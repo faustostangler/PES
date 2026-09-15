@@ -275,3 +275,155 @@ class TestSyncChannelUseCase:
             use_case.execute(query)
 
         mock_ingestion_port.discover_channel_feed.assert_not_called()
+
+    def test_sync_channel_default_force_refresh_is_false(
+        self,
+        mock_ingestion_port: MagicMock,
+        mock_ledger_port: MagicMock,
+        mock_pipeline: MagicMock,
+    ) -> None:
+        now = datetime.now(UTC)
+        item = DiscoveredMediaItem(
+            content_id=ContentId("alreadyDoneDef"),
+            title="Already Processed Default",
+            published_at=now - timedelta(days=1),
+            media_url="https://youtube.com/watch?v=alreadyDoneDef",
+            channel_name="TestChannel",
+        )
+        mock_ingestion_port.discover_channel_feed.return_value = [item]
+        mock_ledger_port.is_processed.return_value = True
+
+        use_case = SyncChannelUseCase(
+            media_ingestion_port=mock_ingestion_port,
+            ledger_port=mock_ledger_port,
+            pipeline=mock_pipeline,
+        )
+
+        query = ChannelFeedQuery(channel_url="https://youtube.com/@TestChannel")
+        # Call execute WITHOUT specifying force_refresh (tests default force_refresh=False)
+        summary = use_case.execute(query)
+
+        assert summary.processed_count == 0
+        assert summary.skipped_count == 1
+        assert summary.failed_count == 0
+        mock_pipeline.run_for_video.assert_not_called()
+
+    def test_sync_channel_naive_datetime_and_exact_cutoff_boundary(
+        self,
+        mock_ingestion_port: MagicMock,
+        mock_ledger_port: MagicMock,
+        mock_pipeline: MagicMock,
+    ) -> None:
+        now = datetime.now(UTC)
+        # Naive datetime safely within lookback (3 days ago with 5 days lookback)
+        recent_naive = (now - timedelta(days=3)).replace(tzinfo=None)
+        old_naive = (now - timedelta(days=7)).replace(tzinfo=None)
+
+        item_recent = DiscoveredMediaItem(
+            content_id=ContentId("recentNaiveVid"),
+            title="Recent Naive Video",
+            published_at=recent_naive,
+            media_url="https://youtube.com/watch?v=recentNaiveVid",
+            channel_name="TestChannel",
+        )
+        item_old = DiscoveredMediaItem(
+            content_id=ContentId("tooOldVideo001"),
+            title="Too Old Video",
+            published_at=old_naive,
+            media_url="https://youtube.com/watch?v=tooOldVideo001",
+            channel_name="TestChannel",
+        )
+        mock_ingestion_port.discover_channel_feed.return_value = [item_recent, item_old]
+
+        use_case = SyncChannelUseCase(
+            media_ingestion_port=mock_ingestion_port,
+            ledger_port=mock_ledger_port,
+            pipeline=mock_pipeline,
+        )
+
+        query = ChannelFeedQuery(
+            channel_url="https://youtube.com/@TestChannel",
+            lookback_days=5,
+        )
+        summary = use_case.execute(query)
+
+        assert summary.total_discovered == 1
+        assert summary.processed_count == 1
+        mock_pipeline.run_for_video.assert_called_once_with(video_url=item_recent.media_url)
+
+    def test_sync_channel_max_videos_limit_enforcement(
+        self,
+        mock_ingestion_port: MagicMock,
+        mock_ledger_port: MagicMock,
+        mock_pipeline: MagicMock,
+    ) -> None:
+        now = datetime.now(UTC)
+        items = [
+            DiscoveredMediaItem(
+                content_id=ContentId(f"vid_item_{i:04d}"),
+                title=f"Video {i}",
+                published_at=now - timedelta(hours=i),
+                media_url=f"https://youtube.com/watch?v=vid_item_{i:04d}",
+                channel_name="TestChannel",
+            )
+            for i in range(5)
+        ]
+        mock_ingestion_port.discover_channel_feed.return_value = items
+
+        use_case = SyncChannelUseCase(
+            media_ingestion_port=mock_ingestion_port,
+            ledger_port=mock_ledger_port,
+            pipeline=mock_pipeline,
+        )
+
+        query = ChannelFeedQuery(
+            channel_url="https://youtube.com/@TestChannel",
+            lookback_days=10,
+            max_videos=2,
+        )
+        summary = use_case.execute(query)
+
+        assert summary.total_discovered == 2
+        assert summary.processed_count == 2
+        assert mock_pipeline.run_for_video.call_count == 2
+
+    def test_sync_channel_ledger_entry_lifecycle_and_exception_handling(
+        self,
+        mock_ingestion_port: MagicMock,
+        mock_ledger_port: MagicMock,
+        mock_pipeline: MagicMock,
+    ) -> None:
+        now = datetime.now(UTC)
+        item = DiscoveredMediaItem(
+            content_id=ContentId("crashItem1"),
+            title="Crash Video",
+            published_at=now - timedelta(hours=1),
+            media_url="https://youtube.com/watch?v=crashItem1",
+            channel_name="TestChannel",
+        )
+        mock_ingestion_port.discover_channel_feed.return_value = [item]
+        mock_pipeline.run_for_video.side_effect = RuntimeError("Fatal pipeline failure")
+
+        use_case = SyncChannelUseCase(
+            media_ingestion_port=mock_ingestion_port,
+            ledger_port=mock_ledger_port,
+            pipeline=mock_pipeline,
+        )
+
+        query = ChannelFeedQuery(channel_url="https://youtube.com/@TestChannel")
+        summary = use_case.execute(query)
+
+        assert summary.failed_count == 1
+        assert summary.status == PipelineStatus.FAILED_TRANSFORMATION
+        assert summary.channel_url == "https://youtube.com/@TestChannel"
+        assert summary.duration_seconds >= 0.0
+
+        # Verify saved ledger entry has error message
+        calls = mock_ledger_port.save_entry.call_args_list
+        assert len(calls) == 2
+        # First call is RUNNING
+        assert calls[0][0][0].status == PipelineStatus.RUNNING
+        assert calls[0][0][0].content_id.value == "crashItem1"
+        # Second call is FAILED_TRANSFORMATION with error_message
+        assert calls[1][0][0].status == PipelineStatus.FAILED_TRANSFORMATION
+        assert "Fatal pipeline failure" in calls[1][0][0].error_message

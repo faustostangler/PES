@@ -37,9 +37,11 @@ class MockMediaIngestionPort(MediaIngestionPort):
         self,
         canned_transcript: RawTranscript | None = None,
         canned_feed: list[DiscoveredMediaItem] | None = None,
+        canned_channel_url: str | None = None,
     ) -> None:
         self.canned_transcript = canned_transcript
         self.canned_feed = canned_feed or []
+        self.canned_channel_url = canned_channel_url
         self.ingest_single_calls: list[str] = []
         self.ingest_channels_calls: list[list[str]] = []
         self.discover_calls: list[ChannelFeedQuery] = []

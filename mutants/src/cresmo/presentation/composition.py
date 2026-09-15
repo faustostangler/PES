@@ -6,6 +6,7 @@ from CresmoSettings to concrete infrastructure adapters and instantiating Cresmo
 
 from __future__ import annotations
 
+import os
 from collections.abc import Callable
 
 from cresmo.application.pipeline import CresmoPipeline
@@ -54,12 +55,10 @@ def build_pipeline(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -69,6 +68,9 @@ def build_pipeline(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
         header_generator=header_generator,
@@ -126,12 +128,10 @@ def x_build_pipeline__mutmut_orig(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -141,6 +141,9 @@ def x_build_pipeline__mutmut_orig(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
         header_generator=header_generator,
@@ -198,12 +201,10 @@ def x_build_pipeline__mutmut_1(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -213,6 +214,9 @@ def x_build_pipeline__mutmut_1(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
         header_generator=header_generator,
@@ -270,12 +274,10 @@ def x_build_pipeline__mutmut_2(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -285,6 +287,9 @@ def x_build_pipeline__mutmut_2(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
         header_generator=header_generator,
@@ -342,12 +347,10 @@ def x_build_pipeline__mutmut_3(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -357,6 +360,9 @@ def x_build_pipeline__mutmut_3(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
         header_generator=header_generator,
@@ -414,12 +420,10 @@ def x_build_pipeline__mutmut_4(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -429,6 +433,9 @@ def x_build_pipeline__mutmut_4(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
         header_generator=header_generator,
@@ -483,12 +490,10 @@ def x_build_pipeline__mutmut_5(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -498,6 +503,9 @@ def x_build_pipeline__mutmut_5(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
         header_generator=header_generator,
@@ -555,12 +563,10 @@ def x_build_pipeline__mutmut_6(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -570,6 +576,9 @@ def x_build_pipeline__mutmut_6(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
         header_generator=header_generator,
@@ -627,12 +636,10 @@ def x_build_pipeline__mutmut_7(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -642,6 +649,9 @@ def x_build_pipeline__mutmut_7(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
         header_generator=header_generator,
@@ -698,12 +708,10 @@ def x_build_pipeline__mutmut_8(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -713,6 +721,9 @@ def x_build_pipeline__mutmut_8(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
         header_generator=header_generator,
@@ -769,12 +780,10 @@ def x_build_pipeline__mutmut_9(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -784,6 +793,9 @@ def x_build_pipeline__mutmut_9(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
         header_generator=header_generator,
@@ -841,12 +853,10 @@ def x_build_pipeline__mutmut_10(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -856,6 +866,9 @@ def x_build_pipeline__mutmut_10(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
         header_generator=header_generator,
@@ -912,12 +925,10 @@ def x_build_pipeline__mutmut_11(
     if (
         resolved_settings.langfuse_public_key or resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -927,6 +938,9 @@ def x_build_pipeline__mutmut_11(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
         header_generator=header_generator,
@@ -984,12 +998,10 @@ def x_build_pipeline__mutmut_12(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = None
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = None
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -999,6 +1011,9 @@ def x_build_pipeline__mutmut_12(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
         header_generator=header_generator,
@@ -1056,12 +1071,10 @@ def x_build_pipeline__mutmut_13(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["XXLANGFUSE_PUBLIC_KEYXX"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["XXLANGFUSE_PUBLIC_KEYXX"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -1071,6 +1084,9 @@ def x_build_pipeline__mutmut_13(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
         header_generator=header_generator,
@@ -1128,12 +1144,10 @@ def x_build_pipeline__mutmut_14(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["langfuse_public_key"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["langfuse_public_key"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -1143,6 +1157,9 @@ def x_build_pipeline__mutmut_14(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
         header_generator=header_generator,
@@ -1200,12 +1217,10 @@ def x_build_pipeline__mutmut_15(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = None
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = None
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -1215,6 +1230,9 @@ def x_build_pipeline__mutmut_15(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
         header_generator=header_generator,
@@ -1272,12 +1290,10 @@ def x_build_pipeline__mutmut_16(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["XXLANGFUSE_SECRET_KEYXX"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["XXLANGFUSE_SECRET_KEYXX"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -1287,6 +1303,9 @@ def x_build_pipeline__mutmut_16(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
         header_generator=header_generator,
@@ -1344,12 +1363,10 @@ def x_build_pipeline__mutmut_17(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["langfuse_secret_key"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["langfuse_secret_key"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -1359,6 +1376,9 @@ def x_build_pipeline__mutmut_17(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
         header_generator=header_generator,
@@ -1416,12 +1436,10 @@ def x_build_pipeline__mutmut_18(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = None
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = None
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -1431,6 +1449,9 @@ def x_build_pipeline__mutmut_18(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
         header_generator=header_generator,
@@ -1488,12 +1509,10 @@ def x_build_pipeline__mutmut_19(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["XXLANGFUSE_HOSTXX"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["XXLANGFUSE_HOSTXX"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -1503,6 +1522,9 @@ def x_build_pipeline__mutmut_19(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
         header_generator=header_generator,
@@ -1560,12 +1582,10 @@ def x_build_pipeline__mutmut_20(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["langfuse_host"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["langfuse_host"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -1575,6 +1595,9 @@ def x_build_pipeline__mutmut_20(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
         header_generator=header_generator,
@@ -1632,17 +1655,18 @@ def x_build_pipeline__mutmut_21(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = None
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
         header_generator=header_generator,
@@ -1700,12 +1724,10 @@ def x_build_pipeline__mutmut_22(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -1715,6 +1737,9 @@ def x_build_pipeline__mutmut_22(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
         header_generator=header_generator,
@@ -1772,12 +1797,10 @@ def x_build_pipeline__mutmut_23(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -1787,6 +1810,9 @@ def x_build_pipeline__mutmut_23(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
         header_generator=header_generator,
@@ -1844,12 +1870,10 @@ def x_build_pipeline__mutmut_24(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -1859,6 +1883,9 @@ def x_build_pipeline__mutmut_24(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
         header_generator=header_generator,
@@ -1916,12 +1943,10 @@ def x_build_pipeline__mutmut_25(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -1930,6 +1955,9 @@ def x_build_pipeline__mutmut_25(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
         header_generator=header_generator,
@@ -1987,12 +2015,10 @@ def x_build_pipeline__mutmut_26(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -2001,6 +2027,9 @@ def x_build_pipeline__mutmut_26(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
         header_generator=header_generator,
@@ -2058,12 +2087,10 @@ def x_build_pipeline__mutmut_27(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -2072,6 +2099,9 @@ def x_build_pipeline__mutmut_27(
                 )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
         header_generator=header_generator,
@@ -2129,12 +2159,10 @@ def x_build_pipeline__mutmut_28(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -2144,6 +2172,9 @@ def x_build_pipeline__mutmut_28(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = ""
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
         header_generator=header_generator,
@@ -2201,12 +2232,10 @@ def x_build_pipeline__mutmut_29(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -2216,8 +2245,14 @@ def x_build_pipeline__mutmut_29(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop(None, None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
 
-    media_ingestion_port = None
+    media_ingestion_port = NativeMediaIngestionAdapter(
+        header_generator=header_generator,
+        whisper_concurrency_limit=resolved_settings.whisper_workers,
+    )
     llm_port = GeminiLLMAdapter(
         api_key=resolved_settings.gemini_api_key.get_secret_value(),
         model_name=resolved_settings.gemini_model,
@@ -2270,12 +2305,10 @@ def x_build_pipeline__mutmut_30(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -2285,9 +2318,12 @@ def x_build_pipeline__mutmut_30(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop(None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
-        header_generator=None,
+        header_generator=header_generator,
         whisper_concurrency_limit=resolved_settings.whisper_workers,
     )
     llm_port = GeminiLLMAdapter(
@@ -2342,12 +2378,10 @@ def x_build_pipeline__mutmut_31(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -2357,10 +2391,13 @@ def x_build_pipeline__mutmut_31(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", )
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
         header_generator=header_generator,
-        whisper_concurrency_limit=None,
+        whisper_concurrency_limit=resolved_settings.whisper_workers,
     )
     llm_port = GeminiLLMAdapter(
         api_key=resolved_settings.gemini_api_key.get_secret_value(),
@@ -2414,12 +2451,10 @@ def x_build_pipeline__mutmut_32(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -2429,8 +2464,12 @@ def x_build_pipeline__mutmut_32(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("XXLANGFUSE_PUBLIC_KEYXX", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
+        header_generator=header_generator,
         whisper_concurrency_limit=resolved_settings.whisper_workers,
     )
     llm_port = GeminiLLMAdapter(
@@ -2485,12 +2524,10 @@ def x_build_pipeline__mutmut_33(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -2500,10 +2537,14 @@ def x_build_pipeline__mutmut_33(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("langfuse_public_key", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
         header_generator=header_generator,
-        )
+        whisper_concurrency_limit=resolved_settings.whisper_workers,
+    )
     llm_port = GeminiLLMAdapter(
         api_key=resolved_settings.gemini_api_key.get_secret_value(),
         model_name=resolved_settings.gemini_model,
@@ -2556,12 +2597,10 @@ def x_build_pipeline__mutmut_34(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -2571,12 +2610,20 @@ def x_build_pipeline__mutmut_34(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop(None, None)
+            os.environ.pop("LANGFUSE_HOST", None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
         header_generator=header_generator,
         whisper_concurrency_limit=resolved_settings.whisper_workers,
     )
-    llm_port = None
+    llm_port = GeminiLLMAdapter(
+        api_key=resolved_settings.gemini_api_key.get_secret_value(),
+        model_name=resolved_settings.gemini_model,
+        fallback_model_name=resolved_settings.gemini_fallback_model,
+        langfuse_client=langfuse_client,
+    )
     vault_port = ObsidianVaultAdapter(
         vault_dir=resolved_settings.vault_dir,
         raw_dir=resolved_settings.raw_dir,
@@ -2623,12 +2670,10 @@ def x_build_pipeline__mutmut_35(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -2638,13 +2683,16 @@ def x_build_pipeline__mutmut_35(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop(None)
+            os.environ.pop("LANGFUSE_HOST", None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
         header_generator=header_generator,
         whisper_concurrency_limit=resolved_settings.whisper_workers,
     )
     llm_port = GeminiLLMAdapter(
-        api_key=None,
+        api_key=resolved_settings.gemini_api_key.get_secret_value(),
         model_name=resolved_settings.gemini_model,
         fallback_model_name=resolved_settings.gemini_fallback_model,
         langfuse_client=langfuse_client,
@@ -2695,12 +2743,10 @@ def x_build_pipeline__mutmut_36(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -2710,6 +2756,9 @@ def x_build_pipeline__mutmut_36(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", )
+            os.environ.pop("LANGFUSE_HOST", None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
         header_generator=header_generator,
@@ -2717,7 +2766,7 @@ def x_build_pipeline__mutmut_36(
     )
     llm_port = GeminiLLMAdapter(
         api_key=resolved_settings.gemini_api_key.get_secret_value(),
-        model_name=None,
+        model_name=resolved_settings.gemini_model,
         fallback_model_name=resolved_settings.gemini_fallback_model,
         langfuse_client=langfuse_client,
     )
@@ -2767,12 +2816,10 @@ def x_build_pipeline__mutmut_37(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -2782,6 +2829,9 @@ def x_build_pipeline__mutmut_37(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("XXLANGFUSE_SECRET_KEYXX", None)
+            os.environ.pop("LANGFUSE_HOST", None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
         header_generator=header_generator,
@@ -2790,7 +2840,7 @@ def x_build_pipeline__mutmut_37(
     llm_port = GeminiLLMAdapter(
         api_key=resolved_settings.gemini_api_key.get_secret_value(),
         model_name=resolved_settings.gemini_model,
-        fallback_model_name=None,
+        fallback_model_name=resolved_settings.gemini_fallback_model,
         langfuse_client=langfuse_client,
     )
     vault_port = ObsidianVaultAdapter(
@@ -2839,12 +2889,10 @@ def x_build_pipeline__mutmut_38(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -2854,6 +2902,9 @@ def x_build_pipeline__mutmut_38(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("langfuse_secret_key", None)
+            os.environ.pop("LANGFUSE_HOST", None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
         header_generator=header_generator,
@@ -2863,7 +2914,7 @@ def x_build_pipeline__mutmut_38(
         api_key=resolved_settings.gemini_api_key.get_secret_value(),
         model_name=resolved_settings.gemini_model,
         fallback_model_name=resolved_settings.gemini_fallback_model,
-        langfuse_client=None,
+        langfuse_client=langfuse_client,
     )
     vault_port = ObsidianVaultAdapter(
         vault_dir=resolved_settings.vault_dir,
@@ -2911,12 +2962,10 @@ def x_build_pipeline__mutmut_39(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -2926,12 +2975,16 @@ def x_build_pipeline__mutmut_39(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop(None, None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
         header_generator=header_generator,
         whisper_concurrency_limit=resolved_settings.whisper_workers,
     )
     llm_port = GeminiLLMAdapter(
+        api_key=resolved_settings.gemini_api_key.get_secret_value(),
         model_name=resolved_settings.gemini_model,
         fallback_model_name=resolved_settings.gemini_fallback_model,
         langfuse_client=langfuse_client,
@@ -2982,12 +3035,10 @@ def x_build_pipeline__mutmut_40(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -2997,6 +3048,9 @@ def x_build_pipeline__mutmut_40(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop(None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
         header_generator=header_generator,
@@ -3004,6 +3058,7 @@ def x_build_pipeline__mutmut_40(
     )
     llm_port = GeminiLLMAdapter(
         api_key=resolved_settings.gemini_api_key.get_secret_value(),
+        model_name=resolved_settings.gemini_model,
         fallback_model_name=resolved_settings.gemini_fallback_model,
         langfuse_client=langfuse_client,
     )
@@ -3053,12 +3108,10 @@ def x_build_pipeline__mutmut_41(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -3068,6 +3121,9 @@ def x_build_pipeline__mutmut_41(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", )
 
     media_ingestion_port = NativeMediaIngestionAdapter(
         header_generator=header_generator,
@@ -3076,6 +3132,7 @@ def x_build_pipeline__mutmut_41(
     llm_port = GeminiLLMAdapter(
         api_key=resolved_settings.gemini_api_key.get_secret_value(),
         model_name=resolved_settings.gemini_model,
+        fallback_model_name=resolved_settings.gemini_fallback_model,
         langfuse_client=langfuse_client,
     )
     vault_port = ObsidianVaultAdapter(
@@ -3124,12 +3181,10 @@ def x_build_pipeline__mutmut_42(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -3139,6 +3194,9 @@ def x_build_pipeline__mutmut_42(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("XXLANGFUSE_HOSTXX", None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
         header_generator=header_generator,
@@ -3148,7 +3206,8 @@ def x_build_pipeline__mutmut_42(
         api_key=resolved_settings.gemini_api_key.get_secret_value(),
         model_name=resolved_settings.gemini_model,
         fallback_model_name=resolved_settings.gemini_fallback_model,
-        )
+        langfuse_client=langfuse_client,
+    )
     vault_port = ObsidianVaultAdapter(
         vault_dir=resolved_settings.vault_dir,
         raw_dir=resolved_settings.raw_dir,
@@ -3195,12 +3254,10 @@ def x_build_pipeline__mutmut_43(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -3210,6 +3267,9 @@ def x_build_pipeline__mutmut_43(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("langfuse_host", None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
         header_generator=header_generator,
@@ -3221,7 +3281,11 @@ def x_build_pipeline__mutmut_43(
         fallback_model_name=resolved_settings.gemini_fallback_model,
         langfuse_client=langfuse_client,
     )
-    vault_port = None
+    vault_port = ObsidianVaultAdapter(
+        vault_dir=resolved_settings.vault_dir,
+        raw_dir=resolved_settings.raw_dir,
+        enriched_dir=resolved_settings.enriched_dir,
+    )
     ledger_port = SqliteLedgerAdapter(db_path=resolved_settings.sqlite_ledger_path)
 
     effective_batch_size = (
@@ -3263,12 +3327,10 @@ def x_build_pipeline__mutmut_44(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -3278,11 +3340,11 @@ def x_build_pipeline__mutmut_44(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
 
-    media_ingestion_port = NativeMediaIngestionAdapter(
-        header_generator=header_generator,
-        whisper_concurrency_limit=resolved_settings.whisper_workers,
-    )
+    media_ingestion_port = None
     llm_port = GeminiLLMAdapter(
         api_key=resolved_settings.gemini_api_key.get_secret_value(),
         model_name=resolved_settings.gemini_model,
@@ -3290,7 +3352,7 @@ def x_build_pipeline__mutmut_44(
         langfuse_client=langfuse_client,
     )
     vault_port = ObsidianVaultAdapter(
-        vault_dir=None,
+        vault_dir=resolved_settings.vault_dir,
         raw_dir=resolved_settings.raw_dir,
         enriched_dir=resolved_settings.enriched_dir,
     )
@@ -3335,12 +3397,10 @@ def x_build_pipeline__mutmut_45(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -3350,9 +3410,12 @@ def x_build_pipeline__mutmut_45(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
-        header_generator=header_generator,
+        header_generator=None,
         whisper_concurrency_limit=resolved_settings.whisper_workers,
     )
     llm_port = GeminiLLMAdapter(
@@ -3363,7 +3426,7 @@ def x_build_pipeline__mutmut_45(
     )
     vault_port = ObsidianVaultAdapter(
         vault_dir=resolved_settings.vault_dir,
-        raw_dir=None,
+        raw_dir=resolved_settings.raw_dir,
         enriched_dir=resolved_settings.enriched_dir,
     )
     ledger_port = SqliteLedgerAdapter(db_path=resolved_settings.sqlite_ledger_path)
@@ -3407,12 +3470,10 @@ def x_build_pipeline__mutmut_46(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -3422,10 +3483,13 @@ def x_build_pipeline__mutmut_46(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
         header_generator=header_generator,
-        whisper_concurrency_limit=resolved_settings.whisper_workers,
+        whisper_concurrency_limit=None,
     )
     llm_port = GeminiLLMAdapter(
         api_key=resolved_settings.gemini_api_key.get_secret_value(),
@@ -3436,7 +3500,7 @@ def x_build_pipeline__mutmut_46(
     vault_port = ObsidianVaultAdapter(
         vault_dir=resolved_settings.vault_dir,
         raw_dir=resolved_settings.raw_dir,
-        enriched_dir=None,
+        enriched_dir=resolved_settings.enriched_dir,
     )
     ledger_port = SqliteLedgerAdapter(db_path=resolved_settings.sqlite_ledger_path)
 
@@ -3479,12 +3543,10 @@ def x_build_pipeline__mutmut_47(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -3494,9 +3556,11 @@ def x_build_pipeline__mutmut_47(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
-        header_generator=header_generator,
         whisper_concurrency_limit=resolved_settings.whisper_workers,
     )
     llm_port = GeminiLLMAdapter(
@@ -3506,6 +3570,7 @@ def x_build_pipeline__mutmut_47(
         langfuse_client=langfuse_client,
     )
     vault_port = ObsidianVaultAdapter(
+        vault_dir=resolved_settings.vault_dir,
         raw_dir=resolved_settings.raw_dir,
         enriched_dir=resolved_settings.enriched_dir,
     )
@@ -3550,12 +3615,10 @@ def x_build_pipeline__mutmut_48(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -3565,11 +3628,13 @@ def x_build_pipeline__mutmut_48(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
         header_generator=header_generator,
-        whisper_concurrency_limit=resolved_settings.whisper_workers,
-    )
+        )
     llm_port = GeminiLLMAdapter(
         api_key=resolved_settings.gemini_api_key.get_secret_value(),
         model_name=resolved_settings.gemini_model,
@@ -3578,6 +3643,7 @@ def x_build_pipeline__mutmut_48(
     )
     vault_port = ObsidianVaultAdapter(
         vault_dir=resolved_settings.vault_dir,
+        raw_dir=resolved_settings.raw_dir,
         enriched_dir=resolved_settings.enriched_dir,
     )
     ledger_port = SqliteLedgerAdapter(db_path=resolved_settings.sqlite_ledger_path)
@@ -3621,12 +3687,10 @@ def x_build_pipeline__mutmut_49(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -3636,21 +3700,20 @@ def x_build_pipeline__mutmut_49(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
         header_generator=header_generator,
         whisper_concurrency_limit=resolved_settings.whisper_workers,
     )
-    llm_port = GeminiLLMAdapter(
-        api_key=resolved_settings.gemini_api_key.get_secret_value(),
-        model_name=resolved_settings.gemini_model,
-        fallback_model_name=resolved_settings.gemini_fallback_model,
-        langfuse_client=langfuse_client,
-    )
+    llm_port = None
     vault_port = ObsidianVaultAdapter(
         vault_dir=resolved_settings.vault_dir,
         raw_dir=resolved_settings.raw_dir,
-        )
+        enriched_dir=resolved_settings.enriched_dir,
+    )
     ledger_port = SqliteLedgerAdapter(db_path=resolved_settings.sqlite_ledger_path)
 
     effective_batch_size = (
@@ -3692,12 +3755,10 @@ def x_build_pipeline__mutmut_50(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -3707,13 +3768,16 @@ def x_build_pipeline__mutmut_50(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
         header_generator=header_generator,
         whisper_concurrency_limit=resolved_settings.whisper_workers,
     )
     llm_port = GeminiLLMAdapter(
-        api_key=resolved_settings.gemini_api_key.get_secret_value(),
+        api_key=None,
         model_name=resolved_settings.gemini_model,
         fallback_model_name=resolved_settings.gemini_fallback_model,
         langfuse_client=langfuse_client,
@@ -3723,7 +3787,7 @@ def x_build_pipeline__mutmut_50(
         raw_dir=resolved_settings.raw_dir,
         enriched_dir=resolved_settings.enriched_dir,
     )
-    ledger_port = None
+    ledger_port = SqliteLedgerAdapter(db_path=resolved_settings.sqlite_ledger_path)
 
     effective_batch_size = (
         batch_size_override if batch_size_override is not None else resolved_settings.batch_size
@@ -3764,12 +3828,10 @@ def x_build_pipeline__mutmut_51(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -3779,6 +3841,9 @@ def x_build_pipeline__mutmut_51(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
         header_generator=header_generator,
@@ -3786,7 +3851,7 @@ def x_build_pipeline__mutmut_51(
     )
     llm_port = GeminiLLMAdapter(
         api_key=resolved_settings.gemini_api_key.get_secret_value(),
-        model_name=resolved_settings.gemini_model,
+        model_name=None,
         fallback_model_name=resolved_settings.gemini_fallback_model,
         langfuse_client=langfuse_client,
     )
@@ -3795,7 +3860,7 @@ def x_build_pipeline__mutmut_51(
         raw_dir=resolved_settings.raw_dir,
         enriched_dir=resolved_settings.enriched_dir,
     )
-    ledger_port = SqliteLedgerAdapter(db_path=None)
+    ledger_port = SqliteLedgerAdapter(db_path=resolved_settings.sqlite_ledger_path)
 
     effective_batch_size = (
         batch_size_override if batch_size_override is not None else resolved_settings.batch_size
@@ -3836,12 +3901,10 @@ def x_build_pipeline__mutmut_52(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -3851,6 +3914,9 @@ def x_build_pipeline__mutmut_52(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
         header_generator=header_generator,
@@ -3859,7 +3925,7 @@ def x_build_pipeline__mutmut_52(
     llm_port = GeminiLLMAdapter(
         api_key=resolved_settings.gemini_api_key.get_secret_value(),
         model_name=resolved_settings.gemini_model,
-        fallback_model_name=resolved_settings.gemini_fallback_model,
+        fallback_model_name=None,
         langfuse_client=langfuse_client,
     )
     vault_port = ObsidianVaultAdapter(
@@ -3869,7 +3935,9 @@ def x_build_pipeline__mutmut_52(
     )
     ledger_port = SqliteLedgerAdapter(db_path=resolved_settings.sqlite_ledger_path)
 
-    effective_batch_size = None
+    effective_batch_size = (
+        batch_size_override if batch_size_override is not None else resolved_settings.batch_size
+    )
 
     return CresmoPipeline(
         media_ingestion_port=media_ingestion_port,
@@ -3906,12 +3974,10 @@ def x_build_pipeline__mutmut_53(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -3921,6 +3987,9 @@ def x_build_pipeline__mutmut_53(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
         header_generator=header_generator,
@@ -3930,7 +3999,7 @@ def x_build_pipeline__mutmut_53(
         api_key=resolved_settings.gemini_api_key.get_secret_value(),
         model_name=resolved_settings.gemini_model,
         fallback_model_name=resolved_settings.gemini_fallback_model,
-        langfuse_client=langfuse_client,
+        langfuse_client=None,
     )
     vault_port = ObsidianVaultAdapter(
         vault_dir=resolved_settings.vault_dir,
@@ -3940,7 +4009,7 @@ def x_build_pipeline__mutmut_53(
     ledger_port = SqliteLedgerAdapter(db_path=resolved_settings.sqlite_ledger_path)
 
     effective_batch_size = (
-        batch_size_override if batch_size_override is None else resolved_settings.batch_size
+        batch_size_override if batch_size_override is not None else resolved_settings.batch_size
     )
 
     return CresmoPipeline(
@@ -3978,12 +4047,10 @@ def x_build_pipeline__mutmut_54(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -3993,13 +4060,15 @@ def x_build_pipeline__mutmut_54(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
         header_generator=header_generator,
         whisper_concurrency_limit=resolved_settings.whisper_workers,
     )
     llm_port = GeminiLLMAdapter(
-        api_key=resolved_settings.gemini_api_key.get_secret_value(),
         model_name=resolved_settings.gemini_model,
         fallback_model_name=resolved_settings.gemini_fallback_model,
         langfuse_client=langfuse_client,
@@ -4016,7 +4085,7 @@ def x_build_pipeline__mutmut_54(
     )
 
     return CresmoPipeline(
-        media_ingestion_port=None,
+        media_ingestion_port=media_ingestion_port,
         llm_port=llm_port,
         vault_port=vault_port,
         ledger_port=ledger_port,
@@ -4050,12 +4119,10 @@ def x_build_pipeline__mutmut_55(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -4065,6 +4132,9 @@ def x_build_pipeline__mutmut_55(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
         header_generator=header_generator,
@@ -4072,7 +4142,6 @@ def x_build_pipeline__mutmut_55(
     )
     llm_port = GeminiLLMAdapter(
         api_key=resolved_settings.gemini_api_key.get_secret_value(),
-        model_name=resolved_settings.gemini_model,
         fallback_model_name=resolved_settings.gemini_fallback_model,
         langfuse_client=langfuse_client,
     )
@@ -4089,7 +4158,7 @@ def x_build_pipeline__mutmut_55(
 
     return CresmoPipeline(
         media_ingestion_port=media_ingestion_port,
-        llm_port=None,
+        llm_port=llm_port,
         vault_port=vault_port,
         ledger_port=ledger_port,
         batch_size=effective_batch_size,
@@ -4122,12 +4191,10 @@ def x_build_pipeline__mutmut_56(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -4137,6 +4204,9 @@ def x_build_pipeline__mutmut_56(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
         header_generator=header_generator,
@@ -4145,7 +4215,6 @@ def x_build_pipeline__mutmut_56(
     llm_port = GeminiLLMAdapter(
         api_key=resolved_settings.gemini_api_key.get_secret_value(),
         model_name=resolved_settings.gemini_model,
-        fallback_model_name=resolved_settings.gemini_fallback_model,
         langfuse_client=langfuse_client,
     )
     vault_port = ObsidianVaultAdapter(
@@ -4162,7 +4231,7 @@ def x_build_pipeline__mutmut_56(
     return CresmoPipeline(
         media_ingestion_port=media_ingestion_port,
         llm_port=llm_port,
-        vault_port=None,
+        vault_port=vault_port,
         ledger_port=ledger_port,
         batch_size=effective_batch_size,
         prompt_provider=prompt_provider,
@@ -4194,12 +4263,10 @@ def x_build_pipeline__mutmut_57(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -4209,6 +4276,9 @@ def x_build_pipeline__mutmut_57(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
         header_generator=header_generator,
@@ -4218,8 +4288,7 @@ def x_build_pipeline__mutmut_57(
         api_key=resolved_settings.gemini_api_key.get_secret_value(),
         model_name=resolved_settings.gemini_model,
         fallback_model_name=resolved_settings.gemini_fallback_model,
-        langfuse_client=langfuse_client,
-    )
+        )
     vault_port = ObsidianVaultAdapter(
         vault_dir=resolved_settings.vault_dir,
         raw_dir=resolved_settings.raw_dir,
@@ -4235,7 +4304,7 @@ def x_build_pipeline__mutmut_57(
         media_ingestion_port=media_ingestion_port,
         llm_port=llm_port,
         vault_port=vault_port,
-        ledger_port=None,
+        ledger_port=ledger_port,
         batch_size=effective_batch_size,
         prompt_provider=prompt_provider,
     )
@@ -4266,12 +4335,10 @@ def x_build_pipeline__mutmut_58(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -4281,6 +4348,9 @@ def x_build_pipeline__mutmut_58(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
         header_generator=header_generator,
@@ -4292,11 +4362,7 @@ def x_build_pipeline__mutmut_58(
         fallback_model_name=resolved_settings.gemini_fallback_model,
         langfuse_client=langfuse_client,
     )
-    vault_port = ObsidianVaultAdapter(
-        vault_dir=resolved_settings.vault_dir,
-        raw_dir=resolved_settings.raw_dir,
-        enriched_dir=resolved_settings.enriched_dir,
-    )
+    vault_port = None
     ledger_port = SqliteLedgerAdapter(db_path=resolved_settings.sqlite_ledger_path)
 
     effective_batch_size = (
@@ -4308,7 +4374,7 @@ def x_build_pipeline__mutmut_58(
         llm_port=llm_port,
         vault_port=vault_port,
         ledger_port=ledger_port,
-        batch_size=None,
+        batch_size=effective_batch_size,
         prompt_provider=prompt_provider,
     )
 
@@ -4338,12 +4404,10 @@ def x_build_pipeline__mutmut_59(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -4353,6 +4417,9 @@ def x_build_pipeline__mutmut_59(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
         header_generator=header_generator,
@@ -4365,7 +4432,7 @@ def x_build_pipeline__mutmut_59(
         langfuse_client=langfuse_client,
     )
     vault_port = ObsidianVaultAdapter(
-        vault_dir=resolved_settings.vault_dir,
+        vault_dir=None,
         raw_dir=resolved_settings.raw_dir,
         enriched_dir=resolved_settings.enriched_dir,
     )
@@ -4381,7 +4448,7 @@ def x_build_pipeline__mutmut_59(
         vault_port=vault_port,
         ledger_port=ledger_port,
         batch_size=effective_batch_size,
-        prompt_provider=None,
+        prompt_provider=prompt_provider,
     )
 
 
@@ -4410,12 +4477,10 @@ def x_build_pipeline__mutmut_60(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -4425,6 +4490,9 @@ def x_build_pipeline__mutmut_60(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
         header_generator=header_generator,
@@ -4438,7 +4506,7 @@ def x_build_pipeline__mutmut_60(
     )
     vault_port = ObsidianVaultAdapter(
         vault_dir=resolved_settings.vault_dir,
-        raw_dir=resolved_settings.raw_dir,
+        raw_dir=None,
         enriched_dir=resolved_settings.enriched_dir,
     )
     ledger_port = SqliteLedgerAdapter(db_path=resolved_settings.sqlite_ledger_path)
@@ -4448,6 +4516,7 @@ def x_build_pipeline__mutmut_60(
     )
 
     return CresmoPipeline(
+        media_ingestion_port=media_ingestion_port,
         llm_port=llm_port,
         vault_port=vault_port,
         ledger_port=ledger_port,
@@ -4481,12 +4550,10 @@ def x_build_pipeline__mutmut_61(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -4496,6 +4563,9 @@ def x_build_pipeline__mutmut_61(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
         header_generator=header_generator,
@@ -4510,7 +4580,7 @@ def x_build_pipeline__mutmut_61(
     vault_port = ObsidianVaultAdapter(
         vault_dir=resolved_settings.vault_dir,
         raw_dir=resolved_settings.raw_dir,
-        enriched_dir=resolved_settings.enriched_dir,
+        enriched_dir=None,
     )
     ledger_port = SqliteLedgerAdapter(db_path=resolved_settings.sqlite_ledger_path)
 
@@ -4520,6 +4590,7 @@ def x_build_pipeline__mutmut_61(
 
     return CresmoPipeline(
         media_ingestion_port=media_ingestion_port,
+        llm_port=llm_port,
         vault_port=vault_port,
         ledger_port=ledger_port,
         batch_size=effective_batch_size,
@@ -4552,12 +4623,10 @@ def x_build_pipeline__mutmut_62(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -4567,6 +4636,9 @@ def x_build_pipeline__mutmut_62(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
         header_generator=header_generator,
@@ -4579,7 +4651,6 @@ def x_build_pipeline__mutmut_62(
         langfuse_client=langfuse_client,
     )
     vault_port = ObsidianVaultAdapter(
-        vault_dir=resolved_settings.vault_dir,
         raw_dir=resolved_settings.raw_dir,
         enriched_dir=resolved_settings.enriched_dir,
     )
@@ -4592,6 +4663,7 @@ def x_build_pipeline__mutmut_62(
     return CresmoPipeline(
         media_ingestion_port=media_ingestion_port,
         llm_port=llm_port,
+        vault_port=vault_port,
         ledger_port=ledger_port,
         batch_size=effective_batch_size,
         prompt_provider=prompt_provider,
@@ -4623,12 +4695,10 @@ def x_build_pipeline__mutmut_63(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -4638,6 +4708,1097 @@ def x_build_pipeline__mutmut_63(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
+
+    media_ingestion_port = NativeMediaIngestionAdapter(
+        header_generator=header_generator,
+        whisper_concurrency_limit=resolved_settings.whisper_workers,
+    )
+    llm_port = GeminiLLMAdapter(
+        api_key=resolved_settings.gemini_api_key.get_secret_value(),
+        model_name=resolved_settings.gemini_model,
+        fallback_model_name=resolved_settings.gemini_fallback_model,
+        langfuse_client=langfuse_client,
+    )
+    vault_port = ObsidianVaultAdapter(
+        vault_dir=resolved_settings.vault_dir,
+        enriched_dir=resolved_settings.enriched_dir,
+    )
+    ledger_port = SqliteLedgerAdapter(db_path=resolved_settings.sqlite_ledger_path)
+
+    effective_batch_size = (
+        batch_size_override if batch_size_override is not None else resolved_settings.batch_size
+    )
+
+    return CresmoPipeline(
+        media_ingestion_port=media_ingestion_port,
+        llm_port=llm_port,
+        vault_port=vault_port,
+        ledger_port=ledger_port,
+        batch_size=effective_batch_size,
+        prompt_provider=prompt_provider,
+    )
+
+
+def x_build_pipeline__mutmut_64(
+    settings: CresmoSettings | None = None,
+    batch_size_override: int | None = None,
+) -> CresmoPipeline:
+    """Instantiate and wire production infrastructure adapters into CresmoPipeline.
+
+    Args:
+        settings: Validated application settings. If None, loaded fail-fast from environment.
+        batch_size_override: Optional operational override for note batch size.
+
+    Returns:
+        Configured and wired CresmoPipeline ready for execution.
+    """
+    resolved_settings = settings or CresmoSettings()
+
+    header_generator = RandomHeaderGenerator(headers_path=resolved_settings.browser_headers_path)
+    prompt_provider = JsonPromptProvider(
+        prompts_path=resolved_settings.prompts_path,
+        skills_dir=resolved_settings.skills_dir,
+    )
+    langfuse_client = None
+    if (
+        resolved_settings.langfuse_public_key
+        and resolved_settings.langfuse_secret_key.get_secret_value()
+    ):
+        try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
+            from langfuse import Langfuse
+
+            langfuse_client = Langfuse(
+                public_key=resolved_settings.langfuse_public_key,
+                secret_key=resolved_settings.langfuse_secret_key.get_secret_value(),
+                host=resolved_settings.langfuse_host,
+            )
+        except Exception:  # noqa: BLE001
+            langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
+
+    media_ingestion_port = NativeMediaIngestionAdapter(
+        header_generator=header_generator,
+        whisper_concurrency_limit=resolved_settings.whisper_workers,
+    )
+    llm_port = GeminiLLMAdapter(
+        api_key=resolved_settings.gemini_api_key.get_secret_value(),
+        model_name=resolved_settings.gemini_model,
+        fallback_model_name=resolved_settings.gemini_fallback_model,
+        langfuse_client=langfuse_client,
+    )
+    vault_port = ObsidianVaultAdapter(
+        vault_dir=resolved_settings.vault_dir,
+        raw_dir=resolved_settings.raw_dir,
+        )
+    ledger_port = SqliteLedgerAdapter(db_path=resolved_settings.sqlite_ledger_path)
+
+    effective_batch_size = (
+        batch_size_override if batch_size_override is not None else resolved_settings.batch_size
+    )
+
+    return CresmoPipeline(
+        media_ingestion_port=media_ingestion_port,
+        llm_port=llm_port,
+        vault_port=vault_port,
+        ledger_port=ledger_port,
+        batch_size=effective_batch_size,
+        prompt_provider=prompt_provider,
+    )
+
+
+def x_build_pipeline__mutmut_65(
+    settings: CresmoSettings | None = None,
+    batch_size_override: int | None = None,
+) -> CresmoPipeline:
+    """Instantiate and wire production infrastructure adapters into CresmoPipeline.
+
+    Args:
+        settings: Validated application settings. If None, loaded fail-fast from environment.
+        batch_size_override: Optional operational override for note batch size.
+
+    Returns:
+        Configured and wired CresmoPipeline ready for execution.
+    """
+    resolved_settings = settings or CresmoSettings()
+
+    header_generator = RandomHeaderGenerator(headers_path=resolved_settings.browser_headers_path)
+    prompt_provider = JsonPromptProvider(
+        prompts_path=resolved_settings.prompts_path,
+        skills_dir=resolved_settings.skills_dir,
+    )
+    langfuse_client = None
+    if (
+        resolved_settings.langfuse_public_key
+        and resolved_settings.langfuse_secret_key.get_secret_value()
+    ):
+        try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
+            from langfuse import Langfuse
+
+            langfuse_client = Langfuse(
+                public_key=resolved_settings.langfuse_public_key,
+                secret_key=resolved_settings.langfuse_secret_key.get_secret_value(),
+                host=resolved_settings.langfuse_host,
+            )
+        except Exception:  # noqa: BLE001
+            langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
+
+    media_ingestion_port = NativeMediaIngestionAdapter(
+        header_generator=header_generator,
+        whisper_concurrency_limit=resolved_settings.whisper_workers,
+    )
+    llm_port = GeminiLLMAdapter(
+        api_key=resolved_settings.gemini_api_key.get_secret_value(),
+        model_name=resolved_settings.gemini_model,
+        fallback_model_name=resolved_settings.gemini_fallback_model,
+        langfuse_client=langfuse_client,
+    )
+    vault_port = ObsidianVaultAdapter(
+        vault_dir=resolved_settings.vault_dir,
+        raw_dir=resolved_settings.raw_dir,
+        enriched_dir=resolved_settings.enriched_dir,
+    )
+    ledger_port = None
+
+    effective_batch_size = (
+        batch_size_override if batch_size_override is not None else resolved_settings.batch_size
+    )
+
+    return CresmoPipeline(
+        media_ingestion_port=media_ingestion_port,
+        llm_port=llm_port,
+        vault_port=vault_port,
+        ledger_port=ledger_port,
+        batch_size=effective_batch_size,
+        prompt_provider=prompt_provider,
+    )
+
+
+def x_build_pipeline__mutmut_66(
+    settings: CresmoSettings | None = None,
+    batch_size_override: int | None = None,
+) -> CresmoPipeline:
+    """Instantiate and wire production infrastructure adapters into CresmoPipeline.
+
+    Args:
+        settings: Validated application settings. If None, loaded fail-fast from environment.
+        batch_size_override: Optional operational override for note batch size.
+
+    Returns:
+        Configured and wired CresmoPipeline ready for execution.
+    """
+    resolved_settings = settings or CresmoSettings()
+
+    header_generator = RandomHeaderGenerator(headers_path=resolved_settings.browser_headers_path)
+    prompt_provider = JsonPromptProvider(
+        prompts_path=resolved_settings.prompts_path,
+        skills_dir=resolved_settings.skills_dir,
+    )
+    langfuse_client = None
+    if (
+        resolved_settings.langfuse_public_key
+        and resolved_settings.langfuse_secret_key.get_secret_value()
+    ):
+        try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
+            from langfuse import Langfuse
+
+            langfuse_client = Langfuse(
+                public_key=resolved_settings.langfuse_public_key,
+                secret_key=resolved_settings.langfuse_secret_key.get_secret_value(),
+                host=resolved_settings.langfuse_host,
+            )
+        except Exception:  # noqa: BLE001
+            langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
+
+    media_ingestion_port = NativeMediaIngestionAdapter(
+        header_generator=header_generator,
+        whisper_concurrency_limit=resolved_settings.whisper_workers,
+    )
+    llm_port = GeminiLLMAdapter(
+        api_key=resolved_settings.gemini_api_key.get_secret_value(),
+        model_name=resolved_settings.gemini_model,
+        fallback_model_name=resolved_settings.gemini_fallback_model,
+        langfuse_client=langfuse_client,
+    )
+    vault_port = ObsidianVaultAdapter(
+        vault_dir=resolved_settings.vault_dir,
+        raw_dir=resolved_settings.raw_dir,
+        enriched_dir=resolved_settings.enriched_dir,
+    )
+    ledger_port = SqliteLedgerAdapter(db_path=None)
+
+    effective_batch_size = (
+        batch_size_override if batch_size_override is not None else resolved_settings.batch_size
+    )
+
+    return CresmoPipeline(
+        media_ingestion_port=media_ingestion_port,
+        llm_port=llm_port,
+        vault_port=vault_port,
+        ledger_port=ledger_port,
+        batch_size=effective_batch_size,
+        prompt_provider=prompt_provider,
+    )
+
+
+def x_build_pipeline__mutmut_67(
+    settings: CresmoSettings | None = None,
+    batch_size_override: int | None = None,
+) -> CresmoPipeline:
+    """Instantiate and wire production infrastructure adapters into CresmoPipeline.
+
+    Args:
+        settings: Validated application settings. If None, loaded fail-fast from environment.
+        batch_size_override: Optional operational override for note batch size.
+
+    Returns:
+        Configured and wired CresmoPipeline ready for execution.
+    """
+    resolved_settings = settings or CresmoSettings()
+
+    header_generator = RandomHeaderGenerator(headers_path=resolved_settings.browser_headers_path)
+    prompt_provider = JsonPromptProvider(
+        prompts_path=resolved_settings.prompts_path,
+        skills_dir=resolved_settings.skills_dir,
+    )
+    langfuse_client = None
+    if (
+        resolved_settings.langfuse_public_key
+        and resolved_settings.langfuse_secret_key.get_secret_value()
+    ):
+        try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
+            from langfuse import Langfuse
+
+            langfuse_client = Langfuse(
+                public_key=resolved_settings.langfuse_public_key,
+                secret_key=resolved_settings.langfuse_secret_key.get_secret_value(),
+                host=resolved_settings.langfuse_host,
+            )
+        except Exception:  # noqa: BLE001
+            langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
+
+    media_ingestion_port = NativeMediaIngestionAdapter(
+        header_generator=header_generator,
+        whisper_concurrency_limit=resolved_settings.whisper_workers,
+    )
+    llm_port = GeminiLLMAdapter(
+        api_key=resolved_settings.gemini_api_key.get_secret_value(),
+        model_name=resolved_settings.gemini_model,
+        fallback_model_name=resolved_settings.gemini_fallback_model,
+        langfuse_client=langfuse_client,
+    )
+    vault_port = ObsidianVaultAdapter(
+        vault_dir=resolved_settings.vault_dir,
+        raw_dir=resolved_settings.raw_dir,
+        enriched_dir=resolved_settings.enriched_dir,
+    )
+    ledger_port = SqliteLedgerAdapter(db_path=resolved_settings.sqlite_ledger_path)
+
+    effective_batch_size = None
+
+    return CresmoPipeline(
+        media_ingestion_port=media_ingestion_port,
+        llm_port=llm_port,
+        vault_port=vault_port,
+        ledger_port=ledger_port,
+        batch_size=effective_batch_size,
+        prompt_provider=prompt_provider,
+    )
+
+
+def x_build_pipeline__mutmut_68(
+    settings: CresmoSettings | None = None,
+    batch_size_override: int | None = None,
+) -> CresmoPipeline:
+    """Instantiate and wire production infrastructure adapters into CresmoPipeline.
+
+    Args:
+        settings: Validated application settings. If None, loaded fail-fast from environment.
+        batch_size_override: Optional operational override for note batch size.
+
+    Returns:
+        Configured and wired CresmoPipeline ready for execution.
+    """
+    resolved_settings = settings or CresmoSettings()
+
+    header_generator = RandomHeaderGenerator(headers_path=resolved_settings.browser_headers_path)
+    prompt_provider = JsonPromptProvider(
+        prompts_path=resolved_settings.prompts_path,
+        skills_dir=resolved_settings.skills_dir,
+    )
+    langfuse_client = None
+    if (
+        resolved_settings.langfuse_public_key
+        and resolved_settings.langfuse_secret_key.get_secret_value()
+    ):
+        try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
+            from langfuse import Langfuse
+
+            langfuse_client = Langfuse(
+                public_key=resolved_settings.langfuse_public_key,
+                secret_key=resolved_settings.langfuse_secret_key.get_secret_value(),
+                host=resolved_settings.langfuse_host,
+            )
+        except Exception:  # noqa: BLE001
+            langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
+
+    media_ingestion_port = NativeMediaIngestionAdapter(
+        header_generator=header_generator,
+        whisper_concurrency_limit=resolved_settings.whisper_workers,
+    )
+    llm_port = GeminiLLMAdapter(
+        api_key=resolved_settings.gemini_api_key.get_secret_value(),
+        model_name=resolved_settings.gemini_model,
+        fallback_model_name=resolved_settings.gemini_fallback_model,
+        langfuse_client=langfuse_client,
+    )
+    vault_port = ObsidianVaultAdapter(
+        vault_dir=resolved_settings.vault_dir,
+        raw_dir=resolved_settings.raw_dir,
+        enriched_dir=resolved_settings.enriched_dir,
+    )
+    ledger_port = SqliteLedgerAdapter(db_path=resolved_settings.sqlite_ledger_path)
+
+    effective_batch_size = (
+        batch_size_override if batch_size_override is None else resolved_settings.batch_size
+    )
+
+    return CresmoPipeline(
+        media_ingestion_port=media_ingestion_port,
+        llm_port=llm_port,
+        vault_port=vault_port,
+        ledger_port=ledger_port,
+        batch_size=effective_batch_size,
+        prompt_provider=prompt_provider,
+    )
+
+
+def x_build_pipeline__mutmut_69(
+    settings: CresmoSettings | None = None,
+    batch_size_override: int | None = None,
+) -> CresmoPipeline:
+    """Instantiate and wire production infrastructure adapters into CresmoPipeline.
+
+    Args:
+        settings: Validated application settings. If None, loaded fail-fast from environment.
+        batch_size_override: Optional operational override for note batch size.
+
+    Returns:
+        Configured and wired CresmoPipeline ready for execution.
+    """
+    resolved_settings = settings or CresmoSettings()
+
+    header_generator = RandomHeaderGenerator(headers_path=resolved_settings.browser_headers_path)
+    prompt_provider = JsonPromptProvider(
+        prompts_path=resolved_settings.prompts_path,
+        skills_dir=resolved_settings.skills_dir,
+    )
+    langfuse_client = None
+    if (
+        resolved_settings.langfuse_public_key
+        and resolved_settings.langfuse_secret_key.get_secret_value()
+    ):
+        try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
+            from langfuse import Langfuse
+
+            langfuse_client = Langfuse(
+                public_key=resolved_settings.langfuse_public_key,
+                secret_key=resolved_settings.langfuse_secret_key.get_secret_value(),
+                host=resolved_settings.langfuse_host,
+            )
+        except Exception:  # noqa: BLE001
+            langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
+
+    media_ingestion_port = NativeMediaIngestionAdapter(
+        header_generator=header_generator,
+        whisper_concurrency_limit=resolved_settings.whisper_workers,
+    )
+    llm_port = GeminiLLMAdapter(
+        api_key=resolved_settings.gemini_api_key.get_secret_value(),
+        model_name=resolved_settings.gemini_model,
+        fallback_model_name=resolved_settings.gemini_fallback_model,
+        langfuse_client=langfuse_client,
+    )
+    vault_port = ObsidianVaultAdapter(
+        vault_dir=resolved_settings.vault_dir,
+        raw_dir=resolved_settings.raw_dir,
+        enriched_dir=resolved_settings.enriched_dir,
+    )
+    ledger_port = SqliteLedgerAdapter(db_path=resolved_settings.sqlite_ledger_path)
+
+    effective_batch_size = (
+        batch_size_override if batch_size_override is not None else resolved_settings.batch_size
+    )
+
+    return CresmoPipeline(
+        media_ingestion_port=None,
+        llm_port=llm_port,
+        vault_port=vault_port,
+        ledger_port=ledger_port,
+        batch_size=effective_batch_size,
+        prompt_provider=prompt_provider,
+    )
+
+
+def x_build_pipeline__mutmut_70(
+    settings: CresmoSettings | None = None,
+    batch_size_override: int | None = None,
+) -> CresmoPipeline:
+    """Instantiate and wire production infrastructure adapters into CresmoPipeline.
+
+    Args:
+        settings: Validated application settings. If None, loaded fail-fast from environment.
+        batch_size_override: Optional operational override for note batch size.
+
+    Returns:
+        Configured and wired CresmoPipeline ready for execution.
+    """
+    resolved_settings = settings or CresmoSettings()
+
+    header_generator = RandomHeaderGenerator(headers_path=resolved_settings.browser_headers_path)
+    prompt_provider = JsonPromptProvider(
+        prompts_path=resolved_settings.prompts_path,
+        skills_dir=resolved_settings.skills_dir,
+    )
+    langfuse_client = None
+    if (
+        resolved_settings.langfuse_public_key
+        and resolved_settings.langfuse_secret_key.get_secret_value()
+    ):
+        try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
+            from langfuse import Langfuse
+
+            langfuse_client = Langfuse(
+                public_key=resolved_settings.langfuse_public_key,
+                secret_key=resolved_settings.langfuse_secret_key.get_secret_value(),
+                host=resolved_settings.langfuse_host,
+            )
+        except Exception:  # noqa: BLE001
+            langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
+
+    media_ingestion_port = NativeMediaIngestionAdapter(
+        header_generator=header_generator,
+        whisper_concurrency_limit=resolved_settings.whisper_workers,
+    )
+    llm_port = GeminiLLMAdapter(
+        api_key=resolved_settings.gemini_api_key.get_secret_value(),
+        model_name=resolved_settings.gemini_model,
+        fallback_model_name=resolved_settings.gemini_fallback_model,
+        langfuse_client=langfuse_client,
+    )
+    vault_port = ObsidianVaultAdapter(
+        vault_dir=resolved_settings.vault_dir,
+        raw_dir=resolved_settings.raw_dir,
+        enriched_dir=resolved_settings.enriched_dir,
+    )
+    ledger_port = SqliteLedgerAdapter(db_path=resolved_settings.sqlite_ledger_path)
+
+    effective_batch_size = (
+        batch_size_override if batch_size_override is not None else resolved_settings.batch_size
+    )
+
+    return CresmoPipeline(
+        media_ingestion_port=media_ingestion_port,
+        llm_port=None,
+        vault_port=vault_port,
+        ledger_port=ledger_port,
+        batch_size=effective_batch_size,
+        prompt_provider=prompt_provider,
+    )
+
+
+def x_build_pipeline__mutmut_71(
+    settings: CresmoSettings | None = None,
+    batch_size_override: int | None = None,
+) -> CresmoPipeline:
+    """Instantiate and wire production infrastructure adapters into CresmoPipeline.
+
+    Args:
+        settings: Validated application settings. If None, loaded fail-fast from environment.
+        batch_size_override: Optional operational override for note batch size.
+
+    Returns:
+        Configured and wired CresmoPipeline ready for execution.
+    """
+    resolved_settings = settings or CresmoSettings()
+
+    header_generator = RandomHeaderGenerator(headers_path=resolved_settings.browser_headers_path)
+    prompt_provider = JsonPromptProvider(
+        prompts_path=resolved_settings.prompts_path,
+        skills_dir=resolved_settings.skills_dir,
+    )
+    langfuse_client = None
+    if (
+        resolved_settings.langfuse_public_key
+        and resolved_settings.langfuse_secret_key.get_secret_value()
+    ):
+        try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
+            from langfuse import Langfuse
+
+            langfuse_client = Langfuse(
+                public_key=resolved_settings.langfuse_public_key,
+                secret_key=resolved_settings.langfuse_secret_key.get_secret_value(),
+                host=resolved_settings.langfuse_host,
+            )
+        except Exception:  # noqa: BLE001
+            langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
+
+    media_ingestion_port = NativeMediaIngestionAdapter(
+        header_generator=header_generator,
+        whisper_concurrency_limit=resolved_settings.whisper_workers,
+    )
+    llm_port = GeminiLLMAdapter(
+        api_key=resolved_settings.gemini_api_key.get_secret_value(),
+        model_name=resolved_settings.gemini_model,
+        fallback_model_name=resolved_settings.gemini_fallback_model,
+        langfuse_client=langfuse_client,
+    )
+    vault_port = ObsidianVaultAdapter(
+        vault_dir=resolved_settings.vault_dir,
+        raw_dir=resolved_settings.raw_dir,
+        enriched_dir=resolved_settings.enriched_dir,
+    )
+    ledger_port = SqliteLedgerAdapter(db_path=resolved_settings.sqlite_ledger_path)
+
+    effective_batch_size = (
+        batch_size_override if batch_size_override is not None else resolved_settings.batch_size
+    )
+
+    return CresmoPipeline(
+        media_ingestion_port=media_ingestion_port,
+        llm_port=llm_port,
+        vault_port=None,
+        ledger_port=ledger_port,
+        batch_size=effective_batch_size,
+        prompt_provider=prompt_provider,
+    )
+
+
+def x_build_pipeline__mutmut_72(
+    settings: CresmoSettings | None = None,
+    batch_size_override: int | None = None,
+) -> CresmoPipeline:
+    """Instantiate and wire production infrastructure adapters into CresmoPipeline.
+
+    Args:
+        settings: Validated application settings. If None, loaded fail-fast from environment.
+        batch_size_override: Optional operational override for note batch size.
+
+    Returns:
+        Configured and wired CresmoPipeline ready for execution.
+    """
+    resolved_settings = settings or CresmoSettings()
+
+    header_generator = RandomHeaderGenerator(headers_path=resolved_settings.browser_headers_path)
+    prompt_provider = JsonPromptProvider(
+        prompts_path=resolved_settings.prompts_path,
+        skills_dir=resolved_settings.skills_dir,
+    )
+    langfuse_client = None
+    if (
+        resolved_settings.langfuse_public_key
+        and resolved_settings.langfuse_secret_key.get_secret_value()
+    ):
+        try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
+            from langfuse import Langfuse
+
+            langfuse_client = Langfuse(
+                public_key=resolved_settings.langfuse_public_key,
+                secret_key=resolved_settings.langfuse_secret_key.get_secret_value(),
+                host=resolved_settings.langfuse_host,
+            )
+        except Exception:  # noqa: BLE001
+            langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
+
+    media_ingestion_port = NativeMediaIngestionAdapter(
+        header_generator=header_generator,
+        whisper_concurrency_limit=resolved_settings.whisper_workers,
+    )
+    llm_port = GeminiLLMAdapter(
+        api_key=resolved_settings.gemini_api_key.get_secret_value(),
+        model_name=resolved_settings.gemini_model,
+        fallback_model_name=resolved_settings.gemini_fallback_model,
+        langfuse_client=langfuse_client,
+    )
+    vault_port = ObsidianVaultAdapter(
+        vault_dir=resolved_settings.vault_dir,
+        raw_dir=resolved_settings.raw_dir,
+        enriched_dir=resolved_settings.enriched_dir,
+    )
+    ledger_port = SqliteLedgerAdapter(db_path=resolved_settings.sqlite_ledger_path)
+
+    effective_batch_size = (
+        batch_size_override if batch_size_override is not None else resolved_settings.batch_size
+    )
+
+    return CresmoPipeline(
+        media_ingestion_port=media_ingestion_port,
+        llm_port=llm_port,
+        vault_port=vault_port,
+        ledger_port=None,
+        batch_size=effective_batch_size,
+        prompt_provider=prompt_provider,
+    )
+
+
+def x_build_pipeline__mutmut_73(
+    settings: CresmoSettings | None = None,
+    batch_size_override: int | None = None,
+) -> CresmoPipeline:
+    """Instantiate and wire production infrastructure adapters into CresmoPipeline.
+
+    Args:
+        settings: Validated application settings. If None, loaded fail-fast from environment.
+        batch_size_override: Optional operational override for note batch size.
+
+    Returns:
+        Configured and wired CresmoPipeline ready for execution.
+    """
+    resolved_settings = settings or CresmoSettings()
+
+    header_generator = RandomHeaderGenerator(headers_path=resolved_settings.browser_headers_path)
+    prompt_provider = JsonPromptProvider(
+        prompts_path=resolved_settings.prompts_path,
+        skills_dir=resolved_settings.skills_dir,
+    )
+    langfuse_client = None
+    if (
+        resolved_settings.langfuse_public_key
+        and resolved_settings.langfuse_secret_key.get_secret_value()
+    ):
+        try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
+            from langfuse import Langfuse
+
+            langfuse_client = Langfuse(
+                public_key=resolved_settings.langfuse_public_key,
+                secret_key=resolved_settings.langfuse_secret_key.get_secret_value(),
+                host=resolved_settings.langfuse_host,
+            )
+        except Exception:  # noqa: BLE001
+            langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
+
+    media_ingestion_port = NativeMediaIngestionAdapter(
+        header_generator=header_generator,
+        whisper_concurrency_limit=resolved_settings.whisper_workers,
+    )
+    llm_port = GeminiLLMAdapter(
+        api_key=resolved_settings.gemini_api_key.get_secret_value(),
+        model_name=resolved_settings.gemini_model,
+        fallback_model_name=resolved_settings.gemini_fallback_model,
+        langfuse_client=langfuse_client,
+    )
+    vault_port = ObsidianVaultAdapter(
+        vault_dir=resolved_settings.vault_dir,
+        raw_dir=resolved_settings.raw_dir,
+        enriched_dir=resolved_settings.enriched_dir,
+    )
+    ledger_port = SqliteLedgerAdapter(db_path=resolved_settings.sqlite_ledger_path)
+
+    effective_batch_size = (
+        batch_size_override if batch_size_override is not None else resolved_settings.batch_size
+    )
+
+    return CresmoPipeline(
+        media_ingestion_port=media_ingestion_port,
+        llm_port=llm_port,
+        vault_port=vault_port,
+        ledger_port=ledger_port,
+        batch_size=None,
+        prompt_provider=prompt_provider,
+    )
+
+
+def x_build_pipeline__mutmut_74(
+    settings: CresmoSettings | None = None,
+    batch_size_override: int | None = None,
+) -> CresmoPipeline:
+    """Instantiate and wire production infrastructure adapters into CresmoPipeline.
+
+    Args:
+        settings: Validated application settings. If None, loaded fail-fast from environment.
+        batch_size_override: Optional operational override for note batch size.
+
+    Returns:
+        Configured and wired CresmoPipeline ready for execution.
+    """
+    resolved_settings = settings or CresmoSettings()
+
+    header_generator = RandomHeaderGenerator(headers_path=resolved_settings.browser_headers_path)
+    prompt_provider = JsonPromptProvider(
+        prompts_path=resolved_settings.prompts_path,
+        skills_dir=resolved_settings.skills_dir,
+    )
+    langfuse_client = None
+    if (
+        resolved_settings.langfuse_public_key
+        and resolved_settings.langfuse_secret_key.get_secret_value()
+    ):
+        try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
+            from langfuse import Langfuse
+
+            langfuse_client = Langfuse(
+                public_key=resolved_settings.langfuse_public_key,
+                secret_key=resolved_settings.langfuse_secret_key.get_secret_value(),
+                host=resolved_settings.langfuse_host,
+            )
+        except Exception:  # noqa: BLE001
+            langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
+
+    media_ingestion_port = NativeMediaIngestionAdapter(
+        header_generator=header_generator,
+        whisper_concurrency_limit=resolved_settings.whisper_workers,
+    )
+    llm_port = GeminiLLMAdapter(
+        api_key=resolved_settings.gemini_api_key.get_secret_value(),
+        model_name=resolved_settings.gemini_model,
+        fallback_model_name=resolved_settings.gemini_fallback_model,
+        langfuse_client=langfuse_client,
+    )
+    vault_port = ObsidianVaultAdapter(
+        vault_dir=resolved_settings.vault_dir,
+        raw_dir=resolved_settings.raw_dir,
+        enriched_dir=resolved_settings.enriched_dir,
+    )
+    ledger_port = SqliteLedgerAdapter(db_path=resolved_settings.sqlite_ledger_path)
+
+    effective_batch_size = (
+        batch_size_override if batch_size_override is not None else resolved_settings.batch_size
+    )
+
+    return CresmoPipeline(
+        media_ingestion_port=media_ingestion_port,
+        llm_port=llm_port,
+        vault_port=vault_port,
+        ledger_port=ledger_port,
+        batch_size=effective_batch_size,
+        prompt_provider=None,
+    )
+
+
+def x_build_pipeline__mutmut_75(
+    settings: CresmoSettings | None = None,
+    batch_size_override: int | None = None,
+) -> CresmoPipeline:
+    """Instantiate and wire production infrastructure adapters into CresmoPipeline.
+
+    Args:
+        settings: Validated application settings. If None, loaded fail-fast from environment.
+        batch_size_override: Optional operational override for note batch size.
+
+    Returns:
+        Configured and wired CresmoPipeline ready for execution.
+    """
+    resolved_settings = settings or CresmoSettings()
+
+    header_generator = RandomHeaderGenerator(headers_path=resolved_settings.browser_headers_path)
+    prompt_provider = JsonPromptProvider(
+        prompts_path=resolved_settings.prompts_path,
+        skills_dir=resolved_settings.skills_dir,
+    )
+    langfuse_client = None
+    if (
+        resolved_settings.langfuse_public_key
+        and resolved_settings.langfuse_secret_key.get_secret_value()
+    ):
+        try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
+            from langfuse import Langfuse
+
+            langfuse_client = Langfuse(
+                public_key=resolved_settings.langfuse_public_key,
+                secret_key=resolved_settings.langfuse_secret_key.get_secret_value(),
+                host=resolved_settings.langfuse_host,
+            )
+        except Exception:  # noqa: BLE001
+            langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
+
+    media_ingestion_port = NativeMediaIngestionAdapter(
+        header_generator=header_generator,
+        whisper_concurrency_limit=resolved_settings.whisper_workers,
+    )
+    llm_port = GeminiLLMAdapter(
+        api_key=resolved_settings.gemini_api_key.get_secret_value(),
+        model_name=resolved_settings.gemini_model,
+        fallback_model_name=resolved_settings.gemini_fallback_model,
+        langfuse_client=langfuse_client,
+    )
+    vault_port = ObsidianVaultAdapter(
+        vault_dir=resolved_settings.vault_dir,
+        raw_dir=resolved_settings.raw_dir,
+        enriched_dir=resolved_settings.enriched_dir,
+    )
+    ledger_port = SqliteLedgerAdapter(db_path=resolved_settings.sqlite_ledger_path)
+
+    effective_batch_size = (
+        batch_size_override if batch_size_override is not None else resolved_settings.batch_size
+    )
+
+    return CresmoPipeline(
+        llm_port=llm_port,
+        vault_port=vault_port,
+        ledger_port=ledger_port,
+        batch_size=effective_batch_size,
+        prompt_provider=prompt_provider,
+    )
+
+
+def x_build_pipeline__mutmut_76(
+    settings: CresmoSettings | None = None,
+    batch_size_override: int | None = None,
+) -> CresmoPipeline:
+    """Instantiate and wire production infrastructure adapters into CresmoPipeline.
+
+    Args:
+        settings: Validated application settings. If None, loaded fail-fast from environment.
+        batch_size_override: Optional operational override for note batch size.
+
+    Returns:
+        Configured and wired CresmoPipeline ready for execution.
+    """
+    resolved_settings = settings or CresmoSettings()
+
+    header_generator = RandomHeaderGenerator(headers_path=resolved_settings.browser_headers_path)
+    prompt_provider = JsonPromptProvider(
+        prompts_path=resolved_settings.prompts_path,
+        skills_dir=resolved_settings.skills_dir,
+    )
+    langfuse_client = None
+    if (
+        resolved_settings.langfuse_public_key
+        and resolved_settings.langfuse_secret_key.get_secret_value()
+    ):
+        try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
+            from langfuse import Langfuse
+
+            langfuse_client = Langfuse(
+                public_key=resolved_settings.langfuse_public_key,
+                secret_key=resolved_settings.langfuse_secret_key.get_secret_value(),
+                host=resolved_settings.langfuse_host,
+            )
+        except Exception:  # noqa: BLE001
+            langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
+
+    media_ingestion_port = NativeMediaIngestionAdapter(
+        header_generator=header_generator,
+        whisper_concurrency_limit=resolved_settings.whisper_workers,
+    )
+    llm_port = GeminiLLMAdapter(
+        api_key=resolved_settings.gemini_api_key.get_secret_value(),
+        model_name=resolved_settings.gemini_model,
+        fallback_model_name=resolved_settings.gemini_fallback_model,
+        langfuse_client=langfuse_client,
+    )
+    vault_port = ObsidianVaultAdapter(
+        vault_dir=resolved_settings.vault_dir,
+        raw_dir=resolved_settings.raw_dir,
+        enriched_dir=resolved_settings.enriched_dir,
+    )
+    ledger_port = SqliteLedgerAdapter(db_path=resolved_settings.sqlite_ledger_path)
+
+    effective_batch_size = (
+        batch_size_override if batch_size_override is not None else resolved_settings.batch_size
+    )
+
+    return CresmoPipeline(
+        media_ingestion_port=media_ingestion_port,
+        vault_port=vault_port,
+        ledger_port=ledger_port,
+        batch_size=effective_batch_size,
+        prompt_provider=prompt_provider,
+    )
+
+
+def x_build_pipeline__mutmut_77(
+    settings: CresmoSettings | None = None,
+    batch_size_override: int | None = None,
+) -> CresmoPipeline:
+    """Instantiate and wire production infrastructure adapters into CresmoPipeline.
+
+    Args:
+        settings: Validated application settings. If None, loaded fail-fast from environment.
+        batch_size_override: Optional operational override for note batch size.
+
+    Returns:
+        Configured and wired CresmoPipeline ready for execution.
+    """
+    resolved_settings = settings or CresmoSettings()
+
+    header_generator = RandomHeaderGenerator(headers_path=resolved_settings.browser_headers_path)
+    prompt_provider = JsonPromptProvider(
+        prompts_path=resolved_settings.prompts_path,
+        skills_dir=resolved_settings.skills_dir,
+    )
+    langfuse_client = None
+    if (
+        resolved_settings.langfuse_public_key
+        and resolved_settings.langfuse_secret_key.get_secret_value()
+    ):
+        try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
+            from langfuse import Langfuse
+
+            langfuse_client = Langfuse(
+                public_key=resolved_settings.langfuse_public_key,
+                secret_key=resolved_settings.langfuse_secret_key.get_secret_value(),
+                host=resolved_settings.langfuse_host,
+            )
+        except Exception:  # noqa: BLE001
+            langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
+
+    media_ingestion_port = NativeMediaIngestionAdapter(
+        header_generator=header_generator,
+        whisper_concurrency_limit=resolved_settings.whisper_workers,
+    )
+    llm_port = GeminiLLMAdapter(
+        api_key=resolved_settings.gemini_api_key.get_secret_value(),
+        model_name=resolved_settings.gemini_model,
+        fallback_model_name=resolved_settings.gemini_fallback_model,
+        langfuse_client=langfuse_client,
+    )
+    vault_port = ObsidianVaultAdapter(
+        vault_dir=resolved_settings.vault_dir,
+        raw_dir=resolved_settings.raw_dir,
+        enriched_dir=resolved_settings.enriched_dir,
+    )
+    ledger_port = SqliteLedgerAdapter(db_path=resolved_settings.sqlite_ledger_path)
+
+    effective_batch_size = (
+        batch_size_override if batch_size_override is not None else resolved_settings.batch_size
+    )
+
+    return CresmoPipeline(
+        media_ingestion_port=media_ingestion_port,
+        llm_port=llm_port,
+        ledger_port=ledger_port,
+        batch_size=effective_batch_size,
+        prompt_provider=prompt_provider,
+    )
+
+
+def x_build_pipeline__mutmut_78(
+    settings: CresmoSettings | None = None,
+    batch_size_override: int | None = None,
+) -> CresmoPipeline:
+    """Instantiate and wire production infrastructure adapters into CresmoPipeline.
+
+    Args:
+        settings: Validated application settings. If None, loaded fail-fast from environment.
+        batch_size_override: Optional operational override for note batch size.
+
+    Returns:
+        Configured and wired CresmoPipeline ready for execution.
+    """
+    resolved_settings = settings or CresmoSettings()
+
+    header_generator = RandomHeaderGenerator(headers_path=resolved_settings.browser_headers_path)
+    prompt_provider = JsonPromptProvider(
+        prompts_path=resolved_settings.prompts_path,
+        skills_dir=resolved_settings.skills_dir,
+    )
+    langfuse_client = None
+    if (
+        resolved_settings.langfuse_public_key
+        and resolved_settings.langfuse_secret_key.get_secret_value()
+    ):
+        try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
+            from langfuse import Langfuse
+
+            langfuse_client = Langfuse(
+                public_key=resolved_settings.langfuse_public_key,
+                secret_key=resolved_settings.langfuse_secret_key.get_secret_value(),
+                host=resolved_settings.langfuse_host,
+            )
+        except Exception:  # noqa: BLE001
+            langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
         header_generator=header_generator,
@@ -4669,7 +5830,7 @@ def x_build_pipeline__mutmut_63(
     )
 
 
-def x_build_pipeline__mutmut_64(
+def x_build_pipeline__mutmut_79(
     settings: CresmoSettings | None = None,
     batch_size_override: int | None = None,
 ) -> CresmoPipeline:
@@ -4694,12 +5855,10 @@ def x_build_pipeline__mutmut_64(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -4709,6 +5868,9 @@ def x_build_pipeline__mutmut_64(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
         header_generator=header_generator,
@@ -4740,7 +5902,7 @@ def x_build_pipeline__mutmut_64(
     )
 
 
-def x_build_pipeline__mutmut_65(
+def x_build_pipeline__mutmut_80(
     settings: CresmoSettings | None = None,
     batch_size_override: int | None = None,
 ) -> CresmoPipeline:
@@ -4765,12 +5927,10 @@ def x_build_pipeline__mutmut_65(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -4780,6 +5940,9 @@ def x_build_pipeline__mutmut_65(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
         header_generator=header_generator,
@@ -4876,6 +6039,21 @@ mutants_x_build_pipeline__mutmut['x_build_pipeline__mutmut_62'] = x_build_pipeli
 mutants_x_build_pipeline__mutmut['x_build_pipeline__mutmut_63'] = x_build_pipeline__mutmut_63 # type: ignore # mutmut generated
 mutants_x_build_pipeline__mutmut['x_build_pipeline__mutmut_64'] = x_build_pipeline__mutmut_64 # type: ignore # mutmut generated
 mutants_x_build_pipeline__mutmut['x_build_pipeline__mutmut_65'] = x_build_pipeline__mutmut_65 # type: ignore # mutmut generated
+mutants_x_build_pipeline__mutmut['x_build_pipeline__mutmut_66'] = x_build_pipeline__mutmut_66 # type: ignore # mutmut generated
+mutants_x_build_pipeline__mutmut['x_build_pipeline__mutmut_67'] = x_build_pipeline__mutmut_67 # type: ignore # mutmut generated
+mutants_x_build_pipeline__mutmut['x_build_pipeline__mutmut_68'] = x_build_pipeline__mutmut_68 # type: ignore # mutmut generated
+mutants_x_build_pipeline__mutmut['x_build_pipeline__mutmut_69'] = x_build_pipeline__mutmut_69 # type: ignore # mutmut generated
+mutants_x_build_pipeline__mutmut['x_build_pipeline__mutmut_70'] = x_build_pipeline__mutmut_70 # type: ignore # mutmut generated
+mutants_x_build_pipeline__mutmut['x_build_pipeline__mutmut_71'] = x_build_pipeline__mutmut_71 # type: ignore # mutmut generated
+mutants_x_build_pipeline__mutmut['x_build_pipeline__mutmut_72'] = x_build_pipeline__mutmut_72 # type: ignore # mutmut generated
+mutants_x_build_pipeline__mutmut['x_build_pipeline__mutmut_73'] = x_build_pipeline__mutmut_73 # type: ignore # mutmut generated
+mutants_x_build_pipeline__mutmut['x_build_pipeline__mutmut_74'] = x_build_pipeline__mutmut_74 # type: ignore # mutmut generated
+mutants_x_build_pipeline__mutmut['x_build_pipeline__mutmut_75'] = x_build_pipeline__mutmut_75 # type: ignore # mutmut generated
+mutants_x_build_pipeline__mutmut['x_build_pipeline__mutmut_76'] = x_build_pipeline__mutmut_76 # type: ignore # mutmut generated
+mutants_x_build_pipeline__mutmut['x_build_pipeline__mutmut_77'] = x_build_pipeline__mutmut_77 # type: ignore # mutmut generated
+mutants_x_build_pipeline__mutmut['x_build_pipeline__mutmut_78'] = x_build_pipeline__mutmut_78 # type: ignore # mutmut generated
+mutants_x_build_pipeline__mutmut['x_build_pipeline__mutmut_79'] = x_build_pipeline__mutmut_79 # type: ignore # mutmut generated
+mutants_x_build_pipeline__mutmut['x_build_pipeline__mutmut_80'] = x_build_pipeline__mutmut_80 # type: ignore # mutmut generated
 mutants_x_build_preflight_checker__mutmut: MutantDict = {}  # type: ignore
 
 

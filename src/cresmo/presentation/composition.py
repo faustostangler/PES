@@ -6,6 +6,7 @@ from CresmoSettings to concrete infrastructure adapters and instantiating Cresmo
 
 from __future__ import annotations
 
+import os
 from collections.abc import Callable
 
 from cresmo.application.pipeline import CresmoPipeline
@@ -49,12 +50,12 @@ def build_pipeline(
         resolved_settings.langfuse_public_key
         and resolved_settings.langfuse_secret_key.get_secret_value()
     ):
-        import os
-
-        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
         try:
+            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+            os.environ["LANGFUSE_SECRET_KEY"] = (
+                resolved_settings.langfuse_secret_key.get_secret_value()
+            )
+            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
             from langfuse import Langfuse
 
             langfuse_client = Langfuse(
@@ -64,6 +65,9 @@ def build_pipeline(
             )
         except Exception:  # noqa: BLE001
             langfuse_client = None
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
 
     media_ingestion_port = NativeMediaIngestionAdapter(
         header_generator=header_generator,

@@ -152,3 +152,118 @@ class TestSqliteLedgerAdapter:
 
         all_entries = adapter.list_entries(limit=100)
         assert len(all_entries) == 40
+
+    def test_in_memory_database_initialization(self) -> None:
+        adapter = SqliteLedgerAdapter(":memory:", timeout=10.0)
+        assert adapter._db_path == ":memory:"
+        assert adapter._timeout == 10.0
+        # In memory mode does not create disk files or parent directories
+        conn = adapter._get_connection()
+        try:
+            # Synchronous normal is applied
+            cursor = conn.execute("PRAGMA synchronous;")
+            sync_mode = cursor.fetchone()[0]
+            assert sync_mode in (1, "1", "NORMAL", "normal")
+        finally:
+            conn.close()
+
+    def test_is_processed_false_for_all_non_completed_statuses(self, tmp_path: Path) -> None:
+        adapter = SqliteLedgerAdapter(tmp_path / "test.db")
+        for idx, status in enumerate(
+            [
+                PipelineStatus.SKIPPED_IDEMPOTENT,
+                PipelineStatus.RUNNING,
+                PipelineStatus.FAILED_INGESTION,
+                PipelineStatus.FAILED_TRANSFORMATION,
+                PipelineStatus.PAUSED_BUDGET,
+            ]
+        ):
+            cid = ContentId(f"statusTest00{idx}")
+            adapter.save_entry(
+                LedgerEntry(
+                    content_id=cid,
+                    media_url=f"https://youtube.com/watch?v={cid.value}",
+                    title="Status Test",
+                    channel_name="TestChannel",
+                    status=status,
+                )
+            )
+            assert not adapter.is_processed(cid)
+
+    def test_mark_processed_defaults_and_on_conflict_update(self, tmp_path: Path) -> None:
+        adapter = SqliteLedgerAdapter(tmp_path / "test.db")
+        cid = ContentId("defaultsTest01")
+
+        # Initial mark_processed creates with defaults
+        adapter.mark_processed(cid)
+        entry = adapter.get_entry(cid)
+        assert entry is not None
+        assert entry.channel_name == "DefaultChannel"
+        assert entry.title == f"Video {cid.value}"
+        assert entry.media_url == f"https://youtube.com/watch?v={cid.value}"
+        assert entry.notes_count == 0
+        assert entry.status == PipelineStatus.COMPLETED
+        assert entry.completed_at is not None
+
+        # Re-marking updates completed_at
+        initial_completed = entry.completed_at
+        adapter.mark_processed(cid)
+        updated = adapter.get_entry(cid)
+        assert updated is not None
+        assert updated.status == PipelineStatus.COMPLETED
+        assert updated.completed_at is not None
+        assert updated.completed_at >= initial_completed
+
+    def test_save_entry_started_at_preservation_and_error_message(self, tmp_path: Path) -> None:
+        adapter = SqliteLedgerAdapter(tmp_path / "test.db")
+        cid = ContentId("errorTest001")
+        start_time = datetime.now(UTC)
+
+        # Initial running entry with start_time
+        entry = LedgerEntry(
+            content_id=cid,
+            media_url=f"https://youtube.com/watch?v={cid.value}",
+            title="Initial Title",
+            channel_name="Channel1",
+            status=PipelineStatus.RUNNING,
+            started_at=start_time,
+        )
+        adapter.save_entry(entry)
+
+        # Failure update without started_at should preserve initial started_at via COALESCE
+        fail_entry = LedgerEntry(
+            content_id=cid,
+            media_url=f"https://youtube.com/watch?v={cid.value}",
+            title="Updated Title",
+            channel_name="Channel2",
+            status=PipelineStatus.FAILED_INGESTION,
+            error_message="Fatal processing failure",
+            started_at=None,
+        )
+        adapter.save_entry(fail_entry)
+
+        retrieved = adapter.get_entry(cid)
+        assert retrieved is not None
+        assert retrieved.title == "Updated Title"
+        assert retrieved.channel_name == "Channel2"
+        assert retrieved.status == PipelineStatus.FAILED_INGESTION
+        assert retrieved.error_message == "Fatal processing failure"
+        assert retrieved.started_at == start_time
+        assert retrieved.completed_at is None
+
+    def test_list_entries_default_limit(self, tmp_path: Path) -> None:
+        adapter = SqliteLedgerAdapter(tmp_path / "test.db")
+        for i in range(10):
+            cid = ContentId(f"defaultLimit{i:02d}")
+            adapter.save_entry(
+                LedgerEntry(
+                    content_id=cid,
+                    media_url=f"https://youtube.com/watch?v={cid.value}",
+                    title=f"Video #{i}",
+                    channel_name="Channel",
+                    status=PipelineStatus.COMPLETED,
+                )
+            )
+        # Calling without limit uses default 100
+        entries = adapter.list_entries()
+        assert len(entries) == 10
