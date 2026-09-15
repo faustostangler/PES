@@ -9,6 +9,7 @@ Tests run_for_video, run_for_text_file, and run_for_manifest.
 from __future__ import annotations
 
 from pathlib import Path
+from unittest.mock import MagicMock
 
 import pytest
 
@@ -22,6 +23,7 @@ from cresmo.infrastructure.adapters.mock_adapters import (
     MockLLMAdapter,
     MockMediaIngestionPort,
 )
+from cresmo.infrastructure.adapters.prompt_provider import JsonPromptProvider
 
 
 class SmartMockLLMAdapter(MockLLMAdapter):
@@ -390,3 +392,231 @@ class TestCresmoPipelineOrchestration:
         assert len(results) == 2
         assert results[0].success is True
         assert results[1].success is True
+
+    def test_pipeline_init_defaults_and_custom_options(self) -> None:
+        # Default initialization
+        pipeline_default = CresmoPipeline(
+            media_ingestion_port=MockMediaIngestionPort(),
+            llm_port=SmartMockLLMAdapter(),
+            vault_port=InMemoryVaultAdapter(),
+        )
+        assert isinstance(pipeline_default.prompt_provider, JsonPromptProvider)
+        assert pipeline_default.synthesize_atomic_batch.batch_size == 5
+
+        # Custom initialization
+        custom_pp = MagicMock()
+        pipeline_custom = CresmoPipeline(
+            media_ingestion_port=MockMediaIngestionPort(),
+            llm_port=SmartMockLLMAdapter(),
+            vault_port=InMemoryVaultAdapter(),
+            batch_size=9,
+            prompt_provider=custom_pp,
+        )
+        assert pipeline_custom.prompt_provider is custom_pp
+        assert pipeline_custom.synthesize_atomic_batch.batch_size == 9
+        assert pipeline_custom.fill_gaps_fluid_prose.prompt_provider is custom_pp
+
+    def test_run_for_video_gap_filler_passes_and_idempotency_attributes(self) -> None:
+        cid = ContentId("videoPassTest1")
+        canned_raw = RawTranscript(
+            content_id=cid,
+            channel_name="Political Theory",
+            body="Raw spoken audio transcript regarding Vilfredo Pareto and elites.",
+        )
+        vault = InMemoryVaultAdapter()
+        ledger = InMemoryLedgerAdapter()
+        pipeline = CresmoPipeline(
+            media_ingestion_port=MockMediaIngestionPort(canned_transcript=canned_raw),
+            llm_port=SmartMockLLMAdapter(),
+            vault_port=vault,
+            ledger_port=ledger,
+        )
+
+        # Explicit gap_filler_passes = 2 (Stage 2 sets passes=2, Stage 3 increments to 3)
+        res = pipeline.run_for_video(
+            "https://youtube.com/watch?v=videoPassTest1", gap_filler_passes=2
+        )
+        assert res.success is True
+        comp = vault.get_enriched_compendium(cid)
+        assert comp is not None
+        assert comp.pass_count == 3
+
+        # Second run without force_reprocess returns exact idempotency attributes
+        res_cached = pipeline.run_for_video(
+            "https://youtube.com/watch?v=videoPassTest1", force_reprocess=False
+        )
+        assert res_cached.content_id == cid
+        assert res_cached.synthesized_notes == ()
+        assert res_cached.reconciled_mocs == ()
+        assert res_cached.duplicates_unified == 0
+        assert res_cached.already_processed is True
+        assert res_cached.success is True
+
+    def test_run_for_text_file_content_id_derivation_boundaries(self, tmp_path: Path) -> None:
+        pipeline = CresmoPipeline(
+            media_ingestion_port=MockMediaIngestionPort(),
+            llm_port=SmartMockLLMAdapter(),
+            vault_port=InMemoryVaultAdapter(),
+            ledger_port=InMemoryLedgerAdapter(),
+        )
+
+        # Boundary: clean stem length exactly 8
+        f8 = tmp_path / "exact008.txt"
+        f8.write_text("Text content for length 8 boundary.", encoding="utf-8")
+        res8 = pipeline.run_for_text_file(f8)
+        assert res8.content_id.value == "exact008"
+
+        # Boundary: clean stem length exactly 64
+        name64 = "a" * 64
+        f64 = tmp_path / f"{name64}.txt"
+        f64.write_text("Text content for length 64 boundary.", encoding="utf-8")
+        res64 = pipeline.run_for_text_file(f64)
+        assert res64.content_id.value == name64
+
+        # Boundary: clean stem length 65 (triggers fallback)
+        name65 = "b" * 65
+        f65 = tmp_path / f"{name65}.txt"
+        f65.write_text("Text content for length 65 boundary.", encoding="utf-8")
+        res65 = pipeline.run_for_text_file(f65)
+        assert res65.content_id.value.startswith("b" * 24 + "_")
+        assert len(res65.content_id.value) == 24 + 1 + 16
+
+        # Boundary: non-alphanumeric stem (empty clean stem -> prefix is 'text')
+        f_symbols = tmp_path / "###$$$%%%.txt"
+        f_symbols.write_text("Text content for non-alphanumeric stem.", encoding="utf-8")
+        res_sym = pipeline.run_for_text_file(f_symbols)
+        assert res_sym.content_id.value.startswith("text_")
+        assert len(res_sym.content_id.value) == 4 + 1 + 16
+
+        # Hyphens and underscores preserved in stem
+        f_hyph = tmp_path / "hyphen-and_under.txt"
+        f_hyph.write_text("Text content with hyphens and underscores.", encoding="utf-8")
+        res_hyph = pipeline.run_for_text_file(f_hyph)
+        assert res_hyph.content_id.value == "hyphen-and_under"
+
+    def test_run_for_text_file_passes_and_idempotency_attributes(self, tmp_path: Path) -> None:
+        text_file = tmp_path / "pass_count_test.txt"
+        text_file.write_text("Detailed text for pass count verification.", encoding="utf-8")
+
+        vault = InMemoryVaultAdapter()
+        ledger = InMemoryLedgerAdapter()
+        pipeline = CresmoPipeline(
+            media_ingestion_port=MockMediaIngestionPort(),
+            llm_port=SmartMockLLMAdapter(),
+            vault_port=vault,
+            ledger_port=ledger,
+        )
+
+        res = pipeline.run_for_text_file(text_file, gap_filler_passes=4)
+        assert res.success is True
+        comp = vault.get_enriched_compendium(res.content_id)
+        assert comp is not None
+        assert comp.pass_count == 5
+
+        # Idempotent re-run
+        res_idem = pipeline.run_for_text_file(text_file, force_reprocess=False)
+        assert res_idem.content_id == res.content_id
+        assert res_idem.synthesized_notes == ()
+        assert res_idem.reconciled_mocs == ()
+        assert res_idem.duplicates_unified == 0
+        assert res_idem.already_processed is True
+        assert res_idem.success is True
+
+    def test_run_for_text_file_frontmatter_field_variants_and_malformed_tolerance(
+        self, tmp_path: Path
+    ) -> None:
+        # Variant keys: 'title', 'channel', 'domain'
+        f_var = tmp_path / "variant_fm.md"
+        f_var.write_text(
+            "---\n"
+            "title: 'Alternative Title'\n"
+            "channel: 'Alternative Channel'\n"
+            "domain: 'sociology'\n"
+            "channel_id: 'alt_id_1'\n"
+            "url: 'https://example.org/alt'\n"
+            "video_description: 'Alternative description text'\n"
+            "---\n"
+            "Body content under variant frontmatter keys.",
+            encoding="utf-8",
+        )
+
+        vault = InMemoryVaultAdapter()
+        pipeline = CresmoPipeline(
+            media_ingestion_port=MockMediaIngestionPort(),
+            llm_port=SmartMockLLMAdapter(),
+            vault_port=vault,
+        )
+
+        res_var = pipeline.run_for_text_file(f_var)
+        assert res_var.success is True
+        raw = vault.get_raw_transcript(res_var.content_id)
+        assert raw is not None
+        assert raw.title == "Alternative Title"
+        assert raw.channel_name == "Alternative Channel"
+        assert raw.channel_category == "sociology"
+        assert raw.channel_id == "alt_id_1"
+        assert raw.source_url == "https://example.org/alt"
+        assert raw.video_description == "Alternative description text"
+
+        # Malformed YAML frontmatter (syntax error) is safely tolerated
+        f_bad_yaml = tmp_path / "bad_yaml.md"
+        f_bad_yaml.write_text(
+            "---\n[unclosed_yaml_sequence: {broken\n---\nBody content surviving bad YAML syntax.",
+            encoding="utf-8",
+        )
+        res_bad = pipeline.run_for_text_file(f_bad_yaml)
+        assert res_bad.success is True
+        raw_bad = vault.get_raw_transcript(res_bad.content_id)
+        assert raw_bad is not None
+        assert "Body content surviving bad YAML" in raw_bad.body
+
+        # Unclosed frontmatter (no closing ---) is treated directly as body
+        f_no_close = tmp_path / "no_close.md"
+        f_no_close.write_text(
+            "---\ntitle: Unclosed without closing delimiter\nJust plain body text.",
+            encoding="utf-8",
+        )
+        res_no_close = pipeline.run_for_text_file(f_no_close)
+        assert res_no_close.success is True
+        raw_no_close = vault.get_raw_transcript(res_no_close.content_id)
+        assert raw_no_close is not None
+        assert "Just plain body text." in raw_no_close.body
+
+    def test_run_for_manifest_parameters_passthrough(self, tmp_path: Path) -> None:
+        manifest = tmp_path / "manifest_params.txt"
+        manifest.write_text(
+            "https://youtube.com/watch?v=paramVid123\n",
+            encoding="utf-8",
+        )
+
+        cid = ContentId("paramVid123")
+        canned_raw = RawTranscript(
+            content_id=cid,
+            channel_name="Political Theory",
+            body="Raw transcript for manifest param test.",
+        )
+        vault = InMemoryVaultAdapter()
+        ledger = InMemoryLedgerAdapter()
+        pipeline = CresmoPipeline(
+            media_ingestion_port=MockMediaIngestionPort(canned_transcript=canned_raw),
+            llm_port=SmartMockLLMAdapter(),
+            vault_port=vault,
+            ledger_port=ledger,
+        )
+
+        # Run with gap_filler_passes = 2 (Stage 2 sets passes=2, Stage 3 increments to 3)
+        results = pipeline.run_for_manifest(manifest, gap_filler_passes=2)
+        assert len(results) == 1
+        assert results[0].success is True
+        comp = vault.get_enriched_compendium(cid)
+        assert comp is not None
+        assert comp.pass_count == 3
+
+        # Second run without force_reprocess is skipped as already processed
+        results_cached = pipeline.run_for_manifest(manifest, force_reprocess=False)
+        assert results_cached[0].already_processed is True
+
+        # Third run with force_reprocess = True executes
+        results_force = pipeline.run_for_manifest(manifest, force_reprocess=True)
+        assert results_force[0].already_processed is False
+        assert results_force[0].success is True

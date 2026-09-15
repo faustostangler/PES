@@ -53,14 +53,16 @@ def collect_mutation_stats(mutants_dir: Path) -> dict[str, LayerStats]:
 
         for exit_code in data.get("exit_code_by_key", {}).values():
             stats[layer]["total"] += 1
-            if exit_code == 1:
+            if exit_code in (1, 3, 37):
                 stats[layer]["killed"] += 1
             elif exit_code == 0:
                 stats[layer]["survived"] += 1
-            elif exit_code is None:
+            elif exit_code in (None, 5, 33, 34):
                 stats[layer]["no_tests"] += 1
-            else:
+            elif exit_code in (24, -24, 36, 152, 255):
                 stats[layer]["timeout"] += 1
+            else:
+                stats[layer]["no_tests"] += 1
 
     return stats
 

@@ -14,7 +14,7 @@ from pathlib import Path
 from typing import Any
 
 from cresmo.application.ports import PromptProviderPort
-from cresmo.infrastructure.config import find_workspace_root
+from cresmo.infrastructure.paths import find_workspace_root
 
 logger = logging.getLogger(__name__)
 

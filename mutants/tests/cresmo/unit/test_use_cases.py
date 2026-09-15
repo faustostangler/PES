@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import json
 from datetime import UTC, datetime
+from unittest.mock import MagicMock
 
 import pytest
 
@@ -227,6 +228,44 @@ class TestFillGapsFluidProse:
         with pytest.raises(CompendiumStructureError, match="must contain a non-empty"):
             use_case.execute(raw, passes=1)
 
+    def test_fill_gaps_missing_complementary_section_raises_error(self) -> None:
+        cid = ContentId("dQw4w9WgXcQ")
+        raw = RawTranscript(
+            content_id=cid,
+            channel_name="Example Channel",
+            body="Raw spoken text.",
+        )
+        llm_response = "# H1 Title\n\nPrimary text without any complementary section."
+        llm_port = MockLLMAdapter(responses=[llm_response])
+        vault_port = InMemoryVaultAdapter()
+
+        use_case = FillGapsFluidProseUseCase(llm_port, vault_port)
+        with pytest.raises(
+            CompendiumStructureError,
+            match=r"Missing mandatory section '## Informações Complementares'",
+        ):
+            use_case.execute(raw, passes=1)
+
+    def test_fill_gaps_preserves_optional_metadata_and_date(self) -> None:
+        cid = ContentId("dQw4w9WgXcQ")
+        raw = RawTranscript(
+            content_id=cid,
+            channel_name="Example Channel",
+            body="Raw spoken text.",
+            channel_category="tech_ai",
+            video_description="Video description text.",
+            upload_date=None,
+        )
+        llm_response = "# H1 Title\n\nPrimary text.\n\n## Informações Complementares\n\nValid complementary info."
+        llm_port = MockLLMAdapter(responses=[llm_response])
+        vault_port = InMemoryVaultAdapter()
+
+        use_case = FillGapsFluidProseUseCase(llm_port, vault_port)
+        comp = use_case.execute(raw, passes=1)
+        assert comp.channel_category == "tech_ai"
+        assert comp.video_description == "Video description text."
+        assert comp.video_date == ""
+
 
 class TestExpandLongitudinalSynchronic:
     """SPEC-001 Scenario 3.1: Braudel & Jaspers Expansion."""
@@ -317,12 +356,31 @@ class TestExpandLongitudinalSynchronic:
         wide_response = "Wide response text.\n\n## Informações Complementares\n\n   "
         llm_port = MockLLMAdapter(responses=[long_response, wide_response])
         vault_port = InMemoryVaultAdapter()
-
         use_case = ExpandLongitudinalSynchronicUseCase(llm_port, vault_port)
         with pytest.raises(
             CompendiumStructureError, match="Missing complementary info in expansion"
         ):
             use_case.execute(initial_compendium)
+
+    def test_expand_with_exact_complementary_tag(self) -> None:
+        cid = ContentId("dQw4w9WgXcQ")
+        initial_compendium = EnrichedCompendium(
+            content_id=cid,
+            channel_name="Example Channel",
+            title=NoteTitle("Teoria das Elites"),
+            body="Continuous prose body.",
+            complementary_info="Initial complementary info.",
+        )
+        long_response = "Long response text."
+        wide_response = "Expanded body.\n\n## Informações Complementares\n\nExact tag notes."
+        llm_port = MockLLMAdapter(responses=[long_response, wide_response])
+        vault_port = InMemoryVaultAdapter()
+
+        use_case = ExpandLongitudinalSynchronicUseCase(llm_port, vault_port)
+        updated = use_case.execute(initial_compendium)
+        assert updated.body == "Expanded body."
+        assert updated.complementary_info == "Exact tag notes."
+        assert updated.pass_count == initial_compendium.pass_count + 1
 
 
 class TestDiscoverAtomicInventory:
@@ -414,6 +472,25 @@ class TestDiscoverAtomicInventory:
         assert title.value == "Unrecognized Typology"
         assert note_type == NoteType.CONCEPT
 
+    def test_discover_inventory_non_list_json_raises_domain_validation_error(self) -> None:
+        cid = ContentId("dQw4w9XcQ")
+        compendium = EnrichedCompendium(
+            content_id=cid,
+            channel_name="Example Channel",
+            title=NoteTitle("Teoria das Elites"),
+            body="Body content.",
+            complementary_info="Complementary info.",
+        )
+        llm_json = json.dumps({"not": "a list", "title": "Vilfredo Pareto"})
+        llm_port = MockLLMAdapter(responses=[llm_json])
+
+        use_case = DiscoverAtomicInventoryUseCase(llm_port)
+        with pytest.raises(
+            DomainValidationError,
+            match=r"Expected JSON array of entities for 'Teoria das Elites', got: dict",
+        ):
+            use_case.execute(compendium)
+
 
 class TestSynthesizeAtomicBatch:
     """SPEC-001 Scenario 5.1: Batched Atomic Synthesis."""
@@ -489,6 +566,50 @@ class TestSynthesizeAtomicBatch:
         assert "Example Channel" in call["prompt"]
         assert "Continuous body describing elites." in call["prompt"]
         assert "Vilfredo Pareto" in call["prompt"]
+
+    def test_synthesize_batch_non_list_json_raises_domain_validation_error(self) -> None:
+        cid = ContentId("dQw4w9WgXcQ")
+        compendium = EnrichedCompendium(
+            content_id=cid,
+            channel_name="Example Channel",
+            title=NoteTitle("Teoria das Elites"),
+            body="Continuous body describing elites.",
+            complementary_info="Complementary info.",
+        )
+        inv = AtomicEntityInventory(items=((NoteTitle("Vilfredo Pareto"), NoteType.ENTITY),))
+        llm_json = json.dumps({"title": "Vilfredo Pareto", "type": "entity"})
+        llm_port = MockLLMAdapter(responses=[llm_json])
+        vault_port = InMemoryVaultAdapter()
+
+        use_case = SynthesizeAtomicBatchUseCase(llm_port, vault_port, batch_size=5)
+        with pytest.raises(
+            DomainValidationError,
+            match=r"Batch synthesis expected JSON array, got: dict",
+        ):
+            use_case.execute(inv, compendium)
+
+    def test_synthesize_batch_short_definition_raises_domain_validation_error(self) -> None:
+        cid = ContentId("dQw4w9WgXcQ")
+        compendium = EnrichedCompendium(
+            content_id=cid,
+            channel_name="Example Channel",
+            title=NoteTitle("Teoria das Elites"),
+            body="Continuous body describing elites.",
+            complementary_info="Complementary info.",
+        )
+        inv = AtomicEntityInventory(items=((NoteTitle("Vilfredo Pareto"), NoteType.ENTITY),))
+        llm_json = json.dumps(
+            [{"title": "Vilfredo Pareto", "type": "entity", "definition": "Short"}]
+        )
+        llm_port = MockLLMAdapter(responses=[llm_json])
+        vault_port = InMemoryVaultAdapter()
+
+        use_case = SynthesizeAtomicBatchUseCase(llm_port, vault_port, batch_size=5)
+        with pytest.raises(
+            DomainValidationError,
+            match=r"must contain at least 20 characters",
+        ):
+            use_case.execute(inv, compendium)
 
     def test_synthesize_batch_existing_note_exact_match_skips_llm(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
@@ -710,8 +831,21 @@ class TestReconcileMOCs:
         # Verify strict port interactions
         assert len(llm_port.call_history) == 1
         call = llm_port.call_history[0]
-        assert "Vilfredo Pareto" in call["prompt"]
-        assert "Ciência Política" in call["prompt"]
+        assert '"title": "Vilfredo Pareto"' in call["prompt"]
+        assert '"type": "entity"' in call["prompt"]
+        assert '"domain": "Ciência Política"' in call["prompt"]
+
+    def test_reconcile_mocs_init_options(self) -> None:
+        llm = MockLLMAdapter()
+        vault = InMemoryVaultAdapter()
+        uc_def = ReconcileMOCsUseCase(llm, vault)
+        from cresmo.infrastructure.adapters.prompt_provider import JsonPromptProvider
+
+        assert isinstance(uc_def.prompt_provider, JsonPromptProvider)
+
+        custom_pp = MagicMock()
+        uc_cust = ReconcileMOCsUseCase(llm, vault, prompt_provider=custom_pp)
+        assert uc_cust.prompt_provider is custom_pp
 
     def test_reconcile_mocs_skips_malformed_entries_and_deduplicates_notes(self) -> None:
         vault_port = InMemoryVaultAdapter()
@@ -730,8 +864,8 @@ class TestReconcileMOCs:
                 {"title": "MOC Empty Notes", "associated_notes": []},
                 {
                     "title": "MOC Valid",
-                    "theme": "Sociologia",
-                    "overview": "Overview text.",
+                    "theme": "  Sociologia  ",
+                    "overview": "  Overview text.  ",
                     "associated_notes": [
                         "Vilfredo Pareto",
                         "vilfredo pareto",  # Duplicate
@@ -749,6 +883,8 @@ class TestReconcileMOCs:
         assert len(mocs) == 1
         moc = mocs[0]
         assert moc.title.value == "MOC Valid"
+        assert moc.theme == "Sociologia"
+        assert moc.overview == "Overview text."
         assert len(moc.associated_notes) == 1
         assert moc.associated_notes[0].value == "Vilfredo Pareto"
 

@@ -8,7 +8,11 @@ from __future__ import annotations
 
 import pytest
 
-from cresmo.application.json_parser import extract_json_data
+from cresmo.application.json_parser import (
+    _TRAILING_COMMA_PATTERN,
+    _extract_individual_objects,
+    extract_json_data,
+)
 
 
 class TestJsonParser:
@@ -133,3 +137,45 @@ class TestJsonParser:
         result = extract_json_data(raw)
         assert isinstance(result, dict)
         assert result["valid"] == "recovered"
+
+    def test_extract_individual_objects_direct_cases(self) -> None:
+        # String starting immediately at index 0 with '{' (kills i = 0 -> i = 1 mutant)
+        text_zero = '{"key0": "val0"}{"key1": "val1"}'
+        objs = _extract_individual_objects(text_zero)
+        assert len(objs) == 2
+        assert objs[0]["key0"] == "val0"
+        assert objs[1]["key1"] == "val1"
+
+        # String with escaped quotes and backslashes inside string value
+        text_escape = '{"quote": "a \\" b", "slash": "c\\\\d"}'
+        objs_esc = _extract_individual_objects(text_escape)
+        assert len(objs_esc) == 1
+        assert objs_esc[0]["quote"] == 'a " b'
+        assert objs_esc[0]["slash"] == "c\\d"
+
+        # String with braces inside quotes (must not alter depth)
+        text_braces = '{"has_braces": "contains { and } braces"}'
+        objs_braces = _extract_individual_objects(text_braces)
+        assert len(objs_braces) == 1
+        assert objs_braces[0]["has_braces"] == "contains { and } braces"
+
+        # Text with no braces at all
+        assert _extract_individual_objects("no braces here") == []
+
+        # Incomplete / unclosed braces
+        assert _extract_individual_objects('{"open": 1') == []
+
+        # Trailing comma fixed inside individual object candidate
+        text_tc = '{"item": 1, }'
+        objs_tc = _extract_individual_objects(text_tc)
+        assert len(objs_tc) == 1
+        assert objs_tc[0]["item"] == 1
+
+    def test_trailing_comma_regex_pattern(self) -> None:
+        # In an array
+        cleaned_arr = _TRAILING_COMMA_PATTERN.sub(r"\1", "[1, 2, ]")
+        assert cleaned_arr == "[1, 2]"
+
+        # In an object
+        cleaned_obj = _TRAILING_COMMA_PATTERN.sub(r"\1", '{"a": 1, }')
+        assert cleaned_obj == '{"a": 1}'

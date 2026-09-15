@@ -356,3 +356,24 @@ class TestObsidianVaultAdapter:
             new_title=NoteTitle("same title"),
         )
         assert count == 0
+
+    @pytest.mark.parametrize(
+        ("raw_name", "expected"),
+        [
+            ("Normal Title", "Normal Title"),
+            ("Title/With/Slashes", "Title_With_Slashes"),
+            ("Title\\With\\Backslashes", "Title_With_Backslashes"),
+            ("Title:With:Colons", "Title_With_Colons"),
+            ("Title*With*Asterisks", "Title_With_Asterisks"),
+            ("Title?With?Questions", "Title_With_Questions"),
+            ('Title"With"Quotes', "Title_With_Quotes"),
+            ("Title<With>Brackets", "Title_With_Brackets"),
+            ("Title|With|Pipes", "Title_With_Pipes"),
+            ("Title%With%Percent", "Title_With_Percent"),
+            ('  All \\/*?:"<>|% Chars  ', "All __________ Chars"),
+        ],
+    )
+    def test_sanitize_filename_exhaustive(self, raw_name: str, expected: str) -> None:
+        from cresmo.infrastructure.adapters.obsidian_vault_adapter import sanitize_filename
+
+        assert sanitize_filename(raw_name) == expected

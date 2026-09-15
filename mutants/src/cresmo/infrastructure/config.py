@@ -15,15 +15,7 @@ from typing import Self
 from pydantic import AliasChoices, Field, SecretStr, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-
-def find_workspace_root(start_path: Path | None = None) -> Path:
-    """Locate the workspace root directory using Anchor Marker resolution."""
-    current = (start_path or Path(__file__)).resolve()
-    for directory in [current, *current.parents]:
-        if (directory / "pyproject.toml").exists() or (directory / ".git").exists():
-            return directory
-    return (start_path or Path(__file__)).resolve().parents[3]
-
+from cresmo.infrastructure.paths import find_workspace_root
 
 _WORKSPACE_DIR = find_workspace_root()
 
