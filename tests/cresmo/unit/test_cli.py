@@ -142,7 +142,10 @@ class TestCresmoCLI:
             )
 
             assert exit_code == EXIT_SUCCESS
-            mock_builder.assert_called_once_with(batch_size_override=9)
+            mock_builder.assert_called_once()
+            call_kwargs = mock_builder.call_args.kwargs
+            assert call_kwargs["batch_size_override"] == 9
+            assert isinstance(call_kwargs["settings"], CresmoSettings)
             mock_pipeline.run_for_video.assert_called_once_with(
                 video_url="https://youtube.com/watch?v=dQw4w9WgXcQ",
                 gap_filler_passes=3,
@@ -311,7 +314,10 @@ class TestCresmoCLI:
                 ]
             )
             assert exit_code == EXIT_SUCCESS
-            mock_builder.assert_called_once_with(batch_size_override=7)
+            mock_builder.assert_called_once()
+            call_kwargs = mock_builder.call_args.kwargs
+            assert call_kwargs["batch_size_override"] == 7
+            assert isinstance(call_kwargs["settings"], CresmoSettings)
             mock_use_case.execute.assert_called_once_with(
                 query=ChannelFeedQuery(
                     channel_url="https://youtube.com/@test",
@@ -980,4 +986,138 @@ class TestCresmoCLI:
             side_effect=RuntimeError("Hardware fault"),
         ):
             code = handle_check_config(Namespace())
+            assert code == EXIT_INTERNAL_ERROR
+
+    def test_cli_help_flag_returns_exit_success(self) -> None:
+        """Verify that -h / --help exits cleanly with EXIT_SUCCESS (0)."""
+        assert main(["--help"]) == EXIT_SUCCESS
+        assert main(["-h"]) == EXIT_SUCCESS
+        assert main(["run", "--help"]) == EXIT_SUCCESS
+
+    def test_cli_argv_none_uses_sys_argv(self) -> None:
+        """Verify that passing argv=None defaults to reading sys.argv[1:]."""
+        with (
+            patch("sys.argv", ["cresmo", "--help"]),
+        ):
+            assert main(None) == EXIT_SUCCESS
+
+    def test_cli_parser_missing_handler_returns_usage_error(self) -> None:
+        """Verify that args without handler attribute returns EXIT_CONFIG_OR_USAGE_ERROR."""
+        from argparse import Namespace
+
+        with patch("cresmo.presentation.cli._create_parser") as mock_create:
+            mock_parser = MagicMock()
+            mock_parser.parse_args.return_value = Namespace()  # no handler attribute
+            mock_create.return_value = mock_parser
+
+            assert main(["run"]) == EXIT_CONFIG_OR_USAGE_ERROR
+
+    def test_cli_dedupe_exception_returns_internal_error(self) -> None:
+        """Verify that unhandled exception in dedupe returns EXIT_INTERNAL_ERROR (1)."""
+        with patch(
+            "cresmo.presentation.commands.dedupe.build_unify_duplicates_use_case",
+            side_effect=RuntimeError("Graph corruption"),
+        ):
+            assert main(["dedupe"]) == EXIT_INTERNAL_ERROR
+
+    def test_cli_sync_domain_validation_error_returns_code_3(self) -> None:
+        """Verify that DomainValidationError in sync returns EXIT_DOMAIN_VALIDATION_ERROR (3)."""
+        mock_use_case = MagicMock()
+        mock_use_case.execute.side_effect = DomainValidationError("Invalid sync domain rule")
+
+        with patch(
+            "cresmo.presentation.commands.sync.build_sync_channel_use_case",
+            return_value=mock_use_case,
+        ):
+            assert (
+                main(["sync", "--channel", "https://youtube.com/@test"])
+                == EXIT_DOMAIN_VALIDATION_ERROR
+            )
+
+    def test_cli_sync_validation_error_returns_code_2(self) -> None:
+        """Verify that pydantic ValidationError in sync returns EXIT_CONFIG_OR_USAGE_ERROR (2)."""
+        from pydantic import BaseModel, ValidationError
+
+        class Dummy(BaseModel):
+            n: int
+
+        mock_use_case = MagicMock()
+        try:
+            Dummy(n="bad")  # type: ignore[arg-type]
+        except ValidationError as ve:
+            mock_use_case.execute.side_effect = ve
+
+        with patch(
+            "cresmo.presentation.commands.sync.build_sync_channel_use_case",
+            return_value=mock_use_case,
+        ):
+            assert (
+                main(["sync", "--channel", "https://youtube.com/@test"])
+                == EXIT_CONFIG_OR_USAGE_ERROR
+            )
+
+    def test_cli_sync_generic_exception_returns_internal_error(self) -> None:
+        """Verify that unexpected exception in sync returns EXIT_INTERNAL_ERROR (1)."""
+        mock_use_case = MagicMock()
+        mock_use_case.execute.side_effect = RuntimeError("Sync explosion")
+
+        with patch(
+            "cresmo.presentation.commands.sync.build_sync_channel_use_case",
+            return_value=mock_use_case,
+        ):
+            assert main(["sync", "--channel", "https://youtube.com/@test"]) == EXIT_INTERNAL_ERROR
+
+    def test_cli_sync_zero_processed_zero_failed_non_completed_returns_success(self) -> None:
+        """Verify that sync with 0 discovered, 0 processed, 0 failed returns EXIT_SUCCESS (0)."""
+        mock_use_case = MagicMock()
+        mock_use_case.execute.return_value = SyncSummary(
+            channel_url="https://youtube.com/@test",
+            total_discovered=0,
+            processed_count=0,
+            skipped_count=0,
+            failed_count=0,
+            duration_seconds=0.1,
+            status=PipelineStatus.RUNNING,
+        )
+
+        with patch(
+            "cresmo.presentation.commands.sync.build_sync_channel_use_case",
+            return_value=mock_use_case,
+        ):
+            assert main(["sync", "--channel", "https://youtube.com/@test"]) == EXIT_SUCCESS
+
+    def test_cli_worker_loop_sleep_and_generic_exception(self) -> None:
+        """Verify worker sleeping during polling loop and unexpected exception handling."""
+        mock_use_case = MagicMock()
+        mock_use_case.execute.return_value = SyncSummary(
+            channel_url="https://youtube.com/@test",
+            total_discovered=1,
+            processed_count=1,
+            skipped_count=0,
+            failed_count=0,
+            duration_seconds=1.0,
+            status=PipelineStatus.COMPLETED,
+        )
+
+        with (
+            patch(
+                "cresmo.presentation.commands.worker.build_sync_channel_use_case",
+                return_value=mock_use_case,
+            ),
+            patch("pathlib.Path.write_text"),
+            patch("time.sleep", side_effect=[None, KeyboardInterrupt]),
+        ):
+            # Test that it executes sleep then breaks gracefully via KeyboardInterrupt
+            code = main(
+                ["worker", "--channel", "https://youtube.com/@test", "--poll-interval", "5"]
+            )
+            assert code == EXIT_SUCCESS
+
+        with (
+            patch(
+                "cresmo.presentation.commands.worker.build_sync_channel_use_case",
+                side_effect=RuntimeError("Worker crash"),
+            ),
+        ):
+            code = main(["worker", "--channel", "https://youtube.com/@test"])
             assert code == EXIT_INTERNAL_ERROR

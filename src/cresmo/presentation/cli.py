@@ -14,6 +14,7 @@ from collections.abc import Sequence
 from cresmo.presentation.commands import (
     check_config,
     dedupe,
+    export_cookies,
     run,
     sync,
     worker,
@@ -44,6 +45,7 @@ COMMAND_MODULES = (
     sync,
     worker,
     dedupe,
+    export_cookies,
 )
 
 
@@ -72,7 +74,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     else:
         argv = list(argv)
 
-    known_subcommands = {"run", "check-config", "sync", "worker", "dedupe"}
+    known_subcommands = {"run", "check-config", "sync", "worker", "dedupe", "export-cookies"}
 
     if not argv:
         argv = ["run"]

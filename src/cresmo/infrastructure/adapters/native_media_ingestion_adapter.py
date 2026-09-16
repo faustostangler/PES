@@ -33,6 +33,7 @@ from cresmo.domain.value_objects import (
     ChannelFeedQuery,
     ContentId,
     DiscoveredMediaItem,
+    normalize_to_uploads_playlist_url,
 )
 from cresmo.infrastructure.adapters.header_generator import RandomHeaderGenerator
 
@@ -48,6 +49,8 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         request_timeout: float = 30.0,
         header_generator: RandomHeaderGenerator | None = None,
         whisper_concurrency_limit: int = 2,
+        cookie_file: Path | str | None = None,
+        js_runtime_name: str | None = None,
     ) -> None:
         """Initialize NativeMediaIngestionAdapter.
 
@@ -55,10 +58,37 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             request_timeout: Socket timeout in seconds for subtitle HTTP requests.
             header_generator: Optional dynamic browser request header generator.
             whisper_concurrency_limit: Maximum concurrent Whisper model executions.
+            cookie_file: Optional path to Netscape cookies file for YouTube authentication.
+            js_runtime_name: Optional explicit JavaScript runtime name for yt-dlp ('node', 'deno', 'bun').
         """
         self.request_timeout = request_timeout
         self._header_generator = header_generator or RandomHeaderGenerator()
         self._whisper_semaphore = threading.BoundedSemaphore(max(1, whisper_concurrency_limit))
+        self._cookie_file: Path | None = Path(cookie_file).resolve() if cookie_file else None
+        self._js_runtime_name: str | None = js_runtime_name or self._detect_js_runtime()
+
+    def _detect_js_runtime(self) -> str | None:
+        """Auto-detect available JavaScript runtime for yt-dlp challenge solving."""
+        for candidate in ("node", "deno", "bun"):
+            if shutil.which(candidate):
+                return candidate
+        return None
+
+    def _build_ydl_opts(self, base_opts: dict[str, Any]) -> dict[str, Any]:
+        """Construct fully-configured yt-dlp options with headers, cookies, and JS runtime."""
+        opts = dict(base_opts)
+        if "http_headers" not in opts:
+            opts["http_headers"] = self._header_generator.get_random_headers()
+
+        # Inject Netscape authentication cookies if file exists
+        if self._cookie_file and self._cookie_file.exists() and self._cookie_file.stat().st_size > 0:
+            opts["cookiefile"] = str(self._cookie_file)
+
+        # Inject JavaScript runtime for YouTube n-sig challenge solving
+        if self._js_runtime_name:
+            opts["js_runtimes"] = {self._js_runtime_name: {}}
+
+        return opts
 
     def _extract_video_id(self, url: str) -> str:
         """Extract YouTube video identifier from URL string."""
@@ -180,6 +210,10 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         msg = str(exc)
         if "429" in msg or "Too Many Requests" in msg:
             raise RateLimitExceededError(f"Upstream rate limit exceeded (HTTP 429): {msg}") from exc
+        if "Sign in to confirm you’re not a bot" in msg or "confirm you're not a bot" in msg:
+            raise IngestionNetworkError(
+                f"YouTube bot-detection challenge triggered. Use active session cookies via 'cresmo export-cookies': {msg}"
+            ) from exc
         if any(
             term in msg
             for term in ("Connection reset", "timed out", "Name or service not known", "Network")
@@ -206,13 +240,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
 
         with tempfile.TemporaryDirectory(prefix="cresmo_scratch_") as scratch_str:
             scratch_path = Path(scratch_str)
-            ydl_opts: dict[str, Any] = {
+            ydl_opts: dict[str, Any] = self._build_ydl_opts({
                 "format": "bestaudio/best",
                 "outtmpl": str(scratch_path / "%(id)s.%(ext)s"),
                 "quiet": True,
                 "no_warnings": True,
-                "http_headers": self._header_generator.get_random_headers(),
-            }
+            })
 
             try:
                 with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -258,12 +291,11 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         """
         video_id = self._extract_video_id(video_url)
 
-        ydl_opts: dict[str, Any] = {
+        ydl_opts: dict[str, Any] = self._build_ydl_opts({
             "skip_download": True,
             "quiet": True,
             "no_warnings": True,
-            "http_headers": self._header_generator.get_random_headers(),
-        }
+        })
 
         try:
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -335,17 +367,20 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         query: ChannelFeedQuery,
     ) -> list[DiscoveredMediaItem]:
         """Discover media items from a YouTube channel or playlist feed."""
-        ydl_opts: dict[str, Any] = {
+        target_url = normalize_to_uploads_playlist_url(query.channel_url)
+        ydl_opts: dict[str, Any] = self._build_ydl_opts({
             "extract_flat": True,
             "playlistend": query.max_videos,
             "quiet": True,
             "no_warnings": True,
-            "http_headers": self._header_generator.get_random_headers(),
-        }
+        })
 
         try:
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-                info = ydl.extract_info(query.channel_url, download=False)
+                info = ydl.extract_info(target_url, download=False)
+                # Fallback to original channel_url if uploads playlist returned empty
+                if (not info or not info.get("entries")) and target_url != query.channel_url:
+                    info = ydl.extract_info(query.channel_url, download=False)
         except Exception as exc:  # noqa: BLE001
             self._handle_yt_dlp_error(exc)
             return []
@@ -416,12 +451,11 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         video_url: str,
     ) -> str | None:
         """Resolve YouTube channel URL or feed identifier from a video URL."""
-        ydl_opts: dict[str, Any] = {
+        ydl_opts: dict[str, Any] = self._build_ydl_opts({
             "extract_flat": True,
             "quiet": True,
             "no_warnings": True,
-            "http_headers": self._header_generator.get_random_headers(),
-        }
+        })
 
         try:
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -432,12 +466,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         if not info or not isinstance(info, dict):
             return None
 
-        channel_url = info.get("channel_url") or info.get("uploader_url")
-        if channel_url:
-            return str(channel_url).strip()
-
         channel_id = info.get("channel_id") or info.get("uploader_id")
         if channel_id:
-            return f"https://www.youtube.com/channel/{str(channel_id).strip()}"
+            return normalize_to_uploads_playlist_url(str(channel_id).strip())
+
+        channel_url = info.get("channel_url") or info.get("uploader_url")
+        if channel_url:
+            return normalize_to_uploads_playlist_url(str(channel_url).strip())
 
         return None

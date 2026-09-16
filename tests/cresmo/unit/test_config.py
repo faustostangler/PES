@@ -49,3 +49,7 @@ class TestCresmoSettings:
         assert settings.enriched_dir == settings.data_dir / "enriched"
         assert settings.index_path == settings.vault_dir / "_index.json"
         assert settings.sqlite_ledger_path == settings.data_dir / "cresmo_ledger.db"
+        assert settings.browser_cookies == "firefox"
+        assert settings.auto_extract_cookies is True
+        assert settings.enable_channel_crawler is True
+        assert settings.require_auth_cookies is False

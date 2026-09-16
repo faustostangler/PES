@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+from unittest.mock import patch
 
 import pytest
 
@@ -377,3 +378,104 @@ class TestObsidianVaultAdapter:
         from cresmo.infrastructure.adapters.obsidian_vault_adapter import sanitize_filename
 
         assert sanitize_filename(raw_name) == expected
+
+    def test_get_raw_transcript_no_frontmatter_fallback(
+        self, storage_paths: tuple[Path, Path, Path]
+    ) -> None:
+        vault_dir, raw_dir, enriched_dir = storage_paths
+        adapter = ObsidianVaultAdapter(
+            vault_dir=vault_dir, raw_dir=raw_dir, enriched_dir=enriched_dir
+        )
+        raw_file = raw_dir / "ChannelFolder" / "no_fm_1234.md"
+        raw_file.parent.mkdir(parents=True, exist_ok=True)
+        raw_file.write_text(
+            "Plain markdown body with no yaml frontmatter at all.", encoding="utf-8"
+        )
+
+        transcript = adapter.get_raw_transcript(ContentId("no_fm_1234"))
+        assert transcript is not None
+        assert transcript.channel_name == "ChannelFolder"
+        assert "Plain markdown body" in transcript.body
+
+    def test_get_raw_transcript_invalid_date_handled_gracefully(
+        self, storage_paths: tuple[Path, Path, Path]
+    ) -> None:
+        vault_dir, raw_dir, enriched_dir = storage_paths
+        adapter = ObsidianVaultAdapter(
+            vault_dir=vault_dir, raw_dir=raw_dir, enriched_dir=enriched_dir
+        )
+        raw_file = raw_dir / "ChannelFolder" / "bad_date12.md"
+        raw_file.parent.mkdir(parents=True, exist_ok=True)
+        raw_file.write_text(
+            "---\nvideo_title: 'Bad Date'\nupload_date: '99999999'\n---\nBody with bad date",
+            encoding="utf-8",
+        )
+
+        transcript = adapter.get_raw_transcript(ContentId("bad_date12"))
+        assert transcript is not None
+        assert transcript.upload_date is None
+
+    def test_get_enriched_compendium_no_frontmatter_returns_none(
+        self, storage_paths: tuple[Path, Path, Path]
+    ) -> None:
+        vault_dir, raw_dir, enriched_dir = storage_paths
+        adapter = ObsidianVaultAdapter(
+            vault_dir=vault_dir, raw_dir=raw_dir, enriched_dir=enriched_dir
+        )
+        file_path = enriched_dir / "comp123456.md"
+        file_path.write_text("No frontmatter header in compendium.", encoding="utf-8")
+
+        assert adapter.get_enriched_compendium(ContentId("comp123456")) is None
+
+    def test_get_atomic_note_os_error_or_missing_frontmatter(
+        self, storage_paths: tuple[Path, Path, Path]
+    ) -> None:
+        vault_dir, raw_dir, enriched_dir = storage_paths
+        adapter = ObsidianVaultAdapter(
+            vault_dir=vault_dir, raw_dir=raw_dir, enriched_dir=enriched_dir
+        )
+        concepts_dir = vault_dir / "concepts"
+        concepts_dir.mkdir(parents=True, exist_ok=True)
+        corrupted = concepts_dir / "Corrupted Note.md"
+        corrupted.write_text("No frontmatter here.", encoding="utf-8")
+
+        assert adapter.get_atomic_note_by_title(NoteTitle("Corrupted Note")) is None
+
+        with patch("pathlib.Path.read_text", side_effect=OSError("Permission denied")):
+            assert adapter.get_atomic_note_by_title(NoteTitle("Corrupted Note")) is None
+
+    def test_get_atomic_note_invalid_type_and_short_definition_fallbacks(
+        self, storage_paths: tuple[Path, Path, Path]
+    ) -> None:
+        vault_dir, raw_dir, enriched_dir = storage_paths
+        adapter = ObsidianVaultAdapter(
+            vault_dir=vault_dir, raw_dir=raw_dir, enriched_dir=enriched_dir
+        )
+        concepts_dir = vault_dir / "concepts"
+        concepts_dir.mkdir(parents=True, exist_ok=True)
+        note_file = concepts_dir / "Fallback Note.md"
+        note_file.write_text(
+            "---\ntitle: 'Fallback Note'\ntype: 'invalid_unrecognized_type'\n---\nShort",
+            encoding="utf-8",
+        )
+
+        note = adapter.get_atomic_note_by_title(NoteTitle("Fallback Note"))
+        assert note is not None
+        assert note.note_type == NoteType.CONCEPT
+        assert "Definição contextual de Fallback Note" in note.definition
+
+    def test_rewrite_wiki_links_ignores_unreadable_files(
+        self, storage_paths: tuple[Path, Path, Path]
+    ) -> None:
+        vault_dir, raw_dir, enriched_dir = storage_paths
+        adapter = ObsidianVaultAdapter(
+            vault_dir=vault_dir, raw_dir=raw_dir, enriched_dir=enriched_dir
+        )
+        concepts_dir = vault_dir / "concepts"
+        concepts_dir.mkdir(parents=True, exist_ok=True)
+        target = concepts_dir / "Note.md"
+        target.write_text("Reference to [[Old Title]].", encoding="utf-8")
+
+        with patch("pathlib.Path.read_text", side_effect=OSError("Disk read error")):
+            count = adapter.rewrite_wiki_links(NoteTitle("Old Title"), NoteTitle("New Title"))
+            assert count == 0

@@ -38,7 +38,7 @@ from cresmo.domain.value_objects import (
     NoteTitle,
     NoteType,
 )
-from cresmo.infrastructure.adapters.mock_adapters import (
+from tests.doubles.mock_adapters import (
     InMemoryVaultAdapter,
     MockLLMAdapter,
     MockMediaIngestionPort,

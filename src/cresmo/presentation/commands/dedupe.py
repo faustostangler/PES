@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import sys
 
+from cresmo.infrastructure.config import CresmoSettings
 from cresmo.presentation.composition import build_unify_duplicates_use_case
 from cresmo.presentation.exit_codes import (
     EXIT_INTERNAL_ERROR,
@@ -24,7 +25,8 @@ def register_subparser(subparsers: argparse._SubParsersAction) -> None:
 def handle_dedupe(args: argparse.Namespace) -> int:
     """Unify duplicate atomic notes across the Obsidian vault graph."""
     try:
-        use_case = build_unify_duplicates_use_case()
+        settings = CresmoSettings()
+        use_case = build_unify_duplicates_use_case(settings=settings)
         report = use_case.execute()
         sys.stdout.write("Vault Graph Deduplication Summary:\n")
         sys.stdout.write(f"- Duplicate Clusters Unified: {report.duplicates_unified_count}\n")

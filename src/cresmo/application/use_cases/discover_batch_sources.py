@@ -14,7 +14,7 @@ from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 from cresmo.application.ports import MediaIngestionPort
-from cresmo.domain.value_objects import ChannelFeedQuery
+from cresmo.domain.value_objects import ChannelFeedQuery, normalize_to_uploads_playlist_url
 from cresmo.infrastructure.config import CresmoSettings
 
 _CHANNEL_REGEX = re.compile(r"youtube\.com/(?:@|c/|channel/|user/|playlist\?list=)", re.IGNORECASE)
@@ -53,6 +53,7 @@ class BatchDiscoveryQuery:
     lookback_days: int | None = None
     channel_max_videos: int = 50
     discovery_workers: int | None = None
+    enable_channel_crawler: bool | None = None
 
 
 def is_channel_or_playlist_feed(url: str) -> bool:
@@ -161,30 +162,44 @@ class DiscoverBatchSourcesUseCase:
     def execute(self, query: BatchDiscoveryQuery | None = None) -> list[BatchSource]:
         """Discover and consolidate batch sources from local lake, seeds, and channel feeds.
 
-        Discovery pipeline flow:
-        - When explicit manifest is passed, only that manifest is loaded.
-        - Otherwise:
-          - Priority text/markdown files (bypasses Stage 1 STT).
-          - Priority URLs from playlist-priority.txt.
-          - Existing raw transcripts in raw_dir lake.
-          - Direct video URLs from playlist.txt.
-          - Concurrent discovery of channel feeds (explicit + discovered by videos).
+        Two-stage discovery pipeline:
+        Stage A: Canais para Sync (Discover unique channels to synchronize)
+          A1: Priority sources (priority_texts_dir and playlist_priority_path)
+          A2: Local raw lake (all channels from existing data/raw/**/*.md files)
+          A3: Seed playlist videos (all channels of videos in data/playlist.txt)
+             - Resolved in O(1) from local lake if already ingested
+             - Resolved concurrently via yt-dlp if new seed video
+
+        Stage B: Vídeos para baixar legenda (Discover recent uploads to ingest)
+          - For each unique channel discovered in Stage A:
+            - Query uploads playlist (UU...) within lookback_days
+            - Filter: If video_id already exists in local raw lake (.md), SKIP!
+            - If video_id does NOT exist in local raw lake, add to download queue.
         """
         q = query or BatchDiscoveryQuery()
         if q.explicit_manifest is not None:
             return self._load_explicit_manifest(q.explicit_manifest)
 
         acc = _BatchSourceAccumulator()
-        self._collect_priority_texts(
-            q.priority_texts_dir or getattr(self.settings, "priority_texts_dir", None), acc
-        )
-        self._collect_priority_urls(
-            q.playlist_priority_path or getattr(self.settings, "playlist_priority_path", None), acc
-        )
 
+        # A1: Priority items
+        priority_texts_dir = q.priority_texts_dir or getattr(
+            self.settings, "priority_texts_dir", None
+        )
+        pri_text_chans = self._collect_priority_texts(priority_texts_dir, acc)
+
+        # A2: Local raw lake (.md files)
         raw_dir = q.raw_dir or getattr(self.settings, "raw_dir", Path("data/raw"))
         local_channels = self._scan_raw_lake(raw_dir, q.scan_raw, acc)
 
+        playlist_priority_path = q.playlist_priority_path or getattr(
+            self.settings, "playlist_priority_path", None
+        )
+        pri_url_chans, pri_unresolved = self._collect_priority_urls(
+            playlist_priority_path, local_channels, acc
+        )
+
+        # A3: Seed playlist
         playlist_path = (
             q.playlist_path
             or q.manifest_path
@@ -194,7 +209,20 @@ class DiscoverBatchSourcesUseCase:
             playlist_path, local_channels, acc
         )
 
-        if self.media_ingestion_port is not None:
+        # Incorporate priority channels into channels_to_probe
+        for pch in pri_text_chans + pri_url_chans:
+            norm_pch = normalize_to_uploads_playlist_url(pch)
+            if norm_pch not in probed_channels:
+                probed_channels.add(norm_pch)
+                channels_to_probe.append(norm_pch)
+
+        crawler_enabled = (
+            q.enable_channel_crawler
+            if q.enable_channel_crawler is not None
+            else getattr(self.settings, "enable_channel_crawler", True)
+        )
+
+        if self.media_ingestion_port is not None and crawler_enabled:
             workers = (
                 q.discovery_workers
                 if q.discovery_workers is not None
@@ -204,9 +232,20 @@ class DiscoverBatchSourcesUseCase:
                 q.lookback_days if q.lookback_days is not None else self.settings.days_lookback
             )
 
-            self._resolve_remote_channels(
-                remote_videos, workers, probed_channels, channels_to_probe
+            all_remote_seeds = list(dict.fromkeys(pri_unresolved + remote_videos))
+            if all_remote_seeds:
+                self._resolve_remote_channels(
+                    all_remote_seeds, workers, probed_channels, channels_to_probe
+                )
+
+            self._notify(
+                f"[crawler] Stage A complete: {len(channels_to_probe)} unique channel(s) identified for sync\n"
+                f"  - A1 (Priority): {len(set(pri_text_chans + pri_url_chans))} channel(s)\n"
+                f"  - A2 (Local Raw Lake): {len(set(local_channels.values()))} channel(s)\n"
+                f"  - A3 (Seed Playlist): {len(channels_to_probe)} total channel(s)\n"
             )
+
+            # Stage B: Vídeos para baixar legenda
             self._probe_channel_feeds(
                 channels_to_probe, lookback, q.channel_max_videos, workers, acc
             )
@@ -222,20 +261,50 @@ class DiscoverBatchSourcesUseCase:
 
     def _collect_priority_texts(
         self, priority_texts_dir: Path | None, acc: _BatchSourceAccumulator
-    ) -> None:
+    ) -> list[str]:
         """Collect local priority text/markdown files that bypass Stage 1 transcription."""
+        priority_channels: list[str] = []
         priority_files = load_transcript_files(priority_texts_dir)
         for pf in priority_files:
             resolved_pf = str(pf.resolve())
             acc.add_source(kind="file", target=resolved_pf)
+            meta = extract_raw_file_metadata(pf)
+            raw_chan = meta.get("channel") or meta.get("channel_id")
+            if raw_chan:
+                norm_chan = normalize_to_uploads_playlist_url(raw_chan)
+                if norm_chan not in priority_channels:
+                    priority_channels.append(norm_chan)
+        return priority_channels
 
     def _collect_priority_urls(
-        self, playlist_priority_path: Path | None, acc: _BatchSourceAccumulator
-    ) -> None:
+        self,
+        playlist_priority_path: Path | None,
+        local_channels: dict[str, str],
+        acc: _BatchSourceAccumulator,
+    ) -> tuple[list[str], list[str]]:
         """Collect priority URLs scheduled for immediate processing."""
+        priority_channels: list[str] = []
+        unresolved_videos: list[str] = []
         priority_urls = read_manifest_lines(playlist_priority_path)
         for pu in priority_urls:
-            acc.add_source(kind="url", target=pu)
+            if is_channel_or_playlist_feed(pu):
+                norm_chan = normalize_to_uploads_playlist_url(pu)
+                if norm_chan not in priority_channels:
+                    priority_channels.append(norm_chan)
+            else:
+                m = _VIDEO_ID_REGEX.search(pu)
+                vid = m.group(1) if m else None
+                if not (vid and acc.has_seen(vid)):
+                    acc.add_source(kind="url", target=pu, vid=vid)
+
+                local_chan = local_channels.get(vid) if vid else None
+                if local_chan:
+                    norm_local = normalize_to_uploads_playlist_url(local_chan)
+                    if norm_local not in priority_channels:
+                        priority_channels.append(norm_local)
+                elif pu not in unresolved_videos:
+                    unresolved_videos.append(pu)
+        return priority_channels, unresolved_videos
 
     def _scan_raw_lake(
         self, raw_dir: Path | None, scan_raw: bool, acc: _BatchSourceAccumulator
@@ -252,14 +321,21 @@ class DiscoverBatchSourcesUseCase:
             vid_front = meta.get("video_id")
             chan_url = meta.get("channel")
             canonical_vid = vid_front or stem
+
+            already_seen = acc.has_seen(stem) or acc.has_seen(canonical_vid)
+
+            # Record in accumulator so discovered feeds know these already exist in local lake
+            acc.seen_vids.add(stem)
+            acc.seen_vids.add(canonical_vid)
+
             if chan_url:
                 local_video_to_channel[canonical_vid] = chan_url
                 local_video_to_channel[stem] = chan_url
 
-            if scan_raw and not acc.has_seen(stem) and not acc.has_seen(canonical_vid):
+            if scan_raw and not already_seen:
                 resolved_rf = str(rf.resolve())
-                acc.add_source(kind="file", target=resolved_rf, vid=stem)
-                acc.seen_vids.add(canonical_vid)
+                if not any(s.target == resolved_rf for s in acc.sources):
+                    acc.sources.append(BatchSource(kind="file", target=resolved_rf))
 
         return local_video_to_channel
 
@@ -313,8 +389,10 @@ class DiscoverBatchSourcesUseCase:
         if not videos:
             return
 
-        self._notify(f"[crawler] Resolving parent channels for {len(videos)} seed videos...\n")
         max_workers = max(1, min(workers, len(videos)))
+        self._notify(
+            f"[crawler] Resolving parent channels for {len(videos)} seed videos with {max_workers} workers\n"
+        )
         with ThreadPoolExecutor(max_workers=max_workers) as executor:
             future_to_vurl = {
                 executor.submit(self.media_ingestion_port.extract_channel_url_from_video, vu): vu
@@ -340,16 +418,17 @@ class DiscoverBatchSourcesUseCase:
         workers: int,
         acc: _BatchSourceAccumulator,
     ) -> None:
-        """Probe recent video uploads across unique channel feeds concurrently."""
+        """Probe recent video uploads across unique channel feeds concurrently (Stage B)."""
         if not channels:
             return
 
         self._notify(
-            f"[crawler] Discovering recent videos across {len(channels)} channels "
+            f"[crawler] Stage B: Discovering recent videos across {len(channels)} channels "
             f"(lookback: {lookback_days}d, workers: {workers})...\n"
         )
         cutoff = datetime.now(UTC) - timedelta(days=lookback_days)
         max_workers = max(1, min(workers, len(channels)))
+        discovered_count = 0
 
         with ThreadPoolExecutor(max_workers=max_workers) as executor:
             future_to_url = {
@@ -363,8 +442,15 @@ class DiscoverBatchSourcesUseCase:
                 for d_url in discovered_urls:
                     m = _VIDEO_ID_REGEX.search(d_url)
                     vid = m.group(1) if m else d_url
+                    # Stage B: Skip if already in raw lake or already queued
                     if not acc.has_seen(vid):
                         acc.add_source(kind="url", target=d_url, vid=vid)
+                        discovered_count += 1
+
+        self._notify(
+            f"[crawler] Stage B complete: Discovered {discovered_count} new video(s) for ingestion "
+            f"(excluding items already existing in local raw lake)\n"
+        )
 
     def _probe_single_channel_feed(
         self, chan_url: str, lookback_days: int, max_videos: int, cutoff: datetime

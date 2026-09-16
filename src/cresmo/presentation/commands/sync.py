@@ -15,6 +15,7 @@ from cresmo.domain.exceptions import (
     SecurityViolationError,
 )
 from cresmo.domain.value_objects import ChannelFeedQuery, PipelineStatus
+from cresmo.infrastructure.config import CresmoSettings
 from cresmo.presentation.composition import build_sync_channel_use_case
 from cresmo.presentation.exit_codes import (
     EXIT_CONFIG_OR_USAGE_ERROR,
@@ -71,7 +72,11 @@ def register_subparser(subparsers: argparse._SubParsersAction) -> None:
 def handle_sync(args: argparse.Namespace) -> int:
     """Synchronize recent video uploads from a YouTube channel feed."""
     try:
-        use_case = build_sync_channel_use_case(batch_size_override=args.batch_size)
+        settings = CresmoSettings()
+        use_case = build_sync_channel_use_case(
+            settings=settings,
+            batch_size_override=args.batch_size,
+        )
         query = ChannelFeedQuery(
             channel_url=args.channel,
             lookback_days=args.lookback,

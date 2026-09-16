@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import os
 from collections.abc import Callable
+from pathlib import Path
 
 from cresmo.application.pipeline import CresmoPipeline
 from cresmo.application.services.preflight import PreflightHealthChecker
@@ -25,6 +26,45 @@ from cresmo.infrastructure.adapters.sqlite_ledger_adapter import SqliteLedgerAda
 from cresmo.infrastructure.config import CresmoSettings
 
 
+def _resolve_cookie_file(settings: CresmoSettings) -> Path | None:
+    """Resolve active cookie file or attempt browser auto-extraction if enabled."""
+    cookie_file = getattr(settings, "cookies_file", None)
+    if (cookie_file is None or not cookie_file.exists()) and getattr(
+        settings, "auto_extract_cookies", True
+    ):
+        from cresmo.infrastructure.adapters.cookie_extractor import ensure_cookies_file
+
+        data_dir = getattr(settings, "data_dir", None) or Path("data")
+        target_cookie_path = data_dir / "cookies.txt"
+        cookie_file = ensure_cookies_file(
+            output_file=target_cookie_path,
+            browser=getattr(settings, "browser_cookies", "firefox"),
+            verbose=False,
+        )
+    return cookie_file
+
+
+def build_media_ingestion_adapter(
+    settings: CresmoSettings | None = None,
+) -> NativeMediaIngestionAdapter:
+    """Instantiate and wire NativeMediaIngestionAdapter with resolved settings and active cookies.
+
+    Acts as the Single Source of Truth (SSOT) factory for media ingestion, centralizing
+    header rotation, active session cookie resolution, and concurrency limits.
+    """
+    resolved_settings = settings or CresmoSettings()
+    headers_path = getattr(resolved_settings, "browser_headers_path", None)
+    header_generator = RandomHeaderGenerator(headers_path=headers_path)
+    cookie_file = _resolve_cookie_file(resolved_settings)
+    whisper_workers = getattr(resolved_settings, "whisper_workers", 1)
+
+    return NativeMediaIngestionAdapter(
+        header_generator=header_generator,
+        whisper_concurrency_limit=whisper_workers,
+        cookie_file=cookie_file,
+    )
+
+
 def build_pipeline(
     settings: CresmoSettings | None = None,
     batch_size_override: int | None = None,
@@ -40,7 +80,6 @@ def build_pipeline(
     """
     resolved_settings = settings or CresmoSettings()
 
-    header_generator = RandomHeaderGenerator(headers_path=resolved_settings.browser_headers_path)
     prompt_provider = JsonPromptProvider(
         prompts_path=resolved_settings.prompts_path,
         skills_dir=resolved_settings.skills_dir,
@@ -69,10 +108,7 @@ def build_pipeline(
             os.environ.pop("LANGFUSE_SECRET_KEY", None)
             os.environ.pop("LANGFUSE_HOST", None)
 
-    media_ingestion_port = NativeMediaIngestionAdapter(
-        header_generator=header_generator,
-        whisper_concurrency_limit=resolved_settings.whisper_workers,
-    )
+    media_ingestion_port = build_media_ingestion_adapter(resolved_settings)
     llm_port = GeminiLLMAdapter(
         api_key=resolved_settings.gemini_api_key.get_secret_value(),
         model_name=resolved_settings.gemini_model,
@@ -185,13 +221,7 @@ def build_discover_batch_sources_use_case(
         Configured DiscoverBatchSourcesUseCase instance.
     """
     resolved_settings = settings or CresmoSettings()
-    headers_path = getattr(resolved_settings, "browser_headers_path", None)
-    header_generator = RandomHeaderGenerator(headers_path=headers_path)
-    whisper_workers = getattr(resolved_settings, "whisper_workers", 1)
-    media_ingestion_port = NativeMediaIngestionAdapter(
-        header_generator=header_generator,
-        whisper_concurrency_limit=whisper_workers,
-    )
+    media_ingestion_port = build_media_ingestion_adapter(resolved_settings)
     return DiscoverBatchSourcesUseCase(
         media_ingestion_port=media_ingestion_port,
         settings=resolved_settings,
