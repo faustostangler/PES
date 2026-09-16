@@ -17,13 +17,13 @@ from cresmo.application.pipeline import CresmoPipeline, PipelineResult
 from cresmo.domain.entities import EnrichedCompendium, RawTranscript
 from cresmo.domain.exceptions import CresmoDomainError
 from cresmo.domain.value_objects import ContentId, NoteTitle
-from cresmo.infrastructure.adapters.mock_adapters import (
+from cresmo.infrastructure.adapters.prompt_provider import JsonPromptProvider
+from tests.doubles.mock_adapters import (
     InMemoryLedgerAdapter,
     InMemoryVaultAdapter,
     MockLLMAdapter,
     MockMediaIngestionPort,
 )
-from cresmo.infrastructure.adapters.prompt_provider import JsonPromptProvider
 
 
 class SmartMockLLMAdapter(MockLLMAdapter):

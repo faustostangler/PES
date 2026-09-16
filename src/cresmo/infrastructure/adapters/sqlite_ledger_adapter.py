@@ -8,6 +8,8 @@ and multi-process concurrency safety adhering to ADR-003 and SPEC-003.
 from __future__ import annotations
 
 import sqlite3
+from collections.abc import Iterator
+from contextlib import contextmanager
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -34,15 +36,20 @@ class SqliteLedgerAdapter(LedgerRepositoryPort):
 
         self._init_db()
 
-    def _get_connection(self) -> sqlite3.Connection:
-        """Create and configure a connection with standard pragmas."""
+    @contextmanager
+    def _get_connection(self) -> Iterator[sqlite3.Connection]:
+        """Create, configure, and safely close a connection with standard pragmas."""
         conn = sqlite3.connect(self._db_path, timeout=self._timeout)
-        conn.row_factory = sqlite3.Row
-        # Enforce WAL mode and NORMAL synchronous
-        if self._db_path != ":memory:":
-            conn.execute("PRAGMA journal_mode=WAL;")
-        conn.execute("PRAGMA synchronous=NORMAL;")
-        return conn
+        try:
+            conn.row_factory = sqlite3.Row
+            # Enforce WAL mode and NORMAL synchronous
+            if self._db_path != ":memory:":
+                conn.execute("PRAGMA journal_mode=WAL;")
+            conn.execute("PRAGMA synchronous=NORMAL;")
+            with conn:
+                yield conn
+        finally:
+            conn.close()
 
     def _init_db(self) -> None:
         """Initialize database schema if not already present."""

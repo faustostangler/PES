@@ -157,15 +157,10 @@ class TestSqliteLedgerAdapter:
         adapter = SqliteLedgerAdapter(":memory:", timeout=10.0)
         assert adapter._db_path == ":memory:"
         assert adapter._timeout == 10.0
-        # In memory mode does not create disk files or parent directories
-        conn = adapter._get_connection()
-        try:
-            # Synchronous normal is applied
+        with adapter._get_connection() as conn:
             cursor = conn.execute("PRAGMA synchronous;")
             sync_mode = cursor.fetchone()[0]
             assert sync_mode in (1, "1", "NORMAL", "normal")
-        finally:
-            conn.close()
 
     def test_is_processed_false_for_all_non_completed_statuses(self, tmp_path: Path) -> None:
         adapter = SqliteLedgerAdapter(tmp_path / "test.db")

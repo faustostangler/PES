@@ -102,6 +102,12 @@ def register_subparser(subparsers: argparse._SubParsersAction) -> None:
         default=False,
         help="Skip scanning existing local markdown transcripts in data/raw/",
     )
+    run_parser.add_argument(
+        "--no-crawl",
+        action="store_true",
+        default=False,
+        help="Disable crawling channel feeds and strictly process manifest seed items",
+    )
     run_parser.set_defaults(handler=handle_run)
 
 
@@ -254,28 +260,39 @@ def load_batch_sources(
 def handle_run(args: argparse.Namespace) -> int:
     """Orchestrate knowledge synthesis pipeline for single video or batch manifest."""
     try:
-        pipeline = (
-            build_pipeline(batch_size_override=args.batch_size)
-            if args.batch_size is not None
-            else build_pipeline()
-        )
-
-        if args.url:
-            return execute_single_video_run(pipeline, args)
-
         settings = CresmoSettings()
         if args.lookback is not None:
             settings.days_lookback = args.lookback
 
         settings.ensure_directories()
+
+        pipeline = build_pipeline(
+            settings=settings,
+            batch_size_override=args.batch_size,
+        )
+
+        if args.url:
+            return execute_single_video_run(pipeline, args)
+
+        enable_crawl = (
+            False
+            if getattr(args, "no_crawl", False)
+            else getattr(settings, "enable_channel_crawler", True)
+        )
+
         query = BatchDiscoveryQuery(
             explicit_manifest=args.manifest,
             scan_raw=not args.no_scan_raw,
             lookback_days=settings.days_lookback,
             channel_max_videos=args.channel_max_videos,
             discovery_workers=settings.channel_discovery_workers,
+            enable_channel_crawler=enable_crawl,
         )
-        sources = load_batch_sources(query=query, settings=settings)
+        sources = load_batch_sources(
+            query=query,
+            settings=settings,
+            media_ingestion_port=pipeline.media_ingestion_port,
+        )
 
         if not sources:
             manifest_display = str(args.manifest) if args.manifest else "data/playlist.txt"

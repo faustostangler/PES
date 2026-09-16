@@ -180,6 +180,42 @@ class DiscoveredMediaItem:
         object.__setattr__(self, "channel_name", c)
 
 
+_CHANNEL_ID_PATTERN = re.compile(r"(?:^|/channel/|/user/|/c/)(UC[a-zA-Z0-9_-]{2,64})")
+
+
+def normalize_to_uploads_playlist_url(channel_ref: str) -> str:
+    """Transform YouTube channel reference to its canonical uploads playlist URL (UU prefix).
+
+    YouTube automatically maintains an 'Uploads from <Channel>' playlist for every channel,
+    where the playlist ID is identical to the channel ID but with the 'UC' prefix swapped to 'UU'.
+    Querying this playlist URL via yt-dlp flat extraction is significantly faster, strictly
+    reverse-chronological, and avoids web scrapers navigating UI tabs.
+    """
+    cleaned = channel_ref.strip()
+    if not cleaned:
+        return cleaned
+
+    # Already an uploads or standard playlist URL
+    if "playlist?list=" in cleaned or "list=UU" in cleaned or "list=PL" in cleaned:
+        return cleaned if cleaned.startswith(("http://", "https://")) else f"https://{cleaned}"
+
+    m = _CHANNEL_ID_PATTERN.search(cleaned)
+    if m:
+        channel_id = m.group(1)
+        uploads_playlist_id = "UU" + channel_id[2:]
+        return f"https://www.youtube.com/playlist?list={uploads_playlist_id}"
+
+    formatted = cleaned if cleaned.startswith(("http://", "https://")) else f"https://{cleaned}"
+    if "/@" in formatted and not formatted.endswith(("/videos", "/shorts", "/streams", "/playlists")):
+        return f"{formatted.rstrip('/')}/videos"
+
+    if formatted.startswith("https://@"):
+        handle = formatted.replace("https://@", "")
+        return f"https://www.youtube.com/@{handle}/videos"
+
+    return formatted
+
+
 @dataclass(frozen=True)
 class ChannelFeedQuery:
     """Encapsulates query constraints for discovering uningested media items."""

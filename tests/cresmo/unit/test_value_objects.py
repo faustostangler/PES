@@ -14,6 +14,7 @@ from cresmo.domain.value_objects import (
     CrossContextRelations,
     NoteTitle,
     NoteType,
+    normalize_to_uploads_playlist_url,
 )
 
 
@@ -148,3 +149,32 @@ class TestCrossContextRelations:
         assert cc.precursors == "Precursor"
         assert cc.lateral_events == "Lateral"
         assert cc.aftermath == "Aftermath"
+
+
+class TestNormalizeToUploadsPlaylistUrl:
+    """Tests for channel ID normalization to canonical uploads playlist (UU...) URLs."""
+
+    def test_uc_channel_id_converted_to_uu_playlist(self) -> None:
+        raw_id = "UCemIxU4HzIhVLeohT7eUUoA"
+        assert (
+            normalize_to_uploads_playlist_url(raw_id)
+            == "https://www.youtube.com/playlist?list=UUemIxU4HzIhVLeohT7eUUoA"
+        )
+
+    def test_channel_url_with_uc_id_converted_to_uu_playlist(self) -> None:
+        url = "https://www.youtube.com/channel/UCLTWPE7XrHEe8m_xAmNbQ-Q"
+        assert (
+            normalize_to_uploads_playlist_url(url)
+            == "https://www.youtube.com/playlist?list=UULTWPE7XrHEe8m_xAmNbQ-Q"
+        )
+
+    def test_existing_playlist_url_preserved(self) -> None:
+        url = "https://www.youtube.com/playlist?list=UULTWPE7XrHEe8m_xAmNbQ-Q"
+        assert normalize_to_uploads_playlist_url(url) == url
+
+    def test_user_handle_appends_videos_tab(self) -> None:
+        handle_url = "https://www.youtube.com/@ancapsu"
+        assert normalize_to_uploads_playlist_url(handle_url) == "https://www.youtube.com/@ancapsu/videos"
+
+    def test_empty_string_returned_intact(self) -> None:
+        assert normalize_to_uploads_playlist_url("") == ""

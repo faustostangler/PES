@@ -132,6 +132,11 @@ class CresmoSettings(BaseSettings):
         default=None,
         description="Optional custom path to browser request headers pool JSON file.",
     )
+    cookies_file: Path | None = Field(
+        default=None,
+        validation_alias=AliasChoices("cookies_file", "DEFAULT_COOKIES_FILE", "CRESMO_COOKIES_FILE"),
+        description="Path to Netscape cookies file for YouTube authentication.",
+    )
     prompts_path: Path | None = Field(
         default=None,
         description="Optional custom path to LLM prompt templates JSON file.",
@@ -144,6 +149,22 @@ class CresmoSettings(BaseSettings):
     # =========================================================================
     # 🟢 Category 3: Operational Tunables
     # =========================================================================
+    browser_cookies: str | None = Field(
+        default="firefox",
+        description="Default browser to extract cookies from if cookies_file is absent ('firefox', 'chrome', etc.).",
+    )
+    auto_extract_cookies: bool = Field(
+        default=True,
+        description="Whether to automatically extract cookies from browser if cookies_file is absent or expired.",
+    )
+    enable_channel_crawler: bool = Field(
+        default=True,
+        description="Whether batch discovery automatically crawls 365d uploads across all channels by default.",
+    )
+    require_auth_cookies: bool = Field(
+        default=False,
+        description="Whether to fail-fast if no valid authenticated YouTube session cookies are found.",
+    )
     gemini_model: str = Field(
         default="gemini-3.5-flash-lite",
         description="Default Gemini model variant for pipeline stages.",
@@ -183,6 +204,21 @@ class CresmoSettings(BaseSettings):
             self.subtitle_workers = max(1, self.whisper_workers * 5)
         if self.channel_discovery_workers <= 0:
             self.channel_discovery_workers = max(1, self.whisper_workers * 10)
+
+        # Auto-resolve cookies_file candidate paths if not set
+        if self.cookies_file is None or not self.cookies_file.exists():
+            candidates = [
+                self.data_dir / "cookies.txt",
+                _WORKSPACE_DIR / "data" / "cookies.txt",
+                _WORKSPACE_DIR / "playground" / "cresmo" / ".yt_dlp_cookies.txt",
+                _WORKSPACE_DIR / "playground" / "isb.ai" / ".yt_dlp_cookies.txt",
+                _WORKSPACE_DIR / ".yt_dlp_cookies.txt",
+            ]
+            for cand in candidates:
+                if cand.exists() and cand.stat().st_size > 0:
+                    self.cookies_file = cand
+                    break
+
         return self
 
     batch_size: int = Field(

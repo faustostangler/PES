@@ -26,7 +26,7 @@ from cresmo.domain.value_objects import (
     NoteType,
     PipelineStatus,
 )
-from cresmo.infrastructure.adapters.mock_adapters import (
+from tests.doubles.mock_adapters import (
     InMemoryLedgerAdapter,
     InMemoryVaultAdapter,
     MockLLMAdapter,

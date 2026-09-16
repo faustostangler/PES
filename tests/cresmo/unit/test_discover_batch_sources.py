@@ -721,3 +721,87 @@ class TestDiscoverBatchSourcesUseCase:
         assert len(acc.sources) == 2
         assert acc.has_seen("disc_item_1") is True
         assert acc.has_seen("https://nonstandard.url/disc_no_id") is True
+
+    def test_two_stage_channel_discovery_with_uploads_playlist_and_lake_filter(
+        self, tmp_path: Path
+    ) -> None:
+        """Verify two-stage channel discovery: A (unify channels) and B (filter raw lake videos)."""
+        # A1: Priority folder
+        pri_dir = tmp_path / "priority_folder"
+        pri_dir.mkdir()
+        (pri_dir / "pri_note.md").write_text(
+            "---\ntitle: Priority Note\nchannel_id: UCPriority12345678901234\n---\nBody",
+            encoding="utf-8",
+        )
+
+        # A2: Local raw lake
+        raw_dir = tmp_path / "raw"
+        raw_dir.mkdir()
+        (raw_dir / "lake_vid1.md").write_text(
+            "---\nvideo_id: lake_vid1\nchannel_id: UCLakeChan12345678901234\n---\nBody",
+            encoding="utf-8",
+        )
+
+        # A3: Seed playlist with a new seed video
+        playlist_file = tmp_path / "playlist.txt"
+        playlist_file.write_text("https://www.youtube.com/watch?v=seed_new_video\n", encoding="utf-8")
+
+        mock_ingestion = MagicMock()
+        mock_ingestion.extract_channel_url_from_video.return_value = (
+            "https://www.youtube.com/playlist?list=UUSeedChan12345678901234"
+        )
+
+        # In Stage B, channel feed returns 2 videos:
+        # - "lake_vid1" (already in raw lake -> MUST BE SKIPPED)
+        # - "brand_new_vid" (not in raw lake -> MUST BE ADDED)
+        already_in_lake_item = _create_mock_media_item(
+            content_id_str="lake_vid1",
+            media_url="https://www.youtube.com/watch?v=lake_vid1",
+            title="Already in Lake",
+        )
+        new_discovered_item = _create_mock_media_item(
+            content_id_str="brand_new_vid",
+            media_url="https://www.youtube.com/watch?v=brand_new_vid",
+            title="Brand New Upload",
+        )
+        mock_ingestion.discover_channel_feed.return_value = [already_in_lake_item, new_discovered_item]
+
+        notifications: list[str] = []
+        use_case = DiscoverBatchSourcesUseCase(
+            media_ingestion_port=mock_ingestion,
+            settings=CresmoSettings(_env_file=None),
+            progress_callback=notifications.append,
+        )
+
+        query = BatchDiscoveryQuery(
+            manifest_path=playlist_file,
+            raw_dir=raw_dir,
+            priority_texts_dir=pri_dir,
+            playlist_priority_path=tmp_path / "empty_pri_urls.txt",
+            scan_raw=False,  # Don't add raw files to sources, only scan for lake filtering
+            enable_channel_crawler=True,
+            discovery_workers=2,
+            lookback_days=365,
+        )
+
+        sources = use_case.execute(query)
+
+        # Targets in sources must include:
+        # 1. pri_note.md (file)
+        # 2. seed_new_video (url)
+        # 3. brand_new_vid (url from Stage B)
+        # MUST NOT include lake_vid1 as URL because it was already in the raw lake!
+        targets = [s.target for s in sources]
+        assert str((pri_dir / "pri_note.md").resolve()) in targets
+        assert "https://www.youtube.com/watch?v=seed_new_video" in targets
+        assert "https://www.youtube.com/watch?v=brand_new_vid" in targets
+        assert "https://www.youtube.com/watch?v=lake_vid1" not in targets
+
+        # Check that discover_channel_feed was called for channels
+        assert mock_ingestion.discover_channel_feed.called
+
+        # Check progress notifications contain Stage A and Stage B logs
+        combined_notifications = "".join(notifications)
+        assert "Stage A complete" in combined_notifications
+        assert "Stage B:" in combined_notifications
+        assert "Stage B complete" in combined_notifications

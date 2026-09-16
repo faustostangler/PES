@@ -1,6 +1,7 @@
-"""Mock in-memory adapters for hermetic unit testing of Cresmo use cases.
+"""Test doubles and in-memory mock adapters for unit testing.
 
-Zero I/O, deterministic responses, capturing call histories for test assertions.
+Relocated from src/cresmo/infrastructure/adapters/mock_adapters.py per ADR-008.
+Provides hermetic, zero-I/O test doubles implementing application ports.
 """
 
 from __future__ import annotations
