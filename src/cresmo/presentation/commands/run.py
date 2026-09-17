@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import sys
+from collections.abc import Iterable, Iterator, Sized
 from pathlib import Path
 
 from pydantic import ValidationError
@@ -188,15 +189,20 @@ def execute_batch_dry_run(pipeline: CresmoPipeline, sources: list[BatchSource]) 
 
 def execute_batch_run(
     pipeline: CresmoPipeline,
-    sources: list[BatchSource],
+    sources: Iterable[BatchSource],
     args: argparse.Namespace,
 ) -> int:
     """Execute end-to-end multi-pass synthesis over prioritized batch sources."""
     completed = 0
     skipped = 0
     failed = 0
+    total_items = 0
+
+    total_str = f"/{len(sources)}" if isinstance(sources, Sized) else ""
 
     for idx, src in enumerate(sources, 1):
+        total_items += 1
+        item_prefix = f"[{idx}{total_str}]"
         try:
             if src.kind == "file":
                 result = pipeline.run_for_text_file(
@@ -215,12 +221,12 @@ def execute_batch_run(
             if result.already_processed:
                 skipped += 1
                 sys.stdout.write(
-                    f"[{idx}/{len(sources)}] [SKIPPED] [{result.content_id.value}] Already processed in ledger.\n"
+                    f"{item_prefix} [SKIPPED] [{result.content_id.value}] Already processed in ledger.\n"
                 )
             elif result.success:
                 completed += 1
                 sys.stdout.write(
-                    f"[{idx}/{len(sources)}] [DONE] [{result.content_id.value}]: "
+                    f"{item_prefix} [DONE] [{result.content_id.value}]: "
                     f"{len(result.synthesized_notes)} atomic notes synthesized, "
                     f"{len(result.reconciled_mocs)} MOCs reconciled, "
                     f"{result.duplicates_unified} duplicate clusters unified.\n"
@@ -228,21 +234,28 @@ def execute_batch_run(
             else:
                 failed += 1
                 sys.stderr.write(
-                    f"[{idx}/{len(sources)}] [ERROR] {display_target}: {result.error_message}\n"
+                    f"{item_prefix} [ERROR] {display_target}: {result.error_message}\n"
                 )
         except RateLimitExceededError as exc:
             failed += 1
-            sys.stderr.write(f"[{idx}/{len(sources)}] [RATE LIMIT] {src.target}: {exc}\n")
+            sys.stderr.write(f"{item_prefix} [RATE LIMIT] {src.target}: {exc}\n")
         except IngestionNetworkError as exc:
             failed += 1
-            sys.stderr.write(f"[{idx}/{len(sources)}] [NETWORK ERROR] {src.target}: {exc}\n")
+            sys.stderr.write(f"{item_prefix} [NETWORK ERROR] {src.target}: {exc}\n")
         except Exception as exc:  # noqa: BLE001
             failed += 1
-            sys.stderr.write(f"[{idx}/{len(sources)}] [FAILED] {src.target}: {exc}\n")
+            sys.stderr.write(f"{item_prefix} [FAILED] {src.target}: {exc}\n")
+
+    if total_items == 0:
+        manifest_display = str(args.manifest) if args.manifest else "data/playlist.txt"
+        sys.stdout.write(
+            f"No sources found to process (manifest: {manifest_display}, raw lake scan: {not args.no_scan_raw}).\n"
+        )
+        return EXIT_SUCCESS
 
     sys.stdout.write(
         f"\nBatch Synthesis Summary:\n"
-        f"- Total Items: {len(sources)}\n"
+        f"- Total Items: {total_items}\n"
         f"- Completed: {completed}\n"
         f"- Skipped (Idempotent): {skipped}\n"
         f"- Failed: {failed}\n"
@@ -266,7 +279,8 @@ def load_batch_sources(
     query: BatchDiscoveryQuery,
     settings: CresmoSettings | None = None,
     media_ingestion_port: MediaIngestionPort | None = None,
-) -> list[BatchSource]:
+    stream: bool = False,
+) -> list[BatchSource] | Iterator[BatchSource]:
     """Execute batch source discovery via DiscoverBatchSourcesUseCase."""
     resolved_settings = settings or CresmoSettings()
     if media_ingestion_port is None:
@@ -280,7 +294,21 @@ def load_batch_sources(
             settings=resolved_settings,
             progress_callback=lambda msg: sys.stdout.write(msg),
         )
+    if stream:
+        return discovery_use_case.execute_stream(query=query)
     return discovery_use_case.execute(query=query)
+
+
+def load_batch_sources_stream(
+    query: BatchDiscoveryQuery,
+    settings: CresmoSettings | None = None,
+    media_ingestion_port: MediaIngestionPort | None = None,
+) -> Iterator[BatchSource]:
+    """Execute streaming batch source discovery via DiscoverBatchSourcesUseCase."""
+    res = load_batch_sources(query, settings, media_ingestion_port, stream=True)
+    if isinstance(res, list):
+        return iter(res)
+    return res
 
 
 def handle_run(args: argparse.Namespace) -> int:
@@ -316,22 +344,28 @@ def handle_run(args: argparse.Namespace) -> int:
             discovery_workers=settings.channel_discovery_workers,
             enable_channel_crawler=enable_crawl,
         )
+
+        if args.dry_run:
+            sources = load_batch_sources(
+                query=query,
+                settings=settings,
+                media_ingestion_port=pipeline.media_ingestion_port,
+                stream=False,
+            )
+            if not sources:
+                manifest_display = str(args.manifest) if args.manifest else "data/playlist.txt"
+                sys.stdout.write(
+                    f"No sources found to process (manifest: {manifest_display}, raw lake scan: {not args.no_scan_raw}).\n"
+                )
+                return EXIT_SUCCESS
+            return execute_batch_dry_run(pipeline, sources)
+
         sources = load_batch_sources(
             query=query,
             settings=settings,
             media_ingestion_port=pipeline.media_ingestion_port,
+            stream=True,
         )
-
-        if not sources:
-            manifest_display = str(args.manifest) if args.manifest else "data/playlist.txt"
-            sys.stdout.write(
-                f"No sources found to process (manifest: {manifest_display}, raw lake scan: {not args.no_scan_raw}).\n"
-            )
-            return EXIT_SUCCESS
-
-        if args.dry_run:
-            return execute_batch_dry_run(pipeline, sources)
-
         return execute_batch_run(pipeline, sources, args)
     except RateLimitExceededError as exc:
         sys.stderr.write(f"Rate limit exceeded: {exc}\n")

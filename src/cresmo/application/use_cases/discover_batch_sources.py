@@ -6,8 +6,10 @@ and lookback feed discovery per ADR-003 and Clean Hexagonal Architecture.
 
 from __future__ import annotations
 
+import queue
 import re
-from collections.abc import Callable
+import threading
+from collections.abc import Callable, Iterator
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
@@ -113,31 +115,43 @@ def extract_raw_file_metadata(path: Path) -> dict[str, str]:
 
 
 class _BatchSourceAccumulator:
-    """Encapsulates deduplication and ordered accumulation of batch sources."""
+    """Encapsulates thread-safe deduplication and ordered accumulation of batch sources."""
 
-    def __init__(self) -> None:
+    def __init__(self, on_source_added: Callable[[BatchSource], None] | None = None) -> None:
         self.sources: list[BatchSource] = []
         self.seen_vids: set[str] = set()
+        self.on_source_added = on_source_added
+        self._lock = threading.Lock()
 
-    def add_source(self, kind: str, target: str, vid: str | None = None) -> None:
+    def add_source(self, kind: str, target: str, vid: str | None = None) -> BatchSource | None:
         """Append a source and register its identifier for deduplication."""
-        self.sources.append(BatchSource(kind=kind, target=target))
-        if vid:
-            self.seen_vids.add(vid)
-        else:
-            self.register_identifier(target)
+        with self._lock:
+            m = _VIDEO_ID_REGEX.search(target)
+            actual_vid = vid or (m.group(1) if m else Path(target).stem)
+            if actual_vid in self.seen_vids:
+                return None
+            self.seen_vids.add(actual_vid)
+            src = BatchSource(kind=kind, target=target)
+            self.sources.append(src)
+            cb = self.on_source_added
+
+        if cb is not None:
+            cb(src)
+        return src
 
     def register_identifier(self, target_str: str) -> None:
         """Register video ID or path stem into the deduplication set."""
-        m = _VIDEO_ID_REGEX.search(target_str)
-        if m:
-            self.seen_vids.add(m.group(1))
-        else:
-            self.seen_vids.add(Path(target_str).stem)
+        with self._lock:
+            m = _VIDEO_ID_REGEX.search(target_str)
+            if m:
+                self.seen_vids.add(m.group(1))
+            else:
+                self.seen_vids.add(Path(target_str).stem)
 
     def has_seen(self, identifier: str) -> bool:
         """Check if an identifier (video ID or stem) was already registered."""
-        return identifier in self.seen_vids
+        with self._lock:
+            return identifier in self.seen_vids
 
 
 class DiscoverBatchSourcesUseCase:
@@ -162,23 +176,23 @@ class DiscoverBatchSourcesUseCase:
     def execute(self, query: BatchDiscoveryQuery | None = None) -> list[BatchSource]:
         """Discover and consolidate batch sources from local lake, seeds, and channel feeds.
 
-        Two-stage discovery pipeline:
-        Stage A: Canais para Sync (Discover unique channels to synchronize)
-          A1: Priority sources (priority_texts_dir and playlist_priority_path)
-          A2: Local raw lake (all channels from existing data/raw/**/*.md files)
-          A3: Seed playlist videos (all channels of videos in data/playlist.txt)
-             - Resolved in O(1) from local lake if already ingested
-             - Resolved concurrently via yt-dlp if new seed video
+        Two-stage discovery pipeline (Stage A: Channels for Sync; Stage B: Recent Uploads).
+        Drains the full streaming queue into a deterministic list of BatchSource.
+        """
+        return list(self.execute_stream(query=query))
 
-        Stage B: Vídeos para baixar legenda (Discover recent uploads to ingest)
-          - For each unique channel discovered in Stage A:
-            - Query uploads playlist (UU...) within lookback_days
-            - Filter: If video_id already exists in local raw lake (.md), SKIP!
-            - If video_id does NOT exist in local raw lake, add to download queue.
+    def execute_stream(
+        self, query: BatchDiscoveryQuery | None = None
+    ) -> Iterator[BatchSource]:
+        """Discover batch sources with streaming queue for overlapped producer-consumer execution.
+
+        Yields high-priority local texts and priority playlist items immediately in the fast path
+        (millisecond latency), while launching channel feed crawling in a concurrent background thread.
         """
         q = query or BatchDiscoveryQuery()
         if q.explicit_manifest is not None:
-            return self._load_explicit_manifest(q.explicit_manifest)
+            yield from self._load_explicit_manifest(q.explicit_manifest)
+            return
 
         acc = _BatchSourceAccumulator()
 
@@ -199,54 +213,114 @@ class DiscoverBatchSourcesUseCase:
             playlist_priority_path, local_channels, acc
         )
 
-        # A3: Seed playlist
+        # FAST-PATH PRIORITY SNAPSHOT:
+        priority_sources = list(acc.sources)
+
         playlist_path = (
             q.playlist_path
             or q.manifest_path
             or getattr(self.settings, "playlist_path", Path("data/playlist.txt"))
         )
-        channels_to_probe, remote_videos, probed_channels = self._classify_seeds(
-            playlist_path, local_channels, acc
-        )
-
-        # Incorporate priority channels into channels_to_probe
-        for pch in pri_text_chans + pri_url_chans:
-            norm_pch = normalize_to_uploads_playlist_url(pch)
-            if norm_pch not in probed_channels:
-                probed_channels.add(norm_pch)
-                channels_to_probe.append(norm_pch)
 
         crawler_enabled = q.enable_channel_crawler
 
-        if self.media_ingestion_port is not None and crawler_enabled:
-            workers = (
-                q.discovery_workers
-                if q.discovery_workers is not None
-                else self.settings.channel_discovery_workers
-            )
-            lookback = (
-                q.lookback_days if q.lookback_days is not None else self.settings.days_lookback
-            )
+        # If crawler is disabled or media ingestion port is absent, process seeds synchronously
+        if self.media_ingestion_port is None or not crawler_enabled:
+            for src in priority_sources:
+                yield src
+            yielded_so_far = len(acc.sources)
+            self._classify_seeds(playlist_path, local_channels, acc)
+            for src in acc.sources[yielded_so_far:]:
+                yield src
+            return
 
-            all_remote_seeds = list(dict.fromkeys(pri_unresolved + remote_videos))
-            if all_remote_seeds:
-                self._resolve_remote_channels(
-                    all_remote_seeds, workers, probed_channels, channels_to_probe
+        # OVERLAPPED STREAMING: Spawn background crawler feeding queue.Queue
+        stream_queue: queue.Queue[BatchSource | None | Exception] = queue.Queue()
+        stop_event = threading.Event()
+
+        # Connect accumulator callback so newly discovered sources stream directly to queue
+        acc.on_source_added = lambda src: stream_queue.put(src)
+
+        workers = (
+            q.discovery_workers
+            if q.discovery_workers is not None
+            else self.settings.channel_discovery_workers
+        )
+        lookback = (
+            q.lookback_days if q.lookback_days is not None else self.settings.days_lookback
+        )
+
+        def _crawler_producer() -> None:
+            try:
+                channels_to_probe, remote_videos, probed_channels = self._classify_seeds(
+                    playlist_path, local_channels, acc
                 )
 
-            self._notify(
-                f"[crawler] Stage A complete: {len(channels_to_probe)} unique channel(s) identified for sync\n"
-                f"  - A1 (Priority): {len(set(pri_text_chans + pri_url_chans))} channel(s)\n"
-                f"  - A2 (Local Raw Lake): {len(set(local_channels.values()))} channel(s)\n"
-                f"  - A3 (Seed Playlist): {len(channels_to_probe)} total channel(s)\n"
-            )
+                for pch in pri_text_chans + pri_url_chans:
+                    norm_pch = normalize_to_uploads_playlist_url(pch)
+                    if norm_pch not in probed_channels:
+                        probed_channels.add(norm_pch)
+                        channels_to_probe.append(norm_pch)
 
-            # Stage B: Vídeos para baixar legenda
-            self._probe_channel_feeds(
-                channels_to_probe, lookback, q.channel_max_videos, workers, acc
-            )
+                if stop_event.is_set():
+                    return
 
-        return acc.sources
+                all_remote_seeds = list(dict.fromkeys(pri_unresolved + remote_videos))
+                if all_remote_seeds:
+                    self._resolve_remote_channels(
+                        all_remote_seeds,
+                        workers,
+                        probed_channels,
+                        channels_to_probe,
+                        stop_event=stop_event,
+                    )
+
+                if stop_event.is_set():
+                    return
+
+                self._notify(
+                    f"[crawler] Stage A complete: {len(channels_to_probe)} unique channel(s) identified for sync\n"
+                    f"  - A1 (Priority): {len(set(pri_text_chans + pri_url_chans))} channel(s)\n"
+                    f"  - A2 (Local Raw Lake): {len(set(local_channels.values()))} channel(s)\n"
+                    f"  - A3 (Seed Playlist): {len(channels_to_probe)} total channel(s)\n"
+                )
+
+                # Stage B: Vídeos para baixar legenda
+                self._probe_channel_feeds(
+                    channels_to_probe,
+                    lookback,
+                    q.channel_max_videos,
+                    workers,
+                    acc,
+                    stop_event=stop_event,
+                )
+            except Exception as exc:  # noqa: BLE001
+                stream_queue.put(exc)
+            finally:
+                stream_queue.put(None)
+
+        crawler_thread = threading.Thread(
+            target=_crawler_producer,
+            name="CresmoCrawlerProducer",
+            daemon=True,
+        )
+        crawler_thread.start()
+
+        try:
+            # Yield fast-path priority sources immediately while crawler runs concurrently!
+            for src in priority_sources:
+                yield src
+
+            while True:
+                item = stream_queue.get()
+                if item is None:
+                    break
+                if isinstance(item, Exception):
+                    self._notify(f"[crawler] Warning: Background crawler failed: {item}\n")
+                    break
+                yield item
+        finally:
+            stop_event.set()
 
     def _load_explicit_manifest(self, manifest_path: Path) -> list[BatchSource]:
         """Load and return sources directly from an explicit manifest override."""
@@ -380,6 +454,7 @@ class DiscoverBatchSourcesUseCase:
         workers: int,
         probed_channels: set[str],
         channels_to_probe: list[str],
+        stop_event: threading.Event | None = None,
     ) -> None:
         """Resolve parent channels concurrently for seed videos missing local metadata."""
         if not videos:
@@ -395,6 +470,8 @@ class DiscoverBatchSourcesUseCase:
                 for vu in videos
             }
             for fut in as_completed(future_to_vurl):
+                if stop_event is not None and stop_event.is_set():
+                    break
                 try:
                     resolved_chan = fut.result()
                     if resolved_chan and resolved_chan not in probed_channels:
@@ -413,6 +490,7 @@ class DiscoverBatchSourcesUseCase:
         max_videos: int,
         workers: int,
         acc: _BatchSourceAccumulator,
+        stop_event: threading.Event | None = None,
     ) -> None:
         """Probe recent video uploads across unique channel feeds concurrently (Stage B)."""
         if not channels:
@@ -434,14 +512,25 @@ class DiscoverBatchSourcesUseCase:
                 for u in channels
             }
             for future in as_completed(future_to_url):
-                discovered_urls = future.result()
+                if stop_event is not None and stop_event.is_set():
+                    break
+                try:
+                    discovered_urls = future.result()
+                except Exception as exc:  # noqa: BLE001
+                    u = future_to_url[future]
+                    self._notify(f"[crawler] Warning: Failed to probe feed for {u}: {exc}\n")
+                    continue
+
                 for d_url in discovered_urls:
+                    if stop_event is not None and stop_event.is_set():
+                        break
                     m = _VIDEO_ID_REGEX.search(d_url)
                     vid = m.group(1) if m else d_url
                     # Stage B: Skip if already in raw lake or already queued
                     if not acc.has_seen(vid):
-                        acc.add_source(kind="url", target=d_url, vid=vid)
-                        discovered_count += 1
+                        added = acc.add_source(kind="url", target=d_url, vid=vid)
+                        if added is not None:
+                            discovered_count += 1
 
         self._notify(
             f"[crawler] Stage B complete: Discovered {discovered_count} new video(s) for ingestion "
