@@ -10,6 +10,8 @@ from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from unittest.mock import MagicMock
 
+import pytest
+
 from cresmo.application.use_cases.discover_batch_sources import (
     BatchDiscoveryQuery,
     BatchSource,
@@ -810,3 +812,178 @@ class TestDiscoverBatchSourcesUseCase:
         assert "Stage A complete" in combined_notifications
         assert "Stage B:" in combined_notifications
         assert "Stage B complete" in combined_notifications
+
+    def test_execute_stream_yields_priority_immediately_while_crawler_in_background(
+        self, tmp_path: Path
+    ) -> None:
+        """Verify priority items are yielded at t=0 before background crawler completes."""
+        import threading
+
+        pri_dir = tmp_path / "priority_texts"
+        pri_dir.mkdir()
+        pri_file = pri_dir / "immediate_prio.md"
+        pri_file.write_text("Immediate priority content", encoding="utf-8")
+
+        pri_urls_file = tmp_path / "playlist-priority.txt"
+        pri_urls_file.write_text("https://www.youtube.com/watch?v=prioVid123\n", encoding="utf-8")
+
+        playlist_file = tmp_path / "playlist.txt"
+        playlist_file.write_text("https://www.youtube.com/@SlowChannel\n", encoding="utf-8")
+
+        crawler_can_finish = threading.Event()
+
+        def slow_discover_feed(feed_query: object) -> list[DiscoveredMediaItem]:
+            # Wait until main thread has already consumed priority items!
+            crawler_can_finish.wait(timeout=5.0)
+            return [
+                DiscoveredMediaItem(
+                    content_id=ContentId("slowVid456"),
+                    media_url="https://www.youtube.com/watch?v=slowVid456",
+                    title="Slow Channel Video",
+                    channel_name="Slow Channel",
+                    published_at=datetime.now(UTC),
+                )
+            ]
+
+        mock_ingestion = MagicMock()
+        mock_ingestion.discover_channel_feed.side_effect = slow_discover_feed
+
+        use_case = DiscoverBatchSourcesUseCase(
+            media_ingestion_port=mock_ingestion,
+            settings=CresmoSettings(_env_file=None),
+        )
+
+        query = BatchDiscoveryQuery(
+            priority_texts_dir=pri_dir,
+            playlist_priority_path=pri_urls_file,
+            playlist_path=playlist_file,
+            raw_dir=tmp_path / "raw",
+            scan_raw=False,
+            enable_channel_crawler=True,
+        )
+
+        stream = use_case.execute_stream(query)
+
+        # 1. First item must be the priority file (yielded at t=0)
+        item1 = next(stream)
+        assert item1.kind == "file"
+        assert item1.target == str(pri_file.resolve())
+
+        # 2. Second item must be the priority URL (yielded at t=0)
+        item2 = next(stream)
+        assert item2.kind == "url"
+        assert "prioVid123" in item2.target
+
+        # At this point, the crawler is still waiting! We release it now:
+        crawler_can_finish.set()
+
+        # 3. Third item must be the crawled channel video
+        item3 = next(stream)
+        assert item3.kind == "url"
+        assert "slowVid456" in item3.target
+
+        # Stream must terminate cleanly
+        with pytest.raises(StopIteration):
+            next(stream)
+
+    def test_execute_stream_deduplicates_priority_and_crawled_videos(
+        self, tmp_path: Path
+    ) -> None:
+        """Verify duplicate video between priority playlist and channel crawler is yielded only once."""
+        pri_urls_file = tmp_path / "playlist-priority.txt"
+        pri_urls_file.write_text("https://www.youtube.com/watch?v=sharedVid999\n", encoding="utf-8")
+
+        playlist_file = tmp_path / "playlist.txt"
+        playlist_file.write_text("https://www.youtube.com/@SharedChannel\n", encoding="utf-8")
+
+        mock_ingestion = MagicMock()
+        mock_ingestion.discover_channel_feed.return_value = [
+            DiscoveredMediaItem(
+                content_id=ContentId("sharedVid999"),
+                media_url="https://www.youtube.com/watch?v=sharedVid999",
+                title="Shared Video",
+                channel_name="Shared Channel",
+                published_at=datetime.now(UTC),
+            )
+        ]
+
+        use_case = DiscoverBatchSourcesUseCase(
+            media_ingestion_port=mock_ingestion,
+            settings=CresmoSettings(_env_file=None),
+        )
+
+        query = BatchDiscoveryQuery(
+            playlist_priority_path=pri_urls_file,
+            playlist_path=playlist_file,
+            raw_dir=tmp_path / "raw",
+            scan_raw=False,
+            enable_channel_crawler=True,
+        )
+
+        sources = list(use_case.execute_stream(query))
+        matching = [s for s in sources if "sharedVid999" in s.target]
+        assert len(matching) == 1
+
+    def test_execute_stream_graceful_cancellation_on_consumer_break(
+        self, tmp_path: Path
+    ) -> None:
+        """Verify breaking early from stream sets stop_event and shuts down cleanly."""
+        pri_dir = tmp_path / "priority_texts"
+        pri_dir.mkdir()
+        for i in range(5):
+            (pri_dir / f"note_{i}.md").write_text(f"Note {i}", encoding="utf-8")
+
+        use_case = DiscoverBatchSourcesUseCase(
+            media_ingestion_port=MagicMock(),
+            settings=CresmoSettings(_env_file=None),
+        )
+
+        query = BatchDiscoveryQuery(
+            priority_texts_dir=pri_dir,
+            raw_dir=tmp_path / "raw",
+            scan_raw=False,
+            enable_channel_crawler=False,
+        )
+
+        # Consume only 2 items and break
+        consumed = []
+        for s in use_case.execute_stream(query):
+            consumed.append(s)
+            if len(consumed) == 2:
+                break
+
+        assert len(consumed) == 2
+
+    def test_execute_stream_handles_crawler_exception_gracefully(
+        self, tmp_path: Path
+    ) -> None:
+        """Verify crawler exception does not crash stream and priority items are preserved."""
+        pri_urls_file = tmp_path / "playlist-priority.txt"
+        pri_urls_file.write_text("https://www.youtube.com/watch?v=safePrio123\n", encoding="utf-8")
+
+        playlist_file = tmp_path / "playlist.txt"
+        playlist_file.write_text("https://www.youtube.com/@CrashChannel\n", encoding="utf-8")
+
+        mock_ingestion = MagicMock()
+        mock_ingestion.discover_channel_feed.side_effect = RuntimeError("YouTube API down")
+
+        notifications: list[str] = []
+        use_case = DiscoverBatchSourcesUseCase(
+            media_ingestion_port=mock_ingestion,
+            settings=CresmoSettings(_env_file=None),
+            progress_callback=notifications.append,
+        )
+
+        query = BatchDiscoveryQuery(
+            playlist_priority_path=pri_urls_file,
+            playlist_path=playlist_file,
+            raw_dir=tmp_path / "raw",
+            scan_raw=False,
+            enable_channel_crawler=True,
+        )
+
+        sources = list(use_case.execute_stream(query))
+        assert len(sources) == 1
+        assert "safePrio123" in sources[0].target
+        assert any("Warning: Failed to probe" in n for n in notifications)
+
