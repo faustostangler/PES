@@ -108,7 +108,14 @@ def register_subparser(subparsers: argparse._SubParsersAction) -> None:
         default=False,
         help="Disable crawling channel feeds and strictly process manifest seed items",
     )
+    run_parser.add_argument(
+        "--web-index",
+        action="store_true",
+        default=False,
+        help="Use Gemini API for raw transcript conceptual indexing instead of local Ollama",
+    )
     run_parser.set_defaults(handler=handle_run)
+
 
 
 def execute_single_video_run(pipeline: CresmoPipeline, args: argparse.Namespace) -> int:
@@ -288,7 +295,9 @@ def handle_run(args: argparse.Namespace) -> int:
         pipeline = build_pipeline(
             settings=settings,
             batch_size_override=args.batch_size,
+            web_index=getattr(args, "web_index", False),
         )
+
 
         if args.url:
             return execute_single_video_run(pipeline, args)
@@ -296,7 +305,7 @@ def handle_run(args: argparse.Namespace) -> int:
         enable_crawl = (
             False
             if getattr(args, "no_crawl", False)
-            else getattr(settings, "enable_channel_crawler", True)
+             else getattr(settings, "enable_channel_crawler", True)
         )
 
         query = BatchDiscoveryQuery(

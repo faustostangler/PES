@@ -16,6 +16,7 @@ from cresmo.application.pipeline import CresmoPipeline
 from cresmo.application.services.preflight import PreflightHealthChecker
 from cresmo.application.use_cases.concat_master import ConcatMasterUseCase
 from cresmo.application.use_cases.discover_batch_sources import DiscoverBatchSourcesUseCase
+from cresmo.application.use_cases.index_raw_transcripts import IndexRawTranscriptsUseCase
 from cresmo.application.use_cases.sync_channel import SyncChannelUseCase
 from cresmo.application.use_cases.unify_duplicate_notes import UnifyDuplicateNotesUseCase
 from cresmo.infrastructure.adapters.gemini_adapter import GeminiLLMAdapter
@@ -23,11 +24,13 @@ from cresmo.infrastructure.adapters.native_media_ingestion_adapter import (
     NativeMediaIngestionAdapter,
 )
 from cresmo.infrastructure.adapters.obsidian_vault_adapter import ObsidianVaultAdapter
+from cresmo.infrastructure.adapters.ollama_llm_adapter import OllamaLLMAdapter
 from cresmo.infrastructure.adapters.sqlite_ledger_adapter import SqliteLedgerAdapter
 from cresmo.infrastructure.config import CresmoSettings
 from cresmo.presentation.composition import (
     build_concat_master_use_case,
     build_discover_batch_sources_use_case,
+    build_index_raw_use_case,
     build_pipeline,
     build_preflight_checker,
     build_sync_channel_use_case,
@@ -142,3 +145,20 @@ class TestCompositionRoot:
         uc = build_concat_master_use_case(settings=test_settings)
         assert isinstance(uc, ConcatMasterUseCase)
         assert uc.settings is test_settings
+
+    def test_build_index_raw_use_case_default_ollama(self, test_settings: CresmoSettings) -> None:
+        uc = build_index_raw_use_case(settings=test_settings, web_index=False)
+        assert isinstance(uc, IndexRawTranscriptsUseCase)
+        assert isinstance(uc.llm, OllamaLLMAdapter)
+        assert isinstance(uc.vault_repo, ObsidianVaultAdapter)
+
+    def test_build_index_raw_use_case_web_index_gemini(self, test_settings: CresmoSettings) -> None:
+        uc = build_index_raw_use_case(settings=test_settings, web_index=True)
+        assert isinstance(uc, IndexRawTranscriptsUseCase)
+        assert isinstance(uc.llm, GeminiLLMAdapter)
+        assert isinstance(uc.vault_repo, ObsidianVaultAdapter)
+
+    def test_build_pipeline_with_web_index(self, test_settings: CresmoSettings) -> None:
+        pipeline = build_pipeline(settings=test_settings, web_index=True)
+        assert isinstance(pipeline, CresmoPipeline)
+        assert isinstance(pipeline.index_raw.llm, GeminiLLMAdapter)

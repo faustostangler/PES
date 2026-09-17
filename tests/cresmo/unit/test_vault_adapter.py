@@ -25,6 +25,7 @@ from cresmo.domain.value_objects import (
     CrossContextRelations,
     NoteTitle,
     NoteType,
+    RawIndexEntry,
 )
 from cresmo.infrastructure.adapters.obsidian_vault_adapter import ObsidianVaultAdapter
 
@@ -522,3 +523,63 @@ class TestObsidianVaultAdapter:
             channel_category="tech_ai",
         )
         assert not out_path.exists()
+
+    def test_raw_index_channel_and_brain_csv_persistence(
+        self, storage_paths: tuple[Path, Path, Path]
+    ) -> None:
+        vault_dir, raw_dir, enriched_dir = storage_paths
+        adapter = ObsidianVaultAdapter(
+            vault_dir=vault_dir,
+            raw_dir=raw_dir,
+            enriched_dir=enriched_dir,
+        )
+
+        entry1 = RawIndexEntry(
+            video_id=ContentId("vid11111111"),
+            url="https://youtube.com/watch?v=vid11111111",
+            title="Video Um",
+            channel_name="Canal Teste",
+            key_concept="Conceito Um",
+            synthesis="Síntese paratática do primeiro vídeo.",
+        )
+        entry2 = RawIndexEntry(
+            video_id=ContentId("vid22222222"),
+            url="https://youtube.com/watch?v=vid22222222",
+            title="Video Dois",
+            channel_name="Canal Teste",
+            key_concept="Conceito Dois",
+            synthesis="Síntese paratática do segundo vídeo.",
+        )
+
+        # 1. Initial indexed check
+        assert adapter.get_indexed_video_ids_for_channel("Canal Teste") == set()
+
+        # 2. Append entry 1
+        adapter.append_channel_index_entry("Canal Teste", entry1)
+        adapter.append_brain_csv_entry(entry1)
+
+        indexed = adapter.get_indexed_video_ids_for_channel("Canal Teste")
+        assert indexed == {"vid11111111"}
+
+        # Check _canal.md file content
+        canal_path = adapter.get_channel_index_path("Canal Teste")
+        assert canal_path.exists()
+        md_text = canal_path.read_text(encoding="utf-8")
+        assert "# Canal: Canal Teste" in md_text
+        assert "vid11111111" in md_text
+        assert "Conceito Um" in md_text
+
+        # 3. Append entry 2
+        adapter.append_channel_index_entry("Canal Teste", entry2)
+        adapter.append_brain_csv_entry(entry2)
+
+        indexed = adapter.get_indexed_video_ids_for_channel("Canal Teste")
+        assert indexed == {"vid11111111", "vid22222222"}
+
+        # 4. Check brain.csv content
+        csv_path = raw_dir.parent / "brain.csv"
+        assert csv_path.exists()
+        csv_text = csv_path.read_text(encoding="utf-8")
+        assert "vid11111111.md,Conceito Um,Síntese paratática do primeiro vídeo." in csv_text
+        assert "vid22222222.md,Conceito Dois,Síntese paratática do segundo vídeo." in csv_text
+

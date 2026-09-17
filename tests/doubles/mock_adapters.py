@@ -28,6 +28,7 @@ from cresmo.domain.value_objects import (
     DiscoveredMediaItem,
     LedgerEntry,
     NoteTitle,
+    RawIndexEntry,
 )
 
 
@@ -119,9 +120,25 @@ class InMemoryVaultAdapter(VaultRepositoryPort):
         self.mocs: dict[str, MapOfContent] = {}
         self.master_documents: dict[tuple[str, str, int], str] = {}
         self.channel_enriched_files: dict[str, list[Path]] = {}
+        self.channel_raw_indexes: dict[str, list[RawIndexEntry]] = {}
+        self.brain_csv_entries: list[RawIndexEntry] = []
+
+    def get_channel_index_path(self, channel_name: str) -> Path:
+        return Path(f"/mock/raw/{channel_name}/_canal.md")
+
+    def get_indexed_video_ids_for_channel(self, channel_name: str) -> set[str]:
+        entries = self.channel_raw_indexes.get(channel_name.strip(), [])
+        return {e.video_id.value for e in entries}
+
+    def append_channel_index_entry(self, channel_name: str, entry: RawIndexEntry) -> None:
+        self.channel_raw_indexes.setdefault(channel_name.strip(), []).append(entry)
+
+    def append_brain_csv_entry(self, entry: RawIndexEntry) -> None:
+        self.brain_csv_entries.append(entry)
 
     def get_enriched_files_for_channel(self, channel_name: str) -> list[Path]:
         return list(self.channel_enriched_files.get(channel_name.strip(), []))
+
 
     def save_master_document(
         self,

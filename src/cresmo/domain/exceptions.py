@@ -44,3 +44,8 @@ class RateLimitExceededError(CresmoInfrastructureError, CresmoDomainError):
 
 class IngestionNetworkError(CresmoInfrastructureError, CresmoDomainError):
     """Raised when media crawling or download fails due to network/transcription errors."""
+
+
+class LLMInfrastructureError(CresmoInfrastructureError):
+    """Raised when an external or local LLM service call fails or is unreachable."""
+

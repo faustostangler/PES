@@ -1220,3 +1220,40 @@ class TestCresmoCLI:
         ):
             code = main(["concat-master"])
             assert code == EXIT_INTERNAL_ERROR
+
+    def test_cli_index_raw_all_channels(self) -> None:
+        mock_uc = MagicMock()
+        mock_uc.index_all_channels.return_value = {"Canal 1": [MagicMock()]}
+        with patch(
+            "cresmo.presentation.commands.index_raw.build_index_raw_use_case",
+            return_value=mock_uc,
+        ) as mock_builder:
+            code = main(["index-raw"])
+            assert code == EXIT_SUCCESS
+            mock_builder.assert_called_once()
+            mock_uc.index_all_channels.assert_called_once_with(force=False)
+
+    def test_cli_index_raw_specific_channel_with_flags(self) -> None:
+        mock_uc = MagicMock()
+        mock_uc.index_channel.return_value = [MagicMock()]
+        with patch(
+            "cresmo.presentation.commands.index_raw.build_index_raw_use_case",
+            return_value=mock_uc,
+        ) as mock_builder:
+            code = main(
+                ["index-raw", "--channel", "Canal Teste", "--web-index", "--model", "custom-model", "--force"]
+            )
+            assert code == EXIT_SUCCESS
+            mock_builder.assert_called_once()
+            assert mock_builder.call_args[1]["web_index"] is True
+            assert mock_builder.call_args[1]["model_override"] == "custom-model"
+            mock_uc.index_channel.assert_called_once_with("Canal Teste", force=True)
+
+    def test_cli_index_raw_error_handling(self) -> None:
+        with patch(
+            "cresmo.presentation.commands.index_raw.build_index_raw_use_case",
+            side_effect=RuntimeError("Ollama failed"),
+        ):
+            code = main(["index-raw"])
+            assert code == EXIT_INTERNAL_ERROR
+

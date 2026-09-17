@@ -53,7 +53,7 @@ class BatchDiscoveryQuery:
     lookback_days: int | None = None
     channel_max_videos: int = 50
     discovery_workers: int | None = None
-    enable_channel_crawler: bool | None = None
+    enable_channel_crawler: bool = True
 
 
 def is_channel_or_playlist_feed(url: str) -> bool:
@@ -216,11 +216,7 @@ class DiscoverBatchSourcesUseCase:
                 probed_channels.add(norm_pch)
                 channels_to_probe.append(norm_pch)
 
-        crawler_enabled = (
-            q.enable_channel_crawler
-            if q.enable_channel_crawler is not None
-            else getattr(self.settings, "enable_channel_crawler", True)
-        )
+        crawler_enabled = q.enable_channel_crawler
 
         if self.media_ingestion_port is not None and crawler_enabled:
             workers = (

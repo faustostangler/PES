@@ -314,3 +314,28 @@ class JsonPromptProvider(PromptProviderPort):
             skill_block=skill_block,
             notes_json=notes_json,
         )
+
+    def get_raw_index_prompt(
+        self,
+        video_title: str,
+        transcript_excerpt: str,
+    ) -> tuple[str, str]:
+        """Format (system_instruction, user_prompt) for raw transcript paratactic conceptual synthesis."""
+        system_instruction = (
+            "Act as a domain expert in conceptual synthesis.\n"
+            "Analyze the provided title and transcript excerpt.\n"
+            "Output your synthesis in two distinct parts separated by a newline:\n"
+            "Line 1: Key Concept (2 to 4 words, no punctuation or markdown labels)\n"
+            "Line 2+: A dense, single paratactic synthesis paragraph in the original language.\n\n"
+            "Style guidelines:\n"
+            "- Use parataxis, direct and swift word order, single and self-contained clauses.\n"
+            "- Use asyndetic juxtaposition of ideas, rapid and incisive rhythm.\n"
+            "- Aim for syntactic clarity and an exoteric, crystalline style where form is an invisible medium.\n"
+            "- Do not use filler introductions or conversational framing."
+        )
+        user_prompt = (
+            f"Video Title: {video_title}\n\n"
+            f"Transcript Excerpt:\n{transcript_excerpt}\n"
+        )
+        return system_instruction, user_prompt
+

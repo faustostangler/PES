@@ -419,3 +419,15 @@ class TestJsonPromptProvider:
         assert provider.get_mocs_prompt("Notes") == "Legacy MOC 1 Notes"
         del provider._templates["mocs"]
         assert provider.get_mocs_prompt("Notes") == "Legacy MOC 2 Notes"
+
+    def test_get_raw_index_prompt_formats_system_and_user_prompt(self) -> None:
+        provider = JsonPromptProvider()
+        sys_inst, user_prompt = provider.get_raw_index_prompt(
+            video_title="Pareto Principle",
+            transcript_excerpt="Pareto analysis shows 80/20 distribution.",
+        )
+        assert "Key Concept" in sys_inst
+        assert "paratactic" in sys_inst.lower()
+        assert "Video Title: Pareto Principle" in user_prompt
+        assert "Pareto analysis shows 80/20 distribution." in user_prompt
+

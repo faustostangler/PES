@@ -16,6 +16,7 @@ from cresmo.presentation.commands import (
     concat_master,
     dedupe,
     export_cookies,
+    index_raw,
     run,
     sync,
     worker,
@@ -48,7 +49,9 @@ COMMAND_MODULES = (
     dedupe,
     export_cookies,
     concat_master,
+    index_raw,
 )
+
 
 
 def _create_parser() -> argparse.ArgumentParser:
@@ -84,7 +87,9 @@ def main(argv: Sequence[str] | None = None) -> int:
         "dedupe",
         "export-cookies",
         "concat-master",
+        "index-raw",
     }
+
 
     if not argv:
         argv = ["run"]

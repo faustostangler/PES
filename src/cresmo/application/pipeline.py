@@ -35,6 +35,7 @@ from cresmo.application.use_cases import (
     DiscoverAtomicInventoryUseCase,
     ExpandLongitudinalSynchronicUseCase,
     FillGapsFluidProseUseCase,
+    IndexRawTranscriptsUseCase,
     IngestRawTranscriptUseCase,
     ReconcileMOCsUseCase,
     SynthesizeAtomicBatchUseCase,
@@ -71,6 +72,7 @@ class CresmoPipeline:
         batch_size: int = 5,
         prompt_provider: PromptProviderPort | None = None,
         settings: CresmoSettings | None = None,
+        indexing_llm_port: LLMTransformationPort | None = None,
     ) -> None:
         self.media_ingestion_port = media_ingestion_port
         self.llm_port = llm_port
@@ -90,10 +92,29 @@ class CresmoPipeline:
         else:
             self.prompt_provider = prompt_provider
 
+        if indexing_llm_port is not None:
+            self.indexing_llm_port = indexing_llm_port
+        elif self.settings.indexing_provider == "ollama":
+            from cresmo.infrastructure.adapters.ollama_llm_adapter import OllamaLLMAdapter
+
+            self.indexing_llm_port = OllamaLLMAdapter(
+                base_url=self.settings.ollama_base_url,
+                model=self.settings.ollama_model,
+                timeout_seconds=self.settings.ollama_timeout_seconds,
+            )
+        else:
+            self.indexing_llm_port = self.llm_port
+
         # Use cases instantiation
         self.ingest_raw_transcript = IngestRawTranscriptUseCase(
             ingestion_port=self.media_ingestion_port,
             vault_port=self.vault_port,
+        )
+        self.index_raw = IndexRawTranscriptsUseCase(
+            vault_repo=self.vault_port,
+            llm=self.indexing_llm_port,
+            prompt_provider=self.prompt_provider,
+            max_chars=self.settings.raw_index_max_chars,
         )
         self.fill_gaps_fluid_prose = FillGapsFluidProseUseCase(
             llm_port=self.llm_port,
@@ -127,6 +148,7 @@ class CresmoPipeline:
             vault_port=self.vault_port,
             settings=self.settings,
         )
+
 
     def _synthesize_transcript(
         self,
@@ -212,6 +234,15 @@ class CresmoPipeline:
         raw = self.ingest_raw_transcript.execute(video_url=video_url)
         if raw is None:
             raise CresmoDomainError(f"Ingestion failed to retrieve transcript for: {video_url}")
+
+        try:
+            self.index_raw.index_single_transcript(raw)
+        except Exception as exc:  # noqa: BLE001
+            import logging
+
+            logging.getLogger(__name__).warning(
+                "[Pipeline] Raw indexing skipped for %s: %s", raw.content_id.value, exc
+            )
 
         return self._synthesize_transcript(
             raw=raw,
@@ -304,6 +335,15 @@ class CresmoPipeline:
         """
         raw = self._load_transcript_from_file(file_path)
         self.vault_port.save_raw_transcript(raw)
+        try:
+            self.index_raw.index_single_transcript(raw)
+        except Exception as exc:  # noqa: BLE001
+            import logging
+
+            logging.getLogger(__name__).warning(
+                "[Pipeline] Raw indexing skipped for %s: %s", raw.content_id.value, exc
+            )
+
         return self._synthesize_transcript(
             raw=raw,
             gap_filler_passes=gap_filler_passes,

@@ -6,6 +6,7 @@ and tiered index management.
 
 from __future__ import annotations
 
+import csv
 import json
 import os
 import re
@@ -30,6 +31,7 @@ from cresmo.domain.value_objects import (
     CrossContextRelations,
     NoteTitle,
     NoteType,
+    RawIndexEntry,
 )
 
 _ILLEGAL_FILENAME_CHARS = re.compile(r'[\\/*?:"<>|%]')
@@ -56,13 +58,16 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
         raw_dir: Path,
         enriched_dir: Path,
         master_dir: Path | None = None,
+        data_dir: Path | None = None,
     ) -> None:
         self.vault_dir = Path(vault_dir).resolve()
         self.raw_dir = Path(raw_dir).resolve()
         self.enriched_dir = Path(enriched_dir).resolve()
+        self.data_dir = Path(data_dir).resolve() if data_dir else self.raw_dir.parent
         self.master_dir = (
-            Path(master_dir).resolve() if master_dir else (self.raw_dir.parent / "master")
+            Path(master_dir).resolve() if master_dir else (self.data_dir / "master")
         )
+
 
         self.mocs_dir = self.vault_dir / "MOCs"
         self.index_path = self.vault_dir / "_index.json"
@@ -89,7 +94,12 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
         desc = transcript.video_description or ""
         desc_indented = "\n".join("  " + l for l in desc.splitlines())
         date_str = transcript.upload_date.strftime("%Y%m%d") if transcript.upload_date else ""
-        escaped_title = (transcript.title or transcript.content_id.value).replace('"', '\\"')
+        raw_title = (
+            transcript.title.value
+            if isinstance(transcript.title, NoteTitle)
+            else str(transcript.title or transcript.content_id.value)
+        )
+        escaped_title = raw_title.replace('"', '\\"')
         escaped_channel = transcript.channel_name.replace('"', '\\"')
         escaped_category = (transcript.channel_category or "uncategorized").replace('"', '\\"')
         channel_id_val = transcript.channel_id or "unknown_channel"
@@ -573,3 +583,51 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
         for p in cat_dir.glob(pattern):
             if p.is_file():
                 p.unlink(missing_ok=True)
+
+    def get_channel_index_path(self, channel_name: str) -> Path:
+        """Return absolute path to channel's _canal.md."""
+        return self.raw_dir / sanitize_filename(channel_name) / "_canal.md"
+
+    def get_indexed_video_ids_for_channel(self, channel_name: str) -> set[str]:
+        """Retrieve set of video IDs already indexed in the channel's _canal.md."""
+        index_file = self.get_channel_index_path(channel_name)
+        if not index_file.exists() or not index_file.is_file():
+            return set()
+        try:
+            content = index_file.read_text(encoding="utf-8", errors="ignore")
+        except OSError:
+            return set()
+
+        ids: set[str] = set()
+        for match in re.finditer(r"\*\*Video ID\*\*:\s*`([a-zA-Z0-9_-]{8,64})`", content):
+            ids.add(match.group(1))
+        for match in re.finditer(r"\[([a-zA-Z0-9_-]{8,64})\]\((https?://[^\)]+)\)", content):
+            ids.add(match.group(1))
+        return ids
+
+    def append_channel_index_entry(self, channel_name: str, entry: RawIndexEntry) -> None:
+        """Append raw index entry to data/raw/<channel_name>/_canal.md atomically."""
+        index_file = self.get_channel_index_path(channel_name)
+        index_file.parent.mkdir(parents=True, exist_ok=True)
+
+        header = ""
+        if not index_file.exists() or index_file.stat().st_size == 0:
+            header = f"# Canal: {channel_name}\n\n"
+
+        block = entry.to_markdown_block() + "\n---\n\n"
+        with open(index_file, "a", encoding="utf-8") as f:
+            if header:
+                f.write(header)
+            f.write(block)
+            f.flush()
+
+    def append_brain_csv_entry(self, entry: RawIndexEntry) -> None:
+        """Append raw index entry to data/brain.csv atomically."""
+        csv_file = self.data_dir / "brain.csv"
+        csv_file.parent.mkdir(parents=True, exist_ok=True)
+
+        with open(csv_file, "a", encoding="utf-8", newline="") as f:
+            writer = csv.writer(f)
+            writer.writerow(entry.to_csv_row())
+            f.flush()
+

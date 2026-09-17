@@ -23,6 +23,7 @@ from cresmo.domain.value_objects import (
     DiscoveredMediaItem,
     LedgerEntry,
     NoteTitle,
+    RawIndexEntry,
 )
 
 
@@ -213,6 +214,27 @@ class VaultRepositoryPort(ABC):
         """Delete previous master parts for channel before writing fresh sequential parts."""
         raise NotImplementedError("Step 1: Clear previous master documents for channel.")
 
+    @abstractmethod
+    def get_indexed_video_ids_for_channel(self, channel_name: str) -> set[str]:
+        """Retrieve set of video IDs already indexed in the channel's _canal.md."""
+        raise NotImplementedError("Step 1: Retrieve indexed video IDs for channel.")
+
+    @abstractmethod
+    def append_channel_index_entry(self, channel_name: str, entry: RawIndexEntry) -> None:
+        """Append raw index entry to data/raw/<channel_name>/_canal.md atomically."""
+        raise NotImplementedError("Step 1: Append entry to channel raw index.")
+
+    @abstractmethod
+    def append_brain_csv_entry(self, entry: RawIndexEntry) -> None:
+        """Append raw index entry to data/brain.csv atomically."""
+        raise NotImplementedError("Step 1: Append entry to brain.csv.")
+
+    @abstractmethod
+    def get_channel_index_path(self, channel_name: str) -> Path:
+        """Return absolute path to channel's _canal.md."""
+        raise NotImplementedError("Step 1: Return channel index path.")
+
+
 
 class LedgerRepositoryPort(ABC):
     """Persistence port for tracking processed content status and idempotency."""
@@ -304,3 +326,13 @@ class PromptProviderPort(ABC):
     ) -> str:
         """Format the MOC reconciliation prompt."""
         raise NotImplementedError
+
+    @abstractmethod
+    def get_raw_index_prompt(
+        self,
+        video_title: str,
+        transcript_excerpt: str,
+    ) -> tuple[str, str]:
+        """Format (system_instruction, user_prompt) for raw transcript paratactic conceptual synthesis."""
+        raise NotImplementedError
+

@@ -11,9 +11,11 @@ from collections.abc import Callable
 from pathlib import Path
 
 from cresmo.application.pipeline import CresmoPipeline
+from cresmo.application.ports import LLMTransformationPort
 from cresmo.application.services.preflight import PreflightHealthChecker
 from cresmo.application.use_cases.concat_master import ConcatMasterUseCase
 from cresmo.application.use_cases.discover_batch_sources import DiscoverBatchSourcesUseCase
+from cresmo.application.use_cases.index_raw_transcripts import IndexRawTranscriptsUseCase
 from cresmo.application.use_cases.sync_channel import SyncChannelUseCase
 from cresmo.application.use_cases.unify_duplicate_notes import UnifyDuplicateNotesUseCase
 from cresmo.infrastructure.adapters.gemini_adapter import GeminiLLMAdapter
@@ -69,12 +71,14 @@ def build_media_ingestion_adapter(
 def build_pipeline(
     settings: CresmoSettings | None = None,
     batch_size_override: int | None = None,
+    web_index: bool = False,
 ) -> CresmoPipeline:
     """Instantiate and wire production infrastructure adapters into CresmoPipeline.
 
     Args:
         settings: Validated application settings. If None, loaded fail-fast from environment.
         batch_size_override: Optional operational override for note batch size.
+        web_index: If True, uses Gemini API for raw transcript indexing instead of local Ollama.
 
     Returns:
         Configured and wired CresmoPipeline ready for execution.
@@ -121,8 +125,20 @@ def build_pipeline(
         raw_dir=resolved_settings.raw_dir,
         enriched_dir=resolved_settings.enriched_dir,
         master_dir=resolved_settings.master_dir,
+        data_dir=resolved_settings.data_dir,
     )
     ledger_port = SqliteLedgerAdapter(db_path=resolved_settings.sqlite_ledger_path)
+
+    if web_index or resolved_settings.indexing_provider == "gemini":
+        indexing_llm_port = llm_port
+    else:
+        from cresmo.infrastructure.adapters.ollama_llm_adapter import OllamaLLMAdapter
+
+        indexing_llm_port = OllamaLLMAdapter(
+            base_url=resolved_settings.ollama_base_url,
+            model=resolved_settings.ollama_model,
+            timeout_seconds=resolved_settings.ollama_timeout_seconds,
+        )
 
     effective_batch_size = (
         batch_size_override if batch_size_override is not None else resolved_settings.batch_size
@@ -136,7 +152,9 @@ def build_pipeline(
         batch_size=effective_batch_size,
         prompt_provider=prompt_provider,
         settings=resolved_settings,
+        indexing_llm_port=indexing_llm_port,
     )
+
 
 
 def build_preflight_checker(
@@ -256,3 +274,57 @@ def build_concat_master_use_case(
         vault_port=resolved_vault,
         settings=resolved_settings,
     )
+
+
+def build_index_raw_use_case(
+    settings: CresmoSettings | None = None,
+    web_index: bool = False,
+    model_override: str | None = None,
+) -> IndexRawTranscriptsUseCase:
+    """Instantiate IndexRawTranscriptsUseCase selecting between local Ollama and Gemini Web API.
+
+    Args:
+        settings: Application settings.
+        web_index: If True, uses cloud Gemini API instead of local Ollama.
+        model_override: Optional model name override.
+
+    Returns:
+        Configured IndexRawTranscriptsUseCase ready for execution.
+    """
+    resolved_settings = settings or CresmoSettings()
+    vault_port = ObsidianVaultAdapter(
+        vault_dir=resolved_settings.vault_dir,
+        raw_dir=resolved_settings.raw_dir,
+        enriched_dir=resolved_settings.enriched_dir,
+        master_dir=resolved_settings.master_dir,
+        data_dir=resolved_settings.data_dir,
+    )
+    prompt_provider = JsonPromptProvider(
+        prompts_path=resolved_settings.prompts_path,
+        skills_dir=resolved_settings.skills_dir,
+    )
+
+    if web_index or resolved_settings.indexing_provider == "gemini":
+        from cresmo.infrastructure.adapters.gemini_adapter import GeminiLLMAdapter
+
+        llm: LLMTransformationPort = GeminiLLMAdapter(
+            api_key=resolved_settings.gemini_api_key.get_secret_value(),
+            model_name=model_override or resolved_settings.gemini_model,
+            fallback_model_name=resolved_settings.gemini_fallback_model,
+        )
+    else:
+        from cresmo.infrastructure.adapters.ollama_llm_adapter import OllamaLLMAdapter
+
+        llm = OllamaLLMAdapter(
+            base_url=resolved_settings.ollama_base_url,
+            model=model_override or resolved_settings.ollama_model,
+            timeout_seconds=resolved_settings.ollama_timeout_seconds,
+        )
+
+    return IndexRawTranscriptsUseCase(
+        vault_repo=vault_port,
+        llm=llm,
+        prompt_provider=prompt_provider,
+        max_chars=resolved_settings.raw_index_max_chars,
+    )
+
