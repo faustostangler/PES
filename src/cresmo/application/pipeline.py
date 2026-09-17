@@ -16,8 +16,12 @@ import hashlib
 import re
 from dataclasses import dataclass
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import yaml
+
+if TYPE_CHECKING:
+    from cresmo.infrastructure.config import CresmoSettings
 
 from cresmo.application.ports import (
     LedgerRepositoryPort,
@@ -27,6 +31,7 @@ from cresmo.application.ports import (
     VaultRepositoryPort,
 )
 from cresmo.application.use_cases import (
+    ConcatMasterUseCase,
     DiscoverAtomicInventoryUseCase,
     ExpandLongitudinalSynchronicUseCase,
     FillGapsFluidProseUseCase,
@@ -65,11 +70,19 @@ class CresmoPipeline:
         ledger_port: LedgerRepositoryPort | None = None,
         batch_size: int = 5,
         prompt_provider: PromptProviderPort | None = None,
+        settings: CresmoSettings | None = None,
     ) -> None:
         self.media_ingestion_port = media_ingestion_port
         self.llm_port = llm_port
         self.vault_port = vault_port
         self.ledger_port = ledger_port
+        if settings is None:
+            from cresmo.infrastructure.config import CresmoSettings
+
+            self.settings = CresmoSettings()
+        else:
+            self.settings = settings
+
         if prompt_provider is None:
             from cresmo.infrastructure.adapters.prompt_provider import JsonPromptProvider
 
@@ -109,6 +122,10 @@ class CresmoPipeline:
         )
         self.unify_duplicate_notes = UnifyDuplicateNotesUseCase(
             vault_port=self.vault_port,
+        )
+        self.concat_master = ConcatMasterUseCase(
+            vault_port=self.vault_port,
+            settings=self.settings,
         )
 
     def _synthesize_transcript(

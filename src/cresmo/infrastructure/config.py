@@ -77,6 +77,11 @@ class CresmoSettings(BaseSettings):
         return self.data_dir / "enriched"
 
     @property
+    def master_dir(self) -> Path:
+        """Directory for consolidated master compendiums per channel category for RAG."""
+        return self.data_dir / "master"
+
+    @property
     def index_path(self) -> Path:
         """Master lookup JSON index."""
         return self.vault_dir / "_index.json"
@@ -99,6 +104,16 @@ class CresmoSettings(BaseSettings):
         default="playlist-priority.txt",
         description="Filename of the priority video manifest inside data_dir.",
     )
+    brain_csv_filename: str = Field(
+        default="brain.csv",
+        description="Filename of the global conceptual index CSV inside data_dir.",
+    )
+
+    @property
+    def brain_csv_path(self) -> Path:
+        """Absolute path to global brain.csv conceptual index file."""
+        return self.data_dir / self.brain_csv_filename
+
 
     priority_texts_dirname: str = Field(
         default="priority",
@@ -126,6 +141,7 @@ class CresmoSettings(BaseSettings):
         self.vault_dir.mkdir(parents=True, exist_ok=True)
         self.raw_dir.mkdir(parents=True, exist_ok=True)
         self.enriched_dir.mkdir(parents=True, exist_ok=True)
+        self.master_dir.mkdir(parents=True, exist_ok=True)
         self.priority_texts_dir.mkdir(parents=True, exist_ok=True)
 
     browser_headers_path: Path | None = Field(
@@ -134,7 +150,9 @@ class CresmoSettings(BaseSettings):
     )
     cookies_file: Path | None = Field(
         default=None,
-        validation_alias=AliasChoices("cookies_file", "DEFAULT_COOKIES_FILE", "CRESMO_COOKIES_FILE"),
+        validation_alias=AliasChoices(
+            "cookies_file", "DEFAULT_COOKIES_FILE", "CRESMO_COOKIES_FILE"
+        ),
         description="Path to Netscape cookies file for YouTube authentication.",
     )
     prompts_path: Path | None = Field(
@@ -235,3 +253,32 @@ class CresmoSettings(BaseSettings):
         validation_alias=AliasChoices("gap_filler_passes", "stage_2_passes"),
         description="Default Socratic gap filler refinement passes.",
     )
+    concat_max_words: int = Field(
+        default=500_000,
+        validation_alias=AliasChoices("concat_max_words", "CONCAT_MAX_WORDS", "MASTER_MAX_WORDS"),
+        description="Maximum word limit per aggregated master document before sequential rollover without mid-file splits.",
+    )
+    ollama_base_url: str = Field(
+        default="http://localhost:11434",
+        validation_alias=AliasChoices("ollama_base_url", "CRESMO_OLLAMA_URL", "OLLAMA_URL"),
+        description="Local Ollama endpoint URL for raw transcript conceptual indexing.",
+    )
+    ollama_model: str = Field(
+        default="qwen2.5:7b",
+        validation_alias=AliasChoices("ollama_model", "CRESMO_OLLAMA_MODEL", "OLLAMA_MODEL"),
+        description="Local Ollama model variant for raw transcript conceptual indexing.",
+    )
+    indexing_provider: str = Field(
+        default="ollama",
+        validation_alias=AliasChoices("indexing_provider", "CRESMO_INDEXING_PROVIDER"),
+        description="Provider for raw transcript conceptual indexing: 'ollama' (default local) or 'gemini' (cloud API).",
+    )
+    ollama_timeout_seconds: float = Field(
+        default=60.0,
+        description="HTTP timeout in seconds for local Ollama inference requests.",
+    )
+    raw_index_max_chars: int = Field(
+        default=3000,
+        description="Maximum characters of transcript body passed to LLM for conceptual synthesis.",
+    )
+

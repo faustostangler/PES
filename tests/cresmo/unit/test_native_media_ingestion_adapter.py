@@ -393,7 +393,7 @@ class TestNativeMediaIngestionAdapter:
             mock_ydl_cls.return_value.__enter__.return_value = mock_ydl
 
             res = adapter.extract_channel_url_from_video("https://www.youtube.com/watch?v=abc12345")
-            assert res == "https://www.youtube.com/@ChannelHandle"
+            assert res == "https://www.youtube.com/@ChannelHandle/videos"
 
     def test_extract_channel_url_from_video_fallback_to_channel_id(self) -> None:
         adapter = NativeMediaIngestionAdapter()
@@ -405,7 +405,7 @@ class TestNativeMediaIngestionAdapter:
             mock_ydl_cls.return_value.__enter__.return_value = mock_ydl
 
             res = adapter.extract_channel_url_from_video("https://www.youtube.com/watch?v=abc12345")
-            assert res == "https://www.youtube.com/channel/UC1234567890abcdef"
+            assert res == "https://www.youtube.com/playlist?list=UU1234567890abcdef"
 
     def test_extract_channel_url_from_video_returns_none_on_error(self) -> None:
         adapter = NativeMediaIngestionAdapter()

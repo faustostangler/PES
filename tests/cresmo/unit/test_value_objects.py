@@ -174,7 +174,69 @@ class TestNormalizeToUploadsPlaylistUrl:
 
     def test_user_handle_appends_videos_tab(self) -> None:
         handle_url = "https://www.youtube.com/@ancapsu"
-        assert normalize_to_uploads_playlist_url(handle_url) == "https://www.youtube.com/@ancapsu/videos"
+        assert (
+            normalize_to_uploads_playlist_url(handle_url)
+            == "https://www.youtube.com/@ancapsu/videos"
+        )
 
     def test_empty_string_returned_intact(self) -> None:
         assert normalize_to_uploads_playlist_url("") == ""
+
+
+class TestMasterDocumentResult:
+    """Tests for MasterDocumentResult value object invariant enforcement."""
+
+    def test_valid_master_document_result(self) -> None:
+        from pathlib import Path
+
+        from cresmo.domain.value_objects import MasterDocumentResult
+
+        res = MasterDocumentResult(
+            channel_name="Fabio Akita",
+            channel_category="tech_ai",
+            output_path=Path("/tmp/master/tech_ai/Fabio_Akita_001.md"),
+            part_number=1,
+            word_count=450000,
+            document_count=25,
+            video_ids=("vid1", "vid2"),
+        )
+        assert res.channel_name == "Fabio Akita"
+        assert res.channel_category == "tech_ai"
+        assert res.part_number == 1
+        assert res.word_count == 450000
+        assert res.document_count == 25
+        assert len(res.video_ids) == 2
+
+    def test_invalid_channel_name_raises_domain_error(self) -> None:
+        from pathlib import Path
+
+        from cresmo.domain.exceptions import DomainValidationError
+        from cresmo.domain.value_objects import MasterDocumentResult
+
+        with pytest.raises(DomainValidationError, match="channel_name cannot be empty"):
+            MasterDocumentResult(
+                channel_name="   ",
+                channel_category="tech_ai",
+                output_path=Path("/tmp/out.md"),
+                part_number=1,
+                word_count=100,
+                document_count=1,
+                video_ids=("vid1",),
+            )
+
+    def test_invalid_part_number_raises_domain_error(self) -> None:
+        from pathlib import Path
+
+        from cresmo.domain.exceptions import DomainValidationError
+        from cresmo.domain.value_objects import MasterDocumentResult
+
+        with pytest.raises(DomainValidationError, match="part_number must be >= 1"):
+            MasterDocumentResult(
+                channel_name="Channel",
+                channel_category="tech_ai",
+                output_path=Path("/tmp/out.md"),
+                part_number=0,
+                word_count=100,
+                document_count=1,
+                video_ids=("vid1",),
+            )

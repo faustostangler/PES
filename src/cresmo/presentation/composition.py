@@ -12,6 +12,7 @@ from pathlib import Path
 
 from cresmo.application.pipeline import CresmoPipeline
 from cresmo.application.services.preflight import PreflightHealthChecker
+from cresmo.application.use_cases.concat_master import ConcatMasterUseCase
 from cresmo.application.use_cases.discover_batch_sources import DiscoverBatchSourcesUseCase
 from cresmo.application.use_cases.sync_channel import SyncChannelUseCase
 from cresmo.application.use_cases.unify_duplicate_notes import UnifyDuplicateNotesUseCase
@@ -119,6 +120,7 @@ def build_pipeline(
         vault_dir=resolved_settings.vault_dir,
         raw_dir=resolved_settings.raw_dir,
         enriched_dir=resolved_settings.enriched_dir,
+        master_dir=resolved_settings.master_dir,
     )
     ledger_port = SqliteLedgerAdapter(db_path=resolved_settings.sqlite_ledger_path)
 
@@ -133,6 +135,7 @@ def build_pipeline(
         ledger_port=ledger_port,
         batch_size=effective_batch_size,
         prompt_provider=prompt_provider,
+        settings=resolved_settings,
     )
 
 
@@ -226,4 +229,30 @@ def build_discover_batch_sources_use_case(
         media_ingestion_port=media_ingestion_port,
         settings=resolved_settings,
         progress_callback=progress_callback,
+    )
+
+
+def build_concat_master_use_case(
+    settings: CresmoSettings | None = None,
+    vault_port: ObsidianVaultAdapter | None = None,
+) -> ConcatMasterUseCase:
+    """Instantiate ConcatMasterUseCase with configured dependencies.
+
+    Args:
+        settings: Application settings.
+        vault_port: Optional pre-configured ObsidianVaultAdapter instance.
+
+    Returns:
+        Configured ConcatMasterUseCase ready for execution.
+    """
+    resolved_settings = settings or CresmoSettings()
+    resolved_vault = vault_port or ObsidianVaultAdapter(
+        vault_dir=resolved_settings.vault_dir,
+        raw_dir=resolved_settings.raw_dir,
+        enriched_dir=resolved_settings.enriched_dir,
+        master_dir=resolved_settings.master_dir,
+    )
+    return ConcatMasterUseCase(
+        vault_port=resolved_vault,
+        settings=resolved_settings,
     )

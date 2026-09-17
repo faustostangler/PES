@@ -47,9 +47,22 @@ class TestCresmoSettings:
         assert settings.vault_dir.name == "vault"
         assert settings.raw_dir == settings.data_dir / "raw"
         assert settings.enriched_dir == settings.data_dir / "enriched"
+        assert settings.master_dir == settings.data_dir / "master"
         assert settings.index_path == settings.vault_dir / "_index.json"
         assert settings.sqlite_ledger_path == settings.data_dir / "cresmo_ledger.db"
         assert settings.browser_cookies == "firefox"
         assert settings.auto_extract_cookies is True
         assert settings.enable_channel_crawler is True
         assert settings.require_auth_cookies is False
+        assert settings.concat_max_words == 500_000
+        assert settings.brain_csv_path == settings.data_dir / "brain.csv"
+        assert settings.ollama_base_url == "http://localhost:11434"
+        assert settings.ollama_model == "qwen2.5:7b"
+        assert settings.indexing_provider == "ollama"
+        assert settings.raw_index_max_chars == 3000
+
+    def test_ensure_directories_creates_master_dir(self, tmp_path: Path) -> None:
+        settings = CresmoSettings(data_dir=tmp_path / "data", vault_dir=tmp_path / "vault")
+        settings.ensure_directories()
+        assert settings.master_dir.exists()
+        assert settings.master_dir.is_dir()

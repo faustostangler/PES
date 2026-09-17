@@ -81,7 +81,11 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             opts["http_headers"] = self._header_generator.get_random_headers()
 
         # Inject Netscape authentication cookies if file exists
-        if self._cookie_file and self._cookie_file.exists() and self._cookie_file.stat().st_size > 0:
+        if (
+            self._cookie_file
+            and self._cookie_file.exists()
+            and self._cookie_file.stat().st_size > 0
+        ):
             opts["cookiefile"] = str(self._cookie_file)
 
         # Inject JavaScript runtime for YouTube n-sig challenge solving
@@ -240,12 +244,14 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
 
         with tempfile.TemporaryDirectory(prefix="cresmo_scratch_") as scratch_str:
             scratch_path = Path(scratch_str)
-            ydl_opts: dict[str, Any] = self._build_ydl_opts({
-                "format": "bestaudio/best",
-                "outtmpl": str(scratch_path / "%(id)s.%(ext)s"),
-                "quiet": True,
-                "no_warnings": True,
-            })
+            ydl_opts: dict[str, Any] = self._build_ydl_opts(
+                {
+                    "format": "bestaudio/best",
+                    "outtmpl": str(scratch_path / "%(id)s.%(ext)s"),
+                    "quiet": True,
+                    "no_warnings": True,
+                }
+            )
 
             try:
                 with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -291,11 +297,13 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         """
         video_id = self._extract_video_id(video_url)
 
-        ydl_opts: dict[str, Any] = self._build_ydl_opts({
-            "skip_download": True,
-            "quiet": True,
-            "no_warnings": True,
-        })
+        ydl_opts: dict[str, Any] = self._build_ydl_opts(
+            {
+                "skip_download": True,
+                "quiet": True,
+                "no_warnings": True,
+            }
+        )
 
         try:
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -368,12 +376,14 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
     ) -> list[DiscoveredMediaItem]:
         """Discover media items from a YouTube channel or playlist feed."""
         target_url = normalize_to_uploads_playlist_url(query.channel_url)
-        ydl_opts: dict[str, Any] = self._build_ydl_opts({
-            "extract_flat": True,
-            "playlistend": query.max_videos,
-            "quiet": True,
-            "no_warnings": True,
-        })
+        ydl_opts: dict[str, Any] = self._build_ydl_opts(
+            {
+                "extract_flat": True,
+                "playlistend": query.max_videos,
+                "quiet": True,
+                "no_warnings": True,
+            }
+        )
 
         try:
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -451,11 +461,13 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         video_url: str,
     ) -> str | None:
         """Resolve YouTube channel URL or feed identifier from a video URL."""
-        ydl_opts: dict[str, Any] = self._build_ydl_opts({
-            "extract_flat": True,
-            "quiet": True,
-            "no_warnings": True,
-        })
+        ydl_opts: dict[str, Any] = self._build_ydl_opts(
+            {
+                "extract_flat": True,
+                "quiet": True,
+                "no_warnings": True,
+            }
+        )
 
         try:
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:

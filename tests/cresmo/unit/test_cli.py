@@ -927,6 +927,54 @@ class TestCresmoCLI:
             assert code == EXIT_SUCCESS
             assert mock_settings.days_lookback == 14
 
+    def test_handle_run_crawl_defaults_and_no_crawl_flag(self) -> None:
+        from argparse import Namespace
+
+        from cresmo.presentation.commands.run import handle_run
+
+        with (
+            patch("cresmo.presentation.commands.run.build_pipeline"),
+            patch(
+                "cresmo.presentation.commands.run.load_batch_sources", return_value=[]
+            ) as mock_load,
+            patch("cresmo.presentation.commands.run.CresmoSettings") as mock_settings_cls,
+        ):
+            mock_settings = MagicMock()
+            mock_settings.enable_channel_crawler = True
+            mock_settings.days_lookback = 365
+            mock_settings.channel_discovery_workers = 30
+            mock_settings_cls.return_value = mock_settings
+
+            # Case 1: Default run without --no-crawl (crawling is enabled)
+            args_default = Namespace(
+                url=None,
+                manifest=None,
+                dry_run=False,
+                no_scan_raw=False,
+                batch_size=None,
+                lookback=None,
+                channel_max_videos=50,
+                no_crawl=False,
+            )
+            assert handle_run(args_default) == EXIT_SUCCESS
+            query_default = mock_load.call_args[1]["query"]
+            assert query_default.enable_channel_crawler is True
+
+            # Case 2: User supplies --no-crawl (crawling is disabled)
+            args_no_crawl = Namespace(
+                url=None,
+                manifest=None,
+                dry_run=False,
+                no_scan_raw=False,
+                batch_size=None,
+                lookback=None,
+                channel_max_videos=50,
+                no_crawl=True,
+            )
+            assert handle_run(args_no_crawl) == EXIT_SUCCESS
+            query_no_crawl = mock_load.call_args[1]["query"]
+            assert query_no_crawl.enable_channel_crawler is False
+
     def test_check_config_telemetry_masked_and_exceptions(self) -> None:
         from argparse import Namespace
 
@@ -1120,4 +1168,55 @@ class TestCresmoCLI:
             ),
         ):
             code = main(["worker", "--channel", "https://youtube.com/@test"])
+            assert code == EXIT_INTERNAL_ERROR
+
+    def test_cli_concat_master_all_channels(self) -> None:
+        mock_uc = MagicMock()
+        mock_uc.execute_all.return_value = {
+            "ChannelA": [
+                MagicMock(
+                    channel_name="ChannelA",
+                    channel_category="tech",
+                    part_number=1,
+                    word_count=5000,
+                    document_count=3,
+                    output_path=Path("/tmp/master/tech/ChannelA_001.md"),
+                )
+            ]
+        }
+        with patch(
+            "cresmo.presentation.commands.concat_master.build_concat_master_use_case",
+            return_value=mock_uc,
+        ):
+            assert main(["concat-master"]) == EXIT_SUCCESS
+            mock_uc.execute_all.assert_called_once_with(max_words=None)
+
+    def test_cli_concat_master_specific_channel(self) -> None:
+        mock_uc = MagicMock()
+        mock_uc.execute_for_channel.return_value = [
+            MagicMock(
+                channel_name="Fabio Akita",
+                channel_category="tech_ai",
+                part_number=1,
+                word_count=12000,
+                document_count=5,
+                output_path=Path("/tmp/master/tech_ai/Fabio_Akita_001.md"),
+            )
+        ]
+        with patch(
+            "cresmo.presentation.commands.concat_master.build_concat_master_use_case",
+            return_value=mock_uc,
+        ):
+            code = main(["concat-master", "--channel", "Fabio Akita", "--max-words", "300000"])
+            assert code == EXIT_SUCCESS
+            mock_uc.execute_for_channel.assert_called_once_with(
+                channel_name="Fabio Akita", max_words=300000
+            )
+
+    def test_cli_concat_master_error_handling(self) -> None:
+        with patch(
+            "cresmo.presentation.commands.concat_master.build_concat_master_use_case",
+            side_effect=RuntimeError("Disk failure"),
+        ):
+            code = main(["concat-master"])
             assert code == EXIT_INTERNAL_ERROR

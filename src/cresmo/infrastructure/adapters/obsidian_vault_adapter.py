@@ -41,6 +41,12 @@ def sanitize_filename(name: str) -> str:
     return _ILLEGAL_FILENAME_CHARS.sub("_", name.strip())
 
 
+def channel_to_slug(name: str) -> str:
+    """Convert channel name to safe slug with underscores instead of whitespace."""
+    clean = re.sub(r"\s+", "_", name.strip())
+    return _ILLEGAL_FILENAME_CHARS.sub("_", clean)
+
+
 class ObsidianVaultAdapter(VaultRepositoryPort):
     """Filesystem-backed Obsidian Second Brain vault adapter."""
 
@@ -49,10 +55,14 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
         vault_dir: Path,
         raw_dir: Path,
         enriched_dir: Path,
+        master_dir: Path | None = None,
     ) -> None:
         self.vault_dir = Path(vault_dir).resolve()
         self.raw_dir = Path(raw_dir).resolve()
         self.enriched_dir = Path(enriched_dir).resolve()
+        self.master_dir = (
+            Path(master_dir).resolve() if master_dir else (self.raw_dir.parent / "master")
+        )
 
         self.mocs_dir = self.vault_dir / "MOCs"
         self.index_path = self.vault_dir / "_index.json"
@@ -60,6 +70,7 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
         # Ensure base directory tree exists
         self.raw_dir.mkdir(parents=True, exist_ok=True)
         self.enriched_dir.mkdir(parents=True, exist_ok=True)
+        self.master_dir.mkdir(parents=True, exist_ok=True)
         self.vault_dir.mkdir(parents=True, exist_ok=True)
         self.mocs_dir.mkdir(parents=True, exist_ok=True)
 
@@ -524,3 +535,41 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
                 updated_count += 1
 
         return updated_count
+
+    def get_enriched_files_for_channel(self, channel_name: str) -> list[Path]:
+        """Retrieve sorted list of all enriched markdown file paths for a given channel."""
+        ch_dir = self.enriched_dir / sanitize_filename(channel_name)
+        if not ch_dir.exists() or not ch_dir.is_dir():
+            return []
+        return sorted(p for p in ch_dir.glob("*.md") if p.is_file())
+
+    def save_master_document(
+        self,
+        channel_name: str,
+        channel_category: str,
+        part_number: int,
+        content: str,
+    ) -> Path:
+        """Persist aggregated master document to master/<channel_category>/<channel_slug>_001.md."""
+        cat_dir = self.master_dir / channel_to_slug(channel_category)
+        cat_dir.mkdir(parents=True, exist_ok=True)
+        channel_slug = channel_to_slug(channel_name)
+        filename = f"{channel_slug}_{part_number:03d}.md"
+        target_path = cat_dir / filename
+        self._atomic_write(target_path, content)
+        return target_path
+
+    def clear_master_documents_for_channel(
+        self,
+        channel_name: str,
+        channel_category: str,
+    ) -> None:
+        """Delete previous master parts for channel before writing fresh sequential parts."""
+        cat_dir = self.master_dir / channel_to_slug(channel_category)
+        channel_slug = channel_to_slug(channel_name)
+        if not cat_dir.exists() or not cat_dir.is_dir():
+            return
+        pattern = f"{channel_slug}_*.md"
+        for p in cat_dir.glob(pattern):
+            if p.is_file():
+                p.unlink(missing_ok=True)

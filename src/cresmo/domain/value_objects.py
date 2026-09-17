@@ -10,6 +10,7 @@ import re
 from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
+from pathlib import Path
 
 from cresmo.domain.exceptions import DomainValidationError, NoteTypologyError
 
@@ -206,7 +207,9 @@ def normalize_to_uploads_playlist_url(channel_ref: str) -> str:
         return f"https://www.youtube.com/playlist?list={uploads_playlist_id}"
 
     formatted = cleaned if cleaned.startswith(("http://", "https://")) else f"https://{cleaned}"
-    if "/@" in formatted and not formatted.endswith(("/videos", "/shorts", "/streams", "/playlists")):
+    if "/@" in formatted and not formatted.endswith(
+        ("/videos", "/shorts", "/streams", "/playlists")
+    ):
         return f"{formatted.rstrip('/')}/videos"
 
     if formatted.startswith("https://@"):
@@ -286,3 +289,99 @@ class LedgerEntry:
         object.__setattr__(self, "media_url", u)
         object.__setattr__(self, "title", t)
         object.__setattr__(self, "channel_name", c)
+
+
+@dataclass(frozen=True)
+class MasterDocumentResult:
+    """Immutable report representing a consolidated master document for RAG."""
+
+    channel_name: str
+    channel_category: str
+    output_path: Path
+    part_number: int
+    word_count: int
+    document_count: int
+    video_ids: tuple[str, ...]
+
+    def __post_init__(self) -> None:
+        c = self.channel_name.strip()
+        cat = self.channel_category.strip()
+        if not c:
+            raise DomainValidationError("MasterDocumentResult channel_name cannot be empty.")
+        if not cat:
+            raise DomainValidationError("MasterDocumentResult channel_category cannot be empty.")
+        if self.part_number < 1:
+            raise DomainValidationError(
+                f"MasterDocumentResult part_number must be >= 1. Got: {self.part_number}"
+            )
+        if self.word_count < 0:
+            raise DomainValidationError(
+                f"MasterDocumentResult word_count cannot be negative. Got: {self.word_count}"
+            )
+        if self.document_count < 0:
+            raise DomainValidationError(
+                f"MasterDocumentResult document_count cannot be negative. Got: {self.document_count}"
+            )
+        object.__setattr__(self, "channel_name", c)
+        object.__setattr__(self, "channel_category", cat)
+
+
+@dataclass(frozen=True)
+class RawIndexEntry:
+    """Immutable Value Object representing a single conceptual index entry for a raw transcript.
+
+    Walkthrough:
+    1. Holds canonical video identity (ContentId, url, channel, title).
+    2. Encapsulates distilled key concept (2 to 4 words).
+    3. Encapsulates paratactic synthesis paragraph.
+    4. Provides formatting helpers for both Markdown (_canal.md) and CSV (brain.csv).
+    """
+
+    video_id: ContentId
+    url: str
+    title: str
+    channel_name: str
+    key_concept: str
+    synthesis: str
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.video_id, ContentId):
+            raise DomainValidationError(
+                f"RawIndexEntry video_id must be a ContentId instance. Got: {type(self.video_id)}"
+            )
+        u = self.url.strip()
+        t = self.title.strip()
+        c = self.channel_name.strip()
+        kc = " ".join(self.key_concept.split())
+        s = self.synthesis.strip()
+
+        if not u:
+            raise DomainValidationError("RawIndexEntry url cannot be empty.")
+        if not t:
+            raise DomainValidationError("RawIndexEntry title cannot be empty.")
+        if not c:
+            raise DomainValidationError("RawIndexEntry channel_name cannot be empty.")
+        if not kc:
+            raise DomainValidationError("RawIndexEntry key_concept cannot be empty.")
+        if not s:
+            raise DomainValidationError("RawIndexEntry synthesis cannot be empty.")
+
+        object.__setattr__(self, "url", u)
+        object.__setattr__(self, "title", t)
+        object.__setattr__(self, "channel_name", c)
+        object.__setattr__(self, "key_concept", kc)
+        object.__setattr__(self, "synthesis", s)
+
+    def to_markdown_block(self) -> str:
+        """Format entry as a rich Markdown block with title link, ID, concept, and paratactic paragraph."""
+        return (
+            f"### [{self.title}]({self.url})\n"
+            f"- **Video ID**: `{self.video_id.value}` | **Conceito**: {self.key_concept}\n\n"
+            f"{self.synthesis}\n"
+        )
+
+    def to_csv_row(self) -> list[str]:
+        """Format entry as a 3-element row for brain.csv: [filename, concept, collapsed_synthesis]."""
+        clean_synthesis = " ".join(self.synthesis.split())
+        return [f"{self.video_id.value}.md", self.key_concept, clean_synthesis]
+
