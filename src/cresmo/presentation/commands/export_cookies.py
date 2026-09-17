@@ -56,11 +56,7 @@ def handle_export_cookies(args: argparse.Namespace) -> int:
     """Extract YouTube session cookies from browser into target Netscape file."""
     try:
         settings = CresmoSettings()
-        output_file = (
-            args.output
-            or settings.cookies_file
-            or (settings.data_dir / "cookies.txt")
-        )
+        output_file = args.output or settings.cookies_file or (settings.data_dir / "cookies.txt")
         output_path = Path(output_file).resolve()
 
         if output_path.exists() and not args.force and has_valid_auth_cookies(output_path):

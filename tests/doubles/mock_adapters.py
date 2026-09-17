@@ -117,6 +117,34 @@ class InMemoryVaultAdapter(VaultRepositoryPort):
         self.atomic_notes: dict[str, AtomicNote] = {}
         self.index_entries: dict[str, dict[str, Any]] = {}
         self.mocs: dict[str, MapOfContent] = {}
+        self.master_documents: dict[tuple[str, str, int], str] = {}
+        self.channel_enriched_files: dict[str, list[Path]] = {}
+
+    def get_enriched_files_for_channel(self, channel_name: str) -> list[Path]:
+        return list(self.channel_enriched_files.get(channel_name.strip(), []))
+
+    def save_master_document(
+        self,
+        channel_name: str,
+        channel_category: str,
+        part_number: int,
+        content: str,
+    ) -> Path:
+        self.master_documents[(channel_name.strip(), channel_category.strip(), part_number)] = content
+        return Path(f"/mock/master/{channel_category}/{channel_name}_{part_number:03d}.md")
+
+    def clear_master_documents_for_channel(
+        self,
+        channel_name: str,
+        channel_category: str,
+    ) -> None:
+        keys_to_del = [
+            k
+            for k in self.master_documents
+            if k[0] == channel_name.strip() and k[1] == channel_category.strip()
+        ]
+        for k in keys_to_del:
+            del self.master_documents[k]
 
     def save_raw_transcript(self, transcript: RawTranscript) -> None:
         self.raw_transcripts[transcript.content_id.value] = transcript

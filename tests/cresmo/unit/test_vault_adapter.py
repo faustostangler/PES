@@ -479,3 +479,46 @@ class TestObsidianVaultAdapter:
         with patch("pathlib.Path.read_text", side_effect=OSError("Disk read error")):
             count = adapter.rewrite_wiki_links(NoteTitle("Old Title"), NoteTitle("New Title"))
             assert count == 0
+
+    def test_master_document_persistence_and_clearing(
+        self, storage_paths: tuple[Path, Path, Path]
+    ) -> None:
+        vault_dir, raw_dir, enriched_dir = storage_paths
+        master_dir = vault_dir.parent / "master"
+        adapter = ObsidianVaultAdapter(
+            vault_dir=vault_dir,
+            raw_dir=raw_dir,
+            enriched_dir=enriched_dir,
+            master_dir=master_dir,
+        )
+
+        # 1. Enriched files discovery
+        ch_dir = enriched_dir / "Fabio Akita"
+        ch_dir.mkdir(parents=True, exist_ok=True)
+        f1 = ch_dir / "vid1.md"
+        f2 = ch_dir / "vid2.md"
+        f1.write_text("file 1", encoding="utf-8")
+        f2.write_text("file 2", encoding="utf-8")
+
+        files = adapter.get_enriched_files_for_channel("Fabio Akita")
+        assert len(files) == 2
+        assert f1 in files and f2 in files
+
+        # 2. Save master document
+        out_path = adapter.save_master_document(
+            channel_name="Fabio Akita",
+            channel_category="tech_ai",
+            part_number=1,
+            content="Aggregated master content part 1",
+        )
+        assert out_path.exists()
+        assert out_path.name == "Fabio_Akita_001.md"
+        assert out_path.parent.name == "tech_ai"
+        assert out_path.read_text(encoding="utf-8") == "Aggregated master content part 1"
+
+        # 3. Clear master documents
+        adapter.clear_master_documents_for_channel(
+            channel_name="Fabio Akita",
+            channel_category="tech_ai",
+        )
+        assert not out_path.exists()

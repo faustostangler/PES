@@ -188,6 +188,31 @@ class VaultRepositoryPort(ABC):
         """Remove specific canonical title or alias key from master _index.json."""
         raise NotImplementedError("Step 1: Remove index entry.")
 
+    @abstractmethod
+    def get_enriched_files_for_channel(self, channel_name: str) -> list[Path]:
+        """Retrieve sorted list of all enriched markdown file paths for a given channel."""
+        raise NotImplementedError("Step 1: Retrieve enriched file paths for channel.")
+
+    @abstractmethod
+    def save_master_document(
+        self,
+        channel_name: str,
+        channel_category: str,
+        part_number: int,
+        content: str,
+    ) -> Path:
+        """Persist aggregated master document to master/<channel_category>/<channel_slug>_001.md."""
+        raise NotImplementedError("Step 1: Persist master document atomically.")
+
+    @abstractmethod
+    def clear_master_documents_for_channel(
+        self,
+        channel_name: str,
+        channel_category: str,
+    ) -> None:
+        """Delete previous master parts for channel before writing fresh sequential parts."""
+        raise NotImplementedError("Step 1: Clear previous master documents for channel.")
+
 
 class LedgerRepositoryPort(ABC):
     """Persistence port for tracking processed content status and idempotency."""

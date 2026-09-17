@@ -10,6 +10,7 @@ Organized across the 7 incremental integer stages:
 - Stage 7: UnifyDuplicateNotesUseCase
 """
 
+from cresmo.application.use_cases.concat_master import ConcatMasterUseCase
 from cresmo.application.use_cases.discover_atomic_inventory import (
     DiscoverAtomicInventoryUseCase,
 )
@@ -39,6 +40,7 @@ from cresmo.application.use_cases.unify_duplicate_notes import (
 __all__ = [
     "BatchDiscoveryQuery",
     "BatchSource",
+    "ConcatMasterUseCase",
     "DeduplicationReport",
     "DiscoverAtomicInventoryUseCase",
     "DiscoverBatchSourcesUseCase",

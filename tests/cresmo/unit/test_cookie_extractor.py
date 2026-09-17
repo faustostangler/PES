@@ -49,7 +49,9 @@ class TestCookieExtractor:
 
     def test_export_cookies_from_browser_handles_exception_gracefully(self, tmp_path: Path) -> None:
         out_file = tmp_path / "extracted.txt"
-        with patch("yt_dlp.cookies.extract_cookies_from_browser", side_effect=Exception("DB locked")):
+        with patch(
+            "yt_dlp.cookies.extract_cookies_from_browser", side_effect=Exception("DB locked")
+        ):
             result = export_cookies_from_browser("firefox", out_file, verbose=False)
             assert result is False
             assert not out_file.exists()
@@ -63,7 +65,9 @@ class TestCookieExtractor:
         ]
         existing_file.write_text("\n".join(lines))
 
-        with patch("cresmo.infrastructure.adapters.cookie_extractor.export_cookies_from_browser") as mock_exp:
+        with patch(
+            "cresmo.infrastructure.adapters.cookie_extractor.export_cookies_from_browser"
+        ) as mock_exp:
             resolved = ensure_cookies_file(existing_file, browser="firefox", max_age_hours=24)
             assert resolved == existing_file
             mock_exp.assert_not_called()
@@ -78,7 +82,9 @@ class TestExportCookiesCLICommand:
             "cresmo.presentation.commands.export_cookies.export_cookies_from_browser",
             return_value=True,
         ) as mock_exp:
-            exit_code = main(["export-cookies", "--browser", "firefox", "--output", str(out_file), "--force"])
+            exit_code = main(
+                ["export-cookies", "--browser", "firefox", "--output", str(out_file), "--force"]
+            )
             assert exit_code == EXIT_SUCCESS
             mock_exp.assert_called_once()
 
@@ -88,5 +94,7 @@ class TestExportCookiesCLICommand:
             "cresmo.presentation.commands.export_cookies.export_cookies_from_browser",
             return_value=False,
         ):
-            exit_code = main(["export-cookies", "--browser", "chrome", "--output", str(out_file), "--force"])
+            exit_code = main(
+                ["export-cookies", "--browser", "chrome", "--output", str(out_file), "--force"]
+            )
             assert exit_code == EXIT_INGESTION_ERROR

@@ -21,18 +21,20 @@ try:
 except ImportError:
     yt_dlp = None  # type: ignore[assignment]
 
-AUTH_COOKIE_NAMES: frozenset[str] = frozenset({
-    "SID",
-    "SSID",
-    "HSID",
-    "SAPISID",
-    "APISID",
-    "LOGIN_INFO",
-    "__Secure-1PSID",
-    "__Secure-3PSID",
-    "__Secure-1PAPISID",
-    "__Secure-3PAPISID",
-})
+AUTH_COOKIE_NAMES: frozenset[str] = frozenset(
+    {
+        "SID",
+        "SSID",
+        "HSID",
+        "SAPISID",
+        "APISID",
+        "LOGIN_INFO",
+        "__Secure-1PSID",
+        "__Secure-3PSID",
+        "__Secure-1PAPISID",
+        "__Secure-3PAPISID",
+    }
+)
 
 SUPPORTED_BROWSERS: tuple[str, ...] = (
     "firefox",
@@ -208,7 +210,11 @@ def ensure_cookies_file(
     out_path = Path(output_file).resolve()
     should_refresh = False
 
-    if not out_path.exists() or out_path.stat().st_size < MIN_COOKIE_FILE_BYTES or not has_valid_auth_cookies(out_path):
+    if (
+        not out_path.exists()
+        or out_path.stat().st_size < MIN_COOKIE_FILE_BYTES
+        or not has_valid_auth_cookies(out_path)
+    ):
         should_refresh = True
     elif max_age_hours > 0:
         age_seconds = time.time() - out_path.stat().st_mtime

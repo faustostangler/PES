@@ -14,6 +14,7 @@ from pydantic import SecretStr
 
 from cresmo.application.pipeline import CresmoPipeline
 from cresmo.application.services.preflight import PreflightHealthChecker
+from cresmo.application.use_cases.concat_master import ConcatMasterUseCase
 from cresmo.application.use_cases.discover_batch_sources import DiscoverBatchSourcesUseCase
 from cresmo.application.use_cases.sync_channel import SyncChannelUseCase
 from cresmo.application.use_cases.unify_duplicate_notes import UnifyDuplicateNotesUseCase
@@ -25,6 +26,7 @@ from cresmo.infrastructure.adapters.obsidian_vault_adapter import ObsidianVaultA
 from cresmo.infrastructure.adapters.sqlite_ledger_adapter import SqliteLedgerAdapter
 from cresmo.infrastructure.config import CresmoSettings
 from cresmo.presentation.composition import (
+    build_concat_master_use_case,
     build_discover_batch_sources_use_case,
     build_pipeline,
     build_preflight_checker,
@@ -135,3 +137,8 @@ class TestCompositionRoot:
             assert isinstance(pipeline, CresmoPipeline)
             assert isinstance(pipeline.llm_port, GeminiLLMAdapter)
             assert pipeline.llm_port._langfuse is None
+
+    def test_build_concat_master_use_case(self, test_settings: CresmoSettings) -> None:
+        uc = build_concat_master_use_case(settings=test_settings)
+        assert isinstance(uc, ConcatMasterUseCase)
+        assert uc.settings is test_settings
