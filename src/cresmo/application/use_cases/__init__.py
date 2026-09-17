@@ -23,6 +23,7 @@ from cresmo.application.use_cases.expand_longitudinal_synchronic import (
     ExpandLongitudinalSynchronicUseCase,
 )
 from cresmo.application.use_cases.fill_gaps_fluid_prose import FillGapsFluidProseUseCase
+from cresmo.application.use_cases.index_raw_transcripts import IndexRawTranscriptsUseCase
 from cresmo.application.use_cases.ingest_raw_transcript import (
     IngestRawTranscriptUseCase,
 )
@@ -47,6 +48,7 @@ __all__ = [
     "DuplicateCluster",
     "ExpandLongitudinalSynchronicUseCase",
     "FillGapsFluidProseUseCase",
+    "IndexRawTranscriptsUseCase",
     "IngestRawTranscriptUseCase",
     "ReconcileMOCsUseCase",
     "SyncChannelUseCase",
