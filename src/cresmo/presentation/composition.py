@@ -161,6 +161,7 @@ def build_pipeline(
             model=resolved_settings.ollama_model,
             timeout_seconds=resolved_settings.ollama_timeout_seconds,
             default_temperature=resolved_settings.raw_index_temperature,
+            num_predict=resolved_settings.ollama_num_predict,
             langfuse_client=langfuse_client,
         )
 
@@ -328,7 +329,10 @@ def build_index_raw_use_case(
     )
 
     langfuse_client: Any | None = None
-    if resolved_settings.langfuse_public_key and resolved_settings.langfuse_secret_key.get_secret_value():
+    if (
+        resolved_settings.langfuse_public_key
+        and resolved_settings.langfuse_secret_key.get_secret_value()
+    ):
         try:
             from langfuse import Langfuse
 
@@ -358,6 +362,7 @@ def build_index_raw_use_case(
             model=model_override or resolved_settings.ollama_model,
             timeout_seconds=resolved_settings.ollama_timeout_seconds,
             default_temperature=resolved_settings.raw_index_temperature,
+            num_predict=resolved_settings.ollama_num_predict,
             langfuse_client=langfuse_client,
         )
 

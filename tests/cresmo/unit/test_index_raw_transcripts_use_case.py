@@ -9,7 +9,10 @@ from __future__ import annotations
 from pathlib import Path
 from unittest.mock import MagicMock
 
-from cresmo.application.use_cases.index_raw_transcripts import IndexRawTranscriptsUseCase
+from cresmo.application.use_cases.index_raw_transcripts import (
+    IndexRawTranscriptsUseCase,
+    parse_judge_boolean,
+)
 from cresmo.domain.entities import RawTranscript
 from cresmo.domain.value_objects import ContentId
 from cresmo.infrastructure.adapters.prompt_provider import JsonPromptProvider
@@ -23,7 +26,11 @@ class TestIndexRawTranscriptsUseCase:
         vault = InMemoryVaultAdapter()
         llm = MockLLMAdapter(
             responses=[
-                "Circulação de Elites\nMinorias burocráticas governam as instituições políticas. A decadência dos governantes precipita a substituição por novas contra-elites organizadas."
+                "Resumo conceitual da teoria das elites e oligarquias organizadas.",
+                "true",
+                "Circulação de Elites",
+                "true",
+                "Minorias burocráticas governam as instituições políticas. A decadência dos governantes precipita a substituição por novas contra-elites organizadas.",
             ]
         )
         prompt_provider = JsonPromptProvider()
@@ -50,6 +57,19 @@ class TestIndexRawTranscriptsUseCase:
         assert "Minorias burocráticas governam" in entry.synthesis
         assert entry.channel_name == "Political Theory"
 
+        # 5 sequential passes executed: Summary -> Summary Judge -> Concepts -> Concepts Judge -> Synthesis
+        assert len(llm.call_history) == 5
+        assert llm.call_history[0]["trace_id"] == "vid11111111_summary"
+        assert llm.call_history[0]["temperature"] == 0.2
+        assert llm.call_history[1]["trace_id"] == "vid11111111_summary_judge"
+        assert llm.call_history[1]["temperature"] == 0.0
+        assert llm.call_history[2]["trace_id"] == "vid11111111_concepts"
+        assert llm.call_history[2]["temperature"] == 0.2
+        assert llm.call_history[3]["trace_id"] == "vid11111111_concepts_judge"
+        assert llm.call_history[3]["temperature"] == 0.0
+        assert llm.call_history[4]["trace_id"] == "vid11111111_synthesis"
+        assert llm.call_history[4]["temperature"] == 0.2
+
         # Verify dual persistence: _canal.md index AND brain.csv
         assert len(vault.channel_raw_indexes["Political Theory"]) == 1
         assert vault.channel_raw_indexes["Political Theory"][0] == entry
@@ -58,7 +78,7 @@ class TestIndexRawTranscriptsUseCase:
 
     def test_index_single_transcript_idempotent_skip(self) -> None:
         vault = InMemoryVaultAdapter()
-        llm = MockLLMAdapter(responses=["Conceito\nSíntese."])
+        llm = MockLLMAdapter(responses=["Resumo.", "true", "Conceito", "true", "Síntese."])
         prompt_provider = JsonPromptProvider()
 
         use_case = IndexRawTranscriptsUseCase(
@@ -77,18 +97,23 @@ class TestIndexRawTranscriptsUseCase:
         # Index once
         entry1 = use_case.index_single_transcript(transcript)
         assert entry1 is not None
+        assert len(llm.call_history) == 5
 
-        # Index again without force - should skip and return None
+        # Index again without force - should skip and return None (0 additional calls)
         entry2 = use_case.index_single_transcript(transcript)
         assert entry2 is None
+        assert len(llm.call_history) == 5
         assert len(vault.channel_raw_indexes["Political Theory"]) == 1
 
     def test_index_single_transcript_handles_legacy_comma_format(self) -> None:
         vault = InMemoryVaultAdapter()
-        # LLM returns single line with comma: "<Concept>, <Synthesis>"
         llm = MockLLMAdapter(
             responses=[
-                "Teoria dos Jogos, Equilíbrios de Nash determinam estratégias ótimas em sistemas competitivos interdependentes."
+                "Resumo sobre equilíbrio de Nash e estratégias interdependentes.",
+                "true",
+                "Teoria dos Jogos, Equilíbrios de Nash",
+                "true",
+                "Equilíbrios de Nash determinam estratégias ótimas em sistemas competitivos interdependentes.",
             ]
         )
         prompt_provider = JsonPromptProvider()
@@ -108,7 +133,7 @@ class TestIndexRawTranscriptsUseCase:
 
         entry = use_case.index_single_transcript(transcript)
         assert entry is not None
-        assert entry.key_concept == "Teoria dos Jogos"
+        assert entry.key_concept == "Teoria dos Jogos, Equilíbrios de Nash"
         assert "Equilíbrios de Nash determinam" in entry.synthesis
 
     def test_index_single_transcript_resilient_to_llm_failure(self) -> None:
@@ -145,8 +170,16 @@ class TestIndexRawTranscriptsUseCase:
         )
         llm = MockLLMAdapter(
             responses=[
-                "Conceito Um\nSíntese um.",
-                "Conceito Dois\nSíntese dois.",
+                "Resumo 1",
+                "true",
+                "Conceito Um",
+                "true",
+                "Síntese um.",
+                "Resumo 2",
+                "true",
+                "Conceito Dois",
+                "true",
+                "Síntese dois.",
             ]
         )
         prompt_provider = JsonPromptProvider()
@@ -183,13 +216,16 @@ class TestIndexRawTranscriptsUseCase:
         assert len(entries_again) == 0
 
     def test_self_healing_rewrite_loop_triggered_when_forbidden_prefix_returned(self) -> None:
-        """Verify that when LLM returns forbidden prefix, a rewrite is requested and succeeds."""
+        """Verify that when LLM returns forbidden prefix on concepts, a rewrite is requested."""
         vault = InMemoryVaultAdapter()
-        # First response has forbidden "Key concepts:" prefix; second is clean comma-separated
         llm = MockLLMAdapter(
             responses=[
-                "Key concepts: Circulação de Elites\nMinorias burocráticas governam as instituições políticas.",
-                "Circulação de Elites, Teoria das Elites\nMinorias burocráticas governam as instituições políticas.",
+                "Resumo sobre Pareto e teoria das elites.",
+                "true",
+                "Key concepts: Circulação de Elites",
+                "Circulação de Elites, Teoria das Elites",
+                "true",
+                "Minorias burocráticas governam as instituições políticas.",
             ]
         )
         prompt_provider = JsonPromptProvider()
@@ -214,17 +250,27 @@ class TestIndexRawTranscriptsUseCase:
 
         assert entry is not None
         assert entry.key_concept == "Circulação de Elites, Teoria das Elites"
-        # Verify LLM was invoked twice (initial + 1 rewrite)
-        assert len(llm.call_history) == 2
+        # 1 summary + 1 summary judge + 1 bad concepts + 1 rewrite + 1 concepts judge + 1 synthesis = 6 calls
+        assert len(llm.call_history) == 6
+        assert llm.call_history[0]["trace_id"] == "vid44444444_summary"
+        assert llm.call_history[1]["trace_id"] == "vid44444444_summary_judge"
+        assert llm.call_history[2]["trace_id"] == "vid44444444_concepts"
+        assert llm.call_history[3]["trace_id"] == "vid44444444_concepts_rewrite_1"
+        assert llm.call_history[4]["trace_id"] == "vid44444444_concepts_judge_retry_1"
+        assert llm.call_history[4]["temperature"] == 0.0
+        assert llm.call_history[5]["trace_id"] == "vid44444444_synthesis"
 
     def test_self_healing_rewrite_loop_exhausts_retries_and_defensively_cleans(self) -> None:
         """Verify that when LLM keeps returning forbidden prefix, retries stop at max_rewrites and cleans."""
         vault = InMemoryVaultAdapter()
         llm = MockLLMAdapter(
             responses=[
-                "Palavras-chave: Conceito Teórico\nSíntese analítica.",
-                "Palavras-chave: Conceito Teórico\nSíntese analítica.",
-                "Palavras-chave: Conceito Teórico\nSíntese analítica.",
+                "Resumo teórico...",
+                "true",
+                "Palavras-chave: Conceito Teórico",
+                "Palavras-chave: Conceito Teórico",
+                "Palavras-chave: Conceito Teórico",
+                "Síntese analítica.",
             ]
         )
         prompt_provider = JsonPromptProvider()
@@ -248,14 +294,104 @@ class TestIndexRawTranscriptsUseCase:
         assert entry is not None
         # Defensively cleaned even though rewrite loop exhausted
         assert entry.key_concept == "Conceito Teórico"
-        # Initial call + 2 rewrites = 3 calls
-        assert len(llm.call_history) == 3
+        # 1 summary + 1 summary judge + 1 initial concept + 2 rewrites + 1 synthesis = 6 calls
+        assert len(llm.call_history) == 6
+
+    def test_summary_judge_triggers_regeneration_on_false(self) -> None:
+        """Verify that when summary judge returns false, summary is regenerated and re-judged."""
+        vault = InMemoryVaultAdapter()
+        llm = MockLLMAdapter(
+            responses=[
+                "Resumo superficial com alucinação.",
+                "false",
+                "Resumo rigoroso e conceitualmente fiel.",
+                "true",
+                "Conceito Fiel",
+                "true",
+                "Síntese paratática final.",
+            ]
+        )
+        prompt_provider = JsonPromptProvider()
+
+        use_case = IndexRawTranscriptsUseCase(
+            vault_repo=vault,
+            llm=llm,
+            prompt_provider=prompt_provider,
+            max_rewrites=2,
+        )
+
+        transcript = RawTranscript(
+            content_id=ContentId("vid77777777"),
+            channel_name="Philosophy",
+            title="Concept Analysis",
+            body="Detailed text on philosophy...",
+        )
+
+        entry = use_case.index_single_transcript(transcript)
+
+        assert entry is not None
+        assert entry.key_concept == "Conceito Fiel"
+        assert len(llm.call_history) == 7
+        assert llm.call_history[0]["trace_id"] == "vid77777777_summary"
+        assert llm.call_history[1]["trace_id"] == "vid77777777_summary_judge"
+        assert llm.call_history[2]["trace_id"] == "vid77777777_summary_retry_1"
+        assert llm.call_history[3]["trace_id"] == "vid77777777_summary_judge_retry_1"
+        assert llm.call_history[4]["trace_id"] == "vid77777777_concepts"
+        assert llm.call_history[5]["trace_id"] == "vid77777777_concepts_judge"
+        assert llm.call_history[6]["trace_id"] == "vid77777777_synthesis"
+
+    def test_concepts_judge_triggers_rewrite_on_false(self) -> None:
+        """Verify that when concepts pass regex but judge returns false, rewrite is triggered."""
+        vault = InMemoryVaultAdapter()
+        llm = MockLLMAdapter(
+            responses=[
+                "Resumo fiel do conteúdo.",
+                "true",
+                "Conceito Desconexo",
+                "false",
+                "Conceito Conexo, Teoria Central",
+                "true",
+                "Síntese estruturada.",
+            ]
+        )
+        prompt_provider = JsonPromptProvider()
+
+        use_case = IndexRawTranscriptsUseCase(
+            vault_repo=vault,
+            llm=llm,
+            prompt_provider=prompt_provider,
+            max_rewrites=2,
+        )
+
+        transcript = RawTranscript(
+            content_id=ContentId("vid88888888"),
+            channel_name="Sociology",
+            title="Social Dynamics",
+            body="Sociology transcript body...",
+        )
+
+        entry = use_case.index_single_transcript(transcript)
+
+        assert entry is not None
+        assert entry.key_concept == "Conceito Conexo, Teoria Central"
+        assert len(llm.call_history) == 7
+        assert llm.call_history[2]["trace_id"] == "vid88888888_concepts"
+        assert llm.call_history[3]["trace_id"] == "vid88888888_concepts_judge"
+        assert llm.call_history[4]["trace_id"] == "vid88888888_concepts_rewrite_1"
+        assert llm.call_history[5]["trace_id"] == "vid88888888_concepts_judge_retry_1"
+        assert llm.call_history[6]["trace_id"] == "vid88888888_synthesis"
 
     def test_index_single_transcript_passes_configured_temperature(self) -> None:
-        """Verify that configured temperature is passed to the LLM port."""
+        """Verify that configured temperature is passed to generative transformations and 0.0 to judges."""
         vault = InMemoryVaultAdapter()
         mock_llm = MagicMock()
-        mock_llm.transform.return_value = "Conceito\nSíntese paratática explicativa."
+        mock_llm.transform.side_effect = [
+            "Resumo explicativo.",
+            "true",
+            "Conceito",
+            "true",
+            "Síntese paratática explicativa.",
+        ]
         prompt_provider = JsonPromptProvider()
 
         use_case = IndexRawTranscriptsUseCase(
@@ -276,8 +412,30 @@ class TestIndexRawTranscriptsUseCase:
         entry = use_case.index_single_transcript(transcript)
 
         assert entry is not None
-        mock_llm.transform.assert_called_once()
-        call_kwargs = mock_llm.transform.call_args[1]
-        assert call_kwargs["temperature"] == 0.35
+        assert mock_llm.transform.call_count == 5
+        calls = mock_llm.transform.call_args_list
+        # Generative passes use configured temperature (0.35)
+        assert calls[0][1]["temperature"] == 0.35
+        assert calls[2][1]["temperature"] == 0.35
+        assert calls[4][1]["temperature"] == 0.35
+        # Judge passes use deterministic temperature (0.0)
+        assert calls[1][1]["temperature"] == 0.0
+        assert calls[3][1]["temperature"] == 0.0
 
+    def test_parse_judge_boolean_edge_cases(self) -> None:
+        """Verify deterministic parsing of judge true/false outputs."""
+        assert parse_judge_boolean("true") is True
+        assert parse_judge_boolean("True") is True
+        assert parse_judge_boolean("TRUE.") is True
+        assert parse_judge_boolean("true\n") is True
+        assert parse_judge_boolean("```\ntrue\n```") is True
+        assert parse_judge_boolean("```json\ntrue\n```") is True
+        assert parse_judge_boolean("true - compliant with all guidelines") is True
 
+        assert parse_judge_boolean("false") is False
+        assert parse_judge_boolean("False") is False
+        assert parse_judge_boolean("FALSE.") is False
+        assert parse_judge_boolean("```\nfalse\n```") is False
+        assert parse_judge_boolean("") is False
+        assert parse_judge_boolean("unclear") is False
+        assert parse_judge_boolean("no") is False
