@@ -107,9 +107,7 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
         self.raw_dir = Path(raw_dir).resolve()
         self.enriched_dir = Path(enriched_dir).resolve()
         self.data_dir = Path(data_dir).resolve() if data_dir else self.raw_dir.parent
-        self.master_dir = (
-            Path(master_dir).resolve() if master_dir else (self.data_dir / "master")
-        )
+        self.master_dir = Path(master_dir).resolve() if master_dir else (self.data_dir / "master")
 
         self.mocs_dir = self.vault_dir / "MOCs"
         self.index_path = self.vault_dir / "_index.json"
@@ -138,7 +136,7 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
         os.replace(temp_file, target_path)
 
     def save_raw_transcript(self, transcript: RawTranscript) -> None:
-        """Persist raw transcript with playground-compatible YAML frontmatter."""
+        """Persist raw transcript with canonical YAML frontmatter."""
         channel_dir = self.raw_dir / sanitize_filename(transcript.channel_name)
         file_path = channel_dir / f"{transcript.content_id.value}.md"
 
@@ -219,7 +217,7 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
         )
 
     def save_enriched_compendium(self, compendium: EnrichedCompendium) -> None:
-        """Persist enriched compendium directly into enriched/ directory with playground YAML."""
+        """Persist enriched compendium directly into enriched/ directory with canonical YAML frontmatter."""
         channel_dir = self.enriched_dir / sanitize_filename(compendium.channel_name)
         file_path = channel_dir / f"{compendium.content_id.value}.md"
 
@@ -636,8 +634,9 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
                 p.unlink(missing_ok=True)
 
     def get_channel_index_path(self, channel_name: str) -> Path:
-        """Return absolute path to channel's _canal.md."""
-        return self.raw_dir / sanitize_filename(channel_name) / "_canal.md"
+        """Return absolute path to channel's _index_{channel_name}.md."""
+        clean_channel = sanitize_filename(channel_name)
+        return self.raw_dir / clean_channel / f"_{clean_channel}.md"
 
     def get_indexed_video_ids_for_channel(self, channel_name: str) -> set[str]:
         """Retrieve set of video IDs already indexed in the channel's _canal.md."""
@@ -681,4 +680,3 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
             writer = csv.writer(f)
             writer.writerow(entry.to_csv_row())
             f.flush()
-

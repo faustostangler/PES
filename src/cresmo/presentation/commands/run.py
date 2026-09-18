@@ -133,7 +133,6 @@ def register_subparser(subparsers: argparse._SubParsersAction) -> None:
     run_parser.set_defaults(handler=handle_run)
 
 
-
 def execute_single_video_run(pipeline: CresmoPipeline, args: argparse.Namespace) -> int:
     """Execute knowledge synthesis or dry run for a single target video.
 
@@ -202,7 +201,8 @@ def execute_batch_dry_run(pipeline: CresmoPipeline, sources: list[BatchSource]) 
             fpath = Path(src.target)
             ingested += 1
             sys.stdout.write(
-                f"[{idx}/{len(sources)}] Dry-run text: [{fpath.stem}] ({fpath.stat().st_size} bytes)\n"
+                f"[{idx}/{len(sources)}] Dry-run text: [{fpath.stem}] "
+                f"({fpath.stat().st_size} bytes)\n"
             )
         else:
             raw = pipeline.ingest_raw_transcript.execute(video_url=src.target)
@@ -261,7 +261,8 @@ def execute_batch_run(
             if result.already_processed:
                 skipped += 1
                 sys.stdout.write(
-                    f"{item_prefix} [SKIPPED] [{result.content_id.value}] Already processed in ledger.\n"
+                    f"{item_prefix} [SKIPPED] [{result.content_id.value}] "
+                    "Already processed in ledger.\n"
                 )
             elif result.success:
                 completed += 1
@@ -289,7 +290,8 @@ def execute_batch_run(
     if total_items == 0:
         manifest_display = str(args.manifest) if args.manifest else "data/playlist.txt"
         sys.stdout.write(
-            f"No sources found to process (manifest: {manifest_display}, raw lake scan: {not args.no_scan_raw}).\n"
+            f"No sources found to process (manifest: {manifest_display}, "
+            f"raw lake scan: {not args.no_scan_raw}).\n"
         )
         return EXIT_SUCCESS
 
@@ -307,7 +309,8 @@ def execute_batch_run(
             master_results = pipeline.concat_master.execute_all()
             total_parts = sum(len(parts) for parts in master_results.values())
             sys.stdout.write(
-                f"Master consolidation complete: {total_parts} master document(s) generated across {len(master_results)} channel(s).\n"
+                f"Master consolidation complete: {total_parts} master document(s) generated "
+                f"across {len(master_results)} channel(s).\n"
             )
         except Exception as exc:  # noqa: BLE001
             sys.stderr.write(f"Warning: Master consolidation failed: {exc}\n")
@@ -319,18 +322,18 @@ def load_batch_sources(
     query: BatchDiscoveryQuery,
     settings: CresmoSettings | None = None,
     media_ingestion_port: MediaIngestionPort | None = None,
-    stream: bool = False,
-) -> list[BatchSource] | Iterator[BatchSource]:
-    """Execute batch source discovery via DiscoverBatchSourcesUseCase.
+) -> Iterator[BatchSource]:
+    """Execute streaming batch source discovery via DiscoverBatchSourcesUseCase.
+
+    Conforms to ADR-010 (Streaming-First Unification).
 
     Args:
         query: BatchDiscoveryQuery constraints.
         settings: Optional application settings.
         media_ingestion_port: Ingestion adapter port instance.
-        stream: If True, yields items as an Iterator generator; otherwise returns list.
 
     Returns:
-        List or streaming iterator of BatchSource records.
+        Streaming iterator of BatchSource records.
     """
     resolved_settings = settings or CresmoSettings()
     if media_ingestion_port is None:
@@ -344,30 +347,7 @@ def load_batch_sources(
             settings=resolved_settings,
             progress_callback=lambda msg: sys.stdout.write(msg),
         )
-    if stream:
-        return discovery_use_case.execute_stream(query=query)
     return discovery_use_case.execute(query=query)
-
-
-def load_batch_sources_stream(
-    query: BatchDiscoveryQuery,
-    settings: CresmoSettings | None = None,
-    media_ingestion_port: MediaIngestionPort | None = None,
-) -> Iterator[BatchSource]:
-    """Execute streaming batch source discovery via DiscoverBatchSourcesUseCase.
-
-    Args:
-        query: BatchDiscoveryQuery constraints.
-        settings: Optional application settings.
-        media_ingestion_port: Ingestion adapter port instance.
-
-    Returns:
-        Iterator of BatchSource records.
-    """
-    res = load_batch_sources(query, settings, media_ingestion_port, stream=True)
-    if isinstance(res, list):
-        return iter(res)
-    return res
 
 
 def handle_run(args: argparse.Namespace) -> int:
@@ -411,17 +391,18 @@ def handle_run(args: argparse.Namespace) -> int:
         )
 
         if args.dry_run:
-            raw_sources = load_batch_sources(
-                query=query,
-                settings=settings,
-                media_ingestion_port=pipeline.media_ingestion_port,
-                stream=False,
+            sources = list(
+                load_batch_sources(
+                    query=query,
+                    settings=settings,
+                    media_ingestion_port=pipeline.media_ingestion_port,
+                )
             )
-            sources = list(raw_sources)
             if not sources:
                 manifest_display = str(args.manifest) if args.manifest else "data/playlist.txt"
                 sys.stdout.write(
-                    f"No sources found to process (manifest: {manifest_display}, raw lake scan: {not args.no_scan_raw}).\n"
+                    f"No sources found to process (manifest: {manifest_display}, "
+                    f"raw lake scan: {not args.no_scan_raw}).\n"
                 )
                 return EXIT_SUCCESS
             return execute_batch_dry_run(pipeline, sources)
@@ -430,7 +411,6 @@ def handle_run(args: argparse.Namespace) -> int:
             query=query,
             settings=settings,
             media_ingestion_port=pipeline.media_ingestion_port,
-            stream=True,
         )
         return execute_batch_run(pipeline, sources, args)
     except RateLimitExceededError as exc:

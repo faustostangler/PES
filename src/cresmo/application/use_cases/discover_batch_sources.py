@@ -183,21 +183,12 @@ class DiscoverBatchSourcesUseCase:
         if self.progress_callback is not None:
             self.progress_callback(message)
 
-    def execute(self, query: BatchDiscoveryQuery | None = None) -> list[BatchSource]:
-        """Discover and consolidate batch sources from local lake, seeds, and channel feeds.
-
-        Two-stage discovery pipeline (Stage A: Channels for Sync; Stage B: Recent Uploads).
-        Drains the full streaming queue into a deterministic list of BatchSource.
-        """
-        return list(self.execute_stream(query=query))
-
-    def execute_stream(
-        self, query: BatchDiscoveryQuery | None = None
-    ) -> Iterator[BatchSource]:
+    def execute(self, query: BatchDiscoveryQuery | None = None) -> Iterator[BatchSource]:
         """Discover batch sources with streaming queue for overlapped producer-consumer execution.
 
         Yields high-priority local texts and priority playlist items immediately in the fast path
         (millisecond latency), while launching channel feed crawling in a concurrent background thread.
+        Conforms to ADR-010 (Streaming-First Unification).
         """
         q = query or BatchDiscoveryQuery()
         if q.explicit_manifest is not None:
@@ -256,9 +247,7 @@ class DiscoverBatchSourcesUseCase:
             if q.discovery_workers is not None
             else self.settings.channel_discovery_workers
         )
-        lookback = (
-            q.lookback_days if q.lookback_days is not None else self.settings.days_lookback
-        )
+        lookback = q.lookback_days if q.lookback_days is not None else self.settings.days_lookback
 
         def _crawler_producer() -> None:
             try:

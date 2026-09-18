@@ -50,18 +50,16 @@ def _clean_text_line(text: str) -> str:
     Returns:
         Sanitized clean string line.
     """
-    clean = text.strip().strip('"\'`*#_')
+    clean = text.strip().strip("\"'`*#_")
     lower = clean.lower()
     for prefix in _INDICATIVE_PREFIXES:
         if lower.startswith(prefix):
-            clean = clean[len(prefix) :].strip().strip('"\'`*#_')
+            clean = clean[len(prefix) :].strip().strip("\"'`*#_")
             lower = clean.lower()
     return clean.strip()
 
 
-def parse_raw_index_response(
-    raw_output: str, fallback_title: str
-) -> tuple[str, str]:
+def parse_raw_index_response(raw_output: str, fallback_title: str) -> tuple[str, str]:
     """Parse LLM output into (key_concept, paratactic_synthesis) with fallbacks.
 
     Supports both:
@@ -204,17 +202,14 @@ class IndexRawTranscriptsUseCase:
         except Exception as exc:  # noqa: BLE001
             # Gracefully degrade on network/Ollama outage to prevent aborting batch runs
             logger.warning(
-                "[IndexRaw] WARNING: LLM transformation failed for '%s' (%s): %s. "
-                "Ensure local Ollama is running ('ollama serve') or pass '--web-index' to use Gemini API.",
+                "[IndexRaw] Skipped '%s' (%s): %s",
                 video_id_str,
                 channel_name,
                 exc,
             )
             return None
 
-        concept, synthesis = parse_raw_index_response(
-            raw_response, fallback_title=title_str
-        )
+        concept, synthesis = parse_raw_index_response(raw_response, fallback_title=title_str)
 
         url = (
             transcript.source_url
@@ -243,9 +238,7 @@ class IndexRawTranscriptsUseCase:
         )
         return entry
 
-    def index_channel(
-        self, channel_name: str, force: bool = False
-    ) -> list[RawIndexEntry]:
+    def index_channel(self, channel_name: str, force: bool = False) -> list[RawIndexEntry]:
         """Index all raw markdown transcripts under a channel folder.
 
         Args:

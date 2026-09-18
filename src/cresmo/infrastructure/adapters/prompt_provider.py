@@ -358,9 +358,5 @@ class JsonPromptProvider(PromptProviderPort):
             "- Aim for syntactic clarity and an exoteric, crystalline style where form is an invisible medium.\n"
             "- Do not use filler introductions or conversational framing."
         )
-        user_prompt = (
-            f"Video Title: {video_title}\n\n"
-            f"Transcript Excerpt:\n{transcript_excerpt}\n"
-        )
+        user_prompt = f"Video Title: {video_title}\n\nTranscript Excerpt:\n{transcript_excerpt}\n"
         return system_instruction, user_prompt
-

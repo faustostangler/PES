@@ -136,7 +136,6 @@ class CresmoSettings(BaseSettings):
         """Absolute path to global brain.csv conceptual index file."""
         return self.data_dir / self.brain_csv_filename
 
-
     priority_texts_dirname: str = Field(
         default="priority",
         description="Directory name inside data_dir containing priority text files (.txt, .md).",
@@ -262,8 +261,6 @@ class CresmoSettings(BaseSettings):
             candidates = [
                 self.data_dir / "cookies.txt",
                 _WORKSPACE_DIR / "data" / "cookies.txt",
-                _WORKSPACE_DIR / "playground" / "cresmo" / ".yt_dlp_cookies.txt",
-                _WORKSPACE_DIR / "playground" / "isb.ai" / ".yt_dlp_cookies.txt",
                 _WORKSPACE_DIR / ".yt_dlp_cookies.txt",
             ]
             for cand in candidates:
@@ -315,4 +312,3 @@ class CresmoSettings(BaseSettings):
         default=3000,
         description="Maximum characters of transcript body passed to LLM for conceptual synthesis.",
     )
-

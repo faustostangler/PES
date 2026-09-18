@@ -118,22 +118,35 @@ class OllamaLLMAdapter(LLMTransformationPort):
                 raw_body = response.read().decode("utf-8")
                 res_json = json.loads(raw_body)
                 return str(res_json.get("response", "")).strip()
-        except urllib.error.URLError as exc:
+        except TimeoutError as exc:
             msg = (
-                f"Ollama is unreachable at {self.base_url} ({exc}). "
-                "Please start the local service with 'ollama serve' (or 'ollama run <model>'), "
-                "or pass '--web-index' to use the Gemini cloud API."
+                f"Ollama timed out at {self.base_url} ({self.timeout_seconds:.0f}s). "
+                "Run 'ollama serve' or pass '--web-index'."
             )
             logger.warning("[OllamaLLMAdapter] %s", msg)
             raise LLMInfrastructureError(msg) from exc
         except urllib.error.HTTPError as exc:
             msg = (
-                f"Ollama HTTP error {exc.code} at {self.base_url}: {exc.reason}. "
-                "Verify model exists using 'ollama list'."
+                f"Ollama HTTP {exc.code} at {self.base_url}: {exc.reason}. "
+                "Run 'ollama list' to verify model."
             )
             logger.warning("[OllamaLLMAdapter] %s", msg)
             raise LLMInfrastructureError(msg) from exc
+        except urllib.error.URLError as exc:
+            if isinstance(getattr(exc, "reason", None), TimeoutError):
+                msg = (
+                    f"Ollama timed out at {self.base_url} ({self.timeout_seconds:.0f}s). "
+                    "Run 'ollama serve' or pass '--web-index'."
+                )
+            else:
+                msg = (
+                    f"Ollama unreachable at {self.base_url}. "
+                    "Run 'ollama serve' or pass '--web-index'."
+                )
+            logger.warning("[OllamaLLMAdapter] %s", msg)
+            raise LLMInfrastructureError(msg) from exc
+            raise LLMInfrastructureError(msg) from exc
         except Exception as exc:
-            msg = f"Unexpected error communicating with Ollama at {self.base_url}: {exc}"
+            msg = f"Ollama error at {self.base_url}: {exc}. Run 'ollama serve' or pass '--web-index'."
             logger.warning("[OllamaLLMAdapter] %s", msg)
             raise LLMInfrastructureError(msg) from exc

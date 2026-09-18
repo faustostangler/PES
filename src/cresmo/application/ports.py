@@ -33,7 +33,7 @@ from cresmo.domain.value_objects import (
 
 class MediaIngestionPort(ABC):
     """Hexagonal Port for media crawling, audio downloading, and subtitle/transcript ingestion.
-    
+
     Conforms to ADR-004 and SPEC-004. Abstracts external tools (yt-dlp, whisper) behind
     pure domain aggregates (RawTranscript).
     """
@@ -124,7 +124,7 @@ class MediaIngestionPort(ABC):
 
 class LLMTransformationPort(ABC):
     """Hexagonal Port defining contracts for generative synthesis and structured extraction.
-    
+
     Conforms to ADR-001 and EVAL-001. Shields use cases from provider-specific SDKs
     (Google GenAI, Ollama, local models).
     """
@@ -569,4 +569,3 @@ class PromptProviderPort(ABC):
             Tuple containing system instruction and user prompt string.
         """
         raise NotImplementedError
-

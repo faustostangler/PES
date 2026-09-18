@@ -24,4 +24,3 @@ EXIT_RATE_LIMIT_EXCEEDED: int = 4
 
 # Media ingestion failure (network socket timeout, unresolvable feed, or audio download failure)
 EXIT_INGESTION_ERROR: int = 5
-
