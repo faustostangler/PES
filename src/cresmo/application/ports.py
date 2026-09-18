@@ -619,14 +619,14 @@ class PromptProviderPort(ABC):
     def get_raw_index_concepts_prompt(
         self,
         video_title: str,
-        summary: str,
+        transcript_excerpt: str,
         language: str = "Português do Brasil",
     ) -> tuple[str, str]:
-        """Format (system_instruction, user_prompt) for Pass 2 key concepts extraction.
+        """Format (system_instruction, user_prompt) for key concepts extraction from raw transcript.
 
         Args:
             video_title: Raw video title string.
-            summary: Summary text produced in Pass 1.
+            transcript_excerpt: First N characters of raw spoken transcript.
             language: Target synthesis language.
 
         Returns:
@@ -656,15 +656,13 @@ class PromptProviderPort(ABC):
         self,
         video_title: str,
         summary: str,
-        concepts: str,
         language: str = "Português do Brasil",
     ) -> tuple[str, str]:
-        """Format (system_instruction, user_prompt) for Pass 3 paratactic synthesis paragraph.
+        """Format (system_instruction, user_prompt) for dense paratactic synthesis paragraph.
 
         Args:
             video_title: Raw video title string.
-            summary: Summary text produced in Pass 1.
-            concepts: Comma-separated concepts extracted in Pass 2.
+            summary: Organized conceptual summary of the content.
             language: Target synthesis language.
 
         Returns:
@@ -697,7 +695,7 @@ class PromptProviderPort(ABC):
     def get_judge_raw_index_concepts_prompt(
         self,
         video_title: str,
-        summary: str,
+        transcript_excerpt: str,
         concepts: str,
         language: str = "Português do Brasil",
     ) -> tuple[str, str]:
@@ -705,8 +703,29 @@ class PromptProviderPort(ABC):
 
         Args:
             video_title: Raw video title string.
-            summary: Summary context produced in Pass 1.
-            concepts: Candidate comma-separated concepts produced in Pass 2.
+            transcript_excerpt: First N characters of raw spoken transcript.
+            concepts: Candidate comma-separated concepts.
+            language: Target evaluation language.
+
+        Returns:
+            Tuple containing system instruction and user prompt string.
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_judge_raw_index_synthesis_prompt(
+        self,
+        video_title: str,
+        transcript_excerpt: str,
+        synthesis: str,
+        language: str = "Português do Brasil",
+    ) -> tuple[str, str]:
+        """Format (system_instruction, user_prompt) for LLM-as-a-judge synthesis compliance verification.
+
+        Args:
+            video_title: Raw video title string.
+            transcript_excerpt: First N characters of raw spoken transcript.
+            synthesis: Candidate single-paragraph synthesis.
             language: Target evaluation language.
 
         Returns:

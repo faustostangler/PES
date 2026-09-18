@@ -49,18 +49,18 @@
     "template": "Video Title: {video_title}\n\nTranscript Excerpt:\n{transcript_excerpt}\n"
   },
   "raw_index_concepts": {
-    "task": "Extract comma-separated key concepts.",
-    "system_instruction": "Act as a domain expert in conceptual synthesis.\nAnalyze the provided summary and title.\nExtract STRICTLY comma-separated key concepts ONLY in {language} (2 to 6 keyword or concept-words, e.g. 'Conceito 1, Conceito 2').\nOnly output the concepts themselves separated by commas. Absolutely NO introductory labels (NO 'Key concepts:', NO 'Keywords:', NO 'Palavras-chave:'), NO prefixes, NO colons, NO markdown framing, and NO conversational framing.",
-    "template": "Video Title: {video_title}\n\nSummary Context:\n{summary}\n"
+    "task": "Extract comma-separated principal concepts.",
+    "system_instruction": "Act as a domain expert in conceptual synthesis.\nAnalyze the provided title and transcript excerpt.\nExtract STRICTLY comma-separated principal concepts ONLY in {language} (e.g. 'Conceito 1, Conceito 2').\nOnly output the principal concepts themselves separated by commas, capturing the core theoretical mechanisms and entities. Absolutely NO introductory labels (NO 'Key concepts:', NO 'Keywords:', NO 'Palavras-chave:'), NO prefixes, NO colons, NO markdown framing, and NO conversational framing.",
+    "template": "Video Title: {video_title}\n\nTranscript Excerpt:\n{transcript_excerpt}\n"
   },
   "raw_index_concepts_rewrite": {
     "task": "Re-write the extracted concepts to strictly adhere to comma-separated format without labels, prefixes or framing.",
     "template": "Your previous concepts extraction violated formatting guidelines because it contained prohibited labels or prefixes:\n\n--- PREVIOUS OUTPUT ---\n{previous_output}\n\nRE-WRITE STRICTLY AS COMMA-SEPARATED CONCEPTS ONLY IN {language_upper} (e.g. 'Conceito 1, Conceito 2'). Absolutely NO labels like 'Key concepts:', NO prefixes, NO colons, NO markdown."
   },
   "raw_index_synthesis": {
-    "task": "Extract a dense, single paratactic synthesis paragraph prioritizing NERs and their relationships.",
-    "system_instruction": "Act as a domain expert in conceptual synthesis.\nWrite a dense, single paratactic synthesis paragraph in {language}. Only ONE paragraph.\nPrioritize identified named entities (NER: individuals, organizations, dates and historical events, places, technical frameworks) and articulate the core causal, functional, or systemic relationships between them, synthetically summarizing all identified concepts.\n\nStyle guidelines:\n- Only ONE single paragraph.\n- Prioritize identified named entities (NER), entities, concepts, events, dates and historical events, places, and processes and map the direct relationships between them.\n- Synthetically summarize all key concepts discovered in the excerpt.\n- Use parataxis, direct and swift word order, single and self-contained clauses.\n- Use asyndetic juxtaposition of ideas, rapid and incisive rhythm.\n- Aim for syntactic clarity and an exoteric, crystalline style where form is an invisible medium.\n- Do not use filler introductions, meta-labels, or conversational framing.",
-    "template": "Video Title: {video_title}\n\nKey Concepts:\n{concepts}\n\nSummary Context:\n{summary}\n"
+    "task": "Extract a dense, single paratactic synthesis paragraph of appropriate size prioritizing NERs and their relationships.",
+    "system_instruction": "Act as a domain expert in conceptual synthesis.\nWrite a dense, single paratactic synthesis paragraph in {language}. Exactly ONE single paragraph of appropriate size (between 40 and 85 words).\nPrioritize identified named entities (NER: individuals, organizations, dates and historical events, places, technical frameworks) and articulate the core causal, functional, or systemic relationships between them, synthetically summarizing all key concepts.\n\nStyle guidelines:\n- Exactly ONE single paragraph of appropriate size (40 to 85 words).\n- Prioritize identified named entities (NER), entities, concepts, events, dates, places, and processes, mapping direct relationships between them.\n- Synthetically summarize the core thesis and mechanisms.\n- Use parataxis, direct and swift word order, single and self-contained clauses.\n- Use asyndetic juxtaposition of ideas, rapid and incisive rhythm.\n- Aim for syntactic clarity and an exoteric, crystalline style where form is an invisible medium.\n- Do not use filler introductions, bullet points, meta-labels, or conversational framing.",
+    "template": "Video Title: {video_title}\n\nOrganized Summary:\n{summary}\n"
   },
   "judge_raw_index_summary": {
     "task": "Evaluate whether the summary faithfully represents the title and transcript excerpt.",
@@ -68,9 +68,14 @@
     "template": "Video Title: {video_title}\n\nTranscript Excerpt:\n{transcript_excerpt}\n\nProposed Summary:\n{summary}\n\nDoes the proposed summary accurately and faithfully synthesize the excerpt without conversational noise or hallucinations? Respond ONLY with 'true' or 'false'."
   },
   "judge_raw_index_concepts": {
-    "task": "Evaluate whether extracted concepts strictly follow formatting rules and reflect the summary.",
-    "system_instruction": "You are an impartial evaluator assessing keyword concepts extraction. Respond STRICTLY with 'true' or 'false'.",
-    "template": "Video Title: {video_title}\n\nSummary Context:\n{summary}\n\nProposed Concepts:\n{concepts}\n\nDo the proposed concepts adhere strictly to rules (2 to 6 comma-separated concept terms, NO labels like 'Key concepts:', NO prefixes, NO colons, NO markdown) and accurately reflect the summary? Respond ONLY with 'true' or 'false'."
+    "task": "Evaluate whether extracted concepts strictly follow formatting rules and reflect the transcript excerpt.",
+    "system_instruction": "You are an impartial evaluator assessing principal concepts extraction. Respond STRICTLY with 'true' or 'false'.",
+    "template": "Video Title: {video_title}\n\nTranscript Excerpt:\n{transcript_excerpt}\n\nProposed Concepts:\n{concepts}\n\nDo the proposed concepts adhere strictly to rules (comma-separated principal concept terms, NO labels like 'Key concepts:', NO prefixes, NO colons, NO markdown) and accurately reflect the core mechanisms and ideas of the transcript excerpt? Respond ONLY with 'true' or 'false'."
+  },
+  "judge_raw_index_synthesis": {
+    "task": "Evaluate whether the synthesis paragraph has appropriate size and faithfully represents the original transcript.",
+    "system_instruction": "You are an impartial evaluator assessing synthesis paragraph quality and fidelity. Respond STRICTLY with 'true' or 'false'.",
+    "template": "Video Title: {video_title}\n\nOriginal Transcript Excerpt:\n{transcript_excerpt}\n\nProposed Synthesis Paragraph:\n{synthesis}\n\nEvaluate whether the proposed synthesis satisfies ALL of the following criteria:\n1. Form and Size: It is strictly a single continuous paragraph of appropriate size (neither a brief fragment nor an overlong essay, without bullet points, line breaks, or introductory labels).\n2. Content Fidelity: It faithfully and accurately synthesizes the original transcript content without hallucinations, external commentary, or conversational noise.\n\nDoes the proposed synthesis meet both criteria? Respond ONLY with 'true' or 'false'."
   }
 }
 

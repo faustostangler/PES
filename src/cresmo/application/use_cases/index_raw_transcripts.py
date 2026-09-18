@@ -43,7 +43,7 @@ _INDICATIVE_PREFIXES = (
 
 _FORBIDDEN_PREFIX_REGEX = re.compile(
     r"^\s*(?:\*{1,3}|#{1,6}\s*)?"
-    r"(?:key\s*concepts?|keywords?|palavras?-chave|conceitos?(?:-chave)?|tópicos?|termo-chave|linha\s*[12]|line\s*[12])"
+    r"(?:key\s*concepts?|keywords?|palavras?-chave|conceitos?(?:-chave)?|tópicos?|termo-chave|síntese(?: conceitual)?|sintese(?: conceitual)?|synthesis|linha\s*[12]|line\s*[12])"
     r"\s*[:：\-–—]",
     re.IGNORECASE,
 )
@@ -93,6 +93,62 @@ def is_valid_concepts_output(raw_output: str) -> bool:
         return False
     clean_first = first_line.strip("\"'`*#_")
     return not _FORBIDDEN_PREFIX_REGEX.search(clean_first)
+
+
+def is_valid_synthesis_paragraph(
+    raw_output: str,
+    min_words: int = 20,
+    max_words: int = 120,
+) -> bool:
+    """Validate that candidate synthesis output is a single paragraph of appropriate size.
+
+    Args:
+        raw_output: Candidate synthesis paragraph from LLM.
+        min_words: Minimum word threshold.
+        max_words: Maximum word threshold.
+
+    Returns:
+        True if the output meets paragraph formatting and size constraints; False otherwise.
+    """
+    clean = raw_output.strip()
+    if not clean:
+        return False
+    if _FORBIDDEN_PREFIX_REGEX.search(clean):
+        return False
+    clean_first = clean.splitlines()[0].strip("\"'`*#_")
+    if _FORBIDDEN_PREFIX_REGEX.search(clean_first):
+        return False
+
+    # Reject multi-paragraph markdown outputs separated by empty lines
+    paragraphs = [p.strip() for p in clean.split("\n\n") if p.strip()]
+    if len(paragraphs) > 1:
+        return False
+
+    # Reject markdown bullet lists or numbered lists
+    for line in clean.splitlines():
+        stripped = line.strip()
+        if stripped.startswith(("- ", "* ", "1.", "2.", "• ")):
+            return False
+
+    words = clean.split()
+    return min_words <= len(words) <= max_words
+
+
+def _can_retry(attempts: int, max_rewrites: int) -> bool:
+    """Determine whether another retry attempt is permitted.
+
+    A max_rewrites value of 0 or negative signifies unbounded (infinite) retries.
+
+    Args:
+        attempts: Number of rewrite attempts completed so far.
+        max_rewrites: Configured threshold limit (0 = infinite).
+
+    Returns:
+        True if another attempt is allowed; False otherwise.
+    """
+    if max_rewrites <= 0:
+        return True
+    return attempts < max_rewrites
 
 
 def parse_judge_boolean(raw_output: str) -> bool:
@@ -257,10 +313,10 @@ class IndexRawTranscriptsUseCase:
         Walkthrough:
             1. Check whether content_id is already present in channel _canal.md index.
             2. If indexed and not force, skip immediately (idempotent 0-token cost).
-            3. Pass 1: Summarize title and transcript excerpt into conceptual summary.
-            4. Judge Pass 1: Deterministic compliance check (temperature=0.0) for summary fidelity.
-            5. Pass 2: Extract strictly comma-separated key concepts.
-            6. Judge Pass 2: Deterministic compliance check (temperature=0.0) and self-healing rewrite loop.
+            3. Pass 1: Extract strictly comma-separated key concepts from raw transcript excerpt.
+            4. Judge Pass 1: Deterministic compliance check (temperature=0.0) and self-healing rewrite loop.
+            5. Pass 2: Summarize title and raw transcript excerpt into conceptual summary.
+            6. Judge Pass 2: Deterministic compliance check (temperature=0.0) for summary fidelity and retry loop.
             7. Pass 3: Synthesize single dense paratactic paragraph prioritizing NERs and their relations.
             8. Construct RawIndexEntry and append to both channel index and brain.csv.
 
@@ -297,150 +353,200 @@ class IndexRawTranscriptsUseCase:
             excerpt = excerpt[: self.max_chars]
 
         try:
-            # Pass 1: Conceptual Summary of title and transcript excerpt
+            # Pass 1: Extract strictly comma-separated key concepts from transcript excerpt
+            sys_con, usr_con = self.prompt_provider.get_raw_index_concepts_prompt(
+                video_title=title_str,
+                transcript_excerpt=excerpt,
+                language=self.language,
+            )
+            sys_judge_con, _ = self.prompt_provider.get_judge_raw_index_concepts_prompt(
+                video_title=title_str,
+                transcript_excerpt=excerpt,
+                concepts="",
+                language=self.language,
+            )
+
+            is_concepts_valid = False
+            concept_retries = 0
+            raw_concepts = ""
+            while not is_concepts_valid:
+                if concept_retries == 0:
+                    prompt = usr_con
+                    trace_id = f"{video_id_str}_concepts"
+                    judge_trace_id = f"{video_id_str}_concepts_judge"
+                else:
+                    logger.info(
+                        "[IndexRaw] Attempt %d: concepts compliance check failed for '%s'. Requesting rewrite.",
+                        concept_retries,
+                        video_id_str,
+                    )
+                    prompt = self.prompt_provider.get_raw_index_concepts_rewrite_prompt(
+                        previous_output=raw_concepts,
+                        language=self.language,
+                    )
+                    trace_id = f"{video_id_str}_concepts_rewrite_{concept_retries}"
+                    judge_trace_id = f"{video_id_str}_concepts_judge_retry_{concept_retries}"
+
+                raw_concepts = self.llm.transform(
+                    prompt=prompt,
+                    system_instruction=sys_con,
+                    temperature=self.temperature,
+                    trace_id=trace_id,
+                )
+
+                if is_valid_concepts_output(raw_concepts):
+                    _, usr_judge_con = self.prompt_provider.get_judge_raw_index_concepts_prompt(
+                        video_title=title_str,
+                        transcript_excerpt=excerpt,
+                        concepts=raw_concepts,
+                        language=self.language,
+                    )
+                    judge_con_resp = self.llm.transform(
+                        prompt=usr_judge_con,
+                        system_instruction=sys_judge_con,
+                        temperature=0.0,
+                        trace_id=judge_trace_id,
+                    )
+                    is_concepts_valid = parse_judge_boolean(judge_con_resp)
+                else:
+                    is_concepts_valid = False
+
+                if not is_concepts_valid:
+                    if not _can_retry(concept_retries, self.max_rewrites):
+                        break
+                    concept_retries += 1
+
+            concept = _clean_concept_line(raw_concepts)
+            if not concept:
+                concept = "Síntese Conceitual"
+
+            # Pass 2: Conceptual Summary of title and transcript excerpt
             sys_sum, usr_sum = self.prompt_provider.get_raw_index_summary_prompt(
                 video_title=title_str,
                 transcript_excerpt=excerpt,
                 language=self.language,
             )
-            raw_summary = self.llm.transform(
-                prompt=usr_sum,
-                system_instruction=sys_sum,
-                temperature=self.temperature,
-                trace_id=f"{video_id_str}_summary",
-            )
-            summary = _clean_text_line(raw_summary) or title_str
-
-            # Pass 1 Compliance Check: LLM-as-a-judge for summary fidelity (deterministic temperature=0.0)
-            sys_judge_sum, usr_judge_sum = self.prompt_provider.get_judge_raw_index_summary_prompt(
+            sys_judge_sum, _ = self.prompt_provider.get_judge_raw_index_summary_prompt(
                 video_title=title_str,
                 transcript_excerpt=excerpt,
-                summary=summary,
+                summary="",
                 language=self.language,
             )
-            judge_sum_resp = self.llm.transform(
-                prompt=usr_judge_sum,
-                system_instruction=sys_judge_sum,
-                temperature=0.0,
-                trace_id=f"{video_id_str}_summary_judge",
-            )
-            is_summary_valid = parse_judge_boolean(judge_sum_resp)
 
-            summary_attempts = 0
-            while not is_summary_valid and summary_attempts < self.max_rewrites:
-                summary_attempts += 1
-                logger.info(
-                    "[IndexRaw] Attempt %d: summary judge returned false for '%s'. Regenerating summary.",
-                    summary_attempts,
-                    video_id_str,
+            is_summary_valid = False
+            summary_retries = 0
+            raw_summary = ""
+            summary = ""
+            while not is_summary_valid:
+                trace_id = (
+                    f"{video_id_str}_summary"
+                    if summary_retries == 0
+                    else f"{video_id_str}_summary_retry_{summary_retries}"
                 )
+                judge_trace_id = (
+                    f"{video_id_str}_summary_judge"
+                    if summary_retries == 0
+                    else f"{video_id_str}_summary_judge_retry_{summary_retries}"
+                )
+                if summary_retries > 0:
+                    logger.info(
+                        "[IndexRaw] Attempt %d: summary judge returned false for '%s'. Regenerating summary.",
+                        summary_retries,
+                        video_id_str,
+                    )
+
                 raw_summary = self.llm.transform(
                     prompt=usr_sum,
                     system_instruction=sys_sum,
                     temperature=self.temperature,
-                    trace_id=f"{video_id_str}_summary_retry_{summary_attempts}",
+                    trace_id=trace_id,
                 )
                 summary = _clean_text_line(raw_summary) or title_str
-                _, usr_judge_sum_retry = self.prompt_provider.get_judge_raw_index_summary_prompt(
+
+                _, usr_judge_sum = self.prompt_provider.get_judge_raw_index_summary_prompt(
                     video_title=title_str,
                     transcript_excerpt=excerpt,
                     summary=summary,
                     language=self.language,
                 )
                 judge_sum_resp = self.llm.transform(
-                    prompt=usr_judge_sum_retry,
+                    prompt=usr_judge_sum,
                     system_instruction=sys_judge_sum,
                     temperature=0.0,
-                    trace_id=f"{video_id_str}_summary_judge_retry_{summary_attempts}",
+                    trace_id=judge_trace_id,
                 )
                 is_summary_valid = parse_judge_boolean(judge_sum_resp)
 
-            # Pass 2: Extract strictly comma-separated key concepts
-            sys_con, usr_con = self.prompt_provider.get_raw_index_concepts_prompt(
-                video_title=title_str,
-                summary=summary,
-                language=self.language,
-            )
-            raw_concepts = self.llm.transform(
-                prompt=usr_con,
-                system_instruction=sys_con,
-                temperature=self.temperature,
-                trace_id=f"{video_id_str}_concepts",
-            )
+                if not is_summary_valid:
+                    if not _can_retry(summary_retries, self.max_rewrites):
+                        break
+                    summary_retries += 1
 
-            # Pass 2 Compliance Check: Heuristic check + LLM-as-a-judge (deterministic temperature=0.0)
-            sys_judge_con, usr_judge_con = self.prompt_provider.get_judge_raw_index_concepts_prompt(
-                video_title=title_str,
-                summary=summary,
-                concepts=raw_concepts,
-                language=self.language,
-            )
-            if is_valid_concepts_output(raw_concepts):
-                judge_con_resp = self.llm.transform(
-                    prompt=usr_judge_con,
-                    system_instruction=sys_judge_con,
-                    temperature=0.0,
-                    trace_id=f"{video_id_str}_concepts_judge",
-                )
-                is_concepts_valid = parse_judge_boolean(judge_con_resp)
-            else:
-                is_concepts_valid = False
-
-            concepts_attempts = 0
-            while not is_concepts_valid and concepts_attempts < self.max_rewrites:
-                concepts_attempts += 1
-                logger.info(
-                    "[IndexRaw] Attempt %d: concepts compliance check failed for '%s'. Requesting rewrite.",
-                    concepts_attempts,
-                    video_id_str,
-                )
-                rewrite_prompt = self.prompt_provider.get_raw_index_concepts_rewrite_prompt(
-                    previous_output=raw_concepts,
-                    language=self.language,
-                )
-                raw_concepts = self.llm.transform(
-                    prompt=rewrite_prompt,
-                    system_instruction=sys_con,
-                    temperature=self.temperature,
-                    trace_id=f"{video_id_str}_concepts_rewrite_{concepts_attempts}",
-                )
-                if is_valid_concepts_output(raw_concepts):
-                    _, usr_judge_con_retry = (
-                        self.prompt_provider.get_judge_raw_index_concepts_prompt(
-                            video_title=title_str,
-                            summary=summary,
-                            concepts=raw_concepts,
-                            language=self.language,
-                        )
-                    )
-                    judge_con_resp = self.llm.transform(
-                        prompt=usr_judge_con_retry,
-                        system_instruction=sys_judge_con,
-                        temperature=0.0,
-                        trace_id=f"{video_id_str}_concepts_judge_retry_{concepts_attempts}",
-                    )
-                    is_concepts_valid = parse_judge_boolean(judge_con_resp)
-                else:
-                    is_concepts_valid = False
-
-            concept = _clean_concept_line(raw_concepts)
-            if not concept:
-                concept = "Síntese Conceitual"
-
-            # Pass 3: Dense single paratactic synthesis paragraph prioritizing NERs and relationships
+            # Pass 3: Dense single paratactic synthesis paragraph of appropriate size from title + summary
             sys_syn, usr_syn = self.prompt_provider.get_raw_index_synthesis_prompt(
                 video_title=title_str,
                 summary=summary,
-                concepts=concept,
                 language=self.language,
             )
-            raw_synthesis = self.llm.transform(
-                prompt=usr_syn,
-                system_instruction=sys_syn,
-                temperature=self.temperature,
-                trace_id=f"{video_id_str}_synthesis",
+            sys_judge_syn, _ = self.prompt_provider.get_judge_raw_index_synthesis_prompt(
+                video_title=title_str,
+                transcript_excerpt=excerpt,
+                synthesis="",
+                language=self.language,
             )
-            synthesis = _clean_text_line(raw_synthesis)
+
+            is_synthesis_valid = False
+            synthesis_retries = 0
+            raw_synthesis = ""
+            synthesis = ""
+            while not is_synthesis_valid:
+                trace_id = (
+                    f"{video_id_str}_synthesis"
+                    if synthesis_retries == 0
+                    else f"{video_id_str}_synthesis_retry_{synthesis_retries}"
+                )
+                judge_trace_id = (
+                    f"{video_id_str}_synthesis_judge"
+                    if synthesis_retries == 0
+                    else f"{video_id_str}_synthesis_judge_retry_{synthesis_retries}"
+                )
+                if synthesis_retries > 0:
+                    logger.info(
+                        "[IndexRaw] Attempt %d: synthesis compliance check failed for '%s'. Regenerating synthesis.",
+                        synthesis_retries,
+                        video_id_str,
+                    )
+
+                raw_synthesis = self.llm.transform(
+                    prompt=usr_syn,
+                    system_instruction=sys_syn,
+                    temperature=self.temperature,
+                    trace_id=trace_id,
+                )
+                synthesis = _clean_text_line(raw_synthesis)
+
+                if is_valid_synthesis_paragraph(synthesis):
+                    _, usr_judge_syn = self.prompt_provider.get_judge_raw_index_synthesis_prompt(
+                        video_title=title_str,
+                        transcript_excerpt=excerpt,
+                        synthesis=synthesis,
+                        language=self.language,
+                    )
+                    judge_syn_resp = self.llm.transform(
+                        prompt=usr_judge_syn,
+                        system_instruction=sys_judge_syn,
+                        temperature=0.0,
+                        trace_id=judge_trace_id,
+                    )
+                    is_synthesis_valid = parse_judge_boolean(judge_syn_resp)
+                else:
+                    is_synthesis_valid = False
+
+                if not is_synthesis_valid:
+                    if not _can_retry(synthesis_retries, self.max_rewrites):
+                        break
+                    synthesis_retries += 1
+
             if not synthesis:
                 synthesis = summary or title_str
 

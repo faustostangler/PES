@@ -343,3 +343,11 @@ class CresmoSettings(BaseSettings):
         ),
         description="Sampling temperature for raw transcript conceptual indexing.",
     )
+    raw_index_max_attempts: int = Field(
+        default=3,
+        ge=0,
+        validation_alias=AliasChoices(
+            "raw_index_max_attempts", "CRESMO_RAW_INDEX_MAX_ATTEMPTS", "RAW_INDEX_MAX_ATTEMPTS"
+        ),
+        description="Maximum LLM judge rewrite attempts for raw indexing (0 means unconstrained / infinite loop).",
+    )
