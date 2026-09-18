@@ -578,3 +578,20 @@ class PromptProviderPort(ABC):
             Tuple containing system instruction and user prompt string.
         """
         raise NotImplementedError
+
+    @abstractmethod
+    def get_raw_index_rewrite_prompt(
+        self,
+        previous_output: str,
+        language: str = "Português do Brasil",
+    ) -> str:
+        """Format corrective rewrite prompt when raw index synthesis violates output rules.
+
+        Args:
+            previous_output: Verbatim output from previous LLM attempt.
+            language: Target natural language for rewrite.
+
+        Returns:
+            Formatted rewrite prompt string.
+        """
+        raise NotImplementedError

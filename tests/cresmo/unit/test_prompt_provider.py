@@ -432,3 +432,15 @@ class TestJsonPromptProvider:
         assert "Video Title: Pareto Principle" in user_prompt
         assert "Pareto analysis shows 80/20 distribution." in user_prompt
 
+    def test_get_raw_index_rewrite_prompt_formats_corrective_template(self) -> None:
+        provider = JsonPromptProvider()
+        assert "raw_index_rewrite" in provider._templates
+        rewrite_prompt = provider.get_raw_index_rewrite_prompt(
+            previous_output="Key concepts: A, B\nSíntese.",
+            language="Português do Brasil",
+        )
+        assert "Key concepts: A, B" in rewrite_prompt
+        assert "PORTUGUÊS DO BRASIL" in rewrite_prompt
+        assert "Português do Brasil" in rewrite_prompt
+        assert "Line 1: Comma-separated key concepts ONLY" in rewrite_prompt
+

@@ -279,12 +279,9 @@ class IndexRawTranscriptsUseCase:
                     attempts,
                     video_id_str,
                 )
-                rewrite_prompt = (
-                    f"Your previous response violated output formatting guidelines because Line 1 contained prohibited labels, prefixes, or framing.\n\n"
-                    f"--- PREVIOUS OUTPUT ---\n{raw_response}\n\n"
-                    f"RE-WRITE THE OUTPUT STRICTLY IN {self.language.upper()} ADHERING TO THIS TWO-PART FORMAT:\n"
-                    f"Line 1: Comma-separated key concepts ONLY (e.g. 'Conceito 1, Conceito 2, Conceito 3'). Absolutely NO labels like 'Key concepts:', NO prefixes, NO colons, NO markdown.\n"
-                    f"Line 2+: Dense single paratactic synthesis paragraph in {self.language}."
+                rewrite_prompt = self.prompt_provider.get_raw_index_rewrite_prompt(
+                    previous_output=raw_response,
+                    language=self.language,
                 )
                 raw_response = self.llm.transform(
                     prompt=rewrite_prompt,
