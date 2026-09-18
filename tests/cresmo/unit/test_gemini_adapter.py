@@ -107,9 +107,17 @@ class TestGeminiLLMAdapter:
 
         # Verify Langfuse generation metadata update
         mock_langfuse.update_current_generation.assert_called_once_with(
+            name="test-trace-123",
             model="gemini-2.5-flash",
             output="Generated analytical synthesis content.",
-            usage_details={"input": 150, "output": 80},
+            usage_details={"input": 150, "output": 80, "total": 230},
+            metadata={
+                "provider": "gemini",
+                "temperature": 0.7,
+                "trace_id": "test-trace-123",
+                "session_id": "session-456",
+                "user_id": "user-789",
+            },
         )
 
     def test_transform_uses_default_temperature_when_none(self) -> None:
@@ -125,6 +133,38 @@ class TestGeminiLLMAdapter:
 
         call_kwargs = mock_genai_client.models.generate_content.call_args[1]
         assert call_kwargs["config"].temperature == 0.2
+
+    def test_transform_emits_full_telemetry_metadata(self) -> None:
+        mock_response = MagicMock(text="Output with telemetry", usage_metadata=None)
+        mock_genai_client = MagicMock()
+        mock_genai_client.models.generate_content.return_value = mock_response
+
+        mock_langfuse = MagicMock()
+        adapter = GeminiLLMAdapter(
+            genai_client=mock_genai_client,
+            langfuse_client=mock_langfuse,
+        )
+
+        adapter.transform(
+            prompt="Test prompt",
+            trace_id="vid123_concepts",
+            session_id="raw_index_Philosophy",
+            user_id="Philosophy",
+        )
+
+        mock_langfuse.update_current_generation.assert_called_once_with(
+            name="vid123_concepts",
+            model="gemini-3.5-flash-lite",
+            output="Output with telemetry",
+            usage_details={"input": 2, "output": 3, "total": 5},
+            metadata={
+                "provider": "gemini",
+                "temperature": 0.2,
+                "trace_id": "vid123_concepts",
+                "session_id": "raw_index_Philosophy",
+                "user_id": "Philosophy",
+            },
+        )
 
     def test_transform_retries_on_transient_error(self) -> None:
         mock_response = MagicMock(text="Success after retry", usage_metadata=None)
@@ -211,9 +251,11 @@ class TestGeminiLLMAdapter:
         adapter.transform(prompt="One two three four five")
 
         mock_langfuse.update_current_generation.assert_called_once_with(
+            name="gemini_generation",
             model="gemini-3.5-flash-lite",
             output="Three words text",
-            usage_details={"input": 5, "output": 3},
+            usage_details={"input": 5, "output": 3, "total": 8},
+            metadata={"provider": "gemini", "temperature": 0.2},
         )
 
     def test_transform_handles_langfuse_telemetry_exception_gracefully(self) -> None:

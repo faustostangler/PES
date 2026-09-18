@@ -65,7 +65,9 @@ class DiscoverAtomicInventoryUseCase:
         response = self.llm_port.transform(
             prompt=prompt,
             temperature=self.temperature,
-            trace_id=compendium.content_id.value,
+            trace_id=f"{compendium.content_id.value}_inventory",
+            session_id=f"stage4_inventory_{compendium.channel_name}",
+            user_id=compendium.channel_name,
         )
 
         # Step 3: Parse output JSON array.

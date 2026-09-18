@@ -92,7 +92,9 @@ class FillGapsFluidProseUseCase:
             current_text = self.llm_port.transform(
                 prompt=prompt,
                 temperature=self.temperature,
-                trace_id=raw_transcript.content_id.value,
+                trace_id=f"{raw_transcript.content_id.value}_gap_fill_pass_{p + 1}",
+                session_id=f"stage2_fluid_prose_{raw_transcript.channel_name}",
+                user_id=raw_transcript.channel_name,
             )
 
         # Extract title from H1 or fallback to raw title

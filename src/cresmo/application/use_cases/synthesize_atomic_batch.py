@@ -144,7 +144,9 @@ class SynthesizeAtomicBatchUseCase:
             response = self.llm_port.transform(
                 prompt=prompt,
                 temperature=self.temperature,
-                trace_id=compendium.content_id.value,
+                trace_id=f"{compendium.content_id.value}_atomic_batch",
+                session_id=f"stage5_atomic_{compendium.channel_name}",
+                user_id=compendium.channel_name,
             )
             data = extract_json_data(response)
             if not isinstance(data, list):

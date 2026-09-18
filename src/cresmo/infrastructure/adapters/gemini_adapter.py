@@ -199,10 +199,27 @@ class GeminiLLMAdapter(LLMTransformationPort):
         # Bind output and token metadata to Langfuse generation span if active
         if self._langfuse is not None:
             try:
+                metadata: dict[str, Any] = {
+                    "provider": "gemini",
+                    "temperature": eff_temperature,
+                }
+                if trace_id:
+                    metadata["trace_id"] = trace_id
+                if session_id:
+                    metadata["session_id"] = session_id
+                if user_id:
+                    metadata["user_id"] = user_id
+
                 self._langfuse.update_current_generation(
+                    name=trace_id or "gemini_generation",
                     model=active_model,
                     output=response_text,
-                    usage_details={"input": prompt_tokens, "output": candidate_tokens},
+                    usage_details={
+                        "input": prompt_tokens,
+                        "output": candidate_tokens,
+                        "total": prompt_tokens + candidate_tokens,
+                    },
+                    metadata=metadata,
                 )
             except (AttributeError, RuntimeError, ValueError):
                 pass
