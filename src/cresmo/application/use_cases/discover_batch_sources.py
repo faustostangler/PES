@@ -21,7 +21,11 @@ from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 from cresmo.application.ports import MediaIngestionPort
-from cresmo.domain.value_objects import ChannelFeedQuery, normalize_to_uploads_playlist_url
+from cresmo.domain.value_objects import (
+    ChannelFeedQuery,
+    SyncFilterCriteria,
+    normalize_to_uploads_playlist_url,
+)
 from cresmo.infrastructure.config import CresmoSettings
 
 _CHANNEL_REGEX = re.compile(r"youtube\.com/(?:@|c/|channel/|user/|playlist\?list=)", re.IGNORECASE)
@@ -53,7 +57,10 @@ class BatchSource:
 
 @dataclass(frozen=True)
 class BatchDiscoveryQuery:
-    """Encapsulates input parameters for batch source discovery."""
+    """Encapsulates input parameters for batch source discovery.
+
+    Conforms to ADR-012: Multi-Criteria Filtering & Alphabetical Feed Ordering.
+    """
 
     explicit_manifest: Path | None = None
     manifest_path: Path | None = None
@@ -66,6 +73,13 @@ class BatchDiscoveryQuery:
     channel_max_videos: int = 50
     discovery_workers: int | None = None
     enable_channel_crawler: bool = True
+    # ADR-012: optional multi-criteria filter; empty = full pipeline flow (no filtering)
+    filter_criteria: SyncFilterCriteria = None  # type: ignore[assignment]
+
+    def __post_init__(self) -> None:
+        # Ensure filter_criteria is always a valid SyncFilterCriteria (never None)
+        if self.filter_criteria is None:
+            object.__setattr__(self, "filter_criteria", SyncFilterCriteria())
 
 
 def is_channel_or_playlist_feed(url: str) -> bool:
@@ -198,20 +212,28 @@ class DiscoverBatchSourcesUseCase:
         acc = _BatchSourceAccumulator()
 
         # A1: Priority items
-        priority_texts_dir = q.priority_texts_dir or getattr(
-            self.settings, "priority_texts_dir", None
+        priority_texts_dir = (
+            q.priority_texts_dir
+            if q.priority_texts_dir is not None
+            else getattr(self.settings, "priority_texts_dir", None)
         )
-        pri_text_chans = self._collect_priority_texts(priority_texts_dir, acc)
+        pri_text_chans = self._collect_priority_texts(priority_texts_dir, acc, q.filter_criteria)
 
         # A2: Local raw lake (.md files)
-        raw_dir = q.raw_dir or getattr(self.settings, "raw_dir", Path("data/raw"))
-        local_channels = self._scan_raw_lake(raw_dir, q.scan_raw, acc)
+        raw_dir = (
+            q.raw_dir
+            if q.raw_dir is not None
+            else getattr(self.settings, "raw_dir", Path("data/raw"))
+        )
+        local_channels = self._scan_raw_lake(raw_dir, q.scan_raw, acc, q.filter_criteria)
 
-        playlist_priority_path = q.playlist_priority_path or getattr(
-            self.settings, "playlist_priority_path", None
+        playlist_priority_path = (
+            q.playlist_priority_path
+            if q.playlist_priority_path is not None
+            else getattr(self.settings, "playlist_priority_path", None)
         )
         pri_url_chans, pri_unresolved = self._collect_priority_urls(
-            playlist_priority_path, local_channels, acc
+            playlist_priority_path, local_channels, acc, q.filter_criteria
         )
 
         # FAST-PATH PRIORITY SNAPSHOT:
@@ -230,7 +252,8 @@ class DiscoverBatchSourcesUseCase:
             for src in priority_sources:
                 yield src
             yielded_so_far = len(acc.sources)
-            self._classify_seeds(playlist_path, local_channels, acc)
+            # ADR-012: pass filter_criteria so channel/video/category filters apply on sync path too
+            self._classify_seeds(playlist_path, local_channels, acc, q.filter_criteria)
             for src in acc.sources[yielded_so_far:]:
                 yield src
             return
@@ -252,7 +275,7 @@ class DiscoverBatchSourcesUseCase:
         def _crawler_producer() -> None:
             try:
                 channels_to_probe, remote_videos, probed_channels = self._classify_seeds(
-                    playlist_path, local_channels, acc
+                    playlist_path, local_channels, acc, q.filter_criteria
                 )
 
                 for pch in pri_text_chans + pri_url_chans:
@@ -271,6 +294,7 @@ class DiscoverBatchSourcesUseCase:
                         workers,
                         probed_channels,
                         channels_to_probe,
+                        filter_criteria=q.filter_criteria,
                         stop_event=stop_event,
                     )
 
@@ -284,13 +308,17 @@ class DiscoverBatchSourcesUseCase:
                     f"  - A3 (Seed Playlist): {len(channels_to_probe)} total channel(s)\n"
                 )
 
-                # Stage B: Vídeos para baixar legenda
+                # ADR-012: Final alphabetical sort after all channel sources are collected
+                # (seeds from _classify_seeds + priority channels + remote-resolved channels)
+                channels_to_probe = sorted(channels_to_probe, key=lambda c: c.lower())
+
                 self._probe_channel_feeds(
                     channels_to_probe,
                     lookback,
                     q.channel_max_videos,
                     workers,
                     acc,
+                    filter_criteria=q.filter_criteria,
                     stop_event=stop_event,
                 )
             except Exception as exc:  # noqa: BLE001
@@ -329,17 +357,44 @@ class DiscoverBatchSourcesUseCase:
         return [BatchSource(kind="url", target=u) for u in urls]
 
     def _collect_priority_texts(
-        self, priority_texts_dir: Path | None, acc: _BatchSourceAccumulator
+        self,
+        priority_texts_dir: Path | None,
+        acc: _BatchSourceAccumulator,
+        filter_criteria: SyncFilterCriteria | None = None,
     ) -> list[str]:
         """Collect local priority text/markdown files that bypass Stage 1 transcription."""
+        criteria = filter_criteria or SyncFilterCriteria()
         priority_channels: list[str] = []
         priority_files = load_transcript_files(priority_texts_dir)
         for pf in priority_files:
-            resolved_pf = str(pf.resolve())
-            acc.add_source(kind="file", target=resolved_pf)
             meta = extract_raw_file_metadata(pf)
             raw_chan = meta.get("channel") or meta.get("channel_id")
-            if raw_chan:
+            vid = meta.get("video_id") or pf.stem
+
+            matches = True
+            if not criteria.is_empty():
+                if criteria.video_ids and not criteria.matches_video(vid):
+                    matches = False
+                if criteria.channels and (
+                    not raw_chan or not criteria.matches_channel(raw_chan, raw_chan)
+                ):
+                    matches = False
+                if criteria.categories and (
+                    not raw_chan or not criteria.matches_category(raw_chan)
+                ):
+                    matches = False
+
+            if matches:
+                resolved_pf = str(pf.resolve())
+                acc.add_source(kind="file", target=resolved_pf)
+
+            if raw_chan and (
+                criteria.is_empty()
+                or (
+                    criteria.matches_channel(raw_chan, raw_chan)
+                    and criteria.matches_category(raw_chan)
+                )
+            ):
                 norm_chan = normalize_to_uploads_playlist_url(raw_chan)
                 if norm_chan not in priority_channels:
                     priority_channels.append(norm_chan)
@@ -350,35 +405,71 @@ class DiscoverBatchSourcesUseCase:
         playlist_priority_path: Path | None,
         local_channels: dict[str, str],
         acc: _BatchSourceAccumulator,
+        filter_criteria: SyncFilterCriteria | None = None,
     ) -> tuple[list[str], list[str]]:
         """Collect priority URLs scheduled for immediate processing."""
+        criteria = filter_criteria or SyncFilterCriteria()
         priority_channels: list[str] = []
         unresolved_videos: list[str] = []
         priority_urls = read_manifest_lines(playlist_priority_path)
         for pu in priority_urls:
             if is_channel_or_playlist_feed(pu):
-                norm_chan = normalize_to_uploads_playlist_url(pu)
-                if norm_chan not in priority_channels:
-                    priority_channels.append(norm_chan)
+                if criteria.is_empty() or (
+                    criteria.matches_channel(pu, pu) and criteria.matches_category(pu)
+                ):
+                    norm_chan = normalize_to_uploads_playlist_url(pu)
+                    if norm_chan not in priority_channels:
+                        priority_channels.append(norm_chan)
             else:
                 m = _VIDEO_ID_REGEX.search(pu)
                 vid = m.group(1) if m else None
-                if not (vid and acc.has_seen(vid)):
+                local_chan = local_channels.get(vid) if vid else None
+
+                matches = True
+                if not criteria.is_empty():
+                    if criteria.video_ids and not criteria.matches_video(vid or pu, pu):
+                        matches = False
+                    if criteria.channels and (
+                        not local_chan or not criteria.matches_channel(local_chan, local_chan)
+                    ):
+                        matches = False
+                    if criteria.categories and (
+                        not local_chan or not criteria.matches_category(local_chan)
+                    ):
+                        matches = False
+
+                if matches and not (vid and acc.has_seen(vid)):
                     acc.add_source(kind="url", target=pu, vid=vid)
 
-                local_chan = local_channels.get(vid) if vid else None
                 if local_chan:
-                    norm_local = normalize_to_uploads_playlist_url(local_chan)
-                    if norm_local not in priority_channels:
-                        priority_channels.append(norm_local)
-                elif pu not in unresolved_videos:
+                    if criteria.is_empty() or (
+                        criteria.matches_channel(local_chan, local_chan)
+                        and criteria.matches_category(local_chan)
+                    ):
+                        norm_local = normalize_to_uploads_playlist_url(local_chan)
+                        if norm_local not in priority_channels:
+                            priority_channels.append(norm_local)
+                elif pu not in unresolved_videos and (
+                    criteria.is_empty()
+                    or (
+                        criteria.video_ids
+                        and criteria.matches_video(vid or pu, pu)
+                        and not criteria.channels
+                        and not criteria.categories
+                    )
+                ):
                     unresolved_videos.append(pu)
         return priority_channels, unresolved_videos
 
     def _scan_raw_lake(
-        self, raw_dir: Path | None, scan_raw: bool, acc: _BatchSourceAccumulator
+        self,
+        raw_dir: Path | None,
+        scan_raw: bool,
+        acc: _BatchSourceAccumulator,
+        filter_criteria: SyncFilterCriteria | None = None,
     ) -> dict[str, str]:
         """Scan raw transcripts lake, extract channel metadata, and register existing files."""
+        criteria = filter_criteria or SyncFilterCriteria()
         local_video_to_channel: dict[str, str] = {}
         if not (hasattr(raw_dir, "is_dir") and raw_dir.is_dir()):
             return local_video_to_channel
@@ -402,9 +493,22 @@ class DiscoverBatchSourcesUseCase:
                 local_video_to_channel[stem] = chan_url
 
             if scan_raw and not already_seen:
-                resolved_rf = str(rf.resolve())
-                if not any(s.target == resolved_rf for s in acc.sources):
-                    acc.sources.append(BatchSource(kind="file", target=resolved_rf))
+                matches = True
+                if not criteria.is_empty():
+                    if criteria.video_ids and not criteria.matches_video(canonical_vid):
+                        matches = False
+                    if criteria.channels and (
+                        not chan_url or not criteria.matches_channel(chan_url, chan_url)
+                    ):
+                        matches = False
+                    if criteria.categories and (
+                        not chan_url or not criteria.matches_category(chan_url)
+                    ):
+                        matches = False
+                if matches:
+                    resolved_rf = str(rf.resolve())
+                    if not any(s.target == resolved_rf for s in acc.sources):
+                        acc.sources.append(BatchSource(kind="file", target=resolved_rf))
 
         return local_video_to_channel
 
@@ -413,37 +517,86 @@ class DiscoverBatchSourcesUseCase:
         playlist_path: Path | None,
         local_channels: dict[str, str],
         acc: _BatchSourceAccumulator,
+        filter_criteria: SyncFilterCriteria | None = None,
     ) -> tuple[list[str], list[str], set[str]]:
-        """Classify seed playlist entries into direct video URLs, feeds, and channel lookups."""
+        """Classify seed playlist entries into direct video URLs, feeds, and channel lookups.
+
+        ADR-012: Applies channel filter criteria and returns channels sorted alphabetically.
+        """
+        criteria = filter_criteria or SyncFilterCriteria()
         channels_to_probe: list[str] = []
         probed_channels: set[str] = set()
         remote_videos: list[str] = []
 
         # Seed channels discovered from the local raw lake
         for c_url in local_channels.values():
-            if c_url not in probed_channels:
+            if c_url not in probed_channels and (
+                criteria.is_empty()
+                or (
+                    criteria.matches_channel(c_url, c_url)
+                    and criteria.matches_category(c_url)
+                )
+            ):
                 probed_channels.add(c_url)
                 channels_to_probe.append(c_url)
 
         main_urls = read_manifest_lines(playlist_path)
         for mu in main_urls:
             if is_channel_or_playlist_feed(mu):
-                if mu not in probed_channels:
+                if mu not in probed_channels and (
+                    criteria.is_empty()
+                    or (
+                        criteria.matches_channel(mu, mu)
+                        and criteria.matches_category(mu)
+                    )
+                ):
                     probed_channels.add(mu)
                     channels_to_probe.append(mu)
             else:
                 m = _VIDEO_ID_REGEX.search(mu)
                 vid = m.group(1) if m else None
-                if not (vid and acc.has_seen(vid)):
+                local_chan = local_channels.get(vid) if vid else None
+
+                matches = True
+                if not criteria.is_empty():
+                    if criteria.video_ids and not criteria.matches_video(vid or mu, mu):
+                        matches = False
+                    if criteria.channels and (
+                        not local_chan or not criteria.matches_channel(local_chan, local_chan)
+                    ):
+                        matches = False
+                    if criteria.categories and (
+                        not local_chan or not criteria.matches_category(local_chan)
+                    ):
+                        matches = False
+
+                # ADR-012: apply multi-criteria filter for direct video seeds
+                if matches and not (vid and acc.has_seen(vid)):
                     acc.add_source(kind="url", target=mu, vid=vid)
 
-                local_chan = local_channels.get(vid) if vid else None
                 if local_chan:
-                    if local_chan not in probed_channels:
+                    if local_chan not in probed_channels and (
+                        criteria.is_empty()
+                        or (
+                            criteria.matches_channel(local_chan, local_chan)
+                            and criteria.matches_category(local_chan)
+                        )
+                    ):
                         probed_channels.add(local_chan)
                         channels_to_probe.append(local_chan)
-                else:
+                elif mu not in remote_videos and (
+                    criteria.is_empty()
+                    or (
+                        criteria.video_ids
+                        and criteria.matches_video(vid or mu, mu)
+                        and not criteria.channels
+                        and not criteria.categories
+                    )
+                ):
                     remote_videos.append(mu)
+
+        # ADR-012: Enforce strict alphabetical ordering of channels before feed probing
+        channels_to_probe = sorted(channels_to_probe, key=lambda c: c.lower())
 
         return channels_to_probe, remote_videos, probed_channels
 
@@ -453,9 +606,11 @@ class DiscoverBatchSourcesUseCase:
         workers: int,
         probed_channels: set[str],
         channels_to_probe: list[str],
+        filter_criteria: SyncFilterCriteria | None = None,
         stop_event: threading.Event | None = None,
     ) -> None:
         """Resolve parent channels concurrently for seed videos missing local metadata."""
+        criteria = filter_criteria or SyncFilterCriteria()
         if not videos:
             return
 
@@ -473,9 +628,18 @@ class DiscoverBatchSourcesUseCase:
                     break
                 try:
                     resolved_chan = fut.result()
-                    if resolved_chan and resolved_chan not in probed_channels:
-                        probed_channels.add(resolved_chan)
-                        channels_to_probe.append(resolved_chan)
+                    if (
+                        isinstance(resolved_chan, str)
+                        and resolved_chan.strip()
+                        and resolved_chan not in probed_channels
+                    ):
+                        chan_clean = resolved_chan.strip()
+                        if criteria.is_empty() or (
+                            criteria.matches_channel(chan_clean, chan_clean)
+                            and criteria.matches_category(chan_clean)
+                        ):
+                            probed_channels.add(chan_clean)
+                            channels_to_probe.append(chan_clean)
                 except Exception as exc:  # noqa: BLE001
                     failed_vu = future_to_vurl[fut]
                     self._notify(
@@ -489,9 +653,15 @@ class DiscoverBatchSourcesUseCase:
         max_videos: int,
         workers: int,
         acc: _BatchSourceAccumulator,
+        filter_criteria: SyncFilterCriteria | None = None,
         stop_event: threading.Event | None = None,
     ) -> None:
-        """Probe recent video uploads across unique channel feeds concurrently (Stage B)."""
+        """Probe recent video uploads across unique channel feeds concurrently (Stage B).
+
+        ADR-012: Channels are pre-sorted alphabetically by caller. Applies video ID filter
+        when filter_criteria specifies video_ids.
+        """
+        criteria = filter_criteria or SyncFilterCriteria()
         if not channels:
             return
 
@@ -527,6 +697,9 @@ class DiscoverBatchSourcesUseCase:
                     vid = m.group(1) if m else d_url
                     # Stage B: Skip if already in raw lake or already queued
                     if not acc.has_seen(vid):
+                        # ADR-012: apply video ID filter before scheduling ingestion
+                        if not criteria.matches_video(vid, d_url):
+                            continue
                         added = acc.add_source(kind="url", target=d_url, vid=vid)
                         if added is not None:
                             discovered_count += 1

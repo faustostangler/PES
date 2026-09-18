@@ -12,12 +12,14 @@ Conforms to:
 from __future__ import annotations
 
 import re
+from collections.abc import Iterable
 from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
 
 from cresmo.domain.exceptions import DomainValidationError, NoteTypologyError
+from cresmo.domain.taxonomy import classify_channel
 
 _CONTENT_ID_PATTERN = re.compile(r"^[a-zA-Z0-9_-]{8,64}$")
 _BRACKETS_PATTERN = re.compile(r"\[\[(.*?)\]\]")
@@ -328,6 +330,132 @@ class ChannelFeedQuery:
         if self.max_videos <= 0:
             raise DomainValidationError(f"max_videos must be positive. Got: {self.max_videos}")
         object.__setattr__(self, "channel_url", u)
+
+
+@dataclass(frozen=True)
+class SyncFilterCriteria:
+    """Immutable multi-criteria filter for channel synchronization and batch discovery.
+
+    Conforms to ADR-012.
+
+    Attributes:
+        channels: Tuple of target channel names, handles, or URLs (normalized lowercase).
+        categories: Tuple of target domain categories or volatility types (normalized lowercase).
+        video_ids: Tuple of target video IDs or URLs.
+    """
+
+    channels: tuple[str, ...] = ()
+    categories: tuple[str, ...] = ()
+    video_ids: tuple[str, ...] = ()
+
+    def __post_init__(self) -> None:
+        norm_channels: list[str] = []
+        for ch in self.channels:
+            cleaned = ch.strip().lower()
+            if not cleaned:
+                raise DomainValidationError("Channel filter token cannot be empty.")
+            norm_channels.append(cleaned)
+
+        norm_categories: list[str] = []
+        for cat in self.categories:
+            cleaned = cat.strip().lower()
+            if not cleaned:
+                raise DomainValidationError("Category filter token cannot be empty.")
+            norm_categories.append(cleaned)
+
+        norm_vids: list[str] = []
+        for vid in self.video_ids:
+            cleaned = vid.strip()
+            if not cleaned:
+                raise DomainValidationError("Video filter token cannot be empty.")
+            norm_vids.append(cleaned)
+
+        object.__setattr__(self, "channels", tuple(norm_channels))
+        object.__setattr__(self, "categories", tuple(norm_categories))
+        object.__setattr__(self, "video_ids", tuple(norm_vids))
+
+    @classmethod
+    def from_strings(
+        cls,
+        channels: Iterable[str] | None = None,
+        categories: Iterable[str] | None = None,
+        video_ids: Iterable[str] | None = None,
+    ) -> SyncFilterCriteria:
+        """Parse multi-value strings (including comma-separated lists) into a SyncFilterCriteria."""
+
+        def _parse_tokens(items: Iterable[str] | None) -> tuple[str, ...]:
+            if not items:
+                return ()
+            tokens: list[str] = []
+            for item in items:
+                if not item:
+                    continue
+                for part in item.split(","):
+                    p = part.strip()
+                    if p:
+                        tokens.append(p)
+            return tuple(tokens)
+
+        return cls(
+            channels=_parse_tokens(channels),
+            categories=_parse_tokens(categories),
+            video_ids=_parse_tokens(video_ids),
+        )
+
+    def is_empty(self) -> bool:
+        """Return True if no filter criteria are specified (full pipeline flow)."""
+        return not self.channels and not self.categories and not self.video_ids
+
+    def matches_channel(self, channel_name: str, channel_url: str | None = None) -> bool:
+        """Evaluate whether a channel matches the configured channel criteria."""
+        if not self.channels:
+            return True
+
+        c_name = channel_name.strip().lower()
+        c_url = (channel_url or "").strip().lower()
+
+        for target in self.channels:
+            if target in c_name or c_name in target:
+                return True
+            if c_url and target in c_url:
+                return True
+            if target.startswith("@") and target[1:] in c_name:
+                return True
+            if f"@{target}" in c_url or f"@{target}" in c_name:
+                return True
+
+        return False
+
+    def matches_category(self, channel_name: str) -> bool:
+        """Evaluate whether a channel matches the configured category criteria.
+
+        Per ADR-012, checks both domain name (e.g. 'politics_br') and volatility type
+        (e.g. 'volatile' or 'perennial') returned by classify_channel.
+        """
+        if not self.categories:
+            return True
+
+        domain, cat_type = classify_channel(channel_name)
+        domain_lower = domain.lower()
+        cat_lower = cat_type.lower()
+
+        return domain_lower in self.categories or cat_lower in self.categories
+
+    def matches_video(self, video_id: str, video_url: str | None = None) -> bool:
+        """Evaluate whether a video matches the configured video ID/URL criteria."""
+        if not self.video_ids:
+            return True
+
+        vid_clean = video_id.strip()
+        vurl_clean = (video_url or "").strip()
+
+        for target in self.video_ids:
+            if target == vid_clean or target in vurl_clean:
+                return True
+            if vid_clean and vid_clean in target:
+                return True
+
+        return False
 
 
 @dataclass(frozen=True)

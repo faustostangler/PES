@@ -16,6 +16,7 @@ from __future__ import annotations
 import os
 from collections.abc import Callable
 from pathlib import Path
+from typing import Any
 
 from cresmo.application.pipeline import CresmoPipeline
 from cresmo.application.ports import LLMTransformationPort
@@ -139,6 +140,7 @@ def build_pipeline(
         model_name=resolved_settings.gemini_model,
         fallback_model_name=resolved_settings.gemini_fallback_model,
         langfuse_client=langfuse_client,
+        default_temperature=resolved_settings.llm_temperature,
     )
     vault_port = ObsidianVaultAdapter(
         vault_dir=resolved_settings.vault_dir,
@@ -158,6 +160,8 @@ def build_pipeline(
             base_url=resolved_settings.ollama_base_url,
             model=resolved_settings.ollama_model,
             timeout_seconds=resolved_settings.ollama_timeout_seconds,
+            default_temperature=resolved_settings.raw_index_temperature,
+            langfuse_client=langfuse_client,
         )
 
     effective_batch_size = (
@@ -323,6 +327,19 @@ def build_index_raw_use_case(
         skills_dir=resolved_settings.skills_dir,
     )
 
+    langfuse_client: Any | None = None
+    if resolved_settings.langfuse_public_key and resolved_settings.langfuse_secret_key.get_secret_value():
+        try:
+            from langfuse import Langfuse
+
+            langfuse_client = Langfuse(
+                public_key=resolved_settings.langfuse_public_key,
+                secret_key=resolved_settings.langfuse_secret_key.get_secret_value(),
+                host=resolved_settings.langfuse_host,
+            )
+        except Exception:  # noqa: BLE001
+            langfuse_client = None
+
     if web_index or resolved_settings.indexing_provider == "gemini":
         from cresmo.infrastructure.adapters.gemini_adapter import GeminiLLMAdapter
 
@@ -330,6 +347,8 @@ def build_index_raw_use_case(
             api_key=resolved_settings.gemini_api_key.get_secret_value(),
             model_name=model_override or resolved_settings.gemini_model,
             fallback_model_name=resolved_settings.gemini_fallback_model,
+            langfuse_client=langfuse_client,
+            default_temperature=resolved_settings.raw_index_temperature,
         )
     else:
         from cresmo.infrastructure.adapters.ollama_llm_adapter import OllamaLLMAdapter
@@ -338,6 +357,8 @@ def build_index_raw_use_case(
             base_url=resolved_settings.ollama_base_url,
             model=model_override or resolved_settings.ollama_model,
             timeout_seconds=resolved_settings.ollama_timeout_seconds,
+            default_temperature=resolved_settings.raw_index_temperature,
+            langfuse_client=langfuse_client,
         )
 
     return IndexRawTranscriptsUseCase(
@@ -345,4 +366,6 @@ def build_index_raw_use_case(
         llm=llm,
         prompt_provider=prompt_provider,
         max_chars=resolved_settings.raw_index_max_chars,
+        temperature=resolved_settings.raw_index_temperature,
+        language=resolved_settings.language,
     )

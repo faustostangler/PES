@@ -39,6 +39,7 @@ class FillGapsFluidProseUseCase:
         llm_port: LLMTransformationPort,
         vault_port: VaultRepositoryPort,
         prompt_provider: PromptProviderPort | None = None,
+        temperature: float | None = None,
     ) -> None:
         """Initialize Stage 2 use case with required ports.
 
@@ -46,9 +47,11 @@ class FillGapsFluidProseUseCase:
             llm_port: Hexagonal port for generative text transformations.
             vault_port: Port providing enriched compendium persistence.
             prompt_provider: Optional provider for decoupled prompt templates.
+            temperature: Sampling temperature override for fluid prose generation.
         """
         self.llm_port = llm_port
         self.vault_port = vault_port
+        self.temperature = temperature
         if prompt_provider is None:
             from cresmo.infrastructure.adapters.prompt_provider import JsonPromptProvider
 
@@ -86,7 +89,11 @@ class FillGapsFluidProseUseCase:
                 raw_text=raw_transcript.body,
                 current_text=current_text if p > 0 else None,
             )
-            current_text = self.llm_port.transform(prompt=prompt)
+            current_text = self.llm_port.transform(
+                prompt=prompt,
+                temperature=self.temperature,
+                trace_id=raw_transcript.content_id.value,
+            )
 
         # Extract title from H1 or fallback to raw title
         m_title = _TITLE_H1_PATTERN.search(current_text)

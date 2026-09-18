@@ -636,10 +636,10 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
     def get_channel_index_path(self, channel_name: str) -> Path:
         """Return absolute path to channel's _index_{channel_name}.md."""
         clean_channel = sanitize_filename(channel_name)
-        return self.raw_dir / clean_channel / f"_{clean_channel}.md"
+        return self.raw_dir / clean_channel / f"_index_{clean_channel}.md"
 
     def get_indexed_video_ids_for_channel(self, channel_name: str) -> set[str]:
-        """Retrieve set of video IDs already indexed in the channel's _canal.md."""
+        """Retrieve set of video IDs already indexed in the channel's _index_{channel_name}.md."""
         index_file = self.get_channel_index_path(channel_name)
         if not index_file.exists() or not index_file.is_file():
             return set()

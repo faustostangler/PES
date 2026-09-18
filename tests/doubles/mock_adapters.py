@@ -96,12 +96,19 @@ class MockLLMAdapter(LLMTransformationPort):
         prompt: str,
         system_instruction: str | None = None,
         temperature: float | None = None,
+        *,
+        trace_id: str | None = None,
+        session_id: str | None = None,
+        user_id: str | None = None,
     ) -> str:
         self.call_history.append(
             {
                 "prompt": prompt,
                 "system_instruction": system_instruction,
                 "temperature": temperature,
+                "trace_id": trace_id,
+                "session_id": session_id,
+                "user_id": user_id,
             }
         )
         if self.responses:

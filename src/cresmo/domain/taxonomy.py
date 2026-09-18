@@ -335,33 +335,52 @@ def classify_channel(channel_name: str) -> tuple[str, str]:
     """Classify source channel deterministically into (domain, category_type).
 
     Args:
-        channel_name: Human-readable or handle name of the channel.
+        channel_name: Human-readable, handle, or URL of the channel.
 
     Returns:
         tuple[str, str]: (category_name, volatility) where volatility is
         either 'perennial' or 'volatile'.
     """
-    name_clean = channel_name.lower().strip()
+    raw = channel_name.lower().strip()
+    candidates: list[str] = [raw]
 
-    if name_clean in POLITICS_BR_CHANNELS:
-        return "politics_br", "volatile"
-    if name_clean in GEOPOLITICS_CHANNELS:
-        return "geopolitics", "volatile"
-    if name_clean in TECH_AI_CHANNELS:
-        return "tech_ai", "perennial"
-    if name_clean in FINANCE_CHANNELS:
-        return "finance", "perennial"
-    if name_clean in ENGINEERING_CHANNELS:
-        return "engineering", "perennial"
-    if name_clean in ARCHITECTURE_CHANNELS:
-        return "architecture", "perennial"
-    if name_clean in HISTORY_CHANNELS:
-        return "history", "perennial"
-    if name_clean in PHILOSOPHY_CHANNELS:
-        return "philosophy", "perennial"
-    if name_clean in HEALTH_CHANNELS:
-        return "health", "perennial"
-    if name_clean in ENTERTAINMENT_CHANNELS:
-        return "entertainment", "volatile"
+    # If it's a URL or handle, extract handle/slug candidate
+    if "/@" in raw:
+        slug = raw.split("/@", 1)[1].split("/", 1)[0].split("?", 1)[0].strip()
+        if slug:
+            candidates.extend([f"@{slug}", slug])
+    elif raw.startswith("@"):
+        slug = raw[1:].strip()
+        if slug:
+            candidates.append(slug)
+    elif "/" in raw:
+        slug = [p for p in raw.split("/") if p][-1].split("?", 1)[0].strip()
+        if slug:
+            if slug.startswith("@"):
+                candidates.extend([slug, slug[1:]])
+            else:
+                candidates.append(slug)
+
+    for name_clean in candidates:
+        if name_clean in POLITICS_BR_CHANNELS:
+            return "politics_br", "volatile"
+        if name_clean in GEOPOLITICS_CHANNELS:
+            return "geopolitics", "volatile"
+        if name_clean in TECH_AI_CHANNELS:
+            return "tech_ai", "perennial"
+        if name_clean in FINANCE_CHANNELS:
+            return "finance", "perennial"
+        if name_clean in ENGINEERING_CHANNELS:
+            return "engineering", "perennial"
+        if name_clean in ARCHITECTURE_CHANNELS:
+            return "architecture", "perennial"
+        if name_clean in HISTORY_CHANNELS:
+            return "history", "perennial"
+        if name_clean in PHILOSOPHY_CHANNELS:
+            return "philosophy", "perennial"
+        if name_clean in HEALTH_CHANNELS:
+            return "health", "perennial"
+        if name_clean in ENTERTAINMENT_CHANNELS:
+            return "entertainment", "volatile"
 
     return DEFAULT_CHANNEL_DOMAIN, DEFAULT_CHANNEL_CATEGORY

@@ -260,8 +260,26 @@ class TestCresmoCLI:
             exit_code = main(["run", "--url", "https://youtube.com/watch?v=dQw4w9WgXcQ"])
             assert exit_code == EXIT_INTERNAL_ERROR
 
-    def test_cli_sync_missing_channel_returns_code_2(self) -> None:
-        assert main(["sync"]) == EXIT_CONFIG_OR_USAGE_ERROR
+    def test_cli_sync_without_flags_executes_default_manifest_sync(self, tmp_path: Path) -> None:
+        mock_use_case = MagicMock()
+        mock_use_case.execute.return_value = SyncSummary(
+            channel_url="https://youtube.com/@default",
+            total_discovered=1,
+            processed_count=1,
+            skipped_count=0,
+            failed_count=0,
+            duration_seconds=1.0,
+            status=PipelineStatus.COMPLETED,
+        )
+        fake_manifest = tmp_path / "playlist.txt"
+        fake_manifest.write_text("https://youtube.com/@default\n", encoding="utf-8")
+        with patch(
+            "cresmo.presentation.commands.sync.build_sync_channel_use_case",
+            return_value=mock_use_case,
+        ):
+            exit_code = main(["sync", "--manifest", str(fake_manifest)])
+            assert exit_code == EXIT_SUCCESS
+            mock_use_case.execute.assert_called_once()
 
     def test_cli_sync_success_returns_code_0(self) -> None:
         mock_use_case = MagicMock()
@@ -327,6 +345,93 @@ class TestCresmoCLI:
                 dry_run=True,
                 force_refresh=True,
             )
+
+    def test_cli_sync_with_category_filter(self, tmp_path: Path) -> None:
+        mock_use_case = MagicMock()
+        mock_use_case.execute.return_value = SyncSummary(
+            channel_url="https://youtube.com/@ancapsu",
+            total_discovered=1,
+            processed_count=1,
+            skipped_count=0,
+            failed_count=0,
+            duration_seconds=1.0,
+            status=PipelineStatus.COMPLETED,
+        )
+        fake_manifest = tmp_path / "playlist.txt"
+        fake_manifest.write_text(
+            "https://youtube.com/@ancapsu\nhttps://youtube.com/@other\n",
+            encoding="utf-8",
+        )
+        with patch(
+            "cresmo.presentation.commands.sync.build_sync_channel_use_case",
+            return_value=mock_use_case,
+        ):
+            exit_code = main(
+                ["sync", "--manifest", str(fake_manifest), "--category", "politics_br"]
+            )
+            assert exit_code == EXIT_SUCCESS
+            assert mock_use_case.execute.call_count == 1
+
+    def test_cli_sync_with_video_direct_filter(self) -> None:
+        mock_use_case = MagicMock()
+        mock_use_case.execute.return_value = SyncSummary(
+            channel_url="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+            total_discovered=1,
+            processed_count=1,
+            skipped_count=0,
+            failed_count=0,
+            duration_seconds=1.0,
+            status=PipelineStatus.COMPLETED,
+        )
+        with patch(
+            "cresmo.presentation.commands.sync.build_sync_channel_use_case",
+            return_value=mock_use_case,
+        ):
+            exit_code = main(["sync", "--video", "dQw4w9WgXcQ,9IbNJ0EsTxI"])
+            assert exit_code == EXIT_SUCCESS
+            assert mock_use_case.execute.call_count == 2
+
+    def test_cli_sync_with_multiple_comma_separated_channels(self) -> None:
+        mock_use_case = MagicMock()
+        mock_use_case.execute.return_value = SyncSummary(
+            channel_url="https://youtube.com/@a",
+            total_discovered=1,
+            processed_count=1,
+            skipped_count=0,
+            failed_count=0,
+            duration_seconds=1.0,
+            status=PipelineStatus.COMPLETED,
+        )
+        with patch(
+            "cresmo.presentation.commands.sync.build_sync_channel_use_case",
+            return_value=mock_use_case,
+        ):
+            exit_code = main(["sync", "--channel", "https://youtube.com/@b,https://youtube.com/@a"])
+            assert exit_code == EXIT_SUCCESS
+            assert mock_use_case.execute.call_count == 2
+            # ADR-012: Ensure channels were called in alphabetical order: @a then @b
+            calls = mock_use_case.execute.call_args_list
+            assert calls[0].kwargs["query"].channel_url == "https://youtube.com/@a"
+            assert calls[1].kwargs["query"].channel_url == "https://youtube.com/@b"
+
+    def test_cli_run_with_filter_criteria_propagated(self) -> None:
+        with (
+            patch("cresmo.presentation.commands.run.build_pipeline"),
+            patch("cresmo.presentation.commands.run.load_batch_sources", return_value=[]) as mock_load,
+        ):
+            exit_code = main([
+                "run",
+                "--dry-run",
+                "--channel", "Ancapsu,Mises",
+                "--category", "politics_br",
+                "--video", "dQw4w9WgXcQ",
+            ])
+            assert exit_code == EXIT_SUCCESS
+            mock_load.assert_called_once()
+            query = mock_load.call_args.kwargs["query"]
+            assert query.filter_criteria.channels == ("ancapsu", "mises")
+            assert query.filter_criteria.categories == ("politics_br",)
+            assert query.filter_criteria.video_ids == ("dQw4w9WgXcQ",)
 
     def test_cli_sync_rate_limit_error_returns_code_4(self) -> None:
         mock_use_case = MagicMock()
