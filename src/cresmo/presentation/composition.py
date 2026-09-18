@@ -373,4 +373,5 @@ def build_index_raw_use_case(
         max_chars=resolved_settings.raw_index_max_chars,
         temperature=resolved_settings.raw_index_temperature,
         language=resolved_settings.language,
+        max_rewrites=resolved_settings.raw_index_max_attempts,
     )

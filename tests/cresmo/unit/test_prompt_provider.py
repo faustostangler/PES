@@ -453,7 +453,17 @@ class TestJsonPromptProvider:
         assert "raw_index_concepts" in provider._templates
         assert "raw_index_synthesis" in provider._templates
 
-        # Pass 1: Summary
+        # Pass 1: Concepts (from transcript excerpt)
+        sys_con, usr_con = provider.get_raw_index_concepts_prompt(
+            video_title="Vilfredo Pareto and Elites",
+            transcript_excerpt="A circulação de elites explica a alternância de poder.",
+            language="Português do Brasil",
+        )
+        assert "comma-separated" in sys_con.lower()
+        assert "Vilfredo Pareto and Elites" in usr_con
+        assert "A circulação de elites" in usr_con
+
+        # Pass 2: Summary (from transcript excerpt)
         sys_sum, usr_sum = provider.get_raw_index_summary_prompt(
             video_title="Vilfredo Pareto and Elites",
             transcript_excerpt="A circulação de elites explica a alternância de poder.",
@@ -464,34 +474,23 @@ class TestJsonPromptProvider:
         assert "Vilfredo Pareto and Elites" in usr_sum
         assert "A circulação de elites" in usr_sum
 
-        # Pass 2: Concepts
-        sys_con, usr_con = provider.get_raw_index_concepts_prompt(
-            video_title="Vilfredo Pareto and Elites",
-            summary="Resumo conceitual da alternância oligárquica.",
-            language="Português do Brasil",
-        )
-        assert "comma-separated" in sys_con.lower()
-        assert "Vilfredo Pareto and Elites" in usr_con
-        assert "Resumo conceitual" in usr_con
-
-        # Pass 3: Synthesis
+        # Pass 3: Synthesis (from summary)
         sys_syn, usr_syn = provider.get_raw_index_synthesis_prompt(
             video_title="Vilfredo Pareto and Elites",
-            summary="Resumo conceitual da alternância oligárquica.",
-            concepts="Circulação de Elites, Pareto",
+            summary="A circulação de elites explica a alternância de poder.",
             language="Português do Brasil",
         )
         assert "paratactic" in sys_syn.lower()
         assert "ner" in sys_syn.lower()
-        assert "only one paragraph" in sys_syn.lower()
+        assert "single paragraph" in sys_syn.lower()
         assert "Vilfredo Pareto and Elites" in usr_syn
-        assert "Circulação de Elites, Pareto" in usr_syn
-        assert "Resumo conceitual" in usr_syn
+        assert "A circulação de elites" in usr_syn
 
     def test_get_judge_raw_index_prompts(self) -> None:
         provider = JsonPromptProvider()
         assert "judge_raw_index_summary" in provider._templates
         assert "judge_raw_index_concepts" in provider._templates
+        assert "judge_raw_index_synthesis" in provider._templates
 
         # Summary Judge
         sys_sum_j, usr_sum_j = provider.get_judge_raw_index_summary_prompt(
@@ -510,13 +509,27 @@ class TestJsonPromptProvider:
         # Concepts Judge
         sys_con_j, usr_con_j = provider.get_judge_raw_index_concepts_prompt(
             video_title="Pareto and Elites",
-            summary="Resumo fiel da circulação das elites.",
+            transcript_excerpt="Explicando a circulação das elites na política.",
             concepts="Circulação de Elites, Pareto",
             language="Português do Brasil",
         )
         assert "impartial evaluator" in sys_con_j.lower()
         assert "strictly with 'true' or 'false'" in sys_con_j.lower()
         assert "Pareto and Elites" in usr_con_j
-        assert "Resumo fiel da circulação das elites." in usr_con_j
+        assert "Explicando a circulação das elites na política." in usr_con_j
         assert "Circulação de Elites, Pareto" in usr_con_j
         assert "true" in usr_con_j.lower()
+
+        # Synthesis Judge
+        sys_syn_j, usr_syn_j = provider.get_judge_raw_index_synthesis_prompt(
+            video_title="Pareto and Elites",
+            transcript_excerpt="Explicando a circulação das elites na política.",
+            synthesis="A circulação de elites reflete a alternância política segundo Pareto.",
+            language="Português do Brasil",
+        )
+        assert "impartial evaluator" in sys_syn_j.lower()
+        assert "strictly with 'true' or 'false'" in sys_syn_j.lower()
+        assert "Pareto and Elites" in usr_syn_j
+        assert "Explicando a circulação das elites na política." in usr_syn_j
+        assert "A circulação de elites reflete a alternância política segundo Pareto." in usr_syn_j
+        assert "true" in usr_syn_j.lower()
