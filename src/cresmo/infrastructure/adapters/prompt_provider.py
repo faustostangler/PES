@@ -359,3 +359,28 @@ class JsonPromptProvider(PromptProviderPort):
         )
         return system_instruction, user_prompt
 
+    def get_raw_index_rewrite_prompt(
+        self,
+        previous_output: str,
+        language: str = "Português do Brasil",
+    ) -> str:
+        """Format corrective rewrite prompt when raw index synthesis violates output rules."""
+        entry = self._templates.get("raw_index_rewrite", {})
+        task = entry.get("task", "")
+        template = entry.get("template", "")
+        if not template:
+            return (
+                f"Your previous response violated output formatting guidelines because Line 1 contained prohibited labels, prefixes, or framing.\n\n"
+                f"--- PREVIOUS OUTPUT ---\n{previous_output}\n\n"
+                f"RE-WRITE THE OUTPUT STRICTLY IN {language.upper()} ADHERING TO THIS TWO-PART FORMAT:\n"
+                f"Line 1: Comma-separated key concepts ONLY (e.g. 'Conceito 1, Conceito 2, Conceito 3'). Absolutely NO labels like 'Key concepts:', NO prefixes, NO colons, NO markdown.\n"
+                f"Line 2+: Dense single paratactic synthesis paragraph in {language}."
+            )
+        return self._safe_format(
+            template,
+            task=task,
+            previous_output=previous_output,
+            language=language,
+            language_upper=language.upper(),
+        )
+
