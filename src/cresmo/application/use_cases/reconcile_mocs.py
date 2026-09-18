@@ -74,7 +74,9 @@ class ReconcileMOCsUseCase:
         response = self.llm_port.transform(
             prompt=prompt,
             temperature=self.temperature,
+            trace_id="stage6_mocs_reconciliation",
             session_id="stage6_mocs",
+            user_id="vault",
         )
         data = extract_json_data(response)
         if not isinstance(data, list):

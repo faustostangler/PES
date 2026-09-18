@@ -95,3 +95,34 @@ We establish four architectural standards for transcript indexing:
 ### Negative / Trade-offs
 - Additional LLM calls per transcript (synthesis judge adds 1 call, retries may add more).
 - Infinite loops (`max_attempts = 0`) could stall if a model consistently fails formatting. Mitigated by setting a sensible default (`max_attempts = 3`) while allowing operators to explicitly request infinite mode.
+
+---
+
+## 5. Architectural Anti-Patterns Identified & Refactoring Strategy
+
+During architectural review of the use case implementation ([`src/cresmo/application/use_cases/index_raw_transcripts.py`](file:///home/stangler/gamer_d/Fausto%20Stangler/Documentos/Python/PES/src/cresmo/application/use_cases/index_raw_transcripts.py)), 5 anti-patterns were documented and targeted for elimination:
+
+### 5.1 Long Method / God Orchestrator (SRP Violation)
+- **Anti-Pattern:** `index_single_transcript` accumulated ~260 lines, handling repository ACL, text slicing, three distinct LLM extraction/retry state machines, error catching, entity instantiation, and dual-output persistence.
+- **Architectural Remedy:** Decompose into three dedicated, single-responsibility private helper methods:
+  - `_extract_concepts(self, video_id: str, title: str, excerpt: str) -> str`
+  - `_extract_summary(self, video_id: str, title: str, excerpt: str) -> str`
+  - `_extract_synthesis(self, video_id: str, title: str, excerpt: str, summary: str) -> str`
+  `index_single_transcript` is streamlined to a ~40-line pure domain orchestrator.
+
+### 5.2 Dummy Parameter Calls (Premature Format Smell)
+- **Anti-Pattern:** Pre-calling prompt formatters before the loop with dummy empty strings (e.g. `concepts=""`, `summary=""`) solely to extract `system_instruction` while discarding the formatted user prompt `_`, followed by a redundant second format call inside the loop.
+- **Architectural Remedy:** Acquire both `system_instruction` and `user_prompt` in-situ within the validation block only when the candidate output exists, eliminating premature and redundant template renders.
+
+### 5.3 WET Loop State Machine (Triplication of Loop Control)
+- **Anti-Pattern:** The control flow (`while not is_valid:`, `retries == 0` flag, dynamic `trace_id` derivation, heuristic regex guard, judge execution at `temperature=0.0`, and `_can_retry` budget check) was duplicated verbatim across all 3 passes.
+- **Architectural Remedy:** Encapsulate each extraction phase in its focused private method while keeping the unified `while not is_valid:` paradigm with clean exit semantics.
+
+### 5.4 Broad Exception Swallowing (Fail-Fast Violation)
+- **Anti-Pattern:** A single broad `try ... except Exception:` block wrapping 200+ lines of application logic silently masked programming bugs (`AttributeError`, `TypeError`, `KeyError`) as transient LLM/network warnings.
+- **Architectural Remedy:** Narrow the exception scope, log with full stack trace (`logger.exception`), and avoid masking internal programming defects.
+
+### 5.5 Leaky Abstraction / Hardcoded External Platform Schema
+- **Anti-Pattern:** Hardcoding `https://youtube.com/watch?v={video_id_str}` inside the application use case coupled the domain to YouTube, generating bogus URLs for local audio, podcasts, or Vimeo.
+- **Architectural Remedy:** Honor `transcript.source_url` directly or preserve platform-neutral URL resolution without leaking third-party platform assumptions into the application layer.
+

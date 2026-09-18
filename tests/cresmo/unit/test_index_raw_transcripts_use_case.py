@@ -70,16 +70,28 @@ class TestIndexRawTranscriptsUseCase:
         assert len(llm.call_history) == 6
         assert llm.call_history[0]["trace_id"] == "vid11111111_concepts"
         assert llm.call_history[0]["temperature"] == 0.2
+        assert llm.call_history[0]["session_id"] == "raw_index_Political Theory"
+        assert llm.call_history[0]["user_id"] == "Political Theory"
         assert llm.call_history[1]["trace_id"] == "vid11111111_concepts_judge"
         assert llm.call_history[1]["temperature"] == 0.0
+        assert llm.call_history[1]["session_id"] == "raw_index_Political Theory"
+        assert llm.call_history[1]["user_id"] == "Political Theory"
         assert llm.call_history[2]["trace_id"] == "vid11111111_summary"
         assert llm.call_history[2]["temperature"] == 0.2
+        assert llm.call_history[2]["session_id"] == "raw_index_Political Theory"
+        assert llm.call_history[2]["user_id"] == "Political Theory"
         assert llm.call_history[3]["trace_id"] == "vid11111111_summary_judge"
         assert llm.call_history[3]["temperature"] == 0.0
+        assert llm.call_history[3]["session_id"] == "raw_index_Political Theory"
+        assert llm.call_history[3]["user_id"] == "Political Theory"
         assert llm.call_history[4]["trace_id"] == "vid11111111_synthesis"
         assert llm.call_history[4]["temperature"] == 0.2
+        assert llm.call_history[4]["session_id"] == "raw_index_Political Theory"
+        assert llm.call_history[4]["user_id"] == "Political Theory"
         assert llm.call_history[5]["trace_id"] == "vid11111111_synthesis_judge"
         assert llm.call_history[5]["temperature"] == 0.0
+        assert llm.call_history[5]["session_id"] == "raw_index_Political Theory"
+        assert llm.call_history[5]["user_id"] == "Political Theory"
 
         # Verify dual persistence: _canal.md index AND brain.csv
         assert len(vault.channel_raw_indexes["Political Theory"]) == 1

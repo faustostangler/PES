@@ -81,7 +81,9 @@ class ExpandLongitudinalSynchronicUseCase:
         res_long = self.llm_port.transform(
             prompt=prompt_long,
             temperature=self.temperature,
-            trace_id=compendium.content_id.value,
+            trace_id=f"{compendium.content_id.value}_longitudinal",
+            session_id=f"stage3_expansion_{compendium.channel_name}",
+            user_id=compendium.channel_name,
         )
 
         prompt_wide = self.prompt_provider.get_wide_expander_prompt(
@@ -90,7 +92,9 @@ class ExpandLongitudinalSynchronicUseCase:
         res_wide = self.llm_port.transform(
             prompt=prompt_wide,
             temperature=self.temperature,
-            trace_id=compendium.content_id.value,
+            trace_id=f"{compendium.content_id.value}_synchronic",
+            session_id=f"stage3_expansion_{compendium.channel_name}",
+            user_id=compendium.channel_name,
         )
 
         m_comp = _COMPLEMENTARY_REGEX.search(res_wide)

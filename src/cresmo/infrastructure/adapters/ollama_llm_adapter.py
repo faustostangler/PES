@@ -175,6 +175,7 @@ class OllamaLLMAdapter(LLMTransformationPort):
                             metadata["user_id"] = user_id
 
                         self._langfuse.update_current_generation(
+                            name=trace_id or "ollama_generation",
                             model=self.model,
                             output=generated_text,
                             usage_details={
