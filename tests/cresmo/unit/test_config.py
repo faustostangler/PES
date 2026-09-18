@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import pytest
+
 from cresmo.infrastructure.config import CresmoSettings
 from cresmo.infrastructure.paths import find_workspace_root
 
@@ -59,10 +61,21 @@ class TestCresmoSettings:
         assert settings.ollama_base_url == "http://localhost:11434"
         assert settings.ollama_model == "qwen2.5:7b"
         assert settings.indexing_provider == "ollama"
+        assert settings.ollama_num_predict == 0
         assert settings.raw_index_max_chars == 0
         assert settings.language == "Português do Brasil"
         assert settings.llm_temperature == 0.2
         assert settings.raw_index_temperature == 0.2
+
+    def test_ollama_num_predict_defaults_and_env_override(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        settings = CresmoSettings()
+        assert settings.ollama_num_predict == 0
+
+        monkeypatch.setenv("CRESMO_OLLAMA_NUM_PREDICT", "450")
+        overridden = CresmoSettings()
+        assert overridden.ollama_num_predict == 450
 
     def test_temperature_validation_bounds(self) -> None:
         import pytest

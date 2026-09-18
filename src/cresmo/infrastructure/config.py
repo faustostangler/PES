@@ -308,6 +308,14 @@ class CresmoSettings(BaseSettings):
         default=60.0,
         description="HTTP timeout in seconds for local Ollama inference requests.",
     )
+    ollama_num_predict: int = Field(
+        default=0,
+        ge=0,
+        validation_alias=AliasChoices(
+            "ollama_num_predict", "CRESMO_OLLAMA_NUM_PREDICT", "OLLAMA_NUM_PREDICT"
+        ),
+        description="Maximum tokens predicted by local Ollama model (0 means unconstrained / model default).",
+    )
     raw_index_max_chars: int = Field(
         default=0,
         description="Maximum characters of transcript body passed to LLM for conceptual synthesis, zero means full text.",
@@ -321,7 +329,9 @@ class CresmoSettings(BaseSettings):
         default=0.2,
         ge=0.0,
         le=2.0,
-        validation_alias=AliasChoices("llm_temperature", "CRESMO_LLM_TEMPERATURE", "LLM_TEMPERATURE"),
+        validation_alias=AliasChoices(
+            "llm_temperature", "CRESMO_LLM_TEMPERATURE", "LLM_TEMPERATURE"
+        ),
         description="Default sampling temperature for generative synthesis and expansion stages.",
     )
     raw_index_temperature: float = Field(

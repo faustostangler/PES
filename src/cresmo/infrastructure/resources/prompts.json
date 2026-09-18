@@ -36,11 +36,41 @@
   },
   "raw_index": {
     "task": "Act as a domain expert in conceptual synthesis.",
-    "system_instruction": "Act as a domain expert in conceptual synthesis.\nAnalyze the provided title and transcript excerpt.\nOutput your synthesis strictly in {language}.\nOutput your synthesis in two distinct parts separated by a newline:\nLine 1: Comma-separated key concepts ONLY (2 to 6 concepts, e.g. 'Conceito 1, Conceito 2'). Only output the concepts themselves separated by commas. Absolutely NO introductory labels, NO prefixes, NO colons, and NO markdown framing (do NOT write 'Key concepts:', 'Keywords:', 'Palavras-chave:', '**Conceito**' or similar text).\nLine 2+: A dense, single paratactic synthesis paragraph in {language}.\n\nStyle guidelines:\n- Use parataxis, direct and swift word order, single and self-contained clauses.\n- Use asyndetic juxtaposition of ideas, rapid and incisive rhythm.\n- Aim for syntactic clarity and an exoteric, crystalline style where form is an invisible medium.\n- Do not use filler introductions, meta-labels, or conversational framing.",
+    "system_instruction": "Act as a domain expert in conceptual synthesis.\nAnalyze the provided title and transcript excerpt.\nOutput your synthesis strictly in {language}.\nOutput your synthesis in two distinct lines separated by one line break:\nLine 1: STRICTLY Comma-separated keyword concepts ONLY (2 to 6 keyword or concept-word only, e.g. 'Conceito 1, Conceito 2'). Only output the concepts themselves separated by commas. Absolutely NO introductory labels, NO prefixes, NO colons, and NO markdown framing (do NOT write 'Key concepts:', 'Keywords:', 'Palavras-chave:', '**Conceito**' or similar text), and no other text or explanations.\n- Synthetically summarize all key concepts discovered in the excerpt inline without sections or subdivisions.\nLine 2+: A dense, single paratactic synthesis paragraph in {language}. Only ONE paragraph. Prioritize identified named entities (NER: individuals, organizations, dates and historical events, places, technical frameworks) and articulate the core causal, functional, or systemic relationships between them, synthetically summarizing all identified concepts.\n\nStyle guidelines:\n- Prioritize identified named entities (NER), entities, concepts, events, dates and historical events, places, and processess and map the direct relationships between them.\n- Use parataxis, direct and swift word order, single and self-contained clauses.\n- Use asyndetic juxtaposition of ideas, rapid and incisive rhythm.\n- Aim for syntactic clarity and an exoteric, crystalline style where form is an invisible medium.\n- Do not use filler introductions, meta-labels, or conversational framing.",
     "template": "Video Title: {video_title}\n\nTranscript Excerpt:\n{transcript_excerpt}\n"
   },
   "raw_index_rewrite": {
     "task": "Re-write the previous output to strictly adhere to two-part format without labels, prefixes or framing.",
-    "template": "Your previous response violated output formatting guidelines because Line 1 contained prohibited labels, prefixes, or framing.\n\n--- PREVIOUS OUTPUT ---\n{previous_output}\n\nRE-WRITE THE OUTPUT STRICTLY IN {language_upper} ADHERING TO THIS TWO-PART FORMAT:\nLine 1: Comma-separated key concepts ONLY (e.g. 'Conceito 1, Conceito 2, Conceito 3'). Absolutely NO labels like 'Key concepts:', NO prefixes, NO colons, NO markdown.\nLine 2+: Dense single paratactic synthesis paragraph in {language}."
+    "template": "Your previous response violated output formatting guidelines because Line 1 contained prohibited labels, prefixes, or framing.\n\n--- PREVIOUS OUTPUT ---\n{previous_output}\n\nRE-WRITE THE OUTPUT STRICTLY IN {language_upper} ADHERING TO THIS TWO-PART FORMAT:\nLine 1: Comma-separated key concepts ONLY (e.g. 'Conceito 1, Conceito 2, Conceito 3'). Absolutely NO labels like 'Key concepts:', NO prefixes, NO colons, NO markdown.\nLine 2+: Dense single paratactic synthesis paragraph in {language} prioritizing identified named entities (NER) and their relationships, synthetically summarizing all key concepts."
+  },
+  "raw_index_summary": {
+    "task": "Act as a domain expert in conceptual synthesis.",
+    "system_instruction": "Act as a domain expert in conceptual synthesis.\nSummarize the provided title and transcript excerpt in {language}.",
+    "template": "Video Title: {video_title}\n\nTranscript Excerpt:\n{transcript_excerpt}\n"
+  },
+  "raw_index_concepts": {
+    "task": "Extract comma-separated key concepts.",
+    "system_instruction": "Act as a domain expert in conceptual synthesis.\nAnalyze the provided summary and title.\nExtract STRICTLY comma-separated key concepts ONLY in {language} (2 to 6 keyword or concept-words, e.g. 'Conceito 1, Conceito 2').\nOnly output the concepts themselves separated by commas. Absolutely NO introductory labels (NO 'Key concepts:', NO 'Keywords:', NO 'Palavras-chave:'), NO prefixes, NO colons, NO markdown framing, and NO conversational framing.",
+    "template": "Video Title: {video_title}\n\nSummary Context:\n{summary}\n"
+  },
+  "raw_index_concepts_rewrite": {
+    "task": "Re-write the extracted concepts to strictly adhere to comma-separated format without labels, prefixes or framing.",
+    "template": "Your previous concepts extraction violated formatting guidelines because it contained prohibited labels or prefixes:\n\n--- PREVIOUS OUTPUT ---\n{previous_output}\n\nRE-WRITE STRICTLY AS COMMA-SEPARATED CONCEPTS ONLY IN {language_upper} (e.g. 'Conceito 1, Conceito 2'). Absolutely NO labels like 'Key concepts:', NO prefixes, NO colons, NO markdown."
+  },
+  "raw_index_synthesis": {
+    "task": "Extract a dense, single paratactic synthesis paragraph prioritizing NERs and their relationships.",
+    "system_instruction": "Act as a domain expert in conceptual synthesis.\nWrite a dense, single paratactic synthesis paragraph in {language}. Only ONE paragraph.\nPrioritize identified named entities (NER: individuals, organizations, dates and historical events, places, technical frameworks) and articulate the core causal, functional, or systemic relationships between them, synthetically summarizing all identified concepts.\n\nStyle guidelines:\n- Only ONE single paragraph.\n- Prioritize identified named entities (NER), entities, concepts, events, dates and historical events, places, and processes and map the direct relationships between them.\n- Synthetically summarize all key concepts discovered in the excerpt.\n- Use parataxis, direct and swift word order, single and self-contained clauses.\n- Use asyndetic juxtaposition of ideas, rapid and incisive rhythm.\n- Aim for syntactic clarity and an exoteric, crystalline style where form is an invisible medium.\n- Do not use filler introductions, meta-labels, or conversational framing.",
+    "template": "Video Title: {video_title}\n\nKey Concepts:\n{concepts}\n\nSummary Context:\n{summary}\n"
+  },
+  "judge_raw_index_summary": {
+    "task": "Evaluate whether the summary faithfully represents the title and transcript excerpt.",
+    "system_instruction": "You are an impartial evaluator assessing summary fidelity. Respond STRICTLY with 'true' or 'false'.",
+    "template": "Video Title: {video_title}\n\nTranscript Excerpt:\n{transcript_excerpt}\n\nProposed Summary:\n{summary}\n\nDoes the proposed summary accurately and faithfully synthesize the excerpt without conversational noise or hallucinations? Respond ONLY with 'true' or 'false'."
+  },
+  "judge_raw_index_concepts": {
+    "task": "Evaluate whether extracted concepts strictly follow formatting rules and reflect the summary.",
+    "system_instruction": "You are an impartial evaluator assessing keyword concepts extraction. Respond STRICTLY with 'true' or 'false'.",
+    "template": "Video Title: {video_title}\n\nSummary Context:\n{summary}\n\nProposed Concepts:\n{concepts}\n\nDo the proposed concepts adhere strictly to rules (2 to 6 comma-separated concept terms, NO labels like 'Key concepts:', NO prefixes, NO colons, NO markdown) and accurately reflect the summary? Respond ONLY with 'true' or 'false'."
   }
 }
+

@@ -429,6 +429,8 @@ class TestJsonPromptProvider:
         )
         assert "key concept" in sys_inst.lower()
         assert "paratactic" in sys_inst.lower()
+        assert "ner" in sys_inst.lower()
+        assert "relationships" in sys_inst.lower()
         assert "Video Title: Pareto Principle" in user_prompt
         assert "Pareto analysis shows 80/20 distribution." in user_prompt
 
@@ -443,4 +445,78 @@ class TestJsonPromptProvider:
         assert "PORTUGUÊS DO BRASIL" in rewrite_prompt
         assert "Português do Brasil" in rewrite_prompt
         assert "Line 1: Comma-separated key concepts ONLY" in rewrite_prompt
+        assert "ner" in rewrite_prompt.lower()
 
+    def test_get_raw_index_3_pass_prompts(self) -> None:
+        provider = JsonPromptProvider()
+        assert "raw_index_summary" in provider._templates
+        assert "raw_index_concepts" in provider._templates
+        assert "raw_index_synthesis" in provider._templates
+
+        # Pass 1: Summary
+        sys_sum, usr_sum = provider.get_raw_index_summary_prompt(
+            video_title="Vilfredo Pareto and Elites",
+            transcript_excerpt="A circulação de elites explica a alternância de poder.",
+            language="Português do Brasil",
+        )
+        assert "summarize" in sys_sum.lower()
+        assert "Português do Brasil" in sys_sum
+        assert "Vilfredo Pareto and Elites" in usr_sum
+        assert "A circulação de elites" in usr_sum
+
+        # Pass 2: Concepts
+        sys_con, usr_con = provider.get_raw_index_concepts_prompt(
+            video_title="Vilfredo Pareto and Elites",
+            summary="Resumo conceitual da alternância oligárquica.",
+            language="Português do Brasil",
+        )
+        assert "comma-separated" in sys_con.lower()
+        assert "Vilfredo Pareto and Elites" in usr_con
+        assert "Resumo conceitual" in usr_con
+
+        # Pass 3: Synthesis
+        sys_syn, usr_syn = provider.get_raw_index_synthesis_prompt(
+            video_title="Vilfredo Pareto and Elites",
+            summary="Resumo conceitual da alternância oligárquica.",
+            concepts="Circulação de Elites, Pareto",
+            language="Português do Brasil",
+        )
+        assert "paratactic" in sys_syn.lower()
+        assert "ner" in sys_syn.lower()
+        assert "only one paragraph" in sys_syn.lower()
+        assert "Vilfredo Pareto and Elites" in usr_syn
+        assert "Circulação de Elites, Pareto" in usr_syn
+        assert "Resumo conceitual" in usr_syn
+
+    def test_get_judge_raw_index_prompts(self) -> None:
+        provider = JsonPromptProvider()
+        assert "judge_raw_index_summary" in provider._templates
+        assert "judge_raw_index_concepts" in provider._templates
+
+        # Summary Judge
+        sys_sum_j, usr_sum_j = provider.get_judge_raw_index_summary_prompt(
+            video_title="Pareto and Elites",
+            transcript_excerpt="Explicando a circulação das elites na política.",
+            summary="Resumo fiel da circulação das elites.",
+            language="Português do Brasil",
+        )
+        assert "impartial evaluator" in sys_sum_j.lower()
+        assert "strictly with 'true' or 'false'" in sys_sum_j.lower()
+        assert "Pareto and Elites" in usr_sum_j
+        assert "Explicando a circulação das elites na política." in usr_sum_j
+        assert "Resumo fiel da circulação das elites." in usr_sum_j
+        assert "true" in usr_sum_j.lower()
+
+        # Concepts Judge
+        sys_con_j, usr_con_j = provider.get_judge_raw_index_concepts_prompt(
+            video_title="Pareto and Elites",
+            summary="Resumo fiel da circulação das elites.",
+            concepts="Circulação de Elites, Pareto",
+            language="Português do Brasil",
+        )
+        assert "impartial evaluator" in sys_con_j.lower()
+        assert "strictly with 'true' or 'false'" in sys_con_j.lower()
+        assert "Pareto and Elites" in usr_con_j
+        assert "Resumo fiel da circulação das elites." in usr_con_j
+        assert "Circulação de Elites, Pareto" in usr_con_j
+        assert "true" in usr_con_j.lower()

@@ -368,14 +368,6 @@ class JsonPromptProvider(PromptProviderPort):
         entry = self._templates.get("raw_index_rewrite", {})
         task = entry.get("task", "")
         template = entry.get("template", "")
-        if not template:
-            return (
-                f"Your previous response violated output formatting guidelines because Line 1 contained prohibited labels, prefixes, or framing.\n\n"
-                f"--- PREVIOUS OUTPUT ---\n{previous_output}\n\n"
-                f"RE-WRITE THE OUTPUT STRICTLY IN {language.upper()} ADHERING TO THIS TWO-PART FORMAT:\n"
-                f"Line 1: Comma-separated key concepts ONLY (e.g. 'Conceito 1, Conceito 2, Conceito 3'). Absolutely NO labels like 'Key concepts:', NO prefixes, NO colons, NO markdown.\n"
-                f"Line 2+: Dense single paratactic synthesis paragraph in {language}."
-            )
         return self._safe_format(
             template,
             task=task,
@@ -384,3 +376,120 @@ class JsonPromptProvider(PromptProviderPort):
             language_upper=language.upper(),
         )
 
+    def get_raw_index_summary_prompt(
+        self,
+        video_title: str,
+        transcript_excerpt: str,
+        language: str = "Português do Brasil",
+    ) -> tuple[str, str]:
+        """Format (system_instruction, user_prompt) for Pass 1 raw transcript summarization."""
+        entry = self._templates.get("raw_index_summary", {})
+        sys_template = entry.get("system_instruction", "")
+        system_instruction = self._safe_format(sys_template, language=language)
+        template = entry.get("template", "")
+        user_prompt = self._safe_format(
+            template,
+            video_title=video_title,
+            transcript_excerpt=transcript_excerpt,
+            language=language,
+        )
+        return system_instruction, user_prompt
+
+    def get_raw_index_concepts_prompt(
+        self,
+        video_title: str,
+        summary: str,
+        language: str = "Português do Brasil",
+    ) -> tuple[str, str]:
+        """Format (system_instruction, user_prompt) for Pass 2 key concepts extraction."""
+        entry = self._templates.get("raw_index_concepts", {})
+        sys_template = entry.get("system_instruction", "")
+        system_instruction = self._safe_format(sys_template, language=language)
+        template = entry.get("template", "")
+        user_prompt = self._safe_format(
+            template,
+            video_title=video_title,
+            summary=summary,
+            language=language,
+        )
+        return system_instruction, user_prompt
+
+    def get_raw_index_concepts_rewrite_prompt(
+        self,
+        previous_output: str,
+        language: str = "Português do Brasil",
+    ) -> str:
+        """Format corrective rewrite prompt when key concepts extraction violates format rules."""
+        entry = self._templates.get("raw_index_concepts_rewrite", {})
+        task = entry.get("task", "")
+        template = entry.get("template", "")
+        return self._safe_format(
+            template,
+            task=task,
+            previous_output=previous_output,
+            language=language,
+            language_upper=language.upper(),
+        )
+
+    def get_raw_index_synthesis_prompt(
+        self,
+        video_title: str,
+        summary: str,
+        concepts: str,
+        language: str = "Português do Brasil",
+    ) -> tuple[str, str]:
+        """Format (system_instruction, user_prompt) for Pass 3 paratactic synthesis paragraph."""
+        entry = self._templates.get("raw_index_synthesis", {})
+        sys_template = entry.get("system_instruction", "")
+        system_instruction = self._safe_format(sys_template, language=language)
+        template = entry.get("template", "")
+        user_prompt = self._safe_format(
+            template,
+            video_title=video_title,
+            summary=summary,
+            concepts=concepts,
+            language=language,
+        )
+        return system_instruction, user_prompt
+
+    def get_judge_raw_index_summary_prompt(
+        self,
+        video_title: str,
+        transcript_excerpt: str,
+        summary: str,
+        language: str = "Português do Brasil",
+    ) -> tuple[str, str]:
+        """Format (system_instruction, user_prompt) for LLM-as-a-judge summary compliance verification."""
+        entry = self._templates.get("judge_raw_index_summary", {})
+        sys_template = entry.get("system_instruction", "")
+        system_instruction = self._safe_format(sys_template, language=language)
+        template = entry.get("template", "")
+        user_prompt = self._safe_format(
+            template,
+            video_title=video_title,
+            transcript_excerpt=transcript_excerpt,
+            summary=summary,
+            language=language,
+        )
+        return system_instruction, user_prompt
+
+    def get_judge_raw_index_concepts_prompt(
+        self,
+        video_title: str,
+        summary: str,
+        concepts: str,
+        language: str = "Português do Brasil",
+    ) -> tuple[str, str]:
+        """Format (system_instruction, user_prompt) for LLM-as-a-judge concepts compliance verification."""
+        entry = self._templates.get("judge_raw_index_concepts", {})
+        sys_template = entry.get("system_instruction", "")
+        system_instruction = self._safe_format(sys_template, language=language)
+        template = entry.get("template", "")
+        user_prompt = self._safe_format(
+            template,
+            video_title=video_title,
+            summary=summary,
+            concepts=concepts,
+            language=language,
+        )
+        return system_instruction, user_prompt

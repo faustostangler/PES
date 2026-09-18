@@ -121,6 +121,7 @@ class CresmoPipeline:
                 model=self.settings.ollama_model,
                 timeout_seconds=self.settings.ollama_timeout_seconds,
                 default_temperature=self.settings.raw_index_temperature,
+                num_predict=self.settings.ollama_num_predict,
             )
         else:
             self.indexing_llm_port = self.llm_port
@@ -360,7 +361,19 @@ class CresmoPipeline:
             PipelineResult summarizing synthesized notes, MOCs, and status.
         """
         raw = self._load_transcript_from_file(file_path)
-        self.vault_port.save_raw_transcript(raw)
+
+        # Avoid redundant disk I/O when file is already located inside the raw transcript lake
+        raw_dir = getattr(self.vault_port, "raw_dir", None)
+        is_already_in_raw = False
+        if isinstance(raw_dir, Path):
+            try:
+                is_already_in_raw = file_path.resolve().is_relative_to(raw_dir.resolve())
+            except (ValueError, RuntimeError):
+                is_already_in_raw = False
+
+        if not is_already_in_raw:
+            self.vault_port.save_raw_transcript(raw)
+
         try:
             self.index_raw.index_single_transcript(raw)
         except Exception as exc:  # noqa: BLE001

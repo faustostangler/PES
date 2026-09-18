@@ -291,6 +291,44 @@ class TestCresmoPipelineOrchestration:
         assert raw.video_description == "Análise de La Boétie"
         assert "Corpo do texto sobre a servidão voluntária" in raw.body
 
+    def test_run_for_text_file_skips_save_when_already_in_raw_lake(self, tmp_path: Path) -> None:
+        """Verify that files residing inside raw_dir lake are not redundantly re-saved to disk."""
+        raw_lake_dir = tmp_path / "raw"
+        chan_dir = raw_lake_dir / "economics"
+        chan_dir.mkdir(parents=True)
+        raw_file = chan_dir / "austrian_business_cycle.md"
+        raw_file.write_text(
+            "An analytical treatise on capital structure and credit expansion.",
+            encoding="utf-8",
+        )
+
+        vault = InMemoryVaultAdapter()
+        # Attach raw_dir to simulate ObsidianVaultAdapter
+        vault.raw_dir = raw_lake_dir  # type: ignore[attr-defined]
+        vault.save_raw_transcript = MagicMock(wraps=vault.save_raw_transcript)  # type: ignore[method-assign]
+
+        pipeline = CresmoPipeline(
+            media_ingestion_port=MockMediaIngestionPort(),
+            llm_port=SmartMockLLMAdapter(),
+            vault_port=vault,
+            ledger_port=InMemoryLedgerAdapter(),
+        )
+
+        res = pipeline.run_for_text_file(raw_file)
+        assert res.success is True
+        # Assert save_raw_transcript was bypassed to prevent redundant disk I/O
+        vault.save_raw_transcript.assert_not_called()
+
+        # For an external file outside raw_dir, verify it IS saved into raw lake
+        ext_dir = tmp_path / "priority_texts"
+        ext_dir.mkdir(parents=True)
+        ext_file = ext_dir / "external_article.txt"
+        ext_file.write_text("External article content.", encoding="utf-8")
+
+        res_ext = pipeline.run_for_text_file(ext_file)
+        assert res_ext.success is True
+        vault.save_raw_transcript.assert_called_once()
+
     def test_run_for_text_file_short_stem_fallback_hash(self, tmp_path: Path) -> None:
         short_file = tmp_path / "ab.txt"
         short_file.write_text("Valid non-empty body content for short stem file.", encoding="utf-8")

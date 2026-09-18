@@ -25,6 +25,16 @@ from pathlib import Path
 from typing import Any
 
 import yt_dlp
+import yt_dlp.plugins
+
+# Eagerly load yt-dlp plugins on the main thread to prevent background thread
+# importlib lock deadlocks during debugging sessions with pydevd.
+try:
+    yt_dlp.plugins.load_all_plugins()
+except Exception:  # noqa: BLE001, S110
+    pass
+
+
 
 from cresmo.application.ports import MediaIngestionPort
 from cresmo.domain.entities import RawTranscript

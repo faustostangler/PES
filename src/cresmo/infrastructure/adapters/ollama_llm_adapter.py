@@ -46,6 +46,7 @@ class OllamaLLMAdapter(LLMTransformationPort):
         model: str = "qwen2.5:7b",
         timeout_seconds: float = 60.0,
         default_temperature: float = 0.2,
+        num_predict: int = 0,
         langfuse_client: Langfuse | None = None,
     ) -> None:
         """Initialize Ollama LLM adapter.
@@ -55,12 +56,14 @@ class OllamaLLMAdapter(LLMTransformationPort):
             model: Model tag to execute for generation tasks.
             timeout_seconds: Maximum time to wait for generation response before raising.
             default_temperature: Default generation sampling temperature.
+            num_predict: Maximum tokens predicted by model (0 means unconstrained / model default).
             langfuse_client: Optional injected Langfuse telemetry client.
         """
         self.base_url = base_url.rstrip("/")
         self.model = model
         self.timeout_seconds = timeout_seconds
         self.default_temperature = default_temperature
+        self.num_predict = num_predict
 
         if langfuse_client is not None:
             self._langfuse: Langfuse | None = langfuse_client
@@ -122,14 +125,17 @@ class OllamaLLMAdapter(LLMTransformationPort):
         """
         eff_temperature = temperature if temperature is not None else self.default_temperature
         endpoint = f"{self.base_url}/api/generate"
+        options: dict[str, Any] = {
+            "temperature": eff_temperature,
+        }
+        if self.num_predict > 0:
+            options["num_predict"] = self.num_predict
+
         payload: dict[str, Any] = {
             "model": self.model,
             "prompt": prompt,
             "stream": False,
-            "options": {
-                "temperature": eff_temperature,
-                "num_predict": 300,
-            },
+            "options": options,
         }
         if system_instruction:
             payload["system"] = system_instruction
@@ -212,6 +218,8 @@ class OllamaLLMAdapter(LLMTransformationPort):
             raise LLMInfrastructureError(msg) from exc
             raise LLMInfrastructureError(msg) from exc
         except Exception as exc:
-            msg = f"Ollama error at {self.base_url}: {exc}. Run 'ollama serve' or pass '--web-index'."
+            msg = (
+                f"Ollama error at {self.base_url}: {exc}. Run 'ollama serve' or pass '--web-index'."
+            )
             logger.warning("[OllamaLLMAdapter] %s", msg)
             raise LLMInfrastructureError(msg) from exc

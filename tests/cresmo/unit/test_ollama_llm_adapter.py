@@ -171,3 +171,42 @@ class TestOllamaLLMAdapter:
             assert call_kwargs["metadata"]["trace_id"] == "cresmo-trace-1"
             assert call_kwargs["metadata"]["session_id"] == "session-42"
 
+    def test_transform_omits_num_predict_when_zero_or_negative(self) -> None:
+        """Verify that when num_predict is 0 (default), num_predict is omitted from options."""
+        adapter = OllamaLLMAdapter(
+            base_url="http://localhost:11434",
+            model="qwen2.5:7b",
+            num_predict=0,
+        )
+        mock_response_data = {"response": "Clean output", "done": True}
+
+        with patch("urllib.request.urlopen") as mock_urlopen:
+            mock_resp = MagicMock()
+            mock_resp.read.return_value = json.dumps(mock_response_data).encode("utf-8")
+            mock_resp.__enter__.return_value = mock_resp
+            mock_urlopen.return_value = mock_resp
+
+            adapter.transform("Test prompt")
+            req = mock_urlopen.call_args[0][0]
+            body = json.loads(req.data.decode("utf-8"))
+            assert "num_predict" not in body["options"]
+
+    def test_transform_includes_num_predict_when_positive(self) -> None:
+        """Verify that when num_predict > 0, it is explicitly included in options."""
+        adapter = OllamaLLMAdapter(
+            base_url="http://localhost:11434",
+            model="qwen2.5:7b",
+            num_predict=500,
+        )
+        mock_response_data = {"response": "Clean output", "done": True}
+
+        with patch("urllib.request.urlopen") as mock_urlopen:
+            mock_resp = MagicMock()
+            mock_resp.read.return_value = json.dumps(mock_response_data).encode("utf-8")
+            mock_resp.__enter__.return_value = mock_resp
+            mock_urlopen.return_value = mock_resp
+
+            adapter.transform("Test prompt")
+            req = mock_urlopen.call_args[0][0]
+            body = json.loads(req.data.decode("utf-8"))
+            assert body["options"]["num_predict"] == 500
