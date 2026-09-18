@@ -1,6 +1,11 @@
 """Stage 2 Use Case: Fill Gaps and Expand Fluid Prose.
 
-Executes Socratic audit and multi-pass fluid prose expansion (cresmo-expander).
+Executes Socratic audit and multi-pass progressive fluid prose expansion (cresmo-expander),
+purging oralities and speech noise while enforcing continuous narrative structure.
+
+Conforms to:
+- SPEC-001: §1 (Stage 2 Gap Filler Socratic Expansion)
+- ADR-001: Modular Monolith Domain Integrity
 """
 
 from __future__ import annotations
@@ -16,8 +21,10 @@ from cresmo.domain.entities import EnrichedCompendium, RawTranscript
 from cresmo.domain.exceptions import CompendiumStructureError
 from cresmo.domain.value_objects import NoteTitle
 
+# Extracts title from markdown H1 header
 _TITLE_H1_PATTERN = re.compile(r"^\s*#\s+(.+)$", re.MULTILINE)
 _COMPLEMENTARY_TAG = "## Informações Complementares"
+# Resilient regex matching variations of the mandatory complementary section header
 _COMPLEMENTARY_REGEX = re.compile(
     r"^\s*#{2,3}\s+\*?\*?(?:Informa[cç][oõ]es\s+Complementares|Notas\s+Complementares|Informa[cç][oõ]es\s+Adicionais)\*?\*?.*$",
     re.MULTILINE | re.IGNORECASE,
@@ -25,7 +32,7 @@ _COMPLEMENTARY_REGEX = re.compile(
 
 
 class FillGapsFluidProseUseCase:
-    """Stage 2: Multi-pass Socratic gap analysis & fluid prose expansion."""
+    """Stage 2: Multi-pass Socratic gap analysis & fluid prose expansion orchestrator."""
 
     def __init__(
         self,
@@ -33,6 +40,13 @@ class FillGapsFluidProseUseCase:
         vault_port: VaultRepositoryPort,
         prompt_provider: PromptProviderPort | None = None,
     ) -> None:
+        """Initialize Stage 2 use case with required ports.
+
+        Args:
+            llm_port: Hexagonal port for generative text transformations.
+            vault_port: Port providing enriched compendium persistence.
+            prompt_provider: Optional provider for decoupled prompt templates.
+        """
         self.llm_port = llm_port
         self.vault_port = vault_port
         if prompt_provider is None:
@@ -47,7 +61,19 @@ class FillGapsFluidProseUseCase:
         raw_transcript: RawTranscript,
         passes: int = 3,
     ) -> EnrichedCompendium:
-        """Execute Stage 2 multi-pass progressive enrichment."""
+        """Execute Stage 2 multi-pass progressive enrichment.
+
+        Args:
+            raw_transcript: Source RawTranscript aggregate from Stage 1.
+            passes: Number of sequential Socratic expansion cycles (default: 3).
+
+        Returns:
+            Validated EnrichedCompendium aggregate with segregated body and complementary info.
+
+        Raises:
+            CompendiumStructureError: If the mandatory complementary info section is missing or empty.
+            DomainValidationError: If construction invariants are violated.
+        """
         current_text = raw_transcript.body
         file_name = f"{raw_transcript.content_id.value}.txt"
 

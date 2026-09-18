@@ -6,6 +6,10 @@ Extracts clean YouTube and Google authentication cookies directly from installed
 On Linux:
 - Firefox stores cookies without OS keyring locks in SQLite, making it the most reliable source.
 - Chrome/Chromium cookies use keyring decryption with graceful fallback.
+
+Conforms to:
+    - ADR-004: Native Media Ingestion Decommissioning
+    - SPEC-004: Native Media Ingestion Specification
 """
 
 from __future__ import annotations
@@ -73,7 +77,15 @@ COOKIE_VALUE_REGEX: re.Pattern[str] = re.compile(r"^[ -~]+$")
 
 
 def has_valid_auth_cookies(cookie_file: Path) -> bool:
-    """Check if the existing cookie file contains valid authenticated session tokens."""
+    """Check if the existing cookie file contains valid authenticated session tokens.
+
+    Args:
+        cookie_file: Filesystem path to the Netscape cookie jar file.
+
+    Returns:
+        True if the file exists, exceeds minimum byte threshold, and contains
+        at least one known YouTube/Google authentication cookie token.
+    """
     if not cookie_file.exists() or cookie_file.stat().st_size < MIN_COOKIE_FILE_BYTES:
         return False
     try:
@@ -93,7 +105,18 @@ def export_cookies_from_browser(
     require_auth: bool = False,
     verbose: bool = False,
 ) -> bool:
-    """Extract cookies from a single browser and save to Netscape cookie file."""
+    """Extract cookies from a single browser and save to Netscape cookie file.
+
+    Args:
+        browser: Browser identifier ('firefox', 'chrome', etc.).
+        output_file: Destination path for the generated Netscape cookie jar.
+        domains: Target domain filters to include (defaults to YouTube/Google domains).
+        require_auth: If True, requires presence of authenticated session tokens to succeed.
+        verbose: If True, prints status messages to stdout/stderr.
+
+    Returns:
+        True if cookies were successfully extracted and persisted; False otherwise.
+    """
     output_path = Path(output_file).resolve()
     temp_path = output_path.with_suffix(".tmp")
 
@@ -168,7 +191,20 @@ def export_cookies_auto(
     preferred_browser: str | None = "firefox",
     verbose: bool = False,
 ) -> bool:
-    """Scan installed browsers in priority order and save the best set of YouTube cookies."""
+    """Scan installed browsers in priority order and save the best set of YouTube cookies.
+
+    Executes a two-tier extraction strategy:
+    1. First pass: scans installed browsers specifically for authenticated session tokens.
+    2. Second pass: if no authenticated session is found, falls back to guest/unauthenticated cookies.
+
+    Args:
+        output_file: Target path where the Netscape cookie jar will be saved.
+        preferred_browser: Primary browser to attempt first (defaults to 'firefox').
+        verbose: If True, outputs extraction telemetry to stdout.
+
+    Returns:
+        True if cookies were successfully extracted and written; False otherwise.
+    """
     output_path = Path(output_file).resolve()
 
     # Prioritize preferred browser (e.g. firefox on Linux)
@@ -205,7 +241,15 @@ def ensure_cookies_file(
     """Ensure a valid authenticated cookie file exists on disk.
 
     Refreshes if missing, expired, or lacking authentication tokens.
-    Returns path to valid cookie file, or None if unavailable.
+
+    Args:
+        output_file: Destination file path for the Netscape cookie file.
+        browser: Preferred browser candidate for cookie extraction.
+        max_age_hours: Maximum allowable file age before forcing a refresh (default: 12h).
+        verbose: If True, outputs diagnostic messages.
+
+    Returns:
+        Path to a valid, verified cookie file, or None if unavailable.
     """
     out_path = Path(output_file).resolve()
     should_refresh = False

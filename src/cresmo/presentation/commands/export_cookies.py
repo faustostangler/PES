@@ -1,4 +1,13 @@
-"""Command handler for cresmo export-cookies."""
+"""Command handler for cresmo export-cookies.
+
+Extracts and validates YouTube authentication cookies directly from installed browsers
+(Firefox, Chrome, Chromium, Brave, Edge) into Netscape format files.
+
+Conforms to:
+    - ADR-002: Presentation CLI & Humble Object
+    - ADR-004: Native Media Ingestion Decommissioning
+    - SPEC-004: Native Media Ingestion Specification
+"""
 
 from __future__ import annotations
 
@@ -20,7 +29,11 @@ from cresmo.presentation.exit_codes import (
 
 
 def register_subparser(subparsers: argparse._SubParsersAction) -> None:
-    """Register 'export-cookies' subcommand parser with argument options."""
+    """Register 'export-cookies' subcommand parser with argument options.
+
+    Args:
+        subparsers: Root CLI subparsers action object.
+    """
     cookie_parser = subparsers.add_parser(
         "export-cookies",
         help="Extract and validate YouTube authentication cookies from installed web browsers",
@@ -53,7 +66,14 @@ def register_subparser(subparsers: argparse._SubParsersAction) -> None:
 
 
 def handle_export_cookies(args: argparse.Namespace) -> int:
-    """Extract YouTube session cookies from browser into target Netscape file."""
+    """Extract YouTube session cookies from browser into target Netscape file.
+
+    Args:
+        args: Parsed CLI argument namespace containing browser name, output path, and flags.
+
+    Returns:
+        Process exit code integer.
+    """
     try:
         settings = CresmoSettings()
         output_file = args.output or settings.cookies_file or (settings.data_dir / "cookies.txt")

@@ -8,7 +8,7 @@ and multi-process concurrency safety adhering to ADR-003 and SPEC-003.
 from __future__ import annotations
 
 import sqlite3
-from collections.abc import Iterator
+from collections.abc import Generator
 from contextlib import contextmanager
 from datetime import UTC, datetime
 from pathlib import Path
@@ -18,7 +18,15 @@ from cresmo.domain.value_objects import ContentId, LedgerEntry, PipelineStatus
 
 
 class SqliteLedgerAdapter(LedgerRepositoryPort):
-    """ACID SQLite ledger persistence adapter in Write-Ahead Logging (WAL) mode."""
+    """ACID SQLite ledger persistence adapter in Write-Ahead Logging (WAL) mode.
+
+    Provides transactional persistence for processing audit trails, ensuring idempotency
+    and preventing duplicate transcription/synthesis across multi-worker executions.
+
+    Conforms to:
+        - ADR-003: PES Production Architecture & Telemetry
+        - SPEC-003: Channel Synchronization Specifications
+    """
 
     def __init__(self, db_path: Path | str, timeout: float = 5.0) -> None:
         """Initialize SQLite ledger adapter and ensure WAL schema invariants.
@@ -37,12 +45,16 @@ class SqliteLedgerAdapter(LedgerRepositoryPort):
         self._init_db()
 
     @contextmanager
-    def _get_connection(self) -> Iterator[sqlite3.Connection]:
-        """Create, configure, and safely close a connection with standard pragmas."""
+    def _get_connection(self) -> Generator[sqlite3.Connection]:
+        """Create, configure, and safely close a connection with standard pragmas.
+
+        Yields:
+            Configured sqlite3.Connection with Row row_factory and WAL journal mode.
+        """
         conn = sqlite3.connect(self._db_path, timeout=self._timeout)
         try:
             conn.row_factory = sqlite3.Row
-            # Enforce WAL mode and NORMAL synchronous
+            # Enforce WAL mode and NORMAL synchronous to maximize write throughput without data corruption
             if self._db_path != ":memory:":
                 conn.execute("PRAGMA journal_mode=WAL;")
             conn.execute("PRAGMA synchronous=NORMAL;")
@@ -52,7 +64,7 @@ class SqliteLedgerAdapter(LedgerRepositoryPort):
             conn.close()
 
     def _init_db(self) -> None:
-        """Initialize database schema if not already present."""
+        """Initialize database schema and indices if not already present."""
         with self._get_connection() as conn:
             conn.execute(
                 """
@@ -74,7 +86,14 @@ class SqliteLedgerAdapter(LedgerRepositoryPort):
             )
 
     def is_processed(self, content_id: ContentId) -> bool:
-        """Check whether a content item has already completed all pipeline stages."""
+        """Check whether a content item has already completed all pipeline stages.
+
+        Args:
+            content_id: Video or media identifier to check.
+
+        Returns:
+            True if status is COMPLETED; False otherwise.
+        """
         with self._get_connection() as conn:
             cursor = conn.execute(
                 "SELECT status FROM cresmo_ledger WHERE content_id = ?;",
@@ -86,7 +105,11 @@ class SqliteLedgerAdapter(LedgerRepositoryPort):
             return str(row["status"]) == PipelineStatus.COMPLETED.value
 
     def mark_processed(self, content_id: ContentId) -> None:
-        """Record content item as successfully processed."""
+        """Record content item as successfully processed.
+
+        Args:
+            content_id: Video or media identifier to mark completed.
+        """
         now_iso = datetime.now(UTC).isoformat()
         with self._get_connection() as conn:
             conn.execute(
@@ -110,7 +133,11 @@ class SqliteLedgerAdapter(LedgerRepositoryPort):
             )
 
     def save_entry(self, entry: LedgerEntry) -> None:
-        """Persist or update an immutable LedgerEntry audit record atomically."""
+        """Persist or update an immutable LedgerEntry audit record atomically.
+
+        Args:
+            entry: LedgerEntry domain value object representing the processing state.
+        """
         started_iso = entry.started_at.isoformat() if entry.started_at else None
         completed_iso = entry.completed_at.isoformat() if entry.completed_at else None
 
@@ -145,7 +172,14 @@ class SqliteLedgerAdapter(LedgerRepositoryPort):
             )
 
     def get_entry(self, content_id: ContentId) -> LedgerEntry | None:
-        """Retrieve the latest LedgerEntry for a given content ID."""
+        """Retrieve the latest LedgerEntry for a given content ID.
+
+        Args:
+            content_id: Video or media identifier to look up.
+
+        Returns:
+            LedgerEntry if record exists, or None.
+        """
         with self._get_connection() as conn:
             cursor = conn.execute(
                 "SELECT * FROM cresmo_ledger WHERE content_id = ?;",
@@ -157,7 +191,14 @@ class SqliteLedgerAdapter(LedgerRepositoryPort):
             return self._row_to_entry(row)
 
     def list_entries(self, limit: int = 100) -> list[LedgerEntry]:
-        """List recently recorded ledger entries."""
+        """List recently recorded ledger entries.
+
+        Args:
+            limit: Maximum count of recent records to return.
+
+        Returns:
+            List of LedgerEntry records sorted newest first.
+        """
         with self._get_connection() as conn:
             cursor = conn.execute(
                 "SELECT * FROM cresmo_ledger ORDER BY rowid DESC LIMIT ?;",
@@ -167,7 +208,14 @@ class SqliteLedgerAdapter(LedgerRepositoryPort):
 
     @staticmethod
     def _row_to_entry(row: sqlite3.Row) -> LedgerEntry:
-        """Convert a sqlite3.Row to an immutable LedgerEntry."""
+        """Convert a sqlite3.Row to an immutable LedgerEntry.
+
+        Args:
+            row: SQLite row containing ledger table columns.
+
+        Returns:
+            Hydrated immutable LedgerEntry value object.
+        """
         started_at = datetime.fromisoformat(row["started_at"]) if row["started_at"] else None
         completed_at = datetime.fromisoformat(row["completed_at"]) if row["completed_at"] else None
         return LedgerEntry(

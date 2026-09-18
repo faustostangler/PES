@@ -1,6 +1,6 @@
 """Cresmo Knowledge Synthesis Pipeline Orchestrator.
 
-Orchestrates the 7 incremental integer stages:
+Orchestrates the 7 incremental integer stages per SPEC-001 and ADR-007 (Template Method):
 - Stage 1: Raw Transcript Ingestion (MediaIngestionPort ACL)
 - Stage 2: Socratic Gap Filler (FillGapsFluidProseUseCase)
 - Stage 3: Longitudinal & Synchronic Expander (ExpandLongitudinalSynchronicUseCase)
@@ -8,6 +8,11 @@ Orchestrates the 7 incremental integer stages:
 - Stage 5: Batched Atomic Synthesis (SynthesizeAtomicBatchUseCase)
 - Stage 6: Map of Content Reconciliation (ReconcileMOCsUseCase)
 - Stage 7: Graph Entity Resolution & Duplicate Unification (UnifyDuplicateNotesUseCase)
+
+Conforms to:
+- ADR-001: Cresmo Modular Monolith Strangling
+- ADR-007: Pipeline Template Method DRY
+- SPEC-001: Core Knowledge Synthesis Specifications
 """
 
 from __future__ import annotations
@@ -49,7 +54,17 @@ from cresmo.domain.value_objects import ContentId
 
 @dataclass(frozen=True)
 class PipelineResult:
-    """Summary record emitted at the conclusion of a pipeline run."""
+    """Summary record emitted at the conclusion of an end-to-end pipeline execution.
+
+    Attributes:
+        content_id: Canonical ContentId processed.
+        success: True if all stages completed successfully without unhandled errors.
+        synthesized_notes: Tuple of all newly synthesized AtomicNote domain aggregates.
+        reconciled_mocs: Tuple of MapOfContent aggregates updated or created.
+        duplicates_unified: Total count of duplicate notes consolidated in Stage 7.
+        already_processed: True if execution was skipped due to ledger idempotency match.
+        error_message: Optional error message string if execution terminated early.
+    """
 
     content_id: ContentId
     success: bool
@@ -61,7 +76,11 @@ class PipelineResult:
 
 
 class CresmoPipeline:
-    """Hexagonal Modular Monolith orchestrator for the Cresmo synthesis engine."""
+    """Hexagonal Modular Monolith orchestrator for the Cresmo synthesis engine.
+
+    Implements the Template Method execution flow across Stages 1 through 7,
+    coordinating dependency-injected Use Cases, Ports, and Adapters.
+    """
 
     def __init__(
         self,

@@ -1,7 +1,12 @@
 """Stage 3 Use Case: Longitudinal & Synchronic Expansion.
 
-Executes Braudelian longue durée (cresmo-long-expander) and Jaspers Axial Time (cresmo-wide-expander)
-deep multi-secular and horizontal cross-sections.
+Executes Fernand Braudel's longue durée (cresmo-long-expander) and Karl Jaspers' Axial Time
+(cresmo-wide-expander) deep multi-secular and horizontal cross-sections, subordinating short-term
+surface events (l'histoire événementielle) to deep historical structures and global synchronies.
+
+Conforms to:
+- SPEC-001: §1 (Stage 3 Expander)
+- ADR-001: Modular Monolith Domain Integrity
 """
 
 from __future__ import annotations
@@ -17,6 +22,7 @@ from cresmo.domain.entities import EnrichedCompendium
 from cresmo.domain.exceptions import CompendiumStructureError
 
 _COMPLEMENTARY_TAG = "## Informações Complementares"
+# Resilient regex matching variations of the mandatory complementary section header
 _COMPLEMENTARY_REGEX = re.compile(
     r"^\s*#{2,3}\s+\*?\*?(?:Informa[cç][oõ]es\s+Complementares|Notas\s+Complementares|Informa[cç][oõ]es\s+Adicionais)\*?\*?.*$",
     re.MULTILINE | re.IGNORECASE,
@@ -25,7 +31,7 @@ _TITLE_H1_PATTERN = re.compile(r"^\s*#\s+.+$", re.MULTILINE)
 
 
 class ExpandLongitudinalSynchronicUseCase:
-    """Stage 3: Deep longitudinal & synchronic expansion in-place."""
+    """Stage 3: Deep longitudinal & synchronic expansion orchestrator."""
 
     def __init__(
         self,
@@ -33,6 +39,13 @@ class ExpandLongitudinalSynchronicUseCase:
         vault_port: VaultRepositoryPort,
         prompt_provider: PromptProviderPort | None = None,
     ) -> None:
+        """Initialize Stage 3 use case with required Hexagonal ports.
+
+        Args:
+            llm_port: Hexagonal port for generative LLM inference.
+            vault_port: Port providing enriched compendium persistence.
+            prompt_provider: Optional provider for decoupled prompt templates.
+        """
         self.llm_port = llm_port
         self.vault_port = vault_port
         if prompt_provider is None:
@@ -46,7 +59,18 @@ class ExpandLongitudinalSynchronicUseCase:
         self,
         compendium: EnrichedCompendium,
     ) -> EnrichedCompendium:
-        """Execute Stage 3 dual expansion in-place."""
+        """Execute Stage 3 dual expansion in-place.
+
+        Args:
+            compendium: EnrichedCompendium aggregate from Stage 2.
+
+        Returns:
+            Updated EnrichedCompendium aggregate enriched with multi-secular and synchronic depth.
+
+        Raises:
+            CompendiumStructureError: If complementary information section is missing or empty.
+            DomainValidationError: If construction invariants are violated.
+        """
         prompt_long = self.prompt_provider.get_long_expander_prompt(
             compendium_body=compendium.body,
             complementary_info=compendium.complementary_info,

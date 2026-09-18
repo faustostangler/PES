@@ -2,9 +2,14 @@
 
 Enforces the 4-Category Configuration Taxonomy using Pydantic Settings V2:
 - Category 1: Secrets & Credentials (Strictly from .env or environment)
-- Category 2: Infra & Storage Paths (Obsidian vault, raw, enriched, index)
-- Category 3: Operational Tunables (Model names, temperatures, batch sizes)
-- Category 4: Domain Invariants (Defined in domain modules)
+- Category 2: Infra & Storage Paths (Obsidian vault, raw, enriched, master, index)
+- Category 3: Operational Tunables (Model names, temperatures, batch sizes, worker counts)
+- Category 4: Domain Invariants (Defined in domain entities and value objects)
+
+Conforms to:
+    - ADR-005: Multi-Role 12-Factor Container & Settings
+    - ADR-006: Resilient Workspace Root Discovery
+    - SPEC-005: Operational Staging Validation
 """
 
 from __future__ import annotations
@@ -21,7 +26,24 @@ _WORKSPACE_DIR = find_workspace_root()
 
 
 class CresmoSettings(BaseSettings):
-    """Single Source of Truth (SSOT) configuration for Cresmo."""
+    """Single Source of Truth (SSOT) configuration for the Cresmo engine.
+
+    Aggregates runtime options, credential secrets, infrastructure filesystem paths,
+    and operational tunables. Validates configurations at application startup to enforce
+    the 12-Factor App methodology and fail-fast principles.
+
+    Attributes:
+        gemini_api_key: Secret key for Google GenAI API calls.
+        langfuse_secret_key: Secret key for Langfuse observability endpoint.
+        langfuse_public_key: Public telemetry identifier for Langfuse tracing.
+        langfuse_host: Telemetry collector endpoint URL.
+        data_dir: Base directory for staging media, compendiums, and ledger databases.
+        vault_dir: Target Obsidian Second Brain vault directory.
+        sqlite_ledger_filename: Database filename for the SQLite WAL ledger.
+        gemini_model: Primary model identifier for LLM transformation stages.
+        whisper_model: Model variant for local audio transcription fallback.
+        batch_size: Synthesis chunk size for atomic note generation.
+    """
 
     model_config = SettingsConfigDict(
         env_file=(
@@ -136,7 +158,11 @@ class CresmoSettings(BaseSettings):
         return self.data_dir / self.priority_texts_dirname
 
     def ensure_directories(self) -> None:
-        """Ensure all runtime directories exist on the filesystem (fail-safe idempotent)."""
+        """Ensure all runtime directories exist on the filesystem.
+
+        Creates directory tree idempotently (equivalent to mkdir -p), preventing
+        missing-directory IOErrors when writing raw transcripts, compendiums, or vault notes.
+        """
         self.data_dir.mkdir(parents=True, exist_ok=True)
         self.vault_dir.mkdir(parents=True, exist_ok=True)
         self.raw_dir.mkdir(parents=True, exist_ok=True)
@@ -217,7 +243,15 @@ class CresmoSettings(BaseSettings):
 
     @model_validator(mode="after")
     def _compute_worker_multiples(self) -> Self:
-        """Compute worker pools as multiples of whisper_workers unless explicitly configured."""
+        """Calculate dynamic worker pool sizes and resolve candidate cookie paths.
+
+        Maintains healthy worker ratios (5x for network-bound subtitle downloads,
+        10x for channel uploads feed polling) derived from the CPU-bound whisper_workers base,
+        preventing thread starvation and CPU saturation.
+
+        Returns:
+            Self instance with calculated worker counts and auto-discovered cookies_file.
+        """
         if self.subtitle_workers <= 0:
             self.subtitle_workers = max(1, self.whisper_workers * 5)
         if self.channel_discovery_workers <= 0:

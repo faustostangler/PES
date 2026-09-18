@@ -1,8 +1,8 @@
 """Preflight Environmental Diagnostics and Health Checker.
 
-Verifies environmental invariants (credentials, storage permissions, and
-system binary dependencies like ffmpeg) in <10ms before executing resource-intensive
-pipelines, adhering to ADR-003 and SPEC-003.
+Verifies environmental invariants (credentials, storage permissions, and system binary
+dependencies like ffmpeg) in <10ms before executing resource-intensive pipelines,
+adhering to fail-fast principles per ADR-003, ADR-005 (12-Factor App), and SPEC-005.
 """
 
 from __future__ import annotations

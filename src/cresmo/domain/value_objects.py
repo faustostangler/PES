@@ -1,7 +1,12 @@
-"""Domain Value Objects for the Cresmo Knowledge Synthesis context.
+"""Domain Value Objects for the Cresmo Knowledge Synthesis Bounded Context.
 
 Implements immutable, self-validating Value Objects adhering to the Doctor Stangler Method
 (Zero Primitive Obsession, construction-time invariant enforcement).
+
+Conforms to:
+- SPEC-001: §2.1 (Domain Invariants & Value Object Contracts)
+- SPEC-003: §2 (Channel Sync Models & Normalization Rules)
+- ADR-001 (Modular Monolith Domain Integrity)
 """
 
 from __future__ import annotations
@@ -20,7 +25,14 @@ _ILLEGAL_CHARS_PATTERN = re.compile(r'[\\/*?:"<>|%]')
 
 
 class NoteType(str, Enum):
-    """Canonical typology classification for Obsidian Second Brain atomic notes."""
+    """Canonical typology classification for Obsidian Second Brain atomic notes.
+    
+    Restricts note classification strictly to authorized categories per SPEC-001: §2.1:
+    - CONCEPT: Abstract principles, mental models, theories.
+    - ENTITY: Specific people, organizations, historical objects, locations.
+    - EVENT: Demarcated historical or contemporary happenings.
+    - PROCESS: Dynamical procedures, systemic flows, algorithmic sequences.
+    """
 
     CONCEPT = "concept"
     ENTITY = "entity"
@@ -29,7 +41,17 @@ class NoteType(str, Enum):
 
     @classmethod
     def from_string(cls, raw: str) -> NoteType:
-        """Parse and normalize case-insensitive typology string."""
+        """Parse and normalize case-insensitive typology string.
+
+        Args:
+            raw: Raw typology string from LLM synthesis or frontmatter.
+
+        Returns:
+            Normalized NoteType enum member.
+
+        Raises:
+            NoteTypologyError: If the raw string does not match any valid typology.
+        """
         normalized = raw.strip().lower()
         for member in cls:
             if member.value == normalized:
@@ -41,12 +63,18 @@ class NoteType(str, Enum):
 
 @dataclass(frozen=True)
 class ContentId:
-    """Strongly-typed unique identifier for a raw media item or transcript."""
+    """Strongly-typed unique identifier for a raw media item or transcript.
+    
+    Invariants:
+        Must be a non-empty string between 8 and 64 characters matching ^[a-zA-Z0-9_-]+$.
+        Zero whitespace or shell/path traversal characters allowed.
+    """
 
     value: str
 
     def __post_init__(self) -> None:
         val = self.value.strip()
+        # Security invariant: prevent directory traversal or injection in identifiers
         if not val or not _CONTENT_ID_PATTERN.match(val):
             raise DomainValidationError(
                 f"Invalid ContentId '{self.value}'. Must match ^[a-zA-Z0-9_-]{{8,64}}$ without whitespace."
@@ -59,15 +87,20 @@ class ContentId:
 
 @dataclass(frozen=True)
 class NoteTitle:
-    """Canonical title for an Atomic Note in the Second Brain vault."""
+    """Canonical title for an Atomic Note in the Obsidian Second Brain vault.
+    
+    Invariants:
+        Length between 1 and 200 characters. Automatically sanitizes WikiLink brackets
+        and filesystem reserved characters while rejecting generic placeholders.
+    """
 
     value: str
 
     def __post_init__(self) -> None:
         raw = self.value.strip()
-        # Strip [[ and ]] if present
+        # ACL sanitization: strip [[ and ]] if LLM output included raw WikiLinks
         sanitized = _BRACKETS_PATTERN.sub(r"\1", raw).strip()
-        # Strip illegal filesystem characters
+        # Filesystem isolation: remove characters prohibited on POSIX and Windows
         sanitized = _ILLEGAL_CHARS_PATTERN.sub("", sanitized).strip()
 
         if not sanitized or len(sanitized) > 200:
@@ -86,7 +119,17 @@ class NoteTitle:
 
 @dataclass(frozen=True)
 class CausalMatrix:
-    """Immutable ternary attribution model of causality for an Atomic Note."""
+    """Immutable ternary attribution model of causality for an Atomic Note.
+    
+    Attributes:
+        cause: The primary generating condition or preceding mechanism.
+        effect: The resultant dynamic outcome or structural change.
+        epistemic_attribution: Conceptual framework, thinker, or source establishing causality.
+
+    Invariants:
+        Per SPEC-001: §2.1, either both cause and effect are populated, or both are empty.
+        Partial causality (cause without effect or vice-versa) is illegal.
+    """
 
     cause: str
     effect: str
@@ -97,6 +140,7 @@ class CausalMatrix:
         e = self.effect.strip()
         ea = self.epistemic_attribution.strip()
 
+        # Invariant enforcement: causality requires relational pairs (cause and effect)
         if (c or e) and (not c or not e):
             raise DomainValidationError(
                 f"CausalMatrix requires both 'cause' and 'effect' to be non-empty. Got cause='{c}', effect='{e}'."
@@ -109,7 +153,13 @@ class CausalMatrix:
 
 @dataclass(frozen=True)
 class CrossContextRelations:
-    """Immutable triad connecting a concept across historical, lateral, and consequential axes."""
+    """Immutable triad connecting a concept across historical, lateral, and consequential axes.
+    
+    Attributes:
+        precursors: Ancestral intellectual, historical, or systemic conditions.
+        lateral_events: Synchronous or parallel occurrences in other domains.
+        aftermath: Long-term downstream repercussions or systemic legacies.
+    """
 
     precursors: str = ""
     lateral_events: str = ""
@@ -123,7 +173,15 @@ class CrossContextRelations:
 
 @dataclass(frozen=True)
 class AtomicEntityInventory:
-    """Discovery manifest of unique named entities discovered across an Enriched Compendium."""
+    """Discovery manifest of unique named entities discovered across an Enriched Compendium.
+    
+    Attributes:
+        items: Sequence of tuples pairing validated NoteTitle and NoteType.
+
+    Invariants:
+        Per SPEC-001: §2.1, inventory cannot be empty and must contain zero duplicate titles
+        (case-insensitive normalization) to guarantee deterministic batch partitioning.
+    """
 
     items: tuple[tuple[NoteTitle, NoteType], ...]
 
@@ -142,7 +200,16 @@ class AtomicEntityInventory:
 
 
 class PipelineStatus(str, Enum):
-    """Canonical execution and idempotency status for media items in the pipeline."""
+    """Canonical execution and idempotency status for media items in the pipeline.
+    
+    Members:
+        COMPLETED: Ingestion and all synthesis stages finished successfully.
+        SKIPPED_IDEMPOTENT: ContentId already processed in ledger; execution bypassed.
+        FAILED_INGESTION: Audio download or transcript crawling failed.
+        FAILED_TRANSFORMATION: LLM synthesis or schema extraction failed.
+        RUNNING: Currently executing active pipeline stages.
+        PAUSED_BUDGET: Token or API rate budget cap reached.
+    """
 
     COMPLETED = "COMPLETED"
     SKIPPED_IDEMPOTENT = "SKIPPED_IDEMPOTENT"
@@ -154,7 +221,15 @@ class PipelineStatus(str, Enum):
 
 @dataclass(frozen=True)
 class DiscoveredMediaItem:
-    """Immutable descriptor of a media item discovered during channel polling."""
+    """Immutable descriptor of a media item discovered during channel polling.
+    
+    Attributes:
+        content_id: Strongly-typed unique content identifier.
+        title: Video or episode title.
+        published_at: UTC timestamp of release.
+        media_url: Canonical web URL.
+        channel_name: Human-readable creator or channel name.
+    """
 
     content_id: ContentId
     title: str
@@ -190,18 +265,25 @@ def normalize_to_uploads_playlist_url(channel_ref: str) -> str:
     YouTube automatically maintains an 'Uploads from <Channel>' playlist for every channel,
     where the playlist ID is identical to the channel ID but with the 'UC' prefix swapped to 'UU'.
     Querying this playlist URL via yt-dlp flat extraction is significantly faster, strictly
-    reverse-chronological, and avoids web scrapers navigating UI tabs.
+    reverse-chronological, and avoids web scrapers navigating dynamic UI tabs.
+
+    Args:
+        channel_ref: Raw channel URL, handle, or channel ID.
+
+    Returns:
+        Canonical YouTube uploads playlist URL or sanitized /videos endpoint.
     """
     cleaned = channel_ref.strip()
     if not cleaned:
         return cleaned
 
-    # Already an uploads or standard playlist URL
+    # Direct pass-through if already a playlist URL
     if "playlist?list=" in cleaned or "list=UU" in cleaned or "list=PL" in cleaned:
         return cleaned if cleaned.startswith(("http://", "https://")) else f"https://{cleaned}"
 
     m = _CHANNEL_ID_PATTERN.search(cleaned)
     if m:
+        # YouTube convention: replace channel prefix 'UC' with uploads playlist prefix 'UU'
         channel_id = m.group(1)
         uploads_playlist_id = "UU" + channel_id[2:]
         return f"https://www.youtube.com/playlist?list={uploads_playlist_id}"
@@ -221,7 +303,13 @@ def normalize_to_uploads_playlist_url(channel_ref: str) -> str:
 
 @dataclass(frozen=True)
 class ChannelFeedQuery:
-    """Encapsulates query constraints for discovering uningested media items."""
+    """Encapsulates query constraints for discovering uningested media items.
+
+    Attributes:
+        channel_url: HTTP(S) URL of the target channel or playlist.
+        lookback_days: Temporal discovery window in days (must be positive).
+        max_videos: Maximum number of items to crawl in a single execution pass.
+    """
 
     channel_url: str
     lookback_days: int = 7
@@ -244,7 +332,17 @@ class ChannelFeedQuery:
 
 @dataclass(frozen=True)
 class SyncSummary:
-    """Immutable batch execution report aggregating outcomes for a channel sync run."""
+    """Immutable batch execution report aggregating outcomes for a channel sync run.
+
+    Attributes:
+        channel_url: Canonical target channel URL.
+        total_discovered: Total count of items retrieved from channel crawler.
+        processed_count: Count of items successfully processed and persisted.
+        skipped_count: Count of items bypassed due to idempotency ledger matches.
+        failed_count: Count of items that failed ingestion or synthesis.
+        duration_seconds: Wall-clock duration of the sync run.
+        status: Overall pipeline execution termination status.
+    """
 
     channel_url: str
     total_discovered: int
@@ -257,7 +355,19 @@ class SyncSummary:
 
 @dataclass(frozen=True)
 class LedgerEntry:
-    """Immutable transactional audit and idempotency record persisted in SQLite WAL."""
+    """Immutable transactional audit and idempotency record persisted in SQLite WAL.
+
+    Attributes:
+        content_id: Unique content identifier.
+        media_url: Web source URL.
+        title: Episode or video title.
+        channel_name: Channel identifier.
+        status: Current pipeline lifecycle status.
+        notes_count: Total atomic notes synthesized.
+        error_message: Optional failure reason if execution failed.
+        started_at: UTC timestamp when ingestion commenced.
+        completed_at: UTC timestamp when synthesis finished.
+    """
 
     content_id: ContentId
     media_url: str
@@ -293,7 +403,17 @@ class LedgerEntry:
 
 @dataclass(frozen=True)
 class MasterDocumentResult:
-    """Immutable report representing a consolidated master document for RAG."""
+    """Immutable report representing a consolidated master document for RAG ingestion.
+
+    Attributes:
+        channel_name: Creator/channel name.
+        channel_category: Macro taxonomy category.
+        output_path: Filesystem path to the generated master Markdown file.
+        part_number: 1-based index when splitting by token/word limits.
+        word_count: Total word count in the compiled document.
+        document_count: Number of individual transcripts consolidated.
+        video_ids: Tuple of all source ContentIds merged.
+    """
 
     channel_name: str
     channel_category: str
@@ -330,11 +450,16 @@ class MasterDocumentResult:
 class RawIndexEntry:
     """Immutable Value Object representing a single conceptual index entry for a raw transcript.
 
-    Walkthrough:
-    1. Holds canonical video identity (ContentId, url, channel, title).
-    2. Encapsulates distilled key concept (2 to 4 words).
-    3. Encapsulates paratactic synthesis paragraph.
-    4. Provides formatting helpers for both Markdown (_canal.md) and CSV (brain.csv).
+    Encapsulates canonical video metadata, distilled 2-to-4 word key concept, and paratactic
+    synthesis paragraph for indexing and RAG retrieval.
+    
+    Attributes:
+        video_id: Canonical ContentId.
+        url: Canonical web URL.
+        title: Episode title.
+        channel_name: Creator channel name.
+        key_concept: Distilled 2-4 word concept descriptor.
+        synthesis: Paratactic summary paragraph.
     """
 
     video_id: ContentId

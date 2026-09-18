@@ -1,7 +1,12 @@
 """Application utility for extracting and parsing JSON payloads from LLM responses.
 
-Handles standard JSON, markdown code fence wrapping (```json ... ```),
-and outermost bracket extraction.
+Functions as an Anti-Corruption Layer (ACL) translating non-deterministic LLM generative
+text into strongly structured Python primitives, handling conversational markdown code fence
+wrapping (```json ... ```), trailing commas, and partial responses.
+
+Conforms to:
+- SPEC-001: §3 (Defensive LLM Response Parsing & Extraction)
+- ADR-001 (Application Decoupling from Generative Variance)
 """
 
 from __future__ import annotations
@@ -10,7 +15,9 @@ import json
 import re
 from typing import Any
 
+# Regex to extract JSON wrapped in markdown codeblocks
 _MARKDOWN_CODE_FENCE_PATTERN = re.compile(r"```(?:json)?\s*([\s\S]*?)\s*```")
+# ACL Sanitizer: strip trailing commas before closing braces/brackets (common LLM hallucination)
 _TRAILING_COMMA_PATTERN = re.compile(r",\s*([\]}])")
 
 
@@ -19,6 +26,12 @@ def _extract_individual_objects(text: str) -> list[dict[str, Any]]:
 
     Handles truncated responses or arrays with trailing syntax errors by
     extracting every syntactically valid object individually.
+
+    Args:
+        text: Raw text potentially containing multiple balanced JSON objects.
+
+    Returns:
+        List of successfully decoded dictionary objects.
     """
     objects: list[dict[str, Any]] = []
     i = 0

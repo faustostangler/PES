@@ -1,7 +1,13 @@
 """Obsidian Second Brain Vault Repository Adapter.
 
 Implements VaultRepositoryPort using atomic filesystem writes, YAML frontmatter serialization,
-and tiered index management.
+and tiered index management. Acts as an Anti-Corruption Layer (ACL) shielding domain entities
+(RawTranscript, EnrichedCompendium, AtomicNote, MapOfContent) from markdown serialization quirks.
+
+Conforms to:
+    - ADR-001: Modular Monolith Domain Integrity
+    - ADR-003: PES Production Architecture & Telemetry
+    - SPEC-001: Core Knowledge Synthesis Specifications
 """
 
 from __future__ import annotations
@@ -39,18 +45,46 @@ _FRONTMATTER_PATTERN = re.compile(r"^---\s*\n([\s\S]*?)\n---\s*\n([\s\S]*)$")
 
 
 def sanitize_filename(name: str) -> str:
-    """Sanitize note title for safe filesystem path."""
+    """Sanitize note title for safe filesystem path representation.
+
+    Args:
+        name: Raw string candidate for a filename.
+
+    Returns:
+        Filesystem-safe string with illegal characters replaced by underscores.
+    """
     return _ILLEGAL_FILENAME_CHARS.sub("_", name.strip())
 
 
 def channel_to_slug(name: str) -> str:
-    """Convert channel name to safe slug with underscores instead of whitespace."""
+    """Convert channel name to safe slug with underscores instead of whitespace.
+
+    Args:
+        name: Channel title or category name.
+
+    Returns:
+        Clean slug safe for folder naming.
+    """
     clean = re.sub(r"\s+", "_", name.strip())
     return _ILLEGAL_FILENAME_CHARS.sub("_", clean)
 
 
 class ObsidianVaultAdapter(VaultRepositoryPort):
-    """Filesystem-backed Obsidian Second Brain vault adapter."""
+    """Filesystem-backed Obsidian Second Brain vault adapter.
+
+    Manages persistence for all stages of the knowledge synthesis pipeline, ensuring
+    POSIX atomic file replacement, two-tier indexing (brain.csv and _index.json),
+    and bi-directional WikiLink integrity.
+
+    Attributes:
+        vault_dir: Absolute path to the Obsidian vault root directory.
+        raw_dir: Directory containing raw video transcripts.
+        enriched_dir: Directory containing multi-pass Socratic compendiums.
+        master_dir: Directory containing aggregated category master compendiums.
+        data_dir: Base directory housing the SQLite ledger and manifests.
+        mocs_dir: Subdirectory within vault/ housing Maps of Content.
+        index_path: Absolute path to the master _index.json lookup catalog.
+    """
 
     def __init__(
         self,
@@ -60,6 +94,15 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
         master_dir: Path | None = None,
         data_dir: Path | None = None,
     ) -> None:
+        """Initialize ObsidianVaultAdapter and ensure base directory trees exist.
+
+        Args:
+            vault_dir: Path to the root Obsidian vault.
+            raw_dir: Directory for raw transcripts.
+            enriched_dir: Directory for enriched multi-pass compendiums.
+            master_dir: Optional path for master aggregated files.
+            data_dir: Optional base data path.
+        """
         self.vault_dir = Path(vault_dir).resolve()
         self.raw_dir = Path(raw_dir).resolve()
         self.enriched_dir = Path(enriched_dir).resolve()
@@ -67,7 +110,6 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
         self.master_dir = (
             Path(master_dir).resolve() if master_dir else (self.data_dir / "master")
         )
-
 
         self.mocs_dir = self.vault_dir / "MOCs"
         self.index_path = self.vault_dir / "_index.json"
@@ -80,7 +122,16 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
         self.mocs_dir.mkdir(parents=True, exist_ok=True)
 
     def _atomic_write(self, target_path: Path, content: str) -> None:
-        """Atomically write text content using temp-file replace pattern."""
+        """Atomically write text content using temp-file replace pattern.
+
+        Writes content to an ephemeral UUID temporary file in the target directory
+        before executing an atomic rename (os.replace). Prevents corrupted half-written
+        files during system crashes or power interruptions.
+
+        Args:
+            target_path: Final destination filesystem path.
+            content: Complete text content to persist.
+        """
         target_path.parent.mkdir(parents=True, exist_ok=True)
         temp_file = target_path.parent / f"{target_path.name}.tmp.{uuid4().hex}"
         temp_file.write_text(content, encoding="utf-8")
@@ -97,7 +148,7 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
         raw_title = (
             transcript.title.value
             if isinstance(transcript.title, NoteTitle)
-            else str(transcript.title or transcript.content_id.value)
+            else (transcript.title or transcript.content_id.value)
         )
         escaped_title = raw_title.replace('"', '\\"')
         escaped_channel = transcript.channel_name.replace('"', '\\"')

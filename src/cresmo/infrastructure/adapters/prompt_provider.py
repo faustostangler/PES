@@ -3,6 +3,10 @@
 Loads LLM prompt templates from a centralized JSON resource and integrates
 embedded agent skill specifications (e.g. cresmo-expander, cresmo-atomic),
 guaranteeing complete decoupling from hard-coded strings in domain and application logic.
+
+Conforms to:
+    - ADR-001: Modular Monolith Domain Integrity
+    - SPEC-001: Core Knowledge Synthesis Specifications (Prompt Decoupling)
 """
 
 from __future__ import annotations
@@ -25,13 +29,27 @@ _CANDIDATE_SKILLS_DIRS = (
 
 
 class JsonPromptProvider(PromptProviderPort):
-    """Hexagonal Adapter providing prompt templates from JSON and embedding skills."""
+    """Hexagonal Adapter providing prompt templates from JSON and embedding skills.
+
+    Acts as an Anti-Corruption Layer (ACL), ensuring prompt engineering templates and
+    agent skill markdown files (.agents/skills) are managed externally from domain code.
+
+    Attributes:
+        prompts_path: Optional explicit filesystem path to a JSON templates file.
+        skills_dir: Resolved directory containing agent skill markdown files.
+    """
 
     def __init__(
         self,
         prompts_path: Path | None = None,
         skills_dir: Path | None = None,
     ) -> None:
+        """Initialize prompt provider and load templates from disk or package resources.
+
+        Args:
+            prompts_path: Optional custom path to prompts.json. If None, loads package default.
+            skills_dir: Optional custom path to .agents/skills directory.
+        """
         self.prompts_path = prompts_path
         self.skills_dir = self._resolve_skills_dir(skills_dir)
         self._templates: dict[str, dict[str, str]] = {}
@@ -40,7 +58,14 @@ class JsonPromptProvider(PromptProviderPort):
 
     @staticmethod
     def _resolve_skills_dir(custom_dir: Path | None) -> Path | None:
-        """Resolve valid filesystem path to .agents/skills directory."""
+        """Resolve valid filesystem path to .agents/skills directory.
+
+        Args:
+            custom_dir: Optional explicitly provided path.
+
+        Returns:
+            Resolved Path instance if valid, or None.
+        """
         if custom_dir is not None and custom_dir.exists():
             return custom_dir
         for candidate in _CANDIDATE_SKILLS_DIRS:

@@ -3,6 +3,10 @@
 Implements LLMTransformationPort using local Ollama REST API endpoints (/api/generate, /api/tags)
 without external dependencies, providing zero-quota offline conceptual synthesis with actionable
 diagnostics when the local daemon is not running.
+
+Conforms to:
+    - ADR-001: Modular Monolith Domain Integrity
+    - SPEC-001: Core Knowledge Synthesis Specifications
 """
 
 from __future__ import annotations
@@ -20,7 +24,16 @@ logger = logging.getLogger(__name__)
 
 
 class OllamaLLMAdapter(LLMTransformationPort):
-    """Hexagonal Adapter connecting to a local Ollama daemon for offline LLM transformation."""
+    """Hexagonal Adapter connecting to a local Ollama daemon for offline LLM transformation.
+
+    Acts as an Anti-Corruption Layer (ACL) shielding domain and application layers from
+    urllib HTTP transport anomalies, translating raw socket errors into domain LLMInfrastructureError.
+
+    Attributes:
+        base_url: Root endpoint URL of the Ollama server (e.g. 'http://localhost:11434').
+        model: Model tag identifier (e.g. 'qwen2.5:7b').
+        timeout_seconds: HTTP socket timeout in seconds.
+    """
 
     def __init__(
         self,
@@ -28,12 +41,23 @@ class OllamaLLMAdapter(LLMTransformationPort):
         model: str = "qwen2.5:7b",
         timeout_seconds: float = 60.0,
     ) -> None:
+        """Initialize Ollama LLM adapter.
+
+        Args:
+            base_url: Ollama daemon HTTP base endpoint.
+            model: Model tag to execute for generation tasks.
+            timeout_seconds: Maximum time to wait for generation response before raising.
+        """
         self.base_url = base_url.rstrip("/")
         self.model = model
         self.timeout_seconds = timeout_seconds
 
     def is_available(self) -> bool:
-        """Check whether local Ollama daemon is reachable and responding."""
+        """Check whether local Ollama daemon is reachable and responding.
+
+        Returns:
+            True if the /api/tags endpoint responds with HTTP 200 within 2 seconds; False otherwise.
+        """
         endpoint = f"{self.base_url}/api/tags"
         req = urllib.request.Request(endpoint, method="GET")
         try:
@@ -51,11 +75,22 @@ class OllamaLLMAdapter(LLMTransformationPort):
         """Execute text transformation on local Ollama instance.
 
         Walkthrough:
-        1. Construct JSON payload with model, prompt, system prompt, and options.
-        2. Post payload to /api/generate endpoint.
-        3. Catch network/connection errors and translate to LLMInfrastructureError with
-           an actionable warning instructing the user to run 'ollama serve' or use '--web-index'.
-        4. Extract and return generated response text.
+            1. Construct JSON payload with model, prompt, system prompt, and options.
+            2. Post payload to /api/generate endpoint.
+            3. Catch network/connection errors and translate to LLMInfrastructureError with
+               an actionable warning instructing the user to run 'ollama serve' or use '--web-index'.
+            4. Extract and return generated response text.
+
+        Args:
+            prompt: Text content or prompt for generation.
+            system_instruction: Optional system instruction directive.
+            temperature: Sampling temperature parameter. Defaults to 0.2.
+
+        Returns:
+            Generated text string from the model.
+
+        Raises:
+            LLMInfrastructureError: If Ollama daemon is unreachable or returns HTTP error.
         """
         endpoint = f"{self.base_url}/api/generate"
         payload: dict[str, Any] = {

@@ -1,6 +1,12 @@
 """Stage 5 Use Case: Synthesize Atomic Note Batches.
 
-Generates rich AtomicNote entities from an AtomicEntityInventory in small batches (<= 5).
+Generates rich AtomicNote domain aggregates from an AtomicEntityInventory in small,
+controlled batches (default: <= 5), enforcing incremental vault persistence and
+tiered index reconciliation.
+
+Conforms to:
+- SPEC-001: §1 (Stage 5 Batched Atomic Synthesis)
+- ADR-001: Modular Monolith Domain Integrity
 """
 
 from __future__ import annotations
@@ -24,12 +30,20 @@ from cresmo.domain.value_objects import (
     NoteType,
 )
 
+# Honorific prefixes stripped during entity normalization to prevent duplicate notes
 _HONORIFIC_PREFIXES: tuple[str, ...] = ("dom ", "dona ", "d. ", "d ")
 _PUNCT_COLLAPSE_RE = re.compile(r"[\s\-_.,()]+")
 
 
 def _norm_honorific(s: str) -> str:
-    """Normalize note title by stripping honorific prefixes and collapsing punctuation."""
+    """Normalize note title by stripping honorific prefixes and collapsing punctuation.
+
+    Args:
+        s: Raw title string.
+
+    Returns:
+        Cleaned lowercase title without honorific prefix.
+    """
     cleaned = s.lower().strip()
     for pfx in _HONORIFIC_PREFIXES:
         if cleaned.startswith(pfx):
@@ -39,7 +53,7 @@ def _norm_honorific(s: str) -> str:
 
 
 class SynthesizeAtomicBatchUseCase:
-    """Stage 5: Batched Atomic Note synthesis and incremental reconciliation."""
+    """Stage 5: Batched Atomic Note synthesis and incremental reconciliation orchestrator."""
 
     def __init__(
         self,
@@ -48,6 +62,14 @@ class SynthesizeAtomicBatchUseCase:
         batch_size: int = 5,
         prompt_provider: PromptProviderPort | None = None,
     ) -> None:
+        """Initialize Stage 5 use case with ports and batch sizing.
+
+        Args:
+            llm_port: Hexagonal port for generative LLM inference.
+            vault_port: Port providing vault atomic note and index persistence.
+            batch_size: Maximum count of entities per LLM prompt chunk (default: 5).
+            prompt_provider: Optional provider for decoupled prompt templates.
+        """
         self.llm_port = llm_port
         self.vault_port = vault_port
         self.batch_size = max(1, batch_size)

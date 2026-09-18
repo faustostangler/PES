@@ -1,7 +1,12 @@
-"""Batch source discovery use case for Cresmo Knowledge Engine.
+"""Batch Source Discovery Use Case for the Cresmo Knowledge Engine.
 
 Orchestrates raw transcript ingestion, manifest parsing, concurrent channel resolution,
-and lookback feed discovery per ADR-003 and Clean Hexagonal Architecture.
+and lookback feed discovery via a streaming Producer-Consumer pattern.
+
+Conforms to:
+- ADR-009: Streaming Batch Source Discovery Producer-Consumer Pattern
+- ADR-001: Modular Monolith Domain Integrity
+- ADR-003: PES Production Architecture
 """
 
 from __future__ import annotations
@@ -28,7 +33,12 @@ _VIDEO_ID_REGEX = re.compile(
 
 @dataclass(frozen=True)
 class BatchSource:
-    """Represents an atomic input item for batch processing."""
+    """Represents an atomic input item for batch processing.
+
+    Attributes:
+        kind: Source modality discriminator ('file' or 'url').
+        target: File path string or web URL.
+    """
 
     kind: str  # "file" | "url"
     target: str

@@ -3,6 +3,10 @@
 Provides dynamic, coherent browser fingerprints (User-Agent, Accept, and
 Client Hints like Sec-Ch-Ua, Sec-Ch-Ua-Platform, Sec-Ch-Ua-Mobile) decoupled
 from source code, loaded via importlib.resources or custom external path.
+
+Conforms to:
+    - ADR-004: Native Media Ingestion Decommissioning
+    - SPEC-004: Native Media Ingestion Specification
 """
 
 from __future__ import annotations

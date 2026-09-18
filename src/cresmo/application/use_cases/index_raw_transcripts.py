@@ -3,6 +3,10 @@
 Extracts a concise key concept and a dense paratactic synthesis paragraph from raw transcripts,
 appending the result incrementally to both the channel's semantic catalog (_canal.md) and
 the global tabular index (brain.csv).
+
+Conforms to:
+- SPEC-001: Core Knowledge Synthesis Specifications
+- ADR-001: Modular Monolith Domain Integrity
 """
 
 from __future__ import annotations
@@ -38,7 +42,14 @@ _INDICATIVE_PREFIXES = (
 
 
 def _clean_text_line(text: str) -> str:
-    """Strip markdown formatting, quotes, and whitespace from a single line."""
+    """Strip markdown formatting, quotes, and conversational prefixes from a single line.
+
+    Args:
+        text: Raw line text from LLM response.
+
+    Returns:
+        Sanitized clean string line.
+    """
     clean = text.strip().strip('"\'`*#_')
     lower = clean.lower()
     for prefix in _INDICATIVE_PREFIXES:
@@ -57,8 +68,15 @@ def parse_raw_index_response(
     1. Multi-line format:
        Line 1: Key Concept
        Line 2+: Paratactic paragraph
-    2. Legacy single-line format:
+    2. Single-line format:
        <Key Concept>, <Synthesis sentence>
+
+    Args:
+        raw_output: Generative LLM response text.
+        fallback_title: Video title used as fallback concept if extraction is empty.
+
+    Returns:
+        Tuple of (key_concept, paratactic_synthesis).
     """
     clean_output = raw_output.strip()
     lines = [line.strip() for line in clean_output.splitlines() if line.strip()]
@@ -95,7 +113,18 @@ def parse_raw_index_response(
 
 
 class IndexRawTranscriptsUseCase:
-    """Orchestrates paratactic conceptual indexing of raw media transcripts."""
+    """Orchestrates paratactic conceptual indexing of raw media transcripts.
+
+    Conforms to:
+        - SPEC-001: Core Knowledge Synthesis Specifications (Incremental Indexing)
+        - ADR-001: Modular Monolith Domain Integrity
+
+    Attributes:
+        vault_repo: Repository port for reading raw transcripts and appending indexes.
+        llm: LLM transformation port for key concept and synthesis extraction.
+        prompt_provider: Provider port supplying indexing prompt templates.
+        max_chars: Maximum character limit from transcript body fed into LLM prompt.
+    """
 
     def __init__(
         self,
@@ -104,6 +133,14 @@ class IndexRawTranscriptsUseCase:
         prompt_provider: PromptProviderPort,
         max_chars: int = 3000,
     ) -> None:
+        """Initialize IndexRawTranscriptsUseCase with required ports.
+
+        Args:
+            vault_repo: Vault persistence adapter for raw transcripts and catalog indexes.
+            llm: Language model adapter for conceptual extraction.
+            prompt_provider: Provider delivering raw indexing prompt templates.
+            max_chars: Maximum character count from raw transcript body to feed prompt.
+        """
         self.vault_repo = vault_repo
         self.llm = llm
         self.prompt_provider = prompt_provider
@@ -117,16 +154,24 @@ class IndexRawTranscriptsUseCase:
         """Index a single raw transcript incrementally if not already indexed.
 
         Walkthrough:
-        1. Check whether content_id is already present in channel _canal.md index.
-        2. If indexed and not force, skip immediately (idempotent 0-token cost).
-        3. Format prompt with video title and first max_chars of body text.
-        4. Invoke LLM transformation contract.
-        5. Parse response into (key_concept, synthesis).
-        6. Construct RawIndexEntry and append to both _canal.md and brain.csv.
+            1. Check whether content_id is already present in channel _canal.md index.
+            2. If indexed and not force, skip immediately (idempotent 0-token cost).
+            3. Format prompt with video title and first max_chars of body text.
+            4. Invoke LLM transformation contract.
+            5. Parse response into (key_concept, synthesis).
+            6. Construct RawIndexEntry and append to both _canal.md and brain.csv.
+
+        Args:
+            transcript: The RawTranscript entity to index.
+            force: If True, re-index even if already present in channel index.
+
+        Returns:
+            The generated RawIndexEntry, or None if skipped or LLM call failed.
         """
         video_id_str = transcript.content_id.value
         channel_name = transcript.channel_name
 
+        # ACL check: Avoid redundant token expenditure if already indexed
         if not force:
             indexed_ids = self.vault_repo.get_indexed_video_ids_for_channel(channel_name)
             if video_id_str in indexed_ids:
@@ -140,10 +185,10 @@ class IndexRawTranscriptsUseCase:
         title_str = (
             transcript.title.value
             if isinstance(transcript.title, NoteTitle)
-            else str(transcript.title or video_id_str)
+            else (transcript.title or video_id_str)
         )
 
-        # Build prompt
+        # Build prompt from bounded transcript excerpt to preserve context budget
         excerpt = transcript.body.strip()[: self.max_chars]
         sys_inst, user_prompt = self.prompt_provider.get_raw_index_prompt(
             video_title=title_str,
@@ -157,6 +202,7 @@ class IndexRawTranscriptsUseCase:
                 temperature=0.2,
             )
         except Exception as exc:  # noqa: BLE001
+            # Gracefully degrade on network/Ollama outage to prevent aborting batch runs
             logger.warning(
                 "[IndexRaw] WARNING: LLM transformation failed for '%s' (%s): %s. "
                 "Ensure local Ollama is running ('ollama serve') or pass '--web-index' to use Gemini API.",
@@ -185,7 +231,7 @@ class IndexRawTranscriptsUseCase:
             synthesis=synthesis,
         )
 
-        # Dual output: channel markdown index and global brain.csv
+        # Dual output persistence: channel markdown index and global tabular catalog (brain.csv)
         self.vault_repo.append_channel_index_entry(channel_name, entry)
         self.vault_repo.append_brain_csv_entry(entry)
 
@@ -200,8 +246,15 @@ class IndexRawTranscriptsUseCase:
     def index_channel(
         self, channel_name: str, force: bool = False
     ) -> list[RawIndexEntry]:
-        """Index all raw markdown transcripts under a channel folder."""
-        # Check vault raw_dir for channel files
+        """Index all raw markdown transcripts under a channel folder.
+
+        Args:
+            channel_name: Subdirectory name representing the channel.
+            force: If True, forces re-indexing of previously indexed transcripts.
+
+        Returns:
+            List of newly created RawIndexEntry instances.
+        """
         indexed_entries: list[RawIndexEntry] = []
         raw_dir = getattr(self.vault_repo, "raw_dir", None)
         if raw_dir is None:
@@ -212,6 +265,7 @@ class IndexRawTranscriptsUseCase:
             return indexed_entries
 
         for file_path in sorted(ch_dir.glob("*.md")):
+            # Skip system indexes and hidden files
             if file_path.name.startswith("_") or file_path.name == "_canal.md":
                 continue
 
@@ -225,7 +279,14 @@ class IndexRawTranscriptsUseCase:
         return indexed_entries
 
     def index_all_channels(self, force: bool = False) -> dict[str, list[RawIndexEntry]]:
-        """Index all raw transcripts across all channels in raw_dir."""
+        """Index all raw transcripts across all channels in the raw directory.
+
+        Args:
+            force: If True, forces re-indexing across all channels.
+
+        Returns:
+            Dictionary mapping channel names to lists of newly generated RawIndexEntry items.
+        """
         results: dict[str, list[RawIndexEntry]] = {}
         raw_dir = getattr(self.vault_repo, "raw_dir", None)
         if raw_dir is None:

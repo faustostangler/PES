@@ -3,6 +3,10 @@
 Follows the Humble Object pattern per Clean/Hexagonal Architecture.
 Responsible solely for argument parsing, subcommand routing, and exit code propagation.
 All domain workflows and command options reside in isolated command modules.
+
+Conforms to:
+    - ADR-002: Presentation CLI & Humble Object
+    - SPEC-002: CLI Controller & Exit Codes
 """
 
 from __future__ import annotations
@@ -53,9 +57,12 @@ COMMAND_MODULES = (
 )
 
 
-
 def _create_parser() -> argparse.ArgumentParser:
-    """Construct root parser and register command subparsers."""
+    """Construct root parser and register command subparsers.
+
+    Returns:
+        Configured ArgumentParser with all registered subcommand handlers.
+    """
     parser = argparse.ArgumentParser(
         prog="cresmo",
         description="Cresmo Knowledge Synthesis CLI (Hexagonal Modular Monolith)",
@@ -73,6 +80,12 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     Conforms to SPEC-002: Humble Object CLI Controller with strictly segregated
     process exit codes and dependency injection via composition root.
+
+    Args:
+        argv: Optional sequence of command-line argument strings. If None, uses sys.argv[1:].
+
+    Returns:
+        Process exit code integer conforming to the exit code taxonomy in exit_codes.py.
     """
     if argv is None:
         argv = sys.argv[1:]
@@ -90,7 +103,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         "index-raw",
     }
 
-
+    # Default implicit command routing to 'run' if no subcommand is supplied
     if not argv:
         argv = ["run"]
     elif argv[0] not in known_subcommands and not argv[0].startswith(("-h", "--help")):
