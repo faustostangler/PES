@@ -126,3 +126,7 @@ During architectural review of the use case implementation ([`src/cresmo/applica
 - **Anti-Pattern:** Hardcoding `https://youtube.com/watch?v={video_id_str}` inside the application use case coupled the domain to YouTube, generating bogus URLs for local audio, podcasts, or Vimeo.
 - **Architectural Remedy:** Honor `transcript.source_url` directly or preserve platform-neutral URL resolution without leaking third-party platform assumptions into the application layer.
 
+### 5.6 Cryptic Telegraphic Naming & Hungarian Notation Smell
+- **Anti-Pattern:** Using truncated abbreviations (`sys_con`, `usr_con`, `sys_judge_con`, `judge_con_resp`, `is_concepts_valid`) and Hungarian type suffixes (`video_id_str`, `title_str`) within private helper scopes, creating cognitive load and breaking naming parity with hexagonal port contracts.
+- **Architectural Remedy:** Adopt symmetrical, idiomatic clean names (`system_instructions`, `user_prompt`, `judge_system_instructions`, `judge_prompt`, `judge_response`, `is_valid`, `retries`, `video_id`, `title`) across all extraction methods, ensuring uniform readability and DX.
+

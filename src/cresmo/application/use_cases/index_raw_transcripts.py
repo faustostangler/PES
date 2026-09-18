@@ -305,55 +305,55 @@ class IndexRawTranscriptsUseCase:
 
     def _extract_concepts(
         self,
-        video_id_str: str,
-        title_str: str,
+        video_id: str,
+        title: str,
         excerpt: str,
         channel_name: str,
     ) -> str:
         """Extract principal concepts through an iterative LLM-as-a-judge loop.
 
         Args:
-            video_id_str: Transcript content identifier for tracing.
-            title_str: Content title.
+            video_id: Transcript content identifier for tracing.
+            title: Content title.
             excerpt: Transcript text excerpt.
             channel_name: Channel name for session and tenant observability tagging.
 
         Returns:
             Sanitized comma-separated concepts string, falling back to 'Síntese Conceitual'.
         """
-        sys_con, usr_con = self.prompt_provider.get_raw_index_concepts_prompt(
-            video_title=title_str,
+        system_instructions, user_prompt = self.prompt_provider.get_raw_index_concepts_prompt(
+            video_title=title,
             transcript_excerpt=excerpt,
             language=self.language,
         )
 
         session_id = f"raw_index_{channel_name}"
         user_id = channel_name
-        is_concepts_valid = False
-        concept_retries = 0
+        is_valid = False
+        retries = 0
         raw_concepts = ""
 
-        while not is_concepts_valid:
-            if concept_retries == 0:
-                prompt = usr_con
-                trace_id = f"{video_id_str}_concepts"
-                judge_trace_id = f"{video_id_str}_concepts_judge"
+        while not is_valid:
+            if retries == 0:
+                prompt = user_prompt
+                trace_id = f"{video_id}_concepts"
+                judge_trace_id = f"{video_id}_concepts_judge"
             else:
                 logger.info(
                     "[IndexRaw] Attempt %d: concepts compliance check failed for '%s'. Requesting rewrite.",
-                    concept_retries,
-                    video_id_str,
+                    retries,
+                    video_id,
                 )
                 prompt = self.prompt_provider.get_raw_index_concepts_rewrite_prompt(
                     previous_output=raw_concepts,
                     language=self.language,
                 )
-                trace_id = f"{video_id_str}_concepts_rewrite_{concept_retries}"
-                judge_trace_id = f"{video_id_str}_concepts_judge_retry_{concept_retries}"
+                trace_id = f"{video_id}_concepts_rewrite_{retries}"
+                judge_trace_id = f"{video_id}_concepts_judge_retry_{retries}"
 
             raw_concepts = self.llm.transform(
                 prompt=prompt,
-                system_instruction=sys_con,
+                system_instruction=system_instructions,
                 temperature=self.temperature,
                 trace_id=trace_id,
                 session_id=session_id,
@@ -361,120 +361,122 @@ class IndexRawTranscriptsUseCase:
             )
 
             if is_valid_concepts_output(raw_concepts):
-                sys_judge_con, usr_judge_con = (
+                judge_system_instructions, judge_prompt = (
                     self.prompt_provider.get_judge_raw_index_concepts_prompt(
-                        video_title=title_str,
+                        video_title=title,
                         transcript_excerpt=excerpt,
                         concepts=raw_concepts,
                         language=self.language,
                     )
                 )
-                judge_con_resp = self.llm.transform(
-                    prompt=usr_judge_con,
-                    system_instruction=sys_judge_con,
+                judge_response = self.llm.transform(
+                    prompt=judge_prompt,
+                    system_instruction=judge_system_instructions,
                     temperature=0.0,
                     trace_id=judge_trace_id,
                     session_id=session_id,
                     user_id=user_id,
                 )
-                is_concepts_valid = parse_judge_boolean(judge_con_resp)
+                is_valid = parse_judge_boolean(judge_response)
             else:
-                is_concepts_valid = False
+                is_valid = False
 
-            if not is_concepts_valid:
-                if not _can_retry(concept_retries, self.max_rewrites):
+            if not is_valid:
+                if not _can_retry(retries, self.max_rewrites):
                     break
-                concept_retries += 1
+                retries += 1
 
         cleaned = _clean_concept_line(raw_concepts)
         return cleaned if cleaned else "Síntese Conceitual"
 
     def _extract_summary(
         self,
-        video_id_str: str,
-        title_str: str,
+        video_id: str,
+        title: str,
         excerpt: str,
         channel_name: str,
     ) -> str:
         """Extract structured conceptual summary through an iterative LLM-as-a-judge loop.
 
         Args:
-            video_id_str: Transcript content identifier for tracing.
-            title_str: Content title.
+            video_id: Transcript content identifier for tracing.
+            title: Content title.
             excerpt: Transcript text excerpt.
             channel_name: Channel name for session and tenant observability tagging.
 
         Returns:
-            Sanitized summary string, falling back to title_str.
+            Sanitized summary string, falling back to title.
         """
-        sys_sum, usr_sum = self.prompt_provider.get_raw_index_summary_prompt(
-            video_title=title_str,
+        system_instructions, user_prompt = self.prompt_provider.get_raw_index_summary_prompt(
+            video_title=title,
             transcript_excerpt=excerpt,
             language=self.language,
         )
 
         session_id = f"raw_index_{channel_name}"
         user_id = channel_name
-        is_summary_valid = False
-        summary_retries = 0
+        is_valid = False
+        retries = 0
         raw_summary = ""
         summary = ""
 
-        while not is_summary_valid:
+        while not is_valid:
             trace_id = (
-                f"{video_id_str}_summary"
-                if summary_retries == 0
-                else f"{video_id_str}_summary_retry_{summary_retries}"
+                f"{video_id}_summary"
+                if retries == 0
+                else f"{video_id}_summary_retry_{retries}"
             )
             judge_trace_id = (
-                f"{video_id_str}_summary_judge"
-                if summary_retries == 0
-                else f"{video_id_str}_summary_judge_retry_{summary_retries}"
+                f"{video_id}_summary_judge"
+                if retries == 0
+                else f"{video_id}_summary_judge_retry_{retries}"
             )
-            if summary_retries > 0:
+            if retries > 0:
                 logger.info(
                     "[IndexRaw] Attempt %d: summary judge returned false for '%s'. Regenerating summary.",
-                    summary_retries,
-                    video_id_str,
+                    retries,
+                    video_id,
                 )
 
             raw_summary = self.llm.transform(
-                prompt=usr_sum,
-                system_instruction=sys_sum,
+                prompt=user_prompt,
+                system_instruction=system_instructions,
                 temperature=self.temperature,
                 trace_id=trace_id,
                 session_id=session_id,
                 user_id=user_id,
             )
-            summary = _clean_text_line(raw_summary) or title_str
+            summary = _clean_text_line(raw_summary) or title
 
-            sys_judge_sum, usr_judge_sum = self.prompt_provider.get_judge_raw_index_summary_prompt(
-                video_title=title_str,
-                transcript_excerpt=excerpt,
-                summary=summary,
-                language=self.language,
+            judge_system_instructions, judge_prompt = (
+                self.prompt_provider.get_judge_raw_index_summary_prompt(
+                    video_title=title,
+                    transcript_excerpt=excerpt,
+                    summary=summary,
+                    language=self.language,
+                )
             )
-            judge_sum_resp = self.llm.transform(
-                prompt=usr_judge_sum,
-                system_instruction=sys_judge_sum,
+            judge_response = self.llm.transform(
+                prompt=judge_prompt,
+                system_instruction=judge_system_instructions,
                 temperature=0.0,
                 trace_id=judge_trace_id,
                 session_id=session_id,
                 user_id=user_id,
             )
-            is_summary_valid = parse_judge_boolean(judge_sum_resp)
+            is_valid = parse_judge_boolean(judge_response)
 
-            if not is_summary_valid:
-                if not _can_retry(summary_retries, self.max_rewrites):
+            if not is_valid:
+                if not _can_retry(retries, self.max_rewrites):
                     break
-                summary_retries += 1
+                retries += 1
 
-        return summary if summary else title_str
+        return summary if summary else title
 
     def _extract_synthesis(
         self,
-        video_id_str: str,
-        title_str: str,
+        video_id: str,
+        title: str,
         excerpt: str,
         summary: str,
         channel_name: str,
@@ -482,49 +484,49 @@ class IndexRawTranscriptsUseCase:
         """Synthesize dense single paratactic paragraph through an iterative LLM-as-a-judge loop.
 
         Args:
-            video_id_str: Transcript content identifier for tracing.
-            title_str: Content title.
+            video_id: Transcript content identifier for tracing.
+            title: Content title.
             excerpt: Original transcript excerpt used for judge fidelity checking.
             summary: Structured conceptual summary from Pass 2.
             channel_name: Channel name for session and tenant observability tagging.
 
         Returns:
-            Sanitized single paratactic synthesis paragraph, falling back to summary or title_str.
+            Sanitized single paratactic synthesis paragraph, falling back to summary or title.
         """
-        sys_syn, usr_syn = self.prompt_provider.get_raw_index_synthesis_prompt(
-            video_title=title_str,
+        system_instructions, user_prompt = self.prompt_provider.get_raw_index_synthesis_prompt(
+            video_title=title,
             summary=summary,
             language=self.language,
         )
 
         session_id = f"raw_index_{channel_name}"
         user_id = channel_name
-        is_synthesis_valid = False
-        synthesis_retries = 0
+        is_valid = False
+        retries = 0
         raw_synthesis = ""
         synthesis = ""
 
-        while not is_synthesis_valid:
+        while not is_valid:
             trace_id = (
-                f"{video_id_str}_synthesis"
-                if synthesis_retries == 0
-                else f"{video_id_str}_synthesis_retry_{synthesis_retries}"
+                f"{video_id}_synthesis"
+                if retries == 0
+                else f"{video_id}_synthesis_retry_{retries}"
             )
             judge_trace_id = (
-                f"{video_id_str}_synthesis_judge"
-                if synthesis_retries == 0
-                else f"{video_id_str}_synthesis_judge_retry_{synthesis_retries}"
+                f"{video_id}_synthesis_judge"
+                if retries == 0
+                else f"{video_id}_synthesis_judge_retry_{retries}"
             )
-            if synthesis_retries > 0:
+            if retries > 0:
                 logger.info(
                     "[IndexRaw] Attempt %d: synthesis compliance check failed for '%s'. Regenerating synthesis.",
-                    synthesis_retries,
-                    video_id_str,
+                    retries,
+                    video_id,
                 )
 
             raw_synthesis = self.llm.transform(
-                prompt=usr_syn,
-                system_instruction=sys_syn,
+                prompt=user_prompt,
+                system_instruction=system_instructions,
                 temperature=self.temperature,
                 trace_id=trace_id,
                 session_id=session_id,
@@ -533,32 +535,32 @@ class IndexRawTranscriptsUseCase:
             synthesis = _clean_text_line(raw_synthesis)
 
             if is_valid_synthesis_paragraph(synthesis):
-                sys_judge_syn, usr_judge_syn = (
+                judge_system_instructions, judge_prompt = (
                     self.prompt_provider.get_judge_raw_index_synthesis_prompt(
-                        video_title=title_str,
+                        video_title=title,
                         transcript_excerpt=excerpt,
                         synthesis=synthesis,
                         language=self.language,
                     )
                 )
-                judge_syn_resp = self.llm.transform(
-                    prompt=usr_judge_syn,
-                    system_instruction=sys_judge_syn,
+                judge_response = self.llm.transform(
+                    prompt=judge_prompt,
+                    system_instruction=judge_system_instructions,
                     temperature=0.0,
                     trace_id=judge_trace_id,
                     session_id=session_id,
                     user_id=user_id,
                 )
-                is_synthesis_valid = parse_judge_boolean(judge_syn_resp)
+                is_valid = parse_judge_boolean(judge_response)
             else:
-                is_synthesis_valid = False
+                is_valid = False
 
-            if not is_synthesis_valid:
-                if not _can_retry(synthesis_retries, self.max_rewrites):
+            if not is_valid:
+                if not _can_retry(retries, self.max_rewrites):
                     break
-                synthesis_retries += 1
+                retries += 1
 
-        return synthesis if synthesis else (summary or title_str)
+        return synthesis if synthesis else (summary or title)
 
     def index_single_transcript(
         self,
@@ -582,24 +584,24 @@ class IndexRawTranscriptsUseCase:
         Returns:
             The generated RawIndexEntry, or None if skipped or LLM call failed.
         """
-        video_id_str = transcript.content_id.value
+        video_id = transcript.content_id.value
         channel_name = transcript.channel_name
 
         # ACL check: Avoid redundant token expenditure if already indexed
         if not force:
             indexed_ids = self.vault_repo.get_indexed_video_ids_for_channel(channel_name)
-            if video_id_str in indexed_ids:
+            if video_id in indexed_ids:
                 logger.info(
                     "[IndexRaw] Skipping already indexed transcript '%s' for channel '%s'.",
-                    video_id_str,
+                    video_id,
                     channel_name,
                 )
                 return None
 
-        title_str = (
+        title = (
             transcript.title.value
             if isinstance(transcript.title, NoteTitle)
-            else (transcript.title or video_id_str)
+            else (transcript.title or video_id)
         )
 
         # Build prompt from bounded transcript excerpt to preserve context budget
@@ -609,20 +611,20 @@ class IndexRawTranscriptsUseCase:
 
         try:
             concept = self._extract_concepts(
-                video_id_str=video_id_str,
-                title_str=title_str,
+                video_id=video_id,
+                title=title,
                 excerpt=excerpt,
                 channel_name=channel_name,
             )
             summary = self._extract_summary(
-                video_id_str=video_id_str,
-                title_str=title_str,
+                video_id=video_id,
+                title=title,
                 excerpt=excerpt,
                 channel_name=channel_name,
             )
             synthesis = self._extract_synthesis(
-                video_id_str=video_id_str,
-                title_str=title_str,
+                video_id=video_id,
+                title=title,
                 excerpt=excerpt,
                 summary=summary,
                 channel_name=channel_name,
@@ -631,7 +633,7 @@ class IndexRawTranscriptsUseCase:
             # Gracefully degrade on network/inference outage to prevent aborting batch runs
             logger.warning(
                 "[IndexRaw] Skipped '%s' (%s) due to inference error: %s",
-                video_id_str,
+                video_id,
                 channel_name,
                 exc,
                 exc_info=True,
@@ -641,13 +643,13 @@ class IndexRawTranscriptsUseCase:
         url = (
             transcript.source_url
             if transcript.source_url
-            else f"https://youtube.com/watch?v={video_id_str}"
+            else f"https://youtube.com/watch?v={video_id}"
         )
 
         entry = RawIndexEntry(
             video_id=transcript.content_id,
             url=url,
-            title=title_str,
+            title=title,
             channel_name=channel_name,
             key_concept=concept,
             synthesis=synthesis,
@@ -659,7 +661,7 @@ class IndexRawTranscriptsUseCase:
 
         logger.info(
             "[IndexRaw] Indexed '%s' | %s | '%s'",
-            video_id_str,
+            video_id,
             channel_name,
             concept,
         )
