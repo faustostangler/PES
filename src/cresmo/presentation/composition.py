@@ -176,7 +176,6 @@ def build_pipeline(
     )
 
 
-
 def build_preflight_checker(
     settings: CresmoSettings | None = None,
     check_ffmpeg: bool = True,
@@ -347,4 +346,3 @@ def build_index_raw_use_case(
         prompt_provider=prompt_provider,
         max_chars=resolved_settings.raw_index_max_chars,
     )
-

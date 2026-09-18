@@ -33,4 +33,3 @@ def find_workspace_root(start_path: Path | None = None) -> Path:
             return directory
     # Fallback heuristic: src/cresmo/infrastructure/paths.py -> parents[3] is project root
     return (start_path or Path(__file__)).resolve().parents[3]
-

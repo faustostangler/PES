@@ -561,9 +561,10 @@ class TestObsidianVaultAdapter:
         indexed = adapter.get_indexed_video_ids_for_channel("Canal Teste")
         assert indexed == {"vid11111111"}
 
-        # Check _canal.md file content
+        # Check channel index file content
         canal_path = adapter.get_channel_index_path("Canal Teste")
         assert canal_path.exists()
+        assert canal_path.name == "_index_Canal Teste.md"
         md_text = canal_path.read_text(encoding="utf-8")
         assert "# Canal: Canal Teste" in md_text
         assert "vid11111111" in md_text

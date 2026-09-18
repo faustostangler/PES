@@ -85,7 +85,7 @@ class TestDiscoverBatchSourcesUseCase:
             playlist_priority_path=tmp_path / "empty_priority.txt",
             priority_texts_dir=tmp_path / "empty_priority_dir",
         )
-        sources = use_case.execute(query)
+        sources = list(use_case.execute(query))
 
         assert len(sources) == 2
         assert all(s.kind == "file" for s in sources)
@@ -121,7 +121,7 @@ class TestDiscoverBatchSourcesUseCase:
             playlist_priority_path=tmp_path / "empty_priority.txt",
             priority_texts_dir=tmp_path / "empty_priority_dir",
         )
-        sources = use_case.execute(query)
+        sources = list(use_case.execute(query))
 
         mock_ingestion.extract_channel_url_from_video.assert_called_once_with(
             "https://www.youtube.com/watch?v=seed12345"
@@ -161,7 +161,7 @@ class TestDiscoverBatchSourcesUseCase:
             playlist_priority_path=tmp_path / "empty_priority.txt",
             priority_texts_dir=tmp_path / "empty_priority_dir",
         )
-        sources = use_case.execute(query)
+        sources = list(use_case.execute(query))
 
         assert mock_ingestion.extract_channel_url_from_video.call_count == 2
         assert mock_ingestion.discover_channel_feed.call_count == 1
@@ -204,7 +204,7 @@ class TestDiscoverBatchSourcesUseCase:
         )
 
         query = BatchDiscoveryQuery(explicit_manifest=manifest)
-        sources = use_case.execute(query)
+        sources = list(use_case.execute(query))
 
         assert len(sources) == 2
         assert [s.target for s in sources] == [
@@ -234,7 +234,7 @@ class TestDiscoverBatchSourcesUseCase:
             raw_dir=tmp_path / "empty_raw",
             scan_raw=False,
         )
-        sources = use_case.execute(query)
+        sources = list(use_case.execute(query))
 
         assert len(sources) == 2
         assert sources[0].kind == "file"
@@ -289,7 +289,7 @@ class TestDiscoverBatchSourcesUseCase:
             playlist_priority_path=tmp_path / "empty_prio.txt",
             priority_texts_dir=tmp_path / "empty_prio_dir",
         )
-        sources = use_case.execute(query)
+        sources = list(use_case.execute(query))
 
         targets = [s.target for s in sources]
         assert "https://youtube.com/watch?v=fresh111" in targets
@@ -318,7 +318,7 @@ class TestDiscoverBatchSourcesUseCase:
             playlist_priority_path=tmp_path / "empty_prio.txt",
             priority_texts_dir=tmp_path / "empty_prio_dir",
         )
-        sources = use_case.execute(query)
+        sources = list(use_case.execute(query))
 
         assert len(sources) == 1
         assert sources[0].target == "https://youtube.com/watch?v=failLookup"
@@ -345,7 +345,7 @@ class TestDiscoverBatchSourcesUseCase:
             playlist_priority_path=tmp_path / "empty_prio.txt",
             priority_texts_dir=tmp_path / "empty_prio_dir",
         )
-        sources = use_case.execute(query)
+        sources = list(use_case.execute(query))
 
         assert len(sources) == 0
         assert any("Warning: Failed to probe" in msg for msg in notifications)
@@ -656,7 +656,7 @@ class TestDiscoverBatchSourcesUseCase:
         )
 
         # Execute with completely empty BatchDiscoveryQuery (defaults trigger all settings fallbacks)
-        sources = use_case.execute(BatchDiscoveryQuery())
+        sources = list(use_case.execute(BatchDiscoveryQuery()))
         targets = [s.target for s in sources]
 
         assert any("prio_note.md" in t for t in targets)
@@ -791,7 +791,7 @@ class TestDiscoverBatchSourcesUseCase:
             lookback_days=365,
         )
 
-        sources = use_case.execute(query)
+        sources = list(use_case.execute(query))
 
         # Targets in sources must include:
         # 1. pri_note.md (file)
@@ -813,7 +813,7 @@ class TestDiscoverBatchSourcesUseCase:
         assert "Stage B:" in combined_notifications
         assert "Stage B complete" in combined_notifications
 
-    def test_execute_stream_yields_priority_immediately_while_crawler_in_background(
+    def test_execute_yields_priority_immediately_while_crawler_in_background(
         self, tmp_path: Path
     ) -> None:
         """Verify priority items are yielded at t=0 before background crawler completes."""
@@ -862,7 +862,7 @@ class TestDiscoverBatchSourcesUseCase:
             enable_channel_crawler=True,
         )
 
-        stream = use_case.execute_stream(query)
+        stream = use_case.execute(query)
 
         # 1. First item must be the priority file (yielded at t=0)
         item1 = next(stream)
@@ -886,7 +886,7 @@ class TestDiscoverBatchSourcesUseCase:
         with pytest.raises(StopIteration):
             next(stream)
 
-    def test_execute_stream_deduplicates_priority_and_crawled_videos(
+    def test_execute_deduplicates_priority_and_crawled_videos(
         self, tmp_path: Path
     ) -> None:
         """Verify duplicate video between priority playlist and channel crawler is yielded only once."""
@@ -920,11 +920,11 @@ class TestDiscoverBatchSourcesUseCase:
             enable_channel_crawler=True,
         )
 
-        sources = list(use_case.execute_stream(query))
+        sources = list(use_case.execute(query))
         matching = [s for s in sources if "sharedVid999" in s.target]
         assert len(matching) == 1
 
-    def test_execute_stream_graceful_cancellation_on_consumer_break(
+    def test_execute_graceful_cancellation_on_consumer_break(
         self, tmp_path: Path
     ) -> None:
         """Verify breaking early from stream sets stop_event and shuts down cleanly."""
@@ -947,14 +947,14 @@ class TestDiscoverBatchSourcesUseCase:
 
         # Consume only 2 items and break
         consumed = []
-        for s in use_case.execute_stream(query):
+        for s in use_case.execute(query):
             consumed.append(s)
             if len(consumed) == 2:
                 break
 
         assert len(consumed) == 2
 
-    def test_execute_stream_handles_crawler_exception_gracefully(
+    def test_execute_handles_crawler_exception_gracefully(
         self, tmp_path: Path
     ) -> None:
         """Verify crawler exception does not crash stream and priority items are preserved."""
@@ -982,7 +982,7 @@ class TestDiscoverBatchSourcesUseCase:
             enable_channel_crawler=True,
         )
 
-        sources = list(use_case.execute_stream(query))
+        sources = list(use_case.execute(query))
         assert len(sources) == 1
         assert "safePrio123" in sources[0].target
         assert any("Warning: Failed to probe" in n for n in notifications)

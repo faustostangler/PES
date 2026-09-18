@@ -78,7 +78,11 @@ def handle_index_raw(args: argparse.Namespace) -> int:
             model_override=args.model,
         )
 
-        provider_name = "Gemini Cloud API" if args.web_index else f"Local Ollama ({args.model or settings.ollama_model})"
+        provider_name = (
+            "Gemini Cloud API"
+            if args.web_index
+            else f"Local Ollama ({args.model or settings.ollama_model})"
+        )
         sys.stdout.write(f"Starting raw transcript conceptual indexing using {provider_name}...\n")
 
         if args.channel:

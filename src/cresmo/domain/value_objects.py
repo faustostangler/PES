@@ -26,7 +26,7 @@ _ILLEGAL_CHARS_PATTERN = re.compile(r'[\\/*?:"<>|%]')
 
 class NoteType(str, Enum):
     """Canonical typology classification for Obsidian Second Brain atomic notes.
-    
+
     Restricts note classification strictly to authorized categories per SPEC-001: §2.1:
     - CONCEPT: Abstract principles, mental models, theories.
     - ENTITY: Specific people, organizations, historical objects, locations.
@@ -64,7 +64,7 @@ class NoteType(str, Enum):
 @dataclass(frozen=True)
 class ContentId:
     """Strongly-typed unique identifier for a raw media item or transcript.
-    
+
     Invariants:
         Must be a non-empty string between 8 and 64 characters matching ^[a-zA-Z0-9_-]+$.
         Zero whitespace or shell/path traversal characters allowed.
@@ -88,7 +88,7 @@ class ContentId:
 @dataclass(frozen=True)
 class NoteTitle:
     """Canonical title for an Atomic Note in the Obsidian Second Brain vault.
-    
+
     Invariants:
         Length between 1 and 200 characters. Automatically sanitizes WikiLink brackets
         and filesystem reserved characters while rejecting generic placeholders.
@@ -120,7 +120,7 @@ class NoteTitle:
 @dataclass(frozen=True)
 class CausalMatrix:
     """Immutable ternary attribution model of causality for an Atomic Note.
-    
+
     Attributes:
         cause: The primary generating condition or preceding mechanism.
         effect: The resultant dynamic outcome or structural change.
@@ -154,7 +154,7 @@ class CausalMatrix:
 @dataclass(frozen=True)
 class CrossContextRelations:
     """Immutable triad connecting a concept across historical, lateral, and consequential axes.
-    
+
     Attributes:
         precursors: Ancestral intellectual, historical, or systemic conditions.
         lateral_events: Synchronous or parallel occurrences in other domains.
@@ -174,7 +174,7 @@ class CrossContextRelations:
 @dataclass(frozen=True)
 class AtomicEntityInventory:
     """Discovery manifest of unique named entities discovered across an Enriched Compendium.
-    
+
     Attributes:
         items: Sequence of tuples pairing validated NoteTitle and NoteType.
 
@@ -201,7 +201,7 @@ class AtomicEntityInventory:
 
 class PipelineStatus(str, Enum):
     """Canonical execution and idempotency status for media items in the pipeline.
-    
+
     Members:
         COMPLETED: Ingestion and all synthesis stages finished successfully.
         SKIPPED_IDEMPOTENT: ContentId already processed in ledger; execution bypassed.
@@ -222,7 +222,7 @@ class PipelineStatus(str, Enum):
 @dataclass(frozen=True)
 class DiscoveredMediaItem:
     """Immutable descriptor of a media item discovered during channel polling.
-    
+
     Attributes:
         content_id: Strongly-typed unique content identifier.
         title: Video or episode title.
@@ -452,7 +452,7 @@ class RawIndexEntry:
 
     Encapsulates canonical video metadata, distilled 2-to-4 word key concept, and paratactic
     synthesis paragraph for indexing and RAG retrieval.
-    
+
     Attributes:
         video_id: Canonical ContentId.
         url: Canonical web URL.
@@ -509,4 +509,3 @@ class RawIndexEntry:
         """Format entry as a 3-element row for brain.csv: [filename, concept, collapsed_synthesis]."""
         clean_synthesis = " ".join(self.synthesis.split())
         return [f"{self.video_id.value}.md", self.key_concept, clean_synthesis]
-

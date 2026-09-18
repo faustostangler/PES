@@ -168,7 +168,6 @@ class CresmoPipeline:
             settings=self.settings,
         )
 
-
     def _synthesize_transcript(
         self,
         raw: RawTranscript,

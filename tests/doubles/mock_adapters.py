@@ -124,7 +124,7 @@ class InMemoryVaultAdapter(VaultRepositoryPort):
         self.brain_csv_entries: list[RawIndexEntry] = []
 
     def get_channel_index_path(self, channel_name: str) -> Path:
-        return Path(f"/mock/raw/{channel_name}/_canal.md")
+        return Path(f"/mock/raw/{channel_name}/_index_{channel_name}.md")
 
     def get_indexed_video_ids_for_channel(self, channel_name: str) -> set[str]:
         entries = self.channel_raw_indexes.get(channel_name.strip(), [])

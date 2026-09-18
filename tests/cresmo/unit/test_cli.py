@@ -514,7 +514,7 @@ class TestCresmoCLI:
         raw_file.write_text("---\nvideo_title: 'Test'\n---\nTranscript body", encoding="utf-8")
 
         query = BatchDiscoveryQuery(scan_raw=True)
-        sources = load_batch_sources(query=query, settings=settings)
+        sources = list(load_batch_sources(query=query, settings=settings))
         targets = [s.target for s in sources]
         assert str(raw_file.resolve()) in targets
         raw_src = next(s for s in sources if s.target == str(raw_file.resolve()))
@@ -562,8 +562,8 @@ class TestCresmoCLI:
         mock_ingestion.discover_channel_feed.return_value = [recent_item, old_item]
 
         query = BatchDiscoveryQuery(scan_raw=False)
-        sources = load_batch_sources(
-            query=query, settings=settings, media_ingestion_port=mock_ingestion
+        sources = list(
+            load_batch_sources(query=query, settings=settings, media_ingestion_port=mock_ingestion)
         )
         urls = [s.target for s in sources if s.kind == "url"]
         assert "https://www.youtube.com/watch?v=recent123" in urls
@@ -610,8 +610,8 @@ class TestCresmoCLI:
         mock_ingestion.discover_channel_feed.return_value = [discovered_item]
 
         query = BatchDiscoveryQuery(scan_raw=False)
-        sources = load_batch_sources(
-            query=query, settings=settings, media_ingestion_port=mock_ingestion
+        sources = list(
+            load_batch_sources(query=query, settings=settings, media_ingestion_port=mock_ingestion)
         )
         urls = [s.target for s in sources if s.kind == "url"]
 
@@ -667,8 +667,8 @@ class TestCresmoCLI:
         mock_ingestion.discover_channel_feed.return_value = [discovered_item]
 
         query = BatchDiscoveryQuery(scan_raw=False)
-        sources = load_batch_sources(
-            query=query, settings=settings, media_ingestion_port=mock_ingestion
+        sources = list(
+            load_batch_sources(query=query, settings=settings, media_ingestion_port=mock_ingestion)
         )
         urls = [s.target for s in sources if s.kind == "url"]
 
@@ -721,8 +721,8 @@ class TestCresmoCLI:
         mock_ingestion.discover_channel_feed.return_value = [discovered_item]
 
         query = BatchDiscoveryQuery(scan_raw=True)
-        sources = load_batch_sources(
-            query=query, settings=settings, media_ingestion_port=mock_ingestion
+        sources = list(
+            load_batch_sources(query=query, settings=settings, media_ingestion_port=mock_ingestion)
         )
         urls = [s.target for s in sources if s.kind == "url"]
 
