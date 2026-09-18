@@ -2,6 +2,11 @@
 
 Performs offline paratactic conceptual indexing of raw transcripts into channel-specific
 semantic catalogs (_canal.md) and the global tabular registry (brain.csv).
+
+Conforms to:
+    - ADR-001: Modular Monolith Domain Integrity
+    - ADR-002: Presentation CLI & Humble Object
+    - SPEC-001: Core Knowledge Synthesis Specifications (Raw Transcript Indexing)
 """
 
 from __future__ import annotations
@@ -18,7 +23,11 @@ from cresmo.presentation.exit_codes import (
 
 
 def register_subparser(subparsers: argparse._SubParsersAction) -> None:
-    """Register 'index-raw' subcommand parser with argument options."""
+    """Register 'index-raw' subcommand parser with argument options.
+
+    Args:
+        subparsers: Root CLI subparsers action object.
+    """
     index_parser = subparsers.add_parser(
         "index-raw",
         help="Incrementally index raw transcripts into channel catalog (_canal.md) and brain.csv",
@@ -51,7 +60,14 @@ def register_subparser(subparsers: argparse._SubParsersAction) -> None:
 
 
 def handle_index_raw(args: argparse.Namespace) -> int:
-    """Handle execution of cresmo index-raw."""
+    """Handle execution of cresmo index-raw.
+
+    Args:
+        args: Parsed CLI argument namespace containing channel, web_index, model, and force options.
+
+    Returns:
+        Process exit code integer.
+    """
     try:
         settings = CresmoSettings()
         settings.ensure_directories()

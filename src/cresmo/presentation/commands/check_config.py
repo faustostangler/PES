@@ -1,4 +1,13 @@
-"""Command handler for cresmo check-config."""
+"""Command handler for cresmo check-config.
+
+Validates environment settings, secret credentials, runtime storage directories,
+and external binaries (ffmpeg) without making billable LLM API requests.
+
+Conforms to:
+    - ADR-002: Presentation CLI & Humble Object
+    - ADR-005: Multi-Role 12-Factor Container & Settings
+    - SPEC-005: Operational Staging Validation
+"""
 
 from __future__ import annotations
 
@@ -18,7 +27,11 @@ from cresmo.presentation.exit_codes import (
 
 
 def register_subparser(subparsers: argparse._SubParsersAction) -> None:
-    """Register 'check-config' subcommand parser."""
+    """Register 'check-config' subcommand parser.
+
+    Args:
+        subparsers: Root CLI subparsers action object.
+    """
     check_parser = subparsers.add_parser(
         "check-config",
         help="Validate environment settings and vault access without calling LLMs",
@@ -27,7 +40,14 @@ def register_subparser(subparsers: argparse._SubParsersAction) -> None:
 
 
 def handle_check_config(args: argparse.Namespace) -> int:
-    """Validate runtime environment, storage paths, and secrets."""
+    """Validate runtime environment, storage paths, and secrets.
+
+    Args:
+        args: Parsed CLI argument namespace.
+
+    Returns:
+        Process exit code conforming to exit_codes.py.
+    """
     try:
         settings = CresmoSettings()
         checker = build_preflight_checker(settings=settings)

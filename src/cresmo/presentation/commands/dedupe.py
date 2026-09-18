@@ -1,4 +1,12 @@
-"""Command handler for cresmo dedupe."""
+"""Command handler for cresmo dedupe.
+
+Orchestrates Stage 7 knowledge graph entity resolution, non-destructive note merging,
+and cross-vault inbound WikiLink rewriting per Clean/Hexagonal Architecture.
+
+Conforms to:
+    - ADR-002: Presentation CLI & Humble Object
+    - SPEC-001: Core Knowledge Synthesis Specifications (Stage 7: Deduplication)
+"""
 
 from __future__ import annotations
 
@@ -14,7 +22,11 @@ from cresmo.presentation.exit_codes import (
 
 
 def register_subparser(subparsers: argparse._SubParsersAction) -> None:
-    """Register 'dedupe' subcommand parser."""
+    """Register 'dedupe' subcommand parser.
+
+    Args:
+        subparsers: Root CLI subparsers action object.
+    """
     dedupe_parser = subparsers.add_parser(
         "dedupe",
         help="Execute Stage 7 graph entity resolution, non-destructive merging, and link rewriting",
@@ -23,7 +35,14 @@ def register_subparser(subparsers: argparse._SubParsersAction) -> None:
 
 
 def handle_dedupe(args: argparse.Namespace) -> int:
-    """Unify duplicate atomic notes across the Obsidian vault graph."""
+    """Unify duplicate atomic notes across the Obsidian vault graph.
+
+    Args:
+        args: Parsed CLI argument namespace.
+
+    Returns:
+        Process exit code integer.
+    """
     try:
         settings = CresmoSettings()
         use_case = build_unify_duplicates_use_case(settings=settings)

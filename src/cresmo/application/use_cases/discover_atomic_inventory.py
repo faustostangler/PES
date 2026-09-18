@@ -1,6 +1,11 @@
 """Stage 4 Use Case: Discover Atomic Entity Inventory.
 
-Executes holistic discovery scan across an Enriched Compendium to extract unique candidate entities.
+Executes holistic discovery scan across an Enriched Compendium to extract unique candidate
+entities (concepts, entities, events, processes) conforming to the Cresmo style guide taxonomy.
+
+Conforms to:
+- SPEC-001: §1 (Stage 4 Holistic Inventory Discovery)
+- ADR-001: Modular Monolith Domain Integrity
 """
 
 from __future__ import annotations
@@ -13,13 +18,19 @@ from cresmo.domain.value_objects import AtomicEntityInventory, NoteTitle, NoteTy
 
 
 class DiscoverAtomicInventoryUseCase:
-    """Stage 4: Holistic entity discovery across enriched text."""
+    """Stage 4: Holistic entity discovery orchestrator across enriched compendium text."""
 
     def __init__(
         self,
         llm_port: LLMTransformationPort,
         prompt_provider: PromptProviderPort | None = None,
     ) -> None:
+        """Initialize Stage 4 use case with required ports.
+
+        Args:
+            llm_port: Hexagonal port for generative LLM inference.
+            prompt_provider: Optional provider for decoupled prompt templates.
+        """
         self.llm_port = llm_port
         if prompt_provider is None:
             from cresmo.infrastructure.adapters.prompt_provider import JsonPromptProvider

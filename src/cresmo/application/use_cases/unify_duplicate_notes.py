@@ -5,6 +5,10 @@ cross-referencing title-to-alias mappings, and honorific normalization.
 Non-destructively merges duplicate notes, rewrites inbound [[WikiLinks]] across the
 entire vault and Maps of Content (MOCs), synchronizes _index.json, and cleans up
 redundant files.
+
+Conforms to:
+- SPEC-001: §1 (Stage 7 Graph Entity Resolution)
+- ADR-001: Modular Monolith Domain Integrity
 """
 
 from __future__ import annotations
@@ -23,7 +27,13 @@ from cresmo.domain.value_objects import (
 
 @dataclass(frozen=True)
 class DuplicateCluster:
-    """Represents a set of duplicate notes resolved to a single canonical identity."""
+    """Represents a set of duplicate notes resolved to a single canonical identity.
+
+    Attributes:
+        canonical_title: Canonical winning note title retained in vault.
+        merged_titles: Tuple of redundant titles merged and redirected.
+        links_rewritten_count: Number of markdown WikiLink references rewritten.
+    """
 
     canonical_title: NoteTitle
     merged_titles: tuple[NoteTitle, ...]
@@ -32,23 +42,34 @@ class DuplicateCluster:
 
 @dataclass(frozen=True)
 class DeduplicationReport:
-    """Summary of the Stage 7 vault deduplication execution."""
+    """Summary of the Stage 7 vault deduplication execution.
+
+    Attributes:
+        clusters: Tuple of all resolved duplicate clusters.
+    """
 
     clusters: tuple[DuplicateCluster, ...]
 
     @property
     def duplicates_unified_count(self) -> int:
+        """Total count of duplicate note clusters resolved."""
         return len(self.clusters)
 
     @property
     def total_links_rewritten(self) -> int:
+        """Total count of inbound WikiLinks updated across vault markdown files."""
         return sum(c.links_rewritten_count for c in self.clusters)
 
 
 class UnifyDuplicateNotesUseCase:
-    """Stage 7: Graph Entity Resolution and Duplicate Unification."""
+    """Stage 7: Graph Entity Resolution and Duplicate Unification orchestrator."""
 
     def __init__(self, vault_port: VaultRepositoryPort) -> None:
+        """Initialize Stage 7 use case with vault persistence port.
+
+        Args:
+            vault_port: Port providing vault atomic note read/write/delete operations.
+        """
         self.vault_port = vault_port
 
     def _normalize_for_matching(self, title: str) -> str:

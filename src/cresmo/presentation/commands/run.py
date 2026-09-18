@@ -1,4 +1,15 @@
-"""Command handler for cresmo run."""
+"""Command handler for cresmo run.
+
+Orchestrates full knowledge synthesis for individual media items or prioritized
+batch runs across playlists, priority texts, and channel upload feeds.
+
+Conforms to:
+    - ADR-002: Presentation CLI & Humble Object
+    - ADR-007: Pipeline Template Method DRY
+    - ADR-009: Streaming Batch Source Discovery Producer-Consumer Pattern
+    - SPEC-001: Core Knowledge Synthesis Specifications
+    - SPEC-002: CLI Controller & Exit Codes
+"""
 
 from __future__ import annotations
 
@@ -39,7 +50,11 @@ from cresmo.presentation.exit_codes import (
 
 
 def register_subparser(subparsers: argparse._SubParsersAction) -> None:
-    """Register 'run' subcommand parser with argument options."""
+    """Register 'run' subcommand parser with argument options.
+
+    Args:
+        subparsers: Root CLI subparsers action object.
+    """
     run_parser = subparsers.add_parser(
         "run",
         help="Run end-to-end knowledge synthesis for a video or manifest playlist",
@@ -120,7 +135,15 @@ def register_subparser(subparsers: argparse._SubParsersAction) -> None:
 
 
 def execute_single_video_run(pipeline: CresmoPipeline, args: argparse.Namespace) -> int:
-    """Execute knowledge synthesis or dry run for a single target video."""
+    """Execute knowledge synthesis or dry run for a single target video.
+
+    Args:
+        pipeline: Wired CresmoPipeline orchestrator.
+        args: Parsed CLI argument namespace containing URL, passes, and flags.
+
+    Returns:
+        Process exit code integer.
+    """
     if args.dry_run:
         raw = pipeline.ingest_raw_transcript.execute(video_url=args.url)
         if raw is None:
@@ -164,7 +187,15 @@ def execute_single_video_run(pipeline: CresmoPipeline, args: argparse.Namespace)
 
 
 def execute_batch_dry_run(pipeline: CresmoPipeline, sources: list[BatchSource]) -> int:
-    """Inspect and validate batch sources without invoking generative LLM stages."""
+    """Inspect and validate batch sources without invoking generative LLM stages.
+
+    Args:
+        pipeline: Wired CresmoPipeline orchestrator.
+        sources: List of discovered BatchSource items to test.
+
+    Returns:
+        Process exit code integer.
+    """
     ingested = 0
     for idx, src in enumerate(sources, 1):
         if src.kind == "file":
@@ -192,7 +223,16 @@ def execute_batch_run(
     sources: Iterable[BatchSource],
     args: argparse.Namespace,
 ) -> int:
-    """Execute end-to-end multi-pass synthesis over prioritized batch sources."""
+    """Execute end-to-end multi-pass synthesis over prioritized batch sources.
+
+    Args:
+        pipeline: Wired CresmoPipeline orchestrator.
+        sources: Iterable stream of prioritized BatchSource items.
+        args: Parsed CLI argument namespace.
+
+    Returns:
+        Process exit code integer.
+    """
     completed = 0
     skipped = 0
     failed = 0
@@ -281,7 +321,17 @@ def load_batch_sources(
     media_ingestion_port: MediaIngestionPort | None = None,
     stream: bool = False,
 ) -> list[BatchSource] | Iterator[BatchSource]:
-    """Execute batch source discovery via DiscoverBatchSourcesUseCase."""
+    """Execute batch source discovery via DiscoverBatchSourcesUseCase.
+
+    Args:
+        query: BatchDiscoveryQuery constraints.
+        settings: Optional application settings.
+        media_ingestion_port: Ingestion adapter port instance.
+        stream: If True, yields items as an Iterator generator; otherwise returns list.
+
+    Returns:
+        List or streaming iterator of BatchSource records.
+    """
     resolved_settings = settings or CresmoSettings()
     if media_ingestion_port is None:
         discovery_use_case = build_discover_batch_sources_use_case(
@@ -304,7 +354,16 @@ def load_batch_sources_stream(
     settings: CresmoSettings | None = None,
     media_ingestion_port: MediaIngestionPort | None = None,
 ) -> Iterator[BatchSource]:
-    """Execute streaming batch source discovery via DiscoverBatchSourcesUseCase."""
+    """Execute streaming batch source discovery via DiscoverBatchSourcesUseCase.
+
+    Args:
+        query: BatchDiscoveryQuery constraints.
+        settings: Optional application settings.
+        media_ingestion_port: Ingestion adapter port instance.
+
+    Returns:
+        Iterator of BatchSource records.
+    """
     res = load_batch_sources(query, settings, media_ingestion_port, stream=True)
     if isinstance(res, list):
         return iter(res)
@@ -312,7 +371,14 @@ def load_batch_sources_stream(
 
 
 def handle_run(args: argparse.Namespace) -> int:
-    """Orchestrate knowledge synthesis pipeline for single video or batch manifest."""
+    """Orchestrate knowledge synthesis pipeline for single video or batch manifest.
+
+    Args:
+        args: Parsed CLI argument namespace.
+
+    Returns:
+        Process exit code integer.
+    """
     try:
         settings = CresmoSettings()
         if args.lookback is not None:
@@ -326,14 +392,13 @@ def handle_run(args: argparse.Namespace) -> int:
             web_index=getattr(args, "web_index", False),
         )
 
-
         if args.url:
             return execute_single_video_run(pipeline, args)
 
         enable_crawl = (
             False
             if getattr(args, "no_crawl", False)
-             else getattr(settings, "enable_channel_crawler", True)
+            else getattr(settings, "enable_channel_crawler", True)
         )
 
         query = BatchDiscoveryQuery(
@@ -346,12 +411,13 @@ def handle_run(args: argparse.Namespace) -> int:
         )
 
         if args.dry_run:
-            sources = load_batch_sources(
+            raw_sources = load_batch_sources(
                 query=query,
                 settings=settings,
                 media_ingestion_port=pipeline.media_ingestion_port,
                 stream=False,
             )
+            sources = list(raw_sources)
             if not sources:
                 manifest_display = str(args.manifest) if args.manifest else "data/playlist.txt"
                 sys.stdout.write(

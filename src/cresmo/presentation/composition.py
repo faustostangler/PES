@@ -1,7 +1,14 @@
 """Composition Root for the Cresmo Knowledge Synthesis Engine.
 
 Centralizes pure Dependency Injection assembly, binding validated configuration
-from CresmoSettings to concrete infrastructure adapters and instantiating CresmoPipeline.
+from CresmoSettings to concrete infrastructure adapters and instantiating CresmoPipeline
+and Application Use Cases per Clean/Hexagonal Architecture.
+
+Conforms to:
+    - ADR-001: Modular Monolith Domain Integrity
+    - ADR-002: Presentation CLI & Humble Object
+    - ADR-005: Multi-Role 12-Factor Container & Settings
+    - SPEC-002: CLI Controller & Exit Codes
 """
 
 from __future__ import annotations
@@ -30,7 +37,14 @@ from cresmo.infrastructure.config import CresmoSettings
 
 
 def _resolve_cookie_file(settings: CresmoSettings) -> Path | None:
-    """Resolve active cookie file or attempt browser auto-extraction if enabled."""
+    """Resolve active cookie file or attempt browser auto-extraction if enabled.
+
+    Args:
+        settings: Validated application configuration.
+
+    Returns:
+        Path to an active Netscape cookie file, or None if unavailable.
+    """
     cookie_file = getattr(settings, "cookies_file", None)
     if (cookie_file is None or not cookie_file.exists()) and getattr(
         settings, "auto_extract_cookies", True
@@ -54,6 +68,12 @@ def build_media_ingestion_adapter(
 
     Acts as the Single Source of Truth (SSOT) factory for media ingestion, centralizing
     header rotation, active session cookie resolution, and concurrency limits.
+
+    Args:
+        settings: Optional CresmoSettings instance. If None, loaded from environment.
+
+    Returns:
+        Fully configured NativeMediaIngestionAdapter instance.
     """
     resolved_settings = settings or CresmoSettings()
     headers_path = getattr(resolved_settings, "browser_headers_path", None)

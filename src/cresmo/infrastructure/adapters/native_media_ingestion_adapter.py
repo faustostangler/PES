@@ -2,7 +2,13 @@
 
 Directly orchestrates yt-dlp and openai-whisper via official Python library APIs.
 Provides robust native subtitle extraction (mitigating HTTP 429), ephemeral
-scratch isolation for audio transcription, and zero legacy isb.ai coupling (ADR-004 & SPEC-004).
+scratch isolation for audio transcription, and zero legacy isb.ai coupling.
+Acts as an Anti-Corruption Layer (ACL) shielding the domain from external
+scraping quirks and third-party media libraries.
+
+Conforms to:
+    - ADR-004: Native Media Ingestion Decommissioning
+    - SPEC-004: Native Media Ingestion Specification
 """
 
 from __future__ import annotations
@@ -42,7 +48,14 @@ _ILLEGAL_FS_CHARS = re.compile(r'[\\/*?:"<>|%]')
 
 
 class NativeMediaIngestionAdapter(MediaIngestionPort):
-    """Production Hexagonal adapter for media ingestion using pure Python libraries."""
+    """Production Hexagonal adapter for media ingestion using pure Python libraries.
+
+    Encapsulates yt-dlp and Whisper execution behind the MediaIngestionPort contract.
+    Shields domain models from low-level subprocesses, network timeouts, and JSON schemas.
+
+    Attributes:
+        request_timeout: Socket timeout in seconds for fetching remote subtitle streams.
+    """
 
     def __init__(
         self,

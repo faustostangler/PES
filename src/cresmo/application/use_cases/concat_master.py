@@ -3,6 +3,10 @@
 Aggregates markdown compendiums in ascending chronological order (oldest first)
 up to the configured word limit without splitting files in the middle. Generates
 sequentially numbered master documents per channel category.
+
+Conforms to:
+- ADR-001: Modular Monolith Domain Integrity
+- SPEC-001: Core Knowledge Synthesis Specifications
 """
 
 from __future__ import annotations
@@ -21,14 +25,30 @@ _VIDEO_ID_PATTERN = re.compile(r'video_id:\s*["\']?([a-zA-Z0-9_-]+)["\']?')
 
 
 def count_words(text: str) -> int:
-    """Count the total number of whitespace-delimited words in a string."""
+    """Count the total number of whitespace-delimited words in a string.
+
+    Args:
+        text: Source text string.
+
+    Returns:
+        Total word count integer.
+    """
     return len(text.split())
 
 
 def parse_metadata_from_content(
     content: str, channel_name: str, fallback_stem: str
 ) -> tuple[int, str, str]:
-    """Extract (video_date, channel_category, video_id) from YAML frontmatter."""
+    """Extract (video_date, channel_category, video_id) from YAML frontmatter.
+
+    Args:
+        content: Raw markdown text with YAML frontmatter.
+        channel_name: Channel identifier for fallback categorization.
+        fallback_stem: File stem fallback if video_id is absent.
+
+    Returns:
+        Tuple of (date_integer, category_string, video_id_string).
+    """
     # 1. Parse video_date
     m_date = _DATE_PATTERN.search(content)
     date_val = 99999999
@@ -58,10 +78,16 @@ class ConcatMasterUseCase:
     def __init__(
         self,
         vault_port: VaultRepositoryPort,
-        settings: CresmoSettings,
+        settings: CresmoSettings | None = None,
     ) -> None:
+        """Initialize use case with vault port and operational settings.
+
+        Args:
+            vault_port: Port providing file read and master document write capabilities.
+            settings: Configuration settings holding target word caps.
+        """
         self.vault_port = vault_port
-        self.settings = settings
+        self.settings = settings if settings is not None else CresmoSettings()
 
     def execute_for_channel(
         self,

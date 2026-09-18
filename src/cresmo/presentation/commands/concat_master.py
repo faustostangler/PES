@@ -1,6 +1,11 @@
 """Command handler for cresmo concat-master.
 
 Consolidates enriched markdown documents into sequential master documents per channel category.
+Applies bounded word thresholds (default: 500k words) without splitting individual documents.
+
+Conforms to:
+    - ADR-002: Presentation CLI & Humble Object
+    - SPEC-001: Core Knowledge Synthesis Specifications (Master RAG Consolidation)
 """
 
 from __future__ import annotations
@@ -17,7 +22,11 @@ from cresmo.presentation.exit_codes import (
 
 
 def register_subparser(subparsers: argparse._SubParsersAction) -> None:
-    """Register 'concat-master' subcommand parser."""
+    """Register 'concat-master' subcommand parser.
+
+    Args:
+        subparsers: Root CLI subparsers action object.
+    """
     concat_parser = subparsers.add_parser(
         "concat-master",
         help="Consolidate enriched compendiums in ascending chronological order into master RAG files",
@@ -40,7 +49,14 @@ def register_subparser(subparsers: argparse._SubParsersAction) -> None:
 
 
 def handle_concat_master(args: argparse.Namespace) -> int:
-    """Consolidate enriched compendiums into master documents."""
+    """Consolidate enriched compendiums into master documents.
+
+    Args:
+        args: Parsed CLI argument namespace containing channel filter and word limits.
+
+    Returns:
+        Process exit code integer.
+    """
     try:
         settings = CresmoSettings()
         use_case = build_concat_master_use_case(settings=settings)

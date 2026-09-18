@@ -1,4 +1,14 @@
-"""Command handler for cresmo worker."""
+"""Command handler for cresmo worker.
+
+Runs a continuous polling worker daemon with periodic heartbeat health reporting
+suitable for Kubernetes/Docker containerized operation per 12-Factor principles.
+
+Conforms to:
+    - ADR-002: Presentation CLI & Humble Object
+    - ADR-003: PES Production Architecture & Telemetry
+    - ADR-005: Multi-Role 12-Factor Container & Settings
+    - SPEC-003: Channel Synchronization Specifications
+"""
 
 from __future__ import annotations
 
@@ -18,7 +28,11 @@ from cresmo.presentation.exit_codes import (
 
 
 def register_subparser(subparsers: argparse._SubParsersAction) -> None:
-    """Register 'worker' subcommand parser with argument options."""
+    """Register 'worker' subcommand parser with argument options.
+
+    Args:
+        subparsers: Root CLI subparsers action object.
+    """
     worker_parser = subparsers.add_parser(
         "worker",
         help="Run continuous polling worker daemon with heartbeat health reporting",
@@ -55,7 +69,14 @@ def register_subparser(subparsers: argparse._SubParsersAction) -> None:
 
 
 def handle_worker(args: argparse.Namespace) -> int:
-    """Run polling daemon for continuous channel monitoring."""
+    """Run polling daemon for continuous channel monitoring.
+
+    Args:
+        args: Parsed CLI argument namespace containing channel, poll interval, and flags.
+
+    Returns:
+        Process exit code integer.
+    """
     try:
         settings = CresmoSettings()
         use_case = build_sync_channel_use_case(settings=settings)

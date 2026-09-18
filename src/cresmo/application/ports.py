@@ -1,9 +1,13 @@
-"""Application Ports (Abstract Base Classes) for the Cresmo Knowledge Synthesis context.
+"""Application Ports (Abstract Base Classes) for the Cresmo Knowledge Synthesis Bounded Context.
 
 Defines the Hexagonal Ports that decouple business logic orchestration from infrastructure
-adapters (media scraping, LLM APIs, Obsidian filesystem storage, and status ledgers).
+adapters (media scraping, LLM APIs, Obsidian filesystem storage, status ledgers, and prompt templates).
 
-[SKELETON STUB - BUILD-TO-LEARN]
+Conforms to:
+- ADR-001: Modular Monolith Domain Integrity (Ports & Adapters)
+- ADR-004: Native Media Ingestion Decommissioning & Pure Python Adapter
+- SPEC-001: Core Knowledge Synthesis Specifications
+- SPEC-004: Native Media Ingestion Specifications
 """
 
 from __future__ import annotations
@@ -28,7 +32,11 @@ from cresmo.domain.value_objects import (
 
 
 class MediaIngestionPort(ABC):
-    """Port for media crawling, audio downloading, and subtitle/transcript ingestion."""
+    """Hexagonal Port for media crawling, audio downloading, and subtitle/transcript ingestion.
+    
+    Conforms to ADR-004 and SPEC-004. Abstracts external tools (yt-dlp, whisper) behind
+    pure domain aggregates (RawTranscript).
+    """
 
     @abstractmethod
     def ingest_single_video(
@@ -38,15 +46,22 @@ class MediaIngestionPort(ABC):
         whisper_model: str = "base",
         keep_audio: bool = False,
     ) -> RawTranscript | None:
-        """Fetch transcript or audio for a single video.
+        """Fetch transcript or transcribe audio for a single video.
 
-        Walkthrough:
-        1. Query metadata for the target video URL.
-        2. Attempt retrieval of native spoken captions (*-orig).
-        3. If unavailable, download audio and run Whisper model.
-        4. Return clean RawTranscript domain aggregate, or None if failed.
+        Args:
+            video_url: Target YouTube or media item URL.
+            output_dir: Directory where raw text and audio scratch files reside.
+            whisper_model: Whisper model checkpoint name (tiny, base, small, medium).
+            keep_audio: If True, preserves downloaded audio; otherwise cleans up.
+
+        Returns:
+            RawTranscript domain aggregate if successful, or None if extraction fails.
+
+        Raises:
+            RateLimitExceededError: If upstream provider returns HTTP 429.
+            IngestionNetworkError: If socket timeout or network failure occurs.
         """
-        raise NotImplementedError("Step 1: Implement single video ingestion contract.")
+        raise NotImplementedError("Implement single video ingestion contract.")
 
     @abstractmethod
     def ingest_channels_and_playlists(
@@ -60,27 +75,33 @@ class MediaIngestionPort(ABC):
     ) -> list[RawTranscript]:
         """Crawl channel playlists and ingest new videos within lookback window.
 
-        Walkthrough:
-        1. Iterate through seed channel/playlist URLs.
-        2. Identify videos published within lookback window not yet present in output_dir.
-        3. Dispatch parallel downloads up to max_workers.
-        4. Return sequence of newly ingested RawTranscript entities.
+        Args:
+            playlist_urls: Seed playlist or channel URLs to inspect.
+            output_dir: Output storage directory for raw Markdown transcripts.
+            days_lookback: Maximum age of videos to ingest in days.
+            whisper_model: Whisper model size name.
+            keep_audio: Whether to preserve downloaded audio on disk.
+            max_workers: Concurrency ceiling for parallel processing.
+
+        Returns:
+            List of newly ingested RawTranscript entities.
         """
-        raise NotImplementedError("Step 1: Implement channels ingestion contract.")
+        raise NotImplementedError("Implement channels ingestion contract.")
 
     @abstractmethod
     def discover_channel_feed(
         self,
         query: ChannelFeedQuery,
     ) -> list[DiscoveredMediaItem]:
-        """Query and discover media items from a channel or playlist feed within query constraints.
+        """Query and discover media items from a channel or playlist feed within constraints.
 
-        Walkthrough:
-        1. Resolve channel or playlist URL.
-        2. Extract recent video metadata (content_id, title, published_at, url, channel_name).
-        3. Filter by lookback window and return DiscoveredMediaItem list.
+        Args:
+            query: Feed query containing channel URL, lookback window, and count limits.
+
+        Returns:
+            List of DiscoveredMediaItem value objects.
         """
-        raise NotImplementedError("Step 1: Implement discover channel feed contract.")
+        raise NotImplementedError("Implement discover channel feed contract.")
 
     @abstractmethod
     def extract_channel_url_from_video(
@@ -90,14 +111,23 @@ class MediaIngestionPort(ABC):
         """Resolve YouTube channel URL or feed identifier from a video URL.
 
         Extracts channel/uploader metadata without downloading video or audio streams.
-        Returns the canonical channel URL (e.g. https://www.youtube.com/channel/{channel_id})
-        or None if resolution fails.
+
+        Args:
+            video_url: Canonical or short video URL.
+
+        Returns:
+            Canonical channel URL (e.g. https://www.youtube.com/channel/{channel_id})
+            or None if resolution fails.
         """
-        raise NotImplementedError("Step 1: Implement video channel resolution contract.")
+        raise NotImplementedError("Implement video channel resolution contract.")
 
 
 class LLMTransformationPort(ABC):
-    """Port defining contract for text generation and structured extraction."""
+    """Hexagonal Port defining contracts for generative synthesis and structured extraction.
+    
+    Conforms to ADR-001 and EVAL-001. Shields use cases from provider-specific SDKs
+    (Google GenAI, Ollama, local models).
+    """
 
     @abstractmethod
     def transform(
@@ -106,93 +136,162 @@ class LLMTransformationPort(ABC):
         system_instruction: str | None = None,
         temperature: float | None = None,
     ) -> str:
-        """Execute text transformation contract given input prompt and optional system directive.
+        """Execute text transformation given input prompt and optional system directive.
 
-        Walkthrough:
-        1. Receive prompt and configuration tunables.
-        2. Send payload to underlying model client (e.g. Gemini, Ollama, Mock).
-        3. Capture latency and token usage.
-        4. Return generated response text.
+        Args:
+            prompt: Formatted user prompt or synthesis task.
+            system_instruction: Optional system instruction guiding model persona.
+            temperature: Sampling temperature override.
+
+        Returns:
+            Generated response text string.
+
+        Raises:
+            LLMInfrastructureError: If provider API or socket fails.
+            RateLimitExceededError: If rate quotas are exhausted.
         """
-        raise NotImplementedError("Step 1: Implement LLM transformation contract.")
+        raise NotImplementedError("Implement LLM transformation contract.")
 
 
 class VaultRepositoryPort(ABC):
-    """Persistence port for the Obsidian Second Brain vault."""
+    """Hexagonal Persistence Port for the Obsidian Second Brain vault and raw/enriched storage.
+
+    Conforms to ADR-001 and SPEC-001. Enforces atomic file writes, YAML frontmatter serialization,
+    tiered index synchronization (_index.json), and bidirectional WikiLink reconciliation.
+    """
 
     @abstractmethod
     def save_raw_transcript(self, transcript: RawTranscript) -> None:
         """Persist raw transcript to raw storage directory.
 
-        Walkthrough:
-        1. Format YAML frontmatter with origin metadata.
-        2. Write body to target channel directory atomically.
+        Args:
+            transcript: RawTranscript domain aggregate containing verbatim text and metadata.
         """
-        raise NotImplementedError("Step 1: Persist raw transcript atomically.")
+        raise NotImplementedError("Persist raw transcript atomically.")
 
     @abstractmethod
     def get_raw_transcript(self, content_id: ContentId) -> RawTranscript | None:
-        """Retrieve raw transcript by content ID."""
-        raise NotImplementedError("Step 1: Retrieve raw transcript by content ID.")
+        """Retrieve raw transcript by content ID.
+
+        Args:
+            content_id: Target unique content identifier.
+
+        Returns:
+            RawTranscript aggregate or None if not present in storage.
+        """
+        raise NotImplementedError("Retrieve raw transcript by content ID.")
 
     @abstractmethod
     def save_enriched_compendium(self, compendium: EnrichedCompendium) -> None:
-        """Persist enriched compendium directly into enriched/ directory."""
-        raise NotImplementedError("Step 1: Persist enriched compendium atomically.")
+        """Persist enriched compendium directly into enriched/ directory.
+
+        Args:
+            compendium: Validated multi-pass fluid prose compendium.
+        """
+        raise NotImplementedError("Persist enriched compendium atomically.")
 
     @abstractmethod
     def get_enriched_compendium(self, content_id: ContentId) -> EnrichedCompendium | None:
-        """Retrieve enriched compendium by content ID."""
-        raise NotImplementedError("Step 1: Retrieve enriched compendium by content ID.")
+        """Retrieve enriched compendium by content ID.
+
+        Args:
+            content_id: Target unique content identifier.
+
+        Returns:
+            EnrichedCompendium aggregate or None if not present in storage.
+        """
+        raise NotImplementedError("Retrieve enriched compendium by content ID.")
 
     @abstractmethod
     def save_atomic_note(self, note: AtomicNote) -> None:
-        """Persist individual atomic note with standardized YAML frontmatter."""
-        raise NotImplementedError("Step 1: Render frontmatter and persist atomic note atomically.")
+        """Persist individual atomic note with standardized YAML frontmatter.
+
+        Args:
+            note: Validated AtomicNote aggregate with taxonomy, tags, and WikiLinks.
+        """
+        raise NotImplementedError("Render frontmatter and persist atomic note atomically.")
 
     @abstractmethod
     def get_atomic_note_by_title(self, title: NoteTitle) -> AtomicNote | None:
-        """Retrieve atomic note by its canonical title."""
-        raise NotImplementedError("Step 1: Read and parse atomic note by title.")
+        """Retrieve atomic note by its canonical title.
+
+        Args:
+            title: Canonical NoteTitle of the target note.
+
+        Returns:
+            Parsed AtomicNote aggregate or None if not found.
+        """
+        raise NotImplementedError("Read and parse atomic note by title.")
 
     @abstractmethod
     def get_all_atomic_notes(self) -> list[AtomicNote]:
-        """Retrieve all atomic notes currently persisted in the vault."""
-        raise NotImplementedError("Step 1: Retrieve all atomic notes.")
+        """Retrieve all atomic notes currently persisted in the vault.
+
+        Returns:
+            List of all parsed AtomicNote aggregates.
+        """
+        raise NotImplementedError("Retrieve all atomic notes.")
 
     @abstractmethod
     def update_index_entry(self, note: AtomicNote) -> None:
-        """Update master _index.json lookup index with note metadata and aliases."""
-        raise NotImplementedError("Step 1: Update _index.json atomically.")
+        """Update master _index.json lookup index with note metadata and aliases.
+
+        Args:
+            note: AtomicNote providing title, slug, and alias keys for indexing.
+        """
+        raise NotImplementedError("Update _index.json atomically.")
 
     @abstractmethod
     def save_map_of_content(self, moc: MapOfContent) -> None:
-        """Persist or update Map of Content in vault/MOCs/."""
-        raise NotImplementedError("Step 1: Persist Map of Content atomically.")
+        """Persist or update Map of Content in vault/MOCs/.
+
+        Args:
+            moc: MapOfContent aggregate reconciling note cluster.
+        """
+        raise NotImplementedError("Persist Map of Content atomically.")
 
     @abstractmethod
     def delete_atomic_note(self, note: AtomicNote) -> None:
-        """Remove atomic note file from vault and clean up index entries."""
-        raise NotImplementedError("Step 1: Delete atomic note.")
+        """Remove atomic note file from vault and clean up index entries.
+
+        Args:
+            note: Target note to delete.
+        """
+        raise NotImplementedError("Delete atomic note.")
 
     @abstractmethod
     def rewrite_wiki_links(self, old_title: NoteTitle, new_title: NoteTitle) -> int:
-        """Rewrite all inbound [[old_title]] links to [[new_title]] across all markdown files in vault/.
+        """Rewrite all inbound [[old_title]] links to [[new_title]] across vault markdown files.
+
+        Args:
+            old_title: Prior note title being renamed.
+            new_title: Target canonical note title.
 
         Returns:
-            Count of files updated.
+            Count of markdown files updated with rewritten links.
         """
-        raise NotImplementedError("Step 1: Rewrite wiki links.")
+        raise NotImplementedError("Rewrite wiki links.")
 
     @abstractmethod
     def remove_index_entry(self, key: str) -> None:
-        """Remove specific canonical title or alias key from master _index.json."""
-        raise NotImplementedError("Step 1: Remove index entry.")
+        """Remove specific canonical title or alias key from master _index.json.
+
+        Args:
+            key: Title or alias lookup key to purge.
+        """
+        raise NotImplementedError("Remove index entry.")
 
     @abstractmethod
     def get_enriched_files_for_channel(self, channel_name: str) -> list[Path]:
-        """Retrieve sorted list of all enriched markdown file paths for a given channel."""
-        raise NotImplementedError("Step 1: Retrieve enriched file paths for channel.")
+        """Retrieve sorted list of all enriched markdown file paths for a given channel.
+
+        Args:
+            channel_name: Human-readable creator channel name.
+
+        Returns:
+            List of Path objects for all channel enriched markdown files.
+        """
+        raise NotImplementedError("Retrieve enriched file paths for channel.")
 
     @abstractmethod
     def save_master_document(
@@ -202,8 +301,18 @@ class VaultRepositoryPort(ABC):
         part_number: int,
         content: str,
     ) -> Path:
-        """Persist aggregated master document to master/<channel_category>/<channel_slug>_001.md."""
-        raise NotImplementedError("Step 1: Persist master document atomically.")
+        """Persist aggregated master document to master/<channel_category>/<channel_slug>_001.md.
+
+        Args:
+            channel_name: Creator channel name.
+            channel_category: Macro taxonomy category name.
+            part_number: 1-based sequential part number.
+            content: Consolidated markdown document string.
+
+        Returns:
+            Path to the saved master document on disk.
+        """
+        raise NotImplementedError("Persist master document atomically.")
 
     @abstractmethod
     def clear_master_documents_for_channel(
@@ -211,62 +320,126 @@ class VaultRepositoryPort(ABC):
         channel_name: str,
         channel_category: str,
     ) -> None:
-        """Delete previous master parts for channel before writing fresh sequential parts."""
-        raise NotImplementedError("Step 1: Clear previous master documents for channel.")
+        """Delete previous master parts for channel before writing fresh sequential parts.
+
+        Args:
+            channel_name: Channel name whose prior parts will be purged.
+            channel_category: Macro category under which master files reside.
+        """
+        raise NotImplementedError("Clear previous master documents for channel.")
 
     @abstractmethod
     def get_indexed_video_ids_for_channel(self, channel_name: str) -> set[str]:
-        """Retrieve set of video IDs already indexed in the channel's _canal.md."""
-        raise NotImplementedError("Step 1: Retrieve indexed video IDs for channel.")
+        """Retrieve set of video IDs already indexed in the channel's _canal.md.
+
+        Args:
+            channel_name: Channel identifier.
+
+        Returns:
+            Set of string video IDs recorded in the channel raw index.
+        """
+        raise NotImplementedError("Retrieve indexed video IDs for channel.")
 
     @abstractmethod
     def append_channel_index_entry(self, channel_name: str, entry: RawIndexEntry) -> None:
-        """Append raw index entry to data/raw/<channel_name>/_canal.md atomically."""
-        raise NotImplementedError("Step 1: Append entry to channel raw index.")
+        """Append raw index entry to data/raw/<channel_name>/_canal.md atomically.
+
+        Args:
+            channel_name: Channel identifier.
+            entry: RawIndexEntry value object.
+        """
+        raise NotImplementedError("Append entry to channel raw index.")
 
     @abstractmethod
     def append_brain_csv_entry(self, entry: RawIndexEntry) -> None:
-        """Append raw index entry to data/brain.csv atomically."""
-        raise NotImplementedError("Step 1: Append entry to brain.csv.")
+        """Append raw index entry to data/brain.csv atomically.
+
+        Args:
+            entry: RawIndexEntry value object.
+        """
+        raise NotImplementedError("Append entry to brain.csv.")
 
     @abstractmethod
     def get_channel_index_path(self, channel_name: str) -> Path:
-        """Return absolute path to channel's _canal.md."""
-        raise NotImplementedError("Step 1: Return channel index path.")
+        """Return absolute path to channel's _canal.md index file.
 
+        Args:
+            channel_name: Channel identifier.
+
+        Returns:
+            Path to the target _canal.md.
+        """
+        raise NotImplementedError("Return channel index path.")
 
 
 class LedgerRepositoryPort(ABC):
-    """Persistence port for tracking processed content status and idempotency."""
+    """Hexagonal Persistence Port for tracking processed content status and idempotency.
+
+    Conforms to ADR-001 and ADR-003. Employs transactional SQLite WAL storage to guarantee
+    zero duplicate LLM calls and reproducible execution audits.
+    """
 
     @abstractmethod
     def is_processed(self, content_id: ContentId) -> bool:
-        """Check whether a content item has already completed all pipeline stages."""
-        raise NotImplementedError("Step 1: Check processed ledger status.")
+        """Check whether a content item has already completed all pipeline stages.
+
+        Args:
+            content_id: Target ContentId.
+
+        Returns:
+            True if marked COMPLETED in ledger; False otherwise.
+        """
+        raise NotImplementedError("Check processed ledger status.")
 
     @abstractmethod
     def mark_processed(self, content_id: ContentId) -> None:
-        """Record content item as successfully processed."""
-        raise NotImplementedError("Step 1: Record content ID in processed ledger.")
+        """Record content item as successfully processed.
+
+        Args:
+            content_id: ContentId to mark COMPLETED.
+        """
+        raise NotImplementedError("Record content ID in processed ledger.")
 
     @abstractmethod
     def save_entry(self, entry: LedgerEntry) -> None:
-        """Persist or update an immutable LedgerEntry audit record atomically."""
-        raise NotImplementedError("Step 1: Persist ledger entry.")
+        """Persist or update an immutable LedgerEntry audit record atomically.
+
+        Args:
+            entry: LedgerEntry value object with timestamps and outcome status.
+        """
+        raise NotImplementedError("Persist ledger entry.")
 
     @abstractmethod
     def get_entry(self, content_id: ContentId) -> LedgerEntry | None:
-        """Retrieve the latest LedgerEntry for a given content ID."""
-        raise NotImplementedError("Step 1: Retrieve ledger entry.")
+        """Retrieve the latest LedgerEntry for a given content ID.
+
+        Args:
+            content_id: ContentId lookup key.
+
+        Returns:
+            LedgerEntry or None if no record exists.
+        """
+        raise NotImplementedError("Retrieve ledger entry.")
 
     @abstractmethod
     def list_entries(self, limit: int = 100) -> list[LedgerEntry]:
-        """List recently recorded ledger entries."""
-        raise NotImplementedError("Step 1: List ledger entries.")
+        """List recently recorded ledger entries.
+
+        Args:
+            limit: Maximum count of entries to return.
+
+        Returns:
+            List of LedgerEntry records ordered reverse-chronologically.
+        """
+        raise NotImplementedError("List ledger entries.")
 
 
 class PromptProviderPort(ABC):
-    """Hexagonal Port for loading decoupled LLM prompt templates and skill documentation."""
+    """Hexagonal Port for loading decoupled LLM prompt templates and skill specifications.
+
+    Conforms to ADR-001 and EVAL-001. Separates raw prompt templates from use cases,
+    enabling versioning, prompt mutation testing, and multi-model configuration.
+    """
 
     @abstractmethod
     def get_gap_filler_prompt(
@@ -278,7 +451,19 @@ class PromptProviderPort(ABC):
         raw_text: str,
         current_text: str | None = None,
     ) -> str:
-        """Format the Socratic gap filler prompt differentiating pass 1 from subsequent passes."""
+        """Format the Socratic gap filler prompt differentiating pass 1 from subsequent passes.
+
+        Args:
+            pass_num: 1-based current enrichment pass.
+            total_passes: Total passes configured.
+            channel_name: Creator channel name.
+            file_name: Source file name for context tracking.
+            raw_text: Verbatim ground truth transcript.
+            current_text: Previous pass text (populated for pass >= 2).
+
+        Returns:
+            Formatted prompt string ready for LLM inference.
+        """
         raise NotImplementedError
 
     @abstractmethod
@@ -287,7 +472,15 @@ class PromptProviderPort(ABC):
         compendium_body: str,
         complementary_info: str,
     ) -> str:
-        """Format the Braudelian longitudinal expander prompt."""
+        """Format the Braudelian longitudinal expander prompt.
+
+        Args:
+            compendium_body: Continuous fluid prose from Stage 2.
+            complementary_info: Section text containing dates, context, and secondary details.
+
+        Returns:
+            Formatted longitudinal expansion prompt string.
+        """
         raise NotImplementedError
 
     @abstractmethod
@@ -295,7 +488,14 @@ class PromptProviderPort(ABC):
         self,
         current_text: str,
     ) -> str:
-        """Format the Jaspers synchronic wide expander prompt."""
+        """Format the Jaspers synchronic wide expander prompt.
+
+        Args:
+            current_text: Longitudinally enriched Markdown prose.
+
+        Returns:
+            Formatted synchronic horizontal cross-section prompt string.
+        """
         raise NotImplementedError
 
     @abstractmethod
@@ -305,7 +505,16 @@ class PromptProviderPort(ABC):
         channel_name: str,
         compendium_body: str,
     ) -> str:
-        """Format the atomic inventory extraction prompt."""
+        """Format the atomic inventory extraction prompt.
+
+        Args:
+            compendium_title: Compendium title string.
+            channel_name: Creator channel name.
+            compendium_body: Complete enriched prose text.
+
+        Returns:
+            Formatted inventory discovery prompt string.
+        """
         raise NotImplementedError
 
     @abstractmethod
@@ -316,7 +525,17 @@ class PromptProviderPort(ABC):
         compendium_body: str,
         targets_json: str,
     ) -> str:
-        """Format the atomic note batch synthesis prompt."""
+        """Format the atomic note batch synthesis prompt.
+
+        Args:
+            compendium_title: Compendium title string.
+            channel_name: Creator channel name.
+            compendium_body: Complete enriched prose text.
+            targets_json: JSON string with target entities to synthesize.
+
+        Returns:
+            Formatted batched atomic note synthesis prompt string.
+        """
         raise NotImplementedError
 
     @abstractmethod
@@ -324,7 +543,14 @@ class PromptProviderPort(ABC):
         self,
         notes_json: str,
     ) -> str:
-        """Format the MOC reconciliation prompt."""
+        """Format the MOC reconciliation prompt.
+
+        Args:
+            notes_json: JSON string of synthesized atomic notes.
+
+        Returns:
+            Formatted MOC reconciliation prompt string.
+        """
         raise NotImplementedError
 
     @abstractmethod
@@ -333,6 +559,14 @@ class PromptProviderPort(ABC):
         video_title: str,
         transcript_excerpt: str,
     ) -> tuple[str, str]:
-        """Format (system_instruction, user_prompt) for raw transcript paratactic conceptual synthesis."""
+        """Format (system_instruction, user_prompt) for raw transcript paratactic conceptual synthesis.
+
+        Args:
+            video_title: Raw video title string.
+            transcript_excerpt: First N characters of raw spoken transcript.
+
+        Returns:
+            Tuple containing system instruction and user prompt string.
+        """
         raise NotImplementedError
 

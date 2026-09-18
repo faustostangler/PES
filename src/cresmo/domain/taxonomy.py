@@ -1,7 +1,13 @@
-"""Domain taxonomy and channel classification for the Cresmo Knowledge Synthesis context.
+"""Domain taxonomy and channel classification for the Cresmo Knowledge Synthesis Bounded Context.
 
 Provides deterministic mapping of media channels into knowledge domains and category types
-(perennial vs. volatile) to guide knowledge retention and indexing.
+(perennial vs. volatile) to guide knowledge retention, RAG chunking, and vault indexing.
+Perennial domains prioritize multi-secular synthesis, whereas volatile domains prioritize
+event-driven provenance tracking.
+
+Conforms to:
+- SPEC-001: §2.1 (Domain Taxonomy & Categorization Rules)
+- ADR-001 (Modular Monolith Domain Integrity)
 """
 
 from __future__ import annotations

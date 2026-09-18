@@ -1,7 +1,14 @@
 """Production LLM adapter integrating Google Gemini API and Langfuse Observability.
 
 Adheres to EVAL-001 rubrics and stangler-surgery telemetry standards, capturing
-prompt versions, trace IDs, latency, token counts, and structured outputs.
+prompt versions, trace IDs, latency, token counts, and structured outputs. Acts
+as an Anti-Corruption Layer (ACL) shielding the domain core from vendor-specific
+types and transient HTTP 429/503 network anomalies.
+
+Conforms to:
+    - ADR-001: Modular Monolith Domain Integrity
+    - ADR-003: PES Production Architecture & Telemetry
+    - EVAL-001: LLM Synthesis Evaluation Rubrics
 """
 
 from __future__ import annotations
@@ -18,7 +25,15 @@ from cresmo.application.ports import LLMTransformationPort
 
 
 def _is_transient_genai_error(exc: BaseException) -> bool:
-    """Determine if a Gemini API exception represents a temporary, retryable condition."""
+    """Determine if a Gemini API exception represents a temporary, retryable condition.
+
+    Args:
+        exc: Raised base exception to inspect.
+
+    Returns:
+        True if the exception corresponds to an HTTP 429, 5xx, or transient network error;
+        False otherwise.
+    """
     if isinstance(exc, errors.APIError):
         code = getattr(exc, "code", None)
         return code in (429, 500, 502, 503, 504)
@@ -49,7 +64,17 @@ def _generate_with_retry(
     contents: Any,
     config: Any,
 ) -> Any:
-    """Execute model content generation with exponential backoff on transient errors."""
+    """Execute model content generation with exponential backoff on transient errors.
+
+    Args:
+        client: Google GenAI client instance.
+        model: Model identifier string.
+        contents: Input prompt or payload.
+        config: Generation configuration parameters.
+
+    Returns:
+        SDK generation response object.
+    """
     return client.models.generate_content(
         model=model,
         contents=contents,
@@ -58,7 +83,17 @@ def _generate_with_retry(
 
 
 class GeminiLLMAdapter(LLMTransformationPort):
-    """Production LLM adapter with Google Gemini API and Langfuse telemetry."""
+    """Production LLM adapter with Google Gemini API and Langfuse telemetry.
+
+    Implements LLMTransformationPort as an Anti-Corruption Layer (ACL), wrapping
+    Google GenAI client calls with exponential retries, model failover, and
+    detailed token usage tracking sent to Langfuse.
+
+    Attributes:
+        model_name: Primary Gemini model variant.
+        fallback_model_name: Optional secondary model variant used if primary fails.
+        max_output_tokens: Bounded token ceiling for model generation.
+    """
 
     def __init__(
         self,
@@ -69,11 +104,21 @@ class GeminiLLMAdapter(LLMTransformationPort):
         genai_client: Any | None = None,
         langfuse_client: Langfuse | None = None,
     ) -> None:
+        """Initialize GeminiLLMAdapter with model configuration and telemetry clients.
+
+        Args:
+            api_key: Optional Gemini API key string. If None, SDK looks for GEMINI_API_KEY env.
+            model_name: Default Gemini model variant for pipeline stages.
+            fallback_model_name: Secondary model variant if primary hits quota or demand spikes.
+            max_output_tokens: Maximum token output limit per generation.
+            genai_client: Optional injected GenAI client for testing.
+            langfuse_client: Optional injected Langfuse client for testing.
+        """
         self.model_name = model_name
         self.fallback_model_name = fallback_model_name
         self.max_output_tokens = max_output_tokens
 
-        # Step 1: Initialize Langfuse client if configured.
+        # Step 1: Initialize Langfuse client if configured
         if langfuse_client is not None:
             self._langfuse: Langfuse | None = langfuse_client
         elif os.environ.get("LANGFUSE_PUBLIC_KEY"):
@@ -81,7 +126,7 @@ class GeminiLLMAdapter(LLMTransformationPort):
         else:
             self._langfuse = None
 
-        # Step 2: Initialize Google GenAI client.
+        # Step 2: Initialize Google GenAI client
         if genai_client is not None:
             self._client = genai_client
         else:

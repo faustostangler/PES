@@ -1,6 +1,11 @@
 """Stage 6 Use Case: Reconcile Maps of Content (MOC).
 
-Reconciles atomic notes into thematic Maps of Content, enforcing zero orphaned notes.
+Reconciles atomic notes into thematic Maps of Content, enforcing zero orphaned notes
+and maintaining a coherent thematic hierarchy across the knowledge graph.
+
+Conforms to:
+- SPEC-001: §1 (Stage 6 Map of Content Reconciliation)
+- ADR-001: Modular Monolith Domain Integrity
 """
 
 from __future__ import annotations
@@ -19,7 +24,7 @@ from cresmo.domain.value_objects import NoteTitle
 
 
 class ReconcileMOCsUseCase:
-    """Stage 6: Map of Content reconciliation and graph topological governance."""
+    """Stage 6: Map of Content reconciliation and graph topological governance orchestrator."""
 
     def __init__(
         self,
@@ -27,6 +32,13 @@ class ReconcileMOCsUseCase:
         vault_port: VaultRepositoryPort,
         prompt_provider: PromptProviderPort | None = None,
     ) -> None:
+        """Initialize Stage 6 use case with required ports.
+
+        Args:
+            llm_port: Hexagonal port for generative LLM inference.
+            vault_port: Port providing atomic note queries and MOC persistence.
+            prompt_provider: Optional provider for decoupled prompt templates.
+        """
         self.llm_port = llm_port
         self.vault_port = vault_port
         if prompt_provider is None:

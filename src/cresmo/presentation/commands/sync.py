@@ -1,4 +1,14 @@
-"""Command handler for cresmo sync."""
+"""Command handler for cresmo sync.
+
+Polls and synchronizes video feeds from YouTube channels or playlists with lookback
+filtering and idempotent ledger tracking per Clean/Hexagonal Architecture.
+
+Conforms to:
+    - ADR-002: Presentation CLI & Humble Object
+    - ADR-003: PES Production Architecture & Telemetry
+    - SPEC-002: CLI Controller & Exit Codes
+    - SPEC-003: Channel Synchronization Specifications
+"""
 
 from __future__ import annotations
 
@@ -28,7 +38,11 @@ from cresmo.presentation.exit_codes import (
 
 
 def register_subparser(subparsers: argparse._SubParsersAction) -> None:
-    """Register 'sync' subcommand parser with argument options."""
+    """Register 'sync' subcommand parser with argument options.
+
+    Args:
+        subparsers: Root CLI subparsers action object.
+    """
     sync_parser = subparsers.add_parser(
         "sync",
         help="Poll and synchronize video feeds from a YouTube channel or playlist",
@@ -70,7 +84,14 @@ def register_subparser(subparsers: argparse._SubParsersAction) -> None:
 
 
 def handle_sync(args: argparse.Namespace) -> int:
-    """Synchronize recent video uploads from a YouTube channel feed."""
+    """Synchronize recent video uploads from a YouTube channel feed.
+
+    Args:
+        args: Parsed CLI argument namespace.
+
+    Returns:
+        Process exit code integer.
+    """
     try:
         settings = CresmoSettings()
         use_case = build_sync_channel_use_case(
