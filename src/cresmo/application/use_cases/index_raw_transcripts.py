@@ -12,6 +12,7 @@ Conforms to:
 from __future__ import annotations
 
 import logging
+import re
 from pathlib import Path
 
 from cresmo.application.ports import (
@@ -40,6 +41,40 @@ _INDICATIVE_PREFIXES = (
     "synthesis:",
 )
 
+_FORBIDDEN_PREFIX_REGEX = re.compile(
+    r"^\s*(?:\*{1,3}|#{1,6}\s*)?"
+    r"(?:key\s*concepts?|keywords?|palavras?-chave|conceitos?(?:-chave)?|tópicos?|termo-chave|linha\s*[12]|line\s*[12])"
+    r"\s*[:：\-–—]",
+    re.IGNORECASE,
+)
+
+
+def is_valid_raw_index_output(raw_output: str) -> bool:
+    """Validate that raw index output conforms to expected structure without forbidden labels.
+
+    Args:
+        raw_output: Generative LLM response text.
+
+    Returns:
+        True if response contains no forbidden prefixes and has valid structure.
+    """
+    clean = raw_output.strip()
+    lines = [line.strip() for line in clean.splitlines() if line.strip()]
+    if not lines:
+        return False
+    first_line = lines[0]
+    if _FORBIDDEN_PREFIX_REGEX.search(first_line):
+        return False
+    clean_first = first_line.strip("\"'`*#_")
+    if _FORBIDDEN_PREFIX_REGEX.search(clean_first):
+        return False
+
+    # Must have either multi-line structure (Line 1: concepts, Line 2+: synthesis)
+    # or single-line comma-delimited structure (<concept>, <synthesis>).
+    if len(lines) >= 2:
+        return True
+    return "," in first_line
+
 
 def _clean_text_line(text: str) -> str:
     """Strip markdown formatting, quotes, and conversational prefixes from a single line.
@@ -57,6 +92,23 @@ def _clean_text_line(text: str) -> str:
             clean = clean[len(prefix) :].strip().strip("\"'`*#_")
             lower = clean.lower()
     return clean.strip()
+
+
+def _clean_concept_line(line: str) -> str:
+    """Sanitize Line 1 into comma-separated concepts with zero labels or meta-prefixes.
+
+    Args:
+        line: Raw first line from LLM response.
+
+    Returns:
+        Comma-separated string of clean concept terms.
+    """
+    clean = _clean_text_line(line)
+    clean = _FORBIDDEN_PREFIX_REGEX.sub("", clean).strip().strip("\"'`*#_:")
+    parts = [p.strip().strip("\"'`*#_") for p in clean.split(",") if p.strip().strip("\"'`*#_")]
+    if parts:
+        return ", ".join(parts)
+    return clean or "Síntese Conceitual"
 
 
 def parse_raw_index_response(raw_output: str, fallback_title: str) -> tuple[str, str]:
@@ -84,7 +136,7 @@ def parse_raw_index_response(raw_output: str, fallback_title: str) -> tuple[str,
 
     # Multi-line format
     if len(lines) >= 2:
-        concept = _clean_text_line(lines[0])
+        concept = _clean_concept_line(lines[0])
         synthesis = " ".join(lines[1:])
         synthesis = _clean_text_line(synthesis)
         if not concept:
@@ -97,7 +149,7 @@ def parse_raw_index_response(raw_output: str, fallback_title: str) -> tuple[str,
     single_line = lines[0]
     if "," in single_line:
         part_c, part_s = single_line.split(",", 1)
-        concept = _clean_text_line(part_c)
+        concept = _clean_concept_line(part_c)
         synthesis = _clean_text_line(part_s)
         if not concept:
             concept = "Síntese Conceitual"
@@ -116,12 +168,16 @@ class IndexRawTranscriptsUseCase:
     Conforms to:
         - SPEC-001: Core Knowledge Synthesis Specifications (Incremental Indexing)
         - ADR-001: Modular Monolith Domain Integrity
+        - ADR-011: Zero Hardcoded Tunables and Self-Healing Output Validation
 
     Attributes:
         vault_repo: Repository port for reading raw transcripts and appending indexes.
         llm: LLM transformation port for key concept and synthesis extraction.
         prompt_provider: Provider port supplying indexing prompt templates.
-        max_chars: Maximum character limit from transcript body fed into LLM prompt.
+        max_chars: Maximum character limit from transcript body fed into LLM prompt (0 = full text).
+        temperature: Generation sampling temperature.
+        language: Target synthesis language.
+        max_rewrites: Maximum corrective rewrite attempts if output violates formatting.
     """
 
     def __init__(
@@ -129,20 +185,29 @@ class IndexRawTranscriptsUseCase:
         vault_repo: VaultRepositoryPort,
         llm: LLMTransformationPort,
         prompt_provider: PromptProviderPort,
-        max_chars: int = 3000,
+        max_chars: int = 0,
+        temperature: float = 0.2,
+        language: str = "Português do Brasil",
+        max_rewrites: int = 3,
     ) -> None:
-        """Initialize IndexRawTranscriptsUseCase with required ports.
+        """Initialize IndexRawTranscriptsUseCase with required ports and tunables.
 
         Args:
             vault_repo: Vault persistence adapter for raw transcripts and catalog indexes.
             llm: Language model adapter for conceptual extraction.
             prompt_provider: Provider delivering raw indexing prompt templates.
-            max_chars: Maximum character count from raw transcript body to feed prompt.
+            max_chars: Maximum character count from raw transcript body to feed prompt (0 = full text).
+            temperature: Sampling temperature for LLM transformation.
+            language: Target natural language for concept extraction and paratactic synthesis.
+            max_rewrites: Maximum corrective rewrite retries when output violates formatting.
         """
         self.vault_repo = vault_repo
         self.llm = llm
         self.prompt_provider = prompt_provider
         self.max_chars = max_chars
+        self.temperature = temperature
+        self.language = language
+        self.max_rewrites = max_rewrites
 
     def index_single_transcript(
         self,
@@ -152,12 +217,13 @@ class IndexRawTranscriptsUseCase:
         """Index a single raw transcript incrementally if not already indexed.
 
         Walkthrough:
-            1. Check whether content_id is already present in channel _canal.md index.
+            1. Check whether content_id is already present in channel _index_<channel>.md index.
             2. If indexed and not force, skip immediately (idempotent 0-token cost).
-            3. Format prompt with video title and first max_chars of body text.
-            4. Invoke LLM transformation contract.
-            5. Parse response into (key_concept, synthesis).
-            6. Construct RawIndexEntry and append to both _canal.md and brain.csv.
+            3. Format prompt with video title and transcript excerpt in target language.
+            4. Invoke LLM transformation contract with telemetry trace_id.
+            5. Self-healing loop: if output contains forbidden labels/prefixes, request rewrite.
+            6. Parse response into (comma_separated_concepts, synthesis).
+            7. Construct RawIndexEntry and append to both channel index and brain.csv.
 
         Args:
             transcript: The RawTranscript entity to index.
@@ -187,18 +253,45 @@ class IndexRawTranscriptsUseCase:
         )
 
         # Build prompt from bounded transcript excerpt to preserve context budget
-        excerpt = transcript.body.strip()[: self.max_chars]
+        excerpt = transcript.body.strip()
+        if self.max_chars and self.max_chars > 0:
+            excerpt = excerpt[: self.max_chars]
         sys_inst, user_prompt = self.prompt_provider.get_raw_index_prompt(
             video_title=title_str,
             transcript_excerpt=excerpt,
+            language=self.language,
         )
 
         try:
             raw_response = self.llm.transform(
                 prompt=user_prompt,
                 system_instruction=sys_inst,
-                temperature=0.2,
+                temperature=self.temperature,
+                trace_id=video_id_str,
             )
+
+            # Self-healing rewrite loop if LLM outputs forbidden prefixes or violates format
+            attempts = 0
+            while not is_valid_raw_index_output(raw_response) and attempts < self.max_rewrites:
+                attempts += 1
+                logger.info(
+                    "[IndexRaw] Attempt %d: output contains forbidden framing. Requesting format rewrite for '%s'.",
+                    attempts,
+                    video_id_str,
+                )
+                rewrite_prompt = (
+                    f"Your previous response violated output formatting guidelines because Line 1 contained prohibited labels, prefixes, or framing.\n\n"
+                    f"--- PREVIOUS OUTPUT ---\n{raw_response}\n\n"
+                    f"RE-WRITE THE OUTPUT STRICTLY IN {self.language.upper()} ADHERING TO THIS TWO-PART FORMAT:\n"
+                    f"Line 1: Comma-separated key concepts ONLY (e.g. 'Conceito 1, Conceito 2, Conceito 3'). Absolutely NO labels like 'Key concepts:', NO prefixes, NO colons, NO markdown.\n"
+                    f"Line 2+: Dense single paratactic synthesis paragraph in {self.language}."
+                )
+                raw_response = self.llm.transform(
+                    prompt=rewrite_prompt,
+                    system_instruction=sys_inst,
+                    temperature=self.temperature,
+                    trace_id=video_id_str,
+                )
         except Exception as exc:  # noqa: BLE001
             # Gracefully degrade on network/Ollama outage to prevent aborting batch runs
             logger.warning(

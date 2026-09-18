@@ -61,6 +61,7 @@ class SynthesizeAtomicBatchUseCase:
         vault_port: VaultRepositoryPort,
         batch_size: int = 5,
         prompt_provider: PromptProviderPort | None = None,
+        temperature: float | None = None,
     ) -> None:
         """Initialize Stage 5 use case with ports and batch sizing.
 
@@ -69,10 +70,12 @@ class SynthesizeAtomicBatchUseCase:
             vault_port: Port providing vault atomic note and index persistence.
             batch_size: Maximum count of entities per LLM prompt chunk (default: 5).
             prompt_provider: Optional provider for decoupled prompt templates.
+            temperature: Sampling temperature override for atomic note synthesis.
         """
         self.llm_port = llm_port
         self.vault_port = vault_port
         self.batch_size = max(1, batch_size)
+        self.temperature = temperature
         if prompt_provider is None:
             from cresmo.infrastructure.adapters.prompt_provider import JsonPromptProvider
 
@@ -138,7 +141,11 @@ class SynthesizeAtomicBatchUseCase:
                 compendium_body=compendium.body,
                 targets_json=json.dumps(targets_summary, ensure_ascii=False),
             )
-            response = self.llm_port.transform(prompt=prompt)
+            response = self.llm_port.transform(
+                prompt=prompt,
+                temperature=self.temperature,
+                trace_id=compendium.content_id.value,
+            )
             data = extract_json_data(response)
             if not isinstance(data, list):
                 raise DomainValidationError(

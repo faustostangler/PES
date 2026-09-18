@@ -31,6 +31,7 @@ class ReconcileMOCsUseCase:
         llm_port: LLMTransformationPort,
         vault_port: VaultRepositoryPort,
         prompt_provider: PromptProviderPort | None = None,
+        temperature: float | None = None,
     ) -> None:
         """Initialize Stage 6 use case with required ports.
 
@@ -38,9 +39,11 @@ class ReconcileMOCsUseCase:
             llm_port: Hexagonal port for generative LLM inference.
             vault_port: Port providing atomic note queries and MOC persistence.
             prompt_provider: Optional provider for decoupled prompt templates.
+            temperature: Sampling temperature override for MOC reconciliation.
         """
         self.llm_port = llm_port
         self.vault_port = vault_port
+        self.temperature = temperature
         if prompt_provider is None:
             from cresmo.infrastructure.adapters.prompt_provider import JsonPromptProvider
 
@@ -68,7 +71,11 @@ class ReconcileMOCsUseCase:
             notes_json=json.dumps(note_summaries, ensure_ascii=False),
         )
 
-        response = self.llm_port.transform(prompt=prompt)
+        response = self.llm_port.transform(
+            prompt=prompt,
+            temperature=self.temperature,
+            session_id="stage6_mocs",
+        )
         data = extract_json_data(response)
         if not isinstance(data, list):
             raise DomainValidationError(

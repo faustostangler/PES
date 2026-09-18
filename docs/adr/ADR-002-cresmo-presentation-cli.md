@@ -292,6 +292,26 @@ To preserve architectural purity and prevent gradual erosion of the Hexagonal an
 *   **Violation**: Degrada a Developer Experience (DX) e a navegabilidade do código (*shotgun surgery*), aumenta exponencialmente a carga cognitiva para rastrear um fluxo de execução simples e dilui a fronteira do caso de uso.
 *   **Prescribed Pattern**: Princípio de Alta Coesão (*High Cohesion* do GRASP, §8.11) e Clean Code: manter partes fortemente relacionadas juntas no mesmo módulo, extraindo componentes apenas quando houver justificativa clara de reuso por múltiplos atores ou fronteira explícita de arquitetura hexagonal (Portas e Adaptadores).
 
+### 9.17 Anti-Pattern: Hardcoded Prompts in Python Logic (Prompts Embutidos no Código)
+*   **Definition**: Definir texto bruto de prompts, templates ou fallbacks multilinha diretamente em arquivos de código Python (`.py`) em vez de arquivos de catálogo de recursos centralizados (`prompts.json`).
+*   **Violation**: Viola o princípio de Single Source of Truth (SSOT) e impede governança independente de prompts em relação ao ciclo de vida do código (ADR-011, §1.1).
+*   **Prescribed Pattern**: Desacoplamento estrito de prompts em catálogo JSON versionado (`src/cresmo/infrastructure/resources/prompts.json`) intermediado por `PromptProviderPort` e `JsonPromptProvider`.
+
+### 9.18 Anti-Pattern: Scattered Magic Numbers & Operational Tunables (Parâmetros Operacionais Hardcoded)
+*   **Definition**: Hardcodificar parâmetros de inferência (`temperature=0.2`), idiomas alvo ou limites operacionais no corpo de casos de uso ou adaptadores.
+*   **Violation**: Violação direta do 12-Factor App (Factor III: Config). Impede ajuste fino e portabilidade entre ambientes sem modificação do código-fonte (ADR-011, §1.2).
+*   **Prescribed Pattern**: Configuração centralizada e tipada via Pydantic (`CresmoSettings` em `config.py`) injetada explicitamente via Inversão de Controle e Injeção de Dependências.
+
+### 9.19 Anti-Pattern: Asymmetric or Missing Observability (Observabilidade Oculta ou Desigual)
+*   **Definition**: Instrumentar telemetria (Langfuse, métricas de tokens, latência) apenas em provedores de nuvem (Gemini), tratando adaptadores locais (Ollama) como caixas-pretas opacas.
+*   **Violation**: Degrada a visibilidade SRE, impede benchmarking comparativo de custo/latência entre inferência local e em nuvem e corrompe o rastreamento distribuído (ADR-011, §1.3).
+*   **Prescribed Pattern**: Paridade total de observabilidade (`@observe(as_type="generation")`) em todos os adaptadores de LLM (`GeminiLLMAdapter` e `OllamaLLMAdapter`) com extração de métricas de tokens e durações.
+
+### 9.20 Anti-Pattern: Passive Acceptance of Malformed Generative Output (Aceitação Passiva de Saída Generativa Inválida)
+*   **Definition**: Tolerar saídas de LLM contendo metarótulos proibidos (ex.: `Key concepts:`, `Palavras-chave:`) ou depender exclusivamente de sanitização permissiva downstream sem realimentação corretiva ao modelo.
+*   **Violation**: Degrada a pureza dos metadados e da taxonomia no Knowledge Vault e gera poluição em índices e links semânticos (ADR-011, §1.4).
+*   **Prescribed Pattern**: Validação estrutural de saída com loop autocorretivo (*self-healing retry loop*) que repassa o erro para o modelo em um loop delimitado (`max_rewrites`), garantindo conformidade contratual antes da persistência.
+
 ---
 
 ## 10. References

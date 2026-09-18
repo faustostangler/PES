@@ -103,3 +103,71 @@ class TestOllamaLLMAdapter:
             mock_urlopen.side_effect = urllib.error.URLError("Connection refused")
 
             assert adapter.is_available() is False
+
+    def test_transform_uses_configured_default_temperature(self) -> None:
+        """Verify that default_temperature passed in constructor is used when temperature is None."""
+        adapter = OllamaLLMAdapter(
+            base_url="http://localhost:11434",
+            model="qwen2.5:7b",
+            default_temperature=0.35,
+        )
+
+        mock_response_data = {
+            "response": "Clean output",
+            "done": True,
+        }
+
+        with patch("urllib.request.urlopen") as mock_urlopen:
+            mock_resp = MagicMock()
+            mock_resp.read.return_value = json.dumps(mock_response_data).encode("utf-8")
+            mock_resp.__enter__.return_value = mock_resp
+            mock_urlopen.return_value = mock_resp
+
+            adapter.transform("Some prompt", temperature=None)
+
+            req = mock_urlopen.call_args[0][0]
+            body = json.loads(req.data.decode("utf-8"))
+            assert body["options"]["temperature"] == 0.35
+
+    def test_transform_emits_langfuse_generation_telemetry(self) -> None:
+        """Verify that OllamaLLMAdapter passes token counts and metrics to Langfuse client."""
+        mock_langfuse = MagicMock()
+        adapter = OllamaLLMAdapter(
+            base_url="http://localhost:11434",
+            model="qwen2.5:7b",
+            langfuse_client=mock_langfuse,
+        )
+
+        mock_response_data = {
+            "response": "Observed output",
+            "done": True,
+            "prompt_eval_count": 50,
+            "eval_count": 120,
+            "total_duration": 450_000_000,
+            "eval_duration": 400_000_000,
+        }
+
+        with patch("urllib.request.urlopen") as mock_urlopen:
+            mock_resp = MagicMock()
+            mock_resp.read.return_value = json.dumps(mock_response_data).encode("utf-8")
+            mock_resp.__enter__.return_value = mock_resp
+            mock_urlopen.return_value = mock_resp
+
+            result = adapter.transform(
+                "Telemetry test prompt",
+                trace_id="cresmo-trace-1",
+                session_id="session-42",
+            )
+
+            assert result == "Observed output"
+            mock_langfuse.update_current_generation.assert_called_once()
+            call_kwargs = mock_langfuse.update_current_generation.call_args[1]
+            assert call_kwargs["usage_details"] == {
+                "input": 50,
+                "output": 120,
+                "total": 170,
+            }
+            assert call_kwargs["metadata"]["total_duration_ms"] == 450.0
+            assert call_kwargs["metadata"]["trace_id"] == "cresmo-trace-1"
+            assert call_kwargs["metadata"]["session_id"] == "session-42"
+

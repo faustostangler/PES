@@ -38,6 +38,7 @@ class ExpandLongitudinalSynchronicUseCase:
         llm_port: LLMTransformationPort,
         vault_port: VaultRepositoryPort,
         prompt_provider: PromptProviderPort | None = None,
+        temperature: float | None = None,
     ) -> None:
         """Initialize Stage 3 use case with required Hexagonal ports.
 
@@ -45,9 +46,11 @@ class ExpandLongitudinalSynchronicUseCase:
             llm_port: Hexagonal port for generative LLM inference.
             vault_port: Port providing enriched compendium persistence.
             prompt_provider: Optional provider for decoupled prompt templates.
+            temperature: Sampling temperature override for longitudinal/synchronic expansion.
         """
         self.llm_port = llm_port
         self.vault_port = vault_port
+        self.temperature = temperature
         if prompt_provider is None:
             from cresmo.infrastructure.adapters.prompt_provider import JsonPromptProvider
 
@@ -75,12 +78,20 @@ class ExpandLongitudinalSynchronicUseCase:
             compendium_body=compendium.body,
             complementary_info=compendium.complementary_info,
         )
-        res_long = self.llm_port.transform(prompt=prompt_long)
+        res_long = self.llm_port.transform(
+            prompt=prompt_long,
+            temperature=self.temperature,
+            trace_id=compendium.content_id.value,
+        )
 
         prompt_wide = self.prompt_provider.get_wide_expander_prompt(
             current_text=res_long,
         )
-        res_wide = self.llm_port.transform(prompt=prompt_wide)
+        res_wide = self.llm_port.transform(
+            prompt=prompt_wide,
+            temperature=self.temperature,
+            trace_id=compendium.content_id.value,
+        )
 
         m_comp = _COMPLEMENTARY_REGEX.search(res_wide)
         if m_comp:

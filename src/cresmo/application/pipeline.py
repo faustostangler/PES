@@ -120,6 +120,7 @@ class CresmoPipeline:
                 base_url=self.settings.ollama_base_url,
                 model=self.settings.ollama_model,
                 timeout_seconds=self.settings.ollama_timeout_seconds,
+                default_temperature=self.settings.raw_index_temperature,
             )
         else:
             self.indexing_llm_port = self.llm_port
@@ -134,31 +135,38 @@ class CresmoPipeline:
             llm=self.indexing_llm_port,
             prompt_provider=self.prompt_provider,
             max_chars=self.settings.raw_index_max_chars,
+            temperature=self.settings.raw_index_temperature,
+            language=self.settings.language,
         )
         self.fill_gaps_fluid_prose = FillGapsFluidProseUseCase(
             llm_port=self.llm_port,
             vault_port=self.vault_port,
             prompt_provider=self.prompt_provider,
+            temperature=self.settings.llm_temperature,
         )
         self.expand_longitudinal_synchronic = ExpandLongitudinalSynchronicUseCase(
             llm_port=self.llm_port,
             vault_port=self.vault_port,
             prompt_provider=self.prompt_provider,
+            temperature=self.settings.llm_temperature,
         )
         self.discover_atomic_inventory = DiscoverAtomicInventoryUseCase(
             llm_port=self.llm_port,
             prompt_provider=self.prompt_provider,
+            temperature=0.0,
         )
         self.synthesize_atomic_batch = SynthesizeAtomicBatchUseCase(
             llm_port=self.llm_port,
             vault_port=self.vault_port,
             batch_size=batch_size,
             prompt_provider=self.prompt_provider,
+            temperature=self.settings.llm_temperature,
         )
         self.reconcile_mocs = ReconcileMOCsUseCase(
             llm_port=self.llm_port,
             vault_port=self.vault_port,
             prompt_provider=self.prompt_provider,
+            temperature=self.settings.llm_temperature,
         )
         self.unify_duplicate_notes = UnifyDuplicateNotesUseCase(
             vault_port=self.vault_port,

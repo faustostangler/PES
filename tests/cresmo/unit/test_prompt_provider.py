@@ -422,11 +422,12 @@ class TestJsonPromptProvider:
 
     def test_get_raw_index_prompt_formats_system_and_user_prompt(self) -> None:
         provider = JsonPromptProvider()
+        assert "raw_index" in provider._templates
         sys_inst, user_prompt = provider.get_raw_index_prompt(
             video_title="Pareto Principle",
             transcript_excerpt="Pareto analysis shows 80/20 distribution.",
         )
-        assert "Key Concept" in sys_inst
+        assert "key concept" in sys_inst.lower()
         assert "paratactic" in sys_inst.lower()
         assert "Video Title: Pareto Principle" in user_prompt
         assert "Pareto analysis shows 80/20 distribution." in user_prompt

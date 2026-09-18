@@ -309,6 +309,27 @@ class CresmoSettings(BaseSettings):
         description="HTTP timeout in seconds for local Ollama inference requests.",
     )
     raw_index_max_chars: int = Field(
-        default=3000,
-        description="Maximum characters of transcript body passed to LLM for conceptual synthesis.",
+        default=0,
+        description="Maximum characters of transcript body passed to LLM for conceptual synthesis, zero means full text.",
+    )
+    language: str = Field(
+        default="Português do Brasil",
+        validation_alias=AliasChoices("language", "CRESMO_LANGUAGE", "DEFAULT_LANGUAGE"),
+        description="Target generation language for synthesis, compendiums, and conceptual indexing.",
+    )
+    llm_temperature: float = Field(
+        default=0.2,
+        ge=0.0,
+        le=2.0,
+        validation_alias=AliasChoices("llm_temperature", "CRESMO_LLM_TEMPERATURE", "LLM_TEMPERATURE"),
+        description="Default sampling temperature for generative synthesis and expansion stages.",
+    )
+    raw_index_temperature: float = Field(
+        default=0.2,
+        ge=0.0,
+        le=2.0,
+        validation_alias=AliasChoices(
+            "raw_index_temperature", "CRESMO_RAW_INDEX_TEMPERATURE", "RAW_INDEX_TEMPERATURE"
+        ),
+        description="Sampling temperature for raw transcript conceptual indexing.",
     )

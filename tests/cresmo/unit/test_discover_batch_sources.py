@@ -22,7 +22,7 @@ from cresmo.application.use_cases.discover_batch_sources import (
     load_transcript_files,
     read_manifest_lines,
 )
-from cresmo.domain.value_objects import ContentId, DiscoveredMediaItem
+from cresmo.domain.value_objects import ContentId, DiscoveredMediaItem, SyncFilterCriteria
 from cresmo.infrastructure.config import CresmoSettings
 
 
@@ -986,4 +986,149 @@ class TestDiscoverBatchSourcesUseCase:
         assert len(sources) == 1
         assert "safePrio123" in sources[0].target
         assert any("Warning: Failed to probe" in n for n in notifications)
+
+    def test_channels_are_probed_in_strict_alphabetical_order(
+        self, tmp_path: Path
+    ) -> None:
+        """Verify channels from manifest/raw are probed in case-insensitive alphabetical order (ADR-012)."""
+        playlist_file = tmp_path / "playlist.txt"
+        playlist_file.write_text(
+            "https://www.youtube.com/@ZetaChannel\n"
+            "https://www.youtube.com/@AlphaChannel\n"
+            "https://www.youtube.com/@BetaChannel\n",
+            encoding="utf-8",
+        )
+
+        queried_channels: list[str] = []
+        mock_ingestion = MagicMock()
+
+        def _fake_discover(q):
+            queried_channels.append(q.channel_url)
+            return []
+
+        mock_ingestion.discover_channel_feed.side_effect = _fake_discover
+
+        use_case = DiscoverBatchSourcesUseCase(
+            media_ingestion_port=mock_ingestion,
+            settings=CresmoSettings(_env_file=None),
+        )
+
+        query = BatchDiscoveryQuery(
+            playlist_path=playlist_file,
+            playlist_priority_path=tmp_path / "nonexistent.txt",  # Isolate from real data/
+            raw_dir=tmp_path / "raw",
+            scan_raw=False,
+            enable_channel_crawler=True,
+            discovery_workers=1,  # Serial execution to assert order directly
+        )
+
+        list(use_case.execute(query))
+
+        assert len(queried_channels) == 3
+        # Strict alphabetical check
+        assert "@AlphaChannel" in queried_channels[0]
+        assert "@BetaChannel" in queried_channels[1]
+        assert "@ZetaChannel" in queried_channels[2]
+
+    def test_discover_sources_filtered_by_channel(self, tmp_path: Path) -> None:
+        """Verify only specified channels are probed when channel filter is active."""
+        playlist_file = tmp_path / "playlist.txt"
+        playlist_file.write_text(
+            "https://www.youtube.com/@AlphaChannel\n"
+            "https://www.youtube.com/@BetaChannel\n",
+            encoding="utf-8",
+        )
+
+        queried_channels: list[str] = []
+        mock_ingestion = MagicMock()
+        mock_ingestion.discover_channel_feed.side_effect = lambda q: (
+            queried_channels.append(q.channel_url) or []
+        )
+
+        use_case = DiscoverBatchSourcesUseCase(
+            media_ingestion_port=mock_ingestion,
+            settings=CresmoSettings(_env_file=None),
+        )
+
+        query = BatchDiscoveryQuery(
+            playlist_path=playlist_file,
+            playlist_priority_path=tmp_path / "empty_prio.txt",
+            priority_texts_dir=tmp_path / "empty_texts",
+            raw_dir=tmp_path / "raw",
+            scan_raw=False,
+            enable_channel_crawler=True,
+            filter_criteria=SyncFilterCriteria(channels=("alphachannel",)),
+        )
+
+        list(use_case.execute(query))
+
+        assert len(queried_channels) == 1
+        assert "@AlphaChannel" in queried_channels[0]
+
+    def test_discover_sources_filtered_by_category_domain_and_volatility(
+        self, tmp_path: Path
+    ) -> None:
+        """Verify category filter correctly matches domain names and volatility types."""
+        raw_dir = tmp_path / "raw"
+        raw_dir.mkdir()
+        (raw_dir / "vid1.md").write_text(
+            "---\ntitle: Political News\nchannel: https://www.youtube.com/@ancapsu\nvideo_id: pol123\n---\nText",
+            encoding="utf-8",
+        )
+        (raw_dir / "vid2.md").write_text(
+            "---\ntitle: Math Lesson\nchannel: https://www.youtube.com/@3blue1brown\nvideo_id: math123\n---\nText",
+            encoding="utf-8",
+        )
+
+        mock_ingestion = MagicMock()
+        mock_ingestion.discover_channel_feed.return_value = []
+
+        use_case = DiscoverBatchSourcesUseCase(
+            media_ingestion_port=mock_ingestion,
+            settings=CresmoSettings(_env_file=None),
+        )
+
+        # Filter strictly by 'politics_br'; isolate from real settings with empty paths
+        query = BatchDiscoveryQuery(
+            playlist_path=tmp_path / "empty_playlist.txt",
+            playlist_priority_path=tmp_path / "empty_prio.txt",
+            priority_texts_dir=tmp_path / "empty_texts",
+            raw_dir=raw_dir,
+            scan_raw=True,
+            enable_channel_crawler=False,
+            filter_criteria=SyncFilterCriteria(categories=("politics_br",)),
+        )
+
+        sources = list(use_case.execute(query))
+        assert len(sources) == 1
+        assert "vid1.md" in sources[0].target
+
+    def test_discover_sources_filtered_by_video(self, tmp_path: Path) -> None:
+        """Verify video filter isolates target video identifier."""
+        playlist_file = tmp_path / "playlist.txt"
+        playlist_file.write_text(
+            "https://www.youtube.com/watch?v=targetVid123\n"
+            "https://www.youtube.com/watch?v=otherVid999\n",
+            encoding="utf-8",
+        )
+
+        use_case = DiscoverBatchSourcesUseCase(
+            media_ingestion_port=MagicMock(),
+            settings=CresmoSettings(_env_file=None),
+        )
+
+        query = BatchDiscoveryQuery(
+            playlist_path=playlist_file,
+            playlist_priority_path=tmp_path / "empty_prio.txt",
+            priority_texts_dir=tmp_path / "empty_texts",
+            raw_dir=tmp_path / "raw",
+            scan_raw=False,
+            enable_channel_crawler=False,
+            filter_criteria=SyncFilterCriteria(video_ids=("targetVid123",)),
+        )
+
+        sources = list(use_case.execute(query))
+        assert len(sources) == 1
+        assert "targetVid123" in sources[0].target
+
 

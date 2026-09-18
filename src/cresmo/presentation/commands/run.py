@@ -34,6 +34,7 @@ from cresmo.domain.exceptions import (
     PreflightError,
     RateLimitExceededError,
 )
+from cresmo.domain.value_objects import SyncFilterCriteria
 from cresmo.infrastructure.config import CresmoSettings
 from cresmo.presentation.composition import (
     build_discover_batch_sources_use_case,
@@ -129,6 +130,43 @@ def register_subparser(subparsers: argparse._SubParsersAction) -> None:
         action="store_true",
         default=False,
         help="Use Gemini API for raw transcript conceptual indexing instead of local Ollama",
+    )
+    # ADR-012: Multi-criteria filtering flags
+    run_parser.add_argument(
+        "--channel",
+        dest="channels",
+        nargs="*",
+        default=None,
+        metavar="CHANNEL",
+        help=(
+            "Filter batch discovery to one or more channel names, handles, or URLs. "
+            "Accepts comma-separated values (e.g. --channel Ancapsu,Mises)."
+        ),
+    )
+    run_parser.add_argument(
+        "--category",
+        "-c",
+        dest="categories",
+        nargs="*",
+        default=None,
+        metavar="CATEGORY",
+        help=(
+            "Filter batch discovery by domain category or volatility type. "
+            "Domain names: politics_br, tech_ai, history, philosophy, finance, "
+            "engineering, architecture, health, entertainment, geopolitics. "
+            "Volatility: perennial, volatile. Accepts comma-separated values."
+        ),
+    )
+    run_parser.add_argument(
+        "--video",
+        dest="video_ids",
+        nargs="*",
+        default=None,
+        metavar="VIDEO_ID",
+        help=(
+            "Restrict batch discovery to specific video IDs or YouTube watch URLs. "
+            "Accepts comma-separated values."
+        ),
     )
     run_parser.set_defaults(handler=handle_run)
 
@@ -381,6 +419,12 @@ def handle_run(args: argparse.Namespace) -> int:
             else getattr(settings, "enable_channel_crawler", True)
         )
 
+        filter_criteria = SyncFilterCriteria.from_strings(
+            channels=getattr(args, "channels", None) or [],
+            categories=getattr(args, "categories", None) or [],
+            video_ids=getattr(args, "video_ids", None) or [],
+        )
+
         query = BatchDiscoveryQuery(
             explicit_manifest=args.manifest,
             scan_raw=not args.no_scan_raw,
@@ -388,6 +432,7 @@ def handle_run(args: argparse.Namespace) -> int:
             channel_max_videos=args.channel_max_videos,
             discovery_workers=settings.channel_discovery_workers,
             enable_channel_crawler=enable_crawl,
+            filter_criteria=filter_criteria,
         )
 
         if args.dry_run:

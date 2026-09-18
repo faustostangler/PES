@@ -11,7 +11,7 @@ from unittest.mock import MagicMock
 
 from cresmo.application.use_cases.index_raw_transcripts import IndexRawTranscriptsUseCase
 from cresmo.domain.entities import RawTranscript
-from cresmo.domain.value_objects import ContentId, NoteTitle
+from cresmo.domain.value_objects import ContentId
 from cresmo.infrastructure.adapters.prompt_provider import JsonPromptProvider
 from tests.doubles.mock_adapters import InMemoryVaultAdapter, MockLLMAdapter
 
@@ -37,7 +37,7 @@ class TestIndexRawTranscriptsUseCase:
         transcript = RawTranscript(
             content_id=ContentId("vid11111111"),
             channel_name="Political Theory",
-            title=NoteTitle("Vilfredo Pareto and Elites"),
+            title="Vilfredo Pareto and Elites",
             body="A teoria sociológica de Vilfredo Pareto enfatiza a inevitabilidade das oligarquias.",
             source_url="https://youtube.com/watch?v=vid11111111",
         )
@@ -70,7 +70,7 @@ class TestIndexRawTranscriptsUseCase:
         transcript = RawTranscript(
             content_id=ContentId("vid11111111"),
             channel_name="Political Theory",
-            title=NoteTitle("Vilfredo Pareto and Elites"),
+            title="Vilfredo Pareto and Elites",
             body="Body text...",
         )
 
@@ -102,7 +102,7 @@ class TestIndexRawTranscriptsUseCase:
         transcript = RawTranscript(
             content_id=ContentId("vid22222222"),
             channel_name="Economics",
-            title=NoteTitle("Nash Equilibrium"),
+            title="Nash Equilibrium",
             body="Jogo não-cooperativo...",
         )
 
@@ -126,7 +126,7 @@ class TestIndexRawTranscriptsUseCase:
         transcript = RawTranscript(
             content_id=ContentId("vid33333333"),
             channel_name="Tech Channel",
-            title=NoteTitle("AI Systems"),
+            title="AI Systems",
             body="AI body...",
         )
 
@@ -160,13 +160,13 @@ class TestIndexRawTranscriptsUseCase:
         t1 = RawTranscript(
             content_id=ContentId("vid11111111"),
             channel_name="Canal Teste",
-            title=NoteTitle("Video 1"),
+            title="Video 1",
             body="Conteúdo 1",
         )
         t2 = RawTranscript(
             content_id=ContentId("vid22222222"),
             channel_name="Canal Teste",
-            title=NoteTitle("Video 2"),
+            title="Video 2",
             body="Conteúdo 2",
         )
         vault.save_raw_transcript(t1)
@@ -181,4 +181,103 @@ class TestIndexRawTranscriptsUseCase:
         # Calling again should skip already indexed
         entries_again = use_case.index_channel("Canal Teste")
         assert len(entries_again) == 0
+
+    def test_self_healing_rewrite_loop_triggered_when_forbidden_prefix_returned(self) -> None:
+        """Verify that when LLM returns forbidden prefix, a rewrite is requested and succeeds."""
+        vault = InMemoryVaultAdapter()
+        # First response has forbidden "Key concepts:" prefix; second is clean comma-separated
+        llm = MockLLMAdapter(
+            responses=[
+                "Key concepts: Circulação de Elites\nMinorias burocráticas governam as instituições políticas.",
+                "Circulação de Elites, Teoria das Elites\nMinorias burocráticas governam as instituições políticas.",
+            ]
+        )
+        prompt_provider = JsonPromptProvider()
+
+        use_case = IndexRawTranscriptsUseCase(
+            vault_repo=vault,
+            llm=llm,
+            prompt_provider=prompt_provider,
+            temperature=0.2,
+            language="Português do Brasil",
+            max_rewrites=3,
+        )
+
+        transcript = RawTranscript(
+            content_id=ContentId("vid44444444"),
+            channel_name="Political Theory",
+            title="Vilfredo Pareto and Elites",
+            body="A teoria sociológica de Vilfredo Pareto...",
+        )
+
+        entry = use_case.index_single_transcript(transcript)
+
+        assert entry is not None
+        assert entry.key_concept == "Circulação de Elites, Teoria das Elites"
+        # Verify LLM was invoked twice (initial + 1 rewrite)
+        assert len(llm.call_history) == 2
+
+    def test_self_healing_rewrite_loop_exhausts_retries_and_defensively_cleans(self) -> None:
+        """Verify that when LLM keeps returning forbidden prefix, retries stop at max_rewrites and cleans."""
+        vault = InMemoryVaultAdapter()
+        llm = MockLLMAdapter(
+            responses=[
+                "Palavras-chave: Conceito Teórico\nSíntese analítica.",
+                "Palavras-chave: Conceito Teórico\nSíntese analítica.",
+                "Palavras-chave: Conceito Teórico\nSíntese analítica.",
+            ]
+        )
+        prompt_provider = JsonPromptProvider()
+
+        use_case = IndexRawTranscriptsUseCase(
+            vault_repo=vault,
+            llm=llm,
+            prompt_provider=prompt_provider,
+            max_rewrites=2,
+        )
+
+        transcript = RawTranscript(
+            content_id=ContentId("vid55555555"),
+            channel_name="Theory",
+            title="Theoretical Notes",
+            body="Conteúdo...",
+        )
+
+        entry = use_case.index_single_transcript(transcript)
+
+        assert entry is not None
+        # Defensively cleaned even though rewrite loop exhausted
+        assert entry.key_concept == "Conceito Teórico"
+        # Initial call + 2 rewrites = 3 calls
+        assert len(llm.call_history) == 3
+
+    def test_index_single_transcript_passes_configured_temperature(self) -> None:
+        """Verify that configured temperature is passed to the LLM port."""
+        vault = InMemoryVaultAdapter()
+        mock_llm = MagicMock()
+        mock_llm.transform.return_value = "Conceito\nSíntese paratática explicativa."
+        prompt_provider = JsonPromptProvider()
+
+        use_case = IndexRawTranscriptsUseCase(
+            vault_repo=vault,
+            llm=mock_llm,
+            prompt_provider=prompt_provider,
+            temperature=0.35,
+            language="Português do Brasil",
+        )
+
+        transcript = RawTranscript(
+            content_id=ContentId("vid66666666"),
+            channel_name="Science",
+            title="Physics",
+            body="Physics transcript...",
+        )
+
+        entry = use_case.index_single_transcript(transcript)
+
+        assert entry is not None
+        mock_llm.transform.assert_called_once()
+        call_kwargs = mock_llm.transform.call_args[1]
+        assert call_kwargs["temperature"] == 0.35
+
 

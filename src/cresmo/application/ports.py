@@ -135,6 +135,10 @@ class LLMTransformationPort(ABC):
         prompt: str,
         system_instruction: str | None = None,
         temperature: float | None = None,
+        *,
+        trace_id: str | None = None,
+        session_id: str | None = None,
+        user_id: str | None = None,
     ) -> str:
         """Execute text transformation given input prompt and optional system directive.
 
@@ -142,6 +146,9 @@ class LLMTransformationPort(ABC):
             prompt: Formatted user prompt or synthesis task.
             system_instruction: Optional system instruction guiding model persona.
             temperature: Sampling temperature override.
+            trace_id: Optional trace ID (e.g. ContentId or session key).
+            session_id: Pipeline session identifier.
+            user_id: Operator or channel identifier.
 
         Returns:
             Generated response text string.
@@ -558,12 +565,14 @@ class PromptProviderPort(ABC):
         self,
         video_title: str,
         transcript_excerpt: str,
+        language: str = "Português do Brasil",
     ) -> tuple[str, str]:
         """Format (system_instruction, user_prompt) for raw transcript paratactic conceptual synthesis.
 
         Args:
             video_title: Raw video title string.
             transcript_excerpt: First N characters of raw spoken transcript.
+            language: Target synthesis language.
 
         Returns:
             Tuple containing system instruction and user prompt string.

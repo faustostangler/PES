@@ -59,7 +59,23 @@ class TestCresmoSettings:
         assert settings.ollama_base_url == "http://localhost:11434"
         assert settings.ollama_model == "qwen2.5:7b"
         assert settings.indexing_provider == "ollama"
-        assert settings.raw_index_max_chars == 3000
+        assert settings.raw_index_max_chars == 0
+        assert settings.language == "Português do Brasil"
+        assert settings.llm_temperature == 0.2
+        assert settings.raw_index_temperature == 0.2
+
+    def test_temperature_validation_bounds(self) -> None:
+        import pytest
+        from pydantic import ValidationError
+
+        with pytest.raises(ValidationError):
+            CresmoSettings(llm_temperature=-0.1)
+
+        with pytest.raises(ValidationError):
+            CresmoSettings(llm_temperature=2.1)
+
+        with pytest.raises(ValidationError):
+            CresmoSettings(raw_index_temperature=-0.5)
 
     def test_ensure_directories_creates_master_dir(self, tmp_path: Path) -> None:
         settings = CresmoSettings(data_dir=tmp_path / "data", vault_dir=tmp_path / "vault")

@@ -103,6 +103,7 @@ class GeminiLLMAdapter(LLMTransformationPort):
         max_output_tokens: int = 8192,
         genai_client: Any | None = None,
         langfuse_client: Langfuse | None = None,
+        default_temperature: float = 0.2,
     ) -> None:
         """Initialize GeminiLLMAdapter with model configuration and telemetry clients.
 
@@ -113,10 +114,12 @@ class GeminiLLMAdapter(LLMTransformationPort):
             max_output_tokens: Maximum token output limit per generation.
             genai_client: Optional injected GenAI client for testing.
             langfuse_client: Optional injected Langfuse client for testing.
+            default_temperature: Default generation sampling temperature when not overridden.
         """
         self.model_name = model_name
         self.fallback_model_name = fallback_model_name
         self.max_output_tokens = max_output_tokens
+        self.default_temperature = default_temperature
 
         # Step 1: Initialize Langfuse client if configured
         if langfuse_client is not None:
@@ -156,7 +159,7 @@ class GeminiLLMAdapter(LLMTransformationPort):
         Returns:
             Generated response text.
         """
-        eff_temperature = 0.2 if temperature is None else temperature
+        eff_temperature = self.default_temperature if temperature is None else temperature
         config = types.GenerateContentConfig(
             temperature=eff_temperature,
             max_output_tokens=self.max_output_tokens,
