@@ -144,10 +144,21 @@ During architectural review of the use case implementation ([`src/cresmo/applica
   - Clean semantic identifiers (`video_id`, `title`, `sort_date`, `frontmatter`) devoid of Hungarian type tags.
 
 ### 5.7 Unwarmed Local Model & Socket Timeout on Cold Start (Ollama / Local LLM Latency)
-- **Anti-Pattern:** Initiating real generative domain workloads directly against a cold local LLM daemon (e.g., Ollama, llama.cpp, vLLM) on application bootstrap. When a model (e.g., Qwen 2.5 7B, ~4.7 GB GGUF) is not resident in memory, the operating system and daemon must page weights from disk into GPU VRAM. This cold-loading latency (typically 30s to 120s depending on bus speed and model size) routinely exceeds standard HTTP read timeouts (e.g., 60s or 120s), resulting in unhandled socket read timeouts (`httpx.ReadTimeout`) and aborted batch jobs on the very first item.
-- **Architectural Remedy:** Introduce an explicit, synchronous preloading barrier (`warmup()`) declared on `LLMTransformationPort` and implemented in `OllamaLLMAdapter`:
-  - When the active LLM provider is `ollama`, the CLI / pipeline invokes `llm_adapter.warmup()` synchronously before dispatching any domain tasks.
-  - The adapter issues a non-generative HTTP POST to `/api/generate` with an empty prompt (`""`), the configured `keep_alive` parameter (e.g., `"1h"` to pin weights in VRAM for subsequent queries), and a dedicated, generous `warmup_timeout_seconds` (default: 300.0s).
-  - The call blocks synchronously until Ollama completes model allocation and returns `{"done": true}`. Only after this handshake succeeds does the orchestrator proceed to domain execution, completely eliminating cold-start socket timeouts.
+- **Anti-Pattern (Head-of-Line Blocking / Cold Start Timeout):** Initiating real generative domain workloads directly against a cold local LLM daemon (e.g., Ollama, llama.cpp, vLLM) on application bootstrap. When a model (e.g., Qwen 2.5 7B, ~4.7 GB GGUF) is not resident in memory, the operating system and daemon must page weights from disk into GPU VRAM. This cold-loading latency (typically 30s to 120s depending on bus speed and model size) routinely exceeds standard HTTP read timeouts (e.g., 60s or 120s), resulting in unhandled socket read timeouts (`httpx.ReadTimeout`) and aborted batch jobs on the very first item. Conversely, executing this warmup *synchronously* at the very top of command handlers blocks CPU and network I/O tasks (such as crawling channel playlists, parsing manifests, and reading directory trees), leaving the CPU idle while waiting for VRAM allocation.
+- **Architectural Remedy (Early Background Warmup + Lazy Rendezvous Barrier):**
+  We establish a two-phase, thread-safe asynchronous synchronization pattern across `LLMTransformationPort` and `OllamaLLMAdapter`:
+  1. **Phase 1: Early Non-blocking Dispatch (`warmup()`):**
+     Invoked as one of the first statements in CLI handlers (`handle_index_raw`, `handle_run`) immediately after initializing the pipeline or use case. The adapter acquires `_warmup_lock` (RLock), clears `_warmup_event`, and spawns a background daemon thread targeting `_execute_warmup(effective_timeout)`. This immediately initiates the non-generative preloading HTTP POST (`/api/generate` with `prompt=""`, `keep_alive: "1h"`, and `warmup_timeout_seconds: 300.0`) in parallel.
+  2. **Phase 2: Concurrency with CPU/Network Workloads:**
+     While the background thread negotiates weight allocation into GPU VRAM, the main application thread proceeds unblocked to execute preparatory tasks: parsing manifests, scanning directory trees, and running channel discovery / seed video crawling (such as resolving 204 seed videos).
+  3. **Phase 3: Lazy Rendezvous Barrier (`wait_for_warmup()`):**
+     Before the first generative inference payload is dispatched inside `transform()`, the adapter enters the rendezvous barrier:
+     - If the background thread has already completed, `wait_for_warmup()` returns immediately (0ms latency, zero overhead).
+     - If model preloading is still finishing, the thread blocks safely at the `_warmup_event.wait(effective_timeout)` barrier without CPU polling.
+     - If warmup was never triggered beforehand, the barrier dispatches it automatically and awaits completion.
+     - Any transport or model error encountered by the worker thread (e.g. HTTP 404 model not found) is captured in `_warmup_error` and re-raised at the barrier, preserving fail-fast error visibility.
+  4. **Strict Elimination of Backward-Compatibility Shims & Race Conditions:**
+     As Cresmo is a clean, evolving architecture, backward-compatibility parameters (such as `wait=True/False` or duplicate method aliases like `trigger_warmup`) were strictly eliminated. The port and adapters enforce a single, unambiguous contract: `warmup() -> None` for non-blocking asynchronous dispatch, and `wait_for_warmup() -> bool` as the rendezvous barrier. State mutations and thread lifecycle transitions are guarded by `threading.RLock` and double-checked locking, completely eliminating race conditions and deadlocks under concurrent execution.
+
 
 

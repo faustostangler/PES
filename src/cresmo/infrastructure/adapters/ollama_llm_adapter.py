@@ -14,6 +14,7 @@ from __future__ import annotations
 import json
 import logging
 import os
+import threading
 import time
 import urllib.error
 import urllib.request
@@ -72,6 +73,10 @@ class OllamaLLMAdapter(LLMTransformationPort):
         self.keep_alive = keep_alive
         self.warmup_timeout_seconds = warmup_timeout_seconds
         self._is_warmed_up = False
+        self._warmup_event = threading.Event()
+        self._warmup_lock = threading.RLock()
+        self._warmup_thread: threading.Thread | None = None
+        self._warmup_error: Exception | None = None
 
         if langfuse_client is not None:
             self._langfuse: Langfuse | None = langfuse_client
@@ -82,6 +87,12 @@ class OllamaLLMAdapter(LLMTransformationPort):
                 self._langfuse = None
         else:
             self._langfuse = None
+
+    @property
+    def is_warmed_up(self) -> bool:
+        """Return True if model weights are confirmed to be loaded in memory."""
+        with self._warmup_lock:
+            return self._is_warmed_up
 
     def is_available(self) -> bool:
         """Check whether local Ollama daemon is reachable and responding.
@@ -97,25 +108,12 @@ class OllamaLLMAdapter(LLMTransformationPort):
         except Exception:  # noqa: BLE001
             return False
 
-    def warmup(self, timeout_seconds: float | None = None) -> bool:
-        """Preload or warm up model weights into memory (VRAM/RAM) with configured keepalive.
+    def _execute_warmup(self, effective_timeout: float) -> bool:
+        """Execute synchronous model preload against /api/generate."""
+        with self._warmup_lock:
+            if self._is_warmed_up:
+                return True
 
-        Posts a preload payload to /api/generate with model and keep_alive, blocking until
-        the model weights are fully loaded into memory. Shields downstream inference calls
-        from cold-start socket timeouts.
-
-        Args:
-            timeout_seconds: Extended socket timeout for model loading (defaults to self.warmup_timeout_seconds).
-
-        Returns:
-            True if model was successfully loaded into memory; False otherwise.
-
-        Raises:
-            LLMInfrastructureError: If Ollama returns HTTP 404 (model missing) or daemon unreachable.
-        """
-        effective_timeout = (
-            timeout_seconds if timeout_seconds is not None else self.warmup_timeout_seconds
-        )
         endpoint = f"{self.base_url}/api/generate"
         payload: dict[str, Any] = {
             "model": self.model,
@@ -151,7 +149,8 @@ class OllamaLLMAdapter(LLMTransformationPort):
                         duration,
                         done_reason,
                     )
-                    self._is_warmed_up = True
+                    with self._warmup_lock:
+                        self._is_warmed_up = True
                     return True
                 return False
         except urllib.error.HTTPError as exc:
@@ -177,6 +176,91 @@ class OllamaLLMAdapter(LLMTransformationPort):
             logger.warning("[OllamaLLMAdapter] %s", msg)
             raise LLMInfrastructureError(msg) from exc
 
+    def _dispatch_warmup_locked(self, timeout_seconds: float | None = None) -> None:
+        """Internal helper to dispatch background thread while holding _warmup_lock."""
+        if self._is_warmed_up:
+            return
+        if self._warmup_thread is not None and self._warmup_thread.is_alive():
+            return
+
+        effective_timeout = (
+            timeout_seconds if timeout_seconds is not None else self.warmup_timeout_seconds
+        )
+        self._warmup_event.clear()
+        self._warmup_error = None
+
+        def _background_worker() -> None:
+            try:
+                self._execute_warmup(effective_timeout)
+            except Exception as exc:  # noqa: BLE001
+                with self._warmup_lock:
+                    self._warmup_error = exc
+            finally:
+                self._warmup_event.set()
+
+        self._warmup_thread = threading.Thread(
+            target=_background_worker,
+            name=f"OllamaWarmupThread-{self.model}",
+            daemon=True,
+        )
+        self._warmup_thread.start()
+        logger.info(
+            "[OllamaLLMAdapter] Dispatched asynchronous background warmup for model '%s' (keep_alive: %s)...",
+            self.model,
+            self.keep_alive,
+        )
+
+    def warmup(self, timeout_seconds: float | None = None) -> None:
+        """Asynchronously preload model weights in background daemon thread.
+
+        Dispatches model weight preloading onto a background daemon thread without blocking,
+        allowing file parsing, directory scanning, and channel crawling to execute concurrently.
+
+        Args:
+            timeout_seconds: Extended socket timeout for model loading (defaults to self.warmup_timeout_seconds).
+        """
+        with self._warmup_lock:
+            self._dispatch_warmup_locked(timeout_seconds)
+
+    def wait_for_warmup(self, timeout_seconds: float | None = None) -> bool:
+        """Wait at the rendezvous barrier until model warmup completes.
+
+        If background warmup is currently in progress, blocks until weights are in VRAM.
+        If warmup has already completed, returns immediately with zero overhead.
+        If warmup was never triggered, dispatches and awaits it automatically.
+
+        Args:
+            timeout_seconds: Extended socket timeout for model loading (defaults to self.warmup_timeout_seconds).
+
+        Returns:
+            True if model was successfully loaded into memory; False otherwise.
+
+        Raises:
+            LLMInfrastructureError: If Ollama returns HTTP 404 (model missing) or daemon unreachable.
+        """
+        with self._warmup_lock:
+            if self._is_warmed_up:
+                return True
+            if self._warmup_thread is None:
+                self._dispatch_warmup_locked(timeout_seconds)
+
+        effective_timeout = (
+            timeout_seconds if timeout_seconds is not None else self.warmup_timeout_seconds
+        )
+        completed = self._warmup_event.wait(timeout=effective_timeout)
+        if not completed:
+            msg = (
+                f"Ollama timed out waiting for background warmup of model '{self.model}' "
+                f"after {effective_timeout:.0f}s. Check system RAM/VRAM."
+            )
+            logger.warning("[OllamaLLMAdapter] %s", msg)
+            raise LLMInfrastructureError(msg)
+
+        with self._warmup_lock:
+            if self._warmup_error is not None:
+                raise self._warmup_error
+            return self._is_warmed_up
+
     @observe(as_type="generation")
     def transform(
         self,
@@ -191,7 +275,7 @@ class OllamaLLMAdapter(LLMTransformationPort):
         """Execute text transformation on local Ollama instance with Langfuse telemetry.
 
         Walkthrough:
-            1. Preload model into memory if not already warmed up (using extended timeout).
+            1. Wait at the rendezvous barrier if background warmup is still in progress.
             2. Construct JSON payload with model, prompt, system prompt, keep_alive, and options.
             3. Post payload to /api/generate endpoint.
             4. Catch network/connection errors and translate to LLMInfrastructureError with
@@ -213,7 +297,7 @@ class OllamaLLMAdapter(LLMTransformationPort):
             LLMInfrastructureError: If Ollama daemon is unreachable or returns HTTP error.
         """
         if not self._is_warmed_up:
-            self.warmup()
+            self.wait_for_warmup()
 
         effective_temperature = (
             temperature if temperature is not None else self.default_temperature

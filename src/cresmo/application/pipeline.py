@@ -179,6 +179,21 @@ class CresmoPipeline:
             settings=self.settings,
         )
 
+    def warmup(self, timeout_seconds: float | None = None) -> None:
+        """Asynchronously trigger warmup across pipeline LLM ports.
+
+        Dispatches non-blocking model weight preloading for both the primary synthesis LLM port
+        and the conceptual indexing LLM port (Ollama/local) so weights are loaded concurrently
+        while media ingestion, crawler queries, or file parsing execute.
+        """
+        if hasattr(self.indexing_llm_port, "warmup"):
+            self.indexing_llm_port.warmup(timeout_seconds=timeout_seconds)
+        if (
+            hasattr(self.llm_port, "warmup")
+            and self.llm_port is not self.indexing_llm_port
+        ):
+            self.llm_port.warmup(timeout_seconds=timeout_seconds)
+
     def _synthesize_transcript(
         self,
         raw: RawTranscript,
@@ -260,6 +275,7 @@ class CresmoPipeline:
         Returns:
             PipelineResult summarizing synthesized notes, MOCs, and status.
         """
+        self.warmup()
         raw = self.ingest_raw_transcript.execute(video_url=video_url)
         if raw is None:
             raise CresmoDomainError(f"Ingestion failed to retrieve transcript for: {video_url}")
@@ -362,6 +378,7 @@ class CresmoPipeline:
         Returns:
             PipelineResult summarizing synthesized notes, MOCs, and status.
         """
+        self.warmup()
         raw = self._load_transcript_from_file(file_path)
 
         # Avoid redundant disk I/O when file is already located inside the raw transcript lake

@@ -303,6 +303,11 @@ class IndexRawTranscriptsUseCase:
         self.language = language
         self.max_rewrites = max_rewrites
 
+    def warmup(self, timeout_seconds: float | None = None) -> None:
+        """Asynchronously trigger warmup on the underlying LLM port."""
+        if hasattr(self.llm, "warmup"):
+            self.llm.warmup(timeout_seconds=timeout_seconds)
+
     def _extract_concepts(
         self,
         video_id: str,
@@ -587,6 +592,8 @@ class IndexRawTranscriptsUseCase:
         video_id = transcript.content_id.value
         channel_name = transcript.channel_name
 
+        self.warmup()
+
         # ACL check: Avoid redundant token expenditure if already indexed
         if not force:
             indexed_ids = self.vault_repo.get_indexed_video_ids_for_channel(channel_name)
@@ -677,6 +684,7 @@ class IndexRawTranscriptsUseCase:
         Returns:
             List of newly created RawIndexEntry instances.
         """
+        self.warmup()
         indexed_entries: list[RawIndexEntry] = []
         raw_dir = getattr(self.vault_repo, "raw_dir", None)
         if raw_dir is None:
@@ -709,6 +717,7 @@ class IndexRawTranscriptsUseCase:
         Returns:
             Dictionary mapping channel names to lists of newly generated RawIndexEntry items.
         """
+        self.warmup()
         results: dict[str, list[RawIndexEntry]] = {}
         raw_dir = getattr(self.vault_repo, "raw_dir", None)
         if raw_dir is None:
