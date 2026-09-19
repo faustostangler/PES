@@ -349,8 +349,6 @@ class JsonPromptProvider(PromptProviderPort):
         template = entry.get("template", "")
         return self._safe_format(template, task=task, **kwargs)
 
-
-
     def get_raw_index_summary_prompt(
         self,
         video_title: str,

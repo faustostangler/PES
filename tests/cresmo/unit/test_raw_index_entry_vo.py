@@ -55,15 +55,18 @@ class TestRawIndexEntry:
             channel_name="Political Theory",
             key_concept="Circulação de Elites",
             synthesis="A circulação das elites postula\nque minorias organizadas governam.",
+            channel_category="politics_br",
         )
 
         row = entry.to_csv_row()
-        assert len(row) == 3
-        assert row[0] == "dQw4w9WgXcQ.md"
-        assert row[1] == "Circulação de Elites"
+        assert len(row) == 5
+        assert row[0] == "politics_br"
+        assert row[1] == "Political Theory"
+        assert row[2] == "dQw4w9WgXcQ.md"
+        assert row[3] == "Circulação de Elites"
         # Newlines in synthesis should be collapsed into single line for CSV
-        assert "\n" not in row[2]
-        assert "A circulação das elites postula que minorias organizadas governam." == row[2]
+        assert "\n" not in row[4]
+        assert "A circulação das elites postula que minorias organizadas governam." == row[4]
 
     def test_rejects_empty_fields(self) -> None:
         with pytest.raises(DomainValidationError, match="cannot be empty"):

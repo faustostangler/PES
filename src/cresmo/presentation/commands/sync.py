@@ -289,6 +289,7 @@ def handle_sync(args: argparse.Namespace) -> int:
 # Helpers (private – presentation layer only)
 # ---------------------------------------------------------------------------
 
+
 def _describe_mode(criteria: SyncFilterCriteria) -> str:
     """Return a human-readable description of the active filter mode for CLI output."""
     parts: list[str] = []

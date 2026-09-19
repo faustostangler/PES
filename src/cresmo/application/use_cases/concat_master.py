@@ -206,7 +206,11 @@ class ConcatMasterUseCase:
         if not enriched_root.exists() or not enriched_root.is_dir():
             return {}
 
-        channel_dirs = sorted(d.name for d in enriched_root.iterdir() if d.is_dir())
+        channel_dirs = sorted(
+            d.name
+            for d in enriched_root.iterdir()
+            if d.is_dir() and not d.name.startswith((".", "_"))
+        )
         all_results: dict[str, list[MasterDocumentResult]] = {}
 
         for channel_name in channel_dirs:

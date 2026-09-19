@@ -374,24 +374,20 @@ class TestJsonPromptProvider:
         assert "raw_index_synthesis" in provider._templates
 
         # Pass 1: Concepts (from transcript excerpt)
-        concepts_system_instructions, concepts_user_prompt = (
-            provider.get_raw_index_concepts_prompt(
-                video_title="Vilfredo Pareto and Elites",
-                transcript_excerpt="A circulação de elites explica a alternância de poder.",
-                language="Português do Brasil",
-            )
+        concepts_system_instructions, concepts_user_prompt = provider.get_raw_index_concepts_prompt(
+            video_title="Vilfredo Pareto and Elites",
+            transcript_excerpt="A circulação de elites explica a alternância de poder.",
+            language="Português do Brasil",
         )
         assert "comma-separated" in concepts_system_instructions.lower()
         assert "Vilfredo Pareto and Elites" in concepts_user_prompt
         assert "A circulação de elites" in concepts_user_prompt
 
         # Pass 2: Summary (from transcript excerpt)
-        summary_system_instructions, summary_user_prompt = (
-            provider.get_raw_index_summary_prompt(
-                video_title="Vilfredo Pareto and Elites",
-                transcript_excerpt="A circulação de elites explica a alternância de poder.",
-                language="Português do Brasil",
-            )
+        summary_system_instructions, summary_user_prompt = provider.get_raw_index_summary_prompt(
+            video_title="Vilfredo Pareto and Elites",
+            transcript_excerpt="A circulação de elites explica a alternância de poder.",
+            language="Português do Brasil",
         )
         assert "summarize" in summary_system_instructions.lower()
         assert "Português do Brasil" in summary_system_instructions
@@ -428,9 +424,7 @@ class TestJsonPromptProvider:
             )
         )
         assert "impartial evaluator" in summary_judge_system_instructions.lower()
-        assert (
-            "strictly with 'true' or 'false'" in summary_judge_system_instructions.lower()
-        )
+        assert "strictly with 'true' or 'false'" in summary_judge_system_instructions.lower()
         assert "Pareto and Elites" in summary_judge_user_prompt
         assert "Explicando a circulação das elites na política." in summary_judge_user_prompt
         assert "Resumo fiel da circulação das elites." in summary_judge_user_prompt
@@ -446,9 +440,7 @@ class TestJsonPromptProvider:
             )
         )
         assert "impartial evaluator" in concepts_judge_system_instructions.lower()
-        assert (
-            "strictly with 'true' or 'false'" in concepts_judge_system_instructions.lower()
-        )
+        assert "strictly with 'true' or 'false'" in concepts_judge_system_instructions.lower()
         assert "Pareto and Elites" in concepts_judge_user_prompt
         assert "Explicando a circulação das elites na política." in concepts_judge_user_prompt
         assert "Circulação de Elites, Pareto" in concepts_judge_user_prompt
@@ -464,13 +456,9 @@ class TestJsonPromptProvider:
             )
         )
         assert "impartial evaluator" in synthesis_judge_system_instructions.lower()
-        assert (
-            "strictly with 'true' or 'false'" in synthesis_judge_system_instructions.lower()
-        )
+        assert "strictly with 'true' or 'false'" in synthesis_judge_system_instructions.lower()
         assert "Pareto and Elites" in synthesis_judge_user_prompt
-        assert (
-            "Explicando a circulação das elites na política." in synthesis_judge_user_prompt
-        )
+        assert "Explicando a circulação das elites na política." in synthesis_judge_user_prompt
         assert (
             "A circulação de elites reflete a alternância política segundo Pareto."
             in synthesis_judge_user_prompt

@@ -34,11 +34,12 @@ from cresmo.domain.exceptions import (
     PreflightError,
     RateLimitExceededError,
 )
-from cresmo.domain.value_objects import SyncFilterCriteria
+from cresmo.domain.value_objects import SyncFilterCriteria, is_processable_transcript_file
 from cresmo.infrastructure.config import CresmoSettings
 from cresmo.presentation.composition import (
     build_discover_batch_sources_use_case,
     build_pipeline,
+    build_preflight_checker,
 )
 from cresmo.presentation.exit_codes import (
     EXIT_CONFIG_OR_USAGE_ERROR,
@@ -237,6 +238,11 @@ def execute_batch_dry_run(pipeline: CresmoPipeline, sources: list[BatchSource]) 
     for source_index, source in enumerate(sources, 1):
         if source.kind == "file":
             file_path = Path(source.target)
+            if not is_processable_transcript_file(file_path):
+                sys.stdout.write(
+                    f"[{source_index}/{len(sources)}] Dry-run skipped artifact: [{file_path.name}]\n"
+                )
+                continue
             ingested += 1
             sys.stdout.write(
                 f"[{source_index}/{len(sources)}] Dry-run text: [{file_path.stem}] "
@@ -285,8 +291,16 @@ def execute_batch_run(
         item_prefix = f"[{source_index}{total_count_suffix}]"
         try:
             if source.kind == "file":
+                target_path = Path(source.target)
+                if not is_processable_transcript_file(target_path):
+                    skipped += 1
+                    sys.stdout.write(
+                        f"{item_prefix} [SKIPPED] [{target_path.name}] "
+                        "Ignored internal Cresmo artifact or system index.\n"
+                    )
+                    continue
                 result = pipeline.run_for_text_file(
-                    file_path=Path(source.target),
+                    file_path=target_path,
                     gap_filler_passes=args.passes,
                     force_reprocess=args.force_reprocess,
                 )
@@ -405,6 +419,13 @@ def handle_run(args: argparse.Namespace) -> int:
             settings.days_lookback = args.lookback
 
         settings.ensure_directories()
+
+        # Active Preflight Validation
+        preflight_checker = build_preflight_checker(settings=settings, check_ffmpeg=True)
+        preflight_res = preflight_checker.check_all()
+        preflight_res.assert_healthy()
+        for warning in preflight_res.warnings:
+            sys.stderr.write(f"[preflight warning] {warning}\n")
 
         pipeline = build_pipeline(
             settings=settings,

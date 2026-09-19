@@ -596,6 +596,7 @@ class RawIndexEntry:
     channel_name: str
     key_concept: str
     synthesis: str
+    channel_category: str = ""
 
     def __post_init__(self) -> None:
         if not isinstance(self.video_id, ContentId):
@@ -607,6 +608,7 @@ class RawIndexEntry:
         c = self.channel_name.strip()
         kc = " ".join(self.key_concept.split())
         s = self.synthesis.strip()
+        cat = (self.channel_category or "").strip()
 
         if not u:
             raise DomainValidationError("RawIndexEntry url cannot be empty.")
@@ -624,6 +626,7 @@ class RawIndexEntry:
         object.__setattr__(self, "channel_name", c)
         object.__setattr__(self, "key_concept", kc)
         object.__setattr__(self, "synthesis", s)
+        object.__setattr__(self, "channel_category", cat)
 
     def to_markdown_block(self) -> str:
         """Format entry as a rich Markdown block with title link, ID, concept, and paratactic paragraph."""
@@ -634,6 +637,85 @@ class RawIndexEntry:
         )
 
     def to_csv_row(self) -> list[str]:
-        """Format entry as a 3-element row for brain.csv: [filename, concept, collapsed_synthesis]."""
+        """Format entry as a 5-element row for brain.csv: [channel_category, channel_name, filename, concept, collapsed_synthesis]."""
         clean_synthesis = " ".join(self.synthesis.split())
-        return [f"{self.video_id.value}.md", self.key_concept, clean_synthesis]
+        return [
+            self.channel_category,
+            self.channel_name,
+            f"{self.video_id.value}.md",
+            self.key_concept,
+            clean_synthesis,
+        ]
+
+
+RESERVED_SYSTEM_FILENAMES: frozenset[str] = frozenset(
+    {
+        "_canal.md",
+        "brain.csv",
+        "cresmo_ledger.db",
+        "cresmo_ledger.db-wal",
+        "cresmo_ledger.db-shm",
+        "playlist.txt",
+        "playlist-priority.txt",
+        "_index.json",
+    }
+)
+
+RESERVED_DERIVED_DIRS: frozenset[str] = frozenset(
+    {
+        "enriched",
+        "master",
+        "vault",
+        ".venv",
+        "tests",
+        "__pycache__",
+    }
+)
+
+
+def is_processable_transcript_file(path: Path | str) -> bool:
+    """Validate whether a path represents a candidate raw transcript and not a system artifact or index.
+
+    Adheres to ADR-015:
+    1. Suffix must strictly be .md or .txt (case-insensitive).
+    2. Filename cannot start with '_' or '.' (hidden or system catalog).
+    3. None of the directory components in path.parts may start with '_' or '.'.
+    4. Filename cannot belong to RESERVED_SYSTEM_FILENAMES.
+    5. Temporary, backup, or editor swap files (.tmp, .bak, .swp, ~) are excluded.
+    6. Files residing inside derived output roots (enriched, master, vault) are excluded.
+
+    Args:
+        path: Path object or string path to validate.
+
+    Returns:
+        True if the file is an eligible raw transcript, False if it is a system artifact/index.
+    """
+    p = Path(path)
+    name = p.name
+    name_lower = name.lower()
+
+    # Rule 1: Suffix must be .md or .txt
+    suffix = p.suffix.lower()
+    if suffix not in {".md", ".txt"}:
+        return False
+
+    # Rule 2: Filename cannot start with '_' or '.'
+    if name.startswith(("_", ".")):
+        return False
+
+    # Rule 3: Hidden or system directory components (e.g. .git, .obsidian, _trash)
+    for part in p.parts[:-1]:
+        if part and part != "/" and part.startswith(("_", ".")):
+            return False
+
+    # Rule 4: Reserved system filenames
+    if name_lower in RESERVED_SYSTEM_FILENAMES:
+        return False
+
+    # Rule 5: Temporary / backup / editor swap suffixes
+    if name_lower.endswith((".tmp", ".bak", ".swp")) or name.endswith("~"):
+        return False
+
+    # Rule 6: Derived artifact directories when path is relative or encompasses multiple roots
+    dir_parts_lower = {part.lower() for part in p.parts[:-1]}
+    return not bool(dir_parts_lower.intersection(RESERVED_DERIVED_DIRS))

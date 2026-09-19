@@ -24,6 +24,7 @@ from cresmo.application.ports import MediaIngestionPort
 from cresmo.domain.value_objects import (
     ChannelFeedQuery,
     SyncFilterCriteria,
+    is_processable_transcript_file,
     normalize_to_uploads_playlist_url,
 )
 from cresmo.infrastructure.config import CresmoSettings
@@ -91,11 +92,11 @@ def is_channel_or_playlist_feed(url: str) -> bool:
 
 
 def load_transcript_files(directory: Path | None) -> list[Path]:
-    """Find all markdown and text files recursively in a directory."""
+    """Find all valid candidate transcript files recursively in a directory, ignoring system artifacts."""
     if directory is None or not directory.is_dir():
         return []
     return sorted(
-        p for p in directory.rglob("*") if p.is_file() and p.suffix.lower() in {".md", ".txt"}
+        p for p in directory.rglob("*") if p.is_file() and is_processable_transcript_file(p)
     )
 
 
@@ -367,6 +368,8 @@ class DiscoverBatchSourcesUseCase:
         priority_channels: list[str] = []
         priority_files = load_transcript_files(priority_texts_dir)
         for pf in priority_files:
+            if not is_processable_transcript_file(pf):
+                continue
             meta = extract_raw_file_metadata(pf)
             raw_chan = meta.get("channel") or meta.get("channel_id")
             vid = meta.get("video_id") or pf.stem
@@ -476,6 +479,8 @@ class DiscoverBatchSourcesUseCase:
 
         raw_files = load_transcript_files(raw_dir)
         for rf in raw_files:
+            if not is_processable_transcript_file(rf):
+                continue
             stem = rf.stem
             meta = extract_raw_file_metadata(rf)
             vid_front = meta.get("video_id")
@@ -532,10 +537,7 @@ class DiscoverBatchSourcesUseCase:
         for c_url in local_channels.values():
             if c_url not in probed_channels and (
                 criteria.is_empty()
-                or (
-                    criteria.matches_channel(c_url, c_url)
-                    and criteria.matches_category(c_url)
-                )
+                or (criteria.matches_channel(c_url, c_url) and criteria.matches_category(c_url))
             ):
                 probed_channels.add(c_url)
                 channels_to_probe.append(c_url)
@@ -545,10 +547,7 @@ class DiscoverBatchSourcesUseCase:
             if is_channel_or_playlist_feed(mu):
                 if mu not in probed_channels and (
                     criteria.is_empty()
-                    or (
-                        criteria.matches_channel(mu, mu)
-                        and criteria.matches_category(mu)
-                    )
+                    or (criteria.matches_channel(mu, mu) and criteria.matches_category(mu))
                 ):
                     probed_channels.add(mu)
                     channels_to_probe.append(mu)

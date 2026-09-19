@@ -417,15 +417,22 @@ class TestCresmoCLI:
     def test_cli_run_with_filter_criteria_propagated(self) -> None:
         with (
             patch("cresmo.presentation.commands.run.build_pipeline"),
-            patch("cresmo.presentation.commands.run.load_batch_sources", return_value=[]) as mock_load,
+            patch(
+                "cresmo.presentation.commands.run.load_batch_sources", return_value=[]
+            ) as mock_load,
         ):
-            exit_code = main([
-                "run",
-                "--dry-run",
-                "--channel", "Ancapsu,Mises",
-                "--category", "politics_br",
-                "--video", "dQw4w9WgXcQ",
-            ])
+            exit_code = main(
+                [
+                    "run",
+                    "--dry-run",
+                    "--channel",
+                    "Ancapsu,Mises",
+                    "--category",
+                    "politics_br",
+                    "--video",
+                    "dQw4w9WgXcQ",
+                ]
+            )
             assert exit_code == EXIT_SUCCESS
             mock_load.assert_called_once()
             query = mock_load.call_args.kwargs["query"]
@@ -1346,7 +1353,15 @@ class TestCresmoCLI:
             return_value=mock_uc,
         ) as mock_builder:
             code = main(
-                ["index-raw", "--channel", "Canal Teste", "--web-index", "--model", "custom-model", "--force"]
+                [
+                    "index-raw",
+                    "--channel",
+                    "Canal Teste",
+                    "--web-index",
+                    "--model",
+                    "custom-model",
+                    "--force",
+                ]
             )
             assert code == EXIT_SUCCESS
             mock_builder.assert_called_once()
@@ -1362,3 +1377,18 @@ class TestCresmoCLI:
             code = main(["index-raw"])
             assert code == EXIT_INTERNAL_ERROR
 
+    def test_cli_index_raw_ollama_probe_failure_exits_config_error(
+        self, capsys: pytest.CaptureFixture[str]
+    ) -> None:
+        mock_checker = MagicMock()
+        mock_checker.check_ollama_probe.return_value = False
+
+        with patch(
+            "cresmo.presentation.commands.index_raw.build_preflight_checker",
+            return_value=mock_checker,
+        ):
+            code = main(["index-raw"])
+            assert code == EXIT_CONFIG_OR_USAGE_ERROR
+            captured = capsys.readouterr()
+            assert "unreachable" in captured.err
+            assert "ollama serve" in captured.err
