@@ -122,6 +122,8 @@ class CresmoPipeline:
                 timeout_seconds=self.settings.ollama_timeout_seconds,
                 default_temperature=self.settings.raw_index_temperature,
                 num_predict=self.settings.ollama_num_predict,
+                keep_alive=self.settings.ollama_keep_alive,
+                warmup_timeout_seconds=self.settings.ollama_warmup_timeout_seconds,
             )
         else:
             self.indexing_llm_port = self.llm_port

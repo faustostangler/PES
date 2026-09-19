@@ -199,8 +199,8 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             headers=self._header_generator.get_random_headers(),
         )
         try:
-            with urllib.request.urlopen(req, timeout=self.request_timeout) as resp:
-                raw_bytes: bytes = resp.read()
+            with urllib.request.urlopen(req, timeout=self.request_timeout) as response:
+                raw_bytes: bytes = response.read()
                 return raw_bytes.decode("utf-8")
         except urllib.error.HTTPError as exc:
             if exc.code == 429:

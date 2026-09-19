@@ -85,10 +85,10 @@ class JsonPromptProvider(PromptProviderPort):
 
         # Fallback to bundled package resource
         try:
-            res_traversable = importlib.resources.files("cresmo.infrastructure.resources").joinpath(
-                "prompts.json"
-            )
-            content = res_traversable.read_text(encoding="utf-8")
+            resource_traversable = importlib.resources.files(
+                "cresmo.infrastructure.resources"
+            ).joinpath("prompts.json")
+            content = resource_traversable.read_text(encoding="utf-8")
             self._templates = json.loads(content)
         except Exception as exc:  # noqa: BLE001
             logger.error("Failed loading bundled prompts.json resource: %s", exc)
@@ -347,8 +347,8 @@ class JsonPromptProvider(PromptProviderPort):
     ) -> tuple[str, str]:
         """Format (system_instruction, user_prompt) pair for a given template key."""
         entry = self._templates.get(template_key, {})
-        sys_template = entry.get("system_instruction", "")
-        system_instruction = self._safe_format(sys_template, **kwargs)
+        system_template = entry.get("system_instruction", "")
+        system_instruction = self._safe_format(system_template, **kwargs)
         template = entry.get("template", "")
         user_prompt = self._safe_format(template, **kwargs)
         return system_instruction, user_prompt

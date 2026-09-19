@@ -210,3 +210,90 @@ class TestOllamaLLMAdapter:
             req = mock_urlopen.call_args[0][0]
             body = json.loads(req.data.decode("utf-8"))
             assert body["options"]["num_predict"] == 500
+
+    def test_warmup_success(self) -> None:
+        """Verify that warmup sends model and keep_alive to /api/generate and marks warmed up."""
+        adapter = OllamaLLMAdapter(
+            base_url="http://localhost:11434",
+            model="qwen2.5:7b",
+            keep_alive="2h",
+            warmup_timeout_seconds=120.0,
+        )
+
+        mock_response_data = {
+            "model": "qwen2.5:7b",
+            "done": True,
+            "done_reason": "load",
+        }
+
+        with patch("urllib.request.urlopen") as mock_urlopen:
+            mock_resp = MagicMock()
+            mock_resp.status = 200
+            mock_resp.read.return_value = json.dumps(mock_response_data).encode("utf-8")
+            mock_resp.__enter__.return_value = mock_resp
+            mock_urlopen.return_value = mock_resp
+
+            assert adapter.warmup() is True
+            assert adapter._is_warmed_up is True
+
+            req = mock_urlopen.call_args[0][0]
+            assert req.full_url == "http://localhost:11434/api/generate"
+            body = json.loads(req.data.decode("utf-8"))
+            assert body["model"] == "qwen2.5:7b"
+            assert body["keep_alive"] == "2h"
+            assert "prompt" not in body
+
+    def test_warmup_model_not_found_raises_actionable_error(self) -> None:
+        """Verify that warmup failure on missing model raises LLMInfrastructureError with pull command."""
+        adapter = OllamaLLMAdapter(
+            base_url="http://localhost:11434",
+            model="nonexistent:model",
+        )
+
+        with patch("urllib.request.urlopen") as mock_urlopen:
+            mock_urlopen.side_effect = urllib.error.HTTPError(
+                url="http://localhost:11434/api/generate",
+                code=404,
+                msg="Not Found",
+                hdrs=Message(),
+                fp=None,
+            )
+
+            with pytest.raises(LLMInfrastructureError, match="ollama pull"):
+                adapter.warmup()
+
+    def test_warmup_timeout_raises_actionable_error(self) -> None:
+        """Verify that warmup timeout raises LLMInfrastructureError."""
+        adapter = OllamaLLMAdapter(
+            base_url="http://localhost:11434",
+            model="qwen2.5:7b",
+            warmup_timeout_seconds=5.0,
+        )
+
+        with patch("urllib.request.urlopen") as mock_urlopen:
+            mock_urlopen.side_effect = TimeoutError("Socket timed out")
+
+            with pytest.raises(LLMInfrastructureError, match="timed out loading model"):
+                adapter.warmup()
+
+    def test_transform_propagates_keep_alive(self) -> None:
+        """Verify that transform includes configured keep_alive in every generate request."""
+        adapter = OllamaLLMAdapter(
+            base_url="http://localhost:11434",
+            model="qwen2.5:7b",
+            keep_alive="1h",
+        )
+        adapter._is_warmed_up = True  # Pre-mark warmed up to test transform payload directly
+
+        mock_response_data = {"response": "Output with keepalive", "done": True}
+
+        with patch("urllib.request.urlopen") as mock_urlopen:
+            mock_resp = MagicMock()
+            mock_resp.read.return_value = json.dumps(mock_response_data).encode("utf-8")
+            mock_resp.__enter__.return_value = mock_resp
+            mock_urlopen.return_value = mock_resp
+
+            adapter.transform("Test keepalive prompt")
+            req = mock_urlopen.call_args[0][0]
+            body = json.loads(req.data.decode("utf-8"))
+            assert body["keep_alive"] == "1h"

@@ -80,50 +80,50 @@ class FillGapsFluidProseUseCase:
         current_text = raw_transcript.body
         file_name = f"{raw_transcript.content_id.value}.txt"
 
-        for p in range(passes):
+        for pass_index in range(passes):
             prompt = self.prompt_provider.get_gap_filler_prompt(
-                pass_num=p + 1,
+                pass_num=pass_index + 1,
                 total_passes=passes,
                 channel_name=raw_transcript.channel_name,
                 file_name=file_name,
                 raw_text=raw_transcript.body,
-                current_text=current_text if p > 0 else None,
+                current_text=current_text if pass_index > 0 else None,
             )
             current_text = self.llm_port.transform(
                 prompt=prompt,
                 temperature=self.temperature,
-                trace_id=f"{raw_transcript.content_id.value}_gap_fill_pass_{p + 1}",
+                trace_id=f"{raw_transcript.content_id.value}_gap_fill_pass_{pass_index + 1}",
                 session_id=f"stage2_fluid_prose_{raw_transcript.channel_name}",
                 user_id=raw_transcript.channel_name,
             )
 
         # Extract title from H1 or fallback to raw title
-        m_title = _TITLE_H1_PATTERN.search(current_text)
-        if m_title:
-            extracted_title = m_title.group(1).strip()
+        title_match = _TITLE_H1_PATTERN.search(current_text)
+        if title_match:
+            extracted_title = title_match.group(1).strip()
         else:
             extracted_title = raw_transcript.title or "Untitled Compendium"
 
         # Split body and complementary info (case-insensitive and whitespace resilient)
-        m_comp = _COMPLEMENTARY_REGEX.search(current_text)
-        if m_comp:
-            body = current_text[: m_comp.start()].strip()
-            comp_info = current_text[m_comp.end() :].strip()
+        complementary_match = _COMPLEMENTARY_REGEX.search(current_text)
+        if complementary_match:
+            body = current_text[: complementary_match.start()].strip()
+            complementary_information = current_text[complementary_match.end() :].strip()
             body = _TITLE_H1_PATTERN.sub("", body).strip()
         elif _COMPLEMENTARY_TAG in current_text:
             parts = current_text.split(_COMPLEMENTARY_TAG, 1)
             body = parts[0].strip()
             body = _TITLE_H1_PATTERN.sub("", body).strip()
-            comp_info = parts[1].strip()
+            complementary_information = parts[1].strip()
         else:
             raise CompendiumStructureError(f"Missing mandatory section '{_COMPLEMENTARY_TAG}'")
 
-        if not comp_info:
+        if not complementary_information:
             raise CompendiumStructureError(
                 "EnrichedCompendium must contain a non-empty 'Informações Complementares' section."
             )
 
-        video_date_str = (
+        video_date = (
             raw_transcript.upload_date.strftime("%Y%m%d") if raw_transcript.upload_date else ""
         )
         compendium = EnrichedCompendium(
@@ -131,12 +131,12 @@ class FillGapsFluidProseUseCase:
             channel_name=raw_transcript.channel_name,
             title=NoteTitle(extracted_title),
             body=body,
-            complementary_info=comp_info,
+            complementary_info=complementary_information,
             pass_count=passes,
             channel_id=raw_transcript.channel_id,
             channel_category=raw_transcript.channel_category,
             source_url=raw_transcript.source_url,
-            video_date=video_date_str,
+            video_date=video_date,
             video_description=raw_transcript.video_description,
         )
         self.vault_port.save_enriched_compendium(compendium)
