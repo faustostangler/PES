@@ -138,8 +138,7 @@ class JsonPromptProvider(PromptProviderPort):
     ) -> str:
         """Format the Socratic gap filler prompt differentiating pass 1 from subsequent passes."""
         key = "gap_filler_pass1" if pass_num == 1 else "gap_filler_pass_subsequent"
-        legacy_key = "stage2_pass1" if pass_num == 1 else "stage2_pass_subsequent"
-        entry = self._templates.get(key) or self._templates.get(legacy_key, {})
+        entry = self._templates.get(key, {})
         task = entry.get("task", "")
         skill_name = entry.get("skill_name", "cresmo-expander")
         template = entry.get("template", "")
@@ -195,9 +194,7 @@ class JsonPromptProvider(PromptProviderPort):
         complementary_info: str,
     ) -> str:
         """Format the Braudelian longitudinal expander prompt."""
-        entry = self._templates.get("long_expander") or self._templates.get(
-            "stage3_long_expander", {}
-        )
+        entry = self._templates.get("long_expander", {})
         task = entry.get("task", "")
         skill_name = entry.get("skill_name", "cresmo-long-expander")
         template = entry.get("template", "")
@@ -223,9 +220,7 @@ class JsonPromptProvider(PromptProviderPort):
         current_text: str,
     ) -> str:
         """Format the Jaspers synchronic wide expander prompt."""
-        entry = self._templates.get("wide_expander") or self._templates.get(
-            "stage3_wide_expander", {}
-        )
+        entry = self._templates.get("wide_expander", {})
         task = entry.get("task", "")
         skill_name = entry.get("skill_name", "cresmo-wide-expander")
         template = entry.get("template", "")
@@ -247,9 +242,7 @@ class JsonPromptProvider(PromptProviderPort):
         compendium_body: str,
     ) -> str:
         """Format the atomic inventory extraction prompt."""
-        entry = self._templates.get("atomic_inventory") or self._templates.get(
-            "stage4_inventory", {}
-        )
+        entry = self._templates.get("atomic_inventory", {})
         task = entry.get("task", "")
         skill_name = entry.get("skill_name", "cresmo-atomic")
         template = entry.get("template", "")
@@ -281,11 +274,7 @@ class JsonPromptProvider(PromptProviderPort):
         targets_json: str,
     ) -> str:
         """Format the atomic note batch synthesis prompt."""
-        entry = (
-            self._templates.get("atomic_batch")
-            or self._templates.get("synthesize_atomic_batch")
-            or self._templates.get("stage5_batch_notes", {})
-        )
+        entry = self._templates.get("atomic_batch", {})
         task = entry.get("task", "")
         skill_name = entry.get("skill_name", "cresmo-atomic")
         template = entry.get("template", "")
@@ -316,11 +305,7 @@ class JsonPromptProvider(PromptProviderPort):
         notes_json: str,
     ) -> str:
         """Format the MOC reconciliation prompt."""
-        entry = (
-            self._templates.get("reconcile_mocs")
-            or self._templates.get("mocs")
-            or self._templates.get("stage6_mocs", {})
-        )
+        entry = self._templates.get("reconcile_mocs", {})
         task = entry.get("task", "")
         skill_name = entry.get("skill_name", "cresmo-moc-manager")
         template = entry.get("template", "")
@@ -364,32 +349,7 @@ class JsonPromptProvider(PromptProviderPort):
         template = entry.get("template", "")
         return self._safe_format(template, task=task, **kwargs)
 
-    def get_raw_index_prompt(
-        self,
-        video_title: str,
-        transcript_excerpt: str,
-        language: str = "Português do Brasil",
-    ) -> tuple[str, str]:
-        """Format (system_instruction, user_prompt) for raw transcript paratactic conceptual synthesis."""
-        return self._format_paired_prompt(
-            "raw_index",
-            video_title=video_title,
-            transcript_excerpt=transcript_excerpt,
-            language=language,
-        )
 
-    def get_raw_index_rewrite_prompt(
-        self,
-        previous_output: str,
-        language: str = "Português do Brasil",
-    ) -> str:
-        """Format corrective rewrite prompt when raw index synthesis violates output rules."""
-        return self._format_single_prompt(
-            "raw_index_rewrite",
-            previous_output=previous_output,
-            language=language,
-            language_upper=language.upper(),
-        )
 
     def get_raw_index_summary_prompt(
         self,

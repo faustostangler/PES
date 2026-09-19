@@ -457,28 +457,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
 
         return items
 
-    def ingest_channels_and_playlists(
-        self,
-        playlist_urls: list[str],
-        output_dir: Path,
-        days_lookback: int = 730,
-        whisper_model: str = "base",
-        keep_audio: bool = False,
-        max_workers: int = 4,
-    ) -> list[RawTranscript]:
-        """Ingest videos from playlists sequentially or in parallel batches."""
-        transcripts: list[RawTranscript] = []
-        for url in playlist_urls:
-            raw = self.ingest_single_video(
-                video_url=url,
-                output_dir=output_dir,
-                whisper_model=whisper_model,
-                keep_audio=keep_audio,
-            )
-            if raw:
-                transcripts.append(raw)
-        return transcripts
-
     def extract_channel_url_from_video(
         self,
         video_url: str,

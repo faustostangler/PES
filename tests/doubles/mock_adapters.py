@@ -45,7 +45,6 @@ class MockMediaIngestionPort(MediaIngestionPort):
         self.canned_feed = canned_feed or []
         self.canned_channel_url = canned_channel_url
         self.ingest_single_calls: list[str] = []
-        self.ingest_channels_calls: list[list[str]] = []
         self.discover_calls: list[ChannelFeedQuery] = []
 
     def discover_channel_feed(
@@ -64,18 +63,6 @@ class MockMediaIngestionPort(MediaIngestionPort):
     ) -> RawTranscript | None:
         self.ingest_single_calls.append(video_url)
         return self.canned_transcript
-
-    def ingest_channels_and_playlists(
-        self,
-        playlist_urls: list[str],
-        output_dir: Path,
-        days_lookback: int = 730,
-        whisper_model: str = "base",
-        keep_audio: bool = False,
-        max_workers: int = 4,
-    ) -> list[RawTranscript]:
-        self.ingest_channels_calls.append(playlist_urls)
-        return [self.canned_transcript] if self.canned_transcript else []
 
     def extract_channel_url_from_video(
         self,

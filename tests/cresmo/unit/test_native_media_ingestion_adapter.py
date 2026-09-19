@@ -314,23 +314,6 @@ class TestNativeMediaIngestionAdapter:
                 assert expected_audio.exists()
                 assert expected_audio.read_text() == "dummy audio file content"
 
-    def test_ingest_channels_and_playlists(self, tmp_path: Path) -> None:
-        adapter = NativeMediaIngestionAdapter()
-        with patch.object(adapter, "ingest_single_video") as mock_single:
-            mock_single.side_effect = [
-                MagicMock(content_id=ContentId("vid11111111")),
-                None,
-                MagicMock(content_id=ContentId("vid33333333")),
-            ]
-
-            results = adapter.ingest_channels_and_playlists(
-                playlist_urls=["https://url1", "https://url2", "https://url3"],
-                output_dir=tmp_path,
-            )
-
-            assert len(results) == 2
-            assert mock_single.call_count == 3
-
     def test_fetch_url_content_uses_dynamic_headers(self) -> None:
         mock_generator = MagicMock()
         mock_generator.get_random_headers.return_value = {
