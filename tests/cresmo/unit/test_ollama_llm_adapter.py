@@ -7,8 +7,10 @@ actionable warnings when Ollama is offline, and availability healthcheck.
 from __future__ import annotations
 
 import json
+import time
 import urllib.error
 from email.message import Message
+from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -212,7 +214,7 @@ class TestOllamaLLMAdapter:
             assert body["options"]["num_predict"] == 500
 
     def test_warmup_success(self) -> None:
-        """Verify that warmup sends model and keep_alive to /api/generate and marks warmed up."""
+        """Verify that warmup asynchronously sends model and keep_alive to /api/generate."""
         adapter = OllamaLLMAdapter(
             base_url="http://localhost:11434",
             model="qwen2.5:7b",
@@ -233,8 +235,9 @@ class TestOllamaLLMAdapter:
             mock_resp.__enter__.return_value = mock_resp
             mock_urlopen.return_value = mock_resp
 
-            assert adapter.warmup() is True
-            assert adapter._is_warmed_up is True
+            adapter.warmup()
+            assert adapter.wait_for_warmup() is True
+            assert adapter.is_warmed_up is True
 
             req = mock_urlopen.call_args[0][0]
             assert req.full_url == "http://localhost:11434/api/generate"
@@ -259,8 +262,9 @@ class TestOllamaLLMAdapter:
                 fp=None,
             )
 
+            adapter.warmup()
             with pytest.raises(LLMInfrastructureError, match="ollama pull"):
-                adapter.warmup()
+                adapter.wait_for_warmup()
 
     def test_warmup_timeout_raises_actionable_error(self) -> None:
         """Verify that warmup timeout raises LLMInfrastructureError."""
@@ -273,8 +277,9 @@ class TestOllamaLLMAdapter:
         with patch("urllib.request.urlopen") as mock_urlopen:
             mock_urlopen.side_effect = TimeoutError("Socket timed out")
 
+            adapter.warmup()
             with pytest.raises(LLMInfrastructureError, match="timed out loading model"):
-                adapter.warmup()
+                adapter.wait_for_warmup()
 
     def test_transform_propagates_keep_alive(self) -> None:
         """Verify that transform includes configured keep_alive in every generate request."""
@@ -297,3 +302,139 @@ class TestOllamaLLMAdapter:
             req = mock_urlopen.call_args[0][0]
             body = json.loads(req.data.decode("utf-8"))
             assert body["keep_alive"] == "1h"
+
+    def test_async_warmup_and_rendezvous_barrier_success(self) -> None:
+        """Verify non-blocking early background warmup and lazy rendezvous barrier synchronization."""
+        adapter = OllamaLLMAdapter(
+            base_url="http://localhost:11434",
+            model="qwen2.5:7b",
+        )
+        assert adapter.is_warmed_up is False
+
+        mock_response_data = {"done": True, "done_reason": "load"}
+
+        with patch("urllib.request.urlopen") as mock_urlopen:
+            mock_resp = MagicMock()
+            mock_resp.status = 200
+            mock_resp.read.return_value = json.dumps(mock_response_data).encode("utf-8")
+            mock_resp.__enter__.return_value = mock_resp
+            mock_urlopen.return_value = mock_resp
+
+            adapter.warmup()
+            assert adapter._warmup_thread is not None
+
+            # Rendezvous barrier blocks until thread completes and returns True
+            assert adapter.wait_for_warmup() is True
+            assert adapter.is_warmed_up is True
+
+            # Subsequent wait_for_warmup returns immediately without re-invoking urlopen
+            mock_urlopen.reset_mock()
+            assert adapter.wait_for_warmup() is True
+            mock_urlopen.assert_not_called()
+
+    def test_warmup_concurrent_calls_prevent_duplicate_threads(self) -> None:
+        """Verify multiple calls to warmup() do not spawn duplicate threads or cause race conditions."""
+        adapter = OllamaLLMAdapter(
+            base_url="http://localhost:11434",
+            model="qwen2.5:7b",
+        )
+        mock_response_data = {"done": True, "done_reason": "load"}
+
+        with patch("urllib.request.urlopen") as mock_urlopen:
+            mock_resp = MagicMock()
+            mock_resp.status = 200
+            mock_resp.read.return_value = json.dumps(mock_response_data).encode("utf-8")
+            mock_resp.__enter__.return_value = mock_resp
+            mock_urlopen.return_value = mock_resp
+
+            # Dispatch twice
+            adapter.warmup()
+            initial_thread = adapter._warmup_thread
+            adapter.warmup()
+            assert adapter._warmup_thread is initial_thread
+
+            assert adapter.wait_for_warmup() is True
+            assert adapter.is_warmed_up is True
+
+            # Calling warmup after completion is a no-op
+            adapter.warmup()
+            assert adapter.is_warmed_up is True
+
+    def test_wait_for_warmup_reraises_background_exception(self) -> None:
+        """Verify that an exception raised in background warmup is re-raised at rendezvous barrier."""
+        adapter = OllamaLLMAdapter(
+            base_url="http://localhost:11434",
+            model="nonexistent:model",
+        )
+
+        with patch("urllib.request.urlopen") as mock_urlopen:
+            mock_urlopen.side_effect = urllib.error.HTTPError(
+                url="http://localhost:11434/api/generate",
+                code=404,
+                msg="Not Found",
+                hdrs=Message(),
+                fp=None,
+            )
+
+            adapter.warmup()
+            with pytest.raises(LLMInfrastructureError, match="ollama pull"):
+                adapter.wait_for_warmup()
+
+    def test_transform_rendezvous_barrier_triggers_warmup_when_cold(self) -> None:
+        """Verify that transform automatically invokes rendezvous barrier when adapter is cold."""
+        adapter = OllamaLLMAdapter(
+            base_url="http://localhost:11434",
+            model="qwen2.5:7b",
+        )
+        assert adapter.is_warmed_up is False
+
+        mock_preload_data = {"done": True, "done_reason": "load"}
+        mock_gen_data = {"response": "Transformed text", "done": True}
+
+        with patch("urllib.request.urlopen") as mock_urlopen:
+            mock_preload_resp = MagicMock()
+            mock_preload_resp.status = 200
+            mock_preload_resp.read.return_value = json.dumps(mock_preload_data).encode("utf-8")
+            mock_preload_resp.__enter__.return_value = mock_preload_resp
+
+            mock_gen_resp = MagicMock()
+            mock_gen_resp.status = 200
+            mock_gen_resp.read.return_value = json.dumps(mock_gen_data).encode("utf-8")
+            mock_gen_resp.__enter__.return_value = mock_gen_resp
+
+            mock_urlopen.side_effect = [mock_preload_resp, mock_gen_resp]
+
+            result = adapter.transform("Hello from cold start")
+            assert result == "Transformed text"
+            assert adapter.is_warmed_up is True
+            assert mock_urlopen.call_count == 2
+
+    def test_concurrent_threads_waiting_at_rendezvous_barrier(self) -> None:
+        """Verify multiple concurrent threads block cleanly at barrier with zero race conditions."""
+        import concurrent.futures
+
+        adapter = OllamaLLMAdapter(
+            base_url="http://localhost:11434",
+            model="qwen2.5:7b",
+        )
+
+        mock_preload_data = {"done": True, "done_reason": "load"}
+
+        def _delayed_urlopen(*_args: Any, **_kwargs: Any) -> MagicMock:
+            time.sleep(0.05)  # Simulate network/VRAM load time
+            mock_resp = MagicMock()
+            mock_resp.status = 200
+            mock_resp.read.return_value = json.dumps(mock_preload_data).encode("utf-8")
+            mock_resp.__enter__.return_value = mock_resp
+            return mock_resp
+
+        with patch("urllib.request.urlopen", side_effect=_delayed_urlopen) as mock_urlopen:
+            adapter.warmup()
+
+            with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+                futures = [executor.submit(adapter.wait_for_warmup) for _ in range(5)]
+                results = [f.result() for f in concurrent.futures.as_completed(futures)]
+
+            assert all(results)
+            assert adapter.is_warmed_up is True
+            assert mock_urlopen.call_count == 1

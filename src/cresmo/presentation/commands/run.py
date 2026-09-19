@@ -412,6 +412,9 @@ def handle_run(args: argparse.Namespace) -> int:
             web_index=getattr(args, "web_index", False),
         )
 
+        if not getattr(args, "web_index", False):
+            pipeline.warmup()
+
         if args.url:
             return execute_single_video_run(pipeline, args)
 
