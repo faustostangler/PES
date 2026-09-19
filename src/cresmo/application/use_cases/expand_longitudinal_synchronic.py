@@ -74,45 +74,45 @@ class ExpandLongitudinalSynchronicUseCase:
             CompendiumStructureError: If complementary information section is missing or empty.
             DomainValidationError: If construction invariants are violated.
         """
-        prompt_long = self.prompt_provider.get_long_expander_prompt(
+        longitudinal_prompt = self.prompt_provider.get_long_expander_prompt(
             compendium_body=compendium.body,
             complementary_info=compendium.complementary_info,
         )
-        res_long = self.llm_port.transform(
-            prompt=prompt_long,
+        longitudinal_expansion = self.llm_port.transform(
+            prompt=longitudinal_prompt,
             temperature=self.temperature,
             trace_id=f"{compendium.content_id.value}_longitudinal",
             session_id=f"stage3_expansion_{compendium.channel_name}",
             user_id=compendium.channel_name,
         )
 
-        prompt_wide = self.prompt_provider.get_wide_expander_prompt(
-            current_text=res_long,
+        synchronic_prompt = self.prompt_provider.get_wide_expander_prompt(
+            current_text=longitudinal_expansion,
         )
-        res_wide = self.llm_port.transform(
-            prompt=prompt_wide,
+        synchronic_expansion = self.llm_port.transform(
+            prompt=synchronic_prompt,
             temperature=self.temperature,
             trace_id=f"{compendium.content_id.value}_synchronic",
             session_id=f"stage3_expansion_{compendium.channel_name}",
             user_id=compendium.channel_name,
         )
 
-        m_comp = _COMPLEMENTARY_REGEX.search(res_wide)
-        if m_comp:
-            body = res_wide[: m_comp.start()].strip()
-            comp_info = res_wide[m_comp.end() :].strip()
-        elif _COMPLEMENTARY_TAG in res_wide:
-            parts = res_wide.split(_COMPLEMENTARY_TAG, 1)
+        complementary_match = _COMPLEMENTARY_REGEX.search(synchronic_expansion)
+        if complementary_match:
+            body = synchronic_expansion[: complementary_match.start()].strip()
+            complementary_information = synchronic_expansion[complementary_match.end() :].strip()
+        elif _COMPLEMENTARY_TAG in synchronic_expansion:
+            parts = synchronic_expansion.split(_COMPLEMENTARY_TAG, 1)
             body = parts[0].strip()
-            comp_info = parts[1].strip()
+            complementary_information = parts[1].strip()
         else:
-            body = res_wide.strip()
-            comp_info = compendium.complementary_info
+            body = synchronic_expansion.strip()
+            complementary_information = compendium.complementary_info
 
         # Strip any leading H1 # Title from body if generated
         body = _TITLE_H1_PATTERN.sub("", body).strip()
 
-        if not comp_info:
+        if not complementary_information:
             raise CompendiumStructureError("Missing complementary info in expansion.")
 
         updated = EnrichedCompendium(
@@ -120,7 +120,7 @@ class ExpandLongitudinalSynchronicUseCase:
             channel_name=compendium.channel_name,
             title=compendium.title,
             body=body,
-            complementary_info=comp_info,
+            complementary_info=complementary_information,
             pass_count=compendium.pass_count + 1,
             channel_id=compendium.channel_id,
             channel_category=compendium.channel_category,

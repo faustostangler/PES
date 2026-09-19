@@ -85,6 +85,14 @@ def handle_index_raw(args: argparse.Namespace) -> int:
         )
         sys.stdout.write(f"Starting raw transcript conceptual indexing using {provider_name}...\n")
 
+        if not args.web_index and hasattr(use_case.llm, "warmup"):
+            effective_model = args.model or settings.ollama_model
+            sys.stdout.write(
+                f"Preloading local Ollama model '{effective_model}' into memory (keepalive: {settings.ollama_keep_alive})...\n"
+            )
+            use_case.llm.warmup()
+            sys.stdout.write("Model loaded into memory successfully.\n")
+
         if args.channel:
             sys.stdout.write(f"Indexing channel: {args.channel}\n")
             entries = use_case.index_channel(args.channel, force=args.force)

@@ -423,14 +423,14 @@ class TestJsonPromptProvider:
     def test_get_raw_index_prompt_formats_system_and_user_prompt(self) -> None:
         provider = JsonPromptProvider()
         assert "raw_index" in provider._templates
-        sys_inst, user_prompt = provider.get_raw_index_prompt(
+        system_instructions, user_prompt = provider.get_raw_index_prompt(
             video_title="Pareto Principle",
             transcript_excerpt="Pareto analysis shows 80/20 distribution.",
         )
-        assert "key concept" in sys_inst.lower()
-        assert "paratactic" in sys_inst.lower()
-        assert "ner" in sys_inst.lower()
-        assert "relationships" in sys_inst.lower()
+        assert "key concept" in system_instructions.lower()
+        assert "paratactic" in system_instructions.lower()
+        assert "ner" in system_instructions.lower()
+        assert "relationships" in system_instructions.lower()
         assert "Video Title: Pareto Principle" in user_prompt
         assert "Pareto analysis shows 80/20 distribution." in user_prompt
 
@@ -454,37 +454,43 @@ class TestJsonPromptProvider:
         assert "raw_index_synthesis" in provider._templates
 
         # Pass 1: Concepts (from transcript excerpt)
-        sys_con, usr_con = provider.get_raw_index_concepts_prompt(
-            video_title="Vilfredo Pareto and Elites",
-            transcript_excerpt="A circulação de elites explica a alternância de poder.",
-            language="Português do Brasil",
+        concepts_system_instructions, concepts_user_prompt = (
+            provider.get_raw_index_concepts_prompt(
+                video_title="Vilfredo Pareto and Elites",
+                transcript_excerpt="A circulação de elites explica a alternância de poder.",
+                language="Português do Brasil",
+            )
         )
-        assert "comma-separated" in sys_con.lower()
-        assert "Vilfredo Pareto and Elites" in usr_con
-        assert "A circulação de elites" in usr_con
+        assert "comma-separated" in concepts_system_instructions.lower()
+        assert "Vilfredo Pareto and Elites" in concepts_user_prompt
+        assert "A circulação de elites" in concepts_user_prompt
 
         # Pass 2: Summary (from transcript excerpt)
-        sys_sum, usr_sum = provider.get_raw_index_summary_prompt(
-            video_title="Vilfredo Pareto and Elites",
-            transcript_excerpt="A circulação de elites explica a alternância de poder.",
-            language="Português do Brasil",
+        summary_system_instructions, summary_user_prompt = (
+            provider.get_raw_index_summary_prompt(
+                video_title="Vilfredo Pareto and Elites",
+                transcript_excerpt="A circulação de elites explica a alternância de poder.",
+                language="Português do Brasil",
+            )
         )
-        assert "summarize" in sys_sum.lower()
-        assert "Português do Brasil" in sys_sum
-        assert "Vilfredo Pareto and Elites" in usr_sum
-        assert "A circulação de elites" in usr_sum
+        assert "summarize" in summary_system_instructions.lower()
+        assert "Português do Brasil" in summary_system_instructions
+        assert "Vilfredo Pareto and Elites" in summary_user_prompt
+        assert "A circulação de elites" in summary_user_prompt
 
         # Pass 3: Synthesis (from summary)
-        sys_syn, usr_syn = provider.get_raw_index_synthesis_prompt(
-            video_title="Vilfredo Pareto and Elites",
-            summary="A circulação de elites explica a alternância de poder.",
-            language="Português do Brasil",
+        synthesis_system_instructions, synthesis_user_prompt = (
+            provider.get_raw_index_synthesis_prompt(
+                video_title="Vilfredo Pareto and Elites",
+                summary="A circulação de elites explica a alternância de poder.",
+                language="Português do Brasil",
+            )
         )
-        assert "paratactic" in sys_syn.lower()
-        assert "ner" in sys_syn.lower()
-        assert "single paragraph" in sys_syn.lower()
-        assert "Vilfredo Pareto and Elites" in usr_syn
-        assert "A circulação de elites" in usr_syn
+        assert "paratactic" in synthesis_system_instructions.lower()
+        assert "ner" in synthesis_system_instructions.lower()
+        assert "single paragraph" in synthesis_system_instructions.lower()
+        assert "Vilfredo Pareto and Elites" in synthesis_user_prompt
+        assert "A circulação de elites" in synthesis_user_prompt
 
     def test_get_judge_raw_index_prompts(self) -> None:
         provider = JsonPromptProvider()
@@ -493,43 +499,60 @@ class TestJsonPromptProvider:
         assert "judge_raw_index_synthesis" in provider._templates
 
         # Summary Judge
-        sys_sum_j, usr_sum_j = provider.get_judge_raw_index_summary_prompt(
-            video_title="Pareto and Elites",
-            transcript_excerpt="Explicando a circulação das elites na política.",
-            summary="Resumo fiel da circulação das elites.",
-            language="Português do Brasil",
+        summary_judge_system_instructions, summary_judge_user_prompt = (
+            provider.get_judge_raw_index_summary_prompt(
+                video_title="Pareto and Elites",
+                transcript_excerpt="Explicando a circulação das elites na política.",
+                summary="Resumo fiel da circulação das elites.",
+                language="Português do Brasil",
+            )
         )
-        assert "impartial evaluator" in sys_sum_j.lower()
-        assert "strictly with 'true' or 'false'" in sys_sum_j.lower()
-        assert "Pareto and Elites" in usr_sum_j
-        assert "Explicando a circulação das elites na política." in usr_sum_j
-        assert "Resumo fiel da circulação das elites." in usr_sum_j
-        assert "true" in usr_sum_j.lower()
+        assert "impartial evaluator" in summary_judge_system_instructions.lower()
+        assert (
+            "strictly with 'true' or 'false'" in summary_judge_system_instructions.lower()
+        )
+        assert "Pareto and Elites" in summary_judge_user_prompt
+        assert "Explicando a circulação das elites na política." in summary_judge_user_prompt
+        assert "Resumo fiel da circulação das elites." in summary_judge_user_prompt
+        assert "true" in summary_judge_user_prompt.lower()
 
         # Concepts Judge
-        sys_con_j, usr_con_j = provider.get_judge_raw_index_concepts_prompt(
-            video_title="Pareto and Elites",
-            transcript_excerpt="Explicando a circulação das elites na política.",
-            concepts="Circulação de Elites, Pareto",
-            language="Português do Brasil",
+        concepts_judge_system_instructions, concepts_judge_user_prompt = (
+            provider.get_judge_raw_index_concepts_prompt(
+                video_title="Pareto and Elites",
+                transcript_excerpt="Explicando a circulação das elites na política.",
+                concepts="Circulação de Elites, Pareto",
+                language="Português do Brasil",
+            )
         )
-        assert "impartial evaluator" in sys_con_j.lower()
-        assert "strictly with 'true' or 'false'" in sys_con_j.lower()
-        assert "Pareto and Elites" in usr_con_j
-        assert "Explicando a circulação das elites na política." in usr_con_j
-        assert "Circulação de Elites, Pareto" in usr_con_j
-        assert "true" in usr_con_j.lower()
+        assert "impartial evaluator" in concepts_judge_system_instructions.lower()
+        assert (
+            "strictly with 'true' or 'false'" in concepts_judge_system_instructions.lower()
+        )
+        assert "Pareto and Elites" in concepts_judge_user_prompt
+        assert "Explicando a circulação das elites na política." in concepts_judge_user_prompt
+        assert "Circulação de Elites, Pareto" in concepts_judge_user_prompt
+        assert "true" in concepts_judge_user_prompt.lower()
 
         # Synthesis Judge
-        sys_syn_j, usr_syn_j = provider.get_judge_raw_index_synthesis_prompt(
-            video_title="Pareto and Elites",
-            transcript_excerpt="Explicando a circulação das elites na política.",
-            synthesis="A circulação de elites reflete a alternância política segundo Pareto.",
-            language="Português do Brasil",
+        synthesis_judge_system_instructions, synthesis_judge_user_prompt = (
+            provider.get_judge_raw_index_synthesis_prompt(
+                video_title="Pareto and Elites",
+                transcript_excerpt="Explicando a circulação das elites na política.",
+                synthesis="A circulação de elites reflete a alternância política segundo Pareto.",
+                language="Português do Brasil",
+            )
         )
-        assert "impartial evaluator" in sys_syn_j.lower()
-        assert "strictly with 'true' or 'false'" in sys_syn_j.lower()
-        assert "Pareto and Elites" in usr_syn_j
-        assert "Explicando a circulação das elites na política." in usr_syn_j
-        assert "A circulação de elites reflete a alternância política segundo Pareto." in usr_syn_j
-        assert "true" in usr_syn_j.lower()
+        assert "impartial evaluator" in synthesis_judge_system_instructions.lower()
+        assert (
+            "strictly with 'true' or 'false'" in synthesis_judge_system_instructions.lower()
+        )
+        assert "Pareto and Elites" in synthesis_judge_user_prompt
+        assert (
+            "Explicando a circulação das elites na política." in synthesis_judge_user_prompt
+        )
+        assert (
+            "A circulação de elites reflete a alternância política segundo Pareto."
+            in synthesis_judge_user_prompt
+        )
+        assert "true" in synthesis_judge_user_prompt.lower()

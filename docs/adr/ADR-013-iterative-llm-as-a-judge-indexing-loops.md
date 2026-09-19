@@ -100,7 +100,7 @@ We establish four architectural standards for transcript indexing:
 
 ## 5. Architectural Anti-Patterns Identified & Refactoring Strategy
 
-During architectural review of the use case implementation ([`src/cresmo/application/use_cases/index_raw_transcripts.py`](file:///home/stangler/gamer_d/Fausto%20Stangler/Documentos/Python/PES/src/cresmo/application/use_cases/index_raw_transcripts.py)), 5 anti-patterns were documented and targeted for elimination:
+During architectural review of the use case implementation ([`src/cresmo/application/use_cases/index_raw_transcripts.py`](file:///home/stangler/gamer_d/Fausto%20Stangler/Documentos/Python/PES/src/cresmo/application/use_cases/index_raw_transcripts.py)) and infrastructure adapters, 7 anti-patterns were documented and targeted for elimination:
 
 ### 5.1 Long Method / God Orchestrator (SRP Violation)
 - **Anti-Pattern:** `index_single_transcript` accumulated ~260 lines, handling repository ACL, text slicing, three distinct LLM extraction/retry state machines, error catching, entity instantiation, and dual-output persistence.
@@ -126,7 +126,28 @@ During architectural review of the use case implementation ([`src/cresmo/applica
 - **Anti-Pattern:** Hardcoding `https://youtube.com/watch?v={video_id_str}` inside the application use case coupled the domain to YouTube, generating bogus URLs for local audio, podcasts, or Vimeo.
 - **Architectural Remedy:** Honor `transcript.source_url` directly or preserve platform-neutral URL resolution without leaking third-party platform assumptions into the application layer.
 
-### 5.6 Cryptic Telegraphic Naming & Hungarian Notation Smell
-- **Anti-Pattern:** Using truncated abbreviations (`sys_con`, `usr_con`, `sys_judge_con`, `judge_con_resp`, `is_concepts_valid`) and Hungarian type suffixes (`video_id_str`, `title_str`) within private helper scopes, creating cognitive load and breaking naming parity with hexagonal port contracts.
-- **Architectural Remedy:** Adopt symmetrical, idiomatic clean names (`system_instructions`, `user_prompt`, `judge_system_instructions`, `judge_prompt`, `judge_response`, `is_valid`, `retries`, `video_id`, `title`) across all extraction methods, ensuring uniform readability and DX.
+### 5.6 Cryptic Telegraphic Naming & Truncated Abbreviations (Anti-Pattern)
+- **Anti-Pattern:** Using truncated variable abbreviations and acronym prefixes/suffixes across application use cases and infrastructure adapters:
+  - `eff_*` for `effective_*` (e.g., `eff_temperature`, `eff_timeout`).
+  - `sys_*` / `usr_*` for `system_*` / `user_*` (e.g., `sys_con`, `usr_con`, `sys_template`).
+  - `res_*` for `result_*` / `response_*` / `resource_*` (e.g., `res_long`, `res_wide`, `res_traversable`).
+  - `cand` for `candidate` and `resp` for `response`.
+  - `m_*` for regex search match objects (e.g., `m_comp`, `m_title`, `m_date`).
+  - Hungarian type suffixes (`video_id_str`, `title_str`, `date_val`, `frontmatter_dict`).
+  Such telegraphic shorthand violates Ubiquitous Language, impairs cognitive clarity, breaks symmetrical parity with Hexagonal port parameter names (such as `system_instruction` vs `judge_system_instructions`), and harms Developer Experience (DX).
+- **Architectural Remedy:** Enforce full, expressive, intent-revealing names without abbreviations across all architectural layers:
+  - `effective_temperature`, `effective_timeout` (never `eff_*`).
+  - `system_instructions`, `user_prompt`, `system_template` (never `sys_*`, `usr_*`).
+  - `longitudinal_expansion`, `synchronic_expansion`, `resource_traversable`, `response` (never `res_*`, `resp`).
+  - `candidate` (never `cand`).
+  - `complementary_match`, `title_match`, `date_match` (never `m_*`).
+  - Clean semantic identifiers (`video_id`, `title`, `sort_date`, `frontmatter`) devoid of Hungarian type tags.
+
+### 5.7 Unwarmed Local Model & Socket Timeout on Cold Start (Ollama / Local LLM Latency)
+- **Anti-Pattern:** Initiating real generative domain workloads directly against a cold local LLM daemon (e.g., Ollama, llama.cpp, vLLM) on application bootstrap. When a model (e.g., Qwen 2.5 7B, ~4.7 GB GGUF) is not resident in memory, the operating system and daemon must page weights from disk into GPU VRAM. This cold-loading latency (typically 30s to 120s depending on bus speed and model size) routinely exceeds standard HTTP read timeouts (e.g., 60s or 120s), resulting in unhandled socket read timeouts (`httpx.ReadTimeout`) and aborted batch jobs on the very first item.
+- **Architectural Remedy:** Introduce an explicit, synchronous preloading barrier (`warmup()`) declared on `LLMTransformationPort` and implemented in `OllamaLLMAdapter`:
+  - When the active LLM provider is `ollama`, the CLI / pipeline invokes `llm_adapter.warmup()` synchronously before dispatching any domain tasks.
+  - The adapter issues a non-generative HTTP POST to `/api/generate` with an empty prompt (`""`), the configured `keep_alive` parameter (e.g., `"1h"` to pin weights in VRAM for subsequent queries), and a dedicated, generous `warmup_timeout_seconds` (default: 300.0s).
+  - The call blocks synchronously until Ollama completes model allocation and returns `{"done": true}`. Only after this handshake succeeds does the orchestrator proceed to domain execution, completely eliminating cold-start socket timeouts.
+
 

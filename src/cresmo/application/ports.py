@@ -159,6 +159,17 @@ class LLMTransformationPort(ABC):
         """
         raise NotImplementedError("Implement LLM transformation contract.")
 
+    def warmup(self) -> bool:
+        """Preload or warm up model into memory if supported by the provider.
+
+        Default implementation returns True immediately for providers not requiring
+        explicit local memory allocation (e.g. cloud APIs or test doubles).
+
+        Returns:
+            True if warmup succeeded or is unnecessary; False if warmup failed.
+        """
+        return True
+
 
 class VaultRepositoryPort(ABC):
     """Hexagonal Persistence Port for the Obsidian Second Brain vault and raw/enriched storage.

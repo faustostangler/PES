@@ -263,9 +263,9 @@ class CresmoSettings(BaseSettings):
                 _WORKSPACE_DIR / "data" / "cookies.txt",
                 _WORKSPACE_DIR / ".yt_dlp_cookies.txt",
             ]
-            for cand in candidates:
-                if cand.exists() and cand.stat().st_size > 0:
-                    self.cookies_file = cand
+            for candidate in candidates:
+                if candidate.exists() and candidate.stat().st_size > 0:
+                    self.cookies_file = candidate
                     break
 
         return self
@@ -307,6 +307,26 @@ class CresmoSettings(BaseSettings):
     ollama_timeout_seconds: float = Field(
         default=60.0,
         description="HTTP timeout in seconds for local Ollama inference requests.",
+    )
+    ollama_warmup_timeout_seconds: float = Field(
+        default=300.0,
+        ge=1.0,
+        validation_alias=AliasChoices(
+            "ollama_warmup_timeout_seconds",
+            "CRESMO_OLLAMA_WARMUP_TIMEOUT",
+            "OLLAMA_WARMUP_TIMEOUT",
+        ),
+        description="Extended HTTP timeout in seconds for initial Ollama model preload into VRAM.",
+    )
+    ollama_keep_alive: str = Field(
+        default="1h",
+        validation_alias=AliasChoices(
+            "ollama_keep_alive",
+            "CRESMO_OLLAMA_KEEPALIVE",
+            "OLLAMA_KEEPALIVE",
+            "CRESMO_OLLAMA_KEEP_ALIVE",
+        ),
+        description="Duration to keep the model loaded in Ollama VRAM/RAM (e.g. '1h', '60m', '-1' for indefinite).",
     )
     ollama_num_predict: int = Field(
         default=0,

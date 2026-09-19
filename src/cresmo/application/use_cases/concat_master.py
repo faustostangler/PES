@@ -50,26 +50,30 @@ def parse_metadata_from_content(
         Tuple of (date_integer, category_string, video_id_string).
     """
     # 1. Parse video_date
-    m_date = _DATE_PATTERN.search(content)
-    date_val = 99999999
-    if m_date:
+    date_match = _DATE_PATTERN.search(content)
+    sort_date = 99999999
+    if date_match:
         try:
-            date_val = int(m_date.group(1))
+            sort_date = int(date_match.group(1))
         except ValueError:
             pass
 
     # 2. Parse channel_category
-    m_cat = _CATEGORY_PATTERN.search(content)
-    if m_cat and m_cat.group(1).strip():
-        category = m_cat.group(1).strip()
+    category_match = _CATEGORY_PATTERN.search(content)
+    if category_match and category_match.group(1).strip():
+        category = category_match.group(1).strip()
     else:
         category, _ = classify_channel(channel_name)
 
     # 3. Parse video_id
-    m_vid = _VIDEO_ID_PATTERN.search(content)
-    video_id = m_vid.group(1).strip() if m_vid and m_vid.group(1).strip() else fallback_stem
+    video_id_match = _VIDEO_ID_PATTERN.search(content)
+    video_id = (
+        video_id_match.group(1).strip()
+        if video_id_match and video_id_match.group(1).strip()
+        else fallback_stem
+    )
 
-    return date_val, category, video_id
+    return sort_date, category, video_id
 
 
 class ConcatMasterUseCase:
@@ -120,7 +124,7 @@ class ConcatMasterUseCase:
             if not content:
                 continue
 
-            date_val, category, video_id = parse_metadata_from_content(
+            sort_date, category, video_id = parse_metadata_from_content(
                 content=content,
                 channel_name=channel_name,
                 fallback_stem=file_path.stem,
@@ -128,14 +132,14 @@ class ConcatMasterUseCase:
             if resolved_category is None:
                 resolved_category = category
 
-            w_count = count_words(content)
-            docs.append((date_val, file_path.name, content, video_id, w_count))
+            word_count = count_words(content)
+            docs.append((sort_date, file_path.name, content, video_id, word_count))
 
         if not docs:
             return []
 
-        # Chronological sort: oldest first (ascending by date_val, then file name)
-        docs.sort(key=lambda d: (d[0], d[1]))
+        # Chronological sort: oldest first (ascending by sort_date, then file name)
+        docs.sort(key=lambda doc_tuple: (doc_tuple[0], doc_tuple[1]))
 
         channel_category = resolved_category or classify_channel(channel_name)[0]
 
@@ -205,9 +209,11 @@ class ConcatMasterUseCase:
         channel_dirs = sorted(d.name for d in enriched_root.iterdir() if d.is_dir())
         all_results: dict[str, list[MasterDocumentResult]] = {}
 
-        for ch_name in channel_dirs:
-            res = self.execute_for_channel(channel_name=ch_name, max_words=max_words)
-            if res:
-                all_results[ch_name] = res
+        for channel_name in channel_dirs:
+            channel_results = self.execute_for_channel(
+                channel_name=channel_name, max_words=max_words
+            )
+            if channel_results:
+                all_results[channel_name] = channel_results
 
         return all_results

@@ -163,6 +163,8 @@ def build_pipeline(
             default_temperature=resolved_settings.raw_index_temperature,
             num_predict=resolved_settings.ollama_num_predict,
             langfuse_client=langfuse_client,
+            keep_alive=resolved_settings.ollama_keep_alive,
+            warmup_timeout_seconds=resolved_settings.ollama_warmup_timeout_seconds,
         )
 
     effective_batch_size = (
@@ -364,6 +366,8 @@ def build_index_raw_use_case(
             default_temperature=resolved_settings.raw_index_temperature,
             num_predict=resolved_settings.ollama_num_predict,
             langfuse_client=langfuse_client,
+            keep_alive=resolved_settings.ollama_keep_alive,
+            warmup_timeout_seconds=resolved_settings.ollama_warmup_timeout_seconds,
         )
 
     return IndexRawTranscriptsUseCase(

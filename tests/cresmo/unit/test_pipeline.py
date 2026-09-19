@@ -325,8 +325,8 @@ class TestCresmoPipelineOrchestration:
         ext_file = ext_dir / "external_article.txt"
         ext_file.write_text("External article content.", encoding="utf-8")
 
-        res_ext = pipeline.run_for_text_file(ext_file)
-        assert res_ext.success is True
+        result_external = pipeline.run_for_text_file(ext_file)
+        assert result_external.success is True
         vault.save_raw_transcript.assert_called_once()
 
     def test_run_for_text_file_short_stem_fallback_hash(self, tmp_path: Path) -> None:
@@ -487,15 +487,15 @@ class TestCresmoPipelineOrchestration:
         assert comp.pass_count == 3
 
         # Second run without force_reprocess returns exact idempotency attributes
-        res_cached = pipeline.run_for_video(
+        result_cached = pipeline.run_for_video(
             "https://youtube.com/watch?v=videoPassTest1", force_reprocess=False
         )
-        assert res_cached.content_id == cid
-        assert res_cached.synthesized_notes == ()
-        assert res_cached.reconciled_mocs == ()
-        assert res_cached.duplicates_unified == 0
-        assert res_cached.already_processed is True
-        assert res_cached.success is True
+        assert result_cached.content_id == cid
+        assert result_cached.synthesized_notes == ()
+        assert result_cached.reconciled_mocs == ()
+        assert result_cached.duplicates_unified == 0
+        assert result_cached.already_processed is True
+        assert result_cached.success is True
 
     def test_run_for_text_file_content_id_derivation_boundaries(self, tmp_path: Path) -> None:
         pipeline = CresmoPipeline(
@@ -508,36 +508,36 @@ class TestCresmoPipelineOrchestration:
         # Boundary: clean stem length exactly 8
         f8 = tmp_path / "exact008.txt"
         f8.write_text("Text content for length 8 boundary.", encoding="utf-8")
-        res8 = pipeline.run_for_text_file(f8)
-        assert res8.content_id.value == "exact008"
+        result_exact_8 = pipeline.run_for_text_file(f8)
+        assert result_exact_8.content_id.value == "exact008"
 
         # Boundary: clean stem length exactly 64
         name64 = "a" * 64
         f64 = tmp_path / f"{name64}.txt"
         f64.write_text("Text content for length 64 boundary.", encoding="utf-8")
-        res64 = pipeline.run_for_text_file(f64)
-        assert res64.content_id.value == name64
+        result_exact_64 = pipeline.run_for_text_file(f64)
+        assert result_exact_64.content_id.value == name64
 
         # Boundary: clean stem length 65 (triggers fallback)
         name65 = "b" * 65
         f65 = tmp_path / f"{name65}.txt"
         f65.write_text("Text content for length 65 boundary.", encoding="utf-8")
-        res65 = pipeline.run_for_text_file(f65)
-        assert res65.content_id.value.startswith("b" * 24 + "_")
-        assert len(res65.content_id.value) == 24 + 1 + 16
+        result_long_65 = pipeline.run_for_text_file(f65)
+        assert result_long_65.content_id.value.startswith("b" * 24 + "_")
+        assert len(result_long_65.content_id.value) == 24 + 1 + 16
 
         # Boundary: non-alphanumeric stem (empty clean stem -> prefix is 'text')
         f_symbols = tmp_path / "###$$$%%%.txt"
         f_symbols.write_text("Text content for non-alphanumeric stem.", encoding="utf-8")
-        res_sym = pipeline.run_for_text_file(f_symbols)
-        assert res_sym.content_id.value.startswith("text_")
-        assert len(res_sym.content_id.value) == 4 + 1 + 16
+        result_symbols = pipeline.run_for_text_file(f_symbols)
+        assert result_symbols.content_id.value.startswith("text_")
+        assert len(result_symbols.content_id.value) == 4 + 1 + 16
 
         # Hyphens and underscores preserved in stem
         f_hyph = tmp_path / "hyphen-and_under.txt"
         f_hyph.write_text("Text content with hyphens and underscores.", encoding="utf-8")
-        res_hyph = pipeline.run_for_text_file(f_hyph)
-        assert res_hyph.content_id.value == "hyphen-and_under"
+        result_hyphenated = pipeline.run_for_text_file(f_hyph)
+        assert result_hyphenated.content_id.value == "hyphen-and_under"
 
     def test_run_for_text_file_passes_and_idempotency_attributes(self, tmp_path: Path) -> None:
         text_file = tmp_path / "pass_count_test.txt"
@@ -559,13 +559,13 @@ class TestCresmoPipelineOrchestration:
         assert comp.pass_count == 5
 
         # Idempotent re-run
-        res_idem = pipeline.run_for_text_file(text_file, force_reprocess=False)
-        assert res_idem.content_id == res.content_id
-        assert res_idem.synthesized_notes == ()
-        assert res_idem.reconciled_mocs == ()
-        assert res_idem.duplicates_unified == 0
-        assert res_idem.already_processed is True
-        assert res_idem.success is True
+        result_idempotent = pipeline.run_for_text_file(text_file, force_reprocess=False)
+        assert result_idempotent.content_id == res.content_id
+        assert result_idempotent.synthesized_notes == ()
+        assert result_idempotent.reconciled_mocs == ()
+        assert result_idempotent.duplicates_unified == 0
+        assert result_idempotent.already_processed is True
+        assert result_idempotent.success is True
 
     def test_run_for_text_file_frontmatter_field_variants_and_malformed_tolerance(
         self, tmp_path: Path
@@ -592,9 +592,9 @@ class TestCresmoPipelineOrchestration:
             vault_port=vault,
         )
 
-        res_var = pipeline.run_for_text_file(f_var)
-        assert res_var.success is True
-        raw = vault.get_raw_transcript(res_var.content_id)
+        result_variant = pipeline.run_for_text_file(f_var)
+        assert result_variant.success is True
+        raw = vault.get_raw_transcript(result_variant.content_id)
         assert raw is not None
         assert raw.title == "Alternative Title"
         assert raw.channel_name == "Alternative Channel"
@@ -609,9 +609,9 @@ class TestCresmoPipelineOrchestration:
             "---\n[unclosed_yaml_sequence: {broken\n---\nBody content surviving bad YAML syntax.",
             encoding="utf-8",
         )
-        res_bad = pipeline.run_for_text_file(f_bad_yaml)
-        assert res_bad.success is True
-        raw_bad = vault.get_raw_transcript(res_bad.content_id)
+        result_bad = pipeline.run_for_text_file(f_bad_yaml)
+        assert result_bad.success is True
+        raw_bad = vault.get_raw_transcript(result_bad.content_id)
         assert raw_bad is not None
         assert "Body content surviving bad YAML" in raw_bad.body
 
@@ -621,9 +621,9 @@ class TestCresmoPipelineOrchestration:
             "---\ntitle: Unclosed without closing delimiter\nJust plain body text.",
             encoding="utf-8",
         )
-        res_no_close = pipeline.run_for_text_file(f_no_close)
-        assert res_no_close.success is True
-        raw_no_close = vault.get_raw_transcript(res_no_close.content_id)
+        result_no_close = pipeline.run_for_text_file(f_no_close)
+        assert result_no_close.success is True
+        raw_no_close = vault.get_raw_transcript(result_no_close.content_id)
         assert raw_no_close is not None
         assert "Just plain body text." in raw_no_close.body
 

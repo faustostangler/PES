@@ -234,24 +234,26 @@ def execute_batch_dry_run(pipeline: CresmoPipeline, sources: list[BatchSource]) 
         Process exit code integer.
     """
     ingested = 0
-    for idx, src in enumerate(sources, 1):
-        if src.kind == "file":
-            fpath = Path(src.target)
+    for source_index, source in enumerate(sources, 1):
+        if source.kind == "file":
+            file_path = Path(source.target)
             ingested += 1
             sys.stdout.write(
-                f"[{idx}/{len(sources)}] Dry-run text: [{fpath.stem}] "
-                f"({fpath.stat().st_size} bytes)\n"
+                f"[{source_index}/{len(sources)}] Dry-run text: [{file_path.stem}] "
+                f"({file_path.stat().st_size} bytes)\n"
             )
         else:
-            raw = pipeline.ingest_raw_transcript.execute(video_url=src.target)
-            if raw is not None:
+            raw_transcript = pipeline.ingest_raw_transcript.execute(video_url=source.target)
+            if raw_transcript is not None:
                 ingested += 1
                 sys.stdout.write(
-                    f"[{idx}/{len(sources)}] Dry-run ingested: [{raw.content_id.value}] "
-                    f"({len(raw.body)} chars)\n"
+                    f"[{source_index}/{len(sources)}] Dry-run ingested: [{raw_transcript.content_id.value}] "
+                    f"({len(raw_transcript.body)} chars)\n"
                 )
             else:
-                sys.stderr.write(f"[{idx}/{len(sources)}] Ingestion failed for: {src.target}\n")
+                sys.stderr.write(
+                    f"[{source_index}/{len(sources)}] Ingestion failed for: {source.target}\n"
+                )
     sys.stdout.write(f"Dry-run completed: {ingested}/{len(sources)} items validated.\n")
     return EXIT_SUCCESS
 
@@ -276,26 +278,26 @@ def execute_batch_run(
     failed = 0
     total_items = 0
 
-    total_str = f"/{len(sources)}" if isinstance(sources, Sized) else ""
+    total_count_suffix = f"/{len(sources)}" if isinstance(sources, Sized) else ""
 
-    for idx, src in enumerate(sources, 1):
+    for source_index, source in enumerate(sources, 1):
         total_items += 1
-        item_prefix = f"[{idx}{total_str}]"
+        item_prefix = f"[{source_index}{total_count_suffix}]"
         try:
-            if src.kind == "file":
+            if source.kind == "file":
                 result = pipeline.run_for_text_file(
-                    file_path=Path(src.target),
+                    file_path=Path(source.target),
                     gap_filler_passes=args.passes,
                     force_reprocess=args.force_reprocess,
                 )
             else:
                 result = pipeline.run_for_video(
-                    video_url=src.target,
+                    video_url=source.target,
                     gap_filler_passes=args.passes,
                     force_reprocess=args.force_reprocess,
                 )
 
-            display_target = src.target
+            display_target = source.target
             if result.already_processed:
                 skipped += 1
                 sys.stdout.write(
@@ -317,13 +319,13 @@ def execute_batch_run(
                 )
         except RateLimitExceededError as exc:
             failed += 1
-            sys.stderr.write(f"{item_prefix} [RATE LIMIT] {src.target}: {exc}\n")
+            sys.stderr.write(f"{item_prefix} [RATE LIMIT] {source.target}: {exc}\n")
         except IngestionNetworkError as exc:
             failed += 1
-            sys.stderr.write(f"{item_prefix} [NETWORK ERROR] {src.target}: {exc}\n")
+            sys.stderr.write(f"{item_prefix} [NETWORK ERROR] {source.target}: {exc}\n")
         except Exception as exc:  # noqa: BLE001
             failed += 1
-            sys.stderr.write(f"{item_prefix} [FAILED] {src.target}: {exc}\n")
+            sys.stderr.write(f"{item_prefix} [FAILED] {source.target}: {exc}\n")
 
     if total_items == 0:
         manifest_display = str(args.manifest) if args.manifest else "data/playlist.txt"

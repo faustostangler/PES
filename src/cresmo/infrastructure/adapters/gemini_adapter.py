@@ -159,9 +159,11 @@ class GeminiLLMAdapter(LLMTransformationPort):
         Returns:
             Generated response text.
         """
-        eff_temperature = self.default_temperature if temperature is None else temperature
+        effective_temperature = (
+            self.default_temperature if temperature is None else temperature
+        )
         config = types.GenerateContentConfig(
-            temperature=eff_temperature,
+            temperature=effective_temperature,
             max_output_tokens=self.max_output_tokens,
             system_instruction=system_instruction,
             automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=True),
@@ -201,7 +203,7 @@ class GeminiLLMAdapter(LLMTransformationPort):
             try:
                 metadata: dict[str, Any] = {
                     "provider": "gemini",
-                    "temperature": eff_temperature,
+                    "temperature": effective_temperature,
                 }
                 if trace_id:
                     metadata["trace_id"] = trace_id
