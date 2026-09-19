@@ -64,31 +64,6 @@ class MediaIngestionPort(ABC):
         raise NotImplementedError("Implement single video ingestion contract.")
 
     @abstractmethod
-    def ingest_channels_and_playlists(
-        self,
-        playlist_urls: list[str],
-        output_dir: Path,
-        days_lookback: int = 730,
-        whisper_model: str = "base",
-        keep_audio: bool = False,
-        max_workers: int = 4,
-    ) -> list[RawTranscript]:
-        """Crawl channel playlists and ingest new videos within lookback window.
-
-        Args:
-            playlist_urls: Seed playlist or channel URLs to inspect.
-            output_dir: Output storage directory for raw Markdown transcripts.
-            days_lookback: Maximum age of videos to ingest in days.
-            whisper_model: Whisper model size name.
-            keep_audio: Whether to preserve downloaded audio on disk.
-            max_workers: Concurrency ceiling for parallel processing.
-
-        Returns:
-            List of newly ingested RawTranscript entities.
-        """
-        raise NotImplementedError("Implement channels ingestion contract.")
-
-    @abstractmethod
     def discover_channel_feed(
         self,
         query: ChannelFeedQuery,
@@ -581,42 +556,6 @@ class PromptProviderPort(ABC):
 
         Returns:
             Formatted MOC reconciliation prompt string.
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def get_raw_index_prompt(
-        self,
-        video_title: str,
-        transcript_excerpt: str,
-        language: str = "Português do Brasil",
-    ) -> tuple[str, str]:
-        """Format (system_instruction, user_prompt) for raw transcript paratactic conceptual synthesis.
-
-        Args:
-            video_title: Raw video title string.
-            transcript_excerpt: First N characters of raw spoken transcript.
-            language: Target synthesis language.
-
-        Returns:
-            Tuple containing system instruction and user prompt string.
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def get_raw_index_rewrite_prompt(
-        self,
-        previous_output: str,
-        language: str = "Português do Brasil",
-    ) -> str:
-        """Format corrective rewrite prompt when raw index synthesis violates output rules.
-
-        Args:
-            previous_output: Verbatim output from previous LLM attempt.
-            language: Target natural language for rewrite.
-
-        Returns:
-            Formatted rewrite prompt string.
         """
         raise NotImplementedError
 

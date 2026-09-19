@@ -272,7 +272,7 @@ class CresmoSettings(BaseSettings):
 
     batch_size: int = Field(
         default=5,
-        validation_alias=AliasChoices("batch_size", "stage_5_batch_size", "atomic_batch_size"),
+        validation_alias=AliasChoices("batch_size", "CRESMO_BATCH_SIZE"),
         description="Batch size for Atomic Note synthesis.",
     )
     keep_audio: bool = Field(
@@ -281,7 +281,7 @@ class CresmoSettings(BaseSettings):
     )
     gap_filler_passes: int = Field(
         default=3,
-        validation_alias=AliasChoices("gap_filler_passes", "stage_2_passes"),
+        validation_alias=AliasChoices("gap_filler_passes", "CRESMO_GAP_FILLER_PASSES"),
         description="Default Socratic gap filler refinement passes.",
     )
     concat_max_words: int = Field(

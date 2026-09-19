@@ -84,22 +84,6 @@ class TestMockMediaIngestionPort:
         assert result is transcript
         assert port.ingest_single_calls == ["https://youtube.com/watch?v=singleVid123"]
 
-    def test_ingest_channels_and_playlists(self, tmp_path: Path) -> None:
-        cid = ContentId("batchVid1234")
-        transcript = RawTranscript(
-            content_id=cid,
-            channel_name="Channel",
-            body="Batch text",
-        )
-        port_with = MockMediaIngestionPort(canned_transcript=transcript)
-        res_with = port_with.ingest_channels_and_playlists(["https://yt.com/1"], tmp_path)
-        assert res_with == [transcript]
-        assert port_with.ingest_channels_calls == [["https://yt.com/1"]]
-
-        port_without = MockMediaIngestionPort(canned_transcript=None)
-        res_without = port_without.ingest_channels_and_playlists(["https://yt.com/2"], tmp_path)
-        assert res_without == []
-
     def test_extract_channel_url_from_video(self) -> None:
         port = MockMediaIngestionPort()
         assert port.extract_channel_url_from_video("https://yt.com/watch?v=123") is None
