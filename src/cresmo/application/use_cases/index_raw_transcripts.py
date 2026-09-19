@@ -21,7 +21,12 @@ from cresmo.application.ports import (
     VaultRepositoryPort,
 )
 from cresmo.domain.entities import RawTranscript
-from cresmo.domain.value_objects import ContentId, NoteTitle, RawIndexEntry
+from cresmo.domain.value_objects import (
+    ContentId,
+    NoteTitle,
+    RawIndexEntry,
+    is_processable_transcript_file,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -427,9 +432,7 @@ class IndexRawTranscriptsUseCase:
 
         while not is_valid:
             trace_id = (
-                f"{video_id}_summary"
-                if retries == 0
-                else f"{video_id}_summary_retry_{retries}"
+                f"{video_id}_summary" if retries == 0 else f"{video_id}_summary_retry_{retries}"
             )
             judge_trace_id = (
                 f"{video_id}_summary_judge"
@@ -513,9 +516,7 @@ class IndexRawTranscriptsUseCase:
 
         while not is_valid:
             trace_id = (
-                f"{video_id}_synthesis"
-                if retries == 0
-                else f"{video_id}_synthesis_retry_{retries}"
+                f"{video_id}_synthesis" if retries == 0 else f"{video_id}_synthesis_retry_{retries}"
             )
             judge_trace_id = (
                 f"{video_id}_synthesis_judge"
@@ -651,6 +652,16 @@ class IndexRawTranscriptsUseCase:
             else f"https://youtube.com/watch?v={video_id}"
         )
 
+        category = (
+            transcript.channel_category.strip()
+            if getattr(transcript, "channel_category", None)
+            else ""
+        )
+        if not category:
+            from cresmo.domain.taxonomy import classify_channel
+
+            category, _ = classify_channel(channel_name)
+
         entry = RawIndexEntry(
             video_id=transcript.content_id,
             url=url,
@@ -658,6 +669,7 @@ class IndexRawTranscriptsUseCase:
             channel_name=channel_name,
             key_concept=concept,
             synthesis=synthesis,
+            channel_category=category,
         )
 
         # Dual output persistence: channel markdown index and global tabular catalog (brain.csv)
@@ -692,8 +704,8 @@ class IndexRawTranscriptsUseCase:
             return indexed_entries
 
         for file_path in sorted(ch_dir.glob("*.md")):
-            # Skip system indexes and hidden files
-            if file_path.name.startswith("_") or file_path.name == "_canal.md":
+            # Skip system indexes, artifacts, and hidden files
+            if not is_processable_transcript_file(file_path):
                 continue
 
             content_id = ContentId(file_path.stem)
@@ -725,7 +737,7 @@ class IndexRawTranscriptsUseCase:
             return results
 
         for sub_dir in sorted(raw_path.iterdir()):
-            if sub_dir.is_dir() and not sub_dir.name.startswith("."):
+            if sub_dir.is_dir() and not sub_dir.name.startswith((".", "_")):
                 entries = self.index_channel(sub_dir.name, force=force)
                 if entries:
                     results[sub_dir.name] = entries

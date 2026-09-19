@@ -120,11 +120,38 @@ class TestCompositionRoot:
         mock_langfuse_instance = MagicMock()
         mock_langfuse_cls = MagicMock(return_value=mock_langfuse_instance)
 
-        with patch.dict("sys.modules", {"langfuse": MagicMock(Langfuse=mock_langfuse_cls)}):
+        with (
+            patch("cresmo.presentation.composition.probe_langfuse_ready", return_value=True),
+            patch.dict("sys.modules", {"langfuse": MagicMock(Langfuse=mock_langfuse_cls)}),
+        ):
             pipeline = build_pipeline(settings=settings_with_langfuse)
             assert isinstance(pipeline, CresmoPipeline)
             assert isinstance(pipeline.llm_port, GeminiLLMAdapter)
             assert pipeline.llm_port._langfuse is mock_langfuse_instance
+
+    def test_build_pipeline_skips_langfuse_when_probe_fails(
+        self, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+    ) -> None:
+        settings_with_langfuse = CresmoSettings(
+            gemini_api_key=SecretStr("TEST_KEY"),
+            vault_dir=tmp_path / "vault",
+            langfuse_public_key="pk-lf-test",
+            langfuse_secret_key=SecretStr("sk-lf-test"),
+            langfuse_host="http://localhost:3000",
+        )
+
+        with patch("cresmo.presentation.composition.probe_langfuse_ready", return_value=False):
+            pipeline = build_pipeline(settings=settings_with_langfuse)
+            assert isinstance(pipeline, CresmoPipeline)
+            assert isinstance(pipeline.llm_port, GeminiLLMAdapter)
+            assert pipeline.llm_port._langfuse is None
+
+        captured = capsys.readouterr()
+        assert (
+            "unreachable" in captured.err
+            or "unreachable" in captured.out
+            or "Langfuse" in captured.err
+        )
 
     def test_build_pipeline_with_langfuse_import_or_init_error(self, tmp_path: Path) -> None:
         settings_with_langfuse = CresmoSettings(
@@ -135,13 +162,41 @@ class TestCompositionRoot:
             langfuse_host="https://cloud.langfuse.com",
         )
 
-        with patch("langfuse.Langfuse", side_effect=RuntimeError("Langfuse init failed")):
+        with (
+            patch("cresmo.presentation.composition.probe_langfuse_ready", return_value=True),
+            patch("langfuse.Langfuse", side_effect=RuntimeError("Langfuse init failed")),
+        ):
             pipeline = build_pipeline(settings=settings_with_langfuse)
             assert isinstance(pipeline, CresmoPipeline)
             assert isinstance(pipeline.llm_port, GeminiLLMAdapter)
             assert pipeline.llm_port._langfuse is None
 
+    def test_probe_langfuse_ready_url_construction(self) -> None:
+        from cresmo.presentation.composition import probe_langfuse_ready
+
+        with patch(
+            "cresmo.presentation.composition.probe_http_endpoint", return_value=True
+        ) as mock_probe:
+            assert probe_langfuse_ready("http://localhost:3000", timeout_seconds=0.5) is True
+            mock_probe.assert_called_once_with(
+                "http://localhost:3000/api/public/health",
+                timeout_seconds=0.5,
+            )
+
+    def test_probe_langfuse_ready_strips_trailing_slash(self) -> None:
+        from cresmo.presentation.composition import probe_langfuse_ready
+
+        with patch(
+            "cresmo.presentation.composition.probe_http_endpoint", return_value=True
+        ) as mock_probe:
+            assert probe_langfuse_ready("http://localhost:3000/", timeout_seconds=0.5) is True
+            mock_probe.assert_called_once_with(
+                "http://localhost:3000/api/public/health",
+                timeout_seconds=0.5,
+            )
+
     def test_build_concat_master_use_case(self, test_settings: CresmoSettings) -> None:
+
         uc = build_concat_master_use_case(settings=test_settings)
         assert isinstance(uc, ConcatMasterUseCase)
         assert uc.settings is test_settings

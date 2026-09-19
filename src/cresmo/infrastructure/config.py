@@ -75,6 +75,14 @@ class CresmoSettings(BaseSettings):
         default="https://cloud.langfuse.com",
         description="Langfuse telemetry endpoint URL.",
     )
+    preflight_probe_timeout_seconds: float = Field(
+        default=1.0,
+        description="Socket timeout in seconds for active preflight probes (Langfuse, Ollama).",
+    )
+    enable_preflight_probes: bool = Field(
+        default=True,
+        description="Enable active HTTP preflight probes before initializing telemetry or remote services.",
+    )
 
     # =========================================================================
     # 🟡 Category 2: Infra & Storage Paths

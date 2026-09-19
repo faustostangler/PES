@@ -159,9 +159,7 @@ class GeminiLLMAdapter(LLMTransformationPort):
         Returns:
             Generated response text.
         """
-        effective_temperature = (
-            self.default_temperature if temperature is None else temperature
-        )
+        effective_temperature = self.default_temperature if temperature is None else temperature
         config = types.GenerateContentConfig(
             temperature=effective_temperature,
             max_output_tokens=self.max_output_tokens,

@@ -49,7 +49,7 @@ from cresmo.application.use_cases import (
 from cresmo.domain.entities import AtomicNote, MapOfContent, RawTranscript
 from cresmo.domain.exceptions import CresmoDomainError
 from cresmo.domain.taxonomy import classify_channel
-from cresmo.domain.value_objects import ContentId
+from cresmo.domain.value_objects import ContentId, is_processable_transcript_file
 
 
 @dataclass(frozen=True)
@@ -188,10 +188,7 @@ class CresmoPipeline:
         """
         if hasattr(self.indexing_llm_port, "warmup"):
             self.indexing_llm_port.warmup(timeout_seconds=timeout_seconds)
-        if (
-            hasattr(self.llm_port, "warmup")
-            and self.llm_port is not self.indexing_llm_port
-        ):
+        if hasattr(self.llm_port, "warmup") and self.llm_port is not self.indexing_llm_port:
             self.llm_port.warmup(timeout_seconds=timeout_seconds)
 
     def _synthesize_transcript(
@@ -297,6 +294,11 @@ class CresmoPipeline:
 
     def _load_transcript_from_file(self, file_path: Path) -> RawTranscript:
         """Parse and construct RawTranscript domain entity from a local file."""
+        if not is_processable_transcript_file(file_path):
+            raise CresmoDomainError(
+                f"File '{file_path.name}' is an internal Cresmo artifact or system index "
+                "and cannot be processed as a transcript."
+            )
         if not file_path.is_file():
             raise CresmoDomainError(f"Priority text file not found: {file_path}")
 
@@ -378,6 +380,11 @@ class CresmoPipeline:
         Returns:
             PipelineResult summarizing synthesized notes, MOCs, and status.
         """
+        if not is_processable_transcript_file(file_path):
+            raise CresmoDomainError(
+                f"File '{file_path.name}' is an internal Cresmo artifact or system index "
+                "and cannot be processed as a transcript."
+            )
         self.warmup()
         raw = self._load_transcript_from_file(file_path)
 

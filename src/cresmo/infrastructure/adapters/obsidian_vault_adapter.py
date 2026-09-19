@@ -600,7 +600,9 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
         ch_dir = self.enriched_dir / sanitize_filename(channel_name)
         if not ch_dir.exists() or not ch_dir.is_dir():
             return []
-        return sorted(p for p in ch_dir.glob("*.md") if p.is_file())
+        return sorted(
+            p for p in ch_dir.glob("*.md") if p.is_file() and not p.name.startswith(("_", "."))
+        )
 
     def save_master_document(
         self,
@@ -672,11 +674,20 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
             f.flush()
 
     def append_brain_csv_entry(self, entry: RawIndexEntry) -> None:
-        """Append raw index entry to data/brain.csv atomically."""
+        """Append raw index entry to data/brain.csv atomically.
+
+        Uses semicolon (`;`) delimiter and full field quoting (`QUOTE_ALL`)
+        to prevent comma-separated key concepts from fragmenting into spurious columns.
+        """
         csv_file = self.data_dir / "brain.csv"
         csv_file.parent.mkdir(parents=True, exist_ok=True)
 
+        write_header = not csv_file.exists() or csv_file.stat().st_size == 0
         with open(csv_file, "a", encoding="utf-8", newline="") as f:
-            writer = csv.writer(f)
+            writer = csv.writer(f, delimiter=";", quoting=csv.QUOTE_ALL)
+            if write_header:
+                writer.writerow(
+                    ["channel_category", "channel_name", "filename", "key_concept", "synthesis"]
+                )
             writer.writerow(entry.to_csv_row())
             f.flush()

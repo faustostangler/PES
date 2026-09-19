@@ -299,9 +299,7 @@ class OllamaLLMAdapter(LLMTransformationPort):
         if not self._is_warmed_up:
             self.wait_for_warmup()
 
-        effective_temperature = (
-            temperature if temperature is not None else self.default_temperature
-        )
+        effective_temperature = temperature if temperature is not None else self.default_temperature
         endpoint = f"{self.base_url}/api/generate"
         options: dict[str, Any] = {
             "temperature": effective_temperature,
@@ -372,7 +370,6 @@ class OllamaLLMAdapter(LLMTransformationPort):
                         logger.debug("[OllamaLLMAdapter] Langfuse span update skipped: %s", exc)
 
                 return generated_text
-
 
         except TimeoutError as exc:
             msg = (

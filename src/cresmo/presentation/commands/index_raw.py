@@ -15,8 +15,12 @@ import argparse
 import sys
 
 from cresmo.infrastructure.config import CresmoSettings
-from cresmo.presentation.composition import build_index_raw_use_case
+from cresmo.presentation.composition import (
+    build_index_raw_use_case,
+    build_preflight_checker,
+)
 from cresmo.presentation.exit_codes import (
+    EXIT_CONFIG_OR_USAGE_ERROR,
     EXIT_INTERNAL_ERROR,
     EXIT_SUCCESS,
 )
@@ -71,6 +75,18 @@ def handle_index_raw(args: argparse.Namespace) -> int:
     try:
         settings = CresmoSettings()
         settings.ensure_directories()
+
+        if not args.web_index and getattr(settings, "enable_preflight_probes", True):
+            timeout = getattr(settings, "preflight_probe_timeout_seconds", 1.0)
+            preflight_checker = build_preflight_checker(settings=settings, check_ffmpeg=False)
+            if not preflight_checker.check_ollama_probe(
+                settings.ollama_base_url, timeout_seconds=timeout
+            ):
+                sys.stderr.write(
+                    f"[preflight] Local Ollama daemon at '{settings.ollama_base_url}' is unreachable.\n"
+                    "            Run 'ollama serve' to start Ollama or pass '--web-index' to use cloud Gemini API.\n"
+                )
+                return EXIT_CONFIG_OR_USAGE_ERROR
 
         use_case = build_index_raw_use_case(
             settings=settings,

@@ -541,6 +541,7 @@ class TestObsidianVaultAdapter:
             channel_name="Canal Teste",
             key_concept="Conceito Um",
             synthesis="Síntese paratática do primeiro vídeo.",
+            channel_category="history",
         )
         entry2 = RawIndexEntry(
             video_id=ContentId("vid22222222"),
@@ -549,6 +550,7 @@ class TestObsidianVaultAdapter:
             channel_name="Canal Teste",
             key_concept="Conceito Dois",
             synthesis="Síntese paratática do segundo vídeo.",
+            channel_category="history",
         )
 
         # 1. Initial indexed check
@@ -581,6 +583,12 @@ class TestObsidianVaultAdapter:
         csv_path = raw_dir.parent / "brain.csv"
         assert csv_path.exists()
         csv_text = csv_path.read_text(encoding="utf-8")
-        assert "vid11111111.md,Conceito Um,Síntese paratática do primeiro vídeo." in csv_text
-        assert "vid22222222.md,Conceito Dois,Síntese paratática do segundo vídeo." in csv_text
-
+        assert '"channel_category";"channel_name";"filename";"key_concept";"synthesis"' in csv_text
+        assert (
+            '"history";"Canal Teste";"vid11111111.md";"Conceito Um";"Síntese paratática do primeiro vídeo."'
+            in csv_text
+        )
+        assert (
+            '"history";"Canal Teste";"vid22222222.md";"Conceito Dois";"Síntese paratática do segundo vídeo."'
+            in csv_text
+        )

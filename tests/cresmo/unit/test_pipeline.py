@@ -230,6 +230,23 @@ class TestCresmoPipelineOrchestration:
         with pytest.raises(CresmoDomainError, match=r"Priority text file is empty:"):
             pipeline.run_for_text_file(empty_file)
 
+    def test_run_for_text_file_rejects_internal_system_artifacts(self, tmp_path: Path) -> None:
+        pipeline = CresmoPipeline(
+            media_ingestion_port=MockMediaIngestionPort(),
+            llm_port=SmartMockLLMAdapter(),
+            vault_port=InMemoryVaultAdapter(),
+            indexing_llm_port=SmartMockLLMAdapter(),
+        )
+        canal_file = tmp_path / "_canal.md"
+        canal_file.write_text("# Channel Index", encoding="utf-8")
+        with pytest.raises(CresmoDomainError, match=r"internal Cresmo artifact or system index"):
+            pipeline.run_for_text_file(canal_file)
+
+        brain_file = tmp_path / "brain.csv"
+        brain_file.write_text("channel,title\n", encoding="utf-8")
+        with pytest.raises(CresmoDomainError, match=r"internal Cresmo artifact or system index"):
+            pipeline.run_for_text_file(brain_file)
+
     def test_run_for_text_file_plain_text_full_cycle(self, tmp_path: Path) -> None:
         chan_dir = tmp_path / "political_science"
         chan_dir.mkdir(parents=True)

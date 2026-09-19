@@ -35,7 +35,6 @@ except Exception:  # noqa: BLE001, S110
     pass
 
 
-
 from cresmo.application.ports import MediaIngestionPort
 from cresmo.domain.entities import RawTranscript
 from cresmo.domain.exceptions import (

@@ -133,7 +133,6 @@ class InMemoryVaultAdapter(VaultRepositoryPort):
     def get_enriched_files_for_channel(self, channel_name: str) -> list[Path]:
         return list(self.channel_enriched_files.get(channel_name.strip(), []))
 
-
     def save_master_document(
         self,
         channel_name: str,
@@ -141,7 +140,9 @@ class InMemoryVaultAdapter(VaultRepositoryPort):
         part_number: int,
         content: str,
     ) -> Path:
-        self.master_documents[(channel_name.strip(), channel_category.strip(), part_number)] = content
+        self.master_documents[(channel_name.strip(), channel_category.strip(), part_number)] = (
+            content
+        )
         return Path(f"/mock/master/{channel_category}/{channel_name}_{part_number:03d}.md")
 
     def clear_master_documents_for_channel(

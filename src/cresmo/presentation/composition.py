@@ -13,14 +13,19 @@ Conforms to:
 
 from __future__ import annotations
 
+import logging
 import os
+import sys
 from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
 from cresmo.application.pipeline import CresmoPipeline
 from cresmo.application.ports import LLMTransformationPort
-from cresmo.application.services.preflight import PreflightHealthChecker
+from cresmo.application.services.preflight import (
+    PreflightHealthChecker,
+    probe_http_endpoint,
+)
 from cresmo.application.use_cases.concat_master import ConcatMasterUseCase
 from cresmo.application.use_cases.discover_batch_sources import DiscoverBatchSourcesUseCase
 from cresmo.application.use_cases.index_raw_transcripts import IndexRawTranscriptsUseCase
@@ -35,6 +40,74 @@ from cresmo.infrastructure.adapters.obsidian_vault_adapter import ObsidianVaultA
 from cresmo.infrastructure.adapters.prompt_provider import JsonPromptProvider
 from cresmo.infrastructure.adapters.sqlite_ledger_adapter import SqliteLedgerAdapter
 from cresmo.infrastructure.config import CresmoSettings
+
+logger = logging.getLogger(__name__)
+
+
+def probe_langfuse_ready(host: str, timeout_seconds: float = 1.0) -> bool:
+    """Active preflight probe verifying whether the Langfuse server is responding to health pings.
+
+    Args:
+        host: Root Langfuse endpoint URL (e.g. 'http://localhost:3000').
+        timeout_seconds: Probe socket timeout in seconds (default: 1.0s).
+
+    Returns:
+        True if the server responded with HTTP < 500, False if unreachable or timed out.
+    """
+    normalized_host = host.rstrip("/")
+    probe_url = f"{normalized_host}/api/public/health"
+    return probe_http_endpoint(probe_url, timeout_seconds=timeout_seconds)
+
+
+def resolve_langfuse_client(settings: CresmoSettings) -> Any | None:
+    """Instantiate and return Langfuse client if configured and actively reachable.
+
+    Performs an active preflight probe against the Langfuse health endpoint before client
+    creation. If unreachable, logs a single-line warning with the remediation command
+    and returns None, preventing uncatchable OpenTelemetry background retry storms per ADR-014.
+
+    Args:
+        settings: Validated application configuration.
+
+    Returns:
+        Configured Langfuse client instance or None if not configured/unreachable.
+    """
+    if not (settings.langfuse_public_key and settings.langfuse_secret_key.get_secret_value()):
+        return None
+
+    # Active Preflight Probe
+    if getattr(settings, "enable_preflight_probes", True):
+        timeout = getattr(settings, "preflight_probe_timeout_seconds", 1.0)
+        is_ready = probe_langfuse_ready(settings.langfuse_host, timeout_seconds=timeout)
+        if not is_ready:
+            sys.stderr.write(
+                f"[preflight] Langfuse server at '{settings.langfuse_host}' is unreachable. "
+                "Telemetry bypassed to prevent OpenTelemetry retry loops.\n"
+                "            To enable observability: docker compose -f docker-compose.langfuse.yml up -d\n"
+            )
+            # Ensure environment variables are not left configured to avoid autoinstrumentation retries
+            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+            os.environ.pop("LANGFUSE_SECRET_KEY", None)
+            os.environ.pop("LANGFUSE_HOST", None)
+            return None
+
+    try:
+        os.environ["LANGFUSE_PUBLIC_KEY"] = settings.langfuse_public_key
+        os.environ["LANGFUSE_SECRET_KEY"] = settings.langfuse_secret_key.get_secret_value()
+        os.environ["LANGFUSE_HOST"] = settings.langfuse_host
+        from langfuse import Langfuse
+
+        return Langfuse(
+            public_key=settings.langfuse_public_key,
+            secret_key=settings.langfuse_secret_key.get_secret_value(),
+            host=settings.langfuse_host,
+        )
+    except Exception as exc:  # noqa: BLE001
+        logger.warning("[composition] Failed to initialize Langfuse client: %s", exc)
+        os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
+        os.environ.pop("LANGFUSE_SECRET_KEY", None)
+        os.environ.pop("LANGFUSE_HOST", None)
+        return None
 
 
 def _resolve_cookie_file(settings: CresmoSettings) -> Path | None:
@@ -110,29 +183,7 @@ def build_pipeline(
         prompts_path=resolved_settings.prompts_path,
         skills_dir=resolved_settings.skills_dir,
     )
-    langfuse_client = None
-    if (
-        resolved_settings.langfuse_public_key
-        and resolved_settings.langfuse_secret_key.get_secret_value()
-    ):
-        try:
-            os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
-            os.environ["LANGFUSE_SECRET_KEY"] = (
-                resolved_settings.langfuse_secret_key.get_secret_value()
-            )
-            os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
-            from langfuse import Langfuse
-
-            langfuse_client = Langfuse(
-                public_key=resolved_settings.langfuse_public_key,
-                secret_key=resolved_settings.langfuse_secret_key.get_secret_value(),
-                host=resolved_settings.langfuse_host,
-            )
-        except Exception:  # noqa: BLE001
-            langfuse_client = None
-            os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
-            os.environ.pop("LANGFUSE_SECRET_KEY", None)
-            os.environ.pop("LANGFUSE_HOST", None)
+    langfuse_client = resolve_langfuse_client(resolved_settings)
 
     media_ingestion_port = build_media_ingestion_adapter(resolved_settings)
     llm_port = GeminiLLMAdapter(
@@ -202,6 +253,8 @@ def build_preflight_checker(
         vault_dir=resolved_settings.vault_dir,
         sqlite_ledger_path=resolved_settings.sqlite_ledger_path,
         check_ffmpeg=check_ffmpeg,
+        langfuse_host=resolved_settings.langfuse_host,
+        ollama_base_url=resolved_settings.ollama_base_url,
     )
 
 
@@ -330,21 +383,7 @@ def build_index_raw_use_case(
         skills_dir=resolved_settings.skills_dir,
     )
 
-    langfuse_client: Any | None = None
-    if (
-        resolved_settings.langfuse_public_key
-        and resolved_settings.langfuse_secret_key.get_secret_value()
-    ):
-        try:
-            from langfuse import Langfuse
-
-            langfuse_client = Langfuse(
-                public_key=resolved_settings.langfuse_public_key,
-                secret_key=resolved_settings.langfuse_secret_key.get_secret_value(),
-                host=resolved_settings.langfuse_host,
-            )
-        except Exception:  # noqa: BLE001
-            langfuse_client = None
+    langfuse_client = resolve_langfuse_client(resolved_settings)
 
     if web_index or resolved_settings.indexing_provider == "gemini":
         from cresmo.infrastructure.adapters.gemini_adapter import GeminiLLMAdapter

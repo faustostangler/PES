@@ -525,6 +525,81 @@ class TestDiscoverBatchSourcesUseCase:
         use_case._scan_raw_lake(raw_dir, scan_raw=True, acc=acc_pre)
         assert not any("vid_with_front" in s.target for s in acc_pre.sources)
 
+    def test_load_transcript_files_ignores_system_artifacts_and_indices(
+        self, tmp_path: Path
+    ) -> None:
+        """Verify internal Cresmo artifacts and indices are rigorously excluded from discovery per ADR-015."""
+        raw_lake = tmp_path / "raw"
+        raw_lake.mkdir()
+
+        channel_dir = raw_lake / "Ancapsu"
+        channel_dir.mkdir()
+
+        # Valid transcripts
+        valid_1 = channel_dir / "valid_video_1.md"
+        valid_1.write_text("# Video 1", encoding="utf-8")
+        valid_2 = channel_dir / "valid_video_2.txt"
+        valid_2.write_text("Video 2 transcript", encoding="utf-8")
+
+        # System artifacts and indices that MUST be ignored
+        (channel_dir / "_canal.md").write_text("# Channel Index", encoding="utf-8")
+        (channel_dir / "_index.md").write_text("# Old index", encoding="utf-8")
+        (channel_dir / "_index.json").write_text("{}", encoding="utf-8")
+        (channel_dir / "brain.csv").write_text("video_id,channel", encoding="utf-8")
+        (channel_dir / "cresmo_ledger.db").write_text("db binary", encoding="utf-8")
+        (channel_dir / "playlist.txt").write_text("https://yt.com/1", encoding="utf-8")
+        (channel_dir / "playlist-priority.txt").write_text("https://yt.com/2", encoding="utf-8")
+        (channel_dir / ".hidden_transcript.md").write_text("hidden", encoding="utf-8")
+        (channel_dir / "in_progress.md.tmp").write_text("tmp", encoding="utf-8")
+        (channel_dir / "backup.txt.bak").write_text("bak", encoding="utf-8")
+        (channel_dir / "swap.md.swp").write_text("swp", encoding="utf-8")
+        (channel_dir / "editor_temp.md~").write_text("tilde", encoding="utf-8")
+
+        # Subdirectories starting with _ or .
+        hidden_sub = channel_dir / ".trash"
+        hidden_sub.mkdir()
+        (hidden_sub / "trashed.md").write_text("trashed", encoding="utf-8")
+
+        system_sub = channel_dir / "_cache"
+        system_sub.mkdir()
+        (system_sub / "cached.md").write_text("cached", encoding="utf-8")
+
+        # Nested valid transcript inside valid subdirectory
+        valid_sub = channel_dir / "subseries"
+        valid_sub.mkdir()
+        valid_3 = valid_sub / "valid_video_3.md"
+        valid_3.write_text("# Subseries video", encoding="utf-8")
+
+        found = load_transcript_files(raw_lake)
+        found_names = sorted(p.name for p in found)
+        assert found_names == ["valid_video_1.md", "valid_video_2.txt", "valid_video_3.md"]
+
+    def test_scan_raw_lake_ignores_canal_index_and_artifacts(self, tmp_path: Path) -> None:
+        """Ensure _scan_raw_lake never treats _canal.md or brain.csv as a video transcript."""
+        raw_dir = tmp_path / "raw"
+        ch_dir = raw_dir / "Mises"
+        ch_dir.mkdir(parents=True)
+
+        # Valid video
+        v1 = ch_dir / "video123.md"
+        v1.write_text("---\nvideo_id: video123\nchannel: Mises\n---\nBody", encoding="utf-8")
+
+        # Channel catalog and artifacts
+        (ch_dir / "_canal.md").write_text("---\n# Catalog\n---\nEntries", encoding="utf-8")
+        (raw_dir / "brain.csv").write_text("channel,title\n", encoding="utf-8")
+
+        use_case = DiscoverBatchSourcesUseCase(
+            media_ingestion_port=MagicMock(),
+            settings=CresmoSettings(_env_file=None),
+        )
+        acc = _BatchSourceAccumulator()
+        use_case._scan_raw_lake(raw_dir, scan_raw=True, acc=acc)
+
+        assert "_canal" not in acc.seen_vids
+        assert not any("_canal.md" in s.target for s in acc.sources)
+        assert len(acc.sources) == 1
+        assert "video123.md" in acc.sources[0].target
+
     def test_classify_seeds_deduplication_and_routing(self, tmp_path: Path) -> None:
         use_case = DiscoverBatchSourcesUseCase(
             media_ingestion_port=MagicMock(),
@@ -886,9 +961,7 @@ class TestDiscoverBatchSourcesUseCase:
         with pytest.raises(StopIteration):
             next(stream)
 
-    def test_execute_deduplicates_priority_and_crawled_videos(
-        self, tmp_path: Path
-    ) -> None:
+    def test_execute_deduplicates_priority_and_crawled_videos(self, tmp_path: Path) -> None:
         """Verify duplicate video between priority playlist and channel crawler is yielded only once."""
         pri_urls_file = tmp_path / "playlist-priority.txt"
         pri_urls_file.write_text("https://www.youtube.com/watch?v=sharedVid999\n", encoding="utf-8")
@@ -924,9 +997,7 @@ class TestDiscoverBatchSourcesUseCase:
         matching = [s for s in sources if "sharedVid999" in s.target]
         assert len(matching) == 1
 
-    def test_execute_graceful_cancellation_on_consumer_break(
-        self, tmp_path: Path
-    ) -> None:
+    def test_execute_graceful_cancellation_on_consumer_break(self, tmp_path: Path) -> None:
         """Verify breaking early from stream sets stop_event and shuts down cleanly."""
         pri_dir = tmp_path / "priority_texts"
         pri_dir.mkdir()
@@ -954,9 +1025,7 @@ class TestDiscoverBatchSourcesUseCase:
 
         assert len(consumed) == 2
 
-    def test_execute_handles_crawler_exception_gracefully(
-        self, tmp_path: Path
-    ) -> None:
+    def test_execute_handles_crawler_exception_gracefully(self, tmp_path: Path) -> None:
         """Verify crawler exception does not crash stream and priority items are preserved."""
         pri_urls_file = tmp_path / "playlist-priority.txt"
         pri_urls_file.write_text("https://www.youtube.com/watch?v=safePrio123\n", encoding="utf-8")
@@ -987,9 +1056,7 @@ class TestDiscoverBatchSourcesUseCase:
         assert "safePrio123" in sources[0].target
         assert any("Warning: Failed to probe" in n for n in notifications)
 
-    def test_channels_are_probed_in_strict_alphabetical_order(
-        self, tmp_path: Path
-    ) -> None:
+    def test_channels_are_probed_in_strict_alphabetical_order(self, tmp_path: Path) -> None:
         """Verify channels from manifest/raw are probed in case-insensitive alphabetical order (ADR-012)."""
         playlist_file = tmp_path / "playlist.txt"
         playlist_file.write_text(
@@ -1034,8 +1101,7 @@ class TestDiscoverBatchSourcesUseCase:
         """Verify only specified channels are probed when channel filter is active."""
         playlist_file = tmp_path / "playlist.txt"
         playlist_file.write_text(
-            "https://www.youtube.com/@AlphaChannel\n"
-            "https://www.youtube.com/@BetaChannel\n",
+            "https://www.youtube.com/@AlphaChannel\nhttps://www.youtube.com/@BetaChannel\n",
             encoding="utf-8",
         )
 
@@ -1130,5 +1196,3 @@ class TestDiscoverBatchSourcesUseCase:
         sources = list(use_case.execute(query))
         assert len(sources) == 1
         assert "targetVid123" in sources[0].target
-
-
