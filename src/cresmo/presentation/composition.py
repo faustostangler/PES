@@ -21,7 +21,7 @@ from pathlib import Path
 from typing import Any
 
 from cresmo.application.pipeline import CresmoPipeline
-from cresmo.application.ports import LLMTransformationPort
+from cresmo.application.ports import LLMTransformationPort, TelemetryPort
 from cresmo.application.services.preflight import (
     PreflightHealthChecker,
     probe_http_endpoint,
@@ -218,6 +218,15 @@ def build_pipeline(
             warmup_timeout_seconds=resolved_settings.ollama_warmup_timeout_seconds,
         )
 
+    if langfuse_client is not None:
+        from cresmo.infrastructure.adapters.opentelemetry_adapter import OpenTelemetryAdapter
+
+        telemetry_port: TelemetryPort = OpenTelemetryAdapter(langfuse_client=langfuse_client)
+    else:
+        from cresmo.infrastructure.adapters.opentelemetry_adapter import NoOpTelemetryAdapter
+
+        telemetry_port = NoOpTelemetryAdapter()
+
     effective_batch_size = (
         batch_size_override if batch_size_override is not None else resolved_settings.batch_size
     )
@@ -231,6 +240,7 @@ def build_pipeline(
         prompt_provider=prompt_provider,
         settings=resolved_settings,
         indexing_llm_port=indexing_llm_port,
+        telemetry_port=telemetry_port,
     )
 
 

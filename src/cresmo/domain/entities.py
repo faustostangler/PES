@@ -219,3 +219,91 @@ class MapOfContent:
                     f"Duplicate associated note '{note.value}' in MapOfContent."
                 )
             seen.add(key)
+
+
+@dataclass(frozen=True)
+class PipelineSessionId:
+    """Value Object representing the holistic multi-stage content lifecycle session.
+
+    Conforms to ADR-016. Ensures end-to-end Session Replay in Langfuse across all 6 stages.
+    Format: content:{channel}:{content_id}
+    """
+
+    value: str
+
+    def __post_init__(self) -> None:
+        if not self.value or not self.value.strip():
+            raise ValueError("PipelineSessionId cannot be empty.")
+        parts = self.value.split(":")
+        if len(parts) != 3 or parts[0] != "content" or not parts[1] or not parts[2]:
+            raise ValueError(
+                f"Invalid PipelineSessionId format: '{self.value}'. "
+                "Expected 'content:{channel}:{content_id}'."
+            )
+
+    @classmethod
+    def create(cls, channel: str, content_id: str | ContentId) -> PipelineSessionId:
+        c_id = content_id.value if isinstance(content_id, ContentId) else content_id
+        return cls(value=f"content:{channel}:{c_id}")
+
+    @property
+    def channel_name(self) -> str:
+        return self.value.split(":")[1]
+
+    @property
+    def content_id(self) -> str:
+        return self.value.split(":")[2]
+
+
+@dataclass(frozen=True)
+class ChannelTenantId:
+    """Value Object representing the source channel as cost center / tenant.
+
+    Conforms to ADR-016. Maps the channel as the primary user entity in Langfuse for FinOps.
+    Format: channel:{channel_name}
+    """
+
+    value: str
+
+    def __post_init__(self) -> None:
+        if not self.value or not self.value.strip():
+            raise ValueError("ChannelTenantId cannot be empty.")
+        parts = self.value.split(":")
+        if len(parts) != 2 or parts[0] != "channel" or not parts[1]:
+            raise ValueError(
+                f"Invalid ChannelTenantId format: '{self.value}'. "
+                "Expected 'channel:{channel_name}'."
+            )
+
+    @classmethod
+    def create(cls, channel: str) -> ChannelTenantId:
+        return cls(value=f"channel:{channel}")
+
+    @property
+    def channel_name(self) -> str:
+        return self.value.split(":")[1]
+
+
+@dataclass(frozen=True)
+class JudgeFrictionMetric:
+    """Value Object calculating LLM-as-a-judge retry friction per ADR-013 & ADR-016.
+
+    Friction ratio = (iterations - 1) / (max_iterations - 1).
+    0.0 = perfect first pass; 1.0 = all retries exhausted.
+    """
+
+    iterations: int
+    max_iterations: int
+    verdict: str
+
+    def __post_init__(self) -> None:
+        if self.iterations < 1:
+            raise ValueError("iterations must be >= 1")
+        if self.max_iterations < 1:
+            raise ValueError("max_iterations must be >= 1")
+
+    @property
+    def friction_ratio(self) -> float:
+        if self.iterations <= 1 or self.max_iterations <= 1:
+            return 0.0
+        return min(1.0, (self.iterations - 1) / (self.max_iterations - 1))

@@ -21,6 +21,7 @@ import urllib.request
 from typing import Any
 
 from langfuse import Langfuse, observe
+from opentelemetry import trace
 
 from cresmo.application.ports import LLMTransformationPort
 from cresmo.domain.exceptions import LLMInfrastructureError
@@ -333,6 +334,18 @@ class OllamaLLMAdapter(LLMTransformationPort):
 
                 prompt_tokens = response_json.get("prompt_eval_count") or len(prompt.split())
                 candidate_tokens = response_json.get("eval_count") or len(generated_text.split())
+
+                # OpenTelemetry GenAI Semantic Conventions & Langfuse span decoration
+                current_span = trace.get_current_span()
+                if current_span and current_span.is_recording():
+                    current_span.set_attribute("gen_ai.system", "ollama")
+                    current_span.set_attribute("gen_ai.request.model", self.model)
+                    current_span.set_attribute("gen_ai.usage.input_tokens", prompt_tokens)
+                    current_span.set_attribute("gen_ai.usage.output_tokens", candidate_tokens)
+                    if session_id:
+                        current_span.set_attribute("langfuse.session.id", session_id)
+                    if user_id:
+                        current_span.set_attribute("langfuse.user.id", user_id)
 
                 if self._langfuse is not None:
                     try:

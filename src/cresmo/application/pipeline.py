@@ -33,6 +33,7 @@ from cresmo.application.ports import (
     LLMTransformationPort,
     MediaIngestionPort,
     PromptProviderPort,
+    TelemetryPort,
     VaultRepositoryPort,
 )
 from cresmo.application.use_cases import (
@@ -46,7 +47,13 @@ from cresmo.application.use_cases import (
     SynthesizeAtomicBatchUseCase,
     UnifyDuplicateNotesUseCase,
 )
-from cresmo.domain.entities import AtomicNote, MapOfContent, RawTranscript
+from cresmo.domain.entities import (
+    AtomicNote,
+    ChannelTenantId,
+    MapOfContent,
+    PipelineSessionId,
+    RawTranscript,
+)
 from cresmo.domain.exceptions import CresmoDomainError
 from cresmo.domain.taxonomy import classify_channel
 from cresmo.domain.value_objects import ContentId, is_processable_transcript_file
@@ -92,11 +99,19 @@ class CresmoPipeline:
         prompt_provider: PromptProviderPort | None = None,
         settings: CresmoSettings | None = None,
         indexing_llm_port: LLMTransformationPort | None = None,
+        telemetry_port: TelemetryPort | None = None,
     ) -> None:
         self.media_ingestion_port = media_ingestion_port
         self.llm_port = llm_port
         self.vault_port = vault_port
         self.ledger_port = ledger_port
+        if telemetry_port is None:
+            from cresmo.infrastructure.adapters.opentelemetry_adapter import NoOpTelemetryAdapter
+
+            self.telemetry_port: TelemetryPort = NoOpTelemetryAdapter()
+        else:
+            self.telemetry_port = telemetry_port
+
         if settings is None:
             from cresmo.infrastructure.config import CresmoSettings
 
@@ -203,58 +218,93 @@ class CresmoPipeline:
         atomic note batching, MOC reconciliation, and duplicate unification.
         """
         content_id = raw.content_id
+        channel_name = (
+            raw.channel_name if raw.channel_name and raw.channel_name.strip() else "unknown_channel"
+        )
+        session_id = PipelineSessionId.create(channel=channel_name, content_id=content_id)
+        user_id = ChannelTenantId.create(channel=channel_name)
 
-        # Idempotency guard — bypass only when caller explicitly requests force-reprocess
-        if self.ledger_port and self.ledger_port.is_processed(content_id) and not force_reprocess:
+        with self.telemetry_port.start_pipeline_session(
+            session_id=session_id,
+            user_id=user_id,
+            metadata={"source": "transcript", "channel": channel_name},
+        ):
+            # Idempotency guard — bypass only when caller explicitly requests force-reprocess
+            if (
+                self.ledger_port
+                and self.ledger_port.is_processed(content_id)
+                and not force_reprocess
+            ):
+                return PipelineResult(
+                    content_id=content_id,
+                    success=True,
+                    synthesized_notes=(),
+                    reconciled_mocs=(),
+                    already_processed=True,
+                )
+
+            # Socratic Gap Filler & Longitudinal Expander (supports resumed execution)
+            expanded_compendium = self.vault_port.get_enriched_compendium(content_id)
+            if expanded_compendium is None:
+                with self.telemetry_port.start_stage_span("stage2_fluid_prose"):
+                    compendium = self.fill_gaps_fluid_prose.execute(
+                        raw_transcript=raw,
+                        passes=gap_filler_passes,
+                    )
+                with self.telemetry_port.start_stage_span("stage3_expansion"):
+                    expanded_compendium = self.expand_longitudinal_synchronic.execute(
+                        compendium=compendium,
+                    )
+
+            # Holistic Inventory Discovery
+            with self.telemetry_port.start_stage_span("stage4_inventory"):
+                inventory = self.discover_atomic_inventory.execute(
+                    compendium=expanded_compendium,
+                )
+
+            # Batched Atomic Synthesis
+            with self.telemetry_port.start_stage_span("stage5_atomic_batch"):
+                self.synthesize_atomic_batch.execute(
+                    inventory=inventory,
+                    compendium=expanded_compendium,
+                )
+
+            # Map of Content Reconciliation
+            with self.telemetry_port.start_stage_span("stage6_mocs"):
+                mocs = self.reconcile_mocs.execute()
+
+            # Stage 7: Graph Entity Resolution & Duplicate Unification
+            with self.telemetry_port.start_stage_span("stage7_duplicate_unification"):
+                dedup_report = self.unify_duplicate_notes.execute()
+
+            # Mark processed in ledger
+            if self.ledger_port:
+                self.ledger_port.mark_processed(content_id)
+
+            final_notes = self.vault_port.get_all_atomic_notes()
+
+            # Record session coherence evaluation score per EVAL-001 & ADR-016
+            item_count = len(inventory.items) if hasattr(inventory, "items") else 1
+            coherence_score = min(1.0, len(final_notes) / max(1, item_count)) if item_count else 1.0
+            self.telemetry_port.record_session_coherence(
+                session_id=session_id,
+                content_id=content_id,
+                score=coherence_score,
+                details={
+                    "final_notes_count": len(final_notes),
+                    "inventory_count": item_count,
+                    "mocs_count": len(mocs),
+                    "duplicates_unified": dedup_report.duplicates_unified_count,
+                },
+            )
+
             return PipelineResult(
                 content_id=content_id,
                 success=True,
-                synthesized_notes=(),
-                reconciled_mocs=(),
-                already_processed=True,
+                synthesized_notes=tuple(final_notes),
+                reconciled_mocs=tuple(mocs),
+                duplicates_unified=dedup_report.duplicates_unified_count,
             )
-
-        # Socratic Gap Filler & Longitudinal Expander (supports resumed execution)
-        expanded_compendium = self.vault_port.get_enriched_compendium(content_id)
-        if expanded_compendium is None:
-            compendium = self.fill_gaps_fluid_prose.execute(
-                raw_transcript=raw,
-                passes=gap_filler_passes,
-            )
-            expanded_compendium = self.expand_longitudinal_synchronic.execute(
-                compendium=compendium,
-            )
-
-        # Holistic Inventory Discovery
-        inventory = self.discover_atomic_inventory.execute(
-            compendium=expanded_compendium,
-        )
-
-        # Batched Atomic Synthesis
-        self.synthesize_atomic_batch.execute(
-            inventory=inventory,
-            compendium=expanded_compendium,
-        )
-
-        # Map of Content Reconciliation
-        mocs = self.reconcile_mocs.execute()
-
-        # Stage 7: Graph Entity Resolution & Duplicate Unification
-        dedup_report = self.unify_duplicate_notes.execute()
-
-        # Mark processed in ledger
-        if self.ledger_port:
-            self.ledger_port.mark_processed(content_id)
-
-        final_notes = self.vault_port.get_all_atomic_notes()
-
-        return PipelineResult(
-            content_id=content_id,
-            success=True,
-            synthesized_notes=tuple(final_notes),
-            reconciled_mocs=tuple(mocs),
-            duplicates_unified=dedup_report.duplicates_unified_count,
-        )
 
     def run_for_video(
         self,

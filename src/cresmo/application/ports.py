@@ -13,12 +13,16 @@ Conforms to:
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from contextlib import AbstractContextManager
 from pathlib import Path
+from typing import Any
 
 from cresmo.domain.entities import (
     AtomicNote,
+    ChannelTenantId,
     EnrichedCompendium,
     MapOfContent,
+    PipelineSessionId,
     RawTranscript,
 )
 from cresmo.domain.value_objects import (
@@ -693,5 +697,87 @@ class PromptProviderPort(ABC):
 
         Returns:
             Tuple containing system instruction and user prompt string.
+        """
+        raise NotImplementedError
+
+
+class TelemetryPort(ABC):
+    """Hexagonal Port for OpenTelemetry distributed tracing, session replays, and FinOps metrics.
+
+    Conforms to ADR-016. Decouples application use cases from concrete telemetry backends
+    (OpenTelemetry SDK, Langfuse API, Prometheus).
+    """
+
+    @abstractmethod
+    def start_pipeline_session(
+        self,
+        session_id: PipelineSessionId,
+        user_id: ChannelTenantId,
+        metadata: dict[str, Any] | None = None,
+    ) -> AbstractContextManager[Any]:
+        """Initiate root OpenTelemetry span binding session_id and user_id attributes.
+
+        Args:
+            session_id: Canonical multi-stage content session identifier.
+            user_id: Channel tenant identifier for cost and volume aggregation.
+            metadata: Additional contextual metadata (e.g. source, pipeline version).
+
+        Returns:
+            ContextManager managing the root span lifecycle.
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def start_stage_span(
+        self,
+        stage_name: str,
+        attributes: dict[str, Any] | None = None,
+    ) -> AbstractContextManager[Any]:
+        """Create child OpenTelemetry span demarcating a discrete pipeline stage.
+
+        Args:
+            stage_name: Identifier for the active pipeline stage.
+            attributes: Optional key-value attributes to attach to the stage span.
+
+        Returns:
+            ContextManager managing the child stage span.
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def record_judge_evaluation(
+        self,
+        session_id: PipelineSessionId,
+        content_id: ContentId,
+        iteration: int,
+        max_iterations: int,
+        verdict: str,
+    ) -> None:
+        """Record an LLM-as-a-judge evaluation iteration and its friction ratio.
+
+        Args:
+            session_id: Content session identifier.
+            content_id: Media content identifier.
+            iteration: 1-based attempt index.
+            max_iterations: Configured retry ceiling.
+            verdict: PASS or NEEDS_REWRITE verdict.
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def record_session_coherence(
+        self,
+        session_id: PipelineSessionId,
+        content_id: ContentId,
+        score: float,
+        details: dict[str, Any] | None = None,
+    ) -> None:
+        """Record an end-to-end session coherence evaluation score.
+
+        Args:
+            session_id: Content session identifier.
+            content_id: Media content identifier.
+            score: Coherence score in [0.0, 1.0].
+            details: Supporting diagnostic attributes (e.g. wikilink counts).
         """
         raise NotImplementedError

@@ -19,6 +19,7 @@ from typing import Any
 from google import genai
 from google.genai import errors, types
 from langfuse import Langfuse, observe
+from opentelemetry import trace
 from tenacity import retry, retry_if_exception, stop_after_attempt, wait_random_exponential
 
 from cresmo.application.ports import LLMTransformationPort
@@ -195,6 +196,18 @@ class GeminiLLMAdapter(LLMTransformationPort):
         candidate_tokens = getattr(usage_meta, "candidates_token_count", 0) or len(
             response_text.split()
         )
+
+        # OpenTelemetry GenAI Semantic Conventions & Langfuse span decoration
+        current_span = trace.get_current_span()
+        if current_span and current_span.is_recording():
+            current_span.set_attribute("gen_ai.system", "google")
+            current_span.set_attribute("gen_ai.request.model", active_model)
+            current_span.set_attribute("gen_ai.usage.input_tokens", prompt_tokens)
+            current_span.set_attribute("gen_ai.usage.output_tokens", candidate_tokens)
+            if session_id:
+                current_span.set_attribute("langfuse.session.id", session_id)
+            if user_id:
+                current_span.set_attribute("langfuse.user.id", user_id)
 
         # Bind output and token metadata to Langfuse generation span if active
         if self._langfuse is not None:
