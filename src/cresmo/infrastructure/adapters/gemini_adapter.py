@@ -13,6 +13,7 @@ Conforms to:
 
 from __future__ import annotations
 
+import logging
 import os
 from typing import Any
 
@@ -23,6 +24,8 @@ from opentelemetry import trace
 from tenacity import retry, retry_if_exception, stop_after_attempt, wait_random_exponential
 
 from cresmo.application.ports import LLMTransformationPort
+
+logger = logging.getLogger(__name__)
 
 
 def _is_transient_genai_error(exc: BaseException) -> bool:
@@ -204,13 +207,17 @@ class GeminiLLMAdapter(LLMTransformationPort):
             current_span.set_attribute("gen_ai.request.model", active_model)
             current_span.set_attribute("gen_ai.usage.input_tokens", prompt_tokens)
             current_span.set_attribute("gen_ai.usage.output_tokens", candidate_tokens)
+            current_span.set_attribute("langfuse.observation.type", "generation")
             if session_id:
                 current_span.set_attribute("langfuse.session.id", session_id)
             if user_id:
                 current_span.set_attribute("langfuse.user.id", user_id)
+            if trace_id:
+                current_span.set_attribute("cresmo.trace_id", trace_id)
+            current_span.set_attribute("cresmo.temperature", effective_temperature)
 
         # Bind output and token metadata to Langfuse generation span if active
-        if self._langfuse is not None:
+        if self._langfuse is not None and hasattr(self._langfuse, "update_current_generation"):
             try:
                 metadata: dict[str, Any] = {
                     "provider": "gemini",
@@ -234,7 +241,7 @@ class GeminiLLMAdapter(LLMTransformationPort):
                     },
                     metadata=metadata,
                 )
-            except (AttributeError, RuntimeError, ValueError):
-                pass
+            except Exception as exc:  # noqa: BLE001
+                logger.debug("Failed to record legacy Langfuse generation metadata: %s", exc)
 
         return response_text

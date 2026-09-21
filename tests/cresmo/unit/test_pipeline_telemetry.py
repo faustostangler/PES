@@ -15,7 +15,7 @@ from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 from opentelemetry.sdk.trace.export.in_memory_span_exporter import InMemorySpanExporter
 
 from cresmo.application.pipeline import CresmoPipeline
-from cresmo.domain.entities import RawTranscript
+from cresmo.domain.entities import RawTranscript, UserIdentity
 from cresmo.domain.value_objects import ContentId
 from cresmo.infrastructure.adapters.opentelemetry_adapter import OpenTelemetryAdapter
 from cresmo.infrastructure.adapters.prompt_provider import JsonPromptProvider
@@ -81,10 +81,14 @@ class TestPipelineTelemetryIntegration:
         # Identify root span
         root_span = next(s for s in spans if s.name == "cresmo.pipeline.execution")
         assert root_span.attributes is not None
+        assert root_span.context is not None
         assert root_span.attributes["langfuse.session.id"] == "content:sandeco:yt_sample1234"
-        assert root_span.attributes["langfuse.user.id"] == "channel:sandeco"
+        assert root_span.attributes["langfuse.user.id"] == "anonymous"
         assert root_span.attributes["cresmo.content_id"] == "yt_sample1234"
         assert root_span.attributes["cresmo.channel"] == "sandeco"
+        assert root_span.attributes["cresmo.tenant_id"] == "channel:sandeco"
+        assert root_span.attributes["cresmo.user.is_anonymous"] is True
+        assert root_span.attributes["cresmo.user.provider"] == "anonymous"
 
         # Check all child stage spans are tied to the root trace_id
         stage_names = {
@@ -112,3 +116,38 @@ class TestPipelineTelemetryIntegration:
         assert coherence_events[0].attributes is not None
         assert "eval.coherence_score" in coherence_events[0].attributes
         assert coherence_events[0].attributes["eval.session_id"] == "content:sandeco:yt_sample1234"
+
+    def test_synthesize_transcript_with_identified_user(
+        self,
+        telemetry_pipeline: tuple[CresmoPipeline, InMemorySpanExporter, InMemoryVaultAdapter],
+    ) -> None:
+        pipeline, exporter, _ = telemetry_pipeline
+
+        raw = RawTranscript(
+            content_id=ContentId("yt_auth_test_01"),
+            channel_name="acropole",
+            body="Aula completa sobre filosofia e estoicismo clássico em Atenas e Roma.",
+            title="Estoicismo Clássico",
+        )
+
+        user = UserIdentity.identified(subject="fausto@cresmo.ai", provider="oauth")
+        result = pipeline._synthesize_transcript(raw=raw, gap_filler_passes=1, user=user)
+
+        assert result.success is True
+
+        spans = exporter.get_finished_spans()
+        root_span = next(
+            s
+            for s in spans
+            if s.name == "cresmo.pipeline.execution"
+            and s.attributes is not None
+            and s.attributes.get("cresmo.content_id") == "yt_auth_test_01"
+        )
+        assert root_span.attributes is not None
+        assert root_span.attributes["langfuse.session.id"] == "content:acropole:yt_auth_test_01"
+        assert root_span.attributes["langfuse.user.id"] == "user:oauth:fausto@cresmo.ai"
+        assert root_span.attributes["cresmo.channel"] == "acropole"
+        assert root_span.attributes["cresmo.tenant_id"] == "channel:acropole"
+        assert root_span.attributes["cresmo.user.is_anonymous"] is False
+        assert root_span.attributes["cresmo.user.provider"] == "oauth"
+        assert root_span.attributes["cresmo.user.subject"] == "fausto@cresmo.ai"

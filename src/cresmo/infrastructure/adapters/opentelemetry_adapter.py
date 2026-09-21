@@ -24,6 +24,7 @@ from cresmo.domain.entities import (
     ContentId,
     JudgeFrictionMetric,
     PipelineSessionId,
+    UserIdentity,
 )
 
 logger = logging.getLogger(__name__)
@@ -33,8 +34,8 @@ class OpenTelemetryAdapter(TelemetryPort):
     """Production Telemetry adapter integrating CNCF OpenTelemetry and Langfuse.
 
     Implements TelemetryPort to provide distributed tracing across the 6-stage
-    Cresmo synthesis pipeline, binding content sessions and channel tenants into
-    first-class telemetry entities.
+    Cresmo synthesis pipeline, binding content sessions, user identities, and channel
+    tenants into first-class telemetry entities.
     """
 
     def __init__(
@@ -55,29 +56,86 @@ class OpenTelemetryAdapter(TelemetryPort):
     def start_pipeline_session(
         self,
         session_id: PipelineSessionId,
-        user_id: ChannelTenantId,
+        user_id: UserIdentity | ChannelTenantId | str,
+        channel_tenant_id: ChannelTenantId | None = None,
         metadata: dict[str, Any] | None = None,
     ) -> Generator[Any]:
         """Initiate root OpenTelemetry span binding session_id and user_id attributes.
 
         Args:
             session_id: Canonical multi-stage content session identifier.
-            user_id: Channel tenant identifier for cost and volume aggregation.
+            user_id: UserIdentity (anonymous or identified OAuth), ChannelTenantId, or string.
+            channel_tenant_id: Optional Channel tenant identifier for cost and volume aggregation.
             metadata: Additional contextual metadata.
 
         Yields:
             The active root OpenTelemetry span.
         """
+        # Normalize UserIdentity
+        if isinstance(user_id, UserIdentity):
+            norm_user = user_id
+        elif isinstance(user_id, ChannelTenantId):
+            norm_user = UserIdentity.from_channel(user_id.channel_name)
+            if channel_tenant_id is None:
+                channel_tenant_id = user_id
+        elif isinstance(user_id, str):
+            if user_id.startswith("channel:"):
+                c_name = user_id.split(":", 1)[1]
+                norm_user = UserIdentity.from_channel(c_name)
+                if channel_tenant_id is None:
+                    channel_tenant_id = ChannelTenantId.create(c_name)
+            elif user_id == "anonymous":
+                norm_user = UserIdentity.anonymous()
+            elif user_id.startswith("user:"):
+                parts = user_id.split(":")
+                if len(parts) >= 3:
+                    norm_user = UserIdentity.identified(
+                        subject=":".join(parts[2:]), provider=parts[1]
+                    )
+                else:
+                    norm_user = UserIdentity.identified(subject=parts[1], provider="oauth")
+            else:
+                norm_user = UserIdentity.identified(subject=user_id, provider="oauth")
+        else:
+            norm_user = UserIdentity.anonymous()
+
+        # Resolve ChannelTenantId
+        tenant = channel_tenant_id or ChannelTenantId.create(session_id.channel_name)
+
         with self._tracer.start_as_current_span("cresmo.pipeline.execution") as span:
+            span.set_attribute("langfuse.observation.type", "span")
             span.set_attribute("langfuse.session.id", session_id.value)
-            span.set_attribute("langfuse.user.id", user_id.value)
+            span.set_attribute("langfuse.user.id", norm_user.value)
             span.set_attribute("cresmo.content_id", session_id.content_id)
-            span.set_attribute("cresmo.channel", user_id.channel_name)
-            span.set_attribute("langfuse.trace.tags", [user_id.channel_name, "cresmo:v2"])
+            span.set_attribute("cresmo.channel", tenant.channel_name)
+            span.set_attribute("cresmo.tenant_id", tenant.value)
+            span.set_attribute("cresmo.user.is_anonymous", norm_user.is_anonymous)
+            span.set_attribute("cresmo.user.provider", norm_user.provider)
+            if norm_user.subject:
+                span.set_attribute("cresmo.user.subject", norm_user.subject)
+
+            tags = [tenant.channel_name, "cresmo:v2", f"auth:{norm_user.provider}"]
+            span.set_attribute("langfuse.trace.tags", tags)
 
             if metadata:
                 for key, val in metadata.items():
                     span.set_attribute(f"cresmo.metadata.{key}", str(val))
+                    if key in ("title", "channel", "video_url", "content_id"):
+                        span.set_attribute(f"langfuse.input.{key}", str(val))
+
+            if self._langfuse is not None:
+                try:
+                    from langfuse import propagate_attributes
+
+                    with propagate_attributes(
+                        session_id=session_id.value,
+                        user_id=norm_user.value,
+                        tags=tags,
+                    ):
+                        yield span
+                    return
+                except Exception as exc:  # noqa: BLE001
+                    logger.debug("Failed to propagate Langfuse attributes: %s", exc)
 
             yield span
 
@@ -98,6 +156,7 @@ class OpenTelemetryAdapter(TelemetryPort):
         """
         span_name = f"cresmo.stage.{stage_name}"
         with self._tracer.start_as_current_span(span_name) as span:
+            span.set_attribute("langfuse.observation.type", "span")
             if attributes:
                 for key, val in attributes.items():
                     span.set_attribute(f"cresmo.stage.{key}", str(val))
@@ -199,7 +258,8 @@ class NoOpTelemetryAdapter(TelemetryPort):
     def start_pipeline_session(
         self,
         session_id: PipelineSessionId,
-        user_id: ChannelTenantId,
+        user_id: UserIdentity | ChannelTenantId | str,
+        channel_tenant_id: ChannelTenantId | None = None,
         metadata: dict[str, Any] | None = None,
     ) -> Generator[Any]:
         """No-op session context manager."""

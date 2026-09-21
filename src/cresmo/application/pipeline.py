@@ -53,6 +53,7 @@ from cresmo.domain.entities import (
     MapOfContent,
     PipelineSessionId,
     RawTranscript,
+    UserIdentity,
 )
 from cresmo.domain.exceptions import CresmoDomainError
 from cresmo.domain.taxonomy import classify_channel
@@ -211,6 +212,7 @@ class CresmoPipeline:
         raw: RawTranscript,
         gap_filler_passes: int = 3,
         force_reprocess: bool = False,
+        user: UserIdentity | None = None,
     ) -> PipelineResult:
         """Execute Stages 2 through 7 (Template Method core for knowledge synthesis).
 
@@ -222,11 +224,13 @@ class CresmoPipeline:
             raw.channel_name if raw.channel_name and raw.channel_name.strip() else "unknown_channel"
         )
         session_id = PipelineSessionId.create(channel=channel_name, content_id=content_id)
-        user_id = ChannelTenantId.create(channel=channel_name)
+        tenant_id = ChannelTenantId.create(channel=channel_name)
+        user_identity = user or UserIdentity.anonymous()
 
         with self.telemetry_port.start_pipeline_session(
             session_id=session_id,
-            user_id=user_id,
+            user_id=user_identity,
+            channel_tenant_id=tenant_id,
             metadata={"source": "transcript", "channel": channel_name},
         ):
             # Idempotency guard — bypass only when caller explicitly requests force-reprocess
@@ -311,6 +315,7 @@ class CresmoPipeline:
         video_url: str,
         gap_filler_passes: int = 3,
         force_reprocess: bool = False,
+        user: UserIdentity | None = None,
     ) -> PipelineResult:
         """Run the end-to-end synthesis pipeline for a single video source.
 
@@ -318,6 +323,7 @@ class CresmoPipeline:
             video_url: Target YouTube or media URL.
             gap_filler_passes: Number of refinement passes for gap filling.
             force_reprocess: If True, bypasses ledger idempotency guard.
+            user: Optional UserIdentity (anonymous or identified OAuth user).
 
         Returns:
             PipelineResult summarizing synthesized notes, MOCs, and status.
@@ -340,6 +346,7 @@ class CresmoPipeline:
             raw=raw,
             gap_filler_passes=gap_filler_passes,
             force_reprocess=force_reprocess,
+            user=user,
         )
 
     def _load_transcript_from_file(self, file_path: Path) -> RawTranscript:
@@ -416,6 +423,7 @@ class CresmoPipeline:
         file_path: Path,
         gap_filler_passes: int = 3,
         force_reprocess: bool = False,
+        user: UserIdentity | None = None,
     ) -> PipelineResult:
         """Run the end-to-end synthesis pipeline starting from a local raw text file.
 
@@ -426,6 +434,7 @@ class CresmoPipeline:
             file_path: Path to the raw text or markdown file (.txt, .md).
             gap_filler_passes: Number of refinement passes for gap filling.
             force_reprocess: If True, bypasses ledger idempotency guard.
+            user: Optional UserIdentity (anonymous or identified OAuth user).
 
         Returns:
             PipelineResult summarizing synthesized notes, MOCs, and status.
@@ -463,6 +472,7 @@ class CresmoPipeline:
             raw=raw,
             gap_filler_passes=gap_filler_passes,
             force_reprocess=force_reprocess,
+            user=user,
         )
 
     def run_for_manifest(
@@ -470,6 +480,7 @@ class CresmoPipeline:
         manifest_path: Path,
         gap_filler_passes: int = 1,
         force_reprocess: bool = False,
+        user: UserIdentity | None = None,
     ) -> list[PipelineResult]:
         """Run the end-to-end synthesis pipeline sequentially for all video URLs in a manifest file.
 
@@ -477,6 +488,7 @@ class CresmoPipeline:
             manifest_path: Path to text file containing video URLs (comments with # and blank lines ignored).
             gap_filler_passes: Number of refinement passes for gap filling.
             force_reprocess: If True, bypasses ledger idempotency guard.
+            user: Optional UserIdentity (anonymous or identified OAuth user).
 
         Returns:
             List of PipelineResult outcomes for each video in the manifest.
@@ -497,6 +509,7 @@ class CresmoPipeline:
                 video_url=url,
                 gap_filler_passes=gap_filler_passes,
                 force_reprocess=force_reprocess,
+                user=user,
             )
             results.append(res)
         return results

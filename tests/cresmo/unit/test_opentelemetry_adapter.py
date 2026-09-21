@@ -21,6 +21,7 @@ from cresmo.domain.entities import (
     ContentId,
     JudgeFrictionMetric,
     PipelineSessionId,
+    UserIdentity,
 )
 from cresmo.infrastructure.adapters.opentelemetry_adapter import (
     NoOpTelemetryAdapter,
@@ -55,6 +56,46 @@ class TestTelemetryValueObjects:
 
         with pytest.raises(ValueError, match="Invalid ChannelTenantId format"):
             ChannelTenantId(value="not_prefixed")
+
+    def test_user_identity_anonymous(self) -> None:
+        u1 = UserIdentity.anonymous()
+        assert u1.value == "anonymous"
+        assert u1.is_anonymous is True
+        assert u1.provider == "anonymous"
+        assert u1.subject == ""
+
+        u2 = UserIdentity.anonymous(token="sess_999")
+        assert u2.value == "anon:sess_999"
+        assert u2.is_anonymous is True
+
+    def test_user_identity_identified_oauth(self) -> None:
+        u = UserIdentity.identified(subject="alice@example.com", provider="oauth")
+        assert u.value == "user:oauth:alice@example.com"
+        assert u.is_anonymous is False
+        assert u.provider == "oauth"
+        assert u.subject == "alice@example.com"
+
+        u_google = UserIdentity.identified(subject="sub_12345", provider="google")
+        assert u_google.value == "user:google:sub_12345"
+        assert u_google.is_anonymous is False
+        assert u_google.provider == "google"
+
+    def test_user_identity_from_channel(self) -> None:
+        u = UserIdentity.from_channel("sandeco")
+        assert u.value == "channel:sandeco"
+        assert u.is_anonymous is True
+        assert u.provider == "channel"
+        assert u.subject == "sandeco"
+
+    def test_user_identity_invariants(self) -> None:
+        with pytest.raises(ValueError, match="cannot be empty"):
+            UserIdentity(value="")
+
+        with pytest.raises(ValueError, match="requires a non-empty subject"):
+            UserIdentity.identified(subject="")
+
+        with pytest.raises(ValueError, match="cannot be empty"):
+            UserIdentity.from_channel("")
 
     def test_judge_friction_metric_calculation(self) -> None:
         # First iteration pass -> 0.0 friction
@@ -188,6 +229,53 @@ class TestOpenTelemetryAdapter:
         assert event.attributes is not None
         assert event.attributes["eval.coherence_score"] == 0.92
         assert event.attributes["eval.details.wikilink_count"] == 14
+
+    def test_pipeline_session_with_anonymous_user(
+        self,
+        otel_setup: tuple[OpenTelemetryAdapter, InMemorySpanExporter],
+    ) -> None:
+        adapter, exporter = otel_setup
+        session_id = PipelineSessionId.create(channel="sandeco", content_id="vid_anon_01")
+        user = UserIdentity.anonymous()
+
+        with adapter.start_pipeline_session(
+            session_id=session_id,
+            user_id=user,
+        ):
+            pass
+
+        spans = exporter.get_finished_spans()
+        root_span = next(s for s in spans if s.name == "cresmo.pipeline.execution")
+        assert root_span.attributes is not None
+        assert root_span.attributes["langfuse.session.id"] == "content:sandeco:vid_anon_01"
+        assert root_span.attributes["langfuse.user.id"] == "anonymous"
+        assert root_span.attributes["cresmo.channel"] == "sandeco"
+        assert root_span.attributes["cresmo.user.is_anonymous"] is True
+        assert root_span.attributes["cresmo.user.provider"] == "anonymous"
+
+    def test_pipeline_session_with_identified_oauth_user(
+        self,
+        otel_setup: tuple[OpenTelemetryAdapter, InMemorySpanExporter],
+    ) -> None:
+        adapter, exporter = otel_setup
+        session_id = PipelineSessionId.create(channel="sandeco", content_id="vid_auth_01")
+        user = UserIdentity.identified(subject="alice@corp.com", provider="google")
+
+        with adapter.start_pipeline_session(
+            session_id=session_id,
+            user_id=user,
+        ):
+            pass
+
+        spans = exporter.get_finished_spans()
+        root_span = next(s for s in spans if s.name == "cresmo.pipeline.execution")
+        assert root_span.attributes is not None
+        assert root_span.attributes["langfuse.session.id"] == "content:sandeco:vid_auth_01"
+        assert root_span.attributes["langfuse.user.id"] == "user:google:alice@corp.com"
+        assert root_span.attributes["cresmo.channel"] == "sandeco"
+        assert root_span.attributes["cresmo.user.is_anonymous"] is False
+        assert root_span.attributes["cresmo.user.provider"] == "google"
+        assert root_span.attributes["cresmo.user.subject"] == "alice@corp.com"
 
 
 class TestNoOpTelemetryAdapter:

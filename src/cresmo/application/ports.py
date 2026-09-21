@@ -13,6 +13,7 @@ Conforms to:
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from collections.abc import Mapping
 from contextlib import AbstractContextManager
 from pathlib import Path
 from typing import Any
@@ -24,6 +25,7 @@ from cresmo.domain.entities import (
     MapOfContent,
     PipelineSessionId,
     RawTranscript,
+    UserIdentity,
 )
 from cresmo.domain.value_objects import (
     ChannelFeedQuery,
@@ -712,14 +714,16 @@ class TelemetryPort(ABC):
     def start_pipeline_session(
         self,
         session_id: PipelineSessionId,
-        user_id: ChannelTenantId,
+        user_id: UserIdentity | ChannelTenantId | str,
+        channel_tenant_id: ChannelTenantId | None = None,
         metadata: dict[str, Any] | None = None,
     ) -> AbstractContextManager[Any]:
         """Initiate root OpenTelemetry span binding session_id and user_id attributes.
 
         Args:
             session_id: Canonical multi-stage content session identifier.
-            user_id: Channel tenant identifier for cost and volume aggregation.
+            user_id: UserIdentity (anonymous or identified OAuth user), ChannelTenantId, or string.
+            channel_tenant_id: Optional Channel tenant identifier for cost and volume aggregation.
             metadata: Additional contextual metadata (e.g. source, pipeline version).
 
         Returns:
@@ -781,3 +785,47 @@ class TelemetryPort(ABC):
             details: Supporting diagnostic attributes (e.g. wikilink counts).
         """
         raise NotImplementedError
+
+
+class AnonymizerPort(ABC):
+    """Hexagonal Port for data anonymization, PII redaction, and credential scrubbing.
+
+    Conforms to ADR-017. Decouples privacy and LGPD compliance rules from infrastructure
+    telemetry collectors and application use cases.
+    """
+
+    @abstractmethod
+    def mask_text(self, text: str) -> str:
+        """Sanitize raw text string by redacting PII (emails, phones) and sensitive secrets.
+
+        Args:
+            text: Unsanitized input string.
+
+        Returns:
+            Sanitized string with sensitive tokens replaced with redaction markers.
+        """
+        raise NotImplementedError("Implement mask_text contract.")
+
+    @abstractmethod
+    def mask_mapping(self, data: Mapping[str, Any]) -> dict[str, Any]:
+        """Recursively scrub sensitive keys and redact sensitive string values in a dictionary.
+
+        Args:
+            data: Key-value mapping potentially containing credentials or PII.
+
+        Returns:
+            Clean copy of the dictionary with sensitive fields redacted or removed.
+        """
+        raise NotImplementedError("Implement mask_mapping contract.")
+
+    @abstractmethod
+    def mask_span_attributes(self, attributes: Mapping[str, Any]) -> dict[str, Any]:
+        """Sanitize OpenTelemetry span attributes before export.
+
+        Args:
+            attributes: Raw span attributes mapping.
+
+        Returns:
+            Clean dictionary conforming to OpenTelemetry types with sensitive data removed.
+        """
+        raise NotImplementedError("Implement mask_span_attributes contract.")

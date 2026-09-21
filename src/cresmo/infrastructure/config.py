@@ -75,6 +75,18 @@ class CresmoSettings(BaseSettings):
         default="https://cloud.langfuse.com",
         description="Langfuse telemetry endpoint URL.",
     )
+    langfuse_environment: str = Field(
+        default="development",
+        description="Langfuse telemetry environment (e.g. 'production', 'staging', 'development').",
+    )
+    langfuse_prompt_label: str = Field(
+        default="production",
+        description="Active prompt label tag in Langfuse (e.g. 'production', 'staging').",
+    )
+    anonymization_enabled: bool = Field(
+        default=True,
+        description="Enable PII and credential masking in telemetry, span attributes, and exports.",
+    )
     preflight_probe_timeout_seconds: float = Field(
         default=1.0,
         description="Socket timeout in seconds for active preflight probes (Langfuse, Ollama).",
