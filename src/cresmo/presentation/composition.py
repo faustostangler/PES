@@ -21,7 +21,12 @@ from pathlib import Path
 from typing import Any
 
 from cresmo.application.pipeline import CresmoPipeline
-from cresmo.application.ports import LLMTransformationPort, TelemetryPort
+from cresmo.application.ports import (
+    AnonymizerPort,
+    LLMTransformationPort,
+    PromptProviderPort,
+    TelemetryPort,
+)
 from cresmo.application.services.preflight import (
     PreflightHealthChecker,
     probe_http_endpoint,
@@ -31,13 +36,20 @@ from cresmo.application.use_cases.discover_batch_sources import DiscoverBatchSou
 from cresmo.application.use_cases.index_raw_transcripts import IndexRawTranscriptsUseCase
 from cresmo.application.use_cases.sync_channel import SyncChannelUseCase
 from cresmo.application.use_cases.unify_duplicate_notes import UnifyDuplicateNotesUseCase
+from cresmo.infrastructure.adapters.anonymizer_adapter import (
+    NoOpAnonymizerAdapter,
+    RegexAnonymizerAdapter,
+)
 from cresmo.infrastructure.adapters.gemini_adapter import GeminiLLMAdapter
 from cresmo.infrastructure.adapters.header_generator import RandomHeaderGenerator
 from cresmo.infrastructure.adapters.native_media_ingestion_adapter import (
     NativeMediaIngestionAdapter,
 )
 from cresmo.infrastructure.adapters.obsidian_vault_adapter import ObsidianVaultAdapter
-from cresmo.infrastructure.adapters.prompt_provider import JsonPromptProvider
+from cresmo.infrastructure.adapters.prompt_provider import (
+    JsonPromptProvider,
+    LangfusePromptProvider,
+)
 from cresmo.infrastructure.adapters.sqlite_ledger_adapter import SqliteLedgerAdapter
 from cresmo.infrastructure.config import CresmoSettings
 
@@ -59,15 +71,20 @@ def probe_langfuse_ready(host: str, timeout_seconds: float = 1.0) -> bool:
     return probe_http_endpoint(probe_url, timeout_seconds=timeout_seconds)
 
 
-def resolve_langfuse_client(settings: CresmoSettings) -> Any | None:
+def resolve_langfuse_client(
+    settings: CresmoSettings,
+    anonymizer: AnonymizerPort | None = None,
+) -> Any | None:
     """Instantiate and return Langfuse client if configured and actively reachable.
 
     Performs an active preflight probe against the Langfuse health endpoint before client
     creation. If unreachable, logs a single-line warning with the remediation command
     and returns None, preventing uncatchable OpenTelemetry background retry storms per ADR-014.
+    Also configures should_export_span allowlisting and export-stage masking per ADR-017.
 
     Args:
         settings: Validated application configuration.
+        anonymizer: Optional AnonymizerPort adapter for export-stage PII scrubbing.
 
     Returns:
         Configured Langfuse client instance or None if not configured/unreachable.
@@ -96,12 +113,50 @@ def resolve_langfuse_client(settings: CresmoSettings) -> Any | None:
         os.environ["LANGFUSE_SECRET_KEY"] = settings.langfuse_secret_key.get_secret_value()
         os.environ["LANGFUSE_HOST"] = settings.langfuse_host
         from langfuse import Langfuse
+        from langfuse.span_filter import is_default_export_span
 
-        return Langfuse(
-            public_key=settings.langfuse_public_key,
-            secret_key=settings.langfuse_secret_key.get_secret_value(),
-            host=settings.langfuse_host,
-        )
+        def should_export_cresmo_span(span: Any) -> bool:
+            if is_default_export_span(span):
+                return True
+            scope = getattr(span, "instrumentation_scope", None)
+            return scope is not None and scope.name.startswith("cresmo.")
+
+        mask_hook = None
+        if anonymizer is not None:
+            try:
+                from langfuse.types import MaskOtelSpansParams, MaskOtelSpansResult, OtelSpanPatch
+
+                def mask_otel_spans(*, params: MaskOtelSpansParams) -> MaskOtelSpansResult | None:
+                    patches = {}
+                    for identifier, span in params.spans.items():
+                        raw_attrs = span.attributes or {}
+                        sanitized = anonymizer.mask_span_attributes(raw_attrs)
+                        if sanitized != raw_attrs:
+                            delete_attrs = [k for k in raw_attrs if k not in sanitized]
+                            set_attrs = {
+                                k: v for k, v in sanitized.items() if raw_attrs.get(k) != v
+                            }
+                            patches[identifier] = OtelSpanPatch(
+                                delete_attributes=tuple(delete_attrs),
+                                set_attributes=set_attrs,
+                            )
+                    return MaskOtelSpansResult(span_patches=patches) if patches else None
+
+                mask_hook = mask_otel_spans
+            except ImportError:
+                mask_hook = None
+
+        init_kwargs: dict[str, Any] = {
+            "public_key": settings.langfuse_public_key,
+            "secret_key": settings.langfuse_secret_key.get_secret_value(),
+            "host": settings.langfuse_host,
+            "should_export_span": should_export_cresmo_span,
+            "environment": getattr(settings, "langfuse_environment", "development"),
+        }
+        if mask_hook is not None:
+            init_kwargs["mask_otel_spans"] = mask_hook
+
+        return Langfuse(**init_kwargs)
     except Exception as exc:  # noqa: BLE001
         logger.warning("[composition] Failed to initialize Langfuse client: %s", exc)
         os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
@@ -179,11 +234,22 @@ def build_pipeline(
     """
     resolved_settings = settings or CresmoSettings()
 
-    prompt_provider = JsonPromptProvider(
+    anonymizer: AnonymizerPort = (
+        RegexAnonymizerAdapter()
+        if getattr(resolved_settings, "anonymization_enabled", True)
+        else NoOpAnonymizerAdapter()
+    )
+    langfuse_client = resolve_langfuse_client(resolved_settings, anonymizer=anonymizer)
+
+    json_prompt_provider = JsonPromptProvider(
         prompts_path=resolved_settings.prompts_path,
         skills_dir=resolved_settings.skills_dir,
     )
-    langfuse_client = resolve_langfuse_client(resolved_settings)
+    prompt_provider: PromptProviderPort = LangfusePromptProvider(
+        langfuse_client=langfuse_client,
+        fallback_provider=json_prompt_provider,
+        label=getattr(resolved_settings, "langfuse_prompt_label", "production"),
+    )
 
     media_ingestion_port = build_media_ingestion_adapter(resolved_settings)
     llm_port = GeminiLLMAdapter(
@@ -388,12 +454,22 @@ def build_index_raw_use_case(
         master_dir=resolved_settings.master_dir,
         data_dir=resolved_settings.data_dir,
     )
-    prompt_provider = JsonPromptProvider(
+    anonymizer: AnonymizerPort = (
+        RegexAnonymizerAdapter()
+        if getattr(resolved_settings, "anonymization_enabled", True)
+        else NoOpAnonymizerAdapter()
+    )
+    langfuse_client = resolve_langfuse_client(resolved_settings, anonymizer=anonymizer)
+
+    json_prompt_provider = JsonPromptProvider(
         prompts_path=resolved_settings.prompts_path,
         skills_dir=resolved_settings.skills_dir,
     )
-
-    langfuse_client = resolve_langfuse_client(resolved_settings)
+    prompt_provider: PromptProviderPort = LangfusePromptProvider(
+        langfuse_client=langfuse_client,
+        fallback_provider=json_prompt_provider,
+        label=getattr(resolved_settings, "langfuse_prompt_label", "production"),
+    )
 
     if web_index or resolved_settings.indexing_provider == "gemini":
         from cresmo.infrastructure.adapters.gemini_adapter import GeminiLLMAdapter

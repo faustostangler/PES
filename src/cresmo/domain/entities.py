@@ -285,6 +285,56 @@ class ChannelTenantId:
 
 
 @dataclass(frozen=True)
+class UserIdentity:
+    """Value Object representing the user/operator executing the synthesis pipeline.
+
+    Supports forward-compatible identity modalities:
+    - Anonymous (unauthenticated, guest, CLI)
+    - Identified (authenticated via OAuth/OIDC login)
+    - Channel fallback (headless background worker pipelines)
+
+    Conforms to ADR-016 and Langfuse Users taxonomy.
+    """
+
+    value: str
+    is_anonymous: bool = True
+    provider: str = "anonymous"
+    subject: str = ""
+
+    def __post_init__(self) -> None:
+        if not self.value or not self.value.strip():
+            raise ValueError("UserIdentity cannot be empty.")
+
+    @classmethod
+    def anonymous(cls, token: str | None = None) -> UserIdentity:
+        """Create an anonymous user identity."""
+        val = f"anon:{token}" if token else "anonymous"
+        return cls(value=val, is_anonymous=True, provider="anonymous", subject="")
+
+    @classmethod
+    def identified(cls, subject: str, provider: str = "oauth") -> UserIdentity:
+        """Create an identified user identity from OAuth subject or email."""
+        if not subject or not subject.strip():
+            raise ValueError("Identified UserIdentity requires a non-empty subject.")
+        prov = provider.strip().lower() or "oauth"
+        val = f"user:{prov}:{subject.strip()}"
+        return cls(value=val, is_anonymous=False, provider=prov, subject=subject.strip())
+
+    @classmethod
+    def from_channel(cls, channel: str) -> UserIdentity:
+        """Create a channel-bound fallback user identity for backward compatibility."""
+        if not channel or not channel.strip():
+            raise ValueError("Channel name cannot be empty.")
+        clean_channel = channel.strip()
+        return cls(
+            value=f"channel:{clean_channel}",
+            is_anonymous=True,
+            provider="channel",
+            subject=clean_channel,
+        )
+
+
+@dataclass(frozen=True)
 class JudgeFrictionMetric:
     """Value Object calculating LLM-as-a-judge retry friction per ADR-013 & ADR-016.
 

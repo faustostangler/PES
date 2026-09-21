@@ -342,12 +342,17 @@ class OllamaLLMAdapter(LLMTransformationPort):
                     current_span.set_attribute("gen_ai.request.model", self.model)
                     current_span.set_attribute("gen_ai.usage.input_tokens", prompt_tokens)
                     current_span.set_attribute("gen_ai.usage.output_tokens", candidate_tokens)
+                    current_span.set_attribute("langfuse.observation.type", "generation")
                     if session_id:
                         current_span.set_attribute("langfuse.session.id", session_id)
                     if user_id:
                         current_span.set_attribute("langfuse.user.id", user_id)
+                    if trace_id:
+                        current_span.set_attribute("cresmo.trace_id", trace_id)
 
-                if self._langfuse is not None:
+                if self._langfuse is not None and hasattr(
+                    self._langfuse, "update_current_generation"
+                ):
                     try:
                         metadata: dict[str, Any] = {
                             "provider": "ollama",

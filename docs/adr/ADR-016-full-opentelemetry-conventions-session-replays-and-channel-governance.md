@@ -38,22 +38,33 @@ We establish **Full OpenTelemetry Semantic Conventions**, a unified **Session/Us
 1. **Content Session Identity (`session_id`):**
    - Formalized via Value Object `PipelineSessionId`.
    - Ubiquitous format: `content:{channel_name}:{content_id}` (e.g. `content:sandeco:ep042_transformers`).
-   - Bounds the entire multi-stage lifecycle of a single transcript into a contiguous OpenTelemetry trace tree and Langfuse Session.
-2. **Channel Cost Center Identity (`user_id`):**
+   - Bounds the entire multi-stage lifecycle of a single transcript into a contiguous OpenTelemetry trace tree and Langfuse Session Replay.
+2. **User & Operator Identity (`user_id`):**
+   - Formalized via Value Object `UserIdentity`.
+   - Supports forward-compatible identity modalities:
+     * **Anonymous (`anonymous` / `anon:{token}`):** Unauthenticated executions, local scripts, and public guest sessions.
+     * **Identified (`user:{provider}:{subject}`):** Authenticated users via OAuth/OIDC login (e.g. `user:oauth:alice@corp.com`).
+     * **Channel Fallback (`channel:{channel_name}`):** Headless background worker pipelines where the channel acts as the acting identity.
+   - Conforms to Langfuse Users taxonomy, ensuring that once OAuth login is active, personal user quotas, audit trails, and per-user activity appear directly in the Langfuse Users view.
+3. **Channel Cost Center Identity (`channel` / `tenant_id`):**
    - Formalized via Value Object `ChannelTenantId`.
    - Ubiquitous format: `channel:{channel_name}` (e.g. `channel:sandeco`).
-   - Maps the channel as the first-class tenant in Langfuse, converting the Users dashboard into an automated Channel FinOps & Token Governance leaderboard.
+   - Represents the primary organizational workspace, media source, and FinOps cost center, tracked as `cresmo.channel`, `cresmo.tenant_id`, and in `langfuse.trace.tags` for cross-dimensional cost analysis.
 
 ### 2.2 OpenTelemetry Span Hierarchy & Semantic Conventions
 The pipeline coordinates traces via a 3-tier OpenTelemetry hierarchy:
 - **Tier 1 — Root Span (`cresmo.pipeline.execution`):**
-  - Created at pipeline entry (`_synthesize_transcript`).
-  - Sets root attributes required by Langfuse:
-    * `langfuse.session.id = PipelineSessionId.value`
-    * `langfuse.user.id = ChannelTenantId.value`
-    * `cresmo.content_id = ContentId.value`
-    * `cresmo.channel = ChannelTenantId.channel_name`
-    * `langfuse.trace.tags = [channel_name, f"provider:{llm_provider}"]`
+   - Created at pipeline entry (`_synthesize_transcript`).
+   - Sets root attributes required by Langfuse:
+     * `langfuse.session.id = PipelineSessionId.value`
+     * `langfuse.user.id = UserIdentity.value`
+     * `cresmo.content_id = ContentId.value`
+     * `cresmo.channel = ChannelTenantId.channel_name`
+     * `cresmo.tenant_id = ChannelTenantId.value`
+     * `cresmo.user.is_anonymous = UserIdentity.is_anonymous`
+     * `cresmo.user.provider = UserIdentity.provider`
+     * `cresmo.user.subject = UserIdentity.subject` (if identified)
+     * `langfuse.trace.tags = [channel_name, "cresmo:v2", f"auth:{user.provider}"]`
 - **Tier 2 — Stage Child Spans (`cresmo.stageN.{stage_name}`):**
   - Created for each pipeline stage (`raw_indexing`, `fill_gaps`, `expansion`, `inventory`, `atomic_synthesis`, `mocs`, `duplicate_unification`).
   - Automatically inherit `session_id` and `user_id` via OpenTelemetry trace context propagation.
