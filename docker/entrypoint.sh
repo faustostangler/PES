@@ -11,7 +11,7 @@ export VAULT_DIR="${VAULT_DIR:-/app/vault}"
 # If first argument matches a known cresmo CLI subcommand or option flag, run cresmo
 if [ "$#" -gt 0 ]; then
     case "$1" in
-        check-config|run|sync|dedupe|--help|-h|--version|-v)
+        check-config|run|sync|worker|dedupe|export-cookies|concat-master|index-raw|seed-prompts|--help|-h|--version|-v)
             exec cresmo "$@"
             ;;
         cresmo)

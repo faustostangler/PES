@@ -22,6 +22,7 @@ from cresmo.presentation.commands import (
     export_cookies,
     index_raw,
     run,
+    seed_prompts,
     sync,
     worker,
 )
@@ -54,6 +55,7 @@ COMMAND_MODULES = (
     export_cookies,
     concat_master,
     index_raw,
+    seed_prompts,
 )
 
 
@@ -101,6 +103,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         "export-cookies",
         "concat-master",
         "index-raw",
+        "seed-prompts",
     }
 
     # Default implicit command routing to 'run' if no subcommand is supplied

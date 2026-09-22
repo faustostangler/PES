@@ -288,7 +288,7 @@ def execute_batch_run(
 
     for source_index, source in enumerate(sources, 1):
         total_items += 1
-        item_prefix = f"[{source_index}{total_count_suffix}]"
+        item_prefix = f"[{source_index}/{total_count_suffix}]"
         try:
             if source.kind == "file":
                 target_path = Path(source.target)

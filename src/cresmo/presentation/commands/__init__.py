@@ -9,6 +9,7 @@ from cresmo.presentation.commands import (
     export_cookies,
     index_raw,
     run,
+    seed_prompts,
     sync,
     worker,
 )
@@ -24,6 +25,7 @@ from cresmo.presentation.commands.run import (
     handle_run,
     load_batch_sources,
 )
+from cresmo.presentation.commands.seed_prompts import handle_seed_prompts
 from cresmo.presentation.commands.sync import handle_sync
 from cresmo.presentation.commands.worker import handle_worker
 
@@ -41,11 +43,13 @@ __all__ = [
     "handle_export_cookies",
     "handle_index_raw",
     "handle_run",
+    "handle_seed_prompts",
     "handle_sync",
     "handle_worker",
     "index_raw",
     "load_batch_sources",
     "run",
+    "seed_prompts",
     "sync",
     "worker",
 ]
