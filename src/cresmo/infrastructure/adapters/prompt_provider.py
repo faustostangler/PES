@@ -127,6 +127,22 @@ class JsonPromptProvider(PromptProviderPort):
             result = result.replace(f"{{{key}}}", str(val))
         return result
 
+    def get_raw_prompt_template(self, template_key: str) -> str:
+        """Retrieve unformatted raw prompt template with embedded skill block.
+
+        Args:
+            template_key: Key in prompts.json (e.g. 'gap_filler_pass1').
+
+        Returns:
+            Raw prompt template string with {skill_block} and {task} resolved.
+        """
+        entry = self._templates.get(template_key, {})
+        tpl = entry.get("template", entry.get("task", ""))
+        skill_name = entry.get("skill_name", "")
+        skill_block = self._get_skill_block(skill_name) if skill_name else ""
+        task = entry.get("task", "")
+        return tpl.replace("{task}", task).replace("{skill_block}", skill_block)
+
     def get_gap_filler_prompt(
         self,
         pass_num: int,

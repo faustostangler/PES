@@ -1017,13 +1017,22 @@ class TestCresmoCLI:
     def test_handle_run_lookback_override(self) -> None:
         from argparse import Namespace
 
+        from cresmo.application.services.preflight import PreflightResult
         from cresmo.presentation.commands.run import handle_run
 
         with (
             patch("cresmo.presentation.commands.run.build_pipeline"),
             patch("cresmo.presentation.commands.run.load_batch_sources", return_value=[]),
             patch("cresmo.presentation.commands.run.CresmoSettings") as mock_settings_cls,
+            patch(
+                "cresmo.presentation.commands.run.build_preflight_checker"
+            ) as mock_checker_builder,
         ):
+            mock_checker = MagicMock()
+            mock_checker.check_all.return_value = PreflightResult(
+                is_healthy=True, errors=(), warnings=()
+            )
+            mock_checker_builder.return_value = mock_checker
             mock_settings = MagicMock()
             mock_settings_cls.return_value = mock_settings
             args = Namespace(
@@ -1042,6 +1051,7 @@ class TestCresmoCLI:
     def test_handle_run_crawl_defaults_and_no_crawl_flag(self) -> None:
         from argparse import Namespace
 
+        from cresmo.application.services.preflight import PreflightResult
         from cresmo.presentation.commands.run import handle_run
 
         with (
@@ -1050,7 +1060,15 @@ class TestCresmoCLI:
                 "cresmo.presentation.commands.run.load_batch_sources", return_value=[]
             ) as mock_load,
             patch("cresmo.presentation.commands.run.CresmoSettings") as mock_settings_cls,
+            patch(
+                "cresmo.presentation.commands.run.build_preflight_checker"
+            ) as mock_checker_builder,
         ):
+            mock_checker = MagicMock()
+            mock_checker.check_all.return_value = PreflightResult(
+                is_healthy=True, errors=(), warnings=()
+            )
+            mock_checker_builder.return_value = mock_checker
             mock_settings = MagicMock()
             mock_settings.enable_channel_crawler = True
             mock_settings.days_lookback = 365
