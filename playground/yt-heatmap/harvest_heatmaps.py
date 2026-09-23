@@ -21,14 +21,40 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import requests
-from scipy.signal import find_peaks
+from scipy.signal import find_peaks, peak_widths
 import yt_dlp
 from yt_dlp.utils import download_range_func
 
 BASE_DIR = Path(__file__).resolve().parent
 
 # --- Path & Seed Configuration ---
-DEFAULT_SEED_URL = "https://www.youtube.com/watch?v=plExzNxH1Po", "https://www.youtube.com/watch?v=sRdWg7YjFS4"
+DEFAULT_SEED_URL: List[str] = [
+    "https://www.youtube.com/watch?v=plExzNxH1Po",
+    "https://www.youtube.com/watch?v=sRdWg7YjFS4",
+    "https://www.youtube.com/watch?v=c82VBPdZUkQ",
+    "https://www.youtube.com/watch?v=Ron7LYbiIrc",
+    "https://www.youtube.com/watch?v=BWi_ZMvGHvY", 
+    "https://www.youtube.com/watch?v=LUs7bJH88yw", 
+    "https://www.youtube.com/watch?v=yyP1ybjcjQ0",
+    "https://www.youtube.com/watch?v=8ee1kBZM3H8",
+    "https://www.youtube.com/watch?v=tQIVi12Vkoc",
+    "https://www.youtube.com/watch?v=pmsanEmo-lU",
+    "https://www.youtube.com/watch?v=1ZqgijX6P7o",
+    "https://www.youtube.com/watch?v=6gFm5SrdFg4",
+    "https://www.youtube.com/watch?v=u_iBlOLUcEY",
+    "https://www.youtube.com/watch?v=8bW9KQLNTow",
+    "https://www.youtube.com/watch?v=YqJHoKPGFp0",
+    "https://www.youtube.com/watch?v=sBMo2roZ5js",
+]
+
+DEFAULT_ANTI_SEED_URL: List[str] = [
+    "https://www.youtube.com/watch?v=3EOLT0KOv-k",  # Copacabana Reveillon / Night crowd
+    "https://www.youtube.com/watch?v=GnoftmWev6c",  # Copacabana Boardwalk at night
+    "https://www.youtube.com/watch?v=FQKFrlkz7dk",  # Porto Alegre (non-Rio / cold city)
+    "https://www.youtube.com/watch?v=FcZ_d6KeZXA",  # Botafogo urban neighborhood
+    "https://www.youtube.com/watch?v=-XHD-LAy6Fc",  # Windstorm & rain chaos
+    "https://www.youtube.com/watch?v=LRuRJfKaJlY",  # Gramado (mountain / cold climate)
+]
 DEFAULT_OUTPUT_DIR = BASE_DIR / "clips_harvested"
 DEFAULT_DB_PATH = BASE_DIR / "heatmap_pipeline.sqlite"
 
@@ -44,23 +70,37 @@ DEFAULT_RECOMMENDATIONS_LIMIT = 12     # Recommended videos to fetch per video f
 DEFAULT_CHANNEL_MIN_RATIO = 0.50       # At least 50% of top popular videos >= threshold
 DEFAULT_CHANNEL_MIN_SCORE = 0.50       # Similarity threshold per video for channel audit
 DEFAULT_CHANNEL_MIN_AVG = 0.65         # Minimum average channel similarity score
-DEFAULT_VIDEO_MIN_SCORE = 0.80         # Strict similarity threshold for admitting videos to video_pool
+DEFAULT_VIDEO_MIN_SCORE = 0.50         # Similarity threshold for admitting videos to video_pool (0.50 with anti-seeds)
 DEFAULT_ANCHOR_ALPHA = 0.75            # Weight of seed vector in Rocchio centroid (75% seed, 25% centroid)
 DEFAULT_SEED_TAGS_LIMIT = 6            # Number of seed tags appended to reference title
+DEFAULT_ANTI_SEED_BETA = 0.30          # Rocchio negative repulsion factor: C* = norm(C+ - beta * C-)
+DEFAULT_ANTI_SEED_MARGIN = 0.0         # Contrastive guardrail: reject candidate if (sim_pos - sim_anti) <= margin
 
 # --- Signal Processing Defaults ---
 DEFAULT_PEAK_MIN_HEIGHT = 0.25         # Minimum normalized heatmap height
 DEFAULT_PEAK_MIN_DISTANCE = 1          # Minimum samples between adjacent peaks
-DEFAULT_PEAK_MIN_PROMINENCE = 0.25      # Minimum peak prominence (mountain sharpness)
+DEFAULT_PEAK_MIN_PROMINENCE = 0.15      # Minimum peak prominence (mountain sharpness)
 DEFAULT_PEAK_MIN_Z_SCORE = 0.50         # Minimum z-score to reject flat retention plateaus
 DEFAULT_PADDING_START = 0.0            # Padding seconds added before peak start
 DEFAULT_PADDING_END = 0.0              # Padding seconds added after peak end
 DEFAULT_CUTOFF_RATIO = 0.0             # Initial duration fraction to ignore
 DEFAULT_CUTOFF_SECONDS = 0.0           # Initial seconds to ignore
+DEFAULT_PEAK_CONTIGUOUS_FLOOR = 0.75  # (legacy) kept for reference — no longer used
+DEFAULT_PEAK_WIDTH_REL_HEIGHT = 0.5   # Prominence fraction at which hot-zone width is measured (FWHM = 0.5)
 
 # --- Media & Download Defaults ---
-DEFAULT_CLIP_FORMAT = "bestvideo[vcodec^=avc1][height<=720]+bestaudio[acodec^=mp4a]/best[ext=mp4]/18/best"
-DEFAULT_YTDLP_EXTRACTOR_ARGS = {"youtube": {"player_client": ["android", "web"]}}
+# SOTA-KISS video format selection:
+#   1. Best 4K/1440p MP4 if available (height > 1080)
+#   2. Best 1080p AVC1 (H.264) + AAC (m4a) for fast ffmpeg cuts and universal compatibility
+#   3. Fallback to any 1080p stream + best audio
+#   4. Fallback to best available video + audio
+DEFAULT_CLIP_FORMAT = (
+    "bestvideo[height>1080][ext=mp4]+bestaudio[ext=m4a]"
+    "/bestvideo[vcodec^=avc1][height<=1080]+bestaudio[acodec^=mp4a]"
+    "/bestvideo[height<=1080]+bestaudio"
+    "/bestvideo+bestaudio"
+    "/best"
+)
 
 # --- Network, Jitter & Resilience Defaults ---
 DEFAULT_HTTP_TIMEOUT = 12              # Timeout in seconds for HTTP requests
@@ -73,12 +113,145 @@ DEFAULT_EMBEDDING_BACKEND = "ollama"
 DEFAULT_OLLAMA_URL = "http://localhost:11434"
 DEFAULT_OLLAMA_MODEL = "nomic-embed-text"
 
+# --- Authentication Cookies ---
+# Auto-resolved at startup: checks well-known paths then extracts from browser.
+DEFAULT_COOKIES_FILE: Optional[Path] = None   # Override with --cookies-file
+DEFAULT_BROWSER_COOKIES: str = "firefox"       # Browser to extract from if no cookies file found
+DEFAULT_COOKIES_MAX_AGE_HOURS: int = 12        # Force re-extraction if file is older than this
+
 USER_AGENTS = [
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
     "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:125.0) Gecko/20100101 Firefox/125.0",
 ]
+
+# Auth cookie names that confirm an authenticated YouTube session
+_YT_AUTH_COOKIE_NAMES: frozenset = frozenset({
+    "SID", "SSID", "HSID", "SAPISID", "APISID", "LOGIN_INFO",
+    "__Secure-1PSID", "__Secure-3PSID", "__Secure-1PAPISID", "__Secure-3PAPISID",
+})
+
+
+def _has_auth_cookies(cookie_file: Path) -> bool:
+    """Return True if the Netscape cookie file contains at least one YouTube auth token."""
+    if not cookie_file.exists() or cookie_file.stat().st_size < 50:
+        return False
+    try:
+        content = cookie_file.read_text(encoding="utf-8", errors="ignore")
+        return any(f"\t{tok}\t" in content or content.endswith(f"\t{tok}") for tok in _YT_AUTH_COOKIE_NAMES)
+    except OSError:
+        return False
+
+
+def resolve_cookies(
+    cookies_file: Optional[Path] = None,
+    browser: str = DEFAULT_BROWSER_COOKIES,
+    max_age_hours: int = DEFAULT_COOKIES_MAX_AGE_HOURS,
+    verbose: bool = True,
+) -> Optional[Path]:
+    """Resolve a valid YouTube Netscape cookie file, auto-extracting from a browser if needed.
+
+    Resolution strategy (mirrors cresmo's ensure_cookies_file):
+      1. If cookies_file is given and valid/fresh, use it directly.
+      2. If missing/stale, try to extract from preferred browser (require auth tokens).
+      3. Fallback: scan all supported browsers for any YouTube cookies.
+      4. Return None if all attempts fail — pipeline continues unauthenticated.
+    """
+    import http.cookiejar
+    import re as _re
+
+    _SUPPORTED = ("firefox", "chrome", "chromium", "brave", "edge", "opera", "vivaldi")
+    _DOMAINS = ("youtube.com", "google.com", "ytimg.com")
+    _NAME_RE = _re.compile(r"^[!-~]+$")
+    _VAL_RE = _re.compile(r"^[ -~]+$")
+
+    # Candidate paths to check when no explicit file is given
+    _candidates = [
+        cookies_file,
+        BASE_DIR / "cookies.txt",
+        BASE_DIR / ".yt_dlp_cookies.txt",
+        Path.home() / ".config" / "yt-dlp" / "cookies.txt",
+    ]
+    active: Optional[Path] = None
+    for c in _candidates:
+        if c and c.exists() and c.stat().st_size > 50:
+            active = c
+            break
+
+    should_refresh = True
+    if active and _has_auth_cookies(active):
+        if max_age_hours <= 0:
+            should_refresh = False
+        else:
+            age_h = (time.time() - active.stat().st_mtime) / 3600
+            if age_h <= max_age_hours:
+                should_refresh = False
+
+    if not should_refresh:
+        if verbose:
+            print(f"[cookies] Using existing cookie file: {active}")
+        return active
+
+    # Try to extract fresh cookies via yt-dlp's browser extractor
+    try:
+        import yt_dlp.cookies as _yt_cookies
+    except ImportError:
+        _yt_cookies = None  # type: ignore[assignment]
+
+    out_path = active or (BASE_DIR / "cookies.txt")
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+
+    def _extract(brw: str, require_auth: bool) -> bool:
+        if _yt_cookies is None:
+            return False
+        try:
+            cj = _yt_cookies.extract_cookies_from_browser(brw)
+        except Exception as exc:
+            if verbose:
+                print(f"[cookies] Could not read from '{brw}': {exc}")
+            return False
+        if not cj:
+            return False
+        mcj = http.cookiejar.MozillaCookieJar(str(out_path))
+        has_auth, count = False, 0
+        for c in cj:
+            dom = (c.domain or "").lower()
+            if not any(dom.endswith(d) for d in _DOMAINS):
+                continue
+            if not c.name or not c.value or len(c.value.strip()) == 0:
+                continue
+            if not _NAME_RE.match(c.name) or not _VAL_RE.match(c.value):
+                continue
+            if c.name in _YT_AUTH_COOKIE_NAMES:
+                has_auth = True
+            mcj.set_cookie(c)
+            count += 1
+        if count == 0 or (require_auth and not has_auth):
+            return False
+        mcj.save(ignore_discard=True, ignore_expires=True)
+        if verbose:
+            auth_tag = "[Authenticated]" if has_auth else "[Guest]"
+            print(f"[cookies] Saved {count} cookies {auth_tag} from '{brw}' -> {out_path.name}")
+        return True
+
+    priority = [browser] if browser in _SUPPORTED else []
+    for b in ("firefox", "chrome", "chromium", "brave", "edge"):
+        if b not in priority:
+            priority.append(b)
+
+    # First pass: authenticated session required
+    for brw in priority:
+        if _extract(brw, require_auth=True):
+            return out_path
+    # Second pass: any valid cookies (guest/unauthenticated)
+    for brw in priority:
+        if _extract(brw, require_auth=False):
+            return out_path
+
+    if verbose:
+        print("[cookies] Could not extract cookies from any browser. Continuing unauthenticated.")
+    return out_path if out_path.exists() and out_path.stat().st_size > 50 else None
 
 
 # ==============================================================================
@@ -134,15 +307,6 @@ def init_database(db_path: Path) -> sqlite3.Connection:
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         """)
-
-        # Migration: Ensure similarity column exists in existing channels and videos tables
-        ch_cols = [r[1] for r in conn.execute("PRAGMA table_info(channels)").fetchall()]
-        if "similarity" not in ch_cols:
-            conn.execute("ALTER TABLE channels ADD COLUMN similarity REAL")
-
-        vid_cols = [r[1] for r in conn.execute("PRAGMA table_info(videos)").fetchall()]
-        if "similarity" not in vid_cols:
-            conn.execute("ALTER TABLE videos ADD COLUMN similarity REAL")
 
         conn.commit()
     return conn
@@ -291,7 +455,7 @@ def get_random_header() -> dict:
     """Return realistic HTTP headers with rotating User-Agent."""
     return {
         "User-Agent": random.choice(USER_AGENTS),
-        "Accept-Language": "pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7",
+        "Accept-Language": "en-US,en;q=0.9,pt-BR;q=0.8,pt;q=0.7",
         "Accept": "*/*",
     }
 
@@ -363,6 +527,54 @@ class EmbeddingEngine:
     def cosine_similarity(v1: np.ndarray, v2: np.ndarray) -> float:
         """Compute cosine similarity between two unit vectors."""
         return float(np.dot(v1, v2))
+
+
+def evaluate_video_similarity(
+    title: str,
+    reference_embedding: np.ndarray,
+    engine: EmbeddingEngine,
+    anti_embedding: Optional[np.ndarray] = None,
+    anti_matrix: Optional[np.ndarray] = None,
+    min_score: float = DEFAULT_VIDEO_MIN_SCORE,
+    anti_margin: float = DEFAULT_ANTI_SEED_MARGIN,
+) -> Tuple[bool, float, float]:
+    """
+    Evaluate video candidate against positive reference and anti-seed anchors.
+
+    Admitted if:
+      1. ref_sim >= min_score (passes similarity threshold against Rocchio-repelled reference anchor)
+      2. If anti-seeds are configured: (ref_sim - anti_sim) > anti_margin (Contrastive Margin Guardrail),
+         where anti_sim is the maximum similarity across the anti-centroid and any individual anti-seed.
+
+    Returns:
+      (is_admitted, ref_similarity, anti_similarity)
+    """
+    try:
+        t_emb = engine.embed(title)
+        ref_sim = float(engine.cosine_similarity(reference_embedding, t_emb))
+    except Exception:
+        return False, 0.0, 0.0
+
+    anti_sim = 0.0
+    if anti_matrix is not None and len(anti_matrix) > 0:
+        try:
+            anti_sim = float(np.max(np.dot(anti_matrix, t_emb)))
+            if anti_embedding is not None:
+                anti_sim = max(anti_sim, float(engine.cosine_similarity(anti_embedding, t_emb)))
+        except Exception:
+            anti_sim = 0.0
+    elif anti_embedding is not None:
+        try:
+            anti_sim = float(engine.cosine_similarity(anti_embedding, t_emb))
+        except Exception:
+            anti_sim = 0.0
+
+    if ref_sim < min_score:
+        return False, ref_sim, anti_sim
+    if (anti_embedding is not None or anti_matrix is not None) and (ref_sim - anti_sim) <= anti_margin:
+        return False, ref_sim, anti_sim
+
+    return True, ref_sim, anti_sim
 
 
 # ==============================================================================
@@ -475,14 +687,8 @@ def fetch_popular_videos_innertube(channel_url: str, limit: int = DEFAULT_TOP_PO
         clean_url = channel_url.rstrip("/")
         videos_url = clean_url if clean_url.endswith("/videos") else f"{clean_url}/videos"
 
-        req = urllib.request.Request(
-            videos_url,
-            headers={
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
-                "Accept-Language": "en-US,en;q=0.9",
-            },
-        )
-        with urllib.request.urlopen(req, timeout=10) as resp:
+        req = urllib.request.Request(videos_url, headers=get_random_header())
+        with urllib.request.urlopen(req, timeout=DEFAULT_HTTP_TIMEOUT) as resp:
             html = resp.read().decode("utf-8", errors="ignore")
 
         m_data = re.search(r"var ytInitialData = ({.*?});</script>", html)
@@ -494,8 +700,8 @@ def fetch_popular_videos_innertube(channel_url: str, limit: int = DEFAULT_TOP_PO
         data = json.loads(m_data.group(1))
         dump = json.dumps(data)
 
-        # Locate the Popular continuation token
-        m_token = re.search(r'Popular[^\"]*\".*?\"continuationCommand\":\s*\{\"token\":\s*\"([^\"]+)\"', dump)
+        # Locate the Popular continuation token (supports English and Portuguese UI)
+        m_token = re.search(r'(?:Popular|Mais populares)[^\"]*\".*?\"continuationCommand\":\s*\{\"token\":\s*\"([^\"]+)\"', dump, re.IGNORECASE)
         if not m_token:
             return []
 
@@ -522,11 +728,11 @@ def fetch_popular_videos_innertube(channel_url: str, limit: int = DEFAULT_TOP_PO
                 browse_url,
                 data=json.dumps(payload).encode("utf-8"),
                 headers={
+                    **get_random_header(),
                     "Content-Type": "application/json",
-                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
                 },
             )
-            with urllib.request.urlopen(b_req, timeout=10) as b_resp:
+            with urllib.request.urlopen(b_req, timeout=DEFAULT_HTTP_TIMEOUT) as b_resp:
                 b_res = json.loads(b_resp.read().decode("utf-8"))
 
             next_token = None
@@ -622,10 +828,13 @@ def audit_channel_topic(
     channel_url: str,
     reference_embedding: np.ndarray,
     engine: EmbeddingEngine,
+    anti_embedding: Optional[np.ndarray] = None,
+    anti_matrix: Optional[np.ndarray] = None,
     min_ratio: float = DEFAULT_CHANNEL_MIN_RATIO,
     min_score: float = DEFAULT_CHANNEL_MIN_SCORE,
     min_avg: float = DEFAULT_CHANNEL_MIN_AVG,
     top_limit: int = DEFAULT_TOP_POPULAR_COUNT,
+    anti_margin: float = DEFAULT_ANTI_SEED_MARGIN,
 ) -> Tuple[bool, float, List[Dict[str, Any]], List[np.ndarray]]:
     """
     Audit channel thematic consistency by comparing its top popular videos with reference niche vector.
@@ -646,12 +855,21 @@ def audit_channel_topic(
             scores.append(0.0)
             continue
         try:
-            t_emb = engine.embed(t)
-            sim = engine.cosine_similarity(reference_embedding, t_emb)
+            is_valid, sim, anti_sim = evaluate_video_similarity(
+                title=t,
+                reference_embedding=reference_embedding,
+                engine=engine,
+                anti_embedding=anti_embedding,
+                anti_matrix=anti_matrix,
+                min_score=min_score,
+                anti_margin=anti_margin,
+            )
             entry["similarity_score"] = round(float(sim), 4)
+            if anti_embedding is not None or anti_matrix is not None:
+                entry["anti_similarity_score"] = round(float(anti_sim), 4)
             scores.append(sim)
-            if sim >= min_score:
-                qualifying_embs.append(t_emb)
+            if is_valid:
+                qualifying_embs.append(engine.embed(t))
         except Exception:
             entry["similarity_score"] = 0.0
             scores.append(0.0)
@@ -680,18 +898,28 @@ def extract_heatmap_peaks(
     cutoff_seconds: float = DEFAULT_CUTOFF_SECONDS,
     max_peaks: int = DEFAULT_MAX_CLIPS_PER_VIDEO,
     min_z_score: float = DEFAULT_PEAK_MIN_Z_SCORE,
+    peak_width_rel_height: float = DEFAULT_PEAK_WIDTH_REL_HEIGHT,
 ) -> List[Dict[str, Any]]:
     """
     Detect genuine viral peaks in YouTube heatmap markers.
+
     Business Rules:
       1. Reject first initial retention drop-off (configured via cutoff_ratio / cutoff_seconds).
-      2. find_peaks with height >= 0.70, distance >= 5, prominence >= 0.25.
+      2. find_peaks with height >= min_height, distance >= min_distance, prominence >= min_prominence.
       3. Z-score check (filters out flat retention lines).
-      4. Apply configurable start/end padding (default 0s).
+      4. Measure hot-zone width via ``scipy.signal.peak_widths`` at ``peak_width_rel_height``
+         (default 0.5 = FWHM).  The threshold is ``peak_val - rel_height * prominence``,
+         making it shape-invariant:
+           - Platykurtic (broad plateau): prominence is small → floor is close to the peak
+             value → width covers the full plateau.
+           - Leptokurtic (sharp spike): prominence is large → floor is lower → width
+             captures only the narrow spike.
+      5. Apply configurable start/end padding on top of the hot zone (default 0 s).
     """
     if not heatmap or duration <= 0:
         return []
 
+    n = len(heatmap)
     values = np.array([pt["value"] for pt in heatmap], dtype=np.float32)
     mean_val = float(np.mean(values))
     std_val = float(np.std(values))
@@ -706,31 +934,45 @@ def extract_heatmap_peaks(
             distance=min_distance,
             prominence=p_thresh,
         )
+        if len(peaks_i) == 0:
+            return []
+
+        # Measure hot-zone width for all peaks at once using prominence-relative height.
+        # peak_widths returns fractional array indices (left_ips, right_ips); convert to
+        # seconds using the uniform bucket width (duration / n).
+        bucket_sec = duration / n
+        _, _, left_ips, right_ips = peak_widths(values, peaks_i, rel_height=peak_width_rel_height)
+
         found = []
         for i, idx in enumerate(peaks_i):
             pt = heatmap[idx]
             val = float(pt["value"])
-            start = float(pt["start_time"])
-            end = float(pt["end_time"])
+            # Canonical single-bucket reference (stored for audit)
+            original_start = float(pt["start_time"])
+            original_end = float(pt["end_time"])
             prom = float(props["prominences"][i])
             z_score = float((val - mean_val) / (std_val + 1e-6))
 
             # Filter 1: Drop-off initial
-            if start < cutoff_time:
+            if original_start < cutoff_time:
                 continue
 
             # Filter 2: Flat retention filter (z-score >= min_z_score)
             if z_score < min_z_score:
                 continue
 
-            # Apply padding
-            padded_start = max(0.0, start - padding_start)
-            padded_end = min(duration, end + padding_end)
+            # Hot-zone boundaries from prominence-relative width (shape-invariant)
+            zone_start = float(left_ips[i]) * bucket_sec
+            zone_end = float(right_ips[i]) * bucket_sec
+
+            # Apply padding around the hot zone
+            padded_start = max(0.0, zone_start - padding_start)
+            padded_end = min(duration, zone_end + padding_end)
 
             found.append({
                 "peak_index": idx,
-                "original_start": start,
-                "original_end": end,
+                "original_start": original_start,
+                "original_end": original_end,
                 "start_time": padded_start,
                 "end_time": padded_end,
                 "duration": padded_end - padded_start,
@@ -766,23 +1008,31 @@ def download_clip_range(
     output_dir: Path,
     conn: Optional[sqlite3.Connection] = None,
     clip_format: str = DEFAULT_CLIP_FORMAT,
+    cookies_file: Optional[Union[str, Path]] = None,
 ) -> Optional[Path]:
     """
     Download exact time slice using HTTP range requests via yt-dlp & ffmpeg.
-    Saves the .mp4 file and persists all audit metadata directly in SQLite.
+    Saves the file and persists all audit metadata directly in SQLite.
+    The output filename includes the actual downloaded resolution (e.g. _1080p, _2160p).
     """
     output_dir.mkdir(parents=True, exist_ok=True)
     safe_ch = re.sub(r"[^A-Za-z0-9_-]", "", channel_id) or "channel"
     clip_base = f"{safe_ch}_{video_id}_peak_{peak_rank}"
-    out_mp4 = output_dir / f"{clip_base}.mp4"
 
     start_sec = float(peak_info["start_time"])
     end_sec = float(peak_info["end_time"])
     duration = float(peak_info.get("duration", end_sec - start_sec))
 
-    # Fast-check: if clip already exists on disk and is not empty, skip downloading
-    if out_mp4.exists() and out_mp4.stat().st_size > 0:
-        print(f"         [i] Clip already exists on disk ({out_mp4.name}). Skipping download.")
+    # Fast-check: look for any resolution variant already on disk (e.g. _1080p.mp4, _720p.mp4, _2160p.webm)
+    existing: Optional[Path] = next(output_dir.glob(f"{clip_base}_*p.*"), None)
+    if existing is None:
+        for ext in (".mp4", ".mkv", ".webm"):
+            cand = output_dir / f"{clip_base}{ext}"
+            if cand.exists():
+                existing = cand
+                break
+    if existing is not None and existing.stat().st_size > 0:
+        print(f"         [i] Clip already exists on disk ({existing.name}). Skipping download.")
         if conn:
             record_clip(
                 conn=conn,
@@ -803,12 +1053,25 @@ def download_clip_range(
                 score=round(float(peak_info["score"]), 4),
                 prominence=round(float(peak_info["prominence"]), 4),
                 z_score=round(float(peak_info["z_score"]), 4),
-                file_path=str(out_mp4),
+                file_path=str(existing),
             )
-        return out_mp4
+        return existing
 
-    ydl_opts = {
-        # Format 18 (360p pre-muxed mp4) downloads range chunks in ~2s without heavy 4K re-encoding
+    # Capture the actual height and output file chosen by yt-dlp via progress hook
+    _captured: Dict[str, Any] = {"height": None, "filename": None}
+
+    def _capture_resolution(d: Dict[str, Any]) -> None:
+        """Store the resolved video height and output filename when download finishes."""
+        if d.get("status") == "finished":
+            h = d.get("height") or d.get("info_dict", {}).get("height")
+            if h:
+                _captured["height"] = int(h)
+            fn = d.get("filename")
+            if fn:
+                _captured["filename"] = Path(fn)
+
+    ydl_opts: Dict[str, Any] = {
+        # SOTA-KISS range download via HTTP byte-range and keyframe cutting
         "format": clip_format,
         "download_ranges": download_range_func(None, [(start_sec, end_sec)]),
         "force_keyframes_at_cuts": True,
@@ -817,12 +1080,42 @@ def download_clip_range(
         "quiet": True,
         "no_warnings": True,
         "js_runtimes": {"node": {}},
-        "extractor_args": DEFAULT_YTDLP_EXTRACTOR_ARGS,
+        "progress_hooks": [_capture_resolution],
     }
+
+    # Resolve cookie authentication
+    cookie_path = cookies_file or (Path(peak_info["_cookiefile"]) if "_cookiefile" in peak_info else None)
+    if cookie_path is None:
+        cookie_path = resolve_cookies(verbose=False)
+    if cookie_path and Path(cookie_path).exists():
+        ydl_opts["cookiefile"] = str(cookie_path)
 
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             ydl.download([video_url])
+
+        # Resolve downloaded file
+        downloaded = _captured.get("filename")
+        if downloaded is None or not downloaded.exists():
+            for ext in (".mp4", ".mkv", ".webm"):
+                cand = output_dir / f"{clip_base}{ext}"
+                if cand.exists():
+                    downloaded = cand
+                    break
+
+        height = _captured.get("height")
+        if downloaded and downloaded.exists():
+            if height:
+                target_path = output_dir / f"{clip_base}_{height}p{downloaded.suffix}"
+                if downloaded != target_path:
+                    downloaded.rename(target_path)
+                    out_path = target_path
+                else:
+                    out_path = downloaded
+            else:
+                out_path = downloaded
+        else:
+            out_path = output_dir / f"{clip_base}.mp4"
 
         # Record all metadata in SQLite (Single Source of Truth in SQL)
         if conn:
@@ -845,10 +1138,10 @@ def download_clip_range(
                 score=round(float(peak_info["score"]), 4),
                 prominence=round(float(peak_info["prominence"]), 4),
                 z_score=round(float(peak_info["z_score"]), 4),
-                file_path=str(out_mp4),
+                file_path=str(out_path),
             )
 
-        return out_mp4
+        return out_path
 
     except Exception as e:
         print(f" [!] Error harvesting clip {clip_base}: {e}")
@@ -875,6 +1168,11 @@ def run_harvest_pipeline(
     cutoff_seconds: float = DEFAULT_CUTOFF_SECONDS,
     clip_format: str = DEFAULT_CLIP_FORMAT,
     recommendations_limit: int = DEFAULT_RECOMMENDATIONS_LIMIT,
+    cookies_file: Optional[Path] = None,
+    browser_cookies: str = DEFAULT_BROWSER_COOKIES,
+    anti_seed_url: Optional[Union[str, List[str]]] = None,
+    anti_beta: float = DEFAULT_ANTI_SEED_BETA,
+    anti_margin: float = DEFAULT_ANTI_SEED_MARGIN,
 ) -> Dict[str, Any]:
     """
     Run full graph discovery, semantic audit, and heatmap extraction pipeline.
@@ -893,12 +1191,24 @@ def run_harvest_pipeline(
     else:
         seed_urls_list = [str(u).strip() for u in seed_url if str(u).strip()]
 
+    # Normalize anti-seeds input
+    if anti_seed_url is None:
+        anti_seed_urls_list = [str(u).strip() for u in DEFAULT_ANTI_SEED_URL if str(u).strip()]
+    elif isinstance(anti_seed_url, str):
+        anti_seed_urls_list = [u.strip() for u in anti_seed_url.split(",") if u.strip()]
+    else:
+        anti_seed_urls_list = [str(u).strip() for u in anti_seed_url if str(u).strip()]
+
     print("=" * 70)
     print(" YouTube Heatmap Harvester & Autonomous Graph Crawler")
     print("=" * 70)
     print(f" Seed Video(s):          {len(seed_urls_list)} seed(s) configured")
     for idx, s_u in enumerate(seed_urls_list, start=1):
         print(f"   [{idx}] {s_u}")
+    if anti_seed_urls_list:
+        print(f" Anti-Seed Video(s):     {len(anti_seed_urls_list)} negative example(s) configured (beta={anti_beta:.2f}, margin={anti_margin:.2f})")
+        for idx, a_u in enumerate(anti_seed_urls_list, start=1):
+            print(f"   [-] {a_u}")
     print(f" Output Directory:       {output_dir.resolve()}")
     print(f" SQLite State Database:  {db_path.resolve()}")
     print(f" Max Approved Channels:  {max_approved_channels}")
@@ -913,19 +1223,26 @@ def run_harvest_pipeline(
     print(f" Video Stream Format:    {clip_format}")
     print("=" * 70)
 
-    # 1. Initialize State & Embeddings
+    # 1. Initialize State, Embeddings & Cookie Session
     conn = init_database(db_path)
     engine = EmbeddingEngine(backend=embedding_backend)
+    active_cookies = resolve_cookies(cookies_file=cookies_file, browser=browser_cookies)
+    if active_cookies:
+        print(f"[*] Cookie session active: {active_cookies.name}")
+    else:
+        print("[!] No cookie file available — running unauthenticated (bot-check risk).")
 
     # 2. Extract Seed Video(s) Info & Compute Normalized Seed Centroid
     print(f"\n[*] Step 1: Initializing {len(seed_urls_list)} Seed Video(s)...")
 
-    ydl_meta = {
+    ydl_meta: Dict[str, Any] = {
         "skip_download": True,
         "quiet": True,
         "no_warnings": True,
         "js_runtimes": {"node": {}},
     }
+    if active_cookies:
+        ydl_meta["cookiefile"] = str(active_cookies)
 
     seed_embeddings: List[np.ndarray] = []
     seed_entries: List[Dict[str, Any]] = []
@@ -978,9 +1295,47 @@ def run_harvest_pipeline(
 
     print(f"[*] Computed Seed Centroid Vector across {len(seed_embeddings)} seed video(s).")
 
+    # 2b. Extract Anti-Seed Video(s) & Compute Anti-Seed Centroid + Projection Matrix (Negative Anchor)
+    anti_embeddings: List[np.ndarray] = []
+    if anti_seed_urls_list:
+        print(f"\n[*] Step 1b: Initializing {len(anti_seed_urls_list)} Anti-Seed Video(s) (Negative Anchor)...")
+        for a_url in anti_seed_urls_list:
+            try:
+                a_id = extract_video_id(a_url)
+                with yt_dlp.YoutubeDL(ydl_meta) as ydl:
+                    a_info = ydl.extract_info(a_url, download=False)
+
+                a_title = str(a_info.get("title") or "Anti-Seed Video")
+                a_tags = a_info.get("tags") or []
+                a_text = f"{a_title}. {' '.join(a_tags[:DEFAULT_SEED_TAGS_LIMIT])}"
+                a_emb = engine.embed(a_text)
+                a_norm = np.linalg.norm(a_emb)
+                if a_norm > 0:
+                    a_emb = a_emb / a_norm
+                anti_embeddings.append(a_emb)
+                print(f"  [-] Anti-Seed ({a_id}): {a_title[:50]}")
+            except Exception as e:
+                print(f"  [!] Failed to extract anti-seed {a_url}: {e}")
+
+    anti_embedding: Optional[np.ndarray] = None
+    anti_matrix: Optional[np.ndarray] = None
+    if anti_embeddings:
+        anti_matrix = np.array(anti_embeddings, dtype=np.float32)
+        anti_centroid = np.mean(anti_embeddings, axis=0)
+        a_norm = np.linalg.norm(anti_centroid)
+        anti_embedding = anti_centroid / a_norm if a_norm > 0 else anti_embeddings[0]
+        print(f"[*] Computed Anti-Seed Centroid Vector across {len(anti_embeddings)} anti-seed(s).")
+
     # ref_embedding maintains the weighted anchor centroid:
-    # ref = alpha * seed_centroid + (1 - alpha) * approved_channel_centroid
-    ref_embedding = seed_embedding.copy()
+    # If anti-seeds exist, apply Rocchio negative feedback: C* = normalize(C_pos - beta * C_anti)
+    if anti_embedding is not None and anti_beta > 0.0:
+        repelled = seed_embedding - (anti_beta * anti_embedding)
+        r_norm = np.linalg.norm(repelled)
+        ref_embedding = repelled / r_norm if r_norm > 0 else seed_embedding.copy()
+        print(f"[*] Applied Rocchio Anti-Seed Repulsion (beta={anti_beta:.2f}) -> anchor tilted away from false positives.")
+    else:
+        ref_embedding = seed_embedding.copy()
+
     approved_embeddings: List[np.ndarray] = [seed_embedding]
     ANCHOR_ALPHA = DEFAULT_ANCHOR_ALPHA  # Anchored on seed centroid vs approved channel centroid
 
@@ -1018,27 +1373,36 @@ def run_harvest_pipeline(
             print(f"[*] Mining top-{top_n_channel_videos} videos from seed channel: {s_ch_name}...")
             top_vids = fetch_channel_top_videos(s_ch_url, limit=top_n_channel_videos)
             enq_seed = 0
-            for entry in top_vids:
-                t_vid = entry.get("id")
+            for v in top_vids:
+                t_vid = v.get("id")
                 if not t_vid or is_video_seen(conn, t_vid) or t_vid in queued_video_ids:
                     continue
-                v_title_entry = entry.get("title", "Untitled")
-                try:
-                    v_sim = float(engine.cosine_similarity(ref_embedding, engine.embed(v_title_entry)))
-                except Exception:
-                    v_sim = 0.0
-                if v_sim >= min_video_similarity:
-                    video_pool.append({
-                        "video_id": t_vid,
-                        "url": f"https://www.youtube.com/watch?v={t_vid}",
-                        "title": v_title_entry,
-                        "channel_url": s_ch_url,
-                        "channel_name": s_ch_name,
-                        "channel_id": s_ch_id,
-                        "similarity_score": round(v_sim, 4),
-                    })
-                    queued_video_ids.add(t_vid)
-                    enq_seed += 1
+                v_title_entry = v.get("title", "Untitled")
+                is_valid, v_sim, v_anti = evaluate_video_similarity(
+                    title=v_title_entry,
+                    reference_embedding=ref_embedding,
+                    engine=engine,
+                    anti_embedding=anti_embedding,
+                    anti_matrix=anti_matrix,
+                    min_score=min_video_similarity,
+                    anti_margin=anti_margin,
+                )
+                if not is_valid:
+                    if (anti_embedding is not None or anti_matrix is not None) and v_sim >= min_video_similarity and (v_sim - v_anti) <= anti_margin:
+                        print(f"    [-] Rejected false positive: {v_title_entry[:45]} (pos={v_sim:.2f}, anti={v_anti:.2f})")
+                    continue
+
+                video_pool.append({
+                    "video_id": t_vid,
+                    "url": f"https://www.youtube.com/watch?v={t_vid}",
+                    "title": v_title_entry,
+                    "channel_url": s_ch_url,
+                    "channel_name": s_ch_name,
+                    "channel_id": s_ch_id,
+                    "similarity_score": round(v_sim, 4),
+                })
+                queued_video_ids.add(t_vid)
+                enq_seed += 1
             print(f"    [+] Enqueued {enq_seed} video(s) from seed channel {s_ch_name} (Similarity >= {min_video_similarity:.2f}).")
 
     processed_videos_count = 0
@@ -1121,6 +1485,9 @@ def run_harvest_pipeline(
                     print(f"     [+] Heatmap detected ({len(heatmap)} points). Found {len(peaks)} hot peak(s):")
                     for p_idx, peak in enumerate(peaks, start=1):
                         print(f"         -> Downloading Peak #{p_idx}: {peak['start_time']:.1f}s to {peak['end_time']:.1f}s (Score: {peak['score']:.2f}, Prom: {peak['prominence']:.2f})")
+                        # Carry cookie path into download_clip_range via peak_info sidecar key
+                        if active_cookies:
+                            peak["_cookiefile"] = str(active_cookies)
                         clip_path = download_clip_range(
                             video_url=v_url,
                             video_id=v_id,
@@ -1132,6 +1499,7 @@ def run_harvest_pipeline(
                             output_dir=output_dir,
                             conn=conn,
                             clip_format=clip_format,
+                            cookies_file=active_cookies,
                         )
                         if clip_path:
                             total_clips_harvested += 1
@@ -1182,7 +1550,10 @@ def run_harvest_pipeline(
                     channel_url=cand_ch_url,
                     reference_embedding=ref_embedding,
                     engine=engine,
+                    anti_embedding=anti_embedding,
+                    anti_matrix=anti_matrix,
                     top_limit=top_n_channel_videos,
+                    anti_margin=anti_margin,
                 )
 
                 if not is_valid:
@@ -1205,6 +1576,8 @@ def run_harvest_pipeline(
                     if c_norm > 0:
                         approved_centroid = approved_centroid / c_norm
                     blended = (ANCHOR_ALPHA * seed_embedding) + ((1.0 - ANCHOR_ALPHA) * approved_centroid)
+                    if anti_embedding is not None and anti_beta > 0.0:
+                        blended = blended - (anti_beta * anti_embedding)
                     b_norm = np.linalg.norm(blended)
                     if b_norm > 0:
                         ref_embedding = blended / b_norm
@@ -1228,16 +1601,20 @@ def run_harvest_pipeline(
 
                     v_title_entry = entry.get("title", "Untitled")
                     v_link = f"https://www.youtube.com/watch?v={t_vid}"
-                    v_sim = entry.get("similarity_score")
-                    if v_sim is None:
-                        try:
-                            v_sim = float(engine.cosine_similarity(ref_embedding, engine.embed(v_title_entry)))
-                        except Exception:
-                            v_sim = 0.0
-                        entry["similarity_score"] = round(v_sim, 4)
+                    is_valid, v_sim, v_anti = evaluate_video_similarity(
+                        title=v_title_entry,
+                        reference_embedding=ref_embedding,
+                        engine=engine,
+                        anti_embedding=anti_embedding,
+                        anti_matrix=anti_matrix,
+                        min_score=min_video_similarity,
+                        anti_margin=anti_margin,
+                    )
+                    entry["similarity_score"] = round(v_sim, 4)
 
-                    v_sim = float(v_sim)
-                    if v_sim < min_video_similarity:
+                    if not is_valid:
+                        if (anti_embedding is not None or anti_matrix is not None) and v_sim >= min_video_similarity and (v_sim - v_anti) <= anti_margin:
+                            print(f"      [-] Rejected Anti-Seed False Positive: {v_title_entry[:45]} (pos={v_sim:.2f}, anti={v_anti:.2f})")
                         continue
 
                     video_pool.append({
@@ -1251,17 +1628,23 @@ def run_harvest_pipeline(
                     })
                     queued_video_ids.add(t_vid)
                     enqueued_count += 1
-                    print(f"({idx}/{tot_candidates}) [POOL #{enqueued_count}] {v_sim:.2f} | {v_title_entry[:45]} | {v_link}")
+                    anti_tag = f" | anti={v_anti:.2f}" if (anti_embedding is not None or anti_matrix is not None) else ""
+                    print(f"({idx}/{tot_candidates}) [POOL #{enqueued_count}] {v_sim:.2f}{anti_tag} | {v_title_entry[:45]} | {v_link}")
 
             # Case 3: Also check the triggering recommended video itself
             rec_vid = cand_meta.get("video_id")
             if rec_vid and not is_video_seen(conn, rec_vid) and rec_vid not in queued_video_ids:
                 rec_title = str(cand_meta.get("title") or "")
-                try:
-                    rec_sim = engine.cosine_similarity(ref_embedding, engine.embed(rec_title))
-                except Exception:
-                    rec_sim = 0.0
-                if rec_sim >= min_video_similarity:
+                is_valid, rec_sim, rec_anti = evaluate_video_similarity(
+                    title=rec_title,
+                    reference_embedding=ref_embedding,
+                    engine=engine,
+                    anti_embedding=anti_embedding,
+                    anti_matrix=anti_matrix,
+                    min_score=min_video_similarity,
+                    anti_margin=anti_margin,
+                )
+                if is_valid:
                     video_pool.append({
                         "video_id": rec_vid,
                         "url": f"https://www.youtube.com/watch?v={rec_vid}",
@@ -1273,7 +1656,10 @@ def run_harvest_pipeline(
                     })
                     queued_video_ids.add(rec_vid)
                     enqueued_count += 1
-                    print(f"      [+] Discovered candidate from approved channel ({rec_sim:.2f}): {rec_title[:55]} ({rec_vid})")
+                    anti_tag = f" (anti: {rec_anti:.2f})" if (anti_embedding is not None or anti_matrix is not None) else ""
+                    print(f"      [+] Discovered candidate from approved channel ({rec_sim:.2f}{anti_tag}): {rec_title[:55]} ({rec_vid})")
+                elif (anti_embedding is not None or anti_matrix is not None) and rec_sim >= min_video_similarity and (rec_sim - rec_anti) <= anti_margin:
+                    print(f"      [-] Rejected candidate false positive: {rec_title[:50]} (pos={rec_sim:.2f}, anti={rec_anti:.2f})")
 
             if enqueued_count > 0:
                 print(f"[+] Enqueued {enqueued_count} video(s) into video pool (Similarity >= {min_video_similarity:.2f}). (Pool size: {len(video_pool)})")
@@ -1319,6 +1705,11 @@ def main():
     parser.add_argument("--cutoff-sec", type=float, default=DEFAULT_CUTOFF_SECONDS, help="Initial seconds to ignore (0.0 to disable)")
     parser.add_argument("--format", default=DEFAULT_CLIP_FORMAT, help="Video download stream format for yt-dlp")
     parser.add_argument("--backend", default=DEFAULT_EMBEDDING_BACKEND, choices=["ollama", "sentence-transformers"], help="Embedding engine")
+    parser.add_argument("--cookies-file", default=None, help="Path to Netscape cookies.txt file for YouTube authentication")
+    parser.add_argument("--browser-cookies", default=DEFAULT_BROWSER_COOKIES, help="Browser to extract cookies from if no cookies file is found (firefox, chrome, etc.)")
+    parser.add_argument("--anti-seed", default=None, help="Anti-seed video URL or comma-separated list of URLs to repel false positives")
+    parser.add_argument("--anti-beta", type=float, default=DEFAULT_ANTI_SEED_BETA, help=f"Rocchio anti-seed repulsion factor (default: {DEFAULT_ANTI_SEED_BETA:.2f})")
+    parser.add_argument("--anti-margin", type=float, default=DEFAULT_ANTI_SEED_MARGIN, help=f"Contrastive margin guardrail: sim_pos - sim_anti > margin (default: {DEFAULT_ANTI_SEED_MARGIN:.2f})")
     args = parser.parse_args()
 
     # --- Inline Sanity Asserts (KISS Validation) ---
@@ -1346,6 +1737,21 @@ def main():
     assert np.isclose(np.linalg.norm(v_s_centroid), 1.0)
     assert np.isclose(float(np.dot(v_s_centroid, v_s1)), float(np.dot(v_s_centroid, v_s2)))
 
+    # Sanity assert: Rocchio Anti-Seed Repulsion tilts reference away from negative subspace
+    v_pos = np.array([1.0, 0.0])
+    v_neg = np.array([0.7071, 0.7071])  # Correlated false positive
+    v_rep = v_pos - DEFAULT_ANTI_SEED_BETA * v_neg
+    v_rep = v_rep / np.linalg.norm(v_rep)
+    assert np.isclose(np.linalg.norm(v_rep), 1.0)
+    assert float(np.dot(v_rep, v_neg)) < float(np.dot(v_pos, v_neg)), "Repulsion must penalize negative direction"
+
+    # Sanity assert: Contrastive Margin Guardrail rejects candidate closer to anti-seeds
+    v_cand_fp = np.array([0.7071, 0.7071])
+    v_anti_matrix = np.array([[0.7071, 0.7071], [0.0, 1.0]])
+    sim_pos = float(np.dot(v_rep, v_cand_fp))
+    sim_anti_max = float(np.max(np.dot(v_anti_matrix, v_cand_fp)))
+    assert sim_anti_max >= sim_pos, "Candidate closer to anti-seeds must be rejected by guardrail"
+
     # Run the pipeline
     run_harvest_pipeline(
         seed_url=args.seed,
@@ -1363,6 +1769,11 @@ def main():
         cutoff_ratio=args.cutoff_ratio,
         cutoff_seconds=args.cutoff_sec,
         clip_format=args.format,
+        cookies_file=Path(args.cookies_file) if args.cookies_file else None,
+        browser_cookies=args.browser_cookies,
+        anti_seed_url=args.anti_seed,
+        anti_beta=args.anti_beta,
+        anti_margin=args.anti_margin,
     )
 
 
