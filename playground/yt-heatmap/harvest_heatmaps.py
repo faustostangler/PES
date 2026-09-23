@@ -12,6 +12,7 @@ import os
 import random
 import re
 import sqlite3
+import subprocess
 import sys
 import time
 import urllib.request
@@ -29,8 +30,10 @@ BASE_DIR = Path(__file__).resolve().parent
 
 # --- Path & Seed Configuration ---
 DEFAULT_SEED_URL: List[str] = [
-    "https://www.youtube.com/watch?v=plExzNxH1Po",
-    "https://www.youtube.com/watch?v=sRdWg7YjFS4",
+    "https://www.youtube.com/watch?v=plExzNxH1Po",  # Barra da Tijuca Beach
+    "https://www.youtube.com/watch?v=sRdWg7YjFS4",  # Leblon and Ipanema Beach
+    "https://www.youtube.com/watch?v=sRRODmeZjPc",  # Copacabana Beach
+    "https://www.youtube.com/watch?v=uo5PfoVNUgE",  # Downtown Rio de Janeiro
     "https://www.youtube.com/watch?v=c82VBPdZUkQ",
     "https://www.youtube.com/watch?v=Ron7LYbiIrc",
     "https://www.youtube.com/watch?v=BWi_ZMvGHvY", 
@@ -50,10 +53,8 @@ DEFAULT_SEED_URL: List[str] = [
 DEFAULT_ANTI_SEED_URL: List[str] = [
     "https://www.youtube.com/watch?v=3EOLT0KOv-k",  # Copacabana Reveillon / Night crowd
     "https://www.youtube.com/watch?v=GnoftmWev6c",  # Copacabana Boardwalk at night
-    "https://www.youtube.com/watch?v=FQKFrlkz7dk",  # Porto Alegre (non-Rio / cold city)
-    "https://www.youtube.com/watch?v=FcZ_d6KeZXA",  # Botafogo urban neighborhood
+    "https://www.youtube.com/watch?v=FQKFrlkz7dk",  # Porto Alegre (cold city / non-coastal)
     "https://www.youtube.com/watch?v=-XHD-LAy6Fc",  # Windstorm & rain chaos
-    "https://www.youtube.com/watch?v=LRuRJfKaJlY",  # Gramado (mountain / cold climate)
 ]
 DEFAULT_OUTPUT_DIR = BASE_DIR / "clips_harvested"
 DEFAULT_DB_PATH = BASE_DIR / "heatmap_pipeline.sqlite"
@@ -73,8 +74,8 @@ DEFAULT_CHANNEL_MIN_AVG = 0.65         # Minimum average channel similarity scor
 DEFAULT_VIDEO_MIN_SCORE = 0.50         # Similarity threshold for admitting videos to video_pool (0.50 with anti-seeds)
 DEFAULT_ANCHOR_ALPHA = 0.75            # Weight of seed vector in Rocchio centroid (75% seed, 25% centroid)
 DEFAULT_SEED_TAGS_LIMIT = 6            # Number of seed tags appended to reference title
-DEFAULT_ANTI_SEED_BETA = 0.30          # Rocchio negative repulsion factor: C* = norm(C+ - beta * C-)
-DEFAULT_ANTI_SEED_MARGIN = 0.0         # Contrastive guardrail: reject candidate if (sim_pos - sim_anti) <= margin
+DEFAULT_ANTI_SEED_BETA = 0.20          # Rocchio negative repulsion factor: C* = norm(C+ - beta * C-)
+DEFAULT_ANTI_SEED_MARGIN = -0.025      # Contrastive guardrail: reject candidate if (sim_pos - sim_anti) <= margin (-0.025 buffer)
 
 # --- Signal Processing Defaults ---
 DEFAULT_PEAK_MIN_HEIGHT = 0.25         # Minimum normalized heatmap height
@@ -107,6 +108,7 @@ DEFAULT_HTTP_TIMEOUT = 12              # Timeout in seconds for HTTP requests
 DEFAULT_DB_TIMEOUT = 15.0              # Timeout in seconds for SQLite connections
 DEFAULT_JITTER_MIN_SEC = 1.0           # Minimum random sleep between network calls
 DEFAULT_JITTER_MAX_SEC = 2.5           # Maximum random sleep between network calls
+DEFAULT_MAX_DOWNLOAD_RETRIES = 3       # Maximum attempts to harvest an intact clip
 
 # --- Embeddings Engine Defaults ---
 DEFAULT_EMBEDDING_BACKEND = "ollama"
@@ -303,9 +305,30 @@ def init_database(db_path: Path) -> sqlite3.Connection:
                 score REAL,
                 prominence REAL,
                 z_score REAL,
+                global_rank_index REAL,
                 file_path TEXT,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
+        """)
+
+        # Schema migration: ensure global_rank_index column exists for existing databases
+        cursor = conn.cursor()
+        cursor.execute("PRAGMA table_info(clips)")
+        existing_cols = {row[1] for row in cursor.fetchall()}
+        if "global_rank_index" not in existing_cols:
+            conn.execute("ALTER TABLE clips ADD COLUMN global_rank_index REAL")
+
+        # Backfill any existing clips missing global_rank_index
+        conn.execute("""
+            UPDATE clips
+            SET global_rank_index = ROUND(
+                prominence * MAX(0.0, z_score) * COALESCE(
+                    (SELECT similarity FROM videos WHERE videos.video_id = clips.video_id),
+                    1.0
+                ),
+                4
+            )
+            WHERE global_rank_index IS NULL
         """)
 
         conn.commit()
@@ -411,6 +434,7 @@ def record_clip(
     prominence: float,
     z_score: float,
     file_path: str,
+    global_rank_index: Optional[float] = None,
 ) -> None:
     """Record harvested clip and its full audit metadata in SQLite."""
     with conn:
@@ -419,21 +443,22 @@ def record_clip(
                 clip_id, video_id, channel_id, channel_name, video_title, source_url,
                 timestamp_link, peak_rank, peak_index, start_time, end_time,
                 clip_duration, original_start_time, original_end_time, score,
-                prominence, z_score, file_path
+                prominence, z_score, global_rank_index, file_path
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ON CONFLICT(clip_id) DO UPDATE SET
                 start_time = excluded.start_time,
                 end_time = excluded.end_time,
                 score = excluded.score,
                 prominence = excluded.prominence,
                 z_score = excluded.z_score,
+                global_rank_index = excluded.global_rank_index,
                 file_path = excluded.file_path
         """, (
             clip_id, video_id, channel_id, channel_name, video_title, source_url,
             timestamp_link, peak_rank, peak_index, start_time, end_time,
             clip_duration, original_start_time, original_end_time, score,
-            prominence, z_score, file_path,
+            prominence, z_score, global_rank_index, file_path,
         ))
         conn.commit()
 
@@ -533,6 +558,7 @@ def evaluate_video_similarity(
     title: str,
     reference_embedding: np.ndarray,
     engine: EmbeddingEngine,
+    pos_embedding: Optional[np.ndarray] = None,
     anti_embedding: Optional[np.ndarray] = None,
     anti_matrix: Optional[np.ndarray] = None,
     min_score: float = DEFAULT_VIDEO_MIN_SCORE,
@@ -541,10 +567,11 @@ def evaluate_video_similarity(
     """
     Evaluate video candidate against positive reference and anti-seed anchors.
 
-    Admitted if:
-      1. ref_sim >= min_score (passes similarity threshold against Rocchio-repelled reference anchor)
-      2. If anti-seeds are configured: (ref_sim - anti_sim) > anti_margin (Contrastive Margin Guardrail),
-         where anti_sim is the maximum similarity across the anti-centroid and any individual anti-seed.
+    Decoupled Architecture:
+      1. Base similarity threshold: ref_sim >= min_score against Rocchio-repelled anchor C*.
+      2. Contrastive Margin Guardrail: (pos_sim - anti_sim) > anti_margin contrasting
+         candidate against the pure positive centroid C+ vs negative anchor C-.
+         Decoupling C+ from C* eliminates the double-penalty effect.
 
     Returns:
       (is_admitted, ref_similarity, anti_similarity)
@@ -558,9 +585,10 @@ def evaluate_video_similarity(
     anti_sim = 0.0
     if anti_matrix is not None and len(anti_matrix) > 0:
         try:
+            # 1-NN Hard Negative Metric: compare against the nearest individual negative exemplar.
+            # Avoid blending with multi-modal centroid, which smooths out negative features
+            # and creates an artificial vector in positive territory.
             anti_sim = float(np.max(np.dot(anti_matrix, t_emb)))
-            if anti_embedding is not None:
-                anti_sim = max(anti_sim, float(engine.cosine_similarity(anti_embedding, t_emb)))
         except Exception:
             anti_sim = 0.0
     elif anti_embedding is not None:
@@ -571,7 +599,12 @@ def evaluate_video_similarity(
 
     if ref_sim < min_score:
         return False, ref_sim, anti_sim
-    if (anti_embedding is not None or anti_matrix is not None) and (ref_sim - anti_sim) <= anti_margin:
+
+    # Decoupled contrastive guardrail: contrast candidate against pure positive anchor C+
+    contrast_pos = pos_embedding if pos_embedding is not None else reference_embedding
+    pos_sim = float(engine.cosine_similarity(contrast_pos, t_emb)) if pos_embedding is not None else ref_sim
+
+    if (anti_embedding is not None or anti_matrix is not None) and (pos_sim - anti_sim) <= anti_margin:
         return False, ref_sim, anti_sim
 
     return True, ref_sim, anti_sim
@@ -828,6 +861,7 @@ def audit_channel_topic(
     channel_url: str,
     reference_embedding: np.ndarray,
     engine: EmbeddingEngine,
+    pos_embedding: Optional[np.ndarray] = None,
     anti_embedding: Optional[np.ndarray] = None,
     anti_matrix: Optional[np.ndarray] = None,
     min_ratio: float = DEFAULT_CHANNEL_MIN_RATIO,
@@ -859,6 +893,7 @@ def audit_channel_topic(
                 title=t,
                 reference_embedding=reference_embedding,
                 engine=engine,
+                pos_embedding=pos_embedding,
                 anti_embedding=anti_embedding,
                 anti_matrix=anti_matrix,
                 min_score=min_score,
@@ -969,6 +1004,9 @@ def extract_heatmap_peaks(
             padded_start = max(0.0, zone_start - padding_start)
             padded_end = min(duration, zone_end + padding_end)
 
+            # Compute initial baseline Global Rank Index
+            gri = round(prom * max(0.0, z_score), 4)
+
             found.append({
                 "peak_index": idx,
                 "original_start": original_start,
@@ -979,6 +1017,7 @@ def extract_heatmap_peaks(
                 "score": val,
                 "prominence": prom,
                 "z_score": z_score,
+                "global_rank_index": gri,
             })
         return found
 
@@ -997,6 +1036,48 @@ def extract_heatmap_peaks(
 # ==============================================================================
 # Module 4: Targeted Fetcher (Range Downloader)
 # ==============================================================================
+def is_clip_intact(file_path: Path, max_desync_sec: float = 2.0) -> bool:
+    """Validate that a downloaded media clip contains intact, complete video and audio streams.
+
+    Detects truncated clips where YouTube CDN severed the connection prematurely (leaving audio
+    duration intact while video is frozen/cut short).
+    """
+    if not file_path.exists() or file_path.stat().st_size < 1024:
+        return False
+    try:
+        cmd = [
+            "ffprobe",
+            "-v",
+            "error",
+            "-show_entries",
+            "stream=codec_type,duration",
+            "-of",
+            "json",
+            str(file_path),
+        ]
+        res = subprocess.run(cmd, capture_output=True, text=True, timeout=5)
+        if res.returncode != 0:
+            return False
+        data = json.loads(res.stdout)
+        streams = data.get("streams", [])
+        v_dur = next(
+            (float(s["duration"]) for s in streams if s.get("codec_type") == "video" and "duration" in s),
+            None,
+        )
+        a_dur = next(
+            (float(s["duration"]) for s in streams if s.get("codec_type") == "audio" and "duration" in s),
+            None,
+        )
+        if v_dur is None:
+            return False
+        # If both audio and video exist, ensure video is not truncated compared to audio
+        if a_dur is not None and (a_dur - v_dur) > max_desync_sec:
+            return False
+        return True
+    except Exception:
+        return True
+
+
 def download_clip_range(
     video_url: str,
     video_id: str,
@@ -1009,11 +1090,14 @@ def download_clip_range(
     conn: Optional[sqlite3.Connection] = None,
     clip_format: str = DEFAULT_CLIP_FORMAT,
     cookies_file: Optional[Union[str, Path]] = None,
+    max_retries: int = DEFAULT_MAX_DOWNLOAD_RETRIES,
+    video_similarity: Optional[float] = None,
 ) -> Optional[Path]:
     """
     Download exact time slice using HTTP range requests via yt-dlp & ffmpeg.
     Saves the file and persists all audit metadata directly in SQLite.
     The output filename includes the actual downloaded resolution (e.g. _1080p, _2160p).
+    Includes automatic retry loop and stream reconnection against transient CDN timeouts.
     """
     output_dir.mkdir(parents=True, exist_ok=True)
     safe_ch = re.sub(r"[^A-Za-z0-9_-]", "", channel_id) or "channel"
@@ -1022,6 +1106,13 @@ def download_clip_range(
     start_sec = float(peak_info["start_time"])
     end_sec = float(peak_info["end_time"])
     duration = float(peak_info.get("duration", end_sec - start_sec))
+
+    # Calculate Global Rank Index: GRI = Prominence * Z-Score * Similarity
+    sim = float(video_similarity if video_similarity is not None else peak_info.get("similarity", 1.0))
+    prom = float(peak_info.get("prominence", 0.0))
+    z_sc = float(peak_info.get("z_score", 0.0))
+    gri = round(prom * max(0.0, z_sc) * max(0.1, sim), 4)
+    peak_info["global_rank_index"] = gri
 
     # Fast-check: look for any resolution variant already on disk (e.g. _1080p.mp4, _720p.mp4, _2160p.webm)
     existing: Optional[Path] = next(output_dir.glob(f"{clip_base}_*p.*"), None)
@@ -1032,120 +1123,162 @@ def download_clip_range(
                 existing = cand
                 break
     if existing is not None and existing.stat().st_size > 0:
-        print(f"         [i] Clip already exists on disk ({existing.name}). Skipping download.")
-        if conn:
-            record_clip(
-                conn=conn,
-                clip_id=clip_base,
-                video_id=video_id,
-                channel_id=channel_id,
-                channel_name=channel_name,
-                video_title=video_title,
-                source_url=video_url,
-                timestamp_link=f"{video_url}&t={int(start_sec)}s",
-                peak_rank=peak_rank,
-                peak_index=int(peak_info.get("peak_index", 0)),
-                start_time=start_sec,
-                end_time=end_sec,
-                clip_duration=round(duration, 2),
-                original_start_time=float(peak_info.get("original_start", start_sec)),
-                original_end_time=float(peak_info.get("original_end", end_sec)),
-                score=round(float(peak_info["score"]), 4),
-                prominence=round(float(peak_info["prominence"]), 4),
-                z_score=round(float(peak_info["z_score"]), 4),
-                file_path=str(existing),
-            )
-        return existing
-
-    # Capture the actual height and output file chosen by yt-dlp via progress hook
-    _captured: Dict[str, Any] = {"height": None, "filename": None}
-
-    def _capture_resolution(d: Dict[str, Any]) -> None:
-        """Store the resolved video height and output filename when download finishes."""
-        if d.get("status") == "finished":
-            h = d.get("height") or d.get("info_dict", {}).get("height")
-            if h:
-                _captured["height"] = int(h)
-            fn = d.get("filename")
-            if fn:
-                _captured["filename"] = Path(fn)
-
-    ydl_opts: Dict[str, Any] = {
-        # SOTA-KISS range download via HTTP byte-range and keyframe cutting
-        "format": clip_format,
-        "download_ranges": download_range_func(None, [(start_sec, end_sec)]),
-        "force_keyframes_at_cuts": True,
-        "outtmpl": str(output_dir / f"{clip_base}.%(ext)s"),
-        "overwrites": True,
-        "quiet": True,
-        "no_warnings": True,
-        "js_runtimes": {"node": {}},
-        "progress_hooks": [_capture_resolution],
-    }
+        if is_clip_intact(existing):
+            print(f"         [i] Clip already exists on disk and is complete ({existing.name}). Skipping download.")
+            if conn:
+                record_clip(
+                    conn=conn,
+                    clip_id=clip_base,
+                    video_id=video_id,
+                    channel_id=channel_id,
+                    channel_name=channel_name,
+                    video_title=video_title,
+                    source_url=video_url,
+                    timestamp_link=f"{video_url}&t={int(start_sec)}s",
+                    peak_rank=peak_rank,
+                    peak_index=int(peak_info.get("peak_index", 0)),
+                    start_time=start_sec,
+                    end_time=end_sec,
+                    clip_duration=round(duration, 2),
+                    original_start_time=float(peak_info.get("original_start", start_sec)),
+                    original_end_time=float(peak_info.get("original_end", end_sec)),
+                    score=round(float(peak_info["score"]), 4),
+                    prominence=round(float(peak_info["prominence"]), 4),
+                    z_score=round(float(peak_info["z_score"]), 4),
+                    global_rank_index=gri,
+                    file_path=str(existing),
+                )
+            return existing
+        else:
+            print(f"         [!] Existing clip {existing.name} is truncated/corrupt (premature EOF). Purging and re-harvesting clean stream copy...")
+            try:
+                existing.unlink(missing_ok=True)
+            except Exception:
+                pass
 
     # Resolve cookie authentication
     cookie_path = cookies_file or (Path(peak_info["_cookiefile"]) if "_cookiefile" in peak_info else None)
     if cookie_path is None:
         cookie_path = resolve_cookies(verbose=False)
-    if cookie_path and Path(cookie_path).exists():
-        ydl_opts["cookiefile"] = str(cookie_path)
 
-    try:
-        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            ydl.download([video_url])
+    out_path: Optional[Path] = None
 
-        # Resolve downloaded file
-        downloaded = _captured.get("filename")
-        if downloaded is None or not downloaded.exists():
-            for ext in (".mp4", ".mkv", ".webm"):
-                cand = output_dir / f"{clip_base}{ext}"
-                if cand.exists():
-                    downloaded = cand
-                    break
+    for attempt in range(1, max_retries + 1):
+        # Capture the actual height and output file chosen by yt-dlp via progress hook
+        _captured: Dict[str, Any] = {"height": None, "filename": None}
 
-        height = _captured.get("height")
-        if downloaded and downloaded.exists():
-            if height:
-                target_path = output_dir / f"{clip_base}_{height}p{downloaded.suffix}"
-                if downloaded != target_path:
-                    downloaded.rename(target_path)
-                    out_path = target_path
+        def _capture_resolution(d: Dict[str, Any]) -> None:
+            """Store the resolved video height and output filename when download finishes."""
+            if d.get("status") == "finished":
+                h = d.get("height") or d.get("info_dict", {}).get("height")
+                if h:
+                    _captured["height"] = int(h)
+                fn = d.get("filename")
+                if fn:
+                    _captured["filename"] = Path(fn)
+
+        ydl_opts: Dict[str, Any] = {
+            # SOTA-KISS range download via HTTP byte-range stream copy (-c copy).
+            # force_keyframes_at_cuts MUST be False. Forcing CPU re-encoding on 4K/high-res streams
+            # causes CPU transcode times to exceed YouTube CDN socket timeouts (>60s), abruptly closing
+            # the HTTPS video stream prematurely and causing the video to freeze while audio plays on.
+            "format": clip_format,
+            "download_ranges": download_range_func(None, [(start_sec, end_sec)]),
+            "force_keyframes_at_cuts": False,
+            "outtmpl": str(output_dir / f"{clip_base}.%(ext)s"),
+            "overwrites": True,
+            "quiet": True,
+            "no_warnings": True,
+            "js_runtimes": {"node": {}},
+            "socket_timeout": 30,
+            "retries": 10,
+            "external_downloader_args": {
+                "ffmpeg_i": ["-reconnect", "1", "-reconnect_streamed", "1", "-reconnect_delay_max", "5"]
+            },
+            "progress_hooks": [_capture_resolution],
+        }
+        if cookie_path and Path(cookie_path).exists():
+            ydl_opts["cookiefile"] = str(cookie_path)
+
+        try:
+            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                ydl.download([video_url])
+
+            # Resolve downloaded file
+            downloaded = _captured.get("filename")
+            if downloaded is None or not downloaded.exists():
+                for ext in (".mp4", ".mkv", ".webm"):
+                    cand = output_dir / f"{clip_base}{ext}"
+                    if cand.exists():
+                        downloaded = cand
+                        break
+
+            height = _captured.get("height")
+            if downloaded and downloaded.exists():
+                if height:
+                    target_path = output_dir / f"{clip_base}_{height}p{downloaded.suffix}"
+                    if downloaded != target_path:
+                        downloaded.rename(target_path)
+                        candidate_out = target_path
+                    else:
+                        candidate_out = downloaded
                 else:
-                    out_path = downloaded
+                    candidate_out = downloaded
             else:
-                out_path = downloaded
-        else:
-            out_path = output_dir / f"{clip_base}.mp4"
+                candidate_out = output_dir / f"{clip_base}.mp4"
 
-        # Record all metadata in SQLite (Single Source of Truth in SQL)
-        if conn:
-            record_clip(
-                conn=conn,
-                clip_id=clip_base,
-                video_id=video_id,
-                channel_id=channel_id,
-                channel_name=channel_name,
-                video_title=video_title,
-                source_url=video_url,
-                timestamp_link=f"{video_url}&t={int(start_sec)}s",
-                peak_rank=peak_rank,
-                peak_index=int(peak_info.get("peak_index", 0)),
-                start_time=start_sec,
-                end_time=end_sec,
-                clip_duration=round(duration, 2),
-                original_start_time=float(peak_info.get("original_start", start_sec)),
-                original_end_time=float(peak_info.get("original_end", end_sec)),
-                score=round(float(peak_info["score"]), 4),
-                prominence=round(float(peak_info["prominence"]), 4),
-                z_score=round(float(peak_info["z_score"]), 4),
-                file_path=str(out_path),
-            )
+            # Strict self-healing integrity validation
+            if candidate_out.exists() and is_clip_intact(candidate_out):
+                out_path = candidate_out
+                break
+            else:
+                c_name = candidate_out.name if candidate_out.exists() else clip_base
+                print(f"         [!] Clip {c_name} was truncated or desynced on attempt {attempt}/{max_retries}.")
+                if candidate_out.exists():
+                    try:
+                        candidate_out.unlink(missing_ok=True)
+                    except Exception:
+                        pass
+                if attempt < max_retries:
+                    retry_wait = random.uniform(DEFAULT_JITTER_MIN_SEC, DEFAULT_JITTER_MAX_SEC) * attempt
+                    print(f"         [i] Retrying stream copy in {retry_wait:.1f}s...")
+                    time.sleep(retry_wait)
 
-        return out_path
+        except Exception as e:
+            print(f"         [!] Error harvesting clip {clip_base} on attempt {attempt}/{max_retries}: {e}")
+            if attempt < max_retries:
+                time.sleep(random.uniform(1.5, 3.0))
 
-    except Exception as e:
-        print(f" [!] Error harvesting clip {clip_base}: {e}")
+    if out_path is None or not out_path.exists() or not is_clip_intact(out_path):
+        print(f"         [!] Failed to harvest an intact clip for {clip_base} after {max_retries} attempts.")
         return None
+
+    # Record all metadata in SQLite (Single Source of Truth in SQL) only when clip is 100% intact
+    if conn:
+        record_clip(
+            conn=conn,
+            clip_id=clip_base,
+            video_id=video_id,
+            channel_id=channel_id,
+            channel_name=channel_name,
+            video_title=video_title,
+            source_url=video_url,
+            timestamp_link=f"{video_url}&t={int(start_sec)}s",
+            peak_rank=peak_rank,
+            peak_index=int(peak_info.get("peak_index", 0)),
+            start_time=start_sec,
+            end_time=end_sec,
+            clip_duration=round(duration, 2),
+            original_start_time=float(peak_info.get("original_start", start_sec)),
+            original_end_time=float(peak_info.get("original_end", end_sec)),
+            score=round(float(peak_info["score"]), 4),
+            prominence=round(float(peak_info["prominence"]), 4),
+            z_score=round(float(peak_info["z_score"]), 4),
+            global_rank_index=gri,
+            file_path=str(out_path),
+        )
+
+    return out_path
 
 
 # ==============================================================================
@@ -1189,15 +1322,15 @@ def run_harvest_pipeline(
     if isinstance(seed_url, str):
         seed_urls_list = [u.strip() for u in seed_url.split(",") if u.strip()]
     else:
-        seed_urls_list = [str(u).strip() for u in seed_url if str(u).strip()]
+        seed_urls_list = [u.strip() for u in seed_url if u.strip()]
 
     # Normalize anti-seeds input
     if anti_seed_url is None:
-        anti_seed_urls_list = [str(u).strip() for u in DEFAULT_ANTI_SEED_URL if str(u).strip()]
+        anti_seed_urls_list = [u.strip() for u in DEFAULT_ANTI_SEED_URL if u.strip()]
     elif isinstance(anti_seed_url, str):
         anti_seed_urls_list = [u.strip() for u in anti_seed_url.split(",") if u.strip()]
     else:
-        anti_seed_urls_list = [str(u).strip() for u in anti_seed_url if str(u).strip()]
+        anti_seed_urls_list = [u.strip() for u in anti_seed_url if u.strip()]
 
     print("=" * 70)
     print(" YouTube Heatmap Harvester & Autonomous Graph Crawler")
@@ -1305,15 +1438,16 @@ def run_harvest_pipeline(
                 with yt_dlp.YoutubeDL(ydl_meta) as ydl:
                     a_info = ydl.extract_info(a_url, download=False)
 
-                a_title = str(a_info.get("title") or "Anti-Seed Video")
-                a_tags = a_info.get("tags") or []
-                a_text = f"{a_title}. {' '.join(a_tags[:DEFAULT_SEED_TAGS_LIMIT])}"
+                a_title = str(a_info.get("title") or "Anti-Seed Video").strip()
+                # Use clean title for anti-seeds to prevent channel tags (e.g. "copacabana beach")
+                # from polluting the negative anchor space.
+                a_text = a_title
                 a_emb = engine.embed(a_text)
                 a_norm = np.linalg.norm(a_emb)
                 if a_norm > 0:
                     a_emb = a_emb / a_norm
                 anti_embeddings.append(a_emb)
-                print(f"  [-] Anti-Seed ({a_id}): {a_title[:50]}")
+                print(f"  [-] Seed ({a_id}): {a_title[:50]}")
             except Exception as e:
                 print(f"  [!] Failed to extract anti-seed {a_url}: {e}")
 
@@ -1325,6 +1459,9 @@ def run_harvest_pipeline(
         a_norm = np.linalg.norm(anti_centroid)
         anti_embedding = anti_centroid / a_norm if a_norm > 0 else anti_embeddings[0]
         print(f"[*] Computed Anti-Seed Centroid Vector across {len(anti_embeddings)} anti-seed(s).")
+
+    # Pure positive centroid anchor (C+) decoupled from Rocchio repulsion
+    pos_embedding: np.ndarray = seed_embedding.copy()
 
     # ref_embedding maintains the weighted anchor centroid:
     # If anti-seeds exist, apply Rocchio negative feedback: C* = normalize(C_pos - beta * C_anti)
@@ -1382,14 +1519,16 @@ def run_harvest_pipeline(
                     title=v_title_entry,
                     reference_embedding=ref_embedding,
                     engine=engine,
+                    pos_embedding=pos_embedding,
                     anti_embedding=anti_embedding,
                     anti_matrix=anti_matrix,
                     min_score=min_video_similarity,
                     anti_margin=anti_margin,
                 )
                 if not is_valid:
-                    if (anti_embedding is not None or anti_matrix is not None) and v_sim >= min_video_similarity and (v_sim - v_anti) <= anti_margin:
-                        print(f"    [-] Rejected false positive: {v_title_entry[:45]} (pos={v_sim:.2f}, anti={v_anti:.2f})")
+                    if (anti_embedding is not None or anti_matrix is not None) and v_sim >= min_video_similarity:
+                        v_url = v.get("url") or f"https://www.youtube.com/watch?v={t_vid}"
+                        print(f"    [-] Rejected false positive: {v_title_entry[:45]} {v_url} (pos={v_sim:.2f}, anti={v_anti:.2f})")
                     continue
 
                 video_pool.append({
@@ -1484,7 +1623,8 @@ def run_harvest_pipeline(
                 if peaks:
                     print(f"     [+] Heatmap detected ({len(heatmap)} points). Found {len(peaks)} hot peak(s):")
                     for p_idx, peak in enumerate(peaks, start=1):
-                        print(f"         -> Downloading Peak #{p_idx}: {peak['start_time']:.1f}s to {peak['end_time']:.1f}s (Score: {peak['score']:.2f}, Prom: {peak['prominence']:.2f})")
+                        gri_preview = round(float(peak.get("prominence", 0.0)) * max(0.0, float(peak.get("z_score", 0.0))) * max(0.1, v_sim), 3)
+                        print(f"         -> Downloading Peak #{p_idx}: {peak['start_time']:.1f}s to {peak['end_time']:.1f}s (Score: {peak['score']:.2f}, Prom: {peak['prominence']:.2f}, GRI: {gri_preview:.3f})")
                         # Carry cookie path into download_clip_range via peak_info sidecar key
                         if active_cookies:
                             peak["_cookiefile"] = str(active_cookies)
@@ -1500,10 +1640,12 @@ def run_harvest_pipeline(
                             conn=conn,
                             clip_format=clip_format,
                             cookies_file=active_cookies,
+                            video_similarity=v_sim,
                         )
                         if clip_path:
                             total_clips_harvested += 1
-                            print(f"         [✓] Harvested: {clip_path.name} (Total clips: {total_clips_harvested})")
+                            gri_val = peak.get("global_rank_index", gri_preview)
+                            print(f"         [✓] Harvested: {clip_path.name} (GRI: {gri_val:.3f} | Total: {total_clips_harvested})")
                     record_video(conn, v_id, v_ch_url, v_title, "processed", True, similarity=v_sim)
                 else:
                     print("     [-] Heatmap present but no peaks met height/prominence criteria.")
@@ -1550,6 +1692,7 @@ def run_harvest_pipeline(
                     channel_url=cand_ch_url,
                     reference_embedding=ref_embedding,
                     engine=engine,
+                    pos_embedding=pos_embedding,
                     anti_embedding=anti_embedding,
                     anti_matrix=anti_matrix,
                     top_limit=top_n_channel_videos,
@@ -1576,11 +1719,15 @@ def run_harvest_pipeline(
                     if c_norm > 0:
                         approved_centroid = approved_centroid / c_norm
                     blended = (ANCHOR_ALPHA * seed_embedding) + ((1.0 - ANCHOR_ALPHA) * approved_centroid)
-                    if anti_embedding is not None and anti_beta > 0.0:
-                        blended = blended - (anti_beta * anti_embedding)
                     b_norm = np.linalg.norm(blended)
-                    if b_norm > 0:
-                        ref_embedding = blended / b_norm
+                    pos_embedding = blended / b_norm if b_norm > 0 else seed_embedding.copy()
+
+                    if anti_embedding is not None and anti_beta > 0.0:
+                        repelled = pos_embedding - (anti_beta * anti_embedding)
+                        r_norm = np.linalg.norm(repelled)
+                        ref_embedding = repelled / r_norm if r_norm > 0 else pos_embedding.copy()
+                    else:
+                        ref_embedding = pos_embedding.copy()
 
             # Case 2: Channel is Approved -> Mine top-N popular videos if not yet mined in this run
             enqueued_count = 0
@@ -1605,6 +1752,7 @@ def run_harvest_pipeline(
                         title=v_title_entry,
                         reference_embedding=ref_embedding,
                         engine=engine,
+                        pos_embedding=pos_embedding,
                         anti_embedding=anti_embedding,
                         anti_matrix=anti_matrix,
                         min_score=min_video_similarity,
@@ -1613,7 +1761,7 @@ def run_harvest_pipeline(
                     entry["similarity_score"] = round(v_sim, 4)
 
                     if not is_valid:
-                        if (anti_embedding is not None or anti_matrix is not None) and v_sim >= min_video_similarity and (v_sim - v_anti) <= anti_margin:
+                        if (anti_embedding is not None or anti_matrix is not None) and v_sim >= min_video_similarity:
                             print(f"      [-] Rejected Anti-Seed False Positive: {v_title_entry[:45]} (pos={v_sim:.2f}, anti={v_anti:.2f})")
                         continue
 
@@ -1639,6 +1787,7 @@ def run_harvest_pipeline(
                     title=rec_title,
                     reference_embedding=ref_embedding,
                     engine=engine,
+                    pos_embedding=pos_embedding,
                     anti_embedding=anti_embedding,
                     anti_matrix=anti_matrix,
                     min_score=min_video_similarity,
@@ -1675,6 +1824,25 @@ def run_harvest_pipeline(
     print(f" Remaining in Video Pool:     {len(video_pool)}")
     print(f" Files Location:              {output_dir.resolve()}")
     print("=" * 70)
+
+    # Display Top 5 Clips by Global Rank Index (GRI = Prominence * Z-Score * Similarity)
+    try:
+        top_clips = conn.execute("""
+            SELECT clip_id, prominence, z_score, global_rank_index, file_path
+            FROM clips
+            WHERE global_rank_index IS NOT NULL
+            ORDER BY global_rank_index DESC
+            LIMIT 5
+        """).fetchall()
+        if top_clips:
+            print("\n Top 5 Clips Ranked Globally (GRI = Prominence * Z-Score * Similarity):")
+            for rank_i, tc in enumerate(top_clips, start=1):
+                c_fn = Path(tc[4]).name if tc[4] else tc[0]
+                gri_v = tc[3] if tc[3] is not None else 0.0
+                print(f"   #{rank_i} GRI: {gri_v:.3f} (Prom {tc[1]:.2f}, Z {tc[2]:.2f}) -> {c_fn}")
+            print("=" * 70)
+    except Exception as e:
+        pass
 
     return {
         "processed_videos": processed_videos_count,
