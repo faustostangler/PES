@@ -11,6 +11,7 @@ import json
 import os
 import random
 import re
+import shutil
 import sqlite3
 import subprocess
 import sys
@@ -19,6 +20,7 @@ import urllib.request
 from collections import deque
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Union
+from urllib.parse import unquote, urlparse
 
 import numpy as np
 import requests
@@ -56,7 +58,36 @@ DEFAULT_ANTI_SEED_URL: List[str] = [
     "https://www.youtube.com/watch?v=FQKFrlkz7dk",  # Porto Alegre (cold city / non-coastal)
     "https://www.youtube.com/watch?v=-XHD-LAy6Fc",  # Windstorm & rain chaos
 ]
-DEFAULT_OUTPUT_DIR = BASE_DIR / "clips_harvested"
+def resolve_storage_path(path_or_uri: Union[str, Path]) -> Path:
+    """Resolve standard POSIX paths or smb:// URIs to accessible local/GVFS mount points."""
+    raw = str(path_or_uri)
+    if raw.startswith("smb://"):
+        parsed = urlparse(raw)
+        server = parsed.hostname or "files.local"
+        parts = unquote(parsed.path).strip("/").split("/", 1)
+        share = parts[0] if parts else "public"
+        sub_path = parts[1] if len(parts) > 1 else ""
+
+        gvfs_mount = Path(f"/run/user/{os.getuid()}/gvfs") / f"smb-share:server={server},share={share}"
+        if gvfs_mount.exists():
+            return gvfs_mount / sub_path
+    return Path(path_or_uri)
+
+
+def sanitize_folder_name(name: str, max_length: int = 150) -> str:
+    """Sanitize channel name or video title for safe directory naming across Linux, SMB and Windows."""
+    if not name:
+        return "unnamed"
+    cleaned = name.replace(":", " -")
+    cleaned = re.sub(r'[/\\*?"<>|]', "", cleaned)
+    cleaned = re.sub(r"\s+", " ", cleaned).strip()
+    cleaned = cleaned.strip(". ")
+    return (cleaned[:max_length].rstrip(". ")) or "unnamed"
+
+
+DEFAULT_OUTPUT_DIR = resolve_storage_path(
+    "smb://files.local/public/Fausto%20Stangler/Documentos/Videos/yt-heatmap/clips_harvested"
+)
 DEFAULT_DB_PATH = BASE_DIR / "heatmap_pipeline.sqlite"
 
 # --- Discovery & Harvesting Limits ---
@@ -635,74 +666,84 @@ def get_recommendations_from_video(
         "videoId": video_id,
     }
     candidates: List[Dict[str, str]] = []
+    max_retries = 3
 
-    try:
-        res = requests.post(url, json=payload, headers=get_random_header(), timeout=DEFAULT_HTTP_TIMEOUT)
-        if res.status_code != 200:
-            print(f" [!] /next returned HTTP {res.status_code} for video {video_id}")
+    results: List[Dict[str, Any]] = []
+    for attempt in range(1, max_retries + 1):
+        try:
+            res = requests.post(url, json=payload, headers=get_random_header(), timeout=DEFAULT_HTTP_TIMEOUT)
+            if res.status_code != 200:
+                if attempt < max_retries:
+                    time.sleep(1.5 * attempt)
+                    continue
+                print(f" [!] /next returned HTTP {res.status_code} for video {video_id}")
+                return candidates
+
+            data = res.json()
+            results = (
+                data.get("contents", {})
+                .get("twoColumnWatchNextResults", {})
+                .get("secondaryResults", {})
+                .get("secondaryResults", {})
+                .get("results", [])
+            )
+            break
+        except Exception as e:
+            if attempt < max_retries:
+                time.sleep(1.5 * attempt)
+                continue
+            print(f" [!] Error fetching recommendations for {video_id}: {e}")
             return candidates
 
-        data = res.json()
-        results = (
-            data.get("contents", {})
-            .get("twoColumnWatchNextResults", {})
-            .get("secondaryResults", {})
-            .get("secondaryResults", {})
-            .get("results", [])
-        )
+    for item in results:
+        v_id, title, ch_url, ch_name, ch_id = None, None, None, None, None
 
-        for item in results:
-            v_id, title, ch_url, ch_name, ch_id = None, None, None, None, None
+        # 1. Modern lockupViewModel
+        if "lockupViewModel" in item:
+            vm = item["lockupViewModel"]
+            v_id = vm.get("contentId")
+            meta_vm = vm.get("metadata", {}).get("lockupMetadataViewModel", {})
+            title = meta_vm.get("title", {}).get("content")
+            avatar = meta_vm.get("image", {}).get("decoratedAvatarViewModel", {})
+            ch_name = avatar.get("a11yLabel")
+            cmd = avatar.get("rendererContext", {}).get("commandContext", {}).get("onTap", {}).get("innertubeCommand", {})
+            ch_url = cmd.get("commandMetadata", {}).get("webCommandMetadata", {}).get("url") or cmd.get("browseEndpoint", {}).get("canonicalBaseUrl")
+            ch_id = cmd.get("browseEndpoint", {}).get("browseId")
+            if not ch_url and ch_id:
+                ch_url = f"/channel/{ch_id}"
 
-            # 1. Modern lockupViewModel
-            if "lockupViewModel" in item:
-                vm = item["lockupViewModel"]
-                v_id = vm.get("contentId")
-                meta_vm = vm.get("metadata", {}).get("lockupMetadataViewModel", {})
-                title = meta_vm.get("title", {}).get("content")
-                avatar = meta_vm.get("image", {}).get("decoratedAvatarViewModel", {})
-                ch_name = avatar.get("a11yLabel")
-                cmd = avatar.get("rendererContext", {}).get("commandContext", {}).get("onTap", {}).get("innertubeCommand", {})
-                ch_url = cmd.get("commandMetadata", {}).get("webCommandMetadata", {}).get("url") or cmd.get("browseEndpoint", {}).get("canonicalBaseUrl")
-                ch_id = cmd.get("browseEndpoint", {}).get("browseId")
-                if not ch_url and ch_id:
-                    ch_url = f"/channel/{ch_id}"
+        # 2. Legacy compactVideoRenderer
+        elif "compactVideoRenderer" in item:
+            c = item["compactVideoRenderer"]
+            v_id = c.get("videoId")
+            title = c.get("title", {}).get("simpleText") or (
+                c.get("title", {}).get("runs", [{}])[0].get("text")
+            )
+            runs = c.get("shortBylineText", {}).get("runs", [])
+            if runs:
+                ch_name = runs[0].get("text")
+                ep = runs[0].get("navigationEndpoint", {})
+                ch_url = ep.get("commandMetadata", {}).get("webCommandMetadata", {}).get("url") or ep.get("browseEndpoint", {}).get("canonicalBaseUrl")
+                ch_id = ep.get("browseEndpoint", {}).get("browseId")
 
-            # 2. Legacy compactVideoRenderer
-            elif "compactVideoRenderer" in item:
-                c = item["compactVideoRenderer"]
-                v_id = c.get("videoId")
-                title = c.get("title", {}).get("simpleText") or (
-                    c.get("title", {}).get("runs", [{}])[0].get("text")
-                )
-                runs = c.get("shortBylineText", {}).get("runs", [])
-                if runs:
-                    ch_name = runs[0].get("text")
-                    ep = runs[0].get("navigationEndpoint", {})
-                    ch_url = ep.get("commandMetadata", {}).get("webCommandMetadata", {}).get("url") or ep.get("browseEndpoint", {}).get("canonicalBaseUrl")
-                    ch_id = ep.get("browseEndpoint", {}).get("browseId")
+        if v_id and ch_url:
+            full_ch_url = ch_url if ch_url.startswith("http") else f"https://www.youtube.com{ch_url}"
+            # Clean URL (strip /featured, /videos, etc.)
+            clean_ch_url = full_ch_url.split("/featured")[0].split("/videos")[0]
 
-            if v_id and ch_url:
-                full_ch_url = ch_url if ch_url.startswith("http") else f"https://www.youtube.com{ch_url}"
-                # Clean URL (strip /featured, /videos, etc.)
-                clean_ch_url = full_ch_url.split("/featured")[0].split("/videos")[0]
+            # Deduplicate by video_id within this recommendation batch
+            if any(c["video_id"] == v_id for c in candidates):
+                continue
 
-                # Deduplicate by video_id within this recommendation batch
-                if any(c["video_id"] == v_id for c in candidates):
-                    continue
-
-                candidates.append({
-                    "video_id": v_id,
-                    "title": title or "Unknown",
-                    "channel_url": clean_ch_url,
-                    "channel_name": ch_name or "",
-                    "channel_id": ch_id or "",
-                })
-                if len(candidates) >= limit:
-                    break
-
-    except Exception as e:
-        print(f" [!] Error fetching recommendations for {video_id}: {e}")
+            candidates.append({
+                "video_id": v_id,
+                "title": title or "Unknown",
+                "channel_url": clean_ch_url,
+                "channel_name": ch_name or "",
+                "channel_id": ch_id or "",
+            })
+            if len(candidates) >= limit:
+                break
 
     return candidates
 
@@ -1100,8 +1141,27 @@ def download_clip_range(
     Includes automatic retry loop and stream reconnection against transient CDN timeouts.
     """
     output_dir.mkdir(parents=True, exist_ok=True)
-    safe_ch = re.sub(r"[^A-Za-z0-9_-]", "", channel_id) or "channel"
-    clip_base = f"{safe_ch}_{video_id}_peak_{peak_rank}"
+    safe_ch_id = re.sub(r"[^A-Za-z0-9_-]", "", channel_id) or "channel"
+    clip_id = f"{safe_ch_id}_{video_id}_peak_{peak_rank}"
+
+    # Build channel directory: output_dir / channel_name
+    safe_channel = sanitize_folder_name(channel_name or safe_ch_id)
+    safe_video = sanitize_folder_name(video_title or video_id, max_length=160)
+    channel_dir = output_dir / safe_channel
+    channel_dir.mkdir(parents=True, exist_ok=True)
+
+    # File prefix: video_title_clip_{peak_rank}
+    clip_prefix = f"{safe_video}_clip_{peak_rank}"
+
+    # Preemptive disk space check (fail-fast against ENOSPC / ffmpeg error 228)
+    try:
+        free_bytes = shutil.disk_usage(output_dir).free
+        min_free_bytes = 500 * 1024 * 1024  # 500 MB minimum safety buffer
+        if free_bytes < min_free_bytes:
+            print(f"         [!] DISK FULL: Only {free_bytes / (1024**2):.1f} MB free on {output_dir.resolve()}. Aborting download to prevent corruption.")
+            return None
+    except Exception:
+        pass
 
     start_sec = float(peak_info["start_time"])
     end_sec = float(peak_info["end_time"])
@@ -1114,21 +1174,66 @@ def download_clip_range(
     gri = round(prom * max(0.0, z_sc) * max(0.1, sim), 4)
     peak_info["global_rank_index"] = gri
 
-    # Fast-check: look for any resolution variant already on disk (e.g. _1080p.mp4, _720p.mp4, _2160p.webm)
-    existing: Optional[Path] = next(output_dir.glob(f"{clip_base}_*p.*"), None)
+    # Fast-check: look for any resolution variant already on disk in channel folder
+    existing: Optional[Path] = next(channel_dir.glob(f"{clip_prefix}_*p.*"), None)
     if existing is None:
         for ext in (".mp4", ".mkv", ".webm"):
-            cand = output_dir / f"{clip_base}{ext}"
+            cand = channel_dir / f"{clip_prefix}{ext}"
             if cand.exists():
                 existing = cand
                 break
+
+    # Fallback check 1: look inside legacy nested video subfolder and migrate if intact
+    if existing is None:
+        nested_dir = channel_dir / safe_video
+        if nested_dir.exists() and nested_dir.is_dir():
+            nested_cand = next(nested_dir.glob(f"clip_{peak_rank}_*p.*"), None)
+            if nested_cand is None:
+                for ext in (".mp4", ".mkv", ".webm"):
+                    cand = nested_dir / f"clip_{peak_rank}{ext}"
+                    if cand.exists():
+                        nested_cand = cand
+                        break
+            if nested_cand is not None and nested_cand.stat().st_size > 0 and is_clip_intact(nested_cand):
+                m_res = re.search(r"(_\d+p)?(\.\w+)$", nested_cand.name)
+                res_ext = m_res.group(0) if m_res else nested_cand.suffix
+                new_target = channel_dir / f"{clip_prefix}{res_ext}"
+                try:
+                    nested_cand.rename(new_target)
+                    existing = new_target
+                    print(f"         [i] Migrated nested clip to channel folder: {new_target.name}")
+                    if not any(nested_dir.iterdir()):
+                        nested_dir.rmdir()
+                except Exception:
+                    existing = nested_cand
+
+    # Fallback check 2: look for legacy flat naming in output_dir and migrate if intact
+    if existing is None:
+        legacy_cand: Optional[Path] = next(output_dir.glob(f"{clip_id}_*p.*"), None)
+        if legacy_cand is None:
+            for ext in (".mp4", ".mkv", ".webm"):
+                cand = output_dir / f"{clip_id}{ext}"
+                if cand.exists():
+                    legacy_cand = cand
+                    break
+        if legacy_cand is not None and legacy_cand.stat().st_size > 0 and is_clip_intact(legacy_cand):
+            m_res = re.search(r"(_\d+p)?(\.\w+)$", legacy_cand.name)
+            res_ext = m_res.group(0) if m_res else legacy_cand.suffix
+            new_target = channel_dir / f"{clip_prefix}{res_ext}"
+            try:
+                legacy_cand.rename(new_target)
+                existing = new_target
+                print(f"         [i] Migrated flat clip to channel folder: {new_target.name}")
+            except Exception:
+                existing = legacy_cand
+
     if existing is not None and existing.stat().st_size > 0:
         if is_clip_intact(existing):
             print(f"         [i] Clip already exists on disk and is complete ({existing.name}). Skipping download.")
             if conn:
                 record_clip(
                     conn=conn,
-                    clip_id=clip_base,
+                    clip_id=clip_id,
                     video_id=video_id,
                     channel_id=channel_id,
                     channel_name=channel_name,
@@ -1178,14 +1283,10 @@ def download_clip_range(
                     _captured["filename"] = Path(fn)
 
         ydl_opts: Dict[str, Any] = {
-            # SOTA-KISS range download via HTTP byte-range stream copy (-c copy).
-            # force_keyframes_at_cuts MUST be False. Forcing CPU re-encoding on 4K/high-res streams
-            # causes CPU transcode times to exceed YouTube CDN socket timeouts (>60s), abruptly closing
-            # the HTTPS video stream prematurely and causing the video to freeze while audio plays on.
             "format": clip_format,
             "download_ranges": download_range_func(None, [(start_sec, end_sec)]),
             "force_keyframes_at_cuts": False,
-            "outtmpl": str(output_dir / f"{clip_base}.%(ext)s"),
+            "outtmpl": str(channel_dir / f"{clip_prefix}.%(ext)s"),
             "overwrites": True,
             "quiet": True,
             "no_warnings": True,
@@ -1208,7 +1309,7 @@ def download_clip_range(
             downloaded = _captured.get("filename")
             if downloaded is None or not downloaded.exists():
                 for ext in (".mp4", ".mkv", ".webm"):
-                    cand = output_dir / f"{clip_base}{ext}"
+                    cand = channel_dir / f"{clip_prefix}{ext}"
                     if cand.exists():
                         downloaded = cand
                         break
@@ -1216,7 +1317,7 @@ def download_clip_range(
             height = _captured.get("height")
             if downloaded and downloaded.exists():
                 if height:
-                    target_path = output_dir / f"{clip_base}_{height}p{downloaded.suffix}"
+                    target_path = channel_dir / f"{clip_prefix}_{height}p{downloaded.suffix}"
                     if downloaded != target_path:
                         downloaded.rename(target_path)
                         candidate_out = target_path
@@ -1225,14 +1326,14 @@ def download_clip_range(
                 else:
                     candidate_out = downloaded
             else:
-                candidate_out = output_dir / f"{clip_base}.mp4"
+                candidate_out = channel_dir / f"{clip_prefix}.mp4"
 
             # Strict self-healing integrity validation
             if candidate_out.exists() and is_clip_intact(candidate_out):
                 out_path = candidate_out
                 break
             else:
-                c_name = candidate_out.name if candidate_out.exists() else clip_base
+                c_name = candidate_out.name if candidate_out.exists() else clip_prefix
                 print(f"         [!] Clip {c_name} was truncated or desynced on attempt {attempt}/{max_retries}.")
                 if candidate_out.exists():
                     try:
@@ -1245,19 +1346,31 @@ def download_clip_range(
                     time.sleep(retry_wait)
 
         except Exception as e:
-            print(f"         [!] Error harvesting clip {clip_base} on attempt {attempt}/{max_retries}: {e}")
+            print(f"         [!] Error harvesting clip {clip_prefix} on attempt {attempt}/{max_retries}: {e}")
+            # Clean up partial download artifacts to reclaim disk space
+            for part in channel_dir.glob(f"{clip_prefix}*.part"):
+                try:
+                    part.unlink(missing_ok=True)
+                except Exception:
+                    pass
             if attempt < max_retries:
                 time.sleep(random.uniform(1.5, 3.0))
 
     if out_path is None or not out_path.exists() or not is_clip_intact(out_path):
-        print(f"         [!] Failed to harvest an intact clip for {clip_base} after {max_retries} attempts.")
+        # Purge any dead .part files left over from failed attempts
+        for part in channel_dir.glob(f"{clip_prefix}*.part"):
+            try:
+                part.unlink(missing_ok=True)
+            except Exception:
+                pass
+        print(f"         [!] Failed to harvest an intact clip for {clip_prefix} after {max_retries} attempts.")
         return None
 
     # Record all metadata in SQLite (Single Source of Truth in SQL) only when clip is 100% intact
     if conn:
         record_clip(
             conn=conn,
-            clip_id=clip_base,
+            clip_id=clip_id,
             video_id=video_id,
             channel_id=channel_id,
             channel_name=channel_name,
@@ -1318,6 +1431,8 @@ def run_harvest_pipeline(
       -> análise temática do canal OK
       -> cada top-n vídeo vai para o pool de vídeos para analisar
     """
+    output_dir = resolve_storage_path(output_dir)
+
     # Normalize seeds input (single URL, comma-separated list, or List[str])
     if isinstance(seed_url, str):
         seed_urls_list = [u.strip() for u in seed_url.split(",") if u.strip()]
@@ -1645,7 +1760,11 @@ def run_harvest_pipeline(
                         if clip_path:
                             total_clips_harvested += 1
                             gri_val = peak.get("global_rank_index", gri_preview)
-                            print(f"         [✓] Harvested: {clip_path.name} (GRI: {gri_val:.3f} | Total: {total_clips_harvested})")
+                            try:
+                                rel_display = clip_path.relative_to(output_dir)
+                            except Exception:
+                                rel_display = clip_path.name
+                            print(f"         [✓] Harvested: {rel_display} (GRI: {gri_val:.3f} | Total: {total_clips_harvested})")
                     record_video(conn, v_id, v_ch_url, v_title, "processed", True, similarity=v_sim)
                 else:
                     print("     [-] Heatmap present but no peaks met height/prominence criteria.")
@@ -1923,7 +2042,7 @@ def main():
     # Run the pipeline
     run_harvest_pipeline(
         seed_url=args.seed,
-        output_dir=Path(args.output_dir),
+        output_dir=resolve_storage_path(args.output_dir),
         db_path=Path(args.db_path),
         max_approved_channels=args.max_channels,
         max_videos_to_process=args.max_videos,
