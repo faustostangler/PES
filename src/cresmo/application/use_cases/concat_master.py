@@ -15,7 +15,7 @@ import re
 
 from cresmo.application.ports import VaultRepositoryPort
 from cresmo.domain.taxonomy import classify_channel
-from cresmo.domain.value_objects import MasterDocumentResult
+from cresmo.domain.value_objects import ChannelName, MasterDocumentResult
 from cresmo.infrastructure.config import CresmoSettings
 
 CHUNK_SEPARATOR: str = "\n\n---\n\n"
@@ -37,7 +37,7 @@ def count_words(text: str) -> int:
 
 
 def parse_metadata_from_content(
-    content: str, channel_name: str, fallback_stem: str
+    content: str, channel_name: ChannelName | str, fallback_stem: str
 ) -> tuple[int, str, str]:
     """Extract (video_date, channel_category, video_id) from YAML frontmatter.
 
@@ -63,7 +63,7 @@ def parse_metadata_from_content(
     if category_match and category_match.group(1).strip():
         category = category_match.group(1).strip()
     else:
-        category, _ = classify_channel(channel_name)
+        category, _ = classify_channel(str(channel_name))
 
     # 3. Parse video_id
     video_id_match = _VIDEO_ID_PATTERN.search(content)
@@ -77,7 +77,13 @@ def parse_metadata_from_content(
 
 
 class ConcatMasterUseCase:
-    """Consolidates enriched compendiums into sequential master documents for RAG."""
+    """Consolidates enriched compendiums into sequential master documents for RAG.
+
+    Conforms to:
+    - SPEC-001: Core Knowledge Synthesis Specifications
+    - ADR-001: Modular Monolith Domain Integrity
+    - ADR-019: Primary execute() method unification and ChannelName Value Object
+    """
 
     def __init__(
         self,
@@ -93,12 +99,12 @@ class ConcatMasterUseCase:
         self.vault_port = vault_port
         self.settings = settings if settings is not None else CresmoSettings()
 
-    def execute_for_channel(
+    def execute(
         self,
-        channel_name: str,
+        channel_name: ChannelName | str,
         max_words: int | None = None,
     ) -> list[MasterDocumentResult]:
-        """Aggregate all enriched files for a specific channel into sequential master files.
+        """Aggregate all enriched files for a specific channel into sequential master files (Primary Entrypoint).
 
         Args:
             channel_name: Name of the channel whose enriched documents to aggregate.
@@ -192,6 +198,14 @@ class ConcatMasterUseCase:
             )
 
         return results
+
+    def execute_for_channel(
+        self,
+        channel_name: ChannelName | str,
+        max_words: int | None = None,
+    ) -> list[MasterDocumentResult]:
+        """Legacy alias delegating to execute() for backward compatibility."""
+        return self.execute(channel_name=channel_name, max_words=max_words)
 
     def execute_all(
         self,

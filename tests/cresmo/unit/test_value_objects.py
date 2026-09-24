@@ -213,7 +213,7 @@ class TestMasterDocumentResult:
         from cresmo.domain.exceptions import DomainValidationError
         from cresmo.domain.value_objects import MasterDocumentResult
 
-        with pytest.raises(DomainValidationError, match="channel_name cannot be empty"):
+        with pytest.raises(DomainValidationError, match="cannot be empty or whitespace"):
             MasterDocumentResult(
                 channel_name="   ",
                 channel_category="tech_ai",
@@ -240,3 +240,59 @@ class TestMasterDocumentResult:
                 document_count=1,
                 video_ids=("vid1",),
             )
+
+
+class TestChannelName:
+    def test_valid_channel_name(self) -> None:
+        from cresmo.domain.value_objects import ChannelName
+
+        cn = ChannelName("  Fabio Akita  ")
+        assert cn.value == "Fabio Akita"
+        assert str(cn) == "Fabio Akita"
+        assert cn == "Fabio Akita"
+        assert cn == ChannelName("Fabio Akita")
+
+    def test_empty_or_whitespace_channel_name_raises(self) -> None:
+        from cresmo.domain.exceptions import DomainValidationError
+        from cresmo.domain.value_objects import ChannelName
+
+        with pytest.raises(DomainValidationError, match="ChannelName cannot be empty"):
+            ChannelName("")
+        with pytest.raises(DomainValidationError, match="ChannelName cannot be empty"):
+            ChannelName("   ")
+
+    def test_path_traversal_channel_name_raises(self) -> None:
+        from cresmo.domain.exceptions import DomainValidationError
+        from cresmo.domain.value_objects import ChannelName
+
+        with pytest.raises(DomainValidationError, match="path traversal"):
+            ChannelName("../../etc/passwd")
+        with pytest.raises(DomainValidationError, match="path traversal"):
+            ChannelName("channel/subfolder")
+        with pytest.raises(DomainValidationError, match="path traversal"):
+            ChannelName("channel\\subfolder")
+
+    def test_channel_name_too_long_raises(self) -> None:
+        from cresmo.domain.exceptions import DomainValidationError
+        from cresmo.domain.value_objects import ChannelName
+
+        with pytest.raises(DomainValidationError, match="exceeds maximum length"):
+            ChannelName("A" * 121)
+
+    def test_from_string_factory(self) -> None:
+        from cresmo.domain.value_objects import ChannelName
+
+        cn = ChannelName.from_string("Veritasium")
+        assert isinstance(cn, ChannelName)
+        assert cn.value == "Veritasium"
+        assert ChannelName.from_string(cn) is cn
+
+
+class TestSourceModality:
+    def test_source_modality_members(self) -> None:
+        from cresmo.domain.value_objects import SourceModality
+
+        assert SourceModality.FILE == "file"
+        assert SourceModality.URL == "url"
+        assert SourceModality("file") is SourceModality.FILE
+        assert SourceModality("url") is SourceModality.URL

@@ -21,6 +21,7 @@ from cresmo.domain.exceptions import (
 )
 from cresmo.domain.value_objects import (
     CausalMatrix,
+    ChannelName,
     ContentId,
     CrossContextRelations,
     NoteTitle,
@@ -39,34 +40,43 @@ class RawTranscript:
 
     Attributes:
         content_id: Strongly-typed canonical media identifier.
-        channel_name: Human-readable creator or source channel name.
+        channel_name: Human-readable creator or source channel name (ChannelName Value Object).
         body: Verbatim text of spoken audio.
         title: Optional original video title.
         source_url: Canonical web URL.
-        upload_date: Optional release date.
+        publication_date: Optional release date.
+        upload_date: Backward-compatible alias for publication_date.
         channel_id: Optional platform channel ID.
         channel_category: Macro topic classification.
         video_description: Raw creator description text.
 
     Invariants:
-        channel_name cannot be whitespace or empty.
+        channel_name cannot be whitespace or empty (enforced by ChannelName).
         body cannot be whitespace or empty (pure audio silence is rejected per SPEC-001: §2.2).
     """
 
     content_id: ContentId
-    channel_name: str
+    channel_name: ChannelName | str
     body: str
     title: str = ""
     source_url: str = ""
+    publication_date: datetime.date | None = None
     upload_date: datetime.date | None = None
     channel_id: str = ""
     channel_category: str = ""
     video_description: str = ""
 
     def __post_init__(self) -> None:
+        # Coerce channel_name to strongly-typed ChannelName Value Object (ADR-019)
+        cn = ChannelName.from_string(self.channel_name)
+        object.__setattr__(self, "channel_name", cn)
+
+        # Unify publication_date and upload_date semantics
+        pub_date = self.publication_date or self.upload_date
+        object.__setattr__(self, "publication_date", pub_date)
+        object.__setattr__(self, "upload_date", pub_date)
+
         # Invariant checks ensuring audio transcription payload is valid
-        if not self.channel_name.strip():
-            raise DomainValidationError("channel_name cannot be empty.")
         if not self.body.strip():
             raise DomainValidationError("RawTranscript body cannot be empty or whitespace.")
 
@@ -80,7 +90,7 @@ class EnrichedCompendium:
 
     Attributes:
         content_id: Strongly-typed canonical media identifier.
-        channel_name: Origin source channel name.
+        channel_name: Origin source channel name (ChannelName Value Object).
         title: Validated NoteTitle of the compendium.
         body: Continuous fluid prose main narrative.
         complementary_info: Encyclopedic context, dates, mini-biographies, and secondary details.
@@ -88,7 +98,8 @@ class EnrichedCompendium:
         channel_id: Optional platform channel ID.
         channel_category: Macro topic classification.
         source_url: Origin web URL.
-        video_date: Publication timestamp string.
+        publication_date: Optional release date (datetime.date).
+        video_date: Backward-compatible timestamp string.
         video_description: Original creator description.
 
     Invariants:
@@ -100,7 +111,7 @@ class EnrichedCompendium:
     """
 
     content_id: ContentId
-    channel_name: str
+    channel_name: ChannelName | str
     title: NoteTitle
     body: str
     complementary_info: str
@@ -108,10 +119,27 @@ class EnrichedCompendium:
     channel_id: str = ""
     channel_category: str = ""
     source_url: str = ""
+    publication_date: datetime.date | None = None
     video_date: str = ""
     video_description: str = ""
 
     def __post_init__(self) -> None:
+        cn = ChannelName.from_string(self.channel_name)
+        object.__setattr__(self, "channel_name", cn)
+
+        # Harmonize publication_date and video_date
+        pub_date = self.publication_date
+        if pub_date is None and self.video_date:
+            try:
+                raw_d = self.video_date.strip()
+                if raw_d:
+                    pub_date = datetime.date.fromisoformat(raw_d[:10])
+            except (ValueError, TypeError):
+                pub_date = None
+        v_date = self.video_date or (pub_date.isoformat() if pub_date else "")
+        object.__setattr__(self, "publication_date", pub_date)
+        object.__setattr__(self, "video_date", v_date)
+
         b = self.body.strip()
         ci = self.complementary_info.strip()
 
@@ -242,9 +270,10 @@ class PipelineSessionId:
             )
 
     @classmethod
-    def create(cls, channel: str, content_id: str | ContentId) -> PipelineSessionId:
+    def create(cls, channel: ChannelName | str, content_id: str | ContentId) -> PipelineSessionId:
         c_id = content_id.value if isinstance(content_id, ContentId) else content_id
-        return cls(value=f"content:{channel}:{c_id}")
+        ch = str(channel).strip()
+        return cls(value=f"content:{ch}:{c_id}")
 
     @property
     def channel_name(self) -> str:
@@ -276,8 +305,9 @@ class ChannelTenantId:
             )
 
     @classmethod
-    def create(cls, channel: str) -> ChannelTenantId:
-        return cls(value=f"channel:{channel}")
+    def create(cls, channel: ChannelName | str) -> ChannelTenantId:
+        ch = str(channel).strip()
+        return cls(value=f"channel:{ch}")
 
     @property
     def channel_name(self) -> str:

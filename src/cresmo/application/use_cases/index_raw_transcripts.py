@@ -22,6 +22,7 @@ from cresmo.application.ports import (
 )
 from cresmo.domain.entities import RawTranscript
 from cresmo.domain.value_objects import (
+    ChannelName,
     ContentId,
     NoteTitle,
     RawIndexEntry,
@@ -270,8 +271,8 @@ class IndexRawTranscriptsUseCase:
         - ADR-011: Zero Hardcoded Tunables and Self-Healing Output Validation
 
     Attributes:
-        vault_repo: Repository port for reading raw transcripts and appending indexes.
-        llm: LLM transformation port for key concept and synthesis extraction.
+        vault_port: Repository port for reading raw transcripts and appending indexes.
+        llm_indexing_port: LLM transformation port for key concept and synthesis extraction.
         prompt_provider: Provider port supplying indexing prompt templates.
         max_chars: Maximum character limit from transcript body fed into LLM prompt (0 = full text).
         temperature: Generation sampling temperature.
@@ -281,27 +282,34 @@ class IndexRawTranscriptsUseCase:
 
     def __init__(
         self,
-        vault_repo: VaultRepositoryPort,
-        llm: LLMTransformationPort,
-        prompt_provider: PromptProviderPort,
+        vault_port: VaultRepositoryPort | None = None,
+        llm_indexing_port: LLMTransformationPort | None = None,
+        prompt_provider: PromptProviderPort | None = None,
         max_chars: int = 0,
         temperature: float = 0.2,
         language: str = "Português do Brasil",
         max_rewrites: int = 3,
+        *,
+        vault_repo: VaultRepositoryPort | None = None,
+        llm: LLMTransformationPort | None = None,
     ) -> None:
         """Initialize IndexRawTranscriptsUseCase with required ports and tunables.
 
-        Args:
-            vault_repo: Vault persistence adapter for raw transcripts and catalog indexes.
-            llm: Language model adapter for conceptual extraction.
-            prompt_provider: Provider delivering raw indexing prompt templates.
-            max_chars: Maximum character count from raw transcript body to feed prompt (0 = full text).
-            temperature: Sampling temperature for LLM transformation.
-            language: Target natural language for concept extraction and paratactic synthesis.
-            max_rewrites: Maximum corrective rewrite retries when output violates formatting.
+        Conforms to ADR-019 (vault_port & llm_indexing_port naming symmetry).
         """
-        self.vault_repo = vault_repo
-        self.llm = llm
+        resolved_vault = vault_port or vault_repo
+        if resolved_vault is None:
+            raise ValueError("vault_port is required.")
+        resolved_llm = llm_indexing_port or llm
+        if resolved_llm is None:
+            raise ValueError("llm_indexing_port is required.")
+        if prompt_provider is None:
+            raise ValueError("prompt_provider is required.")
+
+        self.vault_port = resolved_vault
+        self.vault_repo = resolved_vault  # Backward-compatible alias
+        self.llm_indexing_port = resolved_llm
+        self.llm = resolved_llm  # Backward-compatible alias
         self.prompt_provider = prompt_provider
         self.max_chars = max_chars
         self.temperature = temperature
@@ -309,16 +317,15 @@ class IndexRawTranscriptsUseCase:
         self.max_rewrites = max_rewrites
 
     def warmup(self, timeout_seconds: float | None = None) -> None:
-        """Asynchronously trigger warmup on the underlying LLM port."""
-        if hasattr(self.llm, "warmup"):
-            self.llm.warmup(timeout_seconds=timeout_seconds)
+        """Trigger warmup on the underlying indexing LLM port (ADR-019: direct contract call)."""
+        self.llm_indexing_port.warmup(timeout_seconds=timeout_seconds)
 
     def _extract_concepts(
         self,
         video_id: str,
         title: str,
         excerpt: str,
-        channel_name: str,
+        channel_name: ChannelName | str,
     ) -> str:
         """Extract principal concepts through an iterative LLM-as-a-judge loop.
 
@@ -337,8 +344,9 @@ class IndexRawTranscriptsUseCase:
             language=self.language,
         )
 
-        session_id = f"raw_index_{channel_name}"
-        user_id = channel_name
+        ch = str(channel_name).strip()
+        session_id = f"raw_index_{ch}"
+        user_id = ch
         is_valid = False
         retries = 0
         raw_concepts = ""
@@ -361,7 +369,7 @@ class IndexRawTranscriptsUseCase:
                 trace_id = f"{video_id}_concepts_rewrite_{retries}"
                 judge_trace_id = f"{video_id}_concepts_judge_retry_{retries}"
 
-            raw_concepts = self.llm.transform(
+            raw_concepts = self.llm_indexing_port.transform(
                 prompt=prompt,
                 system_instruction=system_instructions,
                 temperature=self.temperature,
@@ -379,7 +387,7 @@ class IndexRawTranscriptsUseCase:
                         language=self.language,
                     )
                 )
-                judge_response = self.llm.transform(
+                judge_response = self.llm_indexing_port.transform(
                     prompt=judge_prompt,
                     system_instruction=judge_system_instructions,
                     temperature=0.0,
@@ -404,7 +412,7 @@ class IndexRawTranscriptsUseCase:
         video_id: str,
         title: str,
         excerpt: str,
-        channel_name: str,
+        channel_name: ChannelName | str,
     ) -> str:
         """Extract structured conceptual summary through an iterative LLM-as-a-judge loop.
 
@@ -423,8 +431,9 @@ class IndexRawTranscriptsUseCase:
             language=self.language,
         )
 
-        session_id = f"raw_index_{channel_name}"
-        user_id = channel_name
+        ch = str(channel_name).strip()
+        session_id = f"raw_index_{ch}"
+        user_id = ch
         is_valid = False
         retries = 0
         raw_summary = ""
@@ -446,7 +455,7 @@ class IndexRawTranscriptsUseCase:
                     video_id,
                 )
 
-            raw_summary = self.llm.transform(
+            raw_summary = self.llm_indexing_port.transform(
                 prompt=user_prompt,
                 system_instruction=system_instructions,
                 temperature=self.temperature,
@@ -464,7 +473,7 @@ class IndexRawTranscriptsUseCase:
                     language=self.language,
                 )
             )
-            judge_response = self.llm.transform(
+            judge_response = self.llm_indexing_port.transform(
                 prompt=judge_prompt,
                 system_instruction=judge_system_instructions,
                 temperature=0.0,
@@ -487,7 +496,7 @@ class IndexRawTranscriptsUseCase:
         title: str,
         excerpt: str,
         summary: str,
-        channel_name: str,
+        channel_name: ChannelName | str,
     ) -> str:
         """Synthesize dense single paratactic paragraph through an iterative LLM-as-a-judge loop.
 
@@ -507,8 +516,9 @@ class IndexRawTranscriptsUseCase:
             language=self.language,
         )
 
-        session_id = f"raw_index_{channel_name}"
-        user_id = channel_name
+        ch = str(channel_name).strip()
+        session_id = f"raw_index_{ch}"
+        user_id = ch
         is_valid = False
         retries = 0
         raw_synthesis = ""
@@ -530,7 +540,7 @@ class IndexRawTranscriptsUseCase:
                     video_id,
                 )
 
-            raw_synthesis = self.llm.transform(
+            raw_synthesis = self.llm_indexing_port.transform(
                 prompt=user_prompt,
                 system_instruction=system_instructions,
                 temperature=self.temperature,
@@ -549,7 +559,7 @@ class IndexRawTranscriptsUseCase:
                         language=self.language,
                     )
                 )
-                judge_response = self.llm.transform(
+                judge_response = self.llm_indexing_port.transform(
                     prompt=judge_prompt,
                     system_instruction=judge_system_instructions,
                     temperature=0.0,
@@ -568,34 +578,21 @@ class IndexRawTranscriptsUseCase:
 
         return synthesis if synthesis else (summary or title)
 
-    def index_single_transcript(
+    def execute(
         self,
         transcript: RawTranscript,
         force: bool = False,
     ) -> RawIndexEntry | None:
-        """Index a single raw transcript incrementally if not already indexed.
+        """Index a single raw transcript incrementally if not already indexed (Primary entrypoint).
 
-        Walkthrough:
-            1. Check whether content_id is already present in channel _canal.md index.
-            2. If indexed and not force, skip immediately (idempotent 0-token cost).
-            3. Pass 1: Extract strictly comma-separated key concepts from raw transcript excerpt.
-            4. Pass 2: Summarize title and raw transcript excerpt into conceptual summary.
-            5. Pass 3: Synthesize single dense paratactic paragraph prioritizing NERs and their relations.
-            6. Construct RawIndexEntry and append to both channel index and brain.csv.
-
-        Args:
-            transcript: The RawTranscript entity to index.
-            force: If True, re-index even if already present in channel index.
-
-        Returns:
-            The generated RawIndexEntry, or None if skipped or LLM call failed.
+        Conforms to ADR-019 (execute() method convention unification).
         """
         video_id = transcript.content_id.value
         channel_name = transcript.channel_name
 
         # ACL check: Avoid redundant token expenditure if already indexed
         if not force:
-            indexed_ids = self.vault_repo.get_indexed_video_ids_for_channel(channel_name)
+            indexed_ids = self.vault_port.get_indexed_video_ids_for_channel(channel_name)
             if video_id in indexed_ids:
                 logger.info(
                     "[IndexRaw] Skipping already indexed transcript '%s' for channel '%s'.",
@@ -673,8 +670,8 @@ class IndexRawTranscriptsUseCase:
         )
 
         # Dual output persistence: channel markdown index and global tabular catalog (brain.csv)
-        self.vault_repo.append_channel_index_entry(channel_name, entry)
-        self.vault_repo.append_brain_csv_entry(entry)
+        self.vault_port.append_channel_index_entry(channel_name, entry)
+        self.vault_port.append_brain_csv_entry(entry)
 
         logger.info(
             "[IndexRaw] Indexed '%s' | %s | '%s'",
@@ -684,7 +681,17 @@ class IndexRawTranscriptsUseCase:
         )
         return entry
 
-    def index_channel(self, channel_name: str, force: bool = False) -> list[RawIndexEntry]:
+    def index_single_transcript(
+        self,
+        transcript: RawTranscript,
+        force: bool = False,
+    ) -> RawIndexEntry | None:
+        """Legacy alias delegating to execute() for backward compatibility."""
+        return self.execute(transcript=transcript, force=force)
+
+    def index_channel(
+        self, channel_name: ChannelName | str, force: bool = False
+    ) -> list[RawIndexEntry]:
         """Index all raw markdown transcripts under a channel folder.
 
         Args:
@@ -695,11 +702,11 @@ class IndexRawTranscriptsUseCase:
             List of newly created RawIndexEntry instances.
         """
         indexed_entries: list[RawIndexEntry] = []
-        raw_dir = getattr(self.vault_repo, "raw_dir", None)
+        raw_dir = getattr(self.vault_port, "raw_dir", None)
         if raw_dir is None:
             return indexed_entries
 
-        ch_dir = Path(raw_dir) / channel_name
+        ch_dir = Path(raw_dir) / str(channel_name).strip()
         if not ch_dir.exists() or not ch_dir.is_dir():
             return indexed_entries
 
@@ -709,9 +716,9 @@ class IndexRawTranscriptsUseCase:
                 continue
 
             content_id = ContentId(file_path.stem)
-            transcript = self.vault_repo.get_raw_transcript(content_id)
+            transcript = self.vault_port.get_raw_transcript(content_id)
             if transcript is not None:
-                entry = self.index_single_transcript(transcript, force=force)
+                entry = self.execute(transcript, force=force)
                 if entry is not None:
                     indexed_entries.append(entry)
 
@@ -728,7 +735,7 @@ class IndexRawTranscriptsUseCase:
         """
         self.warmup()
         results: dict[str, list[RawIndexEntry]] = {}
-        raw_dir = getattr(self.vault_repo, "raw_dir", None)
+        raw_dir = getattr(self.vault_port, "raw_dir", None)
         if raw_dir is None:
             return results
 

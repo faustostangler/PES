@@ -57,22 +57,31 @@ class SynthesizeAtomicBatchUseCase:
 
     def __init__(
         self,
-        llm_port: LLMTransformationPort,
-        vault_port: VaultRepositoryPort,
+        llm_synthesis_port: LLMTransformationPort | None = None,
+        vault_port: VaultRepositoryPort | None = None,
         batch_size: int = 5,
         prompt_provider: PromptProviderPort | None = None,
         temperature: float | None = None,
+        *,
+        llm_port: LLMTransformationPort | None = None,
     ) -> None:
         """Initialize Stage 5 use case with ports and batch sizing.
 
         Args:
-            llm_port: Hexagonal port for generative LLM inference.
+            llm_synthesis_port: Hexagonal port for generative LLM inference.
             vault_port: Port providing vault atomic note and index persistence.
             batch_size: Maximum count of entities per LLM prompt chunk (default: 5).
             prompt_provider: Optional provider for decoupled prompt templates.
             temperature: Sampling temperature override for atomic note synthesis.
+            llm_port: Backward-compatible alias for llm_synthesis_port.
         """
-        self.llm_port = llm_port
+        port = llm_synthesis_port or llm_port
+        if port is None:
+            raise ValueError("llm_synthesis_port must be provided")
+        if vault_port is None:
+            raise ValueError("vault_port must be provided")
+        self.llm_synthesis_port = port
+        self.llm_port = port  # Backward compatibility
         self.vault_port = vault_port
         self.batch_size = max(1, batch_size)
         self.temperature = temperature
@@ -141,12 +150,12 @@ class SynthesizeAtomicBatchUseCase:
                 compendium_body=compendium.body,
                 targets_json=json.dumps(targets_summary, ensure_ascii=False),
             )
-            response = self.llm_port.transform(
+            response = self.llm_synthesis_port.transform(
                 prompt=prompt,
                 temperature=self.temperature,
                 trace_id=f"{compendium.content_id.value}_atomic_batch",
                 session_id=f"stage5_atomic_{compendium.channel_name}",
-                user_id=compendium.channel_name,
+                user_id=str(compendium.channel_name),
             )
             data = extract_json_data(response)
             if not isinstance(data, list):

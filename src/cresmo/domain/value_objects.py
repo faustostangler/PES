@@ -63,6 +63,69 @@ class NoteType(str, Enum):
         )
 
 
+class SourceModality(str, Enum):
+    """Discriminator for input batch source modality.
+
+    Conforms to ADR-019 (Zero Primitive Obsession).
+    """
+
+    FILE = "file"
+    URL = "url"
+
+
+@dataclass(frozen=True)
+class ChannelName:
+    """Canonical domain Value Object representing a content creator or source channel.
+
+    Conforms to ADR-019: Zero Primitive Obsession.
+
+    Invariants:
+        - Value must be non-empty and not whitespace.
+        - Automatically trimmed of leading and trailing whitespace.
+        - Maximum length of 120 characters.
+        - Prohibits path traversal sequences ('..' or '/' or '\\').
+    """
+
+    value: str
+
+    def __post_init__(self) -> None:
+        val = self.value.strip()
+        if not val:
+            raise DomainValidationError("ChannelName cannot be empty or whitespace.")
+        if len(val) > 120:
+            raise DomainValidationError(
+                f"ChannelName exceeds maximum length of 120 characters: '{val[:30]}...'"
+            )
+        if ".." in val or "/" in val or "\\" in val:
+            raise DomainValidationError(
+                f"ChannelName cannot contain path traversal or separator characters: '{val}'"
+            )
+        object.__setattr__(self, "value", val)
+
+    @classmethod
+    def from_string(cls, raw: str | ChannelName) -> ChannelName:
+        """Ergonomic conversion factory accepting str or existing ChannelName."""
+        if isinstance(raw, cls):
+            return raw
+        return cls(value=str(raw))
+
+    def __str__(self) -> str:
+        return self.value
+
+    def strip(self) -> str:
+        return self.value
+
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, ChannelName):
+            return self.value == other.value
+        if isinstance(other, str):
+            return self.value == other.strip()
+        return False
+
+    def __hash__(self) -> int:
+        return hash(self.value)
+
+
 @dataclass(frozen=True)
 class ContentId:
     """Strongly-typed unique identifier for a raw media item or transcript.
@@ -237,12 +300,11 @@ class DiscoveredMediaItem:
     title: str
     published_at: datetime
     media_url: str
-    channel_name: str
+    channel_name: ChannelName | str
 
     def __post_init__(self) -> None:
         t = self.title.strip()
         u = self.media_url.strip()
-        c = self.channel_name.strip()
 
         if not t:
             raise DomainValidationError("DiscoveredMediaItem title cannot be empty.")
@@ -250,12 +312,11 @@ class DiscoveredMediaItem:
             raise DomainValidationError(
                 f"Invalid DiscoveredMediaItem media_url '{self.media_url}'. Must start with http:// or https://"
             )
-        if not c:
-            raise DomainValidationError("DiscoveredMediaItem channel_name cannot be empty.")
+        cn = ChannelName.from_string(self.channel_name)
 
         object.__setattr__(self, "title", t)
         object.__setattr__(self, "media_url", u)
-        object.__setattr__(self, "channel_name", c)
+        object.__setattr__(self, "channel_name", cn)
 
 
 _CHANNEL_ID_PATTERN = re.compile(r"(?:^|/channel/|/user/|/c/)(UC[a-zA-Z0-9_-]{2,64})")
@@ -500,7 +561,7 @@ class LedgerEntry:
     content_id: ContentId
     media_url: str
     title: str
-    channel_name: str
+    channel_name: ChannelName | str
     status: PipelineStatus
     notes_count: int = 0
     error_message: str | None = None
@@ -510,15 +571,13 @@ class LedgerEntry:
     def __post_init__(self) -> None:
         u = self.media_url.strip()
         t = self.title.strip()
-        c = self.channel_name.strip()
+        cn = ChannelName.from_string(self.channel_name)
         if not u.startswith(("http://", "https://")):
             raise DomainValidationError(
                 f"Invalid LedgerEntry media_url '{self.media_url}'. Must start with http:// or https://"
             )
         if not t:
             raise DomainValidationError("LedgerEntry title cannot be empty.")
-        if not c:
-            raise DomainValidationError("LedgerEntry channel_name cannot be empty.")
         if self.notes_count < 0:
             raise DomainValidationError(
                 f"LedgerEntry notes_count cannot be negative. Got: {self.notes_count}"
@@ -526,7 +585,7 @@ class LedgerEntry:
 
         object.__setattr__(self, "media_url", u)
         object.__setattr__(self, "title", t)
-        object.__setattr__(self, "channel_name", c)
+        object.__setattr__(self, "channel_name", cn)
 
 
 @dataclass(frozen=True)
@@ -534,7 +593,7 @@ class MasterDocumentResult:
     """Immutable report representing a consolidated master document for RAG ingestion.
 
     Attributes:
-        channel_name: Creator/channel name.
+        channel_name: Creator/channel name (ChannelName Value Object).
         channel_category: Macro taxonomy category.
         output_path: Filesystem path to the generated master Markdown file.
         part_number: 1-based index when splitting by token/word limits.
@@ -543,7 +602,7 @@ class MasterDocumentResult:
         video_ids: Tuple of all source ContentIds merged.
     """
 
-    channel_name: str
+    channel_name: ChannelName | str
     channel_category: str
     output_path: Path
     part_number: int
@@ -552,10 +611,8 @@ class MasterDocumentResult:
     video_ids: tuple[str, ...]
 
     def __post_init__(self) -> None:
-        c = self.channel_name.strip()
+        cn = ChannelName.from_string(self.channel_name)
         cat = self.channel_category.strip()
-        if not c:
-            raise DomainValidationError("MasterDocumentResult channel_name cannot be empty.")
         if not cat:
             raise DomainValidationError("MasterDocumentResult channel_category cannot be empty.")
         if self.part_number < 1:
@@ -570,7 +627,7 @@ class MasterDocumentResult:
             raise DomainValidationError(
                 f"MasterDocumentResult document_count cannot be negative. Got: {self.document_count}"
             )
-        object.__setattr__(self, "channel_name", c)
+        object.__setattr__(self, "channel_name", cn)
         object.__setattr__(self, "channel_category", cat)
 
 
@@ -585,7 +642,7 @@ class RawIndexEntry:
         video_id: Canonical ContentId.
         url: Canonical web URL.
         title: Episode title.
-        channel_name: Creator channel name.
+        channel_name: Creator channel name (ChannelName Value Object).
         key_concept: Distilled 2-4 word concept descriptor.
         synthesis: Paratactic summary paragraph.
     """
@@ -593,7 +650,7 @@ class RawIndexEntry:
     video_id: ContentId
     url: str
     title: str
-    channel_name: str
+    channel_name: ChannelName | str
     key_concept: str
     synthesis: str
     channel_category: str = ""
@@ -605,7 +662,7 @@ class RawIndexEntry:
             )
         u = self.url.strip()
         t = self.title.strip()
-        c = self.channel_name.strip()
+        cn = ChannelName.from_string(self.channel_name)
         kc = " ".join(self.key_concept.split())
         s = self.synthesis.strip()
         cat = (self.channel_category or "").strip()
@@ -614,8 +671,6 @@ class RawIndexEntry:
             raise DomainValidationError("RawIndexEntry url cannot be empty.")
         if not t:
             raise DomainValidationError("RawIndexEntry title cannot be empty.")
-        if not c:
-            raise DomainValidationError("RawIndexEntry channel_name cannot be empty.")
         if not kc:
             raise DomainValidationError("RawIndexEntry key_concept cannot be empty.")
         if not s:
@@ -623,7 +678,7 @@ class RawIndexEntry:
 
         object.__setattr__(self, "url", u)
         object.__setattr__(self, "title", t)
-        object.__setattr__(self, "channel_name", c)
+        object.__setattr__(self, "channel_name", cn)
         object.__setattr__(self, "key_concept", kc)
         object.__setattr__(self, "synthesis", s)
         object.__setattr__(self, "channel_category", cat)
@@ -641,7 +696,7 @@ class RawIndexEntry:
         clean_synthesis = " ".join(self.synthesis.split())
         return [
             self.channel_category,
-            self.channel_name,
+            str(self.channel_name),
             f"{self.video_id.value}.md",
             self.key_concept,
             clean_synthesis,

@@ -4,6 +4,8 @@ Derived from SPEC-001 Section 2.2 & Section 5.
 Verifies construction invariants, always-valid state, and exception mapping.
 """
 
+import datetime
+
 import pytest
 
 from cresmo.domain.entities import (
@@ -19,6 +21,7 @@ from cresmo.domain.exceptions import (
 )
 from cresmo.domain.value_objects import (
     CausalMatrix,
+    ChannelName,
     ContentId,
     NoteTitle,
     NoteType,
@@ -30,14 +33,19 @@ class TestRawTranscript:
 
     def test_valid_raw_transcript(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
+        pub = datetime.date(2023, 5, 12)
         transcript = RawTranscript(
             content_id=cid,
             channel_name="Example Channel",
             body="Valid spoken transcript body text.",
+            publication_date=pub,
         )
         assert transcript.content_id == cid
         assert transcript.channel_name == "Example Channel"
+        assert isinstance(transcript.channel_name, ChannelName)
         assert transcript.body == "Valid spoken transcript body text."
+        assert transcript.publication_date == pub
+        assert transcript.upload_date == pub
 
     def test_empty_body_raises_validation_error(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
@@ -62,9 +70,14 @@ class TestEnrichedCompendium:
             body="Continuous fluid prose analyzing institutional power dynamics.",
             complementary_info="Detailed historical and empirical datasets.",
             pass_count=3,
+            video_date="20240315",
         )
         assert comp.content_id == cid
         assert comp.pass_count == 3
+        assert isinstance(comp.channel_name, ChannelName)
+        assert comp.channel_name == "Example Channel"
+        assert comp.video_date == "20240315"
+        assert comp.publication_date == datetime.date(2024, 3, 15)
 
     def test_missing_complementary_info_raises_structure_error(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
@@ -166,7 +179,7 @@ class TestMapOfContent:
 
     def test_raw_transcript_empty_channel_raises_error(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
-        with pytest.raises(DomainValidationError, match="channel_name cannot be empty"):
+        with pytest.raises(DomainValidationError, match="cannot be empty or whitespace"):
             RawTranscript(content_id=cid, channel_name="   ", body="Valid body.")
 
     def test_enriched_compendium_empty_body_raises_error(self) -> None:

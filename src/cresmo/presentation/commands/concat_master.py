@@ -63,9 +63,7 @@ def handle_concat_master(args: argparse.Namespace) -> int:
 
         if args.channel:
             sys.stdout.write(f"Consolidating master documents for channel: '{args.channel}'...\n")
-            results = use_case.execute_for_channel(
-                channel_name=args.channel, max_words=args.max_words
-            )
+            results = use_case.execute(channel_name=args.channel, max_words=args.max_words)
             if not results:
                 sys.stdout.write(f"No enriched documents found for channel '{args.channel}'.\n")
                 return EXIT_SUCCESS

@@ -82,7 +82,7 @@ class TestDiscoveredMediaItem:
 
     def test_empty_channel_name_raises_validation_error(self) -> None:
         now = datetime.now(UTC)
-        with pytest.raises(DomainValidationError, match="channel_name cannot be empty"):
+        with pytest.raises(DomainValidationError, match="cannot be empty or whitespace"):
             DiscoveredMediaItem(
                 content_id=ContentId("dQw4w9WgXcQ"),
                 title="Quantum Physics",

@@ -327,21 +327,26 @@ ENTERTAINMENT_CHANNELS: frozenset[str] = frozenset(
     }
 )
 
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from cresmo.domain.value_objects import ChannelName
+
 DEFAULT_CHANNEL_DOMAIN: str = "uncategorized"
 DEFAULT_CHANNEL_CATEGORY: str = "volatile"
 
 
-def classify_channel(channel_name: str) -> tuple[str, str]:
+def classify_channel(channel_name: ChannelName | str) -> tuple[str, str]:
     """Classify source channel deterministically into (domain, category_type).
 
     Args:
-        channel_name: Human-readable, handle, or URL of the channel.
+        channel_name: Human-readable, handle, or URL of the channel (ChannelName or str).
 
     Returns:
         tuple[str, str]: (category_name, volatility) where volatility is
         either 'perennial' or 'volatile'.
     """
-    raw = channel_name.lower().strip()
+    raw = str(channel_name).lower().strip()
     candidates: list[str] = [raw]
 
     # If it's a URL or handle, extract handle/slug candidate

@@ -66,6 +66,8 @@ class TestCresmoSettings:
         assert settings.language == "Português do Brasil"
         assert settings.llm_temperature == 0.2
         assert settings.raw_index_temperature == 0.2
+        assert settings.llm_synthesis_temperature == 0.2
+        assert settings.llm_indexing_temperature == 0.2
 
     def test_ollama_num_predict_defaults_and_env_override(
         self, monkeypatch: pytest.MonkeyPatch
@@ -82,10 +84,16 @@ class TestCresmoSettings:
         from pydantic import ValidationError
 
         with pytest.raises(ValidationError):
-            CresmoSettings(llm_temperature=-0.1)
+            CresmoSettings(llm_synthesis_temperature=-0.1)
 
         with pytest.raises(ValidationError):
-            CresmoSettings(llm_temperature=2.1)
+            CresmoSettings(llm_synthesis_temperature=2.1)
+
+        with pytest.raises(ValidationError):
+            CresmoSettings(llm_indexing_temperature=-0.5)
+
+        with pytest.raises(ValidationError):
+            CresmoSettings(llm_temperature=-0.1)
 
         with pytest.raises(ValidationError):
             CresmoSettings(raw_index_temperature=-0.5)

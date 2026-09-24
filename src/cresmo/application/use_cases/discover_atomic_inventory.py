@@ -22,18 +22,25 @@ class DiscoverAtomicInventoryUseCase:
 
     def __init__(
         self,
-        llm_port: LLMTransformationPort,
+        llm_synthesis_port: LLMTransformationPort | None = None,
         prompt_provider: PromptProviderPort | None = None,
         temperature: float = 0.0,
+        *,
+        llm_port: LLMTransformationPort | None = None,
     ) -> None:
         """Initialize Stage 4 use case with required Hexagonal ports.
 
         Args:
-            llm_port: Hexagonal port for generative LLM inference.
+            llm_synthesis_port: Hexagonal port for generative LLM inference.
             prompt_provider: Optional provider for decoupled prompt templates.
             temperature: Sampling temperature override (default: 0.0 for deterministic JSON extraction).
+            llm_port: Backward-compatible alias for llm_synthesis_port.
         """
-        self.llm_port = llm_port
+        port = llm_synthesis_port or llm_port
+        if port is None:
+            raise ValueError("llm_synthesis_port must be provided")
+        self.llm_synthesis_port = port
+        self.llm_port = port  # Backward compatibility
         self.temperature = temperature
         if prompt_provider is None:
             from cresmo.infrastructure.adapters.prompt_provider import JsonPromptProvider
@@ -62,12 +69,12 @@ class DiscoverAtomicInventoryUseCase:
         )
 
         # Step 2: Execute LLM transformation with deterministic temperature.
-        response = self.llm_port.transform(
+        response = self.llm_synthesis_port.transform(
             prompt=prompt,
             temperature=self.temperature,
             trace_id=f"{compendium.content_id.value}_inventory",
             session_id=f"stage4_inventory_{compendium.channel_name}",
-            user_id=compendium.channel_name,
+            user_id=str(compendium.channel_name),
         )
 
         # Step 3: Parse output JSON array.

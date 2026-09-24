@@ -23,6 +23,7 @@ from pathlib import Path
 from cresmo.application.ports import MediaIngestionPort
 from cresmo.domain.value_objects import (
     ChannelFeedQuery,
+    SourceModality,
     SyncFilterCriteria,
     is_processable_transcript_file,
     normalize_to_uploads_playlist_url,
@@ -41,17 +42,27 @@ class BatchSource:
     """Represents an atomic input item for batch processing.
 
     Attributes:
-        kind: Source modality discriminator ('file' or 'url').
+        kind: Source modality discriminator (SourceModality.FILE or SourceModality.URL).
         target: File path string or web URL.
     """
 
-    kind: str  # "file" | "url"
+    kind: SourceModality | str
     target: str
+
+    def __post_init__(self) -> None:
+        if isinstance(self.kind, str):
+            try:
+                modality = SourceModality(self.kind.strip().lower())
+            except ValueError:
+                raise ValueError(
+                    f"Invalid BatchSource modality '{self.kind}'. Expected 'file' or 'url'."
+                )
+            object.__setattr__(self, "kind", modality)
 
     @property
     def display_name(self) -> str:
         """Human-readable representation for CLI logs."""
-        if self.kind == "file":
+        if self.kind == SourceModality.FILE or self.kind == "file":
             return Path(self.target).name
         return self.target
 
@@ -345,6 +356,12 @@ class DiscoverBatchSourcesUseCase:
             for src in priority_sources:
                 yield src
 
+            # SINALIZADOR VISUAL:
+            if priority_sources:
+                self._notify(
+                    f"[stream] Fast-path complete: {len(priority_sources)} priority item(s) processed. "
+                    "Awaiting crawled feed stream...\n"
+                )
             # Active waiting in line
             while True:
                 item = stream_queue.get()
