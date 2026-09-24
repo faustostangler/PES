@@ -93,17 +93,28 @@ class CresmoPipeline:
     def __init__(
         self,
         media_ingestion_port: MediaIngestionPort,
-        llm_port: LLMTransformationPort,
-        vault_port: VaultRepositoryPort,
+        llm_synthesis_port: LLMTransformationPort | None = None,
+        vault_port: VaultRepositoryPort | None = None,
         ledger_port: LedgerRepositoryPort | None = None,
         batch_size: int = 5,
         prompt_provider: PromptProviderPort | None = None,
         settings: CresmoSettings | None = None,
-        indexing_llm_port: LLMTransformationPort | None = None,
+        llm_indexing_port: LLMTransformationPort | None = None,
         telemetry_port: TelemetryPort | None = None,
+        *,
+        llm_port: LLMTransformationPort | None = None,
+        indexing_llm_port: LLMTransformationPort | None = None,
     ) -> None:
         self.media_ingestion_port = media_ingestion_port
-        self.llm_port = llm_port
+
+        synth_port = llm_synthesis_port or llm_port
+        if synth_port is None:
+            raise ValueError("llm_synthesis_port must be provided")
+        self.llm_synthesis_port = synth_port
+        self.llm_port = synth_port  # Backward compatibility
+
+        if vault_port is None:
+            raise ValueError("vault_port must be provided")
         self.vault_port = vault_port
         self.ledger_port = ledger_port
         if telemetry_port is None:
@@ -127,12 +138,13 @@ class CresmoPipeline:
         else:
             self.prompt_provider = prompt_provider
 
-        if indexing_llm_port is not None:
-            self.indexing_llm_port = indexing_llm_port
+        resolved_indexing_port = llm_indexing_port or indexing_llm_port
+        if resolved_indexing_port is not None:
+            self.llm_indexing_port = resolved_indexing_port
         elif self.settings.indexing_provider == "ollama":
             from cresmo.infrastructure.adapters.ollama_llm_adapter import OllamaLLMAdapter
 
-            self.indexing_llm_port = OllamaLLMAdapter(
+            self.llm_indexing_port = OllamaLLMAdapter(
                 base_url=self.settings.ollama_base_url,
                 model=self.settings.ollama_model,
                 timeout_seconds=self.settings.ollama_timeout_seconds,
@@ -142,7 +154,8 @@ class CresmoPipeline:
                 warmup_timeout_seconds=self.settings.ollama_warmup_timeout_seconds,
             )
         else:
-            self.indexing_llm_port = self.llm_port
+            self.llm_indexing_port = self.llm_synthesis_port
+        self.indexing_llm_port = self.llm_indexing_port  # Backward compatibility
 
         # Use cases instantiation
         self.ingest_raw_transcript = IngestRawTranscriptUseCase(
@@ -150,39 +163,39 @@ class CresmoPipeline:
             vault_port=self.vault_port,
         )
         self.index_raw = IndexRawTranscriptsUseCase(
-            vault_repo=self.vault_port,
-            llm=self.indexing_llm_port,
+            vault_port=self.vault_port,
+            llm_indexing_port=self.llm_indexing_port,
             prompt_provider=self.prompt_provider,
             max_chars=self.settings.raw_index_max_chars,
             temperature=self.settings.raw_index_temperature,
             language=self.settings.language,
         )
         self.fill_gaps_fluid_prose = FillGapsFluidProseUseCase(
-            llm_port=self.llm_port,
+            llm_synthesis_port=self.llm_synthesis_port,
             vault_port=self.vault_port,
             prompt_provider=self.prompt_provider,
             temperature=self.settings.llm_temperature,
         )
         self.expand_longitudinal_synchronic = ExpandLongitudinalSynchronicUseCase(
-            llm_port=self.llm_port,
+            llm_synthesis_port=self.llm_synthesis_port,
             vault_port=self.vault_port,
             prompt_provider=self.prompt_provider,
             temperature=self.settings.llm_temperature,
         )
         self.discover_atomic_inventory = DiscoverAtomicInventoryUseCase(
-            llm_port=self.llm_port,
+            llm_synthesis_port=self.llm_synthesis_port,
             prompt_provider=self.prompt_provider,
             temperature=0.0,
         )
         self.synthesize_atomic_batch = SynthesizeAtomicBatchUseCase(
-            llm_port=self.llm_port,
+            llm_synthesis_port=self.llm_synthesis_port,
             vault_port=self.vault_port,
             batch_size=batch_size,
             prompt_provider=self.prompt_provider,
             temperature=self.settings.llm_temperature,
         )
         self.reconcile_mocs = ReconcileMOCsUseCase(
-            llm_port=self.llm_port,
+            llm_synthesis_port=self.llm_synthesis_port,
             vault_port=self.vault_port,
             prompt_provider=self.prompt_provider,
             temperature=self.settings.llm_temperature,
@@ -202,10 +215,9 @@ class CresmoPipeline:
         and the conceptual indexing LLM port (Ollama/local) so weights are loaded concurrently
         while media ingestion, crawler queries, or file parsing execute.
         """
-        if hasattr(self.indexing_llm_port, "warmup"):
-            self.indexing_llm_port.warmup(timeout_seconds=timeout_seconds)
-        if hasattr(self.llm_port, "warmup") and self.llm_port is not self.indexing_llm_port:
-            self.llm_port.warmup(timeout_seconds=timeout_seconds)
+        self.llm_indexing_port.warmup(timeout_seconds=timeout_seconds)
+        if self.llm_synthesis_port is not self.llm_indexing_port:
+            self.llm_synthesis_port.warmup(timeout_seconds=timeout_seconds)
 
     def _synthesize_transcript(
         self,
@@ -334,7 +346,7 @@ class CresmoPipeline:
             raise CresmoDomainError(f"Ingestion failed to retrieve transcript for: {video_url}")
 
         try:
-            self.index_raw.index_single_transcript(raw)
+            self.index_raw.execute(raw)
         except Exception as exc:  # noqa: BLE001
             import logging
 
@@ -460,7 +472,7 @@ class CresmoPipeline:
             self.vault_port.save_raw_transcript(raw)
 
         try:
-            self.index_raw.index_single_transcript(raw)
+            self.index_raw.execute(raw)
         except Exception as exc:  # noqa: BLE001
             import logging
 

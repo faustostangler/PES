@@ -28,20 +28,29 @@ class ReconcileMOCsUseCase:
 
     def __init__(
         self,
-        llm_port: LLMTransformationPort,
-        vault_port: VaultRepositoryPort,
+        llm_synthesis_port: LLMTransformationPort | None = None,
+        vault_port: VaultRepositoryPort | None = None,
         prompt_provider: PromptProviderPort | None = None,
         temperature: float | None = None,
+        *,
+        llm_port: LLMTransformationPort | None = None,
     ) -> None:
         """Initialize Stage 6 use case with required ports.
 
         Args:
-            llm_port: Hexagonal port for generative LLM inference.
+            llm_synthesis_port: Hexagonal port for generative LLM inference.
             vault_port: Port providing atomic note queries and MOC persistence.
             prompt_provider: Optional provider for decoupled prompt templates.
             temperature: Sampling temperature override for MOC reconciliation.
+            llm_port: Backward-compatible alias for llm_synthesis_port.
         """
-        self.llm_port = llm_port
+        port = llm_synthesis_port or llm_port
+        if port is None:
+            raise ValueError("llm_synthesis_port must be provided")
+        if vault_port is None:
+            raise ValueError("vault_port must be provided")
+        self.llm_synthesis_port = port
+        self.llm_port = port  # Backward compatibility
         self.vault_port = vault_port
         self.temperature = temperature
         if prompt_provider is None:
@@ -71,7 +80,7 @@ class ReconcileMOCsUseCase:
             notes_json=json.dumps(note_summaries, ensure_ascii=False),
         )
 
-        response = self.llm_port.transform(
+        response = self.llm_synthesis_port.transform(
             prompt=prompt,
             temperature=self.temperature,
             trace_id="stage6_mocs_reconciliation",

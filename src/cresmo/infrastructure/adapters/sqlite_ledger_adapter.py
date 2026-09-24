@@ -162,7 +162,7 @@ class SqliteLedgerAdapter(LedgerRepositoryPort):
                     entry.content_id.value,
                     entry.media_url,
                     entry.title,
-                    entry.channel_name,
+                    str(entry.channel_name),
                     entry.status.value,
                     entry.notes_count,
                     entry.error_message,

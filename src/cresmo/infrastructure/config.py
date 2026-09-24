@@ -365,24 +365,43 @@ class CresmoSettings(BaseSettings):
         validation_alias=AliasChoices("language", "CRESMO_LANGUAGE", "DEFAULT_LANGUAGE"),
         description="Target generation language for synthesis, compendiums, and conceptual indexing.",
     )
-    llm_temperature: float = Field(
+    llm_synthesis_temperature: float = Field(
         default=0.2,
         ge=0.0,
         le=2.0,
         validation_alias=AliasChoices(
-            "llm_temperature", "CRESMO_LLM_TEMPERATURE", "LLM_TEMPERATURE"
+            "llm_synthesis_temperature",
+            "llm_temperature",
+            "CRESMO_LLM_SYNTHESIS_TEMPERATURE",
+            "CRESMO_LLM_TEMPERATURE",
+            "LLM_TEMPERATURE",
         ),
         description="Default sampling temperature for generative synthesis and expansion stages.",
     )
-    raw_index_temperature: float = Field(
+    llm_indexing_temperature: float = Field(
         default=0.2,
         ge=0.0,
         le=2.0,
         validation_alias=AliasChoices(
-            "raw_index_temperature", "CRESMO_RAW_INDEX_TEMPERATURE", "RAW_INDEX_TEMPERATURE"
+            "llm_indexing_temperature",
+            "raw_index_temperature",
+            "CRESMO_LLM_INDEXING_TEMPERATURE",
+            "CRESMO_RAW_INDEX_TEMPERATURE",
+            "RAW_INDEX_TEMPERATURE",
         ),
         description="Sampling temperature for raw transcript conceptual indexing.",
     )
+
+    @property
+    def llm_temperature(self) -> float:
+        """Backward-compatible accessor for llm_synthesis_temperature."""
+        return self.llm_synthesis_temperature
+
+    @property
+    def raw_index_temperature(self) -> float:
+        """Backward-compatible accessor for llm_indexing_temperature."""
+        return self.llm_indexing_temperature
+
     raw_index_max_attempts: int = Field(
         default=3,
         ge=0,

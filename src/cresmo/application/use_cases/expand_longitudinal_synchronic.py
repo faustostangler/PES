@@ -35,20 +35,29 @@ class ExpandLongitudinalSynchronicUseCase:
 
     def __init__(
         self,
-        llm_port: LLMTransformationPort,
-        vault_port: VaultRepositoryPort,
+        llm_synthesis_port: LLMTransformationPort | None = None,
+        vault_port: VaultRepositoryPort | None = None,
         prompt_provider: PromptProviderPort | None = None,
         temperature: float | None = None,
+        *,
+        llm_port: LLMTransformationPort | None = None,
     ) -> None:
         """Initialize Stage 3 use case with required Hexagonal ports.
 
         Args:
-            llm_port: Hexagonal port for generative LLM inference.
+            llm_synthesis_port: Hexagonal port for generative LLM inference.
             vault_port: Port providing enriched compendium persistence.
             prompt_provider: Optional provider for decoupled prompt templates.
             temperature: Sampling temperature override for longitudinal/synchronic expansion.
+            llm_port: Backward-compatible alias for llm_synthesis_port.
         """
-        self.llm_port = llm_port
+        port = llm_synthesis_port or llm_port
+        if port is None:
+            raise ValueError("llm_synthesis_port must be provided")
+        if vault_port is None:
+            raise ValueError("vault_port must be provided")
+        self.llm_synthesis_port = port
+        self.llm_port = port  # Backward compatibility
         self.vault_port = vault_port
         self.temperature = temperature
         if prompt_provider is None:
@@ -78,23 +87,23 @@ class ExpandLongitudinalSynchronicUseCase:
             compendium_body=compendium.body,
             complementary_info=compendium.complementary_info,
         )
-        longitudinal_expansion = self.llm_port.transform(
+        longitudinal_expansion = self.llm_synthesis_port.transform(
             prompt=longitudinal_prompt,
             temperature=self.temperature,
             trace_id=f"{compendium.content_id.value}_longitudinal",
             session_id=f"stage3_expansion_{compendium.channel_name}",
-            user_id=compendium.channel_name,
+            user_id=str(compendium.channel_name),
         )
 
         synchronic_prompt = self.prompt_provider.get_wide_expander_prompt(
             current_text=longitudinal_expansion,
         )
-        synchronic_expansion = self.llm_port.transform(
+        synchronic_expansion = self.llm_synthesis_port.transform(
             prompt=synchronic_prompt,
             temperature=self.temperature,
             trace_id=f"{compendium.content_id.value}_synchronic",
             session_id=f"stage3_expansion_{compendium.channel_name}",
-            user_id=compendium.channel_name,
+            user_id=str(compendium.channel_name),
         )
 
         complementary_match = _COMPLEMENTARY_REGEX.search(synchronic_expansion)
@@ -125,6 +134,7 @@ class ExpandLongitudinalSynchronicUseCase:
             channel_id=compendium.channel_id,
             channel_category=compendium.channel_category,
             source_url=compendium.source_url,
+            publication_date=compendium.publication_date,
             video_date=compendium.video_date,
             video_description=compendium.video_description,
         )

@@ -15,6 +15,7 @@ import shutil
 import sqlite3
 import subprocess
 import sys
+import tempfile
 import time
 import urllib.request
 from collections import deque
@@ -136,6 +137,7 @@ DEFAULT_CLIP_FORMAT = (
 
 # --- Network, Jitter & Resilience Defaults ---
 DEFAULT_HTTP_TIMEOUT = 12              # Timeout in seconds for HTTP requests
+DEFAULT_EMBEDDING_HTTP_TIMEOUT = 60    # Timeout in seconds for embedding generation (allows cold-start model load)
 DEFAULT_DB_TIMEOUT = 15.0              # Timeout in seconds for SQLite connections
 DEFAULT_JITTER_MIN_SEC = 1.0           # Minimum random sleep between network calls
 DEFAULT_JITTER_MAX_SEC = 2.5           # Maximum random sleep between network calls
@@ -281,6 +283,11 @@ def resolve_cookies(
     for brw in priority:
         if _extract(brw, require_auth=False):
             return out_path
+
+    if active and _has_auth_cookies(active):
+        if verbose:
+            print(f"[cookies] Browser extraction failed; falling back to existing authenticated cookies: {active}")
+        return active
 
     if verbose:
         print("[cookies] Could not extract cookies from any browser. Continuing unauthenticated.")
@@ -570,7 +577,7 @@ class EmbeddingEngine:
             res = requests.post(
                 f"{self.ollama_url}/api/embeddings",
                 json={"model": self.model_name, "prompt": text},
-                timeout=DEFAULT_HTTP_TIMEOUT,
+                timeout=DEFAULT_EMBEDDING_HTTP_TIMEOUT,
             )
             res.raise_for_status()
             vec = np.array(res.json()["embedding"], dtype=np.float32)
@@ -1096,7 +1103,7 @@ def is_clip_intact(file_path: Path, max_desync_sec: float = 2.0) -> bool:
             "json",
             str(file_path),
         ]
-        res = subprocess.run(cmd, capture_output=True, text=True, timeout=5)
+        res = subprocess.run(cmd, capture_output=True, text=True, timeout=15)
         if res.returncode != 0:
             return False
         data = json.loads(res.stdout)
@@ -1116,164 +1123,144 @@ def is_clip_intact(file_path: Path, max_desync_sec: float = 2.0) -> bool:
             return False
         return True
     except Exception:
+        return False
+
+
+def has_audio_stream(video_path: Path) -> bool:
+    """Check if the media file contains an audio stream."""
+    try:
+        res = subprocess.run(
+            [
+                "ffprobe", "-v", "error",
+                "-select_streams", "a",
+                "-show_entries", "stream=codec_type",
+                "-of", "csv=p=0",
+                str(video_path),
+            ],
+            capture_output=True,
+            text=True,
+            timeout=15,
+        )
+        return "audio" in res.stdout
+    except Exception:
         return True
 
 
-def download_clip_range(
-    video_url: str,
-    video_id: str,
-    channel_id: str,
-    channel_name: str,
-    video_title: str,
-    peak_info: Dict[str, Any],
-    peak_rank: int,
-    output_dir: Path,
-    conn: Optional[sqlite3.Connection] = None,
-    clip_format: str = DEFAULT_CLIP_FORMAT,
-    cookies_file: Optional[Union[str, Path]] = None,
-    max_retries: int = DEFAULT_MAX_DOWNLOAD_RETRIES,
-    video_similarity: Optional[float] = None,
-) -> Optional[Path]:
+def merge_and_slowdown_clips(
+    clip_paths: List[Path],
+    output_path: Path,
+    speed_factor: float = 0.5,
+) -> bool:
     """
-    Download exact time slice using HTTP range requests via yt-dlp & ffmpeg.
-    Saves the file and persists all audit metadata directly in SQLite.
-    The output filename includes the actual downloaded resolution (e.g. _1080p, _2160p).
-    Includes automatic retry loop and stream reconnection against transient CDN timeouts.
+    Concatenate video clips and re-compile at 50% speed (2x duration).
+    Uses NVENC (NVIDIA GPU CUDA) if available, falling back to libx264.
+    Cleans up any temporary concat list or intermediate files.
     """
-    output_dir.mkdir(parents=True, exist_ok=True)
-    safe_ch_id = re.sub(r"[^A-Za-z0-9_-]", "", channel_id) or "channel"
-    clip_id = f"{safe_ch_id}_{video_id}_peak_{peak_rank}"
+    if not clip_paths:
+        return False
 
-    # Build channel directory: output_dir / channel_name
-    safe_channel = sanitize_folder_name(channel_name or safe_ch_id)
-    safe_video = sanitize_folder_name(video_title or video_id, max_length=160)
-    channel_dir = output_dir / safe_channel
-    channel_dir.mkdir(parents=True, exist_ok=True)
+    valid_clips = [c for c in clip_paths if c.exists() and c.stat().st_size > 0]
+    if not valid_clips:
+        return False
 
-    # File prefix: video_title_clip_{peak_rank}
-    clip_prefix = f"{safe_video}_clip_{peak_rank}"
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    pts_factor = round(1.0 / speed_factor, 4)
+    atempo = round(speed_factor, 4)
+    has_audio = has_audio_stream(valid_clips[0])
 
-    # Preemptive disk space check (fail-fast against ENOSPC / ffmpeg error 228)
+    with tempfile.NamedTemporaryFile("w", suffix=".txt", delete=False) as f:
+        for c in valid_clips:
+            esc = str(c.resolve()).replace("'", "'\\''")
+            f.write(f"file '{esc}'\n")
+        concat_file = Path(f.name)
+
+    # Encode to local temp file first to avoid network latency and corruption on network/SMB shares
+    local_temp = Path(tempfile.gettempdir()) / f"merged_{output_path.name}"
+    if local_temp.exists():
+        try:
+            local_temp.unlink()
+        except Exception:
+            pass
+
+    if has_audio:
+        filter_complex = f"[0:v]setpts={pts_factor}*PTS[v];[0:a]atempo={atempo}[a]"
+        map_args = ["-map", "[v]", "-map", "[a]"]
+    else:
+        filter_complex = f"[0:v]setpts={pts_factor}*PTS[v]"
+        map_args = ["-map", "[v]"]
+
+    # Attempt 1: NVIDIA NVENC Hardware Accelerated (CUDA)
+    cmd_nvenc = [
+        "ffmpeg", "-y",
+        "-hwaccel", "cuda",
+        "-f", "concat", "-safe", "0", "-i", str(concat_file),
+        "-filter_complex", filter_complex,
+        *map_args,
+        "-c:v", "h264_nvenc", "-preset", "p1", "-cq", "21", "-pix_fmt", "yuv420p",
+    ]
+    if has_audio:
+        cmd_nvenc.extend(["-c:a", "aac", "-b:a", "192k"])
+    cmd_nvenc.append(str(local_temp))
+
+    success = False
     try:
-        free_bytes = shutil.disk_usage(output_dir).free
-        min_free_bytes = 500 * 1024 * 1024  # 500 MB minimum safety buffer
-        if free_bytes < min_free_bytes:
-            print(f"         [!] DISK FULL: Only {free_bytes / (1024**2):.1f} MB free on {output_dir.resolve()}. Aborting download to prevent corruption.")
-            return None
-    except Exception:
-        pass
+        r = subprocess.run(cmd_nvenc, capture_output=True, text=True, timeout=1800)
+        if r.returncode == 0 and local_temp.exists() and local_temp.stat().st_size > 0:
+            success = True
+        else:
+            # Fallback Attempt 2: CPU libx264
+            cmd_cpu = [
+                "ffmpeg", "-y",
+                "-f", "concat", "-safe", "0", "-i", str(concat_file),
+                "-filter_complex", filter_complex,
+                *map_args,
+                "-c:v", "libx264", "-preset", "veryfast", "-crf", "21", "-pix_fmt", "yuv420p",
+            ]
+            if has_audio:
+                cmd_cpu.extend(["-c:a", "aac", "-b:a", "192k"])
+            cmd_cpu.append(str(local_temp))
+            r2 = subprocess.run(cmd_cpu, capture_output=True, text=True, timeout=3600)
+            if r2.returncode == 0 and local_temp.exists() and local_temp.stat().st_size > 0:
+                success = True
+    except Exception as e:
+        print(f"         [!] Error merging clips: {e}")
+    finally:
+        concat_file.unlink(missing_ok=True)
 
+    if success and local_temp.exists() and is_clip_intact(local_temp):
+        try:
+            shutil.move(str(local_temp), str(output_path))
+            return True
+        except Exception as e:
+            print(f"         [!] Error moving {local_temp} -> {output_path}: {e}")
+            return False
+    else:
+        if local_temp.exists():
+            local_temp.unlink(missing_ok=True)
+        return False
+
+
+def download_single_peak_temp(
+    video_url: str,
+    peak_info: Dict[str, Any],
+    temp_dir: Path,
+    peak_idx: int,
+    clip_format: str = DEFAULT_CLIP_FORMAT,
+    cookie_path: Optional[Union[str, Path]] = None,
+    max_retries: int = DEFAULT_MAX_DOWNLOAD_RETRIES,
+) -> Tuple[Optional[Path], Optional[int]]:
+    """
+    Download a single heatmap peak time slice into a temporary folder.
+    Returns (clip_path, resolution_height).
+    """
     start_sec = float(peak_info["start_time"])
     end_sec = float(peak_info["end_time"])
-    duration = float(peak_info.get("duration", end_sec - start_sec))
-
-    # Calculate Global Rank Index: GRI = Prominence * Z-Score * Similarity
-    sim = float(video_similarity if video_similarity is not None else peak_info.get("similarity", 1.0))
-    prom = float(peak_info.get("prominence", 0.0))
-    z_sc = float(peak_info.get("z_score", 0.0))
-    gri = round(prom * max(0.0, z_sc) * max(0.1, sim), 4)
-    peak_info["global_rank_index"] = gri
-
-    # Fast-check: look for any resolution variant already on disk in channel folder
-    existing: Optional[Path] = next(channel_dir.glob(f"{clip_prefix}_*p.*"), None)
-    if existing is None:
-        for ext in (".mp4", ".mkv", ".webm"):
-            cand = channel_dir / f"{clip_prefix}{ext}"
-            if cand.exists():
-                existing = cand
-                break
-
-    # Fallback check 1: look inside legacy nested video subfolder and migrate if intact
-    if existing is None:
-        nested_dir = channel_dir / safe_video
-        if nested_dir.exists() and nested_dir.is_dir():
-            nested_cand = next(nested_dir.glob(f"clip_{peak_rank}_*p.*"), None)
-            if nested_cand is None:
-                for ext in (".mp4", ".mkv", ".webm"):
-                    cand = nested_dir / f"clip_{peak_rank}{ext}"
-                    if cand.exists():
-                        nested_cand = cand
-                        break
-            if nested_cand is not None and nested_cand.stat().st_size > 0 and is_clip_intact(nested_cand):
-                m_res = re.search(r"(_\d+p)?(\.\w+)$", nested_cand.name)
-                res_ext = m_res.group(0) if m_res else nested_cand.suffix
-                new_target = channel_dir / f"{clip_prefix}{res_ext}"
-                try:
-                    nested_cand.rename(new_target)
-                    existing = new_target
-                    print(f"         [i] Migrated nested clip to channel folder: {new_target.name}")
-                    if not any(nested_dir.iterdir()):
-                        nested_dir.rmdir()
-                except Exception:
-                    existing = nested_cand
-
-    # Fallback check 2: look for legacy flat naming in output_dir and migrate if intact
-    if existing is None:
-        legacy_cand: Optional[Path] = next(output_dir.glob(f"{clip_id}_*p.*"), None)
-        if legacy_cand is None:
-            for ext in (".mp4", ".mkv", ".webm"):
-                cand = output_dir / f"{clip_id}{ext}"
-                if cand.exists():
-                    legacy_cand = cand
-                    break
-        if legacy_cand is not None and legacy_cand.stat().st_size > 0 and is_clip_intact(legacy_cand):
-            m_res = re.search(r"(_\d+p)?(\.\w+)$", legacy_cand.name)
-            res_ext = m_res.group(0) if m_res else legacy_cand.suffix
-            new_target = channel_dir / f"{clip_prefix}{res_ext}"
-            try:
-                legacy_cand.rename(new_target)
-                existing = new_target
-                print(f"         [i] Migrated flat clip to channel folder: {new_target.name}")
-            except Exception:
-                existing = legacy_cand
-
-    if existing is not None and existing.stat().st_size > 0:
-        if is_clip_intact(existing):
-            print(f"         [i] Clip already exists on disk and is complete ({existing.name}). Skipping download.")
-            if conn:
-                record_clip(
-                    conn=conn,
-                    clip_id=clip_id,
-                    video_id=video_id,
-                    channel_id=channel_id,
-                    channel_name=channel_name,
-                    video_title=video_title,
-                    source_url=video_url,
-                    timestamp_link=f"{video_url}&t={int(start_sec)}s",
-                    peak_rank=peak_rank,
-                    peak_index=int(peak_info.get("peak_index", 0)),
-                    start_time=start_sec,
-                    end_time=end_sec,
-                    clip_duration=round(duration, 2),
-                    original_start_time=float(peak_info.get("original_start", start_sec)),
-                    original_end_time=float(peak_info.get("original_end", end_sec)),
-                    score=round(float(peak_info["score"]), 4),
-                    prominence=round(float(peak_info["prominence"]), 4),
-                    z_score=round(float(peak_info["z_score"]), 4),
-                    global_rank_index=gri,
-                    file_path=str(existing),
-                )
-            return existing
-        else:
-            print(f"         [!] Existing clip {existing.name} is truncated/corrupt (premature EOF). Purging and re-harvesting clean stream copy...")
-            try:
-                existing.unlink(missing_ok=True)
-            except Exception:
-                pass
-
-    # Resolve cookie authentication
-    cookie_path = cookies_file or (Path(peak_info["_cookiefile"]) if "_cookiefile" in peak_info else None)
-    if cookie_path is None:
-        cookie_path = resolve_cookies(verbose=False)
-
-    out_path: Optional[Path] = None
+    prefix = f"peak_{peak_idx}"
 
     for attempt in range(1, max_retries + 1):
-        # Capture the actual height and output file chosen by yt-dlp via progress hook
         _captured: Dict[str, Any] = {"height": None, "filename": None}
 
         def _capture_resolution(d: Dict[str, Any]) -> None:
-            """Store the resolved video height and output filename when download finishes."""
             if d.get("status") == "finished":
                 h = d.get("height") or d.get("info_dict", {}).get("height")
                 if h:
@@ -1286,7 +1273,7 @@ def download_clip_range(
             "format": clip_format,
             "download_ranges": download_range_func(None, [(start_sec, end_sec)]),
             "force_keyframes_at_cuts": False,
-            "outtmpl": str(channel_dir / f"{clip_prefix}.%(ext)s"),
+            "outtmpl": str(temp_dir / f"{prefix}.%(ext)s"),
             "overwrites": True,
             "quiet": True,
             "no_warnings": True,
@@ -1305,93 +1292,178 @@ def download_clip_range(
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                 ydl.download([video_url])
 
-            # Resolve downloaded file
             downloaded = _captured.get("filename")
             if downloaded is None or not downloaded.exists():
                 for ext in (".mp4", ".mkv", ".webm"):
-                    cand = channel_dir / f"{clip_prefix}{ext}"
+                    cand = temp_dir / f"{prefix}{ext}"
                     if cand.exists():
                         downloaded = cand
                         break
 
-            height = _captured.get("height")
-            if downloaded and downloaded.exists():
-                if height:
-                    target_path = channel_dir / f"{clip_prefix}_{height}p{downloaded.suffix}"
-                    if downloaded != target_path:
-                        downloaded.rename(target_path)
-                        candidate_out = target_path
-                    else:
-                        candidate_out = downloaded
-                else:
-                    candidate_out = downloaded
+            if downloaded and downloaded.exists() and is_clip_intact(downloaded):
+                return downloaded, _captured.get("height")
             else:
-                candidate_out = channel_dir / f"{clip_prefix}.mp4"
-
-            # Strict self-healing integrity validation
-            if candidate_out.exists() and is_clip_intact(candidate_out):
-                out_path = candidate_out
-                break
-            else:
-                c_name = candidate_out.name if candidate_out.exists() else clip_prefix
-                print(f"         [!] Clip {c_name} was truncated or desynced on attempt {attempt}/{max_retries}.")
-                if candidate_out.exists():
-                    try:
-                        candidate_out.unlink(missing_ok=True)
-                    except Exception:
-                        pass
+                if downloaded and downloaded.exists():
+                    downloaded.unlink(missing_ok=True)
                 if attempt < max_retries:
-                    retry_wait = random.uniform(DEFAULT_JITTER_MIN_SEC, DEFAULT_JITTER_MAX_SEC) * attempt
-                    print(f"         [i] Retrying stream copy in {retry_wait:.1f}s...")
-                    time.sleep(retry_wait)
-
-        except Exception as e:
-            print(f"         [!] Error harvesting clip {clip_prefix} on attempt {attempt}/{max_retries}: {e}")
-            # Clean up partial download artifacts to reclaim disk space
-            for part in channel_dir.glob(f"{clip_prefix}*.part"):
-                try:
-                    part.unlink(missing_ok=True)
-                except Exception:
-                    pass
+                    time.sleep(random.uniform(1.5, 3.0) * attempt)
+        except Exception:
             if attempt < max_retries:
                 time.sleep(random.uniform(1.5, 3.0))
 
-    if out_path is None or not out_path.exists() or not is_clip_intact(out_path):
-        # Purge any dead .part files left over from failed attempts
-        for part in channel_dir.glob(f"{clip_prefix}*.part"):
-            try:
-                part.unlink(missing_ok=True)
-            except Exception:
-                pass
-        print(f"         [!] Failed to harvest an intact clip for {clip_prefix} after {max_retries} attempts.")
-        return None
+    return None, None
 
-    # Record all metadata in SQLite (Single Source of Truth in SQL) only when clip is 100% intact
-    if conn:
-        record_clip(
-            conn=conn,
-            clip_id=clip_id,
-            video_id=video_id,
-            channel_id=channel_id,
-            channel_name=channel_name,
-            video_title=video_title,
-            source_url=video_url,
-            timestamp_link=f"{video_url}&t={int(start_sec)}s",
-            peak_rank=peak_rank,
-            peak_index=int(peak_info.get("peak_index", 0)),
-            start_time=start_sec,
-            end_time=end_sec,
-            clip_duration=round(duration, 2),
-            original_start_time=float(peak_info.get("original_start", start_sec)),
-            original_end_time=float(peak_info.get("original_end", end_sec)),
-            score=round(float(peak_info["score"]), 4),
-            prominence=round(float(peak_info["prominence"]), 4),
-            z_score=round(float(peak_info["z_score"]), 4),
-            global_rank_index=gri,
-            file_path=str(out_path),
-        )
 
-    return out_path
+def harvest_video_merged(
+    video_url: str,
+    video_id: str,
+    channel_id: str,
+    channel_name: str,
+    video_title: str,
+    peaks: List[Dict[str, Any]],
+    output_dir: Path,
+    conn: Optional[sqlite3.Connection] = None,
+    clip_format: str = DEFAULT_CLIP_FORMAT,
+    cookies_file: Optional[Union[str, Path]] = None,
+    video_similarity: Optional[float] = None,
+) -> Optional[Path]:
+    """
+    Harvest all heatmap peaks for a video, download into temporary scratch space,
+    concatenate in chronological order at 50% speed (2x duration), and save exclusively
+    as a single merged video: channel_dir / f"{safe_video}_{resolution}p.mp4".
+    No individual clips are left on disk.
+    Persists clip audit metadata in SQLite with file_path pointing to the merged video.
+    """
+    output_dir.mkdir(parents=True, exist_ok=True)
+    safe_ch_id = re.sub(r"[^A-Za-z0-9_-]", "", channel_id) or "channel"
+    safe_channel = sanitize_folder_name(channel_name or safe_ch_id)
+    safe_video = sanitize_folder_name(video_title or video_id, max_length=160)
+    channel_dir = output_dir / safe_channel
+    channel_dir.mkdir(parents=True, exist_ok=True)
+
+    # Check if merged video already exists on disk
+    existing: Optional[Path] = next(channel_dir.glob(f"{safe_video}_*p.mp4"), None)
+    if existing is None:
+        cand = channel_dir / f"{safe_video}.mp4"
+        if cand.exists():
+            existing = cand
+
+    if existing is not None and existing.stat().st_size > 0 and is_clip_intact(existing):
+        print(f"         [i] Merged video already exists: {existing.name}")
+        return existing
+
+    cookie_path = cookies_file or resolve_cookies(verbose=False)
+    sim = float(video_similarity if video_similarity is not None else 1.0)
+
+    # Sort peaks chronologically for coherent narrative playback
+    sorted_peaks = sorted(peaks, key=lambda p: float(p.get("start_time", 0.0)))
+
+    temp_dir_obj = tempfile.TemporaryDirectory(prefix=f"harvest_{video_id}_")
+    temp_dir = Path(temp_dir_obj.name)
+
+    downloaded_clips: List[Tuple[Dict[str, Any], int, Path, Optional[int]]] = []
+    max_height: Optional[int] = None
+
+    try:
+        for p_idx, peak in enumerate(sorted_peaks, start=1):
+            gri = round(float(peak.get("prominence", 0.0)) * max(0.0, float(peak.get("z_score", 0.0))) * max(0.1, sim), 4)
+            peak["global_rank_index"] = gri
+            print(f"         -> Downloading Peak #{p_idx}/{len(sorted_peaks)}: {peak['start_time']:.1f}s to {peak['end_time']:.1f}s (Prom: {peak.get('prominence', 0):.2f}, GRI: {gri:.3f})")
+            clip_path, h = download_single_peak_temp(
+                video_url=video_url,
+                peak_info=peak,
+                temp_dir=temp_dir,
+                peak_idx=p_idx,
+                clip_format=clip_format,
+                cookie_path=cookie_path,
+            )
+            if clip_path and is_clip_intact(clip_path):
+                downloaded_clips.append((peak, p_idx, clip_path, h))
+                if h and (max_height is None or h > max_height):
+                    max_height = h
+            else:
+                print(f"         [!] Could not harvest peak #{p_idx}, skipping this segment...")
+
+        if not downloaded_clips:
+            print(f"         [!] No clips successfully harvested for {video_id}.")
+            return None
+
+        # Determine target merged filename
+        res_suffix = f"_{max_height}p" if max_height else ""
+        target_path = channel_dir / f"{safe_video}{res_suffix}.mp4"
+
+        print(f"         [*] Compiling & slowing down {len(downloaded_clips)} clips into merged video: {target_path.name} (50% speed / 2x duration)...")
+        clip_paths_only = [item[2] for item in downloaded_clips]
+        ok = merge_and_slowdown_clips(clip_paths_only, target_path, speed_factor=0.5)
+        if not ok or not target_path.exists() or not is_clip_intact(target_path):
+            print(f"         [!] Failed to compile merged video for {video_id}.")
+            return None
+
+        # Persist all individual clip metadata in SQLite (Single Source of Truth) pointing to merged video
+        if conn:
+            for peak, rank, _, _ in downloaded_clips:
+                clip_id = f"{safe_ch_id}_{video_id}_peak_{rank}"
+                start_sec = float(peak["start_time"])
+                end_sec = float(peak["end_time"])
+                duration = float(peak.get("duration", end_sec - start_sec))
+                record_clip(
+                    conn=conn,
+                    clip_id=clip_id,
+                    video_id=video_id,
+                    channel_id=channel_id,
+                    channel_name=channel_name,
+                    video_title=video_title,
+                    source_url=video_url,
+                    timestamp_link=f"{video_url}&t={int(start_sec)}s",
+                    peak_rank=rank,
+                    peak_index=int(peak.get("peak_index", 0)),
+                    start_time=start_sec,
+                    end_time=end_sec,
+                    clip_duration=round(duration, 2),
+                    original_start_time=float(peak.get("original_start", start_sec)),
+                    original_end_time=float(peak.get("original_end", end_sec)),
+                    score=round(float(peak["score"]), 4),
+                    prominence=round(float(peak["prominence"]), 4),
+                    z_score=round(float(peak["z_score"]), 4),
+                    global_rank_index=float(peak.get("global_rank_index", 0.0)),
+                    file_path=str(target_path),
+                )
+
+        return target_path
+    finally:
+        # Guarantee all temporary individual clips are cleaned up and never left on disk
+        temp_dir_obj.cleanup()
+
+
+def download_clip_range(
+    video_url: str,
+    video_id: str,
+    channel_id: str,
+    channel_name: str,
+    video_title: str,
+    peak_info: Dict[str, Any],
+    peak_rank: int,
+    output_dir: Path,
+    conn: Optional[sqlite3.Connection] = None,
+    clip_format: str = DEFAULT_CLIP_FORMAT,
+    cookies_file: Optional[Union[str, Path]] = None,
+    max_retries: int = DEFAULT_MAX_DOWNLOAD_RETRIES,
+    video_similarity: Optional[float] = None,
+) -> Optional[Path]:
+    """Backward compatibility alias: delegates to harvest_video_merged for single clip."""
+    return harvest_video_merged(
+        video_url=video_url,
+        video_id=video_id,
+        channel_id=channel_id,
+        channel_name=channel_name,
+        video_title=video_title,
+        peaks=[peak_info],
+        output_dir=output_dir,
+        conn=conn,
+        clip_format=clip_format,
+        cookies_file=cookies_file,
+        video_similarity=video_similarity,
+    )
 
 
 # ==============================================================================
@@ -1494,6 +1566,7 @@ def run_harvest_pipeline(
 
     seed_embeddings: List[np.ndarray] = []
     seed_entries: List[Dict[str, Any]] = []
+    seed_errors: List[str] = []
 
     for s_url in seed_urls_list:
         try:
@@ -1528,10 +1601,12 @@ def run_harvest_pipeline(
             # Register seed channel as approved with similarity 1.0
             record_channel(conn, s_channel_url, s_channel_id, s_channel_name, "approved", 1.0, similarity=1.0)
         except Exception as e:
+            seed_errors.append(f"{s_url} -> {type(e).__name__}: {e}")
             print(f"  [!] Failed to extract seed {s_url}: {e}")
 
     if not seed_embeddings:
-        raise RuntimeError("No valid seed videos could be fetched or embedded. Aborting pipeline.")
+        err_details = "\n    - " + "\n    - ".join(seed_errors) if seed_errors else "Empty seed list."
+        raise RuntimeError(f"No valid seed videos could be fetched or embedded. Aborting pipeline.\nDetailed causes:{err_details}")
 
     # Calculate Seed Centroid (mean of all normalized seed embeddings)
     seed_centroid = np.mean(seed_embeddings, axis=0)
@@ -1737,35 +1812,30 @@ def run_harvest_pipeline(
                 )
                 if peaks:
                     print(f"     [+] Heatmap detected ({len(heatmap)} points). Found {len(peaks)} hot peak(s):")
-                    for p_idx, peak in enumerate(peaks, start=1):
-                        gri_preview = round(float(peak.get("prominence", 0.0)) * max(0.0, float(peak.get("z_score", 0.0))) * max(0.1, v_sim), 3)
-                        print(f"         -> Downloading Peak #{p_idx}: {peak['start_time']:.1f}s to {peak['end_time']:.1f}s (Score: {peak['score']:.2f}, Prom: {peak['prominence']:.2f}, GRI: {gri_preview:.3f})")
-                        # Carry cookie path into download_clip_range via peak_info sidecar key
-                        if active_cookies:
-                            peak["_cookiefile"] = str(active_cookies)
-                        clip_path = download_clip_range(
-                            video_url=v_url,
-                            video_id=v_id,
-                            channel_id=v_ch_id or v_ch_name,
-                            channel_name=v_ch_name,
-                            video_title=v_title,
-                            peak_info=peak,
-                            peak_rank=p_idx,
-                            output_dir=output_dir,
-                            conn=conn,
-                            clip_format=clip_format,
-                            cookies_file=active_cookies,
-                            video_similarity=v_sim,
-                        )
-                        if clip_path:
-                            total_clips_harvested += 1
-                            gri_val = peak.get("global_rank_index", gri_preview)
-                            try:
-                                rel_display = clip_path.relative_to(output_dir)
-                            except Exception:
-                                rel_display = clip_path.name
-                            print(f"         [✓] Harvested: {rel_display} (GRI: {gri_val:.3f} | Total: {total_clips_harvested})")
-                    record_video(conn, v_id, v_ch_url, v_title, "processed", True, similarity=v_sim)
+                    merged_video_path = harvest_video_merged(
+                        video_url=v_url,
+                        video_id=v_id,
+                        channel_id=v_ch_id or v_ch_name,
+                        channel_name=v_ch_name,
+                        video_title=v_title,
+                        peaks=peaks,
+                        output_dir=output_dir,
+                        conn=conn,
+                        clip_format=clip_format,
+                        cookies_file=active_cookies,
+                        video_similarity=v_sim,
+                    )
+                    if merged_video_path:
+                        total_clips_harvested += len(peaks)
+                        try:
+                            rel_display = merged_video_path.relative_to(output_dir)
+                        except Exception:
+                            rel_display = merged_video_path.name
+                        print(f"         [✓] Harvested & merged {len(peaks)} clips into: {rel_display} (2x duration / 50% speed | Total clips: {total_clips_harvested})")
+                        record_video(conn, v_id, v_ch_url, v_title, "processed", True, similarity=v_sim)
+                    else:
+                        print(f"         [!] Failed to harvest and merge video {v_id}")
+                        record_video(conn, v_id, v_ch_url, v_title, "error_harvesting", False, similarity=v_sim)
                 else:
                     print("     [-] Heatmap present but no peaks met height/prominence criteria.")
                     record_video(conn, v_id, v_ch_url, v_title, "processed_no_peaks", True, similarity=v_sim)

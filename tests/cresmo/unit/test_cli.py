@@ -1323,7 +1323,7 @@ class TestCresmoCLI:
 
     def test_cli_concat_master_specific_channel(self) -> None:
         mock_uc = MagicMock()
-        mock_uc.execute_for_channel.return_value = [
+        mock_uc.execute.return_value = [
             MagicMock(
                 channel_name="Fabio Akita",
                 channel_category="tech_ai",
@@ -1339,9 +1339,7 @@ class TestCresmoCLI:
         ):
             code = main(["concat-master", "--channel", "Fabio Akita", "--max-words", "300000"])
             assert code == EXIT_SUCCESS
-            mock_uc.execute_for_channel.assert_called_once_with(
-                channel_name="Fabio Akita", max_words=300000
-            )
+            mock_uc.execute.assert_called_once_with(channel_name="Fabio Akita", max_words=300000)
 
     def test_cli_concat_master_error_handling(self) -> None:
         with patch(

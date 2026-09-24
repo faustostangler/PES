@@ -36,20 +36,29 @@ class FillGapsFluidProseUseCase:
 
     def __init__(
         self,
-        llm_port: LLMTransformationPort,
-        vault_port: VaultRepositoryPort,
+        llm_synthesis_port: LLMTransformationPort | None = None,
+        vault_port: VaultRepositoryPort | None = None,
         prompt_provider: PromptProviderPort | None = None,
         temperature: float | None = None,
+        *,
+        llm_port: LLMTransformationPort | None = None,
     ) -> None:
         """Initialize Stage 2 use case with required ports.
 
         Args:
-            llm_port: Hexagonal port for generative text transformations.
+            llm_synthesis_port: Hexagonal port for generative text transformations.
             vault_port: Port providing enriched compendium persistence.
             prompt_provider: Optional provider for decoupled prompt templates.
             temperature: Sampling temperature override for fluid prose generation.
+            llm_port: Backward-compatible alias for llm_synthesis_port.
         """
-        self.llm_port = llm_port
+        port = llm_synthesis_port or llm_port
+        if port is None:
+            raise ValueError("llm_synthesis_port must be provided")
+        if vault_port is None:
+            raise ValueError("vault_port must be provided")
+        self.llm_synthesis_port = port
+        self.llm_port = port  # Backward compatibility
         self.vault_port = vault_port
         self.temperature = temperature
         if prompt_provider is None:
@@ -89,12 +98,12 @@ class FillGapsFluidProseUseCase:
                 raw_text=raw_transcript.body,
                 current_text=current_text if pass_index > 0 else None,
             )
-            current_text = self.llm_port.transform(
+            current_text = self.llm_synthesis_port.transform(
                 prompt=prompt,
                 temperature=self.temperature,
                 trace_id=f"{raw_transcript.content_id.value}_gap_fill_pass_{pass_index + 1}",
                 session_id=f"stage2_fluid_prose_{raw_transcript.channel_name}",
-                user_id=raw_transcript.channel_name,
+                user_id=str(raw_transcript.channel_name),
             )
 
         # Extract title from H1 or fallback to raw title
@@ -123,9 +132,8 @@ class FillGapsFluidProseUseCase:
                 "EnrichedCompendium must contain a non-empty 'Informações Complementares' section."
             )
 
-        video_date = (
-            raw_transcript.upload_date.strftime("%Y%m%d") if raw_transcript.upload_date else ""
-        )
+        pub_date = raw_transcript.publication_date
+        video_date = pub_date.strftime("%Y%m%d") if pub_date else ""
         compendium = EnrichedCompendium(
             content_id=raw_transcript.content_id,
             channel_name=raw_transcript.channel_name,
@@ -136,6 +144,7 @@ class FillGapsFluidProseUseCase:
             channel_id=raw_transcript.channel_id,
             channel_category=raw_transcript.channel_category,
             source_url=raw_transcript.source_url,
+            publication_date=pub_date,
             video_date=video_date,
             video_description=raw_transcript.video_description,
         )

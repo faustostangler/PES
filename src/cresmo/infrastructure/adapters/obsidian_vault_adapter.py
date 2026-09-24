@@ -33,6 +33,7 @@ from cresmo.domain.entities import (
 from cresmo.domain.exceptions import NoteTypologyError
 from cresmo.domain.value_objects import (
     CausalMatrix,
+    ChannelName,
     ContentId,
     CrossContextRelations,
     NoteTitle,
@@ -44,28 +45,28 @@ _ILLEGAL_FILENAME_CHARS = re.compile(r'[\\/*?:"<>|%]')
 _FRONTMATTER_PATTERN = re.compile(r"^---\s*\n([\s\S]*?)\n---\s*\n([\s\S]*)$")
 
 
-def sanitize_filename(name: str) -> str:
+def sanitize_filename(name: str | ChannelName) -> str:
     """Sanitize note title for safe filesystem path representation.
 
     Args:
-        name: Raw string candidate for a filename.
+        name: Raw string candidate or ChannelName for a filename.
 
     Returns:
         Filesystem-safe string with illegal characters replaced by underscores.
     """
-    return _ILLEGAL_FILENAME_CHARS.sub("_", name.strip())
+    return _ILLEGAL_FILENAME_CHARS.sub("_", str(name).strip())
 
 
-def channel_to_slug(name: str) -> str:
+def channel_to_slug(name: str | ChannelName) -> str:
     """Convert channel name to safe slug with underscores instead of whitespace.
 
     Args:
-        name: Channel title or category name.
+        name: Channel title, ChannelName, or category name.
 
     Returns:
         Clean slug safe for folder naming.
     """
-    clean = re.sub(r"\s+", "_", name.strip())
+    clean = re.sub(r"\s+", "_", str(name).strip())
     return _ILLEGAL_FILENAME_CHARS.sub("_", clean)
 
 
@@ -149,7 +150,7 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
             else (transcript.title or transcript.content_id.value)
         )
         escaped_title = raw_title.replace('"', '\\"')
-        escaped_channel = transcript.channel_name.replace('"', '\\"')
+        escaped_channel = str(transcript.channel_name).replace('"', '\\"')
         escaped_category = (transcript.channel_category or "uncategorized").replace('"', '\\"')
         channel_id_val = transcript.channel_id or "unknown_channel"
 
@@ -224,7 +225,7 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
         desc = compendium.video_description or ""
         desc_indented = "\n".join("  " + l for l in desc.splitlines())
         escaped_title = compendium.title.value.replace('"', '\\"')
-        escaped_channel = compendium.channel_name.replace('"', '\\"')
+        escaped_channel = str(compendium.channel_name).replace('"', '\\"')
         escaped_category = (compendium.channel_category or "uncategorized").replace('"', '\\"')
         channel_id_val = compendium.channel_id or "unknown_channel"
 
@@ -595,7 +596,7 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
 
         return updated_count
 
-    def get_enriched_files_for_channel(self, channel_name: str) -> list[Path]:
+    def get_enriched_files_for_channel(self, channel_name: ChannelName | str) -> list[Path]:
         """Retrieve sorted list of all enriched markdown file paths for a given channel."""
         ch_dir = self.enriched_dir / sanitize_filename(channel_name)
         if not ch_dir.exists() or not ch_dir.is_dir():
@@ -606,7 +607,7 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
 
     def save_master_document(
         self,
-        channel_name: str,
+        channel_name: ChannelName | str,
         channel_category: str,
         part_number: int,
         content: str,
@@ -622,7 +623,7 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
 
     def clear_master_documents_for_channel(
         self,
-        channel_name: str,
+        channel_name: ChannelName | str,
         channel_category: str,
     ) -> None:
         """Delete previous master parts for channel before writing fresh sequential parts."""
@@ -635,12 +636,12 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
             if p.is_file():
                 p.unlink(missing_ok=True)
 
-    def get_channel_index_path(self, channel_name: str) -> Path:
+    def get_channel_index_path(self, channel_name: ChannelName | str) -> Path:
         """Return absolute path to channel's _index_{channel_name}.md."""
         clean_channel = sanitize_filename(channel_name)
         return self.raw_dir / f"_index_{clean_channel}.md"
 
-    def get_indexed_video_ids_for_channel(self, channel_name: str) -> set[str]:
+    def get_indexed_video_ids_for_channel(self, channel_name: ChannelName | str) -> set[str]:
         """Retrieve set of video IDs already indexed in the channel's _index_{channel_name}.md."""
         index_file = self.get_channel_index_path(channel_name)
         if not index_file.exists() or not index_file.is_file():
@@ -657,7 +658,9 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
             ids.add(match.group(1))
         return ids
 
-    def append_channel_index_entry(self, channel_name: str, entry: RawIndexEntry) -> None:
+    def append_channel_index_entry(
+        self, channel_name: ChannelName | str, entry: RawIndexEntry
+    ) -> None:
         """Append raw index entry to data/raw/<channel_name>/_canal.md atomically."""
         index_file = self.get_channel_index_path(channel_name)
         index_file.parent.mkdir(parents=True, exist_ok=True)

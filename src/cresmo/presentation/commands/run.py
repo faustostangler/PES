@@ -208,7 +208,7 @@ def execute_single_video_run(pipeline: CresmoPipeline, args: argparse.Namespace)
         try:
             raw = pipeline.vault_port.get_raw_transcript(result.content_id)
             if raw and raw.channel_name:
-                pipeline.concat_master.execute_for_channel(raw.channel_name)
+                pipeline.concat_master.execute(raw.channel_name)
         except Exception as exc:  # noqa: BLE001
             sys.stderr.write(f"Warning: Master consolidation failed: {exc}\n")
 
@@ -478,6 +478,7 @@ def handle_run(args: argparse.Namespace) -> int:
                 return EXIT_SUCCESS
             return execute_batch_dry_run(pipeline, sources)
 
+        # Generator que é o resultado do método execute do discovery_use_case, objeto da classe DiscoverBatchSourcesUseCase
         sources = load_batch_sources(
             query=query,
             settings=settings,

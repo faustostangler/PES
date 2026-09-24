@@ -55,6 +55,7 @@ class TestCompositionRoot:
         assert isinstance(pipeline, CresmoPipeline)
         assert isinstance(pipeline.media_ingestion_port, NativeMediaIngestionAdapter)
         assert isinstance(pipeline.llm_port, GeminiLLMAdapter)
+        assert isinstance(pipeline.llm_synthesis_port, GeminiLLMAdapter)
         assert isinstance(pipeline.vault_port, ObsidianVaultAdapter)
         assert isinstance(pipeline.ledger_port, SqliteLedgerAdapter)
         assert pipeline.synthesize_atomic_batch.batch_size == 7
@@ -205,15 +206,20 @@ class TestCompositionRoot:
         uc = build_index_raw_use_case(settings=test_settings, web_index=False)
         assert isinstance(uc, IndexRawTranscriptsUseCase)
         assert isinstance(uc.llm, OllamaLLMAdapter)
+        assert isinstance(uc.llm_indexing_port, OllamaLLMAdapter)
         assert isinstance(uc.vault_repo, ObsidianVaultAdapter)
+        assert isinstance(uc.vault_port, ObsidianVaultAdapter)
 
     def test_build_index_raw_use_case_web_index_gemini(self, test_settings: CresmoSettings) -> None:
         uc = build_index_raw_use_case(settings=test_settings, web_index=True)
         assert isinstance(uc, IndexRawTranscriptsUseCase)
         assert isinstance(uc.llm, GeminiLLMAdapter)
+        assert isinstance(uc.llm_indexing_port, GeminiLLMAdapter)
         assert isinstance(uc.vault_repo, ObsidianVaultAdapter)
+        assert isinstance(uc.vault_port, ObsidianVaultAdapter)
 
     def test_build_pipeline_with_web_index(self, test_settings: CresmoSettings) -> None:
         pipeline = build_pipeline(settings=test_settings, web_index=True)
         assert isinstance(pipeline, CresmoPipeline)
         assert isinstance(pipeline.index_raw.llm, GeminiLLMAdapter)
+        assert isinstance(pipeline.index_raw.llm_indexing_port, GeminiLLMAdapter)

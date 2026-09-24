@@ -29,6 +29,7 @@ from cresmo.domain.entities import (
 )
 from cresmo.domain.value_objects import (
     ChannelFeedQuery,
+    ChannelName,
     ContentId,
     DiscoveredMediaItem,
     LedgerEntry,
@@ -294,7 +295,7 @@ class VaultRepositoryPort(ABC):
         raise NotImplementedError("Remove index entry.")
 
     @abstractmethod
-    def get_enriched_files_for_channel(self, channel_name: str) -> list[Path]:
+    def get_enriched_files_for_channel(self, channel_name: ChannelName | str) -> list[Path]:
         """Retrieve sorted list of all enriched markdown file paths for a given channel.
 
         Args:
@@ -308,7 +309,7 @@ class VaultRepositoryPort(ABC):
     @abstractmethod
     def save_master_document(
         self,
-        channel_name: str,
+        channel_name: ChannelName | str,
         channel_category: str,
         part_number: int,
         content: str,
@@ -329,7 +330,7 @@ class VaultRepositoryPort(ABC):
     @abstractmethod
     def clear_master_documents_for_channel(
         self,
-        channel_name: str,
+        channel_name: ChannelName | str,
         channel_category: str,
     ) -> None:
         """Delete previous master parts for channel before writing fresh sequential parts.
@@ -341,7 +342,7 @@ class VaultRepositoryPort(ABC):
         raise NotImplementedError("Clear previous master documents for channel.")
 
     @abstractmethod
-    def get_indexed_video_ids_for_channel(self, channel_name: str) -> set[str]:
+    def get_indexed_video_ids_for_channel(self, channel_name: ChannelName | str) -> set[str]:
         """Retrieve set of video IDs already indexed in the channel's _canal.md.
 
         Args:
@@ -353,7 +354,9 @@ class VaultRepositoryPort(ABC):
         raise NotImplementedError("Retrieve indexed video IDs for channel.")
 
     @abstractmethod
-    def append_channel_index_entry(self, channel_name: str, entry: RawIndexEntry) -> None:
+    def append_channel_index_entry(
+        self, channel_name: ChannelName | str, entry: RawIndexEntry
+    ) -> None:
         """Append raw index entry to data/raw/<channel_name>/_canal.md atomically.
 
         Args:
@@ -372,7 +375,7 @@ class VaultRepositoryPort(ABC):
         raise NotImplementedError("Append entry to brain.csv.")
 
     @abstractmethod
-    def get_channel_index_path(self, channel_name: str) -> Path:
+    def get_channel_index_path(self, channel_name: ChannelName | str) -> Path:
         """Return absolute path to channel's _canal.md index file.
 
         Args:
@@ -458,7 +461,7 @@ class PromptProviderPort(ABC):
         self,
         pass_num: int,
         total_passes: int,
-        channel_name: str,
+        channel_name: ChannelName | str,
         file_name: str,
         raw_text: str,
         current_text: str | None = None,
@@ -514,7 +517,7 @@ class PromptProviderPort(ABC):
     def get_inventory_prompt(
         self,
         compendium_title: str,
-        channel_name: str,
+        channel_name: ChannelName | str,
         compendium_body: str,
     ) -> str:
         """Format the atomic inventory extraction prompt.
@@ -533,7 +536,7 @@ class PromptProviderPort(ABC):
     def get_batch_notes_prompt(
         self,
         compendium_title: str,
-        channel_name: str,
+        channel_name: ChannelName | str,
         compendium_body: str,
         targets_json: str,
     ) -> str:
