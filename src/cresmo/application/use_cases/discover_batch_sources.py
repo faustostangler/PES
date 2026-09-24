@@ -273,8 +273,10 @@ class DiscoverBatchSourcesUseCase:
         )
         lookback = q.lookback_days if q.lookback_days is not None else self.settings.days_lookback
 
+        # Field Video Detective (find new videos)
         def _crawler_producer() -> None:
             try:
+                # 1. Seed parser
                 channels_to_probe, remote_videos, probed_channels = self._classify_seeds(
                     playlist_path, local_channels, acc, q.filter_criteria
                 )
@@ -288,6 +290,7 @@ class DiscoverBatchSourcesUseCase:
                 if stop_event.is_set():
                     return
 
+                # 2. Seed-Channel resolver
                 all_remote_seeds = list(dict.fromkeys(pri_unresolved + remote_videos))
                 if all_remote_seeds:
                     self._resolve_remote_channels(
@@ -313,6 +316,7 @@ class DiscoverBatchSourcesUseCase:
                 # (seeds from _classify_seeds + priority channels + remote-resolved channels)
                 channels_to_probe = sorted(channels_to_probe, key=lambda c: c.lower())
 
+                # 3. Channel Video Finder (YouTube API)
                 self._probe_channel_feeds(
                     channels_to_probe,
                     lookback,
@@ -327,11 +331,13 @@ class DiscoverBatchSourcesUseCase:
             finally:
                 stream_queue.put(None)
 
+        # Parallel processing workers
         crawler_thread = threading.Thread(
             target=_crawler_producer,
             name="CresmoCrawlerProducer",
             daemon=True,
         )
+        # Let's Go Brandon
         crawler_thread.start()
 
         try:
@@ -339,6 +345,7 @@ class DiscoverBatchSourcesUseCase:
             for src in priority_sources:
                 yield src
 
+            # Active waiting in line
             while True:
                 item = stream_queue.get()
                 if item is None:
