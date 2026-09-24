@@ -641,7 +641,10 @@ class DiscoverBatchSourcesUseCase:
         self._notify(
             f"[crawler] Resolving parent channels for {len(videos)} seed videos with {max_workers} workers\n"
         )
-        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        with ThreadPoolExecutor(
+            max_workers=max_workers,
+            thread_name_prefix="CresmoChannelResolver",
+        ) as executor:
             future_to_vurl = {
                 executor.submit(self.media_ingestion_port.extract_channel_url_from_video, vu): vu
                 for vu in videos
@@ -696,7 +699,10 @@ class DiscoverBatchSourcesUseCase:
         max_workers = max(1, min(workers, len(channels)))
         discovered_count = 0
 
-        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        with ThreadPoolExecutor(
+            max_workers=max_workers,
+            thread_name_prefix="CresmoFeedProber",
+        ) as executor:
             future_to_url = {
                 executor.submit(
                     self._probe_single_channel_feed, u, lookback_days, max_videos, cutoff

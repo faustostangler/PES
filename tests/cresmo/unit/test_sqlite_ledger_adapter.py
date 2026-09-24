@@ -145,7 +145,9 @@ class TestSqliteLedgerAdapter:
                 )
                 assert adapter.is_processed(ContentId(cid))
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
+        with concurrent.futures.ThreadPoolExecutor(
+            max_workers=4, thread_name_prefix="TestSqliteLedgerWorker"
+        ) as executor:
             futures = [executor.submit(worker, i) for i in range(4)]
             for future in concurrent.futures.as_completed(futures):
                 future.result()

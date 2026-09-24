@@ -160,10 +160,11 @@ def merge_and_slowdown_clips(
 
     if success and local_temp.exists() and is_clip_intact(local_temp):
         try:
-            shutil.move(str(local_temp), str(output_path))
+            shutil.copyfile(str(local_temp), str(output_path))
+            local_temp.unlink(missing_ok=True)
             return True
         except Exception as e:
-            print(f" [!] Error moving {local_temp} -> {output_path}: {e}")
+            print(f" [!] Error copying {local_temp} -> {output_path}: {e}")
             return False
     else:
         if local_temp.exists():

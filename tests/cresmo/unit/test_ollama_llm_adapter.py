@@ -431,7 +431,9 @@ class TestOllamaLLMAdapter:
         with patch("urllib.request.urlopen", side_effect=_delayed_urlopen) as mock_urlopen:
             adapter.warmup()
 
-            with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+            with concurrent.futures.ThreadPoolExecutor(
+                max_workers=5, thread_name_prefix="TestOllamaWarmupWait"
+            ) as executor:
                 futures = [executor.submit(adapter.wait_for_warmup) for _ in range(5)]
                 results = [f.result() for f in concurrent.futures.as_completed(futures)]
 
