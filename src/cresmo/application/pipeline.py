@@ -1,17 +1,19 @@
 """Cresmo Knowledge Synthesis Pipeline Orchestrator.
 
-Orchestrates the 7 incremental integer stages per SPEC-001 and ADR-007 (Template Method):
-- Stage 1: Raw Transcript Ingestion (MediaIngestionPort ACL)
-- Stage 2: Socratic Gap Filler (FillGapsFluidProseUseCase)
-- Stage 3: Longitudinal & Synchronic Expander (ExpandLongitudinalSynchronicUseCase)
-- Stage 4: Holistic Inventory Discovery (DiscoverAtomicInventoryUseCase)
-- Stage 5: Batched Atomic Synthesis (SynthesizeAtomicBatchUseCase)
-- Stage 6: Map of Content Reconciliation (ReconcileMOCsUseCase)
-- Stage 7: Graph Entity Resolution & Duplicate Unification (UnifyDuplicateNotesUseCase)
+Orchestrates the cognitive synthesis pipeline per ADR-007 (Template Method) and ADR-021:
+- Raw Ingestion (MediaIngestionPort ACL)
+- Raw Indexing (IndexRawTranscriptsUseCase)
+- Fluid Prose Synthesis (FillGapsFluidProseUseCase)
+- Longitudinal & Synchronic Expansion (ExpandLongitudinalSynchronicUseCase)
+- Holistic Inventory Discovery (DiscoverAtomicInventoryUseCase)
+- Batched Atomic Synthesis (SynthesizeAtomicBatchUseCase)
+- Map of Content Reconciliation (ReconcileMOCsUseCase)
+- Duplicate Unification & Entity Resolution (UnifyDuplicateNotesUseCase)
 
 Conforms to:
 - ADR-001: Cresmo Modular Monolith Strangling
 - ADR-007: Pipeline Template Method DRY
+- ADR-021: Unified Pipeline Execution Template Method and Telemetry
 - SPEC-001: Core Knowledge Synthesis Specifications
 """
 
@@ -84,12 +86,12 @@ class PipelineResult:
         success: True if all stages completed successfully without unhandled errors.
         synthesized_notes: Tuple of all newly synthesized AtomicNote domain aggregates.
         reconciled_mocs: Tuple of MapOfContent aggregates updated or created.
-        raw_transcript: Optional Stage 1 RawTranscript aggregate root.
-        index_entry: Optional Stage 1.5 RawIndexEntry catalog projection.
-        compendium: Optional Stage 2 & 3 EnrichedCompendium aggregate root.
-        inventory: Optional Stage 4 AtomicEntityInventory value object.
-        dedup_report: Optional Stage 7 DeduplicationReport execution summary.
-        duplicates_unified: Total count of duplicate notes consolidated in Stage 7.
+        raw_transcript: Optional RawTranscript aggregate root from raw ingestion.
+        index_entry: Optional RawIndexEntry catalog projection from raw indexing.
+        compendium: Optional EnrichedCompendium aggregate root from fluid prose & expansion.
+        inventory: Optional AtomicEntityInventory value object from inventory discovery.
+        dedup_report: Optional DeduplicationReport execution summary from duplicate unification.
+        duplicates_unified: Total count of duplicate notes consolidated during duplicate unification.
         already_processed: True if execution was skipped due to ledger idempotency match.
         error_message: Optional error message string if execution terminated early.
     """
@@ -111,7 +113,7 @@ class PipelineResult:
 class CresmoPipeline:
     """Hexagonal Modular Monolith orchestrator for the Cresmo synthesis engine.
 
-    Implements the Template Method execution flow across Stages 1 through 7,
+    Implements the Template Method execution flow across cognitive synthesis use cases,
     coordinating dependency-injected Use Cases, Ports, and Adapters.
     """
 
@@ -256,16 +258,16 @@ class CresmoPipeline:
     ) -> PipelineResult:
         """Execute the end-to-end synthesis pipeline (canonical Template Method).
 
-        Coordinates Stage 1b through Stage 7 under a single root telemetry session span:
+        Coordinates cognitive synthesis use cases under a single root telemetry session span:
         - Root Span: cresmo.pipeline.execution
         - Idempotency guard (ledger_port.is_processed)
-        - Stage 1b: Raw Transcript Indexing & Paratactic Synthesis (stage1b_raw_indexing)
-        - Stage 2: Socratic Gap Filler (stage2_fluid_prose)
-        - Stage 3: Longitudinal & Synchronic Expander (stage3_expansion)
-        - Stage 4: Holistic Inventory Discovery (stage4_inventory)
-        - Stage 5: Batched Atomic Synthesis (stage5_atomic_batch)
-        - Stage 6: Map of Content Reconciliation (stage6_mocs)
-        - Stage 7: Graph Entity Resolution & Duplicate Unification (stage7_duplicate_unification)
+        - Raw Transcript Indexing & Paratactic Synthesis (raw_indexing)
+        - Socratic Gap Filler (fluid_prose)
+        - Longitudinal & Synchronic Expander (expansion)
+        - Holistic Inventory Discovery (inventory)
+        - Batched Atomic Synthesis (atomic_batch)
+        - Map of Content Reconciliation (mocs)
+        - Graph Entity Resolution & Duplicate Unification (duplicate_unification)
         - Ledger mark processed & Session Coherence Evaluation
 
         Args:
@@ -307,9 +309,9 @@ class CresmoPipeline:
                     already_processed=True,
                 )
 
-            # Stage 1b: Raw Transcript Indexing & Paratactic Synthesis
+            # Raw Transcript Indexing & Paratactic Synthesis
             if entry is None:
-                with self.telemetry_port.start_stage_span("stage1b_raw_indexing"):
+                with self.telemetry_port.start_stage_span("raw_indexing"):
                     try:
                         entry = self.index_raw.execute(raw)
                     except Exception as exc:  # noqa: BLE001
@@ -322,35 +324,35 @@ class CresmoPipeline:
             # Socratic Gap Filler & Longitudinal Expander (supports resumed execution)
             expanded_compendium = self.vault_port.get_enriched_compendium(content_id)
             if expanded_compendium is None:
-                with self.telemetry_port.start_stage_span("stage2_fluid_prose"):
+                with self.telemetry_port.start_stage_span("fluid_prose"):
                     compendium = self.fill_gaps_fluid_prose.execute(
                         raw_transcript=raw,
                         passes=gap_filler_passes,
                     )
-                with self.telemetry_port.start_stage_span("stage3_expansion"):
+                with self.telemetry_port.start_stage_span("expansion"):
                     expanded_compendium = self.expand_longitudinal_synchronic.execute(
                         compendium=compendium,
                     )
 
             # Holistic Inventory Discovery
-            with self.telemetry_port.start_stage_span("stage4_inventory"):
+            with self.telemetry_port.start_stage_span("inventory"):
                 inventory = self.discover_atomic_inventory.execute(
                     compendium=expanded_compendium,
                 )
 
             # Batched Atomic Synthesis
-            with self.telemetry_port.start_stage_span("stage5_atomic_batch"):
+            with self.telemetry_port.start_stage_span("atomic_batch"):
                 synthesized_notes = self.synthesize_atomic_batch.execute(
                     inventory=inventory,
                     compendium=expanded_compendium,
                 )
 
             # Map of Content Reconciliation
-            with self.telemetry_port.start_stage_span("stage6_mocs"):
+            with self.telemetry_port.start_stage_span("mocs"):
                 mocs = self.reconcile_mocs.execute()
 
-            # Stage 7: Graph Entity Resolution & Duplicate Unification
-            with self.telemetry_port.start_stage_span("stage7_duplicate_unification"):
+            # Graph Entity Resolution & Duplicate Unification
+            with self.telemetry_port.start_stage_span("duplicate_unification"):
                 dedup_report = self.unify_duplicate_notes.execute()
 
             # Mark processed in ledger
@@ -395,7 +397,7 @@ class CresmoPipeline:
         force_reprocess: bool = False,
         user: UserIdentity | None = None,
     ) -> PipelineResult:
-        """Execute Stages 1b through 7 (Template Method backward compatibility alias).
+        """Execute synthesis stages (Template Method backward compatibility alias).
 
         Deprecated: Use self.execute(...) directly. Retained for full backward compatibility.
         """
@@ -517,8 +519,8 @@ class CresmoPipeline:
     ) -> PipelineResult:
         """Run the end-to-end synthesis pipeline starting from a local raw text file.
 
-        Bypasses Stage 1 media crawling and speech-to-text ingestion, loading
-        the transcript directly into the domain and continuing through Stages 1b-7.
+        Bypasses media crawling and speech-to-text ingestion, loading
+        the transcript directly into the domain and continuing through the synthesis pipeline.
 
         Args:
             file_path: Path to the raw text or markdown file (.txt, .md).

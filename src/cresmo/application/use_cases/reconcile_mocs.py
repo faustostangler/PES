@@ -76,12 +76,13 @@ class ReconcileMOCsUseCase:
         ]
 
         # Step 2: Prompt LLM to cluster notes into thematic Maps of Content.
-        prompt = self.prompt_provider.get_mocs_prompt(
+        system_instruction, user_prompt = self.prompt_provider.get_mocs_prompt(
             notes_json=json.dumps(note_summaries, ensure_ascii=False),
         )
 
         response = self.llm_synthesis_port.transform(
-            prompt=prompt,
+            prompt=user_prompt,
+            system_instruction=system_instruction,
             temperature=self.temperature,
             trace_id="stage6_mocs_reconciliation",
             session_id="stage6_mocs",

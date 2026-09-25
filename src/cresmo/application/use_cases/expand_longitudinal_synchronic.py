@@ -83,23 +83,25 @@ class ExpandLongitudinalSynchronicUseCase:
             CompendiumStructureError: If complementary information section is missing or empty.
             DomainValidationError: If construction invariants are violated.
         """
-        longitudinal_prompt = self.prompt_provider.get_long_expander_prompt(
+        long_sys, long_user = self.prompt_provider.get_long_expander_prompt(
             compendium_body=compendium.body,
             complementary_info=compendium.complementary_info,
         )
         longitudinal_expansion = self.llm_synthesis_port.transform(
-            prompt=longitudinal_prompt,
+            prompt=long_user,
+            system_instruction=long_sys,
             temperature=self.temperature,
             trace_id=f"{compendium.content_id.value}_longitudinal",
             session_id=f"stage3_expansion_{compendium.channel_name}",
             user_id=str(compendium.channel_name),
         )
 
-        synchronic_prompt = self.prompt_provider.get_wide_expander_prompt(
+        wide_sys, wide_user = self.prompt_provider.get_wide_expander_prompt(
             current_text=longitudinal_expansion,
         )
         synchronic_expansion = self.llm_synthesis_port.transform(
-            prompt=synchronic_prompt,
+            prompt=wide_user,
+            system_instruction=wide_sys,
             temperature=self.temperature,
             trace_id=f"{compendium.content_id.value}_synchronic",
             session_id=f"stage3_expansion_{compendium.channel_name}",

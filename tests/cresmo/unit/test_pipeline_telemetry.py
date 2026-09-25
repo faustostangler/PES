@@ -90,15 +90,15 @@ class TestPipelineTelemetryIntegration:
         assert root_span.attributes["cresmo.user.is_anonymous"] is True
         assert root_span.attributes["cresmo.user.provider"] == "anonymous"
 
-        # Check all child stage spans (Stages 1b to 7) are tied to the root trace_id
+        # Check all child stage spans are tied to the root trace_id
         stage_names = {
-            "cresmo.stage.stage1b_raw_indexing",
-            "cresmo.stage.stage2_fluid_prose",
-            "cresmo.stage.stage3_expansion",
-            "cresmo.stage.stage4_inventory",
-            "cresmo.stage.stage5_atomic_batch",
-            "cresmo.stage.stage6_mocs",
-            "cresmo.stage.stage7_duplicate_unification",
+            "cresmo.stage.raw_indexing",
+            "cresmo.stage.fluid_prose",
+            "cresmo.stage.expansion",
+            "cresmo.stage.inventory",
+            "cresmo.stage.atomic_batch",
+            "cresmo.stage.mocs",
+            "cresmo.stage.duplicate_unification",
         }
 
         finished_stage_names = {s.name for s in spans if s.name.startswith("cresmo.stage.")}

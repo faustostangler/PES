@@ -52,19 +52,21 @@ class TestJsonPromptProvider:
     def test_gap_filler_differentiates_pass1_and_subsequent_passes(self) -> None:
         provider = JsonPromptProvider()
 
-        p1 = provider.get_gap_filler_prompt(
+        s1, p1 = provider.get_gap_filler_prompt(
             pass_num=1,
             total_passes=3,
             channel_name=ChannelName("Tech Channel"),
             file_name="test.txt",
             raw_text="Raw text here.",
         )
+        assert isinstance(s1, str)
+        assert len(s1) > 0
         assert "Pass 1/3" in p1
         assert "Tech Channel" in p1
         assert "test.txt" in p1
         assert "Raw text here." in p1
 
-        p2 = provider.get_gap_filler_prompt(
+        s2, p2 = provider.get_gap_filler_prompt(
             pass_num=2,
             total_passes=3,
             channel_name=ChannelName("Tech Channel"),
@@ -72,6 +74,8 @@ class TestJsonPromptProvider:
             raw_text="Raw text here.",
             current_text="Draft from pass 1.",
         )
+        assert isinstance(s2, str)
+        assert len(s2) > 0
         assert "Pass 2/3" in p2
         assert "PASS 1 TO ENRICH" in p2
         assert "Tech Channel" in p2
@@ -80,7 +84,7 @@ class TestJsonPromptProvider:
 
     def test_gap_filler_subsequent_passes_fallback_when_current_text_is_none(self) -> None:
         provider = JsonPromptProvider()
-        p2 = provider.get_gap_filler_prompt(
+        s2, p2 = provider.get_gap_filler_prompt(
             pass_num=2,
             total_passes=3,
             channel_name=ChannelName("Tech Channel"),
@@ -88,50 +92,56 @@ class TestJsonPromptProvider:
             raw_text="Fallback to raw when current_text is None.",
             current_text=None,
         )
+        assert isinstance(s2, str)
         assert "Fallback to raw when current_text is None." in p2
 
     def test_long_and_wide_expander_prompts(self) -> None:
         provider = JsonPromptProvider()
 
-        long_p = provider.get_long_expander_prompt(
+        long_s, long_p = provider.get_long_expander_prompt(
             compendium_body="Main body text.",
             complementary_info="Supplementary info.",
         )
+        assert isinstance(long_s, str)
         assert "Main body text." in long_p
         assert "Supplementary info." in long_p
-        assert "Fernand Braudel" in long_p
+        assert "Fernand Braudel" in long_s or "Fernand Braudel" in long_p
 
-        wide_p = provider.get_wide_expander_prompt(
+        wide_s, wide_p = provider.get_wide_expander_prompt(
             current_text="Longitudinally expanded text.",
         )
+        assert isinstance(wide_s, str)
         assert "Longitudinally expanded text." in wide_p
-        assert "Karl Jaspers" in wide_p
+        assert "Karl Jaspers" in wide_s or "Karl Jaspers" in wide_p
 
     def test_inventory_and_batch_notes_and_mocs_prompts(self) -> None:
         provider = JsonPromptProvider()
 
-        inv_p = provider.get_inventory_prompt(
+        inv_s, inv_p = provider.get_inventory_prompt(
             compendium_title="Compendium Title",
             channel_name=ChannelName("Channel Name"),
             compendium_body="Enriched content body.",
         )
+        assert isinstance(inv_s, str)
         assert "Compendium Title" in inv_p
         assert "Channel Name" in inv_p
         assert "Enriched content body." in inv_p
 
-        batch_p = provider.get_batch_notes_prompt(
+        batch_s, batch_p = provider.get_batch_notes_prompt(
             compendium_title="Compendium Title",
             channel_name=ChannelName("Channel Name"),
             compendium_body="Enriched content body.",
             targets_json='[{"title": "Target 1"}]',
         )
+        assert isinstance(batch_s, str)
         assert "Compendium Title" in batch_p
         assert "Target Entities to Synthesize in this batch:" in batch_p
         assert '[{"title": "Target 1"}]' in batch_p
 
-        mocs_p = provider.get_mocs_prompt(
+        mocs_s, mocs_p = provider.get_mocs_prompt(
             notes_json='[{"title": "Note 1"}]',
         )
+        assert isinstance(mocs_s, str)
         assert "Atomic Notes in Vault:" in mocs_p
         assert '[{"title": "Note 1"}]' in mocs_p
 
@@ -177,7 +187,7 @@ class TestJsonPromptProvider:
         custom_file.write_text(json.dumps(custom_prompts), encoding="utf-8")
 
         provider = JsonPromptProvider(prompts_path=custom_file)
-        p1 = provider.get_gap_filler_prompt(
+        s1, p1 = provider.get_gap_filler_prompt(
             pass_num=1,
             total_passes=3,
             channel_name=ChannelName("Custom Channel"),
@@ -188,8 +198,9 @@ class TestJsonPromptProvider:
             p1
             == "Custom Task 1: Custom Pass 1 for Custom Channel in custom.txt with text (total: 3)"
         )
+        assert s1 == "Custom Task 1"
 
-        p2 = provider.get_gap_filler_prompt(
+        s2, p2 = provider.get_gap_filler_prompt(
             pass_num=2,
             total_passes=3,
             channel_name=ChannelName("Custom Channel"),
@@ -198,23 +209,29 @@ class TestJsonPromptProvider:
             current_text="draft",
         )
         assert p2 == "Custom Task 2: Custom Pass 2/3 (prev 1) for Custom Channel with raw & draft"
+        assert s2 == "Custom Task 2"
 
-        p_long = provider.get_long_expander_prompt("Body", "Info")
+        s_long, p_long = provider.get_long_expander_prompt("Body", "Info")
         assert p_long == "Custom Long: Body + Info"
+        assert s_long == "Custom Long"
 
-        p_wide = provider.get_wide_expander_prompt("WideText")
+        s_wide, p_wide = provider.get_wide_expander_prompt("WideText")
         assert p_wide == "Custom Wide: WideText"
+        assert s_wide == "Custom Wide"
 
-        p_inv = provider.get_inventory_prompt("Title", ChannelName("Channel"), "Body")
+        s_inv, p_inv = provider.get_inventory_prompt("Title", ChannelName("Channel"), "Body")
         assert p_inv == "Custom Inv: Title on Channel with Body"
+        assert s_inv == "Custom Inv"
 
-        p_batch = provider.get_batch_notes_prompt(
+        s_batch, p_batch = provider.get_batch_notes_prompt(
             "Title", ChannelName("Channel"), "Body", "Targets"
         )
         assert p_batch == "Custom Batch: Title on Channel body Body targets Targets"
+        assert s_batch == "Custom Batch"
 
-        p_mocs = provider.get_mocs_prompt("Notes")
+        s_mocs, p_mocs = provider.get_mocs_prompt("Notes")
         assert p_mocs == "Custom MOC: Notes"
+        assert s_mocs == "Custom MOC"
 
     def test_custom_prompts_file_corrupted_falls_back_to_bundled(self, tmp_path: Path) -> None:
         bad_file = tmp_path / "corrupted.json"
@@ -307,46 +324,47 @@ class TestJsonPromptProvider:
         }
 
         # Gap filler pass 1 fallback
-        p1 = provider.get_gap_filler_prompt(1, 2, ChannelName("ChName"), "f.txt", "RawText")
-        assert "Clean raw" in p1
+        s1, p1 = provider.get_gap_filler_prompt(1, 2, ChannelName("ChName"), "f.txt", "RawText")
+        assert "Clean raw" in s1
         assert "Source Channel: ChName" in p1
         assert "File: f.txt" in p1
         assert "Transcript:\nRawText" in p1
         assert "## Informações Complementares" in p1
 
         # Gap filler pass 2 fallback with current_text
-        p2 = provider.get_gap_filler_prompt(
+        s2, p2 = provider.get_gap_filler_prompt(
             2, 2, ChannelName("ChName"), "f.txt", "RawText", current_text="DraftText"
         )
-        assert "Deepen prose" in p2
+        assert "Deepen prose" in s2
         assert "Source Channel: ChName" in p2
         assert "--- ORIGINAL RAW TRANSCRIPT (GROUND TRUTH REFERENCE) ---\nRawText" in p2
         assert "--- PREVIOUS PASS EXPANDED COMPENDIUM DRAFT (PASS 1 TO ENRICH) ---\nDraftText" in p2
         assert "Execute Socratic gap filling and theoretical densification." in p2
 
         # Gap filler pass 2 fallback without current_text
-        p2_none = provider.get_gap_filler_prompt(
+        s2_none, p2_none = provider.get_gap_filler_prompt(
             2, 2, ChannelName("ChName"), "f.txt", "RawText", current_text=None
         )
+        assert "Deepen prose" in s2_none
         assert (
             "--- PREVIOUS PASS EXPANDED COMPENDIUM DRAFT (PASS 1 TO ENRICH) ---\nRawText" in p2_none
         )
 
         # Long expander fallback
-        p_long = provider.get_long_expander_prompt("BodyText", "ComplementaryText")
-        assert "Longue Duree" in p_long
+        s_long, p_long = provider.get_long_expander_prompt("BodyText", "ComplementaryText")
+        assert "Longue Duree" in s_long
         assert "Content:\nBodyText" in p_long
         assert "## Informações Complementares\nComplementaryText" in p_long
 
         # Wide expander fallback
-        p_wide = provider.get_wide_expander_prompt("WideText")
-        assert "Axial Time" in p_wide
+        s_wide, p_wide = provider.get_wide_expander_prompt("WideText")
+        assert "Axial Time" in s_wide
         assert "WideText" in p_wide
         assert p_wide.endswith("WideText")
 
         # Atomic inventory fallback
-        p_inv = provider.get_inventory_prompt("Title", ChannelName("Channel"), "Body")
-        assert "Extract Items" in p_inv
+        s_inv, p_inv = provider.get_inventory_prompt("Title", ChannelName("Channel"), "Body")
+        assert "Extract Items" in s_inv
         assert "Title: Title" in p_inv
         assert "Channel: Channel" in p_inv
         assert "Content:\nBody" in p_inv
@@ -356,10 +374,10 @@ class TestJsonPromptProvider:
         )
 
         # Atomic batch fallback
-        p_batch = provider.get_batch_notes_prompt(
+        s_batch, p_batch = provider.get_batch_notes_prompt(
             "Title", ChannelName("Channel"), "Body", '[{"title": "E1"}]'
         )
-        assert "Synthesize Notes" in p_batch
+        assert "Synthesize Notes" in s_batch
         assert "Source Compendium Title: Title" in p_batch
         assert "Source Channel: Channel" in p_batch
         assert "Source Context:\nBody" in p_batch
@@ -367,8 +385,8 @@ class TestJsonPromptProvider:
         assert "Output strictly a JSON array of note objects." in p_batch
 
         # MOCs fallback
-        p_mocs = provider.get_mocs_prompt('[{"title": "Note1"}]')
-        assert "Map MOCs" in p_mocs
+        s_mocs, p_mocs = provider.get_mocs_prompt('[{"title": "Note1"}]')
+        assert "Map MOCs" in s_mocs
         assert 'Atomic Notes in Vault:\n[{"title": "Note1"}]' in p_mocs
         assert "Output strictly a JSON array of MOC objects." in p_mocs
 

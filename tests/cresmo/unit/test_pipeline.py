@@ -61,9 +61,10 @@ class SmartMockLLMAdapter(MockLLMAdapter):
                 "A decadência dos governantes precipita a substituição por novas contra-elites "
                 "organizadas em estruturas institucionais complexas e altamente resilientes."
             )
-        if "Atomic Inventory Specialist" in prompt or "atomic inventory" in prompt.lower():
+        combined = f"{system_instruction or ''} {prompt}"
+        if "Atomic Inventory Specialist" in combined or "atomic inventory" in combined.lower():
             return '[{"title": "Vilfredo Pareto", "type": "entity"}]'
-        if "Target Entities to Synthesize" in prompt or "targets_json" in prompt:
+        if "Target Entities to Synthesize" in combined or "targets_json" in combined:
             return (
                 '[{"title": "Vilfredo Pareto", "type": "entity", '
                 '"definition": "Sociólogo e economista italiano formulador do conceito de circulação das elites.", '
@@ -71,9 +72,9 @@ class SmartMockLLMAdapter(MockLLMAdapter):
                 '"causal_matrix": {"cause": "Heterogeneidade social", "effect": "Substituição cíclica de lideranças"}}]'
             )
         if (
-            "MOC Manager" in prompt
-            or "maps of content" in prompt.lower()
-            or "cresmo-moc-manager" in prompt
+            "MOC Manager" in combined
+            or "maps of content" in combined.lower()
+            or "cresmo-moc-manager" in combined
         ):
             return (
                 '[{"title": "MOC Teoria Politica", "theme": "Ciência Política", '
