@@ -292,7 +292,9 @@ class OpenTelemetryAdapter(TelemetryPort):
             if hasattr(tracer_provider, "force_flush"):
                 tracer_provider.force_flush(timeout_millis=2000)
         except Exception as exc:  # noqa: BLE001
-            logger.debug("[OpenTelemetryAdapter] OpenTelemetry tracer provider flush skipped: %s", exc)
+            logger.debug(
+                "[OpenTelemetryAdapter] OpenTelemetry tracer provider flush skipped: %s", exc
+            )
 
 
 class NoOpTelemetryAdapter(TelemetryPort):
@@ -343,4 +345,3 @@ class NoOpTelemetryAdapter(TelemetryPort):
 
     def flush(self) -> None:
         """No-op flush for offline/test runs."""
-

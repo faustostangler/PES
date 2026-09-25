@@ -175,11 +175,15 @@ class TestDiscoverBatchSourcesUseCase:
 
     def test_batch_source_content_id_and_vid_compatibility(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
-        bs = BatchSource(kind="url", target="https://youtube.com/watch?v=dQw4w9WgXcQ", content_id=cid)
+        bs = BatchSource(
+            kind="url", target="https://youtube.com/watch?v=dQw4w9WgXcQ", content_id=cid
+        )
         assert bs.content_id == cid
         assert bs.vid == "dQw4w9WgXcQ"
 
-        bs_str = BatchSource(kind="url", target="https://youtube.com/watch?v=dQw4w9WgXcQ", content_id="dQw4w9WgXcQ")
+        bs_str = BatchSource(
+            kind="url", target="https://youtube.com/watch?v=dQw4w9WgXcQ", content_id="dQw4w9WgXcQ"
+        )
         assert isinstance(bs_str.content_id, ContentId)
         assert bs_str.content_id == cid
         assert bs_str.vid == "dQw4w9WgXcQ"
@@ -187,7 +191,9 @@ class TestDiscoverBatchSourcesUseCase:
     def test_accumulator_tracks_content_id_and_backward_compatibility(self) -> None:
         acc = _BatchSourceAccumulator()
         cid = ContentId("dQw4w9WgXcQ")
-        src = acc.add_source(kind="url", target="https://youtube.com/watch?v=dQw4w9WgXcQ", content_id=cid)
+        src = acc.add_source(
+            kind="url", target="https://youtube.com/watch?v=dQw4w9WgXcQ", content_id=cid
+        )
         assert src is not None
         assert src.content_id == cid
         assert src.vid == "dQw4w9WgXcQ"
@@ -195,7 +201,9 @@ class TestDiscoverBatchSourcesUseCase:
         assert acc.has_seen("dQw4w9WgXcQ") is True
 
         # Duplicate detection by ContentId or string
-        dup = acc.add_source(kind="url", target="https://youtube.com/watch?v=dQw4w9WgXcQ", vid="dQw4w9WgXcQ")
+        dup = acc.add_source(
+            kind="url", target="https://youtube.com/watch?v=dQw4w9WgXcQ", vid="dQw4w9WgXcQ"
+        )
         assert dup is None
 
     def test_extract_raw_file_metadata_channel_formats_and_error(self, tmp_path: Path) -> None:
@@ -1222,7 +1230,9 @@ class TestDiscoverBatchSourcesUseCase:
         assert len(sources) == 1
         assert "targetVid123" in sources[0].target
 
-    def test_discover_sources_streaming_respects_queue_maxsize_backpressure(self, tmp_path: Path) -> None:
+    def test_discover_sources_streaming_respects_queue_maxsize_backpressure(
+        self, tmp_path: Path
+    ) -> None:
         """Verify streaming discovery applies backpressure via bounded queue maxsize."""
         playlist_file = tmp_path / "playlist.txt"
         playlist_file.write_text(
@@ -1254,4 +1264,3 @@ class TestDiscoverBatchSourcesUseCase:
         stream = use_case.execute(query)
         items = list(stream)
         assert len(items) == 3
-
