@@ -66,6 +66,18 @@ class TestContentId:
         assert hash(cid) == hash("dQw4w9WgXcQ")
         assert cid.strip() == "dQw4w9WgXcQ"
 
+    def test_extract_from_text(self) -> None:
+        cid = ContentId.extract_from_text("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+        assert cid is not None
+        assert cid.value == "dQw4w9WgXcQ"
+
+        cid2 = ContentId.extract_from_text("https://youtu.be/dQw4w9WgXcQ?t=10")
+        assert cid2 is not None
+        assert cid2.value == "dQw4w9WgXcQ"
+
+        assert ContentId.extract_from_text("not_a_valid_id!@#$") is None
+        assert ContentId.extract_from_text("") is None
+
 
 class TestNoteTitle:
     """SPEC-001 §2.1: NoteTitle validation & sanitization."""
@@ -324,3 +336,118 @@ class TestSourceModality:
         assert SourceModality.URL == "url"
         assert SourceModality("file") is SourceModality.FILE
         assert SourceModality("url") is SourceModality.URL
+
+
+class TestChannelId:
+    """ADR-019 & ADR-020: ChannelId domain Value Object."""
+
+    def test_valid_channel_id(self) -> None:
+        from cresmo.domain.value_objects import ChannelId
+
+        cid = ChannelId("UC_x5XG1OV2P6uZZ5FSM9Ttw")
+        assert cid.value == "UC_x5XG1OV2P6uZZ5FSM9Ttw"
+        assert str(cid) == "UC_x5XG1OV2P6uZZ5FSM9Ttw"
+        assert cid.is_youtube_canonical is True
+        assert cid.uploads_playlist_id == "UU_x5XG1OV2P6uZZ5FSM9Ttw"
+        assert (
+            cid.uploads_playlist_url
+            == "https://www.youtube.com/playlist?list=UU_x5XG1OV2P6uZZ5FSM9Ttw"
+        )
+        assert cid.canonical_url == "https://www.youtube.com/channel/UC_x5XG1OV2P6uZZ5FSM9Ttw"
+
+    def test_synthetic_channel_id(self) -> None:
+        from cresmo.domain.value_objects import ChannelId
+
+        cid = ChannelId("priority_text")
+        assert cid.value == "priority_text"
+        assert cid.is_youtube_canonical is False
+        assert cid.uploads_playlist_id is None
+        assert cid.uploads_playlist_url is None
+        assert cid.canonical_url == "priority_text"
+
+    def test_invalid_channel_id_raises(self) -> None:
+        from cresmo.domain.exceptions import DomainValidationError
+        from cresmo.domain.value_objects import ChannelId
+
+        with pytest.raises(DomainValidationError, match="ChannelId cannot be empty"):
+            ChannelId("")
+        with pytest.raises(DomainValidationError, match="ChannelId cannot be empty"):
+            ChannelId("   ")
+        with pytest.raises(DomainValidationError, match="path traversal"):
+            ChannelId("../etc/passwd")
+        with pytest.raises(DomainValidationError, match="invalid characters"):
+            ChannelId("UC_invalid!@#")
+        with pytest.raises(DomainValidationError, match="exceeds maximum length"):
+            ChannelId("A" * 65)
+
+    def test_from_string_factory(self) -> None:
+        from cresmo.domain.value_objects import ChannelId
+
+        cid = ChannelId.from_string("UC_x5XG1OV2P6uZZ5FSM9Ttw")
+        assert isinstance(cid, ChannelId)
+        assert cid.value == "UC_x5XG1OV2P6uZZ5FSM9Ttw"
+        assert ChannelId.from_string(cid) is cid
+
+    def test_from_url_or_token(self) -> None:
+        from cresmo.domain.exceptions import DomainValidationError
+        from cresmo.domain.value_objects import ChannelId
+
+        cid1 = ChannelId.from_url_or_token(
+            "https://www.youtube.com/channel/UC_x5XG1OV2P6uZZ5FSM9Ttw"
+        )
+        assert cid1.value == "UC_x5XG1OV2P6uZZ5FSM9Ttw"
+
+        cid2 = ChannelId.from_url_or_token("https://www.youtube.com/c/UC_x5XG1OV2P6uZZ5FSM9Ttw")
+        assert cid2.value == "UC_x5XG1OV2P6uZZ5FSM9Ttw"
+
+        cid3 = ChannelId.from_url_or_token("UC_x5XG1OV2P6uZZ5FSM9Ttw")
+        assert cid3.value == "UC_x5XG1OV2P6uZZ5FSM9Ttw"
+
+        with pytest.raises(DomainValidationError, match="Unable to extract valid ChannelId"):
+            ChannelId.from_url_or_token("https://youtube.com/invalid!!")
+
+    def test_extract_from_text(self) -> None:
+        from cresmo.domain.value_objects import ChannelId
+
+        cid = ChannelId.extract_from_text(
+            "https://www.youtube.com/channel/UC_x5XG1OV2P6uZZ5FSM9Ttw"
+        )
+        assert cid is not None
+        assert cid.value == "UC_x5XG1OV2P6uZZ5FSM9Ttw"
+
+        assert ChannelId.extract_from_text("not_valid!@#") is None
+        assert ChannelId.extract_from_text("") is None
+
+    def test_is_channel_or_playlist_url(self) -> None:
+        from cresmo.domain.value_objects import ChannelId
+
+        assert ChannelId.is_channel_or_playlist_url("https://www.youtube.com/@Veritasium") is True
+        assert (
+            ChannelId.is_channel_or_playlist_url(
+                "https://www.youtube.com/channel/UC_x5XG1OV2P6uZZ5FSM9Ttw"
+            )
+            is True
+        )
+        assert ChannelId.is_channel_or_playlist_url("https://www.youtube.com/c/Veritasium") is True
+        assert (
+            ChannelId.is_channel_or_playlist_url("https://www.youtube.com/playlist?list=PL123")
+            is True
+        )
+        assert (
+            ChannelId.is_channel_or_playlist_url("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+            is False
+        )
+        assert ChannelId.is_channel_or_playlist_url("https://otherdomain.com/@handle") is False
+
+    def test_equality_with_string_and_hash(self) -> None:
+        from cresmo.domain.value_objects import ChannelId
+
+        cid = ChannelId("UC_x5XG1OV2P6uZZ5FSM9Ttw")
+        assert cid == "UC_x5XG1OV2P6uZZ5FSM9Ttw"
+        assert "UC_x5XG1OV2P6uZZ5FSM9Ttw" == cid
+        assert cid == "  UC_x5XG1OV2P6uZZ5FSM9Ttw  "
+        assert cid == ChannelId("UC_x5XG1OV2P6uZZ5FSM9Ttw")
+        assert cid != "UC_other_channel_id"
+        assert cid != 999
+        assert hash(cid) == hash("UC_x5XG1OV2P6uZZ5FSM9Ttw")
+        assert cid.strip() == "UC_x5XG1OV2P6uZZ5FSM9Ttw"

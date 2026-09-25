@@ -21,6 +21,7 @@ from cresmo.domain.exceptions import (
 )
 from cresmo.domain.value_objects import (
     CausalMatrix,
+    ChannelId,
     ChannelName,
     ContentId,
     CrossContextRelations,
@@ -62,7 +63,7 @@ class RawTranscript:
     source_url: str = ""
     publication_date: datetime.date | None = None
     upload_date: datetime.date | None = None
-    channel_id: str = ""
+    channel_id: ChannelId | str = ""
     channel_category: str = ""
     video_description: str = ""
 
@@ -70,6 +71,9 @@ class RawTranscript:
         # Coerce channel_name to strongly-typed ChannelName Value Object (ADR-019)
         cn = ChannelName.from_string(self.channel_name)
         object.__setattr__(self, "channel_name", cn)
+
+        if self.channel_id:
+            object.__setattr__(self, "channel_id", ChannelId.from_string(self.channel_id))
 
         # Unify publication_date and upload_date semantics
         pub_date = self.publication_date or self.upload_date
@@ -116,7 +120,7 @@ class EnrichedCompendium:
     body: str
     complementary_info: str
     pass_count: int = 1
-    channel_id: str = ""
+    channel_id: ChannelId | str = ""
     channel_category: str = ""
     source_url: str = ""
     publication_date: datetime.date | None = None
@@ -126,6 +130,9 @@ class EnrichedCompendium:
     def __post_init__(self) -> None:
         cn = ChannelName.from_string(self.channel_name)
         object.__setattr__(self, "channel_name", cn)
+
+        if self.channel_id:
+            object.__setattr__(self, "channel_id", ChannelId.from_string(self.channel_id))
 
         # Harmonize publication_date and video_date
         pub_date = self.publication_date

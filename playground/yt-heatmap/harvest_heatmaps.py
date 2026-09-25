@@ -1288,14 +1288,38 @@ def run_ffmpeg_with_progress(
 
 
 def safe_copy_file(src: Path, dst: Path, chunk_size: int = 16 * 1024 * 1024) -> None:
-    """Stream file bytes in chunks to prevent [Errno 95] Operation not supported on GVFS/FUSE SMB mounts."""
+    """Stream file bytes in chunks with throughput progress to prevent [Errno 95] on GVFS/FUSE."""
     dst.parent.mkdir(parents=True, exist_ok=True)
+    total_bytes = src.stat().st_size
+    copied = 0
+    t0 = time.time()
+    last_print = t0
+
+    print(f"         [*] Transferring to storage: {dst.name} ({total_bytes / (1024 * 1024):.1f} MB)...")
     with open(src, "rb") as fsrc, open(dst, "wb") as fdst:
         while True:
             chunk = fsrc.read(chunk_size)
             if not chunk:
                 break
             fdst.write(chunk)
+            copied += len(chunk)
+            now = time.time()
+            if now - last_print >= 1.0 or copied == total_bytes:
+                elapsed = max(0.001, now - t0)
+                speed_mb = (copied / (1024 * 1024)) / elapsed
+                pct = (copied / total_bytes) * 100 if total_bytes > 0 else 100
+                rem_bytes = max(0, total_bytes - copied)
+                eta_sec = rem_bytes / (speed_mb * 1024 * 1024) if speed_mb > 0 else 0
+                eta_str = f"{int(eta_sec // 60):02d}:{int(eta_sec % 60):02d}"
+                bar = "█" * int(pct // 5) + "░" * (20 - int(pct // 5))
+                sys.stdout.write(
+                    f"\r         [Storage Copy] [{bar}] {pct:5.1f}% | {copied / (1024 * 1024):.1f}/{total_bytes / (1024 * 1024):.1f} MB | {speed_mb:.1f} MB/s | ETA: {eta_str}   "
+                )
+                sys.stdout.flush()
+                last_print = now
+
+    sys.stdout.write("\n")
+    sys.stdout.flush()
 
 
 def merge_and_slowdown_clips(
@@ -1343,10 +1367,12 @@ def merge_and_slowdown_clips(
     ]
 
     success = False
+    t_remux = time.time()
     try:
         r = subprocess.run(cmd_copy, capture_output=True, text=True, timeout=600)
         if r.returncode == 0 and local_temp.exists() and local_temp.stat().st_size > 0 and is_clip_intact(local_temp):
             success = True
+            print(f"         [✓] Fast remux finished in {time.time() - t_remux:.2f}s ({local_temp.stat().st_size / (1024 * 1024):.1f} MB)")
         else:
             # Fallback: NVENC Hardware Re-encode if stream copy fails
             has_audio = has_audio_stream(valid_clips[0])
