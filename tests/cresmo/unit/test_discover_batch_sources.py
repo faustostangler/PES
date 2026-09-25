@@ -1196,3 +1196,37 @@ class TestDiscoverBatchSourcesUseCase:
         sources = list(use_case.execute(query))
         assert len(sources) == 1
         assert "targetVid123" in sources[0].target
+
+    def test_discover_sources_streaming_respects_queue_maxsize_backpressure(self, tmp_path: Path) -> None:
+        """Verify streaming discovery applies backpressure via bounded queue maxsize."""
+        playlist_file = tmp_path / "playlist.txt"
+        playlist_file.write_text(
+            "https://www.youtube.com/watch?v=vid1\n"
+            "https://www.youtube.com/watch?v=vid2\n"
+            "https://www.youtube.com/watch?v=vid3\n",
+            encoding="utf-8",
+        )
+
+        mock_ingestion = MagicMock()
+        mock_ingestion.extract_channel_url_from_video.return_value = None
+
+        settings = CresmoSettings(discovery_queue_maxsize=2, _env_file=None)
+        use_case = DiscoverBatchSourcesUseCase(
+            media_ingestion_port=mock_ingestion,
+            settings=settings,
+        )
+
+        query = BatchDiscoveryQuery(
+            playlist_path=playlist_file,
+            playlist_priority_path=tmp_path / "empty_prio.txt",
+            priority_texts_dir=tmp_path / "empty_texts",
+            raw_dir=tmp_path / "raw",
+            scan_raw=False,
+            enable_channel_crawler=True,
+            queue_maxsize=2,
+        )
+
+        stream = use_case.execute(query)
+        items = list(stream)
+        assert len(items) == 3
+

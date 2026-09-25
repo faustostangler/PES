@@ -14,6 +14,7 @@ Conforms to:
 from __future__ import annotations
 
 import argparse
+import gc
 import sys
 from collections.abc import Iterable, Iterator, Sized
 from pathlib import Path
@@ -289,6 +290,7 @@ def execute_batch_run(
     for source_index, source in enumerate(sources, 1):
         total_items += 1
         item_prefix = f"[{source_index}/{total_count_suffix}]"
+        result = None
         try:
             if source.kind == "file":
                 target_path = Path(source.target)
@@ -340,6 +342,14 @@ def execute_batch_run(
         except Exception as exc:  # noqa: BLE001
             failed += 1
             sys.stderr.write(f"{item_prefix} [FAILED] {source.target}: {exc}\n")
+        finally:
+            # Memory Hygiene & Telemetry Drainage per ADR-020
+            try:
+                pipeline.telemetry_port.flush()
+            except Exception:  # noqa: BLE001
+                pass
+            result = None
+            gc.collect()
 
     if total_items == 0:
         manifest_display = str(args.manifest) if args.manifest else "data/playlist.txt"
@@ -459,6 +469,7 @@ def handle_run(args: argparse.Namespace) -> int:
             discovery_workers=settings.channel_discovery_workers,
             enable_channel_crawler=enable_crawl,
             filter_criteria=filter_criteria,
+            queue_maxsize=settings.discovery_queue_maxsize,
         )
 
         if args.dry_run:

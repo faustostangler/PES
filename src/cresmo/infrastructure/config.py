@@ -259,6 +259,12 @@ class CresmoSettings(BaseSettings):
         validation_alias=AliasChoices("channel_discovery_workers", "max_channel_workers"),
         description="Concurrent worker threads for scanning YouTube channel uploads feeds (defaults to whisper_workers * 10).",
     )
+    discovery_queue_maxsize: int = Field(
+        default=50,
+        ge=1,
+        validation_alias=AliasChoices("discovery_queue_maxsize", "max_discovery_queue_size"),
+        description="Maximum bounded capacity for batch source streaming queue to enforce backpressure against OOM (default: 50).",
+    )
 
     @model_validator(mode="after")
     def _compute_worker_multiples(self) -> Self:

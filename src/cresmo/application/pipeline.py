@@ -280,7 +280,7 @@ class CresmoPipeline:
 
             # Batched Atomic Synthesis
             with self.telemetry_port.start_stage_span("stage5_atomic_batch"):
-                self.synthesize_atomic_batch.execute(
+                synthesized_notes = self.synthesize_atomic_batch.execute(
                     inventory=inventory,
                     compendium=expanded_compendium,
                 )
@@ -297,17 +297,17 @@ class CresmoPipeline:
             if self.ledger_port:
                 self.ledger_port.mark_processed(content_id)
 
-            final_notes = self.vault_port.get_all_atomic_notes()
-
             # Record session coherence evaluation score per EVAL-001 & ADR-016
             item_count = len(inventory.items) if hasattr(inventory, "items") else 1
-            coherence_score = min(1.0, len(final_notes) / max(1, item_count)) if item_count else 1.0
+            coherence_score = (
+                min(1.0, len(synthesized_notes) / max(1, item_count)) if item_count else 1.0
+            )
             self.telemetry_port.record_session_coherence(
                 session_id=session_id,
                 content_id=content_id,
                 score=coherence_score,
                 details={
-                    "final_notes_count": len(final_notes),
+                    "synthesized_notes_count": len(synthesized_notes),
                     "inventory_count": item_count,
                     "mocs_count": len(mocs),
                     "duplicates_unified": dedup_report.duplicates_unified_count,
@@ -317,10 +317,11 @@ class CresmoPipeline:
             return PipelineResult(
                 content_id=content_id,
                 success=True,
-                synthesized_notes=tuple(final_notes),
+                synthesized_notes=tuple(synthesized_notes),
                 reconciled_mocs=tuple(mocs),
                 duplicates_unified=dedup_report.duplicates_unified_count,
             )
+
 
     def run_for_video(
         self,

@@ -789,6 +789,15 @@ class TelemetryPort(ABC):
         """
         raise NotImplementedError
 
+    def flush(self) -> None:
+        """Flush pending spans, metrics, and buffer queues to backend telemetry collectors.
+
+        Default no-op implementation allowing concrete adapters to gracefully drain
+        in-memory buffers without raising NotImplementedError.
+        """
+
+
+
 
 class AnonymizerPort(ABC):
     """Hexagonal Port for data anonymization, PII redaction, and credential scrubbing.

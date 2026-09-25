@@ -30,6 +30,39 @@ from cresmo.domain.entities import (
 logger = logging.getLogger(__name__)
 
 
+def name_telemetry_threads(langfuse_client: Any | None = None) -> None:
+    """Assign canonical SOTA-KISS thread names to background telemetry workers.
+
+    Prevents anonymous threads ('Thread-1', 'Thread-2', etc.) in Linux thread dumps
+    and APMs per ADR-020 Pillar 5 (Thread Hierarchy & APM Visibility).
+    """
+    import threading
+
+    if langfuse_client is not None:
+        try:
+            resources = getattr(langfuse_client, "_resources", None)
+            if resources:
+                for idx, consumer in enumerate(getattr(resources, "_media_upload_consumers", [])):
+                    consumer.name = f"LangfuseMediaUploadConsumer-{idx}"
+                for idx, consumer in enumerate(getattr(resources, "_ingestion_consumers", [])):
+                    consumer.name = f"LangfuseScoreIngestionConsumer-{idx}"
+                pc = getattr(resources, "prompt_cache", None)
+                if pc:
+                    ptm = getattr(pc, "_task_manager", None)
+                    if ptm:
+                        for idx, consumer in enumerate(getattr(ptm, "_consumers", [])):
+                            consumer.name = f"LangfusePromptCacheConsumer-{idx}"
+        except Exception as exc:  # noqa: BLE001
+            logger.debug("Failed to assign canonical names to Langfuse threads: %s", exc)
+
+    try:
+        for t in threading.enumerate():
+            if t.name == "OtelBatchSpanRecordProcessor":
+                t.name = "CresmoOtelBatchSpanProcessor"
+    except Exception as exc:  # noqa: BLE001
+        logger.debug("Failed to assign canonical name to OpenTelemetry thread: %s", exc)
+
+
 class OpenTelemetryAdapter(TelemetryPort):
     """Production Telemetry adapter integrating CNCF OpenTelemetry and Langfuse.
 
@@ -51,6 +84,7 @@ class OpenTelemetryAdapter(TelemetryPort):
         """
         self._tracer = tracer or trace.get_tracer("cresmo.pipeline")
         self._langfuse = langfuse_client
+        name_telemetry_threads(langfuse_client)
 
     @contextmanager
     def start_pipeline_session(
@@ -246,6 +280,20 @@ class OpenTelemetryAdapter(TelemetryPort):
             except Exception as exc:  # noqa: BLE001
                 logger.debug("[OpenTelemetryAdapter] Langfuse score emission skipped: %s", exc)
 
+    def flush(self) -> None:
+        """Flush in-memory OpenTelemetry spans and Langfuse client buffer queues."""
+        if self._langfuse is not None:
+            try:
+                self._langfuse.flush()
+            except Exception as exc:  # noqa: BLE001
+                logger.debug("[OpenTelemetryAdapter] Langfuse client flush skipped: %s", exc)
+        try:
+            tracer_provider = trace.get_tracer_provider()
+            if hasattr(tracer_provider, "force_flush"):
+                tracer_provider.force_flush(timeout_millis=2000)
+        except Exception as exc:  # noqa: BLE001
+            logger.debug("[OpenTelemetryAdapter] OpenTelemetry tracer provider flush skipped: %s", exc)
+
 
 class NoOpTelemetryAdapter(TelemetryPort):
     """Graceful degradation adapter deployed when observability services are offline.
@@ -292,3 +340,7 @@ class NoOpTelemetryAdapter(TelemetryPort):
         details: dict[str, Any] | None = None,
     ) -> None:
         """No-op session coherence recorder."""
+
+    def flush(self) -> None:
+        """No-op flush for offline/test runs."""
+

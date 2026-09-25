@@ -7,6 +7,7 @@ re-compiled at 50% speed (2x duration) with the format:
 Removes individual source clips upon successful merge and updates SQLite database.
 """
 
+import argparse
 import json
 import os
 import re
@@ -15,10 +16,11 @@ import sqlite3
 import subprocess
 import sys
 import tempfile
+import threading
 import time
 from collections import defaultdict
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Union
 
 BASE_DIR = Path(__file__).resolve().parent
 DB_PATH = BASE_DIR / "heatmap_pipeline.sqlite"
@@ -26,6 +28,23 @@ SMB_TARGET = Path(
     f"/run/user/{os.getuid()}/gvfs/smb-share:server=files.local,share=public/Fausto Stangler/Documentos/Videos/yt-heatmap/clips_harvested"
 )
 LOCAL_TARGET = BASE_DIR / "clips_harvested"
+
+
+def resolve_temp_dir(custom_path: Optional[Union[str, Path]] = None) -> Path:
+    """Resolve scratch temporary directory prioritizing custom parameter, environment variable, or /mnt/gamer_d."""
+    if custom_path:
+        p = Path(custom_path)
+    elif "HEATMAP_TEMP_DIR" in os.environ and os.environ["HEATMAP_TEMP_DIR"].strip():
+        p = Path(os.environ["HEATMAP_TEMP_DIR"].strip())
+    elif Path("/mnt/gamer_d/tmp/yt-heatmap").exists() or Path("/mnt/gamer_d").exists():
+        p = Path("/mnt/gamer_d/tmp/yt-heatmap")
+    else:
+        p = Path(tempfile.gettempdir()) / "yt-heatmap"
+    p.mkdir(parents=True, exist_ok=True)
+    return p
+
+
+DEFAULT_TEMP_DIR = resolve_temp_dir()
 
 
 def is_clip_intact(file_path: Path, max_desync_sec: float = 3.0) -> bool:
@@ -81,12 +100,150 @@ def has_audio_stream(video_path: Path) -> bool:
         return True
 
 
+def format_time(sec: float) -> str:
+    """Format seconds into HH:MM:SS or MM:SS."""
+    s = max(0, int(sec))
+    m, s = divmod(s, 60)
+    h, m = divmod(m, 60)
+    if h > 0:
+        return f"{h:02d}:{m:02d}:{s:02d}"
+    return f"{m:02d}:{s:02d}"
+
+
+def get_video_duration(file_path: Path) -> float:
+    """Quickly probe video container duration in seconds."""
+    try:
+        cmd = [
+            "ffprobe", "-v", "error",
+            "-show_entries", "format=duration",
+            "-of", "csv=p=0",
+            str(file_path),
+        ]
+        res = subprocess.run(cmd, capture_output=True, text=True, timeout=10)
+        return float(res.stdout.strip())
+    except Exception:
+        return 0.0
+
+
+def run_ffmpeg_with_progress(
+    cmd: List[str],
+    expected_duration_sec: float = 0.0,
+    label: str = "NVENC",
+    timeout: int = 1800,
+) -> Tuple[int, str]:
+    """
+    Execute ffmpeg command with real-time ETA, speed, and percentage progress bar.
+    Reads progress events via '-progress pipe:1 -nostats'.
+    """
+    # Build command with progress options
+    full_cmd = [cmd[0], "-y", "-progress", "pipe:1", "-nostats"] + [a for a in cmd[1:] if a != "-y"]
+
+    t0 = time.time()
+    stderr_lines: List[str] = []
+    curr_sec = 0.0
+    speed_val = 0.0
+    fps_val = 0.0
+
+    try:
+        proc = subprocess.Popen(
+            full_cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            bufsize=1,
+            universal_newlines=True,
+        )
+    except Exception as e:
+        return -1, str(e)
+
+    def read_stderr():
+        if proc.stderr:
+            for line in proc.stderr:
+                stderr_lines.append(line.strip())
+
+    t_err = threading.Thread(target=read_stderr, daemon=True)
+    t_err.start()
+
+    try:
+        if proc.stdout:
+            for line in iter(proc.stdout.readline, ""):
+                line = line.strip()
+                if not line or "=" not in line:
+                    continue
+                k, v = line.split("=", 1)
+                k, v = k.strip(), v.strip()
+                if k == "out_time_us" and v.isdigit():
+                    curr_sec = int(v) / 1_000_000.0
+                elif k == "speed":
+                    s_str = v.rstrip("x").strip()
+                    try:
+                        speed_val = float(s_str)
+                    except ValueError:
+                        pass
+                elif k == "fps":
+                    try:
+                        fps_val = float(v)
+                    except ValueError:
+                        pass
+                elif k == "progress" and v in ("continue", "end"):
+                    pct = min(99.9, (curr_sec / expected_duration_sec) * 100.0) if expected_duration_sec > 0 else 0.0
+                    rem_sec = max(0.0, expected_duration_sec - curr_sec)
+                    eta_sec = (rem_sec / speed_val) if speed_val > 0 else 0.0
+                    filled = int(pct / 5)
+                    bar = "█" * filled + "░" * (20 - filled)
+                    speed_display = f"{speed_val:.1f}x" if speed_val > 0 else "..."
+                    fps_display = f" ({int(fps_val)} fps)" if fps_val > 0 else ""
+                    dur_display = (
+                        f"{format_time(curr_sec)}/{format_time(expected_duration_sec)}"
+                        if expected_duration_sec > 0
+                        else format_time(curr_sec)
+                    )
+                    eta_display = (
+                        f" | ETA: {format_time(eta_sec)}"
+                        if (expected_duration_sec > 0 and speed_val > 0)
+                        else ""
+                    )
+
+                    sys.stdout.write(
+                        f"\r        [{label}] [{bar}] {pct:5.1f}% | {dur_display} | {speed_display}{fps_display}{eta_display}   "
+                    )
+                    sys.stdout.flush()
+
+        proc.wait(timeout=timeout)
+        t_err.join(timeout=2.0)
+    except subprocess.TimeoutExpired:
+        proc.kill()
+        sys.stdout.write("\n")
+        return -1, "Timed out"
+    except Exception as e:
+        proc.kill()
+        sys.stdout.write("\n")
+        return -1, str(e)
+
+    elapsed = time.time() - t0
+    avg_speed = (expected_duration_sec / elapsed) if (expected_duration_sec > 0 and elapsed > 0) else speed_val
+
+    if proc.returncode == 0:
+        bar = "█" * 20
+        dur_display = format_time(expected_duration_sec) if expected_duration_sec > 0 else format_time(curr_sec)
+        sys.stdout.write(
+            f"\r        [{label}] [{bar}] 100.0% | {dur_display} finished in {elapsed:.1f}s ({avg_speed:.1f}x avg)       \n"
+        )
+        sys.stdout.flush()
+    else:
+        sys.stdout.write("\n")
+
+    return proc.returncode, "\n".join(stderr_lines[-10:])
+
+
 def merge_and_slowdown_clips(
     clip_paths: List[Path],
     output_path: Path,
     speed_factor: float = 0.5,
+    temp_dir: Optional[Path] = None,
+    expected_duration: Optional[float] = None,
 ) -> bool:
-    """Concatenate video clips and re-compile at 50% speed (2x duration)."""
+    """Concatenate video clips and re-compile at 50% speed (2x duration) with real-time ETA progress."""
     if not clip_paths:
         return False
 
@@ -99,14 +256,17 @@ def merge_and_slowdown_clips(
     atempo = round(speed_factor, 4)
     has_audio = has_audio_stream(valid_clips[0])
 
-    with tempfile.NamedTemporaryFile("w", suffix=".txt", delete=False) as f:
+    scratch = temp_dir or DEFAULT_TEMP_DIR
+    scratch.mkdir(parents=True, exist_ok=True)
+
+    with tempfile.NamedTemporaryFile("w", suffix=".txt", delete=False, dir=scratch) as f:
         for c in valid_clips:
             esc = str(c.resolve()).replace("'", "'\\''")
             f.write(f"file '{esc}'\n")
         concat_file = Path(f.name)
 
-    # Encode to local /tmp file first to maximize throughput and avoid network latency
-    local_temp = Path(tempfile.gettempdir()) / f"merged_{output_path.name}"
+    # Encode to local scratch temp file first to maximize throughput and avoid network latency
+    local_temp = scratch / f"merged_{output_path.name}"
     if local_temp.exists():
         try:
             local_temp.unlink()
@@ -133,26 +293,40 @@ def merge_and_slowdown_clips(
         cmd_nvenc.extend(["-c:a", "aac", "-b:a", "192k"])
     cmd_nvenc.append(str(local_temp))
 
+    # Fallback Attempt 2: CPU libx264
+    cmd_cpu = [
+        "ffmpeg", "-y",
+        "-f", "concat", "-safe", "0", "-i", str(concat_file),
+        "-filter_complex", filter_complex,
+        *map_args,
+        "-c:v", "libx264", "-preset", "veryfast", "-crf", "21", "-pix_fmt", "yuv420p",
+    ]
+    if has_audio:
+        cmd_cpu.extend(["-c:a", "aac", "-b:a", "192k"])
+    cmd_cpu.append(str(local_temp))
+
     success = False
     try:
-        r = subprocess.run(cmd_nvenc, capture_output=True, text=True, timeout=1800)
-        if r.returncode == 0 and local_temp.exists() and local_temp.stat().st_size > 0:
+        ret, err = run_ffmpeg_with_progress(
+            cmd_nvenc,
+            expected_duration_sec=expected_duration or 0.0,
+            label="NVENC",
+            timeout=1800,
+        )
+        if ret == 0 and local_temp.exists() and local_temp.stat().st_size > 0:
             success = True
         else:
-            # Fallback Attempt 2: CPU libx264
-            cmd_cpu = [
-                "ffmpeg", "-y",
-                "-f", "concat", "-safe", "0", "-i", str(concat_file),
-                "-filter_complex", filter_complex,
-                *map_args,
-                "-c:v", "libx264", "-preset", "veryfast", "-crf", "21", "-pix_fmt", "yuv420p",
-            ]
-            if has_audio:
-                cmd_cpu.extend(["-c:a", "aac", "-b:a", "192k"])
-            cmd_cpu.append(str(local_temp))
-            r2 = subprocess.run(cmd_cpu, capture_output=True, text=True, timeout=3600)
-            if r2.returncode == 0 and local_temp.exists() and local_temp.stat().st_size > 0:
+            print(f"        [!] NVENC not available or failed (exit {ret}), falling back to CPU (libx264 veryfast)...")
+            ret2, err2 = run_ffmpeg_with_progress(
+                cmd_cpu,
+                expected_duration_sec=expected_duration or 0.0,
+                label="CPU",
+                timeout=3600,
+            )
+            if ret2 == 0 and local_temp.exists() and local_temp.stat().st_size > 0:
                 success = True
+            else:
+                print(f"        [!] CPU ffmpeg failed: {err2}")
     except Exception as e:
         print(f" [!] Error running ffmpeg: {e}")
     finally:
@@ -172,21 +346,52 @@ def merge_and_slowdown_clips(
         return False
 
 
+def update_clip_paths(db_path: Path, target_path: Path, clip_paths: List[Path]) -> None:
+    """Safely update SQLite database file paths with retry logic."""
+    for attempt in range(1, 4):
+        try:
+            with sqlite3.connect(f"file:{db_path.resolve()}?nolock=1", uri=True, timeout=30.0) as c:
+                for cp in clip_paths:
+                    c.execute(
+                        "UPDATE clips SET file_path = ? WHERE file_path = ? OR file_path LIKE ?",
+                        (str(target_path), str(cp), f"%/{cp.name}"),
+                    )
+            return
+        except Exception as e:
+            if attempt == 3:
+                print(f"    [!] Warning: Failed to update SQLite for {target_path.name}: {e}")
+            else:
+                time.sleep(1.0)
+
+
 def main():
+    parser = argparse.ArgumentParser(description="Merge individual clips per video into 50% speed video.")
+    parser.add_argument("--temp-dir", default=str(DEFAULT_TEMP_DIR), help=f"Scratch temporary directory (default: {DEFAULT_TEMP_DIR})")
+    args = parser.parse_args()
+    temp_dir = resolve_temp_dir(args.temp_dir)
+
     root_dir = SMB_TARGET if SMB_TARGET.exists() else LOCAL_TARGET
     print(f"[*] Starting migration on root directory: {root_dir}")
+    print(f"[*] Scratch Temp Directory: {temp_dir}")
 
-    # Connect to SQLite
-    conn = None
+    # Read clip start times and durations from SQLite safely
     clip_start_times: Dict[str, float] = {}
+    clip_durations: Dict[str, float] = {}
     if DB_PATH.exists():
-        conn = sqlite3.connect(f"file:{DB_PATH.resolve()}?nolock=1", uri=True)
-        with conn:
-            cursor = conn.execute("SELECT file_path, start_time FROM clips WHERE file_path IS NOT NULL")
-            for fp, st in cursor.fetchall():
-                if fp and st is not None:
-                    clip_start_times[str(Path(fp))] = float(st)
-                    clip_start_times[Path(fp).name] = float(st)
+        try:
+            with sqlite3.connect(f"file:{DB_PATH.resolve()}?nolock=1", uri=True, timeout=30.0) as db_conn:
+                cursor = db_conn.execute("SELECT file_path, start_time, clip_duration, end_time FROM clips WHERE file_path IS NOT NULL")
+                for fp, st, dur, et in cursor.fetchall():
+                    if fp:
+                        if st is not None:
+                            clip_start_times[str(Path(fp))] = float(st)
+                            clip_start_times[Path(fp).name] = float(st)
+                        d = float(dur) if dur else (float(et) - float(st) if et and st else 0.0)
+                        if d > 0:
+                            clip_durations[str(Path(fp))] = d
+                            clip_durations[Path(fp).name] = d
+        except Exception as e:
+            print(f" [!] Warning: Could not read clip metadata from SQLite: {e}")
 
     # Clean up leftover .part files
     for part in root_dir.glob("*/*.part"):
@@ -240,8 +445,23 @@ def main():
             print(f"    [i] Merged video already exists and intact: {target_path.name}")
             ok = True
         else:
+            # Estimate expected output duration (at 50% speed, duration is 2x input)
+            total_in_sec = sum(
+                clip_durations.get(cp.name, 0.0) or clip_durations.get(str(cp), 0.0)
+                for cp in clip_paths
+            )
+            if total_in_sec <= 0:
+                total_in_sec = sum(get_video_duration(cp) for cp in clip_paths)
+            expected_output_sec = (total_in_sec / 0.5) if total_in_sec > 0 else 0.0
+
             t0 = time.time()
-            ok = merge_and_slowdown_clips(clip_paths, target_path, speed_factor=0.5)
+            ok = merge_and_slowdown_clips(
+                clip_paths,
+                target_path,
+                speed_factor=0.5,
+                temp_dir=temp_dir,
+                expected_duration=expected_output_sec,
+            )
             elapsed = time.time() - t0
             if ok:
                 print(f"    [✓] Merged & slowed down to 50% speed in {elapsed:.1f}s -> {target_path.name}")
@@ -253,23 +473,13 @@ def main():
         # If successfully merged, update SQLite and delete source clips
         if ok and target_path.exists() and is_clip_intact(target_path):
             videos_merged += 1
-            if conn:
-                with conn:
-                    for _, cp in sorted_clips:
-                        conn.execute(
-                            "UPDATE clips SET file_path = ? WHERE file_path = ? OR file_path LIKE ?",
-                            (str(target_path), str(cp), f"%/{cp.name}"),
-                        )
+            update_clip_paths(DB_PATH, target_path, [cp for _, cp in sorted_clips])
             for _, cp in sorted_clips:
                 try:
                     cp.unlink(missing_ok=True)
                     clips_deleted += 1
                 except Exception as e:
                     print(f"    [!] Could not delete source clip {cp.name}: {e}")
-
-    if conn:
-        conn.commit()
-        conn.close()
 
     total_elapsed = time.time() - start_time_all
     print("\n" + "=" * 70)
