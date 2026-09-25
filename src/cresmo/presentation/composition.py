@@ -156,7 +156,11 @@ def resolve_langfuse_client(
         if mask_hook is not None:
             init_kwargs["mask_otel_spans"] = mask_hook
 
-        return Langfuse(**init_kwargs)
+        client = Langfuse(**init_kwargs)
+        from cresmo.infrastructure.adapters.opentelemetry_adapter import name_telemetry_threads
+
+        name_telemetry_threads(client)
+        return client
     except Exception as exc:  # noqa: BLE001
         logger.warning("[composition] Failed to initialize Langfuse client: %s", exc)
         os.environ.pop("LANGFUSE_PUBLIC_KEY", None)

@@ -103,3 +103,19 @@ class TestCresmoSettings:
         settings.ensure_directories()
         assert settings.master_dir.exists()
         assert settings.master_dir.is_dir()
+
+    def test_discovery_queue_maxsize_defaults_and_validation(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        from pydantic import ValidationError
+
+        settings = CresmoSettings()
+        assert settings.discovery_queue_maxsize == 50
+
+        monkeypatch.setenv("DISCOVERY_QUEUE_MAXSIZE", "120")
+        overridden = CresmoSettings()
+        assert overridden.discovery_queue_maxsize == 120
+
+        with pytest.raises(ValidationError):
+            CresmoSettings(discovery_queue_maxsize=int(0))
+

@@ -85,8 +85,8 @@ class BatchDiscoveryQuery:
     channel_max_videos: int = 50
     discovery_workers: int | None = None
     enable_channel_crawler: bool = True
-    # ADR-012: optional multi-criteria filter; empty = full pipeline flow (no filtering)
     filter_criteria: SyncFilterCriteria = None  # type: ignore[assignment]
+    queue_maxsize: int | None = None
 
     def __post_init__(self) -> None:
         # Ensure filter_criteria is always a valid SyncFilterCriteria (never None)
@@ -270,12 +270,25 @@ class DiscoverBatchSourcesUseCase:
                 yield src
             return
 
-        # OVERLAPPED STREAMING: Spawn background crawler feeding queue.Queue
-        stream_queue: queue.Queue[BatchSource | None | Exception] = queue.Queue()
+        # OVERLAPPED STREAMING: Spawn background crawler feeding queue.Queue with bounded backpressure
+        maxsize = (
+            q.queue_maxsize
+            if q.queue_maxsize is not None
+            else getattr(self.settings, "discovery_queue_maxsize", 50)
+        )
+        stream_queue: queue.Queue[BatchSource | None | Exception] = queue.Queue(maxsize=maxsize)
         stop_event = threading.Event()
 
-        # Connect accumulator callback so newly discovered sources stream directly to queue
-        acc.on_source_added = lambda src: stream_queue.put(src)
+        # Connect accumulator callback so newly discovered sources stream directly to queue with backpressure
+        def _enqueue_source(src: BatchSource) -> None:
+            while not stop_event.is_set():
+                try:
+                    stream_queue.put(src, timeout=0.2)
+                    break
+                except queue.Full:
+                    continue
+
+        acc.on_source_added = _enqueue_source
 
         workers = (
             q.discovery_workers
@@ -338,9 +351,17 @@ class DiscoverBatchSourcesUseCase:
                     stop_event=stop_event,
                 )
             except Exception as exc:  # noqa: BLE001
-                stream_queue.put(exc)
+                try:
+                    stream_queue.put(exc, timeout=2.0)
+                except queue.Full:
+                    pass
             finally:
-                stream_queue.put(None)
+                while not stop_event.is_set():
+                    try:
+                        stream_queue.put(None, timeout=0.2)
+                        break
+                    except queue.Full:
+                        continue
 
         # Parallel processing workers
         crawler_thread = threading.Thread(

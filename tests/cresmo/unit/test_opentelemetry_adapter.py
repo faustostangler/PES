@@ -305,3 +305,61 @@ class TestNoOpTelemetryAdapter:
                 score=1.0,
                 details={},
             )
+
+
+def test_name_telemetry_threads_assigns_canonical_names() -> None:
+    """Verify name_telemetry_threads assigns canonical thread names per ADR-020 Pillar 5."""
+    from unittest.mock import MagicMock
+
+    from cresmo.infrastructure.adapters.opentelemetry_adapter import name_telemetry_threads
+
+    # Setup mock consumers
+    mock_media_consumer = MagicMock()
+    mock_media_consumer.name = "Thread-1"
+
+    mock_score_consumer = MagicMock()
+    mock_score_consumer.name = "Thread-2"
+
+    mock_cache_consumer = MagicMock()
+    mock_cache_consumer.name = "Thread-3"
+
+    mock_client = MagicMock()
+    mock_client._resources._media_upload_consumers = [mock_media_consumer]
+    mock_client._resources._ingestion_consumers = [mock_score_consumer]
+    mock_client._resources.prompt_cache._task_manager._consumers = [mock_cache_consumer]
+
+    from unittest.mock import patch
+
+    # Setup dummy OpenTelemetry thread
+    dummy_otel_thread = MagicMock()
+    dummy_otel_thread.name = "OtelBatchSpanRecordProcessor"
+
+    with patch("threading.enumerate", return_value=[dummy_otel_thread]):
+        name_telemetry_threads(mock_client)
+
+    assert mock_media_consumer.name == "LangfuseMediaUploadConsumer-0"
+    assert mock_score_consumer.name == "LangfuseScoreIngestionConsumer-0"
+    assert mock_cache_consumer.name == "LangfusePromptCacheConsumer-0"
+    assert dummy_otel_thread.name == "CresmoOtelBatchSpanProcessor"
+
+
+def test_opentelemetry_adapter_flush() -> None:
+    """Verify flush drains both Langfuse and OpenTelemetry tracer provider."""
+    from unittest.mock import MagicMock, patch
+
+    mock_langfuse = MagicMock()
+    adapter = OpenTelemetryAdapter(langfuse_client=mock_langfuse)
+
+    mock_provider = MagicMock()
+    with patch("opentelemetry.trace.get_tracer_provider", return_value=mock_provider):
+        adapter.flush()
+
+    mock_langfuse.flush.assert_called_once()
+    mock_provider.force_flush.assert_called_once_with(timeout_millis=2000)
+
+
+def test_noop_telemetry_adapter_flush_is_graceful_noop() -> None:
+    """Verify NoOpTelemetryAdapter flush executes gracefully without error."""
+    adapter = NoOpTelemetryAdapter()
+    adapter.flush()
+

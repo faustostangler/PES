@@ -91,6 +91,23 @@ DEFAULT_OUTPUT_DIR = resolve_storage_path(
 )
 DEFAULT_DB_PATH = BASE_DIR / "heatmap_pipeline.sqlite"
 
+
+def resolve_temp_dir(custom_path: Optional[Union[str, Path]] = None) -> Path:
+    """Resolve scratch temporary directory prioritizing custom parameter, environment variable, or /mnt/gamer_d."""
+    if custom_path:
+        p = Path(custom_path)
+    elif "HEATMAP_TEMP_DIR" in os.environ and os.environ["HEATMAP_TEMP_DIR"].strip():
+        p = Path(os.environ["HEATMAP_TEMP_DIR"].strip())
+    elif Path("/mnt/gamer_d/tmp/yt-heatmap").exists() or Path("/mnt/gamer_d").exists():
+        p = Path("/mnt/gamer_d/tmp/yt-heatmap")
+    else:
+        p = Path(tempfile.gettempdir()) / "yt-heatmap"
+    p.mkdir(parents=True, exist_ok=True)
+    return p
+
+
+DEFAULT_TEMP_DIR = resolve_temp_dir()
+
 # --- Discovery & Harvesting Limits ---
 DEFAULT_MAX_APPROVED_CHANNELS = 0      # Max approved channels to audit and mine (0 for unlimited)
 DEFAULT_MAX_VIDEOS_TO_PROCESS = 0      # Max videos to analyze (0 for unlimited, emptying the pool)
@@ -1150,6 +1167,7 @@ def merge_and_slowdown_clips(
     clip_paths: List[Path],
     output_path: Path,
     speed_factor: float = 0.5,
+    temp_dir: Optional[Path] = None,
 ) -> bool:
     """
     Concatenate video clips and re-compile at 50% speed (2x duration).
@@ -1168,14 +1186,17 @@ def merge_and_slowdown_clips(
     atempo = round(speed_factor, 4)
     has_audio = has_audio_stream(valid_clips[0])
 
-    with tempfile.NamedTemporaryFile("w", suffix=".txt", delete=False) as f:
+    scratch = temp_dir or DEFAULT_TEMP_DIR
+    scratch.mkdir(parents=True, exist_ok=True)
+
+    with tempfile.NamedTemporaryFile("w", suffix=".txt", delete=False, dir=scratch) as f:
         for c in valid_clips:
             esc = str(c.resolve()).replace("'", "'\\''")
             f.write(f"file '{esc}'\n")
         concat_file = Path(f.name)
 
-    # Encode to local temp file first to avoid network latency and corruption on network/SMB shares
-    local_temp = Path(tempfile.gettempdir()) / f"merged_{output_path.name}"
+    # Encode to local scratch temp file first to avoid network latency and corruption on network/SMB shares
+    local_temp = scratch / f"merged_{output_path.name}"
     if local_temp.exists():
         try:
             local_temp.unlink()
@@ -1327,6 +1348,7 @@ def harvest_video_merged(
     clip_format: str = DEFAULT_CLIP_FORMAT,
     cookies_file: Optional[Union[str, Path]] = None,
     video_similarity: Optional[float] = None,
+    temp_dir: Optional[Path] = None,
 ) -> Optional[Path]:
     """
     Harvest all heatmap peaks for a video, download into temporary scratch space,
@@ -1359,8 +1381,11 @@ def harvest_video_merged(
     # Sort peaks chronologically for coherent narrative playback
     sorted_peaks = sorted(peaks, key=lambda p: float(p.get("start_time", 0.0)))
 
-    temp_dir_obj = tempfile.TemporaryDirectory(prefix=f"harvest_{video_id}_")
-    temp_dir = Path(temp_dir_obj.name)
+    scratch = temp_dir or DEFAULT_TEMP_DIR
+    scratch.mkdir(parents=True, exist_ok=True)
+
+    temp_dir_obj = tempfile.TemporaryDirectory(prefix=f"harvest_{video_id}_", dir=scratch)
+    temp_dir_path = Path(temp_dir_obj.name)
 
     downloaded_clips: List[Tuple[Dict[str, Any], int, Path, Optional[int]]] = []
     max_height: Optional[int] = None
@@ -1373,7 +1398,7 @@ def harvest_video_merged(
             clip_path, h = download_single_peak_temp(
                 video_url=video_url,
                 peak_info=peak,
-                temp_dir=temp_dir,
+                temp_dir=temp_dir_path,
                 peak_idx=p_idx,
                 clip_format=clip_format,
                 cookie_path=cookie_path,
@@ -1395,7 +1420,7 @@ def harvest_video_merged(
 
         print(f"         [*] Compiling & slowing down {len(downloaded_clips)} clips into merged video: {target_path.name} (50% speed / 2x duration)...")
         clip_paths_only = [item[2] for item in downloaded_clips]
-        ok = merge_and_slowdown_clips(clip_paths_only, target_path, speed_factor=0.5)
+        ok = merge_and_slowdown_clips(clip_paths_only, target_path, speed_factor=0.5, temp_dir=scratch)
         if not ok or not target_path.exists() or not is_clip_intact(target_path):
             print(f"         [!] Failed to compile merged video for {video_id}.")
             return None
@@ -1450,6 +1475,7 @@ def download_clip_range(
     cookies_file: Optional[Union[str, Path]] = None,
     max_retries: int = DEFAULT_MAX_DOWNLOAD_RETRIES,
     video_similarity: Optional[float] = None,
+    temp_dir: Optional[Path] = None,
 ) -> Optional[Path]:
     """Backward compatibility alias: delegates to harvest_video_merged for single clip."""
     return harvest_video_merged(
@@ -1464,6 +1490,7 @@ def download_clip_range(
         clip_format=clip_format,
         cookies_file=cookies_file,
         video_similarity=video_similarity,
+        temp_dir=temp_dir,
     )
 
 
@@ -1492,6 +1519,7 @@ def run_harvest_pipeline(
     anti_seed_url: Optional[Union[str, List[str]]] = None,
     anti_beta: float = DEFAULT_ANTI_SEED_BETA,
     anti_margin: float = DEFAULT_ANTI_SEED_MARGIN,
+    temp_dir: Path = DEFAULT_TEMP_DIR,
 ) -> Dict[str, Any]:
     """
     Run full graph discovery, semantic audit, and heatmap extraction pipeline.
@@ -1505,6 +1533,7 @@ def run_harvest_pipeline(
       -> cada top-n vídeo vai para o pool de vídeos para analisar
     """
     output_dir = resolve_storage_path(output_dir)
+    temp_dir = resolve_temp_dir(temp_dir)
 
     # Normalize seeds input (single URL, comma-separated list, or List[str])
     if isinstance(seed_url, str):
@@ -1531,6 +1560,7 @@ def run_harvest_pipeline(
         for idx, a_u in enumerate(anti_seed_urls_list, start=1):
             print(f"   [-] {a_u}")
     print(f" Output Directory:       {output_dir.resolve()}")
+    print(f" Scratch Temp Dir:       {temp_dir.resolve()}")
     print(f" SQLite State Database:  {db_path.resolve()}")
     print(f" Max Approved Channels:  {max_approved_channels}")
     print(f" Max Videos to Analyze:  {'Unlimited (Drain Pool)' if max_videos_to_process <= 0 else max_videos_to_process}")
@@ -1825,6 +1855,7 @@ def run_harvest_pipeline(
                         clip_format=clip_format,
                         cookies_file=active_cookies,
                         video_similarity=v_sim,
+                        temp_dir=temp_dir,
                     )
                     if merged_video_path:
                         total_clips_harvested += len(peaks)
@@ -2068,6 +2099,7 @@ def main():
     parser.add_argument("--anti-seed", default=None, help="Anti-seed video URL or comma-separated list of URLs to repel false positives")
     parser.add_argument("--anti-beta", type=float, default=DEFAULT_ANTI_SEED_BETA, help=f"Rocchio anti-seed repulsion factor (default: {DEFAULT_ANTI_SEED_BETA:.2f})")
     parser.add_argument("--anti-margin", type=float, default=DEFAULT_ANTI_SEED_MARGIN, help=f"Contrastive margin guardrail: sim_pos - sim_anti > margin (default: {DEFAULT_ANTI_SEED_MARGIN:.2f})")
+    parser.add_argument("--temp-dir", default=str(DEFAULT_TEMP_DIR), help=f"Scratch temporary directory for intermediate encodes (default: {DEFAULT_TEMP_DIR})")
     args = parser.parse_args()
 
     # --- Inline Sanity Asserts (KISS Validation) ---
@@ -2132,6 +2164,7 @@ def main():
         anti_seed_url=args.anti_seed,
         anti_beta=args.anti_beta,
         anti_margin=args.anti_margin,
+        temp_dir=resolve_temp_dir(args.temp_dir),
     )
 
 
