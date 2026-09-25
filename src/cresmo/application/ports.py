@@ -342,14 +342,14 @@ class VaultRepositoryPort(ABC):
         raise NotImplementedError("Clear previous master documents for channel.")
 
     @abstractmethod
-    def get_indexed_video_ids_for_channel(self, channel_name: ChannelName | str) -> set[str]:
-        """Retrieve set of video IDs already indexed in the channel's _canal.md.
+    def get_indexed_video_ids_for_channel(self, channel_name: ChannelName | str) -> set[ContentId]:
+        """Retrieve set of ContentIds already indexed in the channel's _canal.md.
 
         Args:
             channel_name: Channel identifier.
 
         Returns:
-            Set of string video IDs recorded in the channel raw index.
+            Set of ContentId instances recorded in the channel raw index.
         """
         raise NotImplementedError("Retrieve indexed video IDs for channel.")
 
@@ -795,8 +795,6 @@ class TelemetryPort(ABC):
         Default no-op implementation allowing concrete adapters to gracefully drain
         in-memory buffers without raising NotImplementedError.
         """
-
-
 
 
 class AnonymizerPort(ABC):

@@ -641,8 +641,8 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
         clean_channel = sanitize_filename(channel_name)
         return self.raw_dir / f"_index_{clean_channel}.md"
 
-    def get_indexed_video_ids_for_channel(self, channel_name: ChannelName | str) -> set[str]:
-        """Retrieve set of video IDs already indexed in the channel's _index_{channel_name}.md."""
+    def get_indexed_video_ids_for_channel(self, channel_name: ChannelName | str) -> set[ContentId]:
+        """Retrieve set of ContentIds already indexed in the channel's _index_{channel_name}.md."""
         index_file = self.get_channel_index_path(channel_name)
         if not index_file.exists() or not index_file.is_file():
             return set()
@@ -651,11 +651,17 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
         except OSError:
             return set()
 
-        ids: set[str] = set()
-        for match in re.finditer(r"\*\*Video ID\*\*:\s*`([a-zA-Z0-9_-]{8,64})`", content):
-            ids.add(match.group(1))
-        for match in re.finditer(r"\[([a-zA-Z0-9_-]{8,64})\]\((https?://[^\)]+)\)", content):
-            ids.add(match.group(1))
+        ids: set[ContentId] = set()
+        for match in re.finditer(r"\*\*Video ID\*\*:\s*`([a-zA-Z0-9_-]{1,64})`", content):
+            try:
+                ids.add(ContentId(match.group(1)))
+            except (ValueError, TypeError):
+                continue
+        for match in re.finditer(r"\[([a-zA-Z0-9_-]{1,64})\]\((https?://[^\)]+)\)", content):
+            try:
+                ids.add(ContentId(match.group(1)))
+            except (ValueError, TypeError):
+                continue
         return ids
 
     def append_channel_index_entry(

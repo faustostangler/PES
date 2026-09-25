@@ -16,11 +16,12 @@ import sqlite3
 import subprocess
 import sys
 import tempfile
+import threading
 import time
 import urllib.request
 from collections import deque
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union, cast
 from urllib.parse import unquote, urlparse
 
 import numpy as np
@@ -912,10 +913,13 @@ def fetch_channel_top_videos(channel_url: str, limit: int = DEFAULT_TOP_POPULAR_
         "extract_flat": "in_playlist",
         "playlistend": limit,
     }
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+    with yt_dlp.YoutubeDL(cast(Any, ydl_opts)) as ydl:
         try:
             res = ydl.extract_info(pop_url, download=False)
-            return res.get("entries", []) or []
+            raw_entries = res.get("entries") if res else None
+            if not raw_entries:
+                return []
+            return [dict(e) for e in cast(Any, raw_entries)]
         except Exception as e:
             print(f" [!] Could not fetch videos for {channel_url}: {e}")
             return []
@@ -1163,16 +1167,147 @@ def has_audio_stream(video_path: Path) -> bool:
         return True
 
 
+def format_time(sec: float) -> str:
+    """Format seconds into HH:MM:SS or MM:SS."""
+    s = max(0, int(sec))
+    m, s = divmod(s, 60)
+    h, m = divmod(m, 60)
+    if h > 0:
+        return f"{h:02d}:{m:02d}:{s:02d}"
+    return f"{m:02d}:{s:02d}"
+
+
+def run_ffmpeg_with_progress(
+    cmd: List[str],
+    expected_duration_sec: float = 0.0,
+    label: str = "NVENC",
+    timeout: int = 1800,
+) -> Tuple[int, str]:
+    """
+    Execute ffmpeg command with real-time ETA, speed, and percentage progress bar.
+    Reads progress events via '-progress pipe:1 -nostats'.
+    """
+    full_cmd = [cmd[0], "-y", "-progress", "pipe:1", "-nostats"] + [a for a in cmd[1:] if a != "-y"]
+
+    t0 = time.time()
+    stderr_lines: List[str] = []
+    curr_sec = 0.0
+    speed_val = 0.0
+    fps_val = 0.0
+
+    try:
+        proc = subprocess.Popen(
+            full_cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            bufsize=1,
+            universal_newlines=True,
+        )
+    except Exception as e:
+        return -1, str(e)
+
+    def read_stderr():
+        if proc.stderr:
+            for line in proc.stderr:
+                stderr_lines.append(line.strip())
+
+    t_err = threading.Thread(target=read_stderr, daemon=True)
+    t_err.start()
+
+    try:
+        if proc.stdout:
+            for line in iter(proc.stdout.readline, ""):
+                line = line.strip()
+                if not line or "=" not in line:
+                    continue
+                k, v = line.split("=", 1)
+                k, v = k.strip(), v.strip()
+                if k == "out_time_us" and v.isdigit():
+                    curr_sec = int(v) / 1_000_000.0
+                elif k == "speed":
+                    s_str = v.rstrip("x").strip()
+                    try:
+                        speed_val = float(s_str)
+                    except ValueError:
+                        pass
+                elif k == "fps":
+                    try:
+                        fps_val = float(v)
+                    except ValueError:
+                        pass
+                elif k == "progress" and v in ("continue", "end"):
+                    pct = min(99.9, (curr_sec / expected_duration_sec) * 100.0) if expected_duration_sec > 0 else 0.0
+                    rem_sec = max(0.0, expected_duration_sec - curr_sec)
+                    eta_sec = (rem_sec / speed_val) if speed_val > 0 else 0.0
+                    filled = int(pct / 5)
+                    bar = "█" * filled + "░" * (20 - filled)
+                    speed_display = f"{speed_val:.1f}x" if speed_val > 0 else "..."
+                    fps_display = f" ({int(fps_val)} fps)" if fps_val > 0 else ""
+                    dur_display = (
+                        f"{format_time(curr_sec)}/{format_time(expected_duration_sec)}"
+                        if expected_duration_sec > 0
+                        else format_time(curr_sec)
+                    )
+                    eta_display = (
+                        f" | ETA: {format_time(eta_sec)}"
+                        if (expected_duration_sec > 0 and speed_val > 0)
+                        else ""
+                    )
+
+                    sys.stdout.write(
+                        f"\r         [{label}] [{bar}] {pct:5.1f}% | {dur_display} | {speed_display}{fps_display}{eta_display}   "
+                    )
+                    sys.stdout.flush()
+
+        proc.wait(timeout=timeout)
+        t_err.join(timeout=2.0)
+    except subprocess.TimeoutExpired:
+        proc.kill()
+        sys.stdout.write("\n")
+        return -1, "Timed out"
+    except Exception as e:
+        proc.kill()
+        sys.stdout.write("\n")
+        return -1, str(e)
+
+    elapsed = time.time() - t0
+    avg_speed = (expected_duration_sec / elapsed) if (expected_duration_sec > 0 and elapsed > 0) else speed_val
+
+    if proc.returncode == 0:
+        bar = "█" * 20
+        dur_display = format_time(expected_duration_sec) if expected_duration_sec > 0 else format_time(curr_sec)
+        sys.stdout.write(
+            f"\r         [{label}] [{bar}] 100.0% | {dur_display} finished in {elapsed:.1f}s ({avg_speed:.1f}x avg)       \n"
+        )
+        sys.stdout.flush()
+    else:
+        sys.stdout.write("\n")
+
+    return proc.returncode, "\n".join(stderr_lines[-10:])
+
+
+def safe_copy_file(src: Path, dst: Path, chunk_size: int = 16 * 1024 * 1024) -> None:
+    """Stream file bytes in chunks to prevent [Errno 95] Operation not supported on GVFS/FUSE SMB mounts."""
+    dst.parent.mkdir(parents=True, exist_ok=True)
+    with open(src, "rb") as fsrc, open(dst, "wb") as fdst:
+        while True:
+            chunk = fsrc.read(chunk_size)
+            if not chunk:
+                break
+            fdst.write(chunk)
+
+
 def merge_and_slowdown_clips(
     clip_paths: List[Path],
     output_path: Path,
-    speed_factor: float = 0.5,
+    speed_factor: float = 1.0,
     temp_dir: Optional[Path] = None,
+    expected_duration: Optional[float] = None,
 ) -> bool:
     """
-    Concatenate video clips and re-compile at 50% speed (2x duration).
-    Uses NVENC (NVIDIA GPU CUDA) if available, falling back to libx264.
-    Cleans up any temporary concat list or intermediate files.
+    Concatenate video clips at native 1x speed without re-encoding (stream copy).
+    Uses fast bitstream remux (-c copy), falling back to re-encoding only if needed.
     """
     if not clip_paths:
         return False
@@ -1182,10 +1317,6 @@ def merge_and_slowdown_clips(
         return False
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    pts_factor = round(1.0 / speed_factor, 4)
-    atempo = round(speed_factor, 4)
-    has_audio = has_audio_stream(valid_clips[0])
-
     scratch = temp_dir or DEFAULT_TEMP_DIR
     scratch.mkdir(parents=True, exist_ok=True)
 
@@ -1203,46 +1334,63 @@ def merge_and_slowdown_clips(
         except Exception:
             pass
 
-    if has_audio:
-        filter_complex = f"[0:v]setpts={pts_factor}*PTS[v];[0:a]atempo={atempo}[a]"
-        map_args = ["-map", "[v]", "-map", "[a]"]
-    else:
-        filter_complex = f"[0:v]setpts={pts_factor}*PTS[v]"
-        map_args = ["-map", "[v]"]
-
-    # Attempt 1: NVIDIA NVENC Hardware Accelerated (CUDA)
-    cmd_nvenc = [
+    # Primary Method: Instant Stream Copy (-c copy) at native 1x speed
+    cmd_copy = [
         "ffmpeg", "-y",
-        "-hwaccel", "cuda",
         "-f", "concat", "-safe", "0", "-i", str(concat_file),
-        "-filter_complex", filter_complex,
-        *map_args,
-        "-c:v", "h264_nvenc", "-preset", "p1", "-cq", "21", "-pix_fmt", "yuv420p",
+        "-c", "copy",
+        str(local_temp),
     ]
-    if has_audio:
-        cmd_nvenc.extend(["-c:a", "aac", "-b:a", "192k"])
-    cmd_nvenc.append(str(local_temp))
 
     success = False
     try:
-        r = subprocess.run(cmd_nvenc, capture_output=True, text=True, timeout=1800)
-        if r.returncode == 0 and local_temp.exists() and local_temp.stat().st_size > 0:
+        r = subprocess.run(cmd_copy, capture_output=True, text=True, timeout=600)
+        if r.returncode == 0 and local_temp.exists() and local_temp.stat().st_size > 0 and is_clip_intact(local_temp):
             success = True
         else:
-            # Fallback Attempt 2: CPU libx264
-            cmd_cpu = [
+            # Fallback: NVENC Hardware Re-encode if stream copy fails
+            has_audio = has_audio_stream(valid_clips[0])
+            map_args = ["-map", "0:v", "-map", "0:a"] if has_audio else ["-map", "0:v"]
+            cmd_nvenc = [
                 "ffmpeg", "-y",
                 "-f", "concat", "-safe", "0", "-i", str(concat_file),
-                "-filter_complex", filter_complex,
                 *map_args,
-                "-c:v", "libx264", "-preset", "veryfast", "-crf", "21", "-pix_fmt", "yuv420p",
+                "-c:v", "h264_nvenc", "-preset", "p1", "-cq", "21", "-pix_fmt", "yuv420p",
             ]
             if has_audio:
-                cmd_cpu.extend(["-c:a", "aac", "-b:a", "192k"])
-            cmd_cpu.append(str(local_temp))
-            r2 = subprocess.run(cmd_cpu, capture_output=True, text=True, timeout=3600)
-            if r2.returncode == 0 and local_temp.exists() and local_temp.stat().st_size > 0:
+                cmd_nvenc.extend(["-c:a", "aac", "-b:a", "192k"])
+            cmd_nvenc.append(str(local_temp))
+
+            ret, err = run_ffmpeg_with_progress(
+                cmd_nvenc,
+                expected_duration_sec=expected_duration or 0.0,
+                label="NVENC",
+                timeout=1800,
+            )
+            if ret == 0 and local_temp.exists() and local_temp.stat().st_size > 0 and is_clip_intact(local_temp):
                 success = True
+            else:
+                err_msg = err.strip().splitlines()[-1] if err.strip() else f"exit {ret}"
+                print(f"         [!] NVENC failed ({err_msg}), falling back to CPU (libx264 veryfast)...")
+                cmd_cpu = [
+                    "ffmpeg", "-y",
+                    "-f", "concat", "-safe", "0", "-i", str(concat_file),
+                    *map_args,
+                    "-c:v", "libx264", "-preset", "veryfast", "-crf", "21", "-pix_fmt", "yuv420p",
+                ]
+                if has_audio:
+                    cmd_cpu.extend(["-c:a", "aac", "-b:a", "192k"])
+                cmd_cpu.append(str(local_temp))
+                ret2, err2 = run_ffmpeg_with_progress(
+                    cmd_cpu,
+                    expected_duration_sec=expected_duration or 0.0,
+                    label="CPU",
+                    timeout=3600,
+                )
+                if ret2 == 0 and local_temp.exists() and local_temp.stat().st_size > 0:
+                    success = True
+                else:
+                    print(f"         [!] CPU ffmpeg failed: {err2}")
     except Exception as e:
         print(f"         [!] Error merging clips: {e}")
     finally:
@@ -1250,7 +1398,7 @@ def merge_and_slowdown_clips(
 
     if success and local_temp.exists() and is_clip_intact(local_temp):
         try:
-            shutil.copyfile(str(local_temp), str(output_path))
+            safe_copy_file(local_temp, output_path)
             local_temp.unlink(missing_ok=True)
             return True
         except Exception as e:
@@ -1293,7 +1441,7 @@ def download_single_peak_temp(
 
         ydl_opts: Dict[str, Any] = {
             "format": clip_format,
-            "download_ranges": download_range_func(None, [(start_sec, end_sec)]),
+            "download_ranges": download_range_func([], cast(Any, [(start_sec, end_sec)])),
             "force_keyframes_at_cuts": False,
             "outtmpl": str(temp_dir / f"{prefix}.%(ext)s"),
             "overwrites": True,
@@ -1311,7 +1459,7 @@ def download_single_peak_temp(
             ydl_opts["cookiefile"] = str(cookie_path)
 
         try:
-            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            with yt_dlp.YoutubeDL(cast(Any, ydl_opts)) as ydl:
                 ydl.download([video_url])
 
             downloaded = _captured.get("filename")
@@ -1418,9 +1566,21 @@ def harvest_video_merged(
         res_suffix = f"_{max_height}p" if max_height else ""
         target_path = channel_dir / f"{safe_video}{res_suffix}.mp4"
 
-        print(f"         [*] Compiling & slowing down {len(downloaded_clips)} clips into merged video: {target_path.name} (50% speed / 2x duration)...")
+        print(f"         [*] Compiling {len(downloaded_clips)} clips into merged video: {target_path.name} (1x stream copy)...")
+        total_in_sec = sum(
+            float(p.get("duration") or (float(p["end_time"]) - float(p["start_time"])))
+            for p, _, _, _ in downloaded_clips
+        )
+        expected_output_sec = total_in_sec if total_in_sec > 0 else 0.0
+
         clip_paths_only = [item[2] for item in downloaded_clips]
-        ok = merge_and_slowdown_clips(clip_paths_only, target_path, speed_factor=0.5, temp_dir=scratch)
+        ok = merge_and_slowdown_clips(
+            clip_paths_only,
+            target_path,
+            speed_factor=1.0,
+            temp_dir=scratch,
+            expected_duration=expected_output_sec,
+        )
         if not ok or not target_path.exists() or not is_clip_intact(target_path):
             print(f"         [!] Failed to compile merged video for {video_id}.")
             return None
@@ -1586,7 +1746,7 @@ def run_harvest_pipeline(
     # 2. Extract Seed Video(s) Info & Compute Normalized Seed Centroid
     print(f"\n[*] Step 1: Initializing {len(seed_urls_list)} Seed Video(s)...")
 
-    ydl_meta: Dict[str, Any] = {
+    ydl_meta: Any = {
         "skip_download": True,
         "quiet": True,
         "no_warnings": True,
@@ -1863,7 +2023,7 @@ def run_harvest_pipeline(
                             rel_display = merged_video_path.relative_to(output_dir)
                         except Exception:
                             rel_display = merged_video_path.name
-                        print(f"         [✓] Harvested & merged {len(peaks)} clips into: {rel_display} (2x duration / 50% speed | Total clips: {total_clips_harvested})")
+                        print(f"         [✓] Harvested & merged {len(peaks)} clips into: {rel_display} (1x native speed | Total clips: {total_clips_harvested})")
                         record_video(conn, v_id, v_ch_url, v_title, "processed", True, similarity=v_sim)
                     else:
                         print(f"         [!] Failed to harvest and merge video {v_id}")

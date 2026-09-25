@@ -38,6 +38,34 @@ class TestContentId:
         with pytest.raises(DomainValidationError):
             ContentId("invalid/id#special!")
 
+    def test_from_string_factory(self) -> None:
+        cid = ContentId.from_string("dQw4w9WgXcQ")
+        assert isinstance(cid, ContentId)
+        assert cid.value == "dQw4w9WgXcQ"
+        assert ContentId.from_string(cid) is cid
+
+    def test_from_url_or_token(self) -> None:
+        cid1 = ContentId.from_url_or_token("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+        assert cid1.value == "dQw4w9WgXcQ"
+        cid2 = ContentId.from_url_or_token("https://youtu.be/dQw4w9WgXcQ")
+        assert cid2.value == "dQw4w9WgXcQ"
+        cid3 = ContentId.from_url_or_token("https://www.youtube.com/shorts/dQw4w9WgXcQ")
+        assert cid3.value == "dQw4w9WgXcQ"
+        cid4 = ContentId.from_url_or_token("dQw4w9WgXcQ")
+        assert cid4.value == "dQw4w9WgXcQ"
+        with pytest.raises(DomainValidationError, match="Unable to extract valid ContentId"):
+            ContentId.from_url_or_token("https://youtube.com/invalid!")
+
+    def test_equality_with_string_and_hash(self) -> None:
+        cid = ContentId("dQw4w9WgXcQ")
+        assert cid == "dQw4w9WgXcQ"
+        assert "dQw4w9WgXcQ" == cid
+        assert cid == "  dQw4w9WgXcQ  "
+        assert cid != "different_id_123"
+        assert cid != 12345
+        assert hash(cid) == hash("dQw4w9WgXcQ")
+        assert cid.strip() == "dQw4w9WgXcQ"
+
 
 class TestNoteTitle:
     """SPEC-001 §2.1: NoteTitle validation & sanitization."""

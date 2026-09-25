@@ -21,7 +21,11 @@ from pathlib import Path
 from cresmo.domain.exceptions import DomainValidationError, NoteTypologyError
 from cresmo.domain.taxonomy import classify_channel
 
-_CONTENT_ID_PATTERN = re.compile(r"^[a-zA-Z0-9_-]{8,64}$")
+_CONTENT_ID_PATTERN = re.compile(r"^[a-zA-Z0-9_-]{1,64}$")
+_VIDEO_ID_REGEX = re.compile(
+    r"(?:v=|/v/|youtu\.be/|/embed/|/shorts/|/live/|^)([a-zA-Z0-9_-]{8,64})",
+    re.IGNORECASE,
+)
 _BRACKETS_PATTERN = re.compile(r"\[\[(.*?)\]\]")
 _ILLEGAL_CHARS_PATTERN = re.compile(r'[\\/*?:"<>|%]')
 
@@ -146,8 +150,46 @@ class ContentId:
             )
         object.__setattr__(self, "value", val)
 
+    @classmethod
+    def from_string(cls, raw: str | ContentId) -> ContentId:
+        """Ergonomic conversion factory accepting str or existing ContentId."""
+        if isinstance(raw, cls):
+            return raw
+        return cls(value=str(raw).strip())
+
+    @classmethod
+    def from_url_or_token(cls, raw: str | ContentId) -> ContentId:
+        """Extract canonical ContentId from YouTube watch/short/embed URL or token."""
+        if isinstance(raw, cls):
+            return raw
+        token = str(raw).strip()
+        m = _VIDEO_ID_REGEX.search(token)
+        if m:
+            candidate = m.group(1).strip()
+            if _CONTENT_ID_PATTERN.match(candidate):
+                return cls(value=candidate)
+        if _CONTENT_ID_PATTERN.match(token):
+            return cls(value=token)
+        raise DomainValidationError(
+            f"Unable to extract valid ContentId from '{raw}'. Expected YouTube URL or ^[a-zA-Z0-9_-]{{8,64}}$."
+        )
+
     def __str__(self) -> str:
         return self.value
+
+    def strip(self) -> str:
+        """String duck typing helper."""
+        return self.value
+
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, ContentId):
+            return self.value == other.value
+        if isinstance(other, str):
+            return self.value == other.strip()
+        return False
+
+    def __hash__(self) -> int:
+        return hash(self.value)
 
 
 @dataclass(frozen=True)
@@ -313,10 +355,12 @@ class DiscoveredMediaItem:
                 f"Invalid DiscoveredMediaItem media_url '{self.media_url}'. Must start with http:// or https://"
             )
         cn = ChannelName.from_string(self.channel_name)
+        cid = ContentId.from_string(self.content_id)
 
         object.__setattr__(self, "title", t)
         object.__setattr__(self, "media_url", u)
         object.__setattr__(self, "channel_name", cn)
+        object.__setattr__(self, "content_id", cid)
 
 
 _CHANNEL_ID_PATTERN = re.compile(r"(?:^|/channel/|/user/|/c/)(UC[a-zA-Z0-9_-]{2,64})")
@@ -502,18 +546,19 @@ class SyncFilterCriteria:
 
         return domain_lower in self.categories or cat_lower in self.categories
 
-    def matches_video(self, video_id: str, video_url: str | None = None) -> bool:
+    def matches_video(self, video_id: str | ContentId, video_url: str | None = None) -> bool:
         """Evaluate whether a video matches the configured video ID/URL criteria."""
         if not self.video_ids:
             return True
 
-        vid_clean = video_id.strip()
+        vid_clean = video_id.value.strip() if isinstance(video_id, ContentId) else video_id.strip()
         vurl_clean = (video_url or "").strip()
 
         for target in self.video_ids:
-            if target == vid_clean or target in vurl_clean:
+            target_str = target.value.strip() if isinstance(target, ContentId) else target.strip()
+            if target_str == vid_clean or target_str in vurl_clean:
                 return True
-            if vid_clean and vid_clean in target:
+            if vid_clean and vid_clean in target_str:
                 return True
 
         return False
@@ -572,6 +617,7 @@ class LedgerEntry:
         u = self.media_url.strip()
         t = self.title.strip()
         cn = ChannelName.from_string(self.channel_name)
+        cid = ContentId.from_string(self.content_id)
         if not u.startswith(("http://", "https://")):
             raise DomainValidationError(
                 f"Invalid LedgerEntry media_url '{self.media_url}'. Must start with http:// or https://"
@@ -582,6 +628,8 @@ class LedgerEntry:
             raise DomainValidationError(
                 f"LedgerEntry notes_count cannot be negative. Got: {self.notes_count}"
             )
+        object.__setattr__(self, "channel_name", cn)
+        object.__setattr__(self, "content_id", cid)
 
         object.__setattr__(self, "media_url", u)
         object.__setattr__(self, "title", t)
@@ -608,7 +656,7 @@ class MasterDocumentResult:
     part_number: int
     word_count: int
     document_count: int
-    video_ids: tuple[str, ...]
+    video_ids: tuple[ContentId, ...] = ()
 
     def __post_init__(self) -> None:
         cn = ChannelName.from_string(self.channel_name)
@@ -627,8 +675,12 @@ class MasterDocumentResult:
             raise DomainValidationError(
                 f"MasterDocumentResult document_count cannot be negative. Got: {self.document_count}"
             )
+        coerced_vids = tuple(
+            ContentId.from_string(v) if not isinstance(v, ContentId) else v for v in self.video_ids
+        )
         object.__setattr__(self, "channel_name", cn)
         object.__setattr__(self, "channel_category", cat)
+        object.__setattr__(self, "video_ids", coerced_vids)
 
 
 @dataclass(frozen=True)
@@ -656,10 +708,8 @@ class RawIndexEntry:
     channel_category: str = ""
 
     def __post_init__(self) -> None:
-        if not isinstance(self.video_id, ContentId):
-            raise DomainValidationError(
-                f"RawIndexEntry video_id must be a ContentId instance. Got: {type(self.video_id)}"
-            )
+        vid = ContentId.from_string(self.video_id)
+        object.__setattr__(self, "video_id", vid)
         u = self.url.strip()
         t = self.title.strip()
         cn = ChannelName.from_string(self.channel_name)

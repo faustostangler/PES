@@ -117,5 +117,5 @@ class TestCresmoSettings:
         assert overridden.discovery_queue_maxsize == 120
 
         with pytest.raises(ValidationError):
-            CresmoSettings(discovery_queue_maxsize=int(0))
+            CresmoSettings.model_validate({"discovery_queue_maxsize": 0})
 

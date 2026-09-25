@@ -346,10 +346,11 @@ def execute_batch_run(
             # Memory Hygiene & Telemetry Drainage per ADR-020
             try:
                 pipeline.telemetry_port.flush()
-            except Exception:  # noqa: BLE001
+            except Exception:  # noqa: BLE001, S110
                 pass
             result = None
             gc.collect()
+
 
     if total_items == 0:
         manifest_display = str(args.manifest) if args.manifest else "data/playlist.txt"

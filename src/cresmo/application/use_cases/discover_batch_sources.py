@@ -23,6 +23,7 @@ from pathlib import Path
 from cresmo.application.ports import MediaIngestionPort
 from cresmo.domain.value_objects import (
     ChannelFeedQuery,
+    ContentId,
     SourceModality,
     SyncFilterCriteria,
     is_processable_transcript_file,
@@ -44,10 +45,12 @@ class BatchSource:
     Attributes:
         kind: Source modality discriminator (SourceModality.FILE or SourceModality.URL).
         target: File path string or web URL.
+        content_id: Strongly-typed canonical media identifier.
     """
 
     kind: SourceModality | str
     target: str
+    content_id: ContentId | str | None = None
 
     def __post_init__(self) -> None:
         if isinstance(self.kind, str):
@@ -58,6 +61,15 @@ class BatchSource:
                     f"Invalid BatchSource modality '{self.kind}'. Expected 'file' or 'url'."
                 )
             object.__setattr__(self, "kind", modality)
+        if self.content_id is not None and not isinstance(self.content_id, ContentId):
+            object.__setattr__(self, "content_id", ContentId.from_string(self.content_id))
+
+    @property
+    def vid(self) -> str | None:
+        """Backward-compatible accessor for the string representation of content_id."""
+        if self.content_id is None:
+            return None
+        return self.content_id.value if isinstance(self.content_id, ContentId) else self.content_id
 
     @property
     def display_name(self) -> str:
@@ -155,19 +167,64 @@ class _BatchSourceAccumulator:
 
     def __init__(self, on_source_added: Callable[[BatchSource], None] | None = None) -> None:
         self.sources: list[BatchSource] = []
-        self.seen_vids: set[str] = set()
+        self.seen_vids: set[ContentId | str] = set()
         self.on_source_added = on_source_added
         self._lock = threading.Lock()
 
-    def add_source(self, kind: str, target: str, vid: str | None = None) -> BatchSource | None:
+    def add_source(
+        self,
+        kind: SourceModality | str,
+        target: str,
+        vid: ContentId | str | None = None,
+        content_id: ContentId | str | None = None,
+    ) -> BatchSource | None:
         """Append a source and register its identifier for deduplication."""
         with self._lock:
-            m = _VIDEO_ID_REGEX.search(target)
-            actual_vid = vid or (m.group(1) if m else Path(target).stem)
-            if actual_vid in self.seen_vids:
+            resolved_id: ContentId | None = None
+            raw_id = content_id if content_id is not None else vid
+            if raw_id is not None:
+                if isinstance(raw_id, ContentId):
+                    resolved_id = raw_id
+                else:
+                    try:
+                        resolved_id = ContentId.from_url_or_token(raw_id)
+                    except (ValueError, TypeError):
+                        resolved_id = None
+
+            if resolved_id is None:
+                try:
+                    resolved_id = ContentId.from_url_or_token(target)
+                except (ValueError, TypeError):
+                    resolved_id = None
+                if resolved_id is None:
+                    try:
+                        resolved_id = ContentId.from_url_or_token(Path(target).stem)
+                    except (ValueError, TypeError):
+                        resolved_id = None
+
+            dedup_token: str = (
+                resolved_id.value
+                if resolved_id is not None
+                else (str(raw_id) if raw_id is not None else Path(target).stem)
+            )
+            if (
+                dedup_token in self.seen_vids
+                or (resolved_id is not None and resolved_id in self.seen_vids)
+                or (raw_id is not None and str(raw_id) in self.seen_vids)
+            ):
                 return None
-            self.seen_vids.add(actual_vid)
-            src = BatchSource(kind=kind, target=target)
+
+            self.seen_vids.add(dedup_token)
+            if raw_id is not None:
+                self.seen_vids.add(raw_id if not isinstance(raw_id, ContentId) else raw_id.value)
+            if resolved_id is not None:
+                self.seen_vids.add(resolved_id)
+                self.seen_vids.add(resolved_id.value)
+            stem = Path(target).stem
+            if stem:
+                self.seen_vids.add(stem)
+
+            src = BatchSource(kind=kind, target=target, content_id=resolved_id)
             self.sources.append(src)
             cb = self.on_source_added
 
@@ -175,19 +232,39 @@ class _BatchSourceAccumulator:
             cb(src)
         return src
 
-    def register_identifier(self, target_str: str) -> None:
+    def register_identifier(self, target_str: str | ContentId) -> None:
         """Register video ID or path stem into the deduplication set."""
         with self._lock:
-            m = _VIDEO_ID_REGEX.search(target_str)
-            if m:
-                self.seen_vids.add(m.group(1))
-            else:
-                self.seen_vids.add(Path(target_str).stem)
+            if isinstance(target_str, ContentId):
+                self.seen_vids.add(target_str)
+                self.seen_vids.add(target_str.value)
+                return
+            self.seen_vids.add(target_str)
+            try:
+                cid = ContentId.from_url_or_token(target_str)
+                self.seen_vids.add(cid)
+                self.seen_vids.add(cid.value)
+            except (ValueError, TypeError):
+                cid = None
+            stem = Path(target_str).stem
+            if stem:
+                self.seen_vids.add(stem)
 
-    def has_seen(self, identifier: str) -> bool:
-        """Check if an identifier (video ID or stem) was already registered."""
+    def has_seen(self, identifier: str | ContentId) -> bool:
+        """Check if an identifier (video ID, stem, or ContentId) was already registered."""
         with self._lock:
-            return identifier in self.seen_vids
+            if identifier in self.seen_vids:
+                return True
+            if isinstance(identifier, ContentId):
+                return identifier.value in self.seen_vids
+            try:
+                cid = ContentId.from_url_or_token(identifier)
+                if cid in self.seen_vids or cid.value in self.seen_vids:
+                    return True
+            except (ValueError, TypeError):
+                cid = None
+            stem = Path(identifier).stem
+            return stem in self.seen_vids if stem else False
 
 
 class DiscoverBatchSourcesUseCase:
@@ -400,7 +477,14 @@ class DiscoverBatchSourcesUseCase:
         urls = read_manifest_lines(manifest_path)
         if urls:
             self._notify(f"[manifest] Loaded {len(urls)} URLs from {manifest_path.name}\n")
-        return [BatchSource(kind="url", target=u) for u in urls]
+        sources: list[BatchSource] = []
+        for u in urls:
+            try:
+                cid = ContentId.from_url_or_token(u)
+            except (ValueError, TypeError):
+                cid = None
+            sources.append(BatchSource(kind="url", target=u, content_id=cid))
+        return sources
 
     def _collect_priority_texts(
         self,

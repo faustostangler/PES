@@ -122,9 +122,9 @@ class InMemoryVaultAdapter(VaultRepositoryPort):
         ch = str(channel_name).strip()
         return Path(f"/mock/raw/{ch}/_index_{ch}.md")
 
-    def get_indexed_video_ids_for_channel(self, channel_name: ChannelName | str) -> set[str]:
+    def get_indexed_video_ids_for_channel(self, channel_name: ChannelName | str) -> set[ContentId]:
         entries = self.channel_raw_indexes.get(str(channel_name).strip(), [])
-        return {e.video_id.value for e in entries}
+        return {e.video_id for e in entries}
 
     def append_channel_index_entry(
         self, channel_name: ChannelName | str, entry: RawIndexEntry
@@ -156,11 +156,7 @@ class InMemoryVaultAdapter(VaultRepositoryPort):
     ) -> None:
         ch = str(channel_name).strip()
         cat = channel_category.strip()
-        keys_to_del = [
-            k
-            for k in self.master_documents
-            if k[0] == ch and k[1] == cat
-        ]
+        keys_to_del = [k for k in self.master_documents if k[0] == ch and k[1] == cat]
         for k in keys_to_del:
             del self.master_documents[k]
 
