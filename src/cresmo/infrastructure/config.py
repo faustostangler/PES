@@ -83,6 +83,10 @@ class CresmoSettings(BaseSettings):
         default="production",
         description="Active prompt label tag in Langfuse (e.g. 'production', 'staging').",
     )
+    langfuse_timeout_seconds: int = Field(
+        default=30,
+        description="Read and connect timeout in seconds for Langfuse client and OpenTelemetry exporter.",
+    )
     anonymization_enabled: bool = Field(
         default=True,
         description="Enable PII and credential masking in telemetry, span attributes, and exports.",

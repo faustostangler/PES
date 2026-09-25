@@ -326,7 +326,9 @@ class DiscoverBatchSourcesUseCase:
             if q.priority_texts_dir is not None
             else getattr(self.settings, "priority_texts_dir", None)
         )
-        pri_text_chans = self._collect_priority_texts(priority_texts_dir, acc, q.filter_criteria)
+        priority_text_channels = self._collect_priority_texts(
+            priority_texts_dir, acc, q.filter_criteria
+        )
 
         # A2: Local raw lake (.md files)
         raw_dir = (
@@ -334,15 +336,15 @@ class DiscoverBatchSourcesUseCase:
             if q.raw_dir is not None
             else getattr(self.settings, "raw_dir", Path("data/raw"))
         )
-        local_channels = self._scan_raw_lake(raw_dir, q.scan_raw, acc, q.filter_criteria)
+        local_video_channel_map = self._scan_raw_lake(raw_dir, q.scan_raw, acc, q.filter_criteria)
 
         playlist_priority_path = (
             q.playlist_priority_path
             if q.playlist_priority_path is not None
             else getattr(self.settings, "playlist_priority_path", None)
         )
-        pri_url_chans, pri_unresolved = self._collect_priority_urls(
-            playlist_priority_path, local_channels, acc, q.filter_criteria
+        priority_url_channels, unresolved_priority_video_seeds = self._collect_priority_urls(
+            playlist_priority_path, local_video_channel_map, acc, q.filter_criteria
         )
 
         # FAST-PATH PRIORITY SNAPSHOT:
@@ -362,7 +364,7 @@ class DiscoverBatchSourcesUseCase:
                 yield src
             yielded_so_far = len(acc.sources)
             # ADR-012: pass filter_criteria so channel/video/category filters apply on sync path too
-            self._classify_seeds(playlist_path, local_channels, acc, q.filter_criteria)
+            self._classify_seeds(playlist_path, local_video_channel_map, acc, q.filter_criteria)
             for src in acc.sources[yielded_so_far:]:
                 yield src
             return
@@ -399,10 +401,10 @@ class DiscoverBatchSourcesUseCase:
             try:
                 # 1. Seed parser
                 channels_to_probe, remote_videos, probed_channels = self._classify_seeds(
-                    playlist_path, local_channels, acc, q.filter_criteria
+                    playlist_path, local_video_channel_map, acc, q.filter_criteria
                 )
 
-                for pch in pri_text_chans + pri_url_chans:
+                for pch in priority_text_channels + priority_url_channels:
                     norm_pch = normalize_to_uploads_playlist_url(pch)
                     if norm_pch not in probed_channels:
                         probed_channels.add(norm_pch)
@@ -412,7 +414,9 @@ class DiscoverBatchSourcesUseCase:
                     return
 
                 # 2. Seed-Channel resolver
-                all_remote_seeds = list(dict.fromkeys(pri_unresolved + remote_videos))
+                all_remote_seeds = list(
+                    dict.fromkeys(unresolved_priority_video_seeds + remote_videos)
+                )
                 if all_remote_seeds:
                     self._resolve_remote_channels(
                         all_remote_seeds,
@@ -428,8 +432,8 @@ class DiscoverBatchSourcesUseCase:
 
                 self._notify(
                     f"[crawler] Stage A complete: {len(channels_to_probe)} unique channel(s) identified for sync\n"
-                    f"  - A1 (Priority): {len(set(pri_text_chans + pri_url_chans))} channel(s)\n"
-                    f"  - A2 (Local Raw Lake): {len(set(local_channels.values()))} channel(s)\n"
+                    f"  - A1 (Priority): {len(set(priority_text_channels + priority_url_channels))} channel(s)\n"
+                    f"  - A2 (Local Raw Lake): {len(set(local_video_channel_map.values()))} channel(s)\n"
                     f"  - A3 (Seed Playlist): {len(channels_to_probe)} total channel(s)\n"
                 )
 
@@ -555,7 +559,7 @@ class DiscoverBatchSourcesUseCase:
     def _collect_priority_urls(
         self,
         playlist_priority_path: Path | None,
-        local_channels: dict[str, str],
+        local_video_channel_map: dict[str, str],
         acc: _BatchSourceAccumulator,
         filter_criteria: SyncFilterCriteria | None = None,
     ) -> tuple[list[str], list[str]]:
@@ -576,7 +580,7 @@ class DiscoverBatchSourcesUseCase:
             else:
                 cid = ContentId.extract_from_text(pu)
                 vid_str = cid.value if cid else None
-                local_chan = local_channels.get(vid_str) if vid_str else None
+                local_chan = local_video_channel_map.get(vid_str) if vid_str else None
 
                 matches = True
                 if not criteria.is_empty():
@@ -672,7 +676,7 @@ class DiscoverBatchSourcesUseCase:
     def _classify_seeds(
         self,
         playlist_path: Path | None,
-        local_channels: dict[str, str],
+        local_video_channel_map: dict[str, str],
         acc: _BatchSourceAccumulator,
         filter_criteria: SyncFilterCriteria | None = None,
     ) -> tuple[list[str], list[str], set[str]]:
@@ -686,7 +690,7 @@ class DiscoverBatchSourcesUseCase:
         remote_videos: list[str] = []
 
         # Seed channels discovered from the local raw lake
-        for c_url in local_channels.values():
+        for c_url in local_video_channel_map.values():
             if c_url not in probed_channels and (
                 criteria.is_empty()
                 or (
@@ -712,7 +716,7 @@ class DiscoverBatchSourcesUseCase:
             else:
                 cid = ContentId.extract_from_text(mu)
                 vid_str = cid.value if cid else None
-                local_chan = local_channels.get(vid_str) if vid_str else None
+                local_chan = local_video_channel_map.get(vid_str) if vid_str else None
 
                 matches = True
                 if not criteria.is_empty():

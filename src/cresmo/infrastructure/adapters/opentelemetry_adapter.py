@@ -12,7 +12,7 @@ from __future__ import annotations
 
 import logging
 from collections.abc import Generator
-from contextlib import contextmanager
+from contextlib import contextmanager, nullcontext
 from typing import Any
 
 from opentelemetry import trace
@@ -158,21 +158,21 @@ class OpenTelemetryAdapter(TelemetryPort):
                     if key in ("title", "channel", "video_url", "content_id"):
                         span.set_attribute(f"langfuse.input.{key}", str(val))
 
+            cm: Any = nullcontext()
             if self._langfuse is not None:
                 try:
                     from langfuse import propagate_attributes
 
-                    with propagate_attributes(
+                    cm = propagate_attributes(
                         session_id=session_id.value,
                         user_id=norm_user.value,
                         tags=tags,
-                    ):
-                        yield span
-                    return
+                    )
                 except Exception as exc:  # noqa: BLE001
-                    logger.debug("Failed to propagate Langfuse attributes: %s", exc)
+                    logger.debug("Failed to initialize Langfuse propagate_attributes: %s", exc)
 
-            yield span
+            with cm:
+                yield span
 
     @contextmanager
     def start_stage_span(

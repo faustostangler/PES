@@ -23,6 +23,7 @@ from cresmo.domain.entities import (
     PipelineSessionId,
     UserIdentity,
 )
+from cresmo.domain.exceptions import DomainValidationError
 from cresmo.infrastructure.adapters.opentelemetry_adapter import (
     NoOpTelemetryAdapter,
     OpenTelemetryAdapter,
@@ -276,6 +277,21 @@ class TestOpenTelemetryAdapter:
         assert root_span.attributes["cresmo.user.is_anonymous"] is False
         assert root_span.attributes["cresmo.user.provider"] == "google"
         assert root_span.attributes["cresmo.user.subject"] == "alice@corp.com"
+
+    def test_pipeline_session_propagates_caller_exceptions(
+        self,
+        otel_setup: tuple[OpenTelemetryAdapter, InMemorySpanExporter],
+    ) -> None:
+        """Verify that caller exceptions are never swallowed by start_pipeline_session."""
+        adapter, _ = otel_setup
+        session_id = PipelineSessionId.create(channel="sandeco", content_id="vid_exc_01")
+        user_id = ChannelTenantId.create("sandeco")
+
+        with (
+            pytest.raises(DomainValidationError, match="Entity discovery failed"),
+            adapter.start_pipeline_session(session_id=session_id, user_id=user_id),
+        ):
+            raise DomainValidationError("Entity discovery failed")
 
 
 class TestNoOpTelemetryAdapter:
