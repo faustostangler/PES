@@ -351,7 +351,6 @@ def execute_batch_run(
             result = None
             gc.collect()
 
-
     if total_items == 0:
         manifest_display = str(args.manifest) if args.manifest else "data/playlist.txt"
         sys.stdout.write(

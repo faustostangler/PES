@@ -362,4 +362,3 @@ def test_noop_telemetry_adapter_flush_is_graceful_noop() -> None:
     """Verify NoOpTelemetryAdapter flush executes gracefully without error."""
     adapter = NoOpTelemetryAdapter()
     adapter.flush()
-

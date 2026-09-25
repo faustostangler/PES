@@ -118,4 +118,3 @@ class TestCresmoSettings:
 
         with pytest.raises(ValidationError):
             CresmoSettings.model_validate({"discovery_queue_maxsize": 0})
-

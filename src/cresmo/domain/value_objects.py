@@ -132,7 +132,7 @@ class ChannelName:
 
 _CHANNEL_ID_REGEX = re.compile(r"^[a-zA-Z0-9_-]{2,64}$")
 _CHANNEL_URL_EXTRACTOR = re.compile(
-    r"(?:/channel/|/user/|/c/|^)(UC[a-zA-Z0-9_-]{20,62})",
+    r"(?:/channel/|/user/|/c/|^)(UC[a-zA-Z0-9_-]{2,62})",
     re.IGNORECASE,
 )
 _CHANNEL_OR_PLAYLIST_URL_REGEX = re.compile(
@@ -215,12 +215,16 @@ class ChannelId:
         """Discriminator checking if a given URL is a YouTube channel or playlist link."""
         if not url:
             return False
-        return bool(_CHANNEL_OR_PLAYLIST_URL_REGEX.search(url.strip()))
+        u = url.strip()
+        u_lower = u.lower()
+        if "watch?v=" in u_lower and "list=" not in u_lower:
+            return False
+        return bool(_CHANNEL_OR_PLAYLIST_URL_REGEX.search(u))
 
     @property
     def is_youtube_canonical(self) -> bool:
-        """Check if this channel identifier follows canonical YouTube format (UC prefix, >= 20 chars)."""
-        return self.value.startswith("UC") and len(self.value) >= 20
+        """Check if this channel identifier follows canonical YouTube format (UC prefix)."""
+        return self.value.startswith("UC") and len(self.value) >= 4
 
     @property
     def uploads_playlist_id(self) -> str | None:
