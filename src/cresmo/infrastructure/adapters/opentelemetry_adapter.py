@@ -26,6 +26,7 @@ from cresmo.domain.entities import (
     PipelineSessionId,
     UserIdentity,
 )
+from cresmo.domain.value_objects import ChannelName
 
 logger = logging.getLogger(__name__)
 
@@ -90,7 +91,7 @@ class OpenTelemetryAdapter(TelemetryPort):
     def start_pipeline_session(
         self,
         session_id: PipelineSessionId,
-        user_id: UserIdentity | ChannelTenantId | str,
+        user_id: UserIdentity | ChannelTenantId,
         channel_tenant_id: ChannelTenantId | None = None,
         metadata: dict[str, Any] | None = None,
     ) -> Generator[Any]:
@@ -117,7 +118,7 @@ class OpenTelemetryAdapter(TelemetryPort):
                 c_name = user_id.split(":", 1)[1]
                 norm_user = UserIdentity.from_channel(c_name)
                 if channel_tenant_id is None:
-                    channel_tenant_id = ChannelTenantId.create(c_name)
+                    channel_tenant_id = ChannelTenantId.create(ChannelName(c_name))
             elif user_id == "anonymous":
                 norm_user = UserIdentity.anonymous()
             elif user_id.startswith("user:"):
@@ -134,7 +135,7 @@ class OpenTelemetryAdapter(TelemetryPort):
             norm_user = UserIdentity.anonymous()
 
         # Resolve ChannelTenantId
-        tenant = channel_tenant_id or ChannelTenantId.create(session_id.channel_name)
+        tenant = channel_tenant_id or ChannelTenantId.create(ChannelName(session_id.channel_name))
 
         with self._tracer.start_as_current_span("cresmo.pipeline.execution") as span:
             span.set_attribute("langfuse.observation.type", "span")
@@ -308,7 +309,7 @@ class NoOpTelemetryAdapter(TelemetryPort):
     def start_pipeline_session(
         self,
         session_id: PipelineSessionId,
-        user_id: UserIdentity | ChannelTenantId | str,
+        user_id: UserIdentity | ChannelTenantId,
         channel_tenant_id: ChannelTenantId | None = None,
         metadata: dict[str, Any] | None = None,
     ) -> Generator[Any]:

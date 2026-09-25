@@ -23,6 +23,7 @@ from cresmo.application.ports import MediaIngestionPort
 from cresmo.domain.value_objects import (
     ChannelFeedQuery,
     ChannelId,
+    ChannelName,
     ContentId,
     SourceModality,
     SyncFilterCriteria,
@@ -42,17 +43,17 @@ class BatchSource:
         content_id: Strongly-typed canonical media identifier.
     """
 
-    kind: SourceModality | str
+    kind: SourceModality
     target: str
-    content_id: ContentId | str | None = None
+    content_id: ContentId | None = None
 
     def __post_init__(self) -> None:
-        if isinstance(self.kind, str):
+        if isinstance(self.kind, str) and not isinstance(self.kind, SourceModality):
             try:
                 modality = SourceModality(self.kind.strip().lower())
             except ValueError:
                 raise ValueError(
-                    f"Invalid BatchSource modality '{self.kind}'. Expected 'file' or 'url'."
+                    f"Invalid BatchSource modality '{self.kind}'. Expected SourceModality.FILE or SourceModality.URL."
                 )
             object.__setattr__(self, "kind", modality)
         if self.content_id is not None and not isinstance(self.content_id, ContentId):
@@ -68,7 +69,7 @@ class BatchSource:
     @property
     def display_name(self) -> str:
         """Human-readable representation for CLI logs."""
-        if self.kind == SourceModality.FILE or self.kind == "file":
+        if self.kind is SourceModality.FILE:
             return Path(self.target).name
         return self.target
 
@@ -153,6 +154,34 @@ def extract_raw_file_metadata(path: Path) -> dict[str, str]:
     return metadata
 
 
+def _matches_channel_target(criteria: SyncFilterCriteria, chan_target: str) -> bool:
+    if chan_target.startswith(("http", "@")):
+        return criteria.matches_channel(channel_url=chan_target)
+    return criteria.matches_channel(channel_name=ChannelName(chan_target))
+
+
+def _matches_category_target(criteria: SyncFilterCriteria, chan_target: str) -> bool:
+    if chan_target.startswith(("http", "@")):
+        return criteria.matches_category(channel_url=chan_target)
+    return criteria.matches_category(channel_name=ChannelName(chan_target))
+
+
+def _matches_video_target(
+    criteria: SyncFilterCriteria,
+    vid_or_url: ContentId | str | None,
+    url_fallback: str | None = None,
+) -> bool:
+    if isinstance(vid_or_url, ContentId):
+        return criteria.matches_video(video_id=vid_or_url, video_url=url_fallback)
+    if isinstance(vid_or_url, str):
+        if vid_or_url.startswith("http"):
+            return criteria.matches_video(video_url=vid_or_url)
+        return criteria.matches_video(video_id=ContentId(vid_or_url), video_url=url_fallback)
+    if url_fallback:
+        return criteria.matches_video(video_url=url_fallback)
+    return True
+
+
 class _BatchSourceAccumulator:
     """Encapsulates thread-safe deduplication and ordered accumulation of batch sources."""
 
@@ -164,10 +193,10 @@ class _BatchSourceAccumulator:
 
     def add_source(
         self,
-        kind: SourceModality | str,
+        kind: SourceModality,
         target: str,
-        vid: ContentId | str | None = None,
-        content_id: ContentId | str | None = None,
+        vid: ContentId | None = None,
+        content_id: ContentId | None = None,
     ) -> BatchSource | None:
         """Append a source and register its identifier for deduplication."""
         with self._lock:
@@ -474,7 +503,7 @@ class DiscoverBatchSourcesUseCase:
                 cid = ContentId.from_url_or_token(u)
             except (ValueError, TypeError):
                 cid = None
-            sources.append(BatchSource(kind="url", target=u, content_id=cid))
+            sources.append(BatchSource(kind=SourceModality.URL, target=u, content_id=cid))
         return sources
 
     def _collect_priority_texts(
@@ -496,26 +525,26 @@ class DiscoverBatchSourcesUseCase:
 
             matches = True
             if not criteria.is_empty():
-                if criteria.video_ids and not criteria.matches_video(vid):
+                if criteria.video_ids and not _matches_video_target(criteria, vid):
                     matches = False
                 if criteria.channels and (
-                    not raw_chan or not criteria.matches_channel(raw_chan, raw_chan)
+                    not raw_chan or not _matches_channel_target(criteria, raw_chan)
                 ):
                     matches = False
                 if criteria.categories and (
-                    not raw_chan or not criteria.matches_category(raw_chan)
+                    not raw_chan or not _matches_category_target(criteria, raw_chan)
                 ):
                     matches = False
 
             if matches:
                 resolved_pf = str(pf.resolve())
-                acc.add_source(kind="file", target=resolved_pf)
+                acc.add_source(kind=SourceModality.FILE, target=resolved_pf)
 
             if raw_chan and (
                 criteria.is_empty()
                 or (
-                    criteria.matches_channel(raw_chan, raw_chan)
-                    and criteria.matches_category(raw_chan)
+                    _matches_channel_target(criteria, raw_chan)
+                    and _matches_category_target(criteria, raw_chan)
                 )
             ):
                 norm_chan = normalize_to_uploads_playlist_url(raw_chan)
@@ -538,36 +567,37 @@ class DiscoverBatchSourcesUseCase:
         for pu in priority_urls:
             if is_channel_or_playlist_feed(pu):
                 if criteria.is_empty() or (
-                    criteria.matches_channel(pu, pu) and criteria.matches_category(pu)
+                    criteria.matches_channel(channel_url=pu)
+                    and criteria.matches_category(channel_url=pu)
                 ):
                     norm_chan = normalize_to_uploads_playlist_url(pu)
                     if norm_chan not in priority_channels:
                         priority_channels.append(norm_chan)
             else:
                 cid = ContentId.extract_from_text(pu)
-                vid = cid.value if cid else None
-                local_chan = local_channels.get(vid) if vid else None
+                vid_str = cid.value if cid else None
+                local_chan = local_channels.get(vid_str) if vid_str else None
 
                 matches = True
                 if not criteria.is_empty():
-                    if criteria.video_ids and not criteria.matches_video(vid or pu, pu):
+                    if criteria.video_ids and not _matches_video_target(criteria, cid or pu, pu):
                         matches = False
                     if criteria.channels and (
-                        not local_chan or not criteria.matches_channel(local_chan, local_chan)
+                        not local_chan or not _matches_channel_target(criteria, local_chan)
                     ):
                         matches = False
                     if criteria.categories and (
-                        not local_chan or not criteria.matches_category(local_chan)
+                        not local_chan or not _matches_category_target(criteria, local_chan)
                     ):
                         matches = False
 
-                if matches and not (vid and acc.has_seen(vid)):
-                    acc.add_source(kind="url", target=pu, vid=vid)
+                if matches and not (cid and acc.has_seen(cid)):
+                    acc.add_source(kind=SourceModality.URL, target=pu, content_id=cid)
 
                 if local_chan:
                     if criteria.is_empty() or (
-                        criteria.matches_channel(local_chan, local_chan)
-                        and criteria.matches_category(local_chan)
+                        _matches_channel_target(criteria, local_chan)
+                        and _matches_category_target(criteria, local_chan)
                     ):
                         norm_local = normalize_to_uploads_playlist_url(local_chan)
                         if norm_local not in priority_channels:
@@ -576,7 +606,7 @@ class DiscoverBatchSourcesUseCase:
                     criteria.is_empty()
                     or (
                         criteria.video_ids
-                        and criteria.matches_video(vid or pu, pu)
+                        and _matches_video_target(criteria, cid or pu, pu)
                         and not criteria.channels
                         and not criteria.categories
                     )
@@ -620,20 +650,22 @@ class DiscoverBatchSourcesUseCase:
             if scan_raw and not already_seen:
                 matches = True
                 if not criteria.is_empty():
-                    if criteria.video_ids and not criteria.matches_video(canonical_vid):
+                    if criteria.video_ids and not _matches_video_target(criteria, canonical_vid):
                         matches = False
                     if criteria.channels and (
-                        not chan_url or not criteria.matches_channel(chan_url, chan_url)
+                        not chan_url or not _matches_channel_target(criteria, chan_url)
                     ):
                         matches = False
                     if criteria.categories and (
-                        not chan_url or not criteria.matches_category(chan_url)
+                        not chan_url or not _matches_category_target(criteria, chan_url)
                     ):
                         matches = False
                 if matches:
                     resolved_rf = str(rf.resolve())
                     if not any(s.target == resolved_rf for s in acc.sources):
-                        acc.sources.append(BatchSource(kind="file", target=resolved_rf))
+                        acc.sources.append(
+                            BatchSource(kind=SourceModality.FILE, target=resolved_rf)
+                        )
 
         return local_video_to_channel
 
@@ -657,7 +689,10 @@ class DiscoverBatchSourcesUseCase:
         for c_url in local_channels.values():
             if c_url not in probed_channels and (
                 criteria.is_empty()
-                or (criteria.matches_channel(c_url, c_url) and criteria.matches_category(c_url))
+                or (
+                    criteria.matches_channel(channel_url=c_url)
+                    and criteria.matches_category(channel_url=c_url)
+                )
             ):
                 probed_channels.add(c_url)
                 channels_to_probe.append(c_url)
@@ -667,38 +702,41 @@ class DiscoverBatchSourcesUseCase:
             if is_channel_or_playlist_feed(mu):
                 if mu not in probed_channels and (
                     criteria.is_empty()
-                    or (criteria.matches_channel(mu, mu) and criteria.matches_category(mu))
+                    or (
+                        criteria.matches_channel(channel_url=mu)
+                        and criteria.matches_category(channel_url=mu)
+                    )
                 ):
                     probed_channels.add(mu)
                     channels_to_probe.append(mu)
             else:
                 cid = ContentId.extract_from_text(mu)
-                vid = cid.value if cid else None
-                local_chan = local_channels.get(vid) if vid else None
+                vid_str = cid.value if cid else None
+                local_chan = local_channels.get(vid_str) if vid_str else None
 
                 matches = True
                 if not criteria.is_empty():
-                    if criteria.video_ids and not criteria.matches_video(vid or mu, mu):
+                    if criteria.video_ids and not _matches_video_target(criteria, cid or mu, mu):
                         matches = False
                     if criteria.channels and (
-                        not local_chan or not criteria.matches_channel(local_chan, local_chan)
+                        not local_chan or not _matches_channel_target(criteria, local_chan)
                     ):
                         matches = False
                     if criteria.categories and (
-                        not local_chan or not criteria.matches_category(local_chan)
+                        not local_chan or not _matches_category_target(criteria, local_chan)
                     ):
                         matches = False
 
                 # ADR-012: apply multi-criteria filter for direct video seeds
-                if matches and not (vid and acc.has_seen(vid)):
-                    acc.add_source(kind="url", target=mu, vid=vid)
+                if matches and not (cid and acc.has_seen(cid)):
+                    acc.add_source(kind=SourceModality.URL, target=mu, content_id=cid)
 
                 if local_chan:
                     if local_chan not in probed_channels and (
                         criteria.is_empty()
                         or (
-                            criteria.matches_channel(local_chan, local_chan)
-                            and criteria.matches_category(local_chan)
+                            _matches_channel_target(criteria, local_chan)
+                            and _matches_category_target(criteria, local_chan)
                         )
                     ):
                         probed_channels.add(local_chan)
@@ -707,7 +745,7 @@ class DiscoverBatchSourcesUseCase:
                     criteria.is_empty()
                     or (
                         criteria.video_ids
-                        and criteria.matches_video(vid or mu, mu)
+                        and _matches_video_target(criteria, cid or mu, mu)
                         and not criteria.channels
                         and not criteria.categories
                     )
@@ -757,8 +795,8 @@ class DiscoverBatchSourcesUseCase:
                     ):
                         chan_clean = resolved_chan.strip()
                         if criteria.is_empty() or (
-                            criteria.matches_channel(chan_clean, chan_clean)
-                            and criteria.matches_category(chan_clean)
+                            criteria.matches_channel(channel_url=chan_clean)
+                            and criteria.matches_category(channel_url=chan_clean)
                         ):
                             probed_channels.add(chan_clean)
                             channels_to_probe.append(chan_clean)
@@ -819,13 +857,15 @@ class DiscoverBatchSourcesUseCase:
                     if stop_event is not None and stop_event.is_set():
                         break
                     cid = ContentId.extract_from_text(d_url)
-                    vid = cid.value if cid else d_url
+                    vid_token = cid or d_url
                     # Stage B: Skip if already in raw lake or already queued
-                    if not acc.has_seen(vid):
+                    if not acc.has_seen(vid_token):
                         # ADR-012: apply video ID filter before scheduling ingestion
-                        if not criteria.matches_video(vid, d_url):
+                        if not _matches_video_target(criteria, cid or d_url, d_url):
                             continue
-                        added = acc.add_source(kind="url", target=d_url, vid=vid)
+                        added = acc.add_source(
+                            kind=SourceModality.URL, target=d_url, content_id=cid
+                        )
                         if added is not None:
                             discovered_count += 1
 

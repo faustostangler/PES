@@ -36,12 +36,12 @@ class TestRawTranscript:
         pub = datetime.date(2023, 5, 12)
         transcript = RawTranscript(
             content_id=cid,
-            channel_name="Example Channel",
+            channel_name=ChannelName("Example Channel"),
             body="Valid spoken transcript body text.",
             publication_date=pub,
         )
         assert transcript.content_id == cid
-        assert transcript.channel_name == "Example Channel"
+        assert transcript.channel_name == ChannelName("Example Channel")
         assert isinstance(transcript.channel_name, ChannelName)
         assert transcript.body == "Valid spoken transcript body text."
         assert transcript.publication_date == pub
@@ -52,7 +52,7 @@ class TestRawTranscript:
         with pytest.raises(DomainValidationError):
             RawTranscript(
                 content_id=cid,
-                channel_name="Example Channel",
+                channel_name=ChannelName("Example Channel"),
                 body="",
             )
 
@@ -65,7 +65,7 @@ class TestEnrichedCompendium:
         title = NoteTitle("Teoria das Elites")
         comp = EnrichedCompendium(
             content_id=cid,
-            channel_name="Example Channel",
+            channel_name=ChannelName("Example Channel"),
             title=title,
             body="Continuous fluid prose analyzing institutional power dynamics.",
             complementary_info="Detailed historical and empirical datasets.",
@@ -75,7 +75,7 @@ class TestEnrichedCompendium:
         assert comp.content_id == cid
         assert comp.pass_count == 3
         assert isinstance(comp.channel_name, ChannelName)
-        assert comp.channel_name == "Example Channel"
+        assert comp.channel_name == ChannelName("Example Channel")
         assert comp.video_date == "20240315"
         assert comp.publication_date == datetime.date(2024, 3, 15)
 
@@ -85,7 +85,7 @@ class TestEnrichedCompendium:
         with pytest.raises(CompendiumStructureError):
             EnrichedCompendium(
                 content_id=cid,
-                channel_name="Example Channel",
+                channel_name=ChannelName("Example Channel"),
                 title=title,
                 body="Continuous prose body.",
                 complementary_info="",
@@ -97,7 +97,7 @@ class TestEnrichedCompendium:
         with pytest.raises(CompendiumStructureError):
             EnrichedCompendium(
                 content_id=cid,
-                channel_name="Example Channel",
+                channel_name=ChannelName("Example Channel"),
                 title=title,
                 body="Text with table:\n| Col 1 | Col 2 |\n|---|---|\n| A | B |",
                 complementary_info="Complementary info.",
@@ -179,15 +179,15 @@ class TestMapOfContent:
 
     def test_raw_transcript_empty_channel_raises_error(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
-        with pytest.raises(DomainValidationError, match="cannot be empty or whitespace"):
-            RawTranscript(content_id=cid, channel_name="   ", body="Valid body.")
+        with pytest.raises(DomainValidationError, match="ChannelName cannot be empty"):
+            RawTranscript(content_id=cid, channel_name=ChannelName("   "), body="Valid body.")
 
     def test_enriched_compendium_empty_body_raises_error(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
         with pytest.raises(CompendiumStructureError, match="body cannot be empty"):
             EnrichedCompendium(
                 content_id=cid,
-                channel_name="Channel",
+                channel_name=ChannelName("Channel"),
                 title=NoteTitle("Title"),
                 body="   ",
                 complementary_info="Complementary info.",
@@ -198,7 +198,7 @@ class TestMapOfContent:
         with pytest.raises(CompendiumStructureError, match="pass_count must be at least 1"):
             EnrichedCompendium(
                 content_id=cid,
-                channel_name="Channel",
+                channel_name=ChannelName("Channel"),
                 title=NoteTitle("Title"),
                 body="Valid body.",
                 complementary_info="Complementary info.",

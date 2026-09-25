@@ -8,7 +8,7 @@ from cresmo.application.use_cases.concat_master import (
     ConcatMasterUseCase,
     parse_metadata_from_content,
 )
-from cresmo.domain.value_objects import ContentId, MasterDocumentResult
+from cresmo.domain.value_objects import ChannelName, ContentId, MasterDocumentResult
 from cresmo.infrastructure.config import CresmoSettings
 from tests.doubles.mock_adapters import InMemoryVaultAdapter
 
@@ -21,7 +21,7 @@ class TestConcatMasterUseCase:
         vault = InMemoryVaultAdapter()
         use_case = ConcatMasterUseCase(vault_port=vault, settings=settings)
 
-        results = use_case.execute_for_channel(channel_name="EmptyChannel")
+        results = use_case.execute_for_channel(channel_name=ChannelName("EmptyChannel"))
         assert results == []
 
     def test_chronological_sorting_oldest_first(self, tmp_path: Path) -> None:
@@ -52,12 +52,12 @@ class TestConcatMasterUseCase:
         vault.channel_enriched_files["HistoryChannel"] = [f_newest, f_oldest, f_mid]
 
         use_case = ConcatMasterUseCase(vault_port=vault, settings=settings)
-        results = use_case.execute_for_channel("HistoryChannel")
+        results = use_case.execute_for_channel(ChannelName("HistoryChannel"))
 
         assert len(results) == 1
         res = results[0]
         assert isinstance(res, MasterDocumentResult)
-        assert res.channel_name == "HistoryChannel"
+        assert res.channel_name == ChannelName("HistoryChannel")
         assert res.channel_category == "history"
         assert res.part_number == 1
         assert res.document_count == 3
@@ -108,15 +108,15 @@ class TestConcatMasterUseCase:
         vault.channel_enriched_files["TechChannel"] = [f1, f2, f3]
 
         use_case = ConcatMasterUseCase(vault_port=vault, settings=settings)
-        results = use_case.execute_for_channel("TechChannel", max_words=400)
+        results = use_case.execute_for_channel(ChannelName("TechChannel"), max_words=400)
 
         assert len(results) == 3
         assert results[0].part_number == 1
-        assert results[0].video_ids == ("f1",)
+        assert results[0].video_ids == (ContentId("f1"),)
         assert results[1].part_number == 2
-        assert results[1].video_ids == ("f2",)
+        assert results[1].video_ids == (ContentId("f2"),)
         assert results[2].part_number == 3
-        assert results[2].video_ids == ("f3",)
+        assert results[2].video_ids == (ContentId("f3"),)
 
     def test_single_large_file_stays_whole_without_split(self, tmp_path: Path) -> None:
         settings = CresmoSettings(data_dir=tmp_path / "data", vault_dir=tmp_path / "vault")
@@ -136,11 +136,11 @@ class TestConcatMasterUseCase:
 
         use_case = ConcatMasterUseCase(vault_port=vault, settings=settings)
         # Limit 500 words, but file is 1000 words. Must remain whole in Part 1!
-        results = use_case.execute_for_channel("BigDocChannel", max_words=500)
+        results = use_case.execute_for_channel(ChannelName("BigDocChannel"), max_words=500)
 
         assert len(results) == 1
         assert results[0].part_number == 1
-        assert results[0].video_ids == ("big",)
+        assert results[0].video_ids == (ContentId("big"),)
         assert results[0].word_count >= 1000
 
     def test_execute_all_discovers_all_channels(self, tmp_path: Path) -> None:
@@ -170,7 +170,7 @@ class TestConcatMasterUseCase:
     def test_parse_metadata_returns_strongly_typed_content_id(self) -> None:
         content = "---\nvideo_id: vid_custom_123\nvideo_date: 20240101\n---\nBody"
         _sort_date, _cat, vid = parse_metadata_from_content(
-            content, channel_name="TestChan", fallback_stem="fallback_stem"
+            content, channel_name=ChannelName("TestChan"), fallback_stem="fallback_stem"
         )
         assert isinstance(vid, ContentId)
         assert vid.value == "vid_custom_123"

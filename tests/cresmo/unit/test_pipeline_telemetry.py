@@ -16,7 +16,7 @@ from opentelemetry.sdk.trace.export.in_memory_span_exporter import InMemorySpanE
 
 from cresmo.application.pipeline import CresmoPipeline
 from cresmo.domain.entities import RawTranscript, UserIdentity
-from cresmo.domain.value_objects import ContentId
+from cresmo.domain.value_objects import ChannelName, ContentId
 from cresmo.infrastructure.adapters.opentelemetry_adapter import OpenTelemetryAdapter
 from cresmo.infrastructure.adapters.prompt_provider import JsonPromptProvider
 from tests.cresmo.unit.test_pipeline import SmartMockLLMAdapter
@@ -66,7 +66,7 @@ class TestPipelineTelemetryIntegration:
 
         raw = RawTranscript(
             content_id=ContentId("yt_sample1234"),
-            channel_name="sandeco",
+            channel_name=ChannelName("sandeco"),
             body="Aula completa sobre modelos transformadores e atenção multi-cabeça em deep learning.",
             title="Modelos Transformadores",
         )
@@ -125,7 +125,7 @@ class TestPipelineTelemetryIntegration:
 
         raw = RawTranscript(
             content_id=ContentId("yt_auth_test_01"),
-            channel_name="acropole",
+            channel_name=ChannelName("acropole"),
             body="Aula completa sobre filosofia e estoicismo clássico em Atenas e Roma.",
             title="Estoicismo Clássico",
         )

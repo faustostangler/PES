@@ -103,6 +103,8 @@ class TestCresmoSettings:
         settings.ensure_directories()
         assert settings.master_dir.exists()
         assert settings.master_dir.is_dir()
+        assert settings.mocs_dir.exists()
+        assert settings.mocs_dir.is_dir()
 
     def test_discovery_queue_maxsize_defaults_and_validation(
         self, monkeypatch: pytest.MonkeyPatch

@@ -322,29 +322,29 @@ class IndexRawTranscriptsUseCase:
 
     def _extract_concepts(
         self,
-        video_id: str | ContentId,
+        video_id: ContentId,
         title: str,
-        excerpt: str,
-        channel_name: ChannelName | str,
+        text: str,
+        channel_name: ChannelName,
     ) -> str:
         """Extract principal concepts through an iterative LLM-as-a-judge loop.
 
         Args:
-            video_id: Transcript content identifier for tracing.
+            video_id: Canonical ContentId for tracing.
             title: Content title.
-            excerpt: Transcript text excerpt.
-            channel_name: Channel name for session and tenant observability tagging.
+            text: Source text excerpt or structured summary to distill.
+            channel_name: ChannelName Value Object for session and tenant observability tagging.
 
         Returns:
             Sanitized comma-separated concepts string, falling back to 'Síntese Conceitual'.
         """
         system_instructions, user_prompt = self.prompt_provider.get_raw_index_concepts_prompt(
             video_title=title,
-            transcript_excerpt=excerpt,
+            transcript_excerpt=text,
             language=self.language,
         )
 
-        ch = str(channel_name).strip()
+        ch = channel_name.value
         session_id = f"raw_index_{ch}"
         user_id = ch
         is_valid = False
@@ -382,7 +382,7 @@ class IndexRawTranscriptsUseCase:
                 judge_system_instructions, judge_prompt = (
                     self.prompt_provider.get_judge_raw_index_concepts_prompt(
                         video_title=title,
-                        transcript_excerpt=excerpt,
+                        transcript_excerpt=text,
                         concepts=raw_concepts,
                         language=self.language,
                     )
@@ -409,29 +409,29 @@ class IndexRawTranscriptsUseCase:
 
     def _extract_summary(
         self,
-        video_id: str | ContentId,
+        video_id: ContentId,
         title: str,
-        excerpt: str,
-        channel_name: ChannelName | str,
+        text: str,
+        channel_name: ChannelName,
     ) -> str:
         """Extract structured conceptual summary through an iterative LLM-as-a-judge loop.
 
         Args:
-            video_id: Transcript content identifier for tracing.
+            video_id: Canonical ContentId for tracing.
             title: Content title.
-            excerpt: Transcript text excerpt.
-            channel_name: Channel name for session and tenant observability tagging.
+            text: Transcript text excerpt.
+            channel_name: ChannelName Value Object for session and tenant observability tagging.
 
         Returns:
             Sanitized summary string, falling back to title.
         """
         system_instructions, user_prompt = self.prompt_provider.get_raw_index_summary_prompt(
             video_title=title,
-            transcript_excerpt=excerpt,
+            transcript_excerpt=text,
             language=self.language,
         )
 
-        ch = str(channel_name).strip()
+        ch = channel_name.value
         session_id = f"raw_index_{ch}"
         user_id = ch
         is_valid = False
@@ -468,7 +468,7 @@ class IndexRawTranscriptsUseCase:
             judge_system_instructions, judge_prompt = (
                 self.prompt_provider.get_judge_raw_index_summary_prompt(
                     video_title=title,
-                    transcript_excerpt=excerpt,
+                    transcript_excerpt=text,
                     summary=summary,
                     language=self.language,
                 )
@@ -492,20 +492,20 @@ class IndexRawTranscriptsUseCase:
 
     def _extract_synthesis(
         self,
-        video_id: str | ContentId,
+        video_id: ContentId,
         title: str,
         excerpt: str,
         summary: str,
-        channel_name: ChannelName | str,
+        channel_name: ChannelName,
     ) -> str:
         """Synthesize dense single paratactic paragraph through an iterative LLM-as-a-judge loop.
 
         Args:
-            video_id: Transcript content identifier for tracing.
+            video_id: Canonical ContentId for tracing.
             title: Content title.
             excerpt: Original transcript excerpt used for judge fidelity checking.
             summary: Structured conceptual summary from Pass 2.
-            channel_name: Channel name for session and tenant observability tagging.
+            channel_name: ChannelName Value Object for session and tenant observability tagging.
 
         Returns:
             Sanitized single paratactic synthesis paragraph, falling back to summary or title.
@@ -516,7 +516,7 @@ class IndexRawTranscriptsUseCase:
             language=self.language,
         )
 
-        ch = str(channel_name).strip()
+        ch = channel_name.value
         session_id = f"raw_index_{ch}"
         user_id = ch
         is_valid = False
@@ -616,13 +616,13 @@ class IndexRawTranscriptsUseCase:
             concept = self._extract_concepts(
                 video_id=video_id,
                 title=title,
-                excerpt=excerpt,
+                text=excerpt,
                 channel_name=channel_name,
             )
             summary = self._extract_summary(
                 video_id=video_id,
                 title=title,
-                excerpt=excerpt,
+                text=excerpt,
                 channel_name=channel_name,
             )
             synthesis = self._extract_synthesis(
@@ -667,6 +667,8 @@ class IndexRawTranscriptsUseCase:
             key_concept=concept,
             synthesis=synthesis,
             channel_category=category,
+            summary=summary,
+            excerpt=excerpt,
         )
 
         # Dual output persistence: channel markdown index and global tabular catalog (brain.csv)
@@ -689,13 +691,11 @@ class IndexRawTranscriptsUseCase:
         """Legacy alias delegating to execute() for backward compatibility."""
         return self.execute(transcript=transcript, force=force)
 
-    def index_channel(
-        self, channel_name: ChannelName | str, force: bool = False
-    ) -> list[RawIndexEntry]:
+    def index_channel(self, channel_name: ChannelName, force: bool = False) -> list[RawIndexEntry]:
         """Index all raw markdown transcripts under a channel folder.
 
         Args:
-            channel_name: Subdirectory name representing the channel.
+            channel_name: ChannelName Value Object representing the channel.
             force: If True, forces re-indexing of previously indexed transcripts.
 
         Returns:
@@ -706,7 +706,8 @@ class IndexRawTranscriptsUseCase:
         if raw_dir is None:
             return indexed_entries
 
-        ch_dir = Path(raw_dir) / str(channel_name).strip()
+        cn = ChannelName.from_string(channel_name)
+        ch_dir = Path(raw_dir) / cn.value
         if not ch_dir.exists() or not ch_dir.is_dir():
             return indexed_entries
 
@@ -745,7 +746,7 @@ class IndexRawTranscriptsUseCase:
 
         for sub_dir in sorted(raw_path.iterdir()):
             if sub_dir.is_dir() and not sub_dir.name.startswith((".", "_")):
-                entries = self.index_channel(sub_dir.name, force=force)
+                entries = self.index_channel(ChannelName(sub_dir.name), force=force)
                 if entries:
                     results[sub_dir.name] = entries
 

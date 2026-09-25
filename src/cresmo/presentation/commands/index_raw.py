@@ -14,6 +14,7 @@ from __future__ import annotations
 import argparse
 import sys
 
+from cresmo.domain.value_objects import ChannelName
 from cresmo.infrastructure.config import CresmoSettings
 from cresmo.presentation.composition import (
     build_index_raw_use_case,
@@ -111,7 +112,7 @@ def handle_index_raw(args: argparse.Namespace) -> int:
 
         if args.channel:
             sys.stdout.write(f"Indexing channel: {args.channel}\n")
-            entries = use_case.index_channel(args.channel, force=args.force)
+            entries = use_case.index_channel(ChannelName(args.channel), force=args.force)
             sys.stdout.write(
                 f"Completed: {len(entries)} transcript(s) indexed for channel '{args.channel}'.\n"
             )

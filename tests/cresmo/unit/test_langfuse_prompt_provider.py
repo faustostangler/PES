@@ -13,6 +13,7 @@ from unittest.mock import MagicMock
 import pytest
 
 from cresmo.application.ports import PromptProviderPort
+from cresmo.domain.value_objects import ChannelName
 from cresmo.infrastructure.adapters.prompt_provider import (
     JsonPromptProvider,
     LangfusePromptProvider,
@@ -37,7 +38,7 @@ class TestLangfusePromptProvider:
         prompt = provider.get_gap_filler_prompt(
             pass_num=1,
             total_passes=3,
-            channel_name="sandeco",
+            channel_name=ChannelName("sandeco"),
             file_name="ep01.md",
             raw_text="Sample raw transcript.",
         )
@@ -63,7 +64,7 @@ class TestLangfusePromptProvider:
         prompt = provider.get_gap_filler_prompt(
             pass_num=1,
             total_passes=3,
-            channel_name="sandeco",
+            channel_name=ChannelName("sandeco"),
             file_name="ep01.md",
             raw_text="Sample transcript text.",
         )
@@ -92,7 +93,7 @@ class TestLangfusePromptProvider:
         prompt = provider.get_gap_filler_prompt(
             pass_num=1,
             total_passes=3,
-            channel_name="sandeco",
+            channel_name=ChannelName("sandeco"),
             file_name="ep01.md",
             raw_text="Ground truth text.",
         )
@@ -117,12 +118,12 @@ class TestLangfusePromptProvider:
         assert "Axial text" in wide_prompt
 
         inventory_prompt = provider.get_inventory_prompt(
-            "Compendium title", "sandeco", "Compendium body"
+            "Compendium title", ChannelName("sandeco"), "Compendium body"
         )
         assert "Compendium body" in inventory_prompt
 
         atomic_batch_prompt = provider.get_batch_notes_prompt(
-            "Compendium title", "sandeco", "Compendium body", "Inventory JSON"
+            "Compendium title", ChannelName("sandeco"), "Compendium body", "Inventory JSON"
         )
         assert "Compendium body" in atomic_batch_prompt
 

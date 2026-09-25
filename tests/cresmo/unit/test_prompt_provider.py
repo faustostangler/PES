@@ -7,6 +7,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from cresmo.domain.taxonomy import classify_channel
+from cresmo.domain.value_objects import ChannelName
 from cresmo.infrastructure.adapters.prompt_provider import JsonPromptProvider
 
 
@@ -54,7 +55,7 @@ class TestJsonPromptProvider:
         p1 = provider.get_gap_filler_prompt(
             pass_num=1,
             total_passes=3,
-            channel_name="Tech Channel",
+            channel_name=ChannelName("Tech Channel"),
             file_name="test.txt",
             raw_text="Raw text here.",
         )
@@ -66,7 +67,7 @@ class TestJsonPromptProvider:
         p2 = provider.get_gap_filler_prompt(
             pass_num=2,
             total_passes=3,
-            channel_name="Tech Channel",
+            channel_name=ChannelName("Tech Channel"),
             file_name="test.txt",
             raw_text="Raw text here.",
             current_text="Draft from pass 1.",
@@ -82,7 +83,7 @@ class TestJsonPromptProvider:
         p2 = provider.get_gap_filler_prompt(
             pass_num=2,
             total_passes=3,
-            channel_name="Tech Channel",
+            channel_name=ChannelName("Tech Channel"),
             file_name="test.txt",
             raw_text="Fallback to raw when current_text is None.",
             current_text=None,
@@ -111,7 +112,7 @@ class TestJsonPromptProvider:
 
         inv_p = provider.get_inventory_prompt(
             compendium_title="Compendium Title",
-            channel_name="Channel Name",
+            channel_name=ChannelName("Channel Name"),
             compendium_body="Enriched content body.",
         )
         assert "Compendium Title" in inv_p
@@ -120,7 +121,7 @@ class TestJsonPromptProvider:
 
         batch_p = provider.get_batch_notes_prompt(
             compendium_title="Compendium Title",
-            channel_name="Channel Name",
+            channel_name=ChannelName("Channel Name"),
             compendium_body="Enriched content body.",
             targets_json='[{"title": "Target 1"}]',
         )
@@ -179,7 +180,7 @@ class TestJsonPromptProvider:
         p1 = provider.get_gap_filler_prompt(
             pass_num=1,
             total_passes=3,
-            channel_name="Custom Channel",
+            channel_name=ChannelName("Custom Channel"),
             file_name="custom.txt",
             raw_text="text",
         )
@@ -191,7 +192,7 @@ class TestJsonPromptProvider:
         p2 = provider.get_gap_filler_prompt(
             pass_num=2,
             total_passes=3,
-            channel_name="Custom Channel",
+            channel_name=ChannelName("Custom Channel"),
             file_name="custom.txt",
             raw_text="raw",
             current_text="draft",
@@ -204,10 +205,12 @@ class TestJsonPromptProvider:
         p_wide = provider.get_wide_expander_prompt("WideText")
         assert p_wide == "Custom Wide: WideText"
 
-        p_inv = provider.get_inventory_prompt("Title", "Channel", "Body")
+        p_inv = provider.get_inventory_prompt("Title", ChannelName("Channel"), "Body")
         assert p_inv == "Custom Inv: Title on Channel with Body"
 
-        p_batch = provider.get_batch_notes_prompt("Title", "Channel", "Body", "Targets")
+        p_batch = provider.get_batch_notes_prompt(
+            "Title", ChannelName("Channel"), "Body", "Targets"
+        )
         assert p_batch == "Custom Batch: Title on Channel body Body targets Targets"
 
         p_mocs = provider.get_mocs_prompt("Notes")
@@ -304,7 +307,7 @@ class TestJsonPromptProvider:
         }
 
         # Gap filler pass 1 fallback
-        p1 = provider.get_gap_filler_prompt(1, 2, "ChName", "f.txt", "RawText")
+        p1 = provider.get_gap_filler_prompt(1, 2, ChannelName("ChName"), "f.txt", "RawText")
         assert "Clean raw" in p1
         assert "Source Channel: ChName" in p1
         assert "File: f.txt" in p1
@@ -313,7 +316,7 @@ class TestJsonPromptProvider:
 
         # Gap filler pass 2 fallback with current_text
         p2 = provider.get_gap_filler_prompt(
-            2, 2, "ChName", "f.txt", "RawText", current_text="DraftText"
+            2, 2, ChannelName("ChName"), "f.txt", "RawText", current_text="DraftText"
         )
         assert "Deepen prose" in p2
         assert "Source Channel: ChName" in p2
@@ -323,7 +326,7 @@ class TestJsonPromptProvider:
 
         # Gap filler pass 2 fallback without current_text
         p2_none = provider.get_gap_filler_prompt(
-            2, 2, "ChName", "f.txt", "RawText", current_text=None
+            2, 2, ChannelName("ChName"), "f.txt", "RawText", current_text=None
         )
         assert (
             "--- PREVIOUS PASS EXPANDED COMPENDIUM DRAFT (PASS 1 TO ENRICH) ---\nRawText" in p2_none
@@ -342,7 +345,7 @@ class TestJsonPromptProvider:
         assert p_wide.endswith("WideText")
 
         # Atomic inventory fallback
-        p_inv = provider.get_inventory_prompt("Title", "Channel", "Body")
+        p_inv = provider.get_inventory_prompt("Title", ChannelName("Channel"), "Body")
         assert "Extract Items" in p_inv
         assert "Title: Title" in p_inv
         assert "Channel: Channel" in p_inv
@@ -353,7 +356,9 @@ class TestJsonPromptProvider:
         )
 
         # Atomic batch fallback
-        p_batch = provider.get_batch_notes_prompt("Title", "Channel", "Body", '[{"title": "E1"}]')
+        p_batch = provider.get_batch_notes_prompt(
+            "Title", ChannelName("Channel"), "Body", '[{"title": "E1"}]'
+        )
         assert "Synthesize Notes" in p_batch
         assert "Source Compendium Title: Title" in p_batch
         assert "Source Channel: Channel" in p_batch

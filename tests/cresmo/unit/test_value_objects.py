@@ -229,18 +229,18 @@ class TestMasterDocumentResult:
     def test_valid_master_document_result(self) -> None:
         from pathlib import Path
 
-        from cresmo.domain.value_objects import MasterDocumentResult
+        from cresmo.domain.value_objects import ChannelName, ContentId, MasterDocumentResult
 
         res = MasterDocumentResult(
-            channel_name="Fabio Akita",
+            channel_name=ChannelName("Fabio Akita"),
             channel_category="tech_ai",
             output_path=Path("/tmp/master/tech_ai/Fabio_Akita_001.md"),
             part_number=1,
             word_count=450000,
             document_count=25,
-            video_ids=("vid1", "vid2"),
+            video_ids=(ContentId("vid1"), ContentId("vid2")),
         )
-        assert res.channel_name == "Fabio Akita"
+        assert res.channel_name == ChannelName("Fabio Akita")
         assert res.channel_category == "tech_ai"
         assert res.part_number == 1
         assert res.word_count == 450000
@@ -251,34 +251,34 @@ class TestMasterDocumentResult:
         from pathlib import Path
 
         from cresmo.domain.exceptions import DomainValidationError
-        from cresmo.domain.value_objects import MasterDocumentResult
+        from cresmo.domain.value_objects import ChannelName, ContentId, MasterDocumentResult
 
-        with pytest.raises(DomainValidationError, match="cannot be empty or whitespace"):
+        with pytest.raises(DomainValidationError, match="ChannelName cannot be empty"):
             MasterDocumentResult(
-                channel_name="   ",
+                channel_name=ChannelName("   "),
                 channel_category="tech_ai",
                 output_path=Path("/tmp/out.md"),
                 part_number=1,
                 word_count=100,
                 document_count=1,
-                video_ids=("vid1",),
+                video_ids=(ContentId("vid1"),),
             )
 
     def test_invalid_part_number_raises_domain_error(self) -> None:
         from pathlib import Path
 
         from cresmo.domain.exceptions import DomainValidationError
-        from cresmo.domain.value_objects import MasterDocumentResult
+        from cresmo.domain.value_objects import ChannelName, ContentId, MasterDocumentResult
 
         with pytest.raises(DomainValidationError, match="part_number must be >= 1"):
             MasterDocumentResult(
-                channel_name="Channel",
+                channel_name=ChannelName("Channel"),
                 channel_category="tech_ai",
                 output_path=Path("/tmp/out.md"),
                 part_number=0,
                 word_count=100,
                 document_count=1,
-                video_ids=("vid1",),
+                video_ids=(ContentId("vid1"),),
             )
 
 

@@ -22,7 +22,13 @@ from cresmo.application.use_cases.discover_batch_sources import (
     load_transcript_files,
     read_manifest_lines,
 )
-from cresmo.domain.value_objects import ContentId, DiscoveredMediaItem, SyncFilterCriteria
+from cresmo.domain.value_objects import (
+    ChannelName,
+    ContentId,
+    DiscoveredMediaItem,
+    SourceModality,
+    SyncFilterCriteria,
+)
 from cresmo.infrastructure.config import CresmoSettings
 
 
@@ -30,7 +36,7 @@ def _create_mock_media_item(
     content_id_str: str,
     media_url: str,
     title: str = "Test Video",
-    channel_name: str = "Test Channel",
+    channel_name: ChannelName = ChannelName("Test Channel"),
 ) -> DiscoveredMediaItem:
     return DiscoveredMediaItem(
         content_id=ContentId(content_id_str),
@@ -168,21 +174,27 @@ class TestDiscoverBatchSourcesUseCase:
         assert len(sources) == 2
 
     def test_batch_source_display_name(self) -> None:
-        file_source = BatchSource(kind="file", target="/lake/transcripts/lecture1.md")
+        file_source = BatchSource(kind=SourceModality.FILE, target="/lake/transcripts/lecture1.md")
         assert file_source.display_name == "lecture1.md"
-        url_source = BatchSource(kind="url", target="https://youtube.com/watch?v=12345")
+        url_source = BatchSource(
+            kind=SourceModality.URL, target="https://youtube.com/watch?v=12345"
+        )
         assert url_source.display_name == "https://youtube.com/watch?v=12345"
 
     def test_batch_source_content_id_and_vid_compatibility(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
         bs = BatchSource(
-            kind="url", target="https://youtube.com/watch?v=dQw4w9WgXcQ", content_id=cid
+            kind=SourceModality.URL,
+            target="https://youtube.com/watch?v=dQw4w9WgXcQ",
+            content_id=cid,
         )
         assert bs.content_id == cid
         assert bs.vid == "dQw4w9WgXcQ"
 
         bs_str = BatchSource(
-            kind="url", target="https://youtube.com/watch?v=dQw4w9WgXcQ", content_id="dQw4w9WgXcQ"
+            kind=SourceModality.URL,
+            target="https://youtube.com/watch?v=dQw4w9WgXcQ",
+            content_id=cid,
         )
         assert isinstance(bs_str.content_id, ContentId)
         assert bs_str.content_id == cid
@@ -192,7 +204,9 @@ class TestDiscoverBatchSourcesUseCase:
         acc = _BatchSourceAccumulator()
         cid = ContentId("dQw4w9WgXcQ")
         src = acc.add_source(
-            kind="url", target="https://youtube.com/watch?v=dQw4w9WgXcQ", content_id=cid
+            kind=SourceModality.URL,
+            target="https://youtube.com/watch?v=dQw4w9WgXcQ",
+            content_id=cid,
         )
         assert src is not None
         assert src.content_id == cid
@@ -202,7 +216,7 @@ class TestDiscoverBatchSourcesUseCase:
 
         # Duplicate detection by ContentId or string
         dup = acc.add_source(
-            kind="url", target="https://youtube.com/watch?v=dQw4w9WgXcQ", vid="dQw4w9WgXcQ"
+            kind=SourceModality.URL, target="https://youtube.com/watch?v=dQw4w9WgXcQ", vid=cid
         )
         assert dup is None
 
@@ -298,14 +312,14 @@ class TestDiscoverBatchSourcesUseCase:
                 title="Fresh Naive Date Video",
                 published_at=now_naive,
                 media_url="https://youtube.com/watch?v=fresh111",
-                channel_name="ExplicitChannel",
+                channel_name=ChannelName("ExplicitChannel"),
             ),
             DiscoveredMediaItem(
                 content_id=ContentId("old22222"),
                 title="Old Video",
                 published_at=old_naive,
                 media_url="https://youtube.com/watch?v=old22222",
-                channel_name="ExplicitChannel",
+                channel_name=ChannelName("ExplicitChannel"),
             ),
         ]
 
@@ -494,16 +508,20 @@ class TestDiscoverBatchSourcesUseCase:
     def test_batch_source_accumulator_deduplication(self) -> None:
         acc = _BatchSourceAccumulator()
         # Add with explicit vid
-        acc.add_source(kind="file", target="/lake/explicit_vid.md", vid="exp_vid_1")
+        acc.add_source(
+            kind=SourceModality.FILE, target="/lake/explicit_vid.md", vid=ContentId("exp_vid_1")
+        )
         assert acc.has_seen("exp_vid_1") is True
         assert acc.has_seen("non_existent") is False
 
         # Add URL matching video ID regex
-        acc.add_source(kind="url", target="https://www.youtube.com/watch?v=vidRegex123")
+        acc.add_source(
+            kind=SourceModality.URL, target="https://www.youtube.com/watch?v=vidRegex123"
+        )
         assert acc.has_seen("vidRegex123") is True
 
         # Add target without video regex (uses stem)
-        acc.add_source(kind="file", target="/lake/transcripts/lecture_notes.md")
+        acc.add_source(kind=SourceModality.FILE, target="/lake/transcripts/lecture_notes.md")
         assert acc.has_seen("lecture_notes") is True
 
     def test_scan_raw_lake_edge_cases(self, tmp_path: Path) -> None:
@@ -782,14 +800,14 @@ class TestDiscoverBatchSourcesUseCase:
                 title="Discovered 1",
                 published_at=datetime.now(UTC),
                 media_url="https://youtube.com/watch?v=disc_item_1",
-                channel_name="ResolvedChan",
+                channel_name=ChannelName("ResolvedChan"),
             ),
             DiscoveredMediaItem(
                 content_id=ContentId("disc_item_2"),
                 title="Discovered 2",
                 published_at=datetime.now(UTC),
                 media_url="https://nonstandard.url/disc_no_id",
-                channel_name="ResolvedChan",
+                channel_name=ChannelName("ResolvedChan"),
             ),
         ]
 
@@ -948,7 +966,7 @@ class TestDiscoverBatchSourcesUseCase:
                     content_id=ContentId("slowVid456"),
                     media_url="https://www.youtube.com/watch?v=slowVid456",
                     title="Slow Channel Video",
-                    channel_name="Slow Channel",
+                    channel_name=ChannelName("Slow Channel"),
                     published_at=datetime.now(UTC),
                 )
             ]
@@ -1008,7 +1026,7 @@ class TestDiscoverBatchSourcesUseCase:
                 content_id=ContentId("sharedVid999"),
                 media_url="https://www.youtube.com/watch?v=sharedVid999",
                 title="Shared Video",
-                channel_name="Shared Channel",
+                channel_name=ChannelName("Shared Channel"),
                 published_at=datetime.now(UTC),
             )
         ]

@@ -19,6 +19,7 @@ from cresmo.domain.exceptions import (
 )
 from cresmo.domain.value_objects import (
     ChannelFeedQuery,
+    ChannelName,
     ContentId,
     DiscoveredMediaItem,
     LedgerEntry,
@@ -50,13 +51,13 @@ class TestDiscoveredMediaItem:
             title="Quantum Computation Lecture 1",
             published_at=now,
             media_url="https://youtube.com/watch?v=dQw4w9WgXcQ",
-            channel_name="QuantumHub",
+            channel_name=ChannelName("QuantumHub"),
         )
         assert item.content_id.value == "dQw4w9WgXcQ"
         assert item.title == "Quantum Computation Lecture 1"
         assert item.published_at == now
         assert item.media_url == "https://youtube.com/watch?v=dQw4w9WgXcQ"
-        assert item.channel_name == "QuantumHub"
+        assert item.channel_name == ChannelName("QuantumHub")
 
     def test_empty_title_raises_validation_error(self) -> None:
         now = datetime.now(UTC)
@@ -66,7 +67,7 @@ class TestDiscoveredMediaItem:
                 title="   ",
                 published_at=now,
                 media_url="https://youtube.com/watch?v=dQw4w9WgXcQ",
-                channel_name="QuantumHub",
+                channel_name=ChannelName("QuantumHub"),
             )
 
     def test_invalid_url_raises_validation_error(self) -> None:
@@ -77,18 +78,18 @@ class TestDiscoveredMediaItem:
                 title="Quantum Physics",
                 published_at=now,
                 media_url="ftp://example.com/video.mp4",
-                channel_name="QuantumHub",
+                channel_name=ChannelName("QuantumHub"),
             )
 
     def test_empty_channel_name_raises_validation_error(self) -> None:
         now = datetime.now(UTC)
-        with pytest.raises(DomainValidationError, match="cannot be empty or whitespace"):
+        with pytest.raises(DomainValidationError, match="ChannelName cannot be empty"):
             DiscoveredMediaItem(
                 content_id=ContentId("dQw4w9WgXcQ"),
                 title="Quantum Physics",
                 published_at=now,
                 media_url="https://youtube.com/watch?v=dQw4w9WgXcQ",
-                channel_name="  ",
+                channel_name=ChannelName("  "),
             )
 
 
@@ -159,7 +160,7 @@ class TestLedgerEntry:
             content_id=ContentId("dQw4w9WgXcQ"),
             media_url="https://youtube.com/watch?v=dQw4w9WgXcQ",
             title="Quantum Computation",
-            channel_name="QuantumHub",
+            channel_name=ChannelName("QuantumHub"),
             status=PipelineStatus.COMPLETED,
             notes_count=15,
             error_message=None,
@@ -176,7 +177,7 @@ class TestLedgerEntry:
                 content_id=ContentId("dQw4w9WgXcQ"),
                 media_url="https://youtube.com/watch?v=dQw4w9WgXcQ",
                 title="Quantum Computation",
-                channel_name="QuantumHub",
+                channel_name=ChannelName("QuantumHub"),
                 status=PipelineStatus.COMPLETED,
                 notes_count=-1,
             )
@@ -204,9 +205,9 @@ class TestSyncFilterCriteria:
         assert criteria.channels == ()
         assert criteria.categories == ()
         assert criteria.video_ids == ()
-        assert criteria.matches_channel("Ancapsu") is True
-        assert criteria.matches_category("Ancapsu") is True
-        assert criteria.matches_video("dQw4w9WgXcQ") is True
+        assert criteria.matches_channel(ChannelName("Ancapsu")) is True
+        assert criteria.matches_category(ChannelName("Ancapsu")) is True
+        assert criteria.matches_video(ContentId("dQw4w9WgXcQ")) is True
 
     def test_construction_sanitizes_and_normalizes(self) -> None:
         criteria = SyncFilterCriteria(
@@ -247,30 +248,42 @@ class TestSyncFilterCriteria:
 
     def test_matches_channel_by_name_handle_and_url(self) -> None:
         criteria = SyncFilterCriteria(channels=("ancapsu", "veritasium"))
-        assert criteria.matches_channel("Ancapsu") is True
-        assert criteria.matches_channel("ancapsu") is True
-        assert criteria.matches_channel("Veritasium", "https://youtube.com/@Veritasium") is True
-        assert criteria.matches_channel("OtherChannel", "https://youtube.com/@ancapsu") is True
-        assert criteria.matches_channel("3Blue1Brown") is False
+        assert criteria.matches_channel(ChannelName("Ancapsu")) is True
+        assert criteria.matches_channel(ChannelName("ancapsu")) is True
+        assert (
+            criteria.matches_channel(ChannelName("Veritasium"), "https://youtube.com/@Veritasium")
+            is True
+        )
+        assert (
+            criteria.matches_channel(ChannelName("OtherChannel"), "https://youtube.com/@ancapsu")
+            is True
+        )
+        assert criteria.matches_channel(ChannelName("3Blue1Brown")) is False
 
     def test_matches_category_evaluates_domain_name_vs_volatility(self) -> None:
         # Category list has both domain name ("politics_br") and volatility type ("perennial")
         criteria = SyncFilterCriteria(categories=("politics_br", "perennial"))
 
         # Ancapsu -> domain='politics_br', category_type='volatile' -> MATCHES via domain!
-        assert criteria.matches_category("ancapsu") is True
+        assert criteria.matches_category(ChannelName("ancapsu")) is True
 
         # 3blue1brown -> domain='engineering', category_type='perennial' -> MATCHES via volatility!
-        assert criteria.matches_category("3blue1brown") is True
+        assert criteria.matches_category(ChannelName("3blue1brown")) is True
 
         # Canal 90 -> domain='entertainment', category_type='volatile' -> REJECTED (neither matches)
-        assert criteria.matches_category("canal 90") is False
+        assert criteria.matches_category(ChannelName("canal 90")) is False
 
     def test_matches_video_by_id_and_url(self) -> None:
         criteria = SyncFilterCriteria(video_ids=("vid12345", "dQw4w9WgXcQ"))
-        assert criteria.matches_video("vid12345") is True
-        assert criteria.matches_video("dQw4w9WgXcQ") is True
+        assert criteria.matches_video(ContentId("vid12345")) is True
+        assert criteria.matches_video(ContentId("dQw4w9WgXcQ")) is True
         assert criteria.matches_video(ContentId("dQw4w9WgXcQ")) is True
         assert criteria.matches_video(ContentId("vid12345")) is True
-        assert criteria.matches_video("unknown", "https://youtube.com/watch?v=dQw4w9WgXcQ") is True
-        assert criteria.matches_video("unknown", "https://youtube.com/watch?v=other999") is False
+        assert (
+            criteria.matches_video(ContentId("unknown"), "https://youtube.com/watch?v=dQw4w9WgXcQ")
+            is True
+        )
+        assert (
+            criteria.matches_video(ContentId("unknown"), "https://youtube.com/watch?v=other999")
+            is False
+        )

@@ -221,6 +221,32 @@ def build_media_ingestion_adapter(
     )
 
 
+def build_vault_adapter(
+    settings: CresmoSettings | None = None,
+) -> ObsidianVaultAdapter:
+    """Instantiate and wire ObsidianVaultAdapter from application settings.
+
+    Acts as the Single Source of Truth (SSOT) factory for Obsidian vault operations,
+    wiring canonical directory paths (data, raw, enriched, master, MOCs, _index.json).
+
+    Args:
+        settings: Optional CresmoSettings instance. If None, loaded from environment.
+
+    Returns:
+        Fully configured ObsidianVaultAdapter instance.
+    """
+    resolved_settings = settings or CresmoSettings()
+    return ObsidianVaultAdapter(
+        vault_dir=resolved_settings.vault_dir,
+        raw_dir=resolved_settings.raw_dir,
+        enriched_dir=resolved_settings.enriched_dir,
+        master_dir=resolved_settings.master_dir,
+        data_dir=resolved_settings.data_dir,
+        mocs_dir=resolved_settings.mocs_dir,
+        index_path=resolved_settings.index_path,
+    )
+
+
 def build_pipeline(
     settings: CresmoSettings | None = None,
     batch_size_override: int | None = None,
@@ -237,6 +263,7 @@ def build_pipeline(
         Configured and wired CresmoPipeline ready for execution.
     """
     resolved_settings = settings or CresmoSettings()
+    resolved_settings.ensure_directories()
 
     anonymizer: AnonymizerPort = (
         RegexAnonymizerAdapter()
@@ -263,13 +290,7 @@ def build_pipeline(
         langfuse_client=langfuse_client,
         default_temperature=resolved_settings.llm_synthesis_temperature,
     )
-    vault_port = ObsidianVaultAdapter(
-        vault_dir=resolved_settings.vault_dir,
-        raw_dir=resolved_settings.raw_dir,
-        enriched_dir=resolved_settings.enriched_dir,
-        master_dir=resolved_settings.master_dir,
-        data_dir=resolved_settings.data_dir,
-    )
+    vault_port = build_vault_adapter(resolved_settings)
     ledger_port = SqliteLedgerAdapter(db_path=resolved_settings.sqlite_ledger_path)
 
     if web_index or resolved_settings.indexing_provider == "gemini":
@@ -379,11 +400,7 @@ def build_unify_duplicates_use_case(
         Configured UnifyDuplicateNotesUseCase instance.
     """
     resolved_settings = settings or CresmoSettings()
-    vault_port = ObsidianVaultAdapter(
-        vault_dir=resolved_settings.vault_dir,
-        raw_dir=resolved_settings.raw_dir,
-        enriched_dir=resolved_settings.enriched_dir,
-    )
+    vault_port = build_vault_adapter(resolved_settings)
     return UnifyDuplicateNotesUseCase(vault_port=vault_port)
 
 
@@ -423,12 +440,7 @@ def build_concat_master_use_case(
         Configured ConcatMasterUseCase ready for execution.
     """
     resolved_settings = settings or CresmoSettings()
-    resolved_vault = vault_port or ObsidianVaultAdapter(
-        vault_dir=resolved_settings.vault_dir,
-        raw_dir=resolved_settings.raw_dir,
-        enriched_dir=resolved_settings.enriched_dir,
-        master_dir=resolved_settings.master_dir,
-    )
+    resolved_vault = vault_port or build_vault_adapter(resolved_settings)
     return ConcatMasterUseCase(
         vault_port=resolved_vault,
         settings=resolved_settings,
@@ -451,13 +463,7 @@ def build_index_raw_use_case(
         Configured IndexRawTranscriptsUseCase ready for execution.
     """
     resolved_settings = settings or CresmoSettings()
-    vault_port = ObsidianVaultAdapter(
-        vault_dir=resolved_settings.vault_dir,
-        raw_dir=resolved_settings.raw_dir,
-        enriched_dir=resolved_settings.enriched_dir,
-        master_dir=resolved_settings.master_dir,
-        data_dir=resolved_settings.data_dir,
-    )
+    vault_port = build_vault_adapter(resolved_settings)
     anonymizer: AnonymizerPort = (
         RegexAnonymizerAdapter()
         if getattr(resolved_settings, "anonymization_enabled", True)

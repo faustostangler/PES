@@ -22,6 +22,7 @@ from cresmo.domain.exceptions import (
 )
 from cresmo.domain.value_objects import (
     ChannelFeedQuery,
+    ChannelName,
     ContentId,
     PipelineStatus,
     SyncSummary,
@@ -156,7 +157,7 @@ class TestCresmoCLI:
         mock_pipeline = MagicMock()
         mock_raw = RawTranscript(
             content_id=ContentId("dQw4w9WgXcQ"),
-            channel_name="TestChannel",
+            channel_name=ChannelName("TestChannel"),
             body="Verbatim transcript content.",
         )
         mock_pipeline.ingest_raw_transcript.execute.return_value = mock_raw
@@ -206,7 +207,7 @@ class TestCresmoCLI:
         mock_pipeline = MagicMock()
         mock_raw = RawTranscript(
             content_id=ContentId("video11111111"),
-            channel_name="TestChan",
+            channel_name=ChannelName("TestChan"),
             body="Content",
         )
         mock_pipeline.ingest_raw_transcript.execute.return_value = mock_raw
@@ -662,14 +663,14 @@ class TestCresmoCLI:
             title="Recent Video",
             published_at=now - timedelta(days=10),
             media_url="https://www.youtube.com/watch?v=recent123",
-            channel_name="Marcelo Andrade",
+            channel_name=ChannelName("Marcelo Andrade"),
         )
         old_item = DiscoveredMediaItem(
             content_id=ContentId("old123456"),
             title="Old Video",
             published_at=now - timedelta(days=400),
             media_url="https://www.youtube.com/watch?v=old123456",
-            channel_name="Marcelo Andrade",
+            channel_name=ChannelName("Marcelo Andrade"),
         )
         mock_ingestion.discover_channel_feed.return_value = [recent_item, old_item]
 
@@ -717,7 +718,7 @@ class TestCresmoCLI:
             title="Discovered From Parent Channel",
             published_at=now - timedelta(days=5),
             media_url="https://www.youtube.com/watch?v=disc999_item",
-            channel_name="Parent Channel",
+            channel_name=ChannelName("Parent Channel"),
         )
         mock_ingestion.discover_channel_feed.return_value = [discovered_item]
 
@@ -774,7 +775,7 @@ class TestCresmoCLI:
             title="New Video",
             published_at=now - timedelta(days=2),
             media_url="https://www.youtube.com/watch?v=discNew_item",
-            channel_name="Same Channel",
+            channel_name=ChannelName("Same Channel"),
         )
         mock_ingestion.discover_channel_feed.return_value = [discovered_item]
 
@@ -795,7 +796,7 @@ class TestCresmoCLI:
         from datetime import UTC, datetime, timedelta
 
         from cresmo.application.use_cases.discover_batch_sources import BatchDiscoveryQuery
-        from cresmo.domain.value_objects import ContentId, DiscoveredMediaItem
+        from cresmo.domain.value_objects import ChannelName, ContentId, DiscoveredMediaItem
         from cresmo.presentation.commands.run import load_batch_sources
 
         settings = MagicMock(spec=CresmoSettings)
@@ -828,7 +829,7 @@ class TestCresmoCLI:
             title="Discovered From Local Raw Channel",
             published_at=now - timedelta(days=1),
             media_url="https://www.youtube.com/watch?v=discLocalCh_item",
-            channel_name="Local Channel",
+            channel_name=ChannelName("Local Channel"),
         )
         mock_ingestion.discover_channel_feed.return_value = [discovered_item]
 
@@ -901,14 +902,15 @@ class TestCresmoCLI:
 
     def test_execute_batch_dry_run_with_text_file_and_failed_url(self, tmp_path: Path) -> None:
         from cresmo.application.use_cases.discover_batch_sources import BatchSource
+        from cresmo.domain.value_objects import SourceModality
         from cresmo.presentation.commands.run import execute_batch_dry_run
 
         doc_file = tmp_path / "text_doc.md"
         doc_file.write_text("Markdown content for dry-run", encoding="utf-8")
 
         sources = [
-            BatchSource(kind="file", target=str(doc_file)),
-            BatchSource(kind="url", target="https://youtube.com/watch?v=failIngest"),
+            BatchSource(kind=SourceModality.FILE, target=str(doc_file)),
+            BatchSource(kind=SourceModality.URL, target="https://youtube.com/watch?v=failIngest"),
         ]
 
         pipeline = MagicMock()
@@ -921,18 +923,21 @@ class TestCresmoCLI:
         from argparse import Namespace
 
         from cresmo.application.use_cases.discover_batch_sources import BatchSource
+        from cresmo.domain.value_objects import SourceModality
         from cresmo.presentation.commands.run import execute_batch_run
 
         doc_file = tmp_path / "text_doc.md"
         doc_file.write_text("Text", encoding="utf-8")
 
         sources = [
-            BatchSource(kind="file", target=str(doc_file)),
-            BatchSource(kind="url", target="https://youtube.com/watch?v=rateLimit"),
-            BatchSource(kind="url", target="https://youtube.com/watch?v=networkError"),
-            BatchSource(kind="url", target="https://youtube.com/watch?v=genericError"),
-            BatchSource(kind="url", target="https://youtube.com/watch?v=skippedVid"),
-            BatchSource(kind="url", target="https://youtube.com/watch?v=unsuccessfulVid"),
+            BatchSource(kind=SourceModality.FILE, target=str(doc_file)),
+            BatchSource(kind=SourceModality.URL, target="https://youtube.com/watch?v=rateLimit"),
+            BatchSource(kind=SourceModality.URL, target="https://youtube.com/watch?v=networkError"),
+            BatchSource(kind=SourceModality.URL, target="https://youtube.com/watch?v=genericError"),
+            BatchSource(kind=SourceModality.URL, target="https://youtube.com/watch?v=skippedVid"),
+            BatchSource(
+                kind=SourceModality.URL, target="https://youtube.com/watch?v=unsuccessfulVid"
+            ),
         ]
 
         pipeline = MagicMock()
@@ -1305,7 +1310,7 @@ class TestCresmoCLI:
         mock_uc.execute_all.return_value = {
             "ChannelA": [
                 MagicMock(
-                    channel_name="ChannelA",
+                    channel_name=ChannelName("ChannelA"),
                     channel_category="tech",
                     part_number=1,
                     word_count=5000,
@@ -1325,7 +1330,7 @@ class TestCresmoCLI:
         mock_uc = MagicMock()
         mock_uc.execute.return_value = [
             MagicMock(
-                channel_name="Fabio Akita",
+                channel_name=ChannelName("Fabio Akita"),
                 channel_category="tech_ai",
                 part_number=1,
                 word_count=12000,
@@ -1339,7 +1344,9 @@ class TestCresmoCLI:
         ):
             code = main(["concat-master", "--channel", "Fabio Akita", "--max-words", "300000"])
             assert code == EXIT_SUCCESS
-            mock_uc.execute.assert_called_once_with(channel_name="Fabio Akita", max_words=300000)
+            mock_uc.execute.assert_called_once_with(
+                channel_name=ChannelName("Fabio Akita"), max_words=300000
+            )
 
     def test_cli_concat_master_error_handling(self) -> None:
         with patch(

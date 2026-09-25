@@ -37,7 +37,7 @@ def count_words(text: str) -> int:
 
 
 def parse_metadata_from_content(
-    content: str, channel_name: ChannelName | str, fallback_stem: str
+    content: str, channel_name: ChannelName, fallback_stem: str
 ) -> tuple[int, str, ContentId]:
     """Extract (video_date, channel_category, video_id) from YAML frontmatter.
 
@@ -63,7 +63,7 @@ def parse_metadata_from_content(
     if category_match and category_match.group(1).strip():
         category = category_match.group(1).strip()
     else:
-        category, _ = classify_channel(str(channel_name))
+        category, _ = classify_channel(channel_name)
 
     # 3. Parse video_id
     video_id_match = _VIDEO_ID_PATTERN.search(content)
@@ -102,20 +102,21 @@ class ConcatMasterUseCase:
 
     def execute(
         self,
-        channel_name: ChannelName | str,
+        channel_name: ChannelName,
         max_words: int | None = None,
     ) -> list[MasterDocumentResult]:
         """Aggregate all enriched files for a specific channel into sequential master files (Primary Entrypoint).
 
         Args:
-            channel_name: Name of the channel whose enriched documents to aggregate.
+            channel_name: Name of the channel whose enriched documents to aggregate (ChannelName Value Object).
             max_words: Optional word limit override (defaults to settings.concat_max_words).
 
         Returns:
             List of MasterDocumentResult value objects representing created parts.
         """
+        cn = channel_name
         effective_max = max_words if max_words is not None else self.settings.concat_max_words
-        files = self.vault_port.get_enriched_files_for_channel(channel_name)
+        files = self.vault_port.get_enriched_files_for_channel(cn)
         if not files:
             return []
 
@@ -148,7 +149,7 @@ class ConcatMasterUseCase:
         # Chronological sort: oldest first (ascending by sort_date, then file name)
         docs.sort(key=lambda doc_tuple: (doc_tuple[0], doc_tuple[1]))
 
-        channel_category = resolved_category or classify_channel(channel_name)[0]
+        channel_category = resolved_category or classify_channel(cn)[0]
 
         # Group documents into parts without ever splitting a single file
         parts: list[list[tuple[str, ContentId, int]]] = []
@@ -169,7 +170,7 @@ class ConcatMasterUseCase:
 
         # Clear prior master parts for this channel
         self.vault_port.clear_master_documents_for_channel(
-            channel_name=channel_name,
+            channel_name=cn,
             channel_category=channel_category,
         )
 
@@ -180,7 +181,7 @@ class ConcatMasterUseCase:
             video_ids: tuple[ContentId, ...] = tuple(doc[1] for doc in part_docs)
 
             out_path = self.vault_port.save_master_document(
-                channel_name=channel_name,
+                channel_name=cn,
                 channel_category=channel_category,
                 part_number=part_num,
                 content=merged_content,
@@ -188,7 +189,7 @@ class ConcatMasterUseCase:
 
             results.append(
                 MasterDocumentResult(
-                    channel_name=channel_name,
+                    channel_name=cn,
                     channel_category=channel_category,
                     output_path=out_path,
                     part_number=part_num,
@@ -202,7 +203,7 @@ class ConcatMasterUseCase:
 
     def execute_for_channel(
         self,
-        channel_name: ChannelName | str,
+        channel_name: ChannelName,
         max_words: int | None = None,
     ) -> list[MasterDocumentResult]:
         """Legacy alias delegating to execute() for backward compatibility."""
@@ -230,7 +231,7 @@ class ConcatMasterUseCase:
 
         for channel_name in channel_dirs:
             channel_results = self.execute_for_channel(
-                channel_name=channel_name, max_words=max_words
+                channel_name=ChannelName(channel_name), max_words=max_words
             )
             if channel_results:
                 all_results[channel_name] = channel_results

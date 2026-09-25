@@ -118,43 +118,43 @@ class InMemoryVaultAdapter(VaultRepositoryPort):
         self.channel_raw_indexes: dict[str, list[RawIndexEntry]] = {}
         self.brain_csv_entries: list[RawIndexEntry] = []
 
-    def get_channel_index_path(self, channel_name: ChannelName | str) -> Path:
-        ch = str(channel_name).strip()
+    def get_channel_index_path(self, channel_name: ChannelName) -> Path:
+        ch = channel_name.value
         return Path(f"/mock/raw/{ch}/_index_{ch}.md")
 
-    def get_indexed_video_ids_for_channel(self, channel_name: ChannelName | str) -> set[ContentId]:
-        entries = self.channel_raw_indexes.get(str(channel_name).strip(), [])
+    def get_indexed_video_ids_for_channel(self, channel_name: ChannelName) -> set[ContentId]:
+        entries = self.channel_raw_indexes.get(channel_name.value, [])
         return {e.video_id for e in entries}
 
     def append_channel_index_entry(
-        self, channel_name: ChannelName | str, entry: RawIndexEntry
+        self, channel_name: ChannelName, entry: RawIndexEntry
     ) -> None:
-        self.channel_raw_indexes.setdefault(str(channel_name).strip(), []).append(entry)
+        self.channel_raw_indexes.setdefault(channel_name.value, []).append(entry)
 
     def append_brain_csv_entry(self, entry: RawIndexEntry) -> None:
         self.brain_csv_entries.append(entry)
 
-    def get_enriched_files_for_channel(self, channel_name: ChannelName | str) -> list[Path]:
-        return list(self.channel_enriched_files.get(str(channel_name).strip(), []))
+    def get_enriched_files_for_channel(self, channel_name: ChannelName) -> list[Path]:
+        return list(self.channel_enriched_files.get(channel_name.value, []))
 
     def save_master_document(
         self,
-        channel_name: ChannelName | str,
+        channel_name: ChannelName,
         channel_category: str,
         part_number: int,
         content: str,
     ) -> Path:
-        ch = str(channel_name).strip()
+        ch = channel_name.value
         cat = channel_category.strip()
         self.master_documents[(ch, cat, part_number)] = content
         return Path(f"/mock/master/{cat}/{ch}_{part_number:03d}.md")
 
     def clear_master_documents_for_channel(
         self,
-        channel_name: ChannelName | str,
+        channel_name: ChannelName,
         channel_category: str,
     ) -> None:
-        ch = str(channel_name).strip()
+        ch = channel_name.value
         cat = channel_category.strip()
         keys_to_del = [k for k in self.master_documents if k[0] == ch and k[1] == cat]
         for k in keys_to_del:

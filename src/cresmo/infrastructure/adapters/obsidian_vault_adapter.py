@@ -33,6 +33,7 @@ from cresmo.domain.entities import (
 from cresmo.domain.exceptions import NoteTypologyError
 from cresmo.domain.value_objects import (
     CausalMatrix,
+    ChannelId,
     ChannelName,
     ContentId,
     CrossContextRelations,
@@ -94,8 +95,10 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
         enriched_dir: Path,
         master_dir: Path | None = None,
         data_dir: Path | None = None,
+        mocs_dir: Path | None = None,
+        index_path: Path | None = None,
     ) -> None:
-        """Initialize ObsidianVaultAdapter and ensure base directory trees exist.
+        """Initialize ObsidianVaultAdapter with paths and storage configurations.
 
         Args:
             vault_dir: Path to the root Obsidian vault.
@@ -103,6 +106,8 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
             enriched_dir: Directory for enriched multi-pass compendiums.
             master_dir: Optional path for master aggregated files.
             data_dir: Optional base data path.
+            mocs_dir: Optional path to Maps of Content directory (default: vault_dir / "MOCs").
+            index_path: Optional path to master _index.json file (default: vault_dir / "_index.json").
         """
         self.vault_dir = Path(vault_dir).resolve()
         self.raw_dir = Path(raw_dir).resolve()
@@ -110,15 +115,10 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
         self.data_dir = Path(data_dir).resolve() if data_dir else self.raw_dir.parent
         self.master_dir = Path(master_dir).resolve() if master_dir else (self.data_dir / "master")
 
-        self.mocs_dir = self.vault_dir / "MOCs"
-        self.index_path = self.vault_dir / "_index.json"
-
-        # Ensure base directory tree exists
-        self.raw_dir.mkdir(parents=True, exist_ok=True)
-        self.enriched_dir.mkdir(parents=True, exist_ok=True)
-        self.master_dir.mkdir(parents=True, exist_ok=True)
-        self.vault_dir.mkdir(parents=True, exist_ok=True)
-        self.mocs_dir.mkdir(parents=True, exist_ok=True)
+        self.mocs_dir = Path(mocs_dir).resolve() if mocs_dir else (self.vault_dir / "MOCs")
+        self.index_path = (
+            Path(index_path).resolve() if index_path else (self.vault_dir / "_index.json")
+        )
 
     def _atomic_write(self, target_path: Path, content: str) -> None:
         """Atomically write text content using temp-file replace pattern.
@@ -183,7 +183,7 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
         if not match:
             return RawTranscript(
                 content_id=content_id,
-                channel_name=file_path.parent.name,
+                channel_name=ChannelName(file_path.parent.name),
                 body=text,
             )
 
@@ -207,12 +207,12 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
 
         return RawTranscript(
             content_id=content_id,
-            channel_name=ch_name,
+            channel_name=ChannelName(ch_name),
             body=body.strip(),
             title=title,
             source_url=url,
             upload_date=upload_date,
-            channel_id=ch_id,
+            channel_id=ChannelId.from_string(ch_id) if ch_id else None,
             channel_category=ch_cat,
             video_description=desc,
         )
@@ -288,12 +288,12 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
 
         return EnrichedCompendium(
             content_id=content_id,
-            channel_name=ch_name,
+            channel_name=ChannelName(ch_name),
             title=NoteTitle(title),
             body=body_part,
             complementary_info=comp_part,
             pass_count=int(meta.get("pass_count", 1)),
-            channel_id=ch_id,
+            channel_id=ChannelId.from_string(ch_id) if ch_id else None,
             channel_category=ch_cat,
             source_url=url,
             video_date=v_date,
@@ -596,7 +596,7 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
 
         return updated_count
 
-    def get_enriched_files_for_channel(self, channel_name: ChannelName | str) -> list[Path]:
+    def get_enriched_files_for_channel(self, channel_name: ChannelName) -> list[Path]:
         """Retrieve sorted list of all enriched markdown file paths for a given channel."""
         ch_dir = self.enriched_dir / sanitize_filename(channel_name)
         if not ch_dir.exists() or not ch_dir.is_dir():
@@ -607,7 +607,7 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
 
     def save_master_document(
         self,
-        channel_name: ChannelName | str,
+        channel_name: ChannelName,
         channel_category: str,
         part_number: int,
         content: str,
@@ -623,7 +623,7 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
 
     def clear_master_documents_for_channel(
         self,
-        channel_name: ChannelName | str,
+        channel_name: ChannelName,
         channel_category: str,
     ) -> None:
         """Delete previous master parts for channel before writing fresh sequential parts."""
@@ -636,12 +636,12 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
             if p.is_file():
                 p.unlink(missing_ok=True)
 
-    def get_channel_index_path(self, channel_name: ChannelName | str) -> Path:
+    def get_channel_index_path(self, channel_name: ChannelName) -> Path:
         """Return absolute path to channel's _index_{channel_name}.md."""
         clean_channel = sanitize_filename(channel_name)
         return self.raw_dir / f"_index_{clean_channel}.md"
 
-    def get_indexed_video_ids_for_channel(self, channel_name: ChannelName | str) -> set[ContentId]:
+    def get_indexed_video_ids_for_channel(self, channel_name: ChannelName) -> set[ContentId]:
         """Retrieve set of ContentIds already indexed in the channel's _index_{channel_name}.md."""
         index_file = self.get_channel_index_path(channel_name)
         if not index_file.exists() or not index_file.is_file():
@@ -664,9 +664,7 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
                 continue
         return ids
 
-    def append_channel_index_entry(
-        self, channel_name: ChannelName | str, entry: RawIndexEntry
-    ) -> None:
+    def append_channel_index_entry(self, channel_name: ChannelName, entry: RawIndexEntry) -> None:
         """Append raw index entry to data/raw/<channel_name>/_canal.md atomically."""
         index_file = self.get_channel_index_path(channel_name)
         index_file.parent.mkdir(parents=True, exist_ok=True)

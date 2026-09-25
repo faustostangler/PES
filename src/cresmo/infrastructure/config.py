@@ -128,6 +128,11 @@ class CresmoSettings(BaseSettings):
         """Master lookup JSON index."""
         return self.vault_dir / "_index.json"
 
+    @property
+    def mocs_dir(self) -> Path:
+        """Subdirectory within vault/ housing Maps of Content."""
+        return self.vault_dir / "MOCs"
+
     sqlite_ledger_filename: str = Field(
         default="cresmo_ledger.db",
         description="Filename of the SQLite WAL database for processed content tracking.",
@@ -182,12 +187,16 @@ class CresmoSettings(BaseSettings):
         Creates directory tree idempotently (equivalent to mkdir -p), preventing
         missing-directory IOErrors when writing raw transcripts, compendiums, or vault notes.
         """
-        self.data_dir.mkdir(parents=True, exist_ok=True)
-        self.vault_dir.mkdir(parents=True, exist_ok=True)
-        self.raw_dir.mkdir(parents=True, exist_ok=True)
-        self.enriched_dir.mkdir(parents=True, exist_ok=True)
-        self.master_dir.mkdir(parents=True, exist_ok=True)
-        self.priority_texts_dir.mkdir(parents=True, exist_ok=True)
+        for directory in (
+            self.data_dir,
+            self.vault_dir,
+            self.mocs_dir,
+            self.raw_dir,
+            self.enriched_dir,
+            self.master_dir,
+            self.priority_texts_dir,
+        ):
+            directory.mkdir(parents=True, exist_ok=True)
 
     browser_headers_path: Path | None = Field(
         default=None,

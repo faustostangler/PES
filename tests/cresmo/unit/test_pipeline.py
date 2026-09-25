@@ -16,7 +16,7 @@ import pytest
 from cresmo.application.pipeline import CresmoPipeline, PipelineResult
 from cresmo.domain.entities import EnrichedCompendium, RawTranscript
 from cresmo.domain.exceptions import CresmoDomainError
-from cresmo.domain.value_objects import ContentId, NoteTitle
+from cresmo.domain.value_objects import ChannelName, ContentId, NoteTitle, RawIndexEntry
 from cresmo.infrastructure.adapters.prompt_provider import JsonPromptProvider
 from tests.doubles.mock_adapters import (
     InMemoryLedgerAdapter,
@@ -49,6 +49,18 @@ class SmartMockLLMAdapter(MockLLMAdapter):
                 "user_id": user_id,
             }
         )
+        if trace_id and "judge" in trace_id:
+            return "true"
+        if trace_id and "concepts" in trace_id:
+            return "Circulação de Elites"
+        if trace_id and "summary" in trace_id:
+            return "Resumo da teoria das elites."
+        if trace_id and "synthesis" in trace_id:
+            return (
+                "Minorias burocráticas governam as instituições políticas centrais. "
+                "A decadência dos governantes precipita a substituição por novas contra-elites "
+                "organizadas em estruturas institucionais complexas e altamente resilientes."
+            )
         if "Atomic Inventory Specialist" in prompt or "atomic inventory" in prompt.lower():
             return '[{"title": "Vilfredo Pareto", "type": "entity"}]'
         if "Target Entities to Synthesize" in prompt or "targets_json" in prompt:
@@ -83,7 +95,7 @@ class TestCresmoPipelineOrchestration:
         cid = ContentId("dQw4w9WgXcQ")
         canned_raw = RawTranscript(
             content_id=cid,
-            channel_name="Political Theory",
+            channel_name=ChannelName("Political Theory"),
             body="Raw spoken audio transcript regarding Vilfredo Pareto and elites.",
         )
 
@@ -103,6 +115,14 @@ class TestCresmoPipelineOrchestration:
 
         assert result.success is True
         assert result.content_id == cid
+        assert result.raw_transcript is canned_raw
+        assert result.index_entry is not None
+        assert result.index_entry.video_id == cid
+        assert result.compendium is not None
+        assert result.compendium.content_id == cid
+        assert result.inventory is not None
+        assert len(result.inventory.items) == 1
+        assert result.dedup_report is not None
         assert len(result.synthesized_notes) == 1
         assert result.synthesized_notes[0].title.value == "Vilfredo Pareto"
         assert len(result.reconciled_mocs) == 1
@@ -130,7 +150,7 @@ class TestCresmoPipelineOrchestration:
         cid = ContentId("dQw4w9WgXcQ")
         canned_raw = RawTranscript(
             content_id=cid,
-            channel_name="Political Theory",
+            channel_name=ChannelName("Political Theory"),
             body="Some text",
         )
         ledger = InMemoryLedgerAdapter()
@@ -152,7 +172,7 @@ class TestCresmoPipelineOrchestration:
         cid = ContentId("dQw4w9WgXcQ")
         canned_raw = RawTranscript(
             content_id=cid,
-            channel_name="Political Theory",
+            channel_name=ChannelName("Political Theory"),
             body="Some text",
         )
         ledger = InMemoryLedgerAdapter()
@@ -177,13 +197,13 @@ class TestCresmoPipelineOrchestration:
         cid = ContentId("dQw4w9WgXcQ")
         canned_raw = RawTranscript(
             content_id=cid,
-            channel_name="Political Theory",
+            channel_name=ChannelName("Political Theory"),
             body="Raw transcript",
         )
         vault = InMemoryVaultAdapter()
         compendium = EnrichedCompendium(
             content_id=cid,
-            channel_name="Political Theory",
+            channel_name=ChannelName("Political Theory"),
             body="Pre-existing expanded compendium",
             complementary_info="Complementary information",
             title=NoteTitle("Pre-existing Title"),
@@ -203,7 +223,10 @@ class TestCresmoPipelineOrchestration:
         res = pipeline.run_for_video("https://youtube.com/watch?v=dQw4w9WgXcQ")
         assert res.success is True
         assert len(res.synthesized_notes) == 1
-        assert len(llm.call_history) == 3
+        synthesis_stage_calls = [
+            c for c in llm.call_history if c.get("session_id", "").startswith("stage")
+        ]
+        assert len(synthesis_stage_calls) == 3
 
     # =========================================================================
     # Tests for run_for_text_file
@@ -440,7 +463,7 @@ class TestCresmoPipelineOrchestration:
         cid = ContentId("dQw4w9WgXcQ")
         canned_raw = RawTranscript(
             content_id=cid,
-            channel_name="Political Theory",
+            channel_name=ChannelName("Political Theory"),
             body="Raw transcript content",
         )
         pipeline = CresmoPipeline(
@@ -482,7 +505,7 @@ class TestCresmoPipelineOrchestration:
         cid = ContentId("videoPassTest1")
         canned_raw = RawTranscript(
             content_id=cid,
-            channel_name="Political Theory",
+            channel_name=ChannelName("Political Theory"),
             body="Raw spoken audio transcript regarding Vilfredo Pareto and elites.",
         )
         vault = InMemoryVaultAdapter()
@@ -654,7 +677,7 @@ class TestCresmoPipelineOrchestration:
         cid = ContentId("paramVid123")
         canned_raw = RawTranscript(
             content_id=cid,
-            channel_name="Political Theory",
+            channel_name=ChannelName("Political Theory"),
             body="Raw transcript for manifest param test.",
         )
         vault = InMemoryVaultAdapter()
@@ -682,3 +705,49 @@ class TestCresmoPipelineOrchestration:
         results_force = pipeline.run_for_manifest(manifest, force_reprocess=True)
         assert results_force[0].already_processed is False
         assert results_force[0].success is True
+
+    def test_pipeline_run_passes_raw_index_entry_to_synthesize(self) -> None:
+        cid = ContentId("entryPass123")
+        canned_raw = RawTranscript(
+            content_id=cid,
+            channel_name=ChannelName("Political Theory"),
+            body="Raw transcript body containing substantial philosophical concepts.",
+        )
+        vault = InMemoryVaultAdapter()
+        pipeline = CresmoPipeline(
+            media_ingestion_port=MockMediaIngestionPort(canned_transcript=canned_raw),
+            llm_port=SmartMockLLMAdapter(),
+            vault_port=vault,
+        )
+
+        captured_entry: list[RawIndexEntry | None] = []
+        original_synthesize = pipeline._synthesize_transcript
+
+        def spy_synthesize(
+            raw: RawTranscript,
+            entry: RawIndexEntry | None = None,
+            gap_filler_passes: int = 3,
+            force_reprocess: bool = False,
+            user: object = None,
+        ) -> PipelineResult:
+            captured_entry.append(entry)
+            return original_synthesize(
+                raw=raw,
+                entry=entry,
+                gap_filler_passes=gap_filler_passes,
+                force_reprocess=force_reprocess,
+                user=user,  # type: ignore[arg-type]
+            )
+
+        pipeline._synthesize_transcript = spy_synthesize  # type: ignore[assignment,method-assign]
+        res = pipeline.run_for_video("https://youtube.com/watch?v=entryPass123")
+
+        assert res.success is True
+        assert len(captured_entry) == 1
+        entry = captured_entry[0]
+        assert entry is not None
+        assert isinstance(entry, RawIndexEntry)
+        assert entry.video_id == cid
+        assert entry.channel_name == ChannelName("Political Theory")
+        assert entry.summary != ""
+        assert entry.excerpt != ""
