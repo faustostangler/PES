@@ -12,7 +12,6 @@ Conforms to:
 from __future__ import annotations
 
 import queue
-import re
 import threading
 from collections.abc import Callable, Iterator
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -23,6 +22,7 @@ from pathlib import Path
 from cresmo.application.ports import MediaIngestionPort
 from cresmo.domain.value_objects import (
     ChannelFeedQuery,
+    ChannelId,
     ContentId,
     SourceModality,
     SyncFilterCriteria,
@@ -30,12 +30,6 @@ from cresmo.domain.value_objects import (
     normalize_to_uploads_playlist_url,
 )
 from cresmo.infrastructure.config import CresmoSettings
-
-_CHANNEL_REGEX = re.compile(r"youtube\.com/(?:@|c/|channel/|user/|playlist\?list=)", re.IGNORECASE)
-_VIDEO_ID_REGEX = re.compile(
-    r"(?:v=|/v/|youtu\.be/|/embed/|/shorts/|/live/|^)([a-zA-Z0-9_-]{8,64})",
-    re.IGNORECASE,
-)
 
 
 @dataclass(frozen=True)
@@ -108,10 +102,7 @@ class BatchDiscoveryQuery:
 
 def is_channel_or_playlist_feed(url: str) -> bool:
     """Check if a URL represents a channel or playlist rather than a single video."""
-    url_lower = url.lower()
-    return (
-        any(p in url_lower for p in ("/channel/", "/c/", "/user/", "/@", "playlist?list="))
-    ) and ("watch?v=" not in url_lower or "list=" in url_lower)
+    return ChannelId.is_channel_or_playlist_url(url)
 
 
 def load_transcript_files(directory: Path | None) -> list[Path]:
@@ -553,8 +544,8 @@ class DiscoverBatchSourcesUseCase:
                     if norm_chan not in priority_channels:
                         priority_channels.append(norm_chan)
             else:
-                m = _VIDEO_ID_REGEX.search(pu)
-                vid = m.group(1) if m else None
+                cid = ContentId.extract_from_text(pu)
+                vid = cid.value if cid else None
                 local_chan = local_channels.get(vid) if vid else None
 
                 matches = True
@@ -681,8 +672,8 @@ class DiscoverBatchSourcesUseCase:
                     probed_channels.add(mu)
                     channels_to_probe.append(mu)
             else:
-                m = _VIDEO_ID_REGEX.search(mu)
-                vid = m.group(1) if m else None
+                cid = ContentId.extract_from_text(mu)
+                vid = cid.value if cid else None
                 local_chan = local_channels.get(vid) if vid else None
 
                 matches = True
@@ -827,8 +818,8 @@ class DiscoverBatchSourcesUseCase:
                 for d_url in discovered_urls:
                     if stop_event is not None and stop_event.is_set():
                         break
-                    m = _VIDEO_ID_REGEX.search(d_url)
-                    vid = m.group(1) if m else d_url
+                    cid = ContentId.extract_from_text(d_url)
+                    vid = cid.value if cid else d_url
                     # Stage B: Skip if already in raw lake or already queued
                     if not acc.has_seen(vid):
                         # ADR-012: apply video ID filter before scheduling ingestion

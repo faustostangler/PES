@@ -52,7 +52,6 @@ from cresmo.domain.value_objects import (
 )
 from cresmo.infrastructure.adapters.header_generator import RandomHeaderGenerator
 
-_VIDEO_ID_REGEX = re.compile(r"(?:v=|\/)([a-zA-Z0-9_-]{8,64})(?:[&?]|\Z)")
 _ILLEGAL_FS_CHARS = re.compile(r'[\\/*?:"<>|%]')
 
 
@@ -118,9 +117,9 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
 
     def _extract_video_id(self, url: str) -> str:
         """Extract YouTube video identifier from URL string."""
-        match = _VIDEO_ID_REGEX.search(url)
-        if match:
-            return match.group(1)
+        cid = ContentId.extract_from_text(url)
+        if cid:
+            return cid.value
         return Path(url).stem
 
     def _sanitize_fs_name(self, name: str) -> str:
