@@ -10,7 +10,7 @@ import concurrent.futures
 from datetime import UTC, datetime
 from pathlib import Path
 
-from cresmo.domain.value_objects import ContentId, LedgerEntry, PipelineStatus
+from cresmo.domain.value_objects import ChannelName, ContentId, LedgerEntry, PipelineStatus
 from cresmo.infrastructure.adapters.sqlite_ledger_adapter import SqliteLedgerAdapter
 
 
@@ -56,7 +56,7 @@ class TestSqliteLedgerAdapter:
             content_id=ContentId("abcdefgh1234"),
             media_url="https://youtube.com/watch?v=abcdefgh1234",
             title="Advanced Quantum Mechanics",
-            channel_name="PhysicsDept",
+            channel_name=ChannelName("PhysicsDept"),
             status=PipelineStatus.COMPLETED,
             notes_count=12,
             error_message=None,
@@ -70,7 +70,7 @@ class TestSqliteLedgerAdapter:
         assert retrieved is not None
         assert retrieved.content_id.value == "abcdefgh1234"
         assert retrieved.title == "Advanced Quantum Mechanics"
-        assert retrieved.channel_name == "PhysicsDept"
+        assert retrieved.channel_name == ChannelName("PhysicsDept")
         assert retrieved.notes_count == 12
         assert retrieved.status == PipelineStatus.COMPLETED
         assert retrieved.error_message is None
@@ -82,7 +82,7 @@ class TestSqliteLedgerAdapter:
             content_id=ContentId("runningVideo1"),
             media_url="https://youtube.com/watch?v=runningVideo1",
             title="Video in Progress",
-            channel_name="TestChannel",
+            channel_name=ChannelName("TestChannel"),
             status=PipelineStatus.RUNNING,
             started_at=start_time,
         )
@@ -93,7 +93,7 @@ class TestSqliteLedgerAdapter:
             content_id=ContentId("runningVideo1"),
             media_url="https://youtube.com/watch?v=runningVideo1",
             title="Video in Progress",
-            channel_name="TestChannel",
+            channel_name=ChannelName("TestChannel"),
             status=PipelineStatus.COMPLETED,
             notes_count=5,
             started_at=start_time,
@@ -116,7 +116,7 @@ class TestSqliteLedgerAdapter:
                     content_id=ContentId(cid),
                     media_url=f"https://youtube.com/watch?v={cid}",
                     title=f"Video #{i}",
-                    channel_name="Channel",
+                    channel_name=ChannelName("Channel"),
                     status=PipelineStatus.COMPLETED,
                 )
             )
@@ -139,7 +139,7 @@ class TestSqliteLedgerAdapter:
                         content_id=ContentId(cid),
                         media_url=f"https://youtube.com/watch?v={cid}",
                         title=f"Concurrent Video {cid}",
-                        channel_name="WorkerChannel",
+                        channel_name=ChannelName("WorkerChannel"),
                         status=PipelineStatus.COMPLETED,
                     )
                 )
@@ -181,7 +181,7 @@ class TestSqliteLedgerAdapter:
                     content_id=cid,
                     media_url=f"https://youtube.com/watch?v={cid.value}",
                     title="Status Test",
-                    channel_name="TestChannel",
+                    channel_name=ChannelName("TestChannel"),
                     status=status,
                 )
             )
@@ -195,7 +195,7 @@ class TestSqliteLedgerAdapter:
         adapter.mark_processed(cid)
         entry = adapter.get_entry(cid)
         assert entry is not None
-        assert entry.channel_name == "DefaultChannel"
+        assert entry.channel_name == ChannelName("DefaultChannel")
         assert entry.title == f"Video {cid.value}"
         assert entry.media_url == f"https://youtube.com/watch?v={cid.value}"
         assert entry.notes_count == 0
@@ -221,7 +221,7 @@ class TestSqliteLedgerAdapter:
             content_id=cid,
             media_url=f"https://youtube.com/watch?v={cid.value}",
             title="Initial Title",
-            channel_name="Channel1",
+            channel_name=ChannelName("Channel1"),
             status=PipelineStatus.RUNNING,
             started_at=start_time,
         )
@@ -232,7 +232,7 @@ class TestSqliteLedgerAdapter:
             content_id=cid,
             media_url=f"https://youtube.com/watch?v={cid.value}",
             title="Updated Title",
-            channel_name="Channel2",
+            channel_name=ChannelName("Channel2"),
             status=PipelineStatus.FAILED_INGESTION,
             error_message="Fatal processing failure",
             started_at=None,
@@ -242,7 +242,7 @@ class TestSqliteLedgerAdapter:
         retrieved = adapter.get_entry(cid)
         assert retrieved is not None
         assert retrieved.title == "Updated Title"
-        assert retrieved.channel_name == "Channel2"
+        assert retrieved.channel_name == ChannelName("Channel2")
         assert retrieved.status == PipelineStatus.FAILED_INGESTION
         assert retrieved.error_message == "Fatal processing failure"
         assert retrieved.started_at == start_time
@@ -257,7 +257,7 @@ class TestSqliteLedgerAdapter:
                     content_id=cid,
                     media_url=f"https://youtube.com/watch?v={cid.value}",
                     title=f"Video #{i}",
-                    channel_name="Channel",
+                    channel_name=ChannelName("Channel"),
                     status=PipelineStatus.COMPLETED,
                 )
             )

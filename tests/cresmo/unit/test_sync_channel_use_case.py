@@ -20,6 +20,7 @@ from cresmo.domain.exceptions import PreflightError
 from cresmo.domain.value_objects import (
     CausalMatrix,
     ChannelFeedQuery,
+    ChannelName,
     ContentId,
     CrossContextRelations,
     DiscoveredMediaItem,
@@ -76,14 +77,14 @@ class TestSyncChannelUseCase:
             title="Recent Video",
             published_at=now - timedelta(days=2),
             media_url="https://youtube.com/watch?v=recentVideo1",
-            channel_name="TestChannel",
+            channel_name=ChannelName("TestChannel"),
         )
         old_item = DiscoveredMediaItem(
             content_id=ContentId("oldVideo0001"),
             title="Old Video",
             published_at=now - timedelta(days=20),
             media_url="https://youtube.com/watch?v=oldVideo0001",
-            channel_name="TestChannel",
+            channel_name=ChannelName("TestChannel"),
         )
         mock_ingestion_port.discover_channel_feed.return_value = [recent_item, old_item]
 
@@ -118,7 +119,7 @@ class TestSyncChannelUseCase:
             title="Already Processed Video",
             published_at=now - timedelta(days=1),
             media_url="https://youtube.com/watch?v=alreadyDone1",
-            channel_name="TestChannel",
+            channel_name=ChannelName("TestChannel"),
         )
         mock_ingestion_port.discover_channel_feed.return_value = [item]
         mock_ledger_port.is_processed.return_value = True
@@ -150,7 +151,7 @@ class TestSyncChannelUseCase:
             title="Already Processed Video",
             published_at=now - timedelta(days=1),
             media_url="https://youtube.com/watch?v=alreadyDone1",
-            channel_name="TestChannel",
+            channel_name=ChannelName("TestChannel"),
         )
         mock_ingestion_port.discover_channel_feed.return_value = [item]
         mock_ledger_port.is_processed.return_value = True
@@ -180,14 +181,14 @@ class TestSyncChannelUseCase:
             title="Failing Video",
             published_at=now - timedelta(days=1),
             media_url="https://youtube.com/watch?v=failingVideo",
-            channel_name="TestChannel",
+            channel_name=ChannelName("TestChannel"),
         )
         succeeding_item = DiscoveredMediaItem(
             content_id=ContentId("successVideo"),
             title="Success Video",
             published_at=now - timedelta(days=2),
             media_url="https://youtube.com/watch?v=successVideo",
-            channel_name="TestChannel",
+            channel_name=ChannelName("TestChannel"),
         )
         mock_ingestion_port.discover_channel_feed.return_value = [failing_item, succeeding_item]
 
@@ -233,7 +234,7 @@ class TestSyncChannelUseCase:
             title="Dry Run Video",
             published_at=now - timedelta(days=1),
             media_url="https://youtube.com/watch?v=dryRunVideo1",
-            channel_name="TestChannel",
+            channel_name=ChannelName("TestChannel"),
         )
         mock_ingestion_port.discover_channel_feed.return_value = [item]
 
@@ -288,7 +289,7 @@ class TestSyncChannelUseCase:
             title="Already Processed Default",
             published_at=now - timedelta(days=1),
             media_url="https://youtube.com/watch?v=alreadyDoneDef",
-            channel_name="TestChannel",
+            channel_name=ChannelName("TestChannel"),
         )
         mock_ingestion_port.discover_channel_feed.return_value = [item]
         mock_ledger_port.is_processed.return_value = True
@@ -324,14 +325,14 @@ class TestSyncChannelUseCase:
             title="Recent Naive Video",
             published_at=recent_naive,
             media_url="https://youtube.com/watch?v=recentNaiveVid",
-            channel_name="TestChannel",
+            channel_name=ChannelName("TestChannel"),
         )
         item_old = DiscoveredMediaItem(
             content_id=ContentId("tooOldVideo001"),
             title="Too Old Video",
             published_at=old_naive,
             media_url="https://youtube.com/watch?v=tooOldVideo001",
-            channel_name="TestChannel",
+            channel_name=ChannelName("TestChannel"),
         )
         mock_ingestion_port.discover_channel_feed.return_value = [item_recent, item_old]
 
@@ -364,7 +365,7 @@ class TestSyncChannelUseCase:
                 title=f"Video {i}",
                 published_at=now - timedelta(hours=i),
                 media_url=f"https://youtube.com/watch?v=vid_item_{i:04d}",
-                channel_name="TestChannel",
+                channel_name=ChannelName("TestChannel"),
             )
             for i in range(5)
         ]
@@ -399,7 +400,7 @@ class TestSyncChannelUseCase:
             title="Crash Video",
             published_at=now - timedelta(hours=1),
             media_url="https://youtube.com/watch?v=crashItem1",
-            channel_name="TestChannel",
+            channel_name=ChannelName("TestChannel"),
         )
         mock_ingestion_port.discover_channel_feed.return_value = [item]
         mock_pipeline.run_for_video.side_effect = RuntimeError("Fatal pipeline failure")

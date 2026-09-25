@@ -18,6 +18,7 @@ from cresmo.domain.entities import (
 from cresmo.domain.value_objects import (
     CausalMatrix,
     ChannelFeedQuery,
+    ChannelName,
     ContentId,
     CrossContextRelations,
     DiscoveredMediaItem,
@@ -56,7 +57,7 @@ class TestMockMediaIngestionPort:
             title="Sample Video",
             published_at=datetime.now(UTC),
             media_url="https://youtube.com/watch?v=sampleFeed01",
-            channel_name="Sample Channel",
+            channel_name=ChannelName("Sample Channel"),
         )
         port = MockMediaIngestionPort(canned_feed=[item])
         query = ChannelFeedQuery(channel_url="https://youtube.com/@Sample")
@@ -71,7 +72,7 @@ class TestMockMediaIngestionPort:
         cid = ContentId("singleVid123")
         transcript = RawTranscript(
             content_id=cid,
-            channel_name="Channel",
+            channel_name=ChannelName("Channel"),
             body="Spoken text",
         )
         port = MockMediaIngestionPort(canned_transcript=transcript)
@@ -122,7 +123,7 @@ class TestInMemoryVaultAdapter:
     def test_raw_transcript_crud(self) -> None:
         vault = InMemoryVaultAdapter()
         cid = ContentId("transTest123")
-        raw = RawTranscript(content_id=cid, channel_name="Ch", body="Text")
+        raw = RawTranscript(content_id=cid, channel_name=ChannelName("Ch"), body="Text")
         assert vault.get_raw_transcript(cid) is None
 
         vault.save_raw_transcript(raw)
@@ -133,7 +134,7 @@ class TestInMemoryVaultAdapter:
         cid = ContentId("compTest123")
         comp = EnrichedCompendium(
             content_id=cid,
-            channel_name="Ch",
+            channel_name=ChannelName("Ch"),
             title=NoteTitle("T"),
             body="Body",
             complementary_info="Info",
@@ -215,14 +216,14 @@ class TestInMemoryLedgerAdapter:
             content_id=ContentId("entryOne001"),
             media_url="https://yt.com/1",
             title="Video 1",
-            channel_name="Ch",
+            channel_name=ChannelName("Ch"),
             status=PipelineStatus.COMPLETED,
         )
         entry2 = LedgerEntry(
             content_id=ContentId("entryTwo002"),
             media_url="https://yt.com/2",
             title="Video 2",
-            channel_name="Ch",
+            channel_name=ChannelName("Ch"),
             status=PipelineStatus.COMPLETED,
         )
 

@@ -35,7 +35,11 @@ from cresmo.domain.exceptions import (
     PreflightError,
     RateLimitExceededError,
 )
-from cresmo.domain.value_objects import SyncFilterCriteria, is_processable_transcript_file
+from cresmo.domain.value_objects import (
+    SourceModality,
+    SyncFilterCriteria,
+    is_processable_transcript_file,
+)
 from cresmo.infrastructure.config import CresmoSettings
 from cresmo.presentation.composition import (
     build_discover_batch_sources_use_case,
@@ -237,7 +241,7 @@ def execute_batch_dry_run(pipeline: CresmoPipeline, sources: list[BatchSource]) 
     """
     ingested = 0
     for source_index, source in enumerate(sources, 1):
-        if source.kind == "file":
+        if source.kind is SourceModality.FILE:
             file_path = Path(source.target)
             if not is_processable_transcript_file(file_path):
                 sys.stdout.write(
@@ -292,7 +296,7 @@ def execute_batch_run(
         item_prefix = f"[{source_index}/{total_count_suffix}]"
         result = None
         try:
-            if source.kind == "file":
+            if source.kind is SourceModality.FILE:
                 target_path = Path(source.target)
                 if not is_processable_transcript_file(target_path):
                     skipped += 1

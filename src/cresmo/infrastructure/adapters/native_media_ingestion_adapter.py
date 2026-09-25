@@ -46,6 +46,8 @@ from cresmo.domain.exceptions import (
 from cresmo.domain.taxonomy import classify_channel
 from cresmo.domain.value_objects import (
     ChannelFeedQuery,
+    ChannelId,
+    ChannelName,
     ContentId,
     DiscoveredMediaItem,
     normalize_to_uploads_playlist_url,
@@ -370,7 +372,9 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
                 f"Extracted transcript body is empty for video ID '{actual_video_id}'."
             )
 
-        category, _ = classify_channel(channel_name)
+        cid = ContentId(actual_video_id)
+        c_name = ChannelName(channel_name)
+        category, _ = classify_channel(c_name)
         date_str = str(info.get("upload_date") or "")
         upload_date = None
         if len(date_str) == 8 and date_str.isdigit():
@@ -379,14 +383,17 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             except ValueError:
                 pass
 
+        raw_cid = str(info.get("channel_id") or "").strip()
+        ch_id = ChannelId(raw_cid) if raw_cid else None
+
         return RawTranscript(
-            content_id=ContentId(actual_video_id),
-            channel_name=channel_name,
+            content_id=cid,
+            channel_name=c_name,
             body=body,
             title=str(info.get("title") or ""),
             source_url=video_url,
             upload_date=upload_date,
-            channel_id=str(info.get("channel_id") or "unknown_channel"),
+            channel_id=ch_id,
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
@@ -449,7 +456,7 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
                     title=title,
                     published_at=pub_date,
                     media_url=url,
-                    channel_name=channel,
+                    channel_name=ChannelName(channel),
                 )
             )
 

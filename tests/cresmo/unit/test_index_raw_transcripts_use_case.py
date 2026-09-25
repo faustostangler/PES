@@ -16,7 +16,7 @@ from cresmo.application.use_cases.index_raw_transcripts import (
     parse_judge_boolean,
 )
 from cresmo.domain.entities import RawTranscript
-from cresmo.domain.value_objects import ContentId
+from cresmo.domain.value_objects import ChannelName, ContentId
 from cresmo.infrastructure.adapters.prompt_provider import JsonPromptProvider
 from tests.doubles.mock_adapters import InMemoryVaultAdapter, MockLLMAdapter
 
@@ -52,7 +52,7 @@ class TestIndexRawTranscriptsUseCase:
 
         transcript = RawTranscript(
             content_id=ContentId("vid11111111"),
-            channel_name="Political Theory",
+            channel_name=ChannelName("Political Theory"),
             title="Vilfredo Pareto and Elites",
             body="A teoria sociológica de Vilfredo Pareto enfatiza a inevitabilidade das oligarquias.",
             source_url="https://youtube.com/watch?v=vid11111111",
@@ -65,6 +65,11 @@ class TestIndexRawTranscriptsUseCase:
         assert entry.key_concept == "Circulação de Elites"
         assert "Minorias burocráticas governam" in entry.synthesis
         assert entry.channel_name == "Political Theory"
+        assert entry.summary == "Resumo conceitual da teoria das elites e oligarquias organizadas."
+        assert (
+            entry.excerpt
+            == "A teoria sociológica de Vilfredo Pareto enfatiza a inevitabilidade das oligarquias."
+        )
 
         # 6 sequential passes executed: Concepts -> Concepts Judge -> Summary -> Summary Judge -> Synthesis -> Synthesis Judge
         assert len(llm.call_history) == 6
@@ -114,7 +119,7 @@ class TestIndexRawTranscriptsUseCase:
 
         transcript = RawTranscript(
             content_id=ContentId("vid11111111"),
-            channel_name="Political Theory",
+            channel_name=ChannelName("Political Theory"),
             title="Vilfredo Pareto and Elites",
             body="Body text...",
         )
@@ -152,7 +157,7 @@ class TestIndexRawTranscriptsUseCase:
 
         transcript = RawTranscript(
             content_id=ContentId("vid22222222"),
-            channel_name="Economics",
+            channel_name=ChannelName("Economics"),
             title="Nash Equilibrium",
             body="Jogo não-cooperativo...",
         )
@@ -176,7 +181,7 @@ class TestIndexRawTranscriptsUseCase:
 
         transcript = RawTranscript(
             content_id=ContentId("vid33333333"),
-            channel_name="Tech Channel",
+            channel_name=ChannelName("Tech Channel"),
             title="AI Systems",
             body="AI body...",
         )
@@ -220,13 +225,13 @@ class TestIndexRawTranscriptsUseCase:
 
         t1 = RawTranscript(
             content_id=ContentId("vid11111111"),
-            channel_name="Canal Teste",
+            channel_name=ChannelName("Canal Teste"),
             title="Video 1",
             body="Conteúdo 1",
         )
         t2 = RawTranscript(
             content_id=ContentId("vid22222222"),
-            channel_name="Canal Teste",
+            channel_name=ChannelName("Canal Teste"),
             title="Video 2",
             body="Conteúdo 2",
         )
@@ -234,13 +239,13 @@ class TestIndexRawTranscriptsUseCase:
         vault.save_raw_transcript(t2)
 
         # Index channel
-        entries = use_case.index_channel("Canal Teste")
+        entries = use_case.index_channel(ChannelName("Canal Teste"))
         assert len(entries) == 2
         assert entries[0].key_concept == "Conceito Um"
         assert entries[1].key_concept == "Conceito Dois"
 
         # Calling again should skip already indexed
-        entries_again = use_case.index_channel("Canal Teste")
+        entries_again = use_case.index_channel(ChannelName("Canal Teste"))
         assert len(entries_again) == 0
 
     def test_self_healing_rewrite_loop_triggered_when_forbidden_prefix_returned(self) -> None:
@@ -270,7 +275,7 @@ class TestIndexRawTranscriptsUseCase:
 
         transcript = RawTranscript(
             content_id=ContentId("vid44444444"),
-            channel_name="Political Theory",
+            channel_name=ChannelName("Political Theory"),
             title="Vilfredo Pareto and Elites",
             body="A teoria sociológica de Vilfredo Pareto...",
         )
@@ -316,7 +321,7 @@ class TestIndexRawTranscriptsUseCase:
 
         transcript = RawTranscript(
             content_id=ContentId("vid55555555"),
-            channel_name="Theory",
+            channel_name=ChannelName("Theory"),
             title="Theoretical Notes",
             body="Conteúdo...",
         )
@@ -362,7 +367,7 @@ class TestIndexRawTranscriptsUseCase:
 
         transcript = RawTranscript(
             content_id=ContentId("vid77777777"),
-            channel_name="Philosophy",
+            channel_name=ChannelName("Philosophy"),
             title="Concept Analysis",
             body="Detailed text on philosophy...",
         )
@@ -407,7 +412,7 @@ class TestIndexRawTranscriptsUseCase:
 
         transcript = RawTranscript(
             content_id=ContentId("vid88888888"),
-            channel_name="Sociology",
+            channel_name=ChannelName("Sociology"),
             title="Social Dynamics",
             body="Sociology transcript body...",
         )
@@ -452,7 +457,7 @@ class TestIndexRawTranscriptsUseCase:
 
         transcript = RawTranscript(
             content_id=ContentId("vid99999999"),
-            channel_name="Political Theory",
+            channel_name=ChannelName("Political Theory"),
             title="Pareto Dynamics",
             body="Sociological dynamics...",
         )
@@ -496,7 +501,7 @@ class TestIndexRawTranscriptsUseCase:
 
         transcript = RawTranscript(
             content_id=ContentId("vidsize123"),
-            channel_name="General",
+            channel_name=ChannelName("General"),
             title="Size Validation Test",
             body="Body content...",
         )
@@ -543,7 +548,7 @@ class TestIndexRawTranscriptsUseCase:
 
         transcript = RawTranscript(
             content_id=ContentId("vidinfinite"),
-            channel_name="Perseverance",
+            channel_name=ChannelName("Perseverance"),
             title="Infinite Retries",
             body="Infinite attempt body...",
         )
@@ -607,7 +612,7 @@ class TestIndexRawTranscriptsUseCase:
 
         transcript = RawTranscript(
             content_id=ContentId("vid66666666"),
-            channel_name="Science",
+            channel_name=ChannelName("Science"),
             title="Physics",
             body="Physics transcript...",
         )

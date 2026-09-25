@@ -18,6 +18,7 @@ from pathlib import Path
 from typing import Any
 
 from cresmo.application.ports import PromptProviderPort
+from cresmo.domain.value_objects import ChannelName
 from cresmo.infrastructure.paths import find_workspace_root
 
 logger = logging.getLogger(__name__)
@@ -147,7 +148,7 @@ class JsonPromptProvider(PromptProviderPort):
         self,
         pass_num: int,
         total_passes: int,
-        channel_name: str,
+        channel_name: ChannelName,
         file_name: str,
         raw_text: str,
         current_text: str | None = None,
@@ -254,7 +255,7 @@ class JsonPromptProvider(PromptProviderPort):
     def get_inventory_prompt(
         self,
         compendium_title: str,
-        channel_name: str,
+        channel_name: ChannelName,
         compendium_body: str,
     ) -> str:
         """Format the atomic inventory extraction prompt."""
@@ -285,7 +286,7 @@ class JsonPromptProvider(PromptProviderPort):
     def get_batch_notes_prompt(
         self,
         compendium_title: str,
-        channel_name: str,
+        channel_name: ChannelName,
         compendium_body: str,
         targets_json: str,
     ) -> str:
@@ -544,7 +545,7 @@ class LangfusePromptProvider(PromptProviderPort):
         self,
         pass_num: int,
         total_passes: int,
-        channel_name: str,
+        channel_name: ChannelName,
         file_name: str,
         raw_text: str,
         current_text: str | None = None,
@@ -602,7 +603,7 @@ class LangfusePromptProvider(PromptProviderPort):
     def get_inventory_prompt(
         self,
         compendium_title: str,
-        channel_name: str,
+        channel_name: ChannelName,
         compendium_body: str,
     ) -> str:
         """Format the atomic inventory extraction prompt via Langfuse."""
@@ -622,7 +623,7 @@ class LangfusePromptProvider(PromptProviderPort):
     def get_batch_notes_prompt(
         self,
         compendium_title: str,
-        channel_name: str,
+        channel_name: ChannelName,
         compendium_body: str,
         targets_json: str,
     ) -> str:

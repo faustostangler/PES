@@ -488,7 +488,7 @@ class DiscoveredMediaItem:
     title: str
     published_at: datetime
     media_url: str
-    channel_name: ChannelName | str
+    channel_name: ChannelName
 
     def __post_init__(self) -> None:
         t = self.title.strip()
@@ -526,7 +526,7 @@ def normalize_to_uploads_playlist_url(channel_ref: str | ChannelId) -> str:
     if isinstance(channel_ref, ChannelId):
         return channel_ref.uploads_playlist_url or channel_ref.canonical_url
 
-    cleaned = str(channel_ref).strip()
+    cleaned = channel_ref.strip()
     if not cleaned:
         return cleaned
 
@@ -654,27 +654,44 @@ class SyncFilterCriteria:
         """Return True if no filter criteria are specified (full pipeline flow)."""
         return not self.channels and not self.categories and not self.video_ids
 
-    def matches_channel(self, channel_name: str, channel_url: str | None = None) -> bool:
+    def matches_channel(
+        self,
+        channel_name: ChannelName | None = None,
+        channel_url: str | None = None,
+    ) -> bool:
         """Evaluate whether a channel matches the configured channel criteria."""
         if not self.channels:
             return True
 
-        c_name = channel_name.strip().lower()
         c_url = (channel_url or "").strip().lower()
+        if isinstance(channel_name, ChannelName):
+            c_name = channel_name.value.strip().lower()
+        elif isinstance(channel_name, str):
+            c_name = channel_name.strip().lower()
+            if not c_url and ("http" in c_name or "/" in c_name or "@" in c_name):
+                c_url = c_name
+        else:
+            c_name = ""
 
         for target in self.channels:
-            if target in c_name or c_name in target:
+            if c_name and (target in c_name or c_name in target):
                 return True
             if c_url and target in c_url:
                 return True
-            if target.startswith("@") and target[1:] in c_name:
+            if c_name and target.startswith("@") and target[1:] in c_name:
                 return True
-            if f"@{target}" in c_url or f"@{target}" in c_name:
+            if c_url and f"@{target}" in c_url:
+                return True
+            if c_name and f"@{target}" in c_name:
                 return True
 
         return False
 
-    def matches_category(self, channel_name: str) -> bool:
+    def matches_category(
+        self,
+        channel_name: ChannelName | None = None,
+        channel_url: str | None = None,
+    ) -> bool:
         """Evaluate whether a channel matches the configured category criteria.
 
         Per ADR-012, checks both domain name (e.g. 'politics_br') and volatility type
@@ -683,25 +700,39 @@ class SyncFilterCriteria:
         if not self.categories:
             return True
 
-        domain, cat_type = classify_channel(channel_name)
+        target: ChannelName | str = (
+            channel_name if channel_name is not None else (channel_url or "")
+        )
+        domain, cat_type = classify_channel(target)
         domain_lower = domain.lower()
         cat_lower = cat_type.lower()
 
         return domain_lower in self.categories or cat_lower in self.categories
 
-    def matches_video(self, video_id: str | ContentId, video_url: str | None = None) -> bool:
+    def matches_video(
+        self,
+        video_id: ContentId | None = None,
+        video_url: str | None = None,
+    ) -> bool:
         """Evaluate whether a video matches the configured video ID/URL criteria."""
         if not self.video_ids:
             return True
 
-        vid_clean = video_id.value.strip() if isinstance(video_id, ContentId) else video_id.strip()
         vurl_clean = (video_url or "").strip()
+        if isinstance(video_id, ContentId):
+            vid_clean = video_id.value.strip()
+        elif isinstance(video_id, str):
+            vid_clean = video_id.strip()
+            if not vurl_clean and ("http" in vid_clean or "/" in vid_clean):
+                vurl_clean = vid_clean
+        else:
+            vid_clean = ""
 
         for target in self.video_ids:
-            target_str = target.value.strip() if isinstance(target, ContentId) else target.strip()
-            if target_str == vid_clean or target_str in vurl_clean:
+            target_str = target.strip()
+            if vid_clean and (target_str == vid_clean or vid_clean in target_str):
                 return True
-            if vid_clean and vid_clean in target_str:
+            if vurl_clean and (target_str in vurl_clean or vurl_clean in target_str):
                 return True
 
         return False
@@ -749,7 +780,7 @@ class LedgerEntry:
     content_id: ContentId
     media_url: str
     title: str
-    channel_name: ChannelName | str
+    channel_name: ChannelName
     status: PipelineStatus
     notes_count: int = 0
     error_message: str | None = None
@@ -793,7 +824,7 @@ class MasterDocumentResult:
         video_ids: Tuple of all source ContentIds merged.
     """
 
-    channel_name: ChannelName | str
+    channel_name: ChannelName
     channel_category: str
     output_path: Path
     part_number: int
@@ -845,10 +876,12 @@ class RawIndexEntry:
     video_id: ContentId
     url: str
     title: str
-    channel_name: ChannelName | str
+    channel_name: ChannelName
     key_concept: str
     synthesis: str
     channel_category: str = ""
+    summary: str = ""
+    excerpt: str = ""
 
     def __post_init__(self) -> None:
         vid = ContentId.from_string(self.video_id)
@@ -859,6 +892,8 @@ class RawIndexEntry:
         kc = " ".join(self.key_concept.split())
         s = self.synthesis.strip()
         cat = (self.channel_category or "").strip()
+        sum_clean = self.summary.strip()
+        exc_clean = self.excerpt.strip()
 
         if not u:
             raise DomainValidationError("RawIndexEntry url cannot be empty.")
@@ -875,6 +910,8 @@ class RawIndexEntry:
         object.__setattr__(self, "key_concept", kc)
         object.__setattr__(self, "synthesis", s)
         object.__setattr__(self, "channel_category", cat)
+        object.__setattr__(self, "summary", sum_clean)
+        object.__setattr__(self, "excerpt", exc_clean)
 
     def to_markdown_block(self) -> str:
         """Format entry as a rich Markdown block with title link, ID, concept, and paratactic paragraph."""

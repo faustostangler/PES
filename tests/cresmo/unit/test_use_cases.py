@@ -33,6 +33,8 @@ from cresmo.domain.exceptions import (
 from cresmo.domain.value_objects import (
     AtomicEntityInventory,
     CausalMatrix,
+    ChannelId,
+    ChannelName,
     ContentId,
     CrossContextRelations,
     NoteTitle,
@@ -74,7 +76,7 @@ class TestIngestRawTranscript:
         cid = ContentId("dQw4w9WgXcQ")
         canned = RawTranscript(
             content_id=cid,
-            channel_name="Example Channel",
+            channel_name=ChannelName("Example Channel"),
             body="Raw spoken audio transcript.",
         )
         ingestion_port = MockMediaIngestionPort(canned_transcript=canned)
@@ -106,10 +108,10 @@ class TestFillGapsFluidProse:
         cid = ContentId("dQw4w9WgXcQ")
         raw = RawTranscript(
             content_id=cid,
-            channel_name="Example Channel",
+            channel_name=ChannelName("Example Channel"),
             body="Spoken text without structure.",
             upload_date=datetime(2023, 5, 17, 12, 0, tzinfo=UTC),
-            channel_id="UC123456",
+            channel_id=ChannelId("UC123456"),
             source_url="https://youtube.com/watch?v=dQw4w9WgXcQ",
         )
         llm_response = (
@@ -126,8 +128,8 @@ class TestFillGapsFluidProse:
 
         assert compendium.content_id == cid
         assert compendium.title.value == "Teoria das Elites"
-        assert compendium.channel_name == "Example Channel"
-        assert compendium.channel_id == "UC123456"
+        assert compendium.channel_name == ChannelName("Example Channel")
+        assert compendium.channel_id == ChannelId("UC123456")
         assert compendium.video_date == "20230517"
         assert compendium.source_url == "https://youtube.com/watch?v=dQw4w9WgXcQ"
         assert (
@@ -153,7 +155,7 @@ class TestFillGapsFluidProse:
         cid = ContentId("dQw4w9WgXcQ")
         raw = RawTranscript(
             content_id=cid,
-            channel_name="Example Channel",
+            channel_name=ChannelName("Example Channel"),
             body="Raw spoken text.",
             title="Raw Video Title",
         )
@@ -174,7 +176,7 @@ class TestFillGapsFluidProse:
         cid = ContentId("dQw4w9WgXcQ")
         raw = RawTranscript(
             content_id=cid,
-            channel_name="Example Channel",
+            channel_name=ChannelName("Example Channel"),
             body="Raw spoken text.",
             title="",
         )
@@ -194,7 +196,7 @@ class TestFillGapsFluidProse:
         cid = ContentId("dQw4w9WgXcQ")
         raw = RawTranscript(
             content_id=cid,
-            channel_name="Example Channel",
+            channel_name=ChannelName("Example Channel"),
             body="Raw spoken text.",
         )
         llm_response = (
@@ -217,7 +219,7 @@ class TestFillGapsFluidProse:
         cid = ContentId("dQw4w9WgXcQ")
         raw = RawTranscript(
             content_id=cid,
-            channel_name="Example Channel",
+            channel_name=ChannelName("Example Channel"),
             body="Raw spoken text.",
         )
         llm_response = "# H1 Title\n\nPrimary text.\n\n## Informações Complementares\n\n   "
@@ -232,7 +234,7 @@ class TestFillGapsFluidProse:
         cid = ContentId("dQw4w9WgXcQ")
         raw = RawTranscript(
             content_id=cid,
-            channel_name="Example Channel",
+            channel_name=ChannelName("Example Channel"),
             body="Raw spoken text.",
         )
         llm_response = "# H1 Title\n\nPrimary text without any complementary section."
@@ -250,7 +252,7 @@ class TestFillGapsFluidProse:
         cid = ContentId("dQw4w9WgXcQ")
         raw = RawTranscript(
             content_id=cid,
-            channel_name="Example Channel",
+            channel_name=ChannelName("Example Channel"),
             body="Raw spoken text.",
             channel_category="tech_ai",
             video_description="Video description text.",
@@ -274,12 +276,12 @@ class TestExpandLongitudinalSynchronic:
         cid = ContentId("dQw4w9WgXcQ")
         initial_compendium = EnrichedCompendium(
             content_id=cid,
-            channel_name="Example Channel",
+            channel_name=ChannelName("Example Channel"),
             title=NoteTitle("Teoria das Elites"),
             body="Continuous prose body describing elites.",
             complementary_info="Initial complementary info.",
             pass_count=1,
-            channel_id="UC_Test",
+            channel_id=ChannelId("UC_Test"),
             source_url="https://youtube.com/watch?v=dQw4w9WgXcQ",
         )
         long_response = (
@@ -327,7 +329,7 @@ class TestExpandLongitudinalSynchronic:
         cid = ContentId("dQw4w9WgXcQ")
         initial_compendium = EnrichedCompendium(
             content_id=cid,
-            channel_name="Example Channel",
+            channel_name=ChannelName("Example Channel"),
             title=NoteTitle("Teoria das Elites"),
             body="Continuous prose body.",
             complementary_info="Original complementary info.",
@@ -347,7 +349,7 @@ class TestExpandLongitudinalSynchronic:
         cid = ContentId("dQw4w9WgXcQ")
         initial_compendium = EnrichedCompendium(
             content_id=cid,
-            channel_name="Example Channel",
+            channel_name=ChannelName("Example Channel"),
             title=NoteTitle("Teoria das Elites"),
             body="Continuous prose body.",
             complementary_info="Initial complementary info.",
@@ -366,7 +368,7 @@ class TestExpandLongitudinalSynchronic:
         cid = ContentId("dQw4w9WgXcQ")
         initial_compendium = EnrichedCompendium(
             content_id=cid,
-            channel_name="Example Channel",
+            channel_name=ChannelName("Example Channel"),
             title=NoteTitle("Teoria das Elites"),
             body="Continuous prose body.",
             complementary_info="Initial complementary info.",
@@ -390,7 +392,7 @@ class TestDiscoverAtomicInventory:
         cid = ContentId("dQw4w9WgXcQ")
         compendium = EnrichedCompendium(
             content_id=cid,
-            channel_name="Example Channel",
+            channel_name=ChannelName("Example Channel"),
             title=NoteTitle("Teoria das Elites"),
             body="Continuous body describing Vilfredo Pareto and Gaetano Mosca.",
             complementary_info="Complementary info.",
@@ -423,7 +425,7 @@ class TestDiscoverAtomicInventory:
         cid = ContentId("dQw4w9XcQ")
         compendium = EnrichedCompendium(
             content_id=cid,
-            channel_name="Example Channel",
+            channel_name=ChannelName("Example Channel"),
             title=NoteTitle("Teoria das Elites"),
             body="Body content.",
             complementary_info="Complementary info.",
@@ -447,7 +449,7 @@ class TestDiscoverAtomicInventory:
         cid = ContentId("dQw4w9XcQ")
         compendium = EnrichedCompendium(
             content_id=cid,
-            channel_name="Example Channel",
+            channel_name=ChannelName("Example Channel"),
             title=NoteTitle("Teoria das Elites"),
             body="Body content.",
             complementary_info="Complementary info.",
@@ -476,7 +478,7 @@ class TestDiscoverAtomicInventory:
         cid = ContentId("dQw4w9XcQ")
         compendium = EnrichedCompendium(
             content_id=cid,
-            channel_name="Example Channel",
+            channel_name=ChannelName("Example Channel"),
             title=NoteTitle("Teoria das Elites"),
             body="Body content.",
             complementary_info="Complementary info.",
@@ -499,7 +501,7 @@ class TestSynthesizeAtomicBatch:
         cid = ContentId("dQw4w9WgXcQ")
         compendium = EnrichedCompendium(
             content_id=cid,
-            channel_name="Example Channel",
+            channel_name=ChannelName("Example Channel"),
             title=NoteTitle("Teoria das Elites"),
             body="Continuous body describing elites.",
             complementary_info="Complementary info.",
@@ -571,7 +573,7 @@ class TestSynthesizeAtomicBatch:
         cid = ContentId("dQw4w9WgXcQ")
         compendium = EnrichedCompendium(
             content_id=cid,
-            channel_name="Example Channel",
+            channel_name=ChannelName("Example Channel"),
             title=NoteTitle("Teoria das Elites"),
             body="Continuous body describing elites.",
             complementary_info="Complementary info.",
@@ -592,7 +594,7 @@ class TestSynthesizeAtomicBatch:
         cid = ContentId("dQw4w9WgXcQ")
         compendium = EnrichedCompendium(
             content_id=cid,
-            channel_name="Example Channel",
+            channel_name=ChannelName("Example Channel"),
             title=NoteTitle("Teoria das Elites"),
             body="Continuous body describing elites.",
             complementary_info="Complementary info.",
@@ -615,7 +617,7 @@ class TestSynthesizeAtomicBatch:
         cid = ContentId("dQw4w9WgXcQ")
         compendium = EnrichedCompendium(
             content_id=cid,
-            channel_name="Example Channel",
+            channel_name=ChannelName("Example Channel"),
             title=NoteTitle("Teoria das Elites"),
             body="Continuous body describing elites.",
             complementary_info="Complementary info.",
@@ -642,7 +644,7 @@ class TestSynthesizeAtomicBatch:
         cid = ContentId("dQw4w9WgXcQ")
         compendium = EnrichedCompendium(
             content_id=cid,
-            channel_name="Example Channel",
+            channel_name=ChannelName("Example Channel"),
             title=NoteTitle("Teoria das Elites"),
             body="Continuous body describing elites.",
             complementary_info="Complementary info.",
@@ -670,7 +672,7 @@ class TestSynthesizeAtomicBatch:
         cid = ContentId("dQw4w9WgXcQ")
         compendium = EnrichedCompendium(
             content_id=cid,
-            channel_name="Example Channel",
+            channel_name=ChannelName("Example Channel"),
             title=NoteTitle("História do Brasil"),
             body="Continuous body.",
             complementary_info="Complementary info.",
@@ -698,7 +700,7 @@ class TestSynthesizeAtomicBatch:
         cid = ContentId("dQw4w9WgXcQ")
         compendium = EnrichedCompendium(
             content_id=cid,
-            channel_name="Example Channel",
+            channel_name=ChannelName("Example Channel"),
             title=NoteTitle("Teoria das Elites"),
             body="Continuous body.",
             complementary_info="Complementary info.",
@@ -762,7 +764,7 @@ class TestSynthesizeAtomicBatch:
         cid = ContentId("dQw4w9WgXcQ")
         compendium = EnrichedCompendium(
             content_id=cid,
-            channel_name="Example Channel",
+            channel_name=ChannelName("Example Channel"),
             title=NoteTitle("Teoria das Elites"),
             body="Continuous body.",
             complementary_info="Complementary info.",
@@ -896,7 +898,7 @@ class TestUseCasesEdgeCases:
         cid = ContentId("dQw4w9WgXcQ")
         raw = RawTranscript(
             content_id=cid,
-            channel_name="Example Channel",
+            channel_name=ChannelName("Example Channel"),
             body="Spoken text without structure.",
         )
         llm_response = "# Teoria das Elites\n\nOnly body text without complementary info section."
@@ -911,7 +913,7 @@ class TestUseCasesEdgeCases:
         cid = ContentId("dQw4w9WgXcQ")
         compendium = EnrichedCompendium(
             content_id=cid,
-            channel_name="Example Channel",
+            channel_name=ChannelName("Example Channel"),
             title=NoteTitle("Teoria das Elites"),
             body="Body content.",
             complementary_info="Complementary info.",
@@ -926,7 +928,7 @@ class TestUseCasesEdgeCases:
         cid = ContentId("dQw4w9WgXcQ")
         compendium = EnrichedCompendium(
             content_id=cid,
-            channel_name="Example Channel",
+            channel_name=ChannelName("Example Channel"),
             title=NoteTitle("Teoria das Elites"),
             body="Body content.",
             complementary_info="Complementary info.",
@@ -941,7 +943,7 @@ class TestUseCasesEdgeCases:
         cid = ContentId("dQw4w9WgXcQ")
         compendium = EnrichedCompendium(
             content_id=cid,
-            channel_name="Example Channel",
+            channel_name=ChannelName("Example Channel"),
             title=NoteTitle("Teoria das Elites"),
             body="Body content.",
             complementary_info="Complementary info.",

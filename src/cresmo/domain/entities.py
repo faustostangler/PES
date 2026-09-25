@@ -57,22 +57,26 @@ class RawTranscript:
     """
 
     content_id: ContentId
-    channel_name: ChannelName | str
+    channel_name: ChannelName
     body: str
     title: str = ""
     source_url: str = ""
     publication_date: datetime.date | None = None
     upload_date: datetime.date | None = None
-    channel_id: ChannelId | str = ""
+    channel_id: ChannelId | None = None
     channel_category: str = ""
     video_description: str = ""
 
     def __post_init__(self) -> None:
         # Coerce channel_name to strongly-typed ChannelName Value Object (ADR-019)
-        cn = ChannelName.from_string(self.channel_name)
+        cn = (
+            self.channel_name
+            if isinstance(self.channel_name, ChannelName)
+            else ChannelName.from_string(self.channel_name)
+        )
         object.__setattr__(self, "channel_name", cn)
 
-        if self.channel_id:
+        if self.channel_id is not None and not isinstance(self.channel_id, ChannelId):
             object.__setattr__(self, "channel_id", ChannelId.from_string(self.channel_id))
 
         # Unify publication_date and upload_date semantics
@@ -115,12 +119,12 @@ class EnrichedCompendium:
     """
 
     content_id: ContentId
-    channel_name: ChannelName | str
+    channel_name: ChannelName
     title: NoteTitle
     body: str
     complementary_info: str
     pass_count: int = 1
-    channel_id: ChannelId | str = ""
+    channel_id: ChannelId | None = None
     channel_category: str = ""
     source_url: str = ""
     publication_date: datetime.date | None = None
@@ -128,10 +132,14 @@ class EnrichedCompendium:
     video_description: str = ""
 
     def __post_init__(self) -> None:
-        cn = ChannelName.from_string(self.channel_name)
+        cn = (
+            self.channel_name
+            if isinstance(self.channel_name, ChannelName)
+            else ChannelName.from_string(self.channel_name)
+        )
         object.__setattr__(self, "channel_name", cn)
 
-        if self.channel_id:
+        if self.channel_id is not None and not isinstance(self.channel_id, ChannelId):
             object.__setattr__(self, "channel_id", ChannelId.from_string(self.channel_id))
 
         # Harmonize publication_date and video_date
@@ -277,9 +285,9 @@ class PipelineSessionId:
             )
 
     @classmethod
-    def create(cls, channel: ChannelName | str, content_id: str | ContentId) -> PipelineSessionId:
-        c_id = content_id.value if isinstance(content_id, ContentId) else content_id
-        ch = str(channel).strip()
+    def create(cls, channel: ChannelName, content_id: ContentId) -> PipelineSessionId:
+        ch = channel.value if isinstance(channel, ChannelName) else str(channel).strip()
+        c_id = content_id.value if isinstance(content_id, ContentId) else str(content_id).strip()
         return cls(value=f"content:{ch}:{c_id}")
 
     @property
@@ -312,8 +320,8 @@ class ChannelTenantId:
             )
 
     @classmethod
-    def create(cls, channel: ChannelName | str) -> ChannelTenantId:
-        ch = str(channel).strip()
+    def create(cls, channel: ChannelName) -> ChannelTenantId:
+        ch = channel.value if isinstance(channel, ChannelName) else str(channel).strip()
         return cls(value=f"channel:{ch}")
 
     @property

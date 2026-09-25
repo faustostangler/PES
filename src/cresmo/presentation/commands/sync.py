@@ -166,6 +166,7 @@ def handle_sync(args: argparse.Namespace) -> int:
     """
     try:
         settings = CresmoSettings()
+        settings.ensure_directories()
         filter_criteria = _build_filter_criteria(args)
 
         use_case = build_sync_channel_use_case(
@@ -344,6 +345,6 @@ def _resolve_channels_for_sync(
     channels: list[str] = []
     for line in lines:
         norm = normalize_to_uploads_playlist_url(line)
-        if filter_criteria.is_empty() or filter_criteria.matches_category(line):
+        if filter_criteria.is_empty() or filter_criteria.matches_category(channel_url=line):
             channels.append(norm)
     return channels

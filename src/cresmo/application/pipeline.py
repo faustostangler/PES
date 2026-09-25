@@ -38,6 +38,7 @@ from cresmo.application.ports import (
 )
 from cresmo.application.use_cases import (
     ConcatMasterUseCase,
+    DeduplicationReport,
     DiscoverAtomicInventoryUseCase,
     ExpandLongitudinalSynchronicUseCase,
     FillGapsFluidProseUseCase,
@@ -50,6 +51,7 @@ from cresmo.application.use_cases import (
 from cresmo.domain.entities import (
     AtomicNote,
     ChannelTenantId,
+    EnrichedCompendium,
     MapOfContent,
     PipelineSessionId,
     RawTranscript,
@@ -57,18 +59,33 @@ from cresmo.domain.entities import (
 )
 from cresmo.domain.exceptions import CresmoDomainError
 from cresmo.domain.taxonomy import classify_channel
-from cresmo.domain.value_objects import ContentId, is_processable_transcript_file
+from cresmo.domain.value_objects import (
+    AtomicEntityInventory,
+    ChannelId,
+    ChannelName,
+    ContentId,
+    RawIndexEntry,
+    is_processable_transcript_file,
+)
 
 
 @dataclass(frozen=True)
 class PipelineResult:
     """Summary record emitted at the conclusion of an end-to-end pipeline execution.
 
+    Encapsulates both the terminal operational outcome and the rich domain aggregates
+    and intermediate artifacts produced across all incremental synthesis stages.
+
     Attributes:
         content_id: Canonical ContentId processed.
         success: True if all stages completed successfully without unhandled errors.
         synthesized_notes: Tuple of all newly synthesized AtomicNote domain aggregates.
         reconciled_mocs: Tuple of MapOfContent aggregates updated or created.
+        raw_transcript: Optional Stage 1 RawTranscript aggregate root.
+        index_entry: Optional Stage 1.5 RawIndexEntry catalog projection.
+        compendium: Optional Stage 2 & 3 EnrichedCompendium aggregate root.
+        inventory: Optional Stage 4 AtomicEntityInventory value object.
+        dedup_report: Optional Stage 7 DeduplicationReport execution summary.
         duplicates_unified: Total count of duplicate notes consolidated in Stage 7.
         already_processed: True if execution was skipped due to ledger idempotency match.
         error_message: Optional error message string if execution terminated early.
@@ -76,8 +93,13 @@ class PipelineResult:
 
     content_id: ContentId
     success: bool
-    synthesized_notes: tuple[AtomicNote, ...]
-    reconciled_mocs: tuple[MapOfContent, ...]
+    synthesized_notes: tuple[AtomicNote, ...] = ()
+    reconciled_mocs: tuple[MapOfContent, ...] = ()
+    raw_transcript: RawTranscript | None = None
+    index_entry: RawIndexEntry | None = None
+    compendium: EnrichedCompendium | None = None
+    inventory: AtomicEntityInventory | None = None
+    dedup_report: DeduplicationReport | None = None
     duplicates_unified: int = 0
     already_processed: bool = False
     error_message: str | None = None
@@ -141,7 +163,9 @@ class CresmoPipeline:
         resolved_indexing_port = llm_indexing_port or indexing_llm_port
         if resolved_indexing_port is not None:
             self.llm_indexing_port = resolved_indexing_port
-        elif self.settings.indexing_provider == "ollama":
+        elif (
+            llm_synthesis_port is None and llm_port is None
+        ) and self.settings.indexing_provider == "ollama":
             from cresmo.infrastructure.adapters.ollama_llm_adapter import OllamaLLMAdapter
 
             self.llm_indexing_port = OllamaLLMAdapter(
@@ -222,6 +246,7 @@ class CresmoPipeline:
     def _synthesize_transcript(
         self,
         raw: RawTranscript,
+        entry: RawIndexEntry | None = None,
         gap_filler_passes: int = 3,
         force_reprocess: bool = False,
         user: UserIdentity | None = None,
@@ -232,9 +257,7 @@ class CresmoPipeline:
         atomic note batching, MOC reconciliation, and duplicate unification.
         """
         content_id = raw.content_id
-        channel_name = (
-            raw.channel_name if raw.channel_name and raw.channel_name.strip() else "unknown_channel"
-        )
+        channel_name = raw.channel_name
         session_id = PipelineSessionId.create(channel=channel_name, content_id=content_id)
         tenant_id = ChannelTenantId.create(channel=channel_name)
         user_identity = user or UserIdentity.anonymous()
@@ -243,7 +266,7 @@ class CresmoPipeline:
             session_id=session_id,
             user_id=user_identity,
             channel_tenant_id=tenant_id,
-            metadata={"source": "transcript", "channel": channel_name},
+            metadata={"source": "transcript", "channel": channel_name.value},
         ):
             # Idempotency guard — bypass only when caller explicitly requests force-reprocess
             if (
@@ -254,6 +277,9 @@ class CresmoPipeline:
                 return PipelineResult(
                     content_id=content_id,
                     success=True,
+                    raw_transcript=raw,
+                    index_entry=entry,
+                    compendium=self.vault_port.get_enriched_compendium(content_id),
                     synthesized_notes=(),
                     reconciled_mocs=(),
                     already_processed=True,
@@ -317,8 +343,13 @@ class CresmoPipeline:
             return PipelineResult(
                 content_id=content_id,
                 success=True,
+                raw_transcript=raw,
+                index_entry=entry,
+                compendium=expanded_compendium,
+                inventory=inventory,
                 synthesized_notes=tuple(synthesized_notes),
                 reconciled_mocs=tuple(mocs),
+                dedup_report=dedup_report,
                 duplicates_unified=dedup_report.duplicates_unified_count,
             )
 
@@ -345,8 +376,9 @@ class CresmoPipeline:
         if raw is None:
             raise CresmoDomainError(f"Ingestion failed to retrieve transcript for: {video_url}")
 
+        entry: RawIndexEntry | None = None
         try:
-            self.index_raw.execute(raw)
+            entry = self.index_raw.execute(raw)
         except Exception as exc:  # noqa: BLE001
             import logging
 
@@ -356,6 +388,7 @@ class CresmoPipeline:
 
         return self._synthesize_transcript(
             raw=raw,
+            entry=entry,
             gap_filler_passes=gap_filler_passes,
             force_reprocess=force_reprocess,
             user=user,
@@ -389,9 +422,9 @@ class CresmoPipeline:
         content_id = ContentId(value=content_id_str)
 
         title = stem.replace("_", " ").replace("-", " ").title()
-        channel_name = file_path.parent.name if file_path.parent.name else "text"
-        channel_id = "priority_text"
-        channel_category, _ = classify_channel(channel_name)
+        channel_name_raw = file_path.parent.name if file_path.parent.name else "text"
+        channel_id_obj: ChannelId | None = ChannelId("priority_text")
+        channel_category, _ = classify_channel(ChannelName(channel_name_raw))
         source_url = f"file://{file_path.resolve()}"
         video_description = ""
         body = raw_body
@@ -406,10 +439,9 @@ class CresmoPipeline:
                     if meta.get("video_title") or meta.get("title"):
                         title = str(meta.get("video_title") or meta.get("title"))
                     if meta.get("channel_name") or meta.get("channel"):
-                        channel_name = str(meta.get("channel_name") or meta.get("channel"))
-                        channel_category, _ = classify_channel(channel_name)
+                        channel_name_raw = str(meta.get("channel_name") or meta.get("channel"))
                     if meta.get("channel_id"):
-                        channel_id = str(meta["channel_id"])
+                        channel_id_obj = ChannelId.from_string(str(meta["channel_id"]))
                     if meta.get("channel_category") or meta.get("domain"):
                         channel_category = str(meta.get("channel_category") or meta.get("domain"))
                     if meta.get("url"):
@@ -419,13 +451,16 @@ class CresmoPipeline:
                 except Exception:  # noqa: BLE001, S110
                     pass
 
+        channel_name = ChannelName(channel_name_raw)
+        channel_category = channel_category or classify_channel(channel_name)[0]
+
         return RawTranscript(
             content_id=content_id,
             channel_name=channel_name,
             body=body,
             title=title,
             source_url=source_url,
-            channel_id=channel_id,
+            channel_id=channel_id_obj,
             channel_category=channel_category,
             video_description=video_description,
         )
@@ -471,8 +506,9 @@ class CresmoPipeline:
         if not is_already_in_raw:
             self.vault_port.save_raw_transcript(raw)
 
+        entry: RawIndexEntry | None = None
         try:
-            self.index_raw.execute(raw)
+            entry = self.index_raw.execute(raw)
         except Exception as exc:  # noqa: BLE001
             import logging
 
@@ -482,6 +518,7 @@ class CresmoPipeline:
 
         return self._synthesize_transcript(
             raw=raw,
+            entry=entry,
             gap_filler_passes=gap_filler_passes,
             force_reprocess=force_reprocess,
             user=user,
