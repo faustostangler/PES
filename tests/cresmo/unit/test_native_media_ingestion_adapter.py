@@ -22,7 +22,7 @@ from cresmo.domain.exceptions import (
     IngestionNetworkError,
     RateLimitExceededError,
 )
-from cresmo.domain.value_objects import ChannelFeedQuery, ContentId
+from cresmo.domain.value_objects import ChannelFeedQuery, ChannelId, ChannelName, ContentId
 from cresmo.infrastructure.adapters.native_media_ingestion_adapter import (
     NativeMediaIngestionAdapter,
 )
@@ -622,3 +622,76 @@ class TestNativeMediaIngestionAdapter:
             assert transcript is not None
             assert transcript.body == "Transcribed from audio fallback."
             mock_whisper_fb.assert_called_once()
+
+    def test_acl_date_parsing_helpers(self) -> None:
+        adapter = NativeMediaIngestionAdapter()
+        # Valid upload_date
+        assert adapter._parse_upload_date("20240315") == datetime(2024, 3, 15, tzinfo=UTC).date()
+        # Invalid or empty
+        assert adapter._parse_upload_date("") is None
+        assert adapter._parse_upload_date(None) is None
+        assert adapter._parse_upload_date("invalid_date") is None
+        assert adapter._parse_upload_date("2024") is None
+
+        # Published datetime
+        dt = adapter._parse_published_datetime("20240315")
+        assert dt.year == 2024 and dt.month == 3 and dt.day == 15
+        dt_fallback = adapter._parse_published_datetime(None)
+        assert isinstance(dt_fallback, datetime)
+
+    def test_ingest_single_video_vo_extraction_and_publication_date(self, tmp_path: Path) -> None:
+        adapter = NativeMediaIngestionAdapter()
+        fake_info = {
+            "id": "abc12345678",
+            "title": "Vo Extraction Test",
+            "channel": "Channel / Slashed",
+            "channel_id": "UC1234567890123456789012",
+            "upload_date": "20240520",
+            "description": "Video description text",
+            "subtitles": {
+                "en": [
+                    {
+                        "ext": "json3",
+                        "url": "https://video.google.com/timedtext?v=test",
+                    }
+                ]
+            },
+        }
+
+        with (
+            patch("yt_dlp.YoutubeDL") as mock_ydl_cls,
+            patch.object(
+                adapter,
+                "_fetch_url_content",
+                return_value=json.dumps({"events": [{"segs": [{"utf8": "Hello world"}]}]}),
+            ),
+        ):
+            mock_ydl = MagicMock()
+            mock_ydl.extract_info.return_value = fake_info
+            mock_ydl_cls.return_value.__enter__.return_value = mock_ydl
+
+            transcript = adapter.ingest_single_video(
+                video_url="https://youtube.com/watch?v=abc12345678",
+                output_dir=tmp_path,
+            )
+
+            assert transcript is not None
+            assert transcript.content_id == ContentId("abc12345678")
+            assert transcript.channel_name == ChannelName("Channel _ Slashed")
+            assert transcript.channel_id == ChannelId("UC1234567890123456789012")
+            assert transcript.publication_date == datetime(2024, 5, 20, tzinfo=UTC).date()
+            assert transcript.upload_date == transcript.publication_date
+
+    def test_extract_channel_url_from_video_uploads_playlist(self) -> None:
+        adapter = NativeMediaIngestionAdapter()
+        fake_info = {
+            "channel_id": "UCtestChannelId12345678",
+        }
+
+        with patch("yt_dlp.YoutubeDL") as mock_ydl_cls:
+            mock_ydl = MagicMock()
+            mock_ydl.extract_info.return_value = fake_info
+            mock_ydl_cls.return_value.__enter__.return_value = mock_ydl
+
+            url = adapter.extract_channel_url_from_video("https://youtube.com/watch?v=abc12345678")
+            assert url == "https://www.youtube.com/playlist?list=UUtestChannelId12345678"

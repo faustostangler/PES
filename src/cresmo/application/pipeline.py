@@ -18,12 +18,15 @@ Conforms to:
 from __future__ import annotations
 
 import hashlib
+import logging
 import re
 from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING
 
 import yaml
+
+logger = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
     from cresmo.infrastructure.config import CresmoSettings
@@ -243,18 +246,37 @@ class CresmoPipeline:
         if self.llm_synthesis_port is not self.llm_indexing_port:
             self.llm_synthesis_port.warmup(timeout_seconds=timeout_seconds)
 
-    def _synthesize_transcript(
+    def execute(
         self,
         raw: RawTranscript,
-        entry: RawIndexEntry | None = None,
         gap_filler_passes: int = 3,
         force_reprocess: bool = False,
         user: UserIdentity | None = None,
+        entry: RawIndexEntry | None = None,
     ) -> PipelineResult:
-        """Execute Stages 2 through 7 (Template Method core for knowledge synthesis).
+        """Execute the end-to-end synthesis pipeline (canonical Template Method).
 
-        Coordinates idempotency checks, enrichment, inventory discovery,
-        atomic note batching, MOC reconciliation, and duplicate unification.
+        Coordinates Stage 1b through Stage 7 under a single root telemetry session span:
+        - Root Span: cresmo.pipeline.execution
+        - Idempotency guard (ledger_port.is_processed)
+        - Stage 1b: Raw Transcript Indexing & Paratactic Synthesis (stage1b_raw_indexing)
+        - Stage 2: Socratic Gap Filler (stage2_fluid_prose)
+        - Stage 3: Longitudinal & Synchronic Expander (stage3_expansion)
+        - Stage 4: Holistic Inventory Discovery (stage4_inventory)
+        - Stage 5: Batched Atomic Synthesis (stage5_atomic_batch)
+        - Stage 6: Map of Content Reconciliation (stage6_mocs)
+        - Stage 7: Graph Entity Resolution & Duplicate Unification (stage7_duplicate_unification)
+        - Ledger mark processed & Session Coherence Evaluation
+
+        Args:
+            raw: Input RawTranscript domain aggregate root.
+            gap_filler_passes: Number of refinement passes for gap filling.
+            force_reprocess: If True, bypasses ledger idempotency guard.
+            user: Optional UserIdentity (anonymous or identified OAuth user).
+            entry: Optional pre-computed RawIndexEntry (e.g. for test doubles or cached cataloging).
+
+        Returns:
+            PipelineResult encapsulating all synthesized domain aggregates.
         """
         content_id = raw.content_id
         channel_name = raw.channel_name
@@ -284,6 +306,18 @@ class CresmoPipeline:
                     reconciled_mocs=(),
                     already_processed=True,
                 )
+
+            # Stage 1b: Raw Transcript Indexing & Paratactic Synthesis
+            if entry is None:
+                with self.telemetry_port.start_stage_span("stage1b_raw_indexing"):
+                    try:
+                        entry = self.index_raw.execute(raw)
+                    except Exception as exc:  # noqa: BLE001
+                        logger.warning(
+                            "[Pipeline] Raw indexing skipped for %s: %s",
+                            raw.content_id.value,
+                            exc,
+                        )
 
             # Socratic Gap Filler & Longitudinal Expander (supports resumed execution)
             expanded_compendium = self.vault_port.get_enriched_compendium(content_id)
@@ -353,45 +387,24 @@ class CresmoPipeline:
                 duplicates_unified=dedup_report.duplicates_unified_count,
             )
 
-    def run_for_video(
+    def _synthesize_transcript(
         self,
-        video_url: str,
+        raw: RawTranscript,
+        entry: RawIndexEntry | None = None,
         gap_filler_passes: int = 3,
         force_reprocess: bool = False,
         user: UserIdentity | None = None,
     ) -> PipelineResult:
-        """Run the end-to-end synthesis pipeline for a single video source.
+        """Execute Stages 1b through 7 (Template Method backward compatibility alias).
 
-        Args:
-            video_url: Target YouTube or media URL.
-            gap_filler_passes: Number of refinement passes for gap filling.
-            force_reprocess: If True, bypasses ledger idempotency guard.
-            user: Optional UserIdentity (anonymous or identified OAuth user).
-
-        Returns:
-            PipelineResult summarizing synthesized notes, MOCs, and status.
+        Deprecated: Use self.execute(...) directly. Retained for full backward compatibility.
         """
-        self.warmup()
-        raw = self.ingest_raw_transcript.execute(video_url=video_url)
-        if raw is None:
-            raise CresmoDomainError(f"Ingestion failed to retrieve transcript for: {video_url}")
-
-        entry: RawIndexEntry | None = None
-        try:
-            entry = self.index_raw.execute(raw)
-        except Exception as exc:  # noqa: BLE001
-            import logging
-
-            logging.getLogger(__name__).warning(
-                "[Pipeline] Raw indexing skipped for %s: %s", raw.content_id.value, exc
-            )
-
-        return self._synthesize_transcript(
+        return self.execute(
             raw=raw,
-            entry=entry,
             gap_filler_passes=gap_filler_passes,
             force_reprocess=force_reprocess,
             user=user,
+            entry=entry,
         )
 
     def _load_transcript_from_file(self, file_path: Path) -> RawTranscript:
@@ -465,6 +478,36 @@ class CresmoPipeline:
             video_description=video_description,
         )
 
+    def run_for_video(
+        self,
+        video_url: str,
+        gap_filler_passes: int = 3,
+        force_reprocess: bool = False,
+        user: UserIdentity | None = None,
+    ) -> PipelineResult:
+        """Run the end-to-end synthesis pipeline for a single video source.
+
+        Args:
+            video_url: Target YouTube or media URL.
+            gap_filler_passes: Number of refinement passes for gap filling.
+            force_reprocess: If True, bypasses ledger idempotency guard.
+            user: Optional UserIdentity (anonymous or identified OAuth user).
+
+        Returns:
+            PipelineResult summarizing synthesized notes, MOCs, and status.
+        """
+        self.warmup()
+        raw = self.ingest_raw_transcript.execute(video_url=video_url)
+        if raw is None:
+            raise CresmoDomainError(f"Ingestion failed to retrieve transcript for: {video_url}")
+
+        return self.execute(
+            raw=raw,
+            gap_filler_passes=gap_filler_passes,
+            force_reprocess=force_reprocess,
+            user=user,
+        )
+
     def run_for_text_file(
         self,
         file_path: Path,
@@ -475,7 +518,7 @@ class CresmoPipeline:
         """Run the end-to-end synthesis pipeline starting from a local raw text file.
 
         Bypasses Stage 1 media crawling and speech-to-text ingestion, loading
-        the transcript directly into the domain and continuing through Stages 2-7.
+        the transcript directly into the domain and continuing through Stages 1b-7.
 
         Args:
             file_path: Path to the raw text or markdown file (.txt, .md).
@@ -506,19 +549,8 @@ class CresmoPipeline:
         if not is_already_in_raw:
             self.vault_port.save_raw_transcript(raw)
 
-        entry: RawIndexEntry | None = None
-        try:
-            entry = self.index_raw.execute(raw)
-        except Exception as exc:  # noqa: BLE001
-            import logging
-
-            logging.getLogger(__name__).warning(
-                "[Pipeline] Raw indexing skipped for %s: %s", raw.content_id.value, exc
-            )
-
-        return self._synthesize_transcript(
+        return self.execute(
             raw=raw,
-            entry=entry,
             gap_filler_passes=gap_filler_passes,
             force_reprocess=force_reprocess,
             user=user,

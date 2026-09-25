@@ -106,12 +106,15 @@ def resolve_langfuse_client(
             os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
             os.environ.pop("LANGFUSE_SECRET_KEY", None)
             os.environ.pop("LANGFUSE_HOST", None)
+            os.environ.pop("OTEL_EXPORTER_OTLP_TIMEOUT", None)
             return None
 
     try:
+        timeout_sec = getattr(settings, "langfuse_timeout_seconds", 30)
         os.environ["LANGFUSE_PUBLIC_KEY"] = settings.langfuse_public_key
         os.environ["LANGFUSE_SECRET_KEY"] = settings.langfuse_secret_key.get_secret_value()
         os.environ["LANGFUSE_HOST"] = settings.langfuse_host
+        os.environ["OTEL_EXPORTER_OTLP_TIMEOUT"] = str(timeout_sec)
         from langfuse import Langfuse
         from langfuse.span_filter import is_default_export_span
 
@@ -150,6 +153,7 @@ def resolve_langfuse_client(
             "public_key": settings.langfuse_public_key,
             "secret_key": settings.langfuse_secret_key.get_secret_value(),
             "host": settings.langfuse_host,
+            "timeout": timeout_sec,
             "should_export_span": should_export_cresmo_span,
             "environment": getattr(settings, "langfuse_environment", "development"),
         }
@@ -166,6 +170,7 @@ def resolve_langfuse_client(
         os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
         os.environ.pop("LANGFUSE_SECRET_KEY", None)
         os.environ.pop("LANGFUSE_HOST", None)
+        os.environ.pop("OTEL_EXPORTER_OTLP_TIMEOUT", None)
         return None
 
 

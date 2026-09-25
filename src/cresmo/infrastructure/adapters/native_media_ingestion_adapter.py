@@ -20,7 +20,7 @@ import tempfile
 import threading
 import urllib.error
 import urllib.request
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime
 from pathlib import Path
 from typing import Any
 
@@ -306,6 +306,32 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
 
         return body, channel_name
 
+    @staticmethod
+    def _parse_upload_date(raw_date: Any) -> date | None:
+        """Parse yt-dlp upload_date string (YYYYMMDD) into UTC date at ACL boundary."""
+        if not raw_date:
+            return None
+        date_str = str(raw_date).strip()
+        if len(date_str) == 8 and date_str.isdigit():
+            try:
+                return datetime.strptime(date_str, "%Y%m%d").replace(tzinfo=UTC).date()
+            except ValueError:
+                return None
+        return None
+
+    @staticmethod
+    def _parse_published_datetime(raw_date: Any) -> datetime:
+        """Parse yt-dlp upload_date string (YYYYMMDD) into UTC datetime at ACL boundary."""
+        if not raw_date:
+            return datetime.now(UTC)
+        date_str = str(raw_date).strip()
+        if len(date_str) == 8 and date_str.isdigit():
+            try:
+                return datetime.strptime(date_str, "%Y%m%d").replace(tzinfo=UTC)
+            except ValueError:
+                return datetime.now(UTC)
+        return datetime.now(UTC)
+
     def ingest_single_video(
         self,
         video_url: str,
@@ -372,19 +398,15 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
                 f"Extracted transcript body is empty for video ID '{actual_video_id}'."
             )
 
-        cid = ContentId(actual_video_id)
-        c_name = ChannelName(channel_name)
+        cid = ContentId.extract_from_text(actual_video_id) or ContentId.from_url_or_token(
+            actual_video_id
+        )
+        c_name = ChannelName.from_string(channel_name)
         category, _ = classify_channel(c_name)
-        date_str = str(info.get("upload_date") or "")
-        upload_date = None
-        if len(date_str) == 8 and date_str.isdigit():
-            try:
-                upload_date = datetime.strptime(date_str, "%Y%m%d").replace(tzinfo=UTC).date()
-            except ValueError:
-                pass
+        upload_date = self._parse_upload_date(info.get("upload_date"))
 
-        raw_cid = str(info.get("channel_id") or "").strip()
-        ch_id = ChannelId(raw_cid) if raw_cid else None
+        raw_cid = str(info.get("channel_id") or info.get("uploader_id") or "").strip()
+        ch_id = ChannelId.extract_from_text(raw_cid)
 
         return RawTranscript(
             content_id=cid,
@@ -392,6 +414,7 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             body=body,
             title=str(info.get("title") or ""),
             source_url=video_url,
+            publication_date=upload_date,
             upload_date=upload_date,
             channel_id=ch_id,
             channel_category=category,
@@ -427,36 +450,34 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             return []
 
         entries = info.get("entries") or []
-        channel_title = str(info.get("title") or info.get("uploader") or "Unknown_Channel")
+        channel_title = self._sanitize_fs_name(
+            str(info.get("title") or info.get("uploader") or "Unknown_Channel")
+        )
         items: list[DiscoveredMediaItem] = []
 
         for entry in entries:
             if not entry or not isinstance(entry, dict):
                 continue
 
-            vid = str(entry.get("id") or "").strip()
+            raw_vid = str(entry.get("id") or "").strip()
             title = str(entry.get("title") or "").strip()
-            if not vid or not title:
+            if not raw_vid or not title:
                 continue
 
-            url = str(entry.get("url") or f"https://www.youtube.com/watch?v={vid}").strip()
-            channel = str(entry.get("channel") or entry.get("uploader") or channel_title).strip()
+            cid = ContentId.extract_from_text(raw_vid) or ContentId.from_url_or_token(raw_vid)
+            url = str(entry.get("url") or f"https://www.youtube.com/watch?v={cid.value}").strip()
+            raw_channel = str(entry.get("channel") or entry.get("uploader") or channel_title)
+            channel_name = ChannelName.from_string(self._sanitize_fs_name(raw_channel))
 
-            raw_date = entry.get("upload_date")
-            pub_date = datetime.now(UTC)
-            if raw_date and isinstance(raw_date, str) and len(raw_date) == 8:
-                try:
-                    pub_date = datetime.strptime(raw_date, "%Y%m%d").replace(tzinfo=UTC)
-                except ValueError:
-                    pass
+            pub_date = self._parse_published_datetime(entry.get("upload_date"))
 
             items.append(
                 DiscoveredMediaItem(
-                    content_id=ContentId(vid),
+                    content_id=cid,
                     title=title,
                     published_at=pub_date,
                     media_url=url,
-                    channel_name=ChannelName(channel),
+                    channel_name=channel_name,
                 )
             )
 
@@ -486,10 +507,16 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
 
         channel_id = info.get("channel_id") or info.get("uploader_id")
         if channel_id:
+            ch = ChannelId.extract_from_text(str(channel_id).strip())
+            if ch and ch.uploads_playlist_url:
+                return ch.uploads_playlist_url
             return normalize_to_uploads_playlist_url(str(channel_id).strip())
 
         channel_url = info.get("channel_url") or info.get("uploader_url")
         if channel_url:
+            ch = ChannelId.extract_from_text(str(channel_url).strip())
+            if ch and ch.uploads_playlist_url:
+                return ch.uploads_playlist_url
             return normalize_to_uploads_playlist_url(str(channel_url).strip())
 
         return None

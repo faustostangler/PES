@@ -720,34 +720,66 @@ class TestCresmoPipelineOrchestration:
             vault_port=vault,
         )
 
-        captured_entry: list[RawIndexEntry | None] = []
-        original_synthesize = pipeline._synthesize_transcript
-
-        def spy_synthesize(
-            raw: RawTranscript,
-            entry: RawIndexEntry | None = None,
-            gap_filler_passes: int = 3,
-            force_reprocess: bool = False,
-            user: object = None,
-        ) -> PipelineResult:
-            captured_entry.append(entry)
-            return original_synthesize(
-                raw=raw,
-                entry=entry,
-                gap_filler_passes=gap_filler_passes,
-                force_reprocess=force_reprocess,
-                user=user,  # type: ignore[arg-type]
-            )
-
-        pipeline._synthesize_transcript = spy_synthesize  # type: ignore[assignment,method-assign]
         res = pipeline.run_for_video("https://youtube.com/watch?v=entryPass123")
 
         assert res.success is True
-        assert len(captured_entry) == 1
-        entry = captured_entry[0]
-        assert entry is not None
-        assert isinstance(entry, RawIndexEntry)
-        assert entry.video_id == cid
-        assert entry.channel_name == ChannelName("Political Theory")
-        assert entry.summary != ""
-        assert entry.excerpt != ""
+        assert res.index_entry is not None
+        assert isinstance(res.index_entry, RawIndexEntry)
+        assert res.index_entry.video_id == cid
+        assert res.index_entry.channel_name == ChannelName("Political Theory")
+        assert res.index_entry.summary != ""
+        assert res.index_entry.excerpt != ""
+
+    def test_pipeline_execute_skips_raw_indexing_when_already_processed_in_ledger(self) -> None:
+        """Verify that execute() evaluates ledger idempotency before Stage 1b indexing."""
+        cid = ContentId("idempotentVideo123")
+        canned_raw = RawTranscript(
+            content_id=cid,
+            channel_name=ChannelName("Political Theory"),
+            body="Raw transcript content.",
+        )
+        ledger = InMemoryLedgerAdapter()
+        ledger.mark_processed(cid)
+
+        vault = InMemoryVaultAdapter()
+        pipeline = CresmoPipeline(
+            media_ingestion_port=MockMediaIngestionPort(canned_transcript=canned_raw),
+            llm_port=SmartMockLLMAdapter(),
+            vault_port=vault,
+            ledger_port=ledger,
+        )
+
+        indexing_executed = False
+
+        def spy_index_execute(raw: RawTranscript) -> RawIndexEntry | None:
+            nonlocal indexing_executed
+            indexing_executed = True
+            return pipeline.index_raw.execute(raw)
+
+        pipeline.index_raw.execute = spy_index_execute  # type: ignore[assignment,method-assign]
+        res = pipeline.execute(raw=canned_raw, force_reprocess=False)
+
+        assert res.success is True
+        assert res.already_processed is True
+        assert not indexing_executed
+
+    def test_pipeline_backward_compatibility_synthesize_transcript(self) -> None:
+        """Verify that _synthesize_transcript() delegates transparently to execute()."""
+        cid = ContentId("legacyCompat123")
+        canned_raw = RawTranscript(
+            content_id=cid,
+            channel_name=ChannelName("Political Theory"),
+            body="Raw transcript content for backward compatibility check.",
+        )
+        vault = InMemoryVaultAdapter()
+        pipeline = CresmoPipeline(
+            media_ingestion_port=MockMediaIngestionPort(canned_transcript=canned_raw),
+            llm_port=SmartMockLLMAdapter(),
+            vault_port=vault,
+        )
+
+        res = pipeline._synthesize_transcript(raw=canned_raw, gap_filler_passes=1)
+        assert res.success is True
+        assert res.content_id == cid
+        assert res.index_entry is not None
+        assert res.index_entry.video_id == cid

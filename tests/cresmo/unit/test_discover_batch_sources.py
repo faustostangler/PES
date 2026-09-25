@@ -661,23 +661,23 @@ class TestDiscoverBatchSourcesUseCase:
 
         manifest = tmp_path / "test_seeds_playlist.txt"
         manifest.write_text(
-            "https://www.youtube.com/@RawChan\n"  # already in local_channels
+            "https://www.youtube.com/@RawChan\n"  # already in local_video_channel_map
             "https://www.youtube.com/@NewChan\n"  # new channel feed
             "https://youtube.com/watch?v=already_seen_vid123\n"  # already seen -> skipped
-            "https://youtube.com/watch?v=knownLocalVid\n"  # vid matches local_channels -> routes to channels_to_probe
+            "https://youtube.com/watch?v=knownLocalVid\n"  # vid matches local_video_channel_map -> routes to channels_to_probe
             "https://youtube.com/watch?v=remoteUnknownVid\n"  # not in local -> remote_videos
             "https://some.domain.com/unparseable_url\n",  # no video ID regex -> still added as url source
             encoding="utf-8",
         )
 
-        local_channels = {
+        local_video_channel_map = {
             "vid1": "https://www.youtube.com/@RawChan",
-            "vid2": "https://www.youtube.com/@RawChan",  # duplicate channel in local_channels
+            "vid2": "https://www.youtube.com/@RawChan",  # duplicate channel in local_video_channel_map
             "knownLocalVid": "https://www.youtube.com/@KnownLocalChan",
         }
 
         channels_to_probe, remote_videos, _probed_channels = use_case._classify_seeds(
-            manifest, local_channels, acc
+            manifest, local_video_channel_map, acc
         )
 
         # @RawChan only probed once
