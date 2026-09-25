@@ -4,8 +4,11 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from cresmo.application.use_cases.concat_master import ConcatMasterUseCase
-from cresmo.domain.value_objects import MasterDocumentResult
+from cresmo.application.use_cases.concat_master import (
+    ConcatMasterUseCase,
+    parse_metadata_from_content,
+)
+from cresmo.domain.value_objects import ContentId, MasterDocumentResult
 from cresmo.infrastructure.config import CresmoSettings
 from tests.doubles.mock_adapters import InMemoryVaultAdapter
 
@@ -59,6 +62,7 @@ class TestConcatMasterUseCase:
         assert res.part_number == 1
         assert res.document_count == 3
         assert res.video_ids == ("vid_2021", "vid_2023", "vid_2024")
+        assert all(isinstance(vid, ContentId) for vid in res.video_ids)
 
         # Verify content order in master document
         content = vault.master_documents[("HistoryChannel", "history", 1)]
@@ -162,3 +166,12 @@ class TestConcatMasterUseCase:
         assert "ChannelB" in all_results
         assert len(all_results["ChannelA"]) == 1
         assert len(all_results["ChannelB"]) == 1
+
+    def test_parse_metadata_returns_strongly_typed_content_id(self) -> None:
+        content = "---\nvideo_id: vid_custom_123\nvideo_date: 20240101\n---\nBody"
+        _sort_date, _cat, vid = parse_metadata_from_content(
+            content, channel_name="TestChan", fallback_stem="fallback_stem"
+        )
+        assert isinstance(vid, ContentId)
+        assert vid.value == "vid_custom_123"
+        assert vid == "vid_custom_123"

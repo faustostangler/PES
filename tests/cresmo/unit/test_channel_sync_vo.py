@@ -270,5 +270,7 @@ class TestSyncFilterCriteria:
         criteria = SyncFilterCriteria(video_ids=("vid12345", "dQw4w9WgXcQ"))
         assert criteria.matches_video("vid12345") is True
         assert criteria.matches_video("dQw4w9WgXcQ") is True
+        assert criteria.matches_video(ContentId("dQw4w9WgXcQ")) is True
+        assert criteria.matches_video(ContentId("vid12345")) is True
         assert criteria.matches_video("unknown", "https://youtube.com/watch?v=dQw4w9WgXcQ") is True
         assert criteria.matches_video("unknown", "https://youtube.com/watch?v=other999") is False

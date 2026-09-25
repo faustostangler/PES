@@ -18,7 +18,7 @@ class CresmoDomainError(Exception):
     """
 
 
-class DomainValidationError(CresmoDomainError):
+class DomainValidationError(CresmoDomainError, ValueError):
     """Raised when an Entity or Value Object receives data violating construction invariants.
 
     Ensures the 'Always Valid at Construction' principle (SPEC-001: §2.1).

@@ -15,7 +15,7 @@ import re
 
 from cresmo.application.ports import VaultRepositoryPort
 from cresmo.domain.taxonomy import classify_channel
-from cresmo.domain.value_objects import ChannelName, MasterDocumentResult
+from cresmo.domain.value_objects import ChannelName, ContentId, MasterDocumentResult
 from cresmo.infrastructure.config import CresmoSettings
 
 CHUNK_SEPARATOR: str = "\n\n---\n\n"
@@ -38,7 +38,7 @@ def count_words(text: str) -> int:
 
 def parse_metadata_from_content(
     content: str, channel_name: ChannelName | str, fallback_stem: str
-) -> tuple[int, str, str]:
+) -> tuple[int, str, ContentId]:
     """Extract (video_date, channel_category, video_id) from YAML frontmatter.
 
     Args:
@@ -47,7 +47,7 @@ def parse_metadata_from_content(
         fallback_stem: File stem fallback if video_id is absent.
 
     Returns:
-        Tuple of (date_integer, category_string, video_id_string).
+        Tuple of (date_integer, category_string, video_id ContentId).
     """
     # 1. Parse video_date
     date_match = _DATE_PATTERN.search(content)
@@ -67,11 +67,12 @@ def parse_metadata_from_content(
 
     # 3. Parse video_id
     video_id_match = _VIDEO_ID_PATTERN.search(content)
-    video_id = (
+    raw_video_id = (
         video_id_match.group(1).strip()
         if video_id_match and video_id_match.group(1).strip()
         else fallback_stem
     )
+    video_id = ContentId.from_string(raw_video_id)
 
     return sort_date, category, video_id
 
@@ -119,7 +120,7 @@ class ConcatMasterUseCase:
             return []
 
         # Read and inspect each file's date, category, and words
-        docs: list[tuple[int, str, str, str, int]] = []
+        docs: list[tuple[int, str, str, ContentId, int]] = []
         resolved_category: str | None = None
 
         for file_path in files:
@@ -150,8 +151,8 @@ class ConcatMasterUseCase:
         channel_category = resolved_category or classify_channel(channel_name)[0]
 
         # Group documents into parts without ever splitting a single file
-        parts: list[list[tuple[str, str, int]]] = []
-        current_part: list[tuple[str, str, int]] = []
+        parts: list[list[tuple[str, ContentId, int]]] = []
+        current_part: list[tuple[str, ContentId, int]] = []
         current_part_words = 0
 
         for _, _, content, video_id, doc_words in docs:
@@ -176,7 +177,7 @@ class ConcatMasterUseCase:
         for part_num, part_docs in enumerate(parts, start=1):
             merged_content = CHUNK_SEPARATOR.join(doc[0] for doc in part_docs) + "\n"
             total_words = count_words(merged_content)
-            video_ids = tuple(doc[1] for doc in part_docs)
+            video_ids: tuple[ContentId, ...] = tuple(doc[1] for doc in part_docs)
 
             out_path = self.vault_port.save_master_document(
                 channel_name=channel_name,

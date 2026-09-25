@@ -322,7 +322,7 @@ class IndexRawTranscriptsUseCase:
 
     def _extract_concepts(
         self,
-        video_id: str,
+        video_id: str | ContentId,
         title: str,
         excerpt: str,
         channel_name: ChannelName | str,
@@ -409,7 +409,7 @@ class IndexRawTranscriptsUseCase:
 
     def _extract_summary(
         self,
-        video_id: str,
+        video_id: str | ContentId,
         title: str,
         excerpt: str,
         channel_name: ChannelName | str,
@@ -492,7 +492,7 @@ class IndexRawTranscriptsUseCase:
 
     def _extract_synthesis(
         self,
-        video_id: str,
+        video_id: str | ContentId,
         title: str,
         excerpt: str,
         summary: str,
@@ -587,7 +587,7 @@ class IndexRawTranscriptsUseCase:
 
         Conforms to ADR-019 (execute() method convention unification).
         """
-        video_id = transcript.content_id.value
+        video_id = transcript.content_id
         channel_name = transcript.channel_name
 
         # ACL check: Avoid redundant token expenditure if already indexed
@@ -596,7 +596,7 @@ class IndexRawTranscriptsUseCase:
             if video_id in indexed_ids:
                 logger.info(
                     "[IndexRaw] Skipping already indexed transcript '%s' for channel '%s'.",
-                    video_id,
+                    video_id.value,
                     channel_name,
                 )
                 return None
@@ -604,7 +604,7 @@ class IndexRawTranscriptsUseCase:
         title = (
             transcript.title.value
             if isinstance(transcript.title, NoteTitle)
-            else (transcript.title or video_id)
+            else (transcript.title or video_id.value)
         )
 
         # Build prompt from bounded transcript excerpt to preserve context budget

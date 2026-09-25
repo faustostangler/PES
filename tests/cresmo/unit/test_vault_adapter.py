@@ -578,6 +578,7 @@ class TestObsidianVaultAdapter:
 
         indexed = adapter.get_indexed_video_ids_for_channel("Canal Teste")
         assert indexed == {"vid11111111", "vid22222222"}
+        assert all(isinstance(x, ContentId) for x in indexed)
 
         # 4. Check brain.csv content
         csv_path = raw_dir.parent / "brain.csv"
