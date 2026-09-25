@@ -152,55 +152,54 @@ class JsonPromptProvider(PromptProviderPort):
         file_name: str,
         raw_text: str,
         current_text: str | None = None,
-    ) -> str:
-        """Format the Socratic gap filler prompt differentiating pass 1 from subsequent passes."""
+    ) -> tuple[str, str]:
+        """Format (system_instruction, user_prompt) for Socratic gap filling."""
         key = "gap_filler_pass1" if pass_num == 1 else "gap_filler_pass_subsequent"
         entry = self._templates.get(key, {})
         task = entry.get("task", "")
         skill_name = entry.get("skill_name", "cresmo-expander")
         template = entry.get("template", "")
+        system_template = entry.get("system_instruction", "")
         skill_block = self._get_skill_block(skill_name)
 
         if pass_num == 1:
-            if not template:
-                return (
-                    f"{task}\n\n"
-                    f"{skill_block}"
+            if not template and not system_template:
+                sys_inst = f"{task}\n\n{skill_block}".strip()
+                user_p = (
                     f"Source Channel: {channel_name}\n"
                     f"File: {file_name}\n\n"
                     f"Transcript:\n{raw_text}\n\n"
                     "Transform into continuous fluid Markdown prose with analytical headings (## and ###) "
                     "and mandatory '## Informações Complementares' section."
                 )
-            return self._safe_format(
-                template,
-                task=task,
+                return sys_inst, user_p
+
+            return self._format_paired_prompt(
+                key,
                 total_passes=total_passes,
                 channel_name=channel_name,
-                skill_block=skill_block,
                 file_name=file_name,
                 raw_text=raw_text,
             )
 
         # Subsequent passes (pass 2, 3, etc.)
         prev_draft = current_text if current_text is not None else raw_text
-        if not template:
-            return (
-                f"{task}\n\n"
-                f"{skill_block}"
+        if not template and not system_template:
+            sys_inst = f"{task}\n\n{skill_block}".strip()
+            user_p = (
                 f"Source Channel: {channel_name}\n\n"
                 f"--- ORIGINAL RAW TRANSCRIPT (GROUND TRUTH REFERENCE) ---\n{raw_text}\n\n"
                 f"--- PREVIOUS PASS EXPANDED COMPENDIUM DRAFT (PASS {pass_num - 1} TO ENRICH) ---\n{prev_draft}\n\n"
                 "Execute Socratic gap filling and theoretical densification."
             )
-        return self._safe_format(
-            template,
-            task=task,
+            return sys_inst, user_p
+
+        return self._format_paired_prompt(
+            key,
             pass_num=pass_num,
             total_passes=total_passes,
             prev_pass_num=pass_num - 1,
             channel_name=channel_name,
-            skill_block=skill_block,
             raw_text=raw_text,
             current_text=prev_draft,
         )
@@ -209,25 +208,25 @@ class JsonPromptProvider(PromptProviderPort):
         self,
         compendium_body: str,
         complementary_info: str,
-    ) -> str:
-        """Format the Braudelian longitudinal expander prompt."""
+    ) -> tuple[str, str]:
+        """Format (system_instruction, user_prompt) for Braudelian longitudinal expansion."""
         entry = self._templates.get("long_expander", {})
         task = entry.get("task", "")
         skill_name = entry.get("skill_name", "cresmo-long-expander")
         template = entry.get("template", "")
+        system_template = entry.get("system_instruction", "")
         skill_block = self._get_skill_block(skill_name)
 
-        if not template:
-            return (
-                f"{task}\n\n"
-                f"{skill_block}"
+        if not template and not system_template:
+            sys_inst = f"{task}\n\n{skill_block}".strip()
+            user_p = (
                 f"Content:\n{compendium_body}\n\n"
                 f"## Informações Complementares\n{complementary_info}"
             )
-        return self._safe_format(
-            template,
-            task=task,
-            skill_block=skill_block,
+            return sys_inst, user_p
+
+        return self._format_paired_prompt(
+            "long_expander",
             compendium_body=compendium_body,
             complementary_info=complementary_info,
         )
@@ -235,20 +234,21 @@ class JsonPromptProvider(PromptProviderPort):
     def get_wide_expander_prompt(
         self,
         current_text: str,
-    ) -> str:
-        """Format the Jaspers synchronic wide expander prompt."""
+    ) -> tuple[str, str]:
+        """Format (system_instruction, user_prompt) for Jaspers synchronic wide expansion."""
         entry = self._templates.get("wide_expander", {})
         task = entry.get("task", "")
         skill_name = entry.get("skill_name", "cresmo-wide-expander")
         template = entry.get("template", "")
+        system_template = entry.get("system_instruction", "")
         skill_block = self._get_skill_block(skill_name)
 
-        if not template:
-            return f"{task}\n\n{skill_block}{current_text}"
-        return self._safe_format(
-            template,
-            task=task,
-            skill_block=skill_block,
+        if not template and not system_template:
+            sys_inst = f"{task}\n\n{skill_block}".strip()
+            return sys_inst, current_text
+
+        return self._format_paired_prompt(
+            "wide_expander",
             text=current_text,
         )
 
@@ -257,27 +257,27 @@ class JsonPromptProvider(PromptProviderPort):
         compendium_title: str,
         channel_name: ChannelName,
         compendium_body: str,
-    ) -> str:
-        """Format the atomic inventory extraction prompt."""
+    ) -> tuple[str, str]:
+        """Format (system_instruction, user_prompt) for atomic inventory extraction."""
         entry = self._templates.get("atomic_inventory", {})
         task = entry.get("task", "")
         skill_name = entry.get("skill_name", "cresmo-atomic")
         template = entry.get("template", "")
+        system_template = entry.get("system_instruction", "")
         skill_block = self._get_skill_block(skill_name)
 
-        if not template:
-            return (
-                f"{task}\n\n"
-                f"{skill_block}"
+        if not template and not system_template:
+            sys_inst = f"{task}\n\n{skill_block}".strip()
+            user_p = (
                 f"Title: {compendium_title}\n"
                 f"Channel: {channel_name}\n\n"
                 f"Content:\n{compendium_body}\n\n"
                 'Output strictly a JSON array: [{"title": "...", "type": "entity|concept|event|process"}]'
             )
-        return self._safe_format(
-            template,
-            task=task,
-            skill_block=skill_block,
+            return sys_inst, user_p
+
+        return self._format_paired_prompt(
+            "atomic_inventory",
             compendium_title=compendium_title,
             channel_name=channel_name,
             compendium_body=compendium_body,
@@ -289,28 +289,28 @@ class JsonPromptProvider(PromptProviderPort):
         channel_name: ChannelName,
         compendium_body: str,
         targets_json: str,
-    ) -> str:
-        """Format the atomic note batch synthesis prompt."""
+    ) -> tuple[str, str]:
+        """Format (system_instruction, user_prompt) for atomic note batch synthesis."""
         entry = self._templates.get("atomic_batch", {})
         task = entry.get("task", "")
         skill_name = entry.get("skill_name", "cresmo-atomic")
         template = entry.get("template", "")
+        system_template = entry.get("system_instruction", "")
         skill_block = self._get_skill_block(skill_name)
 
-        if not template:
-            return (
-                f"{task}\n\n"
-                f"{skill_block}"
+        if not template and not system_template:
+            sys_inst = f"{task}\n\n{skill_block}".strip()
+            user_p = (
                 f"Source Compendium Title: {compendium_title}\n"
                 f"Source Channel: {channel_name}\n\n"
                 f"Source Context:\n{compendium_body}\n\n"
                 f"Target Entities to Synthesize in this batch:\n{targets_json}\n\n"
                 "Output strictly a JSON array of note objects."
             )
-        return self._safe_format(
-            template,
-            task=task,
-            skill_block=skill_block,
+            return sys_inst, user_p
+
+        return self._format_paired_prompt(
+            "atomic_batch",
             compendium_title=compendium_title,
             channel_name=channel_name,
             compendium_body=compendium_body,
@@ -320,25 +320,25 @@ class JsonPromptProvider(PromptProviderPort):
     def get_mocs_prompt(
         self,
         notes_json: str,
-    ) -> str:
-        """Format the MOC reconciliation prompt."""
+    ) -> tuple[str, str]:
+        """Format (system_instruction, user_prompt) for MOC reconciliation."""
         entry = self._templates.get("reconcile_mocs", {})
         task = entry.get("task", "")
         skill_name = entry.get("skill_name", "cresmo-moc-manager")
         template = entry.get("template", "")
+        system_template = entry.get("system_instruction", "")
         skill_block = self._get_skill_block(skill_name)
 
-        if not template:
-            return (
-                f"{task}\n\n"
-                f"{skill_block}"
+        if not template and not system_template:
+            sys_inst = f"{task}\n\n{skill_block}".strip()
+            user_p = (
                 f"Atomic Notes in Vault:\n{notes_json}\n\n"
                 "Output strictly a JSON array of MOC objects."
             )
-        return self._safe_format(
-            template,
-            task=task,
-            skill_block=skill_block,
+            return sys_inst, user_p
+
+        return self._format_paired_prompt(
+            "reconcile_mocs",
             notes_json=notes_json,
         )
 
@@ -349,10 +349,18 @@ class JsonPromptProvider(PromptProviderPort):
     ) -> tuple[str, str]:
         """Format (system_instruction, user_prompt) pair for a given template key."""
         entry = self._templates.get(template_key, {})
+        task = entry.get("task", "")
+        skill_name = entry.get("skill_name", "")
+        skill_block = self._get_skill_block(skill_name) if skill_name else ""
         system_template = entry.get("system_instruction", "")
-        system_instruction = self._safe_format(system_template, **kwargs)
+        if system_template:
+            system_instruction = self._safe_format(
+                system_template, task=task, skill_block=skill_block, **kwargs
+            )
+        else:
+            system_instruction = f"{task}\n\n{skill_block}".strip() if (task or skill_block) else ""
         template = entry.get("template", "")
-        user_prompt = self._safe_format(template, **kwargs)
+        user_prompt = self._safe_format(template, task=task, skill_block=skill_block, **kwargs)
         return system_instruction, user_prompt
 
     def _format_single_prompt(
@@ -549,9 +557,9 @@ class LangfusePromptProvider(PromptProviderPort):
         file_name: str,
         raw_text: str,
         current_text: str | None = None,
-    ) -> str:
-        """Format the Socratic gap filler prompt via Langfuse with guaranteed fallback."""
-        fallback = self._fallback.get_gap_filler_prompt(
+    ) -> tuple[str, str]:
+        """Format (system_instruction, user_prompt) via Langfuse with guaranteed fallback."""
+        fallback_sys, fallback_user = self._fallback.get_gap_filler_prompt(
             pass_num=pass_num,
             total_passes=total_passes,
             channel_name=channel_name,
@@ -560,9 +568,9 @@ class LangfusePromptProvider(PromptProviderPort):
             current_text=current_text,
         )
         prompt_name = f"cresmo-gap-filler-pass{pass_num}"
-        return self._resolve_prompt(
+        user_prompt = self._resolve_prompt(
             prompt_name=prompt_name,
-            fallback_template=fallback,
+            fallback_template=fallback_user,
             pass_num=pass_num,
             total_passes=total_passes,
             channel_name=channel_name,
@@ -570,55 +578,61 @@ class LangfusePromptProvider(PromptProviderPort):
             raw_text=raw_text,
             current_text=current_text or "",
         )
+        return fallback_sys, user_prompt
 
     def get_long_expander_prompt(
         self,
         compendium_body: str,
         complementary_info: str,
-    ) -> str:
-        """Format the Braudelian longitudinal expander prompt via Langfuse."""
-        fallback = self._fallback.get_long_expander_prompt(
+    ) -> tuple[str, str]:
+        """Format (system_instruction, user_prompt) for longitudinal expansion via Langfuse."""
+        fallback_sys, fallback_user = self._fallback.get_long_expander_prompt(
             compendium_body=compendium_body,
             complementary_info=complementary_info,
         )
-        return self._resolve_prompt(
+        user_prompt = self._resolve_prompt(
             prompt_name="cresmo-long-expander",
-            fallback_template=fallback,
+            fallback_template=fallback_user,
             compendium_body=compendium_body,
             complementary_info=complementary_info,
         )
+        return fallback_sys, user_prompt
 
     def get_wide_expander_prompt(
         self,
         current_text: str,
-    ) -> str:
-        """Format the Jaspers synchronic wide expander prompt via Langfuse."""
-        fallback = self._fallback.get_wide_expander_prompt(current_text=current_text)
-        return self._resolve_prompt(
+    ) -> tuple[str, str]:
+        """Format (system_instruction, user_prompt) for synchronic wide expansion via Langfuse."""
+        fallback_sys, fallback_user = self._fallback.get_wide_expander_prompt(
+            current_text=current_text
+        )
+        user_prompt = self._resolve_prompt(
             prompt_name="cresmo-wide-expander",
-            fallback_template=fallback,
+            fallback_template=fallback_user,
             current_text=current_text,
         )
+        return fallback_sys, user_prompt
 
     def get_inventory_prompt(
         self,
         compendium_title: str,
         channel_name: ChannelName,
         compendium_body: str,
-    ) -> str:
-        """Format the atomic inventory extraction prompt via Langfuse."""
-        fallback = self._fallback.get_inventory_prompt(
+    ) -> tuple[str, str]:
+        """Format (system_instruction, user_prompt) for atomic inventory extraction via Langfuse."""
+        fallback_sys, fallback_user = self._fallback.get_inventory_prompt(
             compendium_title=compendium_title,
             channel_name=channel_name,
             compendium_body=compendium_body,
         )
-        return self._resolve_prompt(
+        user_prompt = self._resolve_prompt(
             prompt_name="cresmo-atomic-inventory",
-            fallback_template=fallback,
+            fallback_template=fallback_user,
             compendium_title=compendium_title,
             channel_name=channel_name,
             compendium_body=compendium_body,
         )
+        return fallback_sys, user_prompt
 
     def get_batch_notes_prompt(
         self,
@@ -626,34 +640,36 @@ class LangfusePromptProvider(PromptProviderPort):
         channel_name: ChannelName,
         compendium_body: str,
         targets_json: str,
-    ) -> str:
-        """Format the atomic note batch synthesis prompt via Langfuse."""
-        fallback = self._fallback.get_batch_notes_prompt(
+    ) -> tuple[str, str]:
+        """Format (system_instruction, user_prompt) for atomic note batch synthesis via Langfuse."""
+        fallback_sys, fallback_user = self._fallback.get_batch_notes_prompt(
             compendium_title=compendium_title,
             channel_name=channel_name,
             compendium_body=compendium_body,
             targets_json=targets_json,
         )
-        return self._resolve_prompt(
+        user_prompt = self._resolve_prompt(
             prompt_name="cresmo-atomic-batch",
-            fallback_template=fallback,
+            fallback_template=fallback_user,
             compendium_title=compendium_title,
             channel_name=channel_name,
             compendium_body=compendium_body,
             targets_json=targets_json,
         )
+        return fallback_sys, user_prompt
 
     def get_mocs_prompt(
         self,
         notes_json: str,
-    ) -> str:
-        """Format the MOC reconciliation prompt via Langfuse."""
-        fallback = self._fallback.get_mocs_prompt(notes_json=notes_json)
-        return self._resolve_prompt(
+    ) -> tuple[str, str]:
+        """Format (system_instruction, user_prompt) for MOC reconciliation via Langfuse."""
+        fallback_sys, fallback_user = self._fallback.get_mocs_prompt(notes_json=notes_json)
+        user_prompt = self._resolve_prompt(
             prompt_name="cresmo-mocs-reconciliation",
-            fallback_template=fallback,
+            fallback_template=fallback_user,
             notes_json=notes_json,
         )
+        return fallback_sys, user_prompt
 
     def get_raw_index_summary_prompt(
         self,

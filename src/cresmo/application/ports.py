@@ -463,8 +463,8 @@ class PromptProviderPort(ABC):
         file_name: str,
         raw_text: str,
         current_text: str | None = None,
-    ) -> str:
-        """Format the Socratic gap filler prompt differentiating pass 1 from subsequent passes.
+    ) -> tuple[str, str]:
+        """Format (system_instruction, user_prompt) for Socratic gap filling.
 
         Args:
             pass_num: 1-based current enrichment pass.
@@ -475,7 +475,7 @@ class PromptProviderPort(ABC):
             current_text: Previous pass text (populated for pass >= 2).
 
         Returns:
-            Formatted prompt string ready for LLM inference.
+            Tuple containing system instruction and user prompt string.
         """
         raise NotImplementedError
 
@@ -484,15 +484,15 @@ class PromptProviderPort(ABC):
         self,
         compendium_body: str,
         complementary_info: str,
-    ) -> str:
-        """Format the Braudelian longitudinal expander prompt.
+    ) -> tuple[str, str]:
+        """Format (system_instruction, user_prompt) for Braudelian longitudinal expansion.
 
         Args:
             compendium_body: Continuous fluid prose from Stage 2.
             complementary_info: Section text containing dates, context, and secondary details.
 
         Returns:
-            Formatted longitudinal expansion prompt string.
+            Tuple containing system instruction and user prompt string.
         """
         raise NotImplementedError
 
@@ -500,14 +500,14 @@ class PromptProviderPort(ABC):
     def get_wide_expander_prompt(
         self,
         current_text: str,
-    ) -> str:
-        """Format the Jaspers synchronic wide expander prompt.
+    ) -> tuple[str, str]:
+        """Format (system_instruction, user_prompt) for Jaspers synchronic wide expansion.
 
         Args:
             current_text: Longitudinally enriched Markdown prose.
 
         Returns:
-            Formatted synchronic horizontal cross-section prompt string.
+            Tuple containing system instruction and user prompt string.
         """
         raise NotImplementedError
 
@@ -517,8 +517,8 @@ class PromptProviderPort(ABC):
         compendium_title: str,
         channel_name: ChannelName,
         compendium_body: str,
-    ) -> str:
-        """Format the atomic inventory extraction prompt.
+    ) -> tuple[str, str]:
+        """Format (system_instruction, user_prompt) for atomic inventory extraction.
 
         Args:
             compendium_title: Compendium title string.
@@ -526,7 +526,7 @@ class PromptProviderPort(ABC):
             compendium_body: Complete enriched prose text.
 
         Returns:
-            Formatted inventory discovery prompt string.
+            Tuple containing system instruction and user prompt string.
         """
         raise NotImplementedError
 
@@ -537,8 +537,8 @@ class PromptProviderPort(ABC):
         channel_name: ChannelName,
         compendium_body: str,
         targets_json: str,
-    ) -> str:
-        """Format the atomic note batch synthesis prompt.
+    ) -> tuple[str, str]:
+        """Format (system_instruction, user_prompt) for atomic note batch synthesis.
 
         Args:
             compendium_title: Compendium title string.
@@ -547,7 +547,7 @@ class PromptProviderPort(ABC):
             targets_json: JSON string with target entities to synthesize.
 
         Returns:
-            Formatted batched atomic note synthesis prompt string.
+            Tuple containing system instruction and user prompt string.
         """
         raise NotImplementedError
 
@@ -555,14 +555,14 @@ class PromptProviderPort(ABC):
     def get_mocs_prompt(
         self,
         notes_json: str,
-    ) -> str:
-        """Format the MOC reconciliation prompt.
+    ) -> tuple[str, str]:
+        """Format (system_instruction, user_prompt) for MOC reconciliation.
 
         Args:
             notes_json: JSON string of synthesized atomic notes.
 
         Returns:
-            Formatted MOC reconciliation prompt string.
+            Tuple containing system instruction and user prompt string.
         """
         raise NotImplementedError
 

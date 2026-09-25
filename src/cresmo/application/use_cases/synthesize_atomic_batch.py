@@ -144,14 +144,15 @@ class SynthesizeAtomicBatchUseCase:
             ]
 
             # Step 2a: Prompt LLM for structured JSON definitions, causal matrices, and relations.
-            prompt = self.prompt_provider.get_batch_notes_prompt(
+            system_instruction, user_prompt = self.prompt_provider.get_batch_notes_prompt(
                 compendium_title=compendium.title.value,
                 channel_name=compendium.channel_name,
                 compendium_body=compendium.body,
                 targets_json=json.dumps(targets_summary, ensure_ascii=False),
             )
             response = self.llm_synthesis_port.transform(
-                prompt=prompt,
+                prompt=user_prompt,
+                system_instruction=system_instruction,
                 temperature=self.temperature,
                 trace_id=f"{compendium.content_id.value}_atomic_batch",
                 session_id=f"stage5_atomic_{compendium.channel_name}",

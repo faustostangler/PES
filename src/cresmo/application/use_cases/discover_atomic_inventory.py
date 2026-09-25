@@ -62,7 +62,7 @@ class DiscoverAtomicInventoryUseCase:
             DomainValidationError: If no valid entities could be discovered.
         """
         # Step 1: Format inventory discovery prompt with compendium body and metadata.
-        prompt = self.prompt_provider.get_inventory_prompt(
+        system_instruction, user_prompt = self.prompt_provider.get_inventory_prompt(
             compendium_title=compendium.title.value,
             channel_name=compendium.channel_name,
             compendium_body=compendium.body,
@@ -70,7 +70,8 @@ class DiscoverAtomicInventoryUseCase:
 
         # Step 2: Execute LLM transformation with deterministic temperature.
         response = self.llm_synthesis_port.transform(
-            prompt=prompt,
+            prompt=user_prompt,
+            system_instruction=system_instruction,
             temperature=self.temperature,
             trace_id=f"{compendium.content_id.value}_inventory",
             session_id=f"stage4_inventory_{compendium.channel_name}",

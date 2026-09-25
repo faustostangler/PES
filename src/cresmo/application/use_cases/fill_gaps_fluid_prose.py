@@ -90,7 +90,7 @@ class FillGapsFluidProseUseCase:
         file_name = f"{raw_transcript.content_id.value}.txt"
 
         for pass_index in range(passes):
-            prompt = self.prompt_provider.get_gap_filler_prompt(
+            system_instruction, user_prompt = self.prompt_provider.get_gap_filler_prompt(
                 pass_num=pass_index + 1,
                 total_passes=passes,
                 channel_name=raw_transcript.channel_name,
@@ -99,7 +99,8 @@ class FillGapsFluidProseUseCase:
                 current_text=current_text if pass_index > 0 else None,
             )
             current_text = self.llm_synthesis_port.transform(
-                prompt=prompt,
+                prompt=user_prompt,
+                system_instruction=system_instruction,
                 temperature=self.temperature,
                 trace_id=f"{raw_transcript.content_id.value}_gap_fill_pass_{pass_index + 1}",
                 session_id=f"stage2_fluid_prose_{raw_transcript.channel_name}",
