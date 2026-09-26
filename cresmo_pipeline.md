@@ -8,9 +8,10 @@ O handle_run() é um orquestrador que instancia o pipeline (via factory) e o sou
 
 O pipeline é o agregador central dos 8 módulos da arquitetura hexagonal em três catgorias de serviços. Os 8 módulos hexagonais são:
 A. Camada transversal: Observabilidade e governança de prompts
-A1. langfuse_client (cliente de observabilidade e governança de LLM)
+A1. langfuse_client (cliente de observabilidade e governança de LLM, [:3000])
 A2. telemetry_port (telemetria hexagonal que orquestra as sessões de tracing e demarca os spans de cada etapa)
 A3. prompt_provider (provedor desacoplado de templates e personas)
+A4. metrics_port (emissão de Golden Signals SRE e métricas DORA raspadas pelo Prometheus [:9090] e visualizadas no Grafana [:3001])
 B. Camada de I/O e Persistência: Ingestão, persistência e idempotência da informação
 B1. media_ingestion_port (captura de dados via yt-dlp e web)
 B2. vault_port (persistência no sistema de transcrições brutas, compêndios enriquecidos, notas atômicas e catálogos)

@@ -58,6 +58,8 @@ class TestCresmoSettings:
         assert settings.require_auth_cookies is False
         assert settings.concat_max_words == 500_000
         assert settings.brain_csv_path == settings.data_dir / "brain.csv"
+        assert settings.prometheus_enabled is True
+        assert settings.prometheus_port == 9090
         assert settings.ollama_base_url == "http://localhost:11434"
         assert settings.ollama_model == "qwen2.5:7b"
         assert settings.indexing_provider == "ollama"
