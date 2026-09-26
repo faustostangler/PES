@@ -270,12 +270,22 @@ def build_pipeline(
     resolved_settings = settings or CresmoSettings()
     resolved_settings.ensure_directories()
 
+    # 1. Observability, Security & Prompt Governance
     anonymizer: AnonymizerPort = (
         RegexAnonymizerAdapter()
         if getattr(resolved_settings, "anonymization_enabled", True)
         else NoOpAnonymizerAdapter()
     )
     langfuse_client = resolve_langfuse_client(resolved_settings, anonymizer=anonymizer)
+
+    if langfuse_client is not None:
+        from cresmo.infrastructure.adapters.opentelemetry_adapter import OpenTelemetryAdapter
+
+        telemetry_port: TelemetryPort = OpenTelemetryAdapter(langfuse_client=langfuse_client)
+    else:
+        from cresmo.infrastructure.adapters.opentelemetry_adapter import NoOpTelemetryAdapter
+
+        telemetry_port = NoOpTelemetryAdapter()
 
     json_prompt_provider = JsonPromptProvider(
         prompts_path=resolved_settings.prompts_path,
@@ -287,7 +297,12 @@ def build_pipeline(
         label=getattr(resolved_settings, "langfuse_prompt_label", "production"),
     )
 
+    # 2. Ingestion, Persistence & Idempotency
     media_ingestion_port = build_media_ingestion_adapter(resolved_settings)
+    vault_port = build_vault_adapter(resolved_settings)
+    ledger_port = SqliteLedgerAdapter(db_path=resolved_settings.sqlite_ledger_path)
+
+    # 3. Cognitive LLM Engines (Synthesis & Fast Indexing)
     llm_synthesis_port = GeminiLLMAdapter(
         api_key=resolved_settings.gemini_api_key.get_secret_value(),
         model_name=resolved_settings.gemini_model,
@@ -295,8 +310,6 @@ def build_pipeline(
         langfuse_client=langfuse_client,
         default_temperature=resolved_settings.llm_synthesis_temperature,
     )
-    vault_port = build_vault_adapter(resolved_settings)
-    ledger_port = SqliteLedgerAdapter(db_path=resolved_settings.sqlite_ledger_path)
 
     if web_index or resolved_settings.indexing_provider == "gemini":
         llm_indexing_port = llm_synthesis_port
@@ -314,15 +327,7 @@ def build_pipeline(
             warmup_timeout_seconds=resolved_settings.ollama_warmup_timeout_seconds,
         )
 
-    if langfuse_client is not None:
-        from cresmo.infrastructure.adapters.opentelemetry_adapter import OpenTelemetryAdapter
-
-        telemetry_port: TelemetryPort = OpenTelemetryAdapter(langfuse_client=langfuse_client)
-    else:
-        from cresmo.infrastructure.adapters.opentelemetry_adapter import NoOpTelemetryAdapter
-
-        telemetry_port = NoOpTelemetryAdapter()
-
+    # 4. Pipeline Assembly
     effective_batch_size = (
         batch_size_override if batch_size_override is not None else resolved_settings.batch_size
     )

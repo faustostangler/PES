@@ -1,8 +1,8 @@
-"""Unit test for Cresmo end-to-end 7-stage Pipeline Orchestration.
+"""Unit test for Cresmo end-to-end Pipeline Orchestration.
 
-Verifies complete causal flow across all incremental integer stages:
-Stage 1 (Raw Transcript / Priority Text) -> Stage 2 (Gap Filler) -> Stage 3 (Expander)
--> Stage 4 (Inventory) -> Stage 5 (Batch) -> Stage 6 (MOC) -> Stage 7 (Dedupe).
+Verifies complete causal flow across all incremental synthesis steps:
+Raw Transcript / Priority Text -> Gap Filler -> Expander
+-> Inventory -> Batch -> MOC -> Deduplication.
 Tests run_for_video, run_for_text_file, and run_for_manifest.
 """
 
@@ -224,10 +224,13 @@ class TestCresmoPipelineOrchestration:
         res = pipeline.run_for_video("https://youtube.com/watch?v=dQw4w9WgXcQ")
         assert res.success is True
         assert len(res.synthesized_notes) == 1
-        synthesis_stage_calls = [
-            c for c in llm.call_history if c.get("session_id", "").startswith("stage")
+        synthesis_calls = [
+            c
+            for c in llm.call_history
+            if c.get("session_id", "").startswith(("inventory_", "atomic_batch_"))
+            or c.get("session_id") == "reconcile_mocs"
         ]
-        assert len(synthesis_stage_calls) == 3
+        assert len(synthesis_calls) == 3
 
     # =========================================================================
     # Tests for run_for_text_file
@@ -518,7 +521,7 @@ class TestCresmoPipelineOrchestration:
             ledger_port=ledger,
         )
 
-        # Explicit gap_filler_passes = 2 (Stage 2 sets passes=2, Stage 3 increments to 3)
+        # Explicit gap_filler_passes = 2 (fluid prose sets passes=2, expansion increments to 3)
         res = pipeline.run_for_video(
             "https://youtube.com/watch?v=videoPassTest1", gap_filler_passes=2
         )
@@ -690,7 +693,7 @@ class TestCresmoPipelineOrchestration:
             ledger_port=ledger,
         )
 
-        # Run with gap_filler_passes = 2 (Stage 2 sets passes=2, Stage 3 increments to 3)
+        # Run with gap_filler_passes = 2 (fluid prose sets passes=2, expansion increments to 3)
         results = pipeline.run_for_manifest(manifest, gap_filler_passes=2)
         assert len(results) == 1
         assert results[0].success is True
@@ -732,7 +735,7 @@ class TestCresmoPipelineOrchestration:
         assert res.index_entry.excerpt != ""
 
     def test_pipeline_execute_skips_raw_indexing_when_already_processed_in_ledger(self) -> None:
-        """Verify that execute() evaluates ledger idempotency before Stage 1b indexing."""
+        """Verify that execute() evaluates ledger idempotency before raw indexing."""
         cid = ContentId("idempotentVideo123")
         canned_raw = RawTranscript(
             content_id=cid,

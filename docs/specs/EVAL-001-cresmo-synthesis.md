@@ -21,30 +21,30 @@ Every generative call across the Cresmo pipeline executed through `LLMTransforma
 ### 1.2 Span Hierarchy
 ```
 PipelineRun [Root Trace]
-├── Stage_1_RawTranscript [Span]
-├── Stage_2_GapFiller [Span]
+├── raw_indexing [Span]
+├── fluid_prose [Span]
 │   └── expand_pass_1 [Generation]
 │   └── expand_pass_2 [Generation]
-├── Stage_3_Expander [Span]
+├── expansion [Span]
 │   └── longue_duree_expansion [Generation]
 │   └── axial_synchronic_expansion [Generation]
-├── Stage_4_Inventory [Span]
+├── inventory [Span]
 │   └── inventory_discovery [Generation]
-├── Stage_5_Batch [Span]
+├── atomic_batch [Span]
 │   └── batch_synthesis_01 [Generation]
 │   └── batch_synthesis_02 [Generation]
-└── Stage_6_MOC [Span]
+└── reconcile_mocs [Span]
     └── moc_reconciliation [Generation]
 ```
 
 ### 1.3 Prompt Version Registry
 All prompt templates must be versioned and registered in Langfuse:
-- `cresmo-stage2-gapfiller:v1.0.0`
-- `cresmo-stage3-expander-longitudinal:v1.0.0`
-- `cresmo-stage3-expander-synchronic:v1.0.0`
-- `cresmo-stage4-inventory:v1.0.0`
-- `cresmo-stage5-batch:v1.0.0`
-- `cresmo-stage6-moc:v1.0.0`
+- `cresmo-gapfiller:v1.0.0`
+- `cresmo-expander-longitudinal:v1.0.0`
+- `cresmo-expander-synchronic:v1.0.0`
+- `cresmo-inventory:v1.0.0`
+- `cresmo-batch:v1.0.0`
+- `cresmo-moc:v1.0.0`
 
 ---
 

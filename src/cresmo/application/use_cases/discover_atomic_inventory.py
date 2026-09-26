@@ -1,10 +1,10 @@
-"""Stage 4 Use Case: Discover Atomic Entity Inventory.
+"""Use Case: Discover Atomic Entity Inventory.
 
 Executes holistic discovery scan across an Enriched Compendium to extract unique candidate
 entities (concepts, entities, events, processes) conforming to the Cresmo style guide taxonomy.
 
 Conforms to:
-- SPEC-001: §1 (Stage 4 Holistic Inventory Discovery)
+- SPEC-001: §1 (Holistic Inventory Discovery)
 - ADR-001: Modular Monolith Domain Integrity
 """
 
@@ -18,7 +18,7 @@ from cresmo.domain.value_objects import AtomicEntityInventory, NoteTitle, NoteTy
 
 
 class DiscoverAtomicInventoryUseCase:
-    """Stage 4: Holistic entity discovery orchestrator across enriched compendium text."""
+    """Holistic entity discovery orchestrator across enriched compendium text."""
 
     def __init__(
         self,
@@ -28,7 +28,7 @@ class DiscoverAtomicInventoryUseCase:
         *,
         llm_port: LLMTransformationPort | None = None,
     ) -> None:
-        """Initialize Stage 4 use case with required Hexagonal ports.
+        """Initialize use case with required Hexagonal ports.
 
         Args:
             llm_synthesis_port: Hexagonal port for generative LLM inference.
@@ -50,10 +50,10 @@ class DiscoverAtomicInventoryUseCase:
             self.prompt_provider = prompt_provider
 
     def execute(self, compendium: EnrichedCompendium) -> AtomicEntityInventory:
-        """Execute Stage 4 discovery scan at configured temperature.
+        """Execute discovery scan at configured temperature.
 
         Args:
-            compendium: Enriched compendium from Stage 3.
+            compendium: Enriched compendium from narrative expansion.
 
         Returns:
             AtomicEntityInventory Value Object containing deduplicated entities.
@@ -74,7 +74,7 @@ class DiscoverAtomicInventoryUseCase:
             system_instruction=system_instruction,
             temperature=self.temperature,
             trace_id=f"{compendium.content_id.value}_inventory",
-            session_id=f"stage4_inventory_{compendium.channel_name}",
+            session_id=f"inventory_{compendium.channel_name}",
             user_id=str(compendium.channel_name),
         )
 

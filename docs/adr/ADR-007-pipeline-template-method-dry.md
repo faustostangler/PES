@@ -15,7 +15,7 @@ In [`src/cresmo/application/pipeline.py`](../../src/cresmo/application/pipeline.
 - `run_for_text_file(file_path)`: Directly parses raw local text/markdown file, saves to vault, and executes synthesis.
 
 ### The Problem (Duplication Smell & Drift Risk)
-A structural inspection revealed that Stages 2 through 7:
+A structural inspection revealed that downstream synthesis steps:
 1. Idempotency ledger check (`is_processed`)
 2. Socratic Gap Filler & Longitudinal Expander (`FillGapsFluidProseUseCase` + `ExpandLongitudinalSynchronicUseCase`)
 3. Holistic Inventory Discovery (`DiscoverAtomicInventoryUseCase`)
@@ -41,10 +41,10 @@ def _synthesize_transcript(
     force_reprocess: bool = False,
 ) -> PipelineResult:
 ```
-This method acts as the invariant skeleton for Stages 2–7. It receives an already constructed `RawTranscript` domain entity and executes all stages identically regardless of origin.
+This method acts as the invariant skeleton for downstream synthesis. It receives an already constructed `RawTranscript` domain entity and executes all synthesis steps identically regardless of origin.
 
 ### 2.2 Specialized Pre-Processing Steps
-The public entrypoints retain solely their differentiated Stage 1 ingestion logic:
+The public entrypoints retain solely their differentiated raw ingestion logic:
 - `run_for_video`: Invokes `self.ingest_raw_transcript.execute(video_url=video_url)` $\rightarrow$ delegates to `_synthesize_transcript`.
 - `run_for_text_file`: Invokes `self._load_transcript_from_file(file_path)` + `self.vault_port.save_raw_transcript(raw)` $\rightarrow$ delegates to `_synthesize_transcript`.
 - `run_for_manifest`: Sequentially delegates each manifest line to `run_for_video`.
@@ -62,7 +62,7 @@ The public entrypoints retain solely their differentiated Stage 1 ingestion logi
 ## 4. Consequences & Impact
 
 ### Positive
-1. **DRY & Single Source of Truth:** The synthesis flow (Stages 2–7) is defined in exactly one place.
+1. **DRY & Single Source of Truth:** The downstream synthesis flow is defined in exactly one place.
 2. **Sub-Zero Bug Drift:** Any new stage or ledger policy update automatically benefits all ingestion modalities (video, priority text, manifests).
 3. **High Cohesion & Readability:** Public methods are lean, single-purpose coordinators with Cyclomatic Complexity $\le 3$.
 

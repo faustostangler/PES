@@ -1,11 +1,11 @@
-"""Stage 3 Use Case: Longitudinal & Synchronic Expansion.
+"""Use Case: Longitudinal & Synchronic Expansion.
 
 Executes Fernand Braudel's longue durée (cresmo-long-expander) and Karl Jaspers' Axial Time
 (cresmo-wide-expander) deep multi-secular and horizontal cross-sections, subordinating short-term
 surface events (l'histoire événementielle) to deep historical structures and global synchronies.
 
 Conforms to:
-- SPEC-001: §1 (Stage 3 Expander)
+- SPEC-001: §1 (Longitudinal and Synchronic Expander)
 - ADR-001: Modular Monolith Domain Integrity
 """
 
@@ -31,7 +31,7 @@ _TITLE_H1_PATTERN = re.compile(r"^\s*#\s+.+$", re.MULTILINE)
 
 
 class ExpandLongitudinalSynchronicUseCase:
-    """Stage 3: Deep longitudinal & synchronic expansion orchestrator."""
+    """Deep longitudinal & synchronic expansion orchestrator."""
 
     def __init__(
         self,
@@ -42,7 +42,7 @@ class ExpandLongitudinalSynchronicUseCase:
         *,
         llm_port: LLMTransformationPort | None = None,
     ) -> None:
-        """Initialize Stage 3 use case with required Hexagonal ports.
+        """Initialize use case with required Hexagonal ports.
 
         Args:
             llm_synthesis_port: Hexagonal port for generative LLM inference.
@@ -71,10 +71,10 @@ class ExpandLongitudinalSynchronicUseCase:
         self,
         compendium: EnrichedCompendium,
     ) -> EnrichedCompendium:
-        """Execute Stage 3 dual expansion in-place.
+        """Execute dual expansion in-place.
 
         Args:
-            compendium: EnrichedCompendium aggregate from Stage 2.
+            compendium: EnrichedCompendium aggregate from fluid prose synthesis.
 
         Returns:
             Updated EnrichedCompendium aggregate enriched with multi-secular and synchronic depth.
@@ -92,7 +92,7 @@ class ExpandLongitudinalSynchronicUseCase:
             system_instruction=long_sys,
             temperature=self.temperature,
             trace_id=f"{compendium.content_id.value}_longitudinal",
-            session_id=f"stage3_expansion_{compendium.channel_name}",
+            session_id=f"expansion_{compendium.channel_name}",
             user_id=str(compendium.channel_name),
         )
 
@@ -104,7 +104,7 @@ class ExpandLongitudinalSynchronicUseCase:
             system_instruction=wide_sys,
             temperature=self.temperature,
             trace_id=f"{compendium.content_id.value}_synchronic",
-            session_id=f"stage3_expansion_{compendium.channel_name}",
+            session_id=f"expansion_{compendium.channel_name}",
             user_id=str(compendium.channel_name),
         )
 

@@ -11,7 +11,7 @@
 
 ## 1. Context & Problem Statement
 
-During the initial strangulation of the legacy procedural pipeline ([`ADR-001`](ADR-001-cresmo-modular-monolith-strangling.md)), an Anti-Corruption Layer ([`LegacyIsbIngestionAdapter`](file:///home/stangler/gamer_d/Fausto%20Stangler/Documentos/Python/PES/src/cresmo/infrastructure/adapters/legacy_isb_ingestion_adapter.py)) was erected to encapsulate the ancestral codebase in `playground/isb.ai/`. This allowed rapid progress on the clean domain core and 6-stage synthesis pipeline without being blocked by media ingestion rewrites.
+During the initial strangulation of the legacy procedural pipeline ([`ADR-001`](ADR-001-cresmo-modular-monolith-strangling.md)), an Anti-Corruption Layer ([`LegacyIsbIngestionAdapter`](file:///home/stangler/gamer_d/Fausto%20Stangler/Documentos/Python/PES/src/cresmo/infrastructure/adapters/legacy_isb_ingestion_adapter.py)) was erected to encapsulate the ancestral codebase in `playground/isb.ai/`. This allowed rapid progress on the clean domain core and synthesis pipeline without being blocked by media ingestion rewrites.
 
 However, `playground/isb.ai/` remains a significant technical debt anchor and stability hazard:
 1. **Dynamic Runtime Pollution:** The legacy adapter relies on `sys.path.insert(0, ...)` and dynamic module imports (`import sync_channels`, `import downloader`), creating race conditions and module resolution side effects.

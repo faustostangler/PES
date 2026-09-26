@@ -1,4 +1,4 @@
-"""Unit tests for Cresmo 6-Stage Use Cases.
+"""Unit tests for Cresmo Application Use Cases.
 
 Derived from SPEC-001 Section 4 (Acceptance Criteria Scenarios).
 Pure, hermetic tests using Mock Ports (0 external I/O) with strict port verification.
@@ -320,10 +320,17 @@ class TestExpandLongitudinalSynchronic:
         # Pass 1: Longitude expander gets initial compendium body and complementary info
         assert "Continuous prose body describing elites." in llm_port.call_history[0]["prompt"]
         assert "Initial complementary info." in llm_port.call_history[0]["prompt"]
+        assert llm_port.call_history[0]["system_instruction"].startswith("You are Cresmo Long-Expander")
+        assert llm_port.call_history[0]["prompt"].startswith("Take the following enriched Markdown document")
+        assert not llm_port.call_history[0]["prompt"].startswith(llm_port.call_history[0]["system_instruction"][:30])
+
         # Pass 2: Wide expander gets the response from longitudinal expansion
         assert (
             "Longitudinal analysis tracing Roman patricians" in llm_port.call_history[1]["prompt"]
         )
+        assert llm_port.call_history[1]["system_instruction"].startswith("You are Cresmo Wide-Expander")
+        assert llm_port.call_history[1]["prompt"].startswith("Take the following longitudinally expanded Markdown document")
+        assert not llm_port.call_history[1]["prompt"].startswith(llm_port.call_history[1]["system_instruction"][:30])
 
     def test_expand_missing_complementary_tag_falls_back_to_original(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")

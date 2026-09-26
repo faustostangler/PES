@@ -1,10 +1,10 @@
-"""Stage 2 Use Case: Fill Gaps and Expand Fluid Prose.
+"""Use Case: Fill Gaps and Expand Fluid Prose.
 
 Executes Socratic audit and multi-pass progressive fluid prose expansion (cresmo-expander),
 purging oralities and speech noise while enforcing continuous narrative structure.
 
 Conforms to:
-- SPEC-001: §1 (Stage 2 Gap Filler Socratic Expansion)
+- SPEC-001: §1 (Gap Filler Socratic Expansion)
 - ADR-001: Modular Monolith Domain Integrity
 """
 
@@ -32,7 +32,7 @@ _COMPLEMENTARY_REGEX = re.compile(
 
 
 class FillGapsFluidProseUseCase:
-    """Stage 2: Multi-pass Socratic gap analysis & fluid prose expansion orchestrator."""
+    """Multi-pass Socratic gap analysis & fluid prose expansion orchestrator."""
 
     def __init__(
         self,
@@ -43,7 +43,7 @@ class FillGapsFluidProseUseCase:
         *,
         llm_port: LLMTransformationPort | None = None,
     ) -> None:
-        """Initialize Stage 2 use case with required ports.
+        """Initialize use case with required ports.
 
         Args:
             llm_synthesis_port: Hexagonal port for generative text transformations.
@@ -73,10 +73,10 @@ class FillGapsFluidProseUseCase:
         raw_transcript: RawTranscript,
         passes: int = 3,
     ) -> EnrichedCompendium:
-        """Execute Stage 2 multi-pass progressive enrichment.
+        """Execute multi-pass progressive enrichment.
 
         Args:
-            raw_transcript: Source RawTranscript aggregate from Stage 1.
+            raw_transcript: Source RawTranscript aggregate.
             passes: Number of sequential Socratic expansion cycles (default: 3).
 
         Returns:
@@ -103,7 +103,7 @@ class FillGapsFluidProseUseCase:
                 system_instruction=system_instruction,
                 temperature=self.temperature,
                 trace_id=f"{raw_transcript.content_id.value}_gap_fill_pass_{pass_index + 1}",
-                session_id=f"stage2_fluid_prose_{raw_transcript.channel_name}",
+                session_id=f"fluid_prose_{raw_transcript.channel_name}",
                 user_id=str(raw_transcript.channel_name),
             )
 

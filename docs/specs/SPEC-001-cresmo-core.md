@@ -12,13 +12,13 @@
 
 This specification defines the precision acceptance criteria, entity invariants, boundary failure modes, and test strategy derived from [ADR-001](../adr/ADR-001-cresmo-modular-monolith-strangling.md). It serves as the frozen contract for Test-Driven Development (Phase 3 Surgery).
 
-The six incremental integer stages specified:
-- **Stage 1**: Raw Transcript (Ingestion via `MediaIngestionPort` ACL)
-- **Stage 2**: Gap Filler (Socratic multi-pass fluid prose expansion)
-- **Stage 3**: Expander (Braudelian longitudinal & Jaspers synchronic expansion)
-- **Stage 4**: Inventory (Holistic discovery of unique atomic entities)
-- **Stage 5**: Batch (Batched atomic synthesis and vault proliferation)
-- **Stage 6**: MOC (Map of Content reconciliation with zero orphaned notes)
+The incremental synthesis processes specified:
+- **Raw Transcript Ingestion**: Ingestion via `MediaIngestionPort` ACL
+- **Fluid Prose Gap Filler**: Socratic multi-pass fluid prose expansion
+- **Longitudinal & Synchronic Expander**: Braudelian longitudinal & Jaspers synchronic expansion
+- **Atomic Inventory Discovery**: Holistic discovery of unique atomic entities
+- **Batched Atomic Synthesis**: Batched atomic synthesis and vault proliferation
+- **MOC Reconciliation**: Map of Content reconciliation with zero orphaned notes
 
 ---
 
@@ -47,19 +47,19 @@ The six incremental integer stages specified:
 
 ### 2.2 Entities & Aggregates (Always Valid at Construction)
 
-- **`RawTranscript` (Stage 1 Aggregate)**:
+- **`RawTranscript` (Aggregate)**:
   - *Invariant*: `body` must contain non-whitespace text. `content_id` must be a valid `ContentId`.
   - *Failure*: Raises `DomainValidationError`.
 
-- **`EnrichedCompendium` (Stage 2 & 3 Aggregate)**:
+- **`EnrichedCompendium` (Aggregate)**:
   - *Invariant*: `body` must be continuous prose (rejects raw markdown tables or bulleted lists in primary narrative). `complementary_info` must not be empty. `pass_count >= 1`.
   - *Failure*: Raises `CompendiumStructureError`.
 
-- **`AtomicNote` (Stage 4 & 5 Aggregate)**:
+- **`AtomicNote` (Aggregate)**:
   - *Invariant*: `title` cannot appear in `direct_relations` (no self-referential cycles). `definition` must be at least 20 characters. `note_type` must be valid.
   - *Failure*: Raises `SelfReferentialRelationError` or `DomainValidationError`.
 
-- **`MapOfContent` (Stage 6 Aggregate)**:
+- **`MapOfContent` (Aggregate)**:
   - *Invariant*: Must contain at least one associated `NoteTitle`. Rejects duplicate note titles within the same MOC.
   - *Failure*: Raises `DomainValidationError`.
 
@@ -89,7 +89,7 @@ The six incremental integer stages specified:
 
 ## 4. Acceptance Criteria (Scenarios)
 
-### Stage 1: Raw Transcript Ingestion
+### Raw Transcript Ingestion
 
 #### Scenario 1.1: Successful Ingestion via ACL
 - **Given**: A valid YouTube URL with available native subtitles.
@@ -103,7 +103,7 @@ The six incremental integer stages specified:
 
 ---
 
-### Stage 2: Socratic Gap Filler
+### Socratic Gap Filler
 
 #### Scenario 2.1: Multi-Pass Continuous Prose Generation
 - **Given**: A valid `RawTranscript`.
@@ -117,25 +117,25 @@ The six incremental integer stages specified:
 
 ---
 
-### Stage 3: Longitudinal & Synchronic Expander
+### Longitudinal & Synchronic Expander
 
 #### Scenario 3.1: Braudelian & Jaspers In-Place Enrichment
-- **Given**: An `EnrichedCompendium` from Stage 2.
+- **Given**: An `EnrichedCompendium` from fluid prose expansion.
 - **When**: `ExpandLongitudinalSynchronicUseCase.execute(compendium)` is invoked.
 - **Then**: The compendium is enriched with 3-tier causal depth (longue durée) and axial synchronicity without overwriting origin metadata.
 
 ---
 
-### Stage 4: Holistic Inventory Discovery
+### Holistic Inventory Discovery
 
 #### Scenario 4.1: Exhaustive Entity Discovery
-- **Given**: An `EnrichedCompendium` from Stage 3.
+- **Given**: An `EnrichedCompendium` from longitudinal & synchronic expansion.
 - **When**: `DiscoverAtomicInventoryUseCase.execute(compendium)` is invoked with `temperature=0.0`.
 - **Then**: Returns an `AtomicEntityInventory` containing unique, deduplicated entity titles and their normalized `NoteType`.
 
 ---
 
-### Stage 5: Batched Atomic Synthesis & Vault Proliferation
+### Batched Atomic Synthesis & Vault Proliferation
 
 #### Scenario 5.1: Batched Note Synthesis with Causal Matrix
 - **Given**: An `AtomicEntityInventory` with 12 entities and `batch_size=5`.
@@ -149,7 +149,7 @@ The six incremental integer stages specified:
 
 ---
 
-### Stage 6: Map of Content (MOC) Reconciliation
+### Map of Content (MOC) Reconciliation
 
 #### Scenario 6.1: Vault Reconciliation with Zero Orphaned Notes
 - **Given**: Newly proliferated `AtomicNote` entities in the vault.
@@ -199,5 +199,5 @@ The 73 legacy tests currently located in `playground/cresmo/tests/` serve as the
 
 Every use case execution must verify telemetry via `Langfuse`:
 - Assert root trace is generated with name `cresmo-pipeline-run` and tags `["cresmo", category, channel]`.
-- Assert each stage produces its corresponding span (`Stage_1_RawTranscript`, `Stage_2_GapFiller`, `Stage_3_Expander`, `Stage_4_Inventory`, `Stage_5_Batch`, `Stage_6_MOC`).
+- Assert each process produces its corresponding span (`raw_indexing`, `fluid_prose`, `expansion`, `inventory`, `atomic_batch`, `reconcile_mocs`, `duplicate_unification`).
 - Assert all generations capture token usage and latency.

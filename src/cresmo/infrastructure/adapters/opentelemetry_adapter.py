@@ -67,7 +67,7 @@ def name_telemetry_threads(langfuse_client: Any | None = None) -> None:
 class OpenTelemetryAdapter(TelemetryPort):
     """Production Telemetry adapter integrating CNCF OpenTelemetry and Langfuse.
 
-    Implements TelemetryPort to provide distributed tracing across the 6-stage
+    Implements TelemetryPort to provide distributed tracing across the
     Cresmo synthesis pipeline, binding content sessions, user identities, and channel
     tenants into first-class telemetry entities.
     """

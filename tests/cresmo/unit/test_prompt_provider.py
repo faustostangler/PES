@@ -105,14 +105,22 @@ class TestJsonPromptProvider:
         assert isinstance(long_s, str)
         assert "Main body text." in long_p
         assert "Supplementary info." in long_p
-        assert "Fernand Braudel" in long_s or "Fernand Braudel" in long_p
+        assert "Fernand Braudel" in long_s
+        assert "Fernand Braudel" in long_p
+        assert long_s.startswith("You are Cresmo Long-Expander")
+        assert long_p.startswith("Take the following enriched Markdown document")
+        assert not long_p.startswith(long_s[:30])
 
         wide_s, wide_p = provider.get_wide_expander_prompt(
             current_text="Longitudinally expanded text.",
         )
         assert isinstance(wide_s, str)
         assert "Longitudinally expanded text." in wide_p
-        assert "Karl Jaspers" in wide_s or "Karl Jaspers" in wide_p
+        assert "Karl Jaspers" in wide_s
+        assert "Karl Jaspers" in wide_p
+        assert wide_s.startswith("You are Cresmo Wide-Expander")
+        assert wide_p.startswith("Take the following longitudinally expanded Markdown document")
+        assert not wide_p.startswith(wide_s[:30])
 
     def test_inventory_and_batch_notes_and_mocs_prompts(self) -> None:
         provider = JsonPromptProvider()

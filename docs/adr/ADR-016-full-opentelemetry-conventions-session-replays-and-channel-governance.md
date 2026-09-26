@@ -22,7 +22,7 @@ In Cresmo's Hexagonal Modular Monolith, raw audio and video transcripts are inge
 
 ### 1.1 Identified Architectural Deficits
 Prior to this decision:
-1. **Fragmented Trace Taxonomy:** Each pipeline stage generated disconnected traces or passed stage-specific string sessions (e.g. `raw_index_channel`, `stage2_fluid_prose_channel`). Traces spanning the same content item across stages 1 to 6 were decoupled, rendering the Langfuse **Session Replay** view fragmented and unable to visualize the holistic multi-stage knowledge evolution.
+1. **Fragmented Trace Taxonomy:** Each pipeline step generated disconnected traces or passed uncoordinated string sessions (e.g. `raw_index_channel`, `fluid_prose_channel`). Traces spanning the same content item across the synthesis lifecycle were decoupled, rendering the Langfuse **Session Replay** view fragmented and unable to visualize the holistic multi-stage knowledge evolution.
 2. **Missing Cost Center (Tenant) Identity:** Use cases did not provide `user_id`. Consequently, the Langfuse **Users** dashboard remained unpopulated, precluding FinOps visibility into token expenditure, model latency, and error distribution per channel.
 3. **Improper Langfuse SDK Attribute Binding:** Adapters placed `session_id` and `user_id` inside custom `metadata` dictionaries rather than native trace/span attributes. Furthermore, calls to `update_current_generation` on the raw `Langfuse` client instance triggered silent `AttributeError` exceptions.
 4. **Uninstrumented LLM-as-a-Judge Friction:** ADR-013 introduced self-healing iterative rewrite loops (`max_rewrites = 3`), but lacked standardized telemetry measuring the friction ratio (retry frequency) per channel and prompt version.
@@ -87,11 +87,11 @@ The pipeline coordinates traces via a 3-tier OpenTelemetry hierarchy:
 
 ### 2.4 Clinical Metrics & Evaluation (EVAL-001)
 1. **LLM-as-a-Judge Friction Telemetry:**
-   - On each judge cycle in Stage 1, the pipeline calculates:
+   - On each judge cycle in raw conceptual indexing, the pipeline calculates:
      $$\text{friction\_ratio} = \frac{\text{iterations} - 1}{\text{max\_iterations}}$$
    - Recorded as a span event and Langfuse score (`judge_friction`) to pinpoint problematic channels or prompts.
 2. **Session Coherence Scoring:**
-   - Upon completion of Stage 6, the pipeline evaluates the semantic alignment and wikilink density between Stage 1 concepts and Stage 5 notes, recording a `session_coherence` score on the root session.
+   - Upon completion of MOC reconciliation, the pipeline evaluates the semantic alignment and wikilink density between raw concepts and atomic notes, recording a `session_coherence` score on the root session.
 
 ---
 

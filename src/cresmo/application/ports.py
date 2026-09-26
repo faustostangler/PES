@@ -488,7 +488,7 @@ class PromptProviderPort(ABC):
         """Format (system_instruction, user_prompt) for Braudelian longitudinal expansion.
 
         Args:
-            compendium_body: Continuous fluid prose from Stage 2.
+            compendium_body: Continuous fluid prose from fluid prose expansion.
             complementary_info: Section text containing dates, context, and secondary details.
 
         Returns:

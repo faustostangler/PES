@@ -1,7 +1,7 @@
 """Integration tests for CresmoPipeline OpenTelemetry Semantic Conventions.
 
 Conforms to ADR-016:
-    - Verifies complete Session Replay span hierarchy across the 6 stages.
+    - Verifies complete Session Replay span hierarchy across pipeline stages.
     - Verifies root span contains langfuse.session.id and langfuse.user.id.
     - Verifies child stage spans inherit trace context from the root span.
     - Verifies session coherence evaluation is recorded on the root span.
@@ -76,7 +76,7 @@ class TestPipelineTelemetryIntegration:
         assert result.success is True
 
         spans = exporter.get_finished_spans()
-        assert len(spans) >= 6  # Root + at least 5 stage spans
+        assert len(spans) >= 6  # Root + child stage spans
 
         # Identify root span
         root_span = next(s for s in spans if s.name == "cresmo.pipeline.execution")

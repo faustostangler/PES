@@ -11,9 +11,9 @@
 
 ## 1. Context & Architectural Forces
 
-In Cresmo's Hexagonal Modular Monolith, audio and video transcripts are synthesized through a multi-stage pipeline ([`ADR-007`](ADR-007-pipeline-template-method-dry.md)) utilizing large language models across two distinct business stages:
-1. **Stage 1b — Raw Transcript Conceptual Indexing:** Summarizes transcript concepts, evaluates quality via LLM-as-a-Judge loops ([`ADR-013`](ADR-013-iterative-llm-as-a-judge-indexing-loops.md)), and indexes YouTube metadata into the channel catalog.
-2. **Stages 2–6 — Knowledge Synthesis:** Transforms raw audio text through Socratic gap-filling, longitudinal/synchronic expansion, atomic inventory discovery, batch note synthesis, and MOC reconciliation.
+In Cresmo's Hexagonal Modular Monolith, audio and video transcripts are synthesized through a pipeline ([`ADR-007`](ADR-007-pipeline-template-method-dry.md)) utilizing large language models across two distinct business operations:
+1. **Raw Transcript Conceptual Indexing:** Summarizes transcript concepts, evaluates quality via LLM-as-a-Judge loops ([`ADR-013`](ADR-013-iterative-llm-as-a-judge-indexing-loops.md)), and indexes YouTube metadata into the channel catalog.
+2. **Knowledge Synthesis:** Transforms raw audio text through Socratic gap-filling, longitudinal/synchronic expansion, atomic inventory discovery, batch note synthesis, and MOC reconciliation.
 
 A comprehensive codebase audit against the **Doctor Stangler Method** revealed several structural nomenclature and design inconsistencies that violate Clean Architecture symmetry and Domain-Driven Design (DDD) Ubiquitous Language:
 

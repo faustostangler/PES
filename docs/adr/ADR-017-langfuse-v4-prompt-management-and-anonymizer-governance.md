@@ -11,7 +11,7 @@
 
 ## 1. Context & Architectural Forces
 
-In Cresmo's Hexagonal Modular Monolith, audio and video transcripts are synthesized through a 7-stage incremental pipeline ([ADR-007](ADR-007-pipeline-template-method-dry.md)). Observability was standardized in [ADR-016](ADR-016-full-opentelemetry-conventions-session-replays-and-channel-governance.md) with OpenTelemetry semantic conventions, session replays (`content:{channel}:{content_id}`), and preliminary clinical scores (`judge_friction`, `session_coherence`).
+In Cresmo's Hexagonal Modular Monolith, audio and video transcripts are synthesized through an incremental synthesis pipeline ([ADR-007](ADR-007-pipeline-template-method-dry.md)). Observability was standardized in [ADR-016](ADR-016-full-opentelemetry-conventions-session-replays-and-channel-governance.md) with OpenTelemetry semantic conventions, session replays (`content:{channel}:{content_id}`), and preliminary clinical scores (`judge_friction`, `session_coherence`).
 
 ### 1.1 Identified Architectural Deficits & Drivers
 
@@ -77,10 +77,10 @@ We treat data privacy and LGPD compliance as a first-class architectural concern
 
 ### 2.4 Multidimensional Evaluation Strategy & Datasets Readiness
 1. **Score Rubrics Definition:**
-   - `judge_friction` (Stage 1): Ratio of retries ($\frac{\text{iterations}-1}{\text{max\_iterations}}$) in $[0.0, 1.0]$.
-   - `faithfulness` (Stage 2/3): Numeric $[0.0, 1.0]$ evaluating whether the narrative compendium invented facts absent from raw transcripts (Target $\ge 0.85$).
-   - `wikilink_density` (Stage 5): Numeric $[0.0, 1.0]$ evaluating graph connectivity in generated atomic notes.
-   - `session_coherence` (Root/Stage 6): Holistic retention score between raw concepts and atomic notes.
+   - `judge_friction` (Raw Indexing): Ratio of retries ($\frac{\text{iterations}-1}{\text{max\_iterations}}$) in $[0.0, 1.0]$.
+   - `faithfulness` (Fluid Prose & Expansion): Numeric $[0.0, 1.0]$ evaluating whether the narrative compendium invented facts absent from raw transcripts (Target $\ge 0.85$).
+   - `wikilink_density` (Atomic Batch): Numeric $[0.0, 1.0]$ evaluating graph connectivity in generated atomic notes.
+   - `session_coherence` (Root/MOC Reconciliation): Holistic retention score between raw concepts and atomic notes.
 2. **Datasets & CI/CD Future Protocol:**
    - Formalize the structure for future dataset curation (`cresmo-golden-corpus`) and offline experiment evaluation via `dataset.run_experiment()`, ready to be wired into CI/CD workflows when established.
 

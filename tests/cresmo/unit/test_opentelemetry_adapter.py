@@ -150,17 +150,17 @@ class TestOpenTelemetryAdapter:
             user_id=user_id,
             metadata={"source": "cli"},
         ):
-            with adapter.start_stage_span("stage1_raw_indexing", attributes={"step": 1}):
+            with adapter.start_stage_span("raw_indexing", attributes={"step": 1}):
                 pass
-            with adapter.start_stage_span("stage2_fluid_prose", attributes={"step": 2}):
+            with adapter.start_stage_span("fluid_prose", attributes={"step": 2}):
                 pass
 
         spans = exporter.get_finished_spans()
         assert len(spans) == 3
 
-        # Spans finish from inside out: stage1, stage2, then root pipeline
-        stage1_span = next(s for s in spans if s.name == "cresmo.stage.stage1_raw_indexing")
-        stage2_span = next(s for s in spans if s.name == "cresmo.stage.stage2_fluid_prose")
+        # Spans finish from inside out: raw_indexing, fluid_prose, then root pipeline
+        raw_indexing_span = next(s for s in spans if s.name == "cresmo.stage.raw_indexing")
+        fluid_prose_span = next(s for s in spans if s.name == "cresmo.stage.fluid_prose")
         root_span = next(s for s in spans if s.name == "cresmo.pipeline.execution")
 
         # Root span must have official Langfuse OTel attributes
@@ -172,13 +172,13 @@ class TestOpenTelemetryAdapter:
         assert root_span.attributes["cresmo.metadata.source"] == "cli"
 
         # Child spans share trace_id
-        assert stage1_span.context is not None
-        assert stage2_span.context is not None
+        assert raw_indexing_span.context is not None
+        assert fluid_prose_span.context is not None
         assert root_span.context is not None
-        assert stage1_span.parent is not None
-        assert stage1_span.context.trace_id == root_span.context.trace_id
-        assert stage2_span.context.trace_id == root_span.context.trace_id
-        assert stage1_span.parent.span_id == root_span.context.span_id
+        assert raw_indexing_span.parent is not None
+        assert raw_indexing_span.context.trace_id == root_span.context.trace_id
+        assert fluid_prose_span.context.trace_id == root_span.context.trace_id
+        assert raw_indexing_span.parent.span_id == root_span.context.span_id
 
     def test_record_judge_evaluation(
         self,
@@ -306,7 +306,7 @@ class TestNoOpTelemetryAdapter:
 
         # Must execute cleanly without exceptions
         with adapter.start_pipeline_session(session_id=session_id, user_id=user_id):
-            with adapter.start_stage_span("stage1"):
+            with adapter.start_stage_span("raw_indexing"):
                 pass
             adapter.record_judge_evaluation(
                 session_id=session_id,

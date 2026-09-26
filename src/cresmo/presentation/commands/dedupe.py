@@ -1,11 +1,11 @@
 """Command handler for cresmo dedupe.
 
-Orchestrates Stage 7 knowledge graph entity resolution, non-destructive note merging,
+Orchestrates knowledge graph entity resolution, non-destructive note merging,
 and cross-vault inbound WikiLink rewriting per Clean/Hexagonal Architecture.
 
 Conforms to:
     - ADR-002: Presentation CLI & Humble Object
-    - SPEC-001: Core Knowledge Synthesis Specifications (Stage 7: Deduplication)
+    - SPEC-001: Core Knowledge Synthesis Specifications (Deduplication)
 """
 
 from __future__ import annotations
@@ -29,7 +29,7 @@ def register_subparser(subparsers: argparse._SubParsersAction) -> None:
     """
     dedupe_parser = subparsers.add_parser(
         "dedupe",
-        help="Execute Stage 7 graph entity resolution, non-destructive merging, and link rewriting",
+        help="Execute graph entity resolution, non-destructive merging, and link rewriting",
     )
     dedupe_parser.set_defaults(handler=handle_dedupe)
 

@@ -35,7 +35,7 @@ _TABLE_PATTERN = re.compile(r"\|.*\|.*\n\|[\s:-]+\|", re.MULTILINE)
 
 @dataclass(frozen=True)
 class RawTranscript:
-    """Stage 1 Aggregate: Verbatim spoken transcript and origin metadata.
+    """RawTranscript Aggregate: Verbatim spoken transcript and origin metadata.
 
     Encapsulates raw audio transcription or native subtitle text alongside channel provenance.
 
@@ -91,10 +91,10 @@ class RawTranscript:
 
 @dataclass(frozen=True)
 class EnrichedCompendium:
-    """Stage 2 & 3 Aggregate: Multi-pass enriched fluid prose compendium.
+    """EnrichedCompendium Aggregate: Multi-pass enriched fluid prose compendium.
 
-    Represents dense formal prose expanded via Socratic gap-filling (Stage 2) and
-    Braudelian longitudinal/Jaspers synchronic cross-sections (Stage 3).
+    Represents dense formal prose expanded via Socratic gap-filling and
+    Braudelian longitudinal/Jaspers synchronic cross-sections.
 
     Attributes:
         content_id: Strongly-typed canonical media identifier.
@@ -175,7 +175,7 @@ class EnrichedCompendium:
 
 @dataclass(frozen=True)
 class AtomicNote:
-    """Stage 4 & 5 Aggregate: Self-contained semantic unit in the Second Brain vault.
+    """AtomicNote Aggregate: Self-contained semantic unit in the Second Brain vault.
 
     Encapsulates an autonomous concept, entity, event, or dynamic process formatted
     as an Obsidian Markdown note with bidirectional WikiLinks.
@@ -228,7 +228,7 @@ class AtomicNote:
 
 @dataclass(frozen=True)
 class MapOfContent:
-    """Stage 6 Aggregate: Synthesis node reconciling clusters of Atomic Notes.
+    """MapOfContent Aggregate: Synthesis node reconciling clusters of Atomic Notes.
 
     Functions as an index anchor (MOC) in the Obsidian vault, organizing
     autonomous atomic notes into coherent thematic hierarchies with zero orphaned notes.
@@ -268,7 +268,7 @@ class MapOfContent:
 class PipelineSessionId:
     """Value Object representing the holistic multi-stage content lifecycle session.
 
-    Conforms to ADR-016. Ensures end-to-end Session Replay in Langfuse across all 6 stages.
+    Conforms to ADR-016. Ensures end-to-end Session Replay in Langfuse across pipeline execution.
     Format: content:{channel}:{content_id}
     """
 

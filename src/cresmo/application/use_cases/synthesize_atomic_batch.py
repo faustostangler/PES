@@ -1,11 +1,11 @@
-"""Stage 5 Use Case: Synthesize Atomic Note Batches.
+"""Use Case: Synthesize Atomic Note Batches.
 
 Generates rich AtomicNote domain aggregates from an AtomicEntityInventory in small,
 controlled batches (default: <= 5), enforcing incremental vault persistence and
 tiered index reconciliation.
 
 Conforms to:
-- SPEC-001: §1 (Stage 5 Batched Atomic Synthesis)
+- SPEC-001: §1 (Batched Atomic Synthesis)
 - ADR-001: Modular Monolith Domain Integrity
 """
 
@@ -53,7 +53,7 @@ def _norm_honorific(s: str) -> str:
 
 
 class SynthesizeAtomicBatchUseCase:
-    """Stage 5: Batched Atomic Note synthesis and incremental reconciliation orchestrator."""
+    """Batched Atomic Note synthesis and incremental reconciliation orchestrator."""
 
     def __init__(
         self,
@@ -65,7 +65,7 @@ class SynthesizeAtomicBatchUseCase:
         *,
         llm_port: LLMTransformationPort | None = None,
     ) -> None:
-        """Initialize Stage 5 use case with ports and batch sizing.
+        """Initialize use case with ports and batch sizing.
 
         Args:
             llm_synthesis_port: Hexagonal port for generative LLM inference.
@@ -97,11 +97,11 @@ class SynthesizeAtomicBatchUseCase:
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
     ) -> list[AtomicNote]:
-        """Execute Stage 5 batched synthesis.
+        """Execute batched atomic note synthesis.
 
         Args:
-            inventory: Discovered unique entity inventory from Stage 4.
-            compendium: Enriched compendium from Stage 3.
+            inventory: Discovered unique entity inventory.
+            compendium: Enriched compendium from narrative expansion.
 
         Returns:
             List of all synthesized and persisted AtomicNote domain aggregates.
@@ -155,7 +155,7 @@ class SynthesizeAtomicBatchUseCase:
                 system_instruction=system_instruction,
                 temperature=self.temperature,
                 trace_id=f"{compendium.content_id.value}_atomic_batch",
-                session_id=f"stage5_atomic_{compendium.channel_name}",
+                session_id=f"atomic_batch_{compendium.channel_name}",
                 user_id=str(compendium.channel_name),
             )
             data = extract_json_data(response)

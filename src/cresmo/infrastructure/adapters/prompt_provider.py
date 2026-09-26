@@ -138,10 +138,15 @@ class JsonPromptProvider(PromptProviderPort):
             Raw prompt template string with {skill_block} and {task} resolved.
         """
         entry = self._templates.get(template_key, {})
-        tpl = entry.get("template", entry.get("task", ""))
         skill_name = entry.get("skill_name", "")
         skill_block = self._get_skill_block(skill_name) if skill_name else ""
         task = entry.get("task", "")
+
+        system_instruction = entry.get("system_instruction", "")
+        template = entry.get("template", "")
+
+        tpl = template or system_instruction or task or entry.get("task", "")
+
         return tpl.replace("{task}", task).replace("{skill_block}", skill_block)
 
     def get_gap_filler_prompt(
@@ -249,6 +254,7 @@ class JsonPromptProvider(PromptProviderPort):
 
         return self._format_paired_prompt(
             "wide_expander",
+            current_text=current_text,
             text=current_text,
         )
 

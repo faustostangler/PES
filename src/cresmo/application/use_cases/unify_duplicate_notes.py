@@ -1,4 +1,4 @@
-"""Stage 7 Use Case: Vault Entity Resolution & Duplicate Note Unification.
+"""Use Case: Vault Entity Resolution & Duplicate Note Unification.
 
 Detects duplicate entities in the Obsidian Second Brain vault using shared aliases,
 cross-referencing title-to-alias mappings, and honorific normalization.
@@ -7,7 +7,7 @@ entire vault and Maps of Content (MOCs), synchronizes _index.json, and cleans up
 redundant files.
 
 Conforms to:
-- SPEC-001: §1 (Stage 7 Graph Entity Resolution)
+- SPEC-001: §1 (Graph Entity Resolution and Deduplication)
 - ADR-001: Modular Monolith Domain Integrity
 """
 
@@ -42,7 +42,7 @@ class DuplicateCluster:
 
 @dataclass(frozen=True)
 class DeduplicationReport:
-    """Summary of the Stage 7 vault deduplication execution.
+    """Summary of the vault deduplication execution.
 
     Attributes:
         clusters: Tuple of all resolved duplicate clusters.
@@ -62,10 +62,10 @@ class DeduplicationReport:
 
 
 class UnifyDuplicateNotesUseCase:
-    """Stage 7: Graph Entity Resolution and Duplicate Unification orchestrator."""
+    """Graph Entity Resolution and Duplicate Unification orchestrator."""
 
     def __init__(self, vault_port: VaultRepositoryPort) -> None:
-        """Initialize Stage 7 use case with vault persistence port.
+        """Initialize use case with vault persistence port.
 
         Args:
             vault_port: Port providing vault atomic note read/write/delete operations.
@@ -189,7 +189,7 @@ class UnifyDuplicateNotesUseCase:
         )
 
     def execute(self) -> DeduplicationReport:
-        """Execute Stage 7 duplicate unification across the entire vault graph."""
+        """Execute duplicate unification across the entire vault graph."""
         notes = self.vault_port.get_all_atomic_notes()
         if not notes:
             return DeduplicationReport(clusters=())

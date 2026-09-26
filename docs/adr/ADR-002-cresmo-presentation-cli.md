@@ -238,7 +238,7 @@ To preserve architectural purity and prevent gradual erosion of the Hexagonal an
 *   **Prescribed Pattern**: Resilient Anchor-Marker discovery (`pyproject.toml` / `.git` / `.cresmo-root`) documented in [ADR-006](ADR-006-resilient-workspace-root-discovery.md).
 
 ### 9.6 Anti-Pattern: Duplicate Pipeline Stage Orchestration (Violação de DRY em Workflows)
-*   **Definition**: Repeating sequential transformation stages across different input modalities (e.g., duplicating Stages 2–7 for video vs. text files).
+*   **Definition**: Repeating sequential transformation stages across different input modalities (e.g., duplicating downstream synthesis stages for video vs. text files).
 *   **Violation**: Leads to cognitive drift, maintenance overhead, and uneven bug fixes across entrypoints.
 *   **Prescribed Pattern**: Template Method pattern extracting the invariant transformation skeleton into private orchestrators (`_synthesize_transcript`), documented in [ADR-007](ADR-007-pipeline-template-method-dry.md).
 

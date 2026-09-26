@@ -62,7 +62,7 @@ Raw language primitives (`str`, `int`, `float`, `dict`) MUST NEVER carry busines
 Hexagonal ports represent domain roles, NOT infrastructure technologies. In accordance with the Interface Segregation Principle (ISP):
 
 1. **Segregation by Business Role:**
-   Ports are named by the business intent they fulfill, never by technology alone. `LLMTransformationPort` is injected as `llm_synthesis_port` into synthesis use cases (Stages 2–6) and as `llm_indexing_port` into indexing use cases (Stage 1b).
+   Ports are named by the business intent they fulfill, never by technology alone. `LLMTransformationPort` is injected as `llm_synthesis_port` into generative synthesis use cases (fluid prose, expansion, inventory, atomic batch, MOC reconciliation) and as `llm_indexing_port` into conceptual indexing use cases.
 2. **Decoupled Calibration:**
    Inference tunables are bound to specific business roles rather than global defaults. Configuration values (`llm_synthesis_temperature` vs. `llm_indexing_temperature`) remain segregated, preventing indexing parameter changes from degrading generative synthesis quality.
 

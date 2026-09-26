@@ -516,7 +516,7 @@ class DiscoverBatchSourcesUseCase:
         acc: _BatchSourceAccumulator,
         filter_criteria: SyncFilterCriteria | None = None,
     ) -> list[str]:
-        """Collect local priority text/markdown files that bypass Stage 1 transcription."""
+        """Collect local priority text/markdown files that bypass audio transcription."""
         criteria = filter_criteria or SyncFilterCriteria()
         priority_channels: list[str] = []
         priority_files = load_transcript_files(priority_texts_dir)

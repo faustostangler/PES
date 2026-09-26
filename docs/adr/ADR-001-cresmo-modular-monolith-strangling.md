@@ -28,12 +28,12 @@ We will strangulate the legacy procedural code in `playground/cresmo/` and `play
 2. **Media Ingestion Anti-Corruption Layer (`MediaIngestionPort`)**: Abstracting all YouTube/Whisper scraping behind a clean interface, moving `isb.ai` calls entirely inside `infrastructure/adapters/legacy_isb_ingestion_adapter.py` with zero `sys.path` leakage into domain or application layers.
 3. **Vault Repository Port (`VaultRepositoryPort`)**: Isolating Obsidian Second Brain persistence (`wiki/`, `enriched/`, `_index.json`, `MOCs/`) behind an infrastructure adapter (`infrastructure/adapters/obsidian_vault_adapter.py`).
 4. **Decomposition into Single-Responsibility Use Cases**: Refactoring the 2,017 LOC procedural pipeline into dedicated use cases:
-   - `IngestRawTranscriptUseCase` (Stage 1: Raw Transcript)
-   - `FillGapsFluidProseUseCase` (Stage 2: Gap Filler)
-   - `ExpandLongitudinalSynchronicUseCase` (Stage 3: Expander)
-   - `DiscoverAtomicInventoryUseCase` (Stage 4: Inventory)
-   - `SynthesizeAtomicBatchUseCase` (Stage 5: Batch)
-   - `ReconcileMOCsUseCase` (Stage 6: MOC)
+   - `IngestRawTranscriptUseCase` (Raw Transcript Ingestion)
+   - `FillGapsFluidProseUseCase` (Fluid Prose Gap Filler)
+   - `ExpandLongitudinalSynchronicUseCase` (Longitudinal & Synchronic Expander)
+   - `DiscoverAtomicInventoryUseCase` (Atomic Inventory Discovery)
+   - `SynthesizeAtomicBatchUseCase` (Batched Atomic Synthesis)
+   - `ReconcileMOCsUseCase` (MOC Reconciliation)
 5. **Deprecation of Legacy IDE Agent RPC in Core**: Standardizing all AI transformations on `LLMTransformationPort` and official `google-genai` adapters.
 6. **Clinical Telemetry & Eval Gates via Langfuse**: Wrapping every generative call in Langfuse spans and enforcing frozen numeric Eval Rubrics before marking synthesis complete.
 
@@ -81,10 +81,10 @@ We will strangulate the legacy procedural code in `playground/cresmo/` and `play
 - `CrossContextRelations`: Immutable value object representing `precursors`, `lateral_events`, and `aftermath`.
 
 ### Entities & Aggregates
-- `RawTranscript`: Root aggregate for Stage 1 (Raw Transcript), containing `ContentId`, source metadata, and verbatim body.
-- `EnrichedCompendium`: Aggregate for Stage 2 (Gap Filler) and Stage 3 (Expander), validating that the body contains dense continuous prose and the mandatory `## Informações Complementares`.
-- `AtomicNote`: Rich domain entity encapsulating frontmatter metadata, contextual definition, typed connections, causal matrix, and cross-context links (Stage 4 Inventory & Stage 5 Batch). Invariants verified at instantiation (no empty titles, valid type, non-empty definition).
-- `MapOfContent`: Aggregate representing thematic MOCs (Stage 6 MOC), ensuring bidirectional links and zero orphaned notes.
+- `RawTranscript`: Root aggregate for Raw Transcript Ingestion, containing `ContentId`, source metadata, and verbatim body.
+- `EnrichedCompendium`: Aggregate for Fluid Prose Gap Filler and Longitudinal/Synchronic Expansion, validating that the body contains dense continuous prose and the mandatory `## Informações Complementares`.
+- `AtomicNote`: Rich domain entity encapsulating frontmatter metadata, contextual definition, typed connections, causal matrix, and cross-context links (Inventory Discovery & Batched Atomic Synthesis). Invariants verified at instantiation (no empty titles, valid type, non-empty definition).
+- `MapOfContent`: Aggregate representing thematic MOCs (MOC Reconciliation), ensuring bidirectional links and zero orphaned notes.
 
 ### Ports (Abstract Base Classes in Application Layer)
 - `MediaIngestionPort`: Contracts for fetching media transcripts (`ingest_channel`, `ingest_single_video`).
@@ -112,10 +112,10 @@ All calls through `LLMTransformationPort` will integrate clinical telemetry:
    - `tags`: `["cresmo", category, channel_name, stage_name]`.
 2. **Span Hierarchy**:
    - Trace Root: `PipelineRun` (overall execution).
-   - Spans: `Stage_1_RawTranscript`, `Stage_2_GapFiller`, `Stage_3_Expander`, `Stage_4_Inventory`, `Stage_5_Batch`, `Stage_6_MOC`.
+   - Spans: `raw_indexing`, `fluid_prose`, `expansion`, `inventory`, `atomic_batch`, `reconcile_mocs`, `duplicate_unification`.
    - Child Generations: Each individual LLM call is wrapped in a Langfuse `generation` capturing prompt tokens, completion tokens, latency, model parameters, and raw inputs/outputs.
 3. **Prompt Version Tracking**:
-   - Every prompt template is registered in Langfuse with semantic versioning (`cresmo-stage2-gapfiller:v1`, `cresmo-stage3-expander-longitudinal:v1`, `cresmo-stage3-expander-synchronic:v1`, `cresmo-stage4-inventory:v1`, `cresmo-stage5-batch:v1`, `cresmo-stage6-moc:v1`).
+   - Every prompt template is registered in Langfuse with semantic versioning (`cresmo-gapfiller:v1`, `cresmo-expander-longitudinal:v1`, `cresmo-expander-synchronic:v1`, `cresmo-inventory:v1`, `cresmo-batch:v1`, `cresmo-moc:v1`).
 4. **Score Schema & Blocking Thresholds**:
 
 | Dimension | Evaluation Method | Threshold | Pipeline Blocking? |

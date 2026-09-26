@@ -1,10 +1,10 @@
-"""Stage 1 Use Case: Ingest Raw Transcript.
+"""Use Case: Ingest Raw Transcript.
 
 Orchestrates media crawling and audio/subtitle transcription through MediaIngestionPort
 and persists the resulting RawTranscript domain aggregate into the vault raw storage.
 
 Conforms to:
-- SPEC-001: §1 (Stage 1 Raw Transcript Ingestion)
+- SPEC-001: §1 (Raw Transcript Ingestion)
 - SPEC-004: Native Media Ingestion Specifications
 - ADR-004: Native Media Ingestion Decommissioning
 """
@@ -18,7 +18,7 @@ from cresmo.domain.entities import RawTranscript
 
 
 class IngestRawTranscriptUseCase:
-    """Stage 1: Media Ingestion & Speech-to-Text Orchestrator."""
+    """Media Ingestion & Speech-to-Text Orchestrator."""
 
     def __init__(
         self,
@@ -26,7 +26,7 @@ class IngestRawTranscriptUseCase:
         vault_port: VaultRepositoryPort,
         raw_storage_dir: Path | None = None,
     ) -> None:
-        """Initialize Stage 1 use case with required Hexagonal ports.
+        """Initialize use case with required Hexagonal ports.
 
         Args:
             ingestion_port: Port providing access to yt-dlp/whisper ingestion.
@@ -43,7 +43,7 @@ class IngestRawTranscriptUseCase:
         whisper_model: str = "base",
         keep_audio: bool = False,
     ) -> RawTranscript | None:
-        """Execute Stage 1 raw ingestion for a target media item.
+        """Execute raw ingestion for a target media item.
 
         Args:
             video_url: Target media URL.

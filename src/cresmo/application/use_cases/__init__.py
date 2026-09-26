@@ -1,13 +1,14 @@
 """Use Cases for the Cresmo Knowledge Synthesis pipeline.
 
-Organized across the 7 incremental integer stages:
-- Stage 1: IngestRawTranscriptUseCase
-- Stage 2: FillGapsFluidProseUseCase
-- Stage 3: ExpandLongitudinalSynchronicUseCase
-- Stage 4: DiscoverAtomicInventoryUseCase
-- Stage 5: SynthesizeAtomicBatchUseCase
-- Stage 6: ReconcileMOCsUseCase
-- Stage 7: UnifyDuplicateNotesUseCase
+Core domain orchestration use cases:
+- IngestRawTranscriptUseCase (Media ingestion and audio transcription)
+- IndexRawTranscriptsUseCase (Catalog conceptual indexing and LLM-as-a-judge quality loops)
+- FillGapsFluidProseUseCase (Socratic gap filling and multi-pass fluid prose expansion)
+- ExpandLongitudinalSynchronicUseCase (Braudelian longue durée and Jaspers synchronic expansion)
+- DiscoverAtomicInventoryUseCase (Holistic candidate entity inventory discovery)
+- SynthesizeAtomicBatchUseCase (Batched atomic note synthesis and causal matrix modeling)
+- ReconcileMOCsUseCase (Thematic Map of Content graph clustering and reconciliation)
+- UnifyDuplicateNotesUseCase (Graph entity resolution, deduplication, and link rewriting)
 """
 
 from cresmo.application.use_cases.concat_master import ConcatMasterUseCase

@@ -12,7 +12,7 @@
 
 ## 1. Context & Problem Statement
 
-With the successful completion of the native media ingestion engine ([`ADR-004`](ADR-004-native-media-ingestion-decommissioning.md)), staging channel validation ([`SPEC-005`](../specs/SPEC-005-operational-staging-validation.md)), and graph deduplication engine (Stage 7), Cresmo operates as an autonomous, self-contained Hexagonal Modular Monolith.
+With the successful completion of the native media ingestion engine ([`ADR-004`](ADR-004-native-media-ingestion-decommissioning.md)), staging channel validation ([`SPEC-005`](../specs/SPEC-005-operational-staging-validation.md)), and graph deduplication engine, Cresmo operates as an autonomous, self-contained Hexagonal Modular Monolith.
 
 However, execution currently relies on the host machine's Python environment and local file paths. To achieve production readiness (Etapa IV / Trilha 5), the system must adhere to modern cloud-native, reproducible deployment standards:
 1. **Host Environment Coupling:** Divergent system libraries (such as `ffmpeg` versions, SSL certificates, or system-level Python patches) create runtime drift between developer workstations, CI runners, and deployment environments.

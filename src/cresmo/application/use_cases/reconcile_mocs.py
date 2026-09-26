@@ -1,10 +1,10 @@
-"""Stage 6 Use Case: Reconcile Maps of Content (MOC).
+"""Use Case: Reconcile Maps of Content (MOC).
 
 Reconciles atomic notes into thematic Maps of Content, enforcing zero orphaned notes
 and maintaining a coherent thematic hierarchy across the knowledge graph.
 
 Conforms to:
-- SPEC-001: §1 (Stage 6 Map of Content Reconciliation)
+- SPEC-001: §1 (Map of Content Reconciliation)
 - ADR-001: Modular Monolith Domain Integrity
 """
 
@@ -24,7 +24,7 @@ from cresmo.domain.value_objects import NoteTitle
 
 
 class ReconcileMOCsUseCase:
-    """Stage 6: Map of Content reconciliation and graph topological governance orchestrator."""
+    """Map of Content reconciliation and graph topological governance orchestrator."""
 
     def __init__(
         self,
@@ -35,7 +35,7 @@ class ReconcileMOCsUseCase:
         *,
         llm_port: LLMTransformationPort | None = None,
     ) -> None:
-        """Initialize Stage 6 use case with required ports.
+        """Initialize use case with required ports.
 
         Args:
             llm_synthesis_port: Hexagonal port for generative LLM inference.
@@ -61,7 +61,7 @@ class ReconcileMOCsUseCase:
             self.prompt_provider = prompt_provider
 
     def execute(self) -> list[MapOfContent]:
-        """Execute Stage 6 MOC reconciliation.
+        """Execute MOC reconciliation.
 
         Returns:
             List of generated or updated MapOfContent domain aggregates.
@@ -84,8 +84,8 @@ class ReconcileMOCsUseCase:
             prompt=user_prompt,
             system_instruction=system_instruction,
             temperature=self.temperature,
-            trace_id="stage6_mocs_reconciliation",
-            session_id="stage6_mocs",
+            trace_id="mocs_reconciliation",
+            session_id="reconcile_mocs",
             user_id="vault",
         )
         data = extract_json_data(response)
