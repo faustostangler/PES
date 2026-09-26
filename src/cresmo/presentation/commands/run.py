@@ -347,13 +347,29 @@ def execute_batch_run(
             failed += 1
             sys.stderr.write(f"{item_prefix} [FAILED] {source.target}: {exc}\n")
         finally:
-            # Memory Hygiene & Telemetry Drainage per ADR-020
+            # Memory Hygiene & Telemetry Drainage per ADR-020 & SPEC-008
             try:
                 pipeline.telemetry_port.flush()
             except Exception:  # noqa: BLE001, S110
                 pass
             result = None
             gc.collect()
+            try:
+                import resource
+
+                rss_bytes = float(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss * 1024)
+                pipeline.metrics_port.set_gauge(
+                    "cresmo_process_resident_memory_bytes",
+                    rss_bytes,
+                    labels={"role": "worker"},
+                )
+                pipeline.metrics_port.increment_counter(
+                    "cresmo_gc_collections_total",
+                    1.0,
+                    labels={"generation": "all"},
+                )
+            except Exception:  # noqa: BLE001, S110
+                pass
 
     if total_items == 0:
         manifest_display = str(args.manifest) if args.manifest else "data/playlist.txt"

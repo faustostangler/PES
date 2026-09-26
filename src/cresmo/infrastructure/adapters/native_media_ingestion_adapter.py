@@ -18,6 +18,7 @@ import re
 import shutil
 import tempfile
 import threading
+import time
 import urllib.error
 import urllib.request
 from datetime import UTC, date, datetime
@@ -35,7 +36,7 @@ except Exception:  # noqa: BLE001, S110
     pass
 
 
-from cresmo.application.ports import MediaIngestionPort
+from cresmo.application.ports import MediaIngestionPort, MetricsPort
 from cresmo.domain.entities import RawTranscript
 from cresmo.domain.exceptions import (
     CresmoInfrastructureError,
@@ -74,6 +75,7 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         whisper_concurrency_limit: int = 2,
         cookie_file: Path | str | None = None,
         js_runtime_name: str | None = None,
+        metrics_port: MetricsPort | None = None,
     ) -> None:
         """Initialize NativeMediaIngestionAdapter.
 
@@ -83,12 +85,19 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             whisper_concurrency_limit: Maximum concurrent Whisper model executions.
             cookie_file: Optional path to Netscape cookies file for YouTube authentication.
             js_runtime_name: Optional explicit JavaScript runtime name for yt-dlp ('node', 'deno', 'bun').
+            metrics_port: Optional MetricsPort instance for Prometheus time-series metrics.
         """
         self.request_timeout = request_timeout
         self._header_generator = header_generator or RandomHeaderGenerator()
         self._whisper_semaphore = threading.BoundedSemaphore(max(1, whisper_concurrency_limit))
         self._cookie_file: Path | None = Path(cookie_file).resolve() if cookie_file else None
         self._js_runtime_name: str | None = js_runtime_name or self._detect_js_runtime()
+        if metrics_port is None:
+            from cresmo.infrastructure.adapters.noop_metrics_adapter import NoOpMetricsAdapter
+
+            self._metrics_port: MetricsPort = NoOpMetricsAdapter()
+        else:
+            self._metrics_port = metrics_port
 
     def _detect_js_runtime(self) -> str | None:
         """Auto-detect available JavaScript runtime for yt-dlp challenge solving."""
@@ -344,82 +353,103 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         Prioritizes native spoken subtitles. If unavailable, falls back to local
         Whisper transcription with RAII temporary scratch storage.
         """
-        video_id = self._extract_video_id(video_url)
-
-        ydl_opts: dict[str, Any] = self._build_ydl_opts(
-            {
-                "skip_download": True,
-                "quiet": True,
-                "no_warnings": True,
-            }
-        )
+        start_time = time.perf_counter()
+        status = "success"
+        channel_for_metrics = "Unknown_Channel"
 
         try:
-            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-                info = ydl.extract_info(video_url, download=False)
-        except Exception as exc:  # noqa: BLE001
-            self._handle_yt_dlp_error(exc)
-            return None
+            video_id = self._extract_video_id(video_url)
 
-        if not info:
-            raise IngestionNetworkError(f"yt-dlp returned no metadata for URL '{video_url}'")
+            ydl_opts: dict[str, Any] = self._build_ydl_opts(
+                {
+                    "skip_download": True,
+                    "quiet": True,
+                    "no_warnings": True,
+                }
+            )
 
-        actual_video_id = str(info.get("id") or video_id)
-        channel_name = self._sanitize_fs_name(
-            str(info.get("channel") or info.get("uploader") or "Unknown_Channel")
-        )
-
-        # Check for native subtitles (rejecting tlang=)
-        sub_url = self._find_native_subtitle_url(info)
-        body = ""
-
-        if sub_url:
             try:
-                raw_sub = self._fetch_url_content(sub_url)
-                sub_data = json.loads(raw_sub)
-                body = self._reconstruct_json3_paragraphs(sub_data)
-            except RateLimitExceededError:
-                raise
-            except Exception:  # noqa: BLE001
-                body = ""
+                with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                    info = ydl.extract_info(video_url, download=False)
+            except Exception as exc:  # noqa: BLE001
+                status = "failure"
+                self._handle_yt_dlp_error(exc)
+                return None
 
-        # If subtitles were absent, malformed, or empty, trigger Whisper fallback
-        if not body:
-            body, channel_name = self._transcribe_audio_fallback(
-                video_url=video_url,
-                output_dir=output_dir,
-                whisper_model=whisper_model,
-                keep_audio=keep_audio,
-                info=info,
+            if not info:
+                status = "failure"
+                raise IngestionNetworkError(f"yt-dlp returned no metadata for URL '{video_url}'")
+
+            actual_video_id = str(info.get("id") or video_id)
+            channel_name = self._sanitize_fs_name(
+                str(info.get("channel") or info.get("uploader") or "Unknown_Channel")
             )
+            channel_for_metrics = channel_name
 
-        if not body:
-            raise DomainValidationError(
-                f"Extracted transcript body is empty for video ID '{actual_video_id}'."
+            # Check for native subtitles (rejecting tlang=)
+            sub_url = self._find_native_subtitle_url(info)
+            body = ""
+
+            if sub_url:
+                try:
+                    raw_sub = self._fetch_url_content(sub_url)
+                    sub_data = json.loads(raw_sub)
+                    body = self._reconstruct_json3_paragraphs(sub_data)
+                except RateLimitExceededError:
+                    status = "failure"
+                    raise
+                except Exception:  # noqa: BLE001
+                    body = ""
+
+            # If subtitles were absent, malformed, or empty, trigger Whisper fallback
+            if not body:
+                body, channel_name = self._transcribe_audio_fallback(
+                    video_url=video_url,
+                    output_dir=output_dir,
+                    whisper_model=whisper_model,
+                    keep_audio=keep_audio,
+                    info=info,
+                )
+                channel_for_metrics = channel_name
+
+            if not body:
+                status = "failure"
+                raise DomainValidationError(
+                    f"Extracted transcript body is empty for video ID '{actual_video_id}'."
+                )
+
+            cid = ContentId.extract_from_text(actual_video_id) or ContentId.from_url_or_token(
+                actual_video_id
             )
+            c_name = ChannelName.from_string(channel_name)
+            category, _ = classify_channel(c_name)
+            upload_date = self._parse_upload_date(info.get("upload_date"))
 
-        cid = ContentId.extract_from_text(actual_video_id) or ContentId.from_url_or_token(
-            actual_video_id
-        )
-        c_name = ChannelName.from_string(channel_name)
-        category, _ = classify_channel(c_name)
-        upload_date = self._parse_upload_date(info.get("upload_date"))
+            raw_cid = str(info.get("channel_id") or info.get("uploader_id") or "").strip()
+            ch_id = ChannelId.extract_from_text(raw_cid)
 
-        raw_cid = str(info.get("channel_id") or info.get("uploader_id") or "").strip()
-        ch_id = ChannelId.extract_from_text(raw_cid)
-
-        return RawTranscript(
-            content_id=cid,
-            channel_name=c_name,
-            body=body,
-            title=str(info.get("title") or ""),
-            source_url=video_url,
-            publication_date=upload_date,
-            upload_date=upload_date,
-            channel_id=ch_id,
-            channel_category=category,
-            video_description=str(info.get("description") or ""),
-        )
+            return RawTranscript(
+                content_id=cid,
+                channel_name=c_name,
+                body=body,
+                title=str(info.get("title") or ""),
+                source_url=video_url,
+                publication_date=upload_date,
+                upload_date=upload_date,
+                channel_id=ch_id,
+                channel_category=category,
+                video_description=str(info.get("description") or ""),
+            )
+        except Exception:
+            status = "failure"
+            raise
+        finally:
+            elapsed = time.perf_counter() - start_time
+            self._metrics_port.observe_histogram(
+                "cresmo_media_ingestion_duration_seconds",
+                elapsed,
+                labels={"channel": channel_for_metrics, "modality": "url", "status": status},
+            )
 
     def discover_channel_feed(
         self,

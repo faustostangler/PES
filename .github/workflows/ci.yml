@@ -65,3 +65,32 @@ jobs:
           docker run --rm \
             -e GEMINI_API_KEY="ci-dummy-token-placeholder" \
             pes-cresmo:ci check-config
+
+  # ============================================================================
+  # 🚀 CD & DORA Metrics Pipeline (DEFERRED - STRICTLY LOCAL ENVIRONMENT)
+  # All remote delivery workflows are marked with TODO anchors per ADR-023/SPEC-008.
+  # ============================================================================
+  # TODO(CI-CD-01): Implement automated deployment job to push OCI container image to registry
+  # and notify Prometheus Pushgateway:
+  #   - name: Push Universal Container Image
+  #     uses: docker/build-push-action@v6
+  #     with:
+  #       push: true
+  #       tags: ${{ secrets.REGISTRY_URL }}/pes-cresmo:${{ github.sha }}
+  #   - name: Emit DORA Deployment Frequency Metric
+  #     run: |
+  #       curl -X POST "${{ secrets.PUSHGATEWAY_URL }}/metrics/job/dora_deploy/environment/production" \
+  #         --data-binary "cresmo_dora_deployments_total{environment=\"production\",role=\"worker\",status=\"success\"} 1"
+  #
+  # TODO(CI-CD-02): Implement Lead Time for Changes calculation job in GitHub Actions:
+  #   - name: Calculate DORA Lead Time
+  #     run: |
+  #       lead_time=$(($(date +%s) - $(git log -1 --format=%ct)))
+  #       curl -X POST "${{ secrets.PUSHGATEWAY_URL }}/metrics/job/dora_lead_time" \
+  #         --data-binary "cresmo_dora_lead_time_seconds{branch=\"${{ github.ref_name }}\",release_tag=\"${{ github.sha }}\"} ${lead_time}"
+  #
+  # TODO(CI-CD-03): Configure ArgoCD webhook / sync listener to record Change Failure Rate:
+  #   - Trigger cresmo_dora_failed_deployments_total on sync failure or automated rollback.
+  #
+  # TODO(CI-CD-04): Integrate Sentry / PagerDuty webhook for Time to Restore Service (TTRS):
+  #   - Measure duration from incident alert trigger to recovery commit deployment.

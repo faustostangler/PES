@@ -6,7 +6,7 @@
 SHELL := /bin/bash
 .DEFAULT_GOAL := up
 
-COMPOSE_FILES := -f docker-compose.langfuse.yml -f docker-compose.yml
+COMPOSE_FILES := -f docker-compose.langfuse.yml -f docker-compose.monitoring.yml -f docker-compose.yml
 
 .PHONY: up
 up:

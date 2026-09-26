@@ -152,3 +152,68 @@ class TestPipelineTelemetryIntegration:
         assert root_span.attributes["cresmo.user.is_anonymous"] is False
         assert root_span.attributes["cresmo.user.provider"] == "oauth"
         assert root_span.attributes["cresmo.user.subject"] == "fausto@cresmo.ai"
+
+    def test_pipeline_records_prometheus_metrics_on_stages(self) -> None:
+        """SPEC-008 Scenario 5: Verifies pipeline records stage duration histograms and counters."""
+        from prometheus_client import CollectorRegistry
+
+        from cresmo.infrastructure.adapters.prometheus_metrics_adapter import (
+            PrometheusMetricsAdapter,
+        )
+
+        registry = CollectorRegistry(auto_describe=True)
+        metrics_adapter = PrometheusMetricsAdapter(registry=registry)
+
+        vault_port = InMemoryVaultAdapter()
+        ledger_port = InMemoryLedgerAdapter()
+        llm_port = SmartMockLLMAdapter()
+        media_port = MockMediaIngestionPort()
+        prompt_provider = JsonPromptProvider()
+
+        pipeline = CresmoPipeline(
+            media_ingestion_port=media_port,
+            llm_port=llm_port,
+            vault_port=vault_port,
+            ledger_port=ledger_port,
+            prompt_provider=prompt_provider,
+            metrics_port=metrics_adapter,
+        )
+
+        raw = RawTranscript(
+            content_id=ContentId("yt_metrics_test_01"),
+            channel_name=ChannelName("sandeco"),
+            body="Aula completa sobre arquitetura hexagonal e métricas de observabilidade.",
+            title="Arquitetura Hexagonal",
+        )
+
+        result = pipeline.execute(raw=raw, gap_filler_passes=1)
+        assert result.success is True
+
+        # Check transcript counter
+        transcript_sample = registry.get_sample_value(
+            "cresmo_transcripts_processed_total",
+            {"channel": "sandeco", "status": "completed", "modality": "transcript"},
+        )
+        assert transcript_sample == 1.0
+
+        # Check atomic notes counter
+        notes_sample = registry.get_sample_value(
+            "cresmo_atomic_notes_synthesized_total",
+            {"channel": "sandeco", "note_type": "all"},
+        )
+        assert notes_sample is not None and notes_sample >= 1.0
+
+        # Check stage duration histograms
+        for stage in (
+            "fluid_prose",
+            "expansion",
+            "inventory",
+            "atomic_batch",
+            "mocs",
+            "duplicate_unification",
+        ):
+            count = registry.get_sample_value(
+                "cresmo_pipeline_stage_duration_seconds_count",
+                {"stage": stage, "channel": "sandeco", "status": "success"},
+            )
+            assert count == 1.0, f"Stage {stage} should have 1 histogram observation"

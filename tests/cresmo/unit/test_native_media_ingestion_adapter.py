@@ -695,3 +695,54 @@ class TestNativeMediaIngestionAdapter:
 
             url = adapter.extract_channel_url_from_video("https://youtube.com/watch?v=abc12345678")
             assert url == "https://www.youtube.com/playlist?list=UUtestChannelId12345678"
+
+    def test_ingest_single_video_records_media_ingestion_metrics(self, tmp_path: Path) -> None:
+        """SPEC-008 Scenario 6: Ingestion Latency Recording via MetricsPort."""
+        from prometheus_client import CollectorRegistry
+
+        from cresmo.infrastructure.adapters.prometheus_metrics_adapter import (
+            PrometheusMetricsAdapter,
+        )
+
+        registry = CollectorRegistry(auto_describe=True)
+        metrics_adapter = PrometheusMetricsAdapter(registry=registry)
+
+        adapter = NativeMediaIngestionAdapter(metrics_port=metrics_adapter)
+        fake_info = {
+            "id": "ingest_metric_01",
+            "title": "Metric Ingestion Test",
+            "channel": "Sandeco_Channel",
+            "upload_date": "20240520",
+            "subtitles": {
+                "en": [
+                    {
+                        "ext": "json3",
+                        "url": "https://video.google.com/timedtext?v=test",
+                    }
+                ]
+            },
+        }
+
+        with (
+            patch("yt_dlp.YoutubeDL") as mock_ydl_cls,
+            patch.object(
+                adapter,
+                "_fetch_url_content",
+                return_value=json.dumps({"events": [{"segs": [{"utf8": "Hello world"}]}]}),
+            ),
+        ):
+            mock_ydl = MagicMock()
+            mock_ydl.extract_info.return_value = fake_info
+            mock_ydl_cls.return_value.__enter__.return_value = mock_ydl
+
+            transcript = adapter.ingest_single_video(
+                video_url="https://youtube.com/watch?v=ingest_metric_01",
+                output_dir=tmp_path,
+            )
+
+            assert transcript is not None
+            sample_count = registry.get_sample_value(
+                "cresmo_media_ingestion_duration_seconds_count",
+                {"channel": "Sandeco_Channel", "modality": "url", "status": "success"},
+            )
+            assert sample_count == 1.0

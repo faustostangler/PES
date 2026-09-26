@@ -22,9 +22,11 @@ from __future__ import annotations
 import hashlib
 import logging
 import re
+import time
+from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, TypeVar
 
 import yaml
 
@@ -37,6 +39,7 @@ from cresmo.application.ports import (
     LedgerRepositoryPort,
     LLMTransformationPort,
     MediaIngestionPort,
+    MetricsPort,
     PromptProviderPort,
     TelemetryPort,
     VaultRepositoryPort,
@@ -128,6 +131,7 @@ class CresmoPipeline:
         settings: CresmoSettings | None = None,
         llm_indexing_port: LLMTransformationPort | None = None,
         telemetry_port: TelemetryPort | None = None,
+        metrics_port: MetricsPort | None = None,
         *,
         llm_port: LLMTransformationPort | None = None,
         indexing_llm_port: LLMTransformationPort | None = None,
@@ -150,6 +154,13 @@ class CresmoPipeline:
             self.telemetry_port: TelemetryPort = NoOpTelemetryAdapter()
         else:
             self.telemetry_port = telemetry_port
+
+        if metrics_port is None:
+            from cresmo.infrastructure.adapters.noop_metrics_adapter import NoOpMetricsAdapter
+
+            self.metrics_port: MetricsPort = NoOpMetricsAdapter()
+        else:
+            self.metrics_port = metrics_port
 
         if settings is None:
             from cresmo.infrastructure.config import CresmoSettings
@@ -298,6 +309,15 @@ class CresmoPipeline:
                 and self.ledger_port.is_processed(content_id)
                 and not force_reprocess
             ):
+                self.metrics_port.increment_counter(
+                    "cresmo_transcripts_processed_total",
+                    1.0,
+                    labels={
+                        "channel": channel_name.value,
+                        "status": "skipped_idempotent",
+                        "modality": "transcript",
+                    },
+                )
                 return PipelineResult(
                     content_id=content_id,
                     success=True,
@@ -309,12 +329,73 @@ class CresmoPipeline:
                     already_processed=True,
                 )
 
+            # Stage execution helper recording durations, errors, and spans
+            _StageRet = TypeVar("_StageRet")
+
+            def _run_stage(stage_name: str, fn: Callable[[], _StageRet]) -> _StageRet:
+                start_time = time.perf_counter()
+                status = "success"
+                with self.telemetry_port.start_stage_span(stage_name):
+                    try:
+                        return fn()
+                    except Exception as exc:
+                        status = "failure"
+                        self.metrics_port.increment_counter(
+                            "cresmo_pipeline_errors_total",
+                            1.0,
+                            labels={
+                                "error_type": exc.__class__.__name__,
+                                "channel": channel_name.value,
+                                "stage": stage_name,
+                            },
+                        )
+                        raise
+                    finally:
+                        elapsed = time.perf_counter() - start_time
+                        self.metrics_port.observe_histogram(
+                            "cresmo_pipeline_stage_duration_seconds",
+                            elapsed,
+                            labels={
+                                "stage": stage_name,
+                                "channel": channel_name.value,
+                                "status": status,
+                            },
+                        )
+
             # Raw Transcript Indexing & Paratactic Synthesis
             if entry is None:
+                start_idx_time = time.perf_counter()
                 with self.telemetry_port.start_stage_span("raw_indexing"):
                     try:
                         entry = self.index_raw.execute(raw)
+                        self.metrics_port.observe_histogram(
+                            "cresmo_pipeline_stage_duration_seconds",
+                            time.perf_counter() - start_idx_time,
+                            labels={
+                                "stage": "raw_indexing",
+                                "channel": channel_name.value,
+                                "status": "success",
+                            },
+                        )
                     except Exception as exc:  # noqa: BLE001
+                        self.metrics_port.observe_histogram(
+                            "cresmo_pipeline_stage_duration_seconds",
+                            time.perf_counter() - start_idx_time,
+                            labels={
+                                "stage": "raw_indexing",
+                                "channel": channel_name.value,
+                                "status": "failure",
+                            },
+                        )
+                        self.metrics_port.increment_counter(
+                            "cresmo_pipeline_errors_total",
+                            1.0,
+                            labels={
+                                "error_type": exc.__class__.__name__,
+                                "channel": channel_name.value,
+                                "stage": "raw_indexing",
+                            },
+                        )
                         logger.warning(
                             "[Pipeline] Raw indexing skipped for %s: %s",
                             raw.content_id.value,
@@ -324,40 +405,68 @@ class CresmoPipeline:
             # Socratic Gap Filler & Longitudinal Expander (supports resumed execution)
             expanded_compendium = self.vault_port.get_enriched_compendium(content_id)
             if expanded_compendium is None:
-                with self.telemetry_port.start_stage_span("fluid_prose"):
-                    compendium = self.fill_gaps_fluid_prose.execute(
+                compendium = _run_stage(
+                    "fluid_prose",
+                    lambda: self.fill_gaps_fluid_prose.execute(
                         raw_transcript=raw,
                         passes=gap_filler_passes,
-                    )
-                with self.telemetry_port.start_stage_span("expansion"):
-                    expanded_compendium = self.expand_longitudinal_synchronic.execute(
+                    ),
+                )
+                expanded_compendium = _run_stage(
+                    "expansion",
+                    lambda: self.expand_longitudinal_synchronic.execute(
                         compendium=compendium,
-                    )
+                    ),
+                )
 
             # Holistic Inventory Discovery
-            with self.telemetry_port.start_stage_span("inventory"):
-                inventory = self.discover_atomic_inventory.execute(
+            inventory = _run_stage(
+                "inventory",
+                lambda: self.discover_atomic_inventory.execute(
                     compendium=expanded_compendium,
-                )
+                ),
+            )
 
             # Batched Atomic Synthesis
-            with self.telemetry_port.start_stage_span("atomic_batch"):
-                synthesized_notes = self.synthesize_atomic_batch.execute(
+            synthesized_notes = _run_stage(
+                "atomic_batch",
+                lambda: self.synthesize_atomic_batch.execute(
                     inventory=inventory,
                     compendium=expanded_compendium,
-                )
+                ),
+            )
 
             # Map of Content Reconciliation
-            with self.telemetry_port.start_stage_span("mocs"):
-                mocs = self.reconcile_mocs.execute()
+            mocs = _run_stage("mocs", lambda: self.reconcile_mocs.execute())
 
             # Graph Entity Resolution & Duplicate Unification
-            with self.telemetry_port.start_stage_span("duplicate_unification"):
-                dedup_report = self.unify_duplicate_notes.execute()
+            dedup_report = _run_stage(
+                "duplicate_unification",
+                lambda: self.unify_duplicate_notes.execute(),
+            )
 
             # Mark processed in ledger
             if self.ledger_port:
                 self.ledger_port.mark_processed(content_id)
+
+            # Record metrics for completed transcript & synthesized notes
+            self.metrics_port.increment_counter(
+                "cresmo_transcripts_processed_total",
+                1.0,
+                labels={
+                    "channel": channel_name.value,
+                    "status": "completed",
+                    "modality": "transcript",
+                },
+            )
+            self.metrics_port.increment_counter(
+                "cresmo_atomic_notes_synthesized_total",
+                float(len(synthesized_notes)),
+                labels={
+                    "channel": channel_name.value,
+                    "note_type": "all",
+                },
+            )
 
             # Record session coherence evaluation score per EVAL-001 & ADR-016
             item_count = len(inventory.items) if hasattr(inventory, "items") else 1
@@ -499,10 +608,12 @@ class CresmoPipeline:
             PipelineResult summarizing synthesized notes, MOCs, and status.
         """
         self.warmup()
+        # Execute raw ingestion for a target media item
         raw = self.ingest_raw_transcript.execute(video_url=video_url)
         if raw is None:
             raise CresmoDomainError(f"Ingestion failed to retrieve transcript for: {video_url}")
 
+        # Execute the end-to-end synthesis pipeline (canonical Template Method).
         return self.execute(
             raw=raw,
             gap_filler_passes=gap_filler_passes,

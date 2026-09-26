@@ -24,6 +24,7 @@ from cresmo.application.pipeline import CresmoPipeline
 from cresmo.application.ports import (
     AnonymizerPort,
     LLMTransformationPort,
+    MetricsPort,
     PromptProviderPort,
     TelemetryPort,
 )
@@ -327,7 +328,19 @@ def build_pipeline(
             warmup_timeout_seconds=resolved_settings.ollama_warmup_timeout_seconds,
         )
 
-    # 4. Pipeline Assembly
+    # 4. SRE & DORA Metrics Telemetry
+    if getattr(resolved_settings, "prometheus_enabled", True):
+        from cresmo.infrastructure.adapters.prometheus_metrics_adapter import (
+            PrometheusMetricsAdapter,
+        )
+
+        metrics_port: MetricsPort = PrometheusMetricsAdapter()
+    else:
+        from cresmo.infrastructure.adapters.noop_metrics_adapter import NoOpMetricsAdapter
+
+        metrics_port = NoOpMetricsAdapter()
+
+    # 5. Pipeline Assembly
     effective_batch_size = (
         batch_size_override if batch_size_override is not None else resolved_settings.batch_size
     )
@@ -342,6 +355,7 @@ def build_pipeline(
         settings=resolved_settings,
         llm_indexing_port=llm_indexing_port,
         telemetry_port=telemetry_port,
+        metrics_port=metrics_port,
     )
 
 

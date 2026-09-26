@@ -249,6 +249,14 @@ class CresmoSettings(BaseSettings):
         default="gemini-3.1-flash-lite",
         description="Fallback Gemini model variant if primary hits quota or demand spikes.",
     )
+    prometheus_enabled: bool = Field(
+        default=True,
+        description="Whether Prometheus SRE Golden Signals and DORA metrics collection is enabled.",
+    )
+    prometheus_port: int = Field(
+        default=9090,
+        description="Local Prometheus scraping and exposition port.",
+    )
     whisper_model: str = Field(
         default="base",
         description="Whisper STT model variant for audio transcription.",
