@@ -137,27 +137,36 @@ class CresmoPipeline:
         telemetry_port: TelemetryPort | None = None,
         metrics_port: MetricsPort | None = None,
     ) -> None:
+        # Primary media crawler and transcript extraction port
         self.media_ingestion_port = media_ingestion_port
 
+        # Fail-fast validation: LLM transformation port is mandatory for synthesis
         if llm_synthesis_port is None:
             raise ValueError("llm_synthesis_port must be provided")
         self.llm_synthesis_port = llm_synthesis_port
 
+        # Fail-fast validation: Vault repository port is mandatory for persistence
         if vault_port is None:
             raise ValueError("vault_port must be provided")
         self.vault_port = vault_port
         self.ledger_port = ledger_port
+
+        # Invert dependencies using pure Null-Object ports and protocol settings
         self.telemetry_port: TelemetryPort = telemetry_port or NoOpTelemetryPort()
         self.metrics_port: MetricsPort = metrics_port or NoOpMetricsPort()
         self.settings: PipelineSettingsProtocol = settings or DefaultPipelineSettings()
         self.prompt_provider: PromptProviderPort = prompt_provider or NoOpPromptProviderPort()
+
+        # Fall back to synthesis LLM if specialized local indexing LLM was not configured
         self.llm_indexing_port = llm_indexing_port or self.llm_synthesis_port
 
-        # Use cases instantiation
+        # Instantiate Stage 0: Raw media ingestion and transcript storage
         self.ingest_raw_transcript = IngestRawTranscriptUseCase(
             ingestion_port=self.media_ingestion_port,
             vault_port=self.vault_port,
         )
+
+        # Instantiate Stage 1: Raw indexing, domain concept extraction, and summary generation
         self.index_raw = IndexRawTranscriptsUseCase(
             vault_port=self.vault_port,
             llm_indexing_port=self.llm_indexing_port,
@@ -166,23 +175,31 @@ class CresmoPipeline:
             temperature=self.settings.raw_index_temperature,
             language=self.settings.language,
         )
+
+        # Instantiate Stage 2: Socratic iterative gap filling and fluid prose transformation
         self.fill_gaps = FillGapsUseCase(
             llm_synthesis_port=self.llm_synthesis_port,
             vault_port=self.vault_port,
             prompt_provider=self.prompt_provider,
             temperature=self.settings.llm_temperature,
         )
+
+        # Instantiate Stage 2.5: Braudelian longitudinal and Jaspers synchronic compendium expansion
         self.expand_compendium = ExpandCompendiumUseCase(
             llm_synthesis_port=self.llm_synthesis_port,
             vault_port=self.vault_port,
             prompt_provider=self.prompt_provider,
             temperature=self.settings.llm_temperature,
         )
+
+        # Instantiate Stage 3: Candidate entity inventory extraction
         self.discover_atomic_inventory = DiscoverAtomicInventoryUseCase(
             llm_synthesis_port=self.llm_synthesis_port,
             prompt_provider=self.prompt_provider,
             temperature=0.0,
         )
+
+        # Instantiate Stage 4: Batch synthesis of atomic notes adhering to second brain taxonomy
         self.synthesize_atomic_batch = SynthesizeAtomicBatchUseCase(
             llm_synthesis_port=self.llm_synthesis_port,
             vault_port=self.vault_port,
@@ -190,15 +207,21 @@ class CresmoPipeline:
             prompt_provider=self.prompt_provider,
             temperature=self.settings.llm_temperature,
         )
+
+        # Instantiate Stage 5: Maps of Content (MOC) reconciliation ensuring zero orphaned notes
         self.reconcile_mocs = ReconcileMOCsUseCase(
             llm_synthesis_port=self.llm_synthesis_port,
             vault_port=self.vault_port,
             prompt_provider=self.prompt_provider,
             temperature=self.settings.llm_temperature,
         )
+
+        # Instantiate Stage 6: Duplicate note resolution and canonical link unification
         self.unify_duplicate_notes = UnifyDuplicateNotesUseCase(
             vault_port=self.vault_port,
         )
+
+        # Instantiate Stage 7: Master compendium concatenation across all channel compendiums
         self.concat_master = ConcatMasterUseCase(
             vault_port=self.vault_port,
             settings=self.settings,
@@ -211,7 +234,10 @@ class CresmoPipeline:
         and the conceptual indexing LLM port (Ollama/local) so weights are loaded concurrently
         while media ingestion, crawler queries, or file parsing execute.
         """
+        # Pre-warm local indexing model weights
         self.llm_indexing_port.warmup(timeout_seconds=timeout_seconds)
+
+        # Pre-warm primary synthesis model weights if separate from indexing adapter
         if self.llm_synthesis_port is not self.llm_indexing_port:
             self.llm_synthesis_port.warmup(timeout_seconds=timeout_seconds)
 
@@ -247,25 +273,25 @@ class CresmoPipeline:
         Returns:
             PipelineResult encapsulating all synthesized domain aggregates.
         """
-        # Identity & Context
+        # Extract domain identifiers and construct correlation keys for distributed tracing
         content_id = raw.content_id
         channel_name = raw.channel_name
         session_id = PipelineSessionId.create(channel=channel_name, content_id=content_id)
         tenant_id = ChannelTenantId.create(channel=channel_name)
         user_identity = user or UserIdentity.anonymous()
 
-        # Trace root (Langfuse/OpenTelemetry)
+        # Open root telemetry session span to correlate all child stage spans in Langfuse/OTel
         with self.telemetry_port.start_pipeline_session(
             session_id=session_id,
             user_id=user_identity,
             channel_tenant_id=tenant_id,
             metadata={"source": "transcript", "channel": channel_name.value},
         ):
-            # 1. Idempotency guard & early exit
+            # Evaluate ACID ledger idempotency guard and exit early if already processed
             if early_result := self._check_idempotent_exit(raw, entry, force_reprocess):
                 return early_result
 
-            # 2. Stage Execution Pipeline
+            # Execute Stage Raw Indexing to generate summary and domain concepts
             if entry is None:
                 entry = self._run_stage(
                     "raw_indexing",
@@ -275,8 +301,10 @@ class CresmoPipeline:
                     fatal=False,
                 )
 
+            # Step 3: Check vault cache for previously expanded compendium to support resumability
             expanded_compendium = self.vault_port.get_enriched_compendium(content_id)
             if expanded_compendium is None:
+                # Stage 2: Socratic iterative gap filling to transform raw speech into fluid prose
                 fluid_compendium = self._run_stage(
                     "fluid_prose",
                     lambda: self.fill_gaps.execute(
@@ -286,6 +314,7 @@ class CresmoPipeline:
                     channel_name=channel_name,
                     content_id=content_id,
                 )
+                # Stage 2.5: Multi-secular Braudelian and synchronic Jaspers compendium expansion
                 expanded_compendium = self._run_stage(
                     "expansion",
                     lambda: self.expand_compendium.execute(
@@ -295,6 +324,7 @@ class CresmoPipeline:
                     content_id=content_id,
                 )
 
+            # Step 4: Execute Stage 3 to extract holistic candidate entity and concept inventory
             inventory = self._run_stage(
                 "inventory",
                 lambda: self.discover_atomic_inventory.execute(
@@ -304,6 +334,7 @@ class CresmoPipeline:
                 content_id=content_id,
             )
 
+            # Step 5: Execute Stage 4 to synthesize atomic notes in batch chunks
             synthesized_notes = self._run_stage(
                 "atomic_batch",
                 lambda: self.synthesize_atomic_batch.execute(
@@ -314,6 +345,7 @@ class CresmoPipeline:
                 content_id=content_id,
             )
 
+            # Step 6: Execute Stage 5 to reconcile Maps of Content (MOCs) with zero orphans
             mocs = self._run_stage(
                 "mocs",
                 lambda: self.reconcile_mocs.execute(),
@@ -321,6 +353,7 @@ class CresmoPipeline:
                 content_id=content_id,
             )
 
+            # Step 7: Execute Stage 6 to unify duplicate notes and consolidate entity aliases
             dedup_report = self._run_stage(
                 "duplicate_unification",
                 lambda: self.unify_duplicate_notes.execute(),
@@ -328,10 +361,11 @@ class CresmoPipeline:
                 content_id=content_id,
             )
 
-            # 3. Post-execution ledger mark & telemetry recording
+            # Step 8: Commit processed status into Write-Ahead Log (WAL) ledger
             if self.ledger_port:
                 self.ledger_port.mark_processed(content_id)
 
+            # Step 9: Record terminal business metrics and session semantic coherence evaluation
             self._record_session_completion(
                 session_id=session_id,
                 content_id=content_id,
@@ -342,6 +376,7 @@ class CresmoPipeline:
                 dedup_report=dedup_report,
             )
 
+            # Step 10: Assemble and return immutable PipelineResult domain aggregate root
             return PipelineResult(
                 content_id=content_id,
                 success=True,
@@ -372,7 +407,9 @@ class CresmoPipeline:
             PipelineResult if already processed and not force_reprocess, None otherwise.
         """
         content_id = raw.content_id
+        # Check idempotency ledger; skip processing if content_id was previously finalized
         if self.ledger_port and self.ledger_port.is_processed(content_id) and not force_reprocess:
+            # Emit telemetry metric indicating idempotency bypass
             self.metrics_port.increment_counter(
                 "cresmo_transcripts_processed_total",
                 1.0,
@@ -382,6 +419,7 @@ class CresmoPipeline:
                     "modality": "transcript",
                 },
             )
+            # Assemble fast-path cached PipelineResult without re-invoking LLM pipelines
             return PipelineResult(
                 content_id=content_id,
                 success=True,
@@ -392,6 +430,7 @@ class CresmoPipeline:
                 reconciled_mocs=(),
                 already_processed=True,
             )
+        # Content requires full pipeline synthesis
         return None
 
     @overload
@@ -441,13 +480,17 @@ class CresmoPipeline:
         Returns:
             Result of fn() or fallback if non-fatal exception caught.
         """
+        # Start high-resolution wall-clock timer for Prometheus duration observation
         start_time = time.perf_counter()
         status = "success"
 
+        # Wrap stage execution inside distributed telemetry span for end-to-end tracing
         with self.telemetry_port.start_stage_span(stage_name):
             try:
+                # Invoke the stage use case callable
                 return fn()
             except Exception as exc:
+                # Flag failure state and track error metrics by exception type and stage
                 status = "failure"
                 self.metrics_port.increment_counter(
                     "cresmo_pipeline_errors_total",
@@ -458,8 +501,10 @@ class CresmoPipeline:
                         "stage": stage_name,
                     },
                 )
+                # Re-raise immediately if stage is marked fatal to abort pipeline
                 if fatal:
                     raise
+                # Non-fatal stage failure: log warning and gracefully return fallback value
                 logger.warning(
                     "[Pipeline] %s skipped for %s: %s",
                     stage_name,
@@ -468,6 +513,7 @@ class CresmoPipeline:
                 )
                 return fallback
             finally:
+                # Record stage execution duration into Prometheus histogram
                 elapsed = time.perf_counter() - start_time
                 self.metrics_port.observe_histogram(
                     "cresmo_pipeline_stage_duration_seconds",
@@ -490,6 +536,7 @@ class CresmoPipeline:
         dedup_report: DeduplicationReport,
     ) -> None:
         """Record completed process metrics and session coherence evaluation score per EVAL-001 & ADR-016."""
+        # Increment completed transcript counter for operational throughput tracking
         self.metrics_port.increment_counter(
             "cresmo_transcripts_processed_total",
             1.0,
@@ -499,6 +546,7 @@ class CresmoPipeline:
                 "modality": "transcript",
             },
         )
+        # Track aggregate count of generated atomic notes across all note taxonomies
         self.metrics_port.increment_counter(
             "cresmo_atomic_notes_synthesized_total",
             float(len(synthesized_notes)),
@@ -508,10 +556,12 @@ class CresmoPipeline:
             },
         )
 
+        # Calculate semantic coherence ratio (notes synthesized vs inventory entities discovered)
         item_count = len(inventory.items) if hasattr(inventory, "items") else 1
         coherence_score = (
             min(1.0, len(synthesized_notes) / max(1, item_count)) if item_count else 1.0
         )
+        # Persist session coherence evaluation and audit metadata into telemetry backend
         self.telemetry_port.record_session_coherence(
             session_id=session_id,
             content_id=content_id,
@@ -526,14 +576,17 @@ class CresmoPipeline:
 
     def _load_transcript_from_file(self, file_path: Path) -> RawTranscript:
         """Parse and construct RawTranscript domain entity from a local file."""
+        # Reject internal Cresmo system files and index databases to avoid self-ingestion corruption
         if not is_processable_transcript_file(file_path):
             raise CresmoDomainError(
                 f"File '{file_path.name}' is an internal Cresmo artifact or system index "
                 "and cannot be processed as a transcript."
             )
+        # Validate that the target file exists on disk
         if not file_path.is_file():
             raise CresmoDomainError(f"Priority text file not found: {file_path}")
 
+        # Read file content and ensure it is non-empty
         raw_body = file_path.read_text(encoding="utf-8").strip()
         if not raw_body:
             raise CresmoDomainError(f"Priority text file is empty: {file_path}")
@@ -544,13 +597,14 @@ class CresmoPipeline:
         if 8 <= len(clean_stem) <= 64:
             content_id_str = clean_stem
         else:
-            # Fallback: combine clean prefix with stable sha256 hash
+            # Fallback: combine clean prefix with stable sha256 hash to satisfy format constraints
             prefix = clean_stem[:24] if clean_stem else "text"
             suffix = hashlib.sha256(raw_body.encode("utf-8")).hexdigest()[:16]
             content_id_str = f"{prefix}_{suffix}"
 
         content_id = ContentId(value=content_id_str)
 
+        # Initialize default metadata attributes inferred from file path and naming conventions
         title = stem.replace("_", " ").replace("-", " ").title()
         channel_name_raw = file_path.parent.name if file_path.parent.name else "text"
         channel_id_obj: ChannelId | None = ChannelId("priority_text")
@@ -559,12 +613,14 @@ class CresmoPipeline:
         video_description = ""
         body = raw_body
 
+        # Parse YAML frontmatter if present to extract explicit media and channel metadata
         if raw_body.startswith("---"):
             fm_match = re.match(r"^---\s*\n([\s\S]*?)\n---\s*\n([\s\S]*)$", raw_body)
             if fm_match:
                 fm_text, parsed_body = fm_match.groups()
                 body = parsed_body.strip()
                 try:
+                    # Safely load YAML dictionary and populate metadata overrides
                     meta = yaml.safe_load(fm_text) or {}
                     if meta.get("video_title") or meta.get("title"):
                         title = str(meta.get("video_title") or meta.get("title"))
@@ -579,11 +635,14 @@ class CresmoPipeline:
                     if meta.get("video_description"):
                         video_description = str(meta["video_description"])
                 except Exception:  # noqa: BLE001, S110
+                    # Silently ignore malformed YAML frontmatter and retain inferred defaults
                     pass
 
+        # Validate channel value object and classify channel category if missing
         channel_name = ChannelName(channel_name_raw)
         channel_category = channel_category or classify_channel(channel_name)[0]
 
+        # Construct and return validated RawTranscript domain aggregate root
         return RawTranscript(
             content_id=content_id,
             channel_name=channel_name,
@@ -613,13 +672,15 @@ class CresmoPipeline:
         Returns:
             PipelineResult summarizing synthesized notes, MOCs, and status.
         """
+        # Warm up LLM model weights asynchronously before initiating ingestion
         self.warmup()
-        # Execute raw ingestion for a target media item
+        # Ingest and parse raw audio/transcript from the remote media URL
         raw = self.ingest_raw_transcript.execute(video_url=video_url)
+        # Fail fast if ingestion was unable to retrieve a valid transcript body
         if raw is None:
             raise CresmoDomainError(f"Ingestion failed to retrieve transcript for: {video_url}")
 
-        # Execute the end-to-end synthesis pipeline (canonical Template Method).
+        # Execute the end-to-end synthesis pipeline (canonical Template Method)
         return self.execute(
             raw=raw,
             gap_filler_passes=gap_filler_passes,
@@ -648,15 +709,18 @@ class CresmoPipeline:
         Returns:
             PipelineResult summarizing synthesized notes, MOCs, and status.
         """
+        # Reject internal Cresmo system files and index databases to avoid self-ingestion corruption
         if not is_processable_transcript_file(file_path):
             raise CresmoDomainError(
                 f"File '{file_path.name}' is an internal Cresmo artifact or system index "
                 "and cannot be processed as a transcript."
             )
+        # Warm up synthesis model weights concurrently during file loading
         self.warmup()
+        # Parse file and instantiate RawTranscript domain entity
         raw = self._load_transcript_from_file(file_path)
 
-        # Avoid redundant disk I/O when file is already located inside the raw transcript lake
+        # Check whether file is already resident within the raw transcript lake to avoid redundant disk writes
         raw_dir = getattr(self.vault_port, "raw_dir", None)
         is_already_in_raw = False
         if isinstance(raw_dir, Path):
@@ -665,9 +729,11 @@ class CresmoPipeline:
             except (ValueError, RuntimeError):
                 is_already_in_raw = False
 
+        # Persist raw transcript to vault storage if not already resident
         if not is_already_in_raw:
             self.vault_port.save_raw_transcript(raw)
 
+        # Execute the end-to-end synthesis pipeline (canonical Template Method)
         return self.execute(
             raw=raw,
             gap_filler_passes=gap_filler_passes,
@@ -693,9 +759,11 @@ class CresmoPipeline:
         Returns:
             List of PipelineResult outcomes for each video in the manifest.
         """
+        # Verify that the manifest file exists
         if not manifest_path.is_file():
             raise CresmoDomainError(f"Manifest file not found: {manifest_path}")
 
+        # Read manifest lines, discarding blank entries and comment lines
         lines = manifest_path.read_text(encoding="utf-8").splitlines()
         urls: list[str] = []
         for line in lines:
@@ -703,6 +771,7 @@ class CresmoPipeline:
             if line_str and not line_str.startswith("#"):
                 urls.append(line_str)
 
+        # Sequentially process each media URL through the end-to-end video pipeline
         results: list[PipelineResult] = []
         for url in urls:
             res = self.run_for_video(
@@ -712,4 +781,5 @@ class CresmoPipeline:
                 user=user,
             )
             results.append(res)
+        # Return all collected pipeline results
         return results
