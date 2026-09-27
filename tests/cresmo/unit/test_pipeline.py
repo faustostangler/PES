@@ -14,10 +14,10 @@ from unittest.mock import MagicMock
 import pytest
 
 from cresmo.application.pipeline import CresmoPipeline, PipelineResult
+from cresmo.application.ports import PromptProviderPort
 from cresmo.domain.entities import EnrichedCompendium, RawTranscript
 from cresmo.domain.exceptions import CresmoDomainError
 from cresmo.domain.value_objects import ChannelName, ContentId, NoteTitle, RawIndexEntry
-from cresmo.infrastructure.adapters.prompt_provider import JsonPromptProvider
 from tests.doubles.mock_adapters import (
     InMemoryLedgerAdapter,
     InMemoryVaultAdapter,
@@ -107,7 +107,7 @@ class TestCresmoPipelineOrchestration:
 
         pipeline = CresmoPipeline(
             media_ingestion_port=mock_ingestion,
-            llm_port=mock_llm,
+            llm_synthesis_port=mock_llm,
             vault_port=vault_port,
             ledger_port=ledger_port,
         )
@@ -136,7 +136,7 @@ class TestCresmoPipelineOrchestration:
         mock_ingestion = MockMediaIngestionPort(canned_transcript=None)
         pipeline = CresmoPipeline(
             media_ingestion_port=mock_ingestion,
-            llm_port=mock_llm,
+            llm_synthesis_port=mock_llm,
             vault_port=InMemoryVaultAdapter(),
             ledger_port=InMemoryLedgerAdapter(),
         )
@@ -159,7 +159,7 @@ class TestCresmoPipelineOrchestration:
 
         pipeline = CresmoPipeline(
             media_ingestion_port=MockMediaIngestionPort(canned_transcript=canned_raw),
-            llm_port=SmartMockLLMAdapter(),
+            llm_synthesis_port=SmartMockLLMAdapter(),
             vault_port=InMemoryVaultAdapter(),
             ledger_port=ledger,
         )
@@ -181,7 +181,7 @@ class TestCresmoPipelineOrchestration:
 
         pipeline = CresmoPipeline(
             media_ingestion_port=MockMediaIngestionPort(canned_transcript=canned_raw),
-            llm_port=SmartMockLLMAdapter(),
+            llm_synthesis_port=SmartMockLLMAdapter(),
             vault_port=InMemoryVaultAdapter(),
             ledger_port=ledger,
         )
@@ -216,7 +216,7 @@ class TestCresmoPipelineOrchestration:
 
         pipeline = CresmoPipeline(
             media_ingestion_port=MockMediaIngestionPort(canned_transcript=canned_raw),
-            llm_port=llm,
+            llm_synthesis_port=llm,
             vault_port=vault,
             ledger_port=InMemoryLedgerAdapter(),
         )
@@ -239,7 +239,7 @@ class TestCresmoPipelineOrchestration:
     def test_run_for_text_file_missing_raises_error(self, tmp_path: Path) -> None:
         pipeline = CresmoPipeline(
             media_ingestion_port=MockMediaIngestionPort(),
-            llm_port=SmartMockLLMAdapter(),
+            llm_synthesis_port=SmartMockLLMAdapter(),
             vault_port=InMemoryVaultAdapter(),
         )
         missing = tmp_path / "non_existent.md"
@@ -249,7 +249,7 @@ class TestCresmoPipelineOrchestration:
     def test_run_for_text_file_empty_raises_error(self, tmp_path: Path) -> None:
         pipeline = CresmoPipeline(
             media_ingestion_port=MockMediaIngestionPort(),
-            llm_port=SmartMockLLMAdapter(),
+            llm_synthesis_port=SmartMockLLMAdapter(),
             vault_port=InMemoryVaultAdapter(),
         )
         empty_file = tmp_path / "empty_transcript.txt"
@@ -260,9 +260,9 @@ class TestCresmoPipelineOrchestration:
     def test_run_for_text_file_rejects_internal_system_artifacts(self, tmp_path: Path) -> None:
         pipeline = CresmoPipeline(
             media_ingestion_port=MockMediaIngestionPort(),
-            llm_port=SmartMockLLMAdapter(),
+            llm_synthesis_port=SmartMockLLMAdapter(),
             vault_port=InMemoryVaultAdapter(),
-            indexing_llm_port=SmartMockLLMAdapter(),
+            llm_indexing_port=SmartMockLLMAdapter(),
         )
         canal_file = tmp_path / "_canal.md"
         canal_file.write_text("# Channel Index", encoding="utf-8")
@@ -287,7 +287,7 @@ class TestCresmoPipelineOrchestration:
         ledger = InMemoryLedgerAdapter()
         pipeline = CresmoPipeline(
             media_ingestion_port=MockMediaIngestionPort(),
-            llm_port=SmartMockLLMAdapter(),
+            llm_synthesis_port=SmartMockLLMAdapter(),
             vault_port=vault,
             ledger_port=ledger,
         )
@@ -318,7 +318,7 @@ class TestCresmoPipelineOrchestration:
         vault = InMemoryVaultAdapter()
         pipeline = CresmoPipeline(
             media_ingestion_port=MockMediaIngestionPort(),
-            llm_port=SmartMockLLMAdapter(),
+            llm_synthesis_port=SmartMockLLMAdapter(),
             vault_port=vault,
             ledger_port=InMemoryLedgerAdapter(),
         )
@@ -353,7 +353,7 @@ class TestCresmoPipelineOrchestration:
 
         pipeline = CresmoPipeline(
             media_ingestion_port=MockMediaIngestionPort(),
-            llm_port=SmartMockLLMAdapter(),
+            llm_synthesis_port=SmartMockLLMAdapter(),
             vault_port=vault,
             ledger_port=InMemoryLedgerAdapter(),
         )
@@ -379,7 +379,7 @@ class TestCresmoPipelineOrchestration:
 
         pipeline = CresmoPipeline(
             media_ingestion_port=MockMediaIngestionPort(),
-            llm_port=SmartMockLLMAdapter(),
+            llm_synthesis_port=SmartMockLLMAdapter(),
             vault_port=InMemoryVaultAdapter(),
             ledger_port=InMemoryLedgerAdapter(),
         )
@@ -399,7 +399,7 @@ class TestCresmoPipelineOrchestration:
 
         pipeline = CresmoPipeline(
             media_ingestion_port=MockMediaIngestionPort(),
-            llm_port=SmartMockLLMAdapter(),
+            llm_synthesis_port=SmartMockLLMAdapter(),
             vault_port=InMemoryVaultAdapter(),
             ledger_port=ledger,
         )
@@ -418,7 +418,7 @@ class TestCresmoPipelineOrchestration:
 
         pipeline = CresmoPipeline(
             media_ingestion_port=MockMediaIngestionPort(),
-            llm_port=SmartMockLLMAdapter(),
+            llm_synthesis_port=SmartMockLLMAdapter(),
             vault_port=InMemoryVaultAdapter(),
             ledger_port=ledger,
         )
@@ -434,7 +434,7 @@ class TestCresmoPipelineOrchestration:
     def test_run_for_manifest_missing_raises_error(self, tmp_path: Path) -> None:
         pipeline = CresmoPipeline(
             media_ingestion_port=MockMediaIngestionPort(),
-            llm_port=SmartMockLLMAdapter(),
+            llm_synthesis_port=SmartMockLLMAdapter(),
             vault_port=InMemoryVaultAdapter(),
         )
         missing = tmp_path / "missing_playlist.txt"
@@ -444,7 +444,7 @@ class TestCresmoPipelineOrchestration:
     def test_run_for_manifest_empty_returns_empty_list(self, tmp_path: Path) -> None:
         pipeline = CresmoPipeline(
             media_ingestion_port=MockMediaIngestionPort(),
-            llm_port=SmartMockLLMAdapter(),
+            llm_synthesis_port=SmartMockLLMAdapter(),
             vault_port=InMemoryVaultAdapter(),
         )
         empty_manifest = tmp_path / "empty_playlist.txt"
@@ -472,7 +472,7 @@ class TestCresmoPipelineOrchestration:
         )
         pipeline = CresmoPipeline(
             media_ingestion_port=MockMediaIngestionPort(canned_transcript=canned_raw),
-            llm_port=SmartMockLLMAdapter(),
+            llm_synthesis_port=SmartMockLLMAdapter(),
             vault_port=InMemoryVaultAdapter(),
             ledger_port=InMemoryLedgerAdapter(),
         )
@@ -486,24 +486,24 @@ class TestCresmoPipelineOrchestration:
         # Default initialization
         pipeline_default = CresmoPipeline(
             media_ingestion_port=MockMediaIngestionPort(),
-            llm_port=SmartMockLLMAdapter(),
+            llm_synthesis_port=SmartMockLLMAdapter(),
             vault_port=InMemoryVaultAdapter(),
         )
-        assert isinstance(pipeline_default.prompt_provider, JsonPromptProvider)
+        assert isinstance(pipeline_default.prompt_provider, PromptProviderPort)
         assert pipeline_default.synthesize_atomic_batch.batch_size == 5
 
         # Custom initialization
         custom_pp = MagicMock()
         pipeline_custom = CresmoPipeline(
             media_ingestion_port=MockMediaIngestionPort(),
-            llm_port=SmartMockLLMAdapter(),
+            llm_synthesis_port=SmartMockLLMAdapter(),
             vault_port=InMemoryVaultAdapter(),
             batch_size=9,
             prompt_provider=custom_pp,
         )
         assert pipeline_custom.prompt_provider is custom_pp
         assert pipeline_custom.synthesize_atomic_batch.batch_size == 9
-        assert pipeline_custom.fill_gaps_fluid_prose.prompt_provider is custom_pp
+        assert pipeline_custom.fill_gaps.prompt_provider is custom_pp
 
     def test_run_for_video_gap_filler_passes_and_idempotency_attributes(self) -> None:
         cid = ContentId("videoPassTest1")
@@ -516,7 +516,7 @@ class TestCresmoPipelineOrchestration:
         ledger = InMemoryLedgerAdapter()
         pipeline = CresmoPipeline(
             media_ingestion_port=MockMediaIngestionPort(canned_transcript=canned_raw),
-            llm_port=SmartMockLLMAdapter(),
+            llm_synthesis_port=SmartMockLLMAdapter(),
             vault_port=vault,
             ledger_port=ledger,
         )
@@ -544,7 +544,7 @@ class TestCresmoPipelineOrchestration:
     def test_run_for_text_file_content_id_derivation_boundaries(self, tmp_path: Path) -> None:
         pipeline = CresmoPipeline(
             media_ingestion_port=MockMediaIngestionPort(),
-            llm_port=SmartMockLLMAdapter(),
+            llm_synthesis_port=SmartMockLLMAdapter(),
             vault_port=InMemoryVaultAdapter(),
             ledger_port=InMemoryLedgerAdapter(),
         )
@@ -591,7 +591,7 @@ class TestCresmoPipelineOrchestration:
         ledger = InMemoryLedgerAdapter()
         pipeline = CresmoPipeline(
             media_ingestion_port=MockMediaIngestionPort(),
-            llm_port=SmartMockLLMAdapter(),
+            llm_synthesis_port=SmartMockLLMAdapter(),
             vault_port=vault,
             ledger_port=ledger,
         )
@@ -632,7 +632,7 @@ class TestCresmoPipelineOrchestration:
         vault = InMemoryVaultAdapter()
         pipeline = CresmoPipeline(
             media_ingestion_port=MockMediaIngestionPort(),
-            llm_port=SmartMockLLMAdapter(),
+            llm_synthesis_port=SmartMockLLMAdapter(),
             vault_port=vault,
         )
 
@@ -688,7 +688,7 @@ class TestCresmoPipelineOrchestration:
         ledger = InMemoryLedgerAdapter()
         pipeline = CresmoPipeline(
             media_ingestion_port=MockMediaIngestionPort(canned_transcript=canned_raw),
-            llm_port=SmartMockLLMAdapter(),
+            llm_synthesis_port=SmartMockLLMAdapter(),
             vault_port=vault,
             ledger_port=ledger,
         )
@@ -720,7 +720,7 @@ class TestCresmoPipelineOrchestration:
         vault = InMemoryVaultAdapter()
         pipeline = CresmoPipeline(
             media_ingestion_port=MockMediaIngestionPort(canned_transcript=canned_raw),
-            llm_port=SmartMockLLMAdapter(),
+            llm_synthesis_port=SmartMockLLMAdapter(),
             vault_port=vault,
         )
 
@@ -748,7 +748,7 @@ class TestCresmoPipelineOrchestration:
         vault = InMemoryVaultAdapter()
         pipeline = CresmoPipeline(
             media_ingestion_port=MockMediaIngestionPort(canned_transcript=canned_raw),
-            llm_port=SmartMockLLMAdapter(),
+            llm_synthesis_port=SmartMockLLMAdapter(),
             vault_port=vault,
             ledger_port=ledger,
         )
@@ -767,23 +767,27 @@ class TestCresmoPipelineOrchestration:
         assert res.already_processed is True
         assert not indexing_executed
 
-    def test_pipeline_backward_compatibility_synthesize_transcript(self) -> None:
-        """Verify that _synthesize_transcript() delegates transparently to execute()."""
-        cid = ContentId("legacyCompat123")
+    def test_pipeline_execute_handles_raw_indexing_failure_gracefully(self) -> None:
+        """Verify that execute() logs a warning and proceeds when raw indexing fails (fatal=False)."""
+        cid = ContentId("failIndex123")
         canned_raw = RawTranscript(
             content_id=cid,
             channel_name=ChannelName("Political Theory"),
-            body="Raw transcript content for backward compatibility check.",
+            body="Raw transcript content for graceful degradation check.",
         )
         vault = InMemoryVaultAdapter()
         pipeline = CresmoPipeline(
             media_ingestion_port=MockMediaIngestionPort(canned_transcript=canned_raw),
-            llm_port=SmartMockLLMAdapter(),
+            llm_synthesis_port=SmartMockLLMAdapter(),
             vault_port=vault,
         )
 
-        res = pipeline._synthesize_transcript(raw=canned_raw, gap_filler_passes=1)
+        def failing_index_execute(raw: RawTranscript) -> RawIndexEntry | None:
+            raise RuntimeError("Disk write failed during raw indexing")
+
+        pipeline.index_raw.execute = failing_index_execute  # type: ignore[assignment,method-assign]
+        res = pipeline.execute(raw=canned_raw)
+
         assert res.success is True
-        assert res.content_id == cid
-        assert res.index_entry is not None
-        assert res.index_entry.video_id == cid
+        assert res.index_entry is None
+        assert res.compendium is not None

@@ -49,7 +49,7 @@ class TestPipelineTelemetryIntegration:
 
         pipeline = CresmoPipeline(
             media_ingestion_port=media_port,
-            llm_port=llm_port,
+            llm_synthesis_port=llm_port,
             vault_port=vault_port,
             ledger_port=ledger_port,
             prompt_provider=prompt_provider,
@@ -58,7 +58,7 @@ class TestPipelineTelemetryIntegration:
 
         return pipeline, exporter, vault_port
 
-    def test_synthesize_transcript_generates_full_span_hierarchy(
+    def test_execute_generates_full_span_hierarchy(
         self,
         telemetry_pipeline: tuple[CresmoPipeline, InMemorySpanExporter, InMemoryVaultAdapter],
     ) -> None:
@@ -71,7 +71,7 @@ class TestPipelineTelemetryIntegration:
             title="Modelos Transformadores",
         )
 
-        result = pipeline._synthesize_transcript(raw=raw, gap_filler_passes=1)
+        result = pipeline.execute(raw=raw, gap_filler_passes=1)
 
         assert result.success is True
 
@@ -118,7 +118,7 @@ class TestPipelineTelemetryIntegration:
         assert "eval.coherence_score" in coherence_events[0].attributes
         assert coherence_events[0].attributes["eval.session_id"] == "content:sandeco:yt_sample1234"
 
-    def test_synthesize_transcript_with_identified_user(
+    def test_execute_with_identified_user(
         self,
         telemetry_pipeline: tuple[CresmoPipeline, InMemorySpanExporter, InMemoryVaultAdapter],
     ) -> None:
@@ -132,7 +132,7 @@ class TestPipelineTelemetryIntegration:
         )
 
         user = UserIdentity.identified(subject="fausto@cresmo.ai", provider="oauth")
-        result = pipeline._synthesize_transcript(raw=raw, gap_filler_passes=1, user=user)
+        result = pipeline.execute(raw=raw, gap_filler_passes=1, user=user)
 
         assert result.success is True
 
@@ -172,7 +172,7 @@ class TestPipelineTelemetryIntegration:
 
         pipeline = CresmoPipeline(
             media_ingestion_port=media_port,
-            llm_port=llm_port,
+            llm_synthesis_port=llm_port,
             vault_port=vault_port,
             ledger_port=ledger_port,
             prompt_provider=prompt_provider,

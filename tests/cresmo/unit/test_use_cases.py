@@ -12,10 +12,11 @@ from unittest.mock import MagicMock
 
 import pytest
 
+from cresmo.application.ports import PromptProviderPort
 from cresmo.application.use_cases import (
     DiscoverAtomicInventoryUseCase,
-    ExpandLongitudinalSynchronicUseCase,
-    FillGapsFluidProseUseCase,
+    ExpandCompendiumUseCase,
+    FillGapsUseCase,
     IngestRawTranscriptUseCase,
     ReconcileMOCsUseCase,
     SynthesizeAtomicBatchUseCase,
@@ -123,7 +124,7 @@ class TestFillGapsFluidProse:
         llm_port = MockLLMAdapter(responses=[llm_response, llm_response, llm_response])
         vault_port = InMemoryVaultAdapter()
 
-        use_case = FillGapsFluidProseUseCase(llm_port, vault_port)
+        use_case = FillGapsUseCase(llm_port, vault_port)
         compendium = use_case.execute(raw, passes=3)
 
         assert compendium.content_id == cid
@@ -167,7 +168,7 @@ class TestFillGapsFluidProse:
         llm_port = MockLLMAdapter(responses=[llm_response])
         vault_port = InMemoryVaultAdapter()
 
-        use_case = FillGapsFluidProseUseCase(llm_port, vault_port)
+        use_case = FillGapsUseCase(llm_port, vault_port)
         compendium = use_case.execute(raw, passes=1)
 
         assert compendium.title.value == "Raw Video Title"
@@ -186,7 +187,7 @@ class TestFillGapsFluidProse:
         llm_port = MockLLMAdapter(responses=[llm_response])
         vault_port = InMemoryVaultAdapter()
 
-        use_case = FillGapsFluidProseUseCase(llm_port, vault_port)
+        use_case = FillGapsUseCase(llm_port, vault_port)
         compendium = use_case.execute(raw, passes=1)
 
         assert compendium.title.value == "Untitled Compendium"
@@ -208,7 +209,7 @@ class TestFillGapsFluidProse:
         llm_port = MockLLMAdapter(responses=[llm_response])
         vault_port = InMemoryVaultAdapter()
 
-        use_case = FillGapsFluidProseUseCase(llm_port, vault_port)
+        use_case = FillGapsUseCase(llm_port, vault_port)
         compendium = use_case.execute(raw, passes=1)
 
         assert compendium.title.value == "H1 Title"
@@ -226,7 +227,7 @@ class TestFillGapsFluidProse:
         llm_port = MockLLMAdapter(responses=[llm_response])
         vault_port = InMemoryVaultAdapter()
 
-        use_case = FillGapsFluidProseUseCase(llm_port, vault_port)
+        use_case = FillGapsUseCase(llm_port, vault_port)
         with pytest.raises(CompendiumStructureError, match="must contain a non-empty"):
             use_case.execute(raw, passes=1)
 
@@ -241,7 +242,7 @@ class TestFillGapsFluidProse:
         llm_port = MockLLMAdapter(responses=[llm_response])
         vault_port = InMemoryVaultAdapter()
 
-        use_case = FillGapsFluidProseUseCase(llm_port, vault_port)
+        use_case = FillGapsUseCase(llm_port, vault_port)
         with pytest.raises(
             CompendiumStructureError,
             match=r"Missing mandatory section '## Informações Complementares'",
@@ -262,7 +263,7 @@ class TestFillGapsFluidProse:
         llm_port = MockLLMAdapter(responses=[llm_response])
         vault_port = InMemoryVaultAdapter()
 
-        use_case = FillGapsFluidProseUseCase(llm_port, vault_port)
+        use_case = FillGapsUseCase(llm_port, vault_port)
         comp = use_case.execute(raw, passes=1)
         assert comp.channel_category == "tech_ai"
         assert comp.video_description == "Video description text."
@@ -299,7 +300,7 @@ class TestExpandLongitudinalSynchronic:
         llm_port = MockLLMAdapter(responses=[long_response, wide_response])
         vault_port = InMemoryVaultAdapter()
 
-        use_case = ExpandLongitudinalSynchronicUseCase(llm_port, vault_port)
+        use_case = ExpandCompendiumUseCase(llm_port, vault_port)
         updated = use_case.execute(initial_compendium)
 
         assert updated.content_id == cid
@@ -320,17 +321,29 @@ class TestExpandLongitudinalSynchronic:
         # Pass 1: Longitude expander gets initial compendium body and complementary info
         assert "Continuous prose body describing elites." in llm_port.call_history[0]["prompt"]
         assert "Initial complementary info." in llm_port.call_history[0]["prompt"]
-        assert llm_port.call_history[0]["system_instruction"].startswith("You are Cresmo Long-Expander")
-        assert llm_port.call_history[0]["prompt"].startswith("Take the following enriched Markdown document")
-        assert not llm_port.call_history[0]["prompt"].startswith(llm_port.call_history[0]["system_instruction"][:30])
+        assert llm_port.call_history[0]["system_instruction"].startswith(
+            "You are Cresmo Long-Expander"
+        )
+        assert llm_port.call_history[0]["prompt"].startswith(
+            "Take the following enriched Markdown document"
+        )
+        assert not llm_port.call_history[0]["prompt"].startswith(
+            llm_port.call_history[0]["system_instruction"][:30]
+        )
 
         # Pass 2: Wide expander gets the response from longitudinal expansion
         assert (
             "Longitudinal analysis tracing Roman patricians" in llm_port.call_history[1]["prompt"]
         )
-        assert llm_port.call_history[1]["system_instruction"].startswith("You are Cresmo Wide-Expander")
-        assert llm_port.call_history[1]["prompt"].startswith("Take the following longitudinally expanded Markdown document")
-        assert not llm_port.call_history[1]["prompt"].startswith(llm_port.call_history[1]["system_instruction"][:30])
+        assert llm_port.call_history[1]["system_instruction"].startswith(
+            "You are Cresmo Wide-Expander"
+        )
+        assert llm_port.call_history[1]["prompt"].startswith(
+            "Take the following longitudinally expanded Markdown document"
+        )
+        assert not llm_port.call_history[1]["prompt"].startswith(
+            llm_port.call_history[1]["system_instruction"][:30]
+        )
 
     def test_expand_missing_complementary_tag_falls_back_to_original(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
@@ -346,7 +359,7 @@ class TestExpandLongitudinalSynchronic:
         llm_port = MockLLMAdapter(responses=[long_response, wide_response])
         vault_port = InMemoryVaultAdapter()
 
-        use_case = ExpandLongitudinalSynchronicUseCase(llm_port, vault_port)
+        use_case = ExpandCompendiumUseCase(llm_port, vault_port)
         updated = use_case.execute(initial_compendium)
 
         assert updated.body == "Wide response without section header."
@@ -365,7 +378,7 @@ class TestExpandLongitudinalSynchronic:
         wide_response = "Wide response text.\n\n## Informações Complementares\n\n   "
         llm_port = MockLLMAdapter(responses=[long_response, wide_response])
         vault_port = InMemoryVaultAdapter()
-        use_case = ExpandLongitudinalSynchronicUseCase(llm_port, vault_port)
+        use_case = ExpandCompendiumUseCase(llm_port, vault_port)
         with pytest.raises(
             CompendiumStructureError, match="Missing complementary info in expansion"
         ):
@@ -385,7 +398,7 @@ class TestExpandLongitudinalSynchronic:
         llm_port = MockLLMAdapter(responses=[long_response, wide_response])
         vault_port = InMemoryVaultAdapter()
 
-        use_case = ExpandLongitudinalSynchronicUseCase(llm_port, vault_port)
+        use_case = ExpandCompendiumUseCase(llm_port, vault_port)
         updated = use_case.execute(initial_compendium)
         assert updated.body == "Expanded body."
         assert updated.complementary_info == "Exact tag notes."
@@ -848,9 +861,8 @@ class TestReconcileMOCs:
         llm = MockLLMAdapter()
         vault = InMemoryVaultAdapter()
         uc_def = ReconcileMOCsUseCase(llm, vault)
-        from cresmo.infrastructure.adapters.prompt_provider import JsonPromptProvider
 
-        assert isinstance(uc_def.prompt_provider, JsonPromptProvider)
+        assert isinstance(uc_def.prompt_provider, PromptProviderPort)
 
         custom_pp = MagicMock()
         uc_cust = ReconcileMOCsUseCase(llm, vault, prompt_provider=custom_pp)
@@ -912,7 +924,7 @@ class TestUseCasesEdgeCases:
         llm_port = MockLLMAdapter(responses=[llm_response])
         vault_port = InMemoryVaultAdapter()
 
-        use_case = FillGapsFluidProseUseCase(llm_port, vault_port)
+        use_case = FillGapsUseCase(llm_port, vault_port)
         with pytest.raises(CompendiumStructureError):
             use_case.execute(raw, passes=1)
 

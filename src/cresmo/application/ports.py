@@ -13,10 +13,11 @@ Conforms to:
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from collections.abc import Mapping
-from contextlib import AbstractContextManager
+from collections.abc import Generator, Mapping
+from contextlib import AbstractContextManager, contextmanager
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, Protocol, runtime_checkable
 
 from cresmo.domain.entities import (
     AtomicNote,
@@ -704,6 +705,185 @@ class PromptProviderPort(ABC):
         raise NotImplementedError
 
 
+class NoOpPromptProviderPort(PromptProviderPort):
+    """Hermetic Null-Object implementation of PromptProviderPort for testing and fallback."""
+
+    def get_gap_filler_prompt(
+        self,
+        pass_num: int,
+        total_passes: int,
+        channel_name: ChannelName,
+        file_name: str,
+        raw_text: str,
+        current_text: str | None = None,
+    ) -> tuple[str, str]:
+        """Format basic system and user prompts without external template dependencies."""
+        system_instruction = f"You are Cresmo Expander. Enrich transcript for {channel_name}."
+        if current_text:
+            user_prompt = (
+                f"Pass {pass_num} of {total_passes} for {channel_name} (file: {file_name}):\n"
+                f"Raw transcript: {raw_text}\n"
+                f"Current text:\n{current_text}"
+            )
+        else:
+            user_prompt = (
+                f"Pass {pass_num} of {total_passes} for {channel_name} (file: {file_name}):\n"
+                f"Raw transcript:\n{raw_text}"
+            )
+        return system_instruction, user_prompt
+
+    def get_long_expander_prompt(
+        self,
+        compendium_body: str,
+        complementary_info: str,
+    ) -> tuple[str, str]:
+        """Format basic longitudinal expansion prompt."""
+        system_instruction = "You are Cresmo Long-Expander."
+        user_prompt = (
+            "Take the following enriched Markdown document and apply longitudinal analysis:\n\n"
+            f"{compendium_body}\n\n"
+            f"## Informações Complementares\n{complementary_info}"
+        )
+        return system_instruction, user_prompt
+
+    def get_wide_expander_prompt(
+        self,
+        current_text: str,
+    ) -> tuple[str, str]:
+        """Format basic wide synchronic expansion prompt."""
+        system_instruction = "You are Cresmo Wide-Expander."
+        user_prompt = (
+            "Take the following longitudinally expanded Markdown document and apply synchronic wide expansion:\n\n"
+            f"{current_text}"
+        )
+        return system_instruction, user_prompt
+
+    def get_inventory_prompt(
+        self,
+        compendium_title: str,
+        channel_name: ChannelName,
+        compendium_body: str,
+    ) -> tuple[str, str]:
+        """Format basic atomic inventory extraction prompt."""
+        system_instruction = "You are Cresmo Atomic Inventory Specialist (cresmo-atomic)."
+        user_prompt = (
+            f"Source Compendium Title: {compendium_title}\n"
+            f"Source Channel: {channel_name}\n\n"
+            f"Source Context:\n{compendium_body}\n\n"
+            'Output strictly a JSON array of candidate entities: [{"title": "...", "type": "entity|concept|event|process"}]'
+        )
+        return system_instruction, user_prompt
+
+    def get_batch_notes_prompt(
+        self,
+        compendium_title: str,
+        channel_name: ChannelName,
+        compendium_body: str,
+        targets_json: str,
+    ) -> tuple[str, str]:
+        """Format basic batch notes synthesis prompt."""
+        system_instruction = "You are Cresmo Atomic Note Synthesizer (cresmo-atomic)."
+        user_prompt = (
+            f"Source Compendium Title: {compendium_title}\n"
+            f"Source Channel: {channel_name}\n\n"
+            f"Source Context:\n{compendium_body}\n\n"
+            f"Target Entities to Synthesize in this batch:\n{targets_json}\n\n"
+            "Output strictly a JSON array of note objects."
+        )
+        return system_instruction, user_prompt
+
+    def get_mocs_prompt(
+        self,
+        notes_json: str,
+    ) -> tuple[str, str]:
+        """Format basic MOC reconciliation prompt."""
+        system_instruction = "You are Cresmo MOC Manager (cresmo-moc-manager)."
+        user_prompt = (
+            f"Atomic Notes in Vault:\n{notes_json}\n\n"
+            "Output strictly a JSON array of MOC objects."
+        )
+        return system_instruction, user_prompt
+
+    def get_raw_index_summary_prompt(
+        self,
+        video_title: str,
+        transcript_excerpt: str,
+        language: str = "Português do Brasil",
+    ) -> tuple[str, str]:
+        """Format basic raw index summary prompt."""
+        system_instruction = f"You are Cresmo Indexer. Language: {language}."
+        user_prompt = f"Video Title: {video_title}\nExcerpt:\n{transcript_excerpt}"
+        return system_instruction, user_prompt
+
+    def get_raw_index_concepts_prompt(
+        self,
+        video_title: str,
+        transcript_excerpt: str,
+        language: str = "Português do Brasil",
+    ) -> tuple[str, str]:
+        """Format basic raw index concepts prompt."""
+        system_instruction = f"You are Cresmo Concept Extractor. Language: {language}."
+        user_prompt = f"Video Title: {video_title}\nExcerpt:\n{transcript_excerpt}"
+        return system_instruction, user_prompt
+
+    def get_raw_index_concepts_rewrite_prompt(
+        self,
+        previous_output: str,
+        language: str = "Português do Brasil",
+    ) -> str:
+        """Format basic concepts rewrite prompt."""
+        return f"Rewrite concepts conforming to rules: {previous_output}"
+
+    def get_raw_index_synthesis_prompt(
+        self,
+        video_title: str,
+        summary: str,
+        language: str = "Português do Brasil",
+    ) -> tuple[str, str]:
+        """Format basic raw index synthesis prompt."""
+        system_instruction = f"You are Cresmo Synthesizer. Language: {language}."
+        user_prompt = f"Video Title: {video_title}\nSummary:\n{summary}"
+        return system_instruction, user_prompt
+
+    def get_judge_raw_index_summary_prompt(
+        self,
+        video_title: str,
+        transcript_excerpt: str,
+        summary: str,
+        language: str = "Português do Brasil",
+    ) -> tuple[str, str]:
+        """Format basic judge raw index summary prompt."""
+        system_instruction = f"You are Judge. Language: {language}."
+        user_prompt = f"Title: {video_title}\nExcerpt:\n{transcript_excerpt}\nSummary:\n{summary}"
+        return system_instruction, user_prompt
+
+    def get_judge_raw_index_concepts_prompt(
+        self,
+        video_title: str,
+        transcript_excerpt: str,
+        concepts: str,
+        language: str = "Português do Brasil",
+    ) -> tuple[str, str]:
+        """Format basic judge raw index concepts prompt."""
+        system_instruction = f"You are Judge. Language: {language}."
+        user_prompt = f"Title: {video_title}\nExcerpt:\n{transcript_excerpt}\nConcepts:\n{concepts}"
+        return system_instruction, user_prompt
+
+    def get_judge_raw_index_synthesis_prompt(
+        self,
+        video_title: str,
+        transcript_excerpt: str,
+        synthesis: str,
+        language: str = "Português do Brasil",
+    ) -> tuple[str, str]:
+        """Format basic judge raw index synthesis prompt."""
+        system_instruction = f"You are Judge. Language: {language}."
+        user_prompt = (
+            f"Title: {video_title}\nExcerpt:\n{transcript_excerpt}\nSynthesis:\n{synthesis}"
+        )
+        return system_instruction, user_prompt
+
+
 class TelemetryPort(ABC):
     """Hexagonal Port for OpenTelemetry distributed tracing, session replays, and FinOps metrics.
 
@@ -793,6 +973,52 @@ class TelemetryPort(ABC):
         Default no-op implementation allowing concrete adapters to gracefully drain
         in-memory buffers without raising NotImplementedError.
         """
+
+
+class NoOpTelemetryPort(TelemetryPort):
+    """Hermetic Null-Object implementation of TelemetryPort for offline/test environments."""
+
+    @contextmanager
+    def start_pipeline_session(
+        self,
+        session_id: PipelineSessionId,
+        user_id: UserIdentity | ChannelTenantId,
+        channel_tenant_id: ChannelTenantId | None = None,
+        metadata: dict[str, Any] | None = None,
+    ) -> Generator[Any]:
+        """No-op session context manager."""
+        yield None
+
+    @contextmanager
+    def start_stage_span(
+        self,
+        stage_name: str,
+        attributes: dict[str, Any] | None = None,
+    ) -> Generator[Any]:
+        """No-op stage span context manager."""
+        yield None
+
+    def record_judge_evaluation(
+        self,
+        session_id: PipelineSessionId,
+        content_id: ContentId,
+        iteration: int,
+        max_iterations: int,
+        verdict: str,
+    ) -> None:
+        """No-op judge evaluation recorder."""
+
+    def record_session_coherence(
+        self,
+        session_id: PipelineSessionId,
+        content_id: ContentId,
+        score: float,
+        details: dict[str, Any] | None = None,
+    ) -> None:
+        """No-op session coherence recorder."""
+
+    def flush(self) -> None:
+        """No-op flush."""
 
 
 class AnonymizerPort(ABC):
@@ -897,3 +1123,106 @@ class MetricsPort(ABC):
             value: Arbitrary numeric value.
             labels: Optional dimensional key-value pairs.
         """
+
+
+class NoOpMetricsPort(MetricsPort):
+    """Hermetic Null-Object implementation of MetricsPort for offline/test environments."""
+
+    def increment_counter(
+        self,
+        name: str,
+        value: float = 1.0,
+        labels: dict[str, str] | None = None,
+    ) -> None:
+        """Increment a monotonically increasing counter."""
+        if value < 0.0:
+            raise ValueError("Counter increment must be non-negative")
+
+    def observe_histogram(
+        self,
+        name: str,
+        value: float,
+        labels: dict[str, str] | None = None,
+    ) -> None:
+        """Record an observed floating-point value into a histogram distribution."""
+        if value < 0.0:
+            raise ValueError("Histogram observation must be non-negative")
+
+    def set_gauge(
+        self,
+        name: str,
+        value: float,
+        labels: dict[str, str] | None = None,
+    ) -> None:
+        """Set the current instantaneous value of a gauge."""
+
+
+@runtime_checkable
+class PipelineSettingsProtocol(Protocol):
+    """Protocol defining runtime settings required by application use cases and pipeline."""
+
+    @property
+    def raw_index_max_chars(self) -> int: ...
+
+    @property
+    def raw_index_temperature(self) -> float: ...
+
+    @property
+    def language(self) -> str: ...
+
+    @property
+    def llm_temperature(self) -> float: ...
+
+    @property
+    def indexing_provider(self) -> str: ...
+
+    @property
+    def batch_size(self) -> int: ...
+
+    @property
+    def concat_max_words(self) -> int: ...
+
+    @property
+    def raw_dir(self) -> Path: ...
+
+    @property
+    def enriched_dir(self) -> Path: ...
+
+    @property
+    def priority_texts_dir(self) -> Path | None: ...
+
+    @property
+    def playlist_path(self) -> Path: ...
+
+    @property
+    def playlist_priority_path(self) -> Path | None: ...
+
+    @property
+    def discovery_queue_maxsize(self) -> int: ...
+
+    @property
+    def channel_discovery_workers(self) -> int: ...
+
+    @property
+    def days_lookback(self) -> int: ...
+
+
+@dataclass
+class DefaultPipelineSettings:
+    """Default in-memory settings for standalone application use cases without .env dependency."""
+
+    raw_index_max_chars: int = 2000
+    raw_index_temperature: float = 0.2
+    language: str = "Português do Brasil"
+    llm_temperature: float = 0.7
+    indexing_provider: str = "gemini"
+    batch_size: int = 5
+    concat_max_words: int = 50000
+    raw_dir: Path = Path("data/raw")
+    enriched_dir: Path = Path("data/enriched")
+    priority_texts_dir: Path | None = None
+    playlist_path: Path = Path("data/playlist.txt")
+    playlist_priority_path: Path | None = None
+    discovery_queue_maxsize: int = 50
+    channel_discovery_workers: int = 4
+    days_lookback: int = 30

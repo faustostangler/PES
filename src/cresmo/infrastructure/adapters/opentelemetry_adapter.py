@@ -290,8 +290,9 @@ class OpenTelemetryAdapter(TelemetryPort):
                 logger.debug("[OpenTelemetryAdapter] Langfuse client flush skipped: %s", exc)
         try:
             tracer_provider = trace.get_tracer_provider()
-            if hasattr(tracer_provider, "force_flush"):
-                tracer_provider.force_flush(timeout_millis=2000)
+            flush_fn = getattr(tracer_provider, "force_flush", None)
+            if callable(flush_fn):
+                flush_fn(timeout_millis=2000)
         except Exception as exc:  # noqa: BLE001
             logger.debug(
                 "[OpenTelemetryAdapter] OpenTelemetry tracer provider flush skipped: %s", exc

@@ -285,9 +285,9 @@ class PipelineSessionId:
             )
 
     @classmethod
-    def create(cls, channel: ChannelName, content_id: ContentId) -> PipelineSessionId:
-        ch = channel.value if isinstance(channel, ChannelName) else str(channel).strip()
-        c_id = content_id.value if isinstance(content_id, ContentId) else str(content_id).strip()
+    def create(cls, channel: ChannelName | str, content_id: ContentId | str) -> PipelineSessionId:
+        ch = channel.value if isinstance(channel, ChannelName) else channel.strip()
+        c_id = content_id.value if isinstance(content_id, ContentId) else content_id.strip()
         return cls(value=f"content:{ch}:{c_id}")
 
     @property
@@ -320,8 +320,8 @@ class ChannelTenantId:
             )
 
     @classmethod
-    def create(cls, channel: ChannelName) -> ChannelTenantId:
-        ch = channel.value if isinstance(channel, ChannelName) else str(channel).strip()
+    def create(cls, channel: ChannelName | str) -> ChannelTenantId:
+        ch = channel.value if isinstance(channel, ChannelName) else channel.strip()
         return cls(value=f"channel:{ch}")
 
     @property

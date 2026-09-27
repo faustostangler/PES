@@ -15,6 +15,7 @@ import pytest
 
 from cresmo.infrastructure.adapters.prompt_provider import JsonPromptProvider
 from cresmo.presentation.cli import main
+from cresmo.presentation.commands.seed_prompts import PROMPT_MAPPINGS
 from cresmo.presentation.exit_codes import (
     EXIT_CONFIG_OR_USAGE_ERROR,
     EXIT_INTERNAL_ERROR,
@@ -64,9 +65,9 @@ class TestSeedPromptsCLI:
         ):
             code = main(["seed-prompts"])
             assert code == EXIT_SUCCESS
-            assert mock_client.create_prompt.call_count == 7
+            assert mock_client.create_prompt.call_count == len(PROMPT_MAPPINGS)
             captured = capsys.readouterr()
-            assert "7/7 prompts synchronized to Langfuse" in captured.out
+            assert f"{len(PROMPT_MAPPINGS)}/{len(PROMPT_MAPPINGS)} prompts synchronized to Langfuse" in captured.out
             assert "✔ Registered 'cresmo-gap-filler-pass1'" in captured.out
 
     def test_seed_prompts_custom_label(self) -> None:
@@ -94,5 +95,5 @@ class TestSeedPromptsCLI:
             code = main(["seed-prompts"])
             assert code == EXIT_INTERNAL_ERROR
             captured = capsys.readouterr()
-            assert "0/7 prompts synchronized" in captured.out
+            assert f"0/{len(PROMPT_MAPPINGS)} prompts synchronized" in captured.out
             assert "✘ Failed to register" in captured.err

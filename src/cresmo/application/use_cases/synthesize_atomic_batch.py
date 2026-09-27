@@ -17,6 +17,7 @@ import re
 from cresmo.application.json_parser import extract_json_data
 from cresmo.application.ports import (
     LLMTransformationPort,
+    NoOpPromptProviderPort,
     PromptProviderPort,
     VaultRepositoryPort,
 )
@@ -57,13 +58,11 @@ class SynthesizeAtomicBatchUseCase:
 
     def __init__(
         self,
-        llm_synthesis_port: LLMTransformationPort | None = None,
-        vault_port: VaultRepositoryPort | None = None,
+        llm_synthesis_port: LLMTransformationPort,
+        vault_port: VaultRepositoryPort,
         batch_size: int = 5,
         prompt_provider: PromptProviderPort | None = None,
         temperature: float | None = None,
-        *,
-        llm_port: LLMTransformationPort | None = None,
     ) -> None:
         """Initialize use case with ports and batch sizing.
 
@@ -73,24 +72,16 @@ class SynthesizeAtomicBatchUseCase:
             batch_size: Maximum count of entities per LLM prompt chunk (default: 5).
             prompt_provider: Optional provider for decoupled prompt templates.
             temperature: Sampling temperature override for atomic note synthesis.
-            llm_port: Backward-compatible alias for llm_synthesis_port.
         """
-        port = llm_synthesis_port or llm_port
-        if port is None:
+        if llm_synthesis_port is None:
             raise ValueError("llm_synthesis_port must be provided")
         if vault_port is None:
             raise ValueError("vault_port must be provided")
-        self.llm_synthesis_port = port
-        self.llm_port = port  # Backward compatibility
+        self.llm_synthesis_port = llm_synthesis_port
         self.vault_port = vault_port
         self.batch_size = max(1, batch_size)
         self.temperature = temperature
-        if prompt_provider is None:
-            from cresmo.infrastructure.adapters.prompt_provider import JsonPromptProvider
-
-            self.prompt_provider: PromptProviderPort = JsonPromptProvider()
-        else:
-            self.prompt_provider = prompt_provider
+        self.prompt_provider: PromptProviderPort = prompt_provider or NoOpPromptProviderPort()
 
     def execute(
         self,

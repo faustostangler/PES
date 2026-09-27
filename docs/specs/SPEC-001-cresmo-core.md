@@ -107,7 +107,7 @@ The incremental synthesis processes specified:
 
 #### Scenario 2.1: Multi-Pass Continuous Prose Generation
 - **Given**: A valid `RawTranscript`.
-- **When**: `FillGapsFluidProseUseCase.execute(raw_transcript, passes=3)` is invoked.
+- **When**: `FillGapsUseCase.execute(raw_transcript, passes=3)` is invoked.
 - **Then**: An `EnrichedCompendium` is produced containing fluid prose and a `## Informações Complementares` section; all oralities and bulleted summaries are absent from the body.
 
 #### Scenario 2.2: Rejection of Discontinuous or Bulleted Output
@@ -121,7 +121,7 @@ The incremental synthesis processes specified:
 
 #### Scenario 3.1: Braudelian & Jaspers In-Place Enrichment
 - **Given**: An `EnrichedCompendium` from fluid prose expansion.
-- **When**: `ExpandLongitudinalSynchronicUseCase.execute(compendium)` is invoked.
+- **When**: `ExpandCompendiumUseCase.execute(compendium)` is invoked.
 - **Then**: The compendium is enriched with 3-tier causal depth (longue durée) and axial synchronicity without overwriting origin metadata.
 
 ---

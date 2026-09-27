@@ -19,7 +19,11 @@ from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
-from cresmo.application.ports import MediaIngestionPort
+from cresmo.application.ports import (
+    DefaultPipelineSettings,
+    MediaIngestionPort,
+    PipelineSettingsProtocol,
+)
 from cresmo.domain.value_objects import (
     ChannelFeedQuery,
     ChannelId,
@@ -30,7 +34,6 @@ from cresmo.domain.value_objects import (
     is_processable_transcript_file,
     normalize_to_uploads_playlist_url,
 )
-from cresmo.infrastructure.config import CresmoSettings
 
 
 @dataclass(frozen=True)
@@ -293,12 +296,12 @@ class DiscoverBatchSourcesUseCase:
     def __init__(
         self,
         media_ingestion_port: MediaIngestionPort,
-        settings: CresmoSettings | None = None,
+        settings: PipelineSettingsProtocol | None = None,
         progress_callback: Callable[[str], object] | None = None,
     ) -> None:
         """Initialize use case with injected media ingestion adapter and optional settings."""
         self.media_ingestion_port = media_ingestion_port
-        self.settings = settings or CresmoSettings()
+        self.settings = settings or DefaultPipelineSettings()
         self.progress_callback = progress_callback
 
     def _notify(self, message: str) -> None:
@@ -628,7 +631,7 @@ class DiscoverBatchSourcesUseCase:
         """Scan raw transcripts lake, extract channel metadata, and register existing files."""
         criteria = filter_criteria or SyncFilterCriteria()
         local_video_to_channel: dict[str, str] = {}
-        if not (hasattr(raw_dir, "is_dir") and raw_dir.is_dir()):
+        if raw_dir is None or not raw_dir.is_dir():
             return local_video_to_channel
 
         raw_files = load_transcript_files(raw_dir)

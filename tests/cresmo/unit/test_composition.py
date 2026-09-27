@@ -54,7 +54,6 @@ class TestCompositionRoot:
 
         assert isinstance(pipeline, CresmoPipeline)
         assert isinstance(pipeline.media_ingestion_port, NativeMediaIngestionAdapter)
-        assert isinstance(pipeline.llm_port, GeminiLLMAdapter)
         assert isinstance(pipeline.llm_synthesis_port, GeminiLLMAdapter)
         assert isinstance(pipeline.vault_port, ObsidianVaultAdapter)
         assert isinstance(pipeline.ledger_port, SqliteLedgerAdapter)
@@ -127,8 +126,8 @@ class TestCompositionRoot:
         ):
             pipeline = build_pipeline(settings=settings_with_langfuse)
             assert isinstance(pipeline, CresmoPipeline)
-            assert isinstance(pipeline.llm_port, GeminiLLMAdapter)
-            assert pipeline.llm_port._langfuse is mock_langfuse_instance
+            assert isinstance(pipeline.llm_synthesis_port, GeminiLLMAdapter)
+            assert pipeline.llm_synthesis_port._langfuse is mock_langfuse_instance
 
     def test_build_pipeline_skips_langfuse_when_probe_fails(
         self, tmp_path: Path, capsys: pytest.CaptureFixture[str]
@@ -144,8 +143,8 @@ class TestCompositionRoot:
         with patch("cresmo.presentation.composition.probe_langfuse_ready", return_value=False):
             pipeline = build_pipeline(settings=settings_with_langfuse)
             assert isinstance(pipeline, CresmoPipeline)
-            assert isinstance(pipeline.llm_port, GeminiLLMAdapter)
-            assert pipeline.llm_port._langfuse is None
+            assert isinstance(pipeline.llm_synthesis_port, GeminiLLMAdapter)
+            assert pipeline.llm_synthesis_port._langfuse is None
 
         captured = capsys.readouterr()
         assert (
@@ -169,8 +168,8 @@ class TestCompositionRoot:
         ):
             pipeline = build_pipeline(settings=settings_with_langfuse)
             assert isinstance(pipeline, CresmoPipeline)
-            assert isinstance(pipeline.llm_port, GeminiLLMAdapter)
-            assert pipeline.llm_port._langfuse is None
+            assert isinstance(pipeline.llm_synthesis_port, GeminiLLMAdapter)
+            assert pipeline.llm_synthesis_port._langfuse is None
 
     def test_probe_langfuse_ready_url_construction(self) -> None:
         from cresmo.presentation.composition import probe_langfuse_ready

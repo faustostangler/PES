@@ -21,9 +21,10 @@ import threading
 import time
 import urllib.error
 import urllib.request
+from collections.abc import Mapping
 from datetime import UTC, date, datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import yt_dlp
 import yt_dlp.plugins
@@ -145,7 +146,7 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         # Strictly reject on-the-fly machine-translated subtitles that cause YouTube HTTP 429
         return "tlang=" not in url
 
-    def _find_native_subtitle_url(self, info: dict[str, Any]) -> str | None:
+    def _find_native_subtitle_url(self, info: Mapping[str, Any]) -> str | None:
         """Search for native spoken subtitle URL, strictly rejecting tlang= translations."""
         subtitles: dict[str, list[dict[str, Any]]] = info.get("subtitles") or {}
         auto_captions: dict[str, list[dict[str, Any]]] = info.get("automatic_captions") or {}
@@ -263,7 +264,7 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         output_dir: Path,
         whisper_model: str,
         keep_audio: bool,
-        info: dict[str, Any] | None = None,
+        info: Mapping[str, Any] | None = None,
     ) -> tuple[str, str]:
         """Download audio to ephemeral scratch dir, transcribe via Whisper, and clean up."""
         import whisper
@@ -286,7 +287,7 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             )
 
             try:
-                with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                with yt_dlp.YoutubeDL(cast(Any, ydl_opts)) as ydl:
                     ydl.download([video_url])
             except Exception as exc:  # noqa: BLE001
                 self._handle_yt_dlp_error(exc)
@@ -369,7 +370,7 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             )
 
             try:
-                with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                with yt_dlp.YoutubeDL(cast(Any, ydl_opts)) as ydl:
                     info = ydl.extract_info(video_url, download=False)
             except Exception as exc:  # noqa: BLE001
                 status = "failure"
@@ -467,7 +468,7 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         )
 
         try:
-            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            with yt_dlp.YoutubeDL(cast(Any, ydl_opts)) as ydl:
                 info = ydl.extract_info(target_url, download=False)
                 # Fallback to original channel_url if uploads playlist returned empty
                 if (not info or not info.get("entries")) and target_url != query.channel_url:
@@ -527,7 +528,7 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         )
 
         try:
-            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            with yt_dlp.YoutubeDL(cast(Any, ydl_opts)) as ydl:
                 info = ydl.extract_info(video_url, download=False)
         except Exception:  # noqa: BLE001
             return None

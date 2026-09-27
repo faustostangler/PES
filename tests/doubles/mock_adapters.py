@@ -126,9 +126,7 @@ class InMemoryVaultAdapter(VaultRepositoryPort):
         entries = self.channel_raw_indexes.get(channel_name.value, [])
         return {e.video_id for e in entries}
 
-    def append_channel_index_entry(
-        self, channel_name: ChannelName, entry: RawIndexEntry
-    ) -> None:
+    def append_channel_index_entry(self, channel_name: ChannelName, entry: RawIndexEntry) -> None:
         self.channel_raw_indexes.setdefault(channel_name.value, []).append(entry)
 
     def append_brain_csv_entry(self, entry: RawIndexEntry) -> None:

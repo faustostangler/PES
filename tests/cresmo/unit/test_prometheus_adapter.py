@@ -236,4 +236,3 @@ class TestPrometheusMetricsAdapter:
         # Dynamic gauge with labels
         adapter.set_gauge("custom_labeled_gauge", 99.0, {"service": "cresmo"})
         assert registry.get_sample_value("custom_labeled_gauge", {"service": "cresmo"}) == 99.0
-

@@ -17,7 +17,7 @@ import logging
 import sys
 from typing import Any
 
-from cresmo.infrastructure.adapters.prompt_provider import JsonPromptProvider
+from cresmo.infrastructure.adapters.prompts import PROMPT_REGISTRY, JsonPromptProvider
 from cresmo.infrastructure.config import CresmoSettings
 from cresmo.presentation.composition import resolve_langfuse_client
 from cresmo.presentation.exit_codes import (
@@ -29,13 +29,7 @@ from cresmo.presentation.exit_codes import (
 logger = logging.getLogger(__name__)
 
 PROMPT_MAPPINGS: dict[str, str] = {
-    "cresmo-gap-filler-pass1": "gap_filler_pass1",
-    "cresmo-gap-filler-pass2": "gap_filler_pass_subsequent",
-    "cresmo-long-expander": "long_expander",
-    "cresmo-wide-expander": "wide_expander",
-    "cresmo-atomic-inventory": "atomic_inventory",
-    "cresmo-atomic-batch": "atomic_batch",
-    "cresmo-mocs-reconciliation": "reconcile_mocs",
+    meta.langfuse_name: meta.key.value for meta in PROMPT_REGISTRY.values()
 }
 
 

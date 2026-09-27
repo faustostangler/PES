@@ -14,7 +14,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 from cresmo.application.ports import LedgerRepositoryPort
-from cresmo.domain.value_objects import ContentId, LedgerEntry, PipelineStatus
+from cresmo.domain.value_objects import ChannelName, ContentId, LedgerEntry, PipelineStatus
 
 
 class SqliteLedgerAdapter(LedgerRepositoryPort):
@@ -222,7 +222,7 @@ class SqliteLedgerAdapter(LedgerRepositoryPort):
             content_id=ContentId(str(row["content_id"])),
             media_url=str(row["media_url"]),
             title=str(row["title"]),
-            channel_name=str(row["channel_name"]),
+            channel_name=ChannelName(str(row["channel_name"])),
             status=PipelineStatus(str(row["status"])),
             notes_count=int(row["notes_count"]),
             error_message=str(row["error_message"]) if row["error_message"] else None,

@@ -3,8 +3,8 @@
 Core domain orchestration use cases:
 - IngestRawTranscriptUseCase (Media ingestion and audio transcription)
 - IndexRawTranscriptsUseCase (Catalog conceptual indexing and LLM-as-a-judge quality loops)
-- FillGapsFluidProseUseCase (Socratic gap filling and multi-pass fluid prose expansion)
-- ExpandLongitudinalSynchronicUseCase (Braudelian longue durée and Jaspers synchronic expansion)
+- FillGapsUseCase (Socratic gap filling and multi-pass fluid prose expansion)
+- ExpandCompendiumUseCase (Braudelian longue durée and Jaspers synchronic expansion)
 - DiscoverAtomicInventoryUseCase (Holistic candidate entity inventory discovery)
 - SynthesizeAtomicBatchUseCase (Batched atomic note synthesis and causal matrix modeling)
 - ReconcileMOCsUseCase (Thematic Map of Content graph clustering and reconciliation)
@@ -20,10 +20,10 @@ from cresmo.application.use_cases.discover_batch_sources import (
     BatchSource,
     DiscoverBatchSourcesUseCase,
 )
-from cresmo.application.use_cases.expand_longitudinal_synchronic import (
-    ExpandLongitudinalSynchronicUseCase,
+from cresmo.application.use_cases.expand_compendium import (
+    ExpandCompendiumUseCase,
 )
-from cresmo.application.use_cases.fill_gaps_fluid_prose import FillGapsFluidProseUseCase
+from cresmo.application.use_cases.fill_gaps import FillGapsUseCase
 from cresmo.application.use_cases.index_raw_transcripts import IndexRawTranscriptsUseCase
 from cresmo.application.use_cases.ingest_raw_transcript import (
     IngestRawTranscriptUseCase,
@@ -47,8 +47,8 @@ __all__ = [
     "DiscoverAtomicInventoryUseCase",
     "DiscoverBatchSourcesUseCase",
     "DuplicateCluster",
-    "ExpandLongitudinalSynchronicUseCase",
-    "FillGapsFluidProseUseCase",
+    "ExpandCompendiumUseCase",
+    "FillGapsUseCase",
     "IndexRawTranscriptsUseCase",
     "IngestRawTranscriptUseCase",
     "ReconcileMOCsUseCase",

@@ -15,7 +15,7 @@ Conforms to:
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Self
+from typing import Any, Self
 
 from pydantic import AliasChoices, Field, SecretStr, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -55,6 +55,17 @@ class CresmoSettings(BaseSettings):
         env_file_encoding="utf-8",
         extra="ignore",
     )
+
+    def __init__(
+        self,
+        *args: Any,
+        _env_file: Path | str | None | Any = ...,
+        **values: Any,
+    ) -> None:
+        """Initialize settings with optional explicit environment file override."""
+        if _env_file is not ...:
+            values["_env_file"] = _env_file
+        super().__init__(*args, **values)
 
     # =========================================================================
     # 🔴 Category 1: Secrets & Credentials

@@ -13,10 +13,13 @@ from __future__ import annotations
 
 import re
 
-from cresmo.application.ports import VaultRepositoryPort
+from cresmo.application.ports import (
+    DefaultPipelineSettings,
+    PipelineSettingsProtocol,
+    VaultRepositoryPort,
+)
 from cresmo.domain.taxonomy import classify_channel
 from cresmo.domain.value_objects import ChannelName, ContentId, MasterDocumentResult
-from cresmo.infrastructure.config import CresmoSettings
 
 CHUNK_SEPARATOR: str = "\n\n---\n\n"
 _DATE_PATTERN = re.compile(r'video_date:\s*["\']?(\d{4,8})["\']?')
@@ -89,7 +92,7 @@ class ConcatMasterUseCase:
     def __init__(
         self,
         vault_port: VaultRepositoryPort,
-        settings: CresmoSettings | None = None,
+        settings: PipelineSettingsProtocol | None = None,
     ) -> None:
         """Initialize use case with vault port and operational settings.
 
@@ -98,7 +101,7 @@ class ConcatMasterUseCase:
             settings: Configuration settings holding target word caps.
         """
         self.vault_port = vault_port
-        self.settings = settings if settings is not None else CresmoSettings()
+        self.settings = settings if settings is not None else DefaultPipelineSettings()
 
     def execute(
         self,

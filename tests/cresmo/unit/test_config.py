@@ -95,10 +95,10 @@ class TestCresmoSettings:
             CresmoSettings(llm_indexing_temperature=-0.5)
 
         with pytest.raises(ValidationError):
-            CresmoSettings(llm_temperature=-0.1)
+            CresmoSettings.model_validate({"llm_temperature": -0.1})
 
         with pytest.raises(ValidationError):
-            CresmoSettings(raw_index_temperature=-0.5)
+            CresmoSettings.model_validate({"raw_index_temperature": -0.5})
 
     def test_ensure_directories_creates_master_dir(self, tmp_path: Path) -> None:
         settings = CresmoSettings(data_dir=tmp_path / "data", vault_dir=tmp_path / "vault")
