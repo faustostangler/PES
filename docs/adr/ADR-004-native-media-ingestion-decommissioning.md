@@ -1,6 +1,6 @@
 # ADR-004: Native Media Ingestion & Legacy ISB.AI Decommissioning
 
-**Status:** APPROVED  
+**Status:** ACCEPTED  
 **Date:** 2026-09-11  
 **Decision Makers:** Lead Architect (Fausto Stangler), Systems Architect (Doctor Stangler Committee)  
 **Governing Method:** Doctor Stangler Architecture Method (Clean/Hexagonal DDD Modular Monolith)  

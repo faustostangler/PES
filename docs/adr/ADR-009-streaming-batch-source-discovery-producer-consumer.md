@@ -1,6 +1,6 @@
 # ADR-009: Streaming Batch Source Discovery via Producer-Consumer Pattern
 
-**Status:** APPROVED  
+**Status:** ACCEPTED  
 **Date:** 2026-09-17  
 **Decision Makers:** Lead Architect (Fausto Stangler), Systems Architect (Doctor Stangler Committee)  
 **Governing Method:** Doctor Stangler Architecture Method (Clean/Hexagonal DDD Modular Monolith)  

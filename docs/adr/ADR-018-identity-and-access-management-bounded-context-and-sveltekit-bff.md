@@ -1,6 +1,6 @@
 # ADR-018: Identity and Access Management (IAM) Bounded Context and SvelteKit BFF Authentication Pattern
 
-**Status:** PROPOSED  
+**Status:** ACCEPTED  
 **Date:** 2026-09-21  
 **Decision Makers:** Lead Architect (Fausto Stangler), Systems Architect (Doctor Stangler Committee)  
 **Governing Method:** Doctor Stangler Architecture Method (Clean/Hexagonal DDD Modular Monolith, 12-Factor App, ADR-First)  

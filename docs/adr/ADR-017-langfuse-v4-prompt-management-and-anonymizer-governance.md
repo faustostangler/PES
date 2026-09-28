@@ -1,11 +1,11 @@
 # ADR-017: Langfuse v4 Observations-First Telemetry, Resilient Prompt Management, and Anonymizer Governance
 
-**Status:** PROPOSED  
+**Status:** ACCEPTED  
 **Date:** 2026-09-21  
 **Decision Makers:** Lead Architect (Fausto Stangler), Systems Architect (Doctor Stangler Committee)  
 **Governing Method:** Doctor Stangler Architecture Method (Clean/Hexagonal DDD Modular Monolith, 12-Factor App, ADR-First)  
 **Glossary Reference:** [`docs/GLOSSARY.md`](../GLOSSARY.md)  
-**Related ADRs:** [`ADR-001`](ADR-001-cresmo-modular-monolith-strangling.md), [`ADR-003`](ADR-003-pes-production-architecture.md), [`ADR-007`](ADR-007-pipeline-template-method-dry.md), [`ADR-011`](ADR-011-zero-hardcoded-tunables-and-unified-inference-observability.md), [`ADR-013`](ADR-013-iterative-llm-as-a-judge-indexing-loops.md), [`ADR-014`](ADR-014-active-preflight-probes-and-fail-fast-observability.md), [`ADR-016`](ADR-016-full-opentelemetry-conventions-session-replays-and-channel-governance.md)
+**Related ADRs:** [`ADR-001`](ADR-001-cresmo-modular-monolith-strangling.md), [`ADR-003`](ADR-003-pes-production-architecture.md), [`ADR-007`](ADR-007-pipeline-template-method-dry.md), [`ADR-010`](ADR-010-zero-legacy-shims-and-streaming-first-unification.md), [`ADR-011`](ADR-011-zero-hardcoded-tunables-and-unified-inference-observability.md), [`ADR-013`](ADR-013-iterative-llm-as-a-judge-indexing-loops.md), [`ADR-014`](ADR-014-active-preflight-probes-and-fail-fast-observability.md), [`ADR-016`](ADR-016-full-opentelemetry-conventions-session-replays-and-channel-governance.md), [`ADR-022`](ADR-022-universal-system-instruction-user-prompt-segregation.md)
 
 ---
 
@@ -41,23 +41,33 @@ We treat data privacy and LGPD compliance as a first-class architectural concern
    - Deployed into Langfuse's export hook `mask_otel_spans` in [composition.py](file:///home/stangler/gamer_d/Fausto%20Stangler/Documentos/Python/PES/src/cresmo/presentation/composition.py), ensuring data is scrubbed at the memory boundary *before* leaving the process.
    - Reusable across any future use case or bounded context.
 
-### 2.2 Resilient Prompt Management (`LangfusePromptProvider`)
-1. **Hexagonal Contract Fulfillment:**
-   - Implement `LangfusePromptProvider(PromptProviderPort)` in `src/cresmo/infrastructure/adapters/prompt_provider.py`.
-2. **Guaranteed 100% Availability Pattern (Offline Resilience):**
+### 2.2 Resilient Prompt Management (`LangfusePromptProvider`) & Chat-Native Prompt Segregation
+1. **Hexagonal Contract Fulfillment & ADR-022 Alignment:**
+   - Implement `LangfusePromptProvider(PromptProviderPort)` in `src/cresmo/infrastructure/adapters/prompts/langfuse_provider.py`.
+   - Every synthesis prompt returns a segregated `tuple[str, str]` corresponding to `(system_instruction, user_prompt)`.
+2. **Chat-Native Model as the Single Standard (Zero Legacy Shims / ADR-010):**
+   - In accordance with **ADR-010 (Principle of Zero Legacy Shims)** and **ADR-022 (Universal System Instruction and User Prompt Segregation)**, all prompts registered and managed in Langfuse Cloud are **strictly Chat Prompts** (`type="chat"`).
+   - Each prompt template contains:
+     - Message with `role: "system"`: Invariant persona, domain instructions, and `cresmo-style-guide` constraints.
+     - Message with `role: "user"`: Dynamic input payload template (`{{channel_name}}`, `{{file_name}}`, `{{raw_text}}`, etc.).
+   - **No Backward Compatibility Shims:** The system eliminates all heuristic text-only fallback branches or monomorphic string shims. The prompt provider resolves `(system_instruction, user_prompt)` directly from the compiled chat messages.
+3. **Guaranteed 100% Availability Pattern (Offline Resilience):**
    - Conforms strictly to [ADR-014](ADR-014-active-preflight-probes-and-fail-fast-observability.md). The provider wraps an injected fallback `JsonPromptProvider`.
    - When Langfuse is reachable:
      ```python
      prompt = self._langfuse.get_prompt(
          name=prompt_name,
          label=self._label,
-         fallback=fallback_template,
+         type="chat",
      )
+     compiled_messages = prompt.compile(**kwargs)
+     # Extracts role='system' -> system_instruction, role='user' -> user_prompt
      ```
    - When Langfuse is offline, unreachable, or in test environments:
-     Degrades immediately to `JsonPromptProvider`, guaranteeing zero network hangs or execution failures.
-3. **Prompt-to-Trace Linking:**
+     Degrades immediately to `JsonPromptProvider`, which already provides the canonical `tuple[str, str]` from `prompts.json` and local skill files without pipeline disruption.
+4. **Prompt-to-Trace Linking:**
    - LLM generation calls receive the resolved prompt reference, automatically populating the Langfuse **Prompt Metrics** tab (median latency, token usage, cost, and eval scores per version).
+   - Enables native **A/B Testing and LLM Playground evaluation** directly inside the Langfuse UI with full system instruction parity.
 
 ### 2.3 Observations-First Telemetry Alignment (Langfuse v4)
 1. **Explicit Span Filtering Allowlist:**
@@ -125,6 +135,7 @@ Strict dependency rules are maintained:
 3. **Universal Data Anonymization:** `AnonymizerPort` protects PII and sensitive tokens across telemetry and application boundaries, ensuring LGPD compliance.
 4. **Accurate Generation Metrics:** Replacing broken `update_current_generation` calls with native v4 observation context enables exact token, latency, and cost tracking per prompt version.
 5. **Future-Proof CI/CD Hook:** Dataset experiment architecture is established without blocking immediate pipeline operations.
+6. **Full System/User Parity in UI Playground (Zero Legacy Shims):** Mandating `type="chat"` eliminates prompt asymmetry between the Langfuse UI Playground and application code. Offline A/B tests and Dataset runs in the Langfuse UI execute with 100% fidelity to the production environment without requiring backwards-compatibility text shims.
 
 ### Negative & Mitigations
 - **Network Overhead on Initial Prompt Fetch:** Mitigated by Langfuse SDK's built-in client-side cache and startup pre-warming.

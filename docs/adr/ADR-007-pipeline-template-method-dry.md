@@ -1,6 +1,6 @@
 # ADR-007: Template Method and DRY Unification in Cognitive Synthesis Pipeline
 
-**Status:** APPROVED  
+**Status:** ACCEPTED  
 **Date:** 2026-09-14  
 **Decision Makers:** Lead Architect (Fausto Stangler), Systems Architect (Doctor Stangler Committee)  
 **Governing Method:** Doctor Stangler Architecture Method (Clean/Hexagonal DDD Modular Monolith)  

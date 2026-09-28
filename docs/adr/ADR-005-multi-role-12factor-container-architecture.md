@@ -1,6 +1,6 @@
 # ADR-005: Multi-Role 12-Factor Container Architecture & Deployment Model
 
-**Status:** APPROVED  
+**Status:** ACCEPTED  
 **Date:** 2026-09-12  
 **Decision Makers:** Lead Architect (Fausto Stangler), Systems Architect (Doctor Stangler Committee)  
 **Governing Method:** Doctor Stangler Architecture Method (Clean/Hexagonal DDD Modular Monolith, 12-Factor App)  

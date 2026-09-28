@@ -1,6 +1,6 @@
 # ADR-001: Strangling Cresmo into Hexagonal Modular Monolith with Media Ingestion ACL and Vault Port
 
-**Status:** APPROVED  
+**Status:** ACCEPTED  
 **Date:** 2026-09-10  
 **Decision Makers:** Lead Architect (Fausto Stangler), Stereoscopist (Doctor Stangler Committee)  
 

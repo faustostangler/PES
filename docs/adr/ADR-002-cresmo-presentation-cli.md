@@ -1,6 +1,6 @@
 # ADR-002: Cresmo Production CLI Entrypoint and Presentation Layer Orchestration
 
-**Status:** APPROVED  
+**Status:** ACCEPTED  
 **Date:** 2026-09-10  
 **Decision Makers:** Lead Architect (Fausto Stangler), Stereoscopist (Doctor Stangler Committee)  
 
