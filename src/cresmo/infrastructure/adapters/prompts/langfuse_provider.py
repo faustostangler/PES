@@ -114,251 +114,39 @@ class LangfusePromptProvider(PromptProviderPort):
             )
             return fallback_sys, fallback_user
 
-    def get_gap_filler_prompt(
+    def get_prompt(
         self,
-        pass_num: int,
-        total_passes: int,
-        channel_name: ChannelName,
-        file_name: str,
-        raw_text: str,
-        current_text: str | None = None,
+        key: PromptKey,
+        **context: Any,
     ) -> tuple[str, str]:
-        """Format (system_instruction, user_prompt) via Langfuse with guaranteed fallback."""
-        fallback_sys, fallback_user = self._fallback.get_gap_filler_prompt(
-            pass_num=pass_num,
-            total_passes=total_passes,
-            channel_name=channel_name,
-            file_name=file_name,
-            raw_text=raw_text,
-            current_text=current_text,
-        )
-        key = PromptKey.GAP_FILLER_PASS1 if pass_num == 1 else PromptKey.GAP_FILLER_PASS_SUBSEQUENT
-        prompt_name = PROMPT_REGISTRY[key].langfuse_name
+        """Dispatch prompt formatting via Langfuse Cloud with guaranteed local fallback.
+
+        Conforms to ADR-014 and ADR-017:
+            - Fetches versioned Chat Prompt from Langfuse Cloud when client is active.
+            - Guaranteed Availability: Gracefully falls back to local provider on error or missing client.
+            - Tracks resolved version for downstream generation observability.
+
+        Args:
+            key: Canonical PromptKey enum member.
+            **context: Template variable substitutions.
+
+        Returns:
+            Tuple containing (system_instruction, user_prompt).
+        """
+        fallback_sys, fallback_user = self._fallback.get_prompt(key, **context)
+        meta = PROMPT_REGISTRY.get(key)
+        if meta is None:
+            return fallback_sys, fallback_user
+
+        # Normalize ChannelName to str for template compilation if present
+        compile_context = dict(context)
+        if "channel_name" in compile_context:
+            ch = compile_context["channel_name"]
+            compile_context["channel_name"] = ch.value if isinstance(ch, ChannelName) else str(ch)
+
         return self._resolve_chat_prompt(
-            prompt_name=prompt_name,
+            prompt_name=meta.langfuse_name,
             fallback_sys=fallback_sys,
             fallback_user=fallback_user,
-            pass_num=pass_num,
-            total_passes=total_passes,
-            channel_name=channel_name,
-            file_name=file_name,
-            raw_text=raw_text,
-            current_text=current_text or "",
-        )
-
-    def get_long_expander_prompt(
-        self,
-        compendium_body: str,
-        complementary_info: str,
-    ) -> tuple[str, str]:
-        """Format (system_instruction, user_prompt) for longitudinal expansion via Langfuse."""
-        fallback_sys, fallback_user = self._fallback.get_long_expander_prompt(
-            compendium_body=compendium_body,
-            complementary_info=complementary_info,
-        )
-        prompt_name = PROMPT_REGISTRY[PromptKey.LONG_EXPANDER].langfuse_name
-        return self._resolve_chat_prompt(
-            prompt_name=prompt_name,
-            fallback_sys=fallback_sys,
-            fallback_user=fallback_user,
-            compendium_body=compendium_body,
-            complementary_info=complementary_info,
-        )
-
-    def get_wide_expander_prompt(
-        self,
-        current_text: str,
-    ) -> tuple[str, str]:
-        """Format (system_instruction, user_prompt) for synchronic wide expansion via Langfuse."""
-        fallback_sys, fallback_user = self._fallback.get_wide_expander_prompt(
-            current_text=current_text
-        )
-        prompt_name = PROMPT_REGISTRY[PromptKey.WIDE_EXPANDER].langfuse_name
-        return self._resolve_chat_prompt(
-            prompt_name=prompt_name,
-            fallback_sys=fallback_sys,
-            fallback_user=fallback_user,
-            current_text=current_text,
-        )
-
-    def get_inventory_prompt(
-        self,
-        compendium_title: str,
-        channel_name: ChannelName,
-        compendium_body: str,
-    ) -> tuple[str, str]:
-        """Format (system_instruction, user_prompt) for atomic inventory extraction via Langfuse."""
-        fallback_sys, fallback_user = self._fallback.get_inventory_prompt(
-            compendium_title=compendium_title,
-            channel_name=channel_name,
-            compendium_body=compendium_body,
-        )
-        prompt_name = PROMPT_REGISTRY[PromptKey.ATOMIC_INVENTORY].langfuse_name
-        return self._resolve_chat_prompt(
-            prompt_name=prompt_name,
-            fallback_sys=fallback_sys,
-            fallback_user=fallback_user,
-            compendium_title=compendium_title,
-            channel_name=channel_name,
-            compendium_body=compendium_body,
-        )
-
-    def get_judge_inventory_prompt(
-        self,
-        compendium_title: str,
-        channel_name: ChannelName | str,
-        compendium_body: str,
-        inventory_json: str,
-    ) -> tuple[str, str]:
-        """Format (system_instruction, user_prompt) for atomic inventory judge via Langfuse."""
-        fallback_sys, fallback_user = self._fallback.get_judge_inventory_prompt(
-            compendium_title=compendium_title,
-            channel_name=channel_name,
-            compendium_body=compendium_body,
-            inventory_json=inventory_json,
-        )
-        prompt_name = PROMPT_REGISTRY[PromptKey.JUDGE_ATOMIC_INVENTORY].langfuse_name
-        ch_str = channel_name.value if isinstance(channel_name, ChannelName) else channel_name
-        return self._resolve_chat_prompt(
-            prompt_name=prompt_name,
-            fallback_sys=fallback_sys,
-            fallback_user=fallback_user,
-            compendium_title=compendium_title,
-            channel_name=ch_str,
-            compendium_body=compendium_body,
-            inventory_json=inventory_json,
-        )
-
-    def get_batch_notes_prompt(
-        self,
-        compendium_title: str,
-        channel_name: ChannelName,
-        compendium_body: str,
-        targets_json: str,
-    ) -> tuple[str, str]:
-        """Format (system_instruction, user_prompt) for atomic note batch synthesis via Langfuse."""
-        fallback_sys, fallback_user = self._fallback.get_batch_notes_prompt(
-            compendium_title=compendium_title,
-            channel_name=channel_name,
-            compendium_body=compendium_body,
-            targets_json=targets_json,
-        )
-        prompt_name = PROMPT_REGISTRY[PromptKey.ATOMIC_BATCH].langfuse_name
-        return self._resolve_chat_prompt(
-            prompt_name=prompt_name,
-            fallback_sys=fallback_sys,
-            fallback_user=fallback_user,
-            compendium_title=compendium_title,
-            channel_name=channel_name,
-            compendium_body=compendium_body,
-            targets_json=targets_json,
-        )
-
-    def get_mocs_prompt(
-        self,
-        notes_json: str,
-    ) -> tuple[str, str]:
-        """Format (system_instruction, user_prompt) for MOC reconciliation via Langfuse."""
-        fallback_sys, fallback_user = self._fallback.get_mocs_prompt(notes_json=notes_json)
-        prompt_name = PROMPT_REGISTRY[PromptKey.RECONCILE_MOCS].langfuse_name
-        return self._resolve_chat_prompt(
-            prompt_name=prompt_name,
-            fallback_sys=fallback_sys,
-            fallback_user=fallback_user,
-            notes_json=notes_json,
-        )
-
-    def get_raw_index_summary_prompt(
-        self,
-        video_title: str,
-        transcript_excerpt: str,
-        language: str = "Português do Brasil",
-    ) -> tuple[str, str]:
-        """Delegate raw index summary prompt formatting to local fallback."""
-        return self._fallback.get_raw_index_summary_prompt(
-            video_title=video_title,
-            transcript_excerpt=transcript_excerpt,
-            language=language,
-        )
-
-    def get_raw_index_concepts_prompt(
-        self,
-        video_title: str,
-        transcript_excerpt: str,
-        language: str = "Português do Brasil",
-    ) -> tuple[str, str]:
-        """Delegate raw index concepts prompt formatting to local fallback."""
-        return self._fallback.get_raw_index_concepts_prompt(
-            video_title=video_title,
-            transcript_excerpt=transcript_excerpt,
-            language=language,
-        )
-
-    def get_raw_index_concepts_rewrite_prompt(
-        self,
-        previous_output: str,
-        language: str = "Português do Brasil",
-    ) -> str:
-        """Delegate raw index concepts rewrite prompt formatting to local fallback."""
-        return self._fallback.get_raw_index_concepts_rewrite_prompt(
-            previous_output=previous_output,
-            language=language,
-        )
-
-    def get_raw_index_synthesis_prompt(
-        self,
-        video_title: str,
-        summary: str,
-        language: str = "Português do Brasil",
-    ) -> tuple[str, str]:
-        """Delegate raw index synthesis prompt formatting to local fallback."""
-        return self._fallback.get_raw_index_synthesis_prompt(
-            video_title=video_title,
-            summary=summary,
-            language=language,
-        )
-
-    def get_judge_raw_index_summary_prompt(
-        self,
-        video_title: str,
-        transcript_excerpt: str,
-        summary: str,
-        language: str = "Português do Brasil",
-    ) -> tuple[str, str]:
-        """Delegate judge summary prompt formatting to local fallback."""
-        return self._fallback.get_judge_raw_index_summary_prompt(
-            video_title=video_title,
-            transcript_excerpt=transcript_excerpt,
-            summary=summary,
-            language=language,
-        )
-
-    def get_judge_raw_index_concepts_prompt(
-        self,
-        video_title: str,
-        transcript_excerpt: str,
-        concepts: str,
-        language: str = "Português do Brasil",
-    ) -> tuple[str, str]:
-        """Delegate judge concepts prompt formatting to local fallback."""
-        return self._fallback.get_judge_raw_index_concepts_prompt(
-            video_title=video_title,
-            transcript_excerpt=transcript_excerpt,
-            concepts=concepts,
-            language=language,
-        )
-
-    def get_judge_raw_index_synthesis_prompt(
-        self,
-        video_title: str,
-        transcript_excerpt: str,
-        synthesis: str,
-        language: str = "Português do Brasil",
-    ) -> tuple[str, str]:
-        """Delegate judge synthesis prompt formatting to local fallback."""
-        return self._fallback.get_judge_raw_index_synthesis_prompt(
-            video_title=video_title,
-            transcript_excerpt=transcript_excerpt,
-            synthesis=synthesis,
-            language=language,
+            **compile_context,
         )

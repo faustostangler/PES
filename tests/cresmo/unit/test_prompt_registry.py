@@ -20,7 +20,26 @@ class TestPromptRegistry:
     """Test suite verifying prompt registry integrity and metadata lookup."""
 
     def test_prompt_registry_contains_all_canonical_keys(self) -> None:
-        """Verify that every PromptKey member is registered in PROMPT_REGISTRY."""
+        """Verify that all 15 canonical PromptKey members are registered in PROMPT_REGISTRY."""
+        expected_keys = {
+            "gap_filler_pass1",
+            "gap_filler_pass_subsequent",
+            "long_expander",
+            "wide_expander",
+            "atomic_inventory",
+            "judge_atomic_inventory",
+            "atomic_batch",
+            "reconcile_mocs",
+            "raw_index_summary",
+            "raw_index_concepts",
+            "raw_index_concepts_rewrite",
+            "raw_index_synthesis",
+            "judge_raw_index_summary",
+            "judge_raw_index_concepts",
+            "judge_raw_index_synthesis",
+        }
+        assert len(PromptKey) == 15
+        assert {k.value for k in PromptKey} == expected_keys
         for key in PromptKey:
             assert key in PROMPT_REGISTRY
             meta = PROMPT_REGISTRY[key]

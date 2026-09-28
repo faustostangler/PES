@@ -21,7 +21,7 @@ from cresmo.application.ports import (
 )
 from cresmo.domain.entities import MapOfContent
 from cresmo.domain.exceptions import DomainValidationError
-from cresmo.domain.value_objects import NoteTitle
+from cresmo.domain.value_objects import NoteTitle, PromptKey
 
 
 class ReconcileMOCsUseCase:
@@ -67,7 +67,8 @@ class ReconcileMOCsUseCase:
         ]
 
         # Step 2: Prompt LLM to cluster notes into thematic Maps of Content.
-        system_instruction, user_prompt = self.prompt_provider.get_mocs_prompt(
+        system_instruction, user_prompt = self.prompt_provider.get_prompt(
+            PromptKey.RECONCILE_MOCS,
             notes_json=json.dumps(note_summaries, ensure_ascii=False),
         )
 

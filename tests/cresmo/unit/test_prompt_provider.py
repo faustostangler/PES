@@ -7,7 +7,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from cresmo.domain.taxonomy import classify_channel
-from cresmo.domain.value_objects import ChannelName
+from cresmo.domain.value_objects import ChannelName, PromptKey
 from cresmo.infrastructure.adapters.prompt_provider import JsonPromptProvider
 
 
@@ -52,7 +52,8 @@ class TestJsonPromptProvider:
     def test_gap_filler_differentiates_pass1_and_subsequent_passes(self) -> None:
         provider = JsonPromptProvider()
 
-        s1, p1 = provider.get_gap_filler_prompt(
+        s1, p1 = provider.get_prompt(
+            PromptKey.GAP_FILLER_PASS1,
             pass_num=1,
             total_passes=3,
             channel_name=ChannelName("Tech Channel"),
@@ -66,7 +67,8 @@ class TestJsonPromptProvider:
         assert "test.txt" in p1
         assert "Raw text here." in p1
 
-        s2, p2 = provider.get_gap_filler_prompt(
+        s2, p2 = provider.get_prompt(
+            PromptKey.GAP_FILLER_PASS_SUBSEQUENT,
             pass_num=2,
             total_passes=3,
             channel_name=ChannelName("Tech Channel"),
@@ -84,7 +86,8 @@ class TestJsonPromptProvider:
 
     def test_gap_filler_subsequent_passes_fallback_when_current_text_is_none(self) -> None:
         provider = JsonPromptProvider()
-        s2, p2 = provider.get_gap_filler_prompt(
+        s2, p2 = provider.get_prompt(
+            PromptKey.GAP_FILLER_PASS_SUBSEQUENT,
             pass_num=2,
             total_passes=3,
             channel_name=ChannelName("Tech Channel"),
@@ -98,7 +101,8 @@ class TestJsonPromptProvider:
     def test_long_and_wide_expander_prompts(self) -> None:
         provider = JsonPromptProvider()
 
-        long_s, long_p = provider.get_long_expander_prompt(
+        long_s, long_p = provider.get_prompt(
+            PromptKey.LONG_EXPANDER,
             compendium_body="Main body text.",
             complementary_info="Supplementary info.",
         )
@@ -110,7 +114,8 @@ class TestJsonPromptProvider:
         assert "longitudinal" in long_p.lower()
         assert not long_p.startswith(long_s[:30])
 
-        wide_s, wide_p = provider.get_wide_expander_prompt(
+        wide_s, wide_p = provider.get_prompt(
+            PromptKey.WIDE_EXPANDER,
             current_text="Longitudinally expanded text.",
         )
         assert isinstance(wide_s, str)
@@ -123,7 +128,8 @@ class TestJsonPromptProvider:
     def test_inventory_and_batch_notes_and_mocs_prompts(self) -> None:
         provider = JsonPromptProvider()
 
-        inv_s, inv_p = provider.get_inventory_prompt(
+        inv_s, inv_p = provider.get_prompt(
+            PromptKey.ATOMIC_INVENTORY,
             compendium_title="Compendium Title",
             channel_name=ChannelName("Channel Name"),
             compendium_body="Enriched content body.",
@@ -133,7 +139,8 @@ class TestJsonPromptProvider:
         assert "Channel Name" in inv_p
         assert "Enriched content body." in inv_p
 
-        judge_inv_s, judge_inv_p = provider.get_judge_inventory_prompt(
+        judge_inv_s, judge_inv_p = provider.get_prompt(
+            PromptKey.JUDGE_ATOMIC_INVENTORY,
             compendium_title="Compendium Title",
             channel_name=ChannelName("Channel Name"),
             compendium_body="Enriched content body.",
@@ -145,7 +152,8 @@ class TestJsonPromptProvider:
         assert '[{"title": "Target 1", "type": "entity"}]' in judge_inv_p
         assert "true" in judge_inv_p.lower()
 
-        batch_s, batch_p = provider.get_batch_notes_prompt(
+        batch_s, batch_p = provider.get_prompt(
+            PromptKey.ATOMIC_BATCH,
             compendium_title="Compendium Title",
             channel_name=ChannelName("Channel Name"),
             compendium_body="Enriched content body.",
@@ -156,7 +164,8 @@ class TestJsonPromptProvider:
         assert "target entities to synthesize" in batch_p.lower()
         assert '[{"title": "Target 1"}]' in batch_p
 
-        mocs_s, mocs_p = provider.get_mocs_prompt(
+        mocs_s, mocs_p = provider.get_prompt(
+            PromptKey.RECONCILE_MOCS,
             notes_json='[{"title": "Note 1"}]',
         )
         assert isinstance(mocs_s, str)
@@ -211,7 +220,8 @@ class TestJsonPromptProvider:
         custom_file.write_text(json.dumps(custom_prompts), encoding="utf-8")
 
         provider = JsonPromptProvider(prompts_path=custom_file)
-        s1, p1 = provider.get_gap_filler_prompt(
+        s1, p1 = provider.get_prompt(
+            PromptKey.GAP_FILLER_PASS1,
             pass_num=1,
             total_passes=3,
             channel_name=ChannelName("Custom Channel"),
@@ -224,7 +234,8 @@ class TestJsonPromptProvider:
         )
         assert s1 == "Custom Task 1"
 
-        s2, p2 = provider.get_gap_filler_prompt(
+        s2, p2 = provider.get_prompt(
+            PromptKey.GAP_FILLER_PASS_SUBSEQUENT,
             pass_num=2,
             total_passes=3,
             channel_name=ChannelName("Custom Channel"),
@@ -235,31 +246,46 @@ class TestJsonPromptProvider:
         assert p2 == "Custom Task 2: Custom Pass 2/3 (prev 1) for Custom Channel with raw & draft"
         assert s2 == "Custom Task 2"
 
-        s_long, p_long = provider.get_long_expander_prompt("Body", "Info")
+        s_long, p_long = provider.get_prompt(
+            PromptKey.LONG_EXPANDER, compendium_body="Body", complementary_info="Info"
+        )
         assert p_long == "Custom Long: Body + Info"
         assert s_long == "Custom Long"
 
-        s_wide, p_wide = provider.get_wide_expander_prompt("WideText")
+        s_wide, p_wide = provider.get_prompt(PromptKey.WIDE_EXPANDER, current_text="WideText")
         assert p_wide == "Custom Wide: WideText"
         assert s_wide == "Custom Wide"
 
-        s_inv, p_inv = provider.get_inventory_prompt("Title", ChannelName("Channel"), "Body")
+        s_inv, p_inv = provider.get_prompt(
+            PromptKey.ATOMIC_INVENTORY,
+            compendium_title="Title",
+            channel_name=ChannelName("Channel"),
+            compendium_body="Body",
+        )
         assert p_inv == "Custom Inv: Title on Channel with Body"
         assert s_inv == "Custom Inv"
 
-        s_j_inv, p_j_inv = provider.get_judge_inventory_prompt(
-            "Title", ChannelName("Channel"), "Body", '[{"title": "T1"}]'
+        s_j_inv, p_j_inv = provider.get_prompt(
+            PromptKey.JUDGE_ATOMIC_INVENTORY,
+            compendium_title="Title",
+            channel_name=ChannelName("Channel"),
+            compendium_body="Body",
+            inventory_json='[{"title": "T1"}]',
         )
         assert p_j_inv == 'Custom Judge Inventory: Title on Channel with [{"title": "T1"}]'
         assert s_j_inv == "Custom Judge System Instruction"
 
-        s_batch, p_batch = provider.get_batch_notes_prompt(
-            "Title", ChannelName("Channel"), "Body", "Targets"
+        s_batch, p_batch = provider.get_prompt(
+            PromptKey.ATOMIC_BATCH,
+            compendium_title="Title",
+            channel_name=ChannelName("Channel"),
+            compendium_body="Body",
+            targets_json="Targets",
         )
         assert p_batch == "Custom Batch: Title on Channel body Body targets Targets"
         assert s_batch == "Custom Batch"
 
-        s_mocs, p_mocs = provider.get_mocs_prompt("Notes")
+        s_mocs, p_mocs = provider.get_prompt(PromptKey.RECONCILE_MOCS, notes_json="Notes")
         assert p_mocs == "Custom MOC: Notes"
         assert s_mocs == "Custom MOC"
 
@@ -354,7 +380,14 @@ class TestJsonPromptProvider:
         }
 
         # Gap filler pass 1 fallback
-        s1, p1 = provider.get_gap_filler_prompt(1, 2, ChannelName("ChName"), "f.txt", "RawText")
+        s1, p1 = provider.get_prompt(
+            PromptKey.GAP_FILLER_PASS1,
+            pass_num=1,
+            total_passes=2,
+            channel_name=ChannelName("ChName"),
+            file_name="f.txt",
+            raw_text="RawText",
+        )
         assert "Clean raw" in s1
         assert "Source Channel: ChName" in p1
         assert "File: f.txt" in p1
@@ -362,8 +395,14 @@ class TestJsonPromptProvider:
         assert "## Informações Complementares" in p1
 
         # Gap filler pass 2 fallback with current_text
-        s2, p2 = provider.get_gap_filler_prompt(
-            2, 2, ChannelName("ChName"), "f.txt", "RawText", current_text="DraftText"
+        s2, p2 = provider.get_prompt(
+            PromptKey.GAP_FILLER_PASS_SUBSEQUENT,
+            pass_num=2,
+            total_passes=2,
+            channel_name=ChannelName("ChName"),
+            file_name="f.txt",
+            raw_text="RawText",
+            current_text="DraftText",
         )
         assert "Deepen prose" in s2
         assert "Source Channel: ChName" in p2
@@ -372,8 +411,14 @@ class TestJsonPromptProvider:
         assert "Execute Socratic gap filling and theoretical densification." in p2
 
         # Gap filler pass 2 fallback without current_text
-        s2_none, p2_none = provider.get_gap_filler_prompt(
-            2, 2, ChannelName("ChName"), "f.txt", "RawText", current_text=None
+        s2_none, p2_none = provider.get_prompt(
+            PromptKey.GAP_FILLER_PASS_SUBSEQUENT,
+            pass_num=2,
+            total_passes=2,
+            channel_name=ChannelName("ChName"),
+            file_name="f.txt",
+            raw_text="RawText",
+            current_text=None,
         )
         assert "Deepen prose" in s2_none
         assert (
@@ -381,19 +426,28 @@ class TestJsonPromptProvider:
         )
 
         # Long expander fallback
-        s_long, p_long = provider.get_long_expander_prompt("BodyText", "ComplementaryText")
+        s_long, p_long = provider.get_prompt(
+            PromptKey.LONG_EXPANDER,
+            compendium_body="BodyText",
+            complementary_info="ComplementaryText",
+        )
         assert "Longue Duree" in s_long
         assert "Content:\nBodyText" in p_long
         assert "## Informações Complementares\nComplementaryText" in p_long
 
         # Wide expander fallback
-        s_wide, p_wide = provider.get_wide_expander_prompt("WideText")
+        s_wide, p_wide = provider.get_prompt(PromptKey.WIDE_EXPANDER, current_text="WideText")
         assert "Axial Time" in s_wide
         assert "WideText" in p_wide
         assert p_wide.endswith("WideText")
 
         # Atomic inventory fallback
-        s_inv, p_inv = provider.get_inventory_prompt("Title", ChannelName("Channel"), "Body")
+        s_inv, p_inv = provider.get_prompt(
+            PromptKey.ATOMIC_INVENTORY,
+            compendium_title="Title",
+            channel_name=ChannelName("Channel"),
+            compendium_body="Body",
+        )
         assert "Extract Items" in s_inv
         assert "Title: Title" in p_inv
         assert "Channel: Channel" in p_inv
@@ -404,8 +458,12 @@ class TestJsonPromptProvider:
         )
 
         # Atomic batch fallback
-        s_batch, p_batch = provider.get_batch_notes_prompt(
-            "Title", ChannelName("Channel"), "Body", '[{"title": "E1"}]'
+        s_batch, p_batch = provider.get_prompt(
+            PromptKey.ATOMIC_BATCH,
+            compendium_title="Title",
+            channel_name=ChannelName("Channel"),
+            compendium_body="Body",
+            targets_json='[{"title": "E1"}]',
         )
         assert "Synthesize Notes" in s_batch
         assert "Source Compendium Title: Title" in p_batch
@@ -415,7 +473,9 @@ class TestJsonPromptProvider:
         assert "Output strictly a JSON array of note objects." in p_batch
 
         # MOCs fallback
-        s_mocs, p_mocs = provider.get_mocs_prompt('[{"title": "Note1"}]')
+        s_mocs, p_mocs = provider.get_prompt(
+            PromptKey.RECONCILE_MOCS, notes_json='[{"title": "Note1"}]'
+        )
         assert "Map MOCs" in s_mocs
         assert 'Atomic Notes in Vault:\n[{"title": "Note1"}]' in p_mocs
         assert "Output strictly a JSON array of MOC objects." in p_mocs
@@ -427,7 +487,8 @@ class TestJsonPromptProvider:
         assert "raw_index_synthesis" in provider._templates
 
         # Pass 1: Concepts (from transcript excerpt)
-        concepts_system_instructions, concepts_user_prompt = provider.get_raw_index_concepts_prompt(
+        concepts_system_instructions, concepts_user_prompt = provider.get_prompt(
+            PromptKey.RAW_INDEX_CONCEPTS,
             video_title="Vilfredo Pareto and Elites",
             transcript_excerpt="A circulação de elites explica a alternância de poder.",
             language="Português do Brasil",
@@ -437,7 +498,8 @@ class TestJsonPromptProvider:
         assert "A circulação de elites" in concepts_user_prompt
 
         # Pass 2: Summary (from transcript excerpt)
-        summary_system_instructions, summary_user_prompt = provider.get_raw_index_summary_prompt(
+        summary_system_instructions, summary_user_prompt = provider.get_prompt(
+            PromptKey.RAW_INDEX_SUMMARY,
             video_title="Vilfredo Pareto and Elites",
             transcript_excerpt="A circulação de elites explica a alternância de poder.",
             language="Português do Brasil",
@@ -448,12 +510,11 @@ class TestJsonPromptProvider:
         assert "A circulação de elites" in summary_user_prompt
 
         # Pass 3: Synthesis (from summary)
-        synthesis_system_instructions, synthesis_user_prompt = (
-            provider.get_raw_index_synthesis_prompt(
-                video_title="Vilfredo Pareto and Elites",
-                summary="A circulação de elites explica a alternância de poder.",
-                language="Português do Brasil",
-            )
+        synthesis_system_instructions, synthesis_user_prompt = provider.get_prompt(
+            PromptKey.RAW_INDEX_SYNTHESIS,
+            video_title="Vilfredo Pareto and Elites",
+            summary="A circulação de elites explica a alternância de poder.",
+            language="Português do Brasil",
         )
         assert "paratactic" in synthesis_system_instructions.lower()
         assert "ner" in synthesis_system_instructions.lower()
@@ -471,13 +532,12 @@ class TestJsonPromptProvider:
         assert "judge_raw_index_synthesis" in provider._templates
 
         # Summary Judge
-        summary_judge_system_instructions, summary_judge_user_prompt = (
-            provider.get_judge_raw_index_summary_prompt(
-                video_title="Pareto and Elites",
-                transcript_excerpt="Explicando a circulação das elites na política.",
-                summary="Resumo fiel da circulação das elites.",
-                language="Português do Brasil",
-            )
+        summary_judge_system_instructions, summary_judge_user_prompt = provider.get_prompt(
+            PromptKey.JUDGE_RAW_INDEX_SUMMARY,
+            video_title="Pareto and Elites",
+            transcript_excerpt="Explicando a circulação das elites na política.",
+            summary="Resumo fiel da circulação das elites.",
+            language="Português do Brasil",
         )
         assert "impartial" in summary_judge_system_instructions.lower()
         assert "evaluator" in summary_judge_system_instructions.lower()
@@ -488,13 +548,12 @@ class TestJsonPromptProvider:
         assert "true" in summary_judge_user_prompt.lower()
 
         # Concepts Judge
-        concepts_judge_system_instructions, concepts_judge_user_prompt = (
-            provider.get_judge_raw_index_concepts_prompt(
-                video_title="Pareto and Elites",
-                transcript_excerpt="Explicando a circulação das elites na política.",
-                concepts="Circulação de Elites, Pareto",
-                language="Português do Brasil",
-            )
+        concepts_judge_system_instructions, concepts_judge_user_prompt = provider.get_prompt(
+            PromptKey.JUDGE_RAW_INDEX_CONCEPTS,
+            video_title="Pareto and Elites",
+            transcript_excerpt="Explicando a circulação das elites na política.",
+            concepts="Circulação de Elites, Pareto",
+            language="Português do Brasil",
         )
         assert "impartial" in concepts_judge_system_instructions.lower()
         assert "strictly with 'true' or 'false'" in concepts_judge_system_instructions.lower()
@@ -504,13 +563,12 @@ class TestJsonPromptProvider:
         assert "true" in concepts_judge_user_prompt.lower()
 
         # Synthesis Judge
-        synthesis_judge_system_instructions, synthesis_judge_user_prompt = (
-            provider.get_judge_raw_index_synthesis_prompt(
-                video_title="Pareto and Elites",
-                transcript_excerpt="Explicando a circulação das elites na política.",
-                synthesis="A circulação de elites reflete a alternância política segundo Pareto.",
-                language="Português do Brasil",
-            )
+        synthesis_judge_system_instructions, synthesis_judge_user_prompt = provider.get_prompt(
+            PromptKey.JUDGE_RAW_INDEX_SYNTHESIS,
+            video_title="Pareto and Elites",
+            transcript_excerpt="Explicando a circulação das elites na política.",
+            synthesis="A circulação de elites reflete a alternância política segundo Pareto.",
+            language="Português do Brasil",
         )
         assert "impartial evaluator" in synthesis_judge_system_instructions.lower()
         assert "strictly with 'true' or 'false'" in synthesis_judge_system_instructions.lower()

@@ -38,6 +38,7 @@ from cresmo.domain.value_objects import (
     AtomicEntityInventory,
     NoteTitle,
     NoteType,
+    PromptKey,
 )
 
 logger = logging.getLogger(__name__)
@@ -124,7 +125,8 @@ class DiscoverAtomicInventoryUseCase:
         Raises:
             DomainValidationError: If candidate entities are rejected by the judge or no valid entities could be discovered.
         """
-        system_instruction, user_prompt = self.prompt_provider.get_inventory_prompt(
+        system_instruction, user_prompt = self.prompt_provider.get_prompt(
+            PromptKey.ATOMIC_INVENTORY,
             compendium_title=compendium.title.value,
             channel_name=compendium.channel_name,
             compendium_body=compendium.body,
@@ -176,7 +178,8 @@ class DiscoverAtomicInventoryUseCase:
             # Gate 1: Deterministic Guardrail (0 tokens / 0ms)
             if is_valid_inventory_json_structure(candidate_data):
                 # Gate 2: Semantic LLM-as-a-Judge Evaluation (temperature=0.0)
-                judge_sys, judge_prompt = self.prompt_provider.get_judge_inventory_prompt(
+                judge_sys, judge_prompt = self.prompt_provider.get_prompt(
+                    PromptKey.JUDGE_ATOMIC_INVENTORY,
                     compendium_title=compendium.title.value,
                     channel_name=compendium.channel_name,
                     compendium_body=compendium.body,

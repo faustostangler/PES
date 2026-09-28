@@ -34,6 +34,7 @@ from cresmo.domain.value_objects import (
     CrossContextRelations,
     NoteTitle,
     NoteType,
+    PromptKey,
 )
 
 # Honorific prefixes stripped during entity normalization to prevent duplicate notes
@@ -140,7 +141,8 @@ class SynthesizeAtomicBatchUseCase:
             ]
 
             # Step 2a: Prompt LLM for structured JSON definitions, causal matrices, and relations.
-            system_instruction, user_prompt = self.prompt_provider.get_batch_notes_prompt(
+            system_instruction, user_prompt = self.prompt_provider.get_prompt(
+                PromptKey.ATOMIC_BATCH,
                 compendium_title=compendium.title.value,
                 channel_name=compendium.channel_name,
                 compendium_body=compendium.body,

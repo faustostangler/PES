@@ -12,22 +12,8 @@ Conforms to:
 from __future__ import annotations
 
 from dataclasses import dataclass
-from enum import StrEnum
 
-
-class PromptKey(StrEnum):
-    """Canonical enumeration of all prompt template identifiers across Cresmo."""
-
-    GAP_FILLER_PASS1 = "gap_filler_pass1"
-    GAP_FILLER_PASS_SUBSEQUENT = "gap_filler_pass_subsequent"
-    LONG_EXPANDER = "long_expander"
-    WIDE_EXPANDER = "wide_expander"
-    ATOMIC_INVENTORY = "atomic_inventory"
-    JUDGE_ATOMIC_INVENTORY = "judge_atomic_inventory"
-    ATOMIC_BATCH = "atomic_batch"
-    RECONCILE_MOCS = "reconcile_mocs"
-    RAW_INDEX_SUMMARY = "raw_index_summary"
-    RAW_INDEX_CONCEPTS = "raw_index_concepts"
+from cresmo.domain.value_objects import PromptKey
 
 
 @dataclass(frozen=True)
@@ -107,6 +93,36 @@ PROMPT_REGISTRY: dict[PromptKey, PromptMetadata] = {
         langfuse_name="cresmo-raw-index-concepts",
         skill_name="cresmo",
         description="Canonical domain concept extraction for raw transcripts lake indexing.",
+    ),
+    PromptKey.RAW_INDEX_CONCEPTS_REWRITE: PromptMetadata(
+        key=PromptKey.RAW_INDEX_CONCEPTS_REWRITE,
+        langfuse_name="cresmo-raw-index-concepts-rewrite",
+        skill_name="cresmo",
+        description="Corrective rewrite prompt when key concepts violate format or syntax rules.",
+    ),
+    PromptKey.RAW_INDEX_SYNTHESIS: PromptMetadata(
+        key=PromptKey.RAW_INDEX_SYNTHESIS,
+        langfuse_name="cresmo-raw-index-synthesis",
+        skill_name="cresmo",
+        description="Dense paratactic synthesis paragraph generation for raw transcript indexing.",
+    ),
+    PromptKey.JUDGE_RAW_INDEX_SUMMARY: PromptMetadata(
+        key=PromptKey.JUDGE_RAW_INDEX_SUMMARY,
+        langfuse_name="cresmo-judge-raw-index-summary",
+        skill_name="cresmo",
+        description="LLM-as-a-judge summary compliance and quality verification.",
+    ),
+    PromptKey.JUDGE_RAW_INDEX_CONCEPTS: PromptMetadata(
+        key=PromptKey.JUDGE_RAW_INDEX_CONCEPTS,
+        langfuse_name="cresmo-judge-raw-index-concepts",
+        skill_name="cresmo",
+        description="LLM-as-a-judge concepts compliance and delimiter verification.",
+    ),
+    PromptKey.JUDGE_RAW_INDEX_SYNTHESIS: PromptMetadata(
+        key=PromptKey.JUDGE_RAW_INDEX_SYNTHESIS,
+        langfuse_name="cresmo-judge-raw-index-synthesis",
+        skill_name="cresmo",
+        description="LLM-as-a-judge synthesis compliance and parataxis verification.",
     ),
 }
 

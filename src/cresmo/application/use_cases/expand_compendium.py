@@ -25,6 +25,7 @@ from cresmo.domain.entities import (
     PipelineSessionId,
 )
 from cresmo.domain.exceptions import CompendiumStructureError
+from cresmo.domain.value_objects import PromptKey
 
 _COMPLEMENTARY_TAG = "## Informações Complementares"
 # Resilient regex matching variations of the mandatory complementary section header
@@ -81,7 +82,8 @@ class ExpandCompendiumUseCase:
         session_id = PipelineSessionId.create(compendium.channel_name, compendium.content_id).value
         user_id = ChannelTenantId.create(compendium.channel_name).value
 
-        long_sys, long_user = self.prompt_provider.get_long_expander_prompt(
+        long_sys, long_user = self.prompt_provider.get_prompt(
+            PromptKey.LONG_EXPANDER,
             compendium_body=compendium.body,
             complementary_info=compendium.complementary_info,
         )
@@ -94,7 +96,8 @@ class ExpandCompendiumUseCase:
             user_id=user_id,
         )
 
-        wide_sys, wide_user = self.prompt_provider.get_wide_expander_prompt(
+        wide_sys, wide_user = self.prompt_provider.get_prompt(
+            PromptKey.WIDE_EXPANDER,
             current_text=longitudinal_expansion,
         )
         synchronic_expansion = self.llm_synthesis_port.transform(

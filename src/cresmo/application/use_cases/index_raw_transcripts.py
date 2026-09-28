@@ -25,6 +25,7 @@ from cresmo.domain.value_objects import (
     ChannelName,
     ContentId,
     NoteTitle,
+    PromptKey,
     RawIndexEntry,
     is_processable_transcript_file,
 )
@@ -338,7 +339,8 @@ class IndexRawTranscriptsUseCase:
         Returns:
             Sanitized comma-separated concepts string, falling back to 'Síntese Conceitual'.
         """
-        system_instructions, user_prompt = self.prompt_provider.get_raw_index_concepts_prompt(
+        system_instructions, user_prompt = self.prompt_provider.get_prompt(
+            PromptKey.RAW_INDEX_CONCEPTS,
             video_title=title,
             transcript_excerpt=text,
             language=self.language,
@@ -362,7 +364,8 @@ class IndexRawTranscriptsUseCase:
                     retries,
                     video_id,
                 )
-                prompt = self.prompt_provider.get_raw_index_concepts_rewrite_prompt(
+                _, prompt = self.prompt_provider.get_prompt(
+                    PromptKey.RAW_INDEX_CONCEPTS_REWRITE,
                     previous_output=raw_concepts,
                     language=self.language,
                 )
@@ -379,13 +382,12 @@ class IndexRawTranscriptsUseCase:
             )
 
             if is_valid_concepts_output(raw_concepts):
-                judge_system_instructions, judge_prompt = (
-                    self.prompt_provider.get_judge_raw_index_concepts_prompt(
-                        video_title=title,
-                        transcript_excerpt=text,
-                        concepts=raw_concepts,
-                        language=self.language,
-                    )
+                judge_system_instructions, judge_prompt = self.prompt_provider.get_prompt(
+                    PromptKey.JUDGE_RAW_INDEX_CONCEPTS,
+                    video_title=title,
+                    transcript_excerpt=text,
+                    concepts=raw_concepts,
+                    language=self.language,
                 )
                 judge_response = self.llm_indexing_port.transform(
                     prompt=judge_prompt,
@@ -425,7 +427,8 @@ class IndexRawTranscriptsUseCase:
         Returns:
             Sanitized summary string, falling back to title.
         """
-        system_instructions, user_prompt = self.prompt_provider.get_raw_index_summary_prompt(
+        system_instructions, user_prompt = self.prompt_provider.get_prompt(
+            PromptKey.RAW_INDEX_SUMMARY,
             video_title=title,
             transcript_excerpt=text,
             language=self.language,
@@ -465,13 +468,12 @@ class IndexRawTranscriptsUseCase:
             )
             summary = _clean_text_line(raw_summary) or title
 
-            judge_system_instructions, judge_prompt = (
-                self.prompt_provider.get_judge_raw_index_summary_prompt(
-                    video_title=title,
-                    transcript_excerpt=text,
-                    summary=summary,
-                    language=self.language,
-                )
+            judge_system_instructions, judge_prompt = self.prompt_provider.get_prompt(
+                PromptKey.JUDGE_RAW_INDEX_SUMMARY,
+                video_title=title,
+                transcript_excerpt=text,
+                summary=summary,
+                language=self.language,
             )
             judge_response = self.llm_indexing_port.transform(
                 prompt=judge_prompt,
@@ -510,7 +512,8 @@ class IndexRawTranscriptsUseCase:
         Returns:
             Sanitized single paratactic synthesis paragraph, falling back to summary or title.
         """
-        system_instructions, user_prompt = self.prompt_provider.get_raw_index_synthesis_prompt(
+        system_instructions, user_prompt = self.prompt_provider.get_prompt(
+            PromptKey.RAW_INDEX_SYNTHESIS,
             video_title=title,
             summary=summary,
             language=self.language,
@@ -551,13 +554,12 @@ class IndexRawTranscriptsUseCase:
             synthesis = _clean_text_line(raw_synthesis)
 
             if is_valid_synthesis_paragraph(synthesis):
-                judge_system_instructions, judge_prompt = (
-                    self.prompt_provider.get_judge_raw_index_synthesis_prompt(
-                        video_title=title,
-                        transcript_excerpt=excerpt,
-                        synthesis=synthesis,
-                        language=self.language,
-                    )
+                judge_system_instructions, judge_prompt = self.prompt_provider.get_prompt(
+                    PromptKey.JUDGE_RAW_INDEX_SYNTHESIS,
+                    video_title=title,
+                    transcript_excerpt=excerpt,
+                    synthesis=synthesis,
+                    language=self.language,
                 )
                 judge_response = self.llm_indexing_port.transform(
                     prompt=judge_prompt,

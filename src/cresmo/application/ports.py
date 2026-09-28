@@ -35,6 +35,7 @@ from cresmo.domain.value_objects import (
     DiscoveredMediaItem,
     LedgerEntry,
     NoteTitle,
+    PromptKey,
     RawIndexEntry,
 )
 
@@ -451,475 +452,213 @@ class LedgerRepositoryPort(ABC):
 class PromptProviderPort(ABC):
     """Hexagonal Port for loading decoupled LLM prompt templates and skill specifications.
 
-    Conforms to ADR-001 and EVAL-001. Separates raw prompt templates from use cases,
-    enabling versioning, prompt mutation testing, and multi-model configuration.
+    Conforms to ADR-001, ADR-017, and ADR-022. Separates raw prompt templates from use cases,
+    enabling versioning, prompt mutation testing, and multi-model configuration via a unified
+    dispatcher keyed by canonical PromptKey.
     """
 
     @abstractmethod
-    def get_gap_filler_prompt(
+    def get_prompt(
         self,
-        pass_num: int,
-        total_passes: int,
-        channel_name: ChannelName,
-        file_name: str,
-        raw_text: str,
-        current_text: str | None = None,
+        key: PromptKey,
+        **context: Any,
     ) -> tuple[str, str]:
-        """Format (system_instruction, user_prompt) for Socratic gap filling.
+        """Dispatch prompt resolution by canonical PromptKey.
 
         Args:
-            pass_num: 1-based current enrichment pass.
-            total_passes: Total passes configured.
-            channel_name: Creator channel name.
-            file_name: Source file name for context tracking.
-            raw_text: Verbatim ground truth transcript.
-            current_text: Previous pass text (populated for pass >= 2).
+            key: Canonical prompt identifier from registry.
+            **context: Template variable substitutions (prompt-specific kwargs).
 
         Returns:
-            Tuple containing system instruction and user prompt string.
+            Tuple containing (system_instruction, user_prompt).
         """
-        raise NotImplementedError
+        raise NotImplementedError("Implement prompt dispatch contract.")
 
-    @abstractmethod
-    def get_long_expander_prompt(
-        self,
-        compendium_body: str,
-        complementary_info: str,
-    ) -> tuple[str, str]:
-        """Format (system_instruction, user_prompt) for Braudelian longitudinal expansion.
+    def get_last_prompt_version(self, prompt_name: str) -> Any | None:
+        """Return the last resolved version for a given prompt identifier.
 
-        Args:
-            compendium_body: Continuous fluid prose from fluid prose expansion.
-            complementary_info: Section text containing dates, context, and secondary details.
-
-        Returns:
-            Tuple containing system instruction and user prompt string.
+        Default implementation returns None for providers that do not track versions.
         """
-        raise NotImplementedError
-
-    @abstractmethod
-    def get_wide_expander_prompt(
-        self,
-        current_text: str,
-    ) -> tuple[str, str]:
-        """Format (system_instruction, user_prompt) for Jaspers synchronic wide expansion.
-
-        Args:
-            current_text: Longitudinally enriched Markdown prose.
-
-        Returns:
-            Tuple containing system instruction and user prompt string.
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def get_inventory_prompt(
-        self,
-        compendium_title: str,
-        channel_name: ChannelName,
-        compendium_body: str,
-    ) -> tuple[str, str]:
-        """Format (system_instruction, user_prompt) for atomic inventory extraction.
-
-        Args:
-            compendium_title: Compendium title string.
-            channel_name: Creator channel name.
-            compendium_body: Complete enriched prose text.
-
-        Returns:
-            Tuple containing system instruction and user prompt string.
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def get_judge_inventory_prompt(
-        self,
-        compendium_title: str,
-        channel_name: ChannelName | str,
-        compendium_body: str,
-        inventory_json: str,
-    ) -> tuple[str, str]:
-        """Format (system_instruction, user_prompt) for atomic inventory LLM-as-a-judge verification.
-
-        Args:
-            compendium_title: Compendium title string.
-            channel_name: Creator channel name.
-            compendium_body: Complete enriched prose text.
-            inventory_json: Candidate extracted inventory JSON array string.
-
-        Returns:
-            Tuple containing system instruction and user prompt string.
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def get_batch_notes_prompt(
-        self,
-        compendium_title: str,
-        channel_name: ChannelName,
-        compendium_body: str,
-        targets_json: str,
-    ) -> tuple[str, str]:
-        """Format (system_instruction, user_prompt) for atomic note batch synthesis.
-
-        Args:
-            compendium_title: Compendium title string.
-            channel_name: Creator channel name.
-            compendium_body: Complete enriched prose text.
-            targets_json: JSON string with target entities to synthesize.
-
-        Returns:
-            Tuple containing system instruction and user prompt string.
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def get_mocs_prompt(
-        self,
-        notes_json: str,
-    ) -> tuple[str, str]:
-        """Format (system_instruction, user_prompt) for MOC reconciliation.
-
-        Args:
-            notes_json: JSON string of synthesized atomic notes.
-
-        Returns:
-            Tuple containing system instruction and user prompt string.
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def get_raw_index_summary_prompt(
-        self,
-        video_title: str,
-        transcript_excerpt: str,
-        language: str = "Português do Brasil",
-    ) -> tuple[str, str]:
-        """Format (system_instruction, user_prompt) for Pass 1 raw transcript summarization.
-
-        Args:
-            video_title: Raw video title string.
-            transcript_excerpt: First N characters of raw spoken transcript.
-            language: Target synthesis language.
-
-        Returns:
-            Tuple containing system instruction and user prompt string.
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def get_raw_index_concepts_prompt(
-        self,
-        video_title: str,
-        transcript_excerpt: str,
-        language: str = "Português do Brasil",
-    ) -> tuple[str, str]:
-        """Format (system_instruction, user_prompt) for key concepts extraction from raw transcript.
-
-        Args:
-            video_title: Raw video title string.
-            transcript_excerpt: First N characters of raw spoken transcript.
-            language: Target synthesis language.
-
-        Returns:
-            Tuple containing system instruction and user prompt string.
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def get_raw_index_concepts_rewrite_prompt(
-        self,
-        previous_output: str,
-        language: str = "Português do Brasil",
-    ) -> str:
-        """Format corrective rewrite prompt when key concepts extraction violates format rules.
-
-        Args:
-            previous_output: Verbatim output from previous LLM attempt.
-            language: Target natural language for rewrite.
-
-        Returns:
-            Formatted rewrite prompt string.
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def get_raw_index_synthesis_prompt(
-        self,
-        video_title: str,
-        summary: str,
-        language: str = "Português do Brasil",
-    ) -> tuple[str, str]:
-        """Format (system_instruction, user_prompt) for dense paratactic synthesis paragraph.
-
-        Args:
-            video_title: Raw video title string.
-            summary: Organized conceptual summary of the content.
-            language: Target synthesis language.
-
-        Returns:
-            Tuple containing system instruction and user prompt string.
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def get_judge_raw_index_summary_prompt(
-        self,
-        video_title: str,
-        transcript_excerpt: str,
-        summary: str,
-        language: str = "Português do Brasil",
-    ) -> tuple[str, str]:
-        """Format (system_instruction, user_prompt) for LLM-as-a-judge summary compliance verification.
-
-        Args:
-            video_title: Raw video title string.
-            transcript_excerpt: First N characters of raw spoken transcript.
-            summary: Candidate summary produced in Pass 1.
-            language: Target evaluation language.
-
-        Returns:
-            Tuple containing system instruction and user prompt string.
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def get_judge_raw_index_concepts_prompt(
-        self,
-        video_title: str,
-        transcript_excerpt: str,
-        concepts: str,
-        language: str = "Português do Brasil",
-    ) -> tuple[str, str]:
-        """Format (system_instruction, user_prompt) for LLM-as-a-judge concepts compliance verification.
-
-        Args:
-            video_title: Raw video title string.
-            transcript_excerpt: First N characters of raw spoken transcript.
-            concepts: Candidate comma-separated concepts.
-            language: Target evaluation language.
-
-        Returns:
-            Tuple containing system instruction and user prompt string.
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def get_judge_raw_index_synthesis_prompt(
-        self,
-        video_title: str,
-        transcript_excerpt: str,
-        synthesis: str,
-        language: str = "Português do Brasil",
-    ) -> tuple[str, str]:
-        """Format (system_instruction, user_prompt) for LLM-as-a-judge synthesis compliance verification.
-
-        Args:
-            video_title: Raw video title string.
-            transcript_excerpt: First N characters of raw spoken transcript.
-            synthesis: Candidate single-paragraph synthesis.
-            language: Target evaluation language.
-
-        Returns:
-            Tuple containing system instruction and user prompt string.
-        """
-        raise NotImplementedError
+        return None
 
 
 class NoOpPromptProviderPort(PromptProviderPort):
     """Hermetic Null-Object implementation of PromptProviderPort for testing and fallback."""
 
-    def get_gap_filler_prompt(
+    def get_prompt(
         self,
-        pass_num: int,
-        total_passes: int,
-        channel_name: ChannelName,
-        file_name: str,
-        raw_text: str,
-        current_text: str | None = None,
+        key: PromptKey,
+        **context: Any,
     ) -> tuple[str, str]:
         """Format basic system and user prompts without external template dependencies."""
-        system_instruction = f"You are Cresmo Expander. Enrich transcript for {channel_name}."
-        if current_text:
-            user_prompt = (
-                f"Pass {pass_num} of {total_passes} for {channel_name} (file: {file_name}):\n"
-                f"Raw transcript: {raw_text}\n"
-                f"Current text:\n{current_text}"
-            )
-        else:
-            user_prompt = (
-                f"Pass {pass_num} of {total_passes} for {channel_name} (file: {file_name}):\n"
-                f"Raw transcript:\n{raw_text}"
-            )
-        return system_instruction, user_prompt
+        match key:
+            case PromptKey.GAP_FILLER_PASS1:
+                channel_name = context.get("channel_name", "")
+                file_name = context.get("file_name", "")
+                raw_text = context.get("raw_text", "")
+                total_passes = context.get("total_passes", 1)
+                system_instruction = (
+                    f"You are Cresmo Expander. Enrich transcript for {channel_name}."
+                )
+                user_prompt = (
+                    f"Pass 1 of {total_passes} for {channel_name} (file: {file_name}):\n"
+                    f"Raw transcript:\n{raw_text}"
+                )
+                return system_instruction, user_prompt
 
-    def get_long_expander_prompt(
-        self,
-        compendium_body: str,
-        complementary_info: str,
-    ) -> tuple[str, str]:
-        """Format basic longitudinal expansion prompt."""
-        system_instruction = "You are Cresmo Long-Expander."
-        user_prompt = (
-            "Take the following enriched Markdown document and apply longitudinal analysis:\n\n"
-            f"{compendium_body}\n\n"
-            f"## Informações Complementares\n{complementary_info}"
-        )
-        return system_instruction, user_prompt
+            case PromptKey.GAP_FILLER_PASS_SUBSEQUENT:
+                channel_name = context.get("channel_name", "")
+                file_name = context.get("file_name", "")
+                raw_text = context.get("raw_text", "")
+                current_text = context.get("current_text", "")
+                pass_num = context.get("pass_num", 2)
+                total_passes = context.get("total_passes", 2)
+                system_instruction = (
+                    f"You are Cresmo Expander. Enrich transcript for {channel_name}."
+                )
+                user_prompt = (
+                    f"Pass {pass_num} of {total_passes} for {channel_name} (file: {file_name}):\n"
+                    f"Raw transcript: {raw_text}\n"
+                    f"Current text:\n{current_text}"
+                )
+                return system_instruction, user_prompt
 
-    def get_wide_expander_prompt(
-        self,
-        current_text: str,
-    ) -> tuple[str, str]:
-        """Format basic wide synchronic expansion prompt."""
-        system_instruction = "You are Cresmo Wide-Expander."
-        user_prompt = (
-            "Take the following longitudinally expanded Markdown document and apply synchronic wide expansion:\n\n"
-            f"{current_text}"
-        )
-        return system_instruction, user_prompt
+            case PromptKey.LONG_EXPANDER:
+                compendium_body = context.get("compendium_body", "")
+                complementary_info = context.get("complementary_info", "")
+                system_instruction = "You are Cresmo Long-Expander."
+                user_prompt = (
+                    "Take the following enriched Markdown document and apply longitudinal analysis:\n\n"
+                    f"{compendium_body}\n\n"
+                    f"## Informações Complementares\n{complementary_info}"
+                )
+                return system_instruction, user_prompt
 
-    def get_inventory_prompt(
-        self,
-        compendium_title: str,
-        channel_name: ChannelName,
-        compendium_body: str,
-    ) -> tuple[str, str]:
-        """Format basic atomic inventory extraction prompt."""
-        system_instruction = "You are Cresmo Atomic Inventory Specialist (cresmo-atomic)."
-        user_prompt = (
-            f"Source Compendium Title: {compendium_title}\n"
-            f"Source Channel: {channel_name}\n\n"
-            f"Source Context:\n{compendium_body}\n\n"
-            'Output strictly a JSON array of candidate entities: [{"title": "...", "type": "entity|concept|event|process"}]'
-        )
-        return system_instruction, user_prompt
+            case PromptKey.WIDE_EXPANDER:
+                current_text = context.get("current_text", "")
+                system_instruction = "You are Cresmo Wide-Expander."
+                user_prompt = (
+                    "Take the following longitudinally expanded Markdown document and apply synchronic wide expansion:\n\n"
+                    f"{current_text}"
+                )
+                return system_instruction, user_prompt
 
-    def get_judge_inventory_prompt(
-        self,
-        compendium_title: str,
-        channel_name: ChannelName | str,
-        compendium_body: str,
-        inventory_json: str,
-    ) -> tuple[str, str]:
-        """Format basic atomic inventory judge prompt."""
-        system_instruction = "You are an impartial evaluator assessing candidate entity extraction. Respond strictly with 'true' or 'false'."
-        user_prompt = (
-            f"Compendium Title: {compendium_title}\n"
-            f"Channel: {channel_name}\n\n"
-            f"Context:\n{compendium_body}\n\n"
-            f"Candidate Inventory:\n{inventory_json}\n\n"
-            "Does the candidate inventory strictly satisfy all ontological, factual, and typographical criteria? Respond ONLY with 'true' or 'false'."
-        )
-        return system_instruction, user_prompt
+            case PromptKey.ATOMIC_INVENTORY:
+                compendium_title = context.get("compendium_title", "")
+                channel_name = context.get("channel_name", "")
+                compendium_body = context.get("compendium_body", "")
+                system_instruction = "You are Cresmo Atomic Inventory Specialist (cresmo-atomic)."
+                user_prompt = (
+                    f"Source Compendium Title: {compendium_title}\n"
+                    f"Source Channel: {channel_name}\n\n"
+                    f"Source Context:\n{compendium_body}\n\n"
+                    'Output strictly a JSON array of candidate entities: [{"title": "...", "type": "entity|concept|event|process"}]'
+                )
+                return system_instruction, user_prompt
 
-    def get_batch_notes_prompt(
-        self,
-        compendium_title: str,
-        channel_name: ChannelName,
-        compendium_body: str,
-        targets_json: str,
-    ) -> tuple[str, str]:
-        """Format basic batch notes synthesis prompt."""
-        system_instruction = "You are Cresmo Atomic Note Synthesizer (cresmo-atomic)."
-        user_prompt = (
-            f"Source Compendium Title: {compendium_title}\n"
-            f"Source Channel: {channel_name}\n\n"
-            f"Source Context:\n{compendium_body}\n\n"
-            f"Target Entities to Synthesize in this batch:\n{targets_json}\n\n"
-            "Output strictly a JSON array of note objects."
-        )
-        return system_instruction, user_prompt
+            case PromptKey.JUDGE_ATOMIC_INVENTORY:
+                compendium_title = context.get("compendium_title", "")
+                channel_name = context.get("channel_name", "")
+                compendium_body = context.get("compendium_body", "")
+                inventory_json = context.get("inventory_json", "")
+                system_instruction = (
+                    "You are an impartial evaluator assessing candidate entity extraction. "
+                    "Respond strictly with 'true' or 'false'."
+                )
+                user_prompt = (
+                    f"Compendium Title: {compendium_title}\n"
+                    f"Channel: {channel_name}\n\n"
+                    f"Context:\n{compendium_body}\n\n"
+                    f"Candidate Inventory:\n{inventory_json}\n\n"
+                    "Does the candidate inventory strictly satisfy all ontological, factual, and typographical criteria? "
+                    "Respond ONLY with 'true' or 'false'."
+                )
+                return system_instruction, user_prompt
 
-    def get_mocs_prompt(
-        self,
-        notes_json: str,
-    ) -> tuple[str, str]:
-        """Format basic MOC reconciliation prompt."""
-        system_instruction = "You are Cresmo MOC Manager (cresmo-moc-manager)."
-        user_prompt = (
-            f"Atomic Notes in Vault:\n{notes_json}\n\nOutput strictly a JSON array of MOC objects."
-        )
-        return system_instruction, user_prompt
+            case PromptKey.ATOMIC_BATCH:
+                compendium_title = context.get("compendium_title", "")
+                channel_name = context.get("channel_name", "")
+                compendium_body = context.get("compendium_body", "")
+                targets_json = context.get("targets_json", "")
+                system_instruction = "You are Cresmo Atomic Note Synthesizer (cresmo-atomic)."
+                user_prompt = (
+                    f"Source Compendium Title: {compendium_title}\n"
+                    f"Source Channel: {channel_name}\n\n"
+                    f"Source Context:\n{compendium_body}\n\n"
+                    f"Target Entities to Synthesize in this batch:\n{targets_json}\n\n"
+                    "Output strictly a JSON array of note objects."
+                )
+                return system_instruction, user_prompt
 
-    def get_raw_index_summary_prompt(
-        self,
-        video_title: str,
-        transcript_excerpt: str,
-        language: str = "Português do Brasil",
-    ) -> tuple[str, str]:
-        """Format basic raw index summary prompt."""
-        system_instruction = f"You are Cresmo Indexer. Language: {language}."
-        user_prompt = f"Video Title: {video_title}\nExcerpt:\n{transcript_excerpt}"
-        return system_instruction, user_prompt
+            case PromptKey.RECONCILE_MOCS:
+                notes_json = context.get("notes_json", "")
+                system_instruction = "You are Cresmo MOC Manager (cresmo-moc-manager)."
+                user_prompt = f"Atomic Notes in Vault:\n{notes_json}\n\nOutput strictly a JSON array of MOC objects."
+                return system_instruction, user_prompt
 
-    def get_raw_index_concepts_prompt(
-        self,
-        video_title: str,
-        transcript_excerpt: str,
-        language: str = "Português do Brasil",
-    ) -> tuple[str, str]:
-        """Format basic raw index concepts prompt."""
-        system_instruction = f"You are Cresmo Concept Extractor. Language: {language}."
-        user_prompt = f"Video Title: {video_title}\nExcerpt:\n{transcript_excerpt}"
-        return system_instruction, user_prompt
+            case PromptKey.RAW_INDEX_SUMMARY:
+                video_title = context.get("video_title", "")
+                transcript_excerpt = context.get("transcript_excerpt", "")
+                language = context.get("language", "Português do Brasil")
+                system_instruction = f"You are Cresmo Indexer. Language: {language}."
+                user_prompt = f"Video Title: {video_title}\nExcerpt:\n{transcript_excerpt}"
+                return system_instruction, user_prompt
 
-    def get_raw_index_concepts_rewrite_prompt(
-        self,
-        previous_output: str,
-        language: str = "Português do Brasil",
-    ) -> str:
-        """Format basic concepts rewrite prompt."""
-        return f"Rewrite concepts conforming to rules: {previous_output}"
+            case PromptKey.RAW_INDEX_CONCEPTS:
+                video_title = context.get("video_title", "")
+                transcript_excerpt = context.get("transcript_excerpt", "")
+                language = context.get("language", "Português do Brasil")
+                system_instruction = f"You are Cresmo Concept Extractor. Language: {language}."
+                user_prompt = f"Video Title: {video_title}\nExcerpt:\n{transcript_excerpt}"
+                return system_instruction, user_prompt
 
-    def get_raw_index_synthesis_prompt(
-        self,
-        video_title: str,
-        summary: str,
-        language: str = "Português do Brasil",
-    ) -> tuple[str, str]:
-        """Format basic raw index synthesis prompt."""
-        system_instruction = f"You are Cresmo Synthesizer. Language: {language}."
-        user_prompt = f"Video Title: {video_title}\nSummary:\n{summary}"
-        return system_instruction, user_prompt
+            case PromptKey.RAW_INDEX_CONCEPTS_REWRITE:
+                previous_output = context.get("previous_output", "")
+                return "", f"Rewrite concepts conforming to rules: {previous_output}"
 
-    def get_judge_raw_index_summary_prompt(
-        self,
-        video_title: str,
-        transcript_excerpt: str,
-        summary: str,
-        language: str = "Português do Brasil",
-    ) -> tuple[str, str]:
-        """Format basic judge raw index summary prompt."""
-        system_instruction = f"You are Judge. Language: {language}."
-        user_prompt = f"Title: {video_title}\nExcerpt:\n{transcript_excerpt}\nSummary:\n{summary}"
-        return system_instruction, user_prompt
+            case PromptKey.RAW_INDEX_SYNTHESIS:
+                video_title = context.get("video_title", "")
+                summary = context.get("summary", "")
+                language = context.get("language", "Português do Brasil")
+                system_instruction = f"You are Cresmo Synthesizer. Language: {language}."
+                user_prompt = f"Video Title: {video_title}\nSummary:\n{summary}"
+                return system_instruction, user_prompt
 
-    def get_judge_raw_index_concepts_prompt(
-        self,
-        video_title: str,
-        transcript_excerpt: str,
-        concepts: str,
-        language: str = "Português do Brasil",
-    ) -> tuple[str, str]:
-        """Format basic judge raw index concepts prompt."""
-        system_instruction = f"You are Judge. Language: {language}."
-        user_prompt = f"Title: {video_title}\nExcerpt:\n{transcript_excerpt}\nConcepts:\n{concepts}"
-        return system_instruction, user_prompt
+            case PromptKey.JUDGE_RAW_INDEX_SUMMARY:
+                video_title = context.get("video_title", "")
+                transcript_excerpt = context.get("transcript_excerpt", "")
+                summary = context.get("summary", "")
+                language = context.get("language", "Português do Brasil")
+                system_instruction = f"You are Judge. Language: {language}."
+                user_prompt = (
+                    f"Title: {video_title}\nExcerpt:\n{transcript_excerpt}\nSummary:\n{summary}"
+                )
+                return system_instruction, user_prompt
 
-    def get_judge_raw_index_synthesis_prompt(
-        self,
-        video_title: str,
-        transcript_excerpt: str,
-        synthesis: str,
-        language: str = "Português do Brasil",
-    ) -> tuple[str, str]:
-        """Format basic judge raw index synthesis prompt."""
-        system_instruction = f"You are Judge. Language: {language}."
-        user_prompt = (
-            f"Title: {video_title}\nExcerpt:\n{transcript_excerpt}\nSynthesis:\n{synthesis}"
-        )
-        return system_instruction, user_prompt
+            case PromptKey.JUDGE_RAW_INDEX_CONCEPTS:
+                video_title = context.get("video_title", "")
+                transcript_excerpt = context.get("transcript_excerpt", "")
+                concepts = context.get("concepts", "")
+                language = context.get("language", "Português do Brasil")
+                system_instruction = f"You are Judge. Language: {language}."
+                user_prompt = (
+                    f"Title: {video_title}\nExcerpt:\n{transcript_excerpt}\nConcepts:\n{concepts}"
+                )
+                return system_instruction, user_prompt
+
+            case PromptKey.JUDGE_RAW_INDEX_SYNTHESIS:
+                video_title = context.get("video_title", "")
+                transcript_excerpt = context.get("transcript_excerpt", "")
+                synthesis = context.get("synthesis", "")
+                language = context.get("language", "Português do Brasil")
+                system_instruction = f"You are Judge. Language: {language}."
+                user_prompt = (
+                    f"Title: {video_title}\nExcerpt:\n{transcript_excerpt}\nSynthesis:\n{synthesis}"
+                )
+                return system_instruction, user_prompt
+
+            case _:
+                raise ValueError(f"Unsupported prompt key: {key}")
 
 
 class TelemetryPort(ABC):

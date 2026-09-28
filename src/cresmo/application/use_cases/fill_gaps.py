@@ -25,7 +25,7 @@ from cresmo.domain.entities import (
     RawTranscript,
 )
 from cresmo.domain.exceptions import CompendiumStructureError
-from cresmo.domain.value_objects import NoteTitle
+from cresmo.domain.value_objects import NoteTitle, PromptKey
 
 # Extracts title from markdown H1 header
 _TITLE_H1_PATTERN = re.compile(r"^\s*#\s+(.+)$", re.MULTILINE)
@@ -91,7 +91,13 @@ class FillGapsUseCase:
         user_id = ChannelTenantId.create(raw_transcript.channel_name).value
 
         for pass_index in range(passes):
-            system_instruction, user_prompt = self.prompt_provider.get_gap_filler_prompt(
+            prompt_key = (
+                PromptKey.GAP_FILLER_PASS1
+                if pass_index == 0
+                else PromptKey.GAP_FILLER_PASS_SUBSEQUENT
+            )
+            system_instruction, user_prompt = self.prompt_provider.get_prompt(
+                prompt_key,
                 pass_num=pass_index + 1,
                 total_passes=passes,
                 channel_name=raw_transcript.channel_name,

@@ -155,50 +155,143 @@ class JsonPromptProvider(PromptProviderPort):
 
         return tpl.replace("{task}", task).replace("{skill_block}", skill_block)
 
-    def get_gap_filler_prompt(
+    def get_prompt(
         self,
-        pass_num: int,
-        total_passes: int,
-        channel_name: ChannelName,
-        file_name: str,
-        raw_text: str,
-        current_text: str | None = None,
+        key: PromptKey,
+        **context: Any,
     ) -> tuple[str, str]:
-        """Format (system_instruction, user_prompt) for Socratic gap filling."""
-        key = (
-            PromptKey.GAP_FILLER_PASS1.value
-            if pass_num == 1
-            else PromptKey.GAP_FILLER_PASS_SUBSEQUENT.value
-        )
+        """Dispatch prompt formatting by canonical PromptKey.
+
+        Args:
+            key: Canonical PromptKey enum member.
+            **context: Template variable substitutions.
+
+        Returns:
+            Tuple containing (system_instruction, user_prompt).
+        """
+        match key:
+            case PromptKey.GAP_FILLER_PASS1:
+                return self._build_gap_filler_pass1(**context)
+            case PromptKey.GAP_FILLER_PASS_SUBSEQUENT:
+                return self._build_gap_filler_subsequent(**context)
+            case PromptKey.LONG_EXPANDER:
+                return self._build_long_expander(**context)
+            case PromptKey.WIDE_EXPANDER:
+                return self._build_wide_expander(**context)
+            case PromptKey.ATOMIC_INVENTORY:
+                return self._build_atomic_inventory(**context)
+            case PromptKey.JUDGE_ATOMIC_INVENTORY:
+                return self._build_judge_atomic_inventory(**context)
+            case PromptKey.ATOMIC_BATCH:
+                return self._build_atomic_batch(**context)
+            case PromptKey.RECONCILE_MOCS:
+                return self._build_reconcile_mocs(**context)
+            case PromptKey.RAW_INDEX_SUMMARY:
+                return self._format_paired_prompt(
+                    PromptKey.RAW_INDEX_SUMMARY.value,
+                    video_title=context.get("video_title", ""),
+                    transcript_excerpt=context.get("transcript_excerpt", ""),
+                    language=context.get("language", "Português do Brasil"),
+                )
+            case PromptKey.RAW_INDEX_CONCEPTS:
+                return self._format_paired_prompt(
+                    PromptKey.RAW_INDEX_CONCEPTS.value,
+                    video_title=context.get("video_title", ""),
+                    transcript_excerpt=context.get("transcript_excerpt", ""),
+                    language=context.get("language", "Português do Brasil"),
+                )
+            case PromptKey.RAW_INDEX_CONCEPTS_REWRITE:
+                lang = context.get("language", "Português do Brasil")
+                prompt_text = self._format_single_prompt(
+                    PromptKey.RAW_INDEX_CONCEPTS_REWRITE.value,
+                    previous_output=context.get("previous_output", ""),
+                    language=lang,
+                    language_upper=lang.upper(),
+                )
+                return "", prompt_text
+            case PromptKey.RAW_INDEX_SYNTHESIS:
+                return self._format_paired_prompt(
+                    PromptKey.RAW_INDEX_SYNTHESIS.value,
+                    video_title=context.get("video_title", ""),
+                    summary=context.get("summary", ""),
+                    language=context.get("language", "Português do Brasil"),
+                )
+            case PromptKey.JUDGE_RAW_INDEX_SUMMARY:
+                return self._format_paired_prompt(
+                    PromptKey.JUDGE_RAW_INDEX_SUMMARY.value,
+                    video_title=context.get("video_title", ""),
+                    transcript_excerpt=context.get("transcript_excerpt", ""),
+                    summary=context.get("summary", ""),
+                    language=context.get("language", "Português do Brasil"),
+                )
+            case PromptKey.JUDGE_RAW_INDEX_CONCEPTS:
+                return self._format_paired_prompt(
+                    PromptKey.JUDGE_RAW_INDEX_CONCEPTS.value,
+                    video_title=context.get("video_title", ""),
+                    transcript_excerpt=context.get("transcript_excerpt", ""),
+                    concepts=context.get("concepts", ""),
+                    language=context.get("language", "Português do Brasil"),
+                )
+            case PromptKey.JUDGE_RAW_INDEX_SYNTHESIS:
+                transcript_excerpt = context.get("transcript_excerpt", "")
+                return self._format_paired_prompt(
+                    PromptKey.JUDGE_RAW_INDEX_SYNTHESIS.value,
+                    video_title=context.get("video_title", ""),
+                    transcript_excerpt=transcript_excerpt,
+                    summary=transcript_excerpt,
+                    synthesis=context.get("synthesis", ""),
+                    language=context.get("language", "Português do Brasil"),
+                )
+            case _:
+                raise ValueError(f"Unsupported prompt key: {key}")
+
+    def _build_gap_filler_pass1(self, **context: Any) -> tuple[str, str]:
+        key = PromptKey.GAP_FILLER_PASS1.value
         entry = self._templates.get(key, {})
         task = entry.get("task", "")
         skill_name = entry.get("skill_name", "cresmo-expander")
         template = entry.get("template", "")
         system_template = entry.get("system_instruction", "")
         skill_block = self._get_skill_block(skill_name)
+        channel_name = context.get("channel_name", "")
+        file_name = context.get("file_name", "")
+        raw_text = context.get("raw_text", "")
+        total_passes = context.get("total_passes", 1)
 
-        if pass_num == 1:
-            if not template and not system_template:
-                sys_inst = f"{task}\n\n{skill_block}".strip()
-                user_p = (
-                    f"Source Channel: {channel_name}\n"
-                    f"File: {file_name}\n\n"
-                    f"Transcript:\n{raw_text}\n\n"
-                    "Transform into continuous fluid Markdown prose with analytical headings (## and ###) "
-                    "and mandatory '## Informações Complementares' section."
-                )
-                return sys_inst, user_p
-
-            return self._format_paired_prompt(
-                key,
-                total_passes=total_passes,
-                channel_name=channel_name,
-                file_name=file_name,
-                raw_text=raw_text,
+        if not template and not system_template:
+            sys_inst = f"{task}\n\n{skill_block}".strip()
+            user_p = (
+                f"Source Channel: {channel_name}\n"
+                f"File: {file_name}\n\n"
+                f"Transcript:\n{raw_text}\n\n"
+                "Transform into continuous fluid Markdown prose with analytical headings (## and ###) "
+                "and mandatory '## Informações Complementares' section."
             )
+            return sys_inst, user_p
 
-        # Subsequent passes (pass 2, 3, etc.)
+        return self._format_paired_prompt(
+            key,
+            total_passes=total_passes,
+            channel_name=channel_name,
+            file_name=file_name,
+            raw_text=raw_text,
+        )
+
+    def _build_gap_filler_subsequent(self, **context: Any) -> tuple[str, str]:
+        key = PromptKey.GAP_FILLER_PASS_SUBSEQUENT.value
+        entry = self._templates.get(key, {})
+        task = entry.get("task", "")
+        skill_name = entry.get("skill_name", "cresmo-expander")
+        template = entry.get("template", "")
+        system_template = entry.get("system_instruction", "")
+        skill_block = self._get_skill_block(skill_name)
+        pass_num = context.get("pass_num", 2)
+        total_passes = context.get("total_passes", 2)
+        channel_name = context.get("channel_name", "")
+        raw_text = context.get("raw_text", "")
+        current_text = context.get("current_text")
         prev_draft = current_text if current_text is not None else raw_text
+
         if not template and not system_template:
             sys_inst = f"{task}\n\n{skill_block}".strip()
             user_p = (
@@ -219,12 +312,7 @@ class JsonPromptProvider(PromptProviderPort):
             current_text=prev_draft,
         )
 
-    def get_long_expander_prompt(
-        self,
-        compendium_body: str,
-        complementary_info: str,
-    ) -> tuple[str, str]:
-        """Format (system_instruction, user_prompt) for Braudelian longitudinal expansion."""
+    def _build_long_expander(self, **context: Any) -> tuple[str, str]:
         key = PromptKey.LONG_EXPANDER.value
         entry = self._templates.get(key, {})
         task = entry.get("task", "")
@@ -232,6 +320,8 @@ class JsonPromptProvider(PromptProviderPort):
         template = entry.get("template", "")
         system_template = entry.get("system_instruction", "")
         skill_block = self._get_skill_block(skill_name)
+        compendium_body = context.get("compendium_body", "")
+        complementary_info = context.get("complementary_info", "")
 
         if not template and not system_template:
             sys_inst = f"{task}\n\n{skill_block}".strip()
@@ -247,11 +337,7 @@ class JsonPromptProvider(PromptProviderPort):
             complementary_info=complementary_info,
         )
 
-    def get_wide_expander_prompt(
-        self,
-        current_text: str,
-    ) -> tuple[str, str]:
-        """Format (system_instruction, user_prompt) for Jaspers synchronic wide expansion."""
+    def _build_wide_expander(self, **context: Any) -> tuple[str, str]:
         key = PromptKey.WIDE_EXPANDER.value
         entry = self._templates.get(key, {})
         task = entry.get("task", "")
@@ -259,6 +345,7 @@ class JsonPromptProvider(PromptProviderPort):
         template = entry.get("template", "")
         system_template = entry.get("system_instruction", "")
         skill_block = self._get_skill_block(skill_name)
+        current_text = context.get("current_text", "")
 
         if not template and not system_template:
             sys_inst = f"{task}\n\n{skill_block}".strip()
@@ -270,13 +357,7 @@ class JsonPromptProvider(PromptProviderPort):
             text=current_text,
         )
 
-    def get_inventory_prompt(
-        self,
-        compendium_title: str,
-        channel_name: ChannelName,
-        compendium_body: str,
-    ) -> tuple[str, str]:
-        """Format (system_instruction, user_prompt) for atomic inventory extraction."""
+    def _build_atomic_inventory(self, **context: Any) -> tuple[str, str]:
         key = PromptKey.ATOMIC_INVENTORY.value
         entry = self._templates.get(key, {})
         task = entry.get("task", "")
@@ -284,6 +365,9 @@ class JsonPromptProvider(PromptProviderPort):
         template = entry.get("template", "")
         system_template = entry.get("system_instruction", "")
         skill_block = self._get_skill_block(skill_name)
+        compendium_title = context.get("compendium_title", "")
+        channel_name = context.get("channel_name", "")
+        compendium_body = context.get("compendium_body", "")
 
         if not template and not system_template:
             sys_inst = f"{task}\n\n{skill_block}".strip()
@@ -302,31 +386,18 @@ class JsonPromptProvider(PromptProviderPort):
             compendium_body=compendium_body,
         )
 
-    def get_judge_inventory_prompt(
-        self,
-        compendium_title: str,
-        channel_name: ChannelName | str,
-        compendium_body: str,
-        inventory_json: str,
-    ) -> tuple[str, str]:
-        """Format (system_instruction, user_prompt) for atomic inventory LLM-as-a-judge verification."""
+    def _build_judge_atomic_inventory(self, **context: Any) -> tuple[str, str]:
+        channel_name = context.get("channel_name", "")
         ch_str = channel_name.value if isinstance(channel_name, ChannelName) else channel_name
         return self._format_paired_prompt(
             PromptKey.JUDGE_ATOMIC_INVENTORY.value,
-            compendium_title=compendium_title,
+            compendium_title=context.get("compendium_title", ""),
             channel_name=ch_str,
-            compendium_body=compendium_body,
-            inventory_json=inventory_json,
+            compendium_body=context.get("compendium_body", ""),
+            inventory_json=context.get("inventory_json", ""),
         )
 
-    def get_batch_notes_prompt(
-        self,
-        compendium_title: str,
-        channel_name: ChannelName,
-        compendium_body: str,
-        targets_json: str,
-    ) -> tuple[str, str]:
-        """Format (system_instruction, user_prompt) for atomic note batch synthesis."""
+    def _build_atomic_batch(self, **context: Any) -> tuple[str, str]:
         key = PromptKey.ATOMIC_BATCH.value
         entry = self._templates.get(key, {})
         task = entry.get("task", "")
@@ -334,6 +405,10 @@ class JsonPromptProvider(PromptProviderPort):
         template = entry.get("template", "")
         system_template = entry.get("system_instruction", "")
         skill_block = self._get_skill_block(skill_name)
+        compendium_title = context.get("compendium_title", "")
+        channel_name = context.get("channel_name", "")
+        compendium_body = context.get("compendium_body", "")
+        targets_json = context.get("targets_json", "")
 
         if not template and not system_template:
             sys_inst = f"{task}\n\n{skill_block}".strip()
@@ -354,11 +429,7 @@ class JsonPromptProvider(PromptProviderPort):
             targets_json=targets_json,
         )
 
-    def get_mocs_prompt(
-        self,
-        notes_json: str,
-    ) -> tuple[str, str]:
-        """Format (system_instruction, user_prompt) for MOC reconciliation."""
+    def _build_reconcile_mocs(self, **context: Any) -> tuple[str, str]:
         key = PromptKey.RECONCILE_MOCS.value
         entry = self._templates.get(key, {})
         task = entry.get("task", "")
@@ -366,6 +437,7 @@ class JsonPromptProvider(PromptProviderPort):
         template = entry.get("template", "")
         system_template = entry.get("system_instruction", "")
         skill_block = self._get_skill_block(skill_name)
+        notes_json = context.get("notes_json", "")
 
         if not template and not system_template:
             sys_inst = f"{task}\n\n{skill_block}".strip()
@@ -411,107 +483,3 @@ class JsonPromptProvider(PromptProviderPort):
         task = entry.get("task", "")
         template = entry.get("template", "")
         return self._safe_format(template, task=task, **kwargs)
-
-    def get_raw_index_summary_prompt(
-        self,
-        video_title: str,
-        transcript_excerpt: str,
-        language: str = "Português do Brasil",
-    ) -> tuple[str, str]:
-        """Format (system_instruction, user_prompt) for Pass 1 raw transcript summarization."""
-        return self._format_paired_prompt(
-            PromptKey.RAW_INDEX_SUMMARY.value,
-            video_title=video_title,
-            transcript_excerpt=transcript_excerpt,
-            language=language,
-        )
-
-    def get_raw_index_concepts_prompt(
-        self,
-        video_title: str,
-        transcript_excerpt: str,
-        language: str = "Português do Brasil",
-    ) -> tuple[str, str]:
-        """Format (system_instruction, user_prompt) for key concepts extraction from raw transcript."""
-        return self._format_paired_prompt(
-            PromptKey.RAW_INDEX_CONCEPTS.value,
-            video_title=video_title,
-            transcript_excerpt=transcript_excerpt,
-            language=language,
-        )
-
-    def get_raw_index_concepts_rewrite_prompt(
-        self,
-        previous_output: str,
-        language: str = "Português do Brasil",
-    ) -> str:
-        """Format corrective rewrite prompt when key concepts extraction violates format rules."""
-        return self._format_single_prompt(
-            "raw_index_concepts_rewrite",
-            previous_output=previous_output,
-            language=language,
-            language_upper=language.upper(),
-        )
-
-    def get_raw_index_synthesis_prompt(
-        self,
-        video_title: str,
-        summary: str,
-        language: str = "Português do Brasil",
-    ) -> tuple[str, str]:
-        """Format (system_instruction, user_prompt) for dense paratactic synthesis paragraph."""
-        return self._format_paired_prompt(
-            "raw_index_synthesis",
-            video_title=video_title,
-            summary=summary,
-            language=language,
-        )
-
-    def get_judge_raw_index_summary_prompt(
-        self,
-        video_title: str,
-        transcript_excerpt: str,
-        summary: str,
-        language: str = "Português do Brasil",
-    ) -> tuple[str, str]:
-        """Format (system_instruction, user_prompt) for LLM-as-a-judge summary compliance verification."""
-        return self._format_paired_prompt(
-            "judge_raw_index_summary",
-            video_title=video_title,
-            transcript_excerpt=transcript_excerpt,
-            summary=summary,
-            language=language,
-        )
-
-    def get_judge_raw_index_concepts_prompt(
-        self,
-        video_title: str,
-        transcript_excerpt: str,
-        concepts: str,
-        language: str = "Português do Brasil",
-    ) -> tuple[str, str]:
-        """Format (system_instruction, user_prompt) for LLM-as-a-judge concepts compliance verification."""
-        return self._format_paired_prompt(
-            "judge_raw_index_concepts",
-            video_title=video_title,
-            transcript_excerpt=transcript_excerpt,
-            concepts=concepts,
-            language=language,
-        )
-
-    def get_judge_raw_index_synthesis_prompt(
-        self,
-        video_title: str,
-        transcript_excerpt: str,
-        synthesis: str,
-        language: str = "Português do Brasil",
-    ) -> tuple[str, str]:
-        """Format (system_instruction, user_prompt) for LLM-as-a-judge synthesis compliance verification."""
-        return self._format_paired_prompt(
-            "judge_raw_index_synthesis",
-            video_title=video_title,
-            transcript_excerpt=transcript_excerpt,
-            summary=transcript_excerpt,
-            synthesis=synthesis,
-            language=language,
-        )

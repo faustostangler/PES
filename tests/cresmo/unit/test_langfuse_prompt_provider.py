@@ -13,7 +13,7 @@ from unittest.mock import MagicMock
 import pytest
 
 from cresmo.application.ports import PromptProviderPort
-from cresmo.domain.value_objects import ChannelName
+from cresmo.domain.value_objects import ChannelName, PromptKey
 from cresmo.infrastructure.adapters.prompt_provider import (
     JsonPromptProvider,
     LangfusePromptProvider,
@@ -35,7 +35,8 @@ class TestLangfusePromptProvider:
             fallback_provider=fallback_provider,
             label="production",
         )
-        sys_inst, prompt = provider.get_gap_filler_prompt(
+        sys_inst, prompt = provider.get_prompt(
+            PromptKey.GAP_FILLER_PASS1,
             pass_num=1,
             total_passes=3,
             channel_name=ChannelName("sandeco"),
@@ -66,7 +67,8 @@ class TestLangfusePromptProvider:
             label="production",
         )
 
-        sys_inst, prompt = provider.get_gap_filler_prompt(
+        sys_inst, prompt = provider.get_prompt(
+            PromptKey.GAP_FILLER_PASS1,
             pass_num=1,
             total_passes=3,
             channel_name=ChannelName("sandeco"),
@@ -81,6 +83,7 @@ class TestLangfusePromptProvider:
         assert args[0] == "cresmo-gap-filler-pass1"
         assert kwargs["label"] == "production"
         assert kwargs["type"] == "chat"
+        assert provider.get_last_prompt_version("cresmo-gap-filler-pass1") == 3
 
     def test_resilience_when_langfuse_client_raises_network_error(
         self, fallback_provider: JsonPromptProvider
@@ -95,7 +98,8 @@ class TestLangfusePromptProvider:
         )
 
         # Must not raise RuntimeError; must gracefully fall back
-        sys_inst, prompt = provider.get_gap_filler_prompt(
+        sys_inst, prompt = provider.get_prompt(
+            PromptKey.GAP_FILLER_PASS1,
             pass_num=1,
             total_passes=3,
             channel_name=ChannelName("sandeco"),
@@ -108,7 +112,7 @@ class TestLangfusePromptProvider:
         assert len(sys_inst) > 0
         assert "Ground truth text." in prompt
 
-    def test_all_prompt_provider_port_methods_implemented(
+    def test_all_prompt_keys_dispatched_via_unified_interface(
         self, fallback_provider: JsonPromptProvider
     ) -> None:
         provider = LangfusePromptProvider(
@@ -118,26 +122,51 @@ class TestLangfusePromptProvider:
         assert isinstance(provider, PromptProviderPort)
 
         # Test expanders
-        long_sys, long_prompt = provider.get_long_expander_prompt("Body text", "Dates and facts")
+        long_sys, long_prompt = provider.get_prompt(
+            PromptKey.LONG_EXPANDER,
+            compendium_body="Body text",
+            complementary_info="Dates and facts",
+        )
         assert isinstance(long_sys, str)
         assert "Body text" in long_prompt
 
-        wide_sys, wide_prompt = provider.get_wide_expander_prompt("Axial text")
+        wide_sys, wide_prompt = provider.get_prompt(
+            PromptKey.WIDE_EXPANDER,
+            current_text="Axial text",
+        )
         assert isinstance(wide_sys, str)
         assert "Axial text" in wide_prompt
 
-        inv_sys, inventory_prompt = provider.get_inventory_prompt(
-            "Compendium title", ChannelName("sandeco"), "Compendium body"
+        inv_sys, inventory_prompt = provider.get_prompt(
+            PromptKey.ATOMIC_INVENTORY,
+            compendium_title="Compendium title",
+            channel_name=ChannelName("sandeco"),
+            compendium_body="Compendium body",
         )
         assert isinstance(inv_sys, str)
         assert "Compendium body" in inventory_prompt
 
-        batch_sys, atomic_batch_prompt = provider.get_batch_notes_prompt(
-            "Compendium title", ChannelName("sandeco"), "Compendium body", "Inventory JSON"
+        batch_sys, atomic_batch_prompt = provider.get_prompt(
+            PromptKey.ATOMIC_BATCH,
+            compendium_title="Compendium title",
+            channel_name=ChannelName("sandeco"),
+            compendium_body="Compendium body",
+            targets_json="Inventory JSON",
         )
         assert isinstance(batch_sys, str)
         assert "Compendium body" in atomic_batch_prompt
 
-        moc_sys, moc_prompt = provider.get_mocs_prompt("Notes summary")
+        moc_sys, moc_prompt = provider.get_prompt(
+            PromptKey.RECONCILE_MOCS,
+            notes_json="Notes summary",
+        )
         assert isinstance(moc_sys, str)
         assert "Notes summary" in moc_prompt
+
+        raw_sys, raw_prompt = provider.get_prompt(
+            PromptKey.RAW_INDEX_SUMMARY,
+            video_title="Pareto",
+            transcript_excerpt="Excerpt",
+        )
+        assert isinstance(raw_sys, str)
+        assert "Pareto" in raw_prompt
