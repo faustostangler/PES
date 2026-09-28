@@ -310,29 +310,9 @@ class JsonPromptProvider(PromptProviderPort):
         inventory_json: str,
     ) -> tuple[str, str]:
         """Format (system_instruction, user_prompt) for atomic inventory LLM-as-a-judge verification."""
-        key = PromptKey.JUDGE_ATOMIC_INVENTORY.value
-        entry = self._templates.get(key, {})
-        template = entry.get("template", "")
-        system_template = entry.get("system_instruction", "")
-
-        if not template and not system_template:
-            sys_inst = (
-                "You are an impartial senior epistemological auditor evaluating candidate entity extraction "
-                "for the Cresmo Second Brain. Respond STRICTLY with 'true' or 'false'."
-            )
-            user_p = (
-                f"Compendium Title: {compendium_title}\n"
-                f"Channel: {channel_name}\n\n"
-                f"--- COMPENDIUM CONTEXT ---\n{compendium_body}\n\n"
-                f"--- CANDIDATE ATOMIC INVENTORY (JSON) ---\n{inventory_json}\n\n"
-                "Does the candidate inventory strictly satisfy all ontological, factual, and typographical criteria? "
-                "Respond ONLY with 'true' or 'false':"
-            )
-            return sys_inst, user_p
-
         ch_str = channel_name.value if isinstance(channel_name, ChannelName) else channel_name
         return self._format_paired_prompt(
-            key,
+            PromptKey.JUDGE_ATOMIC_INVENTORY.value,
             compendium_title=compendium_title,
             channel_name=ch_str,
             compendium_body=compendium_body,

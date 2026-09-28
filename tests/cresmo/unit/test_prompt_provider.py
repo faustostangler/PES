@@ -200,6 +200,12 @@ class TestJsonPromptProvider:
                 "skill_name": "none",
                 "template": "{task}: {notes_json}",
             },
+            "judge_atomic_inventory": {
+                "task": "Custom Judge Inventory",
+                "skill_name": "none",
+                "system_instruction": "Custom Judge System Instruction",
+                "template": "{task}: {compendium_title} on {channel_name} with {inventory_json}",
+            },
         }
         custom_file = tmp_path / "custom_prompts.json"
         custom_file.write_text(json.dumps(custom_prompts), encoding="utf-8")
@@ -240,6 +246,12 @@ class TestJsonPromptProvider:
         s_inv, p_inv = provider.get_inventory_prompt("Title", ChannelName("Channel"), "Body")
         assert p_inv == "Custom Inv: Title on Channel with Body"
         assert s_inv == "Custom Inv"
+
+        s_j_inv, p_j_inv = provider.get_judge_inventory_prompt(
+            "Title", ChannelName("Channel"), "Body", '[{"title": "T1"}]'
+        )
+        assert p_j_inv == 'Custom Judge Inventory: Title on Channel with [{"title": "T1"}]'
+        assert s_j_inv == "Custom Judge System Instruction"
 
         s_batch, p_batch = provider.get_batch_notes_prompt(
             "Title", ChannelName("Channel"), "Body", "Targets"
