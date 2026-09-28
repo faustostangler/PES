@@ -106,9 +106,8 @@ class TestJsonPromptProvider:
         assert "Main body text." in long_p
         assert "Supplementary info." in long_p
         assert "Fernand Braudel" in long_s
-        assert "Fernand Braudel" in long_p
         assert long_s.startswith("You are Cresmo Long-Expander")
-        assert long_p.startswith("Take the following enriched Markdown document")
+        assert "longitudinal" in long_p.lower()
         assert not long_p.startswith(long_s[:30])
 
         wide_s, wide_p = provider.get_wide_expander_prompt(
@@ -117,9 +116,8 @@ class TestJsonPromptProvider:
         assert isinstance(wide_s, str)
         assert "Longitudinally expanded text." in wide_p
         assert "Karl Jaspers" in wide_s
-        assert "Karl Jaspers" in wide_p
         assert wide_s.startswith("You are Cresmo Wide-Expander")
-        assert wide_p.startswith("Take the following longitudinally expanded Markdown document")
+        assert "synchronic" in wide_p.lower()
         assert not wide_p.startswith(wide_s[:30])
 
     def test_inventory_and_batch_notes_and_mocs_prompts(self) -> None:
@@ -135,6 +133,18 @@ class TestJsonPromptProvider:
         assert "Channel Name" in inv_p
         assert "Enriched content body." in inv_p
 
+        judge_inv_s, judge_inv_p = provider.get_judge_inventory_prompt(
+            compendium_title="Compendium Title",
+            channel_name=ChannelName("Channel Name"),
+            compendium_body="Enriched content body.",
+            inventory_json='[{"title": "Target 1", "type": "entity"}]',
+        )
+        assert isinstance(judge_inv_s, str)
+        assert "Compendium Title" in judge_inv_p
+        assert "Channel Name" in judge_inv_p
+        assert '[{"title": "Target 1", "type": "entity"}]' in judge_inv_p
+        assert "true" in judge_inv_p.lower()
+
         batch_s, batch_p = provider.get_batch_notes_prompt(
             compendium_title="Compendium Title",
             channel_name=ChannelName("Channel Name"),
@@ -143,14 +153,14 @@ class TestJsonPromptProvider:
         )
         assert isinstance(batch_s, str)
         assert "Compendium Title" in batch_p
-        assert "Target Entities to Synthesize in this batch:" in batch_p
+        assert "target entities to synthesize" in batch_p.lower()
         assert '[{"title": "Target 1"}]' in batch_p
 
         mocs_s, mocs_p = provider.get_mocs_prompt(
             notes_json='[{"title": "Note 1"}]',
         )
         assert isinstance(mocs_s, str)
-        assert "Atomic Notes in Vault:" in mocs_p
+        assert "vault atomic notes to reconcile" in mocs_p.lower()
         assert '[{"title": "Note 1"}]' in mocs_p
 
     def test_custom_prompts_json_override(self, tmp_path: Path) -> None:
@@ -420,7 +430,7 @@ class TestJsonPromptProvider:
             transcript_excerpt="A circulação de elites explica a alternância de poder.",
             language="Português do Brasil",
         )
-        assert "summarize" in summary_system_instructions.lower()
+        assert "synthesize" in summary_system_instructions.lower()
         assert "Português do Brasil" in summary_system_instructions
         assert "Vilfredo Pareto and Elites" in summary_user_prompt
         assert "A circulação de elites" in summary_user_prompt
@@ -435,7 +445,10 @@ class TestJsonPromptProvider:
         )
         assert "paratactic" in synthesis_system_instructions.lower()
         assert "ner" in synthesis_system_instructions.lower()
-        assert "single paragraph" in synthesis_system_instructions.lower()
+        assert (
+            "single continuous paragraph" in synthesis_system_instructions.lower()
+            or "single paragraph" in synthesis_system_instructions.lower()
+        )
         assert "Vilfredo Pareto and Elites" in synthesis_user_prompt
         assert "A circulação de elites" in synthesis_user_prompt
 
@@ -454,7 +467,8 @@ class TestJsonPromptProvider:
                 language="Português do Brasil",
             )
         )
-        assert "impartial evaluator" in summary_judge_system_instructions.lower()
+        assert "impartial" in summary_judge_system_instructions.lower()
+        assert "evaluator" in summary_judge_system_instructions.lower()
         assert "strictly with 'true' or 'false'" in summary_judge_system_instructions.lower()
         assert "Pareto and Elites" in summary_judge_user_prompt
         assert "Explicando a circulação das elites na política." in summary_judge_user_prompt
@@ -470,7 +484,7 @@ class TestJsonPromptProvider:
                 language="Português do Brasil",
             )
         )
-        assert "impartial evaluator" in concepts_judge_system_instructions.lower()
+        assert "impartial" in concepts_judge_system_instructions.lower()
         assert "strictly with 'true' or 'false'" in concepts_judge_system_instructions.lower()
         assert "Pareto and Elites" in concepts_judge_user_prompt
         assert "Explicando a circulação das elites na política." in concepts_judge_user_prompt

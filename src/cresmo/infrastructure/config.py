@@ -448,3 +448,12 @@ class CresmoSettings(BaseSettings):
         ),
         description="Maximum LLM judge rewrite attempts for raw indexing (0 means unconstrained / infinite loop).",
     )
+
+    inventory_max_attempts: int = Field(
+        default=3,
+        ge=0,
+        validation_alias=AliasChoices(
+            "inventory_max_attempts", "CRESMO_INVENTORY_MAX_ATTEMPTS", "INVENTORY_MAX_ATTEMPTS"
+        ),
+        description="Maximum LLM judge rewrite attempts for atomic inventory discovery (0 means unconstrained / infinite loop).",
+    )

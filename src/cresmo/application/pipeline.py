@@ -197,6 +197,7 @@ class CresmoPipeline:
             llm_synthesis_port=self.llm_synthesis_port,
             prompt_provider=self.prompt_provider,
             temperature=0.0,
+            max_rewrites=self.settings.inventory_max_attempts,
         )
 
         # Instantiate Stage 4: Batch synthesis of atomic notes adhering to second brain taxonomy

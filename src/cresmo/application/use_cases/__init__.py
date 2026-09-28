@@ -14,6 +14,7 @@ Core domain orchestration use cases:
 from cresmo.application.use_cases.concat_master import ConcatMasterUseCase
 from cresmo.application.use_cases.discover_atomic_inventory import (
     DiscoverAtomicInventoryUseCase,
+    is_valid_inventory_json_structure,
 )
 from cresmo.application.use_cases.discover_batch_sources import (
     BatchDiscoveryQuery,
@@ -55,4 +56,5 @@ __all__ = [
     "SyncChannelUseCase",
     "SynthesizeAtomicBatchUseCase",
     "UnifyDuplicateNotesUseCase",
+    "is_valid_inventory_json_structure",
 ]

@@ -532,6 +532,27 @@ class PromptProviderPort(ABC):
         raise NotImplementedError
 
     @abstractmethod
+    def get_judge_inventory_prompt(
+        self,
+        compendium_title: str,
+        channel_name: ChannelName | str,
+        compendium_body: str,
+        inventory_json: str,
+    ) -> tuple[str, str]:
+        """Format (system_instruction, user_prompt) for atomic inventory LLM-as-a-judge verification.
+
+        Args:
+            compendium_title: Compendium title string.
+            channel_name: Creator channel name.
+            compendium_body: Complete enriched prose text.
+            inventory_json: Candidate extracted inventory JSON array string.
+
+        Returns:
+            Tuple containing system instruction and user prompt string.
+        """
+        raise NotImplementedError
+
+    @abstractmethod
     def get_batch_notes_prompt(
         self,
         compendium_title: str,
@@ -774,6 +795,24 @@ class NoOpPromptProviderPort(PromptProviderPort):
         )
         return system_instruction, user_prompt
 
+    def get_judge_inventory_prompt(
+        self,
+        compendium_title: str,
+        channel_name: ChannelName | str,
+        compendium_body: str,
+        inventory_json: str,
+    ) -> tuple[str, str]:
+        """Format basic atomic inventory judge prompt."""
+        system_instruction = "You are an impartial evaluator assessing candidate entity extraction. Respond strictly with 'true' or 'false'."
+        user_prompt = (
+            f"Compendium Title: {compendium_title}\n"
+            f"Channel: {channel_name}\n\n"
+            f"Context:\n{compendium_body}\n\n"
+            f"Candidate Inventory:\n{inventory_json}\n\n"
+            "Does the candidate inventory strictly satisfy all ontological, factual, and typographical criteria? Respond ONLY with 'true' or 'false'."
+        )
+        return system_instruction, user_prompt
+
     def get_batch_notes_prompt(
         self,
         compendium_title: str,
@@ -799,8 +838,7 @@ class NoOpPromptProviderPort(PromptProviderPort):
         """Format basic MOC reconciliation prompt."""
         system_instruction = "You are Cresmo MOC Manager (cresmo-moc-manager)."
         user_prompt = (
-            f"Atomic Notes in Vault:\n{notes_json}\n\n"
-            "Output strictly a JSON array of MOC objects."
+            f"Atomic Notes in Vault:\n{notes_json}\n\nOutput strictly a JSON array of MOC objects."
         )
         return system_instruction, user_prompt
 
@@ -1206,6 +1244,9 @@ class PipelineSettingsProtocol(Protocol):
     @property
     def days_lookback(self) -> int: ...
 
+    @property
+    def inventory_max_attempts(self) -> int: ...
+
 
 @dataclass
 class DefaultPipelineSettings:
@@ -1226,3 +1267,4 @@ class DefaultPipelineSettings:
     discovery_queue_maxsize: int = 50
     channel_discovery_workers: int = 4
     days_lookback: int = 30
+    inventory_max_attempts: int = 3

@@ -23,6 +23,7 @@ class PromptKey(StrEnum):
     LONG_EXPANDER = "long_expander"
     WIDE_EXPANDER = "wide_expander"
     ATOMIC_INVENTORY = "atomic_inventory"
+    JUDGE_ATOMIC_INVENTORY = "judge_atomic_inventory"
     ATOMIC_BATCH = "atomic_batch"
     RECONCILE_MOCS = "reconcile_mocs"
     RAW_INDEX_SUMMARY = "raw_index_summary"
@@ -76,6 +77,12 @@ PROMPT_REGISTRY: dict[PromptKey, PromptMetadata] = {
         langfuse_name="cresmo-atomic-inventory",
         skill_name="cresmo-atomic",
         description="Candidate entity extraction from expanded compendium.",
+    ),
+    PromptKey.JUDGE_ATOMIC_INVENTORY: PromptMetadata(
+        key=PromptKey.JUDGE_ATOMIC_INVENTORY,
+        langfuse_name="cresmo-judge-atomic-inventory",
+        skill_name="cresmo-atomic",
+        description="LLM-as-a-judge candidate entity extraction verification for Obsidian Second Brain.",
     ),
     PromptKey.ATOMIC_BATCH: PromptMetadata(
         key=PromptKey.ATOMIC_BATCH,

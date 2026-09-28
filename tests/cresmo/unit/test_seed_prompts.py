@@ -67,7 +67,10 @@ class TestSeedPromptsCLI:
             assert code == EXIT_SUCCESS
             assert mock_client.create_prompt.call_count == len(PROMPT_MAPPINGS)
             captured = capsys.readouterr()
-            assert f"{len(PROMPT_MAPPINGS)}/{len(PROMPT_MAPPINGS)} prompts synchronized to Langfuse" in captured.out
+            assert (
+                f"{len(PROMPT_MAPPINGS)}/{len(PROMPT_MAPPINGS)} prompts synchronized to Langfuse"
+                in captured.out
+            )
             assert "✔ Registered 'cresmo-gap-filler-pass1'" in captured.out
 
     def test_seed_prompts_custom_label(self) -> None:

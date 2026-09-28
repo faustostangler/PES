@@ -61,10 +61,17 @@ class SmartMockLLMAdapter(MockLLMAdapter):
                 "A decadência dos governantes precipita a substituição por novas contra-elites "
                 "organizadas em estruturas institucionais complexas e altamente resilientes."
             )
-        combined = f"{system_instruction or ''} {prompt}"
-        if "Atomic Inventory Specialist" in combined or "atomic inventory" in combined.lower():
+        if trace_id and "atomic_batch" in trace_id:
+            return (
+                '[{"title": "Vilfredo Pareto", "type": "entity", '
+                '"definition": "Sociólogo e economista italiano formulador do conceito de circulação das elites.", '
+                '"direct_relations": ["Teoria das Elites"], '
+                '"causal_matrix": {"cause": "Heterogeneidade social", "effect": "Substituição cíclica de lideranças"}}]'
+            )
+        combined = f"{system_instruction or ''} {prompt}".lower()
+        if "atomic inventory" in combined or (trace_id and "inventory" in trace_id):
             return '[{"title": "Vilfredo Pareto", "type": "entity"}]'
-        if "Target Entities to Synthesize" in combined or "targets_json" in combined:
+        if "target entities to synthesize" in combined or "targets_json" in combined:
             return (
                 '[{"title": "Vilfredo Pareto", "type": "entity", '
                 '"definition": "Sociólogo e economista italiano formulador do conceito de circulação das elites.", '
@@ -72,9 +79,10 @@ class SmartMockLLMAdapter(MockLLMAdapter):
                 '"causal_matrix": {"cause": "Heterogeneidade social", "effect": "Substituição cíclica de lideranças"}}]'
             )
         if (
-            "MOC Manager" in combined
-            or "maps of content" in combined.lower()
+            "moc manager" in combined
+            or "maps of content" in combined
             or "cresmo-moc-manager" in combined
+            or (trace_id and "mocs" in trace_id)
         ):
             return (
                 '[{"title": "MOC Teoria Politica", "theme": "Ciência Política", '
@@ -230,7 +238,7 @@ class TestCresmoPipelineOrchestration:
             if c.get("session_id", "").startswith(("inventory_", "atomic_batch_"))
             or c.get("session_id") == "reconcile_mocs"
         ]
-        assert len(synthesis_calls) == 3
+        assert len(synthesis_calls) == 4
 
     # =========================================================================
     # Tests for run_for_text_file

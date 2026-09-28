@@ -112,11 +112,7 @@ class LangfusePromptProvider(PromptProviderPort):
             raw_text=raw_text,
             current_text=current_text,
         )
-        key = (
-            PromptKey.GAP_FILLER_PASS1
-            if pass_num == 1
-            else PromptKey.GAP_FILLER_PASS_SUBSEQUENT
-        )
+        key = PromptKey.GAP_FILLER_PASS1 if pass_num == 1 else PromptKey.GAP_FILLER_PASS_SUBSEQUENT
         prompt_name = PROMPT_REGISTRY[key].langfuse_name
         user_prompt = self._resolve_prompt(
             prompt_name=prompt_name,
@@ -184,6 +180,32 @@ class LangfusePromptProvider(PromptProviderPort):
             compendium_title=compendium_title,
             channel_name=channel_name,
             compendium_body=compendium_body,
+        )
+        return fallback_sys, user_prompt
+
+    def get_judge_inventory_prompt(
+        self,
+        compendium_title: str,
+        channel_name: ChannelName | str,
+        compendium_body: str,
+        inventory_json: str,
+    ) -> tuple[str, str]:
+        """Format (system_instruction, user_prompt) for atomic inventory judge via Langfuse."""
+        fallback_sys, fallback_user = self._fallback.get_judge_inventory_prompt(
+            compendium_title=compendium_title,
+            channel_name=channel_name,
+            compendium_body=compendium_body,
+            inventory_json=inventory_json,
+        )
+        prompt_name = PROMPT_REGISTRY[PromptKey.JUDGE_ATOMIC_INVENTORY].langfuse_name
+        ch_str = channel_name.value if isinstance(channel_name, ChannelName) else channel_name
+        user_prompt = self._resolve_prompt(
+            prompt_name=prompt_name,
+            fallback_template=fallback_user,
+            compendium_title=compendium_title,
+            channel_name=ch_str,
+            compendium_body=compendium_body,
+            inventory_json=inventory_json,
         )
         return fallback_sys, user_prompt
 
