@@ -21,7 +21,12 @@ from cresmo.application.ports import (
     PromptProviderPort,
     VaultRepositoryPort,
 )
-from cresmo.domain.entities import AtomicNote, EnrichedCompendium
+from cresmo.domain.entities import (
+    AtomicNote,
+    ChannelTenantId,
+    EnrichedCompendium,
+    PipelineSessionId,
+)
 from cresmo.domain.exceptions import DomainValidationError, NoteTypologyError
 from cresmo.domain.value_objects import (
     AtomicEntityInventory,
@@ -141,13 +146,17 @@ class SynthesizeAtomicBatchUseCase:
                 compendium_body=compendium.body,
                 targets_json=json.dumps(targets_summary, ensure_ascii=False),
             )
+            session_id = PipelineSessionId.create(
+                compendium.channel_name, compendium.content_id
+            ).value
+            user_id = ChannelTenantId.create(compendium.channel_name).value
             response = self.llm_synthesis_port.transform(
                 prompt=user_prompt,
                 system_instruction=system_instruction,
                 temperature=self.temperature,
                 trace_id=f"{compendium.content_id.value}_atomic_batch",
-                session_id=f"atomic_batch_{compendium.channel_name}",
-                user_id=str(compendium.channel_name),
+                session_id=session_id,
+                user_id=user_id,
             )
             data = extract_json_data(response)
             if not isinstance(data, list):

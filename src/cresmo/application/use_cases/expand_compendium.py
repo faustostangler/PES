@@ -19,7 +19,11 @@ from cresmo.application.ports import (
     PromptProviderPort,
     VaultRepositoryPort,
 )
-from cresmo.domain.entities import EnrichedCompendium
+from cresmo.domain.entities import (
+    ChannelTenantId,
+    EnrichedCompendium,
+    PipelineSessionId,
+)
 from cresmo.domain.exceptions import CompendiumStructureError
 
 _COMPLEMENTARY_TAG = "## Informações Complementares"
@@ -74,6 +78,9 @@ class ExpandCompendiumUseCase:
             CompendiumStructureError: If complementary information section is missing or empty.
             DomainValidationError: If construction invariants are violated.
         """
+        session_id = PipelineSessionId.create(compendium.channel_name, compendium.content_id).value
+        user_id = ChannelTenantId.create(compendium.channel_name).value
+
         long_sys, long_user = self.prompt_provider.get_long_expander_prompt(
             compendium_body=compendium.body,
             complementary_info=compendium.complementary_info,
@@ -83,8 +90,8 @@ class ExpandCompendiumUseCase:
             system_instruction=long_sys,
             temperature=self.temperature,
             trace_id=f"{compendium.content_id.value}_longitudinal",
-            session_id=f"expansion_{compendium.channel_name}",
-            user_id=str(compendium.channel_name),
+            session_id=session_id,
+            user_id=user_id,
         )
 
         wide_sys, wide_user = self.prompt_provider.get_wide_expander_prompt(
@@ -95,8 +102,8 @@ class ExpandCompendiumUseCase:
             system_instruction=wide_sys,
             temperature=self.temperature,
             trace_id=f"{compendium.content_id.value}_synchronic",
-            session_id=f"expansion_{compendium.channel_name}",
-            user_id=str(compendium.channel_name),
+            session_id=session_id,
+            user_id=user_id,
         )
 
         complementary_match = _COMPLEMENTARY_REGEX.search(synchronic_expansion)

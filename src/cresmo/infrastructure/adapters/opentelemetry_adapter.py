@@ -281,6 +281,47 @@ class OpenTelemetryAdapter(TelemetryPort):
             except Exception as exc:  # noqa: BLE001
                 logger.debug("[OpenTelemetryAdapter] Langfuse score emission skipped: %s", exc)
 
+    def record_score(
+        self,
+        name: str,
+        value: float,
+        comment: str | None = None,
+        trace_id: str | None = None,
+    ) -> None:
+        """Record an arbitrary evaluation or clinical score to telemetry backend.
+
+        Args:
+            name: Identifier for the score (e.g. 'style_compliance', 'faithfulness').
+            value: Score metric value.
+            comment: Optional explanatory context or rubric details.
+            trace_id: Optional trace ID to associate score with directly.
+        """
+        current_span = trace.get_current_span()
+        if current_span and current_span.is_recording():
+            attrs: dict[str, Any] = {
+                "score.name": name,
+                "score.value": value,
+            }
+            if comment:
+                attrs["score.comment"] = comment
+            if trace_id:
+                attrs["score.trace_id"] = trace_id
+            current_span.add_event("telemetry_score", attributes=attrs)
+
+        if self._langfuse is not None:
+            try:
+                kwargs: dict[str, Any] = {
+                    "name": name,
+                    "value": value,
+                }
+                if comment is not None:
+                    kwargs["comment"] = comment
+                if trace_id is not None:
+                    kwargs["trace_id"] = trace_id
+                self._langfuse.score(**kwargs)
+            except Exception as exc:  # noqa: BLE001
+                logger.debug("[OpenTelemetryAdapter] Langfuse score emission skipped: %s", exc)
+
     def flush(self) -> None:
         """Flush in-memory OpenTelemetry spans and Langfuse client buffer queues."""
         if self._langfuse is not None:
@@ -344,6 +385,15 @@ class NoOpTelemetryAdapter(TelemetryPort):
         details: dict[str, Any] | None = None,
     ) -> None:
         """No-op session coherence recorder."""
+
+    def record_score(
+        self,
+        name: str,
+        value: float,
+        comment: str | None = None,
+        trace_id: str | None = None,
+    ) -> None:
+        """No-op score recorder for offline/test runs."""
 
     def flush(self) -> None:
         """No-op flush for offline/test runs."""

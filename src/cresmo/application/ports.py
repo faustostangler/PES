@@ -1005,6 +1005,24 @@ class TelemetryPort(ABC):
         """
         raise NotImplementedError
 
+    @abstractmethod
+    def record_score(
+        self,
+        name: str,
+        value: float,
+        comment: str | None = None,
+        trace_id: str | None = None,
+    ) -> None:
+        """Record an arbitrary evaluation or clinical score to telemetry backend.
+
+        Args:
+            name: Identifier for the score (e.g. 'style_compliance', 'faithfulness').
+            value: Score metric value.
+            comment: Optional explanatory context or rubric details.
+            trace_id: Optional trace ID to associate score with directly.
+        """
+        raise NotImplementedError
+
     def flush(self) -> None:
         """Flush pending spans, metrics, and buffer queues to backend telemetry collectors.
 
@@ -1054,6 +1072,15 @@ class NoOpTelemetryPort(TelemetryPort):
         details: dict[str, Any] | None = None,
     ) -> None:
         """No-op session coherence recorder."""
+
+    def record_score(
+        self,
+        name: str,
+        value: float,
+        comment: str | None = None,
+        trace_id: str | None = None,
+    ) -> None:
+        """No-op score recorder."""
 
     def flush(self) -> None:
         """No-op flush."""

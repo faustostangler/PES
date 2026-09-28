@@ -28,11 +28,14 @@ from cresmo.application.use_cases.index_raw_transcripts import (
     _can_retry,
     parse_judge_boolean,
 )
-from cresmo.domain.entities import EnrichedCompendium
+from cresmo.domain.entities import (
+    ChannelTenantId,
+    EnrichedCompendium,
+    PipelineSessionId,
+)
 from cresmo.domain.exceptions import DomainValidationError, NoteTypologyError
 from cresmo.domain.value_objects import (
     AtomicEntityInventory,
-    ChannelName,
     NoteTitle,
     NoteType,
 )
@@ -127,13 +130,8 @@ class DiscoverAtomicInventoryUseCase:
             compendium_body=compendium.body,
         )
 
-        ch = (
-            compendium.channel_name.value
-            if isinstance(compendium.channel_name, ChannelName)
-            else str(compendium.channel_name)
-        )
-        session_id = f"inventory_{ch}"
-        user_id = ch
+        session_id = PipelineSessionId.create(compendium.channel_name, compendium.content_id).value
+        user_id = ChannelTenantId.create(compendium.channel_name).value
         content_id = compendium.content_id.value
 
         is_valid = False

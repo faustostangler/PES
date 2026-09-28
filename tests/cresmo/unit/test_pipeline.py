@@ -235,7 +235,7 @@ class TestCresmoPipelineOrchestration:
         synthesis_calls = [
             c
             for c in llm.call_history
-            if c.get("session_id", "").startswith(("inventory_", "atomic_batch_"))
+            if c.get("session_id", "").startswith("content:")
             or c.get("session_id") == "reconcile_mocs"
         ]
         assert len(synthesis_calls) == 4

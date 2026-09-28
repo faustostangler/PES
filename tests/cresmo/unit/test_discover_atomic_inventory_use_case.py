@@ -100,10 +100,14 @@ class TestDiscoverAtomicInventoryJudge:
         # Verify extraction call
         assert llm.call_history[0]["trace_id"] == "vid_inv_1234_inventory"
         assert llm.call_history[0]["temperature"] == 0.0
+        assert llm.call_history[0]["session_id"] == "content:Geopolitics Channel:vid_inv_1234"
+        assert llm.call_history[0]["user_id"] == "channel:Geopolitics Channel"
 
         # Verify judge call
         assert llm.call_history[1]["trace_id"] == "vid_inv_1234_inventory_judge"
         assert llm.call_history[1]["temperature"] == 0.0
+        assert llm.call_history[1]["session_id"] == "content:Geopolitics Channel:vid_inv_1234"
+        assert llm.call_history[1]["user_id"] == "channel:Geopolitics Channel"
         assert "Does the candidate inventory strictly satisfy" in llm.call_history[1]["prompt"]
 
     def test_discover_inventory_judge_retry_loop(

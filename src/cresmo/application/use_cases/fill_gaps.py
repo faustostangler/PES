@@ -18,7 +18,12 @@ from cresmo.application.ports import (
     PromptProviderPort,
     VaultRepositoryPort,
 )
-from cresmo.domain.entities import EnrichedCompendium, RawTranscript
+from cresmo.domain.entities import (
+    ChannelTenantId,
+    EnrichedCompendium,
+    PipelineSessionId,
+    RawTranscript,
+)
 from cresmo.domain.exceptions import CompendiumStructureError
 from cresmo.domain.value_objects import NoteTitle
 
@@ -80,6 +85,11 @@ class FillGapsUseCase:
         current_text = raw_transcript.body
         file_name = f"{raw_transcript.content_id.value}.txt"
 
+        session_id = PipelineSessionId.create(
+            raw_transcript.channel_name, raw_transcript.content_id
+        ).value
+        user_id = ChannelTenantId.create(raw_transcript.channel_name).value
+
         for pass_index in range(passes):
             system_instruction, user_prompt = self.prompt_provider.get_gap_filler_prompt(
                 pass_num=pass_index + 1,
@@ -94,8 +104,8 @@ class FillGapsUseCase:
                 system_instruction=system_instruction,
                 temperature=self.temperature,
                 trace_id=f"{raw_transcript.content_id.value}_gap_fill_pass_{pass_index + 1}",
-                session_id=f"fluid_prose_{raw_transcript.channel_name}",
-                user_id=str(raw_transcript.channel_name),
+                session_id=session_id,
+                user_id=user_id,
             )
 
         # Extract title from H1 or fallback to raw title

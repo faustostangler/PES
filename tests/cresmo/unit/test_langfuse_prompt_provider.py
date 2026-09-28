@@ -48,12 +48,15 @@ class TestLangfusePromptProvider:
         assert len(prompt) > 0
         assert "Sample raw transcript." in prompt
 
-    def test_remote_langfuse_get_prompt_called_with_fallback(
+    def test_remote_langfuse_get_chat_prompt_resolves_system_and_user(
         self, fallback_provider: JsonPromptProvider
     ) -> None:
         mock_client = MagicMock()
         mock_prompt_obj = MagicMock()
-        mock_prompt_obj.compile.return_value = "Compiled prompt from Langfuse Cloud"
+        mock_prompt_obj.compile.return_value = [
+            {"role": "system", "content": "System directive from Langfuse Cloud Chat"},
+            {"role": "user", "content": "User input payload compiled from Langfuse Cloud"},
+        ]
         mock_prompt_obj.version = 3
         mock_client.get_prompt.return_value = mock_prompt_obj
 
@@ -71,15 +74,13 @@ class TestLangfusePromptProvider:
             raw_text="Sample transcript text.",
         )
 
-        assert isinstance(sys_inst, str)
-        assert len(sys_inst) > 0
-        assert prompt == "Compiled prompt from Langfuse Cloud"
+        assert sys_inst == "System directive from Langfuse Cloud Chat"
+        assert prompt == "User input payload compiled from Langfuse Cloud"
         mock_client.get_prompt.assert_called_once()
         args, kwargs = mock_client.get_prompt.call_args
         assert args[0] == "cresmo-gap-filler-pass1"
         assert kwargs["label"] == "production"
-        assert "fallback" in kwargs
-        assert "Sample transcript text." in kwargs["fallback"]
+        assert kwargs["type"] == "chat"
 
     def test_resilience_when_langfuse_client_raises_network_error(
         self, fallback_provider: JsonPromptProvider

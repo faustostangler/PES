@@ -378,3 +378,36 @@ def test_noop_telemetry_adapter_flush_is_graceful_noop() -> None:
     """Verify NoOpTelemetryAdapter flush executes gracefully without error."""
     adapter = NoOpTelemetryAdapter()
     adapter.flush()
+
+
+def test_opentelemetry_adapter_record_score() -> None:
+    """Verify record_score emits score to Langfuse and records event on span."""
+    from unittest.mock import MagicMock
+
+    mock_langfuse = MagicMock()
+    adapter = OpenTelemetryAdapter(langfuse_client=mock_langfuse)
+
+    adapter.record_score(
+        name="style_compliance",
+        value=0.95,
+        comment="Zero em-dashes and continuous prose verified",
+        trace_id="trace_test_123",
+    )
+
+    mock_langfuse.score.assert_called_once_with(
+        name="style_compliance",
+        value=0.95,
+        comment="Zero em-dashes and continuous prose verified",
+        trace_id="trace_test_123",
+    )
+
+
+def test_noop_telemetry_adapter_record_score_is_graceful_noop() -> None:
+    """Verify NoOpTelemetryAdapter record_score executes gracefully without error."""
+    adapter = NoOpTelemetryAdapter()
+    adapter.record_score(
+        name="style_compliance",
+        value=1.0,
+        comment="test",
+        trace_id="test_trace",
+    )
