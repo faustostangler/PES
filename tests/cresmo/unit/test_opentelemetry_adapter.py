@@ -10,6 +10,8 @@ Conforms to ADR-016:
 
 from __future__ import annotations
 
+import json
+
 import pytest
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor
@@ -148,7 +150,13 @@ class TestOpenTelemetryAdapter:
         with adapter.start_pipeline_session(
             session_id=session_id,
             user_id=user_id,
-            metadata={"source": "cli"},
+            metadata={
+                "source": "cli",
+                "title": "Machiavelli and Modern State",
+                "channel": "sandeco",
+                "content_id": "vid_test_123",
+                "video_url": "https://youtube.com/watch?v=123",
+            },
         ):
             with adapter.start_stage_span("raw_indexing", attributes={"step": 1}):
                 pass
@@ -170,6 +178,16 @@ class TestOpenTelemetryAdapter:
         assert root_span.attributes["cresmo.content_id"] == "vid_test_123"
         assert root_span.attributes["cresmo.channel"] == "sandeco"
         assert root_span.attributes["cresmo.metadata.source"] == "cli"
+        assert root_span.attributes["langfuse.input.title"] == "Machiavelli and Modern State"
+        assert root_span.attributes["langfuse.input.channel"] == "sandeco"
+        assert root_span.attributes["langfuse.input.content_id"] == "vid_test_123"
+        assert root_span.attributes["langfuse.input.video_url"] == "https://youtube.com/watch?v=123"
+        assert json.loads(root_span.attributes["langfuse.input"]) == {
+            "title": "Machiavelli and Modern State",
+            "channel": "sandeco",
+            "content_id": "vid_test_123",
+            "video_url": "https://youtube.com/watch?v=123",
+        }
 
         # Child spans share trace_id
         assert raw_indexing_span.context is not None

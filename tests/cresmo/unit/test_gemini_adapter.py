@@ -105,21 +105,6 @@ class TestGeminiLLMAdapter:
         assert call_kwargs["config"].system_instruction == "Act as a political scientist."
         assert call_kwargs["config"].automatic_function_calling.disable is True
 
-        # Verify Langfuse generation metadata update
-        mock_langfuse.update_current_generation.assert_called_once_with(
-            name="test-trace-123",
-            model="gemini-2.5-flash",
-            output="Generated analytical synthesis content.",
-            usage_details={"input": 150, "output": 80, "total": 230},
-            metadata={
-                "provider": "gemini",
-                "temperature": 0.7,
-                "trace_id": "test-trace-123",
-                "session_id": "session-456",
-                "user_id": "user-789",
-            },
-        )
-
     def test_transform_uses_default_temperature_when_none(self) -> None:
         mock_response = MagicMock(text="Default temp text", usage_metadata=None)
         mock_genai_client = MagicMock()
@@ -139,32 +124,30 @@ class TestGeminiLLMAdapter:
         mock_genai_client = MagicMock()
         mock_genai_client.models.generate_content.return_value = mock_response
 
-        mock_langfuse = MagicMock()
         adapter = GeminiLLMAdapter(
             genai_client=mock_genai_client,
-            langfuse_client=mock_langfuse,
         )
 
-        adapter.transform(
-            prompt="Test prompt",
-            trace_id="vid123_concepts",
-            session_id="raw_index_Philosophy",
-            user_id="Philosophy",
-        )
+        mock_span = MagicMock()
+        mock_span.is_recording.return_value = True
 
-        mock_langfuse.update_current_generation.assert_called_once_with(
-            name="vid123_concepts",
-            model="gemini-3.5-flash-lite",
-            output="Output with telemetry",
-            usage_details={"input": 2, "output": 3, "total": 5},
-            metadata={
-                "provider": "gemini",
-                "temperature": 0.2,
-                "trace_id": "vid123_concepts",
-                "session_id": "raw_index_Philosophy",
-                "user_id": "Philosophy",
-            },
-        )
+        with patch("opentelemetry.trace.get_current_span", return_value=mock_span):
+            adapter.transform(
+                prompt="Test prompt",
+                trace_id="vid123_concepts",
+                session_id="raw_index_Philosophy",
+                user_id="Philosophy",
+            )
+
+        mock_span.set_attribute.assert_any_call("gen_ai.system", "google")
+        mock_span.set_attribute.assert_any_call("gen_ai.request.model", "gemini-3.5-flash-lite")
+        mock_span.set_attribute.assert_any_call("gen_ai.usage.input_tokens", 2)
+        mock_span.set_attribute.assert_any_call("gen_ai.usage.output_tokens", 3)
+        mock_span.set_attribute.assert_any_call("langfuse.observation.type", "generation")
+        mock_span.set_attribute.assert_any_call("langfuse.session.id", "raw_index_Philosophy")
+        mock_span.set_attribute.assert_any_call("langfuse.user.id", "Philosophy")
+        mock_span.set_attribute.assert_any_call("cresmo.trace_id", "vid123_concepts")
+        mock_span.set_attribute.assert_any_call("cresmo.temperature", 0.2)
 
     def test_transform_retries_on_transient_error(self) -> None:
         mock_response = MagicMock(text="Success after retry", usage_metadata=None)
@@ -242,38 +225,35 @@ class TestGeminiLLMAdapter:
         mock_genai_client = MagicMock()
         mock_genai_client.models.generate_content.return_value = mock_response
 
-        mock_langfuse = MagicMock()
         adapter = GeminiLLMAdapter(
             genai_client=mock_genai_client,
-            langfuse_client=mock_langfuse,
         )
 
-        adapter.transform(prompt="One two three four five")
+        mock_span = MagicMock()
+        mock_span.is_recording.return_value = True
 
-        mock_langfuse.update_current_generation.assert_called_once_with(
-            name="gemini_generation",
-            model="gemini-3.5-flash-lite",
-            output="Three words text",
-            usage_details={"input": 5, "output": 3, "total": 8},
-            metadata={"provider": "gemini", "temperature": 0.2},
-        )
+        with patch("opentelemetry.trace.get_current_span", return_value=mock_span):
+            adapter.transform(prompt="One two three four five")
 
-    def test_transform_handles_langfuse_telemetry_exception_gracefully(self) -> None:
+        mock_span.set_attribute.assert_any_call("gen_ai.usage.input_tokens", 5)
+        mock_span.set_attribute.assert_any_call("gen_ai.usage.output_tokens", 3)
+
+    def test_transform_works_with_non_recording_span(self) -> None:
         mock_response = MagicMock(text="Output text", usage_metadata=None)
         mock_genai_client = MagicMock()
         mock_genai_client.models.generate_content.return_value = mock_response
 
-        mock_langfuse = MagicMock()
-        mock_langfuse.update_current_generation.side_effect = RuntimeError("Telemetry crash")
-
         adapter = GeminiLLMAdapter(
             genai_client=mock_genai_client,
-            langfuse_client=mock_langfuse,
         )
 
-        # Should not raise exception
-        result = adapter.transform(prompt="Test telemetry error")
-        assert result == "Output text"
+        mock_span = MagicMock()
+        mock_span.is_recording.return_value = False
+
+        with patch("opentelemetry.trace.get_current_span", return_value=mock_span):
+            result = adapter.transform(prompt="Test telemetry with non-recording span")
+            assert result == "Output text"
+            mock_span.set_attribute.assert_not_called()
 
     def test_init_without_langfuse_or_env(self) -> None:
         with patch.dict("os.environ", {}, clear=True):

@@ -10,6 +10,7 @@ Conforms to ADR-016:
 
 from __future__ import annotations
 
+import json
 import logging
 from collections.abc import Generator
 from contextlib import contextmanager, nullcontext
@@ -153,10 +154,14 @@ class OpenTelemetryAdapter(TelemetryPort):
             span.set_attribute("langfuse.trace.tags", tags)
 
             if metadata:
+                input_payload: dict[str, Any] = {}
                 for key, val in metadata.items():
                     span.set_attribute(f"cresmo.metadata.{key}", str(val))
                     if key in ("title", "channel", "video_url", "content_id"):
                         span.set_attribute(f"langfuse.input.{key}", str(val))
+                        input_payload[key] = str(val)
+                if input_payload:
+                    span.set_attribute("langfuse.input", json.dumps(input_payload))
 
             cm: Any = nullcontext()
             if self._langfuse is not None:
@@ -266,9 +271,15 @@ class OpenTelemetryAdapter(TelemetryPort):
                 "eval.content_id": content_id.value,
                 "eval.coherence_score": score,
             }
+            output_payload: dict[str, Any] = {"coherence_score": score}
             if details:
                 for k, v in details.items():
                     attrs[f"eval.details.{k}"] = v
+                    # Explicit root output summary according to Langfuse best practices
+                    current_span.set_attribute(f"langfuse.output.{k}", str(v))
+                    output_payload[k] = v
+            current_span.set_attribute("langfuse.output.coherence_score", str(score))
+            current_span.set_attribute("langfuse.output", json.dumps(output_payload))
             current_span.add_event("session_coherence", attributes=attrs)
 
         if self._langfuse is not None:

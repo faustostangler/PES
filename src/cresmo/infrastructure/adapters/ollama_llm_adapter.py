@@ -350,43 +350,6 @@ class OllamaLLMAdapter(LLMTransformationPort):
                     if trace_id:
                         current_span.set_attribute("cresmo.trace_id", trace_id)
 
-                if self._langfuse is not None and hasattr(
-                    self._langfuse, "update_current_generation"
-                ):
-                    try:
-                        metadata: dict[str, Any] = {
-                            "provider": "ollama",
-                            "base_url": self.base_url,
-                        }
-                        if "total_duration" in response_json:
-                            metadata["total_duration_ms"] = (
-                                response_json["total_duration"] / 1_000_000
-                            )
-                        if "eval_duration" in response_json:
-                            metadata["eval_duration_ms"] = (
-                                response_json["eval_duration"] / 1_000_000
-                            )
-                        if trace_id:
-                            metadata["trace_id"] = trace_id
-                        if session_id:
-                            metadata["session_id"] = session_id
-                        if user_id:
-                            metadata["user_id"] = user_id
-
-                        self._langfuse.update_current_generation(
-                            name=trace_id or "ollama_generation",
-                            model=self.model,
-                            output=generated_text,
-                            usage_details={
-                                "input": prompt_tokens,
-                                "output": candidate_tokens,
-                                "total": prompt_tokens + candidate_tokens,
-                            },
-                            metadata=metadata,
-                        )
-                    except Exception as exc:  # noqa: BLE001
-                        logger.debug("[OllamaLLMAdapter] Langfuse span update skipped: %s", exc)
-
                 return generated_text
 
         except TimeoutError as exc:

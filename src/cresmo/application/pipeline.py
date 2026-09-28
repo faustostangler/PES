@@ -282,11 +282,20 @@ class CresmoPipeline:
         user_identity = user or UserIdentity.anonymous()
 
         # Open root telemetry session span to correlate all child stage spans in Langfuse/OTel
+        root_metadata = {
+            "source": "transcript",
+            "channel": channel_name.value,
+            "content_id": content_id.value,
+            "title": raw.title or content_id.value,
+        }
+        if raw.source_url:
+            root_metadata["video_url"] = raw.source_url
+
         with self.telemetry_port.start_pipeline_session(
             session_id=session_id,
             user_id=user_identity,
             channel_tenant_id=tenant_id,
-            metadata={"source": "transcript", "channel": channel_name.value},
+            metadata=root_metadata,
         ):
             # Evaluate ACID ledger idempotency guard and exit early if already processed
             if early_result := self._check_idempotent_exit(raw, entry, force_reprocess):

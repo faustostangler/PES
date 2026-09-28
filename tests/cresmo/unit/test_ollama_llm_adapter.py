@@ -132,12 +132,10 @@ class TestOllamaLLMAdapter:
             assert body["options"]["temperature"] == 0.35
 
     def test_transform_emits_langfuse_generation_telemetry(self) -> None:
-        """Verify that OllamaLLMAdapter passes token counts and metrics to Langfuse client."""
-        mock_langfuse = MagicMock()
+        """Verify that OllamaLLMAdapter passes token counts and metrics to OpenTelemetry span."""
         adapter = OllamaLLMAdapter(
             base_url="http://localhost:11434",
             model="qwen2.5:7b",
-            langfuse_client=mock_langfuse,
         )
 
         mock_response_data = {
@@ -149,7 +147,13 @@ class TestOllamaLLMAdapter:
             "eval_duration": 400_000_000,
         }
 
-        with patch("urllib.request.urlopen") as mock_urlopen:
+        mock_span = MagicMock()
+        mock_span.is_recording.return_value = True
+
+        with (
+            patch("urllib.request.urlopen") as mock_urlopen,
+            patch("opentelemetry.trace.get_current_span", return_value=mock_span),
+        ):
             mock_resp = MagicMock()
             mock_resp.read.return_value = json.dumps(mock_response_data).encode("utf-8")
             mock_resp.__enter__.return_value = mock_resp
@@ -162,16 +166,13 @@ class TestOllamaLLMAdapter:
             )
 
             assert result == "Observed output"
-            mock_langfuse.update_current_generation.assert_called_once()
-            call_kwargs = mock_langfuse.update_current_generation.call_args[1]
-            assert call_kwargs["usage_details"] == {
-                "input": 50,
-                "output": 120,
-                "total": 170,
-            }
-            assert call_kwargs["metadata"]["total_duration_ms"] == 450.0
-            assert call_kwargs["metadata"]["trace_id"] == "cresmo-trace-1"
-            assert call_kwargs["metadata"]["session_id"] == "session-42"
+            mock_span.set_attribute.assert_any_call("gen_ai.system", "ollama")
+            mock_span.set_attribute.assert_any_call("gen_ai.request.model", "qwen2.5:7b")
+            mock_span.set_attribute.assert_any_call("gen_ai.usage.input_tokens", 50)
+            mock_span.set_attribute.assert_any_call("gen_ai.usage.output_tokens", 120)
+            mock_span.set_attribute.assert_any_call("langfuse.observation.type", "generation")
+            mock_span.set_attribute.assert_any_call("langfuse.session.id", "session-42")
+            mock_span.set_attribute.assert_any_call("cresmo.trace_id", "cresmo-trace-1")
 
     def test_transform_omits_num_predict_when_zero_or_negative(self) -> None:
         """Verify that when num_predict is 0 (default), num_predict is omitted from options."""
@@ -325,7 +326,7 @@ class TestOllamaLLMAdapter:
 
             # Rendezvous barrier blocks until thread completes and returns True
             assert adapter.wait_for_warmup() is True
-            assert adapter.is_warmed_up is True
+            assert bool(adapter.is_warmed_up) is True
 
             # Subsequent wait_for_warmup returns immediately without re-invoking urlopen
             mock_urlopen.reset_mock()
@@ -358,7 +359,7 @@ class TestOllamaLLMAdapter:
 
             # Calling warmup after completion is a no-op
             adapter.warmup()
-            assert adapter.is_warmed_up is True
+            assert bool(adapter.is_warmed_up) is True
 
     def test_wait_for_warmup_reraises_background_exception(self) -> None:
         """Verify that an exception raised in background warmup is re-raised at rendezvous barrier."""
@@ -406,7 +407,7 @@ class TestOllamaLLMAdapter:
 
             result = adapter.transform("Hello from cold start")
             assert result == "Transformed text"
-            assert adapter.is_warmed_up is True
+            assert bool(adapter.is_warmed_up) is True
             assert mock_urlopen.call_count == 2
 
     def test_concurrent_threads_waiting_at_rendezvous_barrier(self) -> None:
