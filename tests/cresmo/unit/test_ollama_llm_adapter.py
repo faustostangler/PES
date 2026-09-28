@@ -14,6 +14,7 @@ from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest
+from opentelemetry.trace import SpanContext, TraceFlags
 
 from cresmo.domain.exceptions import LLMInfrastructureError
 from cresmo.infrastructure.adapters.ollama_llm_adapter import OllamaLLMAdapter
@@ -149,10 +150,16 @@ class TestOllamaLLMAdapter:
 
         mock_span = MagicMock()
         mock_span.is_recording.return_value = True
+        mock_span.get_span_context.return_value = SpanContext(
+            trace_id=1, span_id=1, is_remote=False, trace_flags=TraceFlags(1)
+        )
 
         with (
             patch("urllib.request.urlopen") as mock_urlopen,
-            patch("opentelemetry.trace.get_current_span", return_value=mock_span),
+            patch(
+                "cresmo.infrastructure.adapters.ollama_llm_adapter.trace.get_current_span",
+                return_value=mock_span,
+            ),
         ):
             mock_resp = MagicMock()
             mock_resp.read.return_value = json.dumps(mock_response_data).encode("utf-8")

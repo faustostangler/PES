@@ -182,7 +182,7 @@ class TestOpenTelemetryAdapter:
         assert root_span.attributes["langfuse.input.channel"] == "sandeco"
         assert root_span.attributes["langfuse.input.content_id"] == "vid_test_123"
         assert root_span.attributes["langfuse.input.video_url"] == "https://youtube.com/watch?v=123"
-        assert json.loads(root_span.attributes["langfuse.input"]) == {
+        assert json.loads(str(root_span.attributes["langfuse.input"])) == {
             "title": "Machiavelli and Modern State",
             "channel": "sandeco",
             "content_id": "vid_test_123",
@@ -248,6 +248,13 @@ class TestOpenTelemetryAdapter:
         assert event.attributes is not None
         assert event.attributes["eval.coherence_score"] == 0.92
         assert event.attributes["eval.details.wikilink_count"] == 14
+        assert root_span.attributes is not None
+        assert root_span.attributes["langfuse.output.coherence_score"] == "0.92"
+        assert root_span.attributes["langfuse.output.wikilink_count"] == "14"
+        assert json.loads(str(root_span.attributes["langfuse.output"])) == {
+            "coherence_score": 0.92,
+            "wikilink_count": 14,
+        }
 
     def test_pipeline_session_with_anonymous_user(
         self,

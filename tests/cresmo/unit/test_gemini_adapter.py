@@ -10,11 +10,14 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 from google.genai import errors
+from opentelemetry.trace import SpanContext, TraceFlags
 
 from cresmo.infrastructure.adapters.gemini_adapter import (
     GeminiLLMAdapter,
     _is_transient_genai_error,
 )
+
+DUMMY_SPAN_CONTEXT = SpanContext(trace_id=1, span_id=1, is_remote=False, trace_flags=TraceFlags(1))
 
 
 class TestTransientErrorClassification:
@@ -130,8 +133,12 @@ class TestGeminiLLMAdapter:
 
         mock_span = MagicMock()
         mock_span.is_recording.return_value = True
+        mock_span.get_span_context.return_value = DUMMY_SPAN_CONTEXT
 
-        with patch("opentelemetry.trace.get_current_span", return_value=mock_span):
+        with patch(
+            "cresmo.infrastructure.adapters.gemini_adapter.trace.get_current_span",
+            return_value=mock_span,
+        ):
             adapter.transform(
                 prompt="Test prompt",
                 trace_id="vid123_concepts",
@@ -231,8 +238,12 @@ class TestGeminiLLMAdapter:
 
         mock_span = MagicMock()
         mock_span.is_recording.return_value = True
+        mock_span.get_span_context.return_value = DUMMY_SPAN_CONTEXT
 
-        with patch("opentelemetry.trace.get_current_span", return_value=mock_span):
+        with patch(
+            "cresmo.infrastructure.adapters.gemini_adapter.trace.get_current_span",
+            return_value=mock_span,
+        ):
             adapter.transform(prompt="One two three four five")
 
         mock_span.set_attribute.assert_any_call("gen_ai.usage.input_tokens", 5)
@@ -249,8 +260,12 @@ class TestGeminiLLMAdapter:
 
         mock_span = MagicMock()
         mock_span.is_recording.return_value = False
+        mock_span.get_span_context.return_value = DUMMY_SPAN_CONTEXT
 
-        with patch("opentelemetry.trace.get_current_span", return_value=mock_span):
+        with patch(
+            "cresmo.infrastructure.adapters.gemini_adapter.trace.get_current_span",
+            return_value=mock_span,
+        ):
             result = adapter.transform(prompt="Test telemetry with non-recording span")
             assert result == "Output text"
             mock_span.set_attribute.assert_not_called()
