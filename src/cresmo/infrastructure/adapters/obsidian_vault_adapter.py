@@ -12,6 +12,7 @@ Conforms to:
 
 from __future__ import annotations
 
+import contextlib
 import csv
 import json
 import os
@@ -41,6 +42,9 @@ from cresmo.domain.value_objects import (
     NoteType,
     RawIndexEntry,
 )
+
+ISO_DATE_COMPACT_LENGTH: int = 8
+MIN_NOTE_DEFINITION_LENGTH: int = 20
 
 _ILLEGAL_FILENAME_CHARS = re.compile(r'[\\/*?:"<>|%]')
 _FRONTMATTER_PATTERN = re.compile(r"^---\s*\n([\s\S]*?)\n---\s*\n([\s\S]*)$")
@@ -198,11 +202,9 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
         upload_date = None
         if raw_date:
             date_str = str(raw_date).strip()
-            if len(date_str) == 8 and date_str.isdigit():
-                try:
+            if len(date_str) == ISO_DATE_COMPACT_LENGTH and date_str.isdigit():
+                with contextlib.suppress(ValueError):
                     upload_date = datetime.strptime(date_str, "%Y%m%d").replace(tzinfo=UTC).date()
-                except ValueError:
-                    pass
         desc = str(meta.get("video_description") or "")
 
         return RawTranscript(
@@ -395,7 +397,7 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
             body,
         )
         definition = def_match.group(1).strip() if def_match else body.strip()
-        if len(definition) < 20:
+        if len(definition) < MIN_NOTE_DEFINITION_LENGTH:
             definition = f"Definição contextual de {title.value} com análise teórica substancial."
 
         # Parse direct relations

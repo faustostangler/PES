@@ -18,6 +18,15 @@ from datetime import datetime
 from enum import Enum, StrEnum
 from pathlib import Path
 
+from cresmo.domain.exceptions import DomainValidationError, NoteTypologyError
+from cresmo.domain.taxonomy import classify_channel
+
+MAX_CHANNEL_NAME_LENGTH: int = 120
+MAX_CHANNEL_ID_LENGTH: int = 64
+MIN_CHANNEL_ID_LENGTH: int = 2
+MIN_CANONICAL_CHANNEL_ID_LENGTH: int = 4
+MAX_NOTE_TITLE_LENGTH: int = 200
+
 
 class PromptKey(StrEnum):
     """Canonical enumeration of all prompt template identifiers across Cresmo."""
@@ -37,10 +46,6 @@ class PromptKey(StrEnum):
     JUDGE_RAW_INDEX_SUMMARY = "judge_raw_index_summary"
     JUDGE_RAW_INDEX_CONCEPTS = "judge_raw_index_concepts"
     JUDGE_RAW_INDEX_SYNTHESIS = "judge_raw_index_synthesis"
-
-
-from cresmo.domain.exceptions import DomainValidationError, NoteTypologyError
-from cresmo.domain.taxonomy import classify_channel
 
 _CONTENT_ID_PATTERN = re.compile(r"^[a-zA-Z0-9_-]{1,64}$")
 _VIDEO_ID_REGEX = re.compile(
@@ -117,9 +122,9 @@ class ChannelName:
         val = self.value.strip()
         if not val:
             raise DomainValidationError("ChannelName cannot be empty or whitespace.")
-        if len(val) > 120:
+        if len(val) > MAX_CHANNEL_NAME_LENGTH:
             raise DomainValidationError(
-                f"ChannelName exceeds maximum length of 120 characters: '{val[:30]}...'"
+                f"ChannelName exceeds maximum length of {MAX_CHANNEL_NAME_LENGTH} characters: '{val[:30]}...'"
             )
         if ".." in val or "/" in val or "\\" in val:
             raise DomainValidationError(
@@ -181,12 +186,12 @@ class ChannelId:
         val = self.value.strip()
         if not val:
             raise DomainValidationError("ChannelId cannot be empty or whitespace.")
-        if len(val) > 64:
+        if len(val) > MAX_CHANNEL_ID_LENGTH:
             raise DomainValidationError(
-                f"ChannelId exceeds maximum length of 64 characters: '{val[:30]}...' (length: {len(val)})"
+                f"ChannelId exceeds maximum length of {MAX_CHANNEL_ID_LENGTH} characters: '{val[:30]}...' (length: {len(val)})"
             )
-        if len(val) < 2:
-            raise DomainValidationError(f"ChannelId must have at least 2 characters: '{val}'")
+        if len(val) < MIN_CHANNEL_ID_LENGTH:
+            raise DomainValidationError(f"ChannelId must have at least {MIN_CHANNEL_ID_LENGTH} characters: '{val}'")
         if ".." in val or "/" in val or "\\" in val:
             raise DomainValidationError(
                 f"ChannelId cannot contain path traversal characters: '{val}'"
@@ -245,7 +250,7 @@ class ChannelId:
     @property
     def is_youtube_canonical(self) -> bool:
         """Check if this channel identifier follows canonical YouTube format (UC prefix)."""
-        return self.value.startswith("UC") and len(self.value) >= 4
+        return self.value.startswith("UC") and len(self.value) >= MIN_CANONICAL_CHANNEL_ID_LENGTH
 
     @property
     def uploads_playlist_id(self) -> str | None:
@@ -377,9 +382,9 @@ class NoteTitle:
         # Filesystem isolation: remove characters prohibited on POSIX and Windows
         sanitized = _ILLEGAL_CHARS_PATTERN.sub("", sanitized).strip()
 
-        if not sanitized or len(sanitized) > 200:
+        if not sanitized or len(sanitized) > MAX_NOTE_TITLE_LENGTH:
             raise DomainValidationError(
-                f"NoteTitle must be between 1 and 200 characters. Got: '{self.value}' (sanitized: '{sanitized}')"
+                f"NoteTitle must be between 1 and {MAX_NOTE_TITLE_LENGTH} characters. Got: '{self.value}' (sanitized: '{sanitized}')"
             )
 
         if sanitized.lower() in {"untitled", "untitled_note"}:

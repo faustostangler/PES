@@ -184,14 +184,26 @@ class TestOpenTelemetryAdapter:
         assert "cresmo.content_title" not in root_span.attributes
         assert "cresmo.channel" not in root_span.attributes
         assert "cresmo.channel_id" not in root_span.attributes
+
+        # Zero metadata duplication for first-class canonical keys
         assert root_span.attributes["cresmo.metadata.source"] == "cli"
+        assert "cresmo.metadata.channel" not in root_span.attributes
+        assert "cresmo.metadata.channel_id" not in root_span.attributes
+        assert "cresmo.metadata.content_id" not in root_span.attributes
+        assert "cresmo.metadata.title" not in root_span.attributes
+
+        # Full symmetric Langfuse input keys (cognitive pair + algorithmic pair + URL)
         assert root_span.attributes["langfuse.input.title"] == "Machiavelli and Modern State"
         assert root_span.attributes["langfuse.input.channel"] == "sandeco"
+        assert root_span.attributes["langfuse.input.channel_name"] == "sandeco"
+        assert root_span.attributes["langfuse.input.channel_id"] == "UC_Sandeco123"
         assert root_span.attributes["langfuse.input.content_id"] == "vid_test_123"
         assert root_span.attributes["langfuse.input.video_url"] == "https://youtube.com/watch?v=123"
         assert json.loads(str(root_span.attributes["langfuse.input"])) == {
             "title": "Machiavelli and Modern State",
             "channel": "sandeco",
+            "channel_name": "sandeco",
+            "channel_id": "UC_Sandeco123",
             "content_id": "vid_test_123",
             "video_url": "https://youtube.com/watch?v=123",
         }
@@ -322,6 +334,48 @@ class TestOpenTelemetryAdapter:
             adapter.start_pipeline_session(session_id=session_id, user_id=user_id),
         ):
             raise DomainValidationError("Entity discovery failed")
+
+    def test_pipeline_session_version_resolution_from_metadata(
+        self,
+        otel_setup: tuple[OpenTelemetryAdapter, InMemorySpanExporter],
+    ) -> None:
+        """Verify pipeline_version and version in metadata take precedence over default."""
+        adapter, exporter = otel_setup
+        session_id = PipelineSessionId.create(channel="sandeco", content_id="vid_ver_01")
+        user = UserIdentity.anonymous()
+
+        # 1. Custom pipeline_version in metadata
+        with adapter.start_pipeline_session(
+            session_id=session_id,
+            user_id=user,
+            metadata={"pipeline_version": "cresmo:v3.0-beta"},
+        ):
+            pass
+
+        spans = exporter.get_finished_spans()
+        assert spans[-1].attributes is not None
+        assert list(spans[-1].attributes["langfuse.trace.tags"]) == [
+            "sandeco",
+            "cresmo:v3.0-beta",
+            "auth:anonymous",
+        ]
+
+        # 2. Version in metadata fallback
+        session_id2 = PipelineSessionId.create(channel="sandeco", content_id="vid_ver_02")
+        with adapter.start_pipeline_session(
+            session_id=session_id2,
+            user_id=user,
+            metadata={"version": "v2.5"},
+        ):
+            pass
+
+        spans = exporter.get_finished_spans()
+        assert spans[-1].attributes is not None
+        assert list(spans[-1].attributes["langfuse.trace.tags"]) == [
+            "sandeco",
+            "v2.5",
+            "auth:anonymous",
+        ]
 
 
 class TestNoOpTelemetryAdapter:

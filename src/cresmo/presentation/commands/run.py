@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import argparse
 import gc
-import resource
+import logging
 import sys
 from collections.abc import Iterable, Iterator, Sized
 from pathlib import Path
@@ -42,6 +42,7 @@ from cresmo.domain.value_objects import (
     is_processable_transcript_file,
 )
 from cresmo.infrastructure.config import CresmoSettings
+from cresmo.infrastructure.system import get_process_rss_bytes
 from cresmo.presentation.composition import (
     build_discover_batch_sources_use_case,
     build_pipeline,
@@ -55,6 +56,8 @@ from cresmo.presentation.exit_codes import (
     EXIT_RATE_LIMIT_EXCEEDED,
     EXIT_SUCCESS,
 )
+
+logger = logging.getLogger(__name__)
 
 
 def register_subparser(subparsers: argparse._SubParsersAction) -> None:
@@ -351,12 +354,12 @@ def execute_batch_run(
             # Memory Hygiene & Telemetry Drainage per ADR-020 & SPEC-008
             try:
                 pipeline.telemetry_port.flush()
-            except Exception:  # noqa: BLE001, S110
-                pass
+            except Exception as exc:  # noqa: BLE001
+                logger.debug("[run] Telemetry flush skipped or failed during cleanup: %s", exc)
             result = None
             gc.collect()
             try:
-                rss_bytes = float(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss * 1024)
+                rss_bytes = get_process_rss_bytes()
                 pipeline.metrics_port.set_gauge(
                     "cresmo_process_resident_memory_bytes",
                     rss_bytes,
@@ -367,8 +370,8 @@ def execute_batch_run(
                     1.0,
                     labels={"generation": "all"},
                 )
-            except Exception:  # noqa: BLE001, S110
-                pass
+            except Exception as exc:  # noqa: BLE001
+                logger.debug("[run] Process metrics emission failed during cleanup: %s", exc)
 
     if total_items == 0:
         manifest_display = str(args.manifest) if args.manifest else "data/playlist.txt"

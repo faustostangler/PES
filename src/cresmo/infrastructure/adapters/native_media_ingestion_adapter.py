@@ -14,6 +14,7 @@ Conforms to:
 from __future__ import annotations
 
 import json
+import logging
 import re
 import shutil
 import tempfile
@@ -23,19 +24,12 @@ import urllib.error
 import urllib.request
 from collections.abc import Mapping
 from datetime import UTC, date, datetime
+from http import HTTPStatus
 from pathlib import Path
 from typing import Any, cast
 
 import yt_dlp
 import yt_dlp.plugins
-
-# Eagerly load yt-dlp plugins on the main thread to prevent background thread
-# importlib lock deadlocks during debugging sessions with pydevd.
-try:
-    yt_dlp.plugins.load_all_plugins()
-except Exception:  # noqa: BLE001, S110
-    pass
-
 
 from cresmo.application.ports import MediaIngestionPort, MetricsPort
 from cresmo.domain.entities import RawTranscript
@@ -56,7 +50,19 @@ from cresmo.domain.value_objects import (
 )
 from cresmo.infrastructure.adapters.header_generator import RandomHeaderGenerator
 
+logger = logging.getLogger(__name__)
+
+SENTENCES_PER_PARAGRAPH_THRESHOLD: int = 4
+ISO_DATE_COMPACT_LENGTH: int = 8
 _ILLEGAL_FS_CHARS = re.compile(r'[\\/*?:"<>|%]')
+
+
+def _ensure_yt_dlp_plugins_loaded() -> None:
+    """Eagerly load yt-dlp plugins to prevent background thread importlib lock deadlocks."""
+    try:
+        yt_dlp.plugins.load_all_plugins()
+    except Exception as exc:  # noqa: BLE001
+        logger.debug("Failed to load yt-dlp plugins: %s", exc)
 
 
 class NativeMediaIngestionAdapter(MediaIngestionPort):
@@ -93,6 +99,7 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         self._whisper_semaphore = threading.BoundedSemaphore(max(1, whisper_concurrency_limit))
         self._cookie_file: Path | None = Path(cookie_file).resolve() if cookie_file else None
         self._js_runtime_name: str | None = js_runtime_name or self._detect_js_runtime()
+        _ensure_yt_dlp_plugins_loaded()
         if metrics_port is None:
             from cresmo.infrastructure.adapters.noop_metrics_adapter import NoOpMetricsAdapter
 
@@ -213,7 +220,7 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
                 raw_bytes: bytes = response.read()
                 return raw_bytes.decode("utf-8")
         except urllib.error.HTTPError as exc:
-            if exc.code == 429:
+            if exc.code == HTTPStatus.TOO_MANY_REQUESTS:
                 raise RateLimitExceededError(
                     f"HTTP 429 Too Many Requests while fetching subtitles: {exc}"
                 ) from exc
@@ -233,7 +240,10 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
                 if seg_text and seg_text != "\n":
                     current_sentences.append(seg_text)
                     # Group into paragraphs roughly every 4 sentences or punctuation pauses
-                    if len(current_sentences) >= 4 or seg_text.endswith((".", "!", "?")):
+                    if (
+                        len(current_sentences) >= SENTENCES_PER_PARAGRAPH_THRESHOLD
+                        or seg_text.endswith((".", "!", "?"))
+                    ):
                         paragraphs.append(" ".join(current_sentences))
                         current_sentences = []
 
@@ -322,7 +332,7 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         if not raw_date:
             return None
         date_str = str(raw_date).strip()
-        if len(date_str) == 8 and date_str.isdigit():
+        if len(date_str) == ISO_DATE_COMPACT_LENGTH and date_str.isdigit():
             try:
                 return datetime.strptime(date_str, "%Y%m%d").replace(tzinfo=UTC).date()
             except ValueError:
@@ -335,7 +345,7 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         if not raw_date:
             return datetime.now(UTC)
         date_str = str(raw_date).strip()
-        if len(date_str) == 8 and date_str.isdigit():
+        if len(date_str) == ISO_DATE_COMPACT_LENGTH and date_str.isdigit():
             try:
                 return datetime.strptime(date_str, "%Y%m%d").replace(tzinfo=UTC)
             except ValueError:

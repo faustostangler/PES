@@ -30,10 +30,6 @@ from typing import Literal, TypeVar, overload
 
 import yaml
 
-logger = logging.getLogger(__name__)
-
-_StageRet = TypeVar("_StageRet")
-
 from cresmo.application.ports import (
     DefaultPipelineSettings,
     LedgerRepositoryPort,
@@ -79,6 +75,13 @@ from cresmo.domain.value_objects import (
     RawIndexEntry,
     is_processable_transcript_file,
 )
+
+logger = logging.getLogger(__name__)
+
+_MIN_CONTENT_ID_LENGTH: int = 8
+_MAX_CONTENT_ID_LENGTH: int = 64
+
+_StageRet = TypeVar("_StageRet")
 
 
 @dataclass(frozen=True)
@@ -292,6 +295,7 @@ class CresmoPipeline:
         root_metadata = {
             "source": "transcript",
             "channel": channel_name.value,
+            "channel_name": channel_name.value,
             "content_id": content_id.value,
             "title": raw.title or content_id.value,
         }
@@ -638,7 +642,7 @@ class CresmoPipeline:
         # Derive ContentId safely (must match ^[a-zA-Z0-9_-]{8,64}$)
         stem = file_path.stem
         clean_stem = "".join(c for c in stem if c.isalnum() or c in ("-", "_"))
-        if 8 <= len(clean_stem) <= 64:
+        if _MIN_CONTENT_ID_LENGTH <= len(clean_stem) <= _MAX_CONTENT_ID_LENGTH:
             content_id_str = clean_stem
         else:
             # Fallback: combine clean prefix with stable sha256 hash to satisfy format constraints
@@ -678,9 +682,12 @@ class CresmoPipeline:
                         source_url = str(meta["url"])
                     if meta.get("video_description"):
                         video_description = str(meta["video_description"])
-                except Exception:  # noqa: BLE001, S110
-                    # Silently ignore malformed YAML frontmatter and retain inferred defaults
-                    pass
+                except (yaml.YAMLError, ValueError, TypeError, KeyError) as exc:
+                    logger.debug(
+                        "[pipeline] Malformed YAML frontmatter in '%s', retaining defaults: %s",
+                        file_path.name,
+                        exc,
+                    )
 
         # Validate channel value object and classify channel category if missing
         channel_name = ChannelName(channel_name_raw)

@@ -11,6 +11,7 @@ Conforms to ADR-014 and ADR-017:
 from __future__ import annotations
 
 import logging
+from http import HTTPStatus
 from typing import Any
 
 from langfuse.api.core import ApiError
@@ -109,7 +110,7 @@ class LangfusePromptProvider(PromptProviderPort):
 
             return fallback_sys, fallback_user
         except ApiError as exc:
-            if exc.status_code == 404:
+            if exc.status_code == HTTPStatus.NOT_FOUND:
                 # Prompt name not registered in Langfuse: expected during rollout or new prompts.
                 # Operators should create the missing prompt in Langfuse Cloud.
                 logger.warning(

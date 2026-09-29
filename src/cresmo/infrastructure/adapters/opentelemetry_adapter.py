@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import json
 import logging
+import threading
 from collections.abc import Generator
 from contextlib import contextmanager, nullcontext
 from typing import Any
@@ -19,6 +20,7 @@ from typing import Any
 from opentelemetry import trace
 from opentelemetry.trace import Tracer
 
+from cresmo import PIPELINE_VERSION
 from cresmo.application.ports import TelemetryPort
 from cresmo.domain.entities import (
     ChannelTenantId,
@@ -29,7 +31,23 @@ from cresmo.domain.entities import (
 )
 from cresmo.domain.value_objects import ChannelName
 
+try:
+    from langfuse import propagate_attributes
+except ImportError:  # pragma: no cover
+    propagate_attributes = None
+
 logger = logging.getLogger(__name__)
+
+DEFAULT_PIPELINE_VERSION: str = PIPELINE_VERSION
+OTEL_FLUSH_TIMEOUT_MS: int = 2000
+
+_LANGFUSE_INPUT_KEYS: frozenset[str] = frozenset(
+    {"title", "channel", "channel_name", "channel_id", "content_id", "video_url"}
+)
+
+_CANONICAL_ROOT_METADATA_KEYS: frozenset[str] = frozenset(
+    {"title", "channel", "channel_name", "channel_id", "content_id"}
+)
 
 
 def name_telemetry_threads(langfuse_client: Any | None = None) -> None:
@@ -38,8 +56,6 @@ def name_telemetry_threads(langfuse_client: Any | None = None) -> None:
     Prevents anonymous threads ('Thread-1', 'Thread-2', etc.) in Linux thread dumps
     and APMs per ADR-020 Pillar 5 (Thread Hierarchy & APM Visibility).
     """
-    import threading
-
     if langfuse_client is not None:
         try:
             resources = getattr(langfuse_client, "_resources", None)
@@ -63,6 +79,104 @@ def name_telemetry_threads(langfuse_client: Any | None = None) -> None:
                 t.name = "CresmoOtelBatchSpanProcessor"
     except Exception as exc:  # noqa: BLE001
         logger.debug("Failed to assign canonical name to OpenTelemetry thread: %s", exc)
+
+
+def _resolve_user_identity_and_tenant(
+    user_id: UserIdentity | ChannelTenantId | str,
+    channel_tenant_id: ChannelTenantId | None,
+    session_id: PipelineSessionId,
+) -> tuple[UserIdentity, ChannelTenantId]:
+    """Normalize polymorphic user identification and resolve channel tenant."""
+    norm_user: UserIdentity
+    resolved_tenant = channel_tenant_id
+
+    if isinstance(user_id, UserIdentity):
+        norm_user = user_id
+    elif isinstance(user_id, ChannelTenantId):
+        norm_user = UserIdentity.from_channel(user_id.channel_token)
+        if resolved_tenant is None:
+            resolved_tenant = user_id
+    elif isinstance(user_id, str):
+        if user_id.startswith("channel:"):
+            c_name = user_id.split(":", 1)[1]
+            norm_user = UserIdentity.from_channel(c_name)
+            if resolved_tenant is None:
+                resolved_tenant = ChannelTenantId.create(ChannelName(c_name))
+        elif user_id == "anonymous":
+            norm_user = UserIdentity.anonymous()
+        elif user_id.startswith("user:"):
+            parts = user_id.split(":")
+            if len(parts) >= 3:
+                norm_user = UserIdentity.identified(
+                    subject=":".join(parts[2:]), provider=parts[1]
+                )
+            else:
+                norm_user = UserIdentity.identified(subject=parts[1], provider="oauth")
+        else:
+            norm_user = UserIdentity.identified(subject=user_id, provider="oauth")
+    else:
+        norm_user = UserIdentity.anonymous()
+
+    if resolved_tenant is None:
+        resolved_tenant = ChannelTenantId.create(ChannelName(session_id.channel_token))
+
+    return norm_user, resolved_tenant
+
+
+def _build_session_span_attributes(
+    session_id: PipelineSessionId,
+    user: UserIdentity,
+    tenant: ChannelTenantId,
+    tags: list[str],
+    chan_name: str,
+    metadata: dict[str, Any] | None,
+) -> dict[str, Any]:
+    """Assemble atomic OpenTelemetry and Langfuse session span attributes."""
+    meta = metadata or {}
+    attrs: dict[str, Any] = {
+        "langfuse.observation.type": "span",
+        "langfuse.session.id": session_id.value,
+        "langfuse.user.id": user.value,
+        "cresmo.content.id": session_id.content_id,
+        "cresmo.channel.name": chan_name,
+        "cresmo.tenant_id": tenant.value,
+        "cresmo.user.is_anonymous": user.is_anonymous,
+        "cresmo.user.provider": user.provider,
+        "langfuse.trace.tags": tags,
+    }
+    if "title" in meta:
+        attrs["cresmo.content.title"] = str(meta["title"])
+    if "channel_id" in meta:
+        attrs["cresmo.channel.id"] = str(meta["channel_id"])
+    if user.subject:
+        attrs["cresmo.user.subject"] = user.subject
+
+    input_payload: dict[str, Any] = {}
+    for key, val in meta.items():
+        str_val = str(val)
+        if key not in _CANONICAL_ROOT_METADATA_KEYS:
+            attrs[f"cresmo.metadata.{key}"] = str_val
+        if key in _LANGFUSE_INPUT_KEYS:
+            attrs[f"langfuse.input.{key}"] = str_val
+            input_payload[key] = str_val
+
+    # Ensure channel and channel_name aliases are present symmetrically in langfuse.input
+    if "channel" in meta and "channel_name" not in input_payload:
+        attrs["langfuse.input.channel_name"] = str(meta["channel"])
+        input_payload["channel_name"] = str(meta["channel"])
+    elif "channel_name" in meta and "channel" not in input_payload:
+        attrs["langfuse.input.channel"] = str(meta["channel_name"])
+        input_payload["channel"] = str(meta["channel_name"])
+    elif "channel" not in input_payload and chan_name:
+        attrs["langfuse.input.channel"] = chan_name
+        attrs["langfuse.input.channel_name"] = chan_name
+        input_payload["channel"] = chan_name
+        input_payload["channel_name"] = chan_name
+
+    if input_payload:
+        attrs["langfuse.input"] = json.dumps(input_payload)
+
+    return attrs
 
 
 class OpenTelemetryAdapter(TelemetryPort):
@@ -107,77 +221,31 @@ class OpenTelemetryAdapter(TelemetryPort):
         Yields:
             The active root OpenTelemetry span.
         """
-        # Normalize UserIdentity
-        if isinstance(user_id, UserIdentity):
-            norm_user = user_id
-        elif isinstance(user_id, ChannelTenantId):
-            norm_user = UserIdentity.from_channel(user_id.channel_token)
-            if channel_tenant_id is None:
-                channel_tenant_id = user_id
-        elif isinstance(user_id, str):
-            if user_id.startswith("channel:"):
-                c_name = user_id.split(":", 1)[1]
-                norm_user = UserIdentity.from_channel(c_name)
-                if channel_tenant_id is None:
-                    channel_tenant_id = ChannelTenantId.create(ChannelName(c_name))
-            elif user_id == "anonymous":
-                norm_user = UserIdentity.anonymous()
-            elif user_id.startswith("user:"):
-                parts = user_id.split(":")
-                if len(parts) >= 3:
-                    norm_user = UserIdentity.identified(
-                        subject=":".join(parts[2:]), provider=parts[1]
-                    )
-                else:
-                    norm_user = UserIdentity.identified(subject=parts[1], provider="oauth")
-            else:
-                norm_user = UserIdentity.identified(subject=user_id, provider="oauth")
-        else:
-            norm_user = UserIdentity.anonymous()
+        norm_user, tenant = _resolve_user_identity_and_tenant(
+            user_id=user_id,
+            channel_tenant_id=channel_tenant_id,
+            session_id=session_id,
+        )
+        meta = metadata or {}
+        chan_name = str(meta["channel"]) if "channel" in meta else tenant.channel_token
+        pipeline_version = str(
+            meta.get("pipeline_version") or meta.get("version") or DEFAULT_PIPELINE_VERSION
+        )
+        tags = [chan_name, pipeline_version, f"auth:{norm_user.provider}"]
 
-        # Resolve ChannelTenantId
-        tenant = channel_tenant_id or ChannelTenantId.create(ChannelName(session_id.channel_token))
+        attrs = _build_session_span_attributes(
+            session_id=session_id,
+            user=norm_user,
+            tenant=tenant,
+            tags=tags,
+            chan_name=chan_name,
+            metadata=metadata,
+        )
 
-        with self._tracer.start_as_current_span("synthesize_content") as span:
-            span.set_attribute("langfuse.observation.type", "span")
-            span.set_attribute("langfuse.session.id", session_id.value)
-            span.set_attribute("langfuse.user.id", norm_user.value)
-            span.set_attribute("cresmo.content.id", session_id.content_id)
-            if metadata and metadata.get("title"):
-                span.set_attribute("cresmo.content.title", str(metadata["title"]))
-            # Cognitive channel name: prefer metadata["channel"] (human-readable) over tenant token
-            chan_name = (
-                str(metadata["channel"])
-                if (metadata and metadata.get("channel"))
-                else tenant.channel_token
-            )
-            span.set_attribute("cresmo.channel.name", chan_name)
-            if metadata and metadata.get("channel_id"):
-                span.set_attribute("cresmo.channel.id", str(metadata["channel_id"]))
-            span.set_attribute("cresmo.tenant_id", tenant.value)
-            span.set_attribute("cresmo.user.is_anonymous", norm_user.is_anonymous)
-            span.set_attribute("cresmo.user.provider", norm_user.provider)
-            if norm_user.subject:
-                span.set_attribute("cresmo.user.subject", norm_user.subject)
-
-            tags = [chan_name, "cresmo:v2", f"auth:{norm_user.provider}"]
-            span.set_attribute("langfuse.trace.tags", tags)
-
-            if metadata:
-                input_payload: dict[str, Any] = {}
-                for key, val in metadata.items():
-                    span.set_attribute(f"cresmo.metadata.{key}", str(val))
-                    if key in ("title", "channel", "video_url", "content_id"):
-                        span.set_attribute(f"langfuse.input.{key}", str(val))
-                        input_payload[key] = str(val)
-                if input_payload:
-                    span.set_attribute("langfuse.input", json.dumps(input_payload))
-
+        with self._tracer.start_as_current_span("synthesize_content", attributes=attrs) as span:
             cm: Any = nullcontext()
-            if self._langfuse is not None:
+            if self._langfuse is not None and propagate_attributes is not None:
                 try:
-                    from langfuse import propagate_attributes
-
                     cm = propagate_attributes(
                         session_id=session_id.value,
                         user_id=norm_user.value,
@@ -354,7 +422,7 @@ class OpenTelemetryAdapter(TelemetryPort):
             tracer_provider = trace.get_tracer_provider()
             flush_fn = getattr(tracer_provider, "force_flush", None)
             if callable(flush_fn):
-                flush_fn(timeout_millis=2000)
+                flush_fn(timeout_millis=OTEL_FLUSH_TIMEOUT_MS)
         except Exception as exc:  # noqa: BLE001
             logger.debug(
                 "[OpenTelemetryAdapter] OpenTelemetry tracer provider flush skipped: %s", exc

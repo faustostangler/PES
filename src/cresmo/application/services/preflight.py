@@ -12,6 +12,7 @@ import shutil
 import urllib.error
 import urllib.request
 from dataclasses import dataclass, field
+from http import HTTPStatus
 from pathlib import Path
 
 from pydantic import SecretStr
@@ -40,7 +41,7 @@ def probe_http_endpoint(url: str, timeout_seconds: float = 1.0) -> bool:
             method="GET",
         )
         with urllib.request.urlopen(req, timeout=timeout_seconds) as response:
-            return int(response.status) < 500
+            return int(response.status) < HTTPStatus.INTERNAL_SERVER_ERROR
     except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError, OSError):
         return False
     except Exception:  # noqa: BLE001

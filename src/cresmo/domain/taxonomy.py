@@ -12,6 +12,11 @@ Conforms to:
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from cresmo.domain.value_objects import ChannelName
+
 # [VOLATILE] politics_br: Brazilian political scenario, inquiries, judiciary/STF/Congress decisions, national journalism.
 POLITICS_BR_CHANNELS: frozenset[str] = frozenset(
     {
@@ -326,11 +331,6 @@ ENTERTAINMENT_CHANNELS: frozenset[str] = frozenset(
         "ricardo feltrin",
     }
 )
-
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from cresmo.domain.value_objects import ChannelName
 
 DEFAULT_CHANNEL_DOMAIN: str = "uncategorized"
 DEFAULT_CHANNEL_CATEGORY: str = "volatile"

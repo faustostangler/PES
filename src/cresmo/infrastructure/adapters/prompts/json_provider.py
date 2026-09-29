@@ -15,6 +15,7 @@ from __future__ import annotations
 import importlib.resources
 import json
 import logging
+import sys
 from pathlib import Path
 from typing import Any
 
@@ -71,8 +72,7 @@ class JsonPromptProvider(PromptProviderPort):
         """
         if custom_dir is not None and custom_dir.exists():
             return custom_dir
-        import cresmo.infrastructure.adapters.prompt_provider as facade_mod
-
+        facade_mod = sys.modules.get("cresmo.infrastructure.adapters.prompt_provider")
         candidates = getattr(facade_mod, "_CANDIDATE_SKILLS_DIRS", _CANDIDATE_SKILLS_DIRS)
         for candidate in candidates:
             if candidate.exists():

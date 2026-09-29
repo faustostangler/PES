@@ -29,6 +29,7 @@ from cresmo.domain.exceptions import (
 from cresmo.domain.value_objects import (
     ChannelFeedQuery,
     SyncFilterCriteria,
+    normalize_to_uploads_playlist_url,
 )
 from cresmo.infrastructure.config import CresmoSettings
 from cresmo.presentation.composition import build_sync_channel_use_case
@@ -210,9 +211,6 @@ def handle_sync(args: argparse.Namespace) -> int:
         channels_to_sync = _resolve_channels_for_sync(
             manifest_path=manifest_path,
             filter_criteria=filter_criteria,
-            settings=settings,
-            lookback=args.lookback,
-            max_videos=args.max_videos,
         )
 
         if not channels_to_sync:
@@ -318,9 +316,6 @@ def _read_manifest_lines(path: Path | None) -> list[str]:
 def _resolve_channels_for_sync(
     manifest_path: Path | None,
     filter_criteria: SyncFilterCriteria,
-    settings: CresmoSettings,
-    lookback: int,
-    max_videos: int,
 ) -> list[str]:
     """Collect channel URLs from manifest applying filter_criteria.
 
@@ -331,8 +326,6 @@ def _resolve_channels_for_sync(
 
     ADR-012: Returned list is **not** yet sorted; the caller enforces alphabetical order.
     """
-    from cresmo.domain.value_objects import normalize_to_uploads_playlist_url
-
     # Mode: explicit --channel tokens are treated as direct target URLs/handles
     if filter_criteria.channels:
         return [

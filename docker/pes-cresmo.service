@@ -1,0 +1,16 @@
+[Unit]
+Description=PES Cresmo Infrastructure Stack (Docker Compose)
+Requires=docker.service
+After=docker.service network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+WorkingDirectory=/home/stangler/gamer_d/Fausto Stangler/Documentos/Python/PES
+ExecStart=/usr/bin/docker compose -f docker-compose.langfuse.yml -f docker-compose.monitoring.yml -f docker-compose.yml up -d
+ExecStop=/usr/bin/docker compose -f docker-compose.langfuse.yml -f docker-compose.monitoring.yml -f docker-compose.yml down --remove-orphans
+TimeoutStartSec=300
+
+[Install]
+WantedBy=multi-user.target

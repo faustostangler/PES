@@ -11,6 +11,7 @@ Conforms to:
 
 from __future__ import annotations
 
+import contextlib
 import re
 
 from cresmo.application.ports import (
@@ -22,6 +23,7 @@ from cresmo.domain.taxonomy import classify_channel
 from cresmo.domain.value_objects import ChannelName, ContentId, MasterDocumentResult
 
 CHUNK_SEPARATOR: str = "\n\n---\n\n"
+SENTINEL_FALLBACK_SORT_DATE: int = 99_999_999
 _DATE_PATTERN = re.compile(r'video_date:\s*["\']?(\d{4,8})["\']?')
 _CATEGORY_PATTERN = re.compile(r'channel_category:\s*["\']?([^"\'\n]+)["\']?')
 _VIDEO_ID_PATTERN = re.compile(r'video_id:\s*["\']?([a-zA-Z0-9_-]+)["\']?')
@@ -54,12 +56,10 @@ def parse_metadata_from_content(
     """
     # 1. Parse video_date
     date_match = _DATE_PATTERN.search(content)
-    sort_date = 99999999
+    sort_date = SENTINEL_FALLBACK_SORT_DATE
     if date_match:
-        try:
+        with contextlib.suppress(ValueError):
             sort_date = int(date_match.group(1))
-        except ValueError:
-            pass
 
     # 2. Parse channel_category
     category_match = _CATEGORY_PATTERN.search(content)

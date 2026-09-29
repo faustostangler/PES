@@ -222,3 +222,14 @@ class TestCompositionRoot:
         assert isinstance(pipeline, CresmoPipeline)
         assert isinstance(pipeline.index_raw.llm, GeminiLLMAdapter)
         assert isinstance(pipeline.index_raw.llm_indexing_port, GeminiLLMAdapter)
+
+    def test_build_sync_channel_use_case_raises_runtime_error_when_ledger_port_missing(
+        self, test_settings: CresmoSettings
+    ) -> None:
+        with patch("cresmo.presentation.composition.build_pipeline") as mock_build_pipeline:
+            mock_pipeline = MagicMock(spec=CresmoPipeline)
+            mock_pipeline.ledger_port = None
+            mock_build_pipeline.return_value = mock_pipeline
+
+            with pytest.raises(RuntimeError, match="Ledger port must be wired for channel sync"):
+                build_sync_channel_use_case(settings=test_settings)

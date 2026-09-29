@@ -45,6 +45,8 @@ In this repository, architectural decisions evolve continuously through test-dri
 | [**ADR-022**](ADR-022-universal-system-instruction-user-prompt-segregation.md) | 2026-09-25 | Universal System Instruction and User Prompt Segregation across Knowledge Synthesis Use Cases | Cognitive / Prompts | `ACCEPTED` | Universal segregation between immutable system rules and dynamic user input. |
 | [**ADR-023**](ADR-023-prometheus-sre-golden-signals-and-dora-metrics-platform.md) | 2026-09-26 | Prometheus SRE Golden Signals and DORA Metrics Platform | Observability / SRE | `ACCEPTED` | Standardized Prometheus metrics port, Golden Signals, and DORA tracking. |
 | [**ADR-024**](ADR-024-iterative-llm-as-a-judge-atomic-inventory-discovery.md) | 2026-09-27 | Iterative LLM-as-a-Judge and Deterministic Guardrails for Atomic Inventory Discovery | Cognitive / Guardrails | `ACCEPTED` | Two-Gate Defense (Deterministic Fail-Fast + LLM Judge) for atomic inventory. |
+| [**ADR-025**](ADR-025-grafana-loki-structured-log-aggregation.md) | 2026-09-29 | Grafana Loki Structured Log Aggregation for Cresmo Pipeline | Observability / SRE | `ACCEPTED` | Completes the observability triad with JSON structured logs and trace correlation. |
+| [**ADR-026**](ADR-026-clean-code-anti-patterns-and-code-smell-governance.md) | 2026-09-29 | SOTA-KISS Code Smell & Anti-Pattern Governance — Clean Code Hygiene, Zero Magic Numbers, and Cross-Platform Reliability | Architecture Canon | `ACCEPTED` | Codifies 8 hygiene standards: PEP 8 import topography, zero magic literals/status codes, anti-swallowing & chaining, OS-agnostic paths/telemetry, bounded modularity & cyclomatic limits, zero production asserts, parameter bundling, and dead code elimination. |
 
 ---
 
@@ -86,7 +88,8 @@ graph TD
         A014["ADR-014: Fail-Fast Preflight Probes"]
         A016["ADR-016: OTel Conventions & FinOps"]
         A023["ADR-023: Prometheus SRE Golden Signals"]
-        A014 --> A016 --> A023
+        A025["ADR-025: Grafana Loki Structured Logs"]
+        A014 --> A016 --> A023 --> A025
     end
 
     subgraph Platform ["5. SOTA-KISS Canon & Supporting Infrastructure"]
@@ -96,7 +99,8 @@ graph TD
         A018["ADR-018: IAM Bounded Context & BFF"]
         A019["ADR-019: Nomenclature & ChannelName VO"]
         A020["ADR-020: SOTA-KISS Architectural Canon"]
-        A019 --> A020
+        A026["ADR-026: Code Smell & Anti-Pattern Governance"]
+        A019 --> A020 --> A026
     end
 ```
 
@@ -132,6 +136,11 @@ When navigating the architecture, apply these documented precedence relationship
 - **ADR-017** governs Langfuse observations, prompt versioning with TTL caching, and local fallback.
 - **ADR-023** governs system reliability via Prometheus Golden Signals (Latency, Traffic, Errors, Saturation) and DORA delivery metrics.
 - **Precedence Rule:** Observability is multi-tiered: Prometheus handles operational health/SRE; OpenTelemetry and Langfuse handle distributed traces and LLM quality/cost.
+
+### 4.6 Clean Code Hygiene & Code Smell Governance (ADR-026 extends ADR-020)
+- **ADR-020** codified the core architectural pillars (concurrency topology, zero primitive obsession, contract integrity).
+- **ADR-026** extends this canon to tactical implementation hygiene: bans interleaved imports, magic timeouts, silent error swallowing, hardcoded OS-specific memory multipliers, and monolithic god files (>500 lines).
+- **Precedence Rule:** All new and refactored modules must strictly comply with the five hygiene standards codified in ADR-026.
 
 ---
 

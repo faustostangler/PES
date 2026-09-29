@@ -11,6 +11,7 @@ Conforms to:
 
 from __future__ import annotations
 
+import logging
 import queue
 import threading
 from collections.abc import Callable, Iterator
@@ -35,6 +36,11 @@ from cresmo.domain.value_objects import (
     normalize_to_uploads_playlist_url,
 )
 
+logger = logging.getLogger(__name__)
+
+_DEFAULT_STREAM_QUEUE_TIMEOUT_SECONDS: float = 0.2
+_DEFAULT_STREAM_ERROR_TIMEOUT_SECONDS: float = 2.0
+
 
 @dataclass(frozen=True)
 class BatchSource:
@@ -54,10 +60,10 @@ class BatchSource:
         if isinstance(self.kind, str) and not isinstance(self.kind, SourceModality):
             try:
                 modality = SourceModality(self.kind.strip().lower())
-            except ValueError:
+            except ValueError as exc:
                 raise ValueError(
                     f"Invalid BatchSource modality '{self.kind}'. Expected SourceModality.FILE or SourceModality.URL."
-                )
+                ) from exc
             object.__setattr__(self, "kind", modality)
         if self.content_id is not None and not isinstance(self.content_id, ContentId):
             object.__setattr__(self, "content_id", ContentId.from_string(self.content_id))
@@ -389,7 +395,7 @@ class DiscoverBatchSourcesUseCase:
         def _enqueue_source(src: BatchSource) -> None:
             while not stop_event.is_set():
                 try:
-                    stream_queue.put(src, timeout=0.2)
+                    stream_queue.put(src, timeout=_DEFAULT_STREAM_QUEUE_TIMEOUT_SECONDS)
                     break
                 except queue.Full:
                     continue
@@ -460,13 +466,13 @@ class DiscoverBatchSourcesUseCase:
                 )
             except Exception as exc:  # noqa: BLE001
                 try:
-                    stream_queue.put(exc, timeout=2.0)
+                    stream_queue.put(exc, timeout=_DEFAULT_STREAM_ERROR_TIMEOUT_SECONDS)
                 except queue.Full:
-                    pass
+                    logger.warning("[crawler] Failed to put error into stream_queue (queue full): %s", exc)
             finally:
                 while not stop_event.is_set():
                     try:
-                        stream_queue.put(None, timeout=0.2)
+                        stream_queue.put(None, timeout=_DEFAULT_STREAM_QUEUE_TIMEOUT_SECONDS)
                         break
                     except queue.Full:
                         continue

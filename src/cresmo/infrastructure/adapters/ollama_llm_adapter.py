@@ -18,6 +18,7 @@ import threading
 import time
 import urllib.error
 import urllib.request
+from http import HTTPStatus
 from typing import Any
 
 from langfuse import Langfuse, observe
@@ -27,6 +28,8 @@ from cresmo.application.ports import LLMTransformationPort
 from cresmo.domain.exceptions import LLMInfrastructureError
 
 logger = logging.getLogger(__name__)
+
+DEFAULT_HEALTHCHECK_TIMEOUT_SECONDS: float = 2.0
 
 
 class OllamaLLMAdapter(LLMTransformationPort):
@@ -104,9 +107,10 @@ class OllamaLLMAdapter(LLMTransformationPort):
         endpoint = f"{self.base_url}/api/tags"
         req = urllib.request.Request(endpoint, method="GET")
         try:
-            with urllib.request.urlopen(req, timeout=2.0) as response:
-                return response.status == 200
-        except Exception:  # noqa: BLE001
+            with urllib.request.urlopen(req, timeout=DEFAULT_HEALTHCHECK_TIMEOUT_SECONDS) as response:
+                return response.status == HTTPStatus.OK
+        except (urllib.error.URLError, TimeoutError, OSError) as exc:
+            logger.debug("[OllamaLLMAdapter] is_available probe failed: %s", exc)
             return False
 
     def _execute_warmup(self, effective_timeout: float) -> bool:
@@ -139,7 +143,7 @@ class OllamaLLMAdapter(LLMTransformationPort):
 
         try:
             with urllib.request.urlopen(req, timeout=effective_timeout) as response:
-                if response.status == 200:
+                if response.status == HTTPStatus.OK:
                     raw_body = response.read().decode("utf-8")
                     response_json = json.loads(raw_body)
                     duration = time.perf_counter() - start_time
@@ -155,7 +159,7 @@ class OllamaLLMAdapter(LLMTransformationPort):
                     return True
                 return False
         except urllib.error.HTTPError as exc:
-            if exc.code == 404:
+            if exc.code == HTTPStatus.NOT_FOUND:
                 msg = f"Model '{self.model}' not found in Ollama (HTTP 404) at {self.base_url}. Run 'ollama pull {self.model}'."
             else:
                 msg = f"Ollama HTTP {exc.code} during warmup at {self.base_url}: {exc.reason}."

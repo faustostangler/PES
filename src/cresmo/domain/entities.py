@@ -32,6 +32,10 @@ from cresmo.domain.value_objects import (
 # Regex matching Markdown tables (| header | header | \n | --- | --- |)
 _TABLE_PATTERN = re.compile(r"\|.*\|.*\n\|[\s:-]+\|", re.MULTILINE)
 
+MIN_ATOMIC_NOTE_DEFINITION_LENGTH: int = 20
+PIPELINE_SESSION_ID_PART_COUNT: int = 3
+CHANNEL_TENANT_ID_PART_COUNT: int = 2
+
 
 @dataclass(frozen=True)
 class RawTranscript:
@@ -212,9 +216,9 @@ class AtomicNote:
 
     def __post_init__(self) -> None:
         d = self.definition.strip()
-        if len(d) < 20:
+        if len(d) < MIN_ATOMIC_NOTE_DEFINITION_LENGTH:
             raise DomainValidationError(
-                f"AtomicNote definition must contain at least 20 characters of contextual analysis. Got: '{d}'"
+                f"AtomicNote definition must contain at least {MIN_ATOMIC_NOTE_DEFINITION_LENGTH} characters of contextual analysis. Got: '{d}'"
             )
 
         # Graph invariant: enforce acyclic direct relations (no self-loops)
@@ -278,7 +282,7 @@ class PipelineSessionId:
         if not self.value or not self.value.strip():
             raise ValueError("PipelineSessionId cannot be empty.")
         parts = self.value.split(":")
-        if len(parts) != 3 or parts[0] != "content" or not parts[1] or not parts[2]:
+        if len(parts) != PIPELINE_SESSION_ID_PART_COUNT or parts[0] != "content" or not parts[1] or not parts[2]:
             raise ValueError(
                 f"Invalid PipelineSessionId format: '{self.value}'. "
                 "Expected 'content:{channel}:{content_id}'."
@@ -331,7 +335,7 @@ class ChannelTenantId:
         if not self.value or not self.value.strip():
             raise ValueError("ChannelTenantId cannot be empty.")
         parts = self.value.split(":")
-        if len(parts) != 2 or parts[0] != "channel" or not parts[1]:
+        if len(parts) != CHANNEL_TENANT_ID_PART_COUNT or parts[0] != "channel" or not parts[1]:
             raise ValueError(
                 f"Invalid ChannelTenantId format: '{self.value}'. "
                 "Expected 'channel:{channel_name}'."

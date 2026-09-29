@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import argparse
 import sys
+import tempfile
 import time
 from datetime import UTC, datetime
 from pathlib import Path
@@ -85,7 +86,7 @@ def handle_worker(args: argparse.Namespace) -> int:
             lookback_days=args.lookback,
             max_videos=args.max_videos,
         )
-        heartbeat_file = Path("/tmp/cresmo_worker.heartbeat")
+        heartbeat_file = Path(tempfile.gettempdir()) / "cresmo_worker.heartbeat"
 
         sys.stdout.write(
             f"Starting ChannelPollingDaemon for '{args.channel}' (interval: {args.poll_interval}s)...\n"
