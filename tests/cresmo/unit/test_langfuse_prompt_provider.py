@@ -11,6 +11,7 @@ from __future__ import annotations
 from unittest.mock import MagicMock
 
 import pytest
+from langfuse.api.core import ApiError
 
 from cresmo.application.ports import PromptProviderPort
 from cresmo.domain.value_objects import ChannelName, PromptKey
@@ -111,6 +112,61 @@ class TestLangfusePromptProvider:
         assert isinstance(prompt, str)
         assert len(sys_inst) > 0
         assert "Ground truth text." in prompt
+
+    def test_resilience_when_langfuse_raises_not_found_404(
+        self, fallback_provider: JsonPromptProvider
+    ) -> None:
+        """ApiError(404) means the prompt hasn't been created in Langfuse yet.
+
+        Must fall back silently (with a WARNING, not an exception).
+        """
+        mock_client = MagicMock()
+        mock_client.get_prompt.side_effect = ApiError(status_code=404, body="Not Found")
+
+        provider = LangfusePromptProvider(
+            langfuse_client=mock_client,
+            fallback_provider=fallback_provider,
+            label="production",
+        )
+
+        sys_inst, prompt = provider.get_prompt(
+            PromptKey.GAP_FILLER_PASS1,
+            pass_num=1,
+            total_passes=3,
+            channel_name=ChannelName("sandeco"),
+            file_name="ep01.md",
+            raw_text="Fallback text on 404.",
+        )
+
+        assert isinstance(sys_inst, str)
+        assert isinstance(prompt, str)
+        assert "Fallback text on 404." in prompt
+
+    def test_resilience_when_langfuse_raises_api_error_non_404(
+        self, fallback_provider: JsonPromptProvider
+    ) -> None:
+        """ApiError with a non-404 status (e.g. 500) must also fall back gracefully."""
+        mock_client = MagicMock()
+        mock_client.get_prompt.side_effect = ApiError(status_code=500, body="Internal Server Error")
+
+        provider = LangfusePromptProvider(
+            langfuse_client=mock_client,
+            fallback_provider=fallback_provider,
+            label="production",
+        )
+
+        sys_inst, prompt = provider.get_prompt(
+            PromptKey.GAP_FILLER_PASS1,
+            pass_num=1,
+            total_passes=3,
+            channel_name=ChannelName("sandeco"),
+            file_name="ep01.md",
+            raw_text="Fallback text on 500.",
+        )
+
+        assert isinstance(sys_inst, str)
+        assert isinstance(prompt, str)
+        assert "Fallback text on 500." in prompt
 
     def test_all_prompt_keys_dispatched_via_unified_interface(
         self, fallback_provider: JsonPromptProvider

@@ -285,13 +285,31 @@ class PipelineSessionId:
             )
 
     @classmethod
-    def create(cls, channel: ChannelName | str, content_id: ContentId | str) -> PipelineSessionId:
-        ch = channel.value if isinstance(channel, ChannelName) else channel.strip()
+    def create(
+        cls,
+        channel: ChannelName | str,
+        content_id: ContentId | str,
+        channel_id: ChannelId | None = None,
+    ) -> PipelineSessionId:
+        """Construct canonical session key preferring stable ChannelId over mutable ChannelName.
+
+        Args:
+            channel: Human-readable channel name (cognitive fallback).
+            content_id: Unique content identifier.
+            channel_id: Optional stable platform ID (preferred for algorithmic keys).
+        """
+        # Algorithmic key: prefer stable ID over mutable name
+        ch = (
+            channel_id.value
+            if channel_id
+            else (channel.value if isinstance(channel, ChannelName) else channel.strip())
+        )
         c_id = content_id.value if isinstance(content_id, ContentId) else content_id.strip()
         return cls(value=f"content:{ch}:{c_id}")
 
     @property
-    def channel_name(self) -> str:
+    def channel_token(self) -> str:
+        """Algorithmic channel identifier token stored in the session key (ID or name)."""
         return self.value.split(":")[1]
 
     @property
@@ -320,12 +338,28 @@ class ChannelTenantId:
             )
 
     @classmethod
-    def create(cls, channel: ChannelName | str) -> ChannelTenantId:
-        ch = channel.value if isinstance(channel, ChannelName) else channel.strip()
+    def create(
+        cls,
+        channel: ChannelName | str,
+        channel_id: ChannelId | None = None,
+    ) -> ChannelTenantId:
+        """Construct canonical tenant key preferring stable ChannelId over mutable ChannelName.
+
+        Args:
+            channel: Human-readable channel name (cognitive fallback).
+            channel_id: Optional stable platform ID (preferred for algorithmic keys).
+        """
+        # Algorithmic key: prefer stable ID over mutable name
+        ch = (
+            channel_id.value
+            if channel_id
+            else (channel.value if isinstance(channel, ChannelName) else channel.strip())
+        )
         return cls(value=f"channel:{ch}")
 
     @property
-    def channel_name(self) -> str:
+    def channel_token(self) -> str:
+        """Algorithmic channel identifier token stored in the tenant key (ID or name)."""
         return self.value.split(":")[1]
 
 

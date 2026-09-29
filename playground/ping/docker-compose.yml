@@ -1,0 +1,14 @@
+services:
+  ping-monitor:
+    build: .
+    container_name: ping-monitor
+    restart: unless-stopped
+    network_mode: host
+    environment:
+      TARGET_IP: "1.1.1.1"
+      INTERVAL: "30"
+      DB_PATH: "/data/ping_log.db"
+    volumes:
+      - ./data:/data
+    cap_add:
+      - NET_RAW

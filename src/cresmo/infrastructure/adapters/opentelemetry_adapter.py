@@ -111,7 +111,7 @@ class OpenTelemetryAdapter(TelemetryPort):
         if isinstance(user_id, UserIdentity):
             norm_user = user_id
         elif isinstance(user_id, ChannelTenantId):
-            norm_user = UserIdentity.from_channel(user_id.channel_name)
+            norm_user = UserIdentity.from_channel(user_id.channel_token)
             if channel_tenant_id is None:
                 channel_tenant_id = user_id
         elif isinstance(user_id, str):
@@ -136,21 +136,31 @@ class OpenTelemetryAdapter(TelemetryPort):
             norm_user = UserIdentity.anonymous()
 
         # Resolve ChannelTenantId
-        tenant = channel_tenant_id or ChannelTenantId.create(ChannelName(session_id.channel_name))
+        tenant = channel_tenant_id or ChannelTenantId.create(ChannelName(session_id.channel_token))
 
-        with self._tracer.start_as_current_span("cresmo.pipeline.execution") as span:
+        with self._tracer.start_as_current_span("synthesize_content") as span:
             span.set_attribute("langfuse.observation.type", "span")
             span.set_attribute("langfuse.session.id", session_id.value)
             span.set_attribute("langfuse.user.id", norm_user.value)
-            span.set_attribute("cresmo.content_id", session_id.content_id)
-            span.set_attribute("cresmo.channel", tenant.channel_name)
+            span.set_attribute("cresmo.content.id", session_id.content_id)
+            if metadata and metadata.get("title"):
+                span.set_attribute("cresmo.content.title", str(metadata["title"]))
+            # Cognitive channel name: prefer metadata["channel"] (human-readable) over tenant token
+            chan_name = (
+                str(metadata["channel"])
+                if (metadata and metadata.get("channel"))
+                else tenant.channel_token
+            )
+            span.set_attribute("cresmo.channel.name", chan_name)
+            if metadata and metadata.get("channel_id"):
+                span.set_attribute("cresmo.channel.id", str(metadata["channel_id"]))
             span.set_attribute("cresmo.tenant_id", tenant.value)
             span.set_attribute("cresmo.user.is_anonymous", norm_user.is_anonymous)
             span.set_attribute("cresmo.user.provider", norm_user.provider)
             if norm_user.subject:
                 span.set_attribute("cresmo.user.subject", norm_user.subject)
 
-            tags = [tenant.channel_name, "cresmo:v2", f"auth:{norm_user.provider}"]
+            tags = [chan_name, "cresmo:v2", f"auth:{norm_user.provider}"]
             span.set_attribute("langfuse.trace.tags", tags)
 
             if metadata:

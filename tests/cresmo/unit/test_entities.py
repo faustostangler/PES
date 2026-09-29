@@ -10,8 +10,10 @@ import pytest
 
 from cresmo.domain.entities import (
     AtomicNote,
+    ChannelTenantId,
     EnrichedCompendium,
     MapOfContent,
+    PipelineSessionId,
     RawTranscript,
 )
 from cresmo.domain.exceptions import (
@@ -21,6 +23,7 @@ from cresmo.domain.exceptions import (
 )
 from cresmo.domain.value_objects import (
     CausalMatrix,
+    ChannelId,
     ChannelName,
     ContentId,
     NoteTitle,
@@ -204,3 +207,103 @@ class TestMapOfContent:
                 complementary_info="Complementary info.",
                 pass_count=0,
             )
+
+
+class TestPipelineSessionId:
+    """Phase 1: PipelineSessionId must prefer ChannelId (stable) over ChannelName (mutable)."""
+
+    def test_create_with_channel_name_only_backward_compatible(self) -> None:
+        """Existing callers that pass only ChannelName still produce valid session IDs."""
+        sid = PipelineSessionId.create(
+            channel=ChannelName("Marcelo Andrade"),
+            content_id=ContentId("9IbNJ0EsTxI"),
+        )
+        assert sid.value == "content:Marcelo Andrade:9IbNJ0EsTxI"
+        assert sid.content_id == "9IbNJ0EsTxI"
+        assert sid.channel_token == "Marcelo Andrade"
+        assert not hasattr(sid, "channel_name")
+
+    def test_create_with_channel_id_prefers_id_over_name(self) -> None:
+        """When ChannelId is available, the algorithmic key uses the stable ID."""
+        sid = PipelineSessionId.create(
+            channel=ChannelName("Marcelo Andrade"),
+            content_id=ContentId("9IbNJ0EsTxI"),
+            channel_id=ChannelId("UCxyz1234567890ab"),
+        )
+        # Algorithmic key must use ChannelId, not ChannelName
+        assert sid.value == "content:UCxyz1234567890ab:9IbNJ0EsTxI"
+        assert sid.content_id == "9IbNJ0EsTxI"
+        # channel_token returns the algorithmic token (now the ID)
+        assert sid.channel_token == "UCxyz1234567890ab"
+        assert not hasattr(sid, "channel_name")
+
+    def test_create_with_channel_id_none_falls_back_to_name(self) -> None:
+        """Explicit None channel_id falls back to ChannelName (text file sources)."""
+        sid = PipelineSessionId.create(
+            channel=ChannelName("Philosophy"),
+            content_id=ContentId("abcd1234efgh"),
+            channel_id=None,
+        )
+        assert sid.value == "content:Philosophy:abcd1234efgh"
+        assert sid.channel_token == "Philosophy"
+
+    def test_create_with_string_channel_still_works(self) -> None:
+        """Passing a raw string for channel remains backward-compatible."""
+        sid = PipelineSessionId.create(
+            channel="Raw String Channel",
+            content_id="dQw4w9WgXcQ",
+        )
+        assert sid.value == "content:Raw String Channel:dQw4w9WgXcQ"
+        assert sid.channel_token == "Raw String Channel"
+
+    def test_empty_session_id_raises_error(self) -> None:
+        with pytest.raises(ValueError, match="PipelineSessionId cannot be empty"):
+            PipelineSessionId(value="")
+
+    def test_invalid_format_raises_error(self) -> None:
+        with pytest.raises(ValueError, match="Invalid PipelineSessionId format"):
+            PipelineSessionId(value="bad:format")
+
+
+class TestChannelTenantId:
+    """Phase 1: ChannelTenantId must prefer ChannelId (stable) over ChannelName (mutable)."""
+
+    def test_create_with_channel_name_only_backward_compatible(self) -> None:
+        """Existing callers that pass only ChannelName still produce valid tenant IDs."""
+        tid = ChannelTenantId.create(channel=ChannelName("Marcelo Andrade"))
+        assert tid.value == "channel:Marcelo Andrade"
+        assert tid.channel_token == "Marcelo Andrade"
+        assert not hasattr(tid, "channel_name")
+
+    def test_create_with_channel_id_prefers_id_over_name(self) -> None:
+        """When ChannelId is available, the algorithmic key uses the stable ID."""
+        tid = ChannelTenantId.create(
+            channel=ChannelName("Marcelo Andrade"),
+            channel_id=ChannelId("UCxyz1234567890ab"),
+        )
+        # Algorithmic key must use ChannelId, not ChannelName
+        assert tid.value == "channel:UCxyz1234567890ab"
+        assert tid.channel_token == "UCxyz1234567890ab"
+        assert not hasattr(tid, "channel_name")
+
+    def test_create_with_channel_id_none_falls_back_to_name(self) -> None:
+        """Explicit None channel_id falls back to ChannelName."""
+        tid = ChannelTenantId.create(
+            channel=ChannelName("Philosophy"),
+            channel_id=None,
+        )
+        assert tid.value == "channel:Philosophy"
+        assert tid.channel_token == "Philosophy"
+
+    def test_create_with_string_channel_still_works(self) -> None:
+        """Passing a raw string for channel remains backward-compatible."""
+        tid = ChannelTenantId.create(channel="Raw String")
+        assert tid.value == "channel:Raw String"
+
+    def test_empty_tenant_id_raises_error(self) -> None:
+        with pytest.raises(ValueError, match="ChannelTenantId cannot be empty"):
+            ChannelTenantId(value="")
+
+    def test_invalid_format_raises_error(self) -> None:
+        with pytest.raises(ValueError, match="Invalid ChannelTenantId format"):
+            ChannelTenantId(value="bad_format")

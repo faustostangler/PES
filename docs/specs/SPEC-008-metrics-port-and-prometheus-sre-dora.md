@@ -99,15 +99,15 @@ class MetricsPort(ABC):
 
 | Signal | Metric Name | Type | Standard Bucket Array / Range | Required Labels |
 |---|---|---|---|---|
-| **Latency** | `cresmo_pipeline_stage_duration_seconds` | Histogram | `[0.05, 0.1, 0.25, 0.5, 1.0, 2.5, 5.0, 10.0, 30.0, 60.0, 120.0, 300.0]` | `stage`, `channel`, `status` |
-| **Latency** | `cresmo_media_ingestion_duration_seconds` | Histogram | `[0.5, 1.0, 2.5, 5.0, 10.0, 20.0, 45.0, 90.0, 180.0, 300.0]` | `channel`, `modality`, `status` |
+| **Latency** | `cresmo_pipeline_stage_duration_seconds` | Histogram | `[0.05, 0.1, 0.25, 0.5, 1.0, 2.5, 5.0, 10.0, 30.0, 60.0, 120.0, 300.0]` | `stage`, `channel_id`, `channel_name`, `status` |
+| **Latency** | `cresmo_media_ingestion_duration_seconds` | Histogram | `[0.5, 1.0, 2.5, 5.0, 10.0, 20.0, 45.0, 90.0, 180.0, 300.0]` | `channel_id`, `channel_name`, `modality`, `status` |
 | **Latency** | `cresmo_llm_request_duration_seconds` | Histogram | `[0.2, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 40.0, 60.0]` | `model`, `system`, `role` |
-| **Traffic** | `cresmo_transcripts_processed_total` | Counter | Monotonic `val >= 0.0` | `channel`, `status`, `modality` |
-| **Traffic** | `cresmo_atomic_notes_synthesized_total` | Counter | Monotonic `val >= 0.0` | `channel`, `note_type` |
-| **Traffic** | `cresmo_batch_sources_discovered_total` | Counter | Monotonic `val >= 0.0` | `channel`, `modality` |
-| **Errors** | `cresmo_pipeline_errors_total` | Counter | Monotonic `val >= 0.0` | `error_type`, `channel`, `stage` |
-| **Errors** | `cresmo_judge_retry_count_total` | Counter | Monotonic `val >= 0.0` | `channel`, `pass_type` |
-| **Errors** | `cresmo_ingestion_failures_total` | Counter | Monotonic `val >= 0.0` | `channel`, `reason` |
+| **Traffic** | `cresmo_transcripts_processed_total` | Counter | Monotonic `val >= 0.0` | `channel_id`, `channel_name`, `content_id`, `status`, `modality` |
+| **Traffic** | `cresmo_atomic_notes_synthesized_total` | Counter | Monotonic `val >= 0.0` | `channel_id`, `channel_name`, `content_id`, `note_type` |
+| **Traffic** | `cresmo_batch_sources_discovered_total` | Counter | Monotonic `val >= 0.0` | `channel_id`, `channel_name`, `modality` |
+| **Errors** | `cresmo_pipeline_errors_total` | Counter | Monotonic `val >= 0.0` | `error_type`, `channel_id`, `channel_name`, `content_id`, `stage` |
+| **Errors** | `cresmo_judge_retry_count_total` | Counter | Monotonic `val >= 0.0` | `channel_id`, `channel_name`, `content_id`, `pass_type` |
+| **Errors** | `cresmo_ingestion_failures_total` | Counter | Monotonic `val >= 0.0` | `channel_id`, `channel_name`, `content_id`, `reason` |
 | **Saturation** | `cresmo_discovery_queue_size` | Gauge | Integer `[0, queue_maxsize]` | None (global queue) |
 | **Saturation** | `cresmo_process_resident_memory_bytes` | Gauge | Bytes `val >= 0` | `role` |
 | **Saturation** | `cresmo_gc_collections_total` | Counter | Monotonic `val >= 0` | `generation` (`0`, `1`, `2`) |
@@ -144,13 +144,13 @@ class MetricsPort(ABC):
 
 ### Scenario 1: Counter Increment Validation
 - **Given** an initialized `PrometheusMetricsAdapter`.
-- **When** `increment_counter("cresmo_transcripts_processed_total", 1.0, {"channel": "sandeco", "status": "completed"})` is called.
+- **When** `increment_counter("cresmo_transcripts_processed_total", 1.0, {"channel_id": "UC_sandeco", "channel_name": "sandeco", "content_id": "yt_123", "status": "completed", "modality": "url"})` is called.
 - **Then** the underlying Prometheus counter increases by exactly `1.0`.
 - **And** calling `increment_counter` with a negative value raises `ValueError` (Counter non-negative invariant).
 
 ### Scenario 2: Latency Histogram Observation
 - **Given** an initialized `PrometheusMetricsAdapter`.
-- **When** `observe_histogram("cresmo_pipeline_stage_duration_seconds", 3.45, {"stage": "fluid_prose", "status": "success"})` is called.
+- **When** `observe_histogram("cresmo_pipeline_stage_duration_seconds", 3.45, {"stage": "fluid_prose", "channel_id": "UC_sandeco", "channel_name": "sandeco", "status": "success"})` is called.
 - **Then** the observation is placed into the appropriate histogram bucket (`5.0` bucket count incremented).
 - **And** calling `observe_histogram` with a negative duration raises `ValueError`.
 
@@ -170,12 +170,12 @@ class MetricsPort(ABC):
 ### Scenario 5: Pipeline Stage Duration Recording
 - **Given** a `CresmoPipeline` wired with a live `MetricsPort`.
 - **When** `pipeline.execute(raw)` completes the `expansion` stage.
-- **Then** `observe_histogram` is invoked with `name="cresmo_pipeline_stage_duration_seconds"`, `labels={"stage": "expansion", "channel": raw.channel_name.value, "status": "success"}`.
+- **Then** `observe_histogram` is invoked with `name="cresmo_pipeline_stage_duration_seconds"`, `labels={"stage": "expansion", "channel_id": raw.channel_id.value if raw.channel_id else "", "channel_name": raw.channel_name.value, "status": "success"}`.
 
 ### Scenario 6: Ingestion Latency Recording
 - **Given** a `NativeMediaIngestionAdapter` wired with `MetricsPort`.
 - **When** `ingest_single_video(video_url)` finishes downloading subtitles via `yt-dlp`.
-- **Then** `observe_histogram` is invoked with `name="cresmo_media_ingestion_duration_seconds"`, `labels={"channel": channel_name, "modality": "url", "status": "success"}`.
+- **Then** `observe_histogram` is invoked with `name="cresmo_media_ingestion_duration_seconds"`, `labels={"channel_id": ch_id.value if ch_id else "", "channel_name": channel_name, "modality": "url", "status": "success"}`.
 
 ### Scenario 7: Memory Hygiene RSS Recording
 - **Given** a batch execution in `execute_batch_run`.

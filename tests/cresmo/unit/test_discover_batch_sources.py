@@ -61,6 +61,31 @@ class TestDiscoverBatchSourcesUseCase:
         assert meta["channel"] == "https://www.youtube.com/@channel1"
         assert meta["video_id"] == "abc12345"
 
+    def test_extract_raw_file_metadata_plain_channel_name_not_mangled_to_url(
+        self, tmp_path: Path
+    ) -> None:
+        """Cognitive channel name (e.g. Marcelo Andrade) must not be corrupted into a /channel/ URL."""
+        file = tmp_path / "sample_name.md"
+        file.write_text(
+            "---\ntitle: Sample Video\nchannel: Marcelo Andrade\nvideo_id: abc12345\n---\nBody",
+            encoding="utf-8",
+        )
+        meta = extract_raw_file_metadata(file)
+        assert meta["channel"] == "Marcelo Andrade"
+
+    def test_extract_raw_file_metadata_prefers_channel_id_for_url_resolution(
+        self, tmp_path: Path
+    ) -> None:
+        """When channel_id is provided, it is resolved to canonical YouTube channel URL."""
+        file = tmp_path / "sample_id.md"
+        file.write_text(
+            "---\ntitle: Sample Video\nchannel: Marcelo Andrade\nchannel_id: UC1234567890abcdef\nvideo_id: abc12345\n---\nBody",
+            encoding="utf-8",
+        )
+        meta = extract_raw_file_metadata(file)
+        assert meta["channel"] == "https://www.youtube.com/channel/UC1234567890abcdef"
+        assert meta["channel_id"] == "UC1234567890abcdef"
+
     def test_discover_sources_from_raw_lake(self, tmp_path: Path) -> None:
         raw_dir = tmp_path / "raw"
         raw_dir.mkdir()

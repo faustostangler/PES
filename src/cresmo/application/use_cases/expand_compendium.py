@@ -79,8 +79,15 @@ class ExpandCompendiumUseCase:
             CompendiumStructureError: If complementary information section is missing or empty.
             DomainValidationError: If construction invariants are violated.
         """
-        session_id = PipelineSessionId.create(compendium.channel_name, compendium.content_id).value
-        user_id = ChannelTenantId.create(compendium.channel_name).value
+        session_id = PipelineSessionId.create(
+            channel=compendium.channel_name,
+            content_id=compendium.content_id,
+            channel_id=compendium.channel_id,
+        ).value
+        user_id = ChannelTenantId.create(
+            channel=compendium.channel_name,
+            channel_id=compendium.channel_id,
+        ).value
 
         long_sys, long_user = self.prompt_provider.get_prompt(
             PromptKey.LONG_EXPANDER,

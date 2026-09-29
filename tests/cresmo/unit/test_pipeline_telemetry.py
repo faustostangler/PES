@@ -16,7 +16,7 @@ from opentelemetry.sdk.trace.export.in_memory_span_exporter import InMemorySpanE
 
 from cresmo.application.pipeline import CresmoPipeline
 from cresmo.domain.entities import RawTranscript, UserIdentity
-from cresmo.domain.value_objects import ChannelName, ContentId
+from cresmo.domain.value_objects import ChannelId, ChannelName, ContentId
 from cresmo.infrastructure.adapters.opentelemetry_adapter import OpenTelemetryAdapter
 from cresmo.infrastructure.adapters.prompt_provider import JsonPromptProvider
 from tests.cresmo.unit.test_pipeline import SmartMockLLMAdapter
@@ -79,16 +79,19 @@ class TestPipelineTelemetryIntegration:
         assert len(spans) >= 6  # Root + child stage spans
 
         # Identify root span
-        root_span = next(s for s in spans if s.name == "cresmo.pipeline.execution")
+        root_span = next(s for s in spans if s.name == "synthesize_content")
         assert root_span.attributes is not None
         assert root_span.context is not None
         assert root_span.attributes["langfuse.session.id"] == "content:sandeco:yt_sample1234"
         assert root_span.attributes["langfuse.user.id"] == "anonymous"
-        assert root_span.attributes["cresmo.content_id"] == "yt_sample1234"
-        assert root_span.attributes["cresmo.channel"] == "sandeco"
+        assert root_span.attributes["cresmo.content.id"] == "yt_sample1234"
+        assert root_span.attributes["cresmo.content.title"] == "Modelos Transformadores"
+        assert root_span.attributes["cresmo.channel.name"] == "sandeco"
         assert root_span.attributes["cresmo.tenant_id"] == "channel:sandeco"
         assert root_span.attributes["cresmo.user.is_anonymous"] is True
         assert root_span.attributes["cresmo.user.provider"] == "anonymous"
+        assert "cresmo.content_id" not in root_span.attributes
+        assert "cresmo.channel" not in root_span.attributes
 
         # Check all child stage spans are tied to the root trace_id
         stage_names = {
@@ -140,18 +143,59 @@ class TestPipelineTelemetryIntegration:
         root_span = next(
             s
             for s in spans
-            if s.name == "cresmo.pipeline.execution"
+            if s.name == "synthesize_content"
             and s.attributes is not None
-            and s.attributes.get("cresmo.content_id") == "yt_auth_test_01"
+            and s.attributes.get("cresmo.content.id") == "yt_auth_test_01"
         )
         assert root_span.attributes is not None
         assert root_span.attributes["langfuse.session.id"] == "content:acropole:yt_auth_test_01"
         assert root_span.attributes["langfuse.user.id"] == "user:oauth:fausto@cresmo.ai"
-        assert root_span.attributes["cresmo.channel"] == "acropole"
+        assert root_span.attributes["cresmo.channel.name"] == "acropole"
+        assert root_span.attributes["cresmo.content.title"] == "Estoicismo Clássico"
         assert root_span.attributes["cresmo.tenant_id"] == "channel:acropole"
         assert root_span.attributes["cresmo.user.is_anonymous"] is False
         assert root_span.attributes["cresmo.user.provider"] == "oauth"
         assert root_span.attributes["cresmo.user.subject"] == "fausto@cresmo.ai"
+        assert "cresmo.channel" not in root_span.attributes
+        assert "cresmo.content_id" not in root_span.attributes
+
+    def test_execute_propagates_channel_id_to_telemetry_span(
+        self,
+        telemetry_pipeline: tuple[CresmoPipeline, InMemorySpanExporter, InMemoryVaultAdapter],
+    ) -> None:
+        pipeline, exporter, _ = telemetry_pipeline
+
+        raw = RawTranscript(
+            content_id=ContentId("yt_chan_id_01"),
+            channel_name=ChannelName("acropole"),
+            channel_id=ChannelId("UC_acropole123"),
+            body="Aula completa sobre filosofia e estoicismo clássico em Atenas e Roma.",
+            title="Estoicismo e Virtude",
+        )
+
+        result = pipeline.execute(raw=raw, gap_filler_passes=1)
+
+        assert result.success is True
+
+        spans = exporter.get_finished_spans()
+        root_span = next(
+            s
+            for s in spans
+            if s.name == "synthesize_content"
+            and s.attributes is not None
+            and s.attributes.get("cresmo.content.id") == "yt_chan_id_01"
+        )
+        assert root_span.attributes is not None
+        # Algorithmic keys use stable ChannelId
+        assert root_span.attributes["langfuse.session.id"] == "content:UC_acropole123:yt_chan_id_01"
+        assert root_span.attributes["cresmo.tenant_id"] == "channel:UC_acropole123"
+        assert root_span.attributes["cresmo.channel.id"] == "UC_acropole123"
+        # Cognitive keys use human-readable Name/Title
+        assert root_span.attributes["cresmo.channel.name"] == "acropole"
+        assert root_span.attributes["cresmo.content.title"] == "Estoicismo e Virtude"
+        assert "cresmo.channel" not in root_span.attributes
+        assert "cresmo.channel_id" not in root_span.attributes
+        assert "cresmo.content_id" not in root_span.attributes
 
     def test_pipeline_records_prometheus_metrics_on_stages(self) -> None:
         """SPEC-008 Scenario 5: Verifies pipeline records stage duration histograms and counters."""
@@ -182,6 +226,7 @@ class TestPipelineTelemetryIntegration:
         raw = RawTranscript(
             content_id=ContentId("yt_metrics_test_01"),
             channel_name=ChannelName("sandeco"),
+            channel_id=ChannelId("UC_sandeco_test"),
             body="Aula completa sobre arquitetura hexagonal e métricas de observabilidade.",
             title="Arquitetura Hexagonal",
         )
@@ -192,14 +237,25 @@ class TestPipelineTelemetryIntegration:
         # Check transcript counter
         transcript_sample = registry.get_sample_value(
             "cresmo_transcripts_processed_total",
-            {"channel": "sandeco", "status": "completed", "modality": "transcript"},
+            {
+                "channel_id": "UC_sandeco_test",
+                "channel_name": "sandeco",
+                "content_id": "yt_metrics_test_01",
+                "status": "completed",
+                "modality": "transcript",
+            },
         )
         assert transcript_sample == 1.0
 
         # Check atomic notes counter
         notes_sample = registry.get_sample_value(
             "cresmo_atomic_notes_synthesized_total",
-            {"channel": "sandeco", "note_type": "all"},
+            {
+                "channel_id": "UC_sandeco_test",
+                "channel_name": "sandeco",
+                "content_id": "yt_metrics_test_01",
+                "note_type": "all",
+            },
         )
         assert notes_sample is not None and notes_sample >= 1.0
 
@@ -214,6 +270,11 @@ class TestPipelineTelemetryIntegration:
         ):
             count = registry.get_sample_value(
                 "cresmo_pipeline_stage_duration_seconds_count",
-                {"stage": stage, "channel": "sandeco", "status": "success"},
+                {
+                    "stage": stage,
+                    "channel_id": "UC_sandeco_test",
+                    "channel_name": "sandeco",
+                    "status": "success",
+                },
             )
             assert count == 1.0, f"Stage {stage} should have 1 histogram observation"

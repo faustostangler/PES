@@ -47,19 +47,19 @@ We introduce an explicit, dedicated **`MetricsPort`** in [`src/cresmo/applicatio
 The following canonical metric names and label schemas are standardized across Cresmo:
 
 #### 1. Latency (Histograms in seconds with explicit exponential/logarithmic bucket arrays)
-- `cresmo_pipeline_stage_duration_seconds{stage, channel, status}`: Execution duration of pipeline synthesis stages (`raw_indexing`, `fluid_prose`, `expansion`, `inventory`, `atomic_batch`, `mocs`, `duplicate_unification`).
-- `cresmo_media_ingestion_duration_seconds{channel, modality, status}`: Time taken by `MediaIngestionPort` to probe metadata and download subtitles or audio.
+- `cresmo_pipeline_stage_duration_seconds{stage, channel_id, channel_name, status}`: Execution duration of pipeline synthesis stages (`raw_indexing`, `fluid_prose`, `expansion`, `inventory`, `atomic_batch`, `mocs`, `duplicate_unification`).
+- `cresmo_media_ingestion_duration_seconds{channel_id, channel_name, modality, status}`: Time taken by `MediaIngestionPort` to probe metadata and download subtitles or audio.
 - `cresmo_llm_request_duration_seconds{model, system, role}`: Roundtrip duration of external LLM API calls.
 
 #### 2. Traffic (Monotonically increasing Counters)
-- `cresmo_transcripts_processed_total{channel, status, modality}`: Total count of transcript units consumed by the pipeline (`status="completed|skipped_idempotent|failed"`).
-- `cresmo_atomic_notes_synthesized_total{channel, note_type}`: Total count of discrete Obsidian atomic notes synthesized.
-- `cresmo_batch_sources_discovered_total{channel, modality}`: Total count of media items emitted by the discovery generator.
+- `cresmo_transcripts_processed_total{channel_id, channel_name, content_id, status, modality}`: Total count of transcript units consumed by the pipeline (`status="completed|skipped_idempotent|failed"`).
+- `cresmo_atomic_notes_synthesized_total{channel_id, channel_name, content_id, note_type}`: Total count of discrete Obsidian atomic notes synthesized.
+- `cresmo_batch_sources_discovered_total{channel_id, channel_name, modality}`: Total count of media items emitted by the discovery generator.
 
 #### 3. Errors (Counters partitioned by failure taxonomy)
-- `cresmo_pipeline_errors_total{error_type, channel, stage}`: Count of unhandled or caught pipeline failures (`error_type="rate_limit|network|domain_validation|preflight|internal"`).
-- `cresmo_judge_retry_count_total{channel, pass_type}`: Total count of iterative rewrite cycles triggered by LLM-as-a-judge validation failures.
-- `cresmo_ingestion_failures_total{channel, reason}`: Failures encountered during media extraction (`reason="video_unavailable|no_subtitles|private_video"`).
+- `cresmo_pipeline_errors_total{error_type, channel_id, channel_name, content_id, stage}`: Count of unhandled or caught pipeline failures (`error_type="rate_limit|network|domain_validation|preflight|internal"`).
+- `cresmo_judge_retry_count_total{channel_id, channel_name, content_id, pass_type}`: Total count of iterative rewrite cycles triggered by LLM-as-a-judge validation failures.
+- `cresmo_ingestion_failures_total{channel_id, channel_name, content_id, reason}`: Failures encountered during media extraction (`reason="video_unavailable|no_subtitles|private_video"`).
 
 #### 4. Saturation (Gauges reflecting instantaneous pressure)
 - `cresmo_discovery_queue_size`: Number of pending `BatchSource` items buffered in the bounded discovery queue (`stream_queue`, max capacity 50).

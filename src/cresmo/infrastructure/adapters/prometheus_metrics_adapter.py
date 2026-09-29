@@ -100,13 +100,13 @@ class PrometheusMetricsAdapter(MetricsPort):
         self._histograms["cresmo_pipeline_stage_duration_seconds"] = self._get_or_create_histogram(
             "cresmo_pipeline_stage_duration_seconds",
             "Execution duration of pipeline synthesis stages in seconds.",
-            labelnames=["stage", "channel", "status"],
+            labelnames=["stage", "channel_id", "channel_name", "status"],
             buckets=(0.05, 0.1, 0.25, 0.5, 1.0, 2.5, 5.0, 10.0, 30.0, 60.0, 120.0, 300.0),
         )
         self._histograms["cresmo_media_ingestion_duration_seconds"] = self._get_or_create_histogram(
             "cresmo_media_ingestion_duration_seconds",
             "Duration of media metadata probing and subtitle/audio extraction in seconds.",
-            labelnames=["channel", "modality", "status"],
+            labelnames=["channel_id", "channel_name", "modality", "status"],
             buckets=(0.5, 1.0, 2.5, 5.0, 10.0, 20.0, 45.0, 90.0, 180.0, 300.0),
         )
         self._histograms["cresmo_llm_request_duration_seconds"] = self._get_or_create_histogram(
@@ -120,34 +120,34 @@ class PrometheusMetricsAdapter(MetricsPort):
         self._counters["cresmo_transcripts_processed_total"] = self._get_or_create_counter(
             "cresmo_transcripts_processed_total",
             "Total count of transcript units consumed by the pipeline.",
-            labelnames=["channel", "status", "modality"],
+            labelnames=["channel_id", "channel_name", "content_id", "status", "modality"],
         )
         self._counters["cresmo_atomic_notes_synthesized_total"] = self._get_or_create_counter(
             "cresmo_atomic_notes_synthesized_total",
             "Total count of discrete Obsidian atomic notes synthesized.",
-            labelnames=["channel", "note_type"],
+            labelnames=["channel_id", "channel_name", "content_id", "note_type"],
         )
         self._counters["cresmo_batch_sources_discovered_total"] = self._get_or_create_counter(
             "cresmo_batch_sources_discovered_total",
             "Total count of media items emitted by the discovery generator.",
-            labelnames=["channel", "modality"],
+            labelnames=["channel_id", "channel_name", "modality"],
         )
 
         # 3. Error Counters
         self._counters["cresmo_pipeline_errors_total"] = self._get_or_create_counter(
             "cresmo_pipeline_errors_total",
             "Count of unhandled or caught pipeline failures partitioned by error type.",
-            labelnames=["error_type", "channel", "stage"],
+            labelnames=["error_type", "channel_id", "channel_name", "content_id", "stage"],
         )
         self._counters["cresmo_judge_retry_count_total"] = self._get_or_create_counter(
             "cresmo_judge_retry_count_total",
             "Total count of iterative rewrite cycles triggered by LLM judge failures.",
-            labelnames=["channel", "pass_type"],
+            labelnames=["channel_id", "channel_name", "content_id", "pass_type"],
         )
         self._counters["cresmo_ingestion_failures_total"] = self._get_or_create_counter(
             "cresmo_ingestion_failures_total",
             "Failures encountered during media extraction partitioned by reason.",
-            labelnames=["channel", "reason"],
+            labelnames=["channel_id", "channel_name", "content_id", "reason"],
         )
 
         # 4. Saturation Gauges & Counters

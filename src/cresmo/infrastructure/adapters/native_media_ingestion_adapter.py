@@ -357,6 +357,7 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         start_time = time.perf_counter()
         status = "success"
         channel_for_metrics = "Unknown_Channel"
+        channel_id_for_metrics = ""
 
         try:
             video_id = self._extract_video_id(video_url)
@@ -428,6 +429,8 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
 
             raw_cid = str(info.get("channel_id") or info.get("uploader_id") or "").strip()
             ch_id = ChannelId.extract_from_text(raw_cid)
+            if ch_id:
+                channel_id_for_metrics = ch_id.value
 
             return RawTranscript(
                 content_id=cid,
@@ -449,7 +452,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             self._metrics_port.observe_histogram(
                 "cresmo_media_ingestion_duration_seconds",
                 elapsed,
-                labels={"channel": channel_for_metrics, "modality": "url", "status": status},
+                labels={
+                    "channel_id": channel_id_for_metrics,
+                    "channel_name": channel_for_metrics,
+                    "modality": "url",
+                    "status": status,
+                },
             )
 
     def discover_channel_feed(

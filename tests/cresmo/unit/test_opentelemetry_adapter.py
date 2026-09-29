@@ -38,7 +38,7 @@ class TestTelemetryValueObjects:
     def test_pipeline_session_id_valid(self) -> None:
         session_id = PipelineSessionId.create(channel="sandeco", content_id="yt_12345678")
         assert session_id.value == "content:sandeco:yt_12345678"
-        assert session_id.channel_name == "sandeco"
+        assert session_id.channel_token == "sandeco"
         assert session_id.content_id == "yt_12345678"
 
     def test_pipeline_session_id_rejects_empty(self) -> None:
@@ -51,7 +51,7 @@ class TestTelemetryValueObjects:
     def test_channel_tenant_id_valid(self) -> None:
         tenant = ChannelTenantId.create("sandeco")
         assert tenant.value == "channel:sandeco"
-        assert tenant.channel_name == "sandeco"
+        assert tenant.channel_token == "sandeco"
 
     def test_channel_tenant_id_rejects_empty(self) -> None:
         with pytest.raises(ValueError, match="cannot be empty"):
@@ -154,6 +154,7 @@ class TestOpenTelemetryAdapter:
                 "source": "cli",
                 "title": "Machiavelli and Modern State",
                 "channel": "sandeco",
+                "channel_id": "UC_Sandeco123",
                 "content_id": "vid_test_123",
                 "video_url": "https://youtube.com/watch?v=123",
             },
@@ -169,14 +170,20 @@ class TestOpenTelemetryAdapter:
         # Spans finish from inside out: raw_indexing, fluid_prose, then root pipeline
         raw_indexing_span = next(s for s in spans if s.name == "cresmo.stage.raw_indexing")
         fluid_prose_span = next(s for s in spans if s.name == "cresmo.stage.fluid_prose")
-        root_span = next(s for s in spans if s.name == "cresmo.pipeline.execution")
+        root_span = next(s for s in spans if s.name == "synthesize_content")
 
         # Root span must have official Langfuse OTel attributes
         assert root_span.attributes is not None
         assert root_span.attributes["langfuse.session.id"] == "content:sandeco:vid_test_123"
         assert root_span.attributes["langfuse.user.id"] == "channel:sandeco"
-        assert root_span.attributes["cresmo.content_id"] == "vid_test_123"
-        assert root_span.attributes["cresmo.channel"] == "sandeco"
+        assert root_span.attributes["cresmo.content.id"] == "vid_test_123"
+        assert root_span.attributes["cresmo.content.title"] == "Machiavelli and Modern State"
+        assert root_span.attributes["cresmo.channel.name"] == "sandeco"
+        assert root_span.attributes["cresmo.channel.id"] == "UC_Sandeco123"
+        assert "cresmo.content_id" not in root_span.attributes
+        assert "cresmo.content_title" not in root_span.attributes
+        assert "cresmo.channel" not in root_span.attributes
+        assert "cresmo.channel_id" not in root_span.attributes
         assert root_span.attributes["cresmo.metadata.source"] == "cli"
         assert root_span.attributes["langfuse.input.title"] == "Machiavelli and Modern State"
         assert root_span.attributes["langfuse.input.channel"] == "sandeco"
@@ -215,9 +222,7 @@ class TestOpenTelemetryAdapter:
                 verdict="PASS",
             )
 
-        root_span = next(
-            s for s in exporter.get_finished_spans() if s.name == "cresmo.pipeline.execution"
-        )
+        root_span = next(s for s in exporter.get_finished_spans() if s.name == "synthesize_content")
         assert len(root_span.events) == 1
         event = root_span.events[0]
         assert event.name == "judge_evaluation"
@@ -241,9 +246,7 @@ class TestOpenTelemetryAdapter:
                 details={"wikilink_count": 14},
             )
 
-        root_span = next(
-            s for s in exporter.get_finished_spans() if s.name == "cresmo.pipeline.execution"
-        )
+        root_span = next(s for s in exporter.get_finished_spans() if s.name == "synthesize_content")
         event = next(e for e in root_span.events if e.name == "session_coherence")
         assert event.attributes is not None
         assert event.attributes["eval.coherence_score"] == 0.92
@@ -271,11 +274,12 @@ class TestOpenTelemetryAdapter:
             pass
 
         spans = exporter.get_finished_spans()
-        root_span = next(s for s in spans if s.name == "cresmo.pipeline.execution")
+        root_span = next(s for s in spans if s.name == "synthesize_content")
         assert root_span.attributes is not None
         assert root_span.attributes["langfuse.session.id"] == "content:sandeco:vid_anon_01"
         assert root_span.attributes["langfuse.user.id"] == "anonymous"
-        assert root_span.attributes["cresmo.channel"] == "sandeco"
+        assert root_span.attributes["cresmo.channel.name"] == "sandeco"
+        assert "cresmo.channel" not in root_span.attributes
         assert root_span.attributes["cresmo.user.is_anonymous"] is True
         assert root_span.attributes["cresmo.user.provider"] == "anonymous"
 
@@ -294,11 +298,12 @@ class TestOpenTelemetryAdapter:
             pass
 
         spans = exporter.get_finished_spans()
-        root_span = next(s for s in spans if s.name == "cresmo.pipeline.execution")
+        root_span = next(s for s in spans if s.name == "synthesize_content")
         assert root_span.attributes is not None
         assert root_span.attributes["langfuse.session.id"] == "content:sandeco:vid_auth_01"
         assert root_span.attributes["langfuse.user.id"] == "user:google:alice@corp.com"
-        assert root_span.attributes["cresmo.channel"] == "sandeco"
+        assert root_span.attributes["cresmo.channel.name"] == "sandeco"
+        assert "cresmo.channel" not in root_span.attributes
         assert root_span.attributes["cresmo.user.is_anonymous"] is False
         assert root_span.attributes["cresmo.user.provider"] == "google"
         assert root_span.attributes["cresmo.user.subject"] == "alice@corp.com"

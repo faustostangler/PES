@@ -790,7 +790,7 @@ class LedgerEntry:
         content_id: Unique content identifier.
         media_url: Web source URL.
         title: Episode or video title.
-        channel_name: Channel identifier.
+        channel_name: Human-readable creator channel name (cognitive key, used for directory layout).
         status: Current pipeline lifecycle status.
         notes_count: Total atomic notes synthesized.
         error_message: Optional failure reason if execution failed.

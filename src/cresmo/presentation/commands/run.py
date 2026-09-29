@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import argparse
 import gc
+import resource
 import sys
 from collections.abc import Iterable, Iterator, Sized
 from pathlib import Path
@@ -355,8 +356,6 @@ def execute_batch_run(
             result = None
             gc.collect()
             try:
-                import resource
-
                 rss_bytes = float(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss * 1024)
                 pipeline.metrics_port.set_gauge(
                     "cresmo_process_resident_memory_bytes",
@@ -509,7 +508,7 @@ def handle_run(args: argparse.Namespace) -> int:
                 return EXIT_SUCCESS
             return execute_batch_dry_run(pipeline, sources)
 
-        # Generator que é o resultado do método execute do discovery_use_case, objeto da classe DiscoverBatchSourcesUseCase
+        # Streaming generator produced by DiscoverBatchSourcesUseCase.execute(); consumed lazily by execute_batch_run.
         sources = load_batch_sources(
             query=query,
             settings=settings,

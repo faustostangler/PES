@@ -64,11 +64,23 @@ class TestPrometheusMetricsAdapter:
         adapter.increment_counter(
             "cresmo_transcripts_processed_total",
             2.5,
-            labels={"channel": "sandeco", "status": "completed", "modality": "url"},
+            labels={
+                "channel_id": "UC_sandeco",
+                "channel_name": "sandeco",
+                "content_id": "vid_123",
+                "status": "completed",
+                "modality": "url",
+            },
         )
         sample = registry.get_sample_value(
             "cresmo_transcripts_processed_total",
-            {"channel": "sandeco", "status": "completed", "modality": "url"},
+            {
+                "channel_id": "UC_sandeco",
+                "channel_name": "sandeco",
+                "content_id": "vid_123",
+                "status": "completed",
+                "modality": "url",
+            },
         )
         assert sample == 2.5
 
@@ -76,11 +88,23 @@ class TestPrometheusMetricsAdapter:
         adapter.increment_counter(
             "cresmo_transcripts_processed_total",
             1.0,
-            labels={"channel": "sandeco", "status": "completed", "modality": "url"},
+            labels={
+                "channel_id": "UC_sandeco",
+                "channel_name": "sandeco",
+                "content_id": "vid_123",
+                "status": "completed",
+                "modality": "url",
+            },
         )
         sample = registry.get_sample_value(
             "cresmo_transcripts_processed_total",
-            {"channel": "sandeco", "status": "completed", "modality": "url"},
+            {
+                "channel_id": "UC_sandeco",
+                "channel_name": "sandeco",
+                "content_id": "vid_123",
+                "status": "completed",
+                "modality": "url",
+            },
         )
         assert sample == 3.5
 
@@ -101,23 +125,50 @@ class TestPrometheusMetricsAdapter:
         adapter.observe_histogram(
             "cresmo_pipeline_stage_duration_seconds",
             3.45,
-            labels={"stage": "fluid_prose", "channel": "sandeco", "status": "success"},
+            labels={
+                "stage": "fluid_prose",
+                "channel_id": "UC_sandeco",
+                "channel_name": "sandeco",
+                "status": "success",
+            },
         )
         count = registry.get_sample_value(
             "cresmo_pipeline_stage_duration_seconds_count",
-            {"stage": "fluid_prose", "channel": "sandeco", "status": "success"},
+            {
+                "stage": "fluid_prose",
+                "channel_id": "UC_sandeco",
+                "channel_name": "sandeco",
+                "status": "success",
+            },
         )
         total_sum = registry.get_sample_value(
             "cresmo_pipeline_stage_duration_seconds_sum",
-            {"stage": "fluid_prose", "channel": "sandeco", "status": "success"},
+            {
+                "stage": "fluid_prose",
+                "channel_id": "UC_sandeco",
+                "channel_name": "sandeco",
+                "status": "success",
+            },
         )
         bucket_5 = registry.get_sample_value(
             "cresmo_pipeline_stage_duration_seconds_bucket",
-            {"stage": "fluid_prose", "channel": "sandeco", "status": "success", "le": "5.0"},
+            {
+                "stage": "fluid_prose",
+                "channel_id": "UC_sandeco",
+                "channel_name": "sandeco",
+                "status": "success",
+                "le": "5.0",
+            },
         )
         bucket_2_5 = registry.get_sample_value(
             "cresmo_pipeline_stage_duration_seconds_bucket",
-            {"stage": "fluid_prose", "channel": "sandeco", "status": "success", "le": "2.5"},
+            {
+                "stage": "fluid_prose",
+                "channel_id": "UC_sandeco",
+                "channel_name": "sandeco",
+                "status": "success",
+                "le": "2.5",
+            },
         )
 
         assert count == 1.0
@@ -208,13 +259,40 @@ class TestPrometheusMetricsAdapter:
         second_adapter.increment_counter(
             "cresmo_transcripts_processed_total",
             1.0,
-            labels={"channel": "sandeco", "status": "completed", "modality": "url"},
+            labels={
+                "channel_id": "UC_sandeco",
+                "channel_name": "sandeco",
+                "content_id": "vid_123",
+                "status": "completed",
+                "modality": "url",
+            },
         )
         sample = registry.get_sample_value(
             "cresmo_transcripts_processed_total",
-            {"channel": "sandeco", "status": "completed", "modality": "url"},
+            {
+                "channel_id": "UC_sandeco",
+                "channel_name": "sandeco",
+                "content_id": "vid_123",
+                "status": "completed",
+                "modality": "url",
+            },
         )
         assert sample == 1.0
+
+    def test_canonical_metrics_have_no_legacy_channel_label(
+        self,
+        registry: CollectorRegistry,
+        adapter: PrometheusMetricsAdapter,
+    ) -> None:
+        """Clean-break validation: verifies no canonical metric retains the deprecated 'channel' label."""
+        names_to_collectors = registry._names_to_collectors
+        for name, collector in names_to_collectors.items():
+            if name.startswith("cresmo_"):
+                labelnames = getattr(collector, "_labelnames", ())
+                assert "channel" not in labelnames, (
+                    f"Metric '{name}' still contains deprecated 'channel' label; "
+                    "expected 'channel_id' and/or 'channel_name'."
+                )
 
     def test_dynamic_histogram_and_gauge_without_and_with_labels(
         self,

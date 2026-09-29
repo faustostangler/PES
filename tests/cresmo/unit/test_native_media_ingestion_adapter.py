@@ -743,6 +743,11 @@ class TestNativeMediaIngestionAdapter:
             assert transcript is not None
             sample_count = registry.get_sample_value(
                 "cresmo_media_ingestion_duration_seconds_count",
-                {"channel": "Sandeco_Channel", "modality": "url", "status": "success"},
+                {
+                    "channel_id": "",
+                    "channel_name": "Sandeco_Channel",
+                    "modality": "url",
+                    "status": "success",
+                },
             )
             assert sample_count == 1.0

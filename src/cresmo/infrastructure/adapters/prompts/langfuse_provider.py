@@ -13,6 +13,8 @@ from __future__ import annotations
 import logging
 from typing import Any
 
+from langfuse.api.core import ApiError
+
 from cresmo.application.ports import PromptProviderPort
 from cresmo.domain.value_objects import ChannelName
 from cresmo.infrastructure.adapters.prompts.registry import (
@@ -106,10 +108,31 @@ class LangfusePromptProvider(PromptProviderPort):
                     return sys_inst, user_p
 
             return fallback_sys, fallback_user
-        except Exception as exc:  # noqa: BLE001
-            logger.debug(
-                "[LangfusePromptProvider] Prompt '%s' fetch skipped (%s), using local fallback",
+        except ApiError as exc:
+            if exc.status_code == 404:
+                # Prompt name not registered in Langfuse: expected during rollout or new prompts.
+                # Operators should create the missing prompt in Langfuse Cloud.
+                logger.warning(
+                    "[LangfusePromptProvider] Prompt '%s' not found in Langfuse (404). "
+                    "Create it in Langfuse Cloud or use label='%s'. Using local fallback.",
+                    prompt_name,
+                    self._label,
+                )
+            else:
+                logger.warning(
+                    "[LangfusePromptProvider] Langfuse API error fetching '%s' (HTTP %s: %s). "
+                    "Using local fallback.",
+                    prompt_name,
+                    exc.status_code,
+                    exc.body,
+                )
+            return fallback_sys, fallback_user
+        except Exception as exc:  # noqa: BLE001 — transient infra failure (timeout, auth, etc.)
+            logger.warning(
+                "[LangfusePromptProvider] Transient error fetching prompt '%s' (%s: %s). "
+                "Using local fallback.",
                 prompt_name,
+                type(exc).__name__,
                 exc,
             )
             return fallback_sys, fallback_user

@@ -144,14 +144,18 @@ def extract_raw_file_metadata(path: Path) -> dict[str, str]:
                         k, v = line.split(":", 1)
                         metadata[k.strip()] = v.strip().strip("\"'")
 
-        raw_chan = metadata.get("channel") or metadata.get("channel_id")
+        raw_chan_id = metadata.get("channel_id")
+        raw_chan_name = metadata.get("channel") or metadata.get("channel_name")
+        raw_chan = raw_chan_id or raw_chan_name
         if raw_chan:
             if raw_chan.startswith(("http://", "https://")):
                 metadata["channel"] = raw_chan
             elif raw_chan.startswith("@"):
                 metadata["channel"] = f"https://www.youtube.com/{raw_chan}"
-            else:
+            elif raw_chan.startswith("UC"):
                 metadata["channel"] = f"https://www.youtube.com/channel/{raw_chan}"
+            else:
+                metadata["channel"] = raw_chan
     except Exception:  # noqa: BLE001
         return {}
     return metadata

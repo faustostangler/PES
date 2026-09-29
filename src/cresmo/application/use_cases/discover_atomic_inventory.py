@@ -132,8 +132,15 @@ class DiscoverAtomicInventoryUseCase:
             compendium_body=compendium.body,
         )
 
-        session_id = PipelineSessionId.create(compendium.channel_name, compendium.content_id).value
-        user_id = ChannelTenantId.create(compendium.channel_name).value
+        session_id = PipelineSessionId.create(
+            channel=compendium.channel_name,
+            content_id=compendium.content_id,
+            channel_id=compendium.channel_id,
+        ).value
+        user_id = ChannelTenantId.create(
+            channel=compendium.channel_name,
+            channel_id=compendium.channel_id,
+        ).value
         content_id = compendium.content_id.value
 
         is_valid = False

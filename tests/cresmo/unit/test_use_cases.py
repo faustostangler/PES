@@ -145,10 +145,8 @@ class TestFillGapsFluidProse:
 
         # Verify strict behavioral port interactions
         assert len(llm_port.call_history) == 3
-        assert all(
-            c["session_id"] == "content:Example Channel:dQw4w9WgXcQ" for c in llm_port.call_history
-        )
-        assert all(c["user_id"] == "channel:Example Channel" for c in llm_port.call_history)
+        assert all(c["session_id"] == "content:UC123456:dQw4w9WgXcQ" for c in llm_port.call_history)
+        assert all(c["user_id"] == "channel:UC123456" for c in llm_port.call_history)
         # Pass 1 contains raw body and channel name
         assert "Spoken text without structure." in llm_port.call_history[0]["prompt"]
         assert "Example Channel" in llm_port.call_history[0]["prompt"]
@@ -322,10 +320,8 @@ class TestExpandLongitudinalSynchronic:
 
         # Verify strict port interactions
         assert len(llm_port.call_history) == 2
-        assert all(
-            c["session_id"] == "content:Example Channel:dQw4w9WgXcQ" for c in llm_port.call_history
-        )
-        assert all(c["user_id"] == "channel:Example Channel" for c in llm_port.call_history)
+        assert all(c["session_id"] == "content:UC_Test:dQw4w9WgXcQ" for c in llm_port.call_history)
+        assert all(c["user_id"] == "channel:UC_Test" for c in llm_port.call_history)
         # Pass 1: Longitude expander gets initial compendium body and complementary info
         assert "Continuous prose body describing elites." in llm_port.call_history[0]["prompt"]
         assert "Initial complementary info." in llm_port.call_history[0]["prompt"]
@@ -450,6 +446,27 @@ class TestDiscoverAtomicInventory:
         assert "Teoria das Elites" in call["prompt"]
         assert "Example Channel" in call["prompt"]
         assert "Continuous body describing Vilfredo Pareto" in call["prompt"]
+
+    def test_discover_inventory_uses_channel_id_when_available(self) -> None:
+        """When ChannelId is available on the compendium, session_id and user_id use the ID."""
+        cid = ContentId("dQw4w9WgXcQ")
+        compendium = EnrichedCompendium(
+            content_id=cid,
+            channel_name=ChannelName("Example Channel"),
+            channel_id=ChannelId("UC_TestChannelId"),
+            title=NoteTitle("Teoria das Elites"),
+            body="Continuous body describing Vilfredo Pareto and Gaetano Mosca.",
+            complementary_info="Complementary info.",
+        )
+        llm_json = json.dumps([{"title": "Vilfredo Pareto", "type": "entity"}])
+        llm_port = MockLLMAdapter(responses=[llm_json])
+
+        use_case = DiscoverAtomicInventoryUseCase(llm_port)
+        use_case.execute(compendium)
+
+        call = llm_port.call_history[0]
+        assert call["session_id"] == "content:UC_TestChannelId:dQw4w9WgXcQ"
+        assert call["user_id"] == "channel:UC_TestChannelId"
 
     def test_discover_inventory_deduplicates_case_insensitively(self) -> None:
         cid = ContentId("dQw4w9XcQ")
@@ -600,6 +617,48 @@ class TestSynthesizeAtomicBatch:
         assert "Example Channel" in call["prompt"]
         assert "Continuous body describing elites." in call["prompt"]
         assert "Vilfredo Pareto" in call["prompt"]
+
+    def test_synthesize_batch_uses_channel_id_when_available(self) -> None:
+        """When ChannelId is available on the compendium, session_id and user_id use the ID."""
+        cid = ContentId("dQw4w9WgXcQ")
+        compendium = EnrichedCompendium(
+            content_id=cid,
+            channel_name=ChannelName("Example Channel"),
+            channel_id=ChannelId("UC_TestChannelId"),
+            title=NoteTitle("Teoria das Elites"),
+            body="Continuous body describing elites.",
+            complementary_info="Complementary info.",
+        )
+        inv = AtomicEntityInventory(items=((NoteTitle("Vilfredo Pareto"), NoteType.ENTITY),))
+        batch_json = json.dumps(
+            [
+                {
+                    "title": "Vilfredo Pareto",
+                    "type": "entity",
+                    "definition": "Economista e sociólogo italiano conhecido pela teoria das elites.",
+                    "conceptual_typology": {
+                        "theoretical_lineage": "Sociologia Clássica",
+                        "lateral_events": "Revolução Marginalista",
+                        "aftermath": "Fascismo italiano",
+                    },
+                    "aliases": ["Pareto"],
+                    "content_tags": ["sociologia"],
+                    "domain": "Ciência Política",
+                    "cluster": "Teoria das Elites",
+                    "source": "Teoria das Elites",
+                }
+            ]
+        )
+        llm_port = MockLLMAdapter(responses=[batch_json])
+        vault_port = InMemoryVaultAdapter()
+
+        use_case = SynthesizeAtomicBatchUseCase(llm_port, vault_port, batch_size=5)
+        use_case.execute(inv, compendium)
+
+        assert len(llm_port.call_history) == 1
+        call = llm_port.call_history[0]
+        assert call["session_id"] == "content:UC_TestChannelId:dQw4w9WgXcQ"
+        assert call["user_id"] == "channel:UC_TestChannelId"
 
     def test_synthesize_batch_non_list_json_raises_domain_validation_error(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")

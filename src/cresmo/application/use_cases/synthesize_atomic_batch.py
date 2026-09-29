@@ -149,9 +149,14 @@ class SynthesizeAtomicBatchUseCase:
                 targets_json=json.dumps(targets_summary, ensure_ascii=False),
             )
             session_id = PipelineSessionId.create(
-                compendium.channel_name, compendium.content_id
+                channel=compendium.channel_name,
+                content_id=compendium.content_id,
+                channel_id=compendium.channel_id,
             ).value
-            user_id = ChannelTenantId.create(compendium.channel_name).value
+            user_id = ChannelTenantId.create(
+                channel=compendium.channel_name,
+                channel_id=compendium.channel_id,
+            ).value
             response = self.llm_synthesis_port.transform(
                 prompt=user_prompt,
                 system_instruction=system_instruction,

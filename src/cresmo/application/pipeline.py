@@ -253,7 +253,7 @@ class CresmoPipeline:
         """Execute the end-to-end synthesis pipeline (canonical Template Method).
 
         Coordinates cognitive synthesis use cases under a single root telemetry session span:
-        - Root Span: cresmo.pipeline.execution
+        - Root Span: synthesize_content
         - Idempotency guard (ledger_port.is_processed)
         - Raw Transcript Indexing & Paratactic Synthesis (raw_indexing)
         - Socratic Gap Filler (fluid_prose)
@@ -277,8 +277,15 @@ class CresmoPipeline:
         # Extract domain identifiers and construct correlation keys for distributed tracing
         content_id = raw.content_id
         channel_name = raw.channel_name
-        session_id = PipelineSessionId.create(channel=channel_name, content_id=content_id)
-        tenant_id = ChannelTenantId.create(channel=channel_name)
+        session_id = PipelineSessionId.create(
+            channel=channel_name,
+            content_id=content_id,
+            channel_id=raw.channel_id,
+        )
+        tenant_id = ChannelTenantId.create(
+            channel=channel_name,
+            channel_id=raw.channel_id,
+        )
         user_identity = user or UserIdentity.anonymous()
 
         # Open root telemetry session span to correlate all child stage spans in Langfuse/OTel
@@ -288,6 +295,8 @@ class CresmoPipeline:
             "content_id": content_id.value,
             "title": raw.title or content_id.value,
         }
+        if raw.channel_id:
+            root_metadata["channel_id"] = raw.channel_id.value
         if raw.source_url:
             root_metadata["video_url"] = raw.source_url
 
@@ -308,6 +317,7 @@ class CresmoPipeline:
                     lambda: self.index_raw.execute(raw),
                     channel_name=channel_name,
                     content_id=content_id,
+                    channel_id=raw.channel_id,
                     fatal=False,
                 )
 
@@ -323,6 +333,7 @@ class CresmoPipeline:
                     ),
                     channel_name=channel_name,
                     content_id=content_id,
+                    channel_id=raw.channel_id,
                 )
                 # Stage 2.5: Multi-secular Braudelian and synchronic Jaspers compendium expansion
                 expanded_compendium = self._run_stage(
@@ -332,6 +343,7 @@ class CresmoPipeline:
                     ),
                     channel_name=channel_name,
                     content_id=content_id,
+                    channel_id=raw.channel_id,
                 )
 
             # Step 4: Execute Stage 3 to extract holistic candidate entity and concept inventory
@@ -342,6 +354,7 @@ class CresmoPipeline:
                 ),
                 channel_name=channel_name,
                 content_id=content_id,
+                channel_id=raw.channel_id,
             )
 
             # Step 5: Execute Stage 4 to synthesize atomic notes in batch chunks
@@ -353,6 +366,7 @@ class CresmoPipeline:
                 ),
                 channel_name=channel_name,
                 content_id=content_id,
+                channel_id=raw.channel_id,
             )
 
             # Step 6: Execute Stage 5 to reconcile Maps of Content (MOCs) with zero orphans
@@ -361,6 +375,7 @@ class CresmoPipeline:
                 lambda: self.reconcile_mocs.execute(),
                 channel_name=channel_name,
                 content_id=content_id,
+                channel_id=raw.channel_id,
             )
 
             # Step 7: Execute Stage 6 to unify duplicate notes and consolidate entity aliases
@@ -369,6 +384,7 @@ class CresmoPipeline:
                 lambda: self.unify_duplicate_notes.execute(),
                 channel_name=channel_name,
                 content_id=content_id,
+                channel_id=raw.channel_id,
             )
 
             # Step 8: Commit processed status into Write-Ahead Log (WAL) ledger
@@ -384,6 +400,7 @@ class CresmoPipeline:
                 inventory=inventory,
                 mocs=mocs,
                 dedup_report=dedup_report,
+                channel_id=raw.channel_id,
             )
 
             # Step 10: Assemble and return immutable PipelineResult domain aggregate root
@@ -420,11 +437,14 @@ class CresmoPipeline:
         # Check idempotency ledger; skip processing if content_id was previously finalized
         if self.ledger_port and self.ledger_port.is_processed(content_id) and not force_reprocess:
             # Emit telemetry metric indicating idempotency bypass
+            ch_id_str = raw.channel_id.value if raw.channel_id else ""
             self.metrics_port.increment_counter(
                 "cresmo_transcripts_processed_total",
                 1.0,
                 labels={
-                    "channel": raw.channel_name.value,
+                    "channel_id": ch_id_str,
+                    "channel_name": raw.channel_name.value,
+                    "content_id": content_id.value,
                     "status": "skipped_idempotent",
                     "modality": "transcript",
                 },
@@ -451,6 +471,7 @@ class CresmoPipeline:
         *,
         channel_name: ChannelName,
         content_id: ContentId,
+        channel_id: ChannelId | None = ...,
         fatal: Literal[True] = ...,
         fallback: _StageRet | None = ...,
     ) -> _StageRet: ...
@@ -463,6 +484,7 @@ class CresmoPipeline:
         *,
         channel_name: ChannelName,
         content_id: ContentId,
+        channel_id: ChannelId | None = ...,
         fatal: Literal[False],
         fallback: _StageRet | None = ...,
     ) -> _StageRet | None: ...
@@ -474,6 +496,7 @@ class CresmoPipeline:
         *,
         channel_name: ChannelName,
         content_id: ContentId,
+        channel_id: ChannelId | None = None,
         fatal: bool = True,
         fallback: _StageRet | None = None,
     ) -> _StageRet | None:
@@ -482,8 +505,9 @@ class CresmoPipeline:
         Args:
             stage_name: Identifier for the stage (e.g. 'fluid_prose', 'atomic_batch').
             fn: Callable executing the use case logic.
-            channel_name: Target channel name for metric labeling.
-            content_id: Target content identifier for audit logging.
+            channel_name: Target channel name for metric labeling (cognitive).
+            content_id: Target content identifier for audit logging and metrics (algorithmic).
+            channel_id: Optional platform channel ID (algorithmic).
             fatal: If True, re-raises any caught exception. If False, logs warning and returns fallback.
             fallback: Value returned when non-fatal execution encounters an exception.
 
@@ -493,6 +517,7 @@ class CresmoPipeline:
         # Start high-resolution wall-clock timer for Prometheus duration observation
         start_time = time.perf_counter()
         status = "success"
+        ch_id_str = channel_id.value if channel_id else ""
 
         # Wrap stage execution inside distributed telemetry span for end-to-end tracing
         with self.telemetry_port.start_stage_span(stage_name):
@@ -507,7 +532,9 @@ class CresmoPipeline:
                     1.0,
                     labels={
                         "error_type": exc.__class__.__name__,
-                        "channel": channel_name.value,
+                        "channel_id": ch_id_str,
+                        "channel_name": channel_name.value,
+                        "content_id": content_id.value,
                         "stage": stage_name,
                     },
                 )
@@ -530,7 +557,8 @@ class CresmoPipeline:
                     elapsed,
                     labels={
                         "stage": stage_name,
-                        "channel": channel_name.value,
+                        "channel_id": ch_id_str,
+                        "channel_name": channel_name.value,
                         "status": status,
                     },
                 )
@@ -544,14 +572,18 @@ class CresmoPipeline:
         inventory: AtomicEntityInventory,
         mocs: Sequence[MapOfContent],
         dedup_report: DeduplicationReport,
+        channel_id: ChannelId | None = None,
     ) -> None:
         """Record completed process metrics and session coherence evaluation score per EVAL-001 & ADR-016."""
+        ch_id_str = channel_id.value if channel_id else ""
         # Increment completed transcript counter for operational throughput tracking
         self.metrics_port.increment_counter(
             "cresmo_transcripts_processed_total",
             1.0,
             labels={
-                "channel": channel_name.value,
+                "channel_id": ch_id_str,
+                "channel_name": channel_name.value,
+                "content_id": content_id.value,
                 "status": "completed",
                 "modality": "transcript",
             },
@@ -561,7 +593,9 @@ class CresmoPipeline:
             "cresmo_atomic_notes_synthesized_total",
             float(len(synthesized_notes)),
             labels={
-                "channel": channel_name.value,
+                "channel_id": ch_id_str,
+                "channel_name": channel_name.value,
+                "content_id": content_id.value,
                 "note_type": "all",
             },
         )

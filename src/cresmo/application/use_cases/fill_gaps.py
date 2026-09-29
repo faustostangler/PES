@@ -86,9 +86,14 @@ class FillGapsUseCase:
         file_name = f"{raw_transcript.content_id.value}.txt"
 
         session_id = PipelineSessionId.create(
-            raw_transcript.channel_name, raw_transcript.content_id
+            channel=raw_transcript.channel_name,
+            content_id=raw_transcript.content_id,
+            channel_id=raw_transcript.channel_id,
         ).value
-        user_id = ChannelTenantId.create(raw_transcript.channel_name).value
+        user_id = ChannelTenantId.create(
+            channel=raw_transcript.channel_name,
+            channel_id=raw_transcript.channel_id,
+        ).value
 
         for pass_index in range(passes):
             prompt_key = (
