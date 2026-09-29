@@ -53,6 +53,7 @@ from cresmo.infrastructure.adapters.prompt_provider import (
 )
 from cresmo.infrastructure.adapters.sqlite_ledger_adapter import SqliteLedgerAdapter
 from cresmo.infrastructure.config import CresmoSettings
+from cresmo.infrastructure.logging_config import configure_logging
 
 logger = logging.getLogger(__name__)
 
@@ -271,6 +272,12 @@ def build_pipeline(
     resolved_settings = settings or CresmoSettings()
     resolved_settings.ensure_directories()
 
+    # 0. Structured Logging Configuration (ADR-025)
+    configure_logging(
+        level=resolved_settings.log_level,
+        fmt=resolved_settings.log_format,
+    )
+
     # 1. Observability, Security & Prompt Governance
     anonymizer: AnonymizerPort = (
         RegexAnonymizerAdapter()
@@ -402,7 +409,8 @@ def build_sync_channel_use_case(
     pipeline = build_pipeline(resolved_settings, batch_size_override=batch_size_override)
     preflight_checker = build_preflight_checker(resolved_settings, check_ffmpeg=check_ffmpeg)
 
-    assert pipeline.ledger_port is not None, "Ledger port must be wired for channel sync."
+    if pipeline.ledger_port is None:
+        raise RuntimeError("Ledger port must be wired for channel sync.")
 
     return SyncChannelUseCase(
         media_ingestion_port=pipeline.media_ingestion_port,

@@ -268,6 +268,16 @@ class CresmoSettings(BaseSettings):
         default=9090,
         description="Local Prometheus scraping and exposition port.",
     )
+    log_level: str = Field(
+        default="INFO",
+        validation_alias=AliasChoices("log_level", "LOG_LEVEL", "CRESMO_LOG_LEVEL"),
+        description="Root logging level (DEBUG, INFO, WARNING, ERROR).",
+    )
+    log_format: str = Field(
+        default="json",
+        validation_alias=AliasChoices("log_format", "LOG_FORMAT", "CRESMO_LOG_FORMAT"),
+        description="Log output format: 'json' for Loki structured ingestion, 'text' for local dev.",
+    )
     whisper_model: str = Field(
         default="base",
         description="Whisper STT model variant for audio transcription.",
