@@ -289,7 +289,10 @@ def build_pipeline(
     if langfuse_client is not None:
         from cresmo.infrastructure.adapters.opentelemetry_adapter import OpenTelemetryAdapter
 
-        telemetry_port: TelemetryPort = OpenTelemetryAdapter(langfuse_client=langfuse_client)
+        telemetry_port: TelemetryPort = OpenTelemetryAdapter(
+            langfuse_client=langfuse_client,
+            pipeline_version=resolved_settings.pipeline_version,
+        )
     else:
         from cresmo.infrastructure.adapters.opentelemetry_adapter import NoOpTelemetryAdapter
 

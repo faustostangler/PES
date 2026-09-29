@@ -133,7 +133,7 @@ class OllamaLLMAdapter(LLMTransformationPort):
         )
 
         start_time = time.perf_counter()
-        logger.info(
+        logger.warning(
             "[OllamaLLMAdapter] Preloading model '%s' at %s (keep_alive: %s, timeout: %.0fs)...",
             self.model,
             self.base_url,
@@ -148,7 +148,7 @@ class OllamaLLMAdapter(LLMTransformationPort):
                     response_json = json.loads(raw_body)
                     duration = time.perf_counter() - start_time
                     done_reason = response_json.get("done_reason", "load")
-                    logger.info(
+                    logger.warning(
                         "[OllamaLLMAdapter] Model '%s' successfully loaded into memory in %.2fs (reason: %s).",
                         self.model,
                         duration,
@@ -209,7 +209,7 @@ class OllamaLLMAdapter(LLMTransformationPort):
             daemon=True,
         )
         self._warmup_thread.start()
-        logger.info(
+        logger.warning(
             "[OllamaLLMAdapter] Dispatched asynchronous background warmup for model '%s' (keep_alive: %s)...",
             self.model,
             self.keep_alive,

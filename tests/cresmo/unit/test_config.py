@@ -122,3 +122,14 @@ class TestCresmoSettings:
 
         with pytest.raises(ValidationError):
             CresmoSettings.model_validate({"discovery_queue_maxsize": 0})
+
+    def test_pipeline_version_default_and_env_override(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """Verify pipeline_version defaults to cresmo:v2 and supports PIPELINE_VERSION override per ADR-026 Rule 9."""
+        settings = CresmoSettings()
+        assert settings.pipeline_version == "cresmo:v2"
+
+        monkeypatch.setenv("PIPELINE_VERSION", "cresmo:v3-canary")
+        overridden = CresmoSettings()
+        assert overridden.pipeline_version == "cresmo:v3-canary"

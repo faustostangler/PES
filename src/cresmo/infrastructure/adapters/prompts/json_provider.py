@@ -155,6 +155,34 @@ class JsonPromptProvider(PromptProviderPort):
 
         return tpl.replace("{task}", task).replace("{skill_block}", skill_block)
 
+    def get_chat_prompt_template(self, template_key: str | PromptKey) -> tuple[str, str]:
+        """Retrieve unformatted system instruction and user template with embedded skill block.
+
+        Conforms to ADR-010 and ADR-017 for Chat-Native prompt governance.
+
+        Args:
+            template_key: Key in prompts.json (e.g. 'gap_filler_pass1') or PromptKey enum.
+
+        Returns:
+            Tuple of (system_instruction, user_template).
+        """
+        key_str = template_key.value if isinstance(template_key, PromptKey) else template_key
+        entry = self._templates.get(key_str, {})
+        skill_name = entry.get("skill_name", "")
+        skill_block = self._get_skill_block(skill_name) if skill_name else ""
+        task = entry.get("task", "")
+
+        system_instruction = entry.get("system_instruction", "")
+        if not system_instruction and task:
+            system_instruction = task
+        system_instruction = system_instruction.replace("{task}", task).replace("{skill_block}", skill_block)
+
+        user_template = entry.get("template", "")
+        if not user_template and task and not system_instruction:
+            user_template = task
+
+        return system_instruction, user_template
+
     def get_prompt(
         self,
         key: PromptKey,

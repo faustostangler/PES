@@ -76,14 +76,17 @@ class CresmoSettings(BaseSettings):
     )
     langfuse_secret_key: SecretStr = Field(
         default=SecretStr(""),
+        validation_alias=AliasChoices("langfuse_secret_key", "LANGFUSE_SECRET_KEY"),
         description="Langfuse secret key for evaluation and observability.",
     )
     langfuse_public_key: str = Field(
         default="",
+        validation_alias=AliasChoices("langfuse_public_key", "LANGFUSE_PUBLIC_KEY"),
         description="Langfuse public key for evaluation and observability.",
     )
     langfuse_host: str = Field(
         default="https://cloud.langfuse.com",
+        validation_alias=AliasChoices("langfuse_host", "LANGFUSE_HOST", "LANGFUSE_BASE_URL"),
         description="Langfuse telemetry endpoint URL.",
     )
     langfuse_environment: str = Field(
@@ -251,6 +254,13 @@ class CresmoSettings(BaseSettings):
     require_auth_cookies: bool = Field(
         default=False,
         description="Whether to fail-fast if no valid authenticated YouTube session cookies are found.",
+    )
+    pipeline_version: str = Field(
+        default="cresmo:v2",
+        validation_alias=AliasChoices(
+            "pipeline_version", "PIPELINE_VERSION", "CRESMO_PIPELINE_VERSION"
+        ),
+        description="Canonical pipeline version tag emitted to OpenTelemetry spans and Langfuse traces.",
     )
     gemini_model: str = Field(
         default="gemini-3.5-flash-lite",

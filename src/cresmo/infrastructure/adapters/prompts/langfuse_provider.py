@@ -106,6 +106,10 @@ class LangfusePromptProvider(PromptProviderPort):
                                 sys_inst = str(content)
                             elif role == "user" and content is not None:
                                 user_p = str(content)
+                    # Secondary safe substitution for single-brace template variables
+                    for key, val in kwargs.items():
+                        user_p = user_p.replace(f"{{{key}}}", str(val))
+                        sys_inst = sys_inst.replace(f"{{{key}}}", str(val))
                     return sys_inst, user_p
 
             return fallback_sys, fallback_user

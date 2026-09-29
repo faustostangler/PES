@@ -377,6 +377,31 @@ class TestOpenTelemetryAdapter:
             "auth:anonymous",
         ]
 
+    def test_opentelemetry_adapter_accepts_injected_pipeline_version(
+        self,
+        otel_setup: tuple[OpenTelemetryAdapter, InMemorySpanExporter],
+    ) -> None:
+        """Verify OpenTelemetryAdapter uses constructor-injected pipeline_version per ADR-026 Rule 9."""
+        adapter, exporter = otel_setup
+        custom_adapter = OpenTelemetryAdapter(
+            tracer=adapter._tracer,
+            pipeline_version="cresmo:v3-injected",
+        )
+
+        session_id = PipelineSessionId.create(channel="sandeco", content_id="vid_injected_ver")
+        user = UserIdentity.anonymous()
+
+        with custom_adapter.start_pipeline_session(session_id=session_id, user_id=user):
+            pass
+
+        spans = exporter.get_finished_spans()
+        assert spans[-1].attributes is not None
+        assert list(spans[-1].attributes["langfuse.trace.tags"]) == [
+            "sandeco",
+            "cresmo:v3-injected",
+            "auth:anonymous",
+        ]
+
 
 class TestNoOpTelemetryAdapter:
     """Test NoOpTelemetryAdapter for graceful degradation when observability is offline."""
@@ -495,3 +520,12 @@ def test_noop_telemetry_adapter_record_score_is_graceful_noop() -> None:
         comment="test",
         trace_id="test_trace",
     )
+
+
+def test_cresmo_root_exports_only_package_metadata() -> None:
+    """Verify cresmo package root strictly conforms to ADR-026 Rule 9."""
+    import cresmo
+
+    assert hasattr(cresmo, "__version__")
+    assert not hasattr(cresmo, "PIPELINE_VERSION")
+    assert cresmo.__all__ == ["__version__"]

@@ -24,12 +24,13 @@ During the recursive architectural audit across all layers (Domain, Application,
 6. **Uso de `assert` para Validação de Produção (Zero Production Asserts / `S101`):** Using `assert` statements for dependency validation or control flow that get stripped under `python -O`.
 7. **Explosão de Lista de Parâmetros e Obsessão por Primitivos (`PLR0913`, `PLR0917`):** Functions and constructors accepting 6 to 10+ raw primitive parameters instead of cohesive Parameter Objects or Pydantic DTOs.
 8. **Código Morto e Parâmetros Assinatura Inutilizados (`ARG001`, `ARG002`):** Methods and functions receiving arguments that are never consumed within the execution body.
+9. **Constantes Operacionais e Linhagem em Escopo Global de Módulo / `__init__.py` (Violação 12-Factor Fator III, ADR-005, ADR-011):** Defining runtime operational tags, pipeline versions, or tunable parameters as global variables in module files or `__init__.py` instead of centralizing in `CresmoSettings` (Pydantic Settings V2).
 
 This ADR formally codifies the governance rules, anti-patterns, and required implementations to eliminate these smells across the codebase.
 
 ---
 
-## 2. The Eight Clean Code Anti-Pattern Standards
+## 2. The Nine Clean Code Anti-Pattern Standards
 
 ```
 +---------------------------------------------------------------------------------------------------+
@@ -43,6 +44,7 @@ This ADR formally codifies the governance rules, anti-patterns, and required imp
 |  [Rule 6] Zero Production Asserts       --> Explicit Exceptions for Dependency & Runtime Wiring   |
 |  [Rule 7] Cohesive Parameter Bundling   --> Max 5 Parameters; Pydantic DTOs / Parameter Objects   |
 |  [Rule 8] Signature Hygiene & Dead Code --> Zero Dangling Unused Parameters Across Concrete Code  |
+|  [Rule 9] SSOT Operational Settings     --> Pydantic Settings V2; Zero Global Configs in __init__ |
 +---------------------------------------------------------------------------------------------------+
 ```
 
@@ -245,6 +247,36 @@ Declaring parameters in function or method signatures that are never used in the
 #### 8.2 The Standard & Remediation
 * Concrete functions and methods must not accept unconsumed arguments. Remove dead parameters from call sites and function signatures.
 * When adhering to external interfaces or ABCs where certain arguments are deliberately unneeded in specific adapters (e.g. `NoOpTelemetryAdapter`), prefix the argument name with an underscore (e.g. `_session_id`, `_user_id`) to signal intentional non-use to static analyzers.
+
+---
+
+### Rule 9: Zero Module-Level Operational Constants & Package Root Cleanliness
+
+#### 9.1 The Anti-Pattern
+Declaring operational configurations, pipeline version identifiers, or telemetry tags (such as `PIPELINE_VERSION = "cresmo:v2"`) as global module variables or inside the package root `__init__.py`.
+* **Violations:**
+  1. **12-Factor App (Factor III: Config):** Hardcoded module globals cannot be reconfigured per environment (`.env`, Docker staging, canary deployments) without modifying and recommitting code.
+  2. **Inverted Dependency:** Infrastructure adapters (e.g., `OpenTelemetryAdapter`) end up importing operational constants from the package root `__init__.py` (`from cresmo import PIPELINE_VERSION`), coupling low-level adapters to high-level package entrypoints.
+  3. **Conflation of Distribution Artifact vs Runtime Lineage:** Conflates static Python packaging metadata (`__version__` per PEP 396/PEP 621) with dynamic execution lineage.
+
+```python
+# ANTI-PATTERN: Operational lineage or tunables hardcoded in __init__.py
+# src/cresmo/__init__.py
+__version__ = "0.1.0"
+PIPELINE_VERSION = "cresmo:v2"  # VIOLATION: Operational tunable in package root!
+```
+
+#### 9.2 The Standard & Remediation
+1. **Packaging Metadata Only in `__init__.py`:** The package root `__init__.py` MUST strictly contain packaging metadata (`__version__` and `__all__`).
+2. **Centralized SSOT in `CresmoSettings`:** All operational identifiers, pipeline versions, and telemetry lineage tags MUST be declared as fields in `CresmoSettings` (`src/cresmo/infrastructure/config.py`) using Pydantic Settings V2:
+   ```python
+   pipeline_version: str = Field(
+       default="cresmo:v2",
+       description="Canonical pipeline version tag emitted to OpenTelemetry spans and Langfuse traces.",
+       validation_alias=AliasChoices("PIPELINE_VERSION", "pipeline_version"),
+   )
+   ```
+3. **Explicit Dependency Injection:** Adapters requiring the pipeline version MUST receive it via constructor injection (`OpenTelemetryAdapter(..., pipeline_version=settings.pipeline_version)`) wired at the Composition Root (`composition.py`), never importing from `cresmo.__init__`.
 
 ---
 

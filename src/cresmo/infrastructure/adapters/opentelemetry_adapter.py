@@ -20,7 +20,6 @@ from typing import Any
 from opentelemetry import trace
 from opentelemetry.trace import Tracer
 
-from cresmo import PIPELINE_VERSION
 from cresmo.application.ports import TelemetryPort
 from cresmo.domain.entities import (
     ChannelTenantId,
@@ -38,8 +37,9 @@ except ImportError:  # pragma: no cover
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_PIPELINE_VERSION: str = PIPELINE_VERSION
+DEFAULT_PIPELINE_VERSION: str = "cresmo:v2"
 OTEL_FLUSH_TIMEOUT_MS: int = 2000
+
 
 _LANGFUSE_INPUT_KEYS: frozenset[str] = frozenset(
     {"title", "channel", "channel_name", "channel_id", "content_id", "video_url"}
@@ -107,9 +107,7 @@ def _resolve_user_identity_and_tenant(
         elif user_id.startswith("user:"):
             parts = user_id.split(":")
             if len(parts) >= 3:
-                norm_user = UserIdentity.identified(
-                    subject=":".join(parts[2:]), provider=parts[1]
-                )
+                norm_user = UserIdentity.identified(subject=":".join(parts[2:]), provider=parts[1])
             else:
                 norm_user = UserIdentity.identified(subject=parts[1], provider="oauth")
         else:
@@ -137,12 +135,12 @@ def _build_session_span_attributes(
         "langfuse.observation.type": "span",
         "langfuse.session.id": session_id.value,
         "langfuse.user.id": user.value,
+        "langfuse.trace.tags": tags,
         "cresmo.content.id": session_id.content_id,
         "cresmo.channel.name": chan_name,
         "cresmo.tenant_id": tenant.value,
         "cresmo.user.is_anonymous": user.is_anonymous,
         "cresmo.user.provider": user.provider,
-        "langfuse.trace.tags": tags,
     }
     if "title" in meta:
         attrs["cresmo.content.title"] = str(meta["title"])
@@ -191,15 +189,18 @@ class OpenTelemetryAdapter(TelemetryPort):
         self,
         tracer: Tracer | None = None,
         langfuse_client: Any | None = None,
+        pipeline_version: str | None = None,
     ) -> None:
-        """Initialize OpenTelemetryAdapter with tracer and optional Langfuse client.
+        """Initialize OpenTelemetryAdapter with tracer, optional Langfuse client and pipeline version.
 
         Args:
             tracer: Configured OpenTelemetry Tracer instance.
             langfuse_client: Optional Langfuse client for session/trace scoring.
+            pipeline_version: Operational pipeline version tag (defaults to DEFAULT_PIPELINE_VERSION).
         """
         self._tracer = tracer or trace.get_tracer("cresmo.pipeline")
         self._langfuse = langfuse_client
+        self._pipeline_version = pipeline_version or DEFAULT_PIPELINE_VERSION
         name_telemetry_threads(langfuse_client)
 
     @contextmanager
@@ -229,7 +230,7 @@ class OpenTelemetryAdapter(TelemetryPort):
         meta = metadata or {}
         chan_name = str(meta["channel"]) if "channel" in meta else tenant.channel_token
         pipeline_version = str(
-            meta.get("pipeline_version") or meta.get("version") or DEFAULT_PIPELINE_VERSION
+            meta.get("pipeline_version") or meta.get("version") or self._pipeline_version
         )
         tags = [chan_name, pipeline_version, f"auth:{norm_user.provider}"]
 
