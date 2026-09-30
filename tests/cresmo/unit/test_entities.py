@@ -15,6 +15,7 @@ from cresmo.domain.entities import (
     MapOfContent,
     PipelineSessionId,
     RawTranscript,
+    UserIdentity,
 )
 from cresmo.domain.exceptions import (
     CompendiumStructureError,
@@ -210,51 +211,60 @@ class TestMapOfContent:
 
 
 class TestPipelineSessionId:
-    """Phase 1: PipelineSessionId must prefer ChannelId (stable) over ChannelName (mutable)."""
+    """ADR-027 & SPEC-010: PipelineSessionId canonical format {channel_id}:{video_id}."""
 
-    def test_create_with_channel_name_only_backward_compatible(self) -> None:
-        """Existing callers that pass only ChannelName still produce valid session IDs."""
+    def test_create_with_channel_name_only_produces_canonical_format(self) -> None:
+        """When ChannelId is omitted, session format is {channel_name}:{video_id}."""
         sid = PipelineSessionId.create(
             channel=ChannelName("Marcelo Andrade"),
             content_id=ContentId("9IbNJ0EsTxI"),
         )
-        assert sid.value == "content:Marcelo Andrade:9IbNJ0EsTxI"
+        assert sid.value == "Marcelo Andrade:9IbNJ0EsTxI"
         assert sid.content_id == "9IbNJ0EsTxI"
+        assert sid.video_id == "9IbNJ0EsTxI"
         assert sid.channel_token == "Marcelo Andrade"
         assert not hasattr(sid, "channel_name")
 
     def test_create_with_channel_id_prefers_id_over_name(self) -> None:
-        """When ChannelId is available, the algorithmic key uses the stable ID."""
+        """When ChannelId is available, the algorithmic session ID uses {channel_id}:{video_id}."""
         sid = PipelineSessionId.create(
             channel=ChannelName("Marcelo Andrade"),
             content_id=ContentId("9IbNJ0EsTxI"),
             channel_id=ChannelId("UCxyz1234567890ab"),
         )
-        # Algorithmic key must use ChannelId, not ChannelName
-        assert sid.value == "content:UCxyz1234567890ab:9IbNJ0EsTxI"
+        assert sid.value == "UCxyz1234567890ab:9IbNJ0EsTxI"
         assert sid.content_id == "9IbNJ0EsTxI"
-        # channel_token returns the algorithmic token (now the ID)
+        assert sid.video_id == "9IbNJ0EsTxI"
         assert sid.channel_token == "UCxyz1234567890ab"
         assert not hasattr(sid, "channel_name")
 
     def test_create_with_channel_id_none_falls_back_to_name(self) -> None:
-        """Explicit None channel_id falls back to ChannelName (text file sources)."""
+        """Explicit None channel_id falls back to ChannelName."""
         sid = PipelineSessionId.create(
             channel=ChannelName("Philosophy"),
             content_id=ContentId("abcd1234efgh"),
             channel_id=None,
         )
-        assert sid.value == "content:Philosophy:abcd1234efgh"
+        assert sid.value == "Philosophy:abcd1234efgh"
         assert sid.channel_token == "Philosophy"
+        assert sid.video_id == "abcd1234efgh"
 
     def test_create_with_string_channel_still_works(self) -> None:
-        """Passing a raw string for channel remains backward-compatible."""
+        """Passing a raw string for channel produces canonical {channel}:{content_id}."""
         sid = PipelineSessionId.create(
             channel="Raw String Channel",
             content_id="dQw4w9WgXcQ",
         )
-        assert sid.value == "content:Raw String Channel:dQw4w9WgXcQ"
+        assert sid.value == "Raw String Channel:dQw4w9WgXcQ"
         assert sid.channel_token == "Raw String Channel"
+        assert sid.video_id == "dQw4w9WgXcQ"
+
+    def test_legacy_three_part_format_backward_compatible(self) -> None:
+        """Parsing legacy 'content:{channel}:{content_id}' remains supported."""
+        sid = PipelineSessionId(value="content:Marcelo Andrade:9IbNJ0EsTxI")
+        assert sid.channel_token == "Marcelo Andrade"
+        assert sid.content_id == "9IbNJ0EsTxI"
+        assert sid.video_id == "9IbNJ0EsTxI"
 
     def test_empty_session_id_raises_error(self) -> None:
         with pytest.raises(ValueError, match="PipelineSessionId cannot be empty"):
@@ -262,7 +272,58 @@ class TestPipelineSessionId:
 
     def test_invalid_format_raises_error(self) -> None:
         with pytest.raises(ValueError, match="Invalid PipelineSessionId format"):
-            PipelineSessionId(value="bad:format")
+            PipelineSessionId(value="invalid_format_without_colons")
+
+
+class TestUserIdentity:
+    """ADR-027 & SPEC-010: UserIdentity taxonomy for IAM, CLI, and Workers."""
+
+    def test_worker_identity(self) -> None:
+        """Worker identity generates system:worker with provider system."""
+        user = UserIdentity.worker()
+        assert user.value == "system:worker"
+        assert not user.is_anonymous
+        assert user.provider == "system"
+        assert user.subject == "worker"
+
+    def test_worker_identity_custom_name(self) -> None:
+        """Worker identity accepts custom worker identifier."""
+        user = UserIdentity.worker(name="channel_sync")
+        assert user.value == "system:channel_sync"
+        assert not user.is_anonymous
+        assert user.provider == "system"
+        assert user.subject == "channel_sync"
+
+    def test_identified_iam_user(self) -> None:
+        """Identified IAM user generates user:iam:{username}."""
+        user = UserIdentity.identified(subject="alice", provider="iam")
+        assert user.value == "user:iam:alice"
+        assert not user.is_anonymous
+        assert user.provider == "iam"
+        assert user.subject == "alice"
+
+    def test_anonymous_user(self) -> None:
+        """Anonymous user generates anonymous with provider anonymous."""
+        user = UserIdentity.anonymous()
+        assert user.value == "anonymous"
+        assert user.is_anonymous
+        assert user.provider == "anonymous"
+        assert user.subject == ""
+
+    def test_anonymous_user_with_token(self) -> None:
+        """Anonymous user with token generates anon:{token}."""
+        user = UserIdentity.anonymous(token="guest_123")
+        assert user.value == "anon:guest_123"
+        assert user.is_anonymous
+
+    def test_empty_user_identity_raises_error(self) -> None:
+        with pytest.raises(ValueError, match="UserIdentity cannot be empty"):
+            UserIdentity(value="")
+
+    def test_identified_empty_subject_raises_error(self) -> None:
+        with pytest.raises(ValueError, match="Identified UserIdentity requires a non-empty subject"):
+            UserIdentity.identified(subject="   ", provider="iam")
+
 
 
 class TestChannelTenantId:

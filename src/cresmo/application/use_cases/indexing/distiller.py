@@ -22,7 +22,9 @@ from cresmo.application.use_cases.indexing.validators import (
     is_valid_synthesis_paragraph,
     parse_judge_boolean,
 )
+from cresmo.domain.entities import PipelineSessionId, UserIdentity
 from cresmo.domain.value_objects import (
+    ChannelId,
     ChannelName,
     ContentId,
     PromptKey,
@@ -54,6 +56,8 @@ class LLMTranscriptDistiller:
         title: str,
         text: str,
         channel_name: ChannelName,
+        channel_id: ChannelId | None = None,
+        user: UserIdentity | None = None,
     ) -> str:
         """Extract principal concepts through an iterative LLM-as-a-judge loop."""
         system_instructions, user_prompt = self.prompt_provider.get_prompt(
@@ -63,9 +67,12 @@ class LLMTranscriptDistiller:
             language=self.language,
         )
 
-        ch = channel_name.value
-        session_id = f"raw_index_{ch}"
-        user_id = ch
+        session_id = PipelineSessionId.create(
+            channel=channel_name,
+            content_id=video_id,
+            channel_id=channel_id,
+        ).value
+        user_id = user.value if user else UserIdentity.anonymous().value
         is_valid = False
         retries = 0
         raw_concepts = ""
@@ -132,6 +139,8 @@ class LLMTranscriptDistiller:
         title: str,
         text: str,
         channel_name: ChannelName,
+        channel_id: ChannelId | None = None,
+        user: UserIdentity | None = None,
     ) -> str:
         """Extract structured conceptual summary through an iterative LLM-as-a-judge loop."""
         system_instructions, user_prompt = self.prompt_provider.get_prompt(
@@ -141,9 +150,12 @@ class LLMTranscriptDistiller:
             language=self.language,
         )
 
-        ch = channel_name.value
-        session_id = f"raw_index_{ch}"
-        user_id = ch
+        session_id = PipelineSessionId.create(
+            channel=channel_name,
+            content_id=video_id,
+            channel_id=channel_id,
+        ).value
+        user_id = user.value if user else UserIdentity.anonymous().value
         is_valid = False
         retries = 0
         raw_summary = ""
@@ -206,6 +218,8 @@ class LLMTranscriptDistiller:
         excerpt: str,
         summary: str,
         channel_name: ChannelName,
+        channel_id: ChannelId | None = None,
+        user: UserIdentity | None = None,
     ) -> str:
         """Synthesize dense single paratactic paragraph through an iterative LLM-as-a-judge loop."""
         system_instructions, user_prompt = self.prompt_provider.get_prompt(
@@ -215,9 +229,12 @@ class LLMTranscriptDistiller:
             language=self.language,
         )
 
-        ch = channel_name.value
-        session_id = f"raw_index_{ch}"
-        user_id = ch
+        session_id = PipelineSessionId.create(
+            channel=channel_name,
+            content_id=video_id,
+            channel_id=channel_id,
+        ).value
+        user_id = user.value if user else UserIdentity.anonymous().value
         is_valid = False
         retries = 0
         raw_synthesis = ""

@@ -20,9 +20,9 @@ from cresmo.application.ports import (
     VaultRepositoryPort,
 )
 from cresmo.domain.entities import (
-    ChannelTenantId,
     EnrichedCompendium,
     PipelineSessionId,
+    UserIdentity,
 )
 from cresmo.domain.exceptions import CompendiumStructureError
 from cresmo.domain.value_objects import PromptKey
@@ -66,11 +66,13 @@ class ExpandCompendiumUseCase:
     def execute(
         self,
         compendium: EnrichedCompendium,
+        user: UserIdentity | None = None,
     ) -> EnrichedCompendium:
         """Execute dual expansion in-place.
 
         Args:
             compendium: EnrichedCompendium aggregate from fluid prose synthesis.
+            user: Optional executing UserIdentity principal (defaults to anonymous).
 
         Returns:
             Updated EnrichedCompendium aggregate enriched with multi-secular and synchronic depth.
@@ -84,10 +86,7 @@ class ExpandCompendiumUseCase:
             content_id=compendium.content_id,
             channel_id=compendium.channel_id,
         ).value
-        user_id = ChannelTenantId.create(
-            channel=compendium.channel_name,
-            channel_id=compendium.channel_id,
-        ).value
+        user_id = user.value if user is not None else UserIdentity.anonymous().value
 
         long_sys, long_user = self.prompt_provider.get_prompt(
             PromptKey.LONG_EXPANDER,

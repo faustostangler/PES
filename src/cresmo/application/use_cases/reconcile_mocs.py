@@ -19,7 +19,7 @@ from cresmo.application.ports import (
     PromptProviderPort,
     VaultRepositoryPort,
 )
-from cresmo.domain.entities import MapOfContent
+from cresmo.domain.entities import MapOfContent, PipelineSessionId, UserIdentity
 from cresmo.domain.exceptions import DomainValidationError
 from cresmo.domain.value_objects import NoteTitle, PromptKey
 
@@ -51,8 +51,16 @@ class ReconcileMOCsUseCase:
         self.temperature = temperature
         self.prompt_provider: PromptProviderPort = prompt_provider or NoOpPromptProviderPort()
 
-    def execute(self) -> list[MapOfContent]:
+    def execute(
+        self,
+        session_id: PipelineSessionId | str | None = None,
+        user_id: UserIdentity | str | None = None,
+    ) -> list[MapOfContent]:
         """Execute MOC reconciliation.
+
+        Args:
+            session_id: Optional session identifier for telemetry (defaults to system:mocs).
+            user_id: Optional executing user identity (defaults to system:worker).
 
         Returns:
             List of generated or updated MapOfContent domain aggregates.
@@ -72,13 +80,25 @@ class ReconcileMOCsUseCase:
             notes_json=json.dumps(note_summaries, ensure_ascii=False),
         )
 
+        actual_session_id = (
+            session_id.value
+            if isinstance(session_id, PipelineSessionId)
+            else (session_id or "system:mocs")
+        )
+        if isinstance(user_id, UserIdentity):
+            actual_user_id = user_id.value
+        elif isinstance(user_id, str) and user_id.strip():
+            actual_user_id = user_id.strip()
+        else:
+            actual_user_id = UserIdentity.worker().value
+
         response = self.llm_synthesis_port.transform(
             prompt=user_prompt,
             system_instruction=system_instruction,
             temperature=self.temperature,
             trace_id="mocs_reconciliation",
-            session_id="reconcile_mocs",
-            user_id="vault",
+            session_id=actual_session_id,
+            user_id=actual_user_id,
         )
         data = extract_json_data(response)
         if not isinstance(data, list):

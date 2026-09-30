@@ -231,14 +231,16 @@ class TestCresmoPipelineOrchestration:
 
         res = pipeline.run_for_video("https://youtube.com/watch?v=dQw4w9WgXcQ")
         assert res.success is True
-        assert len(res.synthesized_notes) == 1
-        synthesis_calls = [
+        # All calls share the unified video session_id (6 indexing + 4 downstream synthesis)
+        video_session_calls = [
             c
             for c in llm.call_history
-            if c.get("session_id", "").startswith("content:")
-            or c.get("session_id") == "reconcile_mocs"
+            if c.get("session_id") == "Political Theory:dQw4w9WgXcQ"
         ]
-        assert len(synthesis_calls) == 4
+        assert len(video_session_calls) == 10
+        # Fluid prose and expansion were skipped because compendium was pre-saved
+        assert not any("_gap_fill_pass_" in c.get("trace_id", "") for c in video_session_calls)
+        assert not any("_longitudinal" in c.get("trace_id", "") for c in video_session_calls)
 
     # =========================================================================
     # Tests for run_for_text_file

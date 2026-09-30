@@ -12,6 +12,7 @@ from typing import TYPE_CHECKING
 
 from cresmo.application.ports import LedgerRepositoryPort, MediaIngestionPort
 from cresmo.application.services.preflight import PreflightHealthChecker
+from cresmo.domain.entities import UserIdentity
 from cresmo.domain.value_objects import (
     ChannelFeedQuery,
     DiscoveredMediaItem,
@@ -116,7 +117,10 @@ class SyncChannelUseCase:
             )
 
             try:
-                result = self.pipeline.run_for_video(video_url=item.media_url)
+                result = self.pipeline.run_for_video(
+                    video_url=item.media_url,
+                    user=UserIdentity.worker(),
+                )
                 completed_at = datetime.now(UTC)
 
                 if result.success:

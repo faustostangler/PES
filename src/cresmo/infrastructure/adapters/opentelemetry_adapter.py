@@ -108,6 +108,9 @@ def annotate_llm_span(
 
 def _resolve_identity_from_str(user_id: str) -> tuple[UserIdentity, ChannelTenantId | None]:
     """Parse string representation of user identity and optional channel tenant."""
+    if user_id.startswith("system:"):
+        worker_name = user_id.split(":", 1)[1]
+        return UserIdentity.worker(worker_name), None
     if user_id.startswith("channel:"):
         c_name = user_id.split(":", 1)[1]
         return UserIdentity.from_channel(c_name), ChannelTenantId.create(ChannelName(c_name))
@@ -193,6 +196,7 @@ def _build_session_span_attributes(
         "langfuse.user.id": user.value,
         "langfuse.trace.tags": tags,
         "cresmo.content.id": session_id.content_id,
+        "cresmo.video.id": session_id.video_id,
         "cresmo.channel.name": chan_name,
         "cresmo.tenant_id": tenant.value,
         "cresmo.user.is_anonymous": user.is_anonymous,
@@ -242,14 +246,16 @@ class OpenTelemetryAdapter(TelemetryPort):
         user_id: UserIdentity | ChannelTenantId,
         channel_tenant_id: ChannelTenantId | None = None,
         metadata: dict[str, Any] | None = None,
+        trace_name: str | None = None,
     ) -> Generator[Any]:
         """Initiate root OpenTelemetry span binding session_id and user_id attributes.
 
         Args:
-            session_id: Canonical multi-stage content session identifier.
-            user_id: UserIdentity (anonymous or identified OAuth), ChannelTenantId, or string.
+            session_id: Canonical multi-stage content session identifier ({channel_id}:{video_id}).
+            user_id: UserIdentity (anonymous, identified IAM, or system:worker), ChannelTenantId, or string.
             channel_tenant_id: Optional Channel tenant identifier for cost and volume aggregation.
             metadata: Additional contextual metadata.
+            trace_name: Optional canonical root operation name (defaults to cresmo.pipeline.execution).
 
         Yields:
             The active root OpenTelemetry span.
@@ -275,7 +281,8 @@ class OpenTelemetryAdapter(TelemetryPort):
             metadata=metadata,
         )
 
-        with self._tracer.start_as_current_span("synthesize_content", attributes=attrs) as span:
+        root_operation = trace_name or "cresmo.pipeline.execution"
+        with self._tracer.start_as_current_span(root_operation, attributes=attrs) as span:
             cm: Any = nullcontext()
             if self._langfuse is not None and propagate_attributes is not None:
                 try:

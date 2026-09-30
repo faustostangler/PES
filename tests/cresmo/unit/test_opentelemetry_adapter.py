@@ -37,9 +37,10 @@ class TestTelemetryValueObjects:
 
     def test_pipeline_session_id_valid(self) -> None:
         session_id = PipelineSessionId.create(channel="sandeco", content_id="yt_12345678")
-        assert session_id.value == "content:sandeco:yt_12345678"
+        assert session_id.value == "sandeco:yt_12345678"
         assert session_id.channel_token == "sandeco"
         assert session_id.content_id == "yt_12345678"
+        assert session_id.video_id == "yt_12345678"
 
     def test_pipeline_session_id_rejects_empty(self) -> None:
         with pytest.raises(ValueError, match="cannot be empty"):
@@ -170,13 +171,14 @@ class TestOpenTelemetryAdapter:
         # Spans finish from inside out: raw_indexing, fluid_prose, then root pipeline
         raw_indexing_span = next(s for s in spans if s.name == "cresmo.stage.raw_indexing")
         fluid_prose_span = next(s for s in spans if s.name == "cresmo.stage.fluid_prose")
-        root_span = next(s for s in spans if s.name == "synthesize_content")
+        root_span = next(s for s in spans if s.name == "cresmo.pipeline.execution")
 
         # Root span must have official Langfuse OTel attributes
         assert root_span.attributes is not None
-        assert root_span.attributes["langfuse.session.id"] == "content:sandeco:vid_test_123"
+        assert root_span.attributes["langfuse.session.id"] == "sandeco:vid_test_123"
         assert root_span.attributes["langfuse.user.id"] == "channel:sandeco"
         assert root_span.attributes["cresmo.content.id"] == "vid_test_123"
+        assert root_span.attributes["cresmo.video.id"] == "vid_test_123"
         assert root_span.attributes["cresmo.content.title"] == "Machiavelli and Modern State"
         assert root_span.attributes["cresmo.channel.name"] == "sandeco"
         assert root_span.attributes["cresmo.channel.id"] == "UC_Sandeco123"
@@ -234,7 +236,7 @@ class TestOpenTelemetryAdapter:
                 verdict="PASS",
             )
 
-        root_span = next(s for s in exporter.get_finished_spans() if s.name == "synthesize_content")
+        root_span = next(s for s in exporter.get_finished_spans() if s.name == "cresmo.pipeline.execution")
         assert len(root_span.events) == 1
         event = root_span.events[0]
         assert event.name == "judge_evaluation"
@@ -258,7 +260,7 @@ class TestOpenTelemetryAdapter:
                 details={"wikilink_count": 14},
             )
 
-        root_span = next(s for s in exporter.get_finished_spans() if s.name == "synthesize_content")
+        root_span = next(s for s in exporter.get_finished_spans() if s.name == "cresmo.pipeline.execution")
         event = next(e for e in root_span.events if e.name == "session_coherence")
         assert event.attributes is not None
         assert event.attributes["eval.coherence_score"] == 0.92
@@ -286,10 +288,11 @@ class TestOpenTelemetryAdapter:
             pass
 
         spans = exporter.get_finished_spans()
-        root_span = next(s for s in spans if s.name == "synthesize_content")
+        root_span = next(s for s in spans if s.name == "cresmo.pipeline.execution")
         assert root_span.attributes is not None
-        assert root_span.attributes["langfuse.session.id"] == "content:sandeco:vid_anon_01"
+        assert root_span.attributes["langfuse.session.id"] == "sandeco:vid_anon_01"
         assert root_span.attributes["langfuse.user.id"] == "anonymous"
+        assert root_span.attributes["cresmo.video.id"] == "vid_anon_01"
         assert root_span.attributes["cresmo.channel.name"] == "sandeco"
         assert "cresmo.channel" not in root_span.attributes
         assert root_span.attributes["cresmo.user.is_anonymous"] is True
@@ -310,15 +313,59 @@ class TestOpenTelemetryAdapter:
             pass
 
         spans = exporter.get_finished_spans()
-        root_span = next(s for s in spans if s.name == "synthesize_content")
+        root_span = next(s for s in spans if s.name == "cresmo.pipeline.execution")
         assert root_span.attributes is not None
-        assert root_span.attributes["langfuse.session.id"] == "content:sandeco:vid_auth_01"
+        assert root_span.attributes["langfuse.session.id"] == "sandeco:vid_auth_01"
         assert root_span.attributes["langfuse.user.id"] == "user:google:alice@corp.com"
+        assert root_span.attributes["cresmo.video.id"] == "vid_auth_01"
         assert root_span.attributes["cresmo.channel.name"] == "sandeco"
         assert "cresmo.channel" not in root_span.attributes
         assert root_span.attributes["cresmo.user.is_anonymous"] is False
         assert root_span.attributes["cresmo.user.provider"] == "google"
         assert root_span.attributes["cresmo.user.subject"] == "alice@corp.com"
+
+    def test_pipeline_session_with_worker_identity(
+        self,
+        otel_setup: tuple[OpenTelemetryAdapter, InMemorySpanExporter],
+    ) -> None:
+        adapter, exporter = otel_setup
+        session_id = PipelineSessionId.create(channel="sandeco", content_id="vid_worker_01")
+        user = UserIdentity.worker()
+
+        with adapter.start_pipeline_session(
+            session_id=session_id,
+            user_id=user,
+        ):
+            pass
+
+        spans = exporter.get_finished_spans()
+        root_span = next(s for s in spans if s.name == "cresmo.pipeline.execution")
+        assert root_span.attributes is not None
+        assert root_span.attributes["langfuse.session.id"] == "sandeco:vid_worker_01"
+        assert root_span.attributes["langfuse.user.id"] == "system:worker"
+        assert root_span.attributes["cresmo.user.is_anonymous"] is False
+        assert root_span.attributes["cresmo.user.provider"] == "system"
+        assert root_span.attributes["cresmo.user.subject"] == "worker"
+
+    def test_pipeline_session_with_custom_trace_name(
+        self,
+        otel_setup: tuple[OpenTelemetryAdapter, InMemorySpanExporter],
+    ) -> None:
+        adapter, exporter = otel_setup
+        session_id = PipelineSessionId.create(channel="sandeco", content_id="vid_custom_name")
+        user = UserIdentity.anonymous()
+
+        with adapter.start_pipeline_session(
+            session_id=session_id,
+            user_id=user,
+            trace_name="custom.synthesis.run",
+        ):
+            pass
+
+        spans = exporter.get_finished_spans()
+        root_span = next(s for s in spans if s.name == "custom.synthesis.run")
+        assert root_span.attributes is not None
+        assert root_span.attributes["langfuse.session.id"] == "sandeco:vid_custom_name"
 
     def test_pipeline_session_propagates_caller_exceptions(
         self,

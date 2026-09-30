@@ -79,12 +79,13 @@ class TestPipelineTelemetryIntegration:
         assert len(spans) >= 6  # Root + child stage spans
 
         # Identify root span
-        root_span = next(s for s in spans if s.name == "synthesize_content")
+        root_span = next(s for s in spans if s.name == "cresmo.pipeline.execution")
         assert root_span.attributes is not None
         assert root_span.context is not None
-        assert root_span.attributes["langfuse.session.id"] == "content:sandeco:yt_sample1234"
+        assert root_span.attributes["langfuse.session.id"] == "sandeco:yt_sample1234"
         assert root_span.attributes["langfuse.user.id"] == "anonymous"
         assert root_span.attributes["cresmo.content.id"] == "yt_sample1234"
+        assert root_span.attributes["cresmo.video.id"] == "yt_sample1234"
         assert root_span.attributes["cresmo.content.title"] == "Modelos Transformadores"
         assert root_span.attributes["cresmo.channel.name"] == "sandeco"
         assert root_span.attributes["cresmo.tenant_id"] == "channel:sandeco"
@@ -119,7 +120,7 @@ class TestPipelineTelemetryIntegration:
         assert len(coherence_events) == 1
         assert coherence_events[0].attributes is not None
         assert "eval.coherence_score" in coherence_events[0].attributes
-        assert coherence_events[0].attributes["eval.session_id"] == "content:sandeco:yt_sample1234"
+        assert coherence_events[0].attributes["eval.session_id"] == "sandeco:yt_sample1234"
 
     def test_execute_with_identified_user(
         self,
@@ -143,12 +144,12 @@ class TestPipelineTelemetryIntegration:
         root_span = next(
             s
             for s in spans
-            if s.name == "synthesize_content"
+            if s.name == "cresmo.pipeline.execution"
             and s.attributes is not None
             and s.attributes.get("cresmo.content.id") == "yt_auth_test_01"
         )
         assert root_span.attributes is not None
-        assert root_span.attributes["langfuse.session.id"] == "content:acropole:yt_auth_test_01"
+        assert root_span.attributes["langfuse.session.id"] == "acropole:yt_auth_test_01"
         assert root_span.attributes["langfuse.user.id"] == "user:oauth:fausto@cresmo.ai"
         assert root_span.attributes["cresmo.channel.name"] == "acropole"
         assert root_span.attributes["cresmo.content.title"] == "Estoicismo Clássico"
@@ -158,6 +159,39 @@ class TestPipelineTelemetryIntegration:
         assert root_span.attributes["cresmo.user.subject"] == "fausto@cresmo.ai"
         assert "cresmo.channel" not in root_span.attributes
         assert "cresmo.content_id" not in root_span.attributes
+
+    def test_execute_with_worker_identity(
+        self,
+        telemetry_pipeline: tuple[CresmoPipeline, InMemorySpanExporter, InMemoryVaultAdapter],
+    ) -> None:
+        pipeline, exporter, _ = telemetry_pipeline
+
+        raw = RawTranscript(
+            content_id=ContentId("yt_worker_test_01"),
+            channel_name=ChannelName("sandeco"),
+            body="Aula sobre agentes e automação de pipelines com worker agendado.",
+            title="Automação com Workers",
+        )
+
+        user = UserIdentity.worker()
+        result = pipeline.execute(raw=raw, gap_filler_passes=1, user=user)
+
+        assert result.success is True
+
+        spans = exporter.get_finished_spans()
+        root_span = next(
+            s
+            for s in spans
+            if s.name == "cresmo.pipeline.execution"
+            and s.attributes is not None
+            and s.attributes.get("cresmo.content.id") == "yt_worker_test_01"
+        )
+        assert root_span.attributes is not None
+        assert root_span.attributes["langfuse.session.id"] == "sandeco:yt_worker_test_01"
+        assert root_span.attributes["langfuse.user.id"] == "system:worker"
+        assert root_span.attributes["cresmo.user.is_anonymous"] is False
+        assert root_span.attributes["cresmo.user.provider"] == "system"
+        assert root_span.attributes["cresmo.user.subject"] == "worker"
 
     def test_execute_propagates_channel_id_to_telemetry_span(
         self,
@@ -181,13 +215,13 @@ class TestPipelineTelemetryIntegration:
         root_span = next(
             s
             for s in spans
-            if s.name == "synthesize_content"
+            if s.name == "cresmo.pipeline.execution"
             and s.attributes is not None
             and s.attributes.get("cresmo.content.id") == "yt_chan_id_01"
         )
         assert root_span.attributes is not None
         # Algorithmic keys use stable ChannelId
-        assert root_span.attributes["langfuse.session.id"] == "content:UC_acropole123:yt_chan_id_01"
+        assert root_span.attributes["langfuse.session.id"] == "UC_acropole123:yt_chan_id_01"
         assert root_span.attributes["cresmo.tenant_id"] == "channel:UC_acropole123"
         assert root_span.attributes["cresmo.channel.id"] == "UC_acropole123"
         # Cognitive keys use human-readable Name/Title

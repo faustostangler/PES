@@ -24,9 +24,9 @@ from cresmo.application.ports import (
 )
 from cresmo.domain.entities import (
     AtomicNote,
-    ChannelTenantId,
     EnrichedCompendium,
     PipelineSessionId,
+    UserIdentity,
 )
 from cresmo.domain.exceptions import DomainValidationError, NoteTypologyError
 from cresmo.domain.value_objects import (
@@ -188,6 +188,7 @@ class SynthesizeAtomicBatchUseCase:
         self,
         chunk: list[tuple[NoteTitle, NoteType]],
         compendium: EnrichedCompendium,
+        user: UserIdentity | None = None,
     ) -> list[AtomicNote]:
         """Synthesize and persist notes for a single batch chunk via LLM."""
         targets_summary = [
@@ -206,10 +207,7 @@ class SynthesizeAtomicBatchUseCase:
             content_id=compendium.content_id,
             channel_id=compendium.channel_id,
         ).value
-        user_id = ChannelTenantId.create(
-            channel=compendium.channel_name,
-            channel_id=compendium.channel_id,
-        ).value
+        user_id = user.value if user is not None else UserIdentity.anonymous().value
         response = self.llm_synthesis_port.transform(
             prompt=user_prompt,
             system_instruction=system_instruction,
@@ -236,12 +234,14 @@ class SynthesizeAtomicBatchUseCase:
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
+        user: UserIdentity | None = None,
     ) -> list[AtomicNote]:
         """Execute batched atomic note synthesis.
 
         Args:
             inventory: Discovered unique entity inventory.
             compendium: Enriched compendium from narrative expansion.
+            user: Optional executing UserIdentity principal (defaults to anonymous).
 
         Returns:
             List of all synthesized and persisted AtomicNote domain aggregates.
@@ -257,6 +257,6 @@ class SynthesizeAtomicBatchUseCase:
 
         for i in range(0, len(pending_items), self.batch_size):
             chunk = pending_items[i : i + self.batch_size]
-            synthesized_notes.extend(self._synthesize_chunk(chunk, compendium))
+            synthesized_notes.extend(self._synthesize_chunk(chunk, compendium, user=user))
 
         return synthesized_notes

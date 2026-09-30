@@ -23,9 +23,10 @@ from cresmo.application.ports import (
     VaultRepositoryPort,
 )
 from cresmo.application.use_cases.indexing.distiller import LLMTranscriptDistiller
-from cresmo.domain.entities import RawTranscript
+from cresmo.domain.entities import RawTranscript, UserIdentity
 from cresmo.domain.taxonomy import classify_channel
 from cresmo.domain.value_objects import (
+    ChannelId,
     ChannelName,
     ContentId,
     NoteTitle,
@@ -108,12 +109,16 @@ class IndexRawTranscriptsUseCase:
         title: str,
         text: str,
         channel_name: ChannelName,
+        channel_id: ChannelId | None = None,
+        user: UserIdentity | None = None,
     ) -> str:
         return self._distiller.extract_concepts(
             video_id=video_id,
             title=title,
             text=text,
             channel_name=channel_name,
+            channel_id=channel_id,
+            user=user,
         )
 
     def _extract_summary(
@@ -122,12 +127,16 @@ class IndexRawTranscriptsUseCase:
         title: str,
         text: str,
         channel_name: ChannelName,
+        channel_id: ChannelId | None = None,
+        user: UserIdentity | None = None,
     ) -> str:
         return self._distiller.extract_summary(
             video_id=video_id,
             title=title,
             text=text,
             channel_name=channel_name,
+            channel_id=channel_id,
+            user=user,
         )
 
     def _extract_synthesis(
@@ -137,6 +146,8 @@ class IndexRawTranscriptsUseCase:
         excerpt: str,
         summary: str,
         channel_name: ChannelName,
+        channel_id: ChannelId | None = None,
+        user: UserIdentity | None = None,
     ) -> str:
         return self._distiller.extract_synthesis(
             video_id=video_id,
@@ -144,16 +155,19 @@ class IndexRawTranscriptsUseCase:
             excerpt=excerpt,
             summary=summary,
             channel_name=channel_name,
+            channel_id=channel_id,
+            user=user,
         )
 
     def execute(
         self,
         transcript: RawTranscript,
         force: bool = False,
+        user: UserIdentity | None = None,
     ) -> RawIndexEntry | None:
         """Index a single raw transcript incrementally if not already indexed (Primary entrypoint).
 
-        Conforms to ADR-019 (execute() method convention unification).
+        Conforms to ADR-019 (execute() method convention unification) and ADR-027.
         """
         video_id = transcript.content_id
         channel_name = transcript.channel_name
@@ -186,12 +200,16 @@ class IndexRawTranscriptsUseCase:
                 title=title,
                 text=excerpt,
                 channel_name=channel_name,
+                channel_id=transcript.channel_id,
+                user=user,
             )
             summary = self._extract_summary(
                 video_id=video_id,
                 title=title,
                 text=excerpt,
                 channel_name=channel_name,
+                channel_id=transcript.channel_id,
+                user=user,
             )
             synthesis = self._extract_synthesis(
                 video_id=video_id,
@@ -199,6 +217,8 @@ class IndexRawTranscriptsUseCase:
                 excerpt=excerpt,
                 summary=summary,
                 channel_name=channel_name,
+                channel_id=transcript.channel_id,
+                user=user,
             )
         except Exception as exc:
             # Gracefully degrade on network/inference outage to prevent aborting batch runs

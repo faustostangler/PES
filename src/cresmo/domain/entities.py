@@ -272,8 +272,9 @@ class MapOfContent:
 class PipelineSessionId:
     """Value Object representing the holistic multi-stage content lifecycle session.
 
-    Conforms to ADR-016. Ensures end-to-end Session Replay in Langfuse across pipeline execution.
-    Format: content:{channel}:{content_id}
+    Conforms to ADR-016 and ADR-027.
+    Ensures end-to-end Session Replay in Langfuse for exactly one video.
+    Canonical format: {channel_id}:{video_id}
     """
 
     value: str
@@ -282,15 +283,22 @@ class PipelineSessionId:
         if not self.value or not self.value.strip():
             raise ValueError("PipelineSessionId cannot be empty.")
         parts = self.value.split(":")
-        if (
-            len(parts) != PIPELINE_SESSION_ID_PART_COUNT
-            or parts[0] != "content"
-            or not parts[1]
-            or not parts[2]
-        ):
+        if len(parts) == 2:
+            if not parts[0].strip() or not parts[1].strip():
+                raise ValueError(
+                    f"Invalid PipelineSessionId format: '{self.value}'. "
+                    "Expected '{channel_id}:{video_id}'."
+                )
+        elif len(parts) == 3 and parts[0] == "content":
+            if not parts[1].strip() or not parts[2].strip():
+                raise ValueError(
+                    f"Invalid PipelineSessionId format: '{self.value}'. "
+                    "Expected 'content:{channel}:{content_id}'."
+                )
+        else:
             raise ValueError(
                 f"Invalid PipelineSessionId format: '{self.value}'. "
-                "Expected 'content:{channel}:{content_id}'."
+                "Expected '{channel_id}:{video_id}'."
             )
 
     @classmethod
@@ -304,7 +312,7 @@ class PipelineSessionId:
 
         Args:
             channel: Human-readable channel name (cognitive fallback).
-            content_id: Unique content identifier.
+            content_id: Unique content identifier / video ID.
             channel_id: Optional stable platform ID (preferred for algorithmic keys).
         """
         # Algorithmic key: prefer stable ID over mutable name
@@ -314,16 +322,24 @@ class PipelineSessionId:
             else (channel.value if isinstance(channel, ChannelName) else channel.strip())
         )
         c_id = content_id.value if isinstance(content_id, ContentId) else content_id.strip()
-        return cls(value=f"content:{ch}:{c_id}")
+        return cls(value=f"{ch}:{c_id}")
 
     @property
     def channel_token(self) -> str:
         """Algorithmic channel identifier token stored in the session key (ID or name)."""
-        return self.value.split(":")[1]
+        parts = self.value.split(":")
+        return parts[1] if parts[0] == "content" and len(parts) == 3 else parts[0]
 
     @property
     def content_id(self) -> str:
-        return self.value.split(":")[2]
+        """Content / video identifier stored in the session key."""
+        parts = self.value.split(":")
+        return parts[2] if parts[0] == "content" and len(parts) == 3 else parts[1]
+
+    @property
+    def video_id(self) -> str:
+        """Alias for content_id per ADR-027 single video session replay convention."""
+        return self.content_id
 
 
 @dataclass(frozen=True)
@@ -376,12 +392,11 @@ class ChannelTenantId:
 class UserIdentity:
     """Value Object representing the user/operator executing the synthesis pipeline.
 
-    Supports forward-compatible identity modalities:
-    - Anonymous (unauthenticated, guest, CLI)
-    - Identified (authenticated via OAuth/OIDC login)
-    - Channel fallback (headless background worker pipelines)
-
-    Conforms to ADR-016 and Langfuse Users taxonomy.
+    Supports forward-compatible identity modalities per ADR-027:
+    - Anonymous (unauthenticated, guest, CLI): 'anonymous'
+    - Identified (authenticated via IAM / OAuth): 'user:iam:alice' or 'user:oauth:subject'
+    - Scheduled workers (daemons, batch sync): 'system:worker'
+    - Channel fallback (legacy background worker pipelines): 'channel:...'
     """
 
     value: str
@@ -401,12 +416,23 @@ class UserIdentity:
 
     @classmethod
     def identified(cls, subject: str, provider: str = "oauth") -> UserIdentity:
-        """Create an identified user identity from OAuth subject or email."""
+        """Create an identified user identity from OAuth subject, IAM username, or email."""
         if not subject or not subject.strip():
             raise ValueError("Identified UserIdentity requires a non-empty subject.")
         prov = provider.strip().lower() or "oauth"
         val = f"user:{prov}:{subject.strip()}"
         return cls(value=val, is_anonymous=False, provider=prov, subject=subject.strip())
+
+    @classmethod
+    def worker(cls, name: str = "worker") -> UserIdentity:
+        """Create a scheduled or background worker user identity per ADR-027."""
+        clean_name = name.strip() or "worker"
+        return cls(
+            value=f"system:{clean_name}",
+            is_anonymous=False,
+            provider="system",
+            subject=clean_name,
+        )
 
     @classmethod
     def from_channel(cls, channel: str) -> UserIdentity:

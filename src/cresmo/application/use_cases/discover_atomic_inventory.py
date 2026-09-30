@@ -29,9 +29,9 @@ from cresmo.application.use_cases.index_raw_transcripts import (
     parse_judge_boolean,
 )
 from cresmo.domain.entities import (
-    ChannelTenantId,
     EnrichedCompendium,
     PipelineSessionId,
+    UserIdentity,
 )
 from cresmo.domain.exceptions import DomainValidationError, NoteTypologyError
 from cresmo.domain.value_objects import (
@@ -216,11 +216,16 @@ class DiscoverAtomicInventoryUseCase:
         )
         return parse_judge_boolean(judge_response)
 
-    def execute(self, compendium: EnrichedCompendium) -> AtomicEntityInventory:
+    def execute(
+        self,
+        compendium: EnrichedCompendium,
+        user: UserIdentity | None = None,
+    ) -> AtomicEntityInventory:
         """Execute discovery scan with deterministic guardrails and iterative LLM judge loop.
 
         Args:
             compendium: Enriched compendium from narrative expansion.
+            user: Optional executing UserIdentity principal (defaults to anonymous).
 
         Returns:
             AtomicEntityInventory Value Object containing deduplicated entities.
@@ -240,10 +245,7 @@ class DiscoverAtomicInventoryUseCase:
             content_id=compendium.content_id,
             channel_id=compendium.channel_id,
         ).value
-        user_id = ChannelTenantId.create(
-            channel=compendium.channel_name,
-            channel_id=compendium.channel_id,
-        ).value
+        user_id = user.value if user is not None else UserIdentity.anonymous().value
         content_id = compendium.content_id.value
 
         candidate_data: list[Any] = []

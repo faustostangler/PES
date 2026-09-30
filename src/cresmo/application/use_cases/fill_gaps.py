@@ -19,10 +19,10 @@ from cresmo.application.ports import (
     VaultRepositoryPort,
 )
 from cresmo.domain.entities import (
-    ChannelTenantId,
     EnrichedCompendium,
     PipelineSessionId,
     RawTranscript,
+    UserIdentity,
 )
 from cresmo.domain.exceptions import CompendiumStructureError
 from cresmo.domain.value_objects import NoteTitle, PromptKey
@@ -68,12 +68,14 @@ class FillGapsUseCase:
         self,
         raw_transcript: RawTranscript,
         passes: int = 3,
+        user: UserIdentity | None = None,
     ) -> EnrichedCompendium:
         """Execute multi-pass progressive enrichment.
 
         Args:
             raw_transcript: Source RawTranscript aggregate.
             passes: Number of sequential Socratic expansion cycles (default: 3).
+            user: Optional executing UserIdentity principal (defaults to anonymous).
 
         Returns:
             Validated EnrichedCompendium aggregate with segregated body and complementary info.
@@ -90,10 +92,7 @@ class FillGapsUseCase:
             content_id=raw_transcript.content_id,
             channel_id=raw_transcript.channel_id,
         ).value
-        user_id = ChannelTenantId.create(
-            channel=raw_transcript.channel_name,
-            channel_id=raw_transcript.channel_id,
-        ).value
+        user_id = user.value if user is not None else UserIdentity.anonymous().value
 
         for pass_index in range(passes):
             prompt_key = (

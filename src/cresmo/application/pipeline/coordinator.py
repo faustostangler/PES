@@ -299,6 +299,7 @@ class CresmoPipeline:
             user_id=user_identity,
             channel_tenant_id=tenant_id,
             metadata=root_metadata,
+            trace_name="cresmo.pipeline.execution",
         ):
             if early_result := self._check_idempotent_exit(raw, entry, force_reprocess):
                 return early_result
@@ -306,7 +307,7 @@ class CresmoPipeline:
             if entry is None:
                 entry = self._run_stage(
                     "raw_indexing",
-                    lambda: self.index_raw.execute(raw),
+                    lambda: self.index_raw.execute(raw, user=user_identity),
                     channel_name=channel_name,
                     content_id=content_id,
                     channel_id=raw.channel_id,
@@ -320,6 +321,7 @@ class CresmoPipeline:
                     lambda: self.fill_gaps.execute(
                         raw_transcript=raw,
                         passes=gap_filler_passes,
+                        user=user_identity,
                     ),
                     channel_name=channel_name,
                     content_id=content_id,
@@ -329,6 +331,7 @@ class CresmoPipeline:
                     "expansion",
                     lambda: self.expand_compendium.execute(
                         compendium=fluid_compendium,
+                        user=user_identity,
                     ),
                     channel_name=channel_name,
                     content_id=content_id,
@@ -339,6 +342,7 @@ class CresmoPipeline:
                 "inventory",
                 lambda: self.discover_atomic_inventory.execute(
                     compendium=expanded_compendium,
+                    user=user_identity,
                 ),
                 channel_name=channel_name,
                 content_id=content_id,
@@ -350,6 +354,7 @@ class CresmoPipeline:
                 lambda: self.synthesize_atomic_batch.execute(
                     inventory=inventory,
                     compendium=expanded_compendium,
+                    user=user_identity,
                 ),
                 channel_name=channel_name,
                 content_id=content_id,
@@ -358,7 +363,10 @@ class CresmoPipeline:
 
             mocs = self._run_stage(
                 "mocs",
-                lambda: self.reconcile_mocs.execute(),
+                lambda: self.reconcile_mocs.execute(
+                    session_id=session_id,
+                    user_id=user_identity,
+                ),
                 channel_name=channel_name,
                 content_id=content_id,
                 channel_id=raw.channel_id,

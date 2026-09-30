@@ -34,6 +34,7 @@ class TelemetryPort(ABC):
         user_id: UserIdentity | ChannelTenantId,
         channel_tenant_id: ChannelTenantId | None = None,
         metadata: dict[str, Any] | None = None,
+        trace_name: str | None = None,
     ) -> AbstractContextManager[Any]:
         """Initiate root OpenTelemetry span binding session_id and user_id attributes.
 
@@ -42,6 +43,7 @@ class TelemetryPort(ABC):
             user_id: UserIdentity (anonymous or identified OAuth user), ChannelTenantId, or string.
             channel_tenant_id: Optional Channel tenant identifier for cost and volume aggregation.
             metadata: Additional contextual metadata (e.g. source, pipeline version).
+            trace_name: Optional canonical root operation name (defaults to cresmo.pipeline.execution).
 
         Returns:
             ContextManager managing the root span lifecycle.
@@ -139,9 +141,10 @@ class NoOpTelemetryPort(TelemetryPort):
         user_id: UserIdentity | ChannelTenantId,
         channel_tenant_id: ChannelTenantId | None = None,
         metadata: dict[str, Any] | None = None,
+        trace_name: str | None = None,
     ) -> Generator[Any]:
         """No-op session context manager."""
-        _ = (session_id, user_id, channel_tenant_id, metadata)
+        _ = (session_id, user_id, channel_tenant_id, metadata, trace_name)
         yield None
 
     @contextmanager

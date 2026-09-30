@@ -15,7 +15,7 @@ from cresmo.application.pipeline import CresmoPipeline, PipelineResult
 from cresmo.application.ports import LedgerRepositoryPort, MediaIngestionPort
 from cresmo.application.services.preflight import PreflightHealthChecker, PreflightResult
 from cresmo.application.use_cases.sync_channel import SyncChannelUseCase
-from cresmo.domain.entities import AtomicNote
+from cresmo.domain.entities import AtomicNote, UserIdentity
 from cresmo.domain.exceptions import PreflightError
 from cresmo.domain.value_objects import (
     CausalMatrix,
@@ -105,7 +105,10 @@ class TestSyncChannelUseCase:
         assert summary.skipped_count == 0
         assert summary.failed_count == 0
         assert summary.status == PipelineStatus.COMPLETED
-        mock_pipeline.run_for_video.assert_called_once_with(video_url=recent_item.media_url)
+        mock_pipeline.run_for_video.assert_called_once_with(
+            video_url=recent_item.media_url,
+            user=UserIdentity.worker(),
+        )
 
     def test_sync_channel_skips_already_processed_items(
         self,
@@ -167,7 +170,10 @@ class TestSyncChannelUseCase:
 
         assert summary.processed_count == 1
         assert summary.skipped_count == 0
-        mock_pipeline.run_for_video.assert_called_once_with(video_url=item.media_url)
+        mock_pipeline.run_for_video.assert_called_once_with(
+            video_url=item.media_url,
+            user=UserIdentity.worker(),
+        )
 
     def test_sync_channel_handles_individual_item_failure_gracefully(
         self,
@@ -350,7 +356,10 @@ class TestSyncChannelUseCase:
 
         assert summary.total_discovered == 1
         assert summary.processed_count == 1
-        mock_pipeline.run_for_video.assert_called_once_with(video_url=item_recent.media_url)
+        mock_pipeline.run_for_video.assert_called_once_with(
+            video_url=item_recent.media_url,
+            user=UserIdentity.worker(),
+        )
 
     def test_sync_channel_max_videos_limit_enforcement(
         self,

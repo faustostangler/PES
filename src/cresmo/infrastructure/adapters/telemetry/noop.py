@@ -34,9 +34,10 @@ class NoOpTelemetryAdapter(TelemetryPort):
         user_id: UserIdentity | ChannelTenantId,
         channel_tenant_id: ChannelTenantId | None = None,
         metadata: dict[str, Any] | None = None,
+        trace_name: str | None = None,
     ) -> Generator[Any]:
         """No-op session context manager."""
-        _ = (session_id, user_id, channel_tenant_id, metadata)
+        _ = (session_id, user_id, channel_tenant_id, metadata, trace_name)
         yield None
 
     @contextmanager
