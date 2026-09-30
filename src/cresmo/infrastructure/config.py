@@ -383,8 +383,14 @@ class CresmoSettings(BaseSettings):
         description="Provider for raw transcript conceptual indexing: 'ollama' (default local) or 'gemini' (cloud API).",
     )
     ollama_timeout_seconds: float = Field(
-        default=60.0,
-        description="HTTP timeout in seconds for local Ollama inference requests.",
+        default=300.0,
+        ge=1.0,
+        validation_alias=AliasChoices(
+            "ollama_timeout_seconds",
+            "CRESMO_OLLAMA_TIMEOUT",
+            "OLLAMA_TIMEOUT",
+        ),
+        description="HTTP timeout in seconds for local Ollama inference requests (CPU-only may need 300s+).",
     )
     ollama_warmup_timeout_seconds: float = Field(
         default=300.0,

@@ -28,6 +28,7 @@ from http import HTTPStatus
 from pathlib import Path
 from typing import Any, cast
 
+import whisper
 import yt_dlp
 import yt_dlp.plugins
 
@@ -49,6 +50,7 @@ from cresmo.domain.value_objects import (
     normalize_to_uploads_playlist_url,
 )
 from cresmo.infrastructure.adapters.header_generator import RandomHeaderGenerator
+from cresmo.infrastructure.adapters.noop_metrics_adapter import NoOpMetricsAdapter
 
 logger = logging.getLogger(__name__)
 
@@ -101,8 +103,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         self._js_runtime_name: str | None = js_runtime_name or self._detect_js_runtime()
         _ensure_yt_dlp_plugins_loaded()
         if metrics_port is None:
-            from cresmo.infrastructure.adapters.noop_metrics_adapter import NoOpMetricsAdapter
-
             self._metrics_port: MetricsPort = NoOpMetricsAdapter()
         else:
             self._metrics_port = metrics_port
@@ -277,8 +277,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         info: Mapping[str, Any] | None = None,
     ) -> tuple[str, str]:
         """Download audio to ephemeral scratch dir, transcribe via Whisper, and clean up."""
-        import whisper
-
         channel_name = "Unknown_Channel"
         if info:
             channel_name = self._sanitize_fs_name(

@@ -247,7 +247,7 @@ class TestOllamaLLMAdapter:
             assert adapter.wait_for_warmup() is True
             assert adapter.is_warmed_up is True
 
-            req = mock_urlopen.call_args[0][0]
+            req = mock_urlopen.call_args_list[0][0][0]
             assert req.full_url == "http://localhost:11434/api/generate"
             body = json.loads(req.data.decode("utf-8"))
             assert body["model"] == "qwen2.5:7b"
@@ -397,6 +397,7 @@ class TestOllamaLLMAdapter:
         assert adapter.is_warmed_up is False
 
         mock_preload_data = {"done": True, "done_reason": "load"}
+        mock_ps_data = {"models": [{"name": "qwen2.5:7b", "size_vram": 4000000000}]}
         mock_gen_data = {"response": "Transformed text", "done": True}
 
         with patch("urllib.request.urlopen") as mock_urlopen:
@@ -405,17 +406,22 @@ class TestOllamaLLMAdapter:
             mock_preload_resp.read.return_value = json.dumps(mock_preload_data).encode("utf-8")
             mock_preload_resp.__enter__.return_value = mock_preload_resp
 
+            mock_ps_resp = MagicMock()
+            mock_ps_resp.status = 200
+            mock_ps_resp.read.return_value = json.dumps(mock_ps_data).encode("utf-8")
+            mock_ps_resp.__enter__.return_value = mock_ps_resp
+
             mock_gen_resp = MagicMock()
             mock_gen_resp.status = 200
             mock_gen_resp.read.return_value = json.dumps(mock_gen_data).encode("utf-8")
             mock_gen_resp.__enter__.return_value = mock_gen_resp
 
-            mock_urlopen.side_effect = [mock_preload_resp, mock_gen_resp]
+            mock_urlopen.side_effect = [mock_preload_resp, mock_ps_resp, mock_gen_resp]
 
             result = adapter.transform("Hello from cold start")
             assert result == "Transformed text"
             assert bool(adapter.is_warmed_up) is True
-            assert mock_urlopen.call_count == 2
+            assert mock_urlopen.call_count == 3
 
     def test_concurrent_threads_waiting_at_rendezvous_barrier(self) -> None:
         """Verify multiple concurrent threads block cleanly at barrier with zero race conditions."""
@@ -447,4 +453,4 @@ class TestOllamaLLMAdapter:
 
             assert all(results)
             assert adapter.is_warmed_up is True
-            assert mock_urlopen.call_count == 1
+            assert mock_urlopen.call_count == 2

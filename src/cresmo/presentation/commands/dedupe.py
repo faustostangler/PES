@@ -43,6 +43,7 @@ def handle_dedupe(args: argparse.Namespace) -> int:
     Returns:
         Process exit code integer.
     """
+    _ = args
     try:
         settings = CresmoSettings()
         use_case = build_unify_duplicates_use_case(settings=settings)

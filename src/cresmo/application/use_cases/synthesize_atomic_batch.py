@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import json
 import re
+from typing import Final
 
 from cresmo.application.json_parser import extract_json_data
 from cresmo.application.ports import (
@@ -40,6 +41,7 @@ from cresmo.domain.value_objects import (
 # Honorific prefixes stripped during entity normalization to prevent duplicate notes
 _HONORIFIC_PREFIXES: tuple[str, ...] = ("dom ", "dona ", "d. ", "d ")
 _PUNCT_COLLAPSE_RE = re.compile(r"[\s\-_.,()]+")
+_MIN_HONORIFIC_NORMALIZED_LENGTH: Final[int] = 4
 
 
 def _norm_honorific(s: str) -> str:
@@ -117,7 +119,7 @@ class SynthesizeAtomicBatchUseCase:
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
             for n in existing_notes
-            if len(_norm_honorific(n.title.value)) >= 4
+            if len(_norm_honorific(n.title.value)) >= _MIN_HONORIFIC_NORMALIZED_LENGTH
         }
 
         synthesized_notes: list[AtomicNote] = []

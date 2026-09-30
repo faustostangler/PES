@@ -2,12 +2,15 @@
 
 import uuid
 from datetime import UTC, datetime
+from typing import Final
 
 from identity.application.dtos import RegisterUserRequestDTO, RegisterUserResponseDTO
 from identity.application.ports import PasswordHasherPort, UserRepositoryPort
 from identity.domain.entities import User
 from identity.domain.exceptions import UserAlreadyExistsError, WeakPasswordError
 from identity.domain.value_objects import Email, Role, UserId
+
+MIN_PASSWORD_LENGTH: Final[int] = 8
 
 
 class RegisterUserUseCase:
@@ -26,8 +29,10 @@ class RegisterUserUseCase:
             raise UserAlreadyExistsError(f"User with email '{email.value}' is already registered.")
 
         # Minimum password strength invariant
-        if len(dto.password) < 8:
-            raise WeakPasswordError("Password must be at least 8 characters long.")
+        if len(dto.password) < MIN_PASSWORD_LENGTH:
+            raise WeakPasswordError(
+                f"Password must be at least {MIN_PASSWORD_LENGTH} characters long."
+            )
 
         hashed_password = self._password_hasher.hash(dto.password)
 

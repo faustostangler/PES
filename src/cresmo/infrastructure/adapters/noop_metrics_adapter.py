@@ -33,6 +33,7 @@ class NoOpMetricsAdapter(MetricsPort):
         Raises:
             ValueError: If value is negative.
         """
+        _ = (name, labels)
         if value < 0.0:
             raise ValueError("Counter increment must be non-negative")
 
@@ -52,6 +53,7 @@ class NoOpMetricsAdapter(MetricsPort):
         Raises:
             ValueError: If value is negative.
         """
+        _ = (name, labels)
         if value < 0.0:
             raise ValueError("Histogram observation must be non-negative")
 
@@ -68,4 +70,4 @@ class NoOpMetricsAdapter(MetricsPort):
             value: Arbitrary numeric value.
             labels: Optional label mapping.
         """
-        # Silent no-op for Null Object pattern
+        _ = (name, value, labels)

@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import argparse
 import logging
+import re
 import sys
 from typing import Any
 
@@ -58,7 +59,6 @@ def register_subparser(subparsers: argparse._SubParsersAction[Any]) -> None:
 
 def _to_mustache(text: str) -> str:
     """Convert Python single-brace template variables {var} to Langfuse Mustache {{var}}."""
-    import re
     return re.sub(r"(?<!\{)\{([a-zA-Z_][a-zA-Z0-9_]*)\}(?!\})", r"{{\1}}", text)
 
 
@@ -78,14 +78,18 @@ def handle_seed_prompts(args: argparse.Namespace) -> int:
     provider = JsonPromptProvider()
 
     if dry_run:
-        sys.stdout.write(f"[dry-run] Rendering {len(PROMPT_MAPPINGS)} Chat-Native prompt templates:\n")
+        sys.stdout.write(
+            f"[dry-run] Rendering {len(PROMPT_MAPPINGS)} Chat-Native prompt templates:\n"
+        )
         for lf_name, json_key in PROMPT_MAPPINGS.items():
             sys_inst, user_tpl = provider.get_chat_prompt_template(json_key)
             sys_mustache = _to_mustache(sys_inst)
             user_mustache = _to_mustache(user_tpl)
             preview_sys = sys_mustache[:50].replace("\n", " ")
             preview_usr = user_mustache[:50].replace("\n", " ")
-            sys.stdout.write(f"- {lf_name} (key={json_key}): [system] {preview_sys}... | [user] {preview_usr}...\n")
+            sys.stdout.write(
+                f"- {lf_name} (key={json_key}): [system] {preview_sys}... | [user] {preview_usr}...\n"
+            )
         sys.stdout.write(f"[dry-run] Completed preview of {len(PROMPT_MAPPINGS)} chat prompts.\n")
         return EXIT_SUCCESS
 

@@ -13,12 +13,17 @@ Conforms to:
 
 from __future__ import annotations
 
+import functools
 import logging
 import os
 import sys
 from collections.abc import Callable
 from pathlib import Path
 from typing import Any
+
+from langfuse import Langfuse
+from langfuse.span_filter import is_default_export_span
+from langfuse.types import MaskOtelSpansParams, MaskOtelSpansResult, OtelSpanPatch
 
 from cresmo.application.pipeline import CresmoPipeline
 from cresmo.application.ports import (
@@ -41,12 +46,23 @@ from cresmo.infrastructure.adapters.anonymizer_adapter import (
     NoOpAnonymizerAdapter,
     RegexAnonymizerAdapter,
 )
+from cresmo.infrastructure.adapters.cookie_extractor import ensure_cookies_file
 from cresmo.infrastructure.adapters.gemini_adapter import GeminiLLMAdapter
 from cresmo.infrastructure.adapters.header_generator import RandomHeaderGenerator
 from cresmo.infrastructure.adapters.native_media_ingestion_adapter import (
     NativeMediaIngestionAdapter,
 )
+from cresmo.infrastructure.adapters.noop_metrics_adapter import NoOpMetricsAdapter
 from cresmo.infrastructure.adapters.obsidian_vault_adapter import ObsidianVaultAdapter
+from cresmo.infrastructure.adapters.ollama_llm_adapter import OllamaLLMAdapter
+from cresmo.infrastructure.adapters.opentelemetry_adapter import (
+    NoOpTelemetryAdapter,
+    OpenTelemetryAdapter,
+    name_telemetry_threads,
+)
+from cresmo.infrastructure.adapters.prometheus_metrics_adapter import (
+    PrometheusMetricsAdapter,
+)
 from cresmo.infrastructure.adapters.prompt_provider import (
     JsonPromptProvider,
     LangfusePromptProvider,
@@ -56,6 +72,28 @@ from cresmo.infrastructure.config import CresmoSettings
 from cresmo.infrastructure.logging_config import configure_logging
 
 logger = logging.getLogger(__name__)
+
+
+@functools.lru_cache(maxsize=1)
+def get_shared_settings() -> CresmoSettings:
+    """Return canonical cached CresmoSettings singleton.
+
+    Prevents redundant .env disk reads and multiple configuration allocations
+    across independent adapter factory invocations per ADR-002 §9.1.
+    """
+    return CresmoSettings()
+
+
+def reset_shared_settings() -> None:
+    """Clear cached settings singleton (used for test isolation)."""
+    get_shared_settings.cache_clear()
+
+
+def resolve_shared_settings(settings: CresmoSettings | None = None) -> CresmoSettings:
+    """Resolve injected settings or fall back to the memoized single source of truth."""
+    if settings is not None:
+        return settings
+    return get_shared_settings()
 
 
 def probe_langfuse_ready(host: str, timeout_seconds: float = 1.0) -> bool:
@@ -117,8 +155,6 @@ def resolve_langfuse_client(
         os.environ["LANGFUSE_SECRET_KEY"] = settings.langfuse_secret_key.get_secret_value()
         os.environ["LANGFUSE_HOST"] = settings.langfuse_host
         os.environ["OTEL_EXPORTER_OTLP_TIMEOUT"] = str(timeout_sec)
-        from langfuse import Langfuse
-        from langfuse.span_filter import is_default_export_span
 
         def should_export_cresmo_span(span: Any) -> bool:
             if is_default_export_span(span):
@@ -128,28 +164,22 @@ def resolve_langfuse_client(
 
         mask_hook = None
         if anonymizer is not None:
-            try:
-                from langfuse.types import MaskOtelSpansParams, MaskOtelSpansResult, OtelSpanPatch
 
-                def mask_otel_spans(*, params: MaskOtelSpansParams) -> MaskOtelSpansResult | None:
-                    patches = {}
-                    for identifier, span in params.spans.items():
-                        raw_attrs = span.attributes or {}
-                        sanitized = anonymizer.mask_span_attributes(raw_attrs)
-                        if sanitized != raw_attrs:
-                            delete_attrs = [k for k in raw_attrs if k not in sanitized]
-                            set_attrs = {
-                                k: v for k, v in sanitized.items() if raw_attrs.get(k) != v
-                            }
-                            patches[identifier] = OtelSpanPatch(
-                                delete_attributes=tuple(delete_attrs),
-                                set_attributes=set_attrs,
-                            )
-                    return MaskOtelSpansResult(span_patches=patches) if patches else None
+            def mask_otel_spans(*, params: MaskOtelSpansParams) -> MaskOtelSpansResult | None:
+                patches = {}
+                for identifier, span in params.spans.items():
+                    raw_attrs = span.attributes or {}
+                    sanitized = anonymizer.mask_span_attributes(raw_attrs)
+                    if sanitized != raw_attrs:
+                        delete_attrs = [k for k in raw_attrs if k not in sanitized]
+                        set_attrs = {k: v for k, v in sanitized.items() if raw_attrs.get(k) != v}
+                        patches[identifier] = OtelSpanPatch(
+                            delete_attributes=tuple(delete_attrs),
+                            set_attributes=set_attrs,
+                        )
+                return MaskOtelSpansResult(span_patches=patches) if patches else None
 
-                mask_hook = mask_otel_spans
-            except ImportError:
-                mask_hook = None
+            mask_hook = mask_otel_spans
 
         init_kwargs: dict[str, Any] = {
             "public_key": settings.langfuse_public_key,
@@ -162,9 +192,13 @@ def resolve_langfuse_client(
         if mask_hook is not None:
             init_kwargs["mask_otel_spans"] = mask_hook
 
-        client = Langfuse(**init_kwargs)
-        from cresmo.infrastructure.adapters.opentelemetry_adapter import name_telemetry_threads
-
+        langfuse_module = sys.modules.get("langfuse")
+        langfuse_cls = (
+            getattr(langfuse_module, "Langfuse", Langfuse)
+            if langfuse_module is not None
+            else Langfuse
+        )
+        client = langfuse_cls(**init_kwargs)
         name_telemetry_threads(client)
         return client
     except Exception as exc:  # noqa: BLE001
@@ -189,8 +223,6 @@ def _resolve_cookie_file(settings: CresmoSettings) -> Path | None:
     if (cookie_file is None or not cookie_file.exists()) and getattr(
         settings, "auto_extract_cookies", True
     ):
-        from cresmo.infrastructure.adapters.cookie_extractor import ensure_cookies_file
-
         data_dir = getattr(settings, "data_dir", None) or Path("data")
         target_cookie_path = data_dir / "cookies.txt"
         cookie_file = ensure_cookies_file(
@@ -215,7 +247,7 @@ def build_media_ingestion_adapter(
     Returns:
         Fully configured NativeMediaIngestionAdapter instance.
     """
-    resolved_settings = settings or CresmoSettings()
+    resolved_settings = resolve_shared_settings(settings)
     headers_path = getattr(resolved_settings, "browser_headers_path", None)
     header_generator = RandomHeaderGenerator(headers_path=headers_path)
     cookie_file = _resolve_cookie_file(resolved_settings)
@@ -242,7 +274,7 @@ def build_vault_adapter(
     Returns:
         Fully configured ObsidianVaultAdapter instance.
     """
-    resolved_settings = settings or CresmoSettings()
+    resolved_settings = resolve_shared_settings(settings)
     return ObsidianVaultAdapter(
         vault_dir=resolved_settings.vault_dir,
         raw_dir=resolved_settings.raw_dir,
@@ -269,7 +301,7 @@ def build_pipeline(
     Returns:
         Configured and wired CresmoPipeline ready for execution.
     """
-    resolved_settings = settings or CresmoSettings()
+    resolved_settings = resolve_shared_settings(settings)
     resolved_settings.ensure_directories()
 
     # 0. Structured Logging Configuration (ADR-025)
@@ -287,15 +319,11 @@ def build_pipeline(
     langfuse_client = resolve_langfuse_client(resolved_settings, anonymizer=anonymizer)
 
     if langfuse_client is not None:
-        from cresmo.infrastructure.adapters.opentelemetry_adapter import OpenTelemetryAdapter
-
         telemetry_port: TelemetryPort = OpenTelemetryAdapter(
             langfuse_client=langfuse_client,
             pipeline_version=resolved_settings.pipeline_version,
         )
     else:
-        from cresmo.infrastructure.adapters.opentelemetry_adapter import NoOpTelemetryAdapter
-
         telemetry_port = NoOpTelemetryAdapter()
 
     json_prompt_provider = JsonPromptProvider(
@@ -325,8 +353,6 @@ def build_pipeline(
     if web_index or resolved_settings.indexing_provider == "gemini":
         llm_indexing_port = llm_synthesis_port
     else:
-        from cresmo.infrastructure.adapters.ollama_llm_adapter import OllamaLLMAdapter
-
         llm_indexing_port = OllamaLLMAdapter(
             base_url=resolved_settings.ollama_base_url,
             model=resolved_settings.ollama_model,
@@ -340,14 +366,8 @@ def build_pipeline(
 
     # 4. SRE & DORA Metrics Telemetry
     if getattr(resolved_settings, "prometheus_enabled", True):
-        from cresmo.infrastructure.adapters.prometheus_metrics_adapter import (
-            PrometheusMetricsAdapter,
-        )
-
         metrics_port: MetricsPort = PrometheusMetricsAdapter()
     else:
-        from cresmo.infrastructure.adapters.noop_metrics_adapter import NoOpMetricsAdapter
-
         metrics_port = NoOpMetricsAdapter()
 
     # 5. Pipeline Assembly
@@ -382,7 +402,7 @@ def build_preflight_checker(
     Returns:
         Configured PreflightHealthChecker instance.
     """
-    resolved_settings = settings or CresmoSettings()
+    resolved_settings = resolve_shared_settings(settings)
     return PreflightHealthChecker(
         gemini_api_key=resolved_settings.gemini_api_key,
         vault_dir=resolved_settings.vault_dir,
@@ -408,7 +428,7 @@ def build_sync_channel_use_case(
     Returns:
         Wired SyncChannelUseCase orchestrator.
     """
-    resolved_settings = settings or CresmoSettings()
+    resolved_settings = resolve_shared_settings(settings)
     pipeline = build_pipeline(resolved_settings, batch_size_override=batch_size_override)
     preflight_checker = build_preflight_checker(resolved_settings, check_ffmpeg=check_ffmpeg)
 
@@ -434,7 +454,7 @@ def build_unify_duplicates_use_case(
     Returns:
         Configured UnifyDuplicateNotesUseCase instance.
     """
-    resolved_settings = settings or CresmoSettings()
+    resolved_settings = resolve_shared_settings(settings)
     vault_port = build_vault_adapter(resolved_settings)
     return UnifyDuplicateNotesUseCase(vault_port=vault_port)
 
@@ -452,7 +472,7 @@ def build_discover_batch_sources_use_case(
     Returns:
         Configured DiscoverBatchSourcesUseCase instance.
     """
-    resolved_settings = settings or CresmoSettings()
+    resolved_settings = resolve_shared_settings(settings)
     media_ingestion_port = build_media_ingestion_adapter(resolved_settings)
     return DiscoverBatchSourcesUseCase(
         media_ingestion_port=media_ingestion_port,
@@ -474,7 +494,7 @@ def build_concat_master_use_case(
     Returns:
         Configured ConcatMasterUseCase ready for execution.
     """
-    resolved_settings = settings or CresmoSettings()
+    resolved_settings = resolve_shared_settings(settings)
     resolved_vault = vault_port or build_vault_adapter(resolved_settings)
     return ConcatMasterUseCase(
         vault_port=resolved_vault,
@@ -497,7 +517,7 @@ def build_index_raw_use_case(
     Returns:
         Configured IndexRawTranscriptsUseCase ready for execution.
     """
-    resolved_settings = settings or CresmoSettings()
+    resolved_settings = resolve_shared_settings(settings)
     vault_port = build_vault_adapter(resolved_settings)
     anonymizer: AnonymizerPort = (
         RegexAnonymizerAdapter()
@@ -517,8 +537,6 @@ def build_index_raw_use_case(
     )
 
     if web_index or resolved_settings.indexing_provider == "gemini":
-        from cresmo.infrastructure.adapters.gemini_adapter import GeminiLLMAdapter
-
         llm: LLMTransformationPort = GeminiLLMAdapter(
             api_key=resolved_settings.gemini_api_key.get_secret_value(),
             model_name=model_override or resolved_settings.gemini_model,
@@ -527,8 +545,6 @@ def build_index_raw_use_case(
             default_temperature=resolved_settings.llm_indexing_temperature,
         )
     else:
-        from cresmo.infrastructure.adapters.ollama_llm_adapter import OllamaLLMAdapter
-
         llm = OllamaLLMAdapter(
             base_url=resolved_settings.ollama_base_url,
             model=model_override or resolved_settings.ollama_model,

@@ -15,7 +15,7 @@ import logging
 import threading
 from collections.abc import Generator
 from contextlib import contextmanager, nullcontext
-from typing import Any
+from typing import Any, Final
 
 from opentelemetry import trace
 from opentelemetry.trace import Tracer
@@ -39,6 +39,7 @@ logger = logging.getLogger(__name__)
 
 DEFAULT_PIPELINE_VERSION: str = "cresmo:v2"
 OTEL_FLUSH_TIMEOUT_MS: int = 2000
+_MIN_STRUCTURED_USER_PARTS: Final[int] = 3
 
 
 _LANGFUSE_INPUT_KEYS: frozenset[str] = frozenset(
@@ -81,6 +82,56 @@ def name_telemetry_threads(langfuse_client: Any | None = None) -> None:
         logger.debug("Failed to assign canonical name to OpenTelemetry thread: %s", exc)
 
 
+def annotate_llm_span(
+    *,
+    system: str,
+    model: str,
+    prompt_tokens: int,
+    candidate_tokens: int,
+    session_id: str | None = None,
+    user_id: str | None = None,
+    trace_id: str | None = None,
+    temperature: float | None = None,
+) -> None:
+    """Annotate the current OpenTelemetry span with GenAI Semantic Conventions.
+
+    Centralises the span-decoration pattern shared by every LLM adapter
+    (Ollama, Gemini, …) to honour DRY and ensure all adapters emit
+    identical attribute keys.
+
+    Why a module-level function instead of a base class method: the adapters
+    are already bound to concrete external SDKs and should not inherit shared
+    state — a pure function is the lightest ACL boundary here.
+
+    Args:
+        system: GenAI system identifier (e.g. 'google', 'ollama').
+        model: Model tag used for the request (e.g. 'qwen2.5:7b').
+        prompt_tokens: Number of input/prompt tokens consumed.
+        candidate_tokens: Number of output/completion tokens generated.
+        session_id: Optional Cresmo pipeline session identifier.
+        user_id: Optional operator or channel identifier.
+        trace_id: Optional domain trace identifier (e.g. ContentId).
+        temperature: Optional sampling temperature override for diagnostics.
+    """
+    current_span = trace.get_current_span()
+    if not (current_span and current_span.is_recording()):
+        return
+
+    current_span.set_attribute("gen_ai.system", system)
+    current_span.set_attribute("gen_ai.request.model", model)
+    current_span.set_attribute("gen_ai.usage.input_tokens", prompt_tokens)
+    current_span.set_attribute("gen_ai.usage.output_tokens", candidate_tokens)
+    current_span.set_attribute("langfuse.observation.type", "generation")
+    if session_id:
+        current_span.set_attribute("langfuse.session.id", session_id)
+    if user_id:
+        current_span.set_attribute("langfuse.user.id", user_id)
+    if trace_id:
+        current_span.set_attribute("cresmo.trace_id", trace_id)
+    if temperature is not None:
+        current_span.set_attribute("cresmo.temperature", temperature)
+
+
 def _resolve_user_identity_and_tenant(
     user_id: UserIdentity | ChannelTenantId | str,
     channel_tenant_id: ChannelTenantId | None,
@@ -106,7 +157,7 @@ def _resolve_user_identity_and_tenant(
             norm_user = UserIdentity.anonymous()
         elif user_id.startswith("user:"):
             parts = user_id.split(":")
-            if len(parts) >= 3:
+            if len(parts) >= _MIN_STRUCTURED_USER_PARTS:
                 norm_user = UserIdentity.identified(subject=":".join(parts[2:]), provider=parts[1])
             else:
                 norm_user = UserIdentity.identified(subject=parts[1], provider="oauth")
@@ -446,6 +497,7 @@ class NoOpTelemetryAdapter(TelemetryPort):
         metadata: dict[str, Any] | None = None,
     ) -> Generator[Any]:
         """No-op session context manager."""
+        _ = (session_id, user_id, channel_tenant_id, metadata)
         yield None
 
     @contextmanager
@@ -455,6 +507,7 @@ class NoOpTelemetryAdapter(TelemetryPort):
         attributes: dict[str, Any] | None = None,
     ) -> Generator[Any]:
         """No-op stage span context manager."""
+        _ = (stage_name, attributes)
         yield None
 
     def record_judge_evaluation(

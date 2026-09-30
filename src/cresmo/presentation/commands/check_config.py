@@ -48,6 +48,7 @@ def handle_check_config(args: argparse.Namespace) -> int:
     Returns:
         Process exit code conforming to exit_codes.py.
     """
+    _ = args
     try:
         settings = CresmoSettings()
         checker = build_preflight_checker(settings=settings)

@@ -1,12 +1,15 @@
 """FastAPI Authentication and Authorization Dependencies for Dual-Gate Security."""
 
 from collections.abc import Callable
+from typing import Final
 
 from fastapi import Depends, Header, HTTPException, status
 
 from identity.application.dtos import AuthenticatedUserDTO
 from identity.domain.exceptions import InactiveUserError, InvalidTokenError
 from identity.presentation.composition import IdentityContainer, get_identity_container
+
+_EXPECTED_AUTH_HEADER_PARTS: Final[int] = 2
 
 
 async def get_current_user(
@@ -34,7 +37,7 @@ async def get_current_user(
     # 2. Check Bearer JWT (Web / BFF)
     if authorization:
         parts = authorization.split()
-        if len(parts) == 2 and parts[0].lower() == "bearer":
+        if len(parts) == _EXPECTED_AUTH_HEADER_PARTS and parts[0].lower() == "bearer":
             token = parts[1]
             try:
                 return container.validate_token_uc.execute(token)

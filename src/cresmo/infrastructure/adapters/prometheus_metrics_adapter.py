@@ -10,6 +10,7 @@ from __future__ import annotations
 import logging
 import threading
 
+import prometheus_client
 from prometheus_client import (
     REGISTRY,
     CollectorRegistry,
@@ -284,10 +285,8 @@ def start_metrics_server(
         addr: Address to bind to (default: '0.0.0.0').
         registry: Optional CollectorRegistry instance.
     """
-    from prometheus_client import start_http_server
-
     target_registry = registry if registry is not None else REGISTRY
-    start_http_server(port=port, addr=addr, registry=target_registry)
+    prometheus_client.start_http_server(port=port, addr=addr, registry=target_registry)
     logger.info("Prometheus metrics server active at http://%s:%s/metrics", addr, port)
 
 
@@ -300,7 +299,5 @@ def get_latest_metrics(registry: CollectorRegistry | None = None) -> tuple[bytes
     Returns:
         Tuple of (encoded_metrics_payload, content_type_header).
     """
-    from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
-
     target_registry = registry if registry is not None else REGISTRY
-    return generate_latest(target_registry), CONTENT_TYPE_LATEST
+    return prometheus_client.generate_latest(target_registry), prometheus_client.CONTENT_TYPE_LATEST

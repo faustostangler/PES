@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
+from typing import Final
 
 from cresmo.application.ports import VaultRepositoryPort
 from cresmo.domain.entities import AtomicNote
@@ -61,6 +62,9 @@ class DeduplicationReport:
         return sum(c.links_rewritten_count for c in self.clusters)
 
 
+_MIN_HONORIFIC_NORMALIZED_LENGTH: Final[int] = 4
+
+
 class UnifyDuplicateNotesUseCase:
     """Graph Entity Resolution and Duplicate Unification orchestrator."""
 
@@ -104,7 +108,7 @@ class UnifyDuplicateNotesUseCase:
         # 3. Honorific prefix normalization match
         norm_a = self._normalize_for_matching(t_a)
         norm_b = self._normalize_for_matching(t_b)
-        return norm_a == norm_b and len(norm_a) >= 4
+        return norm_a == norm_b and len(norm_a) >= _MIN_HONORIFIC_NORMALIZED_LENGTH
 
     def _merge_notes(self, canonical: AtomicNote, redundant: AtomicNote) -> AtomicNote:
         """Merge redundant note into canonical note non-destructively."""

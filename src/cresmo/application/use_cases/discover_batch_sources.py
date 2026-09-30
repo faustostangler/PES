@@ -19,6 +19,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
+from typing import Final
 
 from cresmo.application.ports import (
     DefaultPipelineSettings,
@@ -40,6 +41,7 @@ logger = logging.getLogger(__name__)
 
 _DEFAULT_STREAM_QUEUE_TIMEOUT_SECONDS: float = 0.2
 _DEFAULT_STREAM_ERROR_TIMEOUT_SECONDS: float = 2.0
+_EXPECTED_FRONTMATTER_SPLIT_PARTS: Final[int] = 3
 
 
 @dataclass(frozen=True)
@@ -143,7 +145,7 @@ def extract_raw_file_metadata(path: Path) -> dict[str, str]:
         text = path.read_text(encoding="utf-8")
         if text.startswith("---"):
             parts = text.split("---", 2)
-            if len(parts) >= 3:
+            if len(parts) >= _EXPECTED_FRONTMATTER_SPLIT_PARTS:
                 frontmatter = parts[1]
                 for line in frontmatter.splitlines():
                     if ":" in line:

@@ -165,6 +165,7 @@ class LLMTransformationPort(ABC):
         Returns:
             True if warmup completed successfully; False if timed out.
         """
+        _ = timeout_seconds
         return True
 
 
@@ -479,6 +480,7 @@ class PromptProviderPort(ABC):
 
         Default implementation returns None for providers that do not track versions.
         """
+        _ = prompt_name
         return None
 
 
@@ -782,6 +784,7 @@ class NoOpTelemetryPort(TelemetryPort):
         metadata: dict[str, Any] | None = None,
     ) -> Generator[Any]:
         """No-op session context manager."""
+        _ = (session_id, user_id, channel_tenant_id, metadata)
         yield None
 
     @contextmanager
@@ -791,6 +794,7 @@ class NoOpTelemetryPort(TelemetryPort):
         attributes: dict[str, Any] | None = None,
     ) -> Generator[Any]:
         """No-op stage span context manager."""
+        _ = (stage_name, attributes)
         yield None
 
     def record_judge_evaluation(
@@ -939,6 +943,7 @@ class NoOpMetricsPort(MetricsPort):
         labels: dict[str, str] | None = None,
     ) -> None:
         """Increment a monotonically increasing counter."""
+        _ = (name, labels)
         if value < 0.0:
             raise ValueError("Counter increment must be non-negative")
 
@@ -949,6 +954,7 @@ class NoOpMetricsPort(MetricsPort):
         labels: dict[str, str] | None = None,
     ) -> None:
         """Record an observed floating-point value into a histogram distribution."""
+        _ = (name, labels)
         if value < 0.0:
             raise ValueError("Histogram observation must be non-negative")
 
@@ -959,6 +965,7 @@ class NoOpMetricsPort(MetricsPort):
         labels: dict[str, str] | None = None,
     ) -> None:
         """Set the current instantaneous value of a gauge."""
+        _ = (name, value, labels)
 
 
 @runtime_checkable

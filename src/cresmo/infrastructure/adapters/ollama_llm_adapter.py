@@ -26,6 +26,9 @@ from opentelemetry import trace
 
 from cresmo.application.ports import LLMTransformationPort
 from cresmo.domain.exceptions import LLMInfrastructureError
+from cresmo.infrastructure.adapters.opentelemetry_adapter import annotate_llm_span
+
+__all__ = ["OllamaLLMAdapter", "trace"]
 
 logger = logging.getLogger(__name__)
 
@@ -113,6 +116,52 @@ class OllamaLLMAdapter(LLMTransformationPort):
             logger.debug("[OllamaLLMAdapter] is_available probe failed: %s", exc)
             return False
 
+    def _probe_gpu_status(self) -> None:
+        """Probe /api/ps to detect CPU-only inference and emit an actionable WARNING.
+
+        Queries the Ollama process-status endpoint immediately after warmup to inspect
+        ``size_vram`` for the active model. A value of 0 indicates the model is running
+        entirely on CPU RAM, which will cause significantly longer inference times.
+
+        Why: NVIDIA driver failures (e.g. broken nvidia-smi, missing kernel module) silently
+        demote Ollama to CPU-only mode without any error at the API level. This probe surfaces
+        that degradation proactively so operators can act before inference timeouts occur.
+        """
+        endpoint = f"{self.base_url}/api/ps"
+        req = urllib.request.Request(endpoint, method="GET")
+        try:
+            with urllib.request.urlopen(req, timeout=DEFAULT_HEALTHCHECK_TIMEOUT_SECONDS) as response:
+                if response.status != HTTPStatus.OK:
+                    return
+                ps_data: dict[str, Any] = json.loads(response.read().decode("utf-8"))
+        except (urllib.error.URLError, TimeoutError, OSError) as exc:
+            logger.debug("[OllamaLLMAdapter] GPU status probe failed (non-fatal): %s", exc)
+            return
+
+        models: list[dict[str, Any]] = ps_data.get("models", [])
+        active = next(
+            (m for m in models if m.get("name", "").startswith(self.model.split(":")[0])),
+            None,
+        )
+        if active is None:
+            # Model may not appear in /api/ps if it just finished loading; skip silently.
+            return
+
+        size_vram: int = active.get("size_vram", 0)
+        if size_vram == 0:
+            logger.warning(
+                "[OllamaLLMAdapter] ⚠️  GPU probe: model '%s' is running on CPU RAM only "
+                "(size_vram=0). Inference will be significantly slower (300 s+ per request). "
+                "Fix NVIDIA drivers with 'sudo nvidia-smi' and restart Ollama to re-enable GPU.",
+                self.model,
+            )
+        else:
+            logger.info(
+                "[OllamaLLMAdapter] ✅ GPU probe: model '%s' loaded in VRAM (%.1f MB).",
+                self.model,
+                size_vram / 1024 / 1024,
+            )
+
     def _execute_warmup(self, effective_timeout: float) -> bool:
         """Execute synchronous model preload against /api/generate."""
         with self._warmup_lock:
@@ -133,7 +182,7 @@ class OllamaLLMAdapter(LLMTransformationPort):
         )
 
         start_time = time.perf_counter()
-        logger.warning(
+        logger.info(
             "[OllamaLLMAdapter] Preloading model '%s' at %s (keep_alive: %s, timeout: %.0fs)...",
             self.model,
             self.base_url,
@@ -148,7 +197,7 @@ class OllamaLLMAdapter(LLMTransformationPort):
                     response_json = json.loads(raw_body)
                     duration = time.perf_counter() - start_time
                     done_reason = response_json.get("done_reason", "load")
-                    logger.warning(
+                    logger.info(
                         "[OllamaLLMAdapter] Model '%s' successfully loaded into memory in %.2fs (reason: %s).",
                         self.model,
                         duration,
@@ -156,6 +205,7 @@ class OllamaLLMAdapter(LLMTransformationPort):
                     )
                     with self._warmup_lock:
                         self._is_warmed_up = True
+                    self._probe_gpu_status()
                     return True
                 return False
         except urllib.error.HTTPError as exc:
@@ -209,7 +259,7 @@ class OllamaLLMAdapter(LLMTransformationPort):
             daemon=True,
         )
         self._warmup_thread.start()
-        logger.warning(
+        logger.info(
             "[OllamaLLMAdapter] Dispatched asynchronous background warmup for model '%s' (keep_alive: %s)...",
             self.model,
             self.keep_alive,
@@ -340,19 +390,15 @@ class OllamaLLMAdapter(LLMTransformationPort):
                 candidate_tokens = response_json.get("eval_count") or len(generated_text.split())
 
                 # OpenTelemetry GenAI Semantic Conventions & Langfuse span decoration
-                current_span = trace.get_current_span()
-                if current_span and current_span.is_recording():
-                    current_span.set_attribute("gen_ai.system", "ollama")
-                    current_span.set_attribute("gen_ai.request.model", self.model)
-                    current_span.set_attribute("gen_ai.usage.input_tokens", prompt_tokens)
-                    current_span.set_attribute("gen_ai.usage.output_tokens", candidate_tokens)
-                    current_span.set_attribute("langfuse.observation.type", "generation")
-                    if session_id:
-                        current_span.set_attribute("langfuse.session.id", session_id)
-                    if user_id:
-                        current_span.set_attribute("langfuse.user.id", user_id)
-                    if trace_id:
-                        current_span.set_attribute("cresmo.trace_id", trace_id)
+                annotate_llm_span(
+                    system="ollama",
+                    model=self.model,
+                    prompt_tokens=prompt_tokens,
+                    candidate_tokens=candidate_tokens,
+                    session_id=session_id,
+                    user_id=user_id,
+                    trace_id=trace_id,
+                )
 
                 return generated_text
 
@@ -382,7 +428,6 @@ class OllamaLLMAdapter(LLMTransformationPort):
                     "Run 'ollama serve' or pass '--web-index'."
                 )
             logger.warning("[OllamaLLMAdapter] %s", msg)
-            raise LLMInfrastructureError(msg) from exc
             raise LLMInfrastructureError(msg) from exc
         except Exception as exc:
             msg = (

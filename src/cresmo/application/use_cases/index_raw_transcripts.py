@@ -14,6 +14,7 @@ from __future__ import annotations
 import logging
 import re
 from pathlib import Path
+from typing import Final
 
 from cresmo.application.ports import (
     LLMTransformationPort,
@@ -21,6 +22,7 @@ from cresmo.application.ports import (
     VaultRepositoryPort,
 )
 from cresmo.domain.entities import RawTranscript
+from cresmo.domain.taxonomy import classify_channel
 from cresmo.domain.value_objects import (
     ChannelName,
     ContentId,
@@ -31,6 +33,8 @@ from cresmo.domain.value_objects import (
 )
 
 logger = logging.getLogger(__name__)
+
+_MIN_MULTILINE_LINE_COUNT: Final[int] = 2
 
 _INDICATIVE_PREFIXES = (
     "key concept:",
@@ -78,7 +82,7 @@ def is_valid_raw_index_output(raw_output: str) -> bool:
 
     # Must have either multi-line structure (Line 1: concepts, Line 2+: synthesis)
     # or single-line comma-delimited structure (<concept>, <synthesis>).
-    if len(lines) >= 2:
+    if len(lines) >= _MIN_MULTILINE_LINE_COUNT:
         return True
     return "," in first_line
 
@@ -236,7 +240,7 @@ def parse_raw_index_response(raw_output: str, fallback_title: str) -> tuple[str,
         return "Síntese Conceitual", fallback_title
 
     # Multi-line format
-    if len(lines) >= 2:
+    if len(lines) >= _MIN_MULTILINE_LINE_COUNT:
         concept = _clean_concept_line(lines[0])
         synthesis = " ".join(lines[1:])
         synthesis = _clean_text_line(synthesis)
@@ -657,8 +661,6 @@ class IndexRawTranscriptsUseCase:
             else ""
         )
         if not category:
-            from cresmo.domain.taxonomy import classify_channel
-
             category, _ = classify_channel(channel_name)
 
         entry = RawIndexEntry(

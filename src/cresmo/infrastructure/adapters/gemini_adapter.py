@@ -24,6 +24,9 @@ from opentelemetry import trace
 from tenacity import retry, retry_if_exception, stop_after_attempt, wait_random_exponential
 
 from cresmo.application.ports import LLMTransformationPort
+from cresmo.infrastructure.adapters.opentelemetry_adapter import annotate_llm_span
+
+__all__ = ["GeminiLLMAdapter", "trace"]
 
 logger = logging.getLogger(__name__)
 
@@ -201,19 +204,15 @@ class GeminiLLMAdapter(LLMTransformationPort):
         )
 
         # OpenTelemetry GenAI Semantic Conventions & Langfuse span decoration
-        current_span = trace.get_current_span()
-        if current_span and current_span.is_recording():
-            current_span.set_attribute("gen_ai.system", "google")
-            current_span.set_attribute("gen_ai.request.model", active_model)
-            current_span.set_attribute("gen_ai.usage.input_tokens", prompt_tokens)
-            current_span.set_attribute("gen_ai.usage.output_tokens", candidate_tokens)
-            current_span.set_attribute("langfuse.observation.type", "generation")
-            if session_id:
-                current_span.set_attribute("langfuse.session.id", session_id)
-            if user_id:
-                current_span.set_attribute("langfuse.user.id", user_id)
-            if trace_id:
-                current_span.set_attribute("cresmo.trace_id", trace_id)
-            current_span.set_attribute("cresmo.temperature", effective_temperature)
+        annotate_llm_span(
+            system="google",
+            model=active_model,
+            prompt_tokens=prompt_tokens,
+            candidate_tokens=candidate_tokens,
+            session_id=session_id,
+            user_id=user_id,
+            trace_id=trace_id,
+            temperature=effective_temperature,
+        )
 
         return response_text

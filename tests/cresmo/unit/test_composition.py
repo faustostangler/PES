@@ -35,6 +35,9 @@ from cresmo.presentation.composition import (
     build_preflight_checker,
     build_sync_channel_use_case,
     build_unify_duplicates_use_case,
+    get_shared_settings,
+    reset_shared_settings,
+    resolve_shared_settings,
 )
 
 
@@ -233,3 +236,21 @@ class TestCompositionRoot:
 
             with pytest.raises(RuntimeError, match="Ledger port must be wired for channel sync"):
                 build_sync_channel_use_case(settings=test_settings)
+
+    def test_resolve_shared_settings_respects_injected_instance(
+        self, test_settings: CresmoSettings
+    ) -> None:
+        resolved = resolve_shared_settings(test_settings)
+        assert resolved is test_settings
+
+    def test_shared_settings_singleton_memoization_and_reset(self) -> None:
+        reset_shared_settings()
+        s1 = get_shared_settings()
+        s2 = get_shared_settings()
+        assert s1 is s2
+
+        reset_shared_settings()
+        s3 = get_shared_settings()
+        assert s3 is not s1
+        assert s3 == s1
+        reset_shared_settings()
