@@ -9,13 +9,13 @@ scraping quirks and third-party media libraries.
 Conforms to:
     - ADR-004: Native Media Ingestion Decommissioning
     - SPEC-004: Native Media Ingestion Specification
+    - ADR-026: Clean Code Anti-Patterns & Code Smell Governance
 """
 
 from __future__ import annotations
 
 import json
 import logging
-import re
 import shutil
 import tempfile
 import threading
@@ -23,14 +23,12 @@ import time
 import urllib.error
 import urllib.request
 from collections.abc import Mapping
-from datetime import UTC, date, datetime
 from http import HTTPStatus
 from pathlib import Path
 from typing import Any, cast
 
 import whisper
 import yt_dlp
-import yt_dlp.plugins
 
 from cresmo.application.ports import MediaIngestionPort, MetricsPort
 from cresmo.domain.entities import RawTranscript
@@ -47,24 +45,27 @@ from cresmo.domain.value_objects import (
     ChannelName,
     ContentId,
     DiscoveredMediaItem,
-    normalize_to_uploads_playlist_url,
 )
 from cresmo.infrastructure.adapters.header_generator import RandomHeaderGenerator
+from cresmo.infrastructure.adapters.media.feed import (
+    discover_channel_feed_items,
+    extract_channel_url_from_info,
+)
+from cresmo.infrastructure.adapters.media.subtitles import (
+    _ILLEGAL_FS_CHARS,
+    ensure_yt_dlp_plugins_loaded,
+    find_native_subtitle_url,
+    is_native_subtitle_url,
+    parse_published_datetime,
+    parse_upload_date,
+    reconstruct_json3_paragraphs,
+)
 from cresmo.infrastructure.adapters.noop_metrics_adapter import NoOpMetricsAdapter
 
 logger = logging.getLogger(__name__)
 
-SENTENCES_PER_PARAGRAPH_THRESHOLD: int = 4
-ISO_DATE_COMPACT_LENGTH: int = 8
-_ILLEGAL_FS_CHARS = re.compile(r'[\\/*?:"<>|%]')
-
-
-def _ensure_yt_dlp_plugins_loaded() -> None:
-    """Eagerly load yt-dlp plugins to prevent background thread importlib lock deadlocks."""
-    try:
-        yt_dlp.plugins.load_all_plugins()
-    except Exception as exc:  # noqa: BLE001
-        logger.debug("Failed to load yt-dlp plugins: %s", exc)
+# Re-exports for backwards compatibility
+_ensure_yt_dlp_plugins_loaded = ensure_yt_dlp_plugins_loaded
 
 
 class NativeMediaIngestionAdapter(MediaIngestionPort):
@@ -101,7 +102,7 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         self._whisper_semaphore = threading.BoundedSemaphore(max(1, whisper_concurrency_limit))
         self._cookie_file: Path | None = Path(cookie_file).resolve() if cookie_file else None
         self._js_runtime_name: str | None = js_runtime_name or self._detect_js_runtime()
-        _ensure_yt_dlp_plugins_loaded()
+        ensure_yt_dlp_plugins_loaded()
         if metrics_port is None:
             self._metrics_port: MetricsPort = NoOpMetricsAdapter()
         else:
@@ -146,68 +147,11 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         cleaned = _ILLEGAL_FS_CHARS.sub("_", name).strip()
         return cleaned or "Unknown_Channel"
 
-    def _is_native_subtitle_url(self, url: str | None) -> bool:
-        """Validate that subtitle URL is native and not an on-the-fly machine translation."""
-        if not url:
-            return False
-        # Strictly reject on-the-fly machine-translated subtitles that cause YouTube HTTP 429
-        return "tlang=" not in url
+    _is_native_subtitle_url = staticmethod(is_native_subtitle_url)
 
     def _find_native_subtitle_url(self, info: Mapping[str, Any]) -> str | None:
         """Search for native spoken subtitle URL, strictly rejecting tlang= translations."""
-        subtitles: dict[str, list[dict[str, Any]]] = info.get("subtitles") or {}
-        auto_captions: dict[str, list[dict[str, Any]]] = info.get("automatic_captions") or {}
-
-        video_lang = str(info.get("language") or "").lower()
-        is_pt_video = video_lang.startswith("pt")
-
-        if is_pt_video:
-            ordered_langs = ["pt-orig", "pt-BR", "pt", "pt-PT", "en-orig", "en", "en-US"]
-        else:
-            ordered_langs = ["en-orig", "en", "en-US", "pt-orig", "pt-BR", "pt", "pt-PT"]
-
-        # 1. Search in manual subtitles in preferred language order (ext: json3)
-        for lang in ordered_langs:
-            if lang in subtitles:
-                for fmt in subtitles[lang]:
-                    url = fmt.get("url")
-                    if fmt.get("ext") == "json3" and self._is_native_subtitle_url(url):
-                        return str(url)
-
-        # 2. Search manual subtitles in any language
-        for formats in subtitles.values():
-            for fmt in formats:
-                url = fmt.get("url")
-                if fmt.get("ext") == "json3" and self._is_native_subtitle_url(url):
-                    return str(url)
-
-        # 3. Automatic captions: Prioritize explicit original tracks (*-orig)
-        orig_keys = [k for k in auto_captions if k.endswith("-orig") or k == "orig"]
-        orig_keys.sort(
-            key=lambda k: 0 if (is_pt_video and "pt" in k) or (not is_pt_video and "en" in k) else 1
-        )
-        for lang in orig_keys:
-            for fmt in auto_captions[lang]:
-                url = fmt.get("url")
-                if fmt.get("ext") == "json3" and self._is_native_subtitle_url(url):
-                    return str(url)
-
-        # 4. Automatic captions matching preferred language order without tlang
-        for lang in ordered_langs:
-            if lang in auto_captions:
-                for fmt in auto_captions[lang]:
-                    url = fmt.get("url")
-                    if fmt.get("ext") == "json3" and self._is_native_subtitle_url(url):
-                        return str(url)
-
-        # 5. Any automatic caption track without tlang
-        for formats in auto_captions.values():
-            for fmt in formats:
-                url = fmt.get("url")
-                if fmt.get("ext") == "json3" and self._is_native_subtitle_url(url):
-                    return str(url)
-
-        return None
+        return find_native_subtitle_url(info)
 
     def _fetch_url_content(self, url: str) -> str:
         """Fetch remote subtitle payload with dynamic browser headers."""
@@ -230,27 +174,7 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
 
     def _reconstruct_json3_paragraphs(self, data: dict[str, Any]) -> str:
         """Reconstruct JSON3 subtitle event segments into continuous prose paragraphs."""
-        events: list[dict[str, Any]] = data.get("events", [])
-        paragraphs: list[str] = []
-        current_sentences: list[str] = []
-
-        for event in events:
-            if "segs" in event and not event.get("aAppend"):
-                seg_text = "".join(str(s.get("utf8", "")) for s in event["segs"]).strip()
-                if seg_text and seg_text != "\n":
-                    current_sentences.append(seg_text)
-                    # Group into paragraphs roughly every 4 sentences or punctuation pauses
-                    if (
-                        len(current_sentences) >= SENTENCES_PER_PARAGRAPH_THRESHOLD
-                        or seg_text.endswith((".", "!", "?"))
-                    ):
-                        paragraphs.append(" ".join(current_sentences))
-                        current_sentences = []
-
-        if current_sentences:
-            paragraphs.append(" ".join(current_sentences))
-
-        return "\n\n".join(paragraphs).strip()
+        return reconstruct_json3_paragraphs(data)
 
     def _handle_yt_dlp_error(self, exc: Exception) -> None:
         """Translate yt-dlp internal exceptions to canonical domain exception hierarchy."""
@@ -324,31 +248,106 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
 
         return body, channel_name
 
-    @staticmethod
-    def _parse_upload_date(raw_date: Any) -> date | None:
-        """Parse yt-dlp upload_date string (YYYYMMDD) into UTC date at ACL boundary."""
-        if not raw_date:
-            return None
-        date_str = str(raw_date).strip()
-        if len(date_str) == ISO_DATE_COMPACT_LENGTH and date_str.isdigit():
-            try:
-                return datetime.strptime(date_str, "%Y%m%d").replace(tzinfo=UTC).date()
-            except ValueError:
-                return None
-        return None
+    _parse_upload_date = staticmethod(parse_upload_date)
+    _parse_published_datetime = staticmethod(parse_published_datetime)
 
-    @staticmethod
-    def _parse_published_datetime(raw_date: Any) -> datetime:
-        """Parse yt-dlp upload_date string (YYYYMMDD) into UTC datetime at ACL boundary."""
-        if not raw_date:
-            return datetime.now(UTC)
-        date_str = str(raw_date).strip()
-        if len(date_str) == ISO_DATE_COMPACT_LENGTH and date_str.isdigit():
+    def _fetch_video_metadata(self, video_url: str) -> dict[str, Any] | None:
+        """Extract metadata dictionary from yt-dlp without downloading media."""
+        ydl_opts: dict[str, Any] = self._build_ydl_opts(
+            {
+                "skip_download": True,
+                "quiet": True,
+                "no_warnings": True,
+            }
+        )
+        try:
+            with yt_dlp.YoutubeDL(cast(Any, ydl_opts)) as ydl:
+                info = ydl.extract_info(video_url, download=False)
+        except Exception as exc:  # noqa: BLE001
+            self._handle_yt_dlp_error(exc)
+            return None
+
+        if not info:
+            raise IngestionNetworkError(f"yt-dlp returned no metadata for URL '{video_url}'")
+        return cast("dict[str, Any] | None", info)
+
+    def _resolve_transcript_body(
+        self,
+        video_url: str,
+        info: Mapping[str, Any],
+        output_dir: Path,
+        whisper_model: str,
+        keep_audio: bool,
+    ) -> tuple[str, str]:
+        """Resolve transcript text either from native subtitles or Whisper fallback."""
+        channel_name = self._sanitize_fs_name(
+            str(info.get("channel") or info.get("uploader") or "Unknown_Channel")
+        )
+        actual_video_id = str(info.get("id") or self._extract_video_id(video_url))
+
+        # Check for native subtitles (rejecting tlang=)
+        sub_url = self._find_native_subtitle_url(info)
+        body = ""
+
+        if sub_url:
             try:
-                return datetime.strptime(date_str, "%Y%m%d").replace(tzinfo=UTC)
-            except ValueError:
-                return datetime.now(UTC)
-        return datetime.now(UTC)
+                raw_sub = self._fetch_url_content(sub_url)
+                sub_data = json.loads(raw_sub)
+                body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
+            except Exception:  # noqa: BLE001
+                body = ""
+
+        # If subtitles were absent, malformed, or empty, trigger Whisper fallback
+        if not body:
+            body, channel_name = self._transcribe_audio_fallback(
+                video_url=video_url,
+                output_dir=output_dir,
+                whisper_model=whisper_model,
+                keep_audio=keep_audio,
+                info=info,
+            )
+
+        if not body:
+            raise DomainValidationError(
+                f"Extracted transcript body is empty for video ID '{actual_video_id}'."
+            )
+
+        return body, channel_name
+
+    def _build_raw_transcript_aggregate(
+        self,
+        video_url: str,
+        info: Mapping[str, Any],
+        body: str,
+        channel_name: str,
+    ) -> tuple[RawTranscript, ChannelId | None]:
+        """Construct domain RawTranscript entity from resolved metadata and body."""
+        actual_video_id = str(info.get("id") or self._extract_video_id(video_url))
+        cid = ContentId.extract_from_text(actual_video_id) or ContentId.from_url_or_token(
+            actual_video_id
+        )
+        c_name = ChannelName.from_string(channel_name)
+        category, _ = classify_channel(c_name)
+        upload_date = self._parse_upload_date(info.get("upload_date"))
+
+        raw_cid = str(info.get("channel_id") or info.get("uploader_id") or "").strip()
+        ch_id = ChannelId.extract_from_text(raw_cid)
+
+        transcript = RawTranscript(
+            content_id=cid,
+            channel_name=c_name,
+            body=body,
+            title=str(info.get("title") or ""),
+            source_url=video_url,
+            publication_date=upload_date,
+            upload_date=upload_date,
+            channel_id=ch_id,
+            channel_category=category,
+            video_description=str(info.get("description") or ""),
+        )
+        return transcript, ch_id
 
     def ingest_single_video(
         self,
@@ -368,90 +367,29 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         channel_id_for_metrics = ""
 
         try:
-            video_id = self._extract_video_id(video_url)
-
-            ydl_opts: dict[str, Any] = self._build_ydl_opts(
-                {
-                    "skip_download": True,
-                    "quiet": True,
-                    "no_warnings": True,
-                }
-            )
-
-            try:
-                with yt_dlp.YoutubeDL(cast(Any, ydl_opts)) as ydl:
-                    info = ydl.extract_info(video_url, download=False)
-            except Exception as exc:  # noqa: BLE001
-                status = "failure"
-                self._handle_yt_dlp_error(exc)
-                return None
-
+            info = self._fetch_video_metadata(video_url)
             if not info:
                 status = "failure"
-                raise IngestionNetworkError(f"yt-dlp returned no metadata for URL '{video_url}'")
+                return None
 
-            actual_video_id = str(info.get("id") or video_id)
-            channel_name = self._sanitize_fs_name(
-                str(info.get("channel") or info.get("uploader") or "Unknown_Channel")
+            body, channel_name = self._resolve_transcript_body(
+                video_url=video_url,
+                info=info,
+                output_dir=output_dir,
+                whisper_model=whisper_model,
+                keep_audio=keep_audio,
             )
             channel_for_metrics = channel_name
 
-            # Check for native subtitles (rejecting tlang=)
-            sub_url = self._find_native_subtitle_url(info)
-            body = ""
-
-            if sub_url:
-                try:
-                    raw_sub = self._fetch_url_content(sub_url)
-                    sub_data = json.loads(raw_sub)
-                    body = self._reconstruct_json3_paragraphs(sub_data)
-                except RateLimitExceededError:
-                    status = "failure"
-                    raise
-                except Exception:  # noqa: BLE001
-                    body = ""
-
-            # If subtitles were absent, malformed, or empty, trigger Whisper fallback
-            if not body:
-                body, channel_name = self._transcribe_audio_fallback(
-                    video_url=video_url,
-                    output_dir=output_dir,
-                    whisper_model=whisper_model,
-                    keep_audio=keep_audio,
-                    info=info,
-                )
-                channel_for_metrics = channel_name
-
-            if not body:
-                status = "failure"
-                raise DomainValidationError(
-                    f"Extracted transcript body is empty for video ID '{actual_video_id}'."
-                )
-
-            cid = ContentId.extract_from_text(actual_video_id) or ContentId.from_url_or_token(
-                actual_video_id
+            transcript, ch_id = self._build_raw_transcript_aggregate(
+                video_url=video_url,
+                info=info,
+                body=body,
+                channel_name=channel_name,
             )
-            c_name = ChannelName.from_string(channel_name)
-            category, _ = classify_channel(c_name)
-            upload_date = self._parse_upload_date(info.get("upload_date"))
-
-            raw_cid = str(info.get("channel_id") or info.get("uploader_id") or "").strip()
-            ch_id = ChannelId.extract_from_text(raw_cid)
             if ch_id:
                 channel_id_for_metrics = ch_id.value
-
-            return RawTranscript(
-                content_id=cid,
-                channel_name=c_name,
-                body=body,
-                title=str(info.get("title") or ""),
-                source_url=video_url,
-                publication_date=upload_date,
-                upload_date=upload_date,
-                channel_id=ch_id,
-                channel_category=category,
-                video_description=str(info.get("description") or ""),
-            )
+            return transcript
         except Exception:
             status = "failure"
             raise
@@ -473,62 +411,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         query: ChannelFeedQuery,
     ) -> list[DiscoveredMediaItem]:
         """Discover media items from a YouTube channel or playlist feed."""
-        target_url = normalize_to_uploads_playlist_url(query.channel_url)
-        ydl_opts: dict[str, Any] = self._build_ydl_opts(
-            {
-                "extract_flat": True,
-                "playlistend": query.max_videos,
-                "quiet": True,
-                "no_warnings": True,
-            }
+        return discover_channel_feed_items(
+            query=query,
+            ydl_opts=self._build_ydl_opts({}),
+            handle_error=self._handle_yt_dlp_error,
+            sanitize_fs_name=self._sanitize_fs_name,
         )
-
-        try:
-            with yt_dlp.YoutubeDL(cast(Any, ydl_opts)) as ydl:
-                info = ydl.extract_info(target_url, download=False)
-                # Fallback to original channel_url if uploads playlist returned empty
-                if (not info or not info.get("entries")) and target_url != query.channel_url:
-                    info = ydl.extract_info(query.channel_url, download=False)
-        except Exception as exc:  # noqa: BLE001
-            self._handle_yt_dlp_error(exc)
-            return []
-
-        if not info:
-            return []
-
-        entries = info.get("entries") or []
-        channel_title = self._sanitize_fs_name(
-            str(info.get("title") or info.get("uploader") or "Unknown_Channel")
-        )
-        items: list[DiscoveredMediaItem] = []
-
-        for entry in entries:
-            if not entry or not isinstance(entry, dict):
-                continue
-
-            raw_vid = str(entry.get("id") or "").strip()
-            title = str(entry.get("title") or "").strip()
-            if not raw_vid or not title:
-                continue
-
-            cid = ContentId.extract_from_text(raw_vid) or ContentId.from_url_or_token(raw_vid)
-            url = str(entry.get("url") or f"https://www.youtube.com/watch?v={cid.value}").strip()
-            raw_channel = str(entry.get("channel") or entry.get("uploader") or channel_title)
-            channel_name = ChannelName.from_string(self._sanitize_fs_name(raw_channel))
-
-            pub_date = self._parse_published_datetime(entry.get("upload_date"))
-
-            items.append(
-                DiscoveredMediaItem(
-                    content_id=cid,
-                    title=title,
-                    published_at=pub_date,
-                    media_url=url,
-                    channel_name=channel_name,
-                )
-            )
-
-        return items
 
     def extract_channel_url_from_video(
         self,
@@ -542,28 +430,9 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
                 "no_warnings": True,
             }
         )
-
         try:
             with yt_dlp.YoutubeDL(cast(Any, ydl_opts)) as ydl:
                 info = ydl.extract_info(video_url, download=False)
         except Exception:  # noqa: BLE001
             return None
-
-        if not info or not isinstance(info, dict):
-            return None
-
-        channel_id = info.get("channel_id") or info.get("uploader_id")
-        if channel_id:
-            ch = ChannelId.extract_from_text(str(channel_id).strip())
-            if ch and ch.uploads_playlist_url:
-                return ch.uploads_playlist_url
-            return normalize_to_uploads_playlist_url(str(channel_id).strip())
-
-        channel_url = info.get("channel_url") or info.get("uploader_url")
-        if channel_url:
-            ch = ChannelId.extract_from_text(str(channel_url).strip())
-            if ch and ch.uploads_playlist_url:
-                return ch.uploads_playlist_url
-            return normalize_to_uploads_playlist_url(str(channel_url).strip())
-
-        return None
+        return extract_channel_url_from_info(cast(Any, info))

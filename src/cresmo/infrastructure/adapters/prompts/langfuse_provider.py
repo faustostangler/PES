@@ -26,6 +26,56 @@ from cresmo.infrastructure.adapters.prompts.registry import (
 logger = logging.getLogger(__name__)
 
 
+def _handle_api_error(exc: ApiError, prompt_name: str, label: str) -> None:
+    """Log structured warning for Langfuse API errors."""
+    if exc.status_code == HTTPStatus.NOT_FOUND:
+        logger.warning(
+            "[LangfusePromptProvider] Prompt '%s' not found in Langfuse (404). "
+            "Create it in Langfuse Cloud or use label='%s'. Using local fallback.",
+            prompt_name,
+            label,
+        )
+    else:
+        logger.warning(
+            "[LangfusePromptProvider] Langfuse API error fetching '%s' (HTTP %s: %s). "
+            "Using local fallback.",
+            prompt_name,
+            exc.status_code,
+            exc.body,
+        )
+
+
+def _extract_prompt_messages(
+    compiled_messages: Any,
+    fallback_sys: str,
+    fallback_user: str,
+    kwargs: dict[str, Any],
+) -> tuple[str, str]:
+    """Extract system instruction and user prompt from compiled Langfuse chat messages."""
+    if not isinstance(compiled_messages, list):
+        return fallback_sys, fallback_user
+
+    sys_inst = fallback_sys
+    user_p = fallback_user
+    for msg in compiled_messages:
+        if not isinstance(msg, dict):
+            continue
+        role = msg.get("role")
+        content = msg.get("content")
+        if content is None:
+            continue
+        if role == "system":
+            sys_inst = str(content)
+        elif role == "user":
+            user_p = str(content)
+
+    for key, val in kwargs.items():
+        user_p = user_p.replace(f"{{{key}}}", str(val))
+        sys_inst = sys_inst.replace(f"{{{key}}}", str(val))
+
+    return sys_inst, user_p
+
+
 class LangfusePromptProvider(PromptProviderPort):
     """Hexagonal Adapter providing prompts via Langfuse with guaranteed local fallback.
 
@@ -95,42 +145,13 @@ class LangfusePromptProvider(PromptProviderPort):
 
             if hasattr(prompt, "compile"):
                 compiled_messages = prompt.compile(**kwargs)
-                sys_inst = fallback_sys
-                user_p = fallback_user
-                if isinstance(compiled_messages, list):
-                    for msg in compiled_messages:
-                        if isinstance(msg, dict):
-                            role = msg.get("role")
-                            content = msg.get("content")
-                            if role == "system" and content is not None:
-                                sys_inst = str(content)
-                            elif role == "user" and content is not None:
-                                user_p = str(content)
-                    # Secondary safe substitution for single-brace template variables
-                    for key, val in kwargs.items():
-                        user_p = user_p.replace(f"{{{key}}}", str(val))
-                        sys_inst = sys_inst.replace(f"{{{key}}}", str(val))
-                    return sys_inst, user_p
+                return _extract_prompt_messages(
+                    compiled_messages, fallback_sys, fallback_user, kwargs
+                )
 
             return fallback_sys, fallback_user
         except ApiError as exc:
-            if exc.status_code == HTTPStatus.NOT_FOUND:
-                # Prompt name not registered in Langfuse: expected during rollout or new prompts.
-                # Operators should create the missing prompt in Langfuse Cloud.
-                logger.warning(
-                    "[LangfusePromptProvider] Prompt '%s' not found in Langfuse (404). "
-                    "Create it in Langfuse Cloud or use label='%s'. Using local fallback.",
-                    prompt_name,
-                    self._label,
-                )
-            else:
-                logger.warning(
-                    "[LangfusePromptProvider] Langfuse API error fetching '%s' (HTTP %s: %s). "
-                    "Using local fallback.",
-                    prompt_name,
-                    exc.status_code,
-                    exc.body,
-                )
+            _handle_api_error(exc, prompt_name, self._label)
             return fallback_sys, fallback_user
         except Exception as exc:  # noqa: BLE001 — transient infra failure (timeout, auth, etc.)
             logger.warning(

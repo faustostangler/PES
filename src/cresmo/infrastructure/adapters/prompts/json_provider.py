@@ -17,10 +17,10 @@ import json
 import logging
 import sys
 from pathlib import Path
-from typing import Any
+from typing import Any, ClassVar
 
 from cresmo.application.ports import PromptProviderPort
-from cresmo.domain.value_objects import ChannelName
+from cresmo.infrastructure.adapters.prompts.builders import PROMPT_BUILDER_DISPATCH_MAP
 from cresmo.infrastructure.adapters.prompts.registry import PromptKey
 from cresmo.infrastructure.paths import find_workspace_root
 
@@ -175,7 +175,9 @@ class JsonPromptProvider(PromptProviderPort):
         system_instruction = entry.get("system_instruction", "")
         if not system_instruction and task:
             system_instruction = task
-        system_instruction = system_instruction.replace("{task}", task).replace("{skill_block}", skill_block)
+        system_instruction = system_instruction.replace("{task}", task).replace(
+            "{skill_block}", skill_block
+        )
 
         user_template = entry.get("template", "")
         if not user_template and task and not system_instruction:
@@ -197,288 +199,10 @@ class JsonPromptProvider(PromptProviderPort):
         Returns:
             Tuple containing (system_instruction, user_prompt).
         """
-        match key:
-            case PromptKey.GAP_FILLER_PASS1:
-                return self._build_gap_filler_pass1(**context)
-            case PromptKey.GAP_FILLER_PASS_SUBSEQUENT:
-                return self._build_gap_filler_subsequent(**context)
-            case PromptKey.LONG_EXPANDER:
-                return self._build_long_expander(**context)
-            case PromptKey.WIDE_EXPANDER:
-                return self._build_wide_expander(**context)
-            case PromptKey.ATOMIC_INVENTORY:
-                return self._build_atomic_inventory(**context)
-            case PromptKey.JUDGE_ATOMIC_INVENTORY:
-                return self._build_judge_atomic_inventory(**context)
-            case PromptKey.ATOMIC_BATCH:
-                return self._build_atomic_batch(**context)
-            case PromptKey.RECONCILE_MOCS:
-                return self._build_reconcile_mocs(**context)
-            case PromptKey.RAW_INDEX_SUMMARY:
-                return self._format_paired_prompt(
-                    PromptKey.RAW_INDEX_SUMMARY.value,
-                    video_title=context.get("video_title", ""),
-                    transcript_excerpt=context.get("transcript_excerpt", ""),
-                    language=context.get("language", "Português do Brasil"),
-                )
-            case PromptKey.RAW_INDEX_CONCEPTS:
-                return self._format_paired_prompt(
-                    PromptKey.RAW_INDEX_CONCEPTS.value,
-                    video_title=context.get("video_title", ""),
-                    transcript_excerpt=context.get("transcript_excerpt", ""),
-                    language=context.get("language", "Português do Brasil"),
-                )
-            case PromptKey.RAW_INDEX_CONCEPTS_REWRITE:
-                lang = context.get("language", "Português do Brasil")
-                prompt_text = self._format_single_prompt(
-                    PromptKey.RAW_INDEX_CONCEPTS_REWRITE.value,
-                    previous_output=context.get("previous_output", ""),
-                    language=lang,
-                    language_upper=lang.upper(),
-                )
-                return "", prompt_text
-            case PromptKey.RAW_INDEX_SYNTHESIS:
-                return self._format_paired_prompt(
-                    PromptKey.RAW_INDEX_SYNTHESIS.value,
-                    video_title=context.get("video_title", ""),
-                    summary=context.get("summary", ""),
-                    language=context.get("language", "Português do Brasil"),
-                )
-            case PromptKey.JUDGE_RAW_INDEX_SUMMARY:
-                return self._format_paired_prompt(
-                    PromptKey.JUDGE_RAW_INDEX_SUMMARY.value,
-                    video_title=context.get("video_title", ""),
-                    transcript_excerpt=context.get("transcript_excerpt", ""),
-                    summary=context.get("summary", ""),
-                    language=context.get("language", "Português do Brasil"),
-                )
-            case PromptKey.JUDGE_RAW_INDEX_CONCEPTS:
-                return self._format_paired_prompt(
-                    PromptKey.JUDGE_RAW_INDEX_CONCEPTS.value,
-                    video_title=context.get("video_title", ""),
-                    transcript_excerpt=context.get("transcript_excerpt", ""),
-                    concepts=context.get("concepts", ""),
-                    language=context.get("language", "Português do Brasil"),
-                )
-            case PromptKey.JUDGE_RAW_INDEX_SYNTHESIS:
-                transcript_excerpt = context.get("transcript_excerpt", "")
-                return self._format_paired_prompt(
-                    PromptKey.JUDGE_RAW_INDEX_SYNTHESIS.value,
-                    video_title=context.get("video_title", ""),
-                    transcript_excerpt=transcript_excerpt,
-                    summary=transcript_excerpt,
-                    synthesis=context.get("synthesis", ""),
-                    language=context.get("language", "Português do Brasil"),
-                )
-            case _:
-                raise ValueError(f"Unsupported prompt key: {key}")
-
-    def _build_gap_filler_pass1(self, **context: Any) -> tuple[str, str]:
-        key = PromptKey.GAP_FILLER_PASS1.value
-        entry = self._templates.get(key, {})
-        task = entry.get("task", "")
-        skill_name = entry.get("skill_name", "cresmo-expander")
-        template = entry.get("template", "")
-        system_template = entry.get("system_instruction", "")
-        skill_block = self._get_skill_block(skill_name)
-        channel_name = context.get("channel_name", "")
-        file_name = context.get("file_name", "")
-        raw_text = context.get("raw_text", "")
-        total_passes = context.get("total_passes", 1)
-
-        if not template and not system_template:
-            sys_inst = f"{task}\n\n{skill_block}".strip()
-            user_p = (
-                f"Source Channel: {channel_name}\n"
-                f"File: {file_name}\n\n"
-                f"Transcript:\n{raw_text}\n\n"
-                "Transform into continuous fluid Markdown prose with analytical headings (## and ###) "
-                "and mandatory '## Informações Complementares' section."
-            )
-            return sys_inst, user_p
-
-        return self._format_paired_prompt(
-            key,
-            total_passes=total_passes,
-            channel_name=channel_name,
-            file_name=file_name,
-            raw_text=raw_text,
-        )
-
-    def _build_gap_filler_subsequent(self, **context: Any) -> tuple[str, str]:
-        key = PromptKey.GAP_FILLER_PASS_SUBSEQUENT.value
-        entry = self._templates.get(key, {})
-        task = entry.get("task", "")
-        skill_name = entry.get("skill_name", "cresmo-expander")
-        template = entry.get("template", "")
-        system_template = entry.get("system_instruction", "")
-        skill_block = self._get_skill_block(skill_name)
-        pass_num = context.get("pass_num", 2)
-        total_passes = context.get("total_passes", 2)
-        channel_name = context.get("channel_name", "")
-        raw_text = context.get("raw_text", "")
-        current_text = context.get("current_text")
-        prev_draft = current_text if current_text is not None else raw_text
-
-        if not template and not system_template:
-            sys_inst = f"{task}\n\n{skill_block}".strip()
-            user_p = (
-                f"Source Channel: {channel_name}\n\n"
-                f"--- ORIGINAL RAW TRANSCRIPT (GROUND TRUTH REFERENCE) ---\n{raw_text}\n\n"
-                f"--- PREVIOUS PASS EXPANDED COMPENDIUM DRAFT (PASS {pass_num - 1} TO ENRICH) ---\n{prev_draft}\n\n"
-                "Execute Socratic gap filling and theoretical densification."
-            )
-            return sys_inst, user_p
-
-        return self._format_paired_prompt(
-            key,
-            pass_num=pass_num,
-            total_passes=total_passes,
-            prev_pass_num=pass_num - 1,
-            channel_name=channel_name,
-            raw_text=raw_text,
-            current_text=prev_draft,
-        )
-
-    def _build_long_expander(self, **context: Any) -> tuple[str, str]:
-        key = PromptKey.LONG_EXPANDER.value
-        entry = self._templates.get(key, {})
-        task = entry.get("task", "")
-        skill_name = entry.get("skill_name", "cresmo-long-expander")
-        template = entry.get("template", "")
-        system_template = entry.get("system_instruction", "")
-        skill_block = self._get_skill_block(skill_name)
-        compendium_body = context.get("compendium_body", "")
-        complementary_info = context.get("complementary_info", "")
-
-        if not template and not system_template:
-            sys_inst = f"{task}\n\n{skill_block}".strip()
-            user_p = (
-                f"Content:\n{compendium_body}\n\n"
-                f"## Informações Complementares\n{complementary_info}"
-            )
-            return sys_inst, user_p
-
-        return self._format_paired_prompt(
-            key,
-            compendium_body=compendium_body,
-            complementary_info=complementary_info,
-        )
-
-    def _build_wide_expander(self, **context: Any) -> tuple[str, str]:
-        key = PromptKey.WIDE_EXPANDER.value
-        entry = self._templates.get(key, {})
-        task = entry.get("task", "")
-        skill_name = entry.get("skill_name", "cresmo-wide-expander")
-        template = entry.get("template", "")
-        system_template = entry.get("system_instruction", "")
-        skill_block = self._get_skill_block(skill_name)
-        current_text = context.get("current_text", "")
-
-        if not template and not system_template:
-            sys_inst = f"{task}\n\n{skill_block}".strip()
-            return sys_inst, current_text
-
-        return self._format_paired_prompt(
-            key,
-            current_text=current_text,
-            text=current_text,
-        )
-
-    def _build_atomic_inventory(self, **context: Any) -> tuple[str, str]:
-        key = PromptKey.ATOMIC_INVENTORY.value
-        entry = self._templates.get(key, {})
-        task = entry.get("task", "")
-        skill_name = entry.get("skill_name", "cresmo-atomic")
-        template = entry.get("template", "")
-        system_template = entry.get("system_instruction", "")
-        skill_block = self._get_skill_block(skill_name)
-        compendium_title = context.get("compendium_title", "")
-        channel_name = context.get("channel_name", "")
-        compendium_body = context.get("compendium_body", "")
-
-        if not template and not system_template:
-            sys_inst = f"{task}\n\n{skill_block}".strip()
-            user_p = (
-                f"Title: {compendium_title}\n"
-                f"Channel: {channel_name}\n\n"
-                f"Content:\n{compendium_body}\n\n"
-                'Output strictly a JSON array: [{"title": "...", "type": "entity|concept|event|process"}]'
-            )
-            return sys_inst, user_p
-
-        return self._format_paired_prompt(
-            key,
-            compendium_title=compendium_title,
-            channel_name=channel_name,
-            compendium_body=compendium_body,
-        )
-
-    def _build_judge_atomic_inventory(self, **context: Any) -> tuple[str, str]:
-        channel_name = context.get("channel_name", "")
-        ch_str = channel_name.value if isinstance(channel_name, ChannelName) else channel_name
-        return self._format_paired_prompt(
-            PromptKey.JUDGE_ATOMIC_INVENTORY.value,
-            compendium_title=context.get("compendium_title", ""),
-            channel_name=ch_str,
-            compendium_body=context.get("compendium_body", ""),
-            inventory_json=context.get("inventory_json", ""),
-        )
-
-    def _build_atomic_batch(self, **context: Any) -> tuple[str, str]:
-        key = PromptKey.ATOMIC_BATCH.value
-        entry = self._templates.get(key, {})
-        task = entry.get("task", "")
-        skill_name = entry.get("skill_name", "cresmo-atomic")
-        template = entry.get("template", "")
-        system_template = entry.get("system_instruction", "")
-        skill_block = self._get_skill_block(skill_name)
-        compendium_title = context.get("compendium_title", "")
-        channel_name = context.get("channel_name", "")
-        compendium_body = context.get("compendium_body", "")
-        targets_json = context.get("targets_json", "")
-
-        if not template and not system_template:
-            sys_inst = f"{task}\n\n{skill_block}".strip()
-            user_p = (
-                f"Source Compendium Title: {compendium_title}\n"
-                f"Source Channel: {channel_name}\n\n"
-                f"Source Context:\n{compendium_body}\n\n"
-                f"Target Entities to Synthesize in this batch:\n{targets_json}\n\n"
-                "Output strictly a JSON array of note objects."
-            )
-            return sys_inst, user_p
-
-        return self._format_paired_prompt(
-            key,
-            compendium_title=compendium_title,
-            channel_name=channel_name,
-            compendium_body=compendium_body,
-            targets_json=targets_json,
-        )
-
-    def _build_reconcile_mocs(self, **context: Any) -> tuple[str, str]:
-        key = PromptKey.RECONCILE_MOCS.value
-        entry = self._templates.get(key, {})
-        task = entry.get("task", "")
-        skill_name = entry.get("skill_name", "cresmo-moc-manager")
-        template = entry.get("template", "")
-        system_template = entry.get("system_instruction", "")
-        skill_block = self._get_skill_block(skill_name)
-        notes_json = context.get("notes_json", "")
-
-        if not template and not system_template:
-            sys_inst = f"{task}\n\n{skill_block}".strip()
-            user_p = (
-                f"Atomic Notes in Vault:\n{notes_json}\n\n"
-                "Output strictly a JSON array of MOC objects."
-            )
-            return sys_inst, user_p
-
-        return self._format_paired_prompt(
-            key,
-            notes_json=notes_json,
-        )
+        builder = self._DISPATCH_MAP.get(key)
+        if builder is None:
+            raise ValueError(f"Unsupported prompt key: {key}")
+        return builder(self, **context)
 
     def _format_paired_prompt(
         self,
@@ -511,3 +235,5 @@ class JsonPromptProvider(PromptProviderPort):
         task = entry.get("task", "")
         template = entry.get("template", "")
         return self._safe_format(template, task=task, **kwargs)
+
+    _DISPATCH_MAP: ClassVar[dict[PromptKey, Any]] = PROMPT_BUILDER_DISPATCH_MAP

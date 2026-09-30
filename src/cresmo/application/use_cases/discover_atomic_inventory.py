@@ -82,6 +82,51 @@ def is_valid_inventory_json_structure(data: Any) -> bool:
     return True
 
 
+def _parse_and_deduplicate_items(
+    candidate_data: list[Any], compendium_title: str
+) -> tuple[tuple[NoteTitle, NoteType], ...]:
+    """Deduplicate and normalize discovered entity candidates by canonical title.
+
+    Args:
+        candidate_data: Raw parsed JSON entries.
+        compendium_title: Title of compendium for validation reporting.
+
+    Returns:
+        Tuple of (NoteTitle, NoteType) pairs.
+
+    Raises:
+        DomainValidationError: If no valid entities could be discovered.
+    """
+    seen_titles: set[str] = set()
+    items: list[tuple[NoteTitle, NoteType]] = []
+    for entry in candidate_data:
+        if not isinstance(entry, dict):
+            continue
+        title_str = entry.get("title")
+        if not title_str or not isinstance(title_str, str):
+            continue
+        note_title = NoteTitle(title_str)
+        key = note_title.value.lower()
+        if key in seen_titles:
+            continue
+        seen_titles.add(key)
+
+        type_raw = entry.get("type", "concept")
+        try:
+            note_type = NoteType.from_string(str(type_raw))
+        except NoteTypologyError:
+            note_type = NoteType.CONCEPT
+
+        items.append((note_title, note_type))
+
+    if not items:
+        raise DomainValidationError(
+            f"No valid entities discovered in compendium '{compendium_title}'."
+        )
+
+    return tuple(items)
+
+
 class DiscoverAtomicInventoryUseCase:
     """Holistic entity discovery orchestrator across enriched compendium text."""
 
@@ -113,6 +158,64 @@ class DiscoverAtomicInventoryUseCase:
             (prompt_provider is not None) if judge_enabled is None else judge_enabled
         )
 
+    def _query_candidate_inventory(
+        self,
+        prompt: str,
+        system_instruction: str,
+        trace_id: str,
+        session_id: str,
+        user_id: str,
+    ) -> list[Any]:
+        """Query LLM synthesis port and extract candidate JSON inventory."""
+        raw_response = self.llm_synthesis_port.transform(
+            prompt=prompt,
+            system_instruction=system_instruction,
+            temperature=self.temperature,
+            trace_id=trace_id,
+            session_id=session_id,
+            user_id=user_id,
+        )
+        try:
+            return extract_json_data(raw_response)
+        except (ValueError, TypeError, json.JSONDecodeError):
+            return []
+
+    def _evaluate_candidate_inventory(
+        self,
+        candidate_data: Any,
+        compendium: EnrichedCompendium,
+        judge_trace_id: str,
+        session_id: str,
+        user_id: str,
+    ) -> bool:
+        """Validate candidate inventory structure and optional semantic judge."""
+        if not self.judge_enabled:
+            if not isinstance(candidate_data, list):
+                raise DomainValidationError(
+                    f"Expected JSON array of entities for '{compendium.title.value}', got: {type(candidate_data).__name__}"
+                )
+            return True
+
+        if not is_valid_inventory_json_structure(candidate_data):
+            return False
+
+        judge_sys, judge_prompt = self.prompt_provider.get_prompt(
+            PromptKey.JUDGE_ATOMIC_INVENTORY,
+            compendium_title=compendium.title.value,
+            channel_name=compendium.channel_name,
+            compendium_body=compendium.body,
+            inventory_json=json.dumps(candidate_data, ensure_ascii=False),
+        )
+        judge_response = self.llm_synthesis_port.transform(
+            prompt=judge_prompt,
+            system_instruction=judge_sys,
+            temperature=0.0,
+            trace_id=judge_trace_id,
+            session_id=session_id,
+            user_id=user_id,
+        )
+        return parse_judge_boolean(judge_response)
+
     def execute(self, compendium: EnrichedCompendium) -> AtomicEntityInventory:
         """Execute discovery scan with deterministic guardrails and iterative LLM judge loop.
 
@@ -143,67 +246,35 @@ class DiscoverAtomicInventoryUseCase:
         ).value
         content_id = compendium.content_id.value
 
+        candidate_data: list[Any] = []
         is_valid = False
         retries = 0
-        candidate_data: list[Any] = []
 
         while not is_valid:
-            if retries == 0:
-                trace_id = f"{content_id}_inventory"
-                judge_trace_id = f"{content_id}_inventory_judge"
-            else:
+            trace_suffix = "" if retries == 0 else f"_retry_{retries}"
+            if retries > 0:
                 logger.info(
                     "[InventoryDiscovery] Attempt %d: candidate inventory compliance check failed for '%s'. Re-extracting.",
                     retries,
                     content_id,
                 )
-                trace_id = f"{content_id}_inventory_retry_{retries}"
-                judge_trace_id = f"{content_id}_inventory_judge_retry_{retries}"
+            trace_id = f"{content_id}_inventory{trace_suffix}"
+            judge_trace_id = f"{content_id}_inventory_judge{trace_suffix}"
 
-            raw_response = self.llm_synthesis_port.transform(
+            candidate_data = self._query_candidate_inventory(
                 prompt=user_prompt,
                 system_instruction=system_instruction,
-                temperature=self.temperature,
                 trace_id=trace_id,
                 session_id=session_id,
                 user_id=user_id,
             )
-
-            try:
-                candidate_data = extract_json_data(raw_response)
-            except (ValueError, TypeError, json.JSONDecodeError):
-                candidate_data = []
-
-            if not self.judge_enabled:
-                if not isinstance(candidate_data, list):
-                    raise DomainValidationError(
-                        f"Expected JSON array of entities for '{compendium.title.value}', got: {type(candidate_data).__name__}"
-                    )
-                is_valid = True
-                break
-
-            # Gate 1: Deterministic Guardrail (0 tokens / 0ms)
-            if is_valid_inventory_json_structure(candidate_data):
-                # Gate 2: Semantic LLM-as-a-Judge Evaluation (temperature=0.0)
-                judge_sys, judge_prompt = self.prompt_provider.get_prompt(
-                    PromptKey.JUDGE_ATOMIC_INVENTORY,
-                    compendium_title=compendium.title.value,
-                    channel_name=compendium.channel_name,
-                    compendium_body=compendium.body,
-                    inventory_json=json.dumps(candidate_data, ensure_ascii=False),
-                )
-                judge_response = self.llm_synthesis_port.transform(
-                    prompt=judge_prompt,
-                    system_instruction=judge_sys,
-                    temperature=0.0,
-                    trace_id=judge_trace_id,
-                    session_id=session_id,
-                    user_id=user_id,
-                )
-                is_valid = parse_judge_boolean(judge_response)
-            else:
-                is_valid = False
-
+            is_valid = self._evaluate_candidate_inventory(
+                candidate_data=candidate_data,
+                compendium=compendium,
+                judge_trace_id=judge_trace_id,
+                session_id=session_id,
+                user_id=user_id,
+            )
             if not is_valid:
                 if not _can_retry(retries, self.max_rewrites):
                     break
@@ -214,33 +285,5 @@ class DiscoverAtomicInventoryUseCase:
                 f"Candidate entity inventory rejected by LLM-as-a-judge for '{compendium.title.value}'."
             )
 
-        # Step 4: Deduplicate and normalize by canonical title.
-        seen_titles: set[str] = set()
-        items: list[tuple[NoteTitle, NoteType]] = []
-        for entry in candidate_data:
-            if not isinstance(entry, dict):
-                continue
-            title_str = entry.get("title")
-            if not title_str or not isinstance(title_str, str):
-                continue
-            note_title = NoteTitle(title_str)
-            key = note_title.value.lower()
-            if key in seen_titles:
-                continue
-            seen_titles.add(key)
-
-            type_raw = entry.get("type", "concept")
-            try:
-                note_type = NoteType.from_string(str(type_raw))
-            except NoteTypologyError:
-                note_type = NoteType.CONCEPT
-
-            items.append((note_title, note_type))
-
-        if not items:
-            raise DomainValidationError(
-                f"No valid entities discovered in compendium '{compendium.title.value}'."
-            )
-
-        # Step 5: Return AtomicEntityInventory Value Object.
-        return AtomicEntityInventory(items=tuple(items))
+        items = _parse_and_deduplicate_items(candidate_data, compendium.title.value)
+        return AtomicEntityInventory(items=items)

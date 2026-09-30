@@ -15,9 +15,14 @@ from __future__ import annotations
 
 import argparse
 import sys
+from collections.abc import Sequence
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from pydantic import ValidationError
+
+if TYPE_CHECKING:
+    from cresmo.application.use_cases.sync_channel import SyncChannelUseCase
 
 from cresmo.domain.exceptions import (
     DomainValidationError,
@@ -150,6 +155,83 @@ def _build_filter_criteria(args: argparse.Namespace) -> SyncFilterCriteria:
     )
 
 
+def _sync_direct_videos(
+    use_case: SyncChannelUseCase,
+    video_ids: Sequence[str] | set[str],
+    args: argparse.Namespace,
+) -> int:
+    """Synchronize a collection of videos directly by identifier."""
+    total_processed = 0
+    total_failed = 0
+    for video_ref in video_ids:
+        target_url = (
+            video_ref
+            if video_ref.startswith(("http://", "https://"))
+            else f"https://www.youtube.com/watch?v={video_ref}"
+        )
+        query = ChannelFeedQuery(
+            channel_url=target_url,
+            lookback_days=args.lookback,
+            max_videos=1,
+        )
+        summary = use_case.execute(
+            query=query,
+            dry_run=args.dry_run,
+            force_refresh=args.force_refresh,
+        )
+        total_processed += summary.processed_count
+        total_failed += summary.failed_count
+        sys.stdout.write(
+            f"[video] {video_ref}: {summary.processed_count} processed, "
+            f"{summary.skipped_count} skipped, {summary.failed_count} failed\n"
+        )
+    return EXIT_SUCCESS if total_failed == 0 else EXIT_INTERNAL_ERROR
+
+
+def _sync_channel_list(
+    use_case: SyncChannelUseCase,
+    channels_to_sync: list[str],
+    args: argparse.Namespace,
+) -> int:
+    """Synchronize a list of channel feeds and render summary table."""
+    total_discovered = 0
+    total_processed = 0
+    total_skipped = 0
+    total_failed = 0
+
+    for ch_url in channels_to_sync:
+        query = ChannelFeedQuery(
+            channel_url=ch_url,
+            lookback_days=args.lookback,
+            max_videos=args.max_videos,
+        )
+        summary = use_case.execute(
+            query=query,
+            dry_run=args.dry_run,
+            force_refresh=args.force_refresh,
+        )
+        total_discovered += summary.total_discovered
+        total_processed += summary.processed_count
+        total_skipped += summary.skipped_count
+        total_failed += summary.failed_count
+        sys.stdout.write(
+            f"[{ch_url}] discovered={summary.total_discovered} "
+            f"processed={summary.processed_count} "
+            f"skipped={summary.skipped_count} "
+            f"failed={summary.failed_count} "
+            f"({summary.duration_seconds:.1f}s)\n"
+        )
+
+    sys.stdout.write("\nChannel Synchronization Summary:\n")
+    sys.stdout.write(f"- Channels synced: {len(channels_to_sync)}\n")
+    sys.stdout.write(f"- Total in Window: {total_discovered}\n")
+    sys.stdout.write(f"- Processed: {total_processed}\n")
+    sys.stdout.write(f"- Skipped (Idempotent): {total_skipped}\n")
+    sys.stdout.write(f"- Failed: {total_failed}\n")
+
+    return EXIT_SUCCESS if total_failed == 0 else EXIT_INTERNAL_ERROR
+
+
 def handle_sync(args: argparse.Namespace) -> int:
     """Synchronize recent video uploads from one or more YouTube channel feeds.
 
@@ -177,31 +259,7 @@ def handle_sync(args: argparse.Namespace) -> int:
 
         # --- Mode 1: Single/multi-video direct sync ---
         if filter_criteria.video_ids:
-            total_processed = 0
-            total_failed = 0
-            for video_ref in filter_criteria.video_ids:
-                target_url = (
-                    video_ref
-                    if video_ref.startswith(("http://", "https://"))
-                    else f"https://www.youtube.com/watch?v={video_ref}"
-                )
-                query = ChannelFeedQuery(
-                    channel_url=target_url,
-                    lookback_days=args.lookback,
-                    max_videos=1,
-                )
-                summary = use_case.execute(
-                    query=query,
-                    dry_run=args.dry_run,
-                    force_refresh=args.force_refresh,
-                )
-                total_processed += summary.processed_count
-                total_failed += summary.failed_count
-                sys.stdout.write(
-                    f"[video] {video_ref}: {summary.processed_count} processed, "
-                    f"{summary.skipped_count} skipped, {summary.failed_count} failed\n"
-                )
-            return EXIT_SUCCESS if total_failed == 0 else EXIT_INTERNAL_ERROR
+            return _sync_direct_videos(use_case, filter_criteria.video_ids, args)
 
         # --- Mode 2 / 3 / 4: Channel/category/manifest sync ---
         # Resolve the manifest: explicit flag → default data/playlist.txt
@@ -223,43 +281,7 @@ def handle_sync(args: argparse.Namespace) -> int:
 
         # ADR-012: process channels in strict alphabetical order
         channels_to_sync = sorted(channels_to_sync, key=str.lower)
-
-        total_discovered = 0
-        total_processed = 0
-        total_skipped = 0
-        total_failed = 0
-
-        for ch_url in channels_to_sync:
-            query = ChannelFeedQuery(
-                channel_url=ch_url,
-                lookback_days=args.lookback,
-                max_videos=args.max_videos,
-            )
-            summary = use_case.execute(
-                query=query,
-                dry_run=args.dry_run,
-                force_refresh=args.force_refresh,
-            )
-            total_discovered += summary.total_discovered
-            total_processed += summary.processed_count
-            total_skipped += summary.skipped_count
-            total_failed += summary.failed_count
-            sys.stdout.write(
-                f"[{ch_url}] discovered={summary.total_discovered} "
-                f"processed={summary.processed_count} "
-                f"skipped={summary.skipped_count} "
-                f"failed={summary.failed_count} "
-                f"({summary.duration_seconds:.1f}s)\n"
-            )
-
-        sys.stdout.write("\nChannel Synchronization Summary:\n")
-        sys.stdout.write(f"- Channels synced: {len(channels_to_sync)}\n")
-        sys.stdout.write(f"- Total in Window: {total_discovered}\n")
-        sys.stdout.write(f"- Processed: {total_processed}\n")
-        sys.stdout.write(f"- Skipped (Idempotent): {total_skipped}\n")
-        sys.stdout.write(f"- Failed: {total_failed}\n")
-
-        return EXIT_SUCCESS if total_failed == 0 else EXIT_INTERNAL_ERROR
+        return _sync_channel_list(use_case, channels_to_sync, args)
 
     except RateLimitExceededError as exc:
         sys.stderr.write(f"Rate limit exceeded: {exc}\n")

@@ -282,7 +282,12 @@ class PipelineSessionId:
         if not self.value or not self.value.strip():
             raise ValueError("PipelineSessionId cannot be empty.")
         parts = self.value.split(":")
-        if len(parts) != PIPELINE_SESSION_ID_PART_COUNT or parts[0] != "content" or not parts[1] or not parts[2]:
+        if (
+            len(parts) != PIPELINE_SESSION_ID_PART_COUNT
+            or parts[0] != "content"
+            or not parts[1]
+            or not parts[2]
+        ):
             raise ValueError(
                 f"Invalid PipelineSessionId format: '{self.value}'. "
                 "Expected 'content:{channel}:{content_id}'."

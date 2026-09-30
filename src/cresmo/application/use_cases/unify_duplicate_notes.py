@@ -65,6 +65,66 @@ class DeduplicationReport:
 _MIN_HONORIFIC_NORMALIZED_LENGTH: Final[int] = 4
 
 
+def _merge_aliases(canonical: AtomicNote, redundant: AtomicNote) -> tuple[str, ...]:
+    """Merge and sort aliases excluding the canonical note's title."""
+    canonical_lower = canonical.title.value.lower()
+    merged_aliases_set: set[str] = {
+        a for a in (*canonical.aliases, *redundant.aliases) if a.lower() != canonical_lower
+    }
+    if redundant.title.value.lower() != canonical_lower:
+        merged_aliases_set.add(redundant.title.value)
+    return tuple(sorted(merged_aliases_set))
+
+
+def _merge_direct_relations(canonical: AtomicNote, redundant: AtomicNote) -> tuple[NoteTitle, ...]:
+    """Merge direct relations excluding self-referencing titles."""
+    excluded_titles = {canonical.title.value.lower(), redundant.title.value.lower()}
+    merged_relations_dict: dict[str, NoteTitle] = {}
+    for r in (*canonical.direct_relations, *redundant.direct_relations):
+        if r.value.lower() not in excluded_titles:
+            merged_relations_dict[r.value.lower()] = r
+    return tuple(merged_relations_dict.values())
+
+
+def _merge_definitions(canonical_def: str, redundant_def: str) -> str:
+    """Merge definitions preserving full content without verbatim repetition."""
+    def_canonical = canonical_def.strip()
+    def_redundant = redundant_def.strip()
+    if def_canonical == def_redundant or def_redundant in def_canonical:
+        return def_canonical
+    if def_canonical in def_redundant:
+        return def_redundant
+    return f"{def_canonical}\n\n{def_redundant}"
+
+
+def _merge_causal_matrices(
+    cm_a: CausalMatrix | None, cm_b: CausalMatrix | None
+) -> CausalMatrix | None:
+    """Merge two causal matrices preserving non-empty attributes."""
+    if cm_b is None:
+        return cm_a
+    if cm_a is None:
+        return cm_b
+    cause = cm_a.cause or cm_b.cause
+    effect = cm_a.effect or cm_b.effect
+    attrib = cm_a.epistemic_attribution or cm_b.epistemic_attribution
+    return CausalMatrix(cause=cause, effect=effect, epistemic_attribution=attrib)
+
+
+def _merge_cross_contexts(
+    cc_a: CrossContextRelations | None, cc_b: CrossContextRelations | None
+) -> CrossContextRelations | None:
+    """Merge two cross-context relation triads preserving non-empty attributes."""
+    if cc_b is None:
+        return cc_a
+    if cc_a is None:
+        return cc_b
+    pre = cc_a.precursors or cc_b.precursors
+    lat = cc_a.lateral_events or cc_b.lateral_events
+    aft = cc_a.aftermath or cc_b.aftermath
+    return CrossContextRelations(precursors=pre, lateral_events=lat, aftermath=aft)
+
+
 class UnifyDuplicateNotesUseCase:
     """Graph Entity Resolution and Duplicate Unification orchestrator."""
 
@@ -112,80 +172,21 @@ class UnifyDuplicateNotesUseCase:
 
     def _merge_notes(self, canonical: AtomicNote, redundant: AtomicNote) -> AtomicNote:
         """Merge redundant note into canonical note non-destructively."""
-        canonical_lower = canonical.title.value.lower()
-        merged_aliases_set: set[str] = set()
-        for a in canonical.aliases:
-            if a.lower() != canonical_lower:
-                merged_aliases_set.add(a)
-        for a in redundant.aliases:
-            if a.lower() != canonical_lower:
-                merged_aliases_set.add(a)
-        if redundant.title.value.lower() != canonical_lower:
-            merged_aliases_set.add(redundant.title.value)
-
-        merged_aliases = tuple(sorted(merged_aliases_set))
-
-        # 2. Merge tags
+        merged_aliases = _merge_aliases(canonical, redundant)
         merged_tags = tuple(sorted(set(canonical.content_tags) | set(redundant.content_tags)))
-
-        # 3. Merge direct relations (excluding self references)
-        excluded_titles = {canonical.title.value.lower(), redundant.title.value.lower()}
-        merged_relations_dict: dict[str, NoteTitle] = {}
-        for r in canonical.direct_relations:
-            if r.value.lower() not in excluded_titles:
-                merged_relations_dict[r.value.lower()] = r
-        for r in redundant.direct_relations:
-            if r.value.lower() not in excluded_titles:
-                merged_relations_dict[r.value.lower()] = r
-
-        merged_relations = tuple(merged_relations_dict.values())
-
-        # 4. Merge definitions
-        def_canonical = canonical.definition.strip()
-        def_redundant = redundant.definition.strip()
-        if def_canonical == def_redundant or def_redundant in def_canonical:
-            merged_def = def_canonical
-        elif def_canonical in def_redundant:
-            merged_def = def_redundant
-        else:
-            merged_def = f"{def_canonical}\n\n{def_redundant}"
-
-        # 5. Merge causal matrix
-        merged_cm: CausalMatrix | None = canonical.causal_matrix
-        if redundant.causal_matrix is not None:
-            if merged_cm is None:
-                merged_cm = redundant.causal_matrix
-            else:
-                cause = merged_cm.cause or redundant.causal_matrix.cause
-                effect = merged_cm.effect or redundant.causal_matrix.effect
-                attrib = (
-                    merged_cm.epistemic_attribution or redundant.causal_matrix.epistemic_attribution
-                )
-                merged_cm = CausalMatrix(cause=cause, effect=effect, epistemic_attribution=attrib)
-
-        # 6. Merge cross context
-        merged_cc: CrossContextRelations | None = canonical.cross_context
-        if redundant.cross_context is not None:
-            if merged_cc is None:
-                merged_cc = redundant.cross_context
-            else:
-                pre = merged_cc.precursors or redundant.cross_context.precursors
-                lat = merged_cc.lateral_events or redundant.cross_context.lateral_events
-                aft = merged_cc.aftermath or redundant.cross_context.aftermath
-                merged_cc = CrossContextRelations(precursors=pre, lateral_events=lat, aftermath=aft)
-
-        domain = canonical.domain or redundant.domain
-        cluster = canonical.cluster or redundant.cluster
-        source = canonical.source or redundant.source
+        merged_relations = _merge_direct_relations(canonical, redundant)
+        merged_def = _merge_definitions(canonical.definition, redundant.definition)
+        merged_cm = _merge_causal_matrices(canonical.causal_matrix, redundant.causal_matrix)
+        merged_cc = _merge_cross_contexts(canonical.cross_context, redundant.cross_context)
 
         return AtomicNote(
             title=canonical.title,
             note_type=canonical.note_type,
             definition=merged_def,
             content_tags=merged_tags,
-            domain=domain,
-            cluster=cluster,
-            source=source,
+            domain=canonical.domain or redundant.domain,
+            cluster=canonical.cluster or redundant.cluster,
+            source=canonical.source or redundant.source,
             aliases=merged_aliases,
             direct_relations=merged_relations,
             causal_matrix=merged_cm,

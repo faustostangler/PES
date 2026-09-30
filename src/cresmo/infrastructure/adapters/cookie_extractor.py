@@ -19,6 +19,7 @@ import re
 import sys
 import time
 from pathlib import Path
+from typing import Any
 
 try:
     import yt_dlp.cookies
@@ -98,6 +99,45 @@ def has_valid_auth_cookies(cookie_file: Path) -> bool:
         return False
 
 
+def _extract_raw_cookies(browser: str, verbose: bool) -> Any:
+    """Safely invoke yt_dlp browser cookie extraction."""
+    if yt_dlp is None:
+        if verbose:
+            sys.stderr.write("yt-dlp is not installed; cannot extract cookies.\n")
+        return None
+
+    try:
+        return yt_dlp.cookies.extract_cookies_from_browser(browser)
+    except Exception as exc:  # noqa: BLE001 - yt-dlp can raise sqlite/crypto/os errors across platforms
+        if verbose:
+            sys.stderr.write(f"Could not read cookies from '{browser}': {exc}\n")
+        return None
+
+
+def _is_valid_cookie(c: Any, domains: tuple[str, ...]) -> bool:
+    """Validate whether cookie matches target domains and satisfies security invariants."""
+    domain = (c.domain or "").lower()
+    if not any(domain.endswith(d) for d in domains):
+        return False
+
+    if any(sub in domain for sub in IGNORED_SUBDOMAINS):
+        return False
+
+    if not c.name or not c.value or len(c.value.strip()) == 0:
+        return False
+
+    if len(c.name) > MAX_COOKIE_NAME_LENGTH or len(c.value) > MAX_COOKIE_VALUE_LENGTH:
+        return False
+
+    return bool(COOKIE_NAME_REGEX.match(c.name) and COOKIE_VALUE_REGEX.match(c.value))
+
+
+def _sanitize_cookie(c: Any) -> None:
+    """Clamp integer expiry timestamp to avoid 32-bit overflow."""
+    if c.expires and c.expires > MAX_COOKIE_EXPIRY:
+        c.expires = MAX_COOKIE_EXPIRY
+
+
 def export_cookies_from_browser(
     browser: str,
     output_file: Path | str,
@@ -120,18 +160,7 @@ def export_cookies_from_browser(
     output_path = Path(output_file).resolve()
     temp_path = output_path.with_suffix(".tmp")
 
-    if yt_dlp is None:
-        if verbose:
-            sys.stderr.write("yt-dlp is not installed; cannot extract cookies.\n")
-        return False
-
-    try:
-        cj = yt_dlp.cookies.extract_cookies_from_browser(browser)
-    except Exception as exc:  # noqa: BLE001 - yt-dlp can raise sqlite/crypto/os errors across platforms
-        if verbose:
-            sys.stderr.write(f"Could not read cookies from '{browser}': {exc}\n")
-        return False
-
+    cj = _extract_raw_cookies(browser, verbose)
     if not cj:
         return False
 
@@ -141,30 +170,16 @@ def export_cookies_from_browser(
     has_auth_cookies = False
 
     for c in cj:
-        domain = (c.domain or "").lower()
-        if not any(domain.endswith(d) for d in domains):
+        if not _is_valid_cookie(c, domains):
             continue
 
-        if any(sub in domain for sub in IGNORED_SUBDOMAINS):
-            continue
-
-        if not c.name or not c.value or len(c.value.strip()) == 0:
-            continue
-
-        if len(c.name) > MAX_COOKIE_NAME_LENGTH or len(c.value) > MAX_COOKIE_VALUE_LENGTH:
-            continue
-        if not COOKIE_NAME_REGEX.match(c.name) or not COOKIE_VALUE_REGEX.match(c.value):
-            continue
-
-        if c.expires and c.expires > MAX_COOKIE_EXPIRY:
-            c.expires = MAX_COOKIE_EXPIRY
-
+        _sanitize_cookie(c)
         if c.name in AUTH_COOKIE_NAMES:
             has_auth_cookies = True
 
         mcj.set_cookie(c)
         valid_count += 1
-        if "youtube.com" in domain:
+        if "youtube.com" in (c.domain or "").lower():
             yt_count += 1
 
     if valid_count == 0 or (require_auth and not has_auth_cookies):

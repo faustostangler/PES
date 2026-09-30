@@ -74,24 +74,26 @@ def configure_logging(level: str = "INFO", fmt: str = "json") -> None:
             "format": "%(asctime)s [%(levelname)s] %(name)s: %(message)s",
         }
 
-    logging.config.dictConfig({
-        "version": 1,
-        "disable_existing_loggers": False,
-        "filters": {"otel_trace": {"()": CresmoOTelTraceCorrelationFilter}},
-        "formatters": {"default": formatter_cfg},
-        "handlers": {
-            "console": {
-                "class": "logging.StreamHandler",
-                "stream": "ext://sys.stdout",
-                "formatter": "default",
-                "filters": ["otel_trace"],
+    logging.config.dictConfig(
+        {
+            "version": 1,
+            "disable_existing_loggers": False,
+            "filters": {"otel_trace": {"()": CresmoOTelTraceCorrelationFilter}},
+            "formatters": {"default": formatter_cfg},
+            "handlers": {
+                "console": {
+                    "class": "logging.StreamHandler",
+                    "stream": "ext://sys.stdout",
+                    "formatter": "default",
+                    "filters": ["otel_trace"],
+                },
             },
-        },
-        "root": {"level": level.upper(), "handlers": ["console"]},
-        "loggers": {
-            "httpx": {"level": "WARNING"},
-            "httpcore": {"level": "WARNING"},
-            "opentelemetry": {"level": "WARNING"},
-            "urllib3": {"level": "WARNING"},
-        },
-    })
+            "root": {"level": level.upper(), "handlers": ["console"]},
+            "loggers": {
+                "httpx": {"level": "WARNING"},
+                "httpcore": {"level": "WARNING"},
+                "opentelemetry": {"level": "WARNING"},
+                "urllib3": {"level": "WARNING"},
+            },
+        }
+    )

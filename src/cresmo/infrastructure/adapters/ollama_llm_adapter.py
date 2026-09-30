@@ -110,7 +110,9 @@ class OllamaLLMAdapter(LLMTransformationPort):
         endpoint = f"{self.base_url}/api/tags"
         req = urllib.request.Request(endpoint, method="GET")
         try:
-            with urllib.request.urlopen(req, timeout=DEFAULT_HEALTHCHECK_TIMEOUT_SECONDS) as response:
+            with urllib.request.urlopen(
+                req, timeout=DEFAULT_HEALTHCHECK_TIMEOUT_SECONDS
+            ) as response:
                 return response.status == HTTPStatus.OK
         except (urllib.error.URLError, TimeoutError, OSError) as exc:
             logger.debug("[OllamaLLMAdapter] is_available probe failed: %s", exc)
@@ -130,7 +132,9 @@ class OllamaLLMAdapter(LLMTransformationPort):
         endpoint = f"{self.base_url}/api/ps"
         req = urllib.request.Request(endpoint, method="GET")
         try:
-            with urllib.request.urlopen(req, timeout=DEFAULT_HEALTHCHECK_TIMEOUT_SECONDS) as response:
+            with urllib.request.urlopen(
+                req, timeout=DEFAULT_HEALTHCHECK_TIMEOUT_SECONDS
+            ) as response:
                 if response.status != HTTPStatus.OK:
                     return
                 ps_data: dict[str, Any] = json.loads(response.read().decode("utf-8"))

@@ -336,6 +336,43 @@ DEFAULT_CHANNEL_DOMAIN: str = "uncategorized"
 DEFAULT_CHANNEL_CATEGORY: str = "volatile"
 
 
+CHANNEL_TAXONOMY_MAP: tuple[tuple[frozenset[str], tuple[str, str]], ...] = (
+    (POLITICS_BR_CHANNELS, ("politics_br", "volatile")),
+    (GEOPOLITICS_CHANNELS, ("geopolitics", "volatile")),
+    (TECH_AI_CHANNELS, ("tech_ai", "perennial")),
+    (FINANCE_CHANNELS, ("finance", "perennial")),
+    (ENGINEERING_CHANNELS, ("engineering", "perennial")),
+    (ARCHITECTURE_CHANNELS, ("architecture", "perennial")),
+    (HISTORY_CHANNELS, ("history", "perennial")),
+    (PHILOSOPHY_CHANNELS, ("philosophy", "perennial")),
+    (HEALTH_CHANNELS, ("health", "perennial")),
+    (ENTERTAINMENT_CHANNELS, ("entertainment", "volatile")),
+)
+
+
+def _extract_channel_candidates(raw: str) -> list[str]:
+    """Extract candidate channel handles, slugs, and normalized tokens from URL or raw text."""
+    candidates: list[str] = [raw]
+    if "/@" in raw:
+        slug = raw.split("/@", 1)[1].split("/", 1)[0].split("?", 1)[0].strip()
+        if slug:
+            candidates.extend([f"@{slug}", slug])
+    elif raw.startswith("@"):
+        slug = raw[1:].strip()
+        if slug:
+            candidates.append(slug)
+    elif "/" in raw:
+        parts = [p for p in raw.split("/") if p]
+        if parts:
+            slug = parts[-1].split("?", 1)[0].strip()
+            if slug:
+                if slug.startswith("@"):
+                    candidates.extend([slug, slug[1:]])
+                else:
+                    candidates.append(slug)
+    return candidates
+
+
 def classify_channel(channel_name: ChannelName | str) -> tuple[str, str]:
     """Classify source channel deterministically into (domain, category_type).
 
@@ -347,45 +384,11 @@ def classify_channel(channel_name: ChannelName | str) -> tuple[str, str]:
         either 'perennial' or 'volatile'.
     """
     raw = str(channel_name).lower().strip()
-    candidates: list[str] = [raw]
-
-    # If it's a URL or handle, extract handle/slug candidate
-    if "/@" in raw:
-        slug = raw.split("/@", 1)[1].split("/", 1)[0].split("?", 1)[0].strip()
-        if slug:
-            candidates.extend([f"@{slug}", slug])
-    elif raw.startswith("@"):
-        slug = raw[1:].strip()
-        if slug:
-            candidates.append(slug)
-    elif "/" in raw:
-        slug = [p for p in raw.split("/") if p][-1].split("?", 1)[0].strip()
-        if slug:
-            if slug.startswith("@"):
-                candidates.extend([slug, slug[1:]])
-            else:
-                candidates.append(slug)
+    candidates = _extract_channel_candidates(raw)
 
     for name_clean in candidates:
-        if name_clean in POLITICS_BR_CHANNELS:
-            return "politics_br", "volatile"
-        if name_clean in GEOPOLITICS_CHANNELS:
-            return "geopolitics", "volatile"
-        if name_clean in TECH_AI_CHANNELS:
-            return "tech_ai", "perennial"
-        if name_clean in FINANCE_CHANNELS:
-            return "finance", "perennial"
-        if name_clean in ENGINEERING_CHANNELS:
-            return "engineering", "perennial"
-        if name_clean in ARCHITECTURE_CHANNELS:
-            return "architecture", "perennial"
-        if name_clean in HISTORY_CHANNELS:
-            return "history", "perennial"
-        if name_clean in PHILOSOPHY_CHANNELS:
-            return "philosophy", "perennial"
-        if name_clean in HEALTH_CHANNELS:
-            return "health", "perennial"
-        if name_clean in ENTERTAINMENT_CHANNELS:
-            return "entertainment", "volatile"
+        for channels_set, classification in CHANNEL_TAXONOMY_MAP:
+            if name_clean in channels_set:
+                return classification
 
     return DEFAULT_CHANNEL_DOMAIN, DEFAULT_CHANNEL_CATEGORY
