@@ -7,15 +7,17 @@ now enhanced with LLM-as-a-judge synthesis verification, sizing heuristics, and 
 
 from __future__ import annotations
 
-from pathlib import Path
 from unittest.mock import MagicMock
+
+import pytest
 
 from cresmo.application.use_cases.index_raw_transcripts import (
     IndexRawTranscriptsUseCase,
     is_valid_synthesis_paragraph,
     parse_judge_boolean,
 )
-from cresmo.domain.entities import RawTranscript
+from cresmo.domain.entities import FluidTranscript, RawTranscript
+from cresmo.domain.exceptions import DomainValidationError
 from cresmo.domain.value_objects import ChannelName, ContentId
 from cresmo.infrastructure.adapters.prompt_provider import JsonPromptProvider
 from tests.doubles.mock_adapters import InMemoryVaultAdapter, MockLLMAdapter
@@ -50,7 +52,7 @@ class TestIndexRawTranscriptsUseCase:
             prompt_provider=prompt_provider,
         )
 
-        transcript = RawTranscript(
+        transcript = FluidTranscript(
             content_id=ContentId("vid11111111"),
             channel_name=ChannelName("Political Theory"),
             title="Vilfredo Pareto and Elites",
@@ -58,7 +60,7 @@ class TestIndexRawTranscriptsUseCase:
             source_url="https://youtube.com/watch?v=vid11111111",
         )
 
-        entry = use_case.index_single_transcript(transcript)
+        entry = use_case.execute(transcript)
 
         assert entry is not None
         assert entry.video_id == ContentId("vid11111111")
@@ -117,7 +119,7 @@ class TestIndexRawTranscriptsUseCase:
             prompt_provider=prompt_provider,
         )
 
-        transcript = RawTranscript(
+        transcript = FluidTranscript(
             content_id=ContentId("vid11111111"),
             channel_name=ChannelName("Political Theory"),
             title="Vilfredo Pareto and Elites",
@@ -125,12 +127,12 @@ class TestIndexRawTranscriptsUseCase:
         )
 
         # Index once
-        entry1 = use_case.index_single_transcript(transcript)
+        entry1 = use_case.execute(transcript)
         assert entry1 is not None
         assert len(llm.call_history) == 6
 
         # Index again without force - should skip and return None (0 additional calls)
-        entry2 = use_case.index_single_transcript(transcript)
+        entry2 = use_case.execute(transcript)
         assert entry2 is None
         assert len(llm.call_history) == 6
         assert len(vault.channel_raw_indexes["Political Theory"]) == 1
@@ -155,14 +157,14 @@ class TestIndexRawTranscriptsUseCase:
             prompt_provider=prompt_provider,
         )
 
-        transcript = RawTranscript(
+        transcript = FluidTranscript(
             content_id=ContentId("vid22222222"),
             channel_name=ChannelName("Economics"),
             title="Nash Equilibrium",
             body="Jogo não-cooperativo...",
         )
 
-        entry = use_case.index_single_transcript(transcript)
+        entry = use_case.execute(transcript)
         assert entry is not None
         assert entry.key_concept == "Teoria dos Jogos, Equilíbrios de Nash"
         assert "Minorias burocráticas governam" in entry.synthesis
@@ -179,7 +181,7 @@ class TestIndexRawTranscriptsUseCase:
             prompt_provider=prompt_provider,
         )
 
-        transcript = RawTranscript(
+        transcript = FluidTranscript(
             content_id=ContentId("vid33333333"),
             channel_name=ChannelName("Tech Channel"),
             title="AI Systems",
@@ -187,66 +189,31 @@ class TestIndexRawTranscriptsUseCase:
         )
 
         # Should not raise exception, logs warning and returns None
-        entry = use_case.index_single_transcript(transcript)
+        entry = use_case.execute(transcript)
         assert entry is None
         assert len(vault.channel_raw_indexes) == 0
 
-    def test_index_channel_processes_all_unindexed_files(self, tmp_path: Path) -> None:
-        from cresmo.infrastructure.adapters.obsidian_vault_adapter import ObsidianVaultAdapter
-
-        vault = ObsidianVaultAdapter(
-            vault_dir=tmp_path / "vault",
-            raw_dir=tmp_path / "raw",
-            enriched_dir=tmp_path / "enriched",
-        )
-        llm = MockLLMAdapter(
-            responses=[
-                "Conceito Um",
-                "true",
-                "Resumo 1",
-                "true",
-                _SAMPLE_VALID_SYNTHESIS,
-                "true",
-                "Conceito Dois",
-                "true",
-                "Resumo 2",
-                "true",
-                _SAMPLE_VALID_SYNTHESIS,
-                "true",
-            ]
-        )
+    def test_index_raw_rejects_raw_transcript(self) -> None:
+        """ADR-028: IndexRawTranscriptsUseCase strictly rejects RawTranscript."""
+        vault = InMemoryVaultAdapter()
+        llm = MockLLMAdapter()
         prompt_provider = JsonPromptProvider()
-
         use_case = IndexRawTranscriptsUseCase(
             vault_repo=vault,
             llm=llm,
             prompt_provider=prompt_provider,
         )
-
-        t1 = RawTranscript(
-            content_id=ContentId("vid11111111"),
+        raw = RawTranscript(
+            content_id=ContentId("vidraw001"),
             channel_name=ChannelName("Canal Teste"),
-            title="Video 1",
-            body="Conteúdo 1",
+            title="Video Raw",
+            body="Raw spoken text with verbal noise.",
         )
-        t2 = RawTranscript(
-            content_id=ContentId("vid22222222"),
-            channel_name=ChannelName("Canal Teste"),
-            title="Video 2",
-            body="Conteúdo 2",
-        )
-        vault.save_raw_transcript(t1)
-        vault.save_raw_transcript(t2)
-
-        # Index channel
-        entries = use_case.index_channel(ChannelName("Canal Teste"))
-        assert len(entries) == 2
-        assert entries[0].key_concept == "Conceito Um"
-        assert entries[1].key_concept == "Conceito Dois"
-
-        # Calling again should skip already indexed
-        entries_again = use_case.index_channel(ChannelName("Canal Teste"))
-        assert len(entries_again) == 0
+        with pytest.raises(
+            DomainValidationError,
+            match="IndexRawTranscriptsUseCase strictly requires FluidTranscript",
+        ):
+            use_case.execute(raw)
 
     def test_self_healing_rewrite_loop_triggered_when_forbidden_prefix_returned(self) -> None:
         """Verify that when LLM returns forbidden prefix on concepts, a rewrite is requested."""
@@ -273,14 +240,14 @@ class TestIndexRawTranscriptsUseCase:
             max_rewrites=3,
         )
 
-        transcript = RawTranscript(
+        transcript = FluidTranscript(
             content_id=ContentId("vid44444444"),
             channel_name=ChannelName("Political Theory"),
             title="Vilfredo Pareto and Elites",
             body="A teoria sociológica de Vilfredo Pareto...",
         )
 
-        entry = use_case.index_single_transcript(transcript)
+        entry = use_case.execute(transcript)
 
         assert entry is not None
         assert entry.key_concept == "Circulação de Elites, Teoria das Elites"
@@ -319,14 +286,14 @@ class TestIndexRawTranscriptsUseCase:
             max_rewrites=2,
         )
 
-        transcript = RawTranscript(
+        transcript = FluidTranscript(
             content_id=ContentId("vid55555555"),
             channel_name=ChannelName("Theory"),
             title="Theoretical Notes",
             body="Conteúdo...",
         )
 
-        entry = use_case.index_single_transcript(transcript)
+        entry = use_case.execute(transcript)
 
         assert entry is not None
         # Defensively cleaned even though rewrite loop exhausted
@@ -365,14 +332,14 @@ class TestIndexRawTranscriptsUseCase:
             max_rewrites=2,
         )
 
-        transcript = RawTranscript(
+        transcript = FluidTranscript(
             content_id=ContentId("vid77777777"),
             channel_name=ChannelName("Philosophy"),
             title="Concept Analysis",
             body="Detailed text on philosophy...",
         )
 
-        entry = use_case.index_single_transcript(transcript)
+        entry = use_case.execute(transcript)
 
         assert entry is not None
         assert entry.key_concept == "Conceito Fiel"
@@ -410,14 +377,14 @@ class TestIndexRawTranscriptsUseCase:
             max_rewrites=2,
         )
 
-        transcript = RawTranscript(
+        transcript = FluidTranscript(
             content_id=ContentId("vid88888888"),
             channel_name=ChannelName("Sociology"),
             title="Social Dynamics",
             body="Sociology transcript body...",
         )
 
-        entry = use_case.index_single_transcript(transcript)
+        entry = use_case.execute(transcript)
 
         assert entry is not None
         assert entry.key_concept == "Conceito Conexo, Teoria Central"
@@ -455,14 +422,14 @@ class TestIndexRawTranscriptsUseCase:
             max_rewrites=2,
         )
 
-        transcript = RawTranscript(
+        transcript = FluidTranscript(
             content_id=ContentId("vid99999999"),
             channel_name=ChannelName("Political Theory"),
             title="Pareto Dynamics",
             body="Sociological dynamics...",
         )
 
-        entry = use_case.index_single_transcript(transcript)
+        entry = use_case.execute(transcript)
 
         assert entry is not None
         assert entry.key_concept == "Conceito Sólido"
@@ -499,14 +466,14 @@ class TestIndexRawTranscriptsUseCase:
             max_rewrites=2,
         )
 
-        transcript = RawTranscript(
+        transcript = FluidTranscript(
             content_id=ContentId("vidsize123"),
             channel_name=ChannelName("General"),
             title="Size Validation Test",
             body="Body content...",
         )
 
-        entry = use_case.index_single_transcript(transcript)
+        entry = use_case.execute(transcript)
 
         assert entry is not None
         assert entry.synthesis == _SAMPLE_VALID_SYNTHESIS
@@ -546,14 +513,14 @@ class TestIndexRawTranscriptsUseCase:
             max_rewrites=0,  # Unbounded / infinite loop mode
         )
 
-        transcript = RawTranscript(
+        transcript = FluidTranscript(
             content_id=ContentId("vidinfinite"),
             channel_name=ChannelName("Perseverance"),
             title="Infinite Retries",
             body="Infinite attempt body...",
         )
 
-        entry = use_case.index_single_transcript(transcript)
+        entry = use_case.execute(transcript)
 
         assert entry is not None
         assert entry.key_concept == "Conceito Central"
@@ -610,14 +577,14 @@ class TestIndexRawTranscriptsUseCase:
             language="Português do Brasil",
         )
 
-        transcript = RawTranscript(
+        transcript = FluidTranscript(
             content_id=ContentId("vid66666666"),
             channel_name=ChannelName("Science"),
             title="Physics",
             body="Physics transcript...",
         )
 
-        entry = use_case.index_single_transcript(transcript)
+        entry = use_case.execute(transcript)
 
         assert entry is not None
         assert mock_llm.transform.call_count == 6

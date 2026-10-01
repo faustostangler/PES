@@ -242,7 +242,7 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
                 with self._whisper_semaphore:
                     model = whisper.load_model(whisper_model)
                     transcription_result = model.transcribe(str(audio_file))
-                    body = str(transcription_result.get("text", "")).strip()
+                    body = transcription_result.get("text", "").strip()
             except Exception as exc:
                 raise CresmoInfrastructureError(f"Whisper transcription failed: {exc}") from exc
 
@@ -363,8 +363,8 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         """
         start_time = time.perf_counter()
         status = "success"
-        channel_for_metrics = "Unknown_Channel"
-        channel_id_for_metrics = ""
+        channel_name = "Unknown_Channel"
+        channel_id = ""
 
         try:
             info = self._fetch_video_metadata(video_url)
@@ -379,7 +379,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
                 whisper_model=whisper_model,
                 keep_audio=keep_audio,
             )
-            channel_for_metrics = channel_name
 
             transcript, ch_id = self._build_raw_transcript_aggregate(
                 video_url=video_url,
@@ -388,7 +387,7 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
                 channel_name=channel_name,
             )
             if ch_id:
-                channel_id_for_metrics = ch_id.value
+                channel_id = ch_id.value
             return transcript
         except Exception:
             status = "failure"
@@ -399,8 +398,8 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
                 "cresmo_media_ingestion_duration_seconds",
                 elapsed,
                 labels={
-                    "channel_id": channel_id_for_metrics,
-                    "channel_name": channel_for_metrics,
+                    "channel_id": channel_id,
+                    "channel_name": channel_name,
                     "modality": "url",
                     "status": status,
                 },

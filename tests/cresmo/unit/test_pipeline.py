@@ -9,13 +9,14 @@ Tests run_for_video, run_for_text_file, and run_for_manifest.
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Any
 from unittest.mock import MagicMock
 
 import pytest
 
 from cresmo.application.pipeline import CresmoPipeline, PipelineResult
 from cresmo.application.ports import PromptProviderPort
-from cresmo.domain.entities import EnrichedCompendium, RawTranscript
+from cresmo.domain.entities import EnrichedCompendium, FluidTranscript, RawTranscript
 from cresmo.domain.exceptions import CresmoDomainError
 from cresmo.domain.value_objects import ChannelName, ContentId, NoteTitle, RawIndexEntry
 from tests.doubles.mock_adapters import (
@@ -231,12 +232,12 @@ class TestCresmoPipelineOrchestration:
 
         res = pipeline.run_for_video("https://youtube.com/watch?v=dQw4w9WgXcQ")
         assert res.success is True
-        # All calls share the unified video session_id (6 indexing + 4 downstream synthesis)
+        # All calls share the unified video session_id (1 fluid prose + 6 indexing + 4 downstream synthesis = 11)
         video_session_calls = [
             c for c in llm.call_history if c.get("session_id") == "Political Theory:dQw4w9WgXcQ"
         ]
-        assert len(video_session_calls) == 10
-        # Fluid prose and expansion were skipped because compendium was pre-saved
+        assert len(video_session_calls) == 11
+        # Gap filler and expansion were skipped because compendium was pre-saved
         assert not any("_gap_fill_pass_" in c.get("trace_id", "") for c in video_session_calls)
         assert not any("_longitudinal" in c.get("trace_id", "") for c in video_session_calls)
 
@@ -763,10 +764,14 @@ class TestCresmoPipelineOrchestration:
 
         indexing_executed = False
 
-        def spy_index_execute(raw: RawTranscript) -> RawIndexEntry | None:
+        def spy_index_execute(
+            transcript: FluidTranscript,
+            force: bool = False,
+            user: Any = None,
+        ) -> RawIndexEntry | None:
             nonlocal indexing_executed
             indexing_executed = True
-            return pipeline.index_raw.execute(raw)
+            return pipeline.index_raw.execute(transcript, force=force, user=user)
 
         pipeline.index_raw.execute = spy_index_execute  # type: ignore[assignment,method-assign]
         res = pipeline.execute(raw=canned_raw, force_reprocess=False)
@@ -790,7 +795,11 @@ class TestCresmoPipelineOrchestration:
             vault_port=vault,
         )
 
-        def failing_index_execute(raw: RawTranscript) -> RawIndexEntry | None:
+        def failing_index_execute(
+            transcript: FluidTranscript,
+            force: bool = False,
+            user: Any = None,
+        ) -> RawIndexEntry | None:
             raise RuntimeError("Disk write failed during raw indexing")
 
         pipeline.index_raw.execute = failing_index_execute  # type: ignore[assignment,method-assign]
@@ -798,4 +807,5 @@ class TestCresmoPipelineOrchestration:
 
         assert res.success is True
         assert res.index_entry is None
+        assert res.fluid_transcript is not None
         assert res.compendium is not None

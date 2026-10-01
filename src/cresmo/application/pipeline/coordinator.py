@@ -20,9 +20,7 @@ Conforms to:
 from __future__ import annotations
 
 import logging
-from collections.abc import Callable, Sequence
 from pathlib import Path
-from typing import Literal, TypeVar, overload
 
 from cresmo.application.pipeline.models import PipelineResult
 from cresmo.application.pipeline.stage_runner import PipelineStageRunner
@@ -47,7 +45,6 @@ from cresmo.application.ports import (
 )
 from cresmo.application.use_cases import (
     ConcatMasterUseCase,
-    DeduplicationReport,
     DiscoverAtomicInventoryUseCase,
     ExpandCompendiumUseCase,
     FillGapsUseCase,
@@ -55,29 +52,22 @@ from cresmo.application.use_cases import (
     IngestRawTranscriptUseCase,
     ReconcileMOCsUseCase,
     SynthesizeAtomicBatchUseCase,
+    TransformFluidProseUseCase,
     UnifyDuplicateNotesUseCase,
 )
 from cresmo.domain.entities import (
-    AtomicNote,
     ChannelTenantId,
-    MapOfContent,
     PipelineSessionId,
     RawTranscript,
     UserIdentity,
 )
 from cresmo.domain.exceptions import CresmoDomainError
 from cresmo.domain.value_objects import (
-    AtomicEntityInventory,
-    ChannelId,
-    ChannelName,
-    ContentId,
     RawIndexEntry,
     is_processable_transcript_file,
 )
 
 logger = logging.getLogger(__name__)
-
-_StageRet = TypeVar("_StageRet")
 
 
 class CresmoPipeline:
@@ -126,6 +116,13 @@ class CresmoPipeline:
         self.ingest_raw_transcript = IngestRawTranscriptUseCase(
             ingestion_port=self.media_ingestion_port,
             vault_port=self.vault_port,
+        )
+
+        self.transform_fluid_prose = TransformFluidProseUseCase(
+            llm_synthesis_port=self.llm_synthesis_port,
+            vault_port=self.vault_port,
+            prompt_provider=self.prompt_provider,
+            temperature=self.settings.llm_temperature,
         )
 
         self.index_raw = IndexRawTranscriptsUseCase(
@@ -188,78 +185,6 @@ class CresmoPipeline:
         if self.llm_synthesis_port is not self.llm_indexing_port:
             self.llm_synthesis_port.warmup(timeout_seconds=timeout_seconds)
 
-    @overload
-    def _run_stage(
-        self,
-        stage_name: str,
-        fn: Callable[[], _StageRet],
-        *,
-        channel_name: ChannelName,
-        content_id: ContentId,
-        channel_id: ChannelId | None = ...,
-        fatal: Literal[True] = ...,
-        fallback: _StageRet | None = ...,
-    ) -> _StageRet: ...
-
-    @overload
-    def _run_stage(
-        self,
-        stage_name: str,
-        fn: Callable[[], _StageRet],
-        *,
-        channel_name: ChannelName,
-        content_id: ContentId,
-        channel_id: ChannelId | None = ...,
-        fatal: Literal[False],
-        fallback: _StageRet | None = ...,
-    ) -> _StageRet | None: ...
-
-    def _run_stage(
-        self,
-        stage_name: str,
-        fn: Callable[[], _StageRet],
-        *,
-        channel_name: ChannelName,
-        content_id: ContentId,
-        channel_id: ChannelId | None = None,
-        fatal: bool = True,
-        fallback: _StageRet | None = None,
-    ) -> _StageRet | None:
-        return self.stage_runner.run_stage(
-            stage_name,
-            fn,
-            channel_name=channel_name,
-            content_id=content_id,
-            channel_id=channel_id,
-            fatal=fatal,
-            fallback=fallback,
-        )
-
-    def _record_session_completion(
-        self,
-        session_id: PipelineSessionId,
-        content_id: ContentId,
-        channel_name: ChannelName,
-        synthesized_notes: Sequence[AtomicNote],
-        inventory: AtomicEntityInventory,
-        mocs: Sequence[MapOfContent],
-        dedup_report: DeduplicationReport,
-        channel_id: ChannelId | None = None,
-    ) -> None:
-        self.stage_runner.record_session_completion(
-            session_id=session_id,
-            content_id=content_id,
-            channel_name=channel_name,
-            synthesized_notes=synthesized_notes,
-            inventory=inventory,
-            mocs=mocs,
-            dedup_report=dedup_report,
-            channel_id=channel_id,
-        )
-
-    def _load_transcript_from_file(self, file_path: Path) -> RawTranscript:
-        return load_transcript_from_file(file_path)
-
     def execute(
         self,
         raw: RawTranscript,
@@ -304,10 +229,18 @@ class CresmoPipeline:
             if early_result := self._check_idempotent_exit(raw, entry, force_reprocess):
                 return early_result
 
+            fluid_transcript = self.stage_runner.run_stage(
+                "fluid_prose",
+                lambda: self.transform_fluid_prose.execute(raw, user=user_identity),
+                channel_name=channel_name,
+                content_id=content_id,
+                channel_id=raw.channel_id,
+            )
+
             if entry is None:
-                entry = self._run_stage(
+                entry = self.stage_runner.run_stage(
                     "raw_indexing",
-                    lambda: self.index_raw.execute(raw, user=user_identity),
+                    lambda: self.index_raw.execute(fluid_transcript, user=user_identity),
                     channel_name=channel_name,
                     content_id=content_id,
                     channel_id=raw.channel_id,
@@ -316,10 +249,10 @@ class CresmoPipeline:
 
             expanded_compendium = self.vault_port.get_enriched_compendium(content_id)
             if expanded_compendium is None:
-                fluid_compendium = self._run_stage(
-                    "fluid_prose",
+                enriched_compendium = self.stage_runner.run_stage(
+                    "gap_filler",
                     lambda: self.fill_gaps.execute(
-                        raw_transcript=raw,
+                        fluid_transcript=fluid_transcript,
                         passes=gap_filler_passes,
                         user=user_identity,
                     ),
@@ -327,10 +260,10 @@ class CresmoPipeline:
                     content_id=content_id,
                     channel_id=raw.channel_id,
                 )
-                expanded_compendium = self._run_stage(
+                expanded_compendium = self.stage_runner.run_stage(
                     "expansion",
                     lambda: self.expand_compendium.execute(
-                        compendium=fluid_compendium,
+                        compendium=enriched_compendium,
                         user=user_identity,
                     ),
                     channel_name=channel_name,
@@ -338,7 +271,7 @@ class CresmoPipeline:
                     channel_id=raw.channel_id,
                 )
 
-            inventory = self._run_stage(
+            inventory = self.stage_runner.run_stage(
                 "inventory",
                 lambda: self.discover_atomic_inventory.execute(
                     compendium=expanded_compendium,
@@ -349,7 +282,7 @@ class CresmoPipeline:
                 channel_id=raw.channel_id,
             )
 
-            synthesized_notes = self._run_stage(
+            synthesized_notes = self.stage_runner.run_stage(
                 "atomic_batch",
                 lambda: self.synthesize_atomic_batch.execute(
                     inventory=inventory,
@@ -361,7 +294,7 @@ class CresmoPipeline:
                 channel_id=raw.channel_id,
             )
 
-            mocs = self._run_stage(
+            mocs = self.stage_runner.run_stage(
                 "mocs",
                 lambda: self.reconcile_mocs.execute(
                     session_id=session_id,
@@ -372,7 +305,7 @@ class CresmoPipeline:
                 channel_id=raw.channel_id,
             )
 
-            dedup_report = self._run_stage(
+            dedup_report = self.stage_runner.run_stage(
                 "duplicate_unification",
                 lambda: self.unify_duplicate_notes.execute(),
                 channel_name=channel_name,
@@ -383,7 +316,7 @@ class CresmoPipeline:
             if self.ledger_port:
                 self.ledger_port.mark_processed(content_id)
 
-            self._record_session_completion(
+            self.stage_runner.record_session_completion(
                 session_id=session_id,
                 content_id=content_id,
                 channel_name=channel_name,
@@ -398,6 +331,7 @@ class CresmoPipeline:
                 content_id=content_id,
                 success=True,
                 raw_transcript=raw,
+                fluid_transcript=fluid_transcript,
                 index_entry=entry,
                 compendium=expanded_compendium,
                 inventory=inventory,
@@ -474,7 +408,7 @@ class CresmoPipeline:
                 "and cannot be processed as a transcript."
             )
         self.warmup()
-        raw = self._load_transcript_from_file(file_path)
+        raw = load_transcript_from_file(file_path)
         ensure_raw_saved_in_vault(self.vault_port, file_path, raw)
 
         return self.execute(

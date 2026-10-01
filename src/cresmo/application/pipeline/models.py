@@ -8,6 +8,7 @@ from cresmo.application.use_cases import DeduplicationReport
 from cresmo.domain.entities import (
     AtomicNote,
     EnrichedCompendium,
+    FluidTranscript,
     MapOfContent,
     RawTranscript,
 )
@@ -45,6 +46,7 @@ class PipelineResult:
     synthesized_notes: tuple[AtomicNote, ...] = ()
     reconciled_mocs: tuple[MapOfContent, ...] = ()
     raw_transcript: RawTranscript | None = None
+    fluid_transcript: FluidTranscript | None = None
     index_entry: RawIndexEntry | None = None
     compendium: EnrichedCompendium | None = None
     inventory: AtomicEntityInventory | None = None

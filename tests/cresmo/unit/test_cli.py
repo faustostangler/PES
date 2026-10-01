@@ -6,6 +6,7 @@ process exit codes per SPEC-002 §4.1 & §4.2.
 
 from __future__ import annotations
 
+import argparse
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
@@ -29,18 +30,58 @@ from cresmo.domain.value_objects import (
 )
 from cresmo.infrastructure.config import CresmoSettings
 from cresmo.presentation.cli import (
+    COMMAND_MODULES,
     EXIT_CONFIG_OR_USAGE_ERROR,
     EXIT_DOMAIN_VALIDATION_ERROR,
     EXIT_INGESTION_ERROR,
     EXIT_INTERNAL_ERROR,
     EXIT_RATE_LIMIT_EXCEEDED,
     EXIT_SUCCESS,
+    _create_parser,
     main,
 )
 
 
 class TestCresmoCLI:
     """Hermetic unit tests for CLI entrypoint and exit codes."""
+
+    def test_all_command_modules_comply_with_command_module_protocol(self) -> None:
+        """Verify that every module in COMMAND_MODULES satisfies CommandModule protocol."""
+        for mod in COMMAND_MODULES:
+            assert hasattr(mod, "register_subparser"), (
+                f"Module {mod.__name__} in COMMAND_MODULES does not have 'register_subparser'"
+            )
+            assert callable(mod.register_subparser), (
+                f"'register_subparser' in {mod.__name__} is not callable"
+            )
+
+    def test_dynamic_subcommand_registration_parity(self) -> None:
+        """Verify that _create_parser dynamically registers subcommands without hardcoding."""
+        parser = _create_parser()
+        subparsers_action = next(
+            (
+                action
+                for action in parser._actions
+                if isinstance(action, argparse._SubParsersAction)
+            ),
+            None,
+        )
+        assert subparsers_action is not None, "Root parser must contain a SubParsersAction"
+        registered_commands = set(subparsers_action.choices.keys())
+
+        # Ensure core expected subcommands are all registered dynamically
+        expected_commands = {
+            "run",
+            "check-config",
+            "sync",
+            "worker",
+            "dedupe",
+            "export-cookies",
+            "concat-master",
+            "seed-prompts",
+        }
+        assert registered_commands == expected_commands
+        assert len(registered_commands) == len(COMMAND_MODULES)
 
     def test_cli_no_args_defaults_to_run_batch(self) -> None:
         with (
@@ -1355,63 +1396,3 @@ class TestCresmoCLI:
         ):
             code = main(["concat-master"])
             assert code == EXIT_INTERNAL_ERROR
-
-    def test_cli_index_raw_all_channels(self) -> None:
-        mock_uc = MagicMock()
-        mock_uc.index_all_channels.return_value = {"Canal 1": [MagicMock()]}
-        with patch(
-            "cresmo.presentation.commands.index_raw.build_index_raw_use_case",
-            return_value=mock_uc,
-        ) as mock_builder:
-            code = main(["index-raw"])
-            assert code == EXIT_SUCCESS
-            mock_builder.assert_called_once()
-            mock_uc.index_all_channels.assert_called_once_with(force=False)
-
-    def test_cli_index_raw_specific_channel_with_flags(self) -> None:
-        mock_uc = MagicMock()
-        mock_uc.index_channel.return_value = [MagicMock()]
-        with patch(
-            "cresmo.presentation.commands.index_raw.build_index_raw_use_case",
-            return_value=mock_uc,
-        ) as mock_builder:
-            code = main(
-                [
-                    "index-raw",
-                    "--channel",
-                    "Canal Teste",
-                    "--web-index",
-                    "--model",
-                    "custom-model",
-                    "--force",
-                ]
-            )
-            assert code == EXIT_SUCCESS
-            mock_builder.assert_called_once()
-            assert mock_builder.call_args[1]["web_index"] is True
-            assert mock_builder.call_args[1]["model_override"] == "custom-model"
-            mock_uc.index_channel.assert_called_once_with("Canal Teste", force=True)
-
-    def test_cli_index_raw_error_handling(self) -> None:
-        with patch(
-            "cresmo.presentation.commands.index_raw.build_index_raw_use_case",
-            side_effect=RuntimeError("Ollama failed"),
-        ):
-            code = main(["index-raw"])
-            assert code == EXIT_INTERNAL_ERROR
-
-    def test_cli_index_raw_ollama_probe_failure_exits_config_error(
-        self, capsys: pytest.CaptureFixture[str]
-    ) -> None:
-        mock_checker = MagicMock()
-        mock_checker.check_ollama_probe.return_value = False
-
-        with patch(
-            "cresmo.presentation.commands.index_raw.build_preflight_checker",
-            return_value=mock_checker,
-        ):
-            code = main(["index-raw"])
-            assert code == EXIT_CONFIG_OR_USAGE_ERROR
-            captured = capsys.readouterr()
-            assert "unreachable" in captured.err
-            assert "ollama serve" in captured.err

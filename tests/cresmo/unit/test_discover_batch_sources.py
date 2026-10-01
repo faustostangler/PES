@@ -16,6 +16,7 @@ from cresmo.application.use_cases.discover_batch_sources import (
     BatchDiscoveryQuery,
     BatchSource,
     DiscoverBatchSourcesUseCase,
+    LakeScannerService,
     _BatchSourceAccumulator,
     extract_raw_file_metadata,
     is_channel_or_playlist_feed,
@@ -550,18 +551,16 @@ class TestDiscoverBatchSourcesUseCase:
         assert acc.has_seen("lecture_notes") is True
 
     def test_scan_raw_lake_edge_cases(self, tmp_path: Path) -> None:
-        use_case = DiscoverBatchSourcesUseCase(
-            media_ingestion_port=MagicMock(),
-            settings=CresmoSettings(_env_file=None),
-        )
         acc = _BatchSourceAccumulator()
 
         # Non-directory / invalid path inputs
-        assert use_case._scan_raw_lake(None, scan_raw=True, acc=acc) == {}
-        assert use_case._scan_raw_lake(tmp_path / "not_a_dir", scan_raw=True, acc=acc) == {}
+        assert LakeScannerService.scan_raw_lake(None, scan_raw=True, acc=acc) == {}
+        assert (
+            LakeScannerService.scan_raw_lake(tmp_path / "not_a_dir", scan_raw=True, acc=acc) == {}
+        )
         f = tmp_path / "file_not_dir.txt"
         f.write_text("hi", encoding="utf-8")
-        assert use_case._scan_raw_lake(f, scan_raw=True, acc=acc) == {}
+        assert LakeScannerService.scan_raw_lake(f, scan_raw=True, acc=acc) == {}
 
         # Directory with files
         raw_dir = tmp_path / "raw_lake_tests"
@@ -581,7 +580,7 @@ class TestDiscoverBatchSourcesUseCase:
 
         # scan_raw = False: registers channels in dict, but does NOT add to acc.sources
         acc_no_scan = _BatchSourceAccumulator()
-        chan_map = use_case._scan_raw_lake(raw_dir, scan_raw=False, acc=acc_no_scan)
+        chan_map = LakeScannerService.scan_raw_lake(raw_dir, scan_raw=False, acc=acc_no_scan)
         assert chan_map["explicit_vid_456"] == "https://youtube.com/@ChannelOne"
         assert chan_map["vid_with_front"] == "https://youtube.com/@ChannelOne"
         assert chan_map["vid_without_front_id"] == "https://youtube.com/@ChannelTwo"
@@ -589,7 +588,7 @@ class TestDiscoverBatchSourcesUseCase:
 
         # scan_raw = True: adds to acc.sources and registers seen_vids
         acc_scan = _BatchSourceAccumulator()
-        use_case._scan_raw_lake(raw_dir, scan_raw=True, acc=acc_scan)
+        LakeScannerService.scan_raw_lake(raw_dir, scan_raw=True, acc=acc_scan)
         assert len(acc_scan.sources) == 3
         assert acc_scan.has_seen("vid_with_front") is True
         assert acc_scan.has_seen("explicit_vid_456") is True
@@ -598,7 +597,7 @@ class TestDiscoverBatchSourcesUseCase:
         # Pre-seen file is skipped
         acc_pre = _BatchSourceAccumulator()
         acc_pre.seen_vids.add("explicit_vid_456")
-        use_case._scan_raw_lake(raw_dir, scan_raw=True, acc=acc_pre)
+        LakeScannerService.scan_raw_lake(raw_dir, scan_raw=True, acc=acc_pre)
         assert not any("vid_with_front" in s.target for s in acc_pre.sources)
 
     def test_load_transcript_files_ignores_system_artifacts_and_indices(
@@ -664,12 +663,8 @@ class TestDiscoverBatchSourcesUseCase:
         (ch_dir / "_canal.md").write_text("---\n# Catalog\n---\nEntries", encoding="utf-8")
         (raw_dir / "brain.csv").write_text("channel,title\n", encoding="utf-8")
 
-        use_case = DiscoverBatchSourcesUseCase(
-            media_ingestion_port=MagicMock(),
-            settings=CresmoSettings(_env_file=None),
-        )
         acc = _BatchSourceAccumulator()
-        use_case._scan_raw_lake(raw_dir, scan_raw=True, acc=acc)
+        LakeScannerService.scan_raw_lake(raw_dir, scan_raw=True, acc=acc)
 
         assert "_canal" not in acc.seen_vids
         assert not any("_canal.md" in s.target for s in acc.sources)
@@ -677,10 +672,6 @@ class TestDiscoverBatchSourcesUseCase:
         assert "video123.md" in acc.sources[0].target
 
     def test_classify_seeds_deduplication_and_routing(self, tmp_path: Path) -> None:
-        use_case = DiscoverBatchSourcesUseCase(
-            media_ingestion_port=MagicMock(),
-            settings=CresmoSettings(_env_file=None),
-        )
         acc = _BatchSourceAccumulator()
         acc.seen_vids.add("already_seen_vid123")
 
@@ -701,7 +692,7 @@ class TestDiscoverBatchSourcesUseCase:
             "knownLocalVid": "https://www.youtube.com/@KnownLocalChan",
         }
 
-        channels_to_probe, remote_videos, _probed_channels = use_case._classify_seeds(
+        channels_to_probe, remote_videos, _probed_channels = LakeScannerService.classify_seeds(
             manifest, local_video_channel_map, acc
         )
 
@@ -759,7 +750,7 @@ class TestDiscoverBatchSourcesUseCase:
         ]
 
         # Test bare URL format prepending https://
-        urls = use_case._probe_single_channel_feed(
+        urls = use_case._crawler_service.probe_single_channel_feed(
             chan_url="youtube.com/@barechannel",
             lookback_days=7,
             max_videos=25,
@@ -844,13 +835,13 @@ class TestDiscoverBatchSourcesUseCase:
         # Test empty videos list returns immediately
         channels_to_probe: list[str] = []
         probed_channels: set[str] = set()
-        use_case._resolve_remote_channels(
+        use_case._crawler_service.resolve_remote_channels(
             [], workers=4, probed_channels=probed_channels, channels_to_probe=channels_to_probe
         )
         assert channels_to_probe == []
 
         # Test resolve with 2 videos
-        use_case._resolve_remote_channels(
+        use_case._crawler_service.resolve_remote_channels(
             ["https://yt.com/watch?v=v1", "https://yt.com/watch?v=v2"],
             workers=4,
             probed_channels=probed_channels,
@@ -860,11 +851,13 @@ class TestDiscoverBatchSourcesUseCase:
 
         # Test probe feeds with empty channels returns immediately
         acc = _BatchSourceAccumulator()
-        use_case._probe_channel_feeds([], lookback_days=7, max_videos=10, workers=2, acc=acc)
+        use_case._crawler_service.probe_channel_feeds(
+            [], lookback_days=7, max_videos=10, workers=2, acc=acc
+        )
         assert len(acc.sources) == 0
 
         # Test probe feeds populates acc and handles items without standard video ID
-        use_case._probe_channel_feeds(
+        use_case._crawler_service.probe_channel_feeds(
             ["https://youtube.com/@ResolvedChan"],
             lookback_days=7,
             max_videos=10,

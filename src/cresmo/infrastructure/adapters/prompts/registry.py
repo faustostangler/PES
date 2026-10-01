@@ -34,16 +34,22 @@ class PromptMetadata:
 
 
 PROMPT_REGISTRY: dict[PromptKey, PromptMetadata] = {
+    PromptKey.FLUID_PROSE: PromptMetadata(
+        key=PromptKey.FLUID_PROSE,
+        langfuse_name="cresmo-fluid-prose",
+        skill_name="cresmo-fluid-prose",
+        description="Transform raw transcript into clean, continuous fluid prose in third-person neutral narrative with verified NER spelling.",
+    ),
     PromptKey.GAP_FILLER_PASS1: PromptMetadata(
         key=PromptKey.GAP_FILLER_PASS1,
         langfuse_name="cresmo-gap-filler-pass1",
-        skill_name="cresmo-expander",
-        description="Pass 1 Socratic gap filling and transcript detranscription into fluid prose.",
+        skill_name="cresmo-gap-filler",
+        description="Pass 1 Socratic gap filling and epistemic causal stratification into enriched compendium.",
     ),
     PromptKey.GAP_FILLER_PASS_SUBSEQUENT: PromptMetadata(
         key=PromptKey.GAP_FILLER_PASS_SUBSEQUENT,
         langfuse_name="cresmo-gap-filler-pass2",
-        skill_name="cresmo-expander",
+        skill_name="cresmo-gap-filler",
         description="Subsequent passes Socratic densification and epistemic enrichment.",
     ),
     PromptKey.LONG_EXPANDER: PromptMetadata(

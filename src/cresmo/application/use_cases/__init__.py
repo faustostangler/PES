@@ -34,6 +34,9 @@ from cresmo.application.use_cases.sync_channel import SyncChannelUseCase
 from cresmo.application.use_cases.synthesize_atomic_batch import (
     SynthesizeAtomicBatchUseCase,
 )
+from cresmo.application.use_cases.transform_fluid_prose import (
+    TransformFluidProseUseCase,
+)
 from cresmo.application.use_cases.unify_duplicate_notes import (
     DeduplicationReport,
     DuplicateCluster,
@@ -55,6 +58,7 @@ __all__ = [
     "ReconcileMOCsUseCase",
     "SyncChannelUseCase",
     "SynthesizeAtomicBatchUseCase",
+    "TransformFluidProseUseCase",
     "UnifyDuplicateNotesUseCase",
     "is_valid_inventory_json_structure",
 ]

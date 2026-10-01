@@ -15,7 +15,6 @@ Conforms to:
 from __future__ import annotations
 
 import logging
-from pathlib import Path
 
 from cresmo.application.ports import (
     LLMTransformationPort,
@@ -23,30 +22,29 @@ from cresmo.application.ports import (
     VaultRepositoryPort,
 )
 from cresmo.application.use_cases.indexing.distiller import LLMTranscriptDistiller
-from cresmo.domain.entities import RawTranscript, UserIdentity
+from cresmo.domain.entities import FluidTranscript, UserIdentity
+from cresmo.domain.exceptions import DomainValidationError
 from cresmo.domain.taxonomy import classify_channel
 from cresmo.domain.value_objects import (
-    ChannelId,
-    ChannelName,
-    ContentId,
     NoteTitle,
     RawIndexEntry,
-    is_processable_transcript_file,
 )
 
 logger = logging.getLogger(__name__)
 
 
 class IndexRawTranscriptsUseCase:
-    """Orchestrates paratactic conceptual indexing of raw media transcripts.
+    """Orchestrates paratactic conceptual indexing of media transcripts from clean fluid prose.
 
     Conforms to:
         - SPEC-001: Core Knowledge Synthesis Specifications (Incremental Indexing)
+        - SPEC-011: Fluid Prose Detranscription and Gap Filler Decoupling
         - ADR-001: Modular Monolith Domain Integrity
         - ADR-011: Zero Hardcoded Tunables and Self-Healing Output Validation
+        - ADR-028: Strict Rejection of Standalone Raw Indexing & Universal FluidTranscript Contract
 
     Attributes:
-        vault_port: Repository port for reading raw transcripts and appending indexes.
+        vault_port: Repository port for reading transcripts and appending indexes.
         llm_indexing_port: LLM transformation port for key concept and synthesis extraction.
         prompt_provider: Provider port supplying indexing prompt templates.
         max_chars: Maximum character limit from transcript body fed into LLM prompt (0 = full text).
@@ -103,72 +101,21 @@ class IndexRawTranscriptsUseCase:
         """Trigger warmup on the underlying indexing LLM port (ADR-019: direct contract call)."""
         self.llm_indexing_port.warmup(timeout_seconds=timeout_seconds)
 
-    def _extract_concepts(
-        self,
-        video_id: ContentId,
-        title: str,
-        text: str,
-        channel_name: ChannelName,
-        channel_id: ChannelId | None = None,
-        user: UserIdentity | None = None,
-    ) -> str:
-        return self._distiller.extract_concepts(
-            video_id=video_id,
-            title=title,
-            text=text,
-            channel_name=channel_name,
-            channel_id=channel_id,
-            user=user,
-        )
-
-    def _extract_summary(
-        self,
-        video_id: ContentId,
-        title: str,
-        text: str,
-        channel_name: ChannelName,
-        channel_id: ChannelId | None = None,
-        user: UserIdentity | None = None,
-    ) -> str:
-        return self._distiller.extract_summary(
-            video_id=video_id,
-            title=title,
-            text=text,
-            channel_name=channel_name,
-            channel_id=channel_id,
-            user=user,
-        )
-
-    def _extract_synthesis(
-        self,
-        video_id: ContentId,
-        title: str,
-        excerpt: str,
-        summary: str,
-        channel_name: ChannelName,
-        channel_id: ChannelId | None = None,
-        user: UserIdentity | None = None,
-    ) -> str:
-        return self._distiller.extract_synthesis(
-            video_id=video_id,
-            title=title,
-            excerpt=excerpt,
-            summary=summary,
-            channel_name=channel_name,
-            channel_id=channel_id,
-            user=user,
-        )
-
     def execute(
         self,
-        transcript: RawTranscript,
+        transcript: FluidTranscript,
         force: bool = False,
         user: UserIdentity | None = None,
     ) -> RawIndexEntry | None:
-        """Index a single raw transcript incrementally if not already indexed (Primary entrypoint).
+        """Index a single fluid transcript incrementally if not already indexed (Primary entrypoint).
 
-        Conforms to ADR-019 (execute() method convention unification) and ADR-027.
+        Conforms to ADR-028: strictly requires FluidTranscript input. Standalone raw indexing is rejected.
         """
+        if not isinstance(transcript, FluidTranscript):
+            raise DomainValidationError(
+                f"IndexRawTranscriptsUseCase strictly requires FluidTranscript, got: {type(transcript).__name__}"
+            )
+
         video_id = transcript.content_id
         channel_name = transcript.channel_name
 
@@ -195,7 +142,7 @@ class IndexRawTranscriptsUseCase:
             excerpt = excerpt[: self.max_chars]
 
         try:
-            concept = self._extract_concepts(
+            concept = self._distiller.extract_concepts(
                 video_id=video_id,
                 title=title,
                 text=excerpt,
@@ -203,7 +150,7 @@ class IndexRawTranscriptsUseCase:
                 channel_id=transcript.channel_id,
                 user=user,
             )
-            summary = self._extract_summary(
+            summary = self._distiller.extract_summary(
                 video_id=video_id,
                 title=title,
                 text=excerpt,
@@ -211,7 +158,7 @@ class IndexRawTranscriptsUseCase:
                 channel_id=transcript.channel_id,
                 user=user,
             )
-            synthesis = self._extract_synthesis(
+            synthesis = self._distiller.extract_synthesis(
                 video_id=video_id,
                 title=title,
                 excerpt=excerpt,
@@ -268,72 +215,3 @@ class IndexRawTranscriptsUseCase:
             concept,
         )
         return entry
-
-    def index_single_transcript(
-        self,
-        transcript: RawTranscript,
-        force: bool = False,
-    ) -> RawIndexEntry | None:
-        """Legacy alias delegating to execute() for backward compatibility."""
-        return self.execute(transcript=transcript, force=force)
-
-    def index_channel(self, channel_name: ChannelName, force: bool = False) -> list[RawIndexEntry]:
-        """Index all raw markdown transcripts under a channel folder.
-
-        Args:
-            channel_name: ChannelName Value Object representing the channel.
-            force: If True, forces re-indexing of previously indexed transcripts.
-
-        Returns:
-            List of newly created RawIndexEntry instances.
-        """
-        indexed_entries: list[RawIndexEntry] = []
-        raw_dir = getattr(self.vault_port, "raw_dir", None)
-        if raw_dir is None:
-            return indexed_entries
-
-        cn = ChannelName.from_string(channel_name)
-        ch_dir = Path(raw_dir) / cn.value
-        if not ch_dir.exists() or not ch_dir.is_dir():
-            return indexed_entries
-
-        for file_path in sorted(ch_dir.glob("*.md")):
-            # Skip system indexes, artifacts, and hidden files
-            if not is_processable_transcript_file(file_path):
-                continue
-
-            content_id = ContentId(file_path.stem)
-            transcript = self.vault_port.get_raw_transcript(content_id)
-            if transcript is not None:
-                entry = self.execute(transcript, force=force)
-                if entry is not None:
-                    indexed_entries.append(entry)
-
-        return indexed_entries
-
-    def index_all_channels(self, force: bool = False) -> dict[str, list[RawIndexEntry]]:
-        """Index all raw transcripts across all channels in the raw directory.
-
-        Args:
-            force: If True, forces re-indexing across all channels.
-
-        Returns:
-            Dictionary mapping channel names to lists of newly generated RawIndexEntry items.
-        """
-        self.warmup()
-        results: dict[str, list[RawIndexEntry]] = {}
-        raw_dir = getattr(self.vault_port, "raw_dir", None)
-        if raw_dir is None:
-            return results
-
-        raw_path = Path(raw_dir)
-        if not raw_path.exists():
-            return results
-
-        for sub_dir in sorted(raw_path.iterdir()):
-            if sub_dir.is_dir() and not sub_dir.name.startswith((".", "_")):
-                entries = self.index_channel(ChannelName(sub_dir.name), force=force)
-                if entries:
-                    results[sub_dir.name] = entries
-
-        return results

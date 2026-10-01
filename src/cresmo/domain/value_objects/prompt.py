@@ -8,6 +8,7 @@ from enum import StrEnum
 class PromptKey(StrEnum):
     """Canonical enumeration of all prompt template identifiers across Cresmo."""
 
+    FLUID_PROSE = "fluid_prose"
     GAP_FILLER_PASS1 = "gap_filler_pass1"
     GAP_FILLER_PASS_SUBSEQUENT = "gap_filler_pass_subsequent"
     LONG_EXPANDER = "long_expander"

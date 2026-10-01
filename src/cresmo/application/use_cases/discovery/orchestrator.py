@@ -17,7 +17,6 @@ import queue
 import threading
 from collections.abc import Callable, Iterator
 from dataclasses import dataclass
-from datetime import datetime
 from pathlib import Path
 
 from cresmo.application.ports import (
@@ -38,7 +37,6 @@ from cresmo.application.use_cases.discovery.models import (
 from cresmo.domain.value_objects import (
     ContentId,
     SourceModality,
-    SyncFilterCriteria,
     normalize_to_uploads_playlist_url,
 )
 
@@ -92,7 +90,7 @@ class DiscoverBatchSourcesUseCase:
             if q.priority_texts_dir is not None
             else getattr(self.settings, "priority_texts_dir", None)
         )
-        priority_text_channels = self._collect_priority_texts(
+        priority_text_channels = LakeScannerService.collect_priority_texts(
             priority_texts_dir, acc, q.filter_criteria
         )
 
@@ -101,15 +99,19 @@ class DiscoverBatchSourcesUseCase:
             if q.raw_dir is not None
             else getattr(self.settings, "raw_dir", Path("data/raw"))
         )
-        local_video_channel_map = self._scan_raw_lake(raw_dir, q.scan_raw, acc, q.filter_criteria)
+        local_video_channel_map = LakeScannerService.scan_raw_lake(
+            raw_dir, q.scan_raw, acc, q.filter_criteria
+        )
 
         playlist_priority_path = (
             q.playlist_priority_path
             if q.playlist_priority_path is not None
             else getattr(self.settings, "playlist_priority_path", None)
         )
-        priority_url_channels, unresolved_priority_video_seeds = self._collect_priority_urls(
-            playlist_priority_path, local_video_channel_map, acc, q.filter_criteria
+        priority_url_channels, unresolved_priority_video_seeds = (
+            LakeScannerService.collect_priority_urls(
+                playlist_priority_path, local_video_channel_map, acc, q.filter_criteria
+            )
         )
 
         priority_sources = list(acc.sources)
@@ -138,7 +140,7 @@ class DiscoverBatchSourcesUseCase:
         for src in state.priority_sources:
             yield src
         yielded_so_far = len(acc.sources)
-        self._classify_seeds(
+        LakeScannerService.classify_seeds(
             state.playlist_path, state.local_video_channel_map, acc, q.filter_criteria
         )
         for src in acc.sources[yielded_so_far:]:
@@ -161,7 +163,7 @@ class DiscoverBatchSourcesUseCase:
         lookback = q.lookback_days if q.lookback_days is not None else self.settings.days_lookback
 
         try:
-            channels_to_probe, remote_videos, probed_channels = self._classify_seeds(
+            channels_to_probe, remote_videos, probed_channels = LakeScannerService.classify_seeds(
                 state.playlist_path, state.local_video_channel_map, acc, q.filter_criteria
             )
 
@@ -178,7 +180,7 @@ class DiscoverBatchSourcesUseCase:
                 dict.fromkeys(state.unresolved_priority_video_seeds + remote_videos)
             )
             if all_remote_seeds:
-                self._resolve_remote_channels(
+                self._crawler_service.resolve_remote_channels(
                     all_remote_seeds,
                     workers,
                     probed_channels,
@@ -199,7 +201,7 @@ class DiscoverBatchSourcesUseCase:
 
             channels_to_probe = sorted(channels_to_probe, key=lambda c: c.lower())
 
-            self._probe_channel_feeds(
+            self._crawler_service.probe_channel_feeds(
                 channels_to_probe,
                 lookback,
                 q.channel_max_videos,
@@ -309,90 +311,3 @@ class DiscoverBatchSourcesUseCase:
                 cid = None
             sources.append(BatchSource(kind=SourceModality.URL, target=u, content_id=cid))
         return sources
-
-    def _collect_priority_texts(
-        self,
-        priority_texts_dir: Path | None,
-        acc: _BatchSourceAccumulator,
-        filter_criteria: SyncFilterCriteria | None = None,
-    ) -> list[str]:
-        return LakeScannerService.collect_priority_texts(priority_texts_dir, acc, filter_criteria)
-
-    def _collect_priority_urls(
-        self,
-        playlist_priority_path: Path | None,
-        local_video_channel_map: dict[str, str],
-        acc: _BatchSourceAccumulator,
-        filter_criteria: SyncFilterCriteria | None = None,
-    ) -> tuple[list[str], list[str]]:
-        return LakeScannerService.collect_priority_urls(
-            playlist_priority_path, local_video_channel_map, acc, filter_criteria
-        )
-
-    def _scan_raw_lake(
-        self,
-        raw_dir: Path | None,
-        scan_raw: bool,
-        acc: _BatchSourceAccumulator,
-        filter_criteria: SyncFilterCriteria | None = None,
-    ) -> dict[str, str]:
-        return LakeScannerService.scan_raw_lake(raw_dir, scan_raw, acc, filter_criteria)
-
-    def _classify_seeds(
-        self,
-        playlist_path: Path | None,
-        local_video_channel_map: dict[str, str],
-        acc: _BatchSourceAccumulator,
-        filter_criteria: SyncFilterCriteria | None = None,
-    ) -> tuple[list[str], list[str], set[str]]:
-        return LakeScannerService.classify_seeds(
-            playlist_path, local_video_channel_map, acc, filter_criteria
-        )
-
-    def _resolve_remote_channels(
-        self,
-        videos: list[str],
-        workers: int,
-        probed_channels: set[str],
-        channels_to_probe: list[str],
-        filter_criteria: SyncFilterCriteria | None = None,
-        stop_event: threading.Event | None = None,
-    ) -> None:
-        self._crawler_service.resolve_remote_channels(
-            videos=videos,
-            workers=workers,
-            probed_channels=probed_channels,
-            channels_to_probe=channels_to_probe,
-            filter_criteria=filter_criteria,
-            stop_event=stop_event,
-        )
-
-    def _probe_channel_feeds(
-        self,
-        channels: list[str],
-        lookback_days: int,
-        max_videos: int,
-        workers: int,
-        acc: _BatchSourceAccumulator,
-        filter_criteria: SyncFilterCriteria | None = None,
-        stop_event: threading.Event | None = None,
-    ) -> None:
-        self._crawler_service.probe_channel_feeds(
-            channels=channels,
-            lookback_days=lookback_days,
-            max_videos=max_videos,
-            workers=workers,
-            acc=acc,
-            filter_criteria=filter_criteria,
-            stop_event=stop_event,
-        )
-
-    def _probe_single_channel_feed(
-        self, chan_url: str, lookback_days: int, max_videos: int, cutoff: datetime
-    ) -> list[str]:
-        return self._crawler_service.probe_single_channel_feed(
-            chan_url=chan_url,
-            lookback_days=lookback_days,
-            max_videos=max_videos,
-            cutoff=cutoff,
-        )

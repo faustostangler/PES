@@ -275,13 +275,11 @@ def execute_batch_run(
     completed = 0
     skipped = 0
     failed = 0
-    total_items = 0
 
     total_count_suffix = f"/{len(sources)}" if isinstance(sources, Sized) else ""
 
     for source_index, source in enumerate(sources, 1):
-        total_items += 1
-        item_prefix = f"[{source_index}/{total_count_suffix}]"
+        item_prefix = f"[{source_index}{total_count_suffix}]"
         try:
             status = _process_single_batch_item(pipeline, source, args, item_prefix)
             if status == "completed":
@@ -292,6 +290,8 @@ def execute_batch_run(
                 failed += 1
         finally:
             _drain_telemetry_and_memory(pipeline)
+
+    total_items = completed + skipped + failed
 
     if total_items == 0:
         manifest_display = str(args.manifest) if args.manifest else "data/playlist.txt"

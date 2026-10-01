@@ -14,13 +14,13 @@ from __future__ import annotations
 import argparse
 import sys
 from collections.abc import Sequence
+from typing import Protocol
 
 from cresmo.presentation.commands import (
     check_config,
     concat_master,
     dedupe,
     export_cookies,
-    index_raw,
     run,
     seed_prompts,
     sync,
@@ -35,18 +35,29 @@ from cresmo.presentation.exit_codes import (
     EXIT_SUCCESS,
 )
 
+
+class CommandModule(Protocol):
+    """Structural protocol defining the contract for CLI subcommand modules."""
+
+    def register_subparser(self, subparsers: argparse._SubParsersAction) -> None:
+        """Register subcommand parser and default handler."""
+        ...
+
+
 __all__ = [
+    "COMMAND_MODULES",
     "EXIT_CONFIG_OR_USAGE_ERROR",
     "EXIT_DOMAIN_VALIDATION_ERROR",
     "EXIT_INGESTION_ERROR",
     "EXIT_INTERNAL_ERROR",
     "EXIT_RATE_LIMIT_EXCEEDED",
     "EXIT_SUCCESS",
+    "CommandModule",
     "_create_parser",
     "main",
 ]
 
-COMMAND_MODULES = (
+COMMAND_MODULES: tuple[CommandModule, ...] = (
     run,
     check_config,
     sync,
@@ -54,7 +65,6 @@ COMMAND_MODULES = (
     dedupe,
     export_cookies,
     concat_master,
-    index_raw,
     seed_prompts,
 )
 
@@ -94,25 +104,20 @@ def main(argv: Sequence[str] | None = None) -> int:
     else:
         argv = list(argv)
 
-    known_subcommands = {
-        "run",
-        "check-config",
-        "sync",
-        "worker",
-        "dedupe",
-        "export-cookies",
-        "concat-master",
-        "index-raw",
-        "seed-prompts",
-    }
+    parser = _create_parser()
+
+    # Dynamically extract registered subcommand choices from subparsers action
+    subparsers_action = next(
+        (action for action in parser._actions if isinstance(action, argparse._SubParsersAction)),
+        None,
+    )
+    known_subcommands = set(subparsers_action.choices.keys()) if subparsers_action else set()
 
     # Default implicit command routing to 'run' if no subcommand is supplied
     if not argv:
         argv = ["run"]
     elif argv[0] not in known_subcommands and not argv[0].startswith(("-h", "--help")):
         argv = ["run", *argv]
-
-    parser = _create_parser()
 
     try:
         args = parser.parse_args(argv)

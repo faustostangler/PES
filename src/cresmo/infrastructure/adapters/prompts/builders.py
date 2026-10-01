@@ -81,11 +81,43 @@ def build_judge_raw_index_synthesis(provider: Any, **context: Any) -> tuple[str,
     )
 
 
+def build_fluid_prose(provider: Any, **context: Any) -> tuple[str, str]:
+    key = PromptKey.FLUID_PROSE.value
+    entry = provider._templates.get(key, {})
+    task = entry.get("task", "")
+    skill_name = entry.get("skill_name", "cresmo-fluid-prose")
+    template = entry.get("template", "")
+    system_template = entry.get("system_instruction", "")
+    skill_block = provider._get_skill_block(skill_name)
+    channel_name = context.get("channel_name", "")
+    file_name = context.get("file_name", "")
+    raw_text = context.get("raw_text", "")
+    language = context.get("language", "Português do Brasil")
+
+    if not template and not system_template:
+        sys_inst = f"{task}\n\n{skill_block}".strip()
+        user_p = (
+            f"Source Channel: {channel_name}\n"
+            f"File: {file_name}\n\n"
+            f"Transcript:\n{raw_text}\n\n"
+            "Transform raw transcript into clean, continuous fluid prose in third-person neutral narrative without conversational noise."
+        )
+        return sys_inst, user_p
+
+    return provider._format_paired_prompt(
+        key,
+        channel_name=channel_name,
+        file_name=file_name,
+        raw_text=raw_text,
+        language=language,
+    )
+
+
 def build_gap_filler_pass1(provider: Any, **context: Any) -> tuple[str, str]:
     key = PromptKey.GAP_FILLER_PASS1.value
     entry = provider._templates.get(key, {})
     task = entry.get("task", "")
-    skill_name = entry.get("skill_name", "cresmo-expander")
+    skill_name = entry.get("skill_name", "cresmo-gap-filler")
     template = entry.get("template", "")
     system_template = entry.get("system_instruction", "")
     skill_block = provider._get_skill_block(skill_name)
@@ -295,6 +327,7 @@ def build_reconcile_mocs(provider: Any, **context: Any) -> tuple[str, str]:
 
 
 PROMPT_BUILDER_DISPATCH_MAP: dict[PromptKey, Any] = {
+    PromptKey.FLUID_PROSE: build_fluid_prose,
     PromptKey.GAP_FILLER_PASS1: build_gap_filler_pass1,
     PromptKey.GAP_FILLER_PASS_SUBSEQUENT: build_gap_filler_subsequent,
     PromptKey.LONG_EXPANDER: build_long_expander,

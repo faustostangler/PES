@@ -22,6 +22,7 @@ class TestPromptRegistry:
     def test_prompt_registry_contains_all_canonical_keys(self) -> None:
         """Verify that all 15 canonical PromptKey members are registered in PROMPT_REGISTRY."""
         expected_keys = {
+            "fluid_prose",
             "gap_filler_pass1",
             "gap_filler_pass_subsequent",
             "long_expander",
@@ -38,7 +39,7 @@ class TestPromptRegistry:
             "judge_raw_index_concepts",
             "judge_raw_index_synthesis",
         }
-        assert len(PromptKey) == 15
+        assert len(PromptKey) == 16
         assert {k.value for k in PromptKey} == expected_keys
         for key in PromptKey:
             assert key in PROMPT_REGISTRY
@@ -64,7 +65,13 @@ class TestPromptRegistry:
 
         assert meta_enum == meta_str
         assert meta_enum.langfuse_name == "cresmo-gap-filler-pass1"
-        assert meta_enum.skill_name == "cresmo-expander"
+        assert meta_enum.skill_name == "cresmo-gap-filler"
+
+    def test_get_prompt_metadata_fluid_prose(self) -> None:
+        """Verify lookup for decoupled fluid_prose prompt."""
+        meta = get_prompt_metadata(PromptKey.FLUID_PROSE)
+        assert meta.langfuse_name == "cresmo-fluid-prose"
+        assert meta.skill_name == "cresmo-fluid-prose"
 
     def test_get_prompt_metadata_invalid_key_raises(self) -> None:
         """Verify that looking up an unknown prompt key raises KeyError."""

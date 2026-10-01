@@ -20,11 +20,13 @@ from cresmo.application.use_cases import (
     IngestRawTranscriptUseCase,
     ReconcileMOCsUseCase,
     SynthesizeAtomicBatchUseCase,
+    TransformFluidProseUseCase,
 )
 from cresmo.application.use_cases.synthesize_atomic_batch import _norm_honorific
 from cresmo.domain.entities import (
     AtomicNote,
     EnrichedCompendium,
+    FluidTranscript,
     RawTranscript,
 )
 from cresmo.domain.exceptions import (
@@ -102,12 +104,79 @@ class TestIngestRawTranscript:
         assert len(vault_port.raw_transcripts) == 0
 
 
+class TestTransformFluidProse:
+    """SPEC-011: Pure linguistic detranscription into FluidTranscript."""
+
+    def test_transform_fluid_prose_success(self) -> None:
+        cid = ContentId("dQw4w9WgXcQ")
+        raw = RawTranscript(
+            content_id=cid,
+            channel_name=ChannelName("Example Channel"),
+            body="Fala pessoal, hoje vamos ver Pareto, né? Tipo assim, minorias governam.",
+            upload_date=datetime(2023, 5, 17, 12, 0, tzinfo=UTC),
+            channel_id=ChannelId("UC123456"),
+            source_url="https://youtube.com/watch?v=dQw4w9WgXcQ",
+        )
+        llm_response = (
+            "# Vilfredo Pareto e a Teoria das Elites\n\n"
+            "## As Oligarquias Organizadas\n\n"
+            "A teoria da circulação das elites postula que minorias organizadas governam maiorias.\n\n"
+            "## Informações Complementares\n\n"
+            "Acidentalmente gerado e deve ser removido pelo transformador."
+        )
+        llm_port = MockLLMAdapter(responses=[llm_response])
+        use_case = TransformFluidProseUseCase(llm_port)
+        fluid = use_case.execute(raw)
+
+        assert fluid.content_id == cid
+        assert fluid.title == "Vilfredo Pareto e a Teoria das Elites"
+        assert fluid.channel_name == ChannelName("Example Channel")
+        assert fluid.channel_id == ChannelId("UC123456")
+        assert fluid.source_url == "https://youtube.com/watch?v=dQw4w9WgXcQ"
+        assert "## As Oligarquias Organizadas" in fluid.body
+        assert "A teoria da circulação das elites postula" in fluid.body
+        assert "## Informações Complementares" not in fluid.body
+        assert "Acidentalmente gerado" not in fluid.body
+
+    def test_transform_fluid_prose_rejects_non_raw_transcript(self) -> None:
+        llm_port = MockLLMAdapter()
+        use_case = TransformFluidProseUseCase(llm_port)
+        with pytest.raises(
+            DomainValidationError, match="TransformFluidProseUseCase expects RawTranscript"
+        ):
+            use_case.execute("invalid string")  # type: ignore[arg-type]
+
+    def test_transform_fluid_prose_empty_body_raises_error(self) -> None:
+        raw = RawTranscript(
+            content_id=ContentId("empty12345"),
+            channel_name=ChannelName("Example Channel"),
+            body="Raw text",
+        )
+        llm_port = MockLLMAdapter(responses=["   "])
+        use_case = TransformFluidProseUseCase(llm_port)
+        with pytest.raises(CompendiumStructureError, match="Generated fluid prose body is empty"):
+            use_case.execute(raw)
+
+
 class TestFillGapsFluidProse:
-    """SPEC-001 Scenario 2.1: Socratic Gap Filler."""
+    """SPEC-001 Scenario 2.1 & SPEC-011: Socratic Gap Filler on FluidTranscript."""
+
+    def test_fill_gaps_rejects_raw_transcript(self) -> None:
+        """ADR-028 Invariant: FillGapsUseCase strictly rejects RawTranscript."""
+        raw = RawTranscript(
+            content_id=ContentId("vidraw001"),
+            channel_name=ChannelName("Test"),
+            body="Raw spoken text.",
+        )
+        use_case = FillGapsUseCase(MockLLMAdapter(), InMemoryVaultAdapter())
+        with pytest.raises(
+            DomainValidationError, match="FillGapsUseCase strictly requires FluidTranscript"
+        ):
+            use_case.execute(raw)  # type: ignore[arg-type]
 
     def test_fill_gaps_success(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
-        raw = RawTranscript(
+        fluid = FluidTranscript(
             content_id=cid,
             channel_name=ChannelName("Example Channel"),
             body="Spoken text without structure.",
@@ -125,7 +194,7 @@ class TestFillGapsFluidProse:
         vault_port = InMemoryVaultAdapter()
 
         use_case = FillGapsUseCase(llm_port, vault_port)
-        compendium = use_case.execute(raw, passes=3)
+        compendium = use_case.execute(fluid, passes=3)
 
         assert compendium.content_id == cid
         assert compendium.title.value == "Teoria das Elites"
@@ -154,9 +223,9 @@ class TestFillGapsFluidProse:
         assert "A circulação das elites" in llm_port.call_history[1]["prompt"]
         assert "A circulação das elites" in llm_port.call_history[2]["prompt"]
 
-    def test_fill_gaps_title_fallback_to_raw_transcript_title(self) -> None:
+    def test_fill_gaps_title_fallback_to_fluid_transcript_title(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
-        raw = RawTranscript(
+        fluid = FluidTranscript(
             content_id=cid,
             channel_name=ChannelName("Example Channel"),
             body="Raw spoken text.",
@@ -171,13 +240,13 @@ class TestFillGapsFluidProse:
         vault_port = InMemoryVaultAdapter()
 
         use_case = FillGapsUseCase(llm_port, vault_port)
-        compendium = use_case.execute(raw, passes=1)
+        compendium = use_case.execute(fluid, passes=1)
 
         assert compendium.title.value == "Raw Video Title"
 
-    def test_fill_gaps_title_fallback_to_default_when_no_raw_title(self) -> None:
+    def test_fill_gaps_title_fallback_to_default_when_no_fluid_title(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
-        raw = RawTranscript(
+        fluid = FluidTranscript(
             content_id=cid,
             channel_name=ChannelName("Example Channel"),
             body="Raw spoken text.",
@@ -190,14 +259,14 @@ class TestFillGapsFluidProse:
         vault_port = InMemoryVaultAdapter()
 
         use_case = FillGapsUseCase(llm_port, vault_port)
-        compendium = use_case.execute(raw, passes=1)
+        compendium = use_case.execute(fluid, passes=1)
 
         assert compendium.title.value == "Untitled Compendium"
         assert compendium.complementary_info == "Complementary details."
 
     def test_fill_gaps_alternative_regex_header_informacoes_adicionais(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
-        raw = RawTranscript(
+        fluid = FluidTranscript(
             content_id=cid,
             channel_name=ChannelName("Example Channel"),
             body="Raw spoken text.",
@@ -212,7 +281,7 @@ class TestFillGapsFluidProse:
         vault_port = InMemoryVaultAdapter()
 
         use_case = FillGapsUseCase(llm_port, vault_port)
-        compendium = use_case.execute(raw, passes=1)
+        compendium = use_case.execute(fluid, passes=1)
 
         assert compendium.title.value == "H1 Title"
         assert compendium.body == "Primary text."
@@ -220,7 +289,7 @@ class TestFillGapsFluidProse:
 
     def test_fill_gaps_empty_complementary_section_raises_error(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
-        raw = RawTranscript(
+        fluid = FluidTranscript(
             content_id=cid,
             channel_name=ChannelName("Example Channel"),
             body="Raw spoken text.",
@@ -231,11 +300,11 @@ class TestFillGapsFluidProse:
 
         use_case = FillGapsUseCase(llm_port, vault_port)
         with pytest.raises(CompendiumStructureError, match="must contain a non-empty"):
-            use_case.execute(raw, passes=1)
+            use_case.execute(fluid, passes=1)
 
     def test_fill_gaps_missing_complementary_section_raises_error(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
-        raw = RawTranscript(
+        fluid = FluidTranscript(
             content_id=cid,
             channel_name=ChannelName("Example Channel"),
             body="Raw spoken text.",
@@ -249,11 +318,11 @@ class TestFillGapsFluidProse:
             CompendiumStructureError,
             match=r"Missing mandatory section '## Informações Complementares'",
         ):
-            use_case.execute(raw, passes=1)
+            use_case.execute(fluid, passes=1)
 
     def test_fill_gaps_preserves_optional_metadata_and_date(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
-        raw = RawTranscript(
+        fluid = FluidTranscript(
             content_id=cid,
             channel_name=ChannelName("Example Channel"),
             body="Raw spoken text.",
@@ -266,7 +335,7 @@ class TestFillGapsFluidProse:
         vault_port = InMemoryVaultAdapter()
 
         use_case = FillGapsUseCase(llm_port, vault_port)
-        comp = use_case.execute(raw, passes=1)
+        comp = use_case.execute(fluid, passes=1)
         assert comp.channel_category == "tech_ai"
         assert comp.video_description == "Video description text."
         assert comp.video_date == ""
@@ -986,10 +1055,10 @@ class TestUseCasesEdgeCases:
 
     def test_fill_gaps_missing_complementary_info_raises_error(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
-        raw = RawTranscript(
+        fluid = FluidTranscript(
             content_id=cid,
             channel_name=ChannelName("Example Channel"),
-            body="Spoken text without structure.",
+            body="Clean fluid text without structure.",
         )
         llm_response = "# Teoria das Elites\n\nOnly body text without complementary info section."
         llm_port = MockLLMAdapter(responses=[llm_response])
@@ -997,7 +1066,7 @@ class TestUseCasesEdgeCases:
 
         use_case = FillGapsUseCase(llm_port, vault_port)
         with pytest.raises(CompendiumStructureError):
-            use_case.execute(raw, passes=1)
+            use_case.execute(fluid, passes=1)
 
     def test_discover_inventory_non_list_raises_error(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")

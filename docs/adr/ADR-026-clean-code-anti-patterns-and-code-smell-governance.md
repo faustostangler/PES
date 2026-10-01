@@ -375,6 +375,127 @@ else:
 
 ---
 
+### Rule 12: Anti-Shadow State Variables & Variable Aliasing
+
+#### 12.1 The Anti-Pattern
+Declaring temporary "shadow" state variables (such as `channel_for_metrics = "Unknown_Channel"` or `channel_id_for_metrics = ""`) before a `try` block to satisfy a `finally` or telemetry handler, while extracting or computing the primary domain variable (`channel_name`, `ch_id`) inside the `try` block, and subsequently synchronizing them with explicit aliasing assignments:
+```python
+# ANTI-PATTERN: Shadow State Variables and Redundant Variable Aliasing
+channel_for_metrics = "Unknown_Channel"  # Shadow variable
+channel_id_for_metrics = ""
+
+try:
+    ...
+    body, channel_name = self._resolve_transcript_body(...)
+    channel_for_metrics = channel_name  # Redundant aliasing / state synchronization
+
+    transcript, ch_id = self._build_raw_transcript_aggregate(...)
+    if ch_id:
+        channel_id_for_metrics = ch_id.value  # Secondary shadow synchronization
+    return transcript
+finally:
+    labels = {
+        "channel_id": channel_id_for_metrics,
+        "channel_name": channel_for_metrics,
+    }
+```
+Another manifestation is loop shadow counters (e.g. maintaining `total_items += 1` inside an `enumerate(sources, 1)` loop instead of referencing `source_index` or deriving `completed + skipped + failed`).
+
+**Architectural Violations:**
+1. **Dual State & Variable Aliasing:** Maintaining two names for the same logical entity (`channel_for_metrics` vs `channel_name`) introduces cognitive overhead and state desynchronization risk if an early return or exception path updates one but not the other.
+2. **Noise & Superfluous Synchronization Statements:** Lines like `channel_for_metrics = channel_name` exist solely as band-aids for disjointed variable scoping and violate DRY and KISS principles.
+3. **Violates Ubiquitous Language & SSOT:** Domain and telemetry models should share canonical naming without artificial translation layers within the same function scope.
+
+#### 12.2 The Standard & Remediation
+1. **Initialize Canonical Identifiers at Function Scope:** Declare the canonical domain variables (`channel_name = "Unknown_Channel"`, `channel_id = ""`) with safe, fallback defaults directly at the function root before the `try` block.
+2. **Assign Directly Without Aliasing:** Unpack or assign directly to the canonical variables inside the `try` block (`body, channel_name = ...`, `if ch_id: channel_id = ch_id.value`).
+3. **Consume Canonical Variables in `finally` and Exit Handlers:** The `finally` block consumes the canonical variables directly with 100% safety and zero synchronization boilerplate:
+   ```python
+   channel_name = "Unknown_Channel"
+   channel_id = ""
+
+   try:
+       ...
+       body, channel_name = self._resolve_transcript_body(...)
+       transcript, ch_id = self._build_raw_transcript_aggregate(
+           video_url=video_url,
+           info=info,
+           body=body,
+           channel_name=channel_name,
+       )
+       if ch_id:
+           channel_id = ch_id.value
+       return transcript
+   finally:
+       elapsed = time.perf_counter() - start_time
+       self._metrics_port.observe_histogram(
+           "cresmo_media_ingestion_duration_seconds",
+           elapsed,
+           labels={
+               "channel_id": channel_id,
+               "channel_name": channel_name,
+               "modality": "url",
+               "status": status,
+           },
+       )
+   ```
+4. **Derive Aggregates Instead of Shadow Counting:** Avoid shadow accumulator variables across loop iterations when the state is already captured by loop indices (`enumerate`) or partitioned outcome counters (`completed + skipped + failed`).
+
+---
+
+### Rule 13: Anti-Middle Man / Pass-Through Trampoline Methods (Remove Middle Man)
+
+#### 13.1 The Anti-Pattern
+Declaring private wrapper methods that take exact identical parameters and do nothing except forward them 1:1 to an internal collaborator or module-level function:
+```python
+# ANTI-PATTERN: Middle Man / Pass-Through Trampoline Method
+def _extract_concepts(
+    self,
+    video_id: ContentId,
+    title: str,
+    text: str,
+    channel_name: ChannelName,
+    channel_id: ChannelId | None = None,
+    user: UserIdentity | None = None,
+) -> str:
+    return self._distiller.extract_concepts(
+        video_id=video_id,
+        title=title,
+        text=text,
+        channel_name=channel_name,
+        channel_id=channel_id,
+        user=user,
+    )
+```
+Another common manifestation:
+```python
+def _load_transcript_from_file(self, file_path: Path) -> RawTranscript:
+    return load_transcript_from_file(file_path)
+```
+
+**Architectural Violations:**
+1. **Middle Man Code Smell (Martin Fowler, Refactoring):** When a class or orchestrator merely delegates calls to another collaborator without adding business logic, translation, validation, caching, or error handling, it acts as an unnecessary middle man.
+2. **Indirection Without Abstraction (Cognitive Bloat):** Developers reading the execution flow (`execute()`) must jump into a private helper, only to find that it adds zero value and immediately delegates to another class.
+3. **Signature Duplication & Fragility:** Every change to the collaborator's signature requires updating both the trampoline and the caller, duplicating parameter lists and type hints for no architectural benefit.
+
+#### 13.2 The Standard & Remediation
+1. **Remove Middle Man (Direct Collaborator Invocation):** Invoke the internal collaborator directly at the call site within the orchestrating method:
+   ```python
+   # INSTEAD OF self._extract_concepts(...):
+   concept = self._distiller.extract_concepts(
+       video_id=video_id,
+       title=title,
+       text=excerpt,
+       channel_name=channel_name,
+       channel_id=transcript.channel_id,
+       user=user,
+   )
+   ```
+2. **Eliminate Wrapper Methods for Module Functions:** When a standalone domain/infrastructure function is imported (e.g., `load_transcript_from_file`), call it directly (`raw = load_transcript_from_file(file_path)`) rather than wrapping it in a private instance method (`self._load_transcript_from_file`).
+3. **Legitimate Delegators vs Trampolines:** Public Facades implementing an interface/port (e.g. `ObsidianVaultAdapter` implementing `VaultRepositoryPort` by delegating to sub-repositories) or methods adding ACL validation, telemetry spans, or error translation are legitimate. Pure zero-logic private pass-throughs are prohibited.
+
+---
+
 ## 3. Enforcement & Quality Gates
 
 

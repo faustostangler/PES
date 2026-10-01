@@ -7,7 +7,6 @@ from cresmo.presentation.commands import (
     concat_master,
     dedupe,
     export_cookies,
-    index_raw,
     run,
     seed_prompts,
     sync,
@@ -17,7 +16,6 @@ from cresmo.presentation.commands.check_config import handle_check_config
 from cresmo.presentation.commands.concat_master import handle_concat_master
 from cresmo.presentation.commands.dedupe import handle_dedupe
 from cresmo.presentation.commands.export_cookies import handle_export_cookies
-from cresmo.presentation.commands.index_raw import handle_index_raw
 from cresmo.presentation.commands.run import (
     execute_batch_dry_run,
     execute_batch_run,
@@ -41,12 +39,10 @@ __all__ = [
     "handle_concat_master",
     "handle_dedupe",
     "handle_export_cookies",
-    "handle_index_raw",
     "handle_run",
     "handle_seed_prompts",
     "handle_sync",
     "handle_worker",
-    "index_raw",
     "load_batch_sources",
     "run",
     "seed_prompts",

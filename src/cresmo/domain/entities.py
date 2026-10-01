@@ -94,6 +94,71 @@ class RawTranscript:
 
 
 @dataclass(frozen=True)
+class FluidTranscript:
+    """FluidTranscript Aggregate: Detranscribed clean fluid prose without orality noise.
+
+    Represents spoken transcripts transformed into continuous third-person neutral narrative prose
+    with standardized NER spelling, ready for conceptual indexing and Socratic gap filling.
+
+    Conforms to:
+        - ADR-028: Decoupling Fluid Prose Detranscription and Socratic Gap Filling
+        - SPEC-011: Fluid Prose Detranscription Specification
+
+    Attributes:
+        content_id: Strongly-typed canonical media identifier.
+        channel_name: Human-readable creator or source channel name (ChannelName Value Object).
+        body: Continuous fluid prose narrative free of speech noise and oralities.
+        title: Clean video or document title string.
+        source_url: Canonical web URL or local file URI.
+        publication_date: Optional release date.
+        upload_date: Backward-compatible alias for publication_date.
+        channel_id: Optional platform channel ID.
+        channel_category: Macro topic classification.
+        video_description: Raw creator description text.
+
+    Invariants:
+        channel_name cannot be whitespace or empty.
+        body cannot be empty or whitespace.
+        body must be continuous prose; markdown tables are strictly forbidden per cresmo-style-guide.
+    """
+
+    content_id: ContentId
+    channel_name: ChannelName
+    body: str
+    title: str = ""
+    source_url: str = ""
+    publication_date: datetime.date | None = None
+    upload_date: datetime.date | None = None
+    channel_id: ChannelId | None = None
+    channel_category: str = ""
+    video_description: str = ""
+
+    def __post_init__(self) -> None:
+        cn = (
+            self.channel_name
+            if isinstance(self.channel_name, ChannelName)
+            else ChannelName.from_string(self.channel_name)
+        )
+        object.__setattr__(self, "channel_name", cn)
+
+        if self.channel_id is not None and not isinstance(self.channel_id, ChannelId):
+            object.__setattr__(self, "channel_id", ChannelId.from_string(self.channel_id))
+
+        pub_date = self.publication_date or self.upload_date
+        object.__setattr__(self, "publication_date", pub_date)
+        object.__setattr__(self, "upload_date", pub_date)
+
+        b = self.body.strip()
+        if not b:
+            raise DomainValidationError("FluidTranscript body cannot be empty or whitespace.")
+
+        if _TABLE_PATTERN.search(b):
+            raise CompendiumStructureError(
+                "FluidTranscript body must be continuous prose and cannot contain Markdown tables."
+            )
+
+
+@dataclass(frozen=True)
 class EnrichedCompendium:
     """EnrichedCompendium Aggregate: Multi-pass enriched fluid prose compendium.
 
