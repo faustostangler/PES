@@ -19,8 +19,10 @@ import sys
 from typing import Any
 
 from cresmo.infrastructure.adapters.prompts import PROMPT_REGISTRY, JsonPromptProvider
-from cresmo.infrastructure.config import CresmoSettings
-from cresmo.presentation.composition import resolve_langfuse_client
+from cresmo.presentation.composition import (
+    resolve_langfuse_client,
+    resolve_shared_settings,
+)
 from cresmo.presentation.exit_codes import (
     EXIT_CONFIG_OR_USAGE_ERROR,
     EXIT_INTERNAL_ERROR,
@@ -74,7 +76,7 @@ def handle_seed_prompts(args: argparse.Namespace) -> int:
     label = getattr(args, "label", "production") or "production"
     dry_run = getattr(args, "dry_run", False)
 
-    settings = CresmoSettings()
+    settings = resolve_shared_settings()
     provider = JsonPromptProvider()
 
     if dry_run:

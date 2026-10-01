@@ -36,8 +36,10 @@ from cresmo.domain.value_objects import (
     SyncFilterCriteria,
     normalize_to_uploads_playlist_url,
 )
-from cresmo.infrastructure.config import CresmoSettings
-from cresmo.presentation.composition import build_sync_channel_use_case
+from cresmo.presentation.composition import (
+    build_sync_channel_use_case,
+    resolve_shared_settings,
+)
 from cresmo.presentation.exit_codes import (
     EXIT_CONFIG_OR_USAGE_ERROR,
     EXIT_DOMAIN_VALIDATION_ERROR,
@@ -248,7 +250,7 @@ def handle_sync(args: argparse.Namespace) -> int:
         Process exit code integer.
     """
     try:
-        settings = CresmoSettings()
+        settings = resolve_shared_settings()
         settings.ensure_directories()
         filter_criteria = _build_filter_criteria(args)
 

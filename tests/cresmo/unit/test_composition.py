@@ -19,21 +19,43 @@ from cresmo.application.use_cases.discover_batch_sources import DiscoverBatchSou
 from cresmo.application.use_cases.index_raw_transcripts import IndexRawTranscriptsUseCase
 from cresmo.application.use_cases.sync_channel import SyncChannelUseCase
 from cresmo.application.use_cases.unify_duplicate_notes import UnifyDuplicateNotesUseCase
+from cresmo.infrastructure.adapters.anonymizer_adapter import (
+    NoOpAnonymizerAdapter,
+    RegexAnonymizerAdapter,
+)
 from cresmo.infrastructure.adapters.gemini_adapter import GeminiLLMAdapter
 from cresmo.infrastructure.adapters.native_media_ingestion_adapter import (
     NativeMediaIngestionAdapter,
 )
+from cresmo.infrastructure.adapters.noop_metrics_adapter import NoOpMetricsAdapter
 from cresmo.infrastructure.adapters.obsidian_vault_adapter import ObsidianVaultAdapter
 from cresmo.infrastructure.adapters.ollama_llm_adapter import OllamaLLMAdapter
+from cresmo.infrastructure.adapters.opentelemetry_adapter import (
+    NoOpTelemetryAdapter,
+    OpenTelemetryAdapter,
+)
+from cresmo.infrastructure.adapters.prometheus_metrics_adapter import (
+    PrometheusMetricsAdapter,
+)
+from cresmo.infrastructure.adapters.prompt_provider import (
+    JsonPromptProvider,
+    LangfusePromptProvider,
+)
 from cresmo.infrastructure.adapters.sqlite_ledger_adapter import SqliteLedgerAdapter
 from cresmo.infrastructure.config import CresmoSettings
 from cresmo.presentation.composition import (
+    build_anonymizer_adapter,
     build_concat_master_use_case,
     build_discover_batch_sources_use_case,
+    build_gemini_synthesis_adapter,
     build_index_raw_use_case,
+    build_indexing_adapter,
+    build_metrics_adapter,
     build_pipeline,
     build_preflight_checker,
+    build_prompt_provider,
     build_sync_channel_use_case,
+    build_telemetry_adapter,
     build_unify_duplicates_use_case,
     get_shared_settings,
     reset_shared_settings,
@@ -254,3 +276,66 @@ class TestCompositionRoot:
         assert s3 is not s1
         assert s3 == s1
         reset_shared_settings()
+
+    def test_build_anonymizer_adapter_enabled_and_disabled(self, tmp_path: Path) -> None:
+        settings_enabled = CresmoSettings(
+            gemini_api_key=SecretStr("TEST"),
+            vault_dir=tmp_path / "v1",
+            anonymization_enabled=True,
+        )
+        assert isinstance(build_anonymizer_adapter(settings_enabled), RegexAnonymizerAdapter)
+
+        settings_disabled = CresmoSettings(
+            gemini_api_key=SecretStr("TEST"),
+            vault_dir=tmp_path / "v2",
+            anonymization_enabled=False,
+        )
+        assert isinstance(build_anonymizer_adapter(settings_disabled), NoOpAnonymizerAdapter)
+
+    def test_build_telemetry_adapter_with_and_without_client(
+        self, test_settings: CresmoSettings
+    ) -> None:
+        mock_client = MagicMock()
+        adapter = build_telemetry_adapter(test_settings, langfuse_client=mock_client)
+        assert isinstance(adapter, OpenTelemetryAdapter)
+
+        noop = build_telemetry_adapter(test_settings, langfuse_client=None)
+        assert isinstance(noop, NoOpTelemetryAdapter)
+
+    def test_build_metrics_adapter_enabled_and_disabled(self, tmp_path: Path) -> None:
+        settings_enabled = CresmoSettings(
+            gemini_api_key=SecretStr("TEST"),
+            vault_dir=tmp_path / "v1",
+            prometheus_enabled=True,
+        )
+        assert isinstance(build_metrics_adapter(settings_enabled), PrometheusMetricsAdapter)
+
+        settings_disabled = CresmoSettings(
+            gemini_api_key=SecretStr("TEST"),
+            vault_dir=tmp_path / "v2",
+            prometheus_enabled=False,
+        )
+        assert isinstance(build_metrics_adapter(settings_disabled), NoOpMetricsAdapter)
+
+    def test_build_prompt_provider(self, test_settings: CresmoSettings) -> None:
+        provider = build_prompt_provider(test_settings, langfuse_client=None)
+        assert isinstance(provider, LangfusePromptProvider)
+        assert isinstance(provider._fallback, JsonPromptProvider)
+
+    def test_build_gemini_synthesis_adapter(self, test_settings: CresmoSettings) -> None:
+        adapter = build_gemini_synthesis_adapter(test_settings, langfuse_client=None)
+        assert isinstance(adapter, GeminiLLMAdapter)
+        assert adapter.model_name == test_settings.gemini_model
+
+    def test_build_indexing_adapter_selection(self, test_settings: CresmoSettings) -> None:
+        ollama_adapter = build_indexing_adapter(test_settings, web_index=False)
+        assert isinstance(ollama_adapter, OllamaLLMAdapter)
+
+        gemini_adapter = build_indexing_adapter(test_settings, web_index=True)
+        assert isinstance(gemini_adapter, GeminiLLMAdapter)
+
+        mock_synthesis = MagicMock(spec=GeminiLLMAdapter)
+        reused = build_indexing_adapter(
+            test_settings, synthesis_adapter=mock_synthesis, web_index=True
+        )
+        assert reused is mock_synthesis

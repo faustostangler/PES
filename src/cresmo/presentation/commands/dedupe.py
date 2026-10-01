@@ -13,8 +13,10 @@ from __future__ import annotations
 import argparse
 import sys
 
-from cresmo.infrastructure.config import CresmoSettings
-from cresmo.presentation.composition import build_unify_duplicates_use_case
+from cresmo.presentation.composition import (
+    build_unify_duplicates_use_case,
+    resolve_shared_settings,
+)
 from cresmo.presentation.exit_codes import (
     EXIT_INTERNAL_ERROR,
     EXIT_SUCCESS,
@@ -45,7 +47,7 @@ def handle_dedupe(args: argparse.Namespace) -> int:
     """
     _ = args
     try:
-        settings = CresmoSettings()
+        settings = resolve_shared_settings()
         use_case = build_unify_duplicates_use_case(settings=settings)
         report = use_case.execute()
         sys.stdout.write("Vault Graph Deduplication Summary:\n")

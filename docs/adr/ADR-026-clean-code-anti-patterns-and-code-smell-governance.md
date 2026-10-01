@@ -25,12 +25,13 @@ During the recursive architectural audit across all layers (Domain, Application,
 7. **Explosão de Lista de Parâmetros e Obsessão por Primitivos (`PLR0913`, `PLR0917`):** Functions and constructors accepting 6 to 10+ raw primitive parameters instead of cohesive Parameter Objects or Pydantic DTOs.
 8. **Código Morto e Parâmetros Assinatura Inutilizados (`ARG001`, `ARG002`):** Methods and functions receiving arguments that are never consumed within the execution body.
 9. **Constantes Operacionais e Linhagem em Escopo Global de Módulo / `__init__.py` (Violação 12-Factor Fator III, ADR-005, ADR-011):** Defining runtime operational tags, pipeline versions, or tunable parameters as global variables in module files or `__init__.py` instead of centralizing in `CresmoSettings` (Pydantic Settings V2).
+10. **Defensive Fallback Cascading e Instanciação Tardia Oculta (Violação DI & Single Source of Truth):** Declaring optional configuration parameters (`settings: CresmoSettings | None = None`) with inline fallback (`settings or CresmoSettings()`) inside internal functions. This causes unintended disk/env re-reads, bypasses memoized settings factories, and silently drops runtime CLI overrides.
 
 This ADR formally codifies the governance rules, anti-patterns, and required implementations to eliminate these smells across the codebase.
 
 ---
 
-## 2. The Nine Clean Code Anti-Pattern Standards
+## 2. The Ten Clean Code Anti-Pattern Standards
 
 ```
 +---------------------------------------------------------------------------------------------------+
@@ -45,6 +46,7 @@ This ADR formally codifies the governance rules, anti-patterns, and required imp
 |  [Rule 7] Cohesive Parameter Bundling   --> Max 5 Parameters; Pydantic DTOs / Parameter Objects   |
 |  [Rule 8] Signature Hygiene & Dead Code --> Zero Dangling Unused Parameters Across Concrete Code  |
 |  [Rule 9] SSOT Operational Settings     --> Pydantic Settings V2; Zero Global Configs in __init__ |
+|  [Rule 10] Anti-Defensive Cascading     --> Early Strict DI; Zero 'settings or Settings()' Inlines|
 +---------------------------------------------------------------------------------------------------+
 ```
 
@@ -280,7 +282,43 @@ PIPELINE_VERSION = "cresmo:v2"  # VIOLATION: Operational tunable in package root
 
 ---
 
+### Rule 10: Anti-Defensive Fallback Cascading & Early Strict Dependency Injection
+
+#### 10.1 The Anti-Pattern
+Declaring optional configuration parameters (`settings: CresmoSettings | None = None`) in internal functions, services, or use cases with inline fallback logic:
+```python
+# ANTI-PATTERN: Defensive fallback cascading and late unshared instantiation
+def load_batch_sources(
+    query: BatchDiscoveryQuery,
+    settings: CresmoSettings | None = None,  # Smelly optional parameter
+) -> Iterator[BatchSource]:
+    resolved_settings = settings or CresmoSettings()  # VIOLATION: Unintended I/O & unmemoized instance!
+    ...
+```
+**Architectural Violations:**
+1. **Bypasses Single Source of Truth & Memoization:** Chamar `CresmoSettings()` diretamente bypassa a fábrica centralizada `resolve_shared_settings()`, forçando o Pydantic a reler o sistema de arquivos, revalidar `.env` e instanciar múltiplos objetos desacoplados durante a mesma execução.
+2. **Perda Silenciosa de Configurações Dinâmicas (Upstream Overrides):** Se o comando raiz modificou alguma propriedade (por exemplo, `settings.days_lookback = args.lookback`), uma função mais abaixo que faça fallback para `CresmoSettings()` perde silenciosamente esse override, operando com valores default incorretos.
+3. **Assinaturas Falsas (Leaky / Dishonest Signatures):** Funções que não podem operar sem diretórios configurados (`vault_dir`, `raw_dir`) não são opcionais. Declarar `None` na assinatura comunica falsamente que a configuração é dispensável.
+
+#### 10.2 The Standard & Remediation
+1. **Early Resolution at Command Entrypoint:** CLI command handlers (`handle_run`, `handle_sync`, etc.) resolve the shared configuration once at the very top using `resolve_shared_settings()`:
+   ```python
+   settings = resolve_shared_settings()
+   ```
+2. **Strict Mandatory Injection in Internal Functions:** All downstream functions, adapters, and use cases require `settings: CresmoSettings` as an explicit, mandatory parameter (no `| None = None` and no `settings or CresmoSettings()` fallback):
+   ```python
+   def load_batch_sources(
+       query: BatchDiscoveryQuery,
+       settings: CresmoSettings,  # Strictly required
+   ) -> Iterator[BatchSource]:
+       # Use settings directly with zero defensive boilerplate
+   ```
+3. **Factory Resolution for Public Entrypoints:** Only top-level factory functions designed for public composition or test convenience may accept `settings: CresmoSettings | None = None`, and they MUST delegate exclusively to `resolve_shared_settings(settings)` rather than executing raw constructor fallbacks.
+
+---
+
 ## 3. Enforcement & Quality Gates
+
 
 The following Ruff rules and architecture checks are enforced across the entire repository:
 

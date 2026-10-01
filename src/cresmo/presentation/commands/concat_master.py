@@ -14,8 +14,10 @@ import argparse
 import sys
 
 from cresmo.domain.value_objects import ChannelName
-from cresmo.infrastructure.config import CresmoSettings
-from cresmo.presentation.composition import build_concat_master_use_case
+from cresmo.presentation.composition import (
+    build_concat_master_use_case,
+    resolve_shared_settings,
+)
 from cresmo.presentation.exit_codes import (
     EXIT_INTERNAL_ERROR,
     EXIT_SUCCESS,
@@ -59,7 +61,7 @@ def handle_concat_master(args: argparse.Namespace) -> int:
         Process exit code integer.
     """
     try:
-        settings = CresmoSettings()
+        settings = resolve_shared_settings()
         use_case = build_concat_master_use_case(settings=settings)
 
         if args.channel:

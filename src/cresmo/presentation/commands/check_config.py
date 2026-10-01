@@ -50,7 +50,7 @@ def handle_check_config(args: argparse.Namespace) -> int:
     """
     _ = args
     try:
-        settings = CresmoSettings()
+        settings = resolve_shared_settings()
         checker = build_preflight_checker(settings=settings)
         preflight = checker.check_all()
         if not preflight.is_healthy:

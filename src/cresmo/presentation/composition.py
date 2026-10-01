@@ -29,47 +29,36 @@ from langfuse.types import MaskOtelSpansParams, MaskOtelSpansResult, OtelSpanPat
 from cresmo.application.pipeline import CresmoPipeline
 from cresmo.application.ports import (
     AnonymizerPort,
-    MetricsPort,
-    PromptProviderPort,
-    TelemetryPort,
 )
 from cresmo.application.services.preflight import (
     PreflightHealthChecker,
     probe_http_endpoint,
 )
 from cresmo.application.use_cases.sync_channel import SyncChannelUseCase
-from cresmo.infrastructure.adapters.anonymizer_adapter import (
-    NoOpAnonymizerAdapter,
-    RegexAnonymizerAdapter,
-)
-from cresmo.infrastructure.adapters.gemini_adapter import GeminiLLMAdapter
-from cresmo.infrastructure.adapters.noop_metrics_adapter import NoOpMetricsAdapter
-from cresmo.infrastructure.adapters.ollama_llm_adapter import OllamaLLMAdapter
 from cresmo.infrastructure.adapters.opentelemetry_adapter import (
-    NoOpTelemetryAdapter,
-    OpenTelemetryAdapter,
     name_telemetry_threads,
-)
-from cresmo.infrastructure.adapters.prometheus_metrics_adapter import (
-    PrometheusMetricsAdapter,
-)
-from cresmo.infrastructure.adapters.prompt_provider import (
-    JsonPromptProvider,
-    LangfusePromptProvider,
 )
 from cresmo.infrastructure.adapters.sqlite_ledger_adapter import SqliteLedgerAdapter
 from cresmo.infrastructure.config import CresmoSettings
 from cresmo.infrastructure.logging_config import configure_logging
 from cresmo.presentation.factories.adapter_factory import (
     _resolve_cookie_file,
+    build_gemini_synthesis_adapter,
+    build_indexing_adapter,
     build_media_ingestion_adapter,
     build_preflight_checker,
+    build_prompt_provider,
     build_vault_adapter,
 )
 from cresmo.presentation.factories.settings_factory import (
     get_shared_settings,
     reset_shared_settings,
     resolve_shared_settings,
+)
+from cresmo.presentation.factories.telemetry_factory import (
+    build_anonymizer_adapter,
+    build_metrics_adapter,
+    build_telemetry_adapter,
 )
 from cresmo.presentation.factories.use_case_factory import (
     build_concat_master_use_case,
@@ -232,30 +221,10 @@ def build_pipeline(
     )
 
     # 1. Observability, Security & Prompt Governance
-    anonymizer: AnonymizerPort = (
-        RegexAnonymizerAdapter()
-        if getattr(resolved_settings, "anonymization_enabled", True)
-        else NoOpAnonymizerAdapter()
-    )
+    anonymizer = build_anonymizer_adapter(resolved_settings)
     langfuse_client = resolve_langfuse_client(resolved_settings, anonymizer=anonymizer)
-
-    if langfuse_client is not None:
-        telemetry_port: TelemetryPort = OpenTelemetryAdapter(
-            langfuse_client=langfuse_client,
-            pipeline_version=resolved_settings.pipeline_version,
-        )
-    else:
-        telemetry_port = NoOpTelemetryAdapter()
-
-    json_prompt_provider = JsonPromptProvider(
-        prompts_path=resolved_settings.prompts_path,
-        skills_dir=resolved_settings.skills_dir,
-    )
-    prompt_provider: PromptProviderPort = LangfusePromptProvider(
-        langfuse_client=langfuse_client,
-        fallback_provider=json_prompt_provider,
-        label=getattr(resolved_settings, "langfuse_prompt_label", "production"),
-    )
+    telemetry_port = build_telemetry_adapter(resolved_settings, langfuse_client=langfuse_client)
+    prompt_provider = build_prompt_provider(resolved_settings, langfuse_client=langfuse_client)
 
     # 2. Ingestion, Persistence & Idempotency
     media_ingestion_port = build_media_ingestion_adapter(resolved_settings)
@@ -263,33 +232,18 @@ def build_pipeline(
     ledger_port = SqliteLedgerAdapter(db_path=resolved_settings.sqlite_ledger_path)
 
     # 3. Cognitive LLM Engines (Synthesis & Fast Indexing)
-    llm_synthesis_port = GeminiLLMAdapter(
-        api_key=resolved_settings.gemini_api_key.get_secret_value(),
-        model_name=resolved_settings.gemini_model,
-        fallback_model_name=resolved_settings.gemini_fallback_model,
+    llm_synthesis_port = build_gemini_synthesis_adapter(
+        resolved_settings, langfuse_client=langfuse_client
+    )
+    llm_indexing_port = build_indexing_adapter(
+        resolved_settings,
+        synthesis_adapter=llm_synthesis_port,
+        web_index=web_index,
         langfuse_client=langfuse_client,
-        default_temperature=resolved_settings.llm_synthesis_temperature,
     )
 
-    if web_index or resolved_settings.indexing_provider == "gemini":
-        llm_indexing_port = llm_synthesis_port
-    else:
-        llm_indexing_port = OllamaLLMAdapter(
-            base_url=resolved_settings.ollama_base_url,
-            model=resolved_settings.ollama_model,
-            timeout_seconds=resolved_settings.ollama_timeout_seconds,
-            default_temperature=resolved_settings.llm_indexing_temperature,
-            num_predict=resolved_settings.ollama_num_predict,
-            langfuse_client=langfuse_client,
-            keep_alive=resolved_settings.ollama_keep_alive,
-            warmup_timeout_seconds=resolved_settings.ollama_warmup_timeout_seconds,
-        )
-
     # 4. SRE & DORA Metrics Telemetry
-    if getattr(resolved_settings, "prometheus_enabled", True):
-        metrics_port: MetricsPort = PrometheusMetricsAdapter()
-    else:
-        metrics_port = NoOpMetricsAdapter()
+    metrics_port = build_metrics_adapter(resolved_settings)
 
     # 5. Pipeline Assembly
     effective_batch_size = (
@@ -334,13 +288,19 @@ def build_sync_channel_use_case(
 __all__ = [
     "PreflightHealthChecker",
     "_resolve_cookie_file",
+    "build_anonymizer_adapter",
     "build_concat_master_use_case",
     "build_discover_batch_sources_use_case",
+    "build_gemini_synthesis_adapter",
     "build_index_raw_use_case",
+    "build_indexing_adapter",
     "build_media_ingestion_adapter",
+    "build_metrics_adapter",
     "build_pipeline",
     "build_preflight_checker",
+    "build_prompt_provider",
     "build_sync_channel_use_case",
+    "build_telemetry_adapter",
     "build_unify_duplicates_use_case",
     "build_vault_adapter",
     "get_shared_settings",

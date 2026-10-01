@@ -15,10 +15,10 @@ import argparse
 import sys
 
 from cresmo.domain.value_objects import ChannelName
-from cresmo.infrastructure.config import CresmoSettings
 from cresmo.presentation.composition import (
     build_index_raw_use_case,
     build_preflight_checker,
+    resolve_shared_settings,
 )
 from cresmo.presentation.exit_codes import (
     EXIT_CONFIG_OR_USAGE_ERROR,
@@ -74,7 +74,7 @@ def handle_index_raw(args: argparse.Namespace) -> int:
         Process exit code integer.
     """
     try:
-        settings = CresmoSettings()
+        settings = resolve_shared_settings()
         settings.ensure_directories()
 
         if not args.web_index and getattr(settings, "enable_preflight_probes", True):

@@ -20,7 +20,7 @@ from cresmo.infrastructure.adapters.cookie_extractor import (
     export_cookies_from_browser,
     has_valid_auth_cookies,
 )
-from cresmo.infrastructure.config import CresmoSettings
+from cresmo.presentation.composition import resolve_shared_settings
 from cresmo.presentation.exit_codes import (
     EXIT_CONFIG_OR_USAGE_ERROR,
     EXIT_INGESTION_ERROR,
@@ -75,7 +75,7 @@ def handle_export_cookies(args: argparse.Namespace) -> int:
         Process exit code integer.
     """
     try:
-        settings = CresmoSettings()
+        settings = resolve_shared_settings()
         output_file = args.output or settings.cookies_file or (settings.data_dir / "cookies.txt")
         output_path = Path(output_file).resolve()
 

@@ -49,6 +49,7 @@ from cresmo.presentation.composition import (
     build_discover_batch_sources_use_case,
     build_pipeline,
     build_preflight_checker,
+    resolve_shared_settings,
 )
 from cresmo.presentation.exit_codes import (
     EXIT_CONFIG_OR_USAGE_ERROR,
@@ -316,31 +317,30 @@ def execute_batch_run(
 
 def load_batch_sources(
     query: BatchDiscoveryQuery,
-    settings: CresmoSettings | None = None,
+    settings: CresmoSettings,
     media_ingestion_port: MediaIngestionPort | None = None,
 ) -> Iterator[BatchSource]:
     """Execute streaming batch source discovery via DiscoverBatchSourcesUseCase.
 
-    Conforms to ADR-010 (Streaming-First Unification).
+    Conforms to ADR-010 (Streaming-First Unification) and ADR-026 (Anti-Defensive Fallback).
 
     Args:
         query: BatchDiscoveryQuery constraints.
-        settings: Optional application settings.
+        settings: Validated application settings.
         media_ingestion_port: Ingestion adapter port instance.
 
     Returns:
         Streaming iterator of BatchSource records.
     """
-    resolved_settings = settings or CresmoSettings()
     if media_ingestion_port is None:
         discovery_use_case = build_discover_batch_sources_use_case(
-            settings=resolved_settings,
+            settings=settings,
             progress_callback=lambda msg: sys.stdout.write(msg),
         )
     else:
         discovery_use_case = DiscoverBatchSourcesUseCase(
             media_ingestion_port=media_ingestion_port,
-            settings=resolved_settings,
+            settings=settings,
             progress_callback=lambda msg: sys.stdout.write(msg),
         )
     return discovery_use_case.execute(query=query)
@@ -424,7 +424,7 @@ def handle_run(args: argparse.Namespace) -> int:
         Process exit code integer.
     """
     try:
-        settings = CresmoSettings()
+        settings = resolve_shared_settings()
         if args.lookback is not None:
             settings.days_lookback = args.lookback
 

@@ -18,10 +18,27 @@ from langfuse import Langfuse
 from langfuse.span_filter import is_default_export_span
 from langfuse.types import MaskOtelSpansParams, MaskOtelSpansResult, OtelSpanPatch
 
-from cresmo.application.ports import AnonymizerPort
+from cresmo.application.ports import (
+    AnonymizerPort,
+    MetricsPort,
+    TelemetryPort,
+)
 from cresmo.application.services.preflight import probe_http_endpoint
-from cresmo.infrastructure.adapters.opentelemetry_adapter import name_telemetry_threads
+from cresmo.infrastructure.adapters.anonymizer_adapter import (
+    NoOpAnonymizerAdapter,
+    RegexAnonymizerAdapter,
+)
+from cresmo.infrastructure.adapters.noop_metrics_adapter import NoOpMetricsAdapter
+from cresmo.infrastructure.adapters.opentelemetry_adapter import (
+    NoOpTelemetryAdapter,
+    OpenTelemetryAdapter,
+    name_telemetry_threads,
+)
+from cresmo.infrastructure.adapters.prometheus_metrics_adapter import (
+    PrometheusMetricsAdapter,
+)
 from cresmo.infrastructure.config import CresmoSettings
+from cresmo.presentation.factories.settings_factory import resolve_shared_settings
 
 logger = logging.getLogger(__name__)
 
@@ -150,3 +167,37 @@ def resolve_langfuse_client(
         logger.warning("[composition] Failed to initialize Langfuse client: %s", exc)
         _clean_langfuse_env()
         return None
+
+
+def build_anonymizer_adapter(
+    settings: CresmoSettings | None = None,
+) -> AnonymizerPort:
+    """Instantiate AnonymizerPort adapter based on settings configuration."""
+    resolved_settings = resolve_shared_settings(settings)
+    if getattr(resolved_settings, "anonymization_enabled", True):
+        return RegexAnonymizerAdapter()
+    return NoOpAnonymizerAdapter()
+
+
+def build_telemetry_adapter(
+    settings: CresmoSettings | None = None,
+    langfuse_client: Any | None = None,
+) -> TelemetryPort:
+    """Instantiate TelemetryPort adapter choosing between OpenTelemetry and NoOp."""
+    resolved_settings = resolve_shared_settings(settings)
+    if langfuse_client is not None:
+        return OpenTelemetryAdapter(
+            langfuse_client=langfuse_client,
+            pipeline_version=resolved_settings.pipeline_version,
+        )
+    return NoOpTelemetryAdapter()
+
+
+def build_metrics_adapter(
+    settings: CresmoSettings | None = None,
+) -> MetricsPort:
+    """Instantiate MetricsPort adapter choosing between Prometheus and NoOp."""
+    resolved_settings = resolve_shared_settings(settings)
+    if getattr(resolved_settings, "prometheus_enabled", True):
+        return PrometheusMetricsAdapter()
+    return NoOpMetricsAdapter()
