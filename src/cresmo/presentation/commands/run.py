@@ -28,7 +28,6 @@ from cresmo.application.ports import MediaIngestionPort
 from cresmo.application.use_cases.discover_batch_sources import (
     BatchDiscoveryQuery,
     BatchSource,
-    DiscoverBatchSourcesUseCase,
 )
 from cresmo.domain.exceptions import (
     CresmoDomainError,
@@ -321,7 +320,8 @@ def load_batch_sources(
 ) -> Iterator[BatchSource]:
     """Execute streaming batch source discovery via DiscoverBatchSourcesUseCase.
 
-    Conforms to ADR-010 (Streaming-First Unification) and ADR-026 (Anti-Defensive Fallback).
+    Conforms to ADR-010 (Streaming-First Unification), ADR-026 (Anti-Defensive Fallback),
+    and ADR-026 (Rule 11: Anti-Bifurcated Construction).
 
     Args:
         query: BatchDiscoveryQuery constraints.
@@ -331,17 +331,11 @@ def load_batch_sources(
     Returns:
         Streaming iterator of BatchSource records.
     """
-    if media_ingestion_port is None:
-        discovery_use_case = build_discover_batch_sources_use_case(
-            settings=settings,
-            progress_callback=lambda msg: sys.stdout.write(msg),
-        )
-    else:
-        discovery_use_case = DiscoverBatchSourcesUseCase(
-            media_ingestion_port=media_ingestion_port,
-            settings=settings,
-            progress_callback=lambda msg: sys.stdout.write(msg),
-        )
+    discovery_use_case = build_discover_batch_sources_use_case(
+        settings=settings,
+        media_ingestion_port=media_ingestion_port,
+        progress_callback=lambda msg: sys.stdout.write(msg),
+    )
     return discovery_use_case.execute(query=query)
 
 

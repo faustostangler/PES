@@ -10,6 +10,7 @@ from __future__ import annotations
 from collections.abc import Callable
 from typing import TYPE_CHECKING
 
+from cresmo.application.ports import MediaIngestionPort
 from cresmo.application.use_cases.concat_master import ConcatMasterUseCase
 from cresmo.application.use_cases.discover_batch_sources import DiscoverBatchSourcesUseCase
 from cresmo.application.use_cases.index_raw_transcripts import IndexRawTranscriptsUseCase
@@ -71,13 +72,14 @@ def build_unify_duplicates_use_case(
 
 def build_discover_batch_sources_use_case(
     settings: CresmoSettings | None = None,
+    media_ingestion_port: MediaIngestionPort | None = None,
     progress_callback: Callable[[str], object] | None = None,
 ) -> DiscoverBatchSourcesUseCase:
-    """Construct DiscoverBatchSourcesUseCase with NativeMediaIngestionAdapter wired."""
+    """Construct DiscoverBatchSourcesUseCase with injected or default NativeMediaIngestionAdapter."""
     resolved_settings = resolve_shared_settings(settings)
-    media_ingestion_port = build_media_ingestion_adapter(resolved_settings)
+    resolved_media_port = media_ingestion_port or build_media_ingestion_adapter(resolved_settings)
     return DiscoverBatchSourcesUseCase(
-        media_ingestion_port=media_ingestion_port,
+        media_ingestion_port=resolved_media_port,
         settings=resolved_settings,
         progress_callback=progress_callback,
     )

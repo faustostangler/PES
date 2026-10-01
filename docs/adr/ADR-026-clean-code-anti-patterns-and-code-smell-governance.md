@@ -317,6 +317,64 @@ def load_batch_sources(
 
 ---
 
+### Rule 11: Anti-Bifurcated Construction & Leaky Factory Bypass (Single Source of Truth)
+
+#### 11.1 The Anti-Pattern
+Implementing conditional branching in presentation commands, orchestrators, or callers that bifurcates object construction between a factory call and a direct concrete class constructor:
+```python
+# ANTI-PATTERN: Bifurcated Construction and Leaky Factory Bypass
+if media_ingestion_port is None:
+    discovery_use_case = build_discover_batch_sources_use_case(
+        settings=settings,
+        progress_callback=lambda msg: sys.stdout.write(msg),
+    )
+else:
+    discovery_use_case = DiscoverBatchSourcesUseCase(
+        media_ingestion_port=media_ingestion_port,
+        settings=settings,
+        progress_callback=lambda msg: sys.stdout.write(msg),
+    )
+```
+
+**Architectural Violations:**
+1. **Bypasses Single Source of Truth (SSOT):** When a dedicated factory (`build_discover_batch_sources_use_case`) exists, it must be the sole authority on constructing and wiring that Use Case. Bypassing the factory in an `else` branch duplicates constructor arguments and leaks concrete implementation details into the caller.
+2. **Violation of SLAP (Single Level of Abstraction Principle) & DRY:** Presentation helpers (`load_batch_sources`) should orchestrate execution, not manage conditional infrastructure dependency resolution.
+3. **Brittle Dependency Evolution:** If the Use Case constructor evolves (e.g., adding an anonymizer, ledger port, or telemetry wrapper), every bifurcated `else` branch breaks or fails to receive the new cross-cutting concern.
+
+#### 11.2 The Standard & Remediation
+1. **Factories as Open Ports Acceptors:** All use case and pipeline factories (`build_*`) MUST accept optional port overrides (`port: PortInterface | None = None`). If a port is provided, the factory injects it directly; if `None`, the factory constructs or resolves the default adapter.
+   ```python
+   def build_discover_batch_sources_use_case(
+       settings: CresmoSettings | None = None,
+       media_ingestion_port: MediaIngestionPort | None = None,
+       progress_callback: Callable[[str], object] | None = None,
+   ) -> DiscoverBatchSourcesUseCase:
+       resolved_settings = resolve_shared_settings(settings)
+       resolved_media_port = media_ingestion_port or build_media_ingestion_adapter(resolved_settings)
+       return DiscoverBatchSourcesUseCase(
+           media_ingestion_port=resolved_media_port,
+           settings=resolved_settings,
+           progress_callback=progress_callback,
+       )
+   ```
+2. **Unconditional Delegation in Callers:** Callers and presentation helpers delegate 100% of object construction to the factory in a single, clean invocation:
+   ```python
+   def load_batch_sources(
+       query: BatchDiscoveryQuery,
+       settings: CresmoSettings,
+       media_ingestion_port: MediaIngestionPort | None = None,
+   ) -> Iterator[BatchSource]:
+       discovery_use_case = build_discover_batch_sources_use_case(
+           settings=settings,
+           media_ingestion_port=media_ingestion_port,
+           progress_callback=lambda msg: sys.stdout.write(msg),
+       )
+       return discovery_use_case.execute(query=query)
+   ```
+3. **Decoupled Callers:** Presentation command modules (`run.py`, etc.) MUST NOT import concrete Use Case classes if a factory exists for them. They depend strictly on the factory and domain DTOs/queries.
+
+---
+
 ## 3. Enforcement & Quality Gates
 
 

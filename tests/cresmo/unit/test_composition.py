@@ -13,6 +13,7 @@ import pytest
 from pydantic import SecretStr
 
 from cresmo.application.pipeline import CresmoPipeline
+from cresmo.application.ports import MediaIngestionPort
 from cresmo.application.services.preflight import PreflightHealthChecker
 from cresmo.application.use_cases.concat_master import ConcatMasterUseCase
 from cresmo.application.use_cases.discover_batch_sources import DiscoverBatchSourcesUseCase
@@ -113,6 +114,17 @@ class TestCompositionRoot:
         assert isinstance(use_case, DiscoverBatchSourcesUseCase)
         assert isinstance(use_case.media_ingestion_port, NativeMediaIngestionAdapter)
         assert use_case.progress_callback is cb
+
+    def test_build_discover_batch_sources_use_case_with_injected_port(
+        self, test_settings: CresmoSettings
+    ) -> None:
+        mock_port = MagicMock(spec=MediaIngestionPort)
+        use_case = build_discover_batch_sources_use_case(
+            settings=test_settings,
+            media_ingestion_port=mock_port,
+        )
+        assert isinstance(use_case, DiscoverBatchSourcesUseCase)
+        assert use_case.media_ingestion_port is mock_port
 
     def test_factory_functions_fallback_to_default_settings(
         self, test_settings: CresmoSettings
