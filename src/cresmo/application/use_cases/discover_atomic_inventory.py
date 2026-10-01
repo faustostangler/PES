@@ -23,6 +23,7 @@ from cresmo.application.ports import (
     LLMTransformationPort,
     NoOpPromptProviderPort,
     PromptProviderPort,
+    QualityJudgePort,
 )
 from cresmo.application.use_cases.index_raw_transcripts import (
     _can_retry,
@@ -36,6 +37,8 @@ from cresmo.domain.entities import (
 from cresmo.domain.exceptions import DomainValidationError, NoteTypologyError
 from cresmo.domain.value_objects import (
     AtomicEntityInventory,
+    EvaluationContext,
+    JudgeCriterion,
     NoteTitle,
     NoteType,
     PromptKey,
@@ -137,6 +140,7 @@ class DiscoverAtomicInventoryUseCase:
         temperature: float = 0.0,
         max_rewrites: int = 3,
         judge_enabled: bool | None = None,
+        quality_judge_port: QualityJudgePort | None = None,
     ) -> None:
         """Initialize use case with required Hexagonal ports and judge parameters.
 
@@ -147,6 +151,7 @@ class DiscoverAtomicInventoryUseCase:
             max_rewrites: Maximum retry attempts when compliance check fails (default: 3).
             judge_enabled: Whether to execute LLM-as-a-judge verification loop.
                 If None, defaults to True when prompt_provider is provided, False otherwise.
+            quality_judge_port: Optional decoupled QualityJudgePort adapter (ADR-029).
         """
         if llm_synthesis_port is None:
             raise ValueError("llm_synthesis_port must be provided")
@@ -154,8 +159,11 @@ class DiscoverAtomicInventoryUseCase:
         self.temperature = temperature
         self.prompt_provider: PromptProviderPort = prompt_provider or NoOpPromptProviderPort()
         self.max_rewrites = max_rewrites
+        self.quality_judge_port = quality_judge_port
         self.judge_enabled = (
-            (prompt_provider is not None) if judge_enabled is None else judge_enabled
+            (prompt_provider is not None or quality_judge_port is not None)
+            if judge_enabled is None
+            else judge_enabled
         )
 
     def _query_candidate_inventory(
@@ -199,22 +207,42 @@ class DiscoverAtomicInventoryUseCase:
         if not is_valid_inventory_json_structure(candidate_data):
             return False
 
-        judge_sys, judge_prompt = self.prompt_provider.get_prompt(
-            PromptKey.JUDGE_ATOMIC_INVENTORY,
-            compendium_title=compendium.title.value,
-            channel_name=compendium.channel_name,
-            compendium_body=compendium.body,
-            inventory_json=json.dumps(candidate_data, ensure_ascii=False),
-        )
-        judge_response = self.llm_synthesis_port.transform(
-            prompt=judge_prompt,
-            system_instruction=judge_sys,
-            temperature=0.0,
-            trace_id=judge_trace_id,
-            session_id=session_id,
-            user_id=user_id,
-        )
-        return parse_judge_boolean(judge_response)
+        # Priority 1: Decoupled QualityJudgePort (ADR-029)
+        if self.quality_judge_port is not None:
+            context = EvaluationContext(
+                stage_name="atomic_inventory",
+                raw_text=compendium.body,
+                candidate_text=json.dumps(candidate_data, ensure_ascii=False),
+                metadata={
+                    "title": compendium.title.value,
+                    "channel": compendium.channel_name.value,
+                },
+                trace_id=judge_trace_id,
+                required_criteria=(JudgeCriterion.INVENTORY_COHERENCE,),
+            )
+            evaluation = self.quality_judge_port.evaluate(context)
+            return evaluation.passed
+
+        # Priority 2: Fallback to prompt provider when quality_judge_port is not injected
+        if self.prompt_provider:
+            judge_sys, judge_prompt = self.prompt_provider.get_prompt(
+                PromptKey.JUDGE_ATOMIC_INVENTORY,
+                compendium_title=compendium.title.value,
+                channel_name=compendium.channel_name,
+                compendium_body=compendium.body,
+                inventory_json=json.dumps(candidate_data, ensure_ascii=False),
+            )
+            judge_response = self.llm_synthesis_port.transform(
+                prompt=judge_prompt,
+                system_instruction=judge_sys,
+                temperature=0.0,
+                trace_id=judge_trace_id,
+                session_id=session_id,
+                user_id=user_id,
+            )
+            return parse_judge_boolean(judge_response)
+
+        return True
 
     def execute(
         self,

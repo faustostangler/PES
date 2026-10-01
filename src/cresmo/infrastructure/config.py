@@ -74,6 +74,11 @@ class CresmoSettings(BaseSettings):
         default=SecretStr(""),
         description="Google Gemini API Key for synthesis and expansion.",
     )
+    typesafe_api_key: SecretStr = Field(
+        default=SecretStr(""),
+        validation_alias=AliasChoices("typesafe_api_key", "TYPESAFE_API_KEY"),
+        description="TypeSafe AI API Key for System One Jev decision evaluations.",
+    )
     langfuse_secret_key: SecretStr = Field(
         default=SecretStr(""),
         validation_alias=AliasChoices("langfuse_secret_key", "LANGFUSE_SECRET_KEY"),
@@ -482,4 +487,33 @@ class CresmoSettings(BaseSettings):
             "inventory_max_attempts", "CRESMO_INVENTORY_MAX_ATTEMPTS", "INVENTORY_MAX_ATTEMPTS"
         ),
         description="Maximum LLM judge rewrite attempts for atomic inventory discovery (0 means unconstrained / infinite loop).",
+    )
+
+    # =========================================================================
+    # 🔴 Category 3: Quality Judge & Decision-Model Evaluator Settings (ADR-029)
+    # =========================================================================
+    typesafe_model: str = Field(
+        default="jev-latest",
+        validation_alias=AliasChoices("typesafe_model", "TYPESAFE_MODEL"),
+        description="Model identifier for TypeSafe AI System One decision evaluations.",
+    )
+    typesafe_base_url: str = Field(
+        default="https://api.typesafe.ai/v1",
+        validation_alias=AliasChoices("typesafe_base_url", "TYPESAFE_BASE_URL"),
+        description="Base URL endpoint for TypeSafe AI API.",
+    )
+    judge_provider: str = Field(
+        default="gemini",
+        validation_alias=AliasChoices("judge_provider", "CRESMO_JUDGE_PROVIDER"),
+        description="Primary quality judge provider ('gemini', 'typesafe', 'ollama').",
+    )
+    judge_fallback_provider: str = Field(
+        default="ollama",
+        validation_alias=AliasChoices("judge_fallback_provider", "CRESMO_JUDGE_FALLBACK_PROVIDER"),
+        description="Fallback quality judge provider when primary fails.",
+    )
+    judge_blocking: bool = Field(
+        default=False,
+        validation_alias=AliasChoices("judge_blocking", "CRESMO_JUDGE_BLOCKING"),
+        description="Whether failed quality evaluations raise DomainValidationError or log warning scores.",
     )

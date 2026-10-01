@@ -20,6 +20,7 @@ import logging
 from cresmo.application.ports import (
     LLMTransformationPort,
     PromptProviderPort,
+    QualityJudgePort,
     VaultRepositoryPort,
 )
 from cresmo.application.use_cases.indexing.distiller import LLMTranscriptDistiller
@@ -63,6 +64,7 @@ class IndexRawTranscriptsUseCase:
         temperature: float = 0.2,
         language: str = "Português do Brasil",
         max_rewrites: int = 3,
+        quality_judge_port: QualityJudgePort | None = None,
         *,
         vault_repo: VaultRepositoryPort | None = None,
         llm: LLMTransformationPort | None = None,
@@ -89,6 +91,7 @@ class IndexRawTranscriptsUseCase:
         self.temperature = temperature
         self.language = language
         self.max_rewrites = max_rewrites
+        self.quality_judge_port = quality_judge_port
 
         self._distiller = LLMTranscriptDistiller(
             llm_indexing_port=self.llm_indexing_port,
@@ -96,6 +99,7 @@ class IndexRawTranscriptsUseCase:
             temperature=self.temperature,
             language=self.language,
             max_rewrites=self.max_rewrites,
+            quality_judge_port=self.quality_judge_port,
         )
 
     def warmup(self, timeout_seconds: float | None = None) -> None:

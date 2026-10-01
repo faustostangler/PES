@@ -46,6 +46,12 @@ from cresmo.domain.value_objects.notes import (
     NoteType,
 )
 from cresmo.domain.value_objects.prompt import PromptKey
+from cresmo.domain.value_objects.quality import (
+    CriterionScore,
+    EvaluationContext,
+    JudgeCriterion,
+    JudgeEvaluation,
+)
 from cresmo.domain.value_objects.sync import (
     SyncFilterCriteria,
     SyncSummary,
@@ -65,8 +71,12 @@ __all__ = [
     "ChannelId",
     "ChannelName",
     "ContentId",
+    "CriterionScore",
     "CrossContextRelations",
     "DiscoveredMediaItem",
+    "EvaluationContext",
+    "JudgeCriterion",
+    "JudgeEvaluation",
     "LedgerEntry",
     "MasterDocumentResult",
     "NoteTitle",

@@ -16,6 +16,7 @@ from cresmo.application.ports.anonymizer import AnonymizerPort
 from cresmo.application.ports.media import MediaIngestionPort
 from cresmo.application.ports.metrics import MetricsPort, NoOpMetricsPort
 from cresmo.application.ports.prompt import NoOpPromptProviderPort, PromptProviderPort
+from cresmo.application.ports.quality_judge_port import QualityJudgePort
 from cresmo.application.ports.settings import (
     DefaultPipelineSettings,
     PipelineSettingsProtocol,
@@ -42,6 +43,7 @@ __all__ = [
     "NoOpTelemetryPort",
     "PipelineSettingsProtocol",
     "PromptProviderPort",
+    "QualityJudgePort",
     "TelemetryPort",
     "VaultRepositoryPort",
 ]

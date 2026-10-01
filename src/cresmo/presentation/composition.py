@@ -50,6 +50,7 @@ from cresmo.presentation.factories.adapter_factory import (
     build_prompt_provider,
     build_vault_adapter,
 )
+from cresmo.presentation.factories.judge_factory import build_quality_judge_adapter
 from cresmo.presentation.factories.settings_factory import (
     get_shared_settings,
     reset_shared_settings,
@@ -245,7 +246,12 @@ def build_pipeline(
     # 4. SRE & DORA Metrics Telemetry
     metrics_port = build_metrics_adapter(resolved_settings)
 
-    # 5. Pipeline Assembly
+    # 5. Quality Judge & Decision-Model Evaluators (ADR-029)
+    quality_judge_port = build_quality_judge_adapter(
+        resolved_settings, langfuse_client=langfuse_client
+    )
+
+    # 6. Pipeline Assembly
     effective_batch_size = (
         batch_size_override if batch_size_override is not None else resolved_settings.batch_size
     )
@@ -261,6 +267,7 @@ def build_pipeline(
         llm_indexing_port=llm_indexing_port,
         telemetry_port=telemetry_port,
         metrics_port=metrics_port,
+        quality_judge_port=quality_judge_port,
     )
 
 

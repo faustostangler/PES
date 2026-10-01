@@ -12,6 +12,7 @@ from cresmo.presentation.factories.adapter_factory import (
     build_prompt_provider,
     build_vault_adapter,
 )
+from cresmo.presentation.factories.judge_factory import build_quality_judge_adapter
 from cresmo.presentation.factories.settings_factory import (
     get_shared_settings,
     reset_shared_settings,
@@ -44,6 +45,7 @@ __all__ = [
     "build_metrics_adapter",
     "build_preflight_checker",
     "build_prompt_provider",
+    "build_quality_judge_adapter",
     "build_sync_channel_use_case",
     "build_telemetry_adapter",
     "build_unify_duplicates_use_case",

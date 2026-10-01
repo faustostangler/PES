@@ -22,6 +22,8 @@ from __future__ import annotations
 import logging
 from pathlib import Path
 
+from opentelemetry import trace
+
 from cresmo.application.pipeline.models import PipelineResult
 from cresmo.application.pipeline.stage_runner import PipelineStageRunner
 from cresmo.application.pipeline.transcript_loader import (
@@ -40,6 +42,7 @@ from cresmo.application.ports import (
     NoOpTelemetryPort,
     PipelineSettingsProtocol,
     PromptProviderPort,
+    QualityJudgePort,
     TelemetryPort,
     VaultRepositoryPort,
 )
@@ -61,8 +64,10 @@ from cresmo.domain.entities import (
     RawTranscript,
     UserIdentity,
 )
-from cresmo.domain.exceptions import CresmoDomainError
+from cresmo.domain.exceptions import CresmoDomainError, DomainValidationError
 from cresmo.domain.value_objects import (
+    EvaluationContext,
+    JudgeCriterion,
     RawIndexEntry,
     is_processable_transcript_file,
 )
@@ -89,6 +94,7 @@ class CresmoPipeline:
         llm_indexing_port: LLMTransformationPort | None = None,
         telemetry_port: TelemetryPort | None = None,
         metrics_port: MetricsPort | None = None,
+        quality_judge_port: QualityJudgePort | None = None,
     ) -> None:
         self.media_ingestion_port = media_ingestion_port
 
@@ -100,6 +106,7 @@ class CresmoPipeline:
             raise ValueError("vault_port must be provided")
         self.vault_port = vault_port
         self.ledger_port = ledger_port
+        self.quality_judge = quality_judge_port
 
         self.telemetry_port: TelemetryPort = telemetry_port or NoOpTelemetryPort()
         self.metrics_port: MetricsPort = metrics_port or NoOpMetricsPort()
@@ -236,6 +243,39 @@ class CresmoPipeline:
                 content_id=content_id,
                 channel_id=raw.channel_id,
             )
+
+            if self.quality_judge is not None:
+                span = trace.get_current_span()
+                ctx = span.get_span_context() if span else None
+                active_trace_id = (
+                    format(ctx.trace_id, "032x")
+                    if ctx and ctx.trace_id
+                    else f"cresmo_{channel_name.value}_{content_id.value}"
+                )
+                eval_context = EvaluationContext(
+                    stage_name="fluid_prose",
+                    raw_text=raw.body,
+                    candidate_text=fluid_transcript.body,
+                    metadata={"content_id": content_id.value, "channel_name": channel_name.value},
+                    trace_id=active_trace_id,
+                    required_criteria=(
+                        JudgeCriterion.ORALITY_REMOVAL,
+                        JudgeCriterion.SEMANTIC_FAITHFULNESS,
+                        JudgeCriterion.NER_PRESERVATION,
+                        JudgeCriterion.STRUCTURAL_COMPLIANCE,
+                    ),
+                )
+                evaluation = self.quality_judge.evaluate(eval_context)
+                if not evaluation.passed:
+                    logger.warning(
+                        "Quality judge reported low score for 'fluid_prose' (overall=%.2f, passed=%s).",
+                        evaluation.overall_score,
+                        evaluation.passed,
+                    )
+                    if getattr(self.settings, "judge_blocking", False):
+                        raise DomainValidationError(
+                            f"Fluid prose quality evaluation failed threshold: {evaluation.overall_score:.2f}"
+                        )
 
             if entry is None:
                 entry = self.stage_runner.run_stage(
