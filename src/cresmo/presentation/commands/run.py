@@ -49,7 +49,6 @@ from cresmo.presentation.composition import (
     build_discover_batch_sources_use_case,
     build_pipeline,
     build_preflight_checker,
-    resolve_shared_settings,
 )
 from cresmo.presentation.exit_codes import (
     EXIT_CONFIG_OR_USAGE_ERROR,
@@ -424,7 +423,7 @@ def handle_run(args: argparse.Namespace) -> int:
         Process exit code integer.
     """
     try:
-        settings = resolve_shared_settings()
+        settings = CresmoSettings()
         if args.lookback is not None:
             settings.days_lookback = args.lookback
 

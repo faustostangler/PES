@@ -236,7 +236,9 @@ class TestOpenTelemetryAdapter:
                 verdict="PASS",
             )
 
-        root_span = next(s for s in exporter.get_finished_spans() if s.name == "cresmo.pipeline.execution")
+        root_span = next(
+            s for s in exporter.get_finished_spans() if s.name == "cresmo.pipeline.execution"
+        )
         assert len(root_span.events) == 1
         event = root_span.events[0]
         assert event.name == "judge_evaluation"
@@ -260,7 +262,9 @@ class TestOpenTelemetryAdapter:
                 details={"wikilink_count": 14},
             )
 
-        root_span = next(s for s in exporter.get_finished_spans() if s.name == "cresmo.pipeline.execution")
+        root_span = next(
+            s for s in exporter.get_finished_spans() if s.name == "cresmo.pipeline.execution"
+        )
         event = next(e for e in root_span.events if e.name == "session_coherence")
         assert event.attributes is not None
         assert event.attributes["eval.coherence_score"] == 0.92

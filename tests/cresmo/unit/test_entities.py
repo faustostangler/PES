@@ -321,9 +321,10 @@ class TestUserIdentity:
             UserIdentity(value="")
 
     def test_identified_empty_subject_raises_error(self) -> None:
-        with pytest.raises(ValueError, match="Identified UserIdentity requires a non-empty subject"):
+        with pytest.raises(
+            ValueError, match="Identified UserIdentity requires a non-empty subject"
+        ):
             UserIdentity.identified(subject="   ", provider="iam")
-
 
 
 class TestChannelTenantId:

@@ -233,9 +233,7 @@ class TestCresmoPipelineOrchestration:
         assert res.success is True
         # All calls share the unified video session_id (6 indexing + 4 downstream synthesis)
         video_session_calls = [
-            c
-            for c in llm.call_history
-            if c.get("session_id") == "Political Theory:dQw4w9WgXcQ"
+            c for c in llm.call_history if c.get("session_id") == "Political Theory:dQw4w9WgXcQ"
         ]
         assert len(video_session_calls) == 10
         # Fluid prose and expansion were skipped because compendium was pre-saved

@@ -95,8 +95,13 @@ class TestCresmoOTelTraceCorrelationFilter:
 
         log_filter = CresmoOTelTraceCorrelationFilter()
         record = logging.LogRecord(
-            name="test", level=logging.INFO, pathname="", lineno=0,
-            msg="no span", args=(), exc_info=None,
+            name="test",
+            level=logging.INFO,
+            pathname="",
+            lineno=0,
+            msg="no span",
+            args=(),
+            exc_info=None,
         )
 
         result = log_filter.filter(record)
@@ -120,11 +125,18 @@ class TestCresmoOTelTraceCorrelationFilter:
 
         log_filter = CresmoOTelTraceCorrelationFilter()
         record = logging.LogRecord(
-            name="test", level=logging.INFO, pathname="", lineno=0,
-            msg="with span", args=(), exc_info=None,
+            name="test",
+            level=logging.INFO,
+            pathname="",
+            lineno=0,
+            msg="with span",
+            args=(),
+            exc_info=None,
         )
 
-        with patch("cresmo.infrastructure.logging_config.trace.get_current_span", return_value=mock_span):
+        with patch(
+            "cresmo.infrastructure.logging_config.trace.get_current_span", return_value=mock_span
+        ):
             result = log_filter.filter(record)
 
         assert result is True
@@ -145,11 +157,18 @@ class TestCresmoOTelTraceCorrelationFilter:
 
         log_filter = CresmoOTelTraceCorrelationFilter()
         record = logging.LogRecord(
-            name="test", level=logging.INFO, pathname="", lineno=0,
-            msg="session test", args=(), exc_info=None,
+            name="test",
+            level=logging.INFO,
+            pathname="",
+            lineno=0,
+            msg="session test",
+            args=(),
+            exc_info=None,
         )
 
-        with patch("cresmo.infrastructure.logging_config.trace.get_current_span", return_value=mock_span):
+        with patch(
+            "cresmo.infrastructure.logging_config.trace.get_current_span", return_value=mock_span
+        ):
             log_filter.filter(record)
 
         assert record.session_id == "content:sandeco:ep042"  # type: ignore[attr-defined]
