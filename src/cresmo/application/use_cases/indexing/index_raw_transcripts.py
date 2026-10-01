@@ -10,6 +10,7 @@ Conforms to:
 - ADR-011: Zero Hardcoded Tunables and Self-Healing Output Validation
 - ADR-013: Iterative LLM-as-a-Judge Indexing Loops
 - ADR-019: SOTA KISS Nomenclature & Value Objects
+- ADR-028: Strict Rejection of Standalone Raw Indexing & Universal FluidTranscript Contract
 """
 
 from __future__ import annotations

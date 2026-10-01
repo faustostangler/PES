@@ -47,7 +47,7 @@ class TransformFluidProseUseCase:
 - Invariant 3: Does not require or create `## Informações Complementares`.
 - Invariant 4: If `vault_port` is provided, optionally persists to `vault_port.save_fluid_transcript(fluid)`.
 
-### 2.2 `IndexRawTranscriptsUseCase` (`src/cresmo/application/use_cases/indexing/orchestrator.py`)
+### 2.2 `IndexRawTranscriptsUseCase` (`src/cresmo/application/use_cases/indexing/index_raw_transcripts.py`)
 ```python
 def execute(
     self,
