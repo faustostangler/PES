@@ -137,6 +137,52 @@ class TestGeminiJudgeAdapter:
         assert score_item is not None
         assert score_item.score == 0.95
 
+    def test_gemini_judge_uses_custom_prompt_provider(self) -> None:
+        mock_genai_client = MagicMock()
+        mock_response = MagicMock()
+        mock_response.text = json.dumps(
+            {
+                "criteria": [
+                    {
+                        "criterion": "orality_removal",
+                        "score": 1.0,
+                        "passed": True,
+                        "reasoning": "Clean",
+                    }
+                ],
+                "overall_score": 1.0,
+                "passed": True,
+            }
+        )
+        mock_genai_client.models.generate_content.return_value = mock_response
+
+        mock_prompt_provider = MagicMock()
+        mock_prompt_provider.get_prompt.return_value = (
+            "CUSTOM GEMINI SYS",
+            "CUSTOM GEMINI USER",
+        )
+
+        adapter = GeminiJudgeAdapter(
+            client=mock_genai_client,
+            prompt_provider=mock_prompt_provider,
+        )
+        context = EvaluationContext(
+            stage_name="fluid_prose",
+            raw_text="raw",
+            candidate_text="cand",
+            required_criteria=(JudgeCriterion.ORALITY_REMOVAL,),
+        )
+        adapter.evaluate(context)
+
+        mock_prompt_provider.get_prompt.assert_called_once()
+        args, kwargs = mock_prompt_provider.get_prompt.call_args
+        from cresmo.domain.value_objects import PromptKey
+
+        assert args[0] == PromptKey.LLM_JUDGE
+        assert kwargs["stage_name"] == "fluid_prose"
+        assert kwargs["source_text"] == "raw"
+        assert kwargs["candidate_text"] == "cand"
+
 
 class TestOllamaJudgeAdapter:
     """Test suite for local Ollama fallback judge adapter."""
@@ -182,6 +228,59 @@ class TestOllamaJudgeAdapter:
         ollama_score = evaluation.get_score(JudgeCriterion.ORALITY_REMOVAL)
         assert ollama_score is not None
         assert ollama_score.score == 0.85
+
+    def test_ollama_judge_uses_custom_prompt_provider(self) -> None:
+        mock_http_client = MagicMock()
+        mock_post_resp = MagicMock()
+        mock_post_resp.status_code = 200
+        mock_post_resp.json.return_value = {
+            "response": json.dumps(
+                {
+                    "criteria": [
+                        {
+                            "criterion": "orality_removal",
+                            "score": 1.0,
+                            "passed": True,
+                            "reasoning": "Ok",
+                        }
+                    ],
+                    "overall_score": 1.0,
+                    "passed": True,
+                }
+            )
+        }
+        mock_http_client.post.return_value = mock_post_resp
+
+        mock_prompt_provider = MagicMock()
+        mock_prompt_provider.get_prompt.return_value = (
+            "CUSTOM OLLAMA SYS",
+            "CUSTOM OLLAMA USER",
+        )
+
+        adapter = OllamaJudgeAdapter(
+            http_client=mock_http_client,
+            prompt_provider=mock_prompt_provider,
+        )
+        context = EvaluationContext(
+            stage_name="fluid_prose",
+            raw_text="raw text",
+            candidate_text="cand text",
+            required_criteria=(JudgeCriterion.ORALITY_REMOVAL,),
+        )
+        adapter.evaluate(context)
+
+        mock_prompt_provider.get_prompt.assert_called_once()
+        args, kwargs = mock_prompt_provider.get_prompt.call_args
+        from cresmo.domain.value_objects import PromptKey
+
+        assert args[0] == PromptKey.LLM_JUDGE
+        assert kwargs["stage_name"] == "fluid_prose"
+        assert kwargs["source_text"] == "raw text"
+        assert kwargs["candidate_text"] == "cand text"
+
+        call_kwargs = mock_http_client.post.call_args[1]
+        assert call_kwargs["json"]["prompt"] == "CUSTOM OLLAMA USER"
+        assert call_kwargs["json"]["system"] == "CUSTOM OLLAMA SYS"
 
 
 class TestTypeSafeJudgeAdapter:
@@ -482,5 +581,5 @@ class TestCoordinatorLlmJudgeIntegration:
             llm_judge_port=mock_judge,
         )
 
-        with pytest.raises(DomainValidationError, match="fluid_prose quality evaluation failed"):
+        with pytest.raises(DomainValidationError, match="Stage 'fluid_prose' quarantined"):
             pipeline.execute(canned_raw)

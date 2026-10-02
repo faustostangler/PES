@@ -114,6 +114,14 @@ _NOOP_BUILDERS: dict[PromptKey, Callable[[dict[str, Any]], tuple[str, str]]] = {
         f"You are Judge. Language: {c.get('language', 'Português do Brasil')}.",
         f"Title: {c.get('video_title', '')}\nExcerpt:\n{c.get('transcript_excerpt', '')}\nSynthesis:\n{c.get('synthesis', '')}",
     ),
+    PromptKey.LLM_JUDGE: lambda c: (
+        "You are a rigorous, calibrated Quality Evaluation Judge for knowledge synthesis pipelines. You must return ONLY a valid JSON object matching the criteria structure.",
+        f"Stage: {c.get('stage_name', '')}\nRequired Criteria to Evaluate: {c.get('criteria_json', '[]')}\n\n--- SOURCE REFERENCE TEXT ---\n{c.get('source_text', '')}\n\n--- CANDIDATE TEXT ---\n{c.get('candidate_text', '')}\n\nEvaluate now and output the JSON verdict.",
+    ),
+    PromptKey.OLLAMA_CRITIQUE: lambda c: (
+        "You are an expert editorial director. Analyze the quality evaluation failure verdict and synthesize at most 3 concise, direct, imperative corrective directives for the generative model to follow on its retry attempt. Output ONLY the directives, with zero preamble.",
+        f"Stage '{c.get('stage_name', '')}' failed quality evaluation with overall score {c.get('overall_score', '')}.\nCriteria Failures:\n{c.get('criteria_failures', '')}\n\nPlease output concise, direct instructions to fix these defects:",
+    ),
 }
 
 

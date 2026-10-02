@@ -174,3 +174,21 @@ def test_stage_factory_unknown_stage_raises_error() -> None:
     factory = StageFactory(settings=DefaultPipelineSettings())
     with pytest.raises(ValueError, match="Unknown stage 'nonexistent_stage'"):
         factory.build_stage("nonexistent_stage")
+
+
+def test_stage_factory_uses_domain_stage_registry() -> None:
+    """Verify StageFactory dynamically resolves specifications from domain StageRegistry."""
+    from cresmo.domain.stage_registry import StageRegistry, StageSpec
+
+    test_stage_name = "dynamic_registered_stage"
+    custom_spec = StageSpec(
+        transform_prompt_key=PromptKey.FLUID_PROSE,
+        required_criteria=(JudgeCriterion.ORALITY_REMOVAL,),
+    )
+    StageRegistry.register(test_stage_name, custom_spec)
+
+    factory = StageFactory(settings=DefaultPipelineSettings())
+    descriptor = factory.build_stage(test_stage_name)
+    assert descriptor.stage_name == test_stage_name
+    assert descriptor.eval_spec is not None
+    assert descriptor.eval_spec.required_criteria == (JudgeCriterion.ORALITY_REMOVAL,)

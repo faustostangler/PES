@@ -24,3 +24,5 @@ class PromptKey(StrEnum):
     JUDGE_RAW_INDEX_SUMMARY = "judge_raw_index_summary"
     JUDGE_RAW_INDEX_CONCEPTS = "judge_raw_index_concepts"
     JUDGE_RAW_INDEX_SYNTHESIS = "judge_raw_index_synthesis"
+    LLM_JUDGE = "llm_judge"
+    OLLAMA_CRITIQUE = "ollama_critique"

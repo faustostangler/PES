@@ -326,6 +326,25 @@ def build_reconcile_mocs(provider: Any, **context: Any) -> tuple[str, str]:
     )
 
 
+def build_llm_judge(provider: Any, **context: Any) -> tuple[str, str]:
+    return provider._format_paired_prompt(
+        PromptKey.LLM_JUDGE.value,
+        stage_name=context.get("stage_name", ""),
+        criteria_json=context.get("criteria_json", "[]"),
+        source_text=context.get("source_text", ""),
+        candidate_text=context.get("candidate_text", ""),
+    )
+
+
+def build_ollama_critique(provider: Any, **context: Any) -> tuple[str, str]:
+    return provider._format_paired_prompt(
+        PromptKey.OLLAMA_CRITIQUE.value,
+        stage_name=context.get("stage_name", ""),
+        overall_score=context.get("overall_score", ""),
+        criteria_failures=context.get("criteria_failures", ""),
+    )
+
+
 PROMPT_BUILDER_DISPATCH_MAP: dict[PromptKey, Any] = {
     PromptKey.FLUID_PROSE: build_fluid_prose,
     PromptKey.GAP_FILLER_PASS1: build_gap_filler_pass1,
@@ -343,4 +362,6 @@ PROMPT_BUILDER_DISPATCH_MAP: dict[PromptKey, Any] = {
     PromptKey.JUDGE_RAW_INDEX_SUMMARY: build_judge_raw_index_summary,
     PromptKey.JUDGE_RAW_INDEX_CONCEPTS: build_judge_raw_index_concepts,
     PromptKey.JUDGE_RAW_INDEX_SYNTHESIS: build_judge_raw_index_synthesis,
+    PromptKey.LLM_JUDGE: build_llm_judge,
+    PromptKey.OLLAMA_CRITIQUE: build_ollama_critique,
 }

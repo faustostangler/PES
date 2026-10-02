@@ -17,12 +17,14 @@ from typing import Any
 from google import genai
 from google.genai import types
 
+from cresmo.application.ports import PromptProviderPort
 from cresmo.application.ports.llm_judge_port import LlmJudgePort
-from cresmo.domain.value_objects.quality import (
+from cresmo.domain.value_objects import (
     CriterionScore,
     EvaluationContext,
     JudgeCriterion,
     JudgeEvaluation,
+    PromptKey,
 )
 
 logger = logging.getLogger(__name__)
@@ -45,6 +47,7 @@ class GeminiJudgeAdapter(LlmJudgePort):
         client: Any | None = None,
         api_key: str | None = None,
         model: str = "gemini-3.5-flash-lite",
+        prompt_provider: PromptProviderPort | None = None,
     ) -> None:
         """Initialize the Gemini judge adapter.
 
@@ -52,10 +55,12 @@ class GeminiJudgeAdapter(LlmJudgePort):
             client: Pre-configured Google GenAI client instance.
             api_key: Google Gemini API key string.
             model: Gemini model name for evaluation.
+            prompt_provider: Optional PromptProviderPort for externalized prompt templates.
         """
         self._model = model
         self._api_key = api_key
         self._client = client
+        self._prompt_provider = prompt_provider
 
     @property
     def client(self) -> Any:
@@ -70,27 +75,19 @@ class GeminiJudgeAdapter(LlmJudgePort):
         start_time = time.perf_counter()
         criteria_names = [c.value for c in context.required_criteria]
 
-        system_instruction = (
-            "You are a rigorous, calibrated Quality Evaluation Judge for knowledge synthesis pipelines. "
-            "Your task is to critically assess the candidate output text against the original source text. "
-            "You must return ONLY a valid JSON object matching the following structure:\n"
-            "{\n"
-            '  "criteria": [\n'
-            '    {"criterion": "<criterion_name>", "score": 0.0-1.0, "passed": true/false, "reasoning": "<explanation>"}\n'
-            "  ],\n"
-            '  "overall_score": 0.0-1.0,\n'
-            '  "passed": true/false\n'
-            "}"
-        )
+        provider = self._prompt_provider
+        if provider is None:
+            from cresmo.infrastructure.adapters.prompts import JsonPromptProvider
 
-        user_prompt = (
-            f"Stage: {context.stage_name}\n"
-            f"Required Criteria to Evaluate: {json.dumps(criteria_names)}\n\n"
-            "--- SOURCE REFERENCE TEXT ---\n"
-            f"{context.raw_text}\n\n"
-            "--- CANDIDATE TEXT ---\n"
-            f"{context.candidate_text}\n\n"
-            "Evaluate now and output the JSON verdict."
+            provider = JsonPromptProvider()
+            self._prompt_provider = provider
+
+        system_instruction, user_prompt = provider.get_prompt(
+            PromptKey.LLM_JUDGE,
+            stage_name=context.stage_name,
+            criteria_json=json.dumps(criteria_names),
+            source_text=context.raw_text,
+            candidate_text=context.candidate_text,
         )
 
         try:

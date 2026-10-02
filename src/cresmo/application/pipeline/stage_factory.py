@@ -3,12 +3,11 @@
 from __future__ import annotations
 
 from collections.abc import Callable, Sequence
-from dataclasses import dataclass, field
-from typing import Any, ClassVar
+from typing import Any, TypeVar
 
 from cresmo.application.pipeline.stage_descriptor import StageDescriptor
 from cresmo.application.ports import PipelineSettingsProtocol
-from cresmo.application.use_cases.transform_fluid_prose import post_process_fluid_transcript
+from cresmo.domain.stage_registry import StageRegistry, StageSpec
 from cresmo.domain.value_objects import (
     CandidateText,
     JudgeCriterion,
@@ -16,18 +15,8 @@ from cresmo.domain.value_objects import (
     StageEvaluationSpec,
 )
 
-
-@dataclass(frozen=True, slots=True)
-class StageSpec:
-    """Declarative domain specification defining invariant stage metadata."""
-
-    transform_prompt_key: PromptKey | None = None
-    required_criteria: tuple[JudgeCriterion, ...] = ()
-    judge_prompt_key: PromptKey | None = None
-    post_processor: Callable[..., Any] | None = None
-    source_extractor: Callable[..., str] | None = None
-    candidate_extractor: Callable[..., str] | None = None
-    eval_metadata: dict[str, Any] = field(default_factory=dict)
+TSource = TypeVar("TSource")
+TOutput = TypeVar("TOutput")
 
 
 class StageFactory:
@@ -35,25 +24,14 @@ class StageFactory:
 
     Maintains single source of truth for prompts, quality criteria, post-processors,
     and stage execution tunables across pipeline stages (ADR-031).
+    Delegates domain metadata resolution to StageRegistry.
     """
-
-    _STAGE_SPECS: ClassVar[dict[str, StageSpec]] = {
-        "fluid_prose": StageSpec(
-            required_criteria=(
-                JudgeCriterion.ORALITY_REMOVAL,
-                JudgeCriterion.SEMANTIC_FAITHFULNESS,
-                JudgeCriterion.NER_PRESERVATION,
-                JudgeCriterion.STRUCTURAL_COMPLIANCE,
-            ),
-            post_processor=post_process_fluid_transcript,
-        ),
-    }
 
     def __init__(self, settings: PipelineSettingsProtocol) -> None:
         self.settings = settings
         self._cache: dict[str, StageDescriptor[Any, Any]] = {}
 
-    def build_stage[TSource, TOutput](
+    def build_stage(
         self,
         stage_name: str,
         *,
@@ -71,8 +49,9 @@ class StageFactory:
     ) -> StageDescriptor[TSource, TOutput]:
         """Build or retrieve a standardized StageDescriptor for any pipeline stage.
 
-        Resolves stage metadata from the declarative catalog, applies convention-over-configuration
-        for prompts/extractors, and binds centralized settings with optional call-site overrides.
+        Resolves stage metadata from the declarative StageRegistry catalog, applies
+        convention-over-configuration for prompts/extractors, and binds centralized
+        settings with optional call-site overrides.
         """
         has_overrides = any(
             v is not None
@@ -94,7 +73,9 @@ class StageFactory:
         if not has_overrides and stage_name in self._cache:
             return self._cache[stage_name]
 
-        spec = self._STAGE_SPECS.get(stage_name)
+        spec: StageSpec | None = (
+            StageRegistry.get(stage_name) if StageRegistry.contains(stage_name) else None
+        )
 
         # 1. Resolve transform prompt key (explicit -> spec -> convention: PromptKey(stage_name))
         resolved_transform_prompt_key: PromptKey
@@ -196,3 +177,6 @@ class StageFactory:
     # SOTA DX: Direct callable interface and aliases
     __call__ = build_stage
     create_stage = build_stage
+
+
+__all__ = ["StageFactory", "StageSpec"]

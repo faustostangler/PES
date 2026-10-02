@@ -29,6 +29,7 @@ class PipelineStatus(str, Enum):
         FAILED_TRANSFORMATION: LLM synthesis or schema extraction failed.
         RUNNING: Currently executing active pipeline stages.
         PAUSED_BUDGET: Token or API rate budget cap reached.
+        QUARANTINED: Quality gate evaluation failed after maximum retries; item quarantined.
     """
 
     COMPLETED = "COMPLETED"
@@ -37,6 +38,7 @@ class PipelineStatus(str, Enum):
     FAILED_TRANSFORMATION = "FAILED_TRANSFORMATION"
     RUNNING = "RUNNING"
     PAUSED_BUDGET = "PAUSED_BUDGET"
+    QUARANTINED = "QUARANTINED"
 
 
 @dataclass(frozen=True)

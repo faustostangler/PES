@@ -503,7 +503,7 @@ class CresmoSettings(BaseSettings):
         description="Base URL endpoint for TypeSafe AI API.",
     )
     judge_provider: str = Field(
-        default="gemini", # default original typesafe
+        default="gemini",  # default original typesafe
         validation_alias=AliasChoices("judge_provider", "CRESMO_JUDGE_PROVIDER"),
         description="Primary quality judge provider ('gemini', 'typesafe', 'ollama').",
     )

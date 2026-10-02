@@ -15,12 +15,14 @@ from typing import Any
 
 import httpx
 
+from cresmo.application.ports import PromptProviderPort
 from cresmo.application.ports.llm_judge_port import LlmJudgePort
-from cresmo.domain.value_objects.quality import (
+from cresmo.domain.value_objects import (
     CriterionScore,
     EvaluationContext,
     JudgeCriterion,
     JudgeEvaluation,
+    PromptKey,
 )
 
 logger = logging.getLogger(__name__)
@@ -44,6 +46,7 @@ class OllamaJudgeAdapter(LlmJudgePort):
         base_url: str = "http://localhost:11434",
         model: str = "qwen2.5:7b",
         timeout_seconds: float = 120.0,
+        prompt_provider: PromptProviderPort | None = None,
     ) -> None:
         """Initialize Ollama judge adapter.
 
@@ -52,29 +55,32 @@ class OllamaJudgeAdapter(LlmJudgePort):
             base_url: Ollama API server base URL.
             model: Model variant running on Ollama.
             timeout_seconds: HTTP request timeout duration.
+            prompt_provider: Optional PromptProviderPort for externalized prompt templates.
         """
         self._base_url = base_url.rstrip("/")
         self._model = model
         self._timeout = timeout_seconds
         self._client = http_client or httpx.Client(timeout=timeout_seconds)
+        self._prompt_provider = prompt_provider
 
     def evaluate(self, context: EvaluationContext) -> JudgeEvaluation:
         """Evaluate candidate text against raw text using local Ollama model."""
         start_time = time.perf_counter()
         criteria_names = [c.value for c in context.required_criteria]
 
-        system_instruction = (
-            "You are a rigorous Quality Evaluation Judge. Evaluate the candidate text against the source text. "
-            "Output ONLY valid JSON with keys: criteria (array of {criterion, score, passed, reasoning}), "
-            "overall_score (0.0-1.0), and passed (boolean)."
-        )
+        provider = self._prompt_provider
+        if provider is None:
+            from cresmo.infrastructure.adapters.prompts import JsonPromptProvider
 
-        user_prompt = (
-            f"Stage: {context.stage_name}\n"
-            f"Required Criteria: {json.dumps(criteria_names)}\n\n"
-            f"--- SOURCE ---\n{context.raw_text}\n\n"
-            f"--- CANDIDATE ---\n{context.candidate_text}\n\n"
-            "Evaluate and return JSON:"
+            provider = JsonPromptProvider()
+            self._prompt_provider = provider
+
+        system_instruction, user_prompt = provider.get_prompt(
+            PromptKey.LLM_JUDGE,
+            stage_name=context.stage_name,
+            criteria_json=json.dumps(criteria_names),
+            source_text=context.raw_text,
+            candidate_text=context.candidate_text,
         )
 
         try:

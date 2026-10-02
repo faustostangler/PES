@@ -13,6 +13,7 @@ Conforms to:
 from __future__ import annotations
 
 from cresmo.application.ports.anonymizer import AnonymizerPort
+from cresmo.application.ports.critique_synthesizer import CritiqueSynthesizerPort
 from cresmo.application.ports.llm_judge_port import LlmJudgePort
 from cresmo.application.ports.media import MediaIngestionPort
 from cresmo.application.ports.metrics import MetricsPort, NoOpMetricsPort
@@ -33,6 +34,7 @@ from cresmo.application.ports.transformation import LLMTransformationPort
 
 __all__ = [
     "AnonymizerPort",
+    "CritiqueSynthesizerPort",
     "DefaultPipelineSettings",
     "LLMTransformationPort",
     "LedgerRepositoryPort",

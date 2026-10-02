@@ -32,6 +32,7 @@ from cresmo.application.pipeline.transcript_loader import (
     load_transcript_from_file,
 )
 from cresmo.application.ports import (
+    CritiqueSynthesizerPort,
     DefaultPipelineSettings,
     LedgerRepositoryPort,
     LlmJudgePort,
@@ -93,6 +94,7 @@ class CresmoPipeline:
         telemetry_port: TelemetryPort | None = None,
         metrics_port: MetricsPort | None = None,
         llm_judge_port: LlmJudgePort | None = None,
+        critique_synthesizer: CritiqueSynthesizerPort | None = None,
     ) -> None:
         self.media_ingestion_port = media_ingestion_port
 
@@ -113,6 +115,8 @@ class CresmoPipeline:
 
         self.llm_indexing_port = llm_indexing_port or self.llm_synthesis_port
 
+        self.stage_factory = StageFactory(settings=self.settings)
+
         self.stage_runner = PipelineStageRunner(
             telemetry_port=self.telemetry_port,
             metrics_port=self.metrics_port,
@@ -121,9 +125,10 @@ class CresmoPipeline:
             judge_max_attempts=getattr(self.settings, "judge_max_attempts", 1),
             prompt_provider=self.prompt_provider,
             llm_transformation_port=self.llm_synthesis_port,
+            stage_factory=self.stage_factory,
+            critique_synthesizer=critique_synthesizer,
+            ledger_port=self.ledger_port,
         )
-
-        self.stage_factory = StageFactory(settings=self.settings)
 
         self.ingest_raw_transcript = IngestRawTranscriptUseCase(
             ingestion_port=self.media_ingestion_port,
@@ -249,116 +254,43 @@ class CresmoPipeline:
                 channel_id=raw.channel_id,
             )
 
-            # Stage 1: Fluid Prose Detranscription via Standardized StageDescriptor (ADR-031)
-            fluid_transcript = self.stage_runner.execute_stage(
-                descriptor=self.stage_factory.build_stage("fluid_prose"),
+            # =========================================================================
+            # ESTEIRA DE ESTÁGIOS CRESMO (CONVEYOR PIPELINE), Estágio 2 em diante por enquanto comentadas
+            # =========================================================================
+
+            # Estágio 1: Fluid Prose
+            fluid = self.stage_runner.execute_stage(
+                "fluid_prose",
                 source=raw,
                 context=execution_context,
             )
 
-            # =========================================================================
-            # [STAGE BOUNDARY - ADR-031 QUARANTINE]
-            # Downstream stages (2 to 8) are temporarily commented during the StageDescriptor
-            # incremental refactoring. Each will be refactored into a StageDescriptor one-by-one.
-            # =========================================================================
-            # if entry is None:
-            #     entry = self.stage_runner.run_stage(
-            #         "raw_indexing",
-            #         lambda: self.index_raw.execute(fluid_transcript, user=user_identity),
-            #         channel_name=channel_name,
-            #         content_id=content_id,
-            #         channel_id=raw.channel_id,
-            #         fatal=False,
-            #     )
-            #
-            # expanded_compendium = self.vault_port.get_enriched_compendium(content_id)
-            # if expanded_compendium is None:
-            #     enriched_compendium = self.stage_runner.run_stage(
-            #         "gap_filler",
-            #         lambda: self.fill_gaps.execute(
-            #             fluid_transcript=fluid_transcript,
-            #             passes=gap_filler_passes,
-            #             user=user_identity,
-            #         ),
-            #         channel_name=channel_name,
-            #         content_id=content_id,
-            #         channel_id=raw.channel_id,
-            #     )
-            #     expanded_compendium = self.stage_runner.run_stage(
-            #         "expansion",
-            #         lambda: self.expand_compendium.execute(
-            #             compendium=enriched_compendium,
-            #             user=user_identity,
-            #         ),
-            #         channel_name=channel_name,
-            #         content_id=content_id,
-            #         channel_id=raw.channel_id,
-            #     )
-            #
-            # inventory = self.stage_runner.run_stage(
-            #     "inventory",
-            #     lambda: self.discover_atomic_inventory.execute(
-            #         compendium=expanded_compendium,
-            #         user=user_identity,
-            #     ),
-            #     channel_name=channel_name,
-            #     content_id=content_id,
-            #     channel_id=raw.channel_id,
-            # )
-            #
-            # synthesized_notes = self.stage_runner.run_stage(
-            #     "atomic_batch",
-            #     lambda: self.synthesize_atomic_batch.execute(
-            #         inventory=inventory,
-            #         compendium=expanded_compendium,
-            #         user=user_identity,
-            #     ),
-            #     channel_name=channel_name,
-            #     content_id=content_id,
-            #     channel_id=raw.channel_id,
-            # )
-            #
-            # mocs = self.stage_runner.run_stage(
-            #     "mocs",
-            #     lambda: self.reconcile_mocs.execute(
-            #         session_id=session_id,
-            #         user_id=user_identity,
-            #     ),
-            #     channel_name=channel_name,
-            #     content_id=content_id,
-            #     channel_id=raw.channel_id,
-            # )
-            #
-            # dedup_report = self.stage_runner.run_stage(
-            #     "duplicate_unification",
-            #     lambda: self.unify_duplicate_notes.execute(),
-            #     channel_name=channel_name,
-            #     content_id=content_id,
-            #     channel_id=raw.channel_id,
-            # )
-            #
-            # if self.ledger_port:
-            #     self.ledger_port.mark_processed(content_id)
-            #
-            # self.stage_runner.record_session_completion(
-            #     session_id=session_id,
-            #     content_id=content_id,
-            #     channel_name=channel_name,
-            #     synthesized_notes=synthesized_notes,
-            #     inventory=inventory,
-            #     mocs=mocs,
-            #     dedup_report=dedup_report,
-            #     channel_id=raw.channel_id,
-            # )
-            # =========================================================================
-            # [END ADR-031 QUARANTINE]
-            # =========================================================================
+            # Estágio 2: Raw Indexing
+            # index = self.stage_runner.execute_stage("raw_indexing", source=fluid, context=execution_context)
+
+            # Estágio 3: Gap Filler
+            # gaps = self.stage_runner.execute_stage("gap_filler", source=fluid, context=execution_context)
+
+            # Estágio 4: Long Expander
+            # long_exp = self.stage_runner.execute_stage("long_expander", source=gaps, context=execution_context)
+
+            # Estágio 5: Wide Expander
+            # wide_exp = self.stage_runner.execute_stage("wide_expander", source=long_exp, context=execution_context)
+
+            # Estágio 6: Atomic Inventory
+            # inventory = self.stage_runner.execute_stage("atomic_inventory", source=wide_exp, context=execution_context)
+
+            # Estágio 7: Atomic Batch
+            # notes = self.stage_runner.execute_stage("atomic_batch", source=inventory, context=execution_context)
+
+            # Estágio 8: Reconcile MOCs
+            # mocs = self.stage_runner.execute_stage("reconcile_mocs", source=notes, context=execution_context)
 
             return PipelineResult(
                 content_id=content_id,
                 success=True,
                 source_transcript=raw,
-                fluid_transcript=fluid_transcript,
+                fluid_transcript=fluid,
                 index_entry=entry,
             )
 

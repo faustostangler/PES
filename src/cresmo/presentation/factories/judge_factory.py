@@ -10,6 +10,7 @@ from __future__ import annotations
 import logging
 from typing import Any
 
+from cresmo.application.ports import PromptProviderPort
 from cresmo.application.ports.llm_judge_port import LlmJudgePort
 from cresmo.infrastructure.adapters.judges.composite_judge import ResilientCompositeJudgeAdapter
 from cresmo.infrastructure.adapters.judges.gemini_judge import GeminiJudgeAdapter
@@ -24,12 +25,14 @@ logger = logging.getLogger(__name__)
 def build_llm_judge_adapter(
     settings: CresmoSettings,
     langfuse_client: Any | None = None,
+    prompt_provider: PromptProviderPort | None = None,
 ) -> LlmJudgePort:
     """Build a resilient, decorated LlmJudgePort instance based on application settings.
 
     Args:
         settings: Validated Cresmo application settings.
         langfuse_client: Optional Langfuse client for direct score telemetry ingestion.
+        prompt_provider: Optional prompt provider port for externalized judge instructions.
 
     Returns:
         LlmJudgePort: Resilient multi-provider judge wrapped in telemetry decorator.
@@ -41,12 +44,14 @@ def build_llm_judge_adapter(
         primary = GeminiJudgeAdapter(
             api_key=settings.gemini_api_key.get_secret_value(),
             model=settings.gemini_model,
+            prompt_provider=prompt_provider,
         )
     elif provider == "ollama":
         primary = OllamaJudgeAdapter(
             base_url=settings.ollama_base_url,
             model=settings.ollama_model,
             timeout_seconds=settings.ollama_timeout_seconds,
+            prompt_provider=prompt_provider,
         )
     else:
         primary = TypeSafeJudgeAdapter(
@@ -60,6 +65,7 @@ def build_llm_judge_adapter(
         base_url=settings.ollama_base_url,
         model=settings.ollama_model,
         timeout_seconds=settings.ollama_timeout_seconds,
+        prompt_provider=prompt_provider,
     )
 
     # 3. Wrap in Resilient Composite
