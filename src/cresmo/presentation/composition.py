@@ -26,7 +26,12 @@ from langfuse import Langfuse
 from langfuse.span_filter import is_default_export_span
 from langfuse.types import MaskOtelSpansParams, MaskOtelSpansResult, OtelSpanPatch
 
-from cresmo.application.pipeline import CresmoPipeline
+from cresmo.application.pipeline import (
+    CresmoPipeline,
+    PipelineDependencies,
+    PipelineStageRunner,
+    StageFactory,
+)
 from cresmo.application.ports import (
     AnonymizerPort,
 )
@@ -35,6 +40,7 @@ from cresmo.application.services.preflight import (
     probe_http_endpoint,
 )
 from cresmo.application.use_cases.sync_channel import SyncChannelUseCase
+from cresmo.infrastructure.adapters.ollama_critique_adapter import OllamaCritiqueAdapter
 from cresmo.infrastructure.adapters.opentelemetry_adapter import (
     name_telemetry_threads,
 )
@@ -43,7 +49,6 @@ from cresmo.infrastructure.config import CresmoSettings
 from cresmo.infrastructure.logging_config import configure_logging
 from cresmo.presentation.factories.adapter_factory import (
     _resolve_cookie_file,
-    build_critique_synthesizer_adapter,
     build_gemini_synthesis_adapter,
     build_indexing_adapter,
     build_media_ingestion_adapter,
@@ -255,29 +260,41 @@ def build_pipeline(
     )
 
     # 6. Directed Reflection Critique Synthesizer (ADR-031)
-    critique_synthesizer = build_critique_synthesizer_adapter(
+    critique_synthesizer = OllamaCritiqueAdapter(
         llm_transformation_port=llm_indexing_port,
         prompt_provider=prompt_provider,
     )
 
-    # 7. Pipeline Assembly
+    # 7. Pipeline Stage Runner & Closed-Loop Verifier (ADR-030, ADR-031)
+    stage_factory = StageFactory(settings=resolved_settings)
+    stage_runner = PipelineStageRunner(
+        PipelineDependencies(
+            telemetry_port=telemetry_port,
+            metrics_port=metrics_port,
+            llm_judge=llm_judge_port,
+            judge_blocking=getattr(resolved_settings, "judge_blocking", False),
+            judge_max_attempts=getattr(resolved_settings, "judge_max_attempts", 1),
+            prompt_provider=prompt_provider,
+            llm_transformation_port=llm_synthesis_port,
+            stage_factory=stage_factory,
+            critique_synthesizer=critique_synthesizer,
+            ledger_port=ledger_port,
+        )
+    )
+
+    # 8. Pipeline Assembly
     effective_batch_size = (
         batch_size_override if batch_size_override is not None else resolved_settings.batch_size
     )
 
     return CresmoPipeline(
         media_ingestion_port=media_ingestion_port,
-        llm_synthesis_port=llm_synthesis_port,
         vault_port=vault_port,
+        stage_runner=stage_runner,
         ledger_port=ledger_port,
         batch_size=effective_batch_size,
-        prompt_provider=prompt_provider,
         settings=resolved_settings,
         llm_indexing_port=llm_indexing_port,
-        telemetry_port=telemetry_port,
-        metrics_port=metrics_port,
-        llm_judge_port=llm_judge_port,
-        critique_synthesizer=critique_synthesizer,
     )
 
 
@@ -307,7 +324,6 @@ __all__ = [
     "_resolve_cookie_file",
     "build_anonymizer_adapter",
     "build_concat_master_use_case",
-    "build_critique_synthesizer_adapter",
     "build_discover_batch_sources_use_case",
     "build_gemini_synthesis_adapter",
     "build_index_raw_use_case",

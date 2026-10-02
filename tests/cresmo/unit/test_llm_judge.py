@@ -190,7 +190,6 @@ class TestGeminiJudgeAdapter:
             _ = adapter.client
 
 
-
 class TestOllamaJudgeAdapter:
     """Test suite for local Ollama fallback judge adapter."""
 

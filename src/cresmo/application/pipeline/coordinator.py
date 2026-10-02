@@ -73,53 +73,60 @@ class CresmoPipeline:
     def __init__(
         self,
         media_ingestion_port: MediaIngestionPort,
-        llm_synthesis_port: LLMTransformationPort,
         vault_port: VaultRepositoryPort,
+        stage_runner: PipelineStageRunner | None = None,
+        *,
         ledger_port: LedgerRepositoryPort | None = None,
         batch_size: int = 5,
-        prompt_provider: PromptProviderPort | None = None,
         settings: PipelineSettingsProtocol | None = None,
-        llm_indexing_port: LLMTransformationPort | None = None,
         telemetry_port: TelemetryPort | None = None,
         metrics_port: MetricsPort | None = None,
+        llm_synthesis_port: LLMTransformationPort | None = None,
+        llm_indexing_port: LLMTransformationPort | None = None,
+        prompt_provider: PromptProviderPort | None = None,
         llm_judge_port: LlmJudgePort | None = None,
         critique_synthesizer: CritiqueSynthesizerPort | None = None,
     ) -> None:
         self.media_ingestion_port = media_ingestion_port
 
-        if llm_synthesis_port is None:
-            raise ValueError("llm_synthesis_port must be provided")
-        self.llm_synthesis_port = llm_synthesis_port
-
         if vault_port is None:
             raise ValueError("vault_port must be provided")
         self.vault_port = vault_port
         self.ledger_port = ledger_port
-        self.llm_judge = llm_judge_port
         self.batch_size = batch_size
-
-        self.telemetry_port: TelemetryPort = telemetry_port or NoOpTelemetryPort()
-        self.metrics_port: MetricsPort = metrics_port or NoOpMetricsPort()
         self.settings: PipelineSettingsProtocol = settings or DefaultPipelineSettings()
-        self.prompt_provider: PromptProviderPort = prompt_provider or NoOpPromptProviderPort()
 
-        self.llm_indexing_port = llm_indexing_port or self.llm_synthesis_port
-
-        self.stage_factory = StageFactory(settings=self.settings)
-
-        self.stage_runner = PipelineStageRunner(
-            PipelineDependencies(
-                telemetry_port=self.telemetry_port,
-                metrics_port=self.metrics_port,
-                llm_judge=self.llm_judge,
-                judge_blocking=getattr(self.settings, "judge_blocking", False),
-                judge_max_attempts=getattr(self.settings, "judge_max_attempts", 1),
-                prompt_provider=self.prompt_provider,
-                llm_transformation_port=self.llm_synthesis_port,
-                stage_factory=self.stage_factory,
-                critique_synthesizer=critique_synthesizer,
-                ledger_port=self.ledger_port,
+        if stage_runner is not None:
+            self.stage_runner = stage_runner
+            self.telemetry_port: TelemetryPort = (
+                telemetry_port or stage_runner.telemetry_port or NoOpTelemetryPort()
             )
+            self.metrics_port: MetricsPort = (
+                metrics_port or stage_runner.metrics_port or NoOpMetricsPort()
+            )
+        else:
+            if llm_synthesis_port is None:
+                raise ValueError("Either stage_runner or llm_synthesis_port must be provided")
+            self.telemetry_port = telemetry_port or NoOpTelemetryPort()
+            self.metrics_port = metrics_port or NoOpMetricsPort()
+            stage_factory = StageFactory(settings=self.settings)
+            self.stage_runner = PipelineStageRunner(
+                PipelineDependencies(
+                    telemetry_port=self.telemetry_port,
+                    metrics_port=self.metrics_port,
+                    llm_judge=llm_judge_port,
+                    judge_blocking=getattr(self.settings, "judge_blocking", False),
+                    judge_max_attempts=getattr(self.settings, "judge_max_attempts", 1),
+                    prompt_provider=prompt_provider or NoOpPromptProviderPort(),
+                    llm_transformation_port=llm_synthesis_port,
+                    stage_factory=stage_factory,
+                    critique_synthesizer=critique_synthesizer,
+                    ledger_port=self.ledger_port,
+                )
+            )
+
+        self.llm_indexing_port = (
+            llm_indexing_port or self.stage_runner.llm_transformation_port or llm_synthesis_port
         )
 
         self.ingest_raw_transcript = IngestRawTranscriptUseCase(
@@ -127,11 +134,35 @@ class CresmoPipeline:
             vault_port=self.vault_port,
         )
 
+    @property
+    def stage_factory(self) -> StageFactory | None:
+        """Access the stage factory from the stage runner."""
+        return self.stage_runner.stage_factory
+
+    @property
+    def llm_synthesis_port(self) -> LLMTransformationPort | None:
+        """Access the primary LLM transformation port from the stage runner."""
+        return self.stage_runner.llm_transformation_port
+
+    @property
+    def llm_judge(self) -> LlmJudgePort | None:
+        """Access the LLM judge port from the stage runner."""
+        return self.stage_runner.llm_judge
+
+    @property
+    def prompt_provider(self) -> PromptProviderPort | None:
+        """Access the prompt provider from the stage runner."""
+        return self.stage_runner.prompt_provider
+
     def warmup(self, timeout_seconds: float | None = None) -> None:
         """Asynchronously trigger warmup across pipeline LLM ports."""
-        self.llm_indexing_port.warmup(timeout_seconds=timeout_seconds)
-        if self.llm_synthesis_port is not self.llm_indexing_port:
-            self.llm_synthesis_port.warmup(timeout_seconds=timeout_seconds)
+        if self.llm_indexing_port is not None:
+            self.llm_indexing_port.warmup(timeout_seconds=timeout_seconds)
+        if (
+            self.stage_runner.llm_transformation_port is not None
+            and self.stage_runner.llm_transformation_port is not self.llm_indexing_port
+        ):
+            self.stage_runner.warmup(timeout_seconds=timeout_seconds)
 
     def execute(
         self,

@@ -14,8 +14,18 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from cresmo.application.pipeline import CresmoPipeline, PipelineResult
-from cresmo.application.ports import PromptProviderPort
+from cresmo.application.pipeline import (
+    CresmoPipeline,
+    PipelineDependencies,
+    PipelineResult,
+    PipelineStageRunner,
+)
+from cresmo.application.ports import (
+    NoOpMetricsPort,
+    NoOpPromptProviderPort,
+    NoOpTelemetryPort,
+    PromptProviderPort,
+)
 from cresmo.domain.entities import EnrichedCompendium, FluidTranscript, SourceTranscript
 from cresmo.domain.exceptions import CresmoDomainError
 from cresmo.domain.value_objects import ChannelName, ContentId, NoteTitle, RawIndexEntry
@@ -558,6 +568,30 @@ class TestCresmoPipelineOrchestration:
         assert pipeline_custom.prompt_provider is custom_pp
         assert pipeline_custom.batch_size == 9
         assert pipeline_custom.stage_runner.prompt_provider is custom_pp
+
+    def test_pipeline_init_with_directly_injected_stage_runner(self) -> None:
+        """Verify CresmoPipeline accepts a directly injected PipelineStageRunner instance."""
+        mock_llm = SmartMockLLMAdapter()
+        deps = PipelineDependencies(
+            telemetry_port=NoOpTelemetryPort(),
+            metrics_port=NoOpMetricsPort(),
+            prompt_provider=NoOpPromptProviderPort(),
+            llm_transformation_port=mock_llm,
+        )
+        stage_runner = PipelineStageRunner(dependencies=deps)
+
+        pipeline = CresmoPipeline(
+            media_ingestion_port=MockMediaIngestionPort(),
+            vault_port=InMemoryVaultAdapter(),
+            stage_runner=stage_runner,
+            batch_size=8,
+        )
+
+        assert pipeline.stage_runner is stage_runner
+        assert pipeline.telemetry_port is stage_runner.telemetry_port
+        assert pipeline.metrics_port is stage_runner.metrics_port
+        assert pipeline.llm_synthesis_port is mock_llm
+        assert pipeline.batch_size == 8
 
     @pytest.mark.skip(
         reason="Downstream stages 2-8 quarantined pending StageDescriptor refactoring per ADR-031"

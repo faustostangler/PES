@@ -348,4 +348,3 @@ class TestPipelineStageRunnerEvaluatedStage:
             content_id=ContentId("vid_dep_1"),
         )
         assert executed == "result"
-

@@ -215,4 +215,3 @@ class TestDiscoverAtomicInventoryJudge:
         mock_judge.evaluate.assert_called_once()
         ctx = mock_judge.evaluate.call_args[0][0]
         assert ctx.stage_name == "atomic_inventory"
-

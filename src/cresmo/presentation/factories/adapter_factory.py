@@ -12,7 +12,6 @@ from pathlib import Path
 from typing import Any
 
 from cresmo.application.ports import (
-    CritiqueSynthesizerPort,
     LLMTransformationPort,
     PromptProviderPort,
 )
@@ -24,7 +23,6 @@ from cresmo.infrastructure.adapters.native_media_ingestion_adapter import (
     NativeMediaIngestionAdapter,
 )
 from cresmo.infrastructure.adapters.obsidian_vault_adapter import ObsidianVaultAdapter
-from cresmo.infrastructure.adapters.ollama_critique_adapter import OllamaCritiqueAdapter
 from cresmo.infrastructure.adapters.ollama_llm_adapter import OllamaLLMAdapter
 from cresmo.infrastructure.adapters.prompt_provider import (
     JsonPromptProvider,
@@ -165,15 +163,3 @@ def build_indexing_adapter(
         keep_alive=resolved_settings.ollama_keep_alive,
         warmup_timeout_seconds=resolved_settings.ollama_warmup_timeout_seconds,
     )
-
-
-def build_critique_synthesizer_adapter(
-    llm_transformation_port: LLMTransformationPort | None,
-    prompt_provider: PromptProviderPort | None = None,
-) -> CritiqueSynthesizerPort:
-    """Instantiate and wire the OllamaCritiqueAdapter for directed reflection (ADR-031)."""
-    return OllamaCritiqueAdapter(
-        llm_transformation_port=llm_transformation_port,
-        prompt_provider=prompt_provider,
-    )
-

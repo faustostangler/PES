@@ -49,7 +49,7 @@ This ADR formally codifies the governance rules, anti-patterns, and required imp
 |  [Rule 10] Anti-Defensive Cascading     --> Early Strict DI; Zero 'settings or Settings()' Inlines|
 |  [Rule 11] Anti-Bifurcated Construction --> SSOT Factory Composition; Zero Raw Constructor Bypasses|
 |  [Rule 12] Anti-Shadow State Variables  --> Single Canonical Attribute Naming; Zero State Aliasing|
-|  [Rule 13] Anti-Middle Man Methods      --> Direct Collaborator Invocations; Zero Trampolines      |
+|  [Rule 13] Anti-Middle Man & Builders   --> Direct Invocations & Direct Pure DI; Zero Trampolines   |
 |  [Rule 14] Liskov Substitution & SOLID  --> Upfront Port Typing, Full Subtype Interchangeability   |
 +---------------------------------------------------------------------------------------------------+
 ```
@@ -447,12 +447,12 @@ Another manifestation is loop shadow counters (e.g. maintaining `total_items += 
 
 ---
 
-### Rule 13: Anti-Middle Man / Pass-Through Trampoline Methods (Remove Middle Man)
+### Rule 13: Anti-Middle Man / Pass-Through Trampoline Methods & Builders (Remove Middle Man)
 
 #### 13.1 The Anti-Pattern
-Declaring private wrapper methods that take exact identical parameters and do nothing except forward them 1:1 to an internal collaborator or module-level function:
+Declaring private wrapper methods or factory functions that take exact identical parameters and do nothing except forward them 1:1 to an internal collaborator, function, or concrete constructor:
 ```python
-# ANTI-PATTERN: Middle Man / Pass-Through Trampoline Method
+# ANTI-PATTERN 1: Middle Man / Pass-Through Trampoline Method
 def _extract_concepts(
     self,
     video_id: ContentId,
@@ -476,11 +476,23 @@ Another common manifestation:
 def _load_transcript_from_file(self, file_path: Path) -> RawTranscript:
     return load_transcript_from_file(file_path)
 ```
+A third critical manifestation in Dependency Injection / Presentation Composition:
+```python
+# ANTI-PATTERN 2: Pass-Through Factory Trampoline / Middle Man Builder
+def build_critique_synthesizer_adapter(
+    llm_transformation_port: LLMTransformationPort | None,
+    prompt_provider: PromptProviderPort | None = None,
+) -> CritiqueSynthesizerPort:
+    return OllamaCritiqueAdapter(
+        llm_transformation_port=llm_transformation_port,
+        prompt_provider=prompt_provider,
+    )
+```
 
 **Architectural Violations:**
-1. **Middle Man Code Smell (Martin Fowler, Refactoring):** When a class or orchestrator merely delegates calls to another collaborator without adding business logic, translation, validation, caching, or error handling, it acts as an unnecessary middle man.
-2. **Indirection Without Abstraction (Cognitive Bloat):** Developers reading the execution flow (`execute()`) must jump into a private helper, only to find that it adds zero value and immediately delegates to another class.
-3. **Signature Duplication & Fragility:** Every change to the collaborator's signature requires updating both the trampoline and the caller, duplicating parameter lists and type hints for no architectural benefit.
+1. **Middle Man Code Smell (Martin Fowler, Refactoring):** When a class, orchestrator, or factory function merely delegates calls to another collaborator or constructor without adding business logic, polymorphic dispatch, translation, validation, caching, secret resolution, or error handling, it acts as an unnecessary middle man.
+2. **Indirection Without Abstraction (Cognitive Bloat & Speculative Generality):** Developers reading the execution flow or composition root must jump into a factory or private helper, only to find that it adds zero value and immediately delegates to a single deterministic concrete class.
+3. **Signature Duplication & Fragility:** Every change to the collaborator's or adapter's constructor signature requires updating both the trampoline and the caller, duplicating parameter lists and type hints for no architectural benefit.
 
 #### 13.2 The Standard & Remediation
 1. **Remove Middle Man (Direct Collaborator Invocation):** Invoke the internal collaborator directly at the call site within the orchestrating method:
@@ -496,7 +508,17 @@ def _load_transcript_from_file(self, file_path: Path) -> RawTranscript:
    )
    ```
 2. **Eliminate Wrapper Methods for Module Functions:** When a standalone domain/infrastructure function is imported (e.g., `load_transcript_from_file`), call it directly (`raw = load_transcript_from_file(file_path)`) rather than wrapping it in a private instance method (`self._load_transcript_from_file`).
-3. **Legitimate Delegators vs Trampolines:** Public Facades implementing an interface/port (e.g. `ObsidianVaultAdapter` implementing `VaultRepositoryPort` by delegating to sub-repositories) or methods adding ACL validation, telemetry spans, or error translation are legitimate. Pure zero-logic private pass-throughs are prohibited.
+3. **Direct Instantiation in Pure DI Composition Roots (KISS vs Factory Justification):**
+   - **Factories / Builders are justified IF AND ONLY IF:** they perform runtime polymorphic dispatch (e.g., switching between Gemini and Ollama based on `settings.indexing_provider` or `settings.judge_provider`), secret extraction/validation (`api_key.get_secret_value()`), or complex lifecycle management.
+   - **Direct Instantiation:** When an adapter has a single deterministic implementation and takes already-resolved dependencies (e.g., `SqliteLedgerAdapter(db_path=...)` or `OllamaCritiqueAdapter(llm_transformation_port=..., prompt_provider=...)`), instantiate it directly within the Composition Root (`composition.py`). Do not introduce speculative factory functions that act as middle men:
+     ```python
+     # REMEDIATION: Direct Instantiation in Pure DI Composition Root
+     critique_synthesizer = OllamaCritiqueAdapter(
+         llm_transformation_port=llm_indexing_port,
+         prompt_provider=prompt_provider,
+     )
+     ```
+4. **Legitimate Delegators vs Trampolines:** Public Facades implementing an interface/port (e.g. `ObsidianVaultAdapter` implementing `VaultRepositoryPort` by delegating to sub-repositories) or methods adding ACL validation, telemetry spans, or error translation are legitimate. Pure zero-logic pass-throughs are prohibited.
 
 ---
 

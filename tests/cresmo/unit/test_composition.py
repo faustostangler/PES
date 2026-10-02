@@ -12,7 +12,11 @@ from unittest.mock import MagicMock, patch
 import pytest
 from pydantic import SecretStr
 
-from cresmo.application.pipeline import CresmoPipeline
+from cresmo.application.pipeline import (
+    CresmoPipeline,
+    PipelineStageRunner,
+    StageFactory,
+)
 from cresmo.application.ports import MediaIngestionPort
 from cresmo.application.services.preflight import PreflightHealthChecker
 from cresmo.application.use_cases.concat_master import ConcatMasterUseCase
@@ -79,6 +83,9 @@ class TestCompositionRoot:
         pipeline = build_pipeline(settings=test_settings)
 
         assert isinstance(pipeline, CresmoPipeline)
+        assert isinstance(pipeline.stage_runner, PipelineStageRunner)
+        assert pipeline.stage_runner.llm_transformation_port is pipeline.llm_synthesis_port
+        assert isinstance(pipeline.stage_runner.stage_factory, StageFactory)
         assert isinstance(pipeline.media_ingestion_port, NativeMediaIngestionAdapter)
         assert isinstance(pipeline.llm_synthesis_port, GeminiLLMAdapter)
         assert isinstance(pipeline.vault_port, ObsidianVaultAdapter)
