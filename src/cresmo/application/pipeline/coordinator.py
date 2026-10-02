@@ -34,6 +34,7 @@ from cresmo.application.pipeline.transcript_loader import (
 from cresmo.application.ports import (
     DefaultPipelineSettings,
     LedgerRepositoryPort,
+    LlmJudgePort,
     LLMTransformationPort,
     MediaIngestionPort,
     MetricsPort,
@@ -42,7 +43,6 @@ from cresmo.application.ports import (
     NoOpTelemetryPort,
     PipelineSettingsProtocol,
     PromptProviderPort,
-    QualityJudgePort,
     TelemetryPort,
     VaultRepositoryPort,
 )
@@ -94,7 +94,7 @@ class CresmoPipeline:
         llm_indexing_port: LLMTransformationPort | None = None,
         telemetry_port: TelemetryPort | None = None,
         metrics_port: MetricsPort | None = None,
-        quality_judge_port: QualityJudgePort | None = None,
+        llm_judge_port: LlmJudgePort | None = None,
     ) -> None:
         self.media_ingestion_port = media_ingestion_port
 
@@ -106,7 +106,7 @@ class CresmoPipeline:
             raise ValueError("vault_port must be provided")
         self.vault_port = vault_port
         self.ledger_port = ledger_port
-        self.quality_judge = quality_judge_port
+        self.llm_judge = llm_judge_port
 
         self.telemetry_port: TelemetryPort = telemetry_port or NoOpTelemetryPort()
         self.metrics_port: MetricsPort = metrics_port or NoOpMetricsPort()
@@ -244,7 +244,7 @@ class CresmoPipeline:
                 channel_id=raw.channel_id,
             )
 
-            if self.quality_judge is not None:
+            if self.llm_judge is not None:
                 span = trace.get_current_span()
                 ctx = span.get_span_context() if span else None
                 active_trace_id = (
@@ -265,10 +265,10 @@ class CresmoPipeline:
                         JudgeCriterion.STRUCTURAL_COMPLIANCE,
                     ),
                 )
-                evaluation = self.quality_judge.evaluate(eval_context)
+                evaluation = self.llm_judge.evaluate(eval_context)
                 if not evaluation.passed:
                     logger.warning(
-                        "Quality judge reported low score for 'fluid_prose' (overall=%.2f, passed=%s).",
+                        "LLM judge reported low score for 'fluid_prose' (overall=%.2f, passed=%s).",
                         evaluation.overall_score,
                         evaluation.passed,
                     )

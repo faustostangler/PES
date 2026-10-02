@@ -25,7 +25,7 @@ from cresmo.presentation.factories.adapter_factory import (
     build_prompt_provider,
     build_vault_adapter,
 )
-from cresmo.presentation.factories.judge_factory import build_quality_judge_adapter
+from cresmo.presentation.factories.judge_factory import build_llm_judge_adapter
 from cresmo.presentation.factories.settings_factory import resolve_shared_settings
 from cresmo.presentation.factories.telemetry_factory import (
     build_anonymizer_adapter,
@@ -116,9 +116,7 @@ def build_index_raw_use_case(
         model_override=model_override,
         langfuse_client=langfuse_client,
     )
-    quality_judge_port = build_quality_judge_adapter(
-        resolved_settings, langfuse_client=langfuse_client
-    )
+    llm_judge_port = build_llm_judge_adapter(resolved_settings, langfuse_client=langfuse_client)
 
     return IndexRawTranscriptsUseCase(
         vault_port=vault_port,
@@ -128,5 +126,5 @@ def build_index_raw_use_case(
         temperature=resolved_settings.llm_indexing_temperature,
         language=resolved_settings.language,
         max_rewrites=resolved_settings.raw_index_max_attempts,
-        quality_judge_port=quality_judge_port,
+        llm_judge_port=llm_judge_port,
     )

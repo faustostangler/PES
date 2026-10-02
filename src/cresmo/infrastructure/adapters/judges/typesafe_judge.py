@@ -1,8 +1,8 @@
 """TypeSafe AI (System One Jev) Decision-Model Evaluator Adapter.
 
 Conforms to:
-    - ADR-029: Unified QualityJudgePort, Decision-Model Evaluators, and Resilient Multi-Provider Adapters
-    - SPEC-012: Quality Judge Evaluators, Multi-Provider Adapters, and Langfuse Telemetry
+    - ADR-029: Unified LlmJudgePort, Decision-Model Evaluators, and Resilient Multi-Provider Adapters
+    - SPEC-012: LLM Judge Evaluators, Multi-Provider Adapters, and Langfuse Telemetry
 """
 
 from __future__ import annotations
@@ -13,7 +13,7 @@ from typing import Any
 
 import httpx
 
-from cresmo.application.ports.quality_judge_port import QualityJudgePort
+from cresmo.application.ports.llm_judge_port import LlmJudgePort
 from cresmo.domain.value_objects.quality import (
     CriterionScore,
     EvaluationContext,
@@ -24,7 +24,7 @@ from cresmo.domain.value_objects.quality import (
 logger = logging.getLogger(__name__)
 
 
-class TypeSafeJudgeAdapter(QualityJudgePort):
+class TypeSafeJudgeAdapter(LlmJudgePort):
     """Quality judge adapter utilizing TypeSafe AI (System One Jev) Decision Models."""
 
     def __init__(

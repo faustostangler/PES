@@ -54,10 +54,10 @@ Evaluation criteria across pipeline stages:
 
 ## 2. Application Layer Port
 
-In `src/cresmo/application/ports/quality_judge_port.py`:
+In `src/cresmo/application/ports/llm_judge_port.py`:
 
 ```python
-class QualityJudgePort(ABC):
+class LlmJudgePort(ABC):
     """Hexagonal Application Port for semantic quality evaluation and LLM-as-a-Judge."""
 
     @abstractmethod
@@ -87,11 +87,11 @@ In `src/cresmo/infrastructure/adapters/judges/`:
 - Fully implemented and tested with mock fixtures; kept dormant behind configuration.
 
 ### 3.4 `ResilientCompositeJudgeAdapter`
-- Implements `QualityJudgePort`. Wraps `primary: QualityJudgePort` and `fallback: QualityJudgePort`.
+- Implements `LlmJudgePort`. Wraps `primary: LlmJudgePort` and `fallback: LlmJudgePort`.
 - Attempts primary evaluation. If primary raises any exception (network timeout, rate limit, quota error, server failure), logs a warning and calls the fallback adapter.
 
 ### 3.5 `LangfuseJudgeDecorator`
-- Wraps any `QualityJudgePort` instance.
+- Wraps any `LlmJudgePort` instance.
 - Delegates evaluation to inner port.
 - On receiving `JudgeEvaluation`, iterates over `criteria_scores` and calls:
   `langfuse_client.score(trace_id=eval.trace_id, name=score.criterion.value, value=score.score, comment=score.reasoning)`.
@@ -103,18 +103,18 @@ In `src/cresmo/infrastructure/adapters/judges/`:
 
 1. **`DiscoverAtomicInventoryUseCase`:**
    - Remove inline prompt loading and `llm_synthesis_port.transform` call.
-   - Inject `QualityJudgePort`.
+   - Inject `LlmJudgePort`.
    - Evaluate candidates using `JudgeCriterion.INVENTORY_COHERENCE`.
 
 2. **`LLMTranscriptDistiller`:**
    - Remove inline judge prompts and `parse_judge_boolean` in `extract_summary`, `extract_concepts`, and `extract_synthesis`.
-   - Inject `QualityJudgePort`.
+   - Inject `LlmJudgePort`.
    - Evaluate candidates using `JudgeCriterion.INDEX_SYNTHESIS_QUALITY`.
 
 3. **`CresmoPipelineCoordinator` (`coordinator.py`):**
-   - Inject `QualityJudgePort`.
+   - Inject `LlmJudgePort`.
    - After `fluid_prose` stage execution:
-     - Run `quality_judge.evaluate(context)` with criteria `ORALITY_REMOVAL`, `SEMANTIC_FAITHFULNESS`, `NER_PRESERVATION`, `STRUCTURAL_COMPLIANCE`.
+     - Run `llm_judge.evaluate(context)` with criteria `ORALITY_REMOVAL`, `SEMANTIC_FAITHFULNESS`, `NER_PRESERVATION`, `STRUCTURAL_COMPLIANCE`.
      - Log results; if `settings.judge_blocking=True` and `evaluation.passed=False`, raise `DomainValidationError`.
 
 ---

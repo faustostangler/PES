@@ -1,8 +1,8 @@
-"""Hermetic Unit Tests for QualityJudgePort, Decision-Model Evaluators, and Adapters.
+"""Hermetic Unit Tests for LlmJudgePort, Decision-Model Evaluators, and Adapters.
 
 Conforms to:
-    - ADR-029: Unified QualityJudgePort, Decision-Model Evaluators, and Resilient Multi-Provider Adapters
-    - SPEC-012: Quality Judge Evaluators, Multi-Provider Adapters, and Langfuse Telemetry
+    - ADR-029: Unified LlmJudgePort, Decision-Model Evaluators, and Resilient Multi-Provider Adapters
+    - SPEC-012: LLM Judge Evaluators, Multi-Provider Adapters, and Langfuse Telemetry
 """
 
 from __future__ import annotations
@@ -341,39 +341,39 @@ class TestLangfuseJudgeDecorator:
         assert result == mock_eval
 
 
-class TestQualityJudgeFactory:
-    """Test suite for build_quality_judge_adapter DI factory."""
+class TestLlmJudgeFactory:
+    """Test suite for build_llm_judge_adapter DI factory."""
 
-    def test_build_quality_judge_adapter_creates_composite_decorator(self) -> None:
+    def test_build_llm_judge_adapter_creates_composite_decorator(self) -> None:
         from cresmo.infrastructure.config import CresmoSettings
-        from cresmo.presentation.factories.judge_factory import build_quality_judge_adapter
+        from cresmo.presentation.factories.judge_factory import build_llm_judge_adapter
 
         settings = CresmoSettings(judge_provider="gemini")
-        judge = build_quality_judge_adapter(settings, langfuse_client=None)
+        judge = build_llm_judge_adapter(settings, langfuse_client=None)
 
         assert isinstance(judge, LangfuseJudgeDecorator)
         assert isinstance(judge._inner_judge, ResilientCompositeJudgeAdapter)
         assert isinstance(judge._inner_judge._primary, GeminiJudgeAdapter)
         assert isinstance(judge._inner_judge._fallback, OllamaJudgeAdapter)
 
-    def test_build_quality_judge_adapter_typesafe_provider(self) -> None:
+    def test_build_llm_judge_adapter_typesafe_provider(self) -> None:
         from cresmo.infrastructure.config import CresmoSettings
-        from cresmo.presentation.factories.judge_factory import build_quality_judge_adapter
+        from cresmo.presentation.factories.judge_factory import build_llm_judge_adapter
 
         settings = CresmoSettings(judge_provider="typesafe")
-        judge = build_quality_judge_adapter(settings, langfuse_client=None)
+        judge = build_llm_judge_adapter(settings, langfuse_client=None)
 
         assert isinstance(judge, LangfuseJudgeDecorator)
         assert isinstance(judge._inner_judge, ResilientCompositeJudgeAdapter)
         assert isinstance(judge._inner_judge._primary, TypeSafeJudgeAdapter)
         assert isinstance(judge._inner_judge._fallback, OllamaJudgeAdapter)
 
-    def test_build_quality_judge_adapter_ollama_provider(self) -> None:
+    def test_build_llm_judge_adapter_ollama_provider(self) -> None:
         from cresmo.infrastructure.config import CresmoSettings
-        from cresmo.presentation.factories.judge_factory import build_quality_judge_adapter
+        from cresmo.presentation.factories.judge_factory import build_llm_judge_adapter
 
         settings = CresmoSettings(judge_provider="ollama")
-        judge = build_quality_judge_adapter(settings, langfuse_client=None)
+        judge = build_llm_judge_adapter(settings, langfuse_client=None)
 
         assert isinstance(judge, LangfuseJudgeDecorator)
         assert isinstance(judge._inner_judge, ResilientCompositeJudgeAdapter)
@@ -381,10 +381,10 @@ class TestQualityJudgeFactory:
         assert isinstance(judge._inner_judge._fallback, OllamaJudgeAdapter)
 
 
-class TestCoordinatorQualityJudgeIntegration:
+class TestCoordinatorLlmJudgeIntegration:
     """Test suite for CresmoPipeline Stage 1 quality evaluation hooking."""
 
-    def test_coordinator_triggers_quality_judge_for_fluid_prose(self) -> None:
+    def test_coordinator_triggers_llm_judge_for_fluid_prose(self) -> None:
         from cresmo.application.pipeline.coordinator import CresmoPipeline
         from cresmo.domain.entities import RawTranscript
         from cresmo.domain.value_objects import ChannelName, ContentId
@@ -425,7 +425,7 @@ class TestCoordinatorQualityJudgeIntegration:
             vault_port=vault_port,
             ledger_port=ledger_port,
             settings=settings,
-            quality_judge_port=mock_judge,
+            llm_judge_port=mock_judge,
         )
 
         pipeline.execute(canned_raw)
@@ -479,7 +479,7 @@ class TestCoordinatorQualityJudgeIntegration:
             vault_port=vault_port,
             ledger_port=ledger_port,
             settings=settings,
-            quality_judge_port=mock_judge,
+            llm_judge_port=mock_judge,
         )
 
         with pytest.raises(DomainValidationError, match="Fluid prose quality evaluation failed"):

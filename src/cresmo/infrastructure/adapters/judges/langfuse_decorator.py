@@ -1,8 +1,8 @@
-"""Langfuse Telemetry Emission Decorator for Quality Judge Evaluations.
+"""Langfuse Telemetry Emission Decorator for LLM Judge Evaluations.
 
 Conforms to:
-    - ADR-029: Unified QualityJudgePort, Decision-Model Evaluators, and Resilient Multi-Provider Adapters
-    - SPEC-012: Quality Judge Evaluators, Multi-Provider Adapters, and Langfuse Telemetry
+    - ADR-029: Unified LlmJudgePort, Decision-Model Evaluators, and Resilient Multi-Provider Adapters
+    - SPEC-012: LLM Judge Evaluators, Multi-Provider Adapters, and Langfuse Telemetry
 """
 
 from __future__ import annotations
@@ -10,24 +10,24 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from cresmo.application.ports.quality_judge_port import QualityJudgePort
+from cresmo.application.ports.llm_judge_port import LlmJudgePort
 from cresmo.domain.value_objects.quality import EvaluationContext, JudgeEvaluation
 
 logger = logging.getLogger(__name__)
 
 
-class LangfuseJudgeDecorator(QualityJudgePort):
-    """Decorator for QualityJudgePort that automatically emits structured scores to Langfuse."""
+class LangfuseJudgeDecorator(LlmJudgePort):
+    """Decorator for LlmJudgePort that automatically emits structured scores to Langfuse."""
 
     def __init__(
         self,
-        inner_judge: QualityJudgePort,
+        inner_judge: LlmJudgePort,
         langfuse_client: Any | None = None,
     ) -> None:
         """Initialize Langfuse judge telemetry decorator.
 
         Args:
-            inner_judge: The wrapped QualityJudgePort adapter.
+            inner_judge: The wrapped LlmJudgePort adapter.
             langfuse_client: Optional Langfuse client instance for telemetry emission.
         """
         self._inner_judge = inner_judge

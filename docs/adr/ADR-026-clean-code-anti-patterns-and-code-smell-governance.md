@@ -31,7 +31,7 @@ This ADR formally codifies the governance rules, anti-patterns, and required imp
 
 ---
 
-## 2. The Ten Clean Code Anti-Pattern Standards
+## 2. The Clean Code Anti-Pattern Standards
 
 ```
 +---------------------------------------------------------------------------------------------------+
@@ -47,6 +47,10 @@ This ADR formally codifies the governance rules, anti-patterns, and required imp
 |  [Rule 8] Signature Hygiene & Dead Code --> Zero Dangling Unused Parameters Across Concrete Code  |
 |  [Rule 9] SSOT Operational Settings     --> Pydantic Settings V2; Zero Global Configs in __init__ |
 |  [Rule 10] Anti-Defensive Cascading     --> Early Strict DI; Zero 'settings or Settings()' Inlines|
+|  [Rule 11] Anti-Bifurcated Construction --> SSOT Factory Composition; Zero Raw Constructor Bypasses|
+|  [Rule 12] Anti-Shadow State Variables  --> Single Canonical Attribute Naming; Zero State Aliasing|
+|  [Rule 13] Anti-Middle Man Methods      --> Direct Collaborator Invocations; Zero Trampolines      |
+|  [Rule 14] Liskov Substitution & SOLID  --> Upfront Port Typing, Full Subtype Interchangeability   |
 +---------------------------------------------------------------------------------------------------+
 ```
 
@@ -493,6 +497,73 @@ def _load_transcript_from_file(self, file_path: Path) -> RawTranscript:
    ```
 2. **Eliminate Wrapper Methods for Module Functions:** When a standalone domain/infrastructure function is imported (e.g., `load_transcript_from_file`), call it directly (`raw = load_transcript_from_file(file_path)`) rather than wrapping it in a private instance method (`self._load_transcript_from_file`).
 3. **Legitimate Delegators vs Trampolines:** Public Facades implementing an interface/port (e.g. `ObsidianVaultAdapter` implementing `VaultRepositoryPort` by delegating to sub-repositories) or methods adding ACL validation, telemetry spans, or error translation are legitimate. Pure zero-logic private pass-throughs are prohibited.
+
+---
+
+### Rule 14: Liskov Substitution Principle (LSP) & SOLID Alignment across Ports, Adapters, and Factories
+
+#### 14.1 The Anti-Pattern
+Violations of the **Liskov Substitution Principle (LSP)** and core **SOLID** principles typically manifest in Python modular monoliths in three distinct smells:
+
+1. **Leaky Subtype Inference & Untyped Factory Branching:**
+   In dependency injection factories, instantiating concrete adapters within conditional branching (`if / elif / else`) without declaring the target Port interface upfront. This causes static type checkers (`mypy`, `pyright`) to infer wide, leaky union types (e.g. `TypeSafeJudgeAdapter | OllamaJudgeAdapter | GeminiJudgeAdapter`) instead of the unified Port abstraction (`LlmJudgePort`):
+   ```python
+   # ANTI-PATTERN: Implicit Leaky Subtype Assignment in Factory
+   def build_llm_judge_adapter(settings: CresmoSettings) -> LlmJudgePort:
+       provider = settings.judge_provider
+       if provider == "typesafe":
+           primary = TypeSafeJudgeAdapter(...)  # inferred as TypeSafeJudgeAdapter
+       elif provider == "ollama":
+           primary = OllamaJudgeAdapter(...)    # inferred as Union[TypeSafe, Ollama]
+       else:
+           primary = GeminiJudgeAdapter(...)    # union leakage
+       
+       # Downstream consumers may accidentally couple to concrete subtype specifics
+       return ResilientCompositeJudgeAdapter(primary=primary, fallback=fallback)
+   ```
+
+2. **Contract Precondition Strengthening or Postcondition Weakening:**
+   Concrete adapters that alter method signatures, raise undeclared non-domain exceptions instead of standard domain errors, or fail to honor return type invariants established by the Port contract (e.g., failing to return a valid `JudgeEvaluation` for `LlmJudgePort.evaluate()`).
+
+3. **Subtype Downcasting and `isinstance` Branching (Violation of OCP & LSP):**
+   Downstream components (orchestrators, use cases, or composites) inspecting the concrete type of an injected Port via `isinstance(adapter, ConcreteAdapter)` to execute special-case logic, destroying the polymorphism guaranteed by Hexagonal Architecture.
+
+#### 14.2 The Standard & Remediation
+
+1. **Explicit Upfront Port Typing (Single Target Port Contract):**
+   In all DI factory functions, declare the variable type explicitly as the abstract Port interface **before** the conditional resolution block. This enforces at compile time (via `mypy` / `pyright`) that every execution branch assigns an object that strictly satisfies the Port contract:
+   ```python
+   # STANDARD: Explicit Port Interface Declaration Upfront (LSP & Hexagonal DI)
+   primary: LlmJudgePort
+   provider = settings.judge_provider.lower().strip()
+   if provider == "typesafe":
+       primary = TypeSafeJudgeAdapter(
+           api_key=settings.typesafe_api_key.get_secret_value(),
+           model=settings.typesafe_model,
+           base_url=settings.typesafe_base_url,
+       )
+   elif provider == "ollama":
+       primary = OllamaJudgeAdapter(
+           base_url=settings.ollama_base_url,
+           model=settings.ollama_model,
+           timeout_seconds=settings.ollama_timeout_seconds,
+       )
+   else:
+       primary = GeminiJudgeAdapter(
+           api_key=settings.gemini_api_key.get_secret_value(),
+           model=settings.gemini_model,
+       )
+   ```
+
+2. **Full Interchangeability of Implementations (LSP):**
+   Any adapter implementing a Port (such as `GeminiJudgeAdapter`, `OllamaJudgeAdapter`, `TypeSafeJudgeAdapter`, or composite wrappers like `ResilientCompositeJudgeAdapter` and `LangfuseJudgeDecorator` for `LlmJudgePort`) must be 100% interchangeable at runtime without requiring any branch or adapter-specific handling from callers.
+
+3. **SOLID Architectural Alignment:**
+   - **Single Responsibility Principle (SRP):** Each adapter has one distinct responsibility (e.g. `GeminiJudgeAdapter` for Google GenAI structured inference, `LangfuseJudgeDecorator` for telemetry ingestion).
+   - **Open/Closed Principle (OCP):** New providers are added by implementing the Port and registering a new branch in the factory, requiring zero modifications to domain use cases or orchestrators.
+   - **Liskov Substitution Principle (LSP):** Derived adapters strictly honor Port contract invariants and return types.
+   - **Interface Segregation Principle (ISP):** Hexagonal Ports remain lean and fine-grained (e.g. `LlmJudgePort` exposes only `evaluate(context)`, decoupled from generative text synthesis in `LLMTransformationPort`).
+   - **Dependency Inversion Principle (DIP):** Domain and Application use cases depend solely on Port abstractions (`LlmJudgePort`), never on concrete infrastructure adapters or external SDKs.
 
 ---
 

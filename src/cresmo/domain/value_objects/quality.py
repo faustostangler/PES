@@ -1,8 +1,8 @@
 """Domain Value Objects for Quality Evaluation and Decision-Model Evaluators.
 
 Conforms to:
-    - ADR-029: Unified QualityJudgePort, Decision-Model Evaluators, and Resilient Multi-Provider Adapters
-    - SPEC-012: Quality Judge Evaluators, Multi-Provider Adapters, and Langfuse Telemetry
+    - ADR-029: Unified LlmJudgePort, Decision-Model Evaluators, and Resilient Multi-Provider Adapters
+    - SPEC-012: LLM Judge Evaluators, Multi-Provider Adapters, and Langfuse Telemetry
 """
 
 from __future__ import annotations
@@ -90,7 +90,7 @@ class JudgeEvaluation:
 
 @dataclass(frozen=True, slots=True)
 class EvaluationContext:
-    """Immutable input context provided to QualityJudgePort for assessment.
+    """Immutable input context provided to LlmJudgePort for assessment.
 
     Attributes:
         stage_name: Name of pipeline stage being assessed (e.g. 'fluid_prose').

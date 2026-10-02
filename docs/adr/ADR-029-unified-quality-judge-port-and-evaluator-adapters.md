@@ -1,4 +1,4 @@
-# ADR-029: Unified QualityJudgePort, Decision-Model Evaluators, and Resilient Multi-Provider Adapters with Langfuse Telemetry
+# ADR-029: Unified LlmJudgePort, Decision-Model Evaluators, and Resilient Multi-Provider Adapters with Langfuse Telemetry
 
 **Status:** ACCEPTED  
 **Date:** 2026-10-01  
@@ -29,7 +29,7 @@ In the current Cresmo Knowledge Synthesis Engine, quality assessment and semanti
 
 ## 2. Decision
 
-We establish an isolated, hexagonal Quality Evaluation Subsystem governed by a unified port (`QualityJudgePort`), rich domain value objects (`JudgeEvaluation`, `CriterionScore`, `EvaluationContext`), and resilient multi-provider adapters with automatic fallback and direct Langfuse score ingestion.
+We establish an isolated, hexagonal Quality Evaluation Subsystem governed by a unified port (`LlmJudgePort`), rich domain value objects (`JudgeEvaluation`, `CriterionScore`, `EvaluationContext`), and resilient multi-provider adapters with automatic fallback and direct Langfuse score ingestion.
 
 ### 2.1 Domain Layer: Rich Value Objects & Invariants
 
@@ -75,10 +75,10 @@ In `src/cresmo/domain/value_objects/quality.py`, define pure, immutable domain r
 
 ### 2.2 Application Layer: The Unified Port
 
-In `src/cresmo/application/ports/quality_judge_port.py`:
+In `src/cresmo/application/ports/llm_judge_port.py`:
 
 ```python
-class QualityJudgePort(ABC):
+class LlmJudgePort(ABC):
     """Hexagonal Application Port for semantic quality evaluation and LLM-as-a-Judge."""
 
     @abstractmethod
@@ -101,23 +101,23 @@ In `src/cresmo/infrastructure/adapters/judges/`:
    - Fully implemented, verified via unit tests, but kept dormant behind configuration.
 4. **`ResilientCompositeJudgeAdapter` (Resilience Chain):**
    - Encapsulates fallback order: `Primary (Gemini) ──► Fallback (Ollama)`.
-   - If primary fails (timeout, rate limit, quota, server error), logs a failover warning and invokes the fallback adapter transparently.
+   - If primary fails (timeout, rate limit, quota error, server error), logs a failover warning and invokes the fallback adapter transparently.
 5. **`LangfuseJudgeDecorator` (Telemetry Emission):**
-   - Decorates any `QualityJudgePort` adapter.
+   - Decorates any `LlmJudgePort` adapter.
    - Intercepts `JudgeEvaluation` and immediately transmits `langfuse_client.score(trace_id=..., name=criterion.value, value=score.score, comment=score.reasoning)`.
 
 ### 2.4 Purging In-Code Judges & Pipeline Integration
 
 1. **Purge in `DiscoverAtomicInventoryUseCase`:**
    - Remove inline prompt fetching and `llm_synthesis_port.transform` call.
-   - Inject `QualityJudgePort` into constructor.
-   - Delegate validation to `quality_judge.evaluate(context)`.
+   - Inject `LlmJudgePort` into constructor.
+   - Delegate validation to `llm_judge.evaluate(context)`.
 2. **Purge in `LLMTranscriptDistiller`:**
    - Remove inline judge prompts and `parse_judge_boolean` in `extract_concepts`, `extract_summary`, and `extract_synthesis`.
-   - Inject `QualityJudgePort`.
-   - Delegate validation to `quality_judge.evaluate(...)`.
+   - Inject `LlmJudgePort`.
+   - Delegate validation to `llm_judge.evaluate(...)`.
 3. **Hook Stage 1 (`fluid_prose`) Quality Gate in `coordinator.py`:**
-   - After `self.transform_fluid_prose.execute(raw)`, trigger `self.quality_judge.evaluate(...)` for `fluid_prose` across `ORALITY_REMOVAL`, `SEMANTIC_FAITHFULNESS`, `NER_PRESERVATION`, and `STRUCTURAL_COMPLIANCE`.
+   - After `self.transform_fluid_prose.execute(raw)`, trigger `self.llm_judge.evaluate(...)` for `fluid_prose` across `ORALITY_REMOVAL`, `SEMANTIC_FAITHFULNESS`, `NER_PRESERVATION`, and `STRUCTURAL_COMPLIANCE`.
    - Emits scores to Langfuse under the active `trace_name="cresmo.pipeline.execution"`.
    - Tunable behavior: `judge_blocking=False` by default (telemetry sentinels / non-blocking warnings), switchable to `judge_blocking=True` via configuration.
 

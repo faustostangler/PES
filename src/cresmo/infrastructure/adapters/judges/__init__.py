@@ -1,8 +1,8 @@
-"""Quality Judge and Decision-Model Evaluator Adapters.
+"""LLM Judge and Decision-Model Evaluator Adapters.
 
 Conforms to:
-    - ADR-029: Unified QualityJudgePort, Decision-Model Evaluators, and Resilient Multi-Provider Adapters
-    - SPEC-012: Quality Judge Evaluators, Multi-Provider Adapters, and Langfuse Telemetry
+    - ADR-029: Unified LlmJudgePort, Decision-Model Evaluators, and Resilient Multi-Provider Adapters
+    - SPEC-012: LLM Judge Evaluators, Multi-Provider Adapters, and Langfuse Telemetry
 """
 
 from __future__ import annotations

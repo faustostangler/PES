@@ -1,8 +1,8 @@
 """Gemini LLM-as-a-Judge Adapter for Quality Evaluation.
 
 Conforms to:
-    - ADR-029: Unified QualityJudgePort, Decision-Model Evaluators, and Resilient Multi-Provider Adapters
-    - SPEC-012: Quality Judge Evaluators, Multi-Provider Adapters, and Langfuse Telemetry
+    - ADR-029: Unified LlmJudgePort, Decision-Model Evaluators, and Resilient Multi-Provider Adapters
+    - SPEC-012: LLM Judge Evaluators, Multi-Provider Adapters, and Langfuse Telemetry
 """
 
 from __future__ import annotations
@@ -17,7 +17,7 @@ from typing import Any
 from google import genai
 from google.genai import types
 
-from cresmo.application.ports.quality_judge_port import QualityJudgePort
+from cresmo.application.ports.llm_judge_port import LlmJudgePort
 from cresmo.domain.value_objects.quality import (
     CriterionScore,
     EvaluationContext,
@@ -37,7 +37,7 @@ def _clean_json_markdown(text: str) -> str:
     return cleaned
 
 
-class GeminiJudgeAdapter(QualityJudgePort):
+class GeminiJudgeAdapter(LlmJudgePort):
     """Quality judge adapter utilizing Google Gemini API with structured outputs."""
 
     def __init__(

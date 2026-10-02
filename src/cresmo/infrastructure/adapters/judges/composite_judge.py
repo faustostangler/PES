@@ -1,33 +1,33 @@
 """Resilient Composite Judge Adapter Implementing Automatic Fallback.
 
 Conforms to:
-    - ADR-029: Unified QualityJudgePort, Decision-Model Evaluators, and Resilient Multi-Provider Adapters
-    - SPEC-012: Quality Judge Evaluators, Multi-Provider Adapters, and Langfuse Telemetry
+    - ADR-029: Unified LlmJudgePort, Decision-Model Evaluators, and Resilient Multi-Provider Adapters
+    - SPEC-012: LLM Judge Evaluators, Multi-Provider Adapters, and Langfuse Telemetry
 """
 
 from __future__ import annotations
 
 import logging
 
-from cresmo.application.ports.quality_judge_port import QualityJudgePort
+from cresmo.application.ports.llm_judge_port import LlmJudgePort
 from cresmo.domain.value_objects.quality import EvaluationContext, JudgeEvaluation
 
 logger = logging.getLogger(__name__)
 
 
-class ResilientCompositeJudgeAdapter(QualityJudgePort):
+class ResilientCompositeJudgeAdapter(LlmJudgePort):
     """Resilient composite adapter that fails over to a secondary judge when primary fails."""
 
     def __init__(
         self,
-        primary: QualityJudgePort,
-        fallback: QualityJudgePort,
+        primary: LlmJudgePort,
+        fallback: LlmJudgePort,
     ) -> None:
         """Initialize composite adapter with primary and fallback providers.
 
         Args:
-            primary: Primary QualityJudgePort adapter (e.g. GeminiJudgeAdapter).
-            fallback: Fallback QualityJudgePort adapter (e.g. OllamaJudgeAdapter).
+            primary: Primary LlmJudgePort adapter (e.g. GeminiJudgeAdapter).
+            fallback: Fallback LlmJudgePort adapter (e.g. OllamaJudgeAdapter).
         """
         self._primary = primary
         self._fallback = fallback

@@ -1,8 +1,8 @@
-"""Application Port for Quality Evaluation and Decision-Model Evaluators.
+"""Application Port for LLM Judge Evaluation and Decision-Model Evaluators.
 
 Conforms to:
-    - ADR-029: Unified QualityJudgePort, Decision-Model Evaluators, and Resilient Multi-Provider Adapters
-    - SPEC-012: Quality Judge Evaluators, Multi-Provider Adapters, and Langfuse Telemetry
+    - ADR-029: Unified LlmJudgePort, Decision-Model Evaluators, and Resilient Multi-Provider Adapters
+    - SPEC-012: LLM Judge Evaluators, Multi-Provider Adapters, and Langfuse Telemetry
 """
 
 from __future__ import annotations
@@ -12,7 +12,7 @@ from abc import ABC, abstractmethod
 from cresmo.domain.value_objects.quality import EvaluationContext, JudgeEvaluation
 
 
-class QualityJudgePort(ABC):
+class LlmJudgePort(ABC):
     """Hexagonal Application Port for semantic quality evaluation and LLM-as-a-Judge."""
 
     @abstractmethod

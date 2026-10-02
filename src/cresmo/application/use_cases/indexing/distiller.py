@@ -11,9 +11,9 @@ from __future__ import annotations
 import logging
 
 from cresmo.application.ports import (
+    LlmJudgePort,
     LLMTransformationPort,
     PromptProviderPort,
-    QualityJudgePort,
 )
 from cresmo.application.use_cases.indexing.validators import (
     can_retry,
@@ -46,14 +46,14 @@ class LLMTranscriptDistiller:
         temperature: float = 0.2,
         language: str = "Português do Brasil",
         max_rewrites: int = 3,
-        quality_judge_port: QualityJudgePort | None = None,
+        llm_judge_port: LlmJudgePort | None = None,
     ) -> None:
         self.llm_indexing_port = llm_indexing_port
         self.prompt_provider = prompt_provider
         self.temperature = temperature
         self.language = language
         self.max_rewrites = max_rewrites
-        self.quality_judge_port = quality_judge_port
+        self.llm_judge_port = llm_judge_port
 
     def extract_concepts(
         self,
@@ -111,7 +111,7 @@ class LLMTranscriptDistiller:
             )
 
             if is_valid_concepts_output(raw_concepts):
-                if self.quality_judge_port is not None:
+                if self.llm_judge_port is not None:
                     ctx = EvaluationContext(
                         stage_name="raw_indexing_concepts",
                         raw_text=text,
@@ -120,7 +120,7 @@ class LLMTranscriptDistiller:
                         trace_id=judge_trace_id,
                         required_criteria=(JudgeCriterion.INDEX_SYNTHESIS_QUALITY,),
                     )
-                    is_valid = self.quality_judge_port.evaluate(ctx).passed
+                    is_valid = self.llm_judge_port.evaluate(ctx).passed
                 elif self.prompt_provider:
                     judge_system_instructions, judge_prompt = self.prompt_provider.get_prompt(
                         PromptKey.JUDGE_RAW_INDEX_CONCEPTS,
@@ -205,7 +205,7 @@ class LLMTranscriptDistiller:
             )
             summary = clean_text_line(raw_summary) or title
 
-            if self.quality_judge_port is not None:
+            if self.llm_judge_port is not None:
                 ctx = EvaluationContext(
                     stage_name="raw_indexing_summary",
                     raw_text=text,
@@ -214,7 +214,7 @@ class LLMTranscriptDistiller:
                     trace_id=judge_trace_id,
                     required_criteria=(JudgeCriterion.INDEX_SYNTHESIS_QUALITY,),
                 )
-                is_valid = self.quality_judge_port.evaluate(ctx).passed
+                is_valid = self.llm_judge_port.evaluate(ctx).passed
             elif self.prompt_provider:
                 judge_system_instructions, judge_prompt = self.prompt_provider.get_prompt(
                     PromptKey.JUDGE_RAW_INDEX_SUMMARY,
@@ -298,7 +298,7 @@ class LLMTranscriptDistiller:
             synthesis = clean_text_line(raw_synthesis)
 
             if is_valid_synthesis_paragraph(synthesis):
-                if self.quality_judge_port is not None:
+                if self.llm_judge_port is not None:
                     ctx = EvaluationContext(
                         stage_name="raw_indexing_synthesis",
                         raw_text=excerpt,
@@ -307,7 +307,7 @@ class LLMTranscriptDistiller:
                         trace_id=judge_trace_id,
                         required_criteria=(JudgeCriterion.INDEX_SYNTHESIS_QUALITY,),
                     )
-                    is_valid = self.quality_judge_port.evaluate(ctx).passed
+                    is_valid = self.llm_judge_port.evaluate(ctx).passed
                 elif self.prompt_provider:
                     judge_system_instructions, judge_prompt = self.prompt_provider.get_prompt(
                         PromptKey.JUDGE_RAW_INDEX_SYNTHESIS,
