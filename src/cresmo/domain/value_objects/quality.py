@@ -7,6 +7,7 @@ Conforms to:
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any
@@ -107,3 +108,26 @@ class EvaluationContext:
     metadata: dict[str, Any] = field(default_factory=dict)
     trace_id: str | None = None
     required_criteria: tuple[JudgeCriterion, ...] = ()
+
+
+@dataclass(frozen=True, slots=True)
+class StageEvaluationSpec:
+    """Specification of quality evaluation criteria and extractors for a pipeline stage.
+
+    Attributes:
+        raw_text: Source or input reference text for evaluation grounding.
+        candidate_extractor: Callable extracting candidate text from stage result.
+        required_criteria: Tuple of JudgeCriterion required for this stage.
+        metadata: Optional stage metadata for evaluation tracking.
+        max_attempts: Maximum generation attempts if evaluation fails (must be >= 1).
+    """
+
+    raw_text: str
+    candidate_extractor: Callable[[Any], str]
+    required_criteria: tuple[JudgeCriterion, ...]
+    metadata: dict[str, Any] = field(default_factory=dict)
+    max_attempts: int = 1
+
+    def __post_init__(self) -> None:
+        if self.max_attempts < 1:
+            raise ValueError(f"max_attempts must be >= 1, got {self.max_attempts}")

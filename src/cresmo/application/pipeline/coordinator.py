@@ -22,8 +22,6 @@ from __future__ import annotations
 import logging
 from pathlib import Path
 
-from opentelemetry import trace
-
 from cresmo.application.pipeline.models import PipelineResult
 from cresmo.application.pipeline.stage_runner import PipelineStageRunner
 from cresmo.application.pipeline.transcript_loader import (
@@ -64,11 +62,11 @@ from cresmo.domain.entities import (
     RawTranscript,
     UserIdentity,
 )
-from cresmo.domain.exceptions import CresmoDomainError, DomainValidationError
+from cresmo.domain.exceptions import CresmoDomainError
 from cresmo.domain.value_objects import (
-    EvaluationContext,
     JudgeCriterion,
     RawIndexEntry,
+    StageEvaluationSpec,
     is_processable_transcript_file,
 )
 
@@ -118,6 +116,9 @@ class CresmoPipeline:
         self.stage_runner = PipelineStageRunner(
             telemetry_port=self.telemetry_port,
             metrics_port=self.metrics_port,
+            llm_judge=self.llm_judge,
+            judge_blocking=getattr(self.settings, "judge_blocking", False),
+            judge_max_attempts=getattr(self.settings, "judge_max_attempts", 1),
         )
 
         self.ingest_raw_transcript = IngestRawTranscriptUseCase(
@@ -236,46 +237,25 @@ class CresmoPipeline:
             if early_result := self._check_idempotent_exit(raw, entry, force_reprocess):
                 return early_result
 
-            fluid_transcript = self.stage_runner.run_stage(
+            fluid_eval_spec = StageEvaluationSpec(
+                raw_text=raw.body,
+                candidate_extractor=lambda res: res.body,
+                required_criteria=(
+                    JudgeCriterion.ORALITY_REMOVAL,
+                    JudgeCriterion.SEMANTIC_FAITHFULNESS,
+                    JudgeCriterion.NER_PRESERVATION,
+                    JudgeCriterion.STRUCTURAL_COMPLIANCE,
+                ),
+            )
+
+            fluid_transcript = self.stage_runner.run_evaluated_stage(
                 "fluid_prose",
                 lambda: self.transform_fluid_prose.execute(raw, user=user_identity),
                 channel_name=channel_name,
                 content_id=content_id,
                 channel_id=raw.channel_id,
+                eval_spec=fluid_eval_spec,
             )
-
-            if self.llm_judge is not None:
-                span = trace.get_current_span()
-                ctx = span.get_span_context() if span else None
-                active_trace_id = (
-                    format(ctx.trace_id, "032x")
-                    if ctx and ctx.trace_id
-                    else f"cresmo_{channel_name.value}_{content_id.value}"
-                )
-                eval_context = EvaluationContext(
-                    stage_name="fluid_prose",
-                    raw_text=raw.body,
-                    candidate_text=fluid_transcript.body,
-                    metadata={"content_id": content_id.value, "channel_name": channel_name.value},
-                    trace_id=active_trace_id,
-                    required_criteria=(
-                        JudgeCriterion.ORALITY_REMOVAL,
-                        JudgeCriterion.SEMANTIC_FAITHFULNESS,
-                        JudgeCriterion.NER_PRESERVATION,
-                        JudgeCriterion.STRUCTURAL_COMPLIANCE,
-                    ),
-                )
-                evaluation = self.llm_judge.evaluate(eval_context)
-                if not evaluation.passed:
-                    logger.warning(
-                        "LLM judge reported low score for 'fluid_prose' (overall=%.2f, passed=%s).",
-                        evaluation.overall_score,
-                        evaluation.passed,
-                    )
-                    if getattr(self.settings, "judge_blocking", False):
-                        raise DomainValidationError(
-                            f"Fluid prose quality evaluation failed threshold: {evaluation.overall_score:.2f}"
-                        )
 
             if entry is None:
                 entry = self.stage_runner.run_stage(

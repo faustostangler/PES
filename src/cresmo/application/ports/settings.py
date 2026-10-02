@@ -59,6 +59,12 @@ class PipelineSettingsProtocol(Protocol):
     @property
     def inventory_max_attempts(self) -> int: ...
 
+    @property
+    def judge_blocking(self) -> bool: ...
+
+    @property
+    def judge_max_attempts(self) -> int: ...
+
 
 @dataclass
 class DefaultPipelineSettings:
@@ -80,3 +86,5 @@ class DefaultPipelineSettings:
     channel_discovery_workers: int = 4
     days_lookback: int = 30
     inventory_max_attempts: int = 3
+    judge_blocking: bool = False
+    judge_max_attempts: int = 1

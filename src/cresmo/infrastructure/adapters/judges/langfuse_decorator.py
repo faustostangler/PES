@@ -39,14 +39,18 @@ class LangfuseJudgeDecorator(LlmJudgePort):
 
         effective_trace_id = evaluation.trace_id or context.trace_id
         if self._langfuse_client is not None and effective_trace_id:
+            score_fn = getattr(self._langfuse_client, "create_score", None) or getattr(
+                self._langfuse_client, "score", None
+            )
             for score in evaluation.criteria_scores:
                 try:
-                    self._langfuse_client.score(
-                        trace_id=effective_trace_id,
-                        name=score.criterion.value,
-                        value=float(score.score),
-                        comment=score.reasoning,
-                    )
+                    if score_fn is not None:
+                        score_fn(
+                            trace_id=effective_trace_id,
+                            name=score.criterion.value,
+                            value=float(score.score),
+                            comment=score.reasoning,
+                        )
                 except Exception as exc:  # noqa: BLE001 - Observability and telemetry errors must never crash pipeline execution
                     logger.warning(
                         "Failed to emit Langfuse score for criterion '%s': %s",
@@ -54,4 +58,11 @@ class LangfuseJudgeDecorator(LlmJudgePort):
                         exc,
                     )
 
+            try:
+                if hasattr(self._langfuse_client, "flush"):
+                    self._langfuse_client.flush()
+            except Exception as exc:  # noqa: BLE001
+                logger.debug("Failed to flush Langfuse telemetry: %s", exc)
+
         return evaluation
+

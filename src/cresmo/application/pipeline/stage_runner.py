@@ -7,18 +7,27 @@ import time
 from collections.abc import Callable, Sequence
 from typing import Literal, TypeVar, overload
 
-from cresmo.application.ports import MetricsPort, TelemetryPort
+from opentelemetry import trace
+
+from cresmo.application.ports import (
+    LlmJudgePort,
+    MetricsPort,
+    TelemetryPort,
+)
 from cresmo.application.use_cases import DeduplicationReport
 from cresmo.domain.entities import (
     AtomicNote,
     MapOfContent,
     PipelineSessionId,
 )
+from cresmo.domain.exceptions import DomainValidationError
 from cresmo.domain.value_objects import (
     AtomicEntityInventory,
     ChannelId,
     ChannelName,
     ContentId,
+    EvaluationContext,
+    StageEvaluationSpec,
 )
 
 logger = logging.getLogger(__name__)
@@ -33,9 +42,161 @@ class PipelineStageRunner:
         self,
         telemetry_port: TelemetryPort,
         metrics_port: MetricsPort,
+        llm_judge: LlmJudgePort | None = None,
+        judge_blocking: bool = False,
+        judge_max_attempts: int = 1,
     ) -> None:
         self.telemetry_port = telemetry_port
         self.metrics_port = metrics_port
+        self.llm_judge = llm_judge
+        self.judge_blocking = judge_blocking
+        self.judge_max_attempts = judge_max_attempts
+
+    @overload
+    def run_evaluated_stage(
+        self,
+        stage_name: str,
+        fn: Callable[[], _StageRet],
+        *,
+        channel_name: ChannelName,
+        content_id: ContentId,
+        eval_spec: StageEvaluationSpec | None = ...,
+        channel_id: ChannelId | None = ...,
+        fatal: Literal[True] = ...,
+        fallback: _StageRet | None = ...,
+    ) -> _StageRet: ...
+
+    @overload
+    def run_evaluated_stage(
+        self,
+        stage_name: str,
+        fn: Callable[[], _StageRet],
+        *,
+        channel_name: ChannelName,
+        content_id: ContentId,
+        eval_spec: StageEvaluationSpec | None = ...,
+        channel_id: ChannelId | None = ...,
+        fatal: Literal[False],
+        fallback: _StageRet | None = ...,
+    ) -> _StageRet | None: ...
+
+    def run_evaluated_stage(
+        self,
+        stage_name: str,
+        fn: Callable[[], _StageRet],
+        *,
+        channel_name: ChannelName,
+        content_id: ContentId,
+        eval_spec: StageEvaluationSpec | None = None,
+        channel_id: ChannelId | None = None,
+        fatal: bool = True,
+        fallback: _StageRet | None = None,
+    ) -> _StageRet | None:
+        """Execute a pipeline stage within a closed-loop quality evaluation gate with retries.
+
+        If eval_spec or llm_judge is None, delegates directly to run_stage without evaluation.
+        Otherwise, repeatedly executes fn() up to max_attempts until the judge evaluation passes.
+        If all attempts fail and judge_blocking is True, raises DomainValidationError.
+        If judge_blocking is False, logs a warning and returns candidate result.
+        """
+        if self.llm_judge is None or eval_spec is None:
+            return self.run_stage(
+                stage_name,
+                fn,
+                channel_name=channel_name,
+                content_id=content_id,
+                channel_id=channel_id,
+                fatal=fatal,
+                fallback=fallback,
+            )
+
+        effective_max_attempts = max(eval_spec.max_attempts, self.judge_max_attempts)
+        candidate: _StageRet | None = None
+        evaluation = None
+
+        for attempt in range(1, effective_max_attempts + 1):
+            candidate = self.run_stage(
+                stage_name,
+                fn,
+                channel_name=channel_name,
+                content_id=content_id,
+                channel_id=channel_id,
+                fatal=fatal,
+                fallback=fallback,
+            )
+
+            if candidate is None:
+                return fallback
+
+            candidate_text = eval_spec.candidate_extractor(candidate)
+
+            span = trace.get_current_span()
+            ctx = span.get_span_context() if span else None
+            active_trace_id = (
+                format(ctx.trace_id, "032x")
+                if ctx and ctx.trace_id
+                else f"cresmo_{channel_name.value}_{content_id.value}"
+            )
+
+            eval_metadata = {
+                "content_id": content_id.value,
+                "channel_name": channel_name.value,
+                "attempt": attempt,
+                **eval_spec.metadata,
+            }
+
+            eval_context = EvaluationContext(
+                stage_name=stage_name,
+                raw_text=eval_spec.raw_text,
+                candidate_text=candidate_text,
+                metadata=eval_metadata,
+                trace_id=active_trace_id,
+                required_criteria=eval_spec.required_criteria,
+            )
+
+            evaluation = self.llm_judge.evaluate(eval_context)
+
+            self.metrics_port.increment_counter(
+                "cresmo_judge_evaluations_total",
+                1.0,
+                labels={
+                    "stage": stage_name,
+                    "passed": str(evaluation.passed).lower(),
+                    "attempt": str(attempt),
+                },
+            )
+
+            if evaluation.passed:
+                return candidate
+
+            logger.warning(
+                "LLM judge reported low score for '%s' on attempt %d/%d (overall=%.2f, passed=%s).",
+                stage_name,
+                attempt,
+                effective_max_attempts,
+                evaluation.overall_score,
+                evaluation.passed,
+            )
+
+            if attempt < effective_max_attempts:
+                self.metrics_port.increment_counter(
+                    "cresmo_judge_retries_total",
+                    1.0,
+                    labels={"stage": stage_name},
+                )
+
+        if self.judge_blocking:
+            score_str = f"{evaluation.overall_score:.2f}" if evaluation else "0.00"
+            raise DomainValidationError(
+                f"{stage_name} quality evaluation failed threshold after {effective_max_attempts} attempts: {score_str}"
+            )
+
+        logger.warning(
+            "Quality evaluation for '%s' exhausted all %d attempts without passing. Returning candidate as judge_blocking is False.",
+            stage_name,
+            effective_max_attempts,
+        )
+        return candidate
 
     @overload
     def run_stage(

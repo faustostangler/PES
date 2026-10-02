@@ -517,3 +517,8 @@ class CresmoSettings(BaseSettings):
         validation_alias=AliasChoices("judge_blocking", "CRESMO_JUDGE_BLOCKING"),
         description="Whether failed quality evaluations raise DomainValidationError or log warning scores.",
     )
+    judge_max_attempts: int = Field(
+        default=1,
+        validation_alias=AliasChoices("judge_max_attempts", "CRESMO_JUDGE_MAX_ATTEMPTS"),
+        description="Maximum attempts to re-execute a stage when quality evaluation fails.",
+    )

@@ -309,14 +309,14 @@ class TestLangfuseJudgeDecorator:
 
         result = decorator.evaluate(context)
         assert result == mock_eval
-        assert mock_langfuse.score.call_count == 2
-        mock_langfuse.score.assert_any_call(
+        assert mock_langfuse.create_score.call_count == 2
+        mock_langfuse.create_score.assert_any_call(
             trace_id="tr-test-777",
             name="orality_removal",
             value=0.95,
             comment="Clean",
         )
-        mock_langfuse.score.assert_any_call(
+        mock_langfuse.create_score.assert_any_call(
             trace_id="tr-test-777",
             name="semantic_faithfulness",
             value=0.88,
@@ -482,5 +482,5 @@ class TestCoordinatorLlmJudgeIntegration:
             llm_judge_port=mock_judge,
         )
 
-        with pytest.raises(DomainValidationError, match="Fluid prose quality evaluation failed"):
+        with pytest.raises(DomainValidationError, match="fluid_prose quality evaluation failed"):
             pipeline.execute(canned_raw)

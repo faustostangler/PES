@@ -51,6 +51,7 @@ from cresmo.domain.value_objects.quality import (
     EvaluationContext,
     JudgeCriterion,
     JudgeEvaluation,
+    StageEvaluationSpec,
 )
 from cresmo.domain.value_objects.sync import (
     SyncFilterCriteria,
@@ -85,6 +86,7 @@ __all__ = [
     "PromptKey",
     "RawIndexEntry",
     "SourceModality",
+    "StageEvaluationSpec",
     "SyncFilterCriteria",
     "SyncSummary",
     "is_processable_transcript_file",
