@@ -65,4 +65,3 @@ class LangfuseJudgeDecorator(LlmJudgePort):
                 logger.debug("Failed to flush Langfuse telemetry: %s", exc)
 
         return evaluation
-

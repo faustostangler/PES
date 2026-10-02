@@ -13,7 +13,7 @@ import yaml
 if TYPE_CHECKING:
     from cresmo.application.ports.storage import VaultRepositoryPort
 
-from cresmo.domain.entities import RawTranscript
+from cresmo.domain.entities import SourceTranscript
 from cresmo.domain.exceptions import CresmoDomainError
 from cresmo.domain.taxonomy import classify_channel
 from cresmo.domain.value_objects import (
@@ -98,8 +98,8 @@ def _resolve_metadata(
     return title, channel_name, channel_id_obj, category, source_url, video_description
 
 
-def load_transcript_from_file(file_path: Path) -> RawTranscript:
-    """Parse and construct RawTranscript domain entity from a local file.
+def load_transcript_from_file(file_path: Path) -> SourceTranscript:
+    """Parse and construct SourceTranscript domain entity from a local file.
 
     Handles YAML frontmatter metadata overrides and enforces security invariants:
     - Rejects internal Cresmo system files and index databases
@@ -110,7 +110,7 @@ def load_transcript_from_file(file_path: Path) -> RawTranscript:
         file_path: Path to the transcript markdown or text file.
 
     Returns:
-        Validated RawTranscript domain aggregate root.
+        Validated SourceTranscript domain aggregate root.
 
     Raises:
         CresmoDomainError: If file is missing, empty, or a reserved system artifact.
@@ -134,7 +134,7 @@ def load_transcript_from_file(file_path: Path) -> RawTranscript:
         meta, file_path, file_path.stem
     )
 
-    return RawTranscript(
+    return SourceTranscript(
         content_id=content_id,
         channel_name=ch_name,
         body=body,
@@ -160,7 +160,7 @@ def load_manifest_urls(manifest_path: Path) -> list[str]:
 def ensure_raw_saved_in_vault(
     vault_port: VaultRepositoryPort,
     file_path: Path,
-    raw: RawTranscript,
+    raw: SourceTranscript,
 ) -> None:
     """Persist raw transcript in vault if not already located inside its raw directory."""
     raw_dir = getattr(vault_port, "raw_dir", None)

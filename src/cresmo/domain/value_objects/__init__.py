@@ -47,11 +47,14 @@ from cresmo.domain.value_objects.notes import (
 )
 from cresmo.domain.value_objects.prompt import PromptKey
 from cresmo.domain.value_objects.quality import (
+    CandidateText,
     CriterionScore,
     EvaluationContext,
     JudgeCriterion,
     JudgeEvaluation,
     StageEvaluationSpec,
+    TypedVerdict,
+    VerdictType,
 )
 from cresmo.domain.value_objects.sync import (
     SyncFilterCriteria,
@@ -67,6 +70,7 @@ __all__ = [
     "RESERVED_DERIVED_DIRS",
     "RESERVED_SYSTEM_FILENAMES",
     "AtomicEntityInventory",
+    "CandidateText",
     "CausalMatrix",
     "ChannelFeedQuery",
     "ChannelId",
@@ -89,6 +93,8 @@ __all__ = [
     "StageEvaluationSpec",
     "SyncFilterCriteria",
     "SyncSummary",
+    "TypedVerdict",
+    "VerdictType",
     "is_processable_transcript_file",
     "normalize_to_uploads_playlist_url",
 ]

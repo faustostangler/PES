@@ -12,7 +12,8 @@ from __future__ import annotations
 
 import datetime
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import Any
 
 from cresmo.domain.exceptions import (
     CompendiumStructureError,
@@ -38,22 +39,24 @@ CHANNEL_TENANT_ID_PART_COUNT: int = 2
 
 
 @dataclass(frozen=True)
-class RawTranscript:
-    """RawTranscript Aggregate: Verbatim spoken transcript and origin metadata.
+class SourceTranscript:
+    """SourceTranscript Aggregate: Verbatim spoken transcript and origin metadata.
 
-    Encapsulates raw audio transcription or native subtitle text alongside channel provenance.
+    Standardized canonical input contract across pipeline stages per ADR-031.
+    Encapsulates raw audio transcription, native subtitle text, or canonical source text alongside channel provenance.
 
     Attributes:
         content_id: Strongly-typed canonical media identifier.
         channel_name: Human-readable creator or source channel name (ChannelName Value Object).
-        body: Verbatim text of spoken audio.
-        title: Optional original video title.
+        body: Verbatim text of spoken audio or canonical source prose.
+        title: Optional original video/content title.
         source_url: Canonical web URL.
         publication_date: Optional release date.
         upload_date: Backward-compatible alias for publication_date.
         channel_id: Optional platform channel ID.
         channel_category: Macro topic classification.
         video_description: Raw creator description text.
+        metadata: Stage-specific or ingestion provenance metadata dictionary.
 
     Invariants:
         channel_name cannot be whitespace or empty (enforced by ChannelName).
@@ -70,18 +73,17 @@ class RawTranscript:
     channel_id: ChannelId | None = None
     channel_category: str = ""
     video_description: str = ""
+    metadata: dict[str, Any] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
         # Coerce channel_name to strongly-typed ChannelName Value Object (ADR-019)
-        cn = (
-            self.channel_name
-            if isinstance(self.channel_name, ChannelName)
-            else ChannelName.from_string(self.channel_name)
-        )
-        object.__setattr__(self, "channel_name", cn)
+        if isinstance(self.channel_name, str):
+            object.__setattr__(self, "channel_name", ChannelName.from_string(self.channel_name))
+        elif not isinstance(self.channel_name, ChannelName):
+            object.__setattr__(self, "channel_name", ChannelName(str(self.channel_name)))
 
         if self.channel_id is not None and not isinstance(self.channel_id, ChannelId):
-            object.__setattr__(self, "channel_id", ChannelId.from_string(self.channel_id))
+            object.__setattr__(self, "channel_id", ChannelId.from_string(str(self.channel_id)))
 
         # Unify publication_date and upload_date semantics
         pub_date = self.publication_date or self.upload_date
@@ -90,7 +92,7 @@ class RawTranscript:
 
         # Invariant checks ensuring audio transcription payload is valid
         if not self.body.strip():
-            raise DomainValidationError("RawTranscript body cannot be empty or whitespace.")
+            raise DomainValidationError("SourceTranscript body cannot be empty or whitespace.")
 
 
 @dataclass(frozen=True)

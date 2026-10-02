@@ -37,11 +37,10 @@ def build_llm_judge_adapter(
     # 1. Instantiate Primary Provider
     primary: LlmJudgePort
     provider = settings.judge_provider.lower().strip()
-    if provider == "typesafe":
-        primary = TypeSafeJudgeAdapter(
-            api_key=settings.typesafe_api_key.get_secret_value(),
-            model=settings.typesafe_model,
-            base_url=settings.typesafe_base_url,
+    if provider == "gemini":
+        primary = GeminiJudgeAdapter(
+            api_key=settings.gemini_api_key.get_secret_value(),
+            model=settings.gemini_model,
         )
     elif provider == "ollama":
         primary = OllamaJudgeAdapter(
@@ -50,9 +49,10 @@ def build_llm_judge_adapter(
             timeout_seconds=settings.ollama_timeout_seconds,
         )
     else:
-        primary = GeminiJudgeAdapter(
-            api_key=settings.gemini_api_key.get_secret_value(),
-            model=settings.gemini_model,
+        primary = TypeSafeJudgeAdapter(
+            api_key=settings.typesafe_api_key.get_secret_value(),
+            model=settings.typesafe_model,
+            base_url=settings.typesafe_base_url,
         )
 
     # 2. Instantiate Fallback Provider (Default is local Ollama)

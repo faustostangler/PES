@@ -22,7 +22,9 @@ from __future__ import annotations
 import logging
 from pathlib import Path
 
+from cresmo.application.pipeline.context import PipelineExecutionContext
 from cresmo.application.pipeline.models import PipelineResult
+from cresmo.application.pipeline.stage_factory import StageFactory
 from cresmo.application.pipeline.stage_runner import PipelineStageRunner
 from cresmo.application.pipeline.transcript_loader import (
     ensure_raw_saved_in_vault,
@@ -59,14 +61,12 @@ from cresmo.application.use_cases import (
 from cresmo.domain.entities import (
     ChannelTenantId,
     PipelineSessionId,
-    RawTranscript,
+    SourceTranscript,
     UserIdentity,
 )
 from cresmo.domain.exceptions import CresmoDomainError
 from cresmo.domain.value_objects import (
-    JudgeCriterion,
     RawIndexEntry,
-    StageEvaluationSpec,
     is_processable_transcript_file,
 )
 
@@ -119,7 +119,11 @@ class CresmoPipeline:
             llm_judge=self.llm_judge,
             judge_blocking=getattr(self.settings, "judge_blocking", False),
             judge_max_attempts=getattr(self.settings, "judge_max_attempts", 1),
+            prompt_provider=self.prompt_provider,
+            llm_transformation_port=self.llm_synthesis_port,
         )
+
+        self.stage_factory = StageFactory(settings=self.settings)
 
         self.ingest_raw_transcript = IngestRawTranscriptUseCase(
             ingestion_port=self.media_ingestion_port,
@@ -195,7 +199,7 @@ class CresmoPipeline:
 
     def execute(
         self,
-        raw: RawTranscript,
+        raw: SourceTranscript,
         gap_filler_passes: int = 3,
         force_reprocess: bool = False,
         user: UserIdentity | None = None,
@@ -237,133 +241,130 @@ class CresmoPipeline:
             if early_result := self._check_idempotent_exit(raw, entry, force_reprocess):
                 return early_result
 
-            fluid_eval_spec = StageEvaluationSpec(
-                raw_text=raw.body,
-                candidate_extractor=lambda res: res.body,
-                required_criteria=(
-                    JudgeCriterion.ORALITY_REMOVAL,
-                    JudgeCriterion.SEMANTIC_FAITHFULNESS,
-                    JudgeCriterion.NER_PRESERVATION,
-                    JudgeCriterion.STRUCTURAL_COMPLIANCE,
-                ),
-            )
-
-            fluid_transcript = self.stage_runner.run_evaluated_stage(
-                "fluid_prose",
-                lambda: self.transform_fluid_prose.execute(raw, user=user_identity),
-                channel_name=channel_name,
-                content_id=content_id,
-                channel_id=raw.channel_id,
-                eval_spec=fluid_eval_spec,
-            )
-
-            if entry is None:
-                entry = self.stage_runner.run_stage(
-                    "raw_indexing",
-                    lambda: self.index_raw.execute(fluid_transcript, user=user_identity),
-                    channel_name=channel_name,
-                    content_id=content_id,
-                    channel_id=raw.channel_id,
-                    fatal=False,
-                )
-
-            expanded_compendium = self.vault_port.get_enriched_compendium(content_id)
-            if expanded_compendium is None:
-                enriched_compendium = self.stage_runner.run_stage(
-                    "gap_filler",
-                    lambda: self.fill_gaps.execute(
-                        fluid_transcript=fluid_transcript,
-                        passes=gap_filler_passes,
-                        user=user_identity,
-                    ),
-                    channel_name=channel_name,
-                    content_id=content_id,
-                    channel_id=raw.channel_id,
-                )
-                expanded_compendium = self.stage_runner.run_stage(
-                    "expansion",
-                    lambda: self.expand_compendium.execute(
-                        compendium=enriched_compendium,
-                        user=user_identity,
-                    ),
-                    channel_name=channel_name,
-                    content_id=content_id,
-                    channel_id=raw.channel_id,
-                )
-
-            inventory = self.stage_runner.run_stage(
-                "inventory",
-                lambda: self.discover_atomic_inventory.execute(
-                    compendium=expanded_compendium,
-                    user=user_identity,
-                ),
-                channel_name=channel_name,
-                content_id=content_id,
-                channel_id=raw.channel_id,
-            )
-
-            synthesized_notes = self.stage_runner.run_stage(
-                "atomic_batch",
-                lambda: self.synthesize_atomic_batch.execute(
-                    inventory=inventory,
-                    compendium=expanded_compendium,
-                    user=user_identity,
-                ),
-                channel_name=channel_name,
-                content_id=content_id,
-                channel_id=raw.channel_id,
-            )
-
-            mocs = self.stage_runner.run_stage(
-                "mocs",
-                lambda: self.reconcile_mocs.execute(
-                    session_id=session_id,
-                    user_id=user_identity,
-                ),
-                channel_name=channel_name,
-                content_id=content_id,
-                channel_id=raw.channel_id,
-            )
-
-            dedup_report = self.stage_runner.run_stage(
-                "duplicate_unification",
-                lambda: self.unify_duplicate_notes.execute(),
-                channel_name=channel_name,
-                content_id=content_id,
-                channel_id=raw.channel_id,
-            )
-
-            if self.ledger_port:
-                self.ledger_port.mark_processed(content_id)
-
-            self.stage_runner.record_session_completion(
+            execution_context = PipelineExecutionContext(
                 session_id=session_id,
-                content_id=content_id,
+                user_identity=user_identity,
                 channel_name=channel_name,
-                synthesized_notes=synthesized_notes,
-                inventory=inventory,
-                mocs=mocs,
-                dedup_report=dedup_report,
+                content_id=content_id,
                 channel_id=raw.channel_id,
             )
+
+            # Stage 1: Fluid Prose Detranscription via Standardized StageDescriptor (ADR-031)
+            fluid_transcript = self.stage_runner.execute_stage(
+                descriptor=self.stage_factory.build_stage("fluid_prose"),
+                source=raw,
+                context=execution_context,
+            )
+
+            # =========================================================================
+            # [STAGE BOUNDARY - ADR-031 QUARANTINE]
+            # Downstream stages (2 to 8) are temporarily commented during the StageDescriptor
+            # incremental refactoring. Each will be refactored into a StageDescriptor one-by-one.
+            # =========================================================================
+            # if entry is None:
+            #     entry = self.stage_runner.run_stage(
+            #         "raw_indexing",
+            #         lambda: self.index_raw.execute(fluid_transcript, user=user_identity),
+            #         channel_name=channel_name,
+            #         content_id=content_id,
+            #         channel_id=raw.channel_id,
+            #         fatal=False,
+            #     )
+            #
+            # expanded_compendium = self.vault_port.get_enriched_compendium(content_id)
+            # if expanded_compendium is None:
+            #     enriched_compendium = self.stage_runner.run_stage(
+            #         "gap_filler",
+            #         lambda: self.fill_gaps.execute(
+            #             fluid_transcript=fluid_transcript,
+            #             passes=gap_filler_passes,
+            #             user=user_identity,
+            #         ),
+            #         channel_name=channel_name,
+            #         content_id=content_id,
+            #         channel_id=raw.channel_id,
+            #     )
+            #     expanded_compendium = self.stage_runner.run_stage(
+            #         "expansion",
+            #         lambda: self.expand_compendium.execute(
+            #             compendium=enriched_compendium,
+            #             user=user_identity,
+            #         ),
+            #         channel_name=channel_name,
+            #         content_id=content_id,
+            #         channel_id=raw.channel_id,
+            #     )
+            #
+            # inventory = self.stage_runner.run_stage(
+            #     "inventory",
+            #     lambda: self.discover_atomic_inventory.execute(
+            #         compendium=expanded_compendium,
+            #         user=user_identity,
+            #     ),
+            #     channel_name=channel_name,
+            #     content_id=content_id,
+            #     channel_id=raw.channel_id,
+            # )
+            #
+            # synthesized_notes = self.stage_runner.run_stage(
+            #     "atomic_batch",
+            #     lambda: self.synthesize_atomic_batch.execute(
+            #         inventory=inventory,
+            #         compendium=expanded_compendium,
+            #         user=user_identity,
+            #     ),
+            #     channel_name=channel_name,
+            #     content_id=content_id,
+            #     channel_id=raw.channel_id,
+            # )
+            #
+            # mocs = self.stage_runner.run_stage(
+            #     "mocs",
+            #     lambda: self.reconcile_mocs.execute(
+            #         session_id=session_id,
+            #         user_id=user_identity,
+            #     ),
+            #     channel_name=channel_name,
+            #     content_id=content_id,
+            #     channel_id=raw.channel_id,
+            # )
+            #
+            # dedup_report = self.stage_runner.run_stage(
+            #     "duplicate_unification",
+            #     lambda: self.unify_duplicate_notes.execute(),
+            #     channel_name=channel_name,
+            #     content_id=content_id,
+            #     channel_id=raw.channel_id,
+            # )
+            #
+            # if self.ledger_port:
+            #     self.ledger_port.mark_processed(content_id)
+            #
+            # self.stage_runner.record_session_completion(
+            #     session_id=session_id,
+            #     content_id=content_id,
+            #     channel_name=channel_name,
+            #     synthesized_notes=synthesized_notes,
+            #     inventory=inventory,
+            #     mocs=mocs,
+            #     dedup_report=dedup_report,
+            #     channel_id=raw.channel_id,
+            # )
+            # =========================================================================
+            # [END ADR-031 QUARANTINE]
+            # =========================================================================
 
             return PipelineResult(
                 content_id=content_id,
                 success=True,
-                raw_transcript=raw,
+                source_transcript=raw,
                 fluid_transcript=fluid_transcript,
                 index_entry=entry,
-                compendium=expanded_compendium,
-                inventory=inventory,
-                synthesized_notes=tuple(synthesized_notes),
-                reconciled_mocs=tuple(mocs),
-                dedup_report=dedup_report,
-                duplicates_unified=dedup_report.duplicates_unified_count,
             )
 
     def _check_idempotent_exit(
         self,
-        raw: RawTranscript,
+        raw: SourceTranscript,
         entry: RawIndexEntry | None,
         force_reprocess: bool,
     ) -> PipelineResult | None:
@@ -385,7 +386,7 @@ class CresmoPipeline:
             return PipelineResult(
                 content_id=content_id,
                 success=True,
-                raw_transcript=raw,
+                source_transcript=raw,
                 index_entry=entry,
                 compendium=self.vault_port.get_enriched_compendium(content_id),
                 synthesized_notes=(),

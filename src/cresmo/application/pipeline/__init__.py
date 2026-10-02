@@ -9,14 +9,20 @@ Conforms to:
 
 from __future__ import annotations
 
+from cresmo.application.pipeline.context import PipelineExecutionContext
 from cresmo.application.pipeline.coordinator import CresmoPipeline
 from cresmo.application.pipeline.models import PipelineResult
+from cresmo.application.pipeline.stage_descriptor import StageDescriptor
+from cresmo.application.pipeline.stage_factory import StageFactory
 from cresmo.application.pipeline.stage_runner import PipelineStageRunner
 from cresmo.application.pipeline.transcript_loader import load_transcript_from_file
 
 __all__ = [
     "CresmoPipeline",
+    "PipelineExecutionContext",
     "PipelineResult",
     "PipelineStageRunner",
+    "StageDescriptor",
+    "StageFactory",
     "load_transcript_from_file",
 ]

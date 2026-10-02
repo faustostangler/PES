@@ -386,7 +386,7 @@ class TestCoordinatorLlmJudgeIntegration:
 
     def test_coordinator_triggers_llm_judge_for_fluid_prose(self) -> None:
         from cresmo.application.pipeline.coordinator import CresmoPipeline
-        from cresmo.domain.entities import RawTranscript
+        from cresmo.domain.entities import SourceTranscript
         from cresmo.domain.value_objects import ChannelName, ContentId
         from cresmo.infrastructure.config import CresmoSettings
         from tests.cresmo.unit.test_pipeline import SmartMockLLMAdapter
@@ -397,7 +397,7 @@ class TestCoordinatorLlmJudgeIntegration:
         )
 
         cid = ContentId("vid_coord_1")
-        canned_raw = RawTranscript(
+        canned_raw = SourceTranscript(
             content_id=cid,
             channel_name=ChannelName("Test Channel"),
             body="Raw audio text with uh and um.",
@@ -440,7 +440,7 @@ class TestCoordinatorLlmJudgeIntegration:
 
     def test_coordinator_blocking_mode_raises_on_quality_failure(self) -> None:
         from cresmo.application.pipeline.coordinator import CresmoPipeline
-        from cresmo.domain.entities import RawTranscript
+        from cresmo.domain.entities import SourceTranscript
         from cresmo.domain.exceptions import DomainValidationError
         from cresmo.domain.value_objects import ChannelName, ContentId
         from cresmo.infrastructure.config import CresmoSettings
@@ -452,7 +452,7 @@ class TestCoordinatorLlmJudgeIntegration:
         )
 
         cid = ContentId("vid_coord_2")
-        canned_raw = RawTranscript(
+        canned_raw = SourceTranscript(
             content_id=cid,
             channel_name=ChannelName("Test Channel"),
             body="Raw audio.",

@@ -13,7 +13,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from cresmo.application.pipeline import PipelineResult
-from cresmo.domain.entities import RawTranscript
+from cresmo.domain.entities import SourceTranscript
 from cresmo.domain.exceptions import (
     DomainValidationError,
     IngestionNetworkError,
@@ -196,7 +196,7 @@ class TestCresmoCLI:
 
     def test_cli_run_dry_run_invokes_only_ingest(self) -> None:
         mock_pipeline = MagicMock()
-        mock_raw = RawTranscript(
+        mock_raw = SourceTranscript(
             content_id=ContentId("dQw4w9WgXcQ"),
             channel_name=ChannelName("TestChannel"),
             body="Verbatim transcript content.",
@@ -246,7 +246,7 @@ class TestCresmoCLI:
         )
 
         mock_pipeline = MagicMock()
-        mock_raw = RawTranscript(
+        mock_raw = SourceTranscript(
             content_id=ContentId("video11111111"),
             channel_name=ChannelName("TestChan"),
             body="Content",

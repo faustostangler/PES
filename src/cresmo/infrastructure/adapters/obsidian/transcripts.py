@@ -13,7 +13,7 @@ from pathlib import Path
 
 import yaml
 
-from cresmo.domain.entities import EnrichedCompendium, RawTranscript
+from cresmo.domain.entities import EnrichedCompendium, SourceTranscript
 from cresmo.domain.value_objects import (
     ChannelId,
     ChannelName,
@@ -29,14 +29,14 @@ from cresmo.infrastructure.adapters.obsidian.utils import (
 
 
 class TranscriptVaultHandler:
-    """Handles filesystem persistence and retrieval of raw transcripts and enriched compendiums."""
+    """Handles filesystem persistence and retrieval of source transcripts and enriched compendiums."""
 
     def __init__(self, raw_dir: Path, enriched_dir: Path) -> None:
         self.raw_dir = raw_dir
         self.enriched_dir = enriched_dir
 
-    def save_raw_transcript(self, transcript: RawTranscript) -> None:
-        """Persist raw transcript with canonical YAML frontmatter."""
+    def save_raw_transcript(self, transcript: SourceTranscript) -> None:
+        """Persist source transcript with canonical YAML frontmatter."""
         channel_dir = self.raw_dir / sanitize_filename(transcript.channel_name)
         file_path = channel_dir / f"{transcript.content_id.value}.md"
 
@@ -69,8 +69,8 @@ class TranscriptVaultHandler:
         content = f"{yaml_header}\n\n{transcript.body}"
         atomic_write(file_path, content)
 
-    def get_raw_transcript(self, content_id: ContentId) -> RawTranscript | None:
-        """Retrieve raw transcript by searching raw/ directory."""
+    def get_raw_transcript(self, content_id: ContentId) -> SourceTranscript | None:
+        """Retrieve source transcript by searching raw/ directory."""
         target_name = f"{content_id.value}.md"
         matched = list(self.raw_dir.glob(f"**/{target_name}"))
         if not matched:
@@ -80,7 +80,7 @@ class TranscriptVaultHandler:
         text = file_path.read_text(encoding="utf-8")
         match = _FRONTMATTER_PATTERN.match(text)
         if not match:
-            return RawTranscript(
+            return SourceTranscript(
                 content_id=content_id,
                 channel_name=ChannelName(file_path.parent.name),
                 body=text,
@@ -102,7 +102,7 @@ class TranscriptVaultHandler:
                     upload_date = datetime.strptime(date_str, "%Y%m%d").replace(tzinfo=UTC).date()
         desc = str(meta.get("video_description") or "")
 
-        return RawTranscript(
+        return SourceTranscript(
             content_id=content_id,
             channel_name=ChannelName(ch_name),
             body=body.strip(),

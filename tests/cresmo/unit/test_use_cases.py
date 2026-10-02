@@ -27,7 +27,7 @@ from cresmo.domain.entities import (
     AtomicNote,
     EnrichedCompendium,
     FluidTranscript,
-    RawTranscript,
+    SourceTranscript,
 )
 from cresmo.domain.exceptions import (
     CompendiumStructureError,
@@ -77,7 +77,7 @@ class TestIngestRawTranscript:
 
     def test_ingest_single_video_success(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
-        canned = RawTranscript(
+        canned = SourceTranscript(
             content_id=cid,
             channel_name=ChannelName("Example Channel"),
             body="Raw spoken audio transcript.",
@@ -109,7 +109,7 @@ class TestTransformFluidProse:
 
     def test_transform_fluid_prose_success(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
-        raw = RawTranscript(
+        raw = SourceTranscript(
             content_id=cid,
             channel_name=ChannelName("Example Channel"),
             body="Fala pessoal, hoje vamos ver Pareto, né? Tipo assim, minorias governam.",
@@ -142,12 +142,12 @@ class TestTransformFluidProse:
         llm_port = MockLLMAdapter()
         use_case = TransformFluidProseUseCase(llm_port)
         with pytest.raises(
-            DomainValidationError, match="TransformFluidProseUseCase expects RawTranscript"
+            DomainValidationError, match="TransformFluidProseUseCase expects SourceTranscript"
         ):
             use_case.execute("invalid string")  # type: ignore[arg-type]
 
     def test_transform_fluid_prose_empty_body_raises_error(self) -> None:
-        raw = RawTranscript(
+        raw = SourceTranscript(
             content_id=ContentId("empty12345"),
             channel_name=ChannelName("Example Channel"),
             body="Raw text",
@@ -162,8 +162,8 @@ class TestFillGapsFluidProse:
     """SPEC-001 Scenario 2.1 & SPEC-011: Socratic Gap Filler on FluidTranscript."""
 
     def test_fill_gaps_rejects_raw_transcript(self) -> None:
-        """ADR-028 Invariant: FillGapsUseCase strictly rejects RawTranscript."""
-        raw = RawTranscript(
+        """ADR-028 Invariant: FillGapsUseCase strictly rejects SourceTranscript."""
+        raw = SourceTranscript(
             content_id=ContentId("vidraw001"),
             channel_name=ChannelName("Test"),
             body="Raw spoken text.",

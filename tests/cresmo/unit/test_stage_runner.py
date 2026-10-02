@@ -280,3 +280,46 @@ class TestPipelineStageRunnerEvaluatedStage:
             )
 
         assert mock_judge.evaluate.call_count == 2
+
+    def test_execute_stage_with_pipeline_execution_context(self) -> None:
+        """Verify execute_stage cleanly consumes PipelineExecutionContext."""
+        from cresmo.application.pipeline.context import PipelineExecutionContext
+        from cresmo.application.pipeline.stage_descriptor import StageDescriptor
+        from cresmo.domain.entities import PipelineSessionId, SourceTranscript, UserIdentity
+        from cresmo.domain.value_objects import CandidateText, PromptKey
+        from cresmo.infrastructure.adapters.prompt_provider import JsonPromptProvider
+        from tests.doubles.mock_adapters import MockLLMAdapter
+
+        telemetry = NoOpTelemetryPort()
+        metrics = NoOpMetricsPort()
+        prompt_provider = JsonPromptProvider()
+        llm_port = MockLLMAdapter(responses=["# Synthesized Title\n\nClean body text."])
+
+        runner = PipelineStageRunner(
+            telemetry_port=telemetry,
+            metrics_port=metrics,
+            prompt_provider=prompt_provider,
+            llm_transformation_port=llm_port,
+        )
+
+        ctx = PipelineExecutionContext(
+            session_id=PipelineSessionId("ch_test:vid_ctx_1"),
+            user_identity=UserIdentity.worker(),
+            channel_name=ChannelName("CtxChannel"),
+            content_id=ContentId("vid_ctx_1"),
+        )
+
+        descriptor = StageDescriptor[SourceTranscript, CandidateText](
+            stage_name="fluid_prose",
+            transform_prompt_key=PromptKey.FLUID_PROSE,
+        )
+
+        source = SourceTranscript(
+            content_id=ContentId("vid_ctx_1"),
+            channel_name=ChannelName("CtxChannel"),
+            body="Raw speech text.",
+        )
+
+        result = runner.execute_stage(descriptor, source, context=ctx)
+        assert isinstance(result, CandidateText)
+        assert "Clean body text." in result.text

@@ -16,7 +16,7 @@ from cresmo.application.use_cases.index_raw_transcripts import (
     is_valid_synthesis_paragraph,
     parse_judge_boolean,
 )
-from cresmo.domain.entities import FluidTranscript, RawTranscript
+from cresmo.domain.entities import FluidTranscript, SourceTranscript
 from cresmo.domain.exceptions import DomainValidationError
 from cresmo.domain.value_objects import ChannelName, ContentId
 from cresmo.infrastructure.adapters.prompt_provider import JsonPromptProvider
@@ -194,7 +194,7 @@ class TestIndexRawTranscriptsUseCase:
         assert len(vault.channel_raw_indexes) == 0
 
     def test_index_raw_rejects_raw_transcript(self) -> None:
-        """ADR-028: IndexRawTranscriptsUseCase strictly rejects RawTranscript."""
+        """ADR-028: IndexRawTranscriptsUseCase strictly rejects SourceTranscript."""
         vault = InMemoryVaultAdapter()
         llm = MockLLMAdapter()
         prompt_provider = JsonPromptProvider()
@@ -203,7 +203,7 @@ class TestIndexRawTranscriptsUseCase:
             llm=llm,
             prompt_provider=prompt_provider,
         )
-        raw = RawTranscript(
+        raw = SourceTranscript(
             content_id=ContentId("vidraw001"),
             channel_name=ChannelName("Canal Teste"),
             title="Video Raw",
@@ -213,7 +213,7 @@ class TestIndexRawTranscriptsUseCase:
             DomainValidationError,
             match="IndexRawTranscriptsUseCase strictly requires FluidTranscript",
         ):
-            use_case.execute(raw)
+            use_case.execute(raw)  # type: ignore[arg-type]
 
     def test_self_healing_rewrite_loop_triggered_when_forbidden_prefix_returned(self) -> None:
         """Verify that when LLM returns forbidden prefix on concepts, a rewrite is requested."""

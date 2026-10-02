@@ -10,7 +10,7 @@ from cresmo.domain.entities import (
     EnrichedCompendium,
     FluidTranscript,
     MapOfContent,
-    RawTranscript,
+    SourceTranscript,
 )
 from cresmo.domain.value_objects import (
     AtomicEntityInventory,
@@ -31,7 +31,7 @@ class PipelineResult:
         success: True if all stages completed successfully without unhandled errors.
         synthesized_notes: Tuple of all newly synthesized AtomicNote domain aggregates.
         reconciled_mocs: Tuple of MapOfContent aggregates updated or created.
-        raw_transcript: Optional RawTranscript aggregate root from raw ingestion.
+        source_transcript: Optional SourceTranscript aggregate root from raw ingestion.
         index_entry: Optional RawIndexEntry catalog projection from raw indexing.
         compendium: Optional EnrichedCompendium aggregate root from fluid prose & expansion.
         inventory: Optional AtomicEntityInventory value object from inventory discovery.
@@ -45,7 +45,7 @@ class PipelineResult:
     success: bool
     synthesized_notes: tuple[AtomicNote, ...] = ()
     reconciled_mocs: tuple[MapOfContent, ...] = ()
-    raw_transcript: RawTranscript | None = None
+    source_transcript: SourceTranscript | None = None
     fluid_transcript: FluidTranscript | None = None
     index_entry: RawIndexEntry | None = None
     compendium: EnrichedCompendium | None = None

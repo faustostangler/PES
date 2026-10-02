@@ -13,7 +13,7 @@ from cresmo.domain.entities import (
     AtomicNote,
     EnrichedCompendium,
     MapOfContent,
-    RawTranscript,
+    SourceTranscript,
 )
 from cresmo.domain.value_objects import (
     CausalMatrix,
@@ -70,7 +70,7 @@ class TestMockMediaIngestionPort:
 
     def test_ingest_single_video_records_and_returns_canned(self, tmp_path: Path) -> None:
         cid = ContentId("singleVid123")
-        transcript = RawTranscript(
+        transcript = SourceTranscript(
             content_id=cid,
             channel_name=ChannelName("Channel"),
             body="Spoken text",
@@ -123,7 +123,7 @@ class TestInMemoryVaultAdapter:
     def test_raw_transcript_crud(self) -> None:
         vault = InMemoryVaultAdapter()
         cid = ContentId("transTest123")
-        raw = RawTranscript(content_id=cid, channel_name=ChannelName("Ch"), body="Text")
+        raw = SourceTranscript(content_id=cid, channel_name=ChannelName("Ch"), body="Text")
         assert vault.get_raw_transcript(cid) is None
 
         vault.save_raw_transcript(raw)

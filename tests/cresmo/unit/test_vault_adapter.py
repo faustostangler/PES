@@ -17,7 +17,7 @@ from cresmo.domain.entities import (
     AtomicNote,
     EnrichedCompendium,
     MapOfContent,
-    RawTranscript,
+    SourceTranscript,
 )
 from cresmo.domain.value_objects import (
     CausalMatrix,
@@ -55,7 +55,7 @@ class TestObsidianVaultAdapter:
             enriched_dir=enriched_dir,
         )
         cid = ContentId("dQw4w9WgXcQ")
-        raw = RawTranscript(
+        raw = SourceTranscript(
             content_id=cid,
             channel_name=ChannelName("Political Theory"),
             body="Spoken speech transcript line 1.\nSpoken speech transcript line 2.",

@@ -31,7 +31,7 @@ import whisper
 import yt_dlp
 
 from cresmo.application.ports import MediaIngestionPort, MetricsPort
-from cresmo.domain.entities import RawTranscript
+from cresmo.domain.entities import SourceTranscript
 from cresmo.domain.exceptions import (
     CresmoInfrastructureError,
     DomainValidationError,
@@ -322,8 +322,8 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         info: Mapping[str, Any],
         body: str,
         channel_name: str,
-    ) -> tuple[RawTranscript, ChannelId | None]:
-        """Construct domain RawTranscript entity from resolved metadata and body."""
+    ) -> tuple[SourceTranscript, ChannelId | None]:
+        """Construct domain SourceTranscript entity from resolved metadata and body."""
         actual_video_id = str(info.get("id") or self._extract_video_id(video_url))
         cid = ContentId.extract_from_text(actual_video_id) or ContentId.from_url_or_token(
             actual_video_id
@@ -335,7 +335,7 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         raw_cid = str(info.get("channel_id") or info.get("uploader_id") or "").strip()
         ch_id = ChannelId.extract_from_text(raw_cid)
 
-        transcript = RawTranscript(
+        transcript = SourceTranscript(
             content_id=cid,
             channel_name=c_name,
             body=body,
@@ -355,8 +355,8 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         output_dir: Path,
         whisper_model: str = "base",
         keep_audio: bool = False,
-    ) -> RawTranscript | None:
-        """Ingest single video into RawTranscript domain aggregate.
+    ) -> SourceTranscript | None:
+        """Ingest single video into SourceTranscript domain aggregate.
 
         Prioritizes native spoken subtitles. If unavailable, falls back to local
         Whisper transcription with RAII temporary scratch storage.

@@ -15,7 +15,7 @@ from cresmo.domain.entities import (
     AtomicNote,
     EnrichedCompendium,
     MapOfContent,
-    RawTranscript,
+    SourceTranscript,
 )
 from cresmo.domain.value_objects import (
     ChannelName,
@@ -34,23 +34,23 @@ class VaultRepositoryPort(ABC):
     """
 
     @abstractmethod
-    def save_raw_transcript(self, transcript: RawTranscript) -> None:
+    def save_raw_transcript(self, transcript: SourceTranscript) -> None:
         """Persist raw transcript to raw storage directory.
 
         Args:
-            transcript: RawTranscript domain aggregate containing verbatim text and metadata.
+            transcript: SourceTranscript domain aggregate containing verbatim text and metadata.
         """
         raise NotImplementedError("Persist raw transcript atomically.")
 
     @abstractmethod
-    def get_raw_transcript(self, content_id: ContentId) -> RawTranscript | None:
+    def get_raw_transcript(self, content_id: ContentId) -> SourceTranscript | None:
         """Retrieve raw transcript by content ID.
 
         Args:
             content_id: Target unique content identifier.
 
         Returns:
-            RawTranscript aggregate or None if not present in storage.
+            SourceTranscript aggregate or None if not present in storage.
         """
         raise NotImplementedError("Retrieve raw transcript by content ID.")
 

@@ -14,7 +14,7 @@ from cresmo.domain.entities import (
     EnrichedCompendium,
     MapOfContent,
     PipelineSessionId,
-    RawTranscript,
+    SourceTranscript,
     UserIdentity,
 )
 from cresmo.domain.exceptions import (
@@ -32,13 +32,13 @@ from cresmo.domain.value_objects import (
 )
 
 
-class TestRawTranscript:
-    """SPEC-001 §2.2: RawTranscript invariants."""
+class TestSourceTranscript:
+    """SPEC-001 §2.2 & ADR-031: SourceTranscript invariants."""
 
-    def test_valid_raw_transcript(self) -> None:
+    def test_valid_source_transcript(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
         pub = datetime.date(2023, 5, 12)
-        transcript = RawTranscript(
+        transcript = SourceTranscript(
             content_id=cid,
             channel_name=ChannelName("Example Channel"),
             body="Valid spoken transcript body text.",
@@ -54,7 +54,7 @@ class TestRawTranscript:
     def test_empty_body_raises_validation_error(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
         with pytest.raises(DomainValidationError):
-            RawTranscript(
+            SourceTranscript(
                 content_id=cid,
                 channel_name=ChannelName("Example Channel"),
                 body="",
@@ -181,10 +181,10 @@ class TestMapOfContent:
                 associated_notes=(note_a, note_a),
             )
 
-    def test_raw_transcript_empty_channel_raises_error(self) -> None:
+    def test_source_transcript_empty_channel_raises_error(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
         with pytest.raises(DomainValidationError, match="ChannelName cannot be empty"):
-            RawTranscript(content_id=cid, channel_name=ChannelName("   "), body="Valid body.")
+            SourceTranscript(content_id=cid, channel_name=ChannelName("   "), body="Valid body.")
 
     def test_enriched_compendium_empty_body_raises_error(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
