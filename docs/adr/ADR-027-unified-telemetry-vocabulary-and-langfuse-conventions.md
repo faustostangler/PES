@@ -125,9 +125,9 @@ Structured contextual dictionary (`dict[str, Any]`) attached at root span and pr
 1. **Domain (`src/cresmo/domain/entities.py`):**
    - Update `UserIdentity`: add `UserIdentity.worker(name: str = "worker") -> UserIdentity` generating `system:worker`.
    - Update `PipelineSessionId`: canonical format `{channel_id}:{video_id}`, with parsing and property accessors (`channel_token`, `video_id`/`content_id`).
-2. **Application Ports (`src/cresmo/application/ports.py`):**
+2. **Application Ports (`src/cresmo/application/ports/`):**
    - Update `TelemetryPort.start_pipeline_session` signature to accept `trace_name: str | None = None`.
-3. **Application Orchestrator (`src/cresmo/application/pipeline.py`):**
+3. **Application Orchestrator (`src/cresmo/application/pipeline/`):**
    - Set root `trace_name="cresmo.pipeline.execution"`.
    - Pass `session_id` and canonical `user_id` down to child stages.
 4. **Use Cases (`src/cresmo/application/use_cases/`):**

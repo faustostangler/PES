@@ -296,7 +296,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
                 body = self._reconstruct_json3_paragraphs(sub_data)
             except RateLimitExceededError:
                 raise
-            except Exception:  # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001 - Fallback to Whisper audio transcription
+                logger.warning(
+                    "Failed to fetch or parse native subtitles from '%s': %s. Falling back to Whisper.",
+                    sub_url,
+                    exc,
+                )
                 body = ""
 
         # If subtitles were absent, malformed, or empty, trigger Whisper fallback
@@ -432,6 +437,11 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         try:
             with yt_dlp.YoutubeDL(cast(Any, ydl_opts)) as ydl:
                 info = ydl.extract_info(video_url, download=False)
-        except Exception:  # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001 - Non-fatal discovery failure
+            logger.debug(
+                "Could not extract channel URL from video '%s' via flat extraction: %s",
+                video_url,
+                exc,
+            )
             return None
         return extract_channel_url_from_info(cast(Any, info))

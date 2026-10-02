@@ -11,7 +11,7 @@
 
 ## 1. Context & Architectural Motivation
 
-In the evolution of the Cresmo Knowledge Synthesis Engine, `CresmoPipeline` ([`src/cresmo/application/pipeline.py`](../../src/cresmo/application/pipeline.py)) was structured under [ADR-007](ADR-007-pipeline-template-method-dry.md) around a protected Template Method `_synthesize_transcript(raw, ...)` handling downstream synthesis (Fluid Prose, Expansion, Inventory, Atomic Synthesis, MOC Reconciliation, Duplicate Unification).
+In the evolution of the Cresmo Knowledge Synthesis Engine, `CresmoPipeline` ([`src/cresmo/application/pipeline/coordinator.py`](../../src/cresmo/application/pipeline/coordinator.py)) was structured under [ADR-007](ADR-007-pipeline-template-method-dry.md) around a protected Template Method `_synthesize_transcript(raw, ...)` handling downstream synthesis (Fluid Prose, Expansion, Inventory, Atomic Synthesis, MOC Reconciliation, Duplicate Unification).
 
 Later, [ADR-013](ADR-013-iterative-llm-as-a-judge-indexing-loops.md) introduced raw conceptual indexing (`IndexRawTranscriptsUseCase`), which extracts key concepts and generates paratactic catalog summaries verified via LLM-as-a-Judge loops. However, because `_synthesize_transcript` was already locked into synthesis use cases, `index_raw.execute(raw)` was bolted directly into the public ingestion methods `run_for_video` and `run_for_text_file`.
 

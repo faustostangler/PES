@@ -45,14 +45,26 @@ The incremental synthesis processes specified:
 - **`CrossContextRelations`**:
   - *Invariant*: Immutable triad (`precursors`, `lateral_events`, `aftermath`). Strings trimmed.
 
-### 2.2 Entities & Aggregates (Always Valid at Construction)
-
-- **`RawTranscript` (Aggregate)**:
-  - *Invariant*: `body` must contain non-whitespace text. `content_id` must be a valid `ContentId`.
+- **`ChannelName` (ADR-019)**:
+  - *Invariant*: Strongly-typed creator/channel identifier. Length 1 to 120 characters, non-empty, non-whitespace, rejects traversal sequences (`..`, `/`, `\`).
   - *Failure*: Raises `DomainValidationError`.
 
+- **`CandidateText` (ADR-031)**:
+  - *Invariant*: Strongly-typed intermediate generation container. `text` must be non-empty and non-whitespace.
+  - *Failure*: Raises `DomainValidationError`.
+
+### 2.2 Entities & Aggregates (Always Valid at Construction)
+
+- **`SourceTranscript` (Aggregate)** (replaces deprecated `RawTranscript` per ADR-010, ADR-019, ADR-031):
+  - *Invariant*: `body` must contain non-whitespace text. `content_id` must be a valid `ContentId`. `channel_name` must be a valid `ChannelName` Value Object.
+  - *Failure*: Raises `DomainValidationError`.
+
+- **`FluidTranscript` (Aggregate)** (ADR-028):
+  - *Invariant*: `body` must be continuous third-person narrative prose free of oralities and speech noise. Markdown tables in narrative are strictly prohibited. `channel_name` must be a valid `ChannelName`.
+  - *Failure*: Raises `DomainValidationError` or `CompendiumStructureError`.
+
 - **`EnrichedCompendium` (Aggregate)**:
-  - *Invariant*: `body` must be continuous prose (rejects raw markdown tables or bulleted lists in primary narrative). `complementary_info` must not be empty. `pass_count >= 1`.
+  - *Invariant*: `body` must be continuous prose (rejects raw markdown tables or bulleted lists in primary narrative). `complementary_info` must not be empty. `channel_name` must be a valid `ChannelName`. `pass_count >= 1`.
   - *Failure*: Raises `CompendiumStructureError`.
 
 - **`AtomicNote` (Aggregate)**:
@@ -89,26 +101,26 @@ The incremental synthesis processes specified:
 
 ## 4. Acceptance Criteria (Scenarios)
 
-### Raw Transcript Ingestion
+### Source Transcript Ingestion
 
 #### Scenario 1.1: Successful Ingestion via ACL
 - **Given**: A valid YouTube URL with available native subtitles.
 - **When**: `IngestRawTranscriptUseCase.execute(video_url)` is invoked.
-- **Then**: Returns a `RawTranscript` aggregate with valid `ContentId`, populated `body`, and metadata; no `sys.path` tampering escapes the adapter.
+- **Then**: Returns a `SourceTranscript` aggregate with valid `ContentId`, strongly-typed `ChannelName`, populated `body`, and metadata; no `sys.path` tampering escapes the adapter.
 
 #### Scenario 1.2: Ingestion Rejects Corrupted or Empty Payload
 - **Given**: A media source returning empty transcript text.
-- **When**: Construction of `RawTranscript` is attempted.
+- **When**: Construction of `SourceTranscript` is attempted.
 - **Then**: `DomainValidationError` is raised; no corrupted file is persisted.
 
 ---
 
-### Socratic Gap Filler
+### Socratic Gap Filler & Fluid Prose Detranscription
 
 #### Scenario 2.1: Multi-Pass Continuous Prose Generation
-- **Given**: A valid `RawTranscript`.
-- **When**: `FillGapsUseCase.execute(raw_transcript, passes=3)` is invoked.
-- **Then**: An `EnrichedCompendium` is produced containing fluid prose and a `## Informações Complementares` section; all oralities and bulleted summaries are absent from the body.
+- **Given**: A valid `SourceTranscript`.
+- **When**: `FillGapsUseCase.execute(source_transcript, passes=3)` or `TransformFluidProseUseCase.execute(source_transcript)` is invoked.
+- **Then**: An `EnrichedCompendium` or `FluidTranscript` is produced containing fluid prose and preserving origin metadata; all oralities and bulleted summaries are absent from the body.
 
 #### Scenario 2.2: Rejection of Discontinuous or Bulleted Output
 - **Given**: An LLM response formatted purely as bulleted summaries.

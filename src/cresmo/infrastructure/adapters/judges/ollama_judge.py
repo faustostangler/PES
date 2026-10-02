@@ -24,6 +24,7 @@ from cresmo.domain.value_objects import (
     JudgeEvaluation,
     PromptKey,
 )
+from cresmo.infrastructure.adapters.prompts import JsonPromptProvider
 
 logger = logging.getLogger(__name__)
 
@@ -61,21 +62,14 @@ class OllamaJudgeAdapter(LlmJudgePort):
         self._model = model
         self._timeout = timeout_seconds
         self._client = http_client or httpx.Client(timeout=timeout_seconds)
-        self._prompt_provider = prompt_provider
+        self._prompt_provider = prompt_provider or JsonPromptProvider()
 
     def evaluate(self, context: EvaluationContext) -> JudgeEvaluation:
         """Evaluate candidate text against raw text using local Ollama model."""
         start_time = time.perf_counter()
         criteria_names = [c.value for c in context.required_criteria]
 
-        provider = self._prompt_provider
-        if provider is None:
-            from cresmo.infrastructure.adapters.prompts import JsonPromptProvider
-
-            provider = JsonPromptProvider()
-            self._prompt_provider = provider
-
-        system_instruction, user_prompt = provider.get_prompt(
+        system_instruction, user_prompt = self._prompt_provider.get_prompt(
             PromptKey.LLM_JUDGE,
             stage_name=context.stage_name,
             criteria_json=json.dumps(criteria_names),

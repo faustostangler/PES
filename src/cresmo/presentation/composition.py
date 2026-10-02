@@ -43,6 +43,7 @@ from cresmo.infrastructure.config import CresmoSettings
 from cresmo.infrastructure.logging_config import configure_logging
 from cresmo.presentation.factories.adapter_factory import (
     _resolve_cookie_file,
+    build_critique_synthesizer_adapter,
     build_gemini_synthesis_adapter,
     build_indexing_adapter,
     build_media_ingestion_adapter,
@@ -247,9 +248,19 @@ def build_pipeline(
     metrics_port = build_metrics_adapter(resolved_settings)
 
     # 5. LLM Judge & Decision-Model Evaluators (ADR-029)
-    llm_judge_port = build_llm_judge_adapter(resolved_settings, langfuse_client=langfuse_client)
+    llm_judge_port = build_llm_judge_adapter(
+        resolved_settings,
+        langfuse_client=langfuse_client,
+        prompt_provider=prompt_provider,
+    )
 
-    # 6. Pipeline Assembly
+    # 6. Directed Reflection Critique Synthesizer (ADR-031)
+    critique_synthesizer = build_critique_synthesizer_adapter(
+        llm_transformation_port=llm_indexing_port,
+        prompt_provider=prompt_provider,
+    )
+
+    # 7. Pipeline Assembly
     effective_batch_size = (
         batch_size_override if batch_size_override is not None else resolved_settings.batch_size
     )
@@ -266,6 +277,7 @@ def build_pipeline(
         telemetry_port=telemetry_port,
         metrics_port=metrics_port,
         llm_judge_port=llm_judge_port,
+        critique_synthesizer=critique_synthesizer,
     )
 
 
@@ -295,6 +307,7 @@ __all__ = [
     "_resolve_cookie_file",
     "build_anonymizer_adapter",
     "build_concat_master_use_case",
+    "build_critique_synthesizer_adapter",
     "build_discover_batch_sources_use_case",
     "build_gemini_synthesis_adapter",
     "build_index_raw_use_case",

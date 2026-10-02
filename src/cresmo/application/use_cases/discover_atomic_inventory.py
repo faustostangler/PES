@@ -223,7 +223,7 @@ class DiscoverAtomicInventoryUseCase:
             evaluation = self.llm_judge_port.evaluate(context)
             return evaluation.passed
 
-        # Priority 2: Fallback to prompt provider when llm_judge_port is not injected
+        # Priority 2: Transitional fallback when LlmJudgePort is not injected (ADR-010 / ADR-029)
         if self.prompt_provider:
             judge_sys, judge_prompt = self.prompt_provider.get_prompt(
                 PromptKey.JUDGE_ATOMIC_INVENTORY,

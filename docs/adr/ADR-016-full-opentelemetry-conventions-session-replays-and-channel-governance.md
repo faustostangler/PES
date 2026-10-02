@@ -78,7 +78,7 @@ The pipeline coordinates traces via a 3-tier OpenTelemetry hierarchy:
     * `langfuse.observation.type`: `"generation"`
 
 ### 2.3 Hexagonal Port & Adapter Architecture
-1. **Port Definition (`src/cresmo/application/ports.py`):**
+1. **Port Definition (`src/cresmo/application/ports/`):**
    - `TelemetryPort(ABC)` defines contracts for session context management, stage span demarcation, judge evaluation recording, and session coherence scoring.
    - Domain layer remains 100% pure, interacting solely via Value Objects (`PipelineSessionId`, `ChannelTenantId`, `JudgeFrictionMetric`).
 2. **Adapters (`src/cresmo/infrastructure/adapters/opentelemetry_adapter.py`):**

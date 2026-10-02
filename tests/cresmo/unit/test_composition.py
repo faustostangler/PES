@@ -83,12 +83,22 @@ class TestCompositionRoot:
         assert isinstance(pipeline.llm_synthesis_port, GeminiLLMAdapter)
         assert isinstance(pipeline.vault_port, ObsidianVaultAdapter)
         assert isinstance(pipeline.ledger_port, SqliteLedgerAdapter)
-        assert pipeline.synthesize_atomic_batch.batch_size == 7
+        assert pipeline.batch_size == 7
 
     def test_build_pipeline_with_batch_size_override(self, test_settings: CresmoSettings) -> None:
         pipeline = build_pipeline(settings=test_settings, batch_size_override=12)
 
-        assert pipeline.synthesize_atomic_batch.batch_size == 12
+        assert pipeline.batch_size == 12
+
+    def test_build_pipeline_wires_prompt_provider_to_llm_judge(
+        self, test_settings: CresmoSettings
+    ) -> None:
+        with patch("cresmo.presentation.composition.build_llm_judge_adapter") as mock_build_judge:
+            build_pipeline(settings=test_settings)
+            mock_build_judge.assert_called_once()
+            _, kwargs = mock_build_judge.call_args
+            assert "prompt_provider" in kwargs
+            assert kwargs["prompt_provider"] is not None
 
     def test_build_preflight_checker(self, test_settings: CresmoSettings) -> None:
         checker = build_preflight_checker(settings=test_settings, check_ffmpeg=False)
@@ -257,8 +267,7 @@ class TestCompositionRoot:
     def test_build_pipeline_with_web_index(self, test_settings: CresmoSettings) -> None:
         pipeline = build_pipeline(settings=test_settings, web_index=True)
         assert isinstance(pipeline, CresmoPipeline)
-        assert isinstance(pipeline.index_raw.llm, GeminiLLMAdapter)
-        assert isinstance(pipeline.index_raw.llm_indexing_port, GeminiLLMAdapter)
+        assert isinstance(pipeline.llm_indexing_port, GeminiLLMAdapter)
 
     def test_build_sync_channel_use_case_raises_runtime_error_when_ledger_port_missing(
         self, test_settings: CresmoSettings

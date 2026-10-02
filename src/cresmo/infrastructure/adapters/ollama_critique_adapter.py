@@ -11,6 +11,7 @@ from cresmo.application.ports import (
 )
 from cresmo.domain.value_objects import PromptKey
 from cresmo.domain.value_objects.quality import JudgeEvaluation
+from cresmo.infrastructure.adapters.prompts import JsonPromptProvider
 
 logger = logging.getLogger(__name__)
 
@@ -29,7 +30,7 @@ class OllamaCritiqueAdapter(CritiqueSynthesizerPort):
         self.llm_transformation_port = llm_transformation_port
         self.system_instruction = system_instruction
         self.temperature = temperature
-        self._prompt_provider = prompt_provider
+        self._prompt_provider = prompt_provider or JsonPromptProvider()
 
     def synthesize(
         self,
@@ -47,14 +48,7 @@ class OllamaCritiqueAdapter(CritiqueSynthesizerPort):
         if self.llm_transformation_port is None:
             return fallback_critique
 
-        provider = self._prompt_provider
-        if provider is None:
-            from cresmo.infrastructure.adapters.prompts import JsonPromptProvider
-
-            provider = JsonPromptProvider()
-            self._prompt_provider = provider
-
-        resolved_system_instruction, prompt = provider.get_prompt(
+        resolved_system_instruction, prompt = self._prompt_provider.get_prompt(
             PromptKey.OLLAMA_CRITIQUE,
             stage_name=stage_name,
             overall_score=f"{evaluation.overall_score:.2f}",

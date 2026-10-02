@@ -34,7 +34,7 @@ We will implement **Langfuse v4 Observations-First Telemetry**, a resilient **`L
 
 ### 2.1 Decoupled Anonymization Governance (`AnonymizerPort`)
 We treat data privacy and LGPD compliance as a first-class architectural concern, independent of telemetry backends:
-1. **Port Definition (`src/cresmo/application/ports.py`):**
+1. **Port Definition (`src/cresmo/application/ports/anonymizer.py`):**
    - `AnonymizerPort(ABC)` defines contracts for string masking (`mask_text`), structured dictionary sanitization (`mask_mapping`), and OpenTelemetry span patching (`mask_span_attributes`).
 2. **Infrastructure Adapter (`src/cresmo/infrastructure/adapters/anonymizer_adapter.py`):**
    - `RegexAnonymizerAdapter`: Implements `AnonymizerPort` using compiled high-performance regex patterns to redact emails, phone numbers, bearer tokens, API keys, and cookie headers.

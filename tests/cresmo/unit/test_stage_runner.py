@@ -323,3 +323,29 @@ class TestPipelineStageRunnerEvaluatedStage:
         result = runner.execute_stage(descriptor, source, context=ctx)
         assert isinstance(result, CandidateText)
         assert "Clean body text." in result.text
+
+    def test_pipeline_stage_runner_with_dependencies_parameter_object(self) -> None:
+        """Verify PipelineStageRunner instantiates and operates via PipelineDependencies DTO."""
+        from cresmo.application.pipeline.models import PipelineDependencies
+
+        telemetry = NoOpTelemetryPort()
+        metrics = NoOpMetricsPort()
+        deps = PipelineDependencies(
+            telemetry_port=telemetry,
+            metrics_port=metrics,
+            judge_blocking=False,
+            judge_max_attempts=2,
+        )
+        runner = PipelineStageRunner(deps)
+        assert runner.telemetry_port is telemetry
+        assert runner.metrics_port is metrics
+        assert runner.judge_max_attempts == 2
+
+        executed = runner.run_stage(
+            "dummy_stage",
+            lambda: "result",
+            channel_name=ChannelName("TestChan"),
+            content_id=ContentId("vid_dep_1"),
+        )
+        assert executed == "result"
+

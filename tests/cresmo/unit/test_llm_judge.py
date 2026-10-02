@@ -183,6 +183,13 @@ class TestGeminiJudgeAdapter:
         assert kwargs["source_text"] == "raw"
         assert kwargs["candidate_text"] == "cand"
 
+    def test_gemini_judge_raises_value_error_without_api_key_or_client(self) -> None:
+        """Verify fail-fast when attempting to access unconfigured client (ADR-026 Rule 9)."""
+        adapter = GeminiJudgeAdapter()
+        with pytest.raises(ValueError, match="Gemini API key must be provided explicitly"):
+            _ = adapter.client
+
+
 
 class TestOllamaJudgeAdapter:
     """Test suite for local Ollama fallback judge adapter."""

@@ -182,7 +182,7 @@ To guarantee zero regression during the 20+ signature migration, the refactoring
    - Create `ChannelName` in `src/cresmo/domain/value_objects.py`.
    - Update `RawTranscript` and `EnrichedCompendium` in `src/cresmo/domain/entities.py` to use `channel_name: ChannelName`, with constructor coercion (`ChannelName.from_string(channel_name)`).
 2. **Step 2 (Application Ports):**
-   - Update `VaultRepositoryPort` and `PromptProviderPort` method signatures in `src/cresmo/application/ports.py` to accept `channel_name: ChannelName | str` (allowing both strongly-typed Value Objects and strings at adapter boundaries).
+   - Update `VaultRepositoryPort` and `PromptProviderPort` method signatures in `src/cresmo/application/ports/` to accept `channel_name: ChannelName | str` (allowing both strongly-typed Value Objects and strings at adapter boundaries).
 3. **Step 3 (Application Use Cases):**
    - Update `IndexRawTranscriptsUseCase`, `ConcatMasterUseCase`, `SyncChannelUseCase`, and `CresmoPipeline` to utilize `ChannelName`.
 4. **Step 4 (Infrastructure Adapters):**

@@ -122,6 +122,7 @@ class LLMTranscriptDistiller:
                     )
                     is_valid = self.llm_judge_port.evaluate(ctx).passed
                 elif self.prompt_provider:
+                    # Transitional fallback (ADR-010 / ADR-029 §2.4)
                     judge_system_instructions, judge_prompt = self.prompt_provider.get_prompt(
                         PromptKey.JUDGE_RAW_INDEX_CONCEPTS,
                         video_title=title,
@@ -216,6 +217,7 @@ class LLMTranscriptDistiller:
                 )
                 is_valid = self.llm_judge_port.evaluate(ctx).passed
             elif self.prompt_provider:
+                # Transitional fallback (ADR-010 / ADR-029 §2.4)
                 judge_system_instructions, judge_prompt = self.prompt_provider.get_prompt(
                     PromptKey.JUDGE_RAW_INDEX_SUMMARY,
                     video_title=title,
@@ -309,6 +311,7 @@ class LLMTranscriptDistiller:
                     )
                     is_valid = self.llm_judge_port.evaluate(ctx).passed
                 elif self.prompt_provider:
+                    # Transitional fallback (ADR-010 / ADR-029 §2.4)
                     judge_system_instructions, judge_prompt = self.prompt_provider.get_prompt(
                         PromptKey.JUDGE_RAW_INDEX_SYNTHESIS,
                         video_title=title,

@@ -615,3 +615,40 @@ class TestIndexRawTranscriptsUseCase:
         assert parse_judge_boolean("") is False
         assert parse_judge_boolean("unclear") is False
         assert parse_judge_boolean("no") is False
+
+    def test_distiller_delegates_to_llm_judge_port_when_provided(self) -> None:
+        """Verify LLMTranscriptDistiller delegates 100% to LlmJudgePort when injected (ADR-029)."""
+        from cresmo.application.ports import LlmJudgePort
+        from cresmo.application.use_cases.indexing.distiller import LLMTranscriptDistiller
+        from cresmo.domain.value_objects import JudgeEvaluation
+
+        mock_llm = MagicMock()
+        mock_llm.transform.return_value = "Conceito Extraído"
+        mock_judge = MagicMock(spec=LlmJudgePort)
+        mock_judge.evaluate.return_value = JudgeEvaluation(
+            target_stage="raw_indexing_concepts",
+            passed=True,
+            overall_score=0.92,
+            criteria_scores=(),
+            provider="gemini",
+        )
+        prompt_provider = JsonPromptProvider()
+
+        distiller = LLMTranscriptDistiller(
+            llm_indexing_port=mock_llm,
+            prompt_provider=prompt_provider,
+            llm_judge_port=mock_judge,
+            max_rewrites=1,
+        )
+
+        result = distiller.extract_concepts(
+            video_id=ContentId("vid_test_1"),
+            title="Video Title",
+            text="Video transcript body",
+            channel_name=ChannelName("Channel"),
+        )
+        assert result == "Conceito Extraído"
+        mock_judge.evaluate.assert_called_once()
+        ctx = mock_judge.evaluate.call_args[0][0]
+        assert ctx.stage_name == "raw_indexing_concepts"
+

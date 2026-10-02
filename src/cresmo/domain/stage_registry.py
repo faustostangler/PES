@@ -40,6 +40,55 @@ class StageRegistry:
             ),
             post_processor=post_process_fluid_transcript,
         ),
+        # --- Quarantined Stage Specifications (Pending Full ADR-031 Implementation) ---
+        # "raw_indexing": StageSpec(
+        #     transform_prompt_key=PromptKey.RAW_INDEX_SUMMARY,
+        #     required_criteria=(
+        #         JudgeCriterion.INDEX_SYNTHESIS_QUALITY,
+        #         JudgeCriterion.SEMANTIC_FAITHFULNESS,
+        #     ),
+        # ),
+        # "gap_filler": StageSpec(
+        #     transform_prompt_key=PromptKey.GAP_FILLER_PASS1,
+        #     required_criteria=(
+        #         JudgeCriterion.SEMANTIC_FAITHFULNESS,
+        #         JudgeCriterion.STRUCTURAL_COMPLIANCE,
+        #     ),
+        # ),
+        # "long_expander": StageSpec(
+        #     transform_prompt_key=PromptKey.LONG_EXPANDER,
+        #     required_criteria=(
+        #         JudgeCriterion.SEMANTIC_FAITHFULNESS,
+        #         JudgeCriterion.STRUCTURAL_COMPLIANCE,
+        #     ),
+        # ),
+        # "wide_expander": StageSpec(
+        #     transform_prompt_key=PromptKey.WIDE_EXPANDER,
+        #     required_criteria=(
+        #         JudgeCriterion.SEMANTIC_FAITHFULNESS,
+        #         JudgeCriterion.STRUCTURAL_COMPLIANCE,
+        #     ),
+        # ),
+        # "atomic_inventory": StageSpec(
+        #     transform_prompt_key=PromptKey.ATOMIC_INVENTORY,
+        #     required_criteria=(
+        #         JudgeCriterion.INVENTORY_COHERENCE,
+        #         JudgeCriterion.STRUCTURAL_COMPLIANCE,
+        #     ),
+        # ),
+        # "atomic_batch": StageSpec(
+        #     transform_prompt_key=PromptKey.ATOMIC_BATCH,
+        #     required_criteria=(
+        #         JudgeCriterion.STRUCTURAL_COMPLIANCE,
+        #         JudgeCriterion.SEMANTIC_FAITHFULNESS,
+        #     ),
+        # ),
+        # "reconcile_mocs": StageSpec(
+        #     transform_prompt_key=PromptKey.RECONCILE_MOCS,
+        #     required_criteria=(
+        #         JudgeCriterion.STRUCTURAL_COMPLIANCE,
+        #     ),
+        # ),
     }
 
     @classmethod

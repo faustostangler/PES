@@ -116,7 +116,11 @@ def build_index_raw_use_case(
         model_override=model_override,
         langfuse_client=langfuse_client,
     )
-    llm_judge_port = build_llm_judge_adapter(resolved_settings, langfuse_client=langfuse_client)
+    llm_judge_port = build_llm_judge_adapter(
+        resolved_settings,
+        langfuse_client=langfuse_client,
+        prompt_provider=prompt_provider,
+    )
 
     return IndexRawTranscriptsUseCase(
         vault_port=vault_port,

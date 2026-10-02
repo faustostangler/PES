@@ -9,7 +9,6 @@ from __future__ import annotations
 
 import json
 import logging
-import os
 import re
 import time
 from typing import Any
@@ -26,6 +25,7 @@ from cresmo.domain.value_objects import (
     JudgeEvaluation,
     PromptKey,
 )
+from cresmo.infrastructure.adapters.prompts import JsonPromptProvider
 
 logger = logging.getLogger(__name__)
 
@@ -60,14 +60,18 @@ class GeminiJudgeAdapter(LlmJudgePort):
         self._model = model
         self._api_key = api_key
         self._client = client
-        self._prompt_provider = prompt_provider
+        self._prompt_provider = prompt_provider or JsonPromptProvider()
 
     @property
     def client(self) -> Any:
         """Lazy-instantiate the Google GenAI client."""
         if self._client is None:
-            resolved_key = self._api_key or os.getenv("GEMINI_API_KEY", "")
-            self._client = genai.Client(api_key=resolved_key)
+            if not self._api_key:
+                raise ValueError(
+                    "Gemini API key must be provided explicitly via api_key or client. "
+                    "Bypassing Pydantic Settings via direct os.getenv is prohibited (ADR-026 Rule 9)."
+                )
+            self._client = genai.Client(api_key=self._api_key)
         return self._client
 
     def evaluate(self, context: EvaluationContext) -> JudgeEvaluation:
@@ -75,14 +79,7 @@ class GeminiJudgeAdapter(LlmJudgePort):
         start_time = time.perf_counter()
         criteria_names = [c.value for c in context.required_criteria]
 
-        provider = self._prompt_provider
-        if provider is None:
-            from cresmo.infrastructure.adapters.prompts import JsonPromptProvider
-
-            provider = JsonPromptProvider()
-            self._prompt_provider = provider
-
-        system_instruction, user_prompt = provider.get_prompt(
+        system_instruction, user_prompt = self._prompt_provider.get_prompt(
             PromptKey.LLM_JUDGE,
             stage_name=context.stage_name,
             criteria_json=json.dumps(criteria_names),

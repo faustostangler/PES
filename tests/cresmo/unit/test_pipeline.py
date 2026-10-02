@@ -544,7 +544,7 @@ class TestCresmoPipelineOrchestration:
             vault_port=InMemoryVaultAdapter(),
         )
         assert isinstance(pipeline_default.prompt_provider, PromptProviderPort)
-        assert pipeline_default.synthesize_atomic_batch.batch_size == 5
+        assert pipeline_default.batch_size == 5
 
         # Custom initialization
         custom_pp = MagicMock()
@@ -556,8 +556,8 @@ class TestCresmoPipelineOrchestration:
             prompt_provider=custom_pp,
         )
         assert pipeline_custom.prompt_provider is custom_pp
-        assert pipeline_custom.synthesize_atomic_batch.batch_size == 9
-        assert pipeline_custom.fill_gaps.prompt_provider is custom_pp
+        assert pipeline_custom.batch_size == 9
+        assert pipeline_custom.stage_runner.prompt_provider is custom_pp
 
     @pytest.mark.skip(
         reason="Downstream stages 2-8 quarantined pending StageDescriptor refactoring per ADR-031"
@@ -819,23 +819,20 @@ class TestCresmoPipelineOrchestration:
             ledger_port=ledger,
         )
 
-        indexing_executed = False
+        stage_executed = False
+        orig_execute = pipeline.stage_runner.execute_stage
 
-        def spy_index_execute(
-            transcript: FluidTranscript,
-            force: bool = False,
-            user: Any = None,
-        ) -> RawIndexEntry | None:
-            nonlocal indexing_executed
-            indexing_executed = True
-            return pipeline.index_raw.execute(transcript, force=force, user=user)
+        def spy_stage_execute(*args: Any, **kwargs: Any) -> Any:
+            nonlocal stage_executed
+            stage_executed = True
+            return orig_execute(*args, **kwargs)
 
-        pipeline.index_raw.execute = spy_index_execute  # type: ignore[assignment,method-assign]
+        pipeline.stage_runner.execute_stage = spy_stage_execute  # type: ignore[assignment,method-assign]
         res = pipeline.execute(raw=canned_raw, force_reprocess=False)
 
         assert res.success is True
         assert res.already_processed is True
-        assert not indexing_executed
+        assert not stage_executed
 
     @pytest.mark.skip(
         reason="Downstream stages 2-8 quarantined pending StageDescriptor refactoring per ADR-031"

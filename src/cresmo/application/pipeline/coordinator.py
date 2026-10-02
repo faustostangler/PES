@@ -23,7 +23,7 @@ import logging
 from pathlib import Path
 
 from cresmo.application.pipeline.context import PipelineExecutionContext
-from cresmo.application.pipeline.models import PipelineResult
+from cresmo.application.pipeline.models import PipelineDependencies, PipelineResult
 from cresmo.application.pipeline.stage_factory import StageFactory
 from cresmo.application.pipeline.stage_runner import PipelineStageRunner
 from cresmo.application.pipeline.transcript_loader import (
@@ -47,18 +47,7 @@ from cresmo.application.ports import (
     TelemetryPort,
     VaultRepositoryPort,
 )
-from cresmo.application.use_cases import (
-    ConcatMasterUseCase,
-    DiscoverAtomicInventoryUseCase,
-    ExpandCompendiumUseCase,
-    FillGapsUseCase,
-    IndexRawTranscriptsUseCase,
-    IngestRawTranscriptUseCase,
-    ReconcileMOCsUseCase,
-    SynthesizeAtomicBatchUseCase,
-    TransformFluidProseUseCase,
-    UnifyDuplicateNotesUseCase,
-)
+from cresmo.application.use_cases import IngestRawTranscriptUseCase
 from cresmo.domain.entities import (
     ChannelTenantId,
     PipelineSessionId,
@@ -77,8 +66,8 @@ logger = logging.getLogger(__name__)
 class CresmoPipeline:
     """Hexagonal Modular Monolith orchestrator for the Cresmo synthesis engine.
 
-    Implements the Template Method execution flow across cognitive synthesis use cases,
-    coordinating dependency-injected Use Cases, Ports, and Adapters.
+    Implements the Template Method execution flow across cognitive synthesis stages,
+    coordinating declarative stage specifications, ports, and closed-loop verifiers.
     """
 
     def __init__(
@@ -107,6 +96,7 @@ class CresmoPipeline:
         self.vault_port = vault_port
         self.ledger_port = ledger_port
         self.llm_judge = llm_judge_port
+        self.batch_size = batch_size
 
         self.telemetry_port: TelemetryPort = telemetry_port or NoOpTelemetryPort()
         self.metrics_port: MetricsPort = metrics_port or NoOpMetricsPort()
@@ -118,82 +108,23 @@ class CresmoPipeline:
         self.stage_factory = StageFactory(settings=self.settings)
 
         self.stage_runner = PipelineStageRunner(
-            telemetry_port=self.telemetry_port,
-            metrics_port=self.metrics_port,
-            llm_judge=self.llm_judge,
-            judge_blocking=getattr(self.settings, "judge_blocking", False),
-            judge_max_attempts=getattr(self.settings, "judge_max_attempts", 1),
-            prompt_provider=self.prompt_provider,
-            llm_transformation_port=self.llm_synthesis_port,
-            stage_factory=self.stage_factory,
-            critique_synthesizer=critique_synthesizer,
-            ledger_port=self.ledger_port,
+            PipelineDependencies(
+                telemetry_port=self.telemetry_port,
+                metrics_port=self.metrics_port,
+                llm_judge=self.llm_judge,
+                judge_blocking=getattr(self.settings, "judge_blocking", False),
+                judge_max_attempts=getattr(self.settings, "judge_max_attempts", 1),
+                prompt_provider=self.prompt_provider,
+                llm_transformation_port=self.llm_synthesis_port,
+                stage_factory=self.stage_factory,
+                critique_synthesizer=critique_synthesizer,
+                ledger_port=self.ledger_port,
+            )
         )
 
         self.ingest_raw_transcript = IngestRawTranscriptUseCase(
             ingestion_port=self.media_ingestion_port,
             vault_port=self.vault_port,
-        )
-
-        self.transform_fluid_prose = TransformFluidProseUseCase(
-            llm_synthesis_port=self.llm_synthesis_port,
-            vault_port=self.vault_port,
-            prompt_provider=self.prompt_provider,
-            temperature=self.settings.llm_temperature,
-        )
-
-        self.index_raw = IndexRawTranscriptsUseCase(
-            vault_port=self.vault_port,
-            llm_indexing_port=self.llm_indexing_port,
-            prompt_provider=self.prompt_provider,
-            max_chars=self.settings.raw_index_max_chars,
-            temperature=self.settings.raw_index_temperature,
-            language=self.settings.language,
-        )
-
-        self.fill_gaps = FillGapsUseCase(
-            llm_synthesis_port=self.llm_synthesis_port,
-            vault_port=self.vault_port,
-            prompt_provider=self.prompt_provider,
-            temperature=self.settings.llm_temperature,
-        )
-
-        self.expand_compendium = ExpandCompendiumUseCase(
-            llm_synthesis_port=self.llm_synthesis_port,
-            vault_port=self.vault_port,
-            prompt_provider=self.prompt_provider,
-            temperature=self.settings.llm_temperature,
-        )
-
-        self.discover_atomic_inventory = DiscoverAtomicInventoryUseCase(
-            llm_synthesis_port=self.llm_synthesis_port,
-            prompt_provider=self.prompt_provider,
-            temperature=0.0,
-            max_rewrites=self.settings.inventory_max_attempts,
-        )
-
-        self.synthesize_atomic_batch = SynthesizeAtomicBatchUseCase(
-            llm_synthesis_port=self.llm_synthesis_port,
-            vault_port=self.vault_port,
-            batch_size=batch_size,
-            prompt_provider=self.prompt_provider,
-            temperature=self.settings.llm_temperature,
-        )
-
-        self.reconcile_mocs = ReconcileMOCsUseCase(
-            llm_synthesis_port=self.llm_synthesis_port,
-            vault_port=self.vault_port,
-            prompt_provider=self.prompt_provider,
-            temperature=self.settings.llm_temperature,
-        )
-
-        self.unify_duplicate_notes = UnifyDuplicateNotesUseCase(
-            vault_port=self.vault_port,
-        )
-
-        self.concat_master = ConcatMasterUseCase(
-            vault_port=self.vault_port,
-            settings=self.settings,
         )
 
     def warmup(self, timeout_seconds: float | None = None) -> None:

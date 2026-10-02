@@ -3,7 +3,17 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Any
 
+from cresmo.application.ports import (
+    CritiqueSynthesizerPort,
+    LedgerRepositoryPort,
+    LlmJudgePort,
+    LLMTransformationPort,
+    MetricsPort,
+    PromptProviderPort,
+    TelemetryPort,
+)
 from cresmo.application.use_cases import DeduplicationReport
 from cresmo.domain.entities import (
     AtomicNote,
@@ -14,9 +24,40 @@ from cresmo.domain.entities import (
 )
 from cresmo.domain.value_objects import (
     AtomicEntityInventory,
+    ChannelId,
+    ChannelName,
     ContentId,
     RawIndexEntry,
 )
+
+
+@dataclass(frozen=True, slots=True)
+class PipelineDependencies:
+    """Strongly-typed Parameter Object encapsulating pipeline runner collaborators (ADR-026 Rule 7)."""
+
+    telemetry_port: TelemetryPort
+    metrics_port: MetricsPort
+    llm_judge: LlmJudgePort | None = None
+    judge_blocking: bool = False
+    judge_max_attempts: int = 1
+    prompt_provider: PromptProviderPort | None = None
+    llm_transformation_port: LLMTransformationPort | None = None
+    stage_factory: Any | None = None
+    critique_synthesizer: CritiqueSynthesizerPort | None = None
+    ledger_port: LedgerRepositoryPort | None = None
+
+
+@dataclass(frozen=True, slots=True)
+class StageExecutionOptions:
+    """Strongly-typed Parameter Object for stage execution parameters (ADR-026 Rule 7)."""
+
+    channel_name: ChannelName | None = None
+    content_id: ContentId | None = None
+    channel_id: ChannelId | None = None
+    session_id: str | None = None
+    user_id: str | None = None
+    fatal: bool = True
+    fallback: Any | None = None
 
 
 @dataclass(frozen=True)

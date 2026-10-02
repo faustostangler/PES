@@ -184,3 +184,35 @@ class TestDiscoverAtomicInventoryJudge:
             match="Candidate entity inventory rejected by LLM-as-a-judge",
         ):
             use_case.execute(sample_compendium)
+
+    def test_discover_inventory_delegates_to_llm_judge_port_when_provided(
+        self, sample_compendium: EnrichedCompendium
+    ) -> None:
+        """Verify DiscoverAtomicInventoryUseCase delegates 100% to LlmJudgePort (ADR-029)."""
+        from unittest.mock import MagicMock
+
+        from cresmo.application.ports import LlmJudgePort
+        from cresmo.domain.value_objects import JudgeEvaluation
+
+        cand = json.dumps([{"title": "Bacia do Mediterrâneo", "type": "entity"}])
+        llm = MockLLMAdapter(responses=[cand])
+        mock_judge = MagicMock(spec=LlmJudgePort)
+        mock_judge.evaluate.return_value = JudgeEvaluation(
+            target_stage="atomic_inventory",
+            passed=True,
+            overall_score=0.95,
+            criteria_scores=(),
+            provider="gemini",
+        )
+
+        use_case = DiscoverAtomicInventoryUseCase(
+            llm_synthesis_port=llm,
+            llm_judge_port=mock_judge,
+            max_rewrites=1,
+        )
+        inventory = use_case.execute(sample_compendium)
+        assert len(inventory.items) == 1
+        mock_judge.evaluate.assert_called_once()
+        ctx = mock_judge.evaluate.call_args[0][0]
+        assert ctx.stage_name == "atomic_inventory"
+
