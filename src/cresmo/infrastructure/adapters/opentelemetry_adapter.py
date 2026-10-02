@@ -21,13 +21,11 @@ from opentelemetry.trace import Tracer
 
 from cresmo.application.ports import TelemetryPort
 from cresmo.domain.entities import (
-    ChannelTenantId,
     ContentId,
     JudgeFrictionMetric,
     PipelineSessionId,
     UserIdentity,
 )
-from cresmo.domain.value_objects import ChannelName
 
 try:
     from langfuse import propagate_attributes
@@ -106,14 +104,14 @@ def annotate_llm_span(
         current_span.set_attribute("cresmo.temperature", temperature)
 
 
-def _resolve_identity_from_str(user_id: str) -> tuple[UserIdentity, ChannelTenantId | None]:
+def _resolve_identity_from_str(user_id: str) -> tuple[UserIdentity, str | None]:
     """Parse string representation of user identity and optional channel tenant."""
     if user_id.startswith("system:"):
         worker_name = user_id.split(":", 1)[1]
         return UserIdentity.worker(worker_name), None
     if user_id.startswith("channel:"):
         c_name = user_id.split(":", 1)[1]
-        return UserIdentity.from_channel(c_name), ChannelTenantId.create(ChannelName(c_name))
+        return UserIdentity.from_channel(c_name), f"channel:{c_name}"
     if user_id == "anonymous":
         return UserIdentity.anonymous(), None
     if user_id.startswith("user:"):
@@ -125,20 +123,16 @@ def _resolve_identity_from_str(user_id: str) -> tuple[UserIdentity, ChannelTenan
 
 
 def _resolve_user_identity_and_tenant(
-    user_id: UserIdentity | ChannelTenantId | str,
-    channel_tenant_id: ChannelTenantId | None,
+    user_id: UserIdentity | str,
+    channel_tenant_id: str | None,
     session_id: PipelineSessionId,
-) -> tuple[UserIdentity, ChannelTenantId]:
+) -> tuple[UserIdentity, str]:
     """Normalize polymorphic user identification and resolve channel tenant."""
     norm_user: UserIdentity
     resolved_tenant = channel_tenant_id
 
     if isinstance(user_id, UserIdentity):
         norm_user = user_id
-    elif isinstance(user_id, ChannelTenantId):
-        norm_user = UserIdentity.from_channel(user_id.channel_token)
-        if resolved_tenant is None:
-            resolved_tenant = user_id
     elif isinstance(user_id, str):
         norm_user, str_tenant = _resolve_identity_from_str(user_id)
         if resolved_tenant is None:
@@ -147,7 +141,7 @@ def _resolve_user_identity_and_tenant(
         norm_user = UserIdentity.anonymous()
 
     if resolved_tenant is None:
-        resolved_tenant = ChannelTenantId.create(ChannelName(session_id.channel_token))
+        resolved_tenant = f"channel:{session_id.channel_id}"
 
     return norm_user, resolved_tenant
 
@@ -183,7 +177,7 @@ def _build_langfuse_input_payload(
 def _build_session_span_attributes(
     session_id: PipelineSessionId,
     user: UserIdentity,
-    tenant: ChannelTenantId,
+    tenant: str,
     tags: list[str],
     chan_name: str,
     metadata: dict[str, Any] | None,
@@ -196,9 +190,8 @@ def _build_session_span_attributes(
         "langfuse.user.id": user.value,
         "langfuse.trace.tags": tags,
         "cresmo.content.id": session_id.content_id,
-        "cresmo.video.id": session_id.video_id,
         "cresmo.channel.name": chan_name,
-        "cresmo.tenant_id": tenant.value,
+        "cresmo.tenant_id": tenant,
         "cresmo.user.is_anonymous": user.is_anonymous,
         "cresmo.user.provider": user.provider,
     }
@@ -243,16 +236,16 @@ class OpenTelemetryAdapter(TelemetryPort):
     def start_pipeline_session(
         self,
         session_id: PipelineSessionId,
-        user_id: UserIdentity | ChannelTenantId,
-        channel_tenant_id: ChannelTenantId | None = None,
+        user_id: UserIdentity | str,
+        channel_tenant_id: str | None = None,
         metadata: dict[str, Any] | None = None,
         trace_name: str | None = None,
     ) -> Generator[Any]:
         """Initiate root OpenTelemetry span binding session_id and user_id attributes.
 
         Args:
-            session_id: Canonical multi-stage content session identifier ({channel_id}:{video_id}).
-            user_id: UserIdentity (anonymous, identified IAM, or system:worker), ChannelTenantId, or string.
+            session_id: Canonical multi-stage content session identifier ({channel_id}:{content_id}).
+            user_id: UserIdentity (anonymous, identified IAM, or system:worker) or string.
             channel_tenant_id: Optional Channel tenant identifier for cost and volume aggregation.
             metadata: Additional contextual metadata.
             trace_name: Optional canonical root operation name (defaults to cresmo.pipeline.execution).
@@ -266,7 +259,7 @@ class OpenTelemetryAdapter(TelemetryPort):
             session_id=session_id,
         )
         meta = metadata or {}
-        chan_name = str(meta["channel"]) if "channel" in meta else tenant.channel_token
+        chan_name = str(meta["channel"]) if "channel" in meta else session_id.channel_id
         pipeline_version = str(
             meta.get("pipeline_version") or meta.get("version") or self._pipeline_version
         )

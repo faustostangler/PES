@@ -56,30 +56,22 @@ class StageDescriptor[TSource, TOutput]:
         **extra_context: Any,
     ) -> tuple[str, str]:
         """Resolve system instructions and user prompt, injecting closed-loop reflection critique on retry."""
-        file_name = f"{content_id}.txt"
-        raw_text = getattr(source, "body", str(source))
-
-        context = {
-            "channel_name": channel_name,
-            "file_name": file_name,
-            "raw_text": raw_text,
-            "content_id": content_id,
-            **extra_context,
-        }
-
         system_instruction, user_prompt = prompt_provider.get_prompt(
             self.transform_prompt_key,
-            **context,
+            channel_name=channel_name,
+            file_name=f"{content_id}.txt",
+            raw_text=getattr(source, "body", str(source)),
+            content_id=content_id,
+            **extra_context,
         )
 
         if critique:
-            reflection_block = (
-                f"\n\n[PREVIOUS ATTEMPT QUALITY FEEDBACK]\n"
+            user_prompt = (
+                f"{user_prompt}\n\n[PREVIOUS ATTEMPT QUALITY FEEDBACK]\n"
                 f"The previous generation failed quality evaluation:\n"
                 f"{critique}\n"
                 f"Please correct these defects in your output."
             )
-            user_prompt = f"{user_prompt}{reflection_block}"
 
         return system_instruction, user_prompt
 

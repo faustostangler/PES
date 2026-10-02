@@ -60,7 +60,11 @@ class PipelineExecutionContext:
     @property
     def channel_name(self) -> ChannelName:
         """Backward-compatible convenience property for human-readable channel name."""
-        return self.channel.name
+        return (
+            ChannelName(self.channel.name)
+            if isinstance(self.channel.name, str)
+            else self.channel.name
+        )
 
     @property
     def channel_id(self) -> ChannelId | None:
@@ -76,3 +80,8 @@ class PipelineExecutionContext:
     def video(self) -> Content:
         """Alias for content providing natural media terminology."""
         return self.content
+
+    @property
+    def channel_id_str(self) -> str:
+        """Convenience property for string channel platform identifier or empty string."""
+        return self.channel.id.value if self.channel.id else ""

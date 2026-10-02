@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import logging
 import time
-from collections.abc import Callable, Iterator, Sequence
+from collections.abc import Callable, Generator, Sequence
 from contextlib import contextmanager
 from typing import TYPE_CHECKING, TypeVar
 
@@ -108,40 +108,17 @@ class PipelineStageRunner:
 
     def execute_stage(
         self,
-        stage: str | StageDescriptor[_TSource, _TOutput] | None = None,
-        source: _TSource | None = None,
+        stage: str | StageDescriptor[_TSource, _TOutput],
+        source: _TSource,
         *,
-        descriptor: StageDescriptor[_TSource, _TOutput] | None = None,
-        context: PipelineExecutionContext | None = None,
-        channel_name: ChannelName | None = None,
-        content_id: ContentId | None = None,
-        session_id: str | None = None,
-        user_id: str | None = None,
+        context: PipelineExecutionContext,
         prompt_provider: PromptProviderPort | None = None,
         llm_transformation_port: LLMTransformationPort | None = None,
-        channel_id: ChannelId | None = None,
     ) -> _TOutput:
         """Execute a standardized pipeline stage with closed-loop reflection, critique, and telemetry (ADR-031)."""
-        if source is None:
-            raise ValueError("source must be provided to execute_stage")
-
-        target_descriptor = self._resolve_stage_descriptor(stage, descriptor)
-        c_name, c_id, s_id, u_id, ch_id = self._resolve_provenance(
-            context, channel_name, content_id, session_id, user_id, channel_id
-        )
-
-        p_provider = prompt_provider or self.prompt_provider
-        llm_port = llm_transformation_port or self.llm_transformation_port
-        if p_provider is None:
-            raise ValueError(
-                "PromptProviderPort must be provided via constructor or execute_stage argument"
-            )
-        if llm_port is None:
-            raise ValueError(
-                "LLMTransformationPort must be provided via constructor or execute_stage argument"
-            )
-
-        ch_id_str = ch_id.value if ch_id else ""
+        target_descriptor = self._resolve_stage_descriptor(stage)
+        active_prompt_provider = self._resolve_prompt_provider(prompt_provider)
+        active_llm_port = self._resolve_llm_transformation_port(llm_transformation_port)
         stage_name = target_descriptor.stage_name
 
         effective_max_attempts = max(
@@ -154,32 +131,34 @@ class PipelineStageRunner:
         candidate: CandidateText | None = None
         evaluation: JudgeEvaluation | None = None
 
-        with self._measure_stage(stage_name, c_name.value, c_id.value, ch_id_str):
+        with self._measure_stage(
+            stage_name, context.channel_name.value, context.content_id.value, context.channel_id_str
+        ):
             for attempt in range(1, effective_max_attempts + 1):
                 system_instruction, user_prompt = target_descriptor.build_transform_prompt(
-                    p_provider,
+                    active_prompt_provider,
                     source,
-                    channel_name=c_name.value,
-                    content_id=c_id.value,
+                    channel_name=context.channel_name.value,
+                    content_id=context.content_id.value,
                     critique=critique,
                 )
-                active_trace_id = self._get_active_trace_id(c_name, c_id)
-
-                raw_output = llm_port.transform(
-                    prompt=user_prompt,
-                    system_instruction=system_instruction,
-                    temperature=target_descriptor.temperature,
-                    trace_id=active_trace_id,
-                    session_id=s_id,
-                    user_id=u_id,
+                active_trace_id = self._get_active_trace_id(
+                    context.channel_name, context.content_id
                 )
 
                 candidate = CandidateText(
-                    text=raw_output,
+                    text=active_llm_port.transform(
+                        prompt=user_prompt,
+                        system_instruction=system_instruction,
+                        temperature=target_descriptor.temperature,
+                        trace_id=active_trace_id,
+                        session_id=context.session_id.value,
+                        user_id=context.user_identity.value,
+                    ),
                     stage_name=stage_name,
                     metadata={
-                        "content_id": c_id.value,
-                        "channel_name": c_name.value,
+                        "content_id": context.content_id.value,
+                        "channel_name": context.channel_name.value,
                         "attempt": attempt,
                     },
                 )
@@ -187,24 +166,17 @@ class PipelineStageRunner:
                 if self.llm_judge is None or target_descriptor.eval_spec is None:
                     break
 
-                candidate_eval_text = (
-                    target_descriptor.eval_spec.candidate_extractor(candidate)
-                    if target_descriptor.eval_spec.candidate_extractor
-                    else candidate.text
-                )
-                raw_text_target = (
-                    target_descriptor.eval_spec.extract_source_text(source)
-                    if target_descriptor.eval_spec
-                    else getattr(source, "body", str(source))
-                )
-
                 eval_context = EvaluationContext(
                     stage_name=stage_name,
-                    raw_text=raw_text_target,
-                    candidate_text=candidate_eval_text,
+                    raw_text=target_descriptor.eval_spec.extract_source_text(source),
+                    candidate_text=(
+                        target_descriptor.eval_spec.candidate_extractor(candidate)
+                        if target_descriptor.eval_spec.candidate_extractor
+                        else candidate.text
+                    ),
                     metadata={
-                        "content_id": c_id.value,
-                        "channel_name": c_name.value,
+                        "content_id": context.content_id.value,
+                        "channel_name": context.channel_name.value,
                         "attempt": attempt,
                         **target_descriptor.eval_spec.metadata,
                     },
@@ -238,14 +210,12 @@ class PipelineStageRunner:
                 and not evaluation.passed
                 and (target_descriptor.blocking or self.judge_blocking)
             ):
-                if critique is None:
-                    critique = self._synthesize_critique(evaluation, stage_name)
                 record_stage_quarantine(
                     stage_name=stage_name,
-                    content_id=c_id,
-                    channel_name=c_name,
+                    content_id=context.content_id,
+                    channel_name=context.channel_name,
                     evaluation=evaluation,
-                    critique=critique,
+                    critique=critique or self._synthesize_critique(evaluation, stage_name),
                     effective_max_attempts=effective_max_attempts,
                     ledger_port=self.ledger_port,
                     metrics_port=self.metrics_port,
@@ -254,10 +224,7 @@ class PipelineStageRunner:
             if candidate is None:
                 raise DomainValidationError(f"Stage '{stage_name}' produced no candidate text.")
 
-            if target_descriptor.post_processor is not None:
-                return target_descriptor.post_processor(candidate, source)
-
-            return candidate  # type: ignore[return-value]
+            return target_descriptor.post_process(candidate, source)
 
     def run_evaluated_stage(
         self,
@@ -334,9 +301,9 @@ class PipelineStageRunner:
                 )
 
         if self.judge_blocking:
-            score_str = f"{evaluation.overall_score:.2f}" if evaluation else "0.00"
             raise DomainValidationError(
-                f"{stage_name} quality evaluation failed threshold after {effective_max_attempts} attempts: {score_str}"
+                f"{stage_name} quality evaluation failed threshold after {effective_max_attempts} attempts: "
+                f"{(evaluation.overall_score if evaluation else 0.0):.2f}"
             )
 
         logger.warning(
@@ -358,9 +325,13 @@ class PipelineStageRunner:
         fallback: _StageRet | None = None,
     ) -> _StageRet | None:
         """Execute a pipeline stage wrapped with telemetry spans, metrics, and error handling."""
-        ch_id_str = channel_id.value if channel_id else ""
         try:
-            with self._measure_stage(stage_name, channel_name.value, content_id.value, ch_id_str):
+            with self._measure_stage(
+                stage_name,
+                channel_name.value,
+                content_id.value,
+                channel_id.value if channel_id else "",
+            ):
                 return fn()
         except Exception as exc:
             if fatal:
@@ -380,9 +351,8 @@ class PipelineStageRunner:
         channel_id: ChannelId | None = None,
     ) -> None:
         """Record completed process metrics and session coherence evaluation score."""
-        ch_id_str = channel_id.value if channel_id else ""
         lbls = {
-            "channel_id": ch_id_str,
+            "channel_id": channel_id.value if channel_id else "",
             "channel_name": channel_name.value,
             "content_id": content_id.value,
         }
@@ -398,13 +368,10 @@ class PipelineStageRunner:
         )
 
         item_count = len(inventory.items) if hasattr(inventory, "items") else 1
-        coherence_score = (
-            min(1.0, len(synthesized_notes) / max(1, item_count)) if item_count else 1.0
-        )
         self.telemetry_port.record_session_coherence(
             session_id=session_id,
             content_id=content_id,
-            score=coherence_score,
+            score=(min(1.0, len(synthesized_notes) / max(1, item_count)) if item_count else 1.0),
             details={
                 "synthesized_notes_count": len(synthesized_notes),
                 "inventory_count": item_count,
@@ -420,7 +387,7 @@ class PipelineStageRunner:
     @contextmanager
     def _measure_stage(
         self, stage_name: str, channel_name: str, content_id: str, ch_id_str: str
-    ) -> Iterator[None]:
+    ) -> Generator[None]:
         start_time = time.perf_counter()
         status = "success"
         with self.telemetry_port.start_stage_span(stage_name):
@@ -431,46 +398,41 @@ class PipelineStageRunner:
                 self._record_error_metric(exc, stage_name, ch_id_str, channel_name, content_id)
                 raise
             finally:
-                elapsed = time.perf_counter() - start_time
-                self._record_duration_metric(elapsed, stage_name, ch_id_str, channel_name, status)
+                self._record_duration_metric(
+                    time.perf_counter() - start_time, stage_name, ch_id_str, channel_name, status
+                )
+
+    def _resolve_prompt_provider(
+        self, prompt_provider: PromptProviderPort | None
+    ) -> PromptProviderPort:
+        resolved = prompt_provider or self.prompt_provider
+        if resolved is None:
+            raise ValueError(
+                "PromptProviderPort must be provided via constructor or execute_stage argument"
+            )
+        return resolved
+
+    def _resolve_llm_transformation_port(
+        self, llm_transformation_port: LLMTransformationPort | None
+    ) -> LLMTransformationPort:
+        resolved = llm_transformation_port or self.llm_transformation_port
+        if resolved is None:
+            raise ValueError(
+                "LLMTransformationPort must be provided via constructor or execute_stage argument"
+            )
+        return resolved
 
     def _resolve_stage_descriptor(
         self,
-        stage: str | StageDescriptor[_TSource, _TOutput] | None,
-        descriptor: StageDescriptor[_TSource, _TOutput] | None,
+        stage: str | StageDescriptor[_TSource, _TOutput],
     ) -> StageDescriptor[_TSource, _TOutput]:
-        if stage is not None:
-            if isinstance(stage, str):
-                if self.stage_factory is None:
-                    raise ValueError(
-                        f"Cannot resolve stage '{stage}' from string without an injected StageFactory."
-                    )
-                return self.stage_factory.build_stage(stage)
-            return stage
-        if descriptor is not None:
-            return descriptor
-        raise ValueError("Must provide either 'stage' or 'descriptor' to execute_stage.")
-
-    @staticmethod
-    def _resolve_provenance(
-        context: PipelineExecutionContext | None,
-        channel_name: ChannelName | None,
-        content_id: ContentId | None,
-        session_id: str | None,
-        user_id: str | None,
-        channel_id: ChannelId | None,
-    ) -> tuple[ChannelName, ContentId, str, str, ChannelId | None]:
-        if context is not None:
-            return (
-                context.channel_name,
-                context.content_id,
-                context.session_id.value,
-                context.user_identity.value,
-                context.channel_id,
-            )
-        if channel_name is None or content_id is None or session_id is None or user_id is None:
-            raise ValueError("Must provide either 'context' or all provenance keyword arguments")
-        return channel_name, content_id, session_id, user_id, channel_id
+        if isinstance(stage, str):
+            if self.stage_factory is None:
+                raise ValueError(
+                    f"Cannot resolve stage '{stage}' from string without an injected StageFactory."
+                )
+            return self.stage_factory.build_stage(stage)
+        return stage
 
     @staticmethod
     def _get_active_trace_id(channel_name: ChannelName, content_id: ContentId) -> str:

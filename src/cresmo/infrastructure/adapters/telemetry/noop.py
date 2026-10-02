@@ -13,7 +13,6 @@ from typing import Any
 
 from cresmo.application.ports import TelemetryPort
 from cresmo.domain.entities import (
-    ChannelTenantId,
     ContentId,
     PipelineSessionId,
     UserIdentity,
@@ -31,8 +30,8 @@ class NoOpTelemetryAdapter(TelemetryPort):
     def start_pipeline_session(
         self,
         session_id: PipelineSessionId,
-        user_id: UserIdentity | ChannelTenantId,
-        channel_tenant_id: ChannelTenantId | None = None,
+        user_id: UserIdentity | str,
+        channel_tenant_id: str | None = None,
         metadata: dict[str, Any] | None = None,
         trace_name: str | None = None,
     ) -> Generator[Any]:

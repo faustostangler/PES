@@ -53,6 +53,7 @@ In this repository, architectural decisions evolve continuously through test-dri
 | [**ADR-030**](ADR-030-stage-quality-gate-and-evaluator-retry-fabric.md) | 2026-10-01 | Stage Quality Gate & Evaluator Closed-Loop Retry Fabric | Application / Quality | `ACCEPTED` | Eliminates evaluator orchestration duplication in coordinator; introduces `PipelineStageRunner.run_evaluated_stage` retry loop. |
 | [**ADR-031**](ADR-031-standardized-stage-descriptor-and-closed-loop-refinement.md) | 2026-10-01 | Standardized StageDescriptor, SourceTranscript, CandidateText, and Closed-Loop Reflection Quality Fabric | Application / Pipeline | `ACCEPTED` | Universal `StageDescriptor` template, complete elimination of `RawTranscript` in favor of `SourceTranscript`, `CandidateText` VO, `CritiqueSynthesizerPort` reflection loop, and 4-step fail-fast quarantine. |
 | [**ADR-032**](ADR-032-composite-channel-and-content-value-objects.md) | 2026-10-02 | Composite Channel and Content Value Objects and Context Simplification | DDD Tático / Value Objects | `ACCEPTED` | Merges fragmented channel and content attributes into composite `Channel` and `Content` VOs; simplifies `PipelineExecutionContext` to 4 pillars (`session`, `user`, `channel`, `content`). |
+| [**ADR-033**](ADR-033-composite-value-objects-identity-parity-and-tenant-simplification.md) | 2026-10-02 | Composite Value Objects with Identity VOs, Parity, and Tenant Simplification | DDD Tático / Anti-Patterns | `ACCEPTED` | Bans *Primitive Obsession Obsession & Class Explosion* and *Primitive Obsession Reversa*. Establishes Intentional Asymmetric Hybrid Composition, renames `PipelineSessionId.channel_id`, removes `video_id`, and decommissions `ChannelTenantId` with zero backward compatibility. |
 
 
 ---
@@ -169,7 +170,11 @@ When navigating the architecture, apply these documented precedence relationship
 - **ADR-029** consolidates all scattered judge logic under the isolated `LlmJudgePort` with multi-provider adapters (`GeminiJudgeAdapter`, `OllamaJudgeAdapter`, `TypeSafeJudgeAdapter`, `LangfuseJudgeDecorator`).
 - **ADR-030** eliminates repetitive judge orchestration by introducing `PipelineStageRunner.run_evaluated_stage` with configurable retry thresholds.
 - **ADR-031** establishes the universal `StageDescriptor` architecture, completes the total elimination of `RawTranscript` in favor of `SourceTranscript`, introduces `CandidateText`, integrates `CritiqueSynthesizerPort` for closed-loop reflection, and enforces the 4-step fail-fast quarantine protocol (`StageQuarantinedError`).
-- **Precedence Rule:** All pipeline stages must adhere to `StageDescriptor` contracts executed via `PipelineStageRunner.execute_stage(...)`.
+### 4.9 Intentional Asymmetric Value Object Composition (ADR-033 refines ADR-019, ADR-027, ADR-032)
+- **ADR-033** outlaws both *Primitive Obsession Obsession & Class Explosion* (single-field wrapper VOs around every primitive attribute) and *Primitive Obsession Reversa* (flattening strong identity VOs into raw strings).
+- Establishes **Composite Value Objects with Identity VOs (Composição Híbrida Assimétrica Intencional)**: identity attributes retain strong VOs (`ChannelId`, `ContentId`), while contextual attributes (`name`, `category`, `url`, `title`, `publication_date`) are self-validated primitive fields inside composite VOs (`Channel`, `Content`).
+- Renames `PipelineSessionId.channel_token` to `channel_id`, removes `video_id`, and completely decommissions `ChannelTenantId` in favor of `Channel.tenant_key`.
+- **Precedence Rule:** All new domain models must employ intentional asymmetric composition with zero backward compatibility.
 
 ---
 

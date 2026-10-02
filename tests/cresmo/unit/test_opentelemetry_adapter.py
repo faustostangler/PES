@@ -1,7 +1,7 @@
 """Unit tests for OpenTelemetry Semantic Conventions and TelemetryPort implementations.
 
 Conforms to ADR-016:
-    - Verifies PipelineSessionId and ChannelTenantId Value Objects enforce strict domain invariants.
+    - Verifies PipelineSessionId and telemetry Value Objects enforce strict domain invariants.
     - Verifies OpenTelemetryAdapter sets root attributes: langfuse.session.id, langfuse.user.id.
     - Verifies nested stage spans maintain OpenTelemetry trace hierarchy.
     - Verifies judge friction ratio calculation and score recording.
@@ -19,7 +19,6 @@ from opentelemetry.sdk.trace.export.in_memory_span_exporter import InMemorySpanE
 
 from cresmo.application.ports import TelemetryPort
 from cresmo.domain.entities import (
-    ChannelTenantId,
     ContentId,
     JudgeFrictionMetric,
     PipelineSessionId,
@@ -38,9 +37,10 @@ class TestTelemetryValueObjects:
     def test_pipeline_session_id_valid(self) -> None:
         session_id = PipelineSessionId.create(channel="sandeco", content_id="yt_12345678")
         assert session_id.value == "sandeco:yt_12345678"
-        assert session_id.channel_token == "sandeco"
+        assert session_id.channel_id == "sandeco"
         assert session_id.content_id == "yt_12345678"
-        assert session_id.video_id == "yt_12345678"
+        assert not hasattr(session_id, "video_id")
+        assert not hasattr(session_id, "channel_token")
 
     def test_pipeline_session_id_rejects_empty(self) -> None:
         with pytest.raises(ValueError, match="cannot be empty"):
@@ -48,18 +48,6 @@ class TestTelemetryValueObjects:
 
         with pytest.raises(ValueError, match="Invalid PipelineSessionId format"):
             PipelineSessionId(value="invalid_format_without_colons")
-
-    def test_channel_tenant_id_valid(self) -> None:
-        tenant = ChannelTenantId.create("sandeco")
-        assert tenant.value == "channel:sandeco"
-        assert tenant.channel_token == "sandeco"
-
-    def test_channel_tenant_id_rejects_empty(self) -> None:
-        with pytest.raises(ValueError, match="cannot be empty"):
-            ChannelTenantId(value="")
-
-        with pytest.raises(ValueError, match="Invalid ChannelTenantId format"):
-            ChannelTenantId(value="not_prefixed")
 
     def test_user_identity_anonymous(self) -> None:
         u1 = UserIdentity.anonymous()
@@ -146,7 +134,7 @@ class TestOpenTelemetryAdapter:
     ) -> None:
         adapter, exporter = otel_setup
         session_id = PipelineSessionId.create(channel="sandeco", content_id="vid_test_123")
-        user_id = ChannelTenantId.create("sandeco")
+        user_id = UserIdentity.from_channel("sandeco")
 
         with adapter.start_pipeline_session(
             session_id=session_id,
@@ -178,7 +166,7 @@ class TestOpenTelemetryAdapter:
         assert root_span.attributes["langfuse.session.id"] == "sandeco:vid_test_123"
         assert root_span.attributes["langfuse.user.id"] == "channel:sandeco"
         assert root_span.attributes["cresmo.content.id"] == "vid_test_123"
-        assert root_span.attributes["cresmo.video.id"] == "vid_test_123"
+        assert "cresmo.video.id" not in root_span.attributes
         assert root_span.attributes["cresmo.content.title"] == "Machiavelli and Modern State"
         assert root_span.attributes["cresmo.channel.name"] == "sandeco"
         assert root_span.attributes["cresmo.channel.id"] == "UC_Sandeco123"
@@ -225,7 +213,7 @@ class TestOpenTelemetryAdapter:
     ) -> None:
         adapter, exporter = otel_setup
         session_id = PipelineSessionId.create(channel="sandeco", content_id="vid_judge_01")
-        user_id = ChannelTenantId.create("sandeco")
+        user_id = UserIdentity.from_channel("sandeco")
 
         with adapter.start_pipeline_session(session_id=session_id, user_id=user_id):
             adapter.record_judge_evaluation(
@@ -252,7 +240,7 @@ class TestOpenTelemetryAdapter:
     ) -> None:
         adapter, exporter = otel_setup
         session_id = PipelineSessionId.create(channel="sandeco", content_id="vid_coherence_01")
-        user_id = ChannelTenantId.create("sandeco")
+        user_id = UserIdentity.from_channel("sandeco")
 
         with adapter.start_pipeline_session(session_id=session_id, user_id=user_id):
             adapter.record_session_coherence(
@@ -296,7 +284,8 @@ class TestOpenTelemetryAdapter:
         assert root_span.attributes is not None
         assert root_span.attributes["langfuse.session.id"] == "sandeco:vid_anon_01"
         assert root_span.attributes["langfuse.user.id"] == "anonymous"
-        assert root_span.attributes["cresmo.video.id"] == "vid_anon_01"
+        assert root_span.attributes["cresmo.content.id"] == "vid_anon_01"
+        assert "cresmo.video.id" not in root_span.attributes
         assert root_span.attributes["cresmo.channel.name"] == "sandeco"
         assert "cresmo.channel" not in root_span.attributes
         assert root_span.attributes["cresmo.user.is_anonymous"] is True
@@ -321,7 +310,8 @@ class TestOpenTelemetryAdapter:
         assert root_span.attributes is not None
         assert root_span.attributes["langfuse.session.id"] == "sandeco:vid_auth_01"
         assert root_span.attributes["langfuse.user.id"] == "user:google:alice@corp.com"
-        assert root_span.attributes["cresmo.video.id"] == "vid_auth_01"
+        assert root_span.attributes["cresmo.content.id"] == "vid_auth_01"
+        assert "cresmo.video.id" not in root_span.attributes
         assert root_span.attributes["cresmo.channel.name"] == "sandeco"
         assert "cresmo.channel" not in root_span.attributes
         assert root_span.attributes["cresmo.user.is_anonymous"] is False
@@ -378,7 +368,7 @@ class TestOpenTelemetryAdapter:
         """Verify that caller exceptions are never swallowed by start_pipeline_session."""
         adapter, _ = otel_setup
         session_id = PipelineSessionId.create(channel="sandeco", content_id="vid_exc_01")
-        user_id = ChannelTenantId.create("sandeco")
+        user_id = UserIdentity.from_channel("sandeco")
 
         with (
             pytest.raises(DomainValidationError, match="Entity discovery failed"),
@@ -462,7 +452,7 @@ class TestNoOpTelemetryAdapter:
         assert isinstance(adapter, TelemetryPort)
 
         session_id = PipelineSessionId.create(channel="sandeco", content_id="vid_noop")
-        user_id = ChannelTenantId.create("sandeco")
+        user_id = UserIdentity.from_channel("sandeco")
 
         # Must execute cleanly without exceptions
         with adapter.start_pipeline_session(session_id=session_id, user_id=user_id):

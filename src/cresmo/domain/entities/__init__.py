@@ -10,9 +10,7 @@ from __future__ import annotations
 
 from cresmo.domain.entities.compendium import EnrichedCompendium
 from cresmo.domain.entities.identity import (
-    CHANNEL_TENANT_ID_PART_COUNT,
     PIPELINE_SESSION_ID_PART_COUNT,
-    ChannelTenantId,
     JudgeFrictionMetric,
     PipelineSessionId,
     UserIdentity,
@@ -37,14 +35,12 @@ from cresmo.domain.value_objects import (
 )
 
 __all__ = [
-    "CHANNEL_TENANT_ID_PART_COUNT",
     "MIN_ATOMIC_NOTE_DEFINITION_LENGTH",
     "PIPELINE_SESSION_ID_PART_COUNT",
     "AtomicNote",
     "CandidateText",
     "ChannelId",
     "ChannelName",
-    "ChannelTenantId",
     "ContentId",
     "EnrichedCompendium",
     "FluidTranscript",

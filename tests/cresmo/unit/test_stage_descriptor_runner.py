@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock
 
+from cresmo.application.pipeline.context import PipelineExecutionContext
 from cresmo.application.pipeline.stage_descriptor import StageDescriptor
 from cresmo.application.pipeline.stage_runner import PipelineStageRunner
 from cresmo.application.ports import (
@@ -17,7 +18,7 @@ from cresmo.application.ports import (
     NoOpPromptProviderPort,
     NoOpTelemetryPort,
 )
-from cresmo.domain.entities import SourceTranscript
+from cresmo.domain.entities import PipelineSessionId, SourceTranscript, UserIdentity
 from cresmo.domain.value_objects import (
     CandidateText,
     ChannelName,
@@ -78,13 +79,17 @@ class TestStageDescriptorRunner:
             ),
         )
 
-        result = runner.execute_stage(
-            descriptor=descriptor,
-            source=source,
+        ctx = PipelineExecutionContext(
+            session_id=PipelineSessionId.create(source.channel_name, source.content_id),
+            user_identity=UserIdentity.worker(),
             channel_name=source.channel_name,
             content_id=source.content_id,
-            session_id="session_123",
-            user_id="anonymous",
+        )
+
+        result = runner.execute_stage(
+            descriptor,
+            source,
+            context=ctx,
             prompt_provider=prompt_provider,
             llm_transformation_port=mock_llm,
         )
@@ -160,13 +165,17 @@ class TestStageDescriptorRunner:
             ),
         )
 
-        result = runner.execute_stage(
-            descriptor=descriptor,
-            source=source,
+        ctx = PipelineExecutionContext(
+            session_id=PipelineSessionId.create(source.channel_name, source.content_id),
+            user_identity=UserIdentity.worker(),
             channel_name=source.channel_name,
             content_id=source.content_id,
-            session_id="session_456",
-            user_id="anonymous",
+        )
+
+        result = runner.execute_stage(
+            descriptor,
+            source,
+            context=ctx,
             prompt_provider=prompt_provider,
             llm_transformation_port=mock_llm,
         )
@@ -210,13 +219,17 @@ class TestStageDescriptorRunner:
             post_processor=sample_post_processor,
         )
 
-        result = runner.execute_stage(
-            descriptor=descriptor,
-            source=source,
+        ctx = PipelineExecutionContext(
+            session_id=PipelineSessionId.create(source.channel_name, source.content_id),
+            user_identity=UserIdentity.worker(),
             channel_name=source.channel_name,
             content_id=source.content_id,
-            session_id="session_789",
-            user_id="anonymous",
+        )
+
+        result = runner.execute_stage(
+            descriptor,
+            source,
+            context=ctx,
             prompt_provider=prompt_provider,
             llm_transformation_port=mock_llm,
         )

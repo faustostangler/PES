@@ -10,7 +10,6 @@ import pytest
 
 from cresmo.domain.entities import (
     AtomicNote,
-    ChannelTenantId,
     EnrichedCompendium,
     MapOfContent,
     PipelineSessionId,
@@ -239,22 +238,22 @@ class TestMapOfContent:
 
 
 class TestPipelineSessionId:
-    """ADR-027 & SPEC-010: PipelineSessionId canonical format {channel_id}:{video_id}."""
+    """ADR-027, ADR-032 & ADR-033: PipelineSessionId canonical format {channel_id}:{content_id}."""
 
     def test_create_with_channel_name_only_produces_canonical_format(self) -> None:
-        """When ChannelId is omitted, session format is {channel_name}:{video_id}."""
+        """When ChannelId is omitted, session format is {channel_name}:{content_id}."""
         sid = PipelineSessionId.create(
             channel=ChannelName("Marcelo Andrade"),
             content_id=ContentId("9IbNJ0EsTxI"),
         )
         assert sid.value == "Marcelo Andrade:9IbNJ0EsTxI"
         assert sid.content_id == "9IbNJ0EsTxI"
-        assert sid.video_id == "9IbNJ0EsTxI"
-        assert sid.channel_token == "Marcelo Andrade"
-        assert not hasattr(sid, "channel_name")
+        assert sid.channel_id == "Marcelo Andrade"
+        assert not hasattr(sid, "video_id")
+        assert not hasattr(sid, "channel_token")
 
     def test_create_with_channel_id_prefers_id_over_name(self) -> None:
-        """When ChannelId is available, the algorithmic session ID uses {channel_id}:{video_id}."""
+        """When ChannelId is available, the algorithmic session ID uses {channel_id}:{content_id}."""
         sid = PipelineSessionId.create(
             channel=ChannelName("Marcelo Andrade"),
             content_id=ContentId("9IbNJ0EsTxI"),
@@ -262,9 +261,9 @@ class TestPipelineSessionId:
         )
         assert sid.value == "UCxyz1234567890ab:9IbNJ0EsTxI"
         assert sid.content_id == "9IbNJ0EsTxI"
-        assert sid.video_id == "9IbNJ0EsTxI"
-        assert sid.channel_token == "UCxyz1234567890ab"
-        assert not hasattr(sid, "channel_name")
+        assert sid.channel_id == "UCxyz1234567890ab"
+        assert not hasattr(sid, "video_id")
+        assert not hasattr(sid, "channel_token")
 
     def test_create_with_channel_id_none_falls_back_to_name(self) -> None:
         """Explicit None channel_id falls back to ChannelName."""
@@ -274,17 +273,17 @@ class TestPipelineSessionId:
             channel_id=None,
         )
         assert sid.value == "Philosophy:abcd1234efgh"
-        assert sid.channel_token == "Philosophy"
-        assert sid.video_id == "abcd1234efgh"
+        assert sid.channel_id == "Philosophy"
+        assert not hasattr(sid, "video_id")
 
     def test_create_with_channel_and_content_value_objects(self) -> None:
         from cresmo.domain.value_objects import Channel, Content
 
-        ch = Channel.from_name("Example Channel", id="UCxyz1234567890ab")
+        ch = Channel(name="Example Channel", id=ChannelId("UCxyz1234567890ab"))
         cnt = Content.create("9IbNJ0EsTxI")
         sid = PipelineSessionId.create(channel=ch, content_id=cnt)
         assert sid.value == "UCxyz1234567890ab:9IbNJ0EsTxI"
-        assert sid.channel_token == "UCxyz1234567890ab"
+        assert sid.channel_id == "UCxyz1234567890ab"
         assert sid.content_id == "9IbNJ0EsTxI"
 
     def test_create_with_string_channel_still_works(self) -> None:
@@ -294,15 +293,15 @@ class TestPipelineSessionId:
             content_id="dQw4w9WgXcQ",
         )
         assert sid.value == "Raw String Channel:dQw4w9WgXcQ"
-        assert sid.channel_token == "Raw String Channel"
-        assert sid.video_id == "dQw4w9WgXcQ"
+        assert sid.channel_id == "Raw String Channel"
+        assert not hasattr(sid, "video_id")
 
     def test_legacy_three_part_format_backward_compatible(self) -> None:
         """Parsing legacy 'content:{channel}:{content_id}' remains supported."""
         sid = PipelineSessionId(value="content:Marcelo Andrade:9IbNJ0EsTxI")
-        assert sid.channel_token == "Marcelo Andrade"
+        assert sid.channel_id == "Marcelo Andrade"
         assert sid.content_id == "9IbNJ0EsTxI"
-        assert sid.video_id == "9IbNJ0EsTxI"
+        assert not hasattr(sid, "video_id")
 
     def test_empty_session_id_raises_error(self) -> None:
         with pytest.raises(ValueError, match="PipelineSessionId cannot be empty"):
@@ -365,53 +364,50 @@ class TestUserIdentity:
             UserIdentity.identified(subject="   ", provider="iam")
 
 
-class TestChannelTenantId:
-    """Phase 1: ChannelTenantId must prefer ChannelId (stable) over ChannelName (mutable)."""
+class TestChannelCompositeValueObjectAndTenantKey:
+    """ADR-032 & ADR-033: Composite Channel VO with Identity VOs and intrinsic tenant_key."""
 
-    def test_create_with_channel_name_only_backward_compatible(self) -> None:
-        """Existing callers that pass only ChannelName still produce valid tenant IDs."""
-        tid = ChannelTenantId.create(channel=ChannelName("Marcelo Andrade"))
-        assert tid.value == "channel:Marcelo Andrade"
-        assert tid.channel_token == "Marcelo Andrade"
-        assert not hasattr(tid, "channel_name")
+    def test_channel_composition_with_string_name_and_identity_vo(self) -> None:
+        """Channel encapsulates validated string name and strongly-typed ChannelId."""
+        from cresmo.domain.value_objects import Channel, ChannelId
 
-    def test_create_with_channel_id_prefers_id_over_name(self) -> None:
-        """When ChannelId is available, the algorithmic key uses the stable ID."""
-        tid = ChannelTenantId.create(
-            channel=ChannelName("Marcelo Andrade"),
-            channel_id=ChannelId("UCxyz1234567890ab"),
+        ch = Channel(
+            name="Marcelo Andrade",
+            id=ChannelId("UCP3CtEXi5nxbhei_aBfIOVA"),
+            category="history",
+            url="https://www.youtube.com/channel/UCP3CtEXi5nxbhei_aBfIOVA",
         )
-        # Algorithmic key must use ChannelId, not ChannelName
-        assert tid.value == "channel:UCxyz1234567890ab"
-        assert tid.channel_token == "UCxyz1234567890ab"
-        assert not hasattr(tid, "channel_name")
+        assert ch.name == "Marcelo Andrade"
+        assert isinstance(ch.name, str)
+        assert isinstance(ch.id, ChannelId)
+        assert ch.id.value == "UCP3CtEXi5nxbhei_aBfIOVA"
+        assert ch.category == "history"
+        assert ch.tenant_key == "channel:UCP3CtEXi5nxbhei_aBfIOVA"
 
-    def test_create_with_channel_id_none_falls_back_to_name(self) -> None:
-        """Explicit None channel_id falls back to ChannelName."""
-        tid = ChannelTenantId.create(
-            channel=ChannelName("Philosophy"),
-            channel_id=None,
-        )
-        assert tid.value == "channel:Philosophy"
-        assert tid.channel_token == "Philosophy"
-
-    def test_create_with_string_channel_still_works(self) -> None:
-        """Passing a raw string for channel remains backward-compatible."""
-        tid = ChannelTenantId.create(channel="Raw String")
-        assert tid.value == "channel:Raw String"
-
-    def test_empty_tenant_id_raises_error(self) -> None:
-        with pytest.raises(ValueError, match="ChannelTenantId cannot be empty"):
-            ChannelTenantId(value="")
-
-    def test_invalid_format_raises_error(self) -> None:
-        with pytest.raises(ValueError, match="Invalid ChannelTenantId format"):
-            ChannelTenantId(value="bad_format")
-
-    def test_create_with_channel_value_object(self) -> None:
+    def test_channel_tenant_key_fallback_to_name_when_id_none(self) -> None:
+        """When ChannelId is omitted, tenant_key uses the channel name."""
         from cresmo.domain.value_objects import Channel
 
-        ch = Channel.from_name("Example Channel", id="UCxyz1234567890ab")
-        tid = ChannelTenantId.create(channel=ch)
-        assert tid.value == "channel:UCxyz1234567890ab"
-        assert tid.channel_token == "UCxyz1234567890ab"
+        ch = Channel(name="Philosophy Channel")
+        assert ch.id is None
+        assert ch.tenant_key == "channel:Philosophy Channel"
+
+    def test_channel_name_validation_invariants(self) -> None:
+        """Channel enforces ChannelName invariants directly upon construction."""
+        from cresmo.domain.value_objects import Channel
+
+        with pytest.raises(DomainValidationError, match="Channel name cannot be empty"):
+            Channel(name="")
+
+        with pytest.raises(DomainValidationError, match="path traversal"):
+            Channel(name="evil/channel")
+
+        with pytest.raises(DomainValidationError, match="exceeds maximum length"):
+            Channel(name="A" * 121)
+
+    def test_channel_tenant_id_class_decommissioned(self) -> None:
+        """ChannelTenantId is completely deleted and no longer importable per ADR-033."""
+        import cresmo.domain.entities as entities_mod
+
+        assert not hasattr(entities_mod, "ChannelTenantId")
+        assert "ChannelTenantId" not in entities_mod.__all__

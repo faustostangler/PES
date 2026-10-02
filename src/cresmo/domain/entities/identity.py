@@ -19,16 +19,15 @@ from cresmo.domain.value_objects import (
 )
 
 PIPELINE_SESSION_ID_PART_COUNT: int = 3
-CHANNEL_TENANT_ID_PART_COUNT: int = 2
 
 
 @dataclass(frozen=True)
 class PipelineSessionId:
     """Value Object representing the holistic multi-stage content lifecycle session.
 
-    Conforms to ADR-016 and ADR-027.
-    Ensures end-to-end Session Replay in Langfuse for exactly one video.
-    Canonical format: {channel_id}:{video_id}
+    Conforms to ADR-016, ADR-027, and ADR-033.
+    Ensures end-to-end Session Replay in Langfuse for exactly one content item.
+    Canonical format: {channel_id}:{content_id}
     """
 
     value: str
@@ -41,7 +40,7 @@ class PipelineSessionId:
             if not parts[0].strip() or not parts[1].strip():
                 raise ValueError(
                     f"Invalid PipelineSessionId format: '{self.value}'. "
-                    "Expected '{channel_id}:{video_id}'."
+                    "Expected '{channel_id}:{content_id}'."
                 )
         elif len(parts) == 3 and parts[0] == "content":
             if not parts[1].strip() or not parts[2].strip():
@@ -52,7 +51,7 @@ class PipelineSessionId:
         else:
             raise ValueError(
                 f"Invalid PipelineSessionId format: '{self.value}'. "
-                "Expected '{channel_id}:{video_id}'."
+                "Expected '{channel_id}:{content_id}'."
             )
 
     @classmethod
@@ -62,7 +61,7 @@ class PipelineSessionId:
         content_id: Content | ContentId | str,
         channel_id: ChannelId | None = None,
     ) -> PipelineSessionId:
-        """Construct canonical session key preferring stable ChannelId over mutable ChannelName.
+        """Construct canonical session key preferring stable ChannelId over mutable Channel.name.
 
         Args:
             channel: Composite Channel VO, human-readable ChannelName, or str.
@@ -72,7 +71,7 @@ class PipelineSessionId:
         # Algorithmic key: prefer stable ID over mutable name
         if isinstance(channel, Channel):
             ch_id = channel.id or channel_id
-            ch = ch_id.value if ch_id else channel.name.value
+            ch = ch_id.value if ch_id else channel.name
         else:
             ch = (
                 channel_id.value
@@ -88,71 +87,16 @@ class PipelineSessionId:
         return cls(value=f"{ch}:{c_id}")
 
     @property
-    def channel_token(self) -> str:
+    def channel_id(self) -> str:
         """Algorithmic channel identifier token stored in the session key (ID or name)."""
         parts = self.value.split(":")
         return parts[1] if parts[0] == "content" and len(parts) == 3 else parts[0]
 
     @property
     def content_id(self) -> str:
-        """Content / video identifier stored in the session key."""
+        """Content identifier stored in the session key."""
         parts = self.value.split(":")
         return parts[2] if parts[0] == "content" and len(parts) == 3 else parts[1]
-
-    @property
-    def video_id(self) -> str:
-        """Alias for content_id per ADR-027 single video session replay convention."""
-        return self.content_id
-
-
-@dataclass(frozen=True)
-class ChannelTenantId:
-    """Value Object representing the source channel as cost center / tenant.
-
-    Conforms to ADR-016. Maps the channel as the primary user entity in Langfuse for FinOps.
-    Format: channel:{channel_name}
-    """
-
-    value: str
-
-    def __post_init__(self) -> None:
-        if not self.value or not self.value.strip():
-            raise ValueError("ChannelTenantId cannot be empty.")
-        parts = self.value.split(":")
-        if len(parts) != CHANNEL_TENANT_ID_PART_COUNT or parts[0] != "channel" or not parts[1]:
-            raise ValueError(
-                f"Invalid ChannelTenantId format: '{self.value}'. "
-                "Expected 'channel:{channel_name}'."
-            )
-
-    @classmethod
-    def create(
-        cls,
-        channel: Channel | ChannelName | str,
-        channel_id: ChannelId | None = None,
-    ) -> ChannelTenantId:
-        """Construct canonical tenant key preferring stable ChannelId over mutable ChannelName.
-
-        Args:
-            channel: Composite Channel VO, human-readable ChannelName, or str.
-            channel_id: Optional stable platform ID (preferred for algorithmic keys).
-        """
-        # Algorithmic key: prefer stable ID over mutable name
-        if isinstance(channel, Channel):
-            ch_id = channel.id or channel_id
-            ch = ch_id.value if ch_id else channel.name.value
-        else:
-            ch = (
-                channel_id.value
-                if channel_id
-                else (channel.value if isinstance(channel, ChannelName) else channel.strip())
-            )
-        return cls(value=f"channel:{ch}")
-
-    @property
-    def channel_token(self) -> str:
-        """Algorithmic channel identifier token stored in the tenant key (ID or name)."""
-        return self.value.split(":")[1]
 
 
 @dataclass(frozen=True)

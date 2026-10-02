@@ -27,7 +27,7 @@ from cresmo.application.pipeline.models import PipelineDependencies, PipelineRes
 from cresmo.application.pipeline.stage_factory import StageFactory
 from cresmo.application.pipeline.stage_runner import PipelineStageRunner
 from cresmo.application.pipeline.transcript_loader import (
-    ensure_file_saved,
+    ensure_transcript_saved,
     load_manifest_urls,
     load_transcript_from_file,
 )
@@ -49,7 +49,6 @@ from cresmo.application.ports import (
 )
 from cresmo.application.use_cases import IngestRawTranscriptUseCase
 from cresmo.domain.entities import (
-    ChannelTenantId,
     PipelineSessionId,
     SourceTranscript,
     UserIdentity,
@@ -179,15 +178,12 @@ class CresmoPipeline:
             channel=channel,
             content_id=content,
         )
-        tenant_id = ChannelTenantId.create(
-            channel=channel,
-        )
         user_identity = user or UserIdentity.anonymous()
 
         root_metadata = {
             "source": "transcript",
-            "channel": channel.name.value,
-            "channel_name": channel.name.value,
+            "channel": channel.name,
+            "channel_name": channel.name,
             "content_id": content.id.value,
             "title": content.display_title,
         }
@@ -199,7 +195,7 @@ class CresmoPipeline:
         with self.telemetry_port.start_pipeline_session(
             session_id=session_id,
             user_id=user_identity,
-            channel_tenant_id=tenant_id,
+            channel_tenant_id=channel.tenant_key,
             metadata=root_metadata,
             trace_name="cresmo.pipeline.execution",
         ):
@@ -320,10 +316,13 @@ class CresmoPipeline:
                 "and cannot be processed as a transcript."
             )
         self.warmup()
-        persisted_path = ensure_file_saved(file_path, self.settings.raw_dir)
-        raw = load_transcript_from_file(persisted_path)
-        if persisted_path != file_path:
-            self.vault_port.save_transcript(raw)
+        raw = load_transcript_from_file(file_path)
+        ensure_transcript_saved(
+            self.vault_port,
+            file_path,
+            raw,
+            target_dir=self.settings.raw_dir,
+        )
 
         return self.execute(
             raw=raw,

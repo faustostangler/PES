@@ -13,7 +13,6 @@ from contextlib import AbstractContextManager, contextmanager
 from typing import Any
 
 from cresmo.domain.entities import (
-    ChannelTenantId,
     PipelineSessionId,
     UserIdentity,
 )
@@ -31,8 +30,8 @@ class TelemetryPort(ABC):
     def start_pipeline_session(
         self,
         session_id: PipelineSessionId,
-        user_id: UserIdentity | ChannelTenantId,
-        channel_tenant_id: ChannelTenantId | None = None,
+        user_id: UserIdentity | str,
+        channel_tenant_id: str | None = None,
         metadata: dict[str, Any] | None = None,
         trace_name: str | None = None,
     ) -> AbstractContextManager[Any]:
@@ -40,7 +39,7 @@ class TelemetryPort(ABC):
 
         Args:
             session_id: Canonical multi-stage content session identifier.
-            user_id: UserIdentity (anonymous or identified OAuth user), ChannelTenantId, or string.
+            user_id: UserIdentity (anonymous or identified OAuth user), or string.
             channel_tenant_id: Optional Channel tenant identifier for cost and volume aggregation.
             metadata: Additional contextual metadata (e.g. source, pipeline version).
             trace_name: Optional canonical root operation name (defaults to cresmo.pipeline.execution).
@@ -138,8 +137,8 @@ class NoOpTelemetryPort(TelemetryPort):
     def start_pipeline_session(
         self,
         session_id: PipelineSessionId,
-        user_id: UserIdentity | ChannelTenantId,
-        channel_tenant_id: ChannelTenantId | None = None,
+        user_id: UserIdentity | str,
+        channel_tenant_id: str | None = None,
         metadata: dict[str, Any] | None = None,
         trace_name: str | None = None,
     ) -> Generator[Any]:

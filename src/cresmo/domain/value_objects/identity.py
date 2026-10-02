@@ -301,28 +301,38 @@ class ContentId:
 
 @dataclass(frozen=True, slots=True)
 class Channel:
-    """Canonical domain Value Object representing a content creator or source channel.
+    """Canonical domain Composite Value Object representing a content creator or source channel.
 
     Encapsulates channel identity, human-readable name, platform ID, category, and canonical URL.
-    Conforms to ADR-019 (Zero Primitive Obsession) and ADR-032.
+    Conforms to ADR-019, ADR-032, and ADR-033 (Composite Value Objects with Identity VOs).
     """
 
-    name: ChannelName
+    name: str
     id: ChannelId | None = None
     category: str = ""
     url: str | None = None
 
     def __init__(
         self,
-        name: ChannelName | str,
+        name: str | ChannelName,
         id: ChannelId | str | None = None,
         category: str = "",
         url: str | None = None,
     ) -> None:
-        c_name = ChannelName.from_string(name) if isinstance(name, (ChannelName, str)) else name
+        raw_name = name.value if isinstance(name, ChannelName) else str(name)
+        c_name = raw_name.strip()
+        if not c_name:
+            raise DomainValidationError("Channel name cannot be empty or whitespace.")
+        if len(c_name) > MAX_CHANNEL_NAME_LENGTH:
+            raise DomainValidationError(
+                f"Channel name exceeds maximum length of {MAX_CHANNEL_NAME_LENGTH} characters: '{c_name[:30]}...'"
+            )
+        if ".." in c_name or "/" in c_name or "\\" in c_name:
+            raise DomainValidationError(
+                f"Channel name cannot contain path traversal or separator characters: '{c_name}'"
+            )
+
         c_id = ChannelId.from_string(id) if isinstance(id, (ChannelId, str)) and id else None
-        if not isinstance(c_name, ChannelName):
-            raise DomainValidationError(f"Invalid channel name type: {type(name)}")
         if c_id is not None and not isinstance(c_id, ChannelId):
             raise DomainValidationError(f"Invalid channel id type: {type(id)}")
 
@@ -340,14 +350,12 @@ class Channel:
         url: str | None = None,
     ) -> Channel:
         """Ergonomic factory constructing Channel from primitive strings or Value Objects."""
-        c_name = ChannelName.from_string(name)
-        c_id = ChannelId.from_string(id) if id else None
-        return cls(name=c_name, id=c_id, category=category, url=url)
+        return cls(name=name, id=id, category=category, url=url)
 
     @property
     def tenant_key(self) -> str:
         """Canonical tenant format key ('channel:{token}')."""
-        token = self.id.value if self.id else self.name.value
+        token = self.id.value if self.id else self.name
         return f"channel:{token}"
 
     @property
@@ -357,10 +365,10 @@ class Channel:
             return self.url
         if self.id and self.id.is_youtube_canonical:
             return self.id.canonical_url
-        return f"https://www.youtube.com/@{self.name.value}"
+        return f"https://www.youtube.com/@{self.name}"
 
     def __str__(self) -> str:
-        return self.name.value
+        return self.name
 
 
 @dataclass(frozen=True, slots=True)

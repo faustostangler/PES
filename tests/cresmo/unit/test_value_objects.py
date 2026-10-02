@@ -468,7 +468,7 @@ class TestChannel:
             category="News",
             url="https://www.youtube.com/@canaldomeio",
         )
-        assert ch.name == ChannelName("Canal do Meio")
+        assert ch.name == "Canal do Meio"
         assert ch.id == ChannelId("UC_x5XG1OV2P6uZZ5FSM9Ttw")
         assert ch.category == "News"
         assert ch.url == "https://www.youtube.com/@canaldomeio"
@@ -476,26 +476,26 @@ class TestChannel:
         assert str(ch) == "Canal do Meio"
 
     def test_channel_creation_with_string_coercion(self) -> None:
-        from cresmo.domain.value_objects import Channel, ChannelId, ChannelName
+        from cresmo.domain.value_objects import Channel, ChannelId
 
         ch = Channel(
             name="Fabio Akita",
             id="UC_x5XG1OV2P6uZZ5FSM9Ttw",
         )
-        assert isinstance(ch.name, ChannelName)
-        assert ch.name.value == "Fabio Akita"
+        assert isinstance(ch.name, str)
+        assert ch.name == "Fabio Akita"
         assert isinstance(ch.id, ChannelId)
         assert ch.id.value == "UC_x5XG1OV2P6uZZ5FSM9Ttw"
 
     def test_channel_from_name_factory(self) -> None:
-        from cresmo.domain.value_objects import Channel, ChannelId, ChannelName
+        from cresmo.domain.value_objects import Channel, ChannelId
 
         ch = Channel.from_name(
             name="Veritasium",
             id="UCHnyfMqiRRG1u-2MsSQLbXA",
             category="Science",
         )
-        assert ch.name == ChannelName("Veritasium")
+        assert ch.name == "Veritasium"
         assert ch.id == ChannelId("UCHnyfMqiRRG1u-2MsSQLbXA")
         assert ch.category == "Science"
         assert ch.canonical_url == "https://www.youtube.com/channel/UCHnyfMqiRRG1u-2MsSQLbXA"

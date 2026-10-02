@@ -5,15 +5,12 @@ from __future__ import annotations
 from pathlib import Path
 from unittest.mock import MagicMock
 
-import pytest
-
 from cresmo.application.pipeline.transcript_loader import (
-    ensure_file_saved,
+    ensure_transcript_saved,
     is_subpath,
     load_transcript_from_file,
 )
 from cresmo.domain.entities import SourceTranscript
-from cresmo.domain.exceptions import CresmoDomainError
 from cresmo.domain.value_objects import ChannelName, ContentId
 
 
@@ -54,20 +51,23 @@ class TestIsSubpath:
         assert is_subpath(tmp_path, tmp_path) is True
 
 
-class TestEnsureFileSaved:
-    """Verifies filesystem persistence helper ensure_file_saved."""
+class TestEnsureTranscriptSaved:
+    """Verifies transcript persistence delegation to VaultRepositoryPort without disk I/O."""
 
-    def test_file_inside_target_dir_skips_copy(self, tmp_path: Path) -> None:
+    def test_file_inside_target_dir_skips_save(self, tmp_path: Path) -> None:
         target_dir = tmp_path / "target"
         target_dir.mkdir()
         file_path = target_dir / "sample.md"
         file_path.write_text("content", encoding="utf-8")
 
-        result = ensure_file_saved(file_path, target_dir)
+        mock_vault = MagicMock()
+        mock_transcript = MagicMock(spec=SourceTranscript)
 
-        assert result == file_path
+        ensure_transcript_saved(mock_vault, file_path, mock_transcript, target_dir)
 
-    def test_file_outside_target_dir_is_copied(self, tmp_path: Path) -> None:
+        mock_vault.save_transcript.assert_not_called()
+
+    def test_file_outside_target_dir_is_saved_via_vault_port(self, tmp_path: Path) -> None:
         target_dir = tmp_path / "target"
         target_dir.mkdir()
         external_dir = tmp_path / "external"
@@ -75,19 +75,12 @@ class TestEnsureFileSaved:
         file_path = external_dir / "sample.md"
         file_path.write_text("content", encoding="utf-8")
 
-        result = ensure_file_saved(file_path, target_dir)
+        mock_vault = MagicMock()
+        mock_transcript = MagicMock(spec=SourceTranscript)
 
-        assert result == target_dir / "sample.md"
-        assert result.exists()
-        assert result.read_text(encoding="utf-8") == "content"
+        ensure_transcript_saved(mock_vault, file_path, mock_transcript, target_dir)
 
-    def test_missing_file_raises_error(self, tmp_path: Path) -> None:
-        target_dir = tmp_path / "target"
-        target_dir.mkdir()
-        missing = tmp_path / "nonexistent.md"
-
-        with pytest.raises(CresmoDomainError, match="not found"):
-            ensure_file_saved(missing, target_dir)
+        mock_vault.save_transcript.assert_called_once_with(mock_transcript)
 
 
 class TestLoadTranscriptFromFile:
@@ -143,6 +136,5 @@ def test_coordinator_run_for_text_file_passes_raw_dir(tmp_path: Path) -> None:
 
     pipeline.run_for_text_file(file_path)
 
-    # Since file_path is in incoming/ and not in custom_raw/, it must be persisted
-    assert (custom_raw_dir / "sample.md").exists()
+    # Since file_path is in incoming/ and not in custom_raw/, it must be persisted via vault_port mock
     mock_vault.save_transcript.assert_called_once()

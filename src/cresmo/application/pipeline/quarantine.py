@@ -35,24 +35,22 @@ def record_stage_quarantine(
     if ledger_port is not None:
         try:
             existing = ledger_port.get_entry(content_id)
-            media_url = (
-                existing.media_url
-                if existing
-                else f"https://cresmo.internal/content/{content_id.value}"
+            ledger_port.save_entry(
+                LedgerEntry(
+                    content_id=content_id,
+                    media_url=(
+                        existing.media_url
+                        if existing
+                        else f"https://cresmo.internal/content/{content_id.value}"
+                    ),
+                    title=existing.title if existing else f"Quarantined Content {content_id.value}",
+                    channel_name=channel_name,
+                    status=PipelineStatus.QUARANTINED,
+                    error_message=f"Stage '{stage_name}' quarantined: {critique}",
+                    started_at=existing.started_at if existing else None,
+                    completed_at=datetime.now(UTC),
+                )
             )
-            title = existing.title if existing else f"Quarantined Content {content_id.value}"
-            started_at = existing.started_at if existing else None
-            entry = LedgerEntry(
-                content_id=content_id,
-                media_url=media_url,
-                title=title,
-                channel_name=channel_name,
-                status=PipelineStatus.QUARANTINED,
-                error_message=f"Stage '{stage_name}' quarantined: {critique}",
-                started_at=started_at,
-                completed_at=datetime.now(UTC),
-            )
-            ledger_port.save_entry(entry)
         except Exception as ledger_err:  # noqa: BLE001 - Resilient audit persistence
             logger.error(
                 "Failed to record quarantine entry in ledger for %s: %s",

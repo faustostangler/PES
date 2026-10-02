@@ -436,7 +436,6 @@ class TestCresmoPipelineOrchestration:
         result_external = pipeline.run_for_text_file(ext_file)
         assert result_external.success is True
         vault.save_transcript.assert_called_once()
-        assert (raw_lake_dir / "external_article.txt").exists()
 
     def test_run_for_text_file_short_stem_fallback_hash(self, tmp_path: Path) -> None:
         short_file = tmp_path / "ab.txt"
