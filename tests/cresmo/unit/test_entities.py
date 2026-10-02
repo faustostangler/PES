@@ -60,6 +60,34 @@ class TestSourceTranscript:
                 body="",
             )
 
+    def test_source_transcript_channel_and_content_properties(self) -> None:
+        from cresmo.domain.value_objects import Channel, Content
+
+        cid = ContentId("dQw4w9WgXcQ")
+        pub = datetime.date(2023, 5, 12)
+        transcript = SourceTranscript(
+            content_id=cid,
+            channel_name=ChannelName("Example Channel"),
+            body="Valid spoken transcript body text.",
+            title="My Cool Video",
+            source_url="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+            publication_date=pub,
+            channel_id=ChannelId("UC1234567890abcdef"),
+            channel_category="Science",
+        )
+        ch = transcript.channel
+        assert isinstance(ch, Channel)
+        assert ch.name == ChannelName("Example Channel")
+        assert ch.id == ChannelId("UC1234567890abcdef")
+        assert ch.category == "Science"
+
+        cnt = transcript.content
+        assert isinstance(cnt, Content)
+        assert cnt.id == cid
+        assert cnt.title == "My Cool Video"
+        assert cnt.url == "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+        assert cnt.publication_date == pub
+
 
 class TestEnrichedCompendium:
     """SPEC-001 §2.2: EnrichedCompendium invariants."""
@@ -249,6 +277,16 @@ class TestPipelineSessionId:
         assert sid.channel_token == "Philosophy"
         assert sid.video_id == "abcd1234efgh"
 
+    def test_create_with_channel_and_content_value_objects(self) -> None:
+        from cresmo.domain.value_objects import Channel, Content
+
+        ch = Channel.from_name("Example Channel", id="UCxyz1234567890ab")
+        cnt = Content.create("9IbNJ0EsTxI")
+        sid = PipelineSessionId.create(channel=ch, content_id=cnt)
+        assert sid.value == "UCxyz1234567890ab:9IbNJ0EsTxI"
+        assert sid.channel_token == "UCxyz1234567890ab"
+        assert sid.content_id == "9IbNJ0EsTxI"
+
     def test_create_with_string_channel_still_works(self) -> None:
         """Passing a raw string for channel produces canonical {channel}:{content_id}."""
         sid = PipelineSessionId.create(
@@ -369,3 +407,11 @@ class TestChannelTenantId:
     def test_invalid_format_raises_error(self) -> None:
         with pytest.raises(ValueError, match="Invalid ChannelTenantId format"):
             ChannelTenantId(value="bad_format")
+
+    def test_create_with_channel_value_object(self) -> None:
+        from cresmo.domain.value_objects import Channel
+
+        ch = Channel.from_name("Example Channel", id="UCxyz1234567890ab")
+        tid = ChannelTenantId.create(channel=ch)
+        assert tid.value == "channel:UCxyz1234567890ab"
+        assert tid.channel_token == "UCxyz1234567890ab"

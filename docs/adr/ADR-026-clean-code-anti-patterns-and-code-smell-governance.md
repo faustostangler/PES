@@ -26,6 +26,8 @@ During the recursive architectural audit across all layers (Domain, Application,
 8. **Código Morto e Parâmetros Assinatura Inutilizados (`ARG001`, `ARG002`):** Methods and functions receiving arguments that are never consumed within the execution body.
 9. **Constantes Operacionais e Linhagem em Escopo Global de Módulo / `__init__.py` (Violação 12-Factor Fator III, ADR-005, ADR-011):** Defining runtime operational tags, pipeline versions, or tunable parameters as global variables in module files or `__init__.py` instead of centralizing in `CresmoSettings` (Pydantic Settings V2).
 10. **Defensive Fallback Cascading e Instanciação Tardia Oculta (Violação DI & Single Source of Truth):** Declaring optional configuration parameters (`settings: CresmoSettings | None = None`) with inline fallback (`settings or CresmoSettings()`) inside internal functions. This causes unintended disk/env re-reads, bypasses memoized settings factories, and silently drops runtime CLI overrides.
+11. **"C-Style Forward-Declaration / Inverted Newspaper Antipattern" e Ping-Pong com Saltos Retrógrados (Violação do Stepdown Rule / Clean Code):** Inverting the top-down narrative by burying the primary command handler/entry point at the bottom of the module while exposing low-level leaf utility functions at the top, forcing developers into continuous backwards ping-pong jumps across hundreds of lines.
+12. **Acúmulo de Múltiplas Responsabilidades em Módulos de Apresentação (Violação de SRP):** Presentation command modules accumulating disparate concerns (CLI argument conversion, streaming batch processing, resource management/garbage collection, and RAG consolidation) instead of maintaining bounded, laser-focused responsibilities.
 
 This ADR formally codifies the governance rules, anti-patterns, and required implementations to eliminate these smells across the codebase.
 
@@ -51,6 +53,8 @@ This ADR formally codifies the governance rules, anti-patterns, and required imp
 |  [Rule 12] Anti-Shadow State Variables  --> Single Canonical Attribute Naming; Zero State Aliasing|
 |  [Rule 13] Anti-Middle Man & Builders   --> Direct Invocations & Direct Pure DI; Zero Trampolines   |
 |  [Rule 14] Liskov Substitution & SOLID  --> Upfront Port Typing, Full Subtype Interchangeability   |
+|  [Rule 15] Stepdown Rule & Top-Down Narrative --> Inverted Newspaper Elimination; Top-Level Entry Points First   |
+|  [Rule 16] Presentation SRP & Bounded Commands --> CLI Controller Humble Object Decoupled from Batch Engines     |
 +---------------------------------------------------------------------------------------------------+
 ```
 
@@ -586,6 +590,54 @@ Violations of the **Liskov Substitution Principle (LSP)** and core **SOLID** pri
    - **Liskov Substitution Principle (LSP):** Derived adapters strictly honor Port contract invariants and return types.
    - **Interface Segregation Principle (ISP):** Hexagonal Ports remain lean and fine-grained (e.g. `LlmJudgePort` exposes only `evaluate(context)`, decoupled from generative text synthesis in `LLMTransformationPort`).
    - **Dependency Inversion Principle (DIP):** Domain and Application use cases depend solely on Port abstractions (`LlmJudgePort`), never on concrete infrastructure adapters or external SDKs.
+
+---
+
+### Rule 15: The Stepdown Rule & Top-Down Narrative (Anti-Inverted Newspaper & Anti-Ping-Pong)
+
+#### 15.1 The Anti-Pattern
+Placing high-level entry points (`handle_run`, `handle_sync`) at the very bottom of the source file while placing granular leaf helpers (`_drain_telemetry_and_memory`, `_consolidate_master_if_needed`) at the top, resembling outdated C/Pascal forward-declaration constraints. Every call requires jumping backwards ("ping-pong com saltos retrógrados") by hundreds of lines, creating severe cognitive friction and violating Uncle Bob's Stepdown Rule / Newspaper Metaphor.
+
+```python
+# ANTI-PATTERN: Inverted Newspaper with backwards ping-pong jumps
+def _leaf_helper():  # Leaf detail at line 10
+    ...
+
+
+def _execute_branch():  # Intermediate branch at line 100 calls leaf above
+    _leaf_helper()
+
+
+def handle_command():  # Primary entry point buried at line 400!
+    _execute_branch()
+```
+
+#### 15.2 The Standard & Remediation
+All command handlers and orchestrator modules MUST adhere to the **Stepdown Rule (The Newspaper Metaphor)**:
+1. **Headline / Top Abstraction:** CLI registration (`register_subparser`) immediately followed by the primary public entry point (`handle_run`).
+2. **Intermediate Abstraction:** Central dispatcher (`_execute_run_pipeline`) and high-level execution modalities (`execute_single_video_run`, `execute_batch_run`, `execute_batch_dry_run`).
+3. **Domain / Query Helpers:** Query builders and source loaders (`load_batch_sources`, `_build_batch_discovery_query`).
+4. **Leaf Details:** Item-level workers and system maintenance routines (`_process_single_batch_item`, `_consolidate_master_if_needed`, `_drain_telemetry_and_memory`).
+
+Reading down the file steadily descends one level of abstraction at a time without requiring backwards context jumps.
+
+---
+
+### Rule 16: Presentation SRP & Cohesive Command Boundaries
+
+#### 16.1 The Anti-Pattern
+Accumulating multiple distinct lifecycle concerns inside a single CLI command module:
+1. CLI terminal protocol & argument conversion (Humble Object).
+2. Streaming batch discovery & query filtering.
+3. Multi-item batch execution loop with memory/GC drain.
+4. Post-batch downstream domain consolidations (e.g. Master RAG generation).
+
+When unbounded, command files degrade into "Presentation God Files", violating SRP and ADR-026 Rule 5.
+
+#### 16.2 The Standard & Remediation
+1. **Parser Decoupling:** Argument definitions MUST be extracted to dedicated parser modules (`run_parser.py`) to keep command modules focused strictly on execution routing.
+2. **Bounded Modularity (< 500 LOC):** If a command module remains below 500 LOC, cohesive unification (Opção A) is permissible provided the Stepdown Rule (Rule 15) is rigorously enforced.
+3. **SRP Slicing Threshold (> 500 LOC or Disparate Concerns):** If execution logic exceeds 500 LOC or requires reusable background processing, the batch execution engine MUST be sliced into a dedicated executor (e.g., `batch_executor.py`), leaving `run.py` as a pure, lightweight Humble Object controller (< 150 LOC) translating CLI arguments and mapping domain exceptions to POSIX exit codes.
 
 ---
 

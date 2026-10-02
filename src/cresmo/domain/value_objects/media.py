@@ -13,9 +13,12 @@ from enum import Enum
 
 from cresmo.domain.exceptions import DomainValidationError
 from cresmo.domain.value_objects.identity import (
+    Channel,
     ChannelId,
     ChannelName,
+    Content,
     ContentId,
+    SourceModality,
 )
 
 
@@ -76,6 +79,22 @@ class DiscoveredMediaItem:
         object.__setattr__(self, "media_url", u)
         object.__setattr__(self, "channel_name", cn)
         object.__setattr__(self, "content_id", cid)
+
+    @property
+    def channel(self) -> Channel:
+        """Composite Channel Value Object."""
+        return Channel.from_name(name=self.channel_name)
+
+    @property
+    def content(self) -> Content:
+        """Composite Content Value Object."""
+        return Content.create(
+            id=self.content_id,
+            title=self.title,
+            url=self.media_url,
+            modality=SourceModality.URL,
+            publication_date=self.published_at.date() if self.published_at else None,
+        )
 
 
 def normalize_to_uploads_playlist_url(channel_ref: str | ChannelId) -> str:

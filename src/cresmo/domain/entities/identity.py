@@ -11,8 +11,10 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from cresmo.domain.value_objects import (
+    Channel,
     ChannelId,
     ChannelName,
+    Content,
     ContentId,
 )
 
@@ -56,24 +58,33 @@ class PipelineSessionId:
     @classmethod
     def create(
         cls,
-        channel: ChannelName | str,
-        content_id: ContentId | str,
+        channel: Channel | ChannelName | str,
+        content_id: Content | ContentId | str,
         channel_id: ChannelId | None = None,
     ) -> PipelineSessionId:
         """Construct canonical session key preferring stable ChannelId over mutable ChannelName.
 
         Args:
-            channel: Human-readable channel name (cognitive fallback).
-            content_id: Unique content identifier / video ID.
+            channel: Composite Channel VO, human-readable ChannelName, or str.
+            content_id: Composite Content VO, ContentId, or str.
             channel_id: Optional stable platform ID (preferred for algorithmic keys).
         """
         # Algorithmic key: prefer stable ID over mutable name
-        ch = (
-            channel_id.value
-            if channel_id
-            else (channel.value if isinstance(channel, ChannelName) else channel.strip())
-        )
-        c_id = content_id.value if isinstance(content_id, ContentId) else content_id.strip()
+        if isinstance(channel, Channel):
+            ch_id = channel.id or channel_id
+            ch = ch_id.value if ch_id else channel.name.value
+        else:
+            ch = (
+                channel_id.value
+                if channel_id
+                else (channel.value if isinstance(channel, ChannelName) else channel.strip())
+            )
+
+        if isinstance(content_id, Content):
+            c_id = content_id.id.value
+        else:
+            c_id = content_id.value if isinstance(content_id, ContentId) else content_id.strip()
+
         return cls(value=f"{ch}:{c_id}")
 
     @property
@@ -117,21 +128,25 @@ class ChannelTenantId:
     @classmethod
     def create(
         cls,
-        channel: ChannelName | str,
+        channel: Channel | ChannelName | str,
         channel_id: ChannelId | None = None,
     ) -> ChannelTenantId:
         """Construct canonical tenant key preferring stable ChannelId over mutable ChannelName.
 
         Args:
-            channel: Human-readable channel name (cognitive fallback).
+            channel: Composite Channel VO, human-readable ChannelName, or str.
             channel_id: Optional stable platform ID (preferred for algorithmic keys).
         """
         # Algorithmic key: prefer stable ID over mutable name
-        ch = (
-            channel_id.value
-            if channel_id
-            else (channel.value if isinstance(channel, ChannelName) else channel.strip())
-        )
+        if isinstance(channel, Channel):
+            ch_id = channel.id or channel_id
+            ch = ch_id.value if ch_id else channel.name.value
+        else:
+            ch = (
+                channel_id.value
+                if channel_id
+                else (channel.value if isinstance(channel, ChannelName) else channel.strip())
+            )
         return cls(value=f"channel:{ch}")
 
     @property

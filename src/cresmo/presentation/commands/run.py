@@ -66,6 +66,95 @@ def register_subparser(subparsers: argparse._SubParsersAction) -> None:
     register_run_subparser(subparsers, handler=handle_run)
 
 
+def handle_run(args: argparse.Namespace) -> int:
+    """Orchestrate knowledge synthesis pipeline for single video or batch manifest.
+
+    Args:
+        args: Parsed CLI argument namespace.
+
+    Returns:
+        Process exit code integer.
+    """
+    try:
+        settings = CresmoSettings()
+        if args.lookback is not None:
+            settings.days_lookback = args.lookback
+
+        settings.ensure_directories()
+
+        # Active Preflight Validation
+        preflight_checker = build_preflight_checker(settings=settings, check_ffmpeg=True)
+        preflight_res = preflight_checker.check_all()
+        preflight_res.assert_healthy()
+        for warning in preflight_res.warnings:
+            sys.stderr.write(f"[preflight warning] {warning}\n")
+
+        pipeline = build_pipeline(
+            settings=settings,
+            batch_size_override=args.batch_size,
+            web_index=getattr(args, "web_index", False),
+        )
+
+        return _execute_run_pipeline(args, settings, pipeline)
+    except RateLimitExceededError as exc:
+        sys.stderr.write(f"Rate limit exceeded: {exc}\n")
+        return EXIT_RATE_LIMIT_EXCEEDED
+    except IngestionNetworkError as exc:
+        sys.stderr.write(f"Ingestion network error: {exc}\n")
+        return EXIT_INGESTION_ERROR
+    except PreflightError as exc:
+        sys.stderr.write(f"Preflight error: {exc}\n")
+        return EXIT_CONFIG_OR_USAGE_ERROR
+    except (DomainValidationError, CresmoDomainError) as exc:
+        sys.stderr.write(f"Domain validation error: {exc}\n")
+        return EXIT_DOMAIN_VALIDATION_ERROR
+    except ValidationError as exc:
+        sys.stderr.write(f"Configuration error: {exc}\n")
+        return EXIT_CONFIG_OR_USAGE_ERROR
+    except Exception as exc:  # noqa: BLE001
+        sys.stderr.write(f"Unexpected internal error: {exc}\n")
+        return EXIT_INTERNAL_ERROR
+
+
+def _execute_run_pipeline(
+    args: argparse.Namespace,
+    settings: CresmoSettings,
+    pipeline: CresmoPipeline,
+) -> int:
+    """Execute the configured pipeline for single video or batch mode."""
+    if not getattr(args, "web_index", False):
+        pipeline.warmup()
+
+    if args.url:
+        return execute_single_video_run(pipeline, args)
+
+    query = _build_batch_discovery_query(args, settings)
+
+    if args.dry_run:
+        sources = list(
+            load_batch_sources(
+                query=query,
+                settings=settings,
+                media_ingestion_port=pipeline.media_ingestion_port,
+            )
+        )
+        if not sources:
+            manifest_display = str(args.manifest) if args.manifest else "data/playlist.txt"
+            sys.stdout.write(
+                f"No sources found to process (manifest: {manifest_display}, "
+                f"raw lake scan: {not args.no_scan_raw}).\n"
+            )
+            return EXIT_SUCCESS
+        return execute_batch_dry_run(pipeline, sources)
+
+    sources = load_batch_sources(
+        query=query,
+        settings=settings,
+        media_ingestion_port=pipeline.media_ingestion_port,
+    )
+    return execute_batch_run(pipeline, sources, args)
+
+
 def execute_single_video_run(pipeline: CresmoPipeline, args: argparse.Namespace) -> int:
     """Execute knowledge synthesis or dry run for a single target video.
 
@@ -118,6 +207,62 @@ def execute_single_video_run(pipeline: CresmoPipeline, args: argparse.Namespace)
     return EXIT_INTERNAL_ERROR
 
 
+def execute_batch_run(
+    pipeline: CresmoPipeline,
+    sources: Iterable[BatchSource],
+    args: argparse.Namespace,
+) -> int:
+    """Execute end-to-end multi-pass synthesis over prioritized batch sources.
+
+    Args:
+        pipeline: Wired CresmoPipeline orchestrator.
+        sources: Iterable stream of prioritized BatchSource items.
+        args: Parsed CLI argument namespace.
+
+    Returns:
+        Process exit code integer.
+    """
+    completed = 0
+    skipped = 0
+    failed = 0
+
+    total_count_suffix = f"/{len(sources)}" if isinstance(sources, Sized) else ""
+
+    for source_index, source in enumerate(sources, 1):
+        item_prefix = f"[{source_index}{total_count_suffix}]"
+        try:
+            status = _process_single_batch_item(pipeline, source, args, item_prefix)
+            if status == "completed":
+                completed += 1
+            elif status == "skipped":
+                skipped += 1
+            else:
+                failed += 1
+        finally:
+            _drain_telemetry_and_memory(pipeline)
+
+    total_items = completed + skipped + failed
+
+    if total_items == 0:
+        manifest_display = str(args.manifest) if args.manifest else "data/playlist.txt"
+        sys.stdout.write(
+            f"No sources found to process (manifest: {manifest_display}, "
+            f"raw lake scan: {not args.no_scan_raw}).\n"
+        )
+        return EXIT_SUCCESS
+
+    sys.stdout.write(
+        f"\nBatch Synthesis Summary:\n"
+        f"- Total Items: {total_items}\n"
+        f"- Completed: {completed}\n"
+        f"- Skipped (Idempotent): {skipped}\n"
+        f"- Failed: {failed}\n"
+    )
+
+    _consolidate_master_if_needed(pipeline, completed)
+    return EXIT_SUCCESS if failed == 0 else EXIT_INTERNAL_ERROR
+
+
 def execute_batch_dry_run(pipeline: CresmoPipeline, sources: list[BatchSource]) -> int:
     """Inspect and validate batch sources without invoking generative LLM stages.
 
@@ -158,27 +303,59 @@ def execute_batch_dry_run(pipeline: CresmoPipeline, sources: list[BatchSource]) 
     return EXIT_SUCCESS
 
 
-def _drain_telemetry_and_memory(pipeline: CresmoPipeline) -> None:
-    """Drain telemetry queues and perform garbage collection per ADR-020 & SPEC-008."""
-    try:
-        pipeline.telemetry_port.flush()
-    except Exception as exc:  # noqa: BLE001
-        logger.debug("[run] Telemetry flush skipped or failed during cleanup: %s", exc)
-    gc.collect()
-    try:
-        rss_bytes = get_process_rss_bytes()
-        pipeline.metrics_port.set_gauge(
-            "cresmo_process_resident_memory_bytes",
-            rss_bytes,
-            labels={"role": "worker"},
-        )
-        pipeline.metrics_port.increment_counter(
-            "cresmo_gc_collections_total",
-            1.0,
-            labels={"generation": "all"},
-        )
-    except Exception as exc:  # noqa: BLE001
-        logger.debug("[run] Process metrics emission failed during cleanup: %s", exc)
+def load_batch_sources(
+    query: BatchDiscoveryQuery,
+    settings: CresmoSettings,
+    media_ingestion_port: MediaIngestionPort | None = None,
+) -> Iterator[BatchSource]:
+    """Execute streaming batch source discovery via DiscoverBatchSourcesUseCase.
+
+    Conforms to ADR-010 (Streaming-First Unification), ADR-026 (Anti-Defensive Fallback),
+    and ADR-026 (Rule 11: Anti-Bifurcated Construction).
+
+    Args:
+        query: BatchDiscoveryQuery constraints.
+        settings: Validated application settings.
+        media_ingestion_port: Ingestion adapter port instance.
+
+    Returns:
+        Streaming iterator of BatchSource records.
+    """
+    discovery_use_case = build_discover_batch_sources_use_case(
+        settings=settings,
+        media_ingestion_port=media_ingestion_port,
+        progress_callback=lambda msg: sys.stdout.write(msg),
+    )
+    return discovery_use_case.execute(query=query)
+
+
+def _build_batch_discovery_query(
+    args: argparse.Namespace,
+    settings: CresmoSettings,
+) -> BatchDiscoveryQuery:
+    """Build strongly-typed discovery query from parsed CLI arguments and settings."""
+    enable_crawl = (
+        False
+        if getattr(args, "no_crawl", False)
+        else getattr(settings, "enable_channel_crawler", True)
+    )
+
+    filter_criteria = SyncFilterCriteria.from_strings(
+        channels=getattr(args, "channels", None) or [],
+        categories=getattr(args, "categories", None) or [],
+        video_ids=getattr(args, "video_ids", None) or [],
+    )
+
+    return BatchDiscoveryQuery(
+        explicit_manifest=args.manifest,
+        scan_raw=not args.no_scan_raw,
+        lookback_days=settings.days_lookback,
+        channel_max_videos=args.channel_max_videos,
+        discovery_workers=settings.channel_discovery_workers,
+        enable_channel_crawler=enable_crawl,
+        filter_criteria=filter_criteria,
+        queue_maxsize=settings.discovery_queue_maxsize,
+    )
 
 
 def _process_single_batch_item(
@@ -257,201 +434,24 @@ def _consolidate_master_if_needed(pipeline: CresmoPipeline, completed: int) -> N
         sys.stderr.write(f"Warning: Master consolidation failed: {exc}\n")
 
 
-def execute_batch_run(
-    pipeline: CresmoPipeline,
-    sources: Iterable[BatchSource],
-    args: argparse.Namespace,
-) -> int:
-    """Execute end-to-end multi-pass synthesis over prioritized batch sources.
-
-    Args:
-        pipeline: Wired CresmoPipeline orchestrator.
-        sources: Iterable stream of prioritized BatchSource items.
-        args: Parsed CLI argument namespace.
-
-    Returns:
-        Process exit code integer.
-    """
-    completed = 0
-    skipped = 0
-    failed = 0
-
-    total_count_suffix = f"/{len(sources)}" if isinstance(sources, Sized) else ""
-
-    for source_index, source in enumerate(sources, 1):
-        item_prefix = f"[{source_index}{total_count_suffix}]"
-        try:
-            status = _process_single_batch_item(pipeline, source, args, item_prefix)
-            if status == "completed":
-                completed += 1
-            elif status == "skipped":
-                skipped += 1
-            else:
-                failed += 1
-        finally:
-            _drain_telemetry_and_memory(pipeline)
-
-    total_items = completed + skipped + failed
-
-    if total_items == 0:
-        manifest_display = str(args.manifest) if args.manifest else "data/playlist.txt"
-        sys.stdout.write(
-            f"No sources found to process (manifest: {manifest_display}, "
-            f"raw lake scan: {not args.no_scan_raw}).\n"
-        )
-        return EXIT_SUCCESS
-
-    sys.stdout.write(
-        f"\nBatch Synthesis Summary:\n"
-        f"- Total Items: {total_items}\n"
-        f"- Completed: {completed}\n"
-        f"- Skipped (Idempotent): {skipped}\n"
-        f"- Failed: {failed}\n"
-    )
-
-    _consolidate_master_if_needed(pipeline, completed)
-    return EXIT_SUCCESS if failed == 0 else EXIT_INTERNAL_ERROR
-
-
-def load_batch_sources(
-    query: BatchDiscoveryQuery,
-    settings: CresmoSettings,
-    media_ingestion_port: MediaIngestionPort | None = None,
-) -> Iterator[BatchSource]:
-    """Execute streaming batch source discovery via DiscoverBatchSourcesUseCase.
-
-    Conforms to ADR-010 (Streaming-First Unification), ADR-026 (Anti-Defensive Fallback),
-    and ADR-026 (Rule 11: Anti-Bifurcated Construction).
-
-    Args:
-        query: BatchDiscoveryQuery constraints.
-        settings: Validated application settings.
-        media_ingestion_port: Ingestion adapter port instance.
-
-    Returns:
-        Streaming iterator of BatchSource records.
-    """
-    discovery_use_case = build_discover_batch_sources_use_case(
-        settings=settings,
-        media_ingestion_port=media_ingestion_port,
-        progress_callback=lambda msg: sys.stdout.write(msg),
-    )
-    return discovery_use_case.execute(query=query)
-
-
-def _build_batch_discovery_query(
-    args: argparse.Namespace,
-    settings: CresmoSettings,
-) -> BatchDiscoveryQuery:
-    """Build strongly-typed discovery query from parsed CLI arguments and settings."""
-    enable_crawl = (
-        False
-        if getattr(args, "no_crawl", False)
-        else getattr(settings, "enable_channel_crawler", True)
-    )
-
-    filter_criteria = SyncFilterCriteria.from_strings(
-        channels=getattr(args, "channels", None) or [],
-        categories=getattr(args, "categories", None) or [],
-        video_ids=getattr(args, "video_ids", None) or [],
-    )
-
-    return BatchDiscoveryQuery(
-        explicit_manifest=args.manifest,
-        scan_raw=not args.no_scan_raw,
-        lookback_days=settings.days_lookback,
-        channel_max_videos=args.channel_max_videos,
-        discovery_workers=settings.channel_discovery_workers,
-        enable_channel_crawler=enable_crawl,
-        filter_criteria=filter_criteria,
-        queue_maxsize=settings.discovery_queue_maxsize,
-    )
-
-
-def _execute_run_pipeline(
-    args: argparse.Namespace,
-    settings: CresmoSettings,
-    pipeline: CresmoPipeline,
-) -> int:
-    """Execute the configured pipeline for single video or batch mode."""
-    if not getattr(args, "web_index", False):
-        pipeline.warmup()
-
-    if args.url:
-        return execute_single_video_run(pipeline, args)
-
-    query = _build_batch_discovery_query(args, settings)
-
-    if args.dry_run:
-        sources = list(
-            load_batch_sources(
-                query=query,
-                settings=settings,
-                media_ingestion_port=pipeline.media_ingestion_port,
-            )
-        )
-        if not sources:
-            manifest_display = str(args.manifest) if args.manifest else "data/playlist.txt"
-            sys.stdout.write(
-                f"No sources found to process (manifest: {manifest_display}, "
-                f"raw lake scan: {not args.no_scan_raw}).\n"
-            )
-            return EXIT_SUCCESS
-        return execute_batch_dry_run(pipeline, sources)
-
-    sources = load_batch_sources(
-        query=query,
-        settings=settings,
-        media_ingestion_port=pipeline.media_ingestion_port,
-    )
-    return execute_batch_run(pipeline, sources, args)
-
-
-def handle_run(args: argparse.Namespace) -> int:
-    """Orchestrate knowledge synthesis pipeline for single video or batch manifest.
-
-    Args:
-        args: Parsed CLI argument namespace.
-
-    Returns:
-        Process exit code integer.
-    """
+def _drain_telemetry_and_memory(pipeline: CresmoPipeline) -> None:
+    """Drain telemetry queues and perform garbage collection per ADR-020 & SPEC-008."""
     try:
-        settings = CresmoSettings()
-        if args.lookback is not None:
-            settings.days_lookback = args.lookback
-
-        settings.ensure_directories()
-
-        # Active Preflight Validation
-        preflight_checker = build_preflight_checker(settings=settings, check_ffmpeg=True)
-        preflight_res = preflight_checker.check_all()
-        preflight_res.assert_healthy()
-        for warning in preflight_res.warnings:
-            sys.stderr.write(f"[preflight warning] {warning}\n")
-
-        pipeline = build_pipeline(
-            settings=settings,
-            batch_size_override=args.batch_size,
-            web_index=getattr(args, "web_index", False),
-        )
-
-        return _execute_run_pipeline(args, settings, pipeline)
-    except RateLimitExceededError as exc:
-        sys.stderr.write(f"Rate limit exceeded: {exc}\n")
-        return EXIT_RATE_LIMIT_EXCEEDED
-    except IngestionNetworkError as exc:
-        sys.stderr.write(f"Ingestion network error: {exc}\n")
-        return EXIT_INGESTION_ERROR
-    except PreflightError as exc:
-        sys.stderr.write(f"Preflight error: {exc}\n")
-        return EXIT_CONFIG_OR_USAGE_ERROR
-    except (DomainValidationError, CresmoDomainError) as exc:
-        sys.stderr.write(f"Domain validation error: {exc}\n")
-        return EXIT_DOMAIN_VALIDATION_ERROR
-    except ValidationError as exc:
-        sys.stderr.write(f"Configuration error: {exc}\n")
-        return EXIT_CONFIG_OR_USAGE_ERROR
+        pipeline.telemetry_port.flush()
     except Exception as exc:  # noqa: BLE001
-        sys.stderr.write(f"Unexpected internal error: {exc}\n")
-        return EXIT_INTERNAL_ERROR
+        logger.debug("[run] Telemetry flush skipped or failed during cleanup: %s", exc)
+    gc.collect()
+    try:
+        rss_bytes = get_process_rss_bytes()
+        pipeline.metrics_port.set_gauge(
+            "cresmo_process_resident_memory_bytes",
+            rss_bytes,
+            labels={"role": "worker"},
+        )
+        pipeline.metrics_port.increment_counter(
+            "cresmo_gc_collections_total",
+            1.0,
+            labels={"generation": "all"},
+        )
+    except Exception as exc:  # noqa: BLE001
+        logger.debug("[run] Process metrics emission failed during cleanup: %s", exc)

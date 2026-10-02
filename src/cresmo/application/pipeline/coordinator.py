@@ -173,30 +173,28 @@ class CresmoPipeline:
         entry: RawIndexEntry | None = None,
     ) -> PipelineResult:
         """Execute the end-to-end synthesis pipeline (canonical Template Method)."""
-        content_id = raw.content_id
-        channel_name = raw.channel_name
+        channel = raw.channel
+        content = raw.content
         session_id = PipelineSessionId.create(
-            channel=channel_name,
-            content_id=content_id,
-            channel_id=raw.channel_id,
+            channel=channel,
+            content_id=content,
         )
         tenant_id = ChannelTenantId.create(
-            channel=channel_name,
-            channel_id=raw.channel_id,
+            channel=channel,
         )
         user_identity = user or UserIdentity.anonymous()
 
         root_metadata = {
             "source": "transcript",
-            "channel": channel_name.value,
-            "channel_name": channel_name.value,
-            "content_id": content_id.value,
-            "title": raw.title or content_id.value,
+            "channel": channel.name.value,
+            "channel_name": channel.name.value,
+            "content_id": content.id.value,
+            "title": content.display_title,
         }
-        if raw.channel_id:
-            root_metadata["channel_id"] = raw.channel_id.value
-        if raw.source_url:
-            root_metadata["video_url"] = raw.source_url
+        if channel.id:
+            root_metadata["channel_id"] = channel.id.value
+        if content.url:
+            root_metadata["video_url"] = content.url
 
         with self.telemetry_port.start_pipeline_session(
             session_id=session_id,
@@ -211,9 +209,8 @@ class CresmoPipeline:
             execution_context = PipelineExecutionContext(
                 session_id=session_id,
                 user_identity=user_identity,
-                channel_name=channel_name,
-                content_id=content_id,
-                channel_id=raw.channel_id,
+                channel=channel,
+                content=content,
             )
 
             # =========================================================================
@@ -249,7 +246,7 @@ class CresmoPipeline:
             # mocs = self.stage_runner.execute_stage("reconcile_mocs", source=notes, context=execution_context)
 
             return PipelineResult(
-                content_id=content_id,
+                content_id=content.id,
                 success=True,
                 source_transcript=raw,
                 fluid_transcript=fluid,
@@ -324,7 +321,12 @@ class CresmoPipeline:
             )
         self.warmup()
         raw = load_transcript_from_file(file_path)
-        ensure_raw_saved_in_vault(self.vault_port, file_path, raw)
+        ensure_raw_saved_in_vault(
+            self.vault_port,
+            file_path,
+            raw,
+            raw_dir=self.settings.raw_dir,
+        )
 
         return self.execute(
             raw=raw,

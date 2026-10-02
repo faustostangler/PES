@@ -8,6 +8,7 @@ Conforms to:
 
 from __future__ import annotations
 
+import datetime
 import re
 from dataclasses import dataclass
 from enum import Enum
@@ -296,3 +297,133 @@ class ContentId:
 
     def __hash__(self) -> int:
         return hash(self.value)
+
+
+@dataclass(frozen=True, slots=True)
+class Channel:
+    """Canonical domain Value Object representing a content creator or source channel.
+
+    Encapsulates channel identity, human-readable name, platform ID, category, and canonical URL.
+    Conforms to ADR-019 (Zero Primitive Obsession) and ADR-032.
+    """
+
+    name: ChannelName
+    id: ChannelId | None = None
+    category: str = ""
+    url: str | None = None
+
+    def __init__(
+        self,
+        name: ChannelName | str,
+        id: ChannelId | str | None = None,
+        category: str = "",
+        url: str | None = None,
+    ) -> None:
+        c_name = ChannelName.from_string(name) if isinstance(name, (ChannelName, str)) else name
+        c_id = ChannelId.from_string(id) if isinstance(id, (ChannelId, str)) and id else None
+        if not isinstance(c_name, ChannelName):
+            raise DomainValidationError(f"Invalid channel name type: {type(name)}")
+        if c_id is not None and not isinstance(c_id, ChannelId):
+            raise DomainValidationError(f"Invalid channel id type: {type(id)}")
+
+        object.__setattr__(self, "name", c_name)
+        object.__setattr__(self, "id", c_id)
+        object.__setattr__(self, "category", category.strip() if category else "")
+        object.__setattr__(self, "url", url.strip() if url else None)
+
+    @classmethod
+    def from_name(
+        cls,
+        name: str | ChannelName,
+        id: str | ChannelId | None = None,
+        category: str = "",
+        url: str | None = None,
+    ) -> Channel:
+        """Ergonomic factory constructing Channel from primitive strings or Value Objects."""
+        c_name = ChannelName.from_string(name)
+        c_id = ChannelId.from_string(id) if id else None
+        return cls(name=c_name, id=c_id, category=category, url=url)
+
+    @property
+    def tenant_key(self) -> str:
+        """Canonical tenant format key ('channel:{token}')."""
+        token = self.id.value if self.id else self.name.value
+        return f"channel:{token}"
+
+    @property
+    def canonical_url(self) -> str:
+        """Derive the canonical public URL for this channel."""
+        if self.url:
+            return self.url
+        if self.id and self.id.is_youtube_canonical:
+            return self.id.canonical_url
+        return f"https://www.youtube.com/@{self.name.value}"
+
+    def __str__(self) -> str:
+        return self.name.value
+
+
+@dataclass(frozen=True, slots=True)
+class Content:
+    """Canonical domain Value Object representing a media item, transcript, or video.
+
+    Encapsulates content identifier, title, source URL, input modality, and publication date.
+    Conforms to ADR-019 (Zero Primitive Obsession) and ADR-032.
+    """
+
+    id: ContentId
+    title: str = ""
+    url: str = ""
+    modality: SourceModality = SourceModality.URL
+    publication_date: datetime.date | None = None
+
+    def __init__(
+        self,
+        id: ContentId | str,
+        title: str = "",
+        url: str = "",
+        modality: SourceModality | str = SourceModality.URL,
+        publication_date: datetime.date | None = None,
+    ) -> None:
+        c_id = ContentId.from_string(id) if isinstance(id, (ContentId, str)) else id
+        if not isinstance(c_id, ContentId):
+            raise DomainValidationError(f"Invalid content id type: {type(id)}")
+
+        mod = SourceModality(modality.lower()) if isinstance(modality, str) else modality
+
+        object.__setattr__(self, "id", c_id)
+        object.__setattr__(self, "title", title.strip() if title else "")
+        object.__setattr__(self, "url", url.strip() if url else "")
+        object.__setattr__(self, "modality", mod)
+        object.__setattr__(self, "publication_date", publication_date)
+
+    @classmethod
+    def create(
+        cls,
+        id: str | ContentId,
+        title: str = "",
+        url: str = "",
+        modality: SourceModality | str = SourceModality.URL,
+        publication_date: datetime.date | None = None,
+    ) -> Content:
+        """Ergonomic factory constructing Content from primitive strings or Value Objects."""
+        c_id = ContentId.from_string(id)
+        mod = SourceModality(modality.lower()) if isinstance(modality, str) else modality
+        return cls(
+            id=c_id,
+            title=title,
+            url=url,
+            modality=mod,
+            publication_date=publication_date,
+        )
+
+    @property
+    def display_title(self) -> str:
+        """Human-readable display title, falling back to canonical content identifier."""
+        return self.title or self.id.value
+
+    def __str__(self) -> str:
+        return self.id.value
+
+
+Video = Content

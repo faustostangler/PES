@@ -21,9 +21,12 @@ from cresmo.domain.exceptions import (
 )
 from cresmo.domain.value_objects import (
     CandidateText,
+    Channel,
     ChannelId,
     ChannelName,
+    Content,
     ContentId,
+    SourceModality,
 )
 
 # Regex matching Markdown tables (| header | header | \n | --- | --- |)
@@ -93,6 +96,29 @@ class SourceTranscript:
         if not self.body.strip():
             raise DomainValidationError("SourceTranscript body cannot be empty or whitespace.")
 
+    @property
+    def channel(self) -> Channel:
+        """Composite Channel Value Object encapsulating channel identity, taxonomy, and URL."""
+        return Channel(
+            name=self.channel_name,
+            id=self.channel_id,
+            category=self.channel_category,
+            url=f"https://www.youtube.com/channel/{self.channel_id.value}"
+            if self.channel_id
+            else None,
+        )
+
+    @property
+    def content(self) -> Content:
+        """Composite Content Value Object encapsulating media identity, title, URL, and modality."""
+        return Content(
+            id=self.content_id,
+            title=self.title or self.content_id.value,
+            url=self.source_url,
+            modality=SourceModality.URL if self.source_url else SourceModality.FILE,
+            publication_date=self.publication_date,
+        )
+
 
 @dataclass(frozen=True)
 class FluidTranscript:
@@ -157,6 +183,29 @@ class FluidTranscript:
             raise CompendiumStructureError(
                 "FluidTranscript body must be continuous prose and cannot contain Markdown tables."
             )
+
+    @property
+    def channel(self) -> Channel:
+        """Composite Channel Value Object encapsulating channel identity, taxonomy, and URL."""
+        return Channel(
+            name=self.channel_name,
+            id=self.channel_id,
+            category=self.channel_category,
+            url=f"https://www.youtube.com/channel/{self.channel_id.value}"
+            if self.channel_id
+            else None,
+        )
+
+    @property
+    def content(self) -> Content:
+        """Composite Content Value Object encapsulating media identity, title, URL, and modality."""
+        return Content(
+            id=self.content_id,
+            title=self.title or self.content_id.value,
+            url=self.source_url,
+            modality=SourceModality.URL if self.source_url else SourceModality.FILE,
+            publication_date=self.publication_date,
+        )
 
 
 def post_process_fluid_transcript(

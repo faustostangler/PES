@@ -157,19 +157,24 @@ def load_manifest_urls(manifest_path: Path) -> list[str]:
     ]
 
 
+def is_subpath(target_path: Path, parent_dir: Path | None) -> bool:
+    """Determine whether a target file path is located within a parent directory."""
+    if parent_dir is None:
+        return False
+    try:
+        return target_path.resolve().is_relative_to(parent_dir.resolve())
+    except (ValueError, RuntimeError):
+        return False
+
+
 def ensure_raw_saved_in_vault(
     vault_port: VaultRepositoryPort,
     file_path: Path,
     raw: SourceTranscript,
+    raw_dir: Path | None = None,
 ) -> None:
-    """Persist raw transcript in vault if not already located inside its raw directory."""
-    raw_dir = getattr(vault_port, "raw_dir", None)
-    is_already_in_raw = False
-    if isinstance(raw_dir, Path):
-        try:
-            is_already_in_raw = file_path.resolve().is_relative_to(raw_dir.resolve())
-        except (ValueError, RuntimeError):
-            is_already_in_raw = False
-
-    if not is_already_in_raw:
-        vault_port.save_raw_transcript(raw)
+    """Persist raw transcript in vault if not already located inside the target raw directory."""
+    vault_raw_dir = getattr(vault_port, "raw_dir", None)
+    if is_subpath(file_path, raw_dir) or is_subpath(file_path, vault_raw_dir):
+        return
+    vault_port.save_raw_transcript(raw)

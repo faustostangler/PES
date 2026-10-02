@@ -22,10 +22,13 @@ from cresmo.domain.value_objects.constants import (
     is_processable_transcript_file,
 )
 from cresmo.domain.value_objects.identity import (
+    Channel,
     ChannelId,
     ChannelName,
+    Content,
     ContentId,
     SourceModality,
+    Video,
 )
 from cresmo.domain.value_objects.ledger import (
     LedgerEntry,
@@ -72,9 +75,11 @@ __all__ = [
     "AtomicEntityInventory",
     "CandidateText",
     "CausalMatrix",
+    "Channel",
     "ChannelFeedQuery",
     "ChannelId",
     "ChannelName",
+    "Content",
     "ContentId",
     "CriterionScore",
     "CrossContextRelations",
@@ -95,6 +100,7 @@ __all__ = [
     "SyncSummary",
     "TypedVerdict",
     "VerdictType",
+    "Video",
     "is_processable_transcript_file",
     "normalize_to_uploads_playlist_url",
 ]

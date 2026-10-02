@@ -52,6 +52,8 @@ In this repository, architectural decisions evolve continuously through test-dri
 | [**ADR-029**](ADR-029-unified-quality-judge-port-and-evaluator-adapters.md) | 2026-10-01 | Unified LlmJudgePort, Decision-Model Evaluators, and Resilient Multi-Provider Adapters with Langfuse Telemetry | Cognitive / Evaluation | `ACCEPTED` | Unifies scattered judges under `LlmJudgePort`; introduces Gemini, Ollama, TypeSafe, and Langfuse decorator adapters. |
 | [**ADR-030**](ADR-030-stage-quality-gate-and-evaluator-retry-fabric.md) | 2026-10-01 | Stage Quality Gate & Evaluator Closed-Loop Retry Fabric | Application / Quality | `ACCEPTED` | Eliminates evaluator orchestration duplication in coordinator; introduces `PipelineStageRunner.run_evaluated_stage` retry loop. |
 | [**ADR-031**](ADR-031-standardized-stage-descriptor-and-closed-loop-refinement.md) | 2026-10-01 | Standardized StageDescriptor, SourceTranscript, CandidateText, and Closed-Loop Reflection Quality Fabric | Application / Pipeline | `ACCEPTED` | Universal `StageDescriptor` template, complete elimination of `RawTranscript` in favor of `SourceTranscript`, `CandidateText` VO, `CritiqueSynthesizerPort` reflection loop, and 4-step fail-fast quarantine. |
+| [**ADR-032**](ADR-032-composite-channel-and-content-value-objects.md) | 2026-10-02 | Composite Channel and Content Value Objects and Context Simplification | DDD Tático / Value Objects | `ACCEPTED` | Merges fragmented channel and content attributes into composite `Channel` and `Content` VOs; simplifies `PipelineExecutionContext` to 4 pillars (`session`, `user`, `channel`, `content`). |
+
 
 ---
 

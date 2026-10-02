@@ -4,6 +4,9 @@ Derived from SPEC-001 Section 2.1 & Section 5.
 Verifies construction invariants, zero primitive obsession, and boundary validation.
 """
 
+import datetime
+from dataclasses import FrozenInstanceError
+
 import pytest
 
 from cresmo.domain.exceptions import DomainValidationError, NoteTypologyError
@@ -451,3 +454,138 @@ class TestChannelId:
         assert cid != 999
         assert hash(cid) == hash("UC_x5XG1OV2P6uZZ5FSM9Ttw")
         assert cid.strip() == "UC_x5XG1OV2P6uZZ5FSM9Ttw"
+
+
+class TestChannel:
+    """Canonical domain Value Object representing a channel / creator."""
+
+    def test_channel_creation_with_value_objects(self) -> None:
+        from cresmo.domain.value_objects import Channel, ChannelId, ChannelName
+
+        ch = Channel(
+            name=ChannelName("Canal do Meio"),
+            id=ChannelId("UC_x5XG1OV2P6uZZ5FSM9Ttw"),
+            category="News",
+            url="https://www.youtube.com/@canaldomeio",
+        )
+        assert ch.name == ChannelName("Canal do Meio")
+        assert ch.id == ChannelId("UC_x5XG1OV2P6uZZ5FSM9Ttw")
+        assert ch.category == "News"
+        assert ch.url == "https://www.youtube.com/@canaldomeio"
+        assert ch.canonical_url == "https://www.youtube.com/@canaldomeio"
+        assert str(ch) == "Canal do Meio"
+
+    def test_channel_creation_with_string_coercion(self) -> None:
+        from cresmo.domain.value_objects import Channel, ChannelId, ChannelName
+
+        ch = Channel(
+            name="Fabio Akita",
+            id="UC_x5XG1OV2P6uZZ5FSM9Ttw",
+        )
+        assert isinstance(ch.name, ChannelName)
+        assert ch.name.value == "Fabio Akita"
+        assert isinstance(ch.id, ChannelId)
+        assert ch.id.value == "UC_x5XG1OV2P6uZZ5FSM9Ttw"
+
+    def test_channel_from_name_factory(self) -> None:
+        from cresmo.domain.value_objects import Channel, ChannelId, ChannelName
+
+        ch = Channel.from_name(
+            name="Veritasium",
+            id="UCHnyfMqiRRG1u-2MsSQLbXA",
+            category="Science",
+        )
+        assert ch.name == ChannelName("Veritasium")
+        assert ch.id == ChannelId("UCHnyfMqiRRG1u-2MsSQLbXA")
+        assert ch.category == "Science"
+        assert ch.canonical_url == "https://www.youtube.com/channel/UCHnyfMqiRRG1u-2MsSQLbXA"
+
+    def test_channel_canonical_url_fallback(self) -> None:
+        from cresmo.domain.value_objects import Channel
+
+        ch = Channel.from_name(name="NonCanonicalChannel")
+        assert ch.canonical_url == "https://www.youtube.com/@NonCanonicalChannel"
+
+    def test_channel_tenant_key(self) -> None:
+        from cresmo.domain.value_objects import Channel
+
+        ch_with_id = Channel.from_name("Akita", id="UC1234567890abcdef")
+        assert ch_with_id.tenant_key == "channel:UC1234567890abcdef"
+
+        ch_without_id = Channel.from_name("Akita")
+        assert ch_without_id.tenant_key == "channel:Akita"
+
+    def test_channel_empty_name_raises_validation_error(self) -> None:
+        from cresmo.domain.value_objects import Channel
+
+        with pytest.raises(DomainValidationError):
+            Channel.from_name("")
+
+    def test_channel_immutability(self) -> None:
+        from cresmo.domain.value_objects import Channel
+
+        ch = Channel.from_name("Akita")
+        with pytest.raises((FrozenInstanceError, AttributeError)):
+            ch.name = "New Name"  # type: ignore
+
+
+class TestContent:
+    """Canonical domain Value Object representing a content / video item."""
+
+    def test_content_creation_with_value_objects(self) -> None:
+        from cresmo.domain.value_objects import Content, ContentId, SourceModality
+
+        cnt = Content(
+            id=ContentId("dQw4w9WgXcQ"),
+            title="Never Gonna Give You Up",
+            url="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+            modality=SourceModality.URL,
+            publication_date=datetime.date(1987, 7, 27),
+        )
+        assert cnt.id == ContentId("dQw4w9WgXcQ")
+        assert cnt.title == "Never Gonna Give You Up"
+        assert cnt.display_title == "Never Gonna Give You Up"
+        assert cnt.url == "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+        assert cnt.modality == SourceModality.URL
+        assert cnt.publication_date == datetime.date(1987, 7, 27)
+        assert str(cnt) == "dQw4w9WgXcQ"
+
+    def test_content_creation_with_string_coercion(self) -> None:
+        from cresmo.domain.value_objects import Content, ContentId
+
+        cnt = Content(id="dQw4w9WgXcQ", title="Test Title")
+        assert isinstance(cnt.id, ContentId)
+        assert cnt.id.value == "dQw4w9WgXcQ"
+
+    def test_content_create_factory(self) -> None:
+        from cresmo.domain.value_objects import Content, ContentId, SourceModality
+
+        cnt = Content.create(
+            id="dQw4w9WgXcQ",
+            title="My Video",
+            url="https://youtube.com/watch?v=dQw4w9WgXcQ",
+            modality="url",
+            publication_date=datetime.date(2022, 1, 1),
+        )
+        assert cnt.id == ContentId("dQw4w9WgXcQ")
+        assert cnt.title == "My Video"
+        assert cnt.modality == SourceModality.URL
+        assert cnt.publication_date == datetime.date(2022, 1, 1)
+
+    def test_content_display_title_fallback(self) -> None:
+        from cresmo.domain.value_objects import Content
+
+        cnt = Content.create(id="dQw4w9WgXcQ")
+        assert cnt.display_title == "dQw4w9WgXcQ"
+
+    def test_content_video_alias(self) -> None:
+        from cresmo.domain.value_objects import Content, Video
+
+        assert Video is Content
+
+    def test_content_immutability(self) -> None:
+        from cresmo.domain.value_objects import Content
+
+        cnt = Content.create(id="dQw4w9WgXcQ")
+        with pytest.raises((FrozenInstanceError, AttributeError)):
+            cnt.title = "Changed"  # type: ignore

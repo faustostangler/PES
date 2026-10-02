@@ -40,6 +40,28 @@ def test_pipeline_execution_context_creation() -> None:
     assert ctx.channel_id.value == "UC_test123"
 
 
+def test_pipeline_execution_context_composite_creation() -> None:
+    """Verify PipelineExecutionContext receives composite Channel and Content VOs (ADR-032)."""
+    from cresmo.domain.value_objects import Channel, Content
+
+    channel = Channel.from_name("Test Channel", id="UC_test123")
+    content = Content.create("test_vid", title="Sample Title")
+    ctx = PipelineExecutionContext(
+        session_id=PipelineSessionId("test_chan:test_vid"),
+        user_identity=UserIdentity.worker(),
+        channel=channel,
+        content=content,
+    )
+
+    assert ctx.channel == channel
+    assert ctx.content == content
+    assert ctx.video == content
+    assert ctx.channel_name.value == "Test Channel"
+    assert ctx.content_id.value == "test_vid"
+    assert ctx.channel_id is not None
+    assert ctx.channel_id.value == "UC_test123"
+
+
 def test_stage_factory_builds_fluid_prose_descriptor() -> None:
     """Verify StageFactory produces a properly wired, stateless StageDescriptor for fluid prose."""
     settings = DefaultPipelineSettings(
