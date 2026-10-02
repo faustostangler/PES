@@ -35,7 +35,7 @@ class TranscriptVaultHandler:
         self.raw_dir = raw_dir
         self.enriched_dir = enriched_dir
 
-    def save_raw_transcript(self, transcript: SourceTranscript) -> None:
+    def save_transcript(self, transcript: SourceTranscript) -> None:
         """Persist source transcript with canonical YAML frontmatter."""
         channel_dir = self.raw_dir / sanitize_filename(transcript.channel_name)
         file_path = channel_dir / f"{transcript.content_id.value}.md"

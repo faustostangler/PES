@@ -5,13 +5,11 @@ from __future__ import annotations
 import hashlib
 import logging
 import re
+import shutil
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 import yaml
-
-if TYPE_CHECKING:
-    from cresmo.application.ports.storage import VaultRepositoryPort
 
 from cresmo.domain.entities import SourceTranscript
 from cresmo.domain.exceptions import CresmoDomainError
@@ -167,14 +165,26 @@ def is_subpath(target_path: Path, parent_dir: Path | None) -> bool:
         return False
 
 
-def ensure_raw_saved_in_vault(
-    vault_port: VaultRepositoryPort,
-    file_path: Path,
-    raw: SourceTranscript,
-    raw_dir: Path | None = None,
-) -> None:
-    """Persist raw transcript in vault if not already located inside the target raw directory."""
-    vault_raw_dir = getattr(vault_port, "raw_dir", None)
-    if is_subpath(file_path, raw_dir) or is_subpath(file_path, vault_raw_dir):
-        return
-    vault_port.save_raw_transcript(raw)
+def ensure_file_saved(file_path: Path, target_dir: Path) -> Path:
+    """Ensure a file is located within target_dir, saving/copying it if external.
+
+    Args:
+        file_path: Source file path to verify and potentially persist.
+        target_dir: Target destination directory.
+
+    Returns:
+        Path to the file inside target_dir (original file_path if already inside).
+
+    Raises:
+        CresmoDomainError: If the source file does not exist on disk.
+    """
+    if not file_path.is_file():
+        raise CresmoDomainError(f"Priority text file not found: {file_path}")
+
+    if is_subpath(file_path, target_dir):
+        return file_path
+
+    target_dir.mkdir(parents=True, exist_ok=True)
+    destination = target_dir / file_path.name
+    shutil.copy2(file_path, destination)
+    return destination

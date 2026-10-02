@@ -126,7 +126,7 @@ class TestInMemoryVaultAdapter:
         raw = SourceTranscript(content_id=cid, channel_name=ChannelName("Ch"), body="Text")
         assert vault.get_raw_transcript(cid) is None
 
-        vault.save_raw_transcript(raw)
+        vault.save_transcript(raw)
         assert vault.get_raw_transcript(cid) is raw
 
     def test_enriched_compendium_crud(self) -> None:

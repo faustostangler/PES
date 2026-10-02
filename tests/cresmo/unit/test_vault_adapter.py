@@ -61,7 +61,7 @@ class TestObsidianVaultAdapter:
             body="Spoken speech transcript line 1.\nSpoken speech transcript line 2.",
         )
 
-        adapter.save_raw_transcript(raw)
+        adapter.save_transcript(raw)
         retrieved = adapter.get_raw_transcript(cid)
 
         assert retrieved is not None

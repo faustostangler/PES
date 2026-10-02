@@ -27,7 +27,7 @@ from cresmo.application.pipeline.models import PipelineDependencies, PipelineRes
 from cresmo.application.pipeline.stage_factory import StageFactory
 from cresmo.application.pipeline.stage_runner import PipelineStageRunner
 from cresmo.application.pipeline.transcript_loader import (
-    ensure_raw_saved_in_vault,
+    ensure_file_saved,
     load_manifest_urls,
     load_transcript_from_file,
 )
@@ -320,13 +320,10 @@ class CresmoPipeline:
                 "and cannot be processed as a transcript."
             )
         self.warmup()
-        raw = load_transcript_from_file(file_path)
-        ensure_raw_saved_in_vault(
-            self.vault_port,
-            file_path,
-            raw,
-            raw_dir=self.settings.raw_dir,
-        )
+        persisted_path = ensure_file_saved(file_path, self.settings.raw_dir)
+        raw = load_transcript_from_file(persisted_path)
+        if persisted_path != file_path:
+            self.vault_port.save_transcript(raw)
 
         return self.execute(
             raw=raw,

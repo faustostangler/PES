@@ -21,6 +21,7 @@ from cresmo.application.pipeline import (
     PipelineStageRunner,
 )
 from cresmo.application.ports import (
+    DefaultPipelineSettings,
     NoOpMetricsPort,
     NoOpPromptProviderPort,
     NoOpTelemetryPort,
@@ -411,21 +412,20 @@ class TestCresmoPipelineOrchestration:
         )
 
         vault = InMemoryVaultAdapter()
-        # Attach raw_dir to simulate ObsidianVaultAdapter
-        vault.raw_dir = raw_lake_dir  # type: ignore[attr-defined]
-        vault.save_raw_transcript = MagicMock(wraps=vault.save_raw_transcript)  # type: ignore[method-assign]
+        vault.save_transcript = MagicMock(wraps=vault.save_transcript)  # type: ignore[method-assign]
 
         pipeline = CresmoPipeline(
             media_ingestion_port=MockMediaIngestionPort(),
             llm_synthesis_port=SmartMockLLMAdapter(),
             vault_port=vault,
             ledger_port=InMemoryLedgerAdapter(),
+            settings=DefaultPipelineSettings(raw_dir=raw_lake_dir),
         )
 
         res = pipeline.run_for_text_file(raw_file)
         assert res.success is True
-        # Assert save_raw_transcript was bypassed to prevent redundant disk I/O
-        vault.save_raw_transcript.assert_not_called()
+        # Assert save_transcript was bypassed to prevent redundant disk I/O
+        vault.save_transcript.assert_not_called()
 
         # For an external file outside raw_dir, verify it IS saved into raw lake
         ext_dir = tmp_path / "priority_texts"
@@ -435,7 +435,8 @@ class TestCresmoPipelineOrchestration:
 
         result_external = pipeline.run_for_text_file(ext_file)
         assert result_external.success is True
-        vault.save_raw_transcript.assert_called_once()
+        vault.save_transcript.assert_called_once()
+        assert (raw_lake_dir / "external_article.txt").exists()
 
     def test_run_for_text_file_short_stem_fallback_hash(self, tmp_path: Path) -> None:
         short_file = tmp_path / "ab.txt"

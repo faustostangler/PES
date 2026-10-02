@@ -90,8 +90,8 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
 
     # --- Transcripts & Compendiums ---
 
-    def save_raw_transcript(self, transcript: SourceTranscript) -> None:
-        self._transcripts.save_raw_transcript(transcript)
+    def save_transcript(self, transcript: SourceTranscript) -> None:
+        self._transcripts.save_transcript(transcript)
 
     def get_raw_transcript(self, content_id: ContentId) -> SourceTranscript | None:
         return self._transcripts.get_raw_transcript(content_id)

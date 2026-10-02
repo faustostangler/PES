@@ -158,7 +158,7 @@ class InMemoryVaultAdapter(VaultRepositoryPort):
         for k in keys_to_del:
             del self.master_documents[k]
 
-    def save_raw_transcript(self, transcript: SourceTranscript) -> None:
+    def save_transcript(self, transcript: SourceTranscript) -> None:
         self.raw_transcripts[transcript.content_id.value] = transcript
 
     def get_raw_transcript(self, content_id: ContentId) -> SourceTranscript | None:

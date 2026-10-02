@@ -34,13 +34,13 @@ class VaultRepositoryPort(ABC):
     """
 
     @abstractmethod
-    def save_raw_transcript(self, transcript: SourceTranscript) -> None:
-        """Persist raw transcript to raw storage directory.
+    def save_transcript(self, transcript: SourceTranscript) -> None:
+        """Persist source transcript to storage directory.
 
         Args:
             transcript: SourceTranscript domain aggregate containing verbatim text and metadata.
         """
-        raise NotImplementedError("Persist raw transcript atomically.")
+        raise NotImplementedError("Persist source transcript atomically.")
 
     @abstractmethod
     def get_raw_transcript(self, content_id: ContentId) -> SourceTranscript | None:

@@ -1,17 +1,19 @@
-"""Unit tests for transcript_loader, is_subpath helper, and ensure_raw_saved_in_vault."""
+"""Unit tests for transcript_loader, is_subpath helper, and ensure_file_saved."""
 
 from __future__ import annotations
 
 from pathlib import Path
 from unittest.mock import MagicMock
 
+import pytest
+
 from cresmo.application.pipeline.transcript_loader import (
-    ensure_raw_saved_in_vault,
+    ensure_file_saved,
     is_subpath,
     load_transcript_from_file,
 )
-from cresmo.application.ports.storage import VaultRepositoryPort
 from cresmo.domain.entities import SourceTranscript
+from cresmo.domain.exceptions import CresmoDomainError
 from cresmo.domain.value_objects import ChannelName, ContentId
 
 
@@ -52,64 +54,40 @@ class TestIsSubpath:
         assert is_subpath(tmp_path, tmp_path) is True
 
 
-class TestEnsureRawSavedInVault:
-    """Verifies vault persistence delegation based on raw_dir presence."""
+class TestEnsureFileSaved:
+    """Verifies filesystem persistence helper ensure_file_saved."""
 
-    def test_file_inside_raw_dir_skips_persistence(self, tmp_path: Path) -> None:
-        raw_dir = tmp_path / "raw"
-        raw_dir.mkdir()
-        file_path = raw_dir / "sample.md"
-        file_path.write_text("content")
+    def test_file_inside_target_dir_skips_copy(self, tmp_path: Path) -> None:
+        target_dir = tmp_path / "target"
+        target_dir.mkdir()
+        file_path = target_dir / "sample.md"
+        file_path.write_text("content", encoding="utf-8")
 
-        mock_vault = MagicMock(spec=VaultRepositoryPort)
-        mock_raw = MagicMock(spec=SourceTranscript)
+        result = ensure_file_saved(file_path, target_dir)
 
-        ensure_raw_saved_in_vault(
-            mock_vault,
-            file_path,
-            mock_raw,
-            raw_dir=raw_dir,
-        )
+        assert result == file_path
 
-        mock_vault.save_raw_transcript.assert_not_called()
-
-    def test_file_outside_raw_dir_triggers_persistence(self, tmp_path: Path) -> None:
-        raw_dir = tmp_path / "raw"
-        raw_dir.mkdir()
+    def test_file_outside_target_dir_is_copied(self, tmp_path: Path) -> None:
+        target_dir = tmp_path / "target"
+        target_dir.mkdir()
         external_dir = tmp_path / "external"
         external_dir.mkdir()
         file_path = external_dir / "sample.md"
-        file_path.write_text("content")
+        file_path.write_text("content", encoding="utf-8")
 
-        mock_vault = MagicMock(spec=VaultRepositoryPort)
-        mock_raw = MagicMock(spec=SourceTranscript)
+        result = ensure_file_saved(file_path, target_dir)
 
-        ensure_raw_saved_in_vault(
-            mock_vault,
-            file_path,
-            mock_raw,
-            raw_dir=raw_dir,
-        )
+        assert result == target_dir / "sample.md"
+        assert result.exists()
+        assert result.read_text(encoding="utf-8") == "content"
 
-        mock_vault.save_raw_transcript.assert_called_once_with(mock_raw)
+    def test_missing_file_raises_error(self, tmp_path: Path) -> None:
+        target_dir = tmp_path / "target"
+        target_dir.mkdir()
+        missing = tmp_path / "nonexistent.md"
 
-    def test_fallback_to_vault_raw_dir_attr_if_not_passed(self, tmp_path: Path) -> None:
-        raw_dir = tmp_path / "raw"
-        raw_dir.mkdir()
-        file_path = raw_dir / "sample.md"
-        file_path.write_text("content")
-
-        mock_vault = MagicMock(spec=VaultRepositoryPort)
-        mock_vault.raw_dir = raw_dir
-        mock_raw = MagicMock(spec=SourceTranscript)
-
-        ensure_raw_saved_in_vault(
-            mock_vault,
-            file_path,
-            mock_raw,
-        )
-
-        mock_vault.save_raw_transcript.assert_not_called()
+        with pytest.raises(CresmoDomainError, match="not found"):
+            ensure_file_saved(missing, target_dir)
 
 
 class TestLoadTranscriptFromFile:
@@ -166,4 +144,5 @@ def test_coordinator_run_for_text_file_passes_raw_dir(tmp_path: Path) -> None:
     pipeline.run_for_text_file(file_path)
 
     # Since file_path is in incoming/ and not in custom_raw/, it must be persisted
-    mock_vault.save_raw_transcript.assert_called_once()
+    assert (custom_raw_dir / "sample.md").exists()
+    mock_vault.save_transcript.assert_called_once()
