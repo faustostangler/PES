@@ -227,18 +227,21 @@ def build_pipeline(
         fmt=resolved_settings.log_format,
     )
 
-    # 1. Observability, Security & Prompt Governance
+    # 1. Observability & Security
     anonymizer = build_anonymizer_adapter(resolved_settings)
     langfuse_client = resolve_langfuse_client(resolved_settings, anonymizer=anonymizer)
     telemetry_port = build_telemetry_adapter(resolved_settings, langfuse_client=langfuse_client)
-    prompt_provider = build_prompt_provider(resolved_settings, langfuse_client=langfuse_client)
 
     # 2. Ingestion, Persistence & Idempotency
     media_ingestion_port = build_media_ingestion_adapter(resolved_settings)
     vault_port = build_vault_adapter(resolved_settings)
     ledger_port = SqliteLedgerAdapter(db_path=resolved_settings.sqlite_ledger_path)
 
-    # 3. Cognitive LLM Engines (Synthesis & Fast Indexing)
+    # 3. SRE & DORA Metrics Telemetry
+    metrics_port = build_metrics_adapter(resolved_settings)
+
+    # 4. Prompt Governance, Cognitive & Judge LLM Engines
+    prompt_provider = build_prompt_provider(resolved_settings, langfuse_client=langfuse_client)
     llm_synthesis_port = build_gemini_synthesis_adapter(
         resolved_settings, langfuse_client=langfuse_client
     )
@@ -248,24 +251,17 @@ def build_pipeline(
         web_index=web_index,
         langfuse_client=langfuse_client,
     )
-
-    # 4. SRE & DORA Metrics Telemetry
-    metrics_port = build_metrics_adapter(resolved_settings)
-
-    # 5. LLM Judge & Decision-Model Evaluators (ADR-029)
     llm_judge_port = build_llm_judge_adapter(
         resolved_settings,
         langfuse_client=langfuse_client,
         prompt_provider=prompt_provider,
     )
-
-    # 6. Directed Reflection Critique Synthesizer (ADR-031)
     critique_synthesizer = OllamaCritiqueAdapter(
         llm_transformation_port=llm_indexing_port,
         prompt_provider=prompt_provider,
     )
 
-    # 7. Pipeline Stage Runner & Closed-Loop Verifier (ADR-030, ADR-031)
+    # 5. Pipeline Stage Runner & Closed-Loop Verifier (ADR-030, ADR-031)
     stage_factory = StageFactory(settings=resolved_settings)
     stage_runner = PipelineStageRunner(
         PipelineDependencies(
@@ -282,7 +278,7 @@ def build_pipeline(
         )
     )
 
-    # 8. Pipeline Assembly
+    # 6. Pipeline Assembly
     effective_batch_size = (
         batch_size_override if batch_size_override is not None else resolved_settings.batch_size
     )

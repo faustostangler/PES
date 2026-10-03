@@ -244,6 +244,7 @@ class PipelineStageRunner:
                     content_id=context.content.id,
                     channel_name=channel_name_val,
                     channel_id=context.channel.id,
+                    content_title=content_title_val,
                     evaluation=evaluation,
                     critique=critique or self._synthesize_critique(evaluation, stage_name),
                     effective_max_attempts=effective_max_attempts,

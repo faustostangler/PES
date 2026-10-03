@@ -260,12 +260,12 @@ class CresmoPipeline:
         """Evaluate ledger idempotency guard and return existing result if already processed."""
         content_id = raw.content_id
         if self.ledger_port and self.ledger_port.is_processed(content_id) and not force_reprocess:
-            ch_id_str = raw.channel_id.value if raw.channel_id else ""
+            channel_id = raw.channel_id.value if raw.channel_id else ""
             self.metrics_port.increment_counter(
                 "cresmo_transcripts_processed_total",
                 1.0,
                 labels={
-                    "channel_id": ch_id_str,
+                    "channel_id": channel_id,
                     "channel_name": raw.channel_name.value,
                     "content_id": content_id.value,
                     "status": "skipped_idempotent",
