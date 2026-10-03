@@ -9,6 +9,24 @@ from typing import Any
 
 from cresmo.domain.value_objects import ChannelName
 from cresmo.infrastructure.adapters.prompts.registry import PromptKey
+from cresmo.infrastructure.config import CresmoSettings
+
+
+def _resolve_language(provider: Any, context: dict[str, Any]) -> str:
+    """Resolve target language adhering to SSOT configuration hierarchy.
+
+    Order of precedence:
+    1. Explicit execution context override ('language' key in context).
+    2. Injected provider configured language (provider.language).
+    3. Provider settings configured language (provider.settings.language).
+    4. SSOT infrastructure fallback (CresmoSettings.DEFAULT_LANGUAGE).
+    """
+    return (
+        context.get("language")
+        or getattr(provider, "language", None)
+        or getattr(getattr(provider, "settings", None), "language", None)
+        or CresmoSettings.DEFAULT_LANGUAGE
+    )
 
 
 def build_raw_index_summary(provider: Any, **context: Any) -> tuple[str, str]:
@@ -16,7 +34,7 @@ def build_raw_index_summary(provider: Any, **context: Any) -> tuple[str, str]:
         PromptKey.RAW_INDEX_SUMMARY.value,
         video_title=context.get("video_title", ""),
         transcript_excerpt=context.get("transcript_excerpt", ""),
-        language=context.get("language", "Português do Brasil"),
+        language=_resolve_language(provider, context),
     )
 
 
@@ -25,12 +43,12 @@ def build_raw_index_concepts(provider: Any, **context: Any) -> tuple[str, str]:
         PromptKey.RAW_INDEX_CONCEPTS.value,
         video_title=context.get("video_title", ""),
         transcript_excerpt=context.get("transcript_excerpt", ""),
-        language=context.get("language", "Português do Brasil"),
+        language=_resolve_language(provider, context),
     )
 
 
 def build_raw_index_concepts_rewrite(provider: Any, **context: Any) -> tuple[str, str]:
-    lang = context.get("language", "Português do Brasil")
+    lang = _resolve_language(provider, context)
     prompt_text = provider._format_single_prompt(
         PromptKey.RAW_INDEX_CONCEPTS_REWRITE.value,
         previous_output=context.get("previous_output", ""),
@@ -45,7 +63,7 @@ def build_raw_index_synthesis(provider: Any, **context: Any) -> tuple[str, str]:
         PromptKey.RAW_INDEX_SYNTHESIS.value,
         video_title=context.get("video_title", ""),
         summary=context.get("summary", ""),
-        language=context.get("language", "Português do Brasil"),
+        language=_resolve_language(provider, context),
     )
 
 
@@ -55,7 +73,7 @@ def build_judge_raw_index_summary(provider: Any, **context: Any) -> tuple[str, s
         video_title=context.get("video_title", ""),
         transcript_excerpt=context.get("transcript_excerpt", ""),
         summary=context.get("summary", ""),
-        language=context.get("language", "Português do Brasil"),
+        language=_resolve_language(provider, context),
     )
 
 
@@ -65,7 +83,7 @@ def build_judge_raw_index_concepts(provider: Any, **context: Any) -> tuple[str, 
         video_title=context.get("video_title", ""),
         transcript_excerpt=context.get("transcript_excerpt", ""),
         concepts=context.get("concepts", ""),
-        language=context.get("language", "Português do Brasil"),
+        language=_resolve_language(provider, context),
     )
 
 
@@ -77,7 +95,7 @@ def build_judge_raw_index_synthesis(provider: Any, **context: Any) -> tuple[str,
         transcript_excerpt=transcript_excerpt,
         summary=transcript_excerpt,
         synthesis=context.get("synthesis", ""),
-        language=context.get("language", "Português do Brasil"),
+        language=_resolve_language(provider, context),
     )
 
 
@@ -92,7 +110,7 @@ def build_fluid_prose(provider: Any, **context: Any) -> tuple[str, str]:
     channel_name = context.get("channel_name", "")
     file_name = context.get("file_name", "")
     raw_text = context.get("raw_text", "")
-    language = context.get("language", "Português do Brasil")
+    language = _resolve_language(provider, context)
 
     if not template and not system_template:
         sys_inst = f"{task}\n\n{skill_block}".strip()

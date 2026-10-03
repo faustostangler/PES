@@ -66,12 +66,12 @@ class EnrichedCompendium:
     video_description: str = ""
 
     def __post_init__(self) -> None:
-        cn = (
+        resolved_channel_name = (
             self.channel_name
             if isinstance(self.channel_name, ChannelName)
             else ChannelName.from_string(self.channel_name)
         )
-        object.__setattr__(self, "channel_name", cn)
+        object.__setattr__(self, "channel_name", resolved_channel_name)
 
         if self.channel_id is not None and not isinstance(self.channel_id, ChannelId):
             object.__setattr__(self, "channel_id", ChannelId.from_string(self.channel_id))
@@ -80,26 +80,26 @@ class EnrichedCompendium:
         pub_date = self.publication_date
         if pub_date is None and self.video_date:
             try:
-                raw_d = self.video_date.strip()
-                if raw_d:
-                    pub_date = datetime.date.fromisoformat(raw_d[:10])
+                raw_video_date = self.video_date.strip()
+                if raw_video_date:
+                    pub_date = datetime.date.fromisoformat(raw_video_date[:10])
             except (ValueError, TypeError):
                 pub_date = None
-        v_date = self.video_date or (pub_date.isoformat() if pub_date else "")
+        resolved_video_date = self.video_date or (pub_date.isoformat() if pub_date else "")
         object.__setattr__(self, "publication_date", pub_date)
-        object.__setattr__(self, "video_date", v_date)
+        object.__setattr__(self, "video_date", resolved_video_date)
 
-        b = self.body.strip()
-        ci = self.complementary_info.strip()
+        cleaned_body = self.body.strip()
+        cleaned_complementary_info = self.complementary_info.strip()
 
-        if not b:
+        if not cleaned_body:
             raise CompendiumStructureError("EnrichedCompendium body cannot be empty.")
-        if not ci:
+        if not cleaned_complementary_info:
             raise CompendiumStructureError(
                 "EnrichedCompendium must contain a non-empty 'Informações Complementares' section."
             )
         # Structural invariant: reject Markdown tables in primary fluid prose
-        if _TABLE_PATTERN.search(b):
+        if _TABLE_PATTERN.search(cleaned_body):
             raise CompendiumStructureError(
                 "EnrichedCompendium body must be continuous prose and cannot contain Markdown tables."
             )

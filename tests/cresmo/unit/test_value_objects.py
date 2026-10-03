@@ -544,7 +544,6 @@ class TestContent:
         )
         assert cnt.id == ContentId("dQw4w9WgXcQ")
         assert cnt.title == "Never Gonna Give You Up"
-        assert cnt.display_title == "Never Gonna Give You Up"
         assert cnt.url == "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
         assert cnt.modality == SourceModality.URL
         assert cnt.publication_date == datetime.date(1987, 7, 27)
@@ -572,16 +571,17 @@ class TestContent:
         assert cnt.modality == SourceModality.URL
         assert cnt.publication_date == datetime.date(2022, 1, 1)
 
-    def test_content_display_title_fallback(self) -> None:
+    def test_content_title_default_empty(self) -> None:
         from cresmo.domain.value_objects import Content
 
         cnt = Content.create(id="dQw4w9WgXcQ")
-        assert cnt.display_title == "dQw4w9WgXcQ"
+        assert cnt.title == ""
+        assert not hasattr(cnt, "display_title")
 
-    def test_content_video_alias(self) -> None:
-        from cresmo.domain.value_objects import Content, Video
+    def test_content_video_alias_removed(self) -> None:
+        import cresmo.domain.value_objects as vo_mod
 
-        assert Video is Content
+        assert not hasattr(vo_mod, "Video")
 
     def test_content_immutability(self) -> None:
         from cresmo.domain.value_objects import Content

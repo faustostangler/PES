@@ -197,6 +197,8 @@ def _build_session_span_attributes(
     }
     if "title" in meta:
         attrs["cresmo.content.title"] = str(meta["title"])
+    elif "content_title" in meta:
+        attrs["cresmo.content.title"] = str(meta["content_title"])
     if "channel_id" in meta:
         attrs["cresmo.channel.id"] = str(meta["channel_id"])
     if user.subject:
@@ -259,7 +261,7 @@ class OpenTelemetryAdapter(TelemetryPort):
             session_id=session_id,
         )
         meta = metadata or {}
-        chan_name = str(meta["channel"]) if "channel" in meta else session_id.channel_id
+        chan_name = str(meta.get("channel") or meta.get("channel_name") or session_id.channel_id)
         pipeline_version = str(
             meta.get("pipeline_version") or meta.get("version") or self._pipeline_version
         )

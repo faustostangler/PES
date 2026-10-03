@@ -15,6 +15,7 @@ from cresmo.application.ports import (
     LLMTransformationPort,
     PromptProviderPort,
 )
+from cresmo.application.ports.settings import DEFAULT_LANGUAGE
 from cresmo.application.use_cases.indexing.validators import (
     can_retry,
     clean_concept_line,
@@ -44,7 +45,7 @@ class LLMTranscriptDistiller:
         llm_indexing_port: LLMTransformationPort,
         prompt_provider: PromptProviderPort,
         temperature: float = 0.2,
-        language: str = "Português do Brasil",
+        language: str = DEFAULT_LANGUAGE,
         max_rewrites: int = 3,
         llm_judge_port: LlmJudgePort | None = None,
     ) -> None:

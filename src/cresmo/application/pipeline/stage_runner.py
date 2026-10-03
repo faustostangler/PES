@@ -34,6 +34,7 @@ from cresmo.domain.entities import (
     AtomicNote,
     MapOfContent,
     PipelineSessionId,
+    UserIdentity,
 )
 from cresmo.domain.exceptions import DomainValidationError
 from cresmo.domain.value_objects import (
@@ -55,6 +56,17 @@ logger = logging.getLogger(__name__)
 _StageRet = TypeVar("_StageRet")
 _TSource = TypeVar("_TSource")
 _TOutput = TypeVar("_TOutput")
+
+
+def _as_str(
+    val: ChannelName | ContentId | ChannelId | PipelineSessionId | UserIdentity | str | None,
+) -> str:
+    """Extract canonical string value from Value Objects or return primitive string safely."""
+    if val is None:
+        return ""
+    if isinstance(val, (ChannelName, ContentId, ChannelId, PipelineSessionId, UserIdentity)):
+        return val.value
+    return val
 
 
 class PipelineStageRunner:
@@ -116,14 +128,14 @@ class PipelineStageRunner:
         llm_transformation_port: LLMTransformationPort | None = None,
     ) -> _TOutput:
         """Execute a standardized pipeline stage with closed-loop reflection, critique, and telemetry (ADR-031)."""
-        target_descriptor = self._resolve_stage_descriptor(stage)
-        active_prompt_provider = self._resolve_prompt_provider(prompt_provider)
-        active_llm_port = self._resolve_llm_transformation_port(llm_transformation_port)
-        stage_name = target_descriptor.stage_name
+        descriptor = self._resolve_stage_descriptor(stage)
+        prompt_provider = self._resolve_prompt_provider(prompt_provider)
+        llm_port = self._resolve_llm_transformation_port(llm_transformation_port)
+        stage_name = descriptor.stage_name
 
         effective_max_attempts = max(
-            target_descriptor.max_attempts,
-            target_descriptor.eval_spec.max_attempts if target_descriptor.eval_spec else 1,
+            descriptor.max_attempts,
+            descriptor.eval_spec.max_attempts if descriptor.eval_spec else 1,
             self.judge_max_attempts,
         )
 
@@ -131,57 +143,74 @@ class PipelineStageRunner:
         candidate: CandidateText | None = None
         evaluation: JudgeEvaluation | None = None
 
+        channel_id_val = context.channel.id.value if context.channel.id else ""
+        content_id_val = context.content.id.value
+        channel_name_val = context.channel.name
+        content_title_val = context.content.title
+
         with self._measure_stage(
-            stage_name, context.channel_name.value, context.content_id.value, context.channel_id_str
+            stage_name=stage_name,
+            channel_id=channel_id_val,
+            content_id=content_id_val,
+            channel_name=channel_name_val,
         ):
             for attempt in range(1, effective_max_attempts + 1):
-                system_instruction, user_prompt = target_descriptor.build_transform_prompt(
-                    active_prompt_provider,
+                system_instruction, user_prompt = descriptor.build_transform_prompt(
+                    prompt_provider,
                     source,
-                    channel_name=context.channel_name.value,
-                    content_id=context.content_id.value,
+                    channel_name=channel_name_val,
+                    channel_id=channel_id_val,
+                    content_id=content_id_val,
+                    content_title=content_title_val,
                     critique=critique,
                 )
                 active_trace_id = self._get_active_trace_id(
-                    context.channel_name, context.content_id
+                    channel=context.channel.id or channel_name_val,
+                    content_id=context.content.id,
+                    channel_id=context.channel.id,
+                    channel_name=channel_name_val,
                 )
 
                 candidate = CandidateText(
-                    text=active_llm_port.transform(
+                    text=llm_port.transform(
                         prompt=user_prompt,
                         system_instruction=system_instruction,
-                        temperature=target_descriptor.temperature,
+                        temperature=descriptor.temperature,
                         trace_id=active_trace_id,
                         session_id=context.session_id.value,
                         user_id=context.user_identity.value,
                     ),
                     stage_name=stage_name,
                     metadata={
-                        "content_id": context.content_id.value,
-                        "channel_name": context.channel_name.value,
+                        "channel_id": channel_id_val,
+                        "content_id": content_id_val,
+                        "channel_name": channel_name_val,
+                        "content_title": content_title_val,
                         "attempt": attempt,
                     },
                 )
 
-                if self.llm_judge is None or target_descriptor.eval_spec is None:
+                if self.llm_judge is None or descriptor.eval_spec is None:
                     break
 
                 eval_context = EvaluationContext(
                     stage_name=stage_name,
-                    raw_text=target_descriptor.eval_spec.extract_source_text(source),
+                    raw_text=descriptor.eval_spec.extract_source_text(source),
                     candidate_text=(
-                        target_descriptor.eval_spec.candidate_extractor(candidate)
-                        if target_descriptor.eval_spec.candidate_extractor
+                        descriptor.eval_spec.candidate_extractor(candidate)
+                        if descriptor.eval_spec.candidate_extractor
                         else candidate.text
                     ),
                     metadata={
-                        "content_id": context.content_id.value,
-                        "channel_name": context.channel_name.value,
+                        "channel_id": channel_id_val,
+                        "content_id": content_id_val,
+                        "channel_name": channel_name_val,
+                        "content_title": content_title_val,
                         "attempt": attempt,
-                        **target_descriptor.eval_spec.metadata,
+                        **descriptor.eval_spec.metadata,
                     },
                     trace_id=active_trace_id,
-                    required_criteria=target_descriptor.eval_spec.required_criteria,
+                    required_criteria=descriptor.eval_spec.required_criteria,
                 )
 
                 evaluation = self.llm_judge.evaluate(eval_context)
@@ -208,12 +237,13 @@ class PipelineStageRunner:
             if (
                 evaluation is not None
                 and not evaluation.passed
-                and (target_descriptor.blocking or self.judge_blocking)
+                and (descriptor.blocking or self.judge_blocking)
             ):
                 record_stage_quarantine(
                     stage_name=stage_name,
-                    content_id=context.content_id,
-                    channel_name=context.channel_name,
+                    content_id=context.content.id,
+                    channel_name=channel_name_val,
+                    channel_id=context.channel.id,
                     evaluation=evaluation,
                     critique=critique or self._synthesize_critique(evaluation, stage_name),
                     effective_max_attempts=effective_max_attempts,
@@ -224,17 +254,18 @@ class PipelineStageRunner:
             if candidate is None:
                 raise DomainValidationError(f"Stage '{stage_name}' produced no candidate text.")
 
-            return target_descriptor.post_process(candidate, source)
+            return descriptor.post_process(candidate, source)
 
     def run_evaluated_stage(
         self,
         stage_name: str,
         fn: Callable[[], _StageRet],
         *,
-        channel_name: ChannelName,
-        content_id: ContentId,
+        channel_name: ChannelName | str,
+        content_id: ContentId | str,
         eval_spec: StageEvaluationSpec | None = None,
-        channel_id: ChannelId | None = None,
+        channel_id: ChannelId | str | None = None,
+        content_title: str = "",
         fatal: bool = True,
         fallback: _StageRet | None = None,
     ) -> _StageRet | None:
@@ -267,14 +298,21 @@ class PipelineStageRunner:
             if candidate is None:
                 return fallback
 
-            active_trace_id = self._get_active_trace_id(channel_name, content_id)
+            active_trace_id = self._get_active_trace_id(
+                channel=channel_id or channel_name,
+                content_id=content_id,
+                channel_id=channel_id,
+                channel_name=channel_name,
+            )
             eval_context = EvaluationContext(
                 stage_name=stage_name,
                 raw_text=eval_spec.raw_text,
                 candidate_text=eval_spec.candidate_extractor(candidate),
                 metadata={
-                    "content_id": content_id.value,
-                    "channel_name": channel_name.value,
+                    "channel_id": _as_str(channel_id),
+                    "content_id": _as_str(content_id),
+                    "channel_name": _as_str(channel_name),
+                    "content_title": content_title or str(getattr(candidate, "title", "")),
                     "attempt": attempt,
                     **eval_spec.metadata,
                 },
@@ -318,43 +356,46 @@ class PipelineStageRunner:
         stage_name: str,
         fn: Callable[[], _StageRet],
         *,
-        channel_name: ChannelName,
-        content_id: ContentId,
-        channel_id: ChannelId | None = None,
+        channel_name: ChannelName | str,
+        content_id: ContentId | str,
+        channel_id: ChannelId | str | None = None,
         fatal: bool = True,
         fallback: _StageRet | None = None,
     ) -> _StageRet | None:
         """Execute a pipeline stage wrapped with telemetry spans, metrics, and error handling."""
+        channel_name_str = _as_str(channel_name)
+        content_id_str = _as_str(content_id)
+        channel_id_str = _as_str(channel_id)
         try:
             with self._measure_stage(
-                stage_name,
-                channel_name.value,
-                content_id.value,
-                channel_id.value if channel_id else "",
+                stage_name=stage_name,
+                channel_id=channel_id_str,
+                content_id=content_id_str,
+                channel_name=channel_name_str,
             ):
                 return fn()
         except Exception as exc:
             if fatal:
                 raise
-            logger.warning("[Pipeline] %s skipped for %s: %s", stage_name, content_id.value, exc)
+            logger.warning("[Pipeline] %s skipped for %s: %s", stage_name, content_id_str, exc)
             return fallback
 
     def record_session_completion(
         self,
-        session_id: PipelineSessionId,
-        content_id: ContentId,
-        channel_name: ChannelName,
+        session_id: PipelineSessionId | str,
+        content_id: ContentId | str,
+        channel_name: ChannelName | str,
         synthesized_notes: Sequence[AtomicNote],
         inventory: AtomicEntityInventory,
         mocs: Sequence[MapOfContent],
         dedup_report: DeduplicationReport,
-        channel_id: ChannelId | None = None,
+        channel_id: ChannelId | str | None = None,
     ) -> None:
         """Record completed process metrics and session coherence evaluation score."""
         lbls = {
-            "channel_id": channel_id.value if channel_id else "",
-            "channel_name": channel_name.value,
-            "content_id": content_id.value,
+            "channel_id": _as_str(channel_id),
+            "channel_name": _as_str(channel_name),
+            "content_id": _as_str(content_id),
         }
         self.metrics_port.increment_counter(
             "cresmo_transcripts_processed_total",
@@ -368,9 +409,19 @@ class PipelineStageRunner:
         )
 
         item_count = len(inventory.items) if hasattr(inventory, "items") else 1
+        sess_vo = (
+            session_id
+            if isinstance(session_id, PipelineSessionId)
+            else PipelineSessionId(session_id)
+        )
+        cnt_vo = (
+            content_id
+            if isinstance(content_id, ContentId)
+            else ContentId.from_string(content_id)
+        )
         self.telemetry_port.record_session_coherence(
-            session_id=session_id,
-            content_id=content_id,
+            session_id=sess_vo,
+            content_id=cnt_vo,
             score=(min(1.0, len(synthesized_notes) / max(1, item_count)) if item_count else 1.0),
             details={
                 "synthesized_notes_count": len(synthesized_notes),
@@ -386,7 +437,11 @@ class PipelineStageRunner:
 
     @contextmanager
     def _measure_stage(
-        self, stage_name: str, channel_name: str, content_id: str, ch_id_str: str
+        self,
+        stage_name: str,
+        channel_id: str,
+        content_id: str,
+        channel_name: str = "",
     ) -> Generator[None]:
         start_time = time.perf_counter()
         status = "success"
@@ -395,11 +450,21 @@ class PipelineStageRunner:
                 yield
             except Exception as exc:
                 status = "failure"
-                self._record_error_metric(exc, stage_name, ch_id_str, channel_name, content_id)
+                self._record_error_metric(
+                    exc=exc,
+                    stage_name=stage_name,
+                    channel_id=channel_id,
+                    content_id=content_id,
+                    channel_name=channel_name,
+                )
                 raise
             finally:
                 self._record_duration_metric(
-                    time.perf_counter() - start_time, stage_name, ch_id_str, channel_name, status
+                    elapsed=time.perf_counter() - start_time,
+                    stage_name=stage_name,
+                    channel_id=channel_id,
+                    channel_name=channel_name,
+                    status=status,
                 )
 
     def _resolve_prompt_provider(
@@ -435,14 +500,27 @@ class PipelineStageRunner:
         return stage
 
     @staticmethod
-    def _get_active_trace_id(channel_name: ChannelName, content_id: ContentId) -> str:
+    def _get_active_trace_id(
+        channel: ChannelId | ChannelName | str | None = None,
+        content_id: ContentId | str = "",
+        *,
+        channel_id: ChannelId | str | None = None,
+        channel_name: ChannelName | str | None = None,
+    ) -> str:
         span = trace.get_current_span()
         ctx = span.get_span_context() if span else None
-        return (
-            format(ctx.trace_id, "032x")
-            if ctx and ctx.trace_id
-            else f"cresmo_{channel_name.value}_{content_id.value}"
+        if ctx and ctx.trace_id:
+            return format(ctx.trace_id, "032x")
+        effective_ch_id = channel_id or (channel if isinstance(channel, ChannelId) else None)
+        effective_ch_name = (
+            channel_name or (channel if not isinstance(channel, ChannelId) else None)
         )
+        ch_token = (
+            _as_str(effective_ch_id)
+            if effective_ch_id
+            else (_as_str(effective_ch_name) if effective_ch_name else "cresmo")
+        )
+        return f"cresmo_{ch_token}_{_as_str(content_id)}"
 
     def _synthesize_critique(self, evaluation: JudgeEvaluation, stage_name: str) -> str:
         if self.critique_synthesizer is not None:
@@ -450,29 +528,39 @@ class PipelineStageRunner:
         return evaluation.extract_critique()
 
     def _record_error_metric(
-        self, exc: Exception, stage_name: str, ch_id_str: str, channel_name: str, content_id: str
+        self,
+        exc: Exception,
+        stage_name: str,
+        channel_id: str,
+        content_id: str,
+        channel_name: str = "",
     ) -> None:
         self.metrics_port.increment_counter(
             "cresmo_pipeline_errors_total",
             1.0,
             labels={
                 "error_type": exc.__class__.__name__,
-                "channel_id": ch_id_str,
-                "channel_name": channel_name,
+                "channel_id": channel_id,
                 "content_id": content_id,
+                "channel_name": channel_name,
                 "stage": stage_name,
             },
         )
 
     def _record_duration_metric(
-        self, elapsed: float, stage_name: str, ch_id_str: str, channel_name: str, status: str
+        self,
+        elapsed: float,
+        stage_name: str,
+        channel_id: str,
+        channel_name: str,
+        status: str,
     ) -> None:
         self.metrics_port.observe_histogram(
             "cresmo_pipeline_stage_duration_seconds",
             elapsed,
             labels={
                 "stage": stage_name,
-                "channel_id": ch_id_str,
+                "channel_id": channel_id,
                 "channel_name": channel_name,
                 "status": status,
             },
@@ -484,3 +572,4 @@ class PipelineStageRunner:
             1.0,
             labels={"stage": stage_name, "passed": str(passed).lower(), "attempt": str(attempt)},
         )
+

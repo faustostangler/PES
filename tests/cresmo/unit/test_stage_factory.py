@@ -14,8 +14,10 @@ from cresmo.domain.entities import (
 )
 from cresmo.domain.value_objects import (
     CandidateText,
+    Channel,
     ChannelId,
     ChannelName,
+    Content,
     ContentId,
     JudgeCriterion,
     PromptKey,
@@ -24,26 +26,32 @@ from cresmo.domain.value_objects import (
 
 def test_pipeline_execution_context_creation() -> None:
     """Verify PipelineExecutionContext holds all execution provenance fields."""
+    channel = Channel(name="Test Channel", id=ChannelId("UC_test123"))
+    content = Content.create(id=ContentId("test_vid"), title="Test Content")
     ctx = PipelineExecutionContext(
         session_id=PipelineSessionId("test_chan:test_vid"),
         user_identity=UserIdentity.worker(),
-        channel_name=ChannelName("Test Channel"),
-        content_id=ContentId("test_vid"),
-        channel_id=ChannelId("UC_test123"),
+        channel=channel,
+        content=content,
     )
 
     assert ctx.session_id.value == "test_chan:test_vid"
     assert ctx.user_identity.is_anonymous is False
-    assert ctx.channel_name.value == "Test Channel"
-    assert ctx.content_id.value == "test_vid"
-    assert ctx.channel_id is not None
-    assert ctx.channel_id.value == "UC_test123"
+    assert ctx.channel.name == "Test Channel"
+    assert ctx.content.id.value == "test_vid"
+    assert ctx.channel.id is not None
+    assert ctx.channel.id.value == "UC_test123"
+    assert not hasattr(ctx, "video")
+    assert not hasattr(ctx, "channel_name")
+    assert not hasattr(ctx, "channel_id")
+    assert not hasattr(ctx, "content_id")
+    assert not hasattr(ctx, "channel_id_str")
+    assert not hasattr(ctx, "content_id_str")
+    assert not hasattr(ctx, "content_title")
 
 
 def test_pipeline_execution_context_composite_creation() -> None:
     """Verify PipelineExecutionContext receives composite Channel and Content VOs (ADR-032)."""
-    from cresmo.domain.value_objects import Channel, Content
-
     channel = Channel.from_name("Test Channel", id="UC_test123")
     content = Content.create("test_vid", title="Sample Title")
     ctx = PipelineExecutionContext(
@@ -55,17 +63,16 @@ def test_pipeline_execution_context_composite_creation() -> None:
 
     assert ctx.channel == channel
     assert ctx.content == content
-    assert ctx.video == content
-    assert ctx.channel_name.value == "Test Channel"
-    assert ctx.content_id.value == "test_vid"
-    assert ctx.channel_id is not None
-    assert ctx.channel_id.value == "UC_test123"
+    assert ctx.channel.name == "Test Channel"
+    assert ctx.content.id.value == "test_vid"
+    assert ctx.channel.id is not None
+    assert ctx.channel.id.value == "UC_test123"
 
 
 def test_stage_factory_builds_fluid_prose_descriptor() -> None:
     """Verify StageFactory produces a properly wired, stateless StageDescriptor for fluid prose."""
     settings = DefaultPipelineSettings(
-        llm_temperature=0.35,
+        llm_synthesis_temperature=0.35,
         judge_blocking=True,
         judge_max_attempts=3,
     )
@@ -109,7 +116,7 @@ def test_stage_factory_builds_fluid_prose_descriptor() -> None:
 def test_stage_factory_generic_build_stage_custom_parameters() -> None:
     """Verify build_stage creates a custom StageDescriptor with injected parameters and overrides."""
     settings = DefaultPipelineSettings(
-        llm_temperature=0.7,
+        llm_synthesis_temperature=0.7,
         judge_blocking=False,
         judge_max_attempts=2,
     )
@@ -163,7 +170,7 @@ def test_stage_factory_generic_build_stage_custom_parameters() -> None:
 def test_stage_factory_build_stage_minimal_without_criteria() -> None:
     """Verify build_stage creates a stage descriptor with no eval_spec when criteria/extractors omitted."""
     settings = DefaultPipelineSettings(
-        llm_temperature=0.5,
+        llm_synthesis_temperature=0.5,
         judge_blocking=False,
         judge_max_attempts=1,
     )

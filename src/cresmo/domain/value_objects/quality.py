@@ -144,9 +144,9 @@ class JudgeEvaluation:
 
     def get_score(self, criterion: JudgeCriterion) -> CriterionScore | None:
         """Query score for a specific criterion, or None if not evaluated."""
-        for item in self.criteria_scores:
-            if item.criterion == criterion:
-                return item
+        for criterion_score in self.criteria_scores:
+            if criterion_score.criterion == criterion:
+                return criterion_score
         return None
 
     def extract_critique(self) -> str:
@@ -199,7 +199,9 @@ class StageEvaluationSpec:
         source_extractor: Optional callable extracting source reference text from stage input.
     """
 
-    candidate_extractor: Callable[[Any], str] = field(default_factory=lambda: lambda res: str(res))
+    candidate_extractor: Callable[[Any], str] = field(
+        default_factory=lambda: lambda result: str(result)
+    )
     required_criteria: tuple[JudgeCriterion, ...] = ()
     raw_text: str = ""
     metadata: dict[str, Any] = field(default_factory=dict)

@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
+from typing import Any
 
 from cresmo.application.pipeline.context import PipelineExecutionContext
 from cresmo.application.pipeline.models import PipelineDependencies, PipelineResult
@@ -180,17 +181,18 @@ class CresmoPipeline:
         )
         user_identity = user or UserIdentity.anonymous()
 
-        root_metadata = {
+        root_metadata: dict[str, Any] = {
             "source": "transcript",
-            "channel": channel.name,
+            "channel_id": str(channel.id) if channel.id else "",
             "channel_name": channel.name,
             "content_id": content.id.value,
-            "title": content.display_title,
+            "content_title": content.title,
+            "title": content.title,
         }
-        if channel.id:
-            root_metadata["channel_id"] = channel.id.value
         if content.url:
             root_metadata["video_url"] = content.url
+        if content.publication_date:
+            root_metadata["publication_date"] = content.publication_date.isoformat()
 
         with self.telemetry_port.start_pipeline_session(
             session_id=session_id,

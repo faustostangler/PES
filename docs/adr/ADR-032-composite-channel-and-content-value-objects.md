@@ -73,7 +73,7 @@ Convenience properties & factories:
 - `Video = Content` (alias supporting natural domain terminology)
 
 ### 2.3 The 4-Pillar `PipelineExecutionContext`
-`PipelineExecutionContext` is streamlined to encapsulate the 4 foundational pillars of pipeline execution:
+`PipelineExecutionContext` is streamlined to strictly encapsulate the 4 foundational pillars of pipeline execution:
 1. `session_id: PipelineSessionId`
 2. `user_identity: UserIdentity`
 3. `channel: Channel`
@@ -88,11 +88,11 @@ execution_context = PipelineExecutionContext(
 )
 ```
 
-For seamless backward compatibility with existing downstream consumers (such as `PipelineStageRunner`), `PipelineExecutionContext` exposes convenience properties:
-- `channel_name -> ChannelName`
-- `channel_id -> ChannelId | None`
-- `content_id -> ContentId`
-- `video -> Content`
+In strict adherence to the **Principle of Zero Legacy Shims (ADR-010)** and **Rule 18 of ADR-026**, `PipelineExecutionContext` exposes **zero convenience properties or delegation shims**. All consumers (including `PipelineStageRunner`) navigate composite VOs directly:
+- `context.channel.name`
+- `context.channel.id`
+- `context.content.id`
+- `context.content.title`
 
 ---
 
@@ -102,4 +102,7 @@ For seamless backward compatibility with existing downstream consumers (such as 
 - **Zero Primitive Obsession (ADR-019):** Eliminates loose string clumping across the application layer.
 - **Cognitive Clarity:** Pipeline execution binds exactly four well-defined architectural pillars: Session, User, Channel, Content.
 - **Symmetric Aggregate Integration:** `SourceTranscript` and `FluidTranscript` expose cohesive `.channel` and `.content` properties.
-- **100% Backward Compatibility:** Existing call sites and tests function without regressions via property delegation and flexible constructor keyword arguments.
+- **Architectural Purity & Zero Legacy Shims (ADR-010, ADR-026 Rule 18):** No synthetic wrapper properties or backward-compatible aliases dilute the domain aggregates.
+
+### Negative / Trade-offs:
+- Downstream callers and test assertions must access child Value Objects explicitly (`context.channel.name`, `context.content.id`).

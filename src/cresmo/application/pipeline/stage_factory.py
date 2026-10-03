@@ -78,52 +78,43 @@ class StageFactory:
         )
 
         # 1. Resolve transform prompt key (explicit -> spec -> convention: PromptKey(stage_name))
-        resolved_transform_prompt_key: PromptKey
-        if transform_prompt_key is not None:
-            resolved_transform_prompt_key = transform_prompt_key
-        elif spec and spec.transform_prompt_key is not None:
-            resolved_transform_prompt_key = spec.transform_prompt_key
-        else:
-            try:
-                resolved_transform_prompt_key = PromptKey(stage_name)
-            except ValueError as err:
-                raise ValueError(
-                    f"Unknown stage '{stage_name}' with no transform_prompt_key provided."
-                ) from err
+        if transform_prompt_key is None:
+            if spec and spec.transform_prompt_key is not None:
+                transform_prompt_key = spec.transform_prompt_key
+            else:
+                try:
+                    transform_prompt_key = PromptKey(stage_name)
+                except ValueError as err:
+                    raise ValueError(
+                        f"Unknown stage '{stage_name}' with no transform_prompt_key provided."
+                    ) from err
 
         # 2. Resolve post processor
-        resolved_post_processor = (
-            post_processor
-            if post_processor is not None
-            else (spec.post_processor if spec else None)
-        )
+        if post_processor is None and spec:
+            post_processor = spec.post_processor
 
         # 3. Resolve tunables from settings with call-site overrides
-        resolved_temperature = (
-            temperature
-            if temperature is not None
-            else getattr(self.settings, "llm_temperature", None)
-        )
-        resolved_max_attempts = (
+        if temperature is None:
+            temperature = getattr(self.settings, "llm_synthesis_temperature", None)
+        effective_max_attempts: int = (
             max_attempts
             if max_attempts is not None
             else getattr(self.settings, "judge_max_attempts", 1)
         )
-        resolved_blocking = (
-            blocking if blocking is not None else getattr(self.settings, "judge_blocking", False)
+        effective_blocking: bool = (
+            blocking
+            if blocking is not None
+            else getattr(self.settings, "judge_blocking", False)
         )
 
         # 4. Resolve quality evaluation spec
-        resolved_eval_spec: StageEvaluationSpec | None
-        if eval_spec is not None:
-            resolved_eval_spec = eval_spec
-        else:
-            resolved_criteria = (
+        if eval_spec is None:
+            criteria = (
                 tuple(required_criteria)
                 if required_criteria is not None
                 else (spec.required_criteria if spec else ())
             )
-            resolved_cand_ext = (
+            cand_extractor = (
                 candidate_extractor
                 if candidate_extractor is not None
                 else (
@@ -132,41 +123,36 @@ class StageFactory:
                     else (lambda res: res.text if isinstance(res, CandidateText) else str(res))
                 )
             )
-            resolved_src_ext = (
+            src_extractor = (
                 source_extractor
                 if source_extractor is not None
                 else (spec.source_extractor if spec else None)
             )
-            resolved_eval_meta = (
+            metadata = (
                 eval_metadata if eval_metadata is not None else (spec.eval_metadata if spec else {})
             )
 
-            if resolved_criteria or candidate_extractor is not None or source_extractor is not None:
-                resolved_eval_spec = StageEvaluationSpec(
-                    candidate_extractor=resolved_cand_ext,
-                    required_criteria=resolved_criteria,
-                    max_attempts=resolved_max_attempts,
-                    source_extractor=resolved_src_ext,
-                    metadata=resolved_eval_meta,
+            if criteria or candidate_extractor is not None or source_extractor is not None:
+                eval_spec = StageEvaluationSpec(
+                    candidate_extractor=cand_extractor,
+                    required_criteria=criteria,
+                    max_attempts=effective_max_attempts,
+                    source_extractor=src_extractor,
+                    metadata=metadata,
                 )
-            else:
-                resolved_eval_spec = None
 
-        resolved_judge_prompt_key = (
-            judge_prompt_key
-            if judge_prompt_key is not None
-            else (spec.judge_prompt_key if spec else None)
-        )
+        if judge_prompt_key is None and spec:
+            judge_prompt_key = spec.judge_prompt_key
 
         descriptor = StageDescriptor[TSource, TOutput](
             stage_name=stage_name,
-            transform_prompt_key=resolved_transform_prompt_key,
-            judge_prompt_key=resolved_judge_prompt_key,
-            eval_spec=resolved_eval_spec,
-            post_processor=resolved_post_processor,
-            temperature=resolved_temperature,
-            max_attempts=resolved_max_attempts,
-            blocking=resolved_blocking,
+            transform_prompt_key=transform_prompt_key,
+            judge_prompt_key=judge_prompt_key,
+            eval_spec=eval_spec,
+            post_processor=post_processor,
+            temperature=temperature,
+            max_attempts=effective_max_attempts,
+            blocking=effective_blocking,
         )
 
         if not has_overrides:

@@ -21,28 +21,28 @@ def _resolve_channel_name_and_url(
     channel_url: str | None,
 ) -> tuple[str, str]:
     """Extract normalized lowercase (channel_name, channel_url) pair."""
-    c_url = (channel_url or "").strip().lower()
+    resolved_url = (channel_url or "").strip().lower()
     if isinstance(channel_name, ChannelName):
-        return channel_name.value.strip().lower(), c_url
+        return channel_name.value.strip().lower(), resolved_url
     if isinstance(channel_name, str):
-        c_name = channel_name.strip().lower()
-        if not c_url and ("http" in c_name or "/" in c_name or "@" in c_name):
-            return c_name, c_name
-        return c_name, c_url
-    return "", c_url
+        resolved_name = channel_name.strip().lower()
+        if not resolved_url and ("http" in resolved_name or "/" in resolved_name or "@" in resolved_name):
+            return resolved_name, resolved_name
+        return resolved_name, resolved_url
+    return "", resolved_url
 
 
-def _target_matches_channel(target: str, c_name: str, c_url: str) -> bool:
+def _target_matches_channel(target: str, channel_name: str, channel_url: str) -> bool:
     """Check if single target filter token matches normalized name or url."""
-    if c_name and (target in c_name or c_name in target):
+    if channel_name and (target in channel_name or channel_name in target):
         return True
-    if c_url and target in c_url:
+    if channel_url and target in channel_url:
         return True
-    if c_name and target.startswith("@") and target[1:] in c_name:
+    if channel_name and target.startswith("@") and target[1:] in channel_name:
         return True
-    if c_url and f"@{target}" in c_url:
+    if channel_url and f"@{target}" in channel_url:
         return True
-    return bool(c_name and f"@{target}" in c_name)
+    return bool(channel_name and f"@{target}" in channel_name)
 
 
 @dataclass(frozen=True)
@@ -62,30 +62,30 @@ class SyncFilterCriteria:
     video_ids: tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
-        norm_channels: list[str] = []
-        for ch in self.channels:
-            cleaned = ch.strip().lower()
+        normalized_channels: list[str] = []
+        for channel_token in self.channels:
+            cleaned = channel_token.strip().lower()
             if not cleaned:
                 raise DomainValidationError("Channel filter token cannot be empty.")
-            norm_channels.append(cleaned)
+            normalized_channels.append(cleaned)
 
-        norm_categories: list[str] = []
-        for cat in self.categories:
-            cleaned = cat.strip().lower()
+        normalized_categories: list[str] = []
+        for category_token in self.categories:
+            cleaned = category_token.strip().lower()
             if not cleaned:
                 raise DomainValidationError("Category filter token cannot be empty.")
-            norm_categories.append(cleaned)
+            normalized_categories.append(cleaned)
 
-        norm_vids: list[str] = []
-        for vid in self.video_ids:
-            cleaned = vid.strip()
+        normalized_video_ids: list[str] = []
+        for video_token in self.video_ids:
+            cleaned = video_token.strip()
             if not cleaned:
                 raise DomainValidationError("Video filter token cannot be empty.")
-            norm_vids.append(cleaned)
+            normalized_video_ids.append(cleaned)
 
-        object.__setattr__(self, "channels", tuple(norm_channels))
-        object.__setattr__(self, "categories", tuple(norm_categories))
-        object.__setattr__(self, "video_ids", tuple(norm_vids))
+        object.__setattr__(self, "channels", tuple(normalized_channels))
+        object.__setattr__(self, "categories", tuple(normalized_categories))
+        object.__setattr__(self, "video_ids", tuple(normalized_video_ids))
 
     @classmethod
     def from_strings(
@@ -104,9 +104,9 @@ class SyncFilterCriteria:
                 if not item:
                     continue
                 for part in item.split(","):
-                    p = part.strip()
-                    if p:
-                        tokens.append(p)
+                    token = part.strip()
+                    if token:
+                        tokens.append(token)
             return tuple(tokens)
 
         return cls(
@@ -128,8 +128,11 @@ class SyncFilterCriteria:
         if not self.channels:
             return True
 
-        c_name, c_url = _resolve_channel_name_and_url(channel_name, channel_url)
-        return any(_target_matches_channel(target, c_name, c_url) for target in self.channels)
+        resolved_name, resolved_url = _resolve_channel_name_and_url(channel_name, channel_url)
+        return any(
+            _target_matches_channel(target, resolved_name, resolved_url)
+            for target in self.channels
+        )
 
     def matches_category(
         self,
@@ -147,11 +150,11 @@ class SyncFilterCriteria:
         target: ChannelName | str = (
             channel_name if channel_name is not None else (channel_url or "")
         )
-        domain, cat_type = classify_channel(target)
+        domain, volatility_category = classify_channel(target)
         domain_lower = domain.lower()
-        cat_lower = cat_type.lower()
+        volatility_lower = volatility_category.lower()
 
-        return domain_lower in self.categories or cat_lower in self.categories
+        return domain_lower in self.categories or volatility_lower in self.categories
 
     def matches_video(
         self,
@@ -162,21 +165,21 @@ class SyncFilterCriteria:
         if not self.video_ids:
             return True
 
-        vurl_clean = (video_url or "").strip()
+        cleaned_video_url = (video_url or "").strip()
         if isinstance(video_id, ContentId):
-            vid_clean = video_id.value.strip()
+            cleaned_video_id = video_id.value.strip()
         elif isinstance(video_id, str):
-            vid_clean = video_id.strip()
-            if not vurl_clean and ("http" in vid_clean or "/" in vid_clean):
-                vurl_clean = vid_clean
+            cleaned_video_id = video_id.strip()
+            if not cleaned_video_url and ("http" in cleaned_video_id or "/" in cleaned_video_id):
+                cleaned_video_url = cleaned_video_id
         else:
-            vid_clean = ""
+            cleaned_video_id = ""
 
         for target in self.video_ids:
             target_str = target.strip()
-            if vid_clean and (target_str == vid_clean or vid_clean in target_str):
+            if cleaned_video_id and (target_str == cleaned_video_id or cleaned_video_id in target_str):
                 return True
-            if vurl_clean and (target_str in vurl_clean or vurl_clean in target_str):
+            if cleaned_video_url and (target_str in cleaned_video_url or cleaned_video_url in target_str):
                 return True
 
         return False

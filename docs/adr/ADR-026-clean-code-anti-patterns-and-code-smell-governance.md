@@ -28,6 +28,7 @@ During the recursive architectural audit across all layers (Domain, Application,
 10. **Defensive Fallback Cascading e Instanciação Tardia Oculta (Violação DI & Single Source of Truth):** Declaring optional configuration parameters (`settings: CresmoSettings | None = None`) with inline fallback (`settings or CresmoSettings()`) inside internal functions. This causes unintended disk/env re-reads, bypasses memoized settings factories, and silently drops runtime CLI overrides.
 11. **"C-Style Forward-Declaration / Inverted Newspaper Antipattern" e Ping-Pong com Saltos Retrógrados (Violação do Stepdown Rule / Clean Code):** Inverting the top-down narrative by burying the primary command handler/entry point at the bottom of the module while exposing low-level leaf utility functions at the top, forcing developers into continuous backwards ping-pong jumps across hundreds of lines.
 12. **Acúmulo de Múltiplas Responsabilidades em Módulos de Apresentação (Violação de SRP):** Presentation command modules accumulating disparate concerns (CLI argument conversion, streaming batch processing, resource management/garbage collection, and RAG consolidation) instead of maintaining bounded, laser-focused responsibilities.
+13. **Hardcoded Fallbacks Operacionais em Funções de Construção e Adapters (Violação de SSOT e 12-Factor Fator III):** Hardcoding literal operational values (e.g. `dict.get("language", "Português do Brasil")`, `x or "hardcoded"`) as inline fallbacks across builders and adapters instead of sourcing all operational defaults strictly from the Single Source of Truth (`config.py` / `CresmoSettings`). When global configuration or environment variables change, these scattered hardcoded fallbacks silently ignore system configuration when context keys are absent.
 
 This ADR formally codifies the governance rules, anti-patterns, and required implementations to eliminate these smells across the codebase.
 
@@ -55,6 +56,7 @@ This ADR formally codifies the governance rules, anti-patterns, and required imp
 |  [Rule 14] Liskov Substitution & SOLID  --> Upfront Port Typing, Full Subtype Interchangeability   |
 |  [Rule 15] Stepdown Rule & Top-Down Narrative --> Inverted Newspaper Elimination; Top-Level Entry Points First   |
 |  [Rule 16] Presentation SRP & Bounded Commands --> CLI Controller Humble Object Decoupled from Batch Engines     |
+|  [Rule 17] Zero Hardcoded Fallbacks     --> SSOT Config Fallbacks; Zero Ad-Hoc Literal Defaults      |
 +---------------------------------------------------------------------------------------------------+
 ```
 
@@ -641,12 +643,91 @@ When unbounded, command files degrade into "Presentation God Files", violating S
 
 ---
 
+### Rule 17: Zero Hardcoded Operational Fallbacks — Single Source of Truth in `config.py`
+
+#### 17.1 The Anti-Pattern
+Hardcoding literal operational values (such as language names, model identifiers, timeout durations, or directory paths) as inline fallbacks in adapter and prompt builder routines:
+```python
+# ANTI-PATTERN: Scattered hardcoded fallbacks
+def build_raw_index_summary(provider: Any, **context: Any) -> tuple[str, str]:
+    return provider._format_paired_prompt(
+        ...,
+        language=context.get("language", "Português do Brasil"),  # MAGIC LITERAL FALLBACK!
+    )
+```
+This violates:
+1. **ADR-005 & 12-Factor App Factor III:** Configuration must be centralized in a Single Source of Truth (`config.py`).
+2. **ADR-026 Rule 2 (Zero Magic Literals):** Hardcoded string literals scattered across leaf functions create duplicate points of modification.
+3. **Operational Consistency:** When the system language is updated via `.env` (e.g., `CRESMO_LANGUAGE=en-US`), inline fallbacks silently ignore the global configuration whenever the caller does not explicitly populate `context["language"]`.
+
+#### 17.2 The Standard & Remediation
+All operational defaults and fallback values MUST be declared as canonical constants in `config.py` (e.g. `DEFAULT_LANGUAGE: str = "Português do Brasil"`) and exposed via `CresmoSettings`.
+
+Adapters and prompt builders MUST resolve operational values via a strict hierarchical resolution pattern:
+```python
+# SOTA CLEAN REMEDIATION: Hierarchical SSOT fallback resolution
+from cresmo.infrastructure.config import DEFAULT_LANGUAGE
+
+
+def _resolve_language(provider: Any, context: dict[str, Any]) -> str:
+    """Resolve target language adhering to SSOT configuration hierarchy.
+
+    Order of precedence:
+    1. Explicit execution context override ('language' key in context).
+    2. Injected provider configured language (provider.language).
+    3. Provider settings configured language (provider.settings.language).
+    4. SSOT infrastructure fallback (DEFAULT_LANGUAGE from cresmo.infrastructure.config).
+    """
+    return (
+        context.get("language")
+        or getattr(provider, "language", None)
+        or getattr(getattr(provider, "settings", None), "language", None)
+        or DEFAULT_LANGUAGE
+    )
+```
+
+Furthermore, prompt provider instances (`JsonPromptProvider`) MUST be injected with the configured language and settings at instantiation time in composition/factory layers, ensuring end-to-end consistency without inline magic constants.
+
+---
+
+### Rule 18: Zero Convenience Accessors, Property Delegation Shims & Backward-Compatibility Aliases
+
+#### 18.1 The Anti-Pattern
+Introducing convenience properties, delegation shims, or property aliases on classes, execution contexts, or configuration models (e.g., `context.channel_name` delegating to `context.channel.name`, `context.content_id` delegating to `context.content.id`, `settings.default_language` aliasing `settings.language`, or `settings.llm_temperature` aliasing `settings.llm_synthesis_temperature`) to maintain transitional backward compatibility or offer caller shortcuts:
+```python
+# ANTI-PATTERN: Convenience Delegation Shim / Property Alias
+class PipelineExecutionContext:
+    channel: Channel
+    content: Content
+
+    @property
+    def channel_name(self) -> str:  # CONVENIENCE SHIM!
+        return self.channel.name
+
+    @property
+    def content_id(self) -> ContentId:  # CONVENIENCE SHIM!
+        return self.content.id
+```
+
+This violates:
+1. **ADR-010 (The Principle of Zero Legacy Shims & Complete Refactoring):** Production code within bounded contexts must never retain deprecated methods, property wrappers, or aliases solely to avoid refactoring callers or test assertions.
+2. **Single Source of Truth (SSOT) & Law of Demeter in Reverse:** Exposing synthetic shims flattens cohesive domain aggregates into an ambiguous, bloated interface, obscuring whether an attribute belongs to the context itself or to its inner Value Objects (`Channel`, `Content`).
+3. **Cognitive Drift & Codebase Schism:** When aliases exist, different modules and test suites arbitrarily mix `settings.language` with `settings.default_language` and `context.channel_name` with `context.channel.name`, degrading architectural clarity and hindering deterministic refactorings.
+
+#### 18.2 The Standard & Remediation
+1. **Pure Aggregate & Composite Navigation:** Callers holding a composite aggregate or context MUST navigate the canonical hierarchy directly:
+   - For `PipelineExecutionContext`: access `context.channel.name`, `context.channel.id`, `context.content.id`, and `context.content.title`. Zero synthetic delegators (`channel_name`, `channel_id`, `content_id`, `channel_id_str`, `content_id_str`, `content_title`, `video`) are permitted.
+2. **Canonical Configuration Fields:** In configuration models (`CresmoSettings`, `PipelineSettingsProtocol`, `DefaultPipelineSettings`), every tunable must have exactly one canonical field name (e.g., `language`, `llm_synthesis_temperature`, `llm_indexing_temperature`). All `@property` aliases and legacy fallback aliases are eradicated.
+3. **Simultaneous Atomic Refactoring:** Whenever a domain concept or configuration field is refined, all consuming use cases, adapters, commands, and test suites must be updated atomically to use the canonical accessor.
+
+---
+
 ## 3. Enforcement & Quality Gates
 
 
 The following Ruff rules and architecture checks are enforced across the entire repository:
 
-| Ruff Code | Rule Description | Severity | Target Scope |
+| Ruff Code / Check | Rule Description | Severity | Target Scope |
 | :--- | :--- | :--- | :--- |
 | **`E402`** | Module level import not at top of file | **BLOCKING** | All files in `src/` and `tests/` |
 | **`S101`** | Use of `assert` detected | **BLOCKING** | `src/` (strictly zero asserts) |
@@ -660,3 +741,5 @@ The following Ruff rules and architecture checks are enforced across the entire 
 | **`PLR0912`**| Too many branches (>12) | **AUDITED** | Refactor to strategy tables |
 | **`ARG001`**| Unused function argument | **BLOCKING** | Cleaned up or prefixed with `_` |
 | **`ARG002`**| Unused method argument | **AUDITED** | Prefix with `_` in NoOp / Null-Object adapters |
+| **`RULE-017`**| Hardcoded operational fallback strings | **BLOCKING** | Sourced strictly from `config.py` / `CresmoSettings` |
+| **`RULE-018`**| Zero convenience accessors & property aliases | **BLOCKING** | Direct canonical aggregate navigation |

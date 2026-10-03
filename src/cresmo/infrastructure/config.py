@@ -15,14 +15,17 @@ Conforms to:
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any, Self
+from typing import Any, ClassVar, Self
 
 from pydantic import AliasChoices, Field, SecretStr, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+from cresmo.application.ports.settings import DEFAULT_LANGUAGE
 from cresmo.infrastructure.paths import find_workspace_root
 
 _WORKSPACE_DIR = find_workspace_root()
+
+DEFAULT_LANGFUSE_PROMPT_LABEL: str = "production"
 
 
 class CresmoSettings(BaseSettings):
@@ -33,6 +36,8 @@ class CresmoSettings(BaseSettings):
     the 12-Factor App methodology and fail-fast principles.
 
     Attributes:
+        DEFAULT_LANGUAGE: Class-level canonical default language fallback.
+        DEFAULT_LANGFUSE_PROMPT_LABEL: Class-level canonical prompt label fallback.
         gemini_api_key: Secret key for Google GenAI API calls.
         langfuse_secret_key: Secret key for Langfuse observability endpoint.
         langfuse_public_key: Public telemetry identifier for Langfuse tracing.
@@ -44,6 +49,9 @@ class CresmoSettings(BaseSettings):
         whisper_model: Model variant for local audio transcription fallback.
         batch_size: Synthesis chunk size for atomic note generation.
     """
+
+    DEFAULT_LANGUAGE: ClassVar[str] = DEFAULT_LANGUAGE
+    DEFAULT_LANGFUSE_PROMPT_LABEL: ClassVar[str] = DEFAULT_LANGFUSE_PROMPT_LABEL
 
     model_config = SettingsConfigDict(
         env_file=(
@@ -99,7 +107,7 @@ class CresmoSettings(BaseSettings):
         description="Langfuse telemetry environment (e.g. 'production', 'staging', 'development').",
     )
     langfuse_prompt_label: str = Field(
-        default="production",
+        default=DEFAULT_LANGFUSE_PROMPT_LABEL,
         description="Active prompt label tag in Langfuse (e.g. 'production', 'staging').",
     )
     langfuse_timeout_seconds: int = Field(
@@ -430,8 +438,8 @@ class CresmoSettings(BaseSettings):
         description="Maximum characters of transcript body passed to LLM for conceptual synthesis, zero means full text.",
     )
     language: str = Field(
-        default="Português do Brasil",
-        validation_alias=AliasChoices("language", "CRESMO_LANGUAGE", "DEFAULT_LANGUAGE"),
+        default=DEFAULT_LANGUAGE,
+        validation_alias=AliasChoices("language", "CRESMO_LANGUAGE"),
         description="Target generation language for synthesis, compendiums, and conceptual indexing.",
     )
     llm_synthesis_temperature: float = Field(
@@ -440,10 +448,7 @@ class CresmoSettings(BaseSettings):
         le=2.0,
         validation_alias=AliasChoices(
             "llm_synthesis_temperature",
-            "llm_temperature",
             "CRESMO_LLM_SYNTHESIS_TEMPERATURE",
-            "CRESMO_LLM_TEMPERATURE",
-            "LLM_TEMPERATURE",
         ),
         description="Default sampling temperature for generative synthesis and expansion stages.",
     )
@@ -453,23 +458,10 @@ class CresmoSettings(BaseSettings):
         le=2.0,
         validation_alias=AliasChoices(
             "llm_indexing_temperature",
-            "raw_index_temperature",
             "CRESMO_LLM_INDEXING_TEMPERATURE",
-            "CRESMO_RAW_INDEX_TEMPERATURE",
-            "RAW_INDEX_TEMPERATURE",
         ),
         description="Sampling temperature for raw transcript conceptual indexing.",
     )
-
-    @property
-    def llm_temperature(self) -> float:
-        """Backward-compatible accessor for llm_synthesis_temperature."""
-        return self.llm_synthesis_temperature
-
-    @property
-    def raw_index_temperature(self) -> float:
-        """Backward-compatible accessor for llm_indexing_temperature."""
-        return self.llm_indexing_temperature
 
     raw_index_max_attempts: int = Field(
         default=3,
@@ -522,3 +514,6 @@ class CresmoSettings(BaseSettings):
         validation_alias=AliasChoices("judge_max_attempts", "CRESMO_JUDGE_MAX_ATTEMPTS"),
         description="Maximum attempts to re-execute a stage when quality evaluation fails.",
     )
+
+
+__all__ = ["CresmoSettings"]

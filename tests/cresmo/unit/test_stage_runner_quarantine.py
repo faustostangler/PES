@@ -21,8 +21,10 @@ from cresmo.application.ports import (
 from cresmo.domain.entities import PipelineSessionId, SourceTranscript, UserIdentity
 from cresmo.domain.exceptions import StageQuarantinedError
 from cresmo.domain.value_objects import (
+    Channel,
     ChannelId,
     ChannelName,
+    Content,
     ContentId,
     CriterionScore,
     JudgeCriterion,
@@ -32,12 +34,13 @@ from cresmo.domain.value_objects import (
 
 
 def _create_sample_context() -> PipelineExecutionContext:
+    channel = Channel(name="Test Channel", id=ChannelId("UC_test"))
+    content = Content.create(id=ContentId("content_123"), title="Sample Content")
     return PipelineExecutionContext(
         session_id=PipelineSessionId("test_chan:content_123"),
         user_identity=UserIdentity.worker(),
-        channel_name=ChannelName("Test Channel"),
-        content_id=ContentId("content_123"),
-        channel_id=ChannelId("UC_test"),
+        channel=channel,
+        content=content,
     )
 
 
@@ -59,13 +62,13 @@ def test_execute_stage_with_string_identifier_and_factory() -> None:
 
     ctx = _create_sample_context()
     raw = SourceTranscript(
-        content_id=ctx.content_id,
-        channel_name=ctx.channel_name,
+        content_id=ctx.content.id,
+        channel_name=ChannelName(ctx.channel.name),
         body="Original source transcript.",
     )
 
     result = runner.execute_stage("fluid_prose", source=raw, context=ctx)
-    assert result.content_id == ctx.content_id
+    assert result.content_id == ctx.content.id
     assert "Transformed text output." in result.body
     assert mock_llm.transform.call_count == 1
 
@@ -82,8 +85,8 @@ def test_execute_stage_string_without_factory_raises_value_error() -> None:
 
     ctx = _create_sample_context()
     raw = SourceTranscript(
-        content_id=ctx.content_id,
-        channel_name=ctx.channel_name,
+        content_id=ctx.content.id,
+        channel_name=ChannelName(ctx.channel.name),
         body="Some text",
     )
 
@@ -144,13 +147,13 @@ def test_execute_stage_closed_loop_critique_synthesizer_integration() -> None:
 
     ctx = _create_sample_context()
     raw = SourceTranscript(
-        content_id=ctx.content_id,
-        channel_name=ctx.channel_name,
+        content_id=ctx.content.id,
+        channel_name=ChannelName(ctx.channel.name),
         body="Verbatim transcript with hesitation.",
     )
 
     result = runner.execute_stage("fluid_prose", source=raw, context=ctx)
-    assert result.content_id == ctx.content_id
+    assert result.content_id == ctx.content.id
     assert "Refined candidate text." in result.body
 
     # Verify synthesizer was called with the failed evaluation
@@ -209,8 +212,8 @@ def test_execute_stage_fail_fast_quarantine_protocol() -> None:
 
     ctx = _create_sample_context()
     raw = SourceTranscript(
-        content_id=ctx.content_id,
-        channel_name=ctx.channel_name,
+        content_id=ctx.content.id,
+        channel_name=ChannelName(ctx.channel.name),
         body="Text that repeatedly fails.",
     )
 
@@ -220,7 +223,7 @@ def test_execute_stage_fail_fast_quarantine_protocol() -> None:
     # 1. Check StageQuarantinedError properties
     err = exc_info.value
     assert err.stage_name == "fluid_prose"
-    assert err.content_id == ctx.content_id.value
+    assert err.content_id == ctx.content.id.value
     assert err.attempts == 2
     assert "Crítica direcionada irrevogável" in err.critique
     assert err.overall_score == 0.35
@@ -228,8 +231,8 @@ def test_execute_stage_fail_fast_quarantine_protocol() -> None:
     # 2. Check SQLite Ledger Quarantine record
     assert mock_ledger.save_entry.call_count == 1
     saved_entry = mock_ledger.save_entry.call_args[0][0]
-    assert saved_entry.content_id == ctx.content_id
-    assert saved_entry.channel_name == ctx.channel_name
+    assert saved_entry.content_id == ctx.content.id
+    assert saved_entry.channel_name.value == ctx.channel.name
     assert saved_entry.status == PipelineStatus.QUARANTINED
     assert "Stage 'fluid_prose' quarantined" in saved_entry.error_message
 
@@ -237,5 +240,5 @@ def test_execute_stage_fail_fast_quarantine_protocol() -> None:
     mock_metrics.increment_counter.assert_any_call(
         "cresmo_stage_quarantines_total",
         1.0,
-        labels={"stage": "fluid_prose", "channel_name": ctx.channel_name.value},
+        labels={"stage": "fluid_prose", "channel_name": ctx.channel.name},
     )

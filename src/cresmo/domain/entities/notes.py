@@ -61,10 +61,11 @@ class AtomicNote:
     cross_context: CrossContextRelations | None = None
 
     def __post_init__(self) -> None:
-        d = self.definition.strip()
-        if len(d) < MIN_ATOMIC_NOTE_DEFINITION_LENGTH:
+        cleaned_definition = self.definition.strip()
+        if len(cleaned_definition) < MIN_ATOMIC_NOTE_DEFINITION_LENGTH:
             raise DomainValidationError(
-                f"AtomicNote definition must contain at least {MIN_ATOMIC_NOTE_DEFINITION_LENGTH} characters of contextual analysis. Got: '{d}'"
+                f"AtomicNote definition must contain at least {MIN_ATOMIC_NOTE_DEFINITION_LENGTH} "
+                f"characters of contextual analysis. Got: '{cleaned_definition}'"
             )
 
         # Graph invariant: enforce acyclic direct relations (no self-loops)

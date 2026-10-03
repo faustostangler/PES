@@ -61,15 +61,20 @@ We establish the **Composite Value Object with Identity VOs (Composição Híbri
    - `tenant_key: str` — Canonical tenant identifier (`"channel:{id or name}"`).
 2. **`Content` Composite VO:**
    - `id: ContentId` — Strongly-typed media identity VO.
-   - `title: str` — Media title.
+   - `title: str` — Media title. Sole canonical field; redundant `display_title` fallback property is eliminated.
    - `url: str` — Canonical media URL.
    - `modality: SourceModality` — Discriminator enum (`URL` vs `FILE`).
    - `publication_date: datetime.date | None` — Publication timestamp.
+   - **Removal of `Video = Content` Alias:** Legacy type alias `Video` is removed from domain exports.
 
-### 3.2 `PipelineSessionId` Parity and Deprecation Clean-up
+### 3.2 `PipelineSessionId` and Context Deprecation Clean-up
 1. Rename property `.channel_token` to **`.channel_id`**, maintaining exact parity with `Channel.id`.
 2. **Remove property `.video_id`**. Only `.content_id` is retained.
-3. No backward-compatible aliases are preserved.
+3. **`PipelineExecutionContext` Clean-up (Pure 4-Pillar Model):**
+   - Remove legacy alias property `.video`.
+   - Remove backward-compatible initialization kwargs (`channel_name`, `content_id`, `channel_id`). The context strictly requires composite `channel: Channel` and `content: Content`.
+   - **Eradicate all convenience accessors & delegation shims** (`.channel_name`, `.channel_id`, `.content_id`, `.channel_id_str`, `.content_id_str`, `.content_title`) per ADR-026 Rule 18. Callers navigate composite VOs directly (`context.channel.name`, `context.content.id`).
+4. **Zero Legacy Shims:** No backward-compatible aliases, delegation shims, or property wrappers are preserved (ADR-010).
 
 ### 3.3 Decommissioning of `ChannelTenantId`
 1. **`ChannelTenantId` is deleted from the domain**.

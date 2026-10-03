@@ -362,7 +362,7 @@ def _extract_channel_candidates(raw: str) -> list[str]:
         if slug:
             candidates.append(slug)
     elif "/" in raw:
-        parts = [p for p in raw.split("/") if p]
+        parts = [part for part in raw.split("/") if part]
         if parts:
             slug = parts[-1].split("?", 1)[0].strip()
             if slug:

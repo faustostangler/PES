@@ -21,6 +21,7 @@ from cresmo.application.ports import (
 from cresmo.domain.entities import PipelineSessionId, SourceTranscript, UserIdentity
 from cresmo.domain.value_objects import (
     CandidateText,
+    ChannelId,
     ChannelName,
     ContentId,
     CriterionScore,
@@ -80,10 +81,10 @@ class TestStageDescriptorRunner:
         )
 
         ctx = PipelineExecutionContext(
-            session_id=PipelineSessionId.create(source.channel_name, source.content_id),
+            session_id=PipelineSessionId.create(source.channel, source.content),
             user_identity=UserIdentity.worker(),
-            channel_name=source.channel_name,
-            content_id=source.content_id,
+            channel=source.channel,
+            content=source.content,
         )
 
         result = runner.execute_stage(
@@ -166,10 +167,10 @@ class TestStageDescriptorRunner:
         )
 
         ctx = PipelineExecutionContext(
-            session_id=PipelineSessionId.create(source.channel_name, source.content_id),
+            session_id=PipelineSessionId.create(source.channel, source.content),
             user_identity=UserIdentity.worker(),
-            channel_name=source.channel_name,
-            content_id=source.content_id,
+            channel=source.channel,
+            content=source.content,
         )
 
         result = runner.execute_stage(
@@ -220,10 +221,10 @@ class TestStageDescriptorRunner:
         )
 
         ctx = PipelineExecutionContext(
-            session_id=PipelineSessionId.create(source.channel_name, source.content_id),
+            session_id=PipelineSessionId.create(source.channel, source.content),
             user_identity=UserIdentity.worker(),
-            channel_name=source.channel_name,
-            content_id=source.content_id,
+            channel=source.channel,
+            content=source.content,
         )
 
         result = runner.execute_stage(
@@ -235,3 +236,113 @@ class TestStageDescriptorRunner:
         )
 
         assert result == "Clean continuous fluid prose."
+
+    def test_execute_stage_symmetric_identity_metadata_parity(self) -> None:
+        """Verify strict parity: analytical IDs (channel_id, content_id) and semantic text (channel_name, content_title)."""
+        telemetry = NoOpTelemetryPort()
+        metrics = NoOpMetricsPort()
+        mock_judge = MagicMock()
+        mock_judge.evaluate.return_value = JudgeEvaluation(
+            target_stage="fluid_prose",
+            passed=True,
+            overall_score=1.0,
+            criteria_scores=(
+                CriterionScore(
+                    criterion=JudgeCriterion.ORALITY_REMOVAL,
+                    score=1.0,
+                    passed=True,
+                ),
+            ),
+            provider="test_judge",
+        )
+
+        captured_candidate: list[CandidateText] = []
+
+        def capture_candidate(cand: CandidateText) -> str:
+            captured_candidate.append(cand)
+            return cand.text
+
+        mock_llm = MagicMock(spec=LLMTransformationPort)
+        mock_llm.transform.return_value = "Symmetric output text."
+
+        mock_prompt_provider = MagicMock(spec=NoOpPromptProviderPort())
+        mock_prompt_provider.get_prompt.return_value = ("sys_instruction", "user_prompt")
+
+        runner = PipelineStageRunner(
+            telemetry_port=telemetry,
+            metrics_port=metrics,
+            llm_judge=mock_judge,
+        )
+
+        source = SourceTranscript(
+            content_id=ContentId("content_999"),
+            channel_name=ChannelName("Sandeco Channel"),
+            channel_id=ChannelId("UC_SAND123"),
+            title="SOTA DDD Architecture",
+            body="Raw spoken body transcript.",
+        )
+
+        descriptor = StageDescriptor[SourceTranscript, CandidateText](
+            stage_name="fluid_prose",
+            transform_prompt_key=PromptKey.FLUID_PROSE,
+            eval_spec=StageEvaluationSpec(
+                raw_text=source.body,
+                candidate_extractor=capture_candidate,
+                required_criteria=(JudgeCriterion.ORALITY_REMOVAL,),
+                max_attempts=1,
+            ),
+        )
+
+        ctx = PipelineExecutionContext(
+            session_id=PipelineSessionId.create(source.channel, source.content),
+            user_identity=UserIdentity.worker(),
+            channel=source.channel,
+            content=source.content,
+        )
+
+        result = runner.execute_stage(
+            descriptor,
+            source,
+            context=ctx,
+            prompt_provider=mock_prompt_provider,
+            llm_transformation_port=mock_llm,
+        )
+
+        assert isinstance(result, CandidateText)
+
+        # 1. Verify build_transform_prompt received symmetric 2x2 pairs
+        mock_prompt_provider.get_prompt.assert_called_once()
+        prompt_call_kwargs = mock_prompt_provider.get_prompt.call_args[1]
+        assert prompt_call_kwargs["channel_id"] == "UC_SAND123"
+        assert prompt_call_kwargs["content_id"] == "content_999"
+        assert prompt_call_kwargs["channel_name"] == "Sandeco Channel"
+        assert prompt_call_kwargs["content_title"] == "SOTA DDD Architecture"
+
+        # 2. Verify CandidateText.metadata parity
+        assert len(captured_candidate) == 1
+        cand_meta = captured_candidate[0].metadata
+        assert cand_meta["channel_id"] == "UC_SAND123"
+        assert cand_meta["content_id"] == "content_999"
+        assert cand_meta["channel_name"] == "Sandeco Channel"
+        assert cand_meta["content_title"] == "SOTA DDD Architecture"
+        assert cand_meta["attempt"] == 1
+
+        # 3. Verify EvaluationContext.metadata parity
+        mock_judge.evaluate.assert_called_once()
+        eval_ctx = mock_judge.evaluate.call_args[0][0]
+        eval_meta = eval_ctx.metadata
+        assert eval_meta["channel_id"] == "UC_SAND123"
+        assert eval_meta["content_id"] == "content_999"
+        assert eval_meta["channel_name"] == "Sandeco Channel"
+        assert eval_meta["content_title"] == "SOTA DDD Architecture"
+        assert eval_meta["attempt"] == 1
+
+    def test_trace_id_fallback_prioritizes_analytical_channel_id(self) -> None:
+        """Verify fallback trace ID prefers analytical channel_id over human channel_name."""
+        trace_id = PipelineStageRunner._get_active_trace_id(
+            channel_id="UC_CHAN_123",
+            content_id="content_abc",
+            channel_name="Human Channel Name",
+        )
+        assert trace_id == "cresmo_UC_CHAN_123_content_abc"
+

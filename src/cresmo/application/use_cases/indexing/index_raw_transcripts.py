@@ -23,6 +23,7 @@ from cresmo.application.ports import (
     PromptProviderPort,
     VaultRepositoryPort,
 )
+from cresmo.application.ports.settings import DEFAULT_LANGUAGE
 from cresmo.application.use_cases.indexing.distiller import LLMTranscriptDistiller
 from cresmo.domain.entities import FluidTranscript, UserIdentity
 from cresmo.domain.exceptions import DomainValidationError
@@ -62,7 +63,7 @@ class IndexRawTranscriptsUseCase:
         prompt_provider: PromptProviderPort | None = None,
         max_chars: int = 0,
         temperature: float = 0.2,
-        language: str = "Português do Brasil",
+        language: str = DEFAULT_LANGUAGE,
         max_rewrites: int = 3,
         llm_judge_port: LlmJudgePort | None = None,
         *,

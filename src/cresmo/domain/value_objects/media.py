@@ -44,6 +44,10 @@ class PipelineStatus(str, Enum):
     QUARANTINED = "QUARANTINED"
 
 
+DEFAULT_FEED_LOOKBACK_DAYS: int = 7
+DEFAULT_FEED_MAX_VIDEOS: int = 50
+
+
 @dataclass(frozen=True)
 class DiscoveredMediaItem:
     """Immutable descriptor of a media item discovered during channel polling.
@@ -63,22 +67,22 @@ class DiscoveredMediaItem:
     channel_name: ChannelName
 
     def __post_init__(self) -> None:
-        t = self.title.strip()
-        u = self.media_url.strip()
+        cleaned_title = self.title.strip()
+        cleaned_media_url = self.media_url.strip()
 
-        if not t:
+        if not cleaned_title:
             raise DomainValidationError("DiscoveredMediaItem title cannot be empty.")
-        if not u.startswith(("http://", "https://")):
+        if not cleaned_media_url.startswith(("http://", "https://")):
             raise DomainValidationError(
                 f"Invalid DiscoveredMediaItem media_url '{self.media_url}'. Must start with http:// or https://"
             )
-        cn = ChannelName.from_string(self.channel_name)
-        cid = ContentId.from_string(self.content_id)
+        resolved_channel_name = ChannelName.from_string(self.channel_name)
+        resolved_content_id = ContentId.from_string(self.content_id)
 
-        object.__setattr__(self, "title", t)
-        object.__setattr__(self, "media_url", u)
-        object.__setattr__(self, "channel_name", cn)
-        object.__setattr__(self, "content_id", cid)
+        object.__setattr__(self, "title", cleaned_title)
+        object.__setattr__(self, "media_url", cleaned_media_url)
+        object.__setattr__(self, "channel_name", resolved_channel_name)
+        object.__setattr__(self, "content_id", resolved_content_id)
 
     @property
     def channel(self) -> Channel:
@@ -122,9 +126,9 @@ def normalize_to_uploads_playlist_url(channel_ref: str | ChannelId) -> str:
     if "playlist?list=" in cleaned or "list=UU" in cleaned or "list=PL" in cleaned:
         return cleaned if cleaned.startswith(("http://", "https://")) else f"https://{cleaned}"
 
-    cid = ChannelId.extract_from_text(cleaned)
-    if cid and cid.uploads_playlist_url:
-        return cid.uploads_playlist_url
+    extracted_channel_id = ChannelId.extract_from_text(cleaned)
+    if extracted_channel_id and extracted_channel_id.uploads_playlist_url:
+        return extracted_channel_id.uploads_playlist_url
 
     formatted = cleaned if cleaned.startswith(("http://", "https://")) else f"https://{cleaned}"
     if "/@" in formatted and not formatted.endswith(
@@ -150,12 +154,12 @@ class ChannelFeedQuery:
     """
 
     channel_url: str
-    lookback_days: int = 7
-    max_videos: int = 50
+    lookback_days: int = DEFAULT_FEED_LOOKBACK_DAYS
+    max_videos: int = DEFAULT_FEED_MAX_VIDEOS
 
     def __post_init__(self) -> None:
-        u = self.channel_url.strip()
-        if not u.startswith(("http://", "https://")):
+        cleaned_channel_url = self.channel_url.strip()
+        if not cleaned_channel_url.startswith(("http://", "https://")):
             raise DomainValidationError(
                 f"Invalid ChannelFeedQuery channel_url '{self.channel_url}'. Must start with http:// or https://"
             )
@@ -165,4 +169,4 @@ class ChannelFeedQuery:
             )
         if self.max_videos <= 0:
             raise DomainValidationError(f"max_videos must be positive. Got: {self.max_videos}")
-        object.__setattr__(self, "channel_url", u)
+        object.__setattr__(self, "channel_url", cleaned_channel_url)

@@ -12,6 +12,7 @@ from abc import ABC, abstractmethod
 from collections.abc import Callable
 from typing import Any
 
+from cresmo.application.ports.settings import DEFAULT_LANGUAGE
 from cresmo.domain.value_objects import PromptKey
 
 
@@ -87,11 +88,11 @@ _NOOP_BUILDERS: dict[PromptKey, Callable[[dict[str, Any]], tuple[str, str]]] = {
         f"Atomic Notes in Vault:\n{c.get('notes_json', '')}\n\nOutput strictly a JSON array of MOC objects.",
     ),
     PromptKey.RAW_INDEX_SUMMARY: lambda c: (
-        f"You are Cresmo Indexer. Language: {c.get('language', 'Português do Brasil')}.",
+        f"You are Cresmo Indexer. Language: {c.get('language', DEFAULT_LANGUAGE)}.",
         f"Video Title: {c.get('video_title', '')}\nExcerpt:\n{c.get('transcript_excerpt', '')}",
     ),
     PromptKey.RAW_INDEX_CONCEPTS: lambda c: (
-        f"You are Cresmo Concept Extractor. Language: {c.get('language', 'Português do Brasil')}.",
+        f"You are Cresmo Concept Extractor. Language: {c.get('language', DEFAULT_LANGUAGE)}.",
         f"Video Title: {c.get('video_title', '')}\nExcerpt:\n{c.get('transcript_excerpt', '')}",
     ),
     PromptKey.RAW_INDEX_CONCEPTS_REWRITE: lambda c: (
@@ -99,19 +100,19 @@ _NOOP_BUILDERS: dict[PromptKey, Callable[[dict[str, Any]], tuple[str, str]]] = {
         f"Rewrite concepts conforming to rules: {c.get('previous_output', '')}",
     ),
     PromptKey.RAW_INDEX_SYNTHESIS: lambda c: (
-        f"You are Cresmo Synthesizer. Language: {c.get('language', 'Português do Brasil')}.",
+        f"You are Cresmo Synthesizer. Language: {c.get('language', DEFAULT_LANGUAGE)}.",
         f"Video Title: {c.get('video_title', '')}\nSummary:\n{c.get('summary', '')}",
     ),
     PromptKey.JUDGE_RAW_INDEX_SUMMARY: lambda c: (
-        f"You are Judge. Language: {c.get('language', 'Português do Brasil')}.",
+        f"You are Judge. Language: {c.get('language', DEFAULT_LANGUAGE)}.",
         f"Title: {c.get('video_title', '')}\nExcerpt:\n{c.get('transcript_excerpt', '')}\nSummary:\n{c.get('summary', '')}",
     ),
     PromptKey.JUDGE_RAW_INDEX_CONCEPTS: lambda c: (
-        f"You are Judge. Language: {c.get('language', 'Português do Brasil')}.",
+        f"You are Judge. Language: {c.get('language', DEFAULT_LANGUAGE)}.",
         f"Title: {c.get('video_title', '')}\nExcerpt:\n{c.get('transcript_excerpt', '')}\nConcepts:\n{c.get('concepts', '')}",
     ),
     PromptKey.JUDGE_RAW_INDEX_SYNTHESIS: lambda c: (
-        f"You are Judge. Language: {c.get('language', 'Português do Brasil')}.",
+        f"You are Judge. Language: {c.get('language', DEFAULT_LANGUAGE)}.",
         f"Title: {c.get('video_title', '')}\nExcerpt:\n{c.get('transcript_excerpt', '')}\nSynthesis:\n{c.get('synthesis', '')}",
     ),
     PromptKey.LLM_JUDGE: lambda c: (

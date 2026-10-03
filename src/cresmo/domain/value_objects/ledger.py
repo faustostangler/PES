@@ -43,26 +43,26 @@ class LedgerEntry:
     completed_at: datetime | None = None
 
     def __post_init__(self) -> None:
-        u = self.media_url.strip()
-        t = self.title.strip()
-        cn = ChannelName.from_string(self.channel_name)
-        cid = ContentId.from_string(self.content_id)
-        if not u.startswith(("http://", "https://")):
+        cleaned_media_url = self.media_url.strip()
+        cleaned_title = self.title.strip()
+        resolved_channel_name = ChannelName.from_string(self.channel_name)
+        resolved_content_id = ContentId.from_string(self.content_id)
+
+        if not cleaned_media_url.startswith(("http://", "https://")):
             raise DomainValidationError(
                 f"Invalid LedgerEntry media_url '{self.media_url}'. Must start with http:// or https://"
             )
-        if not t:
+        if not cleaned_title:
             raise DomainValidationError("LedgerEntry title cannot be empty.")
         if self.notes_count < 0:
             raise DomainValidationError(
                 f"LedgerEntry notes_count cannot be negative. Got: {self.notes_count}"
             )
-        object.__setattr__(self, "channel_name", cn)
-        object.__setattr__(self, "content_id", cid)
 
-        object.__setattr__(self, "media_url", u)
-        object.__setattr__(self, "title", t)
-        object.__setattr__(self, "channel_name", cn)
+        object.__setattr__(self, "content_id", resolved_content_id)
+        object.__setattr__(self, "channel_name", resolved_channel_name)
+        object.__setattr__(self, "media_url", cleaned_media_url)
+        object.__setattr__(self, "title", cleaned_title)
 
 
 @dataclass(frozen=True)
@@ -88,9 +88,9 @@ class MasterDocumentResult:
     video_ids: tuple[ContentId, ...] = ()
 
     def __post_init__(self) -> None:
-        cn = ChannelName.from_string(self.channel_name)
-        cat = self.channel_category.strip()
-        if not cat:
+        resolved_channel_name = ChannelName.from_string(self.channel_name)
+        cleaned_category = self.channel_category.strip()
+        if not cleaned_category:
             raise DomainValidationError("MasterDocumentResult channel_category cannot be empty.")
         if self.part_number < 1:
             raise DomainValidationError(
@@ -104,12 +104,15 @@ class MasterDocumentResult:
             raise DomainValidationError(
                 f"MasterDocumentResult document_count cannot be negative. Got: {self.document_count}"
             )
-        coerced_vids = tuple(
-            ContentId.from_string(v) if not isinstance(v, ContentId) else v for v in self.video_ids
+        coerced_content_ids = tuple(
+            ContentId.from_string(target_id)
+            if not isinstance(target_id, ContentId)
+            else target_id
+            for target_id in self.video_ids
         )
-        object.__setattr__(self, "channel_name", cn)
-        object.__setattr__(self, "channel_category", cat)
-        object.__setattr__(self, "video_ids", coerced_vids)
+        object.__setattr__(self, "channel_name", resolved_channel_name)
+        object.__setattr__(self, "channel_category", cleaned_category)
+        object.__setattr__(self, "video_ids", coerced_content_ids)
 
 
 @dataclass(frozen=True)
@@ -139,34 +142,34 @@ class RawIndexEntry:
     excerpt: str = ""
 
     def __post_init__(self) -> None:
-        vid = ContentId.from_string(self.video_id)
-        object.__setattr__(self, "video_id", vid)
-        u = self.url.strip()
-        t = self.title.strip()
-        cn = ChannelName.from_string(self.channel_name)
-        kc = " ".join(self.key_concept.split())
-        s = self.synthesis.strip()
-        cat = (self.channel_category or "").strip()
-        sum_clean = self.summary.strip()
-        exc_clean = self.excerpt.strip()
+        resolved_content_id = ContentId.from_string(self.video_id)
+        object.__setattr__(self, "video_id", resolved_content_id)
+        cleaned_url = self.url.strip()
+        cleaned_title = self.title.strip()
+        resolved_channel_name = ChannelName.from_string(self.channel_name)
+        cleaned_key_concept = " ".join(self.key_concept.split())
+        cleaned_synthesis = self.synthesis.strip()
+        cleaned_channel_category = (self.channel_category or "").strip()
+        cleaned_summary = self.summary.strip()
+        cleaned_excerpt = self.excerpt.strip()
 
-        if not u:
+        if not cleaned_url:
             raise DomainValidationError("RawIndexEntry url cannot be empty.")
-        if not t:
+        if not cleaned_title:
             raise DomainValidationError("RawIndexEntry title cannot be empty.")
-        if not kc:
+        if not cleaned_key_concept:
             raise DomainValidationError("RawIndexEntry key_concept cannot be empty.")
-        if not s:
+        if not cleaned_synthesis:
             raise DomainValidationError("RawIndexEntry synthesis cannot be empty.")
 
-        object.__setattr__(self, "url", u)
-        object.__setattr__(self, "title", t)
-        object.__setattr__(self, "channel_name", cn)
-        object.__setattr__(self, "key_concept", kc)
-        object.__setattr__(self, "synthesis", s)
-        object.__setattr__(self, "channel_category", cat)
-        object.__setattr__(self, "summary", sum_clean)
-        object.__setattr__(self, "excerpt", exc_clean)
+        object.__setattr__(self, "url", cleaned_url)
+        object.__setattr__(self, "title", cleaned_title)
+        object.__setattr__(self, "channel_name", resolved_channel_name)
+        object.__setattr__(self, "key_concept", cleaned_key_concept)
+        object.__setattr__(self, "synthesis", cleaned_synthesis)
+        object.__setattr__(self, "channel_category", cleaned_channel_category)
+        object.__setattr__(self, "summary", cleaned_summary)
+        object.__setattr__(self, "excerpt", cleaned_excerpt)
 
     def to_markdown_block(self) -> str:
         """Format entry as a rich Markdown block with title link, ID, concept, and paratactic paragraph."""

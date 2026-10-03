@@ -15,7 +15,9 @@ from cresmo.application.pipeline.stage_runner import PipelineStageRunner
 from cresmo.application.ports import NoOpMetricsPort, NoOpTelemetryPort
 from cresmo.domain.exceptions import DomainValidationError
 from cresmo.domain.value_objects import (
+    Channel,
     ChannelName,
+    Content,
     ContentId,
     JudgeCriterion,
     JudgeEvaluation,
@@ -302,11 +304,13 @@ class TestPipelineStageRunnerEvaluatedStage:
             llm_transformation_port=llm_port,
         )
 
+        channel = Channel(name="CtxChannel")
+        content = Content.create(id=ContentId("vid_ctx_1"), title="CtxTitle")
         ctx = PipelineExecutionContext(
             session_id=PipelineSessionId("ch_test:vid_ctx_1"),
             user_identity=UserIdentity.worker(),
-            channel_name=ChannelName("CtxChannel"),
-            content_id=ContentId("vid_ctx_1"),
+            channel=channel,
+            content=content,
         )
 
         descriptor = StageDescriptor[SourceTranscript, CandidateText](

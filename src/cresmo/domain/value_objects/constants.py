@@ -57,12 +57,12 @@ def is_processable_transcript_file(path: Path | str) -> bool:
     Returns:
         True if the file is an eligible raw transcript, False if it is a system artifact/index.
     """
-    p = Path(path)
-    name = p.name
+    candidate_path = Path(path)
+    name = candidate_path.name
     name_lower = name.lower()
 
     # Rule 1: Suffix must be .md or .txt
-    suffix = p.suffix.lower()
+    suffix = candidate_path.suffix.lower()
     if suffix not in {".md", ".txt"}:
         return False
 
@@ -71,7 +71,7 @@ def is_processable_transcript_file(path: Path | str) -> bool:
         return False
 
     # Rule 3: Hidden or system directory components (e.g. .git, .obsidian, _trash)
-    for part in p.parts[:-1]:
+    for part in candidate_path.parts[:-1]:
         if part and part != "/" and part.startswith(("_", ".")):
             return False
 
@@ -84,5 +84,5 @@ def is_processable_transcript_file(path: Path | str) -> bool:
         return False
 
     # Rule 6: Derived artifact directories when path is relative or encompasses multiple roots
-    dir_parts_lower = {part.lower() for part in p.parts[:-1]}
+    dir_parts_lower = {part.lower() for part in candidate_path.parts[:-1]}
     return not bool(dir_parts_lower.intersection(RESERVED_DERIVED_DIRS))

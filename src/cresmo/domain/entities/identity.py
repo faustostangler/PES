@@ -18,7 +18,9 @@ from cresmo.domain.value_objects import (
     ContentId,
 )
 
-PIPELINE_SESSION_ID_PART_COUNT: int = 3
+CANONICAL_SESSION_ID_PARTS: int = 2
+LEGACY_SESSION_ID_PARTS: int = 3
+PIPELINE_SESSION_ID_PART_COUNT: int = LEGACY_SESSION_ID_PARTS
 
 
 @dataclass(frozen=True)
@@ -36,13 +38,13 @@ class PipelineSessionId:
         if not self.value or not self.value.strip():
             raise ValueError("PipelineSessionId cannot be empty.")
         parts = self.value.split(":")
-        if len(parts) == 2:
+        if len(parts) == CANONICAL_SESSION_ID_PARTS:
             if not parts[0].strip() or not parts[1].strip():
                 raise ValueError(
                     f"Invalid PipelineSessionId format: '{self.value}'. "
                     "Expected '{channel_id}:{content_id}'."
                 )
-        elif len(parts) == 3 and parts[0] == "content":
+        elif len(parts) == LEGACY_SESSION_ID_PARTS and parts[0] == "content":
             if not parts[1].strip() or not parts[2].strip():
                 raise ValueError(
                     f"Invalid PipelineSessionId format: '{self.value}'. "
@@ -70,33 +72,45 @@ class PipelineSessionId:
         """
         # Algorithmic key: prefer stable ID over mutable name
         if isinstance(channel, Channel):
-            ch_id = channel.id or channel_id
-            ch = ch_id.value if ch_id else channel.name
+            resolved_channel_id = channel.id or channel_id
+            channel_identifier = (
+                resolved_channel_id.value if resolved_channel_id else channel.name
+            )
         else:
-            ch = (
+            channel_identifier = (
                 channel_id.value
                 if channel_id
                 else (channel.value if isinstance(channel, ChannelName) else channel.strip())
             )
 
         if isinstance(content_id, Content):
-            c_id = content_id.id.value
+            content_identifier = content_id.id.value
         else:
-            c_id = content_id.value if isinstance(content_id, ContentId) else content_id.strip()
+            content_identifier = (
+                content_id.value if isinstance(content_id, ContentId) else content_id.strip()
+            )
 
-        return cls(value=f"{ch}:{c_id}")
+        return cls(value=f"{channel_identifier}:{content_identifier}")
 
     @property
     def channel_id(self) -> str:
         """Algorithmic channel identifier token stored in the session key (ID or name)."""
         parts = self.value.split(":")
-        return parts[1] if parts[0] == "content" and len(parts) == 3 else parts[0]
+        return (
+            parts[1]
+            if parts[0] == "content" and len(parts) == LEGACY_SESSION_ID_PARTS
+            else parts[0]
+        )
 
     @property
     def content_id(self) -> str:
         """Content identifier stored in the session key."""
         parts = self.value.split(":")
-        return parts[2] if parts[0] == "content" and len(parts) == 3 else parts[1]
+        return (
+            parts[2]
+            if parts[0] == "content" and len(parts) == LEGACY_SESSION_ID_PARTS
+            else parts[1]
+        )
 
 
 @dataclass(frozen=True)
@@ -122,17 +136,22 @@ class UserIdentity:
     @classmethod
     def anonymous(cls, token: str | None = None) -> UserIdentity:
         """Create an anonymous user identity."""
-        val = f"anon:{token}" if token else "anonymous"
-        return cls(value=val, is_anonymous=True, provider="anonymous", subject="")
+        identity_value = f"anon:{token}" if token else "anonymous"
+        return cls(value=identity_value, is_anonymous=True, provider="anonymous", subject="")
 
     @classmethod
     def identified(cls, subject: str, provider: str = "oauth") -> UserIdentity:
         """Create an identified user identity from OAuth subject, IAM username, or email."""
         if not subject or not subject.strip():
             raise ValueError("Identified UserIdentity requires a non-empty subject.")
-        prov = provider.strip().lower() or "oauth"
-        val = f"user:{prov}:{subject.strip()}"
-        return cls(value=val, is_anonymous=False, provider=prov, subject=subject.strip())
+        resolved_provider = provider.strip().lower() or "oauth"
+        identity_value = f"user:{resolved_provider}:{subject.strip()}"
+        return cls(
+            value=identity_value,
+            is_anonymous=False,
+            provider=resolved_provider,
+            subject=subject.strip(),
+        )
 
     @classmethod
     def worker(cls, name: str = "worker") -> UserIdentity:

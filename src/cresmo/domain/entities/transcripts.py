@@ -161,12 +161,12 @@ class FluidTranscript:
     video_description: str = ""
 
     def __post_init__(self) -> None:
-        cn = (
+        resolved_channel_name = (
             self.channel_name
             if isinstance(self.channel_name, ChannelName)
             else ChannelName.from_string(self.channel_name)
         )
-        object.__setattr__(self, "channel_name", cn)
+        object.__setattr__(self, "channel_name", resolved_channel_name)
 
         if self.channel_id is not None and not isinstance(self.channel_id, ChannelId):
             object.__setattr__(self, "channel_id", ChannelId.from_string(self.channel_id))
@@ -175,11 +175,11 @@ class FluidTranscript:
         object.__setattr__(self, "publication_date", pub_date)
         object.__setattr__(self, "upload_date", pub_date)
 
-        b = self.body.strip()
-        if not b:
+        cleaned_body = self.body.strip()
+        if not cleaned_body:
             raise DomainValidationError("FluidTranscript body cannot be empty or whitespace.")
 
-        if _TABLE_PATTERN.search(b):
+        if _TABLE_PATTERN.search(cleaned_body):
             raise CompendiumStructureError(
                 "FluidTranscript body must be continuous prose and cannot contain Markdown tables."
             )

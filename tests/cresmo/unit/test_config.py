@@ -66,8 +66,9 @@ class TestCresmoSettings:
         assert settings.ollama_num_predict == 0
         assert settings.raw_index_max_chars == 0
         assert settings.language == "Português do Brasil"
-        assert settings.llm_temperature == 0.2
-        assert settings.raw_index_temperature == 0.2
+        assert not hasattr(settings, "default_language")
+        assert not hasattr(settings, "llm_temperature")
+        assert not hasattr(settings, "raw_index_temperature")
         assert settings.llm_synthesis_temperature == 0.2
         assert settings.llm_indexing_temperature == 0.2
 
@@ -95,10 +96,10 @@ class TestCresmoSettings:
             CresmoSettings(llm_indexing_temperature=-0.5)
 
         with pytest.raises(ValidationError):
-            CresmoSettings.model_validate({"llm_temperature": -0.1})
+            CresmoSettings.model_validate({"llm_synthesis_temperature": -0.1})
 
         with pytest.raises(ValidationError):
-            CresmoSettings.model_validate({"raw_index_temperature": -0.5})
+            CresmoSettings.model_validate({"llm_indexing_temperature": -0.5})
 
     def test_ensure_directories_creates_master_dir(self, tmp_path: Path) -> None:
         settings = CresmoSettings(data_dir=tmp_path / "data", vault_dir=tmp_path / "vault")

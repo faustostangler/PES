@@ -106,11 +106,13 @@ def build_prompt_provider(
     json_prompt_provider = JsonPromptProvider(
         prompts_path=resolved_settings.prompts_path,
         skills_dir=resolved_settings.skills_dir,
+        language=resolved_settings.language,
+        settings=resolved_settings,
     )
     return LangfusePromptProvider(
         langfuse_client=langfuse_client,
         fallback_provider=json_prompt_provider,
-        label=getattr(resolved_settings, "langfuse_prompt_label", "production"),
+        label=resolved_settings.langfuse_prompt_label,
     )
 
 

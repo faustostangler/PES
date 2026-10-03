@@ -28,7 +28,6 @@ from cresmo.domain.value_objects.identity import (
     Content,
     ContentId,
     SourceModality,
-    Video,
 )
 from cresmo.domain.value_objects.ledger import (
     LedgerEntry,
@@ -36,6 +35,8 @@ from cresmo.domain.value_objects.ledger import (
     RawIndexEntry,
 )
 from cresmo.domain.value_objects.media import (
+    DEFAULT_FEED_LOOKBACK_DAYS,
+    DEFAULT_FEED_MAX_VIDEOS,
     ChannelFeedQuery,
     DiscoveredMediaItem,
     PipelineStatus,
@@ -65,6 +66,8 @@ from cresmo.domain.value_objects.sync import (
 )
 
 __all__ = [
+    "DEFAULT_FEED_LOOKBACK_DAYS",
+    "DEFAULT_FEED_MAX_VIDEOS",
     "MAX_CHANNEL_ID_LENGTH",
     "MAX_CHANNEL_NAME_LENGTH",
     "MAX_NOTE_TITLE_LENGTH",
@@ -100,7 +103,6 @@ __all__ = [
     "SyncSummary",
     "TypedVerdict",
     "VerdictType",
-    "Video",
     "is_processable_transcript_file",
     "normalize_to_uploads_playlist_url",
 ]

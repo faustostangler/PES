@@ -22,6 +22,7 @@ from typing import Any, ClassVar
 from cresmo.application.ports import PromptProviderPort
 from cresmo.infrastructure.adapters.prompts.builders import PROMPT_BUILDER_DISPATCH_MAP
 from cresmo.infrastructure.adapters.prompts.registry import PromptKey
+from cresmo.infrastructure.config import CresmoSettings
 from cresmo.infrastructure.paths import find_workspace_root
 
 logger = logging.getLogger(__name__)
@@ -41,21 +42,33 @@ class JsonPromptProvider(PromptProviderPort):
     Attributes:
         prompts_path: Optional explicit filesystem path to a JSON templates file.
         skills_dir: Resolved directory containing agent skill markdown files.
+        language: Canonical configured target language for prompt generation.
+        settings: Optional runtime settings instance.
     """
 
     def __init__(
         self,
         prompts_path: Path | None = None,
         skills_dir: Path | None = None,
+        language: str | None = None,
+        settings: Any | None = None,
     ) -> None:
         """Initialize prompt provider and load templates from disk or package resources.
 
         Args:
             prompts_path: Optional custom path to prompts.json. If None, loads package default.
             skills_dir: Optional custom path to .agents/skills directory.
+            language: Optional configured target language for prompt generation.
+            settings: Optional runtime settings instance conforming to PipelineSettingsProtocol.
         """
         self.prompts_path = prompts_path
         self.skills_dir = self._resolve_skills_dir(skills_dir)
+        self.language: str = (
+            language
+            or (getattr(settings, "language", None) if settings is not None else None)
+            or CresmoSettings.DEFAULT_LANGUAGE
+        )
+        self.settings: Any | None = settings
         self._templates: dict[str, dict[str, str]] = {}
         self._skill_cache: dict[str, str] = {}
         self._load_templates()
