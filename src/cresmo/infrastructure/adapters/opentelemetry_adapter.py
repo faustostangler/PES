@@ -167,6 +167,9 @@ def _resolve_user_identity_and_tenant(
 def _build_langfuse_input_payload(
     metadata: dict[str, Any],
     channel_name: str,
+    channel_id: str,
+    content_id: str,
+    content_title: str,
     attributes: dict[str, Any],
 ) -> None:
     """Populate OpenTelemetry and Langfuse metadata attributes and JSON input payload."""
@@ -179,10 +182,16 @@ def _build_langfuse_input_payload(
             attributes[f"langfuse.input.{key}"] = formatted_value
             input_payload[key] = formatted_value
 
+    # ID-ID Parity: Symmetrically guarantee channel_id and content_id in langfuse.input
+    if channel_id:
+        attributes["langfuse.input.channel_id"] = channel_id
+        input_payload["channel_id"] = channel_id
+    if content_id:
+        attributes["langfuse.input.content_id"] = content_id
+        input_payload["content_id"] = content_id
+
     # TXT-TXT Parity: Symmetrically guarantee channel and channel_name aliases
-    resolved_channel = (
-        metadata.get("channel") or metadata.get("channel_name") or channel_name
-    )
+    resolved_channel = metadata.get("channel") or metadata.get("channel_name") or channel_name
     if resolved_channel:
         formatted_channel = str(resolved_channel)
         attributes["langfuse.input.channel"] = formatted_channel
@@ -191,11 +200,13 @@ def _build_langfuse_input_payload(
         input_payload["channel_name"] = formatted_channel
 
     # TXT-TXT Parity: Symmetrically guarantee title and content_title aliases in langfuse.input
-    resolved_title = metadata.get("title") or metadata.get("content_title")
+    resolved_title = metadata.get("title") or metadata.get("content_title") or content_title
     if resolved_title:
         formatted_title = str(resolved_title)
         attributes["langfuse.input.title"] = formatted_title
+        attributes["langfuse.input.content_title"] = formatted_title
         input_payload["title"] = formatted_title
+        input_payload["content_title"] = formatted_title
 
     if input_payload:
         attributes["langfuse.input"] = json.dumps(input_payload)
@@ -205,48 +216,53 @@ def _build_session_span_attributes(
     session_id: PipelineSessionId,
     user: UserIdentity,
     tenant: str,
-    tags: list[str],
-    channel_name: str,
-    metadata: dict[str, Any] | None,
-) -> dict[str, Any]:
-    """Assemble atomic OpenTelemetry and Langfuse session span attributes."""
-    effective_metadata = metadata or {}
+    pipeline_version: str,
+    metadata: dict[str, Any],
+) -> tuple[dict[str, Any], list[str]]:
+    """Assemble atomic OpenTelemetry and Langfuse session span attributes and tags."""
+    # 1. Resolve Algorithmic Pair (ID - ID Parity: Machines & Indexes)
+    content_id = session_id.content_id
+    channel_id = str(metadata.get("channel_id") or session_id.channel_id or "").strip()
+
+    # 2. Resolve Cognitive Pair (TXT - TXT Parity: Humans & Observability)
+    resolved_channel_name = str(
+        metadata.get("channel_name") or metadata.get("channel") or session_id.channel_id
+    ).strip()
+    content_title = str(
+        metadata.get("title") or metadata.get("content_title") or content_id
+    ).strip()
+
+    tags = [resolved_channel_name, pipeline_version, f"auth:{user.provider}"]
+
     attributes: dict[str, Any] = {
         "langfuse.observation.type": "span",
         "langfuse.session.id": session_id.value,
         "langfuse.user.id": user.value,
         "langfuse.trace.tags": tags,
         # Algorithmic Pair (ID - ID Parity)
-        "cresmo.content.id": session_id.content_id,
+        "cresmo.channel.id": channel_id,
+        "cresmo.content.id": content_id,
         # Cognitive Pair (TXT - TXT Parity)
-        "cresmo.channel.name": channel_name,
+        "cresmo.channel.name": resolved_channel_name,
+        "cresmo.content.title": content_title,
+        # Tenant & Auth Identity
         "cresmo.tenant_id": tenant,
         "cresmo.user.is_anonymous": user.is_anonymous,
         "cresmo.user.provider": user.provider,
     }
-    # TXT-TXT Parity: Content Title
-    content_title = str(
-        effective_metadata.get("title")
-        or effective_metadata.get("content_title")
-        or ""
-    ).strip()
-    if content_title:
-        attributes["cresmo.content.title"] = content_title
-
-    # ID-ID Parity: Channel ID
-    channel_id = str(effective_metadata.get("channel_id") or "").strip()
-    if channel_id:
-        attributes["cresmo.channel.id"] = channel_id
 
     if user.subject:
         attributes["cresmo.user.subject"] = user.subject
 
     _build_langfuse_input_payload(
-        metadata=effective_metadata,
-        channel_name=channel_name,
+        metadata=metadata,
+        channel_name=resolved_channel_name,
+        channel_id=channel_id,
+        content_id=content_id,
+        content_title=content_title,
         attributes=attributes,
     )
-    return attributes
+    return attributes, tags
 
 
 class OpenTelemetryAdapter(TelemetryPort):
@@ -302,29 +318,24 @@ class OpenTelemetryAdapter(TelemetryPort):
             session_id=session_id,
         )
         effective_metadata = metadata or {}
-        channel_name = str(
-            effective_metadata.get("channel")
-            or effective_metadata.get("channel_name")
-            or session_id.channel_id
-        )
         pipeline_version = str(
             effective_metadata.get("pipeline_version")
             or effective_metadata.get("version")
             or self._pipeline_version
         )
-        tags = [channel_name, pipeline_version, f"auth:{normalized_user.provider}"]
 
-        session_attributes = _build_session_span_attributes(
+        session_attributes, tags = _build_session_span_attributes(
             session_id=session_id,
             user=normalized_user,
             tenant=tenant,
-            tags=tags,
-            channel_name=channel_name,
-            metadata=metadata,
+            pipeline_version=pipeline_version,
+            metadata=effective_metadata,
         )
 
         root_operation = trace_name or "cresmo.pipeline.execution"
-        with self._tracer.start_as_current_span(root_operation, attributes=session_attributes) as span:
+        with self._tracer.start_as_current_span(
+            root_operation, attributes=session_attributes
+        ) as span:
             propagation_context: Any = nullcontext()
             if self._langfuse is not None and propagate_attributes is not None:
                 try:
@@ -392,6 +403,7 @@ class OpenTelemetryAdapter(TelemetryPort):
                 attributes={
                     "judge.session_id": session_id.value,
                     "judge.content_id": content_id.value,
+                    "judge.channel_id": session_id.channel_id,
                     "judge.iteration": iteration,
                     "judge.max_iterations": max_iterations,
                     "judge.verdict": verdict,
@@ -429,6 +441,7 @@ class OpenTelemetryAdapter(TelemetryPort):
             event_attributes: dict[str, Any] = {
                 "eval.session_id": session_id.value,
                 "eval.content_id": content_id.value,
+                "eval.channel_id": session_id.channel_id,
                 "eval.coherence_score": score,
             }
             output_payload: dict[str, Any] = {"coherence_score": score}

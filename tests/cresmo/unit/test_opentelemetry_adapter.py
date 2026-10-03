@@ -184,6 +184,9 @@ class TestOpenTelemetryAdapter:
 
         # Full symmetric Langfuse input keys (cognitive pair + algorithmic pair + URL)
         assert root_span.attributes["langfuse.input.title"] == "Machiavelli and Modern State"
+        assert (
+            root_span.attributes["langfuse.input.content_title"] == "Machiavelli and Modern State"
+        )
         assert root_span.attributes["langfuse.input.channel"] == "sandeco"
         assert root_span.attributes["langfuse.input.channel_name"] == "sandeco"
         assert root_span.attributes["langfuse.input.channel_id"] == "UC_Sandeco123"
@@ -191,6 +194,7 @@ class TestOpenTelemetryAdapter:
         assert root_span.attributes["langfuse.input.video_url"] == "https://youtube.com/watch?v=123"
         assert json.loads(str(root_span.attributes["langfuse.input"])) == {
             "title": "Machiavelli and Modern State",
+            "content_title": "Machiavelli and Modern State",
             "channel": "sandeco",
             "channel_name": "sandeco",
             "channel_id": "UC_Sandeco123",
@@ -231,6 +235,9 @@ class TestOpenTelemetryAdapter:
         event = root_span.events[0]
         assert event.name == "judge_evaluation"
         assert event.attributes is not None
+        assert event.attributes["judge.session_id"] == "sandeco:vid_judge_01"
+        assert event.attributes["judge.content_id"] == "vid_judge_01"
+        assert event.attributes["judge.channel_id"] == "sandeco"
         assert event.attributes["judge.friction_ratio"] == 0.5
         assert event.attributes["judge.verdict"] == "PASS"
 
@@ -255,6 +262,9 @@ class TestOpenTelemetryAdapter:
         )
         event = next(e for e in root_span.events if e.name == "session_coherence")
         assert event.attributes is not None
+        assert event.attributes["eval.session_id"] == "sandeco:vid_coherence_01"
+        assert event.attributes["eval.content_id"] == "vid_coherence_01"
+        assert event.attributes["eval.channel_id"] == "sandeco"
         assert event.attributes["eval.coherence_score"] == 0.92
         assert event.attributes["eval.details.wikilink_count"] == 14
         assert root_span.attributes is not None
@@ -285,8 +295,10 @@ class TestOpenTelemetryAdapter:
         assert root_span.attributes["langfuse.session.id"] == "sandeco:vid_anon_01"
         assert root_span.attributes["langfuse.user.id"] == "anonymous"
         assert root_span.attributes["cresmo.content.id"] == "vid_anon_01"
-        assert "cresmo.video.id" not in root_span.attributes
+        assert root_span.attributes["cresmo.channel.id"] == "sandeco"
+        assert root_span.attributes["cresmo.content.title"] == "vid_anon_01"
         assert root_span.attributes["cresmo.channel.name"] == "sandeco"
+        assert "cresmo.video.id" not in root_span.attributes
         assert "cresmo.channel" not in root_span.attributes
         assert root_span.attributes["cresmo.user.is_anonymous"] is True
         assert root_span.attributes["cresmo.user.provider"] == "anonymous"
@@ -311,8 +323,10 @@ class TestOpenTelemetryAdapter:
         assert root_span.attributes["langfuse.session.id"] == "sandeco:vid_auth_01"
         assert root_span.attributes["langfuse.user.id"] == "user:google:alice@corp.com"
         assert root_span.attributes["cresmo.content.id"] == "vid_auth_01"
-        assert "cresmo.video.id" not in root_span.attributes
+        assert root_span.attributes["cresmo.channel.id"] == "sandeco"
+        assert root_span.attributes["cresmo.content.title"] == "vid_auth_01"
         assert root_span.attributes["cresmo.channel.name"] == "sandeco"
+        assert "cresmo.video.id" not in root_span.attributes
         assert "cresmo.channel" not in root_span.attributes
         assert root_span.attributes["cresmo.user.is_anonymous"] is False
         assert root_span.attributes["cresmo.user.provider"] == "google"
@@ -337,6 +351,10 @@ class TestOpenTelemetryAdapter:
         assert root_span.attributes is not None
         assert root_span.attributes["langfuse.session.id"] == "sandeco:vid_worker_01"
         assert root_span.attributes["langfuse.user.id"] == "system:worker"
+        assert root_span.attributes["cresmo.content.id"] == "vid_worker_01"
+        assert root_span.attributes["cresmo.channel.id"] == "sandeco"
+        assert root_span.attributes["cresmo.content.title"] == "vid_worker_01"
+        assert root_span.attributes["cresmo.channel.name"] == "sandeco"
         assert root_span.attributes["cresmo.user.is_anonymous"] is False
         assert root_span.attributes["cresmo.user.provider"] == "system"
         assert root_span.attributes["cresmo.user.subject"] == "worker"
@@ -561,6 +579,37 @@ def test_noop_telemetry_adapter_record_score_is_graceful_noop() -> None:
         comment="test",
         trace_id="test_trace",
     )
+
+
+def test_universal_algorithmic_and_cognitive_parity_adr034() -> None:
+    """Verify ADR-034: Algorithmic (ID-ID) and Cognitive (TXT-TXT) Parity invariants."""
+    exporter = InMemorySpanExporter()
+    provider = TracerProvider()
+    provider.add_span_processor(SimpleSpanProcessor(exporter))
+    tracer = provider.get_tracer("cresmo.test")
+    adapter = OpenTelemetryAdapter(tracer=tracer)
+
+    session_id = PipelineSessionId.create(channel="test_channel", content_id="test_content_456")
+    user = UserIdentity.anonymous()
+
+    with adapter.start_pipeline_session(
+        session_id=session_id,
+        user_id=user,
+        metadata={"custom_key": "custom_val"},
+    ):
+        pass
+
+    spans = exporter.get_finished_spans()
+    root_span = next(s for s in spans if s.name == "cresmo.pipeline.execution")
+    attrs = root_span.attributes or {}
+
+    # Algorithmic Pair (ID - ID)
+    assert attrs["cresmo.content.id"] == "test_content_456"
+    assert attrs["cresmo.channel.id"] == "test_channel"
+
+    # Cognitive Pair (TXT - TXT)
+    assert attrs["cresmo.channel.name"] == "test_channel"
+    assert attrs["cresmo.content.title"] == "test_content_456"
 
 
 def test_cresmo_root_exports_only_package_metadata() -> None:

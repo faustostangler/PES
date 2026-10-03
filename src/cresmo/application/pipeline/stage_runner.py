@@ -153,6 +153,7 @@ class PipelineStageRunner:
             channel_id=channel_id_val,
             content_id=content_id_val,
             channel_name=channel_name_val,
+            content_title=content_title_val,
         ):
             for attempt in range(1, effective_max_attempts + 1):
                 system_instruction, user_prompt = descriptor.build_transform_prompt(
@@ -278,6 +279,7 @@ class PipelineStageRunner:
                 channel_name=channel_name,
                 content_id=content_id,
                 channel_id=channel_id,
+                content_title=content_title,
                 fatal=fatal,
                 fallback=fallback,
             )
@@ -293,6 +295,7 @@ class PipelineStageRunner:
                 channel_name=channel_name,
                 content_id=content_id,
                 channel_id=channel_id,
+                content_title=content_title,
                 fatal=fatal,
                 fallback=fallback,
             )
@@ -360,6 +363,7 @@ class PipelineStageRunner:
         channel_name: ChannelName | str,
         content_id: ContentId | str,
         channel_id: ChannelId | str | None = None,
+        content_title: str = "",
         fatal: bool = True,
         fallback: _StageRet | None = None,
     ) -> _StageRet | None:
@@ -373,6 +377,7 @@ class PipelineStageRunner:
                 channel_id=channel_id_str,
                 content_id=content_id_str,
                 channel_name=channel_name_str,
+                content_title=content_title,
             ):
                 return fn()
         except Exception as exc:
@@ -416,9 +421,7 @@ class PipelineStageRunner:
             else PipelineSessionId(session_id)
         )
         cnt_vo = (
-            content_id
-            if isinstance(content_id, ContentId)
-            else ContentId.from_string(content_id)
+            content_id if isinstance(content_id, ContentId) else ContentId.from_string(content_id)
         )
         self.telemetry_port.record_session_coherence(
             session_id=sess_vo,
@@ -443,10 +446,17 @@ class PipelineStageRunner:
         channel_id: str,
         content_id: str,
         channel_name: str = "",
+        content_title: str = "",
     ) -> Generator[None]:
         start_time = time.perf_counter()
         status = "success"
-        with self.telemetry_port.start_stage_span(stage_name):
+        stage_attributes = {
+            "channel.id": channel_id,
+            "content.id": content_id,
+            "channel.name": channel_name,
+            "content.title": content_title,
+        }
+        with self.telemetry_port.start_stage_span(stage_name, attributes=stage_attributes):
             try:
                 yield
             except Exception as exc:
@@ -513,8 +523,8 @@ class PipelineStageRunner:
         if ctx and ctx.trace_id:
             return format(ctx.trace_id, "032x")
         effective_ch_id = channel_id or (channel if isinstance(channel, ChannelId) else None)
-        effective_ch_name = (
-            channel_name or (channel if not isinstance(channel, ChannelId) else None)
+        effective_ch_name = channel_name or (
+            channel if not isinstance(channel, ChannelId) else None
         )
         ch_token = (
             _as_str(effective_ch_id)
@@ -573,4 +583,3 @@ class PipelineStageRunner:
             1.0,
             labels={"stage": stage_name, "passed": str(passed).lower(), "attempt": str(attempt)},
         )
-

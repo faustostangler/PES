@@ -56,7 +56,9 @@ def record_stage_quarantine(
                         if existing
                         else f"https://cresmo.internal/content/{content_id.value}"
                     ),
-                    title=existing.title if existing else (content_title or f"Quarantined Content {content_id.value}"),
+                    title=existing.title
+                    if existing
+                    else (content_title or f"Quarantined Content {content_id.value}"),
                     channel_name=channel_name_vo,
                     status=PipelineStatus.QUARANTINED,
                     error_message=f"Stage '{stage_name}' quarantined: {critique}",
@@ -79,13 +81,13 @@ def record_stage_quarantine(
         span.set_attribute("quarantine.attempts", effective_max_attempts)
         span.set_attribute("quarantine.overall_score", evaluation.overall_score)
         # ID-ID Parity: Algorithmic Identifiers
+        effective_channel_id = channel_id_string or channel_name_string
         span.set_attribute("cresmo.content.id", content_id.value)
-        if channel_id_string:
-            span.set_attribute("cresmo.channel.id", channel_id_string)
+        span.set_attribute("cresmo.channel.id", effective_channel_id)
         # TXT-TXT Parity: Cognitive Display Names
+        effective_content_title = content_title or content_id.value
         span.set_attribute("cresmo.channel.name", channel_name_string)
-        if content_title:
-            span.set_attribute("cresmo.content.title", content_title)
+        span.set_attribute("cresmo.content.title", effective_content_title)
 
     metrics_port.increment_counter(
         "cresmo_stage_quarantines_total",
