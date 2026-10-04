@@ -56,6 +56,7 @@ from cresmo.domain.entities import (
 )
 from cresmo.domain.exceptions import CresmoDomainError
 from cresmo.domain.value_objects import (
+    BatchId,
     RawIndexEntry,
     is_processable_transcript_file,
 )
@@ -171,6 +172,7 @@ class CresmoPipeline:
         force_reprocess: bool = False,
         user: UserIdentity | None = None,
         entry: RawIndexEntry | None = None,
+        batch_id: BatchId | str | None = None,
     ) -> PipelineResult:
         """Execute the end-to-end synthesis pipeline (canonical Template Method)."""
         channel = raw.channel
@@ -189,6 +191,11 @@ class CresmoPipeline:
             "content_title": content.title,
             "title": content.title,
         }
+        if batch_id:
+            resolved_batch_id = (
+                batch_id.value if isinstance(batch_id, BatchId) else batch_id.strip()
+            )
+            root_metadata["batch_id"] = resolved_batch_id
         if content.url:
             root_metadata["video_url"] = content.url
         if content.publication_date:
@@ -290,6 +297,7 @@ class CresmoPipeline:
         gap_filler_passes: int = 3,
         force_reprocess: bool = False,
         user: UserIdentity | None = None,
+        batch_id: BatchId | str | None = None,
     ) -> PipelineResult:
         """Run the end-to-end synthesis pipeline for a single video source."""
         self.warmup()
@@ -302,6 +310,7 @@ class CresmoPipeline:
             gap_filler_passes=gap_filler_passes,
             force_reprocess=force_reprocess,
             user=user,
+            batch_id=batch_id,
         )
 
     def run_for_text_file(
@@ -310,6 +319,7 @@ class CresmoPipeline:
         gap_filler_passes: int = 3,
         force_reprocess: bool = False,
         user: UserIdentity | None = None,
+        batch_id: BatchId | str | None = None,
     ) -> PipelineResult:
         """Run the end-to-end synthesis pipeline starting from a local raw text file."""
         if not is_processable_transcript_file(file_path):
@@ -331,6 +341,7 @@ class CresmoPipeline:
             gap_filler_passes=gap_filler_passes,
             force_reprocess=force_reprocess,
             user=user,
+            batch_id=batch_id,
         )
 
     def run_for_manifest(
@@ -339,14 +350,17 @@ class CresmoPipeline:
         gap_filler_passes: int = 1,
         force_reprocess: bool = False,
         user: UserIdentity | None = None,
+        batch_id: BatchId | str | None = None,
     ) -> list[PipelineResult]:
         """Run the end-to-end synthesis pipeline sequentially for all video URLs in a manifest file."""
+        resolved_batch_id = batch_id or BatchId.generate()
         return [
             self.run_for_video(
                 video_url=url,
                 gap_filler_passes=gap_filler_passes,
                 force_reprocess=force_reprocess,
                 user=user,
+                batch_id=resolved_batch_id,
             )
             for url in load_manifest_urls(manifest_path)
         ]

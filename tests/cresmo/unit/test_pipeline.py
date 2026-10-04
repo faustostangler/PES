@@ -29,7 +29,13 @@ from cresmo.application.ports import (
 )
 from cresmo.domain.entities import EnrichedCompendium, FluidTranscript, SourceTranscript
 from cresmo.domain.exceptions import CresmoDomainError
-from cresmo.domain.value_objects import ChannelName, ContentId, NoteTitle, RawIndexEntry
+from cresmo.domain.value_objects import (
+    BatchId,
+    ChannelName,
+    ContentId,
+    NoteTitle,
+    RawIndexEntry,
+)
 from tests.doubles.mock_adapters import (
     InMemoryLedgerAdapter,
     InMemoryVaultAdapter,
@@ -113,7 +119,7 @@ class TestCresmoPipelineOrchestration:
     """Hermetic unit tests for the pipeline orchestration."""
 
     @pytest.mark.skip(
-        reason="Downstream stages 2-8 quarantined pending StageDescriptor refactoring per ADR-031"
+        reason="Downstream stages 2-8 quarantined pending StageConfig refactoring per ADR-031"
     )
     def test_pipeline_full_cycle_success(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
@@ -155,7 +161,7 @@ class TestCresmoPipelineOrchestration:
         assert ledger_port.is_processed(cid) is True
 
     def test_pipeline_stage1_fluid_prose_execution(self) -> None:
-        """Verify CresmoPipeline Stage 1 executes with SourceTranscript via StageDescriptor."""
+        """Verify CresmoPipeline Stage 1 executes with SourceTranscript via StageConfig."""
         cid = ContentId("vid_stage1_iso")
         canned_source = SourceTranscript(
             content_id=cid,
@@ -226,7 +232,7 @@ class TestCresmoPipelineOrchestration:
         assert res.synthesized_notes == ()
 
     @pytest.mark.skip(
-        reason="Downstream stages 2-8 quarantined pending StageDescriptor refactoring per ADR-031"
+        reason="Downstream stages 2-8 quarantined pending StageConfig refactoring per ADR-031"
     )
     def test_run_for_video_force_reprocess_bypasses_ledger(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
@@ -254,7 +260,7 @@ class TestCresmoPipelineOrchestration:
         assert result_notes[0].title.value == "Vilfredo Pareto"
 
     @pytest.mark.skip(
-        reason="Downstream stages 2-8 quarantined pending StageDescriptor refactoring per ADR-031"
+        reason="Downstream stages 2-8 quarantined pending StageConfig refactoring per ADR-031"
     )
     def test_run_for_video_resumes_when_expanded_compendium_exists(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
@@ -337,7 +343,7 @@ class TestCresmoPipelineOrchestration:
             pipeline.run_for_text_file(brain_file)
 
     @pytest.mark.skip(
-        reason="Downstream stages 2-8 quarantined pending StageDescriptor refactoring per ADR-031"
+        reason="Downstream stages 2-8 quarantined pending StageConfig refactoring per ADR-031"
     )
     def test_run_for_text_file_plain_text_full_cycle(self, tmp_path: Path) -> None:
         chan_dir = tmp_path / "political_science"
@@ -546,6 +552,42 @@ class TestCresmoPipelineOrchestration:
         assert results[0].success is True
         assert results[1].success is True
 
+    def test_run_for_manifest_propagates_single_batch_id_to_all_videos(self, tmp_path: Path) -> None:
+        """Verify ADR-035: run_for_manifest creates a single BatchId shared by all video items."""
+        manifest = tmp_path / "playlist.txt"
+        manifest.write_text(
+            "https://youtube.com/watch?v=vid111\nhttps://youtube.com/watch?v=vid222\n",
+            encoding="utf-8",
+        )
+
+        canned_raw = SourceTranscript(
+            content_id=ContentId("vidSample"),
+            channel_name=ChannelName("Political Theory"),
+            body="Raw transcript content for batch manifest test",
+        )
+        pipeline = CresmoPipeline(
+            media_ingestion_port=MockMediaIngestionPort(canned_transcript=canned_raw),
+            llm_synthesis_port=SmartMockLLMAdapter(),
+            vault_port=InMemoryVaultAdapter(),
+            ledger_port=InMemoryLedgerAdapter(),
+        )
+
+        captured_batches: list[Any] = []
+        original_run_for_video = pipeline.run_for_video
+
+        def tracking_run_for_video(video_url: str, **kwargs: Any) -> PipelineResult:
+            captured_batches.append(kwargs.get("batch_id"))
+            return original_run_for_video(video_url=video_url, **kwargs)
+
+        pipeline.run_for_video = tracking_run_for_video  # type: ignore
+
+        results = pipeline.run_for_manifest(manifest)
+        assert len(results) == 2
+        assert len(captured_batches) == 2
+        assert isinstance(captured_batches[0], BatchId)
+        assert isinstance(captured_batches[1], BatchId)
+        assert captured_batches[0] == captured_batches[1]
+
     def test_pipeline_init_defaults_and_custom_options(self) -> None:
         # Default initialization
         pipeline_default = CresmoPipeline(
@@ -594,7 +636,7 @@ class TestCresmoPipelineOrchestration:
         assert pipeline.batch_size == 8
 
     @pytest.mark.skip(
-        reason="Downstream stages 2-8 quarantined pending StageDescriptor refactoring per ADR-031"
+        reason="Downstream stages 2-8 quarantined pending StageConfig refactoring per ADR-031"
     )
     def test_run_for_video_gap_filler_passes_and_idempotency_attributes(self) -> None:
         cid = ContentId("videoPassTest1")
@@ -675,7 +717,7 @@ class TestCresmoPipelineOrchestration:
         assert result_hyphenated.content_id.value == "hyphen-and_under"
 
     @pytest.mark.skip(
-        reason="Downstream stages 2-8 quarantined pending StageDescriptor refactoring per ADR-031"
+        reason="Downstream stages 2-8 quarantined pending StageConfig refactoring per ADR-031"
     )
     def test_run_for_text_file_passes_and_idempotency_attributes(self, tmp_path: Path) -> None:
         text_file = tmp_path / "pass_count_test.txt"
@@ -766,7 +808,7 @@ class TestCresmoPipelineOrchestration:
         assert "Just plain body text." in raw_no_close.body
 
     @pytest.mark.skip(
-        reason="Downstream stages 2-8 quarantined pending StageDescriptor refactoring per ADR-031"
+        reason="Downstream stages 2-8 quarantined pending StageConfig refactoring per ADR-031"
     )
     def test_run_for_manifest_parameters_passthrough(self, tmp_path: Path) -> None:
         manifest = tmp_path / "manifest_params.txt"
@@ -808,7 +850,7 @@ class TestCresmoPipelineOrchestration:
         assert results_force[0].success is True
 
     @pytest.mark.skip(
-        reason="Downstream stages 2-8 quarantined pending StageDescriptor refactoring per ADR-031"
+        reason="Downstream stages 2-8 quarantined pending StageConfig refactoring per ADR-031"
     )
     def test_pipeline_run_passes_raw_index_entry_to_synthesize(self) -> None:
         cid = ContentId("entryPass123")
@@ -869,7 +911,7 @@ class TestCresmoPipelineOrchestration:
         assert not stage_executed
 
     @pytest.mark.skip(
-        reason="Downstream stages 2-8 quarantined pending StageDescriptor refactoring per ADR-031"
+        reason="Downstream stages 2-8 quarantined pending StageConfig refactoring per ADR-031"
     )
     def test_pipeline_execute_handles_raw_indexing_failure_gracefully(self) -> None:
         """Verify that execute() logs a warning and proceeds when raw indexing fails (fatal=False)."""

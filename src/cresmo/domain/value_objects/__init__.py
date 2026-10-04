@@ -22,6 +22,7 @@ from cresmo.domain.value_objects.constants import (
     is_processable_transcript_file,
 )
 from cresmo.domain.value_objects.identity import (
+    BatchId,
     Channel,
     ChannelId,
     ChannelName,
@@ -76,6 +77,7 @@ __all__ = [
     "RESERVED_DERIVED_DIRS",
     "RESERVED_SYSTEM_FILENAMES",
     "AtomicEntityInventory",
+    "BatchId",
     "CandidateText",
     "CausalMatrix",
     "Channel",

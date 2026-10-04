@@ -1,4 +1,4 @@
-# SPEC-014: Standardized StageDescriptor, Closed-Loop Reflection, and Fail-Fast Quarantine Specification
+# SPEC-014: Standardized StageConfig, Closed-Loop Reflection, and Fail-Fast Quarantine Specification
 
 **Context:** Cresmo Knowledge Synthesis & Pipeline Execution Subsystem  
 **Phase:** Phase 2 — Refractometry (Precision Test Specifications)  
@@ -15,8 +15,8 @@ This specification codifies the precision contracts, domain invariants, applicat
 It formalizes:
 1. **Domain Input & Intermediate Contracts:** Replacement of deprecated `RawTranscript` with canonical `SourceTranscript` (`ChannelName` VO) and introduction of `CandidateText` VO.
 2. **Polymorphic Judge Verdicts:** `VerdictType` (`NOUL`, `CHOICE`, `SCORE`) and `TypedVerdict`.
-3. **Domain Catalog:** `StageRegistry` and immutable `StageSpec` definitions.
-4. **Application Template Orchestrator:** `StageDescriptor[TSource, TOutput]`, `StageFactory`, and `PipelineStageRunner.execute_stage(...)`.
+3. **Domain Catalog:** `StageRegistry` and immutable `StageDefinition` definitions.
+4. **Application Template Orchestrator:** `StageConfig[TSource, TOutput]`, `StageFactory`, and `PipelineStageRunner.execute_stage(...)`.
 5. **Closed-Loop Reflection:** Dynamic prompt critique injection via `CritiqueSynthesizerPort`.
 6. **Fail-Fast Quarantine Protocol:** 4-step fail-fast quarantine handling on exhausted retry failures (`StageQuarantinedError`).
 
@@ -70,9 +70,9 @@ In [`src/cresmo/domain/value_objects/quality.py`](../../src/cresmo/domain/value_
   - `reasoning: str = ""`
   - `improvement_suggestion: str = ""`
 
-### 2.4 `StageRegistry` & `StageSpec`
+### 2.4 `StageRegistry` & `StageDefinition`
 In [`src/cresmo/domain/stage_registry.py`](../../src/cresmo/domain/stage_registry.py):
-- **`StageSpec` (Data Class)**:
+- **`StageDefinition` (Data Class)**:
   - `transform_prompt_key: PromptKey | None = None`
   - `required_criteria: tuple[JudgeCriterion, ...] = ()`
   - `judge_prompt_key: PromptKey | None = None`
@@ -81,8 +81,8 @@ In [`src/cresmo/domain/stage_registry.py`](../../src/cresmo/domain/stage_registr
   - `candidate_extractor: Callable[..., str] | None = None`
   - `eval_metadata: dict[str, Any]`
 - **`StageRegistry` (Domain Catalog)**:
-  - Class-level registry `_SPECS: dict[str, StageSpec]`.
-  - Methods: `get(stage_name: str) -> StageSpec`, `contains(stage_name: str) -> bool`, `register(stage_name: str, spec: StageSpec) -> None`, `all_stages() -> list[str]`.
+  - Class-level registry `_SPECS: dict[str, StageDefinition]`.
+  - Methods: `get(stage_name: str) -> StageDefinition`, `contains(stage_name: str) -> bool`, `register(stage_name: str, spec: StageDefinition) -> None`, `all_stages() -> list[str]`.
   - Initial registered stage: `"fluid_prose"` (Stage 1 reference implementation).
 
 ### 2.5 `StageQuarantinedError`
@@ -118,9 +118,9 @@ In [`src/cresmo/infrastructure/adapters/ollama_critique_adapter.py`](../../src/c
 
 ---
 
-## 4. Application Layer: StageDescriptor & Execution Template
+## 4. Application Layer: StageConfig & Execution Template
 
-### 4.1 `StageDescriptor[TSource, TOutput]`
+### 4.1 `StageConfig[TSource, TOutput]`
 In [`src/cresmo/application/pipeline/stage_descriptor.py`](../../src/cresmo/application/pipeline/stage_descriptor.py):
 - Generic container parameterized over `TSource` and `TOutput`.
 - Attributes:
@@ -135,7 +135,7 @@ In [`src/cresmo/application/pipeline/stage_descriptor.py`](../../src/cresmo/appl
 
 ### 4.2 `StageFactory`
 In [`src/cresmo/application/pipeline/stage_factory.py`](../../src/cresmo/application/pipeline/stage_factory.py):
-- Resolves `StageSpec` from `StageRegistry.get(stage_name)` and combines it with runtime `PipelineSettings` (e.g. `judge_blocking`, `judge_max_attempts`, stage temperatures) to construct a configured `StageDescriptor`.
+- Resolves `StageDefinition` from `StageRegistry.get(stage_name)` and combines it with runtime `PipelineSettings` (e.g. `judge_blocking`, `judge_max_attempts`, stage temperatures) to construct a configured `StageConfig`.
 
 ### 4.3 `PipelineStageRunner.execute_stage(...)`
 In [`src/cresmo/application/pipeline/stage_runner.py`](../../src/cresmo/application/pipeline/stage_runner.py):
@@ -143,10 +143,10 @@ In [`src/cresmo/application/pipeline/stage_runner.py`](../../src/cresmo/applicat
   ```python
   def execute_stage(
       self,
-      stage: str | StageDescriptor[_TSource, _TOutput] | None = None,
+      stage: str | StageConfig[_TSource, _TOutput] | None = None,
       source: _TSource | None = None,
       *,
-      descriptor: StageDescriptor[_TSource, _TOutput] | None = None,
+      descriptor: StageConfig[_TSource, _TOutput] | None = None,
       context: PipelineExecutionContext | None = None,
       channel_name: ChannelName | None = None,
       content_id: ContentId | None = None,

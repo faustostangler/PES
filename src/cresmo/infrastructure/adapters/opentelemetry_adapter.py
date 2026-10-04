@@ -41,6 +41,7 @@ _MIN_STRUCTURED_USER_PARTS: Final[int] = 3
 
 _LANGFUSE_INPUT_KEYS: frozenset[str] = frozenset(
     {
+        "batch_id",
         "title",
         "content_title",
         "channel",
@@ -53,6 +54,7 @@ _LANGFUSE_INPUT_KEYS: frozenset[str] = frozenset(
 
 _CANONICAL_ROOT_METADATA_KEYS: frozenset[str] = frozenset(
     {
+        "batch_id",
         "title",
         "content_title",
         "channel",
@@ -253,6 +255,13 @@ def _build_session_span_attributes(
 
     if user.subject:
         attributes["cresmo.user.subject"] = user.subject
+
+    # SOTA-KISS Batch Correlation (ADR-035)
+    batch_id = metadata.get("batch_id")
+    if batch_id:
+        clean_batch_id = str(batch_id).strip()
+        attributes["cresmo.batch_id"] = clean_batch_id
+        tags.append(f"batch:{clean_batch_id}")
 
     _build_langfuse_input_payload(
         metadata=metadata,

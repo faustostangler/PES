@@ -19,7 +19,7 @@ from opentelemetry import trace
 from cresmo.application.pipeline.context import PipelineExecutionContext
 from cresmo.application.pipeline.models import PipelineDependencies
 from cresmo.application.pipeline.quarantine import record_stage_quarantine
-from cresmo.application.pipeline.stage_descriptor import StageDescriptor
+from cresmo.application.pipeline.stage_descriptor import StageConfig
 from cresmo.application.ports import (
     CritiqueSynthesizerPort,
     LedgerRepositoryPort,
@@ -120,7 +120,7 @@ class PipelineStageRunner:
 
     def execute_stage(
         self,
-        stage: str | StageDescriptor[_TSource, _TOutput],
+        stage: str | StageConfig[_TSource, _TOutput],
         source: _TSource,
         *,
         context: PipelineExecutionContext,
@@ -500,8 +500,8 @@ class PipelineStageRunner:
 
     def _resolve_stage_descriptor(
         self,
-        stage: str | StageDescriptor[_TSource, _TOutput],
-    ) -> StageDescriptor[_TSource, _TOutput]:
+        stage: str | StageConfig[_TSource, _TOutput],
+    ) -> StageConfig[_TSource, _TOutput]:
         if isinstance(stage, str):
             if self.stage_factory is None:
                 raise ValueError(

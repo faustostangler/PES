@@ -1,4 +1,4 @@
-# ADR-031: Standardized StageDescriptor, SourceTranscript, CandidateText, and Closed-Loop Reflection Quality Fabric
+# ADR-031: Standardized StageConfig, SourceTranscript, CandidateText, and Closed-Loop Reflection Quality Fabric
 
 **Status:** ACCEPTED  
 **Date:** 2026-10-01  
@@ -41,7 +41,7 @@ We establish the **Standardized Stage Execution Architecture**, built around:
 1. **`SourceTranscript` Domain Aggregate**: The canonical input contract across all pipeline stages. Conforming strictly to ADR-010 (Zero Legacy Shims), `RawTranscript` is completely decommissioned and eliminated with zero backwards compatibility.
 2. **`CandidateText` Value Object**: Strongly-typed, validated container for intermediate LLM transformation outputs.
 3. **`VerdictType` and `TypedVerdict`**: Polymorphic evaluation returns (`NOUL`, `CHOICE`, `SCORE`) for `LlmJudgePort`.
-4. **`StageDescriptor[TSource, TOutput]`**: Reusable Template Method specification encapsulating transform prompts, judge prompts, evaluation specifications, and optional post-processors.
+4. **`StageConfig[TSource, TOutput]`**: Reusable Template Method specification encapsulating transform prompts, judge prompts, evaluation specifications, and optional post-processors.
 5. **Closed-Loop Reflection Fabric**: Injecting judge critique and improvement suggestions into subsequent retry prompts.
 6. **Pipeline Truncation / Quarantine**: Commenting downstream unrefactored stages in `coordinator.py` to isolate Stage 1 (`fluid_transcript`) as the reference implementation.
 
@@ -136,13 +136,13 @@ class TypedVerdict:
 
 ---
 
-### 3.2 Application Layer: `StageDescriptor` Template
+### 3.2 Application Layer: `StageConfig` Template
 
 Encapsulates all stage requirements into a single declarative structure:
 
 ```python
 @dataclass(frozen=True)
-class StageDescriptor(Generic[TSource, TOutput]):
+class StageConfig(Generic[TSource, TOutput]):
     stage_name: str
     transform_prompt_key: PromptKey
     judge_prompt_key: PromptKey | None = None
@@ -174,7 +174,7 @@ When a judge fails an evaluation on attempt $N < \text{max\_attempts}$:
 ## 4. Consequences & Impact
 
 ### Positive
-- **DRY & Unified Extensibility:** Refactoring downstream stages (`raw_indexing`, `gap_filler`, `expansion`, etc.) will only require defining their respective `StageDescriptor` instances.
+- **DRY & Unified Extensibility:** Refactoring downstream stages (`raw_indexing`, `gap_filler`, `expansion`, etc.) will only require defining their respective `StageConfig` instances.
 - **Closed-Loop Convergence:** Self-healing retries dramatically reduce hallucination rates and improve deterministic compliance.
 - **Strong Typing (Zero Primitive Obsession):** `SourceTranscript`, `CandidateText`, and `TypedVerdict` eliminate untyped string plumbing.
 - **Safe Isolation:** Commenting downstream stages allows verifying the entire end-to-end flow of Stage 1 in hermetic isolation.

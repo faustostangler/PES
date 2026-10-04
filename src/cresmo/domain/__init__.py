@@ -10,7 +10,7 @@ from cresmo.domain.exceptions import (
     DomainValidationError,
     StageQuarantinedError,
 )
-from cresmo.domain.stage_registry import StageRegistry, StageSpec
+from cresmo.domain.stage_registry import StageRegistry, StageDefinition
 from cresmo.domain.value_objects.ledger import LedgerEntry
 
 __all__ = [
@@ -21,6 +21,6 @@ __all__ = [
     "LedgerEntry",
     "StageQuarantinedError",
     "StageRegistry",
-    "StageSpec",
+    "StageDefinition",
     "post_process_fluid_transcript",
 ]

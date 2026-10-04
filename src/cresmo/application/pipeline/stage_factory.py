@@ -1,13 +1,13 @@
-"""Factory for pipeline StageDescriptors conforming to ADR-031."""
+"""Factory for pipeline StageConfigs conforming to ADR-031."""
 
 from __future__ import annotations
 
 from collections.abc import Callable, Sequence
 from typing import Any, TypeVar
 
-from cresmo.application.pipeline.stage_descriptor import StageDescriptor
+from cresmo.application.pipeline.stage_descriptor import StageConfig
 from cresmo.application.ports import PipelineSettingsProtocol
-from cresmo.domain.stage_registry import StageRegistry, StageSpec
+from cresmo.domain.stage_registry import StageRegistry, StageDefinition
 from cresmo.domain.value_objects import (
     CandidateText,
     JudgeCriterion,
@@ -20,7 +20,7 @@ TOutput = TypeVar("TOutput")
 
 
 class StageFactory:
-    """Polyvalent Factory creating standardized StageDescriptors from declarative domain specs.
+    """Polyvalent Factory creating standardized StageConfigs from declarative domain specs.
 
     Maintains single source of truth for prompts, quality criteria, post-processors,
     and stage execution tunables across pipeline stages (ADR-031).
@@ -29,7 +29,7 @@ class StageFactory:
 
     def __init__(self, settings: PipelineSettingsProtocol) -> None:
         self.settings = settings
-        self._cache: dict[str, StageDescriptor[Any, Any]] = {}
+        self._cache: dict[str, StageConfig[Any, Any]] = {}
 
     def build_stage(
         self,
@@ -46,8 +46,8 @@ class StageFactory:
         blocking: bool | None = None,
         eval_spec: StageEvaluationSpec | None = None,
         eval_metadata: dict[str, Any] | None = None,
-    ) -> StageDescriptor[TSource, TOutput]:
-        """Build or retrieve a standardized StageDescriptor for any pipeline stage.
+    ) -> StageConfig[TSource, TOutput]:
+        """Build or retrieve a standardized StageConfig for any pipeline stage.
 
         Resolves stage metadata from the declarative StageRegistry catalog, applies
         convention-over-configuration for prompts/extractors, and binds centralized
@@ -73,7 +73,7 @@ class StageFactory:
         if not has_overrides and stage_name in self._cache:
             return self._cache[stage_name]
 
-        spec: StageSpec | None = (
+        spec: StageDefinition | None = (
             StageRegistry.get(stage_name) if StageRegistry.contains(stage_name) else None
         )
 
@@ -144,7 +144,7 @@ class StageFactory:
         if judge_prompt_key is None and spec:
             judge_prompt_key = spec.judge_prompt_key
 
-        descriptor = StageDescriptor[TSource, TOutput](
+        descriptor = StageConfig[TSource, TOutput](
             stage_name=stage_name,
             transform_prompt_key=transform_prompt_key,
             judge_prompt_key=judge_prompt_key,
@@ -165,4 +165,4 @@ class StageFactory:
     create_stage = build_stage
 
 
-__all__ = ["StageFactory", "StageSpec"]
+__all__ = ["StageFactory", "StageDefinition"]

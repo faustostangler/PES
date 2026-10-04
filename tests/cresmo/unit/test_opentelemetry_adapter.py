@@ -612,6 +612,40 @@ def test_universal_algorithmic_and_cognitive_parity_adr034() -> None:
     assert attrs["cresmo.content.title"] == "test_content_456"
 
 
+def test_start_pipeline_session_with_batch_id_adr035() -> None:
+    """Verify ADR-035: batch_id metadata sets cresmo.batch_id attribute, Langfuse tag, and input payload."""
+    exporter = InMemorySpanExporter()
+    provider = TracerProvider()
+    provider.add_span_processor(SimpleSpanProcessor(exporter))
+    tracer = provider.get_tracer("cresmo.test")
+    adapter = OpenTelemetryAdapter(tracer=tracer)
+
+    session_id = PipelineSessionId.create(channel="test_channel", content_id="test_content_789")
+    user = UserIdentity.anonymous()
+    batch_key = "20261003_203603_a1b2c3"
+
+    with adapter.start_pipeline_session(
+        session_id=session_id,
+        user_id=user,
+        metadata={"batch_id": batch_key},
+    ):
+        pass
+
+    spans = exporter.get_finished_spans()
+    root_span = next(s for s in spans if s.name == "cresmo.pipeline.execution")
+    attrs = root_span.attributes or {}
+
+    assert attrs["cresmo.batch_id"] == batch_key
+    tags = attrs.get("langfuse.trace.tags")
+    assert isinstance(tags, (list, tuple))
+    assert f"batch:{batch_key}" in tags
+
+    raw_input = attrs.get("langfuse.input")
+    assert isinstance(raw_input, str)
+    input_payload = json.loads(raw_input)
+    assert input_payload["batch_id"] == batch_key
+
+
 def test_cresmo_root_exports_only_package_metadata() -> None:
     """Verify cresmo package root strictly conforms to ADR-026 Rule 9."""
     import cresmo

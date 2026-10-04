@@ -4,7 +4,7 @@
 **Status**: ACTIVE TRACK 8 IN PROGRESS  
 **Date**: 2026-10-02  
 **Completed Sequence**: **Trilha 2 (Done) $\longrightarrow$ Trilha 4 (Done) $\longrightarrow$ Trilha 1 (Done) $\longrightarrow$ Trilha 5 (Done) $\longrightarrow$ Trilha 6 (Done) $\longrightarrow$ Trilha 7 (Done)**  
-**Current Active Track**: **Trilha 8 (Standardized StageDescriptor Closed-Loop Refinement — ADR-031 / SPEC-014)**  
+**Current Active Track**: **Trilha 8 (Standardized StageConfig Closed-Loop Refinement — ADR-031 / SPEC-014)**  
 
 ---
 
@@ -22,7 +22,7 @@ flowchart TD
     T5["Etapa IV: Trilha 5<br><b>12-Factor Container & IaC</b><br>ADR-005 / SPEC-006<br><b>[COMPLETED]</b>"] -->
     T6["Etapa V: Trilha 6<br><b>Telemetry Triad & SRE Platform</b><br>ADR-016, 017, 023, 025, 027<br><b>[COMPLETED]</b>"] -->
     T7["Etapa VI: Trilha 7<br><b>Code Hygiene & Anti-Patterns</b><br>ADR-026 Canon Governance<br><b>[COMPLETED]</b>"] -->
-    T8["Etapa VII: Trilha 8<br><b>Quality Judge Fabric & StageDescriptors</b><br>ADR-028, 029, 030, 031 / SPEC-014<br><b>[ACTIVE / IN PROGRESS]</b>"]
+    T8["Etapa VII: Trilha 8<br><b>Quality Judge Fabric & StageConfigs</b><br>ADR-028, 029, 030, 031 / SPEC-014<br><b>[ACTIVE / IN PROGRESS]</b>"]
 
     classDef done fill:#2a9d8f,stroke:#264653,color:#fff;
     classDef active fill:#e76f51,stroke:#d62828,color:#fff;
@@ -61,13 +61,13 @@ flowchart TD
 - **Delivered**: Codified 8 hygiene standards: PEP 8 import topography, zero magic literals/status codes, anti-swallowing and chaining, OS-agnostic paths/telemetry, bounded modularity, zero production asserts, parameter bundling, and dead code elimination. Modularized god files (`ports.py` $\rightarrow$ `ports/`, `value_objects.py` $\rightarrow$ `value_objects/`, `pipeline.py` $\rightarrow$ `pipeline/`).
 - **Governing**: [`ADR-026`](../adr/ADR-026-clean-code-anti-patterns-and-code-smell-governance.md).
 
-### Etapa VII (Trilha 8): Quality Judge Fabric & StageDescriptor Closed-Loop Refinement — `STATUS: ACTIVE / IN PROGRESS`
+### Etapa VII (Trilha 8): Quality Judge Fabric & StageConfig Closed-Loop Refinement — `STATUS: ACTIVE / IN PROGRESS`
 - **Sub-Track Milestones**:
   - **Milestone 8.1 (Fluid Prose Decoupling)**: Decouple orality purge from epistemic expansion; introduce `FluidTranscript` aggregate and position `transform_fluid_prose` as Stage 1 prior to catalog indexing ([`ADR-028`](../adr/ADR-028-decoupling-fluid-prose-and-socratic-gap-filling.md), [`SPEC-011`](../specs/SPEC-011-fluid-prose-detranscription-and-gap-filler-decoupling.md)) — `COMPLETED`.
   - **Milestone 8.2 (Unified LlmJudgePort)**: Unify scattered judge logic under `LlmJudgePort` with multi-provider adapters (`GeminiJudgeAdapter`, `OllamaJudgeAdapter`, `TypeSafeJudgeAdapter`, `LangfuseJudgeDecorator`) ([`ADR-029`](../adr/ADR-029-unified-quality-judge-port-and-evaluator-adapters.md), [`SPEC-012`](../specs/SPEC-012-quality-judge-evaluators-and-adapters.md)) — `COMPLETED`.
   - **Milestone 8.3 (Quality Gate Retry Fabric)**: Introduce `PipelineStageRunner.run_evaluated_stage` to eliminate coordinator boilerplate ([`ADR-030`](../adr/ADR-030-stage-quality-gate-and-evaluator-retry-fabric.md), [`SPEC-013`](../specs/SPEC-013-stage-quality-gate-and-evaluator-fabric.md)) — `COMPLETED`.
-  - **Milestone 8.4 (StageDescriptor & Closed-Loop Reflection)**: Universal `StageDescriptor`, full elimination of `RawTranscript` in favor of `SourceTranscript`, `CandidateText` VO, `CritiqueSynthesizerPort` reflection retry loops, and 4-step fail-fast quarantine protocol with Stage 1 (`fluid_prose`) reference implementation ([`ADR-031`](../adr/ADR-031-standardized-stage-descriptor-and-closed-loop-refinement.md), [`SPEC-014`](../specs/SPEC-014-stage-descriptor-and-closed-loop-reflection.md)) — `COMPLETED`.
-  - **Milestone 8.5 (Downstream Stage Refactoring & StageRegistry Enrollment)**: Sequentially refactor quarantined downstream stages (Stage 2: `raw_indexing`, Stage 3: `gap_filler`, Stage 4: `long_expander`, Stage 5: `wide_expander`, Stage 6: `atomic_inventory`, Stage 7: `atomic_batch`, Stage 8: `reconcile_mocs`) to register their declarative `StageSpec` in `StageRegistry` and execute via `stage_runner.execute_stage(...)` — `ACTIVE`.
+  - **Milestone 8.4 (StageConfig & Closed-Loop Reflection)**: Universal `StageConfig`, full elimination of `RawTranscript` in favor of `SourceTranscript`, `CandidateText` VO, `CritiqueSynthesizerPort` reflection retry loops, and 4-step fail-fast quarantine protocol with Stage 1 (`fluid_prose`) reference implementation ([`ADR-031`](../adr/ADR-031-standardized-stage-descriptor-and-closed-loop-refinement.md), [`SPEC-014`](../specs/SPEC-014-stage-descriptor-and-closed-loop-reflection.md)) — `COMPLETED`.
+  - **Milestone 8.5 (Downstream Stage Refactoring & StageRegistry Enrollment)**: Sequentially refactor quarantined downstream stages (Stage 2: `raw_indexing`, Stage 3: `gap_filler`, Stage 4: `long_expander`, Stage 5: `wide_expander`, Stage 6: `atomic_inventory`, Stage 7: `atomic_batch`, Stage 8: `reconcile_mocs`) to register their declarative `StageDefinition` in `StageRegistry` and execute via `stage_runner.execute_stage(...)` — `ACTIVE`.
 
 ---
 
@@ -81,13 +81,13 @@ flowchart TD
 | **Etapa IV** | **Trilha 5** | IaC & 12-Factor Containerization | `ADR-005` | `SPEC-006` | `COMPLETED` | Multi-role Dockerfile & CI Pipeline |
 | **Etapa V** | **Trilha 6** | Telemetry Triad & SRE Platform | `ADR-016`, `ADR-023`, `ADR-025`, `ADR-027` | `SPEC-008`, `SPEC-010` | `COMPLETED` | Prometheus Golden Signals & Loki Logs |
 | **Etapa VI** | **Trilha 7** | Clean Code Hygiene & Anti-Patterns | `ADR-026` | Architecture Canon | `COMPLETED` | Ruff clean, zero god files, strict typing |
-| **Etapa VII** | **Trilha 8** | Quality Judge Fabric & StageDescriptors | `ADR-028`, `ADR-029`, `ADR-030`, `ADR-031` | `SPEC-011`–`SPEC-014` | `ACTIVE` | Hermetic TDD, closed-loop reflection, quarantine |
+| **Etapa VII** | **Trilha 8** | Quality Judge Fabric & StageConfigs | `ADR-028`, `ADR-029`, `ADR-030`, `ADR-031` | `SPEC-011`–`SPEC-014` | `ACTIVE` | Hermetic TDD, closed-loop reflection, quarantine |
 
 ---
 
 ## 4. Next Immediate Action
 
 Under **Etapa VII (Trilha 8: Milestone 8.5)**, proceed with the sequential refactoring and registration of quarantined downstream stages:
-1. **Stage 2 (`raw_indexing`)**: Register `StageSpec` in `StageRegistry`, define `CandidateText` extraction for catalog summaries and principal concepts, and wire into `coordinator.py`.
+1. **Stage 2 (`raw_indexing`)**: Register `StageDefinition` in `StageRegistry`, define `CandidateText` extraction for catalog summaries and principal concepts, and wire into `coordinator.py`.
 2. **Stage 3 (`gap_filler`)**: Re-enable Socratic multi-pass epistemic expansion using `FluidTranscript` as input.
-3. **Stages 4–8 (`long_expander`, `wide_expander`, `atomic_inventory`, `atomic_batch`, `reconcile_mocs`)**: Complete transition to declarative `StageDescriptor` execution.
+3. **Stages 4–8 (`long_expander`, `wide_expander`, `atomic_inventory`, `atomic_batch`, `reconcile_mocs`)**: Complete transition to declarative `StageConfig` execution.

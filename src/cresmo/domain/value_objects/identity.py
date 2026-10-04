@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import datetime
 import re
+import uuid
 from dataclasses import dataclass
 from enum import Enum
 
@@ -21,6 +22,7 @@ from cresmo.domain.value_objects.constants import (
     MIN_CHANNEL_ID_LENGTH,
 )
 
+_BATCH_ID_REGEX = re.compile(r"^\d{8}_\d{6}_[a-f0-9]{6}$")
 _CONTENT_ID_PATTERN = re.compile(r"^[a-zA-Z0-9_-]{1,64}$")
 _VIDEO_ID_REGEX = re.compile(
     r"(?:v=|/v/|youtu\.be/|/embed/|/shorts/|/live/)([a-zA-Z0-9_-]{8,64})",
@@ -45,6 +47,39 @@ class SourceModality(str, Enum):
 
     FILE = "file"
     URL = "url"
+
+
+@dataclass(frozen=True)
+class BatchId:
+    """Canonical domain Value Object representing a batch execution identifier.
+
+    Conforms to ADR-035:
+        - 1 Trace = 1 Work Item invariant.
+        - Canonical SOTA-KISS format: YYYYMMDD_HHMMSS_[uuid6].
+        - Provides correlation across batch executions without Mega-Trace coupling.
+    """
+
+    value: str
+
+    def __post_init__(self) -> None:
+        if not self.value or not self.value.strip():
+            raise DomainValidationError("BatchId cannot be empty.")
+        clean_val = self.value.strip()
+        if not _BATCH_ID_REGEX.match(clean_val):
+            raise DomainValidationError(
+                f"Invalid BatchId format: '{self.value}'. Expected canonical format 'YYYYMMDD_HHMMSS_[uuid6]'."
+            )
+        object.__setattr__(self, "value", clean_val)
+
+    @classmethod
+    def generate(cls) -> BatchId:
+        """Construct canonical batch identifier with UTC timestamp and short UUID suffix."""
+        now_str = datetime.datetime.now(datetime.UTC).strftime("%Y%m%d_%H%M%S")
+        short_uuid = uuid.uuid4().hex[:6]
+        return cls(value=f"{now_str}_{short_uuid}")
+
+    def __str__(self) -> str:
+        return self.value
 
 
 @dataclass(frozen=True)

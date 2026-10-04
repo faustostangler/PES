@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from cresmo.application.pipeline.context import PipelineExecutionContext
-from cresmo.application.pipeline.stage_descriptor import StageDescriptor
+from cresmo.application.pipeline.stage_descriptor import StageConfig
 from cresmo.application.pipeline.stage_factory import StageFactory
 from cresmo.application.ports import DefaultPipelineSettings
 from cresmo.domain.entities import (
@@ -70,7 +70,7 @@ def test_pipeline_execution_context_composite_creation() -> None:
 
 
 def test_stage_factory_builds_fluid_prose_descriptor() -> None:
-    """Verify StageFactory produces a properly wired, stateless StageDescriptor for fluid prose."""
+    """Verify StageFactory produces a properly wired, stateless StageConfig for fluid prose."""
     settings = DefaultPipelineSettings(
         llm_synthesis_temperature=0.35,
         judge_blocking=True,
@@ -79,7 +79,7 @@ def test_stage_factory_builds_fluid_prose_descriptor() -> None:
     factory = StageFactory(settings=settings)
 
     descriptor = factory.build_stage("fluid_prose")
-    assert isinstance(descriptor, StageDescriptor)
+    assert isinstance(descriptor, StageConfig)
     assert descriptor.stage_name == "fluid_prose"
     assert descriptor.transform_prompt_key == PromptKey.FLUID_PROSE
     assert descriptor.temperature == 0.35
@@ -114,7 +114,7 @@ def test_stage_factory_builds_fluid_prose_descriptor() -> None:
 
 
 def test_stage_factory_generic_build_stage_custom_parameters() -> None:
-    """Verify build_stage creates a custom StageDescriptor with injected parameters and overrides."""
+    """Verify build_stage creates a custom StageConfig with injected parameters and overrides."""
     settings = DefaultPipelineSettings(
         llm_synthesis_temperature=0.7,
         judge_blocking=False,
@@ -207,10 +207,10 @@ def test_stage_factory_unknown_stage_raises_error() -> None:
 
 def test_stage_factory_uses_domain_stage_registry() -> None:
     """Verify StageFactory dynamically resolves specifications from domain StageRegistry."""
-    from cresmo.domain.stage_registry import StageRegistry, StageSpec
+    from cresmo.domain.stage_registry import StageRegistry, StageDefinition
 
     test_stage_name = "dynamic_registered_stage"
-    custom_spec = StageSpec(
+    custom_spec = StageDefinition(
         transform_prompt_key=PromptKey.FLUID_PROSE,
         required_criteria=(JudgeCriterion.ORALITY_REMOVAL,),
     )

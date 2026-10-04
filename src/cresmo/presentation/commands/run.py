@@ -37,6 +37,7 @@ from cresmo.domain.exceptions import (
     RateLimitExceededError,
 )
 from cresmo.domain.value_objects import (
+    BatchId,
     SourceModality,
     SyncFilterCriteria,
     is_processable_transcript_file,
@@ -45,6 +46,7 @@ from cresmo.infrastructure.config import CresmoSettings
 from cresmo.infrastructure.system import get_process_rss_bytes
 from cresmo.presentation.commands.run_parser import register_run_subparser
 from cresmo.presentation.composition import (
+    build_concat_master_use_case,
     build_discover_batch_sources_use_case,
     build_pipeline,
     build_preflight_checker,
@@ -191,7 +193,11 @@ def execute_single_video_run(pipeline: CresmoPipeline, args: argparse.Namespace)
         try:
             raw = pipeline.vault_port.get_raw_transcript(result.content_id)
             if raw and raw.channel_name:
-                pipeline.concat_master.execute(raw.channel_name)
+                concat_master = build_concat_master_use_case(
+                    settings=pipeline.settings if isinstance(pipeline.settings, CresmoSettings) else None,
+                    vault_port=pipeline.vault_port,
+                )
+                concat_master.execute(raw.channel_name)
         except Exception as exc:  # noqa: BLE001
             sys.stderr.write(f"Warning: Master consolidation failed: {exc}\n")
 
@@ -225,13 +231,20 @@ def execute_batch_run(
     completed = 0
     skipped = 0
     failed = 0
+    batch_id = BatchId.generate()
 
     total_count_suffix = f"/{len(sources)}" if isinstance(sources, Sized) else ""
 
     for source_index, source in enumerate(sources, 1):
         item_prefix = f"[{source_index}{total_count_suffix}]"
         try:
-            status = _process_single_batch_item(pipeline, source, args, item_prefix)
+            status = _process_single_batch_item(
+                pipeline=pipeline,
+                source=source,
+                args=args,
+                item_prefix=item_prefix,
+                batch_id=batch_id,
+            )
             if status == "completed":
                 completed += 1
             elif status == "skipped":
@@ -252,7 +265,7 @@ def execute_batch_run(
         return EXIT_SUCCESS
 
     sys.stdout.write(
-        f"\nBatch Synthesis Summary:\n"
+        f"\nBatch Synthesis Summary [Batch: {batch_id.value}]:\n"
         f"- Total Items: {total_items}\n"
         f"- Completed: {completed}\n"
         f"- Skipped (Idempotent): {skipped}\n"
@@ -363,6 +376,7 @@ def _process_single_batch_item(
     source: BatchSource,
     args: argparse.Namespace,
     item_prefix: str,
+    batch_id: BatchId | None = None,
 ) -> str:
     """Execute pipeline for a single batch item and report console outcome.
 
@@ -382,12 +396,14 @@ def _process_single_batch_item(
                 file_path=target_path,
                 gap_filler_passes=args.passes,
                 force_reprocess=args.force_reprocess,
+                batch_id=batch_id,
             )
         else:
             result = pipeline.run_for_video(
                 video_url=source.target,
                 gap_filler_passes=args.passes,
                 force_reprocess=args.force_reprocess,
+                batch_id=batch_id,
             )
 
         if result.already_processed:
@@ -424,7 +440,11 @@ def _consolidate_master_if_needed(pipeline: CresmoPipeline, completed: int) -> N
         return
     try:
         sys.stdout.write("\nConsolidating master compendiums for RAG...\n")
-        master_results = pipeline.concat_master.execute_all()
+        concat_master = build_concat_master_use_case(
+            settings=pipeline.settings if isinstance(pipeline.settings, CresmoSettings) else None,
+            vault_port=pipeline.vault_port,
+        )
+        master_results = concat_master.execute_all()
         total_parts = sum(len(parts) for parts in master_results.values())
         sys.stdout.write(
             f"Master consolidation complete: {total_parts} master document(s) generated "

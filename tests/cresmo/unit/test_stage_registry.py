@@ -1,11 +1,11 @@
-"""Unit tests for StageRegistry, StageSpec, PipelineStatus.QUARANTINED, and StageQuarantinedError (ADR-031)."""
+"""Unit tests for StageRegistry, StageDefinition, PipelineStatus.QUARANTINED, and StageQuarantinedError (ADR-031)."""
 
 from __future__ import annotations
 
 import pytest
 
 from cresmo.domain.exceptions import CresmoDomainError, DomainValidationError, StageQuarantinedError
-from cresmo.domain.stage_registry import StageRegistry, StageSpec
+from cresmo.domain.stage_registry import StageRegistry, StageDefinition
 from cresmo.domain.value_objects import (
     JudgeCriterion,
     PipelineStatus,
@@ -40,11 +40,11 @@ def test_stage_quarantined_error_contract() -> None:
 
 
 def test_stage_registry_fluid_prose_spec() -> None:
-    """Verify StageRegistry provides immutable, complete StageSpec for fluid_prose."""
+    """Verify StageRegistry provides immutable, complete StageDefinition for fluid_prose."""
     assert StageRegistry.contains("fluid_prose") is True
     spec = StageRegistry.get("fluid_prose")
 
-    assert isinstance(spec, StageSpec)
+    assert isinstance(spec, StageDefinition)
     assert JudgeCriterion.ORALITY_REMOVAL in spec.required_criteria
     assert JudgeCriterion.SEMANTIC_FAITHFULNESS in spec.required_criteria
     assert JudgeCriterion.NER_PRESERVATION in spec.required_criteria

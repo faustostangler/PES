@@ -1,7 +1,7 @@
 """Hermetic Unit Tests for SourceTranscript, CandidateText, and Typed Verdict Value Objects.
 
 Conforms to:
-    - ADR-031: Standardized StageDescriptor, SourceTranscript, CandidateText, and Closed-Loop Reflection Quality Fabric
+    - ADR-031: Standardized StageConfig, SourceTranscript, CandidateText, and Closed-Loop Reflection Quality Fabric
     - SPEC-014: Standardized Stage Execution and Decision-Model Quality Fabric Specification
 """
 

@@ -10,13 +10,12 @@ from __future__ import annotations
 from collections.abc import Callable
 from typing import TYPE_CHECKING
 
-from cresmo.application.ports import MediaIngestionPort
+from cresmo.application.ports import MediaIngestionPort, VaultRepositoryPort
 from cresmo.application.use_cases.concat_master import ConcatMasterUseCase
 from cresmo.application.use_cases.discover_batch_sources import DiscoverBatchSourcesUseCase
 from cresmo.application.use_cases.index_raw_transcripts import IndexRawTranscriptsUseCase
 from cresmo.application.use_cases.sync_channel import SyncChannelUseCase
 from cresmo.application.use_cases.unify_duplicate_notes import UnifyDuplicateNotesUseCase
-from cresmo.infrastructure.adapters.obsidian_vault_adapter import ObsidianVaultAdapter
 from cresmo.infrastructure.config import CresmoSettings
 from cresmo.presentation.factories.adapter_factory import (
     build_indexing_adapter,
@@ -88,7 +87,7 @@ def build_discover_batch_sources_use_case(
 
 def build_concat_master_use_case(
     settings: CresmoSettings | None = None,
-    vault_port: ObsidianVaultAdapter | None = None,
+    vault_port: VaultRepositoryPort | None = None,
 ) -> ConcatMasterUseCase:
     """Instantiate ConcatMasterUseCase with configured dependencies."""
     resolved_settings = resolve_shared_settings(settings)

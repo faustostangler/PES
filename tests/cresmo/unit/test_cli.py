@@ -1019,6 +1019,49 @@ class TestCresmoCLI:
         code = execute_batch_run(pipeline, sources, args)
         assert code == EXIT_INTERNAL_ERROR
 
+    def test_execute_batch_run_propagates_single_batch_id_to_all_items(
+        self, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+    ) -> None:
+        """Verify ADR-035: batch run generates a single BatchId shared by all items in the run."""
+        from argparse import Namespace
+
+        from cresmo.application.use_cases.discover_batch_sources import BatchSource
+        from cresmo.domain.value_objects import BatchId, SourceModality
+        from cresmo.presentation.commands.run import execute_batch_run
+
+        doc1 = tmp_path / "doc1.md"
+        doc1.write_text("Text 1", encoding="utf-8")
+        doc2 = tmp_path / "doc2.md"
+        doc2.write_text("Text 2", encoding="utf-8")
+
+        sources = [
+            BatchSource(kind=SourceModality.FILE, target=str(doc1)),
+            BatchSource(kind=SourceModality.FILE, target=str(doc2)),
+        ]
+
+        pipeline = MagicMock()
+        res = MagicMock(already_processed=False, success=True, duplicates_unified=0)
+        res.content_id.value = "doc"
+        res.synthesized_notes = []
+        res.reconciled_mocs = []
+        pipeline.run_for_text_file.return_value = res
+
+        args = Namespace(passes=1, force_reprocess=False)
+        code = execute_batch_run(pipeline, sources, args)
+        assert code == EXIT_SUCCESS
+
+        assert pipeline.run_for_text_file.call_count == 2
+        call1_batch = pipeline.run_for_text_file.call_args_list[0].kwargs["batch_id"]
+        call2_batch = pipeline.run_for_text_file.call_args_list[1].kwargs["batch_id"]
+
+        assert isinstance(call1_batch, BatchId)
+        assert isinstance(call2_batch, BatchId)
+        # SOTA-KISS Invariant: Both items in the same batch run share the EXACT same BatchId
+        assert call1_batch == call2_batch
+
+        captured = capsys.readouterr()
+        assert f"[Batch: {call1_batch.value}]" in captured.out
+
     def test_handle_run_preflight_and_validation_errors(self) -> None:
         from argparse import Namespace
 

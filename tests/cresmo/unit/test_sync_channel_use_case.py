@@ -7,7 +7,7 @@ dry-run execution, failure trapping, and preflight health check integration per 
 from __future__ import annotations
 
 from datetime import UTC, datetime, timedelta
-from unittest.mock import MagicMock
+from unittest.mock import ANY, MagicMock
 
 import pytest
 
@@ -18,6 +18,7 @@ from cresmo.application.use_cases.sync_channel import SyncChannelUseCase
 from cresmo.domain.entities import AtomicNote, UserIdentity
 from cresmo.domain.exceptions import PreflightError
 from cresmo.domain.value_objects import (
+    BatchId,
     CausalMatrix,
     ChannelFeedQuery,
     ChannelName,
@@ -108,7 +109,9 @@ class TestSyncChannelUseCase:
         mock_pipeline.run_for_video.assert_called_once_with(
             video_url=recent_item.media_url,
             user=UserIdentity.worker(),
+            batch_id=ANY,
         )
+        assert isinstance(mock_pipeline.run_for_video.call_args.kwargs["batch_id"], BatchId)
 
     def test_sync_channel_skips_already_processed_items(
         self,
@@ -173,7 +176,9 @@ class TestSyncChannelUseCase:
         mock_pipeline.run_for_video.assert_called_once_with(
             video_url=item.media_url,
             user=UserIdentity.worker(),
+            batch_id=ANY,
         )
+        assert isinstance(mock_pipeline.run_for_video.call_args.kwargs["batch_id"], BatchId)
 
     def test_sync_channel_handles_individual_item_failure_gracefully(
         self,
@@ -359,7 +364,9 @@ class TestSyncChannelUseCase:
         mock_pipeline.run_for_video.assert_called_once_with(
             video_url=item_recent.media_url,
             user=UserIdentity.worker(),
+            batch_id=ANY,
         )
+        assert isinstance(mock_pipeline.run_for_video.call_args.kwargs["batch_id"], BatchId)
 
     def test_sync_channel_max_videos_limit_enforcement(
         self,

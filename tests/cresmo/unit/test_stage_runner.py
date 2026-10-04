@@ -286,7 +286,7 @@ class TestPipelineStageRunnerEvaluatedStage:
     def test_execute_stage_with_pipeline_execution_context(self) -> None:
         """Verify execute_stage cleanly consumes PipelineExecutionContext."""
         from cresmo.application.pipeline.context import PipelineExecutionContext
-        from cresmo.application.pipeline.stage_descriptor import StageDescriptor
+        from cresmo.application.pipeline.stage_descriptor import StageConfig
         from cresmo.domain.entities import PipelineSessionId, SourceTranscript, UserIdentity
         from cresmo.domain.value_objects import CandidateText, PromptKey
         from cresmo.infrastructure.adapters.prompt_provider import JsonPromptProvider
@@ -313,7 +313,7 @@ class TestPipelineStageRunnerEvaluatedStage:
             content=content,
         )
 
-        descriptor = StageDescriptor[SourceTranscript, CandidateText](
+        descriptor = StageConfig[SourceTranscript, CandidateText](
             stage_name="fluid_prose",
             transform_prompt_key=PromptKey.FLUID_PROSE,
         )

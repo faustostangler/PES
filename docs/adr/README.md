@@ -51,9 +51,11 @@ In this repository, architectural decisions evolve continuously through test-dri
 | [**ADR-028**](ADR-028-decoupling-fluid-prose-and-socratic-gap-filling.md) | 2026-10-01 | Decoupling Fluid Prose Detranscription and Socratic Gap Filling for Pre-Indexing Linguistic Normalization | Cognitive / Synthesis | `ACCEPTED` | Decouples orality purge from epistemic expansion; establishes `FluidTranscript` domain aggregate prior to indexing. Overrides ADR-021 execution sequence. |
 | [**ADR-029**](ADR-029-unified-quality-judge-port-and-evaluator-adapters.md) | 2026-10-01 | Unified LlmJudgePort, Decision-Model Evaluators, and Resilient Multi-Provider Adapters with Langfuse Telemetry | Cognitive / Evaluation | `ACCEPTED` | Unifies scattered judges under `LlmJudgePort`; introduces Gemini, Ollama, TypeSafe, and Langfuse decorator adapters. |
 | [**ADR-030**](ADR-030-stage-quality-gate-and-evaluator-retry-fabric.md) | 2026-10-01 | Stage Quality Gate & Evaluator Closed-Loop Retry Fabric | Application / Quality | `ACCEPTED` | Eliminates evaluator orchestration duplication in coordinator; introduces `PipelineStageRunner.run_evaluated_stage` retry loop. |
-| [**ADR-031**](ADR-031-standardized-stage-descriptor-and-closed-loop-refinement.md) | 2026-10-01 | Standardized StageDescriptor, SourceTranscript, CandidateText, and Closed-Loop Reflection Quality Fabric | Application / Pipeline | `ACCEPTED` | Universal `StageDescriptor` template, complete elimination of `RawTranscript` in favor of `SourceTranscript`, `CandidateText` VO, `CritiqueSynthesizerPort` reflection loop, and 4-step fail-fast quarantine. |
+| [**ADR-031**](ADR-031-standardized-stage-descriptor-and-closed-loop-refinement.md) | 2026-10-01 | Standardized StageConfig, SourceTranscript, CandidateText, and Closed-Loop Reflection Quality Fabric | Application / Pipeline | `ACCEPTED` | Universal `StageConfig` template, complete elimination of `RawTranscript` in favor of `SourceTranscript`, `CandidateText` VO, `CritiqueSynthesizerPort` reflection loop, and 4-step fail-fast quarantine. |
 | [**ADR-032**](ADR-032-composite-channel-and-content-value-objects.md) | 2026-10-02 | Composite Channel and Content Value Objects and Context Simplification | DDD Tático / Value Objects | `ACCEPTED` | Merges fragmented channel and content attributes into composite `Channel` and `Content` VOs; simplifies `PipelineExecutionContext` to 4 pillars (`session`, `user`, `channel`, `content`). |
 | [**ADR-033**](ADR-033-composite-value-objects-identity-parity-and-tenant-simplification.md) | 2026-10-02 | Composite Value Objects with Identity VOs, Parity, and Tenant Simplification | DDD Tático / Anti-Patterns | `ACCEPTED` | Bans *Primitive Obsession Obsession & Class Explosion* and *Primitive Obsession Reversa*. Establishes Intentional Asymmetric Hybrid Composition, renames `PipelineSessionId.channel_id`, removes `video_id`, and decommissions `ChannelTenantId` with zero backward compatibility. |
+| [**ADR-034**](ADR-034-algorithmic-and-cognitive-parity-standard.md) | 2026-10-03 | Algorithmic (ID-ID) and Cognitive (TXT-TXT) Parity Standard across Telemetry, Observability, and Pipeline Contexts | Observability / Telemetry | `ACCEPTED` | Establishes pairwise parity invariant between algorithmic IDs and human cognitive text across all telemetry, logging, and execution contexts. |
+| [**ADR-035**](ADR-035-atomic-work-item-traces-and-sota-kiss-batch-correlation.md) | 2026-10-03 | Atomic Work-Item Traces & SOTA-KISS Batch Correlation | Observability / Architecture Canon | `ACCEPTED` | Codifies 1 Trace = 1 Work Item invariant, designates the Mega-Trace Monolith as an anti-pattern, establishes the 4 fundamental pillars (SLO, FinOps, Evals, Quotas), and introduces SOTA-KISS `batch_id` (`YYYYMMDD_HHMMSS_[UUID6]`) metadata correlation bypassing `SpanLink`. |
 
 
 ---
@@ -68,7 +70,7 @@ graph TD
         A003["ADR-003: PES Production Architecture"]
         A007["ADR-007: Synthesis Template Method"]
         A021["ADR-021: Unified Pipeline Execution"]
-        A031["ADR-031: StageDescriptor & Reflection Fabric"]
+        A031["ADR-031: StageConfig & Reflection Fabric"]
         A007 -. superseded by .-> A021
         A021 --> A031
     end
@@ -169,7 +171,7 @@ When navigating the architecture, apply these documented precedence relationship
 ### 4.8 Unified Quality Evaluation & Stage Descriptor Fabric (ADR-029, ADR-030, ADR-031 extend ADR-020, ADR-021, ADR-024)
 - **ADR-029** consolidates all scattered judge logic under the isolated `LlmJudgePort` with multi-provider adapters (`GeminiJudgeAdapter`, `OllamaJudgeAdapter`, `TypeSafeJudgeAdapter`, `LangfuseJudgeDecorator`).
 - **ADR-030** eliminates repetitive judge orchestration by introducing `PipelineStageRunner.run_evaluated_stage` with configurable retry thresholds.
-- **ADR-031** establishes the universal `StageDescriptor` architecture, completes the total elimination of `RawTranscript` in favor of `SourceTranscript`, introduces `CandidateText`, integrates `CritiqueSynthesizerPort` for closed-loop reflection, and enforces the 4-step fail-fast quarantine protocol (`StageQuarantinedError`).
+- **ADR-031** establishes the universal `StageConfig` architecture, completes the total elimination of `RawTranscript` in favor of `SourceTranscript`, introduces `CandidateText`, integrates `CritiqueSynthesizerPort` for closed-loop reflection, and enforces the 4-step fail-fast quarantine protocol (`StageQuarantinedError`).
 ### 4.9 Intentional Asymmetric Value Object Composition (ADR-033 refines ADR-019, ADR-027, ADR-032)
 - **ADR-033** outlaws both *Primitive Obsession Obsession & Class Explosion* (single-field wrapper VOs around every primitive attribute) and *Primitive Obsession Reversa* (flattening strong identity VOs into raw strings).
 - Establishes **Composite Value Objects with Identity VOs (Composição Híbrida Assimétrica Intencional)**: identity attributes retain strong VOs (`ChannelId`, `ContentId`), while contextual attributes (`name`, `category`, `url`, `title`, `publication_date`) are self-validated primitive fields inside composite VOs (`Channel`, `Content`).

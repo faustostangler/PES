@@ -16,7 +16,7 @@ from opentelemetry.sdk.trace.export.in_memory_span_exporter import InMemorySpanE
 
 from cresmo.application.pipeline import CresmoPipeline
 from cresmo.domain.entities import SourceTranscript, UserIdentity
-from cresmo.domain.value_objects import ChannelId, ChannelName, ContentId
+from cresmo.domain.value_objects import BatchId, ChannelId, ChannelName, ContentId
 from cresmo.infrastructure.adapters.opentelemetry_adapter import OpenTelemetryAdapter
 from cresmo.infrastructure.adapters.prompt_provider import JsonPromptProvider
 from tests.cresmo.unit.test_pipeline import SmartMockLLMAdapter
@@ -59,7 +59,7 @@ class TestPipelineTelemetryIntegration:
         return pipeline, exporter, vault_port
 
     @pytest.mark.skip(
-        reason="Downstream stages 2-8 quarantined pending StageDescriptor refactoring per ADR-031"
+        reason="Downstream stages 2-8 quarantined pending StageConfig refactoring per ADR-031"
     )
     def test_execute_generates_full_span_hierarchy(
         self,
@@ -235,7 +235,7 @@ class TestPipelineTelemetryIntegration:
         assert "cresmo.content_id" not in root_span.attributes
 
     @pytest.mark.skip(
-        reason="Downstream stages 2-8 quarantined pending StageDescriptor refactoring per ADR-031"
+        reason="Downstream stages 2-8 quarantined pending StageConfig refactoring per ADR-031"
     )
     def test_pipeline_records_prometheus_metrics_on_stages(self) -> None:
         """SPEC-008 Scenario 5: Verifies pipeline records stage duration histograms and counters."""
@@ -318,3 +318,30 @@ class TestPipelineTelemetryIntegration:
                 },
             )
             assert count == 1.0, f"Stage {stage} should have 1 histogram observation"
+
+    def test_pipeline_execute_propagates_batch_id_adr035(
+        self,
+        telemetry_pipeline: tuple[CresmoPipeline, InMemorySpanExporter, InMemoryVaultAdapter],
+    ) -> None:
+        """Verify ADR-035: CresmoPipeline.execute propagates batch_id to root span."""
+        pipeline, exporter, _ = telemetry_pipeline
+
+        raw = SourceTranscript(
+            content_id=ContentId("yt_batch_test"),
+            channel_name=ChannelName("sandeco"),
+            body="Texto para teste de batch_id.",
+            title="Batch ID Test",
+        )
+
+        batch_id = BatchId.generate()
+        result = pipeline.execute(raw=raw, batch_id=batch_id)
+
+        assert result.success is True
+
+        spans = exporter.get_finished_spans()
+        root_span = next(s for s in spans if s.name == "cresmo.pipeline.execution")
+        assert root_span.attributes is not None
+        assert root_span.attributes["cresmo.batch_id"] == batch_id.value
+        tags = root_span.attributes["langfuse.trace.tags"]
+        assert isinstance(tags, (list, tuple))
+        assert f"batch:{batch_id.value}" in tags

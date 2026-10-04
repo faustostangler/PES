@@ -1,7 +1,7 @@
-"""Hermetic Unit Tests for StageDescriptor and Closed-Loop Reflection in PipelineStageRunner.
+"""Hermetic Unit Tests for StageConfig and Closed-Loop Reflection in PipelineStageRunner.
 
 Conforms to:
-    - ADR-031: Standardized StageDescriptor, SourceTranscript, CandidateText, and Closed-Loop Reflection Quality Fabric
+    - ADR-031: Standardized StageConfig, SourceTranscript, CandidateText, and Closed-Loop Reflection Quality Fabric
     - SPEC-014: Standardized Stage Execution and Decision-Model Quality Fabric Specification
 """
 
@@ -10,7 +10,7 @@ from __future__ import annotations
 from unittest.mock import MagicMock
 
 from cresmo.application.pipeline.context import PipelineExecutionContext
-from cresmo.application.pipeline.stage_descriptor import StageDescriptor
+from cresmo.application.pipeline.stage_descriptor import StageConfig
 from cresmo.application.pipeline.stage_runner import PipelineStageRunner
 from cresmo.application.ports import (
     LLMTransformationPort,
@@ -32,8 +32,8 @@ from cresmo.domain.value_objects import (
 )
 
 
-class TestStageDescriptorRunner:
-    """Test suite for StageDescriptor execution with closed-loop reflection."""
+class TestStageConfigRunner:
+    """Test suite for StageConfig execution with closed-loop reflection."""
 
     def test_execute_stage_success_first_attempt(self) -> None:
         telemetry = NoOpTelemetryPort()
@@ -69,7 +69,7 @@ class TestStageDescriptorRunner:
             body="Um, so basically, this is raw spoken text.",
         )
 
-        descriptor = StageDescriptor[SourceTranscript, CandidateText](
+        descriptor = StageConfig[SourceTranscript, CandidateText](
             stage_name="fluid_prose",
             transform_prompt_key=PromptKey.FLUID_PROSE,
             eval_spec=StageEvaluationSpec(
@@ -155,7 +155,7 @@ class TestStageDescriptorRunner:
             body="Text with oralities.",
         )
 
-        descriptor = StageDescriptor[SourceTranscript, CandidateText](
+        descriptor = StageConfig[SourceTranscript, CandidateText](
             stage_name="fluid_prose",
             transform_prompt_key=PromptKey.FLUID_PROSE,
             eval_spec=StageEvaluationSpec(
@@ -214,7 +214,7 @@ class TestStageDescriptorRunner:
             # Strip header
             return candidate.text.replace("# Header Title\n", "").strip()
 
-        descriptor = StageDescriptor[SourceTranscript, str](
+        descriptor = StageConfig[SourceTranscript, str](
             stage_name="fluid_prose",
             transform_prompt_key=PromptKey.FLUID_PROSE,
             post_processor=sample_post_processor,
@@ -282,7 +282,7 @@ class TestStageDescriptorRunner:
             body="Raw spoken body transcript.",
         )
 
-        descriptor = StageDescriptor[SourceTranscript, CandidateText](
+        descriptor = StageConfig[SourceTranscript, CandidateText](
             stage_name="fluid_prose",
             transform_prompt_key=PromptKey.FLUID_PROSE,
             eval_spec=StageEvaluationSpec(
