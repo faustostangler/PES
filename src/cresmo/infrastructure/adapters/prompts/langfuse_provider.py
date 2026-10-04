@@ -186,7 +186,9 @@ class LangfusePromptProvider(PromptProviderPort):
         Returns:
             Tuple containing (system_instruction, user_prompt).
         """
-        fallback_system_instruction, fallback_user_prompt = self._fallback.get_prompt(key, **context)
+        fallback_system_instruction, fallback_user_prompt = self._fallback.get_prompt(
+            key, **context
+        )
         prompt_descriptor = PROMPT_REGISTRY.get(key)
         if prompt_descriptor is None:
             return fallback_system_instruction, fallback_user_prompt

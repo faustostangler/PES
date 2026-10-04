@@ -128,14 +128,14 @@ class PipelineStageRunner:
         llm_transformation_port: LLMTransformationPort | None = None,
     ) -> _TOutput:
         """Execute a standardized pipeline stage with closed-loop reflection, critique, and telemetry (ADR-031)."""
-        descriptor = self._resolve_stage_descriptor(stage)
+        stage_config = self._resolve_stage_config(stage)
         prompt_provider = self._resolve_prompt_provider(prompt_provider)
         llm_port = self._resolve_llm_transformation_port(llm_transformation_port)
-        stage_name = descriptor.stage_name
+        stage_name = stage_config.stage_name
 
         effective_max_attempts = max(
-            descriptor.max_attempts,
-            descriptor.eval_spec.max_attempts if descriptor.eval_spec else 1,
+            stage_config.max_attempts,
+            stage_config.eval_spec.max_attempts if stage_config.eval_spec else 1,
             self.judge_max_attempts,
         )
 
@@ -156,7 +156,7 @@ class PipelineStageRunner:
             content_title=content_title_val,
         ):
             for attempt in range(1, effective_max_attempts + 1):
-                system_instruction, user_prompt = descriptor.build_transform_prompt(
+                system_instruction, user_prompt = stage_config.build_transform_prompt(
                     prompt_provider,
                     source,
                     channel_name=channel_name_val,
@@ -176,7 +176,7 @@ class PipelineStageRunner:
                     text=llm_port.transform(
                         prompt=user_prompt,
                         system_instruction=system_instruction,
-                        temperature=descriptor.temperature,
+                        temperature=stage_config.temperature,
                         trace_id=active_trace_id,
                         session_id=context.session_id.value,
                         user_id=context.user_identity.value,
@@ -191,15 +191,15 @@ class PipelineStageRunner:
                     },
                 )
 
-                if self.llm_judge is None or descriptor.eval_spec is None:
+                if self.llm_judge is None or stage_config.eval_spec is None:
                     break
 
                 eval_context = EvaluationContext(
                     stage_name=stage_name,
-                    raw_text=descriptor.eval_spec.extract_source_text(source),
+                    raw_text=stage_config.eval_spec.extract_source_text(source),
                     candidate_text=(
-                        descriptor.eval_spec.candidate_extractor(candidate)
-                        if descriptor.eval_spec.candidate_extractor
+                        stage_config.eval_spec.candidate_extractor(candidate)
+                        if stage_config.eval_spec.candidate_extractor
                         else candidate.text
                     ),
                     metadata={
@@ -208,10 +208,10 @@ class PipelineStageRunner:
                         "channel_name": channel_name_val,
                         "content_title": content_title_val,
                         "attempt": attempt,
-                        **descriptor.eval_spec.metadata,
+                        **stage_config.eval_spec.metadata,
                     },
                     trace_id=active_trace_id,
-                    required_criteria=descriptor.eval_spec.required_criteria,
+                    required_criteria=stage_config.eval_spec.required_criteria,
                 )
 
                 evaluation = self.llm_judge.evaluate(eval_context)
@@ -238,7 +238,7 @@ class PipelineStageRunner:
             if (
                 evaluation is not None
                 and not evaluation.passed
-                and (descriptor.blocking or self.judge_blocking)
+                and (stage_config.blocking or self.judge_blocking)
             ):
                 record_stage_quarantine(
                     stage_name=stage_name,
@@ -256,7 +256,7 @@ class PipelineStageRunner:
             if candidate is None:
                 raise DomainValidationError(f"Stage '{stage_name}' produced no candidate text.")
 
-            return descriptor.post_process(candidate, source)
+            return stage_config.post_process(candidate, source)
 
     def run_evaluated_stage(
         self,
@@ -498,7 +498,7 @@ class PipelineStageRunner:
             )
         return resolved
 
-    def _resolve_stage_descriptor(
+    def _resolve_stage_config(
         self,
         stage: str | StageConfig[_TSource, _TOutput],
     ) -> StageConfig[_TSource, _TOutput]:
@@ -509,6 +509,9 @@ class PipelineStageRunner:
                 )
             return self.stage_factory.build_stage(stage)
         return stage
+
+    # Backward compatibility alias
+    _resolve_stage_descriptor = _resolve_stage_config
 
     @staticmethod
     def _get_active_trace_id(

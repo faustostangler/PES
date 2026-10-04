@@ -207,7 +207,7 @@ def test_stage_factory_unknown_stage_raises_error() -> None:
 
 def test_stage_factory_uses_domain_stage_registry() -> None:
     """Verify StageFactory dynamically resolves specifications from domain StageRegistry."""
-    from cresmo.domain.stage_registry import StageRegistry, StageDefinition
+    from cresmo.domain.stage_registry import StageDefinition, StageRegistry
 
     test_stage_name = "dynamic_registered_stage"
     custom_spec = StageDefinition(

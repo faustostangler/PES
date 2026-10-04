@@ -552,7 +552,9 @@ class TestCresmoPipelineOrchestration:
         assert results[0].success is True
         assert results[1].success is True
 
-    def test_run_for_manifest_propagates_single_batch_id_to_all_videos(self, tmp_path: Path) -> None:
+    def test_run_for_manifest_propagates_single_batch_id_to_all_videos(
+        self, tmp_path: Path
+    ) -> None:
         """Verify ADR-035: run_for_manifest creates a single BatchId shared by all video items."""
         manifest = tmp_path / "playlist.txt"
         manifest.write_text(

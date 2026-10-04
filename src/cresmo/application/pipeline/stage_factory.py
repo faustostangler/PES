@@ -7,7 +7,7 @@ from typing import Any, TypeVar
 
 from cresmo.application.pipeline.stage_descriptor import StageConfig
 from cresmo.application.ports import PipelineSettingsProtocol
-from cresmo.domain.stage_registry import StageRegistry, StageDefinition
+from cresmo.domain.stage_registry import StageDefinition, StageRegistry
 from cresmo.domain.value_objects import (
     CandidateText,
     JudgeCriterion,
@@ -73,96 +73,112 @@ class StageFactory:
         if not has_overrides and stage_name in self._cache:
             return self._cache[stage_name]
 
-        spec: StageDefinition | None = (
+        stage_definition: StageDefinition | None = (
             StageRegistry.get(stage_name) if StageRegistry.contains(stage_name) else None
         )
 
-        # 1. Resolve transform prompt key (explicit -> spec -> convention: PromptKey(stage_name))
-        if transform_prompt_key is None:
-            if spec and spec.transform_prompt_key is not None:
-                transform_prompt_key = spec.transform_prompt_key
-            else:
-                try:
-                    transform_prompt_key = PromptKey(stage_name)
-                except ValueError as err:
-                    raise ValueError(
-                        f"Unknown stage '{stage_name}' with no transform_prompt_key provided."
-                    ) from err
+        # 1. Resolve transform prompt key (explicit -> stage_definition -> convention: PromptKey(stage_name))
+        if transform_prompt_key is not None:
+            effective_transform_prompt_key = transform_prompt_key
+        elif stage_definition and stage_definition.transform_prompt_key is not None:
+            effective_transform_prompt_key = stage_definition.transform_prompt_key
+        else:
+            try:
+                effective_transform_prompt_key = PromptKey(stage_name)
+            except ValueError as err:
+                raise ValueError(
+                    f"Unknown stage '{stage_name}' with no transform_prompt_key provided."
+                ) from err
 
         # 2. Resolve post processor
-        if post_processor is None and spec:
-            post_processor = spec.post_processor
+        effective_post_processor = (
+            post_processor
+            if post_processor is not None
+            else (stage_definition.post_processor if stage_definition else None)
+        )
 
         # 3. Resolve tunables from settings with call-site overrides
-        if temperature is None:
-            temperature = getattr(self.settings, "llm_synthesis_temperature", None)
+        effective_temperature = (
+            temperature
+            if temperature is not None
+            else getattr(self.settings, "llm_synthesis_temperature", None)
+        )
         effective_max_attempts: int = (
             max_attempts
             if max_attempts is not None
             else getattr(self.settings, "judge_max_attempts", 1)
         )
         effective_blocking: bool = (
-            blocking
-            if blocking is not None
-            else getattr(self.settings, "judge_blocking", False)
+            blocking if blocking is not None else getattr(self.settings, "judge_blocking", False)
         )
 
-        # 4. Resolve quality evaluation spec
-        if eval_spec is None:
-            criteria = (
+        # 4. Resolve quality evaluation spec (StageEvaluationSpec)
+        effective_eval_spec = eval_spec
+        if effective_eval_spec is None:
+            effective_criteria = (
                 tuple(required_criteria)
                 if required_criteria is not None
-                else (spec.required_criteria if spec else ())
+                else (stage_definition.required_criteria if stage_definition else ())
             )
-            cand_extractor = (
+            effective_candidate_extractor = (
                 candidate_extractor
                 if candidate_extractor is not None
                 else (
-                    spec.candidate_extractor
-                    if spec and spec.candidate_extractor is not None
+                    stage_definition.candidate_extractor
+                    if stage_definition and stage_definition.candidate_extractor is not None
                     else (lambda res: res.text if isinstance(res, CandidateText) else str(res))
                 )
             )
-            src_extractor = (
+            effective_source_extractor = (
                 source_extractor
                 if source_extractor is not None
-                else (spec.source_extractor if spec else None)
+                else (stage_definition.source_extractor if stage_definition else None)
             )
-            metadata = (
-                eval_metadata if eval_metadata is not None else (spec.eval_metadata if spec else {})
+            effective_eval_metadata = (
+                eval_metadata
+                if eval_metadata is not None
+                else (stage_definition.eval_metadata if stage_definition else {})
             )
 
-            if criteria or candidate_extractor is not None or source_extractor is not None:
-                eval_spec = StageEvaluationSpec(
-                    candidate_extractor=cand_extractor,
-                    required_criteria=criteria,
+            if (
+                effective_criteria
+                or candidate_extractor is not None
+                or source_extractor is not None
+            ):
+                effective_eval_spec = StageEvaluationSpec(
+                    candidate_extractor=effective_candidate_extractor,
+                    required_criteria=effective_criteria,
                     max_attempts=effective_max_attempts,
-                    source_extractor=src_extractor,
-                    metadata=metadata,
+                    source_extractor=effective_source_extractor,
+                    metadata=effective_eval_metadata,
                 )
 
-        if judge_prompt_key is None and spec:
-            judge_prompt_key = spec.judge_prompt_key
+        # 5. Resolve judge prompt key
+        effective_judge_prompt_key = (
+            judge_prompt_key
+            if judge_prompt_key is not None
+            else (stage_definition.judge_prompt_key if stage_definition else None)
+        )
 
-        descriptor = StageConfig[TSource, TOutput](
+        stage_config = StageConfig[TSource, TOutput](
             stage_name=stage_name,
-            transform_prompt_key=transform_prompt_key,
-            judge_prompt_key=judge_prompt_key,
-            eval_spec=eval_spec,
-            post_processor=post_processor,
-            temperature=temperature,
+            transform_prompt_key=effective_transform_prompt_key,
+            judge_prompt_key=effective_judge_prompt_key,
+            eval_spec=effective_eval_spec,
+            post_processor=effective_post_processor,
+            temperature=effective_temperature,
             max_attempts=effective_max_attempts,
             blocking=effective_blocking,
         )
 
         if not has_overrides:
-            self._cache[stage_name] = descriptor
+            self._cache[stage_name] = stage_config
 
-        return descriptor
+        return stage_config
 
     # SOTA DX: Direct callable interface and aliases
     __call__ = build_stage
     create_stage = build_stage
 
 
-__all__ = ["StageFactory", "StageDefinition"]
+__all__ = ["StageDefinition", "StageFactory"]

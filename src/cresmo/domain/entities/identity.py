@@ -73,9 +73,7 @@ class PipelineSessionId:
         # Algorithmic key: prefer stable ID over mutable name
         if isinstance(channel, Channel):
             resolved_channel_id = channel.id or channel_id
-            channel_identifier = (
-                resolved_channel_id.value if resolved_channel_id else channel.name
-            )
+            channel_identifier = resolved_channel_id.value if resolved_channel_id else channel.name
         else:
             channel_identifier = (
                 channel_id.value

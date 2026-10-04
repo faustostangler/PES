@@ -430,9 +430,7 @@ class Content:
         modality: SourceModality | str = SourceModality.URL,
         publication_date: datetime.date | None = None,
     ) -> None:
-        resolved_content_id = (
-            ContentId.from_string(id) if isinstance(id, (ContentId, str)) else id
-        )
+        resolved_content_id = ContentId.from_string(id) if isinstance(id, (ContentId, str)) else id
         if not isinstance(resolved_content_id, ContentId):
             raise DomainValidationError(f"Invalid content id type: {type(id)}")
 

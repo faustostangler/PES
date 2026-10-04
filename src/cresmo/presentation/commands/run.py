@@ -194,7 +194,9 @@ def execute_single_video_run(pipeline: CresmoPipeline, args: argparse.Namespace)
             raw = pipeline.vault_port.get_raw_transcript(result.content_id)
             if raw and raw.channel_name:
                 concat_master = build_concat_master_use_case(
-                    settings=pipeline.settings if isinstance(pipeline.settings, CresmoSettings) else None,
+                    settings=pipeline.settings
+                    if isinstance(pipeline.settings, CresmoSettings)
+                    else None,
                     vault_port=pipeline.vault_port,
                 )
                 concat_master.execute(raw.channel_name)

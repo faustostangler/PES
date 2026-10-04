@@ -105,9 +105,7 @@ class MasterDocumentResult:
                 f"MasterDocumentResult document_count cannot be negative. Got: {self.document_count}"
             )
         coerced_content_ids = tuple(
-            ContentId.from_string(target_id)
-            if not isinstance(target_id, ContentId)
-            else target_id
+            ContentId.from_string(target_id) if not isinstance(target_id, ContentId) else target_id
             for target_id in self.video_ids
         )
         object.__setattr__(self, "channel_name", resolved_channel_name)

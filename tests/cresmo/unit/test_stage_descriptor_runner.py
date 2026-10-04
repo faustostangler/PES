@@ -345,4 +345,3 @@ class TestStageConfigRunner:
             channel_name="Human Channel Name",
         )
         assert trace_id == "cresmo_UC_CHAN_123_content_abc"
-

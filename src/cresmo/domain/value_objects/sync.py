@@ -26,7 +26,9 @@ def _resolve_channel_name_and_url(
         return channel_name.value.strip().lower(), resolved_url
     if isinstance(channel_name, str):
         resolved_name = channel_name.strip().lower()
-        if not resolved_url and ("http" in resolved_name or "/" in resolved_name or "@" in resolved_name):
+        if not resolved_url and (
+            "http" in resolved_name or "/" in resolved_name or "@" in resolved_name
+        ):
             return resolved_name, resolved_name
         return resolved_name, resolved_url
     return "", resolved_url
@@ -130,8 +132,7 @@ class SyncFilterCriteria:
 
         resolved_name, resolved_url = _resolve_channel_name_and_url(channel_name, channel_url)
         return any(
-            _target_matches_channel(target, resolved_name, resolved_url)
-            for target in self.channels
+            _target_matches_channel(target, resolved_name, resolved_url) for target in self.channels
         )
 
     def matches_category(
@@ -177,9 +178,13 @@ class SyncFilterCriteria:
 
         for target in self.video_ids:
             target_str = target.strip()
-            if cleaned_video_id and (target_str == cleaned_video_id or cleaned_video_id in target_str):
+            if cleaned_video_id and (
+                target_str == cleaned_video_id or cleaned_video_id in target_str
+            ):
                 return True
-            if cleaned_video_url and (target_str in cleaned_video_url or cleaned_video_url in target_str):
+            if cleaned_video_url and (
+                target_str in cleaned_video_url or cleaned_video_url in target_str
+            ):
                 return True
 
         return False

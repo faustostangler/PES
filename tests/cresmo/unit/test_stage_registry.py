@@ -5,7 +5,7 @@ from __future__ import annotations
 import pytest
 
 from cresmo.domain.exceptions import CresmoDomainError, DomainValidationError, StageQuarantinedError
-from cresmo.domain.stage_registry import StageRegistry, StageDefinition
+from cresmo.domain.stage_registry import StageDefinition, StageRegistry
 from cresmo.domain.value_objects import (
     JudgeCriterion,
     PipelineStatus,

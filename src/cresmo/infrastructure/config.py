@@ -292,7 +292,7 @@ class CresmoSettings(BaseSettings):
         description="Local Prometheus scraping and exposition port.",
     )
     log_level: str = Field(
-        default="INFO",
+        default="WARNING",
         validation_alias=AliasChoices("log_level", "LOG_LEVEL", "CRESMO_LOG_LEVEL"),
         description="Root logging level (DEBUG, INFO, WARNING, ERROR).",
     )
