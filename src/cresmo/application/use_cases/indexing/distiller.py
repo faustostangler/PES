@@ -68,7 +68,7 @@ class LLMTranscriptDistiller:
         """Extract principal concepts through an iterative LLM-as-a-judge loop."""
         system_instructions, user_prompt = self.prompt_provider.get_prompt(
             PromptKey.RAW_INDEX_CONCEPTS,
-            video_title=title,
+            content_title=title,
             transcript_excerpt=text,
             language=self.language,
         )
@@ -126,7 +126,7 @@ class LLMTranscriptDistiller:
                     # Transitional fallback (ADR-010 / ADR-029 §2.4)
                     judge_system_instructions, judge_prompt = self.prompt_provider.get_prompt(
                         PromptKey.JUDGE_RAW_INDEX_CONCEPTS,
-                        video_title=title,
+                        content_title=title,
                         transcript_excerpt=text,
                         concepts=raw_concepts,
                         language=self.language,
@@ -165,7 +165,7 @@ class LLMTranscriptDistiller:
         """Extract structured conceptual summary through an iterative LLM-as-a-judge loop."""
         system_instructions, user_prompt = self.prompt_provider.get_prompt(
             PromptKey.RAW_INDEX_SUMMARY,
-            video_title=title,
+            content_title=title,
             transcript_excerpt=text,
             language=self.language,
         )
@@ -221,7 +221,7 @@ class LLMTranscriptDistiller:
                 # Transitional fallback (ADR-010 / ADR-029 §2.4)
                 judge_system_instructions, judge_prompt = self.prompt_provider.get_prompt(
                     PromptKey.JUDGE_RAW_INDEX_SUMMARY,
-                    video_title=title,
+                    content_title=title,
                     transcript_excerpt=text,
                     summary=summary,
                     language=self.language,
@@ -258,7 +258,7 @@ class LLMTranscriptDistiller:
         """Synthesize dense single paratactic paragraph through an iterative LLM-as-a-judge loop."""
         system_instructions, user_prompt = self.prompt_provider.get_prompt(
             PromptKey.RAW_INDEX_SYNTHESIS,
-            video_title=title,
+            content_title=title,
             summary=summary,
             language=self.language,
         )
@@ -315,7 +315,7 @@ class LLMTranscriptDistiller:
                     # Transitional fallback (ADR-010 / ADR-029 §2.4)
                     judge_system_instructions, judge_prompt = self.prompt_provider.get_prompt(
                         PromptKey.JUDGE_RAW_INDEX_SYNTHESIS,
-                        video_title=title,
+                        content_title=title,
                         transcript_excerpt=excerpt,
                         synthesis=synthesis,
                         language=self.language,

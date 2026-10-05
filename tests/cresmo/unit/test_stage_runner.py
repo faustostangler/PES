@@ -352,3 +352,46 @@ class TestPipelineStageRunnerEvaluatedStage:
             content_id=ContentId("vid_dep_1"),
         )
         assert executed == "result"
+
+    def test_run_stage_lazy_fallback_callable_not_called_on_success(self) -> None:
+        """Verify callable fallback supplier is never called on successful execution (ADR-026 Rule 19)."""
+        runner = PipelineStageRunner(
+            telemetry_port=NoOpTelemetryPort(),
+            metrics_port=NoOpMetricsPort(),
+        )
+        mock_fallback_supplier = MagicMock(return_value="lazy_fallback_value")
+
+        result = runner.run_stage(
+            "test_stage",
+            lambda: "success_value",
+            channel_name=ChannelName("TestChan"),
+            content_id=ContentId("vid_1"),
+            fatal=False,
+            fallback=mock_fallback_supplier,
+        )
+
+        assert result == "success_value"
+        mock_fallback_supplier.assert_not_called()
+
+    def test_run_stage_lazy_fallback_callable_called_on_non_fatal_error(self) -> None:
+        """Verify callable fallback supplier is called only on failure (ADR-026 Rule 19)."""
+        runner = PipelineStageRunner(
+            telemetry_port=NoOpTelemetryPort(),
+            metrics_port=NoOpMetricsPort(),
+        )
+        mock_fallback_supplier = MagicMock(return_value="lazy_fallback_value")
+
+        def failing_action() -> str:
+            raise RuntimeError("Transient pipeline failure")
+
+        result = runner.run_stage(
+            "test_stage",
+            failing_action,
+            channel_name=ChannelName("TestChan"),
+            content_id=ContentId("vid_1"),
+            fatal=False,
+            fallback=mock_fallback_supplier,
+        )
+
+        assert result == "lazy_fallback_value"
+        mock_fallback_supplier.assert_called_once()

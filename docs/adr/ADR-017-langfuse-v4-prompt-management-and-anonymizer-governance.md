@@ -51,8 +51,10 @@ We treat data privacy and LGPD compliance as a first-class architectural concern
      - Message with `role: "system"`: Invariant persona, domain instructions, and `cresmo-style-guide` constraints.
      - Message with `role: "user"`: Dynamic input payload template (`{{channel_name}}`, `{{file_name}}`, `{{raw_text}}`, etc.).
    - **No Backward Compatibility Shims:** The system eliminates all heuristic text-only fallback branches or monomorphic string shims. The prompt provider resolves `(system_instruction, user_prompt)` directly from the compiled chat messages.
-3. **Guaranteed 100% Availability Pattern (Offline Resilience):**
-   - Conforms strictly to [ADR-014](ADR-014-active-preflight-probes-and-fail-fast-observability.md). The provider wraps an injected fallback `JsonPromptProvider`.
+3. **Guaranteed 100% Availability via Lazy Fallback Pattern (Offline Resilience & Zero Happy-Path Overhead):**
+   - Conforms strictly to [ADR-014](ADR-014-active-preflight-probes-and-fail-fast-observability.md) and **ADR-026 (Rule 19: Strict Lazy Fallback Execution)**. The provider wraps an injected fallback `JsonPromptProvider`.
+   - **Strict Prohibition of Eager Fallback:** The provider MUST NEVER execute `self._fallback.get_prompt()` prior to attempting remote Langfuse retrieval. Pre-computing fallback templates on the happy path is prohibited due to CPU and latency penalties.
+   - **Lazy Contingency Degradation:** When Langfuse is reachable, only the remote fetch and compilation occur. The local `JsonPromptProvider` is evaluated *strictly on demand* (lazily) when `self._client is None`, if the key is absent from the registry, or within the `ApiError`/`Exception` catch blocks.
    - When Langfuse is reachable:
      ```python
      prompt = self._langfuse.get_prompt(
@@ -64,7 +66,7 @@ We treat data privacy and LGPD compliance as a first-class architectural concern
      # Extracts role='system' -> system_instruction, role='user' -> user_prompt
      ```
    - When Langfuse is offline, unreachable, or in test environments:
-     Degrades immediately to `JsonPromptProvider`, which already provides the canonical `tuple[str, str]` from `prompts.json` and local skill files without pipeline disruption.
+     Degrades lazily to `JsonPromptProvider`, which provides the canonical `tuple[str, str]` from `prompts.json` and local skill files without pipeline disruption and with zero happy-path overhead.
 4. **Prompt-to-Trace Linking:**
    - LLM generation calls receive the resolved prompt reference, automatically populating the Langfuse **Prompt Metrics** tab (median latency, token usage, cost, and eval scores per version).
    - Enables native **A/B Testing and LLM Playground evaluation** directly inside the Langfuse UI with full system instruction parity.

@@ -86,13 +86,13 @@ def is_valid_inventory_json_structure(data: Any) -> bool:
 
 
 def _parse_and_deduplicate_items(
-    candidate_data: list[Any], compendium_title: str
+    candidate_data: list[Any], content_title: str
 ) -> tuple[tuple[NoteTitle, NoteType], ...]:
     """Deduplicate and normalize discovered entity candidates by canonical title.
 
     Args:
         candidate_data: Raw parsed JSON entries.
-        compendium_title: Title of compendium for validation reporting.
+        content_title: Title of content for validation reporting.
 
     Returns:
         Tuple of (NoteTitle, NoteType) pairs.
@@ -124,7 +124,7 @@ def _parse_and_deduplicate_items(
 
     if not items:
         raise DomainValidationError(
-            f"No valid entities discovered in compendium '{compendium_title}'."
+            f"No valid entities discovered in compendium '{content_title}'."
         )
 
     return tuple(items)
@@ -227,7 +227,7 @@ class DiscoverAtomicInventoryUseCase:
         if self.prompt_provider:
             judge_sys, judge_prompt = self.prompt_provider.get_prompt(
                 PromptKey.JUDGE_ATOMIC_INVENTORY,
-                compendium_title=compendium.title.value,
+                content_title=compendium.title.value,
                 channel_name=compendium.channel_name,
                 compendium_body=compendium.body,
                 inventory_json=json.dumps(candidate_data, ensure_ascii=False),
@@ -263,7 +263,7 @@ class DiscoverAtomicInventoryUseCase:
         """
         system_instruction, user_prompt = self.prompt_provider.get_prompt(
             PromptKey.ATOMIC_INVENTORY,
-            compendium_title=compendium.title.value,
+            content_title=compendium.title.value,
             channel_name=compendium.channel_name,
             compendium_body=compendium.body,
         )

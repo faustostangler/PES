@@ -29,6 +29,7 @@ During the recursive architectural audit across all layers (Domain, Application,
 11. **"C-Style Forward-Declaration / Inverted Newspaper Antipattern" e Ping-Pong com Saltos Retrógrados (Violação do Stepdown Rule / Clean Code):** Inverting the top-down narrative by burying the primary command handler/entry point at the bottom of the module while exposing low-level leaf utility functions at the top, forcing developers into continuous backwards ping-pong jumps across hundreds of lines.
 12. **Acúmulo de Múltiplas Responsabilidades em Módulos de Apresentação (Violação de SRP):** Presentation command modules accumulating disparate concerns (CLI argument conversion, streaming batch processing, resource management/garbage collection, and RAG consolidation) instead of maintaining bounded, laser-focused responsibilities.
 13. **Hardcoded Fallbacks Operacionais em Funções de Construção e Adapters (Violação de SSOT e 12-Factor Fator III):** Hardcoding literal operational values (e.g. `dict.get("language", "Português do Brasil")`, `x or "hardcoded"`) as inline fallbacks across builders and adapters instead of sourcing all operational defaults strictly from the Single Source of Truth (`config.py` / `CresmoSettings`). When global configuration or environment variables change, these scattered hardcoded fallbacks silently ignore system configuration when context keys are absent.
+14. **Eager Fallback Evaluation e Degradação Antecipada (Violação de Circuit Breaking & Resiliência Lazy):** Pre-evaluating, instantiating, or parsing fallback assets (e.g., local disk templates, regexes, secondary models, or downstream services) on the happy path *before* attempting the primary/remote provider. This burns CPU/IO cycles unnecessarily on 100% of healthy requests, creates failure contagion, and inverts the semantics of graceful degradation.
 
 This ADR formally codifies the governance rules, anti-patterns, and required implementations to eliminate these smells across the codebase.
 
@@ -57,6 +58,8 @@ This ADR formally codifies the governance rules, anti-patterns, and required imp
 |  [Rule 15] Stepdown Rule & Top-Down Narrative --> Inverted Newspaper Elimination; Top-Level Entry Points First   |
 |  [Rule 16] Presentation SRP & Bounded Commands --> CLI Controller Humble Object Decoupled from Batch Engines     |
 |  [Rule 17] Zero Hardcoded Fallbacks     --> SSOT Config Fallbacks; Zero Ad-Hoc Literal Defaults      |
+|  [Rule 18] Zero Convenience Accessors    --> Direct Canonical Navigation; Zero Delegation Shims     |
+|  [Rule 19] Strict Lazy Fallback Execution--> Zero Eager Evaluation; On-Demand Degradation Only      |
 +---------------------------------------------------------------------------------------------------+
 ```
 
@@ -722,6 +725,66 @@ This violates:
 
 ---
 
+### Rule 19: Strict Lazy Fallback Execution — Anti-Eager Fallback & Circuit Degradation Governance
+
+#### 19.1 The Anti-Pattern
+Pre-evaluating, instantiating, or compiling fallback logic on the happy path *before* invoking the primary provider. For example, reading local disk template files, compiling regexes, caching skill definitions, or invoking secondary LLMs synchronously prior to attempting a remote Langfuse Cloud API call or primary adapter invocation:
+
+```python
+# ANTI-PATTERN: Eagerly evaluating fallback prior to remote call
+class LangfusePromptProvider(PromptProviderPort):
+    def get_prompt(self, key: PromptKey, **context: Any) -> tuple[str, str]:
+        # Eager fallback execution burns disk I/O, regex parsing, and skill cache on 100% of calls!
+        fallback_system_instruction, fallback_user_prompt = self._fallback.get_prompt(
+            key, **context
+        )
+
+        return self._resolve_chat_prompt(
+            key,
+            fallback_system_instruction=fallback_system_instruction,
+            fallback_user_prompt=fallback_user_prompt,
+            **context,
+        )
+```
+
+This violates:
+1. **Performance & Waste Elimination (Lean Engineering):** In 99.9% of production requests, the primary service (e.g., Langfuse Cloud, primary model provider) responds successfully. Computing the fallback eagerly forces unnecessary CPU cycles, disk I/O, and string allocations on the critical happy path.
+2. **Semantics of Graceful Degradation & Circuit Breaking:** A fallback is by definition a *plan B* triggered solely when the primary path is unavailable, disabled, or fails. Treating it as an eager parameter turns degradation into an unconditional overhead.
+3. **Failure Contagion:** If the fallback preparation logic suffers a bug, disk read lock, or validation error, the primary remote call never executes, even though the primary service was completely healthy.
+4. **Clean Separation of Concerns:** The primary execution method becomes polluted with fallback parameters, obscuring the primary pipeline flow.
+
+#### 19.2 The Standard & Remediation
+1. **Strict Lazy Evaluation:** Primary execution paths MUST execute first without computing, parsing, or instantiating fallback assets. Fallbacks MUST only be invoked:
+   - Within an explicit `except Exception:` recovery block, or
+   - Within an explicit offline/circuit-open status branch (e.g., `if not self._is_available():`).
+2. **Lazy Callable / Supplier Pattern:** Where a coordinator or orchestrator receives a fallback parameter, it SHOULD accept a `Callable[[], T]` supplier rather than an eagerly evaluated value whenever computing the fallback involves I/O, parsing, or non-trivial computation:
+   ```python
+   # Recommended for coordinators/runners:
+   fallback: _StageRet | Callable[[], _StageRet] | None = None
+   ```
+3. **SOTA Clean Code Pattern:**
+```python
+# SOTA CLEAN REMEDIATION: Pure Lazy Degradation
+class LangfusePromptProvider(PromptProviderPort):
+    def get_prompt(self, key: PromptKey, **context: Any) -> tuple[str, str]:
+        """Retrieve compiled prompt adhering to strict lazy fallback governance."""
+        if not self._is_available():
+            logger.debug("Langfuse unavailable; executing lazy fallback for %s", key)
+            return self._fallback.get_prompt(key, **context)
+
+        try:
+            return self._fetch_and_compile_remote(key, **context)
+        except Exception as exc:
+            logger.warning(
+                "Remote Langfuse prompt fetch failed for %s (%s); triggering lazy fallback",
+                key,
+                exc,
+            )
+            return self._fallback.get_prompt(key, **context)
+```
+
+---
+
 ## 3. Enforcement & Quality Gates
 
 
@@ -743,3 +806,4 @@ The following Ruff rules and architecture checks are enforced across the entire 
 | **`ARG002`**| Unused method argument | **AUDITED** | Prefix with `_` in NoOp / Null-Object adapters |
 | **`RULE-017`**| Hardcoded operational fallback strings | **BLOCKING** | Sourced strictly from `config.py` / `CresmoSettings` |
 | **`RULE-018`**| Zero convenience accessors & property aliases | **BLOCKING** | Direct canonical aggregate navigation |
+| **`RULE-019`**| Eager fallback evaluation | **BLOCKING** | Prohibited; lazy evaluation on failure/offline only |

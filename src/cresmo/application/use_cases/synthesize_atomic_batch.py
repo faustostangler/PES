@@ -197,7 +197,7 @@ class SynthesizeAtomicBatchUseCase:
 
         system_instruction, user_prompt = self.prompt_provider.get_prompt(
             PromptKey.ATOMIC_BATCH,
-            compendium_title=compendium.title.value,
+            content_title=compendium.title.value,
             channel_name=compendium.channel_name,
             compendium_body=compendium.body,
             targets_json=json.dumps(targets_summary, ensure_ascii=False),

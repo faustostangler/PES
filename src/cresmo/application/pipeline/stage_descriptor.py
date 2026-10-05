@@ -58,15 +58,12 @@ class StageConfig[TSource, TOutput]:
         **extra_context: Any,
     ) -> tuple[str, str]:
         """Resolve system instructions and user prompt, injecting closed-loop reflection critique on retry."""
-        resolved_title = content_title or getattr(source, "title", "")
         system_instruction, user_prompt = prompt_provider.get_prompt(
             self.transform_prompt_key,
             channel_name=channel_name,
             channel_id=channel_id,
             content_id=content_id,
-            content_title=resolved_title,
-            video_title=resolved_title,
-            compendium_title=resolved_title,
+            content_title=content_title,
             file_name=f"{content_id}.txt",
             raw_text=getattr(source, "body", str(source)),
             **extra_context,

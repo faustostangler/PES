@@ -4,11 +4,16 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+from typing import Any
 from unittest.mock import patch
 
 from cresmo.domain.taxonomy import classify_channel
 from cresmo.domain.value_objects import ChannelName, PromptKey
 from cresmo.infrastructure.adapters.prompt_provider import JsonPromptProvider
+from cresmo.infrastructure.adapters.prompts.builders import (
+    PROMPT_BUILDER_REGISTRY,
+    PromptBuilderRegistry,
+)
 
 
 class TestChannelTaxonomy:
@@ -130,7 +135,7 @@ class TestJsonPromptProvider:
 
         inv_s, inv_p = provider.get_prompt(
             PromptKey.ATOMIC_INVENTORY,
-            compendium_title="Compendium Title",
+            content_title="Compendium Title",
             channel_name=ChannelName("Channel Name"),
             compendium_body="Enriched content body.",
         )
@@ -141,7 +146,7 @@ class TestJsonPromptProvider:
 
         judge_inv_s, judge_inv_p = provider.get_prompt(
             PromptKey.JUDGE_ATOMIC_INVENTORY,
-            compendium_title="Compendium Title",
+            content_title="Compendium Title",
             channel_name=ChannelName("Channel Name"),
             compendium_body="Enriched content body.",
             inventory_json='[{"title": "Target 1", "type": "entity"}]',
@@ -154,7 +159,7 @@ class TestJsonPromptProvider:
 
         batch_s, batch_p = provider.get_prompt(
             PromptKey.ATOMIC_BATCH,
-            compendium_title="Compendium Title",
+            content_title="Compendium Title",
             channel_name=ChannelName("Channel Name"),
             compendium_body="Enriched content body.",
             targets_json='[{"title": "Target 1"}]',
@@ -197,12 +202,12 @@ class TestJsonPromptProvider:
             "atomic_inventory": {
                 "task": "Custom Inv",
                 "skill_name": "none",
-                "template": "{task}: {compendium_title} on {channel_name} with {compendium_body}",
+                "template": "{task}: {content_title} on {channel_name} with {compendium_body}",
             },
             "atomic_batch": {
                 "task": "Custom Batch",
                 "skill_name": "none",
-                "template": "{task}: {compendium_title} on {channel_name} body {compendium_body} targets {targets_json}",
+                "template": "{task}: {content_title} on {channel_name} body {compendium_body} targets {targets_json}",
             },
             "reconcile_mocs": {
                 "task": "Custom MOC",
@@ -213,7 +218,7 @@ class TestJsonPromptProvider:
                 "task": "Custom Judge Inventory",
                 "skill_name": "none",
                 "system_instruction": "Custom Judge System Instruction",
-                "template": "{task}: {compendium_title} on {channel_name} with {inventory_json}",
+                "template": "{task}: {content_title} on {channel_name} with {inventory_json}",
             },
         }
         custom_file = tmp_path / "custom_prompts.json"
@@ -258,7 +263,7 @@ class TestJsonPromptProvider:
 
         s_inv, p_inv = provider.get_prompt(
             PromptKey.ATOMIC_INVENTORY,
-            compendium_title="Title",
+            content_title="Title",
             channel_name=ChannelName("Channel"),
             compendium_body="Body",
         )
@@ -267,7 +272,7 @@ class TestJsonPromptProvider:
 
         s_j_inv, p_j_inv = provider.get_prompt(
             PromptKey.JUDGE_ATOMIC_INVENTORY,
-            compendium_title="Title",
+            content_title="Title",
             channel_name=ChannelName("Channel"),
             compendium_body="Body",
             inventory_json='[{"title": "T1"}]',
@@ -277,7 +282,7 @@ class TestJsonPromptProvider:
 
         s_batch, p_batch = provider.get_prompt(
             PromptKey.ATOMIC_BATCH,
-            compendium_title="Title",
+            content_title="Title",
             channel_name=ChannelName("Channel"),
             compendium_body="Body",
             targets_json="Targets",
@@ -444,7 +449,7 @@ class TestJsonPromptProvider:
         # Atomic inventory fallback
         s_inv, p_inv = provider.get_prompt(
             PromptKey.ATOMIC_INVENTORY,
-            compendium_title="Title",
+            content_title="Title",
             channel_name=ChannelName("Channel"),
             compendium_body="Body",
         )
@@ -460,7 +465,7 @@ class TestJsonPromptProvider:
         # Atomic batch fallback
         s_batch, p_batch = provider.get_prompt(
             PromptKey.ATOMIC_BATCH,
-            compendium_title="Title",
+            content_title="Title",
             channel_name=ChannelName("Channel"),
             compendium_body="Body",
             targets_json='[{"title": "E1"}]',
@@ -489,7 +494,7 @@ class TestJsonPromptProvider:
         # Pass 1: Concepts (from transcript excerpt)
         concepts_system_instructions, concepts_user_prompt = provider.get_prompt(
             PromptKey.RAW_INDEX_CONCEPTS,
-            video_title="Vilfredo Pareto and Elites",
+            content_title="Vilfredo Pareto and Elites",
             transcript_excerpt="A circulação de elites explica a alternância de poder.",
             language="Português do Brasil",
         )
@@ -500,7 +505,7 @@ class TestJsonPromptProvider:
         # Pass 2: Summary (from transcript excerpt)
         summary_system_instructions, summary_user_prompt = provider.get_prompt(
             PromptKey.RAW_INDEX_SUMMARY,
-            video_title="Vilfredo Pareto and Elites",
+            content_title="Vilfredo Pareto and Elites",
             transcript_excerpt="A circulação de elites explica a alternância de poder.",
             language="Português do Brasil",
         )
@@ -512,7 +517,7 @@ class TestJsonPromptProvider:
         # Pass 3: Synthesis (from summary)
         synthesis_system_instructions, synthesis_user_prompt = provider.get_prompt(
             PromptKey.RAW_INDEX_SYNTHESIS,
-            video_title="Vilfredo Pareto and Elites",
+            content_title="Vilfredo Pareto and Elites",
             summary="A circulação de elites explica a alternância de poder.",
             language="Português do Brasil",
         )
@@ -534,7 +539,7 @@ class TestJsonPromptProvider:
         # Summary Judge
         summary_judge_system_instructions, summary_judge_user_prompt = provider.get_prompt(
             PromptKey.JUDGE_RAW_INDEX_SUMMARY,
-            video_title="Pareto and Elites",
+            content_title="Pareto and Elites",
             transcript_excerpt="Explicando a circulação das elites na política.",
             summary="Resumo fiel da circulação das elites.",
             language="Português do Brasil",
@@ -550,7 +555,7 @@ class TestJsonPromptProvider:
         # Concepts Judge
         concepts_judge_system_instructions, concepts_judge_user_prompt = provider.get_prompt(
             PromptKey.JUDGE_RAW_INDEX_CONCEPTS,
-            video_title="Pareto and Elites",
+            content_title="Pareto and Elites",
             transcript_excerpt="Explicando a circulação das elites na política.",
             concepts="Circulação de Elites, Pareto",
             language="Português do Brasil",
@@ -565,7 +570,7 @@ class TestJsonPromptProvider:
         # Synthesis Judge
         synthesis_judge_system_instructions, synthesis_judge_user_prompt = provider.get_prompt(
             PromptKey.JUDGE_RAW_INDEX_SYNTHESIS,
-            video_title="Pareto and Elites",
+            content_title="Pareto and Elites",
             transcript_excerpt="Explicando a circulação das elites na política.",
             synthesis="A circulação de elites reflete a alternância política segundo Pareto.",
             language="Português do Brasil",
@@ -579,3 +584,85 @@ class TestJsonPromptProvider:
             in synthesis_judge_user_prompt
         )
         assert "true" in synthesis_judge_user_prompt.lower()
+
+
+class TestPromptBuilderRegistry:
+    """Hermetic unit tests for the first-class typed PromptBuilderRegistry."""
+
+    def test_default_registry_contains_all_prompt_keys(self) -> None:
+        assert PROMPT_BUILDER_REGISTRY.is_frozen
+        assert len(PROMPT_BUILDER_REGISTRY) == len(PromptKey)
+        for key in PromptKey:
+            assert key in PROMPT_BUILDER_REGISTRY
+            builder = PROMPT_BUILDER_REGISTRY.get(key)
+            assert callable(builder)
+            assert PROMPT_BUILDER_REGISTRY[key] is builder
+
+    def test_registry_registration_and_decorator_syntax(self) -> None:
+        registry = PromptBuilderRegistry()
+
+        def custom_builder(provider: Any, **context: Any) -> tuple[str, str]:
+            return "sys", "user"
+
+        registry.register(PromptKey.FLUID_PROSE, custom_builder)
+        assert registry.get(PromptKey.FLUID_PROSE) is custom_builder
+
+        @registry.register(PromptKey.LONG_EXPANDER)
+        def decorated_builder(provider: Any, **context: Any) -> tuple[str, str]:
+            return "dec_sys", "dec_user"
+
+        assert registry.get(PromptKey.LONG_EXPANDER) is decorated_builder
+
+    def test_registry_frozen_guard(self) -> None:
+        registry = PromptBuilderRegistry()
+        registry.register(PromptKey.FLUID_PROSE, lambda p, **c: ("s", "u"))
+        registry.freeze()
+        assert registry.is_frozen
+
+        import pytest
+
+        with pytest.raises(RuntimeError, match="frozen"):
+            registry.register(PromptKey.LONG_EXPANDER, lambda p, **c: ("s", "u"))
+
+        with pytest.raises(RuntimeError, match="frozen"):
+
+            @registry.register(PromptKey.WIDE_EXPANDER)
+            def _fn(p: Any, **c: Any) -> tuple[str, str]:
+                return "s", "u"
+
+    def test_registry_completeness_validation(self) -> None:
+        registry = PromptBuilderRegistry()
+        registry.register(PromptKey.FLUID_PROSE, lambda p, **c: ("s", "u"))
+
+        import pytest
+
+        with pytest.raises(ValueError, match="Missing prompt builders for keys"):
+            registry.validate_completeness()
+
+        # Passes when validating only registered subset
+        registry.validate_completeness(expected_keys=[PromptKey.FLUID_PROSE])
+
+    def test_registry_dependency_injection_into_json_provider(self, tmp_path: Path) -> None:
+        mock_registry = PromptBuilderRegistry()
+        mock_registry.register(
+            PromptKey.FLUID_PROSE,
+            lambda provider, **context: (
+                "Injected System",
+                f"Injected User: {context.get('content_title', '')}",
+            ),
+        )
+        mock_registry.freeze()
+
+        provider = JsonPromptProvider(registry=mock_registry)
+        sys_inst, user_prompt = provider.get_prompt(
+            PromptKey.FLUID_PROSE, content_title="Custom Injection"
+        )
+        assert sys_inst == "Injected System"
+        assert user_prompt == "Injected User: Custom Injection"
+
+    def test_unsupported_key_raises_value_error(self) -> None:
+        registry = PromptBuilderRegistry()
+        import pytest
+
+        with pytest.raises(ValueError, match="Unsupported prompt key"):
+            registry.get(PromptKey.FLUID_PROSE)

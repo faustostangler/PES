@@ -50,9 +50,7 @@ class TestLangfusePromptProvider:
         assert len(prompt) > 0
         assert "Sample raw transcript." in prompt
 
-    def test_remote_langfuse_get_chat_prompt_resolves_system_and_user(
-        self, fallback_provider: JsonPromptProvider
-    ) -> None:
+    def test_remote_langfuse_get_chat_prompt_resolves_system_and_user(self) -> None:
         mock_client = MagicMock()
         mock_prompt_obj = MagicMock()
         mock_prompt_obj.compile.return_value = [
@@ -62,9 +60,12 @@ class TestLangfusePromptProvider:
         mock_prompt_obj.version = 3
         mock_client.get_prompt.return_value = mock_prompt_obj
 
+        mock_fallback = MagicMock(spec=PromptProviderPort)
+        mock_fallback.get_prompt.return_value = ("fallback_sys", "fallback_user")
+
         provider = LangfusePromptProvider(
             langfuse_client=mock_client,
-            fallback_provider=fallback_provider,
+            fallback_provider=mock_fallback,
             label="production",
         )
 
@@ -85,6 +86,37 @@ class TestLangfusePromptProvider:
         assert kwargs["label"] == "production"
         assert kwargs["type"] == "chat"
         assert provider.get_last_prompt_version("cresmo-gap-filler-pass1") == 3
+        # Strict Lazy Fallback (ADR-017 / ADR-026 Rule 19): Zero happy-path fallback execution
+        mock_fallback.get_prompt.assert_not_called()
+
+    def test_remote_langfuse_lazy_fallback_when_compiled_messages_invalid(self) -> None:
+        """When Langfuse returns non-chat structure, gracefully trigger lazy fallback."""
+        mock_client = MagicMock()
+        mock_prompt_obj = MagicMock()
+        mock_prompt_obj.compile.return_value = "invalid non-list structure"
+        mock_client.get_prompt.return_value = mock_prompt_obj
+
+        mock_fallback = MagicMock(spec=PromptProviderPort)
+        mock_fallback.get_prompt.return_value = ("fallback_sys", "fallback_user")
+
+        provider = LangfusePromptProvider(
+            langfuse_client=mock_client,
+            fallback_provider=mock_fallback,
+            label="production",
+        )
+
+        sys_inst, prompt = provider.get_prompt(
+            PromptKey.GAP_FILLER_PASS1,
+            pass_num=1,
+            total_passes=3,
+            channel_name=ChannelName("sandeco"),
+            file_name="ep01.md",
+            raw_text="Sample transcript text.",
+        )
+
+        assert sys_inst == "fallback_sys"
+        assert prompt == "fallback_user"
+        mock_fallback.get_prompt.assert_called_once()
 
     def test_resilience_when_langfuse_client_raises_network_error(
         self, fallback_provider: JsonPromptProvider
@@ -195,7 +227,7 @@ class TestLangfusePromptProvider:
 
         inv_sys, inventory_prompt = provider.get_prompt(
             PromptKey.ATOMIC_INVENTORY,
-            compendium_title="Compendium title",
+            content_title="Compendium title",
             channel_name=ChannelName("sandeco"),
             compendium_body="Compendium body",
         )
@@ -204,7 +236,7 @@ class TestLangfusePromptProvider:
 
         batch_sys, atomic_batch_prompt = provider.get_prompt(
             PromptKey.ATOMIC_BATCH,
-            compendium_title="Compendium title",
+            content_title="Compendium title",
             channel_name=ChannelName("sandeco"),
             compendium_body="Compendium body",
             targets_json="Inventory JSON",
@@ -221,7 +253,7 @@ class TestLangfusePromptProvider:
 
         raw_sys, raw_prompt = provider.get_prompt(
             PromptKey.RAW_INDEX_SUMMARY,
-            video_title="Pareto",
+            content_title="Pareto",
             transcript_excerpt="Excerpt",
         )
         assert isinstance(raw_sys, str)

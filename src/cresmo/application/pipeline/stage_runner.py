@@ -269,7 +269,7 @@ class PipelineStageRunner:
         channel_id: ChannelId | str | None = None,
         content_title: str = "",
         fatal: bool = True,
-        fallback: _StageRet | None = None,
+        fallback: _StageRet | Callable[[], _StageRet] | None = None,
     ) -> _StageRet | None:
         """Execute a pipeline stage within a closed-loop quality evaluation gate with retries (Legacy ADR-030)."""
         if self.llm_judge is None or eval_spec is None:
@@ -300,7 +300,7 @@ class PipelineStageRunner:
                 fallback=fallback,
             )
             if candidate is None:
-                return fallback
+                return fallback() if callable(fallback) else fallback
 
             active_trace_id = self._get_active_trace_id(
                 channel=channel_id or channel_name,
@@ -365,7 +365,7 @@ class PipelineStageRunner:
         channel_id: ChannelId | str | None = None,
         content_title: str = "",
         fatal: bool = True,
-        fallback: _StageRet | None = None,
+        fallback: _StageRet | Callable[[], _StageRet] | None = None,
     ) -> _StageRet | None:
         """Execute a pipeline stage wrapped with telemetry spans, metrics, and error handling."""
         channel_name_str = _as_str(channel_name)
@@ -384,7 +384,7 @@ class PipelineStageRunner:
             if fatal:
                 raise
             logger.warning("[Pipeline] %s skipped for %s: %s", stage_name, content_id_str, exc)
-            return fallback
+            return fallback() if callable(fallback) else fallback
 
     def record_session_completion(
         self,

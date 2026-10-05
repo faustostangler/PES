@@ -17,10 +17,13 @@ import json
 import logging
 import sys
 from pathlib import Path
-from typing import Any, ClassVar
+from typing import Any
 
 from cresmo.application.ports import PromptProviderPort
-from cresmo.infrastructure.adapters.prompts.builders import PROMPT_BUILDER_DISPATCH_MAP
+from cresmo.infrastructure.adapters.prompts.builders import (
+    PROMPT_BUILDER_REGISTRY,
+    PromptBuilderRegistry,
+)
 from cresmo.infrastructure.adapters.prompts.registry import PromptKey
 from cresmo.infrastructure.config import CresmoSettings
 from cresmo.infrastructure.paths import find_workspace_root
@@ -52,6 +55,7 @@ class JsonPromptProvider(PromptProviderPort):
         skills_dir: Path | None = None,
         language: str | None = None,
         settings: Any | None = None,
+        registry: PromptBuilderRegistry | None = None,
     ) -> None:
         """Initialize prompt provider and load templates from disk or package resources.
 
@@ -60,6 +64,7 @@ class JsonPromptProvider(PromptProviderPort):
             skills_dir: Optional custom path to .agents/skills directory.
             language: Optional configured target language for prompt generation.
             settings: Optional runtime settings instance conforming to PipelineSettingsProtocol.
+            registry: Optional first-class PromptBuilderRegistry instance.
         """
         self.prompts_path = prompts_path
         self.skills_dir = self._resolve_skills_dir(skills_dir)
@@ -69,6 +74,7 @@ class JsonPromptProvider(PromptProviderPort):
             or CresmoSettings.DEFAULT_LANGUAGE
         )
         self.settings: Any | None = settings
+        self._registry: PromptBuilderRegistry = registry or PROMPT_BUILDER_REGISTRY
         self._templates: dict[str, dict[str, str]] = {}
         self._skill_cache: dict[str, str] = {}
         self._load_templates()
@@ -212,9 +218,7 @@ class JsonPromptProvider(PromptProviderPort):
         Returns:
             Tuple containing (system_instruction, user_prompt).
         """
-        builder = self._DISPATCH_MAP.get(key)
-        if builder is None:
-            raise ValueError(f"Unsupported prompt key: {key}")
+        builder = self._registry.get(key)
         return builder(self, **context)
 
     def _format_paired_prompt(
@@ -248,5 +252,3 @@ class JsonPromptProvider(PromptProviderPort):
         task = entry.get("task", "")
         template = entry.get("template", "")
         return self._safe_format(template, task=task, **kwargs)
-
-    _DISPATCH_MAP: ClassVar[dict[PromptKey, Any]] = PROMPT_BUILDER_DISPATCH_MAP

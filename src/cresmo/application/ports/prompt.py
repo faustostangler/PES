@@ -73,15 +73,15 @@ _NOOP_BUILDERS: dict[PromptKey, Callable[[dict[str, Any]], tuple[str, str]]] = {
     ),
     PromptKey.ATOMIC_INVENTORY: lambda c: (
         "You are Cresmo Atomic Inventory Specialist (cresmo-atomic).",
-        f'Source Compendium Title: {c.get("compendium_title", "")}\nSource Channel: {c.get("channel_name", "")}\n\nSource Context:\n{c.get("compendium_body", "")}\n\nOutput strictly a JSON array of candidate entities: [{{"title": "...", "type": "entity|concept|event|process"}}]',
+        f'Source Content Title: {c.get("content_title", "")}\nSource Channel: {c.get("channel_name", "")}\n\nSource Context:\n{c.get("compendium_body", "")}\n\nOutput strictly a JSON array of candidate entities: [{{"title": "...", "type": "entity|concept|event|process"}}]',
     ),
     PromptKey.JUDGE_ATOMIC_INVENTORY: lambda c: (
         "You are an impartial evaluator assessing candidate entity extraction. Respond strictly with 'true' or 'false'.",
-        f"Compendium Title: {c.get('compendium_title', '')}\nChannel: {c.get('channel_name', '')}\n\nContext:\n{c.get('compendium_body', '')}\n\nCandidate Inventory:\n{c.get('inventory_json', '')}\n\nDoes the candidate inventory strictly satisfy all ontological, factual, and typographical criteria? Respond ONLY with 'true' or 'false'.",
+        f"Content Title: {c.get('content_title', '')}\nChannel: {c.get('channel_name', '')}\n\nContext:\n{c.get('compendium_body', '')}\n\nCandidate Inventory:\n{c.get('inventory_json', '')}\n\nDoes the candidate inventory strictly satisfy all ontological, factual, and typographical criteria? Respond ONLY with 'true' or 'false'.",
     ),
     PromptKey.ATOMIC_BATCH: lambda c: (
         "You are Cresmo Atomic Note Synthesizer (cresmo-atomic).",
-        f"Source Compendium Title: {c.get('compendium_title', '')}\nSource Channel: {c.get('channel_name', '')}\n\nSource Context:\n{c.get('compendium_body', '')}\n\nTarget Entities to Synthesize in this batch:\n{c.get('targets_json', '')}\n\nOutput strictly a JSON array of note objects.",
+        f"Source Content Title: {c.get('content_title', '')}\nSource Channel: {c.get('channel_name', '')}\n\nSource Context:\n{c.get('compendium_body', '')}\n\nTarget Entities to Synthesize in this batch:\n{c.get('targets_json', '')}\n\nOutput strictly a JSON array of note objects.",
     ),
     PromptKey.RECONCILE_MOCS: lambda c: (
         "You are Cresmo MOC Manager (cresmo-moc-manager).",
@@ -89,11 +89,11 @@ _NOOP_BUILDERS: dict[PromptKey, Callable[[dict[str, Any]], tuple[str, str]]] = {
     ),
     PromptKey.RAW_INDEX_SUMMARY: lambda c: (
         f"You are Cresmo Indexer. Language: {c.get('language', DEFAULT_LANGUAGE)}.",
-        f"Video Title: {c.get('video_title', '')}\nExcerpt:\n{c.get('transcript_excerpt', '')}",
+        f"Title: {c.get('content_title', '')}\nExcerpt:\n{c.get('transcript_excerpt', '')}",
     ),
     PromptKey.RAW_INDEX_CONCEPTS: lambda c: (
         f"You are Cresmo Concept Extractor. Language: {c.get('language', DEFAULT_LANGUAGE)}.",
-        f"Video Title: {c.get('video_title', '')}\nExcerpt:\n{c.get('transcript_excerpt', '')}",
+        f"Title: {c.get('content_title', '')}\nExcerpt:\n{c.get('transcript_excerpt', '')}",
     ),
     PromptKey.RAW_INDEX_CONCEPTS_REWRITE: lambda c: (
         "",
@@ -101,19 +101,19 @@ _NOOP_BUILDERS: dict[PromptKey, Callable[[dict[str, Any]], tuple[str, str]]] = {
     ),
     PromptKey.RAW_INDEX_SYNTHESIS: lambda c: (
         f"You are Cresmo Synthesizer. Language: {c.get('language', DEFAULT_LANGUAGE)}.",
-        f"Video Title: {c.get('video_title', '')}\nSummary:\n{c.get('summary', '')}",
+        f"Title: {c.get('content_title', '')}\nSummary:\n{c.get('summary', '')}",
     ),
     PromptKey.JUDGE_RAW_INDEX_SUMMARY: lambda c: (
         f"You are Judge. Language: {c.get('language', DEFAULT_LANGUAGE)}.",
-        f"Title: {c.get('video_title', '')}\nExcerpt:\n{c.get('transcript_excerpt', '')}\nSummary:\n{c.get('summary', '')}",
+        f"Title: {c.get('content_title', '')}\nExcerpt:\n{c.get('transcript_excerpt', '')}\nSummary:\n{c.get('summary', '')}",
     ),
     PromptKey.JUDGE_RAW_INDEX_CONCEPTS: lambda c: (
         f"You are Judge. Language: {c.get('language', DEFAULT_LANGUAGE)}.",
-        f"Title: {c.get('video_title', '')}\nExcerpt:\n{c.get('transcript_excerpt', '')}\nConcepts:\n{c.get('concepts', '')}",
+        f"Title: {c.get('content_title', '')}\nExcerpt:\n{c.get('transcript_excerpt', '')}\nConcepts:\n{c.get('concepts', '')}",
     ),
     PromptKey.JUDGE_RAW_INDEX_SYNTHESIS: lambda c: (
         f"You are Judge. Language: {c.get('language', DEFAULT_LANGUAGE)}.",
-        f"Title: {c.get('video_title', '')}\nExcerpt:\n{c.get('transcript_excerpt', '')}\nSynthesis:\n{c.get('synthesis', '')}",
+        f"Title: {c.get('content_title', '')}\nExcerpt:\n{c.get('transcript_excerpt', '')}\nSynthesis:\n{c.get('synthesis', '')}",
     ),
     PromptKey.LLM_JUDGE: lambda c: (
         "You are a rigorous, calibrated Quality Evaluation Judge for knowledge synthesis pipelines. You must return ONLY a valid JSON object matching the criteria structure.",
