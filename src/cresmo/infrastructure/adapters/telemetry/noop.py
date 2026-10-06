@@ -77,5 +77,9 @@ class NoOpTelemetryAdapter(TelemetryPort):
     ) -> None:
         """No-op score recorder for offline/test runs."""
 
+    def record_session_output(self, output: dict[str, Any]) -> None:
+        """No-op session output recorder."""
+
     def flush(self) -> None:
         """No-op flush for offline/test runs."""
+

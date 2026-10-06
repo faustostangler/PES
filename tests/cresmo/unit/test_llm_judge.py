@@ -592,3 +592,51 @@ class TestCoordinatorLlmJudgeIntegration:
 
         with pytest.raises(DomainValidationError, match="Stage 'fluid_prose' quarantined"):
             pipeline.execute(canned_raw)
+
+    def test_coordinator_records_session_output_on_success(self) -> None:
+        """Verify CresmoPipeline records high-signal outcome to telemetry port upon completion."""
+        from unittest.mock import MagicMock
+
+        from cresmo.application.pipeline.coordinator import CresmoPipeline
+        from cresmo.domain.entities import SourceTranscript
+        from cresmo.domain.value_objects import ChannelName, ContentId
+        from cresmo.infrastructure.config import CresmoSettings
+        from tests.cresmo.unit.test_pipeline import SmartMockLLMAdapter
+        from tests.doubles.mock_adapters import (
+            InMemoryLedgerAdapter,
+            InMemoryVaultAdapter,
+            MockMediaIngestionPort,
+        )
+
+        cid = ContentId("vid_coord_telemetry")
+        canned_raw = SourceTranscript(
+            content_id=cid,
+            channel_name=ChannelName("Test Channel"),
+            body="Raw audio text with speech noise.",
+        )
+        mock_llm = SmartMockLLMAdapter()
+        mock_ingestion = MockMediaIngestionPort(canned_transcript=canned_raw)
+        vault_port = InMemoryVaultAdapter()
+        vault_port.save_transcript(canned_raw)
+        ledger_port = InMemoryLedgerAdapter()
+        mock_telemetry = MagicMock()
+
+        settings = CresmoSettings(judge_blocking=False)
+        pipeline = CresmoPipeline(
+            media_ingestion_port=mock_ingestion,
+            llm_synthesis_port=mock_llm,
+            vault_port=vault_port,
+            ledger_port=ledger_port,
+            settings=settings,
+            telemetry_port=mock_telemetry,
+        )
+
+        pipeline.execute(canned_raw)
+
+        mock_telemetry.record_session_output.assert_called_once()
+        recorded_output = mock_telemetry.record_session_output.call_args[0][0]
+        assert recorded_output["status"] == "COMPLETED"
+        assert recorded_output["stage"] == "fluid_prose"
+        assert "word_count" in recorded_output
+        assert "char_count" in recorded_output
+

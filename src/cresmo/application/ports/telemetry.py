@@ -122,6 +122,17 @@ class TelemetryPort(ABC):
         """
         raise NotImplementedError
 
+    @abstractmethod
+    def record_session_output(self, output: dict[str, Any]) -> None:
+        """Record structured business outcome payload on the active root session span.
+
+        Adheres to CNCF OpenTelemetry and Langfuse semantic conventions.
+
+        Args:
+            output: Structured dictionary representing high-signal execution results.
+        """
+        raise NotImplementedError
+
     def flush(self) -> None:
         """Flush pending spans, metrics, and buffer queues to backend telemetry collectors.
 
@@ -183,6 +194,9 @@ class NoOpTelemetryPort(TelemetryPort):
         trace_id: str | None = None,
     ) -> None:
         """No-op score recorder."""
+
+    def record_session_output(self, output: dict[str, Any]) -> None:
+        """No-op session output recorder."""
 
     def flush(self) -> None:
         """No-op flush."""

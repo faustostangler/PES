@@ -646,6 +646,98 @@ def test_start_pipeline_session_with_batch_id_adr035() -> None:
     assert input_payload["batch_id"] == batch_key
 
 
+def test_start_pipeline_session_sets_otel_observation_input_attributes() -> None:
+    """Verify start_pipeline_session sets standard OTEL and Langfuse observation input attributes."""
+    exporter = InMemorySpanExporter()
+    provider = TracerProvider()
+    provider.add_span_processor(SimpleSpanProcessor(exporter))
+    tracer = provider.get_tracer("cresmo.test")
+    adapter = OpenTelemetryAdapter(tracer=tracer)
+
+    session_id = PipelineSessionId.create(channel="test_channel", content_id="test_content_101")
+    user = UserIdentity.anonymous()
+
+    with adapter.start_pipeline_session(
+        session_id=session_id,
+        user_id=user,
+        metadata={
+            "title": "Test Title",
+            "raw_characters": 1500,
+            "raw_words": 250,
+        },
+    ):
+        pass
+
+    spans = exporter.get_finished_spans()
+    root_span = next(s for s in spans if s.name == "cresmo.pipeline.execution")
+    attrs = root_span.attributes or {}
+
+    expected_dict = {
+        "title": "Test Title",
+        "content_title": "Test Title",
+        "raw_characters": "1500",
+        "raw_words": "250",
+        "channel_id": "test_channel",
+        "content_id": "test_content_101",
+        "channel": "test_channel",
+        "channel_name": "test_channel",
+    }
+    assert json.loads(str(attrs["input.value"])) == expected_dict
+    assert json.loads(str(attrs["langfuse.observation.input"])) == expected_dict
+    assert json.loads(str(attrs["langfuse.input"])) == expected_dict
+    assert json.loads(str(attrs["langfuse.trace.input"])) == expected_dict
+
+
+def test_record_session_output_sets_otel_and_langfuse_output_attributes() -> None:
+    """Verify record_session_output records high-signal outcome attributes on root span."""
+    exporter = InMemorySpanExporter()
+    provider = TracerProvider()
+    provider.add_span_processor(SimpleSpanProcessor(exporter))
+    tracer = provider.get_tracer("cresmo.test")
+    adapter = OpenTelemetryAdapter(tracer=tracer)
+
+    session_id = PipelineSessionId.create(channel="test_channel", content_id="test_content_102")
+    user = UserIdentity.anonymous()
+
+    with adapter.start_pipeline_session(
+        session_id=session_id,
+        user_id=user,
+        metadata={"title": "Test Episode"},
+    ):
+        output_payload = {
+            "status": "COMPLETED",
+            "stage": "fluid_prose",
+            "word_count": 850,
+            "char_count": 5200,
+        }
+        adapter.record_session_output(output_payload)
+
+    spans = exporter.get_finished_spans()
+    root_span = next(s for s in spans if s.name == "cresmo.pipeline.execution")
+    attrs = root_span.attributes or {}
+
+    expected_serialized = json.dumps(output_payload)
+    assert attrs["output.value"] == expected_serialized
+    assert attrs["langfuse.observation.output"] == expected_serialized
+    assert attrs["langfuse.output"] == expected_serialized
+    assert attrs["langfuse.trace.output"] == expected_serialized
+    assert attrs["cresmo.output.status"] == "COMPLETED"
+    assert attrs["cresmo.output.stage"] == "fluid_prose"
+    assert attrs["cresmo.output.word_count"] == "850"
+    assert attrs["cresmo.output.char_count"] == "5200"
+
+
+def test_noop_telemetry_adapters_record_session_output() -> None:
+    """Verify NoOp telemetry adapters implement record_session_output gracefully."""
+    from cresmo.application.ports.telemetry import NoOpTelemetryPort
+
+    noop_port = NoOpTelemetryPort()
+    noop_port.record_session_output({"status": "COMPLETED"})
+
+    noop_adapter = NoOpTelemetryAdapter()
+    noop_adapter.record_session_output({"status": "COMPLETED"})
+
+
 def test_cresmo_root_exports_only_package_metadata() -> None:
     """Verify cresmo package root strictly conforms to ADR-026 Rule 9."""
     import cresmo
@@ -653,3 +745,4 @@ def test_cresmo_root_exports_only_package_metadata() -> None:
     assert hasattr(cresmo, "__version__")
     assert not hasattr(cresmo, "PIPELINE_VERSION")
     assert cresmo.__all__ == ["__version__"]
+

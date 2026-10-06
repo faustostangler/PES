@@ -183,6 +183,7 @@ class CresmoPipeline:
         )
         user_identity = user or UserIdentity.anonymous()
 
+        raw_text = getattr(raw, "body", "") or getattr(raw, "text", "")
         root_metadata: dict[str, Any] = {
             "source": "transcript",
             "channel_id": str(channel.id) if channel.id else "",
@@ -190,6 +191,8 @@ class CresmoPipeline:
             "content_id": content.id.value,
             "content_title": content.title,
             "title": content.title,
+            "raw_characters": len(raw_text),
+            "raw_words": len(raw_text.split()),
         }
         if batch_id:
             resolved_batch_id = (
@@ -209,6 +212,13 @@ class CresmoPipeline:
             trace_name="cresmo.pipeline.execution",
         ):
             if early_result := self._check_idempotent_exit(raw, entry, force_reprocess):
+                self.telemetry_port.record_session_output(
+                    {
+                        "status": "SKIPPED_IDEMPOTENT",
+                        "reason": "Existing content already processed",
+                        "content_id": content.id.value,
+                    }
+                )
                 return early_result
 
             execution_context = PipelineExecutionContext(
@@ -249,6 +259,17 @@ class CresmoPipeline:
 
             # Estágio 8: Reconcile MOCs
             # mocs = self.stage_runner.execute_stage("reconcile_mocs", source=notes, context=execution_context)
+
+            fluid_text = getattr(fluid, "body", "") or getattr(fluid, "text", "")
+            self.telemetry_port.record_session_output(
+                {
+                    "status": "COMPLETED",
+                    "stage": "fluid_prose",
+                    "title": getattr(fluid, "title", content.title),
+                    "word_count": len(fluid_text.split()),
+                    "char_count": len(fluid_text),
+                }
+            )
 
             return PipelineResult(
                 content_id=content.id,

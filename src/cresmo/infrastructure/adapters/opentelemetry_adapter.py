@@ -49,6 +49,8 @@ _LANGFUSE_INPUT_KEYS: frozenset[str] = frozenset(
         "channel_id",
         "content_id",
         "video_url",
+        "raw_characters",
+        "raw_words",
     }
 )
 
@@ -212,6 +214,8 @@ def _build_langfuse_input_payload(
 
     if input_payload:
         serialized_input = json.dumps(input_payload)
+        attributes["input.value"] = serialized_input
+        attributes["langfuse.observation.input"] = serialized_input
         attributes["langfuse.input"] = serialized_input
         attributes["langfuse.trace.input"] = serialized_input
 
@@ -516,6 +520,29 @@ class OpenTelemetryAdapter(TelemetryPort):
                 self._langfuse.score(**score_arguments)
             except Exception as exc:  # noqa: BLE001
                 logger.debug("[OpenTelemetryAdapter] Langfuse score emission skipped: %s", exc)
+
+    def record_session_output(self, output: dict[str, Any]) -> None:
+        """Record structured business outcome payload on the active root session span.
+
+        Adheres to CNCF OpenTelemetry and Langfuse semantic conventions:
+        - output.value (standard OpenTelemetry convention)
+        - langfuse.observation.output (Langfuse observation convention)
+        - langfuse.output (Langfuse legacy convention)
+        - langfuse.trace.output (Langfuse root trace convention)
+        - cresmo.output.* (granular diagnostic attributes)
+
+        Args:
+            output: Structured dictionary representing high-signal execution results.
+        """
+        current_span = trace.get_current_span()
+        if current_span and current_span.is_recording():
+            serialized_output = json.dumps(output)
+            current_span.set_attribute("output.value", serialized_output)
+            current_span.set_attribute("langfuse.observation.output", serialized_output)
+            current_span.set_attribute("langfuse.output", serialized_output)
+            current_span.set_attribute("langfuse.trace.output", serialized_output)
+            for key, val in output.items():
+                current_span.set_attribute(f"cresmo.output.{key}", str(val))
 
     def flush(self) -> None:
         """Flush in-memory OpenTelemetry spans and Langfuse client buffer queues."""
