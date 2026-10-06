@@ -17,7 +17,7 @@ from typing import Any
 from langfuse.api.core import ApiError
 
 from cresmo.application.ports import PromptProviderPort
-from cresmo.domain.value_objects import ChannelName
+from cresmo.domain.value_objects import ChannelName, ChatMessage, ChatPrompt, MessageRole
 from cresmo.infrastructure.adapters.prompts.registry import (
     PROMPT_REGISTRY,
     PromptKey,
@@ -49,12 +49,12 @@ def _handle_api_error(exc: ApiError, prompt_name: str, label: str) -> None:
 def _extract_prompt_messages(
     compiled_messages: Any,
     kwargs: dict[str, Any],
-) -> tuple[str, str]:
-    """Extract system instruction and user prompt from compiled Langfuse chat messages.
+) -> ChatPrompt:
+    """Extract ChatPrompt from compiled Langfuse chat messages preserving multi-turn turns and few-shots.
 
     Raises:
         TypeError: If compiled_messages is not a list.
-        ValueError: If compiled_messages does not contain both system and user role messages.
+        ValueError: If compiled_messages has no valid messages or system instruction.
     """
     if not isinstance(compiled_messages, list):
         raise TypeError(
@@ -62,29 +62,46 @@ def _extract_prompt_messages(
         )
 
     system_instruction: str | None = None
-    user_prompt: str | None = None
-    for msg in compiled_messages:
-        if not isinstance(msg, dict):
-            continue
-        role = msg.get("role")
-        content = msg.get("content")
-        if content is None:
-            continue
-        if role == "system":
-            system_instruction = str(content)
-        elif role == "user":
-            user_prompt = str(content)
+    messages: list[ChatMessage] = []
 
-    if system_instruction is None or user_prompt is None:
+    for msg in compiled_messages:
+        if isinstance(msg, dict):
+            raw_role = str(msg.get("role", "")).lower().strip()
+            raw_content = msg.get("content")
+        elif hasattr(msg, "role") and hasattr(msg, "content"):
+            raw_role = str(getattr(msg, "role", "")).lower().strip()
+            raw_content = getattr(msg, "content", None)
+        else:
+            continue
+
+        if raw_content is None:
+            continue
+
+        content = str(raw_content)
+        for key, value in kwargs.items():
+            content = content.replace(f"{{{key}}}", str(value))
+
+        if raw_role == "system":
+            if system_instruction:
+                system_instruction = f"{system_instruction}\n\n{content}"
+            else:
+                system_instruction = content
+        elif raw_role in ("user", "human"):
+            messages.append(ChatMessage(role=MessageRole.USER, content=content))
+        elif raw_role in ("assistant", "model", "ai"):
+            messages.append(ChatMessage(role=MessageRole.ASSISTANT, content=content))
+        else:
+            messages.append(ChatMessage(role=MessageRole.USER, content=content))
+
+    if not messages and not system_instruction:
         raise ValueError(
-            "Langfuse chat prompt structure must contain both 'system' and 'user' role messages"
+            "Langfuse chat prompt must contain at least one valid message or system instruction."
         )
 
-    for key, value in kwargs.items():
-        user_prompt = user_prompt.replace(f"{{{key}}}", str(value))
-        system_instruction = system_instruction.replace(f"{{{key}}}", str(value))
-
-    return system_instruction, user_prompt
+    return ChatPrompt(
+        messages=tuple(messages),
+        system_instruction=system_instruction,
+    )
 
 
 class LangfusePromptProvider(PromptProviderPort):
@@ -124,12 +141,12 @@ class LangfusePromptProvider(PromptProviderPort):
         self,
         prompt_name: str,
         **kwargs: Any,
-    ) -> tuple[str, str]:
+    ) -> ChatPrompt:
         """Attempt to fetch and compile Chat-Native prompt from Langfuse Cloud.
 
         Conforms to ADR-010, ADR-014, ADR-017, and ADR-026 (Rule 19):
             - Fetches strictly Chat Prompts (`type="chat"`).
-            - Unpacks messages: `role="system"` -> system_instruction, `role="user"` -> user_prompt.
+            - Unpacks messages into domain ChatPrompt preserving few-shot history.
             - Raises on error so the caller can trigger lazy fallback degradation without happy-path overhead.
 
         Args:
@@ -137,7 +154,7 @@ class LangfusePromptProvider(PromptProviderPort):
             **kwargs: Template variable substitutions.
 
         Returns:
-            Tuple containing (system_instruction, user_prompt).
+            ChatPrompt domain value object.
 
         Raises:
             ApiError: If Langfuse Cloud API returns an HTTP error.
@@ -178,7 +195,7 @@ class LangfusePromptProvider(PromptProviderPort):
         self,
         key: PromptKey,
         **context: Any,
-    ) -> tuple[str, str]:
+    ) -> ChatPrompt:
         """Dispatch prompt formatting via Langfuse Cloud with strict lazy fallback.
 
         Conforms to ADR-014, ADR-017, and ADR-026 (Rule 19):
@@ -192,7 +209,7 @@ class LangfusePromptProvider(PromptProviderPort):
             **context: Template variable substitutions.
 
         Returns:
-            Tuple containing (system_instruction, user_prompt).
+            ChatPrompt domain value object.
         """
         if self._client is None:
             return self._fallback.get_prompt(key, **context)

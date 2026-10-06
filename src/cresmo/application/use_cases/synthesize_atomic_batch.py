@@ -195,7 +195,7 @@ class SynthesizeAtomicBatchUseCase:
             {"title": title.value, "type": note_type.value} for title, note_type in chunk
         ]
 
-        system_instruction, user_prompt = self.prompt_provider.get_prompt(
+        chat_prompt = self.prompt_provider.get_prompt(
             PromptKey.ATOMIC_BATCH,
             content_title=compendium.title.value,
             channel_name=compendium.channel_name,
@@ -209,8 +209,7 @@ class SynthesizeAtomicBatchUseCase:
         ).value
         user_id = user.value if user is not None else UserIdentity.anonymous().value
         response = self.llm_synthesis_port.transform(
-            prompt=user_prompt,
-            system_instruction=system_instruction,
+            prompt=chat_prompt,
             temperature=self.temperature,
             trace_id=f"{compendium.content_id.value}_atomic_batch",
             session_id=session_id,

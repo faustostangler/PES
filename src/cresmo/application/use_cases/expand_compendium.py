@@ -88,27 +88,25 @@ class ExpandCompendiumUseCase:
         ).value
         user_id = user.value if user is not None else UserIdentity.anonymous().value
 
-        long_sys, long_user = self.prompt_provider.get_prompt(
+        long_prompt = self.prompt_provider.get_prompt(
             PromptKey.LONG_EXPANDER,
             compendium_body=compendium.body,
             complementary_info=compendium.complementary_info,
         )
         longitudinal_expansion = self.llm_synthesis_port.transform(
-            prompt=long_user,
-            system_instruction=long_sys,
+            prompt=long_prompt,
             temperature=self.temperature,
             trace_id=f"{compendium.content_id.value}_longitudinal",
             session_id=session_id,
             user_id=user_id,
         )
 
-        wide_sys, wide_user = self.prompt_provider.get_prompt(
+        wide_prompt = self.prompt_provider.get_prompt(
             PromptKey.WIDE_EXPANDER,
             current_text=longitudinal_expansion,
         )
         synchronic_expansion = self.llm_synthesis_port.transform(
-            prompt=wide_user,
-            system_instruction=wide_sys,
+            prompt=wide_prompt,
             temperature=self.temperature,
             trace_id=f"{compendium.content_id.value}_synchronic",
             session_id=session_id,

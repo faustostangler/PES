@@ -16,6 +16,9 @@ from typing import Any
 from cresmo.application.ports.prompt import PromptProviderPort
 from cresmo.domain.value_objects import (
     CandidateText,
+    ChatMessage,
+    ChatPrompt,
+    MessageRole,
     PromptKey,
     StageEvaluationSpec,
 )
@@ -56,9 +59,9 @@ class StageConfig[TSource, TOutput]:
         content_title: str = "",
         critique: str | None = None,
         **extra_context: Any,
-    ) -> tuple[str, str]:
-        """Resolve system instructions and user prompt, injecting closed-loop reflection critique on retry."""
-        system_instruction, user_prompt = prompt_provider.get_prompt(
+    ) -> ChatPrompt:
+        """Resolve ChatPrompt, injecting closed-loop reflection critique on retry."""
+        base_prompt: ChatPrompt = prompt_provider.get_prompt(
             self.transform_prompt_key,
             channel_name=channel_name,
             channel_id=channel_id,
@@ -69,15 +72,34 @@ class StageConfig[TSource, TOutput]:
             **extra_context,
         )
 
-        if critique:
-            user_prompt = (
-                f"{user_prompt}\n\n[PREVIOUS ATTEMPT QUALITY FEEDBACK]\n"
-                f"The previous generation failed quality evaluation:\n"
-                f"{critique}\n"
-                f"Please correct these defects in your output."
+        if not critique:
+            return base_prompt
+
+        critique_feedback = (
+            f"\n\n[PREVIOUS ATTEMPT QUALITY FEEDBACK]\n"
+            f"The previous generation failed quality evaluation:\n"
+            f"{critique}\n"
+            f"Please correct these defects in your output."
+        )
+
+        new_messages: list[ChatMessage] = []
+        for i, msg in enumerate(base_prompt.messages):
+            if i == len(base_prompt.messages) - 1 and msg.role == MessageRole.USER:
+                new_messages.append(
+                    ChatMessage(role=MessageRole.USER, content=f"{msg.content}{critique_feedback}")
+                )
+            else:
+                new_messages.append(msg)
+
+        if not new_messages and base_prompt.system_instruction:
+            new_messages.append(
+                ChatMessage(role=MessageRole.USER, content=critique_feedback.strip())
             )
 
-        return system_instruction, user_prompt
+        return ChatPrompt(
+            messages=tuple(new_messages),
+            system_instruction=base_prompt.system_instruction,
+        )
 
     def post_process(self, candidate: CandidateText, source: TSource) -> TOutput:
         """Execute post-processing transformation on CandidateText or cast candidate directly."""

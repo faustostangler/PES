@@ -23,6 +23,7 @@ from cresmo.domain.value_objects import (
     EvaluationContext,
     JudgeCriterion,
     JudgeEvaluation,
+    MessageRole,
     PromptKey,
 )
 from cresmo.infrastructure.adapters.prompts import JsonPromptProvider
@@ -79,7 +80,7 @@ class GeminiJudgeAdapter(LlmJudgePort):
         start_time = time.perf_counter()
         criteria_names = [c.value for c in context.required_criteria]
 
-        system_instruction, user_prompt = self._prompt_provider.get_prompt(
+        chat_prompt = self._prompt_provider.get_prompt(
             PromptKey.LLM_JUDGE,
             stage_name=context.stage_name,
             criteria_json=json.dumps(criteria_names),
@@ -90,12 +91,19 @@ class GeminiJudgeAdapter(LlmJudgePort):
         try:
             config = types.GenerateContentConfig(
                 temperature=0.0,
-                system_instruction=system_instruction,
+                system_instruction=chat_prompt.system_instruction,
                 response_mime_type="application/json",
             )
+            contents = [
+                types.Content(
+                    role="model" if m.role == MessageRole.ASSISTANT else "user",
+                    parts=[types.Part.from_text(text=m.content)],
+                )
+                for m in chat_prompt.messages
+            ]
             response = self.client.models.generate_content(
                 model=self._model,
-                contents=user_prompt,
+                contents=contents,
                 config=config,
             )
             raw_response_text = response.text or "{}"

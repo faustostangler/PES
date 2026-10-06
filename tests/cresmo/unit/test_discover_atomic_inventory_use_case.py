@@ -108,7 +108,7 @@ class TestDiscoverAtomicInventoryJudge:
         assert llm.call_history[1]["temperature"] == 0.0
         assert llm.call_history[1]["session_id"] == "Geopolitics Channel:vid_inv_1234"
         assert llm.call_history[1]["user_id"] == "anonymous"
-        assert "Does the candidate inventory strictly satisfy" in llm.call_history[1]["prompt"]
+        assert "Does the candidate inventory strictly satisfy" in llm.call_history[1]["prompt"].get_last_user_content()
 
     def test_discover_inventory_judge_retry_loop(
         self, sample_compendium: EnrichedCompendium

@@ -20,6 +20,7 @@ from pathlib import Path
 from typing import Any
 
 from cresmo.application.ports import PromptProviderPort
+from cresmo.domain.value_objects import ChatPrompt
 from cresmo.infrastructure.adapters.prompts.builders import (
     PROMPT_BUILDER_REGISTRY,
     PromptBuilderRegistry,
@@ -208,7 +209,7 @@ class JsonPromptProvider(PromptProviderPort):
         self,
         key: PromptKey,
         **context: Any,
-    ) -> tuple[str, str]:
+    ) -> ChatPrompt:
         """Dispatch prompt formatting by canonical PromptKey.
 
         Args:
@@ -216,7 +217,7 @@ class JsonPromptProvider(PromptProviderPort):
             **context: Template variable substitutions.
 
         Returns:
-            Tuple containing (system_instruction, user_prompt).
+            ChatPrompt instance containing messages and optional system instruction.
         """
         builder = self._registry.get(key)
         return builder(self, **context)
@@ -225,8 +226,8 @@ class JsonPromptProvider(PromptProviderPort):
         self,
         template_key: str,
         **kwargs: Any,
-    ) -> tuple[str, str]:
-        """Format (system_instruction, user_prompt) pair for a given template key."""
+    ) -> ChatPrompt:
+        """Format (system_instruction, user_prompt) pair into a ChatPrompt for a given template key."""
         entry = self._templates.get(template_key, {})
         task = entry.get("task", "")
         skill_name = entry.get("skill_name", "")
@@ -240,15 +241,19 @@ class JsonPromptProvider(PromptProviderPort):
             system_instruction = f"{task}\n\n{skill_block}".strip() if (task or skill_block) else ""
         template = entry.get("template", "")
         user_prompt = self._safe_format(template, task=task, skill_block=skill_block, **kwargs)
-        return system_instruction, user_prompt
+        return ChatPrompt.from_system_and_user(
+            user=user_prompt,
+            system=system_instruction if system_instruction else None,
+        )
 
     def _format_single_prompt(
         self,
         template_key: str,
         **kwargs: Any,
-    ) -> str:
-        """Format a single user prompt string for a given template key."""
+    ) -> ChatPrompt:
+        """Format a single user prompt into a ChatPrompt for a given template key."""
         entry = self._templates.get(template_key, {})
         task = entry.get("task", "")
         template = entry.get("template", "")
-        return self._safe_format(template, task=task, **kwargs)
+        user_prompt = self._safe_format(template, task=task, **kwargs)
+        return ChatPrompt.from_system_and_user(user=user_prompt, system=None)

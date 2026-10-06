@@ -232,7 +232,7 @@ class PipelineStageRunner:
         channel_name_val = context.channel.name
         content_title_val = context.content.title
 
-        system_instruction, user_prompt = stage_config.build_transform_prompt(
+        chat_prompt = stage_config.build_transform_prompt(
             prompt_provider,
             source,
             channel_name=channel_name_val,
@@ -249,13 +249,12 @@ class PipelineStageRunner:
         )
 
         response_text = llm_port.transform(
-                prompt=user_prompt,
-                system_instruction=system_instruction,
-                temperature=stage_config.temperature,
-                trace_id=active_trace_id,
-                session_id=context.session_id.value,
-                user_id=context.user_identity.value,
-            )
+            prompt=chat_prompt,
+            temperature=stage_config.temperature,
+            trace_id=active_trace_id,
+            session_id=context.session_id.value,
+            user_id=context.user_identity.value,
+        )
 
         return CandidateText(
             text=response_text,

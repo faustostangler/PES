@@ -13,15 +13,15 @@ from collections.abc import Callable
 from typing import Any
 
 from cresmo.application.ports.settings import DEFAULT_LANGUAGE
-from cresmo.domain.value_objects import PromptKey
+from cresmo.domain.value_objects import ChatPrompt, PromptKey
 
 
 class PromptProviderPort(ABC):
     """Hexagonal Port for loading decoupled LLM prompt templates and skill specifications.
 
-    Conforms to ADR-001, ADR-017, and ADR-022. Separates raw prompt templates from use cases,
+    Conforms to ADR-001, ADR-017, ADR-022, and ADR-036. Separates raw prompt templates from use cases,
     enabling versioning, prompt mutation testing, and multi-model configuration via a unified
-    dispatcher keyed by canonical PromptKey.
+    dispatcher keyed by canonical PromptKey and returning a rich ChatPrompt value object.
     """
 
     @abstractmethod
@@ -29,7 +29,7 @@ class PromptProviderPort(ABC):
         self,
         key: PromptKey,
         **context: Any,
-    ) -> tuple[str, str]:
+    ) -> ChatPrompt:
         """Dispatch prompt resolution by canonical PromptKey.
 
         Args:
@@ -37,7 +37,7 @@ class PromptProviderPort(ABC):
             **context: Template variable substitutions (prompt-specific kwargs).
 
         Returns:
-            Tuple containing (system_instruction, user_prompt).
+            Canonical ChatPrompt value object supporting multi-turn and few-shot messages.
         """
         raise NotImplementedError("Implement prompt dispatch contract.")
 
@@ -133,9 +133,10 @@ class NoOpPromptProviderPort(PromptProviderPort):
         self,
         key: PromptKey,
         **context: Any,
-    ) -> tuple[str, str]:
+    ) -> ChatPrompt:
         """Format basic system and user prompts without external template dependencies."""
         builder = _NOOP_BUILDERS.get(key)
         if builder is None:
             raise ValueError(f"Unsupported prompt key: {key}")
-        return builder(context)
+        sys_inst, user_prompt = builder(context)
+        return ChatPrompt.single_turn(user_prompt=user_prompt, system_instruction=sys_inst)

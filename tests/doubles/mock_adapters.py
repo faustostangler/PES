@@ -72,6 +72,9 @@ class MockMediaIngestionPort(MediaIngestionPort):
         return getattr(self, "canned_channel_url", None)
 
 
+from cresmo.domain.value_objects.prompt import ChatPrompt
+
+
 class MockLLMAdapter(LLMTransformationPort):
     """In-memory mock for LLMTransformationPort."""
 
@@ -81,8 +84,7 @@ class MockLLMAdapter(LLMTransformationPort):
 
     def transform(
         self,
-        prompt: str,
-        system_instruction: str | None = None,
+        prompt: ChatPrompt,
         temperature: float | None = None,
         *,
         trace_id: str | None = None,
@@ -92,7 +94,7 @@ class MockLLMAdapter(LLMTransformationPort):
         self.call_history.append(
             {
                 "prompt": prompt,
-                "system_instruction": system_instruction,
+                "system_instruction": prompt.system_instruction if isinstance(prompt, ChatPrompt) else None,
                 "temperature": temperature,
                 "trace_id": trace_id,
                 "session_id": session_id,

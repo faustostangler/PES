@@ -12,6 +12,7 @@ import pytest
 from google.genai import errors
 from opentelemetry.trace import SpanContext, TraceFlags
 
+from cresmo.domain.value_objects.prompt import ChatPrompt
 from cresmo.infrastructure.adapters.gemini_adapter import (
     GeminiLLMAdapter,
     _is_transient_genai_error,
@@ -90,8 +91,10 @@ class TestGeminiLLMAdapter:
         )
 
         result = adapter.transform(
-            prompt="Analyze the circulation of elites.",
-            system_instruction="Act as a political scientist.",
+            prompt=ChatPrompt.from_system_and_user(
+                system="Act as a political scientist.",
+                user="Analyze the circulation of elites.",
+            ),
             temperature=0.7,
             trace_id="test-trace-123",
             session_id="session-456",
@@ -102,7 +105,9 @@ class TestGeminiLLMAdapter:
         mock_genai_client.models.generate_content.assert_called_once()
         call_kwargs = mock_genai_client.models.generate_content.call_args[1]
         assert call_kwargs["model"] == "gemini-2.5-flash"
-        assert call_kwargs["contents"] == "Analyze the circulation of elites."
+        assert len(call_kwargs["contents"]) == 1
+        assert call_kwargs["contents"][0].role == "user"
+        assert call_kwargs["contents"][0].parts[0].text == "Analyze the circulation of elites."
         assert call_kwargs["config"].temperature == 0.7
         assert call_kwargs["config"].max_output_tokens == 4096
         assert call_kwargs["config"].system_instruction == "Act as a political scientist."
@@ -117,7 +122,7 @@ class TestGeminiLLMAdapter:
             genai_client=mock_genai_client,
             langfuse_client=None,
         )
-        adapter.transform(prompt="Default test")
+        adapter.transform(prompt=ChatPrompt.single_turn("Default test"))
 
         call_kwargs = mock_genai_client.models.generate_content.call_args[1]
         assert call_kwargs["config"].temperature == 0.2
@@ -140,7 +145,7 @@ class TestGeminiLLMAdapter:
             return_value=mock_span,
         ):
             adapter.transform(
-                prompt="Test prompt",
+                prompt=ChatPrompt.single_turn("Test prompt"),
                 trace_id="vid123_concepts",
                 session_id="raw_index_Philosophy",
                 user_id="Philosophy",
@@ -171,7 +176,7 @@ class TestGeminiLLMAdapter:
             langfuse_client=None,
         )
 
-        result = adapter.transform(prompt="Test retry")
+        result = adapter.transform(prompt=ChatPrompt.single_turn("Test retry"))
         assert result == "Success after retry"
         assert mock_genai_client.models.generate_content.call_count == 2
 
@@ -191,7 +196,7 @@ class TestGeminiLLMAdapter:
             langfuse_client=None,
         )
 
-        result = adapter.transform(prompt="Test fallback")
+        result = adapter.transform(prompt=ChatPrompt.single_turn("Test fallback"))
         assert result == "Fallback model response"
         assert mock_genai_client.models.generate_content.call_count == 2
         first_call = mock_genai_client.models.generate_content.call_args_list[0][1]
@@ -211,7 +216,7 @@ class TestGeminiLLMAdapter:
         )
 
         with pytest.raises(ValueError, match="Fatal model error"):
-            adapter.transform(prompt="Test no fallback")
+            adapter.transform(prompt=ChatPrompt.single_turn("Test no fallback"))
 
     def test_transform_reraises_when_fallback_same_as_primary(self) -> None:
         mock_genai_client = MagicMock()
@@ -225,7 +230,7 @@ class TestGeminiLLMAdapter:
         )
 
         with pytest.raises(ValueError, match="Same model error"):
-            adapter.transform(prompt="Test same fallback")
+            adapter.transform(prompt=ChatPrompt.single_turn("Test same fallback"))
 
     def test_transform_token_fallback_when_usage_metadata_none(self) -> None:
         mock_response = MagicMock(text="Three words text", usage_metadata=None)
@@ -244,7 +249,7 @@ class TestGeminiLLMAdapter:
             "cresmo.infrastructure.adapters.gemini_adapter.trace.get_current_span",
             return_value=mock_span,
         ):
-            adapter.transform(prompt="One two three four five")
+            adapter.transform(prompt=ChatPrompt.single_turn("One two three four five"))
 
         mock_span.set_attribute.assert_any_call("gen_ai.usage.input_tokens", 5)
         mock_span.set_attribute.assert_any_call("gen_ai.usage.output_tokens", 3)
@@ -266,7 +271,9 @@ class TestGeminiLLMAdapter:
             "cresmo.infrastructure.adapters.gemini_adapter.trace.get_current_span",
             return_value=mock_span,
         ):
-            result = adapter.transform(prompt="Test telemetry with non-recording span")
+            result = adapter.transform(prompt=ChatPrompt.single_turn("Test telemetry with non-recording span"))
+            assert result == "Output text"
+            mock_span.set_attribute.assert_not_called()
             assert result == "Output text"
             mock_span.set_attribute.assert_not_called()
 

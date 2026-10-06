@@ -217,11 +217,11 @@ class TestFillGapsFluidProse:
         assert all(c["session_id"] == "UC123456:dQw4w9WgXcQ" for c in llm_port.call_history)
         assert all(c["user_id"] == "anonymous" for c in llm_port.call_history)
         # Pass 1 contains raw body and channel name
-        assert "Spoken text without structure." in llm_port.call_history[0]["prompt"]
-        assert "Example Channel" in llm_port.call_history[0]["prompt"]
+        assert "Spoken text without structure." in llm_port.call_history[0]["prompt"].get_last_user_content()
+        assert "Example Channel" in llm_port.call_history[0]["prompt"].get_last_user_content()
         # Pass 2 and 3 receive current_text from previous pass
-        assert "A circulação das elites" in llm_port.call_history[1]["prompt"]
-        assert "A circulação das elites" in llm_port.call_history[2]["prompt"]
+        assert "A circulação das elites" in llm_port.call_history[1]["prompt"].get_last_user_content()
+        assert "A circulação das elites" in llm_port.call_history[2]["prompt"].get_last_user_content()
 
     def test_fill_gaps_title_fallback_to_fluid_transcript_title(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
@@ -392,31 +392,21 @@ class TestExpandLongitudinalSynchronic:
         assert all(c["session_id"] == "UC_Test:dQw4w9WgXcQ" for c in llm_port.call_history)
         assert all(c["user_id"] == "anonymous" for c in llm_port.call_history)
         # Pass 1: Longitude expander gets initial compendium body and complementary info
-        assert "Continuous prose body describing elites." in llm_port.call_history[0]["prompt"]
-        assert "Initial complementary info." in llm_port.call_history[0]["prompt"]
-        assert llm_port.call_history[0]["system_instruction"].startswith(
-            "You are Cresmo Long-Expander"
-        )
-        assert llm_port.call_history[0]["prompt"].startswith(
-            "Take the following enriched Markdown document"
-        )
-        assert not llm_port.call_history[0]["prompt"].startswith(
-            llm_port.call_history[0]["system_instruction"][:30]
-        )
+        p0 = llm_port.call_history[0]["prompt"].get_last_user_content()
+        sys0 = llm_port.call_history[0]["system_instruction"] or ""
+        assert "Continuous prose body describing elites." in p0
+        assert "Initial complementary info." in p0
+        assert sys0.startswith("You are Cresmo Long-Expander")
+        assert p0.startswith("Take the following enriched Markdown document")
+        assert not p0.startswith(sys0[:30])
 
         # Pass 2: Wide expander gets the response from longitudinal expansion
-        assert (
-            "Longitudinal analysis tracing Roman patricians" in llm_port.call_history[1]["prompt"]
-        )
-        assert llm_port.call_history[1]["system_instruction"].startswith(
-            "You are Cresmo Wide-Expander"
-        )
-        assert llm_port.call_history[1]["prompt"].startswith(
-            "Take the following longitudinally expanded Markdown document"
-        )
-        assert not llm_port.call_history[1]["prompt"].startswith(
-            llm_port.call_history[1]["system_instruction"][:30]
-        )
+        p1 = llm_port.call_history[1]["prompt"].get_last_user_content()
+        sys1 = llm_port.call_history[1]["system_instruction"] or ""
+        assert "Longitudinal analysis tracing Roman patricians" in p1
+        assert sys1.startswith("You are Cresmo Wide-Expander")
+        assert p1.startswith("Take the following longitudinally expanded Markdown document")
+        assert not p1.startswith(sys1[:30])
 
     def test_expand_missing_complementary_tag_falls_back_to_original(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
@@ -512,9 +502,10 @@ class TestDiscoverAtomicInventory:
         assert call["temperature"] == 0.0
         assert call["session_id"] == "Example Channel:dQw4w9WgXcQ"
         assert call["user_id"] == "anonymous"
-        assert "Teoria das Elites" in call["prompt"]
-        assert "Example Channel" in call["prompt"]
-        assert "Continuous body describing Vilfredo Pareto" in call["prompt"]
+        user_prompt = call["prompt"].get_last_user_content()
+        assert "Teoria das Elites" in user_prompt
+        assert "Example Channel" in user_prompt
+        assert "Continuous body describing Vilfredo Pareto" in user_prompt
 
     def test_discover_inventory_uses_channel_id_when_available(self) -> None:
         """When ChannelId is available on the compendium, session_id and user_id use the ID."""
@@ -682,10 +673,11 @@ class TestSynthesizeAtomicBatch:
         call = llm_port.call_history[0]
         assert call["session_id"] == "Example Channel:dQw4w9WgXcQ"
         assert call["user_id"] == "anonymous"
-        assert "Teoria das Elites" in call["prompt"]
-        assert "Example Channel" in call["prompt"]
-        assert "Continuous body describing elites." in call["prompt"]
-        assert "Vilfredo Pareto" in call["prompt"]
+        user_prompt = call["prompt"].get_last_user_content()
+        assert "Teoria das Elites" in user_prompt
+        assert "Example Channel" in user_prompt
+        assert "Continuous body describing elites." in user_prompt
+        assert "Vilfredo Pareto" in user_prompt
 
     def test_synthesize_batch_uses_channel_id_when_available(self) -> None:
         """When ChannelId is available on the compendium, session_id and user_id use the ID."""
@@ -993,9 +985,10 @@ class TestReconcileMOCs:
         # Verify strict port interactions
         assert len(llm_port.call_history) == 1
         call = llm_port.call_history[0]
-        assert '"title": "Vilfredo Pareto"' in call["prompt"]
-        assert '"type": "entity"' in call["prompt"]
-        assert '"domain": "Ciência Política"' in call["prompt"]
+        user_prompt = call["prompt"].get_last_user_content()
+        assert '"title": "Vilfredo Pareto"' in user_prompt
+        assert '"type": "entity"' in user_prompt
+        assert '"domain": "Ciência Política"' in user_prompt
 
     def test_reconcile_mocs_init_options(self) -> None:
         llm = MockLLMAdapter()

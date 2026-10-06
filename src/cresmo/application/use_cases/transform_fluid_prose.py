@@ -142,7 +142,7 @@ class TransformFluidProseUseCase:
         ).value
         user_id = user.value if user is not None else UserIdentity.anonymous().value
 
-        system_instruction, user_prompt = self.prompt_provider.get_prompt(
+        chat_prompt = self.prompt_provider.get_prompt(
             PromptKey.FLUID_PROSE,
             channel_name=source_transcript.channel_name.value,
             file_name=file_name,
@@ -150,8 +150,7 @@ class TransformFluidProseUseCase:
         )
 
         raw_response = self.llm_synthesis_port.transform(
-            prompt=user_prompt,
-            system_instruction=system_instruction,
+            prompt=chat_prompt,
             temperature=self.temperature,
             trace_id=f"{source_transcript.content_id.value}_fluid_prose",
             session_id=session_id,

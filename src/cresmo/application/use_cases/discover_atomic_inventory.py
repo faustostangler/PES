@@ -37,6 +37,7 @@ from cresmo.domain.entities import (
 from cresmo.domain.exceptions import DomainValidationError, NoteTypologyError
 from cresmo.domain.value_objects import (
     AtomicEntityInventory,
+    ChatPrompt,
     EvaluationContext,
     JudgeCriterion,
     NoteTitle,
@@ -168,8 +169,7 @@ class DiscoverAtomicInventoryUseCase:
 
     def _query_candidate_inventory(
         self,
-        prompt: str,
-        system_instruction: str,
+        prompt: ChatPrompt,
         trace_id: str,
         session_id: str,
         user_id: str,
@@ -177,7 +177,6 @@ class DiscoverAtomicInventoryUseCase:
         """Query LLM synthesis port and extract candidate JSON inventory."""
         raw_response = self.llm_synthesis_port.transform(
             prompt=prompt,
-            system_instruction=system_instruction,
             temperature=self.temperature,
             trace_id=trace_id,
             session_id=session_id,
@@ -225,7 +224,7 @@ class DiscoverAtomicInventoryUseCase:
 
         # Priority 2: Transitional fallback when LlmJudgePort is not injected (ADR-010 / ADR-029)
         if self.prompt_provider:
-            judge_sys, judge_prompt = self.prompt_provider.get_prompt(
+            judge_prompt = self.prompt_provider.get_prompt(
                 PromptKey.JUDGE_ATOMIC_INVENTORY,
                 content_title=compendium.title.value,
                 channel_name=compendium.channel_name,
@@ -234,7 +233,6 @@ class DiscoverAtomicInventoryUseCase:
             )
             judge_response = self.llm_synthesis_port.transform(
                 prompt=judge_prompt,
-                system_instruction=judge_sys,
                 temperature=0.0,
                 trace_id=judge_trace_id,
                 session_id=session_id,
@@ -261,7 +259,7 @@ class DiscoverAtomicInventoryUseCase:
         Raises:
             DomainValidationError: If candidate entities are rejected by the judge or no valid entities could be discovered.
         """
-        system_instruction, user_prompt = self.prompt_provider.get_prompt(
+        chat_prompt = self.prompt_provider.get_prompt(
             PromptKey.ATOMIC_INVENTORY,
             content_title=compendium.title.value,
             channel_name=compendium.channel_name,
@@ -292,8 +290,7 @@ class DiscoverAtomicInventoryUseCase:
             judge_trace_id = f"{content_id}_inventory_judge{trace_suffix}"
 
             candidate_data = self._query_candidate_inventory(
-                prompt=user_prompt,
-                system_instruction=system_instruction,
+                prompt=chat_prompt,
                 trace_id=trace_id,
                 session_id=session_id,
                 user_id=user_id,

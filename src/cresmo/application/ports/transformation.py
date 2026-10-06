@@ -9,30 +9,30 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 
+from cresmo.domain.value_objects import ChatPrompt
+
 
 class LLMTransformationPort(ABC):
     """Hexagonal Port defining contracts for generative synthesis and structured extraction.
 
-    Conforms to ADR-001 and EVAL-001. Shields use cases from provider-specific SDKs
+    Conforms to ADR-001, ADR-036, and EVAL-001. Shields use cases from provider-specific SDKs
     (Google GenAI, Ollama, local models).
     """
 
     @abstractmethod
     def transform(
         self,
-        prompt: str,
-        system_instruction: str | None = None,
+        prompt: ChatPrompt,
         temperature: float | None = None,
         *,
         trace_id: str | None = None,
         session_id: str | None = None,
         user_id: str | None = None,
     ) -> str:
-        """Execute text transformation given input prompt and optional system directive.
+        """Execute text transformation given canonical multi-turn or single-turn ChatPrompt.
 
         Args:
-            prompt: Formatted user prompt or synthesis task.
-            system_instruction: Optional system instruction guiding model persona.
+            prompt: Canonical ChatPrompt value object with system instruction and messages.
             temperature: Sampling temperature override.
             trace_id: Optional trace ID (e.g. ContentId or session key).
             session_id: Pipeline session identifier.

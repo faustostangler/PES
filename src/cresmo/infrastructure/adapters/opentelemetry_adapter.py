@@ -211,7 +211,9 @@ def _build_langfuse_input_payload(
         input_payload["content_title"] = formatted_title
 
     if input_payload:
-        attributes["langfuse.input"] = json.dumps(input_payload)
+        serialized_input = json.dumps(input_payload)
+        attributes["langfuse.input"] = serialized_input
+        attributes["langfuse.trace.input"] = serialized_input
 
 
 def _build_session_span_attributes(

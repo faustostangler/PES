@@ -12,6 +12,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
+from cresmo.domain.value_objects.prompt import ChatPrompt
 from cresmo.domain.value_objects.quality import (
     CriterionScore,
     EvaluationContext,
@@ -157,9 +158,9 @@ class TestGeminiJudgeAdapter:
         mock_genai_client.models.generate_content.return_value = mock_response
 
         mock_prompt_provider = MagicMock()
-        mock_prompt_provider.get_prompt.return_value = (
-            "CUSTOM GEMINI SYS",
-            "CUSTOM GEMINI USER",
+        mock_prompt_provider.get_prompt.return_value = ChatPrompt.from_system_and_user(
+            system="CUSTOM GEMINI SYS",
+            user="CUSTOM GEMINI USER",
         )
 
         adapter = GeminiJudgeAdapter(
@@ -258,9 +259,9 @@ class TestOllamaJudgeAdapter:
         mock_http_client.post.return_value = mock_post_resp
 
         mock_prompt_provider = MagicMock()
-        mock_prompt_provider.get_prompt.return_value = (
-            "CUSTOM OLLAMA SYS",
-            "CUSTOM OLLAMA USER",
+        mock_prompt_provider.get_prompt.return_value = ChatPrompt.from_system_and_user(
+            system="CUSTOM OLLAMA SYS",
+            user="CUSTOM OLLAMA USER",
         )
 
         adapter = OllamaJudgeAdapter(
@@ -285,8 +286,10 @@ class TestOllamaJudgeAdapter:
         assert kwargs["candidate_text"] == "cand text"
 
         call_kwargs = mock_http_client.post.call_args[1]
-        assert call_kwargs["json"]["prompt"] == "CUSTOM OLLAMA USER"
-        assert call_kwargs["json"]["system"] == "CUSTOM OLLAMA SYS"
+        assert call_kwargs["json"]["messages"] == [
+            {"role": "system", "content": "CUSTOM OLLAMA SYS"},
+            {"role": "user", "content": "CUSTOM OLLAMA USER"},
+        ]
 
 
 class TestTypeSafeJudgeAdapter:

@@ -50,7 +50,12 @@ from cresmo.domain.value_objects.notes import (
     NoteTitle,
     NoteType,
 )
-from cresmo.domain.value_objects.prompt import PromptKey
+from cresmo.domain.value_objects.prompt import (
+    ChatMessage,
+    ChatPrompt,
+    MessageRole,
+    PromptKey,
+)
 from cresmo.domain.value_objects.quality import (
     CandidateText,
     CriterionScore,
@@ -84,6 +89,8 @@ __all__ = [
     "ChannelFeedQuery",
     "ChannelId",
     "ChannelName",
+    "ChatMessage",
+    "ChatPrompt",
     "Content",
     "ContentId",
     "CriterionScore",
@@ -94,6 +101,7 @@ __all__ = [
     "JudgeEvaluation",
     "LedgerEntry",
     "MasterDocumentResult",
+    "MessageRole",
     "NoteTitle",
     "NoteType",
     "PipelineStatus",

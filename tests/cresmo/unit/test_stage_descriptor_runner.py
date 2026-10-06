@@ -23,6 +23,7 @@ from cresmo.domain.value_objects import (
     CandidateText,
     ChannelId,
     ChannelName,
+    ChatPrompt,
     ContentId,
     CriterionScore,
     JudgeCriterion,
@@ -187,8 +188,9 @@ class TestStageConfigRunner:
 
         # Verify critique was injected into prompt on attempt 2
         second_call_prompt = mock_llm.transform.call_args_list[1].kwargs.get("prompt")
-        assert "[PREVIOUS ATTEMPT QUALITY FEEDBACK]" in second_call_prompt
-        assert "tipo assim" in second_call_prompt
+        assert isinstance(second_call_prompt, ChatPrompt)
+        assert "[PREVIOUS ATTEMPT QUALITY FEEDBACK]" in second_call_prompt.get_last_user_content()
+        assert "tipo assim" in second_call_prompt.get_last_user_content()
 
     def test_execute_stage_with_post_processor(self) -> None:
         telemetry = NoOpTelemetryPort()
@@ -266,7 +268,9 @@ class TestStageConfigRunner:
         mock_llm.transform.return_value = "Symmetric output text."
 
         mock_prompt_provider = MagicMock(spec=NoOpPromptProviderPort())
-        mock_prompt_provider.get_prompt.return_value = ("sys_instruction", "user_prompt")
+        mock_prompt_provider.get_prompt.return_value = ChatPrompt.from_system_and_user(
+            system="sys_instruction", user="user_prompt"
+        )
 
         runner = PipelineStageRunner(
             telemetry_port=telemetry,
@@ -363,7 +367,9 @@ class TestStageConfigRunner:
         mock_llm.transform.return_value = "Isolated candidate text"
 
         prompt_provider = MagicMock()
-        prompt_provider.get_prompt.return_value = ("sys instruction", "user prompt")
+        prompt_provider.get_prompt.return_value = ChatPrompt.from_system_and_user(
+            system="sys instruction", user="user prompt"
+        )
 
         runner = PipelineStageRunner(
             telemetry_port=telemetry,

@@ -164,7 +164,7 @@ def test_execute_stage_closed_loop_critique_synthesizer_integration() -> None:
 
     # Verify critique was injected into prompt on attempt 2
     prompt_attempt_2 = mock_llm.transform.call_args_list[1].kwargs.get("prompt")
-    assert "Direcionamento crítico" in prompt_attempt_2
+    assert "Direcionamento crítico" in prompt_attempt_2.get_last_user_content()
 
 
 def test_execute_stage_fail_fast_quarantine_protocol() -> None:

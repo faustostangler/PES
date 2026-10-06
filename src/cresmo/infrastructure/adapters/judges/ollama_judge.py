@@ -69,7 +69,7 @@ class OllamaJudgeAdapter(LlmJudgePort):
         start_time = time.perf_counter()
         criteria_names = [c.value for c in context.required_criteria]
 
-        system_instruction, user_prompt = self._prompt_provider.get_prompt(
+        chat_prompt = self._prompt_provider.get_prompt(
             PromptKey.LLM_JUDGE,
             stage_name=context.stage_name,
             criteria_json=json.dumps(criteria_names),
@@ -80,15 +80,18 @@ class OllamaJudgeAdapter(LlmJudgePort):
         try:
             payload = {
                 "model": self._model,
-                "prompt": user_prompt,
-                "system": system_instruction,
+                "messages": chat_prompt.to_dict_list(),
                 "format": "json",
                 "stream": False,
             }
-            resp = self._client.post(f"{self._base_url}/api/generate", json=payload)
+            resp = self._client.post(f"{self._base_url}/api/chat", json=payload)
             resp.raise_for_status()
             data = resp.json()
-            raw_text = data.get("response", "{}")
+            msg_obj = data.get("message")
+            if isinstance(msg_obj, dict):
+                raw_text = msg_obj.get("content", "{}")
+            else:
+                raw_text = data.get("response", "{}")
         except Exception as exc:
             logger.warning("OllamaJudgeAdapter evaluation failed: %s", exc)
             raise

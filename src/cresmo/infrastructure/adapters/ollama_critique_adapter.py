@@ -9,7 +9,7 @@ from cresmo.application.ports import (
     LLMTransformationPort,
     PromptProviderPort,
 )
-from cresmo.domain.value_objects import PromptKey
+from cresmo.domain.value_objects import ChatPrompt, PromptKey
 from cresmo.domain.value_objects.quality import JudgeEvaluation
 from cresmo.infrastructure.adapters.prompts import JsonPromptProvider
 
@@ -48,23 +48,25 @@ class OllamaCritiqueAdapter(CritiqueSynthesizerPort):
         if self.llm_transformation_port is None:
             return fallback_critique
 
-        resolved_system_instruction, prompt = self._prompt_provider.get_prompt(
+        chat_prompt = self._prompt_provider.get_prompt(
             PromptKey.OLLAMA_CRITIQUE,
             stage_name=stage_name,
             overall_score=f"{evaluation.overall_score:.2f}",
             criteria_failures=fallback_critique,
         )
 
-        effective_system_instruction = (
-            self.system_instruction
+        effective_prompt = (
+            ChatPrompt(
+                messages=chat_prompt.messages,
+                system_instruction=self.system_instruction,
+            )
             if self.system_instruction is not None
-            else resolved_system_instruction
+            else chat_prompt
         )
 
         try:
             synthesized = self.llm_transformation_port.transform(
-                prompt=prompt,
-                system_instruction=effective_system_instruction,
+                prompt=effective_prompt,
                 temperature=self.temperature,
                 trace_id=trace_id,
             )

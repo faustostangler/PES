@@ -66,7 +66,7 @@ class LLMTranscriptDistiller:
         user: UserIdentity | None = None,
     ) -> str:
         """Extract principal concepts through an iterative LLM-as-a-judge loop."""
-        system_instructions, user_prompt = self.prompt_provider.get_prompt(
+        initial_prompt = self.prompt_provider.get_prompt(
             PromptKey.RAW_INDEX_CONCEPTS,
             content_title=title,
             transcript_excerpt=text,
@@ -85,7 +85,7 @@ class LLMTranscriptDistiller:
 
         while not is_valid:
             if retries == 0:
-                prompt = user_prompt
+                prompt = initial_prompt
                 trace_id = f"{video_id}_concepts"
                 judge_trace_id = f"{video_id}_concepts_judge"
             else:
@@ -94,7 +94,7 @@ class LLMTranscriptDistiller:
                     retries,
                     video_id,
                 )
-                _, prompt = self.prompt_provider.get_prompt(
+                prompt = self.prompt_provider.get_prompt(
                     PromptKey.RAW_INDEX_CONCEPTS_REWRITE,
                     previous_output=raw_concepts,
                     language=self.language,
@@ -104,7 +104,6 @@ class LLMTranscriptDistiller:
 
             raw_concepts = self.llm_indexing_port.transform(
                 prompt=prompt,
-                system_instruction=system_instructions,
                 temperature=self.temperature,
                 trace_id=trace_id,
                 session_id=session_id,
@@ -124,7 +123,7 @@ class LLMTranscriptDistiller:
                     is_valid = self.llm_judge_port.evaluate(ctx).passed
                 elif self.prompt_provider:
                     # Transitional fallback (ADR-010 / ADR-029 §2.4)
-                    judge_system_instructions, judge_prompt = self.prompt_provider.get_prompt(
+                    judge_prompt = self.prompt_provider.get_prompt(
                         PromptKey.JUDGE_RAW_INDEX_CONCEPTS,
                         content_title=title,
                         transcript_excerpt=text,
@@ -133,7 +132,6 @@ class LLMTranscriptDistiller:
                     )
                     judge_response = self.llm_indexing_port.transform(
                         prompt=judge_prompt,
-                        system_instruction=judge_system_instructions,
                         temperature=0.0,
                         trace_id=judge_trace_id,
                         session_id=session_id,
@@ -163,7 +161,7 @@ class LLMTranscriptDistiller:
         user: UserIdentity | None = None,
     ) -> str:
         """Extract structured conceptual summary through an iterative LLM-as-a-judge loop."""
-        system_instructions, user_prompt = self.prompt_provider.get_prompt(
+        chat_prompt = self.prompt_provider.get_prompt(
             PromptKey.RAW_INDEX_SUMMARY,
             content_title=title,
             transcript_excerpt=text,
@@ -198,8 +196,7 @@ class LLMTranscriptDistiller:
                 )
 
             raw_summary = self.llm_indexing_port.transform(
-                prompt=user_prompt,
-                system_instruction=system_instructions,
+                prompt=chat_prompt,
                 temperature=self.temperature,
                 trace_id=trace_id,
                 session_id=session_id,
@@ -219,7 +216,7 @@ class LLMTranscriptDistiller:
                 is_valid = self.llm_judge_port.evaluate(ctx).passed
             elif self.prompt_provider:
                 # Transitional fallback (ADR-010 / ADR-029 §2.4)
-                judge_system_instructions, judge_prompt = self.prompt_provider.get_prompt(
+                judge_prompt = self.prompt_provider.get_prompt(
                     PromptKey.JUDGE_RAW_INDEX_SUMMARY,
                     content_title=title,
                     transcript_excerpt=text,
@@ -228,7 +225,6 @@ class LLMTranscriptDistiller:
                 )
                 judge_response = self.llm_indexing_port.transform(
                     prompt=judge_prompt,
-                    system_instruction=judge_system_instructions,
                     temperature=0.0,
                     trace_id=judge_trace_id,
                     session_id=session_id,
@@ -256,7 +252,7 @@ class LLMTranscriptDistiller:
         user: UserIdentity | None = None,
     ) -> str:
         """Synthesize dense single paratactic paragraph through an iterative LLM-as-a-judge loop."""
-        system_instructions, user_prompt = self.prompt_provider.get_prompt(
+        chat_prompt = self.prompt_provider.get_prompt(
             PromptKey.RAW_INDEX_SYNTHESIS,
             content_title=title,
             summary=summary,
@@ -291,8 +287,7 @@ class LLMTranscriptDistiller:
                 )
 
             raw_synthesis = self.llm_indexing_port.transform(
-                prompt=user_prompt,
-                system_instruction=system_instructions,
+                prompt=chat_prompt,
                 temperature=self.temperature,
                 trace_id=trace_id,
                 session_id=session_id,
@@ -313,7 +308,7 @@ class LLMTranscriptDistiller:
                     is_valid = self.llm_judge_port.evaluate(ctx).passed
                 elif self.prompt_provider:
                     # Transitional fallback (ADR-010 / ADR-029 §2.4)
-                    judge_system_instructions, judge_prompt = self.prompt_provider.get_prompt(
+                    judge_prompt = self.prompt_provider.get_prompt(
                         PromptKey.JUDGE_RAW_INDEX_SYNTHESIS,
                         content_title=title,
                         transcript_excerpt=excerpt,
@@ -322,7 +317,6 @@ class LLMTranscriptDistiller:
                     )
                     judge_response = self.llm_indexing_port.transform(
                         prompt=judge_prompt,
-                        system_instruction=judge_system_instructions,
                         temperature=0.0,
                         trace_id=judge_trace_id,
                         session_id=session_id,

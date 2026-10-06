@@ -105,7 +105,7 @@ class FillGapsUseCase:
                 if pass_index == 0
                 else PromptKey.GAP_FILLER_PASS_SUBSEQUENT
             )
-            system_instruction, user_prompt = self.prompt_provider.get_prompt(
+            chat_prompt = self.prompt_provider.get_prompt(
                 prompt_key,
                 pass_num=pass_index + 1,
                 total_passes=passes,
@@ -115,8 +115,7 @@ class FillGapsUseCase:
                 current_text=current_text if pass_index > 0 else None,
             )
             current_text = self.llm_synthesis_port.transform(
-                prompt=user_prompt,
-                system_instruction=system_instruction,
+                prompt=chat_prompt,
                 temperature=self.temperature,
                 trace_id=f"{fluid_transcript.content_id.value}_gap_fill_pass_{pass_index + 1}",
                 session_id=session_id,

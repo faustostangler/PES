@@ -17,6 +17,7 @@ import pytest
 from opentelemetry.trace import SpanContext, TraceFlags
 
 from cresmo.domain.exceptions import LLMInfrastructureError
+from cresmo.domain.value_objects.prompt import ChatPrompt
 from cresmo.infrastructure.adapters.ollama_llm_adapter import OllamaLLMAdapter
 
 
@@ -42,20 +43,24 @@ class TestOllamaLLMAdapter:
             mock_urlopen.return_value = mock_resp
 
             result = adapter.transform(
-                prompt="Video Title: Pareto\nTranscript...",
-                system_instruction="Act as a domain expert.",
+                prompt=ChatPrompt.from_system_and_user(
+                    system="Act as a domain expert.",
+                    user="Video Title: Pareto\nTranscript...",
+                ),
                 temperature=0.2,
             )
 
             assert "Circulação de Elites" in result
             assert mock_urlopen.called
             req = mock_urlopen.call_args[0][0]
-            assert req.full_url == "http://localhost:11434/api/generate"
+            assert req.full_url == "http://localhost:11434/api/chat"
             assert req.headers["Content-type"] == "application/json"
             body = json.loads(req.data.decode("utf-8"))
             assert body["model"] == "qwen2.5:7b"
-            assert body["prompt"] == "Video Title: Pareto\nTranscript..."
-            assert body["system"] == "Act as a domain expert."
+            assert body["messages"] == [
+                {"role": "system", "content": "Act as a domain expert."},
+                {"role": "user", "content": "Video Title: Pareto\nTranscript..."},
+            ]
             assert body["options"]["temperature"] == 0.2
 
     def test_transform_connection_refused_raises_actionable_error(self) -> None:
@@ -68,7 +73,7 @@ class TestOllamaLLMAdapter:
             mock_urlopen.side_effect = urllib.error.URLError("Connection refused")
 
             with pytest.raises(LLMInfrastructureError, match="ollama serve"):
-                adapter.transform("Some prompt")
+                adapter.transform(ChatPrompt.single_turn("Some prompt"))
 
     def test_transform_http_error_raises_llm_infrastructure_error(self) -> None:
         adapter = OllamaLLMAdapter(
@@ -78,7 +83,7 @@ class TestOllamaLLMAdapter:
 
         with patch("urllib.request.urlopen") as mock_urlopen:
             mock_urlopen.side_effect = urllib.error.HTTPError(
-                url="http://localhost:11434/api/generate",
+                url="http://localhost:11434/api/chat",
                 code=404,
                 msg="model 'nonexistent:model' not found",
                 hdrs=Message(),
@@ -86,7 +91,7 @@ class TestOllamaLLMAdapter:
             )
 
             with pytest.raises(LLMInfrastructureError, match="404"):
-                adapter.transform("Some prompt")
+                adapter.transform(ChatPrompt.single_turn("Some prompt"))
 
     def test_is_available_returns_true_on_success(self) -> None:
         adapter = OllamaLLMAdapter(base_url="http://localhost:11434")
@@ -126,7 +131,7 @@ class TestOllamaLLMAdapter:
             mock_resp.__enter__.return_value = mock_resp
             mock_urlopen.return_value = mock_resp
 
-            adapter.transform("Some prompt", temperature=None)
+            adapter.transform(ChatPrompt.single_turn("Some prompt"), temperature=None)
 
             req = mock_urlopen.call_args[0][0]
             body = json.loads(req.data.decode("utf-8"))
@@ -167,7 +172,7 @@ class TestOllamaLLMAdapter:
             mock_urlopen.return_value = mock_resp
 
             result = adapter.transform(
-                "Telemetry test prompt",
+                ChatPrompt.single_turn("Telemetry test prompt"),
                 trace_id="cresmo-trace-1",
                 session_id="session-42",
             )
@@ -196,7 +201,7 @@ class TestOllamaLLMAdapter:
             mock_resp.__enter__.return_value = mock_resp
             mock_urlopen.return_value = mock_resp
 
-            adapter.transform("Test prompt")
+            adapter.transform(ChatPrompt.single_turn("Test prompt"))
             req = mock_urlopen.call_args[0][0]
             body = json.loads(req.data.decode("utf-8"))
             assert "num_predict" not in body["options"]
@@ -216,7 +221,7 @@ class TestOllamaLLMAdapter:
             mock_resp.__enter__.return_value = mock_resp
             mock_urlopen.return_value = mock_resp
 
-            adapter.transform("Test prompt")
+            adapter.transform(ChatPrompt.single_turn("Test prompt"))
             req = mock_urlopen.call_args[0][0]
             body = json.loads(req.data.decode("utf-8"))
             assert body["options"]["num_predict"] == 500
@@ -306,7 +311,7 @@ class TestOllamaLLMAdapter:
             mock_resp.__enter__.return_value = mock_resp
             mock_urlopen.return_value = mock_resp
 
-            adapter.transform("Test keepalive prompt")
+            adapter.transform(ChatPrompt.single_turn("Test keepalive prompt"))
             req = mock_urlopen.call_args[0][0]
             body = json.loads(req.data.decode("utf-8"))
             assert body["keep_alive"] == "1h"
@@ -418,7 +423,7 @@ class TestOllamaLLMAdapter:
 
             mock_urlopen.side_effect = [mock_preload_resp, mock_ps_resp, mock_gen_resp]
 
-            result = adapter.transform("Hello from cold start")
+            result = adapter.transform(ChatPrompt.single_turn("Hello from cold start"))
             assert result == "Transformed text"
             assert bool(adapter.is_warmed_up) is True
             assert mock_urlopen.call_count == 3

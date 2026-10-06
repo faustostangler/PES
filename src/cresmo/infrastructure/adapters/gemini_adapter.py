@@ -24,6 +24,7 @@ from opentelemetry import trace
 from tenacity import retry, retry_if_exception, stop_after_attempt, wait_random_exponential
 
 from cresmo.application.ports import LLMTransformationPort
+from cresmo.domain.value_objects import ChatPrompt, MessageRole
 from cresmo.infrastructure.adapters.opentelemetry_adapter import annotate_llm_span
 
 __all__ = ["GeminiLLMAdapter", "trace"]
@@ -145,8 +146,7 @@ class GeminiLLMAdapter(LLMTransformationPort):
     @observe(as_type="generation")
     def transform(
         self,
-        prompt: str,
-        system_instruction: str | None = None,
+        prompt: ChatPrompt,
         temperature: float | None = None,
         *,
         trace_id: str | None = None,
@@ -156,8 +156,7 @@ class GeminiLLMAdapter(LLMTransformationPort):
         """Execute text transformation contract with full Langfuse observability span.
 
         Args:
-            prompt: Text prompt for generation.
-            system_instruction: Optional system instruction directive.
+            prompt: Domain ChatPrompt containing sequential messages and optional system instruction.
             temperature: Generation sampling temperature.
             trace_id: Optional trace ID (e.g. ContentId).
             session_id: Pipeline session identifier.
@@ -170,16 +169,26 @@ class GeminiLLMAdapter(LLMTransformationPort):
         config = types.GenerateContentConfig(
             temperature=effective_temperature,
             max_output_tokens=self.max_output_tokens,
-            system_instruction=system_instruction,
+            system_instruction=prompt.system_instruction,
             automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=True),
         )
+
+        contents: list[types.Content] = []
+        for msg in prompt.messages:
+            role = "model" if msg.role == MessageRole.ASSISTANT else "user"
+            contents.append(
+                types.Content(
+                    role=role,
+                    parts=[types.Part.from_text(text=msg.content)],
+                )
+            )
 
         active_model = self.model_name
         try:
             response = _generate_with_retry(
                 client=self._client,
                 model=active_model,
-                contents=prompt,
+                contents=contents,
                 config=config,
             )
         except Exception:
@@ -188,7 +197,7 @@ class GeminiLLMAdapter(LLMTransformationPort):
                 response = _generate_with_retry(
                     client=self._client,
                     model=active_model,
-                    contents=prompt,
+                    contents=contents,
                     config=config,
                 )
             else:
@@ -198,7 +207,8 @@ class GeminiLLMAdapter(LLMTransformationPort):
 
         # Extract usage metadata
         usage_meta = getattr(response, "usage_metadata", None)
-        prompt_tokens = getattr(usage_meta, "prompt_token_count", 0) or len(prompt.split())
+        total_prompt_words = sum(len(m.content.split()) for m in prompt.messages)
+        prompt_tokens = getattr(usage_meta, "prompt_token_count", 0) or total_prompt_words
         candidate_tokens = getattr(usage_meta, "candidates_token_count", 0) or len(
             response_text.split()
         )

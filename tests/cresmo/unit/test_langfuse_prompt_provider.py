@@ -15,6 +15,7 @@ from langfuse.api.core import ApiError
 
 from cresmo.application.ports import PromptProviderPort
 from cresmo.domain.value_objects import ChannelName, PromptKey
+from cresmo.domain.value_objects.prompt import ChatPrompt
 from cresmo.infrastructure.adapters.prompt_provider import (
     JsonPromptProvider,
     LangfusePromptProvider,
@@ -36,7 +37,7 @@ class TestLangfusePromptProvider:
             fallback_provider=fallback_provider,
             label="production",
         )
-        sys_inst, prompt = provider.get_prompt(
+        prompt_res = provider.get_prompt(
             PromptKey.GAP_FILLER_PASS1,
             pass_num=1,
             total_passes=3,
@@ -44,6 +45,8 @@ class TestLangfusePromptProvider:
             file_name="ep01.md",
             raw_text="Sample raw transcript.",
         )
+        sys_inst = prompt_res.system_instruction or ""
+        prompt = prompt_res.get_last_user_content()
         assert isinstance(sys_inst, str)
         assert isinstance(prompt, str)
         assert len(sys_inst) > 0
@@ -61,7 +64,9 @@ class TestLangfusePromptProvider:
         mock_client.get_prompt.return_value = mock_prompt_obj
 
         mock_fallback = MagicMock(spec=PromptProviderPort)
-        mock_fallback.get_prompt.return_value = ("fallback_sys", "fallback_user")
+        mock_fallback.get_prompt.return_value = ChatPrompt.from_system_and_user(
+            system="fallback_sys", user="fallback_user"
+        )
 
         provider = LangfusePromptProvider(
             langfuse_client=mock_client,
@@ -69,7 +74,7 @@ class TestLangfusePromptProvider:
             label="production",
         )
 
-        sys_inst, prompt = provider.get_prompt(
+        prompt_res = provider.get_prompt(
             PromptKey.GAP_FILLER_PASS1,
             pass_num=1,
             total_passes=3,
@@ -77,6 +82,8 @@ class TestLangfusePromptProvider:
             file_name="ep01.md",
             raw_text="Sample transcript text.",
         )
+        sys_inst = prompt_res.system_instruction or ""
+        prompt = prompt_res.get_last_user_content()
 
         assert sys_inst == "System directive from Langfuse Cloud Chat"
         assert prompt == "User input payload compiled from Langfuse Cloud"
@@ -97,7 +104,9 @@ class TestLangfusePromptProvider:
         mock_client.get_prompt.return_value = mock_prompt_obj
 
         mock_fallback = MagicMock(spec=PromptProviderPort)
-        mock_fallback.get_prompt.return_value = ("fallback_sys", "fallback_user")
+        mock_fallback.get_prompt.return_value = ChatPrompt.from_system_and_user(
+            system="fallback_sys", user="fallback_user"
+        )
 
         provider = LangfusePromptProvider(
             langfuse_client=mock_client,
@@ -105,7 +114,7 @@ class TestLangfusePromptProvider:
             label="production",
         )
 
-        sys_inst, prompt = provider.get_prompt(
+        prompt_res = provider.get_prompt(
             PromptKey.GAP_FILLER_PASS1,
             pass_num=1,
             total_passes=3,
@@ -113,6 +122,8 @@ class TestLangfusePromptProvider:
             file_name="ep01.md",
             raw_text="Sample transcript text.",
         )
+        sys_inst = prompt_res.system_instruction or ""
+        prompt = prompt_res.get_last_user_content()
 
         assert sys_inst == "fallback_sys"
         assert prompt == "fallback_user"
@@ -131,7 +142,7 @@ class TestLangfusePromptProvider:
         )
 
         # Must not raise RuntimeError; must gracefully fall back
-        sys_inst, prompt = provider.get_prompt(
+        prompt_res = provider.get_prompt(
             PromptKey.GAP_FILLER_PASS1,
             pass_num=1,
             total_passes=3,
@@ -139,6 +150,8 @@ class TestLangfusePromptProvider:
             file_name="ep01.md",
             raw_text="Ground truth text.",
         )
+        sys_inst = prompt_res.system_instruction or ""
+        prompt = prompt_res.get_last_user_content()
 
         assert isinstance(sys_inst, str)
         assert isinstance(prompt, str)
@@ -161,7 +174,7 @@ class TestLangfusePromptProvider:
             label="production",
         )
 
-        sys_inst, prompt = provider.get_prompt(
+        prompt_res = provider.get_prompt(
             PromptKey.GAP_FILLER_PASS1,
             pass_num=1,
             total_passes=3,
@@ -169,6 +182,8 @@ class TestLangfusePromptProvider:
             file_name="ep01.md",
             raw_text="Fallback text on 404.",
         )
+        sys_inst = prompt_res.system_instruction or ""
+        prompt = prompt_res.get_last_user_content()
 
         assert isinstance(sys_inst, str)
         assert isinstance(prompt, str)
@@ -187,7 +202,7 @@ class TestLangfusePromptProvider:
             label="production",
         )
 
-        sys_inst, prompt = provider.get_prompt(
+        prompt_res = provider.get_prompt(
             PromptKey.GAP_FILLER_PASS1,
             pass_num=1,
             total_passes=3,
@@ -195,6 +210,8 @@ class TestLangfusePromptProvider:
             file_name="ep01.md",
             raw_text="Fallback text on 500.",
         )
+        sys_inst = prompt_res.system_instruction or ""
+        prompt = prompt_res.get_last_user_content()
 
         assert isinstance(sys_inst, str)
         assert isinstance(prompt, str)
@@ -210,51 +227,63 @@ class TestLangfusePromptProvider:
         assert isinstance(provider, PromptProviderPort)
 
         # Test expanders
-        long_sys, long_prompt = provider.get_prompt(
+        long_res = provider.get_prompt(
             PromptKey.LONG_EXPANDER,
             compendium_body="Body text",
             complementary_info="Dates and facts",
         )
+        long_sys = long_res.system_instruction or ""
+        long_prompt = long_res.get_last_user_content()
         assert isinstance(long_sys, str)
         assert "Body text" in long_prompt
 
-        wide_sys, wide_prompt = provider.get_prompt(
+        wide_res = provider.get_prompt(
             PromptKey.WIDE_EXPANDER,
             current_text="Axial text",
         )
+        wide_sys = wide_res.system_instruction or ""
+        wide_prompt = wide_res.get_last_user_content()
         assert isinstance(wide_sys, str)
         assert "Axial text" in wide_prompt
 
-        inv_sys, inventory_prompt = provider.get_prompt(
+        inv_res = provider.get_prompt(
             PromptKey.ATOMIC_INVENTORY,
             content_title="Compendium title",
             channel_name=ChannelName("sandeco"),
             compendium_body="Compendium body",
         )
+        inv_sys = inv_res.system_instruction or ""
+        inventory_prompt = inv_res.get_last_user_content()
         assert isinstance(inv_sys, str)
         assert "Compendium body" in inventory_prompt
 
-        batch_sys, atomic_batch_prompt = provider.get_prompt(
+        batch_res = provider.get_prompt(
             PromptKey.ATOMIC_BATCH,
             content_title="Compendium title",
             channel_name=ChannelName("sandeco"),
             compendium_body="Compendium body",
             targets_json="Inventory JSON",
         )
+        batch_sys = batch_res.system_instruction or ""
+        atomic_batch_prompt = batch_res.get_last_user_content()
         assert isinstance(batch_sys, str)
         assert "Compendium body" in atomic_batch_prompt
 
-        moc_sys, moc_prompt = provider.get_prompt(
+        moc_res = provider.get_prompt(
             PromptKey.RECONCILE_MOCS,
             notes_json="Notes summary",
         )
+        moc_sys = moc_res.system_instruction or ""
+        moc_prompt = moc_res.get_last_user_content()
         assert isinstance(moc_sys, str)
         assert "Notes summary" in moc_prompt
 
-        raw_sys, raw_prompt = provider.get_prompt(
+        raw_res = provider.get_prompt(
             PromptKey.RAW_INDEX_SUMMARY,
             content_title="Pareto",
             transcript_excerpt="Excerpt",
         )
+        raw_sys = raw_res.system_instruction or ""
+        raw_prompt = raw_res.get_last_user_content()
         assert isinstance(raw_sys, str)
         assert "Pareto" in raw_prompt

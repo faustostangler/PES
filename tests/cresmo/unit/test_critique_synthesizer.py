@@ -119,11 +119,15 @@ def test_critique_synthesizer_resilient_fallback_on_exception() -> None:
 def test_critique_synthesizer_uses_custom_prompt_provider() -> None:
     """Verify that OllamaCritiqueAdapter delegates prompt resolution to PromptProviderPort."""
     from cresmo.domain.value_objects import PromptKey
+    from cresmo.domain.value_objects.prompt import ChatPrompt
 
     mock_llm = MagicMock(spec=LLMTransformationPort)
     mock_llm.transform.return_value = "1. Direct instruction."
     mock_prompt_provider = MagicMock()
-    mock_prompt_provider.get_prompt.return_value = ("CUSTOM SYS", "CUSTOM PROMPT")
+    custom_chat_prompt = ChatPrompt.from_system_and_user(
+        system="CUSTOM SYS", user="CUSTOM PROMPT"
+    )
+    mock_prompt_provider.get_prompt.return_value = custom_chat_prompt
 
     adapter = OllamaCritiqueAdapter(
         llm_transformation_port=mock_llm,
@@ -155,8 +159,7 @@ def test_critique_synthesizer_uses_custom_prompt_provider() -> None:
     assert "orality_removal" in kwargs["criteria_failures"]
 
     mock_llm.transform.assert_called_once_with(
-        prompt="CUSTOM PROMPT",
-        system_instruction="CUSTOM SYS",
+        prompt=custom_chat_prompt,
         temperature=0.1,
         trace_id=None,
     )
