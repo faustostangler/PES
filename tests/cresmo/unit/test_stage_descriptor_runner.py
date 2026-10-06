@@ -345,3 +345,78 @@ class TestStageConfigRunner:
             channel_name="Human Channel Name",
         )
         assert trace_id == "cresmo_UC_CHAN_123_content_abc"
+
+    def test_generate_candidate_and_evaluate_candidate_isolated(self) -> None:
+        """Verify _generate_candidate and _evaluate_candidate can be invoked in isolation."""
+        telemetry = NoOpTelemetryPort()
+        metrics = NoOpMetricsPort()
+        mock_judge = MagicMock()
+        mock_judge.evaluate.return_value = JudgeEvaluation(
+            target_stage="fluid_prose",
+            passed=True,
+            overall_score=0.98,
+            criteria_scores=(),
+            provider="test_judge",
+        )
+
+        mock_llm = MagicMock(spec=LLMTransformationPort)
+        mock_llm.transform.return_value = "Isolated candidate text"
+
+        prompt_provider = MagicMock()
+        prompt_provider.get_prompt.return_value = ("sys instruction", "user prompt")
+
+        runner = PipelineStageRunner(
+            telemetry_port=telemetry,
+            metrics_port=metrics,
+            llm_judge=mock_judge,
+        )
+
+        descriptor = StageConfig[SourceTranscript, CandidateText](
+            stage_name="fluid_prose",
+            transform_prompt_key=PromptKey.FLUID_PROSE,
+            eval_spec=StageEvaluationSpec(
+                raw_text="ground truth",
+                required_criteria=(),
+            ),
+        )
+
+        source = SourceTranscript(
+            body="Raw ground truth",
+            channel_name=ChannelName("Channel A"),
+            content_id=ContentId("content_isolated"),
+        )
+        ctx = PipelineExecutionContext(
+            session_id=PipelineSessionId.create(source.channel, source.content),
+            user_identity=UserIdentity.worker(),
+            channel=source.channel,
+            content=source.content,
+        )
+
+        # 1. Test isolated candidate generation
+        candidate = runner._generate_candidate(
+            descriptor,
+            source,
+            context=ctx,
+            prompt_provider=prompt_provider,
+            llm_port=mock_llm,
+            attempt=1,
+            critique="Focus on parataxis",
+        )
+        assert candidate.text == "Isolated candidate text"
+        assert candidate.stage_name == "fluid_prose"
+        assert candidate.metadata["attempt"] == 1
+        assert candidate.metadata["channel_name"] == "Channel A"
+
+        # 2. Test isolated candidate evaluation
+        eval_result = runner._evaluate_candidate(
+            descriptor,
+            source,
+            candidate,
+            context=ctx,
+            attempt=1,
+        )
+        assert eval_result is not None
+        assert eval_result.passed is True
+        assert eval_result.overall_score == 0.98
+        mock_judge.evaluate.assert_called_once()
+

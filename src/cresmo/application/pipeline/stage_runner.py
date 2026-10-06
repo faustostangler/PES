@@ -156,68 +156,25 @@ class PipelineStageRunner:
             content_title=content_title_val,
         ):
             for attempt in range(1, effective_max_attempts + 1):
-                system_instruction, user_prompt = stage_config.build_transform_prompt(
-                    prompt_provider,
+                candidate = self._generate_candidate(
+                    stage_config,
                     source,
-                    channel_name=channel_name_val,
-                    channel_id=channel_id_val,
-                    content_id=content_id_val,
-                    content_title=content_title_val,
+                    context=context,
+                    prompt_provider=prompt_provider,
+                    llm_port=llm_port,
+                    attempt=attempt,
                     critique=critique,
                 )
-                active_trace_id = self._get_active_trace_id(
-                    channel=context.channel.id or channel_name_val,
-                    content_id=context.content.id,
-                    channel_id=context.channel.id,
-                    channel_name=channel_name_val,
+
+                evaluation = self._evaluate_candidate(
+                    stage_config,
+                    source,
+                    candidate,
+                    context=context,
+                    attempt=attempt,
                 )
 
-                candidate = CandidateText(
-                    text=llm_port.transform(
-                        prompt=user_prompt,
-                        system_instruction=system_instruction,
-                        temperature=stage_config.temperature,
-                        trace_id=active_trace_id,
-                        session_id=context.session_id.value,
-                        user_id=context.user_identity.value,
-                    ),
-                    stage_name=stage_name,
-                    metadata={
-                        "channel_id": channel_id_val,
-                        "content_id": content_id_val,
-                        "channel_name": channel_name_val,
-                        "content_title": content_title_val,
-                        "attempt": attempt,
-                    },
-                )
-
-                if self.llm_judge is None or stage_config.eval_spec is None:
-                    break
-
-                eval_context = EvaluationContext(
-                    stage_name=stage_name,
-                    raw_text=stage_config.eval_spec.extract_source_text(source),
-                    candidate_text=(
-                        stage_config.eval_spec.candidate_extractor(candidate)
-                        if stage_config.eval_spec.candidate_extractor
-                        else candidate.text
-                    ),
-                    metadata={
-                        "channel_id": channel_id_val,
-                        "content_id": content_id_val,
-                        "channel_name": channel_name_val,
-                        "content_title": content_title_val,
-                        "attempt": attempt,
-                        **stage_config.eval_spec.metadata,
-                    },
-                    trace_id=active_trace_id,
-                    required_criteria=stage_config.eval_spec.required_criteria,
-                )
-
-                evaluation = self.llm_judge.evaluate(eval_context)
-                self._record_evaluation_metrics(stage_name, evaluation.passed, attempt)
-
-                if evaluation.passed:
+                if evaluation is None or evaluation.passed:
                     break
 
                 logger.warning(
@@ -257,6 +214,109 @@ class PipelineStageRunner:
                 raise DomainValidationError(f"Stage '{stage_name}' produced no candidate text.")
 
             return stage_config.post_process(candidate, source)
+
+    def _generate_candidate(
+        self,
+        stage_config: StageConfig[_TSource, _TOutput],
+        source: _TSource,
+        *,
+        context: PipelineExecutionContext,
+        prompt_provider: PromptProviderPort,
+        llm_port: LLMTransformationPort,
+        attempt: int,
+        critique: str | None = None,
+    ) -> CandidateText:
+        """Build prompt and invoke LLM transformation port to generate CandidateText."""
+        channel_id_val = context.channel.id.value if context.channel.id else ""
+        content_id_val = context.content.id.value
+        channel_name_val = context.channel.name
+        content_title_val = context.content.title
+
+        system_instruction, user_prompt = stage_config.build_transform_prompt(
+            prompt_provider,
+            source,
+            channel_name=channel_name_val,
+            channel_id=channel_id_val,
+            content_id=content_id_val,
+            content_title=content_title_val,
+            critique=critique,
+        )
+        active_trace_id = self._get_active_trace_id(
+            channel=context.channel.id or channel_name_val,
+            content_id=context.content.id,
+            channel_id=context.channel.id,
+            channel_name=channel_name_val,
+        )
+
+        response_text = llm_port.transform(
+                prompt=user_prompt,
+                system_instruction=system_instruction,
+                temperature=stage_config.temperature,
+                trace_id=active_trace_id,
+                session_id=context.session_id.value,
+                user_id=context.user_identity.value,
+            )
+
+        return CandidateText(
+            text=response_text,
+            stage_name=stage_config.stage_name,
+            metadata={
+                "channel_id": channel_id_val,
+                "content_id": content_id_val,
+                "channel_name": channel_name_val,
+                "content_title": content_title_val,
+                "attempt": attempt,
+            },
+        )
+
+    def _evaluate_candidate(
+        self,
+        stage_config: StageConfig[_TSource, _TOutput],
+        source: _TSource,
+        candidate: CandidateText,
+        *,
+        context: PipelineExecutionContext,
+        attempt: int,
+    ) -> JudgeEvaluation | None:
+        """Evaluate candidate text against stage quality criteria if judge and eval_spec are configured."""
+        if self.llm_judge is None or stage_config.eval_spec is None:
+            return None
+
+        channel_id_val = context.channel.id.value if context.channel.id else ""
+        content_id_val = context.content.id.value
+        channel_name_val = context.channel.name
+        content_title_val = context.content.title
+
+        active_trace_id = self._get_active_trace_id(
+            channel=context.channel.id or channel_name_val,
+            content_id=context.content.id,
+            channel_id=context.channel.id,
+            channel_name=channel_name_val,
+        )
+
+        eval_context = EvaluationContext(
+            stage_name=stage_config.stage_name,
+            raw_text=stage_config.eval_spec.extract_source_text(source),
+            candidate_text=(
+                stage_config.eval_spec.candidate_extractor(candidate)
+                if stage_config.eval_spec.candidate_extractor
+                else candidate.text
+            ),
+            metadata={
+                "channel_id": channel_id_val,
+                "content_id": content_id_val,
+                "channel_name": channel_name_val,
+                "content_title": content_title_val,
+                "attempt": attempt,
+                **stage_config.eval_spec.metadata,
+            },
+            trace_id=active_trace_id,
+            required_criteria=stage_config.eval_spec.required_criteria,
+        )
+
+        evaluation = self.llm_judge.evaluate(eval_context)
+        self._record_evaluation_metrics(stage_config.stage_name, evaluation.passed, attempt)
+        return evaluation
 
     def run_evaluated_stage(
         self,
