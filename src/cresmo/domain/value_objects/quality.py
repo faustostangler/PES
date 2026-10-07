@@ -184,6 +184,7 @@ class EvaluationContext:
     metadata: dict[str, Any] = field(default_factory=dict)
     trace_id: str | None = None
     required_criteria: tuple[JudgeCriterion, ...] = ()
+    observation_id: str | None = None
 
 
 @dataclass(frozen=True, slots=True)

@@ -204,12 +204,13 @@ class CresmoPipeline:
         if content.publication_date:
             root_metadata["publication_date"] = content.publication_date.isoformat()
 
+        # Trace root Level 1: cresmo.synthesis_pipeline (ADR-037)
         with self.telemetry_port.start_pipeline_session(
             session_id=session_id,
             user_id=user_identity,
             channel_tenant_id=channel.tenant_key,
             metadata=root_metadata,
-            trace_name="cresmo.pipeline.execution",
+            trace_name="cresmo.synthesis_pipeline",
         ):
             if early_result := self._check_idempotent_exit(raw, entry, force_reprocess):
                 self.telemetry_port.record_session_output(
@@ -261,13 +262,22 @@ class CresmoPipeline:
             # mocs = self.stage_runner.execute_stage("reconcile_mocs", source=notes, context=execution_context)
 
             fluid_text = getattr(fluid, "body", "") or getattr(fluid, "text", "")
+            raw_text = getattr(raw, "body", "") or getattr(raw, "text", "") or str(raw)
+            raw_word_count = len(raw_text.split())
+            synthesized_word_count = len(fluid_text.split())
+            expansion_ratio = round(synthesized_word_count / max(raw_word_count, 1), 3)
+
+            # Trace output (ADR-037 canonical DDD metrics)
             self.telemetry_port.record_session_output(
                 {
                     "status": "COMPLETED",
-                    "stage": "fluid_prose",
-                    "title": getattr(fluid, "title", content.title),
-                    "word_count": len(fluid_text.split()),
-                    "char_count": len(fluid_text),
+                    "stages_completed": ["fluid_prose"],
+                    "content_title": getattr(fluid, "title", content.title),
+                    "source_words": raw_word_count,
+                    "synthesized_words": synthesized_word_count,
+                    "expansion_ratio": expansion_ratio,
+                    "source_characters": len(raw_text),
+                    "synthesized_characters": len(fluid_text),
                 }
             )
 

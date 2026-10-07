@@ -74,12 +74,30 @@ class NoOpTelemetryAdapter(TelemetryPort):
         value: float,
         comment: str | None = None,
         trace_id: str | None = None,
+        observation_id: str | None = None,
     ) -> None:
         """No-op score recorder for offline/test runs."""
 
     def record_session_output(self, output: dict[str, Any]) -> None:
         """No-op session output recorder."""
 
+    @contextmanager
+    def start_stage_evaluation_span(
+        self,
+        stage_name: str,
+        attempt: int = 1,
+        attributes: dict[str, Any] | None = None,
+    ) -> Generator[Any]:
+        """No-op stage evaluation span context manager."""
+        _ = (stage_name, attempt, attributes)
+        yield None
+
+    def record_stage_io(
+        self,
+        input_payload: dict[str, Any] | str | None = None,
+        output_payload: dict[str, Any] | str | None = None,
+    ) -> None:
+        """No-op stage I/O recorder."""
+
     def flush(self) -> None:
         """No-op flush for offline/test runs."""
-

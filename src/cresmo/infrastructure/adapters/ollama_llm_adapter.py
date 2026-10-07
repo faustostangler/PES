@@ -321,7 +321,6 @@ class OllamaLLMAdapter(LLMTransformationPort):
                 raise self._warmup_error
             return self._is_warmed_up
 
-    @observe(as_type="generation")
     def transform(
         self,
         prompt: ChatPrompt,
@@ -331,15 +330,7 @@ class OllamaLLMAdapter(LLMTransformationPort):
         session_id: str | None = None,
         user_id: str | None = None,
     ) -> str:
-        """Execute text transformation on local Ollama instance with Langfuse telemetry.
-
-        Walkthrough:
-            1. Wait at the rendezvous barrier if background warmup is still in progress.
-            2. Construct JSON payload with model, messages (/api/chat), keep_alive, and options.
-            3. Post payload to /api/chat endpoint.
-            4. Catch network/connection errors and translate to LLMInfrastructureError with
-               an actionable warning instructing the user to run 'ollama serve' or use '--web-index'.
-            5. Extract generated response text and emit token usage to Langfuse.
+        """Execute text transformation on local Ollama instance with immediate Langfuse synchronization.
 
         Args:
             prompt: Domain ChatPrompt containing sequential messages and optional system instruction.
@@ -354,6 +345,42 @@ class OllamaLLMAdapter(LLMTransformationPort):
         Raises:
             LLMInfrastructureError: If Ollama daemon is unreachable or returns HTTP error.
         """
+        response_text = self._execute_transform(
+            prompt=prompt,
+            temperature=temperature,
+            trace_id=trace_id,
+            session_id=session_id,
+            user_id=user_id,
+        )
+
+        client = getattr(self, "_langfuse", None)
+        if client is None:
+            try:
+                from langfuse import get_client
+
+                client = get_client()
+            except Exception:  # noqa: BLE001
+                client = None
+
+        if client is not None:
+            try:
+                client.flush()
+            except Exception as exc:  # noqa: BLE001
+                logger.debug("[OllamaLLMAdapter] Langfuse flush skipped: %s", exc)
+
+        return response_text
+
+    @observe(name="cresmo.llm.generate", as_type="generation")
+    def _execute_transform(
+        self,
+        prompt: ChatPrompt,
+        temperature: float | None = None,
+        *,
+        trace_id: str | None = None,
+        session_id: str | None = None,
+        user_id: str | None = None,
+    ) -> str:
+        """Internal worker executing model generation within an active Langfuse generation observation."""
         if not self._is_warmed_up:
             self.wait_for_warmup()
 

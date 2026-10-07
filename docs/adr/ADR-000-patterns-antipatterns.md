@@ -297,3 +297,30 @@ Mocking the System Under Test*
 Over-Specified Expectations*
 Shared Mutable Fixtures*
 Testing Internal Implementation Details*
+
+### Observabilidade, Telemetria e LLM-as-a-Judge
+
+Clean Telemetry Namespacing (Stage-Prefixed Metric Naming)
+Closed-Loop Feedback Score Attribution
+Chronological Stage Evaluation Spans
+Distributed Trace Context Propagation
+Deterministic Telemetry Flush Boundaries
+Golden Signals Segregation (SRE Hardware vs Cognitive Domain Metrics)
+High-Cardinality Attribute Safeguarding
+In-Context Observation ID Binding
+Lean Telemetry Topography (Zero-Duplication Governance)
+Non-Blocking Telemetry Failure (Graceful Degradation)
+Prompt & Model Provenance Versioning
+Trace-Log-Metric Correlation (Exemplars & Loki Structured Injection)
+Blind Evaluation Black Hole*
+Domain Leaking into Telemetry Identifiers*
+Flat Global Score Collision*
+High-Cardinality Label Explosion*
+Homonymous Trace Root Redundancy*
+Log-Trace Disconnect*
+Payload Alias Duplication*
+Silent Telemetry Starvation*
+Telemetry-Induced Cascading Failure*
+Unbound Trace-Level Scoring*
+Uncalibrated Judge Metric Drift*
+Unrecorded Stage I/O*

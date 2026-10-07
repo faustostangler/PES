@@ -37,14 +37,14 @@ logger = logging.getLogger(__name__)
 DEFAULT_PIPELINE_VERSION: str = "cresmo:v2"
 OTEL_FLUSH_TIMEOUT_MS: int = 2000
 _MIN_STRUCTURED_USER_PARTS: Final[int] = 3
+# Infra limit: Langfuse drops propagated attribute values longer than 200 characters.
+_LANGFUSE_PROPAGATED_VALUE_MAX_CHARS: Final[int] = 200
 
 
 _LANGFUSE_INPUT_KEYS: frozenset[str] = frozenset(
     {
         "batch_id",
-        "title",
         "content_title",
-        "channel",
         "channel_name",
         "channel_id",
         "content_id",
@@ -83,6 +83,7 @@ def annotate_llm_span(
     user_id: str | None = None,
     trace_id: str | None = None,
     temperature: float | None = None,
+    max_tokens: int | None = None,
 ) -> None:
     """Annotate the current OpenTelemetry span with GenAI Semantic Conventions.
 
@@ -103,6 +104,7 @@ def annotate_llm_span(
         user_id: Optional operator or channel identifier.
         trace_id: Optional domain trace identifier (e.g. ContentId).
         temperature: Optional sampling temperature override for diagnostics.
+        max_tokens: Optional maximum output tokens limit.
     """
     current_span = trace.get_current_span()
     if not (current_span and current_span.is_recording()):
@@ -120,7 +122,10 @@ def annotate_llm_span(
     if trace_id:
         current_span.set_attribute("cresmo.trace_id", trace_id)
     if temperature is not None:
+        current_span.set_attribute("gen_ai.request.temperature", temperature)
         current_span.set_attribute("cresmo.temperature", temperature)
+    if max_tokens is not None:
+        current_span.set_attribute("gen_ai.request.max_tokens", max_tokens)
 
 
 def _resolve_identity_from_string(user_id: str) -> tuple[UserIdentity, str | None]:
@@ -182,7 +187,7 @@ def _build_langfuse_input_payload(
         formatted_value = str(value)
         if key not in _CANONICAL_ROOT_METADATA_KEYS:
             attributes[f"cresmo.metadata.{key}"] = formatted_value
-        if key in _LANGFUSE_INPUT_KEYS:
+        if key in _LANGFUSE_INPUT_KEYS and key not in ("title", "channel"):
             attributes[f"langfuse.input.{key}"] = formatted_value
             input_payload[key] = formatted_value
 
@@ -194,29 +199,23 @@ def _build_langfuse_input_payload(
         attributes["langfuse.input.content_id"] = content_id
         input_payload["content_id"] = content_id
 
-    # TXT-TXT Parity: Symmetrically guarantee channel and channel_name aliases
-    resolved_channel = metadata.get("channel") or metadata.get("channel_name") or channel_name
+    # TXT-TXT Parity: Symmetrically guarantee channel_name and content_title in canonical input payload (ADR-037)
+    resolved_channel = metadata.get("channel_name") or metadata.get("channel") or channel_name
     if resolved_channel:
         formatted_channel = str(resolved_channel)
-        attributes["langfuse.input.channel"] = formatted_channel
         attributes["langfuse.input.channel_name"] = formatted_channel
-        input_payload["channel"] = formatted_channel
         input_payload["channel_name"] = formatted_channel
 
-    # TXT-TXT Parity: Symmetrically guarantee title and content_title aliases in langfuse.input
-    resolved_title = metadata.get("title") or metadata.get("content_title") or content_title
+    resolved_title = metadata.get("content_title") or metadata.get("title") or content_title
     if resolved_title:
         formatted_title = str(resolved_title)
-        attributes["langfuse.input.title"] = formatted_title
         attributes["langfuse.input.content_title"] = formatted_title
-        input_payload["title"] = formatted_title
         input_payload["content_title"] = formatted_title
 
     if input_payload:
         serialized_input = json.dumps(input_payload)
         attributes["input.value"] = serialized_input
         attributes["langfuse.observation.input"] = serialized_input
-        attributes["langfuse.input"] = serialized_input
         attributes["langfuse.trace.input"] = serialized_input
 
 
@@ -278,6 +277,27 @@ def _build_session_span_attributes(
         attributes=attributes,
     )
     return attributes, tags
+
+
+def _build_propagated_trace_metadata(attributes: dict[str, Any]) -> dict[str, str]:
+    """Derive short identity metadata propagated to every child observation.
+
+    Why: Langfuse v4 renders trace name/IO from the root observation, which is only
+    exported when the root span ends. Propagating identity keeps in-progress traces
+    identifiable and filterable while the pipeline is still running.
+    """
+    candidates = {
+        "channel_id": attributes.get("cresmo.channel.id"),
+        "channel_name": attributes.get("cresmo.channel.name"),
+        "content_id": attributes.get("cresmo.content.id"),
+        "content_title": attributes.get("cresmo.content.title"),
+        "batch_id": attributes.get("cresmo.batch_id"),
+    }
+    return {
+        key: str(value)[:_LANGFUSE_PROPAGATED_VALUE_MAX_CHARS]
+        for key, value in candidates.items()
+        if value
+    }
 
 
 class OpenTelemetryAdapter(TelemetryPort):
@@ -347,7 +367,15 @@ class OpenTelemetryAdapter(TelemetryPort):
             metadata=effective_metadata,
         )
 
-        root_operation = trace_name or "cresmo.pipeline.execution"
+        # ADR-037: Semantic separation between Trace (business transaction) and Root Span (orchestrator)
+        resolved_trace_name = trace_name or "cresmo.synthesis_pipeline"
+        root_operation = (
+            "pipeline.coordinator"
+            if trace_name in (None, "cresmo.pipeline.execution", "cresmo.synthesis_pipeline")
+            else trace_name
+        )
+        session_attributes["langfuse.trace.name"] = resolved_trace_name
+
         with self._tracer.start_as_current_span(
             root_operation, attributes=session_attributes
         ) as span:
@@ -358,6 +386,8 @@ class OpenTelemetryAdapter(TelemetryPort):
                         session_id=session_id.value,
                         user_id=normalized_user.value,
                         tags=tags,
+                        trace_name=resolved_trace_name,
+                        metadata=_build_propagated_trace_metadata(session_attributes),
                     )
                 except Exception as exc:  # noqa: BLE001
                     logger.debug("Failed to initialize Langfuse propagate_attributes: %s", exc)
@@ -380,12 +410,42 @@ class OpenTelemetryAdapter(TelemetryPort):
         Yields:
             The active child stage span.
         """
+        # Trace level 2 (stage) spans: cresmo.stage.fluid_prose, cresmo.stage.transcript_indexing, etc.
         span_name = f"cresmo.stage.{stage_name}"
         with self._tracer.start_as_current_span(span_name) as span:
             span.set_attribute("langfuse.observation.type", "span")
             if attributes:
                 for attribute_key, attribute_value in attributes.items():
                     span.set_attribute(f"cresmo.stage.{attribute_key}", str(attribute_value))
+            yield span
+
+    @contextmanager
+    def start_stage_evaluation_span(
+        self,
+        stage_name: str,
+        attempt: int = 1,
+        attributes: dict[str, Any] | None = None,
+    ) -> Generator[Any]:
+        """Create child OpenTelemetry span demarcating candidate evaluation by LLM judge (ADR-037).
+
+        Chronologically positioned AFTER candidate generation to reflect true causal evaluation order.
+
+        Args:
+            stage_name: Identifier for the active pipeline stage.
+            attempt: 1-based candidate generation attempt.
+            attributes: Optional evaluation diagnostic attributes.
+
+        Yields:
+            The active child evaluation span.
+        """
+        span_name = f"cresmo.stage.{stage_name}.evaluation"
+        with self._tracer.start_as_current_span(span_name) as span:
+            span.set_attribute("langfuse.observation.type", "span")
+            span.set_attribute("judge.attempt", attempt)
+            span.set_attribute("judge.stage_name", stage_name)
+            if attributes:
+                for k, v in attributes.items():
+                    span.set_attribute(k, v)
             yield span
 
     def record_judge_evaluation(
@@ -486,6 +546,7 @@ class OpenTelemetryAdapter(TelemetryPort):
         value: float,
         comment: str | None = None,
         trace_id: str | None = None,
+        observation_id: str | None = None,
     ) -> None:
         """Record an arbitrary evaluation or clinical score to telemetry backend.
 
@@ -494,8 +555,15 @@ class OpenTelemetryAdapter(TelemetryPort):
             value: Score metric value.
             comment: Optional explanatory context or rubric details.
             trace_id: Optional trace ID to associate score with directly.
+            observation_id: Optional observation / span ID to bind score in-context.
         """
         current_span = trace.get_current_span()
+        resolved_observation_id = observation_id
+        if resolved_observation_id is None and current_span and current_span.is_recording():
+            span_ctx = current_span.get_span_context()
+            if span_ctx.is_valid:
+                resolved_observation_id = f"{span_ctx.span_id:016x}"
+
         if current_span and current_span.is_recording():
             score_attributes: dict[str, Any] = {
                 "score.name": name,
@@ -505,6 +573,8 @@ class OpenTelemetryAdapter(TelemetryPort):
                 score_attributes["score.comment"] = comment
             if trace_id:
                 score_attributes["score.trace_id"] = trace_id
+            if resolved_observation_id:
+                score_attributes["score.observation_id"] = resolved_observation_id
             current_span.add_event("telemetry_score", attributes=score_attributes)
 
         if self._langfuse is not None:
@@ -517,6 +587,8 @@ class OpenTelemetryAdapter(TelemetryPort):
                     score_arguments["comment"] = comment
                 if trace_id is not None:
                     score_arguments["trace_id"] = trace_id
+                if resolved_observation_id is not None:
+                    score_arguments["observation_id"] = resolved_observation_id
                 self._langfuse.score(**score_arguments)
             except Exception as exc:  # noqa: BLE001
                 logger.debug("[OpenTelemetryAdapter] Langfuse score emission skipped: %s", exc)
@@ -544,11 +616,48 @@ class OpenTelemetryAdapter(TelemetryPort):
             for key, val in output.items():
                 current_span.set_attribute(f"cresmo.output.{key}", str(val))
 
+    def record_stage_io(
+        self,
+        input_payload: dict[str, Any] | str | None = None,
+        output_payload: dict[str, Any] | str | None = None,
+    ) -> None:
+        """Record domain input and output summaries on the active stage span (ADR-037).
+
+        Args:
+            input_payload: Structured dict or text received by stage.
+            output_payload: Structured dict or text produced by stage.
+        """
+        current_span = trace.get_current_span()
+        if current_span and current_span.is_recording():
+            if input_payload is not None:
+                serialized_in = (
+                    json.dumps(input_payload) if isinstance(input_payload, dict) else input_payload
+                )
+                current_span.set_attribute("input.value", serialized_in)
+                current_span.set_attribute("langfuse.observation.input", serialized_in)
+            if output_payload is not None:
+                serialized_out = (
+                    json.dumps(output_payload)
+                    if isinstance(output_payload, dict)
+                    else output_payload
+                )
+                current_span.set_attribute("output.value", serialized_out)
+                current_span.set_attribute("langfuse.observation.output", serialized_out)
+
     def flush(self) -> None:
         """Flush in-memory OpenTelemetry spans and Langfuse client buffer queues."""
-        if self._langfuse is not None:
+        client = self._langfuse
+        if client is None:
             try:
-                self._langfuse.flush()
+                from langfuse import get_client
+
+                client = get_client()
+            except Exception:  # noqa: BLE001
+                client = None
+
+        if client is not None:
+            try:
+                client.flush()
             except Exception as exc:  # noqa: BLE001
                 logger.debug("[OpenTelemetryAdapter] Langfuse client flush skipped: %s", exc)
         try:

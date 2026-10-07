@@ -28,6 +28,7 @@ from cresmo.domain.exceptions import DomainValidationError
 from cresmo.infrastructure.adapters.opentelemetry_adapter import (
     NoOpTelemetryAdapter,
     OpenTelemetryAdapter,
+    annotate_llm_span,
 )
 
 
@@ -159,7 +160,9 @@ class TestOpenTelemetryAdapter:
         # Spans finish from inside out: raw_indexing, fluid_prose, then root pipeline
         raw_indexing_span = next(s for s in spans if s.name == "cresmo.stage.raw_indexing")
         fluid_prose_span = next(s for s in spans if s.name == "cresmo.stage.fluid_prose")
-        root_span = next(s for s in spans if s.name == "cresmo.pipeline.execution")
+        root_span = next(
+            s for s in spans if s.name in ("pipeline.coordinator", "cresmo.pipeline.execution")
+        )
 
         # Root span must have official Langfuse OTel attributes
         assert root_span.attributes is not None
@@ -182,25 +185,18 @@ class TestOpenTelemetryAdapter:
         assert "cresmo.metadata.content_id" not in root_span.attributes
         assert "cresmo.metadata.title" not in root_span.attributes
 
-        # Full symmetric Langfuse input keys (cognitive pair + algorithmic pair + URL)
-        assert root_span.attributes["langfuse.input.title"] == "Machiavelli and Modern State"
-        assert (
-            root_span.attributes["langfuse.input.content_title"] == "Machiavelli and Modern State"
-        )
-        assert root_span.attributes["langfuse.input.channel"] == "sandeco"
-        assert root_span.attributes["langfuse.input.channel_name"] == "sandeco"
-        assert root_span.attributes["langfuse.input.channel_id"] == "UC_Sandeco123"
-        assert root_span.attributes["langfuse.input.content_id"] == "vid_test_123"
-        assert root_span.attributes["langfuse.input.video_url"] == "https://youtube.com/watch?v=123"
-        assert json.loads(str(root_span.attributes["langfuse.input"])) == {
-            "title": "Machiavelli and Modern State",
+        # ADR-037 Lean canonical input payload (zero duplicate aliases)
+        input_payload_str = str(root_span.attributes.get("input.value"))
+        input_payload = json.loads(input_payload_str)
+        assert input_payload == {
             "content_title": "Machiavelli and Modern State",
-            "channel": "sandeco",
             "channel_name": "sandeco",
             "channel_id": "UC_Sandeco123",
             "content_id": "vid_test_123",
             "video_url": "https://youtube.com/watch?v=123",
         }
+        assert "channel" not in input_payload
+        assert "title" not in input_payload
 
         # Child spans share trace_id
         assert raw_indexing_span.context is not None
@@ -229,7 +225,9 @@ class TestOpenTelemetryAdapter:
             )
 
         root_span = next(
-            s for s in exporter.get_finished_spans() if s.name == "cresmo.pipeline.execution"
+            s
+            for s in exporter.get_finished_spans()
+            if s.name in ("pipeline.coordinator", "cresmo.pipeline.execution")
         )
         assert len(root_span.events) == 1
         event = root_span.events[0]
@@ -258,7 +256,9 @@ class TestOpenTelemetryAdapter:
             )
 
         root_span = next(
-            s for s in exporter.get_finished_spans() if s.name == "cresmo.pipeline.execution"
+            s
+            for s in exporter.get_finished_spans()
+            if s.name in ("pipeline.coordinator", "cresmo.pipeline.execution")
         )
         event = next(e for e in root_span.events if e.name == "session_coherence")
         assert event.attributes is not None
@@ -290,7 +290,9 @@ class TestOpenTelemetryAdapter:
             pass
 
         spans = exporter.get_finished_spans()
-        root_span = next(s for s in spans if s.name == "cresmo.pipeline.execution")
+        root_span = next(
+            s for s in spans if s.name in ("pipeline.coordinator", "cresmo.pipeline.execution")
+        )
         assert root_span.attributes is not None
         assert root_span.attributes["langfuse.session.id"] == "sandeco:vid_anon_01"
         assert root_span.attributes["langfuse.user.id"] == "anonymous"
@@ -318,7 +320,9 @@ class TestOpenTelemetryAdapter:
             pass
 
         spans = exporter.get_finished_spans()
-        root_span = next(s for s in spans if s.name == "cresmo.pipeline.execution")
+        root_span = next(
+            s for s in spans if s.name in ("pipeline.coordinator", "cresmo.pipeline.execution")
+        )
         assert root_span.attributes is not None
         assert root_span.attributes["langfuse.session.id"] == "sandeco:vid_auth_01"
         assert root_span.attributes["langfuse.user.id"] == "user:google:alice@corp.com"
@@ -347,7 +351,9 @@ class TestOpenTelemetryAdapter:
             pass
 
         spans = exporter.get_finished_spans()
-        root_span = next(s for s in spans if s.name == "cresmo.pipeline.execution")
+        root_span = next(
+            s for s in spans if s.name in ("pipeline.coordinator", "cresmo.pipeline.execution")
+        )
         assert root_span.attributes is not None
         assert root_span.attributes["langfuse.session.id"] == "sandeco:vid_worker_01"
         assert root_span.attributes["langfuse.user.id"] == "system:worker"
@@ -570,6 +576,30 @@ def test_opentelemetry_adapter_record_score() -> None:
     )
 
 
+def test_opentelemetry_adapter_record_score_with_explicit_observation_id() -> None:
+    """Verify record_score propagates explicit observation_id to Langfuse client (ADR-036)."""
+    from unittest.mock import MagicMock
+
+    mock_langfuse = MagicMock()
+    adapter = OpenTelemetryAdapter(langfuse_client=mock_langfuse)
+
+    adapter.record_score(
+        name="fluid_prose.semantic_faithfulness",
+        value=0.98,
+        comment="High factual alignment",
+        trace_id="trace_test_456",
+        observation_id="obs_span_789abc",
+    )
+
+    mock_langfuse.score.assert_called_once_with(
+        name="fluid_prose.semantic_faithfulness",
+        value=0.98,
+        comment="High factual alignment",
+        trace_id="trace_test_456",
+        observation_id="obs_span_789abc",
+    )
+
+
 def test_noop_telemetry_adapter_record_score_is_graceful_noop() -> None:
     """Verify NoOpTelemetryAdapter record_score executes gracefully without error."""
     adapter = NoOpTelemetryAdapter()
@@ -600,7 +630,9 @@ def test_universal_algorithmic_and_cognitive_parity_adr034() -> None:
         pass
 
     spans = exporter.get_finished_spans()
-    root_span = next(s for s in spans if s.name == "cresmo.pipeline.execution")
+    root_span = next(
+        s for s in spans if s.name in ("pipeline.coordinator", "cresmo.pipeline.execution")
+    )
     attrs = root_span.attributes or {}
 
     # Algorithmic Pair (ID - ID)
@@ -632,7 +664,9 @@ def test_start_pipeline_session_with_batch_id_adr035() -> None:
         pass
 
     spans = exporter.get_finished_spans()
-    root_span = next(s for s in spans if s.name == "cresmo.pipeline.execution")
+    root_span = next(
+        s for s in spans if s.name in ("pipeline.coordinator", "cresmo.pipeline.execution")
+    )
     attrs = root_span.attributes or {}
 
     assert attrs["cresmo.batch_id"] == batch_key
@@ -640,7 +674,7 @@ def test_start_pipeline_session_with_batch_id_adr035() -> None:
     assert isinstance(tags, (list, tuple))
     assert f"batch:{batch_key}" in tags
 
-    raw_input = attrs.get("langfuse.input")
+    raw_input = attrs.get("input.value") or attrs.get("langfuse.observation.input")
     assert isinstance(raw_input, str)
     input_payload = json.loads(raw_input)
     assert input_payload["batch_id"] == batch_key
@@ -669,23 +703,71 @@ def test_start_pipeline_session_sets_otel_observation_input_attributes() -> None
         pass
 
     spans = exporter.get_finished_spans()
-    root_span = next(s for s in spans if s.name == "cresmo.pipeline.execution")
+    root_span = next(
+        s for s in spans if s.name in ("pipeline.coordinator", "cresmo.pipeline.execution")
+    )
     attrs = root_span.attributes or {}
 
     expected_dict = {
-        "title": "Test Title",
         "content_title": "Test Title",
         "raw_characters": "1500",
         "raw_words": "250",
         "channel_id": "test_channel",
         "content_id": "test_content_101",
-        "channel": "test_channel",
         "channel_name": "test_channel",
     }
     assert json.loads(str(attrs["input.value"])) == expected_dict
     assert json.loads(str(attrs["langfuse.observation.input"])) == expected_dict
-    assert json.loads(str(attrs["langfuse.input"])) == expected_dict
     assert json.loads(str(attrs["langfuse.trace.input"])) == expected_dict
+    # Verify legacy alias bloat is eliminated (ADR-037)
+    assert "channel" not in expected_dict
+    assert "title" not in expected_dict
+
+
+def test_start_pipeline_session_propagates_trace_name_and_identity_metadata(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Regression: in-progress traces must render name + identity in the Langfuse table.
+
+    Langfuse v4 derives trace name/IO from the root observation, which is exported only
+    when the root span ends. Child generations flushed mid-pipeline must therefore carry
+    trace_name and identity metadata via propagate_attributes.
+    """
+    from unittest.mock import MagicMock
+
+    import cresmo.infrastructure.adapters.opentelemetry_adapter as otel_module
+
+    captured: dict[str, object] = {}
+
+    def fake_propagate(**kwargs: object) -> object:
+        captured.update(kwargs)
+        return MagicMock(__enter__=MagicMock(), __exit__=MagicMock(return_value=False))
+
+    monkeypatch.setattr(otel_module, "propagate_attributes", fake_propagate)
+
+    provider = TracerProvider()
+    adapter = OpenTelemetryAdapter(
+        tracer=provider.get_tracer("cresmo.test"), langfuse_client=MagicMock()
+    )
+    session_id = PipelineSessionId.create(channel="chan_id_1", content_id="content_42")
+    long_title = "T" * 500
+
+    with adapter.start_pipeline_session(
+        session_id=session_id,
+        user_id=UserIdentity.anonymous(),
+        metadata={"channel_name": "Marcelo Andrade", "title": long_title, "batch_id": "b1"},
+    ):
+        pass
+
+    assert captured["trace_name"] == "cresmo.synthesis_pipeline"
+    metadata = captured["metadata"]
+    assert isinstance(metadata, dict)
+    assert metadata["content_id"] == "content_42"
+    assert metadata["channel_id"] == "chan_id_1"
+    assert metadata["channel_name"] == "Marcelo Andrade"
+    assert metadata["batch_id"] == "b1"
+    # Langfuse rejects propagated metadata values longer than 200 characters.
+    assert len(metadata["content_title"]) <= 200
 
 
 def test_record_session_output_sets_otel_and_langfuse_output_attributes() -> None:
@@ -713,7 +795,9 @@ def test_record_session_output_sets_otel_and_langfuse_output_attributes() -> Non
         adapter.record_session_output(output_payload)
 
     spans = exporter.get_finished_spans()
-    root_span = next(s for s in spans if s.name == "cresmo.pipeline.execution")
+    root_span = next(
+        s for s in spans if s.name in ("pipeline.coordinator", "cresmo.pipeline.execution")
+    )
     attrs = root_span.attributes or {}
 
     expected_serialized = json.dumps(output_payload)
@@ -746,3 +830,151 @@ def test_cresmo_root_exports_only_package_metadata() -> None:
     assert not hasattr(cresmo, "PIPELINE_VERSION")
     assert cresmo.__all__ == ["__version__"]
 
+
+class TestAdr037LeanTelemetryAndEvaluationSpan:
+    """Unit tests for ADR-037 Lean Telemetry Topography and Chronological Evaluation Spans."""
+
+    def test_default_root_span_and_trace_separation(self) -> None:
+        """Verify default root span name is pipeline.coordinator and trace name is cresmo.synthesis_pipeline."""
+        exporter = InMemorySpanExporter()
+        provider = TracerProvider()
+        provider.add_span_processor(SimpleSpanProcessor(exporter))
+        tracer = provider.get_tracer("cresmo.test")
+        adapter = OpenTelemetryAdapter(tracer=tracer)
+
+        session_id = PipelineSessionId.create(channel="test_chan", content_id="test_cnt")
+        with adapter.start_pipeline_session(
+            session_id=session_id,
+            user_id="system:worker",
+            metadata={"channel_name": "Test Chan", "content_title": "Test Title"},
+        ):
+            pass
+
+        spans = exporter.get_finished_spans()
+        assert len(spans) == 1
+        root_span = spans[0]
+        attrs = root_span.attributes or {}
+        assert root_span.name == "pipeline.coordinator"
+        assert attrs.get("langfuse.trace.name") == "cresmo.synthesis_pipeline"
+
+    def test_lean_input_payload_has_no_duplicate_aliases(self) -> None:
+        """Verify input payload uses canonical keys only and removes redundant alias keys."""
+        exporter = InMemorySpanExporter()
+        provider = TracerProvider()
+        provider.add_span_processor(SimpleSpanProcessor(exporter))
+        tracer = provider.get_tracer("cresmo.test")
+        adapter = OpenTelemetryAdapter(tracer=tracer)
+
+        session_id = PipelineSessionId.create(channel="chan_id", content_id="cnt_id")
+        with adapter.start_pipeline_session(
+            session_id=session_id,
+            user_id="system:worker",
+            metadata={
+                "channel_id": "chan_id",
+                "channel_name": "Channel Alpha",
+                "content_id": "cnt_id",
+                "content_title": "Content Alpha",
+            },
+        ):
+            pass
+
+        spans = exporter.get_finished_spans()
+        root_span = spans[0]
+        attrs = root_span.attributes or {}
+
+        # Canonical input payload
+        input_raw = attrs.get("input.value")
+        assert isinstance(input_raw, str)
+        input_json = json.loads(input_raw)
+        assert "channel_name" in input_json
+        assert "content_title" in input_json
+        # Banned duplicate aliases (ADR-037)
+        assert "channel" not in input_json
+        assert "title" not in input_json
+        assert "langfuse.input.channel" not in attrs
+        assert "langfuse.input.title" not in attrs
+
+    def test_start_stage_evaluation_span_creates_child_span(self) -> None:
+        """Verify start_stage_evaluation_span creates a dedicated child span under stage span."""
+        exporter = InMemorySpanExporter()
+        provider = TracerProvider()
+        provider.add_span_processor(SimpleSpanProcessor(exporter))
+        tracer = provider.get_tracer("cresmo.test")
+        adapter = OpenTelemetryAdapter(tracer=tracer)
+
+        with (
+            adapter.start_stage_span("fluid_prose"),
+            adapter.start_stage_evaluation_span(
+                "fluid_prose",
+                attempt=2,
+                attributes={"judge.verdict": "PASS"},
+            ) as eval_span,
+        ):
+            assert eval_span is not None
+
+        spans = exporter.get_finished_spans()
+        assert len(spans) == 2
+        eval_span_data = next(s for s in spans if s.name == "cresmo.stage.fluid_prose.evaluation")
+        stage_span_data = next(s for s in spans if s.name == "cresmo.stage.fluid_prose")
+
+        # Verify hierarchy
+        assert eval_span_data.parent is not None
+        assert stage_span_data.context is not None
+        assert eval_span_data.parent.span_id == stage_span_data.context.span_id
+
+        eval_attrs = eval_span_data.attributes or {}
+        assert eval_attrs.get("judge.attempt") == 2
+        assert eval_attrs.get("judge.stage_name") == "fluid_prose"
+        assert eval_attrs.get("judge.verdict") == "PASS"
+        assert eval_attrs.get("langfuse.observation.type") == "span"
+
+    def test_record_stage_io_populates_active_span(self) -> None:
+        """Verify record_stage_io sets input and output payloads on the active stage span."""
+        exporter = InMemorySpanExporter()
+        provider = TracerProvider()
+        provider.add_span_processor(SimpleSpanProcessor(exporter))
+        tracer = provider.get_tracer("cresmo.test")
+        adapter = OpenTelemetryAdapter(tracer=tracer)
+
+        with adapter.start_stage_span("fluid_prose"):
+            adapter.record_stage_io(
+                input_payload={"source_words": 1500, "source_type": "transcript"},
+                output_payload={"synthesized_words": 850, "status": "APPROVED"},
+            )
+
+        spans = exporter.get_finished_spans()
+        stage_span = spans[0]
+        attrs = stage_span.attributes or {}
+
+        input_raw = attrs.get("input.value")
+        assert isinstance(input_raw, str)
+        input_data = json.loads(input_raw)
+        assert input_data["source_words"] == 1500
+
+        output_raw = attrs.get("output.value")
+        assert isinstance(output_raw, str)
+        output_data = json.loads(output_raw)
+        assert output_data["synthesized_words"] == 850
+
+    def test_annotate_llm_span_records_temperature_and_max_tokens(self) -> None:
+        """Verify annotate_llm_span populates gen_ai.request.temperature and gen_ai.request.max_tokens."""
+        exporter = InMemorySpanExporter()
+        provider = TracerProvider()
+        provider.add_span_processor(SimpleSpanProcessor(exporter))
+        tracer = provider.get_tracer("cresmo.test")
+
+        with tracer.start_as_current_span("test.llm"):
+            annotate_llm_span(
+                system="google",
+                model="gemini-2.5-flash",
+                prompt_tokens=100,
+                candidate_tokens=50,
+                temperature=0.7,
+                max_tokens=8192,
+            )
+
+        spans = exporter.get_finished_spans()
+        span = spans[0]
+        attrs = span.attributes or {}
+        assert attrs.get("gen_ai.request.temperature") == 0.7
+        assert attrs.get("gen_ai.request.max_tokens") == 8192

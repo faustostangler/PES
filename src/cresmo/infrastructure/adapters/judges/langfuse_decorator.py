@@ -45,12 +45,22 @@ class LangfuseJudgeDecorator(LlmJudgePort):
             for score in evaluation.criteria_scores:
                 try:
                     if score_fn is not None:
-                        score_fn(
-                            trace_id=effective_trace_id,
-                            name=score.criterion.value,
-                            value=float(score.score),
-                            comment=score.reasoning,
+                        # Clean Telemetry (ADR-036): Stage-namespaced metric + observation_id binding
+                        score_name = (
+                            f"{context.stage_name}.{score.criterion.value}"
+                            if context.stage_name
+                            else score.criterion.value
                         )
+                        score_kwargs: dict[str, Any] = {
+                            "trace_id": effective_trace_id,
+                            "name": score_name,
+                            "value": float(score.score),
+                            "comment": score.reasoning,
+                        }
+                        if context.observation_id:
+                            score_kwargs["observation_id"] = context.observation_id
+
+                        score_fn(**score_kwargs)
                 except Exception as exc:  # noqa: BLE001 - Observability and telemetry errors must never crash pipeline execution
                     logger.warning(
                         "Failed to emit Langfuse score for criterion '%s': %s",

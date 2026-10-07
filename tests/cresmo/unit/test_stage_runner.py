@@ -11,16 +11,21 @@ from unittest.mock import MagicMock
 
 import pytest
 
+from cresmo.application.pipeline.context import PipelineExecutionContext
+from cresmo.application.pipeline.stage_descriptor import StageConfig
 from cresmo.application.pipeline.stage_runner import PipelineStageRunner
-from cresmo.application.ports import NoOpMetricsPort, NoOpTelemetryPort
+from cresmo.application.ports import NoOpMetricsPort, NoOpTelemetryPort, TelemetryPort
+from cresmo.domain.entities import PipelineSessionId, UserIdentity
 from cresmo.domain.exceptions import DomainValidationError
 from cresmo.domain.value_objects import (
+    CandidateText,
     Channel,
     ChannelName,
     Content,
     ContentId,
     JudgeCriterion,
     JudgeEvaluation,
+    PromptKey,
     StageEvaluationSpec,
 )
 
@@ -395,3 +400,111 @@ class TestPipelineStageRunnerEvaluatedStage:
 
         assert result == "lazy_fallback_value"
         mock_fallback_supplier.assert_called_once()
+
+    def test_evaluate_candidate_binds_active_observation_id_adr036(self) -> None:
+        """Verify _evaluate_candidate populates EvaluationContext.observation_id from active OTel span (ADR-036)."""
+        from opentelemetry.sdk.trace import TracerProvider
+
+        from cresmo.application.pipeline.context import PipelineExecutionContext
+        from cresmo.application.pipeline.stage_descriptor import StageConfig
+        from cresmo.domain.entities import PipelineSessionId, UserIdentity
+        from cresmo.domain.value_objects import CandidateText, PromptKey
+
+        provider = TracerProvider()
+        tracer = provider.get_tracer("test_tracer")
+
+        mock_judge = MagicMock()
+        mock_eval = MagicMock(spec=JudgeEvaluation)
+        mock_eval.passed = True
+        mock_judge.evaluate.return_value = mock_eval
+
+        runner = PipelineStageRunner(
+            telemetry_port=NoOpTelemetryPort(),
+            metrics_port=NoOpMetricsPort(),
+            llm_judge=mock_judge,
+        )
+
+        stage_config = StageConfig(
+            stage_name="fluid_prose",
+            transform_prompt_key=PromptKey.FLUID_PROSE,
+            eval_spec=StageEvaluationSpec(
+                raw_text="source text",
+                candidate_extractor=lambda res: res.text,
+                required_criteria=(JudgeCriterion.ORALITY_REMOVAL,),
+            ),
+        )
+
+        context = PipelineExecutionContext(
+            session_id=PipelineSessionId.create(channel="test_chan", content_id="test_vid"),
+            user_identity=UserIdentity.anonymous(),
+            channel=Channel(name="TestChan"),
+            content=Content(id=ContentId("test_vid")),
+        )
+
+        candidate = CandidateText(text="candidate prose", stage_name="fluid_prose")
+
+        with tracer.start_as_current_span("cresmo.stage.fluid_prose"):
+            result = runner._evaluate_candidate(
+                stage_config,
+                source="source text",
+                candidate=candidate,
+                context=context,
+                attempt=1,
+            )
+
+        assert result is mock_eval
+        mock_judge.evaluate.assert_called_once()
+        passed_eval_context = mock_judge.evaluate.call_args[0][0]
+        # In ADR-036 it was stage span; in ADR-037 it binds to active evaluation span (or stage fallback)
+        assert passed_eval_context.stage_name == "fluid_prose"
+        assert passed_eval_context.observation_id is not None
+
+    def test_evaluate_candidate_opens_chronological_evaluation_span(self) -> None:
+        """Verify _evaluate_candidate calls start_stage_evaluation_span on TelemetryPort (ADR-037)."""
+        mock_telemetry = MagicMock(spec=TelemetryPort)
+        mock_judge = MagicMock()
+        mock_eval = MagicMock(spec=JudgeEvaluation)
+        mock_eval.passed = True
+        mock_eval.overall_score = 0.95
+        mock_judge.evaluate.return_value = mock_eval
+
+        runner = PipelineStageRunner(
+            telemetry_port=mock_telemetry,
+            metrics_port=NoOpMetricsPort(),
+            llm_judge=mock_judge,
+        )
+
+        stage_config = StageConfig(
+            stage_name="fluid_prose",
+            transform_prompt_key=PromptKey.FLUID_PROSE,
+            eval_spec=StageEvaluationSpec(
+                raw_text="source text",
+                candidate_extractor=lambda res: res.text,
+                required_criteria=(JudgeCriterion.ORALITY_REMOVAL,),
+            ),
+        )
+
+        context = PipelineExecutionContext(
+            session_id=PipelineSessionId.create(channel="test_chan", content_id="test_vid"),
+            user_identity=UserIdentity.anonymous(),
+            channel=Channel(name="TestChan"),
+            content=Content(id=ContentId("test_vid")),
+        )
+        candidate = CandidateText(text="candidate prose", stage_name="fluid_prose")
+
+        runner._evaluate_candidate(
+            stage_config,
+            source="source text",
+            candidate=candidate,
+            context=context,
+            attempt=1,
+        )
+
+        mock_telemetry.start_stage_evaluation_span.assert_called_once_with(
+            stage_name="fluid_prose",
+            attempt=1,
+            attributes={
+                "judge.stage_name": "fluid_prose",
+                "judge.attempt": 1,
+            },
+        )

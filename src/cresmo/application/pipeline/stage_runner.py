@@ -8,11 +8,12 @@ Conforms to:
 
 from __future__ import annotations
 
+import json
 import logging
 import time
 from collections.abc import Callable, Generator, Sequence
 from contextlib import contextmanager
-from typing import TYPE_CHECKING, TypeVar
+from typing import TYPE_CHECKING, Any, TypeVar
 
 from opentelemetry import trace
 
@@ -148,6 +149,7 @@ class PipelineStageRunner:
         channel_name_val = context.channel.name
         content_title_val = context.content.title
 
+        # Trace level 2 span (stage): cresmo.stage.fluid_prose, cresmo.stage.transcript_indexing, etc.
         with self._measure_stage(
             stage_name=stage_name,
             channel_id=channel_id_val,
@@ -155,6 +157,21 @@ class PipelineStageRunner:
             channel_name=channel_name_val,
             content_title=content_title_val,
         ):
+            # ADR-037: Record stage input payload summary
+            source_text = (
+                stage_config.eval_spec.extract_source_text(source)
+                if stage_config.eval_spec
+                else (getattr(source, "body", None) or getattr(source, "text", None) or str(source))
+            )
+            self.telemetry_port.record_stage_io(
+                input_payload={
+                    "stage_name": stage_name,
+                    "source_type": type(source).__name__,
+                    "source_characters": len(source_text) if isinstance(source_text, str) else 0,
+                    "source_words": len(source_text.split()) if isinstance(source_text, str) else 0,
+                }
+            )
+
             for attempt in range(1, effective_max_attempts + 1):
                 candidate = self._generate_candidate(
                     stage_config,
@@ -165,6 +182,7 @@ class PipelineStageRunner:
                     attempt=attempt,
                     critique=critique,
                 )
+                self.telemetry_port.flush()
 
                 evaluation = self._evaluate_candidate(
                     stage_config,
@@ -173,6 +191,7 @@ class PipelineStageRunner:
                     context=context,
                     attempt=attempt,
                 )
+                self.telemetry_port.flush()
 
                 if evaluation is None or evaluation.passed:
                     break
@@ -213,7 +232,23 @@ class PipelineStageRunner:
             if candidate is None:
                 raise DomainValidationError(f"Stage '{stage_name}' produced no candidate text.")
 
-            return stage_config.post_process(candidate, source)
+            output_obj = stage_config.post_process(candidate, source)
+            output_text = (
+                getattr(output_obj, "body", None)
+                or getattr(output_obj, "text", None)
+                or candidate.text
+            )
+            self.telemetry_port.record_stage_io(
+                output_payload={
+                    "status": "APPROVED"
+                    if (evaluation is None or evaluation.passed)
+                    else "COMPLETED_UNBLOCKING",
+                    "output_characters": len(output_text) if isinstance(output_text, str) else 0,
+                    "output_words": len(output_text.split()) if isinstance(output_text, str) else 0,
+                    "attempts": attempt if "attempt" in locals() else 1,
+                }
+            )
+            return output_obj
 
     def _generate_candidate(
         self,
@@ -293,29 +328,86 @@ class PipelineStageRunner:
             channel_name=channel_name_val,
         )
 
-        eval_context = EvaluationContext(
+        with self.telemetry_port.start_stage_evaluation_span(
             stage_name=stage_config.stage_name,
-            raw_text=stage_config.eval_spec.extract_source_text(source),
-            candidate_text=(
-                stage_config.eval_spec.candidate_extractor(candidate)
-                if stage_config.eval_spec.candidate_extractor
-                else candidate.text
-            ),
-            metadata={
-                "channel_id": channel_id_val,
-                "content_id": content_id_val,
-                "channel_name": channel_name_val,
-                "content_title": content_title_val,
-                "attempt": attempt,
-                **stage_config.eval_spec.metadata,
+            attempt=attempt,
+            attributes={
+                "judge.stage_name": stage_config.stage_name,
+                "judge.attempt": attempt,
             },
-            trace_id=active_trace_id,
-            required_criteria=stage_config.eval_spec.required_criteria,
-        )
+        ):
+            current_span = trace.get_current_span()
+            active_observation_id: str | None = None
+            if current_span and current_span.is_recording():
+                span_ctx = current_span.get_span_context()
+                if span_ctx.is_valid:
+                    active_observation_id = f"{span_ctx.span_id:016x}"
 
-        evaluation = self.llm_judge.evaluate(eval_context)
-        self._record_evaluation_metrics(stage_config.stage_name, evaluation.passed, attempt)
-        return evaluation
+            eval_context = EvaluationContext(
+                stage_name=stage_config.stage_name,
+                raw_text=stage_config.eval_spec.extract_source_text(source),
+                candidate_text=(
+                    stage_config.eval_spec.candidate_extractor(candidate)
+                    if stage_config.eval_spec.candidate_extractor
+                    else candidate.text
+                ),
+                metadata={
+                    "channel_id": channel_id_val,
+                    "content_id": content_id_val,
+                    "channel_name": channel_name_val,
+                    "content_title": content_title_val,
+                    "attempt": attempt,
+                    **stage_config.eval_spec.metadata,
+                },
+                trace_id=active_trace_id,
+                required_criteria=stage_config.eval_spec.required_criteria,
+                observation_id=active_observation_id,
+            )
+
+            evaluation = self.llm_judge.evaluate(eval_context)
+            self._record_evaluation_metrics(stage_config.stage_name, evaluation.passed, attempt)
+
+            if current_span and current_span.is_recording() and evaluation is not None:
+                passed_val = evaluation.passed
+                verdict_val = "PASS" if passed_val else "NEEDS_REWRITE"
+                current_span.set_attribute("judge.verdict", verdict_val)
+                score_val = (
+                    float(evaluation.overall_score)
+                    if isinstance(evaluation.overall_score, (int, float))
+                    else str(evaluation.overall_score)
+                )
+                if isinstance(score_val, float):
+                    current_span.set_attribute("judge.overall_score", score_val)
+
+                scores_dict: dict[str, float | str] = {}
+                reasons_dict: dict[str, str] = {}
+                suggestions_dict: dict[str, str] = {}
+                for c in getattr(evaluation, "criteria_scores", ()):
+                    crit_key = str(getattr(c.criterion, "value", c.criterion))
+                    crit_score = (
+                        float(c.score) if isinstance(c.score, (int, float)) else str(c.score)
+                    )
+                    scores_dict[crit_key] = crit_score
+                    if getattr(c, "reasoning", ""):
+                        reasons_dict[crit_key] = str(c.reasoning)
+                    if getattr(c, "improvement_suggestion", ""):
+                        suggestions_dict[crit_key] = str(c.improvement_suggestion)
+
+                eval_output: dict[str, Any] = {
+                    "verdict": verdict_val,
+                    "overall_score": score_val,
+                    "scores": scores_dict,
+                }
+                if reasons_dict:
+                    eval_output["reasons"] = reasons_dict
+                if suggestions_dict:
+                    eval_output["suggestions"] = suggestions_dict
+
+                serialized_eval_out = json.dumps(eval_output)
+                current_span.set_attribute("output.value", serialized_eval_out)
+                current_span.set_attribute("langfuse.observation.output", serialized_eval_out)
+
+            return evaluation
 
     def run_evaluated_stage(
         self,
@@ -515,11 +607,17 @@ class PipelineStageRunner:
             "channel.name": channel_name,
             "content.title": content_title,
         }
+        # Trace level 2 (stage): cresmo.stage.fluid_prose, cresmo.stage.transcript_indexing, etc.
         with self.telemetry_port.start_stage_span(stage_name, attributes=stage_attributes):
             try:
                 yield
             except Exception as exc:
                 status = "failure"
+                current_span = trace.get_current_span()
+                if current_span and current_span.is_recording():
+                    current_span.record_exception(exc)
+                    current_span.set_status(trace.StatusCode.ERROR, str(exc))
+                    current_span.set_attribute("langfuse.observation.level", "ERROR")
                 self._record_error_metric(
                     exc=exc,
                     stage_name=stage_name,

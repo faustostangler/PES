@@ -8,22 +8,25 @@ export PATH="/app/.venv/bin:$PATH"
 export DATA_DIR="${DATA_DIR:-/app/data}"
 export VAULT_DIR="${VAULT_DIR:-/app/vault}"
 
-# If first argument matches a known cresmo CLI subcommand or option flag, run cresmo
+ROLE="${ROLE:-cli}"
+
+# If first argument matches a known cresmo CLI subcommand or option flag, run cresmo.
+# When a specialized ROLE (e.g. worker, api) is set, ignore default Dockerfile CMD "check-config".
 if [ "$#" -gt 0 ]; then
-    case "$1" in
-        check-config|run|sync|worker|dedupe|export-cookies|concat-master|seed-prompts|--help|-h|--version|-v)
-            exec cresmo "$@"
-            ;;
-        cresmo)
-            shift
-            exec cresmo "$@"
-            ;;
-    esac
+    if [ "$1" != "check-config" ] || [ "$ROLE" = "cli" ]; then
+        case "$1" in
+            check-config|run|sync|worker|dedupe|export-cookies|concat-master|seed-prompts|--help|-h|--version|-v)
+                exec cresmo "$@"
+                ;;
+            cresmo)
+                shift
+                exec cresmo "$@"
+                ;;
+        esac
+    fi
 fi
 
 # Route execution according to ROLE environment variable
-ROLE="${ROLE:-cli}"
-
 case "$ROLE" in
     cli)
         if [ "$#" -eq 0 ]; then
@@ -34,7 +37,7 @@ case "$ROLE" in
         ;;
     worker)
         echo "[Cresmo 12-Factor Container] Starting worker daemon..."
-        exec cresmo sync --all
+        exec cresmo sync
         ;;
     api)
         echo "[Cresmo 12-Factor Container] Starting API server on port ${PORT:-8000}..."
@@ -44,3 +47,4 @@ case "$ROLE" in
         exec "$@"
         ;;
 esac
+

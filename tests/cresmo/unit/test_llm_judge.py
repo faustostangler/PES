@@ -420,15 +420,49 @@ class TestLangfuseJudgeDecorator:
         assert mock_langfuse.create_score.call_count == 2
         mock_langfuse.create_score.assert_any_call(
             trace_id="tr-test-777",
-            name="orality_removal",
+            name="fluid_prose.orality_removal",
             value=0.95,
             comment="Clean",
         )
         mock_langfuse.create_score.assert_any_call(
             trace_id="tr-test-777",
-            name="semantic_faithfulness",
+            name="fluid_prose.semantic_faithfulness",
             value=0.88,
             comment="Faithful",
+        )
+
+    def test_emits_scores_with_observation_id_binding(self) -> None:
+        mock_judge = MagicMock()
+        mock_langfuse = MagicMock()
+
+        s1 = CriterionScore(JudgeCriterion.NER_PRESERVATION, 0.99, True, reasoning="Preserved")
+        mock_eval = JudgeEvaluation(
+            target_stage="fluid_prose",
+            passed=True,
+            overall_score=0.99,
+            criteria_scores=(s1,),
+            provider="gemini",
+            trace_id="tr-test-999",
+        )
+        mock_judge.evaluate.return_value = mock_eval
+
+        decorator = LangfuseJudgeDecorator(inner_judge=mock_judge, langfuse_client=mock_langfuse)
+        context = EvaluationContext(
+            stage_name="fluid_prose",
+            raw_text="r",
+            candidate_text="c",
+            trace_id="tr-test-999",
+            observation_id="obs_span_abc123",
+        )
+
+        result = decorator.evaluate(context)
+        assert result == mock_eval
+        mock_langfuse.create_score.assert_called_once_with(
+            trace_id="tr-test-999",
+            name="fluid_prose.ner_preservation",
+            value=0.99,
+            comment="Preserved",
+            observation_id="obs_span_abc123",
         )
 
     def test_safe_bypass_when_langfuse_client_is_none(self) -> None:

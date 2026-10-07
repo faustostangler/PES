@@ -143,7 +143,6 @@ class GeminiLLMAdapter(LLMTransformationPort):
         else:
             self._client = genai.Client(api_key=api_key)
 
-    @observe(as_type="generation")
     def transform(
         self,
         prompt: ChatPrompt,
@@ -153,7 +152,7 @@ class GeminiLLMAdapter(LLMTransformationPort):
         session_id: str | None = None,
         user_id: str | None = None,
     ) -> str:
-        """Execute text transformation contract with full Langfuse observability span.
+        """Execute text transformation contract with immediate Langfuse telemetry synchronization.
 
         Args:
             prompt: Domain ChatPrompt containing sequential messages and optional system instruction.
@@ -165,6 +164,43 @@ class GeminiLLMAdapter(LLMTransformationPort):
         Returns:
             Generated response text.
         """
+        response_text = self._execute_transform(
+            prompt=prompt,
+            temperature=temperature,
+            trace_id=trace_id,
+            session_id=session_id,
+            user_id=user_id,
+        )
+
+        client = self._langfuse
+        if client is None:
+            try:
+                from langfuse import get_client
+
+                client = get_client()
+            except Exception:  # noqa: BLE001
+                client = None
+
+        if client is not None:
+            try:
+                client.flush()
+            except Exception as exc:  # noqa: BLE001
+                logger.debug("[GeminiLLMAdapter] Langfuse flush skipped: %s", exc)
+
+        return response_text
+
+    # Trace level 3: cresmo.llm.generate
+    @observe(name="cresmo.llm.generate", as_type="generation")
+    def _execute_transform(
+        self,
+        prompt: ChatPrompt,
+        temperature: float | None = None,
+        *,
+        trace_id: str | None = None,
+        session_id: str | None = None,
+        user_id: str | None = None,
+    ) -> str:
+        """Internal worker executing model generation within an active Langfuse generation observation."""
         effective_temperature = self.default_temperature if temperature is None else temperature
         config = types.GenerateContentConfig(
             temperature=effective_temperature,
@@ -223,6 +259,7 @@ class GeminiLLMAdapter(LLMTransformationPort):
             user_id=user_id,
             trace_id=trace_id,
             temperature=effective_temperature,
+            max_tokens=self.max_output_tokens,
         )
 
         return response_text

@@ -67,6 +67,27 @@ class TelemetryPort(ABC):
         raise NotImplementedError
 
     @abstractmethod
+    def start_stage_evaluation_span(
+        self,
+        stage_name: str,
+        attempt: int = 1,
+        attributes: dict[str, Any] | None = None,
+    ) -> AbstractContextManager[Any]:
+        """Create child OpenTelemetry span demarcating candidate evaluation by LLM judge (ADR-037).
+
+        Chronologically positioned AFTER candidate generation to reflect true causal evaluation order.
+
+        Args:
+            stage_name: Identifier for the active pipeline stage.
+            attempt: 1-based candidate generation attempt.
+            attributes: Optional evaluation diagnostic attributes.
+
+        Returns:
+            ContextManager managing the child evaluation span.
+        """
+        raise NotImplementedError
+
+    @abstractmethod
     def record_judge_evaluation(
         self,
         session_id: PipelineSessionId,
@@ -111,6 +132,7 @@ class TelemetryPort(ABC):
         value: float,
         comment: str | None = None,
         trace_id: str | None = None,
+        observation_id: str | None = None,
     ) -> None:
         """Record an arbitrary evaluation or clinical score to telemetry backend.
 
@@ -119,6 +141,7 @@ class TelemetryPort(ABC):
             value: Score metric value.
             comment: Optional explanatory context or rubric details.
             trace_id: Optional trace ID to associate score with directly.
+            observation_id: Optional observation / span ID to bind score in-context.
         """
         raise NotImplementedError
 
@@ -130,6 +153,22 @@ class TelemetryPort(ABC):
 
         Args:
             output: Structured dictionary representing high-signal execution results.
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def record_stage_io(
+        self,
+        input_payload: dict[str, Any] | str | None = None,
+        output_payload: dict[str, Any] | str | None = None,
+    ) -> None:
+        """Record domain input and output summaries on the active stage span (ADR-037).
+
+        Populates Langfuse stage inspection panels (Input/Output tabs).
+
+        Args:
+            input_payload: Structured dict or text received by stage.
+            output_payload: Structured dict or text produced by stage.
         """
         raise NotImplementedError
 
@@ -167,6 +206,17 @@ class NoOpTelemetryPort(TelemetryPort):
         _ = (stage_name, attributes)
         yield None
 
+    @contextmanager
+    def start_stage_evaluation_span(
+        self,
+        stage_name: str,
+        attempt: int = 1,
+        attributes: dict[str, Any] | None = None,
+    ) -> Generator[Any]:
+        """No-op stage evaluation span context manager."""
+        _ = (stage_name, attempt, attributes)
+        yield None
+
     def record_judge_evaluation(
         self,
         session_id: PipelineSessionId,
@@ -192,11 +242,19 @@ class NoOpTelemetryPort(TelemetryPort):
         value: float,
         comment: str | None = None,
         trace_id: str | None = None,
+        observation_id: str | None = None,
     ) -> None:
         """No-op score recorder."""
 
     def record_session_output(self, output: dict[str, Any]) -> None:
         """No-op session output recorder."""
+
+    def record_stage_io(
+        self,
+        input_payload: dict[str, Any] | str | None = None,
+        output_payload: dict[str, Any] | str | None = None,
+    ) -> None:
+        """No-op stage I/O recorder."""
 
     def flush(self) -> None:
         """No-op flush."""
