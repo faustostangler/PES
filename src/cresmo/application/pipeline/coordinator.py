@@ -271,8 +271,11 @@ class CresmoPipeline:
             self.telemetry_port.record_session_output(
                 {
                     "status": "COMPLETED",
+                    "stage": "fluid_prose",
                     "stages_completed": ["fluid_prose"],
                     "content_title": getattr(fluid, "title", content.title),
+                    "word_count": synthesized_word_count,
+                    "char_count": len(fluid_text),
                     "source_words": raw_word_count,
                     "synthesized_words": synthesized_word_count,
                     "expansion_ratio": expansion_ratio,

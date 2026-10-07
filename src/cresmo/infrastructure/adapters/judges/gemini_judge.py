@@ -93,6 +93,7 @@ class GeminiJudgeAdapter(LlmJudgePort):
                 temperature=0.0,
                 system_instruction=chat_prompt.system_instruction,
                 response_mime_type="application/json",
+                automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=True),
             )
             contents = [
                 types.Content(

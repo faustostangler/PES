@@ -94,6 +94,8 @@ def configure_logging(level: str = "WARNING", fmt: str = "json") -> None:
                 "httpcore": {"level": "WARNING"},
                 "opentelemetry": {"level": "WARNING"},
                 "urllib3": {"level": "WARNING"},
+                "google_genai": {"level": "ERROR"},
+                "google_genai.models": {"level": "ERROR"},
             },
         }
     )
