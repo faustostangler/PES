@@ -354,7 +354,8 @@ def _extract_channel_candidates(raw: str) -> list[str]:
     """Extract candidate channel handles, slugs, and normalized tokens from URL or raw text."""
     candidates: list[str] = [raw]
     if "/@" in raw:
-        slug = raw.split("/@", 1)[1].split("/", 1)[0].split("?", 1)[0].strip()
+        _, _, after_at = raw.partition("/@")
+        slug = after_at.partition("/")[0].partition("?")[0].strip()
         if slug:
             candidates.extend([f"@{slug}", slug])
     elif raw.startswith("@"):
@@ -362,14 +363,12 @@ def _extract_channel_candidates(raw: str) -> list[str]:
         if slug:
             candidates.append(slug)
     elif "/" in raw:
-        parts = [part for part in raw.split("/") if part]
+        base_raw = raw.partition("?")[0]
+        parts = [part for part in base_raw.split("/") if part]
         if parts:
-            slug = parts[-1].split("?", 1)[0].strip()
+            slug = parts[-1].strip()
             if slug:
-                if slug.startswith("@"):
-                    candidates.extend([slug, slug[1:]])
-                else:
-                    candidates.append(slug)
+                candidates.append(slug)
     return candidates
 
 

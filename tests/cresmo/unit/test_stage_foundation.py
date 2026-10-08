@@ -40,7 +40,7 @@ class TestSourceTranscript:
             publication_date=pub,
         )
         assert transcript.content.id == cid
-        assert transcript.channel.channel_name == ChannelName("Test Channel")
+        assert transcript.channel.name == "Test Channel"
         assert transcript.content.body == "Continuous raw or source transcript text."
         assert transcript.content.title == "Introduction to Socio-Technical Systems"
         assert transcript.provenance.publication_date == pub
@@ -52,9 +52,9 @@ class TestSourceTranscript:
             body="Sample body content",
             channel_id="UC1234567890123456789012",
         )
-        assert isinstance(transcript.channel.channel_name, ChannelName)
-        assert transcript.channel.channel_name.value == "Raw Channel String"
-        assert isinstance(transcript.channel.channel_id, ChannelId)
+        assert transcript.channel.name == "Raw Channel String"
+        assert isinstance(transcript.channel.id, ChannelId)
+        assert transcript.channel.id == ChannelId("UC1234567890123456789012")
 
     def test_source_transcript_empty_body_raises(self) -> None:
         with pytest.raises(DomainValidationError, match="body cannot be empty"):

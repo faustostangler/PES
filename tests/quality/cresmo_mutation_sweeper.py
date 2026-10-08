@@ -32,6 +32,7 @@ import subprocess
 import sys
 from collections.abc import Sequence
 from pathlib import Path
+from typing import Any
 
 # Mapping of source modules/patterns to their mirrored unit test suites
 MODULE_TEST_MAP: dict[str, list[str]] = {
@@ -52,6 +53,7 @@ MODULE_TEST_MAP: dict[str, list[str]] = {
     "src/cresmo/domain/value_objects/identity.py": [
         "tests/cresmo/unit/test_value_objects.py",
         "tests/cresmo/unit/test_batch_id.py",
+        "tests/cresmo/unit/test_channel_sync_vo.py",
     ],
     "src/cresmo/domain/value_objects/sync.py": [
         "tests/cresmo/unit/test_channel_sync_vo.py",
@@ -62,18 +64,23 @@ MODULE_TEST_MAP: dict[str, list[str]] = {
         "tests/cresmo/unit/test_value_objects.py",
     ],
     "src/cresmo/domain/value_objects/media.py": [
+        "tests/cresmo/unit/test_channel_sync_vo.py",
         "tests/cresmo/unit/test_value_objects.py",
     ],
     "src/cresmo/domain/value_objects/ledger.py": [
+        "tests/cresmo/unit/test_channel_sync_vo.py",
+        "tests/cresmo/unit/test_raw_index_entry_vo.py",
         "tests/cresmo/unit/test_value_objects.py",
     ],
     "src/cresmo/domain/value_objects/notes.py": [
         "tests/cresmo/unit/test_value_objects.py",
     ],
     "src/cresmo/domain/value_objects/quality.py": [
+        "tests/cresmo/unit/test_quality_vo.py",
         "tests/cresmo/unit/test_value_objects.py",
     ],
     "src/cresmo/domain/value_objects/constants.py": [
+        "tests/cresmo/unit/test_domain_constants.py",
         "tests/cresmo/unit/test_value_objects.py",
     ],
     "src/cresmo/domain/stage_registry.py": [
@@ -104,10 +111,12 @@ MODULE_TEST_MAP: dict[str, list[str]] = {
         "tests/cresmo/unit/test_pipeline_telemetry.py",
     ],
     "src/cresmo/application/pipeline/context.py": [
+        "tests/cresmo/unit/test_pipeline_execution_context.py",
         "tests/cresmo/unit/test_stage_foundation.py",
         "tests/cresmo/unit/test_stage_runner.py",
     ],
     "src/cresmo/application/pipeline/models.py": [
+        "tests/cresmo/unit/test_pipeline_models.py",
         "tests/cresmo/unit/test_stage_foundation.py",
     ],
     # Wave 3: Application Use Cases
@@ -292,41 +301,38 @@ def collect_pytest_nodes(test_files: Sequence[str]) -> list[str]:
 
 
 def extract_function_keys(source_path: Path) -> list[str]:
-    """Parse python source file and return mutmut mangled function keys."""
+    """Parse python source file and return exact mutmut mangled function keys."""
+    keys: list[str] = []
+    # 1. Extract directly via AST using mutmut's canonical format_utils
     try:
+        from mutmut.utils.format_utils import get_mutant_name, make_mutant_key
         content = source_path.read_text(encoding="utf-8")
         tree = ast.parse(content)
-    except Exception:
-        return []
-
-    # Construct module dot path (e.g. cresmo.domain.entities.identity)
-    parts = list(source_path.parts)
-    if parts[0] == "src":
-        parts = parts[1:]
-    if parts[-1].endswith(".py"):
-        parts[-1] = parts[-1][:-3]
-    module_dot = ".".join(parts)
-
-    keys: list[str] = []
-
-    def _walk(node: ast.AST, prefix: str = "") -> None:
-        for child in ast.iter_child_nodes(node):
-            if isinstance(child, ast.FunctionDef | ast.AsyncFunctionDef):
-                fn_name = f"x_{child.name}" if not prefix else f"x_{prefix}__x_{child.name}"
-                keys.append(f"{module_dot}.{fn_name}")
-                _walk(child, prefix=f"{prefix}__{child.name}" if prefix else child.name)
-            elif isinstance(child, ast.ClassDef):
-                class_prefix = f"x_{child.name}" if not prefix else f"{prefix}__x_{child.name}"
-                for item in child.body:
+        for node in ast.iter_child_nodes(tree):
+            if isinstance(node, ast.FunctionDef | ast.AsyncFunctionDef):
+                mangled = make_mutant_key(node.name)
+                keys.append(get_mutant_name(source_path, mangled))
+            elif isinstance(node, ast.ClassDef):
+                for item in node.body:
                     if isinstance(item, ast.FunctionDef | ast.AsyncFunctionDef):
-                        fn_name = f"x_{item.name}"
-                        keys.append(f"{module_dot}.{class_prefix}__{fn_name}")
-                        _walk(item, prefix=f"{class_prefix}__{item.name}")
-                    elif isinstance(item, ast.ClassDef):
-                        _walk(item, prefix=class_prefix)
+                        mangled = make_mutant_key(item.name, class_name=node.name)
+                        keys.append(get_mutant_name(source_path, mangled))
+    except Exception:
+        pass
 
-    _walk(tree)
-    return keys
+    # 2. Also check if metadata already has any additional keys
+    try:
+        from mutmut.__main__ import SourceFileMutationData
+        from mutmut.utils.format_utils import get_mutant_name
+        data = SourceFileMutationData(path=source_path)
+        data.load()
+        if data.hash_by_function_name:
+            for f in data.hash_by_function_name:
+                keys.append(get_mutant_name(source_path, f))
+    except Exception:
+        pass
+
+    return sorted(set(keys))
 
 
 def seed_mutmut_stats(source_path: Path, test_nodes: Sequence[str]) -> None:
@@ -342,6 +348,11 @@ def seed_mutmut_stats(source_path: Path, test_nodes: Sequence[str]) -> None:
     tests_map = data.setdefault("tests_by_mangled_function_name", {})
     durations = data.setdefault("duration_by_test", {})
     func_hashes = data.setdefault("function_hashes", {})
+    data.setdefault("stats_time", 1700000000.0)
+    data.setdefault("function_dependencies", {})
+    data.setdefault("config_fingerprint", {})
+    data.setdefault("watched_file_hashes", {})
+    data.setdefault("git_commit", None)
 
     for t in test_nodes:
         durations.setdefault(t, 0.05)

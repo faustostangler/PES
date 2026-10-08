@@ -53,12 +53,12 @@ class EnrichedCompendium:
     """
 
     content_id: ContentId
-    channel_name: ChannelName
+    channel_name: ChannelName | str
     title: NoteTitle
     body: str
     complementary_info: str
     pass_count: int = 1
-    channel_id: ChannelId | None = None
+    channel_id: ChannelId | str | None = None
     channel_category: str = ""
     source_url: str = ""
     publication_date: datetime.date | None = None

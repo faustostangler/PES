@@ -11,6 +11,7 @@ import pytest
 from cresmo.domain.taxonomy import (
     DEFAULT_CHANNEL_CATEGORY,
     DEFAULT_CHANNEL_DOMAIN,
+    _extract_channel_candidates,
     classify_channel,
 )
 from cresmo.domain.value_objects import ChannelName
@@ -86,3 +87,89 @@ class TestDomainTaxonomy:
         domain, volatility = classify_channel(ChannelName("Fabio Akita"))
         assert domain == "tech_ai"
         assert volatility == "perennial"
+
+    def test_extract_channel_candidates_url_with_at_sign(self) -> None:
+        candidates = _extract_channel_candidates("https://www.youtube.com/@ancapsu")
+        assert "https://www.youtube.com/@ancapsu" in candidates
+        assert "@ancapsu" in candidates
+        assert "ancapsu" in candidates
+
+        # With trailing path and query parameter
+        c2 = _extract_channel_candidates("https://www.youtube.com/@ancapsu/videos?sub=1")
+        assert c2 == [
+            "https://www.youtube.com/@ancapsu/videos?sub=1",
+            "@ancapsu",
+            "ancapsu",
+        ]
+
+        # Query parameter immediately following handle without intervening slash
+        c_query_direct = _extract_channel_candidates("https://www.youtube.com/@ancapsu?sub_confirmation=1")
+        assert c_query_direct == [
+            "https://www.youtube.com/@ancapsu?sub_confirmation=1",
+            "@ancapsu",
+            "ancapsu",
+        ]
+
+        # Multiple /@ segments: must extract first occurrence
+        c_multi_at = _extract_channel_candidates("https://example.com/@ancapsu/@secondary")
+        assert c_multi_at == [
+            "https://example.com/@ancapsu/@secondary",
+            "@ancapsu",
+            "ancapsu",
+        ]
+
+        # Multiple slashes and multiple query parameters after /@
+        c_deep = _extract_channel_candidates("https://www.youtube.com/@ancapsu/videos/featured?sub=1?extra=2")
+        assert c_deep == [
+            "https://www.youtube.com/@ancapsu/videos/featured?sub=1?extra=2",
+            "@ancapsu",
+            "ancapsu",
+        ]
+
+        # Empty slug after /@
+        c3 = _extract_channel_candidates("https://www.youtube.com/@")
+        assert c3 == ["https://www.youtube.com/@"]
+
+    def test_extract_channel_candidates_handle_starting_with_at(self) -> None:
+        c1 = _extract_channel_candidates("@ancapsu")
+        assert c1 == ["@ancapsu", "ancapsu"]
+
+        # Just @ with nothing after
+        c2 = _extract_channel_candidates("@")
+        assert c2 == ["@"]
+
+    def test_extract_channel_candidates_url_with_regular_slashes(self) -> None:
+        # Standard channel path with query parameters and trailing slash
+        c1 = _extract_channel_candidates("https://www.youtube.com/c/ancapsu/?param=value?extra=1")
+        assert c1 == [
+            "https://www.youtube.com/c/ancapsu/?param=value?extra=1",
+            "ancapsu",
+        ]
+
+        # Path where last component starts with @
+        c2 = _extract_channel_candidates("https://www.youtube.com/c/@ancapsu")
+        assert c2 == [
+            "https://www.youtube.com/c/@ancapsu",
+            "@ancapsu",
+            "ancapsu",
+        ]
+
+        # Slashes only
+        c3 = _extract_channel_candidates("///")
+        assert c3 == ["///"]
+
+    def test_classify_channel_with_urls_and_handles(self) -> None:
+        # Classify via URL with /@
+        d1, v1 = classify_channel("https://www.youtube.com/@ancapsu/about")
+        assert d1 == "politics_br"
+        assert v1 == "volatile"
+
+        # Classify via handle @
+        d2, v2 = classify_channel("@ancapsu")
+        assert d2 == "politics_br"
+        assert v2 == "volatile"
+
+        # Classify via standard URL /
+        d3, v3 = classify_channel("https://youtube.com/c/ancapsu")
+        assert d3 == "politics_br"
+        assert v3 == "volatile"

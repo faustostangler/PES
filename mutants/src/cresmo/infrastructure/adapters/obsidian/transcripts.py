@@ -40,7 +40,7 @@ class TranscriptVaultHandler:
 
     def save_transcript(self, transcript: SourceTranscript) -> None:
         """Persist source transcript with canonical YAML frontmatter."""
-        channel_dir = self.raw_dir / sanitize_filename(transcript.channel.channel_name)
+        channel_dir = self.raw_dir / sanitize_filename(transcript.channel.name)
         file_path = channel_dir / f"{transcript.content.id.value}.md"
 
         desc = transcript.provenance.description or ""
@@ -52,13 +52,9 @@ class TranscriptVaultHandler:
         )
         raw_title = transcript.content.title or transcript.content.id.value
         escaped_title = raw_title.replace('"', '\\"')
-        escaped_channel = str(transcript.channel.channel_name).replace('"', '\\"')
+        escaped_channel = transcript.channel.name.replace('"', '\\"')
         escaped_category = (transcript.channel.category or "uncategorized").replace('"', '\\"')
-        channel_id_val = (
-            transcript.channel.channel_id.value
-            if transcript.channel.channel_id
-            else "unknown_channel"
-        )
+        channel_id_val = transcript.channel.id.value if transcript.channel.id else "unknown_channel"
 
         yaml_header = (
             f"---\n"

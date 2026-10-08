@@ -29,6 +29,7 @@ from cresmo.domain.entities import FluidTranscript, UserIdentity
 from cresmo.domain.exceptions import DomainValidationError
 from cresmo.domain.taxonomy import classify_channel
 from cresmo.domain.value_objects import (
+    ChannelName,
     RawIndexEntry,
 )
 
@@ -122,7 +123,7 @@ class IndexRawTranscriptsUseCase:
             )
 
         video_id = transcript.content.id
-        channel_name = transcript.channel.channel_name
+        channel_name = ChannelName(transcript.channel.name)
 
         # ACL check: Avoid redundant token expenditure if already indexed
         if not force:
@@ -148,7 +149,7 @@ class IndexRawTranscriptsUseCase:
                 title=title,
                 text=excerpt,
                 channel_name=channel_name,
-                channel_id=transcript.channel.channel_id,
+                channel_id=transcript.channel.id,
                 user=user,
             )
             summary = self._distiller.extract_summary(
@@ -156,7 +157,7 @@ class IndexRawTranscriptsUseCase:
                 title=title,
                 text=excerpt,
                 channel_name=channel_name,
-                channel_id=transcript.channel.channel_id,
+                channel_id=transcript.channel.id,
                 user=user,
             )
             synthesis = self._distiller.extract_synthesis(
@@ -165,7 +166,7 @@ class IndexRawTranscriptsUseCase:
                 excerpt=excerpt,
                 summary=summary,
                 channel_name=channel_name,
-                channel_id=transcript.channel.channel_id,
+                channel_id=transcript.channel.id,
                 user=user,
             )
         except Exception as exc:

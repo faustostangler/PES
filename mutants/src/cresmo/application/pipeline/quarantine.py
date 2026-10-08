@@ -48,7 +48,7 @@ def record_stage_quarantine(
 
     if channel is not None:
         channel_name_string = channel.name
-        channel_name_vo = channel.channel_name
+        channel_name_vo = ChannelName(channel.name)
         channel_id_string = channel.id.value if channel.id else ""
     else:
         channel_name_string = (

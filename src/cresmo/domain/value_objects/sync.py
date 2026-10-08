@@ -21,17 +21,12 @@ def _resolve_channel_name_and_url(
     channel_url: str | None,
 ) -> tuple[str, str]:
     """Extract normalized lowercase (channel_name, channel_url) pair."""
-    resolved_url = (channel_url or "").strip().lower()
-    if isinstance(channel_name, ChannelName):
-        return channel_name.value.strip().lower(), resolved_url
-    if isinstance(channel_name, str):
-        resolved_name = channel_name.strip().lower()
-        if not resolved_url and (
-            "http" in resolved_name or "/" in resolved_name or "@" in resolved_name
-        ):
-            return resolved_name, resolved_name
-        return resolved_name, resolved_url
-    return "", resolved_url
+    raw_name = (
+        channel_name.value
+        if isinstance(channel_name, ChannelName)
+        else (channel_name or "")
+    )
+    return raw_name.strip().lower(), (channel_url or "").strip().lower()
 
 
 def _target_matches_channel(target: str, channel_name: str, channel_url: str) -> bool:
@@ -40,11 +35,11 @@ def _target_matches_channel(target: str, channel_name: str, channel_url: str) ->
         return True
     if channel_url and target in channel_url:
         return True
-    if channel_name and target.startswith("@") and target[1:] in channel_name:
-        return True
-    if channel_url and f"@{target}" in channel_url:
-        return True
-    return bool(channel_name and f"@{target}" in channel_name)
+    if target.startswith("@"):
+        bare_target = target.removeprefix("@")
+        if bare_target and (bare_target in channel_name or bare_target in channel_url):
+            return True
+    return False
 
 
 @dataclass(frozen=True)
@@ -92,13 +87,13 @@ class SyncFilterCriteria:
     @classmethod
     def from_strings(
         cls,
-        channels: Iterable[str] | None = None,
-        categories: Iterable[str] | None = None,
-        video_ids: Iterable[str] | None = None,
+        channels: Iterable[str | None] | None = None,
+        categories: Iterable[str | None] | None = None,
+        video_ids: Iterable[str | None] | None = None,
     ) -> SyncFilterCriteria:
         """Parse multi-value strings (including comma-separated lists) into a SyncFilterCriteria."""
 
-        def _parse_tokens(items: Iterable[str] | None) -> tuple[str, ...]:
+        def _parse_tokens(items: Iterable[str | None] | None) -> tuple[str, ...]:
             if not items:
                 return ()
             tokens: list[str] = []
@@ -123,7 +118,7 @@ class SyncFilterCriteria:
 
     def matches_channel(
         self,
-        channel_name: ChannelName | None = None,
+        channel_name: ChannelName | str | None = None,
         channel_url: str | None = None,
     ) -> bool:
         """Evaluate whether a channel matches the configured channel criteria."""
@@ -137,7 +132,7 @@ class SyncFilterCriteria:
 
     def matches_category(
         self,
-        channel_name: ChannelName | None = None,
+        channel_name: ChannelName | str | None = None,
         channel_url: str | None = None,
     ) -> bool:
         """Evaluate whether a channel matches the configured category criteria.
@@ -148,9 +143,12 @@ class SyncFilterCriteria:
         if not self.categories:
             return True
 
-        target: ChannelName | str = (
-            channel_name if channel_name is not None else (channel_url or "")
+        target: ChannelName | str | None = (
+            channel_name if channel_name is not None else channel_url
         )
+        if not target:
+            return False
+
         domain, volatility_category = classify_channel(target)
         domain_lower = domain.lower()
         volatility_lower = volatility_category.lower()
@@ -159,7 +157,7 @@ class SyncFilterCriteria:
 
     def matches_video(
         self,
-        video_id: ContentId | None = None,
+        video_id: ContentId | str | None = None,
         video_url: str | None = None,
     ) -> bool:
         """Evaluate whether a video matches the configured video ID/URL criteria."""
@@ -167,19 +165,16 @@ class SyncFilterCriteria:
             return True
 
         cleaned_video_url = (video_url or "").strip()
-        if isinstance(video_id, ContentId):
-            cleaned_video_id = video_id.value.strip()
-        elif isinstance(video_id, str):
-            cleaned_video_id = video_id.strip()
-            if not cleaned_video_url and ("http" in cleaned_video_id or "/" in cleaned_video_id):
-                cleaned_video_url = cleaned_video_id
-        else:
-            cleaned_video_id = ""
+        cleaned_video_id = (
+            video_id.value.strip()
+            if isinstance(video_id, ContentId)
+            else (video_id.strip() if isinstance(video_id, str) else "")
+        )
 
         for target in self.video_ids:
             target_str = target.strip()
             if cleaned_video_id and (
-                target_str == cleaned_video_id or cleaned_video_id in target_str
+                target_str in cleaned_video_id or cleaned_video_id in target_str
             ):
                 return True
             if cleaned_video_url and (

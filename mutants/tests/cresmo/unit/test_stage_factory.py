@@ -221,3 +221,108 @@ def test_stage_factory_uses_domain_stage_registry() -> None:
     assert descriptor.stage_name == test_stage_name
     assert descriptor.eval_spec is not None
     assert descriptor.eval_spec.required_criteria == (JudgeCriterion.ORALITY_REMOVAL,)
+
+
+def test_stage_factory_caching_and_overrides_bypass() -> None:
+    """Verify StageFactory caches instances but bypasses cache when overrides are specified."""
+    settings = DefaultPipelineSettings(llm_synthesis_temperature=0.35)
+    factory = StageFactory(settings=settings)
+    cached = factory.build_stage("fluid_prose")
+    assert factory._cache["fluid_prose"] is cached
+
+    # Calling with override must bypass cache and return new descriptor with overridden value
+    overridden = factory.build_stage("fluid_prose", temperature=0.99)
+    assert overridden is not cached
+    assert overridden.temperature == 0.99
+    assert cached.temperature == 0.35
+    assert factory.build_stage("fluid_prose") is cached
+
+
+def test_stage_factory_convention_over_configuration_prompt_key() -> None:
+    """Verify stage_name converts via convention to PromptKey when unregistered."""
+    factory = StageFactory(settings=DefaultPipelineSettings())
+    descriptor = factory.build_stage("long_expander")
+    assert descriptor.transform_prompt_key == PromptKey.LONG_EXPANDER
+    assert descriptor.stage_name == "long_expander"
+
+
+def test_stage_factory_settings_defaults_fallback() -> None:
+    """Verify fallback defaults when settings lacks attributes."""
+    class BareSettings:
+        pass
+
+    factory = StageFactory(settings=BareSettings())  # type: ignore[arg-type]
+    descriptor = factory.build_stage("long_expander")
+    assert descriptor.temperature is None
+    assert descriptor.max_attempts == 1
+    assert descriptor.blocking is False
+
+
+def test_stage_factory_explicit_eval_spec_passed() -> None:
+    """Verify explicit eval_spec is respected directly."""
+    from cresmo.domain.value_objects import StageEvaluationSpec
+
+    custom_spec = StageEvaluationSpec(
+        candidate_extractor=lambda c: "custom_candidate",
+        required_criteria=(JudgeCriterion.ORALITY_REMOVAL,),
+        max_attempts=5,
+    )
+    factory = StageFactory(settings=DefaultPipelineSettings())
+    descriptor = factory.build_stage(
+        stage_name="minimal_stage",
+        transform_prompt_key=PromptKey.FLUID_PROSE,
+        eval_spec=custom_spec,
+    )
+    assert descriptor.eval_spec is custom_spec
+    assert descriptor.eval_spec.max_attempts == 5
+
+
+def test_stage_factory_candidate_extractor_fallback_non_candidate_text() -> None:
+    """Verify default candidate extractor converts non-CandidateText via str()."""
+    factory = StageFactory(settings=DefaultPipelineSettings())
+    descriptor = factory.build_stage(
+        stage_name="minimal_stage",
+        transform_prompt_key=PromptKey.FLUID_PROSE,
+        required_criteria=(JudgeCriterion.ORALITY_REMOVAL,),
+    )
+    assert descriptor.eval_spec is not None
+    assert descriptor.eval_spec.candidate_extractor("custom_raw_text") == "custom_raw_text"
+    assert descriptor.eval_spec.candidate_extractor(12345) == "12345"
+
+
+def test_stage_factory_eval_metadata_explicit() -> None:
+    """Verify explicit eval_metadata is passed to StageEvaluationSpec."""
+    factory = StageFactory(settings=DefaultPipelineSettings())
+    descriptor = factory.build_stage(
+        stage_name="minimal_stage",
+        transform_prompt_key=PromptKey.FLUID_PROSE,
+        required_criteria=(JudgeCriterion.ORALITY_REMOVAL,),
+        eval_metadata={"tier": "strict", "threshold": 0.85},
+    )
+    assert descriptor.eval_spec is not None
+    assert descriptor.eval_spec.metadata == {"tier": "strict", "threshold": 0.85}
+
+
+def test_stage_factory_eval_spec_created_with_only_candidate_extractor() -> None:
+    """Verify StageEvaluationSpec is created when only candidate_extractor is provided."""
+    factory = StageFactory(settings=DefaultPipelineSettings())
+    descriptor = factory.build_stage(
+        stage_name="minimal_stage",
+        transform_prompt_key=PromptKey.FLUID_PROSE,
+        candidate_extractor=lambda c: "only_candidate",
+    )
+    assert descriptor.eval_spec is not None
+    assert descriptor.eval_spec.candidate_extractor("test") == "only_candidate"
+
+
+def test_stage_factory_eval_spec_created_with_only_source_extractor() -> None:
+    """Verify StageEvaluationSpec is created when only source_extractor is provided."""
+    factory = StageFactory(settings=DefaultPipelineSettings())
+    descriptor = factory.build_stage(
+        stage_name="minimal_stage",
+        transform_prompt_key=PromptKey.FLUID_PROSE,
+        source_extractor=lambda s: "only_source",
+    )
+    assert descriptor.eval_spec is not None
+    assert descriptor.eval_spec.extract_source_text("dummy") == "only_source"
+

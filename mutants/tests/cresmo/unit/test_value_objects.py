@@ -24,7 +24,7 @@ class TestContentId:
     """SPEC-001 §2.1: ContentId validation."""
 
     def test_valid_content_id(self) -> None:
-        cid = ContentId("dQw4w9WgXcQ")
+        cid = ContentId("  dQw4w9WgXcQ  ")
         assert cid.value == "dQw4w9WgXcQ"
         assert str(cid) == "dQw4w9WgXcQ"
 
@@ -37,7 +37,10 @@ class TestContentId:
             ContentId("   ")
 
     def test_invalid_characters_in_content_id_raises_validation_error(self) -> None:
-        with pytest.raises(DomainValidationError):
+        with pytest.raises(
+            DomainValidationError,
+            match=r"^Invalid ContentId 'invalid/id#special!'\. Must match \^\[a-zA-Z0-9_-\]\{8,64\}\$ without whitespace\.$",
+        ):
             ContentId("invalid/id#special!")
 
     def test_from_string_factory(self) -> None:
@@ -64,8 +67,10 @@ class TestContentId:
         assert "dQw4w9WgXcQ" == cid
         assert cid == "  dQw4w9WgXcQ  "
         assert cid != "different_id_123"
-        assert cid != 12345
+        assert (cid == 12345) is False
+        assert (cid == None) is False
         assert hash(cid) == hash("dQw4w9WgXcQ")
+        assert hash(cid) != hash(None)
         assert cid.strip() == "dQw4w9WgXcQ"
 
     def test_extract_from_text(self) -> None:
@@ -79,6 +84,7 @@ class TestContentId:
 
         assert ContentId.extract_from_text("not_a_valid_id!@#$") is None
         assert ContentId.extract_from_text("") is None
+        assert ContentId.extract_from_text("   ") is None
 
 
 class TestNoteTitle:
@@ -95,17 +101,39 @@ class TestNoteTitle:
 
     def test_sanitizes_illegal_filesystem_characters(self) -> None:
         title = NoteTitle("Teoria / Elites: Modelo?")
-        assert "/" not in title.value
-        assert ":" not in title.value
-        assert "?" not in title.value
+        assert title.value == "Teoria  Elites Modelo"
+        all_illegal = NoteTitle(r'A\B/C*D?E:F"G<H>I|J%K')
+        assert all_illegal.value == "ABCDEFGHIJK"
 
     def test_empty_title_raises_validation_error(self) -> None:
-        with pytest.raises(DomainValidationError):
+        with pytest.raises(
+            DomainValidationError,
+            match=r"NoteTitle must be between 1 and 200 characters\. Got: '' \(sanitized: ''\)",
+        ):
             NoteTitle("")
 
-    def test_generic_placeholder_raises_validation_error(self) -> None:
-        with pytest.raises(DomainValidationError):
-            NoteTitle("Untitled_Note")
+    def test_title_at_exact_max_boundary(self) -> None:
+        from cresmo.domain.value_objects.constants import MAX_NOTE_TITLE_LENGTH
+
+        title = NoteTitle("a" * MAX_NOTE_TITLE_LENGTH)
+        assert len(title.value) == MAX_NOTE_TITLE_LENGTH
+
+    def test_title_exceeding_max_boundary_raises_validation_error(self) -> None:
+        from cresmo.domain.value_objects.constants import MAX_NOTE_TITLE_LENGTH
+
+        with pytest.raises(
+            DomainValidationError,
+            match=rf"NoteTitle must be between 1 and {MAX_NOTE_TITLE_LENGTH} characters\.",
+        ):
+            NoteTitle("a" * (MAX_NOTE_TITLE_LENGTH + 1))
+
+    @pytest.mark.parametrize("placeholder", ["untitled", "UNTITLED", "untitled_note", "Untitled_Note"])
+    def test_generic_placeholder_raises_validation_error(self, placeholder: str) -> None:
+        with pytest.raises(
+            DomainValidationError,
+            match=rf"^Generic placeholder title '{placeholder}' is prohibited\.$",
+        ):
+            NoteTitle(placeholder)
 
 
 class TestNoteType:
@@ -145,6 +173,12 @@ class TestCausalMatrix:
         assert matrix.effect == "Dependência municipal"
         assert matrix.epistemic_attribution == "Tocqueville"
 
+    def test_causal_matrix_defaults_and_empty_pair(self) -> None:
+        matrix = CausalMatrix(cause="", effect="")
+        assert matrix.cause == ""
+        assert matrix.effect == ""
+        assert matrix.epistemic_attribution == ""
+
     def test_whitespace_trimmed_in_causal_matrix(self) -> None:
         matrix = CausalMatrix(
             cause="  Causa  ",
@@ -156,8 +190,18 @@ class TestCausalMatrix:
         assert matrix.epistemic_attribution == "Fonte"
 
     def test_empty_cause_with_effect_raises_validation_error(self) -> None:
-        with pytest.raises(DomainValidationError):
+        with pytest.raises(
+            DomainValidationError,
+            match=r"^CausalMatrix requires both 'cause' and 'effect' to be non-empty\. Got cause='', effect='Efeito'\.$",
+        ):
             CausalMatrix(cause="", effect="Efeito")
+
+    def test_cause_with_empty_effect_raises_validation_error(self) -> None:
+        with pytest.raises(
+            DomainValidationError,
+            match=r"^CausalMatrix requires both 'cause' and 'effect' to be non-empty\. Got cause='Causa', effect=''\.$",
+        ):
+            CausalMatrix(cause="Causa", effect="")
 
 
 class TestAtomicEntityInventory:
@@ -169,18 +213,39 @@ class TestAtomicEntityInventory:
         inv = AtomicEntityInventory(items=((t1, NoteType.CONCEPT), (t2, NoteType.ENTITY)))
         assert len(inv.items) == 2
 
+    def test_lower_vs_upper_casefolding_distinction(self) -> None:
+        # 'ß'.lower() is 'ß', 'SS'.lower() is 'ss' (no collision with lower())
+        # 'ß'.upper() is 'SS', 'SS'.upper() is 'SS' (collision if upper() is used!)
+        t_sharp_s = NoteTitle("ß")
+        t_double_s = NoteTitle("SS")
+        inv = AtomicEntityInventory(items=((t_sharp_s, NoteType.CONCEPT), (t_double_s, NoteType.ENTITY)))
+        assert len(inv.items) == 2
+
     def test_duplicate_titles_in_inventory_raises_validation_error(self) -> None:
         t1 = NoteTitle("Conceito A")
-        with pytest.raises(DomainValidationError):
-            AtomicEntityInventory(items=((t1, NoteType.CONCEPT), (t1, NoteType.ENTITY)))
+        t2 = NoteTitle("conceito a")
+        with pytest.raises(
+            DomainValidationError,
+            match=r"^Duplicate title 'conceito a' detected in AtomicEntityInventory\.$",
+        ):
+            AtomicEntityInventory(items=((t1, NoteType.CONCEPT), (t2, NoteType.ENTITY)))
 
     def test_empty_inventory_raises_validation_error(self) -> None:
-        with pytest.raises(DomainValidationError):
+        with pytest.raises(
+            DomainValidationError,
+            match=r"^AtomicEntityInventory cannot be empty\.$",
+        ):
             AtomicEntityInventory(items=())
 
 
 class TestCrossContextRelations:
     """CrossContextRelations validation and stripping."""
+
+    def test_cross_context_defaults(self) -> None:
+        cc = CrossContextRelations()
+        assert cc.precursors == ""
+        assert cc.lateral_events == ""
+        assert cc.aftermath == ""
 
     def test_cross_context_strips_whitespace(self) -> None:
         cc = CrossContextRelations(
@@ -283,6 +348,89 @@ class TestMasterDocumentResult:
                 video_ids=(ContentId("vid1"),),
             )
 
+    def test_invalid_channel_category_raises(self) -> None:
+        from pathlib import Path
+        from cresmo.domain.exceptions import DomainValidationError
+        from cresmo.domain.value_objects import ChannelName, ContentId, MasterDocumentResult
+
+        with pytest.raises(
+            DomainValidationError,
+            match=r"^MasterDocumentResult channel_category cannot be empty\.$",
+        ):
+            MasterDocumentResult(
+                channel_name=ChannelName("Channel"),
+                channel_category="   ",
+                output_path=Path("/tmp/out.md"),
+                part_number=1,
+                word_count=100,
+                document_count=1,
+            )
+
+        with pytest.raises(
+            DomainValidationError,
+            match=r"^MasterDocumentResult channel_category cannot be empty\.$",
+        ):
+            MasterDocumentResult(
+                channel_name=ChannelName("Channel"),
+                channel_category="",
+                output_path=Path("/tmp/out.md"),
+                part_number=1,
+                word_count=100,
+                document_count=1,
+            )
+
+    def test_negative_counts_raise(self) -> None:
+        from pathlib import Path
+        from cresmo.domain.exceptions import DomainValidationError
+        from cresmo.domain.value_objects import ChannelName, MasterDocumentResult
+
+        with pytest.raises(DomainValidationError, match="word_count cannot be negative"):
+            MasterDocumentResult(
+                channel_name=ChannelName("Channel"),
+                channel_category="tech_ai",
+                output_path=Path("/tmp/out.md"),
+                part_number=1,
+                word_count=-1,
+                document_count=1,
+            )
+
+        with pytest.raises(DomainValidationError, match="document_count cannot be negative"):
+            MasterDocumentResult(
+                channel_name=ChannelName("Channel"),
+                channel_category="tech_ai",
+                output_path=Path("/tmp/out.md"),
+                part_number=1,
+                word_count=100,
+                document_count=-1,
+            )
+
+    def test_boundaries_and_coercion(self) -> None:
+        from pathlib import Path
+        from cresmo.domain.value_objects import ChannelName, ContentId, MasterDocumentResult
+
+        res = MasterDocumentResult(
+            channel_name="  Fabio Akita  ",  # type: ignore[arg-type]
+            channel_category="  tech_ai  ",
+            output_path=Path("/tmp/out.md"),
+            part_number=1,
+            word_count=0,
+            document_count=0,
+            video_ids=("vid1", "vid2"),  # type: ignore[arg-type]
+        )
+        assert isinstance(res.channel_name, ChannelName)
+        assert type(res.channel_name) is ChannelName
+        assert res.channel_name.value == "Fabio Akita"
+        assert res.channel_name == ChannelName("Fabio Akita")
+        assert res.channel_category == "tech_ai"
+        assert res.word_count == 0
+        assert res.document_count == 0
+        assert res.part_number == 1
+        assert len(res.video_ids) == 2
+        assert isinstance(res.video_ids[0], ContentId)
+        assert res.video_ids[0].value == "vid1"
+        assert isinstance(res.video_ids[1], ContentId)
+        assert res.video_ids[1].value == "vid2"
+
 
 class TestChannelName:
     def test_valid_channel_name(self) -> None:
@@ -298,28 +446,58 @@ class TestChannelName:
         from cresmo.domain.exceptions import DomainValidationError
         from cresmo.domain.value_objects import ChannelName
 
-        with pytest.raises(DomainValidationError, match="ChannelName cannot be empty"):
+        with pytest.raises(
+            DomainValidationError, match=r"^ChannelName cannot be empty or whitespace\.$"
+        ):
             ChannelName("")
-        with pytest.raises(DomainValidationError, match="ChannelName cannot be empty"):
+        with pytest.raises(
+            DomainValidationError, match=r"^ChannelName cannot be empty or whitespace\.$"
+        ):
             ChannelName("   ")
 
     def test_path_traversal_channel_name_raises(self) -> None:
         from cresmo.domain.exceptions import DomainValidationError
         from cresmo.domain.value_objects import ChannelName
 
-        with pytest.raises(DomainValidationError, match="path traversal"):
-            ChannelName("../../etc/passwd")
-        with pytest.raises(DomainValidationError, match="path traversal"):
+        with pytest.raises(
+            DomainValidationError,
+            match=r"^ChannelName cannot contain path traversal or separator characters: 'foo\.\.bar'$",
+        ):
+            ChannelName("foo..bar")
+        with pytest.raises(
+            DomainValidationError,
+            match=r"^ChannelName cannot contain path traversal or separator characters: 'channel/subfolder'$",
+        ):
             ChannelName("channel/subfolder")
-        with pytest.raises(DomainValidationError, match="path traversal"):
+        with pytest.raises(
+            DomainValidationError,
+            match=r"^ChannelName cannot contain path traversal or separator characters: 'channel\\subfolder'$",
+        ):
             ChannelName("channel\\subfolder")
 
-    def test_channel_name_too_long_raises(self) -> None:
+    def test_channel_name_boundary_lengths(self) -> None:
         from cresmo.domain.exceptions import DomainValidationError
         from cresmo.domain.value_objects import ChannelName
+        from cresmo.domain.value_objects.constants import MAX_CHANNEL_NAME_LENGTH
 
-        with pytest.raises(DomainValidationError, match="exceeds maximum length"):
-            ChannelName("A" * 121)
+        valid_cn = ChannelName("a" * MAX_CHANNEL_NAME_LENGTH)
+        assert len(valid_cn.value) == MAX_CHANNEL_NAME_LENGTH
+
+        with pytest.raises(
+            DomainValidationError,
+            match=rf"^ChannelName exceeds maximum length of {MAX_CHANNEL_NAME_LENGTH} characters: 'a{{30}}\.\.\.'$",
+        ):
+            ChannelName("a" * (MAX_CHANNEL_NAME_LENGTH + 1))
+
+    def test_equality_and_hash(self) -> None:
+        from cresmo.domain.value_objects import ChannelName
+
+        cn = ChannelName("Fabio Akita")
+        assert (cn == 123) is False
+        assert (cn == None) is False
+        assert hash(cn) == hash("Fabio Akita")
+        assert hash(cn) != hash(None)
+        assert cn.strip() == "Fabio Akita"
 
     def test_from_string_factory(self) -> None:
         from cresmo.domain.value_objects import ChannelName
@@ -346,7 +524,7 @@ class TestChannelId:
     def test_valid_channel_id(self) -> None:
         from cresmo.domain.value_objects import ChannelId
 
-        cid = ChannelId("UC_x5XG1OV2P6uZZ5FSM9Ttw")
+        cid = ChannelId("  UC_x5XG1OV2P6uZZ5FSM9Ttw  ")
         assert cid.value == "UC_x5XG1OV2P6uZZ5FSM9Ttw"
         assert str(cid) == "UC_x5XG1OV2P6uZZ5FSM9Ttw"
         assert cid.is_youtube_canonical is True
@@ -367,20 +545,55 @@ class TestChannelId:
         assert cid.uploads_playlist_url is None
         assert cid.canonical_url == "priority_text"
 
-    def test_invalid_channel_id_raises(self) -> None:
+    def test_channel_id_boundaries_and_invalid_raises(self) -> None:
         from cresmo.domain.exceptions import DomainValidationError
         from cresmo.domain.value_objects import ChannelId
+        from cresmo.domain.value_objects.constants import (
+            MAX_CHANNEL_ID_LENGTH,
+            MIN_CHANNEL_ID_LENGTH,
+        )
 
-        with pytest.raises(DomainValidationError, match="ChannelId cannot be empty"):
+        # Min boundary
+        assert ChannelId("ab").value == "ab"
+        with pytest.raises(
+            DomainValidationError,
+            match=rf"^ChannelId must have at least {MIN_CHANNEL_ID_LENGTH} characters: 'a'$",
+        ):
+            ChannelId("a")
+
+        # Max boundary
+        assert ChannelId("a" * MAX_CHANNEL_ID_LENGTH).value == "a" * MAX_CHANNEL_ID_LENGTH
+        with pytest.raises(
+            DomainValidationError,
+            match=rf"^ChannelId exceeds maximum length of {MAX_CHANNEL_ID_LENGTH} characters: 'a{{30}}\.\.\.' \(length: 65\)$",
+        ):
+            ChannelId("a" * (MAX_CHANNEL_ID_LENGTH + 1))
+
+        with pytest.raises(
+            DomainValidationError, match=r"^ChannelId cannot be empty or whitespace\.$"
+        ):
             ChannelId("")
-        with pytest.raises(DomainValidationError, match="ChannelId cannot be empty"):
+        with pytest.raises(
+            DomainValidationError, match=r"^ChannelId cannot be empty or whitespace\.$"
+        ):
             ChannelId("   ")
-        with pytest.raises(DomainValidationError, match="path traversal"):
-            ChannelId("../etc/passwd")
+        with pytest.raises(
+            DomainValidationError,
+            match=r"^ChannelId cannot contain path traversal characters: 'foo\.\.bar'$",
+        ):
+            ChannelId("foo..bar")
+        with pytest.raises(
+            DomainValidationError,
+            match=r"^ChannelId cannot contain path traversal characters: 'foo/bar'$",
+        ):
+            ChannelId("foo/bar")
+        with pytest.raises(
+            DomainValidationError,
+            match=r"^ChannelId cannot contain path traversal characters: 'foo\\bar'$",
+        ):
+            ChannelId("foo\\bar")
         with pytest.raises(DomainValidationError, match="invalid characters"):
             ChannelId("UC_invalid!@#")
-        with pytest.raises(DomainValidationError, match="exceeds maximum length"):
-            ChannelId("A" * 65)
 
     def test_from_string_factory(self) -> None:
         from cresmo.domain.value_objects import ChannelId
@@ -405,6 +618,9 @@ class TestChannelId:
         cid3 = ChannelId.from_url_or_token("UC_x5XG1OV2P6uZZ5FSM9Ttw")
         assert cid3.value == "UC_x5XG1OV2P6uZZ5FSM9Ttw"
 
+        cid4 = ChannelId.from_url_or_token("custom_channel_identifier")
+        assert cid4.value == "custom_channel_identifier"
+
         with pytest.raises(DomainValidationError, match="Unable to extract valid ChannelId"):
             ChannelId.from_url_or_token("https://youtube.com/invalid!!")
 
@@ -419,6 +635,7 @@ class TestChannelId:
 
         assert ChannelId.extract_from_text("not_valid!@#") is None
         assert ChannelId.extract_from_text("") is None
+        assert ChannelId.extract_from_text("   ") is None
 
     def test_is_channel_or_playlist_url(self) -> None:
         from cresmo.domain.value_objects import ChannelId
@@ -439,7 +656,29 @@ class TestChannelId:
             ChannelId.is_channel_or_playlist_url("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
             is False
         )
+        assert (
+            ChannelId.is_channel_or_playlist_url("https://youtube.com/channel/UC123?watch?v=abcd")
+            is False
+        )
+        assert (
+            ChannelId.is_channel_or_playlist_url("https://youtube.com/channel/UC123?WATCH?V=ABCD")
+            is False
+        )
+        assert (
+            ChannelId.is_channel_or_playlist_url(
+                "https://youtube.com/channel/UC123?watch?v=abcd&list=PL123"
+            )
+            is True
+        )
+        assert (
+            ChannelId.is_channel_or_playlist_url(
+                "https://youtube.com/channel/UC123?watch?v=abcd&LIST=PL123"
+            )
+            is True
+        )
         assert ChannelId.is_channel_or_playlist_url("https://otherdomain.com/@handle") is False
+        assert ChannelId.is_channel_or_playlist_url("") is False
+        assert ChannelId.is_channel_or_playlist_url("   ") is False
 
     def test_equality_with_string_and_hash(self) -> None:
         from cresmo.domain.value_objects import ChannelId
@@ -450,8 +689,10 @@ class TestChannelId:
         assert cid == "  UC_x5XG1OV2P6uZZ5FSM9Ttw  "
         assert cid == ChannelId("UC_x5XG1OV2P6uZZ5FSM9Ttw")
         assert cid != "UC_other_channel_id"
-        assert cid != 999
+        assert (cid == 999) is False
+        assert (cid == None) is False
         assert hash(cid) == hash("UC_x5XG1OV2P6uZZ5FSM9Ttw")
+        assert hash(cid) != hash(None)
         assert cid.strip() == "UC_x5XG1OV2P6uZZ5FSM9Ttw"
 
 
@@ -469,12 +710,14 @@ class TestChannel:
         )
         assert ch.name == "Canal do Meio"
         assert ch.id == ChannelId("UC_x5XG1OV2P6uZZ5FSM9Ttw")
+        assert ch.channel_id == ChannelId("UC_x5XG1OV2P6uZZ5FSM9Ttw")
+        assert ch.channel_name == ChannelName("Canal do Meio")
         assert ch.category == "News"
         assert ch.url == "https://www.youtube.com/@canaldomeio"
         assert ch.canonical_url == "https://www.youtube.com/@canaldomeio"
         assert str(ch) == "Canal do Meio"
 
-    def test_channel_creation_with_string_coercion(self) -> None:
+    def test_channel_creation_with_string_coercion_and_defaults(self) -> None:
         from cresmo.domain.value_objects import Channel, ChannelId
 
         ch = Channel(
@@ -485,6 +728,27 @@ class TestChannel:
         assert ch.name == "Fabio Akita"
         assert isinstance(ch.id, ChannelId)
         assert ch.id.value == "UC_x5XG1OV2P6uZZ5FSM9Ttw"
+        assert ch.category == ""
+        assert ch.url is None
+
+        ch_empty_id = Channel(name="Fabio Akita", id="")
+        assert ch_empty_id.id is None
+
+    def test_channel_kwargs_aliases(self) -> None:
+        from cresmo.domain.value_objects import Channel, ChannelId
+
+        ch = Channel(
+            channel_name="AliasName",
+            channel_id="UC_x5XG1OV2P6uZZ5FSM9Ttw",
+        )
+        assert ch.name == "AliasName"
+        assert ch.id == ChannelId("UC_x5XG1OV2P6uZZ5FSM9Ttw")
+
+        ch_override = Channel(
+            name="PrimaryName",
+            channel_name="IgnoredName",
+        )
+        assert ch_override.name == "PrimaryName"
 
     def test_channel_from_name_factory(self) -> None:
         from cresmo.domain.value_objects import Channel, ChannelId
@@ -498,6 +762,18 @@ class TestChannel:
         assert ch.id == ChannelId("UCHnyfMqiRRG1u-2MsSQLbXA")
         assert ch.category == "Science"
         assert ch.canonical_url == "https://www.youtube.com/channel/UCHnyfMqiRRG1u-2MsSQLbXA"
+
+        ch_min = Channel.from_name(name="Minimal")
+        assert ch_min.name == "Minimal"
+        assert ch_min.id is None
+        assert ch_min.category == ""
+        assert ch_min.url is None
+
+        ch_with_url = Channel.from_name(
+            name="CustomUrl",
+            url="https://example.com/custom",
+        )
+        assert ch_with_url.url == "https://example.com/custom"
 
     def test_channel_canonical_url_fallback(self) -> None:
         from cresmo.domain.value_objects import Channel
@@ -515,10 +791,27 @@ class TestChannel:
         assert ch_without_id.tenant_key == "channel:Akita"
 
     def test_channel_empty_name_raises_validation_error(self) -> None:
+        from cresmo.domain.exceptions import DomainValidationError
         from cresmo.domain.value_objects import Channel
 
-        with pytest.raises(DomainValidationError):
+        with pytest.raises(
+            DomainValidationError, match=r"^Channel name cannot be empty or whitespace\.$"
+        ):
             Channel.from_name("")
+
+        with pytest.raises(
+            DomainValidationError, match=r"^Channel name cannot be empty or whitespace\.$"
+        ):
+            Channel(name=None)
+
+    def test_channel_invalid_id_type_raises(self) -> None:
+        from cresmo.domain.exceptions import DomainValidationError
+        from cresmo.domain.value_objects import Channel
+
+        with pytest.raises(
+            DomainValidationError, match=r"^Invalid channel id type: <class 'int'>$"
+        ):
+            Channel(name="ValidName", id=12345)  # type: ignore[arg-type]
 
     def test_channel_immutability(self) -> None:
         from cresmo.domain.value_objects import Channel
@@ -549,13 +842,36 @@ class TestContent:
         assert not hasattr(cnt, "publication_date")
         assert not hasattr(cnt, "modality")
 
-    def test_content_creation_with_string_coercion(self) -> None:
+    def test_content_creation_with_string_coercion_and_defaults(self) -> None:
         from cresmo.domain.value_objects import Content, ContentId
 
         cnt = Content(id="dQw4w9WgXcQ", title="Test Title", body="Textual body")
         assert isinstance(cnt.id, ContentId)
         assert cnt.id.value == "dQw4w9WgXcQ"
         assert cnt.body == "Textual body"
+
+        cnt_default = Content(id="dQw4w9WgXcQ")
+        assert cnt_default.title == ""
+        assert cnt_default.body == ""
+
+    def test_content_kwargs_aliases_and_overrides(self) -> None:
+        from cresmo.domain.value_objects import Content, ContentId
+
+        cnt = Content(
+            content_id="alt_content_id",
+            content_title="CustomTitle",
+        )
+        assert cnt.id == ContentId("alt_content_id")
+        assert cnt.title == "CustomTitle"
+
+        cnt_override = Content(
+            id="primary_id",
+            content_id="ignored_id",
+            title="PrimaryTitle",
+            content_title="IgnoredTitle",
+        )
+        assert cnt_override.id == ContentId("primary_id")
+        assert cnt_override.title == "PrimaryTitle"
 
     def test_content_create_factory(self) -> None:
         from cresmo.domain.value_objects import Content, ContentId
@@ -571,12 +887,27 @@ class TestContent:
         assert cnt.content_id == ContentId("dQw4w9WgXcQ")
         assert cnt.content_title == "My Video"
 
-    def test_content_title_default_empty(self) -> None:
+    def test_content_defaults(self) -> None:
         from cresmo.domain.value_objects import Content
 
         cnt = Content.create(id="dQw4w9WgXcQ")
         assert cnt.title == ""
+        assert cnt.body == ""
         assert not hasattr(cnt, "display_title")
+
+    def test_content_invalid_id_raises(self) -> None:
+        from cresmo.domain.exceptions import DomainValidationError
+        from cresmo.domain.value_objects import Content
+
+        with pytest.raises(
+            DomainValidationError, match=r"^Content requires non-null id\.$"
+        ):
+            Content(id=None)
+
+        with pytest.raises(
+            DomainValidationError, match=r"^Invalid content id type: <class 'int'>$"
+        ):
+            Content(id=12345)  # type: ignore[arg-type]
 
     def test_content_video_alias_removed(self) -> None:
         import cresmo.domain.value_objects as vo_mod

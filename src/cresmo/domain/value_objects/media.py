@@ -158,6 +158,9 @@ class DiscoveredMediaItem:
         )
 
 
+CHANNEL_TAB_ENDINGS: tuple[str, ...] = ("/videos", "/shorts", "/streams", "/playlists")
+
+
 def normalize_to_uploads_playlist_url(channel_ref: str | ChannelId) -> str:
     """Transform YouTube channel reference to its canonical uploads playlist URL (UU prefix).
 
@@ -188,14 +191,16 @@ def normalize_to_uploads_playlist_url(channel_ref: str | ChannelId) -> str:
         return extracted_channel_id.uploads_playlist_url
 
     formatted = cleaned if cleaned.startswith(("http://", "https://")) else f"https://{cleaned}"
-    if "/@" in formatted and not formatted.endswith(
-        ("/videos", "/shorts", "/streams", "/playlists")
-    ):
-        return f"{formatted.rstrip('/')}/videos"
+    formatted = formatted.rstrip("/")
 
     if formatted.startswith("https://@"):
-        handle = formatted.replace("https://@", "")
+        handle = formatted.removeprefix("https://@")
+        if handle.endswith(CHANNEL_TAB_ENDINGS):
+            return f"https://www.youtube.com/@{handle}"
         return f"https://www.youtube.com/@{handle}/videos"
+
+    if "/@" in formatted and not formatted.endswith(CHANNEL_TAB_ENDINGS):
+        return f"{formatted}/videos"
 
     return formatted
 

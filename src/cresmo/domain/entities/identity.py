@@ -135,14 +135,18 @@ class UserIdentity:
     def anonymous(cls, token: str | None = None) -> UserIdentity:
         """Create an anonymous user identity."""
         identity_value = f"anon:{token}" if token else "anonymous"
-        return cls(value=identity_value, is_anonymous=True, provider="anonymous", subject="")
+        return cls(value=identity_value)
 
     @classmethod
-    def identified(cls, subject: str, provider: str = "oauth") -> UserIdentity:
+    def identified(cls, subject: str, provider: str | None = None) -> UserIdentity:
         """Create an identified user identity from OAuth subject, IAM username, or email."""
         if not subject or not subject.strip():
             raise ValueError("Identified UserIdentity requires a non-empty subject.")
-        resolved_provider = provider.strip().lower() or "oauth"
+        if provider is not None:
+            clean_provider = provider.strip().lower()
+            resolved_provider = clean_provider if clean_provider else "oauth"
+        else:
+            resolved_provider = "oauth"
         identity_value = f"user:{resolved_provider}:{subject.strip()}"
         return cls(
             value=identity_value,
@@ -150,6 +154,7 @@ class UserIdentity:
             provider=resolved_provider,
             subject=subject.strip(),
         )
+
 
     @classmethod
     def worker(cls, name: str = "worker") -> UserIdentity:
@@ -170,10 +175,10 @@ class UserIdentity:
         clean_channel = channel.strip()
         return cls(
             value=f"channel:{clean_channel}",
-            is_anonymous=True,
             provider="channel",
             subject=clean_channel,
         )
+
 
 
 @dataclass(frozen=True)

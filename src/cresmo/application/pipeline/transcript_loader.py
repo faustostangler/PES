@@ -74,7 +74,7 @@ def _resolve_metadata(
     meta: dict[str, Any],
     file_path: Path,
     stem: str,
-) -> tuple[str, ChannelName, ChannelId | None, str, str, str]:
+) -> tuple[str, ChannelName, ChannelId | None, str, str, str, str | None]:
     """Resolve entity attributes combining explicit frontmatter and path conventions."""
     title = str(
         meta.get("video_title")
@@ -97,8 +97,9 @@ def _resolve_metadata(
     )
     source_url = str(meta.get("url") or f"file://{file_path.resolve()}")
     video_description = str(meta.get("video_description") or "")
+    publication_date_raw = meta.get("publication_date") or meta.get("published_at")
 
-    return title, channel_name, channel_id_obj, category, source_url, video_description
+    return title, channel_name, channel_id_obj, category, source_url, video_description, publication_date_raw
 
 
 def load_transcript_from_file(file_path: Path) -> SourceTranscript:
@@ -133,7 +134,7 @@ def load_transcript_from_file(file_path: Path) -> SourceTranscript:
 
     content_id = _derive_content_id(file_path.stem, raw_body)
     body, meta = _extract_frontmatter(raw_body, file_path.name)
-    title, ch_name, ch_id, category, source_url, description = _resolve_metadata(
+    title, ch_name, ch_id, category, source_url, description, pub_date = _resolve_metadata(
         meta, file_path, file_path.stem
     )
 
@@ -145,7 +146,7 @@ def load_transcript_from_file(file_path: Path) -> SourceTranscript:
     provenance = MediaProvenance.create(
         url=source_url,
         description=description,
-        publication_date=None,
+        publication_date=pub_date,
     )
     content = Content.create(
         id=content_id,

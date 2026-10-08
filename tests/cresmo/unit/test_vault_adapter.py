@@ -66,13 +66,11 @@ class TestObsidianVaultAdapter:
 
         assert retrieved is not None
         assert retrieved.content.id == cid
-        assert retrieved.channel.channel_name == ChannelName("Political Theory")
+        assert retrieved.channel.name == "Political Theory"
         assert "transcript line 1" in retrieved.content.body
         # ADR-038 parity assertions
         assert retrieved.channel.name == "Political Theory"
         assert retrieved.content.id == cid
-        assert retrieved.content.content_id == retrieved.content.id
-        assert retrieved.channel.channel_name.value == retrieved.channel.name
 
     def test_custom_injected_mocs_dir_and_index_path(
         self, storage_paths: tuple[Path, Path, Path], tmp_path: Path
@@ -420,7 +418,7 @@ class TestObsidianVaultAdapter:
 
         transcript = adapter.get_raw_transcript(ContentId("no_fm_1234"))
         assert transcript is not None
-        assert transcript.channel.channel_name == ChannelName("ChannelFolder")
+        assert transcript.channel.name == "ChannelFolder"
         assert "Plain markdown body" in transcript.content.body
 
     def test_get_raw_transcript_invalid_date_handled_gracefully(

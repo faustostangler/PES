@@ -108,7 +108,7 @@ class FillGapsUseCase:
                 prompt_key,
                 pass_num=pass_index + 1,
                 total_passes=passes,
-                channel_name=fluid_transcript.channel.channel_name,
+                channel_name=fluid_transcript.channel.name,
                 file_name=file_name,
                 raw_text=fluid_transcript.content.body,
                 current_text=current_text if pass_index > 0 else None,
@@ -151,12 +151,12 @@ class FillGapsUseCase:
         video_date = pub_date.strftime("%Y%m%d") if pub_date else ""
         compendium = EnrichedCompendium(
             content_id=fluid_transcript.content.id,
-            channel_name=fluid_transcript.channel.channel_name,
+            channel_name=fluid_transcript.channel.name,
             title=NoteTitle(extracted_title),
             body=body,
             complementary_info=complementary_information,
             pass_count=passes,
-            channel_id=fluid_transcript.channel.channel_id,
+            channel_id=fluid_transcript.channel.id,
             channel_category=fluid_transcript.channel.category,
             source_url=fluid_transcript.provenance.url,
             publication_date=pub_date,

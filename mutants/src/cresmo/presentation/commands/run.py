@@ -38,6 +38,7 @@ from cresmo.domain.exceptions import (
 )
 from cresmo.domain.value_objects import (
     BatchId,
+    ChannelName,
     SourceModality,
     SyncFilterCriteria,
     is_processable_transcript_file,
@@ -199,7 +200,7 @@ def execute_single_video_run(pipeline: CresmoPipeline, args: argparse.Namespace)
                     else None,
                     vault_port=pipeline.vault_port,
                 )
-                concat_master.execute(raw.channel.channel_name)
+                concat_master.execute(ChannelName(raw.channel.name))
         except Exception as exc:  # noqa: BLE001
             sys.stderr.write(f"Warning: Master consolidation failed: {exc}\n")
 

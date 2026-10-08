@@ -282,7 +282,6 @@ class PipelineStageRunner:
         active_trace_id = self._get_active_trace_id(
             channel=context.channel,
             content=context.content,
-            stage_name=stage_config.stage_name,
         )
 
         response_text = llm_port.transform(
@@ -321,7 +320,6 @@ class PipelineStageRunner:
         active_trace_id = self._get_active_trace_id(
             channel=context.channel,
             content=context.content,
-            stage_name=stage_config.stage_name,
         )
 
         with self.telemetry_port.start_stage_evaluation_span(
@@ -673,7 +671,6 @@ class PipelineStageRunner:
         channel: Channel | ChannelId | ChannelName | str | None = None,
         content: Content | ContentId | str | None = None,
         *,
-        stage_name: str = "",
         channel_id: ChannelId | str | None = None,
         channel_name: ChannelName | str | None = None,
         content_id: ContentId | str | None = None,

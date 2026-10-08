@@ -22,7 +22,7 @@ from cresmo.domain.exceptions import (
     IngestionNetworkError,
     RateLimitExceededError,
 )
-from cresmo.domain.value_objects import ChannelFeedQuery, ChannelId, ChannelName, ContentId
+from cresmo.domain.value_objects import ChannelFeedQuery, ChannelId, ContentId
 from cresmo.infrastructure.adapters.native_media_ingestion_adapter import (
     NativeMediaIngestionAdapter,
 )
@@ -677,8 +677,8 @@ class TestNativeMediaIngestionAdapter:
 
             assert transcript is not None
             assert transcript.content.id == ContentId("abc12345678")
-            assert transcript.channel.channel_name == ChannelName("Channel _ Slashed")
-            assert transcript.channel.channel_id == ChannelId("UC1234567890123456789012")
+            assert transcript.channel.name == "Channel _ Slashed"
+            assert transcript.channel.id == ChannelId("UC1234567890123456789012")
             assert (
                 transcript.provenance.publication_date == datetime(2024, 5, 20, tzinfo=UTC).date()
             )

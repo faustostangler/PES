@@ -199,8 +199,6 @@ class ChannelId:
     @classmethod
     def extract_from_text(cls, text: str) -> ChannelId | None:
         """Extract ChannelId from text or URL safely, returning None on failure."""
-        if not text or not text.strip():
-            return None
         try:
             return cls.from_url_or_token(text)
         except (DomainValidationError, ValueError, TypeError):
@@ -309,8 +307,6 @@ class ContentId:
     @classmethod
     def extract_from_text(cls, text: str) -> ContentId | None:
         """Extract canonical ContentId from text or URL safely, returning None on failure."""
-        if not text or not text.strip():
-            return None
         try:
             return cls.from_url_or_token(text)
         except (DomainValidationError, ValueError, TypeError):
@@ -360,31 +356,24 @@ class Channel:
         effective_name = channel_name if name is None else name
         effective_id = channel_id if id is None else id
 
-        if isinstance(effective_name, ChannelName):
-            raw_name = effective_name.value
-        elif effective_name is not None:
-            raw_name = effective_name
-        else:
-            raw_name = ""
+        raw_name = (
+            effective_name.value
+            if isinstance(effective_name, ChannelName)
+            else (effective_name or "")
+        )
         clean_name = raw_name.strip()
         if not clean_name:
             raise DomainValidationError("Channel name cannot be empty or whitespace.")
-        if len(clean_name) > MAX_CHANNEL_NAME_LENGTH:
-            raise DomainValidationError(
-                f"Channel name exceeds maximum length of {MAX_CHANNEL_NAME_LENGTH} characters: '{clean_name[:30]}...'"
-            )
-        if ".." in clean_name or "/" in clean_name or "\\" in clean_name:
-            raise DomainValidationError(
-                f"Channel name cannot contain path traversal or separator characters: '{clean_name}'"
-            )
 
-        resolved_channel_id = (
-            ChannelId.from_string(effective_id)
-            if isinstance(effective_id, (ChannelId, str)) and effective_id
-            else None
-        )
-        if resolved_channel_id is not None and not isinstance(resolved_channel_id, ChannelId):
-            raise DomainValidationError(f"Invalid channel id type: {type(effective_id)}")
+        clean_name = ChannelName.from_string(clean_name).value
+
+        if effective_id is not None and effective_id != "":
+            if isinstance(effective_id, (ChannelId, str)):
+                resolved_channel_id = ChannelId.from_string(effective_id)
+            else:
+                raise DomainValidationError(f"Invalid channel id type: {type(effective_id)}")
+        else:
+            resolved_channel_id = None
 
         object.__setattr__(self, "name", clean_name)
         object.__setattr__(self, "id", resolved_channel_id)
@@ -455,12 +444,9 @@ class Content:
         effective_id = content_id if id is None else id
         if effective_id is None:
             raise DomainValidationError("Content requires non-null id.")
-        resolved_content_id = (
-            ContentId.from_string(effective_id)
-            if isinstance(effective_id, (ContentId, str))
-            else effective_id
-        )
-        if not isinstance(resolved_content_id, ContentId):
+        if isinstance(effective_id, (ContentId, str)):
+            resolved_content_id = ContentId.from_string(effective_id)
+        else:
             raise DomainValidationError(f"Invalid content id type: {type(effective_id)}")
 
         effective_title = content_title if not title and content_title else title

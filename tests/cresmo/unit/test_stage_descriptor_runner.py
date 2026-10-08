@@ -7,6 +7,7 @@ Conforms to:
 
 from __future__ import annotations
 
+from typing import Any
 from unittest.mock import MagicMock
 
 from cresmo.application.pipeline.context import PipelineExecutionContext
@@ -17,17 +18,22 @@ from cresmo.application.ports import (
     NoOpMetricsPort,
     NoOpPromptProviderPort,
     NoOpTelemetryPort,
+    PromptProviderPort,
 )
 from cresmo.domain.entities import PipelineSessionId, SourceTranscript, UserIdentity
 from cresmo.domain.value_objects import (
     CandidateText,
+    Channel,
     ChannelId,
     ChannelName,
+    ChatMessage,
     ChatPrompt,
+    Content,
     ContentId,
     CriterionScore,
     JudgeCriterion,
     JudgeEvaluation,
+    MessageRole,
     PromptKey,
     StageEvaluationSpec,
 )
@@ -425,3 +431,235 @@ class TestStageConfigRunner:
         assert eval_result.passed is True
         assert eval_result.overall_score == 0.98
         mock_judge.evaluate.assert_called_once()
+
+
+class TestStageConfigPromptBuilding:
+    """Hermetic unit tests for StageConfig defaults, prompt building, and post-processing."""
+
+    def test_stage_config_defaults_and_identity_post_processing(self) -> None:
+        cfg = StageConfig[str, CandidateText](
+            stage_name="default_stage",
+            transform_prompt_key=PromptKey.FLUID_PROSE,
+        )
+        assert cfg.stage_name == "default_stage"
+        assert cfg.transform_prompt_key == PromptKey.FLUID_PROSE
+        assert cfg.judge_prompt_key is None
+        assert cfg.eval_spec is None
+        assert cfg.post_processor is None
+        assert cfg.temperature is None
+        assert cfg.max_attempts == 1
+        assert cfg.blocking is False
+
+        cand = CandidateText(stage_name="default_stage", text="unprocessed text")
+        assert cfg.post_process(cand, "dummy_source") is cand
+
+    def test_build_transform_prompt_default_kwargs(self) -> None:
+        mock_provider = MagicMock(spec=PromptProviderPort)
+        base_prompt = ChatPrompt(
+            messages=(ChatMessage(role=MessageRole.USER, content="User instruction"),),
+            system_instruction="System instruction",
+        )
+        mock_provider.get_prompt.return_value = base_prompt
+
+        cfg = StageConfig[str, str](
+            stage_name="test_stage",
+            transform_prompt_key=PromptKey.FLUID_PROSE,
+        )
+        result = cfg.build_transform_prompt(
+            mock_provider,
+            source="raw_source_text",
+        )
+        mock_provider.get_prompt.assert_called_once_with(
+            PromptKey.FLUID_PROSE,
+            channel_name="",
+            channel_id="",
+            content_id="",
+            content_title="",
+            file_name=".txt",
+            raw_text="raw_source_text",
+        )
+        assert result is base_prompt
+
+    def test_build_transform_prompt_with_explicit_kwargs_and_extra_context(self) -> None:
+        mock_provider = MagicMock(spec=PromptProviderPort)
+        base_prompt = ChatPrompt(
+            messages=(ChatMessage(role=MessageRole.USER, content="Instruction"),),
+        )
+        mock_provider.get_prompt.return_value = base_prompt
+
+        cfg = StageConfig[str, str](
+            stage_name="test_stage",
+            transform_prompt_key=PromptKey.FLUID_PROSE,
+        )
+        cfg.build_transform_prompt(
+            mock_provider,
+            source="custom_text",
+            channel_name="CustomChan",
+            channel_id="ID123",
+            content_id="VID456",
+            content_title="CustomTitle",
+            extra_param="extra_val",
+        )
+        mock_provider.get_prompt.assert_called_once_with(
+            PromptKey.FLUID_PROSE,
+            channel_name="CustomChan",
+            channel_id="ID123",
+            content_id="VID456",
+            content_title="CustomTitle",
+            file_name="VID456.txt",
+            raw_text="custom_text",
+            extra_param="extra_val",
+        )
+
+    def test_build_transform_prompt_with_channel_without_id(self) -> None:
+        mock_provider = MagicMock(spec=PromptProviderPort)
+        mock_provider.get_prompt.return_value = ChatPrompt(
+            messages=(ChatMessage(role=MessageRole.USER, content="Text"),),
+        )
+
+        cfg = StageConfig[str, str](
+            stage_name="test_stage",
+            transform_prompt_key=PromptKey.FLUID_PROSE,
+        )
+        ch = Channel(name="NamedChannel", id=None)
+        cfg.build_transform_prompt(
+            mock_provider,
+            source="raw",
+            channel=ch,
+        )
+        called_kwargs = mock_provider.get_prompt.call_args[1]
+        assert called_kwargs["channel_name"] == "NamedChannel"
+        assert called_kwargs["channel_id"] == ""
+
+    def test_build_transform_prompt_source_extraction_variants(self) -> None:
+        mock_provider = MagicMock(spec=PromptProviderPort)
+        mock_provider.get_prompt.return_value = ChatPrompt(
+            messages=(ChatMessage(role=MessageRole.USER, content="Text"),),
+        )
+
+        cfg = StageConfig[object, str](
+            stage_name="test_stage",
+            transform_prompt_key=PromptKey.FLUID_PROSE,
+        )
+
+        # 1. Source with content.body
+        class SourceContentBody:
+            content = Content(id="c1", body="extracted from content.body")
+
+        cfg.build_transform_prompt(mock_provider, source=SourceContentBody())
+        assert mock_provider.get_prompt.call_args[1]["raw_text"] == "extracted from content.body"
+
+        # 2. Source with body attribute
+        class SourceBody:
+            body = "extracted from body"
+
+        cfg.build_transform_prompt(mock_provider, source=SourceBody())
+        assert mock_provider.get_prompt.call_args[1]["raw_text"] == "extracted from body"
+
+        # 3. Source with text attribute
+        class SourceText:
+            text = "extracted from text"
+
+        cfg.build_transform_prompt(mock_provider, source=SourceText())
+        assert mock_provider.get_prompt.call_args[1]["raw_text"] == "extracted from text"
+
+        # 4. Fallback to str(source)
+        class CustomObj:
+            def __str__(self) -> str:
+                return "custom_str_repr"
+
+        cfg.build_transform_prompt(mock_provider, source=CustomObj())
+        assert mock_provider.get_prompt.call_args[1]["raw_text"] == "custom_str_repr"
+
+    def test_build_transform_prompt_with_critique_multi_turn(self) -> None:
+        mock_provider = MagicMock(spec=PromptProviderPort)
+        base_prompt = ChatPrompt(
+            messages=(
+                ChatMessage(role=MessageRole.USER, content="Example user question"),
+                ChatMessage(role=MessageRole.ASSISTANT, content="Example assistant response"),
+                ChatMessage(role=MessageRole.USER, content="Actual task instruction"),
+            ),
+            system_instruction="System prompt directive",
+        )
+        mock_provider.get_prompt.return_value = base_prompt
+
+        cfg = StageConfig[str, str](
+            stage_name="test_stage",
+            transform_prompt_key=PromptKey.FLUID_PROSE,
+        )
+        result = cfg.build_transform_prompt(
+            mock_provider,
+            source="raw",
+            critique="Colloquialism detected: 'tipo assim'.",
+        )
+
+        assert len(result.messages) == 3
+        # First message (USER) must NOT have critique appended
+        assert result.messages[0].role == MessageRole.USER
+        assert result.messages[0].content == "Example user question"
+        # Second message (ASSISTANT) must NOT be mutated
+        assert result.messages[1].role == MessageRole.ASSISTANT
+        assert result.messages[1].content == "Example assistant response"
+        # Only the final USER message must have the critique appended
+        assert result.messages[2].role == MessageRole.USER
+        assert result.messages[2].content == (
+            "Actual task instruction\n\n[PREVIOUS ATTEMPT QUALITY FEEDBACK]\n"
+            "The previous generation failed quality evaluation:\n"
+            "Colloquialism detected: 'tipo assim'.\n"
+            "Please correct these defects in your output."
+        )
+        assert result.system_instruction == "System prompt directive"
+
+    def test_build_transform_prompt_with_critique_empty_messages_system_only(self) -> None:
+        mock_provider = MagicMock(spec=PromptProviderPort)
+        base_prompt = ChatPrompt(
+            messages=(),
+            system_instruction="System only directive",
+        )
+        mock_provider.get_prompt.return_value = base_prompt
+
+        cfg = StageConfig[str, str](
+            stage_name="test_stage",
+            transform_prompt_key=PromptKey.FLUID_PROSE,
+        )
+        result = cfg.build_transform_prompt(
+            mock_provider,
+            source="raw",
+            critique="Missing citations.",
+        )
+
+        assert len(result.messages) == 1
+        assert result.messages[0].role == MessageRole.USER
+        expected_content = (
+            "[PREVIOUS ATTEMPT QUALITY FEEDBACK]\n"
+            "The previous generation failed quality evaluation:\n"
+            "Missing citations.\n"
+            "Please correct these defects in your output."
+        )
+        assert result.messages[0].content == expected_content
+        assert result.system_instruction == "System only directive"
+
+    def test_post_process_invokes_callable_with_exact_candidate_and_source(self) -> None:
+        received_args: list[tuple[Any, Any]] = []
+
+        def custom_processor(cand: CandidateText, src: SourceTranscript) -> str:
+            received_args.append((cand, src))
+            return f"Processed: {src.channel.name} -> {cand.text}"
+
+        cfg = StageConfig[SourceTranscript, str](
+            stage_name="test_stage",
+            transform_prompt_key=PromptKey.FLUID_PROSE,
+            post_processor=custom_processor,
+        )
+        src = SourceTranscript(
+            content_id=ContentId("cid1"),
+            channel_name=ChannelName("ChanA"),
+            body="source_body",
+        )
+        cand = CandidateText(stage_name="test_stage", text="candidate_body")
+        out = cfg.post_process(cand, src)
+
+        assert out == "Processed: ChanA -> candidate_body"
+        assert len(received_args) == 1
+        assert received_args[0][0] is cand
+        assert received_args[0][1] is src

@@ -44,12 +44,11 @@ def is_processable_transcript_file(path: Path | str) -> bool:
     """Validate whether a path represents a candidate raw transcript and not a system artifact or index.
 
     Adheres to ADR-015:
-    1. Suffix must strictly be .md or .txt (case-insensitive).
+    1. Suffix must strictly be .md or .txt (case-insensitive, excluding swap/backup suffixes).
     2. Filename cannot start with '_' or '.' (hidden or system catalog).
     3. None of the directory components in path.parts may start with '_' or '.'.
     4. Filename cannot belong to RESERVED_SYSTEM_FILENAMES.
-    5. Temporary, backup, or editor swap files (.tmp, .bak, .swp, ~) are excluded.
-    6. Files residing inside derived output roots (enriched, master, vault) are excluded.
+    5. Files residing inside derived output roots (enriched, master, vault) are excluded.
 
     Args:
         path: Path object or string path to validate.
@@ -72,17 +71,13 @@ def is_processable_transcript_file(path: Path | str) -> bool:
 
     # Rule 3: Hidden or system directory components (e.g. .git, .obsidian, _trash)
     for part in candidate_path.parts[:-1]:
-        if part and part != "/" and part.startswith(("_", ".")):
+        if part.startswith(("_", ".")):
             return False
 
     # Rule 4: Reserved system filenames
     if name_lower in RESERVED_SYSTEM_FILENAMES:
         return False
 
-    # Rule 5: Temporary / backup / editor swap suffixes
-    if name_lower.endswith((".tmp", ".bak", ".swp")) or name.endswith("~"):
-        return False
-
-    # Rule 6: Derived artifact directories when path is relative or encompasses multiple roots
+    # Rule 5: Derived artifact directories when path is relative or encompasses multiple roots
     dir_parts_lower = {part.lower() for part in candidate_path.parts[:-1]}
     return not bool(dir_parts_lower.intersection(RESERVED_DERIVED_DIRS))

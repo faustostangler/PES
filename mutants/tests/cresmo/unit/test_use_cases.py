@@ -130,8 +130,8 @@ class TestTransformFluidProse:
 
         assert fluid.content.id == cid
         assert fluid.content.title == "Vilfredo Pareto e a Teoria das Elites"
-        assert fluid.channel.channel_name == ChannelName("Example Channel")
-        assert fluid.channel.channel_id == ChannelId("UC123456")
+        assert fluid.channel.name == "Example Channel"
+        assert fluid.channel.id == ChannelId("UC123456")
         assert fluid.provenance.url == "https://youtube.com/watch?v=dQw4w9WgXcQ"
         assert "## As Oligarquias Organizadas" in fluid.content.body
         assert "A teoria da circulação das elites postula" in fluid.content.body

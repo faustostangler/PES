@@ -57,3 +57,24 @@ def test_stage_registry_unknown_stage_raises_key_error() -> None:
     assert StageRegistry.contains("unknown_stage") is False
     with pytest.raises(KeyError, match="Stage 'unknown_stage' is not registered"):
         StageRegistry.get("unknown_stage")
+
+
+def test_stage_registry_all_stages() -> None:
+    """Verify all_stages returns registered stage identifiers as a list."""
+    stages = StageRegistry.all_stages()
+    assert isinstance(stages, list)
+    assert "fluid_prose" in stages
+
+
+def test_stage_registry_register_dynamic_stage() -> None:
+    """Verify register adds and associates the exact StageDefinition spec."""
+    custom_spec = StageDefinition(required_criteria=(JudgeCriterion.SEMANTIC_FAITHFULNESS,))
+    try:
+        StageRegistry.register("custom_dynamic_stage", custom_spec)
+        assert StageRegistry.contains("custom_dynamic_stage") is True
+        retrieved = StageRegistry.get("custom_dynamic_stage")
+        assert retrieved is custom_spec
+        assert retrieved is not None
+        assert "custom_dynamic_stage" in StageRegistry.all_stages()
+    finally:
+        StageRegistry._SPECS.pop("custom_dynamic_stage", None)
