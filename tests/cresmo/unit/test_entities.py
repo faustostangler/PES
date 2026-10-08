@@ -20,7 +20,6 @@ from cresmo.domain.entities import (
     UserIdentity,
     post_process_fluid_transcript,
 )
-
 from cresmo.domain.exceptions import (
     CompendiumStructureError,
     DomainValidationError,
@@ -54,7 +53,6 @@ class TestSourceTranscript:
         )
         assert transcript.content.id == cid
         assert transcript.channel.name == "Example Channel"
-        assert transcript.channel.channel_name == ChannelName("Example Channel")
         assert transcript.content.body == "Valid spoken transcript body text."
         assert transcript.provenance.publication_date == pub
 
@@ -443,7 +441,6 @@ class TestMapOfContent:
             SourceTranscript(content_id=cid, channel_name=ChannelName("   "), body="Valid body.")
 
 
-
 class TestPipelineSessionId:
     """ADR-027, ADR-032 & ADR-033: PipelineSessionId canonical format {channel_id}:{content_id}."""
 
@@ -596,7 +593,9 @@ class TestPipelineSessionId:
 
         # Channel without id, explicit channel_id passed
         ch2 = Channel(name="Name2", id=None)
-        sid2 = PipelineSessionId.create(channel=ch2, content_id="vid2", channel_id=ChannelId("UC_id2"))
+        sid2 = PipelineSessionId.create(
+            channel=ch2, content_id="vid2", channel_id=ChannelId("UC_id2")
+        )
         assert sid2.value == "UC_id2:vid2"
 
         # Channel without id, channel_id=None -> fallback to channel.name
@@ -675,13 +674,11 @@ class TestUserIdentity:
 
         assert inspect.signature(UserIdentity.identified).parameters["provider"].default is None
 
-
         u1 = UserIdentity.identified(subject="bob")
         assert u1.value == "user:oauth:bob"
         assert u1.is_anonymous is False
         assert u1.provider == "oauth"
         assert u1.subject == "bob"
-
 
         u2 = UserIdentity.identified(subject="carol", provider="   ")
         assert u2.value == "user:oauth:carol"
@@ -777,7 +774,6 @@ class TestJudgeFrictionMetric:
         assert m5.friction_ratio == 1.0
 
 
-
 class TestChannelCompositeValueObjectAndTenantKey:
     """ADR-032 & ADR-033: Composite Channel VO with Identity VOs and intrinsic tenant_key."""
 
@@ -868,14 +864,14 @@ class TestAdr038PureValueObjectTriadComposition:
         assert source.channel.id is not None
         assert source.channel.id.value == "UCP3CtEXi5nxbhei_aBfIOVA"
         assert source.content.id.value == "9IbNJ0EsTxI"
-        assert source.channel.channel_id == source.channel.id
-        assert source.content.content_id == source.content.id
+        assert not hasattr(source.channel, "channel_id")
+        assert not hasattr(source.content, "content_id")
 
         # 3. Cognitive Pair (TXT - TXT Parity)
         assert source.channel.name == "Marcelo Andrade"
         assert source.content.title == "AFONSO HENRIQUES: o fundador de Portugal"
-        assert source.channel.channel_name.value == "Marcelo Andrade"
-        assert source.content.content_title == "AFONSO HENRIQUES: o fundador de Portugal"
+        assert not hasattr(source.channel, "channel_name")
+        assert not hasattr(source.content, "content_title")
 
         # 4. Pure Triad accessors
         assert source.content.body == "Raw spoken audio transcript without edit."
@@ -981,7 +977,6 @@ class TestAdr038PureValueObjectTriadComposition:
         from cresmo.domain.value_objects import (
             Channel,
             ChannelId,
-            ChannelName,
             Content,
             ContentId,
             MediaProvenance,
@@ -992,51 +987,45 @@ class TestAdr038PureValueObjectTriadComposition:
             channel_id="UCxyz1234567890ab",
             category="history",
         )
-        assert ch.channel_id == ChannelId("UCxyz1234567890ab")
-        assert ch.channel_name == ChannelName("Marcelo Andrade")
         assert ch.name == "Marcelo Andrade"
         assert ch.id == ChannelId("UCxyz1234567890ab")
+        assert not hasattr(ch, "channel_id")
+        assert not hasattr(ch, "channel_name")
 
         content = Content(
             content_id="9IbNJ0EsTxI",
             content_title="A Gênese Estrutural do Condado Portucalense",
             body="Prosa contínua e densa.",
         )
-        assert content.content_id == ContentId("9IbNJ0EsTxI")
-        assert content.content_title == "A Gênese Estrutural do Condado Portucalense"
         assert content.id == ContentId("9IbNJ0EsTxI")
         assert content.title == "A Gênese Estrutural do Condado Portucalense"
+        assert not hasattr(content, "content_id")
+        assert not hasattr(content, "content_title")
 
         prov = MediaProvenance(url="https://youtube.com/watch?v=9IbNJ0EsTxI")
 
         src = SourceTranscript(channel=ch, provenance=prov, content=content)
         # Check SourceTranscript parity via Value Objects
-        assert src.channel.channel_id == ChannelId("UCxyz1234567890ab")
-        assert src.content.content_id == ContentId("9IbNJ0EsTxI")
-        assert src.channel.channel_name == ChannelName("Marcelo Andrade")
-        assert src.content.content_title == "A Gênese Estrutural do Condado Portucalense"
+        assert src.channel.id == ChannelId("UCxyz1234567890ab")
+        assert src.content.id == ContentId("9IbNJ0EsTxI")
+        assert src.channel.name == "Marcelo Andrade"
+        assert src.content.title == "A Gênese Estrutural do Condado Portucalense"
 
         fluid = FluidTranscript(channel=ch, provenance=prov, content=content)
         # Check FluidTranscript parity via Value Objects
-        assert fluid.channel.channel_id == ChannelId("UCxyz1234567890ab")
-        assert fluid.content.content_id == ContentId("9IbNJ0EsTxI")
-        assert fluid.channel.channel_name == ChannelName("Marcelo Andrade")
-        assert fluid.content.content_title == "A Gênese Estrutural do Condado Portucalense"
+        assert fluid.channel.id == ChannelId("UCxyz1234567890ab")
+        assert fluid.content.id == ContentId("9IbNJ0EsTxI")
+        assert fluid.channel.name == "Marcelo Andrade"
+        assert fluid.content.title == "A Gênese Estrutural do Condado Portucalense"
 
         root_tx = Transcript(source=src, fluid=fluid)
         # Check Transcript root aggregate parity via Value Objects
-        assert root_tx.channel is not None and root_tx.channel.channel_id == ChannelId(
-            "UCxyz1234567890ab"
-        )
-        assert root_tx.content is not None and root_tx.content.content_id == ContentId(
-            "9IbNJ0EsTxI"
-        )
-        assert root_tx.channel is not None and root_tx.channel.channel_name == ChannelName(
-            "Marcelo Andrade"
-        )
+        assert root_tx.channel is not None and root_tx.channel.id == ChannelId("UCxyz1234567890ab")
+        assert root_tx.content is not None and root_tx.content.id == ContentId("9IbNJ0EsTxI")
+        assert root_tx.channel is not None and root_tx.channel.name == "Marcelo Andrade"
         assert (
             root_tx.content is not None
-            and root_tx.content.content_title == "A Gênese Estrutural do Condado Portucalense"
+            and root_tx.content.title == "A Gênese Estrutural do Condado Portucalense"
         )
 
         # Check PipelineExecutionContext parity
@@ -1051,10 +1040,6 @@ class TestAdr038PureValueObjectTriadComposition:
         assert ctx.content.id == ContentId("9IbNJ0EsTxI")
         assert ctx.channel.name == "Marcelo Andrade"
         assert ctx.content.title == "A Gênese Estrutural do Condado Portucalense"
-        assert ctx.channel.channel_id == ChannelId("UCxyz1234567890ab")
-        assert ctx.content.content_id == ContentId("9IbNJ0EsTxI")
-        assert ctx.channel.channel_name == ChannelName("Marcelo Andrade")
-        assert ctx.content.content_title == "A Gênese Estrutural do Condado Portucalense"
 
 
 class TestSourceTranscriptInvariantsAndEdgeCases:
@@ -1088,13 +1073,19 @@ class TestSourceTranscriptInvariantsAndEdgeCases:
     def test_init_publication_and_upload_date_resolution(self) -> None:
         pub = datetime.date(2023, 1, 1)
         upl = datetime.date(2022, 1, 1)
-        st_both = SourceTranscript(channel_name="C", body="B", publication_date=pub, upload_date=upl)
+        st_both = SourceTranscript(
+            channel_name="C", body="B", publication_date=pub, upload_date=upl
+        )
         assert st_both.provenance.publication_date == pub
 
-        st_upl = SourceTranscript(channel_name="C", body="B", publication_date=None, upload_date=upl)
+        st_upl = SourceTranscript(
+            channel_name="C", body="B", publication_date=None, upload_date=upl
+        )
         assert st_upl.provenance.publication_date == upl
 
-        st_none = SourceTranscript(channel_name="C", body="B", publication_date=None, upload_date=None)
+        st_none = SourceTranscript(
+            channel_name="C", body="B", publication_date=None, upload_date=None
+        )
         assert st_none.provenance.publication_date is None
 
     def test_init_all_primitive_args(self) -> None:
@@ -1212,7 +1203,9 @@ class TestFluidTranscriptInvariantsAndEdgeCases:
 
     def test_init_with_value_objects(self) -> None:
         ch = Channel(name="VO Channel", id=ChannelId("UC_vo"), category="art")
-        prov = MediaProvenance.create(url="https://url", description="desc", publication_date="2024-01-01")
+        prov = MediaProvenance.create(
+            url="https://url", description="desc", publication_date="2024-01-01"
+        )
         cnt = Content(id=ContentId("vo_id"), title="VO Title", body="Clean prose.")
         ft = FluidTranscript(channel=ch, provenance=prov, content=cnt, metadata={"a": 1})
         assert ft.channel is ch
@@ -1244,7 +1237,9 @@ class TestFluidTranscriptInvariantsAndEdgeCases:
         ft_upl = FluidTranscript(channel_name="C", body="B", publication_date=None, upload_date=upl)
         assert ft_upl.provenance.publication_date == upl
 
-        ft_none = FluidTranscript(channel_name="C", body="B", publication_date=None, upload_date=None)
+        ft_none = FluidTranscript(
+            channel_name="C", body="B", publication_date=None, upload_date=None
+        )
         assert ft_none.provenance.publication_date is None
 
     def test_init_all_primitive_args(self) -> None:
@@ -1297,7 +1292,9 @@ class TestFluidTranscriptInvariantsAndEdgeCases:
         ):
             FluidTranscript(channel_name="C", body=table_start)
 
-        table_middle = "Leading paragraph text.\n\n| Header 1 | Header 2 |\n| :--- | ---: |\n| Val 1 | Val 2 |"
+        table_middle = (
+            "Leading paragraph text.\n\n| Header 1 | Header 2 |\n| :--- | ---: |\n| Val 1 | Val 2 |"
+        )
         with pytest.raises(
             CompendiumStructureError,
             match=r"^FluidTranscript body must be continuous prose and cannot contain Markdown tables\.$",
@@ -1409,7 +1406,9 @@ class TestPostProcessFluidTranscriptInvariantsAndRegex:
     """Rigorous invariant and regex matching tests for post_process_fluid_transcript."""
 
     def test_candidate_as_candidatetext_and_raw_str(self) -> None:
-        st = SourceTranscript(channel_name="Chan", content_id="c1", title="Default Title", body="Raw")
+        st = SourceTranscript(
+            channel_name="Chan", content_id="c1", title="Default Title", body="Raw"
+        )
 
         res1 = post_process_fluid_transcript("   Prose body text.   ", st)
         assert res1.content.body == "Prose body text."
@@ -1433,7 +1432,9 @@ class TestPostProcessFluidTranscriptInvariantsAndRegex:
         assert res_sp.content.body == "Body text after."
 
     def test_fallback_titles_when_h1_missing(self) -> None:
-        st_with_title = SourceTranscript(channel_name="Chan", content_id="c1", title="Original Title", body="Raw")
+        st_with_title = SourceTranscript(
+            channel_name="Chan", content_id="c1", title="Original Title", body="Raw"
+        )
         res1 = post_process_fluid_transcript("Body without H1 header.", st_with_title)
         assert res1.content.title == "Original Title"
 
@@ -1445,19 +1446,29 @@ class TestPostProcessFluidTranscriptInvariantsAndRegex:
         st = SourceTranscript(channel_name="Chan", content_id="c1", body="Raw")
         base = "Main core prose narrative that must be preserved."
 
-        res1 = post_process_fluid_transcript(f"{base}\n\n## Informações Complementares\nDetails to drop.", st)
+        res1 = post_process_fluid_transcript(
+            f"{base}\n\n## Informações Complementares\nDetails to drop.", st
+        )
         assert res1.content.body == base
 
-        res2 = post_process_fluid_transcript(f"{base}\n\n### Notas Complementares\nNotes to drop.", st)
+        res2 = post_process_fluid_transcript(
+            f"{base}\n\n### Notas Complementares\nNotes to drop.", st
+        )
         assert res2.content.body == base
 
-        res3 = post_process_fluid_transcript(f"{base}\n\n## Informações Adicionais\nMore to drop.", st)
+        res3 = post_process_fluid_transcript(
+            f"{base}\n\n## Informações Adicionais\nMore to drop.", st
+        )
         assert res3.content.body == base
 
-        res4 = post_process_fluid_transcript(f"{base}\n\n## **Informações Complementares**\nBold to drop.", st)
+        res4 = post_process_fluid_transcript(
+            f"{base}\n\n## **Informações Complementares**\nBold to drop.", st
+        )
         assert res4.content.body == base
 
-        res5 = post_process_fluid_transcript(f"{base}\n\n## informações complementares\nCase to drop.", st)
+        res5 = post_process_fluid_transcript(
+            f"{base}\n\n## informações complementares\nCase to drop.", st
+        )
         assert res5.content.body == base
 
     def test_empty_body_raises_compendium_structure_error(self) -> None:
@@ -1473,7 +1484,9 @@ class TestPostProcessFluidTranscriptInvariantsAndRegex:
             CompendiumStructureError,
             match=r"^Generated fluid prose body is empty for 'c_err_1'\.$",
         ):
-            post_process_fluid_transcript("# Header\n\n## Informações Complementares\nExtra notes.", st)
+            post_process_fluid_transcript(
+                "# Header\n\n## Informações Complementares\nExtra notes.", st
+            )
 
         with pytest.raises(
             CompendiumStructureError,

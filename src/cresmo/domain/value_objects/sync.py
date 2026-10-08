@@ -21,11 +21,7 @@ def _resolve_channel_name_and_url(
     channel_url: str | None,
 ) -> tuple[str, str]:
     """Extract normalized lowercase (channel_name, channel_url) pair."""
-    raw_name = (
-        channel_name.value
-        if isinstance(channel_name, ChannelName)
-        else (channel_name or "")
-    )
+    raw_name = channel_name.value if isinstance(channel_name, ChannelName) else (channel_name or "")
     return raw_name.strip().lower(), (channel_url or "").strip().lower()
 
 
@@ -143,9 +139,7 @@ class SyncFilterCriteria:
         if not self.categories:
             return True
 
-        target: ChannelName | str | None = (
-            channel_name if channel_name is not None else channel_url
-        )
+        target: ChannelName | str | None = channel_name if channel_name is not None else channel_url
         if not target:
             return False
 

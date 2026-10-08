@@ -392,16 +392,6 @@ class Channel:
         return cls(name=name, id=id, category=category, url=url)
 
     @property
-    def channel_id(self) -> ChannelId | None:
-        """Algorithmic channel identifier (channel_id - content_id parity)."""
-        return self.id
-
-    @property
-    def channel_name(self) -> ChannelName:
-        """Cognitive channel creator name (channel_name - content_title parity)."""
-        return ChannelName.from_string(self.name)
-
-    @property
     def tenant_key(self) -> str:
         """Canonical tenant format key ('channel:{token}')."""
         token = self.id.value if self.id else self.name
@@ -469,16 +459,6 @@ class Content:
             title=title,
             body=body,
         )
-
-    @property
-    def content_id(self) -> ContentId:
-        """Algorithmic content identifier (channel_id - content_id parity)."""
-        return self.id
-
-    @property
-    def content_title(self) -> str:
-        """Cognitive content title (channel_name - content_title parity)."""
-        return self.title
 
     def __str__(self) -> str:
         return self.id.value

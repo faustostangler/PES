@@ -248,6 +248,7 @@ def test_stage_factory_convention_over_configuration_prompt_key() -> None:
 
 def test_stage_factory_settings_defaults_fallback() -> None:
     """Verify fallback defaults when settings lacks attributes."""
+
     class BareSettings:
         pass
 
@@ -325,4 +326,3 @@ def test_stage_factory_eval_spec_created_with_only_source_extractor() -> None:
     )
     assert descriptor.eval_spec is not None
     assert descriptor.eval_spec.extract_source_text("dummy") == "only_source"
-

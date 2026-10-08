@@ -103,7 +103,9 @@ class TestDomainTaxonomy:
         ]
 
         # Query parameter immediately following handle without intervening slash
-        c_query_direct = _extract_channel_candidates("https://www.youtube.com/@ancapsu?sub_confirmation=1")
+        c_query_direct = _extract_channel_candidates(
+            "https://www.youtube.com/@ancapsu?sub_confirmation=1"
+        )
         assert c_query_direct == [
             "https://www.youtube.com/@ancapsu?sub_confirmation=1",
             "@ancapsu",
@@ -119,7 +121,9 @@ class TestDomainTaxonomy:
         ]
 
         # Multiple slashes and multiple query parameters after /@
-        c_deep = _extract_channel_candidates("https://www.youtube.com/@ancapsu/videos/featured?sub=1?extra=2")
+        c_deep = _extract_channel_candidates(
+            "https://www.youtube.com/@ancapsu/videos/featured?sub=1?extra=2"
+        )
         assert c_deep == [
             "https://www.youtube.com/@ancapsu/videos/featured?sub=1?extra=2",
             "@ancapsu",

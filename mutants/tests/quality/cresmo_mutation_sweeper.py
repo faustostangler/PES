@@ -111,10 +111,12 @@ MODULE_TEST_MAP: dict[str, list[str]] = {
         "tests/cresmo/unit/test_pipeline_telemetry.py",
     ],
     "src/cresmo/application/pipeline/context.py": [
+        "tests/cresmo/unit/test_pipeline_execution_context.py",
         "tests/cresmo/unit/test_stage_foundation.py",
         "tests/cresmo/unit/test_stage_runner.py",
     ],
     "src/cresmo/application/pipeline/models.py": [
+        "tests/cresmo/unit/test_pipeline_models.py",
         "tests/cresmo/unit/test_stage_foundation.py",
     ],
     # Wave 3: Application Use Cases

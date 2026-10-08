@@ -54,7 +54,6 @@ class TestSourceTranscript:
         )
         assert transcript.content.id == cid
         assert transcript.channel.name == "Example Channel"
-        assert transcript.channel.channel_name == ChannelName("Example Channel")
         assert transcript.content.body == "Valid spoken transcript body text."
         assert transcript.provenance.publication_date == pub
 
@@ -868,14 +867,14 @@ class TestAdr038PureValueObjectTriadComposition:
         assert source.channel.id is not None
         assert source.channel.id.value == "UCP3CtEXi5nxbhei_aBfIOVA"
         assert source.content.id.value == "9IbNJ0EsTxI"
-        assert source.channel.channel_id == source.channel.id
-        assert source.content.content_id == source.content.id
+        assert not hasattr(source.channel, "channel_id")
+        assert not hasattr(source.content, "content_id")
 
         # 3. Cognitive Pair (TXT - TXT Parity)
         assert source.channel.name == "Marcelo Andrade"
         assert source.content.title == "AFONSO HENRIQUES: o fundador de Portugal"
-        assert source.channel.channel_name.value == "Marcelo Andrade"
-        assert source.content.content_title == "AFONSO HENRIQUES: o fundador de Portugal"
+        assert not hasattr(source.channel, "channel_name")
+        assert not hasattr(source.content, "content_title")
 
         # 4. Pure Triad accessors
         assert source.content.body == "Raw spoken audio transcript without edit."
@@ -992,51 +991,49 @@ class TestAdr038PureValueObjectTriadComposition:
             channel_id="UCxyz1234567890ab",
             category="history",
         )
-        assert ch.channel_id == ChannelId("UCxyz1234567890ab")
-        assert ch.channel_name == ChannelName("Marcelo Andrade")
         assert ch.name == "Marcelo Andrade"
         assert ch.id == ChannelId("UCxyz1234567890ab")
+        assert not hasattr(ch, "channel_id")
+        assert not hasattr(ch, "channel_name")
 
         content = Content(
             content_id="9IbNJ0EsTxI",
             content_title="A Gênese Estrutural do Condado Portucalense",
             body="Prosa contínua e densa.",
         )
-        assert content.content_id == ContentId("9IbNJ0EsTxI")
-        assert content.content_title == "A Gênese Estrutural do Condado Portucalense"
         assert content.id == ContentId("9IbNJ0EsTxI")
         assert content.title == "A Gênese Estrutural do Condado Portucalense"
+        assert not hasattr(content, "content_id")
+        assert not hasattr(content, "content_title")
 
         prov = MediaProvenance(url="https://youtube.com/watch?v=9IbNJ0EsTxI")
 
         src = SourceTranscript(channel=ch, provenance=prov, content=content)
         # Check SourceTranscript parity via Value Objects
-        assert src.channel.channel_id == ChannelId("UCxyz1234567890ab")
-        assert src.content.content_id == ContentId("9IbNJ0EsTxI")
-        assert src.channel.channel_name == ChannelName("Marcelo Andrade")
-        assert src.content.content_title == "A Gênese Estrutural do Condado Portucalense"
+        assert src.channel.id == ChannelId("UCxyz1234567890ab")
+        assert src.content.id == ContentId("9IbNJ0EsTxI")
+        assert src.channel.name == "Marcelo Andrade"
+        assert src.content.title == "A Gênese Estrutural do Condado Portucalense"
 
         fluid = FluidTranscript(channel=ch, provenance=prov, content=content)
         # Check FluidTranscript parity via Value Objects
-        assert fluid.channel.channel_id == ChannelId("UCxyz1234567890ab")
-        assert fluid.content.content_id == ContentId("9IbNJ0EsTxI")
-        assert fluid.channel.channel_name == ChannelName("Marcelo Andrade")
-        assert fluid.content.content_title == "A Gênese Estrutural do Condado Portucalense"
+        assert fluid.channel.id == ChannelId("UCxyz1234567890ab")
+        assert fluid.content.id == ContentId("9IbNJ0EsTxI")
+        assert fluid.channel.name == "Marcelo Andrade"
+        assert fluid.content.title == "A Gênese Estrutural do Condado Portucalense"
 
         root_tx = Transcript(source=src, fluid=fluid)
         # Check Transcript root aggregate parity via Value Objects
-        assert root_tx.channel is not None and root_tx.channel.channel_id == ChannelId(
+        assert root_tx.channel is not None and root_tx.channel.id == ChannelId(
             "UCxyz1234567890ab"
         )
-        assert root_tx.content is not None and root_tx.content.content_id == ContentId(
+        assert root_tx.content is not None and root_tx.content.id == ContentId(
             "9IbNJ0EsTxI"
         )
-        assert root_tx.channel is not None and root_tx.channel.channel_name == ChannelName(
-            "Marcelo Andrade"
-        )
+        assert root_tx.channel is not None and root_tx.channel.name == "Marcelo Andrade"
         assert (
             root_tx.content is not None
-            and root_tx.content.content_title == "A Gênese Estrutural do Condado Portucalense"
+            and root_tx.content.title == "A Gênese Estrutural do Condado Portucalense"
         )
 
         # Check PipelineExecutionContext parity
@@ -1051,10 +1048,6 @@ class TestAdr038PureValueObjectTriadComposition:
         assert ctx.content.id == ContentId("9IbNJ0EsTxI")
         assert ctx.channel.name == "Marcelo Andrade"
         assert ctx.content.title == "A Gênese Estrutural do Condado Portucalense"
-        assert ctx.channel.channel_id == ChannelId("UCxyz1234567890ab")
-        assert ctx.content.content_id == ContentId("9IbNJ0EsTxI")
-        assert ctx.channel.channel_name == ChannelName("Marcelo Andrade")
-        assert ctx.content.content_title == "A Gênese Estrutural do Condado Portucalense"
 
 
 class TestSourceTranscriptInvariantsAndEdgeCases:

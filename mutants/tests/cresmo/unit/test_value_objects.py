@@ -127,7 +127,9 @@ class TestNoteTitle:
         ):
             NoteTitle("a" * (MAX_NOTE_TITLE_LENGTH + 1))
 
-    @pytest.mark.parametrize("placeholder", ["untitled", "UNTITLED", "untitled_note", "Untitled_Note"])
+    @pytest.mark.parametrize(
+        "placeholder", ["untitled", "UNTITLED", "untitled_note", "Untitled_Note"]
+    )
     def test_generic_placeholder_raises_validation_error(self, placeholder: str) -> None:
         with pytest.raises(
             DomainValidationError,
@@ -218,7 +220,9 @@ class TestAtomicEntityInventory:
         # 'ß'.upper() is 'SS', 'SS'.upper() is 'SS' (collision if upper() is used!)
         t_sharp_s = NoteTitle("ß")
         t_double_s = NoteTitle("SS")
-        inv = AtomicEntityInventory(items=((t_sharp_s, NoteType.CONCEPT), (t_double_s, NoteType.ENTITY)))
+        inv = AtomicEntityInventory(
+            items=((t_sharp_s, NoteType.CONCEPT), (t_double_s, NoteType.ENTITY))
+        )
         assert len(inv.items) == 2
 
     def test_duplicate_titles_in_inventory_raises_validation_error(self) -> None:
@@ -350,8 +354,9 @@ class TestMasterDocumentResult:
 
     def test_invalid_channel_category_raises(self) -> None:
         from pathlib import Path
+
         from cresmo.domain.exceptions import DomainValidationError
-        from cresmo.domain.value_objects import ChannelName, ContentId, MasterDocumentResult
+        from cresmo.domain.value_objects import ChannelName, MasterDocumentResult
 
         with pytest.raises(
             DomainValidationError,
@@ -381,6 +386,7 @@ class TestMasterDocumentResult:
 
     def test_negative_counts_raise(self) -> None:
         from pathlib import Path
+
         from cresmo.domain.exceptions import DomainValidationError
         from cresmo.domain.value_objects import ChannelName, MasterDocumentResult
 
@@ -406,6 +412,7 @@ class TestMasterDocumentResult:
 
     def test_boundaries_and_coercion(self) -> None:
         from pathlib import Path
+
         from cresmo.domain.value_objects import ChannelName, ContentId, MasterDocumentResult
 
         res = MasterDocumentResult(
@@ -710,8 +717,8 @@ class TestChannel:
         )
         assert ch.name == "Canal do Meio"
         assert ch.id == ChannelId("UC_x5XG1OV2P6uZZ5FSM9Ttw")
-        assert ch.channel_id == ChannelId("UC_x5XG1OV2P6uZZ5FSM9Ttw")
-        assert ch.channel_name == ChannelName("Canal do Meio")
+        assert not hasattr(ch, "channel_id")
+        assert not hasattr(ch, "channel_name")
         assert ch.category == "News"
         assert ch.url == "https://www.youtube.com/@canaldomeio"
         assert ch.canonical_url == "https://www.youtube.com/@canaldomeio"
@@ -835,8 +842,8 @@ class TestContent:
         assert cnt.id == ContentId("dQw4w9WgXcQ")
         assert cnt.title == "Never Gonna Give You Up"
         assert cnt.body == "Never gonna let you down"
-        assert cnt.content_id == ContentId("dQw4w9WgXcQ")
-        assert cnt.content_title == "Never Gonna Give You Up"
+        assert not hasattr(cnt, "content_id")
+        assert not hasattr(cnt, "content_title")
         assert str(cnt) == "dQw4w9WgXcQ"
         assert not hasattr(cnt, "url")
         assert not hasattr(cnt, "publication_date")
@@ -884,8 +891,8 @@ class TestContent:
         assert cnt.id == ContentId("dQw4w9WgXcQ")
         assert cnt.title == "My Video"
         assert cnt.body == "Synthesized body text"
-        assert cnt.content_id == ContentId("dQw4w9WgXcQ")
-        assert cnt.content_title == "My Video"
+        assert not hasattr(cnt, "content_id")
+        assert not hasattr(cnt, "content_title")
 
     def test_content_defaults(self) -> None:
         from cresmo.domain.value_objects import Content
@@ -899,9 +906,7 @@ class TestContent:
         from cresmo.domain.exceptions import DomainValidationError
         from cresmo.domain.value_objects import Content
 
-        with pytest.raises(
-            DomainValidationError, match=r"^Content requires non-null id\.$"
-        ):
+        with pytest.raises(DomainValidationError, match=r"^Content requires non-null id\.$"):
             Content(id=None)
 
         with pytest.raises(

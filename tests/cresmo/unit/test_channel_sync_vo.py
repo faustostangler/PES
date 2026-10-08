@@ -32,10 +32,6 @@ from cresmo.domain.value_objects import (
     SyncSummary,
     normalize_to_uploads_playlist_url,
 )
-from cresmo.domain.value_objects.media import (
-    DEFAULT_FEED_LOOKBACK_DAYS,
-    DEFAULT_FEED_MAX_VIDEOS,
-)
 
 
 class TestPipelineStatus:
@@ -58,7 +54,7 @@ class TestMediaProvenance:
         prov = MediaProvenance(
             url="  https://youtube.com/watch?v=dQw4w9WgXcQ  ",
             description="  Video Description  ",
-            publication_date=datetime(2024, 6, 15, 12, 0, 0),
+            publication_date=datetime(2024, 6, 15, 12, 0, 0, tzinfo=UTC),
         )
         assert prov.url == "https://youtube.com/watch?v=dQw4w9WgXcQ"
         assert prov.description == "Video Description"
@@ -68,7 +64,7 @@ class TestMediaProvenance:
         p1 = MediaProvenance.create(
             url="https://youtube.com",
             description="Test",
-            publication_date=datetime(2024, 6, 15, 12, 0),
+            publication_date=datetime(2024, 6, 15, 12, 0, tzinfo=UTC),
         )
         assert p1.publication_date == date(2024, 6, 15)
 
@@ -263,7 +259,9 @@ class TestChannelFeedQuery:
             ChannelFeedQuery(channel_url="not_a_valid_url")
 
     def test_non_positive_lookback_raises_validation_error(self) -> None:
-        with pytest.raises(DomainValidationError, match=r"^lookback_days must be positive\. Got: 0$"):
+        with pytest.raises(
+            DomainValidationError, match=r"^lookback_days must be positive\. Got: 0$"
+        ):
             ChannelFeedQuery(
                 channel_url="https://youtube.com/@QuantumHub",
                 lookback_days=0,
@@ -458,9 +456,13 @@ class TestSyncFilterCriteria:
         assert criteria.is_empty() is False
 
     def test_empty_tokens_raise_validation_error(self) -> None:
-        with pytest.raises(DomainValidationError, match=r"^Channel filter token cannot be empty\.$"):
+        with pytest.raises(
+            DomainValidationError, match=r"^Channel filter token cannot be empty\.$"
+        ):
             SyncFilterCriteria(channels=("",))
-        with pytest.raises(DomainValidationError, match=r"^Category filter token cannot be empty\.$"):
+        with pytest.raises(
+            DomainValidationError, match=r"^Category filter token cannot be empty\.$"
+        ):
             SyncFilterCriteria(categories=("   ",))
         with pytest.raises(DomainValidationError, match=r"^Video filter token cannot be empty\.$"):
             SyncFilterCriteria(video_ids=("",))
@@ -511,7 +513,10 @@ class TestSyncFilterCriteria:
         # Target starting with '@'
         c3 = SyncFilterCriteria(channels=("@ancapsu",))
         assert c3.matches_channel(ChannelName("ancapsu")) is True
-        assert c3.matches_channel(channel_name=None, channel_url="https://youtube.com/channel/ancapsu") is True
+        assert (
+            c3.matches_channel(channel_name=None, channel_url="https://youtube.com/channel/ancapsu")
+            is True
+        )
         assert c3.matches_channel(ChannelName("other")) is False
 
         # Target being only '@' without bare target
@@ -524,8 +529,12 @@ class TestSyncFilterCriteria:
 
         # Channel URL with @target
         c4 = SyncFilterCriteria(channels=("mychan",))
-        assert c4.matches_channel(channel_name=None, channel_url="https://youtube.com/@mychan") is True
-        assert c4.matches_channel(channel_name=None, channel_url="https://youtube.com/@other") is False
+        assert (
+            c4.matches_channel(channel_name=None, channel_url="https://youtube.com/@mychan") is True
+        )
+        assert (
+            c4.matches_channel(channel_name=None, channel_url="https://youtube.com/@other") is False
+        )
 
         # Channel name containing @target
         c5 = SyncFilterCriteria(channels=("myhandle",))
@@ -534,19 +543,29 @@ class TestSyncFilterCriteria:
     def test_resolve_channel_name_and_url_variations(self) -> None:
         # Raw string channel_name containing URL or handle
         c = SyncFilterCriteria(channels=("mychan",))
-        assert c.matches_channel(channel_name="https://youtube.com/@mychan", channel_url=None) is True
+        assert (
+            c.matches_channel(channel_name="https://youtube.com/@mychan", channel_url=None) is True
+        )
         assert c.matches_channel(channel_name="/mychan/videos", channel_url=None) is True
         assert c.matches_channel(channel_name="@mychan", channel_url=None) is True
         assert c.matches_channel(channel_name="MYCHAN", channel_url=None) is True
 
         # When channel_url is already provided, it takes precedence over embedded string url
-        assert c.matches_channel(channel_name="http://embedded", channel_url="https://youtube.com/@mychan") is True
+        assert (
+            c.matches_channel(
+                channel_name="http://embedded", channel_url="https://youtube.com/@mychan"
+            )
+            is True
+        )
 
         # When channel_name is None, do not match dummy "XXXX" or "xxxx"
         c_dummy = SyncFilterCriteria(channels=("xxxx",))
         assert c_dummy.matches_channel(channel_name=None, channel_url=None) is False
         assert c_dummy.matches_channel(channel_name=ChannelName("other"), channel_url=None) is False
-        assert c_dummy.matches_channel(channel_name=None, channel_url="https://youtube.com/@other") is False
+        assert (
+            c_dummy.matches_channel(channel_name=None, channel_url="https://youtube.com/@other")
+            is False
+        )
 
     def test_matches_category_evaluates_domain_name_vs_volatility(self) -> None:
         # Category list has both domain name ("politics_br") and volatility type ("perennial")
@@ -562,7 +581,10 @@ class TestSyncFilterCriteria:
         assert criteria.matches_category(ChannelName("canal 90")) is False
 
         # Fallback with channel_url when channel_name is None
-        assert criteria.matches_category(channel_name=None, channel_url="https://youtube.com/@ancapsu") is True
+        assert (
+            criteria.matches_category(channel_name=None, channel_url="https://youtube.com/@ancapsu")
+            is True
+        )
         assert criteria.matches_category(channel_name=None, channel_url=None) is False
         c_dummy_cat = SyncFilterCriteria(categories=("XXXX",))
         assert c_dummy_cat.matches_category(channel_name=None, channel_url=None) is False
@@ -597,7 +619,10 @@ class TestSyncFilterCriteria:
         assert criteria.matches_video(video_id="path/12345", video_url=None) is True
 
         # Target is substring of video_url
-        assert criteria.matches_video(video_id=None, video_url="https://youtube.com/watch?v=12345") is True
+        assert (
+            criteria.matches_video(video_id=None, video_url="https://youtube.com/watch?v=12345")
+            is True
+        )
 
         # video_url is substring of Target
         c_url = SyncFilterCriteria(video_ids=("https://youtu.be/12345?t=42",))
@@ -620,10 +645,7 @@ class TestNormalizeToUploadsPlaylistUrl:
 
         # ChannelId without uploads playlist URL falls back to canonical URL
         cid_no_uploads = ChannelId("custom_channel")
-        assert (
-            normalize_to_uploads_playlist_url(cid_no_uploads)
-            == cid_no_uploads.canonical_url
-        )
+        assert normalize_to_uploads_playlist_url(cid_no_uploads) == cid_no_uploads.canonical_url
 
     def test_empty_and_whitespace(self) -> None:
         assert normalize_to_uploads_playlist_url("") == ""
@@ -756,4 +778,3 @@ class TestNormalizeToUploadsPlaylistUrl:
             normalize_to_uploads_playlist_url("http://example.com/custom")
             == "http://example.com/custom"
         )
-
