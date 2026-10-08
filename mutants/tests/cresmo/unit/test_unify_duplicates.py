@@ -1,4 +1,4 @@
-"""Unit tests for Stage 7: UnifyDuplicateNotesUseCase.
+"""Unit tests for UnifyDuplicateNotesUseCase.
 
 Verifies algorithmic duplicate detection, non-destructive merging of definitions,
 aliases, and relations, rewriting of inbound WikiLinks, and vault index synchronization.
@@ -19,7 +19,7 @@ from cresmo.domain.value_objects import (
     NoteTitle,
     NoteType,
 )
-from cresmo.infrastructure.adapters.mock_adapters import InMemoryVaultAdapter
+from tests.doubles.mock_adapters import InMemoryVaultAdapter
 
 
 class TestUnifyDuplicateNotesUseCase:

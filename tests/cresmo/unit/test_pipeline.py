@@ -31,6 +31,7 @@ from cresmo.domain.entities import EnrichedCompendium, FluidTranscript, SourceTr
 from cresmo.domain.exceptions import CresmoDomainError
 from cresmo.domain.value_objects import (
     BatchId,
+    ChannelId,
     ChannelName,
     ContentId,
     NoteTitle,
@@ -190,8 +191,8 @@ class TestCresmoPipelineOrchestration:
         assert result.source_transcript is canned_source
         assert result.fluid_transcript is not None
         assert isinstance(result.fluid_transcript, FluidTranscript)
-        assert result.fluid_transcript.content_id == cid
-        assert "A teoria da circulação das elites postula" in result.fluid_transcript.body
+        assert result.fluid_transcript.content.id == cid
+        assert "A teoria da circulação das elites postula" in result.fluid_transcript.content.body
 
     def test_run_for_video_ingestion_failure_raises_domain_error(self) -> None:
         mock_llm = SmartMockLLMAdapter()
@@ -398,13 +399,13 @@ class TestCresmoPipelineOrchestration:
         assert res.success is True
         raw = vault.get_raw_transcript(res.content_id)
         assert raw is not None
-        assert raw.title == "Discurso sobre a Servidão Voluntária"
-        assert raw.channel_name == "Filosofia Política"
-        assert raw.channel_id == "chan_philo_123"
-        assert raw.channel_category == "philosophy"
-        assert raw.source_url == "https://example.org/etienne"
-        assert raw.video_description == "Análise de La Boétie"
-        assert "Corpo do texto sobre a servidão voluntária" in raw.body
+        assert raw.content.title == "Discurso sobre a Servidão Voluntária"
+        assert raw.channel.name == "Filosofia Política"
+        assert raw.channel.id == ChannelId("chan_philo_123")
+        assert raw.channel.category == "philosophy"
+        assert raw.provenance.url == "https://example.org/etienne"
+        assert raw.provenance.description == "Análise de La Boétie"
+        assert "Corpo do texto sobre a servidão voluntária" in raw.content.body
 
     def test_run_for_text_file_skips_save_when_already_in_raw_lake(self, tmp_path: Path) -> None:
         """Verify that files residing inside raw_dir lake are not redundantly re-saved to disk."""
@@ -778,12 +779,12 @@ class TestCresmoPipelineOrchestration:
         assert result_variant.success is True
         raw = vault.get_raw_transcript(result_variant.content_id)
         assert raw is not None
-        assert raw.title == "Alternative Title"
-        assert raw.channel_name == "Alternative Channel"
-        assert raw.channel_category == "sociology"
-        assert raw.channel_id == "alt_id_1"
-        assert raw.source_url == "https://example.org/alt"
-        assert raw.video_description == "Alternative description text"
+        assert raw.content.title == "Alternative Title"
+        assert raw.channel.name == "Alternative Channel"
+        assert raw.channel.category == "sociology"
+        assert raw.channel.id == ChannelId("alt_id_1")
+        assert raw.provenance.url == "https://example.org/alt"
+        assert raw.provenance.description == "Alternative description text"
 
         # Malformed YAML frontmatter (syntax error) is safely tolerated
         f_bad_yaml = tmp_path / "bad_yaml.md"
@@ -795,7 +796,7 @@ class TestCresmoPipelineOrchestration:
         assert result_bad.success is True
         raw_bad = vault.get_raw_transcript(result_bad.content_id)
         assert raw_bad is not None
-        assert "Body content surviving bad YAML" in raw_bad.body
+        assert "Body content surviving bad YAML" in raw_bad.content.body
 
         # Unclosed frontmatter (no closing ---) is treated directly as body
         f_no_close = tmp_path / "no_close.md"
@@ -807,7 +808,7 @@ class TestCresmoPipelineOrchestration:
         assert result_no_close.success is True
         raw_no_close = vault.get_raw_transcript(result_no_close.content_id)
         assert raw_no_close is not None
-        assert "Just plain body text." in raw_no_close.body
+        assert "Just plain body text." in raw_no_close.content.body
 
     @pytest.mark.skip(
         reason="Downstream stages 2-8 quarantined pending StageConfig refactoring per ADR-031"

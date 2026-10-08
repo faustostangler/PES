@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import pytest
+
 from cresmo.infrastructure.config import CresmoSettings
 from cresmo.infrastructure.paths import find_workspace_root
 
@@ -47,5 +49,88 @@ class TestCresmoSettings:
         assert settings.vault_dir.name == "vault"
         assert settings.raw_dir == settings.data_dir / "raw"
         assert settings.enriched_dir == settings.data_dir / "enriched"
+        assert settings.master_dir == settings.data_dir / "master"
         assert settings.index_path == settings.vault_dir / "_index.json"
         assert settings.sqlite_ledger_path == settings.data_dir / "cresmo_ledger.db"
+        assert settings.browser_cookies == "firefox"
+        assert settings.auto_extract_cookies is True
+        assert settings.enable_channel_crawler is True
+        assert settings.require_auth_cookies is False
+        assert settings.concat_max_words == 500_000
+        assert settings.brain_csv_path == settings.data_dir / "brain.csv"
+        assert settings.prometheus_enabled is True
+        assert settings.prometheus_port == 9090
+        assert settings.ollama_base_url == "http://localhost:11434"
+        assert settings.ollama_model == "qwen2.5:7b"
+        assert settings.indexing_provider == "ollama"
+        assert settings.ollama_num_predict == 0
+        assert settings.raw_index_max_chars == 0
+        assert settings.language == "Português do Brasil"
+        assert not hasattr(settings, "default_language")
+        assert not hasattr(settings, "llm_temperature")
+        assert not hasattr(settings, "raw_index_temperature")
+        assert settings.llm_synthesis_temperature == 0.2
+        assert settings.llm_indexing_temperature == 0.2
+
+    def test_ollama_num_predict_defaults_and_env_override(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        settings = CresmoSettings()
+        assert settings.ollama_num_predict == 0
+
+        monkeypatch.setenv("CRESMO_OLLAMA_NUM_PREDICT", "450")
+        overridden = CresmoSettings()
+        assert overridden.ollama_num_predict == 450
+
+    def test_temperature_validation_bounds(self) -> None:
+        import pytest
+        from pydantic import ValidationError
+
+        with pytest.raises(ValidationError):
+            CresmoSettings(llm_synthesis_temperature=-0.1)
+
+        with pytest.raises(ValidationError):
+            CresmoSettings(llm_synthesis_temperature=2.1)
+
+        with pytest.raises(ValidationError):
+            CresmoSettings(llm_indexing_temperature=-0.5)
+
+        with pytest.raises(ValidationError):
+            CresmoSettings.model_validate({"llm_synthesis_temperature": -0.1})
+
+        with pytest.raises(ValidationError):
+            CresmoSettings.model_validate({"llm_indexing_temperature": -0.5})
+
+    def test_ensure_directories_creates_master_dir(self, tmp_path: Path) -> None:
+        settings = CresmoSettings(data_dir=tmp_path / "data", vault_dir=tmp_path / "vault")
+        settings.ensure_directories()
+        assert settings.master_dir.exists()
+        assert settings.master_dir.is_dir()
+        assert settings.mocs_dir.exists()
+        assert settings.mocs_dir.is_dir()
+
+    def test_discovery_queue_maxsize_defaults_and_validation(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        from pydantic import ValidationError
+
+        settings = CresmoSettings()
+        assert settings.discovery_queue_maxsize == 50
+
+        monkeypatch.setenv("DISCOVERY_QUEUE_MAXSIZE", "120")
+        overridden = CresmoSettings()
+        assert overridden.discovery_queue_maxsize == 120
+
+        with pytest.raises(ValidationError):
+            CresmoSettings.model_validate({"discovery_queue_maxsize": 0})
+
+    def test_pipeline_version_default_and_env_override(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """Verify pipeline_version defaults to cresmo:v2 and supports PIPELINE_VERSION override per ADR-026 Rule 9."""
+        settings = CresmoSettings()
+        assert settings.pipeline_version == "cresmo:v2"
+
+        monkeypatch.setenv("PIPELINE_VERSION", "cresmo:v3-canary")
+        overridden = CresmoSettings()
+        assert overridden.pipeline_version == "cresmo:v3-canary"

@@ -7,7 +7,7 @@ dry-run execution, failure trapping, and preflight health check integration per 
 from __future__ import annotations
 
 from datetime import UTC, datetime, timedelta
-from unittest.mock import MagicMock
+from unittest.mock import ANY, MagicMock
 
 import pytest
 
@@ -15,11 +15,13 @@ from cresmo.application.pipeline import CresmoPipeline, PipelineResult
 from cresmo.application.ports import LedgerRepositoryPort, MediaIngestionPort
 from cresmo.application.services.preflight import PreflightHealthChecker, PreflightResult
 from cresmo.application.use_cases.sync_channel import SyncChannelUseCase
-from cresmo.domain.entities import AtomicNote
+from cresmo.domain.entities import AtomicNote, UserIdentity
 from cresmo.domain.exceptions import PreflightError
 from cresmo.domain.value_objects import (
+    BatchId,
     CausalMatrix,
     ChannelFeedQuery,
+    ChannelName,
     ContentId,
     CrossContextRelations,
     DiscoveredMediaItem,
@@ -76,14 +78,14 @@ class TestSyncChannelUseCase:
             title="Recent Video",
             published_at=now - timedelta(days=2),
             media_url="https://youtube.com/watch?v=recentVideo1",
-            channel_name="TestChannel",
+            channel_name=ChannelName("TestChannel"),
         )
         old_item = DiscoveredMediaItem(
             content_id=ContentId("oldVideo0001"),
             title="Old Video",
             published_at=now - timedelta(days=20),
             media_url="https://youtube.com/watch?v=oldVideo0001",
-            channel_name="TestChannel",
+            channel_name=ChannelName("TestChannel"),
         )
         mock_ingestion_port.discover_channel_feed.return_value = [recent_item, old_item]
 
@@ -104,7 +106,12 @@ class TestSyncChannelUseCase:
         assert summary.skipped_count == 0
         assert summary.failed_count == 0
         assert summary.status == PipelineStatus.COMPLETED
-        mock_pipeline.run_for_video.assert_called_once_with(video_url=recent_item.media_url)
+        mock_pipeline.run_for_video.assert_called_once_with(
+            video_url=recent_item.media_url,
+            user=UserIdentity.worker(),
+            batch_id=ANY,
+        )
+        assert isinstance(mock_pipeline.run_for_video.call_args.kwargs["batch_id"], BatchId)
 
     def test_sync_channel_skips_already_processed_items(
         self,
@@ -118,7 +125,7 @@ class TestSyncChannelUseCase:
             title="Already Processed Video",
             published_at=now - timedelta(days=1),
             media_url="https://youtube.com/watch?v=alreadyDone1",
-            channel_name="TestChannel",
+            channel_name=ChannelName("TestChannel"),
         )
         mock_ingestion_port.discover_channel_feed.return_value = [item]
         mock_ledger_port.is_processed.return_value = True
@@ -150,7 +157,7 @@ class TestSyncChannelUseCase:
             title="Already Processed Video",
             published_at=now - timedelta(days=1),
             media_url="https://youtube.com/watch?v=alreadyDone1",
-            channel_name="TestChannel",
+            channel_name=ChannelName("TestChannel"),
         )
         mock_ingestion_port.discover_channel_feed.return_value = [item]
         mock_ledger_port.is_processed.return_value = True
@@ -166,7 +173,12 @@ class TestSyncChannelUseCase:
 
         assert summary.processed_count == 1
         assert summary.skipped_count == 0
-        mock_pipeline.run_for_video.assert_called_once_with(video_url=item.media_url)
+        mock_pipeline.run_for_video.assert_called_once_with(
+            video_url=item.media_url,
+            user=UserIdentity.worker(),
+            batch_id=ANY,
+        )
+        assert isinstance(mock_pipeline.run_for_video.call_args.kwargs["batch_id"], BatchId)
 
     def test_sync_channel_handles_individual_item_failure_gracefully(
         self,
@@ -180,14 +192,14 @@ class TestSyncChannelUseCase:
             title="Failing Video",
             published_at=now - timedelta(days=1),
             media_url="https://youtube.com/watch?v=failingVideo",
-            channel_name="TestChannel",
+            channel_name=ChannelName("TestChannel"),
         )
         succeeding_item = DiscoveredMediaItem(
             content_id=ContentId("successVideo"),
             title="Success Video",
             published_at=now - timedelta(days=2),
             media_url="https://youtube.com/watch?v=successVideo",
-            channel_name="TestChannel",
+            channel_name=ChannelName("TestChannel"),
         )
         mock_ingestion_port.discover_channel_feed.return_value = [failing_item, succeeding_item]
 
@@ -233,7 +245,7 @@ class TestSyncChannelUseCase:
             title="Dry Run Video",
             published_at=now - timedelta(days=1),
             media_url="https://youtube.com/watch?v=dryRunVideo1",
-            channel_name="TestChannel",
+            channel_name=ChannelName("TestChannel"),
         )
         mock_ingestion_port.discover_channel_feed.return_value = [item]
 
@@ -288,7 +300,7 @@ class TestSyncChannelUseCase:
             title="Already Processed Default",
             published_at=now - timedelta(days=1),
             media_url="https://youtube.com/watch?v=alreadyDoneDef",
-            channel_name="TestChannel",
+            channel_name=ChannelName("TestChannel"),
         )
         mock_ingestion_port.discover_channel_feed.return_value = [item]
         mock_ledger_port.is_processed.return_value = True
@@ -324,14 +336,14 @@ class TestSyncChannelUseCase:
             title="Recent Naive Video",
             published_at=recent_naive,
             media_url="https://youtube.com/watch?v=recentNaiveVid",
-            channel_name="TestChannel",
+            channel_name=ChannelName("TestChannel"),
         )
         item_old = DiscoveredMediaItem(
             content_id=ContentId("tooOldVideo001"),
             title="Too Old Video",
             published_at=old_naive,
             media_url="https://youtube.com/watch?v=tooOldVideo001",
-            channel_name="TestChannel",
+            channel_name=ChannelName("TestChannel"),
         )
         mock_ingestion_port.discover_channel_feed.return_value = [item_recent, item_old]
 
@@ -349,7 +361,12 @@ class TestSyncChannelUseCase:
 
         assert summary.total_discovered == 1
         assert summary.processed_count == 1
-        mock_pipeline.run_for_video.assert_called_once_with(video_url=item_recent.media_url)
+        mock_pipeline.run_for_video.assert_called_once_with(
+            video_url=item_recent.media_url,
+            user=UserIdentity.worker(),
+            batch_id=ANY,
+        )
+        assert isinstance(mock_pipeline.run_for_video.call_args.kwargs["batch_id"], BatchId)
 
     def test_sync_channel_max_videos_limit_enforcement(
         self,
@@ -364,7 +381,7 @@ class TestSyncChannelUseCase:
                 title=f"Video {i}",
                 published_at=now - timedelta(hours=i),
                 media_url=f"https://youtube.com/watch?v=vid_item_{i:04d}",
-                channel_name="TestChannel",
+                channel_name=ChannelName("TestChannel"),
             )
             for i in range(5)
         ]
@@ -399,7 +416,7 @@ class TestSyncChannelUseCase:
             title="Crash Video",
             published_at=now - timedelta(hours=1),
             media_url="https://youtube.com/watch?v=crashItem1",
-            channel_name="TestChannel",
+            channel_name=ChannelName("TestChannel"),
         )
         mock_ingestion_port.discover_channel_feed.return_value = [item]
         mock_pipeline.run_for_video.side_effect = RuntimeError("Fatal pipeline failure")

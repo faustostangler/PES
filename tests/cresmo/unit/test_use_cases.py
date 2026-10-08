@@ -89,7 +89,7 @@ class TestIngestRawTranscript:
         result = use_case.execute("https://youtube.com/watch?v=dQw4w9WgXcQ")
 
         assert result is not None
-        assert result.content_id == cid
+        assert result.content.id == cid
         assert vault_port.get_raw_transcript(cid) == canned
         assert ingestion_port.ingest_single_calls == ["https://youtube.com/watch?v=dQw4w9WgXcQ"]
 
@@ -128,15 +128,15 @@ class TestTransformFluidProse:
         use_case = TransformFluidProseUseCase(llm_port)
         fluid = use_case.execute(raw)
 
-        assert fluid.content_id == cid
-        assert fluid.title == "Vilfredo Pareto e a Teoria das Elites"
-        assert fluid.channel_name == ChannelName("Example Channel")
-        assert fluid.channel_id == ChannelId("UC123456")
-        assert fluid.source_url == "https://youtube.com/watch?v=dQw4w9WgXcQ"
-        assert "## As Oligarquias Organizadas" in fluid.body
-        assert "A teoria da circulação das elites postula" in fluid.body
-        assert "## Informações Complementares" not in fluid.body
-        assert "Acidentalmente gerado" not in fluid.body
+        assert fluid.content.id == cid
+        assert fluid.content.title == "Vilfredo Pareto e a Teoria das Elites"
+        assert fluid.channel.channel_name == ChannelName("Example Channel")
+        assert fluid.channel.channel_id == ChannelId("UC123456")
+        assert fluid.provenance.url == "https://youtube.com/watch?v=dQw4w9WgXcQ"
+        assert "## As Oligarquias Organizadas" in fluid.content.body
+        assert "A teoria da circulação das elites postula" in fluid.content.body
+        assert "## Informações Complementares" not in fluid.content.body
+        assert "Acidentalmente gerado" not in fluid.content.body
 
     def test_transform_fluid_prose_rejects_non_raw_transcript(self) -> None:
         llm_port = MockLLMAdapter()

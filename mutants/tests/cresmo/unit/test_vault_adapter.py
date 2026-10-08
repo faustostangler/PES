@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+from unittest.mock import patch
 
 import pytest
 
@@ -16,14 +17,17 @@ from cresmo.domain.entities import (
     AtomicNote,
     EnrichedCompendium,
     MapOfContent,
-    RawTranscript,
+    SourceTranscript,
 )
 from cresmo.domain.value_objects import (
     CausalMatrix,
+    ChannelId,
+    ChannelName,
     ContentId,
     CrossContextRelations,
     NoteTitle,
     NoteType,
+    RawIndexEntry,
 )
 from cresmo.infrastructure.adapters.obsidian_vault_adapter import ObsidianVaultAdapter
 
@@ -51,19 +55,42 @@ class TestObsidianVaultAdapter:
             enriched_dir=enriched_dir,
         )
         cid = ContentId("dQw4w9WgXcQ")
-        raw = RawTranscript(
+        raw = SourceTranscript(
             content_id=cid,
-            channel_name="Political Theory",
+            channel_name=ChannelName("Political Theory"),
             body="Spoken speech transcript line 1.\nSpoken speech transcript line 2.",
         )
 
-        adapter.save_raw_transcript(raw)
+        adapter.save_transcript(raw)
         retrieved = adapter.get_raw_transcript(cid)
 
         assert retrieved is not None
-        assert retrieved.content_id == cid
-        assert retrieved.channel_name == "Political Theory"
-        assert "transcript line 1" in retrieved.body
+        assert retrieved.content.id == cid
+        assert retrieved.channel.channel_name == ChannelName("Political Theory")
+        assert "transcript line 1" in retrieved.content.body
+        # ADR-038 parity assertions
+        assert retrieved.channel.name == "Political Theory"
+        assert retrieved.content.id == cid
+        assert retrieved.content.content_id == retrieved.content.id
+        assert retrieved.channel.channel_name.value == retrieved.channel.name
+
+    def test_custom_injected_mocs_dir_and_index_path(
+        self, storage_paths: tuple[Path, Path, Path], tmp_path: Path
+    ) -> None:
+        vault_dir, raw_dir, enriched_dir = storage_paths
+        custom_mocs = tmp_path / "custom_mocs"
+        custom_index = tmp_path / "custom_catalog.json"
+
+        adapter = ObsidianVaultAdapter(
+            vault_dir=vault_dir,
+            raw_dir=raw_dir,
+            enriched_dir=enriched_dir,
+            mocs_dir=custom_mocs,
+            index_path=custom_index,
+        )
+
+        assert adapter.mocs_dir == custom_mocs.resolve()
+        assert adapter.index_path == custom_index.resolve()
 
     def test_get_raw_transcript_missing_returns_none(
         self, storage_paths: tuple[Path, Path, Path]
@@ -86,12 +113,12 @@ class TestObsidianVaultAdapter:
         cid = ContentId("dQw4w9WgXcQ")
         compendium = EnrichedCompendium(
             content_id=cid,
-            channel_name="Political Theory",
+            channel_name=ChannelName("Political Theory"),
             title=NoteTitle("Teoria das Elites"),
             body="A circulação das elites governa as dinâmicas institucionais.",
             complementary_info="Dados históricos e matrizes de poder.",
             pass_count=2,
-            channel_id="UC_123",
+            channel_id=ChannelId("UC_123"),
             channel_category="politics",
             source_url="https://youtube.com/watch?v=dQw4w9WgXcQ",
             video_date="20230517",
@@ -106,7 +133,7 @@ class TestObsidianVaultAdapter:
         assert retrieved.title.value == "Teoria das Elites"
         assert "circulação das elites" in retrieved.body
         assert "Dados históricos" in retrieved.complementary_info
-        assert retrieved.channel_id == "UC_123"
+        assert retrieved.channel_id == ChannelId("UC_123")
         assert retrieved.channel_category == "politics"
         assert retrieved.video_date == "20230517"
         assert retrieved.video_description == "Description text."
@@ -377,3 +404,217 @@ class TestObsidianVaultAdapter:
         from cresmo.infrastructure.adapters.obsidian_vault_adapter import sanitize_filename
 
         assert sanitize_filename(raw_name) == expected
+
+    def test_get_raw_transcript_no_frontmatter_fallback(
+        self, storage_paths: tuple[Path, Path, Path]
+    ) -> None:
+        vault_dir, raw_dir, enriched_dir = storage_paths
+        adapter = ObsidianVaultAdapter(
+            vault_dir=vault_dir, raw_dir=raw_dir, enriched_dir=enriched_dir
+        )
+        raw_file = raw_dir / "ChannelFolder" / "no_fm_1234.md"
+        raw_file.parent.mkdir(parents=True, exist_ok=True)
+        raw_file.write_text(
+            "Plain markdown body with no yaml frontmatter at all.", encoding="utf-8"
+        )
+
+        transcript = adapter.get_raw_transcript(ContentId("no_fm_1234"))
+        assert transcript is not None
+        assert transcript.channel.channel_name == ChannelName("ChannelFolder")
+        assert "Plain markdown body" in transcript.content.body
+
+    def test_get_raw_transcript_invalid_date_handled_gracefully(
+        self, storage_paths: tuple[Path, Path, Path]
+    ) -> None:
+        vault_dir, raw_dir, enriched_dir = storage_paths
+        adapter = ObsidianVaultAdapter(
+            vault_dir=vault_dir, raw_dir=raw_dir, enriched_dir=enriched_dir
+        )
+        raw_file = raw_dir / "ChannelFolder" / "bad_date12.md"
+        raw_file.parent.mkdir(parents=True, exist_ok=True)
+        raw_file.write_text(
+            "---\nvideo_title: 'Bad Date'\nupload_date: '99999999'\n---\nBody with bad date",
+            encoding="utf-8",
+        )
+
+        transcript = adapter.get_raw_transcript(ContentId("bad_date12"))
+        assert transcript is not None
+        assert transcript.provenance.publication_date is None
+
+    def test_get_enriched_compendium_no_frontmatter_returns_none(
+        self, storage_paths: tuple[Path, Path, Path]
+    ) -> None:
+        vault_dir, raw_dir, enriched_dir = storage_paths
+        adapter = ObsidianVaultAdapter(
+            vault_dir=vault_dir, raw_dir=raw_dir, enriched_dir=enriched_dir
+        )
+        file_path = enriched_dir / "comp123456.md"
+        file_path.write_text("No frontmatter header in compendium.", encoding="utf-8")
+
+        assert adapter.get_enriched_compendium(ContentId("comp123456")) is None
+
+    def test_get_atomic_note_os_error_or_missing_frontmatter(
+        self, storage_paths: tuple[Path, Path, Path]
+    ) -> None:
+        vault_dir, raw_dir, enriched_dir = storage_paths
+        adapter = ObsidianVaultAdapter(
+            vault_dir=vault_dir, raw_dir=raw_dir, enriched_dir=enriched_dir
+        )
+        concepts_dir = vault_dir / "concepts"
+        concepts_dir.mkdir(parents=True, exist_ok=True)
+        corrupted = concepts_dir / "Corrupted Note.md"
+        corrupted.write_text("No frontmatter here.", encoding="utf-8")
+
+        assert adapter.get_atomic_note_by_title(NoteTitle("Corrupted Note")) is None
+
+        with patch("pathlib.Path.read_text", side_effect=OSError("Permission denied")):
+            assert adapter.get_atomic_note_by_title(NoteTitle("Corrupted Note")) is None
+
+    def test_get_atomic_note_invalid_type_and_short_definition_fallbacks(
+        self, storage_paths: tuple[Path, Path, Path]
+    ) -> None:
+        vault_dir, raw_dir, enriched_dir = storage_paths
+        adapter = ObsidianVaultAdapter(
+            vault_dir=vault_dir, raw_dir=raw_dir, enriched_dir=enriched_dir
+        )
+        concepts_dir = vault_dir / "concepts"
+        concepts_dir.mkdir(parents=True, exist_ok=True)
+        note_file = concepts_dir / "Fallback Note.md"
+        note_file.write_text(
+            "---\ntitle: 'Fallback Note'\ntype: 'invalid_unrecognized_type'\n---\nShort",
+            encoding="utf-8",
+        )
+
+        note = adapter.get_atomic_note_by_title(NoteTitle("Fallback Note"))
+        assert note is not None
+        assert note.note_type == NoteType.CONCEPT
+        assert "Definição contextual de Fallback Note" in note.definition
+
+    def test_rewrite_wiki_links_ignores_unreadable_files(
+        self, storage_paths: tuple[Path, Path, Path]
+    ) -> None:
+        vault_dir, raw_dir, enriched_dir = storage_paths
+        adapter = ObsidianVaultAdapter(
+            vault_dir=vault_dir, raw_dir=raw_dir, enriched_dir=enriched_dir
+        )
+        concepts_dir = vault_dir / "concepts"
+        concepts_dir.mkdir(parents=True, exist_ok=True)
+        target = concepts_dir / "Note.md"
+        target.write_text("Reference to [[Old Title]].", encoding="utf-8")
+
+        with patch("pathlib.Path.read_text", side_effect=OSError("Disk read error")):
+            count = adapter.rewrite_wiki_links(NoteTitle("Old Title"), NoteTitle("New Title"))
+            assert count == 0
+
+    def test_master_document_persistence_and_clearing(
+        self, storage_paths: tuple[Path, Path, Path]
+    ) -> None:
+        vault_dir, raw_dir, enriched_dir = storage_paths
+        master_dir = vault_dir.parent / "master"
+        adapter = ObsidianVaultAdapter(
+            vault_dir=vault_dir,
+            raw_dir=raw_dir,
+            enriched_dir=enriched_dir,
+            master_dir=master_dir,
+        )
+
+        # 1. Enriched files discovery
+        ch_dir = enriched_dir / "Fabio Akita"
+        ch_dir.mkdir(parents=True, exist_ok=True)
+        f1 = ch_dir / "vid1.md"
+        f2 = ch_dir / "vid2.md"
+        f1.write_text("file 1", encoding="utf-8")
+        f2.write_text("file 2", encoding="utf-8")
+
+        files = adapter.get_enriched_files_for_channel(ChannelName("Fabio Akita"))
+        assert len(files) == 2
+        assert f1 in files and f2 in files
+
+        # 2. Save master document
+        out_path = adapter.save_master_document(
+            channel_name=ChannelName("Fabio Akita"),
+            channel_category="tech_ai",
+            part_number=1,
+            content="Aggregated master content part 1",
+        )
+        assert out_path.exists()
+        assert out_path.name == "Fabio_Akita_001.md"
+        assert out_path.parent.name == "tech_ai"
+        assert out_path.read_text(encoding="utf-8") == "Aggregated master content part 1"
+
+        # 3. Clear master documents
+        adapter.clear_master_documents_for_channel(
+            channel_name=ChannelName("Fabio Akita"),
+            channel_category="tech_ai",
+        )
+        assert not out_path.exists()
+
+    def test_raw_index_channel_and_brain_csv_persistence(
+        self, storage_paths: tuple[Path, Path, Path]
+    ) -> None:
+        vault_dir, raw_dir, enriched_dir = storage_paths
+        adapter = ObsidianVaultAdapter(
+            vault_dir=vault_dir,
+            raw_dir=raw_dir,
+            enriched_dir=enriched_dir,
+        )
+
+        entry1 = RawIndexEntry(
+            video_id=ContentId("vid11111111"),
+            url="https://youtube.com/watch?v=vid11111111",
+            title="Video Um",
+            channel_name=ChannelName("Canal Teste"),
+            key_concept="Conceito Um",
+            synthesis="Síntese paratática do primeiro vídeo.",
+            channel_category="history",
+        )
+        entry2 = RawIndexEntry(
+            video_id=ContentId("vid22222222"),
+            url="https://youtube.com/watch?v=vid22222222",
+            title="Video Dois",
+            channel_name=ChannelName("Canal Teste"),
+            key_concept="Conceito Dois",
+            synthesis="Síntese paratática do segundo vídeo.",
+            channel_category="history",
+        )
+
+        # 1. Initial indexed check
+        assert adapter.get_indexed_video_ids_for_channel(ChannelName("Canal Teste")) == set()
+
+        # 2. Append entry 1
+        adapter.append_channel_index_entry(ChannelName("Canal Teste"), entry1)
+        adapter.append_brain_csv_entry(entry1)
+
+        indexed = adapter.get_indexed_video_ids_for_channel(ChannelName("Canal Teste"))
+        assert indexed == {"vid11111111"}
+
+        # Check channel index file content
+        canal_path = adapter.get_channel_index_path(ChannelName("Canal Teste"))
+        assert canal_path.exists()
+        assert canal_path.name == "_index_Canal Teste.md"
+        md_text = canal_path.read_text(encoding="utf-8")
+        assert "# Canal: Canal Teste" in md_text
+        assert "vid11111111" in md_text
+        assert "Conceito Um" in md_text
+
+        # 3. Append entry 2
+        adapter.append_channel_index_entry(ChannelName("Canal Teste"), entry2)
+        adapter.append_brain_csv_entry(entry2)
+
+        indexed = adapter.get_indexed_video_ids_for_channel(ChannelName("Canal Teste"))
+        assert indexed == {"vid11111111", "vid22222222"}
+        assert all(isinstance(x, ContentId) for x in indexed)
+
+        # 4. Check brain.csv content
+        csv_path = raw_dir.parent / "brain.csv"
+        assert csv_path.exists()
+        csv_text = csv_path.read_text(encoding="utf-8")
+        assert '"channel_category";"channel_name";"filename";"key_concept";"synthesis"' in csv_text
+        assert (
+            '"history";"Canal Teste";"vid11111111.md";"Conceito Um";"Síntese paratática do primeiro vídeo."'
+            in csv_text
+        )
+        assert (
+            '"history";"Canal Teste";"vid22222222.md";"Conceito Dois";"Síntese paratática do segundo vídeo."'
+            in csv_text
+        )

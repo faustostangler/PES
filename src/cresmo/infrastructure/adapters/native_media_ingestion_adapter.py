@@ -48,7 +48,6 @@ from cresmo.domain.value_objects import (
     ContentId,
     DiscoveredMediaItem,
     MediaProvenance,
-    SourceModality,
 )
 from cresmo.infrastructure.adapters.header_generator import RandomHeaderGenerator
 from cresmo.infrastructure.adapters.media.feed import (
@@ -348,12 +347,7 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             name=c_name,
             id=ch_id,
             category=category,
-            url=str(info.get("channel_url") or "")
-            or (
-                f"https://www.youtube.com/channel/{ch_id.value}"
-                if ch_id and ch_id.is_youtube_canonical
-                else None
-            ),
+            url=str(info.get("channel_url") or "") or None,
         )
         provenance = MediaProvenance.create(
             url=video_url,
@@ -364,9 +358,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             id=cid,
             title=str(info.get("title") or ""),
             body=body,
-            url=video_url,
-            modality=SourceModality.URL,
-            publication_date=upload_date,
         )
         transcript = SourceTranscript(
             channel=channel,

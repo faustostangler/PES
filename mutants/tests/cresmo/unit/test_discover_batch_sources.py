@@ -10,17 +10,26 @@ from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from unittest.mock import MagicMock
 
+import pytest
+
 from cresmo.application.use_cases.discover_batch_sources import (
     BatchDiscoveryQuery,
     BatchSource,
     DiscoverBatchSourcesUseCase,
+    LakeScannerService,
     _BatchSourceAccumulator,
     extract_raw_file_metadata,
     is_channel_or_playlist_feed,
     load_transcript_files,
     read_manifest_lines,
 )
-from cresmo.domain.value_objects import ContentId, DiscoveredMediaItem
+from cresmo.domain.value_objects import (
+    ChannelName,
+    ContentId,
+    DiscoveredMediaItem,
+    SourceModality,
+    SyncFilterCriteria,
+)
 from cresmo.infrastructure.config import CresmoSettings
 
 
@@ -28,7 +37,7 @@ def _create_mock_media_item(
     content_id_str: str,
     media_url: str,
     title: str = "Test Video",
-    channel_name: str = "Test Channel",
+    channel_name: ChannelName = ChannelName("Test Channel"),
 ) -> DiscoveredMediaItem:
     return DiscoveredMediaItem(
         content_id=ContentId(content_id_str),
@@ -52,6 +61,31 @@ class TestDiscoverBatchSourcesUseCase:
         assert meta["title"] == "Sample Video"
         assert meta["channel"] == "https://www.youtube.com/@channel1"
         assert meta["video_id"] == "abc12345"
+
+    def test_extract_raw_file_metadata_plain_channel_name_not_mangled_to_url(
+        self, tmp_path: Path
+    ) -> None:
+        """Cognitive channel name (e.g. Marcelo Andrade) must not be corrupted into a /channel/ URL."""
+        file = tmp_path / "sample_name.md"
+        file.write_text(
+            "---\ntitle: Sample Video\nchannel: Marcelo Andrade\nvideo_id: abc12345\n---\nBody",
+            encoding="utf-8",
+        )
+        meta = extract_raw_file_metadata(file)
+        assert meta["channel"] == "Marcelo Andrade"
+
+    def test_extract_raw_file_metadata_prefers_channel_id_for_url_resolution(
+        self, tmp_path: Path
+    ) -> None:
+        """When channel_id is provided, it is resolved to canonical YouTube channel URL."""
+        file = tmp_path / "sample_id.md"
+        file.write_text(
+            "---\ntitle: Sample Video\nchannel: Marcelo Andrade\nchannel_id: UC1234567890abcdef\nvideo_id: abc12345\n---\nBody",
+            encoding="utf-8",
+        )
+        meta = extract_raw_file_metadata(file)
+        assert meta["channel"] == "https://www.youtube.com/channel/UC1234567890abcdef"
+        assert meta["channel_id"] == "UC1234567890abcdef"
 
     def test_discover_sources_from_raw_lake(self, tmp_path: Path) -> None:
         raw_dir = tmp_path / "raw"
@@ -83,7 +117,7 @@ class TestDiscoverBatchSourcesUseCase:
             playlist_priority_path=tmp_path / "empty_priority.txt",
             priority_texts_dir=tmp_path / "empty_priority_dir",
         )
-        sources = use_case.execute(query)
+        sources = list(use_case.execute(query))
 
         assert len(sources) == 2
         assert all(s.kind == "file" for s in sources)
@@ -119,7 +153,7 @@ class TestDiscoverBatchSourcesUseCase:
             playlist_priority_path=tmp_path / "empty_priority.txt",
             priority_texts_dir=tmp_path / "empty_priority_dir",
         )
-        sources = use_case.execute(query)
+        sources = list(use_case.execute(query))
 
         mock_ingestion.extract_channel_url_from_video.assert_called_once_with(
             "https://www.youtube.com/watch?v=seed12345"
@@ -159,17 +193,58 @@ class TestDiscoverBatchSourcesUseCase:
             playlist_priority_path=tmp_path / "empty_priority.txt",
             priority_texts_dir=tmp_path / "empty_priority_dir",
         )
-        sources = use_case.execute(query)
+        sources = list(use_case.execute(query))
 
         assert mock_ingestion.extract_channel_url_from_video.call_count == 2
         assert mock_ingestion.discover_channel_feed.call_count == 1
         assert len(sources) == 2
 
     def test_batch_source_display_name(self) -> None:
-        file_source = BatchSource(kind="file", target="/lake/transcripts/lecture1.md")
+        file_source = BatchSource(kind=SourceModality.FILE, target="/lake/transcripts/lecture1.md")
         assert file_source.display_name == "lecture1.md"
-        url_source = BatchSource(kind="url", target="https://youtube.com/watch?v=12345")
+        url_source = BatchSource(
+            kind=SourceModality.URL, target="https://youtube.com/watch?v=12345"
+        )
         assert url_source.display_name == "https://youtube.com/watch?v=12345"
+
+    def test_batch_source_content_id_and_vid_compatibility(self) -> None:
+        cid = ContentId("dQw4w9WgXcQ")
+        bs = BatchSource(
+            kind=SourceModality.URL,
+            target="https://youtube.com/watch?v=dQw4w9WgXcQ",
+            content_id=cid,
+        )
+        assert bs.content_id == cid
+        assert bs.vid == "dQw4w9WgXcQ"
+
+        bs_str = BatchSource(
+            kind=SourceModality.URL,
+            target="https://youtube.com/watch?v=dQw4w9WgXcQ",
+            content_id=cid,
+        )
+        assert isinstance(bs_str.content_id, ContentId)
+        assert bs_str.content_id == cid
+        assert bs_str.vid == "dQw4w9WgXcQ"
+
+    def test_accumulator_tracks_content_id_and_backward_compatibility(self) -> None:
+        acc = _BatchSourceAccumulator()
+        cid = ContentId("dQw4w9WgXcQ")
+        src = acc.add_source(
+            kind=SourceModality.URL,
+            target="https://youtube.com/watch?v=dQw4w9WgXcQ",
+            content_id=cid,
+        )
+        assert src is not None
+        assert src.content_id == cid
+        assert src.vid == "dQw4w9WgXcQ"
+        assert acc.has_seen(cid) is True
+        assert acc.has_seen("dQw4w9WgXcQ") is True
+
+        # Duplicate detection by ContentId or string
+        dup = acc.add_source(
+            kind=SourceModality.URL, target="https://youtube.com/watch?v=dQw4w9WgXcQ", vid=cid
+        )
+        assert dup is None
 
     def test_extract_raw_file_metadata_channel_formats_and_error(self, tmp_path: Path) -> None:
         # Test @handle channel format
@@ -202,7 +277,7 @@ class TestDiscoverBatchSourcesUseCase:
         )
 
         query = BatchDiscoveryQuery(explicit_manifest=manifest)
-        sources = use_case.execute(query)
+        sources = list(use_case.execute(query))
 
         assert len(sources) == 2
         assert [s.target for s in sources] == [
@@ -232,7 +307,7 @@ class TestDiscoverBatchSourcesUseCase:
             raw_dir=tmp_path / "empty_raw",
             scan_raw=False,
         )
-        sources = use_case.execute(query)
+        sources = list(use_case.execute(query))
 
         assert len(sources) == 2
         assert sources[0].kind == "file"
@@ -263,14 +338,14 @@ class TestDiscoverBatchSourcesUseCase:
                 title="Fresh Naive Date Video",
                 published_at=now_naive,
                 media_url="https://youtube.com/watch?v=fresh111",
-                channel_name="ExplicitChannel",
+                channel_name=ChannelName("ExplicitChannel"),
             ),
             DiscoveredMediaItem(
                 content_id=ContentId("old22222"),
                 title="Old Video",
                 published_at=old_naive,
                 media_url="https://youtube.com/watch?v=old22222",
-                channel_name="ExplicitChannel",
+                channel_name=ChannelName("ExplicitChannel"),
             ),
         ]
 
@@ -287,7 +362,7 @@ class TestDiscoverBatchSourcesUseCase:
             playlist_priority_path=tmp_path / "empty_prio.txt",
             priority_texts_dir=tmp_path / "empty_prio_dir",
         )
-        sources = use_case.execute(query)
+        sources = list(use_case.execute(query))
 
         targets = [s.target for s in sources]
         assert "https://youtube.com/watch?v=fresh111" in targets
@@ -316,7 +391,7 @@ class TestDiscoverBatchSourcesUseCase:
             playlist_priority_path=tmp_path / "empty_prio.txt",
             priority_texts_dir=tmp_path / "empty_prio_dir",
         )
-        sources = use_case.execute(query)
+        sources = list(use_case.execute(query))
 
         assert len(sources) == 1
         assert sources[0].target == "https://youtube.com/watch?v=failLookup"
@@ -343,7 +418,7 @@ class TestDiscoverBatchSourcesUseCase:
             playlist_priority_path=tmp_path / "empty_prio.txt",
             priority_texts_dir=tmp_path / "empty_prio_dir",
         )
-        sources = use_case.execute(query)
+        sources = list(use_case.execute(query))
 
         assert len(sources) == 0
         assert any("Warning: Failed to probe" in msg for msg in notifications)
@@ -363,7 +438,9 @@ class TestDiscoverBatchSourcesUseCase:
         # Watch URLs: plain watch URL must be False
         assert is_channel_or_playlist_feed("https://youtube.com/watch?v=abcd1234") is False
         # Channel URL with watch?v but without list must be False
-        assert is_channel_or_playlist_feed("https://youtube.com/channel/UC123?watch?v=abcd") is False
+        assert (
+            is_channel_or_playlist_feed("https://youtube.com/channel/UC123?watch?v=abcd") is False
+        )
         # Channel URL with watch?v AND list must be True
         assert (
             is_channel_or_playlist_feed("https://youtube.com/channel/UC123?watch?v=abcd&list=PL123")
@@ -430,7 +507,7 @@ class TestDiscoverBatchSourcesUseCase:
         # Multiple --- horizontal dividers in body (kills rsplit or unsplit mutations)
         multi = tmp_path / "multi_delim.md"
         multi.write_text(
-            "---\ntitle: \"Quoted Title\"\nchannel: http://youtube.com/@httpchannel\n---\nPart 1\n---\nPart 2\n---\nPart 3",
+            '---\ntitle: "Quoted Title"\nchannel: http://youtube.com/@httpchannel\n---\nPart 1\n---\nPart 2\n---\nPart 3',
             encoding="utf-8",
         )
         meta_multi = extract_raw_file_metadata(multi)
@@ -457,31 +534,33 @@ class TestDiscoverBatchSourcesUseCase:
     def test_batch_source_accumulator_deduplication(self) -> None:
         acc = _BatchSourceAccumulator()
         # Add with explicit vid
-        acc.add_source(kind="file", target="/lake/explicit_vid.md", vid="exp_vid_1")
+        acc.add_source(
+            kind=SourceModality.FILE, target="/lake/explicit_vid.md", vid=ContentId("exp_vid_1")
+        )
         assert acc.has_seen("exp_vid_1") is True
         assert acc.has_seen("non_existent") is False
 
         # Add URL matching video ID regex
-        acc.add_source(kind="url", target="https://www.youtube.com/watch?v=vidRegex123")
+        acc.add_source(
+            kind=SourceModality.URL, target="https://www.youtube.com/watch?v=vidRegex123"
+        )
         assert acc.has_seen("vidRegex123") is True
 
         # Add target without video regex (uses stem)
-        acc.add_source(kind="file", target="/lake/transcripts/lecture_notes.md")
+        acc.add_source(kind=SourceModality.FILE, target="/lake/transcripts/lecture_notes.md")
         assert acc.has_seen("lecture_notes") is True
 
     def test_scan_raw_lake_edge_cases(self, tmp_path: Path) -> None:
-        use_case = DiscoverBatchSourcesUseCase(
-            media_ingestion_port=MagicMock(),
-            settings=CresmoSettings(_env_file=None),
-        )
         acc = _BatchSourceAccumulator()
 
         # Non-directory / invalid path inputs
-        assert use_case._scan_raw_lake(None, scan_raw=True, acc=acc) == {}
-        assert use_case._scan_raw_lake(tmp_path / "not_a_dir", scan_raw=True, acc=acc) == {}
+        assert LakeScannerService.scan_raw_lake(None, scan_raw=True, acc=acc) == {}
+        assert (
+            LakeScannerService.scan_raw_lake(tmp_path / "not_a_dir", scan_raw=True, acc=acc) == {}
+        )
         f = tmp_path / "file_not_dir.txt"
         f.write_text("hi", encoding="utf-8")
-        assert use_case._scan_raw_lake(f, scan_raw=True, acc=acc) == {}
+        assert LakeScannerService.scan_raw_lake(f, scan_raw=True, acc=acc) == {}
 
         # Directory with files
         raw_dir = tmp_path / "raw_lake_tests"
@@ -501,7 +580,7 @@ class TestDiscoverBatchSourcesUseCase:
 
         # scan_raw = False: registers channels in dict, but does NOT add to acc.sources
         acc_no_scan = _BatchSourceAccumulator()
-        chan_map = use_case._scan_raw_lake(raw_dir, scan_raw=False, acc=acc_no_scan)
+        chan_map = LakeScannerService.scan_raw_lake(raw_dir, scan_raw=False, acc=acc_no_scan)
         assert chan_map["explicit_vid_456"] == "https://youtube.com/@ChannelOne"
         assert chan_map["vid_with_front"] == "https://youtube.com/@ChannelOne"
         assert chan_map["vid_without_front_id"] == "https://youtube.com/@ChannelTwo"
@@ -509,7 +588,7 @@ class TestDiscoverBatchSourcesUseCase:
 
         # scan_raw = True: adds to acc.sources and registers seen_vids
         acc_scan = _BatchSourceAccumulator()
-        use_case._scan_raw_lake(raw_dir, scan_raw=True, acc=acc_scan)
+        LakeScannerService.scan_raw_lake(raw_dir, scan_raw=True, acc=acc_scan)
         assert len(acc_scan.sources) == 3
         assert acc_scan.has_seen("vid_with_front") is True
         assert acc_scan.has_seen("explicit_vid_456") is True
@@ -518,36 +597,103 @@ class TestDiscoverBatchSourcesUseCase:
         # Pre-seen file is skipped
         acc_pre = _BatchSourceAccumulator()
         acc_pre.seen_vids.add("explicit_vid_456")
-        use_case._scan_raw_lake(raw_dir, scan_raw=True, acc=acc_pre)
+        LakeScannerService.scan_raw_lake(raw_dir, scan_raw=True, acc=acc_pre)
         assert not any("vid_with_front" in s.target for s in acc_pre.sources)
 
+    def test_load_transcript_files_ignores_system_artifacts_and_indices(
+        self, tmp_path: Path
+    ) -> None:
+        """Verify internal Cresmo artifacts and indices are rigorously excluded from discovery per ADR-015."""
+        raw_lake = tmp_path / "raw"
+        raw_lake.mkdir()
+
+        channel_dir = raw_lake / "Ancapsu"
+        channel_dir.mkdir()
+
+        # Valid transcripts
+        valid_1 = channel_dir / "valid_video_1.md"
+        valid_1.write_text("# Video 1", encoding="utf-8")
+        valid_2 = channel_dir / "valid_video_2.txt"
+        valid_2.write_text("Video 2 transcript", encoding="utf-8")
+
+        # System artifacts and indices that MUST be ignored
+        (channel_dir / "_canal.md").write_text("# Channel Index", encoding="utf-8")
+        (channel_dir / "_index.md").write_text("# Old index", encoding="utf-8")
+        (channel_dir / "_index.json").write_text("{}", encoding="utf-8")
+        (channel_dir / "brain.csv").write_text("video_id,channel", encoding="utf-8")
+        (channel_dir / "cresmo_ledger.db").write_text("db binary", encoding="utf-8")
+        (channel_dir / "playlist.txt").write_text("https://yt.com/1", encoding="utf-8")
+        (channel_dir / "playlist-priority.txt").write_text("https://yt.com/2", encoding="utf-8")
+        (channel_dir / ".hidden_transcript.md").write_text("hidden", encoding="utf-8")
+        (channel_dir / "in_progress.md.tmp").write_text("tmp", encoding="utf-8")
+        (channel_dir / "backup.txt.bak").write_text("bak", encoding="utf-8")
+        (channel_dir / "swap.md.swp").write_text("swp", encoding="utf-8")
+        (channel_dir / "editor_temp.md~").write_text("tilde", encoding="utf-8")
+
+        # Subdirectories starting with _ or .
+        hidden_sub = channel_dir / ".trash"
+        hidden_sub.mkdir()
+        (hidden_sub / "trashed.md").write_text("trashed", encoding="utf-8")
+
+        system_sub = channel_dir / "_cache"
+        system_sub.mkdir()
+        (system_sub / "cached.md").write_text("cached", encoding="utf-8")
+
+        # Nested valid transcript inside valid subdirectory
+        valid_sub = channel_dir / "subseries"
+        valid_sub.mkdir()
+        valid_3 = valid_sub / "valid_video_3.md"
+        valid_3.write_text("# Subseries video", encoding="utf-8")
+
+        found = load_transcript_files(raw_lake)
+        found_names = sorted(p.name for p in found)
+        assert found_names == ["valid_video_1.md", "valid_video_2.txt", "valid_video_3.md"]
+
+    def test_scan_raw_lake_ignores_canal_index_and_artifacts(self, tmp_path: Path) -> None:
+        """Ensure _scan_raw_lake never treats _canal.md or brain.csv as a video transcript."""
+        raw_dir = tmp_path / "raw"
+        ch_dir = raw_dir / "Mises"
+        ch_dir.mkdir(parents=True)
+
+        # Valid video
+        v1 = ch_dir / "video123.md"
+        v1.write_text("---\nvideo_id: video123\nchannel: Mises\n---\nBody", encoding="utf-8")
+
+        # Channel catalog and artifacts
+        (ch_dir / "_canal.md").write_text("---\n# Catalog\n---\nEntries", encoding="utf-8")
+        (raw_dir / "brain.csv").write_text("channel,title\n", encoding="utf-8")
+
+        acc = _BatchSourceAccumulator()
+        LakeScannerService.scan_raw_lake(raw_dir, scan_raw=True, acc=acc)
+
+        assert "_canal" not in acc.seen_vids
+        assert not any("_canal.md" in s.target for s in acc.sources)
+        assert len(acc.sources) == 1
+        assert "video123.md" in acc.sources[0].target
+
     def test_classify_seeds_deduplication_and_routing(self, tmp_path: Path) -> None:
-        use_case = DiscoverBatchSourcesUseCase(
-            media_ingestion_port=MagicMock(),
-            settings=CresmoSettings(_env_file=None),
-        )
         acc = _BatchSourceAccumulator()
         acc.seen_vids.add("already_seen_vid123")
 
         manifest = tmp_path / "test_seeds_playlist.txt"
         manifest.write_text(
-            "https://www.youtube.com/@RawChan\n"  # already in local_channels
+            "https://www.youtube.com/@RawChan\n"  # already in local_video_channel_map
             "https://www.youtube.com/@NewChan\n"  # new channel feed
             "https://youtube.com/watch?v=already_seen_vid123\n"  # already seen -> skipped
-            "https://youtube.com/watch?v=knownLocalVid\n"  # vid matches local_channels -> routes to channels_to_probe
+            "https://youtube.com/watch?v=knownLocalVid\n"  # vid matches local_video_channel_map -> routes to channels_to_probe
             "https://youtube.com/watch?v=remoteUnknownVid\n"  # not in local -> remote_videos
             "https://some.domain.com/unparseable_url\n",  # no video ID regex -> still added as url source
             encoding="utf-8",
         )
 
-        local_channels = {
+        local_video_channel_map = {
             "vid1": "https://www.youtube.com/@RawChan",
-            "vid2": "https://www.youtube.com/@RawChan",  # duplicate channel in local_channels
+            "vid2": "https://www.youtube.com/@RawChan",  # duplicate channel in local_video_channel_map
             "knownLocalVid": "https://www.youtube.com/@KnownLocalChan",
         }
 
-        channels_to_probe, remote_videos, probed_channels = use_case._classify_seeds(
-            manifest, local_channels, acc
+        channels_to_probe, remote_videos, _probed_channels = LakeScannerService.classify_seeds(
+            manifest, local_video_channel_map, acc
         )
 
         # @RawChan only probed once
@@ -604,7 +750,7 @@ class TestDiscoverBatchSourcesUseCase:
         ]
 
         # Test bare URL format prepending https://
-        urls = use_case._probe_single_channel_feed(
+        urls = use_case._crawler_service.probe_single_channel_feed(
             chan_url="youtube.com/@barechannel",
             lookback_days=7,
             max_videos=25,
@@ -652,7 +798,7 @@ class TestDiscoverBatchSourcesUseCase:
         )
 
         # Execute with completely empty BatchDiscoveryQuery (defaults trigger all settings fallbacks)
-        sources = use_case.execute(BatchDiscoveryQuery())
+        sources = list(use_case.execute(BatchDiscoveryQuery()))
         targets = [s.target for s in sources]
 
         assert any("prio_note.md" in t for t in targets)
@@ -670,14 +816,14 @@ class TestDiscoverBatchSourcesUseCase:
                 title="Discovered 1",
                 published_at=datetime.now(UTC),
                 media_url="https://youtube.com/watch?v=disc_item_1",
-                channel_name="ResolvedChan",
+                channel_name=ChannelName("ResolvedChan"),
             ),
             DiscoveredMediaItem(
                 content_id=ContentId("disc_item_2"),
                 title="Discovered 2",
                 published_at=datetime.now(UTC),
                 media_url="https://nonstandard.url/disc_no_id",
-                channel_name="ResolvedChan",
+                channel_name=ChannelName("ResolvedChan"),
             ),
         ]
 
@@ -689,13 +835,13 @@ class TestDiscoverBatchSourcesUseCase:
         # Test empty videos list returns immediately
         channels_to_probe: list[str] = []
         probed_channels: set[str] = set()
-        use_case._resolve_remote_channels(
+        use_case._crawler_service.resolve_remote_channels(
             [], workers=4, probed_channels=probed_channels, channels_to_probe=channels_to_probe
         )
         assert channels_to_probe == []
 
         # Test resolve with 2 videos
-        use_case._resolve_remote_channels(
+        use_case._crawler_service.resolve_remote_channels(
             ["https://yt.com/watch?v=v1", "https://yt.com/watch?v=v2"],
             workers=4,
             probed_channels=probed_channels,
@@ -705,11 +851,13 @@ class TestDiscoverBatchSourcesUseCase:
 
         # Test probe feeds with empty channels returns immediately
         acc = _BatchSourceAccumulator()
-        use_case._probe_channel_feeds([], lookback_days=7, max_videos=10, workers=2, acc=acc)
+        use_case._crawler_service.probe_channel_feeds(
+            [], lookback_days=7, max_videos=10, workers=2, acc=acc
+        )
         assert len(acc.sources) == 0
 
         # Test probe feeds populates acc and handles items without standard video ID
-        use_case._probe_channel_feeds(
+        use_case._crawler_service.probe_channel_feeds(
             ["https://youtube.com/@ResolvedChan"],
             lookback_days=7,
             max_videos=10,
@@ -719,3 +867,436 @@ class TestDiscoverBatchSourcesUseCase:
         assert len(acc.sources) == 2
         assert acc.has_seen("disc_item_1") is True
         assert acc.has_seen("https://nonstandard.url/disc_no_id") is True
+
+    def test_two_stage_channel_discovery_with_uploads_playlist_and_lake_filter(
+        self, tmp_path: Path
+    ) -> None:
+        """Verify two-stage channel discovery: A (unify channels) and B (filter raw lake videos)."""
+        # A1: Priority folder
+        pri_dir = tmp_path / "priority_folder"
+        pri_dir.mkdir()
+        (pri_dir / "pri_note.md").write_text(
+            "---\ntitle: Priority Note\nchannel_id: UCPriority12345678901234\n---\nBody",
+            encoding="utf-8",
+        )
+
+        # A2: Local raw lake
+        raw_dir = tmp_path / "raw"
+        raw_dir.mkdir()
+        (raw_dir / "lake_vid1.md").write_text(
+            "---\nvideo_id: lake_vid1\nchannel_id: UCLakeChan12345678901234\n---\nBody",
+            encoding="utf-8",
+        )
+
+        # A3: Seed playlist with a new seed video
+        playlist_file = tmp_path / "playlist.txt"
+        playlist_file.write_text(
+            "https://www.youtube.com/watch?v=seed_new_video\n", encoding="utf-8"
+        )
+
+        mock_ingestion = MagicMock()
+        mock_ingestion.extract_channel_url_from_video.return_value = (
+            "https://www.youtube.com/playlist?list=UUSeedChan12345678901234"
+        )
+
+        # In Stage B, channel feed returns 2 videos:
+        # - "lake_vid1" (already in raw lake -> MUST BE SKIPPED)
+        # - "brand_new_vid" (not in raw lake -> MUST BE ADDED)
+        already_in_lake_item = _create_mock_media_item(
+            content_id_str="lake_vid1",
+            media_url="https://www.youtube.com/watch?v=lake_vid1",
+            title="Already in Lake",
+        )
+        new_discovered_item = _create_mock_media_item(
+            content_id_str="brand_new_vid",
+            media_url="https://www.youtube.com/watch?v=brand_new_vid",
+            title="Brand New Upload",
+        )
+        mock_ingestion.discover_channel_feed.return_value = [
+            already_in_lake_item,
+            new_discovered_item,
+        ]
+
+        notifications: list[str] = []
+        use_case = DiscoverBatchSourcesUseCase(
+            media_ingestion_port=mock_ingestion,
+            settings=CresmoSettings(_env_file=None),
+            progress_callback=notifications.append,
+        )
+
+        query = BatchDiscoveryQuery(
+            manifest_path=playlist_file,
+            raw_dir=raw_dir,
+            priority_texts_dir=pri_dir,
+            playlist_priority_path=tmp_path / "empty_pri_urls.txt",
+            scan_raw=False,  # Don't add raw files to sources, only scan for lake filtering
+            enable_channel_crawler=True,
+            discovery_workers=2,
+            lookback_days=365,
+        )
+
+        sources = list(use_case.execute(query))
+
+        # Targets in sources must include:
+        # 1. pri_note.md (file)
+        # 2. seed_new_video (url)
+        # 3. brand_new_vid (url from Stage B)
+        # MUST NOT include lake_vid1 as URL because it was already in the raw lake!
+        targets = [s.target for s in sources]
+        assert str((pri_dir / "pri_note.md").resolve()) in targets
+        assert "https://www.youtube.com/watch?v=seed_new_video" in targets
+        assert "https://www.youtube.com/watch?v=brand_new_vid" in targets
+        assert "https://www.youtube.com/watch?v=lake_vid1" not in targets
+
+        # Check that discover_channel_feed was called for channels
+        assert mock_ingestion.discover_channel_feed.called
+
+        # Check progress notifications contain Stage A and Stage B logs
+        combined_notifications = "".join(notifications)
+        assert "Stage A complete" in combined_notifications
+        assert "Stage B:" in combined_notifications
+        assert "Stage B complete" in combined_notifications
+
+    def test_execute_yields_priority_immediately_while_crawler_in_background(
+        self, tmp_path: Path
+    ) -> None:
+        """Verify priority items are yielded at t=0 before background crawler completes."""
+        import threading
+
+        pri_dir = tmp_path / "priority_texts"
+        pri_dir.mkdir()
+        pri_file = pri_dir / "immediate_prio.md"
+        pri_file.write_text("Immediate priority content", encoding="utf-8")
+
+        pri_urls_file = tmp_path / "playlist-priority.txt"
+        pri_urls_file.write_text("https://www.youtube.com/watch?v=prioVid123\n", encoding="utf-8")
+
+        playlist_file = tmp_path / "playlist.txt"
+        playlist_file.write_text("https://www.youtube.com/@SlowChannel\n", encoding="utf-8")
+
+        crawler_can_finish = threading.Event()
+
+        def slow_discover_feed(feed_query: object) -> list[DiscoveredMediaItem]:
+            # Wait until main thread has already consumed priority items!
+            crawler_can_finish.wait(timeout=5.0)
+            return [
+                DiscoveredMediaItem(
+                    content_id=ContentId("slowVid456"),
+                    media_url="https://www.youtube.com/watch?v=slowVid456",
+                    title="Slow Channel Video",
+                    channel_name=ChannelName("Slow Channel"),
+                    published_at=datetime.now(UTC),
+                )
+            ]
+
+        mock_ingestion = MagicMock()
+        mock_ingestion.discover_channel_feed.side_effect = slow_discover_feed
+
+        use_case = DiscoverBatchSourcesUseCase(
+            media_ingestion_port=mock_ingestion,
+            settings=CresmoSettings(_env_file=None),
+        )
+
+        query = BatchDiscoveryQuery(
+            priority_texts_dir=pri_dir,
+            playlist_priority_path=pri_urls_file,
+            playlist_path=playlist_file,
+            raw_dir=tmp_path / "raw",
+            scan_raw=False,
+            enable_channel_crawler=True,
+        )
+
+        stream = use_case.execute(query)
+
+        # 1. First item must be the priority file (yielded at t=0)
+        item1 = next(stream)
+        assert item1.kind == "file"
+        assert item1.target == str(pri_file.resolve())
+
+        # 2. Second item must be the priority URL (yielded at t=0)
+        item2 = next(stream)
+        assert item2.kind == "url"
+        assert "prioVid123" in item2.target
+
+        # At this point, the crawler is still waiting! We release it now:
+        crawler_can_finish.set()
+
+        # 3. Third item must be the crawled channel video
+        item3 = next(stream)
+        assert item3.kind == "url"
+        assert "slowVid456" in item3.target
+
+        # Stream must terminate cleanly
+        with pytest.raises(StopIteration):
+            next(stream)
+
+    def test_execute_deduplicates_priority_and_crawled_videos(self, tmp_path: Path) -> None:
+        """Verify duplicate video between priority playlist and channel crawler is yielded only once."""
+        pri_urls_file = tmp_path / "playlist-priority.txt"
+        pri_urls_file.write_text("https://www.youtube.com/watch?v=sharedVid999\n", encoding="utf-8")
+
+        playlist_file = tmp_path / "playlist.txt"
+        playlist_file.write_text("https://www.youtube.com/@SharedChannel\n", encoding="utf-8")
+
+        mock_ingestion = MagicMock()
+        mock_ingestion.discover_channel_feed.return_value = [
+            DiscoveredMediaItem(
+                content_id=ContentId("sharedVid999"),
+                media_url="https://www.youtube.com/watch?v=sharedVid999",
+                title="Shared Video",
+                channel_name=ChannelName("Shared Channel"),
+                published_at=datetime.now(UTC),
+            )
+        ]
+
+        use_case = DiscoverBatchSourcesUseCase(
+            media_ingestion_port=mock_ingestion,
+            settings=CresmoSettings(_env_file=None),
+        )
+
+        query = BatchDiscoveryQuery(
+            playlist_priority_path=pri_urls_file,
+            playlist_path=playlist_file,
+            raw_dir=tmp_path / "raw",
+            scan_raw=False,
+            enable_channel_crawler=True,
+        )
+
+        sources = list(use_case.execute(query))
+        matching = [s for s in sources if "sharedVid999" in s.target]
+        assert len(matching) == 1
+
+    def test_execute_graceful_cancellation_on_consumer_break(self, tmp_path: Path) -> None:
+        """Verify breaking early from stream sets stop_event and shuts down cleanly."""
+        pri_dir = tmp_path / "priority_texts"
+        pri_dir.mkdir()
+        for i in range(5):
+            (pri_dir / f"note_{i}.md").write_text(f"Note {i}", encoding="utf-8")
+
+        use_case = DiscoverBatchSourcesUseCase(
+            media_ingestion_port=MagicMock(),
+            settings=CresmoSettings(_env_file=None),
+        )
+
+        query = BatchDiscoveryQuery(
+            priority_texts_dir=pri_dir,
+            raw_dir=tmp_path / "raw",
+            scan_raw=False,
+            enable_channel_crawler=False,
+        )
+
+        # Consume only 2 items and break
+        consumed = []
+        for s in use_case.execute(query):
+            consumed.append(s)
+            if len(consumed) == 2:
+                break
+
+        assert len(consumed) == 2
+
+    def test_execute_handles_crawler_exception_gracefully(self, tmp_path: Path) -> None:
+        """Verify crawler exception does not crash stream and priority items are preserved."""
+        pri_urls_file = tmp_path / "playlist-priority.txt"
+        pri_urls_file.write_text("https://www.youtube.com/watch?v=safePrio123\n", encoding="utf-8")
+
+        playlist_file = tmp_path / "playlist.txt"
+        playlist_file.write_text("https://www.youtube.com/@CrashChannel\n", encoding="utf-8")
+
+        mock_ingestion = MagicMock()
+        mock_ingestion.discover_channel_feed.side_effect = RuntimeError("YouTube API down")
+
+        notifications: list[str] = []
+        use_case = DiscoverBatchSourcesUseCase(
+            media_ingestion_port=mock_ingestion,
+            settings=CresmoSettings(_env_file=None),
+            progress_callback=notifications.append,
+        )
+
+        query = BatchDiscoveryQuery(
+            playlist_priority_path=pri_urls_file,
+            playlist_path=playlist_file,
+            raw_dir=tmp_path / "raw",
+            scan_raw=False,
+            enable_channel_crawler=True,
+        )
+
+        sources = list(use_case.execute(query))
+        assert len(sources) == 1
+        assert "safePrio123" in sources[0].target
+        assert any("Warning: Failed to probe" in n for n in notifications)
+
+    def test_channels_are_probed_in_strict_alphabetical_order(self, tmp_path: Path) -> None:
+        """Verify channels from manifest/raw are probed in case-insensitive alphabetical order (ADR-012)."""
+        playlist_file = tmp_path / "playlist.txt"
+        playlist_file.write_text(
+            "https://www.youtube.com/@ZetaChannel\n"
+            "https://www.youtube.com/@AlphaChannel\n"
+            "https://www.youtube.com/@BetaChannel\n",
+            encoding="utf-8",
+        )
+
+        queried_channels: list[str] = []
+        mock_ingestion = MagicMock()
+
+        def _fake_discover(q):
+            queried_channels.append(q.channel_url)
+            return []
+
+        mock_ingestion.discover_channel_feed.side_effect = _fake_discover
+
+        use_case = DiscoverBatchSourcesUseCase(
+            media_ingestion_port=mock_ingestion,
+            settings=CresmoSettings(_env_file=None),
+        )
+
+        query = BatchDiscoveryQuery(
+            playlist_path=playlist_file,
+            playlist_priority_path=tmp_path / "nonexistent.txt",  # Isolate from real data/
+            raw_dir=tmp_path / "raw",
+            scan_raw=False,
+            enable_channel_crawler=True,
+            discovery_workers=1,  # Serial execution to assert order directly
+        )
+
+        list(use_case.execute(query))
+
+        assert len(queried_channels) == 3
+        # Strict alphabetical check
+        assert "@AlphaChannel" in queried_channels[0]
+        assert "@BetaChannel" in queried_channels[1]
+        assert "@ZetaChannel" in queried_channels[2]
+
+    def test_discover_sources_filtered_by_channel(self, tmp_path: Path) -> None:
+        """Verify only specified channels are probed when channel filter is active."""
+        playlist_file = tmp_path / "playlist.txt"
+        playlist_file.write_text(
+            "https://www.youtube.com/@AlphaChannel\nhttps://www.youtube.com/@BetaChannel\n",
+            encoding="utf-8",
+        )
+
+        queried_channels: list[str] = []
+        mock_ingestion = MagicMock()
+        mock_ingestion.discover_channel_feed.side_effect = lambda q: (
+            queried_channels.append(q.channel_url) or []
+        )
+
+        use_case = DiscoverBatchSourcesUseCase(
+            media_ingestion_port=mock_ingestion,
+            settings=CresmoSettings(_env_file=None),
+        )
+
+        query = BatchDiscoveryQuery(
+            playlist_path=playlist_file,
+            playlist_priority_path=tmp_path / "empty_prio.txt",
+            priority_texts_dir=tmp_path / "empty_texts",
+            raw_dir=tmp_path / "raw",
+            scan_raw=False,
+            enable_channel_crawler=True,
+            filter_criteria=SyncFilterCriteria(channels=("alphachannel",)),
+        )
+
+        list(use_case.execute(query))
+
+        assert len(queried_channels) == 1
+        assert "@AlphaChannel" in queried_channels[0]
+
+    def test_discover_sources_filtered_by_category_domain_and_volatility(
+        self, tmp_path: Path
+    ) -> None:
+        """Verify category filter correctly matches domain names and volatility types."""
+        raw_dir = tmp_path / "raw"
+        raw_dir.mkdir()
+        (raw_dir / "vid1.md").write_text(
+            "---\ntitle: Political News\nchannel: https://www.youtube.com/@ancapsu\nvideo_id: pol123\n---\nText",
+            encoding="utf-8",
+        )
+        (raw_dir / "vid2.md").write_text(
+            "---\ntitle: Math Lesson\nchannel: https://www.youtube.com/@3blue1brown\nvideo_id: math123\n---\nText",
+            encoding="utf-8",
+        )
+
+        mock_ingestion = MagicMock()
+        mock_ingestion.discover_channel_feed.return_value = []
+
+        use_case = DiscoverBatchSourcesUseCase(
+            media_ingestion_port=mock_ingestion,
+            settings=CresmoSettings(_env_file=None),
+        )
+
+        # Filter strictly by 'politics_br'; isolate from real settings with empty paths
+        query = BatchDiscoveryQuery(
+            playlist_path=tmp_path / "empty_playlist.txt",
+            playlist_priority_path=tmp_path / "empty_prio.txt",
+            priority_texts_dir=tmp_path / "empty_texts",
+            raw_dir=raw_dir,
+            scan_raw=True,
+            enable_channel_crawler=False,
+            filter_criteria=SyncFilterCriteria(categories=("politics_br",)),
+        )
+
+        sources = list(use_case.execute(query))
+        assert len(sources) == 1
+        assert "vid1.md" in sources[0].target
+
+    def test_discover_sources_filtered_by_video(self, tmp_path: Path) -> None:
+        """Verify video filter isolates target video identifier."""
+        playlist_file = tmp_path / "playlist.txt"
+        playlist_file.write_text(
+            "https://www.youtube.com/watch?v=targetVid123\n"
+            "https://www.youtube.com/watch?v=otherVid999\n",
+            encoding="utf-8",
+        )
+
+        use_case = DiscoverBatchSourcesUseCase(
+            media_ingestion_port=MagicMock(),
+            settings=CresmoSettings(_env_file=None),
+        )
+
+        query = BatchDiscoveryQuery(
+            playlist_path=playlist_file,
+            playlist_priority_path=tmp_path / "empty_prio.txt",
+            priority_texts_dir=tmp_path / "empty_texts",
+            raw_dir=tmp_path / "raw",
+            scan_raw=False,
+            enable_channel_crawler=False,
+            filter_criteria=SyncFilterCriteria(video_ids=("targetVid123",)),
+        )
+
+        sources = list(use_case.execute(query))
+        assert len(sources) == 1
+        assert "targetVid123" in sources[0].target
+
+    def test_discover_sources_streaming_respects_queue_maxsize_backpressure(
+        self, tmp_path: Path
+    ) -> None:
+        """Verify streaming discovery applies backpressure via bounded queue maxsize."""
+        playlist_file = tmp_path / "playlist.txt"
+        playlist_file.write_text(
+            "https://www.youtube.com/watch?v=vid1\n"
+            "https://www.youtube.com/watch?v=vid2\n"
+            "https://www.youtube.com/watch?v=vid3\n",
+            encoding="utf-8",
+        )
+
+        mock_ingestion = MagicMock()
+        mock_ingestion.extract_channel_url_from_video.return_value = None
+
+        settings = CresmoSettings(discovery_queue_maxsize=2, _env_file=None)
+        use_case = DiscoverBatchSourcesUseCase(
+            media_ingestion_port=mock_ingestion,
+            settings=settings,
+        )
+
+        query = BatchDiscoveryQuery(
+            playlist_path=playlist_file,
+            playlist_priority_path=tmp_path / "empty_prio.txt",
+            priority_texts_dir=tmp_path / "empty_texts",
+            raw_dir=tmp_path / "raw",
+            scan_raw=False,
+            enable_channel_crawler=True,
+            queue_maxsize=2,
+        )
+
+        stream = use_case.execute(query)
+        items = list(stream)
+        assert len(items) == 3

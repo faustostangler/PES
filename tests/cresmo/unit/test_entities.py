@@ -43,12 +43,11 @@ class TestSourceTranscript:
             body="Valid spoken transcript body text.",
             publication_date=pub,
         )
-        assert transcript.content_id == cid
-        assert transcript.channel_name == ChannelName("Example Channel")
-        assert isinstance(transcript.channel_name, ChannelName)
-        assert transcript.body == "Valid spoken transcript body text."
-        assert transcript.publication_date == pub
-        assert transcript.upload_date == pub
+        assert transcript.content.id == cid
+        assert transcript.channel.name == "Example Channel"
+        assert transcript.channel.channel_name == ChannelName("Example Channel")
+        assert transcript.content.body == "Valid spoken transcript body text."
+        assert transcript.provenance.publication_date == pub
 
     def test_empty_body_raises_validation_error(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
@@ -76,7 +75,7 @@ class TestSourceTranscript:
         )
         ch = transcript.channel
         assert isinstance(ch, Channel)
-        assert ch.name == ChannelName("Example Channel")
+        assert ch.name == "Example Channel"
         assert ch.id == ChannelId("UC1234567890abcdef")
         assert ch.category == "Science"
 
@@ -84,8 +83,8 @@ class TestSourceTranscript:
         assert isinstance(cnt, Content)
         assert cnt.id == cid
         assert cnt.title == "My Cool Video"
-        assert cnt.url == "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-        assert cnt.publication_date == pub
+        assert transcript.provenance.url == "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+        assert transcript.provenance.publication_date == pub
 
 
 class TestEnrichedCompendium:
@@ -454,19 +453,19 @@ class TestAdr038PureValueObjectTriadComposition:
         assert source.channel.id is not None
         assert source.channel.id.value == "UCP3CtEXi5nxbhei_aBfIOVA"
         assert source.content.id.value == "9IbNJ0EsTxI"
-        assert source.channel_id == source.channel.id
-        assert source.content_id == source.content.id
+        assert source.channel.channel_id == source.channel.id
+        assert source.content.content_id == source.content.id
 
         # 3. Cognitive Pair (TXT - TXT Parity)
         assert source.channel.name == "Marcelo Andrade"
         assert source.content.title == "AFONSO HENRIQUES: o fundador de Portugal"
-        assert source.channel_name.value == "Marcelo Andrade"
-        assert source.title == "AFONSO HENRIQUES: o fundador de Portugal"
+        assert source.channel.channel_name.value == "Marcelo Andrade"
+        assert source.content.content_title == "AFONSO HENRIQUES: o fundador de Portugal"
 
-        # 4. Ergonomic accessors delegate cleanly
-        assert source.body == "Raw spoken audio transcript without edit."
-        assert source.source_url == "https://youtu.be/9IbNJ0EsTxI"
-        assert source.publication_date == datetime.date(2026, 1, 15)
+        # 4. Pure Triad accessors
+        assert source.content.body == "Raw spoken audio transcript without edit."
+        assert source.provenance.url == "https://youtu.be/9IbNJ0EsTxI"
+        assert source.provenance.publication_date == datetime.date(2026, 1, 15)
 
     def test_fluid_transcript_pure_triad_composition(self) -> None:
         from cresmo.domain.entities import FluidTranscript
@@ -491,9 +490,9 @@ class TestAdr038PureValueObjectTriadComposition:
         assert fluid.channel is channel
         assert fluid.provenance is provenance
         assert fluid.content is content
-        assert fluid.body == "Continuous fluid prose narrative."
-        assert fluid.content_id == ContentId("abc")
-        assert fluid.channel_id == ChannelId("UC1234567890")
+        assert fluid.content.body == "Continuous fluid prose narrative."
+        assert fluid.content.id == ContentId("abc")
+        assert fluid.channel.id == ChannelId("UC1234567890")
 
     def test_transcript_aggregate_lifecycle_container(self) -> None:
         from cresmo.domain.entities import FluidTranscript, SourceTranscript, Transcript
@@ -516,7 +515,6 @@ class TestAdr038PureValueObjectTriadComposition:
         aggregate = Transcript(source=source, fluid=fluid)
         assert aggregate.source is source
         assert aggregate.fluid is fluid
-        assert aggregate.content_id == ContentId("vid_01")
         assert aggregate.channel == ch
         assert aggregate.provenance == prov
         assert aggregate.content == fluid_content
@@ -554,7 +552,6 @@ class TestAdr038PureValueObjectTriadComposition:
         assert fluid.content.id == source.content.id
         assert fluid.content.title == "Synthesized H1 Title"
         assert fluid.content.body == "Fluid prose without orality noise."
-        assert fluid.body == "Fluid prose without orality noise."
 
     def test_symmetrical_parity_channel_content(self) -> None:
         """ADR-038: Algorithmic Parity (channel_id - content_id) and Cognitive Parity (channel_name - content_title)."""
@@ -598,28 +595,34 @@ class TestAdr038PureValueObjectTriadComposition:
         prov = MediaProvenance(url="https://youtube.com/watch?v=9IbNJ0EsTxI")
 
         src = SourceTranscript(channel=ch, provenance=prov, content=content)
-        # Check SourceTranscript parity
-        assert src.channel_id == ChannelId("UCxyz1234567890ab")
-        assert src.content_id == ContentId("9IbNJ0EsTxI")
-        assert src.channel_name == ChannelName("Marcelo Andrade")
-        assert src.content_title == "A Gênese Estrutural do Condado Portucalense"
-        assert src.title == src.content_title
+        # Check SourceTranscript parity via Value Objects
+        assert src.channel.channel_id == ChannelId("UCxyz1234567890ab")
+        assert src.content.content_id == ContentId("9IbNJ0EsTxI")
+        assert src.channel.channel_name == ChannelName("Marcelo Andrade")
+        assert src.content.content_title == "A Gênese Estrutural do Condado Portucalense"
 
         fluid = FluidTranscript(channel=ch, provenance=prov, content=content)
-        # Check FluidTranscript parity
-        assert fluid.channel_id == ChannelId("UCxyz1234567890ab")
-        assert fluid.content_id == ContentId("9IbNJ0EsTxI")
-        assert fluid.channel_name == ChannelName("Marcelo Andrade")
-        assert fluid.content_title == "A Gênese Estrutural do Condado Portucalense"
-        assert fluid.title == fluid.content_title
+        # Check FluidTranscript parity via Value Objects
+        assert fluid.channel.channel_id == ChannelId("UCxyz1234567890ab")
+        assert fluid.content.content_id == ContentId("9IbNJ0EsTxI")
+        assert fluid.channel.channel_name == ChannelName("Marcelo Andrade")
+        assert fluid.content.content_title == "A Gênese Estrutural do Condado Portucalense"
 
         root_tx = Transcript(source=src, fluid=fluid)
-        # Check Transcript root aggregate parity
-        assert root_tx.channel_id == ChannelId("UCxyz1234567890ab")
-        assert root_tx.content_id == ContentId("9IbNJ0EsTxI")
-        assert root_tx.channel_name == ChannelName("Marcelo Andrade")
-        assert root_tx.content_title == "A Gênese Estrutural do Condado Portucalense"
-        assert root_tx.title == "A Gênese Estrutural do Condado Portucalense"
+        # Check Transcript root aggregate parity via Value Objects
+        assert root_tx.channel is not None and root_tx.channel.channel_id == ChannelId(
+            "UCxyz1234567890ab"
+        )
+        assert root_tx.content is not None and root_tx.content.content_id == ContentId(
+            "9IbNJ0EsTxI"
+        )
+        assert root_tx.channel is not None and root_tx.channel.channel_name == ChannelName(
+            "Marcelo Andrade"
+        )
+        assert (
+            root_tx.content is not None
+            and root_tx.content.content_title == "A Gênese Estrutural do Condado Portucalense"
+        )
 
         # Check PipelineExecutionContext parity
         sid = PipelineSessionId.create(channel=ch, content_id=content)

@@ -4,7 +4,6 @@ Derived from SPEC-001 Section 2.1 & Section 5.
 Verifies construction invariants, zero primitive obsession, and boundary validation.
 """
 
-import datetime
 from dataclasses import FrozenInstanceError
 
 import pytest
@@ -533,43 +532,44 @@ class TestContent:
     """Canonical domain Value Object representing a content / video item."""
 
     def test_content_creation_with_value_objects(self) -> None:
-        from cresmo.domain.value_objects import Content, ContentId, SourceModality
+        from cresmo.domain.value_objects import Content, ContentId
 
         cnt = Content(
             id=ContentId("dQw4w9WgXcQ"),
             title="Never Gonna Give You Up",
-            url="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-            modality=SourceModality.URL,
-            publication_date=datetime.date(1987, 7, 27),
+            body="Never gonna let you down",
         )
         assert cnt.id == ContentId("dQw4w9WgXcQ")
         assert cnt.title == "Never Gonna Give You Up"
-        assert cnt.url == "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-        assert cnt.modality == SourceModality.URL
-        assert cnt.publication_date == datetime.date(1987, 7, 27)
+        assert cnt.body == "Never gonna let you down"
+        assert cnt.content_id == ContentId("dQw4w9WgXcQ")
+        assert cnt.content_title == "Never Gonna Give You Up"
         assert str(cnt) == "dQw4w9WgXcQ"
+        assert not hasattr(cnt, "url")
+        assert not hasattr(cnt, "publication_date")
+        assert not hasattr(cnt, "modality")
 
     def test_content_creation_with_string_coercion(self) -> None:
         from cresmo.domain.value_objects import Content, ContentId
 
-        cnt = Content(id="dQw4w9WgXcQ", title="Test Title")
+        cnt = Content(id="dQw4w9WgXcQ", title="Test Title", body="Textual body")
         assert isinstance(cnt.id, ContentId)
         assert cnt.id.value == "dQw4w9WgXcQ"
+        assert cnt.body == "Textual body"
 
     def test_content_create_factory(self) -> None:
-        from cresmo.domain.value_objects import Content, ContentId, SourceModality
+        from cresmo.domain.value_objects import Content, ContentId
 
         cnt = Content.create(
             id="dQw4w9WgXcQ",
             title="My Video",
-            url="https://youtube.com/watch?v=dQw4w9WgXcQ",
-            modality="url",
-            publication_date=datetime.date(2022, 1, 1),
+            body="Synthesized body text",
         )
         assert cnt.id == ContentId("dQw4w9WgXcQ")
         assert cnt.title == "My Video"
-        assert cnt.modality == SourceModality.URL
-        assert cnt.publication_date == datetime.date(2022, 1, 1)
+        assert cnt.body == "Synthesized body text"
+        assert cnt.content_id == ContentId("dQw4w9WgXcQ")
+        assert cnt.content_title == "My Video"
 
     def test_content_title_default_empty(self) -> None:
         from cresmo.domain.value_objects import Content

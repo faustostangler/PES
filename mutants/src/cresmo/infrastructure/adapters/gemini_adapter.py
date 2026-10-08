@@ -1,29 +1,47 @@
 """Production LLM adapter integrating Google Gemini API and Langfuse Observability.
 
 Adheres to EVAL-001 rubrics and stangler-surgery telemetry standards, capturing
-prompt versions, trace IDs, latency, token counts, and structured outputs.
+prompt versions, trace IDs, latency, token counts, and structured outputs. Acts
+as an Anti-Corruption Layer (ACL) shielding the domain core from vendor-specific
+types and transient HTTP 429/503 network anomalies.
+
+Conforms to:
+    - ADR-001: Modular Monolith Domain Integrity
+    - ADR-003: PES Production Architecture & Telemetry
+    - EVAL-001: LLM Synthesis Evaluation Rubrics
 """
 
 from __future__ import annotations
 
+import logging
 import os
 from typing import Any
 
 from google import genai
 from google.genai import errors, types
 from langfuse import Langfuse, observe
+from opentelemetry import trace
 from tenacity import retry, retry_if_exception, stop_after_attempt, wait_random_exponential
 
 from cresmo.application.ports import LLMTransformationPort
+from cresmo.domain.value_objects import ChatPrompt, MessageRole
+from cresmo.infrastructure.adapters.opentelemetry_adapter import annotate_llm_span
+
+__all__ = ["GeminiLLMAdapter", "trace"]
+
+logger = logging.getLogger(__name__)
 
 
-from mutmut.mutation.trampoline import wrap_in_trampoline as _mutmut_mutated, MutantDict
-mutants_x__is_transient_genai_error__mutmut: MutantDict = {}  # type: ignore
-
-
-@_mutmut_mutated(mutants_x__is_transient_genai_error__mutmut)
 def _is_transient_genai_error(exc: BaseException) -> bool:
-    """Determine if a Gemini API exception represents a temporary, retryable condition."""
+    """Determine if a Gemini API exception represents a temporary, retryable condition.
+
+    Args:
+        exc: Raised base exception to inspect.
+
+    Returns:
+        True if the exception corresponds to an HTTP 429, 5xx, or transient network error;
+        False otherwise.
+    """
     if isinstance(exc, errors.APIError):
         code = getattr(exc, "code", None)
         return code in (429, 500, 502, 503, 504)
@@ -40,691 +58,6 @@ def _is_transient_genai_error(exc: BaseException) -> bool:
             "Connection reset",
         )
     )
-
-
-def x__is_transient_genai_error__mutmut_orig(exc: BaseException) -> bool:
-    """Determine if a Gemini API exception represents a temporary, retryable condition."""
-    if isinstance(exc, errors.APIError):
-        code = getattr(exc, "code", None)
-        return code in (429, 500, 502, 503, 504)
-    msg = str(exc)
-    return any(
-        pattern in msg
-        for pattern in (
-            "503",
-            "429",
-            "UNAVAILABLE",
-            "ResourceExhausted",
-            "high demand",
-            "rate limit",
-            "Connection reset",
-        )
-    )
-
-
-def x__is_transient_genai_error__mutmut_1(exc: BaseException) -> bool:
-    """Determine if a Gemini API exception represents a temporary, retryable condition."""
-    if isinstance(exc, errors.APIError):
-        code = None
-        return code in (429, 500, 502, 503, 504)
-    msg = str(exc)
-    return any(
-        pattern in msg
-        for pattern in (
-            "503",
-            "429",
-            "UNAVAILABLE",
-            "ResourceExhausted",
-            "high demand",
-            "rate limit",
-            "Connection reset",
-        )
-    )
-
-
-def x__is_transient_genai_error__mutmut_2(exc: BaseException) -> bool:
-    """Determine if a Gemini API exception represents a temporary, retryable condition."""
-    if isinstance(exc, errors.APIError):
-        code = getattr(None, "code", None)
-        return code in (429, 500, 502, 503, 504)
-    msg = str(exc)
-    return any(
-        pattern in msg
-        for pattern in (
-            "503",
-            "429",
-            "UNAVAILABLE",
-            "ResourceExhausted",
-            "high demand",
-            "rate limit",
-            "Connection reset",
-        )
-    )
-
-
-def x__is_transient_genai_error__mutmut_3(exc: BaseException) -> bool:
-    """Determine if a Gemini API exception represents a temporary, retryable condition."""
-    if isinstance(exc, errors.APIError):
-        code = getattr(exc, None, None)
-        return code in (429, 500, 502, 503, 504)
-    msg = str(exc)
-    return any(
-        pattern in msg
-        for pattern in (
-            "503",
-            "429",
-            "UNAVAILABLE",
-            "ResourceExhausted",
-            "high demand",
-            "rate limit",
-            "Connection reset",
-        )
-    )
-
-
-def x__is_transient_genai_error__mutmut_4(exc: BaseException) -> bool:
-    """Determine if a Gemini API exception represents a temporary, retryable condition."""
-    if isinstance(exc, errors.APIError):
-        code = getattr("code", None)
-        return code in (429, 500, 502, 503, 504)
-    msg = str(exc)
-    return any(
-        pattern in msg
-        for pattern in (
-            "503",
-            "429",
-            "UNAVAILABLE",
-            "ResourceExhausted",
-            "high demand",
-            "rate limit",
-            "Connection reset",
-        )
-    )
-
-
-def x__is_transient_genai_error__mutmut_5(exc: BaseException) -> bool:
-    """Determine if a Gemini API exception represents a temporary, retryable condition."""
-    if isinstance(exc, errors.APIError):
-        code = getattr(exc, None)
-        return code in (429, 500, 502, 503, 504)
-    msg = str(exc)
-    return any(
-        pattern in msg
-        for pattern in (
-            "503",
-            "429",
-            "UNAVAILABLE",
-            "ResourceExhausted",
-            "high demand",
-            "rate limit",
-            "Connection reset",
-        )
-    )
-
-
-def x__is_transient_genai_error__mutmut_6(exc: BaseException) -> bool:
-    """Determine if a Gemini API exception represents a temporary, retryable condition."""
-    if isinstance(exc, errors.APIError):
-        code = getattr(exc, "code", )
-        return code in (429, 500, 502, 503, 504)
-    msg = str(exc)
-    return any(
-        pattern in msg
-        for pattern in (
-            "503",
-            "429",
-            "UNAVAILABLE",
-            "ResourceExhausted",
-            "high demand",
-            "rate limit",
-            "Connection reset",
-        )
-    )
-
-
-def x__is_transient_genai_error__mutmut_7(exc: BaseException) -> bool:
-    """Determine if a Gemini API exception represents a temporary, retryable condition."""
-    if isinstance(exc, errors.APIError):
-        code = getattr(exc, "XXcodeXX", None)
-        return code in (429, 500, 502, 503, 504)
-    msg = str(exc)
-    return any(
-        pattern in msg
-        for pattern in (
-            "503",
-            "429",
-            "UNAVAILABLE",
-            "ResourceExhausted",
-            "high demand",
-            "rate limit",
-            "Connection reset",
-        )
-    )
-
-
-def x__is_transient_genai_error__mutmut_8(exc: BaseException) -> bool:
-    """Determine if a Gemini API exception represents a temporary, retryable condition."""
-    if isinstance(exc, errors.APIError):
-        code = getattr(exc, "CODE", None)
-        return code in (429, 500, 502, 503, 504)
-    msg = str(exc)
-    return any(
-        pattern in msg
-        for pattern in (
-            "503",
-            "429",
-            "UNAVAILABLE",
-            "ResourceExhausted",
-            "high demand",
-            "rate limit",
-            "Connection reset",
-        )
-    )
-
-
-def x__is_transient_genai_error__mutmut_9(exc: BaseException) -> bool:
-    """Determine if a Gemini API exception represents a temporary, retryable condition."""
-    if isinstance(exc, errors.APIError):
-        code = getattr(exc, "code", None)
-        return code not in (429, 500, 502, 503, 504)
-    msg = str(exc)
-    return any(
-        pattern in msg
-        for pattern in (
-            "503",
-            "429",
-            "UNAVAILABLE",
-            "ResourceExhausted",
-            "high demand",
-            "rate limit",
-            "Connection reset",
-        )
-    )
-
-
-def x__is_transient_genai_error__mutmut_10(exc: BaseException) -> bool:
-    """Determine if a Gemini API exception represents a temporary, retryable condition."""
-    if isinstance(exc, errors.APIError):
-        code = getattr(exc, "code", None)
-        return code in (430, 500, 502, 503, 504)
-    msg = str(exc)
-    return any(
-        pattern in msg
-        for pattern in (
-            "503",
-            "429",
-            "UNAVAILABLE",
-            "ResourceExhausted",
-            "high demand",
-            "rate limit",
-            "Connection reset",
-        )
-    )
-
-
-def x__is_transient_genai_error__mutmut_11(exc: BaseException) -> bool:
-    """Determine if a Gemini API exception represents a temporary, retryable condition."""
-    if isinstance(exc, errors.APIError):
-        code = getattr(exc, "code", None)
-        return code in (429, 501, 502, 503, 504)
-    msg = str(exc)
-    return any(
-        pattern in msg
-        for pattern in (
-            "503",
-            "429",
-            "UNAVAILABLE",
-            "ResourceExhausted",
-            "high demand",
-            "rate limit",
-            "Connection reset",
-        )
-    )
-
-
-def x__is_transient_genai_error__mutmut_12(exc: BaseException) -> bool:
-    """Determine if a Gemini API exception represents a temporary, retryable condition."""
-    if isinstance(exc, errors.APIError):
-        code = getattr(exc, "code", None)
-        return code in (429, 500, 503, 503, 504)
-    msg = str(exc)
-    return any(
-        pattern in msg
-        for pattern in (
-            "503",
-            "429",
-            "UNAVAILABLE",
-            "ResourceExhausted",
-            "high demand",
-            "rate limit",
-            "Connection reset",
-        )
-    )
-
-
-def x__is_transient_genai_error__mutmut_13(exc: BaseException) -> bool:
-    """Determine if a Gemini API exception represents a temporary, retryable condition."""
-    if isinstance(exc, errors.APIError):
-        code = getattr(exc, "code", None)
-        return code in (429, 500, 502, 504, 504)
-    msg = str(exc)
-    return any(
-        pattern in msg
-        for pattern in (
-            "503",
-            "429",
-            "UNAVAILABLE",
-            "ResourceExhausted",
-            "high demand",
-            "rate limit",
-            "Connection reset",
-        )
-    )
-
-
-def x__is_transient_genai_error__mutmut_14(exc: BaseException) -> bool:
-    """Determine if a Gemini API exception represents a temporary, retryable condition."""
-    if isinstance(exc, errors.APIError):
-        code = getattr(exc, "code", None)
-        return code in (429, 500, 502, 503, 505)
-    msg = str(exc)
-    return any(
-        pattern in msg
-        for pattern in (
-            "503",
-            "429",
-            "UNAVAILABLE",
-            "ResourceExhausted",
-            "high demand",
-            "rate limit",
-            "Connection reset",
-        )
-    )
-
-
-def x__is_transient_genai_error__mutmut_15(exc: BaseException) -> bool:
-    """Determine if a Gemini API exception represents a temporary, retryable condition."""
-    if isinstance(exc, errors.APIError):
-        code = getattr(exc, "code", None)
-        return code in (429, 500, 502, 503, 504)
-    msg = None
-    return any(
-        pattern in msg
-        for pattern in (
-            "503",
-            "429",
-            "UNAVAILABLE",
-            "ResourceExhausted",
-            "high demand",
-            "rate limit",
-            "Connection reset",
-        )
-    )
-
-
-def x__is_transient_genai_error__mutmut_16(exc: BaseException) -> bool:
-    """Determine if a Gemini API exception represents a temporary, retryable condition."""
-    if isinstance(exc, errors.APIError):
-        code = getattr(exc, "code", None)
-        return code in (429, 500, 502, 503, 504)
-    msg = str(None)
-    return any(
-        pattern in msg
-        for pattern in (
-            "503",
-            "429",
-            "UNAVAILABLE",
-            "ResourceExhausted",
-            "high demand",
-            "rate limit",
-            "Connection reset",
-        )
-    )
-
-
-def x__is_transient_genai_error__mutmut_17(exc: BaseException) -> bool:
-    """Determine if a Gemini API exception represents a temporary, retryable condition."""
-    if isinstance(exc, errors.APIError):
-        code = getattr(exc, "code", None)
-        return code in (429, 500, 502, 503, 504)
-    msg = str(exc)
-    return any(
-        None
-    )
-
-
-def x__is_transient_genai_error__mutmut_18(exc: BaseException) -> bool:
-    """Determine if a Gemini API exception represents a temporary, retryable condition."""
-    if isinstance(exc, errors.APIError):
-        code = getattr(exc, "code", None)
-        return code in (429, 500, 502, 503, 504)
-    msg = str(exc)
-    return any(
-        pattern not in msg
-        for pattern in (
-            "503",
-            "429",
-            "UNAVAILABLE",
-            "ResourceExhausted",
-            "high demand",
-            "rate limit",
-            "Connection reset",
-        )
-    )
-
-
-def x__is_transient_genai_error__mutmut_19(exc: BaseException) -> bool:
-    """Determine if a Gemini API exception represents a temporary, retryable condition."""
-    if isinstance(exc, errors.APIError):
-        code = getattr(exc, "code", None)
-        return code in (429, 500, 502, 503, 504)
-    msg = str(exc)
-    return any(
-        pattern in msg
-        for pattern in (
-            "XX503XX",
-            "429",
-            "UNAVAILABLE",
-            "ResourceExhausted",
-            "high demand",
-            "rate limit",
-            "Connection reset",
-        )
-    )
-
-
-def x__is_transient_genai_error__mutmut_20(exc: BaseException) -> bool:
-    """Determine if a Gemini API exception represents a temporary, retryable condition."""
-    if isinstance(exc, errors.APIError):
-        code = getattr(exc, "code", None)
-        return code in (429, 500, 502, 503, 504)
-    msg = str(exc)
-    return any(
-        pattern in msg
-        for pattern in (
-            "503",
-            "XX429XX",
-            "UNAVAILABLE",
-            "ResourceExhausted",
-            "high demand",
-            "rate limit",
-            "Connection reset",
-        )
-    )
-
-
-def x__is_transient_genai_error__mutmut_21(exc: BaseException) -> bool:
-    """Determine if a Gemini API exception represents a temporary, retryable condition."""
-    if isinstance(exc, errors.APIError):
-        code = getattr(exc, "code", None)
-        return code in (429, 500, 502, 503, 504)
-    msg = str(exc)
-    return any(
-        pattern in msg
-        for pattern in (
-            "503",
-            "429",
-            "XXUNAVAILABLEXX",
-            "ResourceExhausted",
-            "high demand",
-            "rate limit",
-            "Connection reset",
-        )
-    )
-
-
-def x__is_transient_genai_error__mutmut_22(exc: BaseException) -> bool:
-    """Determine if a Gemini API exception represents a temporary, retryable condition."""
-    if isinstance(exc, errors.APIError):
-        code = getattr(exc, "code", None)
-        return code in (429, 500, 502, 503, 504)
-    msg = str(exc)
-    return any(
-        pattern in msg
-        for pattern in (
-            "503",
-            "429",
-            "unavailable",
-            "ResourceExhausted",
-            "high demand",
-            "rate limit",
-            "Connection reset",
-        )
-    )
-
-
-def x__is_transient_genai_error__mutmut_23(exc: BaseException) -> bool:
-    """Determine if a Gemini API exception represents a temporary, retryable condition."""
-    if isinstance(exc, errors.APIError):
-        code = getattr(exc, "code", None)
-        return code in (429, 500, 502, 503, 504)
-    msg = str(exc)
-    return any(
-        pattern in msg
-        for pattern in (
-            "503",
-            "429",
-            "UNAVAILABLE",
-            "XXResourceExhaustedXX",
-            "high demand",
-            "rate limit",
-            "Connection reset",
-        )
-    )
-
-
-def x__is_transient_genai_error__mutmut_24(exc: BaseException) -> bool:
-    """Determine if a Gemini API exception represents a temporary, retryable condition."""
-    if isinstance(exc, errors.APIError):
-        code = getattr(exc, "code", None)
-        return code in (429, 500, 502, 503, 504)
-    msg = str(exc)
-    return any(
-        pattern in msg
-        for pattern in (
-            "503",
-            "429",
-            "UNAVAILABLE",
-            "resourceexhausted",
-            "high demand",
-            "rate limit",
-            "Connection reset",
-        )
-    )
-
-
-def x__is_transient_genai_error__mutmut_25(exc: BaseException) -> bool:
-    """Determine if a Gemini API exception represents a temporary, retryable condition."""
-    if isinstance(exc, errors.APIError):
-        code = getattr(exc, "code", None)
-        return code in (429, 500, 502, 503, 504)
-    msg = str(exc)
-    return any(
-        pattern in msg
-        for pattern in (
-            "503",
-            "429",
-            "UNAVAILABLE",
-            "RESOURCEEXHAUSTED",
-            "high demand",
-            "rate limit",
-            "Connection reset",
-        )
-    )
-
-
-def x__is_transient_genai_error__mutmut_26(exc: BaseException) -> bool:
-    """Determine if a Gemini API exception represents a temporary, retryable condition."""
-    if isinstance(exc, errors.APIError):
-        code = getattr(exc, "code", None)
-        return code in (429, 500, 502, 503, 504)
-    msg = str(exc)
-    return any(
-        pattern in msg
-        for pattern in (
-            "503",
-            "429",
-            "UNAVAILABLE",
-            "ResourceExhausted",
-            "XXhigh demandXX",
-            "rate limit",
-            "Connection reset",
-        )
-    )
-
-
-def x__is_transient_genai_error__mutmut_27(exc: BaseException) -> bool:
-    """Determine if a Gemini API exception represents a temporary, retryable condition."""
-    if isinstance(exc, errors.APIError):
-        code = getattr(exc, "code", None)
-        return code in (429, 500, 502, 503, 504)
-    msg = str(exc)
-    return any(
-        pattern in msg
-        for pattern in (
-            "503",
-            "429",
-            "UNAVAILABLE",
-            "ResourceExhausted",
-            "HIGH DEMAND",
-            "rate limit",
-            "Connection reset",
-        )
-    )
-
-
-def x__is_transient_genai_error__mutmut_28(exc: BaseException) -> bool:
-    """Determine if a Gemini API exception represents a temporary, retryable condition."""
-    if isinstance(exc, errors.APIError):
-        code = getattr(exc, "code", None)
-        return code in (429, 500, 502, 503, 504)
-    msg = str(exc)
-    return any(
-        pattern in msg
-        for pattern in (
-            "503",
-            "429",
-            "UNAVAILABLE",
-            "ResourceExhausted",
-            "high demand",
-            "XXrate limitXX",
-            "Connection reset",
-        )
-    )
-
-
-def x__is_transient_genai_error__mutmut_29(exc: BaseException) -> bool:
-    """Determine if a Gemini API exception represents a temporary, retryable condition."""
-    if isinstance(exc, errors.APIError):
-        code = getattr(exc, "code", None)
-        return code in (429, 500, 502, 503, 504)
-    msg = str(exc)
-    return any(
-        pattern in msg
-        for pattern in (
-            "503",
-            "429",
-            "UNAVAILABLE",
-            "ResourceExhausted",
-            "high demand",
-            "RATE LIMIT",
-            "Connection reset",
-        )
-    )
-
-
-def x__is_transient_genai_error__mutmut_30(exc: BaseException) -> bool:
-    """Determine if a Gemini API exception represents a temporary, retryable condition."""
-    if isinstance(exc, errors.APIError):
-        code = getattr(exc, "code", None)
-        return code in (429, 500, 502, 503, 504)
-    msg = str(exc)
-    return any(
-        pattern in msg
-        for pattern in (
-            "503",
-            "429",
-            "UNAVAILABLE",
-            "ResourceExhausted",
-            "high demand",
-            "rate limit",
-            "XXConnection resetXX",
-        )
-    )
-
-
-def x__is_transient_genai_error__mutmut_31(exc: BaseException) -> bool:
-    """Determine if a Gemini API exception represents a temporary, retryable condition."""
-    if isinstance(exc, errors.APIError):
-        code = getattr(exc, "code", None)
-        return code in (429, 500, 502, 503, 504)
-    msg = str(exc)
-    return any(
-        pattern in msg
-        for pattern in (
-            "503",
-            "429",
-            "UNAVAILABLE",
-            "ResourceExhausted",
-            "high demand",
-            "rate limit",
-            "connection reset",
-        )
-    )
-
-
-def x__is_transient_genai_error__mutmut_32(exc: BaseException) -> bool:
-    """Determine if a Gemini API exception represents a temporary, retryable condition."""
-    if isinstance(exc, errors.APIError):
-        code = getattr(exc, "code", None)
-        return code in (429, 500, 502, 503, 504)
-    msg = str(exc)
-    return any(
-        pattern in msg
-        for pattern in (
-            "503",
-            "429",
-            "UNAVAILABLE",
-            "ResourceExhausted",
-            "high demand",
-            "rate limit",
-            "CONNECTION RESET",
-        )
-    )
-
-mutants_x__is_transient_genai_error__mutmut['_mutmut_orig'] = x__is_transient_genai_error__mutmut_orig # type: ignore # mutmut generated
-mutants_x__is_transient_genai_error__mutmut['x__is_transient_genai_error__mutmut_1'] = x__is_transient_genai_error__mutmut_1 # type: ignore # mutmut generated
-mutants_x__is_transient_genai_error__mutmut['x__is_transient_genai_error__mutmut_2'] = x__is_transient_genai_error__mutmut_2 # type: ignore # mutmut generated
-mutants_x__is_transient_genai_error__mutmut['x__is_transient_genai_error__mutmut_3'] = x__is_transient_genai_error__mutmut_3 # type: ignore # mutmut generated
-mutants_x__is_transient_genai_error__mutmut['x__is_transient_genai_error__mutmut_4'] = x__is_transient_genai_error__mutmut_4 # type: ignore # mutmut generated
-mutants_x__is_transient_genai_error__mutmut['x__is_transient_genai_error__mutmut_5'] = x__is_transient_genai_error__mutmut_5 # type: ignore # mutmut generated
-mutants_x__is_transient_genai_error__mutmut['x__is_transient_genai_error__mutmut_6'] = x__is_transient_genai_error__mutmut_6 # type: ignore # mutmut generated
-mutants_x__is_transient_genai_error__mutmut['x__is_transient_genai_error__mutmut_7'] = x__is_transient_genai_error__mutmut_7 # type: ignore # mutmut generated
-mutants_x__is_transient_genai_error__mutmut['x__is_transient_genai_error__mutmut_8'] = x__is_transient_genai_error__mutmut_8 # type: ignore # mutmut generated
-mutants_x__is_transient_genai_error__mutmut['x__is_transient_genai_error__mutmut_9'] = x__is_transient_genai_error__mutmut_9 # type: ignore # mutmut generated
-mutants_x__is_transient_genai_error__mutmut['x__is_transient_genai_error__mutmut_10'] = x__is_transient_genai_error__mutmut_10 # type: ignore # mutmut generated
-mutants_x__is_transient_genai_error__mutmut['x__is_transient_genai_error__mutmut_11'] = x__is_transient_genai_error__mutmut_11 # type: ignore # mutmut generated
-mutants_x__is_transient_genai_error__mutmut['x__is_transient_genai_error__mutmut_12'] = x__is_transient_genai_error__mutmut_12 # type: ignore # mutmut generated
-mutants_x__is_transient_genai_error__mutmut['x__is_transient_genai_error__mutmut_13'] = x__is_transient_genai_error__mutmut_13 # type: ignore # mutmut generated
-mutants_x__is_transient_genai_error__mutmut['x__is_transient_genai_error__mutmut_14'] = x__is_transient_genai_error__mutmut_14 # type: ignore # mutmut generated
-mutants_x__is_transient_genai_error__mutmut['x__is_transient_genai_error__mutmut_15'] = x__is_transient_genai_error__mutmut_15 # type: ignore # mutmut generated
-mutants_x__is_transient_genai_error__mutmut['x__is_transient_genai_error__mutmut_16'] = x__is_transient_genai_error__mutmut_16 # type: ignore # mutmut generated
-mutants_x__is_transient_genai_error__mutmut['x__is_transient_genai_error__mutmut_17'] = x__is_transient_genai_error__mutmut_17 # type: ignore # mutmut generated
-mutants_x__is_transient_genai_error__mutmut['x__is_transient_genai_error__mutmut_18'] = x__is_transient_genai_error__mutmut_18 # type: ignore # mutmut generated
-mutants_x__is_transient_genai_error__mutmut['x__is_transient_genai_error__mutmut_19'] = x__is_transient_genai_error__mutmut_19 # type: ignore # mutmut generated
-mutants_x__is_transient_genai_error__mutmut['x__is_transient_genai_error__mutmut_20'] = x__is_transient_genai_error__mutmut_20 # type: ignore # mutmut generated
-mutants_x__is_transient_genai_error__mutmut['x__is_transient_genai_error__mutmut_21'] = x__is_transient_genai_error__mutmut_21 # type: ignore # mutmut generated
-mutants_x__is_transient_genai_error__mutmut['x__is_transient_genai_error__mutmut_22'] = x__is_transient_genai_error__mutmut_22 # type: ignore # mutmut generated
-mutants_x__is_transient_genai_error__mutmut['x__is_transient_genai_error__mutmut_23'] = x__is_transient_genai_error__mutmut_23 # type: ignore # mutmut generated
-mutants_x__is_transient_genai_error__mutmut['x__is_transient_genai_error__mutmut_24'] = x__is_transient_genai_error__mutmut_24 # type: ignore # mutmut generated
-mutants_x__is_transient_genai_error__mutmut['x__is_transient_genai_error__mutmut_25'] = x__is_transient_genai_error__mutmut_25 # type: ignore # mutmut generated
-mutants_x__is_transient_genai_error__mutmut['x__is_transient_genai_error__mutmut_26'] = x__is_transient_genai_error__mutmut_26 # type: ignore # mutmut generated
-mutants_x__is_transient_genai_error__mutmut['x__is_transient_genai_error__mutmut_27'] = x__is_transient_genai_error__mutmut_27 # type: ignore # mutmut generated
-mutants_x__is_transient_genai_error__mutmut['x__is_transient_genai_error__mutmut_28'] = x__is_transient_genai_error__mutmut_28 # type: ignore # mutmut generated
-mutants_x__is_transient_genai_error__mutmut['x__is_transient_genai_error__mutmut_29'] = x__is_transient_genai_error__mutmut_29 # type: ignore # mutmut generated
-mutants_x__is_transient_genai_error__mutmut['x__is_transient_genai_error__mutmut_30'] = x__is_transient_genai_error__mutmut_30 # type: ignore # mutmut generated
-mutants_x__is_transient_genai_error__mutmut['x__is_transient_genai_error__mutmut_31'] = x__is_transient_genai_error__mutmut_31 # type: ignore # mutmut generated
-mutants_x__is_transient_genai_error__mutmut['x__is_transient_genai_error__mutmut_32'] = x__is_transient_genai_error__mutmut_32 # type: ignore # mutmut generated
 
 
 @retry(
@@ -739,19 +72,37 @@ def _generate_with_retry(
     contents: Any,
     config: Any,
 ) -> Any:
-    """Execute model content generation with exponential backoff on transient errors."""
+    """Execute model content generation with exponential backoff on transient errors.
+
+    Args:
+        client: Google GenAI client instance.
+        model: Model identifier string.
+        contents: Input prompt or payload.
+        config: Generation configuration parameters.
+
+    Returns:
+        SDK generation response object.
+    """
     return client.models.generate_content(
         model=model,
         contents=contents,
         config=config,
     )
-mutants_xǁGeminiLLMAdapterǁ__init____mutmut: MutantDict = {}  # type: ignore
 
 
 class GeminiLLMAdapter(LLMTransformationPort):
-    """Production LLM adapter with Google Gemini API and Langfuse telemetry."""
+    """Production LLM adapter with Google Gemini API and Langfuse telemetry.
 
-    @_mutmut_mutated(mutants_xǁGeminiLLMAdapterǁ__init____mutmut)
+    Implements LLMTransformationPort as an Anti-Corruption Layer (ACL), wrapping
+    Google GenAI client calls with exponential retries, model failover, and
+    detailed token usage tracking sent to Langfuse.
+
+    Attributes:
+        model_name: Primary Gemini model variant.
+        fallback_model_name: Optional secondary model variant used if primary fails.
+        max_output_tokens: Bounded token ceiling for model generation.
+    """
+
     def __init__(
         self,
         api_key: str | None = None,
@@ -760,12 +111,25 @@ class GeminiLLMAdapter(LLMTransformationPort):
         max_output_tokens: int = 8192,
         genai_client: Any | None = None,
         langfuse_client: Langfuse | None = None,
+        default_temperature: float = 0.2,
     ) -> None:
+        """Initialize GeminiLLMAdapter with model configuration and telemetry clients.
+
+        Args:
+            api_key: Optional Gemini API key string. If None, SDK looks for GEMINI_API_KEY env.
+            model_name: Default Gemini model variant for pipeline stages.
+            fallback_model_name: Secondary model variant if primary hits quota or demand spikes.
+            max_output_tokens: Maximum token output limit per generation.
+            genai_client: Optional injected GenAI client for testing.
+            langfuse_client: Optional injected Langfuse client for testing.
+            default_temperature: Default generation sampling temperature when not overridden.
+        """
         self.model_name = model_name
         self.fallback_model_name = fallback_model_name
         self.max_output_tokens = max_output_tokens
+        self.default_temperature = default_temperature
 
-        # Step 1: Initialize Langfuse client if configured.
+        # Step 1: Initialize Langfuse client if configured
         if langfuse_client is not None:
             self._langfuse: Langfuse | None = langfuse_client
         elif os.environ.get("LANGFUSE_PUBLIC_KEY"):
@@ -773,568 +137,25 @@ class GeminiLLMAdapter(LLMTransformationPort):
         else:
             self._langfuse = None
 
-        # Step 2: Initialize Google GenAI client.
+        # Step 2: Initialize Google GenAI client
         if genai_client is not None:
             self._client = genai_client
         else:
             self._client = genai.Client(api_key=api_key)
 
-    def xǁGeminiLLMAdapterǁ__init____mutmut_orig(
-        self,
-        api_key: str | None = None,
-        model_name: str = "gemini-3.5-flash-lite",
-        fallback_model_name: str | None = "gemini-3.1-flash-lite",
-        max_output_tokens: int = 8192,
-        genai_client: Any | None = None,
-        langfuse_client: Langfuse | None = None,
-    ) -> None:
-        self.model_name = model_name
-        self.fallback_model_name = fallback_model_name
-        self.max_output_tokens = max_output_tokens
-
-        # Step 1: Initialize Langfuse client if configured.
-        if langfuse_client is not None:
-            self._langfuse: Langfuse | None = langfuse_client
-        elif os.environ.get("LANGFUSE_PUBLIC_KEY"):
-            self._langfuse = Langfuse()
-        else:
-            self._langfuse = None
-
-        # Step 2: Initialize Google GenAI client.
-        if genai_client is not None:
-            self._client = genai_client
-        else:
-            self._client = genai.Client(api_key=api_key)
-
-    def xǁGeminiLLMAdapterǁ__init____mutmut_1(
-        self,
-        api_key: str | None = None,
-        model_name: str = "XXgemini-3.5-flash-liteXX",
-        fallback_model_name: str | None = "gemini-3.1-flash-lite",
-        max_output_tokens: int = 8192,
-        genai_client: Any | None = None,
-        langfuse_client: Langfuse | None = None,
-    ) -> None:
-        self.model_name = model_name
-        self.fallback_model_name = fallback_model_name
-        self.max_output_tokens = max_output_tokens
-
-        # Step 1: Initialize Langfuse client if configured.
-        if langfuse_client is not None:
-            self._langfuse: Langfuse | None = langfuse_client
-        elif os.environ.get("LANGFUSE_PUBLIC_KEY"):
-            self._langfuse = Langfuse()
-        else:
-            self._langfuse = None
-
-        # Step 2: Initialize Google GenAI client.
-        if genai_client is not None:
-            self._client = genai_client
-        else:
-            self._client = genai.Client(api_key=api_key)
-
-    def xǁGeminiLLMAdapterǁ__init____mutmut_2(
-        self,
-        api_key: str | None = None,
-        model_name: str = "GEMINI-3.5-FLASH-LITE",
-        fallback_model_name: str | None = "gemini-3.1-flash-lite",
-        max_output_tokens: int = 8192,
-        genai_client: Any | None = None,
-        langfuse_client: Langfuse | None = None,
-    ) -> None:
-        self.model_name = model_name
-        self.fallback_model_name = fallback_model_name
-        self.max_output_tokens = max_output_tokens
-
-        # Step 1: Initialize Langfuse client if configured.
-        if langfuse_client is not None:
-            self._langfuse: Langfuse | None = langfuse_client
-        elif os.environ.get("LANGFUSE_PUBLIC_KEY"):
-            self._langfuse = Langfuse()
-        else:
-            self._langfuse = None
-
-        # Step 2: Initialize Google GenAI client.
-        if genai_client is not None:
-            self._client = genai_client
-        else:
-            self._client = genai.Client(api_key=api_key)
-
-    def xǁGeminiLLMAdapterǁ__init____mutmut_3(
-        self,
-        api_key: str | None = None,
-        model_name: str = "gemini-3.5-flash-lite",
-        fallback_model_name: str | None = "XXgemini-3.1-flash-liteXX",
-        max_output_tokens: int = 8192,
-        genai_client: Any | None = None,
-        langfuse_client: Langfuse | None = None,
-    ) -> None:
-        self.model_name = model_name
-        self.fallback_model_name = fallback_model_name
-        self.max_output_tokens = max_output_tokens
-
-        # Step 1: Initialize Langfuse client if configured.
-        if langfuse_client is not None:
-            self._langfuse: Langfuse | None = langfuse_client
-        elif os.environ.get("LANGFUSE_PUBLIC_KEY"):
-            self._langfuse = Langfuse()
-        else:
-            self._langfuse = None
-
-        # Step 2: Initialize Google GenAI client.
-        if genai_client is not None:
-            self._client = genai_client
-        else:
-            self._client = genai.Client(api_key=api_key)
-
-    def xǁGeminiLLMAdapterǁ__init____mutmut_4(
-        self,
-        api_key: str | None = None,
-        model_name: str = "gemini-3.5-flash-lite",
-        fallback_model_name: str | None = "GEMINI-3.1-FLASH-LITE",
-        max_output_tokens: int = 8192,
-        genai_client: Any | None = None,
-        langfuse_client: Langfuse | None = None,
-    ) -> None:
-        self.model_name = model_name
-        self.fallback_model_name = fallback_model_name
-        self.max_output_tokens = max_output_tokens
-
-        # Step 1: Initialize Langfuse client if configured.
-        if langfuse_client is not None:
-            self._langfuse: Langfuse | None = langfuse_client
-        elif os.environ.get("LANGFUSE_PUBLIC_KEY"):
-            self._langfuse = Langfuse()
-        else:
-            self._langfuse = None
-
-        # Step 2: Initialize Google GenAI client.
-        if genai_client is not None:
-            self._client = genai_client
-        else:
-            self._client = genai.Client(api_key=api_key)
-
-    def xǁGeminiLLMAdapterǁ__init____mutmut_5(
-        self,
-        api_key: str | None = None,
-        model_name: str = "gemini-3.5-flash-lite",
-        fallback_model_name: str | None = "gemini-3.1-flash-lite",
-        max_output_tokens: int = 8193,
-        genai_client: Any | None = None,
-        langfuse_client: Langfuse | None = None,
-    ) -> None:
-        self.model_name = model_name
-        self.fallback_model_name = fallback_model_name
-        self.max_output_tokens = max_output_tokens
-
-        # Step 1: Initialize Langfuse client if configured.
-        if langfuse_client is not None:
-            self._langfuse: Langfuse | None = langfuse_client
-        elif os.environ.get("LANGFUSE_PUBLIC_KEY"):
-            self._langfuse = Langfuse()
-        else:
-            self._langfuse = None
-
-        # Step 2: Initialize Google GenAI client.
-        if genai_client is not None:
-            self._client = genai_client
-        else:
-            self._client = genai.Client(api_key=api_key)
-
-    def xǁGeminiLLMAdapterǁ__init____mutmut_6(
-        self,
-        api_key: str | None = None,
-        model_name: str = "gemini-3.5-flash-lite",
-        fallback_model_name: str | None = "gemini-3.1-flash-lite",
-        max_output_tokens: int = 8192,
-        genai_client: Any | None = None,
-        langfuse_client: Langfuse | None = None,
-    ) -> None:
-        self.model_name = None
-        self.fallback_model_name = fallback_model_name
-        self.max_output_tokens = max_output_tokens
-
-        # Step 1: Initialize Langfuse client if configured.
-        if langfuse_client is not None:
-            self._langfuse: Langfuse | None = langfuse_client
-        elif os.environ.get("LANGFUSE_PUBLIC_KEY"):
-            self._langfuse = Langfuse()
-        else:
-            self._langfuse = None
-
-        # Step 2: Initialize Google GenAI client.
-        if genai_client is not None:
-            self._client = genai_client
-        else:
-            self._client = genai.Client(api_key=api_key)
-
-    def xǁGeminiLLMAdapterǁ__init____mutmut_7(
-        self,
-        api_key: str | None = None,
-        model_name: str = "gemini-3.5-flash-lite",
-        fallback_model_name: str | None = "gemini-3.1-flash-lite",
-        max_output_tokens: int = 8192,
-        genai_client: Any | None = None,
-        langfuse_client: Langfuse | None = None,
-    ) -> None:
-        self.model_name = model_name
-        self.fallback_model_name = None
-        self.max_output_tokens = max_output_tokens
-
-        # Step 1: Initialize Langfuse client if configured.
-        if langfuse_client is not None:
-            self._langfuse: Langfuse | None = langfuse_client
-        elif os.environ.get("LANGFUSE_PUBLIC_KEY"):
-            self._langfuse = Langfuse()
-        else:
-            self._langfuse = None
-
-        # Step 2: Initialize Google GenAI client.
-        if genai_client is not None:
-            self._client = genai_client
-        else:
-            self._client = genai.Client(api_key=api_key)
-
-    def xǁGeminiLLMAdapterǁ__init____mutmut_8(
-        self,
-        api_key: str | None = None,
-        model_name: str = "gemini-3.5-flash-lite",
-        fallback_model_name: str | None = "gemini-3.1-flash-lite",
-        max_output_tokens: int = 8192,
-        genai_client: Any | None = None,
-        langfuse_client: Langfuse | None = None,
-    ) -> None:
-        self.model_name = model_name
-        self.fallback_model_name = fallback_model_name
-        self.max_output_tokens = None
-
-        # Step 1: Initialize Langfuse client if configured.
-        if langfuse_client is not None:
-            self._langfuse: Langfuse | None = langfuse_client
-        elif os.environ.get("LANGFUSE_PUBLIC_KEY"):
-            self._langfuse = Langfuse()
-        else:
-            self._langfuse = None
-
-        # Step 2: Initialize Google GenAI client.
-        if genai_client is not None:
-            self._client = genai_client
-        else:
-            self._client = genai.Client(api_key=api_key)
-
-    def xǁGeminiLLMAdapterǁ__init____mutmut_9(
-        self,
-        api_key: str | None = None,
-        model_name: str = "gemini-3.5-flash-lite",
-        fallback_model_name: str | None = "gemini-3.1-flash-lite",
-        max_output_tokens: int = 8192,
-        genai_client: Any | None = None,
-        langfuse_client: Langfuse | None = None,
-    ) -> None:
-        self.model_name = model_name
-        self.fallback_model_name = fallback_model_name
-        self.max_output_tokens = max_output_tokens
-
-        # Step 1: Initialize Langfuse client if configured.
-        if langfuse_client is None:
-            self._langfuse: Langfuse | None = langfuse_client
-        elif os.environ.get("LANGFUSE_PUBLIC_KEY"):
-            self._langfuse = Langfuse()
-        else:
-            self._langfuse = None
-
-        # Step 2: Initialize Google GenAI client.
-        if genai_client is not None:
-            self._client = genai_client
-        else:
-            self._client = genai.Client(api_key=api_key)
-
-    def xǁGeminiLLMAdapterǁ__init____mutmut_10(
-        self,
-        api_key: str | None = None,
-        model_name: str = "gemini-3.5-flash-lite",
-        fallback_model_name: str | None = "gemini-3.1-flash-lite",
-        max_output_tokens: int = 8192,
-        genai_client: Any | None = None,
-        langfuse_client: Langfuse | None = None,
-    ) -> None:
-        self.model_name = model_name
-        self.fallback_model_name = fallback_model_name
-        self.max_output_tokens = max_output_tokens
-
-        # Step 1: Initialize Langfuse client if configured.
-        if langfuse_client is not None:
-            self._langfuse: Langfuse | None = None
-        elif os.environ.get("LANGFUSE_PUBLIC_KEY"):
-            self._langfuse = Langfuse()
-        else:
-            self._langfuse = None
-
-        # Step 2: Initialize Google GenAI client.
-        if genai_client is not None:
-            self._client = genai_client
-        else:
-            self._client = genai.Client(api_key=api_key)
-
-    def xǁGeminiLLMAdapterǁ__init____mutmut_11(
-        self,
-        api_key: str | None = None,
-        model_name: str = "gemini-3.5-flash-lite",
-        fallback_model_name: str | None = "gemini-3.1-flash-lite",
-        max_output_tokens: int = 8192,
-        genai_client: Any | None = None,
-        langfuse_client: Langfuse | None = None,
-    ) -> None:
-        self.model_name = model_name
-        self.fallback_model_name = fallback_model_name
-        self.max_output_tokens = max_output_tokens
-
-        # Step 1: Initialize Langfuse client if configured.
-        if langfuse_client is not None:
-            self._langfuse: Langfuse | None = langfuse_client
-        elif os.environ.get(None):
-            self._langfuse = Langfuse()
-        else:
-            self._langfuse = None
-
-        # Step 2: Initialize Google GenAI client.
-        if genai_client is not None:
-            self._client = genai_client
-        else:
-            self._client = genai.Client(api_key=api_key)
-
-    def xǁGeminiLLMAdapterǁ__init____mutmut_12(
-        self,
-        api_key: str | None = None,
-        model_name: str = "gemini-3.5-flash-lite",
-        fallback_model_name: str | None = "gemini-3.1-flash-lite",
-        max_output_tokens: int = 8192,
-        genai_client: Any | None = None,
-        langfuse_client: Langfuse | None = None,
-    ) -> None:
-        self.model_name = model_name
-        self.fallback_model_name = fallback_model_name
-        self.max_output_tokens = max_output_tokens
-
-        # Step 1: Initialize Langfuse client if configured.
-        if langfuse_client is not None:
-            self._langfuse: Langfuse | None = langfuse_client
-        elif os.environ.get("XXLANGFUSE_PUBLIC_KEYXX"):
-            self._langfuse = Langfuse()
-        else:
-            self._langfuse = None
-
-        # Step 2: Initialize Google GenAI client.
-        if genai_client is not None:
-            self._client = genai_client
-        else:
-            self._client = genai.Client(api_key=api_key)
-
-    def xǁGeminiLLMAdapterǁ__init____mutmut_13(
-        self,
-        api_key: str | None = None,
-        model_name: str = "gemini-3.5-flash-lite",
-        fallback_model_name: str | None = "gemini-3.1-flash-lite",
-        max_output_tokens: int = 8192,
-        genai_client: Any | None = None,
-        langfuse_client: Langfuse | None = None,
-    ) -> None:
-        self.model_name = model_name
-        self.fallback_model_name = fallback_model_name
-        self.max_output_tokens = max_output_tokens
-
-        # Step 1: Initialize Langfuse client if configured.
-        if langfuse_client is not None:
-            self._langfuse: Langfuse | None = langfuse_client
-        elif os.environ.get("langfuse_public_key"):
-            self._langfuse = Langfuse()
-        else:
-            self._langfuse = None
-
-        # Step 2: Initialize Google GenAI client.
-        if genai_client is not None:
-            self._client = genai_client
-        else:
-            self._client = genai.Client(api_key=api_key)
-
-    def xǁGeminiLLMAdapterǁ__init____mutmut_14(
-        self,
-        api_key: str | None = None,
-        model_name: str = "gemini-3.5-flash-lite",
-        fallback_model_name: str | None = "gemini-3.1-flash-lite",
-        max_output_tokens: int = 8192,
-        genai_client: Any | None = None,
-        langfuse_client: Langfuse | None = None,
-    ) -> None:
-        self.model_name = model_name
-        self.fallback_model_name = fallback_model_name
-        self.max_output_tokens = max_output_tokens
-
-        # Step 1: Initialize Langfuse client if configured.
-        if langfuse_client is not None:
-            self._langfuse: Langfuse | None = langfuse_client
-        elif os.environ.get("LANGFUSE_PUBLIC_KEY"):
-            self._langfuse = None
-        else:
-            self._langfuse = None
-
-        # Step 2: Initialize Google GenAI client.
-        if genai_client is not None:
-            self._client = genai_client
-        else:
-            self._client = genai.Client(api_key=api_key)
-
-    def xǁGeminiLLMAdapterǁ__init____mutmut_15(
-        self,
-        api_key: str | None = None,
-        model_name: str = "gemini-3.5-flash-lite",
-        fallback_model_name: str | None = "gemini-3.1-flash-lite",
-        max_output_tokens: int = 8192,
-        genai_client: Any | None = None,
-        langfuse_client: Langfuse | None = None,
-    ) -> None:
-        self.model_name = model_name
-        self.fallback_model_name = fallback_model_name
-        self.max_output_tokens = max_output_tokens
-
-        # Step 1: Initialize Langfuse client if configured.
-        if langfuse_client is not None:
-            self._langfuse: Langfuse | None = langfuse_client
-        elif os.environ.get("LANGFUSE_PUBLIC_KEY"):
-            self._langfuse = Langfuse()
-        else:
-            self._langfuse = ""
-
-        # Step 2: Initialize Google GenAI client.
-        if genai_client is not None:
-            self._client = genai_client
-        else:
-            self._client = genai.Client(api_key=api_key)
-
-    def xǁGeminiLLMAdapterǁ__init____mutmut_16(
-        self,
-        api_key: str | None = None,
-        model_name: str = "gemini-3.5-flash-lite",
-        fallback_model_name: str | None = "gemini-3.1-flash-lite",
-        max_output_tokens: int = 8192,
-        genai_client: Any | None = None,
-        langfuse_client: Langfuse | None = None,
-    ) -> None:
-        self.model_name = model_name
-        self.fallback_model_name = fallback_model_name
-        self.max_output_tokens = max_output_tokens
-
-        # Step 1: Initialize Langfuse client if configured.
-        if langfuse_client is not None:
-            self._langfuse: Langfuse | None = langfuse_client
-        elif os.environ.get("LANGFUSE_PUBLIC_KEY"):
-            self._langfuse = Langfuse()
-        else:
-            self._langfuse = None
-
-        # Step 2: Initialize Google GenAI client.
-        if genai_client is None:
-            self._client = genai_client
-        else:
-            self._client = genai.Client(api_key=api_key)
-
-    def xǁGeminiLLMAdapterǁ__init____mutmut_17(
-        self,
-        api_key: str | None = None,
-        model_name: str = "gemini-3.5-flash-lite",
-        fallback_model_name: str | None = "gemini-3.1-flash-lite",
-        max_output_tokens: int = 8192,
-        genai_client: Any | None = None,
-        langfuse_client: Langfuse | None = None,
-    ) -> None:
-        self.model_name = model_name
-        self.fallback_model_name = fallback_model_name
-        self.max_output_tokens = max_output_tokens
-
-        # Step 1: Initialize Langfuse client if configured.
-        if langfuse_client is not None:
-            self._langfuse: Langfuse | None = langfuse_client
-        elif os.environ.get("LANGFUSE_PUBLIC_KEY"):
-            self._langfuse = Langfuse()
-        else:
-            self._langfuse = None
-
-        # Step 2: Initialize Google GenAI client.
-        if genai_client is not None:
-            self._client = None
-        else:
-            self._client = genai.Client(api_key=api_key)
-
-    def xǁGeminiLLMAdapterǁ__init____mutmut_18(
-        self,
-        api_key: str | None = None,
-        model_name: str = "gemini-3.5-flash-lite",
-        fallback_model_name: str | None = "gemini-3.1-flash-lite",
-        max_output_tokens: int = 8192,
-        genai_client: Any | None = None,
-        langfuse_client: Langfuse | None = None,
-    ) -> None:
-        self.model_name = model_name
-        self.fallback_model_name = fallback_model_name
-        self.max_output_tokens = max_output_tokens
-
-        # Step 1: Initialize Langfuse client if configured.
-        if langfuse_client is not None:
-            self._langfuse: Langfuse | None = langfuse_client
-        elif os.environ.get("LANGFUSE_PUBLIC_KEY"):
-            self._langfuse = Langfuse()
-        else:
-            self._langfuse = None
-
-        # Step 2: Initialize Google GenAI client.
-        if genai_client is not None:
-            self._client = genai_client
-        else:
-            self._client = None
-
-    def xǁGeminiLLMAdapterǁ__init____mutmut_19(
-        self,
-        api_key: str | None = None,
-        model_name: str = "gemini-3.5-flash-lite",
-        fallback_model_name: str | None = "gemini-3.1-flash-lite",
-        max_output_tokens: int = 8192,
-        genai_client: Any | None = None,
-        langfuse_client: Langfuse | None = None,
-    ) -> None:
-        self.model_name = model_name
-        self.fallback_model_name = fallback_model_name
-        self.max_output_tokens = max_output_tokens
-
-        # Step 1: Initialize Langfuse client if configured.
-        if langfuse_client is not None:
-            self._langfuse: Langfuse | None = langfuse_client
-        elif os.environ.get("LANGFUSE_PUBLIC_KEY"):
-            self._langfuse = Langfuse()
-        else:
-            self._langfuse = None
-
-        # Step 2: Initialize Google GenAI client.
-        if genai_client is not None:
-            self._client = genai_client
-        else:
-            self._client = genai.Client(api_key=None)
-
-    @observe(as_type="generation")
     def transform(
         self,
-        prompt: str,
-        system_instruction: str | None = None,
+        prompt: ChatPrompt,
         temperature: float | None = None,
         *,
         trace_id: str | None = None,
         session_id: str | None = None,
         user_id: str | None = None,
     ) -> str:
-        """Execute text transformation contract with full Langfuse observability span.
+        """Execute text transformation contract with immediate Langfuse telemetry synchronization.
 
         Args:
-            prompt: Text prompt for generation.
-            system_instruction: Optional system instruction directive.
+            prompt: Domain ChatPrompt containing sequential messages and optional system instruction.
             temperature: Generation sampling temperature.
             trace_id: Optional trace ID (e.g. ContentId).
             session_id: Pipeline session identifier.
@@ -1343,20 +164,67 @@ class GeminiLLMAdapter(LLMTransformationPort):
         Returns:
             Generated response text.
         """
-        eff_temperature = 0.2 if temperature is None else temperature
+        response_text = self._execute_transform(
+            prompt=prompt,
+            temperature=temperature,
+            trace_id=trace_id,
+            session_id=session_id,
+            user_id=user_id,
+        )
+
+        client = self._langfuse
+        if client is None:
+            try:
+                from langfuse import get_client
+
+                client = get_client()
+            except Exception:  # noqa: BLE001
+                client = None
+
+        if client is not None:
+            try:
+                client.flush()
+            except Exception as exc:  # noqa: BLE001
+                logger.debug("[GeminiLLMAdapter] Langfuse flush skipped: %s", exc)
+
+        return response_text
+
+    # Trace level 3: cresmo.llm.generate
+    @observe(name="cresmo.llm.generate", as_type="generation")
+    def _execute_transform(
+        self,
+        prompt: ChatPrompt,
+        temperature: float | None = None,
+        *,
+        trace_id: str | None = None,
+        session_id: str | None = None,
+        user_id: str | None = None,
+    ) -> str:
+        """Internal worker executing model generation within an active Langfuse generation observation."""
+        effective_temperature = self.default_temperature if temperature is None else temperature
         config = types.GenerateContentConfig(
-            temperature=eff_temperature,
+            temperature=effective_temperature,
             max_output_tokens=self.max_output_tokens,
-            system_instruction=system_instruction,
+            system_instruction=prompt.system_instruction,
             automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=True),
         )
+
+        contents: list[types.Content] = []
+        for msg in prompt.messages:
+            role = "model" if msg.role == MessageRole.ASSISTANT else "user"
+            contents.append(
+                types.Content(
+                    role=role,
+                    parts=[types.Part.from_text(text=msg.content)],
+                )
+            )
 
         active_model = self.model_name
         try:
             response = _generate_with_retry(
                 client=self._client,
                 model=active_model,
-                contents=prompt,
+                contents=contents,
                 config=config,
             )
         except Exception:
@@ -1365,7 +233,7 @@ class GeminiLLMAdapter(LLMTransformationPort):
                 response = _generate_with_retry(
                     client=self._client,
                     model=active_model,
-                    contents=prompt,
+                    contents=contents,
                     config=config,
                 )
             else:
@@ -1375,41 +243,23 @@ class GeminiLLMAdapter(LLMTransformationPort):
 
         # Extract usage metadata
         usage_meta = getattr(response, "usage_metadata", None)
-        prompt_tokens = getattr(usage_meta, "prompt_token_count", 0) or len(prompt.split())
+        total_prompt_words = sum(len(m.content.split()) for m in prompt.messages)
+        prompt_tokens = getattr(usage_meta, "prompt_token_count", 0) or total_prompt_words
         candidate_tokens = getattr(usage_meta, "candidates_token_count", 0) or len(
             response_text.split()
         )
 
-        # Bind output and token metadata to Langfuse generation span if active
-        if self._langfuse is not None:
-            try:
-                self._langfuse.update_current_generation(
-                    model=active_model,
-                    output=response_text,
-                    usage_details={"input": prompt_tokens, "output": candidate_tokens},
-                )
-            except (AttributeError, RuntimeError, ValueError):
-                pass
+        # OpenTelemetry GenAI Semantic Conventions & Langfuse span decoration
+        annotate_llm_span(
+            system="google",
+            model=active_model,
+            prompt_tokens=prompt_tokens,
+            candidate_tokens=candidate_tokens,
+            session_id=session_id,
+            user_id=user_id,
+            trace_id=trace_id,
+            temperature=effective_temperature,
+            max_tokens=self.max_output_tokens,
+        )
 
         return response_text
-
-mutants_xǁGeminiLLMAdapterǁ__init____mutmut['_mutmut_orig'] = GeminiLLMAdapter.xǁGeminiLLMAdapterǁ__init____mutmut_orig # type: ignore # mutmut generated
-mutants_xǁGeminiLLMAdapterǁ__init____mutmut['xǁGeminiLLMAdapterǁ__init____mutmut_1'] = GeminiLLMAdapter.xǁGeminiLLMAdapterǁ__init____mutmut_1 # type: ignore # mutmut generated
-mutants_xǁGeminiLLMAdapterǁ__init____mutmut['xǁGeminiLLMAdapterǁ__init____mutmut_2'] = GeminiLLMAdapter.xǁGeminiLLMAdapterǁ__init____mutmut_2 # type: ignore # mutmut generated
-mutants_xǁGeminiLLMAdapterǁ__init____mutmut['xǁGeminiLLMAdapterǁ__init____mutmut_3'] = GeminiLLMAdapter.xǁGeminiLLMAdapterǁ__init____mutmut_3 # type: ignore # mutmut generated
-mutants_xǁGeminiLLMAdapterǁ__init____mutmut['xǁGeminiLLMAdapterǁ__init____mutmut_4'] = GeminiLLMAdapter.xǁGeminiLLMAdapterǁ__init____mutmut_4 # type: ignore # mutmut generated
-mutants_xǁGeminiLLMAdapterǁ__init____mutmut['xǁGeminiLLMAdapterǁ__init____mutmut_5'] = GeminiLLMAdapter.xǁGeminiLLMAdapterǁ__init____mutmut_5 # type: ignore # mutmut generated
-mutants_xǁGeminiLLMAdapterǁ__init____mutmut['xǁGeminiLLMAdapterǁ__init____mutmut_6'] = GeminiLLMAdapter.xǁGeminiLLMAdapterǁ__init____mutmut_6 # type: ignore # mutmut generated
-mutants_xǁGeminiLLMAdapterǁ__init____mutmut['xǁGeminiLLMAdapterǁ__init____mutmut_7'] = GeminiLLMAdapter.xǁGeminiLLMAdapterǁ__init____mutmut_7 # type: ignore # mutmut generated
-mutants_xǁGeminiLLMAdapterǁ__init____mutmut['xǁGeminiLLMAdapterǁ__init____mutmut_8'] = GeminiLLMAdapter.xǁGeminiLLMAdapterǁ__init____mutmut_8 # type: ignore # mutmut generated
-mutants_xǁGeminiLLMAdapterǁ__init____mutmut['xǁGeminiLLMAdapterǁ__init____mutmut_9'] = GeminiLLMAdapter.xǁGeminiLLMAdapterǁ__init____mutmut_9 # type: ignore # mutmut generated
-mutants_xǁGeminiLLMAdapterǁ__init____mutmut['xǁGeminiLLMAdapterǁ__init____mutmut_10'] = GeminiLLMAdapter.xǁGeminiLLMAdapterǁ__init____mutmut_10 # type: ignore # mutmut generated
-mutants_xǁGeminiLLMAdapterǁ__init____mutmut['xǁGeminiLLMAdapterǁ__init____mutmut_11'] = GeminiLLMAdapter.xǁGeminiLLMAdapterǁ__init____mutmut_11 # type: ignore # mutmut generated
-mutants_xǁGeminiLLMAdapterǁ__init____mutmut['xǁGeminiLLMAdapterǁ__init____mutmut_12'] = GeminiLLMAdapter.xǁGeminiLLMAdapterǁ__init____mutmut_12 # type: ignore # mutmut generated
-mutants_xǁGeminiLLMAdapterǁ__init____mutmut['xǁGeminiLLMAdapterǁ__init____mutmut_13'] = GeminiLLMAdapter.xǁGeminiLLMAdapterǁ__init____mutmut_13 # type: ignore # mutmut generated
-mutants_xǁGeminiLLMAdapterǁ__init____mutmut['xǁGeminiLLMAdapterǁ__init____mutmut_14'] = GeminiLLMAdapter.xǁGeminiLLMAdapterǁ__init____mutmut_14 # type: ignore # mutmut generated
-mutants_xǁGeminiLLMAdapterǁ__init____mutmut['xǁGeminiLLMAdapterǁ__init____mutmut_15'] = GeminiLLMAdapter.xǁGeminiLLMAdapterǁ__init____mutmut_15 # type: ignore # mutmut generated
-mutants_xǁGeminiLLMAdapterǁ__init____mutmut['xǁGeminiLLMAdapterǁ__init____mutmut_16'] = GeminiLLMAdapter.xǁGeminiLLMAdapterǁ__init____mutmut_16 # type: ignore # mutmut generated
-mutants_xǁGeminiLLMAdapterǁ__init____mutmut['xǁGeminiLLMAdapterǁ__init____mutmut_17'] = GeminiLLMAdapter.xǁGeminiLLMAdapterǁ__init____mutmut_17 # type: ignore # mutmut generated
-mutants_xǁGeminiLLMAdapterǁ__init____mutmut['xǁGeminiLLMAdapterǁ__init____mutmut_18'] = GeminiLLMAdapter.xǁGeminiLLMAdapterǁ__init____mutmut_18 # type: ignore # mutmut generated
-mutants_xǁGeminiLLMAdapterǁ__init____mutmut['xǁGeminiLLMAdapterǁ__init____mutmut_19'] = GeminiLLMAdapter.xǁGeminiLLMAdapterǁ__init____mutmut_19 # type: ignore # mutmut generated

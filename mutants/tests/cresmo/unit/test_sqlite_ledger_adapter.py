@@ -10,7 +10,7 @@ import concurrent.futures
 from datetime import UTC, datetime
 from pathlib import Path
 
-from cresmo.domain.value_objects import ContentId, LedgerEntry, PipelineStatus
+from cresmo.domain.value_objects import ChannelName, ContentId, LedgerEntry, PipelineStatus
 from cresmo.infrastructure.adapters.sqlite_ledger_adapter import SqliteLedgerAdapter
 
 
@@ -56,7 +56,7 @@ class TestSqliteLedgerAdapter:
             content_id=ContentId("abcdefgh1234"),
             media_url="https://youtube.com/watch?v=abcdefgh1234",
             title="Advanced Quantum Mechanics",
-            channel_name="PhysicsDept",
+            channel_name=ChannelName("PhysicsDept"),
             status=PipelineStatus.COMPLETED,
             notes_count=12,
             error_message=None,
@@ -70,7 +70,7 @@ class TestSqliteLedgerAdapter:
         assert retrieved is not None
         assert retrieved.content_id.value == "abcdefgh1234"
         assert retrieved.title == "Advanced Quantum Mechanics"
-        assert retrieved.channel_name == "PhysicsDept"
+        assert retrieved.channel_name == ChannelName("PhysicsDept")
         assert retrieved.notes_count == 12
         assert retrieved.status == PipelineStatus.COMPLETED
         assert retrieved.error_message is None
@@ -82,7 +82,7 @@ class TestSqliteLedgerAdapter:
             content_id=ContentId("runningVideo1"),
             media_url="https://youtube.com/watch?v=runningVideo1",
             title="Video in Progress",
-            channel_name="TestChannel",
+            channel_name=ChannelName("TestChannel"),
             status=PipelineStatus.RUNNING,
             started_at=start_time,
         )
@@ -93,7 +93,7 @@ class TestSqliteLedgerAdapter:
             content_id=ContentId("runningVideo1"),
             media_url="https://youtube.com/watch?v=runningVideo1",
             title="Video in Progress",
-            channel_name="TestChannel",
+            channel_name=ChannelName("TestChannel"),
             status=PipelineStatus.COMPLETED,
             notes_count=5,
             started_at=start_time,
@@ -116,7 +116,7 @@ class TestSqliteLedgerAdapter:
                     content_id=ContentId(cid),
                     media_url=f"https://youtube.com/watch?v={cid}",
                     title=f"Video #{i}",
-                    channel_name="Channel",
+                    channel_name=ChannelName("Channel"),
                     status=PipelineStatus.COMPLETED,
                 )
             )
@@ -139,13 +139,15 @@ class TestSqliteLedgerAdapter:
                         content_id=ContentId(cid),
                         media_url=f"https://youtube.com/watch?v={cid}",
                         title=f"Concurrent Video {cid}",
-                        channel_name="WorkerChannel",
+                        channel_name=ChannelName("WorkerChannel"),
                         status=PipelineStatus.COMPLETED,
                     )
                 )
                 assert adapter.is_processed(ContentId(cid))
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
+        with concurrent.futures.ThreadPoolExecutor(
+            max_workers=4, thread_name_prefix="TestSqliteLedgerWorker"
+        ) as executor:
             futures = [executor.submit(worker, i) for i in range(4)]
             for future in concurrent.futures.as_completed(futures):
                 future.result()
@@ -157,32 +159,29 @@ class TestSqliteLedgerAdapter:
         adapter = SqliteLedgerAdapter(":memory:", timeout=10.0)
         assert adapter._db_path == ":memory:"
         assert adapter._timeout == 10.0
-        # In memory mode does not create disk files or parent directories
-        conn = adapter._get_connection()
-        try:
-            # Synchronous normal is applied
+        with adapter._get_connection() as conn:
             cursor = conn.execute("PRAGMA synchronous;")
             sync_mode = cursor.fetchone()[0]
             assert sync_mode in (1, "1", "NORMAL", "normal")
-        finally:
-            conn.close()
 
     def test_is_processed_false_for_all_non_completed_statuses(self, tmp_path: Path) -> None:
         adapter = SqliteLedgerAdapter(tmp_path / "test.db")
-        for idx, status in enumerate([
-            PipelineStatus.SKIPPED_IDEMPOTENT,
-            PipelineStatus.RUNNING,
-            PipelineStatus.FAILED_INGESTION,
-            PipelineStatus.FAILED_TRANSFORMATION,
-            PipelineStatus.PAUSED_BUDGET,
-        ]):
+        for idx, status in enumerate(
+            [
+                PipelineStatus.SKIPPED_IDEMPOTENT,
+                PipelineStatus.RUNNING,
+                PipelineStatus.FAILED_INGESTION,
+                PipelineStatus.FAILED_TRANSFORMATION,
+                PipelineStatus.PAUSED_BUDGET,
+            ]
+        ):
             cid = ContentId(f"statusTest00{idx}")
             adapter.save_entry(
                 LedgerEntry(
                     content_id=cid,
                     media_url=f"https://youtube.com/watch?v={cid.value}",
                     title="Status Test",
-                    channel_name="TestChannel",
+                    channel_name=ChannelName("TestChannel"),
                     status=status,
                 )
             )
@@ -196,7 +195,7 @@ class TestSqliteLedgerAdapter:
         adapter.mark_processed(cid)
         entry = adapter.get_entry(cid)
         assert entry is not None
-        assert entry.channel_name == "DefaultChannel"
+        assert entry.channel_name == ChannelName("DefaultChannel")
         assert entry.title == f"Video {cid.value}"
         assert entry.media_url == f"https://youtube.com/watch?v={cid.value}"
         assert entry.notes_count == 0
@@ -209,6 +208,8 @@ class TestSqliteLedgerAdapter:
         updated = adapter.get_entry(cid)
         assert updated is not None
         assert updated.status == PipelineStatus.COMPLETED
+        assert updated.completed_at is not None
+        assert updated.completed_at >= initial_completed
 
     def test_save_entry_started_at_preservation_and_error_message(self, tmp_path: Path) -> None:
         adapter = SqliteLedgerAdapter(tmp_path / "test.db")
@@ -220,7 +221,7 @@ class TestSqliteLedgerAdapter:
             content_id=cid,
             media_url=f"https://youtube.com/watch?v={cid.value}",
             title="Initial Title",
-            channel_name="Channel1",
+            channel_name=ChannelName("Channel1"),
             status=PipelineStatus.RUNNING,
             started_at=start_time,
         )
@@ -231,7 +232,7 @@ class TestSqliteLedgerAdapter:
             content_id=cid,
             media_url=f"https://youtube.com/watch?v={cid.value}",
             title="Updated Title",
-            channel_name="Channel2",
+            channel_name=ChannelName("Channel2"),
             status=PipelineStatus.FAILED_INGESTION,
             error_message="Fatal processing failure",
             started_at=None,
@@ -241,7 +242,7 @@ class TestSqliteLedgerAdapter:
         retrieved = adapter.get_entry(cid)
         assert retrieved is not None
         assert retrieved.title == "Updated Title"
-        assert retrieved.channel_name == "Channel2"
+        assert retrieved.channel_name == ChannelName("Channel2")
         assert retrieved.status == PipelineStatus.FAILED_INGESTION
         assert retrieved.error_message == "Fatal processing failure"
         assert retrieved.started_at == start_time
@@ -256,11 +257,10 @@ class TestSqliteLedgerAdapter:
                     content_id=cid,
                     media_url=f"https://youtube.com/watch?v={cid.value}",
                     title=f"Video #{i}",
-                    channel_name="Channel",
+                    channel_name=ChannelName("Channel"),
                     status=PipelineStatus.COMPLETED,
                 )
             )
         # Calling without limit uses default 100
         entries = adapter.list_entries()
         assert len(entries) == 10
-

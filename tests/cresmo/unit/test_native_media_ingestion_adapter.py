@@ -83,10 +83,10 @@ class TestNativeMediaIngestionAdapter:
             transcript = adapter.ingest_single_video(video_url=video_url, output_dir=tmp_path)
 
             assert transcript is not None
-            assert transcript.content_id == ContentId("dQw4w9WgXcQ")
-            assert transcript.channel_name == "Political Theory"
-            assert "A teoria da circulação das elites postula" in transcript.body
-            assert "Vilfredo Pareto desenvolveu esta formulação." in transcript.body
+            assert transcript.content.id == ContentId("dQw4w9WgXcQ")
+            assert transcript.channel.name == "Political Theory"
+            assert "A teoria da circulação das elites postula" in transcript.content.body
+            assert "Vilfredo Pareto desenvolveu esta formulação." in transcript.content.body
 
             # Verify that whisper audio fallback was NOT invoked
             mock_whisper.assert_not_called()
@@ -127,7 +127,7 @@ class TestNativeMediaIngestionAdapter:
             transcript = adapter.ingest_single_video(video_url=video_url, output_dir=tmp_path)
 
             assert transcript is not None
-            assert transcript.body == "Transcribed from Whisper"
+            assert transcript.content.body == "Transcribed from Whisper"
             mock_fallback.assert_called_once()
 
     def test_ingest_single_video_whisper_fallback_and_scratch_cleanup(self, tmp_path: Path) -> None:
@@ -179,9 +179,9 @@ class TestNativeMediaIngestionAdapter:
                 transcript = adapter.ingest_single_video(video_url=video_url, output_dir=tmp_path)
 
                 assert transcript is not None
-                assert transcript.content_id == ContentId("dQw4w9WgXcQ")
-                assert transcript.channel_name == "Podcast Channel"
-                assert transcript.body == "Verbatim audio transcript via Whisper."
+                assert transcript.content.id == ContentId("dQw4w9WgXcQ")
+                assert transcript.channel.name == "Podcast Channel"
+                assert transcript.content.body == "Verbatim audio transcript via Whisper."
 
                 # Verify scratch dir was wiped clean
                 assert len(captured_scratch_dirs) == 1
@@ -307,7 +307,7 @@ class TestNativeMediaIngestionAdapter:
                 )
 
                 assert transcript is not None
-                assert transcript.body == "Audio transcript content."
+                assert transcript.content.body == "Audio transcript content."
 
                 # Verify audio was preserved in output_dir / channel_name
                 expected_audio = tmp_path / "KeepAudioChannel" / "keepAudioVid.m4a"
@@ -620,7 +620,7 @@ class TestNativeMediaIngestionAdapter:
             )
 
             assert transcript is not None
-            assert transcript.body == "Transcribed from audio fallback."
+            assert transcript.content.body == "Transcribed from audio fallback."
             mock_whisper_fb.assert_called_once()
 
     def test_acl_date_parsing_helpers(self) -> None:
@@ -676,11 +676,12 @@ class TestNativeMediaIngestionAdapter:
             )
 
             assert transcript is not None
-            assert transcript.content_id == ContentId("abc12345678")
-            assert transcript.channel_name == ChannelName("Channel _ Slashed")
-            assert transcript.channel_id == ChannelId("UC1234567890123456789012")
-            assert transcript.publication_date == datetime(2024, 5, 20, tzinfo=UTC).date()
-            assert transcript.upload_date == transcript.publication_date
+            assert transcript.content.id == ContentId("abc12345678")
+            assert transcript.channel.channel_name == ChannelName("Channel _ Slashed")
+            assert transcript.channel.channel_id == ChannelId("UC1234567890123456789012")
+            assert (
+                transcript.provenance.publication_date == datetime(2024, 5, 20, tzinfo=UTC).date()
+            )
 
     def test_extract_channel_url_from_video_uploads_playlist(self) -> None:
         adapter = NativeMediaIngestionAdapter()

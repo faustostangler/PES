@@ -22,7 +22,7 @@ from cresmo.domain.exceptions import (
     IngestionNetworkError,
     RateLimitExceededError,
 )
-from cresmo.domain.value_objects import ChannelFeedQuery, ContentId
+from cresmo.domain.value_objects import ChannelFeedQuery, ChannelId, ChannelName, ContentId
 from cresmo.infrastructure.adapters.native_media_ingestion_adapter import (
     NativeMediaIngestionAdapter,
 )
@@ -83,10 +83,10 @@ class TestNativeMediaIngestionAdapter:
             transcript = adapter.ingest_single_video(video_url=video_url, output_dir=tmp_path)
 
             assert transcript is not None
-            assert transcript.content_id == ContentId("dQw4w9WgXcQ")
-            assert transcript.channel_name == "Political Theory"
-            assert "A teoria da circulação das elites postula" in transcript.body
-            assert "Vilfredo Pareto desenvolveu esta formulação." in transcript.body
+            assert transcript.content.id == ContentId("dQw4w9WgXcQ")
+            assert transcript.channel.name == "Political Theory"
+            assert "A teoria da circulação das elites postula" in transcript.content.body
+            assert "Vilfredo Pareto desenvolveu esta formulação." in transcript.content.body
 
             # Verify that whisper audio fallback was NOT invoked
             mock_whisper.assert_not_called()
@@ -127,7 +127,7 @@ class TestNativeMediaIngestionAdapter:
             transcript = adapter.ingest_single_video(video_url=video_url, output_dir=tmp_path)
 
             assert transcript is not None
-            assert transcript.body == "Transcribed from Whisper"
+            assert transcript.content.body == "Transcribed from Whisper"
             mock_fallback.assert_called_once()
 
     def test_ingest_single_video_whisper_fallback_and_scratch_cleanup(self, tmp_path: Path) -> None:
@@ -179,9 +179,9 @@ class TestNativeMediaIngestionAdapter:
                 transcript = adapter.ingest_single_video(video_url=video_url, output_dir=tmp_path)
 
                 assert transcript is not None
-                assert transcript.content_id == ContentId("dQw4w9WgXcQ")
-                assert transcript.channel_name == "Podcast Channel"
-                assert transcript.body == "Verbatim audio transcript via Whisper."
+                assert transcript.content.id == ContentId("dQw4w9WgXcQ")
+                assert transcript.channel.name == "Podcast Channel"
+                assert transcript.content.body == "Verbatim audio transcript via Whisper."
 
                 # Verify scratch dir was wiped clean
                 assert len(captured_scratch_dirs) == 1
@@ -307,29 +307,12 @@ class TestNativeMediaIngestionAdapter:
                 )
 
                 assert transcript is not None
-                assert transcript.body == "Audio transcript content."
+                assert transcript.content.body == "Audio transcript content."
 
                 # Verify audio was preserved in output_dir / channel_name
                 expected_audio = tmp_path / "KeepAudioChannel" / "keepAudioVid.m4a"
                 assert expected_audio.exists()
                 assert expected_audio.read_text() == "dummy audio file content"
-
-    def test_ingest_channels_and_playlists(self, tmp_path: Path) -> None:
-        adapter = NativeMediaIngestionAdapter()
-        with patch.object(adapter, "ingest_single_video") as mock_single:
-            mock_single.side_effect = [
-                MagicMock(content_id=ContentId("vid11111111")),
-                None,
-                MagicMock(content_id=ContentId("vid33333333")),
-            ]
-
-            results = adapter.ingest_channels_and_playlists(
-                playlist_urls=["https://url1", "https://url2", "https://url3"],
-                output_dir=tmp_path,
-            )
-
-            assert len(results) == 2
-            assert mock_single.call_count == 3
 
     def test_fetch_url_content_uses_dynamic_headers(self) -> None:
         mock_generator = MagicMock()
@@ -393,7 +376,7 @@ class TestNativeMediaIngestionAdapter:
             mock_ydl_cls.return_value.__enter__.return_value = mock_ydl
 
             res = adapter.extract_channel_url_from_video("https://www.youtube.com/watch?v=abc12345")
-            assert res == "https://www.youtube.com/@ChannelHandle"
+            assert res == "https://www.youtube.com/@ChannelHandle/videos"
 
     def test_extract_channel_url_from_video_fallback_to_channel_id(self) -> None:
         adapter = NativeMediaIngestionAdapter()
@@ -405,7 +388,7 @@ class TestNativeMediaIngestionAdapter:
             mock_ydl_cls.return_value.__enter__.return_value = mock_ydl
 
             res = adapter.extract_channel_url_from_video("https://www.youtube.com/watch?v=abc12345")
-            assert res == "https://www.youtube.com/channel/UC1234567890abcdef"
+            assert res == "https://www.youtube.com/playlist?list=UU1234567890abcdef"
 
     def test_extract_channel_url_from_video_returns_none_on_error(self) -> None:
         adapter = NativeMediaIngestionAdapter()
@@ -637,5 +620,135 @@ class TestNativeMediaIngestionAdapter:
             )
 
             assert transcript is not None
-            assert transcript.body == "Transcribed from audio fallback."
+            assert transcript.content.body == "Transcribed from audio fallback."
             mock_whisper_fb.assert_called_once()
+
+    def test_acl_date_parsing_helpers(self) -> None:
+        adapter = NativeMediaIngestionAdapter()
+        # Valid upload_date
+        assert adapter._parse_upload_date("20240315") == datetime(2024, 3, 15, tzinfo=UTC).date()
+        # Invalid or empty
+        assert adapter._parse_upload_date("") is None
+        assert adapter._parse_upload_date(None) is None
+        assert adapter._parse_upload_date("invalid_date") is None
+        assert adapter._parse_upload_date("2024") is None
+
+        # Published datetime
+        dt = adapter._parse_published_datetime("20240315")
+        assert dt.year == 2024 and dt.month == 3 and dt.day == 15
+        dt_fallback = adapter._parse_published_datetime(None)
+        assert isinstance(dt_fallback, datetime)
+
+    def test_ingest_single_video_vo_extraction_and_publication_date(self, tmp_path: Path) -> None:
+        adapter = NativeMediaIngestionAdapter()
+        fake_info = {
+            "id": "abc12345678",
+            "title": "Vo Extraction Test",
+            "channel": "Channel / Slashed",
+            "channel_id": "UC1234567890123456789012",
+            "upload_date": "20240520",
+            "description": "Video description text",
+            "subtitles": {
+                "en": [
+                    {
+                        "ext": "json3",
+                        "url": "https://video.google.com/timedtext?v=test",
+                    }
+                ]
+            },
+        }
+
+        with (
+            patch("yt_dlp.YoutubeDL") as mock_ydl_cls,
+            patch.object(
+                adapter,
+                "_fetch_url_content",
+                return_value=json.dumps({"events": [{"segs": [{"utf8": "Hello world"}]}]}),
+            ),
+        ):
+            mock_ydl = MagicMock()
+            mock_ydl.extract_info.return_value = fake_info
+            mock_ydl_cls.return_value.__enter__.return_value = mock_ydl
+
+            transcript = adapter.ingest_single_video(
+                video_url="https://youtube.com/watch?v=abc12345678",
+                output_dir=tmp_path,
+            )
+
+            assert transcript is not None
+            assert transcript.content.id == ContentId("abc12345678")
+            assert transcript.channel.channel_name == ChannelName("Channel _ Slashed")
+            assert transcript.channel.channel_id == ChannelId("UC1234567890123456789012")
+            assert (
+                transcript.provenance.publication_date == datetime(2024, 5, 20, tzinfo=UTC).date()
+            )
+
+    def test_extract_channel_url_from_video_uploads_playlist(self) -> None:
+        adapter = NativeMediaIngestionAdapter()
+        fake_info = {
+            "channel_id": "UCtestChannelId12345678",
+        }
+
+        with patch("yt_dlp.YoutubeDL") as mock_ydl_cls:
+            mock_ydl = MagicMock()
+            mock_ydl.extract_info.return_value = fake_info
+            mock_ydl_cls.return_value.__enter__.return_value = mock_ydl
+
+            url = adapter.extract_channel_url_from_video("https://youtube.com/watch?v=abc12345678")
+            assert url == "https://www.youtube.com/playlist?list=UUtestChannelId12345678"
+
+    def test_ingest_single_video_records_media_ingestion_metrics(self, tmp_path: Path) -> None:
+        """SPEC-008 Scenario 6: Ingestion Latency Recording via MetricsPort."""
+        from prometheus_client import CollectorRegistry
+
+        from cresmo.infrastructure.adapters.prometheus_metrics_adapter import (
+            PrometheusMetricsAdapter,
+        )
+
+        registry = CollectorRegistry(auto_describe=True)
+        metrics_adapter = PrometheusMetricsAdapter(registry=registry)
+
+        adapter = NativeMediaIngestionAdapter(metrics_port=metrics_adapter)
+        fake_info = {
+            "id": "ingest_metric_01",
+            "title": "Metric Ingestion Test",
+            "channel": "Sandeco_Channel",
+            "upload_date": "20240520",
+            "subtitles": {
+                "en": [
+                    {
+                        "ext": "json3",
+                        "url": "https://video.google.com/timedtext?v=test",
+                    }
+                ]
+            },
+        }
+
+        with (
+            patch("yt_dlp.YoutubeDL") as mock_ydl_cls,
+            patch.object(
+                adapter,
+                "_fetch_url_content",
+                return_value=json.dumps({"events": [{"segs": [{"utf8": "Hello world"}]}]}),
+            ),
+        ):
+            mock_ydl = MagicMock()
+            mock_ydl.extract_info.return_value = fake_info
+            mock_ydl_cls.return_value.__enter__.return_value = mock_ydl
+
+            transcript = adapter.ingest_single_video(
+                video_url="https://youtube.com/watch?v=ingest_metric_01",
+                output_dir=tmp_path,
+            )
+
+            assert transcript is not None
+            sample_count = registry.get_sample_value(
+                "cresmo_media_ingestion_duration_seconds_count",
+                {
+                    "channel_id": "",
+                    "channel_name": "Sandeco_Channel",
+                    "modality": "url",
+                    "status": "success",
+                },
+            )
+            assert sample_count == 1.0

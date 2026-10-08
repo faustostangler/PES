@@ -13,6 +13,7 @@ from cresmo.domain.taxonomy import (
     DEFAULT_CHANNEL_DOMAIN,
     classify_channel,
 )
+from cresmo.domain.value_objects import ChannelName
 
 
 class TestDomainTaxonomy:
@@ -80,3 +81,8 @@ class TestDomainTaxonomy:
     def test_default_constants(self) -> None:
         assert DEFAULT_CHANNEL_DOMAIN == "uncategorized"
         assert DEFAULT_CHANNEL_CATEGORY == "volatile"
+
+    def test_classify_channel_with_channel_name_vo(self) -> None:
+        domain, volatility = classify_channel(ChannelName("Fabio Akita"))
+        assert domain == "tech_ai"
+        assert volatility == "perennial"
