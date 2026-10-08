@@ -72,5 +72,8 @@ class TestChatPromptValueObject:
         assert turn3.get_last_user_content() == "Critique: fix parataxis"
 
     def test_empty_prompt_raises_validation_error(self) -> None:
-        with pytest.raises(DomainValidationError, match="ChatPrompt must have at least one message or system_instruction"):
+        with pytest.raises(
+            DomainValidationError,
+            match="ChatPrompt must have at least one message or system_instruction",
+        ):
             ChatPrompt(messages=(), system_instruction=None)

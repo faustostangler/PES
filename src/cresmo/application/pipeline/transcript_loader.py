@@ -14,9 +14,13 @@ from cresmo.domain.entities import SourceTranscript
 from cresmo.domain.exceptions import CresmoDomainError
 from cresmo.domain.taxonomy import classify_channel
 from cresmo.domain.value_objects import (
+    Channel,
     ChannelId,
     ChannelName,
+    Content,
     ContentId,
+    MediaProvenance,
+    SourceModality,
     is_processable_transcript_file,
 )
 
@@ -134,15 +138,30 @@ def load_transcript_from_file(file_path: Path) -> SourceTranscript:
         meta, file_path, file_path.stem
     )
 
-    return SourceTranscript(
-        content_id=content_id,
-        channel_name=ch_name,
-        body=body,
+    channel = Channel(
+        name=ch_name,
+        id=ch_id,
+        category=category,
+        url=f"https://www.youtube.com/channel/{ch_id.value}"
+        if ch_id and ch_id.is_youtube_canonical
+        else None,
+    )
+    provenance = MediaProvenance.create(
+        url=source_url,
+        description=description,
+        publication_date=None,
+    )
+    content = Content.create(
+        id=content_id,
         title=title,
-        source_url=source_url,
-        channel_id=ch_id,
-        channel_category=category,
-        video_description=description,
+        body=body,
+        url=source_url,
+        modality=SourceModality.FILE,
+    )
+    return SourceTranscript(
+        channel=channel,
+        provenance=provenance,
+        content=content,
     )
 
 

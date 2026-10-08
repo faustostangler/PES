@@ -40,11 +40,15 @@ from cresmo.domain.exceptions import (
 )
 from cresmo.domain.taxonomy import classify_channel
 from cresmo.domain.value_objects import (
+    Channel,
     ChannelFeedQuery,
     ChannelId,
     ChannelName,
+    Content,
     ContentId,
     DiscoveredMediaItem,
+    MediaProvenance,
+    SourceModality,
 )
 from cresmo.infrastructure.adapters.header_generator import RandomHeaderGenerator
 from cresmo.infrastructure.adapters.media.feed import (
@@ -340,17 +344,34 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         raw_cid = str(info.get("channel_id") or info.get("uploader_id") or "").strip()
         ch_id = ChannelId.extract_from_text(raw_cid)
 
-        transcript = SourceTranscript(
-            content_id=cid,
-            channel_name=c_name,
-            body=body,
-            title=str(info.get("title") or ""),
-            source_url=video_url,
+        channel = Channel(
+            name=c_name,
+            id=ch_id,
+            category=category,
+            url=str(info.get("channel_url") or "")
+            or (
+                f"https://www.youtube.com/channel/{ch_id.value}"
+                if ch_id and ch_id.is_youtube_canonical
+                else None
+            ),
+        )
+        provenance = MediaProvenance.create(
+            url=video_url,
+            description=str(info.get("description") or ""),
             publication_date=upload_date,
-            upload_date=upload_date,
-            channel_id=ch_id,
-            channel_category=category,
-            video_description=str(info.get("description") or ""),
+        )
+        content = Content.create(
+            id=cid,
+            title=str(info.get("title") or ""),
+            body=body,
+            url=video_url,
+            modality=SourceModality.URL,
+            publication_date=upload_date,
+        )
+        transcript = SourceTranscript(
+            channel=channel,
+            provenance=provenance,
+            content=content,
         )
         return transcript, ch_id
 

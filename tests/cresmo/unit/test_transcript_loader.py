@@ -101,9 +101,15 @@ class TestLoadTranscriptFromFile:
 
         assert isinstance(transcript, SourceTranscript)
         assert transcript.title == "My Video Title"
+        assert transcript.content_title == "My Video Title"
         assert transcript.channel_name == ChannelName("Tech Channel")
         assert transcript.body == "This is the spoken transcript body."
         assert isinstance(transcript.content_id, ContentId)
+        # ADR-038: Pure Triad Composition & Parity
+        assert transcript.channel.name == "Tech Channel"
+        assert transcript.content.title == "My Video Title"
+        assert transcript.content.body == "This is the spoken transcript body."
+        assert transcript.provenance.url == f"file://{file_path.resolve()}"
 
 
 def test_coordinator_run_for_text_file_passes_raw_dir(tmp_path: Path) -> None:

@@ -8,7 +8,7 @@ Conforms to:
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import date, datetime
 from enum import Enum
 
 from cresmo.domain.exceptions import DomainValidationError
@@ -46,6 +46,59 @@ class PipelineStatus(str, Enum):
 
 DEFAULT_FEED_LOOKBACK_DAYS: int = 7
 DEFAULT_FEED_MAX_VIDEOS: int = 50
+
+
+@dataclass(frozen=True, slots=True)
+class MediaProvenance:
+    """Canonical domain Value Object encapsulating media origin and acquisition provenance.
+
+    Conforms to ADR-038: Pure Value Object Triad Composition.
+
+    Attributes:
+        url: Canonical web URL or storage URI of source media.
+        description: Raw description or metadata summary provided by the creator.
+        publication_date: Immutable release date of the media content.
+    """
+
+    url: str = ""
+    description: str = ""
+    publication_date: date | None = None
+
+    def __post_init__(self) -> None:
+        clean_url = self.url.strip()
+        clean_desc = self.description.strip()
+        pub_date = self.publication_date
+        if isinstance(pub_date, datetime):
+            pub_date = pub_date.date()
+
+        object.__setattr__(self, "url", clean_url)
+        object.__setattr__(self, "description", clean_desc)
+        object.__setattr__(self, "publication_date", pub_date)
+
+    @classmethod
+    def create(
+        cls,
+        url: str = "",
+        description: str = "",
+        publication_date: date | datetime | str | None = None,
+    ) -> MediaProvenance:
+        """Ergonomic factory parsing dates and normalizing strings."""
+        parsed_date: date | None = None
+        if isinstance(publication_date, datetime):
+            parsed_date = publication_date.date()
+        elif isinstance(publication_date, date):
+            parsed_date = publication_date
+        elif isinstance(publication_date, str) and publication_date.strip():
+            try:
+                parsed_date = date.fromisoformat(publication_date.strip())
+            except ValueError:
+                parsed_date = None
+        return cls(url=url, description=description, publication_date=parsed_date)
+
+    @classmethod
+    def empty(cls) -> MediaProvenance:
+        """Default empty provenance for synthetic or unit testing scenarios."""
+        return cls()
 
 
 @dataclass(frozen=True)

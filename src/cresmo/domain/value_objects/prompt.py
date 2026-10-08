@@ -69,7 +69,9 @@ class ChatPrompt:
     system_instruction: str | None = None
 
     def __post_init__(self) -> None:
-        if not self.messages and (not self.system_instruction or not self.system_instruction.strip()):
+        if not self.messages and (
+            not self.system_instruction or not self.system_instruction.strip()
+        ):
             raise DomainValidationError(
                 "ChatPrompt must have at least one message or system_instruction."
             )
@@ -117,4 +119,3 @@ class ChatPrompt:
         for msg in self.messages:
             result.append({"role": msg.role.value, "content": msg.content})
         return result
-

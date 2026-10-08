@@ -230,14 +230,17 @@ Circular Domain Flow*
 Coupled Layers*
 Delegation Shims*
 Divergent Change*
+Duplicate Temporal Aliasing*
 Fat Controller*
 Fat Model*
 Feature Envy*
+Flat Transcript Property Sprawl*
 God Controller*
 Hardwired Orchestration*
 Inappropriate Intimacy*
 Message Chains*
 Middle Man*
+On-The-Fly Value Object Regeneration*
 Premature Abstraction*
 Primitive Obsession*
 Shotgun Surgery*

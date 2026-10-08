@@ -673,4 +673,3 @@ class TestCoordinatorLlmJudgeIntegration:
         assert recorded_output["stage"] == "fluid_prose"
         assert "word_count" in recorded_output
         assert "char_count" in recorded_output
-

@@ -1,11 +1,13 @@
-"""Source and Fluid Transcript domain aggregates and post-processing.
+"""Source and Fluid Transcript domain aggregates and pure Value Object triad composition.
 
 Conforms to:
 - SPEC-001: §2.2 (Entities & Aggregates Lifecycle and Invariants)
 - ADR-001: Modular Monolith Domain Integrity
+- ADR-019: SOTA-KISS Nomenclature & Value Objects
 - ADR-028: Decoupling Fluid Prose Detranscription and Socratic Gap Filling
 - ADR-031: CandidateText and Stage Descriptor Abstractions
-- SPEC-011: Fluid Prose Detranscription Specification
+- ADR-034: Algorithmic (ID-ID) and Cognitive (TXT-TXT) Parity Standard
+- ADR-038: Pure Value Object Triad Composition for Transcripts and Zero Property Sprawl
 """
 
 from __future__ import annotations
@@ -26,6 +28,7 @@ from cresmo.domain.value_objects import (
     ChannelName,
     Content,
     ContentId,
+    MediaProvenance,
     SourceModality,
 )
 
@@ -40,142 +43,222 @@ _COMPLEMENTARY_REGEX = re.compile(
 )
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, slots=True)
 class SourceTranscript:
     """SourceTranscript Aggregate: Verbatim spoken transcript and origin metadata.
 
-    Standardized canonical input contract across pipeline stages per ADR-031.
-    Encapsulates raw audio transcription, native subtitle text, or canonical source text alongside channel provenance.
-
-    Attributes:
-        content_id: Strongly-typed canonical media identifier.
-        channel_name: Human-readable creator or source channel name (ChannelName Value Object).
-        body: Verbatim text of spoken audio or canonical source prose.
-        title: Optional original video/content title.
-        source_url: Canonical web URL.
-        publication_date: Optional release date.
-        upload_date: Backward-compatible alias for publication_date.
-        channel_id: Optional platform channel ID.
-        channel_category: Macro topic classification.
-        video_description: Raw creator description text.
-        metadata: Stage-specific or ingestion provenance metadata dictionary.
+    Conforms to ADR-038: Pure Value Object Triad Composition.
+    Strictly composed of the Value Object triad:
+    1. channel: Channel (Origin / Creator - channel_id & channel_name)
+    2. provenance: MediaProvenance (Acquisition & Temporal Context)
+    3. content: Content (Textual Artifact & Payload - content_id, content_title, body)
 
     Invariants:
-        channel_name cannot be whitespace or empty (enforced by ChannelName).
-        body cannot be whitespace or empty (pure audio silence is rejected per SPEC-001: §2.2).
+        content.body cannot be whitespace or empty (pure audio silence rejected per SPEC-001: §2.2).
     """
 
-    content_id: ContentId
-    channel_name: ChannelName
-    body: str
-    title: str = ""
-    source_url: str = ""
-    publication_date: datetime.date | None = None
-    upload_date: datetime.date | None = None
-    channel_id: ChannelId | None = None
-    channel_category: str = ""
-    video_description: str = ""
+    channel: Channel
+    provenance: MediaProvenance
+    content: Content
     metadata: dict[str, Any] = field(default_factory=dict)
 
-    def __post_init__(self) -> None:
-        # Coerce channel_name to strongly-typed ChannelName Value Object (ADR-019)
-        if isinstance(self.channel_name, str):
-            object.__setattr__(self, "channel_name", ChannelName.from_string(self.channel_name))
-        elif not isinstance(self.channel_name, ChannelName):
-            object.__setattr__(self, "channel_name", ChannelName(str(self.channel_name)))
+    def __init__(
+        self,
+        channel: Channel | None = None,
+        provenance: MediaProvenance | None = None,
+        content: Content | None = None,
+        *,
+        content_id: ContentId | str | None = None,
+        channel_name: ChannelName | str | None = None,
+        body: str | None = None,
+        title: str = "",
+        source_url: str = "",
+        publication_date: datetime.date | datetime.datetime | None = None,
+        upload_date: datetime.date | datetime.datetime | None = None,
+        channel_id: ChannelId | str | None = None,
+        channel_category: str = "",
+        video_description: str = "",
+        metadata: dict[str, Any] | None = None,
+    ) -> None:
+        """Construct SourceTranscript with either pure Triad Value Objects or ergonomic kwargs."""
+        resolved_date = publication_date or upload_date
 
-        if self.channel_id is not None and not isinstance(self.channel_id, ChannelId):
-            object.__setattr__(self, "channel_id", ChannelId.from_string(str(self.channel_id)))
+        if channel is not None:
+            resolved_channel = channel
+        else:
+            resolved_channel_name = channel_name or ""
+            resolved_channel = Channel(
+                name=resolved_channel_name,
+                id=channel_id,
+                category=channel_category,
+                url=f"https://www.youtube.com/channel/{channel_id}" if channel_id else None,
+            )
 
-        # Unify publication_date and upload_date semantics
-        pub_date = self.publication_date or self.upload_date
-        object.__setattr__(self, "publication_date", pub_date)
-        object.__setattr__(self, "upload_date", pub_date)
+        if provenance is not None:
+            resolved_provenance = provenance
+        else:
+            resolved_provenance = MediaProvenance.create(
+                url=source_url,
+                description=video_description,
+                publication_date=resolved_date,
+            )
 
-        # Invariant checks ensuring audio transcription payload is valid
-        if not self.body.strip():
+        if content is not None:
+            resolved_content = content
+        else:
+            cid = ContentId.from_string(content_id) if content_id else ContentId("unknown")
+            resolved_content = Content(
+                id=cid,
+                title=title,
+                body=body or "",
+                url=resolved_provenance.url,
+                modality=SourceModality.URL if resolved_provenance.url else SourceModality.FILE,
+                publication_date=resolved_provenance.publication_date,
+            )
+
+        if not resolved_content.body.strip():
             raise DomainValidationError("SourceTranscript body cannot be empty or whitespace.")
 
-    @property
-    def channel(self) -> Channel:
-        """Composite Channel Value Object encapsulating channel identity, taxonomy, and URL."""
-        return Channel(
-            name=self.channel_name,
-            id=self.channel_id,
-            category=self.channel_category,
-            url=f"https://www.youtube.com/channel/{self.channel_id.value}"
-            if self.channel_id
-            else None,
-        )
+        object.__setattr__(self, "channel", resolved_channel)
+        object.__setattr__(self, "provenance", resolved_provenance)
+        object.__setattr__(self, "content", resolved_content)
+        object.__setattr__(self, "metadata", metadata or {})
+
+    # =========================================================================
+    # Symmetrical Parity & Ergonomic Accessors (ADR-034 / ADR-038)
+    # =========================================================================
 
     @property
-    def content(self) -> Content:
-        """Composite Content Value Object encapsulating media identity, title, URL, and modality."""
-        return Content(
-            id=self.content_id,
-            title=self.title or self.content_id.value,
-            url=self.source_url,
-            modality=SourceModality.URL if self.source_url else SourceModality.FILE,
-            publication_date=self.publication_date,
-        )
+    def body(self) -> str:
+        """Canonical verbatim transcript body text."""
+        return self.content.body
+
+    @property
+    def title(self) -> str:
+        """Cognitive content title (TXT - TXT Parity)."""
+        return self.content.title
+
+    @property
+    def content_title(self) -> str:
+        """Cognitive content title (channel_name - content_title Parity)."""
+        return self.content.title
+
+    @property
+    def content_id(self) -> ContentId:
+        """Algorithmic media identifier (ID - ID Parity)."""
+        return self.content.id
+
+    @property
+    def channel_name(self) -> ChannelName:
+        """Cognitive channel creator name (TXT - TXT Parity)."""
+        return ChannelName.from_string(self.channel.name)
+
+    @property
+    def channel_id(self) -> ChannelId | None:
+        """Algorithmic channel identifier (ID - ID Parity)."""
+        return self.channel.id
+
+    @property
+    def source_url(self) -> str:
+        """Canonical provenance web URL."""
+        return self.provenance.url
+
+    @property
+    def publication_date(self) -> datetime.date | None:
+        """Canonical publication date."""
+        return self.provenance.publication_date
+
+    @property
+    def upload_date(self) -> datetime.date | None:
+        """Backward-compatible alias for publication date."""
+        return self.provenance.publication_date
+
+    @property
+    def channel_category(self) -> str:
+        """Channel taxonomy category."""
+        return self.channel.category
+
+    @property
+    def video_description(self) -> str:
+        """Original creator description."""
+        return self.provenance.description
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, slots=True)
 class FluidTranscript:
     """FluidTranscript Aggregate: Detranscribed clean fluid prose without orality noise.
 
-    Represents spoken transcripts transformed into continuous third-person neutral narrative prose
-    with standardized NER spelling, ready for conceptual indexing and Socratic gap filling.
-
-    Conforms to:
-        - ADR-028: Decoupling Fluid Prose Detranscription and Socratic Gap Filling
-        - SPEC-011: Fluid Prose Detranscription Specification
-
-    Attributes:
-        content_id: Strongly-typed canonical media identifier.
-        channel_name: Human-readable creator or source channel name (ChannelName Value Object).
-        body: Continuous fluid prose narrative free of speech noise and oralities.
-        title: Clean video or document title string.
-        source_url: Canonical web URL or local file URI.
-        publication_date: Optional release date.
-        upload_date: Backward-compatible alias for publication_date.
-        channel_id: Optional platform channel ID.
-        channel_category: Macro topic classification.
-        video_description: Raw creator description text.
+    Conforms to ADR-028, ADR-031, and ADR-038 (Pure Value Object Triad Composition).
+    Strictly composed of the Value Object triad:
+    1. channel: Channel (Origin / Creator - channel_id & channel_name)
+    2. provenance: MediaProvenance (Acquisition & Temporal Context)
+    3. content: Content (Textual Artifact & Payload - content_id, content_title, body)
 
     Invariants:
-        channel_name cannot be whitespace or empty.
-        body cannot be empty or whitespace.
-        body must be continuous prose; markdown tables are strictly forbidden per cresmo-style-guide.
+        content.body cannot be empty or whitespace.
+        content.body must be continuous prose without Markdown tables (| ... |).
     """
 
-    content_id: ContentId
-    channel_name: ChannelName
-    body: str
-    title: str = ""
-    source_url: str = ""
-    publication_date: datetime.date | None = None
-    upload_date: datetime.date | None = None
-    channel_id: ChannelId | None = None
-    channel_category: str = ""
-    video_description: str = ""
+    channel: Channel
+    provenance: MediaProvenance
+    content: Content
+    metadata: dict[str, Any] = field(default_factory=dict)
 
-    def __post_init__(self) -> None:
-        resolved_channel_name = (
-            self.channel_name
-            if isinstance(self.channel_name, ChannelName)
-            else ChannelName.from_string(self.channel_name)
-        )
-        object.__setattr__(self, "channel_name", resolved_channel_name)
+    def __init__(
+        self,
+        channel: Channel | None = None,
+        provenance: MediaProvenance | None = None,
+        content: Content | None = None,
+        *,
+        content_id: ContentId | str | None = None,
+        channel_name: ChannelName | str | None = None,
+        body: str | None = None,
+        title: str = "",
+        source_url: str = "",
+        publication_date: datetime.date | datetime.datetime | None = None,
+        upload_date: datetime.date | datetime.datetime | None = None,
+        channel_id: ChannelId | str | None = None,
+        channel_category: str = "",
+        video_description: str = "",
+        metadata: dict[str, Any] | None = None,
+    ) -> None:
+        """Construct FluidTranscript with either pure Triad Value Objects or ergonomic kwargs."""
+        resolved_date = publication_date or upload_date
 
-        if self.channel_id is not None and not isinstance(self.channel_id, ChannelId):
-            object.__setattr__(self, "channel_id", ChannelId.from_string(self.channel_id))
+        if channel is not None:
+            resolved_channel = channel
+        else:
+            resolved_channel_name = channel_name or ""
+            resolved_channel = Channel(
+                name=resolved_channel_name,
+                id=channel_id,
+                category=channel_category,
+                url=f"https://www.youtube.com/channel/{channel_id}" if channel_id else None,
+            )
 
-        pub_date = self.publication_date or self.upload_date
-        object.__setattr__(self, "publication_date", pub_date)
-        object.__setattr__(self, "upload_date", pub_date)
+        if provenance is not None:
+            resolved_provenance = provenance
+        else:
+            resolved_provenance = MediaProvenance.create(
+                url=source_url,
+                description=video_description,
+                publication_date=resolved_date,
+            )
 
-        cleaned_body = self.body.strip()
+        if content is not None:
+            resolved_content = content
+        else:
+            cid = ContentId.from_string(content_id) if content_id else ContentId("unknown")
+            resolved_content = Content(
+                id=cid,
+                title=title,
+                body=body or "",
+                url=resolved_provenance.url,
+                modality=SourceModality.URL if resolved_provenance.url else SourceModality.FILE,
+                publication_date=resolved_provenance.publication_date,
+            )
+
+        cleaned_body = resolved_content.body.strip()
         if not cleaned_body:
             raise DomainValidationError("FluidTranscript body cannot be empty or whitespace.")
 
@@ -184,28 +267,136 @@ class FluidTranscript:
                 "FluidTranscript body must be continuous prose and cannot contain Markdown tables."
             )
 
-    @property
-    def channel(self) -> Channel:
-        """Composite Channel Value Object encapsulating channel identity, taxonomy, and URL."""
-        return Channel(
-            name=self.channel_name,
-            id=self.channel_id,
-            category=self.channel_category,
-            url=f"https://www.youtube.com/channel/{self.channel_id.value}"
-            if self.channel_id
-            else None,
-        )
+        object.__setattr__(self, "channel", resolved_channel)
+        object.__setattr__(self, "provenance", resolved_provenance)
+        object.__setattr__(self, "content", resolved_content)
+        object.__setattr__(self, "metadata", metadata or {})
+
+    # =========================================================================
+    # Symmetrical Parity & Ergonomic Accessors (ADR-034 / ADR-038)
+    # =========================================================================
 
     @property
-    def content(self) -> Content:
-        """Composite Content Value Object encapsulating media identity, title, URL, and modality."""
-        return Content(
-            id=self.content_id,
-            title=self.title or self.content_id.value,
-            url=self.source_url,
-            modality=SourceModality.URL if self.source_url else SourceModality.FILE,
-            publication_date=self.publication_date,
-        )
+    def body(self) -> str:
+        """Canonical synthesized fluid prose body text."""
+        return self.content.body
+
+    @property
+    def title(self) -> str:
+        """Cognitive content title (TXT - TXT Parity)."""
+        return self.content.title
+
+    @property
+    def content_title(self) -> str:
+        """Cognitive content title (channel_name - content_title Parity)."""
+        return self.content.title
+
+    @property
+    def content_id(self) -> ContentId:
+        """Algorithmic media identifier (ID - ID Parity)."""
+        return self.content.id
+
+    @property
+    def channel_name(self) -> ChannelName:
+        """Cognitive channel creator name (TXT - TXT Parity)."""
+        return ChannelName.from_string(self.channel.name)
+
+    @property
+    def channel_id(self) -> ChannelId | None:
+        """Algorithmic channel identifier (ID - ID Parity)."""
+        return self.channel.id
+
+    @property
+    def source_url(self) -> str:
+        """Canonical provenance web URL."""
+        return self.provenance.url
+
+    @property
+    def publication_date(self) -> datetime.date | None:
+        """Canonical publication date."""
+        return self.provenance.publication_date
+
+    @property
+    def upload_date(self) -> datetime.date | None:
+        """Backward-compatible alias for publication date."""
+        return self.provenance.publication_date
+
+    @property
+    def channel_category(self) -> str:
+        """Channel taxonomy category."""
+        return self.channel.category
+
+    @property
+    def video_description(self) -> str:
+        """Original creator description."""
+        return self.provenance.description
+
+
+@dataclass(frozen=True, slots=True)
+class Transcript:
+    """Transcript Aggregate Root: Full lifecycle container from source to fluid synthesis.
+
+    Conforms to ADR-038: Pure Value Object Triad Composition.
+    """
+
+    source: SourceTranscript | None = None
+    fluid: FluidTranscript | None = None
+
+    @property
+    def content_id(self) -> ContentId | None:
+        """Algorithmic content identifier from active transcript representation."""
+        if self.fluid is not None:
+            return self.fluid.content_id
+        if self.source is not None:
+            return self.source.content_id
+        return None
+
+    @property
+    def channel(self) -> Channel | None:
+        """Composite Channel Value Object."""
+        if self.fluid is not None:
+            return self.fluid.channel
+        if self.source is not None:
+            return self.source.channel
+        return None
+
+    @property
+    def provenance(self) -> MediaProvenance | None:
+        """Composite MediaProvenance Value Object."""
+        if self.fluid is not None:
+            return self.fluid.provenance
+        if self.source is not None:
+            return self.source.provenance
+        return None
+
+    @property
+    def content(self) -> Content | None:
+        """Composite Content Value Object."""
+        if self.fluid is not None:
+            return self.fluid.content
+        if self.source is not None:
+            return self.source.content
+        return None
+
+    @property
+    def channel_id(self) -> ChannelId | None:
+        """Algorithmic channel identifier (channel_id - content_id Parity)."""
+        return self.channel.id if self.channel else None
+
+    @property
+    def channel_name(self) -> ChannelName | None:
+        """Cognitive channel creator name (channel_name - content_title Parity)."""
+        return ChannelName.from_string(self.channel.name) if self.channel else None
+
+    @property
+    def content_title(self) -> str:
+        """Cognitive content title (channel_name - content_title Parity)."""
+        return self.content.title if self.content else ""
+
+    @property
+    def title(self) -> str:
+        """Cognitive content title alias."""
+        return self.content_title
 
 
 def post_process_fluid_transcript(
@@ -215,7 +406,8 @@ def post_process_fluid_transcript(
     """Post-process candidate text into a validated FluidTranscript domain aggregate.
 
     Strips H1 headers to preserve clean heading hierarchy, removes accidental
-    complementary sections, and maps provenance metadata from the source transcript.
+    complementary sections, and maps the pure Value Object triad from the source transcript.
+    Conforms to ADR-038.
     """
     current_text = (
         candidate.text.strip() if isinstance(candidate, CandidateText) else candidate.strip()
@@ -239,13 +431,13 @@ def post_process_fluid_transcript(
         )
 
     return FluidTranscript(
-        content_id=source.content_id,
-        channel_name=source.channel_name,
-        body=body,
-        title=extracted_title,
-        source_url=source.source_url,
-        publication_date=source.publication_date,
-        channel_id=source.channel_id,
-        channel_category=source.channel_category,
-        video_description=source.video_description,
+        channel=source.channel,
+        provenance=source.provenance,
+        content=Content(
+            id=source.content.id,
+            title=extracted_title,
+            body=body,
+            url=source.provenance.url,
+            publication_date=source.provenance.publication_date,
+        ),
     )

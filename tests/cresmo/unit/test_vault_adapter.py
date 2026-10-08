@@ -68,6 +68,11 @@ class TestObsidianVaultAdapter:
         assert retrieved.content_id == cid
         assert retrieved.channel_name == ChannelName("Political Theory")
         assert "transcript line 1" in retrieved.body
+        # ADR-038 parity assertions
+        assert retrieved.channel.name == "Political Theory"
+        assert retrieved.content.id == cid
+        assert retrieved.content_id == retrieved.content.id
+        assert retrieved.channel_name.value == retrieved.channel.name
 
     def test_custom_injected_mocs_dir_and_index_path(
         self, storage_paths: tuple[Path, Path, Path], tmp_path: Path

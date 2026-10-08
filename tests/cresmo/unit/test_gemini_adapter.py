@@ -271,7 +271,9 @@ class TestGeminiLLMAdapter:
             "cresmo.infrastructure.adapters.gemini_adapter.trace.get_current_span",
             return_value=mock_span,
         ):
-            result = adapter.transform(prompt=ChatPrompt.single_turn("Test telemetry with non-recording span"))
+            result = adapter.transform(
+                prompt=ChatPrompt.single_turn("Test telemetry with non-recording span")
+            )
             assert result == "Output text"
             mock_span.set_attribute.assert_not_called()
             assert result == "Output text"

@@ -411,3 +411,229 @@ class TestChannelCompositeValueObjectAndTenantKey:
 
         assert not hasattr(entities_mod, "ChannelTenantId")
         assert "ChannelTenantId" not in entities_mod.__all__
+
+
+class TestAdr038PureValueObjectTriadComposition:
+    """ADR-038: Pure Value Object Triad Composition and Symmetrical Parity."""
+
+    def test_source_transcript_pure_triad_composition(self) -> None:
+        from cresmo.domain.entities import SourceTranscript
+        from cresmo.domain.value_objects import (
+            Channel,
+            ChannelId,
+            Content,
+            ContentId,
+            MediaProvenance,
+        )
+
+        channel = Channel(
+            id=ChannelId("UCP3CtEXi5nxbhei_aBfIOVA"),
+            name="Marcelo Andrade",
+            category="history",
+            url="https://www.youtube.com/channel/UCP3CtEXi5nxbhei_aBfIOVA",
+        )
+        provenance = MediaProvenance(
+            url="https://youtu.be/9IbNJ0EsTxI",
+            description="Video description about Afonso Henriques.",
+            publication_date=datetime.date(2026, 1, 15),
+        )
+        content = Content(
+            id=ContentId("9IbNJ0EsTxI"),
+            title="AFONSO HENRIQUES: o fundador de Portugal",
+            body="Raw spoken audio transcript without edit.",
+        )
+
+        source = SourceTranscript(channel=channel, provenance=provenance, content=content)
+
+        # 1. Verification of pure Triad composition (ADR-038)
+        assert source.channel is channel
+        assert source.provenance is provenance
+        assert source.content is content
+
+        # 2. Algorithmic Pair (ID - ID Parity)
+        assert source.channel.id is not None
+        assert source.channel.id.value == "UCP3CtEXi5nxbhei_aBfIOVA"
+        assert source.content.id.value == "9IbNJ0EsTxI"
+        assert source.channel_id == source.channel.id
+        assert source.content_id == source.content.id
+
+        # 3. Cognitive Pair (TXT - TXT Parity)
+        assert source.channel.name == "Marcelo Andrade"
+        assert source.content.title == "AFONSO HENRIQUES: o fundador de Portugal"
+        assert source.channel_name.value == "Marcelo Andrade"
+        assert source.title == "AFONSO HENRIQUES: o fundador de Portugal"
+
+        # 4. Ergonomic accessors delegate cleanly
+        assert source.body == "Raw spoken audio transcript without edit."
+        assert source.source_url == "https://youtu.be/9IbNJ0EsTxI"
+        assert source.publication_date == datetime.date(2026, 1, 15)
+
+    def test_fluid_transcript_pure_triad_composition(self) -> None:
+        from cresmo.domain.entities import FluidTranscript
+        from cresmo.domain.value_objects import (
+            Channel,
+            ChannelId,
+            Content,
+            ContentId,
+            MediaProvenance,
+        )
+
+        channel = Channel(id=ChannelId("UC1234567890"), name="History Channel", category="history")
+        provenance = MediaProvenance(url="https://youtube.com/watch?v=abc", description="Desc")
+        content = Content(
+            id=ContentId("abc"),
+            title="Clean Title",
+            body="Continuous fluid prose narrative.",
+        )
+
+        fluid = FluidTranscript(channel=channel, provenance=provenance, content=content)
+
+        assert fluid.channel is channel
+        assert fluid.provenance is provenance
+        assert fluid.content is content
+        assert fluid.body == "Continuous fluid prose narrative."
+        assert fluid.content_id == ContentId("abc")
+        assert fluid.channel_id == ChannelId("UC1234567890")
+
+    def test_transcript_aggregate_lifecycle_container(self) -> None:
+        from cresmo.domain.entities import FluidTranscript, SourceTranscript, Transcript
+        from cresmo.domain.value_objects import (
+            Channel,
+            ChannelId,
+            Content,
+            ContentId,
+            MediaProvenance,
+        )
+
+        ch = Channel(id=ChannelId("UCtest123456"), name="Test Channel")
+        prov = MediaProvenance(url="https://test.url")
+        src_content = Content(id=ContentId("vid_01"), title="Raw Title", body="Raw body")
+        fluid_content = Content(id=ContentId("vid_01"), title="Fluid Title", body="Fluid body")
+
+        source = SourceTranscript(channel=ch, provenance=prov, content=src_content)
+        fluid = FluidTranscript(channel=ch, provenance=prov, content=fluid_content)
+
+        aggregate = Transcript(source=source, fluid=fluid)
+        assert aggregate.source is source
+        assert aggregate.fluid is fluid
+        assert aggregate.content_id == ContentId("vid_01")
+        assert aggregate.channel == ch
+        assert aggregate.provenance == prov
+        assert aggregate.content == fluid_content
+
+    def test_post_process_fluid_transcript_preserves_pure_triad(self) -> None:
+        from cresmo.domain.entities import (
+            CandidateText,
+            SourceTranscript,
+            post_process_fluid_transcript,
+        )
+        from cresmo.domain.value_objects import (
+            Channel,
+            ChannelId,
+            Content,
+            ContentId,
+            MediaProvenance,
+        )
+
+        ch = Channel(id=ChannelId("UCtest123456"), name="Test Channel", category="history")
+        prov = MediaProvenance(url="https://source.url", description="Origin desc")
+        src_content = Content(id=ContentId("vid_02"), title="Original Title", body="Raw body text")
+
+        source = SourceTranscript(channel=ch, provenance=prov, content=src_content)
+        candidate = CandidateText(
+            text="# Synthesized H1 Title\n\nFluid prose without orality noise.",
+            stage_name="fluid_prose",
+        )
+
+        fluid = post_process_fluid_transcript(candidate, source)
+
+        # Retains the exact Channel and Provenance Value Objects from source
+        assert fluid.channel is source.channel
+        assert fluid.provenance is source.provenance
+        # Transforms Content with extracted title and body
+        assert fluid.content.id == source.content.id
+        assert fluid.content.title == "Synthesized H1 Title"
+        assert fluid.content.body == "Fluid prose without orality noise."
+        assert fluid.body == "Fluid prose without orality noise."
+
+    def test_symmetrical_parity_channel_content(self) -> None:
+        """ADR-038: Algorithmic Parity (channel_id - content_id) and Cognitive Parity (channel_name - content_title)."""
+        from cresmo.application.pipeline.context import PipelineExecutionContext
+        from cresmo.domain.entities import (
+            FluidTranscript,
+            PipelineSessionId,
+            SourceTranscript,
+            Transcript,
+            UserIdentity,
+        )
+        from cresmo.domain.value_objects import (
+            Channel,
+            ChannelId,
+            ChannelName,
+            Content,
+            ContentId,
+            MediaProvenance,
+        )
+
+        ch = Channel(
+            channel_name="Marcelo Andrade",
+            channel_id="UCxyz1234567890ab",
+            category="history",
+        )
+        assert ch.channel_id == ChannelId("UCxyz1234567890ab")
+        assert ch.channel_name == ChannelName("Marcelo Andrade")
+        assert ch.name == "Marcelo Andrade"
+        assert ch.id == ChannelId("UCxyz1234567890ab")
+
+        content = Content(
+            content_id="9IbNJ0EsTxI",
+            content_title="A Gênese Estrutural do Condado Portucalense",
+            body="Prosa contínua e densa.",
+        )
+        assert content.content_id == ContentId("9IbNJ0EsTxI")
+        assert content.content_title == "A Gênese Estrutural do Condado Portucalense"
+        assert content.id == ContentId("9IbNJ0EsTxI")
+        assert content.title == "A Gênese Estrutural do Condado Portucalense"
+
+        prov = MediaProvenance(url="https://youtube.com/watch?v=9IbNJ0EsTxI")
+
+        src = SourceTranscript(channel=ch, provenance=prov, content=content)
+        # Check SourceTranscript parity
+        assert src.channel_id == ChannelId("UCxyz1234567890ab")
+        assert src.content_id == ContentId("9IbNJ0EsTxI")
+        assert src.channel_name == ChannelName("Marcelo Andrade")
+        assert src.content_title == "A Gênese Estrutural do Condado Portucalense"
+        assert src.title == src.content_title
+
+        fluid = FluidTranscript(channel=ch, provenance=prov, content=content)
+        # Check FluidTranscript parity
+        assert fluid.channel_id == ChannelId("UCxyz1234567890ab")
+        assert fluid.content_id == ContentId("9IbNJ0EsTxI")
+        assert fluid.channel_name == ChannelName("Marcelo Andrade")
+        assert fluid.content_title == "A Gênese Estrutural do Condado Portucalense"
+        assert fluid.title == fluid.content_title
+
+        root_tx = Transcript(source=src, fluid=fluid)
+        # Check Transcript root aggregate parity
+        assert root_tx.channel_id == ChannelId("UCxyz1234567890ab")
+        assert root_tx.content_id == ContentId("9IbNJ0EsTxI")
+        assert root_tx.channel_name == ChannelName("Marcelo Andrade")
+        assert root_tx.content_title == "A Gênese Estrutural do Condado Portucalense"
+        assert root_tx.title == "A Gênese Estrutural do Condado Portucalense"
+
+        # Check PipelineExecutionContext parity
+        sid = PipelineSessionId.create(channel=ch, content_id=content)
+        ctx = PipelineExecutionContext(
+            session_id=sid,
+            user_identity=UserIdentity.anonymous(),
+            channel=ch,
+            content=content,
+        )
+        assert ctx.channel.id == ChannelId("UCxyz1234567890ab")
+        assert ctx.content.id == ContentId("9IbNJ0EsTxI")
+        assert ctx.channel.name == "Marcelo Andrade"
+        assert ctx.content.title == "A Gênese Estrutural do Condado Portucalense"
+        assert ctx.channel.channel_id == ChannelId("UCxyz1234567890ab")
+        assert ctx.content.content_id == ContentId("9IbNJ0EsTxI")
+        assert ctx.channel.channel_name == ChannelName("Marcelo Andrade")
+        assert ctx.content.content_title == "A Gênese Estrutural do Condado Portucalense"

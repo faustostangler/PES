@@ -15,10 +15,14 @@ import yaml
 
 from cresmo.domain.entities import EnrichedCompendium, SourceTranscript
 from cresmo.domain.value_objects import (
+    Channel,
     ChannelId,
     ChannelName,
+    Content,
     ContentId,
+    MediaProvenance,
     NoteTitle,
+    SourceModality,
 )
 from cresmo.infrastructure.adapters.obsidian.utils import (
     _FRONTMATTER_PATTERN,
@@ -80,10 +84,22 @@ class TranscriptVaultHandler:
         text = file_path.read_text(encoding="utf-8")
         match = _FRONTMATTER_PATTERN.match(text)
         if not match:
-            return SourceTranscript(
-                content_id=content_id,
-                channel_name=ChannelName(file_path.parent.name),
+            channel = Channel(name=file_path.parent.name)
+            provenance = MediaProvenance.create(
+                url=f"file://{file_path.resolve()}",
+                description="",
+            )
+            content = Content.create(
+                id=content_id,
+                title=file_path.stem,
                 body=text,
+                url=f"file://{file_path.resolve()}",
+                modality=SourceModality.FILE,
+            )
+            return SourceTranscript(
+                channel=channel,
+                provenance=provenance,
+                content=content,
             )
 
         fm_text, body = match.groups()
@@ -102,16 +118,31 @@ class TranscriptVaultHandler:
                     upload_date = datetime.strptime(date_str, "%Y%m%d").replace(tzinfo=UTC).date()
         desc = str(meta.get("video_description") or "")
 
-        return SourceTranscript(
-            content_id=content_id,
-            channel_name=ChannelName(ch_name),
-            body=body.strip(),
+        channel = Channel(
+            name=ch_name,
+            id=ChannelId.from_string(ch_id) if ch_id else None,
+            category=ch_cat,
+            url=f"https://www.youtube.com/channel/{ch_id}"
+            if ch_id and ch_id.startswith("UC")
+            else None,
+        )
+        provenance = MediaProvenance.create(
+            url=url,
+            description=desc,
+            publication_date=upload_date,
+        )
+        content = Content.create(
+            id=content_id,
             title=title,
-            source_url=url,
-            upload_date=upload_date,
-            channel_id=ChannelId.from_string(ch_id) if ch_id else None,
-            channel_category=ch_cat,
-            video_description=desc,
+            body=body.strip(),
+            url=url,
+            modality=SourceModality.URL if url else SourceModality.FILE,
+            publication_date=upload_date,
+        )
+        return SourceTranscript(
+            channel=channel,
+            provenance=provenance,
+            content=content,
         )
 
     def save_enriched_compendium(self, compendium: EnrichedCompendium) -> None:

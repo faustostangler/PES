@@ -425,4 +425,3 @@ class TestStageConfigRunner:
         assert eval_result.passed is True
         assert eval_result.overall_score == 0.98
         mock_judge.evaluate.assert_called_once()
-

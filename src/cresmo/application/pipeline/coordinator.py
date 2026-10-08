@@ -184,7 +184,7 @@ class CresmoPipeline:
         user_identity = user or UserIdentity.anonymous()
 
         raw_text = getattr(raw, "body", "") or getattr(raw, "text", "")
-        root_metadata: dict[str, Any] = {
+        root_telemetry_metadata: dict[str, Any] = {
             "source": "transcript",
             "channel_id": str(channel.id) if channel.id else "",
             "channel_name": channel.name,
@@ -198,18 +198,18 @@ class CresmoPipeline:
             resolved_batch_id = (
                 batch_id.value if isinstance(batch_id, BatchId) else batch_id.strip()
             )
-            root_metadata["batch_id"] = resolved_batch_id
+            root_telemetry_metadata["batch_id"] = resolved_batch_id
         if content.url:
-            root_metadata["video_url"] = content.url
+            root_telemetry_metadata["video_url"] = content.url
         if content.publication_date:
-            root_metadata["publication_date"] = content.publication_date.isoformat()
+            root_telemetry_metadata["publication_date"] = content.publication_date.isoformat()
 
         # Trace root Level 1: cresmo.synthesis_pipeline (ADR-037)
         with self.telemetry_port.start_pipeline_session(
             session_id=session_id,
             user_id=user_identity,
             channel_tenant_id=channel.tenant_key,
-            metadata=root_metadata,
+            metadata=root_telemetry_metadata,
             trace_name="cresmo.synthesis_pipeline",
         ):
             if early_result := self._check_idempotent_exit(raw, entry, force_reprocess):

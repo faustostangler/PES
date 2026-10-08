@@ -40,6 +40,7 @@ from cresmo.domain.value_objects.media import (
     DEFAULT_FEED_MAX_VIDEOS,
     ChannelFeedQuery,
     DiscoveredMediaItem,
+    MediaProvenance,
     PipelineStatus,
     normalize_to_uploads_playlist_url,
 )
@@ -101,6 +102,7 @@ __all__ = [
     "JudgeEvaluation",
     "LedgerEntry",
     "MasterDocumentResult",
+    "MediaProvenance",
     "MessageRole",
     "NoteTitle",
     "NoteType",

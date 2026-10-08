@@ -719,9 +719,7 @@ class TestPromptBuilderRegistry:
         mock_registry.freeze()
 
         provider = JsonPromptProvider(registry=mock_registry)
-        prompt = provider.get_prompt(
-            PromptKey.FLUID_PROSE, content_title="Custom Injection"
-        )
+        prompt = provider.get_prompt(PromptKey.FLUID_PROSE, content_title="Custom Injection")
         assert prompt.system_instruction == "Injected System"
         assert prompt.get_last_user_content() == "Injected User: Custom Injection"
 

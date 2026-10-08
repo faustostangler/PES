@@ -349,12 +349,23 @@ class Channel:
 
     def __init__(
         self,
-        name: str | ChannelName,
+        name: str | ChannelName | None = None,
         id: ChannelId | str | None = None,
         category: str = "",
         url: str | None = None,
+        *,
+        channel_name: str | ChannelName | None = None,
+        channel_id: ChannelId | str | None = None,
     ) -> None:
-        raw_name = name.value if isinstance(name, ChannelName) else str(name)
+        effective_name = channel_name if name is None else name
+        effective_id = channel_id if id is None else id
+
+        if isinstance(effective_name, ChannelName):
+            raw_name = effective_name.value
+        elif effective_name is not None:
+            raw_name = effective_name
+        else:
+            raw_name = ""
         clean_name = raw_name.strip()
         if not clean_name:
             raise DomainValidationError("Channel name cannot be empty or whitespace.")
@@ -368,10 +379,12 @@ class Channel:
             )
 
         resolved_channel_id = (
-            ChannelId.from_string(id) if isinstance(id, (ChannelId, str)) and id else None
+            ChannelId.from_string(effective_id)
+            if isinstance(effective_id, (ChannelId, str)) and effective_id
+            else None
         )
         if resolved_channel_id is not None and not isinstance(resolved_channel_id, ChannelId):
-            raise DomainValidationError(f"Invalid channel id type: {type(id)}")
+            raise DomainValidationError(f"Invalid channel id type: {type(effective_id)}")
 
         object.__setattr__(self, "name", clean_name)
         object.__setattr__(self, "id", resolved_channel_id)
@@ -388,6 +401,16 @@ class Channel:
     ) -> Channel:
         """Ergonomic factory constructing Channel from primitive strings or Value Objects."""
         return cls(name=name, id=id, category=category, url=url)
+
+    @property
+    def channel_id(self) -> ChannelId | None:
+        """Algorithmic channel identifier (channel_id - content_id parity)."""
+        return self.id
+
+    @property
+    def channel_name(self) -> ChannelName:
+        """Cognitive channel creator name (channel_name - content_title parity)."""
+        return ChannelName.from_string(self.name)
 
     @property
     def tenant_key(self) -> str:
@@ -410,36 +433,51 @@ class Channel:
 
 @dataclass(frozen=True, slots=True)
 class Content:
-    """Canonical domain Value Object representing a media item, transcript, or video.
+    """Canonical domain Value Object representing a media item, transcript, or synthesized prose.
 
-    Encapsulates content identifier, title, source URL, input modality, and publication date.
-    Conforms to ADR-019 (Zero Primitive Obsession) and ADR-032.
+    Encapsulates content identifier, title, and textual body payload.
+    Conforms to ADR-019 (Zero Primitive Obsession), ADR-032, and ADR-038 (Pure Triad Composition).
     """
 
     id: ContentId
     title: str = ""
+    body: str = ""
     url: str = ""
     modality: SourceModality = SourceModality.URL
     publication_date: datetime.date | None = None
 
     def __init__(
         self,
-        id: ContentId | str,
+        id: ContentId | str | None = None,
         title: str = "",
+        body: str = "",
         url: str = "",
         modality: SourceModality | str = SourceModality.URL,
         publication_date: datetime.date | None = None,
+        *,
+        content_id: ContentId | str | None = None,
+        content_title: str | None = None,
     ) -> None:
-        resolved_content_id = ContentId.from_string(id) if isinstance(id, (ContentId, str)) else id
+        effective_id = content_id if id is None else id
+        if effective_id is None:
+            raise DomainValidationError("Content requires non-null id.")
+        resolved_content_id = (
+            ContentId.from_string(effective_id)
+            if isinstance(effective_id, (ContentId, str))
+            else effective_id
+        )
         if not isinstance(resolved_content_id, ContentId):
-            raise DomainValidationError(f"Invalid content id type: {type(id)}")
+            raise DomainValidationError(f"Invalid content id type: {type(effective_id)}")
 
         resolved_modality = (
             SourceModality(modality.lower()) if isinstance(modality, str) else modality
         )
 
+        effective_title = content_title if not title and content_title else title
+
         object.__setattr__(self, "id", resolved_content_id)
-        object.__setattr__(self, "title", title.strip() if title else "")
+        object.__setattr__(self, "title", effective_title.strip() if effective_title else "")
+        object.__setattr__(self, "body", body)
         object.__setattr__(self, "url", url.strip() if url else "")
         object.__setattr__(self, "modality", resolved_modality)
         object.__setattr__(self, "publication_date", publication_date)
@@ -449,6 +487,7 @@ class Content:
         cls,
         id: str | ContentId,
         title: str = "",
+        body: str = "",
         url: str = "",
         modality: SourceModality | str = SourceModality.URL,
         publication_date: datetime.date | None = None,
@@ -461,10 +500,21 @@ class Content:
         return cls(
             id=resolved_content_id,
             title=title,
+            body=body,
             url=url,
             modality=resolved_modality,
             publication_date=publication_date,
         )
+
+    @property
+    def content_id(self) -> ContentId:
+        """Algorithmic content identifier (channel_id - content_id parity)."""
+        return self.id
+
+    @property
+    def content_title(self) -> str:
+        """Cognitive content title (channel_name - content_title parity)."""
+        return self.title
 
     def __str__(self) -> str:
         return self.id.value

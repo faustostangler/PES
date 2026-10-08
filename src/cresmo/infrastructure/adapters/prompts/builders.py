@@ -244,7 +244,9 @@ def build_wide_expander(provider: Any, **context: Any) -> ChatPrompt:
 
     if not template and not system_template:
         sys_inst = f"{task}\n\n{skill_block}".strip()
-        return ChatPrompt.from_system_and_user(user=current_text, system=sys_inst if sys_inst else None)
+        return ChatPrompt.from_system_and_user(
+            user=current_text, system=sys_inst if sys_inst else None
+        )
 
     return provider._format_paired_prompt(
         key,

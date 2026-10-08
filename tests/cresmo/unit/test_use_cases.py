@@ -217,11 +217,18 @@ class TestFillGapsFluidProse:
         assert all(c["session_id"] == "UC123456:dQw4w9WgXcQ" for c in llm_port.call_history)
         assert all(c["user_id"] == "anonymous" for c in llm_port.call_history)
         # Pass 1 contains raw body and channel name
-        assert "Spoken text without structure." in llm_port.call_history[0]["prompt"].get_last_user_content()
+        assert (
+            "Spoken text without structure."
+            in llm_port.call_history[0]["prompt"].get_last_user_content()
+        )
         assert "Example Channel" in llm_port.call_history[0]["prompt"].get_last_user_content()
         # Pass 2 and 3 receive current_text from previous pass
-        assert "A circulação das elites" in llm_port.call_history[1]["prompt"].get_last_user_content()
-        assert "A circulação das elites" in llm_port.call_history[2]["prompt"].get_last_user_content()
+        assert (
+            "A circulação das elites" in llm_port.call_history[1]["prompt"].get_last_user_content()
+        )
+        assert (
+            "A circulação das elites" in llm_port.call_history[2]["prompt"].get_last_user_content()
+        )
 
     def test_fill_gaps_title_fallback_to_fluid_transcript_title(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")

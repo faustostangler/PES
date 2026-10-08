@@ -11,8 +11,6 @@ Conforms to:
 
 from __future__ import annotations
 
-import re
-
 from cresmo.application.ports import (
     LLMTransformationPort,
     NoOpPromptProviderPort,
@@ -24,63 +22,10 @@ from cresmo.domain.entities import (
     PipelineSessionId,
     SourceTranscript,
     UserIdentity,
+    post_process_fluid_transcript,
 )
-from cresmo.domain.exceptions import CompendiumStructureError, DomainValidationError
-from cresmo.domain.value_objects import CandidateText, PromptKey
-
-# Matches Markdown H1 title header
-_TITLE_H1_PATTERN = re.compile(r"^\s*#\s+(.+)$", re.MULTILINE)
-# Matches any accidental complementary information section headers
-_COMPLEMENTARY_REGEX = re.compile(
-    r"^\s*#{2,3}\s+\*?\*?(?:Informa[cç][oõ]es\s+Complementares|Notas\s+Complementares|Informa[cç][oõ]es\s+Adicionais)\*?\*?.*$",
-    re.MULTILINE | re.IGNORECASE,
-)
-
-
-def post_process_fluid_transcript(
-    candidate: CandidateText | str,
-    source: SourceTranscript,
-) -> FluidTranscript:
-    """Post-process candidate text into a validated FluidTranscript domain aggregate.
-
-    Strips H1 headers to preserve clean heading hierarchy, removes accidental
-    complementary sections, and maps provenance metadata from the source transcript.
-    """
-    current_text = (
-        candidate.text.strip() if isinstance(candidate, CandidateText) else str(candidate).strip()
-    )
-
-    # Extract title from H1 if present, otherwise fall back to source transcript title
-    title_match = _TITLE_H1_PATTERN.search(current_text)
-    if title_match:
-        extracted_title = title_match.group(1).strip()
-        body = _TITLE_H1_PATTERN.sub("", current_text).strip()
-    else:
-        extracted_title = source.title or "Untitled Compendium"
-        body = current_text
-
-    # Purge any accidental complementary information section in Stage 1
-    comp_match = _COMPLEMENTARY_REGEX.search(body)
-    if comp_match:
-        body = body[: comp_match.start()].strip()
-
-    if not body:
-        raise CompendiumStructureError(
-            f"Generated fluid prose body is empty for '{source.content_id.value}'."
-        )
-
-    return FluidTranscript(
-        content_id=source.content_id,
-        channel_name=source.channel_name,
-        body=body,
-        title=extracted_title,
-        source_url=source.source_url,
-        publication_date=source.publication_date,
-        upload_date=source.upload_date,
-        channel_id=source.channel_id,
-        channel_category=source.channel_category,
-        video_description=source.video_description,
-    )
+from cresmo.domain.exceptions import DomainValidationError
+from cresmo.domain.value_objects import PromptKey
 
 
 class TransformFluidProseUseCase:
