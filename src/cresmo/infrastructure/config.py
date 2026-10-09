@@ -26,6 +26,9 @@ from cresmo.infrastructure.paths import find_workspace_root
 _WORKSPACE_DIR = find_workspace_root()
 
 DEFAULT_LANGFUSE_PROMPT_LABEL: str = "production"
+DEFAULT_JUDGE_PASS_THRESHOLD: float = 0.8
+DEFAULT_JUDGE_GEMINI_MODEL: str = "gemini-3.5-flash-lite"
+DEFAULT_JUDGE_TEMPERATURE: float = 0.0
 
 
 class CresmoSettings(BaseSettings):
@@ -52,6 +55,9 @@ class CresmoSettings(BaseSettings):
 
     DEFAULT_LANGUAGE: ClassVar[str] = DEFAULT_LANGUAGE
     DEFAULT_LANGFUSE_PROMPT_LABEL: ClassVar[str] = DEFAULT_LANGFUSE_PROMPT_LABEL
+    DEFAULT_JUDGE_PASS_THRESHOLD: ClassVar[float] = DEFAULT_JUDGE_PASS_THRESHOLD
+    DEFAULT_JUDGE_GEMINI_MODEL: ClassVar[str] = DEFAULT_JUDGE_GEMINI_MODEL
+    DEFAULT_JUDGE_TEMPERATURE: ClassVar[float] = DEFAULT_JUDGE_TEMPERATURE
 
     model_config = SettingsConfigDict(
         env_file=(
@@ -514,6 +520,43 @@ class CresmoSettings(BaseSettings):
         validation_alias=AliasChoices("judge_max_attempts", "CRESMO_JUDGE_MAX_ATTEMPTS"),
         description="Maximum attempts to re-execute a stage when quality evaluation fails.",
     )
+    judge_pass_threshold: float = Field(
+        default=DEFAULT_JUDGE_PASS_THRESHOLD,
+        ge=0.0,
+        le=1.0,
+        validation_alias=AliasChoices(
+            "judge_pass_threshold",
+            "CRESMO_JUDGE_PASS_THRESHOLD",
+            "JUDGE_PASS_THRESHOLD",
+        ),
+        description="Minimum score threshold required for quality judge evaluations to pass.",
+    )
+    judge_gemini_model: str = Field(
+        default=DEFAULT_JUDGE_GEMINI_MODEL,
+        validation_alias=AliasChoices(
+            "judge_gemini_model",
+            "CRESMO_JUDGE_GEMINI_MODEL",
+            "JUDGE_GEMINI_MODEL",
+        ),
+        description="Gemini model variant for quality judge evaluations.",
+    )
+    judge_temperature: float = Field(
+        default=DEFAULT_JUDGE_TEMPERATURE,
+        ge=0.0,
+        le=2.0,
+        validation_alias=AliasChoices(
+            "judge_temperature",
+            "CRESMO_JUDGE_TEMPERATURE",
+            "JUDGE_TEMPERATURE",
+        ),
+        description="Sampling temperature for quality judge evaluation models.",
+    )
 
 
-__all__ = ["CresmoSettings"]
+__all__ = [
+    "CresmoSettings",
+    "DEFAULT_JUDGE_GEMINI_MODEL",
+    "DEFAULT_JUDGE_PASS_THRESHOLD",
+    "DEFAULT_JUDGE_TEMPERATURE",
+    "DEFAULT_LANGFUSE_PROMPT_LABEL",
+]

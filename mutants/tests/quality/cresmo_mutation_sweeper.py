@@ -109,6 +109,7 @@ MODULE_TEST_MAP: dict[str, list[str]] = {
     "src/cresmo/application/pipeline/coordinator.py": [
         "tests/cresmo/unit/test_pipeline.py",
         "tests/cresmo/unit/test_pipeline_telemetry.py",
+        "tests/cresmo/unit/test_pipeline_coordinator.py",
     ],
     "src/cresmo/application/pipeline/context.py": [
         "tests/cresmo/unit/test_pipeline_execution_context.py",
@@ -143,6 +144,18 @@ MODULE_TEST_MAP: dict[str, list[str]] = {
     ],
     "src/cresmo/application/use_cases/indexing/index_raw_transcripts.py": [
         "tests/cresmo/unit/test_index_raw_transcripts_use_case.py",
+    ],
+    "src/cresmo/application/use_cases/ingest_raw_transcript.py": [
+        "tests/cresmo/unit/test_use_cases.py",
+    ],
+    "src/cresmo/application/use_cases/reconcile_mocs.py": [
+        "tests/cresmo/unit/test_use_cases.py",
+    ],
+    "src/cresmo/application/use_cases/sync_channel.py": [
+        "tests/cresmo/unit/test_sync_channel_use_case.py",
+    ],
+    "src/cresmo/application/use_cases/synthesize_atomic_batch.py": [
+        "tests/cresmo/unit/test_use_cases.py",
     ],
     # Wave 4: Infrastructure
     "src/cresmo/infrastructure/adapters/obsidian/adapter.py": [
@@ -206,6 +219,10 @@ WAVE_DEFINITIONS: dict[str, list[str]] = {
         "src/cresmo/application/use_cases/discover_atomic_inventory.py",
         "src/cresmo/application/use_cases/discovery/discover_batch_sources.py",
         "src/cresmo/application/use_cases/indexing/index_raw_transcripts.py",
+        "src/cresmo/application/use_cases/ingest_raw_transcript.py",
+        "src/cresmo/application/use_cases/reconcile_mocs.py",
+        "src/cresmo/application/use_cases/sync_channel.py",
+        "src/cresmo/application/use_cases/synthesize_atomic_batch.py",
     ],
     "infra": [
         "src/cresmo/infrastructure/adapters/obsidian/adapter.py",
@@ -261,7 +278,7 @@ def sync_source_to_mutants() -> int:
             rel = src_file.relative_to(src_dir)
             target = mutants_dir / rel
             target.parent.mkdir(parents=True, exist_ok=True)
-            if not target.exists() or src_file.stat().st_mtime > target.stat().st_mtime:
+            if not target.exists() or src_file.read_bytes() != target.read_bytes():
                 shutil.copy2(src_file, target)
                 count += 1
 
@@ -281,7 +298,7 @@ def sync_source_to_mutants() -> int:
             rel = t_file.relative_to(tests_dir)
             target = mutants_tests_dir / rel
             target.parent.mkdir(parents=True, exist_ok=True)
-            if not target.exists() or t_file.stat().st_mtime > target.stat().st_mtime:
+            if not target.exists() or t_file.read_bytes() != target.read_bytes():
                 shutil.copy2(t_file, target)
                 count += 1
     return count

@@ -10,7 +10,13 @@ import pytest
 
 from cresmo.application.use_cases.unify_duplicate_notes import (
     DeduplicationReport,
+    DuplicateCluster,
     UnifyDuplicateNotesUseCase,
+    _merge_aliases,
+    _merge_causal_matrices,
+    _merge_cross_contexts,
+    _merge_definitions,
+    _merge_direct_relations,
 )
 from cresmo.domain.entities import AtomicNote
 from cresmo.domain.value_objects import (
@@ -348,3 +354,405 @@ class TestUnifyDuplicateNotesUseCase:
         assert report.duplicates_unified_count == 0
         assert report.total_links_rewritten == 0
         assert report.clusters == ()
+
+    def test_merge_aliases_case_exclusion_and_redundant_addition(self) -> None:
+        canonical = AtomicNote(
+            title=NoteTitle("Rome"),
+            note_type=NoteType.ENTITY,
+            definition="Ancient capital of the Roman Empire throughout antiquity.",
+            aliases=("rome", "Capital", "ROME", "Caput Mundi"),
+        )
+        redundant = AtomicNote(
+            title=NoteTitle("Roma"),
+            note_type=NoteType.ENTITY,
+            definition="Italian capital and historical center of Latin civilization.",
+            aliases=("ROMA", "rome", "Eternal City"),
+        )
+        res = _merge_aliases(canonical, redundant)
+        # Excludes canonical title 'Rome' case-insensitively ('rome', 'ROME')
+        assert "rome" not in res
+        assert "ROME" not in res
+        # Includes redundant title 'Roma'
+        assert "Roma" in res
+        assert "Capital" in res
+        assert "Caput Mundi" in res
+        assert "Eternal City" in res
+        assert "ROMA" in res
+        assert res == tuple(sorted(res))
+
+        # When redundant title matches canonical title case-insensitively, it is NOT added
+        redundant_same_title = AtomicNote(
+            title=NoteTitle("rome"),
+            note_type=NoteType.ENTITY,
+            definition="Same title different case and long enough definition string.",
+            aliases=("Urbs",),
+        )
+        res_same = _merge_aliases(canonical, redundant_same_title)
+        assert "rome" not in res_same
+        assert "Urbs" in res_same
+
+    def test_merge_direct_relations_excludes_self_references_and_deduplicates(self) -> None:
+        canonical = AtomicNote(
+            title=NoteTitle("Empire"),
+            note_type=NoteType.CONCEPT,
+            definition="Sovereignty system of hierarchical political domination.",
+            direct_relations=(
+                NoteTitle("imperium"),
+                NoteTitle("IMPERIUM"),
+                NoteTitle("Colony"),
+                NoteTitle("Province"),
+            ),
+        )
+        redundant = AtomicNote(
+            title=NoteTitle("Imperium"),
+            note_type=NoteType.CONCEPT,
+            definition="Roman command authority in provincial territories.",
+            direct_relations=(
+                NoteTitle("empire"),
+                NoteTitle("EMPIRE"),
+                NoteTitle("colony"),
+                NoteTitle("Legion"),
+            ),
+        )
+        res = _merge_direct_relations(canonical, redundant)
+        values = [r.value for r in res]
+        lower_values = [r.value.lower() for r in res]
+        # Excluded cross-titles that would become self-references after merge
+        assert "empire" not in lower_values
+        assert "imperium" not in lower_values
+        # Colony deduplicated case-insensitively
+        assert lower_values.count("colony") == 1
+        assert "Province" in values
+        assert "Legion" in values
+        assert len(res) == 3
+
+    def test_are_duplicates_min_honorific_length_boundary(
+        self, mock_vault: InMemoryVaultAdapter
+    ) -> None:
+        use_case = UnifyDuplicateNotesUseCase(vault_port=mock_vault)
+        # Length 4: "Dom Abcd" vs "Abcd" -> normalized is "abcd" (len 4 == _MIN_HONORIFIC_NORMALIZED_LENGTH)
+        note_4a = AtomicNote(
+            title=NoteTitle("Dom Abcd"),
+            note_type=NoteType.ENTITY,
+            definition="Valid definition containing over twenty characters.",
+        )
+        note_4b = AtomicNote(
+            title=NoteTitle("Abcd"),
+            note_type=NoteType.ENTITY,
+            definition="Valid definition containing over twenty characters.",
+        )
+        assert use_case._are_duplicates(note_4a, note_4b) is True
+
+        # Length 3: "Dom Abc" vs "Abc" -> normalized is "abc" (len 3 < _MIN_HONORIFIC_NORMALIZED_LENGTH)
+        note_3a = AtomicNote(
+            title=NoteTitle("Dom Abc"),
+            note_type=NoteType.ENTITY,
+            definition="Valid definition containing over twenty characters.",
+        )
+        note_3b = AtomicNote(
+            title=NoteTitle("Abc"),
+            note_type=NoteType.ENTITY,
+            definition="Valid definition containing over twenty characters.",
+        )
+        assert use_case._are_duplicates(note_3a, note_3b) is False
+
+    def test_merge_notes_preserves_merged_direct_relations(
+        self, mock_vault: InMemoryVaultAdapter
+    ) -> None:
+        use_case = UnifyDuplicateNotesUseCase(vault_port=mock_vault)
+        canonical = AtomicNote(
+            title=NoteTitle("Alpha Note"),
+            note_type=NoteType.CONCEPT,
+            definition="Definition Alpha containing over twenty characters.",
+            direct_relations=(NoteTitle("Rel1"),),
+        )
+        redundant = AtomicNote(
+            title=NoteTitle("Beta Note"),
+            note_type=NoteType.CONCEPT,
+            definition="Definition Beta containing over twenty characters.",
+            direct_relations=(NoteTitle("Rel2"),),
+        )
+        merged = use_case._merge_notes(canonical, redundant)
+        assert len(merged.direct_relations) == 2
+        assert {r.value for r in merged.direct_relations} == {"Rel1", "Rel2"}
+
+    def test_execute_definition_length_election_threshold(
+        self, mock_vault: InMemoryVaultAdapter
+    ) -> None:
+        use_case = UnifyDuplicateNotesUseCase(vault_port=mock_vault)
+        base_def = "x" * 100
+        # Exactly +50 length difference: note_b does NOT overtake note_a
+        def_plus50 = "y" * 150
+        note_a = AtomicNote(
+            title=NoteTitle("Candidate Alpha"),
+            note_type=NoteType.CONCEPT,
+            definition=base_def,
+            aliases=("shared_alias",),
+        )
+        note_b = AtomicNote(
+            title=NoteTitle("Candidate Beta"),
+            note_type=NoteType.CONCEPT,
+            definition=def_plus50,
+            aliases=("shared_alias",),
+        )
+        mock_vault.save_atomic_note(note_a)
+        mock_vault.save_atomic_note(note_b)
+        mock_vault.update_index_entry(note_a)
+        mock_vault.update_index_entry(note_b)
+
+        report = use_case.execute()
+        assert report.duplicates_unified_count == 1
+        assert report.clusters[0].canonical_title == NoteTitle("Candidate Alpha")
+
+        # Now test exactly +51: note_d DOES overtake note_c
+        mock_vault_2 = InMemoryVaultAdapter()
+        use_case_2 = UnifyDuplicateNotesUseCase(vault_port=mock_vault_2)
+        def_plus51 = "z" * 151
+        note_c = AtomicNote(
+            title=NoteTitle("Candidate Gamma"),
+            note_type=NoteType.CONCEPT,
+            definition=base_def,
+            aliases=("shared_alias_2",),
+        )
+        note_d = AtomicNote(
+            title=NoteTitle("Candidate Delta"),
+            note_type=NoteType.CONCEPT,
+            definition=def_plus51,
+            aliases=("shared_alias_2",),
+        )
+        mock_vault_2.save_atomic_note(note_c)
+        mock_vault_2.save_atomic_note(note_d)
+        mock_vault_2.update_index_entry(note_c)
+        mock_vault_2.update_index_entry(note_d)
+
+        report_2 = use_case_2.execute()
+        assert report_2.duplicates_unified_count == 1
+        assert report_2.clusters[0].canonical_title == NoteTitle("Candidate Delta")
+
+    def test_execute_multi_note_cluster_and_additive_link_rewrites(
+        self, mock_vault: InMemoryVaultAdapter
+    ) -> None:
+        use_case = UnifyDuplicateNotesUseCase(vault_port=mock_vault)
+        # Cluster of 3 duplicate notes: Prime, Alt1, Alt2
+        note_prime = AtomicNote(
+            title=NoteTitle("Prime Entity"),
+            note_type=NoteType.ENTITY,
+            definition="Primary definition of entity.",
+            aliases=("shared_sym",),
+        )
+        note_alt1 = AtomicNote(
+            title=NoteTitle("Alt1 Entity"),
+            note_type=NoteType.ENTITY,
+            definition="Alternative 1 definition.",
+            aliases=("shared_sym",),
+        )
+        note_alt2 = AtomicNote(
+            title=NoteTitle("Alt2 Entity"),
+            note_type=NoteType.ENTITY,
+            definition="Alternative 2 definition.",
+            aliases=("shared_sym",),
+        )
+        # Referencing notes that will get rewritten
+        ref1 = AtomicNote(
+            title=NoteTitle("Reference One"),
+            note_type=NoteType.CONCEPT,
+            definition="Refers to [[Alt1 Entity]] and [[Alt1 Entity]].",
+        )
+        ref2 = AtomicNote(
+            title=NoteTitle("Reference Two"),
+            note_type=NoteType.CONCEPT,
+            definition="Refers to [[Alt2 Entity]].",
+        )
+        mock_vault.save_atomic_note(note_prime)
+        mock_vault.save_atomic_note(note_alt1)
+        mock_vault.save_atomic_note(note_alt2)
+        mock_vault.save_atomic_note(ref1)
+        mock_vault.save_atomic_note(ref2)
+        mock_vault.update_index_entry(note_prime)
+        mock_vault.update_index_entry(note_alt1)
+        mock_vault.update_index_entry(note_alt2)
+        mock_vault.update_index_entry(ref1)
+        mock_vault.update_index_entry(ref2)
+
+        report = use_case.execute()
+        assert report.duplicates_unified_count == 1
+        assert report.total_links_rewritten == 2
+        cluster = report.clusters[0]
+        assert cluster.canonical_title == NoteTitle("Prime Entity")
+        assert set(cluster.merged_titles) == {NoteTitle("Alt1 Entity"), NoteTitle("Alt2 Entity")}
+        assert cluster.links_rewritten_count == 2
+        assert isinstance(cluster, DuplicateCluster)
+
+    def test_execute_interleaved_clusters_exercises_already_merged_tracking(
+        self, mock_vault: InMemoryVaultAdapter
+    ) -> None:
+        use_case = UnifyDuplicateNotesUseCase(vault_port=mock_vault)
+        # Note1 and Note3 form Cluster Alpha (Note3 has longer definition +51, so Note3 overtakes Note1)
+        # Note2 and Note4 form Cluster Beta
+        # Interleaved in vault: [Note1, Note2, Note3, Note4]
+        note1 = AtomicNote(
+            title=NoteTitle("Entity 1A"),
+            note_type=NoteType.ENTITY,
+            definition="Short base definition for first entity.",
+            aliases=("alias_alpha",),
+        )
+        note2 = AtomicNote(
+            title=NoteTitle("Entity 2A"),
+            note_type=NoteType.ENTITY,
+            definition="Short base definition for second entity.",
+            aliases=("alias_beta",),
+        )
+        note3 = AtomicNote(
+            title=NoteTitle("Entity 1B"),
+            note_type=NoteType.ENTITY,
+            definition="Short base definition for first entity." + (" extended analysis." * 10),
+            aliases=("alias_alpha",),
+        )
+        note4 = AtomicNote(
+            title=NoteTitle("Entity 2B"),
+            note_type=NoteType.ENTITY,
+            definition="Short base definition for second entity.",
+            aliases=("alias_beta",),
+        )
+        mock_vault.save_atomic_note(note1)
+        mock_vault.save_atomic_note(note2)
+        mock_vault.save_atomic_note(note3)
+        mock_vault.save_atomic_note(note4)
+        mock_vault.update_index_entry(note1)
+        mock_vault.update_index_entry(note2)
+        mock_vault.update_index_entry(note3)
+        mock_vault.update_index_entry(note4)
+
+        report = use_case.execute()
+        assert report.duplicates_unified_count == 2
+        cluster_alpha = next(
+            c for c in report.clusters if c.canonical_title == NoteTitle("Entity 1B")
+        )
+        assert cluster_alpha.merged_titles == (NoteTitle("Entity 1A"),)
+        cluster_beta = next(
+            c for c in report.clusters if c.canonical_title == NoteTitle("Entity 2A")
+        )
+        assert cluster_beta.merged_titles == (NoteTitle("Entity 2B"),)
+
+        # Confirm notes remaining in vault
+        vault_titles = {n.title.value for n in mock_vault.get_all_atomic_notes()}
+        assert vault_titles == {"Entity 1B", "Entity 2A"}
+
+    def test_execute_sequential_clusters_kills_break_and_casing(
+        self, mock_vault: InMemoryVaultAdapter
+    ) -> None:
+        use_case = UnifyDuplicateNotesUseCase(vault_port=mock_vault)
+        # Sequential clusters: [C1_A, C1_B, C2_A, C2_B]
+        # At i=1, C1_B is visited; if 'break' instead of 'continue', C2 is never processed.
+        c1_a = AtomicNote(
+            title=NoteTitle("Group One Alpha"),
+            note_type=NoteType.ENTITY,
+            definition="Short base definition for group one entity.",
+            aliases=("alias_group_one",),
+        )
+        c1_b = AtomicNote(
+            title=NoteTitle("Group One Beta"),
+            note_type=NoteType.ENTITY,
+            definition="Short base definition for group one entity.",
+            aliases=("alias_group_one",),
+        )
+        c2_a = AtomicNote(
+            title=NoteTitle("Group Two Alpha"),
+            note_type=NoteType.ENTITY,
+            definition="Short base definition for group two entity.",
+            aliases=("alias_group_two",),
+        )
+        c2_b = AtomicNote(
+            title=NoteTitle("Group Two Beta"),
+            note_type=NoteType.ENTITY,
+            definition="Short base definition for group two entity.",
+            aliases=("alias_group_two",),
+        )
+        for note in (c1_a, c1_b, c2_a, c2_b):
+            mock_vault.save_atomic_note(note)
+            mock_vault.update_index_entry(note)
+
+        report = use_case.execute()
+        assert len(report.clusters) == 2
+        assert report.duplicates_unified_count == 2
+        vault_titles = {n.title.value for n in mock_vault.get_all_atomic_notes()}
+        assert vault_titles == {"Group One Alpha", "Group Two Alpha"}
+
+    def test_execute_canonical_overtake_tracking_kills_key_b_and_canonical_add_casing(
+        self, mock_vault: InMemoryVaultAdapter
+    ) -> None:
+        use_case = UnifyDuplicateNotesUseCase(vault_port=mock_vault)
+        # [Alpha Note, Xray Note, Beta Note]
+        # Alpha Note merges Beta Note, but Beta Note definition is >50 chars longer, so Beta becomes canonical.
+        # Beta Note must be recorded in already_merged so that subsequent Xray Note does NOT match and delete it.
+        alpha_note = AtomicNote(
+            title=NoteTitle("Alpha Note"),
+            note_type=NoteType.ENTITY,
+            definition="Short base definition.",
+            aliases=("shared_ab",),
+        )
+        xray_note = AtomicNote(
+            title=NoteTitle("Xray Note"),
+            note_type=NoteType.ENTITY,
+            definition="Independent definition for xray entity.",
+            aliases=("shared_xb",),
+        )
+        beta_note = AtomicNote(
+            title=NoteTitle("Beta Note"),
+            note_type=NoteType.ENTITY,
+            definition="Short base definition." + (" Extra lengthy historical analysis." * 10),
+            aliases=("shared_ab", "shared_xb"),
+        )
+        for note in (alpha_note, xray_note, beta_note):
+            mock_vault.save_atomic_note(note)
+            mock_vault.update_index_entry(note)
+
+        report = use_case.execute()
+        assert len(report.clusters) == 1
+        assert report.clusters[0].canonical_title == NoteTitle("Beta Note")
+        assert report.clusters[0].merged_titles == (NoteTitle("Alpha Note"),)
+        vault_titles = {n.title.value for n in mock_vault.get_all_atomic_notes()}
+        assert vault_titles == {"Beta Note", "Xray Note"}
+
+    def test_execute_redundant_note_not_reprocessed_kills_key_a_casing(
+        self, mock_vault: InMemoryVaultAdapter
+    ) -> None:
+        use_case = UnifyDuplicateNotesUseCase(vault_port=mock_vault)
+        # [Note 1, Note 2, Note 3]
+        # Note 1 ("Scipio Africanus") matches Note 2 ("Dom Publius") via alias.
+        # Note 2 is merged into Note 1 and deleted from vault.
+        # Note 2 matches Note 3 ("Publius") via honorific normalization ('Dom Publius' -> 'publius'),
+        # but Note 1 ("Scipio Africanus") does NOT match Note 3.
+        # When outer loop reaches index 1 (Note 2), key_a check must skip it;
+        # otherwise Note 2 matches Note 3, resurrecting Note 2 in vault and creating a spurious cluster.
+        note_1 = AtomicNote(
+            title=NoteTitle("Scipio Africanus"),
+            note_type=NoteType.ENTITY,
+            definition="Prime general of the Roman Republic in Africa.",
+            aliases=(),
+        )
+        note_2 = AtomicNote(
+            title=NoteTitle("Dom Publius"),
+            note_type=NoteType.ENTITY,
+            definition="Honorific representation of Publius.",
+            aliases=("scipio africanus",),
+        )
+        note_3 = AtomicNote(
+            title=NoteTitle("Publius"),
+            note_type=NoteType.ENTITY,
+            definition="Common praenomen across patrician families.",
+            aliases=(),
+        )
+        for note in (note_1, note_2, note_3):
+            mock_vault.save_atomic_note(note)
+            mock_vault.update_index_entry(note)
+
+        report = use_case.execute()
+        assert len(report.clusters) == 1
+        assert report.clusters[0].canonical_title == NoteTitle("Scipio Africanus")
+        assert report.clusters[0].merged_titles == (NoteTitle("Dom Publius"),)
+        vault_titles = {n.title.value for n in mock_vault.get_all_atomic_notes()}
+        assert vault_titles == {"Scipio Africanus", "Publius"}
+        assert "Dom Publius" not in vault_titles
+
+

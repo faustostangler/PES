@@ -12,7 +12,6 @@ import pytest
 from cresmo.application.pipeline.transcript_loader import (
     _derive_content_id,
     _extract_frontmatter,
-    _parse_frontmatter_dict,
     _resolve_metadata,
     ensure_transcript_saved,
     is_subpath,
@@ -21,8 +20,7 @@ from cresmo.application.pipeline.transcript_loader import (
 )
 from cresmo.domain.entities import SourceTranscript
 from cresmo.domain.exceptions import CresmoDomainError
-from cresmo.domain.taxonomy import classify_channel
-from cresmo.domain.value_objects import ChannelId, ChannelName, ContentId
+from cresmo.domain.value_objects import ContentId
 
 
 class TestIsSubpath:
@@ -99,7 +97,9 @@ class TestEnsureTranscriptSaved:
 
         mock_vault.save_transcript.assert_called_once_with(mock_transcript)
 
-    def test_file_inside_vault_raw_dir_skips_save_when_target_dir_none(self, tmp_path: Path) -> None:
+    def test_file_inside_vault_raw_dir_skips_save_when_target_dir_none(
+        self, tmp_path: Path
+    ) -> None:
         vault_raw_dir = tmp_path / "vault_raw"
         vault_raw_dir.mkdir()
         file_path = vault_raw_dir / "sample.md"
@@ -192,13 +192,19 @@ class TestFrontmatterParsing:
         assert parsed_body == "Actual content"
         assert meta == {}
 
-    def test_malformed_yaml_frontmatter_logs_debug_and_returns_empty(self, caplog: pytest.LogCaptureFixture) -> None:
+    def test_malformed_yaml_frontmatter_logs_debug_and_returns_empty(
+        self, caplog: pytest.LogCaptureFixture
+    ) -> None:
         body = "---\nkey: : [unbalanced yaml\n---\nActual content"
         with caplog.at_level(logging.DEBUG):
             parsed_body, meta = _extract_frontmatter(body, "malformed.md")
         assert parsed_body == "Actual content"
         assert meta == {}
-        record = next(r for r in caplog.records if r.levelno == logging.DEBUG and "malformed.md" in r.getMessage())
+        record = next(
+            r
+            for r in caplog.records
+            if r.levelno == logging.DEBUG and "malformed.md" in r.getMessage()
+        )
         assert record.msg == "[pipeline] Malformed YAML frontmatter in '%s', retaining defaults: %s"
         args = record.args
         assert isinstance(args, tuple)
@@ -348,13 +354,21 @@ class TestLoadTranscriptFromFile:
         assert transcript.content.id.value == "inferred_title_file"
         assert transcript.provenance.publication_date is None
 
-    def test_load_transcript_with_malformed_yaml_logs_with_filename(self, tmp_path: Path, caplog: pytest.LogCaptureFixture) -> None:
+    def test_load_transcript_with_malformed_yaml_logs_with_filename(
+        self, tmp_path: Path, caplog: pytest.LogCaptureFixture
+    ) -> None:
         file_path = tmp_path / "bad_yaml.md"
-        file_path.write_text("---\nfoo: : [bad\n---\nBody text with enough length.", encoding="utf-8")
+        file_path.write_text(
+            "---\nfoo: : [bad\n---\nBody text with enough length.", encoding="utf-8"
+        )
         with caplog.at_level(logging.DEBUG):
             transcript = load_transcript_from_file(file_path)
         assert transcript.content.body == "Body text with enough length."
-        record = next(r for r in caplog.records if r.levelno == logging.DEBUG and "bad_yaml.md" in r.getMessage())
+        record = next(
+            r
+            for r in caplog.records
+            if r.levelno == logging.DEBUG and "bad_yaml.md" in r.getMessage()
+        )
         args = record.args
         assert isinstance(args, tuple)
         assert args[0] == "bad_yaml.md"
@@ -376,7 +390,10 @@ class TestLoadTranscriptFromFile:
         system_file = tmp_path / "_index.md"
         system_file.write_text("index content")
 
-        with pytest.raises(CresmoDomainError, match="is an internal Cresmo artifact or system index and cannot be processed as a transcript."):
+        with pytest.raises(
+            CresmoDomainError,
+            match="is an internal Cresmo artifact or system index and cannot be processed as a transcript.",
+        ):
             load_transcript_from_file(system_file)
 
     def test_nonexistent_file_raises_error(self, tmp_path: Path) -> None:
@@ -460,4 +477,3 @@ def test_coordinator_run_for_text_file_passes_raw_dir(tmp_path: Path) -> None:
 
     # Since file_path is in incoming/ and not in custom_raw/, it must be persisted via vault_port mock
     mock_vault.save_transcript.assert_called_once()
-

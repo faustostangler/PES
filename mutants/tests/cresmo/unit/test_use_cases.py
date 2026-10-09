@@ -7,12 +7,12 @@ Pure, hermetic tests using Mock Ports (0 external I/O) with strict port verifica
 from __future__ import annotations
 
 import json
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime
 from unittest.mock import MagicMock
 
 import pytest
 
-from cresmo.application.ports import PromptProviderPort
+from cresmo.application.ports import NoOpPromptProviderPort, PromptProviderPort
 from cresmo.application.use_cases import (
     DiscoverAtomicInventoryUseCase,
     ExpandCompendiumUseCase,
@@ -28,6 +28,7 @@ from cresmo.domain.entities import (
     EnrichedCompendium,
     FluidTranscript,
     SourceTranscript,
+    UserIdentity,
 )
 from cresmo.domain.exceptions import (
     CompendiumStructureError,
@@ -42,6 +43,7 @@ from cresmo.domain.value_objects import (
     CrossContextRelations,
     NoteTitle,
     NoteType,
+    PromptKey,
 )
 from tests.doubles.mock_adapters import (
     InMemoryVaultAdapter,
@@ -138,11 +140,66 @@ class TestTransformFluidProse:
         assert "## Informações Complementares" not in fluid.content.body
         assert "Acidentalmente gerado" not in fluid.content.body
 
+    def test_transform_fluid_prose_init_validations(self) -> None:
+        llm = MockLLMAdapter()
+        vault = InMemoryVaultAdapter()
+
+        with pytest.raises(ValueError, match=r"^llm_synthesis_port must be provided$"):
+            TransformFluidProseUseCase(None)  # type: ignore[arg-type]
+
+        uc = TransformFluidProseUseCase(llm, vault_port=vault, temperature=0.65)
+        assert uc.llm_synthesis_port is llm
+        assert uc.vault_port is vault
+        assert uc.temperature == 0.65
+        assert isinstance(uc.prompt_provider, NoOpPromptProviderPort)
+
+    def test_transform_fluid_prose_with_temperature_user_and_prompt_provider(self) -> None:
+        cid = ContentId("vid_tfp123")
+        raw = SourceTranscript(
+            content_id=cid,
+            channel_name=ChannelName("Channel Alpha"),
+            body="Spoken oral transcript text.",
+            channel_id=ChannelId("UC_ALPHA"),
+        )
+        llm = MockLLMAdapter(responses=["# Clean Title\n\nPure narrative body."])
+        mock_pp = MagicMock(spec=PromptProviderPort)
+        mock_pp.get_prompt.return_value = MagicMock()
+
+        use_case = TransformFluidProseUseCase(
+            llm_synthesis_port=llm,
+            prompt_provider=mock_pp,
+            temperature=0.75,
+        )
+        user = UserIdentity("usr_prose_editor")
+        fluid = use_case.execute(raw, user=user)
+
+        assert fluid.content.id == cid
+        assert fluid.content.title == "Clean Title"
+        assert fluid.content.body == "Pure narrative body."
+
+        # Prompt provider contract
+        mock_pp.get_prompt.assert_called_once_with(
+            PromptKey.FLUID_PROSE,
+            channel_name=ChannelName("Channel Alpha"),
+            file_name="vid_tfp123.txt",
+            raw_text="Spoken oral transcript text.",
+        )
+
+        # LLM call contract
+        assert len(llm.call_history) == 1
+        call = llm.call_history[0]
+        assert call["prompt"] is mock_pp.get_prompt.return_value
+        assert call["temperature"] == 0.75
+        assert call["trace_id"] == "vid_tfp123_fluid_prose"
+        assert call["user_id"] == "usr_prose_editor"
+        assert call["session_id"] == "UC_ALPHA:vid_tfp123"
+
     def test_transform_fluid_prose_rejects_non_raw_transcript(self) -> None:
         llm_port = MockLLMAdapter()
         use_case = TransformFluidProseUseCase(llm_port)
         with pytest.raises(
-            DomainValidationError, match="TransformFluidProseUseCase expects SourceTranscript"
+            DomainValidationError,
+            match=r"^TransformFluidProseUseCase expects SourceTranscript, got: str$",
         ):
             use_case.execute("invalid string")  # type: ignore[arg-type]
 
@@ -154,12 +211,101 @@ class TestTransformFluidProse:
         )
         llm_port = MockLLMAdapter(responses=["   "])
         use_case = TransformFluidProseUseCase(llm_port)
-        with pytest.raises(CompendiumStructureError, match="Generated fluid prose body is empty"):
+        with pytest.raises(
+            CompendiumStructureError,
+            match=r"^Generated fluid prose body is empty for 'empty12345'\.$",
+        ):
             use_case.execute(raw)
 
 
 class TestFillGapsFluidProse:
     """SPEC-001 Scenario 2.1 & SPEC-011: Socratic Gap Filler on FluidTranscript."""
+
+    def test_fill_gaps_init_validation(self) -> None:
+        vault = InMemoryVaultAdapter()
+        llm = MockLLMAdapter()
+        with pytest.raises(ValueError, match=r"^llm_synthesis_port must be provided$"):
+            FillGapsUseCase(None, vault)  # type: ignore[arg-type]
+
+        with pytest.raises(ValueError, match=r"^vault_port must be provided$"):
+            FillGapsUseCase(llm, None)  # type: ignore[arg-type]
+
+    def test_fill_gaps_temperature_and_default_passes(self) -> None:
+        cid = ContentId("dQw4w9WgXcQ")
+        fluid = FluidTranscript(
+            content_id=cid,
+            channel_name=ChannelName("Example Channel"),
+            body="Raw spoken text.",
+        )
+        llm_response = "# Title\n\nBody.\n\n## Informações Complementares\n\nComp."
+        llm_port = MockLLMAdapter(responses=[llm_response, llm_response, llm_response])
+        vault_port = InMemoryVaultAdapter()
+
+        use_case = FillGapsUseCase(llm_port, vault_port, temperature=0.7)
+        # Calling without passes defaults to passes=3
+        compendium = use_case.execute(fluid)
+
+        assert compendium.pass_count == 3
+        assert len(llm_port.call_history) == 3
+        assert all(call["temperature"] == 0.7 for call in llm_port.call_history)
+        assert llm_port.call_history[1]["temperature"] == 0.7
+        assert llm_port.call_history[2]["temperature"] == 0.7
+
+    def test_fill_gaps_prompt_provider_contract_and_trace_id(self) -> None:
+        cid = ContentId("vid_abc123")
+        fluid = FluidTranscript(
+            content_id=cid,
+            channel_name=ChannelName("Example Channel"),
+            body="Body text to expand.",
+        )
+        llm_response = (
+            "# Title\n\nExpanded body.\n\n## Informações Complementares\n\nComplementary text."
+        )
+        llm_port = MockLLMAdapter(responses=[llm_response, llm_response, llm_response])
+        vault_port = InMemoryVaultAdapter()
+        mock_pp = MagicMock(spec=PromptProviderPort)
+        mock_pp.get_prompt.return_value = MagicMock()
+
+        use_case = FillGapsUseCase(llm_port, vault_port, prompt_provider=mock_pp)
+        compendium = use_case.execute(fluid, passes=3)
+
+        assert compendium.pass_count == 3
+        assert mock_pp.get_prompt.call_count == 3
+
+        # Pass 1: pass_num=1, current_text=None
+        call0 = mock_pp.get_prompt.call_args_list[0]
+        assert call0[0][0] == PromptKey.GAP_FILLER_PASS1
+        assert call0[1]["pass_num"] == 1
+        assert call0[1]["total_passes"] == 3
+        assert call0[1]["channel_name"] == ChannelName("Example Channel")
+        assert call0[1]["file_name"] == "vid_abc123.txt"
+        assert call0[1]["raw_text"] == "Body text to expand."
+        assert call0[1]["current_text"] is None
+
+        # Pass 2: pass_num=2, current_text is previous pass output
+        call1 = mock_pp.get_prompt.call_args_list[1]
+        assert call1[0][0] == PromptKey.GAP_FILLER_PASS_SUBSEQUENT
+        assert call1[1]["pass_num"] == 2
+        assert call1[1]["total_passes"] == 3
+        assert call1[1]["channel_name"] == ChannelName("Example Channel")
+        assert call1[1]["file_name"] == "vid_abc123.txt"
+        assert call1[1]["raw_text"] == "Body text to expand."
+        assert call1[1]["current_text"] == llm_response
+
+        # Pass 3: pass_num=3, current_text is previous pass output
+        call2 = mock_pp.get_prompt.call_args_list[2]
+        assert call2[0][0] == PromptKey.GAP_FILLER_PASS_SUBSEQUENT
+        assert call2[1]["pass_num"] == 3
+        assert call2[1]["total_passes"] == 3
+        assert call2[1]["channel_name"] == ChannelName("Example Channel")
+        assert call2[1]["file_name"] == "vid_abc123.txt"
+        assert call2[1]["raw_text"] == "Body text to expand."
+        assert call2[1]["current_text"] == llm_response
+
+        # Verify trace IDs for all 3 passes
+        assert llm_port.call_history[0]["trace_id"] == "vid_abc123_gap_fill_pass_1"
+        assert llm_port.call_history[1]["trace_id"] == "vid_abc123_gap_fill_pass_2"
+        assert llm_port.call_history[2]["trace_id"] == "vid_abc123_gap_fill_pass_3"
 
     def test_fill_gaps_rejects_raw_transcript(self) -> None:
         """ADR-028 Invariant: FillGapsUseCase strictly rejects SourceTranscript."""
@@ -170,7 +316,8 @@ class TestFillGapsFluidProse:
         )
         use_case = FillGapsUseCase(MockLLMAdapter(), InMemoryVaultAdapter())
         with pytest.raises(
-            DomainValidationError, match="FillGapsUseCase strictly requires FluidTranscript"
+            DomainValidationError,
+            match=r"^FillGapsUseCase strictly requires FluidTranscript, got: SourceTranscript$",
         ):
             use_case.execute(raw)  # type: ignore[arg-type]
 
@@ -210,6 +357,8 @@ class TestFillGapsFluidProse:
             compendium.complementary_info == "Dados empíricos e análises contextuais aprofundadas."
         )
         assert compendium.pass_count == 3
+        assert compendium.publication_date == fluid.provenance.publication_date
+        assert compendium.publication_date is not None
         assert vault_port.get_enriched_compendium(cid) == compendium
 
         # Verify strict behavioral port interactions
@@ -306,7 +455,10 @@ class TestFillGapsFluidProse:
         vault_port = InMemoryVaultAdapter()
 
         use_case = FillGapsUseCase(llm_port, vault_port)
-        with pytest.raises(CompendiumStructureError, match="must contain a non-empty"):
+        with pytest.raises(
+            CompendiumStructureError,
+            match=r"^EnrichedCompendium must contain a non-empty 'Informações Complementares' section\.$",
+        ):
             use_case.execute(fluid, passes=1)
 
     def test_fill_gaps_missing_complementary_section_raises_error(self) -> None:
@@ -385,6 +537,8 @@ class TestExpandLongitudinalSynchronic:
         assert updated.pass_count == 2
         assert updated.channel_id == "UC_Test"
         assert updated.source_url == "https://youtube.com/watch?v=dQw4w9WgXcQ"
+        assert updated.title == initial_compendium.title
+        assert updated.title.value == "Teoria das Elites"
         assert "longue durée" in updated.body
         # Leading H1 must be stripped from body
         assert not updated.body.startswith("#")
@@ -432,6 +586,7 @@ class TestExpandLongitudinalSynchronic:
         use_case = ExpandCompendiumUseCase(llm_port, vault_port)
         updated = use_case.execute(initial_compendium)
 
+        assert updated.title == initial_compendium.title
         assert updated.body == "Wide response without section header."
         assert updated.complementary_info == "Original complementary info."
 
@@ -450,11 +605,25 @@ class TestExpandLongitudinalSynchronic:
         vault_port = InMemoryVaultAdapter()
         use_case = ExpandCompendiumUseCase(llm_port, vault_port)
         with pytest.raises(
-            CompendiumStructureError, match="Missing complementary info in expansion"
+            CompendiumStructureError, match=r"^Missing complementary info in expansion\.$"
         ):
             use_case.execute(initial_compendium)
 
-    def test_expand_with_exact_complementary_tag(self) -> None:
+    def test_expand_init_validations(self) -> None:
+        vault_port = InMemoryVaultAdapter()
+        llm_port = MockLLMAdapter()
+
+        with pytest.raises(ValueError, match=r"^llm_synthesis_port must be provided$"):
+            ExpandCompendiumUseCase(None, vault_port)  # type: ignore[arg-type]
+
+        with pytest.raises(ValueError, match=r"^vault_port must be provided$"):
+            ExpandCompendiumUseCase(llm_port, None)  # type: ignore[arg-type]
+
+        uc = ExpandCompendiumUseCase(llm_port, vault_port)
+        assert isinstance(uc.prompt_provider, NoOpPromptProviderPort)
+        assert uc.temperature is None
+
+    def test_expand_temperature_and_user_and_trace_ids(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
         initial_compendium = EnrichedCompendium(
             content_id=cid,
@@ -468,11 +637,70 @@ class TestExpandLongitudinalSynchronic:
         llm_port = MockLLMAdapter(responses=[long_response, wide_response])
         vault_port = InMemoryVaultAdapter()
 
+        use_case = ExpandCompendiumUseCase(llm_port, vault_port, temperature=0.85)
+        user = UserIdentity("usr_special")
+        updated = use_case.execute(initial_compendium, user=user)
+
+        assert updated.pass_count == initial_compendium.pass_count + 1
+        assert len(llm_port.call_history) == 2
+        assert llm_port.call_history[0]["temperature"] == 0.85
+        assert llm_port.call_history[1]["temperature"] == 0.85
+        assert llm_port.call_history[0]["user_id"] == "usr_special"
+        assert llm_port.call_history[1]["user_id"] == "usr_special"
+        assert llm_port.call_history[0]["trace_id"] == "dQw4w9WgXcQ_longitudinal"
+        assert llm_port.call_history[1]["trace_id"] == "dQw4w9WgXcQ_synchronic"
+
+    def test_expand_with_regex_variations_notas_complementares(self) -> None:
+        cid = ContentId("dQw4w9WgXcQ")
+        initial_compendium = EnrichedCompendium(
+            content_id=cid,
+            channel_name=ChannelName("Example Channel"),
+            title=NoteTitle("Teoria das Elites"),
+            body="Continuous prose body.",
+            complementary_info="Initial complementary info.",
+        )
+        long_response = "Long response text."
+        wide_response = "# Leading Title\nExpanded body.\n\n### Notas Complementares\n\nNotas content."
+        llm_port = MockLLMAdapter(responses=[long_response, wide_response])
+        vault_port = InMemoryVaultAdapter()
+
         use_case = ExpandCompendiumUseCase(llm_port, vault_port)
         updated = use_case.execute(initial_compendium)
         assert updated.body == "Expanded body."
-        assert updated.complementary_info == "Exact tag notes."
-        assert updated.pass_count == initial_compendium.pass_count + 1
+        assert updated.complementary_info == "Notas content."
+
+    def test_expand_preserves_distinct_metadata_and_dates(self) -> None:
+        cid = ContentId("dQw4w9WgXcQ")
+        initial_compendium = EnrichedCompendium(
+            content_id=cid,
+            channel_name=ChannelName("Example Channel"),
+            title=NoteTitle("Teoria das Elites"),
+            body="Continuous prose body.",
+            complementary_info="Initial complementary info.",
+            channel_id=ChannelId("UC_XYZ"),
+            channel_category="Direita",
+            source_url="https://youtube.com/watch?v=dQw4w9WgXcQ",
+            publication_date=date(2021, 1, 1),
+            video_date="20220202",
+            video_description="A deep video description.",
+        )
+        long_response = "Long response text."
+        wide_response = "Expanded body.\n\n## Informações Adicionais\n\nAdicionais content."
+        llm_port = MockLLMAdapter(responses=[long_response, wide_response])
+        vault_port = InMemoryVaultAdapter()
+
+        use_case = ExpandCompendiumUseCase(llm_port, vault_port)
+        updated = use_case.execute(initial_compendium)
+        assert updated.content_id == cid
+        assert updated.channel_name == ChannelName("Example Channel")
+        assert updated.channel_id == "UC_XYZ"
+        assert updated.channel_category == "Direita"
+        assert updated.source_url == "https://youtube.com/watch?v=dQw4w9WgXcQ"
+        assert updated.publication_date == date(2021, 1, 1)
+        assert updated.video_date == "20220202"
+        assert updated.video_description == "A deep video description."
+        assert updated.complementary_info == "Adicionais content."
+
 
 
 class TestDiscoverAtomicInventory:

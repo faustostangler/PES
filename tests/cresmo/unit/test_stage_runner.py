@@ -1231,8 +1231,7 @@ class TestStageRunnerCandidateGenerationAndEvaluation:
         mock_stage_cfg.build_transform_prompt.assert_called_once_with(
             mock_stage_cfg.build_transform_prompt.call_args[0][0],
             mock_stage_cfg.build_transform_prompt.call_args[0][1],
-            channel=ctx.channel,
-            content=ctx.content,
+            context=ctx,
             critique="Improve flow",
         )
         mock_llm.transform.assert_called_once_with(
@@ -1287,8 +1286,7 @@ class TestStageRunnerCandidateGenerationAndEvaluation:
         mock_stage_cfg.build_transform_prompt.assert_called_once_with(
             mock_pp,
             mock_src,
-            channel=ctx.channel,
-            content=ctx.content,
+            context=ctx,
             critique=None,
         )
 
@@ -2341,8 +2339,7 @@ class TestStageRunnerStageExecutionAndFallback:
             mock_record_quar.assert_called_once()
             quar_kwargs = mock_record_quar.call_args[1]
             assert quar_kwargs["stage_name"] == "fluid_prose"
-            assert quar_kwargs["channel"] is ctx.channel
-            assert quar_kwargs["content"] is ctx.content
+            assert quar_kwargs["context"] is ctx
             assert quar_kwargs["provenance"] is prov
             assert quar_kwargs["evaluation"] is eval_fail
             assert quar_kwargs["effective_max_attempts"] == 1

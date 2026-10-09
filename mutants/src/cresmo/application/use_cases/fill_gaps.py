@@ -89,7 +89,6 @@ class FillGapsUseCase:
                 f"FillGapsUseCase strictly requires FluidTranscript, got: {type(fluid_transcript).__name__}"
             )
 
-        current_text = fluid_transcript.content.body
         file_name = f"{fluid_transcript.content.id.value}.txt"
 
         session_id = PipelineSessionId.create(
@@ -98,20 +97,34 @@ class FillGapsUseCase:
         ).value
         user_id = user.value if user is not None else UserIdentity.anonymous().value
 
-        for pass_index in range(passes):
-            prompt_key = (
-                PromptKey.GAP_FILLER_PASS1
-                if pass_index == 0
-                else PromptKey.GAP_FILLER_PASS_SUBSEQUENT
-            )
+        # Pass 1: Initial Socratic gap filling
+        chat_prompt = self.prompt_provider.get_prompt(
+            PromptKey.GAP_FILLER_PASS1,
+            pass_num=1,
+            total_passes=passes,
+            channel_name=fluid_transcript.channel.name,
+            file_name=file_name,
+            raw_text=fluid_transcript.content.body,
+            current_text=None,
+        )
+        current_text = self.llm_synthesis_port.transform(
+            prompt=chat_prompt,
+            temperature=self.temperature,
+            trace_id=f"{fluid_transcript.content.id.value}_gap_fill_pass_1",
+            session_id=session_id,
+            user_id=user_id,
+        )
+
+        # Subsequent passes: Progressive enrichment over current text
+        for pass_index in range(1, passes):
             chat_prompt = self.prompt_provider.get_prompt(
-                prompt_key,
+                PromptKey.GAP_FILLER_PASS_SUBSEQUENT,
                 pass_num=pass_index + 1,
                 total_passes=passes,
                 channel_name=fluid_transcript.channel.name,
                 file_name=file_name,
                 raw_text=fluid_transcript.content.body,
-                current_text=current_text if pass_index > 0 else None,
+                current_text=current_text,
             )
             current_text = self.llm_synthesis_port.transform(
                 prompt=chat_prompt,
@@ -134,11 +147,6 @@ class FillGapsUseCase:
             body = current_text[: complementary_match.start()].strip()
             complementary_information = current_text[complementary_match.end() :].strip()
             body = _TITLE_H1_PATTERN.sub("", body).strip()
-        elif _COMPLEMENTARY_TAG in current_text:
-            parts = current_text.split(_COMPLEMENTARY_TAG, 1)
-            body = parts[0].strip()
-            body = _TITLE_H1_PATTERN.sub("", body).strip()
-            complementary_information = parts[1].strip()
         else:
             raise CompendiumStructureError(f"Missing mandatory section '{_COMPLEMENTARY_TAG}'")
 
@@ -159,7 +167,6 @@ class FillGapsUseCase:
             channel_id=fluid_transcript.channel.id,
             channel_category=fluid_transcript.channel.category,
             source_url=fluid_transcript.provenance.url,
-            publication_date=pub_date,
             video_date=video_date,
             video_description=fluid_transcript.provenance.description,
         )

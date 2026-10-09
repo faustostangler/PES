@@ -175,6 +175,7 @@ class LangfusePromptProvider(PromptProviderPort):
 
             if hasattr(prompt, "compile"):
                 compiled_messages = prompt.compile(**kwargs)
+                # Converte a estrutura do SDK do Langfuse no Value Object do domínio ChatPrompt
                 return _extract_prompt_messages(compiled_messages, kwargs)
 
             raise ValueError(f"Prompt '{prompt_name}' does not implement compile()")

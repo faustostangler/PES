@@ -105,7 +105,9 @@ class TestRawIndexEntry:
         assert isinstance(entry.channel_name, ChannelName)
         assert entry.channel_name.value == "Political Theory"
         assert entry.key_concept == "Circulação de Elites"
-        assert entry.synthesis == "A circulação das elites postula que minorias organizadas governam."
+        assert (
+            entry.synthesis == "A circulação das elites postula que minorias organizadas governam."
+        )
         assert entry.channel_category == "politics_br"
         assert entry.summary == "Resumo"
         assert entry.excerpt == "Trecho"
@@ -157,7 +159,9 @@ class TestRawIndexEntry:
         with pytest.raises(DomainValidationError, match=r"^ChannelName cannot be empty"):
             ChannelName("")
 
-        with pytest.raises(DomainValidationError, match=r"^RawIndexEntry key_concept cannot be empty\.$"):
+        with pytest.raises(
+            DomainValidationError, match=r"^RawIndexEntry key_concept cannot be empty\.$"
+        ):
             RawIndexEntry(
                 video_id=ContentId("dQw4w9WgXcQ"),
                 url="https://url",
@@ -167,7 +171,9 @@ class TestRawIndexEntry:
                 synthesis="Synthesis",
             )
 
-        with pytest.raises(DomainValidationError, match=r"^RawIndexEntry synthesis cannot be empty\.$"):
+        with pytest.raises(
+            DomainValidationError, match=r"^RawIndexEntry synthesis cannot be empty\.$"
+        ):
             RawIndexEntry(
                 video_id=ContentId("dQw4w9WgXcQ"),
                 url="https://url",

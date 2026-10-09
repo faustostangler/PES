@@ -13,13 +13,12 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Any
 
+from cresmo.application.pipeline.context import PipelineExecutionContext
 from cresmo.application.ports.prompt import PromptProviderPort
 from cresmo.domain.value_objects import (
     CandidateText,
-    Channel,
     ChatMessage,
     ChatPrompt,
-    Content,
     MessageRole,
     PromptKey,
     StageEvaluationSpec,
@@ -55,20 +54,12 @@ class StageConfig[TSource, TOutput]:
         prompt_provider: PromptProviderPort,
         source: TSource,
         *,
-        channel: Channel | None = None,
-        content: Content | None = None,
-        channel_name: str = "",
-        content_id: str = "",
-        channel_id: str = "",
-        content_title: str = "",
+        context: PipelineExecutionContext,
         critique: str | None = None,
         **extra_context: Any,
     ) -> ChatPrompt:
         """Resolve ChatPrompt, injecting closed-loop reflection critique on retry."""
-        effective_channel_name = channel.name if channel else channel_name
-        effective_channel_id = (channel.id.value if channel.id else "") if channel else channel_id
-        effective_content_id = content.id.value if content else content_id
-        effective_content_title = content.title if content else content_title
+        effective_channel_id = context.channel.id.value if context.channel.id else ""
         raw_text = (
             getattr(getattr(source, "content", None), "body", None)
             or getattr(source, "body", None)
@@ -77,11 +68,11 @@ class StageConfig[TSource, TOutput]:
         )
         base_prompt: ChatPrompt = prompt_provider.get_prompt(
             self.transform_prompt_key,
-            channel_name=effective_channel_name,
+            channel_name=context.channel.name,
             channel_id=effective_channel_id,
-            content_id=effective_content_id,
-            content_title=effective_content_title,
-            file_name=f"{effective_content_id}.txt",
+            content_id=context.content.id.value,
+            content_title=context.content.title,
+            file_name=f"{context.content.id.value}.txt",
             raw_text=raw_text,
             **extra_context,
         )

@@ -42,7 +42,9 @@ class TestPipelineExecutionContext:
         channel = Channel(name=ChannelName("TechChannel"))
         content = Content(id=ContentId("c1234567"), title="Episode 1")
 
-        with pytest.raises(TypeError, match="session_id must be PipelineSessionId, got"):
+        with pytest.raises(
+            TypeError, match=r"^session_id must be PipelineSessionId, got <class 'str'>$"
+        ):
             PipelineExecutionContext(
                 session_id="not_a_session_id",  # type: ignore[arg-type]
                 user_identity=user_identity,
@@ -55,7 +57,9 @@ class TestPipelineExecutionContext:
         channel = Channel(name=ChannelName("TechChannel"))
         content = Content(id=ContentId("c1234567"), title="Episode 1")
 
-        with pytest.raises(TypeError, match="user_identity must be UserIdentity, got"):
+        with pytest.raises(
+            TypeError, match=r"^user_identity must be UserIdentity, got <class 'str'>$"
+        ):
             PipelineExecutionContext(
                 session_id=session_id,
                 user_identity="not_a_user_identity",  # type: ignore[arg-type]
@@ -68,7 +72,7 @@ class TestPipelineExecutionContext:
         user_identity = UserIdentity.worker()
         content = Content(id=ContentId("c1234567"), title="Episode 1")
 
-        with pytest.raises(TypeError, match="channel must be Channel, got"):
+        with pytest.raises(TypeError, match=r"^channel must be Channel, got <class 'str'>$"):
             PipelineExecutionContext(
                 session_id=session_id,
                 user_identity=user_identity,
@@ -81,7 +85,7 @@ class TestPipelineExecutionContext:
         user_identity = UserIdentity.worker()
         channel = Channel(name=ChannelName("TechChannel"))
 
-        with pytest.raises(TypeError, match="content must be Content, got"):
+        with pytest.raises(TypeError, match=r"^content must be Content, got <class 'str'>$"):
             PipelineExecutionContext(
                 session_id=session_id,
                 user_identity=user_identity,

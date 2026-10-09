@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 from datetime import UTC, datetime
+from typing import TYPE_CHECKING
 
 from opentelemetry import trace
 
@@ -21,12 +22,16 @@ from cresmo.domain.value_objects import (
     PipelineStatus,
 )
 
+if TYPE_CHECKING:
+    from cresmo.application.pipeline.context import PipelineExecutionContext
+
 logger = logging.getLogger(__name__)
 
 
 def record_stage_quarantine(
     *,
     stage_name: str,
+    context: PipelineExecutionContext | None = None,
     channel: Channel | None = None,
     content: Content | None = None,
     evaluation: JudgeEvaluation,
@@ -42,6 +47,10 @@ def record_stage_quarantine(
     content_title: str = "",
 ) -> None:
     """Execute the 4-step fail-fast quarantine protocol per ADR-031."""
+    if context is not None:
+        channel = context.channel
+        content = context.content
+
     resolved_cid = content.id if content is not None else content_id
     if resolved_cid is None:
         raise ValueError("content or content_id must be provided to record_stage_quarantine")

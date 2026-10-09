@@ -99,7 +99,15 @@ def _resolve_metadata(
     video_description = str(meta.get("video_description") or "")
     publication_date_raw = meta.get("publication_date") or meta.get("published_at")
 
-    return title, channel_name, channel_id_obj, category, source_url, video_description, publication_date_raw
+    return (
+        title,
+        channel_name,
+        channel_id_obj,
+        category,
+        source_url,
+        video_description,
+        publication_date_raw,
+    )
 
 
 def load_transcript_from_file(file_path: Path) -> SourceTranscript:

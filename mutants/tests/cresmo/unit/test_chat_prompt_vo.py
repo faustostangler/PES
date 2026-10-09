@@ -117,7 +117,9 @@ class TestChatPromptValueObject:
         assert len(prompt.messages) == 3
         assert prompt.get_last_user_content() == "Raw 2"
 
-    def test_with_turn_returns_new_immutable_instance_and_preserves_system_instruction(self) -> None:
+    def test_with_turn_returns_new_immutable_instance_and_preserves_system_instruction(
+        self,
+    ) -> None:
         base = ChatPrompt.single_turn(
             user_prompt="Initial prompt",
             system_instruction="System context instructions",
@@ -151,7 +153,9 @@ class TestChatPromptValueObject:
         assert prompt.get_last_user_content() == ""
 
     @pytest.mark.parametrize("invalid_sys", [None, "", "   ", "\t"])
-    def test_empty_messages_and_empty_system_raises_validation_error(self, invalid_sys: str | None) -> None:
+    def test_empty_messages_and_empty_system_raises_validation_error(
+        self, invalid_sys: str | None
+    ) -> None:
         with pytest.raises(
             DomainValidationError,
             match=r"^ChatPrompt must have at least one message or system_instruction\.$",
@@ -175,9 +179,7 @@ class TestChatPromptValueObject:
 
     def test_to_dict_list_without_system_instruction(self) -> None:
         prompt = ChatPrompt(
-            messages=(
-                ChatMessage(role=MessageRole.USER, content="Hello"),
-            ),
+            messages=(ChatMessage(role=MessageRole.USER, content="Hello"),),
             system_instruction=None,
         )
         dict_list = prompt.to_dict_list()

@@ -136,9 +136,14 @@ class PipelineStageRunner:
         llm_port = self._resolve_llm_transformation_port(llm_transformation_port)
         stage_name = stage_config.stage_name
 
+        eval_spec_attempts = (
+            stage_config.eval_spec.max_attempts
+            if stage_config.eval_spec is not None
+            else stage_config.max_attempts
+        )
         effective_max_attempts = max(
             stage_config.max_attempts,
-            stage_config.eval_spec.max_attempts if stage_config.eval_spec else 1,
+            eval_spec_attempts,
             self.judge_max_attempts,
         )
 
@@ -149,8 +154,7 @@ class PipelineStageRunner:
         # Trace level 2 span (stage): cresmo.stage.fluid_prose, cresmo.stage.transcript_indexing, etc.
         with self._measure_stage(
             stage_name=stage_name,
-            channel=context.channel,
-            content=context.content,
+            context=context,
         ):
             # ADR-037: Record stage input payload summary
             source_content = getattr(source, "content", None)
@@ -222,8 +226,7 @@ class PipelineStageRunner:
             ):
                 record_stage_quarantine(
                     stage_name=stage_name,
-                    channel=context.channel,
-                    content=context.content,
+                    context=context,
                     provenance=getattr(source, "provenance", None),
                     evaluation=evaluation,
                     critique=critique or self._synthesize_critique(evaluation, stage_name),
@@ -235,7 +238,7 @@ class PipelineStageRunner:
             if candidate is None:
                 raise DomainValidationError(f"Stage '{stage_name}' produced no candidate text.")
 
-            output_obj = stage_config.post_process(candidate, source)
+            output_obj: _TOutput = stage_config.post_process(candidate, source)
             output_content = getattr(output_obj, "content", None)
             output_text = (
                 output_content.body
@@ -255,7 +258,7 @@ class PipelineStageRunner:
                     ),
                     "output_characters": len(output_text) if isinstance(output_text, str) else 0,
                     "output_words": len(output_text.split()) if isinstance(output_text, str) else 0,
-                    "attempts": attempt if "attempt" in locals() else 1,
+                    "attempts": attempt,
                 }
             )
             return output_obj
@@ -275,13 +278,11 @@ class PipelineStageRunner:
         chat_prompt = stage_config.build_transform_prompt(
             prompt_provider,
             source,
-            channel=context.channel,
-            content=context.content,
+            context=context,
             critique=critique,
         )
         active_trace_id = self._get_active_trace_id(
-            channel=context.channel,
-            content=context.content,
+            context=context,
         )
 
         response_text = llm_port.transform(
@@ -318,8 +319,7 @@ class PipelineStageRunner:
             return None
 
         active_trace_id = self._get_active_trace_id(
-            channel=context.channel,
-            content=context.content,
+            context=context,
         )
 
         with self.telemetry_port.start_stage_evaluation_span(
@@ -382,9 +382,9 @@ class PipelineStageRunner:
                         float(c.score) if isinstance(c.score, (int, float)) else str(c.score)
                     )
                     scores_dict[crit_key] = crit_score
-                    if getattr(c, "reasoning", ""):
+                    if hasattr(c, "reasoning") and c.reasoning:
                         reasons_dict[crit_key] = str(c.reasoning)
-                    if getattr(c, "improvement_suggestion", ""):
+                    if hasattr(c, "improvement_suggestion") and c.improvement_suggestion:
                         suggestions_dict[crit_key] = str(c.improvement_suggestion)
 
                 eval_output: dict[str, Any] = {
@@ -490,7 +490,7 @@ class PipelineStageRunner:
         if self.judge_blocking:
             raise DomainValidationError(
                 f"{stage_name} quality evaluation failed threshold after {effective_max_attempts} attempts: "
-                f"{(evaluation.overall_score if evaluation else 0.0):.2f}"
+                f"{(evaluation.overall_score if evaluation is not None else 0.0):.2f}"
             )
 
         logger.warning(
@@ -593,16 +593,21 @@ class PipelineStageRunner:
         self,
         *,
         stage_name: str,
-        channel: Channel,
-        content: Content,
+        context: PipelineExecutionContext | None = None,
+        channel: Channel | None = None,
+        content: Content | None = None,
     ) -> Generator[None]:
         start_time = time.perf_counter()
         status = "success"
+        effective_channel = context.channel if context is not None else channel
+        effective_content = context.content if context is not None else content
+        if effective_channel is None or effective_content is None:
+            raise ValueError("_measure_stage requires context or (channel and content)")
         stage_attributes = {
-            "channel.id": channel.id.value if channel.id else "",
-            "content.id": content.id.value,
-            "channel.name": channel.name,
-            "content.title": content.title,
+            "channel.id": effective_channel.id.value if effective_channel.id else "",
+            "content.id": effective_content.id.value,
+            "channel.name": effective_channel.name,
+            "content.title": effective_content.title,
         }
         # Trace level 2 (stage): cresmo.stage.fluid_prose, cresmo.stage.transcript_indexing, etc.
         with self.telemetry_port.start_stage_span(stage_name, attributes=stage_attributes):
@@ -618,16 +623,16 @@ class PipelineStageRunner:
                 self._record_error_metric(
                     exc=exc,
                     stage_name=stage_name,
-                    channel=channel,
-                    content=content,
+                    channel=effective_channel,
+                    content=effective_content,
                 )
                 raise
             finally:
                 self._record_duration_metric(
                     elapsed=time.perf_counter() - start_time,
                     stage_name=stage_name,
-                    channel=channel,
-                    content=content,
+                    channel=effective_channel,
+                    content=effective_content,
                     status=status,
                 )
 
@@ -671,6 +676,7 @@ class PipelineStageRunner:
         channel: Channel | ChannelId | ChannelName | str | None = None,
         content: Content | ContentId | str | None = None,
         *,
+        context: PipelineExecutionContext | None = None,
         channel_id: ChannelId | str | None = None,
         channel_name: ChannelName | str | None = None,
         content_id: ContentId | str | None = None,
@@ -679,6 +685,9 @@ class PipelineStageRunner:
         ctx = span.get_span_context() if span else None
         if ctx and ctx.trace_id:
             return format(ctx.trace_id, "032x")
+        if context is not None:
+            channel = context.channel
+            content = context.content
         resolved_cid = (
             content.id.value
             if isinstance(content, Content)

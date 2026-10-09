@@ -64,6 +64,33 @@ from cresmo.domain.value_objects import (
 logger = logging.getLogger(__name__)
 
 
+def _extract_source_text(raw: Any) -> str:
+    """Extract raw transcript text from SourceTranscript triad or duck-typed raw sources."""
+    content = getattr(raw, "content", None)
+    if content is not None:
+        body = getattr(content, "body", None)
+        if body:
+            return body
+    body = getattr(raw, "body", None)
+    if body:
+        return body
+    text = getattr(raw, "text", None)
+    if text:
+        return text
+    return ""
+
+
+def _extract_fluid_text(fluid: Any) -> str:
+    """Extract synthesized fluid prose text from FluidTranscript or duck-typed candidate."""
+    body = getattr(fluid, "body", None)
+    if body:
+        return body
+    text = getattr(fluid, "text", None)
+    if text:
+        return text
+    return ""
+
+
 class CresmoPipeline:
     """Hexagonal Modular Monolith orchestrator for the Cresmo synthesis engine.
 
@@ -100,10 +127,12 @@ class CresmoPipeline:
         if stage_runner is not None:
             self.stage_runner = stage_runner
             self.telemetry_port: TelemetryPort = (
-                telemetry_port or stage_runner.telemetry_port or NoOpTelemetryPort()
+                telemetry_port
+                or getattr(stage_runner, "telemetry_port", None)
+                or NoOpTelemetryPort()
             )
             self.metrics_port: MetricsPort = (
-                metrics_port or stage_runner.metrics_port or NoOpMetricsPort()
+                metrics_port or getattr(stage_runner, "metrics_port", None) or NoOpMetricsPort()
             )
         else:
             if llm_synthesis_port is None:
@@ -127,7 +156,9 @@ class CresmoPipeline:
             )
 
         self.llm_indexing_port = (
-            llm_indexing_port or self.stage_runner.llm_transformation_port or llm_synthesis_port
+            llm_indexing_port
+            or getattr(self.stage_runner, "llm_transformation_port", None)
+            or llm_synthesis_port
         )
 
         self.ingest_raw_transcript = IngestRawTranscriptUseCase(
@@ -159,10 +190,8 @@ class CresmoPipeline:
         """Asynchronously trigger warmup across pipeline LLM ports."""
         if self.llm_indexing_port is not None:
             self.llm_indexing_port.warmup(timeout_seconds=timeout_seconds)
-        if (
-            self.stage_runner.llm_transformation_port is not None
-            and self.stage_runner.llm_transformation_port is not self.llm_indexing_port
-        ):
+        runner_llm = getattr(self.stage_runner, "llm_transformation_port", None)
+        if runner_llm is not None and runner_llm is not self.llm_indexing_port:
             self.stage_runner.warmup(timeout_seconds=timeout_seconds)
 
     def execute(
@@ -183,11 +212,7 @@ class CresmoPipeline:
         )
         user_identity = user or UserIdentity.anonymous()
 
-        raw_text = (
-            getattr(getattr(raw, "content", None), "body", None)
-            or getattr(raw, "body", "")
-            or getattr(raw, "text", "")
-        )
+        raw_text = _extract_source_text(raw)
         root_telemetry_metadata: dict[str, Any] = {
             "source": "transcript",
             "channel_id": str(channel.id) if channel.id else "",
@@ -196,6 +221,7 @@ class CresmoPipeline:
             "content_title": content.title,
             "raw_characters": len(raw_text),
             "raw_words": len(raw_text.split()),
+            "gap_filler_passes": gap_filler_passes,
         }
         if batch_id:
             resolved_batch_id = (
@@ -266,8 +292,7 @@ class CresmoPipeline:
             # Estágio 8: Reconcile MOCs
             # mocs = self.stage_runner.execute_stage("reconcile_mocs", source=notes, context=execution_context)
 
-            fluid_text = getattr(fluid, "body", "") or getattr(fluid, "text", "")
-            raw_text = getattr(raw, "body", "") or getattr(raw, "text", "") or str(raw)
+            fluid_text = _extract_fluid_text(fluid)
             raw_word_count = len(raw_text.split())
             synthesized_word_count = len(fluid_text.split())
             expansion_ratio = round(synthesized_word_count / max(raw_word_count, 1), 3)
@@ -324,8 +349,6 @@ class CresmoPipeline:
                 source_transcript=raw,
                 index_entry=entry,
                 compendium=self.vault_port.get_enriched_compendium(content_id),
-                synthesized_notes=(),
-                reconciled_mocs=(),
                 already_processed=True,
             )
         return None

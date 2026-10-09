@@ -27,8 +27,17 @@ from cresmo.domain.value_objects import (
     PromptKey,
 )
 from cresmo.infrastructure.adapters.prompts import JsonPromptProvider
+from cresmo.infrastructure.config import (
+    DEFAULT_JUDGE_GEMINI_MODEL,
+    DEFAULT_JUDGE_PASS_THRESHOLD,
+    DEFAULT_JUDGE_TEMPERATURE,
+)
 
 logger = logging.getLogger(__name__)
+
+DEFAULT_PASS_THRESHOLD: float = DEFAULT_JUDGE_PASS_THRESHOLD
+DEFAULT_MODEL: str = DEFAULT_JUDGE_GEMINI_MODEL
+DEFAULT_TEMPERATURE: float = DEFAULT_JUDGE_TEMPERATURE
 
 
 def _clean_json_markdown(text: str) -> str:
@@ -47,7 +56,9 @@ class GeminiJudgeAdapter(LlmJudgePort):
         self,
         client: Any | None = None,
         api_key: str | None = None,
-        model: str = "gemini-3.5-flash-lite",
+        model: str = DEFAULT_MODEL,
+        pass_threshold: float = DEFAULT_PASS_THRESHOLD,
+        temperature: float = DEFAULT_TEMPERATURE,
         prompt_provider: PromptProviderPort | None = None,
     ) -> None:
         """Initialize the Gemini judge adapter.
@@ -56,11 +67,15 @@ class GeminiJudgeAdapter(LlmJudgePort):
             client: Pre-configured Google GenAI client instance.
             api_key: Google Gemini API key string.
             model: Gemini model name for evaluation.
+            pass_threshold: Minimum score threshold for passing criteria and overall evaluation.
+            temperature: Sampling temperature for deterministic generation.
             prompt_provider: Optional PromptProviderPort for externalized prompt templates.
         """
         self._model = model
         self._api_key = api_key
         self._client = client
+        self._pass_threshold = pass_threshold
+        self._temperature = temperature
         self._prompt_provider = prompt_provider or JsonPromptProvider()
 
     @property

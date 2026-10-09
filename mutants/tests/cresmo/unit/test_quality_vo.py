@@ -6,7 +6,6 @@ src/cresmo/domain/value_objects/quality.py
 
 from __future__ import annotations
 
-from typing import Any
 import pytest
 
 from cresmo.domain.exceptions import DomainValidationError
@@ -218,7 +217,9 @@ class TestCriterionScore:
         assert cs.confidence == boundary_conf
 
     @pytest.mark.parametrize("invalid_conf", [-0.01, 1.01])
-    def test_criterion_confidence_out_of_bounds_raises_value_error(self, invalid_conf: float) -> None:
+    def test_criterion_confidence_out_of_bounds_raises_value_error(
+        self, invalid_conf: float
+    ) -> None:
         with pytest.raises(
             ValueError,
             match=rf"^Confidence must be between 0\.0 and 1\.0 if provided, got: {invalid_conf}$",

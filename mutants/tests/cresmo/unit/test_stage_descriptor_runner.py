@@ -453,7 +453,7 @@ class TestStageConfigPromptBuilding:
         cand = CandidateText(stage_name="default_stage", text="unprocessed text")
         assert cfg.post_process(cand, "dummy_source") is cand
 
-    def test_build_transform_prompt_default_kwargs(self) -> None:
+    def test_build_transform_prompt_with_context(self) -> None:
         mock_provider = MagicMock(spec=PromptProviderPort)
         base_prompt = ChatPrompt(
             messages=(ChatMessage(role=MessageRole.USER, content="User instruction"),),
@@ -465,51 +465,27 @@ class TestStageConfigPromptBuilding:
             stage_name="test_stage",
             transform_prompt_key=PromptKey.FLUID_PROSE,
         )
+        ctx = PipelineExecutionContext(
+            session_id=PipelineSessionId("sess:1"),
+            user_identity=UserIdentity.worker(),
+            channel=Channel(name="MyChan", id=ChannelId("UC_chan")),
+            content=Content(id=ContentId("vid_c123"), title="MyTitle"),
+        )
         result = cfg.build_transform_prompt(
             mock_provider,
             source="raw_source_text",
+            context=ctx,
         )
         mock_provider.get_prompt.assert_called_once_with(
             PromptKey.FLUID_PROSE,
-            channel_name="",
-            channel_id="",
-            content_id="",
-            content_title="",
-            file_name=".txt",
+            channel_name="MyChan",
+            channel_id="UC_chan",
+            content_id="vid_c123",
+            content_title="MyTitle",
+            file_name="vid_c123.txt",
             raw_text="raw_source_text",
         )
         assert result is base_prompt
-
-    def test_build_transform_prompt_with_explicit_kwargs_and_extra_context(self) -> None:
-        mock_provider = MagicMock(spec=PromptProviderPort)
-        base_prompt = ChatPrompt(
-            messages=(ChatMessage(role=MessageRole.USER, content="Instruction"),),
-        )
-        mock_provider.get_prompt.return_value = base_prompt
-
-        cfg = StageConfig[str, str](
-            stage_name="test_stage",
-            transform_prompt_key=PromptKey.FLUID_PROSE,
-        )
-        cfg.build_transform_prompt(
-            mock_provider,
-            source="custom_text",
-            channel_name="CustomChan",
-            channel_id="ID123",
-            content_id="VID456",
-            content_title="CustomTitle",
-            extra_param="extra_val",
-        )
-        mock_provider.get_prompt.assert_called_once_with(
-            PromptKey.FLUID_PROSE,
-            channel_name="CustomChan",
-            channel_id="ID123",
-            content_id="VID456",
-            content_title="CustomTitle",
-            file_name="VID456.txt",
-            raw_text="custom_text",
-            extra_param="extra_val",
-        )
 
     def test_build_transform_prompt_with_channel_without_id(self) -> None:
         mock_provider = MagicMock(spec=PromptProviderPort)
@@ -521,15 +497,53 @@ class TestStageConfigPromptBuilding:
             stage_name="test_stage",
             transform_prompt_key=PromptKey.FLUID_PROSE,
         )
-        ch = Channel(name="NamedChannel", id=None)
+        ctx = PipelineExecutionContext(
+            session_id=PipelineSessionId("sess:2"),
+            user_identity=UserIdentity.worker(),
+            channel=Channel(name="NamedChannel", id=None),
+            content=Content(id=ContentId("vid_c123"), title="MyTitle"),
+        )
         cfg.build_transform_prompt(
             mock_provider,
             source="raw",
-            channel=ch,
+            context=ctx,
         )
         called_kwargs = mock_provider.get_prompt.call_args[1]
         assert called_kwargs["channel_name"] == "NamedChannel"
         assert called_kwargs["channel_id"] == ""
+
+    def test_build_transform_prompt_with_extra_context(self) -> None:
+        mock_provider = MagicMock(spec=PromptProviderPort)
+        mock_provider.get_prompt.return_value = ChatPrompt(
+            messages=(ChatMessage(role=MessageRole.USER, content="Instruction"),),
+        )
+
+        cfg = StageConfig[str, str](
+            stage_name="test_stage",
+            transform_prompt_key=PromptKey.FLUID_PROSE,
+        )
+        ctx = PipelineExecutionContext(
+            session_id=PipelineSessionId("sess:3"),
+            user_identity=UserIdentity.worker(),
+            channel=Channel(name="CustomChan", id=ChannelId("UC_chan")),
+            content=Content(id=ContentId("vid_c456"), title="CustomTitle"),
+        )
+        cfg.build_transform_prompt(
+            mock_provider,
+            source="custom_text",
+            context=ctx,
+            extra_param="extra_val",
+        )
+        mock_provider.get_prompt.assert_called_once_with(
+            PromptKey.FLUID_PROSE,
+            channel_name="CustomChan",
+            channel_id="UC_chan",
+            content_id="vid_c456",
+            content_title="CustomTitle",
+            file_name="vid_c456.txt",
+            raw_text="custom_text",
+            extra_param="extra_val",
+        )
 
     def test_build_transform_prompt_source_extraction_variants(self) -> None:
         mock_provider = MagicMock(spec=PromptProviderPort)
@@ -541,26 +555,32 @@ class TestStageConfigPromptBuilding:
             stage_name="test_stage",
             transform_prompt_key=PromptKey.FLUID_PROSE,
         )
+        ctx = PipelineExecutionContext(
+            session_id=PipelineSessionId("sess:4"),
+            user_identity=UserIdentity.worker(),
+            channel=Channel(name="Chan"),
+            content=Content(id=ContentId("vid_1001")),
+        )
 
         # 1. Source with content.body
         class SourceContentBody:
-            content = Content(id="c1", body="extracted from content.body")
+            content = Content(id="vid_1001", body="extracted from content.body")
 
-        cfg.build_transform_prompt(mock_provider, source=SourceContentBody())
+        cfg.build_transform_prompt(mock_provider, source=SourceContentBody(), context=ctx)
         assert mock_provider.get_prompt.call_args[1]["raw_text"] == "extracted from content.body"
 
         # 2. Source with body attribute
         class SourceBody:
             body = "extracted from body"
 
-        cfg.build_transform_prompt(mock_provider, source=SourceBody())
+        cfg.build_transform_prompt(mock_provider, source=SourceBody(), context=ctx)
         assert mock_provider.get_prompt.call_args[1]["raw_text"] == "extracted from body"
 
         # 3. Source with text attribute
         class SourceText:
             text = "extracted from text"
 
-        cfg.build_transform_prompt(mock_provider, source=SourceText())
+        cfg.build_transform_prompt(mock_provider, source=SourceText(), context=ctx)
         assert mock_provider.get_prompt.call_args[1]["raw_text"] == "extracted from text"
 
         # 4. Fallback to str(source)
@@ -568,7 +588,7 @@ class TestStageConfigPromptBuilding:
             def __str__(self) -> str:
                 return "custom_str_repr"
 
-        cfg.build_transform_prompt(mock_provider, source=CustomObj())
+        cfg.build_transform_prompt(mock_provider, source=CustomObj(), context=ctx)
         assert mock_provider.get_prompt.call_args[1]["raw_text"] == "custom_str_repr"
 
     def test_build_transform_prompt_with_critique_multi_turn(self) -> None:
@@ -587,9 +607,16 @@ class TestStageConfigPromptBuilding:
             stage_name="test_stage",
             transform_prompt_key=PromptKey.FLUID_PROSE,
         )
+        ctx = PipelineExecutionContext(
+            session_id=PipelineSessionId("sess:5"),
+            user_identity=UserIdentity.worker(),
+            channel=Channel(name="Chan"),
+            content=Content(id=ContentId("vid_1001")),
+        )
         result = cfg.build_transform_prompt(
             mock_provider,
             source="raw",
+            context=ctx,
             critique="Colloquialism detected: 'tipo assim'.",
         )
 
@@ -622,9 +649,16 @@ class TestStageConfigPromptBuilding:
             stage_name="test_stage",
             transform_prompt_key=PromptKey.FLUID_PROSE,
         )
+        ctx = PipelineExecutionContext(
+            session_id=PipelineSessionId("sess:6"),
+            user_identity=UserIdentity.worker(),
+            channel=Channel(name="Chan"),
+            content=Content(id=ContentId("vid_1001")),
+        )
         result = cfg.build_transform_prompt(
             mock_provider,
             source="raw",
+            context=ctx,
             critique="Missing citations.",
         )
 

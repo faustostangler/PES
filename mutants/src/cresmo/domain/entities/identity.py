@@ -155,7 +155,6 @@ class UserIdentity:
             subject=subject.strip(),
         )
 
-
     @classmethod
     def worker(cls, name: str = "worker") -> UserIdentity:
         """Create a scheduled or background worker user identity per ADR-027."""
@@ -178,7 +177,6 @@ class UserIdentity:
             provider="channel",
             subject=clean_channel,
         )
-
 
 
 @dataclass(frozen=True)
