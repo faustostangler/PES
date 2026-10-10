@@ -146,10 +146,10 @@ MODULE_TEST_MAP: dict[str, list[str]] = {
         "tests/cresmo/unit/test_index_raw_transcripts_use_case.py",
     ],
     "src/cresmo/application/use_cases/ingest_raw_transcript.py": [
-        "tests/cresmo/unit/test_use_cases.py",
+        "tests/cresmo/unit/test_ingest_raw_transcript_use_case.py",
     ],
     "src/cresmo/application/use_cases/reconcile_mocs.py": [
-        "tests/cresmo/unit/test_use_cases.py",
+        "tests/cresmo/unit/test_reconcile_mocs_use_case.py",
     ],
     "src/cresmo/application/use_cases/sync_channel.py": [
         "tests/cresmo/unit/test_sync_channel_use_case.py",

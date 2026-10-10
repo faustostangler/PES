@@ -113,6 +113,28 @@ class TestSyncChannelUseCase:
         )
         assert isinstance(mock_pipeline.run_for_video.call_args.kwargs["batch_id"], BatchId)
 
+        calls = mock_ledger_port.save_entry.call_args_list
+        assert len(calls) == 2
+        running_entry = calls[0][0][0]
+        assert running_entry.content_id == recent_item.content_id
+        assert running_entry.media_url == recent_item.media_url
+        assert running_entry.title == recent_item.title
+        assert running_entry.channel_name == recent_item.channel_name
+        assert running_entry.status == PipelineStatus.RUNNING
+        assert running_entry.started_at is not None
+        assert running_entry.started_at.tzinfo == UTC
+
+        completed_entry = calls[1][0][0]
+        assert completed_entry.content_id == recent_item.content_id
+        assert completed_entry.media_url == recent_item.media_url
+        assert completed_entry.title == recent_item.title
+        assert completed_entry.channel_name == recent_item.channel_name
+        assert completed_entry.status == PipelineStatus.COMPLETED
+        assert completed_entry.notes_count == 1
+        assert completed_entry.started_at == running_entry.started_at
+        assert completed_entry.completed_at is not None
+        assert completed_entry.completed_at.tzinfo == UTC
+
     def test_sync_channel_skips_already_processed_items(
         self,
         mock_ingestion_port: MagicMock,
@@ -326,16 +348,27 @@ class TestSyncChannelUseCase:
         mock_ledger_port: MagicMock,
         mock_pipeline: MagicMock,
     ) -> None:
-        now = datetime.now(UTC)
+        from unittest.mock import patch
+
+        frozen_now = datetime(2025, 1, 15, 12, 0, 0, tzinfo=UTC)
         # Naive datetime safely within lookback (3 days ago with 5 days lookback)
-        recent_naive = (now - timedelta(days=3)).replace(tzinfo=None)
-        old_naive = (now - timedelta(days=7)).replace(tzinfo=None)
+        recent_naive = (frozen_now - timedelta(days=3)).replace(tzinfo=None)
+        old_naive = (frozen_now - timedelta(days=7)).replace(tzinfo=None)
+        # Exact cutoff boundary item (must be included with >=, excluded with >)
+        exact_cutoff = frozen_now - timedelta(days=5)
 
         item_recent = DiscoveredMediaItem(
             content_id=ContentId("recentNaiveVid"),
             title="Recent Naive Video",
             published_at=recent_naive,
             media_url="https://youtube.com/watch?v=recentNaiveVid",
+            channel_name=ChannelName("TestChannel"),
+        )
+        item_boundary = DiscoveredMediaItem(
+            content_id=ContentId("exactCutoffVid"),
+            title="Exact Cutoff Video",
+            published_at=exact_cutoff,
+            media_url="https://youtube.com/watch?v=exactCutoffVid",
             channel_name=ChannelName("TestChannel"),
         )
         item_old = DiscoveredMediaItem(
@@ -345,7 +378,7 @@ class TestSyncChannelUseCase:
             media_url="https://youtube.com/watch?v=tooOldVideo001",
             channel_name=ChannelName("TestChannel"),
         )
-        mock_ingestion_port.discover_channel_feed.return_value = [item_recent, item_old]
+        mock_ingestion_port.discover_channel_feed.return_value = [item_recent, item_boundary, item_old]
 
         use_case = SyncChannelUseCase(
             media_ingestion_port=mock_ingestion_port,
@@ -357,16 +390,13 @@ class TestSyncChannelUseCase:
             channel_url="https://youtube.com/@TestChannel",
             lookback_days=5,
         )
-        summary = use_case.execute(query)
+        with patch("cresmo.application.use_cases.sync_channel.datetime") as mock_dt:
+            mock_dt.now.return_value = frozen_now
+            summary = use_case.execute(query)
 
-        assert summary.total_discovered == 1
-        assert summary.processed_count == 1
-        mock_pipeline.run_for_video.assert_called_once_with(
-            video_url=item_recent.media_url,
-            user=UserIdentity.worker(),
-            batch_id=ANY,
-        )
-        assert isinstance(mock_pipeline.run_for_video.call_args.kwargs["batch_id"], BatchId)
+        # Both recent and exact cutoff boundary items are discovered (2 total)
+        assert summary.total_discovered == 2
+        assert summary.processed_count == 2
 
     def test_sync_channel_max_videos_limit_enforcement(
         self,
@@ -444,3 +474,213 @@ class TestSyncChannelUseCase:
         # Second call is FAILED_TRANSFORMATION with error_message
         assert calls[1][0][0].status == PipelineStatus.FAILED_TRANSFORMATION
         assert "Fatal pipeline failure" in calls[1][0][0].error_message
+
+    def test_init_attributes(
+        self,
+        mock_ingestion_port: MagicMock,
+        mock_ledger_port: MagicMock,
+        mock_pipeline: MagicMock,
+    ) -> None:
+        checker = MagicMock(spec=PreflightHealthChecker)
+        use_case = SyncChannelUseCase(
+            media_ingestion_port=mock_ingestion_port,
+            ledger_port=mock_ledger_port,
+            pipeline=mock_pipeline,
+            preflight_checker=checker,
+        )
+        assert use_case.media_ingestion_port is mock_ingestion_port
+        assert use_case.ledger_port is mock_ledger_port
+        assert use_case.pipeline is mock_pipeline
+        assert use_case.preflight_checker is checker
+
+    def test_sync_channel_duration_and_discovery_query(
+        self,
+        mock_ingestion_port: MagicMock,
+        mock_ledger_port: MagicMock,
+        mock_pipeline: MagicMock,
+    ) -> None:
+        from unittest.mock import patch
+
+        with patch("time.perf_counter") as mock_perf:
+            mock_perf.side_effect = [100.0, 101.123456]
+            mock_ingestion_port.discover_channel_feed.return_value = []
+            use_case = SyncChannelUseCase(mock_ingestion_port, mock_ledger_port, mock_pipeline)
+            query = ChannelFeedQuery(channel_url="https://youtube.com/@TestChannel")
+            summary = use_case.execute(query)
+
+            mock_ingestion_port.discover_channel_feed.assert_called_once_with(query)
+            assert summary.duration_seconds == 1.123
+
+    def test_sync_channel_multiple_skips_and_is_processed_argument(
+        self,
+        mock_ingestion_port: MagicMock,
+        mock_ledger_port: MagicMock,
+        mock_pipeline: MagicMock,
+    ) -> None:
+        now = datetime.now(UTC)
+        item1 = DiscoveredMediaItem(
+            content_id=ContentId("done1"),
+            title="V1",
+            published_at=now - timedelta(hours=1),
+            media_url="https://youtube.com/watch?v=done1",
+            channel_name=ChannelName("TestChannel"),
+        )
+        item2 = DiscoveredMediaItem(
+            content_id=ContentId("done2"),
+            title="V2",
+            published_at=now - timedelta(hours=2),
+            media_url="https://youtube.com/watch?v=done2",
+            channel_name=ChannelName("TestChannel"),
+        )
+        item3 = DiscoveredMediaItem(
+            content_id=ContentId("new1"),
+            title="V3",
+            published_at=now - timedelta(hours=3),
+            media_url="https://youtube.com/watch?v=new1",
+            channel_name=ChannelName("TestChannel"),
+        )
+        mock_ingestion_port.discover_channel_feed.return_value = [item1, item2, item3]
+        mock_ledger_port.is_processed.side_effect = lambda cid: cid.value in ("done1", "done2")
+
+        use_case = SyncChannelUseCase(mock_ingestion_port, mock_ledger_port, mock_pipeline)
+        query = ChannelFeedQuery(channel_url="https://youtube.com/@TestChannel")
+        summary = use_case.execute(query)
+
+        assert summary.skipped_count == 2
+        assert summary.processed_count == 1
+        assert mock_ledger_port.is_processed.call_args_list[0][0][0] == ContentId("done1")
+        assert mock_ledger_port.is_processed.call_args_list[1][0][0] == ContentId("done2")
+        assert mock_ledger_port.is_processed.call_args_list[2][0][0] == ContentId("new1")
+
+    def test_dry_run_multiple_items_and_continue(
+        self,
+        mock_ingestion_port: MagicMock,
+        mock_ledger_port: MagicMock,
+        mock_pipeline: MagicMock,
+    ) -> None:
+        now = datetime.now(UTC)
+        item1 = DiscoveredMediaItem(
+            content_id=ContentId("dry1"),
+            title="D1",
+            published_at=now - timedelta(hours=1),
+            media_url="https://youtube.com/watch?v=dry1",
+            channel_name=ChannelName("TestChannel"),
+        )
+        item2 = DiscoveredMediaItem(
+            content_id=ContentId("dry2"),
+            title="D2",
+            published_at=now - timedelta(hours=2),
+            media_url="https://youtube.com/watch?v=dry2",
+            channel_name=ChannelName("TestChannel"),
+        )
+        mock_ingestion_port.discover_channel_feed.return_value = [item1, item2]
+
+        use_case = SyncChannelUseCase(mock_ingestion_port, mock_ledger_port, mock_pipeline)
+        query = ChannelFeedQuery(channel_url="https://youtube.com/@TestChannel")
+        summary = use_case.execute(query, dry_run=True)
+
+        assert summary.processed_count == 2
+
+    def test_sync_channel_multiple_pipeline_failures_and_ledger_validation(
+        self,
+        mock_ingestion_port: MagicMock,
+        mock_ledger_port: MagicMock,
+        mock_pipeline: MagicMock,
+    ) -> None:
+        now = datetime.now(UTC)
+        item1 = DiscoveredMediaItem(
+            content_id=ContentId("fail1"),
+            title="F1",
+            published_at=now - timedelta(hours=1),
+            media_url="https://youtube.com/watch?v=fail1",
+            channel_name=ChannelName("TestChannel"),
+        )
+        item2 = DiscoveredMediaItem(
+            content_id=ContentId("fail2"),
+            title="F2",
+            published_at=now - timedelta(hours=2),
+            media_url="https://youtube.com/watch?v=fail2",
+            channel_name=ChannelName("TestChannel"),
+        )
+        mock_ingestion_port.discover_channel_feed.return_value = [item1, item2]
+        mock_pipeline.run_for_video.side_effect = [
+            PipelineResult(content_id=ContentId("fail1"), success=False, error_message="Err1"),
+            PipelineResult(content_id=ContentId("fail2"), success=False, error_message="Err2"),
+        ]
+
+        use_case = SyncChannelUseCase(mock_ingestion_port, mock_ledger_port, mock_pipeline)
+        query = ChannelFeedQuery(channel_url="https://youtube.com/@TestChannel")
+        summary = use_case.execute(query)
+
+        assert summary.failed_count == 2
+        assert summary.status == PipelineStatus.FAILED_TRANSFORMATION
+
+        calls = mock_ledger_port.save_entry.call_args_list
+        assert len(calls) == 4  # 2 running + 2 failed
+
+        fail1 = calls[1][0][0]
+        assert fail1.content_id == ContentId("fail1")
+        assert fail1.media_url == "https://youtube.com/watch?v=fail1"
+        assert fail1.title == "F1"
+        assert fail1.channel_name == ChannelName("TestChannel")
+        assert fail1.status == PipelineStatus.FAILED_TRANSFORMATION
+        assert fail1.error_message == "Err1"
+        assert fail1.started_at is not None
+        assert fail1.completed_at is not None
+
+        fail2 = calls[3][0][0]
+        assert fail2.content_id == ContentId("fail2")
+        assert fail2.error_message == "Err2"
+
+    def test_sync_channel_multiple_exceptions_and_ledger_validation(
+        self,
+        mock_ingestion_port: MagicMock,
+        mock_ledger_port: MagicMock,
+        mock_pipeline: MagicMock,
+    ) -> None:
+        now = datetime.now(UTC)
+        item1 = DiscoveredMediaItem(
+            content_id=ContentId("exc1"),
+            title="E1",
+            published_at=now - timedelta(hours=1),
+            media_url="https://youtube.com/watch?v=exc1",
+            channel_name=ChannelName("TestChannel"),
+        )
+        item2 = DiscoveredMediaItem(
+            content_id=ContentId("exc2"),
+            title="E2",
+            published_at=now - timedelta(hours=2),
+            media_url="https://youtube.com/watch?v=exc2",
+            channel_name=ChannelName("TestChannel"),
+        )
+        mock_ingestion_port.discover_channel_feed.return_value = [item1, item2]
+        mock_pipeline.run_for_video.side_effect = [
+            RuntimeError("Crash 1"),
+            ValueError("Crash 2"),
+        ]
+
+        use_case = SyncChannelUseCase(mock_ingestion_port, mock_ledger_port, mock_pipeline)
+        query = ChannelFeedQuery(channel_url="https://youtube.com/@TestChannel")
+        summary = use_case.execute(query)
+
+        assert summary.failed_count == 2
+        assert summary.status == PipelineStatus.FAILED_TRANSFORMATION
+
+        calls = mock_ledger_port.save_entry.call_args_list
+        assert len(calls) == 4
+
+        exc_entry1 = calls[1][0][0]
+        assert exc_entry1.content_id == ContentId("exc1")
+        assert exc_entry1.media_url == "https://youtube.com/watch?v=exc1"
+        assert exc_entry1.title == "E1"
+        assert exc_entry1.channel_name == ChannelName("TestChannel")
+        assert exc_entry1.status == PipelineStatus.FAILED_TRANSFORMATION
+        assert exc_entry1.error_message == "Crash 1"
+        assert exc_entry1.started_at is not None
+        assert exc_entry1.started_at.tzinfo == UTC
+        assert exc_entry1.completed_at is not None
+        assert exc_entry1.completed_at.tzinfo == UTC
+
+        exc_entry2 = calls[3][0][0]
+        assert exc_entry2.content_id == ContentId("exc2")
+        assert exc_entry2.error_message == "Crash 2"
