@@ -28,10 +28,14 @@ from cresmo.domain.entities import (
     PipelineSessionId,
     UserIdentity,
 )
-from cresmo.domain.exceptions import DomainValidationError, NoteTypologyError
+from cresmo.domain.exceptions import (
+    DomainValidationError,
+    NoteTypologyError,
+)
 from cresmo.domain.value_objects import (
     AtomicEntityInventory,
     CausalMatrix,
+    ChannelId,
     CrossContextRelations,
     NoteTitle,
     NoteType,
@@ -106,10 +110,13 @@ def _parse_single_atomic_note(
     if not isinstance(title_str, str) or not title_str.strip():
         return None
 
-    type_raw = entry.get("type", "concept")
-    try:
-        note_type = NoteType.from_string(str(type_raw))
-    except NoteTypologyError:
+    raw_type = entry.get("type")
+    if isinstance(raw_type, str):
+        try:
+            note_type = NoteType.from_string(raw_type)
+        except NoteTypologyError:
+            note_type = NoteType.CONCEPT
+    else:
         note_type = NoteType.CONCEPT
 
     definition = str(entry.get("definition", "")).strip()
@@ -205,7 +212,9 @@ class SynthesizeAtomicBatchUseCase:
         session_id = PipelineSessionId.create(
             channel=compendium.channel_name,
             content_id=compendium.content_id,
-            channel_id=compendium.channel_id,
+            channel_id=compendium.channel_id
+            if isinstance(compendium.channel_id, ChannelId)
+            else None,
         ).value
         user_id = user.value if user is not None else UserIdentity.anonymous().value
         response = self.llm_synthesis_port.transform(

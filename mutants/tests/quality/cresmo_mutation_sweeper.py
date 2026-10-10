@@ -155,7 +155,7 @@ MODULE_TEST_MAP: dict[str, list[str]] = {
         "tests/cresmo/unit/test_sync_channel_use_case.py",
     ],
     "src/cresmo/application/use_cases/synthesize_atomic_batch.py": [
-        "tests/cresmo/unit/test_use_cases.py",
+        "tests/cresmo/unit/test_synthesize_atomic_batch_use_case.py",
     ],
     # Wave 4: Infrastructure
     "src/cresmo/infrastructure/adapters/obsidian/adapter.py": [

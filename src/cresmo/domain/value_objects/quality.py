@@ -22,6 +22,8 @@ class JudgeCriterion(str, Enum):
     SEMANTIC_FAITHFULNESS = "semantic_faithfulness"
     NER_PRESERVATION = "ner_preservation"
     STRUCTURAL_COMPLIANCE = "structural_compliance"
+    EPISTEMIC_CRITIQUE = "epistemic_critique"
+    AUTHORIAL_VOICE = "authorial_voice"
     INVENTORY_COHERENCE = "inventory_coherence"
     INDEX_SYNTHESIS_QUALITY = "index_synthesis_quality"
 

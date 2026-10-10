@@ -23,6 +23,7 @@ from cresmo.infrastructure.adapters.judges.composite_judge import ResilientCompo
 from cresmo.infrastructure.adapters.judges.gemini_judge import GeminiJudgeAdapter
 from cresmo.infrastructure.adapters.judges.langfuse_decorator import LangfuseJudgeDecorator
 from cresmo.infrastructure.adapters.judges.ollama_judge import OllamaJudgeAdapter
+from cresmo.infrastructure.adapters.judges.preflight_decorator import MechanicalPreflightJudgeDecorator
 from cresmo.infrastructure.adapters.judges.typesafe_judge import TypeSafeJudgeAdapter
 
 
@@ -558,9 +559,11 @@ class TestLlmJudgeFactory:
         judge = build_llm_judge_adapter(settings, langfuse_client=None)
 
         assert isinstance(judge, LangfuseJudgeDecorator)
-        assert isinstance(judge._inner_judge, ResilientCompositeJudgeAdapter)
-        assert isinstance(judge._inner_judge._primary, GeminiJudgeAdapter)
-        assert isinstance(judge._inner_judge._fallback, OllamaJudgeAdapter)
+        assert isinstance(judge._inner_judge, MechanicalPreflightJudgeDecorator)
+        composite = judge._inner_judge._inner_judge
+        assert isinstance(composite, ResilientCompositeJudgeAdapter)
+        assert isinstance(composite._primary, GeminiJudgeAdapter)
+        assert isinstance(composite._fallback, OllamaJudgeAdapter)
 
     def test_build_llm_judge_adapter_typesafe_provider(self) -> None:
         from cresmo.infrastructure.config import CresmoSettings
@@ -570,9 +573,11 @@ class TestLlmJudgeFactory:
         judge = build_llm_judge_adapter(settings, langfuse_client=None)
 
         assert isinstance(judge, LangfuseJudgeDecorator)
-        assert isinstance(judge._inner_judge, ResilientCompositeJudgeAdapter)
-        assert isinstance(judge._inner_judge._primary, TypeSafeJudgeAdapter)
-        assert isinstance(judge._inner_judge._fallback, OllamaJudgeAdapter)
+        assert isinstance(judge._inner_judge, MechanicalPreflightJudgeDecorator)
+        composite = judge._inner_judge._inner_judge
+        assert isinstance(composite, ResilientCompositeJudgeAdapter)
+        assert isinstance(composite._primary, TypeSafeJudgeAdapter)
+        assert isinstance(composite._fallback, OllamaJudgeAdapter)
 
     def test_build_llm_judge_adapter_ollama_provider(self) -> None:
         from cresmo.infrastructure.config import CresmoSettings
@@ -582,9 +587,11 @@ class TestLlmJudgeFactory:
         judge = build_llm_judge_adapter(settings, langfuse_client=None)
 
         assert isinstance(judge, LangfuseJudgeDecorator)
-        assert isinstance(judge._inner_judge, ResilientCompositeJudgeAdapter)
-        assert isinstance(judge._inner_judge._primary, OllamaJudgeAdapter)
-        assert isinstance(judge._inner_judge._fallback, OllamaJudgeAdapter)
+        assert isinstance(judge._inner_judge, MechanicalPreflightJudgeDecorator)
+        composite = judge._inner_judge._inner_judge
+        assert isinstance(composite, ResilientCompositeJudgeAdapter)
+        assert isinstance(composite._primary, OllamaJudgeAdapter)
+        assert isinstance(composite._fallback, OllamaJudgeAdapter)
 
     def test_build_llm_judge_adapter_injects_configured_tunables(self) -> None:
         from cresmo.infrastructure.config import CresmoSettings
@@ -599,7 +606,8 @@ class TestLlmJudgeFactory:
         judge = build_llm_judge_adapter(settings, langfuse_client=None)
 
         assert isinstance(judge, LangfuseJudgeDecorator)
-        inner = judge._inner_judge
+        assert isinstance(judge._inner_judge, MechanicalPreflightJudgeDecorator)
+        inner = judge._inner_judge._inner_judge
         assert isinstance(inner, ResilientCompositeJudgeAdapter)
         primary = inner._primary
         assert isinstance(primary, GeminiJudgeAdapter)
