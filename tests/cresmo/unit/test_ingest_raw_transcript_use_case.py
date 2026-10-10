@@ -9,8 +9,6 @@ from __future__ import annotations
 from pathlib import Path
 from unittest.mock import MagicMock
 
-import pytest
-
 from cresmo.application.ports import MediaIngestionPort, VaultRepositoryPort
 from cresmo.application.use_cases.ingest_raw_transcript import IngestRawTranscriptUseCase
 from cresmo.domain.entities import SourceTranscript

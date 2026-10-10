@@ -23,7 +23,9 @@ from cresmo.infrastructure.adapters.judges.composite_judge import ResilientCompo
 from cresmo.infrastructure.adapters.judges.gemini_judge import GeminiJudgeAdapter
 from cresmo.infrastructure.adapters.judges.langfuse_decorator import LangfuseJudgeDecorator
 from cresmo.infrastructure.adapters.judges.ollama_judge import OllamaJudgeAdapter
-from cresmo.infrastructure.adapters.judges.preflight_decorator import MechanicalPreflightJudgeDecorator
+from cresmo.infrastructure.adapters.judges.preflight_decorator import (
+    MechanicalPreflightJudgeDecorator,
+)
 from cresmo.infrastructure.adapters.judges.typesafe_judge import TypeSafeJudgeAdapter
 
 

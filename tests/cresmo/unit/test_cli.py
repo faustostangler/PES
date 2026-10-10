@@ -48,16 +48,19 @@ class TestCresmoCLI:
     def test_all_command_modules_comply_with_command_module_protocol(self) -> None:
         """Verify that every module in COMMAND_MODULES satisfies CommandModule protocol."""
         for mod in COMMAND_MODULES:
+            mod_name = getattr(mod, "__name__", str(mod))
             assert hasattr(mod, "register_subparser"), (
-                f"Module {mod.__name__} in COMMAND_MODULES does not have 'register_subparser'"
+                f"Module {mod_name} in COMMAND_MODULES does not have 'register_subparser'"
             )
             assert callable(mod.register_subparser), (
-                f"'register_subparser' in {mod.__name__} is not callable"
+                f"'register_subparser' in {mod_name} is not callable"
             )
 
     def test_dynamic_subcommand_registration_parity(self) -> None:
         """Verify that _create_parser dynamically registers subcommands without hardcoding."""
         parser = _create_parser()
+        assert parser.prog == "cresmo"
+        assert parser.description == "Cresmo Knowledge Synthesis CLI (Hexagonal Modular Monolith)"
         subparsers_action = next(
             (
                 action
@@ -67,6 +70,8 @@ class TestCresmoCLI:
             None,
         )
         assert subparsers_action is not None, "Root parser must contain a SubParsersAction"
+        assert subparsers_action.dest == "subcommand"
+        assert subparsers_action.help == "Available subcommands"
         registered_commands = set(subparsers_action.choices.keys())
 
         # Ensure core expected subcommands are all registered dynamically
@@ -90,6 +95,40 @@ class TestCresmoCLI:
         ):
             assert main([]) == EXIT_SUCCESS
 
+    def test_cli_none_argv_defaults_to_sys_argv(self) -> None:
+        with (
+            patch("sys.argv", ["cresmo", "run"]),
+            patch("cresmo.presentation.commands.run.build_pipeline"),
+            patch("cresmo.presentation.commands.run.load_batch_sources", return_value=[]),
+        ):
+            assert main(None) == EXIT_SUCCESS
+
+    def test_cli_implicit_run_routing_with_flags(self) -> None:
+        mock_pipeline = MagicMock()
+        mock_pipeline.run_for_video.return_value = PipelineResult(
+            content_id=ContentId("dQw4w9WgXcQ"),
+            success=True,
+            synthesized_notes=(),
+            reconciled_mocs=(),
+        )
+        with patch("cresmo.presentation.commands.run.build_pipeline", return_value=mock_pipeline):
+            exit_code = main(["--url", "https://youtube.com/watch?v=dQw4w9WgXcQ"])
+            assert exit_code == EXIT_SUCCESS
+
+    def test_cli_help_flag_handling(self) -> None:
+        assert main(["-h"]) == EXIT_SUCCESS
+        assert main(["--help"]) == EXIT_SUCCESS
+
+    def test_cli_subparsers_action_missing_fallback(self) -> None:
+        with (
+            patch("cresmo.presentation.cli._create_parser") as mock_cp,
+            patch("cresmo.presentation.commands.run.build_pipeline"),
+            patch("cresmo.presentation.commands.run.load_batch_sources", return_value=[]),
+        ):
+            p = argparse.ArgumentParser()
+            mock_cp.return_value = p
+            assert main(["run"]) == EXIT_CONFIG_OR_USAGE_ERROR
+
     def test_cli_invalid_subcommand_returns_code_2(self) -> None:
         assert main(["invalid-command"]) == EXIT_CONFIG_OR_USAGE_ERROR
 
@@ -100,7 +139,9 @@ class TestCresmoCLI:
         ):
             assert main(["run"]) == EXIT_SUCCESS
 
-    def test_cli_check_config_success_returns_code_0(self) -> None:
+    def test_cli_check_config_success_returns_code_0(
+        self, capsys: pytest.CaptureFixture[str]
+    ) -> None:
         with (
             patch("cresmo.presentation.commands.check_config.CresmoSettings") as mock_settings_cls,
             patch(
@@ -112,6 +153,9 @@ class TestCresmoCLI:
             mock_settings.sqlite_ledger_path = Path("/tmp/vault/cresmo_ledger.db")
             mock_settings.gemini_model = "gemini-2.5-flash"
             mock_settings.batch_size = 5
+            mock_settings.langfuse_public_key = ""
+            mock_settings.langfuse_secret_key = None
+            mock_settings.langfuse_host = "https://cloud.langfuse.com"
             mock_settings_cls.return_value = mock_settings
 
             mock_checker = MagicMock()
@@ -120,8 +164,18 @@ class TestCresmoCLI:
 
             exit_code = main(["check-config"])
             assert exit_code == EXIT_SUCCESS
+            mock_checker_builder.assert_called_once_with(settings=mock_settings)
+            captured = capsys.readouterr()
+            assert "Configuration and environment verified successfully:\n" in captured.out
+            assert "- Vault Root: /tmp/vault\n" in captured.out
+            assert "- SQLite Ledger: /tmp/vault/cresmo_ledger.db\n" in captured.out
+            assert "- Gemini Model: gemini-2.5-flash\n" in captured.out
+            assert "- Batch Size: 5\n" in captured.out
+            assert "- Langfuse Telemetry: Disabled (no credentials configured)\n" in captured.out
 
-    def test_cli_check_config_preflight_failure_returns_code_2(self) -> None:
+    def test_cli_check_config_preflight_failure_returns_code_2(
+        self, capsys: pytest.CaptureFixture[str]
+    ) -> None:
         with (
             patch("cresmo.presentation.commands.check_config.CresmoSettings") as mock_settings_cls,
             patch(
@@ -139,6 +193,10 @@ class TestCresmoCLI:
 
             exit_code = main(["check-config"])
             assert exit_code == EXIT_CONFIG_OR_USAGE_ERROR
+            mock_checker_builder.assert_called_once_with(settings=mock_settings)
+            captured = capsys.readouterr()
+            assert "Preflight environmental checks failed:\n" in captured.err
+            assert "- Missing GEMINI_API_KEY\n" in captured.err
 
     def test_cli_run_success_returns_code_0(self) -> None:
         mock_pipeline = MagicMock()
@@ -586,31 +644,80 @@ class TestCresmoCLI:
             exit_code = main(["worker", "--channel", "https://youtube.com/@test"])
             assert exit_code == EXIT_SUCCESS
 
-    def test_cli_dedupe_success_returns_code_0(self) -> None:
+    def test_cli_dedupe_success_returns_code_0(
+        self, capsys: pytest.CaptureFixture[str]
+    ) -> None:
         from cresmo.application.use_cases.unify_duplicate_notes import (
             DeduplicationReport,
             DuplicateCluster,
         )
         from cresmo.domain.value_objects import NoteTitle
+        from cresmo.presentation.commands.dedupe import (
+            handle_dedupe,
+            register_subparser,
+        )
+
+        # 0. Register subparser
+        mock_subparsers = MagicMock()
+        mock_dedupe_parser = MagicMock()
+        mock_subparsers.add_parser.return_value = mock_dedupe_parser
+        register_subparser(mock_subparsers)
+        mock_subparsers.add_parser.assert_called_once_with(
+            "dedupe",
+            help="Execute graph entity resolution, non-destructive merging, and link rewriting",
+        )
+        mock_dedupe_parser.set_defaults.assert_called_once_with(handler=handle_dedupe)
 
         mock_use_case = MagicMock()
         mock_use_case.execute.return_value = DeduplicationReport(
             clusters=(
                 DuplicateCluster(
                     canonical_title=NoteTitle("Dom Afonso Henriques"),
-                    merged_titles=(NoteTitle("D. Afonso Henriques"),),
+                    merged_titles=(NoteTitle("D. Afonso Henriques"), NoteTitle("Rei Fundador")),
                     links_rewritten_count=3,
                 ),
             )
         )
+
+        mock_settings = MagicMock()
+        with (
+            patch(
+                "cresmo.presentation.commands.dedupe.resolve_shared_settings",
+                return_value=mock_settings,
+            ) as mock_resolve_settings,
+            patch(
+                "cresmo.presentation.commands.dedupe.build_unify_duplicates_use_case",
+                return_value=mock_use_case,
+            ) as mock_builder,
+        ):
+            exit_code = main(["dedupe"])
+            assert exit_code == EXIT_SUCCESS
+            mock_resolve_settings.assert_called_once()
+            mock_builder.assert_called_once_with(settings=mock_settings)
+            mock_use_case.execute.assert_called_once()
+            captured = capsys.readouterr()
+            assert captured.out.startswith("Vault Graph Deduplication Summary:\n")
+            assert "- Duplicate Clusters Unified: 1\n" in captured.out
+            assert "- Total Inbound WikiLinks Rewritten: 3\n" in captured.out
+            assert (
+                "  • Unified into [[Dom Afonso Henriques]]: [[D. Afonso Henriques]], [[Rei Fundador]] (3 links rewritten)\n"
+                in captured.out
+            )
+
+    def test_cli_dedupe_exception_returns_code_1(
+        self, capsys: pytest.CaptureFixture[str]
+    ) -> None:
+        mock_use_case = MagicMock()
+        mock_use_case.execute.side_effect = RuntimeError("Graph corruption")
 
         with patch(
             "cresmo.presentation.commands.dedupe.build_unify_duplicates_use_case",
             return_value=mock_use_case,
         ):
             exit_code = main(["dedupe"])
-            assert exit_code == EXIT_SUCCESS
-            mock_use_case.execute.assert_called_once()
+            assert exit_code == EXIT_INTERNAL_ERROR
+            captured = capsys.readouterr()
+            assert "Deduplication error: Graph corruption\n" in captured.err
 
     def test_settings_concurrency_pools_and_lookback_defaults(self) -> None:
         """Verify default lookback is 365 days and worker pools use proportional multiples."""
@@ -1194,12 +1301,28 @@ class TestCresmoCLI:
             query_no_crawl = mock_load.call_args[1]["query"]
             assert query_no_crawl.enable_channel_crawler is False
 
-    def test_check_config_telemetry_masked_and_exceptions(self) -> None:
+    def test_check_config_telemetry_masked_and_exceptions(
+        self, capsys: pytest.CaptureFixture[str]
+    ) -> None:
         from argparse import Namespace
 
         from pydantic import SecretStr
 
-        from cresmo.presentation.commands.check_config import handle_check_config
+        from cresmo.presentation.commands.check_config import (
+            handle_check_config,
+            register_subparser,
+        )
+
+        # 0. Subparser registration
+        mock_subparsers = MagicMock()
+        mock_check_parser = MagicMock()
+        mock_subparsers.add_parser.return_value = mock_check_parser
+        register_subparser(mock_subparsers)
+        mock_subparsers.add_parser.assert_called_once_with(
+            "check-config",
+            help="Validate environment settings and vault access without calling LLMs",
+        )
+        mock_check_parser.set_defaults.assert_called_once_with(handler=handle_check_config)
 
         # 1. Langfuse public key and secret key configured
         with (
@@ -1208,6 +1331,7 @@ class TestCresmoCLI:
                 "cresmo.presentation.commands.check_config.build_preflight_checker"
             ) as mock_checker_builder,
         ):
+            # 1a. Custom host
             mock_settings = MagicMock(spec=CresmoSettings)
             mock_settings.vault_dir = Path("/tmp/vault")
             mock_settings.sqlite_ledger_path = Path("/tmp/vault/cresmo_ledger.db")
@@ -1215,7 +1339,7 @@ class TestCresmoCLI:
             mock_settings.batch_size = 5
             mock_settings.langfuse_public_key = "pk-lf-1234567890abcdef"
             mock_settings.langfuse_secret_key = SecretStr("sk-lf-secret")
-            mock_settings.langfuse_host = "https://cloud.langfuse.com"
+            mock_settings.langfuse_host = "http://custom-host:3000"
             mock_settings_cls.return_value = mock_settings
 
             mock_checker = MagicMock()
@@ -1224,6 +1348,58 @@ class TestCresmoCLI:
 
             code = handle_check_config(Namespace())
             assert code == EXIT_SUCCESS
+            captured = capsys.readouterr()
+            assert "- Langfuse Telemetry: Enabled (http://custom-host:3000, pk-lf-1234...)\n" in captured.out
+
+            # 1b. Missing langfuse_host attribute exercises default "https://cloud.langfuse.com"
+            del mock_settings.langfuse_host
+            code = handle_check_config(Namespace())
+            assert code == EXIT_SUCCESS
+            captured = capsys.readouterr()
+            assert "- Langfuse Telemetry: Enabled (https://cloud.langfuse.com, pk-lf-1234...)\n" in captured.out
+
+            # 1c. Secret without get_secret_value
+            mock_settings.langfuse_secret_key = "plain-string-no-method"
+            code = handle_check_config(Namespace())
+            assert code == EXIT_SUCCESS
+            captured = capsys.readouterr()
+            assert "- Langfuse Telemetry: Disabled (no credentials configured)\n" in captured.out
+
+            # 1d. Secret with empty get_secret_value
+            mock_settings.langfuse_secret_key = SecretStr("")
+            code = handle_check_config(Namespace())
+            assert code == EXIT_SUCCESS
+            captured = capsys.readouterr()
+            assert "- Langfuse Telemetry: Disabled (no credentials configured)\n" in captured.out
+
+            # 1e. None secret
+            mock_settings.langfuse_secret_key = None
+            code = handle_check_config(Namespace())
+            assert code == EXIT_SUCCESS
+            captured = capsys.readouterr()
+            assert "- Langfuse Telemetry: Disabled (no credentials configured)\n" in captured.out
+
+            # 1f. Empty public key with valid secret
+            mock_settings.langfuse_public_key = ""
+            mock_settings.langfuse_secret_key = SecretStr("sk-valid")
+            code = handle_check_config(Namespace())
+            assert code == EXIT_SUCCESS
+            captured = capsys.readouterr()
+            assert "- Langfuse Telemetry: Disabled (no credentials configured)\n" in captured.out
+
+            # 1g. Missing public key attribute
+            del mock_settings.langfuse_public_key
+            code = handle_check_config(Namespace())
+            assert code == EXIT_SUCCESS
+            captured = capsys.readouterr()
+            assert "- Langfuse Telemetry: Disabled (no credentials configured)\n" in captured.out
+
+            # 1h. Missing secret key attribute
+            del mock_settings.langfuse_secret_key
+            code = handle_check_config(Namespace())
+            assert code == EXIT_SUCCESS
+            captured = capsys.readouterr()
+            assert "- Langfuse Telemetry: Disabled (no credentials configured)\n" in captured.out
 
         # 2. PreflightError
         with patch(
@@ -1232,6 +1408,8 @@ class TestCresmoCLI:
         ):
             code = handle_check_config(Namespace())
             assert code == EXIT_CONFIG_OR_USAGE_ERROR
+            captured = capsys.readouterr()
+            assert "Preflight error: Vault missing\n" in captured.err
 
         # 3. ValidationError
         with patch("cresmo.presentation.commands.check_config.CresmoSettings") as mock_s:
@@ -1246,6 +1424,8 @@ class TestCresmoCLI:
                 mock_s.side_effect = ve
             code = handle_check_config(Namespace())
             assert code == EXIT_CONFIG_OR_USAGE_ERROR
+            captured = capsys.readouterr()
+            assert "Configuration validation error:\n" in captured.err
 
         # 4. Generic unexpected exception
         with patch(
@@ -1254,19 +1434,49 @@ class TestCresmoCLI:
         ):
             code = handle_check_config(Namespace())
             assert code == EXIT_INTERNAL_ERROR
+            captured = capsys.readouterr()
+            assert "Unexpected configuration error: Hardware fault\n" in captured.err
 
-    def test_cli_help_flag_returns_exit_success(self) -> None:
-        """Verify that -h / --help exits cleanly with EXIT_SUCCESS (0)."""
-        assert main(["--help"]) == EXIT_SUCCESS
-        assert main(["-h"]) == EXIT_SUCCESS
-        assert main(["run", "--help"]) == EXIT_SUCCESS
+    def test_cli_help_flag_returns_exit_success(self, capsys: pytest.CaptureFixture[str]) -> None:
+        """Verify that -h / --help prints root help and exits cleanly with EXIT_SUCCESS (0)."""
+        code = main(["--help"])
+        assert code == EXIT_SUCCESS
+        out, _ = capsys.readouterr()
+        assert "Available subcommands" in out
+        assert "cresmo" in out
+
+        code_short = main(["-h"])
+        assert code_short == EXIT_SUCCESS
+        out_short, _ = capsys.readouterr()
+        assert "Available subcommands" in out_short
+        assert "cresmo" in out_short
+
+        code_run_help = main(["run", "--help"])
+        assert code_run_help == EXIT_SUCCESS
+        out_run, _ = capsys.readouterr()
+        assert "batch-size" in out_run
 
     def test_cli_argv_none_uses_sys_argv(self) -> None:
         """Verify that passing argv=None defaults to reading sys.argv[1:]."""
         with (
-            patch("sys.argv", ["cresmo", "--help"]),
+            patch("sys.argv", ["cresmo", "check-config"]),
+            patch("cresmo.presentation.commands.check_config.handle_check_config") as mock_check,
         ):
-            assert main(None) == EXIT_SUCCESS
+            mock_check.return_value = EXIT_SUCCESS
+            code = main(None)
+            assert code == EXIT_SUCCESS
+            assert mock_check.called
+
+    def test_cli_empty_argv_defaults_to_run_even_if_sys_argv_has_other_command(self) -> None:
+        """Verify that passing explicit empty list argv=[] defaults to run, not sys.argv."""
+        with (
+            patch("sys.argv", ["cresmo", "check-config"]),
+            patch("cresmo.presentation.commands.run.build_pipeline") as mock_run,
+            patch("cresmo.presentation.commands.run.load_batch_sources", return_value=[]),
+        ):
+            code = main([])
+            assert code == EXIT_SUCCESS
+            assert mock_run.called
 
     def test_cli_parser_missing_handler_returns_usage_error(self) -> None:
         """Verify that args without handler attribute returns EXIT_CONFIG_OR_USAGE_ERROR."""

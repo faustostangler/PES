@@ -11,6 +11,7 @@ Conforms to ADR-016:
 from __future__ import annotations
 
 import json
+from typing import Any
 
 import pytest
 from opentelemetry.sdk.trace import TracerProvider
@@ -166,8 +167,17 @@ class TestOpenTelemetryAdapter:
 
         # Root span must have official Langfuse OTel attributes
         assert root_span.attributes is not None
+        assert root_span.attributes["langfuse.observation.type"] == "span"
         assert root_span.attributes["langfuse.session.id"] == "sandeco:vid_test_123"
         assert root_span.attributes["langfuse.user.id"] == "channel:sandeco"
+        assert root_span.attributes["cresmo.tenant_id"] == "channel:sandeco"
+        assert root_span.attributes["cresmo.user.is_anonymous"] is True
+        assert root_span.attributes["cresmo.user.provider"] == "channel"
+        assert tuple(root_span.attributes["langfuse.trace.tags"]) == (
+            "sandeco",
+            "cresmo:v2",
+            "auth:channel",
+        )
         assert root_span.attributes["cresmo.content.id"] == "vid_test_123"
         assert "cresmo.video.id" not in root_span.attributes
         assert root_span.attributes["cresmo.content.title"] == "Machiavelli and Modern State"
@@ -236,6 +246,8 @@ class TestOpenTelemetryAdapter:
         assert event.attributes["judge.session_id"] == "sandeco:vid_judge_01"
         assert event.attributes["judge.content_id"] == "vid_judge_01"
         assert event.attributes["judge.channel_id"] == "sandeco"
+        assert event.attributes["judge.iteration"] == 2
+        assert event.attributes["judge.max_iterations"] == 3
         assert event.attributes["judge.friction_ratio"] == 0.5
         assert event.attributes["judge.verdict"] == "PASS"
 
@@ -978,3 +990,788 @@ class TestAdr037LeanTelemetryAndEvaluationSpan:
         attrs = span.attributes or {}
         assert attrs.get("gen_ai.request.temperature") == 0.7
         assert attrs.get("gen_ai.request.max_tokens") == 8192
+
+
+def _create_mock_non_recording_span() -> Any:
+    from unittest.mock import MagicMock
+
+    mock_span = MagicMock()
+    mock_span.is_recording.return_value = False
+    mock_ctx = MagicMock()
+    mock_ctx.trace_id = 0
+    mock_ctx.span_id = 0
+    mock_ctx.is_valid = False
+    mock_span.get_span_context.return_value = mock_ctx
+    return mock_span
+
+
+class TestAnnotateLlmSpanExtended:
+    """Comprehensive tests for annotate_llm_span GenAI Semantic Conventions."""
+
+    def test_annotate_llm_span_all_parameters(self) -> None:
+        exporter = InMemorySpanExporter()
+        provider = TracerProvider()
+        provider.add_span_processor(SimpleSpanProcessor(exporter))
+        tracer = provider.get_tracer("cresmo.test")
+
+        with tracer.start_as_current_span("test.llm"):
+            annotate_llm_span(
+                system="google",
+                model="gemini-2.5-flash",
+                prompt_tokens=100,
+                candidate_tokens=50,
+                session_id="sandeco:vid1",
+                user_id="user:sandeco",
+                trace_id="vid1",
+                temperature=0.7,
+                max_tokens=8192,
+            )
+
+        spans = exporter.get_finished_spans()
+        assert len(spans) == 1
+        attrs = spans[0].attributes or {}
+        assert attrs["gen_ai.system"] == "google"
+        assert attrs["gen_ai.request.model"] == "gemini-2.5-flash"
+        assert attrs["gen_ai.usage.input_tokens"] == 100
+        assert attrs["gen_ai.usage.output_tokens"] == 50
+        assert attrs["langfuse.observation.type"] == "generation"
+        assert attrs["langfuse.session.id"] == "sandeco:vid1"
+        assert attrs["langfuse.user.id"] == "user:sandeco"
+        assert attrs["cresmo.trace_id"] == "vid1"
+        assert attrs["gen_ai.request.temperature"] == 0.7
+        assert attrs["cresmo.temperature"] == 0.7
+        assert attrs["gen_ai.request.max_tokens"] == 8192
+
+    def test_annotate_llm_span_minimal_parameters(self) -> None:
+        exporter = InMemorySpanExporter()
+        provider = TracerProvider()
+        provider.add_span_processor(SimpleSpanProcessor(exporter))
+        tracer = provider.get_tracer("cresmo.test")
+
+        with tracer.start_as_current_span("test.llm"):
+            annotate_llm_span(
+                system="ollama",
+                model="qwen2.5:7b",
+                prompt_tokens=20,
+                candidate_tokens=10,
+            )
+
+        spans = exporter.get_finished_spans()
+        assert len(spans) == 1
+        attrs = spans[0].attributes or {}
+        assert attrs["gen_ai.system"] == "ollama"
+        assert attrs["gen_ai.request.model"] == "qwen2.5:7b"
+        assert attrs["gen_ai.usage.input_tokens"] == 20
+        assert attrs["gen_ai.usage.output_tokens"] == 10
+        assert attrs["langfuse.observation.type"] == "generation"
+        assert "langfuse.session.id" not in attrs
+        assert "langfuse.user.id" not in attrs
+        assert "cresmo.trace_id" not in attrs
+        assert "gen_ai.request.temperature" not in attrs
+        assert "cresmo.temperature" not in attrs
+        assert "gen_ai.request.max_tokens" not in attrs
+
+    def test_annotate_llm_span_non_recording_span_noop(self) -> None:
+        from unittest.mock import patch
+
+        mock_span = _create_mock_non_recording_span()
+        with patch("opentelemetry.trace.get_current_span", return_value=mock_span):
+            annotate_llm_span(
+                system="google",
+                model="gemini",
+                prompt_tokens=1,
+                candidate_tokens=1,
+            )
+        mock_span.set_attribute.assert_not_called()
+
+    def test_annotate_llm_span_no_current_span_noop(self) -> None:
+        from unittest.mock import patch
+
+        with patch("opentelemetry.trace.get_current_span", return_value=None):
+            annotate_llm_span(
+                system="google",
+                model="gemini",
+                prompt_tokens=1,
+                candidate_tokens=1,
+            )
+
+
+class TestIdentityResolutionExtended:
+    """Test string and polymorphic identity resolution functions."""
+
+    def test_resolve_identity_from_string_system(self) -> None:
+        from cresmo.infrastructure.adapters.opentelemetry_adapter import (
+            _resolve_identity_from_string,
+        )
+
+        ident, tenant = _resolve_identity_from_string("system:worker:node:1")
+        assert ident.value == "system:worker:node:1"
+        assert ident.provider == "system"
+        assert ident.subject == "worker:node:1"
+        assert tenant is None
+
+    def test_resolve_identity_from_string_channel(self) -> None:
+        from cresmo.infrastructure.adapters.opentelemetry_adapter import (
+            _resolve_identity_from_string,
+        )
+
+        ident, tenant = _resolve_identity_from_string("channel:sandeco:sub")
+        assert ident.value == "channel:sandeco:sub"
+        assert ident.provider == "channel"
+        assert ident.subject == "sandeco:sub"
+        assert tenant == "channel:sandeco:sub"
+
+    def test_resolve_identity_from_string_anonymous(self) -> None:
+        from cresmo.infrastructure.adapters.opentelemetry_adapter import (
+            _resolve_identity_from_string,
+        )
+
+        ident, tenant = _resolve_identity_from_string("anonymous")
+        assert ident.value == "anonymous"
+        assert ident.is_anonymous is True
+        assert ident.provider == "anonymous"
+        assert ident.subject == ""
+        assert tenant is None
+
+    def test_resolve_identity_from_string_user_structured(self) -> None:
+        from cresmo.infrastructure.adapters.opentelemetry_adapter import (
+            _resolve_identity_from_string,
+        )
+
+        ident, tenant = _resolve_identity_from_string("user:google:alice:admin")
+        assert ident.value == "user:google:alice:admin"
+        assert ident.provider == "google"
+        assert ident.subject == "alice:admin"
+        assert tenant is None
+
+        # Exactly 3 parts (_MIN_STRUCTURED_USER_PARTS)
+        ident3, tenant3 = _resolve_identity_from_string("user:google:alice")
+        assert ident3.value == "user:google:alice"
+        assert ident3.provider == "google"
+        assert ident3.subject == "alice"
+        assert tenant3 is None
+
+    def test_resolve_identity_from_string_user_short(self) -> None:
+        from unittest.mock import patch
+
+        from cresmo.infrastructure.adapters.opentelemetry_adapter import (
+            _resolve_identity_from_string,
+        )
+
+        with patch(
+            "cresmo.infrastructure.adapters.opentelemetry_adapter.UserIdentity.identified",
+            wraps=UserIdentity.identified,
+        ) as mock_id:
+            ident, tenant = _resolve_identity_from_string("user:bob")
+            assert ident.value == "user:oauth:bob"
+            assert ident.provider == "oauth"
+            assert ident.subject == "bob"
+            assert tenant is None
+            mock_id.assert_called_once_with(subject="bob", provider="oauth")
+
+    def test_resolve_identity_from_string_fallback(self) -> None:
+        from unittest.mock import patch
+
+        from cresmo.infrastructure.adapters.opentelemetry_adapter import (
+            _resolve_identity_from_string,
+        )
+
+        with patch(
+            "cresmo.infrastructure.adapters.opentelemetry_adapter.UserIdentity.identified",
+            wraps=UserIdentity.identified,
+        ) as mock_id:
+            ident, tenant = _resolve_identity_from_string("plain_user_123")
+            assert ident.value == "user:oauth:plain_user_123"
+            assert ident.provider == "oauth"
+            assert ident.subject == "plain_user_123"
+            assert tenant is None
+            mock_id.assert_called_once_with(subject="plain_user_123", provider="oauth")
+
+    def test_resolve_user_identity_and_tenant_variants(self) -> None:
+        from cresmo.infrastructure.adapters.opentelemetry_adapter import (
+            _resolve_user_identity_and_tenant,
+        )
+
+        session_id = PipelineSessionId.create(channel="mychan", content_id="cnt1")
+
+        # 1. UserIdentity instance with channel_tenant_id provided
+        u1 = UserIdentity.worker("w1")
+        res_u1, res_t1 = _resolve_user_identity_and_tenant(u1, "custom_t", session_id)
+        assert res_u1 == u1
+        assert res_t1 == "custom_t"
+
+        # 2. UserIdentity instance with channel_tenant_id None -> default session channel
+        res_u2, res_t2 = _resolve_user_identity_and_tenant(u1, None, session_id)
+        assert res_u2 == u1
+        assert res_t2 == "channel:mychan"
+
+        # 3. str user_id with channel: prefix, no tenant provided -> parsed tenant
+        res_u3, res_t3 = _resolve_user_identity_and_tenant("channel:sandeco", None, session_id)
+        assert res_u3.value == "channel:sandeco"
+        assert res_t3 == "channel:sandeco"
+
+        # 4. str user_id with channel: prefix, but explicit tenant provided
+        res_u4, res_t4 = _resolve_user_identity_and_tenant(
+            "channel:sandeco", "explicit_t", session_id
+        )
+        assert res_u4.value == "channel:sandeco"
+        assert res_t4 == "explicit_t"
+
+        # 5. Invalid type -> anonymous fallback
+        res_u5, res_t5 = _resolve_user_identity_and_tenant(
+            12345, None, session_id  # type: ignore[arg-type]
+        )
+        assert res_u5.is_anonymous is True
+        assert res_u5.value == "anonymous"
+        assert res_t5 == "channel:mychan"
+
+
+class TestLangfusePayloadAndSessionAttributesExtended:
+    """Test _build_langfuse_input_payload and _build_session_span_attributes."""
+
+    def test_build_langfuse_input_payload_all_keys(self) -> None:
+        from cresmo.infrastructure.adapters.opentelemetry_adapter import (
+            _build_langfuse_input_payload,
+        )
+
+        attrs: dict[str, Any] = {}
+        meta = {
+            "batch_id": "batch_99",
+            "video_url": "https://youtu.be/test",
+            "raw_characters": 5000,
+            "raw_words": 800,
+            "custom_key": "custom_val",
+            "title": "ignored_title_in_loop",
+            "channel": "ignored_chan_in_loop",
+        }
+        _build_langfuse_input_payload(
+            metadata=meta,
+            channel_name="chan_default",
+            channel_id="cid_1",
+            content_id="cnt_1",
+            content_title="title_default",
+            attributes=attrs,
+        )
+
+        assert "cresmo.metadata.batch_id" not in attrs
+        assert attrs["cresmo.metadata.custom_key"] == "custom_val"
+        assert "langfuse.input.title" not in attrs
+        assert "langfuse.input.channel" not in attrs
+        assert attrs["langfuse.input.batch_id"] == "batch_99"
+        assert attrs["langfuse.input.video_url"] == "https://youtu.be/test"
+        assert attrs["langfuse.input.raw_characters"] == "5000"
+        assert attrs["langfuse.input.raw_words"] == "800"
+        assert attrs["langfuse.input.channel_id"] == "cid_1"
+        assert attrs["langfuse.input.content_id"] == "cnt_1"
+        assert attrs["langfuse.input.channel_name"] == "ignored_chan_in_loop"
+        assert attrs["langfuse.input.content_title"] == "ignored_title_in_loop"
+
+        payload = json.loads(attrs["input.value"])
+        assert payload["batch_id"] == "batch_99"
+        assert payload["video_url"] == "https://youtu.be/test"
+        assert payload["raw_characters"] == "5000"
+        assert payload["raw_words"] == "800"
+        assert payload["channel_id"] == "cid_1"
+        assert payload["content_id"] == "cnt_1"
+        assert payload["channel_name"] == "ignored_chan_in_loop"
+        assert payload["content_title"] == "ignored_title_in_loop"
+        assert attrs["langfuse.observation.input"] == attrs["input.value"]
+        assert attrs["langfuse.trace.input"] == attrs["input.value"]
+
+    def test_build_langfuse_input_payload_channel_and_title_fallbacks(self) -> None:
+        from cresmo.infrastructure.adapters.opentelemetry_adapter import (
+            _build_langfuse_input_payload,
+        )
+
+        # Case 1: channel_name and content_title from metadata
+        attrs1: dict[str, Any] = {}
+        _build_langfuse_input_payload(
+            metadata={"channel_name": "cname", "content_title": "ctitle"},
+            channel_name="param_c",
+            channel_id="",
+            content_id="",
+            content_title="param_t",
+            attributes=attrs1,
+        )
+        assert attrs1["langfuse.input.channel_name"] == "cname"
+        assert attrs1["langfuse.input.content_title"] == "ctitle"
+        assert "langfuse.input.channel_id" not in attrs1
+        assert "langfuse.input.content_id" not in attrs1
+
+        # Case 2: channel and title from metadata
+        attrs2: dict[str, Any] = {}
+        _build_langfuse_input_payload(
+            metadata={"channel": "chan2", "title": "tit2"},
+            channel_name="param_c",
+            channel_id="",
+            content_id="",
+            content_title="param_t",
+            attributes=attrs2,
+        )
+        assert attrs2["langfuse.input.channel_name"] == "chan2"
+        assert attrs2["langfuse.input.content_title"] == "tit2"
+
+        # Case 3: from fallback parameters when metadata empty
+        attrs3: dict[str, Any] = {}
+        _build_langfuse_input_payload(
+            metadata={},
+            channel_name="param_c",
+            channel_id="",
+            content_id="",
+            content_title="param_t",
+            attributes=attrs3,
+        )
+        assert attrs3["langfuse.input.channel_name"] == "param_c"
+        assert attrs3["langfuse.input.content_title"] == "param_t"
+
+        # Case 4: all empty -> no input payload serialized
+        attrs4: dict[str, Any] = {}
+        _build_langfuse_input_payload(
+            metadata={},
+            channel_name="",
+            channel_id="",
+            content_id="",
+            content_title="",
+            attributes=attrs4,
+        )
+        assert "input.value" not in attrs4
+        assert "langfuse.observation.input" not in attrs4
+        assert "langfuse.trace.input" not in attrs4
+
+    def test_build_session_span_attributes_variants(self) -> None:
+        from cresmo.infrastructure.adapters.opentelemetry_adapter import (
+            _build_session_span_attributes,
+        )
+
+        session_id = PipelineSessionId.create(channel="chan_alpha", content_id="cnt_beta")
+        user = UserIdentity.identified(subject="alice", provider="google")
+
+        # 1. With batch_id and subject
+        attrs, tags = _build_session_span_attributes(
+            session_id=session_id,
+            user=user,
+            tenant="tenant_xyz",
+            pipeline_version="cresmo:v3",
+            metadata={
+                "batch_id": "b_123",
+                "channel": "chan_from_meta",
+                "title": "title_from_meta",
+            },
+        )
+        assert attrs["langfuse.observation.type"] == "span"
+        assert attrs["langfuse.session.id"] == "chan_alpha:cnt_beta"
+        assert attrs["langfuse.user.id"] == "user:google:alice"
+        assert attrs["cresmo.channel.id"] == "chan_alpha"
+        assert attrs["cresmo.content.id"] == "cnt_beta"
+        assert attrs["cresmo.channel.name"] == "chan_from_meta"
+        assert attrs["cresmo.content.title"] == "title_from_meta"
+        assert attrs["cresmo.tenant_id"] == "tenant_xyz"
+        assert attrs["cresmo.user.is_anonymous"] is False
+        assert attrs["cresmo.user.provider"] == "google"
+        assert attrs["cresmo.user.subject"] == "alice"
+        assert attrs["cresmo.batch_id"] == "b_123"
+        assert "batch:b_123" in tags
+        assert "chan_from_meta" in tags
+        assert "cresmo:v3" in tags
+        assert "auth:google" in tags
+
+        # 2. Metadata fallback to channel_id and content_id
+        attrs2, _tags2 = _build_session_span_attributes(
+            session_id=session_id,
+            user=UserIdentity.anonymous(),
+            tenant="tenant_def",
+            pipeline_version="cresmo:v2",
+            metadata={},
+        )
+        assert attrs2["cresmo.channel.name"] == "chan_alpha"
+        assert attrs2["cresmo.content.title"] == "cnt_beta"
+        assert "cresmo.user.subject" not in attrs2
+        assert "cresmo.batch_id" not in attrs2
+
+        # 3. Metadata with only content_title
+        attrs3, _ = _build_session_span_attributes(
+            session_id=session_id,
+            user=user,
+            tenant="tenant_xyz",
+            pipeline_version="cresmo:v3",
+            metadata={"content_title": "ct_alone"},
+        )
+        assert attrs3["cresmo.content.title"] == "ct_alone"
+
+        # 4. Metadata empty verifies content_title in input.value falls back to content_id
+        input_payload2 = json.loads(attrs2["input.value"])
+        assert input_payload2["content_title"] == "cnt_beta"
+
+
+class TestOpenTelemetryAdapterRecordMethodsAndFlushExtended:
+    """Test record_score, record_judge_evaluation, record_session_coherence, record_stage_io, and flush."""
+
+    def test_record_score_inside_span_auto_observation_id(self) -> None:
+        from unittest.mock import MagicMock
+
+        exporter = InMemorySpanExporter()
+        provider = TracerProvider()
+        provider.add_span_processor(SimpleSpanProcessor(exporter))
+        tracer = provider.get_tracer("cresmo.test")
+        mock_langfuse = MagicMock()
+        adapter = OpenTelemetryAdapter(tracer=tracer, langfuse_client=mock_langfuse)
+
+        with tracer.start_as_current_span("parent_span") as span:
+            span_ctx = span.get_span_context()
+            expected_obs_id = f"{span_ctx.span_id:016x}"
+            adapter.record_score(
+                name="precision",
+                value=0.99,
+                comment="great score",
+                trace_id="tr_789",
+                observation_id=None,
+            )
+
+        finished = exporter.get_finished_spans()
+        assert len(finished) == 1
+        event = finished[0].events[0]
+        assert event.name == "telemetry_score"
+        assert event.attributes is not None
+        assert event.attributes["score.name"] == "precision"
+        assert event.attributes["score.value"] == 0.99
+        assert event.attributes["score.comment"] == "great score"
+        assert event.attributes["score.trace_id"] == "tr_789"
+        assert event.attributes["score.observation_id"] == expected_obs_id
+
+        mock_langfuse.score.assert_called_once_with(
+            name="precision",
+            value=0.99,
+            comment="great score",
+            trace_id="tr_789",
+            observation_id=expected_obs_id,
+        )
+
+    def test_record_score_non_recording_span_and_langfuse_exception(self) -> None:
+        from unittest.mock import MagicMock, patch
+
+        mock_span = _create_mock_non_recording_span()
+        mock_langfuse = MagicMock()
+        mock_langfuse.score.side_effect = RuntimeError("langfuse failure")
+        adapter = OpenTelemetryAdapter(langfuse_client=mock_langfuse)
+
+        with patch("opentelemetry.trace.get_current_span", return_value=mock_span):
+            adapter.record_score(name="test", value=1.0)
+
+        mock_span.add_event.assert_not_called()
+        mock_langfuse.score.assert_called_once_with(name="test", value=1.0)
+
+    def test_record_judge_evaluation_span_event_and_langfuse(self) -> None:
+        from unittest.mock import MagicMock
+
+        exporter = InMemorySpanExporter()
+        provider = TracerProvider()
+        provider.add_span_processor(SimpleSpanProcessor(exporter))
+        tracer = provider.get_tracer("cresmo.test")
+        mock_langfuse = MagicMock()
+        adapter = OpenTelemetryAdapter(tracer=tracer, langfuse_client=mock_langfuse)
+
+        session_id = PipelineSessionId.create(channel="sandeco", content_id="c123")
+        content_id = ContentId("c123")
+
+        with tracer.start_as_current_span("eval_stage"):
+            adapter.record_judge_evaluation(
+                session_id=session_id,
+                content_id=content_id,
+                iteration=2,
+                max_iterations=3,
+                verdict="PASS",
+            )
+
+        finished = exporter.get_finished_spans()
+        assert len(finished) == 1
+        event = finished[0].events[0]
+        assert event.name == "judge_evaluation"
+        assert event.attributes is not None
+        assert event.attributes["judge.session_id"] == "sandeco:c123"
+        assert event.attributes["judge.content_id"] == "c123"
+        assert event.attributes["judge.channel_id"] == "sandeco"
+        assert event.attributes["judge.iteration"] == 2
+        assert event.attributes["judge.max_iterations"] == 3
+        assert event.attributes["judge.verdict"] == "PASS"
+        assert event.attributes["judge.friction_ratio"] == 0.5
+
+        mock_langfuse.score.assert_called_once_with(
+            name="judge_friction",
+            value=0.5,
+            comment="Iteration 2/3 - PASS",
+        )
+
+    def test_record_judge_evaluation_non_recording_span_and_langfuse_err(self) -> None:
+        from unittest.mock import MagicMock, patch
+
+        mock_span = _create_mock_non_recording_span()
+        mock_langfuse = MagicMock()
+        mock_langfuse.score.side_effect = RuntimeError("err")
+        adapter = OpenTelemetryAdapter(langfuse_client=mock_langfuse)
+
+        with patch("opentelemetry.trace.get_current_span", return_value=mock_span):
+            adapter.record_judge_evaluation(
+                session_id=PipelineSessionId.create("ch", "c1"),
+                content_id=ContentId("c1"),
+                iteration=1,
+                max_iterations=1,
+                verdict="PASS",
+            )
+        mock_span.add_event.assert_not_called()
+
+    def test_record_session_coherence_with_langfuse_and_non_recording(self) -> None:
+        from unittest.mock import MagicMock, patch
+
+        mock_langfuse = MagicMock()
+        exporter = InMemorySpanExporter()
+        provider = TracerProvider()
+        provider.add_span_processor(SimpleSpanProcessor(exporter))
+        tracer = provider.get_tracer("cresmo.test")
+        adapter = OpenTelemetryAdapter(tracer=tracer, langfuse_client=mock_langfuse)
+
+        session_id = PipelineSessionId.create(channel="chan1", content_id="c1")
+        content_id = ContentId("c1")
+
+        with tracer.start_as_current_span("coherence_span"):
+            adapter.record_session_coherence(
+                session_id=session_id,
+                content_id=content_id,
+                score=0.88,
+                details={"metric_a": 10},
+            )
+
+        mock_langfuse.score.assert_called_once_with(
+            name="session_coherence",
+            value=0.88,
+            comment="Coherence for c1",
+        )
+
+        # Test non-recording span & langfuse exception
+        mock_span = _create_mock_non_recording_span()
+        mock_langfuse.score.side_effect = RuntimeError("score error")
+        with patch("opentelemetry.trace.get_current_span", return_value=mock_span):
+            adapter.record_session_coherence(
+                session_id=session_id,
+                content_id=content_id,
+                score=0.5,
+            )
+        mock_span.add_event.assert_not_called()
+        mock_span.set_attribute.assert_not_called()
+
+    def test_record_stage_io_string_payloads_and_non_recording(self) -> None:
+        from unittest.mock import patch
+
+        exporter = InMemorySpanExporter()
+        provider = TracerProvider()
+        provider.add_span_processor(SimpleSpanProcessor(exporter))
+        tracer = provider.get_tracer("cresmo.test")
+        adapter = OpenTelemetryAdapter(tracer=tracer)
+
+        with tracer.start_as_current_span("stage_span"):
+            adapter.record_stage_io(
+                input_payload="plain text input",
+                output_payload="plain text output",
+            )
+
+        finished = exporter.get_finished_spans()
+        assert len(finished) == 1
+        attrs = finished[0].attributes or {}
+        assert attrs["input.value"] == "plain text input"
+        assert attrs["langfuse.observation.input"] == "plain text input"
+        assert attrs["output.value"] == "plain text output"
+        assert attrs["langfuse.observation.output"] == "plain text output"
+
+        # Non-recording span
+        mock_span = _create_mock_non_recording_span()
+        with patch("opentelemetry.trace.get_current_span", return_value=mock_span):
+            adapter.record_stage_io("in", "out")
+        mock_span.set_attribute.assert_not_called()
+
+    def test_record_session_output_non_recording_span(self) -> None:
+        from unittest.mock import patch
+
+        adapter = OpenTelemetryAdapter()
+        mock_span = _create_mock_non_recording_span()
+        with patch("opentelemetry.trace.get_current_span", return_value=mock_span):
+            adapter.record_session_output({"status": "OK"})
+        mock_span.set_attribute.assert_not_called()
+
+    def test_open_telemetry_adapter_init_defaults(self) -> None:
+        from cresmo.infrastructure.adapters.opentelemetry_adapter import (
+            DEFAULT_PIPELINE_VERSION,
+        )
+
+        adapter = OpenTelemetryAdapter()
+        assert adapter._tracer is not None
+        assert adapter._pipeline_version == DEFAULT_PIPELINE_VERSION
+        assert adapter._langfuse is None
+
+        adapter2 = OpenTelemetryAdapter(pipeline_version="custom:v99")
+        assert adapter2._pipeline_version == "custom:v99"
+
+    def test_flush_exceptions_and_fallbacks(self) -> None:
+        from unittest.mock import MagicMock, patch
+
+        from cresmo.infrastructure.adapters.opentelemetry_adapter import (
+            OTEL_FLUSH_TIMEOUT_MS,
+        )
+
+        # 1. client is None, get_client() succeeds, flush succeeds
+        mock_client = MagicMock()
+        adapter = OpenTelemetryAdapter(langfuse_client=None)
+        with (
+            patch("langfuse.get_client", return_value=mock_client),
+            patch("opentelemetry.trace.get_tracer_provider") as mock_gtp,
+        ):
+            mock_tp = MagicMock()
+            mock_gtp.return_value = mock_tp
+            adapter.flush()
+            mock_client.flush.assert_called_once()
+            mock_tp.force_flush.assert_called_once_with(timeout_millis=OTEL_FLUSH_TIMEOUT_MS)
+
+        # 2. client.flush() raises Exception, tracer_provider.force_flush raises Exception
+        mock_bad_client = MagicMock()
+        mock_bad_client.flush.side_effect = RuntimeError("langfuse flush crash")
+        adapter_bad = OpenTelemetryAdapter(langfuse_client=mock_bad_client)
+        with patch("opentelemetry.trace.get_tracer_provider") as mock_gtp:
+            mock_tp = MagicMock()
+            mock_tp.force_flush.side_effect = RuntimeError("tp flush crash")
+            mock_gtp.return_value = mock_tp
+            adapter_bad.flush()  # does not raise
+
+        # 3. tracer_provider has non-callable force_flush
+        with patch("opentelemetry.trace.get_tracer_provider") as mock_gtp:
+            mock_tp = MagicMock()
+            mock_tp.force_flush = "not_callable"
+            mock_gtp.return_value = mock_tp
+            adapter_bad.flush()  # does not raise
+
+    def test_record_score_inside_span_preserves_explicit_observation_id(self) -> None:
+        from unittest.mock import MagicMock
+
+        exporter = InMemorySpanExporter()
+        provider = TracerProvider()
+        provider.add_span_processor(SimpleSpanProcessor(exporter))
+        tracer = provider.get_tracer("cresmo.test")
+        mock_langfuse = MagicMock()
+        adapter = OpenTelemetryAdapter(tracer=tracer, langfuse_client=mock_langfuse)
+
+        with tracer.start_as_current_span("parent_span"):
+            adapter.record_score(
+                name="precision",
+                value=0.99,
+                observation_id="explicit_obs_id_keep",
+            )
+
+        mock_langfuse.score.assert_called_once_with(
+            name="precision",
+            value=0.99,
+            observation_id="explicit_obs_id_keep",
+        )
+
+    def test_record_judge_evaluation_passes_verdict_to_metric(self) -> None:
+        from unittest.mock import MagicMock, patch
+
+        mock_langfuse = MagicMock()
+        adapter = OpenTelemetryAdapter(langfuse_client=mock_langfuse)
+        session_id = PipelineSessionId.create(channel="sandeco", content_id="c123")
+        content_id = ContentId("c123")
+
+        with patch(
+            "cresmo.infrastructure.adapters.opentelemetry_adapter.JudgeFrictionMetric",
+            wraps=JudgeFrictionMetric,
+        ) as mock_jfm:
+            adapter.record_judge_evaluation(
+                session_id=session_id,
+                content_id=content_id,
+                iteration=2,
+                max_iterations=3,
+                verdict="PASS",
+            )
+            mock_jfm.assert_called_once_with(iterations=2, max_iterations=3, verdict="PASS")
+
+    def test_open_telemetry_adapter_init_calls_tracer_and_thread_naming(self) -> None:
+        from unittest.mock import MagicMock, patch
+
+        mock_client = MagicMock()
+        with (
+            patch("opentelemetry.trace.get_tracer") as mock_get_tracer,
+            patch(
+                "cresmo.infrastructure.adapters.opentelemetry_adapter.name_telemetry_threads"
+            ) as mock_name_threads,
+        ):
+            OpenTelemetryAdapter(langfuse_client=mock_client)
+            mock_get_tracer.assert_called_once_with("cresmo.pipeline")
+            mock_name_threads.assert_called_once_with(mock_client)
+
+    def test_flush_tracer_provider_without_force_flush_attribute(self) -> None:
+        from unittest.mock import MagicMock, patch
+
+        adapter = OpenTelemetryAdapter()
+        mock_tp = MagicMock(spec=[])
+        assert not hasattr(mock_tp, "force_flush")
+        with (
+            patch("opentelemetry.trace.get_tracer_provider", return_value=mock_tp),
+            patch("cresmo.infrastructure.adapters.opentelemetry_adapter.logger.debug") as mock_debug,
+        ):
+            adapter.flush()
+            mock_debug.assert_not_called()
+
+    def test_flush_when_get_client_raises_does_not_log_client_flush_skip(self) -> None:
+        from unittest.mock import MagicMock, patch
+
+        adapter = OpenTelemetryAdapter(langfuse_client=None)
+        mock_tp = MagicMock(spec=[])
+        with (
+            patch("langfuse.get_client", side_effect=ImportError("No langfuse")),
+            patch("cresmo.infrastructure.adapters.opentelemetry_adapter.logger.debug") as mock_debug,
+            patch("opentelemetry.trace.get_tracer_provider", return_value=mock_tp),
+        ):
+            adapter.flush()
+            mock_debug.assert_not_called()
+
+    def test_telemetry_methods_log_debug_on_exceptions(self) -> None:
+        from unittest.mock import MagicMock, patch
+
+        err = RuntimeError("telemetry failure")
+        mock_langfuse = MagicMock()
+        mock_langfuse.score.side_effect = err
+        mock_langfuse.flush.side_effect = err
+        adapter = OpenTelemetryAdapter(langfuse_client=mock_langfuse)
+        session_id = PipelineSessionId.create(channel="chan", content_id="c1")
+        content_id = ContentId("c1")
+
+        with patch("cresmo.infrastructure.adapters.opentelemetry_adapter.logger.debug") as mock_debug:
+            adapter.record_score("score1", 0.5)
+            mock_debug.assert_called_with(
+                "[OpenTelemetryAdapter] Langfuse score emission skipped: %s", err
+            )
+
+            mock_debug.reset_mock()
+            adapter.record_judge_evaluation(session_id, content_id, 1, 1, "PASS")
+            mock_debug.assert_called_with(
+                "[OpenTelemetryAdapter] Langfuse score emission skipped: %s", err
+            )
+
+            mock_debug.reset_mock()
+            adapter.record_session_coherence(session_id, content_id, 0.8)
+            mock_debug.assert_called_with(
+                "[OpenTelemetryAdapter] Langfuse score emission skipped: %s", err
+            )
+
+            mock_debug.reset_mock()
+            adapter.flush()
+            mock_debug.assert_called_with(
+                "[OpenTelemetryAdapter] Langfuse client flush skipped: %s", err
+            )
+
+            mock_debug.reset_mock()
+            mock_tp = MagicMock()
+            err_tp = RuntimeError("tp flush error")
+            mock_tp.force_flush.side_effect = err_tp
+            with patch("opentelemetry.trace.get_tracer_provider", return_value=mock_tp):
+                adapter.flush()
+                mock_debug.assert_called_with(
+                    "[OpenTelemetryAdapter] OpenTelemetry tracer provider flush skipped: %s", err_tp
+                )
+

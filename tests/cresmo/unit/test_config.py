@@ -101,13 +101,28 @@ class TestCresmoSettings:
         with pytest.raises(ValidationError):
             CresmoSettings.model_validate({"llm_indexing_temperature": -0.5})
 
-    def test_ensure_directories_creates_master_dir(self, tmp_path: Path) -> None:
-        settings = CresmoSettings(data_dir=tmp_path / "data", vault_dir=tmp_path / "vault")
+    def test_ensure_directories_creates_all_dirs_and_is_idempotent(self, tmp_path: Path) -> None:
+        settings = CresmoSettings(
+            data_dir=tmp_path / "nested" / "data",
+            vault_dir=tmp_path / "nested" / "vault",
+        )
+        assert not (tmp_path / "nested").exists()
         settings.ensure_directories()
-        assert settings.master_dir.exists()
-        assert settings.master_dir.is_dir()
-        assert settings.mocs_dir.exists()
-        assert settings.mocs_dir.is_dir()
+
+        for d in (
+            settings.data_dir,
+            settings.vault_dir,
+            settings.mocs_dir,
+            settings.raw_dir,
+            settings.enriched_dir,
+            settings.master_dir,
+            settings.priority_texts_dir,
+        ):
+            assert d.exists()
+            assert d.is_dir()
+
+        # Idempotent second run verifies exist_ok=True
+        settings.ensure_directories()
 
     def test_discovery_queue_maxsize_defaults_and_validation(
         self, monkeypatch: pytest.MonkeyPatch
@@ -134,3 +149,10 @@ class TestCresmoSettings:
         monkeypatch.setenv("PIPELINE_VERSION", "cresmo:v3-canary")
         overridden = CresmoSettings()
         assert overridden.pipeline_version == "cresmo:v3-canary"
+
+    def test_cresmo_settings_custom_env_file_override(self, tmp_path: Path) -> None:
+        """Verify _env_file argument explicitly overrides environment file."""
+        custom_env = tmp_path / "custom.env"
+        custom_env.write_text("CRESMO_OLLAMA_MODEL=deepseek-r1:14b\n", encoding="utf-8")
+        settings = CresmoSettings(_env_file=custom_env)
+        assert settings.ollama_model == "deepseek-r1:14b"

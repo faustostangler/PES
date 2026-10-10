@@ -11,11 +11,11 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from cresmo.application.ports import LLMTransformationPort, PromptProviderPort, VaultRepositoryPort
+from cresmo.application.ports import PromptProviderPort
 from cresmo.application.use_cases.reconcile_mocs import ReconcileMOCsUseCase
-from cresmo.domain.entities import AtomicNote, MapOfContent, PipelineSessionId, UserIdentity
+from cresmo.domain.entities import AtomicNote, PipelineSessionId, UserIdentity
 from cresmo.domain.exceptions import DomainValidationError
-from cresmo.domain.value_objects import NoteTitle, NoteType, PromptKey
+from cresmo.domain.value_objects import NoteTitle, NoteType
 from tests.doubles.mock_adapters import InMemoryVaultAdapter, MockLLMAdapter
 
 

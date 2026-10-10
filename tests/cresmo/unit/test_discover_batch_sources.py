@@ -1328,8 +1328,8 @@ class TestDiscoverBatchSourcesUseCase:
     def test_crawler_thread_daemon_and_name_properties(
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        from typing import Any
         import threading
+        from typing import Any
 
         captured_threads: list[threading.Thread] = []
         orig_thread_cls = threading.Thread
@@ -1561,8 +1561,8 @@ class TestDiscoverBatchSourcesUseCase:
     def test_execute_sync_fallback_when_media_ingestion_port_none(
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        from typing import Any
         import threading
+        from typing import Any
 
         captured_threads: list[threading.Thread] = []
         orig_thread_cls = threading.Thread
@@ -1735,8 +1735,8 @@ class TestDiscoverBatchSourcesUseCase:
     def test_discovery_queue_maxsize_settings_and_default(
         self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
     ) -> None:
-        from typing import Any
         import queue
+        from typing import Any
 
         captured_maxsizes: list[int] = []
         orig_queue_cls = queue.Queue
@@ -1786,8 +1786,8 @@ class TestDiscoverBatchSourcesUseCase:
     def test_enqueue_source_queue_timeout_and_parameters(
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        from typing import Any
         import queue
+        from typing import Any
 
         from cresmo.application.use_cases.discovery.discover_batch_sources import (
             _DEFAULT_STREAM_QUEUE_TIMEOUT_SECONDS,

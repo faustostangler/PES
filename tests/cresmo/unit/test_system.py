@@ -5,6 +5,7 @@ Conforms to ADR-026 Rule 4 (OS-Agnostic Telemetry & Safe Storage Paths).
 
 from __future__ import annotations
 
+import resource
 from unittest.mock import MagicMock, patch
 
 from cresmo.infrastructure.system import get_process_rss_bytes
@@ -17,10 +18,11 @@ def test_get_process_rss_bytes_linux_scales_by_1024() -> None:
 
     with (
         patch("sys.platform", "linux"),
-        patch("resource.getrusage", return_value=mock_rusage),
+        patch("resource.getrusage", return_value=mock_rusage) as mock_getrusage,
     ):
         rss = get_process_rss_bytes()
         assert rss == 50_000 * 1024.0
+        mock_getrusage.assert_called_once_with(resource.RUSAGE_SELF)
 
 
 def test_get_process_rss_bytes_darwin_returns_raw_bytes() -> None:
@@ -30,7 +32,8 @@ def test_get_process_rss_bytes_darwin_returns_raw_bytes() -> None:
 
     with (
         patch("sys.platform", "darwin"),
-        patch("resource.getrusage", return_value=mock_rusage),
+        patch("resource.getrusage", return_value=mock_rusage) as mock_getrusage,
     ):
         rss = get_process_rss_bytes()
         assert rss == 51_200_000.0
+        mock_getrusage.assert_called_once_with(resource.RUSAGE_SELF)

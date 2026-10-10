@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import pytest
+
 from cresmo.infrastructure.paths import find_workspace_root
 
 
@@ -44,3 +46,11 @@ class TestWorkspaceRootDiscovery:
         expected_fallback = deep_dir.resolve().parents[3]
         found = find_workspace_root(start_path=deep_dir)
         assert found == expected_fallback
+
+    def test_find_workspace_root_fallback_default_start_path(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        import cresmo.infrastructure.paths as paths_mod
+
+        # Force exists to False to reach fallback with start_path=None
+        monkeypatch.setattr(Path, "exists", lambda self: False)
+        expected = Path(paths_mod.__file__).resolve().parents[3]
+        assert find_workspace_root(None) == expected

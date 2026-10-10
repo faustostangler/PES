@@ -25,8 +25,6 @@ from __future__ import annotations
 import argparse
 import ast
 import json
-import os
-import re
 import shutil
 import subprocess
 import sys
@@ -182,6 +180,62 @@ MODULE_TEST_MAP: dict[str, list[str]] = {
     "src/cresmo/infrastructure/adapters/cookie_extractor.py": [
         "tests/cresmo/unit/test_cookie_extractor.py",
     ],
+    "src/cresmo/infrastructure/paths.py": [
+        "tests/cresmo/unit/test_paths.py",
+    ],
+    "src/cresmo/infrastructure/system.py": [
+        "tests/cresmo/unit/test_system.py",
+    ],
+    "src/cresmo/infrastructure/logging_config.py": [
+        "tests/cresmo/unit/test_logging_config.py",
+    ],
+    "src/cresmo/infrastructure/config.py": [
+        "tests/cresmo/unit/test_config.py",
+    ],
+    "src/cresmo/infrastructure/adapters/sqlite_ledger_adapter.py": [
+        "tests/cresmo/unit/test_sqlite_ledger_adapter.py",
+    ],
+    # Wave 5: Presentation
+    "src/cresmo/presentation/cli.py": [
+        "tests/cresmo/unit/test_cli.py",
+    ],
+    "src/cresmo/presentation/composition.py": [
+        "tests/cresmo/unit/test_composition.py",
+        "tests/cresmo/unit/test_cli.py",
+    ],
+    "src/cresmo/presentation/commands/check_config.py": [
+        "tests/cresmo/unit/test_cli.py",
+        "tests/cresmo/unit/test_preflight_checker.py",
+    ],
+    "src/cresmo/presentation/commands/dedupe.py": [
+        "tests/cresmo/unit/test_cli.py",
+        "tests/cresmo/unit/test_unify_duplicates.py",
+    ],
+    "src/cresmo/presentation/commands/run.py": [
+        "tests/cresmo/unit/test_cli.py",
+    ],
+    "src/cresmo/presentation/commands/run_parser.py": [
+        "tests/cresmo/unit/test_cli.py",
+    ],
+    "src/cresmo/presentation/commands/sync.py": [
+        "tests/cresmo/unit/test_cli.py",
+        "tests/cresmo/unit/test_sync_channel_use_case.py",
+    ],
+    "src/cresmo/presentation/commands/worker.py": [
+        "tests/cresmo/unit/test_cli.py",
+    ],
+    "src/cresmo/presentation/commands/concat_master.py": [
+        "tests/cresmo/unit/test_cli.py",
+        "tests/cresmo/unit/test_concat_master_use_case.py",
+    ],
+    "src/cresmo/presentation/commands/seed_prompts.py": [
+        "tests/cresmo/unit/test_seed_prompts.py",
+        "tests/cresmo/unit/test_cli.py",
+    ],
+    "src/cresmo/presentation/commands/export_cookies.py": [
+        "tests/cresmo/unit/test_cli.py",
+        "tests/cresmo/unit/test_cookie_extractor.py",
+    ],
 }
 
 WAVE_DEFINITIONS: dict[str, list[str]] = {
@@ -233,6 +287,24 @@ WAVE_DEFINITIONS: dict[str, list[str]] = {
         "src/cresmo/infrastructure/adapters/prometheus_metrics_adapter.py",
         "src/cresmo/infrastructure/adapters/anonymizer_adapter.py",
         "src/cresmo/infrastructure/adapters/cookie_extractor.py",
+        "src/cresmo/infrastructure/paths.py",
+        "src/cresmo/infrastructure/system.py",
+        "src/cresmo/infrastructure/logging_config.py",
+        "src/cresmo/infrastructure/config.py",
+        "src/cresmo/infrastructure/adapters/sqlite_ledger_adapter.py",
+    ],
+    "presentation": [
+        "src/cresmo/presentation/cli.py",
+        "src/cresmo/presentation/composition.py",
+        "src/cresmo/presentation/commands/check_config.py",
+        "src/cresmo/presentation/commands/dedupe.py",
+        "src/cresmo/presentation/commands/run.py",
+        "src/cresmo/presentation/commands/run_parser.py",
+        "src/cresmo/presentation/commands/sync.py",
+        "src/cresmo/presentation/commands/worker.py",
+        "src/cresmo/presentation/commands/concat_master.py",
+        "src/cresmo/presentation/commands/seed_prompts.py",
+        "src/cresmo/presentation/commands/export_cookies.py",
     ],
 }
 
@@ -263,7 +335,7 @@ def ensure_mutmut_dataclass_support() -> None:
             )
             if old_block in code:
                 fm_path.write_text(code.replace(old_block, new_block), encoding="utf-8")
-    except Exception:
+    except Exception:  # noqa: BLE001, S110
         pass
 
 
@@ -347,7 +419,7 @@ def extract_function_keys(source_path: Path) -> list[str]:
                     if isinstance(item, ast.FunctionDef | ast.AsyncFunctionDef):
                         mangled = make_mutant_key(item.name, class_name=node.name)
                         keys.append(get_mutant_name(source_path, mangled))
-    except Exception:
+    except Exception:  # noqa: BLE001, S110
         pass
 
     # 2. Also check if metadata already has any additional keys
@@ -359,7 +431,7 @@ def extract_function_keys(source_path: Path) -> list[str]:
         if data.hash_by_function_name:
             for f in data.hash_by_function_name:
                 keys.append(get_mutant_name(source_path, f))
-    except Exception:
+    except Exception:  # noqa: BLE001, S110
         pass
 
     return sorted(set(keys))
@@ -372,7 +444,7 @@ def seed_mutmut_stats(source_path: Path, test_nodes: Sequence[str]) -> None:
     if stats_file.exists():
         try:
             data = json.loads(stats_file.read_text(encoding="utf-8"))
-        except Exception:
+        except Exception:  # noqa: BLE001
             data = {}
 
     tests_map = data.setdefault("tests_by_mangled_function_name", {})
@@ -429,9 +501,9 @@ def run_mutation_on_module(
         print(f"❌ Error: File not found: {source_path_str}")
         return {"total": 0, "killed": 0, "survived": 0}
 
-    print(f"\n================================================================================")
+    print("\n================================================================================")
     print(f"🎯 MUTATING MODULE: {source_path_str}")
-    print(f"================================================================================")
+    print("================================================================================")
 
     # 1. Sync
     synced = sync_source_to_mutants()
@@ -462,12 +534,12 @@ def run_mutation_on_module(
         mutant_code_path.unlink(missing_ok=True)
         if meta_path.exists():
             meta_path.unlink(missing_ok=True)
-        print(f"  🔄 Cleared previous mutant artifacts for fresh generation.")
+        print("  🔄 Cleared previous mutant artifacts for fresh generation.")
 
     # 5. Configure pyproject.toml & run
     original_pyproject = set_pyproject_only_mutate(source_path_str)
     try:
-        print(f"  🚀 Executing 'uv run mutmut run'...")
+        print("  🚀 Executing 'uv run mutmut run'...")
         res = subprocess.run(
             ["uv", "run", "mutmut", "run"],
             capture_output=True,
@@ -516,7 +588,11 @@ def run_mutation_on_module(
 def main() -> int:
     parser = argparse.ArgumentParser(description="SOTA Mutation Sweeper for Cresmo.")
     parser.add_argument("--file", type=str, help="Single file to mutate.")
-    parser.add_argument("--wave", choices=["domain", "pipeline", "use_cases", "infra", "all"], help="Execution wave.")
+    parser.add_argument(
+        "--wave",
+        choices=["domain", "pipeline", "use_cases", "infra", "presentation", "all"],
+        help="Execution wave.",
+    )
     parser.add_argument("--no-reset", action="store_true", help="Do not reset mutant statuses.")
     parser.add_argument("--show-survivors", action="store_true", help="Print diff of surviving mutants.")
     args = parser.parse_args()
@@ -543,7 +619,7 @@ def main() -> int:
 
     rate = (totals["killed"] / totals["total"] * 100) if totals["total"] else 0.0
     print("\n" + "=" * 80)
-    print(f"🏁 WAVE EXECUTION COMPLETE")
+    print("🏁 WAVE EXECUTION COMPLETE")
     print(f"   Total Mutants:   {totals['total']}")
     print(f"   Killed:          {totals['killed']} ({rate:.1f}%)")
     print(f"   Survived:        {totals['survived']}")

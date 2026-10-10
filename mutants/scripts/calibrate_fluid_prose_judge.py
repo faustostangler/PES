@@ -10,9 +10,12 @@ Conforms to:
 from __future__ import annotations
 
 import argparse
+import json
 import logging
 import sys
-from dataclasses import dataclass
+from collections.abc import Iterator
+from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Any
 
 from cresmo.domain.value_objects.quality import (
@@ -25,8 +28,9 @@ from cresmo.presentation.factories.judge_factory import build_llm_judge_adapter
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger("calibrate_judge")
 
+DEFAULT_GOLDEN_SET_PATH = Path("data/golden_sets/fluid_prose_golden_set_42.json")
 
-# Canonical seed dataset items for dry-run offline calibration
+# Canonical seed dataset items for quick dry-run
 SEED_CALIBRATION_DATA: list[dict[str, Any]] = [
     {
         "id": "item_01_pass_clean_narrative",
@@ -43,7 +47,11 @@ SEED_CALIBRATION_DATA: list[dict[str, Any]] = [
             ),
         },
         "expected_output": {"verdict": "PASS"},
-        "metadata": {"category": "valid_transformation"},
+        "metadata": {
+            "criterion": "orality_removal",
+            "difficulty": "easy",
+            "category": "valid_transformation",
+        },
     },
     {
         "id": "item_02_fail_youtube_cta",
@@ -56,7 +64,11 @@ SEED_CALIBRATION_DATA: list[dict[str, Any]] = [
             ),
         },
         "expected_output": {"verdict": "FAIL"},
-        "metadata": {"defect": "youtube_cta_leakage", "violates": "ORALITY_REMOVAL"},
+        "metadata": {
+            "criterion": "orality_removal",
+            "difficulty": "easy",
+            "expected_anomaly": "youtube_cta_leakage",
+        },
     },
     {
         "id": "item_03_fail_mechanical_em_dash",
@@ -69,7 +81,11 @@ SEED_CALIBRATION_DATA: list[dict[str, Any]] = [
             ),
         },
         "expected_output": {"verdict": "FAIL"},
-        "metadata": {"defect": "forbidden_em_dash", "violates": "STRUCTURAL_COMPLIANCE"},
+        "metadata": {
+            "criterion": "structural_compliance",
+            "difficulty": "borderline",
+            "expected_anomaly": "forbidden_em_dash",
+        },
     },
     {
         "id": "item_04_pass_with_epistemic_qualification",
@@ -85,7 +101,11 @@ SEED_CALIBRATION_DATA: list[dict[str, Any]] = [
             ),
         },
         "expected_output": {"verdict": "PASS"},
-        "metadata": {"category": "valid_epistemic_critique", "target": "EPISTEMIC_CRITIQUE"},
+        "metadata": {
+            "criterion": "epistemic_critique",
+            "difficulty": "typical",
+            "expected_anomaly": "none",
+        },
     },
     {
         "id": "item_05_fail_binary_antithesis",
@@ -98,45 +118,11 @@ SEED_CALIBRATION_DATA: list[dict[str, Any]] = [
             ),
         },
         "expected_output": {"verdict": "FAIL"},
-        "metadata": {"defect": "binary_antithesis", "violates": "AUTHORIAL_VOICE"},
-    },
-    {
-        "id": "item_06_fail_hallucination_external",
-        "input": {
-            "raw_text": "falamos apenas sobre a colheita do café no vale do paraíba no século 19.",
-            "candidate_text": (
-                "## A Cafeicultura e o Sistema Financeiro Global\n\n"
-                "A produção cafeeira no Vale do Paraíba provocou o colapso dos bancos britânicos "
-                "e culminou no Tratado de Bretton Woods em 1944 nos Estados Unidos."
-            ),
+        "metadata": {
+            "criterion": "authorial_voice",
+            "difficulty": "borderline",
+            "expected_anomaly": "binary_antithesis",
         },
-        "expected_output": {"verdict": "FAIL"},
-        "metadata": {"defect": "anachronistic_hallucination", "violates": "SEMANTIC_FAITHFULNESS"},
-    },
-    {
-        "id": "item_07_pass_ner_normalized",
-        "input": {
-            "raw_text": "o pensador friedrich nitshe escreveu sobre o eterno retorno dos acontecimentos.",
-            "candidate_text": (
-                "## A Ontologia do Eterno Retorno\n\n"
-                "Na obra do filósofo **Friedrich Nietzsche**, a concepção do eterno retorno "
-                "desafia a linearidade temporal e propõe uma radical afirmação da existência humana."
-            ),
-        },
-        "expected_output": {"verdict": "PASS"},
-        "metadata": {"category": "valid_ner_normalization", "target": "NER_PRESERVATION"},
-    },
-    {
-        "id": "item_08_fail_missing_line1_heading",
-        "input": {
-            "raw_text": "uma explanação detalhada da geopolítica naval do atlântico sul.",
-            "candidate_text": (
-                "Este parágrafo inicial não possui o cabeçalho obrigatório na linha 1.\n\n"
-                "A disputa por rotas comerciais redefiniu a soberania marítima."
-            ),
-        },
-        "expected_output": {"verdict": "FAIL"},
-        "metadata": {"defect": "missing_line1_heading", "violates": "STRUCTURAL_COMPLIANCE"},
     },
 ]
 
@@ -172,12 +158,101 @@ class ConfusionMatrix:
         p, r = self.precision, self.recall
         return (2 * p * r) / (p + r) if (p + r) > 0 else 0.0
 
+    def record(self, expected: str, actual: str) -> str:
+        """Update counts from expected and actual verdicts and return status string."""
+        if expected not in ("PASS", "FAIL"):
+            self.invalid += 1
+            return "INVALID"
 
-def evaluate_single_item(judge: Any, item: dict[str, Any]) -> tuple[str, str, float, str]:
-    """Execute judge on item and return (actual_verdict, expected_verdict, score, reasoning)."""
+        if expected == "PASS" and actual == "PASS":
+            self.tp += 1
+            return "TP (True Positive - Correct Pass)"
+        if expected == "FAIL" and actual == "FAIL":
+            self.tn += 1
+            return "TN (True Negative - Correct Reject)"
+        if expected == "FAIL" and actual == "PASS":
+            self.fp += 1
+            return "FP (False Positive - Permissive Leakage)"
+        self.fn += 1
+        return "FN (False Negative - Pedantic Reject)"
+
+
+@dataclass
+class CalibrationResultSet:
+    """Aggregated calibration results across all dimensions."""
+
+    overall: ConfusionMatrix = field(default_factory=ConfusionMatrix)
+    target_isolated: ConfusionMatrix = field(default_factory=ConfusionMatrix)
+    by_criterion: dict[str, ConfusionMatrix] = field(default_factory=dict)
+    by_difficulty: dict[str, ConfusionMatrix] = field(default_factory=dict)
+    disagreements: list[dict[str, Any]] = field(default_factory=list)
+
+    @property
+    def tp(self) -> int:
+        return self.overall.tp
+
+    @property
+    def fp(self) -> int:
+        return self.overall.fp
+
+    @property
+    def fn(self) -> int:
+        return self.overall.fn
+
+    @property
+    def tn(self) -> int:
+        return self.overall.tn
+
+    @property
+    def invalid(self) -> int:
+        return self.overall.invalid
+
+    @property
+    def total_valid(self) -> int:
+        return self.overall.total_valid
+
+    @property
+    def accuracy(self) -> float:
+        return self.overall.accuracy
+
+    @property
+    def precision(self) -> float:
+        return self.overall.precision
+
+    @property
+    def recall(self) -> float:
+        return self.overall.recall
+
+    @property
+    def f1(self) -> float:
+        return self.overall.f1
+
+
+@dataclass
+class ItemEvaluationResult:
+    """Evaluation result supporting 4-tuple unpacking and target-specific metrics."""
+
+    actual: str
+    expected: str
+    score: float
+    reasoning: str
+    target_actual: str = ""
+    target_score: float = 0.0
+
+    def __iter__(self) -> Iterator[Any]:
+        """Enable unpacking as (actual, expected, score, reasoning)."""
+        yield self.actual
+        yield self.expected
+        yield self.score
+        yield self.reasoning
+
+
+def evaluate_single_item(judge: Any, item: dict[str, Any]) -> ItemEvaluationResult:
+    """Execute judge on item and return unconfounded ItemEvaluationResult."""
     raw_text = item["input"]["raw_text"]
     candidate_text = item["input"]["candidate_text"]
     expected_verdict = item["expected_output"]["verdict"].upper().strip()
+    target_criterion_name = item.get("metadata", {}).get("criterion", "")
 
     context = EvaluationContext(
         stage_name="fluid_prose",
@@ -194,14 +269,38 @@ def evaluate_single_item(judge: Any, item: dict[str, Any]) -> tuple[str, str, fl
     )
 
     evaluation = judge.evaluate(context)
-    actual_verdict = "PASS" if evaluation.passed else "FAIL"
+    global_actual = "PASS" if evaluation.passed else "FAIL"
+    global_score = evaluation.overall_score
     reasoning = evaluation.extract_critique()
-    return actual_verdict, expected_verdict, evaluation.overall_score, reasoning
+
+    # Option 3: Isolated target criterion calculation
+    target_actual = global_actual
+    target_score = global_score
+    try:
+        if target_criterion_name:
+            crit_vo = JudgeCriterion(target_criterion_name)
+            crit_score = evaluation.get_score(crit_vo)
+            if crit_score is not None:
+                target_actual = "PASS" if crit_score.passed else "FAIL"
+                target_score = crit_score.score
+                if crit_score.reasoning:
+                    reasoning = crit_score.reasoning
+    except (ValueError, KeyError):
+        pass
+
+    return ItemEvaluationResult(
+        actual=global_actual,
+        expected=expected_verdict,
+        score=global_score,
+        reasoning=reasoning,
+        target_actual=target_actual,
+        target_score=target_score,
+    )
 
 
-def run_local_calibration(judge: Any, items: list[dict[str, Any]]) -> ConfusionMatrix:
-    """Run calibration over local dataset items and compute confusion matrix."""
-    matrix = ConfusionMatrix()
+def run_local_calibration(judge: Any, items: list[dict[str, Any]]) -> CalibrationResultSet:
+    """Run calibration over local dataset items and compute global and slice metrics."""
+    results = CalibrationResultSet()
 
     print("\n" + "=" * 70)
     print("RUNNING FLUID PROSE JUDGE CALIBRATION HARNESS")
@@ -209,66 +308,123 @@ def run_local_calibration(judge: Any, items: list[dict[str, Any]]) -> ConfusionM
 
     for item in items:
         item_id = item.get("id", "item")
-        actual, expected, score, reasoning = evaluate_single_item(judge, item)
+        metadata = item.get("metadata", {})
+        criterion = metadata.get("criterion", "general")
+        difficulty = metadata.get("difficulty", "typical")
 
-        if expected not in ("PASS", "FAIL"):
-            matrix.invalid += 1
-            print(f"[{item_id}] INVALID expected label: {expected}")
-            continue
+        if criterion not in results.by_criterion:
+            results.by_criterion[criterion] = ConfusionMatrix()
+        if difficulty not in results.by_difficulty:
+            results.by_difficulty[difficulty] = ConfusionMatrix()
 
-        if expected == "PASS" and actual == "PASS":
-            matrix.tp += 1
-            status = "TP (True Positive - Correct Pass)"
-        elif expected == "FAIL" and actual == "FAIL":
-            matrix.tn += 1
-            status = "TN (True Negative - Correct Reject)"
-        elif expected == "FAIL" and actual == "PASS":
-            matrix.fp += 1
-            status = "FP (False Positive - Permissive Leakage)"
-        else:
-            matrix.fn += 1
-            status = "FN (False Negative - Pedantic Reject)"
+        eval_res = evaluate_single_item(judge, item)
+        actual_global = eval_res.actual
+        expected = eval_res.expected
+        score = eval_res.score
+        reasoning = eval_res.reasoning
+        actual_target = eval_res.target_actual
+        target_score = eval_res.target_score
 
-        print(f"[{item_id}] Expected: {expected} | Actual: {actual} (Score: {score:.2f}) -> {status}")
-        if expected != actual:
+        # 1. Global Pipeline Gate
+        results.overall.record(expected, actual_global)
+        # 2. Isolated Target Criterion Gate (Option 3)
+        status_target = results.target_isolated.record(expected, actual_target)
+        results.by_criterion[criterion].record(expected, actual_target)
+        results.by_difficulty[difficulty].record(expected, actual_target)
+
+        print(
+            f"[{item_id:<26}] Expected: {expected} | Global: {actual_global} ({score:.2f}) | "
+            f"Target: {actual_target} ({target_score:.2f}) -> {status_target}"
+        )
+        if expected != actual_target:
+            print(
+                f"    Anomaly: {metadata.get('expected_anomaly', 'n/a')} | Defect Loc: {metadata.get('defect_location', 'n/a')}"
+            )
             print(f"    Reasoning: {reasoning}")
+            results.disagreements.append(
+                {
+                    "id": item_id,
+                    "expected": expected,
+                    "actual_global": actual_global,
+                    "actual_target": actual_target,
+                    "criterion": criterion,
+                    "difficulty": difficulty,
+                    "reasoning": reasoning,
+                }
+            )
 
-    return matrix
+    return results
 
 
-def print_calibration_report(matrix: ConfusionMatrix) -> None:
-    """Print structured calibration diagnostics and recommendations."""
+def print_calibration_report(results: CalibrationResultSet) -> None:
+    """Print structured calibration diagnostics, breakdown tables and recommendations."""
+    matrix = results.overall
+    target_matrix = results.target_isolated
+
     print("\n" + "=" * 70)
-    print("CALIBRATION METRICS & CONFUSION MATRIX REPORT")
+    print("GLOBAL PIPELINE QUALITY GATE REPORT (Composite Hard Gate)")
     print("=" * 70)
     print(f"Total Evaluated: {matrix.total_valid + matrix.invalid}")
     print(f"Valid Rows:      {matrix.total_valid}")
-    print(f"Invalid Rows:    {matrix.invalid}")
     print("-" * 70)
     print(f"True Positives (TP):  {matrix.tp}")
     print(f"False Positives (FP): {matrix.fp}")
     print(f"False Negatives (FN): {matrix.fn}")
     print(f"True Negatives (TN):  {matrix.tn}")
     print("-" * 70)
-    print(f"Accuracy:  {matrix.accuracy * 100:.1f}%")
-    print(f"Precision: {matrix.precision * 100:.1f}%")
-    print(f"Recall:    {matrix.recall * 100:.1f}%")
-    print(f"F1 Score:  {matrix.f1:.3f}")
+    print(f"Global Accuracy:  {matrix.accuracy * 100:.1f}%")
+    print(f"Global Precision: {matrix.precision * 100:.1f}%")
+    print(f"Global Recall:    {matrix.recall * 100:.1f}%")
+    print(f"Global F1 Score:  {matrix.f1:.3f}")
     print("=" * 70)
 
-    # Architectural diagnostics
-    print("DIAGNOSIS & GATE RECOMMENDATION:")
-    if matrix.fp > 0:
-        print("  [!] WARNING: False Positives detected (judge approved flawed outputs).")
-        print("      Risk: Knowledge lake pollution with YouTube CTAs or syntax errors.")
-        print("      Action: Tighten judge pass_threshold or strengthen mechanical gates.")
-    if matrix.fn > 0:
-        print("  [!] WARNING: False Negatives detected (judge rejected valid outputs).")
-        print("      Risk: Redundant retry loops and excessive token spend.")
-        print("      Action: Refine judge prompt instructions to reduce pedantry.")
+    print("\n" + "=" * 70)
+    print("ISOLATED TARGET CRITERION CALIBRATION (Option 3: Unconfounded)")
+    print("=" * 70)
+    print(f"Target Accuracy:  {target_matrix.accuracy * 100:.1f}%")
+    print(f"Target Precision: {target_matrix.precision * 100:.1f}%")
+    print(f"Target Recall:    {target_matrix.recall * 100:.1f}%")
+    print(f"Target F1 Score:  {target_matrix.f1:.3f}")
+    print("-" * 70)
+    print(
+        f"TP: {target_matrix.tp} | FP: {target_matrix.fp} | FN: {target_matrix.fn} | TN: {target_matrix.tn}"
+    )
+    print("=" * 70)
 
-    if matrix.accuracy >= 0.85 and matrix.fp == 0:
-        print("  [✓] JUDGE CALIBRATED: F1 >= 0.85 with zero permissive false positives.")
+    # Criterion breakdown table
+    print("\nBREAKDOWN BY CRITERION (Target-Isolated Metrics):")
+    print(f"{'Criterion':<24} | {'Valid':<5} | {'Acc':<6} | {'Prec':<6} | {'Rec':<6} | {'F1':<6}")
+    print("-" * 65)
+    for crit, m in results.by_criterion.items():
+        print(
+            f"{crit:<24} | {m.total_valid:<5} | {m.accuracy * 100:5.1f}% | "
+            f"{m.precision * 100:5.1f}% | {m.recall * 100:5.1f}% | {m.f1:5.3f}"
+        )
+
+    # Difficulty breakdown table
+    print("\nBREAKDOWN BY DIFFICULTY (Target-Isolated Metrics):")
+    print(f"{'Difficulty':<16} | {'Valid':<5} | {'Acc':<6} | {'Prec':<6} | {'Rec':<6} | {'F1':<6}")
+    print("-" * 55)
+    for diff, m in results.by_difficulty.items():
+        print(
+            f"{diff:<16} | {m.total_valid:<5} | {m.accuracy * 100:5.1f}% | "
+            f"{m.precision * 100:5.1f}% | {m.recall * 100:5.1f}% | {m.f1:5.3f}"
+        )
+
+    # Architectural diagnostics
+    print("\n" + "=" * 70)
+    print("DIAGNOSIS & GATE RECOMMENDATION:")
+    if target_matrix.fp > 0:
+        print("  [!] WARNING: False Positives detected on target criterion.")
+        print("      Risk: Permissive judge passes flawed outputs into knowledge lake.")
+        print("      Action: Tighten rubric guidelines for failed criteria.")
+    if target_matrix.fn > 0:
+        print("  [!] WARNING: False Negatives detected on target criterion.")
+        print("      Risk: Overly pedantic judge triggers excessive retries.")
+        print("      Action: Refine judge instructions to tolerate valid domain synthesis.")
+
+    if target_matrix.accuracy >= 0.85 and target_matrix.fp == 0:
+        print("  [✓] JUDGE CALIBRATED: Target F1 >= 0.85 with zero false positives.")
         print("      Verdict: Safe to activate in blocking mode (judge_blocking=True).")
     else:
         print("  [X] JUDGE NOT CALIBRATED: Does not meet production gates.")
@@ -280,12 +436,22 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Calibrate Fluid Prose LLM Judge")
     parser.add_argument("--provider", default="gemini", choices=["gemini", "ollama", "typesafe"])
     parser.add_argument("--threshold", type=float, default=0.80)
-    parser.add_argument("--dataset-name", default="cresmo-fluid-prose-calibration")
     parser.add_argument(
-        "--dry-run",
+        "--dataset-path",
+        type=Path,
+        default=DEFAULT_GOLDEN_SET_PATH,
+        help="Path to local Golden Set JSON file",
+    )
+    parser.add_argument("--dataset-name", default="cresmo-fluid-prose-calibration-42")
+    parser.add_argument(
+        "--remote",
         action="store_true",
-        default=True,
-        help="Run hermetically using embedded seed examples without remote Langfuse dataset",
+        help="Pull dataset dynamically from remote Langfuse instead of local file",
+    )
+    parser.add_argument(
+        "--seed-only",
+        action="store_true",
+        help="Run quickly against embedded 5-item seed data",
     )
     args = parser.parse_args()
 
@@ -297,29 +463,59 @@ def main() -> int:
     logger.info("Instantiating Judge adapter chain (Provider: %s)...", args.provider)
     judge = build_llm_judge_adapter(settings=settings)
 
-    if args.dry_run:
-        logger.info("Executing dry-run calibration against %d seed items...", len(SEED_CALIBRATION_DATA))
-        matrix = run_local_calibration(judge, SEED_CALIBRATION_DATA)
-        print_calibration_report(matrix)
-        return 0 if matrix.accuracy >= 0.85 else 1
-
-    # Remote Langfuse Dataset Experiment execution
-    try:
-        from langfuse import Langfuse
-
-        langfuse = Langfuse()
-        dataset = langfuse.get_dataset(args.dataset_name)
-        logger.info("Found remote Langfuse dataset '%s' with %d items.", args.dataset_name, len(dataset.items))
-        matrix = run_local_calibration(
-            judge,
-            [{"id": it.id, "input": it.input, "expected_output": it.expected_output} for it in dataset.items],
+    if args.seed_only:
+        logger.info(
+            "Executing calibration against embedded seed items (%d items)...",
+            len(SEED_CALIBRATION_DATA),
         )
-        print_calibration_report(matrix)
-        return 0 if matrix.accuracy >= 0.85 else 1
-    except Exception as exc:  # noqa: BLE001
-        logger.error("Failed connecting to remote Langfuse dataset: %s", exc)
-        logger.info("Tip: Run with --dry-run to test locally using embedded seed items.")
-        return 1
+        results = run_local_calibration(judge, SEED_CALIBRATION_DATA)
+        print_calibration_report(results)
+        return 0 if results.overall.accuracy >= 0.85 else 1
+
+    if args.remote:
+        try:
+            from langfuse import Langfuse
+
+            langfuse = Langfuse()
+            dataset = langfuse.get_dataset(args.dataset_name)
+            logger.info(
+                "Found remote Langfuse dataset '%s' with %d items.",
+                args.dataset_name,
+                len(dataset.items),
+            )
+            items = [
+                {
+                    "id": it.id,
+                    "input": it.input,
+                    "expected_output": it.expected_output,
+                    "metadata": it.metadata or {},
+                }
+                for it in dataset.items
+            ]
+            results = run_local_calibration(judge, items)
+            print_calibration_report(results)
+            return 0 if results.overall.accuracy >= 0.85 else 1
+        except Exception as exc:  # noqa: BLE001
+            logger.error("Failed connecting to remote Langfuse dataset: %s", exc)
+            return 1
+
+    # Default: Load local golden set file
+    if not args.dataset_path.exists():
+        logger.warning(
+            "Golden set file '%s' not found. Falling back to embedded seed data.", args.dataset_path
+        )
+        results = run_local_calibration(judge, SEED_CALIBRATION_DATA)
+        print_calibration_report(results)
+        return 0 if results.overall.accuracy >= 0.85 else 1
+
+    logger.info("Loading Golden Set from '%s'...", args.dataset_path)
+    with open(args.dataset_path, "r", encoding="utf-8") as f:
+        items = json.load(f)
+
+    logger.info("Loaded %d items from %s. Starting calibration...", len(items), args.dataset_path)
+    results = run_local_calibration(judge, items)
+    print_calibration_report(results)
+    return 0 if results.overall.accuracy >= 0.85 else 1
 
 
 if __name__ == "__main__":
