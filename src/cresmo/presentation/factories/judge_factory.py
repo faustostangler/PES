@@ -43,7 +43,9 @@ def build_llm_judge_adapter(
     if provider == "gemini":
         primary = GeminiJudgeAdapter(
             api_key=settings.gemini_api_key.get_secret_value(),
-            model=settings.gemini_model,
+            model=settings.judge_gemini_model,
+            pass_threshold=settings.judge_pass_threshold,
+            temperature=settings.judge_temperature,
             prompt_provider=prompt_provider,
         )
     elif provider == "ollama":
@@ -51,6 +53,7 @@ def build_llm_judge_adapter(
             base_url=settings.ollama_base_url,
             model=settings.ollama_model,
             timeout_seconds=settings.ollama_timeout_seconds,
+            pass_threshold=settings.judge_pass_threshold,
             prompt_provider=prompt_provider,
         )
     else:
@@ -58,6 +61,7 @@ def build_llm_judge_adapter(
             api_key=settings.typesafe_api_key.get_secret_value(),
             model=settings.typesafe_model,
             base_url=settings.typesafe_base_url,
+            pass_threshold=settings.judge_pass_threshold,
         )
 
     # 2. Instantiate Fallback Provider (Default is local Ollama)
@@ -65,6 +69,7 @@ def build_llm_judge_adapter(
         base_url=settings.ollama_base_url,
         model=settings.ollama_model,
         timeout_seconds=settings.ollama_timeout_seconds,
+        pass_threshold=settings.judge_pass_threshold,
         prompt_provider=prompt_provider,
     )
 

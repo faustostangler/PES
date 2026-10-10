@@ -25,8 +25,11 @@ from cresmo.domain.value_objects import (
     PromptKey,
 )
 from cresmo.infrastructure.adapters.prompts import JsonPromptProvider
+from cresmo.infrastructure.config import DEFAULT_JUDGE_PASS_THRESHOLD
 
 logger = logging.getLogger(__name__)
+
+DEFAULT_PASS_THRESHOLD: float = DEFAULT_JUDGE_PASS_THRESHOLD
 
 
 def _clean_json_markdown(text: str) -> str:
@@ -47,6 +50,7 @@ class OllamaJudgeAdapter(LlmJudgePort):
         base_url: str = "http://localhost:11434",
         model: str = "qwen2.5:7b",
         timeout_seconds: float = 120.0,
+        pass_threshold: float = DEFAULT_PASS_THRESHOLD,
         prompt_provider: PromptProviderPort | None = None,
     ) -> None:
         """Initialize Ollama judge adapter.
@@ -56,11 +60,13 @@ class OllamaJudgeAdapter(LlmJudgePort):
             base_url: Ollama API server base URL.
             model: Model variant running on Ollama.
             timeout_seconds: HTTP request timeout duration.
+            pass_threshold: Minimum score threshold for passing criteria and overall evaluation.
             prompt_provider: Optional PromptProviderPort for externalized prompt templates.
         """
         self._base_url = base_url.rstrip("/")
         self._model = model
         self._timeout = timeout_seconds
+        self._pass_threshold = pass_threshold
         self._client = http_client or httpx.Client(timeout=timeout_seconds)
         self._prompt_provider = prompt_provider or JsonPromptProvider()
 
@@ -109,7 +115,7 @@ class OllamaJudgeAdapter(LlmJudgePort):
             try:
                 crit_enum = JudgeCriterion(item["criterion"])
                 score_val = max(0.0, min(1.0, float(item["score"])))
-                passed_val = bool(item.get("passed", score_val >= 0.8))
+                passed_val = bool(item.get("passed", score_val >= self._pass_threshold))
                 criteria_scores_list.append(
                     CriterionScore(
                         criterion=crit_enum,
@@ -123,7 +129,7 @@ class OllamaJudgeAdapter(LlmJudgePort):
 
         overall_score = float(parsed.get("overall_score", 0.0))
         overall_score = max(0.0, min(1.0, overall_score))
-        overall_passed = bool(parsed.get("passed", overall_score >= 0.8))
+        overall_passed = bool(parsed.get("passed", overall_score >= self._pass_threshold))
 
         return JudgeEvaluation(
             target_stage=context.stage_name,
@@ -134,3 +140,19 @@ class OllamaJudgeAdapter(LlmJudgePort):
             latency_ms=latency_ms,
             trace_id=context.trace_id,
         )
+
+    @property
+    def pass_threshold(self) -> float:
+        """Return the minimum score threshold required to pass."""
+        return self._pass_threshold
+
+    @property
+    def model(self) -> str:
+        """Return the model identifier."""
+        return self._model
+
+
+__all__ = [
+    "DEFAULT_PASS_THRESHOLD",
+    "OllamaJudgeAdapter",
+]

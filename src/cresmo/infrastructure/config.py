@@ -554,9 +554,9 @@ class CresmoSettings(BaseSettings):
 
 
 __all__ = [
-    "CresmoSettings",
     "DEFAULT_JUDGE_GEMINI_MODEL",
     "DEFAULT_JUDGE_PASS_THRESHOLD",
     "DEFAULT_JUDGE_TEMPERATURE",
     "DEFAULT_LANGFUSE_PROMPT_LABEL",
+    "CresmoSettings",
 ]

@@ -140,7 +140,7 @@ class IndexRawTranscriptsUseCase:
 
         # Build prompt from bounded transcript excerpt to preserve context budget
         excerpt = transcript.content.body.strip()
-        if self.max_chars and self.max_chars > 0:
+        if self.max_chars > 0:
             excerpt = excerpt[: self.max_chars]
 
         try:

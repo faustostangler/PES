@@ -20,8 +20,11 @@ from cresmo.domain.value_objects.quality import (
     JudgeCriterion,
     JudgeEvaluation,
 )
+from cresmo.infrastructure.config import DEFAULT_JUDGE_PASS_THRESHOLD
 
 logger = logging.getLogger(__name__)
+
+DEFAULT_PASS_THRESHOLD: float = DEFAULT_JUDGE_PASS_THRESHOLD
 
 
 class TypeSafeJudgeAdapter(LlmJudgePort):
@@ -34,6 +37,7 @@ class TypeSafeJudgeAdapter(LlmJudgePort):
         model: str = "jev-latest",
         base_url: str = "https://api.typesafe.ai/v1",
         timeout_seconds: float = 30.0,
+        pass_threshold: float = DEFAULT_PASS_THRESHOLD,
     ) -> None:
         """Initialize TypeSafe AI judge adapter.
 
@@ -43,11 +47,13 @@ class TypeSafeJudgeAdapter(LlmJudgePort):
             model: Model identifier (e.g. 'jev-latest').
             base_url: API endpoint URL.
             timeout_seconds: HTTP timeout duration.
+            pass_threshold: Minimum score threshold for passing criteria and overall evaluation.
         """
         self._api_key = api_key
         self._model = model
         self._base_url = base_url.rstrip("/")
         self._timeout = timeout_seconds
+        self._pass_threshold = pass_threshold
         self._client = http_client or httpx.Client(timeout=timeout_seconds)
 
     def evaluate(self, context: EvaluationContext) -> JudgeEvaluation:
@@ -153,14 +159,14 @@ class TypeSafeJudgeAdapter(LlmJudgePort):
             if c_name in nouls:
                 noul_item = nouls[c_name]
                 score_val = float(noul_item.get("noul", 0.0))
-                passed_val = score_val >= 0.8
+                passed_val = score_val >= self._pass_threshold
             elif c_name in scores:
                 score_item = scores[c_name]
                 score_val = float(score_item.get("score", 0.0))
                 confidence_val = score_item.get("confidence")
                 if confidence_val is not None:
                     confidence_val = float(confidence_val)
-                passed_val = score_val >= 0.8
+                passed_val = score_val >= self._pass_threshold
             else:
                 score_val = 0.5
                 passed_val = False
@@ -197,3 +203,19 @@ class TypeSafeJudgeAdapter(LlmJudgePort):
             latency_ms=latency_ms,
             trace_id=context.trace_id,
         )
+
+    @property
+    def pass_threshold(self) -> float:
+        """Return the minimum score threshold required to pass."""
+        return self._pass_threshold
+
+    @property
+    def model(self) -> str:
+        """Return the model identifier."""
+        return self._model
+
+
+__all__ = [
+    "DEFAULT_PASS_THRESHOLD",
+    "TypeSafeJudgeAdapter",
+]

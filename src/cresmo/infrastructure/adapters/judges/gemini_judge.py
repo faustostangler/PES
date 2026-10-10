@@ -105,7 +105,7 @@ class GeminiJudgeAdapter(LlmJudgePort):
 
         try:
             config = types.GenerateContentConfig(
-                temperature=0.0,
+                temperature=self._temperature,
                 system_instruction=chat_prompt.system_instruction,
                 response_mime_type="application/json",
                 automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=True),
@@ -141,7 +141,7 @@ class GeminiJudgeAdapter(LlmJudgePort):
             try:
                 crit_enum = JudgeCriterion(item["criterion"])
                 score_val = max(0.0, min(1.0, float(item["score"])))
-                passed_val = bool(item.get("passed", score_val >= 0.8))
+                passed_val = bool(item.get("passed", score_val >= self._pass_threshold))
                 criteria_scores_list.append(
                     CriterionScore(
                         criterion=crit_enum,
@@ -155,7 +155,7 @@ class GeminiJudgeAdapter(LlmJudgePort):
 
         overall_score = float(parsed.get("overall_score", 0.0))
         overall_score = max(0.0, min(1.0, overall_score))
-        overall_passed = bool(parsed.get("passed", overall_score >= 0.8))
+        overall_passed = bool(parsed.get("passed", overall_score >= self._pass_threshold))
 
         return JudgeEvaluation(
             target_stage=context.stage_name,
@@ -166,3 +166,26 @@ class GeminiJudgeAdapter(LlmJudgePort):
             latency_ms=latency_ms,
             trace_id=context.trace_id,
         )
+
+    @property
+    def pass_threshold(self) -> float:
+        """Return the minimum score threshold required to pass."""
+        return self._pass_threshold
+
+    @property
+    def temperature(self) -> float:
+        """Return the sampling temperature."""
+        return self._temperature
+
+    @property
+    def model(self) -> str:
+        """Return the model identifier."""
+        return self._model
+
+
+__all__ = [
+    "DEFAULT_MODEL",
+    "DEFAULT_PASS_THRESHOLD",
+    "DEFAULT_TEMPERATURE",
+    "GeminiJudgeAdapter",
+]

@@ -37,6 +37,8 @@ from cresmo.domain.entities import (
 from cresmo.domain.exceptions import DomainValidationError, NoteTypologyError
 from cresmo.domain.value_objects import (
     AtomicEntityInventory,
+    ChannelId,
+    ChannelName,
     ChatPrompt,
     EvaluationContext,
     JudgeCriterion,
@@ -110,16 +112,19 @@ def _parse_and_deduplicate_items(
         if not title_str or not isinstance(title_str, str):
             continue
         note_title = NoteTitle(title_str)
-        key = note_title.value.lower()
+        key = note_title.value.casefold()
         if key in seen_titles:
             continue
         seen_titles.add(key)
 
-        type_raw = entry.get("type", "concept")
-        try:
-            note_type = NoteType.from_string(str(type_raw))
-        except NoteTypologyError:
+        type_raw = entry.get("type")
+        if type_raw is None:
             note_type = NoteType.CONCEPT
+        else:
+            try:
+                note_type = NoteType.from_string(str(type_raw))
+            except NoteTypologyError:
+                note_type = NoteType.CONCEPT
 
         items.append((note_title, note_type))
 
@@ -211,10 +216,14 @@ class DiscoverAtomicInventoryUseCase:
             context = EvaluationContext(
                 stage_name="atomic_inventory",
                 raw_text=compendium.body,
-                candidate_text=json.dumps(candidate_data, ensure_ascii=False),
+                candidate_text=json.dumps(candidate_data),
                 metadata={
                     "title": compendium.title.value,
-                    "channel": compendium.channel_name.value,
+                    "channel": (
+                        compendium.channel_name.value
+                        if isinstance(compendium.channel_name, ChannelName)
+                        else compendium.channel_name
+                    ),
                 },
                 trace_id=judge_trace_id,
                 required_criteria=(JudgeCriterion.INVENTORY_COHERENCE,),
@@ -223,13 +232,13 @@ class DiscoverAtomicInventoryUseCase:
             return evaluation.passed
 
         # Priority 2: Transitional fallback when LlmJudgePort is not injected (ADR-010 / ADR-029)
-        if self.prompt_provider:
+        if not isinstance(self.prompt_provider, NoOpPromptProviderPort):
             judge_prompt = self.prompt_provider.get_prompt(
                 PromptKey.JUDGE_ATOMIC_INVENTORY,
                 content_title=compendium.title.value,
                 channel_name=compendium.channel_name,
                 compendium_body=compendium.body,
-                inventory_json=json.dumps(candidate_data, ensure_ascii=False),
+                inventory_json=json.dumps(candidate_data),
             )
             judge_response = self.llm_synthesis_port.transform(
                 prompt=judge_prompt,
@@ -269,16 +278,14 @@ class DiscoverAtomicInventoryUseCase:
         session_id = PipelineSessionId.create(
             channel=compendium.channel_name,
             content_id=compendium.content_id,
-            channel_id=compendium.channel_id,
+            channel_id=compendium.channel_id if isinstance(compendium.channel_id, ChannelId) else None,
         ).value
         user_id = user.value if user is not None else UserIdentity.anonymous().value
         content_id = compendium.content_id.value
 
-        candidate_data: list[Any] = []
-        is_valid = False
         retries = 0
 
-        while not is_valid:
+        while True:
             trace_suffix = "" if retries == 0 else f"_retry_{retries}"
             if retries > 0:
                 logger.info(
@@ -302,15 +309,13 @@ class DiscoverAtomicInventoryUseCase:
                 session_id=session_id,
                 user_id=user_id,
             )
-            if not is_valid:
-                if not _can_retry(retries, self.max_rewrites):
-                    break
-                retries += 1
-
-        if not is_valid:
-            raise DomainValidationError(
-                f"Candidate entity inventory rejected by LLM-as-a-judge for '{compendium.title.value}'."
-            )
+            if is_valid:
+                break
+            if not _can_retry(retries, self.max_rewrites):
+                raise DomainValidationError(
+                    f"Candidate entity inventory rejected by LLM-as-a-judge for '{compendium.title.value}'."
+                )
+            retries += 1
 
         items = _parse_and_deduplicate_items(candidate_data, compendium.title.value)
         return AtomicEntityInventory(items=items)

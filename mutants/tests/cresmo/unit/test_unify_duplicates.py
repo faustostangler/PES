@@ -13,9 +13,6 @@ from cresmo.application.use_cases.unify_duplicate_notes import (
     DuplicateCluster,
     UnifyDuplicateNotesUseCase,
     _merge_aliases,
-    _merge_causal_matrices,
-    _merge_cross_contexts,
-    _merge_definitions,
     _merge_direct_relations,
 )
 from cresmo.domain.entities import AtomicNote

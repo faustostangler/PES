@@ -7,6 +7,7 @@ now enhanced with LLM-as-a-judge synthesis verification, sizing heuristics, and 
 
 from __future__ import annotations
 
+import logging
 from unittest.mock import MagicMock
 
 import pytest
@@ -32,7 +33,8 @@ _SAMPLE_VALID_SYNTHESIS = (
 class TestIndexRawTranscriptsUseCase:
     """Hermetic unit tests for IndexRawTranscriptsUseCase."""
 
-    def test_index_single_transcript_success(self) -> None:
+    def test_index_single_transcript_success(self, caplog: pytest.LogCaptureFixture) -> None:
+        caplog.set_level(logging.INFO)
         vault = InMemoryVaultAdapter()
         llm = MockLLMAdapter(
             responses=[
@@ -64,6 +66,7 @@ class TestIndexRawTranscriptsUseCase:
 
         assert entry is not None
         assert entry.video_id == ContentId("vid11111111")
+        assert entry.title == "Vilfredo Pareto and Elites"
         assert entry.key_concept == "Circulação de Elites"
         assert "Minorias burocráticas governam" in entry.synthesis
         assert entry.channel_name == "Political Theory"
@@ -106,7 +109,15 @@ class TestIndexRawTranscriptsUseCase:
         assert len(vault.brain_csv_entries) == 1
         assert vault.brain_csv_entries[0] == entry
 
-    def test_index_single_transcript_idempotent_skip(self) -> None:
+        # Verify exact log formatting on completion
+        expected_log = f"[IndexRaw] Indexed '{entry.video_id}' | {entry.channel_name} | '{entry.key_concept}'"
+        assert any(
+            r.levelno == logging.INFO and r.getMessage() == expected_log
+            for r in caplog.records
+        )
+
+    def test_index_single_transcript_idempotent_skip(self, caplog: pytest.LogCaptureFixture) -> None:
+        caplog.set_level(logging.INFO)
         vault = InMemoryVaultAdapter()
         llm = MockLLMAdapter(
             responses=["Conceito", "true", "Resumo.", "true", _SAMPLE_VALID_SYNTHESIS, "true"]
@@ -136,6 +147,14 @@ class TestIndexRawTranscriptsUseCase:
         assert entry2 is None
         assert len(llm.call_history) == 6
         assert len(vault.channel_raw_indexes["Political Theory"]) == 1
+
+        expected_skip_log = (
+            f"[IndexRaw] Skipping already indexed transcript '{transcript.content.id.value}' for channel '{transcript.channel.name}'."
+        )
+        assert any(
+            r.levelno == logging.INFO and r.getMessage() == expected_skip_log
+            for r in caplog.records
+        )
 
     def test_index_single_transcript_handles_legacy_comma_format(self) -> None:
         vault = InMemoryVaultAdapter()
@@ -169,7 +188,8 @@ class TestIndexRawTranscriptsUseCase:
         assert entry.key_concept == "Teoria dos Jogos, Equilíbrios de Nash"
         assert "Minorias burocráticas governam" in entry.synthesis
 
-    def test_index_single_transcript_resilient_to_llm_failure(self) -> None:
+    def test_index_single_transcript_resilient_to_llm_failure(self, caplog: pytest.LogCaptureFixture) -> None:
+        caplog.set_level(logging.WARNING)
         vault = InMemoryVaultAdapter()
         mock_llm = MagicMock()
         mock_llm.transform.side_effect = RuntimeError("Ollama connection failed")
@@ -193,6 +213,20 @@ class TestIndexRawTranscriptsUseCase:
         assert entry is None
         assert len(vault.channel_raw_indexes) == 0
 
+        expected_warn_log = (
+            f"[IndexRaw] Skipped '{transcript.content.id}' ({transcript.channel.name}) due to inference error: Ollama connection failed"
+        )
+        matching_warns = [
+            r for r in caplog.records
+            if r.levelno == logging.WARNING and r.getMessage() == expected_warn_log
+        ]
+        assert len(matching_warns) == 1
+        warn_rec = matching_warns[0]
+        assert warn_rec.exc_info is not None
+        assert isinstance(warn_rec.exc_info, tuple)
+        assert len(warn_rec.exc_info) == 3
+        assert isinstance(warn_rec.exc_info[1], RuntimeError)
+
     def test_index_raw_rejects_raw_transcript(self) -> None:
         """ADR-028: IndexRawTranscriptsUseCase strictly rejects SourceTranscript."""
         vault = InMemoryVaultAdapter()
@@ -211,9 +245,15 @@ class TestIndexRawTranscriptsUseCase:
         )
         with pytest.raises(
             DomainValidationError,
-            match="IndexRawTranscriptsUseCase strictly requires FluidTranscript",
+            match="IndexRawTranscriptsUseCase strictly requires FluidTranscript, got: SourceTranscript",
         ):
             use_case.execute(raw)  # type: ignore[arg-type]
+
+        with pytest.raises(
+            DomainValidationError,
+            match="IndexRawTranscriptsUseCase strictly requires FluidTranscript, got: int",
+        ):
+            use_case.execute(12345)  # type: ignore[arg-type]
 
     def test_self_healing_rewrite_loop_triggered_when_forbidden_prefix_returned(self) -> None:
         """Verify that when LLM returns forbidden prefix on concepts, a rewrite is requested."""
@@ -651,3 +691,228 @@ class TestIndexRawTranscriptsUseCase:
         mock_judge.evaluate.assert_called_once()
         ctx = mock_judge.evaluate.call_args[0][0]
         assert ctx.stage_name == "raw_indexing_concepts"
+
+    def test_init_defaults_and_attributes(self) -> None:
+        """Verify default configuration attributes and alias properties."""
+        vault = InMemoryVaultAdapter()
+        llm = MockLLMAdapter()
+        prompt_provider = JsonPromptProvider()
+        use_case = IndexRawTranscriptsUseCase(
+            vault_port=vault,
+            llm_indexing_port=llm,
+            prompt_provider=prompt_provider,
+        )
+        assert use_case.vault_port is vault
+        assert use_case.vault_repo is vault
+        assert use_case.llm_indexing_port is llm
+        assert use_case.llm is llm
+        assert use_case.prompt_provider is prompt_provider
+        assert use_case.max_chars == 0
+        assert use_case.temperature == 0.2
+        assert use_case.language == "Português do Brasil"
+        assert use_case.max_rewrites == 3
+        assert use_case.llm_judge_port is None
+        assert use_case._distiller.max_rewrites == 3
+        assert use_case._distiller.language == "Português do Brasil"
+        assert use_case._distiller.llm_judge_port is None
+
+        mock_judge = MagicMock()
+        use_case_with_judge = IndexRawTranscriptsUseCase(
+            vault_port=vault,
+            llm_indexing_port=llm,
+            prompt_provider=prompt_provider,
+            llm_judge_port=mock_judge,
+            language="English",
+        )
+        assert use_case_with_judge.llm_judge_port is mock_judge
+        assert use_case_with_judge.language == "English"
+        assert use_case_with_judge._distiller.llm_judge_port is mock_judge
+        assert use_case_with_judge._distiller.language == "English"
+
+    def test_init_raises_value_error_on_missing_required_ports(self) -> None:
+        """Verify fail-fast validation on required ports and prompt provider."""
+        vault = InMemoryVaultAdapter()
+        llm = MockLLMAdapter()
+        prompt_provider = JsonPromptProvider()
+
+        with pytest.raises(ValueError) as exc1:
+            IndexRawTranscriptsUseCase(
+                vault_port=None,
+                vault_repo=None,
+                llm_indexing_port=llm,
+                prompt_provider=prompt_provider,
+            )
+        assert str(exc1.value) == "vault_port is required."
+
+        with pytest.raises(ValueError) as exc2:
+            IndexRawTranscriptsUseCase(
+                vault_port=vault,
+                llm_indexing_port=None,
+                llm=None,
+                prompt_provider=prompt_provider,
+            )
+        assert str(exc2.value) == "llm_indexing_port is required."
+
+        with pytest.raises(ValueError) as exc3:
+            IndexRawTranscriptsUseCase(
+                vault_port=vault,
+                llm_indexing_port=llm,
+                prompt_provider=None,
+            )
+        assert str(exc3.value) == "prompt_provider is required."
+
+    def test_warmup_passes_timeout_seconds(self) -> None:
+        """Verify warmup contract forwards timeout_seconds."""
+        vault = InMemoryVaultAdapter()
+        mock_llm = MagicMock()
+        prompt_provider = JsonPromptProvider()
+        use_case = IndexRawTranscriptsUseCase(
+            vault_port=vault,
+            llm_indexing_port=mock_llm,
+            prompt_provider=prompt_provider,
+        )
+        use_case.warmup(timeout_seconds=42.0)
+        mock_llm.warmup.assert_called_once_with(timeout_seconds=42.0)
+
+    def test_index_single_transcript_excerpt_slicing_and_fallback_title(self) -> None:
+        """Verify max_chars excerpt slicing and fallback to video_id when title is empty."""
+        vault = InMemoryVaultAdapter()
+        llm = MockLLMAdapter(
+            responses=[
+                "Concept",
+                "true",
+                "Summary.",
+                "true",
+                _SAMPLE_VALID_SYNTHESIS,
+                "true",
+            ]
+        )
+        prompt_provider = JsonPromptProvider()
+        use_case = IndexRawTranscriptsUseCase(
+            vault_port=vault,
+            llm_indexing_port=llm,
+            prompt_provider=prompt_provider,
+            max_chars=1,
+        )
+
+        transcript = FluidTranscript(
+            content_id=ContentId("vid_notitle_99"),
+            channel_name=ChannelName("3blue1brown"),
+            title="",
+            body="Long body text...",
+        )
+
+        entry = use_case.execute(transcript)
+        assert entry is not None
+        assert entry.title == "vid_notitle_99"
+        assert entry.excerpt == "L"
+
+    def test_execute_forwards_all_arguments_to_distiller(self) -> None:
+        """Verify execute forwards all VOs, metadata, and user identity to distiller."""
+        from cresmo.domain.entities import UserIdentity
+        from cresmo.domain.value_objects import ChannelId
+
+        vault = InMemoryVaultAdapter()
+        prompt_provider = JsonPromptProvider()
+        use_case = IndexRawTranscriptsUseCase(
+            vault_port=vault,
+            llm_indexing_port=MockLLMAdapter(),
+            prompt_provider=prompt_provider,
+        )
+
+        mock_distiller = MagicMock()
+        mock_distiller.extract_concepts.return_value = "Concept Alpha"
+        mock_distiller.extract_summary.return_value = "Summary Beta"
+        mock_distiller.extract_synthesis.return_value = "Synthesis Gamma"
+        use_case._distiller = mock_distiller
+
+        user = UserIdentity("custom_user_123")
+        transcript = FluidTranscript(
+            content_id=ContentId("vid_args_1"),
+            channel_name=ChannelName("TestChannel"),
+            channel_id=ChannelId("chan_id_1"),
+            title="Title Test",
+            body="Body Test",
+        )
+
+        entry = use_case.execute(transcript, user=user)
+        assert entry is not None
+        assert entry.key_concept == "Concept Alpha"
+        assert entry.summary == "Summary Beta"
+        assert entry.synthesis == "Synthesis Gamma"
+
+        mock_distiller.extract_concepts.assert_called_once_with(
+            video_id=ContentId("vid_args_1"),
+            title="Title Test",
+            text="Body Test",
+            channel_name=ChannelName("TestChannel"),
+            channel_id=ChannelId("chan_id_1"),
+            user=user,
+        )
+        mock_distiller.extract_summary.assert_called_once_with(
+            video_id=ContentId("vid_args_1"),
+            title="Title Test",
+            text="Body Test",
+            channel_name=ChannelName("TestChannel"),
+            channel_id=ChannelId("chan_id_1"),
+            user=user,
+        )
+        mock_distiller.extract_synthesis.assert_called_once_with(
+            video_id=ContentId("vid_args_1"),
+            title="Title Test",
+            excerpt="Body Test",
+            summary="Summary Beta",
+            channel_name=ChannelName("TestChannel"),
+            channel_id=ChannelId("chan_id_1"),
+            user=user,
+        )
+
+    def test_category_explicit_vs_classified_taxonomy(self) -> None:
+        """Verify explicit category preservation and deterministic fallback taxonomy."""
+        vault = InMemoryVaultAdapter()
+        llm = MockLLMAdapter(
+            responses=[
+                "Concept",
+                "true",
+                "Summary.",
+                "true",
+                _SAMPLE_VALID_SYNTHESIS,
+                "true",
+                "Concept",
+                "true",
+                "Summary.",
+                "true",
+                _SAMPLE_VALID_SYNTHESIS,
+                "true",
+            ]
+        )
+        prompt_provider = JsonPromptProvider()
+        use_case = IndexRawTranscriptsUseCase(
+            vault_port=vault,
+            llm_indexing_port=llm,
+            prompt_provider=prompt_provider,
+        )
+
+        # Case A: explicit category with whitespace
+        transcript_explicit = FluidTranscript(
+            content_id=ContentId("vid_cat_1"),
+            channel_name=ChannelName("Generic"),
+            channel_category="  Epistemology  ",
+            title="Title",
+            body="Body",
+        )
+        entry_explicit = use_case.execute(transcript_explicit)
+        assert entry_explicit is not None
+        assert entry_explicit.channel_category == "Epistemology"
+
+        # Case B: empty category -> auto-classify by channel name
+        transcript_classified = FluidTranscript(
+            content_id=ContentId("vid_cat_2"),
+            channel_name=ChannelName("3blue1brown"),
+            channel_category="",
+            title="Title",
+            body="Body",
+        )
+        entry_classified = use_case.execute(transcript_classified)
+        assert entry_classified is not None
+        assert entry_classified.channel_category == "engineering"

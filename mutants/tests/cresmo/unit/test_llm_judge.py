@@ -190,6 +190,70 @@ class TestGeminiJudgeAdapter:
         with pytest.raises(ValueError, match="Gemini API key must be provided explicitly"):
             _ = adapter.client
 
+    def test_gemini_judge_respects_custom_pass_threshold(self) -> None:
+        mock_genai_client = MagicMock()
+        mock_response = MagicMock()
+        mock_response.text = json.dumps(
+            {
+                "criteria": [
+                    {
+                        "criterion": "orality_removal",
+                        "score": 0.75,
+                        "reasoning": "Mostly clean.",
+                    }
+                ],
+                "overall_score": 0.75,
+            }
+        )
+        mock_genai_client.models.generate_content.return_value = mock_response
+
+        # Default threshold 0.8 fails
+        adapter_default = GeminiJudgeAdapter(client=mock_genai_client)
+        context = EvaluationContext(
+            stage_name="fluid_prose",
+            raw_text="raw",
+            candidate_text="cand",
+            required_criteria=(JudgeCriterion.ORALITY_REMOVAL,),
+        )
+        eval_default = adapter_default.evaluate(context)
+        assert eval_default.passed is False
+        assert eval_default.criteria_scores[0].passed is False
+
+        # Custom threshold 0.70 passes
+        adapter_lenient = GeminiJudgeAdapter(client=mock_genai_client, pass_threshold=0.70)
+        eval_lenient = adapter_lenient.evaluate(context)
+        assert eval_lenient.passed is True
+        assert eval_lenient.criteria_scores[0].passed is True
+
+    def test_gemini_judge_respects_custom_temperature(self) -> None:
+        mock_genai_client = MagicMock()
+        mock_response = MagicMock()
+        mock_response.text = json.dumps(
+            {
+                "criteria": [],
+                "overall_score": 1.0,
+                "passed": True,
+            }
+        )
+        mock_genai_client.models.generate_content.return_value = mock_response
+
+        adapter = GeminiJudgeAdapter(client=mock_genai_client, temperature=0.7)
+        assert adapter.temperature == 0.7
+        assert adapter.pass_threshold == 0.8
+        assert adapter.model == "gemini-3.5-flash-lite"
+
+        context = EvaluationContext(
+            stage_name="fluid_prose",
+            raw_text="raw",
+            candidate_text="cand",
+            required_criteria=(),
+        )
+        adapter.evaluate(context)
+
+        _, kwargs = mock_genai_client.models.generate_content.call_args
+        config = kwargs["config"]
+        assert config.temperature == 0.7
+
 
 class TestOllamaJudgeAdapter:
     """Test suite for local Ollama fallback judge adapter."""
@@ -521,6 +585,31 @@ class TestLlmJudgeFactory:
         assert isinstance(judge._inner_judge, ResilientCompositeJudgeAdapter)
         assert isinstance(judge._inner_judge._primary, OllamaJudgeAdapter)
         assert isinstance(judge._inner_judge._fallback, OllamaJudgeAdapter)
+
+    def test_build_llm_judge_adapter_injects_configured_tunables(self) -> None:
+        from cresmo.infrastructure.config import CresmoSettings
+        from cresmo.presentation.factories.judge_factory import build_llm_judge_adapter
+
+        settings = CresmoSettings(
+            judge_provider="gemini",
+            judge_pass_threshold=0.88,
+            judge_gemini_model="gemini-custom-judge",
+            judge_temperature=0.15,
+        )
+        judge = build_llm_judge_adapter(settings, langfuse_client=None)
+
+        assert isinstance(judge, LangfuseJudgeDecorator)
+        inner = judge._inner_judge
+        assert isinstance(inner, ResilientCompositeJudgeAdapter)
+        primary = inner._primary
+        assert isinstance(primary, GeminiJudgeAdapter)
+        assert primary.pass_threshold == 0.88
+        assert primary.model == "gemini-custom-judge"
+        assert primary.temperature == 0.15
+
+        fallback = inner._fallback
+        assert isinstance(fallback, OllamaJudgeAdapter)
+        assert fallback.pass_threshold == 0.88
 
 
 class TestCoordinatorLlmJudgeIntegration:

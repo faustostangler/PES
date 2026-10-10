@@ -1300,3 +1300,542 @@ class TestDiscoverBatchSourcesUseCase:
         stream = use_case.execute(query)
         items = list(stream)
         assert len(items) == 3
+
+    def test_explicit_manifest_loading_detailed_kills_mutants(self, tmp_path: Path) -> None:
+        manifest = tmp_path / "detailed_manifest.txt"
+        manifest.write_text(
+            "https://www.youtube.com/watch?v=exactVideoId1\n"
+            "invalid_non_video_token_$$$\n",
+            encoding="utf-8",
+        )
+        use_case = DiscoverBatchSourcesUseCase(
+            media_ingestion_port=MagicMock(),
+            settings=CresmoSettings(_env_file=None),
+        )
+        sources = list(use_case.execute(BatchDiscoveryQuery(explicit_manifest=manifest)))
+        assert len(sources) == 2
+        # Item 0: valid YouTube URL
+        assert sources[0].kind == SourceModality.URL
+        assert sources[0].target == "https://www.youtube.com/watch?v=exactVideoId1"
+        assert sources[0].content_id == ContentId("exactVideoId1")
+        assert sources[0].content_id is not None
+        assert sources[0].content_id != ""
+        # Item 1: malformed token
+        assert sources[1].kind == SourceModality.URL
+        assert sources[1].target == "invalid_non_video_token_$$$"
+        assert sources[1].content_id is None
+
+    def test_crawler_thread_daemon_and_name_properties(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        from typing import Any
+        import threading
+
+        captured_threads: list[threading.Thread] = []
+        orig_thread_cls = threading.Thread
+
+        def mock_thread(*args: Any, **kwargs: Any) -> threading.Thread:
+            t = orig_thread_cls(*args, **kwargs)
+            captured_threads.append(t)
+            return t
+
+        monkeypatch.setattr(threading, "Thread", mock_thread)
+
+        manifest = tmp_path / "playlist.txt"
+        manifest.write_text("", encoding="utf-8")
+        use_case = DiscoverBatchSourcesUseCase(
+            media_ingestion_port=MagicMock(),
+            settings=CresmoSettings(_env_file=None),
+        )
+        query = BatchDiscoveryQuery(
+            playlist_path=manifest,
+            playlist_priority_path=tmp_path / "prio.txt",
+            priority_texts_dir=tmp_path / "texts",
+            raw_dir=tmp_path / "raw",
+            scan_raw=False,
+            enable_channel_crawler=True,
+        )
+        list(use_case.execute(query))
+        assert len(captured_threads) == 1
+        t = captured_threads[0]
+        assert t.name == "CresmoCrawlerProducer"
+        assert t.daemon is True
+
+    def test_crawler_producer_channel_casefold_sorting(self, tmp_path: Path) -> None:
+        from typing import Any
+
+        manifest = tmp_path / "playlist.txt"
+        manifest.write_text(
+            "https://www.youtube.com/watch?v=vidB\n"
+            "https://www.youtube.com/watch?v=vida\n",
+            encoding="utf-8",
+        )
+        mock_ingestion = MagicMock()
+
+        def mock_extract(url: str) -> str:
+            if "vidB" in url:
+                return "https://www.youtube.com/@BetaChannel"
+            return "https://www.youtube.com/@alphaChannel"
+
+        mock_ingestion.extract_channel_url_from_video.side_effect = mock_extract
+        mock_ingestion.discover_channel_feed.return_value = []
+
+        use_case = DiscoverBatchSourcesUseCase(
+            media_ingestion_port=mock_ingestion,
+            settings=CresmoSettings(_env_file=None),
+        )
+        probed_channels_captured: list[list[str]] = []
+        orig_probe = use_case._crawler_service.probe_channel_feeds
+
+        def spy_probe(*args: Any, **kwargs: Any) -> None:
+            channels = args[0] if args else kwargs.get("channels", [])
+            probed_channels_captured.append(list(channels))
+            orig_probe(*args, **kwargs)
+
+        use_case._crawler_service.probe_channel_feeds = spy_probe
+
+        query = BatchDiscoveryQuery(
+            playlist_path=manifest,
+            playlist_priority_path=tmp_path / "prio.txt",
+            priority_texts_dir=tmp_path / "texts",
+            raw_dir=tmp_path / "raw",
+            scan_raw=False,
+            enable_channel_crawler=True,
+        )
+        list(use_case.execute(query))
+
+        assert len(probed_channels_captured) == 1
+        channels = probed_channels_captured[0]
+        # Casefold sort: '@alphaChannel' must precede '@BetaChannel'
+        # In ASCII raw sort, '@BetaChannel' (B=66) precedes '@alphaChannel' (a=97)
+        assert channels == [
+            "https://www.youtube.com/@alphaChannel",
+            "https://www.youtube.com/@BetaChannel",
+        ]
+
+    def test_priority_channels_merged_and_deduplicated_in_crawler(self, tmp_path: Path) -> None:
+        from typing import Any
+
+        prio_dir = tmp_path / "priority_texts"
+        prio_dir.mkdir()
+        (prio_dir / "doc1.md").write_text(
+            "---\nchannel: https://www.youtube.com/@PrioChan\nvideo_id: prio1111\n---\nBody",
+            encoding="utf-8",
+        )
+        prio_urls = tmp_path / "priority_urls.txt"
+        prio_urls.write_text("https://www.youtube.com/@PrioChan\n", encoding="utf-8")
+        manifest = tmp_path / "playlist.txt"
+        manifest.write_text("", encoding="utf-8")
+
+        mock_ingestion = MagicMock()
+        mock_ingestion.discover_channel_feed.return_value = []
+        use_case = DiscoverBatchSourcesUseCase(
+            media_ingestion_port=mock_ingestion,
+            settings=CresmoSettings(_env_file=None),
+        )
+        probed_captured: list[list[str]] = []
+        orig_probe = use_case._crawler_service.probe_channel_feeds
+
+        def spy_probe(*args: Any, **kwargs: Any) -> None:
+            channels = args[0] if args else kwargs.get("channels", [])
+            probed_captured.append(list(channels))
+            orig_probe(*args, **kwargs)
+
+        use_case._crawler_service.probe_channel_feeds = spy_probe
+
+        query = BatchDiscoveryQuery(
+            playlist_path=manifest,
+            playlist_priority_path=prio_urls,
+            priority_texts_dir=prio_dir,
+            raw_dir=tmp_path / "raw",
+            scan_raw=False,
+            enable_channel_crawler=True,
+        )
+        list(use_case.execute(query))
+        assert len(probed_captured) == 1
+        # Added once and deduplicated across priority text channels and priority url channels
+        assert probed_captured[0] == ["https://www.youtube.com/@PrioChan/videos"]
+
+    def test_crawler_producer_passes_filter_criteria_and_stop_event(self, tmp_path: Path) -> None:
+        from typing import Any
+
+        manifest = tmp_path / "playlist.txt"
+        manifest.write_text("https://www.youtube.com/watch?v=remoteSeed1\n", encoding="utf-8")
+        mock_ingestion = MagicMock()
+        mock_ingestion.extract_channel_url_from_video.return_value = "https://www.youtube.com/@Chan"
+        mock_ingestion.discover_channel_feed.return_value = []
+
+        criteria = SyncFilterCriteria(video_ids=("remoteSeed1",))
+        use_case = DiscoverBatchSourcesUseCase(
+            media_ingestion_port=mock_ingestion,
+            settings=CresmoSettings(_env_file=None),
+        )
+
+        resolve_kwargs: dict[str, object] = {}
+        probe_kwargs: dict[str, object] = {}
+        orig_resolve = use_case._crawler_service.resolve_remote_channels
+        orig_probe = use_case._crawler_service.probe_channel_feeds
+
+        def spy_resolve(*args: Any, **kwargs: Any) -> None:
+            resolve_kwargs.update(kwargs)
+            orig_resolve(*args, **kwargs)
+
+        def spy_probe(*args: Any, **kwargs: Any) -> None:
+            probe_kwargs.update(kwargs)
+            orig_probe(*args, **kwargs)
+
+        use_case._crawler_service.resolve_remote_channels = spy_resolve
+        use_case._crawler_service.probe_channel_feeds = spy_probe
+
+        query = BatchDiscoveryQuery(
+            playlist_path=manifest,
+            playlist_priority_path=tmp_path / "prio.txt",
+            priority_texts_dir=tmp_path / "texts",
+            raw_dir=tmp_path / "raw",
+            scan_raw=False,
+            enable_channel_crawler=True,
+            filter_criteria=criteria,
+        )
+        list(use_case.execute(query))
+
+        assert resolve_kwargs.get("filter_criteria") is criteria
+        assert resolve_kwargs.get("filter_criteria") is not None
+        assert resolve_kwargs.get("stop_event") is not None
+
+        assert probe_kwargs.get("filter_criteria") is criteria
+        assert probe_kwargs.get("filter_criteria") is not None
+        assert probe_kwargs.get("stop_event") is not None
+
+    def test_fast_path_passes_filter_criteria_to_scanners(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        passed_filter_texts: list[SyncFilterCriteria | None] = []
+        passed_filter_urls: list[SyncFilterCriteria | None] = []
+
+        orig_texts = LakeScannerService.collect_priority_texts
+        orig_urls = LakeScannerService.collect_priority_urls
+
+        def spy_texts(
+            directory: Path | None,
+            acc: _BatchSourceAccumulator,
+            filter_criteria: SyncFilterCriteria | None = None,
+        ) -> list[str]:
+            passed_filter_texts.append(filter_criteria)
+            return orig_texts(directory, acc, filter_criteria)
+
+        def spy_urls(
+            path: Path | None,
+            local_map: dict[str, str],
+            acc: _BatchSourceAccumulator,
+            filter_criteria: SyncFilterCriteria | None = None,
+        ) -> tuple[list[str], list[str]]:
+            passed_filter_urls.append(filter_criteria)
+            return orig_urls(path, local_map, acc, filter_criteria)
+
+        monkeypatch.setattr(LakeScannerService, "collect_priority_texts", spy_texts)
+        monkeypatch.setattr(LakeScannerService, "collect_priority_urls", spy_urls)
+
+        criteria = SyncFilterCriteria(video_ids=("vidPass",))
+        use_case = DiscoverBatchSourcesUseCase(
+            media_ingestion_port=MagicMock(),
+            settings=CresmoSettings(_env_file=None),
+        )
+        query = BatchDiscoveryQuery(
+            playlist_path=tmp_path / "playlist.txt",
+            playlist_priority_path=tmp_path / "prio.txt",
+            priority_texts_dir=tmp_path / "texts",
+            raw_dir=tmp_path / "raw",
+            scan_raw=False,
+            enable_channel_crawler=False,
+            filter_criteria=criteria,
+        )
+        list(use_case.execute(query))
+
+        assert len(passed_filter_texts) == 1
+        assert passed_filter_texts[0] is criteria
+        assert passed_filter_texts[0] is not None
+        assert len(passed_filter_urls) == 1
+        assert passed_filter_urls[0] is criteria
+        assert passed_filter_urls[0] is not None
+
+    def test_execute_sync_fallback_when_media_ingestion_port_none(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        from typing import Any
+        import threading
+
+        captured_threads: list[threading.Thread] = []
+        orig_thread_cls = threading.Thread
+
+        def mock_thread(*args: Any, **kwargs: Any) -> threading.Thread:
+            t = orig_thread_cls(*args, **kwargs)
+            captured_threads.append(t)
+            return t
+
+        monkeypatch.setattr(threading, "Thread", mock_thread)
+
+        manifest = tmp_path / "playlist.txt"
+        manifest.write_text("https://www.youtube.com/watch?v=fallback1\n", encoding="utf-8")
+        use_case = DiscoverBatchSourcesUseCase(
+            media_ingestion_port=None,
+            settings=CresmoSettings(_env_file=None),
+        )
+        query = BatchDiscoveryQuery(
+            playlist_path=manifest,
+            playlist_priority_path=tmp_path / "prio.txt",
+            priority_texts_dir=tmp_path / "texts",
+            raw_dir=tmp_path / "raw",
+            scan_raw=False,
+            enable_channel_crawler=True,
+        )
+        sources = list(use_case.execute(query))
+        assert len(sources) == 1
+        assert sources[0].target == "https://www.youtube.com/watch?v=fallback1"
+        assert len(captured_threads) == 0
+
+    def test_producer_exception_handling_and_consumer_warning(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
+    ) -> None:
+        import logging
+        import queue
+        import threading
+
+        manifest = tmp_path / "playlist.txt"
+        manifest.write_text("", encoding="utf-8")
+
+        notifications: list[str] = []
+        use_case = DiscoverBatchSourcesUseCase(
+            media_ingestion_port=MagicMock(),
+            settings=CresmoSettings(_env_file=None),
+            progress_callback=notifications.append,
+        )
+
+        def blow_up(*args: object, **kwargs: object) -> tuple[list[str], list[str], set[str]]:
+            raise RuntimeError("crawler exploded test")
+
+        monkeypatch.setattr(LakeScannerService, "classify_seeds", blow_up)
+
+        query = BatchDiscoveryQuery(
+            playlist_path=manifest,
+            playlist_priority_path=tmp_path / "prio.txt",
+            priority_texts_dir=tmp_path / "texts",
+            raw_dir=tmp_path / "raw",
+            scan_raw=False,
+            enable_channel_crawler=True,
+        )
+        sources = list(use_case.execute(query))
+        assert sources == []
+        assert any(
+            "[crawler] Warning: Background crawler failed: crawler exploded test\n" in n
+            for n in notifications
+        )
+
+        # Test queue.Full logging in _run_crawler_producer
+        caplog.set_level(logging.WARNING)
+        stream_q: queue.Queue[BatchSource | None | Exception] = queue.Queue(maxsize=1)
+        stream_q.put(BatchSource(kind=SourceModality.URL, target="blocker"))
+        stop_evt = threading.Event()
+        stop_evt.set()
+
+        state = use_case._collect_fast_path_sources(query, _BatchSourceAccumulator())
+        use_case._run_crawler_producer(query, _BatchSourceAccumulator(), state, stream_q, stop_evt)
+        warning_records = [r for r in caplog.records if r.levelno == logging.WARNING]
+        assert any(
+            r.getMessage()
+            == "[crawler] Failed to put error into stream_queue (queue full): crawler exploded test"
+            for r in warning_records
+        )
+
+    def test_crawler_producer_queue_put_timeouts(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        import queue
+        import threading
+        from unittest.mock import MagicMock
+
+        from cresmo.application.use_cases.discovery.discover_batch_sources import (
+            _DEFAULT_STREAM_ERROR_TIMEOUT_SECONDS,
+            _DEFAULT_STREAM_QUEUE_TIMEOUT_SECONDS,
+        )
+
+        use_case = DiscoverBatchSourcesUseCase(
+            media_ingestion_port=MagicMock(),
+            settings=CresmoSettings(_env_file=None),
+        )
+        mock_q = MagicMock()
+        err = RuntimeError("test error")
+
+        def blow_up(*args: object, **kwargs: object) -> tuple[list[str], list[str], set[str]]:
+            raise err
+
+        monkeypatch.setattr(LakeScannerService, "classify_seeds", blow_up)
+        stop_evt = threading.Event()
+        q = BatchDiscoveryQuery()
+        state = use_case._collect_fast_path_sources(q, _BatchSourceAccumulator())
+
+        use_case._run_crawler_producer(q, _BatchSourceAccumulator(), state, mock_q, stop_evt)
+
+        # Verify put calls: first exc with timeout=2.0, then None with timeout=0.2
+        assert mock_q.put.call_count == 2
+        call_err, call_none = mock_q.put.call_args_list
+        assert call_err.args[0] is err
+        assert call_err.kwargs.get("timeout") == _DEFAULT_STREAM_ERROR_TIMEOUT_SECONDS
+        assert call_none.args[0] is None
+        assert call_none.kwargs.get("timeout") == _DEFAULT_STREAM_QUEUE_TIMEOUT_SECONDS
+
+        # Test queue.Full retry in finally block
+        mock_q.reset_mock()
+        stop_evt2 = threading.Event()
+        mock_q.put.side_effect = [err, queue.Full(), None]
+        use_case._run_crawler_producer(q, _BatchSourceAccumulator(), state, mock_q, stop_evt2)
+        assert mock_q.put.call_count == 3
+
+    def test_consume_stream_queue_notifications_and_clean_exit(self) -> None:
+        import queue
+        import threading
+
+        notifications: list[str] = []
+        use_case = DiscoverBatchSourcesUseCase(
+            media_ingestion_port=MagicMock(),
+            settings=CresmoSettings(_env_file=None),
+            progress_callback=notifications.append,
+        )
+
+        prio_src = BatchSource(kind=SourceModality.FILE, target="data/prio.md")
+        stream_q: queue.Queue[BatchSource | None | Exception] = queue.Queue()
+        crawled_src = BatchSource(
+            kind=SourceModality.URL, target="https://youtube.com/watch?v=streamed1"
+        )
+        stream_q.put(crawled_src)
+        stream_q.put(None)
+        stop_evt = threading.Event()
+
+        results = list(use_case._consume_stream_queue([prio_src], stream_q, stop_evt))
+        assert results == [prio_src, crawled_src]
+        assert stop_evt.is_set()
+        assert any(
+            "[stream] Fast-path complete: 1 priority item(s) processed. Awaiting crawled feed stream...\n"
+            == n
+            for n in notifications
+        )
+
+        # Test exception path exits cleanly
+        notifications.clear()
+        stream_q_err: queue.Queue[BatchSource | None | Exception] = queue.Queue()
+        stream_q_err.put(RuntimeError("stream broke"))
+        stop_evt_err = threading.Event()
+        err_results = list(use_case._consume_stream_queue([], stream_q_err, stop_evt_err))
+        assert err_results == []
+        assert stop_evt_err.is_set()
+        assert any(
+            "[crawler] Warning: Background crawler failed: stream broke\n" == n
+            for n in notifications
+        )
+
+    def test_discovery_queue_maxsize_settings_and_default(
+        self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+    ) -> None:
+        from typing import Any
+        import queue
+
+        captured_maxsizes: list[int] = []
+        orig_queue_cls = queue.Queue
+
+        def spy_queue(*args: Any, **kwargs: Any) -> queue.Queue[Any]:
+            maxsize = kwargs.get("maxsize")
+            if maxsize is not None:
+                captured_maxsizes.append(maxsize)
+            return orig_queue_cls(*args, **kwargs)
+
+        monkeypatch.setattr(queue, "Queue", spy_queue)
+
+        # Case 1: Custom discovery_queue_maxsize on settings (kills XX, DISCOVERY_QUEUE_MAXSIZE)
+        custom_settings = MagicMock()
+        custom_settings.discovery_queue_maxsize = 7
+        custom_settings.priority_texts_dir = None
+        custom_settings.raw_dir = tmp_path / "raw"
+        custom_settings.playlist_priority_path = None
+        custom_settings.playlist_path = tmp_path / "playlist.txt"
+        custom_settings.channel_discovery_workers = 1
+        custom_settings.days_lookback = 1
+        (tmp_path / "playlist.txt").write_text("", encoding="utf-8")
+
+        use_case = DiscoverBatchSourcesUseCase(
+            media_ingestion_port=MagicMock(),
+            settings=custom_settings,
+        )
+        list(use_case.execute(BatchDiscoveryQuery(enable_channel_crawler=True)))
+        assert captured_maxsizes[-1] == 7
+
+        # Case 2: Object without discovery_queue_maxsize (kills None, 51 defaults)
+        class NoMaxsizeSettings:
+            priority_texts_dir = None
+            raw_dir = tmp_path / "raw"
+            playlist_priority_path = None
+            playlist_path = tmp_path / "playlist.txt"
+            channel_discovery_workers = 1
+            days_lookback = 1
+
+        use_case_default = DiscoverBatchSourcesUseCase(
+            media_ingestion_port=MagicMock(),
+            settings=NoMaxsizeSettings(),  # type: ignore[arg-type]
+        )
+        list(use_case_default.execute(BatchDiscoveryQuery(enable_channel_crawler=True)))
+        assert captured_maxsizes[-1] == 50
+
+    def test_enqueue_source_queue_timeout_and_parameters(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        from typing import Any
+        import queue
+
+        from cresmo.application.use_cases.discovery.discover_batch_sources import (
+            _DEFAULT_STREAM_QUEUE_TIMEOUT_SECONDS,
+        )
+
+        captured_put_calls: list[tuple[Any, dict[str, Any]]] = []
+        orig_q_cls = queue.Queue
+
+        def spy_queue(*args: Any, **kwargs: Any) -> queue.Queue[Any]:
+            q_inst = orig_q_cls(*args, **kwargs)
+            orig_put = q_inst.put
+
+            def spy_put(item: Any, *a: Any, **kw: Any) -> None:
+                captured_put_calls.append((item, kw))
+                return orig_put(item, *a, **kw)
+
+            q_inst.put = spy_put
+            return q_inst
+
+        monkeypatch.setattr(queue, "Queue", spy_queue)
+
+        mock_ingestion = MagicMock()
+        mock_ingestion.discover_channel_feed.return_value = [
+            _create_mock_media_item("streamed999", "https://youtube.com/watch?v=streamed999")
+        ]
+        use_case = DiscoverBatchSourcesUseCase(
+            media_ingestion_port=mock_ingestion,
+            settings=CresmoSettings(_env_file=None),
+        )
+        manifest = tmp_path / "playlist.txt"
+        manifest.write_text("https://www.youtube.com/channel/UCChan1\n", encoding="utf-8")
+
+        query = BatchDiscoveryQuery(
+            playlist_path=manifest,
+            playlist_priority_path=tmp_path / "prio.txt",
+            priority_texts_dir=tmp_path / "texts",
+            raw_dir=tmp_path / "raw",
+            scan_raw=False,
+            enable_channel_crawler=True,
+        )
+        list(use_case.execute(query))
+
+        # Verify that _enqueue_source called put(src, timeout=_DEFAULT_STREAM_QUEUE_TIMEOUT_SECONDS)
+        batch_source_puts = [
+            kw for item, kw in captured_put_calls if isinstance(item, BatchSource)
+        ]
+        assert len(batch_source_puts) >= 1
+        assert all(
+            kw.get("timeout") == _DEFAULT_STREAM_QUEUE_TIMEOUT_SECONDS
+            for kw in batch_source_puts
+        )

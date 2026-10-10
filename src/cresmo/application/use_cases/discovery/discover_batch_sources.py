@@ -61,7 +61,7 @@ class DiscoverBatchSourcesUseCase:
 
     def __init__(
         self,
-        media_ingestion_port: MediaIngestionPort,
+        media_ingestion_port: MediaIngestionPort | None = None,
         settings: PipelineSettingsProtocol | None = None,
         progress_callback: Callable[[str], object] | None = None,
     ) -> None:
@@ -70,7 +70,7 @@ class DiscoverBatchSourcesUseCase:
         self.settings = settings or DefaultPipelineSettings()
         self.progress_callback = progress_callback
         self._crawler_service = ChannelFeedCrawlerService(
-            media_ingestion_port=self.media_ingestion_port,
+            media_ingestion_port=self.media_ingestion_port,  # type: ignore[arg-type]
             notify_fn=self._notify,
         )
 
@@ -88,7 +88,7 @@ class DiscoverBatchSourcesUseCase:
         priority_texts_dir = (
             q.priority_texts_dir
             if q.priority_texts_dir is not None
-            else getattr(self.settings, "priority_texts_dir", None)
+            else self.settings.priority_texts_dir
         )
         priority_text_channels = LakeScannerService.collect_priority_texts(
             priority_texts_dir, acc, q.filter_criteria
@@ -97,7 +97,7 @@ class DiscoverBatchSourcesUseCase:
         raw_dir = (
             q.raw_dir
             if q.raw_dir is not None
-            else getattr(self.settings, "raw_dir", Path("data/raw"))
+            else self.settings.raw_dir
         )
         local_video_channel_map = LakeScannerService.scan_raw_lake(
             raw_dir, q.scan_raw, acc, q.filter_criteria
@@ -106,7 +106,7 @@ class DiscoverBatchSourcesUseCase:
         playlist_priority_path = (
             q.playlist_priority_path
             if q.playlist_priority_path is not None
-            else getattr(self.settings, "playlist_priority_path", None)
+            else self.settings.playlist_priority_path
         )
         priority_url_channels, unresolved_priority_video_seeds = (
             LakeScannerService.collect_priority_urls(
@@ -118,7 +118,7 @@ class DiscoverBatchSourcesUseCase:
         playlist_path = (
             q.playlist_path
             or q.manifest_path
-            or getattr(self.settings, "playlist_path", Path("data/playlist.txt"))
+            or self.settings.playlist_path
         )
 
         return _FastPathDiscoveryState(
@@ -199,7 +199,7 @@ class DiscoverBatchSourcesUseCase:
                 f"  - A3 (Seed Playlist): {len(channels_to_probe)} total channel(s)\n"
             )
 
-            channels_to_probe = sorted(channels_to_probe, key=lambda c: c.lower())
+            channels_to_probe = sorted(channels_to_probe, key=str.casefold)
 
             self._crawler_service.probe_channel_feeds(
                 channels_to_probe,
@@ -221,9 +221,9 @@ class DiscoverBatchSourcesUseCase:
             while not stop_event.is_set():
                 try:
                     stream_queue.put(None, timeout=_DEFAULT_STREAM_QUEUE_TIMEOUT_SECONDS)
-                    break
+                    return
                 except queue.Full:
-                    continue
+                    pass
 
     def _consume_stream_queue(
         self,
@@ -243,10 +243,10 @@ class DiscoverBatchSourcesUseCase:
             while True:
                 item = stream_queue.get()
                 if item is None:
-                    break
+                    return
                 if isinstance(item, Exception):
                     self._notify(f"[crawler] Warning: Background crawler failed: {item}\n")
-                    break
+                    return
                 yield item
         finally:
             stop_event.set()
@@ -282,9 +282,9 @@ class DiscoverBatchSourcesUseCase:
             while not stop_event.is_set():
                 try:
                     stream_queue.put(src, timeout=_DEFAULT_STREAM_QUEUE_TIMEOUT_SECONDS)
-                    break
+                    return
                 except queue.Full:
-                    continue
+                    pass
 
         acc.on_source_added = _enqueue_source
 
