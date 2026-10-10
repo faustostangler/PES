@@ -16,6 +16,9 @@ from cresmo.infrastructure.adapters.judges.composite_judge import ResilientCompo
 from cresmo.infrastructure.adapters.judges.gemini_judge import GeminiJudgeAdapter
 from cresmo.infrastructure.adapters.judges.langfuse_decorator import LangfuseJudgeDecorator
 from cresmo.infrastructure.adapters.judges.ollama_judge import OllamaJudgeAdapter
+from cresmo.infrastructure.adapters.judges.preflight_decorator import (
+    MechanicalPreflightJudgeDecorator,
+)
 from cresmo.infrastructure.adapters.judges.typesafe_judge import TypeSafeJudgeAdapter
 from cresmo.infrastructure.config import CresmoSettings
 
@@ -76,8 +79,11 @@ def build_llm_judge_adapter(
     # 3. Wrap in Resilient Composite
     resilient_judge = ResilientCompositeJudgeAdapter(primary=primary, fallback=fallback)
 
-    # 4. Decorate with Langfuse Telemetry Emission
+    # 4. Wrap in Mechanical Preflight Gate
+    preflight_judge = MechanicalPreflightJudgeDecorator(inner_judge=resilient_judge)
+
+    # 5. Decorate with Langfuse Telemetry Emission
     return LangfuseJudgeDecorator(
-        inner_judge=resilient_judge,
+        inner_judge=preflight_judge,
         langfuse_client=langfuse_client,
     )

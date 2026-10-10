@@ -301,6 +301,19 @@ def sync_source_to_mutants() -> int:
             if not target.exists() or t_file.read_bytes() != target.read_bytes():
                 shutil.copy2(t_file, target)
                 count += 1
+
+    # Also sync scripts/
+    scripts_dir = Path("scripts")
+    mutants_scripts_dir = Path("mutants/scripts")
+    if scripts_dir.exists():
+        for s_file in scripts_dir.glob("**/*"):
+            if s_file.is_file() and not s_file.name.endswith((".pyc", ".pyo")):
+                rel = s_file.relative_to(scripts_dir)
+                target = mutants_scripts_dir / rel
+                target.parent.mkdir(parents=True, exist_ok=True)
+                if not target.exists() or s_file.read_bytes() != target.read_bytes():
+                    shutil.copy2(s_file, target)
+                    count += 1
     return count
 
 

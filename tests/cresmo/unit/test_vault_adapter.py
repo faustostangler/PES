@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+from typing import Any
 from unittest.mock import patch
 
 import pytest
@@ -165,6 +166,7 @@ class TestObsidianVaultAdapter:
             cluster="Elitismo Clássico",
             source="Teoria das Elites",
             aliases=("Pareto", "V. Pareto"),
+            content_tags=("sociologia", "política"),
             direct_relations=(NoteTitle("Gaetano Mosca"),),
             causal_matrix=CausalMatrix(
                 cause="Heterogeneidade das faculdades humanas",
@@ -186,12 +188,37 @@ class TestObsidianVaultAdapter:
         assert retrieved.title.value == "Vilfredo Pareto"
         assert retrieved.note_type == NoteType.ENTITY
         assert retrieved.domain == "Ciência Política"
+        assert retrieved.cluster == "Elitismo Clássico"
+        assert retrieved.source == "Teoria das Elites"
+        assert retrieved.content_tags == ("sociologia", "política")
         assert "Pareto" in retrieved.aliases
         assert NoteTitle("Gaetano Mosca") in retrieved.direct_relations
         assert retrieved.causal_matrix is not None
         assert retrieved.causal_matrix.cause == "Heterogeneidade das faculdades humanas"
+        assert retrieved.causal_matrix.effect == "Formação contínua de minorias dirigentes"
+        assert retrieved.causal_matrix.epistemic_attribution == "Trattato di Sociologia Generale"
         assert retrieved.cross_context is not None
         assert retrieved.cross_context.precursors == "Maquiavel"
+        assert retrieved.cross_context.lateral_events == "Positivismo sociológico"
+        assert retrieved.cross_context.aftermath == "Robert Michels"
+
+        # Check raw saved markdown file content & format
+        saved_file = vault_dir / "entities" / "Vilfredo Pareto.md"
+        assert saved_file.exists()
+        raw_text = saved_file.read_text(encoding="utf-8")
+        assert "title: Vilfredo Pareto\n" in raw_text
+        assert "cluster: Elitismo Clássico\n" in raw_text
+        assert "source: Teoria das Elites\n" in raw_text
+        assert "política" in raw_text
+        # Verify sort_keys=False preserves logical frontmatter order
+        assert raw_text.index("title:") < raw_text.index("domain:") < raw_text.index("tags:")
+        # Verify section spacing and headers
+        assert "\n\n# [[Vilfredo Pareto]]\n\n## Definição & Análise Contextual\n" in raw_text
+        assert "\n## Conexões & Relações Diretas\n- [[Gaetano Mosca]]\n\n" in raw_text
+        assert "\n- Atribuição Epistêmica: Trattato di Sociologia Generale\n\n" in raw_text
+        assert "\n- Eventos Laterais: Positivismo sociológico\n" in raw_text
+        assert "\n- Desdobramentos: Robert Michels\n" in raw_text
+        assert "XXXX" not in raw_text
 
         all_notes = adapter.get_all_atomic_notes()
         assert len(all_notes) == 1
@@ -222,17 +249,33 @@ class TestObsidianVaultAdapter:
         adapter.save_atomic_note(note)
         adapter.update_index_entry(note)
 
+        # Create MOC with same title: must NOT be deleted by delete_atomic_note
+        moc_file = vault_dir / "MOCs" / "Vilfredo Pareto.md"
+        moc_file.parent.mkdir(parents=True, exist_ok=True)
+        moc_file.write_text("Preserved MOC content", encoding="utf-8")
+
         # Confirm note exists before deletion
         assert adapter.get_atomic_note_by_title(note.title) is not None
         index_data = json.loads(adapter.index_path.read_text(encoding="utf-8"))
         assert "vilfredo pareto" in index_data
         assert "pareto" in index_data
 
-        # Delete atomic note
-        adapter.delete_atomic_note(note)
+        # Delete atomic note with spy on Path.unlink to verify missing_ok=True
+        orig_unlink = Path.unlink
+        unlinked_calls: list[dict[str, Any]] = []
 
-        # File and index entries must be gone
+        def spy_unlink(self_path: Path, *args: Any, **kwargs: Any) -> None:
+            unlinked_calls.append(kwargs)
+            orig_unlink(self_path, *args, **kwargs)
+
+        with patch.object(Path, "unlink", spy_unlink):
+            adapter.delete_atomic_note(note)
+
+        assert any(call.get("missing_ok") is True for call in unlinked_calls)
+
+        # File and index entries must be gone, but MOC preserved
         assert adapter.get_atomic_note_by_title(note.title) is None
+        assert moc_file.is_file()
         updated_index = json.loads(adapter.index_path.read_text(encoding="utf-8"))
         assert "vilfredo pareto" not in updated_index
         assert "pareto" not in updated_index
@@ -616,3 +659,211 @@ class TestObsidianVaultAdapter:
             '"history";"Canal Teste";"vid22222222.md";"Conceito Dois";"Síntese paratática do segundo vídeo."'
             in csv_text
         )
+
+    def test_default_and_custom_paths_initialization(
+        self, storage_paths: tuple[Path, Path, Path], tmp_path: Path
+    ) -> None:
+        """Verify default directory resolution and custom data_dir/master_dir resolution."""
+        vault_dir, raw_dir, enriched_dir = storage_paths
+        custom_data = tmp_path / "custom_data"
+        custom_master = tmp_path / "custom_master"
+
+        # Defaults when data_dir, master_dir, index_path, mocs_dir are None
+        adapter_default = ObsidianVaultAdapter(
+            vault_dir=vault_dir,
+            raw_dir=raw_dir,
+            enriched_dir=enriched_dir,
+        )
+        assert adapter_default.data_dir == raw_dir.parent.resolve()
+        assert adapter_default.master_dir == (adapter_default.data_dir / "master").resolve()
+        assert adapter_default.master_dir.name == "master"
+        assert adapter_default.mocs_dir == (vault_dir / "MOCs").resolve()
+        assert adapter_default.mocs_dir.name == "MOCs"
+        assert adapter_default.index_path == (vault_dir / "_index.json").resolve()
+        assert adapter_default.index_path.name == "_index.json"
+
+        # Custom data_dir and master_dir
+        adapter_custom = ObsidianVaultAdapter(
+            vault_dir=vault_dir,
+            raw_dir=raw_dir,
+            enriched_dir=enriched_dir,
+            data_dir=custom_data,
+            master_dir=custom_master,
+        )
+        assert adapter_custom.data_dir == custom_data.resolve()
+        assert adapter_custom.master_dir == custom_master.resolve()
+
+    def test_atomic_write_delegation(
+        self, storage_paths: tuple[Path, Path, Path], tmp_path: Path
+    ) -> None:
+        """Verify _atomic_write helper method writes expected text content."""
+        vault_dir, raw_dir, enriched_dir = storage_paths
+        adapter = ObsidianVaultAdapter(
+            vault_dir=vault_dir,
+            raw_dir=raw_dir,
+            enriched_dir=enriched_dir,
+        )
+        target = tmp_path / "sub" / "atomic_test.txt"
+        adapter._atomic_write(target, "atomic write test content")
+        assert target.is_file()
+        assert target.read_text(encoding="utf-8") == "atomic write test content"
+
+    def test_get_note_path_and_parse_file_delegation(
+        self, storage_paths: tuple[Path, Path, Path]
+    ) -> None:
+        """Verify _get_note_path and _parse_atomic_note_file handler delegations."""
+        vault_dir, raw_dir, enriched_dir = storage_paths
+        adapter = ObsidianVaultAdapter(
+            vault_dir=vault_dir,
+            raw_dir=raw_dir,
+            enriched_dir=enriched_dir,
+        )
+        note = AtomicNote(
+            title=NoteTitle("Direct Path Test"),
+            note_type=NoteType.CONCEPT,
+            definition="Definition text with at least 20 chars for domain validation.",
+        )
+        note_path = adapter._get_note_path(note)
+        assert note_path == vault_dir / "concepts" / "Direct Path Test.md"
+
+        # Save and verify _parse_atomic_note_file delegation
+        adapter.save_atomic_note(note)
+        parsed = adapter._parse_atomic_note_file(note_path)
+        assert parsed is not None
+        assert parsed.title == note.title
+        assert parsed.definition == note.definition
+
+    def test_remove_index_entry_delegation(self, storage_paths: tuple[Path, Path, Path]) -> None:
+        """Verify remove_index_entry handler delegation removes targeted index entry."""
+        vault_dir, raw_dir, enriched_dir = storage_paths
+        adapter = ObsidianVaultAdapter(
+            vault_dir=vault_dir,
+            raw_dir=raw_dir,
+            enriched_dir=enriched_dir,
+        )
+        note = AtomicNote(
+            title=NoteTitle("Index Remove Test"),
+            note_type=NoteType.CONCEPT,
+            definition="Definition text with at least 20 chars for domain validation.",
+        )
+        adapter.update_index_entry(note)
+        key = "index remove test"
+        raw_index = json.loads(adapter.index_path.read_text(encoding="utf-8"))
+        assert key in raw_index
+
+        adapter.remove_index_entry(key)
+        raw_index_after = json.loads(adapter.index_path.read_text(encoding="utf-8"))
+        assert key not in raw_index_after
+
+    def test_parse_atomic_note_file_edge_cases(
+        self, storage_paths: tuple[Path, Path, Path]
+    ) -> None:
+        """Verify boundary definition length, self-relation exclusion, and section parsing fallbacks."""
+        vault_dir, raw_dir, enriched_dir = storage_paths
+        adapter = ObsidianVaultAdapter(
+            vault_dir=vault_dir,
+            raw_dir=raw_dir,
+            enriched_dir=enriched_dir,
+        )
+
+        # 1. Definition length exactly 20 chars: must be preserved, not replaced by fallback
+        exact_20_chars = "12345678901234567890"
+        note_file = vault_dir / "concepts" / "Exact Def Note.md"
+        note_file.parent.mkdir(parents=True, exist_ok=True)
+        content_exact = f"""---
+title: Exact Def Note
+type: concept
+---
+
+# [[Exact Def Note]]
+
+## Definição & Análise Contextual
+{exact_20_chars}
+"""
+        note_file.write_text(content_exact, encoding="utf-8")
+        parsed_exact = adapter._parse_atomic_note_file(note_file)
+        assert parsed_exact is not None
+        assert parsed_exact.definition == exact_20_chars
+
+        # 2. Self-relation filtering with case variations & valid external relation
+        self_rel_file = vault_dir / "concepts" / "Self Loop Note.md"
+        content_self_rel = """---
+type: concept
+---
+
+# [[Self Loop Note]]
+
+## Definição & Análise Contextual
+Definição conceitual com mais de vinte caracteres para passar na validação.
+
+## Conexões & Relações Diretas
+- [[Self Loop Note]]
+- [[self loop note]]
+- [[SELF LOOP NOTE]]
+- [[External Concept]]
+"""
+        self_rel_file.write_text(content_self_rel, encoding="utf-8")
+        parsed_self_rel = adapter._parse_atomic_note_file(self_rel_file)
+        assert parsed_self_rel is not None
+        # Inherits title from file_path.stem when missing in frontmatter
+        assert parsed_self_rel.title.value == "Self Loop Note"
+        # Self-relations filtered out, external concept kept
+        assert parsed_self_rel.direct_relations == (NoteTitle("External Concept"),)
+
+        # 3. Partial causal matrix and cross-context defaults
+        partial_file = vault_dir / "concepts" / "Partial Sections Note.md"
+        content_partial = """---
+title: Partial Sections Note
+type: 12345
+---
+
+# [[Partial Sections Note]]
+
+## Definição & Análise Contextual
+Definição conceitual com mais de vinte caracteres para passar na validação.
+
+## Matriz Causal
+- Causa: Condição Geradora Primária
+- Efeito: Efeito Estrutural Resultante
+
+## Redes de Conexão (Cross-Context)
+- Precursores: Precursores Históricos Relevantes
+"""
+        partial_file.write_text(content_partial, encoding="utf-8")
+        parsed_partial = adapter._parse_atomic_note_file(partial_file)
+        assert parsed_partial is not None
+        # Non-string type falls back to CONCEPT
+        assert parsed_partial.note_type == NoteType.CONCEPT
+        assert parsed_partial.causal_matrix is not None
+        assert parsed_partial.causal_matrix.cause == "Condição Geradora Primária"
+        assert parsed_partial.causal_matrix.effect == "Efeito Estrutural Resultante"
+        assert parsed_partial.causal_matrix.epistemic_attribution == ""
+        assert parsed_partial.cross_context is not None
+        assert parsed_partial.cross_context.precursors == "Precursores Históricos Relevantes"
+        assert parsed_partial.cross_context.lateral_events == ""
+        assert parsed_partial.cross_context.aftermath == ""
+
+    def test_remove_index_entry_indentation_and_unicode(
+        self, storage_paths: tuple[Path, Path, Path]
+    ) -> None:
+        """Verify _index.json formatting preserves 2-space indentation and unescaped unicode."""
+        vault_dir, raw_dir, enriched_dir = storage_paths
+        adapter = ObsidianVaultAdapter(
+            vault_dir=vault_dir,
+            raw_dir=raw_dir,
+            enriched_dir=enriched_dir,
+        )
+        note = AtomicNote(
+            title=NoteTitle("Conceito de Ação"),
+            note_type=NoteType.CONCEPT,
+            definition="Definição teórica com caracteres unicode acentuados para teste.",
+        )
+        adapter.update_index_entry(note)
+        raw_index_text = adapter.index_path.read_text(encoding="utf-8")
+        assert "Conceito de Ação" in raw_index_text
+        assert "\n  " in raw_index_text
+
+        adapter.remove_index_entry("conceito de ação")
+        raw_after = adapter.index_path.read_text(encoding="utf-8")
+        assert "conceito de ação" not in raw_after
+        assert raw_after.startswith("{\n") or raw_after == "{}"

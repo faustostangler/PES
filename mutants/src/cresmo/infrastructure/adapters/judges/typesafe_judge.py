@@ -95,6 +95,30 @@ class TypeSafeJudgeAdapter(LlmJudgePort):
                         "completely faithful and grounded",
                     ],
                 }
+            elif criterion == JudgeCriterion.EPISTEMIC_CRITIQUE:
+                questions_payload[criterion.value] = {
+                    "type": "score",
+                    "instructions": (
+                        "Does the candidate text appropriately qualify factual errors or bias with in-line narrative attribution, and identify conceptual gaps?"
+                    ),
+                    "criteria": [
+                        "uncritically adopts blatant falsehoods or introduces model errors",
+                        "partially addresses inaccuracies",
+                        "rigorously demarcates errors and accurately maps gaps",
+                    ],
+                }
+            elif criterion == JudgeCriterion.AUTHORIAL_VOICE:
+                questions_payload[criterion.value] = {
+                    "type": "score",
+                    "instructions": (
+                        "Does the candidate text embody the Detective Narrator voice with second-order causality and zero binary antitheses?"
+                    ),
+                    "criteria": [
+                        "superficial summary or moralistic commentary",
+                        "moderately analytical voice with minor lapses",
+                        "exemplary analytical detective voice with zero antitheses",
+                    ],
+                }
             elif criterion == JudgeCriterion.INVENTORY_COHERENCE:
                 questions_payload[criterion.value] = {
                     "type": "score",

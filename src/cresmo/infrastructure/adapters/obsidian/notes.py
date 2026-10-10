@@ -117,10 +117,13 @@ class AtomicNoteVaultHandler:
 
         fm_text, body = match.groups()
         meta = yaml.safe_load(fm_text) or {}
-        raw_type = meta.get("type", "concept")
-        try:
-            note_type = NoteType.from_string(raw_type)
-        except (NoteTypologyError, ValueError):
+        raw_type = meta.get("type")
+        if isinstance(raw_type, str):
+            try:
+                note_type = NoteType.from_string(raw_type)
+            except (NoteTypologyError, ValueError):
+                note_type = NoteType.CONCEPT
+        else:
             note_type = NoteType.CONCEPT
 
         title_str = meta.get("title", file_path.stem)
@@ -253,9 +256,9 @@ class AtomicNoteVaultHandler:
             if "MOCs" not in p.parts and p.is_file():
                 p.unlink(missing_ok=True)
 
-        self.remove_index_entry(note.title.value.lower())
+        self.remove_index_entry(note.title.value)
         for alias in note.aliases:
-            self.remove_index_entry(alias.lower())
+            self.remove_index_entry(alias)
 
     def remove_index_entry(self, key: str) -> None:
         """Remove specific canonical title or alias key from master _index.json."""

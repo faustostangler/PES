@@ -47,8 +47,10 @@ def test_stage_registry_fluid_prose_spec() -> None:
     assert isinstance(spec, StageDefinition)
     assert JudgeCriterion.ORALITY_REMOVAL in spec.required_criteria
     assert JudgeCriterion.SEMANTIC_FAITHFULNESS in spec.required_criteria
+    assert JudgeCriterion.EPISTEMIC_CRITIQUE in spec.required_criteria
     assert JudgeCriterion.NER_PRESERVATION in spec.required_criteria
     assert JudgeCriterion.STRUCTURAL_COMPLIANCE in spec.required_criteria
+    assert JudgeCriterion.AUTHORIAL_VOICE in spec.required_criteria
     assert spec.post_processor is not None
 
 

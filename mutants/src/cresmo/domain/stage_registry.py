@@ -35,8 +35,10 @@ class StageRegistry:
             required_criteria=(
                 JudgeCriterion.ORALITY_REMOVAL,
                 JudgeCriterion.SEMANTIC_FAITHFULNESS,
+                JudgeCriterion.EPISTEMIC_CRITIQUE,
                 JudgeCriterion.NER_PRESERVATION,
                 JudgeCriterion.STRUCTURAL_COMPLIANCE,
+                JudgeCriterion.AUTHORIAL_VOICE,
             ),
             post_processor=post_process_fluid_transcript,
         ),
