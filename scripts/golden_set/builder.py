@@ -8,8 +8,14 @@ Assembles, validates, and exports the canonical 42-item Golden Set conforming to
 from __future__ import annotations
 
 import json
+import sys
 from pathlib import Path
 from typing import Any
+
+# Ensure project root is in sys.path when invoked directly as a script / debugger
+REPO_ROOT = Path(__file__).resolve().parents[2]
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
 
 from scripts.golden_set.criterion_epistemic import ITEMS_EPISTEMIC
 from scripts.golden_set.criterion_faithfulness import ITEMS_FAITHFULNESS
@@ -18,7 +24,7 @@ from scripts.golden_set.criterion_orality import ITEMS_ORALITY
 from scripts.golden_set.criterion_structure import ITEMS_STRUCTURE
 from scripts.golden_set.criterion_voice import ITEMS_VOICE
 
-OUTPUT_PATH = Path("data/golden_sets/fluid_prose_golden_set_42.json")
+OUTPUT_PATH = REPO_ROOT / "data" / "golden_sets" / "fluid_prose_golden_set_42.json"
 
 EXPECTED_CRITERIA = {
     "orality_removal": ITEMS_ORALITY,

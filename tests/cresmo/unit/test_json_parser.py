@@ -10,7 +10,9 @@ import pytest
 
 from cresmo.application.json_parser import (
     _TRAILING_COMMA_PATTERN,
+    _extract_bracketed,
     _extract_individual_objects,
+    _find_balanced_closing_brace,
     extract_json_data,
 )
 

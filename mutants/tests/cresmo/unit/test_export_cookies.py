@@ -246,7 +246,9 @@ class TestExportCookiesCommand:
             )
 
             captured = capsys.readouterr()
-            assert captured.out == "[cookies] Extracting YouTube cookies from browser 'chromium'...\n"
+            assert (
+                captured.out == "[cookies] Extracting YouTube cookies from browser 'chromium'...\n"
+            )
             assert captured.err == (
                 "[cookies] ERROR: Failed to extract YouTube cookies from 'chromium'.\n"
                 "[cookies] Action required: Please open Chromium, log in to YouTube, "
@@ -273,7 +275,9 @@ class TestExportCookiesCommand:
 
             captured = capsys.readouterr()
             assert captured.out == ""
-            assert captured.err == "[cookies] Error during cookie extraction: Corrupted config store\n"
+            assert (
+                captured.err == "[cookies] Error during cookie extraction: Corrupted config store\n"
+            )
 
     def test_output_fallback_to_settings_cookies_file(self, tmp_path: Path) -> None:
         """Verify output path falls back to settings.cookies_file when --output is None."""
@@ -357,15 +361,17 @@ class TestExportCookiesCommand:
                 return_value=True,
             ) as mock_export,
         ):
-            code = main([
-                "export-cookies",
-                "--browser",
-                "chrome",
-                "--output",
-                str(cookie_path),
-                "--require-auth",
-                "--force",
-            ])
+            code = main(
+                [
+                    "export-cookies",
+                    "--browser",
+                    "chrome",
+                    "--output",
+                    str(cookie_path),
+                    "--require-auth",
+                    "--force",
+                ]
+            )
             assert code == EXIT_SUCCESS
             mock_export.assert_called_once_with(
                 browser="chrome",

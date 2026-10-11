@@ -751,5 +751,3 @@ class TestUnifyDuplicateNotesUseCase:
         vault_titles = {n.title.value for n in mock_vault.get_all_atomic_notes()}
         assert vault_titles == {"Scipio Africanus", "Publius"}
         assert "Dom Publius" not in vault_titles
-
-

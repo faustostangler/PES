@@ -660,7 +660,9 @@ class TestExpandLongitudinalSynchronic:
             complementary_info="Initial complementary info.",
         )
         long_response = "Long response text."
-        wide_response = "# Leading Title\nExpanded body.\n\n### Notas Complementares\n\nNotas content."
+        wide_response = (
+            "# Leading Title\nExpanded body.\n\n### Notas Complementares\n\nNotas content."
+        )
         llm_port = MockLLMAdapter(responses=[long_response, wide_response])
         vault_port = InMemoryVaultAdapter()
 
@@ -700,7 +702,6 @@ class TestExpandLongitudinalSynchronic:
         assert updated.video_date == "20220202"
         assert updated.video_description == "A deep video description."
         assert updated.complementary_info == "Adicionais content."
-
 
 
 class TestDiscoverAtomicInventory:

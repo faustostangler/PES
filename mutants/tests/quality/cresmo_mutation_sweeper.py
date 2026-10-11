@@ -118,6 +118,14 @@ MODULE_TEST_MAP: dict[str, list[str]] = {
         "tests/cresmo/unit/test_pipeline_models.py",
         "tests/cresmo/unit/test_stage_foundation.py",
     ],
+    # Wave 2: Application Core Utilities & Services
+    "src/cresmo/application/json_parser.py": [
+        "tests/cresmo/unit/test_json_parser.py",
+    ],
+    "src/cresmo/application/services/preflight.py": [
+        "tests/cresmo/unit/test_preflight_checker.py",
+        "tests/cresmo/unit/test_preflight_decorator.py",
+    ],
     # Wave 3: Application Use Cases
     "src/cresmo/application/use_cases/concat_master.py": [
         "tests/cresmo/unit/test_concat_master_use_case.py",
@@ -319,25 +327,26 @@ def ensure_mutmut_dataclass_support() -> None:
     """Ensure mutmut libcst visitor supports @dataclass decorated classes."""
     try:
         import mutmut.mutation.file_mutation as fm
+
         fm_path = Path(fm.__file__)
         code = fm_path.read_text(encoding="utf-8")
-        target_check = 'if isinstance(node, cst.ClassDef) and len(node.decorators):'
-        if target_check in code and 'is_dc = all(' not in code:
-            old_block = '        if isinstance(node, cst.ClassDef) and len(node.decorators):\n            return True'
+        target_check = "if isinstance(node, cst.ClassDef) and len(node.decorators):"
+        if target_check in code and "is_dc = all(" not in code:
+            old_block = "        if isinstance(node, cst.ClassDef) and len(node.decorators):\n            return True"
             new_block = (
-                '        if isinstance(node, cst.ClassDef) and len(node.decorators):\n'
-                '            is_dc = all(\n'
+                "        if isinstance(node, cst.ClassDef) and len(node.decorators):\n"
+                "            is_dc = all(\n"
                 '                (isinstance(d.decorator, cst.Name) and d.decorator.value == "dataclass")\n'
-                '                or (\n'
-                '                    isinstance(d.decorator, cst.Call)\n'
-                '                    and isinstance(d.decorator.func, cst.Name)\n'
+                "                or (\n"
+                "                    isinstance(d.decorator, cst.Call)\n"
+                "                    and isinstance(d.decorator.func, cst.Name)\n"
                 '                    and d.decorator.func.value == "dataclass"\n'
-                '                )\n'
-                '                for d in node.decorators\n'
-                '            )\n'
-                '            if is_dc:\n'
-                '                return False\n'
-                '            return True'
+                "                )\n"
+                "                for d in node.decorators\n"
+                "            )\n"
+                "            if is_dc:\n"
+                "                return False\n"
+                "            return True"
             )
             if old_block in code:
                 fm_path.write_text(code.replace(old_block, new_block), encoding="utf-8")
@@ -395,7 +404,6 @@ def sync_source_to_mutants() -> int:
     return count
 
 
-
 def collect_pytest_nodes(test_files: Sequence[str]) -> list[str]:
     """Collect pytest test node IDs for given test files."""
     cmd = ["uv", "run", "pytest", *test_files, "--collect-only", "-q"]
@@ -414,6 +422,7 @@ def extract_function_keys(source_path: Path) -> list[str]:
     # 1. Extract directly via AST using mutmut's canonical format_utils
     try:
         from mutmut.utils.format_utils import get_mutant_name, make_mutant_key
+
         content = source_path.read_text(encoding="utf-8")
         tree = ast.parse(content)
         for node in ast.iter_child_nodes(tree):
@@ -432,6 +441,7 @@ def extract_function_keys(source_path: Path) -> list[str]:
     try:
         from mutmut.__main__ import SourceFileMutationData
         from mutmut.utils.format_utils import get_mutant_name
+
         data = SourceFileMutationData(path=source_path)
         data.load()
         if data.hash_by_function_name:
@@ -481,11 +491,11 @@ def set_pyproject_only_mutate(target_path: str) -> str:
     pyproject = Path("pyproject.toml")
     original = pyproject.read_text(encoding="utf-8")
 
-    mutmut_section = "[tool.mutmut]\nsource_paths = [\"src\"]\n"
+    mutmut_section = '[tool.mutmut]\nsource_paths = ["src"]\n'
     if mutmut_section in original:
         new_content = original.replace(
             mutmut_section,
-            f"{mutmut_section}only_mutate = [\"{target_path}\"]\n",
+            f'{mutmut_section}only_mutate = ["{target_path}"]\n',
         )
         pyproject.write_text(new_content, encoding="utf-8")
     return original
@@ -524,7 +534,10 @@ def run_mutation_on_module(
         if candidate.exists():
             test_files = [str(candidate)]
         else:
-            test_files = ["tests/cresmo/unit/test_entities.py", "tests/cresmo/unit/test_value_objects.py"]
+            test_files = [
+                "tests/cresmo/unit/test_entities.py",
+                "tests/cresmo/unit/test_value_objects.py",
+            ]
 
     print(f"  🧪 Mirrored Test Suites: {', '.join(test_files)}")
     nodes = collect_pytest_nodes(test_files)
@@ -600,7 +613,9 @@ def main() -> int:
         help="Execution wave.",
     )
     parser.add_argument("--no-reset", action="store_true", help="Do not reset mutant statuses.")
-    parser.add_argument("--show-survivors", action="store_true", help="Print diff of surviving mutants.")
+    parser.add_argument(
+        "--show-survivors", action="store_true", help="Print diff of surviving mutants."
+    )
     args = parser.parse_args()
 
     reset = not args.no_reset

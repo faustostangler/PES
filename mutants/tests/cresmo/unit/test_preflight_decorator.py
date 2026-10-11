@@ -62,8 +62,7 @@ def test_delegates_to_inner_judge_when_mechanical_invariants_pass() -> None:
     decorator = MechanicalPreflightJudgeDecorator(inner_judge=mock_inner_judge)
 
     valid_candidate = (
-        "## Título Válido\n\n"
-        "Texto em prosa sem travessões, sem bullets e estruturado corretamente."
+        "## Título Válido\n\nTexto em prosa sem travessões, sem bullets e estruturado corretamente."
     )
     context = EvaluationContext(
         stage_name="fluid_prose",

@@ -378,7 +378,11 @@ class TestSyncChannelUseCase:
             media_url="https://youtube.com/watch?v=tooOldVideo001",
             channel_name=ChannelName("TestChannel"),
         )
-        mock_ingestion_port.discover_channel_feed.return_value = [item_recent, item_boundary, item_old]
+        mock_ingestion_port.discover_channel_feed.return_value = [
+            item_recent,
+            item_boundary,
+            item_old,
+        ]
 
         use_case = SyncChannelUseCase(
             media_ingestion_port=mock_ingestion_port,

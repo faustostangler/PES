@@ -278,7 +278,9 @@ class DiscoverAtomicInventoryUseCase:
         session_id = PipelineSessionId.create(
             channel=compendium.channel_name,
             content_id=compendium.content_id,
-            channel_id=compendium.channel_id if isinstance(compendium.channel_id, ChannelId) else None,
+            channel_id=compendium.channel_id
+            if isinstance(compendium.channel_id, ChannelId)
+            else None,
         ).value
         user_id = user.value if user is not None else UserIdentity.anonymous().value
         content_id = compendium.content_id.value

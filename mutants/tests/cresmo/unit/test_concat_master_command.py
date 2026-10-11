@@ -209,15 +209,13 @@ class TestConcatMasterCommand:
             )
             assert captured.err == ""
 
-    def test_handle_concat_master_error_handling(
-        self, capsys: pytest.CaptureFixture[str]
-    ) -> None:
+    def test_handle_concat_master_error_handling(self, capsys: pytest.CaptureFixture[str]) -> None:
         """Verify catastrophic failure writes formatted message to stderr and returns EXIT_INTERNAL_ERROR (1)."""
         args = argparse.Namespace(channel=None, max_words=None)
 
         with patch(
             "cresmo.presentation.commands.concat_master.resolve_shared_settings",
-            side_effect=IOError("Permission denied writing to /data/master"),
+            side_effect=OSError("Permission denied writing to /data/master"),
         ):
             code = handle_concat_master(args)
             assert code == EXIT_INTERNAL_ERROR

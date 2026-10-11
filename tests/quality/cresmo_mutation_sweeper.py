@@ -118,6 +118,14 @@ MODULE_TEST_MAP: dict[str, list[str]] = {
         "tests/cresmo/unit/test_pipeline_models.py",
         "tests/cresmo/unit/test_stage_foundation.py",
     ],
+    # Wave 2: Application Core Utilities & Services
+    "src/cresmo/application/json_parser.py": [
+        "tests/cresmo/unit/test_json_parser.py",
+    ],
+    "src/cresmo/application/services/preflight.py": [
+        "tests/cresmo/unit/test_preflight_checker.py",
+        "tests/cresmo/unit/test_preflight_decorator.py",
+    ],
     # Wave 3: Application Use Cases
     "src/cresmo/application/use_cases/concat_master.py": [
         "tests/cresmo/unit/test_concat_master_use_case.py",

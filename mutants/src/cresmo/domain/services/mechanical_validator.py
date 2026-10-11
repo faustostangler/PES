@@ -33,9 +33,7 @@ def validate_fluid_prose_mechanical_invariants(text: str) -> list[str]:
     # 1. Line 1 Contract: Must begin with '## '
     first_line = stripped.splitlines()[0].strip()
     if not first_line.startswith("## ") or first_line.startswith("### "):
-        violations.append(
-            f"Line 1 must start with '## ' (found: '{first_line[:40]}...')"
-        )
+        violations.append(f"Line 1 must start with '## ' (found: '{first_line[:40]}...')")
 
     # 2. Zero YAML Frontmatter
     if _YAML_DELIMITER_PATTERN.search(stripped):
@@ -43,7 +41,9 @@ def validate_fluid_prose_mechanical_invariants(text: str) -> list[str]:
 
     # 3. Zero Em-Dashes ('—')
     if "—" in stripped:
-        violations.append("Text must contain zero em-dashes ('—'). Use commas or separate sentences.")
+        violations.append(
+            "Text must contain zero em-dashes ('—'). Use commas or separate sentences."
+        )
 
     # 4. Zero Bullet Points
     if _BULLET_LINE_PATTERN.search(stripped):

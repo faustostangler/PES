@@ -35,8 +35,14 @@ class TestSeedPromptsCLI:
 
     def test_to_mustache_transformations(self) -> None:
         """Verify single brace {var} conversion to {{var}} without double-escaping."""
-        assert _to_mustache("Hello {name}, your ID is {id_num}") == "Hello {{name}}, your ID is {{id_num}}"
-        assert _to_mustache("Already {{mustache}} stays {{mustache}}") == "Already {{mustache}} stays {{mustache}}"
+        assert (
+            _to_mustache("Hello {name}, your ID is {id_num}")
+            == "Hello {{name}}, your ID is {{id_num}}"
+        )
+        assert (
+            _to_mustache("Already {{mustache}} stays {{mustache}}")
+            == "Already {{mustache}} stays {{mustache}}"
+        )
         assert _to_mustache("Plain text without variables") == "Plain text without variables"
 
     def test_register_subparser(self) -> None:
@@ -76,7 +82,10 @@ class TestSeedPromptsCLI:
         code = main(["seed-prompts", "--dry-run"])
         assert code == EXIT_SUCCESS
         captured = capsys.readouterr()
-        assert f"[dry-run] Rendering {len(PROMPT_MAPPINGS)} Chat-Native prompt templates:\n" in captured.out
+        assert (
+            f"[dry-run] Rendering {len(PROMPT_MAPPINGS)} Chat-Native prompt templates:\n"
+            in captured.out
+        )
         provider = JsonPromptProvider()
         for lf_name, json_key in PROMPT_MAPPINGS.items():
             sys_inst, user_tpl = provider.get_chat_prompt_template(json_key)
@@ -84,11 +93,11 @@ class TestSeedPromptsCLI:
             user_mustache = _to_mustache(user_tpl)
             preview_sys = sys_mustache[:50].replace("\n", " ")
             preview_usr = user_mustache[:50].replace("\n", " ")
-            expected_line = (
-                f"- {lf_name} (key={json_key}): [system] {preview_sys}... | [user] {preview_usr}...\n"
-            )
+            expected_line = f"- {lf_name} (key={json_key}): [system] {preview_sys}... | [user] {preview_usr}...\n"
             assert expected_line in captured.out
-        assert f"[dry-run] Completed preview of {len(PROMPT_MAPPINGS)} chat prompts.\n" in captured.out
+        assert (
+            f"[dry-run] Completed preview of {len(PROMPT_MAPPINGS)} chat prompts.\n" in captured.out
+        )
 
     def test_seed_prompts_langfuse_client_unavailable_returns_code_2(
         self, capsys: pytest.CaptureFixture[str]
@@ -145,7 +154,9 @@ class TestSeedPromptsCLI:
                 assert len(prompt) == 2
                 assert prompt[0]["role"] == "system"
                 assert prompt[1]["role"] == "user"
-                expected_sys, expected_usr = provider.get_chat_prompt_template(PROMPT_MAPPINGS[name])
+                expected_sys, expected_usr = provider.get_chat_prompt_template(
+                    PROMPT_MAPPINGS[name]
+                )
                 assert prompt[0]["content"] == _to_mustache(expected_sys)
                 assert prompt[1]["content"] == _to_mustache(expected_usr)
                 assert len(prompt[0]["content"]) > 0
@@ -156,7 +167,10 @@ class TestSeedPromptsCLI:
                 f"{len(PROMPT_MAPPINGS)}/{len(PROMPT_MAPPINGS)} prompts synchronized to Langfuse"
                 in captured.out
             )
-            assert "✔ Registered 'cresmo-gap-filler-pass1' in Langfuse [type=chat, label=production]\n" in captured.out
+            assert (
+                "✔ Registered 'cresmo-gap-filler-pass1' in Langfuse [type=chat, label=production]\n"
+                in captured.out
+            )
 
     def test_seed_prompts_custom_label(self) -> None:
         """Verify custom --label is passed to client.create_prompt."""
@@ -205,7 +219,10 @@ class TestSeedPromptsCLI:
             code = main(["seed-prompts"])
             assert code == EXIT_SUCCESS
             captured = capsys.readouterr()
-            assert f"Completed: {len(PROMPT_MAPPINGS) - 1}/{len(PROMPT_MAPPINGS)} prompts synchronized to Langfuse.\n" in captured.out
+            assert (
+                f"Completed: {len(PROMPT_MAPPINGS) - 1}/{len(PROMPT_MAPPINGS)} prompts synchronized to Langfuse.\n"
+                in captured.out
+            )
             assert "✘ Failed to register" in captured.err
 
     def test_seed_prompts_all_failures_returns_internal_error(
@@ -221,7 +238,10 @@ class TestSeedPromptsCLI:
             code = main(["seed-prompts"])
             assert code == EXIT_INTERNAL_ERROR
             captured = capsys.readouterr()
-            assert f"Completed: 0/{len(PROMPT_MAPPINGS)} prompts synchronized to Langfuse.\n" in captured.out
+            assert (
+                f"Completed: 0/{len(PROMPT_MAPPINGS)} prompts synchronized to Langfuse.\n"
+                in captured.out
+            )
             assert "✘ Failed to register" in captured.err
 
     def test_seed_prompts_empty_mappings_returns_success(self) -> None:
@@ -251,5 +271,6 @@ class TestSeedPromptsCLI:
                 clear=True,
             ),
         ):
-            assert handle_seed_prompts(Namespace(label="prod", dry_run=False)) == EXIT_INTERNAL_ERROR
-
+            assert (
+                handle_seed_prompts(Namespace(label="prod", dry_run=False)) == EXIT_INTERNAL_ERROR
+            )

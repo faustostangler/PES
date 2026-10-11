@@ -15,7 +15,6 @@ from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
-from pydantic import ValidationError
 
 from cresmo.domain.exceptions import (
     DomainValidationError,
@@ -25,14 +24,11 @@ from cresmo.domain.exceptions import (
     SecurityViolationError,
 )
 from cresmo.domain.value_objects import (
-    ChannelFeedQuery,
     PipelineStatus,
     SyncFilterCriteria,
     SyncSummary,
 )
-from cresmo.presentation.cli import main
 from cresmo.presentation.commands.sync import (
-    _build_filter_criteria,
     _describe_mode,
     _read_manifest_lines,
     _resolve_channels_for_sync,
@@ -224,8 +220,7 @@ class TestSyncCommand:
         # 2. Manifest reading with empty criteria
         manifest = tmp_path / "manifest.txt"
         manifest.write_text(
-            "https://www.youtube.com/@FabioAkita\n"
-            "https://www.youtube.com/@ancapsu\n",
+            "https://www.youtube.com/@FabioAkita\nhttps://www.youtube.com/@ancapsu\n",
             encoding="utf-8",
         )
         all_channels = _resolve_channels_for_sync(manifest, SyncFilterCriteria())
@@ -281,7 +276,10 @@ class TestSyncCommand:
 
         captured = capsys.readouterr()
         assert "[video] dQw4w9WgXcQ: 1 processed, 0 skipped, 0 failed\n" in captured.out
-        assert "[video] https://youtube.com/watch?v=alreadyHttp: 0 processed, 1 skipped, 0 failed\n" in captured.out
+        assert (
+            "[video] https://youtube.com/watch?v=alreadyHttp: 0 processed, 1 skipped, 0 failed\n"
+            in captured.out
+        )
 
         # Test failure case returns EXIT_INTERNAL_ERROR (1)
         mock_use_case.reset_mock()
@@ -302,9 +300,7 @@ class TestSyncCommand:
         )
         assert code_fail == EXIT_INTERNAL_ERROR
 
-    def test_sync_channel_list_summary_and_error(
-        self, capsys: pytest.CaptureFixture[str]
-    ) -> None:
+    def test_sync_channel_list_summary_and_error(self, capsys: pytest.CaptureFixture[str]) -> None:
         """Verify _sync_channel_list executes channels, logs table, and returns EXIT_SUCCESS or EXIT_INTERNAL_ERROR."""
         mock_use_case = MagicMock()
         mock_use_case.execute.side_effect = [
@@ -340,8 +336,14 @@ class TestSyncCommand:
         assert code == EXIT_SUCCESS
 
         captured = capsys.readouterr()
-        assert "[https://youtube.com/@alpha] discovered=5 processed=3 skipped=2 failed=0 (2.4s)\n" in captured.out
-        assert "[https://youtube.com/@beta] discovered=2 processed=1 skipped=1 failed=0 (1.2s)\n" in captured.out
+        assert (
+            "[https://youtube.com/@alpha] discovered=5 processed=3 skipped=2 failed=0 (2.4s)\n"
+            in captured.out
+        )
+        assert (
+            "[https://youtube.com/@beta] discovered=2 processed=1 skipped=1 failed=0 (1.2s)\n"
+            in captured.out
+        )
         assert "Channel Synchronization Summary:\n" in captured.out
         assert "- Channels synced: 2\n" in captured.out
         assert "- Total in Window: 7\n" in captured.out
@@ -361,7 +363,10 @@ class TestSyncCommand:
             duration_seconds=0.5,
             status=PipelineStatus.FAILED_INGESTION,
         )
-        assert _sync_channel_list(mock_use_case, ["https://youtube.com/@fail"], args) == EXIT_INTERNAL_ERROR
+        assert (
+            _sync_channel_list(mock_use_case, ["https://youtube.com/@fail"], args)
+            == EXIT_INTERNAL_ERROR
+        )
 
     def test_handle_sync_empty_matching_channels(
         self, capsys: pytest.CaptureFixture[str], tmp_path: Path
@@ -386,14 +391,20 @@ class TestSyncCommand:
         )
 
         with (
-            patch("cresmo.presentation.commands.sync.resolve_shared_settings", return_value=mock_settings),
+            patch(
+                "cresmo.presentation.commands.sync.resolve_shared_settings",
+                return_value=mock_settings,
+            ),
             patch("cresmo.presentation.commands.sync.build_sync_channel_use_case"),
         ):
             code = handle_sync(args)
             assert code == EXIT_SUCCESS
 
             captured = capsys.readouterr()
-            assert f"No channels found matching filter (categories=unknown_cat). Verify manifest at '{manifest}' and filter criteria.\n" in captured.out
+            assert (
+                f"No channels found matching filter (categories=unknown_cat). Verify manifest at '{manifest}' and filter criteria.\n"
+                in captured.out
+            )
 
     def test_handle_sync_exceptions_mapped_to_exit_codes(
         self, capsys: pytest.CaptureFixture[str]
@@ -413,18 +424,39 @@ class TestSyncCommand:
         )
 
         exception_map = [
-            (RateLimitExceededError("429 Too Many Requests"), EXIT_RATE_LIMIT_EXCEEDED, "Rate limit exceeded:"),
-            (IngestionNetworkError("Network socket closed"), EXIT_INGESTION_ERROR, "Ingestion network error:"),
+            (
+                RateLimitExceededError("429 Too Many Requests"),
+                EXIT_RATE_LIMIT_EXCEEDED,
+                "Rate limit exceeded:",
+            ),
+            (
+                IngestionNetworkError("Network socket closed"),
+                EXIT_INGESTION_ERROR,
+                "Ingestion network error:",
+            ),
             (PreflightError("Ollama offline"), EXIT_CONFIG_OR_USAGE_ERROR, "Preflight error:"),
-            (DomainValidationError("Invalid schema"), EXIT_DOMAIN_VALIDATION_ERROR, "Domain validation error:"),
-            (SecurityViolationError("Path traversal attack"), EXIT_CONFIG_OR_USAGE_ERROR, "Security boundary violation:"),
+            (
+                DomainValidationError("Invalid schema"),
+                EXIT_DOMAIN_VALIDATION_ERROR,
+                "Domain validation error:",
+            ),
+            (
+                SecurityViolationError("Path traversal attack"),
+                EXIT_CONFIG_OR_USAGE_ERROR,
+                "Security boundary violation:",
+            ),
             (RuntimeError("Unknown bug"), EXIT_INTERNAL_ERROR, "Unexpected sync error:"),
         ]
 
         for exc, expected_code, expected_msg_prefix in exception_map:
             with (
-                patch("cresmo.presentation.commands.sync.resolve_shared_settings", return_value=mock_settings),
-                patch("cresmo.presentation.commands.sync.build_sync_channel_use_case", side_effect=exc),
+                patch(
+                    "cresmo.presentation.commands.sync.resolve_shared_settings",
+                    return_value=mock_settings,
+                ),
+                patch(
+                    "cresmo.presentation.commands.sync.build_sync_channel_use_case", side_effect=exc
+                ),
             ):
                 code = handle_sync(args)
                 assert code == expected_code

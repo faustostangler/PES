@@ -11,8 +11,6 @@ import argparse
 from pathlib import Path
 from unittest.mock import MagicMock
 
-import pytest
-
 from cresmo.presentation.commands.run_parser import register_run_subparser
 
 
@@ -211,35 +209,37 @@ class TestRunParser:
         handler = MagicMock()
         register_run_subparser(subparsers, handler=handler)
 
-        args = parser.parse_args([
-            "run",
-            "--url",
-            "https://youtu.be/test1234",
-            "--manifest",
-            str(manifest_path),
-            "--passes",
-            "5",
-            "--batch-size",
-            "8",
-            "--dry-run",
-            "--force-reprocess",
-            "--lookback",
-            "180",
-            "--channel-max-videos",
-            "20",
-            "--no-scan-raw",
-            "--no-crawl",
-            "--web-index",
-            "--channel",
-            "ChannelA",
-            "ChannelB",
-            "-c",
-            "politics_br",
-            "tech_ai",
-            "--video",
-            "vid1",
-            "vid2",
-        ])
+        args = parser.parse_args(
+            [
+                "run",
+                "--url",
+                "https://youtu.be/test1234",
+                "--manifest",
+                str(manifest_path),
+                "--passes",
+                "5",
+                "--batch-size",
+                "8",
+                "--dry-run",
+                "--force-reprocess",
+                "--lookback",
+                "180",
+                "--channel-max-videos",
+                "20",
+                "--no-scan-raw",
+                "--no-crawl",
+                "--web-index",
+                "--channel",
+                "ChannelA",
+                "ChannelB",
+                "-c",
+                "politics_br",
+                "tech_ai",
+                "--video",
+                "vid1",
+                "vid2",
+            ]
+        )
 
         assert args.url == "https://youtu.be/test1234"
         assert args.manifest == manifest_path
@@ -264,12 +264,14 @@ class TestRunParser:
         handler = MagicMock()
         register_run_subparser(subparsers, handler=handler)
 
-        args = parser.parse_args([
-            "run",
-            "--playlist",
-            str(p_path),
-            "--category",
-            "philosophy",
-        ])
+        args = parser.parse_args(
+            [
+                "run",
+                "--playlist",
+                str(p_path),
+                "--category",
+                "philosophy",
+            ]
+        )
         assert args.manifest == p_path
         assert args.categories == ["philosophy"]

@@ -203,9 +203,18 @@ class TestCompositionRoot:
             assert pipeline.ledger_port is not None
             assert isinstance(pipeline.llm_synthesis_port, GeminiLLMAdapter)
             assert pipeline.llm_synthesis_port._langfuse is mock_langfuse_instance
-            assert getattr(pipeline.stage_runner.telemetry_port, "_langfuse", None) is mock_langfuse_instance
-            assert getattr(pipeline.stage_runner.prompt_provider, "_client", None) is mock_langfuse_instance
-            assert getattr(pipeline.stage_runner.critique_synthesizer, "llm_transformation_port", None) is pipeline.llm_indexing_port
+            assert (
+                getattr(pipeline.stage_runner.telemetry_port, "_langfuse", None)
+                is mock_langfuse_instance
+            )
+            assert (
+                getattr(pipeline.stage_runner.prompt_provider, "_client", None)
+                is mock_langfuse_instance
+            )
+            assert (
+                getattr(pipeline.stage_runner.critique_synthesizer, "llm_transformation_port", None)
+                is pipeline.llm_indexing_port
+            )
             assert (
                 getattr(pipeline.stage_runner.critique_synthesizer, "_prompt_provider", None)
                 is pipeline.stage_runner.prompt_provider
@@ -232,7 +241,10 @@ class TestCompositionRoot:
         captured = capsys.readouterr()
         assert "Langfuse server at 'http://localhost:3000' is unreachable" in captured.err
         assert "Telemetry bypassed to prevent OpenTelemetry retry loops.\n" in captured.err
-        assert "To enable observability: docker compose -f docker-compose.langfuse.yml up -d\n" in captured.err
+        assert (
+            "To enable observability: docker compose -f docker-compose.langfuse.yml up -d\n"
+            in captured.err
+        )
 
     def test_build_pipeline_with_langfuse_import_or_init_error(
         self, tmp_path: Path, caplog: pytest.LogCaptureFixture
@@ -254,7 +266,10 @@ class TestCompositionRoot:
             assert isinstance(pipeline.llm_synthesis_port, GeminiLLMAdapter)
             assert pipeline.llm_synthesis_port._langfuse is None
 
-        assert "[composition] Failed to initialize Langfuse client: Langfuse init failed" in caplog.text
+        assert (
+            "[composition] Failed to initialize Langfuse client: Langfuse init failed"
+            in caplog.text
+        )
 
     def test_build_pipeline_judge_attempts_and_blocking_configurations(
         self, tmp_path: Path
@@ -287,9 +302,7 @@ class TestCompositionRoot:
         pipeline = build_pipeline(settings=test_settings, web_index=True)
         assert pipeline.llm_indexing_port is pipeline.llm_synthesis_port
 
-    def test_build_pipeline_default_web_index_is_false(
-        self, test_settings: CresmoSettings
-    ) -> None:
+    def test_build_pipeline_default_web_index_is_false(self, test_settings: CresmoSettings) -> None:
         pipeline = build_pipeline(settings=test_settings)
         assert pipeline.llm_indexing_port is not pipeline.llm_synthesis_port
         assert isinstance(pipeline.llm_indexing_port, OllamaLLMAdapter)
@@ -312,7 +325,9 @@ class TestCompositionRoot:
         with patch(
             "cresmo.presentation.composition.probe_http_endpoint", return_value=True
         ) as mock_probe:
-            assert probe_langfuse_ready("http://localhost:3000/serviceX/", timeout_seconds=0.5) is True
+            assert (
+                probe_langfuse_ready("http://localhost:3000/serviceX/", timeout_seconds=0.5) is True
+            )
             mock_probe.assert_called_once_with(
                 "http://localhost:3000/serviceX/api/public/health",
                 timeout_seconds=0.5,
@@ -328,7 +343,9 @@ class TestCompositionRoot:
             langfuse_secret_key=SecretStr("sk-1"),
             langfuse_host="http://host1:3000",
         )
-        with patch("cresmo.presentation.composition.probe_langfuse_ready", return_value=False) as mock_probe:
+        with patch(
+            "cresmo.presentation.composition.probe_langfuse_ready", return_value=False
+        ) as mock_probe:
             assert resolve_langfuse_client(s1) is None
             mock_probe.assert_called_once_with("http://host1:3000", timeout_seconds=1.0)
             captured = capsys.readouterr()
@@ -347,7 +364,9 @@ class TestCompositionRoot:
             langfuse_host="http://host2:3000",
             preflight_probe_timeout_seconds=3.5,
         )
-        with patch("cresmo.presentation.composition.probe_langfuse_ready", return_value=False) as mock_probe2:
+        with patch(
+            "cresmo.presentation.composition.probe_langfuse_ready", return_value=False
+        ) as mock_probe2:
             assert resolve_langfuse_client(s2) is None
             mock_probe2.assert_called_once_with("http://host2:3000", timeout_seconds=3.5)
 
@@ -356,7 +375,9 @@ class TestCompositionRoot:
             langfuse_secret_key=SecretStr("sk-miss"),
             langfuse_host="http://hostmiss:3000",
         )
-        with patch("cresmo.presentation.composition.probe_langfuse_ready", return_value=False) as mock_probe_miss:
+        with patch(
+            "cresmo.presentation.composition.probe_langfuse_ready", return_value=False
+        ) as mock_probe_miss:
             assert resolve_langfuse_client(s_missing_probe_attrs) is None  # type: ignore[arg-type]
             mock_probe_miss.assert_called_once_with("http://hostmiss:3000", timeout_seconds=1.0)
 
@@ -395,7 +416,9 @@ class TestCompositionRoot:
             mock_pipeline.ledger_port = None
             mock_build_pipeline.return_value = mock_pipeline
 
-            with pytest.raises(RuntimeError, match=r"^Ledger port must be wired for channel sync\.$"):
+            with pytest.raises(
+                RuntimeError, match=r"^Ledger port must be wired for channel sync\.$"
+            ):
                 build_sync_channel_use_case(settings=test_settings)
 
     def test_resolve_shared_settings_respects_injected_instance(
@@ -496,13 +519,17 @@ class TestCompositionRoot:
         predicate = _build_should_export_span()
 
         # 1. Default export span returns True
-        with patch("cresmo.presentation.composition.is_default_export_span", return_value=True) as mock_default:
+        with patch(
+            "cresmo.presentation.composition.is_default_export_span", return_value=True
+        ) as mock_default:
             span_default = SimpleNamespace()
             assert predicate(span_default) is True
             mock_default.assert_called_once_with(span_default)
 
         # 2. Not default export, but starts with cresmo.
-        with patch("cresmo.presentation.composition.is_default_export_span", return_value=False) as mock_not_default:
+        with patch(
+            "cresmo.presentation.composition.is_default_export_span", return_value=False
+        ) as mock_not_default:
             span_cresmo = SimpleNamespace(
                 instrumentation_scope=SimpleNamespace(name="cresmo.pipeline.runner")
             )
@@ -560,9 +587,7 @@ class TestCompositionRoot:
         assert mask_fn(params=params_none) is None  # type: ignore[arg-type]
         mock_anonymizer.mask_span_attributes.assert_called_with({})
 
-    def test_resolve_langfuse_client_probe_disabled_and_kwargs(
-        self, tmp_path: Path
-    ) -> None:
+    def test_resolve_langfuse_client_probe_disabled_and_kwargs(self, tmp_path: Path) -> None:
         settings = CresmoSettings(
             gemini_api_key=SecretStr("TEST"),
             vault_dir=tmp_path / "v",
@@ -692,7 +717,9 @@ class TestCompositionRoot:
     ) -> None:
         with (
             patch("cresmo.presentation.composition.configure_logging") as mock_logging,
-            patch("cresmo.infrastructure.config.CresmoSettings.ensure_directories") as mock_ensure_dirs,
+            patch(
+                "cresmo.infrastructure.config.CresmoSettings.ensure_directories"
+            ) as mock_ensure_dirs,
         ):
             pipeline = build_pipeline(settings=test_settings, batch_size_override=23)
             mock_logging.assert_called_once_with(
@@ -714,9 +741,7 @@ class TestCompositionRoot:
             assert runner.critique_synthesizer is not None
             assert runner.ledger_port is pipeline.ledger_port
 
-    def test_build_pipeline_missing_judge_attributes_fallbacks(
-        self, tmp_path: Path
-    ) -> None:
+    def test_build_pipeline_missing_judge_attributes_fallbacks(self, tmp_path: Path) -> None:
         real_settings = CresmoSettings(
             gemini_api_key=SecretStr("TEST"),
             vault_dir=tmp_path / "v_miss",
@@ -746,14 +771,38 @@ class TestCompositionRoot:
         mock_judge_adapter = MagicMock()
 
         with (
-            patch("cresmo.presentation.composition.build_anonymizer_adapter", return_value=mock_anon_adapter) as mock_anon,
-            patch("cresmo.presentation.composition.resolve_langfuse_client", return_value=mock_lf_client) as mock_lf,
-            patch("cresmo.presentation.composition.build_telemetry_adapter", return_value=mock_tel_adapter) as mock_tel,
-            patch("cresmo.presentation.composition.build_media_ingestion_adapter", return_value=mock_ingest_adapter) as mock_ingest,
-            patch("cresmo.presentation.composition.build_prompt_provider", return_value=mock_prompt_prov) as mock_prompt,
-            patch("cresmo.presentation.composition.build_gemini_synthesis_adapter", return_value=mock_synth_adapter) as mock_gemini,
-            patch("cresmo.presentation.composition.build_indexing_adapter", return_value=mock_index_adapter) as mock_idx,
-            patch("cresmo.presentation.composition.build_llm_judge_adapter", return_value=mock_judge_adapter) as mock_judge,
+            patch(
+                "cresmo.presentation.composition.build_anonymizer_adapter",
+                return_value=mock_anon_adapter,
+            ) as mock_anon,
+            patch(
+                "cresmo.presentation.composition.resolve_langfuse_client",
+                return_value=mock_lf_client,
+            ) as mock_lf,
+            patch(
+                "cresmo.presentation.composition.build_telemetry_adapter",
+                return_value=mock_tel_adapter,
+            ) as mock_tel,
+            patch(
+                "cresmo.presentation.composition.build_media_ingestion_adapter",
+                return_value=mock_ingest_adapter,
+            ) as mock_ingest,
+            patch(
+                "cresmo.presentation.composition.build_prompt_provider",
+                return_value=mock_prompt_prov,
+            ) as mock_prompt,
+            patch(
+                "cresmo.presentation.composition.build_gemini_synthesis_adapter",
+                return_value=mock_synth_adapter,
+            ) as mock_gemini,
+            patch(
+                "cresmo.presentation.composition.build_indexing_adapter",
+                return_value=mock_index_adapter,
+            ) as mock_idx,
+            patch(
+                "cresmo.presentation.composition.build_llm_judge_adapter",
+                return_value=mock_judge_adapter,
+            ) as mock_judge,
             patch("cresmo.infrastructure.config.CresmoSettings.ensure_directories"),
         ):
             pipeline = build_pipeline(settings=test_settings, web_index=False)

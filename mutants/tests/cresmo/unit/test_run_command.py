@@ -83,9 +83,7 @@ class TestRunCommand:
         # Must not raise
         _drain_telemetry_and_memory(mock_pipeline)
 
-    def test_execute_single_video_run_dry_run(
-        self, capsys: pytest.CaptureFixture[str]
-    ) -> None:
+    def test_execute_single_video_run_dry_run(self, capsys: pytest.CaptureFixture[str]) -> None:
         """Verify single video --dry-run prints transcript length on success and handles None."""
         mock_pipeline = MagicMock()
         args = argparse.Namespace(url="https://youtube.com/watch?v=dry1", dry_run=True)
@@ -97,7 +95,9 @@ class TestRunCommand:
         mock_pipeline.ingest_raw_transcript.execute.return_value = mock_raw
 
         assert execute_single_video_run(mock_pipeline, args) == EXIT_SUCCESS
-        mock_pipeline.ingest_raw_transcript.execute.assert_called_once_with(video_url="https://youtube.com/watch?v=dry1")
+        mock_pipeline.ingest_raw_transcript.execute.assert_called_once_with(
+            video_url="https://youtube.com/watch?v=dry1"
+        )
         captured = capsys.readouterr()
         assert "Dry run successful for [dry1]: Transcript length: 150 characters.\n" in captured.out
 
@@ -105,7 +105,10 @@ class TestRunCommand:
         mock_pipeline.ingest_raw_transcript.execute.return_value = None
         assert execute_single_video_run(mock_pipeline, args) == EXIT_INGESTION_ERROR
         captured = capsys.readouterr()
-        assert "Dry-run ingestion returned no transcript for https://youtube.com/watch?v=dry1\n" in captured.err
+        assert (
+            "Dry-run ingestion returned no transcript for https://youtube.com/watch?v=dry1\n"
+            in captured.err
+        )
 
     def test_execute_single_video_run_already_processed_in_ledger(
         self, capsys: pytest.CaptureFixture[str]
@@ -157,12 +160,16 @@ class TestRunCommand:
             duplicates_unified=1,
         )
 
-        with patch("cresmo.presentation.commands.run.build_concat_master_use_case") as mock_build_concat:
+        with patch(
+            "cresmo.presentation.commands.run.build_concat_master_use_case"
+        ) as mock_build_concat:
             mock_concat_uc = MagicMock()
             mock_build_concat.return_value = mock_concat_uc
 
             assert execute_single_video_run(mock_pipeline, args) == EXIT_SUCCESS
-            mock_pipeline.vault_port.get_raw_transcript.assert_called_once_with(ContentId("success1"))
+            mock_pipeline.vault_port.get_raw_transcript.assert_called_once_with(
+                ContentId("success1")
+            )
             mock_build_concat.assert_called_once_with(
                 settings=mock_pipeline.settings,
                 vault_port=mock_pipeline.vault_port,
@@ -201,9 +208,7 @@ class TestRunCommand:
         captured = capsys.readouterr()
         assert "Warning: Master consolidation failed: Vault locked\n" in captured.err
 
-    def test_execute_single_video_run_failure(
-        self, capsys: pytest.CaptureFixture[str]
-    ) -> None:
+    def test_execute_single_video_run_failure(self, capsys: pytest.CaptureFixture[str]) -> None:
         """Verify pipeline failure returns EXIT_INTERNAL_ERROR with error message."""
         mock_pipeline = MagicMock()
         args = argparse.Namespace(
@@ -223,9 +228,7 @@ class TestRunCommand:
         captured = capsys.readouterr()
         assert "Pipeline error: Ollama out of memory\n" in captured.err
 
-    def test_execute_batch_run_empty_sources(
-        self, capsys: pytest.CaptureFixture[str]
-    ) -> None:
+    def test_execute_batch_run_empty_sources(self, capsys: pytest.CaptureFixture[str]) -> None:
         """Verify batch run with 0 sources logs informative notice and returns EXIT_SUCCESS."""
         mock_pipeline = MagicMock()
         args = argparse.Namespace(manifest=None, no_scan_raw=False)
@@ -271,12 +274,16 @@ class TestRunCommand:
         # 3: URL fails
         mock_pipeline.run_for_video.side_effect = [
             PipelineResult(content_id=ContentId("skipVid"), success=True, already_processed=True),
-            PipelineResult(content_id=ContentId("failVid"), success=False, error_message="Network glitch"),
+            PipelineResult(
+                content_id=ContentId("failVid"), success=False, error_message="Network glitch"
+            ),
         ]
 
         with (
             patch("cresmo.presentation.commands.run._drain_telemetry_and_memory"),
-            patch("cresmo.presentation.commands.run.build_concat_master_use_case") as mock_build_concat,
+            patch(
+                "cresmo.presentation.commands.run.build_concat_master_use_case"
+            ) as mock_build_concat,
         ):
             mock_concat = MagicMock()
             mock_concat.execute_all.return_value = {"tech": [MagicMock()]}
@@ -292,7 +299,10 @@ class TestRunCommand:
             assert "- Skipped (Idempotent): 1\n" in captured.out
             assert "- Failed: 1\n" in captured.out
             assert "Consolidating master compendiums for RAG...\n" in captured.out
-            assert "Master consolidation complete: 1 master document(s) generated across 1 channel(s).\n" in captured.out
+            assert (
+                "Master consolidation complete: 1 master document(s) generated across 1 channel(s).\n"
+                in captured.out
+            )
 
     def test_execute_batch_dry_run_artifacts_and_urls(
         self, capsys: pytest.CaptureFixture[str], tmp_path: Path
@@ -332,7 +342,9 @@ class TestRunCommand:
 
     def test_build_batch_discovery_query(self) -> None:
         """Verify _build_batch_discovery_query accurately propagates CLI overrides and settings defaults."""
-        settings = CresmoSettings(days_lookback=45, channel_discovery_workers=8, discovery_queue_maxsize=200)
+        settings = CresmoSettings(
+            days_lookback=45, channel_discovery_workers=8, discovery_queue_maxsize=200
+        )
         args = argparse.Namespace(
             manifest=Path("custom_playlist.txt"),
             no_scan_raw=True,
@@ -356,9 +368,7 @@ class TestRunCommand:
         assert query.filter_criteria.categories == ("tech_ai",)
         assert query.filter_criteria.video_ids == ("vidA",)
 
-    def test_handle_run_preflight_and_exceptions(
-        self, capsys: pytest.CaptureFixture[str]
-    ) -> None:
+    def test_handle_run_preflight_and_exceptions(self, capsys: pytest.CaptureFixture[str]) -> None:
         """Verify handle_run preflight warnings and exception taxonomy mapping."""
         args = argparse.Namespace(
             lookback=60,
@@ -378,12 +388,16 @@ class TestRunCommand:
         mock_preflight.check_all.return_value = mock_preflight_res
 
         with (
-            patch("cresmo.presentation.commands.run.build_preflight_checker", return_value=mock_preflight),
+            patch(
+                "cresmo.presentation.commands.run.build_preflight_checker",
+                return_value=mock_preflight,
+            ),
             patch("cresmo.presentation.commands.run.build_pipeline") as mock_build_pipeline,
             patch("cresmo.presentation.commands.run.load_batch_sources", return_value=[]),
         ):
             code = handle_run(args)
             assert code == EXIT_SUCCESS
+            mock_build_pipeline.assert_called_once()
             captured = capsys.readouterr()
             assert "[preflight warning] GPU driver outdated\n" in captured.err
             assert "[preflight warning] Disk low\n" in captured.err
@@ -391,9 +405,17 @@ class TestRunCommand:
         # Test exception mapping
         exceptions = [
             (RateLimitExceededError("Quota"), EXIT_RATE_LIMIT_EXCEEDED, "Rate limit exceeded:"),
-            (IngestionNetworkError("Socket timeout"), EXIT_INGESTION_ERROR, "Ingestion network error:"),
+            (
+                IngestionNetworkError("Socket timeout"),
+                EXIT_INGESTION_ERROR,
+                "Ingestion network error:",
+            ),
             (PreflightError("FFmpeg missing"), EXIT_CONFIG_OR_USAGE_ERROR, "Preflight error:"),
-            (DomainValidationError("Invalid"), EXIT_DOMAIN_VALIDATION_ERROR, "Domain validation error:"),
+            (
+                DomainValidationError("Invalid"),
+                EXIT_DOMAIN_VALIDATION_ERROR,
+                "Domain validation error:",
+            ),
             (RuntimeError("Crash"), EXIT_INTERNAL_ERROR, "Unexpected internal error:"),
         ]
 
@@ -417,9 +439,15 @@ class TestRunCommand:
         unproc = tmp_path / "_index.md"
         unproc.write_text("cresmo-gap-filler", encoding="utf-8")
         src_unproc = BatchSource(kind=SourceModality.FILE, target=str(unproc))
-        assert _process_single_batch_item(mock_pipeline, src_unproc, args, "[1/1]", batch_id) == "skipped"
+        assert (
+            _process_single_batch_item(mock_pipeline, src_unproc, args, "[1/1]", batch_id)
+            == "skipped"
+        )
         captured = capsys.readouterr()
-        assert "[1/1] [SKIPPED] [_index.md] Ignored internal Cresmo artifact or system index.\n" in captured.out
+        assert (
+            "[1/1] [SKIPPED] [_index.md] Ignored internal Cresmo artifact or system index.\n"
+            in captured.out
+        )
 
         # 2. Processable file already processed
         valid_file = tmp_path / "lecture.md"
@@ -430,7 +458,10 @@ class TestRunCommand:
             success=True,
             already_processed=True,
         )
-        assert _process_single_batch_item(mock_pipeline, src_file, args, "[1/2]", batch_id) == "skipped"
+        assert (
+            _process_single_batch_item(mock_pipeline, src_file, args, "[1/2]", batch_id)
+            == "skipped"
+        )
         mock_pipeline.run_for_text_file.assert_called_once_with(
             file_path=valid_file,
             gap_filler_passes=3,
@@ -449,9 +480,15 @@ class TestRunCommand:
             reconciled_mocs=(MagicMock(),),
             duplicates_unified=2,
         )
-        assert _process_single_batch_item(mock_pipeline, src_file, args, "[2/2]", batch_id) == "completed"
+        assert (
+            _process_single_batch_item(mock_pipeline, src_file, args, "[2/2]", batch_id)
+            == "completed"
+        )
         captured = capsys.readouterr()
-        assert "[2/2] [DONE] [f2]: 2 atomic notes synthesized, 1 MOCs reconciled, 2 duplicate clusters unified.\n" in captured.out
+        assert (
+            "[2/2] [DONE] [f2]: 2 atomic notes synthesized, 1 MOCs reconciled, 2 duplicate clusters unified.\n"
+            in captured.out
+        )
 
         # 4. URL item failure
         src_url = BatchSource(kind=SourceModality.URL, target="https://youtube.com/watch?v=fail")
@@ -460,7 +497,9 @@ class TestRunCommand:
             success=False,
             error_message="Synthesis failure",
         )
-        assert _process_single_batch_item(mock_pipeline, src_url, args, "[3/3]", batch_id) == "failed"
+        assert (
+            _process_single_batch_item(mock_pipeline, src_url, args, "[3/3]", batch_id) == "failed"
+        )
         mock_pipeline.run_for_video.assert_called_once_with(
             video_url="https://youtube.com/watch?v=fail",
             gap_filler_passes=3,
@@ -472,19 +511,27 @@ class TestRunCommand:
 
         # 5. Rate limit error
         mock_pipeline.run_for_video.side_effect = RateLimitExceededError("Rate limited")
-        assert _process_single_batch_item(mock_pipeline, src_url, args, "[4/4]", batch_id) == "failed"
+        assert (
+            _process_single_batch_item(mock_pipeline, src_url, args, "[4/4]", batch_id) == "failed"
+        )
         captured = capsys.readouterr()
         assert "[4/4] [RATE LIMIT] https://youtube.com/watch?v=fail: Rate limited\n" in captured.err
 
         # 6. Ingestion network error
         mock_pipeline.run_for_video.side_effect = IngestionNetworkError("Network down")
-        assert _process_single_batch_item(mock_pipeline, src_url, args, "[5/5]", batch_id) == "failed"
+        assert (
+            _process_single_batch_item(mock_pipeline, src_url, args, "[5/5]", batch_id) == "failed"
+        )
         captured = capsys.readouterr()
-        assert "[5/5] [NETWORK ERROR] https://youtube.com/watch?v=fail: Network down\n" in captured.err
+        assert (
+            "[5/5] [NETWORK ERROR] https://youtube.com/watch?v=fail: Network down\n" in captured.err
+        )
 
         # 7. Generic exception
         mock_pipeline.run_for_video.side_effect = RuntimeError("Fatal fault")
-        assert _process_single_batch_item(mock_pipeline, src_url, args, "[6/6]", batch_id) == "failed"
+        assert (
+            _process_single_batch_item(mock_pipeline, src_url, args, "[6/6]", batch_id) == "failed"
+        )
         captured = capsys.readouterr()
         assert "[6/6] [FAILED] https://youtube.com/watch?v=fail: Fatal fault\n" in captured.err
 
@@ -497,7 +544,9 @@ class TestRunCommand:
 
         # 1. web_index=True -> warmup not called
         args_web = argparse.Namespace(web_index=True, url="https://youtube.com/watch?v=vid1")
-        with patch("cresmo.presentation.commands.run.execute_single_video_run", return_value=EXIT_SUCCESS) as mock_single:
+        with patch(
+            "cresmo.presentation.commands.run.execute_single_video_run", return_value=EXIT_SUCCESS
+        ) as mock_single:
             assert _execute_run_pipeline(args_web, settings, mock_pipeline) == EXIT_SUCCESS
             mock_pipeline.warmup.assert_not_called()
             mock_single.assert_called_once_with(mock_pipeline, args_web)
@@ -505,7 +554,9 @@ class TestRunCommand:
         # 2. web_index=False -> warmup called
         mock_pipeline.reset_mock()
         args_local = argparse.Namespace(web_index=False, url="https://youtube.com/watch?v=vid2")
-        with patch("cresmo.presentation.commands.run.execute_single_video_run", return_value=EXIT_SUCCESS) as mock_single:
+        with patch(
+            "cresmo.presentation.commands.run.execute_single_video_run", return_value=EXIT_SUCCESS
+        ) as mock_single:
             assert _execute_run_pipeline(args_local, settings, mock_pipeline) == EXIT_SUCCESS
             mock_pipeline.warmup.assert_called_once()
             mock_single.assert_called_once_with(mock_pipeline, args_local)
@@ -521,7 +572,10 @@ class TestRunCommand:
         settings = CresmoSettings()
         query = MagicMock()
 
-        with patch("cresmo.presentation.commands.run.build_discover_batch_sources_use_case", return_value=mock_uc) as mock_build_uc:
+        with patch(
+            "cresmo.presentation.commands.run.build_discover_batch_sources_use_case",
+            return_value=mock_uc,
+        ) as mock_build_uc:
             sources = list(load_batch_sources(query=query, settings=settings))
             assert sources == []
             mock_build_uc.assert_called_once()
@@ -530,11 +584,8 @@ class TestRunCommand:
             captured = capsys.readouterr()
             assert captured.out == "Crawling channel feed...\n"
 
-    def test_consolidate_master_if_needed_error(
-        self, capsys: pytest.CaptureFixture[str]
-    ) -> None:
+    def test_consolidate_master_if_needed_error(self, capsys: pytest.CaptureFixture[str]) -> None:
         """Verify _consolidate_master_if_needed writes warning on failure and skips when completed <= 0."""
-        from cresmo.presentation.commands.run import _consolidate_master_if_needed
 
         mock_pipeline = MagicMock()
 
@@ -545,16 +596,16 @@ class TestRunCommand:
         assert captured.err == ""
 
         # completed > 0 with failure
-        with patch("cresmo.presentation.commands.run.build_concat_master_use_case", side_effect=RuntimeError("Disk full")):
+        with patch(
+            "cresmo.presentation.commands.run.build_concat_master_use_case",
+            side_effect=RuntimeError("Disk full"),
+        ):
             _consolidate_master_if_needed(mock_pipeline, completed=1)
             captured = capsys.readouterr()
             assert "Warning: Master consolidation failed: Disk full\n" in captured.err
 
-    def test_consolidate_master_if_needed_success(
-        self, capsys: pytest.CaptureFixture[str]
-    ) -> None:
+    def test_consolidate_master_if_needed_success(self, capsys: pytest.CaptureFixture[str]) -> None:
         """Verify _consolidate_master_if_needed when completed > 0 formats summary table accurately."""
-        from cresmo.presentation.commands.run import _consolidate_master_if_needed
 
         mock_pipeline = MagicMock()
         mock_pipeline.settings = CresmoSettings()
@@ -564,7 +615,10 @@ class TestRunCommand:
             "philosophy": [MagicMock()],
         }
 
-        with patch("cresmo.presentation.commands.run.build_concat_master_use_case", return_value=mock_concat) as mock_build_concat:
+        with patch(
+            "cresmo.presentation.commands.run.build_concat_master_use_case",
+            return_value=mock_concat,
+        ) as mock_build_concat:
             _consolidate_master_if_needed(mock_pipeline, completed=2)
             mock_build_concat.assert_called_once_with(
                 settings=mock_pipeline.settings,
@@ -597,7 +651,10 @@ class TestRunCommand:
         mock_preflight.check_all.return_value = mock_preflight_res
 
         with (
-            patch("cresmo.presentation.commands.run.build_preflight_checker", return_value=mock_preflight) as mock_build_preflight,
+            patch(
+                "cresmo.presentation.commands.run.build_preflight_checker",
+                return_value=mock_preflight,
+            ) as mock_build_preflight,
             patch("cresmo.presentation.commands.run.build_pipeline") as mock_build_pipeline,
             patch("cresmo.presentation.commands.run.load_batch_sources", return_value=[]),
         ):
@@ -642,7 +699,10 @@ class TestRunCommand:
             code = execute_batch_run(mock_pipeline, gen_sources(), args)
             assert code == EXIT_SUCCESS
             captured = capsys.readouterr()
-            assert "[1] [DONE] [gen1]: 0 atomic notes synthesized, 0 MOCs reconciled, 0 duplicate clusters unified.\n" in captured.out
+            assert (
+                "[1] [DONE] [gen1]: 0 atomic notes synthesized, 0 MOCs reconciled, 0 duplicate clusters unified.\n"
+                in captured.out
+            )
 
     def test_execute_run_pipeline_batch_dry_run_with_sources(
         self, capsys: pytest.CaptureFixture[str]
@@ -661,17 +721,26 @@ class TestRunCommand:
             no_crawl=False,
             channel_max_videos=50,
         )
-        fake_source = BatchSource(kind=SourceModality.URL, target="https://youtube.com/watch?v=dryTest")
+        fake_source = BatchSource(
+            kind=SourceModality.URL, target="https://youtube.com/watch?v=dryTest"
+        )
 
         with (
-            patch("cresmo.presentation.commands.run.load_batch_sources", return_value=[fake_source]) as mock_load,
-            patch("cresmo.presentation.commands.run.execute_batch_dry_run", return_value=EXIT_SUCCESS) as mock_dry,
+            patch(
+                "cresmo.presentation.commands.run.load_batch_sources", return_value=[fake_source]
+            ) as mock_load,
+            patch(
+                "cresmo.presentation.commands.run.execute_batch_dry_run", return_value=EXIT_SUCCESS
+            ) as mock_dry,
         ):
             code = _execute_run_pipeline(args, settings, mock_pipeline)
             assert code == EXIT_SUCCESS
             mock_load.assert_called_once()
             assert mock_load.call_args.kwargs["settings"] is settings
-            assert mock_load.call_args.kwargs["media_ingestion_port"] == mock_pipeline.media_ingestion_port
+            assert (
+                mock_load.call_args.kwargs["media_ingestion_port"]
+                == mock_pipeline.media_ingestion_port
+            )
             mock_dry.assert_called_once_with(mock_pipeline, [fake_source])
 
     def test_build_batch_discovery_query_crawl_defaults(self) -> None:
@@ -703,8 +772,10 @@ class TestRunCommand:
         with caplog.at_level(logging.DEBUG):
             _drain_telemetry_and_memory(mock_pipeline)
 
-        assert "[run] Telemetry flush skipped or failed during cleanup: Telemetry offline" in caplog.text
-        assert "[run] Process metrics emission failed during cleanup: Metrics offline" in caplog.text
-
-
-
+        assert (
+            "[run] Telemetry flush skipped or failed during cleanup: Telemetry offline"
+            in caplog.text
+        )
+        assert (
+            "[run] Process metrics emission failed during cleanup: Metrics offline" in caplog.text
+        )

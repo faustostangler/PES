@@ -94,11 +94,7 @@ class DiscoverBatchSourcesUseCase:
             priority_texts_dir, acc, q.filter_criteria
         )
 
-        raw_dir = (
-            q.raw_dir
-            if q.raw_dir is not None
-            else self.settings.raw_dir
-        )
+        raw_dir = q.raw_dir if q.raw_dir is not None else self.settings.raw_dir
         local_video_channel_map = LakeScannerService.scan_raw_lake(
             raw_dir, q.scan_raw, acc, q.filter_criteria
         )
@@ -115,11 +111,7 @@ class DiscoverBatchSourcesUseCase:
         )
 
         priority_sources = list(acc.sources)
-        playlist_path = (
-            q.playlist_path
-            or q.manifest_path
-            or self.settings.playlist_path
-        )
+        playlist_path = q.playlist_path or q.manifest_path or self.settings.playlist_path
 
         return _FastPathDiscoveryState(
             priority_sources=priority_sources,
@@ -221,7 +213,7 @@ class DiscoverBatchSourcesUseCase:
             while not stop_event.is_set():
                 try:
                     stream_queue.put(None, timeout=_DEFAULT_STREAM_QUEUE_TIMEOUT_SECONDS)
-                    return
+                    return  # noqa: B012
                 except queue.Full:
                     pass
 
