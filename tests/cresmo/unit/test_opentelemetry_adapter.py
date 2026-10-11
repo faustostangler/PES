@@ -1219,7 +1219,9 @@ class TestIdentityResolutionExtended:
 
         # 5. Invalid type -> anonymous fallback
         res_u5, res_t5 = _resolve_user_identity_and_tenant(
-            12345, None, session_id  # type: ignore[arg-type]
+            12345,
+            None,
+            session_id,  # type: ignore[arg-type]
         )
         assert res_u5.is_anonymous is True
         assert res_u5.value == "anonymous"
@@ -1712,7 +1714,9 @@ class TestOpenTelemetryAdapterRecordMethodsAndFlushExtended:
         assert not hasattr(mock_tp, "force_flush")
         with (
             patch("opentelemetry.trace.get_tracer_provider", return_value=mock_tp),
-            patch("cresmo.infrastructure.adapters.opentelemetry_adapter.logger.debug") as mock_debug,
+            patch(
+                "cresmo.infrastructure.adapters.opentelemetry_adapter.logger.debug"
+            ) as mock_debug,
         ):
             adapter.flush()
             mock_debug.assert_not_called()
@@ -1724,7 +1728,9 @@ class TestOpenTelemetryAdapterRecordMethodsAndFlushExtended:
         mock_tp = MagicMock(spec=[])
         with (
             patch("langfuse.get_client", side_effect=ImportError("No langfuse")),
-            patch("cresmo.infrastructure.adapters.opentelemetry_adapter.logger.debug") as mock_debug,
+            patch(
+                "cresmo.infrastructure.adapters.opentelemetry_adapter.logger.debug"
+            ) as mock_debug,
             patch("opentelemetry.trace.get_tracer_provider", return_value=mock_tp),
         ):
             adapter.flush()
@@ -1741,7 +1747,9 @@ class TestOpenTelemetryAdapterRecordMethodsAndFlushExtended:
         session_id = PipelineSessionId.create(channel="chan", content_id="c1")
         content_id = ContentId("c1")
 
-        with patch("cresmo.infrastructure.adapters.opentelemetry_adapter.logger.debug") as mock_debug:
+        with patch(
+            "cresmo.infrastructure.adapters.opentelemetry_adapter.logger.debug"
+        ) as mock_debug:
             adapter.record_score("score1", 0.5)
             mock_debug.assert_called_with(
                 "[OpenTelemetryAdapter] Langfuse score emission skipped: %s", err
@@ -1774,4 +1782,3 @@ class TestOpenTelemetryAdapterRecordMethodsAndFlushExtended:
                 mock_debug.assert_called_with(
                     "[OpenTelemetryAdapter] OpenTelemetry tracer provider flush skipped: %s", err_tp
                 )
-

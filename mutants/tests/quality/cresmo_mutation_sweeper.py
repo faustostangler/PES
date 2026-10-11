@@ -212,19 +212,24 @@ MODULE_TEST_MAP: dict[str, list[str]] = {
         "tests/cresmo/unit/test_unify_duplicates.py",
     ],
     "src/cresmo/presentation/commands/run.py": [
+        "tests/cresmo/unit/test_run_command.py",
         "tests/cresmo/unit/test_cli.py",
     ],
     "src/cresmo/presentation/commands/run_parser.py": [
+        "tests/cresmo/unit/test_run_parser.py",
         "tests/cresmo/unit/test_cli.py",
     ],
     "src/cresmo/presentation/commands/sync.py": [
+        "tests/cresmo/unit/test_sync_command.py",
         "tests/cresmo/unit/test_cli.py",
         "tests/cresmo/unit/test_sync_channel_use_case.py",
     ],
     "src/cresmo/presentation/commands/worker.py": [
+        "tests/cresmo/unit/test_worker_command.py",
         "tests/cresmo/unit/test_cli.py",
     ],
     "src/cresmo/presentation/commands/concat_master.py": [
+        "tests/cresmo/unit/test_concat_master_command.py",
         "tests/cresmo/unit/test_cli.py",
         "tests/cresmo/unit/test_concat_master_use_case.py",
     ],
@@ -233,6 +238,7 @@ MODULE_TEST_MAP: dict[str, list[str]] = {
         "tests/cresmo/unit/test_cli.py",
     ],
     "src/cresmo/presentation/commands/export_cookies.py": [
+        "tests/cresmo/unit/test_export_cookies.py",
         "tests/cresmo/unit/test_cli.py",
         "tests/cresmo/unit/test_cookie_extractor.py",
     ],

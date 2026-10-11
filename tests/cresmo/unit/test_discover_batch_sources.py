@@ -1304,8 +1304,7 @@ class TestDiscoverBatchSourcesUseCase:
     def test_explicit_manifest_loading_detailed_kills_mutants(self, tmp_path: Path) -> None:
         manifest = tmp_path / "detailed_manifest.txt"
         manifest.write_text(
-            "https://www.youtube.com/watch?v=exactVideoId1\n"
-            "invalid_non_video_token_$$$\n",
+            "https://www.youtube.com/watch?v=exactVideoId1\ninvalid_non_video_token_$$$\n",
             encoding="utf-8",
         )
         use_case = DiscoverBatchSourcesUseCase(
@@ -1366,8 +1365,7 @@ class TestDiscoverBatchSourcesUseCase:
 
         manifest = tmp_path / "playlist.txt"
         manifest.write_text(
-            "https://www.youtube.com/watch?v=vidB\n"
-            "https://www.youtube.com/watch?v=vida\n",
+            "https://www.youtube.com/watch?v=vidB\nhttps://www.youtube.com/watch?v=vida\n",
             encoding="utf-8",
         )
         mock_ingestion = MagicMock()
@@ -1646,9 +1644,7 @@ class TestDiscoverBatchSourcesUseCase:
             for r in warning_records
         )
 
-    def test_crawler_producer_queue_put_timeouts(
-        self, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_crawler_producer_queue_put_timeouts(self, monkeypatch: pytest.MonkeyPatch) -> None:
         import queue
         import threading
         from unittest.mock import MagicMock
@@ -1831,11 +1827,8 @@ class TestDiscoverBatchSourcesUseCase:
         list(use_case.execute(query))
 
         # Verify that _enqueue_source called put(src, timeout=_DEFAULT_STREAM_QUEUE_TIMEOUT_SECONDS)
-        batch_source_puts = [
-            kw for item, kw in captured_put_calls if isinstance(item, BatchSource)
-        ]
+        batch_source_puts = [kw for item, kw in captured_put_calls if isinstance(item, BatchSource)]
         assert len(batch_source_puts) >= 1
         assert all(
-            kw.get("timeout") == _DEFAULT_STREAM_QUEUE_TIMEOUT_SECONDS
-            for kw in batch_source_puts
+            kw.get("timeout") == _DEFAULT_STREAM_QUEUE_TIMEOUT_SECONDS for kw in batch_source_puts
         )

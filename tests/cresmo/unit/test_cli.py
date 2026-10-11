@@ -644,9 +644,7 @@ class TestCresmoCLI:
             exit_code = main(["worker", "--channel", "https://youtube.com/@test"])
             assert exit_code == EXIT_SUCCESS
 
-    def test_cli_dedupe_success_returns_code_0(
-        self, capsys: pytest.CaptureFixture[str]
-    ) -> None:
+    def test_cli_dedupe_success_returns_code_0(self, capsys: pytest.CaptureFixture[str]) -> None:
         from cresmo.application.use_cases.unify_duplicate_notes import (
             DeduplicationReport,
             DuplicateCluster,
@@ -704,9 +702,7 @@ class TestCresmoCLI:
                 in captured.out
             )
 
-    def test_cli_dedupe_exception_returns_code_1(
-        self, capsys: pytest.CaptureFixture[str]
-    ) -> None:
+    def test_cli_dedupe_exception_returns_code_1(self, capsys: pytest.CaptureFixture[str]) -> None:
         mock_use_case = MagicMock()
         mock_use_case.execute.side_effect = RuntimeError("Graph corruption")
 
@@ -1349,14 +1345,20 @@ class TestCresmoCLI:
             code = handle_check_config(Namespace())
             assert code == EXIT_SUCCESS
             captured = capsys.readouterr()
-            assert "- Langfuse Telemetry: Enabled (http://custom-host:3000, pk-lf-1234...)\n" in captured.out
+            assert (
+                "- Langfuse Telemetry: Enabled (http://custom-host:3000, pk-lf-1234...)\n"
+                in captured.out
+            )
 
             # 1b. Missing langfuse_host attribute exercises default "https://cloud.langfuse.com"
             del mock_settings.langfuse_host
             code = handle_check_config(Namespace())
             assert code == EXIT_SUCCESS
             captured = capsys.readouterr()
-            assert "- Langfuse Telemetry: Enabled (https://cloud.langfuse.com, pk-lf-1234...)\n" in captured.out
+            assert (
+                "- Langfuse Telemetry: Enabled (https://cloud.langfuse.com, pk-lf-1234...)\n"
+                in captured.out
+            )
 
             # 1c. Secret without get_secret_value
             mock_settings.langfuse_secret_key = "plain-string-no-method"

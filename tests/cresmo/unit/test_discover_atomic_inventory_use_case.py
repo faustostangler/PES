@@ -392,9 +392,7 @@ class TestDiscoverAtomicInventoryJudge:
 
         # Verify exact record messages
         retry_messages = [
-            rec.getMessage()
-            for rec in caplog.records
-            if "[InventoryDiscovery]" in rec.getMessage()
+            rec.getMessage() for rec in caplog.records if "[InventoryDiscovery]" in rec.getMessage()
         ]
         assert len(retry_messages) == 2
         assert (
@@ -406,7 +404,6 @@ class TestDiscoverAtomicInventoryJudge:
             == "[InventoryDiscovery] Attempt 2: candidate inventory compliance check failed for 'vid_inv_1234'. Re-extracting."
         )
 
-
     def test_fallback_judge_prompt_provider_argument_fidelity(
         self, sample_compendium: EnrichedCompendium
     ) -> None:
@@ -417,7 +414,9 @@ class TestDiscoverAtomicInventoryJudge:
         mock_provider = MagicMock(spec=PromptProviderPort)
         mock_provider.get_prompt.side_effect = [
             ChatPrompt(messages=(ChatMessage(role=MessageRole.USER, content="extract entities"),)),
-            ChatPrompt(messages=(ChatMessage(role=MessageRole.USER, content="judge boolean: true"),)),
+            ChatPrompt(
+                messages=(ChatMessage(role=MessageRole.USER, content="judge boolean: true"),)
+            ),
         ]
 
         use_case = DiscoverAtomicInventoryUseCase(

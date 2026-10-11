@@ -82,7 +82,11 @@ def print_mutation_report(stats: dict[str, LayerStats]) -> None:
     for layer, s in stats.items():
         total = s["total"]
         rate = (s["killed"] / total * 100) if total > 0 else 0.0
-        status_icon = "🎉" if (layer in ("domain", "application") and s["survived"] == 0 and total > 0) else "📊"
+        status_icon = (
+            "🎉"
+            if (layer in ("domain", "application") and s["survived"] == 0 and total > 0)
+            else "📊"
+        )
         print(
             f"{status_icon} {layer.capitalize():<15} | {total:<7} | {s['killed']:<7} | {s['survived']:<8} | {s['no_tests']:<8} | {s['timeout']:<8} | {rate:>7.2f}%"
         )
@@ -126,13 +130,13 @@ def main() -> int:
         "--enforce-domain",
         action="store_true",
         default=False,
-        help="Fail fast (exit 1) if Sacred Domain contains even 1 surviving mutant (requires 100.0%).",
+        help="Fail fast (exit 1) if Sacred Domain contains even 1 surviving mutant (requires 100.0%%).",
     )
     parser.add_argument(
         "--enforce-application",
         action="store_true",
         default=False,
-        help="Fail fast (exit 1) if Application layer contains even 1 surviving mutant (requires 100.0%).",
+        help="Fail fast (exit 1) if Application layer contains even 1 surviving mutant (requires 100.0%%).",
     )
     parser.add_argument(
         "--enforce-infrastructure",
@@ -173,14 +177,16 @@ def main() -> int:
     args = parser.parse_args()
 
     # If no flags passed, default to --enforce-domain
-    if not any([
-        args.enforce_domain,
-        args.enforce_application,
-        args.enforce_infrastructure,
-        args.enforce_presentation,
-        args.enforce_all,
-        args.verify_completeness,
-    ]):
+    if not any(
+        [
+            args.enforce_domain,
+            args.enforce_application,
+            args.enforce_infrastructure,
+            args.enforce_presentation,
+            args.enforce_all,
+            args.verify_completeness,
+        ]
+    ):
         args.enforce_domain = True
 
     if args.enforce_all:
@@ -197,66 +203,90 @@ def main() -> int:
 
     # 1. Domain Gate (Hard: 0 survivors)
     if args.enforce_domain:
-        domain = stats.get("domain", {"total": 0, "killed": 0, "survived": 0, "no_tests": 0, "timeout": 0})
+        domain = stats.get(
+            "domain", {"total": 0, "killed": 0, "survived": 0, "no_tests": 0, "timeout": 0}
+        )
         if domain["total"] == 0:
             print("❌ FAIL: No Domain mutants found in database.\n")
             exit_code = 1
         elif domain["survived"] > 0:
-            print(f"❌ FAIL: Sacred Domain has {domain['survived']} surviving mutants! Target: 0 (100.0%% required).\n")
+            print(
+                f"❌ FAIL: Sacred Domain has {domain['survived']} surviving mutants! Target: 0 (100.0% required).\n"
+            )
             exit_code = 1
         else:
             print("✅ PASS: Sacred Domain Gate — 100.0% resilient with ZERO surviving mutants.")
 
     # 2. Application Gate (Hard: 0 survivors)
     if args.enforce_application:
-        app = stats.get("application", {"total": 0, "killed": 0, "survived": 0, "no_tests": 0, "timeout": 0})
+        app = stats.get(
+            "application", {"total": 0, "killed": 0, "survived": 0, "no_tests": 0, "timeout": 0}
+        )
         if app["total"] == 0:
             print("❌ FAIL: No Application mutants found in database.\n")
             exit_code = 1
         elif app["survived"] > 0:
-            print(f"❌ FAIL: Application Core has {app['survived']} surviving mutants! Target: 0 (100.0%% required).\n")
+            print(
+                f"❌ FAIL: Application Core has {app['survived']} surviving mutants! Target: 0 (100.0% required).\n"
+            )
             exit_code = 1
         else:
             print("✅ PASS: Application Core Gate — 100.0% resilient with ZERO surviving mutants.")
 
     # 3. Infrastructure Gate (Threshold >= min-infra-rate)
     if args.enforce_infrastructure:
-        infra = stats.get("infrastructure", {"total": 0, "killed": 0, "survived": 0, "no_tests": 0, "timeout": 0})
+        infra = stats.get(
+            "infrastructure", {"total": 0, "killed": 0, "survived": 0, "no_tests": 0, "timeout": 0}
+        )
         rate = (infra["killed"] / infra["total"] * 100) if infra["total"] > 0 else 0.0
         if infra["total"] == 0:
             print("❌ FAIL: No Infrastructure mutants found in database.\n")
             exit_code = 1
         elif rate < args.min_infra_rate:
-            print(f"❌ FAIL: Infrastructure kill rate {rate:.2f}% is below target {args.min_infra_rate:.2f}%!\n")
+            print(
+                f"❌ FAIL: Infrastructure kill rate {rate:.2f}% is below target {args.min_infra_rate:.2f}%!\n"
+            )
             exit_code = 1
         else:
-            print(f"✅ PASS: Infrastructure Gate — {rate:.2f}% kill rate satisfies target (>={args.min_infra_rate:.2f}%).")
+            print(
+                f"✅ PASS: Infrastructure Gate — {rate:.2f}% kill rate satisfies target (>={args.min_infra_rate:.2f}%)."
+            )
 
     # 4. Presentation Gate (Threshold >= min-pres-rate)
     if args.enforce_presentation:
-        pres = stats.get("presentation", {"total": 0, "killed": 0, "survived": 0, "no_tests": 0, "timeout": 0})
+        pres = stats.get(
+            "presentation", {"total": 0, "killed": 0, "survived": 0, "no_tests": 0, "timeout": 0}
+        )
         rate = (pres["killed"] / pres["total"] * 100) if pres["total"] > 0 else 0.0
         if pres["total"] == 0:
             print("❌ FAIL: No Presentation mutants found in database.\n")
             exit_code = 1
         elif rate < args.min_pres_rate:
-            print(f"❌ FAIL: Presentation kill rate {rate:.2f}% is below target {args.min_pres_rate:.2f}%!\n")
+            print(
+                f"❌ FAIL: Presentation kill rate {rate:.2f}% is below target {args.min_pres_rate:.2f}%!\n"
+            )
             exit_code = 1
         else:
-            print(f"✅ PASS: Presentation Gate — {rate:.2f}% kill rate satisfies target (>={args.min_pres_rate:.2f}%).")
+            print(
+                f"✅ PASS: Presentation Gate — {rate:.2f}% kill rate satisfies target (>={args.min_pres_rate:.2f}%)."
+            )
 
     # 5. Completeness Check
     if args.verify_completeness:
         missing = verify_module_completeness(args.src_dir, args.mutants_dir)
         if missing:
-            print(f"⚠️  WARNING: {len(missing)} functional modules lack mutation profiles in {args.mutants_dir}:")
+            print(
+                f"⚠️  WARNING: {len(missing)} functional modules lack mutation profiles in {args.mutants_dir}:"
+            )
             for m in missing[:10]:
                 print(f"    - {m}")
             if len(missing) > 10:
                 print(f"    ... and {len(missing) - 10} more.")
             exit_code = 1
         else:
-            print("✅ PASS: Module Completeness — All functional source modules have active mutation profiles.")
+            print(
+                "✅ PASS: Module Completeness — All functional source modules have active mutation profiles."
+            )
 
     print()
     return exit_code

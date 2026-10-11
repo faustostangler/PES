@@ -1007,7 +1007,14 @@ Definição conceitual com mais de vinte caracteres para passar na validação.
         # Validate exact keys and values in primary title
         primary_entry = index.get("vilfredo pareto")
         assert primary_entry is not None
-        assert set(primary_entry.keys()) == {"title", "type", "domain", "cluster", "aliases", "path"}
+        assert set(primary_entry.keys()) == {
+            "title",
+            "type",
+            "domain",
+            "cluster",
+            "aliases",
+            "path",
+        }
         assert primary_entry["title"] == "Vilfredo Pareto"
         assert primary_entry["type"] == "entity"
         assert primary_entry["domain"] == "Sociologia das Elites"
@@ -1609,6 +1616,3 @@ Only body here, no complementary section.
 
         with pytest.raises(CompendiumStructureError):
             adapter.get_enriched_compendium(ContentId("no_comp_789"))
-
-
-

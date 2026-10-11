@@ -110,13 +110,16 @@ class TestIndexRawTranscriptsUseCase:
         assert vault.brain_csv_entries[0] == entry
 
         # Verify exact log formatting on completion
-        expected_log = f"[IndexRaw] Indexed '{entry.video_id}' | {entry.channel_name} | '{entry.key_concept}'"
+        expected_log = (
+            f"[IndexRaw] Indexed '{entry.video_id}' | {entry.channel_name} | '{entry.key_concept}'"
+        )
         assert any(
-            r.levelno == logging.INFO and r.getMessage() == expected_log
-            for r in caplog.records
+            r.levelno == logging.INFO and r.getMessage() == expected_log for r in caplog.records
         )
 
-    def test_index_single_transcript_idempotent_skip(self, caplog: pytest.LogCaptureFixture) -> None:
+    def test_index_single_transcript_idempotent_skip(
+        self, caplog: pytest.LogCaptureFixture
+    ) -> None:
         caplog.set_level(logging.INFO)
         vault = InMemoryVaultAdapter()
         llm = MockLLMAdapter(
@@ -148,9 +151,7 @@ class TestIndexRawTranscriptsUseCase:
         assert len(llm.call_history) == 6
         assert len(vault.channel_raw_indexes["Political Theory"]) == 1
 
-        expected_skip_log = (
-            f"[IndexRaw] Skipping already indexed transcript '{transcript.content.id.value}' for channel '{transcript.channel.name}'."
-        )
+        expected_skip_log = f"[IndexRaw] Skipping already indexed transcript '{transcript.content.id.value}' for channel '{transcript.channel.name}'."
         assert any(
             r.levelno == logging.INFO and r.getMessage() == expected_skip_log
             for r in caplog.records
@@ -188,7 +189,9 @@ class TestIndexRawTranscriptsUseCase:
         assert entry.key_concept == "Teoria dos Jogos, Equilíbrios de Nash"
         assert "Minorias burocráticas governam" in entry.synthesis
 
-    def test_index_single_transcript_resilient_to_llm_failure(self, caplog: pytest.LogCaptureFixture) -> None:
+    def test_index_single_transcript_resilient_to_llm_failure(
+        self, caplog: pytest.LogCaptureFixture
+    ) -> None:
         caplog.set_level(logging.WARNING)
         vault = InMemoryVaultAdapter()
         mock_llm = MagicMock()
@@ -213,11 +216,10 @@ class TestIndexRawTranscriptsUseCase:
         assert entry is None
         assert len(vault.channel_raw_indexes) == 0
 
-        expected_warn_log = (
-            f"[IndexRaw] Skipped '{transcript.content.id}' ({transcript.channel.name}) due to inference error: Ollama connection failed"
-        )
+        expected_warn_log = f"[IndexRaw] Skipped '{transcript.content.id}' ({transcript.channel.name}) due to inference error: Ollama connection failed"
         matching_warns = [
-            r for r in caplog.records
+            r
+            for r in caplog.records
             if r.levelno == logging.WARNING and r.getMessage() == expected_warn_log
         ]
         assert len(matching_warns) == 1

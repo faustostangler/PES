@@ -61,12 +61,15 @@ def upload_golden_set(
             "NER_PRESERVATION, STRUCTURAL_COMPLIANCE, AUTHORIAL_VOICE."
         )
 
-        logger.info("Creating or retrieving Langfuse dataset: '%s'...", dataset_name)
-        langfuse.create_dataset(
-            name=dataset_name,
-            description=dataset_desc,
-            metadata={"source": str(dataset_path), "total_items": len(items)},
-        )
+        try:
+            langfuse.create_dataset(
+                name=dataset_name,
+                description=dataset_desc,
+                metadata={"source": str(dataset_path), "total_items": len(items)},
+            )
+            logger.info("Created new Langfuse dataset: '%s'.", dataset_name)
+        except Exception as ds_err:  # noqa: BLE001
+            logger.info("Dataset '%s' already exists or active (%s). Updating items...", dataset_name, ds_err)
 
         logger.info("Uploading %d dataset items to '%s'...", len(items), dataset_name)
         for i, item in enumerate(items, start=1):
@@ -76,13 +79,17 @@ def upload_golden_set(
             expected_output = item["expected_output"]
             metadata = item.get("metadata", {})
 
-            langfuse.create_dataset_item(
-                dataset_name=dataset_name,
-                id=item_id,
-                input={"raw_text": raw_text, "candidate_text": candidate_text},
-                expected_output=expected_output,
-                metadata=metadata,
-            )
+            try:
+                langfuse.create_dataset_item(
+                    dataset_name=dataset_name,
+                    id=item_id,
+                    input={"raw_text": raw_text, "candidate_text": candidate_text},
+                    expected_output=expected_output,
+                    metadata=metadata,
+                )
+            except Exception as item_err:  # noqa: BLE001
+                logger.debug("Item '%s' already exists or update skipped: %s", item_id, item_err)
+
             if i % 7 == 0 or i == len(items):
                 logger.info("Uploaded %d/%d items...", i, len(items))
 

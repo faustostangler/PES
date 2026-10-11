@@ -26,22 +26,13 @@ def test_valid_fluid_prose_passes_mechanical_validation() -> None:
 
 
 def test_fails_when_line_1_not_heading_2() -> None:
-    invalid_text = (
-        "# Título com H1 Não Permitido\n\n"
-        "Texto em prosa sem divisão adequada."
-    )
+    invalid_text = "# Título com H1 Não Permitido\n\nTexto em prosa sem divisão adequada."
     violations = validate_fluid_prose_mechanical_invariants(invalid_text)
     assert any("Line 1 must start with '## '" in v for v in violations)
 
 
 def test_fails_when_yaml_frontmatter_present() -> None:
-    invalid_text = (
-        "---\n"
-        "title: Vídeo de Economia\n"
-        "---\n\n"
-        "## Início do Texto\n\n"
-        "Conteúdo em prosa."
-    )
+    invalid_text = "---\ntitle: Vídeo de Economia\n---\n\n## Início do Texto\n\nConteúdo em prosa."
     violations = validate_fluid_prose_mechanical_invariants(invalid_text)
     assert any("YAML frontmatter" in v for v in violations)
 
@@ -67,11 +58,7 @@ def test_fails_when_bullet_lists_present() -> None:
 
 
 def test_fails_when_table_present() -> None:
-    invalid_text = (
-        "## Comércio e Preços\n\n"
-        "| Produto | Preço |\n"
-        "| Grãos | 10 |\n"
-    )
+    invalid_text = "## Comércio e Preços\n\n| Produto | Preço |\n| Grãos | 10 |\n"
     violations = validate_fluid_prose_mechanical_invariants(invalid_text)
     assert any("table" in v.lower() for v in violations)
 
