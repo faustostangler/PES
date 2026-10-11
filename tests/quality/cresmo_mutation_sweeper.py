@@ -203,6 +203,21 @@ MODULE_TEST_MAP: dict[str, list[str]] = {
     "src/cresmo/infrastructure/adapters/sqlite_ledger_adapter.py": [
         "tests/cresmo/unit/test_sqlite_ledger_adapter.py",
     ],
+    "src/cresmo/infrastructure/adapters/header_generator.py": [
+        "tests/cresmo/unit/test_header_generator.py",
+    ],
+    "src/cresmo/infrastructure/adapters/gemini_adapter.py": [
+        "tests/cresmo/unit/test_gemini_adapter.py",
+    ],
+    "src/cresmo/infrastructure/adapters/native_media_ingestion_adapter.py": [
+        "tests/cresmo/unit/test_native_media_ingestion_adapter.py",
+    ],
+    "src/cresmo/infrastructure/adapters/obsidian_vault_adapter.py": [
+        "tests/cresmo/unit/test_vault_adapter.py",
+    ],
+    "src/cresmo/infrastructure/adapters/prompt_provider.py": [
+        "tests/cresmo/unit/test_prompt_provider.py",
+    ],
     # Wave 5: Presentation
     "src/cresmo/presentation/cli.py": [
         "tests/cresmo/unit/test_cli.py",

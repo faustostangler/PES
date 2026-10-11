@@ -19,6 +19,7 @@ import yt_dlp.utils
 
 from cresmo.domain.exceptions import (
     CresmoInfrastructureError,
+    DomainValidationError,
     IngestionNetworkError,
     RateLimitExceededError,
 )
@@ -377,6 +378,11 @@ class TestNativeMediaIngestionAdapter:
 
             res = adapter.extract_channel_url_from_video("https://www.youtube.com/watch?v=abc12345")
             assert res == "https://www.youtube.com/@ChannelHandle/videos"
+            opts = mock_ydl_cls.call_args[0][0]
+            assert opts["extract_flat"] is True
+            assert opts["quiet"] is True
+            assert opts["no_warnings"] is True
+            assert mock_ydl.extract_info.call_args[1]["download"] is False
 
     def test_extract_channel_url_from_video_fallback_to_channel_id(self) -> None:
         adapter = NativeMediaIngestionAdapter()
@@ -390,7 +396,12 @@ class TestNativeMediaIngestionAdapter:
             res = adapter.extract_channel_url_from_video("https://www.youtube.com/watch?v=abc12345")
             assert res == "https://www.youtube.com/playlist?list=UU1234567890abcdef"
 
-    def test_extract_channel_url_from_video_returns_none_on_error(self) -> None:
+    def test_extract_channel_url_from_video_returns_none_on_error(
+        self, caplog: pytest.LogCaptureFixture
+    ) -> None:
+        import logging
+
+        caplog.set_level(logging.DEBUG)
         adapter = NativeMediaIngestionAdapter()
         with patch("yt_dlp.YoutubeDL") as mock_ydl_cls:
             mock_ydl = MagicMock()
@@ -401,6 +412,8 @@ class TestNativeMediaIngestionAdapter:
                 "https://www.youtube.com/watch?v=unavailable"
             )
             assert res is None
+            assert "Could not extract channel URL from video" in caplog.text
+            assert "via flat extraction: Video unavailable" in caplog.text
 
     def test_extract_video_id_fallback_to_path_stem(self) -> None:
         adapter = NativeMediaIngestionAdapter()
@@ -752,3 +765,426 @@ class TestNativeMediaIngestionAdapter:
                 },
             )
             assert sample_count == 1.0
+
+    def test_handle_yt_dlp_error_exhaustive(self) -> None:
+        adapter = NativeMediaIngestionAdapter()
+        with pytest.raises(RateLimitExceededError, match="HTTP 429"):
+            adapter._handle_yt_dlp_error(Exception("HTTP Error 429"))
+        with pytest.raises(RateLimitExceededError, match="HTTP 429"):
+            adapter._handle_yt_dlp_error(Exception("Error: Too Many Requests received"))
+
+        with pytest.raises(IngestionNetworkError, match="YouTube bot-detection challenge"):
+            adapter._handle_yt_dlp_error(Exception("Sign in to confirm you’re not a bot"))
+        with pytest.raises(IngestionNetworkError, match="YouTube bot-detection challenge"):
+            adapter._handle_yt_dlp_error(Exception("Please confirm you're not a bot to proceed"))
+
+        for term in (
+            "Connection reset by peer",
+            "Operation timed out",
+            "Name or service not known",
+            "Network unreachable",
+        ):
+            with pytest.raises(IngestionNetworkError, match="Ingestion network connectivity error"):
+                adapter._handle_yt_dlp_error(Exception(term))
+
+        with pytest.raises(
+            CresmoInfrastructureError, match="Media extraction infrastructure error"
+        ):
+            adapter._handle_yt_dlp_error(Exception("Some unknown yt-dlp internal error"))
+
+    def test_transcribe_audio_fallback_keep_audio_and_cleanup(self, tmp_path: Path) -> None:
+        adapter = NativeMediaIngestionAdapter()
+        fake_info = {"channel": "Science Today", "uploader": "SciUploader"}
+        dummy_audio_name = "test_audio.m4a"
+
+        def mock_ydl_download(urls: list[str]) -> None:
+            # Create a fake audio file in scratch directory
+            import glob
+
+            scratch_dirs = glob.glob("/tmp/cresmo_scratch_*")
+            if scratch_dirs:
+                latest = max(scratch_dirs, key=lambda d: Path(d).stat().st_mtime)
+                (Path(latest) / dummy_audio_name).write_bytes(b"dummy audio bytes")
+
+        with (
+            patch("yt_dlp.YoutubeDL") as mock_ydl_cls,
+            patch("whisper.load_model") as mock_load_model,
+        ):
+            mock_ydl = MagicMock()
+            mock_ydl.download.side_effect = mock_ydl_download
+            mock_ydl_cls.return_value.__enter__.return_value = mock_ydl
+
+            mock_model = MagicMock()
+            mock_model.transcribe.return_value = {"text": "  Transcribed text content  "}
+            mock_load_model.return_value = mock_model
+
+            body, channel = adapter._transcribe_audio_fallback(
+                video_url="https://youtube.com/watch?v=123",
+                output_dir=tmp_path,
+                whisper_model="tiny",
+                keep_audio=True,
+                info=fake_info,
+            )
+
+            assert body == "Transcribed text content"
+            assert channel == "Science Today"
+            saved_audio = tmp_path / "Science Today" / dummy_audio_name
+            assert saved_audio.exists()
+            assert saved_audio.read_bytes() == b"dummy audio bytes"
+            opts = mock_ydl_cls.call_args[0][0]
+            assert opts["format"] == "bestaudio/best"
+            assert "%(id)s.%(ext)s" in opts["outtmpl"]
+            assert opts["quiet"] is True
+            assert opts["no_warnings"] is True
+            assert mock_ydl.download.call_args[0][0] == ["https://youtube.com/watch?v=123"]
+
+    def test_resolve_transcript_body_with_native_subtitles_success(self, tmp_path: Path) -> None:
+        adapter = NativeMediaIngestionAdapter()
+        fake_info = {
+            "id": "sub_success",
+            "channel": "MyChannel",
+            "subtitles": {
+                "pt": [{"ext": "json3", "url": "https://subs.google.com/timedtext?v=sub_success"}]
+            },
+        }
+        raw_json3 = json.dumps({"events": [{"segs": [{"utf8": "Primeiro paragrafo falado."}]}]})
+        with patch.object(adapter, "_fetch_url_content", return_value=raw_json3) as mock_fetch:
+            body, chan = adapter._resolve_transcript_body(
+                video_url="https://youtube.com/watch?v=sub_success",
+                info=fake_info,
+                output_dir=tmp_path,
+                whisper_model="base",
+                keep_audio=False,
+            )
+            assert body == "Primeiro paragrafo falado."
+            assert chan == "MyChannel"
+            mock_fetch.assert_called_once_with("https://subs.google.com/timedtext?v=sub_success")
+
+    def test_transcribe_audio_fallback_no_downloaded_file_raises_error(
+        self, tmp_path: Path
+    ) -> None:
+        adapter = NativeMediaIngestionAdapter()
+        with (
+            patch("yt_dlp.YoutubeDL") as mock_ydl_cls,
+            patch("whisper.load_model"),
+        ):
+            mock_ydl = MagicMock()
+            mock_ydl_cls.return_value.__enter__.return_value = mock_ydl
+
+            with pytest.raises(IngestionNetworkError, match="no file was found"):
+                adapter._transcribe_audio_fallback(
+                    video_url="https://youtube.com/watch?v=123",
+                    output_dir=tmp_path,
+                    whisper_model="base",
+                    keep_audio=False,
+                    info={"uploader": "UploaderOnly"},
+                )
+
+    def test_transcribe_audio_fallback_whisper_error_raises_infra_error(
+        self, tmp_path: Path
+    ) -> None:
+        adapter = NativeMediaIngestionAdapter()
+
+        def mock_ydl_download(urls: list[str]) -> None:
+            import glob
+
+            scratch_dirs = glob.glob("/tmp/cresmo_scratch_*")
+            if scratch_dirs:
+                latest = max(scratch_dirs, key=lambda d: Path(d).stat().st_mtime)
+                (Path(latest) / "audio.mp3").write_bytes(b"dummy")
+
+        with (
+            patch("yt_dlp.YoutubeDL") as mock_ydl_cls,
+            patch("whisper.load_model", side_effect=RuntimeError("CUDA OOM")),
+        ):
+            mock_ydl = MagicMock()
+            mock_ydl.download.side_effect = mock_ydl_download
+            mock_ydl_cls.return_value.__enter__.return_value = mock_ydl
+
+            with pytest.raises(
+                CresmoInfrastructureError, match="Whisper transcription failed: CUDA OOM"
+            ):
+                adapter._transcribe_audio_fallback(
+                    video_url="https://youtube.com/watch?v=123",
+                    output_dir=tmp_path,
+                    whisper_model="base",
+                    keep_audio=False,
+                    info=None,
+                )
+
+    def test_build_raw_transcript_aggregate_attributes(self) -> None:
+        adapter = NativeMediaIngestionAdapter()
+        info = {
+            "id": "vid999",
+            "channel_id": "UC_channel_123",
+            "channel_url": "https://youtube.com/@channel123",
+            "upload_date": "20231225",
+            "title": "Quantum Computing 101",
+            "description": "Intro to qubits and entanglement",
+        }
+        transcript, ch_id = adapter._build_raw_transcript_aggregate(
+            video_url="https://youtube.com/watch?v=vid999",
+            info=info,
+            body="Qubits can exist in superposition.",
+            channel_name="QuantumHub",
+        )
+        assert transcript.channel.name == "QuantumHub"
+        assert transcript.channel.url == "https://youtube.com/@channel123"
+        assert transcript.content.title == "Quantum Computing 101"
+        assert transcript.content.body == "Qubits can exist in superposition."
+        assert transcript.provenance.description == "Intro to qubits and entanglement"
+        assert ch_id is not None
+        assert ch_id.value == "UC_channel_123"
+
+    def test_build_raw_transcript_aggregate_channel_url_empty_becomes_none(self) -> None:
+        adapter = NativeMediaIngestionAdapter()
+        info = {
+            "id": "vid000",
+            "uploader_id": "uploader_xyz",
+            "channel_url": "",
+            "upload_date": "",
+            "title": "Title",
+            "description": "",
+        }
+        transcript, ch_id = adapter._build_raw_transcript_aggregate(
+            video_url="https://youtube.com/watch?v=vid000",
+            info=info,
+            body="body",
+            channel_name="Chan",
+        )
+        assert transcript.channel.url is None
+        assert ch_id is not None
+        assert ch_id.value == "uploader_xyz"
+
+    def test_build_ydl_opts_options_injection(self, tmp_path: Path) -> None:
+        cookie_file = tmp_path / "cookies.txt"
+        cookie_file.write_text(
+            "# Netscape HTTP Cookie File\n.youtube.com TRUE / FALSE 0 SID secret", encoding="utf-8"
+        )
+
+        adapter = NativeMediaIngestionAdapter(
+            cookie_file=cookie_file,
+            js_runtime_name="node",
+        )
+
+        base_opts = {"quiet": True, "http_headers": {"Custom-Header": "Preserved"}}
+        opts = adapter._build_ydl_opts(base_opts)
+
+        assert opts["quiet"] is True
+        assert opts["http_headers"] == {"Custom-Header": "Preserved"}
+        assert opts["cookiefile"] == str(cookie_file)
+        assert opts["js_runtimes"] == {"node": {}}
+
+    def test_fetch_video_metadata_none_returns_error(self) -> None:
+        adapter = NativeMediaIngestionAdapter()
+        with patch("yt_dlp.YoutubeDL") as mock_ydl_cls:
+            mock_ydl = MagicMock()
+            mock_ydl.extract_info.return_value = None
+            mock_ydl_cls.return_value.__enter__.return_value = mock_ydl
+
+            with pytest.raises(IngestionNetworkError, match="yt-dlp returned no metadata"):
+                adapter._fetch_video_metadata("https://youtube.com/watch?v=empty_meta")
+
+    def test_fetch_video_metadata_options_and_success(self) -> None:
+        adapter = NativeMediaIngestionAdapter()
+        with patch("yt_dlp.YoutubeDL") as mock_ydl_cls:
+            mock_ydl = MagicMock()
+            mock_ydl.extract_info.return_value = {"id": "123", "title": "Test"}
+            mock_ydl_cls.return_value.__enter__.return_value = mock_ydl
+
+            res = adapter._fetch_video_metadata("https://youtube.com/watch?v=123")
+            assert res == {"id": "123", "title": "Test"}
+            opts = mock_ydl_cls.call_args[0][0]
+            assert opts["skip_download"] is True
+            assert opts["quiet"] is True
+            assert opts["no_warnings"] is True
+            assert mock_ydl.extract_info.call_args[1]["download"] is False
+
+    def test_fetch_video_metadata_exception_handled(self) -> None:
+        adapter = NativeMediaIngestionAdapter()
+        with patch("yt_dlp.YoutubeDL") as mock_ydl_cls:
+            mock_ydl = MagicMock()
+            mock_ydl.extract_info.side_effect = RuntimeError("timed out")
+            mock_ydl_cls.return_value.__enter__.return_value = mock_ydl
+
+            with pytest.raises(IngestionNetworkError, match="Ingestion network connectivity error"):
+                adapter._fetch_video_metadata("https://youtube.com/watch?v=123")
+
+    def test_ingest_single_video_when_metadata_none_returns_none(self, tmp_path: Path) -> None:
+        adapter = NativeMediaIngestionAdapter()
+        with patch.object(adapter, "_fetch_video_metadata", return_value=None):
+            res = adapter.ingest_single_video(
+                video_url="https://youtube.com/watch?v=no_meta",
+                output_dir=tmp_path,
+            )
+            assert res is None
+
+    def test_ingest_single_video_exception_records_failure_metric(self, tmp_path: Path) -> None:
+        from prometheus_client import CollectorRegistry
+
+        from cresmo.infrastructure.adapters.prometheus_metrics_adapter import (
+            PrometheusMetricsAdapter,
+        )
+
+        registry = CollectorRegistry(auto_describe=True)
+        metrics = PrometheusMetricsAdapter(registry=registry)
+        adapter = NativeMediaIngestionAdapter(metrics_port=metrics)
+
+        with (
+            patch.object(
+                adapter,
+                "_fetch_video_metadata",
+                return_value={"id": "fail1", "channel": "FailChan"},
+            ),
+            patch.object(
+                adapter, "_resolve_transcript_body", side_effect=RuntimeError("Whisper exploded")
+            ),
+            pytest.raises(RuntimeError, match="Whisper exploded"),
+        ):
+            adapter.ingest_single_video(
+                video_url="https://youtube.com/watch?v=fail1",
+                output_dir=tmp_path,
+            )
+
+        sample_count = registry.get_sample_value(
+            "cresmo_media_ingestion_duration_seconds_count",
+            {
+                "channel_id": "",
+                "channel_name": "Unknown_Channel",
+                "modality": "url",
+                "status": "failure",
+            },
+        )
+        assert sample_count == 1.0
+
+    def test_resolve_transcript_body_empty_raises_domain_validation_error(
+        self, tmp_path: Path
+    ) -> None:
+        adapter = NativeMediaIngestionAdapter()
+        with (
+            patch.object(adapter, "_find_native_subtitle_url", return_value=None),
+            patch.object(adapter, "_transcribe_audio_fallback", return_value=("", "Chan")),
+            pytest.raises(DomainValidationError, match="Extracted transcript body is empty"),
+        ):
+            adapter._resolve_transcript_body(
+                video_url="https://youtube.com/watch?v=empty_vid",
+                info={"id": "empty_vid"},
+                output_dir=tmp_path,
+                whisper_model="base",
+                keep_audio=False,
+            )
+
+    def test_resolve_transcript_body_rate_limit_reraised(self, tmp_path: Path) -> None:
+        adapter = NativeMediaIngestionAdapter()
+        with (
+            patch.object(adapter, "_find_native_subtitle_url", return_value="https://subs.url"),
+            patch.object(
+                adapter, "_fetch_url_content", side_effect=RateLimitExceededError("HTTP 429")
+            ),
+            pytest.raises(RateLimitExceededError),
+        ):
+            adapter._resolve_transcript_body(
+                video_url="https://youtube.com/watch?v=rl_vid",
+                info={"id": "rl_vid"},
+                output_dir=tmp_path,
+                whisper_model="base",
+                keep_audio=False,
+            )
+
+    def test_resolve_transcript_body_native_sub_exception_falls_back_to_whisper(
+        self, tmp_path: Path, caplog: pytest.LogCaptureFixture
+    ) -> None:
+        import logging
+
+        caplog.set_level(logging.WARNING)
+        adapter = NativeMediaIngestionAdapter()
+        with (
+            patch.object(adapter, "_find_native_subtitle_url", return_value="https://subs.url"),
+            patch.object(adapter, "_fetch_url_content", return_value="invalid json {{{"),
+            patch.object(
+                adapter, "_transcribe_audio_fallback", return_value=("Fallback body", "Chan")
+            ),
+        ):
+            body, chan = adapter._resolve_transcript_body(
+                video_url="https://youtube.com/watch?v=sub_err",
+                info={"id": "sub_err", "channel": "Chan"},
+                output_dir=tmp_path,
+                whisper_model="base",
+                keep_audio=False,
+            )
+            assert body == "Fallback body"
+            assert chan == "Chan"
+            assert "Failed to fetch or parse native subtitles" in caplog.text
+            assert "Falling back to Whisper" in caplog.text
+
+    def test_detect_js_runtime_precedence_and_none(self) -> None:
+        adapter = NativeMediaIngestionAdapter()
+        with patch("shutil.which", side_effect=lambda x: "/usr/bin/node" if x == "node" else None):
+            assert adapter._detect_js_runtime() == "node"
+
+        with patch("shutil.which", side_effect=lambda x: "/usr/bin/deno" if x == "deno" else None):
+            assert adapter._detect_js_runtime() == "deno"
+
+        with patch("shutil.which", side_effect=lambda x: "/usr/bin/bun" if x == "bun" else None):
+            assert adapter._detect_js_runtime() == "bun"
+
+        with patch("shutil.which", return_value=None):
+            assert adapter._detect_js_runtime() is None
+
+    def test_sanitize_fs_name_illegal_chars_and_fallbacks(self) -> None:
+        adapter = NativeMediaIngestionAdapter()
+        assert adapter._sanitize_fs_name("Valid Channel") == "Valid Channel"
+        assert (
+            adapter._sanitize_fs_name("Channel: With / Illegal * Chars?")
+            == "Channel_ With _ Illegal _ Chars_"
+        )
+        assert adapter._sanitize_fs_name("") == "Unknown_Channel"
+        assert adapter._sanitize_fs_name("   ") == "Unknown_Channel"
+        assert adapter._sanitize_fs_name("///") == "___"
+
+    def test_build_raw_transcript_aggregate_no_channel_id_returns_none(self) -> None:
+        adapter = NativeMediaIngestionAdapter()
+        info = {
+            "id": "vid111",
+            "title": "Title 111",
+        }
+        transcript, ch_id = adapter._build_raw_transcript_aggregate(
+            video_url="https://youtube.com/watch?v=vid111",
+            info=info,
+            body="body text",
+            channel_name="NoChannelID",
+        )
+        assert ch_id is None
+        assert transcript.channel.id is None
+        assert transcript.provenance.description == ""
+        assert transcript.provenance.publication_date is None
+
+    def test_ingest_single_video_success_flow(self, tmp_path: Path) -> None:
+        adapter = NativeMediaIngestionAdapter()
+        fake_info = {
+            "id": "ingest_ok_1",
+            "title": "Ingested Title",
+            "channel": "IngestChan",
+            "channel_id": "UC_ingest_123",
+            "upload_date": "20240101",
+        }
+        with (
+            patch.object(adapter, "_fetch_video_metadata", return_value=fake_info),
+            patch.object(
+                adapter,
+                "_resolve_transcript_body",
+                return_value=("Resolved body text", "IngestChan"),
+            ),
+        ):
+            transcript = adapter.ingest_single_video(
+                video_url="https://youtube.com/watch?v=ingest_ok_1",
+                output_dir=tmp_path,
+                whisper_model="tiny",
+                keep_audio=False,
+            )
+            assert transcript is not None
+            assert transcript.content.title == "Ingested Title"
+            assert transcript.content.body == "Resolved body text"
+            assert transcript.channel.name == "IngestChan"
+            assert transcript.channel.id is not None
+            assert transcript.channel.id.value == "UC_ingest_123"

@@ -204,16 +204,22 @@ class DiscoverBatchSourcesUseCase:
             )
         except Exception as exc:  # noqa: BLE001
             try:
+                if getattr(stream_queue, "full", lambda: False)() is True:
+                    raise queue.Full
                 stream_queue.put(exc, timeout=_DEFAULT_STREAM_ERROR_TIMEOUT_SECONDS)
-            except queue.Full:
+            except Exception:  # noqa: BLE001
                 logger.warning(
                     "[crawler] Failed to put error into stream_queue (queue full): %s", exc
                 )
         finally:
-            while not stop_event.is_set():
+            for _ in range(5):
+                if stop_event.is_set():
+                    break
                 try:
+                    if getattr(stream_queue, "full", lambda: False)() is True:
+                        raise queue.Full
                     stream_queue.put(None, timeout=_DEFAULT_STREAM_QUEUE_TIMEOUT_SECONDS)
-                    return  # noqa: B012
+                    break
                 except queue.Full:
                     pass
 
@@ -222,6 +228,7 @@ class DiscoverBatchSourcesUseCase:
         priority_sources: list[BatchSource],
         stream_queue: queue.Queue[BatchSource | None | Exception],
         stop_event: threading.Event,
+        crawler_thread: threading.Thread | None = None,
     ) -> Iterator[BatchSource]:
         """Consume streamed items from queue yielding priority sources first."""
         try:
@@ -233,7 +240,18 @@ class DiscoverBatchSourcesUseCase:
                     "Awaiting crawled feed stream...\n"
                 )
             while True:
-                item = stream_queue.get()
+                if stop_event.is_set():
+                    return
+                if crawler_thread is not None and not crawler_thread.is_alive() and stream_queue.empty():
+                    return
+                try:
+                    item = stream_queue.get(timeout=_DEFAULT_STREAM_QUEUE_TIMEOUT_SECONDS)
+                except queue.Empty:
+                    if stop_event.is_set():
+                        return
+                    if crawler_thread is None or not crawler_thread.is_alive():
+                        return
+                    continue
                 if item is None:
                     return
                 if isinstance(item, Exception):
@@ -288,7 +306,9 @@ class DiscoverBatchSourcesUseCase:
         )
         crawler_thread.start()
 
-        yield from self._consume_stream_queue(state.priority_sources, stream_queue, stop_event)
+        yield from self._consume_stream_queue(
+            state.priority_sources, stream_queue, stop_event, crawler_thread
+        )
 
     def _load_explicit_manifest(self, manifest_path: Path) -> list[BatchSource]:
         """Load and return sources directly from an explicit manifest override."""

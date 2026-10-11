@@ -37,21 +37,17 @@ def _find_balanced_closing_brace(text: str, start: int) -> int | None:
     """Find the index of the matching closing brace for a JSON block starting at start."""
     depth = 0
     in_string = False
-    escape = False
-    n = len(text)
-    for i in range(start, n):
+    escape = 0
+    for i in range(start, len(text)):
         char = text[i]
-        if in_string:
-            if escape:
-                escape = False
-            elif char == "\\":
-                escape = True
-            elif char == '"':
-                in_string = False
-        else:
-            if char == '"':
-                in_string = True
-            elif char == "{":
+        if escape == 1:
+            escape = 0
+        elif char == "\\":
+            escape = 1 if in_string else 0
+        elif char == '"':
+            in_string = not in_string
+        elif in_string is False:
+            if char == "{":
                 depth += 1
             elif char == "}":
                 depth -= 1
@@ -75,7 +71,9 @@ def _extract_individual_objects(text: str) -> list[dict[str, Any]]:
     objects: list[dict[str, Any]] = []
     i = 0
     n = len(text)
-    while i < n:
+    for _ in range(n):
+        if i >= n:
+            break
         if text[i] == "{":
             end = _find_balanced_closing_brace(text, i)
             if end is not None:

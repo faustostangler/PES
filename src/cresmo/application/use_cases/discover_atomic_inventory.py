@@ -26,7 +26,6 @@ from cresmo.application.ports import (
     PromptProviderPort,
 )
 from cresmo.application.use_cases.index_raw_transcripts import (
-    _can_retry,
     parse_judge_boolean,
 )
 from cresmo.domain.entities import (
@@ -285,9 +284,7 @@ class DiscoverAtomicInventoryUseCase:
         user_id = user.value if user is not None else UserIdentity.anonymous().value
         content_id = compendium.content_id.value
 
-        retries = 0
-
-        while True:
+        for retries in range(self.max_rewrites + 1):
             trace_suffix = "" if retries == 0 else f"_retry_{retries}"
             if retries > 0:
                 logger.info(
@@ -313,11 +310,10 @@ class DiscoverAtomicInventoryUseCase:
             )
             if is_valid:
                 break
-            if not _can_retry(retries, self.max_rewrites):
-                raise DomainValidationError(
-                    f"Candidate entity inventory rejected by LLM-as-a-judge for '{compendium.title.value}'."
-                )
-            retries += 1
+        else:
+            raise DomainValidationError(
+                f"Candidate entity inventory rejected by LLM-as-a-judge for '{compendium.title.value}'."
+            )
 
         items = _parse_and_deduplicate_items(candidate_data, compendium.title.value)
         return AtomicEntityInventory(items=items)

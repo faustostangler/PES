@@ -6,6 +6,8 @@ retry behavior, fallback model execution, and Langfuse span observation.
 
 from __future__ import annotations
 
+import logging
+import os
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -32,6 +34,14 @@ class TestTransientErrorClassification:
     @pytest.mark.parametrize("code", [400, 401, 403, 404, 499])
     def test_non_transient_api_error_codes_return_false(self, code: int) -> None:
         err = errors.APIError(code=code, response_json={})
+        assert _is_transient_genai_error(err) is False
+
+    def test_api_error_without_code_attribute_returns_false(self) -> None:
+        class DummyAPIError(errors.APIError):
+            def __init__(self) -> None:
+                pass
+
+        err = DummyAPIError()
         assert _is_transient_genai_error(err) is False
 
     @pytest.mark.parametrize(
@@ -296,3 +306,131 @@ class TestGeminiLLMAdapter:
             )
             mock_client_cls.assert_called_once_with(api_key="secret-key")
             assert adapter._client == mock_client_cls.return_value
+
+    def test_default_initialization_attributes(self) -> None:
+        mock_client = MagicMock()
+        adapter = GeminiLLMAdapter(genai_client=mock_client)
+        assert adapter.model_name == "gemini-3.5-flash-lite"
+        assert adapter.fallback_model_name == "gemini-3.1-flash-lite"
+        assert adapter.max_output_tokens == 8192
+        assert adapter.default_temperature == 0.2
+
+    def test_transient_api_error_all_codes_individually(self) -> None:
+        for c in (429, 500, 502, 503, 504):
+            err = errors.APIError(code=c, response_json={})
+            assert _is_transient_genai_error(err) is True
+
+    def test_transform_flushes_langfuse_client(self) -> None:
+        mock_client = MagicMock()
+        mock_response = MagicMock()
+        mock_response.text = "Generated output"
+        mock_client.models.generate_content.return_value = mock_response
+
+        mock_langfuse = MagicMock()
+        adapter = GeminiLLMAdapter(
+            genai_client=mock_client,
+            langfuse_client=mock_langfuse,
+        )
+
+        res = adapter.transform(ChatPrompt.single_turn("hello"))
+        assert res == "Generated output"
+        mock_langfuse.flush.assert_called_once()
+
+    def test_transform_langfuse_flush_exception_swallowed(self) -> None:
+        mock_client = MagicMock()
+        mock_response = MagicMock()
+        mock_response.text = "Output"
+        mock_client.models.generate_content.return_value = mock_response
+
+        mock_langfuse = MagicMock()
+        mock_langfuse.flush.side_effect = RuntimeError("Telemetry flush timed out")
+        adapter = GeminiLLMAdapter(
+            genai_client=mock_client,
+            langfuse_client=mock_langfuse,
+        )
+
+        res = adapter.transform(ChatPrompt.single_turn("hello"))
+        assert res == "Output"
+
+    def test_transform_switches_to_fallback_model_on_exception(self) -> None:
+        mock_client = MagicMock()
+        mock_response = MagicMock()
+        mock_response.text = "Fallback output"
+
+        # First call fails on primary model, second call succeeds on fallback model
+        mock_client.models.generate_content.side_effect = [
+            RuntimeError("Primary model failed"),
+            mock_response,
+        ]
+
+        adapter = GeminiLLMAdapter(
+            genai_client=mock_client,
+            model_name="gemini-3.5-flash-lite",
+            fallback_model_name="gemini-3.1-flash-lite",
+            langfuse_client=None,
+        )
+
+        res = adapter.transform(ChatPrompt.single_turn("trigger fallback"))
+        assert res == "Fallback output"
+        assert mock_client.models.generate_content.call_count == 2
+        calls = mock_client.models.generate_content.call_args_list
+        assert calls[0].kwargs["model"] == "gemini-3.5-flash-lite"
+        assert calls[1].kwargs["model"] == "gemini-3.1-flash-lite"
+
+    def test_init_langfuse_from_environ(self) -> None:
+        with patch.dict(os.environ, {"LANGFUSE_PUBLIC_KEY": "pk-12345"}), patch(
+            "cresmo.infrastructure.adapters.gemini_adapter.Langfuse"
+        ) as mock_lf:
+            mock_instance = MagicMock()
+            mock_lf.return_value = mock_instance
+            adapter = GeminiLLMAdapter(genai_client=MagicMock())
+            assert adapter._langfuse is mock_instance
+
+    def test_init_langfuse_none_without_env(self) -> None:
+        with patch.dict(os.environ, {}, clear=True):
+            adapter = GeminiLLMAdapter(genai_client=MagicMock())
+            assert adapter._langfuse is None
+
+    def test_transform_langfuse_fallback_get_client_and_flush(self) -> None:
+        mock_client = MagicMock()
+        mock_response = MagicMock()
+        mock_response.text = "Output"
+        mock_response.usage_metadata = None
+        mock_client.models.generate_content.return_value = mock_response
+
+        mock_langfuse_client = MagicMock()
+        with (
+            patch.dict(os.environ, {}, clear=True),
+            patch("langfuse.get_client", return_value=mock_langfuse_client),
+        ):
+            adapter = GeminiLLMAdapter(
+                genai_client=mock_client,
+                langfuse_client=None,
+            )
+            res = adapter.transform(ChatPrompt.single_turn("hello"))
+            assert res == "Output"
+            mock_langfuse_client.flush.assert_called_once()
+
+    def test_transform_langfuse_flush_exception_logged_at_debug(
+        self, caplog: pytest.LogCaptureFixture
+    ) -> None:
+        mock_client = MagicMock()
+        mock_response = MagicMock()
+        mock_response.text = "Output"
+        mock_response.usage_metadata = None
+        mock_client.models.generate_content.return_value = mock_response
+
+        mock_langfuse_client = MagicMock()
+        mock_langfuse_client.flush.side_effect = RuntimeError("flush failed")
+        with (
+            caplog.at_level(logging.DEBUG),
+            patch.dict(os.environ, {}, clear=True),
+            patch("langfuse.get_client", return_value=mock_langfuse_client),
+        ):
+            adapter = GeminiLLMAdapter(
+                genai_client=mock_client,
+                langfuse_client=None,
+            )
+            res = adapter.transform(ChatPrompt.single_turn("hello"))
+            assert res == "Output"
+            assert "[GeminiLLMAdapter] Langfuse flush skipped: flush failed" in caplog.text

@@ -6,6 +6,8 @@ and channel feed discovery per ADR-003 and Clean Hexagonal Architecture.
 
 from __future__ import annotations
 
+import queue
+import threading
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from unittest.mock import MagicMock
@@ -1832,3 +1834,30 @@ class TestDiscoverBatchSourcesUseCase:
         assert all(
             kw.get("timeout") == _DEFAULT_STREAM_QUEUE_TIMEOUT_SECONDS for kw in batch_source_puts
         )
+
+    def test_consume_stream_queue_stops_when_crawler_thread_dies(self) -> None:
+        use_case = DiscoverBatchSourcesUseCase(
+            media_ingestion_port=MagicMock(),
+            settings=CresmoSettings(_env_file=None),
+        )
+        stream_q: queue.Queue[BatchSource | None | Exception] = queue.Queue()
+        stop_ev = threading.Event()
+        dead_thread = threading.Thread(target=lambda: None)
+        dead_thread.start()
+        dead_thread.join()
+
+        items = list(use_case._consume_stream_queue([], stream_q, stop_ev, dead_thread))
+        assert items == []
+        assert stop_ev.is_set()
+
+    def test_consume_stream_queue_stops_when_stop_event_set(self) -> None:
+        use_case = DiscoverBatchSourcesUseCase(
+            media_ingestion_port=MagicMock(),
+            settings=CresmoSettings(_env_file=None),
+        )
+        stream_q: queue.Queue[BatchSource | None | Exception] = queue.Queue()
+        stop_ev = threading.Event()
+        stop_ev.set()
+
+        items = list(use_case._consume_stream_queue([], stream_q, stop_ev, None))
+        assert items == []

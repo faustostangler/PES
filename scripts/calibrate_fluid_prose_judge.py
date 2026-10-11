@@ -18,6 +18,13 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
+# Ensure project root and src are in sys.path when invoked directly as a script / debugger
+REPO_ROOT = Path(__file__).resolve().parents[1]
+SRC_DIR = REPO_ROOT / "src"
+for p in (str(SRC_DIR), str(REPO_ROOT)):
+    if p not in sys.path:
+        sys.path.insert(0, p)
+
 from cresmo.domain.value_objects.quality import (
     EvaluationContext,
     JudgeCriterion,

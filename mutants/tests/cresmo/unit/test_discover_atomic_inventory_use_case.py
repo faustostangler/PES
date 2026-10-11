@@ -202,6 +202,21 @@ class TestDiscoverAtomicInventoryJudge:
             match="Candidate entity inventory rejected by LLM-as-a-judge",
         ):
             use_case.execute(sample_compendium)
+        assert len(llm.call_history) == 4
+
+        # Verify max_rewrites=0 executes exactly 1 attempt (2 calls: candidate + judge)
+        llm_zero = MockLLMAdapter(responses=[cand, "false"])
+        use_case_zero = DiscoverAtomicInventoryUseCase(
+            llm_synthesis_port=llm_zero,
+            prompt_provider=prompt_provider,
+            max_rewrites=0,
+        )
+        with pytest.raises(
+            DomainValidationError,
+            match="Candidate entity inventory rejected by LLM-as-a-judge",
+        ):
+            use_case_zero.execute(sample_compendium)
+        assert len(llm_zero.call_history) == 2
 
     def test_guardrail_rejects_non_dict_element_and_non_string_type(self) -> None:
         assert is_valid_inventory_json_structure(["not_a_dict"]) is False
@@ -460,3 +475,17 @@ class TestDiscoverAtomicInventoryJudge:
             user_id="test_user",
         )
         assert res is True
+
+    def test_execute_docstring_and_type_contract(self) -> None:
+        doc = DiscoverAtomicInventoryUseCase.execute.__doc__
+        expected = (
+            "Execute discovery scan with deterministic guardrails and iterative LLM judge loop.\n\n"
+            "Args:\n"
+            "    compendium: Enriched compendium from narrative expansion.\n"
+            "    user: Optional executing UserIdentity principal (defaults to anonymous).\n\n"
+            "Returns:\n"
+            "    AtomicEntityInventory Value Object containing deduplicated entities.\n\n"
+            "Raises:\n"
+            "    DomainValidationError: If candidate entities are rejected by the judge or no valid entities could be discovered.\n"
+        )
+        assert doc == expected
