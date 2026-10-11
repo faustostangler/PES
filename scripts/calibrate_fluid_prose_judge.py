@@ -40,7 +40,7 @@ from cresmo.presentation.factories.judge_factory import build_llm_judge_adapter
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger("calibrate_judge")
 
-DEFAULT_GOLDEN_SET_PATH = Path("data/golden_sets/fluid_prose_golden_set_42.json")
+DEFAULT_GOLDEN_SET_PATH = Path("data/golden_sets/fluid_prose_golden_set.json")
 
 # Canonical seed dataset items for quick dry-run
 SEED_CALIBRATION_DATA: list[dict[str, Any]] = [
@@ -1026,7 +1026,7 @@ def main() -> int:
         default=DEFAULT_GOLDEN_SET_PATH,
         help="Path to local Golden Set JSON file",
     )
-    parser.add_argument("--dataset-name", default="cresmo-fluid-prose-calibration-42")
+    parser.add_argument("--dataset-name", default="cresmo-fluid-prose-calibration")
     parser.add_argument(
         "--remote",
         action="store_true",
@@ -1053,7 +1053,7 @@ def main() -> int:
         "--output-path",
         type=Path,
         default=None,
-        help="Custom destination path to write full calibration report (default: data/reports/calibration_fluid_prose_{provider}.txt)",
+        help="Custom destination path to write full calibration report (default: scripts/golden_set/calibration_fluid_prose_{provider}.txt)",
     )
     args = parser.parse_args()
 
@@ -1077,7 +1077,7 @@ def main() -> int:
     )
 
     resolved_model = args.model or (settings.ollama_model if args.provider == "ollama" else settings.judge_gemini_model)
-    output_file = args.output_path or Path(f"data/reports/calibration_fluid_prose_{args.provider}.txt")
+    output_file = args.output_path or Path(f"scripts/golden_set/calibration_fluid_prose_{args.provider}.txt")
 
     logger.info(
         "Instantiating Judge adapter chain (Provider: %s, Model: %s)...",

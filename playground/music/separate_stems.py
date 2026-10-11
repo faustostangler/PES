@@ -19,6 +19,7 @@ from pathlib import Path
 import re
 import shutil
 import sys
+from typing import Any, cast
 import urllib.request
 import torch
 import yt_dlp
@@ -139,15 +140,15 @@ def stems_already_exist(audio_path: Path, stems: list[str] = STEMS_6S) -> bool:
     return all((target_dir / f"{base_stem_name} - {s}.mp3").exists() for s in stems)
 
 
-def extract_tracks_from_url(url: str) -> list[dict]:
+def extract_tracks_from_url(url: str) -> list[Any]:
     """Extract all video track entries from a single URL or YouTube playlist."""
-    ydl_opts = {
+    ydl_opts: dict[str, Any] = {
         "quiet": True,
         "extract_flat": "in_playlist",
         "noplaylist": False,
         "no_warnings": True,
     }
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+    with yt_dlp.YoutubeDL(cast(Any, ydl_opts)) as ydl:
         try:
             info = ydl.extract_info(url, download=False)
         except Exception as e:
@@ -161,13 +162,13 @@ def extract_tracks_from_url(url: str) -> list[dict]:
         if entries is not None:
             entry_list = [e for e in entries if e]
             print(f"[yt-dlp] Playlist detected: '{info.get('title', 'Untitled')}' with {len(entry_list)} tracks.")
-            return entry_list
+            return list(entry_list)
         else:
             return [info]
 
 
 def download_single_track(
-    entry: dict,
+    entry: dict[str, Any] | Any,
     library_dir: Path,
     expected_stems: list[str] = STEMS_6S,
     ollama_model: str = DEFAULT_OLLAMA_MODEL,
@@ -177,13 +178,16 @@ def download_single_track(
     channel = entry.get("uploader") or entry.get("channel") or "Unknown Artist"
     description = entry.get("description") or ""
 
-    video_url = entry.get("webpage_url") or entry.get("url")
-    if not video_url and entry.get("id"):
-        video_url = f"https://www.youtube.com/watch?v={entry.get('id')}"
+    video_url_candidate: str | None = entry.get("webpage_url") or entry.get("url")
+    if not video_url_candidate and entry.get("id"):
+        video_url_candidate = f"https://music.youtube.com/watch?v={entry.get('id')}"
+
+    video_url: str = video_url_candidate or ""
 
     if not description and video_url:
         try:
-            with yt_dlp.YoutubeDL({"quiet": True, "no_warnings": True}) as ydl:
+            probe_opts: dict[str, Any] = {"quiet": True, "no_warnings": True}
+            with yt_dlp.YoutubeDL(cast(Any, probe_opts)) as ydl:
                 full_info = ydl.extract_info(video_url, download=False)
                 if full_info:
                     title = full_info.get("title") or title
@@ -228,7 +232,7 @@ def download_single_track(
         return expected_mp3, metadata, False
 
     out_template = str(genre_dir / f"{file_stem}.%(ext)s")
-    ydl_dl_opts = {
+    ydl_dl_opts: dict[str, Any] = {
         "format": "bestaudio/best",
         "outtmpl": out_template,
         "noplaylist": True,
@@ -243,11 +247,11 @@ def download_single_track(
         "no_warnings": True,
     }
 
-    if entry.get("id"):
-        video_url = f"https://music.youtube.com/watch?v={entry.get('id')}"
+    if not video_url:
+        raise ValueError(f"Could not determine video URL for entry: {title}")
 
     print(f"[yt-dlp] Downloading audio: {title} -> {file_stem}.mp3")
-    with yt_dlp.YoutubeDL(ydl_dl_opts) as ydl:
+    with yt_dlp.YoutubeDL(cast(Any, ydl_dl_opts)) as ydl:
         ydl.download([video_url])
 
     assert expected_mp3.exists(), f"Downloaded audio not found at: {expected_mp3}"

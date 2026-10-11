@@ -24,7 +24,7 @@ from scripts.golden_set.criterion_orality import ITEMS_ORALITY
 from scripts.golden_set.criterion_structure import ITEMS_STRUCTURE
 from scripts.golden_set.criterion_voice import ITEMS_VOICE
 
-OUTPUT_PATH = REPO_ROOT / "data" / "golden_sets" / "fluid_prose_golden_set_42.json"
+OUTPUT_PATH = REPO_ROOT / "data" / "golden_sets" / "fluid_prose_golden_set.json"
 
 EXPECTED_CRITERIA = {
     "orality_removal": ITEMS_ORALITY,
