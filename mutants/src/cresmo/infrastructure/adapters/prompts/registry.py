@@ -16,6 +16,9 @@ from dataclasses import dataclass
 from cresmo.domain.value_objects import PromptKey
 
 
+from mutmut.mutation.trampoline import wrap_in_trampoline as _mutmut_mutated, MutantDict
+
+
 @dataclass(frozen=True)
 class PromptMetadata:
     """Immutable specification and linkage for a registered prompt template.
@@ -148,8 +151,10 @@ PROMPT_REGISTRY: dict[PromptKey, PromptMetadata] = {
 LANGFUSE_TO_PROMPT_KEY: dict[str, PromptKey] = {
     meta.langfuse_name: meta.key for meta in PROMPT_REGISTRY.values()
 }
+mutants_x_get_prompt_metadata__mutmut: MutantDict = {}  # type: ignore
 
 
+@_mutmut_mutated(mutants_x_get_prompt_metadata__mutmut)
 def get_prompt_metadata(key: PromptKey | str) -> PromptMetadata:
     """Retrieve metadata definition for a given PromptKey or string name.
 
@@ -177,3 +182,154 @@ def get_prompt_metadata(key: PromptKey | str) -> PromptMetadata:
         return PROMPT_REGISTRY[LANGFUSE_TO_PROMPT_KEY[key]]
 
     raise KeyError(f"Unknown prompt key: '{key}'")
+
+
+def x_get_prompt_metadata__mutmut_orig(key: PromptKey | str) -> PromptMetadata:
+    """Retrieve metadata definition for a given PromptKey or string name.
+
+    Args:
+        key: PromptKey instance or string matching a PromptKey value or langfuse_name.
+
+    Returns:
+        Immutable PromptMetadata instance.
+
+    Raises:
+        KeyError: If key is not registered in PROMPT_REGISTRY.
+    """
+    if isinstance(key, PromptKey):
+        return PROMPT_REGISTRY[key]
+
+    # Try lookup by string value of PromptKey
+    try:
+        enum_key = PromptKey(key)
+        return PROMPT_REGISTRY[enum_key]
+    except ValueError:
+        pass
+
+    # Try lookup by langfuse_name
+    if key in LANGFUSE_TO_PROMPT_KEY:
+        return PROMPT_REGISTRY[LANGFUSE_TO_PROMPT_KEY[key]]
+
+    raise KeyError(f"Unknown prompt key: '{key}'")
+
+
+def x_get_prompt_metadata__mutmut_1(key: PromptKey | str) -> PromptMetadata:
+    """Retrieve metadata definition for a given PromptKey or string name.
+
+    Args:
+        key: PromptKey instance or string matching a PromptKey value or langfuse_name.
+
+    Returns:
+        Immutable PromptMetadata instance.
+
+    Raises:
+        KeyError: If key is not registered in PROMPT_REGISTRY.
+    """
+    if isinstance(key, PromptKey):
+        return PROMPT_REGISTRY[key]
+
+    # Try lookup by string value of PromptKey
+    try:
+        enum_key = None
+        return PROMPT_REGISTRY[enum_key]
+    except ValueError:
+        pass
+
+    # Try lookup by langfuse_name
+    if key in LANGFUSE_TO_PROMPT_KEY:
+        return PROMPT_REGISTRY[LANGFUSE_TO_PROMPT_KEY[key]]
+
+    raise KeyError(f"Unknown prompt key: '{key}'")
+
+
+def x_get_prompt_metadata__mutmut_2(key: PromptKey | str) -> PromptMetadata:
+    """Retrieve metadata definition for a given PromptKey or string name.
+
+    Args:
+        key: PromptKey instance or string matching a PromptKey value or langfuse_name.
+
+    Returns:
+        Immutable PromptMetadata instance.
+
+    Raises:
+        KeyError: If key is not registered in PROMPT_REGISTRY.
+    """
+    if isinstance(key, PromptKey):
+        return PROMPT_REGISTRY[key]
+
+    # Try lookup by string value of PromptKey
+    try:
+        enum_key = PromptKey(None)
+        return PROMPT_REGISTRY[enum_key]
+    except ValueError:
+        pass
+
+    # Try lookup by langfuse_name
+    if key in LANGFUSE_TO_PROMPT_KEY:
+        return PROMPT_REGISTRY[LANGFUSE_TO_PROMPT_KEY[key]]
+
+    raise KeyError(f"Unknown prompt key: '{key}'")
+
+
+def x_get_prompt_metadata__mutmut_3(key: PromptKey | str) -> PromptMetadata:
+    """Retrieve metadata definition for a given PromptKey or string name.
+
+    Args:
+        key: PromptKey instance or string matching a PromptKey value or langfuse_name.
+
+    Returns:
+        Immutable PromptMetadata instance.
+
+    Raises:
+        KeyError: If key is not registered in PROMPT_REGISTRY.
+    """
+    if isinstance(key, PromptKey):
+        return PROMPT_REGISTRY[key]
+
+    # Try lookup by string value of PromptKey
+    try:
+        enum_key = PromptKey(key)
+        return PROMPT_REGISTRY[enum_key]
+    except ValueError:
+        pass
+
+    # Try lookup by langfuse_name
+    if key not in LANGFUSE_TO_PROMPT_KEY:
+        return PROMPT_REGISTRY[LANGFUSE_TO_PROMPT_KEY[key]]
+
+    raise KeyError(f"Unknown prompt key: '{key}'")
+
+
+def x_get_prompt_metadata__mutmut_4(key: PromptKey | str) -> PromptMetadata:
+    """Retrieve metadata definition for a given PromptKey or string name.
+
+    Args:
+        key: PromptKey instance or string matching a PromptKey value or langfuse_name.
+
+    Returns:
+        Immutable PromptMetadata instance.
+
+    Raises:
+        KeyError: If key is not registered in PROMPT_REGISTRY.
+    """
+    if isinstance(key, PromptKey):
+        return PROMPT_REGISTRY[key]
+
+    # Try lookup by string value of PromptKey
+    try:
+        enum_key = PromptKey(key)
+        return PROMPT_REGISTRY[enum_key]
+    except ValueError:
+        pass
+
+    # Try lookup by langfuse_name
+    if key in LANGFUSE_TO_PROMPT_KEY:
+        return PROMPT_REGISTRY[LANGFUSE_TO_PROMPT_KEY[key]]
+
+    raise KeyError(None)
+
+mutants_x_get_prompt_metadata__mutmut['_mutmut_orig'] = x_get_prompt_metadata__mutmut_orig # type: ignore # mutmut generated
+mutants_x_get_prompt_metadata__mutmut['x_get_prompt_metadata__mutmut_1'] = x_get_prompt_metadata__mutmut_1 # type: ignore # mutmut generated
+mutants_x_get_prompt_metadata__mutmut['x_get_prompt_metadata__mutmut_2'] = x_get_prompt_metadata__mutmut_2 # type: ignore # mutmut generated
+mutants_x_get_prompt_metadata__mutmut['x_get_prompt_metadata__mutmut_3'] = x_get_prompt_metadata__mutmut_3 # type: ignore # mutmut generated
+mutants_x_get_prompt_metadata__mutmut['x_get_prompt_metadata__mutmut_4'] = x_get_prompt_metadata__mutmut_4 # type: ignore # mutmut generated

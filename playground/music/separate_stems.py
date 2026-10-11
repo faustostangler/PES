@@ -1,26 +1,27 @@
 #!/usr/bin/env python3
 """Demucs Stem Extraction (Meta AI) with Ollama AI Tagging and YouTube Playlist Downloader (yt-dlp).
 
-Supports single YouTube videos and full YouTube/YouTube Music playlists.
-Default mode: 6 Stems (Vocals, Drums, Bass, Other, Guitar, Piano) with MAXIMUM quality.
-Downloads and organizes audio and stems in the same folder as:
-  {gênero}/{artista} - {música}.mp3
-  {gênero}/{artista} - {música} - vocals.mp3
-  {gênero}/{artista} - {música} - drums.mp3
-  {gênero}/{artista} - {música} - bass.mp3
-  {gênero}/{artista} - {música} - other.mp3
-  {gênero}/{artista} - {música} - guitar.mp3
-  {gênero}/{artista} - {música} - piano.mp3
+TWO-PHASE BATCH PIPELINE WITH HISTORY CONTROL:
+  - history.json: Banco de controle local de faixas já concluídas (elimina retrabalho).
+  - LOTE 1 (LLM/Ollama): Faz o tagging e download de todas as faixas pendentes mantendo o Ollama aquecido.
+  - TRANSIÇÃO: Descarrega o Ollama da VRAM uma única vez e limpa a GPU.
+  - LOTE 2 (Demucs SOTA): A GPU fica 100% livre para o Demucs processar os 6 stems em lote no modo MÁXIMO.
 """
 
 import argparse
+import datetime
 import json
+import os
 from pathlib import Path
 import re
 import shutil
 import sys
 from typing import Any, cast
 import urllib.request
+
+# Evita fragmentação de memória VRAM no PyTorch (CUDA)
+os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
+
 import torch
 import yt_dlp
 from demucs.separate import main as demucs_main
@@ -28,33 +29,6 @@ from demucs.separate import main as demucs_main
 # ==============================================================================
 # CONFIGURAÇÃO DE QUALIDADE (DEMUCS / META AI)
 # ==============================================================================
-# O Demucs possui 4 dimensões principais de ajuste de fidelidade vs performance:
-#
-# 1. MODELO PRE-TREINADO (-n / --name):
-#    - PADRÃO (6 STEMS): "htdemucs_6s" (6 stems: Vocals, Drums, Bass, Other, Guitar, Piano)
-#    - 4 STEMS MAX:      "htdemucs_ft" (Ensemble fine-tuned para 4 stems)
-#    - BALANCED:         "htdemucs"    (Modelo base padrão de 4 stems)
-#    - FAST / LOW:       "mdx_extra_q" (Quantizado / rápido para testes)
-#
-# 2. SHIFTS (--shifts): Truque de estabilização equivariante (random time/phase shifts).
-#    Executa a rede N vezes com pequenos deslocamentos no tempo e calcula a média.
-#    Elimina artefatos metálicos e ruídos de fase.
-#    - MAX:        5 (ou 10 conforme o paper original da Meta para pureza máxima de estúdio)
-#    - BALANCED:   1 ou 2
-#    - FAST / LOW: 0 (desligado, 1 única passada direta)
-#
-# 3. OVERLAP (--overlap): Sobreposição entre as janelas de processamento de áudio (chunks).
-#    - MAX:        0.50 (50% de sobreposição com cross-fade contínuo, elimina costuras entre blocos)
-#    - BALANCED:   0.25 (padrão Demucs)
-#    - FAST / LOW: 0.10 (mínimo, rápido)
-#
-# 4. MP3 BITRATE & PRESET (--mp3-bitrate / --mp3-preset):
-#    - MAX:        320 kbps (bitrate máximo do formato MP3) com preset 2 (máxima qualidade do codificador LAME)
-#    - BALANCED:   256 kbps (preset 4)
-#    - FAST / LOW: 192 ou 128 kbps (preset 7)
-# ==============================================================================
-
-# --- Defaults configurados no MÁXIMO absoluto com 6 STEMS ---
 DEFAULT_MODEL = "htdemucs_6s"    # Modelo de 6 Stems (Vocals, Drums, Bass, Other, Guitar, Piano)
 DEFAULT_SHIFTS = 5               # 5 passagens de estabilização equivariante (elimina artefatos)
 DEFAULT_OVERLAP = 0.50           # 50% de sobreposição para junção perfeita dos chunks
@@ -62,21 +36,119 @@ DEFAULT_MP3_BITRATE = 320        # 320 kbps (qualidade máxima de MP3)
 DEFAULT_MP3_PRESET = 2           # Preset 2 do encoder LAME (máxima fidelidade acústica)
 DEFAULT_CLIP_MODE = "rescale"    # Evita qualquer distorção digital reescalando picos > 0dBFS
 
-# Lista canônica dos 6 stems esperados
 STEMS_6S = ["vocals", "drums", "bass", "other", "guitar", "piano"]
 STEMS_4S = ["vocals", "drums", "bass", "other"]
 
 DEFAULT_PLAYLIST_FILE = Path(__file__).parent / "playlist.txt"
 DEFAULT_LIBRARY_DIR = Path(__file__).parent / "library"
+DEFAULT_HISTORY_FILE = Path(__file__).parent / "history.json"
 DEFAULT_DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 OLLAMA_HOST = "http://localhost:11434"
 DEFAULT_OLLAMA_MODEL = "qwen2.5:latest"
 
 
+# ==============================================================================
+# CONTROLE DE HISTÓRICO (BANCO LOCAL DE FAIXAS CONCLUÍDAS)
+# ==============================================================================
+def load_history(history_file: Path = DEFAULT_HISTORY_FILE) -> dict[str, Any]:
+    """Carrega o histórico de faixas processadas do arquivo JSON."""
+    if not history_file.exists():
+        return {"tracks": {}}
+    try:
+        with open(history_file, encoding="utf-8") as f:
+            data = json.load(f)
+            if isinstance(data, dict) and "tracks" in data:
+                return data
+            return {"tracks": {}}
+    except Exception as e:
+        print(f"[Histórico] Aviso ao ler histórico ({e}). Criando nova base.")
+        return {"tracks": {}}
+
+
+def save_history(history: dict[str, Any], history_file: Path = DEFAULT_HISTORY_FILE) -> None:
+    """Salva o histórico atualizado em disco de forma segura."""
+    tmp_file = history_file.with_suffix(".tmp")
+    try:
+        with open(tmp_file, "w", encoding="utf-8") as f:
+            json.dump(history, f, indent=2, ensure_ascii=False)
+        tmp_file.replace(history_file)
+    except Exception as e:
+        print(f"[Histórico] Erro ao salvar histórico: {e}")
+
+
+def is_track_completed(
+    history: dict[str, Any],
+    video_id: str,
+    library_dir: Path,
+    expected_stems: list[str] = STEMS_6S,
+) -> bool:
+    """Verifica se a faixa já foi registrada e se todos os stems estão de fato no disco."""
+    tracks = history.get("tracks", {})
+    if video_id in tracks:
+        entry = tracks[video_id]
+        audio_rel = entry.get("audio_file")
+        if audio_rel:
+            audio_path = library_dir / audio_rel
+            if audio_path.exists() and stems_already_exist(audio_path, stems=expected_stems):
+                return True
+    return False
+
+
+def record_history_entry(
+    history: dict[str, Any],
+    video_id: str,
+    title: str,
+    artist: str,
+    track: str,
+    genre: str,
+    audio_file: Path,
+    stems: list[Path],
+    library_dir: Path,
+    history_file: Path = DEFAULT_HISTORY_FILE,
+) -> None:
+    """Registra uma faixa concluída com seus metadados e arquivos."""
+    tracks = history.setdefault("tracks", {})
+    try:
+        rel_audio = str(audio_file.relative_to(library_dir))
+    except ValueError:
+        rel_audio = str(audio_file)
+
+    tracks[video_id] = {
+        "video_id": video_id,
+        "title": title,
+        "artist": artist,
+        "track": track,
+        "genre": genre,
+        "audio_file": rel_audio,
+        "stems": [s.name for s in sorted(stems)],
+        "processed_at": datetime.datetime.now().isoformat(),
+    }
+    save_history(history, history_file)
+
+
+# ==============================================================================
+# OLLAMA & IA METADATA
+# ==============================================================================
 def sanitize_filename(name: str) -> str:
-    """Remove or replace characters that are invalid in file and folder paths."""
+    """Remove caracteres inválidos para caminhos de arquivos e pastas."""
     cleaned = re.sub(r'[\\/*?:"<>|]', "", name).strip()
     return cleaned or "Unknown"
+
+
+def unload_ollama_model(model: str = DEFAULT_OLLAMA_MODEL, host: str = OLLAMA_HOST) -> None:
+    """Libera explicitamente o modelo Ollama da VRAM da GPU."""
+    print(f"\n[GPU VRAM] Descarregando modelo '{model}' do Ollama da VRAM...")
+    try:
+        req = urllib.request.Request(
+            f"{host}/api/generate",
+            data=json.dumps({"model": model, "keep_alive": 0}).encode("utf-8"),
+            headers={"Content-Type": "application/json"},
+        )
+        with urllib.request.urlopen(req, timeout=10):
+            pass
+        print("[GPU VRAM] Memória GPU do Ollama liberada com sucesso.")
+    except Exception as e:
+        print(f"[GPU VRAM] Aviso ao descarregar Ollama: {e}")
 
 
 def query_ollama_metadata(
@@ -86,7 +158,7 @@ def query_ollama_metadata(
     model: str = DEFAULT_OLLAMA_MODEL,
     host: str = OLLAMA_HOST,
 ) -> dict[str, str]:
-    """Classify genre, artist, and track name using local Ollama model."""
+    """Classifica gênero, artista e nome da faixa usando o modelo local do Ollama."""
     prompt = f"""Given the music video title, channel, and description, identify:
 1. genre (broad musical genre like "Rock", "Samba-Reggae", "Pop", "Jazz", "Hip Hop", "Eletronica", "MPB", "Reggae", etc. - clean and suitable for folder naming)
 2. artist (main artist or band name)
@@ -100,6 +172,12 @@ Description:
 
 Respond strictly in valid JSON with keys "genre", "artist", "track". Do not include markdown codeblocks or explanation.
 """
+    result = {
+        "genre": "Unknown",
+        "artist": sanitize_filename(channel or "Unknown"),
+        "track": sanitize_filename(title or "Track"),
+    }
+
     for attempt in range(2):
         try:
             req = urllib.request.Request(
@@ -115,33 +193,32 @@ Respond strictly in valid JSON with keys "genre", "artist", "track". Do not incl
             with urllib.request.urlopen(req, timeout=120) as resp:
                 raw_res = json.loads(resp.read().decode("utf-8"))
                 data = json.loads(raw_res.get("response", "{}"))
-                genre = sanitize_filename(data.get("genre") or "Unknown")
-                artist = sanitize_filename(data.get("artist") or channel or "Unknown")
-                track = sanitize_filename(data.get("track") or title or "Track")
-                return {"genre": genre, "artist": artist, "track": track}
+                result["genre"] = sanitize_filename(data.get("genre") or "Unknown")
+                result["artist"] = sanitize_filename(data.get("artist") or channel or "Unknown")
+                result["track"] = sanitize_filename(data.get("track") or title or "Track")
+                break
         except Exception as e:
             if attempt == 0:
-                print(f"[Ollama] Notice: Attempt 1 failed ({e}). Retrying...")
+                print(f"[Ollama] Tentativa 1 falhou ({e}). Tentando novamente...")
                 continue
-            print(f"[Ollama] Warning: Could not infer metadata via LLM ({e}). Using raw tags.")
+            print(f"[Ollama] Aviso: Não foi possível inferir metadados via LLM ({e}). Usando tags básicas.")
             break
 
-    return {
-        "genre": "Unknown",
-        "artist": sanitize_filename(channel or "Unknown"),
-        "track": sanitize_filename(title or "Track"),
-    }
+    return result
 
 
 def stems_already_exist(audio_path: Path, stems: list[str] = STEMS_6S) -> bool:
-    """Check if all stem MP3 files already exist in the target folder."""
+    """Verifica se todos os arquivos MP3 de stems esperados já existem na pasta."""
     target_dir = audio_path.parent
     base_stem_name = audio_path.stem
     return all((target_dir / f"{base_stem_name} - {s}.mp3").exists() for s in stems)
 
 
+# ==============================================================================
+# DOWNLOAD E EXTRAÇÃO DE METADADOS (YT-DLP)
+# ==============================================================================
 def extract_tracks_from_url(url: str) -> list[Any]:
-    """Extract all video track entries from a single URL or YouTube playlist."""
+    """Extrai todas as faixas de um link individual ou playlist do YouTube."""
     ydl_opts: dict[str, Any] = {
         "quiet": True,
         "extract_flat": "in_playlist",
@@ -152,7 +229,7 @@ def extract_tracks_from_url(url: str) -> list[Any]:
         try:
             info = ydl.extract_info(url, download=False)
         except Exception as e:
-            print(f"[yt-dlp] Error extracting URL {url}: {e}")
+            print(f"[yt-dlp] Erro ao extrair link {url}: {e}")
             return []
 
         if not info:
@@ -161,7 +238,7 @@ def extract_tracks_from_url(url: str) -> list[Any]:
         entries = info.get("entries")
         if entries is not None:
             entry_list = [e for e in entries if e]
-            print(f"[yt-dlp] Playlist detected: '{info.get('title', 'Untitled')}' with {len(entry_list)} tracks.")
+            print(f"[yt-dlp] Playlist detectada: '{info.get('title', 'Sem Título')}' com {len(entry_list)} faixa(s).")
             return list(entry_list)
         else:
             return [info]
@@ -173,7 +250,7 @@ def download_single_track(
     expected_stems: list[str] = STEMS_6S,
     ollama_model: str = DEFAULT_OLLAMA_MODEL,
 ) -> tuple[Path, dict[str, str], bool]:
-    """Tag with Ollama, download audio if needed, returning (mp3_path, metadata, already_had_stems)."""
+    """Etiqueta com Ollama e baixa áudio se necessário."""
     title = entry.get("title") or "Unknown Title"
     channel = entry.get("uploader") or entry.get("channel") or "Unknown Artist"
     description = entry.get("description") or ""
@@ -196,7 +273,7 @@ def download_single_track(
         except Exception:
             pass
 
-    print(f"\n[AI Tagging] Asking Ollama ({ollama_model}) for metadata: '{title}'...")
+    print(f"\n[Fase 1: AI Tagging] Consultando Ollama ({ollama_model}): '{title}'...")
     metadata = query_ollama_metadata(
         title=title,
         channel=channel,
@@ -207,28 +284,27 @@ def download_single_track(
     artist = metadata["artist"]
     track = metadata["track"]
 
-    print(f"[AI Tagging] Identified -> Gênero: '{genre}' | Artista: '{artist}' | Música: '{track}'")
+    print(f"[Fase 1: AI Tagging] Identificado -> Gênero: '{genre}' | Artista: '{artist}' | Música: '{track}'")
 
     file_stem = f"{artist} - {track}"
     
-    # Check if track is already present in ANY genre subfolder in library
+    # Verifica se já existe em qualquer subpasta de gênero na biblioteca
     existing_in_library = list(library_dir.glob(f"*/{file_stem}.mp3"))
     if existing_in_library:
         expected_mp3 = existing_in_library[0]
         genre_dir = expected_mp3.parent
-        print(f"[Library] Found existing audio in: {genre_dir.name}/{expected_mp3.name}")
+        print(f"[Library] Áudio já presente em: {genre_dir.name}/{expected_mp3.name}")
     else:
         genre_dir = library_dir / genre
         genre_dir.mkdir(parents=True, exist_ok=True)
         expected_mp3 = genre_dir / f"{file_stem}.mp3"
 
-    # Check if all expected stems (default: 6 stems) already exist
+    # Verifica se todos os stems já existem
     if stems_already_exist(expected_mp3, stems=expected_stems):
-        print(f"[Cache] All {len(expected_stems)} stems already exist for: '{file_stem}'. Skipping.")
+        print(f"[Cache] Todos os {len(expected_stems)} stems já existem para: '{file_stem}'.")
         return expected_mp3, metadata, True
 
     if expected_mp3.exists():
-        print(f"[Library] Audio already downloaded: {expected_mp3.name}")
         return expected_mp3, metadata, False
 
     out_template = str(genre_dir / f"{file_stem}.%(ext)s")
@@ -250,15 +326,18 @@ def download_single_track(
     if not video_url:
         raise ValueError(f"Could not determine video URL for entry: {title}")
 
-    print(f"[yt-dlp] Downloading audio: {title} -> {file_stem}.mp3")
+    print(f"[yt-dlp] Baixando áudio: {title} -> {file_stem}.mp3")
     with yt_dlp.YoutubeDL(cast(Any, ydl_dl_opts)) as ydl:
         ydl.download([video_url])
 
     assert expected_mp3.exists(), f"Downloaded audio not found at: {expected_mp3}"
-    print(f"[yt-dlp] Saved: {expected_mp3.name}")
+    print(f"[yt-dlp] Salvo: {expected_mp3.name}")
     return expected_mp3, metadata, False
 
 
+# ==============================================================================
+# SEPARAÇÃO DE STEMS (DEMUCS SOTA)
+# ==============================================================================
 def separate_stems_in_place(
     audio_path: Path,
     model: str = DEFAULT_MODEL,
@@ -270,9 +349,9 @@ def separate_stems_in_place(
     clip_mode: str = DEFAULT_CLIP_MODE,
     two_stems: str | None = None,
 ) -> list[Path]:
-    """Separate audio into stems saved in the same directory as {artist} - {musica} - {stem}.mp3."""
+    """Separa áudio nos stems salvos na mesma pasta como {artista} - {musica} - {stem}.mp3."""
     audio_path = Path(audio_path).resolve()
-    assert audio_path.exists(), f"Input audio file not found: {audio_path}"
+    assert audio_path.exists(), f"Arquivo de áudio não encontrado: {audio_path}"
 
     target_dir = audio_path.parent
     base_stem_name = audio_path.stem
@@ -280,12 +359,17 @@ def separate_stems_in_place(
     temp_demucs_dir = target_dir / ".tmp_demucs"
     temp_demucs_dir.mkdir(parents=True, exist_ok=True)
 
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
+
+    # Argumentos com chunk segment de 4s otimizado para placas de 6GB
     cmd_args = [
         "-n", model,
         "-o", str(temp_demucs_dir),
         "-d", device,
         "--shifts", str(shifts),
         "--overlap", str(overlap),
+        "--segment", "4",
         "--mp3",
         "--mp3-bitrate", str(mp3_bitrate),
         "--mp3-preset", str(mp3_preset),
@@ -297,9 +381,29 @@ def separate_stems_in_place(
 
     cmd_args.append(str(audio_path))
 
-    print(f"\n[Demucs] Separating stems for: {audio_path.name}")
-    print(f"[Demucs] Config: Model={model} | Shifts={shifts} | Overlap={overlap*100:.0f}% | MP3={mp3_bitrate}kbps | Device={device}")
-    demucs_main(cmd_args)
+    print(f"\n[Demucs] Separando stems para: {audio_path.name}")
+    print(f"[Demucs] Config: Modelo={model} | Shifts={shifts} | Overlap={overlap*100:.0f}% | Segment=4s | MP3={mp3_bitrate}kbps | Device={device}")
+    
+    try:
+        demucs_main(cmd_args)
+    except Exception as err:
+        if "out of memory" in str(err).lower() and device == "cuda":
+            print("\n[Demucs] Aviso: GPU VRAM atingiu o limite com segment=4s. Tentando com segment=2s...")
+            torch.cuda.empty_cache()
+            seg_idx = cmd_args.index("--segment")
+            cmd_args[seg_idx + 1] = "2"
+            try:
+                demucs_main(cmd_args)
+            except Exception as err2:
+                if "out of memory" in str(err2).lower():
+                    print("\n[Demucs] Aviso: Fallback para CPU devido a restrições de VRAM...")
+                    dev_idx = cmd_args.index("-d")
+                    cmd_args[dev_idx + 1] = "cpu"
+                    demucs_main(cmd_args)
+                else:
+                    raise err2
+        else:
+            raise err
 
     raw_output_folder = temp_demucs_dir / model / audio_path.stem
     generated_stems: list[Path] = []
@@ -317,7 +421,7 @@ def separate_stems_in_place(
 
 
 def read_playlist_file(playlist_path: Path) -> list[str]:
-    """Read URLs from a text file, ignoring comments and blank lines."""
+    """Lê URLs de um arquivo txt, ignorando linhas vazias e comentários."""
     if not playlist_path.exists():
         return []
     with open(playlist_path, encoding="utf-8") as f:
@@ -325,31 +429,35 @@ def read_playlist_file(playlist_path: Path) -> list[str]:
     return [line for line in lines if line and not line.startswith("#")]
 
 
+# ==============================================================================
+# MAIN
+# ==============================================================================
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Download YouTube videos or playlists and save stems as {artista} - {musica} - {stem}.mp3 in the same {genre}/ folder (Default: 6 Stems MAX)."
+        description="Download YouTube videos/playlists e separa em 6 Stems MAX com controle de histórico (history.json)."
     )
     parser.add_argument(
         "target",
         nargs="?",
         default=None,
-        help="YouTube URL, playlist URL, local audio file, or text file with links (default: playlist.txt)",
+        help="YouTube URL, playlist URL, arquivo de áudio local, ou arquivo txt com links (padrão: playlist.txt)",
     )
-    parser.add_argument("-o", "--out", default=DEFAULT_LIBRARY_DIR, type=Path, help="Root directory for the music library")
+    parser.add_argument("-o", "--out", default=DEFAULT_LIBRARY_DIR, type=Path, help="Diretório raiz da biblioteca musical")
+    parser.add_argument("--history", default=DEFAULT_HISTORY_FILE, type=Path, help="Arquivo JSON de histórico de faixas")
     
     # Presets de qualidade
     parser.add_argument(
         "--preset",
         choices=["max", "balanced", "fast"],
         default="max",
-        help="Quality preset: 'max' (htdemucs_6s, 5 shifts, 50%% overlap, 320kbps), 'balanced' (htdemucs_6s, 1 shift, 25%% overlap), 'fast' (htdemucs_6s, 0 shifts, 10%% overlap)",
+        help="Preset de qualidade: 'max' (htdemucs_6s, 5 shifts, 50%% overlap, 320kbps), 'balanced' (1 shift, 25%% overlap), 'fast' (0 shifts, 10%% overlap)",
     )
-    parser.add_argument("-m", "--model", default=None, help=f"Override Demucs model name (default: {DEFAULT_MODEL} [6 stems])")
-    parser.add_argument("--shifts", type=int, default=None, help="Override equivariant stabilization shifts (0-10)")
-    parser.add_argument("--overlap", type=float, default=None, help="Override chunk overlap fraction (0.1 - 0.75)")
-    parser.add_argument("-d", "--device", default=DEFAULT_DEVICE, help=f"Execution device (default: {DEFAULT_DEVICE})")
-    parser.add_argument("--two-stems", default=None, help="Isolate one stem (e.g., 'vocals') and rest into instrumental")
-    parser.add_argument("--ollama-model", default=DEFAULT_OLLAMA_MODEL, help=f"Ollama model for tagging (default: {DEFAULT_OLLAMA_MODEL})")
+    parser.add_argument("-m", "--model", default=None, help=f"Modelo do Demucs (padrão: {DEFAULT_MODEL} [6 stems])")
+    parser.add_argument("--shifts", type=int, default=None, help="Número de random shifts (0-10)")
+    parser.add_argument("--overlap", type=float, default=None, help="Fração de overlap dos chunks (0.1 - 0.75)")
+    parser.add_argument("-d", "--device", default=DEFAULT_DEVICE, help=f"Dispositivo de execução (padrão: {DEFAULT_DEVICE})")
+    parser.add_argument("--two-stems", default=None, help="Isolar apenas um stem (ex: 'vocals') e o resto instrumental")
+    parser.add_argument("--ollama-model", default=DEFAULT_OLLAMA_MODEL, help=f"Modelo Ollama para tagging (padrão: {DEFAULT_OLLAMA_MODEL})")
 
     args = parser.parse_args()
 
@@ -373,6 +481,9 @@ if __name__ == "__main__":
 
     expected_stems = STEMS_6S if "6s" in model else STEMS_4S
 
+    # Carrega banco de histórico local
+    history = load_history(args.history)
+
     urls_or_files: list[str] = []
     if args.target:
         target_path = Path(args.target)
@@ -385,31 +496,51 @@ if __name__ == "__main__":
 
     if not urls_or_files:
         print("Demucs 6-Stems & Ollama Music Library Extractor")
-        print(f"Device: {DEFAULT_DEVICE} (CUDA: {torch.cuda.is_available()}) | Ollama: {args.ollama_model}")
-        print(f"Default Preset: MAX (Model: {model} [6 STEMS], Shifts: {shifts}, Overlap: {overlap*100:.0f}%, Bitrate: {mp3_bitrate}k)")
-        print(f"\nNo target specified and {DEFAULT_PLAYLIST_FILE.name} is empty.")
-        print("\nHow to use:")
-        print("  1. Add YouTube URLs or Playlists to playground/music/playlist.txt and run:")
+        print(f"Dispositivo: {DEFAULT_DEVICE} (CUDA: {torch.cuda.is_available()}) | Ollama: {args.ollama_model}")
+        print(f"Preset Padrão: MAX (Modelo: {model} [6 STEMS], Shifts: {shifts}, Overlap: {overlap*100:.0f}%, Bitrate: {mp3_bitrate}k)")
+        print(f"\nNenhum link especificado e {DEFAULT_PLAYLIST_FILE.name} está vazio.")
+        print("\nComo usar:")
+        print("  1. Adicione URLs ou Playlists ao playground/music/playlist.txt e execute:")
         print("     python playground/music/separate_stems.py")
         sys.exit(0)
 
-    print(f"Found {len(urls_or_files)} line(s) in playlist/input.")
-    print(f"Active Quality Preset: {args.preset.upper()} (Model={model} [6 STEMS], Shifts={shifts}, Overlap={overlap*100:.0f}%, MP3={mp3_bitrate}kbps)")
+    print("\n" + "=" * 70)
+    print("INICIANDO PIPELINE EM DOIS LOTES COM CONTROLE DE HISTÓRICO")
+    print(f"Total de linhas no playlist.txt: {len(urls_or_files)}")
+    print(f"Histórico carregado: {len(history.get('tracks', {}))} faixa(s) registrada(s) em {args.history.name}")
+    print(f"Preset Ativo: {args.preset.upper()} (Modelo={model} [6 STEMS], Shifts={shifts}, Overlap={overlap*100:.0f}%, MP3={mp3_bitrate}kbps)")
+    print("=" * 70)
+
+    # ==============================================================================
+    # LOTE 1: INGESTÃO, AI TAGGING E DOWNLOADS (OLLAMA ATIVO NA GPU)
+    # ==============================================================================
+    print("\n>>> [LOTE 1/2] FASE DE INGESTÃO, TAGGING COM OLLAMA E DOWNLOADS <<<")
+    print("Verificando histórico e baixando apenas faixas pendentes.\n")
+
+    # Lista de tuplas: (audio_path, video_id, metadata)
+    tracks_to_process: list[tuple[Path, str, dict[str, str]]] = []
+    total_entries_count = 0
+    skipped_history_count = 0
 
     for line_idx, raw_item in enumerate(urls_or_files, start=1):
-        print(f"\n==================================================")
-        print(f"[{line_idx}/{len(urls_or_files)}] Reading: {raw_item}")
-        print(f"==================================================")
-
         if raw_item.startswith("http://") or raw_item.startswith("https://"):
             track_entries = extract_tracks_from_url(raw_item)
             if not track_entries:
-                print(f"[Warning] No valid tracks extracted from: {raw_item}")
+                print(f"[Aviso] Nenhuma faixa encontrada para: {raw_item}")
                 continue
 
-            print(f"Total track(s) to process for this URL: {len(track_entries)}")
+            total_entries_count += len(track_entries)
             for t_idx, entry in enumerate(track_entries, start=1):
-                print(f"\n--- Processing Track [{t_idx}/{len(track_entries)}] ---")
+                vid_id = entry.get("id") or entry.get("url") or f"track_{line_idx}_{t_idx}"
+                track_title = entry.get("title") or "Unknown"
+
+                # 1. Checagem direta no histórico (instantânea, sem rede nem LLM)
+                if is_track_completed(history, vid_id, args.out, expected_stems=expected_stems):
+                    print(f"[Histórico ✓] Faixa já concluída anteriormente: '{track_title}' (ID: {vid_id}). Pulando.")
+                    skipped_history_count += 1
+                    continue
+
+                # 2. Se pendente, consulta Ollama e baixa áudio
                 audio_file, meta, had_stems = download_single_track(
                     entry=entry,
                     library_dir=args.out,
@@ -418,34 +549,66 @@ if __name__ == "__main__":
                 )
 
                 if had_stems:
-                    continue
-
-                stems = separate_stems_in_place(
-                    audio_path=audio_file,
-                    model=model,
-                    device=args.device,
-                    shifts=shifts,
-                    overlap=overlap,
-                    mp3_bitrate=mp3_bitrate,
-                    mp3_preset=DEFAULT_MP3_PRESET,
-                    clip_mode=DEFAULT_CLIP_MODE,
-                    two_stems=args.two_stems,
-                )
-
-                print(f"\n✓ Stems saved in same folder: {audio_file.parent}")
-                for stem_file in sorted(stems):
-                    size_mb = stem_file.stat().st_size / (1024 * 1024)
-                    print(f"  • {stem_file.name} ({size_mb:.2f} MB)")
+                    # Registra no histórico se já tinha os stems
+                    stems_found = list(audio_file.parent.glob(f"{audio_file.stem} - *.mp3"))
+                    record_history_entry(
+                        history=history,
+                        video_id=vid_id,
+                        title=track_title,
+                        artist=meta["artist"],
+                        track=meta["track"],
+                        genre=meta["genre"],
+                        audio_file=audio_file,
+                        stems=stems_found,
+                        library_dir=args.out,
+                        history_file=args.history,
+                    )
+                    skipped_history_count += 1
+                else:
+                    tracks_to_process.append((audio_file, vid_id, meta))
 
         else:
             local_path = Path(raw_item)
-            assert local_path.exists(), f"Local audio file not found: {local_path}"
-            if stems_already_exist(local_path, stems=expected_stems):
-                print(f"[Cache] All {len(expected_stems)} stems already exist for: '{local_path.name}'. Skipping.")
-                continue
+            assert local_path.exists(), f"Arquivo local não encontrado: {local_path}"
+            total_entries_count += 1
+            vid_id = local_path.stem
+            if is_track_completed(history, vid_id, args.out, expected_stems=expected_stems) or stems_already_exist(local_path, stems=expected_stems):
+                print(f"[Histórico ✓] Faixa local já possui todos os stems: '{local_path.name}'. Pulando.")
+                skipped_history_count += 1
+            else:
+                meta = {"genre": local_path.parent.name, "artist": "Various", "track": local_path.stem}
+                tracks_to_process.append((local_path, vid_id, meta))
+
+    # ==============================================================================
+    # TRANSIÇÃO DE LOTE: DESCARREGAR OLLAMA E LIBERAR VRAM TOTAL
+    # ==============================================================================
+    print("\n" + "=" * 70)
+    print(f"FASE 1 CONCLUÍDA! Total de faixas avaliadas: {total_entries_count}")
+    print(f"Faixas puladas pelo histórico/disco: {skipped_history_count}")
+    print(f"Faixas pendentes para separação de stems: {len(tracks_to_process)}")
+    print("=" * 70)
+
+    if tracks_to_process:
+        unload_ollama_model(model=args.ollama_model, host=OLLAMA_HOST)
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+
+    # ==============================================================================
+    # LOTE 2: SEPARAÇÃO DE STEMS COM DEMUCS (GPU 100% DEDICADA)
+    # ==============================================================================
+    if not tracks_to_process:
+        print("\n✓ Todas as faixas já estão concluídas e salvas no histórico!")
+    else:
+        print(f"\n>>> [LOTE 2/2] FASE DE SEPARAÇÃO COM DEMUCS ({len(tracks_to_process)} faixa(s)) <<<")
+        print(f"GPU totalmente dedicada ao modelo {model} (6 Stems MAX).\n")
+
+        for idx, (audio_file, vid_id, meta) in enumerate(tracks_to_process, start=1):
+            print(f"\n--------------------------------------------------")
+            print(f"[{idx}/{len(tracks_to_process)}] Processando Stems: {audio_file.name}")
+            print(f"--------------------------------------------------")
 
             stems = separate_stems_in_place(
-                audio_path=local_path,
+                audio_path=audio_file,
                 model=model,
                 device=args.device,
                 shifts=shifts,
@@ -455,9 +618,27 @@ if __name__ == "__main__":
                 clip_mode=DEFAULT_CLIP_MODE,
                 two_stems=args.two_stems,
             )
-            print(f"\n✓ Stems saved in same folder: {local_path.parent}")
+
+            # Registra no histórico imediatamente após a conclusão da faixa
+            record_history_entry(
+                history=history,
+                video_id=vid_id,
+                title=meta.get("track", audio_file.stem),
+                artist=meta.get("artist", "Unknown"),
+                track=meta.get("track", audio_file.stem),
+                genre=meta.get("genre", audio_file.parent.name),
+                audio_file=audio_file,
+                stems=stems,
+                library_dir=args.out,
+                history_file=args.history,
+            )
+
+            print(f"\n✓ 6 Stems salvos em: {audio_file.parent}")
             for stem_file in sorted(stems):
                 size_mb = stem_file.stat().st_size / (1024 * 1024)
                 print(f"  • {stem_file.name} ({size_mb:.2f} MB)")
+            print(f"[Histórico] Faixa registrada no {args.history.name} com sucesso.")
 
-    print("\n✓ All items processed and organized successfully!")
+    print("\n" + "=" * 70)
+    print("✓ PIPELINE COMPLETO EXECUTADO COM SUCESSO!")
+    print("=" * 70)

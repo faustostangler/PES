@@ -59,9 +59,7 @@ def validate_fluid_prose_mechanical_invariants(text: str) -> list[str]:
 
     # 7. Paragraph Segmentation: Body must be structured into distinct paragraphs
     body_paragraphs = [
-        p.strip()
-        for p in stripped.split("\n\n")
-        if p.strip() and not p.strip().startswith("##")
+        p.strip() for p in stripped.split("\n\n") if p.strip() and not p.strip().startswith("##")
     ]
     if len(body_paragraphs) == 1 and len(body_paragraphs[0].split()) > 80:
         violations.append(
