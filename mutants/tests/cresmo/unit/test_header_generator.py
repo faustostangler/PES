@@ -37,8 +37,11 @@ class TestRandomHeaderGenerator:
         assert isinstance(ua, str)
         assert ua.startswith("Mozilla/5.0")
 
-    def test_loads_from_custom_file_path(self, tmp_path: Path, caplog: pytest.LogCaptureFixture) -> None:
+    def test_loads_from_custom_file_path(
+        self, tmp_path: Path, caplog: pytest.LogCaptureFixture
+    ) -> None:
         import logging
+
         caplog.set_level(logging.DEBUG)
         custom_file = tmp_path / "custom_headers.json"
         custom_profiles = [
@@ -57,8 +60,11 @@ class TestRandomHeaderGenerator:
         assert headers["Accept"] == "application/json"
         assert "Successfully loaded 1 browser header profiles." in caplog.text
 
-    def test_fallback_when_file_not_found(self, tmp_path: Path, caplog: pytest.LogCaptureFixture) -> None:
+    def test_fallback_when_file_not_found(
+        self, tmp_path: Path, caplog: pytest.LogCaptureFixture
+    ) -> None:
         import logging
+
         caplog.set_level(logging.WARNING)
         missing_file = tmp_path / "non_existent_pool.json"
         generator = RandomHeaderGenerator(headers_path=missing_file)
@@ -69,7 +75,10 @@ class TestRandomHeaderGenerator:
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
             "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
         )
-        assert p0["Accept"] == "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8"
+        assert (
+            p0["Accept"]
+            == "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8"
+        )
         assert p0["Accept-Language"] == "pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7"
         assert p0["Sec-Ch-Ua"] == '"Not_A Brand";v="8", "Chromium";v="124", "Google Chrome";v="124"'
         assert p0["Sec-Ch-Ua-Mobile"] == "?0"
@@ -83,9 +92,14 @@ class TestRandomHeaderGenerator:
             "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
             "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
         )
-        assert p1["Accept"] == "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8"
+        assert (
+            p1["Accept"]
+            == "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8"
+        )
         assert p1["Accept-Language"] == "en-US,en;q=0.9,pt-BR;q=0.8,pt;q=0.7"
-        assert p1["Sec-Ch-Ua"] == '"Chromium";v="124", "Google Chrome";v="124", "Not-A.Brand";v="99"'
+        assert (
+            p1["Sec-Ch-Ua"] == '"Chromium";v="124", "Google Chrome";v="124", "Not-A.Brand";v="99"'
+        )
         assert p1["Sec-Ch-Ua-Mobile"] == "?0"
         assert p1["Sec-Ch-Ua-Platform"] == '"macOS"'
         assert p1["Sec-Fetch-Dest"] == "empty"
@@ -93,10 +107,16 @@ class TestRandomHeaderGenerator:
         assert p1["Sec-Fetch-Site"] == "same-origin"
 
         assert f"Custom headers path '{missing_file}' does not exist." in caplog.text
-        assert "Browser header profiles pool was empty or failed to load. Falling back to embedded default profiles." in caplog.text
+        assert (
+            "Browser header profiles pool was empty or failed to load. Falling back to embedded default profiles."
+            in caplog.text
+        )
 
-    def test_fallback_when_file_is_invalid_json(self, tmp_path: Path, caplog: pytest.LogCaptureFixture) -> None:
+    def test_fallback_when_file_is_invalid_json(
+        self, tmp_path: Path, caplog: pytest.LogCaptureFixture
+    ) -> None:
         import logging
+
         caplog.set_level(logging.WARNING)
         corrupt_file = tmp_path / "corrupt.json"
         corrupt_file.write_text("{invalid json", encoding="utf-8")
@@ -117,8 +137,11 @@ class TestRandomHeaderGenerator:
         ua = generator.get_random_user_agent()
         assert ua.startswith("Mozilla/5.0 (Windows NT 10.0")
 
-    def test_custom_payload_non_list_falls_back(self, tmp_path: Path, caplog: pytest.LogCaptureFixture) -> None:
+    def test_custom_payload_non_list_falls_back(
+        self, tmp_path: Path, caplog: pytest.LogCaptureFixture
+    ) -> None:
         import logging
+
         caplog.set_level(logging.WARNING)
         p1 = tmp_path / "not_list.json"
         p1.write_text('{"User-Agent": "Dict"}', encoding="utf-8")
@@ -132,14 +155,20 @@ class TestRandomHeaderGenerator:
         generator = RandomHeaderGenerator(headers_path=p2)
         assert len(generator.profiles) == 2
 
-    def test_package_resource_loading_failure_falls_back(self, caplog: pytest.LogCaptureFixture) -> None:
+    def test_package_resource_loading_failure_falls_back(
+        self, caplog: pytest.LogCaptureFixture
+    ) -> None:
         import logging
         from unittest.mock import patch
+
         caplog.set_level(logging.WARNING)
         with patch("importlib.resources.files", side_effect=OSError("Resource access denied")):
             generator = RandomHeaderGenerator()
             assert len(generator.profiles) == 2
-            assert "Failed to load bundled package headers resource: Resource access denied" in caplog.text
+            assert (
+                "Failed to load bundled package headers resource: Resource access denied"
+                in caplog.text
+            )
 
     def test_profiles_property_returns_defensive_copy(self) -> None:
         generator = RandomHeaderGenerator()

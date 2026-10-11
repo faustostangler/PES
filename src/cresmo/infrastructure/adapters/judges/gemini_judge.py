@@ -9,12 +9,20 @@ from __future__ import annotations
 
 import json
 import logging
+import random
 import re
 import time
 from typing import Any
 
 from google import genai
-from google.genai import types
+from google.genai import errors, types
+from tenacity import (
+    RetryCallState,
+    retry,
+    retry_if_exception,
+    stop_after_attempt,
+    wait_random_exponential,
+)
 
 from cresmo.application.ports import PromptProviderPort
 from cresmo.application.ports.llm_judge_port import LlmJudgePort
@@ -47,6 +55,72 @@ def _clean_json_markdown(text: str) -> str:
     if match:
         return match.group(1).strip()
     return cleaned
+
+
+def _is_transient_genai_error(exc: BaseException) -> bool:
+    """Determine if a Gemini API exception represents a temporary, retryable condition (e.g. 429)."""
+    if isinstance(exc, errors.APIError):
+        code = getattr(exc, "code", None)
+        return code in (429, 500, 502, 503, 504)
+    msg = str(exc)
+    return any(
+        pattern in msg
+        for pattern in (
+            "503",
+            "429",
+            "UNAVAILABLE",
+            "ResourceExhausted",
+            "RESOURCE_EXHAUSTED",
+            "high demand",
+            "rate limit",
+            "quota",
+            "Connection reset",
+        )
+    )
+
+
+def _wait_for_quota_or_backoff(retry_state: RetryCallState) -> float:
+    """Compute wait duration honoring API retryDelay if returned by Gemini, else exponential backoff."""
+    if retry_state.outcome and retry_state.outcome.failed:
+        exc = retry_state.outcome.exception()
+        if exc is not None:
+            msg = str(exc)
+            match = re.search(r"[Pp]lease retry in ([0-9]+(?:\.[0-9]+)?)s", msg)
+            if not match:
+                match = re.search(r"['\"]retryDelay['\"]:\s*['\"]([0-9]+)s?['\"]", msg)
+            if match:
+                try:
+                    suggested = float(match.group(1))
+                    wait_sec = suggested + random.uniform(1.0, 3.0)
+                    logger.warning(
+                        "Gemini quota exhausted (429). Server requested backoff: waiting %.1fs before retry...",
+                        wait_sec,
+                    )
+                    return wait_sec
+                except (ValueError, TypeError):
+                    pass
+    exp_wait = wait_random_exponential(min=5, max=60)
+    return float(exp_wait(retry_state))
+
+
+@retry(
+    retry=retry_if_exception(_is_transient_genai_error),
+    wait=_wait_for_quota_or_backoff,
+    stop=stop_after_attempt(5),
+    reraise=True,
+)
+def _generate_content_with_retry(
+    client: Any,
+    model: str,
+    contents: Any,
+    config: Any,
+) -> Any:
+    """Generate content with automatic exponential backoff for transient rate limits (429)."""
+    return client.models.generate_content(
+        model=model,
+        contents=contents,
+        config=config,
+    )
 
 
 class GeminiJudgeAdapter(LlmJudgePort):
@@ -117,7 +191,8 @@ class GeminiJudgeAdapter(LlmJudgePort):
                 )
                 for m in chat_prompt.messages
             ]
-            response = self.client.models.generate_content(
+            response = _generate_content_with_retry(
+                client=self.client,
                 model=self._model,
                 contents=contents,
                 config=config,

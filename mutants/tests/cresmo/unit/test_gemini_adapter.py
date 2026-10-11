@@ -378,9 +378,10 @@ class TestGeminiLLMAdapter:
         assert calls[1].kwargs["model"] == "gemini-3.1-flash-lite"
 
     def test_init_langfuse_from_environ(self) -> None:
-        with patch.dict(os.environ, {"LANGFUSE_PUBLIC_KEY": "pk-12345"}), patch(
-            "cresmo.infrastructure.adapters.gemini_adapter.Langfuse"
-        ) as mock_lf:
+        with (
+            patch.dict(os.environ, {"LANGFUSE_PUBLIC_KEY": "pk-12345"}),
+            patch("cresmo.infrastructure.adapters.gemini_adapter.Langfuse") as mock_lf,
+        ):
             mock_instance = MagicMock()
             mock_lf.return_value = mock_instance
             adapter = GeminiLLMAdapter(genai_client=MagicMock())

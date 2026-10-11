@@ -242,7 +242,11 @@ class DiscoverBatchSourcesUseCase:
             while True:
                 if stop_event.is_set():
                     return
-                if crawler_thread is not None and not crawler_thread.is_alive() and stream_queue.empty():
+                if (
+                    crawler_thread is not None
+                    and not crawler_thread.is_alive()
+                    and stream_queue.empty()
+                ):
                     return
                 try:
                     item = stream_queue.get(timeout=_DEFAULT_STREAM_QUEUE_TIMEOUT_SECONDS)

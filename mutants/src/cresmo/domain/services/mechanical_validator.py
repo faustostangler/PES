@@ -32,7 +32,7 @@ def validate_fluid_prose_mechanical_invariants(text: str) -> list[str]:
 
     # 1. Line 1 Contract: Must begin with '## '
     first_line = stripped.splitlines()[0].strip()
-    if not first_line.startswith("## ") or first_line.startswith("### "):
+    if not first_line.startswith("## "):
         violations.append(f"Line 1 must start with '## ' (found: '{first_line[:40]}...')")
 
     # 2. Zero YAML Frontmatter
@@ -56,5 +56,16 @@ def validate_fluid_prose_mechanical_invariants(text: str) -> list[str]:
     # 6. Zero Blockquotes
     if _BLOCKQUOTE_LINE_PATTERN.search(stripped):
         violations.append("Text must contain zero blockquotes ('>').")
+
+    # 7. Paragraph Segmentation: Body must be structured into distinct paragraphs
+    body_paragraphs = [
+        p.strip()
+        for p in stripped.split("\n\n")
+        if p.strip() and not p.strip().startswith("##")
+    ]
+    if len(body_paragraphs) == 1 and len(body_paragraphs[0].split()) > 80:
+        violations.append(
+            "Text must contain distinct paragraphs separated by blank lines (monolithic wall of text detected)."
+        )
 
     return violations

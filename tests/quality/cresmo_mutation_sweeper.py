@@ -87,6 +87,9 @@ MODULE_TEST_MAP: dict[str, list[str]] = {
     "src/cresmo/domain/taxonomy.py": [
         "tests/cresmo/unit/test_taxonomy.py",
     ],
+    "src/cresmo/domain/services/mechanical_validator.py": [
+        "tests/cresmo/unit/test_mechanical_validator.py",
+    ],
     # Wave 2: Application Pipeline Engine
     "src/cresmo/application/pipeline/quarantine.py": [
         "tests/cresmo/unit/test_stage_runner_quarantine.py",
@@ -265,9 +268,141 @@ MODULE_TEST_MAP: dict[str, list[str]] = {
         "tests/cresmo/unit/test_cli.py",
         "tests/cresmo/unit/test_cookie_extractor.py",
     ],
+    # Wave 6: Discovery Modules
+    "src/cresmo/application/use_cases/discovery/channel_crawler.py": [
+        "tests/cresmo/unit/test_discover_batch_sources.py",
+    ],
+    "src/cresmo/application/use_cases/discovery/lake_scanner.py": [
+        "tests/cresmo/unit/test_discover_batch_sources.py",
+    ],
+    "src/cresmo/application/use_cases/discovery/manifests.py": [
+        "tests/cresmo/unit/test_discover_batch_sources.py",
+    ],
+    "src/cresmo/application/use_cases/discovery/models.py": [
+        "tests/cresmo/unit/test_discover_batch_sources.py",
+    ],
+    # Wave 6: Indexing Modules
+    "src/cresmo/application/use_cases/indexing/distiller.py": [
+        "tests/cresmo/unit/test_index_raw_transcripts_use_case.py",
+    ],
+    "src/cresmo/application/use_cases/indexing/validators.py": [
+        "tests/cresmo/unit/test_index_raw_transcripts_use_case.py",
+    ],
+    # Wave 6: Judges Adapters
+    "src/cresmo/infrastructure/adapters/judges/composite_judge.py": [
+        "tests/cresmo/unit/test_llm_judge.py",
+    ],
+    "src/cresmo/infrastructure/adapters/judges/gemini_judge.py": [
+        "tests/cresmo/unit/test_llm_judge.py",
+    ],
+    "src/cresmo/infrastructure/adapters/judges/langfuse_decorator.py": [
+        "tests/cresmo/unit/test_llm_judge.py",
+    ],
+    "src/cresmo/infrastructure/adapters/judges/ollama_judge.py": [
+        "tests/cresmo/unit/test_llm_judge.py",
+    ],
+    "src/cresmo/infrastructure/adapters/judges/preflight_decorator.py": [
+        "tests/cresmo/unit/test_preflight_decorator.py",
+        "tests/cresmo/unit/test_llm_judge.py",
+    ],
+    "src/cresmo/infrastructure/adapters/judges/typesafe_judge.py": [
+        "tests/cresmo/unit/test_llm_judge.py",
+    ],
+    # Wave 6: Media Adapters
+    "src/cresmo/infrastructure/adapters/media/feed.py": [
+        "tests/cresmo/unit/test_native_media_ingestion_adapter.py",
+    ],
+    "src/cresmo/infrastructure/adapters/media/subtitles.py": [
+        "tests/cresmo/unit/test_native_media_ingestion_adapter.py",
+    ],
+    # Wave 6: Metrics & Obsidian Helpers
+    "src/cresmo/infrastructure/adapters/noop_metrics_adapter.py": [
+        "tests/cresmo/unit/test_metrics_port.py",
+    ],
+    "src/cresmo/infrastructure/adapters/obsidian/catalog.py": [
+        "tests/cresmo/unit/test_vault_adapter.py",
+    ],
+    "src/cresmo/infrastructure/adapters/obsidian/utils.py": [
+        "tests/cresmo/unit/test_vault_adapter.py",
+    ],
+    # Wave 6: Ollama & Prompt Adapters
+    "src/cresmo/infrastructure/adapters/ollama_critique_adapter.py": [
+        "tests/cresmo/unit/test_critique_synthesizer.py",
+    ],
+    "src/cresmo/infrastructure/adapters/ollama_llm_adapter.py": [
+        "tests/cresmo/unit/test_ollama_llm_adapter.py",
+    ],
+    "src/cresmo/infrastructure/adapters/prompts/builders.py": [
+        "tests/cresmo/unit/test_prompt_provider.py",
+    ],
+    "src/cresmo/infrastructure/adapters/prompts/json_provider.py": [
+        "tests/cresmo/unit/test_prompt_provider.py",
+    ],
+    "src/cresmo/infrastructure/adapters/prompts/langfuse_provider.py": [
+        "tests/cresmo/unit/test_langfuse_prompt_provider.py",
+    ],
+    "src/cresmo/infrastructure/adapters/prompts/registry.py": [
+        "tests/cresmo/unit/test_prompt_registry.py",
+    ],
+    # Wave 6: Telemetry
+    "src/cresmo/infrastructure/adapters/telemetry/noop.py": [
+        "tests/cresmo/unit/test_opentelemetry_adapter.py",
+    ],
+    "src/cresmo/infrastructure/adapters/telemetry/thread_naming.py": [
+        "tests/cresmo/unit/test_opentelemetry_adapter.py",
+    ],
+    # Wave 6: Presentation Factories
+    "src/cresmo/presentation/factories/adapter_factory.py": [
+        "tests/cresmo/unit/test_composition.py",
+    ],
+    "src/cresmo/presentation/factories/judge_factory.py": [
+        "tests/cresmo/unit/test_composition.py",
+        "tests/cresmo/unit/test_llm_judge.py",
+    ],
+    "src/cresmo/presentation/factories/settings_factory.py": [
+        "tests/cresmo/unit/test_composition.py",
+    ],
+    "src/cresmo/presentation/factories/telemetry_factory.py": [
+        "tests/cresmo/unit/test_composition.py",
+    ],
+    "src/cresmo/presentation/factories/use_case_factory.py": [
+        "tests/cresmo/unit/test_composition.py",
+    ],
 }
 
 WAVE_DEFINITIONS: dict[str, list[str]] = {
+    "completeness": [
+        "src/cresmo/application/use_cases/discovery/channel_crawler.py",
+        "src/cresmo/application/use_cases/discovery/lake_scanner.py",
+        "src/cresmo/application/use_cases/discovery/manifests.py",
+        "src/cresmo/application/use_cases/discovery/models.py",
+        "src/cresmo/application/use_cases/indexing/distiller.py",
+        "src/cresmo/application/use_cases/indexing/validators.py",
+        "src/cresmo/infrastructure/adapters/judges/composite_judge.py",
+        "src/cresmo/infrastructure/adapters/judges/gemini_judge.py",
+        "src/cresmo/infrastructure/adapters/judges/langfuse_decorator.py",
+        "src/cresmo/infrastructure/adapters/judges/ollama_judge.py",
+        "src/cresmo/infrastructure/adapters/judges/preflight_decorator.py",
+        "src/cresmo/infrastructure/adapters/judges/typesafe_judge.py",
+        "src/cresmo/infrastructure/adapters/media/feed.py",
+        "src/cresmo/infrastructure/adapters/media/subtitles.py",
+        "src/cresmo/infrastructure/adapters/noop_metrics_adapter.py",
+        "src/cresmo/infrastructure/adapters/obsidian/catalog.py",
+        "src/cresmo/infrastructure/adapters/obsidian/utils.py",
+        "src/cresmo/infrastructure/adapters/ollama_critique_adapter.py",
+        "src/cresmo/infrastructure/adapters/ollama_llm_adapter.py",
+        "src/cresmo/infrastructure/adapters/prompts/builders.py",
+        "src/cresmo/infrastructure/adapters/prompts/json_provider.py",
+        "src/cresmo/infrastructure/adapters/prompts/langfuse_provider.py",
+        "src/cresmo/infrastructure/adapters/prompts/registry.py",
+        "src/cresmo/infrastructure/adapters/telemetry/noop.py",
+        "src/cresmo/infrastructure/adapters/telemetry/thread_naming.py",
+        "src/cresmo/presentation/factories/adapter_factory.py",
+        "src/cresmo/presentation/factories/judge_factory.py",
+        "src/cresmo/presentation/factories/settings_factory.py",
+        "src/cresmo/presentation/factories/telemetry_factory.py",
+        "src/cresmo/presentation/factories/use_case_factory.py",
+    ],
     "domain": [
         "src/cresmo/domain/entities/identity.py",
         "src/cresmo/domain/entities/transcripts.py",
@@ -573,9 +708,13 @@ def run_mutation_on_module(
     # 5. Configure pyproject.toml & run
     original_pyproject = set_pyproject_only_mutate(source_path_str)
     try:
-        print("  🚀 Executing 'uv run mutmut run'...")
+        mod_parts = Path(source_path_str)
+        if mod_parts.parts and mod_parts.parts[0] == "src":
+            mod_parts = Path(*mod_parts.parts[1:])
+        pattern = f"*{str(mod_parts.with_suffix('')).replace('/', '.')}*"
+        cmd = ["uv", "run", "mutmut", "run", pattern]
         res = subprocess.run(
-            ["uv", "run", "mutmut", "run"],
+            cmd,
             capture_output=True,
             text=True,
             check=False,
@@ -624,7 +763,7 @@ def main() -> int:
     parser.add_argument("--file", type=str, help="Single file to mutate.")
     parser.add_argument(
         "--wave",
-        choices=["domain", "pipeline", "use_cases", "infra", "presentation", "all"],
+        choices=["completeness", "domain", "pipeline", "use_cases", "infra", "presentation", "all"],
         help="Execution wave.",
     )
     parser.add_argument("--no-reset", action="store_true", help="Do not reset mutant statuses.")
