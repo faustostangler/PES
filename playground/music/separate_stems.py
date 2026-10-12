@@ -16,6 +16,7 @@ from pathlib import Path
 import re
 import shutil
 import sys
+import time
 from typing import Any, cast
 import urllib.request
 
@@ -217,6 +218,21 @@ def stems_already_exist(audio_path: Path, stems: list[str] = STEMS_6S) -> bool:
 # ==============================================================================
 # DOWNLOAD E EXTRAÇÃO DE METADADOS (YT-DLP)
 # ==============================================================================
+def get_js_runtime_config() -> dict[str, Any]:
+    """Configura o runtime JavaScript (Node.js) para o yt-dlp resolver assinaturas e evitar HTTP 403."""
+    node_bin = shutil.which("node")
+    if not node_bin:
+        nvm_dir = Path.home() / ".nvm" / "versions" / "node"
+        if nvm_dir.exists():
+            versions = sorted(nvm_dir.glob("*/bin/node"), reverse=True)
+            if versions:
+                node_bin = str(versions[0])
+    
+    if node_bin:
+        return {"node": {"path": node_bin}}
+    return {}
+
+
 def extract_tracks_from_url(url: str) -> list[Any]:
     """Extrai todas as faixas de um link individual ou playlist do YouTube."""
     ydl_opts: dict[str, Any] = {
@@ -225,6 +241,10 @@ def extract_tracks_from_url(url: str) -> list[Any]:
         "noplaylist": False,
         "no_warnings": True,
     }
+    js_runtimes = get_js_runtime_config()
+    if js_runtimes:
+        ydl_opts["js_runtimes"] = js_runtimes
+
     with yt_dlp.YoutubeDL(cast(Any, ydl_opts)) as ydl:
         try:
             info = ydl.extract_info(url, download=False)
@@ -261,9 +281,13 @@ def download_single_track(
 
     video_url: str = video_url_candidate or ""
 
+    js_runtimes = get_js_runtime_config()
+
     if not description and video_url:
         try:
             probe_opts: dict[str, Any] = {"quiet": True, "no_warnings": True}
+            if js_runtimes:
+                probe_opts["js_runtimes"] = js_runtimes
             with yt_dlp.YoutubeDL(cast(Any, probe_opts)) as ydl:
                 full_info = ydl.extract_info(video_url, download=False)
                 if full_info:
@@ -312,6 +336,11 @@ def download_single_track(
         "format": "bestaudio/best",
         "outtmpl": out_template,
         "noplaylist": True,
+        "retries": 10,
+        "fragment_retries": 10,
+        "file_access_retries": 5,
+        "buffersize": 1024 * 64,
+        "http_chunk_size": 10485760,
         "postprocessors": [
             {
                 "key": "FFmpegExtractAudio",
@@ -322,13 +351,36 @@ def download_single_track(
         "quiet": False,
         "no_warnings": True,
     }
+    if js_runtimes:
+        ydl_dl_opts["js_runtimes"] = js_runtimes
 
     if not video_url:
         raise ValueError(f"Could not determine video URL for entry: {title}")
 
-    print(f"[yt-dlp] Baixando áudio: {title} -> {file_stem}.mp3")
-    with yt_dlp.YoutubeDL(cast(Any, ydl_dl_opts)) as ydl:
-        ydl.download([video_url])
+    max_retries = 3
+    last_error: Exception | None = None
+    for attempt in range(1, max_retries + 1):
+        try:
+            print(f"[yt-dlp] Baixando áudio (tentativa {attempt}/{max_retries}): {title} -> {file_stem}.mp3")
+            current_opts = dict(ydl_dl_opts)
+            if attempt == 2:
+                current_opts["format"] = "140/bestaudio/best"
+            with yt_dlp.YoutubeDL(cast(Any, current_opts)) as ydl:
+                ydl.download([video_url])
+            if expected_mp3.exists():
+                last_error = None
+                break
+        except Exception as e:
+            last_error = e
+            if attempt < max_retries:
+                wait_time = attempt * 3
+                print(f"[yt-dlp] Falha temporária na tentativa {attempt} ({e}). Tentando novamente em {wait_time}s...")
+                time.sleep(wait_time)
+            else:
+                print(f"[yt-dlp] Erro persistente após {max_retries} tentativas: {e}")
+
+    if last_error is not None and not expected_mp3.exists():
+        raise last_error
 
     assert expected_mp3.exists(), f"Downloaded audio not found at: {expected_mp3}"
     print(f"[yt-dlp] Salvo: {expected_mp3.name}")
@@ -541,12 +593,17 @@ if __name__ == "__main__":
                     continue
 
                 # 2. Se pendente, consulta Ollama e baixa áudio
-                audio_file, meta, had_stems = download_single_track(
-                    entry=entry,
-                    library_dir=args.out,
-                    expected_stems=expected_stems,
-                    ollama_model=args.ollama_model,
-                )
+                try:
+                    audio_file, meta, had_stems = download_single_track(
+                        entry=entry,
+                        library_dir=args.out,
+                        expected_stems=expected_stems,
+                        ollama_model=args.ollama_model,
+                    )
+                except Exception as dl_err:
+                    print(f"\n[Aviso] Falha ao baixar faixa '{track_title}' (ID: {vid_id}): {dl_err}")
+                    print("[Aviso] Continuando com as demais faixas da lista...\n")
+                    continue
 
                 if had_stems:
                     # Registra no histórico se já tinha os stems
@@ -566,6 +623,9 @@ if __name__ == "__main__":
                     skipped_history_count += 1
                 else:
                     tracks_to_process.append((audio_file, vid_id, meta))
+
+                # Pequena pausa entre downloads para evitar throttling do YouTube
+                time.sleep(1.0)
 
         else:
             local_path = Path(raw_item)
@@ -607,37 +667,41 @@ if __name__ == "__main__":
             print(f"[{idx}/{len(tracks_to_process)}] Processando Stems: {audio_file.name}")
             print(f"--------------------------------------------------")
 
-            stems = separate_stems_in_place(
-                audio_path=audio_file,
-                model=model,
-                device=args.device,
-                shifts=shifts,
-                overlap=overlap,
-                mp3_bitrate=mp3_bitrate,
-                mp3_preset=DEFAULT_MP3_PRESET,
-                clip_mode=DEFAULT_CLIP_MODE,
-                two_stems=args.two_stems,
-            )
+            try:
+                stems = separate_stems_in_place(
+                    audio_path=audio_file,
+                    model=model,
+                    device=args.device,
+                    shifts=shifts,
+                    overlap=overlap,
+                    mp3_bitrate=mp3_bitrate,
+                    mp3_preset=DEFAULT_MP3_PRESET,
+                    clip_mode=DEFAULT_CLIP_MODE,
+                    two_stems=args.two_stems,
+                )
 
-            # Registra no histórico imediatamente após a conclusão da faixa
-            record_history_entry(
-                history=history,
-                video_id=vid_id,
-                title=meta.get("track", audio_file.stem),
-                artist=meta.get("artist", "Unknown"),
-                track=meta.get("track", audio_file.stem),
-                genre=meta.get("genre", audio_file.parent.name),
-                audio_file=audio_file,
-                stems=stems,
-                library_dir=args.out,
-                history_file=args.history,
-            )
+                # Registra no histórico imediatamente após a conclusão da faixa
+                record_history_entry(
+                    history=history,
+                    video_id=vid_id,
+                    title=meta.get("track", audio_file.stem),
+                    artist=meta.get("artist", "Unknown"),
+                    track=meta.get("track", audio_file.stem),
+                    genre=meta.get("genre", audio_file.parent.name),
+                    audio_file=audio_file,
+                    stems=stems,
+                    library_dir=args.out,
+                    history_file=args.history,
+                )
 
-            print(f"\n✓ 6 Stems salvos em: {audio_file.parent}")
-            for stem_file in sorted(stems):
-                size_mb = stem_file.stat().st_size / (1024 * 1024)
-                print(f"  • {stem_file.name} ({size_mb:.2f} MB)")
-            print(f"[Histórico] Faixa registrada no {args.history.name} com sucesso.")
+                print(f"\n✓ 6 Stems salvos em: {audio_file.parent}")
+                for stem_file in sorted(stems):
+                    size_mb = stem_file.stat().st_size / (1024 * 1024)
+                    print(f"  • {stem_file.name} ({size_mb:.2f} MB)")
+                print(f"[Histórico] Faixa registrada no {args.history.name} com sucesso.")
+            except Exception as demucs_err:
+                print(f"\n[Aviso] Falha ao separar stems de '{audio_file.name}': {demucs_err}")
+                print("[Aviso] Continuando com as demais faixas da fila...\n")
 
     print("\n" + "=" * 70)
     print("✓ PIPELINE COMPLETO EXECUTADO COM SUCESSO!")

@@ -15,12 +15,19 @@ import logging
 import sys
 from pathlib import Path
 
+# Ensure project root and src are in sys.path
+REPO_ROOT = Path(__file__).resolve().parents[3]
+SRC_DIR = REPO_ROOT / "src"
+for p in (str(SRC_DIR), str(REPO_ROOT)):
+    if p not in sys.path:
+        sys.path.insert(0, p)
+
 from cresmo.infrastructure.config import CresmoSettings
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger("upload_golden_set")
 
-DEFAULT_GOLDEN_SET_PATH = Path("data/golden_sets/fluid_prose_golden_set.json")
+DEFAULT_GOLDEN_SET_PATH = REPO_ROOT / "data" / "golden_sets" / "fluid_prose_golden_set.json"
 DEFAULT_DATASET_NAME = "cresmo-fluid-prose-calibration"
 
 

@@ -24,7 +24,7 @@ from statistics import NormalDist
 from typing import Any
 
 # Ensure project root and src are in sys.path when invoked directly as a script / debugger
-REPO_ROOT = Path(__file__).resolve().parents[1]
+REPO_ROOT = Path(__file__).resolve().parents[3]
 SRC_DIR = REPO_ROOT / "src"
 for p in (str(SRC_DIR), str(REPO_ROOT)):
     if p not in sys.path:
@@ -40,7 +40,7 @@ from cresmo.presentation.factories.judge_factory import build_llm_judge_adapter
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger("calibrate_judge")
 
-DEFAULT_GOLDEN_SET_PATH = Path("data/golden_sets/fluid_prose_golden_set.json")
+DEFAULT_GOLDEN_SET_PATH = REPO_ROOT / "data" / "golden_sets" / "fluid_prose_golden_set.json"
 
 # Canonical seed dataset items for quick dry-run
 SEED_CALIBRATION_DATA: list[dict[str, Any]] = [
@@ -1053,7 +1053,7 @@ def main() -> int:
         "--output-path",
         type=Path,
         default=None,
-        help="Custom destination path to write full calibration report (default: scripts/golden_set/calibration_fluid_prose_{provider}.txt)",
+        help="Custom destination path to write full calibration report (default: scripts/fluid_prose/llm_judge_{provider}.txt)",
     )
     args = parser.parse_args()
 
@@ -1077,7 +1077,7 @@ def main() -> int:
     )
 
     resolved_model = args.model or (settings.ollama_model if args.provider == "ollama" else settings.judge_gemini_model)
-    output_file = args.output_path or Path(f"scripts/golden_set/calibration_fluid_prose_{args.provider}.txt")
+    output_file = args.output_path or (REPO_ROOT / "scripts" / "fluid_prose" / f"llm_judge_{args.provider}.txt")
 
     logger.info(
         "Instantiating Judge adapter chain (Provider: %s, Model: %s)...",

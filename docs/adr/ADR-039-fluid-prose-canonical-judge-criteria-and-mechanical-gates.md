@@ -30,7 +30,7 @@ We establish the **Canonical Fluid Prose Evaluation Framework** and the **Progre
 ```mermaid
 graph TD
     subgraph "Stage 1: Offline Prompt Calibration"
-        GS[Golden Set: 42 Items Ground Truth] --> CAL[Calibration Harness: scripts/calibrate_fluid_prose_judge.py]
+        GS[Golden Set: 42 Items Ground Truth] --> CAL[Calibration Harness: scripts/fluid_prose/llm_judge/calibrate.py]
         CAL --> SDT[15 SDT Metrics & Confusion Matrix]
         SDT --> OPT[Prompt Hardening & Universal Invariants]
         OPT --> SEED[Langfuse Prompt Registry Sync]
@@ -97,7 +97,7 @@ Every judge in the Cresmo pipeline must advance through 5 discrete stages before
 #### Stage 1: Offline Prompt Calibration & Golden Set Hardening
 - **Process:**
   1. Build a human-curated Golden Set of at least 40 items (balanced between PASS and FAIL across difficulty tiers: `easy`, `typical`, `borderline`).
-  2. Execute `scripts/calibrate_fluid_prose_judge.py` to calculate the 15 Signal Detection Theory (SDT) metrics and confusion matrices.
+  2. Execute `scripts/fluid_prose/llm_judge/calibrate.py` to calculate the 15 Signal Detection Theory (SDT) metrics and confusion matrices.
   3. Identify failure modes (Permissive Alfa vs Pedantic Beta). Refine prompts universally (zero ad-hoc over-fitting).
   4. Synchronize versioned prompts to Langfuse via `cresmo seed-prompts`.
   5. Apply pacing delay ($4.2\text{s}$) and jitter ($0.8\text{s}$) with tenacity server-aware retry to respect API rate limits.
@@ -199,7 +199,7 @@ Once Stage 1 (`fluid_prose`) satisfies all gates, the exact same 4-phase calibra
 ## 3. Rate-Limiting & Resilient Backoff Architecture
 
 To prevent provider rate exhaustion (`429 RESOURCE_EXHAUSTED`), the infrastructure incorporates:
-1. **Pacing Delay & Jitter:** `scripts/calibrate_fluid_prose_judge.py` defaults to `delay=4.2s` and `jitter=0.8s`. This caps throughput at $\sim 10\text{--}11\text{ RPM}$, safely below the 15 RPM free tier ceiling.
+1. **Pacing Delay & Jitter:** `scripts/fluid_prose/llm_judge/calibrate.py` defaults to `delay=4.2s` and `jitter=0.8s`. This caps throughput at $\sim 10\text{--}11\text{ RPM}$, safely below the 15 RPM free tier ceiling.
 2. **Server-Aware Retry (`_wait_for_quota_or_backoff`):** `GeminiJudgeAdapter` inspects `retryDelay` payloads in Google GenAI API errors (`"Please retry in 47.8s"`). Tenacity pauses for the exact duration requested by the server plus jitter, preventing unneeded retries or premature fallback triggering.
 
 ---
