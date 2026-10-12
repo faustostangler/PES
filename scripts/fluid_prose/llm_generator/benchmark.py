@@ -64,6 +64,15 @@ CANONICAL_CRITERIA: tuple[JudgeCriterion, ...] = (
     JudgeCriterion.AUTHORIAL_VOICE,
 )
 
+ALL_BENCHMARK_MODELS: list[str] = [
+    "gemini:gemini-3.5-flash",
+    "gemini:gemini-2.5-flash",
+    "ollama:qwen2.5:latest",
+    "ollama:gemma4:latest",
+    "ollama:deepseek-r1:7b",
+    "ollama:llama3:latest",
+]
+
 
 @dataclass(frozen=True)
 class BenchmarkSample:
@@ -596,9 +605,9 @@ def main() -> int:
     parser.add_argument(
         "--models",
         nargs="+",
-        default=["gemini:gemini-3.5-flash"],
+        default=ALL_BENCHMARK_MODELS,
         help=(
-            "List of model identifiers to test sequentially (e.g. "
+            "List of model identifiers to test sequentially (default: all canonical models - "
             "'gemini:gemini-3.5-flash' 'gemini:gemini-2.5-flash' 'ollama:qwen2.5:latest' "
             "'ollama:gemma4:latest' 'ollama:deepseek-r1:7b' 'ollama:llama3:latest' or 'all')"
         ),
@@ -650,14 +659,7 @@ def main() -> int:
     # 1. Resolve Target Models
     raw_models = args.models
     if "all" in [m.lower() for m in raw_models]:
-        raw_models = [
-            "gemini:gemini-3.5-flash",
-            "gemini:gemini-2.5-flash",
-            "ollama:qwen2.5:latest",
-            "ollama:gemma4:latest",
-            "ollama:deepseek-r1:7b",
-            "ollama:llama3:latest",
-        ]
+        raw_models = list(ALL_BENCHMARK_MODELS)
 
     # 2. Load Samples
     samples = load_benchmark_samples(input_path=args.input, limit=args.limit)
@@ -666,10 +668,13 @@ def main() -> int:
         return 1
 
     print(f"📦 Amostras carregadas para o benchmark: {len(samples)}")
-    for i, s in enumerate(samples[:5], 1):
-        print(f"   {i}. [{s.sample_id}] {s.content_title} ({len(s.raw_text)} caracteres)")
-    if len(samples) > 5:
-        print(f"   ... e mais {len(samples) - 5} amostras.")
+    for i, s in enumerate(samples, 1):
+        print(f"   {i:2d}. [{s.sample_id}] {s.content_title} ({len(s.raw_text)} caracteres)")
+
+    print(f"\n🎯 Modelos agendados para avaliação ({len(raw_models)}):")
+    for i, m in enumerate(raw_models, 1):
+        print(f"   {i}. {m}")
+    print()
 
     # 3. Instantiate Prompt Provider & Calibrated Judge Adapter
     prompt_provider = build_prompt_provider(settings=settings)
