@@ -25,7 +25,21 @@ os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
 
 import torch
 import yt_dlp
+import demucs.apply
 from demucs.separate import main as demucs_main
+import tqdm
+
+# Ajuste visual da barra de progresso do Demucs para caber no terminal sem quebrar linha
+_orig_tqdm = demucs.apply.tqdm.tqdm
+
+
+def _compact_tqdm(*args: Any, **kwargs: Any) -> Any:
+    # Reduz de ncols=120 (muito largo) para 50 colunas para evitar estouro de linha no console
+    kwargs["ncols"] = min(kwargs.get("ncols", 50), 50)
+    return _orig_tqdm(*args, **kwargs)
+
+
+setattr(demucs.apply.tqdm, "tqdm", _compact_tqdm)
 
 # ==============================================================================
 # CONFIGURAÇÃO DE QUALIDADE (DEMUCS / META AI)

@@ -18,7 +18,11 @@ from pathlib import Path
 from typing import Any, ClassVar, Self
 
 from pydantic import AliasChoices, Field, SecretStr, model_validator
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import (
+    BaseSettings,
+    PydanticBaseSettingsSource,
+    SettingsConfigDict,
+)
 
 from cresmo.application.ports.settings import DEFAULT_LANGUAGE
 from cresmo.infrastructure.paths import find_workspace_root
@@ -31,6 +35,9 @@ DEFAULT_JUDGE_GEMINI_MODEL: str = "gemini-3.5-flash-lite"
 DEFAULT_JUDGE_TEMPERATURE: float = 0.0
 
 
+
+
+
 class CresmoSettings(BaseSettings):
     """Single Source of Truth (SSOT) configuration for the Cresmo engine.
 
@@ -41,7 +48,8 @@ class CresmoSettings(BaseSettings):
     Attributes:
         DEFAULT_LANGUAGE: Class-level canonical default language fallback.
         DEFAULT_LANGFUSE_PROMPT_LABEL: Class-level canonical prompt label fallback.
-        gemini_api_key: Secret key for Google GenAI API calls.
+        gemini_api_keys: List of secret keys for Google GenAI quota-aware failover.
+        gemini_api_key: Primary secret key for backward compatibility.
         langfuse_secret_key: Secret key for Langfuse observability endpoint.
         langfuse_public_key: Public telemetry identifier for Langfuse tracing.
         langfuse_host: Telemetry collector endpoint URL.
@@ -70,6 +78,41 @@ class CresmoSettings(BaseSettings):
         extra="ignore",
     )
 
+    @classmethod
+    def settings_customise_sources(
+        cls,
+        settings_cls: type[BaseSettings],
+        init_settings: PydanticBaseSettingsSource,
+        env_settings: PydanticBaseSettingsSource,
+        dotenv_settings: PydanticBaseSettingsSource,
+        file_secret_settings: PydanticBaseSettingsSource,
+    ) -> tuple[PydanticBaseSettingsSource, ...]:
+        """Customise settings sources to safely parse comma-separated credentials from env."""
+        def _safe_decode(field_name: str, field: Any, val: Any, orig_decode: Any) -> Any:
+            if field_name == "gemini_api_keys" and isinstance(val, str):
+                try:
+                    return orig_decode(field_name, field, val)
+                except (ValueError, TypeError):
+                    return [p.strip() for p in val.split(",") if p.strip()]
+            return orig_decode(field_name, field, val)
+
+        orig_dot = dotenv_settings.decode_complex_value
+        dotenv_settings.decode_complex_value = (  # type: ignore[method-assign]
+            lambda field_name, field, value: _safe_decode(field_name, field, value, orig_dot)
+        )
+
+        orig_env = env_settings.decode_complex_value
+        env_settings.decode_complex_value = (  # type: ignore[method-assign]
+            lambda field_name, field, value: _safe_decode(field_name, field, value, orig_env)
+        )
+
+        return (
+            init_settings,
+            env_settings,
+            dotenv_settings,
+            file_secret_settings,
+        )
+
     def __init__(
         self,
         *args: Any,
@@ -79,15 +122,50 @@ class CresmoSettings(BaseSettings):
         """Initialize settings with optional explicit environment file override."""
         if _env_file is not ...:
             values["_env_file"] = _env_file
+        if "gemini_api_key" in values and "gemini_api_keys" not in values:
+            values["gemini_api_keys"] = values["gemini_api_key"]
         super().__init__(*args, **values)
 
     # =========================================================================
     # 🔴 Category 1: Secrets & Credentials
     # =========================================================================
-    gemini_api_key: SecretStr = Field(
-        default=SecretStr(""),
-        description="Google Gemini API Key for synthesis and expansion.",
+    gemini_api_keys: list[SecretStr] = Field(
+        default_factory=list,
+        description="Google Gemini API Keys for quota-aware failover and rotation.",
     )
+
+    @property
+    def gemini_api_key(self) -> SecretStr:
+        """Primary Google Gemini API Key for backward compatibility."""
+        if self.gemini_api_keys:
+            return self.gemini_api_keys[0]
+        return SecretStr("")
+
+    @model_validator(mode="before")
+    @classmethod
+    def _normalize_gemini_credentials(cls, data: Any) -> Any:
+        """Normalize comma-separated strings or legacy single key into gemini_api_keys."""
+        if isinstance(data, dict):
+            raw_keys = (
+                data.get("gemini_api_keys")
+                or data.get("GEMINI_API_KEYS")
+                or data.get("gemini_api_key")
+                or data.get("GEMINI_API_KEY")
+            )
+            if raw_keys is not None:
+                if isinstance(raw_keys, str):
+                    data["gemini_api_keys"] = [
+                        SecretStr(p.strip()) for p in raw_keys.split(",") if p.strip()
+                    ]
+                elif isinstance(raw_keys, SecretStr):
+                    data["gemini_api_keys"] = [raw_keys]
+                elif isinstance(raw_keys, list):
+                    data["gemini_api_keys"] = [
+                        item if isinstance(item, SecretStr) else SecretStr(item.strip())
+                        for item in raw_keys
+                        if (isinstance(item, SecretStr) or (isinstance(item, str) and item.strip()))
+                    ]
+        return data
     typesafe_api_key: SecretStr = Field(
         default=SecretStr(""),
         validation_alias=AliasChoices("typesafe_api_key", "TYPESAFE_API_KEY"),

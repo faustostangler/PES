@@ -45,7 +45,7 @@ def build_llm_judge_adapter(
     provider = settings.judge_provider.lower().strip()
     if provider == "gemini":
         primary = GeminiJudgeAdapter(
-            api_key=settings.gemini_api_key.get_secret_value(),
+            api_keys=[k.get_secret_value() for k in settings.gemini_api_keys],
             model=settings.judge_gemini_model,
             pass_threshold=settings.judge_pass_threshold,
             temperature=settings.judge_temperature,

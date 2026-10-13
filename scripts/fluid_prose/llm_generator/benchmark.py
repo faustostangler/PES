@@ -41,6 +41,7 @@ for path in (str(SRC_DIR), str(REPO_ROOT)):
 from cresmo.application.ports import LLMTransformationPort, PromptProviderPort
 from cresmo.domain.value_objects.prompt import PromptKey
 from cresmo.domain.value_objects.quality import (
+    DEFAULT_FLUID_PROSE_WEIGHTS,
     CriterionScore,
     EvaluationContext,
     JudgeCriterion,
@@ -67,10 +68,10 @@ CANONICAL_CRITERIA: tuple[JudgeCriterion, ...] = (
 ALL_BENCHMARK_MODELS: list[str] = [
     "gemini:gemini-3.5-flash",
     "gemini:gemini-2.5-flash",
-    "ollama:qwen2.5:latest",
-    "ollama:gemma4:latest",
-    "ollama:deepseek-r1:7b",
-    "ollama:llama3:latest",
+    # "ollama:qwen2.5:latest",
+    # "ollama:gemma4:latest",
+    # "ollama:deepseek-r1:7b",
+    # "ollama:llama3:latest",
 ]
 
 
@@ -112,6 +113,7 @@ class CriterionStats:
     min_score: float
     max_score: float
     stdev_score: float
+    weight: float = 0.0
 
 
 @dataclass
@@ -124,6 +126,7 @@ class ModelBenchmarkSummary:
     successful_runs: int
     passed_runs: int
     failed_runs: int
+    vetoed_runs: int
     pass_rate: float
     defect_rate: float
     mean_overall_score: float
@@ -256,13 +259,13 @@ def build_generator_adapter(
     """Instantiate candidate generator LLM adapter."""
     prov = provider.lower().strip()
     if prov == "gemini":
-        api_key = settings.gemini_api_key.get_secret_value()
-        if not api_key:
+        api_keys = [k.get_secret_value() for k in settings.gemini_api_keys]
+        if not api_keys:
             raise ValueError(
-                "GEMINI_API_KEY is required to test Gemini models. Set it in .env or environment."
+                "GEMINI_API_KEY or GEMINI_API_KEYS is required to test Gemini models. Set it in .env or environment."
             )
         return GeminiLLMAdapter(
-            api_key=api_key,
+            api_keys=api_keys,
             model_name=model_name,
             default_temperature=temperature,
         )
@@ -393,7 +396,13 @@ def run_benchmark_for_model(
             t_judge_end = time.perf_counter()
             judge_latency = t_judge_end - t_judge_start
 
-        status_str = "✓ PASS" if eval_result.passed else "✗ FAIL"
+        if eval_result.is_vetoed:
+            status_str = "✗ VETO"
+        elif eval_result.passed:
+            status_str = "✓ PASS"
+        else:
+            status_str = "✗ FAIL"
+
         score_str = f"{eval_result.overall_score:.2f}"
         print(
             f"[{idx:02d}/{len(samples):02d}] Amostra: {sample.sample_id:<25} | "
@@ -420,6 +429,7 @@ def run_benchmark_for_model(
     successful_runs = sum(1 for r in results if r.error is None and r.candidate_text.strip())
     passed_runs = sum(1 for r in results if r.evaluation.passed)
     failed_runs = total_samples - passed_runs
+    vetoed_runs = sum(1 for r in results if r.evaluation.is_vetoed)
     pass_rate = (passed_runs / total_samples * 100.0) if total_samples > 0 else 0.0
     defect_rate = (failed_runs / total_samples * 100.0) if total_samples > 0 else 0.0
 
@@ -468,6 +478,7 @@ def run_benchmark_for_model(
             min_score=crit_min,
             max_score=crit_max,
             stdev_score=crit_stdev,
+            weight=DEFAULT_FLUID_PROSE_WEIGHTS.get(crit, 0.0),
         )
 
     return ModelBenchmarkSummary(
@@ -477,6 +488,7 @@ def run_benchmark_for_model(
         successful_runs=successful_runs,
         passed_runs=passed_runs,
         failed_runs=failed_runs,
+        vetoed_runs=vetoed_runs,
         pass_rate=pass_rate,
         defect_rate=defect_rate,
         mean_overall_score=mean_overall,
@@ -505,7 +517,10 @@ def format_model_report(summary: ModelBenchmarkSummary) -> str:
         f"Provedor do Modelo:      {summary.provider.upper()}",
         f"Modelo Gerador Avaliado: {summary.model_name}",
         "Juiz de Avaliação:       Gemini 3.5 Flash Lite Calibrado (Prompt: cresmo-llm-judge)",
-        "Threshold de Aprovação:  >= 0.8000 (ADR-039 Canonical Stage Quality Gate)",
+        "Modelo de Decisão:      Média Ponderada + Mechanical Veto (Two-Layered Quality Gate)",
+        "Pesos Canônicos:        Faithfulness: 25% | NER: 25% | Orality: 20% | Epistemic: 10% | Struct: 10% | Voice: 10%",
+        "Veto Mecânico:          Hard Floor >= 0.80 em Semantic Faithfulness e NER Preservation (Eliminatório)",
+        "Threshold Geral:        >= 0.8000 (ADR-039 Canonical Stage Quality Gate)",
         "",
         "=" * 90,
         "1. TABELA DE MÉTRICAS EXECUTIVAS E PRODUCTION QUALITY GATES",
@@ -516,6 +531,7 @@ def format_model_report(summary: ModelBenchmarkSummary) -> str:
         f"{'Gerações Concluídas com Sucesso':<34} | {summary.successful_runs:<16} | {'100% de Completude':<32}",
         f"{'Aprovações Globais (Pass)':<34} | {summary.passed_runs:<16} | {'N/A':<32}",
         f"{'Reprovações Globais (Fail)':<34} | {summary.failed_runs:<16} | {'0 (Zero Defeitos)':<32}",
+        f"{'Reprovações por Veto Mecânico':<34} | {summary.vetoed_runs:<16} | {'0 (Eliminatório)':<32}",
         f"{'Taxa de Aprovação (Pass Rate)':<34} | {summary.pass_rate:5.1f}%{'':<10} | {'>= 80.0% (Recomendado >= 90%)':<32}",
         f"{'Taxa de Defeito (Defect Rate)':<34} | {summary.defect_rate:5.1f}%{'':<10} | {'<= 10.0% (Shadow Mode Target)':<32}",
         f"{'Score Médio Geral (Overall Mean)':<34} | {summary.mean_overall_score:6.4f}{'':<10} | {'>= 0.8000':<32}",
@@ -531,23 +547,24 @@ def format_model_report(summary: ModelBenchmarkSummary) -> str:
         f"{'Latência do Juiz P95 (Tail)':<34} | {summary.p95_judge_latency:5.2f}s{'':<10} | {'<= 6.00s (SLO ADR-039)':<32}",
         "=" * 90,
         "",
-        "=" * 90,
+        "=" * 102,
         "2. MATRIZ DE CONFORMIDADE E BREAKDOWN POR CRITÉRIO CANÔNICO",
-        "=" * 90,
-        f"{'Critério Canônico':<24} | {'Total':<5} | {'Pass':<5} | {'Fail':<5} | {'Pass Rate':<9} | {'Score Méd':<9} | {'Min':<6} | {'StDev':<6} | {'Status'}",
-        "-" * 90,
+        "=" * 102,
+        f"{'Critério Canônico':<22} | {'Peso':<5} | {'Total':<5} | {'Pass':<4} | {'Fail':<4} | {'Pass Rate':<8} | {'Score Méd':<9} | {'Min':<5} | {'StDev':<5} | {'Status'}",
+        "-" * 102,
     ]
 
     for crit_name, cs in summary.criteria_stats.items():
         status_flag = "[✓ PASS]" if cs.pass_rate >= 80.0 else "[✗ FAIL]"
+        weight_str = f"{int(cs.weight * 100)}%"
         lines.append(
-            f"{crit_name:<24} | {cs.total_evaluations:<5} | {cs.passed_count:<5} | "
-            f"{cs.failed_count:<5} | {cs.pass_rate:6.1f}%   | {cs.mean_score:8.4f}  | "
-            f"{cs.min_score:5.2f}  | {cs.stdev_score:5.2f}  | {status_flag}"
+            f"{crit_name:<22} | {weight_str:<5} | {cs.total_evaluations:<5} | {cs.passed_count:<4} | "
+            f"{cs.failed_count:<4} | {cs.pass_rate:5.1f}%  | {cs.mean_score:9.4f} | "
+            f"{cs.min_score:5.2f} | {cs.stdev_score:5.2f} | {status_flag}"
         )
 
     lines.extend([
-        "=" * 90,
+        "=" * 102,
         "",
         "=" * 90,
         "3. DETALHAMENTO ITEM A ITEM (TRANSCRIÇÃO, PROSA GERADA E VEREDITO DO JUIZ)",
@@ -556,13 +573,23 @@ def format_model_report(summary: ModelBenchmarkSummary) -> str:
     ])
 
     for idx, r in enumerate(summary.sample_results, start=1):
-        status_tag = "APROVADO [PASS]" if r.evaluation.passed else "REPROVADO [FAIL]"
+        if r.evaluation.is_vetoed:
+            status_tag = "REPROVADO [MECHANICAL VETO]"
+        elif r.evaluation.passed:
+            status_tag = "APROVADO [PASS]"
+        else:
+            status_tag = "REPROVADO [FAIL]"
+
         lines.extend([
             "-" * 90,
             f"AMOSTRA #{idx:02d} | ID: {r.sample.sample_id} | Foco: {r.sample.criterion_focus}",
             f"Canal: {r.sample.channel_name} | Título: {r.sample.content_title}",
             f"Veredito do Juiz: {status_tag} | Overall Score: {r.evaluation.overall_score:.4f}",
             f"Tempo Geração: {r.generation_latency_seconds:.2f}s | Tempo Avaliação: {r.judge_latency_seconds:.2f}s",
+        ])
+        if r.evaluation.is_vetoed and r.evaluation.veto_reasons:
+            lines.append(f"Motivo do Veto Mecânico: {'; '.join(r.evaluation.veto_reasons)}")
+        lines.extend([
             "-" * 90,
             "",
             "--- [ENTRADA: TRANSCRIÇÃO BRUTA (RAW TEXT)] ---",

@@ -110,10 +110,13 @@ def build_fluid_prose(provider: Any, **context: Any) -> ChatPrompt:
     key = PromptKey.FLUID_PROSE.value
     entry = provider._templates.get(key, {})
     task = entry.get("task", "")
-    skill_name = entry.get("skill_name", "cresmo-fluid-prose")
     template = entry.get("template", "")
     system_template = entry.get("system_instruction", "")
-    skill_block = provider._get_skill_block(skill_name)
+    skill_block = (
+        provider._resolve_skill_block(entry)
+        if hasattr(provider, "_resolve_skill_block")
+        else provider._get_skill_block(entry.get("skill_name", "cresmo-fluid-prose"))
+    )
     channel_name = context.get("channel_name", "")
     file_name = context.get("file_name", "")
     raw_text = context.get("raw_text", "")

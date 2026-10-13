@@ -122,8 +122,9 @@ def build_gemini_synthesis_adapter(
 ) -> GeminiLLMAdapter:
     """Instantiate and wire GeminiLLMAdapter for core synthesis workflows."""
     resolved_settings = resolve_shared_settings(settings)
+    api_keys = [k.get_secret_value() for k in resolved_settings.gemini_api_keys]
     return GeminiLLMAdapter(
-        api_key=resolved_settings.gemini_api_key.get_secret_value(),
+        api_keys=api_keys,
         model_name=resolved_settings.gemini_model,
         fallback_model_name=resolved_settings.gemini_fallback_model,
         langfuse_client=langfuse_client,
@@ -137,6 +138,7 @@ def build_indexing_adapter(
     web_index: bool = False,
     model_override: str | None = None,
     langfuse_client: Any | None = None,
+    api_keys: list[str] | None = None,
 ) -> LLMTransformationPort:
     """Instantiate LLM adapter for indexing, selecting between local Ollama and Gemini API."""
     resolved_settings = resolve_shared_settings(settings)
@@ -147,8 +149,9 @@ def build_indexing_adapter(
             and model_override is None
         ):
             return synthesis_adapter
+        keys = api_keys or [k.get_secret_value() for k in resolved_settings.gemini_api_keys]
         return GeminiLLMAdapter(
-            api_key=resolved_settings.gemini_api_key.get_secret_value(),
+            api_keys=keys,
             model_name=model_override or resolved_settings.gemini_model,
             fallback_model_name=resolved_settings.gemini_fallback_model,
             langfuse_client=langfuse_client,

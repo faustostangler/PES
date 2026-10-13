@@ -145,6 +145,15 @@ class JsonPromptProvider(PromptProviderPort):
             return ""
         return f"--- SKILL SPECIFICATION ({skill_name}) ---\n{content}\n\n"
 
+    def _resolve_skill_block(self, entry: dict[str, Any]) -> str:
+        """Resolve combined skill specification blocks for an entry."""
+        skills = entry.get("skills")
+        if isinstance(skills, list) and skills:
+            blocks = [self._get_skill_block(str(name)) for name in skills]
+            return "".join(b for b in blocks if b)
+        skill_name = entry.get("skill_name", "")
+        return self._get_skill_block(skill_name) if skill_name else ""
+
     @staticmethod
     def _safe_format(template: str, **kwargs: Any) -> str:
         """Safely substitute named {keys} without failing on literal JSON braces."""
@@ -164,8 +173,7 @@ class JsonPromptProvider(PromptProviderPort):
         """
         key_str = template_key.value if isinstance(template_key, PromptKey) else template_key
         entry = self._templates.get(key_str, {})
-        skill_name = entry.get("skill_name", "")
-        skill_block = self._get_skill_block(skill_name) if skill_name else ""
+        skill_block = self._resolve_skill_block(entry)
         task = entry.get("task", "")
 
         system_instruction = entry.get("system_instruction", "")
@@ -188,8 +196,7 @@ class JsonPromptProvider(PromptProviderPort):
         """
         key_str = template_key.value if isinstance(template_key, PromptKey) else template_key
         entry = self._templates.get(key_str, {})
-        skill_name = entry.get("skill_name", "")
-        skill_block = self._get_skill_block(skill_name) if skill_name else ""
+        skill_block = self._resolve_skill_block(entry)
         task = entry.get("task", "")
 
         system_instruction = entry.get("system_instruction", "")
@@ -230,8 +237,7 @@ class JsonPromptProvider(PromptProviderPort):
         """Format (system_instruction, user_prompt) pair into a ChatPrompt for a given template key."""
         entry = self._templates.get(template_key, {})
         task = entry.get("task", "")
-        skill_name = entry.get("skill_name", "")
-        skill_block = self._get_skill_block(skill_name) if skill_name else ""
+        skill_block = self._resolve_skill_block(entry)
         system_template = entry.get("system_instruction", "")
         if system_template:
             system_instruction = self._safe_format(

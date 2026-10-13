@@ -729,3 +729,50 @@ class TestPromptBuilderRegistry:
 
         with pytest.raises(ValueError, match="Unsupported prompt key"):
             registry.get(PromptKey.FLUID_PROSE)
+
+    def test_multi_skill_block_resolution(self, tmp_path: Path) -> None:
+        skills_dir = tmp_path / "skills"
+        skills_dir.mkdir()
+        (skills_dir / "skill-a").mkdir()
+        (skills_dir / "skill-a" / "SKILL.md").write_text("Skill A Spec Content", encoding="utf-8")
+        (skills_dir / "skill-b").mkdir()
+        (skills_dir / "skill-b" / "SKILL.md").write_text("Skill B Spec Content", encoding="utf-8")
+
+        custom_prompts = {
+            "multi_skill_test": {
+                "task": "Test Multi Skill Task",
+                "skills": ["skill-a", "skill-b"],
+                "system_instruction": "{task}\n\n{skill_block}",
+                "template": "Run task with {input_val}",
+            }
+        }
+        prompts_file = tmp_path / "prompts.json"
+        prompts_file.write_text(json.dumps(custom_prompts), encoding="utf-8")
+
+        provider = JsonPromptProvider(prompts_path=prompts_file, skills_dir=skills_dir)
+        sys_inst, user_tpl = provider.get_chat_prompt_template("multi_skill_test")
+        assert "--- SKILL SPECIFICATION (skill-a) ---" in sys_inst
+        assert "Skill A Spec Content" in sys_inst
+        assert "--- SKILL SPECIFICATION (skill-b) ---" in sys_inst
+        assert "Skill B Spec Content" in sys_inst
+        assert user_tpl == "Run task with {input_val}"
+
+    def test_fluid_prose_embeds_cresmo_style_guide_and_fluid_prose(self) -> None:
+        provider = JsonPromptProvider()
+        prompt = provider.get_prompt(
+            PromptKey.FLUID_PROSE,
+            channel_name="Test Channel",
+            file_name="test.txt",
+            raw_text="Test spoken raw transcript content.",
+        )
+        sys_inst = prompt.system_instruction or ""
+        assert "--- SKILL SPECIFICATION (cresmo-style-guide) ---" in sys_inst
+        assert "--- SKILL SPECIFICATION (cresmo-fluid-prose) ---" in sys_inst
+        assert "The 4 Core Style Pillars" in sys_inst
+        assert "Daniel Dennett" in sys_inst
+        assert "Emil Cioran" in sys_inst
+        assert "Friedrich Nietzsche" in sys_inst
+        assert "Jorge Luis Borges" in sys_inst
+        assert "Nassim Nicholas Taleb" in sys_inst
+        assert "Test spoken raw transcript content." in prompt.get_last_user_content()
+

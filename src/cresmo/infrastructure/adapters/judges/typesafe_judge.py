@@ -209,21 +209,11 @@ class TypeSafeJudgeAdapter(LlmJudgePort):
                 )
             )
 
-        if criteria_scores_list:
-            overall_score = sum(c.score for c in criteria_scores_list) / len(criteria_scores_list)
-        else:
-            overall_score = 1.0
-
-        overall_passed = (
-            all(c.passed for c in criteria_scores_list) if criteria_scores_list else True
-        )
-
-        return JudgeEvaluation(
+        return JudgeEvaluation.create_with_composite_verdict(
             target_stage=context.stage_name,
-            passed=overall_passed,
-            overall_score=overall_score,
-            criteria_scores=tuple(criteria_scores_list),
+            criteria_scores=criteria_scores_list,
             provider="typesafe",
+            pass_threshold=self._pass_threshold,
             latency_ms=latency_ms,
             trace_id=context.trace_id,
         )

@@ -417,3 +417,111 @@ class TestStageEvaluationSpec:
     def test_extract_source_text_fallback_to_str(self) -> None:
         spec = StageEvaluationSpec()
         assert spec.extract_source_text(42) == "42"
+
+
+class TestWeightedAverageAndMechanicalVeto:
+    """Tests for Média Ponderada + Mechanical Veto (Two-Layered Quality Gate)."""
+
+    def test_perfect_scores_pass_without_veto(self) -> None:
+        scores = (
+            CriterionScore(JudgeCriterion.SEMANTIC_FAITHFULNESS, 1.0, True),
+            CriterionScore(JudgeCriterion.NER_PRESERVATION, 1.0, True),
+            CriterionScore(JudgeCriterion.ORALITY_REMOVAL, 1.0, True),
+            CriterionScore(JudgeCriterion.EPISTEMIC_CRITIQUE, 1.0, True),
+            CriterionScore(JudgeCriterion.STRUCTURAL_COMPLIANCE, 1.0, True),
+            CriterionScore(JudgeCriterion.AUTHORIAL_VOICE, 1.0, True),
+        )
+        eval_res = JudgeEvaluation.create_with_composite_verdict(
+            target_stage="fluid_prose",
+            criteria_scores=scores,
+            provider="gemini",
+        )
+        assert eval_res.overall_score == 1.0
+        assert eval_res.passed is True
+        assert eval_res.is_vetoed is False
+        assert len(eval_res.veto_reasons) == 0
+
+    def test_high_average_vetoed_by_semantic_faithfulness(self) -> None:
+        # Faithfulness = 0.70 (< 0.80 veto threshold), all others = 1.0
+        # Weighted avg: 0.25*0.70 + 0.25*1.0 + 0.20*1.0 + 0.10*1.0 + 0.10*1.0 + 0.10*1.0 = 0.925
+        scores = (
+            CriterionScore(JudgeCriterion.SEMANTIC_FAITHFULNESS, 0.70, False),
+            CriterionScore(JudgeCriterion.NER_PRESERVATION, 1.0, True),
+            CriterionScore(JudgeCriterion.ORALITY_REMOVAL, 1.0, True),
+            CriterionScore(JudgeCriterion.EPISTEMIC_CRITIQUE, 1.0, True),
+            CriterionScore(JudgeCriterion.STRUCTURAL_COMPLIANCE, 1.0, True),
+            CriterionScore(JudgeCriterion.AUTHORIAL_VOICE, 1.0, True),
+        )
+        eval_res = JudgeEvaluation.create_with_composite_verdict(
+            target_stage="fluid_prose",
+            criteria_scores=scores,
+            provider="gemini",
+        )
+        # Even with high overall score (0.925), mechanical veto MUST reject the sample
+        assert eval_res.overall_score == pytest.approx(0.925, abs=1e-3)
+        assert eval_res.passed is False
+        assert eval_res.is_vetoed is True
+        assert any("semantic_faithfulness" in r for r in eval_res.veto_reasons)
+        critique = eval_res.extract_critique()
+        assert "[CRITICAL MECHANICAL VETO]" in critique
+
+    def test_high_average_vetoed_by_ner_preservation(self) -> None:
+        # NER = 0.60 (< 0.80 veto threshold), all others = 1.0
+        scores = (
+            CriterionScore(JudgeCriterion.SEMANTIC_FAITHFULNESS, 1.0, True),
+            CriterionScore(JudgeCriterion.NER_PRESERVATION, 0.60, False),
+            CriterionScore(JudgeCriterion.ORALITY_REMOVAL, 1.0, True),
+            CriterionScore(JudgeCriterion.EPISTEMIC_CRITIQUE, 1.0, True),
+            CriterionScore(JudgeCriterion.STRUCTURAL_COMPLIANCE, 1.0, True),
+            CriterionScore(JudgeCriterion.AUTHORIAL_VOICE, 1.0, True),
+        )
+        eval_res = JudgeEvaluation.create_with_composite_verdict(
+            target_stage="fluid_prose",
+            criteria_scores=scores,
+            provider="gemini",
+        )
+        assert eval_res.passed is False
+        assert eval_res.is_vetoed is True
+        assert any("ner_preservation" in r for r in eval_res.veto_reasons)
+
+    def test_minor_criterion_low_does_not_veto_if_weighted_avg_passes(self) -> None:
+        # Voice = 0.50 (weight 0.10), all others = 1.0
+        # Weighted avg: 0.25*1.0 + 0.25*1.0 + 0.20*1.0 + 0.10*1.0 + 0.10*1.0 + 0.10*0.50 = 0.95
+        scores = (
+            CriterionScore(JudgeCriterion.SEMANTIC_FAITHFULNESS, 1.0, True),
+            CriterionScore(JudgeCriterion.NER_PRESERVATION, 1.0, True),
+            CriterionScore(JudgeCriterion.ORALITY_REMOVAL, 1.0, True),
+            CriterionScore(JudgeCriterion.EPISTEMIC_CRITIQUE, 1.0, True),
+            CriterionScore(JudgeCriterion.STRUCTURAL_COMPLIANCE, 1.0, True),
+            CriterionScore(JudgeCriterion.AUTHORIAL_VOICE, 0.50, False),
+        )
+        eval_res = JudgeEvaluation.create_with_composite_verdict(
+            target_stage="fluid_prose",
+            criteria_scores=scores,
+            provider="gemini",
+        )
+        assert eval_res.overall_score == pytest.approx(0.95, abs=1e-3)
+        assert eval_res.is_vetoed is False
+        assert eval_res.passed is True
+
+    def test_weighted_avg_fails_even_without_veto_if_score_below_threshold(self) -> None:
+        # All pass veto threshold (0.80), but multiple criteria are 0.70
+        # Faithfulness = 0.80, NER = 0.80, Orality = 0.70, Epistemic = 0.70, Struct = 0.70, Voice = 0.70
+        # Weighted avg = 0.25*0.8 + 0.25*0.8 + 0.20*0.7 + 0.10*0.7 + 0.10*0.7 + 0.10*0.7 = 0.75 (< 0.80)
+        scores = (
+            CriterionScore(JudgeCriterion.SEMANTIC_FAITHFULNESS, 0.80, True),
+            CriterionScore(JudgeCriterion.NER_PRESERVATION, 0.80, True),
+            CriterionScore(JudgeCriterion.ORALITY_REMOVAL, 0.70, False),
+            CriterionScore(JudgeCriterion.EPISTEMIC_CRITIQUE, 0.70, False),
+            CriterionScore(JudgeCriterion.STRUCTURAL_COMPLIANCE, 0.70, False),
+            CriterionScore(JudgeCriterion.AUTHORIAL_VOICE, 0.70, False),
+        )
+        eval_res = JudgeEvaluation.create_with_composite_verdict(
+            target_stage="fluid_prose",
+            criteria_scores=scores,
+            provider="gemini",
+        )
+        assert eval_res.overall_score == pytest.approx(0.75, abs=1e-3)
+        assert eval_res.is_vetoed is False
+        assert eval_res.passed is False
+

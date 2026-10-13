@@ -115,6 +115,78 @@ class CriterionScore:
             )
 
 
+DEFAULT_FLUID_PROSE_WEIGHTS: dict[JudgeCriterion, float] = {
+    JudgeCriterion.SEMANTIC_FAITHFULNESS: 0.25,
+    JudgeCriterion.NER_PRESERVATION: 0.25,
+    JudgeCriterion.ORALITY_REMOVAL: 0.20,
+    JudgeCriterion.EPISTEMIC_CRITIQUE: 0.10,
+    JudgeCriterion.STRUCTURAL_COMPLIANCE: 0.10,
+    JudgeCriterion.AUTHORIAL_VOICE: 0.10,
+}
+
+DEFAULT_MECHANICAL_VETO_CRITERIA: frozenset[JudgeCriterion] = frozenset({
+    JudgeCriterion.SEMANTIC_FAITHFULNESS,
+    JudgeCriterion.NER_PRESERVATION,
+})
+
+
+def compute_composite_verdict(
+    criteria_scores: tuple[CriterionScore, ...] | list[CriterionScore],
+    pass_threshold: float = 0.80,
+    veto_threshold: float = 0.80,
+    weights: dict[JudgeCriterion, float] | None = None,
+    veto_criteria: frozenset[JudgeCriterion] | None = None,
+) -> tuple[float, bool, bool, tuple[str, ...]]:
+    """Compute weighted composite score and apply two-layered mechanical veto.
+
+    Conforms to:
+        - ADR-039: Fluid Prose Canonical Judge Criteria, Two-Layered Mechanical Gates
+
+    Layer 1 (Mechanical Veto):
+        Non-negotiable veto floor on critical epistemic criteria (Semantic Faithfulness,
+        NER Preservation). If any veto criterion scores below veto_threshold or fails,
+        the entire evaluation is rejected unconditionally.
+
+    Layer 2 (Weighted Aggregation):
+        Evaluates overall weighted mean against pass_threshold.
+
+    Returns:
+        tuple[float, bool, bool, tuple[str, ...]]:
+            (overall_score, passed, is_vetoed, veto_reasons)
+    """
+    scores = tuple(criteria_scores)
+    if not scores:
+        return 0.0, False, False, ()
+
+    active_weights = weights or DEFAULT_FLUID_PROSE_WEIGHTS
+    active_veto = (
+        veto_criteria if veto_criteria is not None else DEFAULT_MECHANICAL_VETO_CRITERIA
+    )
+
+    weighted_sum = 0.0
+    total_weight = 0.0
+    veto_reasons: list[str] = []
+
+    for cs in scores:
+        w = active_weights.get(cs.criterion, 1.0)
+        weighted_sum += cs.score * w
+        total_weight += w
+
+        if cs.criterion in active_veto and (cs.score < veto_threshold or not cs.passed):
+            veto_reasons.append(
+                f"Mechanical Veto on critical criterion '{cs.criterion.value}': "
+                f"score {cs.score:.2f} < threshold {veto_threshold:.2f}"
+            )
+
+    overall_score = round(weighted_sum / total_weight, 4) if total_weight > 0.0 else 0.0
+    overall_score = max(0.0, min(1.0, overall_score))
+
+    is_vetoed = len(veto_reasons) > 0
+    passed = (not is_vetoed) and (overall_score >= pass_threshold)
+
+    return overall_score, passed, is_vetoed, tuple(veto_reasons)
+
+
 @dataclass(frozen=True, slots=True)
 class JudgeEvaluation:
     """Immutable aggregate result of a stage quality evaluation.
@@ -127,6 +199,8 @@ class JudgeEvaluation:
         provider: Provider identifier that generated this evaluation (e.g. 'gemini', 'ollama', 'typesafe').
         latency_ms: Roundtrip inference and evaluation latency in milliseconds.
         trace_id: OpenTelemetry / Langfuse trace correlation identifier.
+        is_vetoed: Boolean indicating whether mechanical veto was triggered.
+        veto_reasons: Immutable collection of specific mechanical veto causes.
     """
 
     target_stage: str
@@ -136,6 +210,8 @@ class JudgeEvaluation:
     provider: str
     latency_ms: float = 0.0
     trace_id: str | None = None
+    is_vetoed: bool = False
+    veto_reasons: tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
         """Validate aggregate invariants."""
@@ -143,6 +219,40 @@ class JudgeEvaluation:
             raise ValueError(
                 f"Overall score must be between 0.0 and 1.0, got: {self.overall_score}"
             )
+
+    @classmethod
+    def create_with_composite_verdict(
+        cls,
+        target_stage: str,
+        criteria_scores: tuple[CriterionScore, ...] | list[CriterionScore],
+        provider: str,
+        pass_threshold: float = 0.80,
+        veto_threshold: float = 0.80,
+        latency_ms: float = 0.0,
+        trace_id: str | None = None,
+        weights: dict[JudgeCriterion, float] | None = None,
+        veto_criteria: frozenset[JudgeCriterion] | None = None,
+    ) -> JudgeEvaluation:
+        """Construct JudgeEvaluation with weighted average and mechanical veto resolution."""
+        scores_tuple = tuple(criteria_scores)
+        overall_score, passed, is_vetoed, veto_reasons = compute_composite_verdict(
+            criteria_scores=scores_tuple,
+            pass_threshold=pass_threshold,
+            veto_threshold=veto_threshold,
+            weights=weights,
+            veto_criteria=veto_criteria,
+        )
+        return cls(
+            target_stage=target_stage,
+            passed=passed,
+            overall_score=overall_score,
+            criteria_scores=scores_tuple,
+            provider=provider,
+            latency_ms=latency_ms,
+            trace_id=trace_id,
+            is_vetoed=is_vetoed,
+            veto_reasons=veto_reasons,
+        )
 
     def get_score(self, criterion: JudgeCriterion) -> CriterionScore | None:
         """Query score for a specific criterion, or None if not evaluated."""
@@ -158,6 +268,8 @@ class JudgeEvaluation:
         for closed-loop self-healing reflection.
         """
         failures: list[str] = []
+        if self.is_vetoed and self.veto_reasons:
+            failures.append("[CRITICAL MECHANICAL VETO]: " + "; ".join(self.veto_reasons))
         for score in self.criteria_scores:
             if not score.passed:
                 part = f"- {score.criterion.value}: {score.reasoning}"

@@ -127,16 +127,11 @@ class OllamaJudgeAdapter(LlmJudgePort):
             except (ValueError, KeyError) as parse_err:
                 logger.debug("Skipping unparseable Ollama criterion item: %s", parse_err)
 
-        overall_score = float(parsed.get("overall_score", 0.0))
-        overall_score = max(0.0, min(1.0, overall_score))
-        overall_passed = bool(parsed.get("passed", overall_score >= self._pass_threshold))
-
-        return JudgeEvaluation(
+        return JudgeEvaluation.create_with_composite_verdict(
             target_stage=context.stage_name,
-            passed=overall_passed,
-            overall_score=overall_score,
-            criteria_scores=tuple(criteria_scores_list),
+            criteria_scores=criteria_scores_list,
             provider="ollama",
+            pass_threshold=self._pass_threshold,
             latency_ms=latency_ms,
             trace_id=context.trace_id,
         )
