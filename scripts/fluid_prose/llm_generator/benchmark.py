@@ -19,6 +19,7 @@ Conforms to:
 from __future__ import annotations
 
 import argparse
+import contextlib
 import json
 import logging
 import os
@@ -738,6 +739,10 @@ def main() -> int:
 
         except Exception as exc:  # noqa: BLE001
             logger.error("Erro ao executar benchmark para o modelo '%s': %s", spec, exc)
+
+    if hasattr(prompt_provider, "_langfuse") and getattr(prompt_provider, "_langfuse", None):
+        with contextlib.suppress(Exception):
+            prompt_provider._langfuse.flush()
 
     print("🏁 Todos os benchmarks solicitados foram concluídos!")
     return 0
