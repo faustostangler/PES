@@ -294,6 +294,20 @@ def build_pipeline(
     )
 
 
+def build_stage_runner(settings: CresmoSettings | None = None) -> PipelineStageRunner:
+    """Build and wire an isolated PipelineStageRunner instance with resolved settings.
+
+    Args:
+        settings: Optional custom or partial application settings.
+
+    Returns:
+        Fully wired PipelineStageRunner with LLM transformation and telemetry adapters.
+    """
+    resolved_settings = resolve_shared_settings(settings)
+    pipeline = build_pipeline(resolved_settings)
+    return pipeline.stage_runner
+
+
 def build_sync_channel_use_case(
     settings: CresmoSettings | None = None,
     batch_size_override: int | None = None,
@@ -329,6 +343,7 @@ __all__ = [
     "build_pipeline",
     "build_preflight_checker",
     "build_prompt_provider",
+    "build_stage_runner",
     "build_sync_channel_use_case",
     "build_telemetry_adapter",
     "build_unify_duplicates_use_case",
@@ -340,3 +355,4 @@ __all__ = [
     "resolve_langfuse_client",
     "resolve_shared_settings",
 ]
+
