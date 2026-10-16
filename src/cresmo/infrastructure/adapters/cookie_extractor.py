@@ -21,11 +21,6 @@ import time
 from pathlib import Path
 from typing import Any
 
-try:
-    import yt_dlp.cookies
-except ImportError:
-    yt_dlp = None  # type: ignore[assignment]
-
 AUTH_COOKIE_NAMES: frozenset[str] = frozenset(
     {
         "SID",
@@ -101,7 +96,9 @@ def has_valid_auth_cookies(cookie_file: Path) -> bool:
 
 def _extract_raw_cookies(browser: str, verbose: bool) -> Any:
     """Safely invoke yt_dlp browser cookie extraction."""
-    if yt_dlp is None:
+    try:
+        import yt_dlp.cookies
+    except ImportError:
         if verbose:
             sys.stderr.write("yt-dlp is not installed; cannot extract cookies.\n")
         return None

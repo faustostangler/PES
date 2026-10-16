@@ -48,7 +48,6 @@ from cresmo.infrastructure.adapters.sqlite_ledger_adapter import SqliteLedgerAda
 from cresmo.infrastructure.config import CresmoSettings
 from cresmo.infrastructure.logging_config import configure_logging
 from cresmo.presentation.factories.adapter_factory import (
-    _resolve_cookie_file,
     build_gemini_synthesis_adapter,
     build_indexing_adapter,
     build_media_ingestion_adapter,
@@ -331,7 +330,6 @@ def build_sync_channel_use_case(
 
 __all__ = [
     "PreflightHealthChecker",
-    "_resolve_cookie_file",
     "build_anonymizer_adapter",
     "build_concat_master_use_case",
     "build_discover_batch_sources_use_case",

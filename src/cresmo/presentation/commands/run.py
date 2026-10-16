@@ -22,6 +22,7 @@ from pathlib import Path
 from typing import Annotated, Any
 
 import typer
+from opentelemetry import trace
 from pydantic import ValidationError
 
 from cresmo.application.pipeline import CresmoPipeline
@@ -266,45 +267,47 @@ def handle_run(args: Any) -> int:
     Returns:
         Process exit code integer.
     """
-    try:
-        settings = CresmoSettings()
-        if args.lookback is not None:
-            settings.days_lookback = args.lookback
+    tracer = trace.get_tracer("cresmo.cli")
+    with tracer.start_as_current_span("cresmo.run"):
+        try:
+            settings = CresmoSettings()
+            if args.lookback is not None:
+                settings.days_lookback = args.lookback
 
-        settings.ensure_directories()
+            settings.ensure_directories()
 
-        # Active Preflight Validation
-        preflight_checker = build_preflight_checker(settings=settings, check_ffmpeg=True)
-        preflight_res = preflight_checker.check_all()
-        preflight_res.assert_healthy()
-        for warning in preflight_res.warnings:
-            sys.stderr.write(f"[preflight warning] {warning}\n")
+            # Active Preflight Validation
+            preflight_checker = build_preflight_checker(settings=settings, check_ffmpeg=True)
+            preflight_res = preflight_checker.check_all()
+            preflight_res.assert_healthy()
+            for warning in preflight_res.warnings:
+                sys.stderr.write(f"[preflight warning] {warning}\n")
 
-        pipeline = build_pipeline(
-            settings=settings,
-            batch_size_override=args.batch_size,
-            web_index=getattr(args, "web_index", False),
-        )
+            pipeline = build_pipeline(
+                settings=settings,
+                batch_size_override=args.batch_size,
+                web_index=getattr(args, "web_index", False),
+            )
 
-        return _execute_run_pipeline(args, settings, pipeline)
-    except RateLimitExceededError as exc:
-        sys.stderr.write(f"Rate limit exceeded: {exc}\n")
-        return EXIT_RATE_LIMIT_EXCEEDED
-    except IngestionNetworkError as exc:
-        sys.stderr.write(f"Ingestion network error: {exc}\n")
-        return EXIT_INGESTION_ERROR
-    except PreflightError as exc:
-        sys.stderr.write(f"Preflight error: {exc}\n")
-        return EXIT_CONFIG_OR_USAGE_ERROR
-    except (DomainValidationError, CresmoDomainError) as exc:
-        sys.stderr.write(f"Domain validation error: {exc}\n")
-        return EXIT_DOMAIN_VALIDATION_ERROR
-    except ValidationError as exc:
-        sys.stderr.write(f"Configuration error: {exc}\n")
-        return EXIT_CONFIG_OR_USAGE_ERROR
-    except Exception as exc:  # noqa: BLE001
-        sys.stderr.write(f"Unexpected internal error: {exc}\n")
-        return EXIT_INTERNAL_ERROR
+            return _execute_run_pipeline(args, settings, pipeline)
+        except RateLimitExceededError as exc:
+            sys.stderr.write(f"Rate limit exceeded: {exc}\n")
+            return EXIT_RATE_LIMIT_EXCEEDED
+        except IngestionNetworkError as exc:
+            sys.stderr.write(f"Ingestion network error: {exc}\n")
+            return EXIT_INGESTION_ERROR
+        except PreflightError as exc:
+            sys.stderr.write(f"Preflight error: {exc}\n")
+            return EXIT_CONFIG_OR_USAGE_ERROR
+        except (DomainValidationError, CresmoDomainError) as exc:
+            sys.stderr.write(f"Domain validation error: {exc}\n")
+            return EXIT_DOMAIN_VALIDATION_ERROR
+        except ValidationError as exc:
+            sys.stderr.write(f"Configuration error: {exc}\n")
+            return EXIT_CONFIG_OR_USAGE_ERROR
+        except Exception as exc:  # noqa: BLE001
+            sys.stderr.write(f"Unexpected internal error: {exc}\n")
+            return EXIT_INTERNAL_ERROR
 
 
 def _execute_run_pipeline(

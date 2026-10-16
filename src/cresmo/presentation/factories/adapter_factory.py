@@ -16,7 +16,6 @@ from cresmo.application.ports import (
     PromptProviderPort,
 )
 from cresmo.application.services.preflight import PreflightHealthChecker
-from cresmo.infrastructure.adapters.cookie_extractor import ensure_cookies_file
 from cresmo.infrastructure.adapters.gemini_adapter import GeminiLLMAdapter
 from cresmo.infrastructure.adapters.header_generator import RandomHeaderGenerator
 from cresmo.infrastructure.adapters.native_media_ingestion_adapter import (
@@ -33,19 +32,21 @@ from cresmo.presentation.factories.settings_factory import resolve_shared_settin
 
 
 def _resolve_cookie_file(settings: CresmoSettings) -> Path | None:
-    """Resolve active cookie file or attempt browser auto-extraction if enabled."""
+    """Resolve active cookie file from settings or default data directory.
+
+    Decoupled per ADR-000 and ADR-002: does not invoke browser extraction at startup.
+    Explicit extraction is governed exclusively by the export-cookies CLI command.
+    """
     cookie_file = getattr(settings, "cookies_file", None)
-    if (cookie_file is None or not cookie_file.exists()) and getattr(
-        settings, "auto_extract_cookies", True
-    ):
-        data_dir = getattr(settings, "data_dir", None) or Path("data")
-        target_cookie_path = data_dir / "cookies.txt"
-        cookie_file = ensure_cookies_file(
-            output_file=target_cookie_path,
-            browser=getattr(settings, "browser_cookies", "firefox"),
-            verbose=False,
-        )
-    return cookie_file
+    if cookie_file is not None and Path(cookie_file).exists():
+        return Path(cookie_file)
+
+    data_dir = getattr(settings, "data_dir", None) or Path("data")
+    target_cookie_path = data_dir / "cookies.txt"
+    if target_cookie_path.exists():
+        return target_cookie_path
+
+    return None
 
 
 def build_media_ingestion_adapter(
