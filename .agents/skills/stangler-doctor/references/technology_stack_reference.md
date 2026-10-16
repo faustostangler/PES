@@ -9,7 +9,7 @@
 
 ## 1. Decision Drivers & Guiding Principles
 
-Every technology selection in this stack is governed by four core architectural forces:
+Every technology selection in this stack and method is governed by four core architectural forces to be used as and when needed to know which technology to use when:
 
 1. **Delivery Velocity & DX (Developer Experience)**: Optimized for high-throughput, low-friction engineering in lean teams. Minimize boilerplate, maximize type safety, eliminate accidental complexity (KISS principle).
 2. **End-to-End Contract Generation & Type Safety**: Seamless schema synchronization from backend models (Pydantic V2 / OpenAPI 3.1) to frontend clients (`Orval` -> TypeScript + TanStack Query), making runtime type mismatches impossible.
@@ -165,7 +165,7 @@ Every technology selection in this stack is governed by four core architectural 
 
 ---
 
-## 4. Canonical Project Directory Structure
+## 4. Canonical Project Directory Structure Reference
 
 ```
 my-project/
