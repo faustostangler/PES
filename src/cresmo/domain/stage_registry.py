@@ -6,7 +6,10 @@ from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import Any, ClassVar
 
-from cresmo.domain.entities import post_process_fluid_transcript
+from cresmo.domain.entities import (
+    post_process_enriched_compendium,
+    post_process_fluid_transcript,
+)
 from cresmo.domain.value_objects import JudgeCriterion, PromptKey
 
 
@@ -21,6 +24,8 @@ class StageDefinition:
     source_extractor: Callable[..., str] | None = None
     candidate_extractor: Callable[..., str] | None = None
     eval_metadata: dict[str, Any] = field(default_factory=dict)
+    max_passes: int = 1
+    early_stopping_enabled: bool = False
 
 
 class StageRegistry:
@@ -42,21 +47,32 @@ class StageRegistry:
             ),
             post_processor=post_process_fluid_transcript,
         ),
-        # --- Quarantined Stage Specifications (Pending Full ADR-031 Implementation) ---
-        # "raw_indexing": StageDefinition(
-        #     transform_prompt_key=PromptKey.RAW_INDEX_SUMMARY,
-        #     required_criteria=(
-        #         JudgeCriterion.INDEX_SYNTHESIS_QUALITY,
-        #         JudgeCriterion.SEMANTIC_FAITHFULNESS,
-        #     ),
-        # ),
-        # "gap_filler": StageDefinition(
-        #     transform_prompt_key=PromptKey.GAP_FILLER_PASS1,
-        #     required_criteria=(
-        #         JudgeCriterion.SEMANTIC_FAITHFULNESS,
-        #         JudgeCriterion.STRUCTURAL_COMPLIANCE,
-        #     ),
-        # ),
+        "gap_filler": StageDefinition(
+            transform_prompt_key=PromptKey.GAP_FILLER_PASS1,
+            required_criteria=(
+                JudgeCriterion.FACTUAL_GROUNDING,
+                JudgeCriterion.SOCRATIC_EPISTEMIC_DEPTH,
+                JudgeCriterion.CAUSAL_STRATIFICATION_AGENCY,
+                JudgeCriterion.COMPLEMENTARY_SUBSTANCE,
+                JudgeCriterion.AUTHORIAL_NATURALISM,
+            ),
+            post_processor=post_process_enriched_compendium,
+            eval_metadata={
+                "weights": {
+                    JudgeCriterion.FACTUAL_GROUNDING.value: 0.25,
+                    JudgeCriterion.SOCRATIC_EPISTEMIC_DEPTH.value: 0.25,
+                    JudgeCriterion.CAUSAL_STRATIFICATION_AGENCY.value: 0.20,
+                    JudgeCriterion.COMPLEMENTARY_SUBSTANCE.value: 0.15,
+                    JudgeCriterion.AUTHORIAL_NATURALISM.value: 0.15,
+                },
+                "veto_criteria": [
+                    JudgeCriterion.FACTUAL_GROUNDING.value,
+                    JudgeCriterion.COMPLEMENTARY_SUBSTANCE.value,
+                ],
+            },
+            max_passes=3,
+            early_stopping_enabled=True,
+        ),
         # "long_expander": StageDefinition(
         #     transform_prompt_key=PromptKey.LONG_EXPANDER,
         #     required_criteria=(

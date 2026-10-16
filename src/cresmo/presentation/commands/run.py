@@ -14,13 +14,14 @@ Conforms to:
 
 from __future__ import annotations
 
-import argparse
 import gc
 import logging
 import sys
 from collections.abc import Iterable, Iterator, Sized
 from pathlib import Path
+from typing import Annotated, Any
 
+import typer
 from pydantic import ValidationError
 
 from cresmo.application.pipeline import CresmoPipeline
@@ -45,7 +46,6 @@ from cresmo.domain.value_objects import (
 )
 from cresmo.infrastructure.config import CresmoSettings
 from cresmo.infrastructure.system import get_process_rss_bytes
-from cresmo.presentation.commands.run_parser import register_run_subparser
 from cresmo.presentation.composition import (
     build_concat_master_use_case,
     build_discover_batch_sources_use_case,
@@ -64,12 +64,200 @@ from cresmo.presentation.exit_codes import (
 logger = logging.getLogger(__name__)
 
 
-def register_subparser(subparsers: argparse._SubParsersAction) -> None:
-    """Register 'run' subcommand parser with argument options."""
-    register_run_subparser(subparsers, handler=handle_run)
+def run(
+    url: Annotated[
+        str | None,
+        typer.Option("--url", help="Target YouTube or media video URL"),
+    ] = None,
+    all_videos: Annotated[
+        bool,
+        typer.Option(
+            "--all",
+            help="Run full pipeline for all videos in the manifest playlists",
+        ),
+    ] = True,
+    manifest: Annotated[
+        Path | None,
+        typer.Option(
+            "--manifest",
+            "--playlist",
+            resolve_path=True,
+            exists=True,
+            help="Path to manifest or playlist text file (default: data/playlist.txt)",
+        ),
+    ] = None,
+    passes: Annotated[
+        int,
+        typer.Option(
+            "--passes",
+            min=1,
+            max=10,
+            help="Refinement passes for gap filler (default: 3)",
+        ),
+    ] = 3,
+    batch_size: Annotated[
+        int | None,
+        typer.Option(
+            "--batch-size",
+            min=1,
+            help="Batch size override for atomic note synthesis",
+        ),
+    ] = None,
+    dry_run: Annotated[
+        bool,
+        typer.Option(
+            "--dry-run",
+            help="Ingest raw transcript without executing generative LLM synthesis",
+        ),
+    ] = False,
+    force_reprocess: Annotated[
+        bool,
+        typer.Option(
+            "--force-reprocess",
+            help="Bypass ledger idempotency guard and re-synthesize even if already completed",
+        ),
+    ] = False,
+    lookback: Annotated[
+        int | None,
+        typer.Option(
+            "--lookback",
+            min=0,
+            help="Days lookback window for channel uploads discovery (default: 365 days / 1 year)",
+        ),
+    ] = None,
+    channel_max_videos: Annotated[
+        int,
+        typer.Option(
+            "--channel-max-videos",
+            min=1,
+            help="Maximum candidate videos to inspect per channel feed (default: 50)",
+        ),
+    ] = 50,
+    no_scan_raw: Annotated[
+        bool,
+        typer.Option(
+            "--no-scan-raw",
+            help="Skip scanning existing local markdown transcripts in data/raw/",
+        ),
+    ] = False,
+    no_crawl: Annotated[
+        bool,
+        typer.Option(
+            "--no-crawl",
+            help="Disable crawling channel feeds and strictly process manifest seed items",
+        ),
+    ] = False,
+    web_index: Annotated[
+        bool,
+        typer.Option(
+            "--web-index",
+            help="Use Gemini API for raw transcript conceptual indexing instead of local Ollama",
+        ),
+    ] = False,
+    channels: Annotated[
+        list[str] | None,
+        typer.Option(
+            "--channel",
+            help="Filter batch discovery to one or more channel names, handles, or URLs.",
+        ),
+    ] = None,
+    categories: Annotated[
+        list[str] | None,
+        typer.Option(
+            "--category",
+            "-c",
+            help="Filter batch discovery by domain category or volatility type.",
+        ),
+    ] = None,
+    video_ids: Annotated[
+        list[str] | None,
+        typer.Option(
+            "--video",
+            help="Restrict batch discovery to specific video IDs or YouTube watch URLs.",
+        ),
+    ] = None,
+    device: Annotated[
+        str | None,
+        typer.Option(
+            "--device",
+            help="Inference device accelerator (auto, cuda, cpu, mps)",
+        ),
+    ] = None,
+    concurrency: Annotated[
+        int | None,
+        typer.Option(
+            "--concurrency",
+            min=1,
+            help="Concurrency limit for synthesis workers",
+        ),
+    ] = None,
+    verbose: Annotated[
+        bool,
+        typer.Option("--verbose", "-v", help="Enable verbose logging output"),
+    ] = False,
+) -> None:
+    """Run end-to-end knowledge synthesis for a video or manifest playlist."""
+    _ = (all_videos, device, concurrency, verbose)
+
+    class _Args:
+        url: str | None
+        manifest: Path | None
+        passes: int
+        batch_size: int | None
+        dry_run: bool
+        force_reprocess: bool
+        lookback: int | None
+        channel_max_videos: int
+        no_scan_raw: bool
+        no_crawl: bool
+        web_index: bool
+        channels: list[str] | None
+        categories: list[str] | None
+        video_ids: list[str] | None
+
+    args = _Args()
+    args.url = url
+    args.manifest = manifest
+    args.passes = passes
+    args.batch_size = batch_size
+    args.dry_run = dry_run
+    args.force_reprocess = force_reprocess
+    args.lookback = lookback
+    args.channel_max_videos = channel_max_videos
+    args.no_scan_raw = no_scan_raw
+    args.no_crawl = no_crawl
+    args.web_index = web_index
+    args.channels = channels
+    args.categories = categories
+    args.video_ids = video_ids
+
+    try:
+        code = handle_run(args)
+        if code != EXIT_SUCCESS:
+            raise typer.Exit(code=code)
+    except typer.Exit:
+        raise
+    except RateLimitExceededError as exc:
+        sys.stderr.write(f"Rate limit exceeded: {exc}\n")
+        raise typer.Exit(code=EXIT_RATE_LIMIT_EXCEEDED) from exc
+    except IngestionNetworkError as exc:
+        sys.stderr.write(f"Ingestion network error: {exc}\n")
+        raise typer.Exit(code=EXIT_INGESTION_ERROR) from exc
+    except PreflightError as exc:
+        sys.stderr.write(f"Preflight error: {exc}\n")
+        raise typer.Exit(code=EXIT_CONFIG_OR_USAGE_ERROR) from exc
+    except (DomainValidationError, CresmoDomainError) as exc:
+        sys.stderr.write(f"Domain validation error: {exc}\n")
+        raise typer.Exit(code=EXIT_DOMAIN_VALIDATION_ERROR) from exc
+    except ValidationError as exc:
+        sys.stderr.write(f"Configuration error: {exc}\n")
+        raise typer.Exit(code=EXIT_CONFIG_OR_USAGE_ERROR) from exc
+    except Exception as exc:
+        sys.stderr.write(f"Unexpected internal error: {exc}\n")
+        raise typer.Exit(code=EXIT_INTERNAL_ERROR) from exc
 
 
-def handle_run(args: argparse.Namespace) -> int:
+def handle_run(args: Any) -> int:
     """Orchestrate knowledge synthesis pipeline for single video or batch manifest.
 
     Args:
@@ -120,7 +308,7 @@ def handle_run(args: argparse.Namespace) -> int:
 
 
 def _execute_run_pipeline(
-    args: argparse.Namespace,
+    args: Any,
     settings: CresmoSettings,
     pipeline: CresmoPipeline,
 ) -> int:
@@ -158,7 +346,7 @@ def _execute_run_pipeline(
     return execute_batch_run(pipeline, sources, args)
 
 
-def execute_single_video_run(pipeline: CresmoPipeline, args: argparse.Namespace) -> int:
+def execute_single_video_run(pipeline: CresmoPipeline, args: Any) -> int:
     """Execute knowledge synthesis or dry run for a single target video.
 
     Args:
@@ -219,7 +407,7 @@ def execute_single_video_run(pipeline: CresmoPipeline, args: argparse.Namespace)
 def execute_batch_run(
     pipeline: CresmoPipeline,
     sources: Iterable[BatchSource],
-    args: argparse.Namespace,
+    args: Any,
 ) -> int:
     """Execute end-to-end multi-pass synthesis over prioritized batch sources.
 
@@ -346,7 +534,7 @@ def load_batch_sources(
 
 
 def _build_batch_discovery_query(
-    args: argparse.Namespace,
+    args: Any,
     settings: CresmoSettings,
 ) -> BatchDiscoveryQuery:
     """Build strongly-typed discovery query from parsed CLI arguments and settings."""
@@ -377,7 +565,7 @@ def _build_batch_discovery_query(
 def _process_single_batch_item(
     pipeline: CresmoPipeline,
     source: BatchSource,
-    args: argparse.Namespace,
+    args: Any,
     item_prefix: str,
     batch_id: BatchId | None = None,
 ) -> str:

@@ -1,8 +1,12 @@
 # ADR-002: Cresmo Production CLI Entrypoint and Presentation Layer Orchestration
 
-**Status:** ACCEPTED  
+**Status:** DEPRECATED (SUPERSEDED by [ADR-042](ADR-042-typer-presentation-cli.md))  
 **Date:** 2026-09-10  
 **Decision Makers:** Lead Architect (Fausto Stangler), Stereoscopist (Doctor Stangler Committee)  
+
+> [!WARNING]
+> **DEPRECATION NOTICE (ADR-042):**  
+> Standard library `argparse` has been completely deprecated and purged from the Cresmo codebase in favor of **Typer** (backed by Click and Rich) per [ADR-042](ADR-042-typer-presentation-cli.md) and [SPEC-042](../specs/SPEC-042-typer-cli-presentation.md). The Humble Object pattern and composition root principles established in this ADR remain in effect, but all driving CLI parsing is now handled by `TyperCliDrivingAdapter`.
 
 ---
 
@@ -22,15 +26,13 @@ Ubiquitous Language definitions are documented in [`CONTEXT.md`](../../CONTEXT.m
 
 ## 2. Decision
 
-We will implement the Presentation Layer in `src/cresmo/presentation/` adhering to the **Humble Object Pattern**, driven by standard library `argparse` and supported by an atomic `JsonLedgerAdapter` in `src/cresmo/infrastructure/adapters/`:
+We will implement the Presentation Layer in `src/cresmo/presentation/` adhering to the **Humble Object Pattern** (originally driven by `argparse`, now superseded by `Typer` per ADR-042) and supported by an atomic `JsonLedgerAdapter` in `src/cresmo/infrastructure/adapters/`:
 
 1. **Humble Object CLI Controller (`src/cresmo/presentation/cli.py`)**:
    - Strips all business logic and orchestration from the presentation layer.
-   - Implements subcommands:
-     - `cresmo run --url <video_url>`: Executes the end-to-end synthesis pipeline for a single target video.
-     - `cresmo check-config`: Validates environment settings (`.env`), API keys, and vault paths fail-fast without executing transformations.
+   - Implements subcommands (`run`, `check-config`, `sync`, `worker`, `dedupe`, `export-cookies`, `concat-master`, `seed-prompts`).
    - Accepts operational overrides via CLI flags (`--batch-size`, `--passes`, `--dry-run`).
-   - Uses Python's built-in `argparse` to eliminate extra external framework dependencies.
+   - *(Deprecated in favor of Typer per ADR-042)*: Formerly used `argparse`; now uses Typer for type-annotated, declarative parameter validation and fail-fast bounds.
 
 2. **Centralized Composition Root (`src/cresmo/presentation/composition.py`)**:
    - Acts as the pure Dependency Injection assembly root.
@@ -70,12 +72,12 @@ We will implement the Presentation Layer in `src/cresmo/presentation/` adhering 
 ### Positive
 - **Architectural Cohesion**: Hexagonal separation remains intact; the CLI is a humble translator with zero domain logic.
 - **Fail-Fast Ergonomics**: Operators can run `cresmo check-config` to verify setup before initiating expensive LLM jobs.
-- **Zero New Dependencies**: `argparse` is standard library; avoids adding `click` or `typer` to `pyproject.toml`.
+- **Zero New Dependencies (Historical)**: In initial design, avoided adding external dependencies; superseded by ADR-042 which provisions Typer.
 - **Atomic Idempotency**: `JsonLedgerAdapter` guarantees no duplicate processing and cannot corrupt the ledger file on failure.
 - **Deterministic Observability**: Exit codes enable unambiguous automation in cron scripts and container orchestration.
 
 ### Negative
-- `argparse` requires slightly more boilerplate code than decorator-based libraries like `typer`.
+- `argparse` required significantly more boilerplate code and lacked static type safety (`argparse.Namespace` primitive obsession), motivating its replacement in ADR-042.
 - Terminal color formatting is restricted to ANSI escapes or standard stdout to avoid heavy UI dependencies.
 
 ### Neutral
@@ -85,10 +87,9 @@ We will implement the Presentation Layer in `src/cresmo/presentation/` adhering 
 
 ## 4. Alternatives Considered
 
-### Alternative A: Using `click` or `typer`
-- **Pros**: Automatic help generation, type hints for arguments, shell auto-completion.
-- **Cons**: Requires adding new dependencies (`click` or `typer`) to `pyproject.toml`, increasing lockfile surface.
-- **Why rejected**: Standard library `argparse` fulfills 100% of our Humble Object requirements without bloating the project dependencies.
+### Alternative A: Using `click` or `typer` (REVISITED & ACCEPTED in ADR-042)
+- **Status in ADR-002**: Rejected in September 2026 to prioritize zero external dependencies.
+- **Status in ADR-042**: **Revisited and Adopted**. As Cresmo scaled to 8 distinct operational subcommands, the architectural benefits of type-annotated signatures, declarative range bounds, Rich-based visual hierarchy, and elimination of `argparse.Namespace` outweighed external dependency concerns. `argparse` is now officially deprecated.
 
 ### Alternative B: Root-level procedural script (`run_cresmo.py`)
 - **Pros**: Quick to write in 20 lines.
@@ -218,7 +219,7 @@ To preserve architectural purity and prevent gradual erosion of the Hexagonal an
 *   **Prescribed Pattern (Fail-Fast Single Source of Truth)**: Instantiate `settings = CresmoSettings()` once at the entrypoint controller (`handle_run`), mutate/override operational parameters explicitly, and inject the identical instance down into `build_pipeline(settings=settings)` and all downstream use cases.
 
 ### 9.2 Anti-Pattern: Dependency Inversion Violation (A Aplicação Conhecer a Apresentação)
-*   **Definition**: Allowing Application or Domain services (e.g., `pipeline.py`, use cases, entities) to import, reference, or call presentation abstractions (e.g., `argparse.Namespace`, `cli.py`, `sys.stdout`, exit codes).
+*   **Definition**: Allowing Application or Domain services (e.g., `pipeline.py`, use cases, entities) to import, reference, or call presentation abstractions (e.g., presentation objects, `cli.py`, `sys.stdout`, exit codes).
 *   **Violation**: Breaks the core Dependency Rule of Clean Architecture. Renders business logic untestable without mock terminal environments and prevents reusing the engine in APIs, queues, or webhooks.
 *   **Prescribed Pattern**: Presentation layer imports and depends on Application/Domain. Application/Domain never imports Presentation. All CLI-specific behaviors (exit code translation, console formatting) reside strictly in `cresmo/presentation/`.
 

@@ -6,8 +6,8 @@ process exit codes per SPEC-002 §4.1 & §4.2.
 
 from __future__ import annotations
 
-import argparse
 from pathlib import Path
+from types import SimpleNamespace as Namespace
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -30,51 +30,25 @@ from cresmo.domain.value_objects import (
 )
 from cresmo.infrastructure.config import CresmoSettings
 from cresmo.presentation.cli import (
-    COMMAND_MODULES,
+    app,
+    main,
+)
+from cresmo.presentation.exit_codes import (
     EXIT_CONFIG_OR_USAGE_ERROR,
     EXIT_DOMAIN_VALIDATION_ERROR,
     EXIT_INGESTION_ERROR,
     EXIT_INTERNAL_ERROR,
     EXIT_RATE_LIMIT_EXCEEDED,
     EXIT_SUCCESS,
-    _create_parser,
-    main,
 )
 
 
 class TestCresmoCLI:
     """Hermetic unit tests for CLI entrypoint and exit codes."""
 
-    def test_all_command_modules_comply_with_command_module_protocol(self) -> None:
-        """Verify that every module in COMMAND_MODULES satisfies CommandModule protocol."""
-        for mod in COMMAND_MODULES:
-            mod_name = getattr(mod, "__name__", str(mod))
-            assert hasattr(mod, "register_subparser"), (
-                f"Module {mod_name} in COMMAND_MODULES does not have 'register_subparser'"
-            )
-            assert callable(mod.register_subparser), (
-                f"'register_subparser' in {mod_name} is not callable"
-            )
-
-    def test_dynamic_subcommand_registration_parity(self) -> None:
-        """Verify that _create_parser dynamically registers subcommands without hardcoding."""
-        parser = _create_parser()
-        assert parser.prog == "cresmo"
-        assert parser.description == "Cresmo Knowledge Synthesis CLI (Hexagonal Modular Monolith)"
-        subparsers_action = next(
-            (
-                action
-                for action in parser._actions
-                if isinstance(action, argparse._SubParsersAction)
-            ),
-            None,
-        )
-        assert subparsers_action is not None, "Root parser must contain a SubParsersAction"
-        assert subparsers_action.dest == "subcommand"
-        assert subparsers_action.help == "Available subcommands"
-        registered_commands = set(subparsers_action.choices.keys())
-
-        # Ensure core expected subcommands are all registered dynamically
+    def test_typer_app_registered_commands(self) -> None:
+        """Verify that all 8 subcommands are registered in Typer app."""
+        registered_commands = {cmd.name for cmd in app.registered_commands if cmd.name}
         expected_commands = {
             "run",
             "check-config",
@@ -86,14 +60,29 @@ class TestCresmoCLI:
             "seed-prompts",
         }
         assert registered_commands == expected_commands
-        assert len(registered_commands) == len(COMMAND_MODULES)
 
-    def test_cli_no_args_defaults_to_run_batch(self) -> None:
-        with (
-            patch("cresmo.presentation.commands.run.build_pipeline"),
-            patch("cresmo.presentation.commands.run.load_batch_sources", return_value=[]),
-        ):
-            assert main([]) == EXIT_SUCCESS
+    def test_cli_public_all_interface(self) -> None:
+        """Verify that cli.__all__ strictly exposes only published entrypoint primitives."""
+        import cresmo.presentation.cli as cli_mod
+
+        assert cli_mod.__all__ == ["app", "main"]
+
+    def test_exit_codes_public_all_interface(self) -> None:
+        """Verify that exit_codes.__all__ defines the complete canonical taxonomy."""
+        import cresmo.presentation.exit_codes as exit_codes_mod
+
+        assert exit_codes_mod.__all__ == [
+            "EXIT_CONFIG_OR_USAGE_ERROR",
+            "EXIT_DOMAIN_VALIDATION_ERROR",
+            "EXIT_INGESTION_ERROR",
+            "EXIT_INTERNAL_ERROR",
+            "EXIT_RATE_LIMIT_EXCEEDED",
+            "EXIT_SUCCESS",
+        ]
+
+    def test_cli_no_args_displays_help_and_exits(self) -> None:
+        """Verify running with no arguments returns usage error and renders help."""
+        assert main([]) == EXIT_CONFIG_OR_USAGE_ERROR
 
     def test_cli_none_argv_defaults_to_sys_argv(self) -> None:
         with (
@@ -103,31 +92,14 @@ class TestCresmoCLI:
         ):
             assert main(None) == EXIT_SUCCESS
 
-    def test_cli_implicit_run_routing_with_flags(self) -> None:
-        mock_pipeline = MagicMock()
-        mock_pipeline.run_for_video.return_value = PipelineResult(
-            content_id=ContentId("dQw4w9WgXcQ"),
-            success=True,
-            synthesized_notes=(),
-            reconciled_mocs=(),
-        )
-        with patch("cresmo.presentation.commands.run.build_pipeline", return_value=mock_pipeline):
-            exit_code = main(["--url", "https://youtube.com/watch?v=dQw4w9WgXcQ"])
-            assert exit_code == EXIT_SUCCESS
+    def test_cli_disallows_implicit_run_routing_with_flags(self) -> None:
+        """Verify passing flags without subcommand returns usage error per ADR-042."""
+        exit_code = main(["--url", "https://youtube.com/watch?v=dQw4w9WgXcQ"])
+        assert exit_code == EXIT_CONFIG_OR_USAGE_ERROR
 
     def test_cli_help_flag_handling(self) -> None:
         assert main(["-h"]) == EXIT_SUCCESS
         assert main(["--help"]) == EXIT_SUCCESS
-
-    def test_cli_subparsers_action_missing_fallback(self) -> None:
-        with (
-            patch("cresmo.presentation.cli._create_parser") as mock_cp,
-            patch("cresmo.presentation.commands.run.build_pipeline"),
-            patch("cresmo.presentation.commands.run.load_batch_sources", return_value=[]),
-        ):
-            p = argparse.ArgumentParser()
-            mock_cp.return_value = p
-            assert main(["run"]) == EXIT_CONFIG_OR_USAGE_ERROR
 
     def test_cli_invalid_subcommand_returns_code_2(self) -> None:
         assert main(["invalid-command"]) == EXIT_CONFIG_OR_USAGE_ERROR
@@ -320,11 +292,11 @@ class TestCresmoCLI:
             )
             mock_pipeline.run_for_video.assert_not_called()
 
-    def test_cli_run_all_missing_manifest_returns_code_0(self, tmp_path: Path) -> None:
+    def test_cli_run_all_missing_manifest_returns_usage_error(self, tmp_path: Path) -> None:
         missing_file = tmp_path / "non_existent.txt"
         with patch("cresmo.presentation.commands.run.build_pipeline"):
             exit_code = main(["run", "--all", "--manifest", str(missing_file)])
-        assert exit_code == EXIT_SUCCESS
+        assert exit_code == EXIT_CONFIG_OR_USAGE_ERROR
 
     def test_cli_maps_domain_validation_error_to_code_3(self) -> None:
         mock_pipeline = MagicMock()
@@ -650,21 +622,6 @@ class TestCresmoCLI:
             DuplicateCluster,
         )
         from cresmo.domain.value_objects import NoteTitle
-        from cresmo.presentation.commands.dedupe import (
-            handle_dedupe,
-            register_subparser,
-        )
-
-        # 0. Register subparser
-        mock_subparsers = MagicMock()
-        mock_dedupe_parser = MagicMock()
-        mock_subparsers.add_parser.return_value = mock_dedupe_parser
-        register_subparser(mock_subparsers)
-        mock_subparsers.add_parser.assert_called_once_with(
-            "dedupe",
-            help="Execute graph entity resolution, non-destructive merging, and link rewriting",
-        )
-        mock_dedupe_parser.set_defaults.assert_called_once_with(handler=handle_dedupe)
 
         mock_use_case = MagicMock()
         mock_use_case.execute.return_value = DeduplicationReport(
@@ -738,16 +695,10 @@ class TestCresmoCLI:
         assert settings.channel_discovery_workers == 30
 
     def test_cli_worker_flags_removed(self) -> None:
-        """Verify that --subtitle-workers, --whisper-workers, and --discovery-workers are removed."""
-        from cresmo.presentation.cli import _create_parser
-
-        parser = _create_parser()
-        with pytest.raises(SystemExit):
-            parser.parse_args(["run", "--subtitle-workers", "5"])
-        with pytest.raises(SystemExit):
-            parser.parse_args(["run", "--whisper-workers", "2"])
-        with pytest.raises(SystemExit):
-            parser.parse_args(["run", "--discovery-workers", "10"])
+        """Verify that --subtitle-workers, --whisper-workers, and --discovery-workers are rejected."""
+        assert main(["run", "--subtitle-workers", "5"]) == EXIT_CONFIG_OR_USAGE_ERROR
+        assert main(["run", "--whisper-workers", "2"]) == EXIT_CONFIG_OR_USAGE_ERROR
+        assert main(["run", "--discovery-workers", "10"]) == EXIT_CONFIG_OR_USAGE_ERROR
 
     def test_load_batch_sources_includes_raw_directory(self, tmp_path: Path) -> None:
         """Verify local raw transcript lake files are loaded into Tier 2."""
@@ -992,7 +943,6 @@ class TestCresmoCLI:
         assert call_query.channel_url == "https://www.youtube.com/channel/UCLocal123"
 
     def test_execute_single_video_dry_run_ingestion_none_returns_error(self) -> None:
-        from argparse import Namespace
 
         from cresmo.presentation.commands.run import execute_single_video_run
 
@@ -1004,7 +954,6 @@ class TestCresmoCLI:
         assert code == EXIT_INGESTION_ERROR
 
     def test_execute_single_video_run_already_processed_skipped(self) -> None:
-        from argparse import Namespace
 
         from cresmo.presentation.commands.run import execute_single_video_run
 
@@ -1024,7 +973,6 @@ class TestCresmoCLI:
         assert code == EXIT_SUCCESS
 
     def test_execute_single_video_run_pipeline_error_returns_internal_error(self) -> None:
-        from argparse import Namespace
 
         from cresmo.presentation.commands.run import execute_single_video_run
 
@@ -1064,7 +1012,6 @@ class TestCresmoCLI:
         assert code == EXIT_SUCCESS
 
     def test_execute_batch_run_with_file_and_exceptions(self, tmp_path: Path) -> None:
-        from argparse import Namespace
 
         from cresmo.application.use_cases.discover_batch_sources import BatchSource
         from cresmo.domain.value_objects import SourceModality
@@ -1126,7 +1073,6 @@ class TestCresmoCLI:
         self, tmp_path: Path, capsys: pytest.CaptureFixture[str]
     ) -> None:
         """Verify ADR-035: batch run generates a single BatchId shared by all items in the run."""
-        from argparse import Namespace
 
         from cresmo.application.use_cases.discover_batch_sources import BatchSource
         from cresmo.domain.value_objects import BatchId, SourceModality
@@ -1166,7 +1112,6 @@ class TestCresmoCLI:
         assert f"[Batch: {call1_batch.value}]" in captured.out
 
     def test_handle_run_preflight_and_validation_errors(self) -> None:
-        from argparse import Namespace
 
         from cresmo.presentation.commands.run import handle_run
 
@@ -1207,7 +1152,6 @@ class TestCresmoCLI:
             assert handle_run(args) == EXIT_CONFIG_OR_USAGE_ERROR
 
     def test_handle_run_lookback_override(self) -> None:
-        from argparse import Namespace
 
         from cresmo.application.services.preflight import PreflightResult
         from cresmo.presentation.commands.run import handle_run
@@ -1241,7 +1185,6 @@ class TestCresmoCLI:
             assert mock_settings.days_lookback == 14
 
     def test_handle_run_crawl_defaults_and_no_crawl_flag(self) -> None:
-        from argparse import Namespace
 
         from cresmo.application.services.preflight import PreflightResult
         from cresmo.presentation.commands.run import handle_run
@@ -1300,25 +1243,11 @@ class TestCresmoCLI:
     def test_check_config_telemetry_masked_and_exceptions(
         self, capsys: pytest.CaptureFixture[str]
     ) -> None:
-        from argparse import Namespace
+        from types import SimpleNamespace as Namespace
 
         from pydantic import SecretStr
 
-        from cresmo.presentation.commands.check_config import (
-            handle_check_config,
-            register_subparser,
-        )
-
-        # 0. Subparser registration
-        mock_subparsers = MagicMock()
-        mock_check_parser = MagicMock()
-        mock_subparsers.add_parser.return_value = mock_check_parser
-        register_subparser(mock_subparsers)
-        mock_subparsers.add_parser.assert_called_once_with(
-            "check-config",
-            help="Validate environment settings and vault access without calling LLMs",
-        )
-        mock_check_parser.set_defaults.assert_called_once_with(handler=handle_check_config)
+        from cresmo.presentation.commands.check_config import handle_check_config
 
         # 1. Langfuse public key and secret key configured
         with (
@@ -1444,14 +1373,10 @@ class TestCresmoCLI:
         code = main(["--help"])
         assert code == EXIT_SUCCESS
         out, _ = capsys.readouterr()
-        assert "Available subcommands" in out
-        assert "cresmo" in out
+        assert "cresmo" in out.lower()
 
         code_short = main(["-h"])
         assert code_short == EXIT_SUCCESS
-        out_short, _ = capsys.readouterr()
-        assert "Available subcommands" in out_short
-        assert "cresmo" in out_short
 
         code_run_help = main(["run", "--help"])
         assert code_run_help == EXIT_SUCCESS
@@ -1469,27 +1394,10 @@ class TestCresmoCLI:
             assert code == EXIT_SUCCESS
             assert mock_check.called
 
-    def test_cli_empty_argv_defaults_to_run_even_if_sys_argv_has_other_command(self) -> None:
-        """Verify that passing explicit empty list argv=[] defaults to run, not sys.argv."""
-        with (
-            patch("sys.argv", ["cresmo", "check-config"]),
-            patch("cresmo.presentation.commands.run.build_pipeline") as mock_run,
-            patch("cresmo.presentation.commands.run.load_batch_sources", return_value=[]),
-        ):
-            code = main([])
-            assert code == EXIT_SUCCESS
-            assert mock_run.called
-
-    def test_cli_parser_missing_handler_returns_usage_error(self) -> None:
-        """Verify that args without handler attribute returns EXIT_CONFIG_OR_USAGE_ERROR."""
-        from argparse import Namespace
-
-        with patch("cresmo.presentation.cli._create_parser") as mock_create:
-            mock_parser = MagicMock()
-            mock_parser.parse_args.return_value = Namespace()  # no handler attribute
-            mock_create.return_value = mock_parser
-
-            assert main(["run"]) == EXIT_CONFIG_OR_USAGE_ERROR
+    def test_cli_empty_argv_returns_usage_error(self) -> None:
+        """Verify that passing explicit empty list argv=[] returns usage error (code 2)."""
+        code = main([])
+        assert code == EXIT_CONFIG_OR_USAGE_ERROR
 
     def test_cli_dedupe_exception_returns_internal_error(self) -> None:
         """Verify that unhandled exception in dedupe returns EXIT_INTERNAL_ERROR (1)."""
@@ -1588,7 +1496,7 @@ class TestCresmoCLI:
         ):
             # Test that it executes sleep then breaks gracefully via KeyboardInterrupt
             code = main(
-                ["worker", "--channel", "https://youtube.com/@test", "--poll-interval", "5"]
+                ["worker", "--channel", "https://youtube.com/@test", "--poll-interval", "10"]
             )
             assert code == EXIT_SUCCESS
 
@@ -1651,3 +1559,148 @@ class TestCresmoCLI:
         ):
             code = main(["concat-master"])
             assert code == EXIT_INTERNAL_ERROR
+
+    # SPEC-042 Test Suites (Refractometry - Phase 2)
+    def test_root_cli_help_displays_all_subcommands(self) -> None:
+        """Verify root help via CliRunner renders all 8 expected subcommands."""
+        from typer.testing import CliRunner
+
+        from cresmo.presentation.cli import app
+
+        runner = CliRunner()
+        result = runner.invoke(app, ["--help"])
+        assert result.exit_code == 0
+        expected = [
+            "run",
+            "check-config",
+            "sync",
+            "worker",
+            "dedupe",
+            "export-cookies",
+            "concat-master",
+            "seed-prompts",
+        ]
+        for cmd in expected:
+            assert cmd in result.output
+
+    def test_root_cli_no_args_displays_help_and_exits(self) -> None:
+        """Verify invoking root app without arguments displays help and exits with code 2."""
+        from typer.testing import CliRunner
+
+        from cresmo.presentation.cli import app
+
+        runner = CliRunner()
+        result = runner.invoke(app, [])
+        assert result.exit_code in (0, 2)
+        assert "Usage: " in result.output
+
+    def test_invalid_subcommand_returns_exit_config_or_usage_error(self) -> None:
+        """Verify invalid subcommand via CliRunner returns code 2."""
+        from typer.testing import CliRunner
+
+        from cresmo.presentation.cli import app
+
+        runner = CliRunner()
+        result = runner.invoke(app, ["nonexistent-command"])
+        assert result.exit_code == EXIT_CONFIG_OR_USAGE_ERROR
+
+    def test_run_command_validates_passes_boundary(self) -> None:
+        """Verify --passes enforces [1, 10] bounds fail-fast."""
+        from typer.testing import CliRunner
+
+        from cresmo.presentation.cli import app
+
+        runner = CliRunner()
+        res_min = runner.invoke(app, ["run", "--passes", "0"])
+        assert res_min.exit_code == EXIT_CONFIG_OR_USAGE_ERROR
+
+        res_max = runner.invoke(app, ["run", "--passes", "15"])
+        assert res_max.exit_code == EXIT_CONFIG_OR_USAGE_ERROR
+
+    def test_run_command_validates_nonexistent_manifest_file(self) -> None:
+        """Verify --manifest enforces file existence fail-fast."""
+        from typer.testing import CliRunner
+
+        from cresmo.presentation.cli import app
+
+        runner = CliRunner()
+        result = runner.invoke(app, ["run", "--manifest", "/nonexistent/manifest.txt"])
+        assert result.exit_code == EXIT_CONFIG_OR_USAGE_ERROR
+
+    def test_run_command_maps_rate_limit_exceeded_to_exit_code_4(self) -> None:
+        """Verify RateLimitExceededError maps to EXIT_RATE_LIMIT_EXCEEDED (4)."""
+        from typer.testing import CliRunner
+
+        from cresmo.presentation.cli import app
+
+        runner = CliRunner()
+        with patch(
+            "cresmo.presentation.commands.run.build_pipeline",
+            side_effect=RateLimitExceededError("Rate limit reached"),
+        ):
+            result = runner.invoke(app, ["run", "--url", "https://youtube.com/watch?v=123"])
+            assert result.exit_code == EXIT_RATE_LIMIT_EXCEEDED
+
+    def test_run_command_maps_ingestion_error_to_exit_code_5(self) -> None:
+        """Verify IngestionNetworkError maps to EXIT_INGESTION_ERROR (5)."""
+        from typer.testing import CliRunner
+
+        from cresmo.presentation.cli import app
+
+        runner = CliRunner()
+        with patch(
+            "cresmo.presentation.commands.run.build_pipeline",
+            side_effect=IngestionNetworkError("Ingestion failure"),
+        ):
+            result = runner.invoke(app, ["run", "--url", "https://youtube.com/watch?v=123"])
+            assert result.exit_code == EXIT_INGESTION_ERROR
+
+    def test_run_command_maps_domain_validation_error_to_exit_code_3(self) -> None:
+        """Verify DomainValidationError maps to EXIT_DOMAIN_VALIDATION_ERROR (3)."""
+        from typer.testing import CliRunner
+
+        from cresmo.presentation.cli import app
+
+        runner = CliRunner()
+        with patch(
+            "cresmo.presentation.commands.run.build_pipeline",
+            side_effect=DomainValidationError("Invalid domain state"),
+        ):
+            result = runner.invoke(app, ["run", "--url", "https://youtube.com/watch?v=123"])
+            assert result.exit_code == EXIT_DOMAIN_VALIDATION_ERROR
+
+    def test_run_command_maps_preflight_error_to_exit_code_2(self) -> None:
+        """Verify PreflightError maps to EXIT_CONFIG_OR_USAGE_ERROR (2)."""
+        from typer.testing import CliRunner
+
+        from cresmo.presentation.cli import app
+
+        runner = CliRunner()
+        mock_checker = MagicMock()
+        mock_checker.check_all.side_effect = PreflightError("Preflight check failure")
+        with patch(
+            "cresmo.presentation.commands.run.build_preflight_checker",
+            return_value=mock_checker,
+        ):
+            result = runner.invoke(app, ["run", "--url", "https://youtube.com/watch?v=123"])
+            assert result.exit_code == EXIT_CONFIG_OR_USAGE_ERROR
+
+    def test_run_command_translates_channel_option_to_channel_name_vo(self) -> None:
+        """Verify --channel argument is translated to ChannelName in BatchDiscoveryQuery."""
+        from typer.testing import CliRunner
+
+        from cresmo.presentation.cli import app
+
+        runner = CliRunner()
+        mock_pipeline = MagicMock()
+        with (
+            patch("cresmo.presentation.commands.run.build_pipeline", return_value=mock_pipeline),
+            patch(
+                "cresmo.presentation.commands.run.load_batch_sources", return_value=[]
+            ) as mock_load,
+        ):
+            result = runner.invoke(app, ["run", "--channel", "Spotniks", "--dry-run"])
+            assert result.exit_code == EXIT_SUCCESS
+            mock_load.assert_called_once()
+            query = mock_load.call_args.kwargs["query"]
+            assert ChannelName("Spotniks").value.lower() in query.filter_criteria.channels

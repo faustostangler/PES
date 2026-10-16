@@ -65,6 +65,9 @@ class PipelineSettingsProtocol(Protocol):
     @property
     def judge_max_attempts(self) -> int: ...
 
+    @property
+    def gap_filler_passes(self) -> int: ...
+
 
 DEFAULT_LANGUAGE: str = "Português do Brasil"
 
@@ -91,6 +94,7 @@ class DefaultPipelineSettings:
     inventory_max_attempts: int = 3
     judge_blocking: bool = False
     judge_max_attempts: int = 1
+    gap_filler_passes: int = 3
 
 
 __all__ = [

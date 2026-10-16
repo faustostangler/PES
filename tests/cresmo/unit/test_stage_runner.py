@@ -2485,3 +2485,46 @@ class TestStageRunnerStageExecutionAndFallback:
                 "attempts": 1,
             }
         )
+
+    def test_execute_stage_with_max_passes_override(self) -> None:
+        from cresmo.application.pipeline.stage_factory import StageFactory
+
+        mock_t = MagicMock(spec=TelemetryPort)
+        mock_m = MagicMock()
+        mock_factory = MagicMock(spec=StageFactory)
+
+        cfg = StageConfig[MagicMock, CandidateText](
+            stage_name="gap_filler",
+            transform_prompt_key=PromptKey.GAP_FILLER_PASS1,
+            max_passes=2,
+            eval_spec=None,
+        )
+        mock_factory.build_stage.return_value = cfg
+
+        mock_trans = MagicMock()
+        mock_trans.transform.return_value = "## Test\n\nContent\n\n## Informações Complementares\n1. Info"
+
+        runner = PipelineStageRunner(
+            telemetry_port=mock_t,
+            metrics_port=mock_m,
+            stage_factory=mock_factory,
+            llm_transformation_port=mock_trans,
+            prompt_provider=MagicMock(),
+        )
+        ctx = PipelineExecutionContext(
+            session_id=PipelineSessionId("ret_sess:1"),
+            user_identity=UserIdentity.worker(),
+            channel=Channel(name="RetCh", id=ChannelId("UC_ret")),
+            content=Content.create(id=ContentId("vid_retry_1"), title="Retry Title"),
+        )
+
+        runner.execute_stage(
+            "gap_filler",
+            MagicMock(),
+            context=ctx,
+            max_passes=2,
+        )
+
+        mock_factory.build_stage.assert_called_once_with("gap_filler", max_passes=2)
+
+

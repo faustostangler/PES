@@ -1,16 +1,20 @@
 # SPEC-002: Cresmo Production CLI & Presentation Layer Specifications
 
 **Linked ADR:** [`ADR-002: Cresmo Production CLI Entrypoint and Presentation Layer Orchestration`](../adr/ADR-002-cresmo-presentation-cli.md) & [`ADR-003: PES Production Architecture`](../adr/ADR-003-pes-production-architecture.md)  
-**Status:** APPROVED  
+**Status:** APPROVED (PARTIALLY SUPERSEDED by [SPEC-042](SPEC-042-typer-cli-presentation.md))  
 **Date:** 2026-09-11  
 **Bounded Context:** Cresmo Knowledge Synthesis — Presentation & Infrastructure Adapters  
+
+> [!WARNING]
+> **DEPRECATION NOTICE (SPEC-042 / ADR-042):**  
+> CLI driving adapter implementation using `argparse` is deprecated and superseded by **Typer** per [`SPEC-042: Modern Typer Presentation CLI Specifications`](SPEC-042-typer-cli-presentation.md) and [`ADR-042`](../adr/ADR-042-typer-presentation-cli.md). The exit code taxonomy and composition root principles defined herein remain authoritative.
 
 ---
 
 ## 1. Overview & Objectives
 
 Derives the precision test specifications and frozen acceptance criteria from [`ADR-002`](../adr/ADR-002-cresmo-presentation-cli.md) and [`ADR-003`](../adr/ADR-003-pes-production-architecture.md). This specification covers:
-1. The **Humble Object CLI** controller in `src/cresmo/presentation/cli.py` driven by `argparse` (`run`, `sync`, `check-config`, `worker`).
+1. The **Humble Object CLI** controller in `src/cresmo/presentation/cli.py` (originally `argparse`, superseded by `Typer` per `SPEC-042`).
 2. The **Composition Root** factory in `src/cresmo/presentation/composition.py` wiring `LLMAdapterFactory`, `PromptRepositoryPort`, and `PreflightHealthChecker`.
 3. The **ACID SQLite WAL Ledger Adapter** in `src/cresmo/infrastructure/adapters/sqlite_ledger_adapter.py` (`SqliteLedgerAdapter`).
 4. The **Process Exit Code Taxonomy** mapping CLI executions to deterministic shell exit codes.
@@ -75,7 +79,7 @@ Derives the precision test specifications and frozen acceptance criteria from [`
 |---|---|---|---|
 | Successful execution | `PipelineResult(success=True)` | `0` | `stdout: Success summary` |
 | Idempotency skip | Content already in ledger | `0` | `stdout: Already processed` |
-| Invalid flags / missing `--url` | `argparse.ArgumentError` / `SystemExit(2)` | `2` | `stderr: Usage help` |
+| Invalid flags / missing `--url` | `click.UsageError` / `click.BadParameter` / `typer.Exit(2)` | `2` | `stderr: Usage help` |
 | Missing env / invalid setting | `pydantic.ValidationError` | `2` | `stderr: Configuration error details` |
 | Invalid domain entities/data | `DomainValidationError`, `CompendiumStructureError`, `TypologyViolationError` | `3` | `stderr: Domain validation failed: ...` |
 | Upstream rate limit exceeded | `RateLimitExceededError` (HTTP 429) | `4` | `stderr: Rate limit exceeded: ...` |

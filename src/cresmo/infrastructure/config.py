@@ -456,7 +456,11 @@ class CresmoSettings(BaseSettings):
     )
     gap_filler_passes: int = Field(
         default=3,
-        validation_alias=AliasChoices("gap_filler_passes", "CRESMO_GAP_FILLER_PASSES"),
+        ge=1,
+        le=10,
+        validation_alias=AliasChoices(
+            "gap_filler_passes", "CRESMO_GAP_FILLER_PASSES", "GAP_FILLER_PASSES"
+        ),
         description="Default Socratic gap filler refinement passes.",
     )
     concat_max_words: int = Field(

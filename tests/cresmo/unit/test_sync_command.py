@@ -8,10 +8,8 @@ Conforms to:
     - SPEC-003: Channel Synchronization Specifications
 """
 
-from __future__ import annotations
-
-import argparse
 from pathlib import Path
+from types import SimpleNamespace as Namespace
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -28,6 +26,7 @@ from cresmo.domain.value_objects import (
     SyncFilterCriteria,
     SyncSummary,
 )
+from cresmo.presentation.cli import main
 from cresmo.presentation.commands.sync import (
     _describe_mode,
     _read_manifest_lines,
@@ -35,7 +34,6 @@ from cresmo.presentation.commands.sync import (
     _sync_channel_list,
     _sync_direct_videos,
     handle_sync,
-    register_subparser,
 )
 from cresmo.presentation.exit_codes import (
     EXIT_CONFIG_OR_USAGE_ERROR,
@@ -50,117 +48,9 @@ from cresmo.presentation.exit_codes import (
 class TestSyncCommand:
     """Test suite for cresmo sync command and private helpers."""
 
-    def test_register_subparser(self) -> None:
-        """Verify sync subparser configuration, argument flags, choices, types, defaults, and helps."""
-        mock_subparsers = MagicMock()
-        mock_parser = MagicMock()
-        mock_subparsers.add_parser.return_value = mock_parser
-
-        register_subparser(mock_subparsers)
-
-        mock_subparsers.add_parser.assert_called_once_with(
-            "sync",
-            help="Poll and synchronize video feeds from YouTube channels or playlists",
-        )
-
-        expected_args = [
-            (
-                ("--channel",),
-                {
-                    "dest": "channels",
-                    "nargs": "*",
-                    "default": None,
-                    "metavar": "CHANNEL",
-                    "help": (
-                        "One or more target YouTube channel names, handles (@ancapsu), or URLs. "
-                        "Accepts comma-separated values or multiple flags. "
-                        "When omitted, all channels in the manifest are synced."
-                    ),
-                },
-            ),
-            (
-                ("--category", "-c"),
-                {
-                    "dest": "categories",
-                    "nargs": "*",
-                    "default": None,
-                    "metavar": "CATEGORY",
-                    "help": (
-                        "Filter by domain category or volatility type. "
-                        "Domain categories: politics_br, tech_ai, history, philosophy, finance, "
-                        "engineering, architecture, health, entertainment, geopolitics. "
-                        "Volatility types: perennial, volatile. "
-                        "Accepts comma-separated values (e.g. --category politics_br,tech_ai)."
-                    ),
-                },
-            ),
-            (
-                ("--video",),
-                {
-                    "dest": "video_ids",
-                    "nargs": "*",
-                    "default": None,
-                    "metavar": "VIDEO_ID",
-                    "help": (
-                        "One or more video IDs or YouTube watch URLs to sync directly. "
-                        "Accepts comma-separated values. When specified, skips channel feed crawling."
-                    ),
-                },
-            ),
-            (
-                ("--manifest", "--playlist"),
-                {
-                    "type": Path,
-                    "default": None,
-                    "dest": "manifest",
-                    "help": "Path to manifest or playlist text file (default: data/playlist.txt)",
-                },
-            ),
-            (
-                ("--lookback",),
-                {
-                    "type": int,
-                    "default": 7 * 52 * 2,
-                    "help": "Days lookback window for new uploads (default: 2 years)",
-                },
-            ),
-            (
-                ("--max-videos",),
-                {
-                    "type": int,
-                    "default": 250,
-                    "help": "Maximum videos to discover and process in this run (default: 250)",
-                },
-            ),
-            (
-                ("--batch-size",),
-                {
-                    "type": int,
-                    "default": None,
-                    "help": "Batch size override for atomic note synthesis",
-                },
-            ),
-            (
-                ("--dry-run",),
-                {
-                    "action": "store_true",
-                    "help": "Discover and filter feed without executing LLM synthesis or ledger updates",
-                },
-            ),
-            (
-                ("--force-refresh",),
-                {
-                    "action": "store_true",
-                    "help": "Force re-synthesis even if content is already marked completed in ledger",
-                },
-            ),
-        ]
-
-        assert mock_parser.add_argument.call_count == len(expected_args)
-        for args, kwargs in expected_args:
-            mock_parser.add_argument.assert_any_call(*args, **kwargs)
-
-        mock_parser.set_defaults.assert_called_once_with(handler=handle_sync)
+    def test_sync_cli_help(self) -> None:
+        """Verify sync CLI displays help and options."""
+        assert main(["sync", "--help"]) == EXIT_SUCCESS
 
     def test_describe_mode(self) -> None:
         """Verify _describe_mode produces exact descriptive strings for all filter criteria combinations."""
@@ -254,7 +144,7 @@ class TestSyncCommand:
             ),
         ]
 
-        args = argparse.Namespace(
+        args = Namespace(
             lookback=30,
             dry_run=True,
             force_refresh=False,
@@ -324,7 +214,7 @@ class TestSyncCommand:
             ),
         ]
 
-        args = argparse.Namespace(
+        args = Namespace(
             lookback=60,
             max_videos=50,
             dry_run=False,
@@ -378,7 +268,7 @@ class TestSyncCommand:
         mock_settings = MagicMock()
         mock_settings.playlist_path = manifest
 
-        args = argparse.Namespace(
+        args = Namespace(
             channels=[],
             categories=["unknown_cat"],
             video_ids=[],
@@ -411,7 +301,7 @@ class TestSyncCommand:
     ) -> None:
         """Verify all domain, network, validation, and generic exceptions map to canonical exit codes."""
         mock_settings = MagicMock()
-        args = argparse.Namespace(
+        args = Namespace(
             channels=["https://youtube.com/@test"],
             categories=[],
             video_ids=[],

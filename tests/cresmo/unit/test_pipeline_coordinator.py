@@ -393,20 +393,25 @@ class TestCresmoPipelineExecutionAndIdempotency:
         assert meta["video_url"] == "https://youtube.com/watch?v=1234567"
         assert meta["publication_date"] == "2024-05-20"
 
-        # Verify execute_stage call
-        mock_runner.execute_stage.assert_called_once()
-        stage_args = mock_runner.execute_stage.call_args
-        assert stage_args[0][0] == "fluid_prose"
-        assert stage_args[1]["source"] is sample_source_transcript
-        assert stage_args[1]["context"].content.id == ContentId("c1234567")
-        assert stage_args[1]["context"].user_identity == user
+        # Verify execute_stage calls (fluid_prose followed by gap_filler)
+        assert mock_runner.execute_stage.call_count == 2
+        first_call = mock_runner.execute_stage.call_args_list[0]
+        assert first_call[0][0] == "fluid_prose"
+        assert first_call[1]["source"] is sample_source_transcript
+        assert first_call[1]["context"].content.id == ContentId("c1234567")
+        assert first_call[1]["context"].user_identity == user
+
+        second_call = mock_runner.execute_stage.call_args_list[1]
+        assert second_call[0][0] == "gap_filler"
+        assert second_call[1]["source"] is mock_runner.execute_stage.return_value
+        assert second_call[1]["context"].content.id == ContentId("c1234567")
 
         # Verify record_session_output with all canonical fields
         mock_t.record_session_output.assert_called_once()
         output_payload = mock_t.record_session_output.call_args[0][0]
         assert output_payload["status"] == "COMPLETED"
-        assert output_payload["stage"] == "fluid_prose"
-        assert output_payload["stages_completed"] == ["fluid_prose"]
+        assert output_payload["stage"] == "gap_filler"
+        assert output_payload["stages_completed"] == ["fluid_prose", "gap_filler"]
         assert output_payload["content_title"] == "Polished Pareto Essay"
         raw_words = len(sample_source_transcript.content.body.split())
         synth_words = len(FluidOutput.body.split())
@@ -626,7 +631,7 @@ class TestCresmoPipelineExecutionAndIdempotency:
         res = pipeline.execute(sample_source_transcript, force_reprocess=True)
         assert res.already_processed is False
         assert res.success is True
-        mock_runner.execute_stage.assert_called_once()
+        assert mock_runner.execute_stage.call_count == 2
 
     def test_execute_stage_failure_propagates_exception(
         self, sample_source_transcript: SourceTranscript
@@ -661,7 +666,7 @@ class TestCresmoPipelineExecutionAndIdempotency:
         assert sig_file.parameters["force_reprocess"].default is False
 
         sig_man = inspect.signature(CresmoPipeline.run_for_manifest)
-        assert sig_man.parameters["gap_filler_passes"].default == 1
+        assert sig_man.parameters["gap_filler_passes"].default == 3
         assert sig_man.parameters["force_reprocess"].default is False
 
 
@@ -944,7 +949,7 @@ class TestCresmoPipelineRunForSources:
             assert results == [res1]
             mock_run_video.assert_called_once()
             call_kwargs = mock_run_video.call_args[1]
-            assert call_kwargs["gap_filler_passes"] == 1
+            assert call_kwargs["gap_filler_passes"] == 3
             assert call_kwargs["force_reprocess"] is False
             assert call_kwargs["user"] is None
             assert isinstance(call_kwargs["batch_id"], BatchId)

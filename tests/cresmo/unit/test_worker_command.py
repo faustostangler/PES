@@ -10,20 +10,18 @@ Conforms to:
 
 from __future__ import annotations
 
-import argparse
 from datetime import datetime
 from pathlib import Path
+from types import SimpleNamespace as Namespace
 from unittest.mock import MagicMock, patch
 
 import pytest
 
 from cresmo.domain.value_objects import ChannelFeedQuery, PipelineStatus, SyncSummary
 from cresmo.presentation.cli import main
-from cresmo.presentation.commands.worker import (
-    handle_worker,
-    register_subparser,
-)
+from cresmo.presentation.commands.worker import handle_worker
 from cresmo.presentation.exit_codes import (
+    EXIT_CONFIG_OR_USAGE_ERROR,
     EXIT_INTERNAL_ERROR,
     EXIT_SUCCESS,
 )
@@ -32,65 +30,13 @@ from cresmo.presentation.exit_codes import (
 class TestWorkerCommand:
     """Test suite for cresmo worker CLI command."""
 
-    def test_register_subparser_options_and_defaults(self) -> None:
-        """Verify worker subparser arguments, choices, types, defaults, and helps."""
-        mock_subparsers = MagicMock()
-        mock_parser = MagicMock()
-        mock_subparsers.add_parser.return_value = mock_parser
-
-        register_subparser(mock_subparsers)
-
-        mock_subparsers.add_parser.assert_called_once_with(
-            "worker",
-            help="Run continuous polling worker daemon with heartbeat health reporting",
-        )
-
-        expected_arguments = [
-            (
-                ("--channel",),
-                {
-                    "required": True,
-                    "help": "Target YouTube channel or playlist URL to poll continuously",
-                },
-            ),
-            (
-                ("--poll-interval",),
-                {
-                    "type": int,
-                    "default": 300,
-                    "help": "Polling interval in seconds between feed checks (default: 300)",
-                },
-            ),
-            (
-                ("--lookback",),
-                {
-                    "type": int,
-                    "default": 7,
-                    "help": "Days lookback window for new uploads per polling cycle (default: 7)",
-                },
-            ),
-            (
-                ("--max-videos",),
-                {
-                    "type": int,
-                    "default": 10,
-                    "help": "Maximum videos per cycle (default: 10)",
-                },
-            ),
-            (
-                ("--once",),
-                {
-                    "action": "store_true",
-                    "help": "Execute exactly one polling cycle and terminate cleanly",
-                },
-            ),
-        ]
-
-        assert mock_parser.add_argument.call_count == len(expected_arguments)
-        for args, kwargs in expected_arguments:
-            mock_parser.add_argument.assert_any_call(*args, **kwargs)
-
-        mock_parser.set_defaults.assert_called_once_with(handler=handle_worker)
+    def test_worker_option_validation_and_help(self) -> None:
+        """Verify worker CLI options fail-fast on missing channel or invalid poll interval."""
+        assert main(["worker", "--help"]) == EXIT_SUCCESS
+        assert main(["worker"]) == EXIT_CONFIG_OR_USAGE_ERROR
+        assert main(
+            ["worker", "--channel", "https://youtube.com/@test", "--poll-interval", "5"]
+        ) == (EXIT_CONFIG_OR_USAGE_ERROR)
 
     def test_worker_once_successful_cycle(
         self, tmp_path: Path, capsys: pytest.CaptureFixture[str]
@@ -109,7 +55,7 @@ class TestWorkerCommand:
         )
         mock_use_case.execute.return_value = mock_summary
 
-        args = argparse.Namespace(
+        args = Namespace(
             channel="https://youtube.com/@cresmo",
             poll_interval=120,
             lookback=14,
@@ -179,7 +125,7 @@ class TestWorkerCommand:
         )
         mock_use_case.execute.return_value = mock_summary
 
-        args = argparse.Namespace(
+        args = Namespace(
             channel="https://youtube.com/@loop",
             poll_interval=45,
             lookback=7,
@@ -211,7 +157,7 @@ class TestWorkerCommand:
         self, tmp_path: Path, capsys: pytest.CaptureFixture[str]
     ) -> None:
         """Verify unhandled exception during polling outputs error to stderr and returns EXIT_INTERNAL_ERROR (1)."""
-        args = argparse.Namespace(
+        args = Namespace(
             channel="https://youtube.com/@broken",
             poll_interval=300,
             lookback=7,

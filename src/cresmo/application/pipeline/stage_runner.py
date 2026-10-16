@@ -38,6 +38,9 @@ from cresmo.domain.entities import (
     UserIdentity,
 )
 from cresmo.domain.exceptions import DomainValidationError
+from cresmo.domain.services.mechanical_validator import (
+    check_complementary_mechanical_saturation,
+)
 from cresmo.domain.value_objects import (
     AtomicEntityInventory,
     CandidateText,
@@ -48,6 +51,7 @@ from cresmo.domain.value_objects import (
     ContentId,
     EvaluationContext,
     JudgeEvaluation,
+    PromptKey,
     StageEvaluationSpec,
 )
 
@@ -129,9 +133,10 @@ class PipelineStageRunner:
         context: PipelineExecutionContext,
         prompt_provider: PromptProviderPort | None = None,
         llm_transformation_port: LLMTransformationPort | None = None,
+        max_passes: int | None = None,
     ) -> _TOutput:
         """Execute a standardized pipeline stage with closed-loop reflection, critique, and telemetry (ADR-031)."""
-        stage_config = self._resolve_stage_config(stage)
+        stage_config = self._resolve_stage_config(stage, max_passes=max_passes)
         prompt_provider = self._resolve_prompt_provider(prompt_provider)
         llm_port = self._resolve_llm_transformation_port(llm_transformation_port)
         stage_name = stage_config.stage_name
@@ -274,35 +279,109 @@ class PipelineStageRunner:
         attempt: int,
         critique: str | None = None,
     ) -> CandidateText:
-        """Build prompt and invoke LLM transformation port to generate CandidateText."""
+        """Build prompt and invoke LLM transformation port to generate CandidateText.
+
+        Supports iterative multi-pass synthesis with mechanical early stopping (ADR-028/031).
+        """
+        active_trace_id = self._get_active_trace_id(
+            context=context,
+        )
+
+        raw_max_passes = getattr(stage_config, "max_passes", 1)
+        max_passes = raw_max_passes if isinstance(raw_max_passes, int) and raw_max_passes > 0 else 1
+
+        # Pass 1: Initial transformation
+        pass_kwargs: dict[str, Any] = (
+            {"pass_num": 1, "total_passes": max_passes} if max_passes > 1 else {}
+        )
+        if max_passes > 1:
+            logger.info(
+                "[StageRunner] Executing pass 1/%d for %s...",
+                max_passes,
+                stage_config.stage_name,
+            )
         chat_prompt = stage_config.build_transform_prompt(
             prompt_provider,
             source,
             context=context,
             critique=critique,
-        )
-        active_trace_id = self._get_active_trace_id(
-            context=context,
+            **pass_kwargs,
         )
 
-        response_text = llm_port.transform(
+        curr_text = llm_port.transform(
             prompt=chat_prompt,
             temperature=stage_config.temperature,
-            trace_id=active_trace_id,
+            trace_id=f"{active_trace_id}_pass_1" if max_passes > 1 else active_trace_id,
             session_id=context.session_id.value,
             user_id=context.user_identity.value,
         )
 
+        actual_passes = 1
+        is_saturated = False
+
+        # Subsequent passes if multi-pass enabled
+        if max_passes > 1:
+            for pass_index in range(2, max_passes + 1):
+                logger.info(
+                    "[StageRunner] Executing pass %d/%d for %s...",
+                    pass_index,
+                    max_passes,
+                    stage_config.stage_name,
+                )
+                subsequent_key = (
+                    PromptKey.GAP_FILLER_PASS_SUBSEQUENT
+                    if stage_config.stage_name == "gap_filler"
+                    else stage_config.transform_prompt_key
+                )
+                chat_prompt = stage_config.build_transform_prompt(
+                    prompt_provider,
+                    source,
+                    context=context,
+                    prompt_key=subsequent_key,
+                    pass_num=pass_index,
+                    prev_pass_num=pass_index - 1,
+                    total_passes=max_passes,
+                    current_text=curr_text,
+                )
+                new_text = llm_port.transform(
+                    prompt=chat_prompt,
+                    temperature=stage_config.temperature,
+                    trace_id=f"{active_trace_id}_pass_{pass_index}",
+                    session_id=context.session_id.value,
+                    user_id=context.user_identity.value,
+                )
+                actual_passes = pass_index
+
+                # Layer 1: Check mechanical saturation between passes
+                if getattr(
+                    stage_config, "early_stopping_enabled", False
+                ) and check_complementary_mechanical_saturation(curr_text, new_text):
+                    logger.info(
+                        "[StageRunner] Saturação mecânica atingida na passada %d/%d. Parando antecipadamente.",
+                        pass_index,
+                        max_passes,
+                    )
+                    is_saturated = True
+                    curr_text = new_text
+                    break
+
+                curr_text = new_text
+
+        candidate_metadata: dict[str, Any] = {
+            "channel_id": context.channel.id.value if context.channel.id else "",
+            "content_id": context.content.id.value,
+            "channel_name": context.channel.name,
+            "content_title": context.content.title,
+            "attempt": attempt,
+        }
+        if max_passes > 1:
+            candidate_metadata["passes_executed"] = actual_passes
+            candidate_metadata["is_saturated"] = is_saturated
+
         return CandidateText(
-            text=response_text,
+            text=curr_text,
             stage_name=stage_config.stage_name,
-            metadata={
-                "channel_id": context.channel.id.value if context.channel.id else "",
-                "content_id": context.content.id.value,
-                "channel_name": context.channel.name,
-                "content_title": context.content.title,
-                "attempt": attempt,
-            },
+            metadata=candidate_metadata,
         )
 
     def _evaluate_candidate(
@@ -659,13 +738,18 @@ class PipelineStageRunner:
     def _resolve_stage_config(
         self,
         stage: str | StageConfig[_TSource, _TOutput],
+        *,
+        max_passes: int | None = None,
     ) -> StageConfig[_TSource, _TOutput]:
         if isinstance(stage, str):
             if self.stage_factory is None:
                 raise ValueError(
                     f"Cannot resolve stage '{stage}' from string without an injected StageFactory."
                 )
-            return self.stage_factory.build_stage(stage)
+            kwargs: dict[str, Any] = {}
+            if max_passes is not None:
+                kwargs["max_passes"] = max_passes
+            return self.stage_factory.build_stage(stage, **kwargs)
         return stage
 
     # Backward compatibility alias

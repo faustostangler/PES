@@ -11,8 +11,8 @@ Conforms to:
 
 from __future__ import annotations
 
-import argparse
 from pathlib import Path
+from types import SimpleNamespace as Namespace
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -86,7 +86,7 @@ class TestRunCommand:
     def test_execute_single_video_run_dry_run(self, capsys: pytest.CaptureFixture[str]) -> None:
         """Verify single video --dry-run prints transcript length on success and handles None."""
         mock_pipeline = MagicMock()
-        args = argparse.Namespace(url="https://youtube.com/watch?v=dry1", dry_run=True)
+        args = Namespace(url="https://youtube.com/watch?v=dry1", dry_run=True)
 
         # 1. Success
         mock_raw = MagicMock()
@@ -115,7 +115,7 @@ class TestRunCommand:
     ) -> None:
         """Verify skipped message when video is marked already processed."""
         mock_pipeline = MagicMock()
-        args = argparse.Namespace(
+        args = Namespace(
             url="https://youtube.com/watch?v=skip1",
             dry_run=False,
             passes=3,
@@ -145,7 +145,7 @@ class TestRunCommand:
         mock_raw.channel.name = "Fabio Akita"
         mock_pipeline.vault_port.get_raw_transcript.return_value = mock_raw
 
-        args = argparse.Namespace(
+        args = Namespace(
             url="https://youtube.com/watch?v=success1",
             dry_run=False,
             passes=2,
@@ -190,7 +190,7 @@ class TestRunCommand:
         mock_pipeline.settings = CresmoSettings()
         mock_pipeline.vault_port.get_raw_transcript.side_effect = RuntimeError("Vault locked")
 
-        args = argparse.Namespace(
+        args = Namespace(
             url="https://youtube.com/watch?v=warn1",
             dry_run=False,
             passes=1,
@@ -211,7 +211,7 @@ class TestRunCommand:
     def test_execute_single_video_run_failure(self, capsys: pytest.CaptureFixture[str]) -> None:
         """Verify pipeline failure returns EXIT_INTERNAL_ERROR with error message."""
         mock_pipeline = MagicMock()
-        args = argparse.Namespace(
+        args = Namespace(
             url="https://youtube.com/watch?v=fail1",
             dry_run=False,
             passes=3,
@@ -231,7 +231,7 @@ class TestRunCommand:
     def test_execute_batch_run_empty_sources(self, capsys: pytest.CaptureFixture[str]) -> None:
         """Verify batch run with 0 sources logs informative notice and returns EXIT_SUCCESS."""
         mock_pipeline = MagicMock()
-        args = argparse.Namespace(manifest=None, no_scan_raw=False)
+        args = Namespace(manifest=None, no_scan_raw=False)
 
         assert execute_batch_run(mock_pipeline, [], args) == EXIT_SUCCESS
         captured = capsys.readouterr()
@@ -256,7 +256,7 @@ class TestRunCommand:
             BatchSource(kind=SourceModality.URL, target="https://youtube.com/watch?v=failVid"),
         ]
 
-        args = argparse.Namespace(
+        args = Namespace(
             manifest=None,
             no_scan_raw=False,
             passes=3,
@@ -345,7 +345,7 @@ class TestRunCommand:
         settings = CresmoSettings(
             days_lookback=45, channel_discovery_workers=8, discovery_queue_maxsize=200
         )
-        args = argparse.Namespace(
+        args = Namespace(
             manifest=Path("custom_playlist.txt"),
             no_scan_raw=True,
             channel_max_videos=15,
@@ -370,7 +370,7 @@ class TestRunCommand:
 
     def test_handle_run_preflight_and_exceptions(self, capsys: pytest.CaptureFixture[str]) -> None:
         """Verify handle_run preflight warnings and exception taxonomy mapping."""
-        args = argparse.Namespace(
+        args = Namespace(
             lookback=60,
             batch_size=None,
             web_index=False,
@@ -432,7 +432,7 @@ class TestRunCommand:
         from cresmo.presentation.commands.run import _process_single_batch_item
 
         mock_pipeline = MagicMock()
-        args = argparse.Namespace(passes=3, force_reprocess=False)
+        args = Namespace(passes=3, force_reprocess=False)
         batch_id = MagicMock()
 
         # 1. Unprocessable file
@@ -543,7 +543,7 @@ class TestRunCommand:
         settings = CresmoSettings()
 
         # 1. web_index=True -> warmup not called
-        args_web = argparse.Namespace(web_index=True, url="https://youtube.com/watch?v=vid1")
+        args_web = Namespace(web_index=True, url="https://youtube.com/watch?v=vid1")
         with patch(
             "cresmo.presentation.commands.run.execute_single_video_run", return_value=EXIT_SUCCESS
         ) as mock_single:
@@ -553,7 +553,7 @@ class TestRunCommand:
 
         # 2. web_index=False -> warmup called
         mock_pipeline.reset_mock()
-        args_local = argparse.Namespace(web_index=False, url="https://youtube.com/watch?v=vid2")
+        args_local = Namespace(web_index=False, url="https://youtube.com/watch?v=vid2")
         with patch(
             "cresmo.presentation.commands.run.execute_single_video_run", return_value=EXIT_SUCCESS
         ) as mock_single:
@@ -633,7 +633,7 @@ class TestRunCommand:
 
     def test_handle_run_with_custom_flags(self) -> None:
         """Verify handle_run passes custom lookback, batch_size, and web_index to pipeline builder."""
-        args = argparse.Namespace(
+        args = Namespace(
             lookback=90,
             batch_size=8,
             web_index=True,
@@ -679,7 +679,7 @@ class TestRunCommand:
         def gen_sources():
             yield BatchSource(kind=SourceModality.FILE, target=str(valid_file))
 
-        args = argparse.Namespace(
+        args = Namespace(
             manifest=None,
             no_scan_raw=False,
             passes=1,
@@ -712,7 +712,7 @@ class TestRunCommand:
 
         mock_pipeline = MagicMock()
         settings = CresmoSettings()
-        args = argparse.Namespace(
+        args = Namespace(
             web_index=False,
             url=None,
             dry_run=True,
@@ -745,7 +745,7 @@ class TestRunCommand:
 
     def test_build_batch_discovery_query_crawl_defaults(self) -> None:
         """Verify _build_batch_discovery_query respects enable_channel_crawler setting when no_crawl is False."""
-        args = argparse.Namespace(
+        args = Namespace(
             manifest=None,
             no_scan_raw=False,
             channel_max_videos=50,

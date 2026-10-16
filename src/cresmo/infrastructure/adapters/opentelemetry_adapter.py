@@ -608,7 +608,7 @@ class OpenTelemetryAdapter(TelemetryPort):
         """
         current_span = trace.get_current_span()
         if current_span and current_span.is_recording():
-            serialized_output = json.dumps(output)
+            serialized_output = json.dumps(output, default=str)
             current_span.set_attribute("output.value", serialized_output)
             current_span.set_attribute("langfuse.observation.output", serialized_output)
             current_span.set_attribute("langfuse.output", serialized_output)
@@ -631,13 +631,13 @@ class OpenTelemetryAdapter(TelemetryPort):
         if current_span and current_span.is_recording():
             if input_payload is not None:
                 serialized_in = (
-                    json.dumps(input_payload) if isinstance(input_payload, dict) else input_payload
+                    json.dumps(input_payload, default=str) if isinstance(input_payload, dict) else input_payload
                 )
                 current_span.set_attribute("input.value", serialized_in)
                 current_span.set_attribute("langfuse.observation.input", serialized_in)
             if output_payload is not None:
                 serialized_out = (
-                    json.dumps(output_payload)
+                    json.dumps(output_payload, default=str)
                     if isinstance(output_payload, dict)
                     else output_payload
                 )

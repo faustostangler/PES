@@ -81,10 +81,13 @@ def _extract_source_text(raw: Any) -> str:
 
 
 def _extract_fluid_text(fluid: Any) -> str:
-    """Extract synthesized fluid prose text from FluidTranscript or duck-typed candidate."""
-    body = getattr(fluid, "body", None)
-    if body:
-        return body
+    """Extract synthesized fluid prose text from FluidTranscript, EnrichedCompendium, or duck-typed candidate."""
+    comp_body = getattr(fluid, "body", None)
+    comp_info = getattr(fluid, "complementary_info", None)
+    if comp_body and comp_info:
+        return f"{comp_body}\n\n## Informações Complementares\n\n{comp_info}"
+    if comp_body:
+        return comp_body
     text = getattr(fluid, "text", None)
     if text:
         return text
@@ -261,7 +264,7 @@ class CresmoPipeline:
             )
 
             # =========================================================================
-            # ESTEIRA DE ESTÁGIOS CRESMO (CONVEYOR PIPELINE), Estágio 2 em diante por enquanto comentadas
+            # ESTEIRA DE ESTÁGIOS CRESMO (CONVEYOR PIPELINE)
             # =========================================================================
 
             # Estágio 1: Fluid Prose
@@ -271,17 +274,21 @@ class CresmoPipeline:
                 context=execution_context,
             )
 
-            # Estágio 2: Raw Indexing
-            # index = self.stage_runner.execute_stage("raw_indexing", source=fluid, context=execution_context)
+            # Estágio 2: Gap Filler
+            gaps = self.stage_runner.execute_stage(
+                "gap_filler",
+                source=fluid,
+                context=execution_context,
+            )
 
-            # Estágio 3: Gap Filler
-            # gaps = self.stage_runner.execute_stage("gap_filler", source=fluid, context=execution_context)
-
-            # Estágio 4: Long Expander
+            # Estágio 3: Long Expander
             # long_exp = self.stage_runner.execute_stage("long_expander", source=gaps, context=execution_context)
 
-            # Estágio 5: Wide Expander
+            # Estágio 4: Wide Expander
             # wide_exp = self.stage_runner.execute_stage("wide_expander", source=long_exp, context=execution_context)
+
+            # Estágio 5: Raw Indexing (reordenado: após wide_expander e antes de atomic_inventory)
+            # index = self.stage_runner.execute_stage("raw_indexing", source=wide_exp, context=execution_context)
 
             # Estágio 6: Atomic Inventory
             # inventory = self.stage_runner.execute_stage("atomic_inventory", source=wide_exp, context=execution_context)
@@ -292,25 +299,27 @@ class CresmoPipeline:
             # Estágio 8: Reconcile MOCs
             # mocs = self.stage_runner.execute_stage("reconcile_mocs", source=notes, context=execution_context)
 
-            fluid_text = _extract_fluid_text(fluid)
+            synthesized_text = _extract_fluid_text(gaps) or _extract_fluid_text(fluid)
             raw_word_count = len(raw_text.split())
-            synthesized_word_count = len(fluid_text.split())
+            synthesized_word_count = len(synthesized_text.split())
             expansion_ratio = round(synthesized_word_count / max(raw_word_count, 1), 3)
 
             # Trace output (ADR-037 canonical DDD metrics)
+            raw_title = getattr(gaps, "title", getattr(fluid, "title", content.title))
+            resolved_title = str(getattr(raw_title, "value", raw_title or ""))
             self.telemetry_port.record_session_output(
                 {
                     "status": "COMPLETED",
-                    "stage": "fluid_prose",
-                    "stages_completed": ["fluid_prose"],
-                    "content_title": getattr(fluid, "title", content.title),
+                    "stage": "gap_filler",
+                    "stages_completed": ["fluid_prose", "gap_filler"],
+                    "content_title": resolved_title,
                     "word_count": synthesized_word_count,
-                    "char_count": len(fluid_text),
+                    "char_count": len(synthesized_text),
                     "source_words": raw_word_count,
                     "synthesized_words": synthesized_word_count,
                     "expansion_ratio": expansion_ratio,
                     "source_characters": len(raw_text),
-                    "synthesized_characters": len(fluid_text),
+                    "synthesized_characters": len(synthesized_text),
                 }
             )
 
@@ -319,6 +328,7 @@ class CresmoPipeline:
                 success=True,
                 source_transcript=raw,
                 fluid_transcript=fluid,
+                compendium=gaps,
                 index_entry=entry,
             )
 
@@ -409,7 +419,7 @@ class CresmoPipeline:
     def run_for_manifest(
         self,
         manifest_path: Path,
-        gap_filler_passes: int = 1,
+        gap_filler_passes: int = 3,
         force_reprocess: bool = False,
         user: UserIdentity | None = None,
         batch_id: BatchId | str | None = None,

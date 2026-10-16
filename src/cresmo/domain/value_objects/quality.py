@@ -18,12 +18,23 @@ from cresmo.domain.exceptions import DomainValidationError
 class JudgeCriterion(str, Enum):
     """Canonical semantic criteria for stage quality evaluation."""
 
+    # Stage 1: Fluid Prose Criteria
     ORALITY_REMOVAL = "orality_removal"
     SEMANTIC_FAITHFULNESS = "semantic_faithfulness"
     NER_PRESERVATION = "ner_preservation"
     STRUCTURAL_COMPLIANCE = "structural_compliance"
     EPISTEMIC_CRITIQUE = "epistemic_critique"
     AUTHORIAL_VOICE = "authorial_voice"
+
+    # Stage 2: Specialized Gap Filler Criteria
+    FACTUAL_GROUNDING = "factual_grounding"
+    SOCRATIC_EPISTEMIC_DEPTH = "socratic_epistemic_depth"
+    CAUSAL_STRATIFICATION_AGENCY = "causal_stratification_agency"
+    COMPLEMENTARY_SUBSTANCE = "complementary_substance"
+    AUTHORIAL_NATURALISM = "authorial_naturalism"
+    EPISTEMIC_SATURATION = "epistemic_saturation"
+
+    # Downstream Stages
     INVENTORY_COHERENCE = "inventory_coherence"
     INDEX_SYNTHESIS_QUALITY = "index_synthesis_quality"
 
@@ -127,6 +138,19 @@ DEFAULT_FLUID_PROSE_WEIGHTS: dict[JudgeCriterion, float] = {
 DEFAULT_MECHANICAL_VETO_CRITERIA: frozenset[JudgeCriterion] = frozenset({
     JudgeCriterion.SEMANTIC_FAITHFULNESS,
     JudgeCriterion.NER_PRESERVATION,
+})
+
+GAP_FILLER_CANONICAL_WEIGHTS: dict[JudgeCriterion, float] = {
+    JudgeCriterion.FACTUAL_GROUNDING: 0.25,
+    JudgeCriterion.SOCRATIC_EPISTEMIC_DEPTH: 0.25,
+    JudgeCriterion.CAUSAL_STRATIFICATION_AGENCY: 0.20,
+    JudgeCriterion.COMPLEMENTARY_SUBSTANCE: 0.15,
+    JudgeCriterion.AUTHORIAL_NATURALISM: 0.15,
+}
+
+GAP_FILLER_MECHANICAL_VETO_CRITERIA: frozenset[JudgeCriterion] = frozenset({
+    JudgeCriterion.FACTUAL_GROUNDING,
+    JudgeCriterion.COMPLEMENTARY_SUBSTANCE,
 })
 
 

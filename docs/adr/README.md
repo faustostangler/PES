@@ -22,7 +22,7 @@ In this repository, architectural decisions evolve continuously through test-dri
 | ID | Date | Title | Bounded Context / Domain | Status | Lineage & Precedence Notes |
 | :--- | :--- | :--- | :--- | :---: | :--- |
 | [**ADR-001**](ADR-001-cresmo-modular-monolith-strangling.md) | 2026-09-10 | Strangling Cresmo into Hexagonal Modular Monolith with Media Ingestion ACL and Vault Port | Cresmo Core | `ACCEPTED` | Foundational strangling architecture. Refined by ADR-019/020. |
-| [**ADR-002**](ADR-002-cresmo-presentation-cli.md) | 2026-09-10 | Cresmo Production CLI Entrypoint and Presentation Layer Orchestration | Presentation / CLI | `ACCEPTED` | Established Argparse Humble Object CLI entrypoint and presentation layer dependency composition. |
+| [**ADR-002**](ADR-002-cresmo-presentation-cli.md) | 2026-09-10 | Cresmo Production CLI Entrypoint and Presentation Layer Orchestration | Presentation / CLI | `DEPRECATED` | **SUPERSEDED by ADR-042**. Established Humble Object CLI entrypoint. Argparse deprecated in favor of Typer. |
 | [**ADR-003**](ADR-003-pes-production-architecture.md) | 2026-09-11 | PES Production Architecture — Consolidated 13-Chapter Synthesis | Architecture Canon | `ACCEPTED` | Comprehensive 13-chapter baseline. Subsequent ADRs detail specific chapters. |
 | [**ADR-004**](ADR-004-native-media-ingestion-decommissioning.md) | 2026-09-11 | Native Media Ingestion & Legacy ISB.AI Decommissioning | Ingestion ACL | `ACCEPTED` | Decommissioned external dependencies; introduced native audio ingestion. |
 | [**ADR-005**](ADR-005-multi-role-12factor-container-architecture.md) | 2026-09-12 | Multi-Role 12-Factor Container Architecture & Deployment Model | Platform / DevOps | `ACCEPTED` | Single Dockerfile multi-role dispatch (`api`, `worker`, `cli`) with PID 1 `tini`. |
@@ -59,6 +59,7 @@ In this repository, architectural decisions evolve continuously through test-dri
 | [**ADR-036**](ADR-036-clean-telemetry-namespacing-and-observation-binding.md) | 2026-10-07 | Clean Telemetry Namespacing & In-Context Observation ID Binding | Observability / Quality | `ACCEPTED` | Codifies stage-prefixed evaluation metrics (`{stage_name}.{criterion}`) and binds scores to active OpenTelemetry span IDs (`observation_id`). Bans `Flat Global Score Collision*` and `Unbound Trace-Level Scoring*`. |
 | [**ADR-037**](ADR-037-lean-telemetry-topography-and-chronological-evaluation.md) | 2026-10-07 | Lean Telemetry Topography, Chronological Stage Evaluation Spans, and Zero-Duplication Governance | Observability / SRE | `ACCEPTED` | Codifies 4-tier lean telemetry topography (`cresmo.synthesis_pipeline` -> `pipeline.coordinator` -> `cresmo.stage.{stage}` -> `evaluation`). Bans `Homonymous Trace Root Redundancy*`, `Payload Alias Duplication*`, `Blind Evaluation Black Hole*`, and `Unrecorded Stage I/O*`. |
 | [**ADR-038**](ADR-038-pure-value-object-triad-composition.md) | 2026-10-07 | Pure Value Object Triad Composition for Transcripts and Zero Property Sprawl | DDD Tático / Entidades | `ACCEPTED` | Refactors transcripts into a pure 3-VO triad composition (`Channel`, `MediaProvenance`, `Content`). Enforces structural ID-ID and TXT-TXT parity with zero property sprawl. |
+| [**ADR-042**](ADR-042-typer-presentation-cli.md) | 2026-10-14 | Modern Typer Presentation CLI Driving Adapter | Presentation / CLI | `ACCEPTED` | **Supercedes ADR-002**. Eliminates legacy argparse in favor of Typer + Rich with fail-fast boundary validation. |
 
 
 ---
@@ -69,11 +70,13 @@ In this repository, architectural decisions evolve continuously through test-dri
 graph TD
     subgraph Core ["1. Core Domain & Pipeline Execution"]
         A001["ADR-001: Modular Monolith Strangling"]
-        A002["ADR-002: Argparse Humble Object CLI"]
+        A002["ADR-002: Presentation CLI (Deprecated)"]
+        A042["ADR-042: Modern Typer CLI Adapter"]
         A003["ADR-003: PES Production Architecture"]
         A007["ADR-007: Synthesis Template Method"]
         A021["ADR-021: Unified Pipeline Execution"]
         A031["ADR-031: StageConfig & Reflection Fabric"]
+        A002 -. superseded by .-> A042
         A007 -. superseded by .-> A021
         A021 --> A031
     end

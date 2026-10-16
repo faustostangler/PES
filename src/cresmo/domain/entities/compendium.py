@@ -10,6 +10,7 @@ from __future__ import annotations
 import datetime
 import re
 from dataclasses import dataclass
+from typing import Any
 
 from cresmo.domain.exceptions import CompendiumStructureError
 from cresmo.domain.value_objects import (
@@ -105,3 +106,109 @@ class EnrichedCompendium:
             )
         if self.pass_count < 1:
             raise CompendiumStructureError("pass_count must be at least 1.")
+
+
+_TITLE_H1_PATTERN = re.compile(r"^\s*#\s+(.+)$", re.MULTILINE)
+_COMPLEMENTARY_REGEX = re.compile(
+    r"^\s*#{2,3}\s+\*?\*?(?:Informa[cç][oõ]es\s+Complementares|Notas\s+Complementares|Informa[cç][oõ]es\s+Adicionais)\*?\*?.*$",
+    re.MULTILINE | re.IGNORECASE,
+)
+
+
+def post_process_enriched_compendium(
+    candidate: Any,
+    source: Any,
+    pass_count: int = 1,
+) -> EnrichedCompendium:
+    """Post-process candidate text into a validated EnrichedCompendium domain aggregate.
+
+    Conforms to ADR-028, ADR-031, and ADR-038.
+    Strips H1 headers to preserve clean heading hierarchy, segregates the main continuous
+    prose body from the mandatory '## Informações Complementares' section, and maps
+    the pure Value Object triad from the source transcript.
+    """
+    candidate_text = getattr(candidate, "text", candidate)
+    current_text = str(candidate_text).strip()
+
+    title_match = _TITLE_H1_PATTERN.search(current_text)
+    if title_match:
+        extracted_title = title_match.group(1).strip()
+        body = _TITLE_H1_PATTERN.sub("", current_text).strip()
+    else:
+        source_content = getattr(source, "content", None)
+        extracted_title = (
+            getattr(source_content, "title", None)
+            or getattr(source, "title", None)
+            or "Untitled Compendium"
+        )
+        body = current_text
+
+    complementary_match = _COMPLEMENTARY_REGEX.search(body)
+    if not complementary_match:
+        raise CompendiumStructureError(
+            "Missing mandatory complementary information section '## Informações Complementares'."
+        )
+
+    main_body = body[: complementary_match.start()].strip()
+    complementary_info = body[complementary_match.end() :].strip()
+
+    if not main_body:
+        raise CompendiumStructureError("EnrichedCompendium body cannot be empty.")
+    if not complementary_info:
+        raise CompendiumStructureError(
+            "EnrichedCompendium must contain a non-empty 'Informações Complementares' section."
+        )
+
+    # Resolve triad attributes from source
+    source_content = getattr(source, "content", None)
+    content_id = (
+        getattr(source_content, "id", None)
+        or getattr(source, "content_id", None)
+        or ContentId("unknown")
+    )
+    if isinstance(content_id, str):
+        content_id = ContentId.from_string(content_id)
+
+    channel_name = (
+        getattr(getattr(source, "channel", None), "name", None)
+        or getattr(source, "channel_name", "")
+    )
+    channel_id = (
+        getattr(getattr(source, "channel", None), "id", None)
+        or getattr(source, "channel_id", None)
+    )
+    channel_category = (
+        getattr(getattr(source, "channel", None), "category", "")
+        or getattr(source, "channel_category", "")
+    )
+
+    provenance = getattr(source, "provenance", None)
+    source_url = getattr(provenance, "url", "") or getattr(source, "source_url", "")
+    pub_date = (
+        getattr(provenance, "publication_date", None)
+        or getattr(source, "publication_date", None)
+    )
+    video_description = (
+        getattr(provenance, "description", "")
+        or getattr(source, "video_description", "")
+    )
+    video_date = (
+        pub_date.strftime("%Y%m%d")
+        if isinstance(pub_date, datetime.date)
+        else getattr(source, "video_date", "")
+    )
+
+    return EnrichedCompendium(
+        content_id=content_id,
+        channel_name=channel_name,
+        title=NoteTitle(extracted_title),
+        body=main_body,
+        complementary_info=complementary_info,
+        pass_count=max(pass_count, 1),
+        channel_id=channel_id,
+        channel_category=channel_category,
+        source_url=source_url,
+        publication_date=pub_date,
+        video_date=video_date,
+        video_description=video_description,
+    )

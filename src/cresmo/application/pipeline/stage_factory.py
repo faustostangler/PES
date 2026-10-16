@@ -46,6 +46,8 @@ class StageFactory:
         blocking: bool | None = None,
         eval_spec: StageEvaluationSpec | None = None,
         eval_metadata: dict[str, Any] | None = None,
+        max_passes: int | None = None,
+        early_stopping_enabled: bool | None = None,
     ) -> StageConfig[TSource, TOutput]:
         """Build or retrieve a standardized StageConfig for any pipeline stage.
 
@@ -67,6 +69,8 @@ class StageFactory:
                 blocking,
                 eval_spec,
                 eval_metadata,
+                max_passes,
+                early_stopping_enabled,
             )
         )
 
@@ -160,6 +164,25 @@ class StageFactory:
             else (stage_definition.judge_prompt_key if stage_definition else None)
         )
 
+        # 6. Resolve multi-pass and early stopping tunables
+        if max_passes is not None:
+            effective_max_passes = max_passes
+        elif stage_definition and getattr(stage_definition, "max_passes", 1) > 1:
+            effective_max_passes = stage_definition.max_passes
+        elif stage_name == "gap_filler":
+            effective_max_passes = getattr(self.settings, "gap_filler_passes", 3)
+        else:
+            effective_max_passes = 1
+
+        if early_stopping_enabled is not None:
+            effective_early_stopping = early_stopping_enabled
+        elif (
+            stage_definition and getattr(stage_definition, "early_stopping_enabled", False)
+        ) or stage_name == "gap_filler":
+            effective_early_stopping = True
+        else:
+            effective_early_stopping = False
+
         stage_config = StageConfig[TSource, TOutput](
             stage_name=stage_name,
             transform_prompt_key=effective_transform_prompt_key,
@@ -169,6 +192,8 @@ class StageFactory:
             temperature=effective_temperature,
             max_attempts=effective_max_attempts,
             blocking=effective_blocking,
+            max_passes=effective_max_passes,
+            early_stopping_enabled=effective_early_stopping,
         )
 
         if not has_overrides:

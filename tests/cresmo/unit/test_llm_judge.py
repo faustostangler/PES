@@ -671,13 +671,18 @@ class TestCoordinatorLlmJudgeIntegration:
 
         pipeline.execute(canned_raw)
 
-        assert mock_judge.evaluate.call_count >= 1
-        eval_ctx = mock_judge.evaluate.call_args[0][0]
-        assert eval_ctx.stage_name == "fluid_prose"
-        assert JudgeCriterion.ORALITY_REMOVAL in eval_ctx.required_criteria
-        assert JudgeCriterion.SEMANTIC_FAITHFULNESS in eval_ctx.required_criteria
-        assert JudgeCriterion.NER_PRESERVATION in eval_ctx.required_criteria
-        assert JudgeCriterion.STRUCTURAL_COMPLIANCE in eval_ctx.required_criteria
+        assert mock_judge.evaluate.call_count >= 2
+        fluid_eval_ctx = mock_judge.evaluate.call_args_list[0][0][0]
+        assert fluid_eval_ctx.stage_name == "fluid_prose"
+        assert JudgeCriterion.ORALITY_REMOVAL in fluid_eval_ctx.required_criteria
+        assert JudgeCriterion.SEMANTIC_FAITHFULNESS in fluid_eval_ctx.required_criteria
+        assert JudgeCriterion.NER_PRESERVATION in fluid_eval_ctx.required_criteria
+        assert JudgeCriterion.STRUCTURAL_COMPLIANCE in fluid_eval_ctx.required_criteria
+
+        gap_eval_ctx = mock_judge.evaluate.call_args_list[1][0][0]
+        assert gap_eval_ctx.stage_name == "gap_filler"
+        assert JudgeCriterion.FACTUAL_GROUNDING in gap_eval_ctx.required_criteria
+        assert JudgeCriterion.SOCRATIC_EPISTEMIC_DEPTH in gap_eval_ctx.required_criteria
 
     def test_coordinator_blocking_mode_raises_on_quality_failure(self) -> None:
         from cresmo.application.pipeline.coordinator import CresmoPipeline
@@ -769,6 +774,7 @@ class TestCoordinatorLlmJudgeIntegration:
         mock_telemetry.record_session_output.assert_called_once()
         recorded_output = mock_telemetry.record_session_output.call_args[0][0]
         assert recorded_output["status"] == "COMPLETED"
-        assert recorded_output["stage"] == "fluid_prose"
+        assert recorded_output["stage"] == "gap_filler"
+        assert recorded_output["stages_completed"] == ["fluid_prose", "gap_filler"]
         assert "word_count" in recorded_output
         assert "char_count" in recorded_output

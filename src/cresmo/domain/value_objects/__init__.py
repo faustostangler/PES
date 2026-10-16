@@ -60,6 +60,8 @@ from cresmo.domain.value_objects.prompt import (
 from cresmo.domain.value_objects.quality import (
     DEFAULT_FLUID_PROSE_WEIGHTS,
     DEFAULT_MECHANICAL_VETO_CRITERIA,
+    GAP_FILLER_CANONICAL_WEIGHTS,
+    GAP_FILLER_MECHANICAL_VETO_CRITERIA,
     CandidateText,
     CriterionScore,
     EvaluationContext,
@@ -80,6 +82,8 @@ __all__ = [
     "DEFAULT_FEED_MAX_VIDEOS",
     "DEFAULT_FLUID_PROSE_WEIGHTS",
     "DEFAULT_MECHANICAL_VETO_CRITERIA",
+    "GAP_FILLER_CANONICAL_WEIGHTS",
+    "GAP_FILLER_MECHANICAL_VETO_CRITERIA",
     "MAX_CHANNEL_ID_LENGTH",
     "MAX_CHANNEL_NAME_LENGTH",
     "MAX_NOTE_TITLE_LENGTH",
