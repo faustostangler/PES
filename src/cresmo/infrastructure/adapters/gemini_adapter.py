@@ -17,13 +17,17 @@ import logging
 import os
 from typing import Any
 
-from google import genai
 from google.genai import errors, types
 from langfuse import Langfuse, observe
 from opentelemetry import trace
 from tenacity import retry, retry_if_exception, stop_after_attempt, wait_random_exponential
 
 from cresmo.application.ports import LLMTransformationPort
+from cresmo.domain.value_objects import ChatPrompt, MessageRole
+from cresmo.infrastructure.adapters.gemini_pool import (
+    GeminiCredentialPool,
+    is_quota_exhausted_error,
+)
 from cresmo.infrastructure.adapters.opentelemetry_adapter import annotate_llm_span
 
 __all__ = ["GeminiLLMAdapter", "trace"]
@@ -59,8 +63,20 @@ def _is_transient_genai_error(exc: BaseException) -> bool:
     )
 
 
+def _is_transient_cluster_error(exc: BaseException) -> bool:
+    """Determine if an exception represents a retryable 5xx or cluster network condition.
+
+    CRITICAL INVARIANT (ADR-041 §2.3):
+    HTTP 429 (quota exhaustion) is NOT retried here because it must immediately trigger
+    credential rotation via GeminiCredentialPool.
+    """
+    if is_quota_exhausted_error(exc):
+        return False
+    return _is_transient_genai_error(exc)
+
+
 @retry(
-    retry=retry_if_exception(_is_transient_genai_error),
+    retry=retry_if_exception(_is_transient_cluster_error),
     wait=wait_random_exponential(min=2, max=20),
     stop=stop_after_attempt(5),
     reraise=True,
@@ -111,6 +127,8 @@ class GeminiLLMAdapter(LLMTransformationPort):
         genai_client: Any | None = None,
         langfuse_client: Langfuse | None = None,
         default_temperature: float = 0.2,
+        credential_pool: GeminiCredentialPool | None = None,
+        api_keys: list[str] | None = None,
     ) -> None:
         """Initialize GeminiLLMAdapter with model configuration and telemetry clients.
 
@@ -122,6 +140,8 @@ class GeminiLLMAdapter(LLMTransformationPort):
             genai_client: Optional injected GenAI client for testing.
             langfuse_client: Optional injected Langfuse client for testing.
             default_temperature: Default generation sampling temperature when not overridden.
+            credential_pool: Optional injected GeminiCredentialPool for quota rotation.
+            api_keys: Optional list of raw API keys to initialize credential pool.
         """
         self.model_name = model_name
         self.fallback_model_name = fallback_model_name
@@ -136,28 +156,39 @@ class GeminiLLMAdapter(LLMTransformationPort):
         else:
             self._langfuse = None
 
-        # Step 2: Initialize Google GenAI client
-        if genai_client is not None:
-            self._client = genai_client
+        # Step 2: Initialize Credential Pool & Client
+        if credential_pool is not None:
+            self._pool = credential_pool
+        elif api_keys is not None and len(api_keys) > 0:
+            self._pool = GeminiCredentialPool(keys=api_keys)
+        elif genai_client is not None:
+            self._pool = GeminiCredentialPool(
+                keys=["mock-key"],
+                client_factory=lambda _: genai_client,
+            )
         else:
-            self._client = genai.Client(api_key=api_key)
+            raw = api_key or os.environ.get("GEMINI_API_KEYS") or os.environ.get("GEMINI_API_KEY") or ""
+            parts = [p.strip() for p in raw.split(",") if p.strip()]
+            self._pool = GeminiCredentialPool(keys=parts if parts else [""])
 
-    @observe(as_type="generation")
+    @property
+    def _client(self) -> Any:
+        """Active leased client from the credential pool."""
+        return self._pool.lease()[1]
+
     def transform(
         self,
-        prompt: str,
-        system_instruction: str | None = None,
+        prompt: ChatPrompt,
         temperature: float | None = None,
         *,
         trace_id: str | None = None,
         session_id: str | None = None,
         user_id: str | None = None,
     ) -> str:
-        """Execute text transformation contract with full Langfuse observability span.
+        """Execute text transformation contract with immediate Langfuse telemetry synchronization.
 
         Args:
-            prompt: Text prompt for generation.
-            system_instruction: Optional system instruction directive.
+            prompt: Domain ChatPrompt containing sequential messages and optional system instruction.
             temperature: Generation sampling temperature.
             trace_id: Optional trace ID (e.g. ContentId).
             session_id: Pipeline session identifier.
@@ -166,39 +197,94 @@ class GeminiLLMAdapter(LLMTransformationPort):
         Returns:
             Generated response text.
         """
+        response_text = self._execute_transform(
+            prompt=prompt,
+            temperature=temperature,
+            trace_id=trace_id,
+            session_id=session_id,
+            user_id=user_id,
+        )
+
+        client = self._langfuse
+        if client is None:
+            try:
+                from langfuse import get_client
+
+                client = get_client()
+            except Exception:  # noqa: BLE001
+                client = None
+
+        if client is not None:
+            try:
+                client.flush()
+            except Exception as exc:  # noqa: BLE001
+                logger.debug("[GeminiLLMAdapter] Langfuse flush skipped: %s", exc)
+
+        return response_text
+
+    # Trace level 3: cresmo.llm.generate
+    @observe(name="cresmo.llm.generate", as_type="generation")
+    def _execute_transform(
+        self,
+        prompt: ChatPrompt,
+        temperature: float | None = None,
+        *,
+        trace_id: str | None = None,
+        session_id: str | None = None,
+        user_id: str | None = None,
+    ) -> str:
+        """Internal worker executing model generation within an active Langfuse generation observation."""
         effective_temperature = self.default_temperature if temperature is None else temperature
         config = types.GenerateContentConfig(
             temperature=effective_temperature,
             max_output_tokens=self.max_output_tokens,
-            system_instruction=system_instruction,
+            system_instruction=prompt.system_instruction,
             automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=True),
         )
 
-        active_model = self.model_name
-        try:
-            response = _generate_with_retry(
-                client=self._client,
-                model=active_model,
-                contents=prompt,
-                config=config,
+        contents: list[types.Content] = []
+        for msg in prompt.messages:
+            role = "model" if msg.role == MessageRole.ASSISTANT else "user"
+            contents.append(
+                types.Content(
+                    role=role,
+                    parts=[types.Part.from_text(text=msg.content)],
+                )
             )
-        except Exception:
-            if self.fallback_model_name and self.fallback_model_name != self.model_name:
-                active_model = self.fallback_model_name
-                response = _generate_with_retry(
-                    client=self._client,
+
+        active_model = self.model_name
+
+        def _do_generate(client: Any) -> Any:
+            nonlocal active_model
+            try:
+                return _generate_with_retry(
+                    client=client,
                     model=active_model,
-                    contents=prompt,
+                    contents=contents,
                     config=config,
                 )
-            else:
+            except Exception as exc:
+                if is_quota_exhausted_error(exc):
+                    # HTTP 429 quota depletion bubbles up to execute_with_failover
+                    raise
+                if self.fallback_model_name and self.fallback_model_name != self.model_name:
+                    active_model = self.fallback_model_name
+                    return _generate_with_retry(
+                        client=client,
+                        model=active_model,
+                        contents=contents,
+                        config=config,
+                    )
                 raise
+
+        response = self._pool.execute_with_failover(_do_generate)
 
         response_text = response.text or ""
 
         # Extract usage metadata
         usage_meta = getattr(response, "usage_metadata", None)
-        prompt_tokens = getattr(usage_meta, "prompt_token_count", 0) or len(prompt.split())
+        total_prompt_words = sum(len(m.content.split()) for m in prompt.messages)
+        prompt_tokens = getattr(usage_meta, "prompt_token_count", 0) or total_prompt_words
         candidate_tokens = getattr(usage_meta, "candidates_token_count", 0) or len(
             response_text.split()
         )
@@ -213,6 +299,7 @@ class GeminiLLMAdapter(LLMTransformationPort):
             user_id=user_id,
             trace_id=trace_id,
             temperature=effective_temperature,
+            max_tokens=self.max_output_tokens,
         )
 
         return response_text

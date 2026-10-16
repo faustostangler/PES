@@ -14,6 +14,7 @@ from cresmo.application.ports import LedgerRepositoryPort, MediaIngestionPort
 from cresmo.application.services.preflight import PreflightHealthChecker
 from cresmo.domain.entities import UserIdentity
 from cresmo.domain.value_objects import (
+    BatchId,
     ChannelFeedQuery,
     DiscoveredMediaItem,
     LedgerEntry,
@@ -92,6 +93,7 @@ class SyncChannelUseCase:
         processed_count = 0
         skipped_count = 0
         failed_count = 0
+        batch_id = BatchId.generate()
 
         # Step 4: Process items with idempotency skip check
         for item in in_window_items:
@@ -120,6 +122,7 @@ class SyncChannelUseCase:
                 result = self.pipeline.run_for_video(
                     video_url=item.media_url,
                     user=UserIdentity.worker(),
+                    batch_id=batch_id,
                 )
                 completed_at = datetime.now(UTC)
 

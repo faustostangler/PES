@@ -10,7 +10,9 @@ import pytest
 
 from cresmo.application.json_parser import (
     _TRAILING_COMMA_PATTERN,
+    _extract_bracketed,
     _extract_individual_objects,
+    _find_balanced_closing_brace,
     extract_json_data,
 )
 
@@ -103,6 +105,13 @@ class TestJsonParser:
         assert result[0]["meta"]["depth"] == 2
         assert result[1]["title"] == "Back\\slash"
 
+    def test_find_balanced_closing_brace_with_escaped_quote_and_closing_brace_inside_string(
+        self,
+    ) -> None:
+        text = '{"title": "With \\"}brace inside string\\"", "ok": true}'
+        end = _find_balanced_closing_brace(text, 0)
+        assert end == len(text)
+
     def test_extract_individual_objects_with_trailing_comma(self) -> None:
         raw = 'Text: {"title": "Object 1", "type": "concept", } and then {"title": "Object 2"}'
         result = extract_json_data(raw)
@@ -179,3 +188,71 @@ class TestJsonParser:
         # In an object
         cleaned_obj = _TRAILING_COMMA_PATTERN.sub(r"\1", '{"a": 1, }')
         assert cleaned_obj == '{"a": 1}'
+
+    def test_find_balanced_closing_brace_comprehensive(self) -> None:
+        # String inside quotes with closing brace
+        text1 = '{"a": "hello } world"}'
+        assert _find_balanced_closing_brace(text1, 0) == len(text1)
+
+        # String inside quotes with opening brace
+        text2 = '{"a": "hello { world"}'
+        assert _find_balanced_closing_brace(text2, 0) == len(text2)
+
+        # Escaped quote inside string with brace
+        text3 = r'{"a": "hello \" } world"}'
+        assert _find_balanced_closing_brace(text3, 0) == len(text3)
+
+        # Escaped backslash before quote
+        text4 = r'{"a": "foo\\"}'
+        assert _find_balanced_closing_brace(text4, 0) == len(text4)
+
+        # Escape character reset for standard escape sequences
+        text5 = '{"a": "\\n"}'
+        assert _find_balanced_closing_brace(text5, 0) == len(text5)
+
+        # Unbalanced braces returns None
+        assert _find_balanced_closing_brace('{"a": 1', 0) is None
+
+        # Quote outside brace or invalid start
+        assert _find_balanced_closing_brace(' "{" ', 0) is None
+
+        # Empty string key closing quote
+        assert _find_balanced_closing_brace('{"": 1}', 0) == 7
+
+    def test_extract_bracketed_boundary_conditions(self) -> None:
+        # Both characters present and end > start
+        assert _extract_bracketed("prefix [foo] suffix", "[", "]") == "[foo]"
+        # Trailing char immediately attached
+        assert _extract_bracketed("[foo]x", "[", "]") == "[foo]"
+        # open_ch missing
+        assert _extract_bracketed("foo] suffix", "[", "]") is None
+        # close_ch missing
+        assert _extract_bracketed("prefix [foo", "[", "]") is None
+        # Neither present
+        assert _extract_bracketed("nothing here", "[", "]") is None
+        # close_ch precedes open_ch (end <= start)
+        assert _extract_bracketed("] foo [", "[", "]") is None
+        # start == end
+        assert _extract_bracketed("[", "[", "[") is None
+
+    def test_extract_json_data_step4_outermost_object_isolation(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        from unittest.mock import MagicMock
+
+        import cresmo.application.json_parser as jp
+
+        mock_step5 = MagicMock(
+            side_effect=AssertionError("Step 5 should not be reached for valid step 4 object")
+        )
+        monkeypatch.setattr(jp, "_extract_individual_objects", mock_step5)
+
+        res = extract_json_data('Text before {"field": "value"} text after')
+        assert res == {"field": "value"}
+
+    def test_extract_json_data_error_message_truncation_exact(self) -> None:
+        long_junk = "A" * 300
+        with pytest.raises(ValueError) as exc_info:
+            extract_json_data(long_junk)
+        expected_msg = f"Failed to extract valid JSON payload: {'A' * 200}"
+        assert str(exc_info.value) == expected_msg

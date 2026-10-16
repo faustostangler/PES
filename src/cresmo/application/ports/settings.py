@@ -15,13 +15,13 @@ class PipelineSettingsProtocol(Protocol):
     def raw_index_max_chars(self) -> int: ...
 
     @property
-    def raw_index_temperature(self) -> float: ...
+    def llm_indexing_temperature(self) -> float: ...
 
     @property
     def language(self) -> str: ...
 
     @property
-    def llm_temperature(self) -> float: ...
+    def llm_synthesis_temperature(self) -> float: ...
 
     @property
     def indexing_provider(self) -> str: ...
@@ -59,15 +59,27 @@ class PipelineSettingsProtocol(Protocol):
     @property
     def inventory_max_attempts(self) -> int: ...
 
+    @property
+    def judge_blocking(self) -> bool: ...
+
+    @property
+    def judge_max_attempts(self) -> int: ...
+
+    @property
+    def gap_filler_passes(self) -> int: ...
+
+
+DEFAULT_LANGUAGE: str = "Português do Brasil"
+
 
 @dataclass
 class DefaultPipelineSettings:
     """Default in-memory settings for standalone application use cases without .env dependency."""
 
     raw_index_max_chars: int = 2000
-    raw_index_temperature: float = 0.2
-    language: str = "Português do Brasil"
-    llm_temperature: float = 0.7
+    llm_indexing_temperature: float = 0.2
+    language: str = DEFAULT_LANGUAGE
+    llm_synthesis_temperature: float = 0.7
     indexing_provider: str = "gemini"
     batch_size: int = 5
     concat_max_words: int = 50000
@@ -80,3 +92,13 @@ class DefaultPipelineSettings:
     channel_discovery_workers: int = 4
     days_lookback: int = 30
     inventory_max_attempts: int = 3
+    judge_blocking: bool = False
+    judge_max_attempts: int = 1
+    gap_filler_passes: int = 3
+
+
+__all__ = [
+    "DEFAULT_LANGUAGE",
+    "DefaultPipelineSettings",
+    "PipelineSettingsProtocol",
+]

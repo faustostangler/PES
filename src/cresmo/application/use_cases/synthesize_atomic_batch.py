@@ -28,10 +28,14 @@ from cresmo.domain.entities import (
     PipelineSessionId,
     UserIdentity,
 )
-from cresmo.domain.exceptions import DomainValidationError, NoteTypologyError
+from cresmo.domain.exceptions import (
+    DomainValidationError,
+    NoteTypologyError,
+)
 from cresmo.domain.value_objects import (
     AtomicEntityInventory,
     CausalMatrix,
+    ChannelId,
     CrossContextRelations,
     NoteTitle,
     NoteType,
@@ -106,10 +110,13 @@ def _parse_single_atomic_note(
     if not isinstance(title_str, str) or not title_str.strip():
         return None
 
-    type_raw = entry.get("type", "concept")
-    try:
-        note_type = NoteType.from_string(str(type_raw))
-    except NoteTypologyError:
+    raw_type = entry.get("type")
+    if isinstance(raw_type, str):
+        try:
+            note_type = NoteType.from_string(raw_type)
+        except NoteTypologyError:
+            note_type = NoteType.CONCEPT
+    else:
         note_type = NoteType.CONCEPT
 
     definition = str(entry.get("definition", "")).strip()
@@ -195,9 +202,9 @@ class SynthesizeAtomicBatchUseCase:
             {"title": title.value, "type": note_type.value} for title, note_type in chunk
         ]
 
-        system_instruction, user_prompt = self.prompt_provider.get_prompt(
+        chat_prompt = self.prompt_provider.get_prompt(
             PromptKey.ATOMIC_BATCH,
-            compendium_title=compendium.title.value,
+            content_title=compendium.title.value,
             channel_name=compendium.channel_name,
             compendium_body=compendium.body,
             targets_json=json.dumps(targets_summary, ensure_ascii=False),
@@ -205,12 +212,13 @@ class SynthesizeAtomicBatchUseCase:
         session_id = PipelineSessionId.create(
             channel=compendium.channel_name,
             content_id=compendium.content_id,
-            channel_id=compendium.channel_id,
+            channel_id=compendium.channel_id
+            if isinstance(compendium.channel_id, ChannelId)
+            else None,
         ).value
         user_id = user.value if user is not None else UserIdentity.anonymous().value
         response = self.llm_synthesis_port.transform(
-            prompt=user_prompt,
-            system_instruction=system_instruction,
+            prompt=chat_prompt,
             temperature=self.temperature,
             trace_id=f"{compendium.content_id.value}_atomic_batch",
             session_id=session_id,

@@ -26,6 +26,7 @@ from opentelemetry import trace
 
 from cresmo.application.ports import LLMTransformationPort
 from cresmo.domain.exceptions import LLMInfrastructureError
+from cresmo.domain.value_objects import ChatPrompt
 from cresmo.infrastructure.adapters.opentelemetry_adapter import annotate_llm_span
 
 __all__ = ["OllamaLLMAdapter", "trace"]
@@ -320,30 +321,19 @@ class OllamaLLMAdapter(LLMTransformationPort):
                 raise self._warmup_error
             return self._is_warmed_up
 
-    @observe(as_type="generation")
     def transform(
         self,
-        prompt: str,
-        system_instruction: str | None = None,
+        prompt: ChatPrompt,
         temperature: float | None = None,
         *,
         trace_id: str | None = None,
         session_id: str | None = None,
         user_id: str | None = None,
     ) -> str:
-        """Execute text transformation on local Ollama instance with Langfuse telemetry.
-
-        Walkthrough:
-            1. Wait at the rendezvous barrier if background warmup is still in progress.
-            2. Construct JSON payload with model, prompt, system prompt, keep_alive, and options.
-            3. Post payload to /api/generate endpoint.
-            4. Catch network/connection errors and translate to LLMInfrastructureError with
-               an actionable warning instructing the user to run 'ollama serve' or use '--web-index'.
-            5. Extract generated response text and emit token usage to Langfuse.
+        """Execute text transformation on local Ollama instance with immediate Langfuse synchronization.
 
         Args:
-            prompt: Text content or prompt for generation.
-            system_instruction: Optional system instruction directive.
+            prompt: Domain ChatPrompt containing sequential messages and optional system instruction.
             temperature: Sampling temperature override. Defaults to self.default_temperature.
             trace_id: Optional trace ID (e.g. ContentId).
             session_id: Pipeline session identifier.
@@ -355,26 +345,61 @@ class OllamaLLMAdapter(LLMTransformationPort):
         Raises:
             LLMInfrastructureError: If Ollama daemon is unreachable or returns HTTP error.
         """
+        response_text = self._execute_transform(
+            prompt=prompt,
+            temperature=temperature,
+            trace_id=trace_id,
+            session_id=session_id,
+            user_id=user_id,
+        )
+
+        client = getattr(self, "_langfuse", None)
+        if client is None:
+            try:
+                from langfuse import get_client
+
+                client = get_client()
+            except Exception:  # noqa: BLE001
+                client = None
+
+        if client is not None:
+            try:
+                client.flush()
+            except Exception as exc:  # noqa: BLE001
+                logger.debug("[OllamaLLMAdapter] Langfuse flush skipped: %s", exc)
+
+        return response_text
+
+    @observe(name="cresmo.llm.generate", as_type="generation")
+    def _execute_transform(
+        self,
+        prompt: ChatPrompt,
+        temperature: float | None = None,
+        *,
+        trace_id: str | None = None,
+        session_id: str | None = None,
+        user_id: str | None = None,
+    ) -> str:
+        """Internal worker executing model generation within an active Langfuse generation observation."""
         if not self._is_warmed_up:
             self.wait_for_warmup()
 
         effective_temperature = temperature if temperature is not None else self.default_temperature
-        endpoint = f"{self.base_url}/api/generate"
+        endpoint = f"{self.base_url}/api/chat"
         options: dict[str, Any] = {
             "temperature": effective_temperature,
         }
         if self.num_predict > 0:
             options["num_predict"] = self.num_predict
 
+        messages = prompt.to_dict_list()
         payload: dict[str, Any] = {
             "model": self.model,
-            "prompt": prompt,
+            "messages": messages,
             "stream": False,
             "keep_alive": self.keep_alive,
             "options": options,
         }
-        if system_instruction:
-            payload["system"] = system_instruction
 
         data = json.dumps(payload).encode("utf-8")
         req = urllib.request.Request(
@@ -388,9 +413,14 @@ class OllamaLLMAdapter(LLMTransformationPort):
             with urllib.request.urlopen(req, timeout=self.timeout_seconds) as response:
                 raw_body = response.read().decode("utf-8")
                 response_json = json.loads(raw_body)
-                generated_text = str(response_json.get("response", "")).strip()
+                msg_obj = response_json.get("message")
+                if isinstance(msg_obj, dict):
+                    generated_text = str(msg_obj.get("content", "")).strip()
+                else:
+                    generated_text = str(response_json.get("response", "")).strip()
 
-                prompt_tokens = response_json.get("prompt_eval_count") or len(prompt.split())
+                total_prompt_words = sum(len(m.content.split()) for m in prompt.messages)
+                prompt_tokens = response_json.get("prompt_eval_count") or total_prompt_words
                 candidate_tokens = response_json.get("eval_count") or len(generated_text.split())
 
                 # OpenTelemetry GenAI Semantic Conventions & Langfuse span decoration

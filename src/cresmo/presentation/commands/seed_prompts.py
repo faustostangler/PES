@@ -12,11 +12,12 @@ Conforms to:
 
 from __future__ import annotations
 
-import argparse
 import logging
 import re
 import sys
-from typing import Any
+from typing import Annotated, Any
+
+import typer
 
 from cresmo.infrastructure.adapters.prompts import PROMPT_REGISTRY, JsonPromptProvider
 from cresmo.presentation.composition import (
@@ -36,27 +37,25 @@ PROMPT_MAPPINGS: dict[str, str] = {
 }
 
 
-def register_subparser(subparsers: argparse._SubParsersAction[Any]) -> None:
-    """Register 'seed-prompts' subcommand parser.
-
-    Args:
-        subparsers: Root CLI subparsers action object.
-    """
-    seed_parser = subparsers.add_parser(
-        "seed-prompts",
-        help="Synchronize canonical prompt templates into Langfuse prompt management",
-    )
-    seed_parser.add_argument(
-        "--label",
-        default="production",
-        help="Target Langfuse prompt label (default: production)",
-    )
-    seed_parser.add_argument(
-        "--dry-run",
-        action="store_true",
-        help="Render prompts without transmitting to Langfuse server",
-    )
-    seed_parser.set_defaults(handler=handle_seed_prompts)
+def seed_prompts(
+    label: Annotated[
+        str,
+        typer.Option("--label", help="Target Langfuse prompt label (default: production)"),
+    ] = "production",
+    dry_run: Annotated[
+        bool,
+        typer.Option("--dry-run", help="Render prompts without transmitting to Langfuse server"),
+    ] = False,
+    verbose: Annotated[
+        bool,
+        typer.Option("--verbose", "-v", help="Enable verbose output"),
+    ] = False,
+) -> None:
+    """Synchronize local prompt definitions to the active Langfuse server."""
+    _ = verbose
+    code = handle_seed_prompts(None, label=label, dry_run=dry_run)
+    if code != EXIT_SUCCESS:
+        raise typer.Exit(code=code)
 
 
 def _to_mustache(text: str) -> str:
@@ -64,22 +63,32 @@ def _to_mustache(text: str) -> str:
     return re.sub(r"(?<!\{)\{([a-zA-Z_][a-zA-Z0-9_]*)\}(?!\})", r"{{\1}}", text)
 
 
-def handle_seed_prompts(args: argparse.Namespace) -> int:
+def handle_seed_prompts(
+    args: Any = None,
+    label: str = "production",
+    dry_run: bool = False,
+) -> int:
     """Synchronize local prompt definitions to the active Langfuse server.
 
     Args:
-        args: Parsed CLI argument namespace.
+        args: Parsed CLI argument namespace or None.
+        label: Target prompt label string.
+        dry_run: Whether to simulate prompt rendering.
 
     Returns:
         Process exit code conforming to exit_codes.py.
     """
-    label = getattr(args, "label", "production") or "production"
-    dry_run = getattr(args, "dry_run", False)
+    target_label = (
+        getattr(args, "label", label) or "production"
+        if args is not None
+        else (label or "production")
+    )
+    target_dry_run = getattr(args, "dry_run", dry_run) if args is not None else dry_run
 
     settings = resolve_shared_settings()
     provider = JsonPromptProvider()
 
-    if dry_run:
+    if target_dry_run:
         sys.stdout.write(
             f"[dry-run] Rendering {len(PROMPT_MAPPINGS)} Chat-Native prompt templates:\n"
         )
@@ -115,11 +124,13 @@ def handle_seed_prompts(args: argparse.Namespace) -> int:
             client.create_prompt(
                 name=lf_name,
                 prompt=chat_prompt,
-                labels=[label],
+                labels=[target_label],
                 tags=["cresmo", "v2"],
                 type="chat",
             )
-            sys.stdout.write(f"✔ Registered '{lf_name}' in Langfuse [type=chat, label={label}]\n")
+            sys.stdout.write(
+                f"✔ Registered '{lf_name}' in Langfuse [type=chat, label={target_label}]\n"
+            )
             success_count += 1
         except Exception as exc:  # noqa: BLE001
             sys.stderr.write(f"✘ Failed to register '{lf_name}': {exc}\n")

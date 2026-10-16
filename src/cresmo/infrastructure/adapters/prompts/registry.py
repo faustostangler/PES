@@ -130,7 +130,20 @@ PROMPT_REGISTRY: dict[PromptKey, PromptMetadata] = {
         skill_name="cresmo",
         description="LLM-as-a-judge synthesis compliance and parataxis verification.",
     ),
+    PromptKey.LLM_JUDGE: PromptMetadata(
+        key=PromptKey.LLM_JUDGE,
+        langfuse_name="cresmo-llm-judge",
+        skill_name="cresmo",
+        description="Universal multi-criteria quality evaluation judge for knowledge synthesis pipelines.",
+    ),
+    PromptKey.OLLAMA_CRITIQUE: PromptMetadata(
+        key=PromptKey.OLLAMA_CRITIQUE,
+        langfuse_name="cresmo-ollama-critique",
+        skill_name="cresmo",
+        description="Converts structured judge evaluation failures into directed natural language corrective directives.",
+    ),
 }
+
 
 LANGFUSE_TO_PROMPT_KEY: dict[str, PromptKey] = {
     meta.langfuse_name: meta.key for meta in PROMPT_REGISTRY.values()

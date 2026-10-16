@@ -106,19 +106,20 @@ class CausalMatrix:
     epistemic_attribution: str = ""
 
     def __post_init__(self) -> None:
-        c = self.cause.strip()
-        e = self.effect.strip()
-        ea = self.epistemic_attribution.strip()
+        cleaned_cause = self.cause.strip()
+        cleaned_effect = self.effect.strip()
+        cleaned_epistemic_attribution = self.epistemic_attribution.strip()
 
         # Invariant enforcement: causality requires relational pairs (cause and effect)
-        if (c or e) and (not c or not e):
+        if (cleaned_cause or cleaned_effect) and (not cleaned_cause or not cleaned_effect):
             raise DomainValidationError(
-                f"CausalMatrix requires both 'cause' and 'effect' to be non-empty. Got cause='{c}', effect='{e}'."
+                f"CausalMatrix requires both 'cause' and 'effect' to be non-empty. "
+                f"Got cause='{cleaned_cause}', effect='{cleaned_effect}'."
             )
 
-        object.__setattr__(self, "cause", c)
-        object.__setattr__(self, "effect", e)
-        object.__setattr__(self, "epistemic_attribution", ea)
+        object.__setattr__(self, "cause", cleaned_cause)
+        object.__setattr__(self, "effect", cleaned_effect)
+        object.__setattr__(self, "epistemic_attribution", cleaned_epistemic_attribution)
 
 
 @dataclass(frozen=True)

@@ -89,36 +89,47 @@ class FillGapsUseCase:
                 f"FillGapsUseCase strictly requires FluidTranscript, got: {type(fluid_transcript).__name__}"
             )
 
-        current_text = fluid_transcript.body
-        file_name = f"{fluid_transcript.content_id.value}.txt"
+        file_name = f"{fluid_transcript.content.id.value}.txt"
 
         session_id = PipelineSessionId.create(
-            channel=fluid_transcript.channel_name,
-            content_id=fluid_transcript.content_id,
-            channel_id=fluid_transcript.channel_id,
+            channel=fluid_transcript.channel,
+            content_id=fluid_transcript.content,
         ).value
         user_id = user.value if user is not None else UserIdentity.anonymous().value
 
-        for pass_index in range(passes):
-            prompt_key = (
-                PromptKey.GAP_FILLER_PASS1
-                if pass_index == 0
-                else PromptKey.GAP_FILLER_PASS_SUBSEQUENT
-            )
-            system_instruction, user_prompt = self.prompt_provider.get_prompt(
-                prompt_key,
+        # Pass 1: Initial Socratic gap filling
+        chat_prompt = self.prompt_provider.get_prompt(
+            PromptKey.GAP_FILLER_PASS1,
+            pass_num=1,
+            total_passes=passes,
+            channel_name=fluid_transcript.channel.name,
+            file_name=file_name,
+            raw_text=fluid_transcript.content.body,
+            current_text=None,
+        )
+        current_text = self.llm_synthesis_port.transform(
+            prompt=chat_prompt,
+            temperature=self.temperature,
+            trace_id=f"{fluid_transcript.content.id.value}_gap_fill_pass_1",
+            session_id=session_id,
+            user_id=user_id,
+        )
+
+        # Subsequent passes: Progressive enrichment over current text
+        for pass_index in range(1, passes):
+            chat_prompt = self.prompt_provider.get_prompt(
+                PromptKey.GAP_FILLER_PASS_SUBSEQUENT,
                 pass_num=pass_index + 1,
                 total_passes=passes,
-                channel_name=fluid_transcript.channel_name,
+                channel_name=fluid_transcript.channel.name,
                 file_name=file_name,
-                raw_text=fluid_transcript.body,
-                current_text=current_text if pass_index > 0 else None,
+                raw_text=fluid_transcript.content.body,
+                current_text=current_text,
             )
             current_text = self.llm_synthesis_port.transform(
-                prompt=user_prompt,
-                system_instruction=system_instruction,
+                prompt=chat_prompt,
                 temperature=self.temperature,
-                trace_id=f"{fluid_transcript.content_id.value}_gap_fill_pass_{pass_index + 1}",
+                trace_id=f"{fluid_transcript.content.id.value}_gap_fill_pass_{pass_index + 1}",
                 session_id=session_id,
                 user_id=user_id,
             )
@@ -128,7 +139,7 @@ class FillGapsUseCase:
         if title_match:
             extracted_title = title_match.group(1).strip()
         else:
-            extracted_title = fluid_transcript.title or "Untitled Compendium"
+            extracted_title = fluid_transcript.content.title or "Untitled Compendium"
 
         # Split body and complementary info (case-insensitive and whitespace resilient)
         complementary_match = _COMPLEMENTARY_REGEX.search(current_text)
@@ -136,11 +147,6 @@ class FillGapsUseCase:
             body = current_text[: complementary_match.start()].strip()
             complementary_information = current_text[complementary_match.end() :].strip()
             body = _TITLE_H1_PATTERN.sub("", body).strip()
-        elif _COMPLEMENTARY_TAG in current_text:
-            parts = current_text.split(_COMPLEMENTARY_TAG, 1)
-            body = parts[0].strip()
-            body = _TITLE_H1_PATTERN.sub("", body).strip()
-            complementary_information = parts[1].strip()
         else:
             raise CompendiumStructureError(f"Missing mandatory section '{_COMPLEMENTARY_TAG}'")
 
@@ -149,21 +155,20 @@ class FillGapsUseCase:
                 "EnrichedCompendium must contain a non-empty 'Informações Complementares' section."
             )
 
-        pub_date = fluid_transcript.publication_date
+        pub_date = fluid_transcript.provenance.publication_date
         video_date = pub_date.strftime("%Y%m%d") if pub_date else ""
         compendium = EnrichedCompendium(
-            content_id=fluid_transcript.content_id,
-            channel_name=fluid_transcript.channel_name,
+            content_id=fluid_transcript.content.id,
+            channel_name=fluid_transcript.channel.name,
             title=NoteTitle(extracted_title),
             body=body,
             complementary_info=complementary_information,
             pass_count=passes,
-            channel_id=fluid_transcript.channel_id,
-            channel_category=fluid_transcript.channel_category,
-            source_url=fluid_transcript.source_url,
-            publication_date=pub_date,
+            channel_id=fluid_transcript.channel.id,
+            channel_category=fluid_transcript.channel.category,
+            source_url=fluid_transcript.provenance.url,
             video_date=video_date,
-            video_description=fluid_transcript.video_description,
+            video_description=fluid_transcript.provenance.description,
         )
         self.vault_port.save_enriched_compendium(compendium)
         return compendium

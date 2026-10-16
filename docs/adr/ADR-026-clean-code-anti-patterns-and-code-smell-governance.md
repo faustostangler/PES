@@ -26,12 +26,16 @@ During the recursive architectural audit across all layers (Domain, Application,
 8. **Código Morto e Parâmetros Assinatura Inutilizados (`ARG001`, `ARG002`):** Methods and functions receiving arguments that are never consumed within the execution body.
 9. **Constantes Operacionais e Linhagem em Escopo Global de Módulo / `__init__.py` (Violação 12-Factor Fator III, ADR-005, ADR-011):** Defining runtime operational tags, pipeline versions, or tunable parameters as global variables in module files or `__init__.py` instead of centralizing in `CresmoSettings` (Pydantic Settings V2).
 10. **Defensive Fallback Cascading e Instanciação Tardia Oculta (Violação DI & Single Source of Truth):** Declaring optional configuration parameters (`settings: CresmoSettings | None = None`) with inline fallback (`settings or CresmoSettings()`) inside internal functions. This causes unintended disk/env re-reads, bypasses memoized settings factories, and silently drops runtime CLI overrides.
+11. **"C-Style Forward-Declaration / Inverted Newspaper Antipattern" e Ping-Pong com Saltos Retrógrados (Violação do Stepdown Rule / Clean Code):** Inverting the top-down narrative by burying the primary command handler/entry point at the bottom of the module while exposing low-level leaf utility functions at the top, forcing developers into continuous backwards ping-pong jumps across hundreds of lines.
+12. **Acúmulo de Múltiplas Responsabilidades em Módulos de Apresentação (Violação de SRP):** Presentation command modules accumulating disparate concerns (CLI argument conversion, streaming batch processing, resource management/garbage collection, and RAG consolidation) instead of maintaining bounded, laser-focused responsibilities.
+13. **Hardcoded Fallbacks Operacionais em Funções de Construção e Adapters (Violação de SSOT e 12-Factor Fator III):** Hardcoding literal operational values (e.g. `dict.get("language", "Português do Brasil")`, `x or "hardcoded"`) as inline fallbacks across builders and adapters instead of sourcing all operational defaults strictly from the Single Source of Truth (`config.py` / `CresmoSettings`). When global configuration or environment variables change, these scattered hardcoded fallbacks silently ignore system configuration when context keys are absent.
+14. **Eager Fallback Evaluation e Degradação Antecipada (Violação de Circuit Breaking & Resiliência Lazy):** Pre-evaluating, instantiating, or parsing fallback assets (e.g., local disk templates, regexes, secondary models, or downstream services) on the happy path *before* attempting the primary/remote provider. This burns CPU/IO cycles unnecessarily on 100% of healthy requests, creates failure contagion, and inverts the semantics of graceful degradation.
 
 This ADR formally codifies the governance rules, anti-patterns, and required implementations to eliminate these smells across the codebase.
 
 ---
 
-## 2. The Ten Clean Code Anti-Pattern Standards
+## 2. The Clean Code Anti-Pattern Standards
 
 ```
 +---------------------------------------------------------------------------------------------------+
@@ -47,6 +51,15 @@ This ADR formally codifies the governance rules, anti-patterns, and required imp
 |  [Rule 8] Signature Hygiene & Dead Code --> Zero Dangling Unused Parameters Across Concrete Code  |
 |  [Rule 9] SSOT Operational Settings     --> Pydantic Settings V2; Zero Global Configs in __init__ |
 |  [Rule 10] Anti-Defensive Cascading     --> Early Strict DI; Zero 'settings or Settings()' Inlines|
+|  [Rule 11] Anti-Bifurcated Construction --> SSOT Factory Composition; Zero Raw Constructor Bypasses|
+|  [Rule 12] Anti-Shadow State Variables  --> Single Canonical Attribute Naming; Zero State Aliasing|
+|  [Rule 13] Anti-Middle Man & Builders   --> Direct Invocations & Direct Pure DI; Zero Trampolines   |
+|  [Rule 14] Liskov Substitution & SOLID  --> Upfront Port Typing, Full Subtype Interchangeability   |
+|  [Rule 15] Stepdown Rule & Top-Down Narrative --> Inverted Newspaper Elimination; Top-Level Entry Points First   |
+|  [Rule 16] Presentation SRP & Bounded Commands --> CLI Controller Humble Object Decoupled from Batch Engines     |
+|  [Rule 17] Zero Hardcoded Fallbacks     --> SSOT Config Fallbacks; Zero Ad-Hoc Literal Defaults      |
+|  [Rule 18] Zero Convenience Accessors    --> Direct Canonical Navigation; Zero Delegation Shims     |
+|  [Rule 19] Strict Lazy Fallback Execution--> Zero Eager Evaluation; On-Demand Degradation Only      |
 +---------------------------------------------------------------------------------------------------+
 ```
 
@@ -443,12 +456,12 @@ Another manifestation is loop shadow counters (e.g. maintaining `total_items += 
 
 ---
 
-### Rule 13: Anti-Middle Man / Pass-Through Trampoline Methods (Remove Middle Man)
+### Rule 13: Anti-Middle Man / Pass-Through Trampoline Methods & Builders (Remove Middle Man)
 
 #### 13.1 The Anti-Pattern
-Declaring private wrapper methods that take exact identical parameters and do nothing except forward them 1:1 to an internal collaborator or module-level function:
+Declaring private wrapper methods or factory functions that take exact identical parameters and do nothing except forward them 1:1 to an internal collaborator, function, or concrete constructor:
 ```python
-# ANTI-PATTERN: Middle Man / Pass-Through Trampoline Method
+# ANTI-PATTERN 1: Middle Man / Pass-Through Trampoline Method
 def _extract_concepts(
     self,
     video_id: ContentId,
@@ -472,11 +485,23 @@ Another common manifestation:
 def _load_transcript_from_file(self, file_path: Path) -> RawTranscript:
     return load_transcript_from_file(file_path)
 ```
+A third critical manifestation in Dependency Injection / Presentation Composition:
+```python
+# ANTI-PATTERN 2: Pass-Through Factory Trampoline / Middle Man Builder
+def build_critique_synthesizer_adapter(
+    llm_transformation_port: LLMTransformationPort | None,
+    prompt_provider: PromptProviderPort | None = None,
+) -> CritiqueSynthesizerPort:
+    return OllamaCritiqueAdapter(
+        llm_transformation_port=llm_transformation_port,
+        prompt_provider=prompt_provider,
+    )
+```
 
 **Architectural Violations:**
-1. **Middle Man Code Smell (Martin Fowler, Refactoring):** When a class or orchestrator merely delegates calls to another collaborator without adding business logic, translation, validation, caching, or error handling, it acts as an unnecessary middle man.
-2. **Indirection Without Abstraction (Cognitive Bloat):** Developers reading the execution flow (`execute()`) must jump into a private helper, only to find that it adds zero value and immediately delegates to another class.
-3. **Signature Duplication & Fragility:** Every change to the collaborator's signature requires updating both the trampoline and the caller, duplicating parameter lists and type hints for no architectural benefit.
+1. **Middle Man Code Smell (Martin Fowler, Refactoring):** When a class, orchestrator, or factory function merely delegates calls to another collaborator or constructor without adding business logic, polymorphic dispatch, translation, validation, caching, secret resolution, or error handling, it acts as an unnecessary middle man.
+2. **Indirection Without Abstraction (Cognitive Bloat & Speculative Generality):** Developers reading the execution flow or composition root must jump into a factory or private helper, only to find that it adds zero value and immediately delegates to a single deterministic concrete class.
+3. **Signature Duplication & Fragility:** Every change to the collaborator's or adapter's constructor signature requires updating both the trampoline and the caller, duplicating parameter lists and type hints for no architectural benefit.
 
 #### 13.2 The Standard & Remediation
 1. **Remove Middle Man (Direct Collaborator Invocation):** Invoke the internal collaborator directly at the call site within the orchestrating method:
@@ -492,7 +517,271 @@ def _load_transcript_from_file(self, file_path: Path) -> RawTranscript:
    )
    ```
 2. **Eliminate Wrapper Methods for Module Functions:** When a standalone domain/infrastructure function is imported (e.g., `load_transcript_from_file`), call it directly (`raw = load_transcript_from_file(file_path)`) rather than wrapping it in a private instance method (`self._load_transcript_from_file`).
-3. **Legitimate Delegators vs Trampolines:** Public Facades implementing an interface/port (e.g. `ObsidianVaultAdapter` implementing `VaultRepositoryPort` by delegating to sub-repositories) or methods adding ACL validation, telemetry spans, or error translation are legitimate. Pure zero-logic private pass-throughs are prohibited.
+3. **Direct Instantiation in Pure DI Composition Roots (KISS vs Factory Justification):**
+   - **Factories / Builders are justified IF AND ONLY IF:** they perform runtime polymorphic dispatch (e.g., switching between Gemini and Ollama based on `settings.indexing_provider` or `settings.judge_provider`), secret extraction/validation (`api_key.get_secret_value()`), or complex lifecycle management.
+   - **Direct Instantiation:** When an adapter has a single deterministic implementation and takes already-resolved dependencies (e.g., `SqliteLedgerAdapter(db_path=...)` or `OllamaCritiqueAdapter(llm_transformation_port=..., prompt_provider=...)`), instantiate it directly within the Composition Root (`composition.py`). Do not introduce speculative factory functions that act as middle men:
+     ```python
+     # REMEDIATION: Direct Instantiation in Pure DI Composition Root
+     critique_synthesizer = OllamaCritiqueAdapter(
+         llm_transformation_port=llm_indexing_port,
+         prompt_provider=prompt_provider,
+     )
+     ```
+4. **Legitimate Delegators vs Trampolines:** Public Facades implementing an interface/port (e.g. `ObsidianVaultAdapter` implementing `VaultRepositoryPort` by delegating to sub-repositories) or methods adding ACL validation, telemetry spans, or error translation are legitimate. Pure zero-logic pass-throughs are prohibited.
+
+---
+
+### Rule 14: Liskov Substitution Principle (LSP) & SOLID Alignment across Ports, Adapters, and Factories
+
+#### 14.1 The Anti-Pattern
+Violations of the **Liskov Substitution Principle (LSP)** and core **SOLID** principles typically manifest in Python modular monoliths in three distinct smells:
+
+1. **Leaky Subtype Inference & Untyped Factory Branching:**
+   In dependency injection factories, instantiating concrete adapters within conditional branching (`if / elif / else`) without declaring the target Port interface upfront. This causes static type checkers (`mypy`, `pyright`) to infer wide, leaky union types (e.g. `TypeSafeJudgeAdapter | OllamaJudgeAdapter | GeminiJudgeAdapter`) instead of the unified Port abstraction (`LlmJudgePort`):
+   ```python
+   # ANTI-PATTERN: Implicit Leaky Subtype Assignment in Factory
+   def build_llm_judge_adapter(settings: CresmoSettings) -> LlmJudgePort:
+       provider = settings.judge_provider
+       if provider == "typesafe":
+           primary = TypeSafeJudgeAdapter(...)  # inferred as TypeSafeJudgeAdapter
+       elif provider == "ollama":
+           primary = OllamaJudgeAdapter(...)    # inferred as Union[TypeSafe, Ollama]
+       else:
+           primary = GeminiJudgeAdapter(...)    # union leakage
+       
+       # Downstream consumers may accidentally couple to concrete subtype specifics
+       return ResilientCompositeJudgeAdapter(primary=primary, fallback=fallback)
+   ```
+
+2. **Contract Precondition Strengthening or Postcondition Weakening:**
+   Concrete adapters that alter method signatures, raise undeclared non-domain exceptions instead of standard domain errors, or fail to honor return type invariants established by the Port contract (e.g., failing to return a valid `JudgeEvaluation` for `LlmJudgePort.evaluate()`).
+
+3. **Subtype Downcasting and `isinstance` Branching (Violation of OCP & LSP):**
+   Downstream components (orchestrators, use cases, or composites) inspecting the concrete type of an injected Port via `isinstance(adapter, ConcreteAdapter)` to execute special-case logic, destroying the polymorphism guaranteed by Hexagonal Architecture.
+
+#### 14.2 The Standard & Remediation
+
+1. **Explicit Upfront Port Typing (Single Target Port Contract):**
+   In all DI factory functions, declare the variable type explicitly as the abstract Port interface **before** the conditional resolution block. This enforces at compile time (via `mypy` / `pyright`) that every execution branch assigns an object that strictly satisfies the Port contract:
+   ```python
+   # STANDARD: Explicit Port Interface Declaration Upfront (LSP & Hexagonal DI)
+   primary: LlmJudgePort
+   provider = settings.judge_provider.lower().strip()
+   if provider == "typesafe":
+       primary = TypeSafeJudgeAdapter(
+           api_key=settings.typesafe_api_key.get_secret_value(),
+           model=settings.typesafe_model,
+           base_url=settings.typesafe_base_url,
+       )
+   elif provider == "ollama":
+       primary = OllamaJudgeAdapter(
+           base_url=settings.ollama_base_url,
+           model=settings.ollama_model,
+           timeout_seconds=settings.ollama_timeout_seconds,
+       )
+   else:
+       primary = GeminiJudgeAdapter(
+           api_key=settings.gemini_api_key.get_secret_value(),
+           model=settings.gemini_model,
+       )
+   ```
+
+2. **Full Interchangeability of Implementations (LSP):**
+   Any adapter implementing a Port (such as `GeminiJudgeAdapter`, `OllamaJudgeAdapter`, `TypeSafeJudgeAdapter`, or composite wrappers like `ResilientCompositeJudgeAdapter` and `LangfuseJudgeDecorator` for `LlmJudgePort`) must be 100% interchangeable at runtime without requiring any branch or adapter-specific handling from callers.
+
+3. **SOLID Architectural Alignment:**
+   - **Single Responsibility Principle (SRP):** Each adapter has one distinct responsibility (e.g. `GeminiJudgeAdapter` for Google GenAI structured inference, `LangfuseJudgeDecorator` for telemetry ingestion).
+   - **Open/Closed Principle (OCP):** New providers are added by implementing the Port and registering a new branch in the factory, requiring zero modifications to domain use cases or orchestrators.
+   - **Liskov Substitution Principle (LSP):** Derived adapters strictly honor Port contract invariants and return types.
+   - **Interface Segregation Principle (ISP):** Hexagonal Ports remain lean and fine-grained (e.g. `LlmJudgePort` exposes only `evaluate(context)`, decoupled from generative text synthesis in `LLMTransformationPort`).
+   - **Dependency Inversion Principle (DIP):** Domain and Application use cases depend solely on Port abstractions (`LlmJudgePort`), never on concrete infrastructure adapters or external SDKs.
+
+---
+
+### Rule 15: The Stepdown Rule & Top-Down Narrative (Anti-Inverted Newspaper & Anti-Ping-Pong)
+
+#### 15.1 The Anti-Pattern
+Placing high-level entry points (`handle_run`, `handle_sync`) at the very bottom of the source file while placing granular leaf helpers (`_drain_telemetry_and_memory`, `_consolidate_master_if_needed`) at the top, resembling outdated C/Pascal forward-declaration constraints. Every call requires jumping backwards ("ping-pong com saltos retrógrados") by hundreds of lines, creating severe cognitive friction and violating Uncle Bob's Stepdown Rule / Newspaper Metaphor.
+
+```python
+# ANTI-PATTERN: Inverted Newspaper with backwards ping-pong jumps
+def _leaf_helper():  # Leaf detail at line 10
+    ...
+
+
+def _execute_branch():  # Intermediate branch at line 100 calls leaf above
+    _leaf_helper()
+
+
+def handle_command():  # Primary entry point buried at line 400!
+    _execute_branch()
+```
+
+#### 15.2 The Standard & Remediation
+All command handlers and orchestrator modules MUST adhere to the **Stepdown Rule (The Newspaper Metaphor)**:
+1. **Headline / Top Abstraction:** CLI registration (`register_subparser`) immediately followed by the primary public entry point (`handle_run`).
+2. **Intermediate Abstraction:** Central dispatcher (`_execute_run_pipeline`) and high-level execution modalities (`execute_single_video_run`, `execute_batch_run`, `execute_batch_dry_run`).
+3. **Domain / Query Helpers:** Query builders and source loaders (`load_batch_sources`, `_build_batch_discovery_query`).
+4. **Leaf Details:** Item-level workers and system maintenance routines (`_process_single_batch_item`, `_consolidate_master_if_needed`, `_drain_telemetry_and_memory`).
+
+Reading down the file steadily descends one level of abstraction at a time without requiring backwards context jumps.
+
+---
+
+### Rule 16: Presentation SRP & Cohesive Command Boundaries
+
+#### 16.1 The Anti-Pattern
+Accumulating multiple distinct lifecycle concerns inside a single CLI command module:
+1. CLI terminal protocol & argument conversion (Humble Object).
+2. Streaming batch discovery & query filtering.
+3. Multi-item batch execution loop with memory/GC drain.
+4. Post-batch downstream domain consolidations (e.g. Master RAG generation).
+
+When unbounded, command files degrade into "Presentation God Files", violating SRP and ADR-026 Rule 5.
+
+#### 16.2 The Standard & Remediation
+1. **Parser Decoupling:** Argument definitions MUST be extracted to dedicated parser modules (`run_parser.py`) to keep command modules focused strictly on execution routing.
+2. **Bounded Modularity (< 500 LOC):** If a command module remains below 500 LOC, cohesive unification (Opção A) is permissible provided the Stepdown Rule (Rule 15) is rigorously enforced.
+3. **SRP Slicing Threshold (> 500 LOC or Disparate Concerns):** If execution logic exceeds 500 LOC or requires reusable background processing, the batch execution engine MUST be sliced into a dedicated executor (e.g., `batch_executor.py`), leaving `run.py` as a pure, lightweight Humble Object controller (< 150 LOC) translating CLI arguments and mapping domain exceptions to POSIX exit codes.
+
+---
+
+### Rule 17: Zero Hardcoded Operational Fallbacks — Single Source of Truth in `config.py`
+
+#### 17.1 The Anti-Pattern
+Hardcoding literal operational values (such as language names, model identifiers, timeout durations, or directory paths) as inline fallbacks in adapter and prompt builder routines:
+```python
+# ANTI-PATTERN: Scattered hardcoded fallbacks
+def build_raw_index_summary(provider: Any, **context: Any) -> tuple[str, str]:
+    return provider._format_paired_prompt(
+        ...,
+        language=context.get("language", "Português do Brasil"),  # MAGIC LITERAL FALLBACK!
+    )
+```
+This violates:
+1. **ADR-005 & 12-Factor App Factor III:** Configuration must be centralized in a Single Source of Truth (`config.py`).
+2. **ADR-026 Rule 2 (Zero Magic Literals):** Hardcoded string literals scattered across leaf functions create duplicate points of modification.
+3. **Operational Consistency:** When the system language is updated via `.env` (e.g., `CRESMO_LANGUAGE=en-US`), inline fallbacks silently ignore the global configuration whenever the caller does not explicitly populate `context["language"]`.
+
+#### 17.2 The Standard & Remediation
+All operational defaults and fallback values MUST be declared as canonical constants in `config.py` (e.g. `DEFAULT_LANGUAGE: str = "Português do Brasil"`) and exposed via `CresmoSettings`.
+
+Adapters and prompt builders MUST resolve operational values via a strict hierarchical resolution pattern:
+```python
+# SOTA CLEAN REMEDIATION: Hierarchical SSOT fallback resolution
+from cresmo.infrastructure.config import DEFAULT_LANGUAGE
+
+
+def _resolve_language(provider: Any, context: dict[str, Any]) -> str:
+    """Resolve target language adhering to SSOT configuration hierarchy.
+
+    Order of precedence:
+    1. Explicit execution context override ('language' key in context).
+    2. Injected provider configured language (provider.language).
+    3. Provider settings configured language (provider.settings.language).
+    4. SSOT infrastructure fallback (DEFAULT_LANGUAGE from cresmo.infrastructure.config).
+    """
+    return (
+        context.get("language")
+        or getattr(provider, "language", None)
+        or getattr(getattr(provider, "settings", None), "language", None)
+        or DEFAULT_LANGUAGE
+    )
+```
+
+Furthermore, prompt provider instances (`JsonPromptProvider`) MUST be injected with the configured language and settings at instantiation time in composition/factory layers, ensuring end-to-end consistency without inline magic constants.
+
+---
+
+### Rule 18: Zero Convenience Accessors, Property Delegation Shims & Backward-Compatibility Aliases
+
+#### 18.1 The Anti-Pattern
+Introducing convenience properties, delegation shims, or property aliases on classes, execution contexts, or configuration models (e.g., `context.channel_name` delegating to `context.channel.name`, `context.content_id` delegating to `context.content.id`, `settings.default_language` aliasing `settings.language`, or `settings.llm_temperature` aliasing `settings.llm_synthesis_temperature`) to maintain transitional backward compatibility or offer caller shortcuts:
+```python
+# ANTI-PATTERN: Convenience Delegation Shim / Property Alias
+class PipelineExecutionContext:
+    channel: Channel
+    content: Content
+
+    @property
+    def channel_name(self) -> str:  # CONVENIENCE SHIM!
+        return self.channel.name
+
+    @property
+    def content_id(self) -> ContentId:  # CONVENIENCE SHIM!
+        return self.content.id
+```
+
+This violates:
+1. **ADR-010 (The Principle of Zero Legacy Shims & Complete Refactoring):** Production code within bounded contexts must never retain deprecated methods, property wrappers, or aliases solely to avoid refactoring callers or test assertions.
+2. **Single Source of Truth (SSOT) & Law of Demeter in Reverse:** Exposing synthetic shims flattens cohesive domain aggregates into an ambiguous, bloated interface, obscuring whether an attribute belongs to the context itself or to its inner Value Objects (`Channel`, `Content`).
+3. **Cognitive Drift & Codebase Schism:** When aliases exist, different modules and test suites arbitrarily mix `settings.language` with `settings.default_language` and `context.channel_name` with `context.channel.name`, degrading architectural clarity and hindering deterministic refactorings.
+
+#### 18.2 The Standard & Remediation
+1. **Pure Aggregate & Composite Navigation:** Callers holding a composite aggregate or context MUST navigate the canonical hierarchy directly:
+   - For `PipelineExecutionContext`: access `context.channel.name`, `context.channel.id`, `context.content.id`, and `context.content.title`. Zero synthetic delegators (`channel_name`, `channel_id`, `content_id`, `channel_id_str`, `content_id_str`, `content_title`, `video`) are permitted.
+2. **Canonical Configuration Fields:** In configuration models (`CresmoSettings`, `PipelineSettingsProtocol`, `DefaultPipelineSettings`), every tunable must have exactly one canonical field name (e.g., `language`, `llm_synthesis_temperature`, `llm_indexing_temperature`). All `@property` aliases and legacy fallback aliases are eradicated.
+3. **Simultaneous Atomic Refactoring:** Whenever a domain concept or configuration field is refined, all consuming use cases, adapters, commands, and test suites must be updated atomically to use the canonical accessor.
+
+---
+
+### Rule 19: Strict Lazy Fallback Execution — Anti-Eager Fallback & Circuit Degradation Governance
+
+#### 19.1 The Anti-Pattern
+Pre-evaluating, instantiating, or compiling fallback logic on the happy path *before* invoking the primary provider. For example, reading local disk template files, compiling regexes, caching skill definitions, or invoking secondary LLMs synchronously prior to attempting a remote Langfuse Cloud API call or primary adapter invocation:
+
+```python
+# ANTI-PATTERN: Eagerly evaluating fallback prior to remote call
+class LangfusePromptProvider(PromptProviderPort):
+    def get_prompt(self, key: PromptKey, **context: Any) -> tuple[str, str]:
+        # Eager fallback execution burns disk I/O, regex parsing, and skill cache on 100% of calls!
+        fallback_system_instruction, fallback_user_prompt = self._fallback.get_prompt(
+            key, **context
+        )
+
+        return self._resolve_chat_prompt(
+            key,
+            fallback_system_instruction=fallback_system_instruction,
+            fallback_user_prompt=fallback_user_prompt,
+            **context,
+        )
+```
+
+This violates:
+1. **Performance & Waste Elimination (Lean Engineering):** In 99.9% of production requests, the primary service (e.g., Langfuse Cloud, primary model provider) responds successfully. Computing the fallback eagerly forces unnecessary CPU cycles, disk I/O, and string allocations on the critical happy path.
+2. **Semantics of Graceful Degradation & Circuit Breaking:** A fallback is by definition a *plan B* triggered solely when the primary path is unavailable, disabled, or fails. Treating it as an eager parameter turns degradation into an unconditional overhead.
+3. **Failure Contagion:** If the fallback preparation logic suffers a bug, disk read lock, or validation error, the primary remote call never executes, even though the primary service was completely healthy.
+4. **Clean Separation of Concerns:** The primary execution method becomes polluted with fallback parameters, obscuring the primary pipeline flow.
+
+#### 19.2 The Standard & Remediation
+1. **Strict Lazy Evaluation:** Primary execution paths MUST execute first without computing, parsing, or instantiating fallback assets. Fallbacks MUST only be invoked:
+   - Within an explicit `except Exception:` recovery block, or
+   - Within an explicit offline/circuit-open status branch (e.g., `if not self._is_available():`).
+2. **Lazy Callable / Supplier Pattern:** Where a coordinator or orchestrator receives a fallback parameter, it SHOULD accept a `Callable[[], T]` supplier rather than an eagerly evaluated value whenever computing the fallback involves I/O, parsing, or non-trivial computation:
+   ```python
+   # Recommended for coordinators/runners:
+   fallback: _StageRet | Callable[[], _StageRet] | None = None
+   ```
+3. **SOTA Clean Code Pattern:**
+```python
+# SOTA CLEAN REMEDIATION: Pure Lazy Degradation
+class LangfusePromptProvider(PromptProviderPort):
+    def get_prompt(self, key: PromptKey, **context: Any) -> tuple[str, str]:
+        """Retrieve compiled prompt adhering to strict lazy fallback governance."""
+        if not self._is_available():
+            logger.debug("Langfuse unavailable; executing lazy fallback for %s", key)
+            return self._fallback.get_prompt(key, **context)
+
+        try:
+            return self._fetch_and_compile_remote(key, **context)
+        except Exception as exc:
+            logger.warning(
+                "Remote Langfuse prompt fetch failed for %s (%s); triggering lazy fallback",
+                key,
+                exc,
+            )
+            return self._fallback.get_prompt(key, **context)
+```
 
 ---
 
@@ -501,7 +790,7 @@ def _load_transcript_from_file(self, file_path: Path) -> RawTranscript:
 
 The following Ruff rules and architecture checks are enforced across the entire repository:
 
-| Ruff Code | Rule Description | Severity | Target Scope |
+| Ruff Code / Check | Rule Description | Severity | Target Scope |
 | :--- | :--- | :--- | :--- |
 | **`E402`** | Module level import not at top of file | **BLOCKING** | All files in `src/` and `tests/` |
 | **`S101`** | Use of `assert` detected | **BLOCKING** | `src/` (strictly zero asserts) |
@@ -515,3 +804,6 @@ The following Ruff rules and architecture checks are enforced across the entire 
 | **`PLR0912`**| Too many branches (>12) | **AUDITED** | Refactor to strategy tables |
 | **`ARG001`**| Unused function argument | **BLOCKING** | Cleaned up or prefixed with `_` |
 | **`ARG002`**| Unused method argument | **AUDITED** | Prefix with `_` in NoOp / Null-Object adapters |
+| **`RULE-017`**| Hardcoded operational fallback strings | **BLOCKING** | Sourced strictly from `config.py` / `CresmoSettings` |
+| **`RULE-018`**| Zero convenience accessors & property aliases | **BLOCKING** | Direct canonical aggregate navigation |
+| **`RULE-019`**| Eager fallback evaluation | **BLOCKING** | Prohibited; lazy evaluation on failure/offline only |

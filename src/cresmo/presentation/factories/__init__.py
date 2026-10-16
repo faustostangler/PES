@@ -12,6 +12,7 @@ from cresmo.presentation.factories.adapter_factory import (
     build_prompt_provider,
     build_vault_adapter,
 )
+from cresmo.presentation.factories.judge_factory import build_llm_judge_adapter
 from cresmo.presentation.factories.settings_factory import (
     get_shared_settings,
     reset_shared_settings,
@@ -40,6 +41,7 @@ __all__ = [
     "build_gemini_synthesis_adapter",
     "build_index_raw_use_case",
     "build_indexing_adapter",
+    "build_llm_judge_adapter",
     "build_media_ingestion_adapter",
     "build_metrics_adapter",
     "build_preflight_checker",

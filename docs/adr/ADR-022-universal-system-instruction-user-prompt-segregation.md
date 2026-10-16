@@ -56,7 +56,7 @@ We establish universal segregation between **System Instructions** and **User Pr
 ```
 
 ### 2.1 Hexagonal Port Contract Update (`PromptProviderPort`)
-All synthesis prompt retrieval methods in `PromptProviderPort` ([`src/cresmo/application/ports.py`](../../src/cresmo/application/ports.py)) return `tuple[str, str]`:
+All synthesis prompt retrieval methods in `PromptProviderPort` ([`src/cresmo/application/ports/prompt_provider.py`](../../src/cresmo/application/ports/prompt_provider.py)) return `tuple[str, str]`:
 ```python
 def get_gap_filler_prompt(...) -> tuple[str, str]: ...
 def get_long_expander_prompt(...) -> tuple[str, str]: ...

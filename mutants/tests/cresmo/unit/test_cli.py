@@ -6,13 +6,14 @@ process exit codes per SPEC-002 §4.1 & §4.2.
 
 from __future__ import annotations
 
+import argparse
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
 
 from cresmo.application.pipeline import PipelineResult
-from cresmo.domain.entities import RawTranscript
+from cresmo.domain.entities import SourceTranscript
 from cresmo.domain.exceptions import (
     DomainValidationError,
     IngestionNetworkError,
@@ -22,18 +23,21 @@ from cresmo.domain.exceptions import (
 )
 from cresmo.domain.value_objects import (
     ChannelFeedQuery,
+    ChannelName,
     ContentId,
     PipelineStatus,
     SyncSummary,
 )
 from cresmo.infrastructure.config import CresmoSettings
 from cresmo.presentation.cli import (
+    COMMAND_MODULES,
     EXIT_CONFIG_OR_USAGE_ERROR,
     EXIT_DOMAIN_VALIDATION_ERROR,
     EXIT_INGESTION_ERROR,
     EXIT_INTERNAL_ERROR,
     EXIT_RATE_LIMIT_EXCEEDED,
     EXIT_SUCCESS,
+    _create_parser,
     main,
 )
 
@@ -41,12 +45,89 @@ from cresmo.presentation.cli import (
 class TestCresmoCLI:
     """Hermetic unit tests for CLI entrypoint and exit codes."""
 
+    def test_all_command_modules_comply_with_command_module_protocol(self) -> None:
+        """Verify that every module in COMMAND_MODULES satisfies CommandModule protocol."""
+        for mod in COMMAND_MODULES:
+            mod_name = getattr(mod, "__name__", str(mod))
+            assert hasattr(mod, "register_subparser"), (
+                f"Module {mod_name} in COMMAND_MODULES does not have 'register_subparser'"
+            )
+            assert callable(mod.register_subparser), (
+                f"'register_subparser' in {mod_name} is not callable"
+            )
+
+    def test_dynamic_subcommand_registration_parity(self) -> None:
+        """Verify that _create_parser dynamically registers subcommands without hardcoding."""
+        parser = _create_parser()
+        assert parser.prog == "cresmo"
+        assert parser.description == "Cresmo Knowledge Synthesis CLI (Hexagonal Modular Monolith)"
+        subparsers_action = next(
+            (
+                action
+                for action in parser._actions
+                if isinstance(action, argparse._SubParsersAction)
+            ),
+            None,
+        )
+        assert subparsers_action is not None, "Root parser must contain a SubParsersAction"
+        assert subparsers_action.dest == "subcommand"
+        assert subparsers_action.help == "Available subcommands"
+        registered_commands = set(subparsers_action.choices.keys())
+
+        # Ensure core expected subcommands are all registered dynamically
+        expected_commands = {
+            "run",
+            "check-config",
+            "sync",
+            "worker",
+            "dedupe",
+            "export-cookies",
+            "concat-master",
+            "seed-prompts",
+        }
+        assert registered_commands == expected_commands
+        assert len(registered_commands) == len(COMMAND_MODULES)
+
     def test_cli_no_args_defaults_to_run_batch(self) -> None:
         with (
             patch("cresmo.presentation.commands.run.build_pipeline"),
             patch("cresmo.presentation.commands.run.load_batch_sources", return_value=[]),
         ):
             assert main([]) == EXIT_SUCCESS
+
+    def test_cli_none_argv_defaults_to_sys_argv(self) -> None:
+        with (
+            patch("sys.argv", ["cresmo", "run"]),
+            patch("cresmo.presentation.commands.run.build_pipeline"),
+            patch("cresmo.presentation.commands.run.load_batch_sources", return_value=[]),
+        ):
+            assert main(None) == EXIT_SUCCESS
+
+    def test_cli_implicit_run_routing_with_flags(self) -> None:
+        mock_pipeline = MagicMock()
+        mock_pipeline.run_for_video.return_value = PipelineResult(
+            content_id=ContentId("dQw4w9WgXcQ"),
+            success=True,
+            synthesized_notes=(),
+            reconciled_mocs=(),
+        )
+        with patch("cresmo.presentation.commands.run.build_pipeline", return_value=mock_pipeline):
+            exit_code = main(["--url", "https://youtube.com/watch?v=dQw4w9WgXcQ"])
+            assert exit_code == EXIT_SUCCESS
+
+    def test_cli_help_flag_handling(self) -> None:
+        assert main(["-h"]) == EXIT_SUCCESS
+        assert main(["--help"]) == EXIT_SUCCESS
+
+    def test_cli_subparsers_action_missing_fallback(self) -> None:
+        with (
+            patch("cresmo.presentation.cli._create_parser") as mock_cp,
+            patch("cresmo.presentation.commands.run.build_pipeline"),
+            patch("cresmo.presentation.commands.run.load_batch_sources", return_value=[]),
+        ):
+            p = argparse.ArgumentParser()
+            mock_cp.return_value = p
+            assert main(["run"]) == EXIT_CONFIG_OR_USAGE_ERROR
 
     def test_cli_invalid_subcommand_returns_code_2(self) -> None:
         assert main(["invalid-command"]) == EXIT_CONFIG_OR_USAGE_ERROR
@@ -58,7 +139,9 @@ class TestCresmoCLI:
         ):
             assert main(["run"]) == EXIT_SUCCESS
 
-    def test_cli_check_config_success_returns_code_0(self) -> None:
+    def test_cli_check_config_success_returns_code_0(
+        self, capsys: pytest.CaptureFixture[str]
+    ) -> None:
         with (
             patch("cresmo.presentation.commands.check_config.CresmoSettings") as mock_settings_cls,
             patch(
@@ -70,6 +153,9 @@ class TestCresmoCLI:
             mock_settings.sqlite_ledger_path = Path("/tmp/vault/cresmo_ledger.db")
             mock_settings.gemini_model = "gemini-2.5-flash"
             mock_settings.batch_size = 5
+            mock_settings.langfuse_public_key = ""
+            mock_settings.langfuse_secret_key = None
+            mock_settings.langfuse_host = "https://cloud.langfuse.com"
             mock_settings_cls.return_value = mock_settings
 
             mock_checker = MagicMock()
@@ -78,8 +164,18 @@ class TestCresmoCLI:
 
             exit_code = main(["check-config"])
             assert exit_code == EXIT_SUCCESS
+            mock_checker_builder.assert_called_once_with(settings=mock_settings)
+            captured = capsys.readouterr()
+            assert "Configuration and environment verified successfully:\n" in captured.out
+            assert "- Vault Root: /tmp/vault\n" in captured.out
+            assert "- SQLite Ledger: /tmp/vault/cresmo_ledger.db\n" in captured.out
+            assert "- Gemini Model: gemini-2.5-flash\n" in captured.out
+            assert "- Batch Size: 5\n" in captured.out
+            assert "- Langfuse Telemetry: Disabled (no credentials configured)\n" in captured.out
 
-    def test_cli_check_config_preflight_failure_returns_code_2(self) -> None:
+    def test_cli_check_config_preflight_failure_returns_code_2(
+        self, capsys: pytest.CaptureFixture[str]
+    ) -> None:
         with (
             patch("cresmo.presentation.commands.check_config.CresmoSettings") as mock_settings_cls,
             patch(
@@ -97,6 +193,10 @@ class TestCresmoCLI:
 
             exit_code = main(["check-config"])
             assert exit_code == EXIT_CONFIG_OR_USAGE_ERROR
+            mock_checker_builder.assert_called_once_with(settings=mock_settings)
+            captured = capsys.readouterr()
+            assert "Preflight environmental checks failed:\n" in captured.err
+            assert "- Missing GEMINI_API_KEY\n" in captured.err
 
     def test_cli_run_success_returns_code_0(self) -> None:
         mock_pipeline = MagicMock()
@@ -142,7 +242,10 @@ class TestCresmoCLI:
             )
 
             assert exit_code == EXIT_SUCCESS
-            mock_builder.assert_called_once_with(batch_size_override=9)
+            mock_builder.assert_called_once()
+            call_kwargs = mock_builder.call_args.kwargs
+            assert call_kwargs["batch_size_override"] == 9
+            assert isinstance(call_kwargs["settings"], CresmoSettings)
             mock_pipeline.run_for_video.assert_called_once_with(
                 video_url="https://youtube.com/watch?v=dQw4w9WgXcQ",
                 gap_filler_passes=3,
@@ -151,9 +254,9 @@ class TestCresmoCLI:
 
     def test_cli_run_dry_run_invokes_only_ingest(self) -> None:
         mock_pipeline = MagicMock()
-        mock_raw = RawTranscript(
+        mock_raw = SourceTranscript(
             content_id=ContentId("dQw4w9WgXcQ"),
-            channel_name="TestChannel",
+            channel_name=ChannelName("TestChannel"),
             body="Verbatim transcript content.",
         )
         mock_pipeline.ingest_raw_transcript.execute.return_value = mock_raw
@@ -201,9 +304,9 @@ class TestCresmoCLI:
         )
 
         mock_pipeline = MagicMock()
-        mock_raw = RawTranscript(
+        mock_raw = SourceTranscript(
             content_id=ContentId("video11111111"),
-            channel_name="TestChan",
+            channel_name=ChannelName("TestChan"),
             body="Content",
         )
         mock_pipeline.ingest_raw_transcript.execute.return_value = mock_raw
@@ -257,8 +360,26 @@ class TestCresmoCLI:
             exit_code = main(["run", "--url", "https://youtube.com/watch?v=dQw4w9WgXcQ"])
             assert exit_code == EXIT_INTERNAL_ERROR
 
-    def test_cli_sync_missing_channel_returns_code_2(self) -> None:
-        assert main(["sync"]) == EXIT_CONFIG_OR_USAGE_ERROR
+    def test_cli_sync_without_flags_executes_default_manifest_sync(self, tmp_path: Path) -> None:
+        mock_use_case = MagicMock()
+        mock_use_case.execute.return_value = SyncSummary(
+            channel_url="https://youtube.com/@default",
+            total_discovered=1,
+            processed_count=1,
+            skipped_count=0,
+            failed_count=0,
+            duration_seconds=1.0,
+            status=PipelineStatus.COMPLETED,
+        )
+        fake_manifest = tmp_path / "playlist.txt"
+        fake_manifest.write_text("https://youtube.com/@default\n", encoding="utf-8")
+        with patch(
+            "cresmo.presentation.commands.sync.build_sync_channel_use_case",
+            return_value=mock_use_case,
+        ):
+            exit_code = main(["sync", "--manifest", str(fake_manifest)])
+            assert exit_code == EXIT_SUCCESS
+            mock_use_case.execute.assert_called_once()
 
     def test_cli_sync_success_returns_code_0(self) -> None:
         mock_use_case = MagicMock()
@@ -311,7 +432,10 @@ class TestCresmoCLI:
                 ]
             )
             assert exit_code == EXIT_SUCCESS
-            mock_builder.assert_called_once_with(batch_size_override=7)
+            mock_builder.assert_called_once()
+            call_kwargs = mock_builder.call_args.kwargs
+            assert call_kwargs["batch_size_override"] == 7
+            assert isinstance(call_kwargs["settings"], CresmoSettings)
             mock_use_case.execute.assert_called_once_with(
                 query=ChannelFeedQuery(
                     channel_url="https://youtube.com/@test",
@@ -321,6 +445,100 @@ class TestCresmoCLI:
                 dry_run=True,
                 force_refresh=True,
             )
+
+    def test_cli_sync_with_category_filter(self, tmp_path: Path) -> None:
+        mock_use_case = MagicMock()
+        mock_use_case.execute.return_value = SyncSummary(
+            channel_url="https://youtube.com/@ancapsu",
+            total_discovered=1,
+            processed_count=1,
+            skipped_count=0,
+            failed_count=0,
+            duration_seconds=1.0,
+            status=PipelineStatus.COMPLETED,
+        )
+        fake_manifest = tmp_path / "playlist.txt"
+        fake_manifest.write_text(
+            "https://youtube.com/@ancapsu\nhttps://youtube.com/@other\n",
+            encoding="utf-8",
+        )
+        with patch(
+            "cresmo.presentation.commands.sync.build_sync_channel_use_case",
+            return_value=mock_use_case,
+        ):
+            exit_code = main(
+                ["sync", "--manifest", str(fake_manifest), "--category", "politics_br"]
+            )
+            assert exit_code == EXIT_SUCCESS
+            assert mock_use_case.execute.call_count == 1
+
+    def test_cli_sync_with_video_direct_filter(self) -> None:
+        mock_use_case = MagicMock()
+        mock_use_case.execute.return_value = SyncSummary(
+            channel_url="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+            total_discovered=1,
+            processed_count=1,
+            skipped_count=0,
+            failed_count=0,
+            duration_seconds=1.0,
+            status=PipelineStatus.COMPLETED,
+        )
+        with patch(
+            "cresmo.presentation.commands.sync.build_sync_channel_use_case",
+            return_value=mock_use_case,
+        ):
+            exit_code = main(["sync", "--video", "dQw4w9WgXcQ,9IbNJ0EsTxI"])
+            assert exit_code == EXIT_SUCCESS
+            assert mock_use_case.execute.call_count == 2
+
+    def test_cli_sync_with_multiple_comma_separated_channels(self) -> None:
+        mock_use_case = MagicMock()
+        mock_use_case.execute.return_value = SyncSummary(
+            channel_url="https://youtube.com/@a",
+            total_discovered=1,
+            processed_count=1,
+            skipped_count=0,
+            failed_count=0,
+            duration_seconds=1.0,
+            status=PipelineStatus.COMPLETED,
+        )
+        with patch(
+            "cresmo.presentation.commands.sync.build_sync_channel_use_case",
+            return_value=mock_use_case,
+        ):
+            exit_code = main(["sync", "--channel", "https://youtube.com/@b,https://youtube.com/@a"])
+            assert exit_code == EXIT_SUCCESS
+            assert mock_use_case.execute.call_count == 2
+            # ADR-012: Ensure channels were called in alphabetical order: @a then @b
+            calls = mock_use_case.execute.call_args_list
+            assert calls[0].kwargs["query"].channel_url == "https://youtube.com/@a"
+            assert calls[1].kwargs["query"].channel_url == "https://youtube.com/@b"
+
+    def test_cli_run_with_filter_criteria_propagated(self) -> None:
+        with (
+            patch("cresmo.presentation.commands.run.build_pipeline"),
+            patch(
+                "cresmo.presentation.commands.run.load_batch_sources", return_value=[]
+            ) as mock_load,
+        ):
+            exit_code = main(
+                [
+                    "run",
+                    "--dry-run",
+                    "--channel",
+                    "Ancapsu,Mises",
+                    "--category",
+                    "politics_br",
+                    "--video",
+                    "dQw4w9WgXcQ",
+                ]
+            )
+            assert exit_code == EXIT_SUCCESS
+            mock_load.assert_called_once()
+            query = mock_load.call_args.kwargs["query"]
+            assert query.filter_criteria.channels == ("ancapsu", "mises")
+            assert query.filter_criteria.categories == ("politics_br",)
+            assert query.filter_criteria.video_ids == ("dQw4w9WgXcQ",)
 
     def test_cli_sync_rate_limit_error_returns_code_4(self) -> None:
         mock_use_case = MagicMock()
@@ -426,31 +644,76 @@ class TestCresmoCLI:
             exit_code = main(["worker", "--channel", "https://youtube.com/@test"])
             assert exit_code == EXIT_SUCCESS
 
-    def test_cli_dedupe_success_returns_code_0(self) -> None:
+    def test_cli_dedupe_success_returns_code_0(self, capsys: pytest.CaptureFixture[str]) -> None:
         from cresmo.application.use_cases.unify_duplicate_notes import (
             DeduplicationReport,
             DuplicateCluster,
         )
         from cresmo.domain.value_objects import NoteTitle
+        from cresmo.presentation.commands.dedupe import (
+            handle_dedupe,
+            register_subparser,
+        )
+
+        # 0. Register subparser
+        mock_subparsers = MagicMock()
+        mock_dedupe_parser = MagicMock()
+        mock_subparsers.add_parser.return_value = mock_dedupe_parser
+        register_subparser(mock_subparsers)
+        mock_subparsers.add_parser.assert_called_once_with(
+            "dedupe",
+            help="Execute graph entity resolution, non-destructive merging, and link rewriting",
+        )
+        mock_dedupe_parser.set_defaults.assert_called_once_with(handler=handle_dedupe)
 
         mock_use_case = MagicMock()
         mock_use_case.execute.return_value = DeduplicationReport(
             clusters=(
                 DuplicateCluster(
                     canonical_title=NoteTitle("Dom Afonso Henriques"),
-                    merged_titles=(NoteTitle("D. Afonso Henriques"),),
+                    merged_titles=(NoteTitle("D. Afonso Henriques"), NoteTitle("Rei Fundador")),
                     links_rewritten_count=3,
                 ),
             )
         )
+
+        mock_settings = MagicMock()
+        with (
+            patch(
+                "cresmo.presentation.commands.dedupe.resolve_shared_settings",
+                return_value=mock_settings,
+            ) as mock_resolve_settings,
+            patch(
+                "cresmo.presentation.commands.dedupe.build_unify_duplicates_use_case",
+                return_value=mock_use_case,
+            ) as mock_builder,
+        ):
+            exit_code = main(["dedupe"])
+            assert exit_code == EXIT_SUCCESS
+            mock_resolve_settings.assert_called_once()
+            mock_builder.assert_called_once_with(settings=mock_settings)
+            mock_use_case.execute.assert_called_once()
+            captured = capsys.readouterr()
+            assert captured.out.startswith("Vault Graph Deduplication Summary:\n")
+            assert "- Duplicate Clusters Unified: 1\n" in captured.out
+            assert "- Total Inbound WikiLinks Rewritten: 3\n" in captured.out
+            assert (
+                "  • Unified into [[Dom Afonso Henriques]]: [[D. Afonso Henriques]], [[Rei Fundador]] (3 links rewritten)\n"
+                in captured.out
+            )
+
+    def test_cli_dedupe_exception_returns_code_1(self, capsys: pytest.CaptureFixture[str]) -> None:
+        mock_use_case = MagicMock()
+        mock_use_case.execute.side_effect = RuntimeError("Graph corruption")
 
         with patch(
             "cresmo.presentation.commands.dedupe.build_unify_duplicates_use_case",
             return_value=mock_use_case,
         ):
             exit_code = main(["dedupe"])
-            assert exit_code == EXIT_SUCCESS
-            mock_use_case.execute.assert_called_once()
+            assert exit_code == EXIT_INTERNAL_ERROR
+            captured = capsys.readouterr()
+            assert "Deduplication error: Graph corruption\n" in captured.err
 
     def test_settings_concurrency_pools_and_lookback_defaults(self) -> None:
         """Verify default lookback is 365 days and worker pools use proportional multiples."""
@@ -508,7 +771,7 @@ class TestCresmoCLI:
         raw_file.write_text("---\nvideo_title: 'Test'\n---\nTranscript body", encoding="utf-8")
 
         query = BatchDiscoveryQuery(scan_raw=True)
-        sources = load_batch_sources(query=query, settings=settings)
+        sources = list(load_batch_sources(query=query, settings=settings))
         targets = [s.target for s in sources]
         assert str(raw_file.resolve()) in targets
         raw_src = next(s for s in sources if s.target == str(raw_file.resolve()))
@@ -544,20 +807,20 @@ class TestCresmoCLI:
             title="Recent Video",
             published_at=now - timedelta(days=10),
             media_url="https://www.youtube.com/watch?v=recent123",
-            channel_name="Marcelo Andrade",
+            channel_name=ChannelName("Marcelo Andrade"),
         )
         old_item = DiscoveredMediaItem(
             content_id=ContentId("old123456"),
             title="Old Video",
             published_at=now - timedelta(days=400),
             media_url="https://www.youtube.com/watch?v=old123456",
-            channel_name="Marcelo Andrade",
+            channel_name=ChannelName("Marcelo Andrade"),
         )
         mock_ingestion.discover_channel_feed.return_value = [recent_item, old_item]
 
         query = BatchDiscoveryQuery(scan_raw=False)
-        sources = load_batch_sources(
-            query=query, settings=settings, media_ingestion_port=mock_ingestion
+        sources = list(
+            load_batch_sources(query=query, settings=settings, media_ingestion_port=mock_ingestion)
         )
         urls = [s.target for s in sources if s.kind == "url"]
         assert "https://www.youtube.com/watch?v=recent123" in urls
@@ -599,13 +862,13 @@ class TestCresmoCLI:
             title="Discovered From Parent Channel",
             published_at=now - timedelta(days=5),
             media_url="https://www.youtube.com/watch?v=disc999_item",
-            channel_name="Parent Channel",
+            channel_name=ChannelName("Parent Channel"),
         )
         mock_ingestion.discover_channel_feed.return_value = [discovered_item]
 
         query = BatchDiscoveryQuery(scan_raw=False)
-        sources = load_batch_sources(
-            query=query, settings=settings, media_ingestion_port=mock_ingestion
+        sources = list(
+            load_batch_sources(query=query, settings=settings, media_ingestion_port=mock_ingestion)
         )
         urls = [s.target for s in sources if s.kind == "url"]
 
@@ -656,13 +919,13 @@ class TestCresmoCLI:
             title="New Video",
             published_at=now - timedelta(days=2),
             media_url="https://www.youtube.com/watch?v=discNew_item",
-            channel_name="Same Channel",
+            channel_name=ChannelName("Same Channel"),
         )
         mock_ingestion.discover_channel_feed.return_value = [discovered_item]
 
         query = BatchDiscoveryQuery(scan_raw=False)
-        sources = load_batch_sources(
-            query=query, settings=settings, media_ingestion_port=mock_ingestion
+        sources = list(
+            load_batch_sources(query=query, settings=settings, media_ingestion_port=mock_ingestion)
         )
         urls = [s.target for s in sources if s.kind == "url"]
 
@@ -677,7 +940,7 @@ class TestCresmoCLI:
         from datetime import UTC, datetime, timedelta
 
         from cresmo.application.use_cases.discover_batch_sources import BatchDiscoveryQuery
-        from cresmo.domain.value_objects import ContentId, DiscoveredMediaItem
+        from cresmo.domain.value_objects import ChannelName, ContentId, DiscoveredMediaItem
         from cresmo.presentation.commands.run import load_batch_sources
 
         settings = MagicMock(spec=CresmoSettings)
@@ -710,13 +973,13 @@ class TestCresmoCLI:
             title="Discovered From Local Raw Channel",
             published_at=now - timedelta(days=1),
             media_url="https://www.youtube.com/watch?v=discLocalCh_item",
-            channel_name="Local Channel",
+            channel_name=ChannelName("Local Channel"),
         )
         mock_ingestion.discover_channel_feed.return_value = [discovered_item]
 
         query = BatchDiscoveryQuery(scan_raw=True)
-        sources = load_batch_sources(
-            query=query, settings=settings, media_ingestion_port=mock_ingestion
+        sources = list(
+            load_batch_sources(query=query, settings=settings, media_ingestion_port=mock_ingestion)
         )
         urls = [s.target for s in sources if s.kind == "url"]
 
@@ -783,14 +1046,15 @@ class TestCresmoCLI:
 
     def test_execute_batch_dry_run_with_text_file_and_failed_url(self, tmp_path: Path) -> None:
         from cresmo.application.use_cases.discover_batch_sources import BatchSource
+        from cresmo.domain.value_objects import SourceModality
         from cresmo.presentation.commands.run import execute_batch_dry_run
 
         doc_file = tmp_path / "text_doc.md"
         doc_file.write_text("Markdown content for dry-run", encoding="utf-8")
 
         sources = [
-            BatchSource(kind="file", target=str(doc_file)),
-            BatchSource(kind="url", target="https://youtube.com/watch?v=failIngest"),
+            BatchSource(kind=SourceModality.FILE, target=str(doc_file)),
+            BatchSource(kind=SourceModality.URL, target="https://youtube.com/watch?v=failIngest"),
         ]
 
         pipeline = MagicMock()
@@ -803,18 +1067,21 @@ class TestCresmoCLI:
         from argparse import Namespace
 
         from cresmo.application.use_cases.discover_batch_sources import BatchSource
+        from cresmo.domain.value_objects import SourceModality
         from cresmo.presentation.commands.run import execute_batch_run
 
         doc_file = tmp_path / "text_doc.md"
         doc_file.write_text("Text", encoding="utf-8")
 
         sources = [
-            BatchSource(kind="file", target=str(doc_file)),
-            BatchSource(kind="url", target="https://youtube.com/watch?v=rateLimit"),
-            BatchSource(kind="url", target="https://youtube.com/watch?v=networkError"),
-            BatchSource(kind="url", target="https://youtube.com/watch?v=genericError"),
-            BatchSource(kind="url", target="https://youtube.com/watch?v=skippedVid"),
-            BatchSource(kind="url", target="https://youtube.com/watch?v=unsuccessfulVid"),
+            BatchSource(kind=SourceModality.FILE, target=str(doc_file)),
+            BatchSource(kind=SourceModality.URL, target="https://youtube.com/watch?v=rateLimit"),
+            BatchSource(kind=SourceModality.URL, target="https://youtube.com/watch?v=networkError"),
+            BatchSource(kind=SourceModality.URL, target="https://youtube.com/watch?v=genericError"),
+            BatchSource(kind=SourceModality.URL, target="https://youtube.com/watch?v=skippedVid"),
+            BatchSource(
+                kind=SourceModality.URL, target="https://youtube.com/watch?v=unsuccessfulVid"
+            ),
         ]
 
         pipeline = MagicMock()
@@ -854,6 +1121,49 @@ class TestCresmoCLI:
         args = Namespace(passes=1, force_reprocess=False)
         code = execute_batch_run(pipeline, sources, args)
         assert code == EXIT_INTERNAL_ERROR
+
+    def test_execute_batch_run_propagates_single_batch_id_to_all_items(
+        self, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+    ) -> None:
+        """Verify ADR-035: batch run generates a single BatchId shared by all items in the run."""
+        from argparse import Namespace
+
+        from cresmo.application.use_cases.discover_batch_sources import BatchSource
+        from cresmo.domain.value_objects import BatchId, SourceModality
+        from cresmo.presentation.commands.run import execute_batch_run
+
+        doc1 = tmp_path / "doc1.md"
+        doc1.write_text("Text 1", encoding="utf-8")
+        doc2 = tmp_path / "doc2.md"
+        doc2.write_text("Text 2", encoding="utf-8")
+
+        sources = [
+            BatchSource(kind=SourceModality.FILE, target=str(doc1)),
+            BatchSource(kind=SourceModality.FILE, target=str(doc2)),
+        ]
+
+        pipeline = MagicMock()
+        res = MagicMock(already_processed=False, success=True, duplicates_unified=0)
+        res.content_id.value = "doc"
+        res.synthesized_notes = []
+        res.reconciled_mocs = []
+        pipeline.run_for_text_file.return_value = res
+
+        args = Namespace(passes=1, force_reprocess=False)
+        code = execute_batch_run(pipeline, sources, args)
+        assert code == EXIT_SUCCESS
+
+        assert pipeline.run_for_text_file.call_count == 2
+        call1_batch = pipeline.run_for_text_file.call_args_list[0].kwargs["batch_id"]
+        call2_batch = pipeline.run_for_text_file.call_args_list[1].kwargs["batch_id"]
+
+        assert isinstance(call1_batch, BatchId)
+        assert isinstance(call2_batch, BatchId)
+        # SOTA-KISS Invariant: Both items in the same batch run share the EXACT same BatchId
+        assert call1_batch == call2_batch
+
+        captured = capsys.readouterr()
+        assert f"[Batch: {call1_batch.value}]" in captured.out
 
     def test_handle_run_preflight_and_validation_errors(self) -> None:
         from argparse import Namespace
@@ -899,13 +1209,22 @@ class TestCresmoCLI:
     def test_handle_run_lookback_override(self) -> None:
         from argparse import Namespace
 
+        from cresmo.application.services.preflight import PreflightResult
         from cresmo.presentation.commands.run import handle_run
 
         with (
             patch("cresmo.presentation.commands.run.build_pipeline"),
             patch("cresmo.presentation.commands.run.load_batch_sources", return_value=[]),
             patch("cresmo.presentation.commands.run.CresmoSettings") as mock_settings_cls,
+            patch(
+                "cresmo.presentation.commands.run.build_preflight_checker"
+            ) as mock_checker_builder,
         ):
+            mock_checker = MagicMock()
+            mock_checker.check_all.return_value = PreflightResult(
+                is_healthy=True, errors=(), warnings=()
+            )
+            mock_checker_builder.return_value = mock_checker
             mock_settings = MagicMock()
             mock_settings_cls.return_value = mock_settings
             args = Namespace(
@@ -921,12 +1240,85 @@ class TestCresmoCLI:
             assert code == EXIT_SUCCESS
             assert mock_settings.days_lookback == 14
 
-    def test_check_config_telemetry_masked_and_exceptions(self) -> None:
+    def test_handle_run_crawl_defaults_and_no_crawl_flag(self) -> None:
+        from argparse import Namespace
+
+        from cresmo.application.services.preflight import PreflightResult
+        from cresmo.presentation.commands.run import handle_run
+
+        with (
+            patch("cresmo.presentation.commands.run.build_pipeline"),
+            patch(
+                "cresmo.presentation.commands.run.load_batch_sources", return_value=[]
+            ) as mock_load,
+            patch("cresmo.presentation.commands.run.CresmoSettings") as mock_settings_cls,
+            patch(
+                "cresmo.presentation.commands.run.build_preflight_checker"
+            ) as mock_checker_builder,
+        ):
+            mock_checker = MagicMock()
+            mock_checker.check_all.return_value = PreflightResult(
+                is_healthy=True, errors=(), warnings=()
+            )
+            mock_checker_builder.return_value = mock_checker
+            mock_settings = MagicMock()
+            mock_settings.enable_channel_crawler = True
+            mock_settings.days_lookback = 365
+            mock_settings.channel_discovery_workers = 30
+            mock_settings_cls.return_value = mock_settings
+
+            # Case 1: Default run without --no-crawl (crawling is enabled)
+            args_default = Namespace(
+                url=None,
+                manifest=None,
+                dry_run=False,
+                no_scan_raw=False,
+                batch_size=None,
+                lookback=None,
+                channel_max_videos=50,
+                no_crawl=False,
+            )
+            assert handle_run(args_default) == EXIT_SUCCESS
+            query_default = mock_load.call_args[1]["query"]
+            assert query_default.enable_channel_crawler is True
+
+            # Case 2: User supplies --no-crawl (crawling is disabled)
+            args_no_crawl = Namespace(
+                url=None,
+                manifest=None,
+                dry_run=False,
+                no_scan_raw=False,
+                batch_size=None,
+                lookback=None,
+                channel_max_videos=50,
+                no_crawl=True,
+            )
+            assert handle_run(args_no_crawl) == EXIT_SUCCESS
+            query_no_crawl = mock_load.call_args[1]["query"]
+            assert query_no_crawl.enable_channel_crawler is False
+
+    def test_check_config_telemetry_masked_and_exceptions(
+        self, capsys: pytest.CaptureFixture[str]
+    ) -> None:
         from argparse import Namespace
 
         from pydantic import SecretStr
 
-        from cresmo.presentation.commands.check_config import handle_check_config
+        from cresmo.presentation.commands.check_config import (
+            handle_check_config,
+            register_subparser,
+        )
+
+        # 0. Subparser registration
+        mock_subparsers = MagicMock()
+        mock_check_parser = MagicMock()
+        mock_subparsers.add_parser.return_value = mock_check_parser
+        register_subparser(mock_subparsers)
+        mock_subparsers.add_parser.assert_called_once_with(
+            "check-config",
+            help="Validate environment settings and vault access without calling LLMs",
+        )
+        mock_check_parser.set_defaults.assert_called_once_with(handler=handle_check_config)
 
         # 1. Langfuse public key and secret key configured
         with (
@@ -935,6 +1327,7 @@ class TestCresmoCLI:
                 "cresmo.presentation.commands.check_config.build_preflight_checker"
             ) as mock_checker_builder,
         ):
+            # 1a. Custom host
             mock_settings = MagicMock(spec=CresmoSettings)
             mock_settings.vault_dir = Path("/tmp/vault")
             mock_settings.sqlite_ledger_path = Path("/tmp/vault/cresmo_ledger.db")
@@ -942,7 +1335,7 @@ class TestCresmoCLI:
             mock_settings.batch_size = 5
             mock_settings.langfuse_public_key = "pk-lf-1234567890abcdef"
             mock_settings.langfuse_secret_key = SecretStr("sk-lf-secret")
-            mock_settings.langfuse_host = "https://cloud.langfuse.com"
+            mock_settings.langfuse_host = "http://custom-host:3000"
             mock_settings_cls.return_value = mock_settings
 
             mock_checker = MagicMock()
@@ -951,6 +1344,64 @@ class TestCresmoCLI:
 
             code = handle_check_config(Namespace())
             assert code == EXIT_SUCCESS
+            captured = capsys.readouterr()
+            assert (
+                "- Langfuse Telemetry: Enabled (http://custom-host:3000, pk-lf-1234...)\n"
+                in captured.out
+            )
+
+            # 1b. Missing langfuse_host attribute exercises default "https://cloud.langfuse.com"
+            del mock_settings.langfuse_host
+            code = handle_check_config(Namespace())
+            assert code == EXIT_SUCCESS
+            captured = capsys.readouterr()
+            assert (
+                "- Langfuse Telemetry: Enabled (https://cloud.langfuse.com, pk-lf-1234...)\n"
+                in captured.out
+            )
+
+            # 1c. Secret without get_secret_value
+            mock_settings.langfuse_secret_key = "plain-string-no-method"
+            code = handle_check_config(Namespace())
+            assert code == EXIT_SUCCESS
+            captured = capsys.readouterr()
+            assert "- Langfuse Telemetry: Disabled (no credentials configured)\n" in captured.out
+
+            # 1d. Secret with empty get_secret_value
+            mock_settings.langfuse_secret_key = SecretStr("")
+            code = handle_check_config(Namespace())
+            assert code == EXIT_SUCCESS
+            captured = capsys.readouterr()
+            assert "- Langfuse Telemetry: Disabled (no credentials configured)\n" in captured.out
+
+            # 1e. None secret
+            mock_settings.langfuse_secret_key = None
+            code = handle_check_config(Namespace())
+            assert code == EXIT_SUCCESS
+            captured = capsys.readouterr()
+            assert "- Langfuse Telemetry: Disabled (no credentials configured)\n" in captured.out
+
+            # 1f. Empty public key with valid secret
+            mock_settings.langfuse_public_key = ""
+            mock_settings.langfuse_secret_key = SecretStr("sk-valid")
+            code = handle_check_config(Namespace())
+            assert code == EXIT_SUCCESS
+            captured = capsys.readouterr()
+            assert "- Langfuse Telemetry: Disabled (no credentials configured)\n" in captured.out
+
+            # 1g. Missing public key attribute
+            del mock_settings.langfuse_public_key
+            code = handle_check_config(Namespace())
+            assert code == EXIT_SUCCESS
+            captured = capsys.readouterr()
+            assert "- Langfuse Telemetry: Disabled (no credentials configured)\n" in captured.out
+
+            # 1h. Missing secret key attribute
+            del mock_settings.langfuse_secret_key
+            code = handle_check_config(Namespace())
+            assert code == EXIT_SUCCESS
+            captured = capsys.readouterr()
+            assert "- Langfuse Telemetry: Disabled (no credentials configured)\n" in captured.out
 
         # 2. PreflightError
         with patch(
@@ -959,6 +1410,8 @@ class TestCresmoCLI:
         ):
             code = handle_check_config(Namespace())
             assert code == EXIT_CONFIG_OR_USAGE_ERROR
+            captured = capsys.readouterr()
+            assert "Preflight error: Vault missing\n" in captured.err
 
         # 3. ValidationError
         with patch("cresmo.presentation.commands.check_config.CresmoSettings") as mock_s:
@@ -973,6 +1426,8 @@ class TestCresmoCLI:
                 mock_s.side_effect = ve
             code = handle_check_config(Namespace())
             assert code == EXIT_CONFIG_OR_USAGE_ERROR
+            captured = capsys.readouterr()
+            assert "Configuration validation error:\n" in captured.err
 
         # 4. Generic unexpected exception
         with patch(
@@ -980,4 +1435,219 @@ class TestCresmoCLI:
             side_effect=RuntimeError("Hardware fault"),
         ):
             code = handle_check_config(Namespace())
+            assert code == EXIT_INTERNAL_ERROR
+            captured = capsys.readouterr()
+            assert "Unexpected configuration error: Hardware fault\n" in captured.err
+
+    def test_cli_help_flag_returns_exit_success(self, capsys: pytest.CaptureFixture[str]) -> None:
+        """Verify that -h / --help prints root help and exits cleanly with EXIT_SUCCESS (0)."""
+        code = main(["--help"])
+        assert code == EXIT_SUCCESS
+        out, _ = capsys.readouterr()
+        assert "Available subcommands" in out
+        assert "cresmo" in out
+
+        code_short = main(["-h"])
+        assert code_short == EXIT_SUCCESS
+        out_short, _ = capsys.readouterr()
+        assert "Available subcommands" in out_short
+        assert "cresmo" in out_short
+
+        code_run_help = main(["run", "--help"])
+        assert code_run_help == EXIT_SUCCESS
+        out_run, _ = capsys.readouterr()
+        assert "batch-size" in out_run
+
+    def test_cli_argv_none_uses_sys_argv(self) -> None:
+        """Verify that passing argv=None defaults to reading sys.argv[1:]."""
+        with (
+            patch("sys.argv", ["cresmo", "check-config"]),
+            patch("cresmo.presentation.commands.check_config.handle_check_config") as mock_check,
+        ):
+            mock_check.return_value = EXIT_SUCCESS
+            code = main(None)
+            assert code == EXIT_SUCCESS
+            assert mock_check.called
+
+    def test_cli_empty_argv_defaults_to_run_even_if_sys_argv_has_other_command(self) -> None:
+        """Verify that passing explicit empty list argv=[] defaults to run, not sys.argv."""
+        with (
+            patch("sys.argv", ["cresmo", "check-config"]),
+            patch("cresmo.presentation.commands.run.build_pipeline") as mock_run,
+            patch("cresmo.presentation.commands.run.load_batch_sources", return_value=[]),
+        ):
+            code = main([])
+            assert code == EXIT_SUCCESS
+            assert mock_run.called
+
+    def test_cli_parser_missing_handler_returns_usage_error(self) -> None:
+        """Verify that args without handler attribute returns EXIT_CONFIG_OR_USAGE_ERROR."""
+        from argparse import Namespace
+
+        with patch("cresmo.presentation.cli._create_parser") as mock_create:
+            mock_parser = MagicMock()
+            mock_parser.parse_args.return_value = Namespace()  # no handler attribute
+            mock_create.return_value = mock_parser
+
+            assert main(["run"]) == EXIT_CONFIG_OR_USAGE_ERROR
+
+    def test_cli_dedupe_exception_returns_internal_error(self) -> None:
+        """Verify that unhandled exception in dedupe returns EXIT_INTERNAL_ERROR (1)."""
+        with patch(
+            "cresmo.presentation.commands.dedupe.build_unify_duplicates_use_case",
+            side_effect=RuntimeError("Graph corruption"),
+        ):
+            assert main(["dedupe"]) == EXIT_INTERNAL_ERROR
+
+    def test_cli_sync_domain_validation_error_returns_code_3(self) -> None:
+        """Verify that DomainValidationError in sync returns EXIT_DOMAIN_VALIDATION_ERROR (3)."""
+        mock_use_case = MagicMock()
+        mock_use_case.execute.side_effect = DomainValidationError("Invalid sync domain rule")
+
+        with patch(
+            "cresmo.presentation.commands.sync.build_sync_channel_use_case",
+            return_value=mock_use_case,
+        ):
+            assert (
+                main(["sync", "--channel", "https://youtube.com/@test"])
+                == EXIT_DOMAIN_VALIDATION_ERROR
+            )
+
+    def test_cli_sync_validation_error_returns_code_2(self) -> None:
+        """Verify that pydantic ValidationError in sync returns EXIT_CONFIG_OR_USAGE_ERROR (2)."""
+        from pydantic import BaseModel, ValidationError
+
+        class Dummy(BaseModel):
+            n: int
+
+        mock_use_case = MagicMock()
+        try:
+            Dummy(n="bad")  # type: ignore[arg-type]
+        except ValidationError as ve:
+            mock_use_case.execute.side_effect = ve
+
+        with patch(
+            "cresmo.presentation.commands.sync.build_sync_channel_use_case",
+            return_value=mock_use_case,
+        ):
+            assert (
+                main(["sync", "--channel", "https://youtube.com/@test"])
+                == EXIT_CONFIG_OR_USAGE_ERROR
+            )
+
+    def test_cli_sync_generic_exception_returns_internal_error(self) -> None:
+        """Verify that unexpected exception in sync returns EXIT_INTERNAL_ERROR (1)."""
+        mock_use_case = MagicMock()
+        mock_use_case.execute.side_effect = RuntimeError("Sync explosion")
+
+        with patch(
+            "cresmo.presentation.commands.sync.build_sync_channel_use_case",
+            return_value=mock_use_case,
+        ):
+            assert main(["sync", "--channel", "https://youtube.com/@test"]) == EXIT_INTERNAL_ERROR
+
+    def test_cli_sync_zero_processed_zero_failed_non_completed_returns_success(self) -> None:
+        """Verify that sync with 0 discovered, 0 processed, 0 failed returns EXIT_SUCCESS (0)."""
+        mock_use_case = MagicMock()
+        mock_use_case.execute.return_value = SyncSummary(
+            channel_url="https://youtube.com/@test",
+            total_discovered=0,
+            processed_count=0,
+            skipped_count=0,
+            failed_count=0,
+            duration_seconds=0.1,
+            status=PipelineStatus.RUNNING,
+        )
+
+        with patch(
+            "cresmo.presentation.commands.sync.build_sync_channel_use_case",
+            return_value=mock_use_case,
+        ):
+            assert main(["sync", "--channel", "https://youtube.com/@test"]) == EXIT_SUCCESS
+
+    def test_cli_worker_loop_sleep_and_generic_exception(self) -> None:
+        """Verify worker sleeping during polling loop and unexpected exception handling."""
+        mock_use_case = MagicMock()
+        mock_use_case.execute.return_value = SyncSummary(
+            channel_url="https://youtube.com/@test",
+            total_discovered=1,
+            processed_count=1,
+            skipped_count=0,
+            failed_count=0,
+            duration_seconds=1.0,
+            status=PipelineStatus.COMPLETED,
+        )
+
+        with (
+            patch(
+                "cresmo.presentation.commands.worker.build_sync_channel_use_case",
+                return_value=mock_use_case,
+            ),
+            patch("pathlib.Path.write_text"),
+            patch("time.sleep", side_effect=[None, KeyboardInterrupt]),
+        ):
+            # Test that it executes sleep then breaks gracefully via KeyboardInterrupt
+            code = main(
+                ["worker", "--channel", "https://youtube.com/@test", "--poll-interval", "5"]
+            )
+            assert code == EXIT_SUCCESS
+
+        with (
+            patch(
+                "cresmo.presentation.commands.worker.build_sync_channel_use_case",
+                side_effect=RuntimeError("Worker crash"),
+            ),
+        ):
+            code = main(["worker", "--channel", "https://youtube.com/@test"])
+            assert code == EXIT_INTERNAL_ERROR
+
+    def test_cli_concat_master_all_channels(self) -> None:
+        mock_uc = MagicMock()
+        mock_uc.execute_all.return_value = {
+            "ChannelA": [
+                MagicMock(
+                    channel_name=ChannelName("ChannelA"),
+                    channel_category="tech",
+                    part_number=1,
+                    word_count=5000,
+                    document_count=3,
+                    output_path=Path("/tmp/master/tech/ChannelA_001.md"),
+                )
+            ]
+        }
+        with patch(
+            "cresmo.presentation.commands.concat_master.build_concat_master_use_case",
+            return_value=mock_uc,
+        ):
+            assert main(["concat-master"]) == EXIT_SUCCESS
+            mock_uc.execute_all.assert_called_once_with(max_words=None)
+
+    def test_cli_concat_master_specific_channel(self) -> None:
+        mock_uc = MagicMock()
+        mock_uc.execute.return_value = [
+            MagicMock(
+                channel_name=ChannelName("Fabio Akita"),
+                channel_category="tech_ai",
+                part_number=1,
+                word_count=12000,
+                document_count=5,
+                output_path=Path("/tmp/master/tech_ai/Fabio_Akita_001.md"),
+            )
+        ]
+        with patch(
+            "cresmo.presentation.commands.concat_master.build_concat_master_use_case",
+            return_value=mock_uc,
+        ):
+            code = main(["concat-master", "--channel", "Fabio Akita", "--max-words", "300000"])
+            assert code == EXIT_SUCCESS
+            mock_uc.execute.assert_called_once_with(
+                channel_name=ChannelName("Fabio Akita"), max_words=300000
+            )
+
+    def test_cli_concat_master_error_handling(self) -> None:
+        with patch(
+            "cresmo.presentation.commands.concat_master.build_concat_master_use_case",
+            side_effect=RuntimeError("Disk failure"),
+        ):
+            code = main(["concat-master"])
             assert code == EXIT_INTERNAL_ERROR

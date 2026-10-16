@@ -11,7 +11,6 @@ Conforms to:
 
 from __future__ import annotations
 
-import contextlib
 import re
 
 from cresmo.application.ports import (
@@ -58,8 +57,7 @@ def parse_metadata_from_content(
     date_match = _DATE_PATTERN.search(content)
     sort_date = SENTINEL_FALLBACK_SORT_DATE
     if date_match:
-        with contextlib.suppress(ValueError):
-            sort_date = int(date_match.group(1))
+        sort_date = int(date_match.group(1))
 
     # 2. Parse channel_category
     category_match = _CATEGORY_PATTERN.search(content)
@@ -152,7 +150,8 @@ class ConcatMasterUseCase:
         # Chronological sort: oldest first (ascending by sort_date, then file name)
         docs.sort(key=lambda doc_tuple: (doc_tuple[0], doc_tuple[1]))
 
-        channel_category = resolved_category or classify_channel(cn)[0]
+        assert resolved_category is not None
+        channel_category = resolved_category
 
         # Group documents into parts without ever splitting a single file
         parts: list[list[tuple[str, ContentId, int]]] = []

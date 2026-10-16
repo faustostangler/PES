@@ -79,11 +79,14 @@ def _merge_aliases(canonical: AtomicNote, redundant: AtomicNote) -> tuple[str, .
 def _merge_direct_relations(canonical: AtomicNote, redundant: AtomicNote) -> tuple[NoteTitle, ...]:
     """Merge direct relations excluding self-referencing titles."""
     excluded_titles = {canonical.title.value.lower(), redundant.title.value.lower()}
-    merged_relations_dict: dict[str, NoteTitle] = {}
+    seen: set[str] = set()
+    merged_relations: list[NoteTitle] = []
     for r in (*canonical.direct_relations, *redundant.direct_relations):
-        if r.value.lower() not in excluded_titles:
-            merged_relations_dict[r.value.lower()] = r
-    return tuple(merged_relations_dict.values())
+        r_lower = r.value.lower()
+        if r_lower not in excluded_titles and r_lower not in seen:
+            seen.add(r_lower)
+            merged_relations.append(r)
+    return tuple(merged_relations)
 
 
 def _merge_definitions(canonical_def: str, redundant_def: str) -> str:
@@ -202,8 +205,7 @@ class UnifyDuplicateNotesUseCase:
         clusters_found: list[DuplicateCluster] = []
         already_merged: set[str] = set()
 
-        for i in range(len(notes)):
-            note_a = notes[i]
+        for i, note_a in enumerate(notes):
             key_a = note_a.title.value.lower()
             if key_a in already_merged:
                 continue
@@ -212,8 +214,7 @@ class UnifyDuplicateNotesUseCase:
             merged_titles_in_cluster: list[NoteTitle] = []
             total_rewritten = 0
 
-            for j in range(i + 1, len(notes)):
-                note_b = notes[j]
+            for note_b in notes[i + 1 :]:
                 key_b = note_b.title.value.lower()
                 if key_b in already_merged:
                     continue

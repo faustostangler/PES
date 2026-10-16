@@ -8,7 +8,9 @@ Conforms to:
 
 from __future__ import annotations
 
+import datetime
 import re
+import uuid
 from dataclasses import dataclass
 from enum import Enum
 
@@ -20,6 +22,7 @@ from cresmo.domain.value_objects.constants import (
     MIN_CHANNEL_ID_LENGTH,
 )
 
+_BATCH_ID_REGEX = re.compile(r"^\d{8}_\d{6}_[a-f0-9]{6}$")
 _CONTENT_ID_PATTERN = re.compile(r"^[a-zA-Z0-9_-]{1,64}$")
 _VIDEO_ID_REGEX = re.compile(
     r"(?:v=|/v/|youtu\.be/|/embed/|/shorts/|/live/)([a-zA-Z0-9_-]{8,64})",
@@ -47,6 +50,39 @@ class SourceModality(str, Enum):
 
 
 @dataclass(frozen=True)
+class BatchId:
+    """Canonical domain Value Object representing a batch execution identifier.
+
+    Conforms to ADR-035:
+        - 1 Trace = 1 Work Item invariant.
+        - Canonical SOTA-KISS format: YYYYMMDD_HHMMSS_[uuid6].
+        - Provides correlation across batch executions without Mega-Trace coupling.
+    """
+
+    value: str
+
+    def __post_init__(self) -> None:
+        if not self.value or not self.value.strip():
+            raise DomainValidationError("BatchId cannot be empty.")
+        clean_val = self.value.strip()
+        if not _BATCH_ID_REGEX.match(clean_val):
+            raise DomainValidationError(
+                f"Invalid BatchId format: '{self.value}'. Expected canonical format 'YYYYMMDD_HHMMSS_[uuid6]'."
+            )
+        object.__setattr__(self, "value", clean_val)
+
+    @classmethod
+    def generate(cls) -> BatchId:
+        """Construct canonical batch identifier with UTC timestamp and short UUID suffix."""
+        now_str = datetime.datetime.now(datetime.UTC).strftime("%Y%m%d_%H%M%S")
+        short_uuid = uuid.uuid4().hex[:6]
+        return cls(value=f"{now_str}_{short_uuid}")
+
+    def __str__(self) -> str:
+        return self.value
+
+
+@dataclass(frozen=True)
 class ChannelName:
     """Canonical domain Value Object representing a content creator or source channel.
 
@@ -62,18 +98,18 @@ class ChannelName:
     value: str
 
     def __post_init__(self) -> None:
-        val = self.value.strip()
-        if not val:
+        cleaned_value = self.value.strip()
+        if not cleaned_value:
             raise DomainValidationError("ChannelName cannot be empty or whitespace.")
-        if len(val) > MAX_CHANNEL_NAME_LENGTH:
+        if len(cleaned_value) > MAX_CHANNEL_NAME_LENGTH:
             raise DomainValidationError(
-                f"ChannelName exceeds maximum length of {MAX_CHANNEL_NAME_LENGTH} characters: '{val[:30]}...'"
+                f"ChannelName exceeds maximum length of {MAX_CHANNEL_NAME_LENGTH} characters: '{cleaned_value[:30]}...'"
             )
-        if ".." in val or "/" in val or "\\" in val:
+        if ".." in cleaned_value or "/" in cleaned_value or "\\" in cleaned_value:
             raise DomainValidationError(
-                f"ChannelName cannot contain path traversal or separator characters: '{val}'"
+                f"ChannelName cannot contain path traversal or separator characters: '{cleaned_value}'"
             )
-        object.__setattr__(self, "value", val)
+        object.__setattr__(self, "value", cleaned_value)
 
     @classmethod
     def from_string(cls, raw: str | ChannelName) -> ChannelName:
@@ -115,26 +151,26 @@ class ChannelId:
     value: str
 
     def __post_init__(self) -> None:
-        val = self.value.strip()
-        if not val:
+        cleaned_value = self.value.strip()
+        if not cleaned_value:
             raise DomainValidationError("ChannelId cannot be empty or whitespace.")
-        if len(val) > MAX_CHANNEL_ID_LENGTH:
+        if len(cleaned_value) > MAX_CHANNEL_ID_LENGTH:
             raise DomainValidationError(
-                f"ChannelId exceeds maximum length of {MAX_CHANNEL_ID_LENGTH} characters: '{val[:30]}...' (length: {len(val)})"
+                f"ChannelId exceeds maximum length of {MAX_CHANNEL_ID_LENGTH} characters: '{cleaned_value[:30]}...' (length: {len(cleaned_value)})"
             )
-        if len(val) < MIN_CHANNEL_ID_LENGTH:
+        if len(cleaned_value) < MIN_CHANNEL_ID_LENGTH:
             raise DomainValidationError(
-                f"ChannelId must have at least {MIN_CHANNEL_ID_LENGTH} characters: '{val}'"
+                f"ChannelId must have at least {MIN_CHANNEL_ID_LENGTH} characters: '{cleaned_value}'"
             )
-        if ".." in val or "/" in val or "\\" in val:
+        if ".." in cleaned_value or "/" in cleaned_value or "\\" in cleaned_value:
             raise DomainValidationError(
-                f"ChannelId cannot contain path traversal characters: '{val}'"
+                f"ChannelId cannot contain path traversal characters: '{cleaned_value}'"
             )
-        if not _CHANNEL_ID_REGEX.match(val):
+        if not _CHANNEL_ID_REGEX.match(cleaned_value):
             raise DomainValidationError(
-                f"ChannelId contains invalid characters: '{val}'. Expected ^[a-zA-Z0-9_-]{{2,64}}$"
+                f"ChannelId contains invalid characters: '{cleaned_value}'. Expected ^[a-zA-Z0-9_-]{{2,64}}$"
             )
-        object.__setattr__(self, "value", val)
+        object.__setattr__(self, "value", cleaned_value)
 
     @classmethod
     def from_string(cls, raw: str | ChannelId) -> ChannelId:
@@ -149,9 +185,9 @@ class ChannelId:
         if isinstance(raw, cls):
             return raw
         token = str(raw).strip()
-        m = _CHANNEL_URL_EXTRACTOR.search(token)
-        if m:
-            candidate = m.group(1).strip()
+        match_url = _CHANNEL_URL_EXTRACTOR.search(token)
+        if match_url:
+            candidate = match_url.group(1).strip()
             if _CHANNEL_ID_REGEX.match(candidate):
                 return cls(value=candidate)
         if _CHANNEL_ID_REGEX.match(token):
@@ -163,8 +199,6 @@ class ChannelId:
     @classmethod
     def extract_from_text(cls, text: str) -> ChannelId | None:
         """Extract ChannelId from text or URL safely, returning None on failure."""
-        if not text or not text.strip():
-            return None
         try:
             return cls.from_url_or_token(text)
         except (DomainValidationError, ValueError, TypeError):
@@ -175,11 +209,11 @@ class ChannelId:
         """Discriminator checking if a given URL is a YouTube channel or playlist link."""
         if not url:
             return False
-        u = url.strip()
-        u_lower = u.lower()
-        if "watch?v=" in u_lower and "list=" not in u_lower:
+        cleaned_url = url.strip()
+        normalized_url = cleaned_url.lower()
+        if "watch?v=" in normalized_url and "list=" not in normalized_url:
             return False
-        return bool(_CHANNEL_OR_PLAYLIST_URL_REGEX.search(u))
+        return bool(_CHANNEL_OR_PLAYLIST_URL_REGEX.search(cleaned_url))
 
     @property
     def is_youtube_canonical(self) -> bool:
@@ -196,9 +230,9 @@ class ChannelId:
     @property
     def uploads_playlist_url(self) -> str | None:
         """Generate canonical YouTube uploads playlist URL."""
-        pid = self.uploads_playlist_id
-        if pid:
-            return f"https://www.youtube.com/playlist?list={pid}"
+        playlist_id = self.uploads_playlist_id
+        if playlist_id:
+            return f"https://www.youtube.com/playlist?list={playlist_id}"
         return None
 
     @property
@@ -238,13 +272,13 @@ class ContentId:
     value: str
 
     def __post_init__(self) -> None:
-        val = self.value.strip()
+        cleaned_value = self.value.strip()
         # Security invariant: prevent directory traversal or injection in identifiers
-        if not val or not _CONTENT_ID_PATTERN.match(val):
+        if not cleaned_value or not _CONTENT_ID_PATTERN.match(cleaned_value):
             raise DomainValidationError(
                 f"Invalid ContentId '{self.value}'. Must match ^[a-zA-Z0-9_-]{{8,64}}$ without whitespace."
             )
-        object.__setattr__(self, "value", val)
+        object.__setattr__(self, "value", cleaned_value)
 
     @classmethod
     def from_string(cls, raw: str | ContentId) -> ContentId:
@@ -259,9 +293,9 @@ class ContentId:
         if isinstance(raw, cls):
             return raw
         token = str(raw).strip()
-        m = _VIDEO_ID_REGEX.search(token)
-        if m:
-            candidate = m.group(1).strip()
+        match_url = _VIDEO_ID_REGEX.search(token)
+        if match_url:
+            candidate = match_url.group(1).strip()
             if _CONTENT_ID_PATTERN.match(candidate):
                 return cls(value=candidate)
         if _CONTENT_ID_PATTERN.match(token):
@@ -273,8 +307,6 @@ class ContentId:
     @classmethod
     def extract_from_text(cls, text: str) -> ContentId | None:
         """Extract canonical ContentId from text or URL safely, returning None on failure."""
-        if not text or not text.strip():
-            return None
         try:
             return cls.from_url_or_token(text)
         except (DomainValidationError, ValueError, TypeError):
@@ -296,3 +328,137 @@ class ContentId:
 
     def __hash__(self) -> int:
         return hash(self.value)
+
+
+@dataclass(frozen=True, slots=True)
+class Channel:
+    """Canonical domain Composite Value Object representing a content creator or source channel.
+
+    Encapsulates channel identity, human-readable name, platform ID, category, and canonical URL.
+    Conforms to ADR-019, ADR-032, and ADR-033 (Composite Value Objects with Identity VOs).
+    """
+
+    name: str
+    id: ChannelId | None = None
+    category: str = ""
+    url: str | None = None
+
+    def __init__(
+        self,
+        name: str | ChannelName | None = None,
+        id: ChannelId | str | None = None,
+        category: str = "",
+        url: str | None = None,
+        *,
+        channel_name: str | ChannelName | None = None,
+        channel_id: ChannelId | str | None = None,
+    ) -> None:
+        effective_name = channel_name if name is None else name
+        effective_id = channel_id if id is None else id
+
+        raw_name = (
+            effective_name.value
+            if isinstance(effective_name, ChannelName)
+            else (effective_name or "")
+        )
+        clean_name = raw_name.strip()
+        if not clean_name:
+            raise DomainValidationError("Channel name cannot be empty or whitespace.")
+
+        clean_name = ChannelName.from_string(clean_name).value
+
+        if effective_id is not None and effective_id != "":
+            if isinstance(effective_id, (ChannelId, str)):
+                resolved_channel_id = ChannelId.from_string(effective_id)
+            else:
+                raise DomainValidationError(f"Invalid channel id type: {type(effective_id)}")
+        else:
+            resolved_channel_id = None
+
+        object.__setattr__(self, "name", clean_name)
+        object.__setattr__(self, "id", resolved_channel_id)
+        object.__setattr__(self, "category", category.strip() if category else "")
+        object.__setattr__(self, "url", url.strip() if url else None)
+
+    @classmethod
+    def from_name(
+        cls,
+        name: str | ChannelName,
+        id: str | ChannelId | None = None,
+        category: str = "",
+        url: str | None = None,
+    ) -> Channel:
+        """Ergonomic factory constructing Channel from primitive strings or Value Objects."""
+        return cls(name=name, id=id, category=category, url=url)
+
+    @property
+    def tenant_key(self) -> str:
+        """Canonical tenant format key ('channel:{token}')."""
+        token = self.id.value if self.id else self.name
+        return f"channel:{token}"
+
+    @property
+    def canonical_url(self) -> str:
+        """Derive the canonical public URL for this channel."""
+        if self.url:
+            return self.url
+        if self.id and self.id.is_youtube_canonical:
+            return self.id.canonical_url
+        return f"https://www.youtube.com/@{self.name}"
+
+    def __str__(self) -> str:
+        return self.name
+
+
+@dataclass(frozen=True, slots=True)
+class Content:
+    """Canonical domain Value Object representing a media item, transcript, or synthesized prose.
+
+    Encapsulates content identifier, title, and textual body payload.
+    Conforms to ADR-019 (Zero Primitive Obsession), ADR-032, ADR-034, and ADR-038 (Pure Triad Composition).
+    """
+
+    id: ContentId
+    title: str = ""
+    body: str = ""
+
+    def __init__(
+        self,
+        id: ContentId | str | None = None,
+        title: str = "",
+        body: str = "",
+        *,
+        content_id: ContentId | str | None = None,
+        content_title: str | None = None,
+    ) -> None:
+        effective_id = content_id if id is None else id
+        if effective_id is None:
+            raise DomainValidationError("Content requires non-null id.")
+        if isinstance(effective_id, (ContentId, str)):
+            resolved_content_id = ContentId.from_string(effective_id)
+        else:
+            raise DomainValidationError(f"Invalid content id type: {type(effective_id)}")
+
+        effective_title = content_title if not title and content_title else title
+
+        object.__setattr__(self, "id", resolved_content_id)
+        object.__setattr__(self, "title", effective_title.strip() if effective_title else "")
+        object.__setattr__(self, "body", body)
+
+    @classmethod
+    def create(
+        cls,
+        id: str | ContentId,
+        title: str = "",
+        body: str = "",
+    ) -> Content:
+        """Ergonomic factory constructing Content from primitive strings or Value Objects."""
+        resolved_content_id = ContentId.from_string(id)
+        return cls(
+            id=resolved_content_id,
+            title=title,
+            body=body,
+        )
+
+    def __str__(self) -> str:
+        return self.id.value

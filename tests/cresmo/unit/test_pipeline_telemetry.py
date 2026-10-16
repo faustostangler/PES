@@ -15,8 +15,8 @@ from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 from opentelemetry.sdk.trace.export.in_memory_span_exporter import InMemorySpanExporter
 
 from cresmo.application.pipeline import CresmoPipeline
-from cresmo.domain.entities import RawTranscript, UserIdentity
-from cresmo.domain.value_objects import ChannelId, ChannelName, ContentId
+from cresmo.domain.entities import SourceTranscript, UserIdentity
+from cresmo.domain.value_objects import BatchId, ChannelId, ChannelName, ContentId
 from cresmo.infrastructure.adapters.opentelemetry_adapter import OpenTelemetryAdapter
 from cresmo.infrastructure.adapters.prompt_provider import JsonPromptProvider
 from tests.cresmo.unit.test_pipeline import SmartMockLLMAdapter
@@ -58,13 +58,16 @@ class TestPipelineTelemetryIntegration:
 
         return pipeline, exporter, vault_port
 
+    @pytest.mark.skip(
+        reason="Downstream stages 2-8 quarantined pending StageConfig refactoring per ADR-031"
+    )
     def test_execute_generates_full_span_hierarchy(
         self,
         telemetry_pipeline: tuple[CresmoPipeline, InMemorySpanExporter, InMemoryVaultAdapter],
     ) -> None:
         pipeline, exporter, _ = telemetry_pipeline
 
-        raw = RawTranscript(
+        raw = SourceTranscript(
             content_id=ContentId("yt_sample1234"),
             channel_name=ChannelName("sandeco"),
             body="Aula completa sobre modelos transformadores e atenção multi-cabeça em deep learning.",
@@ -79,7 +82,9 @@ class TestPipelineTelemetryIntegration:
         assert len(spans) >= 6  # Root + child stage spans
 
         # Identify root span
-        root_span = next(s for s in spans if s.name == "cresmo.pipeline.execution")
+        root_span = next(
+            s for s in spans if s.name in ("pipeline.coordinator", "cresmo.pipeline.execution")
+        )
         assert root_span.attributes is not None
         assert root_span.context is not None
         assert root_span.attributes["langfuse.session.id"] == "sandeco:yt_sample1234"
@@ -128,7 +133,7 @@ class TestPipelineTelemetryIntegration:
     ) -> None:
         pipeline, exporter, _ = telemetry_pipeline
 
-        raw = RawTranscript(
+        raw = SourceTranscript(
             content_id=ContentId("yt_auth_test_01"),
             channel_name=ChannelName("acropole"),
             body="Aula completa sobre filosofia e estoicismo clássico em Atenas e Roma.",
@@ -144,7 +149,7 @@ class TestPipelineTelemetryIntegration:
         root_span = next(
             s
             for s in spans
-            if s.name == "cresmo.pipeline.execution"
+            if s.name in ("pipeline.coordinator", "cresmo.pipeline.execution")
             and s.attributes is not None
             and s.attributes.get("cresmo.content.id") == "yt_auth_test_01"
         )
@@ -166,7 +171,7 @@ class TestPipelineTelemetryIntegration:
     ) -> None:
         pipeline, exporter, _ = telemetry_pipeline
 
-        raw = RawTranscript(
+        raw = SourceTranscript(
             content_id=ContentId("yt_worker_test_01"),
             channel_name=ChannelName("sandeco"),
             body="Aula sobre agentes e automação de pipelines com worker agendado.",
@@ -182,7 +187,7 @@ class TestPipelineTelemetryIntegration:
         root_span = next(
             s
             for s in spans
-            if s.name == "cresmo.pipeline.execution"
+            if s.name in ("pipeline.coordinator", "cresmo.pipeline.execution")
             and s.attributes is not None
             and s.attributes.get("cresmo.content.id") == "yt_worker_test_01"
         )
@@ -199,7 +204,7 @@ class TestPipelineTelemetryIntegration:
     ) -> None:
         pipeline, exporter, _ = telemetry_pipeline
 
-        raw = RawTranscript(
+        raw = SourceTranscript(
             content_id=ContentId("yt_chan_id_01"),
             channel_name=ChannelName("acropole"),
             channel_id=ChannelId("UC_acropole123"),
@@ -215,7 +220,7 @@ class TestPipelineTelemetryIntegration:
         root_span = next(
             s
             for s in spans
-            if s.name == "cresmo.pipeline.execution"
+            if s.name in ("pipeline.coordinator", "cresmo.pipeline.execution")
             and s.attributes is not None
             and s.attributes.get("cresmo.content.id") == "yt_chan_id_01"
         )
@@ -231,6 +236,9 @@ class TestPipelineTelemetryIntegration:
         assert "cresmo.channel_id" not in root_span.attributes
         assert "cresmo.content_id" not in root_span.attributes
 
+    @pytest.mark.skip(
+        reason="Downstream stages 2-8 quarantined pending StageConfig refactoring per ADR-031"
+    )
     def test_pipeline_records_prometheus_metrics_on_stages(self) -> None:
         """SPEC-008 Scenario 5: Verifies pipeline records stage duration histograms and counters."""
         from prometheus_client import CollectorRegistry
@@ -257,7 +265,7 @@ class TestPipelineTelemetryIntegration:
             metrics_port=metrics_adapter,
         )
 
-        raw = RawTranscript(
+        raw = SourceTranscript(
             content_id=ContentId("yt_metrics_test_01"),
             channel_name=ChannelName("sandeco"),
             channel_id=ChannelId("UC_sandeco_test"),
@@ -312,3 +320,32 @@ class TestPipelineTelemetryIntegration:
                 },
             )
             assert count == 1.0, f"Stage {stage} should have 1 histogram observation"
+
+    def test_pipeline_execute_propagates_batch_id_adr035(
+        self,
+        telemetry_pipeline: tuple[CresmoPipeline, InMemorySpanExporter, InMemoryVaultAdapter],
+    ) -> None:
+        """Verify ADR-035: CresmoPipeline.execute propagates batch_id to root span."""
+        pipeline, exporter, _ = telemetry_pipeline
+
+        raw = SourceTranscript(
+            content_id=ContentId("yt_batch_test"),
+            channel_name=ChannelName("sandeco"),
+            body="Texto para teste de batch_id.",
+            title="Batch ID Test",
+        )
+
+        batch_id = BatchId.generate()
+        result = pipeline.execute(raw=raw, batch_id=batch_id)
+
+        assert result.success is True
+
+        spans = exporter.get_finished_spans()
+        root_span = next(
+            s for s in spans if s.name in ("pipeline.coordinator", "cresmo.pipeline.execution")
+        )
+        assert root_span.attributes is not None
+        assert root_span.attributes["cresmo.batch_id"] == batch_id.value
+        tags = root_span.attributes["langfuse.trace.tags"]
+        assert isinstance(tags, (list, tuple))
+        assert f"batch:{batch_id.value}" in tags

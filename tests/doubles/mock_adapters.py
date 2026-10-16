@@ -20,7 +20,7 @@ from cresmo.domain.entities import (
     AtomicNote,
     EnrichedCompendium,
     MapOfContent,
-    RawTranscript,
+    SourceTranscript,
 )
 from cresmo.domain.value_objects import (
     ChannelFeedQuery,
@@ -38,7 +38,7 @@ class MockMediaIngestionPort(MediaIngestionPort):
 
     def __init__(
         self,
-        canned_transcript: RawTranscript | None = None,
+        canned_transcript: SourceTranscript | None = None,
         canned_feed: list[DiscoveredMediaItem] | None = None,
         canned_channel_url: str | None = None,
     ) -> None:
@@ -61,7 +61,7 @@ class MockMediaIngestionPort(MediaIngestionPort):
         output_dir: Path,
         whisper_model: str = "base",
         keep_audio: bool = False,
-    ) -> RawTranscript | None:
+    ) -> SourceTranscript | None:
         self.ingest_single_calls.append(video_url)
         return self.canned_transcript
 
@@ -70,6 +70,9 @@ class MockMediaIngestionPort(MediaIngestionPort):
         video_url: str,
     ) -> str | None:
         return getattr(self, "canned_channel_url", None)
+
+
+from cresmo.domain.value_objects.prompt import ChatPrompt
 
 
 class MockLLMAdapter(LLMTransformationPort):
@@ -81,8 +84,7 @@ class MockLLMAdapter(LLMTransformationPort):
 
     def transform(
         self,
-        prompt: str,
-        system_instruction: str | None = None,
+        prompt: ChatPrompt,
         temperature: float | None = None,
         *,
         trace_id: str | None = None,
@@ -92,7 +94,9 @@ class MockLLMAdapter(LLMTransformationPort):
         self.call_history.append(
             {
                 "prompt": prompt,
-                "system_instruction": system_instruction,
+                "system_instruction": prompt.system_instruction
+                if isinstance(prompt, ChatPrompt)
+                else None,
                 "temperature": temperature,
                 "trace_id": trace_id,
                 "session_id": session_id,
@@ -108,7 +112,7 @@ class InMemoryVaultAdapter(VaultRepositoryPort):
     """In-memory mock for VaultRepositoryPort."""
 
     def __init__(self) -> None:
-        self.raw_transcripts: dict[str, RawTranscript] = {}
+        self.raw_transcripts: dict[str, SourceTranscript] = {}
         self.compendiums: dict[str, EnrichedCompendium] = {}
         self.atomic_notes: dict[str, AtomicNote] = {}
         self.index_entries: dict[str, dict[str, Any]] = {}
@@ -158,10 +162,10 @@ class InMemoryVaultAdapter(VaultRepositoryPort):
         for k in keys_to_del:
             del self.master_documents[k]
 
-    def save_raw_transcript(self, transcript: RawTranscript) -> None:
-        self.raw_transcripts[transcript.content_id.value] = transcript
+    def save_transcript(self, transcript: SourceTranscript) -> None:
+        self.raw_transcripts[transcript.content.id.value] = transcript
 
-    def get_raw_transcript(self, content_id: ContentId) -> RawTranscript | None:
+    def get_raw_transcript(self, content_id: ContentId) -> SourceTranscript | None:
         return self.raw_transcripts.get(content_id.value)
 
     def save_enriched_compendium(self, compendium: EnrichedCompendium) -> None:

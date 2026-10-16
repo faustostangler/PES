@@ -11,9 +11,11 @@ from __future__ import annotations
 import logging
 
 from cresmo.application.ports import (
+    LlmJudgePort,
     LLMTransformationPort,
     PromptProviderPort,
 )
+from cresmo.application.ports.settings import DEFAULT_LANGUAGE
 from cresmo.application.use_cases.indexing.validators import (
     can_retry,
     clean_concept_line,
@@ -27,6 +29,8 @@ from cresmo.domain.value_objects import (
     ChannelId,
     ChannelName,
     ContentId,
+    EvaluationContext,
+    JudgeCriterion,
     PromptKey,
 )
 
@@ -41,14 +45,16 @@ class LLMTranscriptDistiller:
         llm_indexing_port: LLMTransformationPort,
         prompt_provider: PromptProviderPort,
         temperature: float = 0.2,
-        language: str = "Português do Brasil",
+        language: str = DEFAULT_LANGUAGE,
         max_rewrites: int = 3,
+        llm_judge_port: LlmJudgePort | None = None,
     ) -> None:
         self.llm_indexing_port = llm_indexing_port
         self.prompt_provider = prompt_provider
         self.temperature = temperature
         self.language = language
         self.max_rewrites = max_rewrites
+        self.llm_judge_port = llm_judge_port
 
     def extract_concepts(
         self,
@@ -60,9 +66,9 @@ class LLMTranscriptDistiller:
         user: UserIdentity | None = None,
     ) -> str:
         """Extract principal concepts through an iterative LLM-as-a-judge loop."""
-        system_instructions, user_prompt = self.prompt_provider.get_prompt(
+        initial_prompt = self.prompt_provider.get_prompt(
             PromptKey.RAW_INDEX_CONCEPTS,
-            video_title=title,
+            content_title=title,
             transcript_excerpt=text,
             language=self.language,
         )
@@ -79,7 +85,7 @@ class LLMTranscriptDistiller:
 
         while not is_valid:
             if retries == 0:
-                prompt = user_prompt
+                prompt = initial_prompt
                 trace_id = f"{video_id}_concepts"
                 judge_trace_id = f"{video_id}_concepts_judge"
             else:
@@ -88,7 +94,7 @@ class LLMTranscriptDistiller:
                     retries,
                     video_id,
                 )
-                _, prompt = self.prompt_provider.get_prompt(
+                prompt = self.prompt_provider.get_prompt(
                     PromptKey.RAW_INDEX_CONCEPTS_REWRITE,
                     previous_output=raw_concepts,
                     language=self.language,
@@ -98,7 +104,6 @@ class LLMTranscriptDistiller:
 
             raw_concepts = self.llm_indexing_port.transform(
                 prompt=prompt,
-                system_instruction=system_instructions,
                 temperature=self.temperature,
                 trace_id=trace_id,
                 session_id=session_id,
@@ -106,22 +111,35 @@ class LLMTranscriptDistiller:
             )
 
             if is_valid_concepts_output(raw_concepts):
-                judge_system_instructions, judge_prompt = self.prompt_provider.get_prompt(
-                    PromptKey.JUDGE_RAW_INDEX_CONCEPTS,
-                    video_title=title,
-                    transcript_excerpt=text,
-                    concepts=raw_concepts,
-                    language=self.language,
-                )
-                judge_response = self.llm_indexing_port.transform(
-                    prompt=judge_prompt,
-                    system_instruction=judge_system_instructions,
-                    temperature=0.0,
-                    trace_id=judge_trace_id,
-                    session_id=session_id,
-                    user_id=user_id,
-                )
-                is_valid = parse_judge_boolean(judge_response)
+                if self.llm_judge_port is not None:
+                    ctx = EvaluationContext(
+                        stage_name="raw_indexing_concepts",
+                        raw_text=text,
+                        candidate_text=raw_concepts,
+                        metadata={"title": title, "channel": channel_name.value},
+                        trace_id=judge_trace_id,
+                        required_criteria=(JudgeCriterion.INDEX_SYNTHESIS_QUALITY,),
+                    )
+                    is_valid = self.llm_judge_port.evaluate(ctx).passed
+                elif self.prompt_provider:
+                    # Transitional fallback (ADR-010 / ADR-029 §2.4)
+                    judge_prompt = self.prompt_provider.get_prompt(
+                        PromptKey.JUDGE_RAW_INDEX_CONCEPTS,
+                        content_title=title,
+                        transcript_excerpt=text,
+                        concepts=raw_concepts,
+                        language=self.language,
+                    )
+                    judge_response = self.llm_indexing_port.transform(
+                        prompt=judge_prompt,
+                        temperature=0.0,
+                        trace_id=judge_trace_id,
+                        session_id=session_id,
+                        user_id=user_id,
+                    )
+                    is_valid = parse_judge_boolean(judge_response)
+                else:
+                    is_valid = True
             else:
                 is_valid = False
 
@@ -143,9 +161,9 @@ class LLMTranscriptDistiller:
         user: UserIdentity | None = None,
     ) -> str:
         """Extract structured conceptual summary through an iterative LLM-as-a-judge loop."""
-        system_instructions, user_prompt = self.prompt_provider.get_prompt(
+        chat_prompt = self.prompt_provider.get_prompt(
             PromptKey.RAW_INDEX_SUMMARY,
-            video_title=title,
+            content_title=title,
             transcript_excerpt=text,
             language=self.language,
         )
@@ -178,8 +196,7 @@ class LLMTranscriptDistiller:
                 )
 
             raw_summary = self.llm_indexing_port.transform(
-                prompt=user_prompt,
-                system_instruction=system_instructions,
+                prompt=chat_prompt,
                 temperature=self.temperature,
                 trace_id=trace_id,
                 session_id=session_id,
@@ -187,22 +204,35 @@ class LLMTranscriptDistiller:
             )
             summary = clean_text_line(raw_summary) or title
 
-            judge_system_instructions, judge_prompt = self.prompt_provider.get_prompt(
-                PromptKey.JUDGE_RAW_INDEX_SUMMARY,
-                video_title=title,
-                transcript_excerpt=text,
-                summary=summary,
-                language=self.language,
-            )
-            judge_response = self.llm_indexing_port.transform(
-                prompt=judge_prompt,
-                system_instruction=judge_system_instructions,
-                temperature=0.0,
-                trace_id=judge_trace_id,
-                session_id=session_id,
-                user_id=user_id,
-            )
-            is_valid = parse_judge_boolean(judge_response)
+            if self.llm_judge_port is not None:
+                ctx = EvaluationContext(
+                    stage_name="raw_indexing_summary",
+                    raw_text=text,
+                    candidate_text=summary,
+                    metadata={"title": title, "channel": channel_name.value},
+                    trace_id=judge_trace_id,
+                    required_criteria=(JudgeCriterion.INDEX_SYNTHESIS_QUALITY,),
+                )
+                is_valid = self.llm_judge_port.evaluate(ctx).passed
+            elif self.prompt_provider:
+                # Transitional fallback (ADR-010 / ADR-029 §2.4)
+                judge_prompt = self.prompt_provider.get_prompt(
+                    PromptKey.JUDGE_RAW_INDEX_SUMMARY,
+                    content_title=title,
+                    transcript_excerpt=text,
+                    summary=summary,
+                    language=self.language,
+                )
+                judge_response = self.llm_indexing_port.transform(
+                    prompt=judge_prompt,
+                    temperature=0.0,
+                    trace_id=judge_trace_id,
+                    session_id=session_id,
+                    user_id=user_id,
+                )
+                is_valid = parse_judge_boolean(judge_response)
+            else:
+                is_valid = True
 
             if not is_valid:
                 if not can_retry(retries, self.max_rewrites):
@@ -222,9 +252,9 @@ class LLMTranscriptDistiller:
         user: UserIdentity | None = None,
     ) -> str:
         """Synthesize dense single paratactic paragraph through an iterative LLM-as-a-judge loop."""
-        system_instructions, user_prompt = self.prompt_provider.get_prompt(
+        chat_prompt = self.prompt_provider.get_prompt(
             PromptKey.RAW_INDEX_SYNTHESIS,
-            video_title=title,
+            content_title=title,
             summary=summary,
             language=self.language,
         )
@@ -257,8 +287,7 @@ class LLMTranscriptDistiller:
                 )
 
             raw_synthesis = self.llm_indexing_port.transform(
-                prompt=user_prompt,
-                system_instruction=system_instructions,
+                prompt=chat_prompt,
                 temperature=self.temperature,
                 trace_id=trace_id,
                 session_id=session_id,
@@ -267,22 +296,35 @@ class LLMTranscriptDistiller:
             synthesis = clean_text_line(raw_synthesis)
 
             if is_valid_synthesis_paragraph(synthesis):
-                judge_system_instructions, judge_prompt = self.prompt_provider.get_prompt(
-                    PromptKey.JUDGE_RAW_INDEX_SYNTHESIS,
-                    video_title=title,
-                    transcript_excerpt=excerpt,
-                    synthesis=synthesis,
-                    language=self.language,
-                )
-                judge_response = self.llm_indexing_port.transform(
-                    prompt=judge_prompt,
-                    system_instruction=judge_system_instructions,
-                    temperature=0.0,
-                    trace_id=judge_trace_id,
-                    session_id=session_id,
-                    user_id=user_id,
-                )
-                is_valid = parse_judge_boolean(judge_response)
+                if self.llm_judge_port is not None:
+                    ctx = EvaluationContext(
+                        stage_name="raw_indexing_synthesis",
+                        raw_text=excerpt,
+                        candidate_text=synthesis,
+                        metadata={"title": title, "channel": channel_name.value},
+                        trace_id=judge_trace_id,
+                        required_criteria=(JudgeCriterion.INDEX_SYNTHESIS_QUALITY,),
+                    )
+                    is_valid = self.llm_judge_port.evaluate(ctx).passed
+                elif self.prompt_provider:
+                    # Transitional fallback (ADR-010 / ADR-029 §2.4)
+                    judge_prompt = self.prompt_provider.get_prompt(
+                        PromptKey.JUDGE_RAW_INDEX_SYNTHESIS,
+                        content_title=title,
+                        transcript_excerpt=excerpt,
+                        synthesis=synthesis,
+                        language=self.language,
+                    )
+                    judge_response = self.llm_indexing_port.transform(
+                        prompt=judge_prompt,
+                        temperature=0.0,
+                        trace_id=judge_trace_id,
+                        session_id=session_id,
+                        user_id=user_id,
+                    )
+                    is_valid = parse_judge_boolean(judge_response)
+                else:
+                    is_valid = True
             else:
                 is_valid = False
 

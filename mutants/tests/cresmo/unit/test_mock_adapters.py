@@ -13,11 +13,13 @@ from cresmo.domain.entities import (
     AtomicNote,
     EnrichedCompendium,
     MapOfContent,
-    RawTranscript,
+    SourceTranscript,
 )
 from cresmo.domain.value_objects import (
     CausalMatrix,
     ChannelFeedQuery,
+    ChannelName,
+    ChatPrompt,
     ContentId,
     CrossContextRelations,
     DiscoveredMediaItem,
@@ -26,7 +28,7 @@ from cresmo.domain.value_objects import (
     NoteType,
     PipelineStatus,
 )
-from cresmo.infrastructure.adapters.mock_adapters import (
+from tests.doubles.mock_adapters import (
     InMemoryLedgerAdapter,
     InMemoryVaultAdapter,
     MockLLMAdapter,
@@ -34,7 +36,9 @@ from cresmo.infrastructure.adapters.mock_adapters import (
 )
 
 
-def _create_sample_note(title: str, definition: str = "A valid definition with at least twenty characters.") -> AtomicNote:
+def _create_sample_note(
+    title: str, definition: str = "A valid definition with at least twenty characters."
+) -> AtomicNote:
     return AtomicNote(
         title=NoteTitle(title),
         note_type=NoteType.CONCEPT,
@@ -54,7 +58,7 @@ class TestMockMediaIngestionPort:
             title="Sample Video",
             published_at=datetime.now(UTC),
             media_url="https://youtube.com/watch?v=sampleFeed01",
-            channel_name="Sample Channel",
+            channel_name=ChannelName("Sample Channel"),
         )
         port = MockMediaIngestionPort(canned_feed=[item])
         query = ChannelFeedQuery(channel_url="https://youtube.com/@Sample")
@@ -67,9 +71,9 @@ class TestMockMediaIngestionPort:
 
     def test_ingest_single_video_records_and_returns_canned(self, tmp_path: Path) -> None:
         cid = ContentId("singleVid123")
-        transcript = RawTranscript(
+        transcript = SourceTranscript(
             content_id=cid,
-            channel_name="Channel",
+            channel_name=ChannelName("Channel"),
             body="Spoken text",
         )
         port = MockMediaIngestionPort(canned_transcript=transcript)
@@ -82,28 +86,15 @@ class TestMockMediaIngestionPort:
         assert result is transcript
         assert port.ingest_single_calls == ["https://youtube.com/watch?v=singleVid123"]
 
-    def test_ingest_channels_and_playlists(self, tmp_path: Path) -> None:
-        cid = ContentId("batchVid1234")
-        transcript = RawTranscript(
-            content_id=cid,
-            channel_name="Channel",
-            body="Batch text",
-        )
-        port_with = MockMediaIngestionPort(canned_transcript=transcript)
-        res_with = port_with.ingest_channels_and_playlists(["https://yt.com/1"], tmp_path)
-        assert res_with == [transcript]
-        assert port_with.ingest_channels_calls == [["https://yt.com/1"]]
-
-        port_without = MockMediaIngestionPort(canned_transcript=None)
-        res_without = port_without.ingest_channels_and_playlists(["https://yt.com/2"], tmp_path)
-        assert res_without == []
-
     def test_extract_channel_url_from_video(self) -> None:
         port = MockMediaIngestionPort()
         assert port.extract_channel_url_from_video("https://yt.com/watch?v=123") is None
 
-        setattr(port, "canned_channel_url", "https://yt.com/@ExplicitChan")
-        assert port.extract_channel_url_from_video("https://yt.com/watch?v=123") == "https://yt.com/@ExplicitChan"
+        port.canned_channel_url = "https://yt.com/@ExplicitChan"
+        assert (
+            port.extract_channel_url_from_video("https://yt.com/watch?v=123")
+            == "https://yt.com/@ExplicitChan"
+        )
 
 
 class TestMockLLMAdapter:
@@ -111,18 +102,21 @@ class TestMockLLMAdapter:
 
     def test_transform_default_and_canned_responses(self) -> None:
         adapter = MockLLMAdapter(responses=["First Response", "Second Response"])
-        r1 = adapter.transform(prompt="Prompt 1", system_instruction="Sys 1", temperature=0.7)
+        p1 = ChatPrompt.from_system_and_user(system="Sys 1", user="Prompt 1")
+        r1 = adapter.transform(prompt=p1, temperature=0.7)
         assert r1 == "First Response"
 
-        r2 = adapter.transform(prompt="Prompt 2")
+        p2 = ChatPrompt.single_turn("Prompt 2")
+        r2 = adapter.transform(prompt=p2)
         assert r2 == "Second Response"
 
         # Defaults when responses empty
-        r3 = adapter.transform(prompt="Prompt 3")
+        p3 = ChatPrompt.single_turn("Prompt 3")
+        r3 = adapter.transform(prompt=p3)
         assert r3 == "Deterministic mock LLM response."
 
         assert len(adapter.call_history) == 3
-        assert adapter.call_history[0]["prompt"] == "Prompt 1"
+        assert adapter.call_history[0]["prompt"] == p1
         assert adapter.call_history[0]["system_instruction"] == "Sys 1"
         assert adapter.call_history[0]["temperature"] == 0.7
 
@@ -133,10 +127,10 @@ class TestInMemoryVaultAdapter:
     def test_raw_transcript_crud(self) -> None:
         vault = InMemoryVaultAdapter()
         cid = ContentId("transTest123")
-        raw = RawTranscript(content_id=cid, channel_name="Ch", body="Text")
+        raw = SourceTranscript(content_id=cid, channel_name=ChannelName("Ch"), body="Text")
         assert vault.get_raw_transcript(cid) is None
 
-        vault.save_raw_transcript(raw)
+        vault.save_transcript(raw)
         assert vault.get_raw_transcript(cid) is raw
 
     def test_enriched_compendium_crud(self) -> None:
@@ -144,7 +138,7 @@ class TestInMemoryVaultAdapter:
         cid = ContentId("compTest123")
         comp = EnrichedCompendium(
             content_id=cid,
-            channel_name="Ch",
+            channel_name=ChannelName("Ch"),
             title=NoteTitle("T"),
             body="Body",
             complementary_info="Info",
@@ -226,14 +220,14 @@ class TestInMemoryLedgerAdapter:
             content_id=ContentId("entryOne001"),
             media_url="https://yt.com/1",
             title="Video 1",
-            channel_name="Ch",
+            channel_name=ChannelName("Ch"),
             status=PipelineStatus.COMPLETED,
         )
         entry2 = LedgerEntry(
             content_id=ContentId("entryTwo002"),
             media_url="https://yt.com/2",
             title="Video 2",
-            channel_name="Ch",
+            channel_name=ChannelName("Ch"),
             status=PipelineStatus.COMPLETED,
         )
 

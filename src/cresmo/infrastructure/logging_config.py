@@ -42,7 +42,7 @@ class CresmoOTelTraceCorrelationFilter(logging.Filter):
 _LOGGING_CONFIGURED: bool = False
 
 
-def configure_logging(level: str = "INFO", fmt: str = "json") -> None:
+def configure_logging(level: str = "WARNING", fmt: str = "json") -> None:
     """Configure root logger with JSON or text formatter.
 
     Idempotent: subsequent calls with the same arguments are no-ops. Calling
@@ -94,6 +94,8 @@ def configure_logging(level: str = "INFO", fmt: str = "json") -> None:
                 "httpcore": {"level": "WARNING"},
                 "opentelemetry": {"level": "WARNING"},
                 "urllib3": {"level": "WARNING"},
+                "google_genai": {"level": "ERROR"},
+                "google_genai.models": {"level": "ERROR"},
             },
         }
     )

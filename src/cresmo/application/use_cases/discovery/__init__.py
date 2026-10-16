@@ -4,6 +4,9 @@ Re-exports core models, services, and orchestrator use cases.
 """
 
 from cresmo.application.use_cases.discovery.channel_crawler import ChannelFeedCrawlerService
+from cresmo.application.use_cases.discovery.discover_batch_sources import (
+    DiscoverBatchSourcesUseCase,
+)
 from cresmo.application.use_cases.discovery.lake_scanner import LakeScannerService
 from cresmo.application.use_cases.discovery.manifests import (
     extract_raw_file_metadata,
@@ -19,7 +22,6 @@ from cresmo.application.use_cases.discovery.models import (
     BatchSource,
     _BatchSourceAccumulator,
 )
-from cresmo.application.use_cases.discovery.orchestrator import DiscoverBatchSourcesUseCase
 
 __all__ = [
     "BatchDiscoveryQuery",

@@ -3,20 +3,61 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Any
 
+from cresmo.application.ports import (
+    CritiqueSynthesizerPort,
+    LedgerRepositoryPort,
+    LlmJudgePort,
+    LLMTransformationPort,
+    MetricsPort,
+    PromptProviderPort,
+    TelemetryPort,
+)
 from cresmo.application.use_cases import DeduplicationReport
 from cresmo.domain.entities import (
     AtomicNote,
     EnrichedCompendium,
     FluidTranscript,
     MapOfContent,
-    RawTranscript,
+    SourceTranscript,
 )
 from cresmo.domain.value_objects import (
     AtomicEntityInventory,
+    ChannelId,
+    ChannelName,
     ContentId,
     RawIndexEntry,
 )
+
+
+@dataclass(frozen=True, slots=True)
+class PipelineDependencies:
+    """Strongly-typed Parameter Object encapsulating pipeline runner collaborators (ADR-026 Rule 7)."""
+
+    telemetry_port: TelemetryPort
+    metrics_port: MetricsPort
+    llm_judge: LlmJudgePort | None = None
+    judge_blocking: bool = False
+    judge_max_attempts: int = 1
+    prompt_provider: PromptProviderPort | None = None
+    llm_transformation_port: LLMTransformationPort | None = None
+    stage_factory: Any | None = None
+    critique_synthesizer: CritiqueSynthesizerPort | None = None
+    ledger_port: LedgerRepositoryPort | None = None
+
+
+@dataclass(frozen=True, slots=True)
+class StageExecutionOptions:
+    """Strongly-typed Parameter Object for stage execution parameters (ADR-026 Rule 7)."""
+
+    channel_name: ChannelName | None = None
+    content_id: ContentId | None = None
+    channel_id: ChannelId | None = None
+    session_id: str | None = None
+    user_id: str | None = None
+    fatal: bool = True
+    fallback: Any | None = None
 
 
 @dataclass(frozen=True)
@@ -31,7 +72,7 @@ class PipelineResult:
         success: True if all stages completed successfully without unhandled errors.
         synthesized_notes: Tuple of all newly synthesized AtomicNote domain aggregates.
         reconciled_mocs: Tuple of MapOfContent aggregates updated or created.
-        raw_transcript: Optional RawTranscript aggregate root from raw ingestion.
+        source_transcript: Optional SourceTranscript aggregate root from raw ingestion.
         index_entry: Optional RawIndexEntry catalog projection from raw indexing.
         compendium: Optional EnrichedCompendium aggregate root from fluid prose & expansion.
         inventory: Optional AtomicEntityInventory value object from inventory discovery.
@@ -45,7 +86,7 @@ class PipelineResult:
     success: bool
     synthesized_notes: tuple[AtomicNote, ...] = ()
     reconciled_mocs: tuple[MapOfContent, ...] = ()
-    raw_transcript: RawTranscript | None = None
+    source_transcript: SourceTranscript | None = None
     fluid_transcript: FluidTranscript | None = None
     index_entry: RawIndexEntry | None = None
     compendium: EnrichedCompendium | None = None

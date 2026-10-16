@@ -13,12 +13,13 @@ from cresmo.domain.entities import (
     AtomicNote,
     EnrichedCompendium,
     MapOfContent,
-    RawTranscript,
+    SourceTranscript,
 )
 from cresmo.domain.value_objects import (
     CausalMatrix,
     ChannelFeedQuery,
     ChannelName,
+    ChatPrompt,
     ContentId,
     CrossContextRelations,
     DiscoveredMediaItem,
@@ -70,7 +71,7 @@ class TestMockMediaIngestionPort:
 
     def test_ingest_single_video_records_and_returns_canned(self, tmp_path: Path) -> None:
         cid = ContentId("singleVid123")
-        transcript = RawTranscript(
+        transcript = SourceTranscript(
             content_id=cid,
             channel_name=ChannelName("Channel"),
             body="Spoken text",
@@ -101,18 +102,21 @@ class TestMockLLMAdapter:
 
     def test_transform_default_and_canned_responses(self) -> None:
         adapter = MockLLMAdapter(responses=["First Response", "Second Response"])
-        r1 = adapter.transform(prompt="Prompt 1", system_instruction="Sys 1", temperature=0.7)
+        p1 = ChatPrompt.from_system_and_user(system="Sys 1", user="Prompt 1")
+        r1 = adapter.transform(prompt=p1, temperature=0.7)
         assert r1 == "First Response"
 
-        r2 = adapter.transform(prompt="Prompt 2")
+        p2 = ChatPrompt.single_turn("Prompt 2")
+        r2 = adapter.transform(prompt=p2)
         assert r2 == "Second Response"
 
         # Defaults when responses empty
-        r3 = adapter.transform(prompt="Prompt 3")
+        p3 = ChatPrompt.single_turn("Prompt 3")
+        r3 = adapter.transform(prompt=p3)
         assert r3 == "Deterministic mock LLM response."
 
         assert len(adapter.call_history) == 3
-        assert adapter.call_history[0]["prompt"] == "Prompt 1"
+        assert adapter.call_history[0]["prompt"] == p1
         assert adapter.call_history[0]["system_instruction"] == "Sys 1"
         assert adapter.call_history[0]["temperature"] == 0.7
 
@@ -123,10 +127,10 @@ class TestInMemoryVaultAdapter:
     def test_raw_transcript_crud(self) -> None:
         vault = InMemoryVaultAdapter()
         cid = ContentId("transTest123")
-        raw = RawTranscript(content_id=cid, channel_name=ChannelName("Ch"), body="Text")
+        raw = SourceTranscript(content_id=cid, channel_name=ChannelName("Ch"), body="Text")
         assert vault.get_raw_transcript(cid) is None
 
-        vault.save_raw_transcript(raw)
+        vault.save_transcript(raw)
         assert vault.get_raw_transcript(cid) is raw
 
     def test_enriched_compendium_crud(self) -> None:

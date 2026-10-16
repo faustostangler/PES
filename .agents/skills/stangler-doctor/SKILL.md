@@ -735,6 +735,7 @@ All reference files are co-located in this skill's `references/` directory.
 
 | File | Use When |
 |------|----------|
+| `references/technology_stack_reference.md` | SOTA-KISS Technology Stack Reference, layer selection matrix, and frontend/backend decision guide to use as per need |
 | `references/adr_template.md` | **Phase 1** — ADR drafting (mandatory first step) |
 | `references/adr_lifecycle_guide.md` | Managing ADR state, governance, and resolution of impasses |
 | `references/legacy_strangling_patterns.md` | Migrating/wrapping legacy or non-conformant code with ACLs |

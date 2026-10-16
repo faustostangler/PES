@@ -26,7 +26,12 @@ from langfuse import Langfuse
 from langfuse.span_filter import is_default_export_span
 from langfuse.types import MaskOtelSpansParams, MaskOtelSpansResult, OtelSpanPatch
 
-from cresmo.application.pipeline import CresmoPipeline
+from cresmo.application.pipeline import (
+    CresmoPipeline,
+    PipelineDependencies,
+    PipelineStageRunner,
+    StageFactory,
+)
 from cresmo.application.ports import (
     AnonymizerPort,
 )
@@ -35,6 +40,7 @@ from cresmo.application.services.preflight import (
     probe_http_endpoint,
 )
 from cresmo.application.use_cases.sync_channel import SyncChannelUseCase
+from cresmo.infrastructure.adapters.ollama_critique_adapter import OllamaCritiqueAdapter
 from cresmo.infrastructure.adapters.opentelemetry_adapter import (
     name_telemetry_threads,
 )
@@ -50,6 +56,7 @@ from cresmo.presentation.factories.adapter_factory import (
     build_prompt_provider,
     build_vault_adapter,
 )
+from cresmo.presentation.factories.judge_factory import build_llm_judge_adapter
 from cresmo.presentation.factories.settings_factory import (
     get_shared_settings,
     reset_shared_settings,
@@ -220,18 +227,21 @@ def build_pipeline(
         fmt=resolved_settings.log_format,
     )
 
-    # 1. Observability, Security & Prompt Governance
+    # 1. Observability & Security
     anonymizer = build_anonymizer_adapter(resolved_settings)
     langfuse_client = resolve_langfuse_client(resolved_settings, anonymizer=anonymizer)
     telemetry_port = build_telemetry_adapter(resolved_settings, langfuse_client=langfuse_client)
-    prompt_provider = build_prompt_provider(resolved_settings, langfuse_client=langfuse_client)
 
     # 2. Ingestion, Persistence & Idempotency
     media_ingestion_port = build_media_ingestion_adapter(resolved_settings)
     vault_port = build_vault_adapter(resolved_settings)
     ledger_port = SqliteLedgerAdapter(db_path=resolved_settings.sqlite_ledger_path)
 
-    # 3. Cognitive LLM Engines (Synthesis & Fast Indexing)
+    # 3. SRE & DORA Metrics Telemetry
+    metrics_port = build_metrics_adapter(resolved_settings)
+
+    # 4. Prompt Governance, Cognitive & Judge LLM Engines
+    prompt_provider = build_prompt_provider(resolved_settings, langfuse_client=langfuse_client)
     llm_synthesis_port = build_gemini_synthesis_adapter(
         resolved_settings, langfuse_client=langfuse_client
     )
@@ -241,26 +251,46 @@ def build_pipeline(
         web_index=web_index,
         langfuse_client=langfuse_client,
     )
+    llm_judge_port = build_llm_judge_adapter(
+        resolved_settings,
+        langfuse_client=langfuse_client,
+        prompt_provider=prompt_provider,
+    )
+    critique_synthesizer = OllamaCritiqueAdapter(
+        llm_transformation_port=llm_indexing_port,
+        prompt_provider=prompt_provider,
+    )
 
-    # 4. SRE & DORA Metrics Telemetry
-    metrics_port = build_metrics_adapter(resolved_settings)
+    # 5. Pipeline Stage Runner & Closed-Loop Verifier (ADR-030, ADR-031)
+    stage_factory = StageFactory(settings=resolved_settings)
+    stage_runner = PipelineStageRunner(
+        PipelineDependencies(
+            telemetry_port=telemetry_port,
+            metrics_port=metrics_port,
+            llm_judge=llm_judge_port,
+            judge_blocking=getattr(resolved_settings, "judge_blocking", False),
+            judge_max_attempts=getattr(resolved_settings, "judge_max_attempts", 1),
+            prompt_provider=prompt_provider,
+            llm_transformation_port=llm_synthesis_port,
+            stage_factory=stage_factory,
+            critique_synthesizer=critique_synthesizer,
+            ledger_port=ledger_port,
+        )
+    )
 
-    # 5. Pipeline Assembly
+    # 6. Pipeline Assembly
     effective_batch_size = (
         batch_size_override if batch_size_override is not None else resolved_settings.batch_size
     )
 
     return CresmoPipeline(
         media_ingestion_port=media_ingestion_port,
-        llm_synthesis_port=llm_synthesis_port,
         vault_port=vault_port,
+        stage_runner=stage_runner,
         ledger_port=ledger_port,
         batch_size=effective_batch_size,
-        prompt_provider=prompt_provider,
         settings=resolved_settings,
         llm_indexing_port=llm_indexing_port,
-        telemetry_port=telemetry_port,
-        metrics_port=metrics_port,
     )
 
 

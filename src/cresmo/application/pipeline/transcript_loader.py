@@ -10,18 +10,21 @@ from typing import TYPE_CHECKING, Any
 
 import yaml
 
-if TYPE_CHECKING:
-    from cresmo.application.ports.storage import VaultRepositoryPort
-
-from cresmo.domain.entities import RawTranscript
+from cresmo.domain.entities import SourceTranscript
 from cresmo.domain.exceptions import CresmoDomainError
 from cresmo.domain.taxonomy import classify_channel
 from cresmo.domain.value_objects import (
+    Channel,
     ChannelId,
     ChannelName,
+    Content,
     ContentId,
+    MediaProvenance,
     is_processable_transcript_file,
 )
+
+if TYPE_CHECKING:
+    from cresmo.application.ports.storage import VaultRepositoryPort
 
 logger = logging.getLogger(__name__)
 
@@ -71,7 +74,7 @@ def _resolve_metadata(
     meta: dict[str, Any],
     file_path: Path,
     stem: str,
-) -> tuple[str, ChannelName, ChannelId | None, str, str, str]:
+) -> tuple[str, ChannelName, ChannelId | None, str, str, str, str | None]:
     """Resolve entity attributes combining explicit frontmatter and path conventions."""
     title = str(
         meta.get("video_title")
@@ -94,12 +97,21 @@ def _resolve_metadata(
     )
     source_url = str(meta.get("url") or f"file://{file_path.resolve()}")
     video_description = str(meta.get("video_description") or "")
+    publication_date_raw = meta.get("publication_date") or meta.get("published_at")
 
-    return title, channel_name, channel_id_obj, category, source_url, video_description
+    return (
+        title,
+        channel_name,
+        channel_id_obj,
+        category,
+        source_url,
+        video_description,
+        publication_date_raw,
+    )
 
 
-def load_transcript_from_file(file_path: Path) -> RawTranscript:
-    """Parse and construct RawTranscript domain entity from a local file.
+def load_transcript_from_file(file_path: Path) -> SourceTranscript:
+    """Parse and construct SourceTranscript domain entity from a local file.
 
     Handles YAML frontmatter metadata overrides and enforces security invariants:
     - Rejects internal Cresmo system files and index databases
@@ -110,7 +122,7 @@ def load_transcript_from_file(file_path: Path) -> RawTranscript:
         file_path: Path to the transcript markdown or text file.
 
     Returns:
-        Validated RawTranscript domain aggregate root.
+        Validated SourceTranscript domain aggregate root.
 
     Raises:
         CresmoDomainError: If file is missing, empty, or a reserved system artifact.
@@ -130,19 +142,29 @@ def load_transcript_from_file(file_path: Path) -> RawTranscript:
 
     content_id = _derive_content_id(file_path.stem, raw_body)
     body, meta = _extract_frontmatter(raw_body, file_path.name)
-    title, ch_name, ch_id, category, source_url, description = _resolve_metadata(
+    title, ch_name, ch_id, category, source_url, description, pub_date = _resolve_metadata(
         meta, file_path, file_path.stem
     )
 
-    return RawTranscript(
-        content_id=content_id,
-        channel_name=ch_name,
-        body=body,
+    channel = Channel(
+        name=ch_name,
+        id=ch_id,
+        category=category,
+    )
+    provenance = MediaProvenance.create(
+        url=source_url,
+        description=description,
+        publication_date=pub_date,
+    )
+    content = Content.create(
+        id=content_id,
         title=title,
-        source_url=source_url,
-        channel_id=ch_id,
-        channel_category=category,
-        video_description=description,
+        body=body,
+    )
+    return SourceTranscript(
+        channel=channel,
+        provenance=provenance,
+        content=content,
     )
 
 
@@ -157,19 +179,28 @@ def load_manifest_urls(manifest_path: Path) -> list[str]:
     ]
 
 
-def ensure_raw_saved_in_vault(
+def is_subpath(target_path: Path, parent_dir: Path | None) -> bool:
+    """Determine whether a target file path is located within a parent directory."""
+    if parent_dir is None:
+        return False
+    try:
+        return target_path.resolve().is_relative_to(parent_dir.resolve())
+    except (ValueError, RuntimeError):
+        return False
+
+
+def ensure_transcript_saved(
     vault_port: VaultRepositoryPort,
     file_path: Path,
-    raw: RawTranscript,
+    transcript: SourceTranscript,
+    target_dir: Path | None = None,
 ) -> None:
-    """Persist raw transcript in vault if not already located inside its raw directory."""
-    raw_dir = getattr(vault_port, "raw_dir", None)
-    is_already_in_raw = False
-    if isinstance(raw_dir, Path):
-        try:
-            is_already_in_raw = file_path.resolve().is_relative_to(raw_dir.resolve())
-        except (ValueError, RuntimeError):
-            is_already_in_raw = False
+    """Persist transcript via vault_port if not already located inside target_dir.
 
-    if not is_already_in_raw:
-        vault_port.save_raw_transcript(raw)
+    Conforms to Hexagonal Architecture: physical file persistence is encapsulated
+    by VaultRepositoryPort adapter, preventing direct disk I/O in the application layer.
+    """
+    vault_target_dir = getattr(vault_port, "raw_dir", None)
+    if is_subpath(file_path, target_dir) or is_subpath(file_path, vault_target_dir):
+        return
+    vault_port.save_transcript(transcript)

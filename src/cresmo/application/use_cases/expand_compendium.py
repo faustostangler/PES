@@ -25,9 +25,8 @@ from cresmo.domain.entities import (
     UserIdentity,
 )
 from cresmo.domain.exceptions import CompendiumStructureError
-from cresmo.domain.value_objects import PromptKey
+from cresmo.domain.value_objects import Channel, PromptKey
 
-_COMPLEMENTARY_TAG = "## Informações Complementares"
 # Resilient regex matching variations of the mandatory complementary section header
 _COMPLEMENTARY_REGEX = re.compile(
     r"^\s*#{2,3}\s+\*?\*?(?:Informa[cç][oõ]es\s+Complementares|Notas\s+Complementares|Informa[cç][oõ]es\s+Adicionais)\*?\*?.*$",
@@ -82,33 +81,30 @@ class ExpandCompendiumUseCase:
             DomainValidationError: If construction invariants are violated.
         """
         session_id = PipelineSessionId.create(
-            channel=compendium.channel_name,
+            channel=Channel(name=compendium.channel_name, id=compendium.channel_id),
             content_id=compendium.content_id,
-            channel_id=compendium.channel_id,
         ).value
         user_id = user.value if user is not None else UserIdentity.anonymous().value
 
-        long_sys, long_user = self.prompt_provider.get_prompt(
+        long_prompt = self.prompt_provider.get_prompt(
             PromptKey.LONG_EXPANDER,
             compendium_body=compendium.body,
             complementary_info=compendium.complementary_info,
         )
         longitudinal_expansion = self.llm_synthesis_port.transform(
-            prompt=long_user,
-            system_instruction=long_sys,
+            prompt=long_prompt,
             temperature=self.temperature,
             trace_id=f"{compendium.content_id.value}_longitudinal",
             session_id=session_id,
             user_id=user_id,
         )
 
-        wide_sys, wide_user = self.prompt_provider.get_prompt(
+        wide_prompt = self.prompt_provider.get_prompt(
             PromptKey.WIDE_EXPANDER,
             current_text=longitudinal_expansion,
         )
         synchronic_expansion = self.llm_synthesis_port.transform(
-            prompt=wide_user,
-            system_instruction=wide_sys,
+            prompt=wide_prompt,
             temperature=self.temperature,
             trace_id=f"{compendium.content_id.value}_synchronic",
             session_id=session_id,
@@ -119,10 +115,6 @@ class ExpandCompendiumUseCase:
         if complementary_match:
             body = synchronic_expansion[: complementary_match.start()].strip()
             complementary_information = synchronic_expansion[complementary_match.end() :].strip()
-        elif _COMPLEMENTARY_TAG in synchronic_expansion:
-            parts = synchronic_expansion.split(_COMPLEMENTARY_TAG, 1)
-            body = parts[0].strip()
-            complementary_information = parts[1].strip()
         else:
             body = synchronic_expansion.strip()
             complementary_information = compendium.complementary_info

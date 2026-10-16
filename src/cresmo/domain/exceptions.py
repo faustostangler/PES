@@ -25,6 +25,31 @@ class DomainValidationError(CresmoDomainError, ValueError):
     """
 
 
+class StageQuarantinedError(DomainValidationError):
+    """Raised when a pipeline stage exhausts retries and enters quarantine.
+
+    Conforms to ADR-031 Fail-Fast Quality Fabric.
+    """
+
+    def __init__(
+        self,
+        stage_name: str,
+        content_id: str,
+        attempts: int,
+        critique: str,
+        overall_score: float,
+    ) -> None:
+        self.stage_name = stage_name
+        self.content_id = content_id
+        self.attempts = attempts
+        self.critique = critique
+        self.overall_score = overall_score
+        super().__init__(
+            f"Stage '{stage_name}' quarantined for content '{content_id}' after "
+            f"{attempts} attempts (overall score: {overall_score:.2f}). Critique: {critique}"
+        )
+
+
 class NoteTypologyError(CresmoDomainError):
     """Raised when an invalid note typology classification is supplied.
 

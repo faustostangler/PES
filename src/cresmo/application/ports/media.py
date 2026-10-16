@@ -10,7 +10,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from pathlib import Path
 
-from cresmo.domain.entities import RawTranscript
+from cresmo.domain.entities import SourceTranscript
 from cresmo.domain.value_objects import ChannelFeedQuery, DiscoveredMediaItem
 
 
@@ -18,7 +18,7 @@ class MediaIngestionPort(ABC):
     """Hexagonal Port for media crawling, audio downloading, and subtitle/transcript ingestion.
 
     Conforms to ADR-004 and SPEC-004. Abstracts external tools (yt-dlp, whisper) behind
-    pure domain aggregates (RawTranscript).
+    pure domain aggregates (SourceTranscript).
     """
 
     @abstractmethod
@@ -28,7 +28,7 @@ class MediaIngestionPort(ABC):
         output_dir: Path,
         whisper_model: str = "base",
         keep_audio: bool = False,
-    ) -> RawTranscript | None:
+    ) -> SourceTranscript | None:
         """Fetch transcript or transcribe audio for a single video.
 
         Args:
@@ -38,7 +38,7 @@ class MediaIngestionPort(ABC):
             keep_audio: If True, preserves downloaded audio; otherwise cleans up.
 
         Returns:
-            RawTranscript domain aggregate if successful, or None if extraction fails.
+            SourceTranscript domain aggregate if successful, or None if extraction fails.
 
         Raises:
             RateLimitExceededError: If upstream provider returns HTTP 429.

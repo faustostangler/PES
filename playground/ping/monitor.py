@@ -1,10 +1,13 @@
 import csv
+import json
 import os
 import sqlite3
 import subprocess
 import threading
 import time
+import urllib.request
 from datetime import datetime, timedelta
+from typing import Any
 
 from icmplib import ping as icmp_ping
 import speedtest
@@ -35,9 +38,73 @@ _csv_lock = threading.Lock()
 # State for speed test scheduler
 _speed_lock = threading.Lock()
 _speed_running = False
-_current_ssid: str | None = None
+_current_network_key: str | None = None
 _step_k = 1  # 1-indexed, from 1 to 7
+_step_k_by_ssid: dict[str | None, int] = {}
 _next_speedtest_due = datetime.min
+_pending_network_trigger: tuple[str, str] | None = None
+
+# GeoIP & VPN exit location cache
+_geoip_lock = threading.Lock()
+_latest_geoip: dict[str, Any] = {
+    "ip": "",
+    "city": "",
+    "country": "",
+    "org": "",
+    "is_vpn": False,
+    "vpn_provider": "",
+}
+_last_geoip_fetch: float = 0.0
+
+
+def _fetch_geoip_worker() -> None:
+    """Queries public GeoIP endpoints in the background to identify exit location and provider."""
+    global _latest_geoip, _last_geoip_fetch
+    endpoints = [
+        ("http://ip-api.com/json/", lambda d: {
+            "ip": d.get("query", ""),
+            "city": d.get("city", ""),
+            "country": d.get("countryCode", "") or d.get("country", ""),
+            "org": d.get("org", "") or d.get("isp", ""),
+        }),
+        ("https://ipinfo.io/json", lambda d: {
+            "ip": d.get("ip", ""),
+            "city": d.get("city", ""),
+            "country": d.get("country", ""),
+            "org": d.get("org", ""),
+        }),
+    ]
+    for url, parser in endpoints:
+        try:
+            req = urllib.request.Request(url, headers={"User-Agent": "curl/7.68.0"})
+            with urllib.request.urlopen(req, timeout=3.0) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
+                parsed = parser(data)
+                org_lower = parsed.get("org", "").lower()
+                is_vpn = any(k in org_lower for k in ("surfshark", "vpn", "m247", "datacamp", "nord", "mullvad", "proton"))
+                vpn_provider = "Surfshark" if "surfshark" in org_lower else ("VPN" if is_vpn else "")
+                parsed["is_vpn"] = is_vpn
+                parsed["vpn_provider"] = vpn_provider
+                with _geoip_lock:
+                    _latest_geoip = parsed
+                    _last_geoip_fetch = time.monotonic()
+                return
+        except Exception:
+            continue
+
+
+def trigger_geoip_refresh(force: bool = False) -> None:
+    """Triggers background GeoIP refresh if cache expired or force requested."""
+    global _last_geoip_fetch
+    now = time.monotonic()
+    if force or (now - _last_geoip_fetch > 300):
+        t = threading.Thread(target=_fetch_geoip_worker, daemon=True)
+        t.start()
+
+
+def get_cached_geoip() -> dict[str, Any]:
+    with _geoip_lock:
+        return dict(_latest_geoip)
 
 
 def init_storage(db_path: str, csv_path: str) -> sqlite3.Connection:
@@ -127,35 +194,81 @@ def get_wifi_ssid(interface: str) -> str | None:
         return None
 
 
-def get_network_info() -> tuple[str, str | None, str, str]:
-    """Detects active default route, interface, network type (WIFI/LAN/VPN) and SSID."""
+def get_underlying_wifi_ssid() -> str | None:
+    """Scans all wireless interfaces to detect connected Wi-Fi SSID, even when routed via VPN."""
+    try:
+        if os.path.exists("/sys/class/net"):
+            for dev in os.listdir("/sys/class/net"):
+                if dev.startswith(("wl", "wlan")):
+                    ssid = get_wifi_ssid(dev)
+                    if ssid:
+                        return ssid
+    except Exception:
+        pass
+    return None
+
+
+def get_network_info() -> tuple[str, str, str, str, str]:
+    """
+    Detects active route to TARGET_IP, interface, network type (WIFI/LAN/VPN), SSID, and gateway.
+    Returns (net_type, network_key, dev, gw, display_name).
+    """
     try:
         res = subprocess.run(
-            ["ip", "route", "show", "default"],
+            ["ip", "route", "get", TARGET_IP],
             capture_output=True,
             text=True,
             timeout=2,
         )
-        parts = res.stdout.strip().split()
-        if "via" in parts and "dev" in parts:
-            gw = parts[parts.index("via") + 1]
-            dev = parts[parts.index("dev") + 1]
-            ssid = None
+        tokens = res.stdout.strip().split()
+        dev = "UNKNOWN"
+        gw = "direct"
+        if "dev" in tokens:
+            dev = tokens[tokens.index("dev") + 1]
+        if "via" in tokens:
+            gw = tokens[tokens.index("via") + 1]
 
-            if dev.startswith(("wl", "wlan")):
-                net_type = "WIFI"
-                ssid = get_wifi_ssid(dev)
-            elif dev.startswith(("eth", "en")):
-                net_type = "LAN"
-            elif any(k in dev for k in ("wg", "tun", "vpn", "surfshark")):
-                net_type = "VPN"
+        underlying_wifi = get_underlying_wifi_ssid()
+        geoip = get_cached_geoip()
+
+        is_vpn_dev = any(k in dev for k in ("wg", "tun", "tap", "vpn", "surfshark"))
+        is_vpn = is_vpn_dev or geoip.get("is_vpn", False)
+
+        if is_vpn:
+            net_type = "VPN"
+            vpn_prov = geoip.get("vpn_provider") or ("Surfshark" if "surfshark" in dev else "VPN")
+            loc_parts = []
+            if geoip.get("city"):
+                loc_parts.append(geoip["city"])
+            if geoip.get("country"):
+                loc_parts.append(geoip["country"])
+            loc_str = f" [{', '.join(loc_parts)}]" if loc_parts else ""
+
+            if underlying_wifi:
+                display_name = f"VPN:{vpn_prov}{loc_str} via WIFI [{underlying_wifi}] ({dev})"
+                net_key = f"VPN:{vpn_prov}{loc_str} ({underlying_wifi})"
             else:
-                net_type = "OTHER"
+                display_name = f"VPN:{vpn_prov}{loc_str} ({dev})"
+                net_key = f"VPN:{vpn_prov}{loc_str}"
+        elif dev.startswith(("wl", "wlan")):
+            net_type = "WIFI"
+            wifi_ssid = get_wifi_ssid(dev) or underlying_wifi
+            ssid_name = wifi_ssid if wifi_ssid else "Wi-Fi"
+            display_name = f"WIFI [{ssid_name}]"
+            net_key = ssid_name
+        elif dev.startswith(("eth", "en")):
+            net_type = "LAN"
+            display_name = f"LAN ({dev})"
+            net_key = f"LAN:{dev}"
+        else:
+            net_type = "OTHER"
+            display_name = f"{dev}"
+            net_key = dev
 
-            return net_type, ssid, dev, gw
+        return net_type, net_key, dev, gw, display_name
     except Exception:
         pass
-    return "UNKNOWN", None, "UNKNOWN", "UNKNOWN"
+    return "UNKNOWN", "UNKNOWN", "UNKNOWN", "UNKNOWN", "UNKNOWN"
 
 
 def _run_traceroute_worker(host: str, max_hops: int = 5) -> None:
@@ -214,7 +327,7 @@ def ping_host_icmplib(host: str) -> tuple[bool, float | None, float | None, floa
 
 
 def compute_hourly_ffill_weekly_mean(conn: sqlite3.Connection, ssid: str | None, now: datetime) -> float | None:
-    """Calculates weekly moving average using hourly forward-fill (ffill)."""
+    """Calculates moving average for the given network SSID using hourly forward-fill (ffill)."""
     cutoff = now - timedelta(days=SPEED_WINDOW_DAYS)
     cutoff_str = cutoff.strftime("%Y-%m-%d %H:%M:%S")
 
@@ -222,12 +335,22 @@ def compute_hourly_ffill_weekly_mean(conn: sqlite3.Connection, ssid: str | None,
         cursor = conn.cursor()
         if ssid:
             cursor.execute(
-                "SELECT ts, download_mbps FROM speed_log WHERE ssid = ? AND ts >= ? ORDER BY ts ASC",
+                """
+                SELECT ts, download_mbps
+                FROM speed_log
+                WHERE ssid = ? AND ts >= ? AND download_mbps > 0
+                ORDER BY ts ASC
+                """,
                 (ssid, cutoff_str),
             )
         else:
             cursor.execute(
-                "SELECT ts, download_mbps FROM speed_log WHERE ts >= ? ORDER BY ts ASC",
+                """
+                SELECT ts, download_mbps
+                FROM speed_log
+                WHERE (ssid IS NULL OR ssid = '') AND ts >= ? AND download_mbps > 0
+                ORDER BY ts ASC
+                """,
                 (cutoff_str,),
             )
         rows = cursor.fetchall()
@@ -235,7 +358,7 @@ def compute_hourly_ffill_weekly_mean(conn: sqlite3.Connection, ssid: str | None,
     if not rows:
         return None
 
-    measurements = []
+    measurements: list[tuple[datetime, float]] = []
     for ts_str, dl in rows:
         try:
             dt = datetime.strptime(ts_str, "%Y-%m-%d %H:%M:%S")
@@ -246,17 +369,23 @@ def compute_hourly_ffill_weekly_mean(conn: sqlite3.Connection, ssid: str | None,
     if not measurements:
         return None
 
-    total_hours = SPEED_WINDOW_DAYS * 24  # 168 hours
-    hourly_values = []
+    # Calculate hourly forward fill only across the active observation window for this network
+    start_time = max(cutoff, measurements[0][0])
+    total_hours = max(1, int((now - start_time).total_seconds() // 3600))
+
+    hourly_values: list[float] = []
     cur_val = measurements[0][1]
     m_idx = 0
 
     for h in range(total_hours):
-        hour_point = cutoff + timedelta(hours=h + 1)
+        hour_point = start_time + timedelta(hours=h + 1)
         while m_idx < len(measurements) and measurements[m_idx][0] <= hour_point:
             cur_val = measurements[m_idx][1]
             m_idx += 1
         hourly_values.append(cur_val)
+
+    if not hourly_values:
+        return cur_val
 
     return sum(hourly_values) / len(hourly_values)
 
@@ -276,8 +405,8 @@ def measure_throughput_speedtest() -> tuple[float | None, float | None, float | 
 
 
 def _run_speedtest_worker(conn: sqlite3.Connection, ssid: str | None, reason: str) -> None:
-    """Executes speedtest asynchronously and updates adaptive PG schedule."""
-    global _speed_running, _step_k, _next_speedtest_due
+    """Executes speedtest asynchronously and updates adaptive PG schedule for the active network."""
+    global _speed_running, _step_k, _next_speedtest_due, _pending_network_trigger, _current_network_key
 
     now = datetime.now()
     now_str = now.strftime("%Y-%m-%d %H:%M:%S")
@@ -287,52 +416,57 @@ def _run_speedtest_worker(conn: sqlite3.Connection, ssid: str | None, reason: st
         if dl is None:
             with _speed_lock:
                 _step_k = 1
+                _step_k_by_ssid[ssid] = 1
                 _next_speedtest_due = now + timedelta(hours=1)
                 _speed_running = False
             return
 
         weekly_mean = compute_hourly_ffill_weekly_mean(conn, ssid, now)
+        is_baseline = weekly_mean is None or weekly_mean <= 0
 
-        if weekly_mean is not None and weekly_mean > 0:
+        if not is_baseline:
             dev_pct = abs(dl - weekly_mean) / weekly_mean
         else:
             weekly_mean = dl
             dev_pct = 0.0
 
         with _speed_lock:
-            old_k = _step_k
-            if dev_pct > SPEED_DEVIATION_THRESHOLD:
+            cur_k = _step_k_by_ssid.get(ssid, 1)
+            old_k = cur_k
+            if is_baseline:
                 _step_k = 1
-                status_str = f"INSTÁVEL (desvio {dev_pct*100:.1f}% > 10% da média {weekly_mean:.2f} Mbps) -> Reseta para Passo 1 (1h)"
+                status_str = f"BASELINE INICIAL (primeira medição na rede '{ssid or 'N/A'}': {dl:.2f} Mbps) -> Passo 1 (1h)"
+            elif dev_pct > SPEED_DEVIATION_THRESHOLD:
+                _step_k = 1
+                status_str = f"INSTÁVEL (desvio {dev_pct*100:.1f}% > 10% da média {weekly_mean:.2f} Mbps na rede '{ssid or 'N/A'}') -> Reseta para Passo 1 (1h)"
             else:
-                _step_k = min(7, _step_k + 1)
-                status_str = f"ESTÁVEL (desvio {dev_pct*100:.1f}% <= 10% da média {weekly_mean:.2f} Mbps) -> Passo {old_k} -> {_step_k}"
+                _step_k = min(7, cur_k + 1)
+                status_str = f"ESTÁVEL (desvio {dev_pct*100:.1f}% <= 10% da média {weekly_mean:.2f} Mbps na rede '{ssid or 'N/A'}') -> Passo {old_k} -> {_step_k}"
 
+            _step_k_by_ssid[ssid] = _step_k
             hours = PG_STEPS_HOURS[_step_k - 1]
             _next_speedtest_due = now + timedelta(hours=hours)
 
         # 1. Save to SQLite
-        with _db_lock:
-            with conn:
-                conn.execute(
-                    """
-                    INSERT INTO speed_log (
-                        ts, ssid, download_mbps, upload_mbps, ping_ms, server_name,
-                        step_k, interval_hours, weekly_mean, deviation_pct, trigger_reason
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                    """,
-                    (now_str, ssid, dl, ul, ping_ms, server_name, _step_k, hours, round(weekly_mean, 2), round(dev_pct * 100, 2), reason),
-                )
+        with _db_lock, conn:
+            conn.execute(
+                """
+                INSERT INTO speed_log (
+                    ts, ssid, download_mbps, upload_mbps, ping_ms, server_name,
+                    step_k, interval_hours, weekly_mean, deviation_pct, trigger_reason
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (now_str, ssid, dl, ul, ping_ms, server_name, _step_k, hours, round(weekly_mean, 2), round(dev_pct * 100, 2), reason),
+            )
 
         # 2. Append to CSV
         speed_csv = os.path.join(os.path.dirname(CSV_PATH), "speed_history.csv")
-        with _csv_lock:
-            with open(speed_csv, "a", newline="", encoding="utf-8") as f:
-                writer = csv.writer(f)
-                writer.writerow([
-                    now_str, ssid, dl, ul, ping_ms, server_name,
-                    _step_k, hours, round(weekly_mean, 2), round(dev_pct * 100, 2), reason
-                ])
+        with _csv_lock, open(speed_csv, "a", newline="", encoding="utf-8") as f:
+            writer = csv.writer(f)
+            writer.writerow([
+                now_str, ssid, dl, ul, ping_ms, server_name,
+                _step_k, hours, round(weekly_mean, 2), round(dev_pct * 100, 2), reason
+            ])
 
         print(
             f"[{now_str}] 🚀 SPEEDTEST [{ssid or 'N/A'}] Motivo: {reason} | Servidor: {server_name} | "
@@ -341,42 +475,75 @@ def _run_speedtest_worker(conn: sqlite3.Connection, ssid: str | None, reason: st
         )
 
     finally:
+        pending = None
         with _speed_lock:
             _speed_running = False
+            if _pending_network_trigger is not None:
+                pending = _pending_network_trigger
+                _pending_network_trigger = None
+                _current_network_key = pending[0]
+                _speed_running = True
+
+        if pending is not None:
+            # Immediately trigger next speedtest for the queued network change
+            t = threading.Thread(
+                target=_run_speedtest_worker,
+                args=(conn, pending[0], pending[1]),
+                daemon=True,
+            )
+            t.start()
 
 
-def check_and_trigger_speedtest(conn: sqlite3.Connection, current_ssid: str | None) -> None:
+def check_and_trigger_speedtest(
+    conn: sqlite3.Connection,
+    current_network: str | None,
+    force_reconnect: bool = False,
+) -> None:
     """Verifies network changes or scheduled due dates and triggers speedtest worker."""
-    global _current_ssid, _step_k, _next_speedtest_due, _speed_running
+    global _current_network_key, _step_k, _next_speedtest_due, _speed_running, _pending_network_trigger
+
+    if not current_network or current_network == "UNKNOWN":
+        return
 
     now = datetime.now()
     should_run = False
     reason = ""
 
     with _speed_lock:
-        if _speed_running:
-            return
+        network_changed = (_current_network_key is not None and current_network != _current_network_key)
+        initial_network = (_current_network_key is None)
 
-        if _current_ssid is not None and current_ssid != _current_ssid:
+        if network_changed:
             should_run = True
-            reason = f"Troca de rede: '{_current_ssid}' -> '{current_ssid}'"
-            _step_k = 1
-        elif _current_ssid is None:
+            reason = f"Troca de rede: '{_current_network_key}' -> '{current_network}'"
+            _step_k_by_ssid[current_network] = 1
+        elif initial_network:
             should_run = True
-            reason = f"Inicialização na rede '{current_ssid}'"
-            _step_k = 1
+            reason = f"Inicialização na rede '{current_network}'"
+            _step_k_by_ssid[current_network] = 1
+        elif force_reconnect:
+            should_run = True
+            reason = f"Reconexão após queda de link na rede '{current_network}'"
         elif now >= _next_speedtest_due:
+            cur_k = _step_k_by_ssid.get(current_network, _step_k)
+            _step_k = cur_k
             should_run = True
             reason = f"Agendamento Passo {_step_k} ({PG_STEPS_HOURS[_step_k - 1]}h atingido)"
 
         if should_run:
-            _current_ssid = current_ssid
+            if _speed_running:
+                # Queue the network change if a test is already running
+                if network_changed or initial_network or force_reconnect:
+                    _pending_network_trigger = (current_network, reason)
+                return
+
+            _current_network_key = current_network
             _speed_running = True
 
     if should_run:
         t = threading.Thread(
             target=_run_speedtest_worker,
-            args=(conn, current_ssid, reason),
+            args=(conn, current_network, reason),
             daemon=True,
         )
         t.start()
@@ -431,35 +598,49 @@ def main() -> None:
     )
 
     trigger_traceroute(TARGET_IP)
+    trigger_geoip_refresh(force=True)
+
+    last_network_key: str | None = None
 
     while True:
         cycle_count += 1
         ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         is_up, latency, jitter, loss = ping_host_icmplib(TARGET_IP)
-        net_type, ssid, iface, gateway = get_network_info()
+        net_type, net_key, iface, gateway, display_name = get_network_info()
 
+        was_restored = False
         if is_up:
-            check_and_trigger_speedtest(conn, ssid)
+            if consecutive_failures >= 2:
+                was_restored = True
+                print(f"[{ts}] 🟢 RESTORED after {consecutive_failures} consecutive failures.", flush=True)
+            consecutive_failures = 0
+
+            # Force GeoIP refresh if network changed
+            if last_network_key is not None and net_key != last_network_key:
+                trigger_geoip_refresh(force=True)
+            last_network_key = net_key
+
+            check_and_trigger_speedtest(conn, net_key, force_reconnect=was_restored)
+        else:
+            consecutive_failures += 1
+            print(f"[{ts}] ❌ DOWN (failure #{consecutive_failures}) | {display_name} ({iface}) | Trace: {get_cached_traceroute()}", flush=True)
+            if consecutive_failures == 3:
+                print(f"[{ts}] 🚨 ALERT: Outage confirmed (3 consecutive failures).", flush=True)
+            log_ping(conn, ts, "DOWN", None, None, 100.0, consecutive_failures, net_type, net_key, iface, gateway, get_cached_traceroute())
 
         if not is_up or (cycle_count % 10 == 0):
             trigger_traceroute(TARGET_IP)
+        if cycle_count % 10 == 0:
+            trigger_geoip_refresh()
 
         trace = get_cached_traceroute()
-        ssid_display = f" [{ssid}]" if ssid else ""
+        geoip = get_cached_geoip()
+        geo_info = f" | IP: {geoip['ip']} ({geoip['city']}, {geoip['country']} - {geoip['org']})" if geoip.get("ip") else ""
 
         if is_up:
-            if consecutive_failures >= 3:
-                print(f"[{ts}] 🟢 RESTORED after {consecutive_failures} consecutive failures.", flush=True)
-            consecutive_failures = 0
             jitter_str = f" | Jitter: {jitter}ms" if jitter is not None else ""
-            print(f"[{ts}] ✅ UP   ({latency}ms{jitter_str}) | {net_type}{ssid_display} ({iface} -> {gateway})", flush=True)
-            log_ping(conn, ts, "UP", latency, jitter, loss, consecutive_failures, net_type, ssid, iface, gateway, trace)
-        else:
-            consecutive_failures += 1
-            print(f"[{ts}] ❌ DOWN (failure #{consecutive_failures}) | {net_type}{ssid_display} ({iface}) | Trace: {trace}", flush=True)
-            if consecutive_failures == 3:
-                print(f"[{ts}] 🚨 ALERT: Outage confirmed (3 consecutive failures).", flush=True)
-            log_ping(conn, ts, "DOWN", None, None, 100.0, consecutive_failures, net_type, ssid, iface, gateway, trace)
+            print(f"[{ts}] ✅ UP   ({latency}ms{jitter_str}) | {display_name} ({iface} -> {gateway}){geo_info}", flush=True)
+            log_ping(conn, ts, "UP", latency, jitter, loss, consecutive_failures, net_type, net_key, iface, gateway, trace)
 
         time.sleep(INTERVAL)
 

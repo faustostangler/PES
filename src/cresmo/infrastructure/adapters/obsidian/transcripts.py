@@ -13,11 +13,14 @@ from pathlib import Path
 
 import yaml
 
-from cresmo.domain.entities import EnrichedCompendium, RawTranscript
+from cresmo.domain.entities import EnrichedCompendium, SourceTranscript
 from cresmo.domain.value_objects import (
+    Channel,
     ChannelId,
     ChannelName,
+    Content,
     ContentId,
+    MediaProvenance,
     NoteTitle,
 )
 from cresmo.infrastructure.adapters.obsidian.utils import (
@@ -29,48 +32,48 @@ from cresmo.infrastructure.adapters.obsidian.utils import (
 
 
 class TranscriptVaultHandler:
-    """Handles filesystem persistence and retrieval of raw transcripts and enriched compendiums."""
+    """Handles filesystem persistence and retrieval of source transcripts and enriched compendiums."""
 
     def __init__(self, raw_dir: Path, enriched_dir: Path) -> None:
         self.raw_dir = raw_dir
         self.enriched_dir = enriched_dir
 
-    def save_raw_transcript(self, transcript: RawTranscript) -> None:
-        """Persist raw transcript with canonical YAML frontmatter."""
-        channel_dir = self.raw_dir / sanitize_filename(transcript.channel_name)
-        file_path = channel_dir / f"{transcript.content_id.value}.md"
+    def save_transcript(self, transcript: SourceTranscript) -> None:
+        """Persist source transcript with canonical YAML frontmatter."""
+        channel_dir = self.raw_dir / sanitize_filename(transcript.channel.name)
+        file_path = channel_dir / f"{transcript.content.id.value}.md"
 
-        desc = transcript.video_description or ""
+        desc = transcript.provenance.description or ""
         desc_indented = "\n".join("  " + l for l in desc.splitlines())
-        date_str = transcript.upload_date.strftime("%Y%m%d") if transcript.upload_date else ""
-        raw_title = (
-            transcript.title.value
-            if isinstance(transcript.title, NoteTitle)
-            else (transcript.title or transcript.content_id.value)
+        date_str = (
+            transcript.provenance.publication_date.strftime("%Y%m%d")
+            if transcript.provenance.publication_date
+            else ""
         )
+        raw_title = transcript.content.title or transcript.content.id.value
         escaped_title = raw_title.replace('"', '\\"')
-        escaped_channel = str(transcript.channel_name).replace('"', '\\"')
-        escaped_category = (transcript.channel_category or "uncategorized").replace('"', '\\"')
-        channel_id_val = transcript.channel_id or "unknown_channel"
+        escaped_channel = transcript.channel.name.replace('"', '\\"')
+        escaped_category = (transcript.channel.category or "uncategorized").replace('"', '\\"')
+        channel_id_val = transcript.channel.id.value if transcript.channel.id else "unknown_channel"
 
         yaml_header = (
             f"---\n"
             f'video_title: "{escaped_title}"\n'
-            f"video_id: {transcript.content_id.value}\n"
+            f"video_id: {transcript.content.id.value}\n"
             f'channel_name: "{escaped_channel}"\n'
             f"channel_id: {channel_id_val}\n"
             f'channel_category: "{escaped_category}"\n'
-            f"url: {transcript.source_url}\n"
+            f"url: {transcript.provenance.url}\n"
             f"video_date: {date_str}\n"
             f"video_description: |\n"
             f"{desc_indented}\n"
             f"---"
         )
-        content = f"{yaml_header}\n\n{transcript.body}"
+        content = f"{yaml_header}\n\n{transcript.content.body}"
         atomic_write(file_path, content)
 
-    def get_raw_transcript(self, content_id: ContentId) -> RawTranscript | None:
-        """Retrieve raw transcript by searching raw/ directory."""
+    def get_raw_transcript(self, content_id: ContentId) -> SourceTranscript | None:
+        """Retrieve source transcript by searching raw/ directory."""
         target_name = f"{content_id.value}.md"
         matched = list(self.raw_dir.glob(f"**/{target_name}"))
         if not matched:
@@ -80,10 +83,20 @@ class TranscriptVaultHandler:
         text = file_path.read_text(encoding="utf-8")
         match = _FRONTMATTER_PATTERN.match(text)
         if not match:
-            return RawTranscript(
-                content_id=content_id,
-                channel_name=ChannelName(file_path.parent.name),
+            channel = Channel(name=file_path.parent.name)
+            provenance = MediaProvenance.create(
+                url=f"file://{file_path.resolve()}",
+                description="",
+            )
+            content = Content.create(
+                id=content_id,
+                title=file_path.stem,
                 body=text,
+            )
+            return SourceTranscript(
+                channel=channel,
+                provenance=provenance,
+                content=content,
             )
 
         fm_text, body = match.groups()
@@ -102,16 +115,25 @@ class TranscriptVaultHandler:
                     upload_date = datetime.strptime(date_str, "%Y%m%d").replace(tzinfo=UTC).date()
         desc = str(meta.get("video_description") or "")
 
-        return RawTranscript(
-            content_id=content_id,
-            channel_name=ChannelName(ch_name),
-            body=body.strip(),
+        channel = Channel(
+            name=ch_name,
+            id=ChannelId.from_string(ch_id) if ch_id else None,
+            category=ch_cat,
+        )
+        provenance = MediaProvenance.create(
+            url=url,
+            description=desc,
+            publication_date=upload_date,
+        )
+        content = Content.create(
+            id=content_id,
             title=title,
-            source_url=url,
-            upload_date=upload_date,
-            channel_id=ChannelId.from_string(ch_id) if ch_id else None,
-            channel_category=ch_cat,
-            video_description=desc,
+            body=body.strip(),
+        )
+        return SourceTranscript(
+            channel=channel,
+            provenance=provenance,
+            content=content,
         )
 
     def save_enriched_compendium(self, compendium: EnrichedCompendium) -> None:

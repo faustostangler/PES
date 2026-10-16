@@ -38,8 +38,10 @@ class TestPromptRegistry:
             "judge_raw_index_summary",
             "judge_raw_index_concepts",
             "judge_raw_index_synthesis",
+            "llm_judge",
+            "ollama_critique",
         }
-        assert len(PromptKey) == 16
+        assert len(PromptKey) == 18
         assert {k.value for k in PromptKey} == expected_keys
         for key in PromptKey:
             assert key in PROMPT_REGISTRY

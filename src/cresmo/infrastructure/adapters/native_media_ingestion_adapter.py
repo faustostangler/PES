@@ -31,7 +31,7 @@ import whisper
 import yt_dlp
 
 from cresmo.application.ports import MediaIngestionPort, MetricsPort
-from cresmo.domain.entities import RawTranscript
+from cresmo.domain.entities import SourceTranscript
 from cresmo.domain.exceptions import (
     CresmoInfrastructureError,
     DomainValidationError,
@@ -40,11 +40,14 @@ from cresmo.domain.exceptions import (
 )
 from cresmo.domain.taxonomy import classify_channel
 from cresmo.domain.value_objects import (
+    Channel,
     ChannelFeedQuery,
     ChannelId,
     ChannelName,
+    Content,
     ContentId,
     DiscoveredMediaItem,
+    MediaProvenance,
 )
 from cresmo.infrastructure.adapters.header_generator import RandomHeaderGenerator
 from cresmo.infrastructure.adapters.media.feed import (
@@ -296,7 +299,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
                 body = self._reconstruct_json3_paragraphs(sub_data)
             except RateLimitExceededError:
                 raise
-            except Exception:  # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001 - Fallback to Whisper audio transcription
+                logger.warning(
+                    "Failed to fetch or parse native subtitles from '%s': %s. Falling back to Whisper.",
+                    sub_url,
+                    exc,
+                )
                 body = ""
 
         # If subtitles were absent, malformed, or empty, trigger Whisper fallback
@@ -322,8 +330,8 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         info: Mapping[str, Any],
         body: str,
         channel_name: str,
-    ) -> tuple[RawTranscript, ChannelId | None]:
-        """Construct domain RawTranscript entity from resolved metadata and body."""
+    ) -> tuple[SourceTranscript, ChannelId | None]:
+        """Construct domain SourceTranscript entity from resolved metadata and body."""
         actual_video_id = str(info.get("id") or self._extract_video_id(video_url))
         cid = ContentId.extract_from_text(actual_video_id) or ContentId.from_url_or_token(
             actual_video_id
@@ -335,17 +343,26 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         raw_cid = str(info.get("channel_id") or info.get("uploader_id") or "").strip()
         ch_id = ChannelId.extract_from_text(raw_cid)
 
-        transcript = RawTranscript(
-            content_id=cid,
-            channel_name=c_name,
-            body=body,
-            title=str(info.get("title") or ""),
-            source_url=video_url,
+        channel = Channel(
+            name=c_name,
+            id=ch_id,
+            category=category,
+            url=str(info.get("channel_url") or "") or None,
+        )
+        provenance = MediaProvenance.create(
+            url=video_url,
+            description=str(info.get("description") or ""),
             publication_date=upload_date,
-            upload_date=upload_date,
-            channel_id=ch_id,
-            channel_category=category,
-            video_description=str(info.get("description") or ""),
+        )
+        content = Content.create(
+            id=cid,
+            title=str(info.get("title") or ""),
+            body=body,
+        )
+        transcript = SourceTranscript(
+            channel=channel,
+            provenance=provenance,
+            content=content,
         )
         return transcript, ch_id
 
@@ -355,8 +372,8 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         output_dir: Path,
         whisper_model: str = "base",
         keep_audio: bool = False,
-    ) -> RawTranscript | None:
-        """Ingest single video into RawTranscript domain aggregate.
+    ) -> SourceTranscript | None:
+        """Ingest single video into SourceTranscript domain aggregate.
 
         Prioritizes native spoken subtitles. If unavailable, falls back to local
         Whisper transcription with RAII temporary scratch storage.
@@ -432,6 +449,11 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         try:
             with yt_dlp.YoutubeDL(cast(Any, ydl_opts)) as ydl:
                 info = ydl.extract_info(video_url, download=False)
-        except Exception:  # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001 - Non-fatal discovery failure
+            logger.debug(
+                "Could not extract channel URL from video '%s' via flat extraction: %s",
+                video_url,
+                exc,
+            )
             return None
         return extract_channel_url_from_info(cast(Any, info))

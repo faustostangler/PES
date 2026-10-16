@@ -10,13 +10,12 @@ from __future__ import annotations
 from collections.abc import Callable
 from typing import TYPE_CHECKING
 
-from cresmo.application.ports import MediaIngestionPort
+from cresmo.application.ports import MediaIngestionPort, VaultRepositoryPort
 from cresmo.application.use_cases.concat_master import ConcatMasterUseCase
 from cresmo.application.use_cases.discover_batch_sources import DiscoverBatchSourcesUseCase
 from cresmo.application.use_cases.index_raw_transcripts import IndexRawTranscriptsUseCase
 from cresmo.application.use_cases.sync_channel import SyncChannelUseCase
 from cresmo.application.use_cases.unify_duplicate_notes import UnifyDuplicateNotesUseCase
-from cresmo.infrastructure.adapters.obsidian_vault_adapter import ObsidianVaultAdapter
 from cresmo.infrastructure.config import CresmoSettings
 from cresmo.presentation.factories.adapter_factory import (
     build_indexing_adapter,
@@ -25,6 +24,7 @@ from cresmo.presentation.factories.adapter_factory import (
     build_prompt_provider,
     build_vault_adapter,
 )
+from cresmo.presentation.factories.judge_factory import build_llm_judge_adapter
 from cresmo.presentation.factories.settings_factory import resolve_shared_settings
 from cresmo.presentation.factories.telemetry_factory import (
     build_anonymizer_adapter,
@@ -87,7 +87,7 @@ def build_discover_batch_sources_use_case(
 
 def build_concat_master_use_case(
     settings: CresmoSettings | None = None,
-    vault_port: ObsidianVaultAdapter | None = None,
+    vault_port: VaultRepositoryPort | None = None,
 ) -> ConcatMasterUseCase:
     """Instantiate ConcatMasterUseCase with configured dependencies."""
     resolved_settings = resolve_shared_settings(settings)
@@ -115,6 +115,11 @@ def build_index_raw_use_case(
         model_override=model_override,
         langfuse_client=langfuse_client,
     )
+    llm_judge_port = build_llm_judge_adapter(
+        resolved_settings,
+        langfuse_client=langfuse_client,
+        prompt_provider=prompt_provider,
+    )
 
     return IndexRawTranscriptsUseCase(
         vault_port=vault_port,
@@ -124,4 +129,5 @@ def build_index_raw_use_case(
         temperature=resolved_settings.llm_indexing_temperature,
         language=resolved_settings.language,
         max_rewrites=resolved_settings.raw_index_max_attempts,
+        llm_judge_port=llm_judge_port,
     )

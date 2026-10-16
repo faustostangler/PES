@@ -10,8 +10,10 @@ Conforms to:
 
 from __future__ import annotations
 
-import argparse
 import sys
+from typing import Annotated, Any
+
+import typer
 
 from cresmo.domain.value_objects import ChannelName
 from cresmo.presentation.composition import (
@@ -24,58 +26,73 @@ from cresmo.presentation.exit_codes import (
 )
 
 
-def register_subparser(subparsers: argparse._SubParsersAction) -> None:
-    """Register 'concat-master' subcommand parser.
+def concat_master(
+    channel: Annotated[
+        str | None,
+        typer.Option(
+            "--channel",
+            "-c",
+            help="Target specific channel name to consolidate (default: all channels in enriched/)",
+        ),
+    ] = None,
+    max_words: Annotated[
+        int | None,
+        typer.Option(
+            "--max-words",
+            "-w",
+            min=1,
+            help="Maximum word count per master document (default: 500,000, never splitting files in the middle)",
+        ),
+    ] = None,
+    verbose: Annotated[
+        bool,
+        typer.Option("--verbose", "-v", help="Enable verbose output"),
+    ] = False,
+) -> None:
+    """Consolidate enriched compendiums into master documents."""
+    _ = verbose
+    code = handle_concat_master(None, channel=channel, max_words=max_words)
+    if code != EXIT_SUCCESS:
+        raise typer.Exit(code=code)
 
-    Args:
-        subparsers: Root CLI subparsers action object.
-    """
-    concat_parser = subparsers.add_parser(
-        "concat-master",
-        help="Consolidate enriched compendiums in ascending chronological order into master RAG files",
-    )
-    concat_parser.add_argument(
-        "--channel",
-        "-c",
-        type=str,
-        default=None,
-        help="Target specific channel name to consolidate (default: all channels in enriched/)",
-    )
-    concat_parser.add_argument(
-        "--max-words",
-        "-w",
-        type=int,
-        default=None,
-        help="Maximum word count per master document (default: 500,000, never splitting files in the middle)",
-    )
-    concat_parser.set_defaults(handler=handle_concat_master)
 
-
-def handle_concat_master(args: argparse.Namespace) -> int:
+def handle_concat_master(
+    args: Any = None,
+    channel: str | None = None,
+    max_words: int | None = None,
+) -> int:
     """Consolidate enriched compendiums into master documents.
 
     Args:
-        args: Parsed CLI argument namespace containing channel filter and word limits.
+        args: Parsed CLI argument namespace or None.
+        channel: Optional channel name string override.
+        max_words: Optional maximum words per master document override.
 
     Returns:
         Process exit code integer.
     """
+    if args is not None:
+        target_channel = getattr(args, "channel", None)
+        target_max_words = getattr(args, "max_words", None)
+    else:
+        target_channel = channel
+        target_max_words = max_words
     try:
         settings = resolve_shared_settings()
         use_case = build_concat_master_use_case(settings=settings)
 
-        if args.channel:
-            sys.stdout.write(f"Consolidating master documents for channel: '{args.channel}'...\n")
+        if target_channel:
+            sys.stdout.write(f"Consolidating master documents for channel: '{target_channel}'...\n")
             results = use_case.execute(
-                channel_name=ChannelName(args.channel), max_words=args.max_words
+                channel_name=ChannelName(target_channel), max_words=target_max_words
             )
             if not results:
-                sys.stdout.write(f"No enriched documents found for channel '{args.channel}'.\n")
+                sys.stdout.write(f"No enriched documents found for channel '{target_channel}'.\n")
                 return EXIT_SUCCESS
 
             total_words = sum(r.word_count for r in results)
             sys.stdout.write(
-                f"Generated {len(results)} master document(s) for '{args.channel}' ({total_words:,} words):\n"
+                f"Generated {len(results)} master document(s) for '{target_channel}' ({total_words:,} words):\n"
             )
             for r in results:
                 sys.stdout.write(
@@ -85,7 +102,7 @@ def handle_concat_master(args: argparse.Namespace) -> int:
             return EXIT_SUCCESS
 
         sys.stdout.write("Consolidating master documents across all channels in enriched/...\n")
-        all_results = use_case.execute_all(max_words=args.max_words)
+        all_results = use_case.execute_all(max_words=target_max_words)
         if not all_results:
             sys.stdout.write("No enriched channel directories found to consolidate.\n")
             return EXIT_SUCCESS

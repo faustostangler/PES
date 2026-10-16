@@ -4,7 +4,7 @@ Re-exports core services, validators, and IndexRawTranscriptsUseCase.
 """
 
 from cresmo.application.use_cases.indexing.distiller import LLMTranscriptDistiller
-from cresmo.application.use_cases.indexing.orchestrator import IndexRawTranscriptsUseCase
+from cresmo.application.use_cases.indexing.index_raw_transcripts import IndexRawTranscriptsUseCase
 from cresmo.application.use_cases.indexing.validators import (
     _can_retry,
     _clean_concept_line,

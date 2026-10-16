@@ -9,6 +9,7 @@ from __future__ import annotations
 import concurrent.futures
 from datetime import UTC, datetime
 from pathlib import Path
+from unittest.mock import patch
 
 from cresmo.domain.value_objects import ChannelName, ContentId, LedgerEntry, PipelineStatus
 from cresmo.infrastructure.adapters.sqlite_ledger_adapter import SqliteLedgerAdapter
@@ -69,11 +70,37 @@ class TestSqliteLedgerAdapter:
 
         assert retrieved is not None
         assert retrieved.content_id.value == "abcdefgh1234"
+        assert retrieved.media_url == "https://youtube.com/watch?v=abcdefgh1234"
         assert retrieved.title == "Advanced Quantum Mechanics"
         assert retrieved.channel_name == ChannelName("PhysicsDept")
         assert retrieved.notes_count == 12
         assert retrieved.status == PipelineStatus.COMPLETED
         assert retrieved.error_message is None
+        assert retrieved.started_at == now
+        assert retrieved.completed_at == now
+
+    def test_save_and_get_entry_with_error_message(self, tmp_path: Path) -> None:
+        adapter = SqliteLedgerAdapter(tmp_path / "test.db")
+        now = datetime.now(UTC)
+        entry = LedgerEntry(
+            content_id=ContentId("errVideo123"),
+            media_url="https://youtube.com/watch?v=errVideo123",
+            title="Failed Video",
+            channel_name=ChannelName("ErrorChannel"),
+            status=PipelineStatus.FAILED_INGESTION,
+            notes_count=0,
+            error_message="Download timeout 408",
+            started_at=now,
+            completed_at=now,
+        )
+        adapter.save_entry(entry)
+        retrieved = adapter.get_entry(ContentId("errVideo123"))
+        assert retrieved is not None
+        assert retrieved.error_message == "Download timeout 408"
+        assert retrieved.status == PipelineStatus.FAILED_INGESTION
+        assert retrieved.notes_count == 0
+        assert retrieved.started_at == now
+        assert retrieved.completed_at == now
 
     def test_save_entry_updates_existing_entry(self, tmp_path: Path) -> None:
         adapter = SqliteLedgerAdapter(tmp_path / "test.db")
@@ -264,3 +291,180 @@ class TestSqliteLedgerAdapter:
         # Calling without limit uses default 100
         entries = adapter.list_entries()
         assert len(entries) == 10
+
+    def test_init_schema_creates_tables_and_indexes(self, tmp_path: Path) -> None:
+        adapter = SqliteLedgerAdapter(tmp_path / "schema_test.db")
+        with adapter._get_connection() as conn:
+            cursor = conn.execute(
+                "SELECT name FROM sqlite_master WHERE type='table' AND name='cresmo_ledger';"
+            )
+            assert cursor.fetchone() is not None
+
+            cursor = conn.execute("SELECT name FROM sqlite_master WHERE type='index';")
+            index_names = {row[0] for row in cursor.fetchall()}
+            assert "idx_cresmo_ledger_status" in index_names
+
+    def test_is_processed_only_returns_true_for_completed_status(self, tmp_path: Path) -> None:
+        adapter = SqliteLedgerAdapter(tmp_path / "status_test.db")
+        cid_running = ContentId("vid_running")
+        cid_failed = ContentId("vid_failed")
+        cid_completed = ContentId("vid_completed")
+
+        adapter.save_entry(
+            LedgerEntry(
+                content_id=cid_running,
+                media_url="https://youtube.com/watch?v=vid_running",
+                title="Running Video",
+                channel_name=ChannelName("Channel"),
+                status=PipelineStatus.RUNNING,
+            )
+        )
+        adapter.save_entry(
+            LedgerEntry(
+                content_id=cid_failed,
+                media_url="https://youtube.com/watch?v=vid_failed",
+                title="Failed Video",
+                channel_name=ChannelName("Channel"),
+                status=PipelineStatus.FAILED_INGESTION,
+            )
+        )
+        adapter.save_entry(
+            LedgerEntry(
+                content_id=cid_completed,
+                media_url="https://youtube.com/watch?v=vid_completed",
+                title="Completed Video",
+                channel_name=ChannelName("Channel"),
+                status=PipelineStatus.COMPLETED,
+            )
+        )
+
+        assert adapter.is_processed(cid_running) is False
+        assert adapter.is_processed(cid_failed) is False
+        assert adapter.is_processed(cid_completed) is True
+
+    def test_init_defaults_and_timeout(self) -> None:
+        adapter = SqliteLedgerAdapter(":memory:")
+        assert adapter._timeout == 5.0
+        assert adapter._db_path == ":memory:"
+
+    def test_row_to_entry_direct_and_null_fields(self, tmp_path: Path) -> None:
+        adapter = SqliteLedgerAdapter(tmp_path / "test.db")
+        entry_none = LedgerEntry(
+            content_id=ContentId("null_fields_vid"),
+            media_url="https://youtube.com/watch?v=null_fields_vid",
+            title="Null Fields Video",
+            channel_name=ChannelName("NullChannel"),
+            status=PipelineStatus.RUNNING,
+            notes_count=0,
+            error_message=None,
+            started_at=None,
+            completed_at=None,
+        )
+        adapter.save_entry(entry_none)
+        retrieved = adapter.get_entry(ContentId("null_fields_vid"))
+        assert retrieved is not None
+        assert retrieved.started_at is None
+        assert retrieved.completed_at is None
+        assert retrieved.error_message is None
+        assert retrieved.notes_count == 0
+        assert retrieved.status == PipelineStatus.RUNNING
+        assert retrieved.title == "Null Fields Video"
+        assert retrieved.media_url == "https://youtube.com/watch?v=null_fields_vid"
+        assert retrieved.channel_name == ChannelName("NullChannel")
+
+    def test_is_processed_skipped_idempotent_and_non_existent(self, tmp_path: Path) -> None:
+        adapter = SqliteLedgerAdapter(tmp_path / "test.db")
+        cid_skip = ContentId("vid_skipped_test")
+        adapter.save_entry(
+            LedgerEntry(
+                content_id=cid_skip,
+                media_url="https://youtube.com/watch?v=vid_skipped_test",
+                title="Skipped",
+                channel_name=ChannelName("Chan"),
+                status=PipelineStatus.SKIPPED_IDEMPOTENT,
+            )
+        )
+        assert adapter.is_processed(cid_skip) is False
+        assert adapter.get_entry(ContentId("non_existent_id")) is None
+
+    def test_list_entries_limit_parameter_and_default(self, tmp_path: Path) -> None:
+        adapter = SqliteLedgerAdapter(tmp_path / "test.db")
+        for i in range(15):
+            adapter.mark_processed(ContentId(f"lim_vid_{i:02d}"))
+
+        assert len(adapter.list_entries(limit=5)) == 5
+        assert len(adapter.list_entries(limit=10)) == 10
+        assert len(adapter.list_entries(limit=15)) == 15
+        assert len(adapter.list_entries()) == 15
+
+    def test_init_creates_nested_parent_directories(self, tmp_path: Path) -> None:
+        deep_dir = tmp_path / "deep" / "nested" / "path"
+        db_file = deep_dir / "ledger.db"
+        adapter = SqliteLedgerAdapter(db_file)
+        assert deep_dir.exists()
+        assert adapter.is_processed(ContentId("any_id")) is False
+
+    def test_init_memory_does_not_call_mkdir(self) -> None:
+        with patch.object(Path, "mkdir") as mock_mkdir:
+            adapter = SqliteLedgerAdapter(":memory:")
+            mock_mkdir.assert_not_called()
+            assert adapter._db_path == ":memory:"
+
+    def test_mark_processed_timestamp_timezone_is_utc(self, tmp_path: Path) -> None:
+        adapter = SqliteLedgerAdapter(tmp_path / "test.db")
+        cid = ContentId("utc_tz_test_vid")
+        adapter.mark_processed(cid)
+        entry = adapter.get_entry(cid)
+        assert entry is not None
+        assert entry.completed_at is not None
+        assert entry.completed_at.tzinfo == UTC
+
+    def test_list_entries_default_limit_is_one_hundred(self, tmp_path: Path) -> None:
+        adapter = SqliteLedgerAdapter(tmp_path / "test.db")
+        for i in range(105):
+            adapter.mark_processed(ContentId(f"bulk_limit_{i:03d}"))
+        entries = adapter.list_entries()
+        assert len(entries) == 100
+
+    def test_row_to_entry_case_sensitive_mapping_all_columns(self) -> None:
+        start_dt = datetime.now(UTC)
+        comp_dt = datetime.now(UTC)
+        strict_row = {
+            "content_id": "strict_vid",
+            "media_url": "https://youtube.com/watch?v=strict_vid",
+            "title": "Strict Title",
+            "channel_name": "Strict Channel",
+            "status": "COMPLETED",
+            "notes_count": 42,
+            "error_message": "Some transient error",
+            "started_at": start_dt.isoformat(),
+            "completed_at": comp_dt.isoformat(),
+        }
+        entry = SqliteLedgerAdapter._row_to_entry(strict_row)  # type: ignore[arg-type]
+        assert entry.content_id.value == "strict_vid"
+        assert entry.media_url == "https://youtube.com/watch?v=strict_vid"
+        assert entry.title == "Strict Title"
+        assert entry.channel_name.value == "Strict Channel"
+        assert entry.status == PipelineStatus.COMPLETED
+        assert entry.notes_count == 42
+        assert entry.error_message == "Some transient error"
+        assert entry.started_at == start_dt
+        assert entry.completed_at == comp_dt
+
+    def test_row_to_entry_without_timestamps_or_error(self) -> None:
+        strict_row = {
+            "content_id": "strict_vid_none",
+            "media_url": "https://youtube.com/watch?v=strict_vid_none",
+            "title": "Strict Title None",
+            "channel_name": "Strict Channel None",
+            "status": "RUNNING",
+            "notes_count": 0,
+            "error_message": None,
+            "started_at": None,
+            "completed_at": None,
+        }
+        entry = SqliteLedgerAdapter._row_to_entry(strict_row)  # type: ignore[arg-type]
+        assert entry.content_id.value == "strict_vid_none"
+        assert entry.started_at is None
+        assert entry.completed_at is None
+        assert entry.error_message is None

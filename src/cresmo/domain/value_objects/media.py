@@ -8,13 +8,15 @@ Conforms to:
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import date, datetime
 from enum import Enum
 
 from cresmo.domain.exceptions import DomainValidationError
 from cresmo.domain.value_objects.identity import (
+    Channel,
     ChannelId,
     ChannelName,
+    Content,
     ContentId,
 )
 
@@ -29,6 +31,7 @@ class PipelineStatus(str, Enum):
         FAILED_TRANSFORMATION: LLM synthesis or schema extraction failed.
         RUNNING: Currently executing active pipeline stages.
         PAUSED_BUDGET: Token or API rate budget cap reached.
+        QUARANTINED: Quality gate evaluation failed after maximum retries; item quarantined.
     """
 
     COMPLETED = "COMPLETED"
@@ -37,6 +40,64 @@ class PipelineStatus(str, Enum):
     FAILED_TRANSFORMATION = "FAILED_TRANSFORMATION"
     RUNNING = "RUNNING"
     PAUSED_BUDGET = "PAUSED_BUDGET"
+    QUARANTINED = "QUARANTINED"
+
+
+DEFAULT_FEED_LOOKBACK_DAYS: int = 7
+DEFAULT_FEED_MAX_VIDEOS: int = 50
+
+
+@dataclass(frozen=True, slots=True)
+class MediaProvenance:
+    """Canonical domain Value Object encapsulating media origin and acquisition provenance.
+
+    Conforms to ADR-038: Pure Value Object Triad Composition.
+
+    Attributes:
+        url: Canonical web URL or storage URI of source media.
+        description: Raw description or metadata summary provided by the creator.
+        publication_date: Immutable release date of the media content.
+    """
+
+    url: str = ""
+    description: str = ""
+    publication_date: date | None = None
+
+    def __post_init__(self) -> None:
+        clean_url = self.url.strip()
+        clean_desc = self.description.strip()
+        pub_date = self.publication_date
+        if isinstance(pub_date, datetime):
+            pub_date = pub_date.date()
+
+        object.__setattr__(self, "url", clean_url)
+        object.__setattr__(self, "description", clean_desc)
+        object.__setattr__(self, "publication_date", pub_date)
+
+    @classmethod
+    def create(
+        cls,
+        url: str = "",
+        description: str = "",
+        publication_date: date | datetime | str | None = None,
+    ) -> MediaProvenance:
+        """Ergonomic factory parsing dates and normalizing strings."""
+        parsed_date: date | None = None
+        if isinstance(publication_date, datetime):
+            parsed_date = publication_date.date()
+        elif isinstance(publication_date, date):
+            parsed_date = publication_date
+        elif isinstance(publication_date, str) and publication_date.strip():
+            try:
+                parsed_date = date.fromisoformat(publication_date.strip())
+            except ValueError:
+                parsed_date = None
+        return cls(url=url, description=description, publication_date=parsed_date)
+
+    @classmethod
+    def empty(cls) -> MediaProvenance:
+        """Default empty provenance for synthetic or unit testing scenarios."""
+        return cls()
 
 
 @dataclass(frozen=True)
@@ -58,22 +119,46 @@ class DiscoveredMediaItem:
     channel_name: ChannelName
 
     def __post_init__(self) -> None:
-        t = self.title.strip()
-        u = self.media_url.strip()
+        cleaned_title = self.title.strip()
+        cleaned_media_url = self.media_url.strip()
 
-        if not t:
+        if not cleaned_title:
             raise DomainValidationError("DiscoveredMediaItem title cannot be empty.")
-        if not u.startswith(("http://", "https://")):
+        if not cleaned_media_url.startswith(("http://", "https://")):
             raise DomainValidationError(
                 f"Invalid DiscoveredMediaItem media_url '{self.media_url}'. Must start with http:// or https://"
             )
-        cn = ChannelName.from_string(self.channel_name)
-        cid = ContentId.from_string(self.content_id)
+        resolved_channel_name = ChannelName.from_string(self.channel_name)
+        resolved_content_id = ContentId.from_string(self.content_id)
 
-        object.__setattr__(self, "title", t)
-        object.__setattr__(self, "media_url", u)
-        object.__setattr__(self, "channel_name", cn)
-        object.__setattr__(self, "content_id", cid)
+        object.__setattr__(self, "title", cleaned_title)
+        object.__setattr__(self, "media_url", cleaned_media_url)
+        object.__setattr__(self, "channel_name", resolved_channel_name)
+        object.__setattr__(self, "content_id", resolved_content_id)
+
+    @property
+    def channel(self) -> Channel:
+        """Composite Channel Value Object."""
+        return Channel.from_name(name=self.channel_name)
+
+    @property
+    def provenance(self) -> MediaProvenance:
+        """Composite MediaProvenance Value Object."""
+        return MediaProvenance(
+            url=self.media_url,
+            publication_date=self.published_at.date() if self.published_at else None,
+        )
+
+    @property
+    def content(self) -> Content:
+        """Composite Content Value Object."""
+        return Content.create(
+            id=self.content_id,
+            title=self.title,
+        )
+
+
+CHANNEL_TAB_ENDINGS: tuple[str, ...] = ("/videos", "/shorts", "/streams", "/playlists")
 
 
 def normalize_to_uploads_playlist_url(channel_ref: str | ChannelId) -> str:
@@ -101,19 +186,21 @@ def normalize_to_uploads_playlist_url(channel_ref: str | ChannelId) -> str:
     if "playlist?list=" in cleaned or "list=UU" in cleaned or "list=PL" in cleaned:
         return cleaned if cleaned.startswith(("http://", "https://")) else f"https://{cleaned}"
 
-    cid = ChannelId.extract_from_text(cleaned)
-    if cid and cid.uploads_playlist_url:
-        return cid.uploads_playlist_url
+    extracted_channel_id = ChannelId.extract_from_text(cleaned)
+    if extracted_channel_id and extracted_channel_id.uploads_playlist_url:
+        return extracted_channel_id.uploads_playlist_url
 
     formatted = cleaned if cleaned.startswith(("http://", "https://")) else f"https://{cleaned}"
-    if "/@" in formatted and not formatted.endswith(
-        ("/videos", "/shorts", "/streams", "/playlists")
-    ):
-        return f"{formatted.rstrip('/')}/videos"
+    formatted = formatted.rstrip("/")
 
     if formatted.startswith("https://@"):
-        handle = formatted.replace("https://@", "")
+        handle = formatted.removeprefix("https://@")
+        if handle.endswith(CHANNEL_TAB_ENDINGS):
+            return f"https://www.youtube.com/@{handle}"
         return f"https://www.youtube.com/@{handle}/videos"
+
+    if "/@" in formatted and not formatted.endswith(CHANNEL_TAB_ENDINGS):
+        return f"{formatted}/videos"
 
     return formatted
 
@@ -129,12 +216,12 @@ class ChannelFeedQuery:
     """
 
     channel_url: str
-    lookback_days: int = 7
-    max_videos: int = 50
+    lookback_days: int = DEFAULT_FEED_LOOKBACK_DAYS
+    max_videos: int = DEFAULT_FEED_MAX_VIDEOS
 
     def __post_init__(self) -> None:
-        u = self.channel_url.strip()
-        if not u.startswith(("http://", "https://")):
+        cleaned_channel_url = self.channel_url.strip()
+        if not cleaned_channel_url.startswith(("http://", "https://")):
             raise DomainValidationError(
                 f"Invalid ChannelFeedQuery channel_url '{self.channel_url}'. Must start with http:// or https://"
             )
@@ -144,4 +231,4 @@ class ChannelFeedQuery:
             )
         if self.max_videos <= 0:
             raise DomainValidationError(f"max_videos must be positive. Got: {self.max_videos}")
-        object.__setattr__(self, "channel_url", u)
+        object.__setattr__(self, "channel_url", cleaned_channel_url)

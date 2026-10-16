@@ -13,12 +13,12 @@ Conforms to:
 
 from __future__ import annotations
 
-import argparse
 import sys
 from collections.abc import Sequence
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Annotated, Any
 
+import typer
 from pydantic import ValidationError
 
 if TYPE_CHECKING:
@@ -50,100 +50,113 @@ from cresmo.presentation.exit_codes import (
 )
 
 
-def register_subparser(subparsers: argparse._SubParsersAction) -> None:
-    """Register 'sync' subcommand parser with argument options.
-
-    Supports three targeting modes (ADR-012):
-    - Single channel: ``cresmo sync --channel <url>``
-    - Category filter: ``cresmo sync --category politics_br,tech_ai``
-    - Video filter:    ``cresmo sync --video <id_or_url>``
-    - Default (no flags): full manifest sync from data/playlist.txt
-
-    Args:
-        subparsers: Root CLI subparsers action object.
-    """
-    sync_parser = subparsers.add_parser(
-        "sync",
-        help="Poll and synchronize video feeds from YouTube channels or playlists",
-    )
-    sync_parser.add_argument(
-        "--channel",
-        dest="channels",
-        nargs="*",
-        default=None,
-        metavar="CHANNEL",
-        help=(
-            "One or more target YouTube channel names, handles (@ancapsu), or URLs. "
-            "Accepts comma-separated values or multiple flags. "
-            "When omitted, all channels in the manifest are synced."
+def sync(
+    channels: Annotated[
+        list[str] | None,
+        typer.Option(
+            "--channel",
+            help="One or more target YouTube channel names, handles, or URLs.",
         ),
-    )
-    sync_parser.add_argument(
-        "--category",
-        "-c",
-        dest="categories",
-        nargs="*",
-        default=None,
-        metavar="CATEGORY",
-        help=(
-            "Filter by domain category or volatility type. "
-            "Domain categories: politics_br, tech_ai, history, philosophy, finance, "
-            "engineering, architecture, health, entertainment, geopolitics. "
-            "Volatility types: perennial, volatile. "
-            "Accepts comma-separated values (e.g. --category politics_br,tech_ai)."
+    ] = None,
+    categories: Annotated[
+        list[str] | None,
+        typer.Option(
+            "--category",
+            "-c",
+            help="Filter by domain category or volatility type.",
         ),
-    )
-    sync_parser.add_argument(
-        "--video",
-        dest="video_ids",
-        nargs="*",
-        default=None,
-        metavar="VIDEO_ID",
-        help=(
-            "One or more video IDs or YouTube watch URLs to sync directly. "
-            "Accepts comma-separated values. When specified, skips channel feed crawling."
+    ] = None,
+    video_ids: Annotated[
+        list[str] | None,
+        typer.Option(
+            "--video",
+            help="One or more video IDs or YouTube watch URLs to sync directly.",
         ),
-    )
-    sync_parser.add_argument(
-        "--manifest",
-        "--playlist",
-        type=Path,
-        default=None,
-        dest="manifest",
-        help="Path to manifest or playlist text file (default: data/playlist.txt)",
-    )
-    sync_parser.add_argument(
-        "--lookback",
-        type=int,
-        default=7 * 52 * 2,  # 2 years
-        help="Days lookback window for new uploads (default: 2 years)",
-    )
-    sync_parser.add_argument(
-        "--max-videos",
-        type=int,
-        default=250,
-        help="Maximum videos to discover and process in this run (default: 250)",
-    )
-    sync_parser.add_argument(
-        "--batch-size",
-        type=int,
-        default=None,
-        help="Batch size override for atomic note synthesis",
-    )
-    sync_parser.add_argument(
-        "--dry-run",
-        action="store_true",
-        help="Discover and filter feed without executing LLM synthesis or ledger updates",
-    )
-    sync_parser.add_argument(
-        "--force-refresh",
-        action="store_true",
-        help="Force re-synthesis even if content is already marked completed in ledger",
-    )
-    sync_parser.set_defaults(handler=handle_sync)
+    ] = None,
+    manifest: Annotated[
+        Path | None,
+        typer.Option(
+            "--manifest",
+            "--playlist",
+            resolve_path=True,
+            exists=True,
+            help="Path to manifest or playlist text file (default: data/playlist.txt)",
+        ),
+    ] = None,
+    lookback: Annotated[
+        int,
+        typer.Option(
+            "--lookback",
+            min=0,
+            help="Days lookback window for new uploads",
+        ),
+    ] = 7 * 52 * 2,
+    max_videos: Annotated[
+        int,
+        typer.Option(
+            "--max-videos",
+            min=1,
+            help="Maximum videos to discover and process in this run (default: 250)",
+        ),
+    ] = 250,
+    batch_size: Annotated[
+        int | None,
+        typer.Option(
+            "--batch-size",
+            min=1,
+            help="Batch size override for atomic note synthesis",
+        ),
+    ] = None,
+    dry_run: Annotated[
+        bool,
+        typer.Option(
+            "--dry-run",
+            help="Discover and filter feed without executing LLM synthesis or ledger updates",
+        ),
+    ] = False,
+    force_refresh: Annotated[
+        bool,
+        typer.Option(
+            "--force-refresh",
+            help="Force re-synthesis even if content is already marked completed in ledger",
+        ),
+    ] = False,
+    verbose: Annotated[
+        bool,
+        typer.Option("--verbose", "-v", help="Enable verbose output"),
+    ] = False,
+) -> None:
+    """Poll and synchronize video feeds from YouTube channels or playlists."""
+    _ = verbose
+
+    class _Args:
+        channels: list[str] | None
+        categories: list[str] | None
+        video_ids: list[str] | None
+        manifest: Path | None
+        lookback: int
+        max_videos: int
+        batch_size: int | None
+        dry_run: bool
+        force_refresh: bool
+
+    args = _Args()
+    args.channels = channels
+    args.categories = categories
+    args.video_ids = video_ids
+    args.manifest = manifest
+    args.lookback = lookback
+    args.max_videos = max_videos
+    args.batch_size = batch_size
+    args.dry_run = dry_run
+    args.force_refresh = force_refresh
+
+    code = handle_sync(args)
+    if code != EXIT_SUCCESS:
+        raise typer.Exit(code=code)
 
 
-def _build_filter_criteria(args: argparse.Namespace) -> SyncFilterCriteria:
+def _build_filter_criteria(args: Any) -> SyncFilterCriteria:
     """Parse CLI argument namespace into a SyncFilterCriteria Value Object.
 
     Accepts comma-separated values within each flag (e.g. ``--channel Ancapsu,Mises``).
@@ -151,16 +164,16 @@ def _build_filter_criteria(args: argparse.Namespace) -> SyncFilterCriteria:
     ADR-012: Empty criteria triggers default full-pipeline flow.
     """
     return SyncFilterCriteria.from_strings(
-        channels=args.channels or [],
-        categories=args.categories or [],
-        video_ids=args.video_ids or [],
+        channels=getattr(args, "channels", None) or [],
+        categories=getattr(args, "categories", None) or [],
+        video_ids=getattr(args, "video_ids", None) or [],
     )
 
 
 def _sync_direct_videos(
     use_case: SyncChannelUseCase,
     video_ids: Sequence[str] | set[str],
-    args: argparse.Namespace,
+    args: Any,
 ) -> int:
     """Synchronize a collection of videos directly by identifier."""
     total_processed = 0
@@ -173,13 +186,13 @@ def _sync_direct_videos(
         )
         query = ChannelFeedQuery(
             channel_url=target_url,
-            lookback_days=args.lookback,
+            lookback_days=getattr(args, "lookback", 7 * 52 * 2),
             max_videos=1,
         )
         summary = use_case.execute(
             query=query,
-            dry_run=args.dry_run,
-            force_refresh=args.force_refresh,
+            dry_run=getattr(args, "dry_run", False),
+            force_refresh=getattr(args, "force_refresh", False),
         )
         total_processed += summary.processed_count
         total_failed += summary.failed_count
@@ -193,7 +206,7 @@ def _sync_direct_videos(
 def _sync_channel_list(
     use_case: SyncChannelUseCase,
     channels_to_sync: list[str],
-    args: argparse.Namespace,
+    args: Any,
 ) -> int:
     """Synchronize a list of channel feeds and render summary table."""
     total_discovered = 0
@@ -204,13 +217,13 @@ def _sync_channel_list(
     for ch_url in channels_to_sync:
         query = ChannelFeedQuery(
             channel_url=ch_url,
-            lookback_days=args.lookback,
-            max_videos=args.max_videos,
+            lookback_days=getattr(args, "lookback", 7 * 52 * 2),
+            max_videos=getattr(args, "max_videos", 250),
         )
         summary = use_case.execute(
             query=query,
-            dry_run=args.dry_run,
-            force_refresh=args.force_refresh,
+            dry_run=getattr(args, "dry_run", False),
+            force_refresh=getattr(args, "force_refresh", False),
         )
         total_discovered += summary.total_discovered
         total_processed += summary.processed_count
@@ -234,7 +247,7 @@ def _sync_channel_list(
     return EXIT_SUCCESS if total_failed == 0 else EXIT_INTERNAL_ERROR
 
 
-def handle_sync(args: argparse.Namespace) -> int:
+def handle_sync(args: Any) -> int:
     """Synchronize recent video uploads from one or more YouTube channel feeds.
 
     Execution modes (ADR-012):

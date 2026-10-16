@@ -17,11 +17,16 @@ import json
 import logging
 import sys
 from pathlib import Path
-from typing import Any, ClassVar
+from typing import Any
 
 from cresmo.application.ports import PromptProviderPort
-from cresmo.infrastructure.adapters.prompts.builders import PROMPT_BUILDER_DISPATCH_MAP
+from cresmo.domain.value_objects import ChatPrompt
+from cresmo.infrastructure.adapters.prompts.builders import (
+    PROMPT_BUILDER_REGISTRY,
+    PromptBuilderRegistry,
+)
 from cresmo.infrastructure.adapters.prompts.registry import PromptKey
+from cresmo.infrastructure.config import CresmoSettings
 from cresmo.infrastructure.paths import find_workspace_root
 
 logger = logging.getLogger(__name__)
@@ -41,21 +46,36 @@ class JsonPromptProvider(PromptProviderPort):
     Attributes:
         prompts_path: Optional explicit filesystem path to a JSON templates file.
         skills_dir: Resolved directory containing agent skill markdown files.
+        language: Canonical configured target language for prompt generation.
+        settings: Optional runtime settings instance.
     """
 
     def __init__(
         self,
         prompts_path: Path | None = None,
         skills_dir: Path | None = None,
+        language: str | None = None,
+        settings: Any | None = None,
+        registry: PromptBuilderRegistry | None = None,
     ) -> None:
         """Initialize prompt provider and load templates from disk or package resources.
 
         Args:
             prompts_path: Optional custom path to prompts.json. If None, loads package default.
             skills_dir: Optional custom path to .agents/skills directory.
+            language: Optional configured target language for prompt generation.
+            settings: Optional runtime settings instance conforming to PipelineSettingsProtocol.
+            registry: Optional first-class PromptBuilderRegistry instance.
         """
         self.prompts_path = prompts_path
         self.skills_dir = self._resolve_skills_dir(skills_dir)
+        self.language: str = (
+            language
+            or (getattr(settings, "language", None) if settings is not None else None)
+            or CresmoSettings.DEFAULT_LANGUAGE
+        )
+        self.settings: Any | None = settings
+        self._registry: PromptBuilderRegistry = registry or PROMPT_BUILDER_REGISTRY
         self._templates: dict[str, dict[str, str]] = {}
         self._skill_cache: dict[str, str] = {}
         self._load_templates()
@@ -125,6 +145,15 @@ class JsonPromptProvider(PromptProviderPort):
             return ""
         return f"--- SKILL SPECIFICATION ({skill_name}) ---\n{content}\n\n"
 
+    def _resolve_skill_block(self, entry: dict[str, Any]) -> str:
+        """Resolve combined skill specification blocks for an entry."""
+        skills = entry.get("skills")
+        if isinstance(skills, list) and skills:
+            blocks = [self._get_skill_block(str(name)) for name in skills]
+            return "".join(b for b in blocks if b)
+        skill_name = entry.get("skill_name", "")
+        return self._get_skill_block(skill_name) if skill_name else ""
+
     @staticmethod
     def _safe_format(template: str, **kwargs: Any) -> str:
         """Safely substitute named {keys} without failing on literal JSON braces."""
@@ -144,8 +173,7 @@ class JsonPromptProvider(PromptProviderPort):
         """
         key_str = template_key.value if isinstance(template_key, PromptKey) else template_key
         entry = self._templates.get(key_str, {})
-        skill_name = entry.get("skill_name", "")
-        skill_block = self._get_skill_block(skill_name) if skill_name else ""
+        skill_block = self._resolve_skill_block(entry)
         task = entry.get("task", "")
 
         system_instruction = entry.get("system_instruction", "")
@@ -168,8 +196,7 @@ class JsonPromptProvider(PromptProviderPort):
         """
         key_str = template_key.value if isinstance(template_key, PromptKey) else template_key
         entry = self._templates.get(key_str, {})
-        skill_name = entry.get("skill_name", "")
-        skill_block = self._get_skill_block(skill_name) if skill_name else ""
+        skill_block = self._resolve_skill_block(entry)
         task = entry.get("task", "")
 
         system_instruction = entry.get("system_instruction", "")
@@ -189,7 +216,7 @@ class JsonPromptProvider(PromptProviderPort):
         self,
         key: PromptKey,
         **context: Any,
-    ) -> tuple[str, str]:
+    ) -> ChatPrompt:
         """Dispatch prompt formatting by canonical PromptKey.
 
         Args:
@@ -197,23 +224,20 @@ class JsonPromptProvider(PromptProviderPort):
             **context: Template variable substitutions.
 
         Returns:
-            Tuple containing (system_instruction, user_prompt).
+            ChatPrompt instance containing messages and optional system instruction.
         """
-        builder = self._DISPATCH_MAP.get(key)
-        if builder is None:
-            raise ValueError(f"Unsupported prompt key: {key}")
+        builder = self._registry.get(key)
         return builder(self, **context)
 
     def _format_paired_prompt(
         self,
         template_key: str,
         **kwargs: Any,
-    ) -> tuple[str, str]:
-        """Format (system_instruction, user_prompt) pair for a given template key."""
+    ) -> ChatPrompt:
+        """Format (system_instruction, user_prompt) pair into a ChatPrompt for a given template key."""
         entry = self._templates.get(template_key, {})
         task = entry.get("task", "")
-        skill_name = entry.get("skill_name", "")
-        skill_block = self._get_skill_block(skill_name) if skill_name else ""
+        skill_block = self._resolve_skill_block(entry)
         system_template = entry.get("system_instruction", "")
         if system_template:
             system_instruction = self._safe_format(
@@ -223,17 +247,19 @@ class JsonPromptProvider(PromptProviderPort):
             system_instruction = f"{task}\n\n{skill_block}".strip() if (task or skill_block) else ""
         template = entry.get("template", "")
         user_prompt = self._safe_format(template, task=task, skill_block=skill_block, **kwargs)
-        return system_instruction, user_prompt
+        return ChatPrompt.from_system_and_user(
+            user=user_prompt,
+            system=system_instruction if system_instruction else None,
+        )
 
     def _format_single_prompt(
         self,
         template_key: str,
         **kwargs: Any,
-    ) -> str:
-        """Format a single user prompt string for a given template key."""
+    ) -> ChatPrompt:
+        """Format a single user prompt into a ChatPrompt for a given template key."""
         entry = self._templates.get(template_key, {})
         task = entry.get("task", "")
         template = entry.get("template", "")
-        return self._safe_format(template, task=task, **kwargs)
-
-    _DISPATCH_MAP: ClassVar[dict[PromptKey, Any]] = PROMPT_BUILDER_DISPATCH_MAP
+        user_prompt = self._safe_format(template, task=task, **kwargs)
+        return ChatPrompt.from_system_and_user(user=user_prompt, system=None)

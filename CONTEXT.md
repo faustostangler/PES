@@ -44,6 +44,10 @@ _Avoid_: Helper script, wrapper, bridge
 A frozen, mathematically quantified assessment matrix (measuring faithfulness, relevance, hallucination, and toxicity) executed via Langfuse to validate non-deterministic LLM pipeline outputs.
 _Avoid_: Prompt check, quality test, review rubric
 
+**Presentation Driving Adapter**:
+The primary hexagonal driving adapter that parses POSIX command-line inputs, validates and binds them into domain Value Objects and application queries, coordinates Application Use Cases, and surfaces formatted diagnostics or canonical POSIX exit codes without leaking framework dependencies into inner layers.
+_Avoid_: CLI script, arg parser, command runner
+
 ## Example Dialogue
 
 > **Lead Architect**: "How does the ingestion of a new political speech ensure the vault maintains epistemic density without duplicate nodes?"

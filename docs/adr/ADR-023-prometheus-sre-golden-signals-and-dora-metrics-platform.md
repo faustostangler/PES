@@ -36,7 +36,7 @@ However, the system currently lacks standardized, high-performance time-series t
 We establish the **Prometheus SRE Golden Signals and DORA Metrics Platform** in Cresmo under the Doctor Stangler Architecture Method:
 
 ### 2.1 Hexagonal Segregation: Introduction of `MetricsPort`
-We introduce an explicit, dedicated **`MetricsPort`** in [`src/cresmo/application/ports.py`](../../src/cresmo/application/ports.py), adhering to the **Interface Segregation Principle (ISP)**. It remains completely distinct from `TelemetryPort` (which governs trace trees and Langfuse GenAI session replays):
+We introduce an explicit, dedicated **`MetricsPort`** in [`src/cresmo/application/ports/metrics.py`](../../src/cresmo/application/ports/metrics.py), adhering to the **Interface Segregation Principle (ISP)**. It remains completely distinct from `TelemetryPort` (which governs trace trees and Langfuse GenAI session replays):
 
 - **Domain and Application Layers:** Rely strictly on `MetricsPort` and pure Value Objects (`MetricName`, `MetricLabels`). No imports of `prometheus_client` or time-series libraries are permitted outside `src/cresmo/infrastructure/adapters/`.
 - **Infrastructure Layer:**

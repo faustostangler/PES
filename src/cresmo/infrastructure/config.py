@@ -15,14 +15,27 @@ Conforms to:
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any, Self
+from typing import Any, ClassVar, Self
 
 from pydantic import AliasChoices, Field, SecretStr, model_validator
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import (
+    BaseSettings,
+    PydanticBaseSettingsSource,
+    SettingsConfigDict,
+)
 
+from cresmo.application.ports.settings import DEFAULT_LANGUAGE
 from cresmo.infrastructure.paths import find_workspace_root
 
 _WORKSPACE_DIR = find_workspace_root()
+
+DEFAULT_LANGFUSE_PROMPT_LABEL: str = "production"
+DEFAULT_JUDGE_PASS_THRESHOLD: float = 0.8
+DEFAULT_JUDGE_GEMINI_MODEL: str = "gemini-3.5-flash-lite"
+DEFAULT_JUDGE_TEMPERATURE: float = 0.0
+
+
+
 
 
 class CresmoSettings(BaseSettings):
@@ -33,7 +46,10 @@ class CresmoSettings(BaseSettings):
     the 12-Factor App methodology and fail-fast principles.
 
     Attributes:
-        gemini_api_key: Secret key for Google GenAI API calls.
+        DEFAULT_LANGUAGE: Class-level canonical default language fallback.
+        DEFAULT_LANGFUSE_PROMPT_LABEL: Class-level canonical prompt label fallback.
+        gemini_api_keys: List of secret keys for Google GenAI quota-aware failover.
+        gemini_api_key: Primary secret key for backward compatibility.
         langfuse_secret_key: Secret key for Langfuse observability endpoint.
         langfuse_public_key: Public telemetry identifier for Langfuse tracing.
         langfuse_host: Telemetry collector endpoint URL.
@@ -44,6 +60,12 @@ class CresmoSettings(BaseSettings):
         whisper_model: Model variant for local audio transcription fallback.
         batch_size: Synthesis chunk size for atomic note generation.
     """
+
+    DEFAULT_LANGUAGE: ClassVar[str] = DEFAULT_LANGUAGE
+    DEFAULT_LANGFUSE_PROMPT_LABEL: ClassVar[str] = DEFAULT_LANGFUSE_PROMPT_LABEL
+    DEFAULT_JUDGE_PASS_THRESHOLD: ClassVar[float] = DEFAULT_JUDGE_PASS_THRESHOLD
+    DEFAULT_JUDGE_GEMINI_MODEL: ClassVar[str] = DEFAULT_JUDGE_GEMINI_MODEL
+    DEFAULT_JUDGE_TEMPERATURE: ClassVar[float] = DEFAULT_JUDGE_TEMPERATURE
 
     model_config = SettingsConfigDict(
         env_file=(
@@ -56,6 +78,41 @@ class CresmoSettings(BaseSettings):
         extra="ignore",
     )
 
+    @classmethod
+    def settings_customise_sources(
+        cls,
+        settings_cls: type[BaseSettings],
+        init_settings: PydanticBaseSettingsSource,
+        env_settings: PydanticBaseSettingsSource,
+        dotenv_settings: PydanticBaseSettingsSource,
+        file_secret_settings: PydanticBaseSettingsSource,
+    ) -> tuple[PydanticBaseSettingsSource, ...]:
+        """Customise settings sources to safely parse comma-separated credentials from env."""
+        def _safe_decode(field_name: str, field: Any, val: Any, orig_decode: Any) -> Any:
+            if field_name == "gemini_api_keys" and isinstance(val, str):
+                try:
+                    return orig_decode(field_name, field, val)
+                except (ValueError, TypeError):
+                    return [p.strip() for p in val.split(",") if p.strip()]
+            return orig_decode(field_name, field, val)
+
+        orig_dot = dotenv_settings.decode_complex_value
+        dotenv_settings.decode_complex_value = (  # type: ignore[method-assign]
+            lambda field_name, field, value: _safe_decode(field_name, field, value, orig_dot)
+        )
+
+        orig_env = env_settings.decode_complex_value
+        env_settings.decode_complex_value = (  # type: ignore[method-assign]
+            lambda field_name, field, value: _safe_decode(field_name, field, value, orig_env)
+        )
+
+        return (
+            init_settings,
+            env_settings,
+            dotenv_settings,
+            file_secret_settings,
+        )
+
     def __init__(
         self,
         *args: Any,
@@ -65,14 +122,54 @@ class CresmoSettings(BaseSettings):
         """Initialize settings with optional explicit environment file override."""
         if _env_file is not ...:
             values["_env_file"] = _env_file
+        if "gemini_api_key" in values and "gemini_api_keys" not in values:
+            values["gemini_api_keys"] = values["gemini_api_key"]
         super().__init__(*args, **values)
 
     # =========================================================================
     # 🔴 Category 1: Secrets & Credentials
     # =========================================================================
-    gemini_api_key: SecretStr = Field(
+    gemini_api_keys: list[SecretStr] = Field(
+        default_factory=list,
+        description="Google Gemini API Keys for quota-aware failover and rotation.",
+    )
+
+    @property
+    def gemini_api_key(self) -> SecretStr:
+        """Primary Google Gemini API Key for backward compatibility."""
+        if self.gemini_api_keys:
+            return self.gemini_api_keys[0]
+        return SecretStr("")
+
+    @model_validator(mode="before")
+    @classmethod
+    def _normalize_gemini_credentials(cls, data: Any) -> Any:
+        """Normalize comma-separated strings or legacy single key into gemini_api_keys."""
+        if isinstance(data, dict):
+            raw_keys = (
+                data.get("gemini_api_keys")
+                or data.get("GEMINI_API_KEYS")
+                or data.get("gemini_api_key")
+                or data.get("GEMINI_API_KEY")
+            )
+            if raw_keys is not None:
+                if isinstance(raw_keys, str):
+                    data["gemini_api_keys"] = [
+                        SecretStr(p.strip()) for p in raw_keys.split(",") if p.strip()
+                    ]
+                elif isinstance(raw_keys, SecretStr):
+                    data["gemini_api_keys"] = [raw_keys]
+                elif isinstance(raw_keys, list):
+                    data["gemini_api_keys"] = [
+                        item if isinstance(item, SecretStr) else SecretStr(item.strip())
+                        for item in raw_keys
+                        if (isinstance(item, SecretStr) or (isinstance(item, str) and item.strip()))
+                    ]
+        return data
+    typesafe_api_key: SecretStr = Field(
         default=SecretStr(""),
-        description="Google Gemini API Key for synthesis and expansion.",
+        validation_alias=AliasChoices("typesafe_api_key", "TYPESAFE_API_KEY"),
+        description="TypeSafe AI API Key for System One Jev decision evaluations.",
     )
     langfuse_secret_key: SecretStr = Field(
         default=SecretStr(""),
@@ -94,7 +191,7 @@ class CresmoSettings(BaseSettings):
         description="Langfuse telemetry environment (e.g. 'production', 'staging', 'development').",
     )
     langfuse_prompt_label: str = Field(
-        default="production",
+        default=DEFAULT_LANGFUSE_PROMPT_LABEL,
         description="Active prompt label tag in Langfuse (e.g. 'production', 'staging').",
     )
     langfuse_timeout_seconds: int = Field(
@@ -279,7 +376,7 @@ class CresmoSettings(BaseSettings):
         description="Local Prometheus scraping and exposition port.",
     )
     log_level: str = Field(
-        default="INFO",
+        default="WARNING",
         validation_alias=AliasChoices("log_level", "LOG_LEVEL", "CRESMO_LOG_LEVEL"),
         description="Root logging level (DEBUG, INFO, WARNING, ERROR).",
     )
@@ -359,7 +456,11 @@ class CresmoSettings(BaseSettings):
     )
     gap_filler_passes: int = Field(
         default=3,
-        validation_alias=AliasChoices("gap_filler_passes", "CRESMO_GAP_FILLER_PASSES"),
+        ge=1,
+        le=10,
+        validation_alias=AliasChoices(
+            "gap_filler_passes", "CRESMO_GAP_FILLER_PASSES", "GAP_FILLER_PASSES"
+        ),
         description="Default Socratic gap filler refinement passes.",
     )
     concat_max_words: int = Field(
@@ -425,8 +526,8 @@ class CresmoSettings(BaseSettings):
         description="Maximum characters of transcript body passed to LLM for conceptual synthesis, zero means full text.",
     )
     language: str = Field(
-        default="Português do Brasil",
-        validation_alias=AliasChoices("language", "CRESMO_LANGUAGE", "DEFAULT_LANGUAGE"),
+        default=DEFAULT_LANGUAGE,
+        validation_alias=AliasChoices("language", "CRESMO_LANGUAGE"),
         description="Target generation language for synthesis, compendiums, and conceptual indexing.",
     )
     llm_synthesis_temperature: float = Field(
@@ -435,10 +536,7 @@ class CresmoSettings(BaseSettings):
         le=2.0,
         validation_alias=AliasChoices(
             "llm_synthesis_temperature",
-            "llm_temperature",
             "CRESMO_LLM_SYNTHESIS_TEMPERATURE",
-            "CRESMO_LLM_TEMPERATURE",
-            "LLM_TEMPERATURE",
         ),
         description="Default sampling temperature for generative synthesis and expansion stages.",
     )
@@ -448,23 +546,10 @@ class CresmoSettings(BaseSettings):
         le=2.0,
         validation_alias=AliasChoices(
             "llm_indexing_temperature",
-            "raw_index_temperature",
             "CRESMO_LLM_INDEXING_TEMPERATURE",
-            "CRESMO_RAW_INDEX_TEMPERATURE",
-            "RAW_INDEX_TEMPERATURE",
         ),
         description="Sampling temperature for raw transcript conceptual indexing.",
     )
-
-    @property
-    def llm_temperature(self) -> float:
-        """Backward-compatible accessor for llm_synthesis_temperature."""
-        return self.llm_synthesis_temperature
-
-    @property
-    def raw_index_temperature(self) -> float:
-        """Backward-compatible accessor for llm_indexing_temperature."""
-        return self.llm_indexing_temperature
 
     raw_index_max_attempts: int = Field(
         default=3,
@@ -483,3 +568,77 @@ class CresmoSettings(BaseSettings):
         ),
         description="Maximum LLM judge rewrite attempts for atomic inventory discovery (0 means unconstrained / infinite loop).",
     )
+
+    # =========================================================================
+    # 🔴 Category 3: Quality Judge & Decision-Model Evaluator Settings (ADR-029)
+    # =========================================================================
+    typesafe_model: str = Field(
+        default="jev-latest",
+        validation_alias=AliasChoices("typesafe_model", "TYPESAFE_MODEL"),
+        description="Model identifier for TypeSafe AI System One decision evaluations.",
+    )
+    typesafe_base_url: str = Field(
+        default="https://api.typesafe.ai/v1",
+        validation_alias=AliasChoices("typesafe_base_url", "TYPESAFE_BASE_URL"),
+        description="Base URL endpoint for TypeSafe AI API.",
+    )
+    judge_provider: str = Field(
+        default="gemini",  # default original typesafe
+        validation_alias=AliasChoices("judge_provider", "CRESMO_JUDGE_PROVIDER"),
+        description="Primary quality judge provider ('gemini', 'typesafe', 'ollama').",
+    )
+    judge_fallback_provider: str = Field(
+        default="ollama",
+        validation_alias=AliasChoices("judge_fallback_provider", "CRESMO_JUDGE_FALLBACK_PROVIDER"),
+        description="Fallback quality judge provider when primary fails.",
+    )
+    judge_blocking: bool = Field(
+        default=False,
+        validation_alias=AliasChoices("judge_blocking", "CRESMO_JUDGE_BLOCKING"),
+        description="Whether failed quality evaluations raise DomainValidationError or log warning scores.",
+    )
+    judge_max_attempts: int = Field(
+        default=1,
+        validation_alias=AliasChoices("judge_max_attempts", "CRESMO_JUDGE_MAX_ATTEMPTS"),
+        description="Maximum attempts to re-execute a stage when quality evaluation fails.",
+    )
+    judge_pass_threshold: float = Field(
+        default=DEFAULT_JUDGE_PASS_THRESHOLD,
+        ge=0.0,
+        le=1.0,
+        validation_alias=AliasChoices(
+            "judge_pass_threshold",
+            "CRESMO_JUDGE_PASS_THRESHOLD",
+            "JUDGE_PASS_THRESHOLD",
+        ),
+        description="Minimum score threshold required for quality judge evaluations to pass.",
+    )
+    judge_gemini_model: str = Field(
+        default=DEFAULT_JUDGE_GEMINI_MODEL,
+        validation_alias=AliasChoices(
+            "judge_gemini_model",
+            "CRESMO_JUDGE_GEMINI_MODEL",
+            "JUDGE_GEMINI_MODEL",
+        ),
+        description="Gemini model variant for quality judge evaluations.",
+    )
+    judge_temperature: float = Field(
+        default=DEFAULT_JUDGE_TEMPERATURE,
+        ge=0.0,
+        le=2.0,
+        validation_alias=AliasChoices(
+            "judge_temperature",
+            "CRESMO_JUDGE_TEMPERATURE",
+            "JUDGE_TEMPERATURE",
+        ),
+        description="Sampling temperature for quality judge evaluation models.",
+    )
+
+
+__all__ = [
+    "DEFAULT_JUDGE_GEMINI_MODEL",
+    "DEFAULT_JUDGE_PASS_THRESHOLD",
+    "DEFAULT_JUDGE_TEMPERATURE",
+    "DEFAULT_LANGFUSE_PROMPT_LABEL",
+    "CresmoSettings",
+]
