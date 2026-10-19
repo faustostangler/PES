@@ -93,9 +93,9 @@ def run(
             "--passes",
             min=1,
             max=10,
-            help="Refinement passes for gap filler (default: 3)",
+            help="Refinement passes for text expansion (default: 5)",
         ),
-    ] = 3,
+    ] = 5,
     batch_size: Annotated[
         int | None,
         typer.Option(

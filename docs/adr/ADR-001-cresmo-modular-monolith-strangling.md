@@ -1,8 +1,12 @@
 # ADR-001: Strangling Cresmo into Hexagonal Modular Monolith with Media Ingestion ACL and Vault Port
 
-**Status:** ACCEPTED  
+**Status:** ACCEPTED (Foundational Strangling Architecture)  
 **Date:** 2026-09-10  
 **Decision Makers:** Lead Architect (Fausto Stangler), Stereoscopist (Doctor Stangler Committee)  
+**Lineage & Evolution Notes:**  
+- **Media Ingestion ACL**: The transitional ACL wrapping legacy `playground/isb.ai` was **DEPRECATED and DECOMMISSIONED by [`ADR-004`](ADR-004-native-media-ingestion-decommissioning.md)** in favor of `NativeMediaIngestionAdapter`.
+- **Domain Aggregates**: The transitional `RawTranscript` domain entity was **DEPRECATED and SUPERSEDED by `SourceTranscript`** per [`ADR-010`](ADR-010-zero-legacy-shims-and-streaming-first-unification.md), [`ADR-031`](ADR-031-standardized-stage-descriptor-and-closed-loop-refinement.md), and [`ADR-038`](ADR-038-pure-value-object-triad-composition.md) (Pure 3-VO Triad Composition).
+- **Presentation Layer**: Initial entrypoints were refined and superseded by [`ADR-042`](ADR-042-typer-presentation-cli.md).
 
 ---
 

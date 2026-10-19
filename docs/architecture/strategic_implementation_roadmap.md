@@ -22,12 +22,13 @@ flowchart TD
     T5["Etapa IV: Trilha 5<br><b>12-Factor Container & IaC</b><br>ADR-005 / SPEC-006<br><b>[COMPLETED]</b>"] -->
     T6["Etapa V: Trilha 6<br><b>Telemetry Triad & SRE Platform</b><br>ADR-016, 017, 023, 025, 027<br><b>[COMPLETED]</b>"] -->
     T7["Etapa VI: Trilha 7<br><b>Code Hygiene & Anti-Patterns</b><br>ADR-026 Canon Governance<br><b>[COMPLETED]</b>"] -->
-    T8["Etapa VII: Trilha 8<br><b>Quality Judge Fabric & StageConfigs</b><br>ADR-028, 029, 030, 031 / SPEC-014<br><b>[ACTIVE / IN PROGRESS]</b>"]
+    T8["Etapa VII: Trilha 8<br><b>Quality Judge Fabric & StageConfigs</b><br>ADR-028, 029, 030, 031 / SPEC-014<br><b>[COMPLETED]</b>"] -->
+    T9["Etapa VIII: Trilha 9<br><b>Domain Triad, Atomic Traces & Typer CLI</b><br>ADR-032–042 / SPEC-042<br><b>[ACTIVE / IN PROGRESS]</b>"]
 
     classDef done fill:#2a9d8f,stroke:#264653,color:#fff;
     classDef active fill:#e76f51,stroke:#d62828,color:#fff;
-    class T2,T4,T1,T5,T6,T7 done;
-    class T8 active;
+    class T2,T4,T1,T5,T6,T7,T8 done;
+    class T9 active;
 ```
 
 ---
@@ -61,13 +62,22 @@ flowchart TD
 - **Delivered**: Codified 8 hygiene standards: PEP 8 import topography, zero magic literals/status codes, anti-swallowing and chaining, OS-agnostic paths/telemetry, bounded modularity, zero production asserts, parameter bundling, and dead code elimination. Modularized god files (`ports.py` $\rightarrow$ `ports/`, `value_objects.py` $\rightarrow$ `value_objects/`, `pipeline.py` $\rightarrow$ `pipeline/`).
 - **Governing**: [`ADR-026`](../adr/ADR-026-clean-code-anti-patterns-and-code-smell-governance.md).
 
-### Etapa VII (Trilha 8): Quality Judge Fabric & StageConfig Closed-Loop Refinement — `STATUS: ACTIVE / IN PROGRESS`
+### Etapa VII (Trilha 8): Quality Judge Fabric & StageConfig Closed-Loop Refinement — `STATUS: COMPLETED`
 - **Sub-Track Milestones**:
   - **Milestone 8.1 (Fluid Prose Decoupling)**: Decouple orality purge from epistemic expansion; introduce `FluidTranscript` aggregate and position `transform_fluid_prose` as Stage 1 prior to catalog indexing ([`ADR-028`](../adr/ADR-028-decoupling-fluid-prose-and-socratic-gap-filling.md), [`SPEC-011`](../specs/SPEC-011-fluid-prose-detranscription-and-gap-filler-decoupling.md)) — `COMPLETED`.
   - **Milestone 8.2 (Unified LlmJudgePort)**: Unify scattered judge logic under `LlmJudgePort` with multi-provider adapters (`GeminiJudgeAdapter`, `OllamaJudgeAdapter`, `TypeSafeJudgeAdapter`, `LangfuseJudgeDecorator`) ([`ADR-029`](../adr/ADR-029-unified-quality-judge-port-and-evaluator-adapters.md), [`SPEC-012`](../specs/SPEC-012-quality-judge-evaluators-and-adapters.md)) — `COMPLETED`.
   - **Milestone 8.3 (Quality Gate Retry Fabric)**: Introduce `PipelineStageRunner.run_evaluated_stage` to eliminate coordinator boilerplate ([`ADR-030`](../adr/ADR-030-stage-quality-gate-and-evaluator-retry-fabric.md), [`SPEC-013`](../specs/SPEC-013-stage-quality-gate-and-evaluator-fabric.md)) — `COMPLETED`.
   - **Milestone 8.4 (StageConfig & Closed-Loop Reflection)**: Universal `StageConfig`, full elimination of `RawTranscript` in favor of `SourceTranscript`, `CandidateText` VO, `CritiqueSynthesizerPort` reflection retry loops, and 4-step fail-fast quarantine protocol with Stage 1 (`fluid_prose`) reference implementation ([`ADR-031`](../adr/ADR-031-standardized-stage-descriptor-and-closed-loop-refinement.md), [`SPEC-014`](../specs/SPEC-014-stage-descriptor-and-closed-loop-reflection.md)) — `COMPLETED`.
-  - **Milestone 8.5 (Downstream Stage Refactoring & StageRegistry Enrollment)**: Sequentially refactor quarantined downstream stages (Stage 2: `raw_indexing`, Stage 3: `gap_filler`, Stage 4: `long_expander`, Stage 5: `wide_expander`, Stage 6: `atomic_inventory`, Stage 7: `atomic_batch`, Stage 8: `reconcile_mocs`) to register their declarative `StageDefinition` in `StageRegistry` and execute via `stage_runner.execute_stage(...)` — `ACTIVE`.
+  - **Milestone 8.5 (Progressive Calibration & Canonical Judges)**: Codified Layer 1 mechanical validation, Layer 2 LLM-as-a-Judge, and 5-stage progressive calibration harness ([`ADR-039`](../adr/ADR-039-fluid-prose-canonical-judge-criteria-and-mechanical-gates.md), [`SPEC-015`](../specs/SPEC-015-fluid-prose-quality-gates-and-calibration.md)) — `COMPLETED`.
+
+### Etapa VIII (Trilha 9): Domain Triad Composition, Atomic Telemetry & Typer Presentation CLI — `STATUS: ACTIVE / IN PROGRESS`
+- **Sub-Track Milestones**:
+  - **Milestone 9.1 (Asymmetric Hybrid Composition & Parity)**: Eliminate *Primitive Obsession Obsession* and *Primitive Obsession Reversa*. Decommission `ChannelTenantId` in favor of `Channel.tenant_key`, remove `video_id`, enforce algorithmic/cognitive parity ([`ADR-032`](../adr/ADR-032-composite-channel-and-content-value-objects.md), [`ADR-033`](../adr/ADR-033-composite-value-objects-identity-parity-and-tenant-simplification.md), [`ADR-034`](../adr/ADR-034-algorithmic-and-cognitive-parity-standard.md)) — `COMPLETED`.
+  - **Milestone 9.2 (Atomic Work-Item Traces & Lean Topography)**: Ban the Mega-Trace Monolith (`1 Trace = 1 Work Item`), introduce stage-prefixed evaluation metrics (`{stage}.{criterion}`) with span observation binding, and establish 4-tier lean topography ([`ADR-035`](../adr/ADR-035-atomic-work-item-traces-and-sota-kiss-batch-correlation.md), [`ADR-036`](../adr/ADR-036-clean-telemetry-namespacing-and-observation-binding.md), [`ADR-037`](../adr/ADR-037-lean-telemetry-topography-and-chronological-evaluation.md)) — `COMPLETED`.
+  - **Milestone 9.3 (Pure 3-VO Triad Composition)**: Refactor transcripts into pure composition (`Channel`, `MediaProvenance`, `Content`), eliminating `upload_date` aliases and flat property sprawl ([`ADR-038`](../adr/ADR-038-pure-value-object-triad-composition.md)) — `COMPLETED`.
+  - **Milestone 9.4 (Dynamic Multi-Skill Prompt Composition)**: Support array of skills (`skills: [...]`) in `JsonPromptProvider`, dynamically binding `cresmo-style-guide` and operational skills without prompt duplication ([`ADR-040`](../adr/ADR-040-dynamic-cross-cutting-skill-block-composition.md), [`SPEC-040`](../specs/SPEC-040-dynamic-cross-cutting-skill-block-composition.md)) — `COMPLETED`.
+  - **Milestone 9.5 (Gemini Quota Failover Pool)**: Thread-safe credential leasing and HTTP 429 quota rotation via `GeminiCredentialPool` ([`ADR-041`](../adr/ADR-041-gemini-credential-pool-and-quota-failover.md), [`SPEC-041`](../specs/SPEC-041-gemini-credential-pool-and-quota-failover.md)) — `COMPLETED`.
+  - **Milestone 9.6 (Modern Typer Presentation CLI Adapter)**: Purge legacy `argparse` in favor of Typer + Rich with declarative parameter bounds, type annotations, and fail-fast validation ([`ADR-042`](../adr/ADR-042-typer-presentation-cli.md), [`SPEC-042`](../specs/SPEC-042-typer-cli-presentation.md)) — `ACTIVE`.
 
 ---
 
@@ -81,13 +91,13 @@ flowchart TD
 | **Etapa IV** | **Trilha 5** | IaC & 12-Factor Containerization | `ADR-005` | `SPEC-006` | `COMPLETED` | Multi-role Dockerfile & CI Pipeline |
 | **Etapa V** | **Trilha 6** | Telemetry Triad & SRE Platform | `ADR-016`, `ADR-023`, `ADR-025`, `ADR-027` | `SPEC-008`, `SPEC-010` | `COMPLETED` | Prometheus Golden Signals & Loki Logs |
 | **Etapa VI** | **Trilha 7** | Clean Code Hygiene & Anti-Patterns | `ADR-026` | Architecture Canon | `COMPLETED` | Ruff clean, zero god files, strict typing |
-| **Etapa VII** | **Trilha 8** | Quality Judge Fabric & StageConfigs | `ADR-028`, `ADR-029`, `ADR-030`, `ADR-031` | `SPEC-011`–`SPEC-014` | `ACTIVE` | Hermetic TDD, closed-loop reflection, quarantine |
+| **Etapa VII** | **Trilha 8** | Quality Judge Fabric & StageConfigs | `ADR-028`–`ADR-031`, `ADR-039` | `SPEC-011`–`SPEC-015` | `COMPLETED` | Hermetic TDD, closed-loop reflection, quarantine |
+| **Etapa VIII** | **Trilha 9** | Domain Triad, Atomic Traces & Typer CLI | `ADR-032`–`ADR-042` | `SPEC-040`–`SPEC-042` | `ACTIVE` | Zero Primitive Obsession, 1 Trace = 1 Work Item, Typer CLI |
 
 ---
 
 ## 4. Next Immediate Action
 
-Under **Etapa VII (Trilha 8: Milestone 8.5)**, proceed with the sequential refactoring and registration of quarantined downstream stages:
-1. **Stage 2 (`raw_indexing`)**: Register `StageDefinition` in `StageRegistry`, define `CandidateText` extraction for catalog summaries and principal concepts, and wire into `coordinator.py`.
-2. **Stage 3 (`gap_filler`)**: Re-enable Socratic multi-pass epistemic expansion using `FluidTranscript` as input.
-3. **Stages 4–8 (`long_expander`, `wide_expander`, `atomic_inventory`, `atomic_batch`, `reconcile_mocs`)**: Complete transition to declarative `StageConfig` execution.
+Under **Etapa VIII (Trilha 9: Milestone 9.6)**:
+1. Complete remaining test adjustments for `test_pipeline_coordinator.py`, `test_cli.py`, and `test_preflight_checker.py` ensuring full pass-rate with Typer and composite triad models.
+2. Advance downstream stage registrations under the universal `StageConfig` fabric.

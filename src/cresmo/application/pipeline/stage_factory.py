@@ -170,7 +170,11 @@ class StageFactory:
         elif stage_definition and getattr(stage_definition, "max_passes", 1) > 1:
             effective_max_passes = stage_definition.max_passes
         elif stage_name == "gap_filler":
-            effective_max_passes = getattr(self.settings, "gap_filler_passes", 3)
+            effective_max_passes = getattr(
+                self.settings,
+                "expansion_max_passes",
+                getattr(self.settings, "gap_filler_passes", 5),
+            )
         else:
             effective_max_passes = 1
 

@@ -1,11 +1,12 @@
 # ADR-028: Decoupling Fluid Prose Detranscription and Socratic Gap Filling for Pre-Indexing Linguistic Normalization
 
-**Status:** PROPOSED  
+**Status:** ACCEPTED  
 **Date:** 2026-10-01  
 **Decision Makers:** Lead Architect (Fausto Stangler), Systems Architect (Doctor Stangler Committee)  
 **Governing Method:** Doctor Stangler Architecture Method (Clean/Hexagonal DDD Modular Monolith, KISS & Fail-Fast Principles, ADR-First)  
 **Glossary Reference:** [`docs/GLOSSARY.md`](../GLOSSARY.md)  
-**Related ADRs:** [`ADR-001`](ADR-001-cresmo-modular-monolith-strangling.md), [`ADR-007`](ADR-007-pipeline-template-method-dry.md), [`ADR-013`](ADR-013-iterative-llm-as-a-judge-indexing-loops.md), [`ADR-019`](ADR-019-sota-kiss-nomenclature-and-channel-name-value-object.md), [`ADR-021`](ADR-021-unified-pipeline-execution-template-method-and-telemetry.md), [`ADR-026`](ADR-026-clean-code-anti-patterns-and-code-smell-governance.md)
+**Overrides:** [`ADR-021`](ADR-021-unified-pipeline-execution-template-method-and-telemetry.md) *(Section 2.2 Execution Sequence)*  
+**Related ADRs:** [`ADR-001`](ADR-001-cresmo-modular-monolith-strangling.md), [`ADR-007`](ADR-007-pipeline-template-method-dry.md), [`ADR-013`](ADR-013-iterative-llm-as-a-judge-indexing-loops.md), [`ADR-019`](ADR-019-sota-kiss-nomenclature-and-channel-name-value-object.md), [`ADR-021`](ADR-021-unified-pipeline-execution-template-method-and-telemetry.md), [`ADR-026`](ADR-026-clean-code-anti-patterns-and-code-smell-governance.md), [`ADR-031`](ADR-031-standardized-stage-descriptor-and-closed-loop-refinement.md), [`ADR-038`](ADR-038-pure-value-object-triad-composition.md), [`ADR-039`](ADR-039-fluid-prose-canonical-judge-criteria-and-mechanical-gates.md)
 
 ---
 

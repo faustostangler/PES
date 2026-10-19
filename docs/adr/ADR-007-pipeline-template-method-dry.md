@@ -1,10 +1,20 @@
 # ADR-007: Template Method and DRY Unification in Cognitive Synthesis Pipeline
 
-**Status:** ACCEPTED  
+**Status:** DEPRECATED (SUPERSEDED by [`ADR-021`](ADR-021-unified-pipeline-execution-template-method-and-telemetry.md))  
 **Date:** 2026-09-14  
 **Decision Makers:** Lead Architect (Fausto Stangler), Systems Architect (Doctor Stangler Committee)  
 **Governing Method:** Doctor Stangler Architecture Method (Clean/Hexagonal DDD Modular Monolith)  
 **Glossary Reference:** [`docs/GLOSSARY.md`](../GLOSSARY.md)  
+**Superseded By:** [`ADR-021`](ADR-021-unified-pipeline-execution-template-method-and-telemetry.md), [`ADR-028`](ADR-028-decoupling-fluid-prose-and-socratic-gap-filling.md), [`ADR-030`](ADR-030-stage-quality-gate-and-evaluator-retry-fabric.md), [`ADR-031`](ADR-031-standardized-stage-descriptor-and-closed-loop-refinement.md), [`ADR-035`](ADR-035-atomic-work-item-traces-and-sota-kiss-batch-correlation.md)  
+
+> [!WARNING]
+> **SUPERSEDED ARCHITECTURAL DECISION:**  
+> The downstream private template method (`_synthesize_transcript`) operating on `RawTranscript` has been **DEPRECATED and SUPERSEDED**:
+> - **Pipeline Orchestration**: Hoisted to `CresmoPipeline.execute(...)` with single root execution span per [`ADR-021`](ADR-021-unified-pipeline-execution-template-method-and-telemetry.md).
+> - **Execution Sequence**: Decoupled fluid prose and established `transform_fluid_prose` as Stage 1 before catalog indexing per [`ADR-028`](ADR-028-decoupling-fluid-prose-and-socratic-gap-filling.md).
+> - **Stage Runner Fabric**: Individual stage execution refactored into `PipelineStageRunner.run_evaluated_stage` and universal `StageConfig` per [`ADR-030`](ADR-030-stage-quality-gate-and-evaluator-retry-fabric.md) and [`ADR-031`](ADR-031-standardized-stage-descriptor-and-closed-loop-refinement.md).
+> - **Domain Aggregate**: `RawTranscript` completely replaced by `SourceTranscript` per [`ADR-031`](ADR-031-standardized-stage-descriptor-and-closed-loop-refinement.md) and [`ADR-038`](ADR-038-pure-value-object-triad-composition.md).
+> - **Telemetry Invariant**: Single mega-trace replaced by 1 Trace = 1 Work Item per [`ADR-035`](ADR-035-atomic-work-item-traces-and-sota-kiss-batch-correlation.md) and [`ADR-037`](ADR-037-lean-telemetry-topography-and-chronological-evaluation.md).
 
 ---
 

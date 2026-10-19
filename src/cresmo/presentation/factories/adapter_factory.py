@@ -75,6 +75,7 @@ def build_vault_adapter(
         vault_dir=resolved_settings.vault_dir,
         raw_dir=resolved_settings.raw_dir,
         enriched_dir=resolved_settings.enriched_dir,
+        fluid_dir=resolved_settings.fluid_dir,
         master_dir=resolved_settings.master_dir,
         data_dir=resolved_settings.data_dir,
         mocs_dir=resolved_settings.mocs_dir,

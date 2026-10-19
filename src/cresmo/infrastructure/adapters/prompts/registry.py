@@ -136,6 +136,12 @@ PROMPT_REGISTRY: dict[PromptKey, PromptMetadata] = {
         skill_name="cresmo",
         description="Universal multi-criteria quality evaluation judge for knowledge synthesis pipelines.",
     ),
+    PromptKey.JUDGE_GAP_FILLER: PromptMetadata(
+        key=PromptKey.JUDGE_GAP_FILLER,
+        langfuse_name="cresmo-judge-gap-filler",
+        skill_name="cresmo-gap-filler",
+        description="LLM-as-a-judge quality evaluation for gap_filler evaluating factual grounding, epistemic depth, causality, and complementary substance.",
+    ),
     PromptKey.OLLAMA_CRITIQUE: PromptMetadata(
         key=PromptKey.OLLAMA_CRITIQUE,
         langfuse_name="cresmo-ollama-critique",

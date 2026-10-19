@@ -19,6 +19,7 @@ from cresmo.application.ports import (
 from cresmo.domain.entities import (
     AtomicNote,
     EnrichedCompendium,
+    FluidTranscript,
     MapOfContent,
     SourceTranscript,
 )
@@ -113,12 +114,14 @@ class InMemoryVaultAdapter(VaultRepositoryPort):
 
     def __init__(self) -> None:
         self.raw_transcripts: dict[str, SourceTranscript] = {}
+        self.fluid_transcripts: dict[str, FluidTranscript] = {}
         self.compendiums: dict[str, EnrichedCompendium] = {}
         self.atomic_notes: dict[str, AtomicNote] = {}
         self.index_entries: dict[str, dict[str, Any]] = {}
         self.mocs: dict[str, MapOfContent] = {}
         self.master_documents: dict[tuple[str, str, int], str] = {}
         self.channel_enriched_files: dict[str, list[Path]] = {}
+        self.channel_fluid_files: dict[str, list[Path]] = {}
         self.channel_raw_indexes: dict[str, list[RawIndexEntry]] = {}
         self.brain_csv_entries: list[RawIndexEntry] = []
 
@@ -173,6 +176,15 @@ class InMemoryVaultAdapter(VaultRepositoryPort):
 
     def get_enriched_compendium(self, content_id: ContentId) -> EnrichedCompendium | None:
         return self.compendiums.get(content_id.value)
+
+    def save_fluid_transcript(self, transcript: FluidTranscript) -> None:
+        self.fluid_transcripts[transcript.content.id.value] = transcript
+
+    def get_fluid_transcript(self, content_id: ContentId) -> FluidTranscript | None:
+        return self.fluid_transcripts.get(content_id.value)
+
+    def get_fluid_files_for_channel(self, channel_name: ChannelName) -> list[Path]:
+        return list(self.channel_fluid_files.get(channel_name.value, []))
 
     def save_atomic_note(self, note: AtomicNote) -> None:
         self.atomic_notes[note.title.value.lower()] = note

@@ -2,7 +2,7 @@
 
 **Context:** Cresmo Knowledge Synthesis  
 **Phase:** Phase 2 — Refractometry (Precision Test Specifications)  
-**Status:** PROPOSED SPECIFICATION  
+**Status:** ACCEPTED SPECIFICATION  
 **Governing ADR:** [`ADR-028`](../adr/ADR-028-decoupling-fluid-prose-and-socratic-gap-filling.md)  
 **Related Specs:** [`SPEC-001`](SPEC-001-cresmo-core.md), [`SPEC-008`](SPEC-008-metrics-port-and-prometheus-sre-dora.md), [`SPEC-010`](SPEC-010-unified-telemetry-vocabulary-and-langfuse-conventions.md)
 

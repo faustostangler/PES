@@ -2,18 +2,24 @@
 
 **Governing Architecture:** Doctor Stangler Architecture Method (Clean/Hexagonal DDD Modular Monolith, 12-Factor App, SOTA-KISS)  
 **Glossary Reference:** [`docs/GLOSSARY.md`](../GLOSSARY.md)  
-**Canon State:** All ADRs listed in this catalog are **ACCEPTED**.  
+**Foundational Canon Reference:** [`ADR-000: Patterns and Anti-Patterns Reference Catalog`](ADR-000-patterns-antipatterns.md)  
+**Canon State:** All ADRs listed in this catalog are officially **ACCEPTED**, with earlier versions marked `DEPRECATED` or `SUPERSEDED` where architectural evolutions have taken precedence.  
 
 ---
 
-## 1. Architectural Precedence Principle (*Lex Posterior Derogat Priori*)
+## 1. Architectural Precedence Invariants
 
-In this repository, architectural decisions evolve continuously through test-driven refactoring and domain refinement:
+In this repository, architectural decisions evolve continuously through test-driven refactoring and domain refinement under two immutable principles:
 
 > [!IMPORTANT]
-> **Precedence Invariant:** All ADRs are officially **ACCEPTED**. In the event of any semantic ambiguity, interface drift, or operational conflict between decisions, **more recent ADRs supersede and override older ADRs**.
-> 
-> When refactoring code or evaluating compliance, the specifications established in higher-numbered ADRs take definitive precedence over earlier formulations.
+> ### Invariant 1: ADR-000 Absolute Supreme Authority
+> [`ADR-000: Patterns and Anti-Patterns Catalog`](ADR-000-patterns-antipatterns.md) is the **Foundational Supreme Canon**. It has **absolute overarching priority over all ADRs in the repository, regardless of publication date**. All architectural patterns defined in ADR-000 are authoritative; all items marked with an asterisk (`*`) are strictly prohibited anti-patterns that must never be introduced or tolerated.
+>
+> ### Invariant 2: Lex Posterior Derogat Priori (More Recent Overrides Older)
+> For all subsequent decisions (ADR-001 through ADR-042), **more recent ADRs supersede and override older ADRs**. In the event of any semantic ambiguity, interface drift, or operational conflict:
+> - If an older ADR says to do **A** and a more recent ADR says to do **B**, **B is authoritative** and **A is deprecated / superseded**.
+> - All decisions previously designated as `PROPOSED` or `IN REVIEW` are officially **ACCEPTED** as ratified canon.
+> - Downstream implementations, specifications, and tests must strictly adhere to the higher-numbered ADR.
 
 ---
 
@@ -21,46 +27,49 @@ In this repository, architectural decisions evolve continuously through test-dri
 
 | ID | Date | Title | Bounded Context / Domain | Status | Lineage & Precedence Notes |
 | :--- | :--- | :--- | :--- | :---: | :--- |
-| [**ADR-001**](ADR-001-cresmo-modular-monolith-strangling.md) | 2026-09-10 | Strangling Cresmo into Hexagonal Modular Monolith with Media Ingestion ACL and Vault Port | Cresmo Core | `ACCEPTED` | Foundational strangling architecture. Refined by ADR-019/020. |
-| [**ADR-002**](ADR-002-cresmo-presentation-cli.md) | 2026-09-10 | Cresmo Production CLI Entrypoint and Presentation Layer Orchestration | Presentation / CLI | `DEPRECATED` | **SUPERSEDED by ADR-042**. Established Humble Object CLI entrypoint. Argparse deprecated in favor of Typer. |
+| [**ADR-000**](ADR-000-patterns-antipatterns.md) | 2026-09-10 | Architectural Patterns and Anti-Patterns Reference Catalog | Architecture Canon | `ACCEPTED` | **Supreme Precedence**. Inviolable baseline catalog of patterns and banned anti-patterns (`*`). Overrides all ADRs regardless of date. |
+| [**ADR-001**](ADR-001-cresmo-modular-monolith-strangling.md) | 2026-09-10 | Strangling Cresmo into Hexagonal Modular Monolith with Media Ingestion ACL and Vault Port | Cresmo Core | `ACCEPTED` | Foundational strangling architecture. Legacy `isb.ai` ACL decommissioned by ADR-004; `RawTranscript` superseded by `SourceTranscript` per ADR-010/031/038. |
+| [**ADR-002**](ADR-002-cresmo-presentation-cli.md) | 2026-09-10 | Cresmo Production CLI Entrypoint and Presentation Layer Orchestration | Presentation / CLI | `DEPRECATED` | **SUPERSEDED by ADR-042**. Established Humble Object CLI entrypoint. Argparse deprecated in favor of Typer + Rich. |
 | [**ADR-003**](ADR-003-pes-production-architecture.md) | 2026-09-11 | PES Production Architecture — Consolidated 13-Chapter Synthesis | Architecture Canon | `ACCEPTED` | Comprehensive 13-chapter baseline. Subsequent ADRs detail specific chapters. |
-| [**ADR-004**](ADR-004-native-media-ingestion-decommissioning.md) | 2026-09-11 | Native Media Ingestion & Legacy ISB.AI Decommissioning | Ingestion ACL | `ACCEPTED` | Decommissioned external dependencies; introduced native audio ingestion. |
+| [**ADR-004**](ADR-004-native-media-ingestion-decommissioning.md) | 2026-09-11 | Native Media Ingestion & Legacy ISB.AI Decommissioning | Ingestion ACL | `ACCEPTED` | Decommissioned external dependencies; introduced native audio ingestion (`yt-dlp` + `whisper`). |
 | [**ADR-005**](ADR-005-multi-role-12factor-container-architecture.md) | 2026-09-12 | Multi-Role 12-Factor Container Architecture & Deployment Model | Platform / DevOps | `ACCEPTED` | Single Dockerfile multi-role dispatch (`api`, `worker`, `cli`) with PID 1 `tini`. |
 | [**ADR-006**](ADR-006-resilient-workspace-root-discovery.md) | 2026-09-14 | Resilient Workspace Root Discovery via Anchor Markers | Shared Kernel / Infra | `ACCEPTED` | Deterministic root anchor markers (`pyproject.toml`, `.git`, `src/`). |
-| [**ADR-007**](ADR-007-pipeline-template-method-dry.md) | 2026-09-14 | Template Method and DRY Unification in Cognitive Synthesis Pipeline | Application / Pipeline | `ACCEPTED` | Downstream synthesis template method. **Partially overridden by ADR-021**. |
+| [**ADR-007**](ADR-007-pipeline-template-method-dry.md) | 2026-09-14 | Template Method and DRY Unification in Cognitive Synthesis Pipeline | Application / Pipeline | `SUPERSEDED` | **SUPERSEDED by ADR-021** (and subsequently refined by ADR-028, ADR-030, ADR-031, ADR-035). |
 | [**ADR-008**](ADR-008-isolation-of-test-doubles.md) | 2026-09-14 | Isolation of Test Doubles to `tests/doubles/` and Production Code Purity | Testing & Quality | `ACCEPTED` | Zero mock/fake leakage into `src/`. Production code purity invariant. |
-| [**ADR-009**](ADR-009-streaming-batch-source-discovery-producer-consumer.md) | 2026-09-17 | Streaming Batch Source Discovery via Producer-Consumer Pattern | Ingestion / Feed Sync | `ACCEPTED` | Memory-efficient streaming iterator discovery over monolithic directory scans. |
+| [**ADR-009**](ADR-009-streaming-batch-source-discovery-producer-consumer.md) | 2026-09-17 | Streaming Batch Source Discovery via Producer-Consumer Pattern | Ingestion / Feed Sync | `ACCEPTED` | Memory-efficient streaming iterator discovery over monolithic directory scans. **Section 2.5 Dual Interface superseded by ADR-010**. |
 | [**ADR-010**](ADR-010-zero-legacy-shims-and-streaming-first-unification.md) | 2026-09-17 | Zero Legacy Shims and Streaming-First Unification Principle | Architecture Canon | `ACCEPTED` | **Overrides ADR-009 shims**. Mandates complete deletion of transitional adapters. |
 | [**ADR-011**](ADR-011-zero-hardcoded-tunables-and-unified-inference-observability.md) | 2026-09-17 | Zero Hardcoded Tunables, Self-Healing Output Validation, and Unified Inference Observability | Cognitive / SRE | `ACCEPTED` | Establishes self-healing loops and parameterization via settings. |
 | [**ADR-012**](ADR-012-multi-criteria-sync-filtering-and-alphabetical-feed-ordering.md) | 2026-09-17 | Multi-Criteria Synchronization Filtering and Alphabetical Feed Ordering | Ingestion / Feed Sync | `ACCEPTED` | Deterministic alphabetical channel queue ordering and multi-criteria filters. |
 | [**ADR-013**](ADR-013-iterative-llm-as-a-judge-indexing-loops.md) | 2026-09-18 | Iterative LLM-as-a-Judge Indexing Loops for Principal Concepts and Proportionate Synthesis Paragraphs | Cognitive / Indexing | `ACCEPTED` | Two-pass distillation and iterative LLM-as-a-judge for catalog indexing. |
 | [**ADR-014**](ADR-014-active-preflight-probes-and-fail-fast-observability.md) | 2026-09-19 | Active Preflight Probes and Fail-Fast Observability Architecture | Observability / SRE | `ACCEPTED` | Sub-10ms fail-fast preflight diagnostics before any I/O execution. |
 | [**ADR-015**](ADR-015-artifact-segregation-and-exclusion-invariants.md) | 2026-09-20 | Invariant Exclusion of System Artifacts and Indices from Batch Processing Pipeline | Ingestion / Storage | `ACCEPTED` | Strict exclusion filters for metadata artifacts (`_index.json`, `_channel.md`). |
-| [**ADR-016**](ADR-016-full-opentelemetry-conventions-session-replays-and-channel-governance.md) | 2026-09-21 | Full OpenTelemetry Semantic Conventions, Unified Session Replays, and Channel FinOps Governance | Observability / FinOps | `ACCEPTED` | Standardized trace spans, session replays, and channel-level FinOps attribution. |
-| [**ADR-017**](ADR-017-langfuse-v4-prompt-management-and-anonymizer-governance.md) | 2026-09-21 | Langfuse v4 Observations-First Telemetry, Resilient Prompt Management, and Anonymizer Governance | Cognitive / Security | `ACCEPTED` | Langfuse v4 prompt registry with local JSON fallback and PII anonymization. |
+| [**ADR-016**](ADR-016-full-opentelemetry-conventions-session-replays-and-channel-governance.md) | 2026-09-21 | Full OpenTelemetry Semantic Conventions, Unified Session Replays, and Channel FinOps Governance | Observability / FinOps | `ACCEPTED` | Standardized trace spans, session replays, and channel-level FinOps attribution. **Partially superseded by ADR-027, ADR-033, ADR-035, ADR-037**. |
+| [**ADR-017**](ADR-017-langfuse-v4-prompt-management-and-anonymizer-governance.md) | 2026-09-21 | Langfuse v4 Observations-First Telemetry, Resilient Prompt Management, and Anonymizer Governance | Cognitive / Security | `ACCEPTED` | Langfuse v4 prompt registry with local JSON fallback and PII anonymization. Refined by ADR-040. |
 | [**ADR-018**](ADR-018-identity-and-access-management-bounded-context-and-sveltekit-bff.md) | 2026-09-21 | Identity and Access Management (IAM) Bounded Context and SvelteKit BFF Authentication Pattern | IAM / BFF Presentation | `ACCEPTED` | Independent IAM context and SvelteKit Backend-for-Frontend session pattern. |
-| [**ADR-019**](ADR-019-sota-kiss-nomenclature-and-channel-name-value-object.md) | 2026-09-24 | SOTA-KISS Nomenclature Alignment, Port Role Suffixes, and ChannelName Domain Value Object | DDD Tático / Canon | `ACCEPTED` | Port/Adapter role suffixes and `ChannelName` domain Value Object. |
-| [**ADR-020**](ADR-020-sota-kiss-engineering-canon-and-concurrency-topology.md) | 2026-09-24 | SOTA-KISS Architectural Canon — Concurrency Topology, Zero Primitive Obsession, Contract Integrity, and Boundary ACLs | Architecture Canon | `ACCEPTED` | Four SOTA-KISS pillars governing concurrency, contracts, VO typing, and ACLs. |
-| [**ADR-021**](ADR-021-unified-pipeline-execution-template-method-and-telemetry.md) | 2026-09-25 | Unified Pipeline Execution — SOTA-KISS Template Method, Single Root Span Telemetry, and Symmetrical Dispatchers | Application / Pipeline | `ACCEPTED` | **Overrides ADR-007**. Hoists template method to root span execution. Refined by ADR-028 & ADR-031. |
+| [**ADR-019**](ADR-019-sota-kiss-nomenclature-and-channel-name-value-object.md) | 2026-09-24 | SOTA-KISS Nomenclature Alignment, Port Role Suffixes, and ChannelName Domain Value Object | DDD Tático / Canon | `ACCEPTED` | Port/Adapter role suffixes and `ChannelName` domain Value Object. Refined by ADR-032, ADR-033, ADR-038. |
+| [**ADR-020**](ADR-020-sota-kiss-engineering-canon-and-concurrency-topology.md) | 2026-09-24 | SOTA-KISS Architectural Canon — Concurrency Topology, Zero Primitive Obsession, Contract Integrity, and Boundary ACLs | Architecture Canon | `ACCEPTED` | Four SOTA-KISS pillars governing concurrency, contracts, VO typing, and ACLs. Extended by ADR-026, ADR-033, ADR-035. |
+| [**ADR-021**](ADR-021-unified-pipeline-execution-template-method-and-telemetry.md) | 2026-09-25 | Unified Pipeline Execution — SOTA-KISS Template Method, Single Root Span Telemetry, and Symmetrical Dispatchers | Application / Pipeline | `ACCEPTED` | **Overrides ADR-007**. Hoists template method to root span execution. **Partially superseded by ADR-028, ADR-030, ADR-031, ADR-035, ADR-037**. |
 | [**ADR-022**](ADR-022-universal-system-instruction-user-prompt-segregation.md) | 2026-09-25 | Universal System Instruction and User Prompt Segregation across Knowledge Synthesis Use Cases | Cognitive / Prompts | `ACCEPTED` | Universal segregation between immutable system rules and dynamic user input. |
 | [**ADR-023**](ADR-023-prometheus-sre-golden-signals-and-dora-metrics-platform.md) | 2026-09-26 | Prometheus SRE Golden Signals and DORA Metrics Platform | Observability / SRE | `ACCEPTED` | Standardized Prometheus metrics port, Golden Signals, and DORA tracking. |
 | [**ADR-024**](ADR-024-iterative-llm-as-a-judge-atomic-inventory-discovery.md) | 2026-09-27 | Iterative LLM-as-a-Judge and Deterministic Guardrails for Atomic Inventory Discovery | Cognitive / Guardrails | `ACCEPTED` | Two-Gate Defense (Deterministic Fail-Fast + LLM Judge) for atomic inventory. |
 | [**ADR-025**](ADR-025-grafana-loki-structured-log-aggregation.md) | 2026-09-29 | Grafana Loki Structured Log Aggregation for Cresmo Pipeline | Observability / SRE | `ACCEPTED` | Completes the observability triad with JSON structured logs and trace correlation. |
-| [**ADR-026**](ADR-026-clean-code-anti-patterns-and-code-smell-governance.md) | 2026-09-29 | SOTA-KISS Code Smell & Anti-Pattern Governance — Clean Code Hygiene, Zero Magic Numbers, and Cross-Platform Reliability | Architecture Canon | `ACCEPTED` | Codifies 8 hygiene standards: PEP 8 import topography, zero magic literals/status codes, anti-swallowing & chaining, OS-agnostic paths/telemetry, bounded modularity & cyclomatic limits, zero production asserts, parameter bundling, and dead code elimination. |
-| [**ADR-027**](ADR-027-unified-telemetry-vocabulary-and-langfuse-conventions.md) | 2026-09-30 | SOTA-KISS Unified Telemetry Vocabulary & Langfuse Semantic Conventions | Observability / Telemetry | `ACCEPTED` | Establishes single-video session replay (`{channel_id}:{video_id}`), `ChannelTenantId`, and polymorphic `UserIdentity`. Refines ADR-016. |
-| [**ADR-028**](ADR-028-decoupling-fluid-prose-and-socratic-gap-filling.md) | 2026-10-01 | Decoupling Fluid Prose Detranscription and Socratic Gap Filling for Pre-Indexing Linguistic Normalization | Cognitive / Synthesis | `ACCEPTED` | Decouples orality purge from epistemic expansion; establishes `FluidTranscript` domain aggregate prior to indexing. Overrides ADR-021 execution sequence. |
+| [**ADR-026**](ADR-026-clean-code-anti-patterns-and-code-smell-governance.md) | 2026-09-29 | SOTA-KISS Code Smell & Anti-Pattern Governance — Clean Code Hygiene, Zero Magic Numbers, and Cross-Platform Reliability | Architecture Canon | `ACCEPTED` | Codifies 8 hygiene standards: PEP 8 import topography, zero magic literals/status codes, anti-swallowing & chaining, OS-agnostic paths/telemetry, bounded modularity, zero production asserts, parameter bundling, and dead code elimination. |
+| [**ADR-027**](ADR-027-unified-telemetry-vocabulary-and-langfuse-conventions.md) | 2026-09-30 | SOTA-KISS Unified Telemetry Vocabulary & Langfuse Semantic Conventions | Observability / Telemetry | `ACCEPTED` | Establishes single-video session replay (`{channel_id}:{content_id}`) and polymorphic `UserIdentity`. **Partially superseded by ADR-033, ADR-035**. |
+| [**ADR-028**](ADR-028-decoupling-fluid-prose-and-socratic-gap-filling.md) | 2026-10-01 | Decoupling Fluid Prose Detranscription and Socratic Gap Filling for Pre-Indexing Linguistic Normalization | Cognitive / Synthesis | `ACCEPTED` | Decouples orality purge from epistemic expansion; establishes `FluidTranscript` domain aggregate prior to indexing. **Overrides ADR-021 execution sequence**. |
 | [**ADR-029**](ADR-029-unified-quality-judge-port-and-evaluator-adapters.md) | 2026-10-01 | Unified LlmJudgePort, Decision-Model Evaluators, and Resilient Multi-Provider Adapters with Langfuse Telemetry | Cognitive / Evaluation | `ACCEPTED` | Unifies scattered judges under `LlmJudgePort`; introduces Gemini, Ollama, TypeSafe, and Langfuse decorator adapters. |
 | [**ADR-030**](ADR-030-stage-quality-gate-and-evaluator-retry-fabric.md) | 2026-10-01 | Stage Quality Gate & Evaluator Closed-Loop Retry Fabric | Application / Quality | `ACCEPTED` | Eliminates evaluator orchestration duplication in coordinator; introduces `PipelineStageRunner.run_evaluated_stage` retry loop. |
 | [**ADR-031**](ADR-031-standardized-stage-descriptor-and-closed-loop-refinement.md) | 2026-10-01 | Standardized StageConfig, SourceTranscript, CandidateText, and Closed-Loop Reflection Quality Fabric | Application / Pipeline | `ACCEPTED` | Universal `StageConfig` template, complete elimination of `RawTranscript` in favor of `SourceTranscript`, `CandidateText` VO, `CritiqueSynthesizerPort` reflection loop, and 4-step fail-fast quarantine. |
-| [**ADR-032**](ADR-032-composite-channel-and-content-value-objects.md) | 2026-10-02 | Composite Channel and Content Value Objects and Context Simplification | DDD Tático / Value Objects | `ACCEPTED` | Merges fragmented channel and content attributes into composite `Channel` and `Content` VOs; simplifies `PipelineExecutionContext` to 4 pillars (`session`, `user`, `channel`, `content`). |
+| [**ADR-032**](ADR-032-composite-channel-and-content-value-objects.md) | 2026-10-02 | Composite Channel and Content Value Objects and Context Simplification | DDD Tático / Value Objects | `ACCEPTED` | Merges fragmented channel and content attributes into composite `Channel` and `Content` VOs. **Refined by ADR-033, ADR-038**. |
 | [**ADR-033**](ADR-033-composite-value-objects-identity-parity-and-tenant-simplification.md) | 2026-10-02 | Composite Value Objects with Identity VOs, Parity, and Tenant Simplification | DDD Tático / Anti-Patterns | `ACCEPTED` | Bans *Primitive Obsession Obsession & Class Explosion* and *Primitive Obsession Reversa*. Establishes Intentional Asymmetric Hybrid Composition, renames `PipelineSessionId.channel_id`, removes `video_id`, and decommissions `ChannelTenantId` with zero backward compatibility. |
 | [**ADR-034**](ADR-034-algorithmic-and-cognitive-parity-standard.md) | 2026-10-03 | Algorithmic (ID-ID) and Cognitive (TXT-TXT) Parity Standard across Telemetry, Observability, and Pipeline Contexts | Observability / Telemetry | `ACCEPTED` | Establishes pairwise parity invariant between algorithmic IDs and human cognitive text across all telemetry, logging, and execution contexts. |
-| [**ADR-035**](ADR-035-atomic-work-item-traces-and-sota-kiss-batch-correlation.md) | 2026-10-03 | Atomic Work-Item Traces & SOTA-KISS Batch Correlation | Observability / Architecture Canon | `ACCEPTED` | Codifies 1 Trace = 1 Work Item invariant, designates the Mega-Trace Monolith as an anti-pattern, establishes the 4 fundamental pillars (SLO, FinOps, Evals, Quotas), and introduces SOTA-KISS `batch_id` (`YYYYMMDD_HHMMSS_[UUID6]`) metadata correlation bypassing `SpanLink`. |
+| [**ADR-035**](ADR-035-atomic-work-item-traces-and-sota-kiss-batch-correlation.md) | 2026-10-03 | Atomic Work-Item Traces & SOTA-KISS Batch Correlation | Observability / Architecture Canon | `ACCEPTED` | Codifies 1 Trace = 1 Work Item invariant, designates the Mega-Trace Monolith as an anti-pattern, establishes the 4 fundamental pillars (SLO, FinOps, Evals, Quotas), and introduces SOTA-KISS `batch_id` (`YYYYMMDD_HHMMSS_[UUID6]`) metadata correlation. **Supersedes ADR-016/021 Mega-Trace**. |
 | [**ADR-036**](ADR-036-clean-telemetry-namespacing-and-observation-binding.md) | 2026-10-07 | Clean Telemetry Namespacing & In-Context Observation ID Binding | Observability / Quality | `ACCEPTED` | Codifies stage-prefixed evaluation metrics (`{stage_name}.{criterion}`) and binds scores to active OpenTelemetry span IDs (`observation_id`). Bans `Flat Global Score Collision*` and `Unbound Trace-Level Scoring*`. |
 | [**ADR-037**](ADR-037-lean-telemetry-topography-and-chronological-evaluation.md) | 2026-10-07 | Lean Telemetry Topography, Chronological Stage Evaluation Spans, and Zero-Duplication Governance | Observability / SRE | `ACCEPTED` | Codifies 4-tier lean telemetry topography (`cresmo.synthesis_pipeline` -> `pipeline.coordinator` -> `cresmo.stage.{stage}` -> `evaluation`). Bans `Homonymous Trace Root Redundancy*`, `Payload Alias Duplication*`, `Blind Evaluation Black Hole*`, and `Unrecorded Stage I/O*`. |
-| [**ADR-038**](ADR-038-pure-value-object-triad-composition.md) | 2026-10-07 | Pure Value Object Triad Composition for Transcripts and Zero Property Sprawl | DDD Tático / Entidades | `ACCEPTED` | Refactors transcripts into a pure 3-VO triad composition (`Channel`, `MediaProvenance`, `Content`). Enforces structural ID-ID and TXT-TXT parity with zero property sprawl. |
-| [**ADR-042**](ADR-042-typer-presentation-cli.md) | 2026-10-14 | Modern Typer Presentation CLI Driving Adapter | Presentation / CLI | `ACCEPTED` | **Supercedes ADR-002**. Eliminates legacy argparse in favor of Typer + Rich with fail-fast boundary validation. |
-
+| [**ADR-038**](ADR-038-pure-value-object-triad-composition.md) | 2026-10-07 | Pure Value Object Triad Composition for Transcripts and Zero Property Sprawl | DDD Tático / Entidades | `ACCEPTED` | Refactors transcripts into a pure 3-VO triad composition (`Channel`, `MediaProvenance`, `Content`). Enforces structural ID-ID and TXT-TXT parity with zero property sprawl. Bans `Duplicate Temporal Aliasing*`. |
+| [**ADR-039**](ADR-039-fluid-prose-canonical-judge-criteria-and-mechanical-gates.md) | 2026-10-11 | Fluid Prose Canonical Judge Criteria, Two-Layered Mechanical Gates, and Progressive LLM-as-a-Judge Calibration Lifecycle | Cognitive / Evaluation | `ACCEPTED` | Codifies Layer 1 mechanical validation, Layer 2 LLM-as-a-judge, and 5-stage progressive calibration harness. |
+| [**ADR-040**](ADR-040-dynamic-cross-cutting-skill-block-composition.md) | 2026-10-13 | Dynamic Cross-Cutting Skill Block Composition in JsonPromptProvider and Cresmo Style Embedding | Cognitive / Prompts | `ACCEPTED` | Multi-skill dynamic block resolution (`skills: [...]`) in `JsonPromptProvider`, enforcing SSOT and dynamic skill injection over static JSON duplication. |
+| [**ADR-041**](ADR-041-gemini-credential-pool-and-quota-failover.md) | 2026-10-13 | Gemini Credential Pool and Quota-Aware Failover Rotation | Infrastructure / Resilience | `ACCEPTED` | Strategy A1+B2 thread-safe credential pool (`GeminiCredentialPool`) with fast quota failover, client caching, and server `retryDelay` cooldown. |
+| [**ADR-042**](ADR-042-typer-presentation-cli.md) | 2026-10-14 | Modern Typer Presentation CLI Driving Adapter | Presentation / CLI | `ACCEPTED` | **Supersedes ADR-002**. Eliminates legacy argparse in favor of Typer + Rich with fail-fast boundary validation. |
 
 ---
 
@@ -68,17 +77,27 @@ In this repository, architectural decisions evolve continuously through test-dri
 
 ```mermaid
 graph TD
+    A000["ADR-000: Patterns & Anti-Patterns Catalog<br><b>(Supreme Reference Canon)</b>"] --> Core
+    A000 --> Ingestion
+    A000 --> Cognitive
+    A000 --> SRE
+    A000 --> Platform
+
     subgraph Core ["1. Core Domain & Pipeline Execution"]
         A001["ADR-001: Modular Monolith Strangling"]
         A002["ADR-002: Presentation CLI (Deprecated)"]
         A042["ADR-042: Modern Typer CLI Adapter"]
         A003["ADR-003: PES Production Architecture"]
-        A007["ADR-007: Synthesis Template Method"]
+        A007["ADR-007: Synthesis Template Method (Superseded)"]
         A021["ADR-021: Unified Pipeline Execution"]
+        A030["ADR-030: Quality Gate Retry Fabric"]
         A031["ADR-031: StageConfig & Reflection Fabric"]
+        A038["ADR-038: Pure 3-VO Triad Composition"]
         A002 -. superseded by .-> A042
         A007 -. superseded by .-> A021
-        A021 --> A031
+        A021 -. refined by .-> A030
+        A030 --> A031
+        A031 --> A038
     end
 
     subgraph Ingestion ["2. Media Ingestion & Feed Synchronization"]
@@ -87,6 +106,7 @@ graph TD
         A010["ADR-010: Zero Legacy Shims"]
         A012["ADR-012: Multi-Criteria Sync Filtering"]
         A015["ADR-015: Artifact Exclusion Invariants"]
+        A001 -. isb.ai ACL replaced by .-> A004
         A009 -. tightened by .-> A010
         A010 --> A012 --> A015
     end
@@ -99,13 +119,15 @@ graph TD
         A024["ADR-024: Inventory Two-Gate Defense"]
         A028["ADR-028: Decouple Fluid Prose"]
         A029["ADR-029: Unified LlmJudgePort"]
-        A030["ADR-030: Quality Gate Retry Fabric"]
+        A039["ADR-039: Canonical Judge Criteria & Gates"]
+        A040["ADR-040: Dynamic Multi-Skill Composition"]
         A011 --> A013
         A013 --> A024
         A017 --> A022
+        A017 --> A040
         A022 --> A028
-        A024 --> A029 --> A030
-        A030 --> A031
+        A024 --> A029
+        A029 --> A039
     end
 
     subgraph SRE ["4. Observability, Telemetry & SRE Platform"]
@@ -114,7 +136,12 @@ graph TD
         A023["ADR-023: Prometheus SRE Golden Signals"]
         A025["ADR-025: Grafana Loki Structured Logs"]
         A027["ADR-027: Unified Telemetry & Conventions"]
+        A034["ADR-034: Algorithmic & Cognitive Parity"]
+        A035["ADR-035: Atomic Traces (Anti Mega-Trace)"]
+        A036["ADR-036: Clean Namespacing & Observation Binding"]
+        A037["ADR-037: 4-Tier Lean Telemetry Topography"]
         A014 --> A016 --> A023 --> A025 --> A027
+        A027 --> A034 --> A035 --> A036 --> A037
     end
 
     subgraph Platform ["5. SOTA-KISS Canon & Supporting Infrastructure"]
@@ -125,7 +152,12 @@ graph TD
         A019["ADR-019: Nomenclature & ChannelName VO"]
         A020["ADR-020: SOTA-KISS Architectural Canon"]
         A026["ADR-026: Code Smell & Anti-Pattern Governance"]
+        A032["ADR-032: Composite Channel & Content VOs"]
+        A033["ADR-033: Asymmetric Hybrid Composition"]
+        A041["ADR-041: Gemini Credential Pool Failover"]
         A019 --> A020 --> A026
+        A020 --> A032 --> A033
+        A005 --> A041
     end
 ```
 
@@ -133,56 +165,59 @@ graph TD
 
 ## 4. Key Precedence & Overwrite Mappings
 
-When navigating the architecture, apply these documented precedence relationships:
+When navigating the architecture, apply these authoritative precedence relationships:
 
-### 4.1 Pipeline Orchestration (ADR-021 overrides ADR-007)
-- **ADR-007** originally scoped the Template Method to downstream synthesis (`_synthesize_transcript`), which left raw transcript indexing (`index_raw`) duplicated inside individual ingestion methods and outside the telemetry session span.
-- **ADR-021** hoists the Template Method to `CresmoPipeline.execute(...)` as a single root telemetry span (`cresmo.pipeline.execution`), enforcing an early idempotency guard and unified LLM-as-a-judge nesting.
-- **Precedence Rule:** Implementations must strictly follow **ADR-021**.
+### 4.0 Supreme Architectural Canon (ADR-000 Overarching Precedence)
+- **ADR-000** defines the inviolable patterns and strictly prohibited anti-patterns (`*`).
+- **Precedence Rule:** In any architectural trade-off or PR review, prohibitions in ADR-000 take absolute precedence over later compromises or expediency shortcuts.
+
+### 4.1 Pipeline Orchestration (ADR-021 overrides ADR-007; ADR-028 & ADR-031 refine ADR-021)
+- **ADR-007** originally scoped the Template Method to downstream synthesis (`_synthesize_transcript`), leaving raw transcript indexing duplicated and outside the telemetry session span.
+- **ADR-021** hoisted the Template Method to `CresmoPipeline.execute(...)` as the single root execution span.
+- **ADR-028** decoupled fluid prose and placed it as Stage 1 *before* `raw_indexing`, ensuring clean normalized prose enters catalog indexing.
+- **ADR-031** introduced `PipelineStageRunner.run_evaluated_stage` and universal `StageConfig`, replacing monolithic coordinator dispatch.
+- **Precedence Rule:** Implementations must strictly follow **ADR-028** and **ADR-031**.
 
 ### 4.2 Legacy Elimination (ADR-010 overrides ADR-009 Backward Compatibility)
-- **ADR-009** introduced streaming batch source discovery but preserved backward compatibility shims for transitional scripts.
-- **ADR-010** established the zero-legacy-shims invariant, demanding immediate removal of transitional adapters in favor of pure streaming interfaces.
-- **Precedence Rule:** No transitional compatibility shims are permitted in the codebase.
+- **ADR-009** introduced streaming batch source discovery but preserved backward compatibility shims (`execute_stream` alongside `execute(query) -> list`).
+- **ADR-010** established the zero-legacy-shims invariant, demanding immediate removal of transitional adapters in favor of a single pure streaming interface `execute(query) -> Iterator[BatchSource]`.
+- **Precedence Rule:** No transitional compatibility shims are permitted in the codebase. Materialization is strictly the caller's responsibility via `list(stream)`.
 
-### 4.3 SOTA-KISS Canon & Zero Primitive Obsession (ADR-020 & ADR-019 refine ADR-001 & ADR-003)
-- **ADR-019** codified strict port naming suffixes (`*Port`, `*Adapter`) and replaced raw strings with the `ChannelName` domain Value Object.
-- **ADR-020** established the four universal SOTA-KISS pillars (Concurrency topology, Zero primitive obsession, Contract integrity, Boundary ACLs).
-- **Precedence Rule:** All domain interactions must encapsulate business concepts in Value Objects; raw strings/integers for domain identities are prohibited.
+### 4.3 Media Ingestion Decommissioning (ADR-004 supersedes ADR-001 ISB.AI ACL)
+- **ADR-001** wrapped legacy `playground/isb.ai` via an Anti-Corruption Layer.
+- **ADR-004** completely decommissioned `playground/isb.ai`, replacing it with `NativeMediaIngestionAdapter` wrapping `yt-dlp` and `whisper`.
+- **Precedence Rule:** The codebase must never depend on or import from legacy `playground/isb.ai`.
 
-### 4.4 Cognitive Guardrails (ADR-024 & ADR-013 formalize ADR-011)
-- **ADR-011** defined the self-healing principle without hardcoded retries.
-- **ADR-013** applied this to raw transcript indexing (`IndexRawTranscriptsUseCase`).
-- **ADR-024** formalized the **Two-Gate Defense Pattern** (Gate 1: Zero-token deterministic JSON/regex validation; Gate 2: LLM-as-a-judge at `temperature=0.0`) for holistic candidate discovery (`DiscoverAtomicInventoryUseCase`).
-- **Precedence Rule:** Cognitive use cases must implement deterministic Gate 1 pre-validation before invoking LLM judges.
+### 4.4 Presentation CLI (ADR-042 supersedes ADR-002)
+- **ADR-002** established the CLI driving adapter using standard library `argparse`.
+- **ADR-042** completely deprecated `argparse` in favor of `TyperCliDrivingAdapter` (Typer + Rich) with declarative validation, colored terminals, and type safety.
+- **Precedence Rule:** All CLI commands must be implemented via Typer under `src/cresmo/presentation/`.
 
-### 4.5 Triad of Observability (ADR-016, ADR-017, ADR-023, ADR-025, ADR-027)
-- **ADR-016** governs distributed traces, OpenTelemetry semantic conventions, and FinOps token attribution.
-- **ADR-017** governs Langfuse observations, prompt versioning with TTL caching, and local fallback.
-- **ADR-023** governs system reliability via Prometheus Golden Signals (Latency, Traffic, Errors, Saturation) and DORA delivery metrics.
-- **ADR-025** integrates Grafana Loki for structured JSON log aggregation and trace correlation.
-- **ADR-027** standardizes single-video session replay keys (`{channel_id}:{video_id}`), `ChannelTenantId` as cost center, and polymorphic `UserIdentity`.
-- **Precedence Rule:** Observability is multi-tiered: Prometheus handles operational health/SRE; OpenTelemetry, Loki, and Langfuse handle distributed traces, logs, and LLM quality/cost.
+### 4.5 SOTA-KISS Domain Modeling & Hybrid Asymmetric Composition (ADR-033 & ADR-038 supersede ADR-019 & ADR-032)
+- **ADR-019** introduced standalone single-field `ChannelName`.
+- **ADR-032** merged channel attributes into composite `Channel` and created `Video = Content` alias.
+- **ADR-033** banned *Primitive Obsession Obsession & Class Explosion* (single-field wrappers inside composite objects) and *Primitive Obsession Reversa*. Established **Composição Híbrida Assimétrica Intencional**: identity attributes retain strong VOs (`ChannelId`, `ContentId`), while contextual attributes (`name`, `category`, `url`, `title`, `publication_date`) are self-validated primitive fields inside composite VOs (`Channel`, `Content`). Removed `Video = Content` alias and decommissioned `ChannelTenantId` in favor of `Channel.tenant_key`.
+- **ADR-038** refactored transcripts into the Pure 3-VO Triad (`Channel`, `MediaProvenance`, `Content`), eliminating `upload_date` temporal aliasing and flat property sprawl.
+- **Precedence Rule:** All domain entities must employ the Pure 3-VO Triad composition with zero backward compatibility.
 
-### 4.6 Clean Code Hygiene & Code Smell Governance (ADR-026 extends ADR-020)
-- **ADR-020** codified the core architectural pillars (concurrency topology, zero primitive obsession, contract integrity).
-- **ADR-026** extends this canon to tactical implementation hygiene: bans interleaved imports, magic timeouts, silent error swallowing, hardcoded OS-specific memory multipliers, and monolithic god files (>500 lines).
-- **Precedence Rule:** All new and refactored modules must strictly comply with the hygiene standards codified in ADR-026.
+### 4.6 Telemetry Invariants & Topography (ADR-035 & ADR-037 supersede ADR-016 & ADR-021 Mega-Trace)
+- **ADR-016** and **ADR-021** wrapped multi-item batch executions under a single root trace named `cresmo.pipeline.execution`.
+- **ADR-035** formally banned the **Mega-Trace Monolith** as an anti-pattern, codifying **1 Trace = 1 Work Item** with lightweight `batch_id` metadata correlation.
+- **ADR-036** codified stage-prefixed metric namespacing (`{stage_name}.{criterion}`) and bound evaluation scores to active span `observation_id`.
+- **ADR-037** codified the 4-tier lean telemetry topography, decoupling Trace (`cresmo.synthesis_pipeline`) from Root Span (`pipeline.coordinator`) and banning `Homonymous Trace Root Redundancy*`.
+- **Precedence Rule:** Every processed item represents an independent trace. Traces must strictly conform to the 4-tier topography in ADR-037.
 
-### 4.7 Pre-Indexing Linguistic Normalization (ADR-028 refines ADR-021)
-- **ADR-021** placed catalog indexing (`raw_indexing`) before downstream synthesis, operating directly on spoken verbatim text.
-- **ADR-028** decouples `fluid_prose` detranscription from epistemic gap filling and positions it before indexing as Stage 1, producing the `FluidTranscript` domain aggregate and ensuring clean, normalized prose enters catalog distillation.
-- **Precedence Rule:** Pipeline execution must execute `transform_fluid_prose` as Stage 1 prior to catalog indexing.
+### 4.7 Dynamic Multi-Skill Resolution (ADR-040 extends ADR-017 & ADR-028)
+- **ADR-017** established prompt template management via `prompts.json` and scalar `skill_name`.
+- **ADR-040** enhanced `JsonPromptProvider` to support dynamic multi-skill block resolution (`skills: [...]`), allowing seamless composition of cross-cutting style guides (`cresmo-style-guide`) with stage-specific skills (`cresmo-fluid-prose`), eliminating prompt copy-paste drift.
+- **Precedence Rule:** Prompts requiring authorial style must dynamically inject skills via `skills: [...]`.
 
-### 4.8 Unified Quality Evaluation & Stage Descriptor Fabric (ADR-029, ADR-030, ADR-031 extend ADR-020, ADR-021, ADR-024)
-- **ADR-029** consolidates all scattered judge logic under the isolated `LlmJudgePort` with multi-provider adapters (`GeminiJudgeAdapter`, `OllamaJudgeAdapter`, `TypeSafeJudgeAdapter`, `LangfuseJudgeDecorator`).
-- **ADR-030** eliminates repetitive judge orchestration by introducing `PipelineStageRunner.run_evaluated_stage` with configurable retry thresholds.
-- **ADR-031** establishes the universal `StageConfig` architecture, completes the total elimination of `RawTranscript` in favor of `SourceTranscript`, introduces `CandidateText`, integrates `CritiqueSynthesizerPort` for closed-loop reflection, and enforces the 4-step fail-fast quarantine protocol (`StageQuarantinedError`).
-### 4.9 Intentional Asymmetric Value Object Composition (ADR-033 refines ADR-019, ADR-027, ADR-032)
-- **ADR-033** outlaws both *Primitive Obsession Obsession & Class Explosion* (single-field wrapper VOs around every primitive attribute) and *Primitive Obsession Reversa* (flattening strong identity VOs into raw strings).
-- Establishes **Composite Value Objects with Identity VOs (Composição Híbrida Assimétrica Intencional)**: identity attributes retain strong VOs (`ChannelId`, `ContentId`), while contextual attributes (`name`, `category`, `url`, `title`, `publication_date`) are self-validated primitive fields inside composite VOs (`Channel`, `Content`).
-- Renames `PipelineSessionId.channel_token` to `channel_id`, removes `video_id`, and completely decommissions `ChannelTenantId` in favor of `Channel.tenant_key`.
-- **Precedence Rule:** All new domain models must employ intentional asymmetric composition with zero backward compatibility.
+### 4.8 Credential Failover Rotation (ADR-041 extends ADR-005, ADR-011, ADR-014, ADR-029)
+- **ADR-041** implemented thread-safe, quota-aware failover via `GeminiCredentialPool` handling HTTP 429 (`RESOURCE_EXHAUSTED`) with server `retryDelay` cooldown, preventing pipeline hangs on Free Tier quota exhaustion.
+### 4.9 Fluid Transcript Vault Persistence and Checkpointing (ADR-043 extends ADR-015 & ADR-028)
+- **ADR-028** decoupled `fluid_prose` detranscription from Socratic gap filling, creating the `FluidTranscript` aggregate in-memory.
+- **ADR-043** extended `VaultRepositoryPort` and `ObsidianVaultAdapter` to persist and retrieve `FluidTranscript` aggregates in `data/fluid/{channel_name}/{video_id}.md` with YAML frontmatter. Implemented idempotent pipeline checkpointing, enabling crash recovery and complete data provenance lineage (`data/raw` $\to$ `data/fluid` $\to$ `data/enriched`).
+- **Precedence Rule:** Stage 1 `fluid_prose` outputs must be atomically persisted to `data/fluid/`. Pipelines must check for existing checkpoints before triggering redundant LLM inference.
 
 ---
 
@@ -192,3 +227,4 @@ When navigating the architecture, apply these documented precedence relationship
 2. **Ubiquitous Language Synchronization:** All technical terms and domain aggregates declared in an ADR must be indexed in [`docs/GLOSSARY.md`](../GLOSSARY.md).
 3. **Hermetic Test Double Policy:** In accordance with [ADR-008](ADR-008-isolation-of-test-doubles.md), test fakes, stubs, and doubles reside exclusively in `tests/doubles/` and are never packaged into production modules.
 4. **Modifying Existing Decisions:** When an architectural direction shifts, create a new ADR detailing the motivation and explicitly note the preceding ADR being superseded or refined.
+

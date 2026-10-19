@@ -50,6 +50,7 @@ from cresmo.application.ports import (
 )
 from cresmo.application.use_cases import IngestRawTranscriptUseCase
 from cresmo.domain.entities import (
+    FluidTranscript,
     PipelineSessionId,
     SourceTranscript,
     UserIdentity,
@@ -69,13 +70,13 @@ def _extract_source_text(raw: Any) -> str:
     content = getattr(raw, "content", None)
     if content is not None:
         body = getattr(content, "body", None)
-        if body:
+        if isinstance(body, str) and body:
             return body
     body = getattr(raw, "body", None)
-    if body:
+    if isinstance(body, str) and body:
         return body
     text = getattr(raw, "text", None)
-    if text:
+    if isinstance(text, str) and text:
         return text
     return ""
 
@@ -84,12 +85,12 @@ def _extract_fluid_text(fluid: Any) -> str:
     """Extract synthesized fluid prose text from FluidTranscript, EnrichedCompendium, or duck-typed candidate."""
     comp_body = getattr(fluid, "body", None)
     comp_info = getattr(fluid, "complementary_info", None)
-    if comp_body and comp_info:
+    if isinstance(comp_body, str) and isinstance(comp_info, str) and comp_body and comp_info:
         return f"{comp_body}\n\n## Informações Complementares\n\n{comp_info}"
-    if comp_body:
+    if isinstance(comp_body, str) and comp_body:
         return comp_body
     text = getattr(fluid, "text", None)
-    if text:
+    if isinstance(text, str) and text:
         return text
     return ""
 
@@ -267,19 +268,34 @@ class CresmoPipeline:
             # ESTEIRA DE ESTÁGIOS CRESMO (CONVEYOR PIPELINE)
             # =========================================================================
 
-            # Estágio 1: Fluid Prose
-            fluid = self.stage_runner.execute_stage(
-                "fluid_prose",
-                source=raw,
-                context=execution_context,
-            )
+            # Estágio 1: Fluid Prose (Checkpoint-aware per ADR-043 / SPEC-043)
+            fluid = None
+            if not force_reprocess:
+                cached = self.vault_port.get_fluid_transcript(content.id)
+                if isinstance(cached, FluidTranscript):
+                    fluid = cached
+                    logger.info(
+                        "Reusing cached fluid transcript for content_id '%s'",
+                        content.id.value,
+                    )
 
-            # Estágio 2: Gap Filler
-            gaps = self.stage_runner.execute_stage(
-                "gap_filler",
-                source=fluid,
-                context=execution_context,
-            )
+            if fluid is None:
+                fluid = self.stage_runner.execute_stage(
+                    "fluid_prose",
+                    source=raw,
+                    context=execution_context,
+                )
+                if isinstance(fluid, FluidTranscript):
+                    self.vault_port.save_fluid_transcript(fluid)
+
+            # temp debug by senior architect. keep commented.
+            # # Estágio 2: Gap Filler
+            # gaps = self.stage_runner.execute_stage(
+            #     "gap_filler",
+            #     source=fluid,
+            #     context=execution_context,
+            # )
+            gaps: Any = fluid
 
             # Estágio 3: Long Expander
             # long_exp = self.stage_runner.execute_stage("long_expander", source=gaps, context=execution_context)

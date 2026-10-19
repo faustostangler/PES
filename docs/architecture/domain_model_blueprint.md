@@ -2,178 +2,170 @@
 
 **Context**: Cresmo Knowledge Synthesis  
 **Phase**: Phase 1 — Stereoscopy  
-**Status**: APPROVED SPECIFICATION  
-**Governing ADRs**: [`ADR-001`](../adr/ADR-001-cresmo-modular-monolith-strangling.md), [`ADR-019`](../adr/ADR-019-sota-kiss-nomenclature-and-channel-name-value-object.md), [`ADR-028`](../adr/ADR-028-decoupling-fluid-prose-and-socratic-gap-filling.md), [`ADR-031`](../adr/ADR-031-standardized-stage-descriptor-and-closed-loop-refinement.md)  
+**Status**: APPROVED SPECIFICATION (SYNCHRONIZED WITH ADR-033 & ADR-038)  
+**Governing ADRs**: [`ADR-000`](../adr/ADR-000-patterns-antipatterns.md), [`ADR-001`](../adr/ADR-001-cresmo-modular-monolith-strangling.md), [`ADR-019`](../adr/ADR-019-sota-kiss-nomenclature-and-channel-name-value-object.md), [`ADR-028`](../adr/ADR-028-decoupling-fluid-prose-and-socratic-gap-filling.md), [`ADR-031`](../adr/ADR-031-standardized-stage-descriptor-and-closed-loop-refinement.md), [`ADR-032`](../adr/ADR-032-composite-channel-and-content-value-objects.md), [`ADR-033`](../adr/ADR-033-composite-value-objects-identity-parity-and-tenant-simplification.md), [`ADR-038`](../adr/ADR-038-pure-value-object-triad-composition.md)  
 
 ---
 
-## 1. Value Objects (Zero Primitive Obsession)
+## 1. Value Objects (Zero Primitive Obsession & Intentional Asymmetric Hybrid Composition)
 
-All business concepts must be modeled as immutable Value Objects enforcing domain invariants at instantiation.
+All business concepts must be modeled as immutable Value Objects enforcing domain invariants at instantiation. Per [`ADR-033`](../adr/ADR-033-composite-value-objects-identity-parity-and-tenant-simplification.md), we reject both *Primitive Obsession* (raw strings for domain identifiers) and *Primitive Obsession Obsession* (dummy single-field wrappers for every string), establishing **Intentional Asymmetric Hybrid Composition**.
 
-### 1.1 `ContentId`
-- **Definition**: Unique identifier for media content (YouTube video ID or hash).
+### 1.1 Identity Value Objects
+
+#### `ContentId`
+- **Definition**: Strongly-typed platform identifier for media content (YouTube video ID or sha256 hash).
 - **Invariants**:
   - Must not be empty or whitespace-only.
-  - Must match regex `^[a-zA-Z0-9_-]{8,64}$`.
-- **Implementation Rules**:
-  - Implemented via `@dataclass(frozen=True)` or Pydantic V2 `BaseModel(frozen=True)`.
-  - Construction rejects invalid strings immediately (`raise DomainValidationError`).
+  - Rejects path traversal and command injection tokens.
+  - Matches regex `^[a-zA-Z0-9_-]{8,64}$`.
 
-### 1.2 `NoteTitle`
-- **Definition**: Canonical title of an Atomic Note.
-- **Invariants**:
-  - Length between 1 and 200 characters.
-  - Automatically sanitized of `[[`, `]]`, newline characters, and filesystem illegal characters (`/ \ : * ? " < > | %`).
-  - Cannot be generic placeholder (`"Untitled"`, `"Untitled_Note"`).
-
-### 1.3 `NoteType`
-- **Definition**: Categorical typology of an Atomic Note.
-- **Invariants**:
-  - Must strictly be one of: `NoteType.CONCEPT`, `NoteType.ENTITY`, `NoteType.EVENT`, `NoteType.PROCESS`.
-  - Case-insensitive string normalization at construction.
-
-### 1.4 `CausalMatrix`
-- **Definition**: Ternary attribution model of causality.
-- **Attributes**:
-  - `cause: str` (Underlying premise/cause).
-  - `effect: str` (Observable impact/outcome).
-  - `epistemic_attribution: str` (Authoritative source or philosophical lineage).
-- **Invariants**:
-  - All attributes trimmed.
-  - At least `cause` and `effect` must contain non-empty content when present.
-
-### 1.5 `CrossContextRelations`
-- **Definition**: Triad connecting a concept across historical, lateral, and consequential axes.
-- **Attributes**:
-  - `precursors: str` (Historical precursors).
-  - `lateral_events: str` (Synchronous occurrences).
-  - `aftermath: str` (Long-term consequences).
-
-### 1.6 `ChannelName` (ADR-019)
-- **Definition**: Strongly-typed identifier representing a content creator or media channel.
+#### `ChannelId`
+- **Definition**: Strongly-typed canonical platform creator identifier (e.g. YouTube `UC...`).
 - **Invariants**:
   - Must not be empty or whitespace.
-  - Length capped between 1 and 120 characters.
-  - Rejects directory traversal tokens (`..`, `/`, `\`).
-  - Case-preserving with transparent equality and hash support.
+  - Rejects invalid characters and path traversal.
 
-### 1.7 `ChannelId` (SPEC-003)
-- **Definition**: Canonical platform channel identifier (e.g. YouTube `UC...`).
+### 1.2 Composite Value Objects (ADR-032, ADR-033, ADR-038)
+
+#### `Channel` (Composite Value Object)
+- **Definition**: Encapsulates creator provenance, platform identities, and tenant cost center.
+- **Attributes**:
+  - `id: ChannelId | None` (Algorithmic Platform Key).
+  - `name: str` (Cognitive Key — self-validating non-empty string, max 120 chars, prohibits traversal).
+  - `category: str = ""` (Taxonomy category).
+  - `url: str | None = None` (Explicit source URL).
+- **Properties & Intrinsic Capabilities**:
+  - `tenant_key -> str`: Intrinsic tenant cost-center representation (`"channel:{id or name}"`), replacing decommissioned `ChannelTenantId`.
+  - `canonical_url -> str`: Automatically derives normalized channel URL.
+
+#### `MediaProvenance` (Composite Value Object — ADR-038)
+- **Definition**: Encapsulates external acquisition metadata and temporal grounding.
+- **Attributes**:
+  - `url: str = ""` (Source canonical media or file URL).
+  - `description: str = ""` (Original media summary/description).
+  - `publication_date: datetime.date | None = None` (Canonical publication timestamp).
 - **Invariants**:
-  - Non-empty, alphanumeric string with underscores/hyphens.
+  - Eliminates legacy `upload_date` alias per ADR-038 (`Duplicate Temporal Aliasing*` banned).
 
-### 1.8 `CandidateText` (ADR-031)
-- **Definition**: Validated, strongly-typed domain container for intermediate LLM transformation outputs.
+#### `Content` (Composite Value Object — ADR-032, ADR-038)
+- **Definition**: Encapsulates text payload, title, and algorithmic ID.
+- **Attributes**:
+  - `id: ContentId` (Algorithmic Key).
+  - `title: str = ""` (Cognitive Key — sanitized title).
+  - `body: str` (Canonical text payload for raw audio or synthesized prose).
+- **Invariants**:
+  - `body` cannot be empty or whitespace-only.
+  - Replaces legacy type alias `Video` (eliminated per ADR-033).
+
+### 1.3 Cognitive & Intermediate Value Objects
+
+#### `CandidateText` (ADR-031)
+- **Definition**: Validated domain container for intermediate LLM transformation outputs during pipeline stages.
 - **Attributes**:
   - `text: str` (Transformed text payload).
   - `stage_name: str` (Identifier of producing pipeline stage).
-  - `metadata: dict[str, Any]` (Provenance and telemetry attributes).
+  - `metadata: dict[str, Any]` (Stage metrics and telemetry attributes).
 - **Invariants**:
   - `text` cannot be empty or whitespace-only (`raise DomainValidationError`).
 
-### 1.9 `PipelineSessionId` (ADR-016, ADR-027)
-- **Definition**: Value Object representing the holistic single-video lifecycle session for Langfuse session replay.
-- **Format**: `{channel_id}:{video_id}` (or legacy `content:{channel}:{content_id}`).
+#### `NoteTitle`
+- **Definition**: Canonical title of an Atomic Note.
 - **Invariants**:
-  - Cannot be empty. Components must be valid non-empty tokens.
+  - Length between 1 and 200 characters.
+  - Automatically sanitized of `[[`, `]]`, newlines, and illegal filesystem characters (`/ \ : * ? " < > | %`).
+  - Cannot be generic placeholder (`"Untitled"`).
 
-### 1.10 `ChannelTenantId` & `UserIdentity` (ADR-027)
-- **`ChannelTenantId`**: Formatted as `channel:{channel_name_or_id}`, representing the cost center / tenant.
-- **`UserIdentity`**: Polymorphic operator identity:
-  - Anonymous: `anonymous` or `anon:{token}`
-  - Identified: `user:{provider}:{subject}`
-  - Scheduled Worker: `system:{worker_name}`
+#### `NoteType`
+- **Definition**: Categorical typology of an Atomic Note (`CONCEPT`, `ENTITY`, `EVENT`, `PROCESS`).
+
+#### `CausalMatrix` & `CrossContextRelations`
+- **Definition**: Ternary attribution models representing causes, effects, precursors, lateral events, and aftermath.
+
+### 1.4 Telemetry Identity Value Objects
+
+#### `PipelineSessionId` (ADR-027, ADR-033, ADR-035)
+- **Definition**: Value Object representing the single-video holistic lifecycle session for Langfuse session replay.
+- **Format**: `{channel_id}:{content_id}` (or fallback `{channel_name}:{content_id}`).
+- **Invariants**:
+  - Bound to exactly 1 processed work item per ADR-035.
+  - Eradicates `.video_id` property per ADR-033.
+
+#### `UserIdentity` (ADR-027)
+- **Definition**: Polymorphic operator identity (`anonymous`, `user:{provider}:{subject}`, `system:{worker}`).
+- **Invariant**: Channels and tenants are strictly segregated from user identities.
+
+#### `ChannelTenantId` *(DECOMMISSIONED per ADR-033)*
+- **Status**: Completely eliminated in favor of `Channel.tenant_key`.
 
 ---
 
-## 2. Aggregates & Entities (Always Valid at Construction)
+## 2. Aggregates & Entities: Pure 3-Value-Object Triad Composition (ADR-038)
 
-Entities enforce business invariants during `__init__` / `model_validator(mode="after")`. There is no "build now, validate later" state.
+Per [`ADR-038`](../adr/ADR-038-pure-value-object-triad-composition.md), all transcript aggregates are structured as a pure composition of three cohesive, immutable Value Objects, eliminating `Flat Transcript Property Sprawl*`:
 
-### 2.1 `SourceTranscript` Aggregate (ADR-031)
-- **Root Entity**: `SourceTranscript` (Standardized replacement for deprecated `RawTranscript` per ADR-010 and ADR-031)
-- **Attributes**:
-  - `content_id: ContentId`
-  - `channel_name: ChannelName` (Enforced Value Object per ADR-019)
-  - `body: str` (Verbatim spoken text or canonical source prose)
-  - `title: str = ""`
-  - `source_url: str = ""`
-  - `publication_date: datetime.date | None = None`
-  - `upload_date: datetime.date | None = None` (Backward-compatible alias for publication_date)
-  - `channel_id: ChannelId | None = None`
-  - `channel_category: str = ""`
-  - `video_description: str = ""`
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│                      TRANSCRIPT AGGREGATE ROOT                         │
+├────────────────────────────────────────────────────────────────────────┤
+│ 1. channel: Channel                      (Origin, Creator, Tenant)     │
+│ 2. provenance: MediaProvenance           (Acquisition, Date, Metadata) │
+│ 3. content: Content                      (ID, Title, Text Body)        │
+└────────────────────────────────────────────────────────────────────────┘
+```
+
+### 2.1 `SourceTranscript` Aggregate (ADR-010, ADR-031, ADR-038)
+- **Root Entity**: `SourceTranscript` (Canonical input entity; replacing deprecated `RawTranscript`).
+- **Composition**:
+  - `channel: Channel`
+  - `provenance: MediaProvenance`
+  - `content: Content` (holds verbatim spoken text or source markdown)
+  - `metadata: dict[str, Any]` (extensible non-domain telemetry metadata)
+- **Invariants**:
+  - `content.body` must not be empty or whitespace (audio silence rejected).
+  - `content.id` and `channel.name` must be valid at construction.
+  - Algorithmic parity (`channel.id` + `content.id`) and Cognitive parity (`channel.name` + `content.title`) enforced structurally.
+
+### 2.2 `FluidTranscript` Aggregate (ADR-028, ADR-038)
+- **Root Entity**: `FluidTranscript` (Stage 1 linguistic normalization output).
+- **Composition**:
+  - `channel: Channel`
+  - `provenance: MediaProvenance`
+  - `content: Content` (holds third-person neutral prose free of speech noise and oralities)
   - `metadata: dict[str, Any]`
 - **Invariants**:
-  - `channel_name` must be a valid, non-empty `ChannelName`.
-  - `body` must not be empty or whitespace (audio silence rejected).
-  - `content_id` must be valid.
-  - Coerces raw string inputs to `ChannelName` and `ChannelId` automatically.
-
-### 2.2 `FluidTranscript` Aggregate (ADR-028)
-- **Root Entity**: `FluidTranscript` (Stage 1 linguistic normalization output)
-- **Attributes**:
-  - `content_id: ContentId`
-  - `channel_name: ChannelName`
-  - `body: str` (Continuous third-person neutral narrative prose free of oralities and speech noise)
-  - `title: str = ""`
-  - `source_url: str = ""`
-  - `publication_date: datetime.date | None = None`
-  - `upload_date: datetime.date | None = None`
-  - `channel_id: ChannelId | None = None`
-  - `channel_category: str = ""`
-  - `video_description: str = ""`
-- **Invariants**:
-  - `channel_name` cannot be empty or whitespace.
-  - `body` cannot be empty or whitespace.
-  - `body` must be continuous narrative prose; markdown tables are strictly forbidden (cresmo-style-guide).
-- **Post-Processor**:
-  - `post_process_fluid_transcript(candidate: CandidateText | str, source: SourceTranscript) -> FluidTranscript`: Strips H1 headers, strips accidental complementary sections, and propagates provenance metadata.
+  - `content.body` must be continuous narrative prose; markdown tables and bulleted lists are forbidden in the core narrative.
+  - Preserves exact identity parity with originating `SourceTranscript`.
 
 ### 2.3 `EnrichedCompendium` Aggregate
-- **Root Entity**: `EnrichedCompendium`
+- **Root Entity**: `EnrichedCompendium` (Historical and scientific gap-filling output).
 - **Attributes**:
   - `content_id: ContentId`
-  - `channel_name: ChannelName`
+  - `channel: Channel`
   - `title: NoteTitle`
   - `body: str` (Continuous fluid prose)
   - `complementary_info: str` (Historical & scientific data)
-  - `pass_count: int`
-- **Invariants**:
-  - `body` must not contain markdown tables or bulleted lists in the main text.
-  - `complementary_info` must not be empty.
-  - `pass_count >= 1`.
+  - `pass_count: int >= 1`
 
 ### 2.4 `AtomicNote` Aggregate
-- **Root Entity**: `AtomicNote`
+- **Root Entity**: `AtomicNote` (Atomic Second Brain note).
 - **Attributes**:
   - `title: NoteTitle`
   - `note_type: NoteType`
   - `content_tags: tuple[str, ...]`
-  - `domain: str`
-  - `cluster: str`
-  - `source: str`
-  - `aliases: tuple[str, ...]`
-  - `definition: str`
-  - `direct_relations: tuple[NoteTitle, ...]`
+  - `domain: str`, `cluster: str`, `source: str`
+  - `definition: str` (minimum 20 chars)
+  - `direct_relations: tuple[NoteTitle, ...]` (no self-referential cycles)
   - `causal_matrix: CausalMatrix | None`
   - `cross_context: CrossContextRelations | None`
-- **Invariants**:
-  - `definition` must be non-empty (minimum 20 characters).
-  - `title` cannot be present in its own `direct_relations` (no self-referential cycles).
-  - All `direct_relations` must be valid `NoteTitle` instances.
 
 ### 2.5 `MapOfContent` (MOC) Aggregate
-- **Root Entity**: `MapOfContent`
+- **Root Entity**: `MapOfContent` (High-level conceptual index note).
 - **Attributes**:
   - `title: NoteTitle`
   - `theme: str`
   - `overview: str`
-  - `associated_notes: tuple[NoteTitle, ...]`
-- **Invariants**:
-  - `associated_notes` must contain at least 1 note.
-  - No duplicate note titles within the MOC.
+  - `associated_notes: tuple[NoteTitle, ...]` (minimum 1 note, zero duplicates)
 
 ---
 

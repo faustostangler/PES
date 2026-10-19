@@ -1,6 +1,6 @@
 # SPEC-042: Modern Typer Presentation CLI Specifications
 
-**Status:** PROPOSED  
+**Status:** ACCEPTED (SUPERSEDES SPEC-002)  
 **Date:** 2026-10-13  
 **Originating ADR:** [`docs/adr/ADR-042-typer-presentation-cli.md`](../adr/ADR-042-typer-presentation-cli.md)  
 **Governing Method:** Doctor Stangler Architecture Method (TDD Red-Green-Refactor, Hexagonal/Clean Architecture, Fail-Fast)  

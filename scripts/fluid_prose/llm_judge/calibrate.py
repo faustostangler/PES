@@ -40,7 +40,9 @@ from cresmo.presentation.factories.judge_factory import build_llm_judge_adapter
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger("calibrate_judge")
 
-DEFAULT_GOLDEN_SET_PATH = REPO_ROOT / "data" / "golden_sets" / "fluid_prose_golden_set.json"
+DEFAULT_GOLDEN_SET_PATH = (
+    REPO_ROOT / "scripts" / "fluid_prose" / "golden_sets" / "fluid_prose_golden_set.json"
+)
 
 # Canonical seed dataset items for quick dry-run
 SEED_CALIBRATION_DATA: list[dict[str, Any]] = [

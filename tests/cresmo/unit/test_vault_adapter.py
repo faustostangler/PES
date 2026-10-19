@@ -18,6 +18,7 @@ import pytest
 from cresmo.domain.entities import (
     AtomicNote,
     EnrichedCompendium,
+    FluidTranscript,
     MapOfContent,
     SourceTranscript,
 )
@@ -1616,3 +1617,92 @@ Only body here, no complementary section.
 
         with pytest.raises(CompendiumStructureError):
             adapter.get_enriched_compendium(ContentId("no_comp_789"))
+
+    def test_save_and_get_fluid_transcript(
+        self, storage_paths: tuple[Path, Path, Path], tmp_path: Path
+    ) -> None:
+        """Verify save_fluid_transcript and get_fluid_transcript roundtrip per ADR-043 and SPEC-043."""
+        vault_dir, raw_dir, enriched_dir = storage_paths
+        fluid_dir = tmp_path / "data" / "fluid"
+        adapter = ObsidianVaultAdapter(
+            vault_dir=vault_dir,
+            raw_dir=raw_dir,
+            enriched_dir=enriched_dir,
+            fluid_dir=fluid_dir,
+        )
+        cid = ContentId("fluid_test_abc123")
+        fluid = FluidTranscript(
+            channel=Channel(name="Ciência e Tecnologia", id=ChannelId("UC_TECH")),
+            provenance=MediaProvenance.create(
+                url="https://youtube.com/watch?v=fluid_test_abc123",
+                publication_date=date(2026, 6, 15),
+                description="Descrição detalhada sobre arquitetura de sistemas.",
+            ),
+            content=Content.create(
+                id=cid,
+                title="A Engenharia de Software Moderna",
+                body="## A Natureza da Concorrência em Sistemas de Baixa Latência\n\nTexto narrativo em terceira pessoa desprovido de qualquer vício oral.",
+            ),
+        )
+
+        adapter.save_fluid_transcript(fluid)
+
+        # Invariant 1: File must be created on disk in channel subfolder
+        expected_file = fluid_dir / "Ciência e Tecnologia" / "fluid_test_abc123.md"
+        assert expected_file.exists()
+        file_text = expected_file.read_text(encoding="utf-8")
+        assert "video_id: fluid_test_abc123" in file_text
+        assert 'channel_name: "Ciência e Tecnologia"' in file_text
+        assert "## A Natureza da Concorrência" in file_text
+
+        # Invariant 2: Retrieval roundtrip fidelity
+        retrieved = adapter.get_fluid_transcript(cid)
+        assert retrieved is not None
+        assert retrieved.content.id == cid
+        assert retrieved.channel.name == "Ciência e Tecnologia"
+        assert retrieved.content.title == "A Engenharia de Software Moderna"
+        assert retrieved.content.body == fluid.content.body
+        assert retrieved.provenance.url == "https://youtube.com/watch?v=fluid_test_abc123"
+        assert retrieved.provenance.publication_date == date(2026, 6, 15)
+
+    def test_get_fluid_transcript_missing_returns_none(
+        self, storage_paths: tuple[Path, Path, Path], tmp_path: Path
+    ) -> None:
+        """Verify get_fluid_transcript returns None when content ID is not present."""
+        vault_dir, raw_dir, enriched_dir = storage_paths
+        fluid_dir = tmp_path / "data" / "fluid"
+        adapter = ObsidianVaultAdapter(
+            vault_dir=vault_dir,
+            raw_dir=raw_dir,
+            enriched_dir=enriched_dir,
+            fluid_dir=fluid_dir,
+        )
+        assert adapter.get_fluid_transcript(ContentId("absent_id_999")) is None
+
+    def test_get_fluid_files_for_channel(
+        self, storage_paths: tuple[Path, Path, Path], tmp_path: Path
+    ) -> None:
+        """Verify get_fluid_files_for_channel lists all fluid markdown files."""
+        vault_dir, raw_dir, enriched_dir = storage_paths
+        fluid_dir = tmp_path / "data" / "fluid"
+        adapter = ObsidianVaultAdapter(
+            vault_dir=vault_dir,
+            raw_dir=raw_dir,
+            enriched_dir=enriched_dir,
+            fluid_dir=fluid_dir,
+        )
+        ch_name = ChannelName("Filosofia Política")
+        for i in (1, 2):
+            fluid = FluidTranscript(
+                channel=Channel(name=ch_name),
+                provenance=MediaProvenance.create(url=f"https://yt.com/{i}"),
+                content=Content.create(
+                    id=ContentId(f"phil_{i}"), title=f"Title {i}", body=f"## Body {i}"
+                ),
+            )
+            adapter.save_fluid_transcript(fluid)
+
+        files = adapter.get_fluid_files_for_channel(ch_name)
+        assert len(files) == 2
+        file_stems = {f.stem for f in files}
+        assert file_stems == {"phil_1", "phil_2"}

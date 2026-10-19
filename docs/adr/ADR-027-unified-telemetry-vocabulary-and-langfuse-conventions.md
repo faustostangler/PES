@@ -2,11 +2,17 @@
 
 | Field       | Value                                                              |
 |-------------|--------------------------------------------------------------------|
-| **Status**  | PROPOSED                                                           |
+| **Status**  | ACCEPTED (PARTIALLY SUPERSEDED by [`ADR-033`](ADR-033-composite-value-objects-identity-parity-and-tenant-simplification.md), [`ADR-035`](ADR-035-atomic-work-item-traces-and-sota-kiss-batch-correlation.md), and [`ADR-037`](ADR-037-lean-telemetry-topography-and-chronological-evaluation.md)) |
 | **Date**    | 2026-09-30                                                         |
 | **Authors** | Lead Architect (Fausto Stangler), Systems Architect (Doctor Stangler Committee) |
 | **Scope**   | Cross-Cutting Telemetry & Observability — Domain, Application, Infrastructure, Presentation |
-| **Relates** | ADR-011, ADR-014, ADR-016, ADR-018, ADR-021, ADR-023, ADR-025, ADR-026 |
+| **Relates** | ADR-011, ADR-014, ADR-016, ADR-018, ADR-021, ADR-023, ADR-025, ADR-026, ADR-033, ADR-035, ADR-037 |
+
+> [!WARNING]
+> **PARTIALLY SUPERSEDED CONVENTIONS:**  
+> 1. **`ChannelTenantId` Decommissioning**: Standalone `ChannelTenantId` was **DEPRECATED & DECOMMISSIONED by [`ADR-033`](ADR-033-composite-value-objects-identity-parity-and-tenant-simplification.md)** in favor of `Channel.tenant_key`.
+> 2. **Session Replay & Identifier Parity**: The session replay format was finalized from `{channel_id}:{video_id}` to `{channel_id}:{content_id}` per [`ADR-033`](ADR-033-composite-value-objects-identity-parity-and-tenant-simplification.md) and [`ADR-035`](ADR-035-atomic-work-item-traces-and-sota-kiss-batch-correlation.md), completely removing `.video_id`.
+> 3. **Batch Trace Correlation**: Batch correlation is strictly managed via root span `batch_id` metadata under `1 Trace = 1 Work Item` per [`ADR-035`](ADR-035-atomic-work-item-traces-and-sota-kiss-batch-correlation.md).
 
 ---
 

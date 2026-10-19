@@ -1,11 +1,19 @@
 # ADR-032: Composite Channel and Content Value Objects and Context Simplification
 
-**Status:** ACCEPTED  
+**Status:** ACCEPTED (REFINED / PARTIALLY SUPERSEDED by [`ADR-033`](ADR-033-composite-value-objects-identity-parity-and-tenant-simplification.md) and [`ADR-038`](ADR-038-pure-value-object-triad-composition.md))  
 **Date:** 2026-10-02  
 **Decision Makers:** Lead Architect (Fausto Stangler), Systems Architect (Doctor Stangler Committee)  
 **Governing Method:** Doctor Stangler Architecture Method (Clean/Hexagonal DDD Modular Monolith, KISS & Fail-Fast Principles, ADR-First)  
 **Glossary Reference:** [`docs/GLOSSARY.md`](../GLOSSARY.md)  
-**Related ADRs:** [`ADR-016`](ADR-016-full-opentelemetry-conventions-session-replays-and-channel-governance.md), [`ADR-019`](ADR-019-sota-kiss-nomenclature-and-channel-name-value-object.md), [`ADR-026`](ADR-026-clean-code-anti-patterns-and-code-smell-governance.md), [`ADR-027`](ADR-027-unified-telemetry-vocabulary-and-langfuse-conventions.md), [`ADR-031`](ADR-031-standardized-stage-descriptor-and-closed-loop-refinement.md)
+**Related ADRs:** [`ADR-016`](ADR-016-full-opentelemetry-conventions-session-replays-and-channel-governance.md), [`ADR-019`](ADR-019-sota-kiss-nomenclature-and-channel-name-value-object.md), [`ADR-026`](ADR-026-clean-code-anti-patterns-and-code-smell-governance.md), [`ADR-027`](ADR-027-unified-telemetry-vocabulary-and-langfuse-conventions.md), [`ADR-031`](ADR-031-standardized-stage-descriptor-and-closed-loop-refinement.md), [`ADR-033`](ADR-033-composite-value-objects-identity-parity-and-tenant-simplification.md), [`ADR-038`](ADR-038-pure-value-object-triad-composition.md)
+
+> [!WARNING]
+> **REFINEMENT & CLEANUP NOTE:**  
+> The composite modeling initiated in this ADR was refined with zero backward compatibility:
+> 1. **Elimination of `Video = Content` Alias**: The legacy alias was removed from domain exports per [`ADR-033`](ADR-033-composite-value-objects-identity-parity-and-tenant-simplification.md). Only `Content` is authoritative.
+> 2. **Prohibition of Single-Field VO Nesting**: Nesting `ChannelName` inside `Channel` was banned per ADR-033 (*Primitive Obsession Obsession*). `Channel.name` is a self-validating string.
+> 3. **Elimination of `.video_id`**: Removed from `PipelineSessionId` in favor of `.content_id` per ADR-033.
+> 4. **Triad Composition**: Media acquisition fields (`url`, `publication_date`, `description`) were extracted into `MediaProvenance`, establishing the Pure 3-VO Triad (`Channel`, `MediaProvenance`, `Content`) per [`ADR-038`](ADR-038-pure-value-object-triad-composition.md).
 
 ---
 

@@ -2,10 +2,19 @@
 
 | Field       | Value                                                              |
 |-------------|--------------------------------------------------------------------|
-| **Status**  | DRAFT                                                              |
+| **Status**  | ACCEPTED (PARTIALLY SUPERSEDED by ADR-033, ADR-035, ADR-037)        |
 | **Date**    | 2026-09-30                                                         |
 | **Authors** | Lead Architect (Fausto Stangler), Systems Architect (Doctor Stangler Committee) |
 | **ADR**     | [`ADR-027`](../adr/ADR-027-unified-telemetry-vocabulary-and-langfuse-conventions.md) |
+
+---
+
+> [!WARNING]
+> ### Architectural Evolution & Partial Supersession Notice
+> This specification has been refined and partially superseded by later accepted ADRs:
+> 1. **`ChannelTenantId` Decommissioned (`ADR-033`)**: The standalone `ChannelTenantId` value object and the legacy session string token format (`.channel_token`) are decommissioned. Multi-tenant partitioning is directly derived from `Channel.tenant_key`.
+> 2. **Canonical Session ID Format (`ADR-033`, `ADR-035`)**: The canonical session identifier format is `{channel_id}:{content_id}` (falling back to `{channel_name}:{content_id}` if no channel ID exists). The `.video_id` property/alias has been purged across the domain in favor of generic `.content_id`.
+> 3. **Per-Stage Independent Traces (`ADR-035`, `ADR-037`)**: The requirement for a single monolithic 7-stage OpenTelemetry trace is superseded. In accordance with ADR-035 and ADR-037, each pipeline stage initiates an independent OpenTelemetry trace with its own root span, correlated across Langfuse using `langfuse.session.id = session_id.value`.
 
 ---
 
@@ -15,14 +24,10 @@
   - `UserIdentity.worker(name="worker")` constructs an immutable Value Object with `value="system:worker"`, `is_anonymous=False`, `provider="system"`, `subject="worker"`.
   - `UserIdentity.identified(subject="alice", provider="iam")` produces `value="user:iam:alice"`, `is_anonymous=False`, `provider="iam"`, `subject="alice"`.
   - `UserIdentity.anonymous()` produces `value="anonymous"`, `is_anonymous=True`, `provider="anonymous"`, `subject=""`.
-- **AC-002 (PipelineSessionId Format - Single Video Session Replay):**
-  - Canonical format is `{channel_id}:{video_id}`.
-  - When `channel_id` is supplied, `PipelineSessionId.create(channel=..., content_id=video_id, channel_id=channel_id)` produces `{channel_id.value}:{video_id.value}`.
-  - When `channel_id` is `None`, falls back to `{channel_name.value}:{video_id.value}`.
-  - `PipelineSessionId` provides properties:
-    - `.channel_token`: returns the channel token (ID or name).
-    - `.video_id` (alias for `.content_id`): returns the content/video ID.
-  - Backward compatibility: parsing legacy 3-part `content:{channel}:{video_id}` does not raise an exception, extracting the correct token and content ID.
+- **AC-002 (PipelineSessionId Format - Single Content Session Replay):**
+  - Canonical format is `{channel_id}:{content_id}` (or `{channel_name}:{content_id}` if `channel_id` is None per ADR-033).
+  - `PipelineSessionId.create(channel=..., content_id=content_id)` produces `{channel_id.value}:{content_id.value}`.
+  - Backward compatibility: parsing legacy 3-part `content:{channel}:{content_id}` or `{channel}:{video_id}` extracts the correct channel token and content ID without raising an exception.
 - **AC-003 (OpenTelemetry Root Span & Trace Name):**
   - `TelemetryPort.start_pipeline_session` accepts optional `trace_name: str | None = None`.
   - When omitted, `trace_name` defaults to `"cresmo.pipeline.execution"`.

@@ -224,7 +224,9 @@ def load_benchmark_samples(
 
     # Case 3: Fallback to Golden Set items if data/raw has fewer than 2 transcripts
     if len(samples) < 2:
-        golden_path = REPO_ROOT / "data" / "golden_sets" / "fluid_prose_golden_set.json"
+        golden_path = (
+            REPO_ROOT / "scripts" / "fluid_prose" / "golden_sets" / "fluid_prose_golden_set.json"
+        )
         if golden_path.exists():
             data = json.loads(golden_path.read_text(encoding="utf-8"))
             seen_texts: set[str] = set()

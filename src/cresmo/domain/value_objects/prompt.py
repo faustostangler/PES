@@ -33,6 +33,7 @@ class PromptKey(StrEnum):
     JUDGE_RAW_INDEX_CONCEPTS = "judge_raw_index_concepts"
     JUDGE_RAW_INDEX_SYNTHESIS = "judge_raw_index_synthesis"
     LLM_JUDGE = "llm_judge"
+    JUDGE_GAP_FILLER = "judge_gap_filler"
     OLLAMA_CRITIQUE = "ollama_critique"
 
 

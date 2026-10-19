@@ -139,6 +139,73 @@ class TypeSafeJudgeAdapter(LlmJudgePort):
                         "exemplary paratactic synthesis",
                     ],
                 }
+            elif criterion == JudgeCriterion.FACTUAL_GROUNDING:
+                questions_payload[criterion.value] = {
+                    "type": "score",
+                    "instructions": (
+                        "Are all expanded concepts and claims historically and scientifically grounded with zero hallucinations?"
+                    ),
+                    "criteria": [
+                        "contains fabricated or anachronistic facts",
+                        "mostly grounded with minor inaccuracies",
+                        "completely grounded in factual truth",
+                    ],
+                }
+            elif criterion == JudgeCriterion.SOCRATIC_EPISTEMIC_DEPTH:
+                questions_payload[criterion.value] = {
+                    "type": "score",
+                    "instructions": (
+                        "Does the text eliminate explanatory voids and demonstrate intermediate mechanisms across Socratic dimensions?"
+                    ),
+                    "criteria": [
+                        "superficial with teleological shortcuts",
+                        "partially dense with some mechanisms explained",
+                        "deeply articulated causal mechanisms and premises",
+                    ],
+                }
+            elif criterion == JudgeCriterion.CAUSAL_STRATIFICATION_AGENCY:
+                questions_payload[criterion.value] = {
+                    "type": "score",
+                    "instructions": (
+                        "Does the text stratify causality across 3 tiers and expose non-spontaneous agency and latent networks?"
+                    ),
+                    "criteria": [
+                        "naive spontaneous events without temporal depth",
+                        "partially stratified with some institutional context",
+                        "exemplary 3-tier stratification and latent network analysis",
+                    ],
+                }
+            elif criterion == JudgeCriterion.COMPLEMENTARY_SUBSTANCE:
+                questions_payload[criterion.value] = {
+                    "type": "score",
+                    "instructions": (
+                        "Is the ## Informações Complementares section encyclopedic, numbered, and rich in primary data?"
+                    ),
+                    "criteria": [
+                        "missing, empty, bulleted, or tautological",
+                        "acceptable notes with minor omissions",
+                        "rich standalone encyclopedic substance with Big-Endian dates",
+                    ],
+                }
+            elif criterion == JudgeCriterion.AUTHORIAL_NATURALISM:
+                questions_payload[criterion.value] = {
+                    "type": "score",
+                    "instructions": (
+                        "Does the text maintain the Detective Narrator voice, methodological naturalism, and zero binary antitheses?"
+                    ),
+                    "criteria": [
+                        "moralistic commentary or binary antitheses present",
+                        "moderately naturalistic voice with minor lapses",
+                        "exemplary naturalistic analysis with zero antitheses",
+                    ],
+                }
+            elif criterion == JudgeCriterion.EPISTEMIC_SATURATION:
+                questions_payload[criterion.value] = {
+                    "type": "noul",
+                    "instructions": (
+                        "Has the compendium reached epistemic saturation with negligible new marginal information?"
+                    ),
+                }
 
         state_payload = {
             "source_raw": context.raw_text,

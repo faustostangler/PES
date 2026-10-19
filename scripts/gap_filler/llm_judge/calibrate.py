@@ -1,0 +1,691 @@
+#!/usr/bin/env python3
+"""Offline Calibration Harness for Gap Filler LLM Judges.
+
+Conforms to:
+    - ADR-039: Progressive LLM-as-a-Judge Calibration Lifecycle (Stage 2 gap_filler)
+    - ADR-028: Decoupling Fluid Prose and Socratic Gap Filling
+    - SPEC-015: Quality Gates and Calibration Framework
+    - Langfuse Judge Calibration: .agents/skills/langfuse/references/judge-calibration.md
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import logging
+import math
+import random
+import sys
+import time
+from collections.abc import Iterator
+from dataclasses import dataclass, field
+from datetime import UTC, datetime
+from pathlib import Path
+from statistics import NormalDist
+from typing import Any
+
+# Ensure project root and src are in sys.path when invoked directly as a script / debugger
+REPO_ROOT = Path(__file__).resolve().parents[3]
+SRC_DIR = REPO_ROOT / "src"
+for p in (str(SRC_DIR), str(REPO_ROOT)):
+    if p not in sys.path:
+        sys.path.insert(0, p)
+
+from cresmo.domain.value_objects.quality import (
+    EvaluationContext,
+    JudgeCriterion,
+)
+from cresmo.infrastructure.config import CresmoSettings
+from cresmo.presentation.factories.judge_factory import build_llm_judge_adapter
+
+logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
+logger = logging.getLogger("calibrate_gap_filler_judge")
+
+DEFAULT_GOLDEN_SET_PATH = (
+    REPO_ROOT / "scripts" / "gap_filler" / "golden_sets" / "gap_filler_golden_set.json"
+)
+
+# Canonical seed dataset items for quick dry-run
+SEED_CALIBRATION_DATA: list[dict[str, Any]] = [
+    {
+        "id": "seed_01_pass_factual_grounding",
+        "input": {
+            "raw_text": (
+                "## A Posse de Afonso Henriques e a Bula Manifestis Probatum\n\n"
+                "Afonso Henriques declarou a autonomia do Condado Portucalense no século XII. "
+                "Após anos de conflitos contra o Reino de Leão e campanhas da Reconquista, "
+                "a corte papal reconheceu formalmente a soberania portuguesa através de documento solene."
+            ),
+            "candidate_text": (
+                "## A Autonomia Feudal e a Legitimação Apostólica do Reino de Portugal\n\n"
+                "A consolidação política da independência portucalense exigiu não apenas vitórias campais "
+                "contra os exércitos de Afonso VII de Leão, mas a inserção direta na rede de suserania da Santa Sé. "
+                "Em 23 de maio de 1179, o papa **Alexandre III** promulgou a célebre bula **Manifestis Probatum**, "
+                "declarando **Afonso Henriques** rei soberano de Portugal e outorgando proteção apostólica contra "
+                "quaisquer pretensões anexionistas de monarcas cristãos vizinhos.\n\n"
+                "Esse ato diplomático coroou um esforço de décadas iniciado no Tratado de Zamora em 1143, subordinando "
+                "a legitimidade jurídica do novo reino ao pagamento anual de um censo de dois marcos de ouro à corte romana.\n\n"
+                "## Informações Complementares\n\n"
+                "1. O Tratado de Zamora de outubro de 1143 contou com a mediação do cardeal Guido de Vico, legado papal na Península Ibérica.\n\n"
+                "2. O censo pago por Afonso Henriques à Santa Sé foi elevado de quatro onças de ouro anuais em 1144 para dois marcos de ouro em 1179."
+            ),
+        },
+        "expected_output": {"verdict": "PASS"},
+        "metadata": {
+            "criterion": "factual_grounding",
+            "difficulty": "easy",
+            "expected_anomaly": "none",
+            "defect_location": "none",
+            "video_id": "9IbNJ0EsTxI",
+            "target_verdict": "PASS",
+        },
+    },
+    {
+        "id": "seed_02_fail_socratic_epistemic_depth",
+        "input": {
+            "raw_text": (
+                "## Concorrência e Gargalos em Bancos Relacionais sob Alta Carga\n\n"
+                "Em testes de estresse com milhares de requisições simultâneas por segundo, o banco de dados PostgreSQL "
+                "frequentemente apresenta degradação severa de latência quando as conexões não são limitadas. "
+                "O esgotamento de recursos decorre da contenção de bloqueios em linhas concorrentes e do custo de "
+                "context switching entre múltiplos processos no sistema operacional."
+            ),
+            "candidate_text": (
+                "## O Esgotamento de Recursos em Bancos Relacionais sob Concorrência Extrema\n\n"
+                "Em cenários de estresse computacional caracterizados por taxas elevadas de transações simultâneas, "
+                "a arquitetura do **PostgreSQL** manifesta variações desproporcionais na latência percebida pelos clientes. "
+                "A saturação de conexões sem pooling adequado impõe um ônus operacional que degrada o rendimento global "
+                "da aplicação sob teste de estresse na infraestrutura em contêineres **Docker**.\n\n"
+                "A degradação manifesta-se através de disputas intensas por recursos compartilhados, onde diferentes "
+                "processos disputam o acesso aos mesmos registros de tabelas financeiras. A sobrecarga de gerenciar "
+                "dezenas de processos paralelos força o núcleo do sistema operacional a despender ciclos valiosos de "
+                "processamento em trocas de contexto em vez de executar consultas analíticas úteis.\n\n"
+                "Essas perturbações confirmam a necessidade de dimensionar corretamente o agrupamento de conexões "
+                "e revisar a modelagem de consultas para preservar a estabilidade da camada de persistência.\n\n"
+                "## Informações Complementares\n\n"
+                "1. O gerenciador de conexões PgBouncer opera em três modos distintos de agrupamento: sessão, transação e instrução.\n\n"
+                "2. O comando EXPLAIN ANALYZE do PostgreSQL executa a consulta e retorna o plano de execução real juntamente com os custos."
+            ),
+        },
+        "expected_output": {"verdict": "FAIL"},
+        "metadata": {
+            "criterion": "socratic_epistemic_depth",
+            "difficulty": "borderline",
+            "expected_anomaly": "explanatory_vacuum_missing_mvcc_intermediate_mechanisms",
+            "defect_location": "paragraph_2",
+            "video_id": "-yGHG3pnHLg",
+            "target_verdict": "FAIL",
+        },
+    },
+]
+
+
+@dataclass(frozen=True)
+class MetricInfo:
+    """Informações conceituais e quantitativas de cada métrica de avaliação do juiz."""
+
+    code: str
+    name: str
+    math_formula: str
+    meaning: str
+
+
+METRIC_DICTIONARY: list[MetricInfo] = [
+    MetricInfo(
+        code="hit_rate",
+        name="Taxa de Hit (Sensibilidade)",
+        math_formula="Hit / (Hit + Pedantismo-Beta)",
+        meaning="Proporção de textos conformes que o juiz aprova.",
+    ),
+    MetricInfo(
+        code="specificity",
+        name="Especificidade (Taxa de Rejeição)",
+        math_formula="Rejeição / (Rejeição + Permissivo-Alfa)",
+        meaning="Proporção de textos defeituosos que o juiz reprova.",
+    ),
+    MetricInfo(
+        code="accuracy",
+        name="Acurácia Global",
+        math_formula="(Hit + Rejeição) / Total",
+        meaning="Proporção de decisões corretas do juiz.",
+    ),
+    MetricInfo(
+        code="precision",
+        name="Precisão (Valor Preditivo Positivo)",
+        math_formula="Hit / (Hit + Permissivo-Alfa)",
+        meaning="Confiabilidade de uma aprovação emitida pelo juiz.",
+    ),
+    MetricInfo(
+        code="f1",
+        name="F1-Score Balanceado",
+        math_formula="2 * (Precisão * Recall) / (Precisão + Recall)",
+        meaning="Média harmônica entre precisão e sensibilidade.",
+    ),
+    MetricInfo(
+        code="mcc",
+        name="Coeficiente de Correlação de Matthews (MCC)",
+        math_formula="((Hit * Rej) - (Alfa * Beta)) / sqrt((H+A)(H+B)(R+A)(R+B))",
+        meaning="Correlação entre previsões e gabarito (-1 a +1).",
+    ),
+    MetricInfo(
+        code="d_prime",
+        name="Sensibilidade de Discriminação (d')",
+        math_formula="NormInv(Taxa Hit) - NormInv(Taxa Permissivo)",
+        meaning="Capacidade intrínseca de separar sinal e ruído.",
+    ),
+    MetricInfo(
+        code="c_bias",
+        name="Critério de Resposta (c)",
+        math_formula="-0.5 * (NormInv(Taxa Hit) + NormInv(Taxa Permissivo))",
+        meaning="Tendência sistemática a aprovar (liberal) ou reprovar (conservador).",
+    ),
+]
+
+
+@dataclass
+class ConfusionMatrix:
+    """Matriz de Confusão 2x2 segundo a Teoria de Detecção de Sinal (SDT)."""
+
+    hit: int = 0
+    pedantismo_beta: int = 0
+    permissivo_alfa: int = 0
+    rejeicao: int = 0
+    invalid: int = 0
+
+    @property
+    def tp(self) -> int:
+        return self.hit
+
+    @property
+    def fn(self) -> int:
+        return self.pedantismo_beta
+
+    @property
+    def fp(self) -> int:
+        return self.permissivo_alfa
+
+    @property
+    def tn(self) -> int:
+        return self.rejeicao
+
+    @property
+    def total_corretos(self) -> int:
+        return self.hit + self.pedantismo_beta
+
+    @property
+    def total_defeituosos(self) -> int:
+        return self.permissivo_alfa + self.rejeicao
+
+    @property
+    def total_valid(self) -> int:
+        return self.total_corretos + self.total_defeituosos
+
+    @property
+    def total_avaliacoes(self) -> int:
+        return self.total_valid + self.invalid
+
+    @property
+    def hit_rate(self) -> float:
+        tot = self.total_corretos
+        return self.hit / tot if tot > 0 else 0.0
+
+    @property
+    def recall(self) -> float:
+        return self.hit_rate
+
+    @property
+    def beta_fnr(self) -> float:
+        tot = self.total_corretos
+        return self.pedantismo_beta / tot if tot > 0 else 0.0
+
+    @property
+    def alpha_fpr(self) -> float:
+        tot = self.total_defeituosos
+        return self.permissivo_alfa / tot if tot > 0 else 0.0
+
+    @property
+    def specificity(self) -> float:
+        tot = self.total_defeituosos
+        return self.rejeicao / tot if tot > 0 else 0.0
+
+    @property
+    def accuracy(self) -> float:
+        tot = self.total_valid
+        return (self.hit + self.rejeicao) / tot if tot > 0 else 0.0
+
+    @property
+    def precision(self) -> float:
+        denom = self.hit + self.permissivo_alfa
+        return self.hit / denom if denom > 0 else 0.0
+
+    @property
+    def f1(self) -> float:
+        p = self.precision
+        r = self.recall
+        return (2 * p * r) / (p + r) if (p + r) > 0 else 0.0
+
+    @property
+    def mcc(self) -> float:
+        num = (self.hit * self.rejeicao) - (self.permissivo_alfa * self.pedantismo_beta)
+        denom = math.sqrt(
+            (self.hit + self.permissivo_alfa)
+            * (self.hit + self.pedantismo_beta)
+            * (self.rejeicao + self.permissivo_alfa)
+            * (self.rejeicao + self.pedantismo_beta)
+        )
+        return num / denom if denom > 0 else 0.0
+
+    @property
+    def d_prime(self) -> float:
+        n_signal = self.total_corretos
+        n_noise = self.total_defeituosos
+        if n_signal == 0 or n_noise == 0:
+            return 0.0
+        eps_s = 1.0 / (2 * n_signal)
+        eps_n = 1.0 / (2 * n_noise)
+        hit_rate = self.hit / n_signal
+        fa_rate = self.permissivo_alfa / n_noise
+        h_clamp = min(max(hit_rate, eps_s), 1.0 - eps_s)
+        fa_clamp = min(max(fa_rate, eps_n), 1.0 - eps_n)
+        norm = NormalDist()
+        return norm.inv_cdf(h_clamp) - norm.inv_cdf(fa_clamp)
+
+    @property
+    def c_bias(self) -> float:
+        n_signal = self.total_corretos
+        n_noise = self.total_defeituosos
+        if n_signal == 0 or n_noise == 0:
+            return 0.0
+        eps_s = 1.0 / (2 * n_signal)
+        eps_n = 1.0 / (2 * n_noise)
+        hit_rate = self.hit / n_signal
+        fa_rate = self.permissivo_alfa / n_noise
+        h_clamp = min(max(hit_rate, eps_s), 1.0 - eps_s)
+        fa_clamp = min(max(fa_rate, eps_n), 1.0 - eps_n)
+        norm = NormalDist()
+        return -0.5 * (norm.inv_cdf(h_clamp) + norm.inv_cdf(fa_clamp))
+
+    def record(self, expected: str, actual: str) -> str:
+        """Update counts from expected and actual verdicts and return status string."""
+        if expected not in ("PASS", "FAIL"):
+            self.invalid += 1
+            return "INVALID"
+
+        if expected == "PASS":
+            if actual == "PASS":
+                self.hit += 1
+                return "HIT"
+            if actual == "FAIL":
+                self.pedantismo_beta += 1
+                return "PEDANTISMO_BETA"
+            self.invalid += 1
+            return "INVALID"
+
+        # expected == "FAIL"
+        if actual == "PASS":
+            self.permissivo_alfa += 1
+            return "PERMISSIVO_ALFA"
+        if actual == "FAIL":
+            self.rejeicao += 1
+            return "REJEICAO"
+        self.invalid += 1
+        return "INVALID"
+
+
+@dataclass
+class CalibrationResultSet:
+    """Agregador de resultados globais e fatias da calibração."""
+
+    overall: ConfusionMatrix = field(default_factory=ConfusionMatrix)
+    target_isolated: ConfusionMatrix = field(default_factory=ConfusionMatrix)
+    by_criterion: dict[str, ConfusionMatrix] = field(default_factory=dict)
+    by_difficulty: dict[str, ConfusionMatrix] = field(default_factory=dict)
+    disagreements: list[dict[str, Any]] = field(default_factory=list)
+
+
+@dataclass
+class ItemEvaluationResult:
+    """Evaluation result supporting unpacking and target-specific metrics."""
+
+    actual: str
+    expected: str
+    score: float
+    reasoning: str
+    target_actual: str = ""
+    target_score: float = 0.0
+
+    def __iter__(self) -> Iterator[Any]:
+        yield self.actual
+        yield self.expected
+        yield self.score
+        yield self.reasoning
+
+
+def evaluate_single_item(judge: Any, item: dict[str, Any]) -> ItemEvaluationResult:
+    """Execute judge on item and return unconfounded ItemEvaluationResult."""
+    raw_text = item["input"]["raw_text"]
+    candidate_text = item["input"]["candidate_text"]
+    expected_verdict = item["expected_output"]["verdict"].upper().strip()
+    target_criterion_name = item.get("metadata", {}).get("criterion", "")
+
+    context = EvaluationContext(
+        stage_name="gap_filler",
+        raw_text=raw_text,
+        candidate_text=candidate_text,
+        required_criteria=(
+            JudgeCriterion.FACTUAL_GROUNDING,
+            JudgeCriterion.SOCRATIC_EPISTEMIC_DEPTH,
+            JudgeCriterion.CAUSAL_STRATIFICATION_AGENCY,
+            JudgeCriterion.COMPLEMENTARY_SUBSTANCE,
+            JudgeCriterion.AUTHORIAL_NATURALISM,
+        ),
+    )
+
+    evaluation = judge.evaluate(context)
+    global_actual = "PASS" if evaluation.passed else "FAIL"
+    global_score = evaluation.overall_score
+    reasoning = evaluation.extract_critique()
+
+    target_actual = global_actual
+    target_score = global_score
+    try:
+        if target_criterion_name:
+            crit_vo = JudgeCriterion(target_criterion_name)
+            crit_score = evaluation.get_score(crit_vo)
+            if crit_score is not None:
+                target_actual = "PASS" if crit_score.passed else "FAIL"
+                target_score = crit_score.score
+                if crit_score.reasoning:
+                    reasoning = crit_score.reasoning
+    except (ValueError, KeyError):
+        pass
+
+    return ItemEvaluationResult(
+        actual=global_actual,
+        expected=expected_verdict,
+        score=global_score,
+        reasoning=reasoning,
+        target_actual=target_actual,
+        target_score=target_score,
+    )
+
+
+def run_local_calibration(
+    judge: Any,
+    items: list[dict[str, Any]],
+    delay: float = 4.2,
+    jitter: float = 0.8,
+) -> CalibrationResultSet:
+    """Run calibration over local dataset items and compute global and slice metrics."""
+    results = CalibrationResultSet()
+
+    print("\n" + "=" * 70)
+    print("RUNNING GAP FILLER JUDGE CALIBRATION HARNESS")
+    if delay > 0:
+        print(
+            f"Pacing: {delay:.1f}s base delay + up to {jitter:.1f}s jitter between LLM evaluations"
+        )
+    print("=" * 70)
+
+    for i, item in enumerate(items, start=1):
+        item_id = item.get("id", "item")
+        metadata = item.get("metadata", {})
+        criterion = metadata.get("criterion", "general")
+        difficulty = metadata.get("difficulty", "typical")
+
+        if criterion not in results.by_criterion:
+            results.by_criterion[criterion] = ConfusionMatrix()
+        if difficulty not in results.by_difficulty:
+            results.by_difficulty[difficulty] = ConfusionMatrix()
+
+        eval_res = evaluate_single_item(judge, item)
+        actual_global = eval_res.actual
+        expected = eval_res.expected
+        reasoning = eval_res.reasoning
+        actual_target = eval_res.target_actual
+        target_score = eval_res.target_score
+
+        # 1. Global Pipeline Gate
+        results.overall.record(expected, actual_global)
+        # 2. Isolated Target Criterion Gate
+        status_target = results.target_isolated.record(expected, actual_target)
+        results.by_criterion[criterion].record(expected, actual_target)
+        results.by_difficulty[difficulty].record(expected, actual_target)
+
+        print(
+            f"[{i:02d}/{len(items):02d}] [{item_id:<26}] Expected: {expected} | "
+            f"Target: {actual_target} ({target_score:.2f}) -> {status_target}"
+        )
+        if expected != actual_target:
+            print(f"    [DIVERGÊNCIA] Anomaly: {metadata.get('expected_anomaly', 'n/a')}")
+            results.disagreements.append(
+                {
+                    "id": item_id,
+                    "expected": expected,
+                    "actual_global": actual_global,
+                    "actual_target": actual_target,
+                    "criterion": criterion,
+                    "difficulty": difficulty,
+                    "reasoning": reasoning,
+                }
+            )
+
+        # Rate-limiting pacing with jitter before next item
+        if i < len(items) and delay > 0:
+            sleep_time = delay + random.uniform(0.0, jitter)
+            time.sleep(sleep_time)
+
+    return results
+
+
+def save_calibration_report(
+    results: CalibrationResultSet,
+    output_path: Path,
+    provider: str,
+    model: str,
+) -> None:
+    """Save formatted calibration report to output text file."""
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    m = results.target_isolated
+
+    lines = [
+        "=" * 80,
+        f"CRESMO STAGE 2 (GAP_FILLER) JUDGE CALIBRATION REPORT - {datetime.now(UTC).strftime('%Y-%m-%d %H:%M:%S UTC')}",
+        "=" * 80,
+        f"Provider: {provider} | Model: {model}",
+        f"Total Items: {m.total_valid} | Valid: {m.total_valid} | Invalid: {m.invalid}",
+        f"Overall Target Accuracy: {m.accuracy * 100:.2f}%",
+        f"Precision: {m.precision * 100:.2f}% | Recall: {m.recall * 100:.2f}% | F1: {m.f1:.4f}",
+        f"Specificity: {m.specificity * 100:.2f}% | Alpha (FPR): {m.alpha_fpr * 100:.2f}% | Beta (FNR): {m.beta_fnr * 100:.2f}%",
+        f"MCC: {m.mcc:.4f} | d-prime (d'): {m.d_prime:.4f} | c bias: {m.c_bias:.4f}",
+        "",
+        "CRITERIA BREAKDOWN:",
+        "-" * 80,
+    ]
+
+    for crit, c_mat in sorted(results.by_criterion.items()):
+        lines.append(
+            f"{crit:<35} | Items: {c_mat.total_valid:2d} | "
+            f"Acc: {c_mat.accuracy * 100:5.1f}% | Hit: {c_mat.hit} | Rej: {c_mat.rejeicao} | "
+            f"Alfa: {c_mat.permissivo_alfa} | Beta: {c_mat.pedantismo_beta}"
+        )
+
+    lines.extend(
+        [
+            "",
+            "DIFFICULTY BREAKDOWN:",
+            "-" * 80,
+        ]
+    )
+    for diff, d_mat in sorted(results.by_difficulty.items()):
+        lines.append(
+            f"{diff:<35} | Items: {d_mat.total_valid:2d} | "
+            f"Acc: {d_mat.accuracy * 100:5.1f}% | Hit: {d_mat.hit} | Rej: {d_mat.rejeicao} | "
+            f"Alfa: {d_mat.permissivo_alfa} | Beta: {d_mat.pedantismo_beta}"
+        )
+
+    if results.disagreements:
+        lines.extend(
+            [
+                "",
+                f"DISAGREEMENTS / CLASSIFICATION ERRORS ({len(results.disagreements)}):",
+                "-" * 80,
+            ]
+        )
+        for d in results.disagreements:
+            lines.append(
+                f"- ID: {d['id']} | Expected: {d['expected']} | Actual: {d['actual_target']} | "
+                f"Crit: {d['criterion']} | Diff: {d['difficulty']}\n  Critique: {d['reasoning']}"
+            )
+
+    report_content = "\n".join(lines) + "\n"
+    with open(output_path, "w", encoding="utf-8") as f:
+        f.write(report_content)
+    print(f"\nCalibration report successfully saved to: {output_path}")
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(
+        description="Offline Calibration Harness for Gap Filler LLM Judges."
+    )
+    parser.add_argument(
+        "--provider",
+        choices=["gemini", "typesafe", "ollama"],
+        default="gemini",
+        help="LLM Judge adapter provider (default: gemini)",
+    )
+    parser.add_argument(
+        "--model",
+        type=str,
+        default=None,
+        help="Target model identifier (e.g. gemini-2.5-flash, qwen2.5:14b)",
+    )
+    parser.add_argument(
+        "--threshold",
+        type=float,
+        default=0.80,
+        help="Approval pass threshold (default: 0.80)",
+    )
+    parser.add_argument(
+        "--dataset-path",
+        type=Path,
+        default=DEFAULT_GOLDEN_SET_PATH,
+        help=f"Path to local golden set JSON (default: {DEFAULT_GOLDEN_SET_PATH})",
+    )
+    parser.add_argument(
+        "--seed-only",
+        action="store_true",
+        help="Run calibration on minimal seed dataset for testing without loading full set",
+    )
+    parser.add_argument(
+        "--delay",
+        type=float,
+        default=None,
+        help="Delay between requests in seconds (default: 4.2s for Gemini API, 0.0s for local Ollama)",
+    )
+    parser.add_argument(
+        "--jitter",
+        type=float,
+        default=None,
+        help="Random jitter in seconds (default: 0.8s for Gemini API, 0.0s for local Ollama)",
+    )
+    parser.add_argument(
+        "--output-path",
+        type=Path,
+        default=None,
+        help="Custom destination path to write full calibration report",
+    )
+    args = parser.parse_args()
+
+    delay = args.delay if args.delay is not None else (0.0 if args.provider == "ollama" else 4.2)
+    jitter = args.jitter if args.jitter is not None else (0.0 if args.provider == "ollama" else 0.8)
+
+    model_kwargs: dict[str, Any] = {}
+    if args.model:
+        if args.provider == "ollama":
+            model_kwargs["ollama_model"] = args.model
+        elif args.provider == "gemini":
+            model_kwargs["judge_gemini_model"] = args.model
+        elif args.provider == "typesafe":
+            model_kwargs["typesafe_model"] = args.model
+
+    settings = CresmoSettings(
+        judge_provider=args.provider,
+        gap_filler_judge_threshold=args.threshold,
+        **model_kwargs,
+    )
+
+    resolved_model = args.model or (
+        settings.ollama_model if args.provider == "ollama" else settings.judge_gemini_model
+    )
+    output_file = args.output_path or (
+        REPO_ROOT / "scripts" / "gap_filler" / f"llm_judge_{args.provider}.txt"
+    )
+
+    logger.info(
+        "Instantiating Judge adapter chain (Provider: %s, Model: %s)...",
+        args.provider,
+        resolved_model,
+    )
+    judge = build_llm_judge_adapter(settings=settings)
+
+    if args.seed_only:
+        logger.info(
+            "Executing calibration against embedded seed items (%d items)...",
+            len(SEED_CALIBRATION_DATA),
+        )
+        results = run_local_calibration(
+            judge,
+            SEED_CALIBRATION_DATA,
+            delay=delay,
+            jitter=jitter,
+        )
+        save_calibration_report(
+            results,
+            output_path=output_file,
+            provider=args.provider,
+            model=resolved_model,
+        )
+        return 0 if results.target_isolated.accuracy >= 0.80 else 1
+
+    if not args.dataset_path.exists():
+        logger.warning(
+            "Golden set file '%s' not found. Falling back to embedded seed data.",
+            args.dataset_path,
+        )
+        results = run_local_calibration(
+            judge,
+            SEED_CALIBRATION_DATA,
+            delay=delay,
+            jitter=jitter,
+        )
+        save_calibration_report(
+            results,
+            output_path=output_file,
+            provider=args.provider,
+            model=resolved_model,
+        )
+        return 0 if results.target_isolated.accuracy >= 0.80 else 1
+
+    logger.info("Loading Golden Set from '%s'...", args.dataset_path)
+    with open(args.dataset_path, encoding="utf-8") as f:
+        items = json.load(f)
+
+    logger.info("Loaded %d items from %s. Starting calibration...", len(items), args.dataset_path)
+    results = run_local_calibration(
+        judge,
+        items,
+        delay=delay,
+        jitter=jitter,
+    )
+    save_calibration_report(
+        results,
+        output_path=output_file,
+        provider=args.provider,
+        model=resolved_model,
+    )
+    return 0 if results.target_isolated.accuracy >= 0.80 else 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())

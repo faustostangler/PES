@@ -30,12 +30,9 @@ from cresmo.infrastructure.paths import find_workspace_root
 _WORKSPACE_DIR = find_workspace_root()
 
 DEFAULT_LANGFUSE_PROMPT_LABEL: str = "production"
-DEFAULT_JUDGE_PASS_THRESHOLD: float = 0.8
+DEFAULT_JUDGE_PASS_THRESHOLD: float = 0.9
 DEFAULT_JUDGE_GEMINI_MODEL: str = "gemini-3.5-flash-lite"
 DEFAULT_JUDGE_TEMPERATURE: float = 0.0
-
-
-
 
 
 class CresmoSettings(BaseSettings):
@@ -88,6 +85,7 @@ class CresmoSettings(BaseSettings):
         file_secret_settings: PydanticBaseSettingsSource,
     ) -> tuple[PydanticBaseSettingsSource, ...]:
         """Customise settings sources to safely parse comma-separated credentials from env."""
+
         def _safe_decode(field_name: str, field: Any, val: Any, orig_decode: Any) -> Any:
             if field_name == "gemini_api_keys" and isinstance(val, str):
                 try:
@@ -166,6 +164,7 @@ class CresmoSettings(BaseSettings):
                         if (isinstance(item, SecretStr) or (isinstance(item, str) and item.strip()))
                     ]
         return data
+
     typesafe_api_key: SecretStr = Field(
         default=SecretStr(""),
         validation_alias=AliasChoices("typesafe_api_key", "TYPESAFE_API_KEY"),
@@ -203,7 +202,7 @@ class CresmoSettings(BaseSettings):
         description="Enable PII and credential masking in telemetry, span attributes, and exports.",
     )
     preflight_probe_timeout_seconds: float = Field(
-        default=1.0,
+        default=2.0,
         description="Socket timeout in seconds for active preflight probes (Langfuse, Ollama).",
     )
     enable_preflight_probes: bool = Field(
@@ -227,6 +226,11 @@ class CresmoSettings(BaseSettings):
     def raw_dir(self) -> Path:
         """Directory for ingested raw media transcripts."""
         return self.data_dir / "raw"
+
+    @property
+    def fluid_dir(self) -> Path:
+        """Directory for intermediate detranscribed fluid prose transcripts."""
+        return self.data_dir / "fluid"
 
     @property
     def enriched_dir(self) -> Path:
@@ -454,15 +458,26 @@ class CresmoSettings(BaseSettings):
         default=False,
         description="Whether to preserve downloaded raw audio files.",
     )
-    gap_filler_passes: int = Field(
-        default=3,
+    expansion_max_passes: int = Field(
+        default=5,
         ge=1,
         le=10,
         validation_alias=AliasChoices(
-            "gap_filler_passes", "CRESMO_GAP_FILLER_PASSES", "GAP_FILLER_PASSES"
+            "expansion_max_passes",
+            "CRESMO_EXPANSION_MAX_PASSES",
+            "EXPANSION_MAX_PASSES",
+            "gap_filler_passes",
+            "CRESMO_GAP_FILLER_PASSES",
+            "GAP_FILLER_PASSES",
         ),
-        description="Default Socratic gap filler refinement passes.",
+        description="Default multi-pass text expansion and refinement limit before mechanical saturation.",
     )
+
+    @property
+    def gap_filler_passes(self) -> int:
+        """Backward-compatible property alias for expansion_max_passes."""
+        return self.expansion_max_passes
+
     concat_max_words: int = Field(
         default=500_000,
         validation_alias=AliasChoices("concat_max_words", "CONCAT_MAX_WORDS", "MASTER_MAX_WORDS"),
@@ -612,6 +627,32 @@ class CresmoSettings(BaseSettings):
             "JUDGE_PASS_THRESHOLD",
         ),
         description="Minimum score threshold required for quality judge evaluations to pass.",
+    )
+    gap_filler_judge_threshold: float = Field(
+        default=DEFAULT_JUDGE_PASS_THRESHOLD,
+        ge=0.0,
+        le=1.0,
+        validation_alias=AliasChoices(
+            "gap_filler_judge_threshold",
+            "CRESMO_GAP_FILLER_JUDGE_THRESHOLD",
+            "GAP_FILLER_JUDGE_THRESHOLD",
+        ),
+        description="Minimum score threshold required for gap_filler judge evaluations to pass.",
+    )
+    gap_filler_judge_weights: dict[str, float] = Field(
+        default_factory=lambda: {
+            "factual_grounding": 0.25,
+            "socratic_epistemic_depth": 0.25,
+            "causal_stratification_agency": 0.20,
+            "complementary_substance": 0.15,
+            "authorial_naturalism": 0.15,
+        },
+        validation_alias=AliasChoices(
+            "gap_filler_judge_weights",
+            "CRESMO_GAP_FILLER_JUDGE_WEIGHTS",
+            "GAP_FILLER_JUDGE_WEIGHTS",
+        ),
+        description="Criterion weights for gap_filler stage judge evaluation.",
     )
     judge_gemini_model: str = Field(
         default=DEFAULT_JUDGE_GEMINI_MODEL,

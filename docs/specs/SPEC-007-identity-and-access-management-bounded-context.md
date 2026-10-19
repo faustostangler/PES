@@ -1,6 +1,6 @@
 # SPEC-007: Identity and Access Management (IAM) Bounded Context Specification
 
-**Status:** PROPOSED  
+**Status:** ACCEPTED  
 **Date:** 2026-09-21  
 **Governing Method:** Doctor Stangler Architecture Method (Clean/Hexagonal DDD Modular Monolith)  
 **Governing ADR:** [`docs/adr/ADR-018-identity-and-access-management-bounded-context-and-sveltekit-bff.md`](../adr/ADR-018-identity-and-access-management-bounded-context-and-sveltekit-bff.md)  

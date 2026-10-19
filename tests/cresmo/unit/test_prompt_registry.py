@@ -39,9 +39,10 @@ class TestPromptRegistry:
             "judge_raw_index_concepts",
             "judge_raw_index_synthesis",
             "llm_judge",
+            "judge_gap_filler",
             "ollama_critique",
         }
-        assert len(PromptKey) == 18
+        assert len(PromptKey) == 19
         assert {k.value for k in PromptKey} == expected_keys
         for key in PromptKey:
             assert key in PROMPT_REGISTRY
@@ -74,6 +75,12 @@ class TestPromptRegistry:
         meta = get_prompt_metadata(PromptKey.FLUID_PROSE)
         assert meta.langfuse_name == "cresmo-fluid-prose"
         assert meta.skill_name == "cresmo-fluid-prose"
+
+    def test_get_prompt_metadata_judge_gap_filler(self) -> None:
+        """Verify lookup for specialized judge_gap_filler prompt."""
+        meta = get_prompt_metadata(PromptKey.JUDGE_GAP_FILLER)
+        assert meta.langfuse_name == "cresmo-judge-gap-filler"
+        assert meta.skill_name == "cresmo-gap-filler"
 
     def test_get_prompt_metadata_invalid_key_raises(self) -> None:
         """Verify that looking up an unknown prompt key raises KeyError."""

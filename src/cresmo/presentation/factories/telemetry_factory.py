@@ -43,19 +43,24 @@ from cresmo.presentation.factories.settings_factory import resolve_shared_settin
 logger = logging.getLogger(__name__)
 
 
-def probe_langfuse_ready(host: str, timeout_seconds: float = 1.0) -> bool:
+def probe_langfuse_ready(host: str, timeout_seconds: float = 2.0) -> bool:
     """Active preflight probe verifying whether the Langfuse server is responding to health pings.
 
     Args:
         host: Root Langfuse endpoint URL (e.g. 'http://localhost:3000').
-        timeout_seconds: Probe socket timeout in seconds (default: 1.0s).
+        timeout_seconds: Probe socket timeout in seconds (default: 2.0s).
 
     Returns:
         True if the server responded with HTTP < 500, False if unreachable or timed out.
     """
     normalized_host = host.rstrip("/")
     probe_url = f"{normalized_host}/api/public/health"
-    return probe_http_endpoint(probe_url, timeout_seconds=timeout_seconds)
+    if probe_http_endpoint(probe_url, timeout_seconds=timeout_seconds):
+        return True
+    if "localhost" in normalized_host:
+        fallback_url = probe_url.replace("localhost", "127.0.0.1")
+        return probe_http_endpoint(fallback_url, timeout_seconds=timeout_seconds)
+    return False
 
 
 def _clean_langfuse_env() -> None:

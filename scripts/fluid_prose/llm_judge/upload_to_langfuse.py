@@ -27,7 +27,9 @@ from cresmo.infrastructure.config import CresmoSettings
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger("upload_golden_set")
 
-DEFAULT_GOLDEN_SET_PATH = REPO_ROOT / "data" / "golden_sets" / "fluid_prose_golden_set.json"
+DEFAULT_GOLDEN_SET_PATH = (
+    REPO_ROOT / "scripts" / "fluid_prose" / "golden_sets" / "fluid_prose_golden_set.json"
+)
 DEFAULT_DATASET_NAME = "cresmo-fluid-prose-calibration"
 
 

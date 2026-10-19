@@ -70,7 +70,7 @@ class StageRegistry:
                     JudgeCriterion.COMPLEMENTARY_SUBSTANCE.value,
                 ],
             },
-            max_passes=3,
+            max_passes=5,
             early_stopping_enabled=True,
         ),
         # "long_expander": StageDefinition(

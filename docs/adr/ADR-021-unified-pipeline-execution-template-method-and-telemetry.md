@@ -1,11 +1,19 @@
 # ADR-021: Unified Pipeline Execution — SOTA-KISS Template Method, Single Root Span Telemetry, and Symmetrical Dispatchers
 
-**Status:** ACCEPTED  
+**Status:** ACCEPTED (PARTIALLY SUPERSEDED by [`ADR-028`](ADR-028-decoupling-fluid-prose-and-socratic-gap-filling.md), [`ADR-030`](ADR-030-stage-quality-gate-and-evaluator-retry-fabric.md), [`ADR-031`](ADR-031-standardized-stage-descriptor-and-closed-loop-refinement.md), [`ADR-035`](ADR-035-atomic-work-item-traces-and-sota-kiss-batch-correlation.md), and [`ADR-037`](ADR-037-lean-telemetry-topography-and-chronological-evaluation.md))  
 **Date:** 2026-09-25  
 **Decision Makers:** Lead Architect (Fausto Stangler), Systems Architect (Doctor Stangler Committee)  
 **Governing Method:** Doctor Stangler Architecture Method (Clean/Hexagonal DDD Modular Monolith, KISS & Fail-Fast Principles, ADR-First)  
 **Glossary Reference:** [`docs/GLOSSARY.md`](../GLOSSARY.md)  
-**Related ADRs:** [`ADR-001`](ADR-001-cresmo-modular-monolith-strangling.md), [`ADR-007`](ADR-007-pipeline-template-method-dry.md), [`ADR-013`](ADR-013-iterative-llm-as-a-judge-indexing-loops.md), [`ADR-016`](ADR-016-full-opentelemetry-conventions-session-replays-and-channel-governance.md), [`ADR-020`](ADR-020-sota-kiss-engineering-canon-and-concurrency-topology.md)
+**Supersedes:** [`ADR-007`](ADR-007-pipeline-template-method-dry.md)  
+**Related ADRs:** [`ADR-001`](ADR-001-cresmo-modular-monolith-strangling.md), [`ADR-007`](ADR-007-pipeline-template-method-dry.md), [`ADR-013`](ADR-013-iterative-llm-as-a-judge-indexing-loops.md), [`ADR-016`](ADR-016-full-opentelemetry-conventions-session-replays-and-channel-governance.md), [`ADR-020`](ADR-020-sota-kiss-engineering-canon-and-concurrency-topology.md), [`ADR-028`](ADR-028-decoupling-fluid-prose-and-socratic-gap-filling.md), [`ADR-030`](ADR-030-stage-quality-gate-and-evaluator-retry-fabric.md), [`ADR-031`](ADR-031-standardized-stage-descriptor-and-closed-loop-refinement.md), [`ADR-035`](ADR-035-atomic-work-item-traces-and-sota-kiss-batch-correlation.md), [`ADR-037`](ADR-037-lean-telemetry-topography-and-chronological-evaluation.md)
+
+> [!WARNING]
+> **PARTIALLY SUPERSEDED SPECIFICATIONS:**  
+> While ADR-021 definitively superseded ADR-007 by hoisting the template method to `CresmoPipeline.execute(...)`, key components were subsequently superseded:
+> 1. **Stage Execution Sequence**: Section 2.2 placed `raw_indexing` before `fluid_prose`. This was **SUPERSEDED by [`ADR-028`](ADR-028-decoupling-fluid-prose-and-socratic-gap-filling.md)**, which decoupled fluid prose and designated it as Stage 1 prior to catalog indexing for linguistic normalization.
+> 2. **Stage Orchestration Fabric**: Direct coordinator stage dispatch was **SUPERSEDED by [`ADR-030`](ADR-030-stage-quality-gate-and-evaluator-retry-fabric.md)** and [`ADR-031`](ADR-031-standardized-stage-descriptor-and-closed-loop-refinement.md) through declarative `StageConfig` and `PipelineStageRunner.run_evaluated_stage`.
+> 3. **Mega-Trace Prohibition**: The single root span encapsulating all batch items was **SUPERSEDED by [`ADR-035`](ADR-035-atomic-work-item-traces-and-sota-kiss-batch-correlation.md)** (`1 Trace = 1 Work Item`) and [`ADR-037`](ADR-037-lean-telemetry-topography-and-chronological-evaluation.md) (Trace: `cresmo.synthesis_pipeline`, Root Span: `pipeline.coordinator`).
 
 ---
 

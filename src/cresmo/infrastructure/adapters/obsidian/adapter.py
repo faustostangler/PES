@@ -18,6 +18,7 @@ from cresmo.application.ports import VaultRepositoryPort
 from cresmo.domain.entities import (
     AtomicNote,
     EnrichedCompendium,
+    FluidTranscript,
     MapOfContent,
     SourceTranscript,
 )
@@ -50,6 +51,7 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
         vault_dir: Path,
         raw_dir: Path,
         enriched_dir: Path,
+        fluid_dir: Path | None = None,
         master_dir: Path | None = None,
         data_dir: Path | None = None,
         mocs_dir: Path | None = None,
@@ -59,6 +61,7 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
         self.raw_dir = Path(raw_dir).resolve()
         self.enriched_dir = Path(enriched_dir).resolve()
         self.data_dir = Path(data_dir).resolve() if data_dir else self.raw_dir.parent
+        self.fluid_dir = Path(fluid_dir).resolve() if fluid_dir else (self.data_dir / "fluid")
         self.master_dir = Path(master_dir).resolve() if master_dir else (self.data_dir / "master")
 
         self.mocs_dir = Path(mocs_dir).resolve() if mocs_dir else (self.vault_dir / "MOCs")
@@ -69,6 +72,7 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
         self._transcripts = TranscriptVaultHandler(
             raw_dir=self.raw_dir,
             enriched_dir=self.enriched_dir,
+            fluid_dir=self.fluid_dir,
         )
         self._notes = AtomicNoteVaultHandler(
             vault_dir=self.vault_dir,
@@ -104,6 +108,15 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
 
     def get_enriched_files_for_channel(self, channel_name: ChannelName) -> list[Path]:
         return self._transcripts.get_enriched_files_for_channel(channel_name)
+
+    def save_fluid_transcript(self, transcript: FluidTranscript) -> None:
+        self._transcripts.save_fluid_transcript(transcript)
+
+    def get_fluid_transcript(self, content_id: ContentId) -> FluidTranscript | None:
+        return self._transcripts.get_fluid_transcript(content_id)
+
+    def get_fluid_files_for_channel(self, channel_name: ChannelName) -> list[Path]:
+        return self._transcripts.get_fluid_files_for_channel(channel_name)
 
     # --- Atomic Notes ---
 

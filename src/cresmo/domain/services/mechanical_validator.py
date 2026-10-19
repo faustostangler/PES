@@ -70,8 +70,8 @@ def validate_fluid_prose_mechanical_invariants(text: str) -> list[str]:
 
 
 _COMPLEMENTARY_REGEX = re.compile(
-    r"^\s*#{2,3}\s+\*?\*?(?:Informa[cç][oõ]es\s+Complementares|Notas\s+Complementares|Informa[cç][oõ]es\s+Adicionais)\*?\*?.*$",
-    re.MULTILINE | re.IGNORECASE,
+    r"^\s*##\s+Informações\s+Complementares\s*$",
+    re.MULTILINE,
 )
 _BOLD_ENTITY_PATTERN = re.compile(r"\*\*([^*]+)\*\*")
 
@@ -121,17 +121,14 @@ def validate_gap_filler_mechanical_invariants(text: str) -> list[str]:
             "Missing mandatory complementary section '## Informações Complementares'."
         )
         main_body = stripped
+        comp_section = ""
     else:
         main_body = stripped[: comp_match.start()].strip()
         comp_section = stripped[comp_match.end() :].strip()
         if not comp_section:
-            violations.append(
-                "Section '## Informações Complementares' is empty."
-            )
+            violations.append("Section '## Informações Complementares' is empty.")
         if not main_body:
-            violations.append(
-                "Main body text before '## Informações Complementares' is empty."
-            )
+            violations.append("Main body text before '## Informações Complementares' is empty.")
 
     # 5. Zero Markdown Tables in main body
     if _TABLE_LINE_PATTERN.search(main_body) or ("|" in main_body and "-|-" in main_body):
@@ -146,6 +143,13 @@ def validate_gap_filler_mechanical_invariants(text: str) -> list[str]:
     # 7. Zero Blockquotes in main body
     if _BLOCKQUOTE_LINE_PATTERN.search(main_body):
         violations.append("Main body must contain zero blockquotes ('>').")
+
+    # 8. Zero Bullet Points in complementary section (must be numbered continuous paragraphs)
+    if comp_section and _BULLET_LINE_PATTERN.search(comp_section):
+        violations.append(
+            "Complementary section must contain zero bullet points or list markers ('*', '-', '+'). "
+            "Use numbered continuous paragraphs ('1. ', '2. ')."
+        )
 
     return violations
 
@@ -196,4 +200,3 @@ def check_complementary_mechanical_saturation(
 
     # If any new bold entity was introduced in the current pass, not saturated yet
     return curr_entities.issubset(prev_entities)
-

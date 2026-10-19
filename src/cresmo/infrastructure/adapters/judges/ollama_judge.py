@@ -75,8 +75,13 @@ class OllamaJudgeAdapter(LlmJudgePort):
         start_time = time.perf_counter()
         criteria_names = [c.value for c in context.required_criteria]
 
+        prompt_key = (
+            PromptKey.JUDGE_GAP_FILLER
+            if context.stage_name == "gap_filler"
+            else PromptKey.LLM_JUDGE
+        )
         chat_prompt = self._prompt_provider.get_prompt(
-            PromptKey.LLM_JUDGE,
+            prompt_key,
             stage_name=context.stage_name,
             criteria_json=json.dumps(criteria_names),
             source_text=context.raw_text,

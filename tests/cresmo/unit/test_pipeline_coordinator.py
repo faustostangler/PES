@@ -42,6 +42,7 @@ from cresmo.application.ports import (
     VaultRepositoryPort,
 )
 from cresmo.domain.entities import (
+    FluidTranscript,
     SourceTranscript,
     UserIdentity,
 )
@@ -953,3 +954,34 @@ class TestCresmoPipelineRunForSources:
             assert call_kwargs["force_reprocess"] is False
             assert call_kwargs["user"] is None
             assert isinstance(call_kwargs["batch_id"], BatchId)
+
+    def test_pipeline_fluid_prose_checkpoint_skips_stage_runner(self) -> None:
+        """Verify pipeline reuses cached FluidTranscript when force_reprocess is False per ADR-043."""
+        cid = ContentId("vid_cached_fluid")
+        raw = SourceTranscript(
+            content_id=cid,
+            channel_name=ChannelName("Channel Test"),
+            body="Verbatim spoken text.",
+        )
+        cached_fluid = FluidTranscript(
+            content_id=cid,
+            channel_name=ChannelName("Channel Test"),
+            body="## Cached Detranscribed Prose",
+        )
+        mock_ingestion = MagicMock(spec=MediaIngestionPort)
+        mock_vault = MagicMock(spec=VaultRepositoryPort)
+        mock_vault.get_raw_transcript.return_value = raw
+        mock_vault.get_fluid_transcript.return_value = cached_fluid
+        mock_runner = MagicMock(spec=PipelineStageRunner)
+
+        pipeline = CresmoPipeline(
+            media_ingestion_port=mock_ingestion,
+            vault_port=mock_vault,
+            stage_runner=mock_runner,
+        )
+
+        result = pipeline.execute(raw, force_reprocess=False)
+
+        assert result.success is True
+        assert result.fluid_transcript == cached_fluid
+        mock_runner.execute_stage.assert_not_called()

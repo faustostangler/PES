@@ -71,6 +71,7 @@ class TestCresmoSettings:
         assert not hasattr(settings, "raw_index_temperature")
         assert settings.llm_synthesis_temperature == 0.2
         assert settings.llm_indexing_temperature == 0.2
+        assert settings.expansion_max_passes == 5
 
     def test_ollama_num_predict_defaults_and_env_override(
         self, monkeypatch: pytest.MonkeyPatch

@@ -12,7 +12,11 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from cresmo.application.ports import NoOpPromptProviderPort, PromptProviderPort
+from cresmo.application.ports import (
+    NoOpPromptProviderPort,
+    PromptProviderPort,
+    VaultRepositoryPort,
+)
 from cresmo.application.use_cases import (
     DiscoverAtomicInventoryUseCase,
     ExpandCompendiumUseCase,
@@ -193,6 +197,26 @@ class TestTransformFluidProse:
         assert call["trace_id"] == "vid_tfp123_fluid_prose"
         assert call["user_id"] == "usr_prose_editor"
         assert call["session_id"] == "UC_ALPHA:vid_tfp123"
+
+    def test_transform_fluid_prose_persists_to_vault_when_configured(self) -> None:
+        """Verify TransformFluidProseUseCase invokes vault_port.save_fluid_transcript per ADR-043."""
+        cid = ContentId("vid_tfp_persist")
+        raw = SourceTranscript(
+            content_id=cid,
+            channel_name=ChannelName("Channel Beta"),
+            body="Spoken oral transcript text.",
+        )
+        llm = MockLLMAdapter(responses=["# Clean Title\n\n## Clean Body\n\nPure narrative body."])
+        mock_vault = MagicMock(spec=VaultRepositoryPort)
+
+        use_case = TransformFluidProseUseCase(
+            llm_synthesis_port=llm,
+            vault_port=mock_vault,
+        )
+        fluid = use_case.execute(raw)
+
+        mock_vault.save_fluid_transcript.assert_called_once_with(fluid)
+        assert fluid.content.id == cid
 
     def test_transform_fluid_prose_rejects_non_raw_transcript(self) -> None:
         llm_port = MockLLMAdapter()

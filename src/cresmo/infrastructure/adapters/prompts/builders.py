@@ -366,6 +366,16 @@ def build_llm_judge(provider: Any, **context: Any) -> ChatPrompt:
     )
 
 
+def build_judge_gap_filler(provider: Any, **context: Any) -> ChatPrompt:
+    return provider._format_paired_prompt(
+        PromptKey.JUDGE_GAP_FILLER.value,
+        stage_name=context.get("stage_name", "gap_filler"),
+        criteria_json=context.get("criteria_json", "[]"),
+        source_text=context.get("source_text", ""),
+        candidate_text=context.get("candidate_text", ""),
+    )
+
+
 def build_ollama_critique(provider: Any, **context: Any) -> ChatPrompt:
     return provider._format_paired_prompt(
         PromptKey.OLLAMA_CRITIQUE.value,
@@ -507,6 +517,7 @@ def create_default_prompt_builder_registry() -> PromptBuilderRegistry:
     registry.register(PromptKey.JUDGE_RAW_INDEX_CONCEPTS, build_judge_raw_index_concepts)
     registry.register(PromptKey.JUDGE_RAW_INDEX_SYNTHESIS, build_judge_raw_index_synthesis)
     registry.register(PromptKey.LLM_JUDGE, build_llm_judge)
+    registry.register(PromptKey.JUDGE_GAP_FILLER, build_judge_gap_filler)
     registry.register(PromptKey.OLLAMA_CRITIQUE, build_ollama_critique)
 
     registry.validate_completeness()

@@ -54,6 +54,26 @@ class TestJsonPromptProvider:
         assert "atomic_inventory" in provider._templates
         assert "atomic_batch" in provider._templates
         assert "reconcile_mocs" in provider._templates
+        assert "judge_gap_filler" in provider._templates
+
+    def test_judge_gap_filler_prompt_formatting(self) -> None:
+        provider = JsonPromptProvider()
+        prompt = provider.get_prompt(
+            PromptKey.JUDGE_GAP_FILLER,
+            stage_name="gap_filler",
+            criteria_json='["factual_grounding", "socratic_epistemic_depth"]',
+            source_text="Source fluid transcript.",
+            candidate_text="Candidate compendium text.",
+        )
+        assert prompt.system_instruction is not None
+        assert "factual_grounding" in prompt.system_instruction
+        assert "socratic_epistemic_depth" in prompt.system_instruction
+        assert "causal_stratification_agency" in prompt.system_instruction
+        assert "complementary_substance" in prompt.system_instruction
+        assert "authorial_naturalism" in prompt.system_instruction
+        user_msg = prompt.get_last_user_content()
+        assert "Source fluid transcript." in user_msg
+        assert "Candidate compendium text." in user_msg
 
     def test_gap_filler_differentiates_pass1_and_subsequent_passes(self) -> None:
         provider = JsonPromptProvider()
