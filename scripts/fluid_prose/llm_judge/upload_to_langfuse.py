@@ -9,11 +9,15 @@ Conforms to:
 
 from __future__ import annotations
 
-import argparse
 import json
 import logging
 import sys
+from collections.abc import Sequence
 from pathlib import Path
+from typing import Annotated
+
+import click
+import typer
 
 # Ensure project root and src are in sys.path
 REPO_ROOT = Path(__file__).resolve().parents[3]
@@ -115,28 +119,65 @@ def upload_golden_set(
         return 1
 
 
-def main() -> int:
-    parser = argparse.ArgumentParser(description="Upload Golden Set to Langfuse")
-    parser.add_argument(
-        "--dataset-path",
-        type=Path,
-        default=DEFAULT_GOLDEN_SET_PATH,
-        help="Path to local golden set JSON file",
-    )
-    parser.add_argument(
-        "--dataset-name",
-        type=str,
-        default=DEFAULT_DATASET_NAME,
-        help="Target Langfuse dataset name",
-    )
-    parser.add_argument(
-        "--description",
-        type=str,
-        default=None,
-        help="Optional dataset description",
-    )
-    args = parser.parse_args()
-    return upload_golden_set(args.dataset_path, args.dataset_name, args.description)
+app = typer.Typer(
+    name="upload-fluid-prose-dataset",
+    help="Upload Golden Set to Langfuse.",
+    no_args_is_help=False,
+    context_settings={"help_option_names": ["-h", "--help"]},
+)
+
+
+@app.command()
+def upload(
+    dataset_path: Annotated[
+        Path,
+        typer.Option(
+            "--dataset-path",
+            help="Path to local golden set JSON file",
+        ),
+    ] = DEFAULT_GOLDEN_SET_PATH,
+    dataset_name: Annotated[
+        str,
+        typer.Option(
+            "--dataset-name",
+            help="Target Langfuse dataset name",
+        ),
+    ] = DEFAULT_DATASET_NAME,
+    description: Annotated[
+        str | None,
+        typer.Option(
+            "--description",
+            help="Optional dataset description",
+        ),
+    ] = None,
+) -> None:
+    code = upload_golden_set(dataset_path, dataset_name, description)
+    if code != 0:
+        raise typer.Exit(code=code)
+
+
+def main(argv: Sequence[str] | None = None) -> int:
+    """Execute fluid prose dataset upload entrypoint.
+
+    Args:
+        argv: Optional sequence of CLI arguments. If None, uses sys.argv[1:].
+
+    Returns:
+        Process exit code integer.
+    """
+    try:
+        res = app(args=list(argv) if argv is not None else None, standalone_mode=False)
+        return 0 if res is None else int(res)
+    except typer.Exit as exc:
+        return exc.exit_code
+    except click.ClickException as exc:
+        sys.stderr.write(f"Usage error: {exc}\n")
+        return getattr(exc, "exit_code", 2)
+    except SystemExit as exc:
+        return exc.code if isinstance(exc.code, int) else 2
+    except Exception as exc:  # noqa: BLE001
+        sys.stderr.write(f"Unexpected error: {exc}\n")
+        return 1
 
 
 if __name__ == "__main__":

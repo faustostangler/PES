@@ -28,6 +28,8 @@ from typing import Any, TypeVar
 from google import genai
 from google.genai import errors
 
+from cresmo.domain.exceptions import RateLimitExceededError
+
 __all__ = [
     "CredentialPoolExhaustedError",
     "GeminiCredentialPool",
@@ -40,7 +42,7 @@ logger = logging.getLogger(__name__)
 T = TypeVar("T")
 
 
-class CredentialPoolExhaustedError(RuntimeError):
+class CredentialPoolExhaustedError(RateLimitExceededError, RuntimeError):
     """Raised when all credentials in the pool are temporarily in cooldown."""
 
     def __init__(self, retry_after_seconds: float, message: str | None = None) -> None:

@@ -22,7 +22,6 @@ Usage:
 
 from __future__ import annotations
 
-import argparse
 import ast
 import json
 import shutil
@@ -30,7 +29,10 @@ import subprocess
 import sys
 from collections.abc import Sequence
 from pathlib import Path
-from typing import Any
+from typing import Annotated, Any
+
+import click
+import typer
 
 # Mapping of source modules/patterns to their mirrored unit test suites
 MODULE_TEST_MAP: dict[str, list[str]] = {
@@ -758,36 +760,65 @@ def run_mutation_on_module(
     return {"total": total, "killed": killed, "survived": survived}
 
 
-def main() -> int:
-    parser = argparse.ArgumentParser(description="SOTA Mutation Sweeper for Cresmo.")
-    parser.add_argument("--file", type=str, help="Single file to mutate.")
-    parser.add_argument(
-        "--wave",
-        choices=["completeness", "domain", "pipeline", "use_cases", "infra", "presentation", "all"],
-        help="Execution wave.",
-    )
-    parser.add_argument("--no-reset", action="store_true", help="Do not reset mutant statuses.")
-    parser.add_argument(
-        "--show-survivors", action="store_true", help="Print diff of surviving mutants."
-    )
-    args = parser.parse_args()
+app = typer.Typer(
+    name="cresmo-mutation-sweeper",
+    help="SOTA Mutation Sweeper for Cresmo.",
+    no_args_is_help=False,
+    context_settings={"help_option_names": ["-h", "--help"]},
+)
 
-    reset = not args.no_reset
 
-    if args.file:
-        targets = [args.file]
-    elif args.wave:
-        if args.wave == "all":
+@app.command()
+def sweep(
+    file_path: Annotated[
+        str | None,
+        typer.Option(
+            "--file",
+            help="Single file to mutate.",
+        ),
+    ] = None,
+    wave: Annotated[
+        str | None,
+        typer.Option(
+            "--wave",
+            help="Execution wave: completeness, domain, pipeline, use_cases, infra, presentation, all",
+        ),
+    ] = None,
+    no_reset: Annotated[
+        bool,
+        typer.Option(
+            "--no-reset",
+            help="Do not reset mutant statuses.",
+        ),
+    ] = False,
+    show_survivors: Annotated[
+        bool,
+        typer.Option(
+            "--show-survivors",
+            help="Print diff of surviving mutants.",
+        ),
+    ] = False,
+) -> None:
+    reset = not no_reset
+
+    if file_path:
+        targets = [file_path]
+    elif wave:
+        if wave == "all":
             targets = [f for wave_files in WAVE_DEFINITIONS.values() for f in wave_files]
+        elif wave in WAVE_DEFINITIONS:
+            targets = WAVE_DEFINITIONS[wave]
         else:
-            targets = WAVE_DEFINITIONS[args.wave]
+            print(f"❌ Error: Invalid wave '{wave}'. Valid choices: {list(WAVE_DEFINITIONS.keys()) + ['all']}")
+            raise typer.Exit(code=1)
     else:
-        parser.print_help()
-        return 1
+        ctx = click.get_current_context()
+        print(ctx.get_help())
+        raise typer.Exit(code=1)
 
     totals = {"total": 0, "killed": 0, "survived": 0}
     for target in targets:
-        res = run_mutation_on_module(target, reset=reset, show_survivors=args.show_survivors)
+        res = run_mutation_on_module(target, reset=reset, show_survivors=show_survivors)
         totals["total"] += res["total"]
         totals["killed"] += res["killed"]
         totals["survived"] += res["survived"]
@@ -800,7 +831,32 @@ def main() -> int:
     print(f"   Survived:        {totals['survived']}")
     print("=" * 80 + "\n")
 
-    return 0 if totals["survived"] == 0 else 1
+    if totals["survived"] != 0:
+        raise typer.Exit(code=1)
+
+
+def main(argv: Sequence[str] | None = None) -> int:
+    """Execute mutation sweeper entrypoint.
+
+    Args:
+        argv: Optional sequence of CLI arguments. If None, uses sys.argv[1:].
+
+    Returns:
+        Process exit code integer.
+    """
+    try:
+        res = app(args=list(argv) if argv is not None else None, standalone_mode=False)
+        return 0 if res is None else int(res)
+    except typer.Exit as exc:
+        return exc.exit_code
+    except click.ClickException as exc:
+        sys.stderr.write(f"Usage error: {exc}\n")
+        return getattr(exc, "exit_code", 2)
+    except SystemExit as exc:
+        return exc.code if isinstance(exc.code, int) else 2
+    except Exception as exc:  # noqa: BLE001
+        sys.stderr.write(f"Unexpected error: {exc}\n")
+        return 1
 
 
 if __name__ == "__main__":

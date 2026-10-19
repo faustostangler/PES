@@ -756,6 +756,19 @@ class TestLlmJudgeFactory:
         assert isinstance(fallback, OllamaJudgeAdapter)
         assert fallback.pass_threshold == 0.88
 
+    def test_build_llm_judge_adapter_without_fallback_bypasses_composite(self) -> None:
+        """Verify build_llm_judge_adapter with enable_fallback=False returns primary adapter directly."""
+        from cresmo.infrastructure.config import CresmoSettings
+        from cresmo.presentation.factories.judge_factory import build_llm_judge_adapter
+
+        settings = CresmoSettings(judge_provider="gemini")
+        judge = build_llm_judge_adapter(settings, langfuse_client=None, enable_fallback=False)
+
+        assert isinstance(judge, LangfuseJudgeDecorator)
+        assert isinstance(judge._inner_judge, MechanicalPreflightJudgeDecorator)
+        assert isinstance(judge._inner_judge._inner_judge, GeminiJudgeAdapter)
+        assert not isinstance(judge._inner_judge._inner_judge, ResilientCompositeJudgeAdapter)
+
 
 class TestCoordinatorLlmJudgeIntegration:
     """Test suite for CresmoPipeline Stage 1 quality evaluation hooking."""

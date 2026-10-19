@@ -30,6 +30,7 @@ from cresmo.domain.value_objects import (
     ContentId,
     SourceModality,
 )
+from cresmo.infrastructure.adapters.gemini_pool import CredentialPoolExhaustedError
 from cresmo.infrastructure.config import CresmoSettings
 from cresmo.presentation.commands.run import (
     _build_batch_discovery_query,
@@ -779,3 +780,47 @@ class TestRunCommand:
         assert (
             "[run] Process metrics emission failed during cleanup: Metrics offline" in caplog.text
         )
+
+    def test_execute_batch_run_breaks_immediately_on_credential_pool_exhausted(
+        self, capsys: pytest.CaptureFixture[str]
+    ) -> None:
+        """Verify batch run breaks immediately on CredentialPoolExhaustedError, halting remaining items."""
+        mock_pipeline = MagicMock()
+        mock_pipeline.settings = CresmoSettings()
+
+        sources = [
+            BatchSource(kind=SourceModality.URL, target="https://youtube.com/watch?v=cooldownVid"),
+            BatchSource(
+                kind=SourceModality.URL, target="https://youtube.com/watch?v=shouldNeverRun1"
+            ),
+            BatchSource(
+                kind=SourceModality.URL, target="https://youtube.com/watch?v=shouldNeverRun2"
+            ),
+        ]
+
+        args = Namespace(
+            manifest=None,
+            no_scan_raw=False,
+            passes=3,
+            force_reprocess=False,
+        )
+
+        mock_pipeline.run_for_video.side_effect = CredentialPoolExhaustedError(
+            retry_after_seconds=46294.7,
+            message="All 3 Gemini credentials in pool are in cooldown. Earliest key will recover in 46294.7s.",
+        )
+
+        with patch("cresmo.presentation.commands.run._drain_telemetry_and_memory") as mock_drain:
+            code = execute_batch_run(mock_pipeline, sources, args)
+
+            assert code == EXIT_RATE_LIMIT_EXCEEDED
+            assert mock_pipeline.run_for_video.call_count == 1
+            mock_drain.assert_called_once()
+
+            captured = capsys.readouterr()
+            assert "[COOLDOWN ABORT]" in captured.err
+            assert "46294.7s" in captured.err
+            assert "Batch Synthesis Summary" in captured.out
+            assert "- Total Items: 1\n" in captured.out
+            assert "- Failed: 1\n" in captured.out
+            assert "- Completed: 0\n" in captured.out

@@ -9,19 +9,21 @@ Conforms to:
 
 from __future__ import annotations
 
-import argparse
 import json
 import logging
 import math
 import random
 import sys
 import time
-from collections.abc import Iterator
+from collections.abc import Iterator, Sequence
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
 from statistics import NormalDist
-from typing import Any
+from typing import Annotated, Any
+
+import click
+import typer
 
 # Ensure project root and src are in sys.path when invoked directly as a script / debugger
 REPO_ROOT = Path(__file__).resolve().parents[3]
@@ -1012,83 +1014,117 @@ def save_calibration_report(
     return output_path
 
 
-def main() -> int:
-    parser = argparse.ArgumentParser(description="Calibrate Fluid Prose LLM Judge")
-    parser.add_argument("--provider", default="gemini", choices=["gemini", "ollama", "typesafe"])
-    parser.add_argument(
-        "--model",
-        type=str,
-        default=None,
-        help="Optional override for model name (e.g. 'qwen2.5:7b', 'gemma4:latest' for Ollama)",
-    )
-    parser.add_argument("--threshold", type=float, default=0.80)
-    parser.add_argument(
-        "--dataset-path",
-        type=Path,
-        default=DEFAULT_GOLDEN_SET_PATH,
-        help="Path to local Golden Set JSON file",
-    )
-    parser.add_argument("--dataset-name", default="cresmo-fluid-prose-calibration")
-    parser.add_argument(
-        "--remote",
-        action="store_true",
-        help="Pull dataset dynamically from remote Langfuse instead of local file",
-    )
-    parser.add_argument(
-        "--seed-only",
-        action="store_true",
-        help="Run quickly against embedded 5-item seed data",
-    )
-    parser.add_argument(
-        "--delay",
-        type=float,
-        default=None,
-        help="Base pacing delay in seconds (default: 4.2s for Gemini API, 0.0s for local Ollama)",
-    )
-    parser.add_argument(
-        "--jitter",
-        type=float,
-        default=None,
-        help="Random jitter in seconds (default: 0.8s for Gemini API, 0.0s for local Ollama)",
-    )
-    parser.add_argument(
-        "--output-path",
-        type=Path,
-        default=None,
-        help="Custom destination path to write full calibration report (default: scripts/fluid_prose/llm_judge_{provider}.txt)",
-    )
-    args = parser.parse_args()
+app = typer.Typer(
+    name="calibrate-fluid-prose",
+    help="Calibrate Fluid Prose LLM Judge.",
+    no_args_is_help=False,
+    context_settings={"help_option_names": ["-h", "--help"]},
+)
 
+
+@app.command()
+def calibrate(
+    provider: Annotated[
+        str,
+        typer.Option(
+            "--provider",
+            help="Judge provider: gemini, ollama, or typesafe",
+        ),
+    ] = "gemini",
+    model: Annotated[
+        str | None,
+        typer.Option(
+            "--model",
+            help="Optional override for model name (e.g. 'qwen2.5:7b', 'gemma4:latest' for Ollama)",
+        ),
+    ] = None,
+    threshold: Annotated[
+        float,
+        typer.Option(
+            "--threshold",
+            help="Approval pass threshold",
+        ),
+    ] = 0.80,
+    dataset_path: Annotated[
+        Path,
+        typer.Option(
+            "--dataset-path",
+            help="Path to local Golden Set JSON file",
+        ),
+    ] = DEFAULT_GOLDEN_SET_PATH,
+    dataset_name: Annotated[
+        str,
+        typer.Option(
+            "--dataset-name",
+            help="Dataset name for remote Langfuse pull",
+        ),
+    ] = "cresmo-fluid-prose-calibration",
+    remote: Annotated[
+        bool,
+        typer.Option(
+            "--remote",
+            help="Pull dataset dynamically from remote Langfuse instead of local file",
+        ),
+    ] = False,
+    seed_only: Annotated[
+        bool,
+        typer.Option(
+            "--seed-only",
+            help="Run quickly against embedded 5-item seed data",
+        ),
+    ] = False,
+    delay: Annotated[
+        float | None,
+        typer.Option(
+            "--delay",
+            help="Base pacing delay in seconds (default: 4.2s for Gemini API, 0.0s for local Ollama)",
+        ),
+    ] = None,
+    jitter: Annotated[
+        float | None,
+        typer.Option(
+            "--jitter",
+            help="Random jitter in seconds (default: 0.8s for Gemini API, 0.0s for local Ollama)",
+        ),
+    ] = None,
+    output_path: Annotated[
+        Path | None,
+        typer.Option(
+            "--output-path",
+            help="Custom destination path to write full calibration report",
+        ),
+    ] = None,
+) -> None:
     # Automatic zero-delay pacing for local providers
-    delay = args.delay if args.delay is not None else (0.0 if args.provider == "ollama" else 4.2)
-    jitter = args.jitter if args.jitter is not None else (0.0 if args.provider == "ollama" else 0.8)
+    req_delay = delay if delay is not None else (0.0 if provider == "ollama" else 4.2)
+    req_jitter = jitter if jitter is not None else (0.0 if provider == "ollama" else 0.8)
 
     model_kwargs: dict[str, Any] = {}
-    if args.model:
-        if args.provider == "ollama":
-            model_kwargs["ollama_model"] = args.model
-        elif args.provider == "gemini":
-            model_kwargs["judge_gemini_model"] = args.model
-        elif args.provider == "typesafe":
-            model_kwargs["typesafe_model"] = args.model
+    if model:
+        if provider == "ollama":
+            model_kwargs["ollama_model"] = model
+        elif provider == "gemini":
+            model_kwargs["judge_gemini_model"] = model
+        elif provider == "typesafe":
+            model_kwargs["typesafe_model"] = model
 
     settings = CresmoSettings(
-        judge_provider=args.provider,
-        judge_pass_threshold=args.threshold,
+        judge_provider=provider,
+        judge_pass_threshold=threshold,
         **model_kwargs,
     )
 
-    resolved_model = args.model or (settings.ollama_model if args.provider == "ollama" else settings.judge_gemini_model)
-    output_file = args.output_path or (REPO_ROOT / "scripts" / "fluid_prose" / f"llm_judge_{args.provider}.txt")
+    resolved_model = model or (settings.ollama_model if provider == "ollama" else settings.judge_gemini_model)
+    output_file = output_path or (REPO_ROOT / "scripts" / "fluid_prose" / f"llm_judge_{provider}.txt")
 
     logger.info(
         "Instantiating Judge adapter chain (Provider: %s, Model: %s)...",
-        args.provider,
+        provider,
         resolved_model,
     )
     judge = build_llm_judge_adapter(settings=settings)
 
-    if args.seed_only:
+    if seed_only:
         logger.info(
             "Executing calibration against embedded seed items (%d items)...",
             len(SEED_CALIBRATION_DATA),
@@ -1096,26 +1132,28 @@ def main() -> int:
         results = run_local_calibration(
             judge,
             SEED_CALIBRATION_DATA,
-            delay=delay,
-            jitter=jitter,
+            delay=req_delay,
+            jitter=req_jitter,
         )
         save_calibration_report(
             results,
             output_path=output_file,
-            provider=args.provider,
+            provider=provider,
             model=resolved_model,
         )
-        return 0 if results.target_isolated.accuracy >= 0.85 else 1
+        if results.target_isolated.accuracy < 0.85:
+            raise typer.Exit(code=1)
+        return
 
-    if args.remote:
+    if remote:
         try:
             from langfuse import Langfuse
 
             langfuse = Langfuse()
-            dataset = langfuse.get_dataset(args.dataset_name)
+            dataset = langfuse.get_dataset(dataset_name)
             logger.info(
                 "Found remote Langfuse dataset '%s' with %d items.",
-                args.dataset_name,
+                dataset_name,
                 len(dataset.items),
             )
             items = [
@@ -1130,57 +1168,86 @@ def main() -> int:
             results = run_local_calibration(
                 judge,
                 items,
-                delay=delay,
-                jitter=jitter,
+                delay=req_delay,
+                jitter=req_jitter,
             )
             save_calibration_report(
                 results,
                 output_path=output_file,
-                provider=args.provider,
+                provider=provider,
                 model=resolved_model,
             )
-            return 0 if results.target_isolated.accuracy >= 0.85 else 1
+            if results.target_isolated.accuracy < 0.85:
+                raise typer.Exit(code=1)
+            return
         except Exception as exc:  # noqa: BLE001
             logger.error("Failed connecting to remote Langfuse dataset: %s", exc)
-            return 1
+            raise typer.Exit(code=1) from exc
 
     # Default: Load local golden set file
-    if not args.dataset_path.exists():
+    if not dataset_path.exists():
         logger.warning(
-            "Golden set file '%s' not found. Falling back to embedded seed data.", args.dataset_path
+            "Golden set file '%s' not found. Falling back to embedded seed data.", dataset_path
         )
         results = run_local_calibration(
             judge,
             SEED_CALIBRATION_DATA,
-            delay=delay,
-            jitter=jitter,
+            delay=req_delay,
+            jitter=req_jitter,
         )
         save_calibration_report(
             results,
             output_path=output_file,
-            provider=args.provider,
+            provider=provider,
             model=resolved_model,
         )
-        return 0 if results.target_isolated.accuracy >= 0.85 else 1
+        if results.target_isolated.accuracy < 0.85:
+            raise typer.Exit(code=1)
+        return
 
-    logger.info("Loading Golden Set from '%s'...", args.dataset_path)
-    with open(args.dataset_path, "r", encoding="utf-8") as f:
+    logger.info("Loading Golden Set from '%s'...", dataset_path)
+    with open(dataset_path, "r", encoding="utf-8") as f:
         items = json.load(f)
 
-    logger.info("Loaded %d items from %s. Starting calibration...", len(items), args.dataset_path)
+    logger.info("Loaded %d items from %s. Starting calibration...", len(items), dataset_path)
     results = run_local_calibration(
         judge,
         items,
-        delay=delay,
-        jitter=jitter,
+        delay=req_delay,
+        jitter=req_jitter,
     )
     save_calibration_report(
         results,
         output_path=output_file,
-        provider=args.provider,
+        provider=provider,
         model=resolved_model,
     )
-    return 0 if results.target_isolated.accuracy >= 0.85 else 1
+    if results.target_isolated.accuracy < 0.85:
+        raise typer.Exit(code=1)
+
+
+def main(argv: Sequence[str] | None = None) -> int:
+    """Execute fluid prose judge calibration entrypoint.
+
+    Args:
+        argv: Optional sequence of CLI arguments. If None, uses sys.argv[1:].
+
+    Returns:
+        Process exit code integer.
+    """
+    try:
+        res = app(args=list(argv) if argv is not None else None, standalone_mode=False)
+        return 0 if res is None else int(res)
+    except typer.Exit as exc:
+        return exc.exit_code
+    except click.ClickException as exc:
+        sys.stderr.write(f"Usage error: {exc}\n")
+        return getattr(exc, "exit_code", 2)
+    except SystemExit as exc:
+        return exc.code if isinstance(exc.code, int) else 2
+    except Exception as exc:  # noqa: BLE001
+        sys.stderr.write(f"Unexpected error: {exc}\n")
+        return 1
 
 
 if __name__ == "__main__":

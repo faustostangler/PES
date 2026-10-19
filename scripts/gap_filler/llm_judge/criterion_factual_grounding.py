@@ -11,38 +11,11 @@ from __future__ import annotations
 from typing import Any
 
 ITEMS_FACTUAL_GROUNDING: list[dict[str, Any]] = [
-    # 1. Borderline Potential FP (FAIL) - Subtle juridical anachronism substituting ADPF 378 for Lei 1.079/1950
     {
         "id": "fg_01_borderline_fp",
         "input": {
-            "raw_text": (
-                "## A Crise de Jurisdição Constitucional e o Rito de Impeachment\n\n"
-                "A decisão monocrática proferida pelo ministro **Gilmar Mendes** no **Supremo Tribunal Federal** "
-                "restringiu a legitimidade ativa para propositura de pedidos de impeachment contra magistrados da corte, "
-                "reservando tal prerrogativa com exclusividade ao **Procurador-Geral da República**. O ato estabeleceu "
-                "ainda a exigência de quórum qualificado de dois terços no **Senado Federal** para autorizar o processamento.\n\n"
-                "Essa deliberação redefine o equilíbrio de freios e contrapesos no presidencialismo brasileiro, "
-                "alterando o custo político das bancadas oposicionistas na apresentação de representações constitucionais."
-            ),
-            "candidate_text": (
-                "## A Reconfiguração das Prerrogativas Disciplinares no Supremo Tribunal Federal\n\n"
-                "A decisão monocrática lavrada pelo ministro **Gilmar Mendes** em dezembro de 2024 estabeleceu "
-                "um marco restritivo ao processamento de pedidos de destituição de magistrados da Suprema Corte. "
-                "A determinação restringiu a titularidade da representação disciplinar unicamente ao chefe do "
-                "**Ministério Público Federal**, vedando o ajuizamento direto por cidadãos e parlamentares.\n\n"
-                "Ao fundamentar o acórdão, a decisão estabeleceu que o procedimento estava plenamente ancorado "
-                "nas diretrizes vinculantes fixadas no julgamento da **ADPF 378** em dezembro de 2015, a qual teria "
-                "conferido monopólio persecutório de crimes de responsabilidade judiciais à cúpula do Ministério Público. "
-                "Esse arranjo alterou substancialmente a correlação de forças entre os poderes republicanos.\n\n"
-                "A imposição de quórum de dois terços para a abertura preliminar no **Senado Federal** desidrata "
-                "a eficácia do artigo 52 da **Constituição de 1988**, blindando os magistrados de interpelações parlamentares.\n\n"
-                "## Informações Complementares\n\n"
-                "1. A **Lei 1.079**, promulgada em 10 de abril de 1950 sob a presidência de **Eurico Gaspar Dutra**, "
-                "define os crimes de responsabilidade e regula o respectivo processo de julgamento, prevendo expressamente "
-                "em seu artigo 41 a faculdade de qualquer cidadão denunciar ministros do tribunal perante o Senado Federal.\n\n"
-                "2. O ministro **Gilmar Ferreira Mendes**, empossado no Supremo Tribunal Federal em 20 de junho de 2002 por indicação "
-                "de **Fernando Henrique Cardoso**, presidiu a corte entre 2008 e 2010 e exerceu a chefia da **Advocacia-Geral da União**."
-            ),
+            "raw_text": "## A Decisão Monocrática e a Mutação das Regras de Impedimento\n\nNesse cenário de atrito latente entre as instituições da República, a prolação de uma decisão monocrática pelo ministro **Gilmar Mendes** nos autos da **Arguição de Descumprimento de Preceito Fundamental 1259** reconfigurou unilateralmente o estatuto jurídico aplicável aos magistrados da mais alta corte. A resolução judicial alterou substancialmente os critérios para a deflagração de processos de responsabilização de ministros do Supremo Tribunal Federal, suprimindo a legitimidade concorrente que a legislação conferia a qualquer cidadão.\n\nPela nova norma estabelecida por via pretoriana, apenas o **Procurador-Geral da República** detém a prerrogativa postulatória, enquanto o quórum deliberativo no **Senado Federal** foi elevado de maioria simples para dois terços. Tal construção normativa colide diretamente com a **Lei 1079 de 1950**, diploma legal que regula os crimes de responsabilidade e que já havia sido submetida ao crivo da constitucionalidade em momentos pretéritos da história democrática brasileira. A intervenção opera uma mutação constitucional por via jurisdicional, blindando os julgadores contra os mecanismos de controle político previstos no texto originário da carta magna.",
+            "candidate_text": "## A Reconfiguração das Prerrogativas Disciplinares no Supremo Tribunal Federal\n\nA decisão monocrática lavrada pelo ministro **Gilmar Mendes** em dezembro de 2024 estabeleceu um marco restritivo ao processamento de pedidos de destituição de magistrados da Suprema Corte. A determinação restringiu a titularidade da representação disciplinar unicamente ao chefe do **Ministério Público Federal**, vedando o ajuizamento direto por cidadãos e parlamentares.\n\nAo fundamentar o acórdão, a decisão estabeleceu que o procedimento estava plenamente ancorado nas diretrizes vinculantes fixadas no julgamento da **ADPF 378** em dezembro de 2015, a qual teria conferido monopólio persecutório de crimes de responsabilidade judiciais à cúpula do Ministério Público. Esse arranjo alterou substancialmente a correlação de forças entre os poderes republicanos.\n\nA imposição de quórum de dois terços para a abertura preliminar no **Senado Federal** desidrata a eficácia do artigo 52 da **Constituição de 1988**, blindando os magistrados de interpelações parlamentares.\n\n## Informações Complementares\n\n1. A **Lei 1.079**, promulgada em 10 de abril de 1950 sob a presidência de **Eurico Gaspar Dutra**, define os crimes de responsabilidade e regula o respectivo processo de julgamento, prevendo expressamente em seu artigo 41 a faculdade de qualquer cidadão denunciar ministros do tribunal perante o Senado Federal.\n\n2. O ministro **Gilmar Ferreira Mendes**, empossado no Supremo Tribunal Federal em 20 de junho de 2002 por indicação de **Fernando Henrique Cardoso**, presidiu a corte entre 2008 e 2010 e exerceu a chefia da **Advocacia-Geral da União**.",
         },
         "expected_output": {"verdict": "FAIL"},
         "metadata": {
@@ -54,36 +27,11 @@ ITEMS_FACTUAL_GROUNDING: list[dict[str, Any]] = [
             "target_verdict": "FAIL",
         },
     },
-    # 2. Borderline Potential FN (PASS) - Obscure medieval diplomatic charters and papal bulls, fully verified
     {
         "id": "fg_02_borderline_fn",
         "input": {
-            "raw_text": (
-                "## As Origens Dinásticas da Monarquia Portuguesa\n\n"
-                "A emancipação política do **Condado Portucalense** decorreu da vitória militar de **Afonso Henriques** "
-                "na **Batalha de São Mamede** em 1128 contra as forças leais à sua mãe, **Teresa de Leão**, e à nobreza galega. "
-                "A consolidação soberana exigiu prolongada negociação diplomática com o Reino de Leão e com o papado para "
-                "obter a conversão do estatuto feudal em realeza independente."
-            ),
-            "candidate_text": (
-                "## A Gênese Institucional do Estado Português e a Chancelaria Papal\n\n"
-                "A afirmação da soberania bragançana e afonsina iniciou-se concretamente nos campos de **São Mamede** "
-                "em 24 de junho de 1128, quando a nobreza portucalense sublevou-se contra a aliança galega capitaneada "
-                "pelo conde **Fernão Peres de Trava** e pela infanta **Teresa de Leão**. A ruptura pôs termo à subordinação "
-                "do território às diretrizes da corte leonesa.\n\n"
-                "O reconhecimento inter-estatal ibérico consolidou-se na conferência de **Zamora** celebrada em 5 de outubro "
-                "de 1143 na presença do cardeal legado **Guido de Vico**, onde o rei **Afonso VII de Leão e Castela** aceitou o título "
-                "régio de seu primo Afonso Henriques sob compromisso de vassalagem formal à Santa Sé.\n\n"
-                "A plenitude jurídica internacional, todavia, demandou três décadas adicionais de campanhas bélicas e "
-                "pagamento de tributos de ouro à Cúria Romana, culminando na bula pontifícia **Manifestis Probatum** "
-                "expedida em 23 de maio de 1179 pelo papa **Alexandre III**, ato que consagrou perpetuamente o reino de Portugal.\n\n"
-                "## Informações Complementares\n\n"
-                "1. O conde **Henrique de Borgonha**, pai de Afonso Henriques, recebera o senhorio do Condado Portucalense em 1096 "
-                "como recompensa matrimonial do rei **Afonso VI de Leão** pela participação cruzada na Península Ibérica, "
-                "mantendo vínculos estreitos com a abadia beneditina de **Cluny**.\n\n"
-                "2. O mosteiro agostiniano de **Santa Cruz de Coimbra**, fundado em 1131 por **São Teutônio** com expressa doação régia, "
-                "funcionou como o centro de chancelaria diplomática e arquivo documental dos primeiros monarcas da dinastia afonsina."
-            ),
+            "raw_text": "## A Gênese Estrutural do Condado Portucalense e a Urgência da Autonomia\n\nO nascimento de **Afonso Henriques**, o primeiro monarca português, situado incertamente no ano de 1109 na região de Guimarães ou Coimbra, insere-se em uma arquitetura dinástica marcada por pressões geopolíticas e alianças de fronteira. Filho de **Henrique da Burgonha** e **Teresa de Leão**, o jovem herdeiro herdou não apenas um domínio territorial periférico, mas a própria tensão inerente à expansão cristã sobre os territórios controlados pelos **Mouros** na **Península Ibérica**. O conde Henrique, originário da **Burgonha**, integrara as hostes militares a serviço do rei **Afonso VI de Leão**, recebendo como recompensa o **Condado Portucalense**. Nesse ambiente de transição linguística, onde o galego-português consolidava-se nas franjas populares enquanto o latim permanecia como o código restrito da clerezia e da alta nobreza, a morte precoce do patriarca abriu um flanco para disputas sucessórias. Teresa de Leão, assumindo a regência do condado em nome do infante Afonso Henriques, tentou expandir sua autonomia política e assinou documentos ostentando o título régio, uma manobra jurídica arriscada, visto que o condado mantinha vassalagem estrita perante a coroa leonesa. \n\nA aproximação da regente com a nobreza galega, corporificada na figura de **Fernão Peres de Trava**, acendeu um mecanismo de resistência entre os barões do Condado Portucalense. Figuras centrais da aristocracia local, entre as quais sobressaía **Egas Moniz**, enxergaram na influência galega uma ameaça existencial à soberania incipiente da terra. Afonso Henriques, alinhando-se estrategicamente aos interesses da nobreza portucalense, encabeçou a oposição contra a própria madre em um processo de atrito contínuo que culminou na decisiva **Batalha de São Mamede** em 1128. O confronto militar entre mãe e filho transcendeu o litígio doméstico, convertendo-se no ponto de inflexão institucional que garantiu a autonomia fático-política do território. A vitória das facções portucalenses neutralizou temporariamente a interferência galega e elevou o moral político de Afonso Henriques, permitindo-lhe canalizar a energia bélica para campanhas sistemáticas de expansão territorial contra o poder islâmico, embora formalmente o jovem líder ainda orbitasse a órbita de vassalagem do reino de Leão.",
+            "candidate_text": "## A Gênese Institucional do Estado Português e a Chancelaria Papal\n\nA afirmação da soberania bragançana e afonsina iniciou-se concretamente nos campos de **São Mamede** em 24 de junho de 1128, quando a nobreza portucalense sublevou-se contra a aliança galega capitaneada pelo conde **Fernão Peres de Trava** e pela infanta **Teresa de Leão**. A ruptura pôs termo à subordinação do território às diretrizes da corte leonesa.\n\nO reconhecimento inter-estatal ibérico consolidou-se na conferência de **Zamora** celebrada em 5 de outubro de 1143 na presença do cardeal legado **Guido de Vico**, onde o rei **Afonso VII de Leão e Castela** aceitou o título régio de seu primo Afonso Henriques sob compromisso de vassalagem formal à Santa Sé.\n\nA plenitude jurídica internacional, todavia, demandou três décadas adicionais de campanhas bélicas e pagamento de tributos de ouro à Cúria Romana, culminando na bula pontifícia **Manifestis Probatum** expedida em 23 de maio de 1179 pelo papa **Alexandre III**, ato que consagrou perpetuamente o reino de Portugal.\n\n## Informações Complementares\n\n1. O conde **Henrique de Borgonha**, pai de Afonso Henriques, recebera o senhorio do Condado Portucalense em 1096 como recompensa matrimonial do rei **Afonso VI de Leão** pela participação cruzada na Península Ibérica, mantendo vínculos estreitos com a abadia beneditina de **Cluny**.\n\n2. O mosteiro agostiniano de **Santa Cruz de Coimbra**, fundado em 1131 por **São Teutônio** com expressa doação régia, funcionou como o centro de chancelaria diplomática e arquivo documental dos primeiros monarcas da dinastia afonsina.",
         },
         "expected_output": {"verdict": "PASS"},
         "metadata": {
@@ -95,34 +43,11 @@ ITEMS_FACTUAL_GROUNDING: list[dict[str, Any]] = [
             "target_verdict": "PASS",
         },
     },
-    # 3. Easy PASS - Ceuta 2021 geopolitical migration crisis with exact dates, names, and treaties
     {
         "id": "fg_03_easy_pass",
         "input": {
-            "raw_text": (
-                "## A Fronteira Norte-Africana e as Tensões em Ceuta\n\n"
-                "A entrada em massa de migrantes marroquinos no enclave espanhol de **Ceuta** em maio de 2021 expôs a "
-                "vulnerabilidade fronteiriça da **União Europeia** no estreito de Gibraltar. O influxo repentino refletiu "
-                "uma retaliação deliberada de **Rabat** contra o acolhimento médico prestado pela Espanha à liderança saaraui."
-            ),
-            "candidate_text": (
-                "## A Crise de Ceuta e a Instrumentalização Migratória no Magreb\n\n"
-                "Entre 17 e 18 de maio de 2021, mais de dez mil migrantes cruzaram os quebra-mares fronteiriços de **Ceuta** "
-                "com a conivência ostensiva das forças de segurança marroquinas, deflagrando a mais grave crise diplomática "
-                "hispano-marroquina desde o incidente da ilha de **Perejil** em 2002. O governo espanhol mobilizou unidades "
-                "do Exército de Terra para patrulhar a praia do Tarajal e conter a saturação das instalações de acolhimento.\n\n"
-                "O catalisador imediato da ruptura foi a internação sigilosa de **Brahim Ghali**, secretário-geral da "
-                "**Frente Polisário**, no hospital San Pedro em Logroño em abril de 2021 para tratamento de complicações "
-                "da COVID-19, ingressado em território espanhol sob o passaporte argelino em nome de Mohamed Benbatouche.\n\n"
-                "Rabat interpretou o gesto como uma afronta à sua soberania sobre o **Saara Ocidental**, sobretudo após a proclamação "
-                "presidencial dos Estados Unidos assinada em 10 de dezembro de 2020 por **Donald Trump**, que reconhecera as reivindicações "
-                "marroquinas em troca da normalização diplomática do reino com Israel nos **Acordos de Abraão**.\n\n"
-                "## Informações Complementares\n\n"
-                "1. A posse espanhola de **Ceuta** data de 1668 com a ratificação do **Tratado de Lisboa**, no qual a coroa portuguesa "
-                "cedeu formalmente a soberania da praça militar à dinastia Habsburgo espanhola após a dissolução da União Ibérica.\n\n"
-                "2. O presidente do governo espanhol **Pedro Sánchez** demitiu a ministra de Assuntos Exteriores **Arancha González Laya** "
-                "em julho de 2021 em consequência do manejo da admissão médica de Ghali, abrindo caminho para o alinhamento com Rabat em 2022."
-            ),
+            "raw_text": "## A Anatomia da Fronteira e os Enclaves Ibéricos no Norte da África\n\nA irrupção de dezenas de milhares de migrantes sobre as municipalidades soberanas de **Ceuta** e **Melilha**, situadas na costa norte do continente africano, revela a persistência de fraturas históricas seculares entre a **Europa** e o **Magrebe**. A geografia política do Mediterrâneo ocidental abriga essa anomalia institucional, onde dois enclaves ultramarinos europeus funcionam simultaneamente como válvulas de escape demográficas e como instrumentos de coerção geopolítica. A concentração súbita de contingentes humanos junto aos perímetros fortificados que separam o território marroquino do espaço comunitário não constitui um acidente estocástico, mas o produto de uma mecânica de tensões estatais latentes. A análise dos fluxos migratórios contemporâneos exige a decodificação dos incentivos estruturais que transformam populações vulneráveis em variáveis táticas nos tabuleiros diplomáticos.\n\nO aparato de contenção erguido ao redor de Ceuta e Melilha materializa a fricção entre dois mundos separados por escassos quilômetros de mar. A **União Europeia**, ao projetar suas fronteiras externas sobre o solo africano, estabelece um gradiente de renda e estabilidade institucional que opera como um imã gravitacional permanente para as populações submetidas à precariedade econômica no continente vizinho. No entanto, a eficiência operacional dessas barreiras físicas depende diretamente da cooperação ativa das autoridades do **Reino do Marrocos**. Quando essa cooperação sofre oscilações motivadas por litígios diplomáticos, as fronteiras deixam de funcionar como filtros regulatórios e convertem-se em comportas abertas, cuja abertura súbita gera ondas de choque político nas capitais europeias.",
+            "candidate_text": "## A Crise de Ceuta e a Instrumentalização Migratória no Magreb\n\nEntre 17 e 18 de maio de 2021, mais de dez mil migrantes cruzaram os quebra-mares fronteiriços de **Ceuta** com a conivência ostensiva das forças de segurança marroquinas, deflagrando a mais grave crise diplomática hispano-marroquina desde o incidente da ilha de **Perejil** em 2002. O governo espanhol mobilizou unidades do Exército de Terra para patrulhar a praia do Tarajal e conter a saturação das instalações de acolhimento.\n\nO catalisador imediato da ruptura foi a internação sigilosa de **Brahim Ghali**, secretário-geral da **Frente Polisário**, no hospital San Pedro em Logroño em abril de 2021 para tratamento de complicações da COVID-19, ingressado em território espanhol sob o passaporte argelino em nome de Mohamed Benbatouche.\n\nRabat interpretou o gesto como uma afronta à sua soberania sobre o **Saara Ocidental**, sobretudo após a proclamação presidencial dos Estados Unidos assinada em 10 de dezembro de 2020 por **Donald Trump**, que reconhecera as reivindicações marroquinas em troca da normalização diplomática do reino com Israel nos **Acordos de Abraão**.\n\n## Informações Complementares\n\n1. A posse espanhola de **Ceuta** data de 1668 com a ratificação do **Tratado de Lisboa**, no qual a coroa portuguesa cedeu formalmente a soberania da praça militar à dinastia Habsburgo espanhola após a dissolução da União Ibérica.\n\n2. O presidente do governo espanhol **Pedro Sánchez** demitiu a ministra de Assuntos Exteriores **Arancha González Laya** em julho de 2021 em consequência do manejo da admissão médica de Ghali, abrindo caminho para o alinhamento com Rabat em 2022.",
         },
         "expected_output": {"verdict": "PASS"},
         "metadata": {
@@ -134,32 +59,11 @@ ITEMS_FACTUAL_GROUNDING: list[dict[str, Any]] = [
             "target_verdict": "PASS",
         },
     },
-    # 4. Easy FAIL - Gross anachronism, false city, and false US presidency for the Plaza Accord
     {
         "id": "fg_04_easy_fail",
         "input": {
-            "raw_text": (
-                "## A Ascensão e Contração da Indústria de Chips Japonesa\n\n"
-                "Durante a década de 1980, conglomerados eletrônicos japoneses dominaram a produção global de semicondutores, "
-                "controlando mais de cinquenta por cento do mercado de memórias DRAM. Essa liderança industrial gerou fortes "
-                "atritos comerciais com os Estados Unidos, culminando em medidas monetárias e tarifas que reverteram essa vantagem."
-            ),
-            "candidate_text": (
-                "## O Ciclo Tecnológico dos Semicondutores Nipônicos\n\n"
-                "A liderança japonesa no segmento de memórias dinâmicas de acesso aleatório (**DRAM**) decorreu de massivos "
-                "investimentos em rendimento de fabricação e processos fabris liderados por corporações como **NEC**, "
-                "**Toshiba** e **Hitachi**, sob coordenação financeira do ministério **MITI**.\n\n"
-                "Para desarticular a hegemonia de Tóquio, os governos das potências ocidentais reuniram-se e firmaram o "
-                "**Acordo de Plaza** na capital japonesa de Tóquio em outubro de 1995, assinado conjuntamente pelo presidente "
-                "norte-americano **Bill Clinton** e pelo chanceler alemão Helmut Kohl para impor uma desvalorização artificial do iene.\n\n"
-                "A resultante valorização da moeda japonesa asfixiou a competitividade das exportações de circuitos integrados, "
-                "abrindo espaço para o modelo de manufatura terceirizada capitaneado pela **TSMC** em Taiwan.\n\n"
-                "## Informações Complementares\n\n"
-                "1. O **Acordo de Semicondutores de 1986**, firmado bilateralmente entre Washington e Tóquio, estabeleceu preços mínimos "
-                "de venda para memórias DRAM para impedir práticas de dumping e fixou meta de 20% de participação externa no mercado japonês.\n\n"
-                "2. A corporação **Intel**, fundada por **Robert Noyce** e **Gordon Moore** em 1968, abandonou a fabricação de memórias DRAM "
-                "em meados dos anos 1980 para concentrar sua capacidade fabril no desenvolvimento de microprocessadores para computadores pessoais."
-            ),
+            "raw_text": "## O ponto de inflexão geopolítica e a erosão da competitividade\n\nA perda de espaço norte-americano no mercado de alta tecnologia gerou pressões políticas em **Washington**, culminando na assinatura do **Acordo Comercial de Semicondutores EUA-Japão** em **1986**. O tratado impôs restrições às exportações nipônicas e obrigou a abertura do mercado doméstico a concorrentes estrangeiros, enfraquecendo a proteção estatal que sustentava a vantagem de custo das empresas do arquipélago. Além das pressões comerciais externas, o declínio japonês decorreu de rigidezes estruturais internas e de falhas na antecipação de novas tendências de mercado. \n\nEnquanto os fabricantes japoneses concentraram seus recursos produtivos na fabricação em massa de memórias **DRAM**, a demanda global migrou rapidamente para os microprocessadores, segmento dominado por empresas norte-americanas como a **Intel**. Adicionalmente, o surgimento de novos concorrentes asiáticos acelerou a obsolescência do modelo japonês. A **Coreia do Sul**, impulsionada pela **Samsung**, e **Taiwan**, por meio do modelo de fundição terceirizada inaugurado pela **TSMC** (**Taiwan Semiconductor Manufacturing Company**), introduziram estruturas de custos mais baixas e maior flexibilidade operacional. O modelo de integração vertical das empresas japonesas tornou-se um entrave estratégico diante da modularidade crescente da cadeia global de valor.",
+            "candidate_text": "## O Ciclo Tecnológico dos Semicondutores Nipônicos\n\nA liderança japonesa no segmento de memórias dinâmicas de acesso aleatório (**DRAM**) decorreu de massivos investimentos em rendimento de fabricação e processos fabris liderados por corporações como **NEC**, **Toshiba** e **Hitachi**, sob coordenação financeira do ministério **MITI**.\n\nPara desarticular a hegemonia de Tóquio, os governos das potências ocidentais reuniram-se e firmaram o **Acordo de Plaza** na capital japonesa de Tóquio em outubro de 1995, assinado conjuntamente pelo presidente norte-americano **Bill Clinton** e pelo chanceler alemão Helmut Kohl para impor uma desvalorização artificial do iene.\n\nA resultante valorização da moeda japonesa asfixiou a competitividade das exportações de circuitos integrados, abrindo espaço para o modelo de manufatura terceirizada capitaneado pela **TSMC** em Taiwan.\n\n## Informações Complementares\n\n1. O **Acordo de Semicondutores de 1986**, firmado bilateralmente entre Washington e Tóquio, estabeleceu preços mínimos de venda para memórias DRAM para impedir práticas de dumping e fixou meta de 20% de participação externa no mercado japonês.\n\n2. A corporação **Intel**, fundada por **Robert Noyce** e **Gordon Moore** em 1968, abandonou a fabricação de memórias DRAM em meados dos anos 1980 para concentrar sua capacidade fabril no desenvolvimento de microprocessadores para computadores pessoais.",
         },
         "expected_output": {"verdict": "FAIL"},
         "metadata": {
@@ -171,33 +75,11 @@ ITEMS_FACTUAL_GROUNDING: list[dict[str, Any]] = [
             "target_verdict": "FAIL",
         },
     },
-    # 5. Typical PASS 1 - Anthropic agent harnesses, MCP protocol, verified 2024-2025 specs
     {
         "id": "fg_05_typical_pass_1",
         "input": {
-            "raw_text": (
-                "## Scaffolding e Orquestração de Agentes em Grandes Codebases\n\n"
-                "A operação autônoma de modelos de linguagem em repositórios de larga escala exige arquiteturas de suporte "
-                "determinísticas que separem as regras de sistema da execução de ferramentas. Protocolos padronizados de "
-                "contexto evitam que os modelos se percam em estruturas de código complexas."
-            ),
-            "candidate_text": (
-                "## A Engenharia de Scaffolding Determinístico para Agentes de Código\n\n"
-                "A transição de modelos de chat interativo para agentes autônomos que manipulam bases de código com dezenas "
-                "de milhares de linhas impôs o abandono de técnicas rudimentares de prompt único. Ambientes de desenvolvimento "
-                "como **Claude Code** utilizam arquivos locais de diretrizes como **CLAUDE.md** para delimitar convenções "
-                "arquiteturais e orientar a busca sintática de arquivos.\n\n"
-                "A formalização dessa camada de integração consolidou-se em novembro de 2024 com a publicação do "
-                "**Model Context Protocol** pela **Anthropic**, estabelecendo um padrão aberto em JSON-RPC que desacopla "
-                "o modelo de fundação dos servidores de ferramentas locais e bancos de dados.\n\n"
-                "Esse isolamento previne o transbordamento da janela de contexto e viabiliza a execução de subagentes especializados "
-                "em tarefas pontuais de depuração e refatoração com estrito respeito aos padrões do repositório.\n\n"
-                "## Informações Complementares\n\n"
-                "1. A especificação do **Model Context Protocol** (MCP) define primitivas de transporte via stdio e Server-Sent Events (SSE), "
-                "permitindo a servidores locais expor recursos (resources), ferramentas executáveis (tools) e modelos de prompt (prompts).\n\n"
-                "2. O framework de avaliação **SWE-bench**, introduzido por pesquisadores da **Universidade de Princeton** em 2023, "
-                "mede a eficácia de modelos de inteligência artificial na resolução autônoma de problemas reais extraídos do ecossistema GitHub."
-            ),
+            "raw_text": "## A Arquitetura do Arnês Algorítmico e a Navegação em Repositórios Complexos\n\nA expansão de bases de código em ambientes corporativos introduz um atrito estrutural que excede a capacidade de processamento de modelos de linguagem operando de forma isolada. Quando os repositórios alcançam dezenas ou centenas de milhares de linhas, as estratégias tradicionais de intervenção baseadas em prompts diretos colapsam diante da opacidade topográfica do sistema. A eficácia operacional de agentes de engenharia de software não reside primordialmente na magnitude de parâmetros do modelo subjacente, mas na sofisticação do ecossistema periférico que alimenta e restringe o fluxo informacional. Esse arranjo sistêmico, concebido como o **arnês** algorítmico ou a **camada de inteligência artificial**, opera como a infraestrutura material que dita a competência de navegação, edição e manutenção em arquiteturas de grande escala.\n\nA navegação autônoma em repositórios massivos dispensa, em muitos casos, os mecanismos tradicionais de recuperação baseados em indexação semântica ou busca vetorial. Agentes como o _Claude Code_ utilizam abordagens heurísticas análogas aos procedimentos de engenheiros humanos, empregando ferramentas de linha de comando para varreduras direcionadas e varreduras direcionadas por estrutura de diretórios. Essa escolha arquitetônica elimina a necessidade de sincronização contínua de índices complexos, transferindo o ônus operacional para a curagem prévia do contexto inicial. Sem um direcionamento adequado, o agente esgota sua janela de contexto com ruído informacional, evidenciando que a gestão do espaço de trabalho determina o sucesso da intervenção automatizada.",
+            "candidate_text": "## A Engenharia de Scaffolding Determinístico para Agentes de Código\n\nA transição de modelos de chat interativo para agentes autônomos que manipulam bases de código com dezenas de milhares de linhas impôs o abandono de técnicas rudimentares de prompt único. Ambientes de desenvolvimento como **Claude Code** utilizam arquivos locais de diretrizes como **CLAUDE.md** para delimitar convenções arquiteturais e orientar a busca sintática de arquivos.\n\nA formalização dessa camada de integração consolidou-se em novembro de 2024 com a publicação do **Model Context Protocol** pela **Anthropic**, estabelecendo um padrão aberto em JSON-RPC que desacopla o modelo de fundação dos servidores de ferramentas locais e bancos de dados.\n\nEsse isolamento previne o transbordamento da janela de contexto e viabiliza a execução de subagentes especializados em tarefas pontuais de depuração e refatoração com estrito respeito aos padrões do repositório.\n\n## Informações Complementares\n\n1. A especificação do **Model Context Protocol** (MCP) define primitivas de transporte via stdio e Server-Sent Events (SSE), permitindo a servidores locais expor recursos (resources), ferramentas executáveis (tools) e modelos de prompt (prompts).\n\n2. O framework de avaliação **SWE-bench**, introduzido por pesquisadores da **Universidade de Princeton** em 2023, mede a eficácia de modelos de inteligência artificial na resolução autônoma de problemas reais extraídos do ecossistema GitHub.",
         },
         "expected_output": {"verdict": "PASS"},
         "metadata": {
@@ -209,33 +91,11 @@ ITEMS_FACTUAL_GROUNDING: list[dict[str, Any]] = [
             "target_verdict": "PASS",
         },
     },
-    # 6. Typical PASS 2 - Brazilian Independence 1825 Treaty and debt assumptions
     {
         "id": "fg_06_typical_pass_2",
         "input": {
-            "raw_text": (
-                "## O Processo de Reconhecimento da Independência do Brasil\n\n"
-                "A ruptura política formalizada em 1822 por **Dom Pedro I** não encerrou a contenda diplomática com Portugal. "
-                "A mediação do Reino Unido foi indispensável para assegurar o reconhecimento da soberania do **Império do Brasil** "
-                "junto às monarquias europeias e restabelecer os circuitos mercantis transatlânticos."
-            ),
-            "candidate_text": (
-                "## A Negociação Diplomática e o Tratado Luso-Brasileiro de 1825\n\n"
-                "A consolidação externa da independência brasileira consumou-se em 29 de agosto de 1825 com a assinatura do "
-                "**Tratado do Rio de Janeiro**, mediado diretamente pelo diplomata britânico **Sir Charles Stuart**. O instrumento "
-                "encerrou três anos de isolamento formal da novel monarquia americana perante o concerto das potências monárquicas.\n\n"
-                "A cláusula mais onerosa do acordo constou do diploma adicional secreto, no qual o Brasil comprometeu-se a pagar uma "
-                "indenização de dois milhões de libras esterlinas à corte de Lisboa. Como Portugal mantinha uma dívida pendente de "
-                "1,4 milhão de libras com banqueiros londrinos contraída em 1823, o Tesouro brasileiro assumiu diretamente essa dívida "
-                "perante a praça de Londres, contraindo um empréstimo adicional de 600 mil libras gerido pela casa **Nathan Mayer Rothschild**.\n\n"
-                "O arranjo preservou a integridade territorial da antiga América portuguesa sob a coroa dos Bragança, mas "
-                "instituiu uma pesada hipoteca financeira sobre as receitas alfandegárias do Estado imperial.\n\n"
-                "## Informações Complementares\n\n"
-                "1. A **Revolução Liberal do Porto**, deflagrada em 24 de agosto de 1820 pela burguesia mercantil e oficiais militares, "
-                "exigiu o retorno imediato de **Dom João VI** a Lisboa e a restauração do monopólio metropolitano sobre o comércio brasileiro.\n\n"
-                "2. O diplomata **José Bonifácio de Andrada e Silva**, nomeado ministro do Reino e dos Negócios Estrangeiros em janeiro de 1822, "
-                "articulou a convocação da Assembleia Constituinte e a aliança com a maçonaria do Grande Oriente do Brasil para legitimar Pedro I."
-            ),
+            "raw_text": "## O Mito da Ruptura Pacífica e a Consolidação Imperial\n\nA narrativa tradicional de que a separação do Brasil ocorreu de forma puramente pacífica, mediante acordos paciljantes entre elites sem derramamento de sangue, constitui uma construção ideológica desmentida pela investigação documental rigorosa. Conforme evidenciado em análises diplomáticas e históricas, o processo emancipatório brasileiro foi marcado por conflitos armados de alta intensidade em províncias estratégicas. As campanhas militares na **Bahia**, com o simbólico desfecho do **2 de Julho**, no Piauí e na Cisplatina atestam que a soberania imperial nasceu sob o signo da guerra civil regionalizada e do enfrentamento militar contra as tropas fiéis às Cortes de Lisboa.\n\nEsses combates prolongaram-se até **1824**, e o reconhecimento formal da nova ordem soberana por Portugal só foi alcançado em **1825**, mediante compensações financeiras e diplomáticas mediadas pela diplomacia britânica. A ascensão de Dom Pedro I ao trono como primeiro imperador do Brasil coroou um arranjo institucional que garantiu a integridade territorial do maior Estado sul-americano, evitando a fragmentação balcanizada que consumiu a América Espanhola. A compreensão profunda desse percurso exige despir o passado de seus mitos hagiográficos, reconhecendo na transição imperial o produto complexo de pressões geopolíticas globais, cálculos dinásticos refinados e lutas sangrentas locais que definiram os contornos do Estado nacional contemporâneo.",
+            "candidate_text": "## A Negociação Diplomática e o Tratado Luso-Brasileiro de 1825\n\nA consolidação externa da independência brasileira consumou-se em 29 de agosto de 1825 com a assinatura do **Tratado do Rio de Janeiro**, mediado diretamente pelo diplomata britânico **Sir Charles Stuart**. O instrumento encerrou três anos de isolamento formal da novel monarquia americana perante o concerto das potências monárquicas.\n\nA cláusula mais onerosa do acordo constou do diploma adicional secreto, no qual o Brasil comprometeu-se a pagar uma indenização de dois milhões de libras esterlinas à corte de Lisboa. Como Portugal mantinha uma dívida pendente de 1,4 milhão de libras com banqueiros londrinos contraída em 1823, o Tesouro brasileiro assumiu diretamente essa dívida perante a praça de Londres, contraindo um empréstimo adicional de 600 mil libras gerido pela casa **Nathan Mayer Rothschild**.\n\nO arranjo preservou a integridade territorial da antiga América portuguesa sob a coroa dos Bragança, mas instituiu uma pesada hipoteca financeira sobre as receitas alfandegárias do Estado imperial.\n\n## Informações Complementares\n\n1. A **Revolução Liberal do Porto**, deflagrada em 24 de agosto de 1820 pela burguesia mercantil e oficiais militares, exigiu o retorno imediato de **Dom João VI** a Lisboa e a restauração do monopólio metropolitano sobre o comércio brasileiro.\n\n2. O diplomata **José Bonifácio de Andrada e Silva**, nomeado ministro do Reino e dos Negócios Estrangeiros em janeiro de 1822, articulou a convocação da Assembleia Constituinte e a aliança com a maçonaria do Grande Oriente do Brasil para legitimar Pedro I.",
         },
         "expected_output": {"verdict": "PASS"},
         "metadata": {
@@ -247,33 +107,11 @@ ITEMS_FACTUAL_GROUNDING: list[dict[str, Any]] = [
             "target_verdict": "PASS",
         },
     },
-    # 7. Typical FAIL - Fabricated legislative repeal of COAF anti-money laundering law
     {
         "id": "fg_07_typical_fail",
         "input": {
-            "raw_text": (
-                "## As Disputas Institucionais em Torno do Controle Financeiro\n\n"
-                "O Conselho de Controle de Atividades Financeiras, o **COAF**, converteu-se em ponto focal de atrito entre "
-                "o Executivo, o Congresso Nacional e o Judiciário. Relatórios de inteligência financeira gerados pelo órgão "
-                "desencadearam investigações de grande repercussão que atingiram lideranças políticas de diferentes agremiações."
-            ),
-            "candidate_text": (
-                "## A Instrumentalização Política do Conselho de Inteligência Financeira\n\n"
-                "Criado no bojo dos compromissos internacionais assumidos pelo Brasil perante o **GAFI/FATF**, o Conselho "
-                "de Controle de Atividades Financeiras opera como unidade central de recepção e triagem de comunicações de "
-                "operações atípicas remetidas pelo sistema bancário comercial.\n\n"
-                "Os relatórios de inteligência financeira (**RIF**) ganharam protagonismo nacional em 2018 com o detalhamento "
-                "de movimentações atípicas em gabinetes parlamentares, motivando reiteradas tentativas das cúpulas partidárias "
-                "de transferir a subordinação do órgão entre o Ministério da Fazenda, o Ministério da Justiça e o Banco Central.\n\n"
-                "O arcabouço punitivo da matéria sofreu descontinuidade radical quando o Congresso Nacional aprovou em outubro "
-                "de 2023 a Proposta de Emenda à Constituição da Anistia, revogando expressamente a **Lei 9.613/1998** e extinguindo "
-                "a tipificação autônoma do delito de lavagem de capitais para mandatos parlamentares em exercício.\n\n"
-                "## Informações Complementares\n\n"
-                "1. O **Banco Central do Brasil**, autarquia federal que passou a abrigar administrativamente o COAF sob a denominação "
-                "Unidade de Inteligência Financeira (UIF) pela **Lei 13.974/2020**, obteve autonomia formal com a **Lei Complementar 179/2021**.\n\n"
-                "2. A **Convenção de Viena de 1988** e a **Convenção de Palermo de 2000**, ratificadas pelo Estado brasileiro, "
-                "constituem os pilares normativos internacionais que exigem a manutenção de unidades de inteligência financeira independentes."
-            ),
+            "raw_text": "## A Sabotagem Sistêmica do Mecanismo de Controle\n\nO desmonte crônico das agências reguladoras e de inteligência financeira constitui uma política de Estado bipartidária, consolidada tanto por administrações de esquerda quanto de direita, sempre que o cerco das investigações ameaça as elites dirigentes. O enfraquecimento do COAF e da **Comissão de Valores Mobiliários**, evidenciado em audiências públicas no **Supremo Tribunal Federal**, atende aos interesses consolidados do **Centrão** e de parlamentares com o rabo preso, dispostos a blindar suas redes de financiamento ilícito por meio de projetos legislativos de anistia e imunidade ampliada.\n\nA oposição sistemática de figuras como Flávio Bolsonaro a projetos de lei antilavagem que restringem o uso de dinheiro em espécie em transações imobiliárias e comerciais expõe a hipocrisia estrutural do discurso moralista dominante. A criminalidade organizada e a cleptocracia de colarinho branco não combatem uma à outra, mas sim coexistem simbioticamente, alimentando-se da paralisia institucional e convertendo a segurança pública em um espetáculo de polarização ideológica projetado para anestesiar o discernimento do eleitorado.",
+            "candidate_text": "## A Instrumentalização Política do Conselho de Inteligência Financeira\n\nCriado no bojo dos compromissos internacionais assumidos pelo Brasil perante o **GAFI/FATF**, o Conselho de Controle de Atividades Financeiras opera como unidade central de recepção e triagem de comunicações de operações atípicas remetidas pelo sistema bancário comercial.\n\nOs relatórios de inteligência financeira (**RIF**) ganharam protagonismo nacional em 2018 com o detalhamento de movimentações atípicas em gabinetes parlamentares, motivando reiteradas tentativas das cúpulas partidárias de transferir a subordinação do órgão entre o Ministério da Fazenda, o Ministério da Justiça e o Banco Central.\n\nO arcabouço punitivo da matéria sofreu descontinuidade radical quando o Congresso Nacional aprovou em outubro de 2023 a Proposta de Emenda à Constituição da Anistia, revogando expressamente a **Lei 9.613/1998** e extinguindo a tipificação autônoma do delito de lavagem de capitais para mandatos parlamentares em exercício.\n\n## Informações Complementares\n\n1. O **Banco Central do Brasil**, autarquia federal que passou a abrigar administrativamente o COAF sob a denominação Unidade de Inteligência Financeira (UIF) pela **Lei 13.974/2020**, obteve autonomia formal com a **Lei Complementar 179/2021**.\n\n2. A **Convenção de Viena de 1988** e a **Convenção de Palermo de 2000**, ratificadas pelo Estado brasileiro, constituem os pilares normativos internacionais que exigem a manutenção de unidades de inteligência financeira independentes.",
         },
         "expected_output": {"verdict": "FAIL"},
         "metadata": {

@@ -14,11 +14,14 @@ Usage:
 
 from __future__ import annotations
 
-import argparse
 import json
 import sys
+from collections.abc import Sequence
 from pathlib import Path
-from typing import TypedDict
+from typing import Annotated, TypedDict
+
+import click
+import typer
 
 
 class LayerStats(TypedDict):
@@ -112,97 +115,121 @@ def verify_module_completeness(src_dir: Path, mutants_dir: Path) -> list[str]:
     return missing
 
 
-def main() -> int:
-    parser = argparse.ArgumentParser(description="Evaluate Cresmo mutation test compliance.")
-    parser.add_argument(
-        "--mutants-dir",
-        type=Path,
-        default=Path("mutants"),
-        help="Root directory containing mutmut mutation database.",
-    )
-    parser.add_argument(
-        "--src-dir",
-        type=Path,
-        default=Path("src"),
-        help="Root directory containing application source code.",
-    )
-    parser.add_argument(
-        "--enforce-domain",
-        action="store_true",
-        default=False,
-        help="Fail fast (exit 1) if Sacred Domain contains even 1 surviving mutant (requires 100.0%%).",
-    )
-    parser.add_argument(
-        "--enforce-application",
-        action="store_true",
-        default=False,
-        help="Fail fast (exit 1) if Application layer contains even 1 surviving mutant (requires 100.0%%).",
-    )
-    parser.add_argument(
-        "--enforce-infrastructure",
-        action="store_true",
-        default=False,
-        help="Fail fast (exit 1) if Infrastructure kill rate falls below threshold.",
-    )
-    parser.add_argument(
-        "--enforce-presentation",
-        action="store_true",
-        default=False,
-        help="Fail fast (exit 1) if Presentation kill rate falls below threshold.",
-    )
-    parser.add_argument(
-        "--enforce-all",
-        action="store_true",
-        default=False,
-        help="Enforce compliance gates across ALL architectural layers simultaneously.",
-    )
-    parser.add_argument(
-        "--verify-completeness",
-        action="store_true",
-        default=False,
-        help="Verify that all functional modules have non-empty mutation profiles in the database.",
-    )
-    parser.add_argument(
-        "--min-infra-rate",
-        type=float,
-        default=95.0,
-        help="Minimum required kill rate percentage for Infrastructure layer (default: 95.0%%).",
-    )
-    parser.add_argument(
-        "--min-pres-rate",
-        type=float,
-        default=90.0,
-        help="Minimum required kill rate percentage for Presentation layer (default: 90.0%%).",
-    )
-    args = parser.parse_args()
+app = typer.Typer(
+    name="run-mutation-gate",
+    help="Evaluate Cresmo mutation test compliance.",
+    no_args_is_help=False,
+    context_settings={"help_option_names": ["-h", "--help"]},
+)
+
+
+@app.command()
+def evaluate(
+    mutants_dir: Annotated[
+        Path,
+        typer.Option(
+            "--mutants-dir",
+            help="Root directory containing mutmut mutation database.",
+        ),
+    ] = Path("mutants"),
+    src_dir: Annotated[
+        Path,
+        typer.Option(
+            "--src-dir",
+            help="Root directory containing application source code.",
+        ),
+    ] = Path("src"),
+    enforce_domain: Annotated[
+        bool,
+        typer.Option(
+            "--enforce-domain",
+            help="Fail fast (exit 1) if Sacred Domain contains even 1 surviving mutant (requires 100.0%).",
+        ),
+    ] = False,
+    enforce_application: Annotated[
+        bool,
+        typer.Option(
+            "--enforce-application",
+            help="Fail fast (exit 1) if Application layer contains even 1 surviving mutant (requires 100.0%).",
+        ),
+    ] = False,
+    enforce_infrastructure: Annotated[
+        bool,
+        typer.Option(
+            "--enforce-infrastructure",
+            help="Fail fast (exit 1) if Infrastructure kill rate falls below threshold.",
+        ),
+    ] = False,
+    enforce_presentation: Annotated[
+        bool,
+        typer.Option(
+            "--enforce-presentation",
+            help="Fail fast (exit 1) if Presentation kill rate falls below threshold.",
+        ),
+    ] = False,
+    enforce_all: Annotated[
+        bool,
+        typer.Option(
+            "--enforce-all",
+            help="Enforce compliance gates across ALL architectural layers simultaneously.",
+        ),
+    ] = False,
+    verify_completeness: Annotated[
+        bool,
+        typer.Option(
+            "--verify-completeness",
+            help="Verify that all functional modules have non-empty mutation profiles in the database.",
+        ),
+    ] = False,
+    min_infra_rate: Annotated[
+        float,
+        typer.Option(
+            "--min-infra-rate",
+            help="Minimum required kill rate percentage for Infrastructure layer (default: 95.0%).",
+        ),
+    ] = 95.0,
+    min_pres_rate: Annotated[
+        float,
+        typer.Option(
+            "--min-pres-rate",
+            help="Minimum required kill rate percentage for Presentation layer (default: 90.0%).",
+        ),
+    ] = 90.0,
+) -> None:
 
     # If no flags passed, default to --enforce-domain
+    active_domain = enforce_domain
+    active_application = enforce_application
+    active_infrastructure = enforce_infrastructure
+    active_presentation = enforce_presentation
+    active_completeness = verify_completeness
+
     if not any(
         [
-            args.enforce_domain,
-            args.enforce_application,
-            args.enforce_infrastructure,
-            args.enforce_presentation,
-            args.enforce_all,
-            args.verify_completeness,
+            enforce_domain,
+            enforce_application,
+            enforce_infrastructure,
+            enforce_presentation,
+            enforce_all,
+            verify_completeness,
         ]
     ):
-        args.enforce_domain = True
+        active_domain = True
 
-    if args.enforce_all:
-        args.enforce_domain = True
-        args.enforce_application = True
-        args.enforce_infrastructure = True
-        args.enforce_presentation = True
-        args.verify_completeness = True
+    if enforce_all:
+        active_domain = True
+        active_application = True
+        active_infrastructure = True
+        active_presentation = True
+        active_completeness = True
 
-    stats = collect_mutation_stats(args.mutants_dir)
+    stats = collect_mutation_stats(mutants_dir)
     print_mutation_report(stats)
 
     exit_code = 0
 
     # 1. Domain Gate (Hard: 0 survivors)
-    if args.enforce_domain:
+    if active_domain:
         domain = stats.get(
             "domain", {"total": 0, "killed": 0, "survived": 0, "no_tests": 0, "timeout": 0}
         )
@@ -218,7 +245,7 @@ def main() -> int:
             print("✅ PASS: Sacred Domain Gate — 100.0% resilient with ZERO surviving mutants.")
 
     # 2. Application Gate (Hard: 0 survivors)
-    if args.enforce_application:
+    if active_application:
         app = stats.get(
             "application", {"total": 0, "killed": 0, "survived": 0, "no_tests": 0, "timeout": 0}
         )
@@ -234,7 +261,7 @@ def main() -> int:
             print("✅ PASS: Application Core Gate — 100.0% resilient with ZERO surviving mutants.")
 
     # 3. Infrastructure Gate (Threshold >= min-infra-rate)
-    if args.enforce_infrastructure:
+    if active_infrastructure:
         infra = stats.get(
             "infrastructure", {"total": 0, "killed": 0, "survived": 0, "no_tests": 0, "timeout": 0}
         )
@@ -242,18 +269,18 @@ def main() -> int:
         if infra["total"] == 0:
             print("❌ FAIL: No Infrastructure mutants found in database.\n")
             exit_code = 1
-        elif rate < args.min_infra_rate:
+        elif rate < min_infra_rate:
             print(
-                f"❌ FAIL: Infrastructure kill rate {rate:.2f}% is below target {args.min_infra_rate:.2f}%!\n"
+                f"❌ FAIL: Infrastructure kill rate {rate:.2f}% is below target {min_infra_rate:.2f}%!\n"
             )
             exit_code = 1
         else:
             print(
-                f"✅ PASS: Infrastructure Gate — {rate:.2f}% kill rate satisfies target (>={args.min_infra_rate:.2f}%)."
+                f"✅ PASS: Infrastructure Gate — {rate:.2f}% kill rate satisfies target (>={min_infra_rate:.2f}%)."
             )
 
     # 4. Presentation Gate (Threshold >= min-pres-rate)
-    if args.enforce_presentation:
+    if active_presentation:
         pres = stats.get(
             "presentation", {"total": 0, "killed": 0, "survived": 0, "no_tests": 0, "timeout": 0}
         )
@@ -261,22 +288,22 @@ def main() -> int:
         if pres["total"] == 0:
             print("❌ FAIL: No Presentation mutants found in database.\n")
             exit_code = 1
-        elif rate < args.min_pres_rate:
+        elif rate < min_pres_rate:
             print(
-                f"❌ FAIL: Presentation kill rate {rate:.2f}% is below target {args.min_pres_rate:.2f}%!\n"
+                f"❌ FAIL: Presentation kill rate {rate:.2f}% is below target {min_pres_rate:.2f}%!\n"
             )
             exit_code = 1
         else:
             print(
-                f"✅ PASS: Presentation Gate — {rate:.2f}% kill rate satisfies target (>={args.min_pres_rate:.2f}%)."
+                f"✅ PASS: Presentation Gate — {rate:.2f}% kill rate satisfies target (>={min_pres_rate:.2f}%)."
             )
 
     # 5. Completeness Check
-    if args.verify_completeness:
-        missing = verify_module_completeness(args.src_dir, args.mutants_dir)
+    if active_completeness:
+        missing = verify_module_completeness(src_dir, mutants_dir)
         if missing:
             print(
-                f"⚠️  WARNING: {len(missing)} functional modules lack mutation profiles in {args.mutants_dir}:"
+                f"⚠️  WARNING: {len(missing)} functional modules lack mutation profiles in {mutants_dir}:"
             )
             for m in missing[:10]:
                 print(f"    - {m}")
@@ -289,7 +316,32 @@ def main() -> int:
             )
 
     print()
-    return exit_code
+    if exit_code != 0:
+        raise typer.Exit(code=exit_code)
+
+
+def main(argv: Sequence[str] | None = None) -> int:
+    """Execute mutation gate runner entrypoint.
+
+    Args:
+        argv: Optional sequence of CLI arguments. If None, uses sys.argv[1:].
+
+    Returns:
+        Process exit code integer.
+    """
+    try:
+        res = app(args=list(argv) if argv is not None else None, standalone_mode=False)
+        return 0 if res is None else int(res)
+    except typer.Exit as exc:
+        return exc.exit_code
+    except click.ClickException as exc:
+        sys.stderr.write(f"Usage error: {exc}\n")
+        return getattr(exc, "exit_code", 2)
+    except SystemExit as exc:
+        return exc.code if isinstance(exc.code, int) else 2
+    except Exception as exc:  # noqa: BLE001
+        sys.stderr.write(f"Unexpected error: {exc}\n")
+        return 1
 
 
 if __name__ == "__main__":

@@ -11,35 +11,11 @@ from __future__ import annotations
 from typing import Any
 
 ITEMS_SOCRATIC_DEPTH: list[dict[str, Any]] = [
-    # 1. Borderline Potential FP (FAIL) - Erudite technical paraphrase that omits intermediate causal mechanisms
     {
         "id": "se_01_borderline_fp",
         "input": {
-            "raw_text": (
-                "## Concorrência e Gargalos em Bancos Relacionais sob Alta Carga\n\n"
-                "Em testes de estresse com milhares de requisições simultâneas por segundo, o banco de dados **PostgreSQL** "
-                "frequentemente apresenta degradação severa de latência quando as conexões não são limitadas. "
-                "O esgotamento de recursos decorre da contenção de bloqueios em linhas concorrentes e do custo de "
-                "context switching entre múltiplos processos no sistema operacional."
-            ),
-            "candidate_text": (
-                "## O Esgotamento de Recursos em Bancos Relacionais sob Concorrência Extrema\n\n"
-                "Em cenários de estresse computacional caracterizados por taxas elevadas de transações simultâneas, "
-                "a arquitetura do **PostgreSQL** manifesta variações desproporcionais na latência percebida pelos clientes. "
-                "A saturação de conexões sem pooling adequado impõe um ônus operacional que degrada o rendimento global "
-                "da aplicação sob teste de estresse na infraestrutura em contêineres **Docker**.\n\n"
-                "A degradação manifesta-se através de disputas intensas por recursos compartilhados, onde diferentes "
-                "processos disputam o acesso aos mesmos registros de tabelas financeiras. A sobrecarga de gerenciar "
-                "dezenas de processos paralelos força o núcleo do sistema operacional a despender ciclos valiosos de "
-                "processamento em trocas de contexto em vez de executar consultas analíticas úteis.\n\n"
-                "Essas perturbações confirmam a necessidade de dimensionar corretamente o agrupamento de conexões "
-                "e revisar a modelagem de consultas para preservar a estabilidade da camada de persistência.\n\n"
-                "## Informações Complementares\n\n"
-                "1. O gerenciador de conexões **PgBouncer**, amplamente utilizado em ambientes de produção com PostgreSQL, "
-                "opera em três modos distintos de agrupamento: sessão, transação e instrução, mitigando o custo de criação de processos.\n\n"
-                "2. O comando **EXPLAIN ANALYZE** do PostgreSQL executa a consulta e retorna o plano de execução real juntamente "
-                "com os custos de nós de varredura sequencial (Seq Scan) e tempo de execução consumido em buffers compartilhados."
-            ),
+            "raw_text": "## Persistência Relacional e a Otimização de Consultas\n\nO banco de dados relacional **PostgreSQL**, frequentemente subestimado e rotulado como o principal gargalo de sistemas web, demonstra uma eficiência notável quando submetido a cargas controladas de operações atômicas. A crença generalizada de que armazéns de dados em memória como o **Redis** são universalmente superiores ignora o fato de que um banco relacional quase vazio opera na mesma ordem de magnitude de velocidade para inserções simples. A complexidade surge quando operações de busca textual exigem varreduras sequenciais em tabelas extensas, transformando consultas em gargalos computacionais severos devido ao uso inadequado de operadores de correspondência parcial.\n\nA mitigação dessas ineficiências exige a compreensão de estruturas de indexação avançadas, como as árvores de busca generalizada e as extensões de **trigramas**, que permitem a fragmentação de textos em subunidades indexáveis. A substituição de múltiplos testes condicionais por uma única coluna gerada e indexada reduz drasticamente o custo computacional das consultas, transformando varreduras lineares custosas em buscas indexadas altamente eficientes. A introdução de serviços de busca externos, como o **Elasticsearch**, só se justifica quando a volumetria de dados e a complexidade das consultas superam os limites operacionais das ferramentas relacionais nativas, reforçando o princípio de que a complexidade arquitetural deve ser sempre a última linha de defesa, nunca a primeira escolha.",
+            "candidate_text": "## O Esgotamento de Recursos em Bancos Relacionais sob Concorrência Extrema\n\nEm cenários de estresse computacional caracterizados por taxas elevadas de transações simultâneas, a arquitetura do **PostgreSQL** manifesta variações desproporcionais na latência percebida pelos clientes. A saturação de conexões sem pooling adequado impõe um ônus operacional que degrada o rendimento global da aplicação sob teste de estresse na infraestrutura em contêineres **Docker**.\n\nA degradação manifesta-se através de disputas intensas por recursos compartilhados, onde diferentes processos disputam o acesso aos mesmos registros de tabelas financeiras. A sobrecarga de gerenciar dezenas de processos paralelos força o núcleo do sistema operacional a despender ciclos valiosos de processamento em trocas de contexto em vez de executar consultas analíticas úteis.\n\nEssas perturbações confirmam a necessidade de dimensionar corretamente o agrupamento de conexões e revisar a modelagem de consultas para preservar a estabilidade da camada de persistência.\n\n## Informações Complementares\n\n1. O gerenciador de conexões **PgBouncer**, amplamente utilizado em ambientes de produção com PostgreSQL, opera em três modos distintos de agrupamento: sessão, transação e instrução, mitigando o custo de criação de processos.\n\n2. O comando **EXPLAIN ANALYZE** do PostgreSQL executa a consulta e retorna o plano de execução real juntamente com os custos de nós de varredura sequencial (Seq Scan) e tempo de execução consumido em buffers compartilhados.",
         },
         "expected_output": {"verdict": "FAIL"},
         "metadata": {
@@ -51,36 +27,11 @@ ITEMS_SOCRATIC_DEPTH: list[dict[str, Any]] = [
             "target_verdict": "FAIL",
         },
     },
-    # 2. Borderline Potential FN (PASS) - Rigorous multi-dimensional audit of LLM inference mechanics
     {
         "id": "se_02_borderline_fn",
         "input": {
-            "raw_text": (
-                "## O Funcionamento Cognitivo dos Modelos de Linguagem\n\n"
-                "Modelos de linguagem como o **ChatGPT** operam fundamentalmente como sistemas de predição estatística "
-                "de próximo token treinados em extensos corpora textuais. Usuários frequentemente atribuem capacidades "
-                "de raciocínio autônomo a essas ferramentas, ignorando que as respostas decorrem de padrões probabilísticos "
-                "ajustados por aprendizagem por reforço com feedback humano."
-            ),
-            "candidate_text": (
-                "## A Natureza Probabilística e os Limites Epistêmicos dos Modelos de Linguagem\n\n"
-                "A interpretação do comportamento de modelos de linguagem de grande porte (**LLM**) oscila entre o fascínio "
-                "pela fluência sintática e o equívoco de atribuir intencionalidade consciente a uma arquitetura puramente estocástica. "
-                "Na formulação conceituada por **Andrej Karpathy**, o modelo base funciona como um compressor de padrões que estima "
-                "a distribuição condicional de probabilidades sobre um vocabulário discreto de tokens através de camadas de auto-atenção.\n\n"
-                "A transição entre o modelo pré-treinado e o assistente conversacional não introduz raciocínio dedutivo novo, "
-                "mas restringe o espaço amostral mediante ajuste fino supervisionado (**SFT**) e aprendizagem por reforço com feedback "
-                "humano (**RLHF**). Esse processo mascara o mecanismo de predição estocástica com uma persona prestativa, gerando "
-                "alucinações factuais exatamente nos domínios em que a densidade de dados estatísticos é insuficiente.\n\n"
-                "Operacionalmente, a memória de trabalho do sistema limita-se ao buffer da **KV-cache** contido na janela de contexto ativo. "
-                "Quando o usuário delega tarefas sem scaffolding externo, o modelo opera no equivalente computacional do Sistema 1 "
-                "(resposta instintiva rápida descrita por **Daniel Kahneman**), falhando em problemas que requerem verificação algorítmica deliberada.\n\n"
-                "## Informações Complementares\n\n"
-                "1. A técnica de **Decodificação Especulativa** (Speculative Decoding) utiliza um modelo menor e mais veloz para gerar "
-                "candidatos a tokens subsequentes que são validados em paralelo pelo modelo principal, acelerando a taxa de geração sem perda de fidelidade.\n\n"
-                "2. O artigo seminal **Attention Is All You Need**, publicado em 2017 por pesquisadores do **Google Brain**, "
-                "introduziu a arquitetura Transformer baseada no mecanismo de produto escalar escalado (scaled dot-product attention)."
-            ),
+            "raw_text": "## Arquiteturas de Raciocínio e Modelos de Pensamento\n\nA evolução recente na engenharia de redes neurais introduziu uma ruptura metodológica com o advento dos modelos orientados ao raciocínio profundo. Mediante a aplicação de **aprendizado por reforço** em ambientes controlados de simulação matemática e lógica, essas arquiteturas desenvolvem estratégias internas de deliberação que mimetizam o monólogo interior humano. Antes de emitir a resposta definitiva para o usuário, o sistema gera milhares de tokens intermediários de reflexão, permitindo a exploração de hipóteses, a autoverificação de premissas e a retificação de caminhos dedutivos defectivos.\n\nEssa capacidade computacional adicional consome tempo considerável de processamento, traduzindo-se em janelas de espera que podem durar múltiplos minutos. Contudo, o ganho de acurácia torna-se decisivo em domínios de alta complexidade formal, a exemplo da resolução de bugs em código de programação avançado ou na derivação de demonstrações científicas. Tarefas triviais ou conversacionais permanecem impermeáveis a ganhos de desempenho por essa via, justificando uma abordagem heurística onde o usuário emprega modelos rápidos para consultas corriqueiras e reserva os motores de raciocínio prolongado para nós problemáticos intransponíveis.",
+            "candidate_text": "## A Natureza Probabilística e os Limites Epistêmicos dos Modelos de Linguagem\n\nA interpretação do comportamento de modelos de linguagem de grande porte (**LLM**) oscila entre o fascínio pela fluência sintática e o equívoco de atribuir intencionalidade consciente a uma arquitetura puramente estocástica. Na formulação conceituada por **Andrej Karpathy**, o modelo base funciona como um compressor de padrões que estima a distribuição condicional de probabilidades sobre um vocabulário discreto de tokens através de camadas de auto-atenção.\n\nA transição entre o modelo pré-treinado e o assistente conversacional não introduz raciocínio dedutivo novo, mas restringe o espaço amostral mediante ajuste fino supervisionado (**SFT**) e aprendizagem por reforço com feedback humano (**RLHF**). Esse processo mascara o mecanismo de predição estocástica com uma persona prestativa, gerando alucinações factuais exatamente nos domínios em que a densidade de dados estatísticos é insuficiente.\n\nOperacionalmente, a memória de trabalho do sistema limita-se ao buffer da **KV-cache** contido na janela de contexto ativo. Quando o usuário delega tarefas sem scaffolding externo, o modelo opera no equivalente computacional do Sistema 1 (resposta instintiva rápida descrita por **Daniel Kahneman**), falhando em problemas que requerem verificação algorítmica deliberada.\n\n## Informações Complementares\n\n1. A técnica de **Decodificação Especulativa** (Speculative Decoding) utiliza um modelo menor e mais veloz para gerar candidatos a tokens subsequentes que são validados em paralelo pelo modelo principal, acelerando a taxa de geração sem perda de fidelidade.\n\n2. O artigo seminal **Attention Is All You Need**, publicado em 2017 por pesquisadores do **Google Brain**, introduziu a arquitetura Transformer baseada no mecanismo de produto escalar escalado (scaled dot-product attention).",
         },
         "expected_output": {"verdict": "PASS"},
         "metadata": {
@@ -92,35 +43,11 @@ ITEMS_SOCRATIC_DEPTH: list[dict[str, Any]] = [
             "target_verdict": "PASS",
         },
     },
-    # 3. Easy PASS - Public Choice theory applied to Brazilian electoral corruption
     {
         "id": "se_03_easy_pass",
         "input": {
-            "raw_text": (
-                "## A Recorrência da Corrupção Política nas Eleições Brasileiras\n\n"
-                "A persistência de parlamentares processados ou condenados por corrupção em sucessivas legislaturas "
-                "é frequentemente atribuída à ignorância ou alienação moral do eleitorado. No entanto, a análise econômica "
-                "da política demonstra que essa dinâmica decorre de estruturas de incentivos e das regras eleitorais."
-            ),
-            "candidate_text": (
-                "## A Economia Política do Voto e a Teoria da Escolha Pública\n\n"
-                "A explicação moralista que reduz a reeleição sistemática de agentes políticos desonestos a uma suposta "
-                "falha ética do eleitorado negligencia os postulados fundamentais da **Teoria da Escolha Pública** formulados "
-                "por **James M. Buchanan** e **Gordon Tullock**. Os agentes políticos atuam como maximizadores de utilidade pessoal, "
-                "buscando poder, prestígio e recursos sob a lógica dos incentivos institucionais vigentes.\n\n"
-                "O conceito de **Ignorância Racional**, delineado por **Anthony Downs** em 1957, elucida o cálculo do cidadão comum: "
-                "como a probabilidade de um voto individual alterar o resultado eleitoral é próxima de zero e o custo de auditar "
-                "votações e prontuários judiciais é elevado, o eleitor racionalmente abstém-se de gastar tempo investigando seus candidatos. "
-                "Ao mesmo tempo, coalizões de interesses organizados operam com a lógica de benefícios concentrados pagos por custos difusos.\n\n"
-                "Um subsídio ou emenda parlamentar de cinquenta milhões de reais financiada por milhões de contribuintes dilui o custo "
-                "em poucos centavos por cidadão, enquanto o benefício bilionário canalizado para empreiteiras e sindicatos locais "
-                "fornece o capital concentrado e a militância necessários para assegurar a recondução eleitoral do grupo político.\n\n"
-                "## Informações Complementares\n\n"
-                "1. O economista **Mancur Olson**, em sua obra **A Lógica da Ação Coletiva** publicada em 1965, demonstrou que pequenos "
-                "grupos com interesses homogêneos possuem enorme facilidade de organização e lobby frente a maiorias desorganizadas.\n\n"
-                "2. O **Fundo Especial de Financiamento de Campanha** (Fundo Eleitoral), instituído pela **Lei 13.487/2017**, "
-                "alocou bilhões de reais de recursos públicos aos diretórios partidários nacionais, reforçando a blindagem das cúpulas."
-            ),
+            "raw_text": "## A Anatomia Oculta do Voto Legislativo\n\nA engenharia eleitoral contemporânea opera sobre a desatenção sistemática do eleitorado, transformando o sufrágio para o **poder legislativo** em um mecanismo opaco de transferência de capital político. Numa democracia de massas, a esmagadora maioria do eleitorado é incapaz de recordar a própria escolha logo após o encerramento do pleito, reflexo direto de uma dinâmica em que a decisão é postergada para os momentos derradeiros da campanha. Esse comportamento não constitui um acidente cognitivo isolado, mas o resultado previsível de um sistema deliberadamente complexo, onde a obscuridade institucional serve para blindar redes de interesses estabelecidas. A mecânica das eleições proporcionais, aplicadas à **Câmara dos Deputados** e às assembleias estaduais, subordina o eleitor desatento a uma lógica de caudas partidárias e cabeças de chapa, convertendo o voto individual em um cheque em branco para estruturas partidárias consolidadas.\n\nO sistema de **quociente eleitoral** constitui a pedra angular dessa arquitetura, determinando o custo em votos necessários para que um partido conquiste uma cadeira. Esse índice resulta da divisão do total de sufrágios válidos pelas vagas em disputa, gerando um patamar numérico que oscila conforme a densidade demográfica de cada unidade federativa. Nos estados de menor população, a exigência constitucional de um contingente mínimo de **deputados federais** distorce a proporcionalidade representativa, barateando o custo da cadeira e criando assimetrias profundas em relação a grandes colégios eleitorais como **São Paulo**. Enquanto os eleitores paulistas enfrentam barreiras quantitativas elevadíssimas para eleger seus representantes, regiões periféricas operam com margens exíguas, evidenciando que a arquitetura do voto foi moldada para privilegiar arranjos federativos arcaicos em detrimento da representatividade demográfica real.\n\nDentro desse tabuleiro, os partidos políticos constroem suas listas de candidatos utilizando uma estratégia dual, combinando candidatos de proeminência, os chamados **cabeças de chapa**, com uma imensa periferia de nomes secundários, conhecida como **cauda partidária**. Os cabeças de chapa concentram a capacidade de atrair votos e garantir a conquista das cadeiras, enquanto a cauda cumpre a função logística de acumular o volume necessário para atingir o quociente eleitoral. Essa engrenagem recorre a uma diversidade calculada de perfis marginais, desde figuras ligadas a estruturas de poder local até candidaturas fantoches e inocentes útiles, cuja única finalidade utilitária é somar votos para a legenda. A complexidade matemática do processo funciona como um campo de força cognitivo, impedindo que o cidadão comum compreenda que seu voto nominal em um candidato sem expressão numérica acaba por irrigar o saldo global de votos da legenda, elegendo figuras centrais comprometidas com esquemas tradicionais de corrupção.",
+            "candidate_text": "## A Economia Política do Voto e a Teoria da Escolha Pública\n\nA explicação moralista que reduz a reeleição sistemática de agentes políticos desonestos a uma suposta falha ética do eleitorado negligencia os postulados fundamentais da **Teoria da Escolha Pública** formulados por **James M. Buchanan** e **Gordon Tullock**. Os agentes políticos atuam como maximizadores de utilidade pessoal, buscando poder, prestígio e recursos sob a lógica dos incentivos institucionais vigentes.\n\nO conceito de **Ignorância Racional**, delineado por **Anthony Downs** em 1957, elucida o cálculo do cidadão comum: como a probabilidade de um voto individual alterar o resultado eleitoral é próxima de zero e o custo de auditar votações e prontuários judiciais é elevado, o eleitor racionalmente abstém-se de gastar tempo investigando seus candidatos. Ao mesmo tempo, coalizões de interesses organizados operam com a lógica de benefícios concentrados pagos por custos difusos.\n\nUm subsídio ou emenda parlamentar de cinquenta milhões de reais financiada por milhões de contribuintes dilui o custo em poucos centavos por cidadão, enquanto o benefício bilionário canalizado para empreiteiras e sindicatos locais fornece o capital concentrado e a militância necessários para assegurar a recondução eleitoral do grupo político.\n\n## Informações Complementares\n\n1. O economista **Mancur Olson**, em sua obra **A Lógica da Ação Coletiva** publicada em 1965, demonstrou que pequenos grupos com interesses homogêneos possuem enorme facilidade de organização e lobby frente a maiorias desorganizadas.\n\n2. O **Fundo Especial de Financiamento de Campanha** (Fundo Eleitoral), instituído pela **Lei 13.487/2017**, alocou bilhões de reais de recursos públicos aos diretórios partidários nacionais, reforçando a blindagem das cúpulas.",
         },
         "expected_output": {"verdict": "PASS"},
         "metadata": {
@@ -132,29 +59,11 @@ ITEMS_SOCRATIC_DEPTH: list[dict[str, Any]] = [
             "target_verdict": "PASS",
         },
     },
-    # 4. Easy FAIL - Superficial paraphrase with zero epistemic expansion or mechanistic explanation
     {
         "id": "se_04_easy_fail",
         "input": {
-            "raw_text": (
-                "## A Decisão do STF sobre a Lei de Impeachment\n\n"
-                "O ministro **Gilmar Mendes** suspendeu trechos da **Lei 1.079/1950** que permitiam a qualquer cidadão "
-                "apresentar pedidos de impeachment contra membros do **Supremo Tribunal Federal**. A liminar transferiu "
-                "a exclusividade dessa iniciativa para a **Procuradoria-Geral da República** e estabeleceu quórum qualificado "
-                "de dois terços para o Senado admitir a denúncia."
-            ),
-            "candidate_text": (
-                "## O Julgamento da Lei de Impeachment no Supremo Tribunal Federal\n\n"
-                "O ministro **Gilmar Mendes** determinou a suspensão de dispositivos da **Lei 1.079/1950** que autorizavam "
-                "qualquer pessoa comum a protocolar representações de impeachment contra os integrantes da suprema corte. "
-                "A decisão judicial concentrou a prerrogativa nas mãos da **Procuradoria-Geral da República**.\n\n"
-                "Além dessa restrição de iniciativa, a medida estabeleceu que o **Senado Federal** precisa de dois terços dos "
-                "votos para aceitar qualquer denúncia desse tipo, dificultando bastante os processos de impeachment de ministros.\n\n"
-                "A medida causou polêmica na comunidade jurídica porque alterou as regras que estavam em vigor há décadas.\n\n"
-                "## Informações Complementares\n\n"
-                "1. A **Lei 1.079** foi sancionada em 1950 durante o mandato do presidente Eurico Gaspar Dutra.\n\n"
-                "2. O Senado Federal é composto por 81 senadores que representam os estados da federação brasileira."
-            ),
+            "raw_text": "## A Decisão Monocrática e a Mutação das Regras de Impedimento\n\nNesse cenário de atrito latente entre as instituições da República, a prolação de uma decisão monocrática pelo ministro **Gilmar Mendes** nos autos da **Arguição de Descumprimento de Preceito Fundamental 1259** reconfigurou unilateralmente o estatuto jurídico aplicável aos magistrados da mais alta corte. A resolução judicial alterou substancialmente os critérios para a deflagração de processos de responsabilização de ministros do Supremo Tribunal Federal, suprimindo a legitimidade concorrente que a legislação conferia a qualquer cidadão.\n\nPela nova norma estabelecida por via pretoriana, apenas o **Procurador-Geral da República** detém a prerrogativa postulatória, enquanto o quórum deliberativo no **Senado Federal** foi elevado de maioria simples para dois terços. Tal construção normativa colide diretamente com a **Lei 1079 de 1950**, diploma legal que regula os crimes de responsabilidade e que já havia sido submetida ao crivo da constitucionalidade em momentos pretéritos da história democrática brasileira. A intervenção opera uma mutação constitucional por via jurisdicional, blindando os julgadores contra os mecanismos de controle político previstos no texto originário da carta magna.",
+            "candidate_text": "## O Julgamento da Lei de Impeachment no Supremo Tribunal Federal\n\nO ministro **Gilmar Mendes** determinou a suspensão de dispositivos da **Lei 1.079/1950** que autorizavam qualquer pessoa comum a protocolar representações de impeachment contra os integrantes da suprema corte. A decisão judicial concentrou a prerrogativa nas mãos da **Procuradoria-Geral da República**.\n\nAlém dessa restrição de iniciativa, a medida estabeleceu que o **Senado Federal** precisa de dois terços dos votos para aceitar qualquer denúncia desse tipo, dificultando bastante os processos de impeachment de ministros.\n\nA medida causou polêmica na comunidade jurídica porque alterou as regras que estavam em vigor há décadas.\n\n## Informações Complementares\n\n1. A **Lei 1.079** foi sancionada em 1950 durante o mandato do presidente Eurico Gaspar Dutra.\n\n2. O Senado Federal é composto por 81 senadores que representam os estados da federação brasileira.",
         },
         "expected_output": {"verdict": "FAIL"},
         "metadata": {
@@ -166,36 +75,11 @@ ITEMS_SOCRATIC_DEPTH: list[dict[str, Any]] = [
             "target_verdict": "FAIL",
         },
     },
-    # 5. Typical PASS 1 - Japanese semiconductor decline intermediate industrial mechanisms
     {
         "id": "se_05_typical_pass_1",
         "input": {
-            "raw_text": (
-                "## A Crise Estrutural da Indústria Eletrônica Japonesa\n\n"
-                "A hegemonia do Japão no mercado de chips colapsou na década de 1990 devido à incapacidade dos conglomerados "
-                "locais de acompanhar a transição do segmento de memórias padronizadas para microprocessadores e sistemas móveis. "
-                "A ascensão do modelo fabless fragmentou a cadeia global de suprimentos."
-            ),
-            "candidate_text": (
-                "## A Desconstrução do Modelo Vertical Integrado na Manufatura de Circuitos\n\n"
-                "A derrocada dos conglomerados japoneses (**keiretsus**) no mercado de semicondutores após 1990 constitui um caso clássico "
-                "do dilema da inovação analisado sob a perspectiva dos custos de coordenação. Corporações como **Toshiba**, **NEC** e **Fujitsu** "
-                "estruturavam-se como fabricantes de dispositivos integrados (**IDM**), mantendo sob o mesmo teto corporativo o design "
-                "de circuitos, as plantas de litografia e a montagem de produtos finais de consumo.\n\n"
-                "Esse modelo alcançou produtividade extraordinária enquanto a vantagem competitiva esteve assentada em memórias **DRAM**, "
-                "onde melhorias incrementais na pureza do silício e taxas de defeito por wafer garantiam margens expressivas. Contudo, "
-                "a introdução da arquitetura **PC** aberta pela **IBM** deslocou o núcleo de valor do silício da memória física para os "
-                "microprocessadores lógicos de alta velocidade dominados pela **Intel**, que exigiam ciclos rápidos de iteração de design.\n\n"
-                "A ruptura definitiva consolidou-se com o modelo de fundição pura concebido por **Morris Chang** na **TSMC** em 1987. "
-                "Ao desacoplar o projeto lógico da pesada depreciação de capital das salas limpas (cleanrooms), empresas americanas "
-                "sem fábrica própria (**fabless**) puderam escalar projetos arrojados sem carregar o imobilizado de fábricas bilionárias, "
-                "tornando obsoleta a rigidez de alocação de capital dos consórcios fabris japoneses.\n\n"
-                "## Informações Complementares\n\n"
-                "1. A **Lei de Moore**, formulada em 1965 por **Gordon Moore**, postulou a duplicação periódica do número de transistores "
-                "em circuitos integrados a cada dois anos, impondo uma corrida de despesas de capital (CapEx) insustentável para players não especializados.\n\n"
-                "2. O projeto cooperativo de semicondutores **VLSI** (Very Large Scale Integration), coordenado pelo **MITI** entre 1976 e 1980, "
-                "uniu concorrentes japoneses para desenvolver a tecnologia básica de litografia que garantiu o domínio transitório de DRAM nos anos 1980."
-            ),
+            "raw_text": "## A consolidação da hegemonia e o projeto VLSI\n\nO lançamento do **Projeto de Circuito Integrado** em meados da década de **1960** permitiu que empresas como **NEC**, **Toshiba** e **Hitachi** saltassem da fabricação isolada de transistores para a produção de circuitos integrados. Esse arranjo institucional consolidou-se por meio do sistema **keiretsu**, rede de conglomerados empresariais estreitamente vinculados a bancos e fornecedores, garantindo o fluxo contínuo de capital de longo prazo necessário para financiar a pesquisa e o desenvolvimento no setor de semicondutores. Em **1978**, o **MITI** coordenou a execução do **Projeto VLSI** (**Integração em Larga Escala Muito Grande**), iniciativa voltada para o desenvolvimento de memórias de acesso aleatório dinâmico, conhecidas como chips **DRAM**. \n\nA estratégia colaborativa do **Projeto VLSI** conferiu às empresas japonesas uma vantagem estrutural decisiva frente aos concorrentes norte-americanas, que operavam de maneira fragmentada e sem coordenação centralizada. Os fabricantes nipônicos priorizaram a eficiência fabril, focando em altas taxas de rendimento e na redução sistemática de defeitos de fabricação. Em **1983**, o **Japão** ultrapassou os **Estados Unidos** na produção de chips **DRAM**, capturando quase cinquenta por cento do mercado global de semicondutores. No ano de **1986**, o apogeu da supremacia japonesa atingiu patamares inéditos, com o controle de mais da metade da produção mundial e a liderança incontestável de gigantes como **NEC**, **Toshiba** e **Fujitsu**.",
+            "candidate_text": "## A Desconstrução do Modelo Vertical Integrado na Manufatura de Circuitos\n\nA derrocada dos conglomerados japoneses (**keiretsus**) no mercado de semicondutores após 1990 constitui um caso clássico do dilema da inovação analisado sob a perspectiva dos custos de coordenação. Corporações como **Toshiba**, **NEC** e **Fujitsu** estruturavam-se como fabricantes de dispositivos integrados (**IDM**), mantendo sob o mesmo teto corporativo o design de circuitos, as plantas de litografia e a montagem de produtos finais de consumo.\n\nEsse modelo alcançou produtividade extraordinária enquanto a vantagem competitiva esteve assentada em memórias **DRAM**, onde melhorias incrementais na pureza do silício e taxas de defeito por wafer garantiam margens expressivas. Contudo, a introdução da arquitetura **PC** aberta pela **IBM** deslocou o núcleo de valor do silício da memória física para os microprocessadores lógicos de alta velocidade dominados pela **Intel**, que exigiam ciclos rápidos de iteração de design.\n\nA ruptura definitiva consolidou-se com o modelo de fundição pura concebido por **Morris Chang** na **TSMC** em 1987. Ao desacoplar o projeto lógico da pesada depreciação de capital das salas limpas (cleanrooms), empresas americanas sem fábrica própria (**fabless**) puderam escalar projetos arrojados sem carregar o imobilizado de fábricas bilionárias, tornando obsoleta a rigidez de alocação de capital dos consórcios fabris japoneses.\n\n## Informações Complementares\n\n1. A **Lei de Moore**, formulada em 1965 por **Gordon Moore**, postulou a duplicação periódica do número de transistores em circuitos integrados a cada dois anos, impondo uma corrida de despesas de capital (CapEx) insustentável para players não especializados.\n\n2. O projeto cooperativo de semicondutores **VLSI** (Very Large Scale Integration), coordenado pelo **MITI** entre 1976 e 1980, uniu concorrentes japoneses para desenvolver a tecnologia básica de litografia que garantiu o domínio transitório de DRAM nos anos 1980.",
         },
         "expected_output": {"verdict": "PASS"},
         "metadata": {
@@ -207,34 +91,11 @@ ITEMS_SOCRATIC_DEPTH: list[dict[str, Any]] = [
             "target_verdict": "PASS",
         },
     },
-    # 6. Typical PASS 2 - Multi-agent AI systems game-theoretic intermediate state transitions
     {
         "id": "se_06_typical_pass_2",
         "input": {
-            "raw_text": (
-                "## A Coordenação Autônoma em Sistemas Multiagente de IA\n\n"
-                "Quando múltiplos agentes de inteligência artificial interagem em ambientes compartilhados sem controle centralizado, "
-                "comportamentos emergentes imprevisíveis surgem rapidamente. A dinâmica pode convergir para cooperação estável "
-                "ou para colapsos sistêmicos provocados por assimetria de informação."
-            ),
-            "candidate_text": (
-                "## Dinâmicas Emergentes e Teoria dos Jogos em Ecossistemas Multiagente\n\n"
-                "A transição de modelos isolados para enxames de agentes autônomos transforma o problema de alinhamento em um desafio "
-                "de governança de sistemas complexos. Na formulação investigada pelos pesquisadores da **Google DeepMind**, cada agente "
-                "atua como um tomador de decisão algorítmico munido de funções de utilidade e políticas de execução próprias, "
-                "interagindo através de barramentos de mensageria assíncrona.\n\n"
-                "O colapso da cooperação ocorre tipicamente por dilemas de coordenação análogos à **Tragédia dos Comuns**: na ausência "
-                "de mecanismos de verificação e penalização com custos de transação nulos, agentes individuais maximizam suas chamadas "
-                "a APIs e saturação de largura de banda, provocando starvation dos agentes vizinhos e degradação em cascata do sistema.\n\n"
-                "A mitigação dessa entropia não decorre de prompts apelativos, mas da imposição de equilíbrios de **Nash** mediante "
-                "incentivos estruturais, como orçamentos criptográficos de cota (token-budgeting) e protocolos de reputação rastreáveis. "
-                "Esse arranjo assegura que o vetor de recompensa do agente coincida matematicamente com a estabilidade de longo prazo do ecossistema.\n\n"
-                "## Informações Complementares\n\n"
-                "1. O conceito de **Equilíbrio Correlacionado**, introduzido pelo matemático **Robert Aumann** em 1974, amplia o equilíbrio "
-                "de Nash ao permitir que os jogadores coordenem suas escolhas a partir de sinais públicos gerados por um mediador independente.\n\n"
-                "2. O framework de avaliação **AutoGPT**, lançado em março de 2023 por **Toran Bruce Richards**, evidenciou as limitações "
-                "de loops autônomos ingênuos de reflexão, que entravam em ciclos recursivos infinitos sem atingir o estado terminal da tarefa."
-            ),
+            "raw_text": "## A Arquitetura dos Agentes Autônomos\n\nA transição da inteligência artificial contemporânea é marcada pela superação do modelo estático de conversação, onde **grandes modelos de linguagem** funcionam como oráculos passivos que exigem intervenção humana contínua para cada micro-passo operacional. A introdução de **agentes autônomos**, desenvolvidos em laboratórios como o **Google DeepMind**, inaugura um paradigma cibernético onde o software observa um estado ambiental, formula um plano de execução, e opera ferramentas de forma independente. O problema fundamental não reside mais na geração de texto, mas na construção de **arneses de execução**, arcabouços de software que circundam o modelo de linguagem e conferem-lhe a capacidade de encadear decisões no mundo físico e digital. Esta autonomia operacional altera a posição do operador humano, transformando-o de um datilógrafo digital em um gerente de processos, cuja função primordial passa a ser a auditoria e a aprovação de fluxos complexos de trabalho.\n\nO desenvolvimento histórico desses sistemas encontra antecedentes em simulações tridimensionais e otimizações de data centers, mas a incorporação da linguagem natural como interface universal catalisou a interatividade em escala industrial. Enquanto os modelos tradicionais limitavam-se a prever continuações textuais em uma janela de contexto restrita, os agentes atuais possuem a capacidade de invocar APIs, disparar transações financeiras, enviar correspondências eletrônicas e coordenar a execução de tarefas multifásicas sem supervisão linear. No entanto, a ampliação da autonomia acarreta um vetor proporcional de vulnerabilidade sistêmica, uma vez que a taxa de erro de qualquer agente inteligente aumenta em função direta da complexidade da tarefa atribuída. A persistência de falhas sutis, combinada com o fenômeno psicológico da **viés de automação**, cria um risco latente onde operadores humanos, entorpecidos pela sequência de acertos iniciais, abandonam a vigilância crítica e expõem seus sistemas a catástrofes operacionais imprevistas.",
+            "candidate_text": "## Dinâmicas Emergentes e Teoria dos Jogos em Ecossistemas Multiagente\n\nA transição de modelos isolados para enxames de agentes autônomos transforma o problema de alinhamento em um desafio de governança de sistemas complexos. Na formulação investigada pelos pesquisadores da **Google DeepMind**, cada agente atua como um tomador de decisão algorítmico munido de funções de utilidade e políticas de execução próprias, interagindo através de barramentos de mensageria assíncrona.\n\nO colapso da cooperação ocorre tipicamente por dilemas de coordenação análogos à **Tragédia dos Comuns**: na ausência de mecanismos de verificação e penalização com custos de transação nulos, agentes individuais maximizam suas chamadas a APIs e saturação de largura de banda, provocando starvation dos agentes vizinhos e degradação em cascata do sistema.\n\nA mitigação dessa entropia não decorre de prompts apelativos, mas da imposição de equilíbrios de **Nash** mediante incentivos estruturais, como orçamentos criptográficos de cota (token-budgeting) e protocolos de reputação rastreáveis. Esse arranjo assegura que o vetor de recompensa do agente coincida matematicamente com a estabilidade de longo prazo do ecossistema.\n\n## Informações Complementares\n\n1. O conceito de **Equilíbrio Correlacionado**, introduzido pelo matemático **Robert Aumann** em 1974, amplia o equilíbrio de Nash ao permitir que os jogadores coordenem suas escolhas a partir de sinais públicos gerados por um mediador independente.\n\n2. O framework de avaliação **AutoGPT**, lançado em março de 2023 por **Toran Bruce Richards**, evidenciou as limitações de loops autônomos ingênuos de reflexão, que entravam em ciclos recursivos infinitos sem atingir o estado terminal da tarefa.",
         },
         "expected_output": {"verdict": "PASS"},
         "metadata": {
@@ -246,32 +107,11 @@ ITEMS_SOCRATIC_DEPTH: list[dict[str, Any]] = [
             "target_verdict": "PASS",
         },
     },
-    # 7. Typical FAIL - Explanatory vacuum jumping from oligarchy presence to state capture without mechanisms
     {
         "id": "se_07_typical_fail",
         "input": {
-            "raw_text": (
-                "## A Perpetuação de Clãs Políticos no Brasil Contemporâneo\n\n"
-                "Famílias tradicionais como os **Sarney** no Maranhão, os **Barbalho** no Pará e os **Calheiros** em Alagoas "
-                "mantêm o controle político de seus estados há várias gerações. Esse fenômeno sobreviveu à transição democrática "
-                "e se consolidou através da ocupação de postos-chave nos poderes Executivo e Legislativo."
-            ),
-            "candidate_text": (
-                "## As Dinâmicas Hereditárias do Poder Político Regional\n\n"
-                "A longevidade das dinastias políticas estaduais no Brasil representa um dos traços mais marcantes da federação "
-                "republicana. A preservação do poder hegemônico por clãs familiares nas regiões Norte e Nordeste estende-se por "
-                "mais de quatro décadas sem descontinuidade substantiva após a promulgação da **Constituição de 1988**.\n\n"
-                "Essas famílias simplesmente controlam todo o aparelho de Estado porque a população local aceita passivamente "
-                "sua dominação e vota regularmente nos herdeiros dos clãs, fazendo com que o poder passe de pai para filho de forma "
-                "automática sem qualquer tipo de resistência social ou disputa de poder.\n\n"
-                "Dessa maneira, a política brasileira permanece refém dessas linhagens que governam os estados e determinam os "
-                "rumos da nação sem que os mecanismos democráticos consigam produzir qualquer tipo de renovação das lideranças.\n\n"
-                "## Informações Complementares\n\n"
-                "1. **José Sarney**, eleito governador do Maranhão em 1965 pelo partido UDN, presidiu a República entre 1985 e 1990 "
-                "e exerceu sucessivos mandatos como presidente do Senado Federal.\n\n"
-                "2. **Jader Barbalho**, governador do Pará por dois mandatos e presidente do Senado em 2001, consolidou a influência "
-                "de sua família, cujo filho **Helder Barbalho** foi eleito governador do estado em 2018 e reeleito em 2022."
-            ),
+            "raw_text": "## A Gênese do Coronelismo e a Economia da Fraqueza\n\nA arquitetura do poder político no Brasil contemporâneo encontra suas raízes mais profundas na desagregação do **Império** e na consolidação da **Primeira República**. Ao contrário da leitura ingênua que enxerga o coronel do interior como um soberano absoluto dotado de força autônoma, a análise institucional demonstra que o **coronelismo** emergiu da própria fragilidade estrutural do poder local. Com o declínio do regime escravista no final do **século XIX** e a precarização das economias agrárias tradicionais, os antigos patriarcas perderam a capacidade de coerção direta. Simultaneamente, a **República Velha** recém-proclamada proclamava no papel um federalismo abrangente e eleições competitivas, mas revelava-se incapaz de estender sua burocracia, seu aparato policial e sua justiça para além dos portões dos municípios distantes. Deste vácuo institucional, emergiu um pacto de reciprocidade clientelista meticulosamente mapeado por **Vitor Nunes Leal** em sua obra clássica _Coronelismo, enxada e voto_. \n\nO funcionamento desse mecanismo dependia de uma cadeia hierárquica de dependência mútua e intercâmbio de favores. O cidadão comum, destituído de amparo estatal básico, recorria ao coronel para obter assistência médica de urgência, suprimentos alimentares em períodos de seca, recursos financeiros sem juros ou mediação jurídica informal. Em contrapartida, o eleitor entregava o seu sufrágio. Como as eleições da época careciam de sigilo e eram dominadas pelo voto aberto e fiscalizado, o escrutínio transformava-se em um ritual de subordinação, onde as atas e as urnas eram controladas diretamente pelos prepostos do clã local. Por sua vez, o coronel consolidava o seu prestígio regional repassando o bloco de votos consolidado ao governador do estado, que, por sua vez, sustentava a base parlamentar indispensável ao presidente da República. Este circuito fechado garantia imunidade política aos chefes locais e assegurava que a engrenagem do poder permanecesse estanque à participação popular genuína.",
+            "candidate_text": "## As Dinâmicas Hereditárias do Poder Político Regional\n\nA longevidade das dinastias políticas estaduais no Brasil representa um dos traços mais marcantes da federação republicana. A preservação do poder hegemônico por clãs familiares nas regiões Norte e Nordeste estende-se por mais de quatro décadas sem descontinuidade substantiva após a promulgação da **Constituição de 1988**.\n\nEssas famílias simplesmente controlam todo o aparelho de Estado porque a população local aceita passivamente sua dominação e vota regularmente nos herdeiros dos clãs, fazendo com que o poder passe de pai para filho de forma automática sem qualquer tipo de resistência social ou disputa de poder.\n\nDessa maneira, a política brasileira permanece refém dessas linhagens que governam os estados e determinam os rumos da nação sem que os mecanismos democráticos consigam produzir qualquer tipo de renovação das lideranças.\n\n## Informações Complementares\n\n1. **José Sarney**, eleito governador do Maranhão em 1965 pelo partido UDN, presidiu a República entre 1985 e 1990 e exerceu sucessivos mandatos como presidente do Senado Federal.\n\n2. **Jader Barbalho**, governador do Pará por dois mandatos e presidente do Senado em 2001, consolidou a influência de sua família, cujo filho **Helder Barbalho** foi eleito governador do estado em 2018 e reeleito em 2022.",
         },
         "expected_output": {"verdict": "FAIL"},
         "metadata": {

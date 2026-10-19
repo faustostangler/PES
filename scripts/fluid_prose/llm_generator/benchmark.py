@@ -18,7 +18,6 @@ Conforms to:
 
 from __future__ import annotations
 
-import argparse
 import contextlib
 import json
 import logging
@@ -27,10 +26,14 @@ import re
 import statistics
 import sys
 import time
+from collections.abc import Sequence
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
+from typing import Annotated, Any
+
+import click
+import typer
 
 # Ensure project root and src are in sys.path
 REPO_ROOT = Path(__file__).resolve().parents[3]
@@ -627,56 +630,66 @@ def format_model_report(summary: ModelBenchmarkSummary) -> str:
     return "\n".join(lines)
 
 
-def main() -> int:
-    """CLI Entrypoint for generator benchmark execution."""
-    parser = argparse.ArgumentParser(
-        description="Benchmark and evaluate candidate generator LLMs for Fluid Prose against canonical judge."
-    )
-    parser.add_argument(
-        "--models",
-        nargs="+",
-        default=ALL_BENCHMARK_MODELS,
-        help=(
-            "List of model identifiers to test sequentially (default: all canonical models - "
-            "'gemini:gemini-3.5-flash' 'gemini:gemini-2.5-flash' 'ollama:qwen2.5:latest' "
-            "'ollama:gemma4:latest' 'ollama:deepseek-r1:7b' 'ollama:llama3:latest' or 'all')"
-        ),
-    )
-    parser.add_argument(
-        "--input",
-        type=Path,
-        default=None,
-        help="Path to specific transcript file or directory of raw transcripts (default: scripts/fluid_prose/llm_generator/samples).",
-    )
-    parser.add_argument(
-        "--limit",
-        type=int,
-        default=None,
-        help="Maximum number of transcript samples to evaluate per model.",
-    )
-    parser.add_argument(
-        "--output-dir",
-        type=Path,
-        default=REPO_ROOT / "scripts" / "fluid_prose",
-        help="Directory to save individual model report files (default: scripts/fluid_prose).",
-    )
-    parser.add_argument(
-        "--temperature",
-        type=float,
-        default=0.2,
-        help="Sampling temperature for generator models (default: 0.2).",
-    )
-    parser.add_argument(
-        "--pacing",
-        type=float,
-        default=1.0,
-        help="Inter-request sleep delay in seconds to respect rate limits (default: 1.0).",
-    )
+app = typer.Typer(
+    name="benchmark-generator",
+    help="Benchmark and evaluate candidate generator LLMs for Fluid Prose against canonical judge.",
+    no_args_is_help=False,
+    context_settings={"help_option_names": ["-h", "--help"]},
+)
 
-    args = parser.parse_args()
+
+@app.command()
+def benchmark(
+    models: Annotated[
+        list[str] | None,
+        typer.Option(
+            "--models",
+            help=(
+                "List of model identifiers to test sequentially (default: all canonical models - "
+                "'gemini:gemini-3.5-flash' 'gemini:gemini-2.5-flash' 'ollama:qwen2.5:latest' "
+                "'ollama:gemma4:latest' 'ollama:deepseek-r1:7b' 'ollama:llama3:latest' or 'all')"
+            ),
+        ),
+    ] = None,
+    input_path: Annotated[
+        Path | None,
+        typer.Option(
+            "--input",
+            help="Path to specific transcript file or directory of raw transcripts",
+        ),
+    ] = None,
+    limit: Annotated[
+        int | None,
+        typer.Option(
+            "--limit",
+            help="Maximum number of transcript samples to evaluate per model.",
+        ),
+    ] = None,
+    output_dir: Annotated[
+        Path,
+        typer.Option(
+            "--output-dir",
+            help="Directory to save individual model report files",
+        ),
+    ] = REPO_ROOT / "scripts" / "fluid_prose",
+    temperature: Annotated[
+        float,
+        typer.Option(
+            "--temperature",
+            help="Sampling temperature for generator models (default: 0.2).",
+        ),
+    ] = 0.2,
+    pacing: Annotated[
+        float,
+        typer.Option(
+            "--pacing",
+            help="Inter-request sleep delay in seconds to respect rate limits (default: 1.0).",
+        ),
+    ] = 1.0,
+) -> None:
     settings = CresmoSettings()
     settings.ensure_directories()
-    args.output_dir.mkdir(parents=True, exist_ok=True)
+    output_dir.mkdir(parents=True, exist_ok=True)
 
     # Propagate Langfuse environment variables to silence client initialization warnings
     if settings.langfuse_public_key:
@@ -687,15 +700,15 @@ def main() -> int:
         os.environ["LANGFUSE_HOST"] = settings.langfuse_host
 
     # 1. Resolve Target Models
-    raw_models = args.models
+    raw_models = models if models else list(ALL_BENCHMARK_MODELS)
     if "all" in [m.lower() for m in raw_models]:
         raw_models = list(ALL_BENCHMARK_MODELS)
 
     # 2. Load Samples
-    samples = load_benchmark_samples(input_path=args.input, limit=args.limit)
+    samples = load_benchmark_samples(input_path=input_path, limit=limit)
     if not samples:
         logger.error("Nenhuma amostra de transcrição encontrada para benchmark!")
-        return 1
+        raise typer.Exit(code=1)
 
     print(f"📦 Amostras carregadas para o benchmark: {len(samples)}")
     for i, s in enumerate(samples, 1):
@@ -714,7 +727,7 @@ def main() -> int:
     for spec in raw_models:
         provider, model_name = resolve_model_spec(spec)
         filename_slug = sanitize_filename(provider, model_name)
-        output_file = args.output_dir / f"llm_generator_{filename_slug}.txt"
+        output_file = output_dir / f"llm_generator_{filename_slug}.txt"
 
         try:
             summary = run_benchmark_for_model(
@@ -724,8 +737,8 @@ def main() -> int:
                 settings=settings,
                 prompt_provider=prompt_provider,
                 judge_adapter=judge_adapter,
-                temperature=args.temperature,
-                pacing_seconds=args.pacing,
+                temperature=temperature,
+                pacing_seconds=pacing,
             )
 
             report_text = format_model_report(summary)
@@ -747,7 +760,30 @@ def main() -> int:
             prompt_provider._langfuse.flush()
 
     print("🏁 Todos os benchmarks solicitados foram concluídos!")
-    return 0
+
+
+def main(argv: Sequence[str] | None = None) -> int:
+    """CLI Entrypoint for generator benchmark execution.
+
+    Args:
+        argv: Optional sequence of CLI arguments. If None, uses sys.argv[1:].
+
+    Returns:
+        Process exit code integer.
+    """
+    try:
+        res = app(args=list(argv) if argv is not None else None, standalone_mode=False)
+        return 0 if res is None else int(res)
+    except typer.Exit as exc:
+        return exc.exit_code
+    except click.ClickException as exc:
+        sys.stderr.write(f"Usage error: {exc}\n")
+        return getattr(exc, "exit_code", 2)
+    except SystemExit as exc:
+        return exc.code if isinstance(exc.code, int) else 2
+    except Exception as exc:  # noqa: BLE001
+        sys.stderr.write(f"Unexpected error: {exc}\n")
+        return 1
 
 
 if __name__ == "__main__":

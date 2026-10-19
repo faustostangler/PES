@@ -9,11 +9,15 @@ Conforms to:
 
 from __future__ import annotations
 
-import argparse
 import json
 import logging
 import sys
+from collections.abc import Sequence
 from pathlib import Path
+from typing import Annotated
+
+import click
+import typer
 
 # Ensure project root and src are in sys.path
 REPO_ROOT = Path(__file__).resolve().parents[3]
@@ -111,32 +115,66 @@ def upload_golden_set(
         return 1
 
 
-def main() -> None:
-    parser = argparse.ArgumentParser(
-        description="Upload Cresmo gap_filler Golden Dataset to Langfuse."
-    )
-    parser.add_argument(
-        "--path",
-        type=Path,
-        default=DEFAULT_GOLDEN_SET_PATH,
-        help=f"Path to golden dataset JSON (default: {DEFAULT_GOLDEN_SET_PATH})",
-    )
-    parser.add_argument(
-        "--name",
-        type=str,
-        default=DEFAULT_DATASET_NAME,
-        help=f"Dataset name in Langfuse (default: {DEFAULT_DATASET_NAME})",
-    )
-    parser.add_argument(
-        "--description",
-        type=str,
-        default=None,
-        help="Optional custom dataset description.",
-    )
+app = typer.Typer(
+    name="upload-gap-filler-dataset",
+    help="Upload Cresmo gap_filler Golden Dataset to Langfuse.",
+    no_args_is_help=False,
+    context_settings={"help_option_names": ["-h", "--help"]},
+)
 
-    args = parser.parse_args()
-    sys.exit(upload_golden_set(args.path, args.name, args.description))
+
+@app.command()
+def upload(
+    path: Annotated[
+        Path,
+        typer.Option(
+            "--path",
+            help=f"Path to golden dataset JSON (default: {DEFAULT_GOLDEN_SET_PATH})",
+        ),
+    ] = DEFAULT_GOLDEN_SET_PATH,
+    name: Annotated[
+        str,
+        typer.Option(
+            "--name",
+            help=f"Dataset name in Langfuse (default: {DEFAULT_DATASET_NAME})",
+        ),
+    ] = DEFAULT_DATASET_NAME,
+    description: Annotated[
+        str | None,
+        typer.Option(
+            "--description",
+            help="Optional custom dataset description.",
+        ),
+    ] = None,
+) -> None:
+    code = upload_golden_set(path, name, description)
+    if code != 0:
+        raise typer.Exit(code=code)
+
+
+def main(argv: Sequence[str] | None = None) -> int:
+    """Execute gap filler dataset upload entrypoint.
+
+    Args:
+        argv: Optional sequence of CLI arguments. If None, uses sys.argv[1:].
+
+    Returns:
+        Process exit code integer.
+    """
+    try:
+        res = app(args=list(argv) if argv is not None else None, standalone_mode=False)
+        return 0 if res is None else int(res)
+    except typer.Exit as exc:
+        return exc.exit_code
+    except click.ClickException as exc:
+        sys.stderr.write(f"Usage error: {exc}\n")
+        return getattr(exc, "exit_code", 2)
+    except SystemExit as exc:
+        return exc.code if isinstance(exc.code, int) else 2
+    except Exception as exc:  # noqa: BLE001
+        sys.stderr.write(f"Unexpected error: {exc}\n")
+        return 1
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

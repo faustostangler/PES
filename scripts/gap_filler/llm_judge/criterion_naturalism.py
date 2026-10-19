@@ -11,32 +11,11 @@ from __future__ import annotations
 from typing import Any
 
 ITEMS_NATURALISM: list[dict[str, Any]] = [
-    # 1. Borderline Potential FP (FAIL) - Disguised antitheses and subtle moralizing tone in tech critique
     {
         "id": "an_01_borderline_fp",
         "input": {
-            "raw_text": (
-                "## A Falácia do Prompt Engineering como Habilidade Duradoura\n\n"
-                "Muitos analistas de tecnologia acreditam que o ajuste artesanal de prompts garante relevância profissional "
-                "no ecossistema de inteligência artificial. Com a rápida evolução dos modelos para raciocínio estruturado, "
-                "a dependência de macetes verbais perde valor diante de arquiteturas de software sólidas."
-            ),
-            "candidate_text": (
-                "## O Esgotamento das Heurísticas Verbais: Da Engenharia de Prompts à Arquitetura de Sistemas\n\n"
-                "A corrida frenética por fórmulas mágicas de comando reflete a ilusão ingênua de que atalhos linguísticos "
-                "podem substituir o rigor fundamental da engenharia de software. Não se trata de uma especialização técnica legítima, "
-                "mas sim de um modismo passageiro explorado por oportunistas que vendem manuais simplórios para profissionais desatentos.\n\n"
-                "Longe de constituir uma competência perene na era dos transformadores, a manipulação de adjetivos e instruções em linguagem "
-                "natural revela-se uma prática lamentavelmente estéril. Os novos modelos de raciocínio avançado, como o OpenAI o1, internalizam "
-                "cadeias de pensamento estruturadas em tempo de inferência, tornando os antigos truques de formulação obsoletos e ridículos.\n\n"
-                "A verdadeira engenharia reside não no empirismo ingênuo dos prompts, mas no design determinístico de pipelines com esquemas "
-                "validados por Pydantic e interfaces assíncronas resilientes.\n\n"
-                "## Informações Complementares\n\n"
-                "1. A técnica de Chain-of-Thought (CoT), descrita por Jason Wei e colaboradores em 2022, demonstrou que a indução "
-                "explícita de etapas intermediárias de cálculo melhora a acurácia em raciocínio aritmético e simbólico.\n\n"
-                "2. A especificação JSON Schema, mantida pelo consórcio IETF, padroniza anotações e regras de validação para dados "
-                "estruturados trocados em interfaces de programação de aplicações (APIs)."
-            ),
+            "raw_text": "## O Ecossistema de Ferramentas e o Mito do Prompt Único na Engenharia de Software Contemporânea\n\nA integração de modelos de inteligência artificial no ciclo de vida do desenvolvimento de software exige uma reavaliação metodológica profunda, afastando-se do otimismo ingênuo do prompt único para abraçar arquiteturas de controle interativo. Plataformas integradas consolidadas no mercado atual, a exemplo da **Abacus AI**, fornecem um ambiente unificado que agrupa múltiplos modelos de grande escala, ferramentas de geração multimídia e agentes autônomos capazes de estruturar protótipos e aplicações completas a partir de comandos textuais. A experiência empírica acumulada ao longo de uma década de atuação na indústria de tecnologia demonstra que a utilização intensiva dessas ferramentas altera a dinâmica diária do programador, transferindo o gargalo operacional da escrita mecânica de código para a gestão rigorosa de contexto, a especificação funcional e a revisão crítica de artefatos gerados por agentes.\n\nO imaginário popular consolidou o conceito do prompt único, a crença equivocada de que engenharia de prompts complexa, diretrizes extensas e plugins especializados permitirão que uma inteligência artificial resolva problemas arquiteturais complexos em uma única interação. Embora essa abordagem funcione satisfatoriamente para tarefas triviais, aplicá-la a sistemas de grande escala resulta invariavelmente em desvios comportamentais severos e código desalinhado com as necessidades do negócio. A superação desse mito fundamenta-se na adoção de um modelo conversacional iterativo, inspirado em metodologias colaborativas onde o desenvolvedor e o agente realizam um refinamento sucessivo por meio de diálogos estruturados. Modelos dotados de capacidades avançadas de raciocínio respondem melhor à elucidação clara da intenção final, permitindo que a inteligência artificial compreenda o impacto da funcionalidade no usuário e reduza a incidência de soluções desconectadas da realidade operacional.",
+            "candidate_text": "## O Esgotamento das Heurísticas Verbais: Da Engenharia de Prompts à Arquitetura de Sistemas\n\nA corrida frenética por fórmulas mágicas de comando reflete a ilusão ingênua de que atalhos linguísticos podem substituir o rigor fundamental da engenharia de software. Não se trata de uma especialização técnica legítima, mas sim de um modismo passageiro explorado por oportunistas que vendem manuais simplórios para profissionais desatentos.\n\nLonge de constituir uma competência perene na era dos transformadores, a manipulação de adjetivos e instruções em linguagem natural revela-se uma prática lamentavelmente estéril. Os novos modelos de raciocínio avançado, como o OpenAI o1, internalizam cadeias de pensamento estruturadas em tempo de inferência, tornando os antigos truques de formulação obsoletos e ridículos.\n\nA verdadeira engenharia reside não no empirismo ingênuo dos prompts, mas no design determinístico de pipelines com esquemas validados por Pydantic e interfaces assíncronas resilientes.\n\n## Informações Complementares\n\n1. A técnica de Chain-of-Thought (CoT), descrita por Jason Wei e colaboradores em 2022, demonstrou que a indução explícita de etapas intermediárias de cálculo melhora a acurácia em raciocínio aritmético e simbólico.\n\n2. A especificação JSON Schema, mantida pelo consórcio IETF, padroniza anotações e regras de validação para dados estruturados trocados em interfaces de programação de aplicações (APIs).",
         },
         "expected_output": {"verdict": "FAIL"},
         "metadata": {
@@ -48,34 +27,11 @@ ITEMS_NATURALISM: list[dict[str, Any]] = [
             "target_verdict": "FAIL",
         },
     },
-    # 2. Borderline Potential FN (PASS) - Rigorous biological and thermodynamic naturalism in public choice
     {
         "id": "an_02_borderline_fn",
         "input": {
-            "raw_text": (
-                "## A Escolha Pública e o Comportamento Burocrático\n\n"
-                "A escola da Escolha Pública demonstra que agentes governamentais buscam maximizar seus próprios interesses "
-                "orçamentários e regulatórios. A expansão contínua da máquina estatal responde a incentivos internos da própria burocracia, "
-                "independentemente do bem-estar social prometido nas leis."
-            ),
-            "candidate_text": (
-                "## A Mecânica Biofísica da Apropriação: A Escola da Escolha Pública e a Termodinâmica Burocrática\n\n"
-                "A persistência do aparato estatal moderno assemelha-se à homeostase de um organismo complexo submetido à "
-                "pressão seletiva de recursos limitados. Sob a formulação de **James Buchanan** e **Gordon Tullock**, o agente público "
-                "opera despido de inclinações heroicas ou altruístas: trata-se de uma unidade biológica racional que busca maximizar seu "
-                "consumo metabólico de poder discricionário, prestígio institucional e estabilidade de renda.\n\n"
-                "A multiplicação de regulamentações atua como uma barreira física de atrito sobre o sistema produtivo, análoga ao "
-                "aumento de viscosidade em um fluido circulatório. Ao criar nós de estrangulamento procedimental na concessão de licenças "
-                "e alvarás, o órgão regulador gera um gradiente artificial de escassez que obriga os operadores econômicos a despender "
-                "energia metabólica sob a forma de taxas de conformidade e honorários de despachantes para destravar o fluxo operacional.\n\n"
-                "Nesse ecossistema concorrencial, a ampliação da complexidade legal não decorre de desvios individuais, mas da própria lógica "
-                "de autopreservação e expansão de área de contato do tecido burocrático.\n\n"
-                "## Informações Complementares\n\n"
-                "1. A obra fundadora **The Calculus of Consent: Logical Foundations of Constitutional Democracy** foi publicada por James "
-                "Buchanan e Gordon Tullock em 1962, aplicando modelos de escolha racional aos processos de votação legislativa.\n\n"
-                "2. O economista William Niskanen formalizou o modelo de maximização orçamentária do burocrata em 1971, postulando que o "
-                "tamanho do orçamento de uma agência serve como métrica aproximada para a utilidade pessoal do administrador."
-            ),
+            "raw_text": "## Mecanismos de Controle e o Comércio de Vagas\n\nO controle interno dessas chapas proporcionais revela a brutalidade subjacente à competição política, onde a estabilidade dos acordos de cúpula não pode ser ameaçada por surpresas decorrentes do desempenho nas urnas. Quando uma candidatura periférica rompe a apatia geral e ameaça suplantar os nomes previamente consagrados pela cúpula partidária, a organização aciona imediatamente mecanismos de contenção que vão desde a asfixia financeira via **fundo eleitoral** até a coerção direta. A promessa de aportes em parcelas semanais serve como coleira de controle, permitindo que a direção do partido estrangule campanhas dissidentes ao primeiro sinal de insubordinação. Em instâncias mais extremas, a eliminação de concorrentes incômodos ocorre por meio de pressões diretas e ameaças, demonstrando que a sobrevivência dessas estruturas depende da supressão implacável de qualquer disrupção meritocrática.\n\nEsse ecossistema gerou um verdadeiro mercado secundário de vagas e transferências partidárias, no qual excedentes de votos são comercializados entre legendas como mercadorias em bolsa de valores. Partidos que acumulam capital político em excesso negociam o excedente com agremiações deficitárias, viabilizando transações financeiras ocultas que contornam a fiscalização oficial dos órgãos de controle. O financiamento dessas operações articula **emendas parlamentares**, cargos comissionados em agências estaduais e acordos federativos firmados nos bastidores do poder executivo. A conversão de recursos públicos em capilaridade eleitoral forma um ciclo fechado de reprodução da classe política tradicional, onde o erário financia a infraestrutura necessária para perpetuar a desinformação do eleitorado e garantir a imunidade dos atores instalados no aparato estatal.\n\nA simetria desse modelo estende-se às eleições majoritárias para o **Senado Federal**, onde a opacidade assume formas ainda mais sofisticadas através da instrumentalização de suplências. As elites políticas recorrem frequentemente à estratégia de lançar figuras de apelo midiático para atrair o eleitorado urbano e progressista, ocultando estrategicamente o perfil real dos suplentes designados para ocupar o cargo em caso de afastamento ministerial. Essa técnica de camuflagem política explora a ignorância funcional do eleitor médio, que vota seduzido por pautas identitárias ou ambientais sem perceber que o mandato efetivo será exercido por operadores partidários de bastidor. A manipulação deliberada da identidade dos suplentes neutraliza a vigilância cívica, transformando o voto popular em um veículo para a recondução de burocratas invisíveis aos postos estratégicos da república.",
+            "candidate_text": "## A Mecânica Biofísica da Apropriação: A Escola da Escolha Pública e a Termodinâmica Burocrática\n\nA persistência do aparato estatal moderno assemelha-se à homeostase de um organismo complexo submetido à pressão seletiva de recursos limitados. Sob a formulação de **James Buchanan** e **Gordon Tullock**, o agente público opera despido de inclinações heroicas ou altruístas: trata-se de uma unidade biológica racional que busca maximizar seu consumo metabólico de poder discricionário, prestígio institucional e estabilidade de renda.\n\nA multiplicação de regulamentações atua como uma barreira física de atrito sobre o sistema produtivo, análoga ao aumento de viscosidade em um fluido circulatório. Ao criar nós de estrangulamento procedimental na concessão de licenças e alvarás, o órgão regulador gera um gradiente artificial de escassez que obriga os operadores econômicos a despender energia metabólica sob a forma de taxas de conformidade e honorários de despachantes para destravar o fluxo operacional.\n\nNesse ecossistema concorrencial, a ampliação da complexidade legal não decorre de desvios individuais, mas da própria lógica de autopreservação e expansão de área de contato do tecido burocrático.\n\n## Informações Complementares\n\n1. A obra fundadora **The Calculus of Consent: Logical Foundations of Constitutional Democracy** foi publicada por James Buchanan e Gordon Tullock em 1962, aplicando modelos de escolha racional aos processos de votação legislativa.\n\n2. O economista William Niskanen formalizou o modelo de maximização orçamentária do burocrata em 1971, postulando que o tamanho do orçamento de uma agência serve como métrica aproximada para a utilidade pessoal do administrador.",
         },
         "expected_output": {"verdict": "PASS"},
         "metadata": {
@@ -87,34 +43,11 @@ ITEMS_NATURALISM: list[dict[str, Any]] = [
             "target_verdict": "PASS",
         },
     },
-    # 3. Easy PASS - Exemplary naturalism, geographic and demographic determinism without sentimentality
     {
         "id": "an_03_easy_pass",
         "input": {
-            "raw_text": (
-                "## O Enclave de Ceuta e a Geopolítica do Estreito de Gibraltar\n\n"
-                "Ceuta ocupa uma posição estratégica na entrada ocidental do Mediterrâneo sob soberania espanhola há séculos. "
-                "A cidade enfrenta pressões demográficas e migratórias permanentes por ser a única fronteira terrestre da União Europeia "
-                "no continente africano."
-            ),
-            "candidate_text": (
-                "## A Topografia da Fricção: O Enclave de Ceuta e o Equilíbrio Hidrográfico no Estreito\n\n"
-                "A estabilidade geopolítica do promontório de **Ceuta** repousa em contingências orográficas e oceanográficas "
-                "que subordinam qualquer cálculo diplomático temporário. Localizada no istmo da península de Almina, a praça-forte espanhola "
-                "funciona como um ponto de estrangulamento que vigia os dezoito quilômetros de largura do canal de Gibraltar, canalizando "
-                "o fluxo de circulação marítima entre o Atlântico e a bacia mediterrânica.\n\n"
-                "A barreira perimetral de oito quilômetros e duzentos metros erguida em torno do perímetro territorial atua como uma "
-                "membrana seletiva submetida a gradientes de pressão demográfica extremos. De um lado, a transição etária acelerada da "
-                "península Ibérica convive com excedentes populacionais jovens no Magreb e no Sahel subsaariano, gerando uma tensão mecânica "
-                "contínua sobre os postos de controle de Tarajal e Benzú.\n\n"
-                "A gestão desse atrito fronteiriço reflete o equilíbrio de forças físicas e hidrocarbonetos entre o reino alauita e os estados "
-                "membros de Schengen, convertendo o fluxo migratório em válvula hidrostática de compensação geopolítica.\n\n"
-                "## Informações Complementares\n\n"
-                "1. A posse de Ceuta foi formalizada pela coroa espanhola em 1668 pelo Tratado de Lisboa, após a Restauração da Independência "
-                "portuguesa, quando os habitantes locais optaram por jurar fidelidade a Carlos II da Espanha.\n\n"
-                "2. A cerca de segurança de Ceuta conta com monitoramento por câmeras térmicas, sensores de movimento subterrâneos e sistema "
-                "integrado de vigilância externa operado pela Guarda Civil espanhola."
-            ),
+            "raw_text": "## A Herança da Reconquista e a Gênese dos Enclaves\n\nA presença ibérica no norte da África remonta aos desdobramentos estratégicos da **Guerra da Reconquista**, processo secular de expansão cristã na **Península Ibérica** concluído no final do **século XV**. A tomada de Ceuta por **Portugal** em **1415**, seguida pela conquista de Melilha pela **Espanha** em **1497**, obedeceu a uma lógica de segurança marítima destinada a controlar o **Estreito de Gibraltar** e neutralizar a pirataria baseada na costa norte-africana. A consolidação dessas praças fortes precedeu em séculos a formação do Estado marroquino moderno, conferindo aos títulos jurídicos ibéricos uma antiguidade que o governo de **Rabat** contesta com base na continuidade territorial e na soberania anticolonial.\n\nA arquitetura institucional dessas possessões passou por reconfigurações dinâmicas, destacando-se a **União Ibérica** entre **1580** e **1640**, período em que as coroas espanhola e portuguesa fundiram-se sob os **Habsburgos**. Com a restauração da independência portuguesa, o **Tratado de Lisboa** de **1668** ratificou a permanência de Ceuta sob soberania espanhola, após consulta às populações locais que preferiram a integração à monarquia vizinha. Essa ancestralidade jurídica fundamenta a intransigência de **Madri** na recusa de qualquer negociação sobre o estatuto das cidades, consideradas partes integrantes do território nacional espanhol e, por extensão, do arcabouço defensivo comunitário europeu.",
+            "candidate_text": "## A Topografia da Fricção: O Enclave de Ceuta e o Equilíbrio Hidrográfico no Estreito\n\nA estabilidade geopolítica do promontório de **Ceuta** repousa em contingências orográficas e oceanográficas que subordinam qualquer cálculo diplomático temporário. Localizada no istmo da península de Almina, a praça-forte espanhola funciona como um ponto de estrangulamento que vigia os dezoito quilômetros de largura do canal de Gibraltar, canalizando o fluxo de circulação marítima entre o Atlântico e a bacia mediterrânica.\n\nA barreira perimetral de oito quilômetros e duzentos metros erguida em torno do perímetro territorial atua como uma membrana seletiva submetida a gradientes de pressão demográfica extremos. De um lado, a transição etária acelerada da península Ibérica convive com excedentes populacionais jovens no Magreb e no Sahel subsaariano, gerando uma tensão mecânica contínua sobre os postos de controle de Tarajal e Benzú.\n\nA gestão desse atrito fronteiriço reflete o equilíbrio de forças físicas e hidrocarbonetos entre o reino alauita e os estados membros de Schengen, convertendo o fluxo migratório em válvula hidrostática de compensação geopolítica.\n\n## Informações Complementares\n\n1. A posse de Ceuta foi formalizada pela coroa espanhola em 1668 pelo Tratado de Lisboa, após a Restauração da Independência portuguesa, quando os habitantes locais optaram por jurar fidelidade a Carlos II da Espanha.\n\n2. A cerca de segurança de Ceuta conta com monitoramento por câmeras térmicas, sensores de movimento subterrâneos e sistema integrado de vigilância externa operado pela Guarda Civil espanhola.",
         },
         "expected_output": {"verdict": "PASS"},
         "metadata": {
@@ -126,31 +59,11 @@ ITEMS_NATURALISM: list[dict[str, Any]] = [
             "target_verdict": "PASS",
         },
     },
-    # 4. Easy FAIL - High moralistic indignation and sensationalist outrage
     {
         "id": "an_04_easy_fail",
         "input": {
-            "raw_text": (
-                "## Pedidos de Impeachment contra Ministros do STF\n\n"
-                "Parlamentares da oposição protocolaram sucessivos pedidos de impeachment contra o ministro Gilmar Mendes no Senado Federal. "
-                "O presidente da casa legislativa mantém as representações arquivadas ou sem tramitação, gerando críticas sobre blindagem mútua."
-            ),
-            "candidate_text": (
-                "## A Blindagem Desavergonhada: O Senado de Joelhos e o Escândalo Gilmar Mendes\n\n"
-                "É uma vergonha nacional inadmissível o que o presidente do Senado faz ao engavetar os justos pedidos de impedimento "
-                "do ministro Gilmar Mendes. Uma corte que deveria ser o templo sagrado da Constituição transformou-se em um balcão de negócios "
-                "nojento, onde a impunidade zomba descaradamente da cara do cidadão de bem que trabalha de sol a sol para pagar impostos extorsivos!\n\n"
-                "O ministro cometeu abusos escandalosos e deveria ser sumariamente expulso e preso para servir de exemplo moral. Sua conduta "
-                "revoltante mancha a honra do país perante o mundo civilizado. Como pode um magistrado viajar em jatinhos de magnatas e rir "
-                "da nossa miséria sem que o povo saia às ruas para derrubar esses canalhas?\n\n"
-                "A omissão covarde dos senadores é uma traição inominável que clama aos céus por justiça e queima na alma dos verdadeiros "
-                "patriotas que não aceitam viver sob a bota imunda da ditadura da toga.\n\n"
-                "## Informações Complementares\n\n"
-                "1. A Lei Federal 1.079/1950 (Lei do Impeachment) define os crimes de responsabilidade e estabelece a competência privativa "
-                "do Senado Federal para processar e julgar os ministros do Supremo Tribunal Federal.\n\n"
-                "2. O artigo 52, inciso II, da Constituição Federal de 1988 exige quórum de dois terços dos votos dos membros do Senado "
-                "Federal para a condenação definitiva à perda do cargo em processo de impedimento."
-            ),
+            "raw_text": "## O Dilema do Poder Legislativo entre a Conivência e a Reação\n\nDiante da alteração unilateral das regras do jogo institucional, a bola encontra-se novamente no campo do poder legislativo, historicamente marcado pela relutância em confrontar os excessos do judiciário. As alternativas postas à mesa dividem-se entre frentes jurídicas, consubstanciadas na tramitação de **Propostas de Emenda à Constituição** destinadas a restringir decisões monocráticas e a regulamentar o rito de impeachment, e vias estritamente políticas, como o desafiamento direto da decisão judicial por meio do desengavetamento de pedidos de impedimento já protocolados.\n\nO precedente histórico de 2016, quando a mesa diretora do Senado recusou o cumprimento de uma decisão de afastamento cautelar imposta a um de seus presidentes, demonstra que a soberania dos poderes comporta margens de resistência quando há vontade política consolidada. A inércia continuada do legislativo, contudo, perpetua um arranjo de apaziguamento que tende a agravar o desequilíbrio sistêmico. A advertência clássica aplicável aos cenários de capitulação diante de escaladas autoritárias ressoa com precisão metodológica, pois a escolha sistemática pela aparente conciliação em detrimento da defesa intransigente das próprias prerrogativas conduz, inevitavelmente, não à paz institucional, mas à ampliação do conflito latente.",
+            "candidate_text": "## A Blindagem Desavergonhada: O Senado de Joelhos e o Escândalo Gilmar Mendes\n\nÉ uma vergonha nacional inadmissível o que o presidente do Senado faz ao engavetar os justos pedidos de impedimento do ministro Gilmar Mendes. Uma corte que deveria ser o templo sagrado da Constituição transformou-se em um balcão de negócios nojento, onde a impunidade zomba descaradamente da cara do cidadão de bem que trabalha de sol a sol para pagar impostos extorsivos!\n\nO ministro cometeu abusos escandalosos e deveria ser sumariamente expulso e preso para servir de exemplo moral. Sua conduta revoltante mancha a honra do país perante o mundo civilizado. Como pode um magistrado viajar em jatinhos de magnatas e rir da nossa miséria sem que o povo saia às ruas para derrubar esses canalhas?\n\nA omissão covarde dos senadores é uma traição inominável que clama aos céus por justiça e queima na alma dos verdadeiros patriotas que não aceitam viver sob a bota imunda da ditadura da toga.\n\n## Informações Complementares\n\n1. A Lei Federal 1.079/1950 (Lei do Impeachment) define os crimes de responsabilidade e estabelece a competência privativa do Senado Federal para processar e julgar os ministros do Supremo Tribunal Federal.\n\n2. O artigo 52, inciso II, da Constituição Federal de 1988 exige quórum de dois terços dos votos dos membros do Senado Federal para a condenação definitiva à perda do cargo em processo de impedimento.",
         },
         "expected_output": {"verdict": "FAIL"},
         "metadata": {
@@ -162,33 +75,11 @@ ITEMS_NATURALISM: list[dict[str, Any]] = [
             "target_verdict": "FAIL",
         },
     },
-    # 5. Typical PASS 1 - Cool sociological dissection of financial surveillance
     {
         "id": "an_05_typical_pass_1",
         "input": {
-            "raw_text": (
-                "## O Monitoramento Financeiro pelo COAF e a Lei de Lavagem de Dinheiro\n\n"
-                "O Conselho de Controle de Atividades Financeiras centraliza dados de movimentações atípicas comunicadas por bancos. "
-                "Relatórios de inteligência financeira subsidiam inquéritos policiais sem necessidade de autorização judicial prévia, "
-                "provocando debates sobre sigilo bancário."
-            ),
-            "candidate_text": (
-                "## A Cibernética da Vigilância Financeira: A Malha do COAF e a Fluidez do Capital\n\n"
-                "A estruturação do Conselho de Controle de Atividades Financeiras (**COAF**) materializa a doutrina contemporânea "
-                "de contenção de fluxos monetários ilícitos através de telemetria bancária contínua. Operando como nó de agregação informacional, "
-                "o conselho não desempenha funções jurisdicionais punitivas: atua como filtro de desvio padrão algorítmico, identificando "
-                "incongruências entre a capacidade contributiva declarada e o volume de depósitos fracionados em espécie.\n\n"
-                "A obrigatoriedade de notificação imposta às instituições de crédito terceiriza o custo de policiamento para os departamentos "
-                "de conformidade privados, sob pena de sanções administrativas severas. Esse mecanismo converte os gerentes de risco em "
-                "sensores periféricos do aparato estatal, registrando operações atípicas em relatórios analíticos de inteligência financeira (**RIF**).\n\n"
-                "A expansão dessa rede reduz a liquidez das operações informais e eleva a fricção transacional sobre setores intensivos em papel-moeda, "
-                "delimitando o perímetro de circulação do capital dentro das fronteiras monitoráveis do sistema de pagamentos instantâneos.\n\n"
-                "## Informações Complementares\n\n"
-                "1. A Lei Federal 9.613/1998 criou o COAF e tipificou os crimes de lavagem de dinheiro, sendo profundamente reformada "
-                "pela Lei Federal 12.683/2012, que extinguiu o rol taxativo de crimes antecedentes.\n\n"
-                "2. A Circular 3.978/2020 do Banco Central do Brasil disciplinou a política, os procedimentos e os controles internos "
-                "a serem adotados pelas instituições financeiras para identificação e monitoramento de clientes e operações suspeitas."
-            ),
+            "raw_text": "## A Sabotagem Sistêmica do Mecanismo de Controle\n\nO desmonte crônico das agências reguladoras e de inteligência financeira constitui uma política de Estado bipartidária, consolidada tanto por administrações de esquerda quanto de direita, sempre que o cerco das investigações ameaça as elites dirigentes. O enfraquecimento do COAF e da **Comissão de Valores Mobiliários**, evidenciado em audiências públicas no **Supremo Tribunal Federal**, atende aos interesses consolidados do **Centrão** e de parlamentares com o rabo preso, dispostos a blindar suas redes de financiamento ilícito por meio de projetos legislativos de anistia e imunidade ampliada.\n\nA oposição sistemática de figuras como Flávio Bolsonaro a projetos de lei antilavagem que restringem o uso de dinheiro em espécie em transações imobiliárias e comerciais expõe a hipocrisia estrutural do discurso moralista dominante. A criminalidade organizada e a cleptocracia de colarinho branco não combatem uma à outra, mas sim coexistem simbioticamente, alimentando-se da paralisia institucional e convertendo a segurança pública em um espetáculo de polarização ideológica projetado para anestesiar o discernimento do eleitorado.",
+            "candidate_text": "## A Cibernética da Vigilância Financeira: A Malha do COAF e a Fluidez do Capital\n\nA estruturação do Conselho de Controle de Atividades Financeiras (**COAF**) materializa a doutrina contemporânea de contenção de fluxos monetários ilícitos através de telemetria bancária contínua. Operando como nó de agregação informacional, o conselho não desempenha funções jurisdicionais punitivas: atua como filtro de desvio padrão algorítmico, identificando incongruências entre a capacidade contributiva declarada e o volume de depósitos fracionados em espécie.\n\nA obrigatoriedade de notificação imposta às instituições de crédito terceiriza o custo de policiamento para os departamentos de conformidade privados, sob pena de sanções administrativas severas. Esse mecanismo converte os gerentes de risco em sensores periféricos do aparato estatal, registrando operações atípicas em relatórios analíticos de inteligência financeira (**RIF**).\n\nA expansão dessa rede reduz a liquidez das operações informais e eleva a fricção transacional sobre setores intensivos em papel-moeda, delimitando o perímetro de circulação do capital dentro das fronteiras monitoráveis do sistema de pagamentos instantâneos.\n\n## Informações Complementares\n\n1. A Lei Federal 9.613/1998 criou o COAF e tipificou os crimes de lavagem de dinheiro, sendo profundamente reformada pela Lei Federal 12.683/2012, que extinguiu o rol taxativo de crimes antecedentes.\n\n2. A Circular 3.978/2020 do Banco Central do Brasil disciplinou a política, os procedimentos e os controles internos a serem adotados pelas instituições financeiras para identificação e monitoramento de clientes e operações suspeitas.",
         },
         "expected_output": {"verdict": "PASS"},
         "metadata": {
@@ -200,32 +91,11 @@ ITEMS_NATURALISM: list[dict[str, Any]] = [
             "target_verdict": "PASS",
         },
     },
-    # 6. Typical PASS 2 - Hard mechanical engineering constraints on memory and processor architecture
     {
         "id": "an_06_typical_pass_2",
         "input": {
-            "raw_text": (
-                "## A Gestão de Memória e Concorrência em Sistemas de Baixa Latência\n\n"
-                "A alternância de contexto e as falhas de cache de CPU impõem custos severos em serviços web de alto rendimento. "
-                "A alocação excessiva de ponteiros em heap fragmenta o acesso à memória e degrada o desempenho dos núcleos de processamento."
-            ),
-            "candidate_text": (
-                "## A Física do Silício: Localidade Espacial, Falhas de Cache e Fricção em Concorrência\n\n"
-                "Em sistemas computacionais de alto rendimento, o gargalo de execução não reside na sofisticação algorítmica abstrata, "
-                "mas na distância física e no tempo de trânsito dos elétrons entre o registrador do processador e as barras de memória RAM. "
-                "A penalidade temporal imposta por uma falha de cache L3 gira em torno de duzentos ciclos de CPU, equivalendo a uma eternidade "
-                "mecânica em pipelines orientados a dezenas de milhares de operações por milissegundo.\n\n"
-                "Quando threads concorrentes disputam estruturas de dados desalinhadas na mesma linha de cache de sessenta e quatro bytes, "
-                "ocorre o fenômeno destrutivo de falso compartilhamento. O protocolo de coerência de cache (MESI) invalida continuamente os estados "
-                "das caches dos núcleos vizinhos, forçando barramentos a transmitir mensagens de sincronização que anulam o paralelismo do hardware.\n\n"
-                "O design eficiente de sistemas impõe portanto a compactação de layouts de dados contíguos em memória para maximizar o pré-carregamento "
-                "espacial e eliminar trocas de contexto desnecessárias no agendador do sistema operacional.\n\n"
-                "## Informações Complementares\n\n"
-                "1. O protocolo MESI (Modified, Exclusive, Shared, Invalid) é o padrão de coerência de cache de escrita que sincroniza "
-                "o estado das linhas de dados entre processadores com múltiplos núcleos independentes.\n\n"
-                "2. O fenômeno da parede de memória (Memory Wall) foi formulado em 1995 por Wm. A. Wulf e Sally A. McKee, descrevendo a "
-                "divergência exponencial entre a velocidade de processamento dos núcleos e a largura de banda da memória principal."
-            ),
+            "raw_text": "## Ecosistemas de Linguagens e o Custo da Produtividade\n\nA dicotomia entre linguagens compiladas nativamente e linguagens interpretadas reflete um compromisso histórico entre o desempenho de execução e a velocidade de desenvolvimento humano. Linguagens que geram código de máquina otimizado oferecem uma vantagem incontestável em termos de consumo de recursos e latência, mas impõem uma curva de aprendizado íngreme e exigem do engenheiro um domínio íntimo dos detalhes de baixo nível do sistema operacional e do hardware. Em contrapartida, ecossistemas interpretados priorizam a produtividade e a facilidade de expansão de equipes, aceitando o custo operacional de uma infraestrutura ligeiramente superior para compensar a sobrecarga de execução.\n\nA cultura associada a cada ecossistema tecnológico molda profundamente a forma como os desenvolvedores interagem com ferramentas e gerenciam dependências. A preferência por interfaces de linha de comando minimalistas contrasta fortemente com a dependência de ambientes de desenvolvimento integrados massivos e assistentes gráficos de configuração. Essa divergência cultural garante que o setor tecnológico permaneça plural, sem a convergência para um padrão único de desenvolvimento. A maturidade técnica, portanto, não se mede pela adoção da tecnologia mais moderna ou da linguagem mais veloz, mas pela capacidade de auditar o próprio código, medir rigorosamente seu comportamento sob estresse e aplicar otimizações fundamentadas exclusivamente em dados empíricos.",
+            "candidate_text": "## A Física do Silício: Localidade Espacial, Falhas de Cache e Fricção em Concorrência\n\nEm sistemas computacionais de alto rendimento, o gargalo de execução não reside na sofisticação algorítmica abstrata, mas na distância física e no tempo de trânsito dos elétrons entre o registrador do processador e as barras de memória RAM. A penalidade temporal imposta por uma falha de cache L3 gira em torno de duzentos ciclos de CPU, equivalendo a uma eternidade mecânica em pipelines orientados a dezenas de milhares de operações por milissegundo.\n\nQuando threads concorrentes disputam estruturas de dados desalinhadas na mesma linha de cache de sessenta e quatro bytes, ocorre o fenômeno destrutivo de falso compartilhamento. O protocolo de coerência de cache (MESI) invalida continuamente os estados das caches dos núcleos vizinhos, forçando barramentos a transmitir mensagens de sincronização que anulam o paralelismo do hardware.\n\nO design eficiente de sistemas impõe portanto a compactação de layouts de dados contíguos em memória para maximizar o pré-carregamento espacial e eliminar trocas de contexto desnecessárias no agendador do sistema operacional.\n\n## Informações Complementares\n\n1. O protocolo MESI (Modified, Exclusive, Shared, Invalid) é o padrão de coerência de cache de escrita que sincroniza o estado das linhas de dados entre processadores com múltiplos núcleos independentes.\n\n2. O fenômeno da parede de memória (Memory Wall) foi formulado em 1995 por Wm. A. Wulf e Sally A. McKee, descrevendo a divergência exponencial entre a velocidade de processamento dos núcleos e a largura de banda da memória principal.",
         },
         "expected_output": {"verdict": "PASS"},
         "metadata": {
@@ -237,32 +107,11 @@ ITEMS_NATURALISM: list[dict[str, Any]] = [
             "target_verdict": "PASS",
         },
     },
-    # 7. Typical FAIL - Academic legalese, ornamental Latinisms, and repetitive antitheses
     {
         "id": "an_07_typical_fail",
         "input": {
-            "raw_text": (
-                "## A Estrutura Notarial e Registral sob o Prisma Institucional\n\n"
-                "A delegação das funções notariais a particulares garante segurança jurídica às transações privadas no Brasil. "
-                "Contudo, a rigidez corporativa das associações de classe dificulta a modernização tecnológica e a redução de taxas."
-            ),
-            "candidate_text": (
-                "## A Hermenêutica Registral e o Desiderato Notarial no Ordenamento Pátrio\n\n"
-                "Convém assentar ab initio que o instituto da delegação extrajudicial não consubstancia uma mera benesse estatal, "
-                "mas sim uma conditio sine qua non para a mantença da higidez transacional no tecido societário. Mutatis mutandis, "
-                "a chancela pública outorgada aos tabelionatos opera não apenas como garantia formal, mas sobretudo como baluarte inescusável "
-                "contra a eclosão de lides patrimoniais temerárias.\n\n"
-                "Não se pode olvidar, data venia, que as resistências corporativas à inovação digital decorrem não da inércia dos agentes, "
-                "mas fundamentalmente do temor reverencial ante a precarização das solenidades milenares do direito registral. Não se trata "
-                "de privilégio anacrônico, mas sim de solene prerrogativa indispensável à tutela da dignidade negocial.\n\n"
-                "Cumpre aos operadores do direito sopesar tais vetores com a devida prudência pretoriana, evitando reformas afoitas "
-                "que venham a vulnerar a segurança jurídica que há séculos alicerça a propriedade imobiliária nacional.\n\n"
-                "## Informações Complementares\n\n"
-                "1. O princípio da publicidade notarial impõe a oponibilidade erga omnes dos registros regularmente lavrados nos livros "
-                "das serventias de registro de imóveis da comarca competente.\n\n"
-                "2. A Lei 6.015/1973 (Lei de Registros Públicos) estabelece o princípio da continuidade registral, exigindo que cada "
-                "nova inscrição patrimonial esteja formalmente encadeada ao assento precedente."
-            ),
+            "raw_text": "## A Coria do Poder no Norte e no Nordeste\n\nNa região amazônica, o **Pará** consolidou uma das máquinas familiares mais duradouras da história republicana sob a égide da **família Barbalho**. Iniciada com a atuação parlamentar de **Laércio Barbalho** na década de **1950**, a hegemonia expandiu-se com **Jader Barbalho**, cujos mandatos executivos e legislativos culminaram na presidência do Senado Federal, e perpetuou-se com **Hélder Barbalho** à frente do governo estadual. A engenharia de sustentação deste grupo transcendeu a disputa eleitoral convencional, integrando parentes diretos em órgãos de fiscalização e controle de contas vitais, a começar por tribunais de contas estaduais e municipais. A aparente contradição entre a modernização discursiva da gestão ambiental e a densa teia de nomeações familiares em cargos vitalícios ilustra a perfeita acomodação dos clãs modernos às brechas da jurisprudência sobre nepotismo, cujas restrições legais frequentemente evitam a contratação direta pelo titular, mas toleram o cruzamento institucional de indicações chanceladas por outros poderes.\n\nNa **Bahia**, o **carlismo** erigido por **Antônio Carlos Magalhães** instituiu um padrão de dominação baseado na centralização férrea do poder executivo estadual e na construção de um complexo de radiodifusão, a **Rede Bahia**, afiliada à rede **Globo**. O controle exercido sobre o fluxo informacional permitiu moldar a percepção pública do território, transformando o capital midiático em instrumento de coerção e legitimação política. Embora a morte do patriarca e as derrotas eleitorais subsequentes para forças oposicionistas tenham reconfigurado o cenário baiano, herdeiros políticos como **ACM Neto** continuam a disputar a hegemonia estadual ancorados na capilaridade de redes partidárias consolidadas. Paralelamente, em **Goiás**, a **família Caiado** mantém uma ascendência secular que remonta ao período colonial e à exploração de sesmarias, adaptando sua base rural e pecuária aos embates ideológicos contemporâneos, corporificados historicamente na atuação junto à **União Democrática Ruralista** e projetados nacionalmente através de mandatos executivos estaduais.",
+            "candidate_text": "## A Hermenêutica Registral e o Desiderato Notarial no Ordenamento Pátrio\n\nConvém assentar ab initio que o instituto da delegação extrajudicial não consubstancia uma mera benesse estatal, mas sim uma conditio sine qua non para a mantença da higidez transacional no tecido societário. Mutatis mutandis, a chancela pública outorgada aos tabelionatos opera não apenas como garantia formal, mas sobretudo como baluarte inescusável contra a eclosão de lides patrimoniais temerárias.\n\nNão se pode olvidar, data venia, que as resistências corporativas à inovação digital decorrem não da inércia dos agentes, mas fundamentalmente do temor reverencial ante a precarização das solenidades milenares do direito registral. Não se trata de privilégio anacrônico, mas sim de solene prerrogativa indispensável à tutela da dignidade negocial.\n\nCumpre aos operadores do direito sopesar tais vetores com a devida prudência pretoriana, evitando reformas afoitas que venham a vulnerar a segurança jurídica que há séculos alicerça a propriedade imobiliária nacional.\n\n## Informações Complementares\n\n1. O princípio da publicidade notarial impõe a oponibilidade erga omnes dos registros regularmente lavrados nos livros das serventias de registro de imóveis da comarca competente.\n\n2. A Lei 6.015/1973 (Lei de Registros Públicos) estabelece o princípio da continuidade registral, exigindo que cada nova inscrição patrimonial esteja formalmente encadeada ao assento precedente.",
         },
         "expected_output": {"verdict": "FAIL"},
         "metadata": {

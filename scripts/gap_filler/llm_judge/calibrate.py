@@ -10,19 +10,22 @@ Conforms to:
 
 from __future__ import annotations
 
-import argparse
 import json
 import logging
 import math
 import random
+import re
 import sys
 import time
-from collections.abc import Iterator
+from collections.abc import Iterator, Sequence
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
 from statistics import NormalDist
-from typing import Any
+from typing import Annotated, Any
+
+import click
+import typer
 
 # Ensure project root and src are in sys.path when invoked directly as a script / debugger
 REPO_ROOT = Path(__file__).resolve().parents[3]
@@ -35,6 +38,7 @@ from cresmo.domain.value_objects.quality import (
     EvaluationContext,
     JudgeCriterion,
 )
+from cresmo.infrastructure.adapters.gemini_pool import CredentialPoolExhaustedError
 from cresmo.infrastructure.config import CresmoSettings
 from cresmo.presentation.factories.judge_factory import build_llm_judge_adapter
 
@@ -44,6 +48,39 @@ logger = logging.getLogger("calibrate_gap_filler_judge")
 DEFAULT_GOLDEN_SET_PATH = (
     REPO_ROOT / "scripts" / "gap_filler" / "golden_sets" / "gap_filler_golden_set.json"
 )
+
+# Canonical benchmark judge models evaluated sequentially by default (aligned with fluid_prose)
+ALL_CALIBRATION_MODELS: list[str] = [
+    "gemini:gemini-3.5-flash-lite",
+    "gemini:gemini-2.5-flash",
+    # "ollama:qwen2.5:14b",
+    # "ollama:qwen2.5:latest",
+]
+
+
+def resolve_model_spec(spec: str, default_provider: str = "gemini") -> tuple[str, str]:
+    """Parse model specification string into (provider, model_name)."""
+    if ":" in spec:
+        provider, model_name = spec.split(":", 1)
+        return provider.strip().lower(), model_name.strip()
+    if spec.lower().startswith("gemini"):
+        return "gemini", spec
+    if spec.lower().startswith("ollama"):
+        return "ollama", spec
+    if spec.lower().startswith("typesafe"):
+        return "typesafe", spec
+    return default_provider, spec
+
+
+def sanitize_report_filename(provider: str, model_name: str) -> str:
+    """Generate clean slug for model calibration report file."""
+    clean_model = model_name
+    if clean_model.startswith(f"{provider}:"):
+        clean_model = clean_model[len(provider) + 1 :]
+    clean_model = clean_model.replace(":", "_").replace("/", "_")
+    clean_model = re.sub(r"[^a-zA-Z0-9_\-\.]", "_", clean_model)
+    return f"llm_judge_{provider}_{clean_model}.txt"
+
 
 # Canonical seed dataset items for quick dry-run
 SEED_CALIBRATION_DATA: list[dict[str, Any]] = [
@@ -415,6 +452,7 @@ def run_local_calibration(
     items: list[dict[str, Any]],
     delay: float = 4.2,
     jitter: float = 0.8,
+    max_retry_wait: float = 60.0,
 ) -> CalibrationResultSet:
     """Run calibration over local dataset items and compute global and slice metrics."""
     results = CalibrationResultSet()
@@ -438,7 +476,35 @@ def run_local_calibration(
         if difficulty not in results.by_difficulty:
             results.by_difficulty[difficulty] = ConfusionMatrix()
 
-        eval_res = evaluate_single_item(judge, item)
+        max_attempts = 3
+        eval_res = None
+        for attempt in range(1, max_attempts + 1):
+            try:
+                eval_res = evaluate_single_item(judge, item)
+                break
+            except CredentialPoolExhaustedError as exc:
+                if exc.retry_after_seconds <= max_retry_wait and attempt < max_attempts:
+                    logger.warning(
+                        "[RETRY %d/%d] Credential pool in cooldown (%.1fs <= %.1fs limit). Waiting before retry for '%s'...",
+                        attempt,
+                        max_attempts,
+                        exc.retry_after_seconds,
+                        max_retry_wait,
+                        item_id,
+                    )
+                    time.sleep(exc.retry_after_seconds)
+                else:
+                    logger.error(
+                        "\n🚨 [COOLDOWN ABORT] Model credentials in cooldown for %.1fs (> %.1fs limit). "
+                        "Aborting calibration to preserve benchmark isolation (zero fallback).",
+                        exc.retry_after_seconds,
+                        max_retry_wait,
+                    )
+                    raise
+
+        if eval_res is None:
+            continue
+
         actual_global = eval_res.actual
         expected = eval_res.expected
         reasoning = eval_res.reasoning
@@ -544,147 +610,249 @@ def save_calibration_report(
     print(f"\nCalibration report successfully saved to: {output_path}")
 
 
-def main() -> int:
-    parser = argparse.ArgumentParser(
-        description="Offline Calibration Harness for Gap Filler LLM Judges."
-    )
-    parser.add_argument(
-        "--provider",
-        choices=["gemini", "typesafe", "ollama"],
-        default="gemini",
-        help="LLM Judge adapter provider (default: gemini)",
-    )
-    parser.add_argument(
-        "--model",
-        type=str,
-        default=None,
-        help="Target model identifier (e.g. gemini-2.5-flash, qwen2.5:14b)",
-    )
-    parser.add_argument(
-        "--threshold",
-        type=float,
-        default=0.80,
-        help="Approval pass threshold (default: 0.80)",
-    )
-    parser.add_argument(
-        "--dataset-path",
-        type=Path,
-        default=DEFAULT_GOLDEN_SET_PATH,
-        help=f"Path to local golden set JSON (default: {DEFAULT_GOLDEN_SET_PATH})",
-    )
-    parser.add_argument(
-        "--seed-only",
-        action="store_true",
-        help="Run calibration on minimal seed dataset for testing without loading full set",
-    )
-    parser.add_argument(
-        "--delay",
-        type=float,
-        default=None,
-        help="Delay between requests in seconds (default: 4.2s for Gemini API, 0.0s for local Ollama)",
-    )
-    parser.add_argument(
-        "--jitter",
-        type=float,
-        default=None,
-        help="Random jitter in seconds (default: 0.8s for Gemini API, 0.0s for local Ollama)",
-    )
-    parser.add_argument(
-        "--output-path",
-        type=Path,
-        default=None,
-        help="Custom destination path to write full calibration report",
-    )
-    args = parser.parse_args()
+app = typer.Typer(
+    name="calibrate-gap-filler",
+    help="Offline Calibration Harness for Gap Filler LLM Judges.",
+    no_args_is_help=False,
+    context_settings={"help_option_names": ["-h", "--help"]},
+)
 
-    delay = args.delay if args.delay is not None else (0.0 if args.provider == "ollama" else 4.2)
-    jitter = args.jitter if args.jitter is not None else (0.0 if args.provider == "ollama" else 0.8)
 
-    model_kwargs: dict[str, Any] = {}
-    if args.model:
-        if args.provider == "ollama":
-            model_kwargs["ollama_model"] = args.model
-        elif args.provider == "gemini":
-            model_kwargs["judge_gemini_model"] = args.model
-        elif args.provider == "typesafe":
-            model_kwargs["typesafe_model"] = args.model
+@app.command()
+def calibrate(
+    models: Annotated[
+        list[str] | None,
+        typer.Option(
+            "--models",
+            help="List of model specifications to calibrate sequentially (e.g. 'gemini:gemini-3.5-flash-lite' 'gemini:gemini-2.5-flash'). Default: all canonical models.",
+        ),
+    ] = None,
+    model: Annotated[
+        str | None,
+        typer.Option(
+            "--model",
+            help="Optional single model override (e.g. 'gemini-3.5-flash-lite', 'qwen2.5:14b')",
+        ),
+    ] = None,
+    provider: Annotated[
+        str,
+        typer.Option(
+            "--provider",
+            help="Default provider fallback when not specified in model spec (default: 'gemini')",
+        ),
+    ] = "gemini",
+    threshold: Annotated[
+        float,
+        typer.Option(
+            "--threshold",
+            help="Approval pass threshold (default: 0.80)",
+        ),
+    ] = 0.80,
+    dataset_path: Annotated[
+        Path,
+        typer.Option(
+            "--dataset-path",
+            help="Path to local golden set JSON",
+        ),
+    ] = DEFAULT_GOLDEN_SET_PATH,
+    seed_only: Annotated[
+        bool,
+        typer.Option(
+            "--seed-only",
+            help="Run calibration on minimal seed dataset for testing without loading full set",
+        ),
+    ] = False,
+    delay: Annotated[
+        float | None,
+        typer.Option(
+            "--delay",
+            help="Delay between requests in seconds (default: 4.2s for Gemini API, 0.0s for local Ollama)",
+        ),
+    ] = None,
+    jitter: Annotated[
+        float | None,
+        typer.Option(
+            "--jitter",
+            help="Random jitter in seconds (default: 0.8s for Gemini API, 0.0s for local Ollama)",
+        ),
+    ] = None,
+    output_path: Annotated[
+        Path | None,
+        typer.Option(
+            "--output-path",
+            help="Custom destination path to write full calibration report (single model mode)",
+        ),
+    ] = None,
+) -> None:
+    # 1. Resolve Target Models
+    if models:
+        target_specs = models
+    elif model:
+        target_specs = [model]
+    else:
+        target_specs = ALL_CALIBRATION_MODELS
 
-    settings = CresmoSettings(
-        judge_provider=args.provider,
-        gap_filler_judge_threshold=args.threshold,
-        **model_kwargs,
-    )
+    # 2. Resolve Dataset Items
+    if seed_only or not dataset_path.exists():
+        if not seed_only:
+            logger.warning(
+                "Golden set file '%s' not found. Falling back to embedded seed data.",
+                dataset_path,
+            )
+        items = SEED_CALIBRATION_DATA
+        logger.info("Using embedded seed dataset (%d items).", len(items))
+    else:
+        logger.info("Loading Golden Set from '%s'...", dataset_path)
+        with open(dataset_path, encoding="utf-8") as f:
+            items = json.load(f)
+        logger.info("Loaded %d items from %s.", len(items), dataset_path)
 
-    resolved_model = args.model or (
-        settings.ollama_model if args.provider == "ollama" else settings.judge_gemini_model
-    )
-    output_file = args.output_path or (
-        REPO_ROOT / "scripts" / "gap_filler" / f"llm_judge_{args.provider}.txt"
-    )
+    print(f"\n🎯 Modelos agendados para calibração do Judge ({len(target_specs)}):")
+    for i, m in enumerate(target_specs, 1):
+        print(f"   {i}. {m}")
+    print()
 
-    logger.info(
-        "Instantiating Judge adapter chain (Provider: %s, Model: %s)...",
-        args.provider,
-        resolved_model,
-    )
-    judge = build_llm_judge_adapter(settings=settings)
+    # 3. Iterate sequentially over models
+    reports: list[dict[str, Any]] = []
+    overall_exit_code = 0
 
-    if args.seed_only:
+    for spec in target_specs:
+        resolved_provider, model_name = resolve_model_spec(spec, default_provider=provider)
+        req_delay = delay if delay is not None else (0.0 if resolved_provider == "ollama" else 4.2)
+        req_jitter = (
+            jitter if jitter is not None else (0.0 if resolved_provider == "ollama" else 0.8)
+        )
+
+        model_kwargs: dict[str, Any] = {}
+        if resolved_provider == "ollama":
+            model_kwargs["ollama_model"] = model_name
+        elif resolved_provider == "gemini":
+            model_kwargs["judge_gemini_model"] = model_name
+        elif resolved_provider == "typesafe":
+            model_kwargs["typesafe_model"] = model_name
+
+        settings = CresmoSettings(
+            judge_provider=resolved_provider,
+            gap_filler_judge_threshold=threshold,
+            **model_kwargs,
+        )
+
+        if output_path and len(target_specs) == 1:
+            output_file = output_path
+        else:
+            filename = sanitize_report_filename(resolved_provider, model_name)
+            output_file = REPO_ROOT / "scripts" / "gap_filler" / filename
+
         logger.info(
-            "Executing calibration against embedded seed items (%d items)...",
-            len(SEED_CALIBRATION_DATA),
+            "\n🚀 INICIANDO CALIBRAÇÃO DO JUIZ: [%s] %s",
+            resolved_provider.upper(),
+            model_name,
         )
-        results = run_local_calibration(
-            judge,
-            SEED_CALIBRATION_DATA,
-            delay=delay,
-            jitter=jitter,
-        )
-        save_calibration_report(
-            results,
-            output_path=output_file,
-            provider=args.provider,
-            model=resolved_model,
-        )
-        return 0 if results.target_isolated.accuracy >= 0.80 else 1
+        # Metrological isolation: zero fallback failover during calibration
+        judge = build_llm_judge_adapter(settings=settings, enable_fallback=False)
 
-    if not args.dataset_path.exists():
-        logger.warning(
-            "Golden set file '%s' not found. Falling back to embedded seed data.",
-            args.dataset_path,
-        )
-        results = run_local_calibration(
-            judge,
-            SEED_CALIBRATION_DATA,
-            delay=delay,
-            jitter=jitter,
-        )
-        save_calibration_report(
-            results,
-            output_path=output_file,
-            provider=args.provider,
-            model=resolved_model,
-        )
-        return 0 if results.target_isolated.accuracy >= 0.80 else 1
+        try:
+            results = run_local_calibration(
+                judge,
+                items,
+                delay=req_delay,
+                jitter=req_jitter,
+            )
+            save_calibration_report(
+                results,
+                output_path=output_file,
+                provider=resolved_provider,
+                model=model_name,
+            )
 
-    logger.info("Loading Golden Set from '%s'...", args.dataset_path)
-    with open(args.dataset_path, encoding="utf-8") as f:
-        items = json.load(f)
+            acc = results.target_isolated.accuracy
+            d_prime = results.target_isolated.d_prime
+            f1 = results.target_isolated.f1
+            prec = results.target_isolated.precision
+            rec = results.target_isolated.recall
 
-    logger.info("Loaded %d items from %s. Starting calibration...", len(items), args.dataset_path)
-    results = run_local_calibration(
-        judge,
-        items,
-        delay=delay,
-        jitter=jitter,
+            reports.append(
+                {
+                    "spec": f"{resolved_provider}:{model_name}",
+                    "accuracy": acc,
+                    "d_prime": d_prime,
+                    "f1": f1,
+                    "precision": prec,
+                    "recall": rec,
+                    "output_file": output_file,
+                    "passed": acc >= 0.80,
+                }
+            )
+
+            if acc < 0.80:
+                overall_exit_code = 1
+        except CredentialPoolExhaustedError as exc:
+            logger.error(
+                "❌ [ABORTADO] Modelo '%s:%s' abortado devido a cooldown de cota (%.1fs). "
+                "Calibração interrompida para este modelo para evitar contaminação do benchmark.",
+                resolved_provider,
+                model_name,
+                exc.retry_after_seconds,
+            )
+            reports.append(
+                {
+                    "spec": f"{resolved_provider}:{model_name}",
+                    "accuracy": 0.0,
+                    "d_prime": 0.0,
+                    "f1": 0.0,
+                    "precision": 0.0,
+                    "recall": 0.0,
+                    "output_file": f"ABORTADO (COOLDOWN {exc.retry_after_seconds:.0f}s)",
+                    "passed": False,
+                }
+            )
+            overall_exit_code = 1
+
+    # 4. Print Comparative Summary Table
+    print("\n" + "=" * 90)
+    print("COMPARATIVO DE CALIBRAÇÃO DOS JUÍZES (STAGE 2: GAP_FILLER)")
+    print("=" * 90)
+    print(
+        f"{'Modelo':<35} | {'Acurácia':<8} | {'d-prime':<7} | {'F1':<6} | {'Precisão':<8} | {'Recall':<6} | {'Status':<6}"
     )
-    save_calibration_report(
-        results,
-        output_path=output_file,
-        provider=args.provider,
-        model=resolved_model,
-    )
-    return 0 if results.target_isolated.accuracy >= 0.80 else 1
+    print("-" * 90)
+    for r in reports:
+        status_str = "APROVADO" if r["passed"] else "FALHOU"
+        print(
+            f"{r['spec']:<35} | {r['accuracy'] * 100:>7.1f}% | {r['d_prime']:>7.2f} | {r['f1']:>6.3f} | {r['precision'] * 100:>7.1f}% | {r['recall'] * 100:>5.1f}% | {status_str:<6}"
+        )
+    print("=" * 90)
+    print("📁 Relatórios individuais salvos em:")
+    for r in reports:
+        print(f"   👉 {r['output_file']}")
+    print()
+
+    if overall_exit_code != 0:
+        raise typer.Exit(code=overall_exit_code)
+
+
+def main(argv: Sequence[str] | None = None) -> int:
+    """Execute gap filler judge calibration entrypoint.
+
+    Args:
+        argv: Optional sequence of CLI arguments. If None, uses sys.argv[1:].
+
+    Returns:
+        Exit code (0 for success/approval, non-zero for failure).
+    """
+    try:
+        res = app(args=list(argv) if argv is not None else None, standalone_mode=False)
+        return 0 if res is None else int(res)
+    except typer.Exit as exc:
+        return exc.exit_code
+    except click.ClickException as exc:
+        sys.stderr.write(f"Usage error: {exc}\n")
+        return getattr(exc, "exit_code", 2)
+    except SystemExit as exc:
+        return exc.code if isinstance(exc.code, int) else 2
+    except Exception as exc:  # noqa: BLE001
+        sys.stderr.write(f"Unexpected error: {exc}\n")
+        return 1
 
 
 if __name__ == "__main__":

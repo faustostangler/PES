@@ -45,6 +45,7 @@ from cresmo.domain.value_objects import (
     SyncFilterCriteria,
     is_processable_transcript_file,
 )
+from cresmo.infrastructure.adapters.gemini_pool import CredentialPoolExhaustedError
 from cresmo.infrastructure.config import CresmoSettings
 from cresmo.infrastructure.system import get_process_rss_bytes
 from cresmo.presentation.composition import (
@@ -93,9 +94,9 @@ def run(
             "--passes",
             min=1,
             max=10,
-            help="Refinement passes for text expansion (default: 5)",
+            help="Refinement passes for text expansion (default: 3)",
         ),
-    ] = 5,
+    ] = 3,
     batch_size: Annotated[
         int | None,
         typer.Option(
@@ -426,6 +427,7 @@ def execute_batch_run(
     skipped = 0
     failed = 0
     batch_id = BatchId.generate()
+    aborted_by_quota = False
 
     total_count_suffix = f"/{len(sources)}" if isinstance(sources, Sized) else ""
 
@@ -445,6 +447,14 @@ def execute_batch_run(
                 skipped += 1
             else:
                 failed += 1
+        except CredentialPoolExhaustedError as exc:
+            failed += 1
+            aborted_by_quota = True
+            sys.stderr.write(
+                f"{item_prefix} [COOLDOWN ABORT] {source.target}: {exc}\n"
+                f"Halting batch processing immediately (fail-fast cooldown).\n"
+            )
+            break
         finally:
             _drain_telemetry_and_memory(pipeline)
 
@@ -467,6 +477,8 @@ def execute_batch_run(
     )
 
     _consolidate_master_if_needed(pipeline, completed)
+    if aborted_by_quota:
+        return EXIT_RATE_LIMIT_EXCEEDED
     return EXIT_SUCCESS if failed == 0 else EXIT_INTERNAL_ERROR
 
 
@@ -617,6 +629,9 @@ def _process_single_batch_item(
 
         sys.stderr.write(f"{item_prefix} [ERROR] {source.target}: {result.error_message}\n")
         return "failed"
+    except CredentialPoolExhaustedError:
+        # Re-raise so execute_batch_run can abort the loop immediately per ADR-041 fail-fast policy
+        raise
     except RateLimitExceededError as exc:
         sys.stderr.write(f"{item_prefix} [RATE LIMIT] {source.target}: {exc}\n")
         return "failed"

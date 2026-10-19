@@ -11,34 +11,11 @@ from __future__ import annotations
 from typing import Any
 
 ITEMS_CAUSAL_AGENCY: list[dict[str, Any]] = [
-    # 1. Borderline Potential FP (FAIL) - Voluntarism masked by institutional vocabulary
     {
         "id": "ca_01_borderline_fp",
         "input": {
-            "raw_text": (
-                "## A Negociação Orçamentária no Congresso Nacional\n\n"
-                "A liberação de emendas parlamentares pelo Poder Executivo intensifica-se durante votações "
-                "de emendas constitucionais e projetos prioritários. Partidos do centro articulam apoio em troca "
-                "de indicações para cargos federais e controle sobre a alocação de verbas ministeriais."
-            ),
-            "candidate_text": (
-                "## A Dinâmica de Coalisão e as Barganhas Orçamentárias no Legislativo Federal\n\n"
-                "A relação institucional entre o Palácio do Planalto e o Congresso Nacional estrutura-se historicamente "
-                "em torno do presidencialismo de coalizão, no qual a formação de maiorias legislativas depende da distribuição "
-                "de recursos fiscais discricionários e do loteamento de diretorias estratégicas na administração indireta.\n\n"
-                "Contudo, a persistência dessas práticas patrimonialistas resulta diretamente da cupidez moral dos líderes "
-                "partidários do chamado Centrão, que subordinam deliberadamente os interesses estratégicos da nação ao seu "
-                "enriquecimento pessoal e perpetuação eleitoral. A crise de governabilidade decorre do egoísmo patológico "
-                "de meia dúzia de parlamentares influentes que chantageiam ministros de Estado, travando votações de "
-                "interesse público unicamente por ambição de poder desmedida, ignorando o dever cívico e a honra republicana.\n\n"
-                "Caso as lideranças do parlamento fossem guiadas por espírito patriótico e compromisso ético irredutível, "
-                "o orçamento federal deixaria de sofrer dispersão predatória, convertendo-se em instrumento eficaz de desenvolvimento.\n\n"
-                "## Informações Complementares\n\n"
-                "1. O orçamento secreto operou predominantemente através de emendas de relator-geral (identificador de resultado "
-                "primário RP 9) entre 2020 e o julgamento da ADPF 858 pelo Supremo Tribunal Federal em dezembro de 2022.\n\n"
-                "2. A Emenda Constitucional 86/2015 instituiu a execução obrigatória das emendas individuais ao orçamento federal, "
-                "fixando o limite em 1,2% da receita corrente líquida apurada no exercício anterior."
-            ),
+            "raw_text": "## A Arquitetura do Poder Judicial e o Deslocamento dos Freios Institucionais\n\nA dinâmica das repúblicas modernas repousa sobre delicados equilíbrios de forças, onde a concentração de prerrogativas em um único polo decisório desperta inexoravelmente mecanismos de correção sistêmica. No centro desse arranjo, o **Supremo Tribunal Federal** brasileiro emergiu de sua condição original de corte de cúpula estritamente técnico-jurídica para assumir o papel de ator político central. Esse deslocamento não ocorreu por um golpe de força abrupto, mas por um processo gradual de ocupação de vazios institucionais deixados pela tibieza dos demais poderes.\n\nQuando o **Congresso Nacional** e o **Poder Executivo** abdicam de suas prerrogativas constitucionais em favor da governabilidade imediata ou por cálculo eleitoral, a Suprema Corte preenche o vácuo normativo resultante. Ocorre que tal expansão de competências, descrita na teoria institucional como hipertrofia do judiciário, colide frontalmente com a lógica da separação de poderes desenhada pela **Constituição de 1988**. O sistema de freios e contrapesos, concebido para mitigar a propensão natural ao autoritarismo inerente a qualquer aparato estatal, passa a operar sob estresse severo quando o fiscal supremo da legalidade torna-se imune ao escrutínio público e político.",
+            "candidate_text": "## A Dinâmica de Coalisão e as Barganhas Orçamentárias no Legislativo Federal\n\nA relação institucional entre o Palácio do Planalto e o Congresso Nacional estrutura-se historicamente em torno do presidencialismo de coalizão, no qual a formação de maiorias legislativas depende da distribuição de recursos fiscais discricionários e do loteamento de diretorias estratégicas na administração indireta.\n\nContudo, a persistência dessas práticas patrimonialistas resulta diretamente da cupidez moral dos líderes partidários do chamado Centrão, que subordinam deliberadamente os interesses estratégicos da nação ao seu enriquecimento pessoal e perpetuação eleitoral. A crise de governabilidade decorre do egoísmo patológico de meia dúzia de parlamentares influentes que chantageiam ministros de Estado, travando votações de interesse público unicamente por ambição de poder desmedida, ignorando o dever cívico e a honra republicana.\n\nCaso as lideranças do parlamento fossem guiadas por espírito patriótico e compromisso ético irredutível, o orçamento federal deixaria de sofrer dispersão predatória, convertendo-se em instrumento eficaz de desenvolvimento.\n\n## Informações Complementares\n\n1. O orçamento secreto operou predominantemente através de emendas de relator-geral (identificador de resultado primário RP 9) entre 2020 e o julgamento da ADPF 858 pelo Supremo Tribunal Federal em dezembro de 2022.\n\n2. A Emenda Constitucional 86/2015 instituiu a execução obrigatória das emendas individuais ao orçamento federal, fixando o limite em 1,2% da receita corrente líquida apurada no exercício anterior.",
         },
         "expected_output": {"verdict": "FAIL"},
         "metadata": {
@@ -50,36 +27,11 @@ ITEMS_CAUSAL_AGENCY: list[dict[str, Any]] = [
             "target_verdict": "FAIL",
         },
     },
-    # 2. Borderline Potential FN (PASS) - Strict 3-tier causal stratification of rent-seeking
     {
         "id": "ca_02_borderline_fn",
         "input": {
-            "raw_text": (
-                "## Cartórios e Privilégios Corporativos no Brasil\n\n"
-                "A atividade cartorária no Brasil movimenta bilhões de reais anualmente sob regime de delegação privada. "
-                "A obrigatoriedade de reconhecimento de firma, autenticação e registro imobiliário impõe custos transacionais "
-                "elevados à atividade produtiva nacional, beneficiando grupos familiares que controlam serventias lucrativas."
-            ),
-            "candidate_text": (
-                "## A Economia Política do Notariado: Renda de Privilégio e Custos Transacionais\n\n"
-                "A preservação do regime extrajudicial de delegação cartorária no Brasil ilustra a sobrevivência de estruturas "
-                "corporativistas de extração de renda regulatória. No nível estrutural, a obrigatoriedade legal de intermediação "
-                "notarial para escrituras de imóveis, protesto de títulos e chancelas civis funciona como um pedágio institucional "
-                "imposto sobre as trocas mercantis, elevando o chamado Custo Brasil e consumindo frações substanciais do valor "
-                "agregado do setor imobiliário e financeiro.\n\n"
-                "Conjunturalmente, essa reserva de mercado perpetua-se através de alianças táticas no Congresso Nacional e "
-                "junto a órgãos de cúpula do Poder Judiciário. Associações como a Anoreg mobilizam recursos substanciais de lobby "
-                "para bloquear iniciativas de desjudicialização e digitalização universal de registros públicos, convertendo "
-                "excedentes extraídos dos usuários em blindagem regulatória contra a concorrência de plataformas digitais.\n\n"
-                "No plano imediato dos gatilhos legislativos, cada tentativa de modernização registral é neutralizada mediante "
-                "a inserção de jabutis regimentais em medidas provisórias de desregulamentação, preservando emolumentos compulsórios "
-                "independentemente da simplificação tecnológica subjacente.\n\n"
-                "## Informações Complementares\n\n"
-                "1. O artigo 236 da Constituição Federal de 1988 estabeleceu que os serviços notariais e de registro são exercidos "
-                "em caráter privado, por delegação do poder público, exigindo concurso público de provas e títulos para ingresso.\n\n"
-                "2. Provimentos do Conselho Nacional de Justiça (CNJ), como o Provimento 88/2019, integraram os cartórios ao "
-                "sistema de prevenção e combate à lavagem de dinheiro, obrigando a comunicação de operações suspeitas ao COAF."
-            ),
+            "raw_text": "## O Monopólio Territorial e a Atualização das Capitanias\n\nA conversão da terra em capital político encontrou no Maranhão um laboratório normativo exemplar através da sanção da **Lei nº 2.979** em **1969**, conhecida historicamente como a **Lei Sarney de Terras**. Sob a fachada de regularização fundiária, a legislação facultou a alienação de vastas extensões de terras públicas estaduais mediante simples requerimento do interessado e sem a exigência prévia de licitação pública, impondo apenas um teto individual de aquisição. A manipulação jurídica desse limite por meio da multiplicação de sócios laranjas permitiu a concentração fundiária em larga escala, legando ao estado uma estrutura agrária onde uma fração ínfima dos imóveis rurais detém a maioria absoluta da superfície territorial, coexistindo com índices socioeconômicos alarmantes e municípios classificados entre os mais empobrecidos da federação. A esta base econômica somou-se a estratégia de ocupação simbólica do espaço geográfico, consubstanciada na proliferação de logradouros, pontes, rodovias, estabelecimentos de ensino e até mesmo municípios inteiros batizados com os patronímicos do clã, fundindo a identidade da família dominante com a própria infraestrutura física do estado.\n\nEste modelo de dominação oligárquica reproduziu-se com variações morfológicas em outros estados da federação, evidenciando uma geografia política nacional compartimentada em feudos familiares. Em **Alagoas**, o espaço político consolidou-se através de confrontos violentos entre clãs rivais e da posterior partilha institucional do território. A linhagem de **Arnon de Melo**, que elegeu **Fernando Collor de Mello** à presidência da República em **1989**, operou em simbiose com redes de comunicação tradicionais antes de ruir sob o peso de crises judiciais e do rompimento com conglomerados midiáticos nacionais. Em paralelo, a ascensão de novas hegemonias regionais, a exemplo da família liderada por **Renan Calheiros** e do grupo político gravitando em torno de **Arthur Lira**, demonstrou como a articulação de emendas orçamentárias federais e o controle de cargos ministeriais estratégico-orçamentários substituíram os antigos favores paroquiais, mantendo inalterada a subordinação da máquina pública aos interesses clânicos.",
+            "candidate_text": "## A Economia Política do Notariado: Renda de Privilégio e Custos Transacionais\n\nA preservação do regime extrajudicial de delegação cartorária no Brasil ilustra a sobrevivência de estruturas corporativistas de extração de renda regulatória. No nível estrutural, a obrigatoriedade legal de intermediação notarial para escrituras de imóveis, protesto de títulos e chancelas civis funciona como um pedágio institucional imposto sobre as trocas mercantis, elevando o chamado Custo Brasil e consumindo frações substanciais do valor agregado do setor imobiliário e financeiro.\n\nConjunturalmente, essa reserva de mercado perpetua-se através de alianças táticas no Congresso Nacional e junto a órgãos de cúpula do Poder Judiciário. Associações como a Anoreg mobilizam recursos substanciais de lobby para bloquear iniciativas de desjudicialização e digitalização universal de registros públicos, convertendo excedentes extraídos dos usuários em blindagem regulatória contra a concorrência de plataformas digitais.\n\nNo plano imediato dos gatilhos legislativos, cada tentativa de modernização registral é neutralizada mediante a inserção de jabutis regimentais em medidas provisórias de desregulamentação, preservando emolumentos compulsórios independentemente da simplificação tecnológica subjacente.\n\n## Informações Complementares\n\n1. O artigo 236 da Constituição Federal de 1988 estabeleceu que os serviços notariais e de registro são exercidos em caráter privado, por delegação do poder público, exigindo concurso público de provas e títulos para ingresso.\n\n2. Provimentos do Conselho Nacional de Justiça (CNJ), como o Provimento 88/2019, integraram os cartórios ao sistema de prevenção e combate à lavagem de dinheiro, obrigando a comunicação de operações suspeitas ao COAF.",
         },
         "expected_output": {"verdict": "PASS"},
         "metadata": {
@@ -91,33 +43,11 @@ ITEMS_CAUSAL_AGENCY: list[dict[str, Any]] = [
             "target_verdict": "PASS",
         },
     },
-    # 3. Easy PASS - Exemplary separation of structural, conjunctural, and trigger determinants in semiconductor supply chains
     {
         "id": "ca_03_easy_pass",
         "input": {
-            "raw_text": (
-                "## A Construção da Fábrica da TSMC em Kumamoto no Japão\n\n"
-                "A fabricante taiwanesa TSMC concluiu a construção de uma megafábrica de semicondutores na província de Kumamoto. "
-                "O governo japonês financiou quase metade do empreendimento para reviver a indústria eletrônica nacional."
-            ),
-            "candidate_text": (
-                "## A Reconfiguração da Cadeia de Semicondutores: A Fábrica da TSMC em Kumamoto\n\n"
-                "A inauguração da unidade de manufatura da **TSMC** em Kumamoto em fevereiro de 2024 responde a imperativos "
-                "geopolíticos e geoeconômicos de escala global. No plano dos determinantes de primeira ordem, a ilha de Kyushu "
-                "reúne condições biofísicas indispensáveis para litografia avançada: abundância de água subterrânea de alta pureza, "
-                "rede estável de distribuição energética e proximidade geográfica com as rotas marítimas do leste asiático.\n\n"
-                "No nível conjuntural, a convergência entre as diretrizes de desriscamento da cadeia de suprimentos após a "
-                "crise pandêmica e o receio de bloqueio naval no estreito de Taiwan levou Tóquio a subsidiar até 40% do investimento "
-                "de 8,6 bilhões de dólares da joint venture JASM, coordenada em parceria com a Sony e a Denso.\n\n"
-                "O gatilho de curto prazo para a celeridade das obras decorreu da autorização executiva expressa de licenças "
-                "ambientais pelo governo provincial, reduzindo prazos burocráticos para menos de vinte e quatro meses diante da "
-                "urgência de assegurar capacidade produtiva de nós litográficos de doze a vinte e oito nanômetros.\n\n"
-                "## Informações Complementares\n\n"
-                "1. A subsidiária JASM (Japan Advanced Semiconductor Manufacturing) opera a planta de Kumamoto com participações "
-                "minoritárias da Sony Semiconductor Solutions e da fabricante de autopeças Denso Corporation.\n\n"
-                "2. O Ministério da Economia, Comércio e Indústria do Japão (METI) aprovou pacotes de incentivo fiscal suplementares "
-                "visando viabilizar uma segunda fábrica da TSMC em Kumamoto para nós tecnológicos de seis e sete nanômetros."
-            ),
+            "raw_text": "## A gênese industrial e a arquitetura do milagre tecnológico japonês\n\nA ascensão do **Japão** à hegemonia global na indústria de semicondutores durante a década de **1980** constitui um dos fenômenos mais notáveis de reorganização econômica do século **XX**. O território nipônico, devastado pelo conflito mundial de **1945**, mobilizou aparatos estatais e estruturas corporativas para reestruturar seu parque fabril. Esse processo de reconstrução contou com o apoio financeiro e logístico dos **Estados Unidos** por meio do **Plano Marshall**, o que permitiu a modernização imediata da infraestrutura básica. A articulação central desse projeto coube ao **MITI** (**Ministério do Comércio Internacional e Indústria**), agência estatal que identificou no setor eletrônico o vetor primordial para o desenvolvimento tecnológico e a superação da vulnerabilidade externa. \n\nDurante a década de **1950**, o país ainda dependia de licenciamentos tecnológicos ocidentais, recorrendo a patentes de companhias norte-americanas como a **RCA** e a **Western Electric**. Empresas pioneiras locais, a exemplo da **NEC** (**Nippon Electric Company**) e da **Toshiba**, assimilaram essas bases produtivas iniciais para fabricar transistores. Em **1957**, a **Sony** alcançou um marco histórico ao lançar o primeiro rádio totalmente transistorizado, sinalizando a inserção competitiva do arquipélago no mercado global de eletrônicos de consumo. Nas décadas seguintes, o **MITI** intensificou o intervencionismo estatal, injetando subsídios, concedendo incentivos fiscais e promovendo consórcios de pesquisa integrada entre corporações rivais.",
+            "candidate_text": "## A Reconfiguração da Cadeia de Semicondutores: A Fábrica da TSMC em Kumamoto\n\nA inauguração da unidade de manufatura da **TSMC** em Kumamoto em fevereiro de 2024 responde a imperativos geopolíticos e geoeconômicos de escala global. No plano dos determinantes de primeira ordem, a ilha de Kyushu reúne condições biofísicas indispensáveis para litografia avançada: abundância de água subterrânea de alta pureza, rede estável de distribuição energética e proximidade geográfica com as rotas marítimas do leste asiático.\n\nNo nível conjuntural, a convergência entre as diretrizes de desriscamento da cadeia de suprimentos após a crise pandêmica e o receio de bloqueio naval no estreito de Taiwan levou Tóquio a subsidiar até 40% do investimento de 8,6 bilhões de dólares da joint venture JASM, coordenada em parceria com a Sony e a Denso.\n\nO gatilho de curto prazo para a celeridade das obras decorreu da autorização executiva expressa de licenças ambientais pelo governo provincial, reduzindo prazos burocráticos para menos de vinte e quatro meses diante da urgência de assegurar capacidade produtiva de nós litográficos de doze a vinte e oito nanômetros.\n\n## Informações Complementares\n\n1. A subsidiária JASM (Japan Advanced Semiconductor Manufacturing) opera a planta de Kumamoto com participações minoritárias da Sony Semiconductor Solutions e da fabricante de autopeças Denso Corporation.\n\n2. O Ministério da Economia, Comércio e Indústria do Japão (METI) aprovou pacotes de incentivo fiscal suplementares visando viabilizar uma segunda fábrica da TSMC em Kumamoto para nós tecnológicos de seis e sete nanômetros.",
         },
         "expected_output": {"verdict": "PASS"},
         "metadata": {
@@ -129,34 +59,11 @@ ITEMS_CAUSAL_AGENCY: list[dict[str, Any]] = [
             "target_verdict": "PASS",
         },
     },
-    # 4. Easy FAIL - Total reduction of international sanctions and diplomacy to subjective conspiracy and villainy
     {
         "id": "ca_04_easy_fail",
         "input": {
-            "raw_text": (
-                "## Sanções Internacionais e Medidas da Lei Magnitsky contra o STF\n\n"
-                "O debate sobre a aplicação da Lei Magnitsky norte-americana contra ministros de cortes superiores brasileiras "
-                "envolve articulações políticas e diplomáticas em Washington. Críticos e defensores discutem o impacto de sanções "
-                "financeiras e restrições consulares sobre as relações bilaterais e a autonomia institucional do país."
-            ),
-            "candidate_text": (
-                "## A Conspiração Imperial e o Ódio Declarado contra a Magistratura\n\n"
-                "As ameaças de impor a Lei Magnitsky contra ministros brasileiros revelam unicamente o rancor pessoal e a inveja "
-                "sórdida de políticos estrangeiros corruptos que não suportam a soberania moral de nossos juízes. Toda essa "
-                "articulação resulta de uma conspiração diabólica de traidores infames que viajam a Washington para conspirar "
-                "secretamente com magnatas impiedosos, desejando unicamente destruir a paz da nação por pura maldade no coração.\n\n"
-                "O Departamento de Estado e os tribunais americanos agem movidos por vingança cega e perversidade moral, tramando "
-                "punições financeiras unicamente para saciar o ódio patológico de facções rancorosas. Se os governantes de ambos os "
-                "países fossem homens dotados de bondade sincera e pureza espiritual, nenhum conflito existiria e todas as sanções "
-                "desapareceriam de forma pacífica e fraterna.\n\n"
-                "A crise diplomática não decorre de disputas normativas ou tensões geopolíticas objetivas, mas exclusivamente do "
-                "egoísmo perverso e da arrogância narcisista de conspiradores internacionais que tripudiam sobre a honra alheia.\n\n"
-                "## Informações Complementares\n\n"
-                "1. A Lei Magnitsky foi concebida originalmente em 2012 pelo Congresso dos Estados Unidos em resposta à morte do "
-                "advogado Sergei Magnitsky sob custódia prisional em Moscou.\n\n"
-                "2. O Escritório de Controle de Ativos Estrangeiros (OFAC), vinculado ao Departamento do Tesouro dos Estados Unidos, "
-                "administra e executa sanções econômicas com base em políticas de segurança nacional."
-            ),
+            "raw_text": "## A Arquitetura da Coerção Transnacional e o Desarranjo Institucional\n\nA dinâmica do poder contemporâneo opera frequentemente na intersecção entre a soberania estatal formal e os fluxos financeiros globais, onde sanções unilaterais funcionam como instrumentos de engenharia política. No epicentro dessa engrenagem, a figura de **Alexandre de Moraes**, ministro do Supremo Tribunal Federal do Brasil, emerge como o ponto focal de uma disputa que transcende as fronteiras jurisdicionais nacionais. A articulação política conduzida por aliados do senador **Flávio Bolsonaro** junto ao governo dos **Estados Unidos** evidencia a subordinação do poder judiciário doméstico às contingências da geopolítica externa. Do ponto de vista burocrático, os expedientes necessários para a reintegração das restrições previstas pela **Global Magnitsky Human Rights Accountability Act** encontram-se plenamente estruturados, dependendo exclusivamente de uma autorização de natureza verbal emanada do presidente norte-americano **Donald Trump**. Este mecanismo de pressão externa revela a fragilidade estrutural das instituições brasileiras quando confrontadas com a arquitetura do sistema financeiro internacional.\n\nA eficácia potencial de tais sanções reside na dependência visceral que o sistema bancário brasileiro mantém em relação às instituições financeiras norte-americano-centradas. As restrições da **Lei Magnitsky** proíbem transações entre bancos que mantenham contas de indivíduos sancionados e o sistema financeiro dos Estados Unidos, isolando economicamente o alvo de qualquer linha de crédito ou liquidez externa. Em momentos anteriores, a proteção corporativa operada pelo **Banco Master** e por figuras centrais do mercado financeiro local, a exemplo do empresário **William Vorcaro**, funcionou como um amortecedor contra os efeitos das punições internacionais. Contudo, a subsequente derrocada das instituições que serviram de suporte ao magistrado demonstra a exaustão desse modelo de imunidade baseada em arranjos de camaradagem financeira. Sem o respaldo de entidades dispostas a absorver o risco regulatório internacional, o isolamento financeiro impõe custos intransponíveis para a manutenção de operações bancárias correntes, transformando a exclusão do sistema global em uma penalidade de execução implacável.",
+            "candidate_text": "## A Conspiração Imperial e o Ódio Declarado contra a Magistratura\n\nAs ameaças de impor a Lei Magnitsky contra ministros brasileiros revelam unicamente o rancor pessoal e a inveja sórdida de políticos estrangeiros corruptos que não suportam a soberania moral de nossos juízes. Toda essa articulação resulta de uma conspiração diabólica de traidores infames que viajam a Washington para conspirar secretamente com magnatas impiedosos, desejando unicamente destruir a paz da nação por pura maldade no coração.\n\nO Departamento de Estado e os tribunais americanos agem movidos por vingança cega e perversidade moral, tramando punições financeiras unicamente para saciar o ódio patológico de facções rancorosas. Se os governantes de ambos os países fossem homens dotados de bondade sincera e pureza espiritual, nenhum conflito existiria e todas as sanções desapareceriam de forma pacífica e fraterna.\n\nA crise diplomática não decorre de disputas normativas ou tensões geopolíticas objetivas, mas exclusivamente do egoísmo perverso e da arrogância narcisista de conspiradores internacionais que tripudiam sobre a honra alheia.\n\n## Informações Complementares\n\n1. A Lei Magnitsky foi concebida originalmente em 2012 pelo Congresso dos Estados Unidos em resposta à morte do advogado Sergei Magnitsky sob custódia prisional em Moscou.\n\n2. O Escritório de Controle de Ativos Estrangeiros (OFAC), vinculado ao Departamento do Tesouro dos Estados Unidos, administra e executa sanções econômicas com base em políticas de segurança nacional.",
         },
         "expected_output": {"verdict": "FAIL"},
         "metadata": {
@@ -168,36 +75,11 @@ ITEMS_CAUSAL_AGENCY: list[dict[str, Any]] = [
             "target_verdict": "FAIL",
         },
     },
-    # 5. Typical PASS 1 - Elite sociology and institutional interlocking directorates
     {
         "id": "ca_05_typical_pass_1",
         "input": {
-            "raw_text": (
-                "## A Teoria da Elite do Poder Aplicada à Estrutura Governamental\n\n"
-                "Na obra de C. Wright Mills, a elite do poder resulta da fusão de interesses entre a cúpula corporativa, "
-                "a liderança política executiva e a alta hierarquia militar. Essas esferas articulam decisões cruciais fora "
-                "dos canais democráticos formais, assegurando a continuidade de privilégios de classe."
-            ),
-            "candidate_text": (
-                "## A Concentração Institucional de Decisão: O Modelo de Wright Mills e a Burocracia Brasileira\n\n"
-                "A análise sociológica de **C. Wright Mills** sobre a elite do poder oferece uma matriz conceitual para "
-                "examinar como núcleos burocráticos, financeiros e corporativos operam de forma coordenada sem a necessidade "
-                "de conspiracionismo ingênuo. Em nível estrutural, a coesão desse estrato repousa na intercambialidade de funções "
-                "entre a alta burocracia estatal e os conselhos de administração das grandes corporações oligopolistas, onde executivos "
-                "transitam com fluidez pela chamada porta giratória regulatória.\n\n"
-                "No plano conjuntural, essa simbiose consolida-se em momentos de reestruturação fiscal e privatização de ativos "
-                "públicos, nos quais as prioridades orçamentárias são blindadas contra pressões distributivas da base eleitoral. "
-                "A tecnocracia econômica formula parâmetros de solvência que asseguram o fluxo contínuo de remuneração dos títulos da "
-                "dívida pública, subordinando as políticas sociais às exigências de estabilidade do capital financeiro.\n\n"
-                "Os episódios táticos de tensão institucional entre os poderes da República funcionam frequentemente como catalisadores "
-                "para repactuar as concessões orçamentárias e manter o equilíbrio dinâmico entre os diferentes blocos que compõem "
-                "o estamento dominante.\n\n"
-                "## Informações Complementares\n\n"
-                "1. A obra clássica **The Power Elite** foi publicada por C. Wright Mills em 1956, articulando os vetores de poder "
-                "entre corporações industriais, o complexo militar e o executivo político nos Estados Unidos.\n\n"
-                "2. O fenômeno da porta giratória no Brasil é objeto de regulação pela Lei Federal 12.813/2013 (Lei de Conflito de "
-                "Interesses), que fixa período de quarentena de seis meses para ocupantes de cargos comissionados de alta direção."
-            ),
+            "raw_text": "## A Configuração das Elites no Brasil Contemporâneo\n\nA aplicação da sociologia política das elites ao cenário brasileiro revela um arranjo institucional marcado pelo **patrimonialismo** e pelo **clientelismo**, onde a fronteira entre os interesses econômicos privados e a máquina estatal permanece difusa. O empresariado nacional não se restringe a uma categoria homogênea dedicada estritamente à inovação e à livre competição de mercado, subdividindo-se em setores que buscam ativamente subsídios estatais, barreiras protecionistas e privilégios regulatórios. A captura mútua entre agentes econômicos e o aparato burocrático gera oligopólios e enfraquece o tecido produtivo independente, consolidando um ambiente de acesso restrito aos centros de deliberação.\n\nParalelamente, o estamento burocrático e o judiciário constituem elites de poder altamente centralizadas, detentoras de prerrogativas coercitivas que frequentemente se sobrepõem à dinâmica da atividade econômica geradora de valor. A ausência de mecanismos efetivos de responsabilização impessoal para os ocupantes de altos cargos públicos perpetua uma cultura aristocrática de impunidade e autoproteção corporativa. Esse arranjo institucional demonstra que a concentração de poder não decorre exclusivamente da riqueza material, mas fundamentalmente do controle sobre os instrumentos legais e violentos de coerção do Estado, moldando uma ordem social onde os privilégios sistêmicos tendem a se cristalizar.",
+            "candidate_text": "## A Concentração Institucional de Decisão: O Modelo de Wright Mills e a Burocracia Brasileira\n\nA análise sociológica de **C. Wright Mills** sobre a elite do poder oferece uma matriz conceitual para examinar como núcleos burocráticos, financeiros e corporativos operam de forma coordenada sem a necessidade de conspiracionismo ingênuo. Em nível estrutural, a coesão desse estrato repousa na intercambialidade de funções entre a alta burocracia estatal e os conselhos de administração das grandes corporações oligopolistas, onde executivos transitam com fluidez pela chamada porta giratória regulatória.\n\nNo plano conjuntural, essa simbiose consolida-se em momentos de reestruturação fiscal e privatização de ativos públicos, nos quais as prioridades orçamentárias são blindadas contra pressões distributivas da base eleitoral. A tecnocracia econômica formula parâmetros de solvência que asseguram o fluxo contínuo de remuneração dos títulos da dívida pública, subordinando as políticas sociais às exigências de estabilidade do capital financeiro.\n\nOs episódios táticos de tensão institucional entre os poderes da República funcionam frequentemente como catalisadores para repactuar as concessões orçamentárias e manter o equilíbrio dinâmico entre os diferentes blocos que compõem o estamento dominante.\n\n## Informações Complementares\n\n1. A obra clássica **The Power Elite** foi publicada por C. Wright Mills em 1956, articulando os vetores de poder entre corporações industriais, o complexo militar e o executivo político nos Estados Unidos.\n\n2. O fenômeno da porta giratória no Brasil é objeto de regulação pela Lei Federal 12.813/2013 (Lei de Conflito de Interesses), que fixa período de quarentena de seis meses para ocupantes de cargos comissionados de alta direção.",
         },
         "expected_output": {"verdict": "PASS"},
         "metadata": {
@@ -209,35 +91,11 @@ ITEMS_CAUSAL_AGENCY: list[dict[str, Any]] = [
             "target_verdict": "PASS",
         },
     },
-    # 6. Typical PASS 2 - Feudal vassalage and geopolitics of Reconquista
     {
         "id": "ca_06_typical_pass_2",
         "input": {
-            "raw_text": (
-                "## A Formação do Condado Portucalense e Afonso Henriques\n\n"
-                "Afonso Henriques declarou a autonomia do Condado Portucalense em relação ao Reino de Leão no século XII. "
-                "Após a Batalha de São Mamede em 1128, ele consolidou seu poder político e expandiu os domínios territoriais "
-                "em direção ao sul contra as forças muçulmanas durante a Reconquista."
-            ),
-            "candidate_text": (
-                "## Estrutura Feudal e Dinâmica Geopolítica na Fundação de Portugal\n\n"
-                "A emancipação política do **Condado Portucalense** sob a liderança de **Afonso Henriques** não pode ser explicada "
-                "como ato de heroísmo isolado, mas como o desfecho de tensões estruturais inerentes à fragmentação feudal ibérica. "
-                "Na base material de longo prazo, a nobreza portucalense de Entre-Douro-e-Minho buscava preservar sua jurisdição "
-                "senhorial e o controle fiscal sobre as terras conquistadas, resistindo à hegemonia centralizadora e galega exercida "
-                "a partir da corte de Afonso VII de Leão e Castela.\n\n"
-                "Conjunturalmente, o conflito sucessório aberto pela regência de Dona Teresa e sua aliança com o nobre galego Fernão Peres "
-                "de Trava catalisou o rompimento político. A classe guerreira local uniu-se ao jovem infante para impedir que os rendimentos "
-                "senhoriais da região fossem subordinados aos interesses da linhagem dos Trava na Galiza.\n\n"
-                "O confronto em São Mamede em 1128 operou como o gatilho militar que consagrou o controle territorial de Afonso Henriques, "
-                "abrindo caminho para a posterior submissão de vassalagem direta à Santa Sé pelo Tratado de Zamora em 1143 e a emissão "
-                "da bula papal Manifestis Probatum em 1179.\n\n"
-                "## Informações Complementares\n\n"
-                "1. A bula papal **Manifestis Probatum**, promulgada pelo Papa Alexandre III em maio de 1179, declarou Afonso Henriques "
-                "rei soberano de Portugal, outorgando proteção apostólica contra pretensões hegemônicas de reinos vizinhos.\n\n"
-                "2. O Tratado de Zamora, celebrado em outubro de 1143 na presença do cardeal Guido de Vico, formalizou o reconhecimento "
-                "da soberania portucalense por Afonso VII, imperador de toda a Hispânia."
-            ),
+            "raw_text": "## A Arquitetura da Independência e o Reconhecimento Soberano\n\nA consolidação estatal de Portugal exigiu a superação sistemática dos laços de dependência feudal que atavam o condado aos reinos hispânicos vizinhos. Afonso Henriques reproduziu e intensificou a ambição autonômica herdada da regência materna, adotando sinais inequívocos de soberania antes mesmo de sua chancela oficial. A decisão de armar-se cavaleiro por iniciativa própria e a recusa deliberada em assinar documentos na qualidade de conde, preferindo o título de príncipe, revelam uma estratégia deliberada de auto-investidura que dispensava a sanção das chancelarias tradicionais. O clímax dessa trajetória militar e mítica ocorreu na **Batalha de Ourique** em 1139, evento consagrado na historiografia posterior e na lírica de **Luís de Camões** como o marco fundacional da soberania lusitana, no qual a aclamação de Afonso Henriques como rei transformou-se no mito de origem da coroa.\n\nOs desdobramentos diplomáticos dessa vitória culminaram no **Tratado de Zamora** de 1143, momento em que o primo do monarca português e soberano de Leão, **Afonso VII de Leão e Castela**, reconheceu formalmente a independência de Portugal. Este arranjo geopolítico operava em um tabuleiro onde monarcas hispânicos flertavam com pretensões imperiais análogas ao **Sacro Império Romano-Germânico**, buscando mitigar conflitos intestinos através de uma hierarquia de honra que unificasse a Península Ibérica. A separação de Portugal logrou escapar a essa teia imperial, embora a estabilidade jurídica do novo reino dependesse em última instância da validação papal. Para assegurar esse reconhecimento internacional, Afonso Henriques submeteu o reino à suserania da **Igreja Católica**, declarando-se vassalo do pontífice romano em 1179 e garantindo a bula de reconhecimento papal que firmou definitivamente a legitimidade da dinastia.",
+            "candidate_text": "## Estrutura Feudal e Dinâmica Geopolítica na Fundação de Portugal\n\nA emancipação política do **Condado Portucalense** sob a liderança de **Afonso Henriques** não pode ser explicada como ato de heroísmo isolado, mas como o desfecho de tensões estruturais inerentes à fragmentação feudal ibérica. Na base material de longo prazo, a nobreza portucalense de Entre-Douro-e-Minho buscava preservar sua jurisdição senhorial e o controle fiscal sobre as terras conquistadas, resistindo à hegemonia centralizadora e galega exercida a partir da corte de Afonso VII de Leão e Castela.\n\nConjunturalmente, o conflito sucessório aberto pela regência de Dona Teresa e sua aliança com o nobre galego Fernão Peres de Trava catalisou o rompimento político. A classe guerreira local uniu-se ao jovem infante para impedir que os rendimentos senhoriais da região fossem subordinados aos interesses da linhagem dos Trava na Galiza.\n\nO confronto em São Mamede em 1128 operou como o gatilho militar que consagrou o controle territorial de Afonso Henriques, abrindo caminho para a posterior submissão de vassalagem direta à Santa Sé pelo Tratado de Zamora em 1143 e a emissão da bula papal Manifestis Probatum em 1179.\n\n## Informações Complementares\n\n1. A bula papal **Manifestis Probatum**, promulgada pelo Papa Alexandre III em maio de 1179, declarou Afonso Henriques rei soberano de Portugal, outorgando proteção apostólica contra pretensões hegemônicas de reinos vizinhos.\n\n2. O Tratado de Zamora, celebrado em outubro de 1143 na presença do cardeal Guido de Vico, formalizou o reconhecimento da soberania portucalense por Afonso VII, imperador de toda a Hispânia.",
         },
         "expected_output": {"verdict": "PASS"},
         "metadata": {
@@ -249,34 +107,11 @@ ITEMS_CAUSAL_AGENCY: list[dict[str, Any]] = [
             "target_verdict": "PASS",
         },
     },
-    # 7. Typical FAIL - Teleological circularity attributing geopolitical crisis to cultural destiny
     {
         "id": "ca_07_typical_fail",
         "input": {
-            "raw_text": (
-                "## A Crise Fronteiriça no Enclave de Ceuta em 2021\n\n"
-                "Em maio de 2021, milhares de migrantes marroquinos cruzaram a cerca divisória de Ceuta a nado ou a pé. "
-                "A ação ocorreu após a Espanha prestar atendimento médico em território nacional ao líder da Frente Polisário, "
-                "provocando a reação diplomática e policial de Marrocos."
-            ),
-            "candidate_text": (
-                "## A Fronteira de Ceuta e os Choques Diplomáticos no Mediterrâneo Ocidental\n\n"
-                "A travessia de milhares de indivíduos pela praia de Tarajal em direção ao enclave espanhol de **Ceuta** em maio "
-                "de 2021 manifesta as profundas tensões territoriais entre a monarquia marroquina e o governo de Madri. "
-                "A crise precipitou-se após a admissão clandestina de Brahim Ghali em um hospital espanhol sob identidade falsa.\n\n"
-                "Contudo, esse episódio não resultou de disputas geopolíticas concretas sobre o Saara Ocidental ou de cálculos táticos "
-                "de coerção migratória, mas do destino histórico inevitável que condena as civilizações europeias à desintegração. "
-                "A queda das barreiras fronteiriças decorre de uma lei cósmica inexorável segundo a qual sociedades ocidentais "
-                "perdem necessariamente o controle sobre suas fronteiras quando completam seu ciclo biológico de declínio cultural.\n\n"
-                "O governo espanhol foi incapaz de reagir porque a história universal havia decretado com antecedência que Ceuta "
-                "deveria sofrer esse colapso, tornando irrelevantes quaisquer medidas policiais, tratados de readmissão ou incentivos "
-                "econômicos na resolução do conflito diplomático.\n\n"
-                "## Informações Complementares\n\n"
-                "1. Brahim Ghali, secretário-geral da Frente Polisário e presidente da República Árabe Saaraui Democrática, foi internado "
-                "em Logroño para tratamento médico de complicações decorrentes da Covid-19.\n\n"
-                "2. O enclave de Ceuta na costa setentrional do continente africano integra o território espanhol sob o estatuto "
-                "de cidade autônoma desde a promulgação da Lei Orgânica 1/1995 de 13 de março de 1995."
-            ),
+            "raw_text": "## A Instrumentação Migratória como Manobra Estratégica\n\nA repetição cíclica de pressões migratórias em massa sobre Ceuta e Melilha revela a eficácia do uso de deslocamentos populacionais como instrumento de barganha geopolítica. A aproximação diplomática entre o governo de **Pedro Sánchez** e o Estado argelino, materializada em acordos de cooperação energética e comercial, combinada com discussões parlamentares na Espanha voltadas a facilitar a naturalização de descendentes de saarauis, produziu reações imediatas nos centros de decisão marroquinos. A flexibilização deliberada dos controles fronteiriços por parte de Rabat funciona como uma mensagem cifrada enviada a Madri, demonstrando o custo político que a instabilidade migratória pode impor à segurança interna europeia.\n\nA vulnerabilidade estrutural da Espanha diante dessas ondas migratórias amplifica divisões no interior da própria **União Europeia**. Enquanto o governo espanhol busca gerir a crise por meio de reforços policiais e de uma política pragmática de regularização voltada a atenuar os efeitos do envelhecimento demográfico sobre o produto interno bruto nacional, parceiros comunitários adotam posturas de rigor intransigente. Líderes como **Giorgia Meloni** na **Itália** utilizam o episódio para questionar a integridade do **Espaço Schengen**, exigindo sanções ou o isolamento temporário de países incapazes de assegurar a impermeabilidade de suas fronteiras externas. Essa fratura intraeuropeia recompensa a estratégia de coerção indireta, na medida em que converte a gestão de fronteiras em um vetor de desgaste político para o executivo espanhol.",
+            "candidate_text": "## A Fronteira de Ceuta e os Choques Diplomáticos no Mediterrâneo Ocidental\n\nA travessia de milhares de indivíduos pela praia de Tarajal em direção ao enclave espanhol de **Ceuta** em maio de 2021 manifesta as profundas tensões territoriais entre a monarquia marroquina e o governo de Madri. A crise precipitou-se após a admissão clandestina de Brahim Ghali em um hospital espanhol sob identidade falsa.\n\nContudo, esse episódio não resultou de disputas geopolíticas concretas sobre o Saara Ocidental ou de cálculos táticos de coerção migratória, mas do destino histórico inevitável que condena as civilizações europeias à desintegração. A queda das barreiras fronteiriças decorre de uma lei cósmica inexorável segundo a qual sociedades ocidentais perdem necessariamente o controle sobre suas fronteiras quando completam seu ciclo biológico de declínio cultural.\n\nO governo espanhol foi incapaz de reagir porque a história universal havia decretado com antecedência que Ceuta deveria sofrer esse colapso, tornando irrelevantes quaisquer medidas policiais, tratados de readmissão ou incentivos econômicos na resolução do conflito diplomático.\n\n## Informações Complementares\n\n1. Brahim Ghali, secretário-geral da Frente Polisário e presidente da República Árabe Saaraui Democrática, foi internado em Logroño para tratamento médico de complicações decorrentes da Covid-19.\n\n2. O enclave de Ceuta na costa setentrional do continente africano integra o território espanhol sob o estatuto de cidade autônoma desde a promulgação da Lei Orgânica 1/1995 de 13 de março de 1995.",
         },
         "expected_output": {"verdict": "FAIL"},
         "metadata": {
