@@ -11,11 +11,11 @@ Conforms to ADR-016:
 from __future__ import annotations
 
 import json
-import logging
 from collections.abc import Generator
 from contextlib import contextmanager, nullcontext
 from typing import Any, Final
 
+import structlog
 from opentelemetry import trace
 from opentelemetry.trace import Tracer
 
@@ -32,7 +32,7 @@ try:
 except ImportError:  # pragma: no cover
     propagate_attributes = None
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 DEFAULT_PIPELINE_VERSION: str = "cresmo:v2"
 OTEL_FLUSH_TIMEOUT_MS: int = 2000

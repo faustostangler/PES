@@ -9,12 +9,12 @@ Conforms to:
 from __future__ import annotations
 
 import json
-import logging
 import time
 from collections.abc import Callable, Generator, Sequence
 from contextlib import contextmanager
 from typing import TYPE_CHECKING, Any, TypeVar
 
+import structlog
 from opentelemetry import trace
 
 from cresmo.application.pipeline.context import PipelineExecutionContext
@@ -58,7 +58,7 @@ from cresmo.domain.value_objects import (
 if TYPE_CHECKING:
     from cresmo.application.pipeline.stage_factory import StageFactory
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 _StageRet = TypeVar("_StageRet")
 _TSource = TypeVar("_TSource")

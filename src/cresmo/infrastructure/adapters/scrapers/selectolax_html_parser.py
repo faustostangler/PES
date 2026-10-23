@@ -7,13 +7,10 @@ compared to pure-Python parsers.
 
 from __future__ import annotations
 
-import logging
 from typing import Any
 from urllib.parse import urljoin
 
 from selectolax.lexbor import LexborHTMLParser
-
-logger = logging.getLogger(__name__)
 
 
 class SelectolaxHtmlParser:

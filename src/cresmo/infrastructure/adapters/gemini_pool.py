@@ -18,15 +18,15 @@ Conforms to:
 from __future__ import annotations
 
 import hashlib
-import logging
 import re
 import threading
 import time
 from collections.abc import Callable
 from typing import Any, TypeVar
 
+import structlog
 from google import genai
-from google.genai import errors
+from google.genai import errors, types
 
 from cresmo.domain.exceptions import RateLimitExceededError
 
@@ -37,7 +37,7 @@ __all__ = [
     "parse_retry_delay_from_error",
 ]
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 T = TypeVar("T")
 
@@ -149,24 +149,34 @@ class GeminiCredentialPool:
     - As soon as index 0's cooldown expires, the next lease() immediately picks index 0.
     """
 
+    DEFAULT_TIMEOUT: float = 60.0
+
     def __init__(
         self,
         keys: list[str],
         client_factory: Callable[[str], Any] | None = None,
+        timeout: float = DEFAULT_TIMEOUT,
     ) -> None:
         """Initialize the credential pool with an ordered list of API keys.
 
         Args:
             keys: Ordered list of Gemini API keys (index 0 has highest priority).
             client_factory: Optional factory callable to instantiate GenAI clients.
+            timeout: Socket and request timeout in seconds for GenAI HTTP clients.
         """
         cleaned_keys = [k.strip() for k in keys if k and k.strip()]
         if not cleaned_keys:
             raise ValueError("GeminiCredentialPool requires at least one API key.")
 
         self._keys = cleaned_keys
+        self._timeout = timeout
+        timeout_ms = int(timeout * 1000)
         self._client_factory = client_factory or (
-            lambda k: genai.Client(api_key=k) if k else genai.Client()
+            lambda k: (
+                genai.Client(api_key=k, http_options=types.HttpOptions(timeout=timeout_ms))
+                if k
+                else genai.Client(http_options=types.HttpOptions(timeout=timeout_ms))
+            )
         )
         self._lock = threading.Lock()
 
@@ -189,6 +199,11 @@ class GeminiCredentialPool:
     def key_count(self) -> int:
         """Total number of credentials managed by the pool."""
         return len(self._keys)
+
+    @property
+    def timeout(self) -> float:
+        """Configured socket/request timeout in seconds."""
+        return self._timeout
 
     def get_alias(self, key_str: str) -> str:
         """Return the obfuscated identifier for a given key string."""

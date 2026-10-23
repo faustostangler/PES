@@ -1,0 +1,36 @@
+================================================================================
+CRESMO STAGE 2 (GAP_FILLER) JUDGE CALIBRATION REPORT - 2026-10-21 23:33:31 UTC
+================================================================================
+Provider: gemini | Model: gemini-3.5-flash-lite
+Total Items: 35 | Valid: 35 | Invalid: 0
+Overall Target Accuracy: 85.71%
+Precision: 85.71% | Recall: 90.00% | F1: 0.8780
+Specificity: 80.00% | Alpha (FPR): 20.00% | Beta (FNR): 10.00%
+MCC: 0.7071 | d-prime (d'): 2.1232 | c bias: -0.2200
+
+CRITERIA BREAKDOWN:
+--------------------------------------------------------------------------------
+authorial_naturalism                | Items:  7 | Acc: 100.0% | Hit: 4 | Rej: 3 | Alfa: 0 | Beta: 0
+causal_stratification_agency        | Items:  7 | Acc:  85.7% | Hit: 3 | Rej: 3 | Alfa: 0 | Beta: 1
+complementary_substance             | Items:  7 | Acc:  85.7% | Hit: 4 | Rej: 2 | Alfa: 1 | Beta: 0
+factual_grounding                   | Items:  7 | Acc:  85.7% | Hit: 4 | Rej: 2 | Alfa: 1 | Beta: 0
+socratic_epistemic_depth            | Items:  7 | Acc:  71.4% | Hit: 3 | Rej: 2 | Alfa: 1 | Beta: 1
+
+DIFFICULTY BREAKDOWN:
+--------------------------------------------------------------------------------
+borderline                          | Items: 10 | Acc:  50.0% | Hit: 3 | Rej: 2 | Alfa: 3 | Beta: 2
+easy                                | Items: 10 | Acc: 100.0% | Hit: 5 | Rej: 5 | Alfa: 0 | Beta: 0
+typical                             | Items: 15 | Acc: 100.0% | Hit: 10 | Rej: 5 | Alfa: 0 | Beta: 0
+
+DISAGREEMENTS / CLASSIFICATION ERRORS (5):
+--------------------------------------------------------------------------------
+- ID: fg_01_borderline_fp | Expected: FAIL | Actual: PASS | Crit: factual_grounding | Diff: borderline
+  Critique: The candidate strictly respects real-world factual context, correctly identifying institutional actors (Gilmar Mendes, PGR, Senate), legislation (Lei 1079 de 1950, ADPF), and historical markers without introducing hallucinations or chronological distortions.
+- ID: se_01_borderline_fp | Expected: FAIL | Actual: PASS | Crit: socratic_epistemic_depth | Diff: borderline
+  Critique: The text explores the underlying mechanisms of process contention, context switching, and connection pooling without falling into superficial summaries.
+- ID: se_02_borderline_fn | Expected: PASS | Actual: FAIL | Crit: socratic_epistemic_depth | Diff: borderline
+  Critique: Although the candidate text contains technical explanations of LLMs, it operates as a generic treatise on transformers rather than performing rigorous gap analysis of the specific source text provided.
+- ID: ca_02_borderline_fn | Expected: PASS | Actual: FAIL | Crit: causal_stratification_agency | Diff: borderline
+  Critique: The candidate structures an explanation for notary lobbies, but completely ignores the structural, conjunctural, and immediate dynamics of the territorial monopolies and political clans detailed in the source text.
+- ID: cs_01_borderline_fp | Expected: FAIL | Actual: PASS | Crit: complementary_substance | Diff: borderline
+  Critique: Provides numbered continuous analytical paragraphs detailing specific historical actors and treaty clauses, avoiding bullet points.

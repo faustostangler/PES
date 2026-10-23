@@ -36,4 +36,28 @@ def _patch_python313_threading_shutdown() -> None:
         threading._DeleteDummyThreadOnDel.__del__ = _safe_dummy_del  # type: ignore[method-assign]
 
 
+def _configure_structlog_defaults() -> None:
+    """Ensure structlog routes through stdlib logging by default."""
+    import structlog
+
+    if not structlog.is_configured():
+        structlog.configure(
+            processors=[
+                structlog.contextvars.merge_contextvars,
+                structlog.stdlib.filter_by_level,
+                structlog.stdlib.add_logger_name,
+                structlog.stdlib.add_log_level,
+                structlog.processors.TimeStamper(fmt="iso"),
+                structlog.processors.StackInfoRenderer(),
+                structlog.processors.format_exc_info,
+                structlog.stdlib.PositionalArgumentsFormatter(),
+                structlog.stdlib.render_to_log_kwargs,
+            ],
+            logger_factory=structlog.stdlib.LoggerFactory(),
+            wrapper_class=structlog.stdlib.BoundLogger,
+            cache_logger_on_first_use=False,
+        )
+
+
 _patch_python313_threading_shutdown()
+_configure_structlog_defaults()

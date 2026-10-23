@@ -6,11 +6,12 @@ Conforms to:
 
 from __future__ import annotations
 
-import logging
 import threading
 from typing import Any
 
-logger = logging.getLogger(__name__)
+import structlog
+
+logger = structlog.get_logger(__name__)
 
 
 def _name_langfuse_threads(langfuse_client: Any) -> None:

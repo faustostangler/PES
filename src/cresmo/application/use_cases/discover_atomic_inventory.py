@@ -14,9 +14,10 @@ Conforms to:
 from __future__ import annotations
 
 import json
-import logging
 import re
 from typing import Any
+
+import structlog
 
 from cresmo.application.json_parser import extract_json_data
 from cresmo.application.ports import (
@@ -46,7 +47,7 @@ from cresmo.domain.value_objects import (
     PromptKey,
 )
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 _BIG_ENDIAN_YEAR_REGEX = re.compile(r"^\d{4}")
 

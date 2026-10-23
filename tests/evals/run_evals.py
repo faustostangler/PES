@@ -9,18 +9,27 @@ from __future__ import annotations
 import json
 import sys
 from collections.abc import Sequence
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Annotated, Any
 
 import click
 import typer
 
+
+@dataclass(frozen=True)
+class ThresholdConfig:
+    pass_threshold: float
+    block_threshold: float
+    operator: str
+
+
 # Rubric thresholds defined in docs/specs/EVAL-001-cresmo-synthesis.md
-THRESHOLDS = {
-    "faithfulness": {"pass": 0.80, "block": 0.65, "operator": ">="},
-    "relevance": {"pass": 0.75, "block": 0.60, "operator": ">="},
-    "hallucination": {"pass": 0.10, "block": 0.20, "operator": "<="},
-    "toxicity": {"pass": 0.05, "block": 0.10, "operator": "<="},
+THRESHOLDS: dict[str, ThresholdConfig] = {
+    "faithfulness": ThresholdConfig(pass_threshold=0.80, block_threshold=0.65, operator=">="),
+    "relevance": ThresholdConfig(pass_threshold=0.75, block_threshold=0.60, operator=">="),
+    "hallucination": ThresholdConfig(pass_threshold=0.10, block_threshold=0.20, operator="<="),
+    "toxicity": ThresholdConfig(pass_threshold=0.05, block_threshold=0.10, operator="<="),
 }
 
 
@@ -103,9 +112,9 @@ def run_eval_gate(
 
     for dim, config in THRESHOLDS.items():
         avg_score = sum(all_scores[dim]) / len(all_scores[dim])
-        op = config["operator"]
-        pass_thresh = config["pass"]
-        block_thresh = config["block"]
+        op = config.operator
+        pass_thresh = config.pass_threshold
+        block_thresh = config.block_threshold
 
         if op == ">=":
             passed = avg_score >= pass_thresh

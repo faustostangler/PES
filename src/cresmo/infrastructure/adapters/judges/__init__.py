@@ -8,6 +8,11 @@ Conforms to:
 from __future__ import annotations
 
 from cresmo.infrastructure.adapters.judges.composite_judge import ResilientCompositeJudgeAdapter
+from cresmo.infrastructure.adapters.judges.criterion_parser import (
+    JudgeCriterionOutputSchema,
+    JudgeResponseOutputSchema,
+    parse_criteria_scores,
+)
 from cresmo.infrastructure.adapters.judges.gemini_judge import GeminiJudgeAdapter
 from cresmo.infrastructure.adapters.judges.langfuse_decorator import LangfuseJudgeDecorator
 from cresmo.infrastructure.adapters.judges.ollama_judge import OllamaJudgeAdapter
@@ -15,8 +20,11 @@ from cresmo.infrastructure.adapters.judges.typesafe_judge import TypeSafeJudgeAd
 
 __all__ = [
     "GeminiJudgeAdapter",
+    "JudgeCriterionOutputSchema",
+    "JudgeResponseOutputSchema",
     "LangfuseJudgeDecorator",
     "OllamaJudgeAdapter",
     "ResilientCompositeJudgeAdapter",
     "TypeSafeJudgeAdapter",
+    "parse_criteria_scores",
 ]

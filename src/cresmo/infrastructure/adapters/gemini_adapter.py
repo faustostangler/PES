@@ -13,10 +13,11 @@ Conforms to:
 
 from __future__ import annotations
 
-import logging
 import os
 from typing import Any
 
+import httpx
+import structlog
 from google.genai import errors, types
 from langfuse import Langfuse, observe
 from opentelemetry import trace
@@ -29,38 +30,48 @@ from cresmo.infrastructure.adapters.gemini_pool import (
     is_quota_exhausted_error,
 )
 from cresmo.infrastructure.adapters.opentelemetry_adapter import annotate_llm_span
+from cresmo.infrastructure.config import DEFAULT_GEMINI_TIMEOUT_SECONDS
 
 __all__ = ["GeminiLLMAdapter", "trace"]
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
+
+
+TRANSIENT_NETWORK_PATTERNS: tuple[str, ...] = (
+    "503",
+    "429",
+    "UNAVAILABLE",
+    "ResourceExhausted",
+    "RESOURCE_EXHAUSTED",
+    "high demand",
+    "rate limit",
+    "quota",
+    "Connection reset",
+    "connection reset",
+    "Server disconnected",
+    "RemoteDisconnected",
+    "RemoteProtocolError",
+    "broken pipe",
+    "peer closed",
+    "connection closed",
+    "closed before response",
+    "timed out",
+    "timeout",
+    "socket.timeout",
+)
 
 
 def _is_transient_genai_error(exc: BaseException) -> bool:
-    """Determine if a Gemini API exception represents a temporary, retryable condition.
-
-    Args:
-        exc: Raised base exception to inspect.
-
-    Returns:
-        True if the exception corresponds to an HTTP 429, 5xx, or transient network error;
-        False otherwise.
-    """
+    """Determine if a Gemini API exception represents a temporary, retryable condition."""
+    if isinstance(
+        exc, (ConnectionError, TimeoutError, httpx.TransportError, httpx.TimeoutException)
+    ):
+        return True
     if isinstance(exc, errors.APIError):
         code = getattr(exc, "code", None)
         return code in (429, 500, 502, 503, 504)
     msg = str(exc)
-    return any(
-        pattern in msg
-        for pattern in (
-            "503",
-            "429",
-            "UNAVAILABLE",
-            "ResourceExhausted",
-            "high demand",
-            "rate limit",
-            "Connection reset",
-        )
-    )
+    return any(pattern in msg for pattern in TRANSIENT_NETWORK_PATTERNS)
 
 
 def _is_transient_cluster_error(exc: BaseException) -> bool:
@@ -129,6 +140,7 @@ class GeminiLLMAdapter(LLMTransformationPort):
         default_temperature: float = 0.2,
         credential_pool: GeminiCredentialPool | None = None,
         api_keys: list[str] | None = None,
+        timeout_seconds: float = DEFAULT_GEMINI_TIMEOUT_SECONDS,
     ) -> None:
         """Initialize GeminiLLMAdapter with model configuration and telemetry clients.
 
@@ -142,11 +154,13 @@ class GeminiLLMAdapter(LLMTransformationPort):
             default_temperature: Default generation sampling temperature when not overridden.
             credential_pool: Optional injected GeminiCredentialPool for quota rotation.
             api_keys: Optional list of raw API keys to initialize credential pool.
+            timeout_seconds: Socket and request timeout in seconds for GenAI HTTP calls.
         """
         self.model_name = model_name
         self.fallback_model_name = fallback_model_name
         self.max_output_tokens = max_output_tokens
         self.default_temperature = default_temperature
+        self.timeout_seconds = timeout_seconds
 
         # Step 1: Initialize Langfuse client if configured
         if langfuse_client is not None:
@@ -160,16 +174,24 @@ class GeminiLLMAdapter(LLMTransformationPort):
         if credential_pool is not None:
             self._pool = credential_pool
         elif api_keys is not None and len(api_keys) > 0:
-            self._pool = GeminiCredentialPool(keys=api_keys)
+            self._pool = GeminiCredentialPool(keys=api_keys, timeout=timeout_seconds)
         elif genai_client is not None:
             self._pool = GeminiCredentialPool(
                 keys=["mock-key"],
                 client_factory=lambda _: genai_client,
+                timeout=timeout_seconds,
             )
         else:
-            raw = api_key or os.environ.get("GEMINI_API_KEYS") or os.environ.get("GEMINI_API_KEY") or ""
+            raw = (
+                api_key
+                or os.environ.get("GEMINI_API_KEYS")
+                or os.environ.get("GEMINI_API_KEY")
+                or ""
+            )
             parts = [p.strip() for p in raw.split(",") if p.strip()]
-            self._pool = GeminiCredentialPool(keys=parts if parts else [""])
+            self._pool = GeminiCredentialPool(
+                keys=parts if parts else [""], timeout=timeout_seconds
+            )
 
     @property
     def _client(self) -> Any:

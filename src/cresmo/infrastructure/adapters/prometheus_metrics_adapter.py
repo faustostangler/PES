@@ -7,10 +7,10 @@ Conforms to:
 
 from __future__ import annotations
 
-import logging
 import threading
 
 import prometheus_client
+import structlog
 from prometheus_client import (
     REGISTRY,
     CollectorRegistry,
@@ -21,7 +21,7 @@ from prometheus_client import (
 
 from cresmo.application.ports import MetricsPort
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 
 class PrometheusMetricsAdapter(MetricsPort):

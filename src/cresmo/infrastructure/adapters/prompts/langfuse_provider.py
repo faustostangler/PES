@@ -10,10 +10,10 @@ Conforms to ADR-014 and ADR-017:
 
 from __future__ import annotations
 
-import logging
 from http import HTTPStatus
 from typing import Any
 
+import structlog
 from langfuse.api.core import ApiError
 
 from cresmo.application.ports import PromptProviderPort
@@ -24,7 +24,7 @@ from cresmo.infrastructure.adapters.prompts.registry import (
 )
 from cresmo.infrastructure.config import CresmoSettings
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 
 def _handle_api_error(exc: ApiError, prompt_name: str, label: str) -> None:

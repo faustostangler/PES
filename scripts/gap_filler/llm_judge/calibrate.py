@@ -11,7 +11,6 @@ Conforms to:
 from __future__ import annotations
 
 import json
-import logging
 import math
 import random
 import re
@@ -25,6 +24,7 @@ from statistics import NormalDist
 from typing import Annotated, Any
 
 import click
+import structlog
 import typer
 
 # Ensure project root and src are in sys.path when invoked directly as a script / debugger
@@ -42,20 +42,14 @@ from cresmo.infrastructure.adapters.gemini_pool import CredentialPoolExhaustedEr
 from cresmo.infrastructure.config import CresmoSettings
 from cresmo.presentation.factories.judge_factory import build_llm_judge_adapter
 
-logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
-logger = logging.getLogger("calibrate_gap_filler_judge")
+logger = structlog.get_logger("calibrate_gap_filler_judge")
 
 DEFAULT_GOLDEN_SET_PATH = (
     REPO_ROOT / "scripts" / "gap_filler" / "golden_sets" / "gap_filler_golden_set.json"
 )
 
-# Canonical benchmark judge models evaluated sequentially by default (aligned with fluid_prose)
-ALL_CALIBRATION_MODELS: list[str] = [
-    "gemini:gemini-3.5-flash-lite",
-    "gemini:gemini-2.5-flash",
-    # "ollama:qwen2.5:14b",
-    # "ollama:qwen2.5:latest",
-]
+# Canonical benchmark judge models evaluated sequentially by default (configured via CresmoSettings)
+ALL_CALIBRATION_MODELS: list[str] = CresmoSettings().judge_calibration_models
 
 
 def resolve_model_spec(spec: str, default_provider: str = "gemini") -> tuple[str, str]:
@@ -501,6 +495,26 @@ def run_local_calibration(
                         max_retry_wait,
                     )
                     raise
+            except Exception as exc:
+                if attempt < max_attempts:
+                    retry_wait = min(15.0, 3.0 * attempt)
+                    logger.warning(
+                        "[RETRY %d/%d] Transient error during evaluation of '%s': %s. Waiting %.1fs before retrying...",
+                        attempt,
+                        max_attempts,
+                        item_id,
+                        exc,
+                        retry_wait,
+                    )
+                    time.sleep(retry_wait)
+                else:
+                    logger.error(
+                        "\n🚨 [EVALUATION ABORT] Failed to evaluate item '%s' after %d attempts: %s",
+                        item_id,
+                        max_attempts,
+                        exc,
+                    )
+                    raise
 
         if eval_res is None:
             continue
@@ -624,7 +638,7 @@ def calibrate(
         list[str] | None,
         typer.Option(
             "--models",
-            help="List of model specifications to calibrate sequentially (e.g. 'gemini:gemini-3.5-flash-lite' 'gemini:gemini-2.5-flash'). Default: all canonical models.",
+            help="List of model specifications to calibrate sequentially. Default: configured in CresmoSettings.judge_calibration_models.",
         ),
     ] = None,
     model: Annotated[
@@ -857,3 +871,4 @@ def main(argv: Sequence[str] | None = None) -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
+    print('done!')

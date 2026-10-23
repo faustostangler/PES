@@ -20,7 +20,6 @@ from __future__ import annotations
 
 import contextlib
 import json
-import logging
 import os
 import re
 import statistics
@@ -33,6 +32,7 @@ from pathlib import Path
 from typing import Annotated, Any
 
 import click
+import structlog
 import typer
 
 # Ensure project root and src are in sys.path
@@ -57,8 +57,7 @@ from cresmo.infrastructure.config import CresmoSettings
 from cresmo.presentation.factories.adapter_factory import build_prompt_provider
 from cresmo.presentation.factories.judge_factory import build_llm_judge_adapter
 
-logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
-logger = logging.getLogger("benchmark_generators")
+logger = structlog.get_logger("benchmark_generators")
 
 CANONICAL_CRITERIA: tuple[JudgeCriterion, ...] = (
     JudgeCriterion.ORALITY_REMOVAL,
@@ -69,14 +68,7 @@ CANONICAL_CRITERIA: tuple[JudgeCriterion, ...] = (
     JudgeCriterion.AUTHORIAL_VOICE,
 )
 
-ALL_BENCHMARK_MODELS: list[str] = [
-    "gemini:gemini-3.5-flash",
-    "gemini:gemini-2.5-flash",
-    # "ollama:qwen2.5:latest",
-    # "ollama:gemma4:latest",
-    # "ollama:deepseek-r1:7b",
-    # "ollama:llama3:latest",
-]
+ALL_BENCHMARK_MODELS: list[str] = CresmoSettings().generator_benchmark_models
 
 
 @dataclass(frozen=True)
@@ -165,9 +157,9 @@ def parse_raw_transcript_file(file_path: Path) -> BenchmarkSample:
             for line in frontmatter_raw.splitlines():
                 line = line.strip()
                 if line.startswith("channel_name:"):
-                    channel_name = line.split(":", 1)[1].strip().strip('"\'')
+                    channel_name = line.split(":", 1)[1].strip().strip("\"'")
                 elif line.startswith("video_title:"):
-                    content_title = line.split(":", 1)[1].strip().strip('"\'')
+                    content_title = line.split(":", 1)[1].strip().strip("\"'")
 
     return BenchmarkSample(
         sample_id=file_path.stem,
@@ -464,7 +456,10 @@ def run_benchmark_for_model(
             cs.score for r in results for cs in r.evaluation.criteria_scores if cs.criterion == crit
         ]
         crit_passes = sum(
-            1 for r in results for cs in r.evaluation.criteria_scores if cs.criterion == crit and cs.passed
+            1
+            for r in results
+            for cs in r.evaluation.criteria_scores
+            if cs.criterion == crit and cs.passed
         )
         total_crit = len(crit_scores)
         crit_fails = total_crit - crit_passes
@@ -569,14 +564,16 @@ def format_model_report(summary: ModelBenchmarkSummary) -> str:
             f"{cs.min_score:5.2f} | {cs.stdev_score:5.2f} | {status_flag}"
         )
 
-    lines.extend([
-        "=" * 102,
-        "",
-        "=" * 90,
-        "3. DETALHAMENTO ITEM A ITEM (TRANSCRIÇÃO, PROSA GERADA E VEREDITO DO JUIZ)",
-        "=" * 90,
-        "",
-    ])
+    lines.extend(
+        [
+            "=" * 102,
+            "",
+            "=" * 90,
+            "3. DETALHAMENTO ITEM A ITEM (TRANSCRIÇÃO, PROSA GERADA E VEREDITO DO JUIZ)",
+            "=" * 90,
+            "",
+        ]
+    )
 
     for idx, r in enumerate(summary.sample_results, start=1):
         if r.evaluation.is_vetoed:
@@ -586,26 +583,32 @@ def format_model_report(summary: ModelBenchmarkSummary) -> str:
         else:
             status_tag = "REPROVADO [FAIL]"
 
-        lines.extend([
-            "-" * 90,
-            f"AMOSTRA #{idx:02d} | ID: {r.sample.sample_id} | Foco: {r.sample.criterion_focus}",
-            f"Canal: {r.sample.channel_name} | Título: {r.sample.content_title}",
-            f"Veredito do Juiz: {status_tag} | Overall Score: {r.evaluation.overall_score:.4f}",
-            f"Tempo Geração: {r.generation_latency_seconds:.2f}s | Tempo Avaliação: {r.judge_latency_seconds:.2f}s",
-        ])
+        lines.extend(
+            [
+                "-" * 90,
+                f"AMOSTRA #{idx:02d} | ID: {r.sample.sample_id} | Foco: {r.sample.criterion_focus}",
+                f"Canal: {r.sample.channel_name} | Título: {r.sample.content_title}",
+                f"Veredito do Juiz: {status_tag} | Overall Score: {r.evaluation.overall_score:.4f}",
+                f"Tempo Geração: {r.generation_latency_seconds:.2f}s | Tempo Avaliação: {r.judge_latency_seconds:.2f}s",
+            ]
+        )
         if r.evaluation.is_vetoed and r.evaluation.veto_reasons:
             lines.append(f"Motivo do Veto Mecânico: {'; '.join(r.evaluation.veto_reasons)}")
-        lines.extend([
-            "-" * 90,
-            "",
-            "--- [ENTRADA: TRANSCRIÇÃO BRUTA (RAW TEXT)] ---",
-            r.sample.raw_text.strip(),
-            "",
-            "--- [SAÍDA: PROSA FLUIDA GERADA PELO MODELO (CANDIDATE TEXT)] ---",
-            r.candidate_text.strip() if r.candidate_text.strip() else "[GERAÇÃO VAZIA OU FALHOU]",
-            "",
-            "--- [AVALIAÇÃO DETALHADA DO JUIZ POR CRITÉRIO] ---",
-        ])
+        lines.extend(
+            [
+                "-" * 90,
+                "",
+                "--- [ENTRADA: TRANSCRIÇÃO BRUTA (RAW TEXT)] ---",
+                r.sample.raw_text.strip(),
+                "",
+                "--- [SAÍDA: PROSA FLUIDA GERADA PELO MODELO (CANDIDATE TEXT)] ---",
+                r.candidate_text.strip()
+                if r.candidate_text.strip()
+                else "[GERAÇÃO VAZIA OU FALHOU]",
+                "",
+                "--- [AVALIAÇÃO DETALHADA DO JUIZ POR CRITÉRIO] ---",
+            ]
+        )
 
         for score in r.evaluation.criteria_scores:
             c_status = "PASS" if score.passed else "FAIL"
@@ -621,11 +624,13 @@ def format_model_report(summary: ModelBenchmarkSummary) -> str:
 
         lines.extend(["", ""])
 
-    lines.extend([
-        "=" * 90,
-        "FIM DO RELATÓRIO DO MODELO",
-        "=" * 90,
-    ])
+    lines.extend(
+        [
+            "=" * 90,
+            "FIM DO RELATÓRIO DO MODELO",
+            "=" * 90,
+        ]
+    )
 
     return "\n".join(lines)
 
@@ -645,9 +650,8 @@ def benchmark(
         typer.Option(
             "--models",
             help=(
-                "List of model identifiers to test sequentially (default: all canonical models - "
-                "'gemini:gemini-3.5-flash' 'gemini:gemini-2.5-flash' 'ollama:qwen2.5:latest' "
-                "'ollama:gemma4:latest' 'ollama:deepseek-r1:7b' 'ollama:llama3:latest' or 'all')"
+                "List of model identifiers to test sequentially (default: configured in "
+                "CresmoSettings.generator_benchmark_models)"
             ),
         ),
     ] = None,

@@ -205,11 +205,8 @@ class TestFrontmatterParsing:
             for r in caplog.records
             if r.levelno == logging.DEBUG and "malformed.md" in r.getMessage()
         )
-        assert record.msg == "[pipeline] Malformed YAML frontmatter in '%s', retaining defaults: %s"
-        args = record.args
-        assert isinstance(args, tuple)
-        assert args[0] == "malformed.md"
-        assert isinstance(args[1], Exception)
+        assert "[pipeline] Malformed YAML frontmatter in 'malformed.md'" in record.getMessage()
+        assert "retaining defaults" in record.getMessage()
 
 
 class TestMetadataResolution:
@@ -369,9 +366,8 @@ class TestLoadTranscriptFromFile:
             for r in caplog.records
             if r.levelno == logging.DEBUG and "bad_yaml.md" in r.getMessage()
         )
-        args = record.args
-        assert isinstance(args, tuple)
-        assert args[0] == "bad_yaml.md"
+        assert "[pipeline] Malformed YAML frontmatter in 'bad_yaml.md'" in record.getMessage()
+        assert "retaining defaults" in record.getMessage()
 
     def test_load_transcript_enforces_utf8_encoding(self, tmp_path: Path) -> None:
         file_path = tmp_path / "encoding_test.md"

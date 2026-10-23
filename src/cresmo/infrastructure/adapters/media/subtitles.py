@@ -7,15 +7,15 @@ Conforms to:
 
 from __future__ import annotations
 
-import logging
 import re
 from collections.abc import Mapping
 from datetime import UTC, date, datetime
 from typing import Any
 
+import structlog
 import yt_dlp.plugins
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 SENTENCES_PER_PARAGRAPH_THRESHOLD: int = 4
 ISO_DATE_COMPACT_LENGTH: int = 8

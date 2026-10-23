@@ -15,12 +15,12 @@ Conforms to:
 from __future__ import annotations
 
 import gc
-import logging
 import sys
 from collections.abc import Iterable, Iterator, Sized
 from pathlib import Path
 from typing import Annotated, Any
 
+import structlog
 import typer
 from opentelemetry import trace
 from pydantic import ValidationError
@@ -63,7 +63,7 @@ from cresmo.presentation.exit_codes import (
     EXIT_SUCCESS,
 )
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 
 def run(
@@ -326,21 +326,21 @@ def _execute_run_pipeline(
     query = _build_batch_discovery_query(args, settings)
 
     if args.dry_run:
-        sources = list(
+        dry_run_sources = list(
             load_batch_sources(
                 query=query,
                 settings=settings,
                 media_ingestion_port=pipeline.media_ingestion_port,
             )
         )
-        if not sources:
+        if not dry_run_sources:
             manifest_display = str(args.manifest) if args.manifest else "data/playlist.txt"
             sys.stdout.write(
                 f"No sources found to process (manifest: {manifest_display}, "
                 f"raw lake scan: {not args.no_scan_raw}).\n"
             )
             return EXIT_SUCCESS
-        return execute_batch_dry_run(pipeline, sources)
+        return execute_batch_dry_run(pipeline, dry_run_sources)
 
     sources = load_batch_sources(
         query=query,

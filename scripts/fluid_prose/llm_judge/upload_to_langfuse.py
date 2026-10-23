@@ -10,13 +10,13 @@ Conforms to:
 from __future__ import annotations
 
 import json
-import logging
 import sys
 from collections.abc import Sequence
 from pathlib import Path
 from typing import Annotated
 
 import click
+import structlog
 import typer
 
 # Ensure project root and src are in sys.path
@@ -28,8 +28,7 @@ for p in (str(SRC_DIR), str(REPO_ROOT)):
 
 from cresmo.infrastructure.config import CresmoSettings
 
-logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
-logger = logging.getLogger("upload_golden_set")
+logger = structlog.get_logger("upload_golden_set")
 
 DEFAULT_GOLDEN_SET_PATH = (
     REPO_ROOT / "scripts" / "fluid_prose" / "golden_sets" / "fluid_prose_golden_set.json"

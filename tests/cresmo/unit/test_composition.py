@@ -316,7 +316,7 @@ class TestCompositionRoot:
             assert probe_langfuse_ready("http://localhost:3000/serviceX") is True
             mock_probe.assert_called_once_with(
                 "http://localhost:3000/serviceX/api/public/health",
-                timeout_seconds=1.0,
+                timeout_seconds=2.0,
             )
 
     def test_probe_langfuse_ready_strips_trailing_slash(self) -> None:
@@ -347,7 +347,7 @@ class TestCompositionRoot:
             "cresmo.presentation.composition.probe_langfuse_ready", return_value=False
         ) as mock_probe:
             assert resolve_langfuse_client(s1) is None
-            mock_probe.assert_called_once_with("http://host1:3000", timeout_seconds=1.0)
+            mock_probe.assert_called_once_with("http://host1:3000", timeout_seconds=2.0)
             captured = capsys.readouterr()
             expected_msg = (
                 f"[preflight] Langfuse server at '{s1.langfuse_host}' is unreachable. "
@@ -660,8 +660,8 @@ class TestCompositionRoot:
             client = resolve_langfuse_client(settings)  # type: ignore[arg-type]
             assert client is None
             record = next(r for r in caplog.records if r.levelno == logging.WARNING)
-            assert record.msg == "[composition] Failed to initialize Langfuse client: %s"
-            assert record.args is not None and "Langfuse boom" in str(record.args)
+            assert "[composition] Failed to initialize Langfuse client" in record.getMessage()
+            assert "Langfuse boom" in record.getMessage()
 
     def test_resolve_langfuse_client_missing_keys_returns_none(self, tmp_path: Path) -> None:
         s1 = CresmoSettings(

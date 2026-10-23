@@ -7,11 +7,11 @@ Conforms to:
 
 from __future__ import annotations
 
-import logging
 import time
 from typing import Any
 
 import httpx
+import structlog
 
 from cresmo.application.ports.llm_judge_port import LlmJudgePort
 from cresmo.domain.value_objects.quality import (
@@ -22,7 +22,7 @@ from cresmo.domain.value_objects.quality import (
 )
 from cresmo.infrastructure.config import DEFAULT_JUDGE_PASS_THRESHOLD
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 DEFAULT_PASS_THRESHOLD: float = DEFAULT_JUDGE_PASS_THRESHOLD
 

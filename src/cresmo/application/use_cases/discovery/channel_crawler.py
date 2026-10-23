@@ -7,7 +7,6 @@ Conforms to:
 
 from __future__ import annotations
 
-import logging
 import threading
 from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -28,8 +27,6 @@ from cresmo.domain.value_objects import (
     SourceModality,
     SyncFilterCriteria,
 )
-
-logger = logging.getLogger(__name__)
 
 
 class ChannelFeedCrawlerService:

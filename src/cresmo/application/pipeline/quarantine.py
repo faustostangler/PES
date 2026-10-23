@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
-import logging
 from datetime import UTC, datetime
 from typing import TYPE_CHECKING
 
+import structlog
 from opentelemetry import trace
 
 from cresmo.application.ports import LedgerRepositoryPort, MetricsPort
@@ -25,7 +25,7 @@ from cresmo.domain.value_objects import (
 if TYPE_CHECKING:
     from cresmo.application.pipeline.context import PipelineExecutionContext
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 
 def record_stage_quarantine(

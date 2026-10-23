@@ -157,3 +157,40 @@ class TestCresmoSettings:
         custom_env.write_text("CRESMO_OLLAMA_MODEL=deepseek-r1:14b\n", encoding="utf-8")
         settings = CresmoSettings(_env_file=custom_env)
         assert settings.ollama_model == "deepseek-r1:14b"
+
+    def test_calibration_and_benchmark_models_defaults_and_env_override(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """Verify calibration and benchmark models defaults and safe comma-separated env parsing."""
+        settings = CresmoSettings()
+        assert settings.gemini_model == "gemini-3.5-flash-lite"
+        assert settings.judge_gemini_model == "gemini-3.5-flash-lite"
+        assert settings.benchmark_models == [
+            "gemini:gemini-3.5-flash-lite",
+            "gemini:gemini-3.8-flash",
+        ]
+        assert settings.judge_calibration_models == settings.benchmark_models
+        assert settings.generator_benchmark_models == settings.benchmark_models
+
+        monkeypatch.setenv(
+            "BENCHMARK_MODELS",
+            "gemini:gemini-3.5-flash-lite, ollama:qwen2.5:14b",
+        )
+        overridden = CresmoSettings()
+        assert overridden.benchmark_models == [
+            "gemini:gemini-3.5-flash-lite",
+            "ollama:qwen2.5:14b",
+        ]
+        assert overridden.judge_calibration_models == overridden.benchmark_models
+        assert overridden.generator_benchmark_models == overridden.benchmark_models
+
+    def test_gemini_timeout_seconds_defaults_and_env_override(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """Verify gemini_timeout_seconds defaults to 60.0 and supports env override."""
+        settings = CresmoSettings()
+        assert settings.gemini_timeout_seconds == 60.0
+
+        monkeypatch.setenv("GEMINI_TIMEOUT_SECONDS", "45.0")
+        overridden = CresmoSettings()
+        assert overridden.gemini_timeout_seconds == 45.0

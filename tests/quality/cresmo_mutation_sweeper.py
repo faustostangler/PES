@@ -591,7 +591,7 @@ def extract_function_keys(source_path: Path) -> list[str]:
 
     # 2. Also check if metadata already has any additional keys
     try:
-        from mutmut.__main__ import SourceFileMutationData
+        from mutmut.__main__ import SourceFileMutationData  # type: ignore[attr-defined]
         from mutmut.utils.format_utils import get_mutant_name
 
         data = SourceFileMutationData(path=source_path)

@@ -7,12 +7,12 @@ Conforms to:
 
 from __future__ import annotations
 
-import logging
+import structlog
 
 from cresmo.application.ports.llm_judge_port import LlmJudgePort
 from cresmo.domain.value_objects.quality import EvaluationContext, JudgeEvaluation
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 
 class ResilientCompositeJudgeAdapter(LlmJudgePort):

@@ -8,12 +8,12 @@ Conforms to:
 
 from __future__ import annotations
 
-import logging
 import os
 import sys
 from collections.abc import Callable
 from typing import Any
 
+import structlog
 from langfuse import Langfuse
 from langfuse.span_filter import is_default_export_span
 from langfuse.types import MaskOtelSpansParams, MaskOtelSpansResult, OtelSpanPatch
@@ -40,7 +40,7 @@ from cresmo.infrastructure.adapters.prometheus_metrics_adapter import (
 from cresmo.infrastructure.config import CresmoSettings
 from cresmo.presentation.factories.settings_factory import resolve_shared_settings
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 
 def probe_langfuse_ready(host: str, timeout_seconds: float = 2.0) -> bool:

@@ -7,7 +7,6 @@ Conforms to:
 
 from __future__ import annotations
 
-import logging
 from typing import Any
 
 from cresmo.application.ports import PromptProviderPort
@@ -21,8 +20,6 @@ from cresmo.infrastructure.adapters.judges.preflight_decorator import (
 )
 from cresmo.infrastructure.adapters.judges.typesafe_judge import TypeSafeJudgeAdapter
 from cresmo.infrastructure.config import CresmoSettings
-
-logger = logging.getLogger(__name__)
 
 
 def build_llm_judge_adapter(
@@ -53,6 +50,7 @@ def build_llm_judge_adapter(
             pass_threshold=settings.judge_pass_threshold,
             temperature=settings.judge_temperature,
             prompt_provider=prompt_provider,
+            timeout_seconds=settings.gemini_timeout_seconds,
         )
     elif provider == "ollama":
         primary = OllamaJudgeAdapter(

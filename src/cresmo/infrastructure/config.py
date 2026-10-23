@@ -31,8 +31,20 @@ _WORKSPACE_DIR = find_workspace_root()
 
 DEFAULT_LANGFUSE_PROMPT_LABEL: str = "production"
 DEFAULT_JUDGE_PASS_THRESHOLD: float = 0.9
-DEFAULT_JUDGE_GEMINI_MODEL: str = "gemini-3.5-flash-lite"
+DEFAULT_GEMINI_MODEL: str = "gemini-3.5-flash-lite"
+DEFAULT_JUDGE_GEMINI_MODEL: str = DEFAULT_GEMINI_MODEL
 DEFAULT_JUDGE_TEMPERATURE: float = 0.0
+DEFAULT_GEMINI_TIMEOUT_SECONDS: float = 60.0
+DEFAULT_BENCHMARK_MODELS: list[str] = [
+    "gemini:gemini-3.5-flash-lite",
+    "gemini:gemini-3.8-flash",
+    # "ollama:qwen2.5:latest",
+    # "ollama:gemma4:latest",
+    # "ollama:deepseek-r1:7b",
+    # "ollama:llama3:latest",
+]
+DEFAULT_JUDGE_CALIBRATION_MODELS: list[str] = DEFAULT_BENCHMARK_MODELS
+DEFAULT_GENERATOR_BENCHMARK_MODELS: list[str] = DEFAULT_BENCHMARK_MODELS
 
 
 class CresmoSettings(BaseSettings):
@@ -61,8 +73,12 @@ class CresmoSettings(BaseSettings):
     DEFAULT_LANGUAGE: ClassVar[str] = DEFAULT_LANGUAGE
     DEFAULT_LANGFUSE_PROMPT_LABEL: ClassVar[str] = DEFAULT_LANGFUSE_PROMPT_LABEL
     DEFAULT_JUDGE_PASS_THRESHOLD: ClassVar[float] = DEFAULT_JUDGE_PASS_THRESHOLD
-    DEFAULT_JUDGE_GEMINI_MODEL: ClassVar[str] = DEFAULT_JUDGE_GEMINI_MODEL
+    DEFAULT_GEMINI_MODEL: ClassVar[str] = DEFAULT_GEMINI_MODEL
+    DEFAULT_JUDGE_GEMINI_MODEL: ClassVar[str] = DEFAULT_GEMINI_MODEL
     DEFAULT_JUDGE_TEMPERATURE: ClassVar[float] = DEFAULT_JUDGE_TEMPERATURE
+    DEFAULT_BENCHMARK_MODELS: ClassVar[list[str]] = DEFAULT_BENCHMARK_MODELS
+    DEFAULT_JUDGE_CALIBRATION_MODELS: ClassVar[list[str]] = DEFAULT_BENCHMARK_MODELS
+    DEFAULT_GENERATOR_BENCHMARK_MODELS: ClassVar[list[str]] = DEFAULT_BENCHMARK_MODELS
 
     model_config = SettingsConfigDict(
         env_file=(
@@ -87,7 +103,12 @@ class CresmoSettings(BaseSettings):
         """Customise settings sources to safely parse comma-separated credentials from env."""
 
         def _safe_decode(field_name: str, field: Any, val: Any, orig_decode: Any) -> Any:
-            if field_name == "gemini_api_keys" and isinstance(val, str):
+            if field_name in (
+                "gemini_api_keys",
+                "benchmark_models",
+                "judge_calibration_models",
+                "generator_benchmark_models",
+            ) and isinstance(val, str):
                 try:
                     return orig_decode(field_name, field, val)
                 except (ValueError, TypeError):
@@ -364,7 +385,7 @@ class CresmoSettings(BaseSettings):
         description="Canonical pipeline version tag emitted to OpenTelemetry spans and Langfuse traces.",
     )
     gemini_model: str = Field(
-        default="gemini-3.5-flash-lite",
+        default=DEFAULT_GEMINI_MODEL,
         description="Default Gemini model variant for pipeline stages.",
     )
     gemini_fallback_model: str = Field(
@@ -497,6 +518,18 @@ class CresmoSettings(BaseSettings):
         default="ollama",
         validation_alias=AliasChoices("indexing_provider", "CRESMO_INDEXING_PROVIDER"),
         description="Provider for raw transcript conceptual indexing: 'ollama' (default local) or 'gemini' (cloud API).",
+    )
+    gemini_timeout_seconds: float = Field(
+        default=DEFAULT_GEMINI_TIMEOUT_SECONDS,
+        ge=1.0,
+        validation_alias=AliasChoices(
+            "gemini_timeout_seconds",
+            "CRESMO_GEMINI_TIMEOUT_SECONDS",
+            "GEMINI_TIMEOUT_SECONDS",
+            "CRESMO_GEMINI_TIMEOUT",
+            "GEMINI_TIMEOUT",
+        ),
+        description="HTTP/TCP socket timeout in seconds for Google Gemini API inference requests.",
     )
     ollama_timeout_seconds: float = Field(
         default=300.0,
@@ -655,7 +688,7 @@ class CresmoSettings(BaseSettings):
         description="Criterion weights for gap_filler stage judge evaluation.",
     )
     judge_gemini_model: str = Field(
-        default=DEFAULT_JUDGE_GEMINI_MODEL,
+        default=DEFAULT_GEMINI_MODEL,
         validation_alias=AliasChoices(
             "judge_gemini_model",
             "CRESMO_JUDGE_GEMINI_MODEL",
@@ -674,9 +707,38 @@ class CresmoSettings(BaseSettings):
         ),
         description="Sampling temperature for quality judge evaluation models.",
     )
+    benchmark_models: list[str] = Field(
+        default_factory=lambda: list(DEFAULT_BENCHMARK_MODELS),
+        validation_alias=AliasChoices(
+            "benchmark_models",
+            "CRESMO_BENCHMARK_MODELS",
+            "BENCHMARK_MODELS",
+            "judge_calibration_models",
+            "generator_benchmark_models",
+            "CRESMO_JUDGE_CALIBRATION_MODELS",
+            "JUDGE_CALIBRATION_MODELS",
+            "CRESMO_GENERATOR_BENCHMARK_MODELS",
+            "GENERATOR_BENCHMARK_MODELS",
+        ),
+        description="Canonical model specifications sequentially evaluated in judge calibration and generator benchmark harnesses.",
+    )
+
+    @property
+    def judge_calibration_models(self) -> list[str]:
+        """Backward-compatible alias for benchmark_models."""
+        return self.benchmark_models
+
+    @property
+    def generator_benchmark_models(self) -> list[str]:
+        """Backward-compatible alias for benchmark_models."""
+        return self.benchmark_models
 
 
 __all__ = [
+    "DEFAULT_BENCHMARK_MODELS",
+    "DEFAULT_GEMINI_MODEL",
+    "DEFAULT_GENERATOR_BENCHMARK_MODELS",
+    "DEFAULT_JUDGE_CALIBRATION_MODELS",
     "DEFAULT_JUDGE_GEMINI_MODEL",
     "DEFAULT_JUDGE_PASS_THRESHOLD",
     "DEFAULT_JUDGE_TEMPERATURE",

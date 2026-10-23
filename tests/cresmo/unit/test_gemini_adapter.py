@@ -304,7 +304,10 @@ class TestGeminiLLMAdapter:
                 genai_client=None,
                 langfuse_client=None,
             )
-            mock_client_cls.assert_called_once_with(api_key="secret-key")
+            mock_client_cls.assert_called_once()
+            call_kwargs = mock_client_cls.call_args.kwargs
+            assert call_kwargs["api_key"] == "secret-key"
+            assert call_kwargs["http_options"].timeout == 60000
             assert adapter._client == mock_client_cls.return_value
 
     def test_default_initialization_attributes(self) -> None:

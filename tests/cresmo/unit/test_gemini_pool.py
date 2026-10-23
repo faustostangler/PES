@@ -207,4 +207,12 @@ class TestGeminiQuotaAndErrorScoping:
         assert client2.models.generate_content.call_count == 1
         assert pool.lease()[0] == "k2"
 
+    def test_credential_pool_constructs_client_with_timeout(self) -> None:
+        """Verify GeminiCredentialPool accepts timeout and configures genai.Client with http_options."""
+        pool = GeminiCredentialPool(keys=["dummy-key"], timeout=42.0)
+        _key, client, _alias = pool.lease()
+        # Verify client._api_client._http_options.timeout == 42000 (ms in SDK)
+        assert hasattr(client, "_api_client")
+        assert client._api_client._http_options.timeout == 42000
+
 

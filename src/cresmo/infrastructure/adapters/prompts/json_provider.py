@@ -14,10 +14,11 @@ from __future__ import annotations
 
 import importlib.resources
 import json
-import logging
 import sys
 from pathlib import Path
 from typing import Any
+
+import structlog
 
 from cresmo.application.ports import PromptProviderPort
 from cresmo.domain.value_objects import ChatPrompt
@@ -29,7 +30,7 @@ from cresmo.infrastructure.adapters.prompts.registry import PromptKey
 from cresmo.infrastructure.config import CresmoSettings
 from cresmo.infrastructure.paths import find_workspace_root
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 _CANDIDATE_SKILLS_DIRS = (
     Path.cwd() / ".agents" / "skills",

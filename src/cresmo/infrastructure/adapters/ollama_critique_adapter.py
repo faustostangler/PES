@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-import logging
+import structlog
 
 from cresmo.application.ports import (
     CritiqueSynthesizerPort,
@@ -13,7 +13,7 @@ from cresmo.domain.value_objects import ChatPrompt, PromptKey
 from cresmo.domain.value_objects.quality import JudgeEvaluation
 from cresmo.infrastructure.adapters.prompts import JsonPromptProvider
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 
 class OllamaCritiqueAdapter(CritiqueSynthesizerPort):

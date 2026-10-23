@@ -10,7 +10,6 @@ Conforms to:
 from __future__ import annotations
 
 import json
-import logging
 import math
 import random
 import sys
@@ -23,6 +22,7 @@ from statistics import NormalDist
 from typing import Annotated, Any
 
 import click
+import structlog
 import typer
 
 # Ensure project root and src are in sys.path when invoked directly as a script / debugger
@@ -39,8 +39,7 @@ from cresmo.domain.value_objects.quality import (
 from cresmo.infrastructure.config import CresmoSettings
 from cresmo.presentation.factories.judge_factory import build_llm_judge_adapter
 
-logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
-logger = logging.getLogger("calibrate_judge")
+logger = structlog.get_logger("calibrate_judge")
 
 DEFAULT_GOLDEN_SET_PATH = (
     REPO_ROOT / "scripts" / "fluid_prose" / "golden_sets" / "fluid_prose_golden_set.json"
@@ -1180,7 +1179,7 @@ def calibrate(
             if results.target_isolated.accuracy < 0.85:
                 raise typer.Exit(code=1)
             return
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             logger.error("Failed connecting to remote Langfuse dataset: %s", exc)
             raise typer.Exit(code=1) from exc
 

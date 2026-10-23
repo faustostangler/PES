@@ -8,26 +8,25 @@ Conforms to:
 from __future__ import annotations
 
 import json
-import logging
 import re
 import time
 from typing import Any
 
 import httpx
+import structlog
 
 from cresmo.application.ports import PromptProviderPort
 from cresmo.application.ports.llm_judge_port import LlmJudgePort
 from cresmo.domain.value_objects import (
-    CriterionScore,
     EvaluationContext,
-    JudgeCriterion,
     JudgeEvaluation,
     PromptKey,
 )
+from cresmo.infrastructure.adapters.judges.criterion_parser import parse_criteria_scores
 from cresmo.infrastructure.adapters.prompts import JsonPromptProvider
 from cresmo.infrastructure.config import DEFAULT_JUDGE_PASS_THRESHOLD
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 DEFAULT_PASS_THRESHOLD: float = DEFAULT_JUDGE_PASS_THRESHOLD
 
@@ -115,22 +114,11 @@ class OllamaJudgeAdapter(LlmJudgePort):
             logger.error("Failed to parse Ollama judge JSON output: %s", raw_text)
             raise ValueError(f"Ollama returned invalid JSON: {raw_text}") from err
 
-        criteria_scores_list: list[CriterionScore] = []
-        for item in parsed.get("criteria", []):
-            try:
-                crit_enum = JudgeCriterion(item["criterion"])
-                score_val = max(0.0, min(1.0, float(item["score"])))
-                passed_val = bool(item.get("passed", score_val >= self._pass_threshold))
-                criteria_scores_list.append(
-                    CriterionScore(
-                        criterion=crit_enum,
-                        score=score_val,
-                        passed=passed_val,
-                        reasoning=str(item.get("reasoning", "")),
-                    )
-                )
-            except (ValueError, KeyError) as parse_err:
-                logger.debug("Skipping unparseable Ollama criterion item: %s", parse_err)
+        criteria_scores_list = parse_criteria_scores(
+            raw_criteria=parsed.get("criteria", []),
+            pass_threshold=self._pass_threshold,
+            logger_instance=logger,
+        )
 
         return JudgeEvaluation.create_with_composite_verdict(
             target_stage=context.stage_name,

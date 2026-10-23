@@ -19,9 +19,10 @@ Conforms to:
 
 from __future__ import annotations
 
-import logging
 from pathlib import Path
 from typing import Any
+
+import structlog
 
 from cresmo.application.pipeline.context import PipelineExecutionContext
 from cresmo.application.pipeline.models import PipelineDependencies, PipelineResult
@@ -62,7 +63,7 @@ from cresmo.domain.value_objects import (
     is_processable_transcript_file,
 )
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 
 def _extract_source_text(raw: Any) -> str:

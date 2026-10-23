@@ -15,7 +15,7 @@ Conforms to:
 
 from __future__ import annotations
 
-import logging
+import structlog
 
 from cresmo.application.ports import (
     LlmJudgePort,
@@ -33,7 +33,7 @@ from cresmo.domain.value_objects import (
     RawIndexEntry,
 )
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 
 class IndexRawTranscriptsUseCase:

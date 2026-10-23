@@ -15,7 +15,6 @@ Conforms to:
 from __future__ import annotations
 
 import json
-import logging
 import shutil
 import tempfile
 import threading
@@ -27,6 +26,7 @@ from http import HTTPStatus
 from pathlib import Path
 from typing import Any, cast
 
+import structlog
 import whisper
 import yt_dlp
 
@@ -65,7 +65,7 @@ from cresmo.infrastructure.adapters.media.subtitles import (
 )
 from cresmo.infrastructure.adapters.noop_metrics_adapter import NoOpMetricsAdapter
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 # Re-exports for backwards compatibility
 _ensure_yt_dlp_plugins_loaded = ensure_yt_dlp_plugins_loaded

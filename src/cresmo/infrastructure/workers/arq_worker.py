@@ -12,15 +12,15 @@ Conforms to:
 
 from __future__ import annotations
 
-import logging
 import os
 from pathlib import Path
 from typing import Any, ClassVar
 
+import structlog
 from arq import Retry
 from arq.connections import RedisSettings
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 # Timeout configurations per job profile
 _DEFAULT_JOB_TIMEOUT_SECONDS: int = 600  # 10 minutes for long synthesis/transcription

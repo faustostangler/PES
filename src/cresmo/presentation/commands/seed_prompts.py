@@ -12,7 +12,6 @@ Conforms to:
 
 from __future__ import annotations
 
-import logging
 import re
 import sys
 from typing import Annotated, Any
@@ -29,8 +28,6 @@ from cresmo.presentation.exit_codes import (
     EXIT_INTERNAL_ERROR,
     EXIT_SUCCESS,
 )
-
-logger = logging.getLogger(__name__)
 
 PROMPT_MAPPINGS: dict[str, str] = {
     meta.langfuse_name: meta.key.value for meta in PROMPT_REGISTRY.values()

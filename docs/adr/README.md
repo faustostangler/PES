@@ -70,6 +70,8 @@ In this repository, architectural decisions evolve continuously through test-dri
 | [**ADR-040**](ADR-040-dynamic-cross-cutting-skill-block-composition.md) | 2026-10-13 | Dynamic Cross-Cutting Skill Block Composition in JsonPromptProvider and Cresmo Style Embedding | Cognitive / Prompts | `ACCEPTED` | Multi-skill dynamic block resolution (`skills: [...]`) in `JsonPromptProvider`, enforcing SSOT and dynamic skill injection over static JSON duplication. |
 | [**ADR-041**](ADR-041-gemini-credential-pool-and-quota-failover.md) | 2026-10-13 | Gemini Credential Pool and Quota-Aware Failover Rotation | Infrastructure / Resilience | `ACCEPTED` | Strategy A1+B2 thread-safe credential pool (`GeminiCredentialPool`) with fast quota failover, client caching, and server `retryDelay` cooldown. |
 | [**ADR-042**](ADR-042-typer-presentation-cli.md) | 2026-10-14 | Modern Typer Presentation CLI Driving Adapter | Presentation / CLI | `ACCEPTED` | **Supersedes ADR-002**. Eliminates legacy argparse in favor of Typer + Rich with fail-fast boundary validation. |
+| [**ADR-043**](ADR-043-fluid-transcript-vault-persistence-and-checkpointing.md) | 2026-10-18 | Fluid Transcript Vault Persistence, Checkpointing, and Lineage Observability | Storage / Checkpointing | `ACCEPTED` | Extends VaultRepositoryPort and Obsidian Vault adapter to persist normalized fluid transcripts in data/fluid/ with atomic checkpointing. |
+| [**ADR-044**](ADR-044-structlog-structured-logging-unification.md) | 2026-10-20 | Structlog Structured Logging Unification and Stdlib Logging Elimination | Observability / Infra | `ACCEPTED` | **Supersedes ADR-025 in part**. Eliminates stdlib logging in favor of native structlog with OTel trace correlation and Loki JSON output. |
 
 ---
 
@@ -121,6 +123,7 @@ graph TD
         A029["ADR-029: Unified LlmJudgePort"]
         A039["ADR-039: Canonical Judge Criteria & Gates"]
         A040["ADR-040: Dynamic Multi-Skill Composition"]
+        A045["ADR-045: Cognitive-Load-Tiered Pipeline & Escalation (PROPOSED)"]
         A011 --> A013
         A013 --> A024
         A017 --> A022
@@ -128,6 +131,7 @@ graph TD
         A022 --> A028
         A024 --> A029
         A029 --> A039
+        A039 --> A045
     end
 
     subgraph SRE ["4. Observability, Telemetry & SRE Platform"]
@@ -218,6 +222,12 @@ When navigating the architecture, apply these authoritative precedence relations
 - **ADR-028** decoupled `fluid_prose` detranscription from Socratic gap filling, creating the `FluidTranscript` aggregate in-memory.
 - **ADR-043** extended `VaultRepositoryPort` and `ObsidianVaultAdapter` to persist and retrieve `FluidTranscript` aggregates in `data/fluid/{channel_name}/{video_id}.md` with YAML frontmatter. Implemented idempotent pipeline checkpointing, enabling crash recovery and complete data provenance lineage (`data/raw` $\to$ `data/fluid` $\to$ `data/enriched`).
 - **Precedence Rule:** Stage 1 `fluid_prose` outputs must be atomically persisted to `data/fluid/`. Pipelines must check for existing checkpoints before triggering redundant LLM inference.
+
+### 4.10 Cognitive-Load-Tiered Pipeline & Evaluator Escalation (ADR-045 extends ADR-029, ADR-030, ADR-031 & ADR-039)
+- **ADR-045 (PROPOSED)** eliminates the Homogeneous Model Anti-Pattern, codifying the Evaluator Epistemic Asymmetry Principle (Judge capability $\ge$ Generator capability).
+- Establishes heterogeneous generator allocation across the 4 Cresmo stages (Lightweight for `fluid_prose`, Frontier for `gap_filler`, Structured Mode for `cresmo_atomic`, Algorithmic Native for `mocs`).
+- Introduces 3-tier quality gates: Tier 0 (Mechanical/Pydantic zero-cost filters), Tier 1 (`LlmJudgePort` evaluation), Tier 2 (Model Cascading or Reflective Diagnostic Self-Repair).
+- **Precedence Rule (Pending Approval):** Once accepted, stages must not execute uniform global model configurations; they must declare explicit generator tiers and escalation policies.
 
 ---
 

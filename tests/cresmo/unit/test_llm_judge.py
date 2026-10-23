@@ -243,7 +243,9 @@ class TestGeminiJudgeAdapter:
 
         adapter = GeminiJudgeAdapter(client=mock_genai_client, temperature=0.7)
         assert adapter.temperature == 0.7
-        assert adapter.pass_threshold == 0.8
+        from cresmo.infrastructure.adapters.judges.gemini_judge import DEFAULT_PASS_THRESHOLD
+
+        assert adapter.pass_threshold == DEFAULT_PASS_THRESHOLD
         assert adapter.model == "gemini-3.5-flash-lite"
 
         context = EvaluationContext(
@@ -303,6 +305,124 @@ class TestGeminiJudgeAdapter:
         assert args[0] == PromptKey.JUDGE_GAP_FILLER
         assert kwargs["stage_name"] == "gap_filler"
 
+    def test_gemini_judge_passes_response_schema_in_config(self) -> None:
+        mock_genai_client = MagicMock()
+        mock_response = MagicMock()
+        mock_response.text = json.dumps(
+            {
+                "criteria": [
+                    {
+                        "criterion": "factual_grounding",
+                        "score": 0.95,
+                        "passed": True,
+                        "reasoning": "Accurate grounding.",
+                    }
+                ],
+                "overall_score": 0.95,
+                "passed": True,
+            }
+        )
+        mock_genai_client.models.generate_content.return_value = mock_response
+
+        adapter = GeminiJudgeAdapter(client=mock_genai_client)
+        context = EvaluationContext(
+            stage_name="gap_filler",
+            raw_text="source",
+            candidate_text="candidate",
+            required_criteria=(JudgeCriterion.FACTUAL_GROUNDING,),
+        )
+        adapter.evaluate(context)
+
+        mock_genai_client.models.generate_content.assert_called_once()
+        _, kwargs = mock_genai_client.models.generate_content.call_args
+        config = kwargs["config"]
+        from cresmo.infrastructure.adapters.judges.criterion_parser import (
+            JudgeResponseOutputSchema,
+        )
+
+        assert config.response_schema is JudgeResponseOutputSchema
+        assert config.response_mime_type == "application/json"
+
+    def test_gemini_judge_resiliently_parses_aliases_and_skips_unparseable_meta(self) -> None:
+        mock_genai_client = MagicMock()
+        mock_response = MagicMock()
+        mock_response.text = json.dumps(
+            {
+                "criteria": [
+                    {
+                        "name": "factual_grounding",
+                        "score": 0.95,
+                        "passed": True,
+                        "reasoning": "Valid via name alias.",
+                    },
+                    {
+                        "criterion_name": "socratic_epistemic_depth",
+                        "score": 0.92,
+                        "passed": True,
+                        "reasoning": "Valid via criterion_name alias.",
+                    },
+                    {
+                        "summary": "Non-criterion meta object produced by LLM",
+                        "overall_score": 0.95,
+                    },
+                ],
+                "overall_score": 0.935,
+                "passed": True,
+            }
+        )
+        mock_genai_client.models.generate_content.return_value = mock_response
+
+        adapter = GeminiJudgeAdapter(client=mock_genai_client, pass_threshold=0.80)
+        context = EvaluationContext(
+            stage_name="gap_filler",
+            raw_text="source",
+            candidate_text="candidate",
+            required_criteria=(
+                JudgeCriterion.FACTUAL_GROUNDING,
+                JudgeCriterion.SOCRATIC_EPISTEMIC_DEPTH,
+            ),
+        )
+        evaluation = adapter.evaluate(context)
+
+        assert evaluation.passed is True
+        assert len(evaluation.criteria_scores) == 2
+        fg = evaluation.get_score(JudgeCriterion.FACTUAL_GROUNDING)
+        assert fg is not None
+        assert fg.score == 0.95
+        depth = evaluation.get_score(JudgeCriterion.SOCRATIC_EPISTEMIC_DEPTH)
+        assert depth is not None
+        assert depth.score == 0.92
+
+    def test_transient_network_and_disconnect_error_detection(self) -> None:
+        from cresmo.infrastructure.adapters.judges.gemini_judge import (
+            _is_transient_cluster_error,
+            _is_transient_genai_error,
+        )
+
+        disconnect_err = Exception("Server disconnected without sending a response.")
+        assert _is_transient_genai_error(disconnect_err) is True
+        assert _is_transient_cluster_error(disconnect_err) is True
+
+        conn_reset_err = ConnectionResetError("Connection reset by peer")
+        assert _is_transient_genai_error(conn_reset_err) is True
+        assert _is_transient_cluster_error(conn_reset_err) is True
+
+        protocol_err = Exception("RemoteProtocolError: peer closed connection")
+        assert _is_transient_genai_error(protocol_err) is True
+        assert _is_transient_cluster_error(protocol_err) is True
+
+        # Ensure quota exhaustion is NOT handled as cluster error (delegated to pool)
+        quota_err = Exception("ResourceExhausted: 429 Resource has been exhausted")
+        assert _is_transient_genai_error(quota_err) is True
+        assert _is_transient_cluster_error(quota_err) is False
+
+    def test_gemini_judge_adapter_accepts_timeout_seconds(self) -> None:
+        """Verify GeminiJudgeAdapter accepts timeout_seconds and passes it to pool."""
+        judge = GeminiJudgeAdapter(api_key="mock-key", timeout_seconds=45.0)
+        assert judge._timeout_seconds == 45.0
+        assert judge._pool is not None
+        assert judge._pool.timeout == 45.0
+
 
 class TestOllamaJudgeAdapter:
     """Test suite for local Ollama fallback judge adapter."""
@@ -333,6 +453,7 @@ class TestOllamaJudgeAdapter:
             http_client=mock_http_client,
             base_url="http://localhost:11434",
             model="qwen2.5:7b",
+            pass_threshold=0.80,
         )
         context = EvaluationContext(
             stage_name="fluid_prose",
@@ -520,6 +641,7 @@ class TestTypeSafeJudgeAdapter:
         adapter = TypeSafeJudgeAdapter(
             api_key="sk-test",
             http_client=mock_http_client,
+            pass_threshold=0.80,
         )
         context = EvaluationContext(
             stage_name="gap_filler",

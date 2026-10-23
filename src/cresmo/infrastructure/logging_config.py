@@ -1,15 +1,17 @@
-"""Centralized structured logging for Loki integration per ADR-025.
+"""Centralized structured logging for Loki integration per ADR-025 and ADR-044.
 
-Configures stdlib logging with JSON formatter (python-json-logger) and
-OpenTelemetry trace correlation filter for Grafana Loki -> Langfuse pivot.
+Configures structlog and stdlib logging with JSON formatter (python-json-logger) and
+OpenTelemetry trace correlation filter/processor for Grafana Loki -> Langfuse pivot.
 """
 
 from __future__ import annotations
 
 import logging
 import logging.config
+from collections.abc import MutableMapping
 from typing import Any
 
+import structlog
 from opentelemetry import trace
 
 
@@ -39,11 +41,34 @@ class CresmoOTelTraceCorrelationFilter(logging.Filter):
         return True
 
 
+def add_opentelemetry_context(
+    logger: Any,
+    method_name: str,
+    event_dict: MutableMapping[str, Any],
+) -> MutableMapping[str, Any]:
+    """Structlog processor injecting OTel trace_id, span_id, and session_id into event_dict."""
+    span = trace.get_current_span()
+    ctx = span.get_span_context() if span else None
+    if ctx and ctx.trace_id:
+        event_dict["otelTraceID"] = format(ctx.trace_id, "032x")
+        event_dict["otelSpanID"] = format(ctx.span_id, "016x")
+    else:
+        event_dict["otelTraceID"] = "0" * 32
+        event_dict["otelSpanID"] = "0" * 16
+
+    event_dict["session_id"] = ""
+    if hasattr(span, "attributes") and span.attributes:
+        sid = span.attributes.get("langfuse.session.id")
+        if sid:
+            event_dict["session_id"] = str(sid)
+    return event_dict
+
+
 _LOGGING_CONFIGURED: bool = False
 
 
 def configure_logging(level: str = "WARNING", fmt: str = "json") -> None:
-    """Configure root logger with JSON or text formatter.
+    """Configure root logger and structlog with JSON or text formatter.
 
     Idempotent: subsequent calls with the same arguments are no-ops. Calling
     with different arguments reconfigures. This prevents test-session stream
@@ -99,3 +124,25 @@ def configure_logging(level: str = "WARNING", fmt: str = "json") -> None:
             },
         }
     )
+
+    structlog.configure(
+        processors=[
+            structlog.contextvars.merge_contextvars,
+            structlog.stdlib.filter_by_level,
+            structlog.stdlib.add_logger_name,
+            structlog.stdlib.add_log_level,
+            structlog.processors.TimeStamper(fmt="iso"),
+            add_opentelemetry_context,
+            structlog.processors.StackInfoRenderer(),
+            structlog.processors.format_exc_info,
+            structlog.stdlib.PositionalArgumentsFormatter(),
+            structlog.stdlib.render_to_log_kwargs,
+        ],
+        logger_factory=structlog.stdlib.LoggerFactory(),
+        wrapper_class=structlog.stdlib.BoundLogger,
+        cache_logger_on_first_use=True,
+    )
+
+
+get_logger = structlog.get_logger
+
