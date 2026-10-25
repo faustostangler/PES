@@ -36,8 +36,8 @@ DEFAULT_JUDGE_GEMINI_MODEL: str = DEFAULT_GEMINI_MODEL
 DEFAULT_JUDGE_TEMPERATURE: float = 0.0
 DEFAULT_GEMINI_TIMEOUT_SECONDS: float = 60.0
 DEFAULT_BENCHMARK_MODELS: list[str] = [
+    "gemini:gemini-3.5-flash",
     "gemini:gemini-3.5-flash-lite",
-    "gemini:gemini-3.8-flash",
     # "ollama:qwen2.5:latest",
     # "ollama:gemma4:latest",
     # "ollama:deepseek-r1:7b",

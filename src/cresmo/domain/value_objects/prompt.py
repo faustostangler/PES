@@ -32,7 +32,7 @@ class PromptKey(StrEnum):
     JUDGE_RAW_INDEX_SUMMARY = "judge_raw_index_summary"
     JUDGE_RAW_INDEX_CONCEPTS = "judge_raw_index_concepts"
     JUDGE_RAW_INDEX_SYNTHESIS = "judge_raw_index_synthesis"
-    LLM_JUDGE = "llm_judge"
+    JUDGE_FLUID_PROSE = "judge_fluid_prose"
     JUDGE_GAP_FILLER = "judge_gap_filler"
     OLLAMA_CRITIQUE = "ollama_critique"
 
@@ -67,25 +67,25 @@ class ChatPrompt:
     """
 
     messages: tuple[ChatMessage, ...]
-    system_instruction: str | None = None
+    system_prompt: str | None = None
 
     def __post_init__(self) -> None:
         if not self.messages and (
-            not self.system_instruction or not self.system_instruction.strip()
+            not self.system_prompt or not self.system_prompt.strip()
         ):
             raise DomainValidationError(
-                "ChatPrompt must have at least one message or system_instruction."
+                "ChatPrompt must have at least one message or system_prompt."
             )
 
     @classmethod
     def single_turn(
         cls,
         user_prompt: str,
-        system_instruction: str | None = None,
+        system_prompt: str | None = None,
     ) -> ChatPrompt:
         """Convenience factory creating a single-turn user prompt."""
         return cls(
-            system_instruction=system_instruction,
+            system_prompt=system_prompt,
             messages=(ChatMessage(role=MessageRole.USER, content=user_prompt),),
         )
 
@@ -95,13 +95,13 @@ class ChatPrompt:
         user: str,
         system: str | None = None,
     ) -> ChatPrompt:
-        """Convenience factory creating a ChatPrompt from user content and optional system instruction."""
-        return cls.single_turn(user_prompt=user, system_instruction=system)
+        """Convenience factory creating a ChatPrompt from user content and optional system prompt."""
+        return cls.single_turn(user_prompt=user, system_prompt=system)
 
     def with_turn(self, role: MessageRole, content: str) -> ChatPrompt:
         """Return a new immutable ChatPrompt with an appended message turn."""
         return ChatPrompt(
-            system_instruction=self.system_instruction,
+            system_prompt=self.system_prompt,
             messages=(*self.messages, ChatMessage(role=role, content=content)),
         )
 
@@ -115,8 +115,8 @@ class ChatPrompt:
     def to_dict_list(self) -> list[dict[str, str]]:
         """Serialize messages into standardized dictionary representation."""
         result: list[dict[str, str]] = []
-        if self.system_instruction:
-            result.append({"role": MessageRole.SYSTEM.value, "content": self.system_instruction})
+        if self.system_prompt:
+            result.append({"role": MessageRole.SYSTEM.value, "content": self.system_prompt})
         for msg in self.messages:
             result.append({"role": msg.role.value, "content": msg.content})
         return result

@@ -100,14 +100,14 @@ class StageConfig[TSource, TOutput]:
             else:
                 new_messages.append(msg)
 
-        if not new_messages and base_prompt.system_instruction:
+        if not new_messages and base_prompt.system_prompt:
             new_messages.append(
                 ChatMessage(role=MessageRole.USER, content=critique_feedback.strip())
             )
 
         return ChatPrompt(
             messages=tuple(new_messages),
-            system_instruction=base_prompt.system_instruction,
+            system_prompt=base_prompt.system_prompt,
         )
 
     def post_process(self, candidate: CandidateText, source: TSource) -> TOutput:

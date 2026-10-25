@@ -795,6 +795,7 @@ def calibrate(
                     "recall": rec,
                     "output_file": output_file,
                     "passed": acc >= 0.80,
+                    "status": "APROVADO" if acc >= 0.80 else "REPROVADO",
                 }
             )
 
@@ -818,27 +819,54 @@ def calibrate(
                     "recall": 0.0,
                     "output_file": f"ABORTADO (COOLDOWN {exc.retry_after_seconds:.0f}s)",
                     "passed": False,
+                    "status": "COOLDOWN",
+                }
+            )
+            overall_exit_code = 1
+        except Exception as exc:  # noqa: BLE001
+            logger.error(
+                "❌ [ERRO] Falha na calibração do modelo '%s:%s': %s. Continuando para os próximos modelos da fila.",
+                resolved_provider,
+                model_name,
+                exc,
+            )
+            reports.append(
+                {
+                    "spec": f"{resolved_provider}:{model_name}",
+                    "accuracy": 0.0,
+                    "d_prime": 0.0,
+                    "f1": 0.0,
+                    "precision": 0.0,
+                    "recall": 0.0,
+                    "output_file": f"ERRO ({type(exc).__name__}: {str(exc)[:60]})",
+                    "passed": False,
+                    "status": "ERRO",
                 }
             )
             overall_exit_code = 1
 
     # 4. Print Comparative Summary Table
-    print("\n" + "=" * 90)
+    print("\n" + "=" * 95)
     print("COMPARATIVO DE CALIBRAÇÃO DOS JUÍZES (STAGE 2: GAP_FILLER)")
-    print("=" * 90)
+    print("=" * 95)
     print(
-        f"{'Modelo':<35} | {'Acurácia':<8} | {'d-prime':<7} | {'F1':<6} | {'Precisão':<8} | {'Recall':<6} | {'Status':<6}"
+        f"{'Modelo':<35} | {'Acurácia':<8} | {'d-prime':<7} | {'F1':<6} | {'Precisão':<8} | {'Recall':<6} | {'Status':<9}"
     )
-    print("-" * 90)
+    print("-" * 95)
     for r in reports:
-        status_str = "APROVADO" if r["passed"] else "FALHOU"
-        print(
-            f"{r['spec']:<35} | {r['accuracy'] * 100:>7.1f}% | {r['d_prime']:>7.2f} | {r['f1']:>6.3f} | {r['precision'] * 100:>7.1f}% | {r['recall'] * 100:>5.1f}% | {status_str:<6}"
-        )
-    print("=" * 90)
-    print("📁 Relatórios individuais salvos em:")
+        status_str = r.get("status", "APROVADO" if r["passed"] else "REPROVADO")
+        if status_str in ("ERRO", "COOLDOWN"):
+            print(
+                f"{r['spec']:<35} | {'N/A':>8} | {'N/A':>7} | {'N/A':>6} | {'N/A':>8} | {'N/A':>6} | {status_str:<9}"
+            )
+        else:
+            print(
+                f"{r['spec']:<35} | {r['accuracy'] * 100:>7.1f}% | {r['d_prime']:>7.2f} | {r['f1']:>6.3f} | {r['precision'] * 100:>7.1f}% | {r['recall'] * 100:>5.1f}% | {status_str:<9}"
+            )
+    print("=" * 95)
+    print("📁 Relatórios e status individuais:")
     for r in reports:
-        print(f"   👉 {r['output_file']}")
+        print(f"   👉 {r['spec']}: {r['output_file']}")
     print()
 
     if overall_exit_code != 0:
@@ -870,5 +898,6 @@ def main(argv: Sequence[str] | None = None) -> int:
 
 
 if __name__ == "__main__":
-    sys.exit(main())
-    print('done!')
+    exit_code = main()
+    print("done!")
+    sys.exit(exit_code)

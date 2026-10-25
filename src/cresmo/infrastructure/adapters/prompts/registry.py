@@ -130,11 +130,11 @@ PROMPT_REGISTRY: dict[PromptKey, PromptMetadata] = {
         skill_name="cresmo",
         description="LLM-as-a-judge synthesis compliance and parataxis verification.",
     ),
-    PromptKey.LLM_JUDGE: PromptMetadata(
-        key=PromptKey.LLM_JUDGE,
-        langfuse_name="cresmo-llm-judge",
-        skill_name="cresmo",
-        description="Universal multi-criteria quality evaluation judge for knowledge synthesis pipelines.",
+    PromptKey.JUDGE_FLUID_PROSE: PromptMetadata(
+        key=PromptKey.JUDGE_FLUID_PROSE,
+        langfuse_name="cresmo-judge-fluid-prose",
+        skill_name="cresmo-fluid-prose",
+        description="LLM-as-a-judge quality evaluation for fluid_prose stage verifying orality removal, semantic faithfulness, NER preservation, and authorial voice.",
     ),
     PromptKey.JUDGE_GAP_FILLER: PromptMetadata(
         key=PromptKey.JUDGE_GAP_FILLER,

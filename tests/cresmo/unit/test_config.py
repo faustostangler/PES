@@ -166,8 +166,8 @@ class TestCresmoSettings:
         assert settings.gemini_model == "gemini-3.5-flash-lite"
         assert settings.judge_gemini_model == "gemini-3.5-flash-lite"
         assert settings.benchmark_models == [
+            "gemini:gemini-3.5-flash",
             "gemini:gemini-3.5-flash-lite",
-            "gemini:gemini-3.8-flash",
         ]
         assert settings.judge_calibration_models == settings.benchmark_models
         assert settings.generator_benchmark_models == settings.benchmark_models

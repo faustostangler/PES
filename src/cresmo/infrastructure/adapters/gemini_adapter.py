@@ -260,7 +260,7 @@ class GeminiLLMAdapter(LLMTransformationPort):
         config = types.GenerateContentConfig(
             temperature=effective_temperature,
             max_output_tokens=self.max_output_tokens,
-            system_instruction=prompt.system_instruction,
+            system_instruction=prompt.system_prompt,
             automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=True),
         )
 

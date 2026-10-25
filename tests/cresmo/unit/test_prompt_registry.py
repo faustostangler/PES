@@ -38,7 +38,7 @@ class TestPromptRegistry:
             "judge_raw_index_summary",
             "judge_raw_index_concepts",
             "judge_raw_index_synthesis",
-            "llm_judge",
+            "judge_fluid_prose",
             "judge_gap_filler",
             "ollama_critique",
         }

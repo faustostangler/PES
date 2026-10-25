@@ -37,6 +37,7 @@ class StageRegistry:
     _SPECS: ClassVar[dict[str, StageDefinition]] = {
         "fluid_prose": StageDefinition(
             transform_prompt_key=PromptKey.FLUID_PROSE,
+            judge_prompt_key=PromptKey.JUDGE_FLUID_PROSE,
             required_criteria=(
                 JudgeCriterion.ORALITY_REMOVAL,
                 JudgeCriterion.SEMANTIC_FAITHFULNESS,
@@ -49,6 +50,7 @@ class StageRegistry:
         ),
         "gap_filler": StageDefinition(
             transform_prompt_key=PromptKey.GAP_FILLER_PASS1,
+            judge_prompt_key=PromptKey.JUDGE_GAP_FILLER,
             required_criteria=(
                 JudgeCriterion.FACTUAL_GROUNDING,
                 JudgeCriterion.SOCRATIC_EPISTEMIC_DEPTH,

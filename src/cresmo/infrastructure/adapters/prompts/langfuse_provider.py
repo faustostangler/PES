@@ -61,7 +61,7 @@ def _extract_prompt_messages(
             f"Expected compiled_messages to be a list, got {type(compiled_messages).__name__}"
         )
 
-    system_instruction: str | None = None
+    system_prompt: str | None = None
     messages: list[ChatMessage] = []
 
     for msg in compiled_messages:
@@ -82,10 +82,10 @@ def _extract_prompt_messages(
             content = content.replace(f"{{{key}}}", str(value))
 
         if raw_role == "system":
-            if system_instruction:
-                system_instruction = f"{system_instruction}\n\n{content}"
+            if system_prompt:
+                system_prompt = f"{system_prompt}\n\n{content}"
             else:
-                system_instruction = content
+                system_prompt = content
         elif raw_role in ("user", "human"):
             messages.append(ChatMessage(role=MessageRole.USER, content=content))
         elif raw_role in ("assistant", "model", "ai"):
@@ -93,14 +93,14 @@ def _extract_prompt_messages(
         else:
             messages.append(ChatMessage(role=MessageRole.USER, content=content))
 
-    if not messages and not system_instruction:
+    if not messages and not system_prompt:
         raise ValueError(
-            "Langfuse chat prompt must contain at least one valid message or system instruction."
+            "Langfuse chat prompt must contain at least one valid message or system prompt."
         )
 
     return ChatPrompt(
         messages=tuple(messages),
-        system_instruction=system_instruction,
+        system_prompt=system_prompt,
     )
 
 

@@ -183,7 +183,7 @@ class TestGeminiJudgeAdapter:
         args, kwargs = mock_prompt_provider.get_prompt.call_args
         from cresmo.domain.value_objects import PromptKey
 
-        assert args[0] == PromptKey.LLM_JUDGE
+        assert args[0] == PromptKey.JUDGE_FLUID_PROSE
         assert kwargs["stage_name"] == "fluid_prose"
         assert kwargs["source_text"] == "raw"
         assert kwargs["candidate_text"] == "cand"
@@ -514,7 +514,7 @@ class TestOllamaJudgeAdapter:
         args, kwargs = mock_prompt_provider.get_prompt.call_args
         from cresmo.domain.value_objects import PromptKey
 
-        assert args[0] == PromptKey.LLM_JUDGE
+        assert args[0] == PromptKey.JUDGE_FLUID_PROSE
         assert kwargs["stage_name"] == "fluid_prose"
         assert kwargs["source_text"] == "raw text"
         assert kwargs["candidate_text"] == "cand text"

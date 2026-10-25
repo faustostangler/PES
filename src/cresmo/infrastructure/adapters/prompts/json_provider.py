@@ -177,41 +177,41 @@ class JsonPromptProvider(PromptProviderPort):
         skill_block = self._resolve_skill_block(entry)
         task = entry.get("task", "")
 
-        system_instruction = entry.get("system_instruction", "")
-        template = entry.get("template", "")
+        system_prompt = entry.get("system_prompt", "")
+        user_prompt = entry.get("user_prompt", "")
 
-        tpl = template or system_instruction or task or entry.get("task", "")
+        tpl = user_prompt or system_prompt or task or entry.get("task", "")
 
         return tpl.replace("{task}", task).replace("{skill_block}", skill_block)
 
     def get_chat_prompt_template(self, template_key: str | PromptKey) -> tuple[str, str]:
-        """Retrieve unformatted system instruction and user template with embedded skill block.
+        """Retrieve unformatted system prompt and user prompt with embedded skill block.
 
-        Conforms to ADR-010 and ADR-017 for Chat-Native prompt governance.
+        Conforms to ADR-010, ADR-017, and ADR-022 for Chat-Native prompt governance.
 
         Args:
             template_key: Key in prompts.json (e.g. 'gap_filler_pass1') or PromptKey enum.
 
         Returns:
-            Tuple of (system_instruction, user_template).
+            Tuple of (system_prompt, user_prompt).
         """
         key_str = template_key.value if isinstance(template_key, PromptKey) else template_key
         entry = self._templates.get(key_str, {})
         skill_block = self._resolve_skill_block(entry)
         task = entry.get("task", "")
 
-        system_instruction = entry.get("system_instruction", "")
-        if not system_instruction and task:
-            system_instruction = task
-        system_instruction = system_instruction.replace("{task}", task).replace(
+        system_prompt = entry.get("system_prompt", "")
+        if not system_prompt and task:
+            system_prompt = task
+        system_prompt = system_prompt.replace("{task}", task).replace(
             "{skill_block}", skill_block
         )
 
-        user_template = entry.get("template", "")
-        if not user_template and task and not system_instruction:
-            user_template = task
+        user_prompt = entry.get("user_prompt", "")
+        if not user_prompt and task and not system_prompt:
+            user_prompt = task
 
-        return system_instruction, user_template
+        return system_prompt, user_prompt
 
     def get_prompt(
         self,
@@ -225,7 +225,7 @@ class JsonPromptProvider(PromptProviderPort):
             **context: Template variable substitutions.
 
         Returns:
-            ChatPrompt instance containing messages and optional system instruction.
+            ChatPrompt instance containing messages and optional system prompt.
         """
         builder = self._registry.get(key)
         return builder(self, **context)
@@ -235,22 +235,22 @@ class JsonPromptProvider(PromptProviderPort):
         template_key: str,
         **kwargs: Any,
     ) -> ChatPrompt:
-        """Format (system_instruction, user_prompt) pair into a ChatPrompt for a given template key."""
+        """Format (system_prompt, user_prompt) pair into a ChatPrompt for a given template key."""
         entry = self._templates.get(template_key, {})
         task = entry.get("task", "")
         skill_block = self._resolve_skill_block(entry)
-        system_template = entry.get("system_instruction", "")
+        system_template = entry.get("system_prompt", "")
         if system_template:
-            system_instruction = self._safe_format(
+            system_prompt = self._safe_format(
                 system_template, task=task, skill_block=skill_block, **kwargs
             )
         else:
-            system_instruction = f"{task}\n\n{skill_block}".strip() if (task or skill_block) else ""
-        template = entry.get("template", "")
-        user_prompt = self._safe_format(template, task=task, skill_block=skill_block, **kwargs)
+            system_prompt = f"{task}\n\n{skill_block}".strip() if (task or skill_block) else ""
+        user_template = entry.get("user_prompt", "")
+        user_prompt = self._safe_format(user_template, task=task, skill_block=skill_block, **kwargs)
         return ChatPrompt.from_system_and_user(
             user=user_prompt,
-            system=system_instruction if system_instruction else None,
+            system=system_prompt if system_prompt else None,
         )
 
     def _format_single_prompt(
@@ -261,6 +261,6 @@ class JsonPromptProvider(PromptProviderPort):
         """Format a single user prompt into a ChatPrompt for a given template key."""
         entry = self._templates.get(template_key, {})
         task = entry.get("task", "")
-        template = entry.get("template", "")
-        user_prompt = self._safe_format(template, task=task, **kwargs)
+        user_template = entry.get("user_prompt", "")
+        user_prompt = self._safe_format(user_template, task=task, **kwargs)
         return ChatPrompt.from_system_and_user(user=user_prompt, system=None)

@@ -95,7 +95,7 @@ class MockLLMAdapter(LLMTransformationPort):
         self.call_history.append(
             {
                 "prompt": prompt,
-                "system_instruction": prompt.system_instruction
+                "system_prompt": prompt.system_prompt
                 if isinstance(prompt, ChatPrompt)
                 else None,
                 "temperature": temperature,

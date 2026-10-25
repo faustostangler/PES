@@ -578,7 +578,7 @@ class TestExpandLongitudinalSynchronic:
         assert all(c["user_id"] == "anonymous" for c in llm_port.call_history)
         # Pass 1: Longitude expander gets initial compendium body and complementary info
         p0 = llm_port.call_history[0]["prompt"].get_last_user_content()
-        sys0 = llm_port.call_history[0]["system_instruction"] or ""
+        sys0 = llm_port.call_history[0]["system_prompt"] or ""
         assert "Continuous prose body describing elites." in p0
         assert "Initial complementary info." in p0
         assert sys0.startswith("You are Cresmo Long-Expander")
@@ -587,7 +587,7 @@ class TestExpandLongitudinalSynchronic:
 
         # Pass 2: Wide expander gets the response from longitudinal expansion
         p1 = llm_port.call_history[1]["prompt"].get_last_user_content()
-        sys1 = llm_port.call_history[1]["system_instruction"] or ""
+        sys1 = llm_port.call_history[1]["system_prompt"] or ""
         assert "Longitudinal analysis tracing Roman patricians" in p1
         assert sys1.startswith("You are Cresmo Wide-Expander")
         assert p1.startswith("Take the following longitudinally expanded Markdown document")

@@ -115,7 +115,7 @@ _NOOP_BUILDERS: dict[PromptKey, Callable[[dict[str, Any]], tuple[str, str]]] = {
         f"You are Judge. Language: {c.get('language', DEFAULT_LANGUAGE)}.",
         f"Title: {c.get('content_title', '')}\nExcerpt:\n{c.get('transcript_excerpt', '')}\nSynthesis:\n{c.get('synthesis', '')}",
     ),
-    PromptKey.LLM_JUDGE: lambda c: (
+    PromptKey.JUDGE_FLUID_PROSE: lambda c: (
         "You are a rigorous, calibrated Quality Evaluation Judge for knowledge synthesis pipelines. You must return ONLY a valid JSON object matching the criteria structure.",
         f"Stage: {c.get('stage_name', '')}\nRequired Criteria to Evaluate: {c.get('criteria_json', '[]')}\n\n--- SOURCE REFERENCE TEXT ---\n{c.get('source_text', '')}\n\n--- CANDIDATE TEXT ---\n{c.get('candidate_text', '')}\n\nEvaluate now and output the JSON verdict.",
     ),
@@ -139,4 +139,4 @@ class NoOpPromptProviderPort(PromptProviderPort):
         if builder is None:
             raise ValueError(f"Unsupported prompt key: {key}")
         sys_inst, user_prompt = builder(context)
-        return ChatPrompt.single_turn(user_prompt=user_prompt, system_instruction=sys_inst)
+        return ChatPrompt.single_turn(user_prompt=user_prompt, system_prompt=sys_inst)
