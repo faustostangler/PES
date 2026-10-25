@@ -22,12 +22,12 @@ from collections.abc import Callable
 from typing import Any
 
 import structlog
-from langfuse import Langfuse
+from langfuse import Langfuse # very slow import
 from langfuse.span_filter import is_default_export_span
 from langfuse.types import MaskOtelSpansParams, MaskOtelSpansResult, OtelSpanPatch
 
 from cresmo.application.pipeline import (
-    CresmoPipeline,
+    CresmoPipeline, # slow import
     PipelineDependencies,
     PipelineStageRunner,
     StageFactory,
