@@ -298,7 +298,7 @@ class TestFillGapsFluidProse:
 
         # Pass 1: pass_num=1, current_text=None
         call0 = mock_pp.get_prompt.call_args_list[0]
-        assert call0[0][0] == PromptKey.GAP_FILLER_PASS1
+        assert call0[0][0] == PromptKey.GAP_FILLER
         assert call0[1]["pass_num"] == 1
         assert call0[1]["total_passes"] == 3
         assert call0[1]["channel_name"] == ChannelName("Example Channel")
@@ -308,7 +308,7 @@ class TestFillGapsFluidProse:
 
         # Pass 2: pass_num=2, current_text is previous pass output
         call1 = mock_pp.get_prompt.call_args_list[1]
-        assert call1[0][0] == PromptKey.GAP_FILLER_PASS_SUBSEQUENT
+        assert call1[0][0] == PromptKey.GAP_FILLER
         assert call1[1]["pass_num"] == 2
         assert call1[1]["total_passes"] == 3
         assert call1[1]["channel_name"] == ChannelName("Example Channel")
@@ -318,7 +318,7 @@ class TestFillGapsFluidProse:
 
         # Pass 3: pass_num=3, current_text is previous pass output
         call2 = mock_pp.get_prompt.call_args_list[2]
-        assert call2[0][0] == PromptKey.GAP_FILLER_PASS_SUBSEQUENT
+        assert call2[0][0] == PromptKey.GAP_FILLER
         assert call2[1]["pass_num"] == 3
         assert call2[1]["total_passes"] == 3
         assert call2[1]["channel_name"] == ChannelName("Example Channel")

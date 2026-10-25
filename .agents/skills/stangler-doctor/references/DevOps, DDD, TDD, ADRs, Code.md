@@ -156,7 +156,7 @@ Sentry: Real-time error tracking with direct mapping to source code and commits.
 
 UptimeRobot: Simple, effective external monitoring for service availability heartbeats.
 
-VI. Execution Protocol: The Akita Method (AI Pair Programming)
+VI. Execution Protocol: The Stangler method (AI Pair Programming)
 
 Any interaction with the AI assistant must rigorously follow this operational method to ensure quality and prevent regressions. The human acts as the Lead Architect; the AI acts as the High-Performance Implementer.
 
@@ -269,7 +269,7 @@ Code must be thoroughly refactored to include proper type hints, Google Style st
 
 Inline comments are reserved exclusively to answer "why", document Anti-Corruption Layers (ACL), note infra limits, or explain exceptions.
 
-4. Execution Protocol: The Akita Method
+4. Execution Protocol: The Stangler method
 
 All implementation work strictly follows a three-turn dialectical cycle.
 

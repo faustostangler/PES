@@ -23,8 +23,7 @@ class TestPromptRegistry:
         """Verify that all 15 canonical PromptKey members are registered in PROMPT_REGISTRY."""
         expected_keys = {
             "fluid_prose",
-            "gap_filler_pass1",
-            "gap_filler_pass_subsequent",
+            "gap_filler",
             "long_expander",
             "wide_expander",
             "atomic_inventory",
@@ -42,7 +41,7 @@ class TestPromptRegistry:
             "judge_gap_filler",
             "ollama_critique",
         }
-        assert len(PromptKey) == 19
+        assert len(PromptKey) == 18
         assert {k.value for k in PromptKey} == expected_keys
         for key in PromptKey:
             assert key in PROMPT_REGISTRY
@@ -63,11 +62,11 @@ class TestPromptRegistry:
 
     def test_get_prompt_metadata_by_key_and_string(self) -> None:
         """Verify lookup by PromptKey enum and raw string."""
-        meta_enum = get_prompt_metadata(PromptKey.GAP_FILLER_PASS1)
-        meta_str = get_prompt_metadata("gap_filler_pass1")
+        meta_enum = get_prompt_metadata(PromptKey.GAP_FILLER)
+        meta_str = get_prompt_metadata("gap_filler")
 
         assert meta_enum == meta_str
-        assert meta_enum.langfuse_name == "cresmo-gap-filler-pass1"
+        assert meta_enum.langfuse_name == "cresmo-gap-filler"
         assert meta_enum.skill_name == "cresmo-gap-filler"
 
     def test_get_prompt_metadata_fluid_prose(self) -> None:

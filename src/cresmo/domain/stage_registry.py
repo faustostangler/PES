@@ -49,7 +49,7 @@ class StageRegistry:
             post_processor=post_process_fluid_transcript,
         ),
         "gap_filler": StageDefinition(
-            transform_prompt_key=PromptKey.GAP_FILLER_PASS1,
+            transform_prompt_key=PromptKey.GAP_FILLER,
             judge_prompt_key=PromptKey.JUDGE_GAP_FILLER,
             required_criteria=(
                 JudgeCriterion.FACTUAL_GROUNDING,

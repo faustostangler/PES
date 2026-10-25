@@ -116,7 +116,7 @@ We establish the **Universal Algorithmic (ID-ID) and Cognitive (TXT-TXT) Parity 
 ### Positive:
 - **Zero Ambiguity:** Dashboards, traces, and metrics are completely symmetrical; searching by channel or content in Grafana Loki, OpenTelemetry APM, or Langfuse yields predictable results.
 - **Elimination of Broken Telemetry:** Spans will never possess half a pair (e.g. ID without paired ID, or Name without paired Title).
-- **Strict Compliance with Akita Method & Stangler Doctor:** Domain purity is mirrored into infrastructural telemetry with fail-fast determinism.
+- **Strict Compliance with Stangler Method & Stangler Doctor:** Domain purity is mirrored into infrastructural telemetry with fail-fast determinism.
 
 ### Negative / Trade-offs:
 - **Breaking Changes:** Any downstream test or observer expecting `cresmo.channel.id` or `cresmo.content.title` to be absent under empty metadata must be updated to expect the canonical fallback values.

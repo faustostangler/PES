@@ -47,8 +47,7 @@ class TestJsonPromptProvider:
     def test_default_prompt_provider_loads_bundled_json(self) -> None:
         provider = JsonPromptProvider()
         assert len(provider._templates) > 0
-        assert "gap_filler_pass1" in provider._templates
-        assert "gap_filler_pass_subsequent" in provider._templates
+        assert "gap_filler" in provider._templates
         assert "long_expander" in provider._templates
         assert "wide_expander" in provider._templates
         assert "atomic_inventory" in provider._templates
@@ -75,60 +74,45 @@ class TestJsonPromptProvider:
         assert "Source fluid transcript." in user_msg
         assert "Candidate compendium text." in user_msg
 
-    def test_gap_filler_differentiates_pass1_and_subsequent_passes(self) -> None:
+    def test_gap_filler_unified_prompt_build_and_refine_modes(self) -> None:
         provider = JsonPromptProvider()
 
+        # Mode 1: BUILD (pass 1, no current_text)
         prompt1 = provider.get_prompt(
-            PromptKey.GAP_FILLER_PASS1,
+            PromptKey.GAP_FILLER,
             pass_num=1,
             total_passes=3,
             channel_name=ChannelName("Tech Channel"),
             file_name="test.txt",
-            raw_text="Raw text here.",
+            source_text="Source fluid text here.",
         )
         s1 = prompt1.system_prompt or ""
         p1 = prompt1.get_last_user_content()
         assert isinstance(s1, str)
-        assert len(s1) > 0
-        assert "Pass 1/3" in p1
+        assert "ITERATION PROTOCOL" in s1
+        assert "Pass: 1/3" in p1
         assert "Tech Channel" in p1
         assert "test.txt" in p1
-        assert "Raw text here." in p1
+        assert "<source_text>\nSource fluid text here.\n</source_text>" in p1
+        assert "<draft" not in p1
 
+        # Mode 2: REFINE (pass 2, with current_text)
         prompt2 = provider.get_prompt(
-            PromptKey.GAP_FILLER_PASS_SUBSEQUENT,
+            PromptKey.GAP_FILLER,
             pass_num=2,
             total_passes=3,
             channel_name=ChannelName("Tech Channel"),
             file_name="test.txt",
-            raw_text="Raw text here.",
+            source_text="Source fluid text here.",
             current_text="Draft from pass 1.",
         )
         s2 = prompt2.system_prompt or ""
         p2 = prompt2.get_last_user_content()
         assert isinstance(s2, str)
-        assert len(s2) > 0
-        assert "Pass 2/3" in p2
-        assert "PASS 1 TO ENRICH" in p2
-        assert "Tech Channel" in p2
-        assert "Draft from pass 1." in p2
-        assert p1 != p2
-
-    def test_gap_filler_subsequent_passes_fallback_when_current_text_is_none(self) -> None:
-        provider = JsonPromptProvider()
-        prompt2 = provider.get_prompt(
-            PromptKey.GAP_FILLER_PASS_SUBSEQUENT,
-            pass_num=2,
-            total_passes=3,
-            channel_name=ChannelName("Tech Channel"),
-            file_name="test.txt",
-            raw_text="Fallback to raw when current_text is None.",
-            current_text=None,
-        )
-        s2 = prompt2.system_prompt or ""
-        p2 = prompt2.get_last_user_content()
-        assert isinstance(s2, str)
-        assert "Fallback to raw when current_text is None." in p2
+        assert s1 == s2  # Unified system prompt across passes
+        assert "Pass: 2/3" in p2
+        assert "<source_text>\nSource fluid text here.\n</source_text>" in p2
+        assert '<draft pass="1">\nDraft from pass 1.\n</draft>' in p2
 
     def test_long_and_wide_expander_prompts(self) -> None:
         provider = JsonPromptProvider()
@@ -218,15 +202,10 @@ class TestJsonPromptProvider:
 
     def test_custom_prompts_json_override(self, tmp_path: Path) -> None:
         custom_prompts = {
-            "gap_filler_pass1": {
-                "task": "Custom Task 1",
+            "gap_filler": {
+                "task": "Custom Gap Filler",
                 "skill_name": "none",
-                "user_prompt": "{task}: Custom Pass 1 for {channel_name} in {file_name} with {raw_text} (total: {total_passes})",
-            },
-            "gap_filler_pass_subsequent": {
-                "task": "Custom Task 2",
-                "skill_name": "none",
-                "user_prompt": "{task}: Custom Pass {pass_num}/{total_passes} (prev {prev_pass_num}) for {channel_name} with {raw_text} & {current_text}",
+                "user_prompt": "{task}: Pass {pass_num}/{total_passes} for {channel_name} with source: {source_text}{draft_section}",
             },
             "long_expander": {
                 "task": "Custom Long",
@@ -265,33 +244,33 @@ class TestJsonPromptProvider:
 
         provider = JsonPromptProvider(prompts_path=custom_file)
         prompt1 = provider.get_prompt(
-            PromptKey.GAP_FILLER_PASS1,
+            PromptKey.GAP_FILLER,
             pass_num=1,
             total_passes=3,
             channel_name=ChannelName("Custom Channel"),
             file_name="custom.txt",
-            raw_text="text",
+            source_text="text",
         )
         assert (
             prompt1.get_last_user_content()
-            == "Custom Task 1: Custom Pass 1 for Custom Channel in custom.txt with text (total: 3)"
+            == "Custom Gap Filler: Pass 1/3 for Custom Channel with source: text"
         )
-        assert prompt1.system_prompt == "Custom Task 1"
+        assert prompt1.system_prompt == "Custom Gap Filler"
 
         prompt2 = provider.get_prompt(
-            PromptKey.GAP_FILLER_PASS_SUBSEQUENT,
+            PromptKey.GAP_FILLER,
             pass_num=2,
             total_passes=3,
             channel_name=ChannelName("Custom Channel"),
             file_name="custom.txt",
-            raw_text="raw",
+            source_text="text",
             current_text="draft",
         )
         assert (
             prompt2.get_last_user_content()
-            == "Custom Task 2: Custom Pass 2/3 (prev 1) for Custom Channel with raw & draft"
+            == 'Custom Gap Filler: Pass 2/3 for Custom Channel with source: text\n<draft pass="1">\ndraft\n</draft>\n'
         )
-        assert prompt2.system_prompt == "Custom Task 2"
+        assert prompt2.system_prompt == "Custom Gap Filler"
 
         prompt_long = provider.get_prompt(
             PromptKey.LONG_EXPANDER, compendium_body="Body", complementary_info="Info"
@@ -347,7 +326,7 @@ class TestJsonPromptProvider:
         bad_file.write_text("NOT VALID JSON", encoding="utf-8")
 
         provider = JsonPromptProvider(prompts_path=bad_file)
-        assert "gap_filler_pass1" in provider._templates
+        assert "gap_filler" in provider._templates
         assert len(provider._templates) > 0
 
     def test_bundled_resource_load_failure_clears_templates(self) -> None:
@@ -423,8 +402,7 @@ class TestJsonPromptProvider:
         provider = JsonPromptProvider()
         # Clear out templates to trigger all hardcoded fallbacks
         provider._templates = {
-            "gap_filler_pass1": {"task": "Clean raw", "user_prompt": ""},
-            "gap_filler_pass_subsequent": {"task": "Deepen prose", "user_prompt": ""},
+            "gap_filler": {"task": "Socratic Expander", "user_prompt": ""},
             "long_expander": {"task": "Longue Duree", "user_prompt": ""},
             "wide_expander": {"task": "Axial Time", "user_prompt": ""},
             "atomic_inventory": {"task": "Extract Items", "user_prompt": ""},
@@ -432,57 +410,40 @@ class TestJsonPromptProvider:
             "reconcile_mocs": {"task": "Map MOCs", "user_prompt": ""},
         }
 
-        # Gap filler pass 1 fallback
+        # Gap filler fallback without current_text (BUILD mode)
         prompt1 = provider.get_prompt(
-            PromptKey.GAP_FILLER_PASS1,
+            PromptKey.GAP_FILLER,
             pass_num=1,
             total_passes=2,
             channel_name=ChannelName("ChName"),
             file_name="f.txt",
-            raw_text="RawText",
+            source_text="RawText",
         )
         s1 = prompt1.system_prompt or ""
         p1 = prompt1.get_last_user_content()
-        assert "Clean raw" in s1
+        assert "Socratic Expander" in s1
         assert "Source Channel: ChName" in p1
         assert "File: f.txt" in p1
-        assert "Transcript:\nRawText" in p1
+        assert "<source_text>\nRawText\n</source_text>" in p1
+        assert "<draft" not in p1
         assert "## Informações Complementares" in p1
 
-        # Gap filler pass 2 fallback with current_text
+        # Gap filler fallback with current_text (REFINE mode)
         prompt2 = provider.get_prompt(
-            PromptKey.GAP_FILLER_PASS_SUBSEQUENT,
+            PromptKey.GAP_FILLER,
             pass_num=2,
             total_passes=2,
             channel_name=ChannelName("ChName"),
             file_name="f.txt",
-            raw_text="RawText",
+            source_text="RawText",
             current_text="DraftText",
         )
         s2 = prompt2.system_prompt or ""
         p2 = prompt2.get_last_user_content()
-        assert "Deepen prose" in s2
+        assert "Socratic Expander" in s2
         assert "Source Channel: ChName" in p2
-        assert "--- ORIGINAL RAW TRANSCRIPT (GROUND TRUTH REFERENCE) ---\nRawText" in p2
-        assert "--- PREVIOUS PASS EXPANDED COMPENDIUM DRAFT (PASS 1 TO ENRICH) ---\nDraftText" in p2
-        assert "Execute Socratic gap filling and theoretical densification." in p2
-
-        # Gap filler pass 2 fallback without current_text
-        prompt2_none = provider.get_prompt(
-            PromptKey.GAP_FILLER_PASS_SUBSEQUENT,
-            pass_num=2,
-            total_passes=2,
-            channel_name=ChannelName("ChName"),
-            file_name="f.txt",
-            raw_text="RawText",
-            current_text=None,
-        )
-        s2_none = prompt2_none.system_prompt or ""
-        p2_none = prompt2_none.get_last_user_content()
-        assert "Deepen prose" in s2_none
-        assert (
-            "--- PREVIOUS PASS EXPANDED COMPENDIUM DRAFT (PASS 1 TO ENRICH) ---\nRawText" in p2_none
-        )
+        assert "<source_text>\nRawText\n</source_text>" in p2
+        assert '<draft pass="1">\nDraftText\n</draft>' in p2
 
         # Long expander fallback
         prompt_long = provider.get_prompt(

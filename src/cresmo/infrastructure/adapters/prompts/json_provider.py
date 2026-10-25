@@ -167,7 +167,7 @@ class JsonPromptProvider(PromptProviderPort):
         """Retrieve unformatted raw prompt template with embedded skill block.
 
         Args:
-            template_key: Key in prompts.json (e.g. 'gap_filler_pass1') or PromptKey enum.
+            template_key: Key in prompts.json (e.g. 'gap_filler') or PromptKey enum.
 
         Returns:
             Raw prompt template string with {skill_block} and {task} resolved.
@@ -190,7 +190,7 @@ class JsonPromptProvider(PromptProviderPort):
         Conforms to ADR-010, ADR-017, and ADR-022 for Chat-Native prompt governance.
 
         Args:
-            template_key: Key in prompts.json (e.g. 'gap_filler_pass1') or PromptKey enum.
+            template_key: Key in prompts.json (e.g. 'gap_filler') or PromptKey enum.
 
         Returns:
             Tuple of (system_prompt, user_prompt).

@@ -51,7 +51,6 @@ from cresmo.domain.value_objects import (
     ContentId,
     EvaluationContext,
     JudgeEvaluation,
-    PromptKey,
     StageEvaluationSpec,
 )
 
@@ -328,11 +327,7 @@ class PipelineStageRunner:
                     max_passes,
                     stage_config.stage_name,
                 )
-                subsequent_key = (
-                    PromptKey.GAP_FILLER_PASS_SUBSEQUENT
-                    if stage_config.stage_name == "gap_filler"
-                    else stage_config.transform_prompt_key
-                )
+                subsequent_key = stage_config.transform_prompt_key
                 chat_prompt = stage_config.build_transform_prompt(
                     prompt_provider,
                     source,

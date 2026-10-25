@@ -141,8 +141,8 @@ def build_fluid_prose(provider: Any, **context: Any) -> ChatPrompt:
     )
 
 
-def build_gap_filler_pass1(provider: Any, **context: Any) -> ChatPrompt:
-    key = PromptKey.GAP_FILLER_PASS1.value
+def build_gap_filler(provider: Any, **context: Any) -> ChatPrompt:
+    key = PromptKey.GAP_FILLER.value
     entry = provider._templates.get(key, {})
     task = entry.get("task", "")
     skill_name = entry.get("skill_name", "cresmo-gap-filler")
@@ -151,15 +151,25 @@ def build_gap_filler_pass1(provider: Any, **context: Any) -> ChatPrompt:
     skill_block = provider._get_skill_block(skill_name)
     channel_name = context.get("channel_name", "")
     file_name = context.get("file_name", "")
-    raw_text = context.get("raw_text", "")
+    source_text = context.get("source_text") or context.get("raw_text", "")
+    current_text = context.get("current_text")
+    pass_num = context.get("pass_num", 1)
     total_passes = context.get("total_passes", 1)
+    language = _resolve_language(provider, context)
+
+    draft_section = (
+        f'\n<draft pass="{pass_num - 1}">\n{current_text}\n</draft>\n'
+        if current_text
+        else ""
+    )
 
     if not template and not system_template:
         sys_inst = f"{task}\n\n{skill_block}".strip()
         user_p = (
             f"Source Channel: {channel_name}\n"
             f"File: {file_name}\n\n"
-            f"Transcript:\n{raw_text}\n\n"
+            f"<source_text>\n{source_text}\n</source_text>\n"
+            f"{draft_section}\n"
             "Transform into continuous fluid Markdown prose with analytical headings (## and ###) "
             "and mandatory '## Informações Complementares' section."
         )
@@ -167,46 +177,16 @@ def build_gap_filler_pass1(provider: Any, **context: Any) -> ChatPrompt:
 
     return provider._format_paired_prompt(
         key,
-        total_passes=total_passes,
-        channel_name=channel_name,
-        file_name=file_name,
-        raw_text=raw_text,
-    )
-
-
-def build_gap_filler_subsequent(provider: Any, **context: Any) -> ChatPrompt:
-    key = PromptKey.GAP_FILLER_PASS_SUBSEQUENT.value
-    entry = provider._templates.get(key, {})
-    task = entry.get("task", "")
-    skill_name = entry.get("skill_name", "cresmo-expander")
-    template = entry.get("user_prompt", "")
-    system_template = entry.get("system_prompt", "")
-    skill_block = provider._get_skill_block(skill_name)
-    pass_num = context.get("pass_num", 2)
-    total_passes = context.get("total_passes", 2)
-    channel_name = context.get("channel_name", "")
-    raw_text = context.get("raw_text", "")
-    current_text = context.get("current_text")
-    prev_draft = current_text if current_text is not None else raw_text
-
-    if not template and not system_template:
-        sys_inst = f"{task}\n\n{skill_block}".strip()
-        user_p = (
-            f"Source Channel: {channel_name}\n\n"
-            f"--- ORIGINAL RAW TRANSCRIPT (GROUND TRUTH REFERENCE) ---\n{raw_text}\n\n"
-            f"--- PREVIOUS PASS EXPANDED COMPENDIUM DRAFT (PASS {pass_num - 1} TO ENRICH) ---\n{prev_draft}\n\n"
-            "Execute Socratic gap filling and theoretical densification."
-        )
-        return ChatPrompt.from_system_and_user(user=user_p, system=sys_inst if sys_inst else None)
-
-    return provider._format_paired_prompt(
-        key,
+        language=language,
         pass_num=pass_num,
         total_passes=total_passes,
         prev_pass_num=pass_num - 1,
         channel_name=channel_name,
-        raw_text=raw_text,
-        current_text=prev_draft,
+        file_name=file_name,
+        source_text=source_text,
+        raw_text=source_text,
+        current_text=current_text or "",
+        draft_section=draft_section,
     )
 
 
@@ -501,8 +481,7 @@ def create_default_prompt_builder_registry() -> PromptBuilderRegistry:
     """Instantiate, populate, validate, and freeze the canonical PromptBuilderRegistry."""
     registry = PromptBuilderRegistry()
     registry.register(PromptKey.FLUID_PROSE, build_fluid_prose)
-    registry.register(PromptKey.GAP_FILLER_PASS1, build_gap_filler_pass1)
-    registry.register(PromptKey.GAP_FILLER_PASS_SUBSEQUENT, build_gap_filler_subsequent)
+    registry.register(PromptKey.GAP_FILLER, build_gap_filler)
     registry.register(PromptKey.LONG_EXPANDER, build_long_expander)
     registry.register(PromptKey.WIDE_EXPANDER, build_wide_expander)
     registry.register(PromptKey.ATOMIC_INVENTORY, build_atomic_inventory)

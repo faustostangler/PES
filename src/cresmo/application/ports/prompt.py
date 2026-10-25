@@ -55,13 +55,9 @@ _NOOP_BUILDERS: dict[PromptKey, Callable[[dict[str, Any]], tuple[str, str]]] = {
         f"You are Cresmo Fluid Prose Detranscriptor (cresmo-fluid-prose). Channel: {c.get('channel_name', '')}.",
         f"Transform raw transcript into clean, continuous fluid prose in third-person neutral narrative:\nFile: {c.get('file_name', '')}\n\nTranscript:\n{c.get('raw_text', '')}",
     ),
-    PromptKey.GAP_FILLER_PASS1: lambda c: (
+    PromptKey.GAP_FILLER: lambda c: (
         f"You are Cresmo Expander. Enrich transcript for {c.get('channel_name', '')}.",
-        f"Pass 1 of {c.get('total_passes', 1)} for {c.get('channel_name', '')} (file: {c.get('file_name', '')}):\nRaw transcript:\n{c.get('raw_text', '')}",
-    ),
-    PromptKey.GAP_FILLER_PASS_SUBSEQUENT: lambda c: (
-        f"You are Cresmo Expander. Enrich transcript for {c.get('channel_name', '')}.",
-        f"Pass {c.get('pass_num', 2)} of {c.get('total_passes', 2)} for {c.get('channel_name', '')} (file: {c.get('file_name', '')}):\nRaw transcript: {c.get('raw_text', '')}\nCurrent text:\n{c.get('current_text', '')}",
+        f"Pass {c.get('pass_num', 1)} of {c.get('total_passes', 1)} for {c.get('channel_name', '')} (file: {c.get('file_name', '')}):\nRaw transcript:\n{c.get('source_text') or c.get('raw_text', '')}\nCurrent text:\n{c.get('current_text', '')}",
     ),
     PromptKey.LONG_EXPANDER: lambda c: (
         "You are Cresmo Long-Expander.",

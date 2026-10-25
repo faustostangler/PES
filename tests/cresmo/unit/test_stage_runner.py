@@ -2495,7 +2495,7 @@ class TestStageRunnerStageExecutionAndFallback:
 
         cfg = StageConfig[MagicMock, CandidateText](
             stage_name="gap_filler",
-            transform_prompt_key=PromptKey.GAP_FILLER_PASS1,
+            transform_prompt_key=PromptKey.GAP_FILLER,
             max_passes=2,
             eval_spec=None,
         )

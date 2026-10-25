@@ -124,7 +124,9 @@ def test_gap_filler_execution_multi_pass_to_completion(
     mock_llm = MagicMock(spec=LLMTransformationPort)
     mock_llm.transform.side_effect = [pass1_text, pass2_text, pass3_text]
 
-    stage_factory = StageFactory(settings=DefaultPipelineSettings())
+    stage_factory = StageFactory(
+        settings=DefaultPipelineSettings(expansion_max_passes=3, gap_filler_passes=3)
+    )
 
     runner = PipelineStageRunner(
         telemetry_port=NoOpTelemetryPort(),
@@ -138,6 +140,7 @@ def test_gap_filler_execution_multi_pass_to_completion(
         "gap_filler",
         source=sample_fluid_transcript,
         context=sample_context,
+        max_passes=3,
     )
 
     assert isinstance(result, EnrichedCompendium)

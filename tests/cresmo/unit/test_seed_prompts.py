@@ -51,10 +51,10 @@ class TestSeedPromptsCLI:
     def test_get_raw_prompt_template_returns_populated_template(self) -> None:
         """Verify get_raw_prompt_template on JsonPromptProvider returns non-empty template."""
         provider = JsonPromptProvider()
-        tpl = provider.get_raw_prompt_template("gap_filler_pass1")
+        tpl = provider.get_raw_prompt_template("gap_filler")
         assert isinstance(tpl, str)
         assert len(tpl) > 0
-        assert "SKILL SPECIFICATION" in tpl or "Transcript" in tpl
+        assert "SKILL SPECIFICATION" in tpl or "Transcript" in tpl or "source_text" in tpl
 
     def test_seed_prompts_dry_run(self, capsys: pytest.CaptureFixture[str]) -> None:
         """Verify --dry-run prints template previews and exits with SUCCESS without API calls."""
@@ -147,7 +147,7 @@ class TestSeedPromptsCLI:
                 in captured.out
             )
             assert (
-                "✔ Registered 'cresmo-gap-filler-pass1' in Langfuse [type=chat, label=production]\n"
+                "✔ Registered 'cresmo-gap-filler' in Langfuse [type=chat, label=production]\n"
                 in captured.out
             )
 
@@ -246,7 +246,7 @@ class TestSeedPromptsCLI:
             ),
             patch.dict(
                 "cresmo.presentation.commands.seed_prompts.PROMPT_MAPPINGS",
-                {"single": "gap_filler_pass1"},
+                {"single": "gap_filler"},
                 clear=True,
             ),
         ):

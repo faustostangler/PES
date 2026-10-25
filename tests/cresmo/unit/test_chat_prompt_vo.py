@@ -24,8 +24,7 @@ class TestPromptKeyAndMessageRole:
     def test_prompt_key_values(self) -> None:
         expected = {
             PromptKey.FLUID_PROSE: "fluid_prose",
-            PromptKey.GAP_FILLER_PASS1: "gap_filler_pass1",
-            PromptKey.GAP_FILLER_PASS_SUBSEQUENT: "gap_filler_pass_subsequent",
+            PromptKey.GAP_FILLER: "gap_filler",
             PromptKey.LONG_EXPANDER: "long_expander",
             PromptKey.WIDE_EXPANDER: "wide_expander",
             PromptKey.ATOMIC_INVENTORY: "atomic_inventory",
@@ -45,6 +44,7 @@ class TestPromptKeyAndMessageRole:
         }
         for key, val in expected.items():
             assert key.value == val
+        assert not hasattr(PromptKey, "GAP_FILLER_REFINE")
 
     def test_message_role_values(self) -> None:
         assert MessageRole.SYSTEM.value == "system"

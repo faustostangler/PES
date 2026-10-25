@@ -38,7 +38,7 @@ class TestLangfusePromptProvider:
             label="production",
         )
         prompt_res = provider.get_prompt(
-            PromptKey.GAP_FILLER_PASS1,
+            PromptKey.GAP_FILLER,
             pass_num=1,
             total_passes=3,
             channel_name=ChannelName("sandeco"),
@@ -75,7 +75,7 @@ class TestLangfusePromptProvider:
         )
 
         prompt_res = provider.get_prompt(
-            PromptKey.GAP_FILLER_PASS1,
+            PromptKey.GAP_FILLER,
             pass_num=1,
             total_passes=3,
             channel_name=ChannelName("sandeco"),
@@ -89,10 +89,10 @@ class TestLangfusePromptProvider:
         assert prompt == "User input payload compiled from Langfuse Cloud"
         mock_client.get_prompt.assert_called_once()
         args, kwargs = mock_client.get_prompt.call_args
-        assert args[0] == "cresmo-gap-filler-pass1"
+        assert args[0] == "cresmo-gap-filler"
         assert kwargs["label"] == "production"
         assert kwargs["type"] == "chat"
-        assert provider.get_last_prompt_version("cresmo-gap-filler-pass1") == 3
+        assert provider.get_last_prompt_version("cresmo-gap-filler") == 3
         # Strict Lazy Fallback (ADR-017 / ADR-026 Rule 19): Zero happy-path fallback execution
         mock_fallback.get_prompt.assert_not_called()
 
@@ -115,7 +115,7 @@ class TestLangfusePromptProvider:
         )
 
         prompt_res = provider.get_prompt(
-            PromptKey.GAP_FILLER_PASS1,
+            PromptKey.GAP_FILLER,
             pass_num=1,
             total_passes=3,
             channel_name=ChannelName("sandeco"),
@@ -143,7 +143,7 @@ class TestLangfusePromptProvider:
 
         # Must not raise RuntimeError; must gracefully fall back
         prompt_res = provider.get_prompt(
-            PromptKey.GAP_FILLER_PASS1,
+            PromptKey.GAP_FILLER,
             pass_num=1,
             total_passes=3,
             channel_name=ChannelName("sandeco"),
@@ -175,7 +175,7 @@ class TestLangfusePromptProvider:
         )
 
         prompt_res = provider.get_prompt(
-            PromptKey.GAP_FILLER_PASS1,
+            PromptKey.GAP_FILLER,
             pass_num=1,
             total_passes=3,
             channel_name=ChannelName("sandeco"),
@@ -203,7 +203,7 @@ class TestLangfusePromptProvider:
         )
 
         prompt_res = provider.get_prompt(
-            PromptKey.GAP_FILLER_PASS1,
+            PromptKey.GAP_FILLER,
             pass_num=1,
             total_passes=3,
             channel_name=ChannelName("sandeco"),

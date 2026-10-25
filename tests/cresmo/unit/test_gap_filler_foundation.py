@@ -170,7 +170,7 @@ def test_stage_registry_contains_gap_filler() -> None:
     """Verify gap_filler is officially registered in StageRegistry."""
     assert StageRegistry.contains("gap_filler") is True
     spec = StageRegistry.get("gap_filler")
-    assert spec.transform_prompt_key == PromptKey.GAP_FILLER_PASS1
+    assert spec.transform_prompt_key == PromptKey.GAP_FILLER
     assert JudgeCriterion.FACTUAL_GROUNDING in spec.required_criteria
     assert JudgeCriterion.COMPLEMENTARY_SUBSTANCE in spec.required_criteria
     assert spec.post_processor is not None
