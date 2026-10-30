@@ -17,9 +17,9 @@ services:
     healthcheck:
       test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://127.0.0.1:3000/api/public/health || exit 1"]
       interval: 5s
-      timeout: 5s
-      retries: 25
-      start_period: 45s
+      timeout: 10s
+      retries: 20
+      start_period: 90s
     environment:
       - NODE_ENV=production
       - HOSTNAME=0.0.0.0
