@@ -135,11 +135,11 @@ def run(
             help="Maximum candidate videos to inspect per channel feed (default: 50)",
         ),
     ] = 50,
-    no_scan_raw: Annotated[
+    scan_raw: Annotated[
         bool,
         typer.Option(
-            "--no-scan-raw",
-            help="Skip scanning existing local markdown transcripts in data/raw/",
+            "--scan-raw",
+            help="Scan local raw transcript lake for unprocessed files (default: False)",
         ),
     ] = False,
     no_crawl: Annotated[
@@ -210,7 +210,7 @@ def run(
         force_reprocess: bool
         lookback: int | None
         channel_max_videos: int
-        no_scan_raw: bool
+        scan_raw: bool
         no_crawl: bool
         web_index: bool
         channels: list[str] | None
@@ -226,7 +226,7 @@ def run(
     args.force_reprocess = force_reprocess
     args.lookback = lookback
     args.channel_max_videos = channel_max_videos
-    args.no_scan_raw = no_scan_raw
+    args.scan_raw = scan_raw
     args.no_crawl = no_crawl
     args.web_index = web_index
     args.channels = channels
@@ -337,7 +337,7 @@ def _execute_run_pipeline(
             manifest_display = str(args.manifest) if args.manifest else "data/playlist.txt"
             sys.stdout.write(
                 f"No sources found to process (manifest: {manifest_display}, "
-                f"raw lake scan: {not args.no_scan_raw}).\n"
+                f"raw lake scan: {getattr(args, 'scan_raw', False)}).\n"
             )
             return EXIT_SUCCESS
         return execute_batch_dry_run(pipeline, dry_run_sources)
@@ -464,7 +464,7 @@ def execute_batch_run(
         manifest_display = str(args.manifest) if args.manifest else "data/playlist.txt"
         sys.stdout.write(
             f"No sources found to process (manifest: {manifest_display}, "
-            f"raw lake scan: {not args.no_scan_raw}).\n"
+            f"raw lake scan: {getattr(args, 'scan_raw', False)}).\n"
         )
         return EXIT_SUCCESS
 
@@ -567,7 +567,7 @@ def _build_batch_discovery_query(
 
     return BatchDiscoveryQuery(
         explicit_manifest=args.manifest,
-        scan_raw=not args.no_scan_raw,
+        scan_raw=getattr(args, "scan_raw", False),
         lookback_days=settings.days_lookback,
         channel_max_videos=args.channel_max_videos,
         discovery_workers=settings.channel_discovery_workers,

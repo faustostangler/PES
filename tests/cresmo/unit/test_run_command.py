@@ -232,12 +232,12 @@ class TestRunCommand:
     def test_execute_batch_run_empty_sources(self, capsys: pytest.CaptureFixture[str]) -> None:
         """Verify batch run with 0 sources logs informative notice and returns EXIT_SUCCESS."""
         mock_pipeline = MagicMock()
-        args = Namespace(manifest=None, no_scan_raw=False)
+        args = Namespace(manifest=None, scan_raw=False)
 
         assert execute_batch_run(mock_pipeline, [], args) == EXIT_SUCCESS
         captured = capsys.readouterr()
         assert (
-            "No sources found to process (manifest: data/playlist.txt, raw lake scan: True).\n"
+            "No sources found to process (manifest: data/playlist.txt, raw lake scan: False).\n"
             in captured.out
         )
 
@@ -259,7 +259,7 @@ class TestRunCommand:
 
         args = Namespace(
             manifest=None,
-            no_scan_raw=False,
+            scan_raw=False,
             passes=3,
             force_reprocess=False,
         )
@@ -348,7 +348,7 @@ class TestRunCommand:
         )
         args = Namespace(
             manifest=Path("custom_playlist.txt"),
-            no_scan_raw=True,
+            scan_raw=True,
             channel_max_videos=15,
             no_crawl=True,
             channels=["Channel1"],
@@ -359,7 +359,7 @@ class TestRunCommand:
         query = _build_batch_discovery_query(args, settings)
         assert isinstance(query, BatchDiscoveryQuery)
         assert query.explicit_manifest == Path("custom_playlist.txt")
-        assert query.scan_raw is False
+        assert query.scan_raw is True
         assert query.lookback_days == 45
         assert query.channel_max_videos == 15
         assert query.discovery_workers == 8
@@ -377,7 +377,7 @@ class TestRunCommand:
             web_index=False,
             url=None,
             dry_run=False,
-            no_scan_raw=False,
+            scan_raw=False,
             manifest=None,
             channel_max_videos=50,
         )
@@ -640,7 +640,7 @@ class TestRunCommand:
             web_index=True,
             url=None,
             dry_run=False,
-            no_scan_raw=False,
+            scan_raw=False,
             manifest=None,
             channel_max_videos=50,
         )
@@ -682,7 +682,7 @@ class TestRunCommand:
 
         args = Namespace(
             manifest=None,
-            no_scan_raw=False,
+            scan_raw=False,
             passes=1,
             force_reprocess=False,
         )
@@ -718,7 +718,7 @@ class TestRunCommand:
             url=None,
             dry_run=True,
             manifest=None,
-            no_scan_raw=False,
+            scan_raw=False,
             no_crawl=False,
             channel_max_videos=50,
         )
@@ -748,7 +748,7 @@ class TestRunCommand:
         """Verify _build_batch_discovery_query respects enable_channel_crawler setting when no_crawl is False."""
         args = Namespace(
             manifest=None,
-            no_scan_raw=False,
+            scan_raw=False,
             channel_max_videos=50,
             no_crawl=False,
         )
@@ -800,7 +800,7 @@ class TestRunCommand:
 
         args = Namespace(
             manifest=None,
-            no_scan_raw=False,
+            scan_raw=False,
             passes=3,
             force_reprocess=False,
         )
