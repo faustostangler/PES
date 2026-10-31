@@ -7,7 +7,7 @@ Whisper audio extraction) with automated retries, timeouts, and graceful shutdow
 Conforms to:
 - ADR-003: PES Production Architecture & Telemetry
 - ADR-005: Multi-Role 12-Factor Container & Settings
-- Technology Stack Reference §2 (Camada 1: Distributed Task Queue)
+- Technology Stack Reference §2 (Layer 1: Distributed Task Queue)
 """
 
 from __future__ import annotations

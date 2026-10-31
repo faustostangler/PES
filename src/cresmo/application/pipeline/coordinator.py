@@ -266,10 +266,10 @@ class CresmoPipeline:
             )
 
             # =========================================================================
-            # ESTEIRA DE ESTÁGIOS CRESMO (CONVEYOR PIPELINE)
+            # CRESMO STAGES CONVEYOR PIPELINE
             # =========================================================================
 
-            # Estágio 1: Fluid Prose (Checkpoint-aware per ADR-043 / SPEC-043)
+            # Stage 1: Fluid Prose (Checkpoint-aware per ADR-043 / SPEC-043)
             fluid = None
             if not force_reprocess:
                 cached = self.vault_port.get_fluid_transcript(content.id)
@@ -290,7 +290,7 @@ class CresmoPipeline:
                     self.vault_port.save_fluid_transcript(fluid)
 
             # temp debug by senior architect. keep commented.
-            # # Estágio 2: Gap Filler
+            # # Stage 2: Gap Filler
             # gaps = self.stage_runner.execute_stage(
             #     "gap_filler",
             #     source=fluid,
@@ -298,22 +298,22 @@ class CresmoPipeline:
             # )
             gaps: Any = fluid
 
-            # Estágio 3: Long Expander
+            # Stage 3: Long Expander
             # long_exp = self.stage_runner.execute_stage("long_expander", source=gaps, context=execution_context)
 
-            # Estágio 4: Wide Expander
+            # Stage 4: Wide Expander
             # wide_exp = self.stage_runner.execute_stage("wide_expander", source=long_exp, context=execution_context)
 
-            # Estágio 5: Raw Indexing (reordenado: após wide_expander e antes de atomic_inventory)
+            # Stage 5: Raw Indexing (reordered: after wide_expander and before atomic_inventory)
             # index = self.stage_runner.execute_stage("raw_indexing", source=wide_exp, context=execution_context)
 
-            # Estágio 6: Atomic Inventory
+            # Stage 6: Atomic Inventory
             # inventory = self.stage_runner.execute_stage("atomic_inventory", source=wide_exp, context=execution_context)
 
-            # Estágio 7: Atomic Batch
+            # Stage 7: Atomic Batch
             # notes = self.stage_runner.execute_stage("atomic_batch", source=inventory, context=execution_context)
 
-            # Estágio 8: Reconcile MOCs
+            # Stage 8: Reconcile MOCs
             # mocs = self.stage_runner.execute_stage("reconcile_mocs", source=notes, context=execution_context)
 
             synthesized_text = _extract_fluid_text(gaps) or _extract_fluid_text(fluid)

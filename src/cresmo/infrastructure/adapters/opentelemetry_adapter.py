@@ -30,7 +30,7 @@ from cresmo.domain.entities import (
 try:
     from langfuse import propagate_attributes
 except ImportError:  # pragma: no cover
-    propagate_attributes = None
+    propagate_attributes = None  # type: ignore[assignment]
 
 logger = structlog.get_logger(__name__)
 

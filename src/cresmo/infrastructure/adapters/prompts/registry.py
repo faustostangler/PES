@@ -177,3 +177,12 @@ def get_prompt_metadata(key: PromptKey | str) -> PromptMetadata:
         return PROMPT_REGISTRY[LANGFUSE_TO_PROMPT_KEY[key]]
 
     raise KeyError(f"Unknown prompt key: '{key}'")
+
+
+__all__ = [
+    "LANGFUSE_TO_PROMPT_KEY",
+    "PROMPT_REGISTRY",
+    "PromptKey",
+    "PromptMetadata",
+    "get_prompt_metadata",
+]

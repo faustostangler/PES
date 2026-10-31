@@ -114,7 +114,7 @@ class OllamaLLMAdapter(LLMTransformationPort):
             with urllib.request.urlopen(
                 req, timeout=DEFAULT_HEALTHCHECK_TIMEOUT_SECONDS
             ) as response:
-                return response.status == HTTPStatus.OK
+                return bool(response.status == HTTPStatus.OK)
         except (urllib.error.URLError, TimeoutError, OSError) as exc:
             logger.debug("[OllamaLLMAdapter] is_available probe failed: %s", exc)
             return False

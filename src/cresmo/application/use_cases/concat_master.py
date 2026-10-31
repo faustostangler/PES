@@ -18,6 +18,7 @@ from cresmo.application.ports import (
     PipelineSettingsProtocol,
     VaultRepositoryPort,
 )
+from cresmo.domain.exceptions import DomainValidationError
 from cresmo.domain.taxonomy import classify_channel
 from cresmo.domain.value_objects import ChannelName, ContentId, MasterDocumentResult
 
@@ -150,7 +151,10 @@ class ConcatMasterUseCase:
         # Chronological sort: oldest first (ascending by sort_date, then file name)
         docs.sort(key=lambda doc_tuple: (doc_tuple[0], doc_tuple[1]))
 
-        assert resolved_category is not None
+        if resolved_category is None:
+            raise DomainValidationError(
+                f"Channel category could not be resolved for '{channel_name.value}'."
+            )
         channel_category = resolved_category
 
         # Group documents into parts without ever splitting a single file

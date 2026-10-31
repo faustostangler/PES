@@ -12,7 +12,7 @@ import json
 import time
 from collections.abc import Callable, Generator, Sequence
 from contextlib import contextmanager
-from typing import TYPE_CHECKING, Any, TypeVar
+from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 import structlog
 from opentelemetry import trace
@@ -352,7 +352,7 @@ class PipelineStageRunner:
                     stage_config, "early_stopping_enabled", False
                 ) and check_complementary_mechanical_saturation(curr_text, new_text):
                     logger.info(
-                        "[StageRunner] Saturação mecânica atingida na passada %d/%d. Parando antecipadamente.",
+                        "[StageRunner] Mechanical saturation reached at pass %d/%d. Halting early.",
                         pass_index,
                         max_passes,
                     )
@@ -414,11 +414,7 @@ class PipelineStageRunner:
             eval_context = EvaluationContext(
                 stage_name=stage_config.stage_name,
                 raw_text=stage_config.eval_spec.extract_source_text(source),
-                candidate_text=(
-                    stage_config.eval_spec.candidate_extractor(candidate)
-                    if stage_config.eval_spec.candidate_extractor
-                    else candidate.text
-                ),
+                candidate_text=stage_config.eval_spec.candidate_extractor(candidate),
                 metadata={
                     "channel_id": context.channel.id.value if context.channel.id else "",
                     "content_id": context.content.id.value,
@@ -744,7 +740,8 @@ class PipelineStageRunner:
             kwargs: dict[str, Any] = {}
             if max_passes is not None:
                 kwargs["max_passes"] = max_passes
-            return self.stage_factory.build_stage(stage, **kwargs)
+            built_stage = self.stage_factory.build_stage(stage, **kwargs)
+            return cast(StageConfig[_TSource, _TOutput], built_stage)
         return stage
 
     # Backward compatibility alias

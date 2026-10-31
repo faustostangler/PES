@@ -173,10 +173,10 @@ def check_complementary_mechanical_saturation(
 ) -> bool:
     """Evaluate Layer 1 mechanical saturation between consecutive passes.
 
-    Conforms to Lead Architect directives:
-    1. Delta de Comprimento: variação no número de itens/parágrafos de informações complementares < 5.
-    2. NER Overlap: 100% das entidades em negrito (**...**) na seção complementar atual
-       já estavam presentes na passagem anterior (zero novas entidades introduzidas).
+    Saturation holds when both conditions are met:
+    1. Length Delta: absolute variation in complementary section items/paragraphs is below max_delta_items.
+    2. NER Overlap: 100% of bolded entities (**...**) in current complementary section
+       were already present in previous pass (zero new entities introduced).
     """
     prev_comp = extract_complementary_section(prev_text)
     curr_comp = extract_complementary_section(current_text)

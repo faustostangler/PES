@@ -44,7 +44,7 @@ class TestCresmoSettings:
     """Validate settings defaults and derived property invariants."""
 
     def test_default_paths_anchor_to_workspace(self) -> None:
-        settings = CresmoSettings()
+        settings = CresmoSettings(_env_file=None)
         assert settings.data_dir.name == "data"
         assert settings.vault_dir.name == "vault"
         assert settings.raw_dir == settings.data_dir / "raw"
@@ -76,11 +76,11 @@ class TestCresmoSettings:
     def test_ollama_num_predict_defaults_and_env_override(
         self, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        settings = CresmoSettings()
+        settings = CresmoSettings(_env_file=None)
         assert settings.ollama_num_predict == 0
 
         monkeypatch.setenv("CRESMO_OLLAMA_NUM_PREDICT", "450")
-        overridden = CresmoSettings()
+        overridden = CresmoSettings(_env_file=None)
         assert overridden.ollama_num_predict == 450
 
     def test_temperature_validation_bounds(self) -> None:

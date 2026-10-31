@@ -50,8 +50,9 @@ class PrometheusMetricsAdapter(MetricsPort):
     ) -> Counter:
         """Retrieve existing counter from registry or create a new one idempotently."""
         existing = getattr(self._registry, "_names_to_collectors", {})
-        if name in existing and isinstance(existing[name], Counter):
-            return existing[name]
+        collector = existing.get(name) if isinstance(existing, dict) else None
+        if isinstance(collector, Counter):
+            return collector
         return Counter(
             name,
             documentation or f"Counter for {name}",
@@ -68,8 +69,9 @@ class PrometheusMetricsAdapter(MetricsPort):
     ) -> Histogram:
         """Retrieve existing histogram from registry or create a new one idempotently."""
         existing = getattr(self._registry, "_names_to_collectors", {})
-        if name in existing and isinstance(existing[name], Histogram):
-            return existing[name]
+        collector = existing.get(name) if isinstance(existing, dict) else None
+        if isinstance(collector, Histogram):
+            return collector
         return Histogram(
             name,
             documentation or f"Histogram for {name}",
@@ -86,8 +88,9 @@ class PrometheusMetricsAdapter(MetricsPort):
     ) -> Gauge:
         """Retrieve existing gauge from registry or create a new one idempotently."""
         existing = getattr(self._registry, "_names_to_collectors", {})
-        if name in existing and isinstance(existing[name], Gauge):
-            return existing[name]
+        collector = existing.get(name) if isinstance(existing, dict) else None
+        if isinstance(collector, Gauge):
+            return collector
         return Gauge(
             name,
             documentation or f"Gauge for {name}",
