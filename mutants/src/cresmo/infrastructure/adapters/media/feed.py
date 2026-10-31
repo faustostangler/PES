@@ -7,7 +7,6 @@ Conforms to:
 
 from __future__ import annotations
 
-import logging
 from collections.abc import Callable
 from typing import Any, cast
 
@@ -22,8 +21,6 @@ from cresmo.domain.value_objects import (
     normalize_to_uploads_playlist_url,
 )
 from cresmo.infrastructure.adapters.media.subtitles import parse_published_datetime
-
-logger = logging.getLogger(__name__)
 
 
 def discover_channel_feed_items(

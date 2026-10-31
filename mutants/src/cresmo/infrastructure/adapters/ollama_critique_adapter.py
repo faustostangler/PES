@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-import logging
+import structlog
 
 from cresmo.application.ports import (
     CritiqueSynthesizerPort,
@@ -13,7 +13,7 @@ from cresmo.domain.value_objects import ChatPrompt, PromptKey
 from cresmo.domain.value_objects.quality import JudgeEvaluation
 from cresmo.infrastructure.adapters.prompts import JsonPromptProvider
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 
 class OllamaCritiqueAdapter(CritiqueSynthesizerPort):
@@ -22,13 +22,13 @@ class OllamaCritiqueAdapter(CritiqueSynthesizerPort):
     def __init__(
         self,
         llm_transformation_port: LLMTransformationPort | None = None,
-        system_instruction: str | None = None,
+        system_prompt: str | None = None,
         temperature: float = 0.1,
         *,
         prompt_provider: PromptProviderPort | None = None,
     ) -> None:
         self.llm_transformation_port = llm_transformation_port
-        self.system_instruction = system_instruction
+        self.system_prompt = system_prompt
         self.temperature = temperature
         self._prompt_provider = prompt_provider or JsonPromptProvider()
 
@@ -58,9 +58,9 @@ class OllamaCritiqueAdapter(CritiqueSynthesizerPort):
         effective_prompt = (
             ChatPrompt(
                 messages=chat_prompt.messages,
-                system_instruction=self.system_instruction,
+                system_prompt=self.system_prompt,
             )
-            if self.system_instruction is not None
+            if self.system_prompt is not None
             else chat_prompt
         )
 

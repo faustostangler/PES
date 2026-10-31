@@ -16,9 +16,6 @@ from dataclasses import dataclass
 from cresmo.domain.value_objects import PromptKey
 
 
-from mutmut.mutation.trampoline import wrap_in_trampoline as _mutmut_mutated, MutantDict
-
-
 @dataclass(frozen=True)
 class PromptMetadata:
     """Immutable specification and linkage for a registered prompt template.
@@ -43,17 +40,11 @@ PROMPT_REGISTRY: dict[PromptKey, PromptMetadata] = {
         skill_name="cresmo-fluid-prose",
         description="Transform raw transcript into clean, continuous fluid prose in third-person neutral narrative with verified NER spelling.",
     ),
-    PromptKey.GAP_FILLER_PASS1: PromptMetadata(
-        key=PromptKey.GAP_FILLER_PASS1,
-        langfuse_name="cresmo-gap-filler-pass1",
+    PromptKey.GAP_FILLER: PromptMetadata(
+        key=PromptKey.GAP_FILLER,
+        langfuse_name="cresmo-gap-filler",
         skill_name="cresmo-gap-filler",
-        description="Pass 1 Socratic gap filling and epistemic causal stratification into enriched compendium.",
-    ),
-    PromptKey.GAP_FILLER_PASS_SUBSEQUENT: PromptMetadata(
-        key=PromptKey.GAP_FILLER_PASS_SUBSEQUENT,
-        langfuse_name="cresmo-gap-filler-pass2",
-        skill_name="cresmo-gap-filler",
-        description="Subsequent passes Socratic densification and epistemic enrichment.",
+        description="Socratic gap filling and epistemic causal stratification into enriched compendium across iterative passes.",
     ),
     PromptKey.LONG_EXPANDER: PromptMetadata(
         key=PromptKey.LONG_EXPANDER,
@@ -133,11 +124,17 @@ PROMPT_REGISTRY: dict[PromptKey, PromptMetadata] = {
         skill_name="cresmo",
         description="LLM-as-a-judge synthesis compliance and parataxis verification.",
     ),
-    PromptKey.LLM_JUDGE: PromptMetadata(
-        key=PromptKey.LLM_JUDGE,
-        langfuse_name="cresmo-llm-judge",
-        skill_name="cresmo",
-        description="Universal multi-criteria quality evaluation judge for knowledge synthesis pipelines.",
+    PromptKey.JUDGE_FLUID_PROSE: PromptMetadata(
+        key=PromptKey.JUDGE_FLUID_PROSE,
+        langfuse_name="cresmo-judge-fluid-prose",
+        skill_name="cresmo-fluid-prose",
+        description="LLM-as-a-judge quality evaluation for fluid_prose stage verifying orality removal, semantic faithfulness, NER preservation, and authorial voice.",
+    ),
+    PromptKey.JUDGE_GAP_FILLER: PromptMetadata(
+        key=PromptKey.JUDGE_GAP_FILLER,
+        langfuse_name="cresmo-judge-gap-filler",
+        skill_name="cresmo-gap-filler",
+        description="LLM-as-a-judge quality evaluation for gap_filler evaluating factual grounding, epistemic depth, causality, and complementary substance.",
     ),
     PromptKey.OLLAMA_CRITIQUE: PromptMetadata(
         key=PromptKey.OLLAMA_CRITIQUE,
@@ -151,10 +148,8 @@ PROMPT_REGISTRY: dict[PromptKey, PromptMetadata] = {
 LANGFUSE_TO_PROMPT_KEY: dict[str, PromptKey] = {
     meta.langfuse_name: meta.key for meta in PROMPT_REGISTRY.values()
 }
-mutants_x_get_prompt_metadata__mutmut: MutantDict = {}  # type: ignore
 
 
-@_mutmut_mutated(mutants_x_get_prompt_metadata__mutmut)
 def get_prompt_metadata(key: PromptKey | str) -> PromptMetadata:
     """Retrieve metadata definition for a given PromptKey or string name.
 
@@ -184,152 +179,10 @@ def get_prompt_metadata(key: PromptKey | str) -> PromptMetadata:
     raise KeyError(f"Unknown prompt key: '{key}'")
 
 
-def x_get_prompt_metadata__mutmut_orig(key: PromptKey | str) -> PromptMetadata:
-    """Retrieve metadata definition for a given PromptKey or string name.
-
-    Args:
-        key: PromptKey instance or string matching a PromptKey value or langfuse_name.
-
-    Returns:
-        Immutable PromptMetadata instance.
-
-    Raises:
-        KeyError: If key is not registered in PROMPT_REGISTRY.
-    """
-    if isinstance(key, PromptKey):
-        return PROMPT_REGISTRY[key]
-
-    # Try lookup by string value of PromptKey
-    try:
-        enum_key = PromptKey(key)
-        return PROMPT_REGISTRY[enum_key]
-    except ValueError:
-        pass
-
-    # Try lookup by langfuse_name
-    if key in LANGFUSE_TO_PROMPT_KEY:
-        return PROMPT_REGISTRY[LANGFUSE_TO_PROMPT_KEY[key]]
-
-    raise KeyError(f"Unknown prompt key: '{key}'")
-
-
-def x_get_prompt_metadata__mutmut_1(key: PromptKey | str) -> PromptMetadata:
-    """Retrieve metadata definition for a given PromptKey or string name.
-
-    Args:
-        key: PromptKey instance or string matching a PromptKey value or langfuse_name.
-
-    Returns:
-        Immutable PromptMetadata instance.
-
-    Raises:
-        KeyError: If key is not registered in PROMPT_REGISTRY.
-    """
-    if isinstance(key, PromptKey):
-        return PROMPT_REGISTRY[key]
-
-    # Try lookup by string value of PromptKey
-    try:
-        enum_key = None
-        return PROMPT_REGISTRY[enum_key]
-    except ValueError:
-        pass
-
-    # Try lookup by langfuse_name
-    if key in LANGFUSE_TO_PROMPT_KEY:
-        return PROMPT_REGISTRY[LANGFUSE_TO_PROMPT_KEY[key]]
-
-    raise KeyError(f"Unknown prompt key: '{key}'")
-
-
-def x_get_prompt_metadata__mutmut_2(key: PromptKey | str) -> PromptMetadata:
-    """Retrieve metadata definition for a given PromptKey or string name.
-
-    Args:
-        key: PromptKey instance or string matching a PromptKey value or langfuse_name.
-
-    Returns:
-        Immutable PromptMetadata instance.
-
-    Raises:
-        KeyError: If key is not registered in PROMPT_REGISTRY.
-    """
-    if isinstance(key, PromptKey):
-        return PROMPT_REGISTRY[key]
-
-    # Try lookup by string value of PromptKey
-    try:
-        enum_key = PromptKey(None)
-        return PROMPT_REGISTRY[enum_key]
-    except ValueError:
-        pass
-
-    # Try lookup by langfuse_name
-    if key in LANGFUSE_TO_PROMPT_KEY:
-        return PROMPT_REGISTRY[LANGFUSE_TO_PROMPT_KEY[key]]
-
-    raise KeyError(f"Unknown prompt key: '{key}'")
-
-
-def x_get_prompt_metadata__mutmut_3(key: PromptKey | str) -> PromptMetadata:
-    """Retrieve metadata definition for a given PromptKey or string name.
-
-    Args:
-        key: PromptKey instance or string matching a PromptKey value or langfuse_name.
-
-    Returns:
-        Immutable PromptMetadata instance.
-
-    Raises:
-        KeyError: If key is not registered in PROMPT_REGISTRY.
-    """
-    if isinstance(key, PromptKey):
-        return PROMPT_REGISTRY[key]
-
-    # Try lookup by string value of PromptKey
-    try:
-        enum_key = PromptKey(key)
-        return PROMPT_REGISTRY[enum_key]
-    except ValueError:
-        pass
-
-    # Try lookup by langfuse_name
-    if key not in LANGFUSE_TO_PROMPT_KEY:
-        return PROMPT_REGISTRY[LANGFUSE_TO_PROMPT_KEY[key]]
-
-    raise KeyError(f"Unknown prompt key: '{key}'")
-
-
-def x_get_prompt_metadata__mutmut_4(key: PromptKey | str) -> PromptMetadata:
-    """Retrieve metadata definition for a given PromptKey or string name.
-
-    Args:
-        key: PromptKey instance or string matching a PromptKey value or langfuse_name.
-
-    Returns:
-        Immutable PromptMetadata instance.
-
-    Raises:
-        KeyError: If key is not registered in PROMPT_REGISTRY.
-    """
-    if isinstance(key, PromptKey):
-        return PROMPT_REGISTRY[key]
-
-    # Try lookup by string value of PromptKey
-    try:
-        enum_key = PromptKey(key)
-        return PROMPT_REGISTRY[enum_key]
-    except ValueError:
-        pass
-
-    # Try lookup by langfuse_name
-    if key in LANGFUSE_TO_PROMPT_KEY:
-        return PROMPT_REGISTRY[LANGFUSE_TO_PROMPT_KEY[key]]
-
-    raise KeyError(None)
-
-mutants_x_get_prompt_metadata__mutmut['_mutmut_orig'] = x_get_prompt_metadata__mutmut_orig # type: ignore # mutmut generated
-mutants_x_get_prompt_metadata__mutmut['x_get_prompt_metadata__mutmut_1'] = x_get_prompt_metadata__mutmut_1 # type: ignore # mutmut generated
-mutants_x_get_prompt_metadata__mutmut['x_get_prompt_metadata__mutmut_2'] = x_get_prompt_metadata__mutmut_2 # type: ignore # mutmut generated
-mutants_x_get_prompt_metadata__mutmut['x_get_prompt_metadata__mutmut_3'] = x_get_prompt_metadata__mutmut_3 # type: ignore # mutmut generated
-mutants_x_get_prompt_metadata__mutmut['x_get_prompt_metadata__mutmut_4'] = x_get_prompt_metadata__mutmut_4 # type: ignore # mutmut generated
+__all__ = [
+    "LANGFUSE_TO_PROMPT_KEY",
+    "PROMPT_REGISTRY",
+    "PromptKey",
+    "PromptMetadata",
+    "get_prompt_metadata",
+]

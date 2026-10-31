@@ -268,7 +268,7 @@ class TestPreflightHealthChecker:
             res_lf_def = checker.check_langfuse_probe("http://localhost:3000/")
             assert res_lf_def is True
             mock_probe.assert_called_with(
-                "http://localhost:3000/api/public/health", timeout_seconds=1.0
+                "http://localhost:3000/api/public/health", timeout_seconds=2.0
             )
 
             mock_probe.reset_mock()
@@ -286,7 +286,7 @@ class TestPreflightHealthChecker:
             mock_probe.reset_mock()
             assert checker.check_langfuse_probe("http://localhost:3000/apiX") is True
             mock_probe.assert_called_with(
-                "http://localhost:3000/apiX/api/public/health", timeout_seconds=1.0
+                "http://localhost:3000/apiX/api/public/health", timeout_seconds=2.0
             )
 
             mock_probe.reset_mock()

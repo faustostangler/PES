@@ -8,18 +8,15 @@ Conforms to:
 
 from __future__ import annotations
 
-import argparse
 from pathlib import Path
+from types import SimpleNamespace as Namespace
 from unittest.mock import MagicMock, patch
 
 import pytest
 
 from cresmo.domain.value_objects import ChannelName
 from cresmo.presentation.cli import main
-from cresmo.presentation.commands.concat_master import (
-    handle_concat_master,
-    register_subparser,
-)
+from cresmo.presentation.commands.concat_master import handle_concat_master
 from cresmo.presentation.exit_codes import (
     EXIT_INTERNAL_ERROR,
     EXIT_SUCCESS,
@@ -29,35 +26,9 @@ from cresmo.presentation.exit_codes import (
 class TestConcatMasterCommand:
     """Test suite for cresmo concat-master command."""
 
-    def test_register_subparser_arguments_and_metadata(self) -> None:
-        """Verify concat-master subparser configuration, flags, aliases, defaults, and helps."""
-        mock_subparsers = MagicMock()
-        mock_parser = MagicMock()
-        mock_subparsers.add_parser.return_value = mock_parser
-
-        register_subparser(mock_subparsers)
-
-        mock_subparsers.add_parser.assert_called_once_with(
-            "concat-master",
-            help="Consolidate enriched compendiums in ascending chronological order into master RAG files",
-        )
-
-        assert mock_parser.add_argument.call_count == 2
-        mock_parser.add_argument.assert_any_call(
-            "--channel",
-            "-c",
-            type=str,
-            default=None,
-            help="Target specific channel name to consolidate (default: all channels in enriched/)",
-        )
-        mock_parser.add_argument.assert_any_call(
-            "--max-words",
-            "-w",
-            type=int,
-            default=None,
-            help="Maximum word count per master document (default: 500,000, never splitting files in the middle)",
-        )
-        mock_parser.set_defaults.assert_called_once_with(handler=handle_concat_master)
+    def test_concat_master_cli_help(self) -> None:
+        """Verify concat-master CLI displays help and options."""
+        assert main(["concat-master", "--help"]) == EXIT_SUCCESS
 
     def test_handle_concat_master_specific_channel_success(
         self, capsys: pytest.CaptureFixture[str]
@@ -80,7 +51,7 @@ class TestConcatMasterCommand:
         )
         mock_use_case.execute.return_value = [part1, part2]
 
-        args = argparse.Namespace(channel="Fabio Akita", max_words=300000)
+        args = Namespace(channel="Fabio Akita", max_words=300000)
 
         with (
             patch(
@@ -117,7 +88,7 @@ class TestConcatMasterCommand:
         mock_use_case = MagicMock()
         mock_use_case.execute.return_value = []
 
-        args = argparse.Namespace(channel="UnknownChannel", max_words=None)
+        args = Namespace(channel="UnknownChannel", max_words=None)
 
         with patch(
             "cresmo.presentation.commands.concat_master.build_concat_master_use_case",
@@ -162,7 +133,7 @@ class TestConcatMasterCommand:
             "ChannelB": [part_b1, part_b2],
         }
 
-        args = argparse.Namespace(channel=None, max_words=500000)
+        args = Namespace(channel=None, max_words=500000)
 
         with patch(
             "cresmo.presentation.commands.concat_master.build_concat_master_use_case",
@@ -193,7 +164,7 @@ class TestConcatMasterCommand:
         mock_use_case = MagicMock()
         mock_use_case.execute_all.return_value = {}
 
-        args = argparse.Namespace(channel=None, max_words=None)
+        args = Namespace(channel=None, max_words=None)
 
         with patch(
             "cresmo.presentation.commands.concat_master.build_concat_master_use_case",
@@ -211,7 +182,7 @@ class TestConcatMasterCommand:
 
     def test_handle_concat_master_error_handling(self, capsys: pytest.CaptureFixture[str]) -> None:
         """Verify catastrophic failure writes formatted message to stderr and returns EXIT_INTERNAL_ERROR (1)."""
-        args = argparse.Namespace(channel=None, max_words=None)
+        args = Namespace(channel=None, max_words=None)
 
         with patch(
             "cresmo.presentation.commands.concat_master.resolve_shared_settings",

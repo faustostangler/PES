@@ -8,7 +8,9 @@ Conforms to:
 
 from __future__ import annotations
 
-import logging
+import itertools
+
+import structlog
 
 from cresmo.application.ports import (
     LlmJudgePort,
@@ -17,7 +19,6 @@ from cresmo.application.ports import (
 )
 from cresmo.application.ports.settings import DEFAULT_LANGUAGE
 from cresmo.application.use_cases.indexing.validators import (
-    can_retry,
     clean_concept_line,
     clean_text_line,
     is_valid_concepts_output,
@@ -34,7 +35,14 @@ from cresmo.domain.value_objects import (
     PromptKey,
 )
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
+
+
+def _retry_indices(max_rewrites: int) -> itertools.count[int] | range:
+    """Yield retry attempt indices. If max_rewrites <= 0, allow unbounded retries."""
+    if max_rewrites <= 0:
+        return itertools.count(0)
+    return range(max_rewrites + 1)
 
 
 class LLMTranscriptDistiller:
@@ -79,11 +87,9 @@ class LLMTranscriptDistiller:
             channel_id=channel_id,
         ).value
         user_id = user.value if user else UserIdentity.anonymous().value
-        is_valid = False
-        retries = 0
         raw_concepts = ""
 
-        while not is_valid:
+        for retries in _retry_indices(self.max_rewrites):
             if retries == 0:
                 prompt = initial_prompt
                 trace_id = f"{video_id}_concepts"
@@ -110,6 +116,7 @@ class LLMTranscriptDistiller:
                 user_id=user_id,
             )
 
+            is_valid = False
             if is_valid_concepts_output(raw_concepts):
                 if self.llm_judge_port is not None:
                     ctx = EvaluationContext(
@@ -140,13 +147,9 @@ class LLMTranscriptDistiller:
                     is_valid = parse_judge_boolean(judge_response)
                 else:
                     is_valid = True
-            else:
-                is_valid = False
 
-            if not is_valid:
-                if not can_retry(retries, self.max_rewrites):
-                    break
-                retries += 1
+            if is_valid:
+                break
 
         cleaned = clean_concept_line(raw_concepts)
         return cleaned if cleaned else "Síntese Conceitual"
@@ -174,12 +177,10 @@ class LLMTranscriptDistiller:
             channel_id=channel_id,
         ).value
         user_id = user.value if user else UserIdentity.anonymous().value
-        is_valid = False
-        retries = 0
         raw_summary = ""
         summary = ""
 
-        while not is_valid:
+        for retries in _retry_indices(self.max_rewrites):
             trace_id = (
                 f"{video_id}_summary" if retries == 0 else f"{video_id}_summary_retry_{retries}"
             )
@@ -204,6 +205,7 @@ class LLMTranscriptDistiller:
             )
             summary = clean_text_line(raw_summary) or title
 
+            is_valid = False
             if self.llm_judge_port is not None:
                 ctx = EvaluationContext(
                     stage_name="raw_indexing_summary",
@@ -234,10 +236,8 @@ class LLMTranscriptDistiller:
             else:
                 is_valid = True
 
-            if not is_valid:
-                if not can_retry(retries, self.max_rewrites):
-                    break
-                retries += 1
+            if is_valid:
+                break
 
         return summary if summary else title
 
@@ -265,12 +265,10 @@ class LLMTranscriptDistiller:
             channel_id=channel_id,
         ).value
         user_id = user.value if user else UserIdentity.anonymous().value
-        is_valid = False
-        retries = 0
         raw_synthesis = ""
         synthesis = ""
 
-        while not is_valid:
+        for retries in _retry_indices(self.max_rewrites):
             trace_id = (
                 f"{video_id}_synthesis" if retries == 0 else f"{video_id}_synthesis_retry_{retries}"
             )
@@ -295,6 +293,7 @@ class LLMTranscriptDistiller:
             )
             synthesis = clean_text_line(raw_synthesis)
 
+            is_valid = False
             if is_valid_synthesis_paragraph(synthesis):
                 if self.llm_judge_port is not None:
                     ctx = EvaluationContext(
@@ -325,12 +324,8 @@ class LLMTranscriptDistiller:
                     is_valid = parse_judge_boolean(judge_response)
                 else:
                     is_valid = True
-            else:
-                is_valid = False
 
-            if not is_valid:
-                if not can_retry(retries, self.max_rewrites):
-                    break
-                retries += 1
+            if is_valid:
+                break
 
         return synthesis if synthesis else (summary or title)

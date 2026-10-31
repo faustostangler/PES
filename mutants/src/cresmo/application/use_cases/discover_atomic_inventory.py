@@ -14,9 +14,10 @@ Conforms to:
 from __future__ import annotations
 
 import json
-import logging
 import re
 from typing import Any
+
+import structlog
 
 from cresmo.application.json_parser import extract_json_data
 from cresmo.application.ports import (
@@ -46,7 +47,7 @@ from cresmo.domain.value_objects import (
     PromptKey,
 )
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 _BIG_ENDIAN_YEAR_REGEX = re.compile(r"^\d{4}")
 
@@ -177,7 +178,7 @@ class DiscoverAtomicInventoryUseCase:
         trace_id: str,
         session_id: str,
         user_id: str,
-    ) -> list[Any]:
+    ) -> Any:
         """Query LLM synthesis port and extract candidate JSON inventory."""
         raw_response = self.llm_synthesis_port.transform(
             prompt=prompt,
@@ -315,5 +316,9 @@ class DiscoverAtomicInventoryUseCase:
                 f"Candidate entity inventory rejected by LLM-as-a-judge for '{compendium.title.value}'."
             )
 
+        if not isinstance(candidate_data, list):
+            raise DomainValidationError(
+                f"Expected JSON array of entities for '{compendium.title.value}', got: {type(candidate_data).__name__}"
+            )
         items = _parse_and_deduplicate_items(candidate_data, compendium.title.value)
         return AtomicEntityInventory(items=items)

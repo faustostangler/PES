@@ -58,6 +58,10 @@ from cresmo.domain.value_objects.prompt import (
     PromptKey,
 )
 from cresmo.domain.value_objects.quality import (
+    DEFAULT_FLUID_PROSE_WEIGHTS,
+    DEFAULT_MECHANICAL_VETO_CRITERIA,
+    GAP_FILLER_CANONICAL_WEIGHTS,
+    GAP_FILLER_MECHANICAL_VETO_CRITERIA,
     CandidateText,
     CriterionScore,
     EvaluationContext,
@@ -66,6 +70,7 @@ from cresmo.domain.value_objects.quality import (
     StageEvaluationSpec,
     TypedVerdict,
     VerdictType,
+    compute_composite_verdict,
 )
 from cresmo.domain.value_objects.sync import (
     SyncFilterCriteria,
@@ -75,6 +80,10 @@ from cresmo.domain.value_objects.sync import (
 __all__ = [
     "DEFAULT_FEED_LOOKBACK_DAYS",
     "DEFAULT_FEED_MAX_VIDEOS",
+    "DEFAULT_FLUID_PROSE_WEIGHTS",
+    "DEFAULT_MECHANICAL_VETO_CRITERIA",
+    "GAP_FILLER_CANONICAL_WEIGHTS",
+    "GAP_FILLER_MECHANICAL_VETO_CRITERIA",
     "MAX_CHANNEL_ID_LENGTH",
     "MAX_CHANNEL_NAME_LENGTH",
     "MAX_NOTE_TITLE_LENGTH",
@@ -115,6 +124,7 @@ __all__ = [
     "SyncSummary",
     "TypedVerdict",
     "VerdictType",
+    "compute_composite_verdict",
     "is_processable_transcript_file",
     "normalize_to_uploads_playlist_url",
 ]

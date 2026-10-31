@@ -1,0 +1,145 @@
+====================================================================================================
+CRESMO FLUID_PROSE - SUÍTE DE BENCHMARK DO GERADOR LLM (12 TRANSCRIÇÕES CANÔNICAS)
+====================================================================================================
+Objetivo: Avaliar a capacidade gerativa de modelos de linguagem (Gemini, Ollama Qwen, Gemma, Llama, DeepSeek)
+na conversão de áudio transcrito bruto para Prosa Fluida contínua sob o contrato do ADR-039 e cresmo-style-guide.
+Cada perfil testa uma armadilha clássica de alucinação, degradação de atenção ou vício estilístico de LLMs.
+
+Organização da Suíte: 4 Perfis Analíticos x 3 Níveis de Dificuldade (Fácil, Intermediário, Difícil) = 12 Amostras.
+
+====================================================================================================
+PERFIL 1: O ÉPICO HISTÓRICO / POLÍTICO-INSTITUCIONAL
+Foco do Teste: Preservação de Entidades Nomeadas (NER), Numerais Régios Romanos, Precisão Cronológica Big-Endian (YYYY).
+====================================================================================================
+
+[1.1] NÍVEL: FÁCIL
+• Arquivo:         GAxuHfvSli8.md
+• Canal:           Hoje no Mundo Militar
+• Título:          “Ucrânia: Missão Impossível” Como Putin se atolou na própria guerra
+• Extensão:        10.941 caracteres (1.627 palavras)
+• Justificativa:   Narrativa geopolítica linear do século XXI com vocabulário contemporâneo direto 
+                   (Kremlin, Kiev, Zelensky, OTAN, invasão de 2022). O modelo deve manter a coerência 
+                   sem risco de homônimos arcaicos ou confusão de genealogias, funcionando como linha 
+                   de base para verificação de retenção de fatos recentes.
+
+[1.2] NÍVEL: INTERMEDIÁRIO
+• Arquivo:         9IbNJ0EsTxI.md
+• Canal:           Marcelo Andrade
+• Título:          AFONSO HENRIQUES: o fundador de Portugal — e por que ele importa para o Brasil
+• Extensão:        14.915 caracteres (2.509 palavras)
+• Justificativa:   História medieval com reis homônimos (Afonso VI de Leão vs Afonso VII), transição 
+                   linguística (latim e galego-português) e tratados fundacionais (São Mamede 1128, 
+                   Ourique 1139, Zamora 1143, reconhecimento papal 1179). Testa rigor com numerais romanos 
+                   e padronização de datas históricas em Big-Endian.
+
+[1.3] NÍVEL: DIFÍCIL
+• Arquivo:         ef2l-YG3Bto.md
+• Canal:           Marcelo Andrade
+• Título:          INDEPENDÊNCIA ou SEPARAÇÃO? A história do 7 de Setembro que não te contaram
+• Extensão:        23.185 caracteres (3.803 palavras)
+• Justificativa:   Extensão longa (>23k caracteres) e alta sobreposição institucional densa (Cortes de 
+                   Lisboa, D. João VI, D. Pedro I, José Bonifácio, maçonaria, deputados provinciais, 
+                   dívidas com a Grã-Bretanha e Tratado do Rio de Janeiro de 1825). Testa a capacidade da 
+                   janela de contexto de sustentar fatos históricos interligados sem alucinar alianças espúrias.
+
+====================================================================================================
+PERFIL 2: O TÉCNICO / ENGENHARIA DE SOFTWARE / IA & ARQUITETURA
+Foco do Teste: Jargões Técnicos em Inglês, Explicações de Segunda Ordem, Relações de Causa e Efeito Sistêmicas.
+====================================================================================================
+
+[2.1] NÍVEL: FÁCIL
+• Arquivo:         wGqH0FL3m0A.md
+• Canal:           Código Fonte TV
+• Título:          VOCÊ PRECISA CONSTRUIR SEU SAAS EM 2026!
+• Extensão:        19.172 caracteres (3.332 palavras)
+• Justificativa:   Conceitos gerais de produtos digitais modernos, MVPs, gateways de pagamento e autenticação. 
+                   Lógica sequencial e vocabulário acessível de negócios web. O modelo precisa transformar a 
+                   conversa de tutorial em prosa formal assertiva sem inventar complexidades inexistentes.
+
+[2.2] NÍVEL: INTERMEDIÁRIO
+• Arquivo:         9a1MH3Ip1ZQ.md
+• Canal:           Lucas Montano
+• Título:          Não fique na mão da Anthropic e OpenAI
+• Extensão:        22.018 caracteres (3.872 palavras)
+• Justificativa:   Arquitetura de software aplicada a LLMs, risco de lock-in de fornecedor, custos de inferência, 
+                   abstração de provedores e interoperabilidade de APIs. Exige que o modelo traduza o jargão 
+                   técnico para linguagem formal de engenharia sem banalizar os mecanismos estruturais.
+
+[2.3] NÍVEL: DIFÍCIL
+• Arquivo:         ytTJtfg9HCw.md
+• Canal:           Augusto Galego
+• Título:          Práticas do Akita com IA. Deu bom? (Boas Práticas de Engenharia)
+• Extensão:        26.456 caracteres (4.616 palavras)
+• Justificativa:   Discussão aprofundada de engenharia de software sobre testes automatizados, paradigmas de 
+                   desenvolvimento, refatoração de código com IA e trade-offs técnicos. Força o modelo a manter 
+                   rigor analítico em explicações de mecanismos de segunda ordem e naturalismo metodológico.
+
+====================================================================================================
+PERFIL 3: O COLOQUIAL COM MUITO RUÍDO / OPINIÃO / CONVERSACIONAL
+Foco do Teste: Erradicação Cirúrgica de Oralidade, Gírias, Interrupções, Pedidos de Likes e Metadiscurso do YouTube.
+====================================================================================================
+
+[3.1] NÍVEL: FÁCIL
+• Arquivo:         MzuwGccdY1A.md
+• Canal:           Bruno Ávila
+• Título:          Ninguém mais fala como gente
+• Extensão:        22.861 caracteres (4.095 palavras)
+• Justificativa:   Monólogo reflexivo e informal sobre semiótica, comunicação e comportamento humano. A oralidade 
+                   é suave e bem articulada, facilitando para o gerador expurgar a primeira pessoa ("eu acho") 
+                   e estruturar parágrafos sem enfrentar termos excessivamente chulos ou desordenados.
+
+[3.2] NÍVEL: INTERMEDIÁRIO
+• Arquivo:         dg6KEMqqt_4.md
+• Canal:           Inteligência Mil Grau
+• Título:          NOVO Kimi k2.6 Surpreende Com Sites Excelentes
+• Extensão:        21.971 caracteres (3.787 palavras)
+• Justificativa:   Formato clássico de review de tecnologia do YouTube com alta incidência de ruído: saudações 
+                   aos inscritos, "olha que legal", "deixa o joinha", chamadas para inscrição e reações ao vivo. 
+                   Testa a capacidade mecânica de expurgar 100% dos bordões de engajamento sem perder os fatos.
+
+[3.3] NÍVEL: DIFÍCIL
+• Arquivo:         KFwoOkNFojs.md
+• Canal:           mano deyvin
+• Título:          Hackeou a máquina usando RUBY
+• Extensão:        20.826 caracteres (3.796 palavras)
+• Justificativa:   TESTE DE ESTRESSE EXTREMO DE ORALIDADE: Linguagem de streamer desbocado, gírias pesadas de dev 
+                   ("mano", "tá ligado", "bosta", "zoado"), patrocinadores inseridos no meio da fala ("maior escola 
+                   de investimentos papá"), ironias e risadas. Se o modelo conseguir destilar esse áudio em prosa 
+                   séria em 3ª pessoa de Narrador Detetive, ele é capaz de processar qualquer transcrição do planeta.
+
+====================================================================================================
+PERFIL 4: O FILOSÓFICO / GEOPOLÍTICO / CONJUNTURAL ABSTRATO
+Foco do Teste: Estrutura em Múltiplos Parágrafos, Neutralidade sem Moralismo e Proibição Estrita de Antíteses ("não X, mas Y").
+====================================================================================================
+
+[4.1] NÍVEL: FÁCIL
+• Arquivo:         _dni6oPFxYc.md
+• Canal:           Arata Academy
+• Título:          Defusão Cognitiva: a cura para a ruminação mental
+• Extensão:        17.912 caracteres (2.850 palavras)
+• Justificativa:   Psicologia cognitiva estruturada (ACT / Steven Hayes). Conceitos claros e auto-contidos sobre 
+                   pensamentos como eventos transitórios. A estrutura lógica é altamente didática, permitindo 
+                   avaliar se o gerador cria transições elegantes e mantém o tom naturalista sem jargões herméticos.
+
+[4.2] NÍVEL: INTERMEDIÁRIO
+• Arquivo:         ZEZ7UIq14Wo.md
+• Canal:           Professor Ricardo Marcílio
+• Título:          Por que 50 mil imigrantes invadiram Ceuta (Espanha)
+• Extensão:        22.765 caracteres (3.610 palavras)
+• Justificativa:   Geopolítica internacional com enclaves territoriais (Ceuta/Melilha), Tratado de Utrecht, 
+                   disputa diplomática Marrocos vs Espanha e fluxos migratórios. Requer articulação causal equilibrada 
+                   e neutralidade factual sem emitir juízos morais ou adjetivos condenatórios.
+
+[4.3] NÍVEL: DIFÍCIL
+• Arquivo:         eYFTRQHaPgw.md
+• Canal:           HENI OZI CUKIER
+• Título:          PUTIN VAI USAR UMA BOMBA NUCLEAR NA UCRÂNIA?
+• Extensão:        24.673 caracteres (4.164 palavras)
+• Justificativa:   Teoria dos jogos, dissuasão nuclear, equilíbrio de poder e escalada bélica. Este texto é a 
+                   maior armadilha existente para a proibição de antíteses binárias ("não se trata de X, mas de Y" 
+                   e "não apenas X, como Y"). Se o modelo passar sem usar nenhuma antítese e mantiver a postura 
+                   afirmativa e investigativa, ele atinge o ápice da calibração do cresmo-style-guide.
+
+====================================================================================================
+FIM DO ÍNDICE METROLÓGICO
+====================================================================================================

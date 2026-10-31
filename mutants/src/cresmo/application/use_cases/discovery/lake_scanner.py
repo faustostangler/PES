@@ -109,7 +109,7 @@ class LakeScannerService:
                     matches = False
 
             if matches:
-                resolved_pf = str(pf.resolve())
+                resolved_pf = str(pf.absolute())
                 acc.add_source(kind=SourceModality.FILE, target=resolved_pf)
 
             if raw_chan and (
@@ -209,7 +209,7 @@ class LakeScannerService:
                     ):
                         matches = False
                 if matches:
-                    resolved_rf = str(rf.resolve())
+                    resolved_rf = str(rf.absolute())
                     if not any(s.target == resolved_rf for s in acc.sources):
                         acc.sources.append(
                             BatchSource(kind=SourceModality.FILE, target=resolved_rf)

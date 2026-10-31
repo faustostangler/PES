@@ -14,11 +14,16 @@ Conforms to:
 
 from __future__ import annotations
 
+import functools
 from pathlib import Path
 from typing import Any, ClassVar, Self
 
 from pydantic import AliasChoices, Field, SecretStr, model_validator
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import (
+    BaseSettings,
+    PydanticBaseSettingsSource,
+    SettingsConfigDict,
+)
 
 from cresmo.application.ports.settings import DEFAULT_LANGUAGE
 from cresmo.infrastructure.paths import find_workspace_root
@@ -26,9 +31,21 @@ from cresmo.infrastructure.paths import find_workspace_root
 _WORKSPACE_DIR = find_workspace_root()
 
 DEFAULT_LANGFUSE_PROMPT_LABEL: str = "production"
-DEFAULT_JUDGE_PASS_THRESHOLD: float = 0.8
-DEFAULT_JUDGE_GEMINI_MODEL: str = "gemini-3.5-flash-lite"
+DEFAULT_JUDGE_PASS_THRESHOLD: float = 0.9
+DEFAULT_GEMINI_MODEL: str = "gemini-3.5-flash-lite"
+DEFAULT_JUDGE_GEMINI_MODEL: str = DEFAULT_GEMINI_MODEL
 DEFAULT_JUDGE_TEMPERATURE: float = 0.0
+DEFAULT_GEMINI_TIMEOUT_SECONDS: float = 60.0
+DEFAULT_BENCHMARK_MODELS: list[str] = [
+    "gemini:gemini-3.5-flash",
+    "gemini:gemini-3.5-flash-lite",
+    # "ollama:qwen2.5:latest",
+    # "ollama:gemma4:latest",
+    # "ollama:deepseek-r1:7b",
+    # "ollama:llama3:latest",
+]
+DEFAULT_JUDGE_CALIBRATION_MODELS: list[str] = DEFAULT_BENCHMARK_MODELS
+DEFAULT_GENERATOR_BENCHMARK_MODELS: list[str] = DEFAULT_BENCHMARK_MODELS
 
 
 class CresmoSettings(BaseSettings):
@@ -41,7 +58,8 @@ class CresmoSettings(BaseSettings):
     Attributes:
         DEFAULT_LANGUAGE: Class-level canonical default language fallback.
         DEFAULT_LANGFUSE_PROMPT_LABEL: Class-level canonical prompt label fallback.
-        gemini_api_key: Secret key for Google GenAI API calls.
+        gemini_api_keys: List of secret keys for Google GenAI quota-aware failover.
+        gemini_api_key: Primary secret key for backward compatibility.
         langfuse_secret_key: Secret key for Langfuse observability endpoint.
         langfuse_public_key: Public telemetry identifier for Langfuse tracing.
         langfuse_host: Telemetry collector endpoint URL.
@@ -56,8 +74,12 @@ class CresmoSettings(BaseSettings):
     DEFAULT_LANGUAGE: ClassVar[str] = DEFAULT_LANGUAGE
     DEFAULT_LANGFUSE_PROMPT_LABEL: ClassVar[str] = DEFAULT_LANGFUSE_PROMPT_LABEL
     DEFAULT_JUDGE_PASS_THRESHOLD: ClassVar[float] = DEFAULT_JUDGE_PASS_THRESHOLD
-    DEFAULT_JUDGE_GEMINI_MODEL: ClassVar[str] = DEFAULT_JUDGE_GEMINI_MODEL
+    DEFAULT_GEMINI_MODEL: ClassVar[str] = DEFAULT_GEMINI_MODEL
+    DEFAULT_JUDGE_GEMINI_MODEL: ClassVar[str] = DEFAULT_GEMINI_MODEL
     DEFAULT_JUDGE_TEMPERATURE: ClassVar[float] = DEFAULT_JUDGE_TEMPERATURE
+    DEFAULT_BENCHMARK_MODELS: ClassVar[list[str]] = DEFAULT_BENCHMARK_MODELS
+    DEFAULT_JUDGE_CALIBRATION_MODELS: ClassVar[list[str]] = DEFAULT_BENCHMARK_MODELS
+    DEFAULT_GENERATOR_BENCHMARK_MODELS: ClassVar[list[str]] = DEFAULT_BENCHMARK_MODELS
 
     model_config = SettingsConfigDict(
         env_file=(
@@ -70,6 +92,47 @@ class CresmoSettings(BaseSettings):
         extra="ignore",
     )
 
+    @classmethod
+    def settings_customise_sources(
+        cls,
+        settings_cls: type[BaseSettings],
+        init_settings: PydanticBaseSettingsSource,
+        env_settings: PydanticBaseSettingsSource,
+        dotenv_settings: PydanticBaseSettingsSource,
+        file_secret_settings: PydanticBaseSettingsSource,
+    ) -> tuple[PydanticBaseSettingsSource, ...]:
+        """Customise settings sources to safely parse comma-separated credentials from env."""
+
+        def _safe_decode(field_name: str, field: Any, val: Any, orig_decode: Any) -> Any:
+            if field_name in (
+                "gemini_api_keys",
+                "benchmark_models",
+                "judge_calibration_models",
+                "generator_benchmark_models",
+            ) and isinstance(val, str):
+                try:
+                    return orig_decode(field_name, field, val)
+                except (ValueError, TypeError):
+                    return [p.strip() for p in val.split(",") if p.strip()]
+            return orig_decode(field_name, field, val)
+
+        orig_dot = dotenv_settings.decode_complex_value
+        dotenv_settings.decode_complex_value = (  # type: ignore[method-assign]
+            lambda field_name, field, value: _safe_decode(field_name, field, value, orig_dot)
+        )
+
+        orig_env = env_settings.decode_complex_value
+        env_settings.decode_complex_value = (  # type: ignore[method-assign]
+            lambda field_name, field, value: _safe_decode(field_name, field, value, orig_env)
+        )
+
+        return (
+            init_settings,
+            env_settings,
+            dotenv_settings,
+            file_secret_settings,
+        )
+
     def __init__(
         self,
         *args: Any,
@@ -79,15 +142,51 @@ class CresmoSettings(BaseSettings):
         """Initialize settings with optional explicit environment file override."""
         if _env_file is not ...:
             values["_env_file"] = _env_file
+        if "gemini_api_key" in values and "gemini_api_keys" not in values:
+            values["gemini_api_keys"] = values["gemini_api_key"]
         super().__init__(*args, **values)
 
     # =========================================================================
     # 🔴 Category 1: Secrets & Credentials
     # =========================================================================
-    gemini_api_key: SecretStr = Field(
-        default=SecretStr(""),
-        description="Google Gemini API Key for synthesis and expansion.",
+    gemini_api_keys: list[SecretStr] = Field(
+        default_factory=list,
+        description="Google Gemini API Keys for quota-aware failover and rotation.",
     )
+
+    @property
+    def gemini_api_key(self) -> SecretStr:
+        """Primary Google Gemini API Key for backward compatibility."""
+        if self.gemini_api_keys:
+            return self.gemini_api_keys[0]
+        return SecretStr("")
+
+    @model_validator(mode="before")
+    @classmethod
+    def _normalize_gemini_credentials(cls, data: Any) -> Any:
+        """Normalize comma-separated strings or legacy single key into gemini_api_keys."""
+        if isinstance(data, dict):
+            raw_keys = (
+                data.get("gemini_api_keys")
+                or data.get("GEMINI_API_KEYS")
+                or data.get("gemini_api_key")
+                or data.get("GEMINI_API_KEY")
+            )
+            if raw_keys is not None:
+                if isinstance(raw_keys, str):
+                    data["gemini_api_keys"] = [
+                        SecretStr(p.strip()) for p in raw_keys.split(",") if p.strip()
+                    ]
+                elif isinstance(raw_keys, SecretStr):
+                    data["gemini_api_keys"] = [raw_keys]
+                elif isinstance(raw_keys, list):
+                    data["gemini_api_keys"] = [
+                        item if isinstance(item, SecretStr) else SecretStr(item.strip())
+                        for item in raw_keys
+                        if (isinstance(item, SecretStr) or (isinstance(item, str) and item.strip()))
+                    ]
+        return data
+
     typesafe_api_key: SecretStr = Field(
         default=SecretStr(""),
         validation_alias=AliasChoices("typesafe_api_key", "TYPESAFE_API_KEY"),
@@ -125,7 +224,7 @@ class CresmoSettings(BaseSettings):
         description="Enable PII and credential masking in telemetry, span attributes, and exports.",
     )
     preflight_probe_timeout_seconds: float = Field(
-        default=1.0,
+        default=2.0,
         description="Socket timeout in seconds for active preflight probes (Langfuse, Ollama).",
     )
     enable_preflight_probes: bool = Field(
@@ -149,6 +248,11 @@ class CresmoSettings(BaseSettings):
     def raw_dir(self) -> Path:
         """Directory for ingested raw media transcripts."""
         return self.data_dir / "raw"
+
+    @property
+    def fluid_dir(self) -> Path:
+        """Directory for intermediate detranscribed fluid prose transcripts."""
+        return self.data_dir / "fluid"
 
     @property
     def enriched_dir(self) -> Path:
@@ -282,7 +386,7 @@ class CresmoSettings(BaseSettings):
         description="Canonical pipeline version tag emitted to OpenTelemetry spans and Langfuse traces.",
     )
     gemini_model: str = Field(
-        default="gemini-3.5-flash-lite",
+        default=DEFAULT_GEMINI_MODEL,
         description="Default Gemini model variant for pipeline stages.",
     )
     gemini_fallback_model: str = Field(
@@ -376,11 +480,26 @@ class CresmoSettings(BaseSettings):
         default=False,
         description="Whether to preserve downloaded raw audio files.",
     )
-    gap_filler_passes: int = Field(
-        default=3,
-        validation_alias=AliasChoices("gap_filler_passes", "CRESMO_GAP_FILLER_PASSES"),
-        description="Default Socratic gap filler refinement passes.",
+    expansion_max_passes: int = Field(
+        default=5,
+        ge=1,
+        le=10,
+        validation_alias=AliasChoices(
+            "expansion_max_passes",
+            "CRESMO_EXPANSION_MAX_PASSES",
+            "EXPANSION_MAX_PASSES",
+            "gap_filler_passes",
+            "CRESMO_GAP_FILLER_PASSES",
+            "GAP_FILLER_PASSES",
+        ),
+        description="Default multi-pass text expansion and refinement limit before mechanical saturation.",
     )
+
+    @property
+    def gap_filler_passes(self) -> int:
+        """Backward-compatible property alias for expansion_max_passes."""
+        return self.expansion_max_passes
+
     concat_max_words: int = Field(
         default=500_000,
         validation_alias=AliasChoices("concat_max_words", "CONCAT_MAX_WORDS", "MASTER_MAX_WORDS"),
@@ -400,6 +519,18 @@ class CresmoSettings(BaseSettings):
         default="ollama",
         validation_alias=AliasChoices("indexing_provider", "CRESMO_INDEXING_PROVIDER"),
         description="Provider for raw transcript conceptual indexing: 'ollama' (default local) or 'gemini' (cloud API).",
+    )
+    gemini_timeout_seconds: float = Field(
+        default=DEFAULT_GEMINI_TIMEOUT_SECONDS,
+        ge=1.0,
+        validation_alias=AliasChoices(
+            "gemini_timeout_seconds",
+            "CRESMO_GEMINI_TIMEOUT_SECONDS",
+            "GEMINI_TIMEOUT_SECONDS",
+            "CRESMO_GEMINI_TIMEOUT",
+            "GEMINI_TIMEOUT",
+        ),
+        description="HTTP/TCP socket timeout in seconds for Google Gemini API inference requests.",
     )
     ollama_timeout_seconds: float = Field(
         default=300.0,
@@ -531,8 +662,34 @@ class CresmoSettings(BaseSettings):
         ),
         description="Minimum score threshold required for quality judge evaluations to pass.",
     )
+    gap_filler_judge_threshold: float = Field(
+        default=DEFAULT_JUDGE_PASS_THRESHOLD,
+        ge=0.0,
+        le=1.0,
+        validation_alias=AliasChoices(
+            "gap_filler_judge_threshold",
+            "CRESMO_GAP_FILLER_JUDGE_THRESHOLD",
+            "GAP_FILLER_JUDGE_THRESHOLD",
+        ),
+        description="Minimum score threshold required for gap_filler judge evaluations to pass.",
+    )
+    gap_filler_judge_weights: dict[str, float] = Field(
+        default_factory=lambda: {
+            "factual_grounding": 0.25,
+            "socratic_epistemic_depth": 0.25,
+            "causal_stratification_agency": 0.20,
+            "complementary_substance": 0.15,
+            "authorial_naturalism": 0.15,
+        },
+        validation_alias=AliasChoices(
+            "gap_filler_judge_weights",
+            "CRESMO_GAP_FILLER_JUDGE_WEIGHTS",
+            "GAP_FILLER_JUDGE_WEIGHTS",
+        ),
+        description="Criterion weights for gap_filler stage judge evaluation.",
+    )
     judge_gemini_model: str = Field(
-        default=DEFAULT_JUDGE_GEMINI_MODEL,
+        default=DEFAULT_GEMINI_MODEL,
         validation_alias=AliasChoices(
             "judge_gemini_model",
             "CRESMO_JUDGE_GEMINI_MODEL",
@@ -551,12 +708,66 @@ class CresmoSettings(BaseSettings):
         ),
         description="Sampling temperature for quality judge evaluation models.",
     )
+    benchmark_models: list[str] = Field(
+        default_factory=lambda: list(DEFAULT_BENCHMARK_MODELS),
+        validation_alias=AliasChoices(
+            "benchmark_models",
+            "CRESMO_BENCHMARK_MODELS",
+            "BENCHMARK_MODELS",
+            "judge_calibration_models",
+            "generator_benchmark_models",
+            "CRESMO_JUDGE_CALIBRATION_MODELS",
+            "JUDGE_CALIBRATION_MODELS",
+            "CRESMO_GENERATOR_BENCHMARK_MODELS",
+            "GENERATOR_BENCHMARK_MODELS",
+        ),
+        description="Canonical model specifications sequentially evaluated in judge calibration and generator benchmark harnesses.",
+    )
+
+    @property
+    def judge_calibration_models(self) -> list[str]:
+        """Backward-compatible alias for benchmark_models."""
+        return self.benchmark_models
+
+    @property
+    def generator_benchmark_models(self) -> list[str]:
+        """Backward-compatible alias for benchmark_models."""
+        return self.benchmark_models
+
+
+@functools.lru_cache(maxsize=1)
+def get_shared_settings() -> CresmoSettings:
+    """Return canonical cached CresmoSettings singleton.
+
+    Prevents redundant .env disk reads and multiple configuration allocations
+    across independent adapter factory invocations per ADR-002 §9.1 and ADR-048.
+    """
+    return CresmoSettings()
+
+
+def reset_shared_settings() -> None:
+    """Clear cached settings singleton (used for test isolation)."""
+    get_shared_settings.cache_clear()
+
+
+def resolve_shared_settings(settings: CresmoSettings | None = None) -> CresmoSettings:
+    """Resolve injected settings or fall back to the memoized single source of truth."""
+    if settings is not None:
+        return settings
+    return get_shared_settings()
 
 
 __all__ = [
+    "DEFAULT_BENCHMARK_MODELS",
+    "DEFAULT_GEMINI_MODEL",
+    "DEFAULT_GENERATOR_BENCHMARK_MODELS",
+    "DEFAULT_JUDGE_CALIBRATION_MODELS",
     "DEFAULT_JUDGE_GEMINI_MODEL",
     "DEFAULT_JUDGE_PASS_THRESHOLD",
     "DEFAULT_JUDGE_TEMPERATURE",
     "DEFAULT_LANGFUSE_PROMPT_LABEL",
     "CresmoSettings",
+    "get_shared_settings",
+    "reset_shared_settings",
+    "resolve_shared_settings",
 ]

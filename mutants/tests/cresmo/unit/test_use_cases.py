@@ -12,7 +12,11 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from cresmo.application.ports import NoOpPromptProviderPort, PromptProviderPort
+from cresmo.application.ports import (
+    NoOpPromptProviderPort,
+    PromptProviderPort,
+    VaultRepositoryPort,
+)
 from cresmo.application.use_cases import (
     DiscoverAtomicInventoryUseCase,
     ExpandCompendiumUseCase,
@@ -194,6 +198,26 @@ class TestTransformFluidProse:
         assert call["user_id"] == "usr_prose_editor"
         assert call["session_id"] == "UC_ALPHA:vid_tfp123"
 
+    def test_transform_fluid_prose_persists_to_vault_when_configured(self) -> None:
+        """Verify TransformFluidProseUseCase invokes vault_port.save_fluid_transcript per ADR-043."""
+        cid = ContentId("vid_tfp_persist")
+        raw = SourceTranscript(
+            content_id=cid,
+            channel_name=ChannelName("Channel Beta"),
+            body="Spoken oral transcript text.",
+        )
+        llm = MockLLMAdapter(responses=["# Clean Title\n\n## Clean Body\n\nPure narrative body."])
+        mock_vault = MagicMock(spec=VaultRepositoryPort)
+
+        use_case = TransformFluidProseUseCase(
+            llm_synthesis_port=llm,
+            vault_port=mock_vault,
+        )
+        fluid = use_case.execute(raw)
+
+        mock_vault.save_fluid_transcript.assert_called_once_with(fluid)
+        assert fluid.content.id == cid
+
     def test_transform_fluid_prose_rejects_non_raw_transcript(self) -> None:
         llm_port = MockLLMAdapter()
         use_case = TransformFluidProseUseCase(llm_port)
@@ -274,7 +298,7 @@ class TestFillGapsFluidProse:
 
         # Pass 1: pass_num=1, current_text=None
         call0 = mock_pp.get_prompt.call_args_list[0]
-        assert call0[0][0] == PromptKey.GAP_FILLER_PASS1
+        assert call0[0][0] == PromptKey.GAP_FILLER
         assert call0[1]["pass_num"] == 1
         assert call0[1]["total_passes"] == 3
         assert call0[1]["channel_name"] == ChannelName("Example Channel")
@@ -284,7 +308,7 @@ class TestFillGapsFluidProse:
 
         # Pass 2: pass_num=2, current_text is previous pass output
         call1 = mock_pp.get_prompt.call_args_list[1]
-        assert call1[0][0] == PromptKey.GAP_FILLER_PASS_SUBSEQUENT
+        assert call1[0][0] == PromptKey.GAP_FILLER
         assert call1[1]["pass_num"] == 2
         assert call1[1]["total_passes"] == 3
         assert call1[1]["channel_name"] == ChannelName("Example Channel")
@@ -294,7 +318,7 @@ class TestFillGapsFluidProse:
 
         # Pass 3: pass_num=3, current_text is previous pass output
         call2 = mock_pp.get_prompt.call_args_list[2]
-        assert call2[0][0] == PromptKey.GAP_FILLER_PASS_SUBSEQUENT
+        assert call2[0][0] == PromptKey.GAP_FILLER
         assert call2[1]["pass_num"] == 3
         assert call2[1]["total_passes"] == 3
         assert call2[1]["channel_name"] == ChannelName("Example Channel")
@@ -554,7 +578,7 @@ class TestExpandLongitudinalSynchronic:
         assert all(c["user_id"] == "anonymous" for c in llm_port.call_history)
         # Pass 1: Longitude expander gets initial compendium body and complementary info
         p0 = llm_port.call_history[0]["prompt"].get_last_user_content()
-        sys0 = llm_port.call_history[0]["system_instruction"] or ""
+        sys0 = llm_port.call_history[0]["system_prompt"] or ""
         assert "Continuous prose body describing elites." in p0
         assert "Initial complementary info." in p0
         assert sys0.startswith("You are Cresmo Long-Expander")
@@ -563,7 +587,7 @@ class TestExpandLongitudinalSynchronic:
 
         # Pass 2: Wide expander gets the response from longitudinal expansion
         p1 = llm_port.call_history[1]["prompt"].get_last_user_content()
-        sys1 = llm_port.call_history[1]["system_instruction"] or ""
+        sys1 = llm_port.call_history[1]["system_prompt"] or ""
         assert "Longitudinal analysis tracing Roman patricians" in p1
         assert sys1.startswith("You are Cresmo Wide-Expander")
         assert p1.startswith("Take the following longitudinally expanded Markdown document")

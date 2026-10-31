@@ -10,10 +10,10 @@ Conforms to ADR-014 and ADR-017:
 
 from __future__ import annotations
 
-import logging
 from http import HTTPStatus
 from typing import Any
 
+import structlog
 from langfuse.api.core import ApiError
 
 from cresmo.application.ports import PromptProviderPort
@@ -24,7 +24,7 @@ from cresmo.infrastructure.adapters.prompts.registry import (
 )
 from cresmo.infrastructure.config import CresmoSettings
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 
 def _handle_api_error(exc: ApiError, prompt_name: str, label: str) -> None:
@@ -61,7 +61,7 @@ def _extract_prompt_messages(
             f"Expected compiled_messages to be a list, got {type(compiled_messages).__name__}"
         )
 
-    system_instruction: str | None = None
+    system_prompt: str | None = None
     messages: list[ChatMessage] = []
 
     for msg in compiled_messages:
@@ -82,10 +82,10 @@ def _extract_prompt_messages(
             content = content.replace(f"{{{key}}}", str(value))
 
         if raw_role == "system":
-            if system_instruction:
-                system_instruction = f"{system_instruction}\n\n{content}"
+            if system_prompt:
+                system_prompt = f"{system_prompt}\n\n{content}"
             else:
-                system_instruction = content
+                system_prompt = content
         elif raw_role in ("user", "human"):
             messages.append(ChatMessage(role=MessageRole.USER, content=content))
         elif raw_role in ("assistant", "model", "ai"):
@@ -93,14 +93,14 @@ def _extract_prompt_messages(
         else:
             messages.append(ChatMessage(role=MessageRole.USER, content=content))
 
-    if not messages and not system_instruction:
+    if not messages and not system_prompt:
         raise ValueError(
-            "Langfuse chat prompt must contain at least one valid message or system instruction."
+            "Langfuse chat prompt must contain at least one valid message or system prompt."
         )
 
     return ChatPrompt(
         messages=tuple(messages),
-        system_instruction=system_instruction,
+        system_prompt=system_prompt,
     )
 
 
@@ -175,7 +175,7 @@ class LangfusePromptProvider(PromptProviderPort):
 
             if hasattr(prompt, "compile"):
                 compiled_messages = prompt.compile(**kwargs)
-                # Converte a estrutura do SDK do Langfuse no Value Object do domínio ChatPrompt
+                # Convert Langfuse SDK structure into ChatPrompt domain Value Object
                 return _extract_prompt_messages(compiled_messages, kwargs)
 
             raise ValueError(f"Prompt '{prompt_name}' does not implement compile()")

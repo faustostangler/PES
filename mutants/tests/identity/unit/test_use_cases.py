@@ -23,9 +23,12 @@ from identity.application.ports import (
 from identity.application.use_cases.authenticate_user import AuthenticateUserUseCase
 from identity.application.use_cases.manage_pat import (
     CreatePersonalAccessTokenUseCase,
+    ListPersonalAccessTokensUseCase,
+    RevokePersonalAccessTokenUseCase,
     ValidatePersonalAccessTokenUseCase,
 )
 from identity.application.use_cases.register_user import RegisterUserUseCase
+from identity.application.use_cases.validate_token import ValidateTokenUseCase
 from identity.domain.entities import PersonalAccessToken, User
 from identity.domain.exceptions import (
     InactiveUserError,
@@ -264,3 +267,112 @@ class TestPersonalAccessTokenUseCases:
 
         with pytest.raises(InvalidTokenError, match="revoked or expired"):
             validate_uc.execute(created.raw_token)
+
+
+class TestListPersonalAccessTokensUseCase:
+    def test_list_pats_returns_all_user_tokens(self) -> None:
+        pat_repo = InMemoryPATRepository()
+        create_uc = CreatePersonalAccessTokenUseCase(pat_repo=pat_repo)
+        list_uc = ListPersonalAccessTokensUseCase(pat_repo=pat_repo)
+
+        t1 = create_uc.execute(CreatePATRequestDTO(user_id="usr_1", name="Token 1", scopes=["cresmo:sync"]))
+        t2 = create_uc.execute(CreatePATRequestDTO(user_id="usr_1", name="Token 2", scopes=["cresmo:admin"]))
+        create_uc.execute(CreatePATRequestDTO(user_id="usr_2", name="Token Other", scopes=[]))
+
+        items = list_uc.execute(UserId("usr_1"))
+        assert len(items) == 2
+        ids = {item.id for item in items}
+        assert t1.id in ids
+        assert t2.id in ids
+        assert all(item.is_active for item in items)
+
+
+class TestRevokePersonalAccessTokenUseCase:
+    def test_revoke_existing_pat_returns_true(self) -> None:
+        pat_repo = InMemoryPATRepository()
+        create_uc = CreatePersonalAccessTokenUseCase(pat_repo=pat_repo)
+        revoke_uc = RevokePersonalAccessTokenUseCase(pat_repo=pat_repo)
+
+        t1 = create_uc.execute(CreatePATRequestDTO(user_id="usr_1", name="Token 1"))
+        assert revoke_uc.execute(t1.id, UserId("usr_1")) is True
+
+        tokens = pat_repo.list_by_user(UserId("usr_1"))
+        assert len(tokens) == 1
+        assert tokens[0].is_active is False
+
+    def test_revoke_nonexistent_or_other_user_pat_returns_false(self) -> None:
+        pat_repo = InMemoryPATRepository()
+        create_uc = CreatePersonalAccessTokenUseCase(pat_repo=pat_repo)
+        revoke_uc = RevokePersonalAccessTokenUseCase(pat_repo=pat_repo)
+
+        t1 = create_uc.execute(CreatePATRequestDTO(user_id="usr_1", name="Token 1"))
+        assert revoke_uc.execute(t1.id, UserId("usr_2")) is False
+        assert revoke_uc.execute("nonexistent", UserId("usr_1")) is False
+
+
+class TestValidateTokenUseCase:
+    def test_validate_valid_token_success(self) -> None:
+        user_repo = InMemoryUserRepository()
+        token_service = DummyTokenService()
+        user = User(
+            id=UserId("usr_jwt_valid"),
+            email=Email("jwt@example.com"),
+            hashed_password=HashedPassword("$dummy$pass"),
+            roles=frozenset([Role.USER]),
+        )
+        user_repo.save(user)
+        token = token_service.create_access_token(user)
+
+        use_case = ValidateTokenUseCase(token_service=token_service, user_repo=user_repo)
+        auth_user = use_case.execute(token)
+
+        assert auth_user.user_id == "usr_jwt_valid"
+        assert auth_user.email == "jwt@example.com"
+        assert auth_user.has_role(Role.USER.value) is True
+        assert auth_user.tenant_id == "default"
+
+    def test_validate_token_missing_subject_raises_error(self) -> None:
+        user_repo = InMemoryUserRepository()
+
+        class MissingSubTokenService(TokenServicePort):
+            def create_access_token(self, user: User, expires_delta: timedelta | None = None) -> str:
+                return "token"
+
+            def decode_access_token(self, token: str) -> dict[str, Any]:
+                return {"roles": ["user"]}
+
+        use_case = ValidateTokenUseCase(token_service=MissingSubTokenService(), user_repo=user_repo)
+        with pytest.raises(InvalidTokenError, match="missing subject"):
+            use_case.execute("token")
+
+    def test_validate_token_user_not_found_raises_error(self) -> None:
+        user_repo = InMemoryUserRepository()
+        token_service = DummyTokenService()
+        dummy_user = User(
+            id=UserId("usr_nonexistent"),
+            email=Email("nonexistent@example.com"),
+            hashed_password=HashedPassword("$dummy$pass"),
+        )
+        token = token_service.create_access_token(dummy_user)
+
+        use_case = ValidateTokenUseCase(token_service=token_service, user_repo=user_repo)
+        with pytest.raises(InvalidTokenError, match="inactive or not found"):
+            use_case.execute(token)
+
+    def test_validate_token_inactive_user_raises_error(self) -> None:
+        user_repo = InMemoryUserRepository()
+        token_service = DummyTokenService()
+        user = User(
+            id=UserId("usr_inactive"),
+            email=Email("inactive@example.com"),
+            hashed_password=HashedPassword("$dummy$pass"),
+            is_active=False,
+        )
+        user_repo.save(user)
+        token = token_service.create_access_token(user)
+
+        use_case = ValidateTokenUseCase(token_service=token_service, user_repo=user_repo)
+        with pytest.raises(InvalidTokenError, match="inactive or not found"):
+            use_case.execute(token)
+
+

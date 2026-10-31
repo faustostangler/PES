@@ -16,18 +16,18 @@ Conforms to:
 
 from __future__ import annotations
 
-import logging
 import os
 import sys
 from collections.abc import Callable
 from typing import Any
 
-from langfuse import Langfuse
+import structlog
+from langfuse import Langfuse  # very slow import
 from langfuse.span_filter import is_default_export_span
 from langfuse.types import MaskOtelSpansParams, MaskOtelSpansResult, OtelSpanPatch
 
 from cresmo.application.pipeline import (
-    CresmoPipeline,
+    CresmoPipeline,  # slow import
     PipelineDependencies,
     PipelineStageRunner,
     StageFactory,
@@ -48,7 +48,6 @@ from cresmo.infrastructure.adapters.sqlite_ledger_adapter import SqliteLedgerAda
 from cresmo.infrastructure.config import CresmoSettings
 from cresmo.infrastructure.logging_config import configure_logging
 from cresmo.presentation.factories.adapter_factory import (
-    _resolve_cookie_file,
     build_gemini_synthesis_adapter,
     build_indexing_adapter,
     build_media_ingestion_adapter,
@@ -74,22 +73,27 @@ from cresmo.presentation.factories.use_case_factory import (
     build_unify_duplicates_use_case,
 )
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 
-def probe_langfuse_ready(host: str, timeout_seconds: float = 1.0) -> bool:
+def probe_langfuse_ready(host: str, timeout_seconds: float = 2.0) -> bool:
     """Active preflight probe verifying whether the Langfuse server is responding to health pings.
 
     Args:
         host: Root Langfuse endpoint URL (e.g. 'http://localhost:3000').
-        timeout_seconds: Probe socket timeout in seconds (default: 1.0s).
+        timeout_seconds: Probe socket timeout in seconds (default: 2.0s).
 
     Returns:
         True if the server responded with HTTP < 500, False if unreachable or timed out.
     """
     normalized_host = host.rstrip("/")
     probe_url = f"{normalized_host}/api/public/health"
-    return probe_http_endpoint(probe_url, timeout_seconds=timeout_seconds)
+    if probe_http_endpoint(probe_url, timeout_seconds=timeout_seconds):
+        return True
+    if "localhost" in normalized_host:
+        fallback_url = probe_url.replace("localhost", "127.0.0.1")
+        return probe_http_endpoint(fallback_url, timeout_seconds=timeout_seconds)
+    return False
 
 
 def _clean_langfuse_env() -> None:
@@ -294,6 +298,29 @@ def build_pipeline(
     )
 
 
+def build_stage_runner(settings: CresmoSettings | None = None) -> PipelineStageRunner:
+    """Build and wire an isolated PipelineStageRunner instance with resolved settings.
+
+    Args:
+        settings: Optional custom or partial application settings.
+
+    Returns:
+        Fully wired PipelineStageRunner with LLM transformation and telemetry adapters.
+    """
+    resolved_settings = resolve_shared_settings(settings)
+    pipeline = build_pipeline(resolved_settings)
+    return pipeline.stage_runner
+
+
+# Register hook into infrastructure arq worker to eliminate reverse coupling per ADR-048
+try:
+    from cresmo.infrastructure.workers.arq_worker import register_stage_runner_factory
+
+    register_stage_runner_factory(build_stage_runner)
+except ImportError:
+    pass
+
+
 def build_sync_channel_use_case(
     settings: CresmoSettings | None = None,
     batch_size_override: int | None = None,
@@ -317,7 +344,6 @@ def build_sync_channel_use_case(
 
 __all__ = [
     "PreflightHealthChecker",
-    "_resolve_cookie_file",
     "build_anonymizer_adapter",
     "build_concat_master_use_case",
     "build_discover_batch_sources_use_case",
@@ -329,6 +355,7 @@ __all__ = [
     "build_pipeline",
     "build_preflight_checker",
     "build_prompt_provider",
+    "build_stage_runner",
     "build_sync_channel_use_case",
     "build_telemetry_adapter",
     "build_unify_duplicates_use_case",
@@ -340,3 +367,4 @@ __all__ = [
     "resolve_langfuse_client",
     "resolve_shared_settings",
 ]
+

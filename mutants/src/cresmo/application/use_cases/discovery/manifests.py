@@ -51,15 +51,21 @@ def extract_raw_file_metadata(path: Path) -> dict[str, str]:
     """Extract YAML frontmatter attributes from a raw markdown transcript file."""
     metadata: dict[str, str] = {}
     try:
-        text = path.read_text(encoding="utf-8")
-        if text.startswith("---"):
-            parts = text.split("---", 2)
-            if len(parts) >= _EXPECTED_FRONTMATTER_SPLIT_PARTS:
-                frontmatter = parts[1]
-                for line in frontmatter.splitlines():
+        with path.open("r", encoding="utf-8") as f:
+            first_line = f.readline()
+            if first_line.strip() == "---":
+                closed = False
+                for idx, line in enumerate(f):
+                    if idx >= 50:
+                        break
+                    if line.strip() == "---":
+                        closed = True
+                        break
                     if ":" in line:
                         k, v = line.split(":", 1)
                         metadata[k.strip()] = v.strip().strip("\"'")
+                if not closed:
+                    return {}
 
         raw_chan_id = metadata.get("channel_id")
         raw_chan_name = metadata.get("channel") or metadata.get("channel_name")

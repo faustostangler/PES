@@ -12,12 +12,14 @@ Conforms to:
 
 from __future__ import annotations
 
-import argparse
 import sys
 import tempfile
 import time
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import Annotated, Any
+
+import typer
 
 from cresmo.domain.value_objects import ChannelFeedQuery
 from cresmo.presentation.composition import (
@@ -30,68 +32,105 @@ from cresmo.presentation.exit_codes import (
 )
 
 
-def register_subparser(subparsers: argparse._SubParsersAction) -> None:
-    """Register 'worker' subcommand parser with argument options.
+def worker(
+    channel: Annotated[
+        str,
+        typer.Option(
+            "--channel",
+            help="Target YouTube channel or playlist URL to poll continuously",
+        ),
+    ],
+    poll_interval: Annotated[
+        int,
+        typer.Option(
+            "--poll-interval",
+            min=10,
+            help="Polling interval in seconds between feed checks (default: 300)",
+        ),
+    ] = 300,
+    lookback: Annotated[
+        int,
+        typer.Option(
+            "--lookback",
+            min=0,
+            help="Days lookback window for new uploads per polling cycle (default: 7)",
+        ),
+    ] = 7,
+    max_videos: Annotated[
+        int,
+        typer.Option(
+            "--max-videos",
+            min=1,
+            help="Maximum videos per cycle (default: 10)",
+        ),
+    ] = 10,
+    once: Annotated[
+        bool,
+        typer.Option(
+            "--once",
+            help="Execute exactly one polling cycle and terminate cleanly",
+        ),
+    ] = False,
+    verbose: Annotated[
+        bool,
+        typer.Option("--verbose", "-v", help="Enable verbose output"),
+    ] = False,
+) -> None:
+    """Run continuous polling worker daemon with heartbeat health reporting."""
+    _ = verbose
+    code = handle_worker(
+        None,
+        channel=channel,
+        poll_interval=poll_interval,
+        lookback=lookback,
+        max_videos=max_videos,
+        once=once,
+    )
+    if code != EXIT_SUCCESS:
+        raise typer.Exit(code=code)
 
-    Args:
-        subparsers: Root CLI subparsers action object.
-    """
-    worker_parser = subparsers.add_parser(
-        "worker",
-        help="Run continuous polling worker daemon with heartbeat health reporting",
-    )
-    worker_parser.add_argument(
-        "--channel",
-        required=True,
-        help="Target YouTube channel or playlist URL to poll continuously",
-    )
-    worker_parser.add_argument(
-        "--poll-interval",
-        type=int,
-        default=300,
-        help="Polling interval in seconds between feed checks (default: 300)",
-    )
-    worker_parser.add_argument(
-        "--lookback",
-        type=int,
-        default=7,
-        help="Days lookback window for new uploads per polling cycle (default: 7)",
-    )
-    worker_parser.add_argument(
-        "--max-videos",
-        type=int,
-        default=10,
-        help="Maximum videos per cycle (default: 10)",
-    )
-    worker_parser.add_argument(
-        "--once",
-        action="store_true",
-        help="Execute exactly one polling cycle and terminate cleanly",
-    )
-    worker_parser.set_defaults(handler=handle_worker)
 
-
-def handle_worker(args: argparse.Namespace) -> int:
+def handle_worker(
+    args: Any = None,
+    channel: str | None = None,
+    poll_interval: int = 300,
+    lookback: int = 7,
+    max_videos: int = 10,
+    once: bool = False,
+) -> int:
     """Run polling daemon for continuous channel monitoring.
 
     Args:
-        args: Parsed CLI argument namespace containing channel, poll interval, and flags.
+        args: Parsed CLI argument namespace or None.
+        channel: Target YouTube channel or playlist URL string.
+        poll_interval: Polling interval in seconds.
+        lookback: Days lookback window.
+        max_videos: Maximum videos per cycle.
+        once: Whether to execute single cycle and terminate.
 
     Returns:
         Process exit code integer.
     """
+    target_channel = getattr(args, "channel", channel) if args is not None else channel
+    target_poll_interval = (
+        getattr(args, "poll_interval", poll_interval) if args is not None else poll_interval
+    )
+    target_lookback = getattr(args, "lookback", lookback) if args is not None else lookback
+    target_max_videos = getattr(args, "max_videos", max_videos) if args is not None else max_videos
+    target_once = getattr(args, "once", once) if args is not None else once
+
     try:
         settings = resolve_shared_settings()
         use_case = build_sync_channel_use_case(settings=settings)
         query = ChannelFeedQuery(
-            channel_url=args.channel,
-            lookback_days=args.lookback,
-            max_videos=args.max_videos,
+            channel_url=target_channel or "",
+            lookback_days=target_lookback,
+            max_videos=target_max_videos,
         )
         heartbeat_file = Path(tempfile.gettempdir()) / "cresmo_worker.heartbeat"
 
         sys.stdout.write(
-            f"Starting ChannelPollingDaemon for '{args.channel}' (interval: {args.poll_interval}s)...\n"
+            f"Starting ChannelPollingDaemon for '{target_channel}' (interval: {target_poll_interval}s)...\n"
         )
 
         while True:
@@ -102,10 +141,10 @@ def handle_worker(args: argparse.Namespace) -> int:
                 f"processed={summary.processed_count}, skipped={summary.skipped_count}, failed={summary.failed_count}\n"
             )
 
-            if args.once:
+            if target_once:
                 break
 
-            time.sleep(args.poll_interval)
+            time.sleep(target_poll_interval)
 
         return EXIT_SUCCESS
     except KeyboardInterrupt:
