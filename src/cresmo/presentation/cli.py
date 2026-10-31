@@ -102,7 +102,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         Process exit code integer conforming to the exit code taxonomy in exit_codes.py.
     """
     try:
-        res = app(args=list(argv) if argv is not None else None, standalone_mode=False)
+exis        res = app(args=list(argv) if argv is not None else None, standalone_mode=False)
         return EXIT_SUCCESS if res is None else int(res)
     except typer.Exit as exc:
         return exc.exit_code
