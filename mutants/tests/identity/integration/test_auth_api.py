@@ -42,13 +42,12 @@ class TestAuthAPIEndpoints:
             json={
                 "email": "architect@pes.ai",
                 "password": "StrongPassword123!",
-                "roles": ["admin", "user"],
             },
         )
         assert reg_resp.status_code == 201
         data = reg_resp.json()
         assert data["email"] == "architect@pes.ai"
-        assert "admin" in data["roles"]
+        assert data["roles"] == ["user"]
 
         # 2. Login with registered user
         login_resp = app_client.post(
@@ -75,7 +74,7 @@ class TestAuthAPIEndpoints:
         assert me_resp.status_code == 200
         me_data = me_resp.json()
         assert me_data["email"] == "architect@pes.ai"
-        assert "admin" in me_data["roles"]
+        assert me_data["roles"] == ["user"]
 
         # 5. Create Personal Access Token (PAT) for CLI
         pat_resp = app_client.post(

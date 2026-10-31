@@ -9,11 +9,13 @@ from enum import Enum
 
 from identity.domain.exceptions import (
     InvalidEmailError,
+    InvalidTokenError,
     InvalidUserIdError,
 )
 
 # Standard RFC 5322 simplified email validation regex
 EMAIL_REGEX = re.compile(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$")
+TOKEN_HASH_REGEX = re.compile(r"^[0-9a-f]{64}$")
 
 
 @dataclass(frozen=True)
@@ -94,12 +96,22 @@ class TokenHash:
 
     value: str
 
+    def __post_init__(self) -> None:
+        if (
+            not self.value
+            or not isinstance(self.value, str)
+            or not TOKEN_HASH_REGEX.match(self.value)
+        ):
+            raise InvalidTokenError(
+                "TokenHash must be a 64-character lowercase hexadecimal string."
+            )
+
     @classmethod
     def from_raw_token(cls, raw_token: str) -> TokenHash:
         """Derives a hexadecimal SHA-256 hash from a raw plaintext token."""
         if not raw_token or not raw_token.strip():
             raise ValueError("Raw token cannot be empty.")
-        computed = hashlib.sha256(raw_token.strip().encode("utf-8")).hexdigest()
+        computed = hashlib.sha256(raw_token.strip().encode()).hexdigest()
         return cls(value=computed)
 
     def __str__(self) -> str:

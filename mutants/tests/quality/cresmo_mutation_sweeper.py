@@ -367,19 +367,19 @@ MODULE_TEST_MAP: dict[str, list[str]] = {
         "tests/cresmo/unit/test_composition.py",
     ],
     # Wave 0 (ADR-048): Cresmo Infrastructure unmapped modules
-    "src/cresmo/infrastructure/adapters/polars_batch_processor.py": [
+    "src/cresmo/infrastructure/adapters/data/polars_batch_processor.py": [
         "tests/cresmo/unit/test_polars_batch_processor.py",
     ],
-    "src/cresmo/infrastructure/adapters/postgres_ledger_adapter.py": [
+    "src/cresmo/infrastructure/adapters/database/postgres_ledger_adapter.py": [
         "tests/cresmo/unit/test_postgres_ledger_adapter.py",
     ],
-    "src/cresmo/infrastructure/adapters/credential_pool.py": [
+    "src/cresmo/infrastructure/adapters/gemini_pool.py": [
         "tests/cresmo/unit/test_gemini_pool.py",
     ],
-    "src/cresmo/infrastructure/adapters/criterion_parser.py": [
+    "src/cresmo/infrastructure/adapters/judges/criterion_parser.py": [
         "tests/cresmo/unit/test_criterion_parser.py",
     ],
-    "src/cresmo/infrastructure/adapters/selectolax_html_parser.py": [
+    "src/cresmo/infrastructure/adapters/scrapers/selectolax_html_parser.py": [
         "tests/cresmo/unit/test_selectolax_html_parser.py",
     ],
     "src/cresmo/infrastructure/database/models.py": [
@@ -407,15 +407,19 @@ MODULE_TEST_MAP: dict[str, list[str]] = {
     ],
     "src/identity/application/use_cases/register_user.py": [
         "tests/identity/unit/test_use_cases.py",
+        "tests/identity/unit/test_dependencies_and_routes.py",
     ],
     "src/identity/application/use_cases/authenticate_user.py": [
         "tests/identity/unit/test_use_cases.py",
+        "tests/identity/unit/test_dependencies_and_routes.py",
     ],
     "src/identity/application/use_cases/manage_pat.py": [
         "tests/identity/unit/test_use_cases.py",
+        "tests/identity/unit/test_dependencies_and_routes.py",
     ],
     "src/identity/application/use_cases/validate_token.py": [
         "tests/identity/unit/test_use_cases.py",
+        "tests/identity/unit/test_dependencies_and_routes.py",
     ],
     "src/identity/infrastructure/settings.py": [
         "tests/identity/unit/test_adapters.py",
@@ -430,12 +434,15 @@ MODULE_TEST_MAP: dict[str, list[str]] = {
         "tests/identity/integration/test_sqlite_repositories.py",
     ],
     "src/identity/presentation/composition.py": [
+        "tests/identity/unit/test_dependencies_and_routes.py",
         "tests/identity/integration/test_auth_api.py",
     ],
     "src/identity/presentation/dependencies.py": [
+        "tests/identity/unit/test_dependencies_and_routes.py",
         "tests/identity/integration/test_auth_api.py",
     ],
     "src/identity/presentation/routes.py": [
+        "tests/identity/unit/test_dependencies_and_routes.py",
         "tests/identity/integration/test_auth_api.py",
     ],
 }
@@ -535,11 +542,20 @@ WAVE_DEFINITIONS: dict[str, list[str]] = {
         "src/cresmo/infrastructure/adapters/native_media_ingestion_adapter.py",
         "src/cresmo/infrastructure/adapters/obsidian_vault_adapter.py",
         "src/cresmo/infrastructure/adapters/prompt_provider.py",
-        "src/cresmo/infrastructure/adapters/polars_batch_processor.py",
-        "src/cresmo/infrastructure/adapters/postgres_ledger_adapter.py",
-        "src/cresmo/infrastructure/adapters/credential_pool.py",
-        "src/cresmo/infrastructure/adapters/criterion_parser.py",
-        "src/cresmo/infrastructure/adapters/selectolax_html_parser.py",
+        "src/cresmo/infrastructure/adapters/data/polars_batch_processor.py",
+        "src/cresmo/infrastructure/adapters/database/postgres_ledger_adapter.py",
+        "src/cresmo/infrastructure/adapters/gemini_pool.py",
+        "src/cresmo/infrastructure/adapters/judges/criterion_parser.py",
+        "src/cresmo/infrastructure/adapters/scrapers/selectolax_html_parser.py",
+        "src/cresmo/infrastructure/database/models.py",
+        "src/cresmo/infrastructure/workers/arq_worker.py",
+    ],
+    "cresmo_unmapped_infra": [
+        "src/cresmo/infrastructure/adapters/data/polars_batch_processor.py",
+        "src/cresmo/infrastructure/adapters/database/postgres_ledger_adapter.py",
+        "src/cresmo/infrastructure/adapters/gemini_pool.py",
+        "src/cresmo/infrastructure/adapters/judges/criterion_parser.py",
+        "src/cresmo/infrastructure/adapters/scrapers/selectolax_html_parser.py",
         "src/cresmo/infrastructure/database/models.py",
         "src/cresmo/infrastructure/workers/arq_worker.py",
     ],

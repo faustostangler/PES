@@ -58,7 +58,7 @@ class CreatePersonalAccessTokenUseCase:
             raw_token=raw_token,
             token_prefix=pat.token_prefix,
             name=pat.name,
-            scopes=[s.value for s in pat.scopes],
+            scopes=sorted(s.value for s in pat.scopes),
             expires_at=pat.expires_at.isoformat() if pat.expires_at else None,
         )
 
@@ -116,7 +116,7 @@ class ListPersonalAccessTokensUseCase:
                 id=t.id,
                 name=t.name,
                 token_prefix=t.token_prefix,
-                scopes=[s.value for s in t.scopes],
+                scopes=sorted(s.value for s in t.scopes),
                 created_at=t.created_at.isoformat(),
                 expires_at=t.expires_at.isoformat() if t.expires_at else None,
                 last_used_at=t.last_used_at.isoformat() if t.last_used_at else None,

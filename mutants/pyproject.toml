@@ -116,6 +116,8 @@ packages = ["src/cresmo", "src/identity", "src/shared_kernel"]
 
 [tool.mutmut]
 source_paths = ["src"]
+only_mutate = ["src/cresmo/infrastructure/workers/arq_worker.py"]
+runner = "pytest -x tests/cresmo/unit/test_arq_worker.py"
 also_copy = [
     ".env",
     ".agents",
