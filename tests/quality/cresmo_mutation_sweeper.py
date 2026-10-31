@@ -243,10 +243,6 @@ MODULE_TEST_MAP: dict[str, list[str]] = {
         "tests/cresmo/unit/test_run_command.py",
         "tests/cresmo/unit/test_cli.py",
     ],
-    "src/cresmo/presentation/commands/run_parser.py": [
-        "tests/cresmo/unit/test_run_parser.py",
-        "tests/cresmo/unit/test_cli.py",
-    ],
     "src/cresmo/presentation/commands/sync.py": [
         "tests/cresmo/unit/test_sync_command.py",
         "tests/cresmo/unit/test_cli.py",
@@ -370,6 +366,78 @@ MODULE_TEST_MAP: dict[str, list[str]] = {
     "src/cresmo/presentation/factories/use_case_factory.py": [
         "tests/cresmo/unit/test_composition.py",
     ],
+    # Wave 0 (ADR-048): Cresmo Infrastructure unmapped modules
+    "src/cresmo/infrastructure/adapters/polars_batch_processor.py": [
+        "tests/cresmo/unit/test_polars_batch_processor.py",
+    ],
+    "src/cresmo/infrastructure/adapters/postgres_ledger_adapter.py": [
+        "tests/cresmo/unit/test_postgres_ledger_adapter.py",
+    ],
+    "src/cresmo/infrastructure/adapters/credential_pool.py": [
+        "tests/cresmo/unit/test_gemini_pool.py",
+    ],
+    "src/cresmo/infrastructure/adapters/criterion_parser.py": [
+        "tests/cresmo/unit/test_criterion_parser.py",
+    ],
+    "src/cresmo/infrastructure/adapters/selectolax_html_parser.py": [
+        "tests/cresmo/unit/test_selectolax_html_parser.py",
+    ],
+    "src/cresmo/infrastructure/database/models.py": [
+        "tests/cresmo/unit/test_postgres_ledger_adapter.py",
+    ],
+    "src/cresmo/infrastructure/workers/arq_worker.py": [
+        "tests/cresmo/unit/test_arq_worker.py",
+    ],
+    # Shared Kernel Context
+    "src/shared_kernel/security.py": [
+        "tests/shared_kernel/unit/test_security.py",
+    ],
+    # IAM Identity Bounded Context
+    "src/identity/domain/entities.py": [
+        "tests/identity/unit/test_domain.py",
+    ],
+    "src/identity/domain/value_objects.py": [
+        "tests/identity/unit/test_domain.py",
+    ],
+    "src/identity/domain/exceptions.py": [
+        "tests/identity/unit/test_domain.py",
+    ],
+    "src/identity/application/dtos.py": [
+        "tests/identity/unit/test_use_cases.py",
+    ],
+    "src/identity/application/use_cases/register_user.py": [
+        "tests/identity/unit/test_use_cases.py",
+    ],
+    "src/identity/application/use_cases/authenticate_user.py": [
+        "tests/identity/unit/test_use_cases.py",
+    ],
+    "src/identity/application/use_cases/manage_pat.py": [
+        "tests/identity/unit/test_use_cases.py",
+    ],
+    "src/identity/application/use_cases/validate_token.py": [
+        "tests/identity/unit/test_use_cases.py",
+    ],
+    "src/identity/infrastructure/settings.py": [
+        "tests/identity/unit/test_adapters.py",
+    ],
+    "src/identity/infrastructure/adapters/argon2_hasher_adapter.py": [
+        "tests/identity/unit/test_adapters.py",
+    ],
+    "src/identity/infrastructure/adapters/jwt_token_adapter.py": [
+        "tests/identity/unit/test_adapters.py",
+    ],
+    "src/identity/infrastructure/adapters/sqlite_user_repository.py": [
+        "tests/identity/integration/test_sqlite_repositories.py",
+    ],
+    "src/identity/presentation/composition.py": [
+        "tests/identity/integration/test_auth_api.py",
+    ],
+    "src/identity/presentation/dependencies.py": [
+        "tests/identity/integration/test_auth_api.py",
+    ],
+    "src/identity/presentation/routes.py": [
+        "tests/identity/integration/test_auth_api.py",
+    ],
 }
 
 WAVE_DEFINITIONS: dict[str, list[str]] = {
@@ -419,6 +487,8 @@ WAVE_DEFINITIONS: dict[str, list[str]] = {
         "src/cresmo/domain/value_objects/quality.py",
         "src/cresmo/domain/value_objects/constants.py",
         "src/cresmo/domain/stage_registry.py",
+        "src/cresmo/domain/services/mechanical_validator.py",
+        "src/cresmo/domain/taxonomy.py",
     ],
     "pipeline": [
         "src/cresmo/application/pipeline/quarantine.py",
@@ -429,6 +499,8 @@ WAVE_DEFINITIONS: dict[str, list[str]] = {
         "src/cresmo/application/pipeline/coordinator.py",
         "src/cresmo/application/pipeline/context.py",
         "src/cresmo/application/pipeline/models.py",
+        "src/cresmo/application/json_parser.py",
+        "src/cresmo/application/services/preflight.py",
     ],
     "use_cases": [
         "src/cresmo/application/use_cases/concat_master.py",
@@ -458,6 +530,18 @@ WAVE_DEFINITIONS: dict[str, list[str]] = {
         "src/cresmo/infrastructure/logging_config.py",
         "src/cresmo/infrastructure/config.py",
         "src/cresmo/infrastructure/adapters/sqlite_ledger_adapter.py",
+        "src/cresmo/infrastructure/adapters/gemini_adapter.py",
+        "src/cresmo/infrastructure/adapters/header_generator.py",
+        "src/cresmo/infrastructure/adapters/native_media_ingestion_adapter.py",
+        "src/cresmo/infrastructure/adapters/obsidian_vault_adapter.py",
+        "src/cresmo/infrastructure/adapters/prompt_provider.py",
+        "src/cresmo/infrastructure/adapters/polars_batch_processor.py",
+        "src/cresmo/infrastructure/adapters/postgres_ledger_adapter.py",
+        "src/cresmo/infrastructure/adapters/credential_pool.py",
+        "src/cresmo/infrastructure/adapters/criterion_parser.py",
+        "src/cresmo/infrastructure/adapters/selectolax_html_parser.py",
+        "src/cresmo/infrastructure/database/models.py",
+        "src/cresmo/infrastructure/workers/arq_worker.py",
     ],
     "presentation": [
         "src/cresmo/presentation/cli.py",
@@ -465,12 +549,37 @@ WAVE_DEFINITIONS: dict[str, list[str]] = {
         "src/cresmo/presentation/commands/check_config.py",
         "src/cresmo/presentation/commands/dedupe.py",
         "src/cresmo/presentation/commands/run.py",
-        "src/cresmo/presentation/commands/run_parser.py",
         "src/cresmo/presentation/commands/sync.py",
         "src/cresmo/presentation/commands/worker.py",
         "src/cresmo/presentation/commands/concat_master.py",
         "src/cresmo/presentation/commands/seed_prompts.py",
         "src/cresmo/presentation/commands/export_cookies.py",
+    ],
+    "shared_kernel": [
+        "src/shared_kernel/security.py",
+    ],
+    "identity_domain": [
+        "src/identity/domain/entities.py",
+        "src/identity/domain/value_objects.py",
+        "src/identity/domain/exceptions.py",
+    ],
+    "identity_application": [
+        "src/identity/application/dtos.py",
+        "src/identity/application/use_cases/register_user.py",
+        "src/identity/application/use_cases/authenticate_user.py",
+        "src/identity/application/use_cases/manage_pat.py",
+        "src/identity/application/use_cases/validate_token.py",
+    ],
+    "identity_infrastructure": [
+        "src/identity/infrastructure/settings.py",
+        "src/identity/infrastructure/adapters/argon2_hasher_adapter.py",
+        "src/identity/infrastructure/adapters/jwt_token_adapter.py",
+        "src/identity/infrastructure/adapters/sqlite_user_repository.py",
+    ],
+    "identity_presentation": [
+        "src/identity/presentation/composition.py",
+        "src/identity/presentation/dependencies.py",
+        "src/identity/presentation/routes.py",
     ],
 }
 
@@ -625,7 +734,8 @@ def seed_mutmut_stats(source_path: Path, test_nodes: Sequence[str]) -> None:
     data.setdefault("git_commit", None)
 
     for t in test_nodes:
-        durations.setdefault(t, 0.05)
+        # Enforce safe duration floor (5.0s) to prevent false SIGXCPU (-24) in mutmut per ADR-048
+        durations.setdefault(t, 5.0)
 
     fn_keys = extract_function_keys(source_path)
     for k in fn_keys:

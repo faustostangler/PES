@@ -33,21 +33,27 @@ class LayerStats(TypedDict):
 
 
 def collect_mutation_stats(mutants_dir: Path) -> dict[str, LayerStats]:
-    """Scan all .meta files in mutants/src/cresmo and aggregate stats by architectural layer."""
-    cresmo_dir = mutants_dir / "src" / "cresmo"
+    """Scan all .meta files in mutants/src across all bounded contexts and aggregate stats by architectural layer."""
+    mutants_src = mutants_dir / "src"
     layers = ["domain", "application", "infrastructure", "presentation"]
     stats: dict[str, LayerStats] = {
         l: {"total": 0, "killed": 0, "survived": 0, "no_tests": 0, "timeout": 0} for l in layers
     }
 
-    if not cresmo_dir.exists():
+    if not mutants_src.exists():
         return stats
 
-    for meta_file in cresmo_dir.glob("**/*.meta"):
-        rel_parts = meta_file.relative_to(cresmo_dir).parts
+    for meta_file in mutants_src.glob("**/*.meta"):
+        rel_parts = meta_file.relative_to(mutants_src).parts
         if not rel_parts:
             continue
-        layer = rel_parts[0]
+        if rel_parts[0] == "shared_kernel":
+            layer = "domain"
+        elif rel_parts[0] in ("cresmo", "identity") and len(rel_parts) > 1:
+            layer = rel_parts[1]
+        else:
+            continue
+
         if layer not in stats:
             continue
 
@@ -98,18 +104,19 @@ def print_mutation_report(stats: dict[str, LayerStats]) -> None:
 
 
 def verify_module_completeness(src_dir: Path, mutants_dir: Path) -> list[str]:
-    """Verify that all non-interface functional python modules have corresponding .meta files."""
+    """Verify that all non-interface functional python modules across contexts have corresponding .meta files."""
     missing: list[str] = []
-    cresmo_src = src_dir / "cresmo"
-    cresmo_mutants = mutants_dir / "src" / "cresmo"
-    if not cresmo_src.exists():
+    mutants_src = mutants_dir / "src"
+    if not src_dir.exists():
         return missing
 
-    for src_file in sorted(cresmo_src.glob("**/*.py")):
+    for src_file in sorted(src_dir.glob("**/*.py")):
         if src_file.name == "__init__.py" or "ports" in src_file.parts:
             continue
-        rel = src_file.relative_to(cresmo_src)
-        meta_file = cresmo_mutants / rel.with_suffix(".py.meta")
+        rel = src_file.relative_to(src_dir)
+        if not rel.parts or rel.parts[0] not in ("cresmo", "identity", "shared_kernel"):
+            continue
+        meta_file = mutants_src / rel.with_suffix(".py.meta")
         if not meta_file.exists():
             missing.append(str(rel))
     return missing
