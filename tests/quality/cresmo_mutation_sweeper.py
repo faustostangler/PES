@@ -650,6 +650,14 @@ def sync_source_to_mutants() -> int:
                 shutil.copy2(t_file, target)
                 count += 1
 
+    # Prune orphaned test files in mutants/tests
+    if mutants_tests_dir.exists():
+        for p in list(mutants_tests_dir.glob("**/*")):
+            if p.is_file() and not p.name.endswith((".meta", ".spans", ".pyc", ".pyo")):
+                rel = p.relative_to(mutants_tests_dir)
+                if not (tests_dir / rel).exists():
+                    p.unlink(missing_ok=True)
+
     # Also sync scripts/
     scripts_dir = Path("scripts")
     mutants_scripts_dir = Path("mutants/scripts")
@@ -748,16 +756,17 @@ def seed_mutmut_stats(source_path: Path, test_nodes: Sequence[str]) -> None:
     stats_file.write_text(json.dumps(data, indent=4), encoding="utf-8")
 
 
-def set_pyproject_only_mutate(target_path: str) -> str:
-    """Set only_mutate in pyproject.toml and return original file content."""
+def set_pyproject_only_mutate(target_path: str, test_files: Sequence[str] | None = None) -> str:
+    """Set only_mutate and targeted runner in pyproject.toml and return original file content."""
     pyproject = Path("pyproject.toml")
     original = pyproject.read_text(encoding="utf-8")
 
     mutmut_section = '[tool.mutmut]\nsource_paths = ["src"]\n'
     if mutmut_section in original:
+        tests_arg = " ".join(test_files) if test_files else "tests/shared_kernel tests/identity tests/cresmo"
         new_content = original.replace(
             mutmut_section,
-            f'{mutmut_section}only_mutate = ["{target_path}"]\n',
+            f'{mutmut_section}only_mutate = ["{target_path}"]\nrunner = "pytest -x {tests_arg}"\n',
         )
         pyproject.write_text(new_content, encoding="utf-8")
     return original
@@ -818,7 +827,7 @@ def run_mutation_on_module(
         print("  🔄 Cleared previous mutant artifacts for fresh generation.")
 
     # 5. Configure pyproject.toml & run
-    original_pyproject = set_pyproject_only_mutate(source_path_str)
+    original_pyproject = set_pyproject_only_mutate(source_path_str, test_files=test_files)
     try:
         mod_parts = Path(source_path_str)
         if mod_parts.parts and mod_parts.parts[0] == "src":
