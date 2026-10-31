@@ -103,8 +103,8 @@ If an Eval dimension fails (score below the blocking threshold):
 3. **Re-run the full quality gate** after remediation: `[MUTATION_EXEC]` + `[EVAL_EXEC]`.
 4. The implementation is **not complete** until both mutation survivors = 0 AND Eval gate passes.
 
-### Step 5: Pre-Commit Architectural Audit (Delegate to `stangler-refraction`)
-Before staging or committing changes, activate [stangler-refraction](../stangler-refraction/SKILL.md) to spawn an isolated `strict-clean-architect` subagent that inspects the pending `git diff` for Hexagonal boundary leaks, Anti-Mirroring compliance, forbidden `src.` import prefixes, and strict typing integrity.
+### Step 5: Pre-Commit Architectural Audit (Delegate to `stangler-scheimpflug`)
+Before staging or committing changes, activate [stangler-scheimpflug](../stangler-scheimpflug/SKILL.md) to spawn an isolated `strict-clean-architect` subagent that inspects the pending `git diff` for Hexagonal boundary leaks, Anti-Mirroring compliance, forbidden `src.` import prefixes, and strict typing integrity.
 
 ---
 

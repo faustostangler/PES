@@ -3,7 +3,7 @@ name: stangler-doctor
 description: >
   Enforces the Doctor Stangler Architecture Method — the mandatory coding methodology for this workspace.
   Coordinates the multi-agent committee via its sub-skills located under the same .agents/ directory:
-  stangler-angiography, stangler-stereoscopy, stangler-refractometry, stangler-surgery, stangler-treatment, stangler-pathologist, stangler-refraction, stangler-laser, and stangler-fast.
+  stangler-angiography, stangler-stereoscopy, stangler-refractometry, stangler-surgery, stangler-treatment, stangler-pathologist, stangler-scheimpflug, stangler-laser, and stangler-fast.
   ADR-first: every coding task begins with an Architectural Decision Record. Specs are
   consequences of the ADR. Implementation plans are consequences of specs. No implementation
   plan without specs. No specs without ADR. Governs architecture (DDD, Hexagonal/Clean
@@ -43,7 +43,7 @@ To ensure absolute precision, the Doctor Stangler Method is executed by a commit
 | **Phase 3** | **Surgery** | `../stangler-surgery/SKILL.md` | Surgical TDD implementation, failing tests, minimum code to pass, refactoring |
 | **Phase 4** | **Treatment** | `../stangler-treatment/SKILL.md` | Post-op quality checks, mutation testing (`mutmut`), static types, linting |
 | **Phase 4 Biopsy** | **Pathologist** | `../stangler-pathologist/SKILL.md` | Isolated `Workspace="branch"` subagent (`mutant-hunter`) for `mutmut` & `pytest-asyncio` patch synthesis |
-| **Pre-Commit Audit** | **Refraction** | `../stangler-refraction/SKILL.md` | Isolated subagent (`strict-clean-architect`) auditing git diffs for Hexagonal purity, Anti-Mirroring, `src.` imports, and `mypy --strict` |
+| **Pre-Commit Audit** | **Scheimpflug** | `../stangler-scheimpflug/SKILL.md` | Isolated subagent (`strict-clean-architect`) auditing git diffs for Hexagonal purity, Anti-Mirroring, `src.` imports, and `mypy --strict` |
 | **Grilling** | **Laser Griller** | `../stangler-laser/SKILL.md` | Reference-grounded grilling to challenge/stress-test architectural plans against 13 reference chapters |
 | **Fast Track** | **Fast Coder** | `../stangler-fast/SKILL.md` | Rapid prototyping, sandbox spikes, throwaway experiments, KISS tasks |
 
