@@ -36,6 +36,12 @@ from cresmo.domain.value_objects import (
     NoteType,
     RawIndexEntry,
 )
+from cresmo.infrastructure.adapters.obsidian.catalog import ChannelCatalogHandler
+from cresmo.infrastructure.adapters.obsidian.utils import (
+    atomic_write,
+    channel_to_slug,
+    sanitize_filename,
+)
 from cresmo.infrastructure.adapters.obsidian_vault_adapter import ObsidianVaultAdapter
 
 
@@ -1706,3 +1712,93 @@ Only body here, no complementary section.
         assert len(files) == 2
         file_stems = {f.stem for f in files}
         assert file_stems == {"phil_1", "phil_2"}
+
+
+class TestChannelCatalogHandlerAndUtils:
+    """Hermetic unit tests for obsidian catalog handler and filesystem utilities."""
+
+    def test_sanitize_filename(self) -> None:
+        assert sanitize_filename("safe_name") == "safe_name"
+        assert sanitize_filename('bad/file:name*with?chars"and<more>|end%') == "bad_file_name_with_chars_and_more__end_"
+        assert sanitize_filename(ChannelName("  Leading And Trailing  ")) == "Leading And Trailing"
+
+    def test_channel_to_slug(self) -> None:
+        assert channel_to_slug("My Channel Name") == "My_Channel_Name"
+        assert channel_to_slug("Channel / With * Illegal") == "Channel___With___Illegal"
+        assert channel_to_slug(ChannelName("Poli Sci")) == "Poli_Sci"
+
+    def test_atomic_write(self, tmp_path: Path) -> None:
+        target = tmp_path / "sub" / "dir" / "file.txt"
+        atomic_write(target, "atomic content")
+        assert target.exists()
+        assert target.read_text(encoding="utf-8") == "atomic content"
+
+    def test_catalog_handler_index_paths_and_parsing(self, tmp_path: Path) -> None:
+        raw_dir = tmp_path / "raw"
+        data_dir = tmp_path / "data"
+        handler = ChannelCatalogHandler(raw_dir=raw_dir, data_dir=data_dir)
+
+        ch = ChannelName("Tech Channel")
+        idx_path = handler.get_channel_index_path(ch)
+        assert idx_path == raw_dir / "_index_Tech Channel.md"
+
+        # Missing file returns empty set
+        assert handler.get_indexed_video_ids_for_channel(ch) == set()
+
+        # Write index file with both format patterns and an invalid id
+        idx_path.parent.mkdir(parents=True, exist_ok=True)
+        idx_path.write_text(
+            "# Canal: Tech\n\n"
+            "- **Video ID**: `vid00000001`\n"
+            "- [vid00000002](https://youtube.com/watch?v=vid00000002)\n"
+            "- **Video ID**: `invalid video id with spaces`\n",
+            encoding="utf-8",
+        )
+        video_ids = handler.get_indexed_video_ids_for_channel(ch)
+        assert ContentId("vid00000001") in video_ids
+        assert ContentId("vid00000002") in video_ids
+
+    def test_catalog_handler_append_entries(self, tmp_path: Path) -> None:
+        raw_dir = tmp_path / "raw"
+        data_dir = tmp_path / "data"
+        handler = ChannelCatalogHandler(raw_dir=raw_dir, data_dir=data_dir)
+
+        ch = ChannelName("Economics")
+        entry = RawIndexEntry(
+            channel_name=ch,
+            channel_category="Social Sciences",
+            video_id=ContentId("vid_econ_01"),
+            title="Market Mechanisms",
+            key_concept="Price Discovery",
+            synthesis="Prices coordinate dispersed knowledge efficiently across economic agents.",
+            summary="Study of market price signaling.",
+            excerpt="Excerpt body text.",
+            url="https://youtube.com/watch?v=vid_econ_01",
+        )
+
+        # First append creates file with header
+        handler.append_channel_index_entry(ch, entry)
+        idx_path = handler.get_channel_index_path(ch)
+        assert idx_path.exists()
+        content = idx_path.read_text(encoding="utf-8")
+        assert "# Canal: Economics" in content
+        assert "Price Discovery" in content
+
+        # Second append does not duplicate header
+        handler.append_channel_index_entry(ch, entry)
+        content_twice = idx_path.read_text(encoding="utf-8")
+        assert content_twice.count("# Canal: Economics") == 1
+
+        # Brain CSV append creates header with semicolon delimiter
+        handler.append_brain_csv_entry(entry)
+        csv_file = data_dir / "brain.csv"
+        assert csv_file.exists()
+        csv_content = csv_file.read_text(encoding="utf-8")
+        assert '"channel_category";"channel_name";"filename";"key_concept";"synthesis"' in csv_content
+        assert '"Price Discovery"' in csv_content
+
+        # Second brain CSV append appends without repeating header
+        handler.append_brain_csv_entry(entry)
+        csv_twice = csv_file.read_text(encoding="utf-8")
+        assert csv_twice.count('"channel_category";"channel_name"') == 1
+
