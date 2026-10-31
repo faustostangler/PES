@@ -41,6 +41,8 @@ This glossary establishes the canonical terminology across all engineering discu
 | **`AlphabeticalFeedOrdering`** | Domain Invariant | Deterministic sorting rule mandating that all candidate channel feeds discovered from manifests or lakes are ordered alphabetically case-insensitively before feed probing or media downloads. | `AlphabeticalSync`, `SortedChannels`, `DeterministicOrder` |
 | **`ChannelName`** | Value Object | Immutable, self-validating identifier representing a content creator or channel feed. Enforces non-emptiness, trims whitespace, caps length at 120 chars, and rejects path traversal sequences (`..`, `/`, `\`). Supports transparent string equality and hashing. | `channel_str`, `channel_id`, `chan_name` |
 | **`SourceModality`** | Value Object / Enumeration | Strongly-typed enumeration (`FILE = "file"`, `URL = "url"`) representing the physical or remote ingestion modality of a batch source item, replacing unvalidated string primitives. | `kind_str`, `source_type`, `input_kind` |
+| **`TokenHash`** | Value Object | Immutable, self-validating cryptographic SHA-256 hash enforcing exactly 64 lowercase hexadecimal characters for Personal Access Tokens and secrets per ADR-048. | `raw_hash`, `token_str`, `hash_key` |
+| **`PersonalAccessToken`** | Entity / Aggregate | Domain entity for machine-to-machine authentication supporting clock-injectable validity verification (`is_active_at`), permission scopes, and usage audit timestamps per ADR-018 and ADR-048. | `PAT`, `api_key`, `access_token` |
 
 ---
 
@@ -141,5 +143,7 @@ This glossary establishes the canonical terminology across all engineering discu
 | **`SessionReplayTelemetry`** | Observability architecture pattern in which independent per-stage OpenTelemetry traces are correlated inside Langfuse under a single cohesive execution session via `PipelineSessionId` (`{channel_id}:{content_id}`), avoiding monolithic spans while enabling granular stage-level debugging. (Codified in `ADR-035`, `ADR-037`). | `MegaTrace (anti-pattern)`, `MonolithicSession`, `GlobalTrace` |
 | **`MultiContextMutationGate`** | Quality gate architecture pattern enforcing mutation testing across all bounded contexts (`shared_kernel`, `identity`, `cresmo`) through automated wave sweeps and strict kill rate verification (100% in domain/application, >= 95% in infrastructure). (Codified in `ADR-048`, `SPEC-048`). | `MutationGate`, `MutantHunterGate`, `WaveSweeper` |
 | **`StageRunnerRegistrationHook`** | Clean Architecture pattern decoupling background infrastructure task runners (`arq_worker.py`) from presentation composition roots via runtime factory dependency registration. (Codified in `ADR-048`, `SPEC-048`). | `WorkerRunnerHook`, `StageRunnerInjector`, `DecoupledWorkerHook` |
+| **`IamSettings`** | Centralized configuration sub-model (`src/config.py`) sourcing IAM environment variables with fail-fast validation (`min_length=32` on `IAM_JWT_SECRET_KEY`) per ADR-048. | `AuthSettings`, `IdentityConfig`, `SecuritySettings` |
+| **`AppConfig`** | Single Source of Truth root settings model (`src/config.py`) consolidating Bounded Contexts (`iam: IamSettings`, `cresmo: CresmoSettings`) sourced from `.env` without scattered environment variables. | `GlobalConfig`, `CentralSettings`, `ConfigTree` |
 
 

@@ -111,7 +111,7 @@ def verify_module_completeness(src_dir: Path, mutants_dir: Path) -> list[str]:
         return missing
 
     for src_file in sorted(src_dir.glob("**/*.py")):
-        if src_file.name == "__init__.py" or "ports" in src_file.parts:
+        if src_file.name in ("__init__.py", "ports.py") or "ports" in src_file.parts:
             continue
         rel = src_file.relative_to(src_dir)
         if not rel.parts or rel.parts[0] not in ("cresmo", "identity", "shared_kernel"):

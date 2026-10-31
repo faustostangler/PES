@@ -39,8 +39,8 @@ class TokenResponseDTO:
     """Output payload containing authentication token."""
 
     access_token: str
-    token_type: str = "bearer"
-    expires_in: int = 900  # 15 minutes
+    token_type: str
+    expires_in: int
 
 
 @dataclass(frozen=True)
