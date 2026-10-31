@@ -8,7 +8,11 @@ Conforms to:
 from __future__ import annotations
 
 from cresmo.domain.services.mechanical_validator import (
+    check_complementary_mechanical_saturation,
+    count_complementary_items,
+    extract_complementary_section,
     validate_fluid_prose_mechanical_invariants,
+    validate_gap_filler_mechanical_invariants,
 )
 
 
@@ -197,3 +201,81 @@ def test_multiple_simultaneous_violations() -> None:
     assert "bullet points" in violations[3]
     assert "table markers" in violations[4]
     assert "blockquotes" in violations[5]
+
+
+def test_extract_complementary_section() -> None:
+    text_with = (
+        "## Corpo Principal\n\nTexto de análise.\n\n"
+        "## Informações Complementares\n\n1. Primeiro detalhe.\n\n2. Segundo detalhe."
+    )
+    assert extract_complementary_section(text_with) == "1. Primeiro detalhe.\n\n2. Segundo detalhe."
+    assert extract_complementary_section("## Apenas Corpo\n\nSem seção adicional.") == ""
+
+
+def test_count_complementary_items() -> None:
+    numbered = "1. Item um.\n\n2. Item dois.\n\n3. Item três."
+    assert count_complementary_items(numbered) == 3
+
+    paragraphs = "Primeiro parágrafo de texto.\n\nSegundo parágrafo de texto."
+    assert count_complementary_items(paragraphs) == 2
+
+    empty_or_single = "Texto simples contínuo."
+    assert count_complementary_items(empty_or_single) == 1
+
+
+def test_check_complementary_mechanical_saturation() -> None:
+    prev_text = (
+        "## Corpo\n\nTexto.\n\n"
+        "## Informações Complementares\n\n"
+        "1. Contexto sobre **Banco Central** e **Inflação**.\n\n"
+        "2. Análise da taxa **Selic**."
+    )
+    # Saturated pass: same or subset of entities, item delta <= 5
+    curr_saturated = (
+        "## Corpo\n\nTexto.\n\n"
+        "## Informações Complementares\n\n"
+        "1. Contexto aprofundado sobre **Banco Central**.\n\n"
+        "2. Análise da taxa **Selic**."
+    )
+    assert check_complementary_mechanical_saturation(prev_text, curr_saturated) is True
+
+    # Unsaturated pass: introduces new entity **Ministério da Fazenda**
+    curr_new_entity = (
+        "## Corpo\n\nTexto.\n\n"
+        "## Informações Complementares\n\n"
+        "1. Contexto com **Banco Central** e **Ministério da Fazenda**."
+    )
+    assert check_complementary_mechanical_saturation(prev_text, curr_new_entity) is False
+
+    # Unsaturated pass: missing complementary section
+    assert check_complementary_mechanical_saturation("Sem seção", curr_saturated) is False
+    assert check_complementary_mechanical_saturation(prev_text, "Sem seção") is False
+
+    # Unsaturated pass: length delta >= max_delta_items (5)
+    huge_items = "\n\n".join([f"{i}. Item de detalhe." for i in range(1, 10)])
+    curr_too_large = f"## Corpo\n\nTexto.\n\n## Informações Complementares\n\n{huge_items}"
+    assert check_complementary_mechanical_saturation(prev_text, curr_too_large, max_delta_items=5) is False
+
+
+def test_validate_gap_filler_mechanical_invariants() -> None:
+    valid_gap_filler = (
+        "## Título Principal\n\n"
+        "Parágrafo introdutório sobre o tema sem listas ou tabelas.\n\n"
+        "## Informações Complementares\n\n"
+        "1. Detalhe contextual numerado.\n\n"
+        "2. Segundo detalhe com **Entidade**."
+    )
+    assert validate_gap_filler_mechanical_invariants(valid_gap_filler) == []
+
+    # Missing complementary section
+    missing_comp = "## Título Principal\n\nParágrafo único."
+    violations = validate_gap_filler_mechanical_invariants(missing_comp)
+    assert any("Missing mandatory complementary section" in v for v in violations)
+
+    # Empty text
+    assert validate_gap_filler_mechanical_invariants("") == ["Text is empty or whitespace."]
+
+    # Em-dash violation
+    em_dash_text = valid_gap_filler + " — com em-dash proibido."
+    assert any("em-dashes" in v for v in validate_gap_filler_mechanical_invariants(em_dash_text))
+
