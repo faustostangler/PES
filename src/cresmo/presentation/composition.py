@@ -22,12 +22,12 @@ from collections.abc import Callable
 from typing import Any
 
 import structlog
-from langfuse import Langfuse # very slow import
+from langfuse import Langfuse  # very slow import
 from langfuse.span_filter import is_default_export_span
 from langfuse.types import MaskOtelSpansParams, MaskOtelSpansResult, OtelSpanPatch
 
 from cresmo.application.pipeline import (
-    CresmoPipeline, # slow import
+    CresmoPipeline,  # slow import
     PipelineDependencies,
     PipelineStageRunner,
     StageFactory,
@@ -310,6 +310,15 @@ def build_stage_runner(settings: CresmoSettings | None = None) -> PipelineStageR
     resolved_settings = resolve_shared_settings(settings)
     pipeline = build_pipeline(resolved_settings)
     return pipeline.stage_runner
+
+
+# Register hook into infrastructure arq worker to eliminate reverse coupling per ADR-048
+try:
+    from cresmo.infrastructure.workers.arq_worker import register_stage_runner_factory
+
+    register_stage_runner_factory(build_stage_runner)
+except ImportError:
+    pass
 
 
 def build_sync_channel_use_case(

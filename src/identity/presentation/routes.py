@@ -143,19 +143,19 @@ async def list_personal_access_tokens(
     current_user: AuthenticatedUserDTO = Depends(get_current_user),
     container: IdentityContainer = Depends(get_identity_container),
 ) -> list[PATListItemSchema]:
-    tokens = container.pat_repo.list_by_user(UserId(current_user.user_id))
+    items = container.list_pats_uc.execute(UserId(current_user.user_id))
     return [
         PATListItemSchema(
             id=t.id,
             name=t.name,
             token_prefix=t.token_prefix,
-            scopes=[s.value for s in t.scopes],
-            created_at=t.created_at.isoformat(),
-            expires_at=t.expires_at.isoformat() if t.expires_at else None,
-            last_used_at=t.last_used_at.isoformat() if t.last_used_at else None,
+            scopes=t.scopes,
+            created_at=t.created_at,
+            expires_at=t.expires_at,
+            last_used_at=t.last_used_at,
             is_active=t.is_active,
         )
-        for t in tokens
+        for t in items
     ]
 
 
@@ -169,7 +169,7 @@ async def revoke_personal_access_token(
     current_user: AuthenticatedUserDTO = Depends(get_current_user),
     container: IdentityContainer = Depends(get_identity_container),
 ) -> None:
-    revoked = container.pat_repo.revoke(token_id, UserId(current_user.user_id))
+    revoked = container.revoke_pat_uc.execute(token_id, UserId(current_user.user_id))
     if not revoked:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

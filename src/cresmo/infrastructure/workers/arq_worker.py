@@ -13,6 +13,7 @@ Conforms to:
 from __future__ import annotations
 
 import os
+from collections.abc import Callable
 from pathlib import Path
 from typing import Any, ClassVar
 
@@ -26,6 +27,19 @@ logger = structlog.get_logger(__name__)
 _DEFAULT_JOB_TIMEOUT_SECONDS: int = 600  # 10 minutes for long synthesis/transcription
 _DEFAULT_MAX_RETRIES: int = 3
 _DEFAULT_RETRY_DELAY_SECONDS: int = 15
+
+_STAGE_RUNNER_FACTORY: Callable[..., Any] | None = None
+
+
+def register_stage_runner_factory(factory: Callable[..., Any]) -> None:
+    """Register stage runner builder hook to decouple infrastructure from presentation (ADR-048)."""
+    global _STAGE_RUNNER_FACTORY
+    _STAGE_RUNNER_FACTORY = factory
+
+
+def get_stage_runner_factory() -> Callable[..., Any] | None:
+    """Return registered stage runner builder hook."""
+    return _STAGE_RUNNER_FACTORY
 
 
 async def job_process_pipeline_stage(
@@ -67,10 +81,19 @@ async def job_process_pipeline_stage(
             Content,
             ContentId,
         )
-        from cresmo.presentation.composition import build_stage_runner, resolve_shared_settings
+        from cresmo.infrastructure.config import resolve_shared_settings
 
         settings = ctx.get("settings") or resolve_shared_settings()
-        stage_runner = ctx.get("stage_runner") or build_stage_runner(settings=settings)
+        stage_runner = ctx.get("stage_runner")
+        if stage_runner is None:
+            factory = ctx.get("stage_runner_factory") or _STAGE_RUNNER_FACTORY
+            if factory is not None:
+                stage_runner = factory(settings=settings)
+            else:
+                raise RuntimeError(
+                    "Stage runner factory not configured in worker context. "
+                    "Register via register_stage_runner_factory() or inject ctx['stage_runner']."
+                )
 
         session_key = f"{channel}:{content_id}"
         exec_context = PipelineExecutionContext(
@@ -200,7 +223,7 @@ async def job_sync_feed(
 async def startup(ctx: dict[str, Any]) -> None:
     """Initialize shared connections, settings, and telemetry on worker boot."""
     logger.info("Starting ARQ Worker for Cresmo Knowledge Engine...")
-    from cresmo.presentation.composition import resolve_shared_settings
+    from cresmo.infrastructure.config import resolve_shared_settings
 
     ctx["settings"] = resolve_shared_settings()
 

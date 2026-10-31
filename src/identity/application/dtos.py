@@ -1,6 +1,9 @@
 """Data Transfer Objects (DTOs) for IAM Application Layer."""
 
+from collections.abc import Iterable
 from dataclasses import dataclass, field
+
+from shared_kernel.security import AuthenticatedUser
 
 
 @dataclass(frozen=True)
@@ -63,17 +66,33 @@ class CreatedPATResponseDTO:
 
 
 @dataclass(frozen=True)
-class AuthenticatedUserDTO:
-    """Contextual security principal passed to downstream controllers and contexts."""
+class PATItemDTO:
+    """Read-only view of a Personal Access Token for listing."""
 
-    user_id: str
-    tenant_id: str = "default"
-    email: str = ""
-    roles: list[str] = field(default_factory=list)
-    scopes: list[str] = field(default_factory=list)
+    id: str
+    name: str
+    token_prefix: str
+    scopes: list[str]
+    created_at: str
+    expires_at: str | None
+    last_used_at: str | None
+    is_active: bool
 
-    def has_role(self, role: str) -> bool:
-        return role in self.roles or "admin" in self.roles
 
-    def has_scope(self, scope: str) -> bool:
-        return scope in self.scopes or "admin" in self.roles
+@dataclass(frozen=True)
+class AuthenticatedUserDTO(AuthenticatedUser):
+    """Contextual security principal conforming to Shared Kernel contract (ADR-048)."""
+
+    def __init__(
+        self,
+        user_id: str,
+        tenant_id: str = "default",
+        email: str = "",
+        roles: Iterable[str] = (),
+        scopes: Iterable[str] = (),
+    ) -> None:
+        object.__setattr__(self, "user_id", user_id)
+        object.__setattr__(self, "tenant_id", tenant_id)
+        object.__setattr__(self, "email", email)
+        object.__setattr__(self, "roles", frozenset(roles))
+        object.__setattr__(self, "scopes", frozenset(scopes))

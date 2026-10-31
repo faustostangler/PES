@@ -14,6 +14,7 @@ Conforms to:
 
 from __future__ import annotations
 
+import functools
 from pathlib import Path
 from typing import Any, ClassVar, Self
 
@@ -734,6 +735,28 @@ class CresmoSettings(BaseSettings):
         return self.benchmark_models
 
 
+@functools.lru_cache(maxsize=1)
+def get_shared_settings() -> CresmoSettings:
+    """Return canonical cached CresmoSettings singleton.
+
+    Prevents redundant .env disk reads and multiple configuration allocations
+    across independent adapter factory invocations per ADR-002 §9.1 and ADR-048.
+    """
+    return CresmoSettings()
+
+
+def reset_shared_settings() -> None:
+    """Clear cached settings singleton (used for test isolation)."""
+    get_shared_settings.cache_clear()
+
+
+def resolve_shared_settings(settings: CresmoSettings | None = None) -> CresmoSettings:
+    """Resolve injected settings or fall back to the memoized single source of truth."""
+    if settings is not None:
+        return settings
+    return get_shared_settings()
+
+
 __all__ = [
     "DEFAULT_BENCHMARK_MODELS",
     "DEFAULT_GEMINI_MODEL",
@@ -744,4 +767,7 @@ __all__ = [
     "DEFAULT_JUDGE_TEMPERATURE",
     "DEFAULT_LANGFUSE_PROMPT_LABEL",
     "CresmoSettings",
+    "get_shared_settings",
+    "reset_shared_settings",
+    "resolve_shared_settings",
 ]
