@@ -199,10 +199,11 @@ async def job_extract_audio(
                 headers_path = getattr(settings, "browser_headers_path", None)
                 cookie_file = getattr(settings, "cookies_file", None)
                 header_generator = RandomHeaderGenerator(headers_path=headers_path)
+                whisper_workers = getattr(settings, "whisper_workers", 1)
                 ingestion_adapter = NativeMediaIngestionAdapter(
                     header_generator=header_generator,
                     cookie_file=Path(cookie_file) if cookie_file else None,
-                    whisper_workers=getattr(settings, "whisper_workers", 1),
+                    whisper_concurrency_limit=whisper_workers,
                 )
 
         output_dir = Path(getattr(settings, "raw_dir", "data/raw"))
