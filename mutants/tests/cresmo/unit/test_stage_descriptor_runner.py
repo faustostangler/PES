@@ -457,7 +457,7 @@ class TestStageConfigPromptBuilding:
         mock_provider = MagicMock(spec=PromptProviderPort)
         base_prompt = ChatPrompt(
             messages=(ChatMessage(role=MessageRole.USER, content="User instruction"),),
-            system_instruction="System instruction",
+            system_prompt="System instruction",
         )
         mock_provider.get_prompt.return_value = base_prompt
 
@@ -599,7 +599,7 @@ class TestStageConfigPromptBuilding:
                 ChatMessage(role=MessageRole.ASSISTANT, content="Example assistant response"),
                 ChatMessage(role=MessageRole.USER, content="Actual task instruction"),
             ),
-            system_instruction="System prompt directive",
+            system_prompt="System prompt directive",
         )
         mock_provider.get_prompt.return_value = base_prompt
 
@@ -635,13 +635,13 @@ class TestStageConfigPromptBuilding:
             "Colloquialism detected: 'tipo assim'.\n"
             "Please correct these defects in your output."
         )
-        assert result.system_instruction == "System prompt directive"
+        assert result.system_prompt == "System prompt directive"
 
     def test_build_transform_prompt_with_critique_empty_messages_system_only(self) -> None:
         mock_provider = MagicMock(spec=PromptProviderPort)
         base_prompt = ChatPrompt(
             messages=(),
-            system_instruction="System only directive",
+            system_prompt="System only directive",
         )
         mock_provider.get_prompt.return_value = base_prompt
 
@@ -671,7 +671,7 @@ class TestStageConfigPromptBuilding:
             "Please correct these defects in your output."
         )
         assert result.messages[0].content == expected_content
-        assert result.system_instruction == "System only directive"
+        assert result.system_prompt == "System only directive"
 
     def test_post_process_invokes_callable_with_exact_candidate_and_source(self) -> None:
         received_args: list[tuple[Any, Any]] = []

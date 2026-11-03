@@ -6,6 +6,8 @@ Wires together infrastructure adapters and application use cases.
 from identity.application.use_cases.authenticate_user import AuthenticateUserUseCase
 from identity.application.use_cases.manage_pat import (
     CreatePersonalAccessTokenUseCase,
+    ListPersonalAccessTokensUseCase,
+    RevokePersonalAccessTokenUseCase,
     ValidatePersonalAccessTokenUseCase,
 )
 from identity.application.use_cases.register_user import RegisterUserUseCase
@@ -39,6 +41,8 @@ class IdentityContainer:
             self.token_service,
         )
         self.create_pat_uc = CreatePersonalAccessTokenUseCase(self.pat_repo)
+        self.list_pats_uc = ListPersonalAccessTokensUseCase(self.pat_repo)
+        self.revoke_pat_uc = RevokePersonalAccessTokenUseCase(self.pat_repo)
         self.validate_pat_uc = ValidatePersonalAccessTokenUseCase(self.pat_repo, self.user_repo)
         self.validate_token_uc = ValidateTokenUseCase(self.token_service, self.user_repo)
 

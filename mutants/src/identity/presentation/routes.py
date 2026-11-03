@@ -16,6 +16,7 @@ from identity.domain.exceptions import (
     InactiveUserError,
     InvalidCredentialsError,
     InvalidEmailError,
+    InvalidRoleError,
     UserAlreadyExistsError,
     WeakPasswordError,
 )
@@ -30,7 +31,6 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 class RegisterSchema(BaseModel):
     email: str = Field(min_length=3, max_length=255)
     password: str = Field(min_length=8)
-    roles: list[str] = Field(default_factory=lambda: ["user"])
 
 
 class LoginSchema(BaseModel):
@@ -61,20 +61,20 @@ class PATListItemSchema(BaseModel):
     status_code=status.HTTP_201_CREATED,
     summary="Register new user account",
 )
-async def register(
+def register(
     payload: RegisterSchema,
     container: IdentityContainer = Depends(get_identity_container),
 ) -> RegisterUserResponseDTO:
     dto = RegisterUserRequestDTO(
         email=payload.email,
         password=payload.password,
-        roles=payload.roles,
+        roles=["user"],
     )
     try:
         return container.register_user_uc.execute(dto)
     except UserAlreadyExistsError as e:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(e)) from e
-    except (InvalidEmailError, WeakPasswordError) as e:
+    except (InvalidEmailError, WeakPasswordError, InvalidRoleError) as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e)) from e
 
 
@@ -83,7 +83,7 @@ async def register(
     response_model=TokenResponseDTO,
     summary="Authenticate and receive JWT access token",
 )
-async def login(
+def login(
     payload: LoginSchema,
     container: IdentityContainer = Depends(get_identity_container),
 ) -> TokenResponseDTO:
@@ -108,7 +108,7 @@ async def login(
     response_model=AuthenticatedUserDTO,
     summary="Get current authenticated user profile",
 )
-async def get_me(
+def get_me(
     current_user: AuthenticatedUserDTO = Depends(get_current_user),
 ) -> AuthenticatedUserDTO:
     return current_user
@@ -120,7 +120,7 @@ async def get_me(
     status_code=status.HTTP_201_CREATED,
     summary="Generate Personal Access Token (revealed once)",
 )
-async def create_personal_access_token(
+def create_personal_access_token(
     payload: CreatePATSchema,
     current_user: AuthenticatedUserDTO = Depends(get_current_user),
     container: IdentityContainer = Depends(get_identity_container),
@@ -139,23 +139,23 @@ async def create_personal_access_token(
     response_model=list[PATListItemSchema],
     summary="List active Personal Access Tokens for current user",
 )
-async def list_personal_access_tokens(
+def list_personal_access_tokens(
     current_user: AuthenticatedUserDTO = Depends(get_current_user),
     container: IdentityContainer = Depends(get_identity_container),
 ) -> list[PATListItemSchema]:
-    tokens = container.pat_repo.list_by_user(UserId(current_user.user_id))
+    items = container.list_pats_uc.execute(UserId(current_user.user_id))
     return [
         PATListItemSchema(
             id=t.id,
             name=t.name,
             token_prefix=t.token_prefix,
-            scopes=[s.value for s in t.scopes],
-            created_at=t.created_at.isoformat(),
-            expires_at=t.expires_at.isoformat() if t.expires_at else None,
-            last_used_at=t.last_used_at.isoformat() if t.last_used_at else None,
+            scopes=t.scopes,
+            created_at=t.created_at,
+            expires_at=t.expires_at,
+            last_used_at=t.last_used_at,
             is_active=t.is_active,
         )
-        for t in tokens
+        for t in items
     ]
 
 
@@ -164,12 +164,12 @@ async def list_personal_access_tokens(
     status_code=status.HTTP_204_NO_CONTENT,
     summary="Revoke Personal Access Token",
 )
-async def revoke_personal_access_token(
+def revoke_personal_access_token(
     token_id: str,
     current_user: AuthenticatedUserDTO = Depends(get_current_user),
     container: IdentityContainer = Depends(get_identity_container),
 ) -> None:
-    revoked = container.pat_repo.revoke(token_id, UserId(current_user.user_id))
+    revoked = container.revoke_pat_uc.execute(token_id, UserId(current_user.user_id))
     if not revoked:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

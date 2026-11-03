@@ -10,7 +10,7 @@ Conforms to:
 from __future__ import annotations
 
 from cresmo.application.pipeline.context import PipelineExecutionContext
-from cresmo.application.pipeline.coordinator import CresmoPipeline # slow import
+from cresmo.application.pipeline.coordinator import CresmoPipeline
 from cresmo.application.pipeline.models import (
     PipelineDependencies,
     PipelineResult,

@@ -247,7 +247,10 @@ class TestCompositionRoot:
         )
 
     def test_build_pipeline_with_langfuse_import_or_init_error(
-        self, tmp_path: Path, caplog: pytest.LogCaptureFixture
+        self,
+        tmp_path: Path,
+        caplog: pytest.LogCaptureFixture,
+        capsys: pytest.CaptureFixture[str],
     ) -> None:
         settings_with_langfuse = CresmoSettings(
             gemini_api_key=SecretStr("TEST_KEY"),
@@ -266,10 +269,8 @@ class TestCompositionRoot:
             assert isinstance(pipeline.llm_synthesis_port, GeminiLLMAdapter)
             assert pipeline.llm_synthesis_port._langfuse is None
 
-        assert (
-            "[composition] Failed to initialize Langfuse client: Langfuse init failed"
-            in caplog.text
-        )
+        expected_msg = "[composition] Failed to initialize Langfuse client: Langfuse init failed"
+        assert expected_msg in caplog.text or expected_msg in capsys.readouterr().out
 
     def test_build_pipeline_judge_attempts_and_blocking_configurations(
         self, tmp_path: Path

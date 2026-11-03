@@ -16,7 +16,6 @@ from cresmo.application.ports import (
     PromptProviderPort,
 )
 from cresmo.application.services.preflight import PreflightHealthChecker
-from cresmo.infrastructure.adapters.cookie_extractor import ensure_cookies_file
 from cresmo.infrastructure.adapters.gemini_adapter import GeminiLLMAdapter
 from cresmo.infrastructure.adapters.header_generator import RandomHeaderGenerator
 from cresmo.infrastructure.adapters.native_media_ingestion_adapter import (
@@ -33,19 +32,21 @@ from cresmo.presentation.factories.settings_factory import resolve_shared_settin
 
 
 def _resolve_cookie_file(settings: CresmoSettings) -> Path | None:
-    """Resolve active cookie file or attempt browser auto-extraction if enabled."""
+    """Resolve active cookie file from settings or default data directory.
+
+    Decoupled per ADR-000 and ADR-002: does not invoke browser extraction at startup.
+    Explicit extraction is governed exclusively by the export-cookies CLI command.
+    """
     cookie_file = getattr(settings, "cookies_file", None)
-    if (cookie_file is None or not cookie_file.exists()) and getattr(
-        settings, "auto_extract_cookies", True
-    ):
-        data_dir = getattr(settings, "data_dir", None) or Path("data")
-        target_cookie_path = data_dir / "cookies.txt"
-        cookie_file = ensure_cookies_file(
-            output_file=target_cookie_path,
-            browser=getattr(settings, "browser_cookies", "firefox"),
-            verbose=False,
-        )
-    return cookie_file
+    if cookie_file is not None and Path(cookie_file).exists():
+        return Path(cookie_file)
+
+    data_dir = getattr(settings, "data_dir", None) or Path("data")
+    target_cookie_path = data_dir / "cookies.txt"
+    if target_cookie_path.exists():
+        return target_cookie_path
+
+    return None
 
 
 def build_media_ingestion_adapter(
@@ -74,6 +75,7 @@ def build_vault_adapter(
         vault_dir=resolved_settings.vault_dir,
         raw_dir=resolved_settings.raw_dir,
         enriched_dir=resolved_settings.enriched_dir,
+        fluid_dir=resolved_settings.fluid_dir,
         master_dir=resolved_settings.master_dir,
         data_dir=resolved_settings.data_dir,
         mocs_dir=resolved_settings.mocs_dir,
@@ -122,8 +124,9 @@ def build_gemini_synthesis_adapter(
 ) -> GeminiLLMAdapter:
     """Instantiate and wire GeminiLLMAdapter for core synthesis workflows."""
     resolved_settings = resolve_shared_settings(settings)
+    api_keys = [k.get_secret_value() for k in resolved_settings.gemini_api_keys]
     return GeminiLLMAdapter(
-        api_key=resolved_settings.gemini_api_key.get_secret_value(),
+        api_keys=api_keys,
         model_name=resolved_settings.gemini_model,
         fallback_model_name=resolved_settings.gemini_fallback_model,
         langfuse_client=langfuse_client,
@@ -137,6 +140,7 @@ def build_indexing_adapter(
     web_index: bool = False,
     model_override: str | None = None,
     langfuse_client: Any | None = None,
+    api_keys: list[str] | None = None,
 ) -> LLMTransformationPort:
     """Instantiate LLM adapter for indexing, selecting between local Ollama and Gemini API."""
     resolved_settings = resolve_shared_settings(settings)
@@ -147,8 +151,9 @@ def build_indexing_adapter(
             and model_override is None
         ):
             return synthesis_adapter
+        keys = api_keys or [k.get_secret_value() for k in resolved_settings.gemini_api_keys]
         return GeminiLLMAdapter(
-            api_key=resolved_settings.gemini_api_key.get_secret_value(),
+            api_keys=keys,
             model_name=model_override or resolved_settings.gemini_model,
             fallback_model_name=resolved_settings.gemini_fallback_model,
             langfuse_client=langfuse_client,

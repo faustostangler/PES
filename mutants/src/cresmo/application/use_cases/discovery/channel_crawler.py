@@ -7,7 +7,6 @@ Conforms to:
 
 from __future__ import annotations
 
-import logging
 import threading
 from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -28,8 +27,6 @@ from cresmo.domain.value_objects import (
     SourceModality,
     SyncFilterCriteria,
 )
-
-logger = logging.getLogger(__name__)
 
 
 class ChannelFeedCrawlerService:
@@ -182,7 +179,7 @@ class ChannelFeedCrawlerService:
                         pub = pub.replace(tzinfo=UTC)
                     if pub < cutoff:
                         continue
-                u = getattr(item, "media_url", getattr(item, "url", ""))
+                u = getattr(item, "media_url", None) or getattr(item, "url", "")
                 if u:
                     in_window.append(u)
             return in_window

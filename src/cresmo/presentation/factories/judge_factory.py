@@ -69,6 +69,7 @@ def build_llm_judge_adapter(
         )
 
     # 2. Instantiate Fallback Provider if enabled
+    resilient_judge: LlmJudgePort
     if enable_fallback:
         fallback: LlmJudgePort = OllamaJudgeAdapter(
             base_url=settings.ollama_base_url,

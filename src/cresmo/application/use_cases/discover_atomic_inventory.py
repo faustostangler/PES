@@ -178,7 +178,7 @@ class DiscoverAtomicInventoryUseCase:
         trace_id: str,
         session_id: str,
         user_id: str,
-    ) -> list[Any]:
+    ) -> Any:
         """Query LLM synthesis port and extract candidate JSON inventory."""
         raw_response = self.llm_synthesis_port.transform(
             prompt=prompt,
@@ -316,5 +316,9 @@ class DiscoverAtomicInventoryUseCase:
                 f"Candidate entity inventory rejected by LLM-as-a-judge for '{compendium.title.value}'."
             )
 
+        if not isinstance(candidate_data, list):
+            raise DomainValidationError(
+                f"Expected JSON array of entities for '{compendium.title.value}', got: {type(candidate_data).__name__}"
+            )
         items = _parse_and_deduplicate_items(candidate_data, compendium.title.value)
         return AtomicEntityInventory(items=items)

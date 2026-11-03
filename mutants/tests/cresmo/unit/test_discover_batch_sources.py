@@ -89,6 +89,29 @@ class TestDiscoverBatchSourcesUseCase:
         assert meta["channel"] == "https://www.youtube.com/channel/UC1234567890abcdef"
         assert meta["channel_id"] == "UC1234567890abcdef"
 
+    def test_extract_raw_file_metadata_streaming_stops_at_closing_delimiter(
+        self, tmp_path: Path
+    ) -> None:
+        """Verify frontmatter streaming reads headers and does not process trailing body lines."""
+        file = tmp_path / "huge_file.md"
+        content = "---\ntitle: Fast Header\nchannel: @fastchan\nvideo_id: fst123\n---\n" + (
+            "Line of text\n" * 1000
+        )
+        file.write_text(content, encoding="utf-8")
+        meta = extract_raw_file_metadata(file)
+        assert meta["title"] == "Fast Header"
+        assert meta["channel"] == "https://www.youtube.com/@fastchan"
+        assert meta["video_id"] == "fst123"
+
+    def test_extract_raw_file_metadata_missing_frontmatter_returns_empty(
+        self, tmp_path: Path
+    ) -> None:
+        """File without initial frontmatter delimiter returns empty metadata dict immediately."""
+        file = tmp_path / "plain.md"
+        file.write_text("No frontmatter header at all here.\nJust body text.", encoding="utf-8")
+        meta = extract_raw_file_metadata(file)
+        assert meta == {}
+
     def test_discover_sources_from_raw_lake(self, tmp_path: Path) -> None:
         raw_dir = tmp_path / "raw"
         raw_dir.mkdir()

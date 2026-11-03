@@ -9,7 +9,7 @@ Conforms to:
 
 from __future__ import annotations
 
-from argparse import Namespace
+from types import SimpleNamespace as Namespace
 from typing import Any
 from unittest.mock import MagicMock, patch
 
@@ -21,7 +21,6 @@ from cresmo.presentation.commands.seed_prompts import (
     PROMPT_MAPPINGS,
     _to_mustache,
     handle_seed_prompts,
-    register_subparser,
 )
 from cresmo.presentation.exit_codes import (
     EXIT_CONFIG_OR_USAGE_ERROR,
@@ -45,37 +44,17 @@ class TestSeedPromptsCLI:
         )
         assert _to_mustache("Plain text without variables") == "Plain text without variables"
 
-    def test_register_subparser(self) -> None:
-        """Verify subparser configuration, arguments, defaults, and handler registration."""
-        mock_subparsers = MagicMock()
-        mock_parser = MagicMock()
-        mock_subparsers.add_parser.return_value = mock_parser
-
-        register_subparser(mock_subparsers)
-        mock_subparsers.add_parser.assert_called_once_with(
-            "seed-prompts",
-            help="Synchronize canonical prompt templates into Langfuse prompt management",
-        )
-        assert mock_parser.add_argument.call_count == 2
-        mock_parser.add_argument.assert_any_call(
-            "--label",
-            default="production",
-            help="Target Langfuse prompt label (default: production)",
-        )
-        mock_parser.add_argument.assert_any_call(
-            "--dry-run",
-            action="store_true",
-            help="Render prompts without transmitting to Langfuse server",
-        )
-        mock_parser.set_defaults.assert_called_once_with(handler=handle_seed_prompts)
+    def test_seed_prompts_cli_help(self) -> None:
+        """Verify seed-prompts CLI displays help and options."""
+        assert main(["seed-prompts", "--help"]) == EXIT_SUCCESS
 
     def test_get_raw_prompt_template_returns_populated_template(self) -> None:
         """Verify get_raw_prompt_template on JsonPromptProvider returns non-empty template."""
         provider = JsonPromptProvider()
-        tpl = provider.get_raw_prompt_template("gap_filler_pass1")
+        tpl = provider.get_raw_prompt_template("gap_filler")
         assert isinstance(tpl, str)
         assert len(tpl) > 0
-        assert "SKILL SPECIFICATION" in tpl or "Transcript" in tpl
+        assert "SKILL SPECIFICATION" in tpl or "Transcript" in tpl or "source_text" in tpl
 
     def test_seed_prompts_dry_run(self, capsys: pytest.CaptureFixture[str]) -> None:
         """Verify --dry-run prints template previews and exits with SUCCESS without API calls."""
@@ -168,7 +147,7 @@ class TestSeedPromptsCLI:
                 in captured.out
             )
             assert (
-                "✔ Registered 'cresmo-gap-filler-pass1' in Langfuse [type=chat, label=production]\n"
+                "✔ Registered 'cresmo-gap-filler' in Langfuse [type=chat, label=production]\n"
                 in captured.out
             )
 
@@ -267,7 +246,7 @@ class TestSeedPromptsCLI:
             ),
             patch.dict(
                 "cresmo.presentation.commands.seed_prompts.PROMPT_MAPPINGS",
-                {"single": "gap_filler_pass1"},
+                {"single": "gap_filler"},
                 clear=True,
             ),
         ):

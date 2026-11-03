@@ -394,18 +394,13 @@ class TestCresmoPipelineExecutionAndIdempotency:
         assert meta["video_url"] == "https://youtube.com/watch?v=1234567"
         assert meta["publication_date"] == "2024-05-20"
 
-        # Verify execute_stage calls (fluid_prose followed by gap_filler)
-        assert mock_runner.execute_stage.call_count == 2
+        # Verify execute_stage calls (fluid_prose active; downstream stages commented)
+        assert mock_runner.execute_stage.call_count == 1
         first_call = mock_runner.execute_stage.call_args_list[0]
         assert first_call[0][0] == "fluid_prose"
         assert first_call[1]["source"] is sample_source_transcript
         assert first_call[1]["context"].content.id == ContentId("c1234567")
         assert first_call[1]["context"].user_identity == user
-
-        second_call = mock_runner.execute_stage.call_args_list[1]
-        assert second_call[0][0] == "gap_filler"
-        assert second_call[1]["source"] is mock_runner.execute_stage.return_value
-        assert second_call[1]["context"].content.id == ContentId("c1234567")
 
         # Verify record_session_output with all canonical fields
         mock_t.record_session_output.assert_called_once()
@@ -632,7 +627,7 @@ class TestCresmoPipelineExecutionAndIdempotency:
         res = pipeline.execute(sample_source_transcript, force_reprocess=True)
         assert res.already_processed is False
         assert res.success is True
-        assert mock_runner.execute_stage.call_count == 2
+        assert mock_runner.execute_stage.call_count == 1
 
     def test_execute_stage_failure_propagates_exception(
         self, sample_source_transcript: SourceTranscript

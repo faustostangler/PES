@@ -519,8 +519,8 @@ class TestSourceModality:
     def test_source_modality_members(self) -> None:
         from cresmo.domain.value_objects import SourceModality
 
-        assert SourceModality.FILE == "file"
-        assert SourceModality.URL == "url"
+        assert SourceModality.FILE.value == "file"
+        assert SourceModality.URL.value == "url"
         assert SourceModality("file") is SourceModality.FILE
         assert SourceModality("url") is SourceModality.URL
 
@@ -925,3 +925,63 @@ class TestContent:
         cnt = Content.create(id="dQw4w9WgXcQ")
         with pytest.raises((FrozenInstanceError, AttributeError)):
             cnt.title = "Changed"  # type: ignore
+
+
+class TestRawIndexEntry:
+    def test_to_markdown_block(self) -> None:
+        from cresmo.domain.value_objects import ChannelName, ContentId, RawIndexEntry
+
+        entry = RawIndexEntry(
+            video_id=ContentId("dQw4w9WgXcQ"),
+            url="https://youtube.com/watch?v=dQw4w9WgXcQ",
+            title="Never Gonna Give You Up",
+            channel_name=ChannelName("RickAstleyVEVO"),
+            key_concept="Pop Music Video",
+            synthesis="A landmark 1980s music video that defined internet meme culture.",
+        )
+        md = entry.to_markdown_block()
+        assert "### [Never Gonna Give You Up](https://youtube.com/watch?v=dQw4w9WgXcQ)" in md
+        assert "- **Video ID**: `dQw4w9WgXcQ` | **Conceito**: Pop Music Video" in md
+        assert "A landmark 1980s music video that defined internet meme culture." in md
+
+    def test_to_csv_row(self) -> None:
+        from cresmo.domain.value_objects import ChannelName, ContentId, RawIndexEntry
+
+        entry = RawIndexEntry(
+            video_id=ContentId("dQw4w9WgXcQ"),
+            url="https://youtube.com/watch?v=dQw4w9WgXcQ",
+            title="Never Gonna Give You Up",
+            channel_name=ChannelName("RickAstleyVEVO"),
+            key_concept="Pop Music Video",
+            synthesis="A landmark 1980s music video.",
+            channel_category="Music",
+            summary="Full summary text.",
+            excerpt="Short excerpt.",
+        )
+        row = entry.to_csv_row()
+        assert row == [
+            "Music",
+            "RickAstleyVEVO",
+            "dQw4w9WgXcQ.md",
+            "Pop Music Video",
+            "A landmark 1980s music video.",
+        ]
+
+    def test_validation_errors(self) -> None:
+        from cresmo.domain.exceptions import DomainValidationError
+        from cresmo.domain.value_objects import ChannelName, ContentId, RawIndexEntry
+
+        cid = ContentId("dQw4w9WgXcQ")
+        cname = ChannelName("RickAstleyVEVO")
+
+        with pytest.raises(DomainValidationError, match="url cannot be empty"):
+            RawIndexEntry(cid, "", "Title", cname, "Concept", "Synthesis")
+
+        with pytest.raises(DomainValidationError, match="title cannot be empty"):
+            RawIndexEntry(cid, "https://url", "", cname, "Concept", "Synthesis")
+
+        with pytest.raises(DomainValidationError, match="key_concept cannot be empty"):
+            RawIndexEntry(cid, "https://url", "Title", cname, "", "Synthesis")
+
+        with pytest.raises(DomainValidationError, match="synthesis cannot be empty"):
+            RawIndexEntry(cid, "https://url", "Title", cname, "Concept", "")

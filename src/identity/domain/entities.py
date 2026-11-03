@@ -31,18 +31,25 @@ class PersonalAccessToken:
     last_used_at: datetime | None = None
     is_revoked: bool = False
 
-    @property
-    def is_active(self) -> bool:
-        """Determines if the token is currently valid and unexpired."""
+    def is_active_at(self, now: datetime) -> bool:
+        """Determines if the token is active and unexpired at a specific instant."""
         if self.is_revoked:
             return False
         if self.expires_at is not None:
-            now = datetime.now(UTC)
-            # Ensure comparison timezone safety
-            exp = self.expires_at if self.expires_at.tzinfo else self.expires_at.replace(tzinfo=UTC)
-            if now >= exp:
+            exp = (
+                self.expires_at
+                if self.expires_at.tzinfo
+                else self.expires_at.replace(tzinfo=UTC)
+            )
+            chk = now if now.tzinfo else now.replace(tzinfo=UTC)
+            if chk >= exp:
                 return False
         return True
+
+    @property
+    def is_active(self) -> bool:
+        """Determines if the token is currently valid and unexpired."""
+        return self.is_active_at(datetime.now(UTC))
 
     def has_scope(self, scope: Scope) -> bool:
         """Checks if the token grants a specific permission scope."""

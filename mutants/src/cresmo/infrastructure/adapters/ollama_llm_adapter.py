@@ -12,7 +12,6 @@ Conforms to:
 from __future__ import annotations
 
 import json
-import logging
 import os
 import threading
 import time
@@ -21,6 +20,7 @@ import urllib.request
 from http import HTTPStatus
 from typing import Any
 
+import structlog
 from langfuse import Langfuse, observe
 from opentelemetry import trace
 
@@ -31,7 +31,7 @@ from cresmo.infrastructure.adapters.opentelemetry_adapter import annotate_llm_sp
 
 __all__ = ["OllamaLLMAdapter", "trace"]
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 DEFAULT_HEALTHCHECK_TIMEOUT_SECONDS: float = 2.0
 
@@ -114,7 +114,7 @@ class OllamaLLMAdapter(LLMTransformationPort):
             with urllib.request.urlopen(
                 req, timeout=DEFAULT_HEALTHCHECK_TIMEOUT_SECONDS
             ) as response:
-                return response.status == HTTPStatus.OK
+                return bool(response.status == HTTPStatus.OK)
         except (urllib.error.URLError, TimeoutError, OSError) as exc:
             logger.debug("[OllamaLLMAdapter] is_available probe failed: %s", exc)
             return False

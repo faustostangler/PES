@@ -32,7 +32,7 @@ class LLMTransformationPort(ABC):
         """Execute text transformation given canonical multi-turn or single-turn ChatPrompt.
 
         Args:
-            prompt: Canonical ChatPrompt value object with system instruction and messages.
+            prompt: Canonical ChatPrompt value object with system prompt and messages.
             temperature: Sampling temperature override.
             trace_id: Optional trace ID (e.g. ContentId or session key).
             session_id: Pipeline session identifier.

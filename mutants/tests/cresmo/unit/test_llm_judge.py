@@ -8,6 +8,7 @@ Conforms to:
 from __future__ import annotations
 
 import json
+from typing import Any
 from unittest.mock import MagicMock
 
 import pytest
@@ -182,7 +183,7 @@ class TestGeminiJudgeAdapter:
         args, kwargs = mock_prompt_provider.get_prompt.call_args
         from cresmo.domain.value_objects import PromptKey
 
-        assert args[0] == PromptKey.LLM_JUDGE
+        assert args[0] == PromptKey.JUDGE_FLUID_PROSE
         assert kwargs["stage_name"] == "fluid_prose"
         assert kwargs["source_text"] == "raw"
         assert kwargs["candidate_text"] == "cand"
@@ -242,7 +243,9 @@ class TestGeminiJudgeAdapter:
 
         adapter = GeminiJudgeAdapter(client=mock_genai_client, temperature=0.7)
         assert adapter.temperature == 0.7
-        assert adapter.pass_threshold == 0.8
+        from cresmo.infrastructure.adapters.judges.gemini_judge import DEFAULT_PASS_THRESHOLD
+
+        assert adapter.pass_threshold == DEFAULT_PASS_THRESHOLD
         assert adapter.model == "gemini-3.5-flash-lite"
 
         context = EvaluationContext(
@@ -256,6 +259,169 @@ class TestGeminiJudgeAdapter:
         _, kwargs = mock_genai_client.models.generate_content.call_args
         config = kwargs["config"]
         assert config.temperature == 0.7
+
+    def test_gemini_judge_uses_judge_gap_filler_for_gap_filler_stage(self) -> None:
+        mock_genai_client = MagicMock()
+        mock_response = MagicMock()
+        mock_response.text = json.dumps(
+            {
+                "criteria": [
+                    {
+                        "criterion": "factual_grounding",
+                        "score": 0.95,
+                        "passed": True,
+                        "reasoning": "Fully grounded in real-world facts.",
+                    }
+                ],
+                "overall_score": 0.95,
+                "passed": True,
+            }
+        )
+        mock_genai_client.models.generate_content.return_value = mock_response
+
+        mock_prompt_provider = MagicMock()
+        mock_prompt_provider.get_prompt.return_value = ChatPrompt.from_system_and_user(
+            system="SYSTEM INSTRUCTION FOR GAP FILLER",
+            user="USER PROMPT",
+        )
+
+        adapter = GeminiJudgeAdapter(
+            client=mock_genai_client,
+            prompt_provider=mock_prompt_provider,
+        )
+        context = EvaluationContext(
+            stage_name="gap_filler",
+            raw_text="source transcript",
+            candidate_text="candidate compendium",
+            required_criteria=(JudgeCriterion.FACTUAL_GROUNDING,),
+        )
+        evaluation = adapter.evaluate(context)
+
+        assert evaluation.passed is True
+        mock_prompt_provider.get_prompt.assert_called_once()
+        args, kwargs = mock_prompt_provider.get_prompt.call_args
+        from cresmo.domain.value_objects import PromptKey
+
+        assert args[0] == PromptKey.JUDGE_GAP_FILLER
+        assert kwargs["stage_name"] == "gap_filler"
+
+    def test_gemini_judge_passes_response_schema_in_config(self) -> None:
+        mock_genai_client = MagicMock()
+        mock_response = MagicMock()
+        mock_response.text = json.dumps(
+            {
+                "criteria": [
+                    {
+                        "criterion": "factual_grounding",
+                        "score": 0.95,
+                        "passed": True,
+                        "reasoning": "Accurate grounding.",
+                    }
+                ],
+                "overall_score": 0.95,
+                "passed": True,
+            }
+        )
+        mock_genai_client.models.generate_content.return_value = mock_response
+
+        adapter = GeminiJudgeAdapter(client=mock_genai_client)
+        context = EvaluationContext(
+            stage_name="gap_filler",
+            raw_text="source",
+            candidate_text="candidate",
+            required_criteria=(JudgeCriterion.FACTUAL_GROUNDING,),
+        )
+        adapter.evaluate(context)
+
+        mock_genai_client.models.generate_content.assert_called_once()
+        _, kwargs = mock_genai_client.models.generate_content.call_args
+        config = kwargs["config"]
+        from cresmo.infrastructure.adapters.judges.criterion_parser import (
+            JudgeResponseOutputSchema,
+        )
+
+        assert config.response_schema is JudgeResponseOutputSchema
+        assert config.response_mime_type == "application/json"
+
+    def test_gemini_judge_resiliently_parses_aliases_and_skips_unparseable_meta(self) -> None:
+        mock_genai_client = MagicMock()
+        mock_response = MagicMock()
+        mock_response.text = json.dumps(
+            {
+                "criteria": [
+                    {
+                        "name": "factual_grounding",
+                        "score": 0.95,
+                        "passed": True,
+                        "reasoning": "Valid via name alias.",
+                    },
+                    {
+                        "criterion_name": "socratic_epistemic_depth",
+                        "score": 0.92,
+                        "passed": True,
+                        "reasoning": "Valid via criterion_name alias.",
+                    },
+                    {
+                        "summary": "Non-criterion meta object produced by LLM",
+                        "overall_score": 0.95,
+                    },
+                ],
+                "overall_score": 0.935,
+                "passed": True,
+            }
+        )
+        mock_genai_client.models.generate_content.return_value = mock_response
+
+        adapter = GeminiJudgeAdapter(client=mock_genai_client, pass_threshold=0.80)
+        context = EvaluationContext(
+            stage_name="gap_filler",
+            raw_text="source",
+            candidate_text="candidate",
+            required_criteria=(
+                JudgeCriterion.FACTUAL_GROUNDING,
+                JudgeCriterion.SOCRATIC_EPISTEMIC_DEPTH,
+            ),
+        )
+        evaluation = adapter.evaluate(context)
+
+        assert evaluation.passed is True
+        assert len(evaluation.criteria_scores) == 2
+        fg = evaluation.get_score(JudgeCriterion.FACTUAL_GROUNDING)
+        assert fg is not None
+        assert fg.score == 0.95
+        depth = evaluation.get_score(JudgeCriterion.SOCRATIC_EPISTEMIC_DEPTH)
+        assert depth is not None
+        assert depth.score == 0.92
+
+    def test_transient_network_and_disconnect_error_detection(self) -> None:
+        from cresmo.infrastructure.adapters.judges.gemini_judge import (
+            _is_transient_cluster_error,
+            _is_transient_genai_error,
+        )
+
+        disconnect_err = Exception("Server disconnected without sending a response.")
+        assert _is_transient_genai_error(disconnect_err) is True
+        assert _is_transient_cluster_error(disconnect_err) is True
+
+        conn_reset_err = ConnectionResetError("Connection reset by peer")
+        assert _is_transient_genai_error(conn_reset_err) is True
+        assert _is_transient_cluster_error(conn_reset_err) is True
+
+        protocol_err = Exception("RemoteProtocolError: peer closed connection")
+        assert _is_transient_genai_error(protocol_err) is True
+        assert _is_transient_cluster_error(protocol_err) is True
+
+        # Ensure quota exhaustion is NOT handled as cluster error (delegated to pool)
+        quota_err = Exception("ResourceExhausted: 429 Resource has been exhausted")
+        assert _is_transient_genai_error(quota_err) is True
+        assert _is_transient_cluster_error(quota_err) is False
+
+    def test_gemini_judge_adapter_accepts_timeout_seconds(self) -> None:
+        """Verify GeminiJudgeAdapter accepts timeout_seconds and passes it to pool."""
+        judge = GeminiJudgeAdapter(api_key="mock-key", timeout_seconds=45.0)
+        assert judge._timeout_seconds == 45.0
+        assert judge._pool is not None
+        assert judge._pool.timeout == 45.0
 
 
 class TestOllamaJudgeAdapter:
@@ -287,6 +453,7 @@ class TestOllamaJudgeAdapter:
             http_client=mock_http_client,
             base_url="http://localhost:11434",
             model="qwen2.5:7b",
+            pass_threshold=0.80,
         )
         context = EvaluationContext(
             stage_name="fluid_prose",
@@ -347,7 +514,7 @@ class TestOllamaJudgeAdapter:
         args, kwargs = mock_prompt_provider.get_prompt.call_args
         from cresmo.domain.value_objects import PromptKey
 
-        assert args[0] == PromptKey.LLM_JUDGE
+        assert args[0] == PromptKey.JUDGE_FLUID_PROSE
         assert kwargs["stage_name"] == "fluid_prose"
         assert kwargs["source_text"] == "raw text"
         assert kwargs["candidate_text"] == "cand text"
@@ -357,6 +524,54 @@ class TestOllamaJudgeAdapter:
             {"role": "system", "content": "CUSTOM OLLAMA SYS"},
             {"role": "user", "content": "CUSTOM OLLAMA USER"},
         ]
+
+    def test_ollama_judge_uses_judge_gap_filler_for_gap_filler_stage(self) -> None:
+        mock_http_client = MagicMock()
+        mock_post_resp = MagicMock()
+        mock_post_resp.status_code = 200
+        mock_post_resp.json.return_value = {
+            "response": json.dumps(
+                {
+                    "criteria": [
+                        {
+                            "criterion": "factual_grounding",
+                            "score": 0.90,
+                            "passed": True,
+                            "reasoning": "Grounded.",
+                        }
+                    ],
+                    "overall_score": 0.90,
+                    "passed": True,
+                }
+            )
+        }
+        mock_http_client.post.return_value = mock_post_resp
+
+        mock_prompt_provider = MagicMock()
+        mock_prompt_provider.get_prompt.return_value = ChatPrompt.from_system_and_user(
+            system="OLLAMA GAP FILLER SYS",
+            user="OLLAMA GAP FILLER USER",
+        )
+
+        adapter = OllamaJudgeAdapter(
+            http_client=mock_http_client,
+            prompt_provider=mock_prompt_provider,
+        )
+        context = EvaluationContext(
+            stage_name="gap_filler",
+            raw_text="source raw",
+            candidate_text="cand text",
+            required_criteria=(JudgeCriterion.FACTUAL_GROUNDING,),
+        )
+        evaluation = adapter.evaluate(context)
+
+        assert evaluation.passed is True
+        mock_prompt_provider.get_prompt.assert_called_once()
+        args, kwargs = mock_prompt_provider.get_prompt.call_args
+        from cresmo.domain.value_objects import PromptKey
+
+        assert args[0] == PromptKey.JUDGE_GAP_FILLER
+        assert kwargs["stage_name"] == "gap_filler"
 
 
 class TestTypeSafeJudgeAdapter:
@@ -374,7 +589,7 @@ class TestTypeSafeJudgeAdapter:
             "scores": {
                 "semantic_faithfulness": {"score": 0.90, "confidence": 0.94},
             },
-            "choices": {},
+            "choices": dict[str, Any](),
         }
         mock_http_client.post.return_value = mock_post_resp
 
@@ -406,6 +621,48 @@ class TestTypeSafeJudgeAdapter:
         ts_faithfulness = evaluation.get_score(JudgeCriterion.SEMANTIC_FAITHFULNESS)
         assert ts_faithfulness is not None
         assert ts_faithfulness.confidence == 0.94
+
+    def test_typesafe_judge_evaluates_gap_filler_criteria(self) -> None:
+        mock_http_client = MagicMock()
+        mock_post_resp = MagicMock()
+        mock_post_resp.status_code = 200
+        mock_post_resp.json.return_value = {
+            "nouls": dict[str, Any](),
+            "scores": {
+                "factual_grounding": {"score": 0.92, "confidence": 0.95},
+                "socratic_epistemic_depth": {"score": 0.88, "confidence": 0.90},
+                "causal_stratification_agency": {"score": 0.85, "confidence": 0.88},
+                "complementary_substance": {"score": 0.90, "confidence": 0.92},
+                "authorial_naturalism": {"score": 0.87, "confidence": 0.89},
+            },
+        }
+        mock_http_client.post.return_value = mock_post_resp
+
+        adapter = TypeSafeJudgeAdapter(
+            api_key="sk-test",
+            http_client=mock_http_client,
+            pass_threshold=0.80,
+        )
+        context = EvaluationContext(
+            stage_name="gap_filler",
+            raw_text="source text",
+            candidate_text="candidate compendium text",
+            required_criteria=(
+                JudgeCriterion.FACTUAL_GROUNDING,
+                JudgeCriterion.SOCRATIC_EPISTEMIC_DEPTH,
+                JudgeCriterion.CAUSAL_STRATIFICATION_AGENCY,
+                JudgeCriterion.COMPLEMENTARY_SUBSTANCE,
+                JudgeCriterion.AUTHORIAL_NATURALISM,
+            ),
+        )
+        evaluation = adapter.evaluate(context)
+
+        assert evaluation.passed is True
+        assert len(evaluation.criteria_scores) == 5
+        score_fg = evaluation.get_score(JudgeCriterion.FACTUAL_GROUNDING)
+        assert score_fg is not None
+        assert score_fg.score == 0.92
+        assert score_fg.passed is True
 
 
 class TestResilientCompositeJudgeAdapter:
@@ -621,6 +878,19 @@ class TestLlmJudgeFactory:
         assert isinstance(fallback, OllamaJudgeAdapter)
         assert fallback.pass_threshold == 0.88
 
+    def test_build_llm_judge_adapter_without_fallback_bypasses_composite(self) -> None:
+        """Verify build_llm_judge_adapter with enable_fallback=False returns primary adapter directly."""
+        from cresmo.infrastructure.config import CresmoSettings
+        from cresmo.presentation.factories.judge_factory import build_llm_judge_adapter
+
+        settings = CresmoSettings(judge_provider="gemini")
+        judge = build_llm_judge_adapter(settings, langfuse_client=None, enable_fallback=False)
+
+        assert isinstance(judge, LangfuseJudgeDecorator)
+        assert isinstance(judge._inner_judge, MechanicalPreflightJudgeDecorator)
+        assert isinstance(judge._inner_judge._inner_judge, GeminiJudgeAdapter)
+        assert not isinstance(judge._inner_judge._inner_judge, ResilientCompositeJudgeAdapter)
+
 
 class TestCoordinatorLlmJudgeIntegration:
     """Test suite for CresmoPipeline Stage 1 quality evaluation hooking."""
@@ -672,12 +942,18 @@ class TestCoordinatorLlmJudgeIntegration:
         pipeline.execute(canned_raw)
 
         assert mock_judge.evaluate.call_count >= 1
-        eval_ctx = mock_judge.evaluate.call_args[0][0]
-        assert eval_ctx.stage_name == "fluid_prose"
-        assert JudgeCriterion.ORALITY_REMOVAL in eval_ctx.required_criteria
-        assert JudgeCriterion.SEMANTIC_FAITHFULNESS in eval_ctx.required_criteria
-        assert JudgeCriterion.NER_PRESERVATION in eval_ctx.required_criteria
-        assert JudgeCriterion.STRUCTURAL_COMPLIANCE in eval_ctx.required_criteria
+        fluid_eval_ctx = mock_judge.evaluate.call_args_list[0][0][0]
+        assert fluid_eval_ctx.stage_name == "fluid_prose"
+        assert JudgeCriterion.ORALITY_REMOVAL in fluid_eval_ctx.required_criteria
+        assert JudgeCriterion.SEMANTIC_FAITHFULNESS in fluid_eval_ctx.required_criteria
+        assert JudgeCriterion.NER_PRESERVATION in fluid_eval_ctx.required_criteria
+        assert JudgeCriterion.STRUCTURAL_COMPLIANCE in fluid_eval_ctx.required_criteria
+
+        if mock_judge.evaluate.call_count >= 2:
+            gap_eval_ctx = mock_judge.evaluate.call_args_list[1][0][0]
+            assert gap_eval_ctx.stage_name == "gap_filler"
+            assert JudgeCriterion.FACTUAL_GROUNDING in gap_eval_ctx.required_criteria
+            assert JudgeCriterion.SOCRATIC_EPISTEMIC_DEPTH in gap_eval_ctx.required_criteria
 
     def test_coordinator_blocking_mode_raises_on_quality_failure(self) -> None:
         from cresmo.application.pipeline.coordinator import CresmoPipeline
@@ -769,6 +1045,7 @@ class TestCoordinatorLlmJudgeIntegration:
         mock_telemetry.record_session_output.assert_called_once()
         recorded_output = mock_telemetry.record_session_output.call_args[0][0]
         assert recorded_output["status"] == "COMPLETED"
-        assert recorded_output["stage"] == "fluid_prose"
+        assert recorded_output["stage"] == "gap_filler"
+        assert recorded_output["stages_completed"] == ["fluid_prose", "gap_filler"]
         assert "word_count" in recorded_output
         assert "char_count" in recorded_output

@@ -169,9 +169,12 @@ def post_process_enriched_compendium(
     if isinstance(content_id, str):
         content_id = ContentId.from_string(content_id)
 
-    channel_name = (
+    raw_channel_name = (
         getattr(getattr(source, "channel", None), "name", None)
         or getattr(source, "channel_name", "")
+    )
+    resolved_channel_name: ChannelName | str = (
+        raw_channel_name if isinstance(raw_channel_name, (ChannelName, str)) else ""
     )
     channel_id = (
         getattr(getattr(source, "channel", None), "id", None)
@@ -200,7 +203,7 @@ def post_process_enriched_compendium(
 
     return EnrichedCompendium(
         content_id=content_id,
-        channel_name=channel_name,
+        channel_name=resolved_channel_name,
         title=NoteTitle(extracted_title),
         body=main_body,
         complementary_info=complementary_info,

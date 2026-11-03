@@ -19,7 +19,7 @@ from cresmo.application.services.preflight import PreflightHealthChecker
 from cresmo.infrastructure.adapters.gemini_adapter import GeminiLLMAdapter
 from cresmo.infrastructure.adapters.header_generator import RandomHeaderGenerator
 from cresmo.infrastructure.adapters.native_media_ingestion_adapter import (
-    NativeMediaIngestionAdapter, # slow import
+    NativeMediaIngestionAdapter,
 )
 from cresmo.infrastructure.adapters.obsidian_vault_adapter import ObsidianVaultAdapter
 from cresmo.infrastructure.adapters.ollama_llm_adapter import OllamaLLMAdapter

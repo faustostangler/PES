@@ -12,12 +12,13 @@ Conforms to:
 
 from __future__ import annotations
 
-import logging
 import queue
 import threading
 from collections.abc import Callable, Iterator
 from dataclasses import dataclass
 from pathlib import Path
+
+import structlog
 
 from cresmo.application.ports import (
     DefaultPipelineSettings,
@@ -40,7 +41,7 @@ from cresmo.domain.value_objects import (
     normalize_to_uploads_playlist_url,
 )
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 _DEFAULT_STREAM_QUEUE_TIMEOUT_SECONDS: float = 0.2
 _DEFAULT_STREAM_ERROR_TIMEOUT_SECONDS: float = 2.0

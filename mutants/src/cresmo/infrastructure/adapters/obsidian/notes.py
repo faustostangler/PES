@@ -135,8 +135,6 @@ class AtomicNoteVaultHandler:
             body,
         )
         definition = def_match.group(1).strip() if def_match else body.strip()
-        if len(definition) < MIN_NOTE_DEFINITION_LENGTH:
-            definition = f"Definição contextual de {title.value} com análise teórica substancial."
 
         # Parse direct relations
         relations: list[NoteTitle] = []

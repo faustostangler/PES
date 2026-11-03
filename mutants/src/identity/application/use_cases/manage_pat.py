@@ -8,6 +8,7 @@ from identity.application.dtos import (
     AuthenticatedUserDTO,
     CreatedPATResponseDTO,
     CreatePATRequestDTO,
+    PATItemDTO,
 )
 from identity.application.ports import (
     PersonalAccessTokenRepositoryPort,
@@ -57,7 +58,7 @@ class CreatePersonalAccessTokenUseCase:
             raw_token=raw_token,
             token_prefix=pat.token_prefix,
             name=pat.name,
-            scopes=[s.value for s in pat.scopes],
+            scopes=sorted(s.value for s in pat.scopes),
             expires_at=pat.expires_at.isoformat() if pat.expires_at else None,
         )
 
@@ -100,3 +101,37 @@ class ValidatePersonalAccessTokenUseCase:
             roles=[r.value for r in user.roles],
             scopes=[s.value for s in pat.scopes],
         )
+
+
+class ListPersonalAccessTokensUseCase:
+    """Lists all Personal Access Tokens belonging to a specific user (ADR-048)."""
+
+    def __init__(self, pat_repo: PersonalAccessTokenRepositoryPort) -> None:
+        self._pat_repo = pat_repo
+
+    def execute(self, user_id: UserId) -> list[PATItemDTO]:
+        tokens = self._pat_repo.list_by_user(user_id)
+        return [
+            PATItemDTO(
+                id=t.id,
+                name=t.name,
+                token_prefix=t.token_prefix,
+                scopes=sorted(s.value for s in t.scopes),
+                created_at=t.created_at.isoformat(),
+                expires_at=t.expires_at.isoformat() if t.expires_at else None,
+                last_used_at=t.last_used_at.isoformat() if t.last_used_at else None,
+                is_active=t.is_active,
+            )
+            for t in tokens
+        ]
+
+
+class RevokePersonalAccessTokenUseCase:
+    """Revokes a Personal Access Token belonging to a specific user (ADR-048)."""
+
+    def __init__(self, pat_repo: PersonalAccessTokenRepositoryPort) -> None:
+        self._pat_repo = pat_repo
+
+    def execute(self, token_id: str, user_id: UserId) -> bool:
+        return self._pat_repo.revoke(token_id, user_id)
+

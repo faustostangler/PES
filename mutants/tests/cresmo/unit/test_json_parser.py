@@ -112,6 +112,13 @@ class TestJsonParser:
         end = _find_balanced_closing_brace(text, 0)
         assert end == len(text)
 
+        # Backslash outside quotes does not escape closing brace
+        assert _find_balanced_closing_brace("{\\}", 0) == 3
+        assert _find_balanced_closing_brace("{}", 0) == 2
+        # Escaped backslash inside string followed by quote
+        assert _find_balanced_closing_brace('{"k": "\\\\"}', 0) == 11
+        assert _find_balanced_closing_brace('{"k": "\\""}', 0) == 11
+
     def test_extract_individual_objects_with_trailing_comma(self) -> None:
         raw = 'Text: {"title": "Object 1", "type": "concept", } and then {"title": "Object 2"}'
         result = extract_json_data(raw)

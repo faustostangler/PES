@@ -11,9 +11,10 @@ Conforms to:
 
 from __future__ import annotations
 
-import argparse
 import sys
+from typing import Annotated, Any
 
+import typer
 from pydantic import ValidationError
 
 from cresmo.domain.exceptions import PreflightError
@@ -26,24 +27,24 @@ from cresmo.presentation.exit_codes import (
 )
 
 
-def register_subparser(subparsers: argparse._SubParsersAction) -> None:
-    """Register 'check-config' subcommand parser.
+def check_config(
+    verbose: Annotated[
+        bool,
+        typer.Option("--verbose", "-v", help="Enable verbose output"),
+    ] = False,
+) -> None:
+    """Validate runtime environment, storage paths, and secrets fail-fast."""
+    _ = verbose
+    code = handle_check_config(None)
+    if code != EXIT_SUCCESS:
+        raise typer.Exit(code=code)
 
-    Args:
-        subparsers: Root CLI subparsers action object.
-    """
-    check_parser = subparsers.add_parser(
-        "check-config",
-        help="Validate environment settings and vault access without calling LLMs",
-    )
-    check_parser.set_defaults(handler=handle_check_config)
 
-
-def handle_check_config(args: argparse.Namespace) -> int:
+def handle_check_config(args: Any = None) -> int:
     """Validate runtime environment, storage paths, and secrets.
 
     Args:
-        args: Parsed CLI argument namespace.
+        args: Parsed CLI argument namespace or None.
 
     Returns:
         Process exit code conforming to exit_codes.py.

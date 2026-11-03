@@ -37,13 +37,13 @@ def _find_balanced_closing_brace(text: str, start: int) -> int | None:
     """Find the index of the matching closing brace for a JSON block starting at start."""
     depth = 0
     in_string = False
-    escape = 0
+    escape = False
     for i in range(start, len(text)):
         char = text[i]
-        if escape == 1:
-            escape = 0
+        if escape:
+            escape = False
         elif char == "\\":
-            escape = 1 if in_string else 0
+            escape = in_string
         elif char == '"':
             in_string = not in_string
         elif in_string is False:

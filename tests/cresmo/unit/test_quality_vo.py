@@ -420,7 +420,7 @@ class TestStageEvaluationSpec:
 
 
 class TestWeightedAverageAndMechanicalVeto:
-    """Tests for Média Ponderada + Mechanical Veto (Two-Layered Quality Gate)."""
+    """Tests for Weighted Average + Mechanical Veto (Two-Layered Quality Gate)."""
 
     def test_perfect_scores_pass_without_veto(self) -> None:
         scores = (

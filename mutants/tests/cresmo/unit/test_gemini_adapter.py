@@ -304,7 +304,10 @@ class TestGeminiLLMAdapter:
                 genai_client=None,
                 langfuse_client=None,
             )
-            mock_client_cls.assert_called_once_with(api_key="secret-key")
+            mock_client_cls.assert_called_once()
+            call_kwargs = mock_client_cls.call_args.kwargs
+            assert call_kwargs["api_key"] == "secret-key"
+            assert call_kwargs["http_options"].timeout == 60000
             assert adapter._client == mock_client_cls.return_value
 
     def test_default_initialization_attributes(self) -> None:
@@ -435,3 +438,51 @@ class TestGeminiLLMAdapter:
             res = adapter.transform(ChatPrompt.single_turn("hello"))
             assert res == "Output"
             assert "[GeminiLLMAdapter] Langfuse flush skipped: flush failed" in caplog.text
+
+    def test_transform_rotates_api_key_on_429(self) -> None:
+        from cresmo.infrastructure.adapters.gemini_pool import GeminiCredentialPool
+
+        client1 = MagicMock(name="client-1")
+        client2 = MagicMock(name="client-2")
+        client1.models.generate_content.side_effect = RuntimeError(
+            "ResourceExhausted: 429 Quota exceeded. Please retry in 3600s."
+        )
+        mock_resp = MagicMock(text="Success from secondary key", usage_metadata=None)
+        client2.models.generate_content.return_value = mock_resp
+
+        clients = {"k1": client1, "k2": client2}
+        pool = GeminiCredentialPool(keys=["k1", "k2"], client_factory=lambda k: clients[k])
+
+        adapter = GeminiLLMAdapter(credential_pool=pool)
+        result = adapter.transform(ChatPrompt.single_turn("Testing 429 failover"))
+
+        assert result == "Success from secondary key"
+        assert client1.models.generate_content.call_count == 1
+        assert client2.models.generate_content.call_count == 1
+        # Primary key must be in cooldown, so next lease returns k2
+        assert pool.lease()[0] == "k2"
+
+    def test_transform_does_not_rotate_key_on_503(self) -> None:
+        from cresmo.infrastructure.adapters.gemini_pool import GeminiCredentialPool
+
+        client1 = MagicMock(name="client-1")
+        client2 = MagicMock(name="client-2")
+        # 503 on first try, then succeeds on retry with SAME client
+        mock_resp = MagicMock(text="Recovered from 503", usage_metadata=None)
+        client1.models.generate_content.side_effect = [
+            RuntimeError("503 UNAVAILABLE: high demand"),
+            mock_resp,
+        ]
+
+        clients = {"k1": client1, "k2": client2}
+        pool = GeminiCredentialPool(keys=["k1", "k2"], client_factory=lambda k: clients[k])
+
+        adapter = GeminiLLMAdapter(credential_pool=pool)
+        result = adapter.transform(ChatPrompt.single_turn("Testing 503 retention"))
+
+        assert result == "Recovered from 503"
+        assert client1.models.generate_content.call_count == 2
+        assert client2.models.generate_content.call_count == 0
+        # Primary key must still be primary (NOT cooled down)
+        assert pool.lease()[0] == "k1"
+

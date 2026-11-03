@@ -8,26 +8,25 @@ Conforms to:
 from __future__ import annotations
 
 import json
-import logging
 import re
 import time
 from typing import Any
 
 import httpx
+import structlog
 
 from cresmo.application.ports import PromptProviderPort
 from cresmo.application.ports.llm_judge_port import LlmJudgePort
 from cresmo.domain.value_objects import (
-    CriterionScore,
     EvaluationContext,
-    JudgeCriterion,
     JudgeEvaluation,
     PromptKey,
 )
+from cresmo.infrastructure.adapters.judges.criterion_parser import parse_criteria_scores
 from cresmo.infrastructure.adapters.prompts import JsonPromptProvider
 from cresmo.infrastructure.config import DEFAULT_JUDGE_PASS_THRESHOLD
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 DEFAULT_PASS_THRESHOLD: float = DEFAULT_JUDGE_PASS_THRESHOLD
 
@@ -75,8 +74,17 @@ class OllamaJudgeAdapter(LlmJudgePort):
         start_time = time.perf_counter()
         criteria_names = [c.value for c in context.required_criteria]
 
+        if context.stage_name == "gap_filler":
+            prompt_key = PromptKey.JUDGE_GAP_FILLER
+        elif context.stage_name == "fluid_prose":
+            prompt_key = PromptKey.JUDGE_FLUID_PROSE
+        else:
+            try:
+                prompt_key = PromptKey(f"judge_{context.stage_name}")
+            except ValueError:
+                prompt_key = PromptKey.JUDGE_FLUID_PROSE
         chat_prompt = self._prompt_provider.get_prompt(
-            PromptKey.LLM_JUDGE,
+            prompt_key,
             stage_name=context.stage_name,
             criteria_json=json.dumps(criteria_names),
             source_text=context.raw_text,
@@ -110,33 +118,17 @@ class OllamaJudgeAdapter(LlmJudgePort):
             logger.error("Failed to parse Ollama judge JSON output: %s", raw_text)
             raise ValueError(f"Ollama returned invalid JSON: {raw_text}") from err
 
-        criteria_scores_list: list[CriterionScore] = []
-        for item in parsed.get("criteria", []):
-            try:
-                crit_enum = JudgeCriterion(item["criterion"])
-                score_val = max(0.0, min(1.0, float(item["score"])))
-                passed_val = bool(item.get("passed", score_val >= self._pass_threshold))
-                criteria_scores_list.append(
-                    CriterionScore(
-                        criterion=crit_enum,
-                        score=score_val,
-                        passed=passed_val,
-                        reasoning=str(item.get("reasoning", "")),
-                    )
-                )
-            except (ValueError, KeyError) as parse_err:
-                logger.debug("Skipping unparseable Ollama criterion item: %s", parse_err)
+        criteria_scores_list = parse_criteria_scores(
+            raw_criteria=parsed.get("criteria", []),
+            pass_threshold=self._pass_threshold,
+            logger_instance=logger,
+        )
 
-        overall_score = float(parsed.get("overall_score", 0.0))
-        overall_score = max(0.0, min(1.0, overall_score))
-        overall_passed = bool(parsed.get("passed", overall_score >= self._pass_threshold))
-
-        return JudgeEvaluation(
+        return JudgeEvaluation.create_with_composite_verdict(
             target_stage=context.stage_name,
-            passed=overall_passed,
-            overall_score=overall_score,
-            criteria_scores=tuple(criteria_scores_list),
+            criteria_scores=criteria_scores_list,
             provider="ollama",
+            pass_threshold=self._pass_threshold,
             latency_ms=latency_ms,
             trace_id=context.trace_id,
         )

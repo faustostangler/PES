@@ -535,5 +535,4 @@ def test_record_stage_quarantine_ledger_exception_resilience(
     mock_metrics.increment_counter.assert_called_once()
     error_records = [r for r in caplog.records if r.levelname == "ERROR"]
     assert len(error_records) == 1
-    assert error_records[0].msg == "Failed to record quarantine entry in ledger for %s: %s"
-    assert error_records[0].args == ("vid_err", mock_ledger.get_entry.side_effect)
+    assert "Failed to record quarantine entry in ledger for vid_err: Database locked" in error_records[0].getMessage()

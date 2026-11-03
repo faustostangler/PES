@@ -33,7 +33,7 @@ def _patch_python313_threading_shutdown() -> None:
                     if active and active.get(self._tident) is self._dummy_thread:
                         active.pop(self._tident, None)
 
-        threading._DeleteDummyThreadOnDel.__del__ = _safe_dummy_del  # type: ignore[method-assign]
+        threading._DeleteDummyThreadOnDel.__del__ = _safe_dummy_del
 
 
 def _configure_structlog_defaults() -> None:

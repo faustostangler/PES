@@ -22,15 +22,18 @@ Usage:
 
 from __future__ import annotations
 
-import argparse
 import ast
 import json
+import re
 import shutil
 import subprocess
 import sys
 from collections.abc import Sequence
 from pathlib import Path
-from typing import Any
+from typing import Annotated, Any
+
+import click
+import typer
 
 # Mapping of source modules/patterns to their mirrored unit test suites
 MODULE_TEST_MAP: dict[str, list[str]] = {
@@ -241,10 +244,6 @@ MODULE_TEST_MAP: dict[str, list[str]] = {
         "tests/cresmo/unit/test_run_command.py",
         "tests/cresmo/unit/test_cli.py",
     ],
-    "src/cresmo/presentation/commands/run_parser.py": [
-        "tests/cresmo/unit/test_run_parser.py",
-        "tests/cresmo/unit/test_cli.py",
-    ],
     "src/cresmo/presentation/commands/sync.py": [
         "tests/cresmo/unit/test_sync_command.py",
         "tests/cresmo/unit/test_cli.py",
@@ -270,22 +269,29 @@ MODULE_TEST_MAP: dict[str, list[str]] = {
     ],
     # Wave 6: Discovery Modules
     "src/cresmo/application/use_cases/discovery/channel_crawler.py": [
+        "tests/cresmo/unit/test_channel_crawler.py",
         "tests/cresmo/unit/test_discover_batch_sources.py",
     ],
     "src/cresmo/application/use_cases/discovery/lake_scanner.py": [
+        "tests/cresmo/unit/test_lake_scanner.py",
         "tests/cresmo/unit/test_discover_batch_sources.py",
     ],
     "src/cresmo/application/use_cases/discovery/manifests.py": [
+        "tests/cresmo/unit/test_discovery_manifests.py",
         "tests/cresmo/unit/test_discover_batch_sources.py",
     ],
     "src/cresmo/application/use_cases/discovery/models.py": [
+        "tests/cresmo/unit/test_discovery_models.py",
         "tests/cresmo/unit/test_discover_batch_sources.py",
     ],
     # Wave 6: Indexing Modules
     "src/cresmo/application/use_cases/indexing/distiller.py": [
+        "tests/cresmo/unit/test_indexing_distiller.py",
         "tests/cresmo/unit/test_index_raw_transcripts_use_case.py",
+        "tests/cresmo/unit/test_indexing_validators.py",
     ],
     "src/cresmo/application/use_cases/indexing/validators.py": [
+        "tests/cresmo/unit/test_indexing_validators.py",
         "tests/cresmo/unit/test_index_raw_transcripts_use_case.py",
     ],
     # Wave 6: Judges Adapters
@@ -368,6 +374,85 @@ MODULE_TEST_MAP: dict[str, list[str]] = {
     "src/cresmo/presentation/factories/use_case_factory.py": [
         "tests/cresmo/unit/test_composition.py",
     ],
+    # Wave 0 (ADR-048): Cresmo Infrastructure unmapped modules
+    "src/cresmo/infrastructure/adapters/data/polars_batch_processor.py": [
+        "tests/cresmo/unit/test_polars_batch_processor.py",
+    ],
+    "src/cresmo/infrastructure/adapters/database/postgres_ledger_adapter.py": [
+        "tests/cresmo/unit/test_postgres_ledger_adapter.py",
+    ],
+    "src/cresmo/infrastructure/adapters/gemini_pool.py": [
+        "tests/cresmo/unit/test_gemini_pool.py",
+    ],
+    "src/cresmo/infrastructure/adapters/judges/criterion_parser.py": [
+        "tests/cresmo/unit/test_criterion_parser.py",
+    ],
+    "src/cresmo/infrastructure/adapters/scrapers/selectolax_html_parser.py": [
+        "tests/cresmo/unit/test_selectolax_html_parser.py",
+    ],
+    "src/cresmo/infrastructure/database/models.py": [
+        "tests/cresmo/unit/test_postgres_ledger_adapter.py",
+    ],
+    "src/cresmo/infrastructure/workers/arq_worker.py": [
+        "tests/cresmo/unit/test_arq_worker.py",
+    ],
+    # Shared Kernel Context
+    "src/shared_kernel/security.py": [
+        "tests/shared_kernel/unit/test_security.py",
+    ],
+    # IAM Identity Bounded Context
+    "src/identity/domain/entities.py": [
+        "tests/identity/unit/test_domain.py",
+    ],
+    "src/identity/domain/value_objects.py": [
+        "tests/identity/unit/test_domain.py",
+    ],
+    "src/identity/domain/exceptions.py": [
+        "tests/identity/unit/test_domain.py",
+    ],
+    "src/identity/application/dtos.py": [
+        "tests/identity/unit/test_use_cases.py",
+    ],
+    "src/identity/application/use_cases/register_user.py": [
+        "tests/identity/unit/test_use_cases.py",
+        "tests/identity/unit/test_dependencies_and_routes.py",
+    ],
+    "src/identity/application/use_cases/authenticate_user.py": [
+        "tests/identity/unit/test_use_cases.py",
+        "tests/identity/unit/test_dependencies_and_routes.py",
+    ],
+    "src/identity/application/use_cases/manage_pat.py": [
+        "tests/identity/unit/test_use_cases.py",
+        "tests/identity/unit/test_dependencies_and_routes.py",
+    ],
+    "src/identity/application/use_cases/validate_token.py": [
+        "tests/identity/unit/test_use_cases.py",
+        "tests/identity/unit/test_dependencies_and_routes.py",
+    ],
+    "src/identity/infrastructure/settings.py": [
+        "tests/identity/unit/test_adapters.py",
+    ],
+    "src/identity/infrastructure/adapters/argon2_hasher_adapter.py": [
+        "tests/identity/unit/test_adapters.py",
+    ],
+    "src/identity/infrastructure/adapters/jwt_token_adapter.py": [
+        "tests/identity/unit/test_adapters.py",
+    ],
+    "src/identity/infrastructure/adapters/sqlite_user_repository.py": [
+        "tests/identity/integration/test_sqlite_repositories.py",
+    ],
+    "src/identity/presentation/composition.py": [
+        "tests/identity/unit/test_dependencies_and_routes.py",
+        "tests/identity/integration/test_auth_api.py",
+    ],
+    "src/identity/presentation/dependencies.py": [
+        "tests/identity/unit/test_dependencies_and_routes.py",
+        "tests/identity/integration/test_auth_api.py",
+    ],
+    "src/identity/presentation/routes.py": [
+        "tests/identity/unit/test_dependencies_and_routes.py",
+        "tests/identity/integration/test_auth_api.py",
+    ],
 }
 
 WAVE_DEFINITIONS: dict[str, list[str]] = {
@@ -417,6 +502,8 @@ WAVE_DEFINITIONS: dict[str, list[str]] = {
         "src/cresmo/domain/value_objects/quality.py",
         "src/cresmo/domain/value_objects/constants.py",
         "src/cresmo/domain/stage_registry.py",
+        "src/cresmo/domain/services/mechanical_validator.py",
+        "src/cresmo/domain/taxonomy.py",
     ],
     "pipeline": [
         "src/cresmo/application/pipeline/quarantine.py",
@@ -427,6 +514,8 @@ WAVE_DEFINITIONS: dict[str, list[str]] = {
         "src/cresmo/application/pipeline/coordinator.py",
         "src/cresmo/application/pipeline/context.py",
         "src/cresmo/application/pipeline/models.py",
+        "src/cresmo/application/json_parser.py",
+        "src/cresmo/application/services/preflight.py",
     ],
     "use_cases": [
         "src/cresmo/application/use_cases/concat_master.py",
@@ -456,6 +545,27 @@ WAVE_DEFINITIONS: dict[str, list[str]] = {
         "src/cresmo/infrastructure/logging_config.py",
         "src/cresmo/infrastructure/config.py",
         "src/cresmo/infrastructure/adapters/sqlite_ledger_adapter.py",
+        "src/cresmo/infrastructure/adapters/gemini_adapter.py",
+        "src/cresmo/infrastructure/adapters/header_generator.py",
+        "src/cresmo/infrastructure/adapters/native_media_ingestion_adapter.py",
+        "src/cresmo/infrastructure/adapters/obsidian_vault_adapter.py",
+        "src/cresmo/infrastructure/adapters/prompt_provider.py",
+        "src/cresmo/infrastructure/adapters/data/polars_batch_processor.py",
+        "src/cresmo/infrastructure/adapters/database/postgres_ledger_adapter.py",
+        "src/cresmo/infrastructure/adapters/gemini_pool.py",
+        "src/cresmo/infrastructure/adapters/judges/criterion_parser.py",
+        "src/cresmo/infrastructure/adapters/scrapers/selectolax_html_parser.py",
+        "src/cresmo/infrastructure/database/models.py",
+        "src/cresmo/infrastructure/workers/arq_worker.py",
+    ],
+    "cresmo_unmapped_infra": [
+        "src/cresmo/infrastructure/adapters/data/polars_batch_processor.py",
+        "src/cresmo/infrastructure/adapters/database/postgres_ledger_adapter.py",
+        "src/cresmo/infrastructure/adapters/gemini_pool.py",
+        "src/cresmo/infrastructure/adapters/judges/criterion_parser.py",
+        "src/cresmo/infrastructure/adapters/scrapers/selectolax_html_parser.py",
+        "src/cresmo/infrastructure/database/models.py",
+        "src/cresmo/infrastructure/workers/arq_worker.py",
     ],
     "presentation": [
         "src/cresmo/presentation/cli.py",
@@ -463,12 +573,37 @@ WAVE_DEFINITIONS: dict[str, list[str]] = {
         "src/cresmo/presentation/commands/check_config.py",
         "src/cresmo/presentation/commands/dedupe.py",
         "src/cresmo/presentation/commands/run.py",
-        "src/cresmo/presentation/commands/run_parser.py",
         "src/cresmo/presentation/commands/sync.py",
         "src/cresmo/presentation/commands/worker.py",
         "src/cresmo/presentation/commands/concat_master.py",
         "src/cresmo/presentation/commands/seed_prompts.py",
         "src/cresmo/presentation/commands/export_cookies.py",
+    ],
+    "shared_kernel": [
+        "src/shared_kernel/security.py",
+    ],
+    "identity_domain": [
+        "src/identity/domain/entities.py",
+        "src/identity/domain/value_objects.py",
+        "src/identity/domain/exceptions.py",
+    ],
+    "identity_application": [
+        "src/identity/application/dtos.py",
+        "src/identity/application/use_cases/register_user.py",
+        "src/identity/application/use_cases/authenticate_user.py",
+        "src/identity/application/use_cases/manage_pat.py",
+        "src/identity/application/use_cases/validate_token.py",
+    ],
+    "identity_infrastructure": [
+        "src/identity/infrastructure/settings.py",
+        "src/identity/infrastructure/adapters/argon2_hasher_adapter.py",
+        "src/identity/infrastructure/adapters/jwt_token_adapter.py",
+        "src/identity/infrastructure/adapters/sqlite_user_repository.py",
+    ],
+    "identity_presentation": [
+        "src/identity/presentation/composition.py",
+        "src/identity/presentation/dependencies.py",
+        "src/identity/presentation/routes.py",
     ],
 }
 
@@ -539,6 +674,14 @@ def sync_source_to_mutants() -> int:
                 shutil.copy2(t_file, target)
                 count += 1
 
+    # Prune orphaned test files in mutants/tests
+    if mutants_tests_dir.exists():
+        for p in list(mutants_tests_dir.glob("**/*")):
+            if p.is_file() and not p.name.endswith((".meta", ".spans", ".pyc", ".pyo")):
+                rel = p.relative_to(mutants_tests_dir)
+                if not (tests_dir / rel).exists():
+                    p.unlink(missing_ok=True)
+
     # Also sync scripts/
     scripts_dir = Path("scripts")
     mutants_scripts_dir = Path("mutants/scripts")
@@ -550,6 +693,19 @@ def sync_source_to_mutants() -> int:
                 target.parent.mkdir(parents=True, exist_ok=True)
                 if not target.exists() or s_file.read_bytes() != target.read_bytes():
                     shutil.copy2(s_file, target)
+                    count += 1
+
+    # Also sync .agents/
+    agents_dir = Path(".agents")
+    mutants_agents_dir = Path("mutants/.agents")
+    if agents_dir.exists():
+        for a_file in agents_dir.glob("**/*"):
+            if a_file.is_file() and not a_file.name.endswith((".pyc", ".pyo")):
+                rel = a_file.relative_to(agents_dir)
+                target = mutants_agents_dir / rel
+                target.parent.mkdir(parents=True, exist_ok=True)
+                if not target.exists() or a_file.read_bytes() != target.read_bytes():
+                    shutil.copy2(a_file, target)
                     count += 1
     return count
 
@@ -589,7 +745,7 @@ def extract_function_keys(source_path: Path) -> list[str]:
 
     # 2. Also check if metadata already has any additional keys
     try:
-        from mutmut.__main__ import SourceFileMutationData
+        from mutmut.__main__ import SourceFileMutationData  # type: ignore[attr-defined]
         from mutmut.utils.format_utils import get_mutant_name
 
         data = SourceFileMutationData(path=source_path)
@@ -623,7 +779,8 @@ def seed_mutmut_stats(source_path: Path, test_nodes: Sequence[str]) -> None:
     data.setdefault("git_commit", None)
 
     for t in test_nodes:
-        durations.setdefault(t, 0.05)
+        # Enforce safe duration floor (5.0s) to prevent false SIGXCPU (-24) in mutmut per ADR-048
+        durations.setdefault(t, 5.0)
 
     fn_keys = extract_function_keys(source_path)
     for k in fn_keys:
@@ -636,19 +793,24 @@ def seed_mutmut_stats(source_path: Path, test_nodes: Sequence[str]) -> None:
     stats_file.write_text(json.dumps(data, indent=4), encoding="utf-8")
 
 
-def set_pyproject_only_mutate(target_path: str) -> str:
-    """Set only_mutate in pyproject.toml and return original file content."""
+def set_pyproject_only_mutate(target_path: str, test_files: Sequence[str] | None = None) -> str:
+    """Set only_mutate and targeted runner in pyproject.toml and return original file content."""
     pyproject = Path("pyproject.toml")
     original = pyproject.read_text(encoding="utf-8")
 
+    # Clean any stale only_mutate/runner entries first (idempotent recovery)
+    clean_original = re.sub(r'only_mutate\s*=\s*\[.*?\]\n?', '', original)
+    clean_original = re.sub(r'runner\s*=\s*".*?"\n?', '', clean_original)
+
     mutmut_section = '[tool.mutmut]\nsource_paths = ["src"]\n'
-    if mutmut_section in original:
-        new_content = original.replace(
+    if mutmut_section in clean_original:
+        tests_arg = " ".join(test_files) if test_files else "tests/shared_kernel tests/identity tests/cresmo"
+        new_content = clean_original.replace(
             mutmut_section,
-            f'{mutmut_section}only_mutate = ["{target_path}"]\n',
+            f'{mutmut_section}only_mutate = ["{target_path}"]\nrunner = "pytest -x {tests_arg}"\n',
         )
         pyproject.write_text(new_content, encoding="utf-8")
-    return original
+    return clean_original
 
 
 def restore_pyproject(original_content: str) -> None:
@@ -706,7 +868,7 @@ def run_mutation_on_module(
         print("  🔄 Cleared previous mutant artifacts for fresh generation.")
 
     # 5. Configure pyproject.toml & run
-    original_pyproject = set_pyproject_only_mutate(source_path_str)
+    original_pyproject = set_pyproject_only_mutate(source_path_str, test_files=test_files)
     try:
         mod_parts = Path(source_path_str)
         if mod_parts.parts and mod_parts.parts[0] == "src":
@@ -758,36 +920,65 @@ def run_mutation_on_module(
     return {"total": total, "killed": killed, "survived": survived}
 
 
-def main() -> int:
-    parser = argparse.ArgumentParser(description="SOTA Mutation Sweeper for Cresmo.")
-    parser.add_argument("--file", type=str, help="Single file to mutate.")
-    parser.add_argument(
-        "--wave",
-        choices=["completeness", "domain", "pipeline", "use_cases", "infra", "presentation", "all"],
-        help="Execution wave.",
-    )
-    parser.add_argument("--no-reset", action="store_true", help="Do not reset mutant statuses.")
-    parser.add_argument(
-        "--show-survivors", action="store_true", help="Print diff of surviving mutants."
-    )
-    args = parser.parse_args()
+app = typer.Typer(
+    name="cresmo-mutation-sweeper",
+    help="SOTA Mutation Sweeper for Cresmo.",
+    no_args_is_help=False,
+    context_settings={"help_option_names": ["-h", "--help"]},
+)
 
-    reset = not args.no_reset
 
-    if args.file:
-        targets = [args.file]
-    elif args.wave:
-        if args.wave == "all":
+@app.command()
+def sweep(
+    file_path: Annotated[
+        str | None,
+        typer.Option(
+            "--file",
+            help="Single file to mutate.",
+        ),
+    ] = None,
+    wave: Annotated[
+        str | None,
+        typer.Option(
+            "--wave",
+            help="Execution wave: completeness, domain, pipeline, use_cases, infra, presentation, all",
+        ),
+    ] = None,
+    no_reset: Annotated[
+        bool,
+        typer.Option(
+            "--no-reset",
+            help="Do not reset mutant statuses.",
+        ),
+    ] = False,
+    show_survivors: Annotated[
+        bool,
+        typer.Option(
+            "--show-survivors",
+            help="Print diff of surviving mutants.",
+        ),
+    ] = False,
+) -> None:
+    reset = not no_reset
+
+    if file_path:
+        targets = [file_path]
+    elif wave:
+        if wave == "all":
             targets = [f for wave_files in WAVE_DEFINITIONS.values() for f in wave_files]
+        elif wave in WAVE_DEFINITIONS:
+            targets = WAVE_DEFINITIONS[wave]
         else:
-            targets = WAVE_DEFINITIONS[args.wave]
+            print(f"❌ Error: Invalid wave '{wave}'. Valid choices: {list(WAVE_DEFINITIONS.keys()) + ['all']}")
+            raise typer.Exit(code=1)
     else:
-        parser.print_help()
-        return 1
+        ctx = click.get_current_context()
+        print(ctx.get_help())
+        raise typer.Exit(code=1)
 
     totals = {"total": 0, "killed": 0, "survived": 0}
     for target in targets:
-        res = run_mutation_on_module(target, reset=reset, show_survivors=args.show_survivors)
+        res = run_mutation_on_module(target, reset=reset, show_survivors=show_survivors)
         totals["total"] += res["total"]
         totals["killed"] += res["killed"]
         totals["survived"] += res["survived"]
@@ -800,7 +991,32 @@ def main() -> int:
     print(f"   Survived:        {totals['survived']}")
     print("=" * 80 + "\n")
 
-    return 0 if totals["survived"] == 0 else 1
+    if totals["survived"] != 0:
+        raise typer.Exit(code=1)
+
+
+def main(argv: Sequence[str] | None = None) -> int:
+    """Execute mutation sweeper entrypoint.
+
+    Args:
+        argv: Optional sequence of CLI arguments. If None, uses sys.argv[1:].
+
+    Returns:
+        Process exit code integer.
+    """
+    try:
+        res = app(args=list(argv) if argv is not None else None, standalone_mode=False)
+        return 0 if res is None else int(res)
+    except typer.Exit as exc:
+        return exc.exit_code
+    except click.ClickException as exc:
+        sys.stderr.write(f"Usage error: {exc}\n")
+        return getattr(exc, "exit_code", 2)
+    except SystemExit as exc:
+        return exc.code if isinstance(exc.code, int) else 2
+    except Exception as exc:  # noqa: BLE001
+        sys.stderr.write(f"Unexpected error: {exc}\n")
+        return 1
 
 
 if __name__ == "__main__":

@@ -24,3 +24,12 @@ EXIT_RATE_LIMIT_EXCEEDED: int = 4
 
 # Media ingestion failure (network socket timeout, unresolvable feed, or audio download failure)
 EXIT_INGESTION_ERROR: int = 5
+
+__all__ = [
+    "EXIT_CONFIG_OR_USAGE_ERROR",
+    "EXIT_DOMAIN_VALIDATION_ERROR",
+    "EXIT_INGESTION_ERROR",
+    "EXIT_INTERNAL_ERROR",
+    "EXIT_RATE_LIMIT_EXCEEDED",
+    "EXIT_SUCCESS",
+]
