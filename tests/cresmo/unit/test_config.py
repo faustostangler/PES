@@ -72,6 +72,22 @@ class TestCresmoSettings:
         assert settings.llm_synthesis_temperature == 0.2
         assert settings.llm_indexing_temperature == 0.2
         assert settings.expansion_max_passes == 5
+        assert settings.judge_max_attempts == 2
+        assert settings.raw_index_max_attempts == 2
+        assert settings.inventory_max_attempts == 2
+        assert settings.max_retries == 2
+
+    def test_max_retries_alias_and_env_override(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        settings = CresmoSettings()
+        assert settings.max_retries == 2
+        assert settings.judge_max_attempts == 2
+
+        monkeypatch.setenv("CRESMO_MAX_RETRIES", "4")
+        overridden = CresmoSettings()
+        assert overridden.max_retries == 4
+        assert overridden.judge_max_attempts == 4
 
     def test_ollama_num_predict_defaults_and_env_override(
         self, monkeypatch: pytest.MonkeyPatch

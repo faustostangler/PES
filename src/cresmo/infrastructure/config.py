@@ -601,7 +601,7 @@ class CresmoSettings(BaseSettings):
     )
 
     raw_index_max_attempts: int = Field(
-        default=3,
+        default=2,
         ge=0,
         validation_alias=AliasChoices(
             "raw_index_max_attempts", "CRESMO_RAW_INDEX_MAX_ATTEMPTS", "RAW_INDEX_MAX_ATTEMPTS"
@@ -610,7 +610,7 @@ class CresmoSettings(BaseSettings):
     )
 
     inventory_max_attempts: int = Field(
-        default=3,
+        default=2,
         ge=0,
         validation_alias=AliasChoices(
             "inventory_max_attempts", "CRESMO_INVENTORY_MAX_ATTEMPTS", "INVENTORY_MAX_ATTEMPTS"
@@ -647,10 +647,21 @@ class CresmoSettings(BaseSettings):
         description="Whether failed quality evaluations raise DomainValidationError or log warning scores.",
     )
     judge_max_attempts: int = Field(
-        default=1,
-        validation_alias=AliasChoices("judge_max_attempts", "CRESMO_JUDGE_MAX_ATTEMPTS"),
-        description="Maximum attempts to re-execute a stage when quality evaluation fails.",
+        default=2,
+        ge=1,
+        validation_alias=AliasChoices(
+            "judge_max_attempts",
+            "CRESMO_JUDGE_MAX_ATTEMPTS",
+            "max_retries",
+            "CRESMO_MAX_RETRIES",
+        ),
+        description="Maximum execution attempts (default: 2) across all pipeline stages when quality evaluation fails.",
     )
+
+    @property
+    def max_retries(self) -> int:
+        """Backward-compatible property alias for judge_max_attempts."""
+        return self.judge_max_attempts
     judge_pass_threshold: float = Field(
         default=DEFAULT_JUDGE_PASS_THRESHOLD,
         ge=0.0,

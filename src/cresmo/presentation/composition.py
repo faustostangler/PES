@@ -273,7 +273,7 @@ def build_pipeline(
             metrics_port=metrics_port,
             llm_judge=llm_judge_port,
             judge_blocking=getattr(resolved_settings, "judge_blocking", False),
-            judge_max_attempts=getattr(resolved_settings, "judge_max_attempts", 1),
+            judge_max_attempts=getattr(resolved_settings, "judge_max_attempts", 2),
             prompt_provider=prompt_provider,
             llm_transformation_port=llm_synthesis_port,
             stage_factory=stage_factory,

@@ -294,7 +294,7 @@ class TestCompositionRoot:
         )
         p_default = build_pipeline(settings=s_default)
         assert p_default.stage_runner.judge_blocking is False
-        assert p_default.stage_runner.judge_max_attempts == 1
+        assert p_default.stage_runner.judge_max_attempts == 2
         assert isinstance(p_default.stage_runner.metrics_port, NoOpMetricsAdapter)
 
     def test_build_pipeline_web_index_reuses_synthesis_adapter(
@@ -757,7 +757,7 @@ class TestCompositionRoot:
 
         pipeline = build_pipeline(settings=SettingsWithoutJudgeAttrs())  # type: ignore[arg-type]
         assert pipeline.stage_runner.judge_blocking is False
-        assert pipeline.stage_runner.judge_max_attempts == 1
+        assert pipeline.stage_runner.judge_max_attempts == 2
 
     def test_build_pipeline_subfactory_wiring_integrity(
         self, test_settings: CresmoSettings

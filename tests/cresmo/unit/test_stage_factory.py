@@ -255,7 +255,7 @@ def test_stage_factory_settings_defaults_fallback() -> None:
     factory = StageFactory(settings=BareSettings())  # type: ignore[arg-type]
     descriptor = factory.build_stage("long_expander")
     assert descriptor.temperature is None
-    assert descriptor.max_attempts == 1
+    assert descriptor.max_attempts == 2
     assert descriptor.blocking is False
 
 

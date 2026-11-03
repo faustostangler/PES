@@ -550,7 +550,7 @@ class TestStageRunnerHelperAndInit:
 
         runner = PipelineStageRunner(telemetry_port=mock_t, metrics_port=mock_m)
         assert runner.judge_blocking is False
-        assert runner.judge_max_attempts == 1
+        assert runner.judge_max_attempts == 2
         assert runner.prompt_provider is None
         assert runner.llm_transformation_port is None
         assert runner.stage_factory is None

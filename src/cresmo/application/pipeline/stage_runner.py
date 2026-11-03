@@ -86,7 +86,7 @@ class PipelineStageRunner:
         metrics_port: MetricsPort | None = None,
         llm_judge: LlmJudgePort | None = None,
         judge_blocking: bool = False,
-        judge_max_attempts: int = 1,
+        judge_max_attempts: int = 2,
         prompt_provider: PromptProviderPort | None = None,
         llm_transformation_port: LLMTransformationPort | None = None,
         stage_factory: StageFactory | None = None,

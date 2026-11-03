@@ -248,7 +248,7 @@ class TestCresmoPipelineInitializationAndProperties:
             settings=object(),  # Has neither judge_blocking nor judge_max_attempts
         )
         assert pipeline.stage_runner.judge_blocking is False
-        assert pipeline.stage_runner.judge_max_attempts == 1
+        assert pipeline.stage_runner.judge_max_attempts == 2
 
 
 class TestCresmoPipelineWarmup:

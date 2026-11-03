@@ -66,6 +66,9 @@ class PipelineSettingsProtocol(Protocol):
     def judge_max_attempts(self) -> int: ...
 
     @property
+    def max_retries(self) -> int: ...
+
+    @property
     def expansion_max_passes(self) -> int: ...
 
     @property
@@ -94,9 +97,10 @@ class DefaultPipelineSettings:
     discovery_queue_maxsize: int = 50
     channel_discovery_workers: int = 4
     days_lookback: int = 30
-    inventory_max_attempts: int = 3
+    inventory_max_attempts: int = 2
     judge_blocking: bool = False
-    judge_max_attempts: int = 1
+    judge_max_attempts: int = 2
+    max_retries: int = 2
     expansion_max_passes: int = 5
     gap_filler_passes: int = 5
 

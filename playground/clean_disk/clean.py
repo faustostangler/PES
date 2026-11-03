@@ -253,6 +253,59 @@ def clean_user_caches(dry_run: bool = False) -> int:
             except Exception as e:
                 print(f"[ERROR] Failed removing Whisper cache: {e}")
 
+    # 5. Chrome Optimization Guide On-Device Model
+    opt_model_dir = HOME / ".config/google-chrome/OptGuideOnDeviceModel"
+    if opt_model_dir.exists():
+        size = get_dir_size(opt_model_dir)
+        total_freed += size
+        if dry_run:
+            print(f"[WOULD REMOVE] Chrome OptGuide Models: {opt_model_dir} ({format_size(size)})")
+        else:
+            try:
+                shutil.rmtree(opt_model_dir)
+                print(f"[REMOVED] Chrome OptGuide Models ({format_size(size)})")
+            except Exception as e:
+                print(f"[ERROR] Failed removing Chrome OptGuide models: {e}")
+
+    # 6. Python & Dev Caches (pip, huggingface, torch, jedi, thumbnails)
+    misc_caches = [
+        ("Pip Cache", HOME / ".cache/pip"),
+        ("HuggingFace Cache", HOME / ".cache/huggingface"),
+        ("Torch Cache", HOME / ".cache/torch"),
+        ("Jedi Cache", HOME / ".cache/jedi"),
+        ("Thumbnails Cache", HOME / ".cache/thumbnails"),
+        ("Antigravity Browser Profile Cache", HOME / ".gemini/antigravity-browser-profile/Default/Cache"),
+    ]
+    for label, c_path in misc_caches:
+        if c_path.exists():
+            size = get_dir_size(c_path)
+            total_freed += size
+            if dry_run:
+                print(f"[WOULD REMOVE] {label}: {c_path} ({format_size(size)})")
+            else:
+                try:
+                    shutil.rmtree(c_path)
+                    print(f"[REMOVED] {label} ({format_size(size)})")
+                except Exception as e:
+                    print(f"[ERROR] Failed removing {label}: {e}")
+
+    # 7. Antigravity Orphaned Git Worktrees
+    worktrees_dir = HOME / ".gemini/antigravity/worktrees"
+    if worktrees_dir.exists():
+        size = get_dir_size(worktrees_dir)
+        if size > 0:
+            total_freed += size
+            if dry_run:
+                print(f"[WOULD REMOVE] Antigravity Worktrees: {worktrees_dir} ({format_size(size)})")
+            else:
+                try:
+                    subprocess.run(["git", "worktree", "prune"], check=False)
+                    shutil.rmtree(worktrees_dir)
+                    worktrees_dir.mkdir(parents=True, exist_ok=True)
+                    print(f"[REMOVED] Antigravity Worktrees ({format_size(size)})")
+                except Exception as e:
+                    print(f"[ERROR] Failed removing worktrees: {e}")
+
     print(f"Total user caches {'reclaimable' if dry_run else 'freed'}: {format_size(total_freed)}")
     return total_freed
 

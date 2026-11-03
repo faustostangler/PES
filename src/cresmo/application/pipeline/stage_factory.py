@@ -110,7 +110,7 @@ class StageFactory:
         effective_max_attempts: int = (
             max_attempts
             if max_attempts is not None
-            else getattr(self.settings, "judge_max_attempts", 1)
+            else getattr(self.settings, "judge_max_attempts", 2)
         )
         effective_blocking: bool = (
             blocking if blocking is not None else getattr(self.settings, "judge_blocking", False)
