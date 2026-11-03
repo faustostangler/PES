@@ -179,7 +179,7 @@ class ChannelFeedCrawlerService:
                         pub = pub.replace(tzinfo=UTC)
                     if pub < cutoff:
                         continue
-                u = getattr(item, "media_url", getattr(item, "url", ""))
+                u = getattr(item, "media_url", None) or getattr(item, "url", "")
                 if u:
                     in_window.append(u)
             return in_window

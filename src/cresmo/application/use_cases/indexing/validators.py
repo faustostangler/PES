@@ -231,8 +231,6 @@ def parse_raw_index_response(raw_output: str, fallback_title: str) -> tuple[str,
         concept = clean_concept_line(lines[0])
         synthesis = " ".join(lines[1:])
         synthesis = clean_text_line(synthesis)
-        if not concept:
-            concept = "Síntese Conceitual"
         if not synthesis:
             synthesis = fallback_title
         return concept, synthesis
@@ -243,8 +241,6 @@ def parse_raw_index_response(raw_output: str, fallback_title: str) -> tuple[str,
         part_c, part_s = single_line.split(",", 1)
         concept = clean_concept_line(part_c)
         synthesis = clean_text_line(part_s)
-        if not concept:
-            concept = "Síntese Conceitual"
         if not synthesis:
             synthesis = fallback_title
         return concept, synthesis

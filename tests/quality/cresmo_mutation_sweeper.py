@@ -24,6 +24,7 @@ from __future__ import annotations
 
 import ast
 import json
+import re
 import shutil
 import subprocess
 import sys
@@ -268,22 +269,29 @@ MODULE_TEST_MAP: dict[str, list[str]] = {
     ],
     # Wave 6: Discovery Modules
     "src/cresmo/application/use_cases/discovery/channel_crawler.py": [
+        "tests/cresmo/unit/test_channel_crawler.py",
         "tests/cresmo/unit/test_discover_batch_sources.py",
     ],
     "src/cresmo/application/use_cases/discovery/lake_scanner.py": [
+        "tests/cresmo/unit/test_lake_scanner.py",
         "tests/cresmo/unit/test_discover_batch_sources.py",
     ],
     "src/cresmo/application/use_cases/discovery/manifests.py": [
+        "tests/cresmo/unit/test_discovery_manifests.py",
         "tests/cresmo/unit/test_discover_batch_sources.py",
     ],
     "src/cresmo/application/use_cases/discovery/models.py": [
+        "tests/cresmo/unit/test_discovery_models.py",
         "tests/cresmo/unit/test_discover_batch_sources.py",
     ],
     # Wave 6: Indexing Modules
     "src/cresmo/application/use_cases/indexing/distiller.py": [
+        "tests/cresmo/unit/test_indexing_distiller.py",
         "tests/cresmo/unit/test_index_raw_transcripts_use_case.py",
+        "tests/cresmo/unit/test_indexing_validators.py",
     ],
     "src/cresmo/application/use_cases/indexing/validators.py": [
+        "tests/cresmo/unit/test_indexing_validators.py",
         "tests/cresmo/unit/test_index_raw_transcripts_use_case.py",
     ],
     # Wave 6: Judges Adapters
@@ -790,15 +798,19 @@ def set_pyproject_only_mutate(target_path: str, test_files: Sequence[str] | None
     pyproject = Path("pyproject.toml")
     original = pyproject.read_text(encoding="utf-8")
 
+    # Clean any stale only_mutate/runner entries first (idempotent recovery)
+    clean_original = re.sub(r'only_mutate\s*=\s*\[.*?\]\n?', '', original)
+    clean_original = re.sub(r'runner\s*=\s*".*?"\n?', '', clean_original)
+
     mutmut_section = '[tool.mutmut]\nsource_paths = ["src"]\n'
-    if mutmut_section in original:
+    if mutmut_section in clean_original:
         tests_arg = " ".join(test_files) if test_files else "tests/shared_kernel tests/identity tests/cresmo"
-        new_content = original.replace(
+        new_content = clean_original.replace(
             mutmut_section,
             f'{mutmut_section}only_mutate = ["{target_path}"]\nrunner = "pytest -x {tests_arg}"\n',
         )
         pyproject.write_text(new_content, encoding="utf-8")
-    return original
+    return clean_original
 
 
 def restore_pyproject(original_content: str) -> None:

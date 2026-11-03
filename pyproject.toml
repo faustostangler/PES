@@ -116,6 +116,8 @@ packages = ["src/cresmo", "src/identity", "src/shared_kernel"]
 
 [tool.mutmut]
 source_paths = ["src"]
+only_mutate = ["src/cresmo/application/use_cases/indexing/distiller.py"]
+runner = "pytest -x tests/cresmo/unit/test_indexing_distiller.py tests/cresmo/unit/test_index_raw_transcripts_use_case.py tests/cresmo/unit/test_indexing_validators.py"
 also_copy = [
     ".env",
     ".agents",

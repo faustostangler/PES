@@ -29,6 +29,8 @@ _DEFAULT_MAX_RETRIES: int = 3
 _DEFAULT_RETRY_DELAY_SECONDS: int = 15
 
 _STAGE_RUNNER_FACTORY: Callable[..., Any] | None = None
+_MEDIA_INGESTION_FACTORY: Callable[..., Any] | None = None
+_SYNC_CHANNEL_FACTORY: Callable[..., Any] | None = None
 
 
 def register_stage_runner_factory(factory: Callable[..., Any]) -> None:
@@ -40,6 +42,28 @@ def register_stage_runner_factory(factory: Callable[..., Any]) -> None:
 def get_stage_runner_factory() -> Callable[..., Any] | None:
     """Return registered stage runner builder hook."""
     return _STAGE_RUNNER_FACTORY
+
+
+def register_media_ingestion_factory(factory: Callable[..., Any]) -> None:
+    """Register media ingestion builder hook to decouple infrastructure from presentation (ADR-051)."""
+    global _MEDIA_INGESTION_FACTORY
+    _MEDIA_INGESTION_FACTORY = factory
+
+
+def get_media_ingestion_factory() -> Callable[..., Any] | None:
+    """Return registered media ingestion builder hook."""
+    return _MEDIA_INGESTION_FACTORY
+
+
+def register_sync_channel_factory(factory: Callable[..., Any]) -> None:
+    """Register sync channel use case builder hook to decouple infrastructure from presentation (ADR-051)."""
+    global _SYNC_CHANNEL_FACTORY
+    _SYNC_CHANNEL_FACTORY = factory
+
+
+def get_sync_channel_factory() -> Callable[..., Any] | None:
+    """Return registered sync channel use case builder hook."""
+    return _SYNC_CHANNEL_FACTORY
 
 
 async def job_process_pipeline_stage(
@@ -158,15 +182,28 @@ async def job_extract_audio(
     logger.info("Executing audio extraction job [content_id=%s, job_id=%s]", content_id, job_id)
 
     try:
-        from cresmo.presentation.composition import (
-            build_media_ingestion_adapter,
-            resolve_shared_settings,
-        )
+        from cresmo.infrastructure.config import resolve_shared_settings
 
         settings = ctx.get("settings") or resolve_shared_settings()
-        ingestion_adapter = ctx.get("ingestion_adapter") or build_media_ingestion_adapter(
-            settings=settings
-        )
+        ingestion_adapter = ctx.get("ingestion_adapter")
+        if ingestion_adapter is None:
+            factory = ctx.get("media_ingestion_factory") or _MEDIA_INGESTION_FACTORY
+            if factory is not None:
+                ingestion_adapter = factory(settings=settings)
+            else:
+                from cresmo.infrastructure.adapters.header_generator import RandomHeaderGenerator
+                from cresmo.infrastructure.adapters.native_media_ingestion_adapter import (
+                    NativeMediaIngestionAdapter,
+                )
+
+                headers_path = getattr(settings, "browser_headers_path", None)
+                cookie_file = getattr(settings, "cookies_file", None)
+                header_generator = RandomHeaderGenerator(headers_path=headers_path)
+                ingestion_adapter = NativeMediaIngestionAdapter(
+                    header_generator=header_generator,
+                    cookie_file=Path(cookie_file) if cookie_file else None,
+                    whisper_workers=getattr(settings, "whisper_workers", 1),
+                )
 
         output_dir = Path(getattr(settings, "raw_dir", "data/raw"))
         transcript_obj = ingestion_adapter.ingest_single_video(
@@ -196,13 +233,19 @@ async def job_sync_feed(
     """Execute channel polling and feed synchronization as an isolated Redis task."""
     logger.info("Executing sync feed job [channel_url=%s, max_videos=%d]", channel_url, max_videos)
     from cresmo.domain.value_objects import ChannelFeedQuery
-    from cresmo.presentation.composition import (
-        build_sync_channel_use_case,
-        resolve_shared_settings,
-    )
+    from cresmo.infrastructure.config import resolve_shared_settings
 
     settings = ctx.get("settings") or resolve_shared_settings()
-    sync_use_case = build_sync_channel_use_case(settings=settings)
+    sync_use_case = ctx.get("sync_channel_use_case")
+    if sync_use_case is None:
+        factory = ctx.get("sync_channel_factory") or _SYNC_CHANNEL_FACTORY
+        if factory is not None:
+            sync_use_case = factory(settings=settings)
+        else:
+            raise RuntimeError(
+                "Sync channel use case not configured in worker context. "
+                "Register via register_sync_channel_factory() or inject ctx['sync_channel_use_case']."
+            )
 
     query = ChannelFeedQuery(
         channel_url=channel_url,

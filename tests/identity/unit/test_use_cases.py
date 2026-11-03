@@ -174,6 +174,9 @@ class TestRegisterUserUseCase:
         assert response.email == "newuser@example.com"
         assert response.roles == ["user"]
         assert response.user_id.startswith("usr_")
+        assert response.is_active is True
+        assert response.created_at is not None
+        assert datetime.fromisoformat(response.created_at) >= before
         saved = repo.get_by_email(Email("newuser@example.com"))
         assert saved is not None
         assert response.user_id == saved.id.value
@@ -186,6 +189,34 @@ class TestRegisterUserUseCase:
         assert saved.created_at >= before
         assert saved.updated_at is not None
         assert saved.updated_at >= before
+
+    def test_register_passes_explicit_domain_entity_fields(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        repo = InMemoryUserRepository()
+        hasher = DummyPasswordHasher()
+        use_case = RegisterUserUseCase(user_repo=repo, password_hasher=hasher)
+
+        init_kwargs: dict[str, Any] = {}
+        original_init = User.__init__
+
+        def spy_user_init(self: User, *args: Any, **kwargs: Any) -> None:
+            init_kwargs.update(kwargs)
+            original_init(self, *args, **kwargs)
+
+        monkeypatch.setattr(User, "__init__", spy_user_init)
+
+        dto = RegisterUserRequestDTO(
+            email="explicit@example.com",
+            password="SecurePassword123!",
+            roles=["user"],
+        )
+        use_case.execute(dto)
+
+        assert "roles" in init_kwargs
+        assert init_kwargs["roles"] == frozenset([Role.USER])
+        assert "is_active" in init_kwargs
+        assert init_kwargs["is_active"] is True
+        assert "created_at" in init_kwargs
+        assert "updated_at" in init_kwargs
 
     def test_register_with_minimum_valid_password_length(self) -> None:
         repo = InMemoryUserRepository()
@@ -375,7 +406,11 @@ class TestPersonalAccessTokenUseCases:
         created = create_uc.execute(create_dto)
 
         assert created.raw_token.startswith("cresmo_pat_")
+        assert len(created.raw_token.removeprefix("cresmo_pat_")) == 43
         assert created.token_prefix == created.raw_token[:16]
+        assert created.id.startswith("pat_")
+        assert len(created.id) == 16
+        assert len(created.id.removeprefix("pat_")) == 12
         assert created.expires_at is not None
         assert datetime.fromisoformat(created.expires_at) >= before_create + timedelta(days=29)
 
@@ -402,6 +437,41 @@ class TestPersonalAccessTokenUseCases:
         create_uc = CreatePersonalAccessTokenUseCase(pat_repo=pat_repo)
         created = create_uc.execute(CreatePATRequestDTO(user_id="usr_noexp", name="Infinite Token", expires_in_days=None))
         assert created.expires_at is None
+
+    def test_create_pat_explicit_entropy_bytes(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        import secrets
+        pat_repo = InMemoryPATRepository()
+        create_uc = CreatePersonalAccessTokenUseCase(pat_repo=pat_repo)
+        called_nbytes = []
+        def fake_token(nbytes: int | None = None) -> str:
+            called_nbytes.append(nbytes)
+            return "x" * 43
+        monkeypatch.setattr(secrets, "token_urlsafe", fake_token)
+        create_uc.execute(CreatePATRequestDTO(user_id="usr_1", name="Test"))
+        assert called_nbytes == [32]
+
+    def test_validate_pat_explicit_tenant_id(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        pat_repo = InMemoryPATRepository()
+        user_repo = InMemoryUserRepository()
+        user = User(
+            id=UserId("usr_cli"),
+            email=Email("cli@example.com"),
+            hashed_password=HashedPassword("$dummy$pass"),
+        )
+        user_repo.save(user)
+        create_uc = CreatePersonalAccessTokenUseCase(pat_repo=pat_repo)
+        validate_uc = ValidatePersonalAccessTokenUseCase(pat_repo=pat_repo, user_repo=user_repo)
+        created = create_uc.execute(CreatePATRequestDTO(user_id="usr_cli", name="Token"))
+
+        passed_kwargs: dict[str, Any] = {}
+        original_init = AuthenticatedUserDTO.__init__
+        def spy_dto_init(self: AuthenticatedUserDTO, *args: Any, **kwargs: Any) -> None:
+            passed_kwargs.update(kwargs)
+            original_init(self, *args, **kwargs)
+        monkeypatch.setattr(AuthenticatedUserDTO, "__init__", spy_dto_init)
+
+        validate_uc.execute(created.raw_token)
+        assert passed_kwargs.get("tenant_id") == "default"
 
     def test_validate_malformed_token_raises_error(self) -> None:
         pat_repo = InMemoryPATRepository()

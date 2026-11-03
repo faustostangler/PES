@@ -572,9 +572,7 @@ class TestObsidianVaultAdapter:
         )
 
         note = adapter.get_atomic_note_by_title(NoteTitle("Fallback Note"))
-        assert note is not None
-        assert note.note_type == NoteType.CONCEPT
-        assert "Definição contextual de Fallback Note" in note.definition
+        assert note is None
 
     def test_rewrite_wiki_links_ignores_unreadable_files(
         self, storage_paths: tuple[Path, Path, Path]

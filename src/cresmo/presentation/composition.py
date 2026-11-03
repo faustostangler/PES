@@ -312,15 +312,6 @@ def build_stage_runner(settings: CresmoSettings | None = None) -> PipelineStageR
     return pipeline.stage_runner
 
 
-# Register hook into infrastructure arq worker to eliminate reverse coupling per ADR-048
-try:
-    from cresmo.infrastructure.workers.arq_worker import register_stage_runner_factory
-
-    register_stage_runner_factory(build_stage_runner)
-except ImportError:
-    pass
-
-
 def build_sync_channel_use_case(
     settings: CresmoSettings | None = None,
     batch_size_override: int | None = None,
@@ -340,6 +331,21 @@ def build_sync_channel_use_case(
         pipeline=pipeline,
         preflight_checker=preflight_checker,
     )
+
+
+# Register hooks into infrastructure arq worker to eliminate reverse coupling per ADR-048 and ADR-051
+try:
+    from cresmo.infrastructure.workers.arq_worker import (
+        register_media_ingestion_factory,
+        register_stage_runner_factory,
+        register_sync_channel_factory,
+    )
+
+    register_stage_runner_factory(build_stage_runner)
+    register_media_ingestion_factory(build_media_ingestion_adapter)
+    register_sync_channel_factory(build_sync_channel_use_case)
+except ImportError:
+    pass
 
 
 __all__ = [

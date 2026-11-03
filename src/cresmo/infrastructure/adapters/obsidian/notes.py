@@ -15,7 +15,7 @@ from typing import Any
 import yaml
 
 from cresmo.domain.entities import AtomicNote
-from cresmo.domain.exceptions import NoteTypologyError
+from cresmo.domain.exceptions import DomainValidationError, NoteTypologyError
 from cresmo.domain.value_objects import (
     CausalMatrix,
     CrossContextRelations,
@@ -24,7 +24,6 @@ from cresmo.domain.value_objects import (
 )
 from cresmo.infrastructure.adapters.obsidian.utils import (
     _FRONTMATTER_PATTERN,
-    MIN_NOTE_DEFINITION_LENGTH,
     atomic_write,
     sanitize_filename,
 )
@@ -135,8 +134,6 @@ class AtomicNoteVaultHandler:
             body,
         )
         definition = def_match.group(1).strip() if def_match else body.strip()
-        if len(definition) < MIN_NOTE_DEFINITION_LENGTH:
-            definition = f"Definição contextual de {title.value} com análise teórica substancial."
 
         # Parse direct relations
         relations: list[NoteTitle] = []
@@ -179,19 +176,22 @@ class AtomicNoteVaultHandler:
                 aftermath=aft.group(1).strip() if aft else "",
             )
 
-        return AtomicNote(
-            title=title,
-            note_type=note_type,
-            definition=definition,
-            content_tags=tuple(meta.get("tags", ())),
-            domain=meta.get("domain", ""),
-            cluster=meta.get("cluster", ""),
-            source=meta.get("source", ""),
-            aliases=tuple(meta.get("aliases", ())),
-            direct_relations=tuple(relations),
-            causal_matrix=causal_matrix,
-            cross_context=cross_context,
-        )
+        try:
+            return AtomicNote(
+                title=title,
+                note_type=note_type,
+                definition=definition,
+                content_tags=tuple(meta.get("tags", ())),
+                domain=meta.get("domain", ""),
+                cluster=meta.get("cluster", ""),
+                source=meta.get("source", ""),
+                aliases=tuple(meta.get("aliases", ())),
+                direct_relations=tuple(relations),
+                causal_matrix=causal_matrix,
+                cross_context=cross_context,
+            )
+        except DomainValidationError:
+            return None
 
     def get_atomic_note_by_title(self, title: NoteTitle) -> AtomicNote | None:
         """Retrieve atomic note by searching index or vault directory."""

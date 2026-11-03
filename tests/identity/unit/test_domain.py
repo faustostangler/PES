@@ -217,10 +217,10 @@ class TestPersonalAccessTokenEntity:
         assert pat.is_active_at(exp_time - timedelta(microseconds=1)) is True
 
         # Naive datetime comparisons (ensure naive check replaces with UTC)
-        naive_at_exp = datetime(2026, 10, 31, 12, 0, 0)
+        naive_at_exp = datetime(2026, 10, 31, 12, 0, 0, tzinfo=UTC).replace(tzinfo=None)
         assert pat.is_active_at(naive_at_exp) is False
 
-        naive_before_exp = datetime(2026, 10, 31, 11, 59, 59)
+        naive_before_exp = datetime(2026, 10, 31, 11, 59, 59, tzinfo=UTC).replace(tzinfo=None)
         assert pat.is_active_at(naive_before_exp) is True
 
     def test_pat_timezone_naive_expiry_converted_to_utc(self) -> None:
