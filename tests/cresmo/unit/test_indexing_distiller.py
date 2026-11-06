@@ -232,7 +232,7 @@ class TestLLMTranscriptDistillerExtractSummary:
                 "First summary attempt",
                 "false",  # Judge rejected
                 "Second summary attempt",
-                "true",   # Judge passed
+                "true",  # Judge passed
             ]
         )
         prompts = DummyPromptProvider()

@@ -524,4 +524,3 @@ class TestWeightedAverageAndMechanicalVeto:
         assert eval_res.overall_score == pytest.approx(0.75, abs=1e-3)
         assert eval_res.is_vetoed is False
         assert eval_res.passed is False
-

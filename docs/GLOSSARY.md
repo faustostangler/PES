@@ -43,6 +43,7 @@ This glossary establishes the canonical terminology across all engineering discu
 | **`SourceModality`** | Value Object / Enumeration | Strongly-typed enumeration (`FILE = "file"`, `URL = "url"`) representing the physical or remote ingestion modality of a batch source item, replacing unvalidated string primitives. | `kind_str`, `source_type`, `input_kind` |
 | **`TokenHash`** | Value Object | Immutable, self-validating cryptographic SHA-256 hash enforcing exactly 64 lowercase hexadecimal characters for Personal Access Tokens and secrets per ADR-048. | `raw_hash`, `token_str`, `hash_key` |
 | **`PersonalAccessToken`** | Entity / Aggregate | Domain entity for machine-to-machine authentication supporting clock-injectable validity verification (`is_active_at`), permission scopes, and usage audit timestamps per ADR-018 and ADR-048. | `PAT`, `api_key`, `access_token` |
+| **`PromptMetadata.description`** | Canonical SSOT Field | Canonical textual specification of a prompt's synthesis responsibility and architectural role in `PROMPT_REGISTRY`, replacing deprecated `"task"` fields per ADR-050. | `task`, `task_description`, `prompt_goal` |
 
 ---
 

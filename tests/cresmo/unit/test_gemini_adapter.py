@@ -485,4 +485,3 @@ class TestGeminiLLMAdapter:
         assert client2.models.generate_content.call_count == 0
         # Primary key must still be primary (NOT cooled down)
         assert pool.lease()[0] == "k1"
-

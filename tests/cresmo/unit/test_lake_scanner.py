@@ -40,15 +40,28 @@ class TestLakeScannerHelpers:
     def test_matches_video_entry_empty_criteria(self) -> None:
         empty = SyncFilterCriteria()
         cid = ContentId("dQw4w9WgXcQ")
-        assert _matches_video_entry(empty, cid, "https://youtube.com/watch?v=dQw4w9WgXcQ", "pes_chan") is True
+        assert (
+            _matches_video_entry(empty, cid, "https://youtube.com/watch?v=dQw4w9WgXcQ", "pes_chan")
+            is True
+        )
 
     def test_matches_video_entry_video_ids_filter(self) -> None:
         criteria = SyncFilterCriteria(video_ids=("dQw4w9WgXcQ",))
         cid_match = ContentId("dQw4w9WgXcQ")
         cid_other = ContentId("oHg5SJYRHA0")
 
-        assert _matches_video_entry(criteria, cid_match, "https://youtube.com/watch?v=dQw4w9WgXcQ", None) is True
-        assert _matches_video_entry(criteria, cid_other, "https://youtube.com/watch?v=oHg5SJYRHA0", None) is False
+        assert (
+            _matches_video_entry(
+                criteria, cid_match, "https://youtube.com/watch?v=dQw4w9WgXcQ", None
+            )
+            is True
+        )
+        assert (
+            _matches_video_entry(
+                criteria, cid_other, "https://youtube.com/watch?v=oHg5SJYRHA0", None
+            )
+            is False
+        )
 
     def test_matches_video_entry_channels_and_categories_filter(self) -> None:
         criteria = SyncFilterCriteria(channels=("target_chan",), categories=("volatile",))
@@ -71,7 +84,12 @@ class TestLakeScannerHelpers:
         # Video IDs only criteria matches
         vid_only = SyncFilterCriteria(video_ids=("dQw4w9WgXcQ",))
         assert _is_unresolved_video_candidate(vid_only, cid, url) is True
-        assert _is_unresolved_video_candidate(vid_only, ContentId("oHg5SJYRHA0"), "https://youtube.com/watch?v=oHg5SJYRHA0") is False
+        assert (
+            _is_unresolved_video_candidate(
+                vid_only, ContentId("oHg5SJYRHA0"), "https://youtube.com/watch?v=oHg5SJYRHA0"
+            )
+            is False
+        )
 
         # If channels or categories criteria are set, unresolved candidate must be False
         with_chan = SyncFilterCriteria(video_ids=("dQw4w9WgXcQ",), channels=("some_chan",))
@@ -124,7 +142,9 @@ class TestLakeScannerService:
 
         criteria = SyncFilterCriteria(channels=("allowed_chan",))
         acc = _BatchSourceAccumulator()
-        channels = LakeScannerService.collect_priority_texts(priority_dir, acc, filter_criteria=criteria)
+        channels = LakeScannerService.collect_priority_texts(
+            priority_dir, acc, filter_criteria=criteria
+        )
 
         assert len(acc.sources) == 1
         assert acc.sources[0].target == str(md_matched.absolute())

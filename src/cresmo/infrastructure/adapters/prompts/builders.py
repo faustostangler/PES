@@ -10,7 +10,9 @@ from dataclasses import dataclass, field
 from typing import Any, Protocol, overload, runtime_checkable
 
 from cresmo.domain.value_objects import ChannelName, ChatPrompt
-from cresmo.infrastructure.adapters.prompts.registry import PromptKey
+from cresmo.infrastructure.adapters.prompts.registry import (
+    PromptKey,
+)
 from cresmo.infrastructure.config import CresmoSettings
 
 
@@ -24,8 +26,8 @@ class PromptTemplateHost(Protocol):
     @property
     def language(self) -> str | None: ...
 
-    def _format_paired_prompt(self, template_key: str, **kwargs: Any) -> ChatPrompt: ...
-    def _format_single_prompt(self, template_key: str, **kwargs: Any) -> ChatPrompt: ...
+    def _format_paired_prompt(self, template_key: str, /, **kwargs: Any) -> ChatPrompt: ...
+    def _format_single_prompt(self, template_key: str, /, **kwargs: Any) -> ChatPrompt: ...
     def _get_skill_block(self, skill_name: str) -> str: ...
     def _resolve_skill_block(self, entry: dict[str, Any]) -> str: ...
 
@@ -138,50 +140,16 @@ def build_judge_raw_index_synthesis(provider: PromptTemplateHost, **context: Any
 
 
 def build_fluid_prose(provider: PromptTemplateHost, **context: Any) -> ChatPrompt:
-    key = PromptKey.FLUID_PROSE.value
-    entry = provider._templates.get(key, {})
-    task = entry.get("task", "")
-    template = entry.get("user_prompt", "")
-    system_template = entry.get("system_prompt", "")
-    skill_block = (
-        provider._resolve_skill_block(entry)
-        if hasattr(provider, "_resolve_skill_block")
-        else provider._get_skill_block(entry.get("skill_name", "cresmo-fluid-prose"))
-    )
-    channel_name = context.get("channel_name", "")
-    file_name = context.get("file_name", "")
-    raw_text = context.get("raw_text", "")
-    language = _resolve_language(provider, context)
-
-    if not template and not system_template:
-        sys_inst = f"{task}\n\n{skill_block}".strip()
-        user_p = (
-            f"Source Channel: {channel_name}\n"
-            f"File: {file_name}\n\n"
-            f"Transcript:\n{raw_text}\n\n"
-            "Transform raw transcript into clean, continuous fluid prose in third-person neutral narrative without conversational noise."
-        )
-        return ChatPrompt.from_system_and_user(user=user_p, system=sys_inst if sys_inst else None)
-
     return provider._format_paired_prompt(
-        key,
-        channel_name=channel_name,
-        file_name=file_name,
-        raw_text=raw_text,
-        language=language,
+        PromptKey.FLUID_PROSE.value,
+        channel_name=context.get("channel_name", ""),
+        file_name=context.get("file_name", ""),
+        raw_text=context.get("raw_text", ""),
+        language=_resolve_language(provider, context),
     )
 
 
 def build_gap_filler(provider: PromptTemplateHost, **context: Any) -> ChatPrompt:
-    key = PromptKey.GAP_FILLER.value
-    entry = provider._templates.get(key, {})
-    task = entry.get("task", "")
-    skill_name = entry.get("skill_name", "cresmo-gap-filler")
-    template = entry.get("user_prompt", "")
-    system_template = entry.get("system_prompt", "")
-    skill_block = provider._get_skill_block(skill_name)
-    channel_name = context.get("channel_name", "")
-    file_name = context.get("file_name", "")
     source_text = context.get("source_text") or context.get("raw_text", "")
     current_text = context.get("current_text")
     pass_num = context.get("pass_num", 1)
@@ -189,31 +157,17 @@ def build_gap_filler(provider: PromptTemplateHost, **context: Any) -> ChatPrompt
     language = _resolve_language(provider, context)
 
     draft_section = (
-        f'\n<draft pass="{pass_num - 1}">\n{current_text}\n</draft>\n'
-        if current_text
-        else ""
+        f'\n<draft pass="{pass_num - 1}">\n{current_text}\n</draft>\n' if current_text else ""
     )
 
-    if not template and not system_template:
-        sys_inst = f"{task}\n\n{skill_block}".strip()
-        user_p = (
-            f"Source Channel: {channel_name}\n"
-            f"File: {file_name}\n\n"
-            f"<source_text>\n{source_text}\n</source_text>\n"
-            f"{draft_section}\n"
-            "Transform into continuous fluid Markdown prose with analytical headings (## and ###) "
-            "and mandatory '## Informações Complementares' section."
-        )
-        return ChatPrompt.from_system_and_user(user=user_p, system=sys_inst if sys_inst else None)
-
     return provider._format_paired_prompt(
-        key,
+        PromptKey.GAP_FILLER.value,
         language=language,
         pass_num=pass_num,
         total_passes=total_passes,
         prev_pass_num=pass_num - 1,
-        channel_name=channel_name,
-        file_name=file_name,
+        channel_name=context.get("channel_name", ""),
+        file_name=context.get("file_name", ""),
         source_text=source_text,
         raw_text=source_text,
         current_text=current_text or "",
@@ -222,80 +176,28 @@ def build_gap_filler(provider: PromptTemplateHost, **context: Any) -> ChatPrompt
 
 
 def build_long_expander(provider: PromptTemplateHost, **context: Any) -> ChatPrompt:
-    key = PromptKey.LONG_EXPANDER.value
-    entry = provider._templates.get(key, {})
-    task = entry.get("task", "")
-    skill_name = entry.get("skill_name", "cresmo-long-expander")
-    template = entry.get("user_prompt", "")
-    system_template = entry.get("system_prompt", "")
-    skill_block = provider._get_skill_block(skill_name)
-    compendium_body = context.get("compendium_body", "")
-    complementary_info = context.get("complementary_info", "")
-
-    if not template and not system_template:
-        sys_inst = f"{task}\n\n{skill_block}".strip()
-        user_p = (
-            f"Content:\n{compendium_body}\n\n## Informações Complementares\n{complementary_info}"
-        )
-        return ChatPrompt.from_system_and_user(user=user_p, system=sys_inst if sys_inst else None)
-
     return provider._format_paired_prompt(
-        key,
-        compendium_body=compendium_body,
-        complementary_info=complementary_info,
+        PromptKey.LONG_EXPANDER.value,
+        compendium_body=context.get("compendium_body", ""),
+        complementary_info=context.get("complementary_info", ""),
     )
 
 
 def build_wide_expander(provider: PromptTemplateHost, **context: Any) -> ChatPrompt:
-    key = PromptKey.WIDE_EXPANDER.value
-    entry = provider._templates.get(key, {})
-    task = entry.get("task", "")
-    skill_name = entry.get("skill_name", "cresmo-wide-expander")
-    template = entry.get("user_prompt", "")
-    system_template = entry.get("system_prompt", "")
-    skill_block = provider._get_skill_block(skill_name)
     current_text = context.get("current_text", "")
-
-    if not template and not system_template:
-        sys_inst = f"{task}\n\n{skill_block}".strip()
-        return ChatPrompt.from_system_and_user(
-            user=current_text, system=sys_inst if sys_inst else None
-        )
-
     return provider._format_paired_prompt(
-        key,
+        PromptKey.WIDE_EXPANDER.value,
         current_text=current_text,
         text=current_text,
     )
 
 
 def build_atomic_inventory(provider: PromptTemplateHost, **context: Any) -> ChatPrompt:
-    key = PromptKey.ATOMIC_INVENTORY.value
-    entry = provider._templates.get(key, {})
-    task = entry.get("task", "")
-    skill_name = entry.get("skill_name", "cresmo-atomic")
-    template = entry.get("user_prompt", "")
-    system_template = entry.get("system_prompt", "")
-    skill_block = provider._get_skill_block(skill_name)
-    content_title = _resolve_content_title(context)
-    channel_name = context.get("channel_name", "")
-    compendium_body = context.get("compendium_body", "")
-
-    if not template and not system_template:
-        sys_inst = f"{task}\n\n{skill_block}".strip()
-        user_p = (
-            f"Title: {content_title}\n"
-            f"Channel: {channel_name}\n\n"
-            f"Content:\n{compendium_body}\n\n"
-            'Output strictly a JSON array: [{"title": "...", "type": "entity|concept|event|process"}]'
-        )
-        return ChatPrompt.from_system_and_user(user=user_p, system=sys_inst if sys_inst else None)
-
     return provider._format_paired_prompt(
-        key,
-        content_title=content_title,
-        channel_name=channel_name,
-        compendium_body=compendium_body,
+        PromptKey.ATOMIC_INVENTORY.value,
+        content_title=_resolve_content_title(context),
+        channel_name=context.get("channel_name", ""),
+        compendium_body=context.get("compendium_body", ""),
     )
 
 
@@ -312,58 +214,19 @@ def build_judge_atomic_inventory(provider: PromptTemplateHost, **context: Any) -
 
 
 def build_atomic_batch(provider: PromptTemplateHost, **context: Any) -> ChatPrompt:
-    key = PromptKey.ATOMIC_BATCH.value
-    entry = provider._templates.get(key, {})
-    task = entry.get("task", "")
-    skill_name = entry.get("skill_name", "cresmo-atomic")
-    template = entry.get("user_prompt", "")
-    system_template = entry.get("system_prompt", "")
-    skill_block = provider._get_skill_block(skill_name)
-    content_title = _resolve_content_title(context)
-    channel_name = context.get("channel_name", "")
-    compendium_body = context.get("compendium_body", "")
-    targets_json = context.get("targets_json", "")
-
-    if not template and not system_template:
-        sys_inst = f"{task}\n\n{skill_block}".strip()
-        user_p = (
-            f"Source Compendium Title: {content_title}\n"
-            f"Source Channel: {channel_name}\n\n"
-            f"Source Context:\n{compendium_body}\n\n"
-            f"Target Entities to Synthesize in this batch:\n{targets_json}\n\n"
-            "Output strictly a JSON array of note objects."
-        )
-        return ChatPrompt.from_system_and_user(user=user_p, system=sys_inst if sys_inst else None)
-
     return provider._format_paired_prompt(
-        key,
-        content_title=content_title,
-        channel_name=channel_name,
-        compendium_body=compendium_body,
-        targets_json=targets_json,
+        PromptKey.ATOMIC_BATCH.value,
+        content_title=_resolve_content_title(context),
+        channel_name=context.get("channel_name", ""),
+        compendium_body=context.get("compendium_body", ""),
+        targets_json=context.get("targets_json", ""),
     )
 
 
 def build_reconcile_mocs(provider: PromptTemplateHost, **context: Any) -> ChatPrompt:
-    key = PromptKey.RECONCILE_MOCS.value
-    entry = provider._templates.get(key, {})
-    task = entry.get("task", "")
-    skill_name = entry.get("skill_name", "cresmo-moc-manager")
-    template = entry.get("user_prompt", "")
-    system_template = entry.get("system_prompt", "")
-    skill_block = provider._get_skill_block(skill_name)
-    notes_json = context.get("notes_json", "")
-
-    if not template and not system_template:
-        sys_inst = f"{task}\n\n{skill_block}".strip()
-        user_p = (
-            f"Atomic Notes in Vault:\n{notes_json}\n\nOutput strictly a JSON array of MOC objects."
-        )
-        return ChatPrompt.from_system_and_user(user=user_p, system=sys_inst if sys_inst else None)
-
     return provider._format_paired_prompt(
-        key,
-        notes_json=notes_json,
+        PromptKey.RECONCILE_MOCS.value,
+        notes_json=context.get("notes_json", ""),
     )
 
 

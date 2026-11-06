@@ -60,7 +60,9 @@ class SmartMockLLMAdapter(MockLLMAdapter):
         system_prompt: str | None = None,
     ) -> str:
         sys_str = prompt.system_prompt if isinstance(prompt, ChatPrompt) else system_prompt
-        prompt_text = prompt.get_last_user_content() if isinstance(prompt, ChatPrompt) else str(prompt)
+        prompt_text = (
+            prompt.get_last_user_content() if isinstance(prompt, ChatPrompt) else str(prompt)
+        )
         self.call_history.append(
             {
                 "prompt": prompt,

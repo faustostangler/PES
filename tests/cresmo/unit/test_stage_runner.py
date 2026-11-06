@@ -2502,7 +2502,9 @@ class TestStageRunnerStageExecutionAndFallback:
         mock_factory.build_stage.return_value = cfg
 
         mock_trans = MagicMock()
-        mock_trans.transform.return_value = "## Test\n\nContent\n\n## Informações Complementares\n1. Info"
+        mock_trans.transform.return_value = (
+            "## Test\n\nContent\n\n## Informações Complementares\n1. Info"
+        )
 
         runner = PipelineStageRunner(
             telemetry_port=mock_t,
@@ -2526,5 +2528,3 @@ class TestStageRunnerStageExecutionAndFallback:
         )
 
         mock_factory.build_stage.assert_called_once_with("gap_filler", max_passes=2)
-
-

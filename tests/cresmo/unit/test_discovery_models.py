@@ -49,7 +49,11 @@ class TestBatchSource:
             BatchSource(kind="invalid_kind", target="/path/to/file")  # type: ignore[arg-type]
 
     def test_instantiate_with_string_content_id_auto_converts(self) -> None:
-        bs = BatchSource(kind=SourceModality.URL, target="https://youtube.com/watch?v=dQw4w9WgXcQ", content_id="dQw4w9WgXcQ")  # type: ignore[arg-type]
+        bs = BatchSource(
+            kind=SourceModality.URL,
+            target="https://youtube.com/watch?v=dQw4w9WgXcQ",
+            content_id="dQw4w9WgXcQ",
+        )  # type: ignore[arg-type]
         assert isinstance(bs.content_id, ContentId)
         assert bs.content_id.value == "dQw4w9WgXcQ"
         assert bs.vid == "dQw4w9WgXcQ"

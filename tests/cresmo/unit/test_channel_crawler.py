@@ -75,7 +75,9 @@ class TestChannelFeedCrawlerService:
 
         probed = set()
         channels = []
-        crawler.resolve_remote_channels([], workers=2, probed_channels=probed, channels_to_probe=channels)
+        crawler.resolve_remote_channels(
+            [], workers=2, probed_channels=probed, channels_to_probe=channels
+        )
         assert len(channels) == 0
         assert len(logs) == 0
 

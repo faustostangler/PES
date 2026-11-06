@@ -89,14 +89,14 @@ def handle_seed_prompts(
         sys.stdout.write(
             f"[dry-run] Rendering {len(PROMPT_MAPPINGS)} Chat-Native prompt templates:\n"
         )
-        for lf_name, json_key in PROMPT_MAPPINGS.items():
-            sys_inst, user_tpl = provider.get_chat_prompt_template(json_key)
+        for name, key in PROMPT_MAPPINGS.items():
+            sys_inst, user_tpl = provider.get_chat_prompt_template(key)
             sys_mustache = _to_mustache(sys_inst)
             user_mustache = _to_mustache(user_tpl)
             preview_sys = sys_mustache[:50].replace("\n", " ")
             preview_usr = user_mustache[:50].replace("\n", " ")
             sys.stdout.write(
-                f"- {lf_name} (key={json_key}): [system] {preview_sys}... | [user] {preview_usr}...\n"
+                f"- {name} (key={key}): [system] {preview_sys}... | [user] {preview_usr}...\n"
             )
         sys.stdout.write(f"[dry-run] Completed preview of {len(PROMPT_MAPPINGS)} chat prompts.\n")
         return EXIT_SUCCESS
@@ -111,7 +111,7 @@ def handle_seed_prompts(
 
     success_count = 0
     failure_count = 0
-    for lf_name, json_key in PROMPT_MAPPINGS.items():
+    for name, json_key in PROMPT_MAPPINGS.items():
         sys_inst, user_tpl = provider.get_chat_prompt_template(json_key)
         chat_prompt = [
             {"role": "system", "content": _to_mustache(sys_inst)},
@@ -119,18 +119,18 @@ def handle_seed_prompts(
         ]
         try:
             client.create_prompt(
-                name=lf_name,
+                name=name,
                 prompt=chat_prompt,
                 labels=[target_label],
                 tags=["cresmo", "v2"],
                 type="chat",
             )
             sys.stdout.write(
-                f"✔ Registered '{lf_name}' in Langfuse [type=chat, label={target_label}]\n"
+                f"✔ Registered '{name}' in Langfuse [type=chat, label={target_label}]\n"
             )
             success_count += 1
         except Exception as exc:  # noqa: BLE001
-            sys.stderr.write(f"✘ Failed to register '{lf_name}': {exc}\n")
+            sys.stderr.write(f"✘ Failed to register '{name}': {exc}\n")
             failure_count += 1
 
     sys.stdout.write(

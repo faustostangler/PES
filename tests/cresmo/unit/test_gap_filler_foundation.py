@@ -54,10 +54,7 @@ def test_gap_filler_mechanical_invariants_valid() -> None:
 
 def test_gap_filler_mechanical_invariants_missing_complementary_section() -> None:
     """Verify missing '## Informações Complementares' triggers a mechanical violation."""
-    invalid_text = (
-        "## O Surgimento de Portugal\n\n"
-        "Texto corrido sem seção complementar alguma."
-    )
+    invalid_text = "## O Surgimento de Portugal\n\nTexto corrido sem seção complementar alguma."
     violations = validate_gap_filler_mechanical_invariants(invalid_text)
     assert any("Informações Complementares" in v for v in violations)
 
@@ -65,9 +62,7 @@ def test_gap_filler_mechanical_invariants_missing_complementary_section() -> Non
 def test_gap_filler_mechanical_invariants_empty_complementary_section() -> None:
     """Verify empty complementary section triggers a mechanical violation."""
     invalid_text = (
-        "## O Surgimento de Portugal\n\n"
-        "Texto corrido principal.\n\n"
-        "## Informações Complementares\n"
+        "## O Surgimento de Portugal\n\nTexto corrido principal.\n\n## Informações Complementares\n"
     )
     violations = validate_gap_filler_mechanical_invariants(invalid_text)
     assert any("empty" in v.lower() for v in violations)
@@ -81,7 +76,9 @@ def test_gap_filler_mechanical_invariants_prohibits_em_dash_and_tables() -> None
         "## Informações Complementares\n\n"
         "1. Detalhes."
     )
-    assert any("em-dash" in v.lower() for v in validate_gap_filler_mechanical_invariants(text_with_em_dash))
+    assert any(
+        "em-dash" in v.lower() for v in validate_gap_filler_mechanical_invariants(text_with_em_dash)
+    )
 
     text_with_table = (
         "## Título\n\n"
@@ -89,18 +86,19 @@ def test_gap_filler_mechanical_invariants_prohibits_em_dash_and_tables() -> None
         "## Informações Complementares\n\n"
         "1. Detalhes."
     )
-    assert any("table" in v.lower() for v in validate_gap_filler_mechanical_invariants(text_with_table))
+    assert any(
+        "table" in v.lower() for v in validate_gap_filler_mechanical_invariants(text_with_table)
+    )
 
 
 def test_gap_filler_mechanical_invariants_prohibits_bullets_in_main_body() -> None:
     """Verify bullet points in main body are rejected by mechanical preflight."""
     text_with_bullets = (
-        "## Título\n\n"
-        "* Item 1\n* Item 2\n\n"
-        "## Informações Complementares\n\n"
-        "1. Detalhes."
+        "## Título\n\n* Item 1\n* Item 2\n\n## Informações Complementares\n\n1. Detalhes."
     )
-    assert any("bullet" in v.lower() for v in validate_gap_filler_mechanical_invariants(text_with_bullets))
+    assert any(
+        "bullet" in v.lower() for v in validate_gap_filler_mechanical_invariants(text_with_bullets)
+    )
 
 
 def test_check_complementary_mechanical_saturation_detected() -> None:

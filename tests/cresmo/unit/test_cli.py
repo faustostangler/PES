@@ -659,7 +659,9 @@ class TestCresmoCLI:
                 in captured.out
             )
 
-    def test_cli_dedupe_with_vault_flags_and_verbose(self, capsys: pytest.CaptureFixture[str], tmp_path: Path) -> None:
+    def test_cli_dedupe_with_vault_flags_and_verbose(
+        self, capsys: pytest.CaptureFixture[str], tmp_path: Path
+    ) -> None:
         from cresmo.application.use_cases.unify_duplicate_notes import DeduplicationReport
 
         mock_use_case = MagicMock()
@@ -685,7 +687,9 @@ class TestCresmoCLI:
         ):
             exit_code = main(["dedupe", "--vault", str(custom_vault), "--dry-run", "--verbose"])
             assert exit_code == EXIT_SUCCESS
-            mock_settings.model_copy.assert_called_once_with(update={"vault_dir": custom_vault.resolve()})
+            mock_settings.model_copy.assert_called_once_with(
+                update={"vault_dir": custom_vault.resolve()}
+            )
             mock_builder.assert_called_once_with(settings=mock_copied_settings)
             captured = capsys.readouterr()
             assert f"Vault directory: {custom_vault}" in captured.out

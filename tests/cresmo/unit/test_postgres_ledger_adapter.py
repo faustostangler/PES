@@ -164,4 +164,3 @@ def test_outbox_row_schema_and_instantiation() -> None:
     assert row.payload == '{"key": "value"}'
     assert row.created_at == now
     assert row.__tablename__ == "cresmo_outbox"
-

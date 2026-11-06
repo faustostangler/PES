@@ -136,9 +136,7 @@ def test_golden_set_candidate_text_invariants(
         if meta["criterion"] != JudgeCriterion.STRUCTURAL_COMPLIANCE.value or verdict == "PASS":
             assert cand.startswith("## "), f"Item '{item_id}' candidate_text must start with '## '."
             prose_paragraphs = [
-                p.strip()
-                for p in cand.split("\n\n")
-                if p.strip() and not p.strip().startswith("#")
+                p.strip() for p in cand.split("\n\n") if p.strip() and not p.strip().startswith("#")
             ]
             assert 2 <= len(prose_paragraphs) <= 5, (
                 f"Item '{item_id}' has {len(prose_paragraphs)} prose paragraphs, expected 2-5."
@@ -176,4 +174,3 @@ def test_golden_set_metadata_and_defect_isolation(
             assert meta.get("target_verdict") == "FAIL", (
                 f"FAIL Item '{item_id}' target_verdict must be FAIL."
             )
-

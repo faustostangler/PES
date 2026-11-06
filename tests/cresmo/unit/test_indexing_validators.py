@@ -76,11 +76,11 @@ class TestIsValidRawIndexOutput:
         assert is_valid_raw_index_output(exact_two_lines) is True
 
     def test_forbidden_prefix_wrapped_in_markdown_decorations_is_invalid(self) -> None:
-        assert is_valid_raw_index_output('*Key Concept:* DDD\nSynthesis here') is False
-        assert is_valid_raw_index_output('`Key Concept:` DDD\nSynthesis here') is False
+        assert is_valid_raw_index_output("*Key Concept:* DDD\nSynthesis here") is False
+        assert is_valid_raw_index_output("`Key Concept:` DDD\nSynthesis here") is False
         assert is_valid_raw_index_output('"Key Concept:" DDD\nSynthesis here') is False
-        assert is_valid_raw_index_output('_Key Concept:_ DDD\nSynthesis here') is False
-        assert is_valid_raw_index_output('# Key Concept: DDD\nSynthesis here') is False
+        assert is_valid_raw_index_output("_Key Concept:_ DDD\nSynthesis here") is False
+        assert is_valid_raw_index_output("# Key Concept: DDD\nSynthesis here") is False
 
     def test_single_line_with_comma_is_valid(self) -> None:
         valid_single = "Domain Entities, This is a concise synthesis."
@@ -100,12 +100,15 @@ class TestIsValidConceptsOutput:
         assert is_valid_concepts_output("Key Concepts: Hexagonal Architecture") is False
         assert is_valid_concepts_output("## Conceitos-chave: DDD, TDD") is False
         assert is_valid_concepts_output('"Keywords:" Event Sourcing') is False
-        assert is_valid_concepts_output('*Key Concept:* Event Sourcing') is False
-        assert is_valid_concepts_output('`Key Concept:` Event Sourcing') is False
-        assert is_valid_concepts_output('_Key Concept:_ Event Sourcing') is False
+        assert is_valid_concepts_output("*Key Concept:* Event Sourcing") is False
+        assert is_valid_concepts_output("`Key Concept:` Event Sourcing") is False
+        assert is_valid_concepts_output("_Key Concept:_ Event Sourcing") is False
 
     def test_clean_concept_string_is_valid(self) -> None:
-        assert is_valid_concepts_output("Domain Entities, Value Objects, Hexagonal Architecture") is True
+        assert (
+            is_valid_concepts_output("Domain Entities, Value Objects, Hexagonal Architecture")
+            is True
+        )
         assert is_valid_concepts_output("Idempotency, Outbox Pattern") is True
 
 
@@ -197,7 +200,7 @@ class TestParseJudgeBoolean:
 class TestCleanTextLine:
     def test_strips_markdown_formatting_and_quotes(self) -> None:
         assert clean_text_line('**"Domain Models"**') == "Domain Models"
-        assert clean_text_line('`#_Hexagonal Architecture_#`') == "Hexagonal Architecture"
+        assert clean_text_line("`#_Hexagonal Architecture_#`") == "Hexagonal Architecture"
 
     def test_strips_indicative_prefixes(self) -> None:
         for prefix in _INDICATIVE_PREFIXES:

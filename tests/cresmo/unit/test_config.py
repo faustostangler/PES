@@ -77,9 +77,7 @@ class TestCresmoSettings:
         assert settings.inventory_max_attempts == 2
         assert settings.max_retries == 2
 
-    def test_max_retries_alias_and_env_override(
-        self, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_max_retries_alias_and_env_override(self, monkeypatch: pytest.MonkeyPatch) -> None:
         settings = CresmoSettings()
         assert settings.max_retries == 2
         assert settings.judge_max_attempts == 2

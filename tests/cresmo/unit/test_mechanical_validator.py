@@ -254,7 +254,10 @@ def test_check_complementary_mechanical_saturation() -> None:
     # Unsaturated pass: length delta >= max_delta_items (5)
     huge_items = "\n\n".join([f"{i}. Item de detalhe." for i in range(1, 10)])
     curr_too_large = f"## Corpo\n\nTexto.\n\n## Informações Complementares\n\n{huge_items}"
-    assert check_complementary_mechanical_saturation(prev_text, curr_too_large, max_delta_items=5) is False
+    assert (
+        check_complementary_mechanical_saturation(prev_text, curr_too_large, max_delta_items=5)
+        is False
+    )
 
 
 def test_validate_gap_filler_mechanical_invariants() -> None:
@@ -278,4 +281,3 @@ def test_validate_gap_filler_mechanical_invariants() -> None:
     # Em-dash violation
     em_dash_text = valid_gap_filler + " — com em-dash proibido."
     assert any("em-dashes" in v for v in validate_gap_filler_mechanical_invariants(em_dash_text))
-

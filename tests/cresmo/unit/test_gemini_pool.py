@@ -104,15 +104,28 @@ class TestGeminiQuotaAndErrorScoping:
         from cresmo.infrastructure.adapters.gemini_pool import is_quota_exhausted_error
 
         assert is_quota_exhausted_error(RuntimeError("429 Resource has been exhausted")) is True
-        assert is_quota_exhausted_error(RuntimeError("ResourceExhausted: Quota exceeded for project")) is True
+        assert (
+            is_quota_exhausted_error(RuntimeError("ResourceExhausted: Quota exceeded for project"))
+            is True
+        )
         assert is_quota_exhausted_error(RuntimeError("Too Many Requests: rate limit hit")) is True
 
     def test_is_quota_exhausted_rejects_503_and_other_errors(self) -> None:
         from cresmo.infrastructure.adapters.gemini_pool import is_quota_exhausted_error
 
         # 503 MUST NEVER trigger rotation (ADR-041 §2.3)
-        assert is_quota_exhausted_error(RuntimeError("503 The model is overloaded. Please try again later.")) is False
-        assert is_quota_exhausted_error(RuntimeError("UNAVAILABLE: Server is currently under high demand")) is False
+        assert (
+            is_quota_exhausted_error(
+                RuntimeError("503 The model is overloaded. Please try again later.")
+            )
+            is False
+        )
+        assert (
+            is_quota_exhausted_error(
+                RuntimeError("UNAVAILABLE: Server is currently under high demand")
+            )
+            is False
+        )
         assert is_quota_exhausted_error(ValueError("Invalid argument")) is False
 
     def test_parse_retry_delay_from_error(self) -> None:
@@ -183,11 +196,13 @@ class TestGeminiQuotaAndErrorScoping:
             "ResourceExhausted: 429 Quota limit reached. Please retry in 180s."
         )
         mock_resp = MagicMock()
-        mock_resp.text = json.dumps({
-            "criteria": [{"criterion": "orality_removal", "score": 0.95, "passed": True}],
-            "overall_score": 0.95,
-            "passed": True,
-        })
+        mock_resp.text = json.dumps(
+            {
+                "criteria": [{"criterion": "orality_removal", "score": 0.95, "passed": True}],
+                "overall_score": 0.95,
+                "passed": True,
+            }
+        )
         client2.models.generate_content.return_value = mock_resp
 
         clients = {"k1": client1, "k2": client2}
@@ -214,5 +229,3 @@ class TestGeminiQuotaAndErrorScoping:
         # Verify client._api_client._http_options.timeout == 42000 (ms in SDK)
         assert hasattr(client, "_api_client")
         assert client._api_client._http_options.timeout == 42000
-
-

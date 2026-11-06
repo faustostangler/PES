@@ -49,7 +49,6 @@ class TestPromptRegistry:
             assert isinstance(meta, PromptMetadata)
             assert meta.key == key
             assert meta.langfuse_name.startswith("cresmo-")
-            assert len(meta.skill_name) > 0
             assert len(meta.description) > 0
 
     def test_prompt_registry_keys_are_unique(self) -> None:
@@ -67,19 +66,16 @@ class TestPromptRegistry:
 
         assert meta_enum == meta_str
         assert meta_enum.langfuse_name == "cresmo-gap-filler"
-        assert meta_enum.skill_name == "cresmo-gap-filler"
 
     def test_get_prompt_metadata_fluid_prose(self) -> None:
         """Verify lookup for decoupled fluid_prose prompt."""
         meta = get_prompt_metadata(PromptKey.FLUID_PROSE)
         assert meta.langfuse_name == "cresmo-fluid-prose"
-        assert meta.skill_name == "cresmo-fluid-prose"
 
     def test_get_prompt_metadata_judge_gap_filler(self) -> None:
         """Verify lookup for specialized judge_gap_filler prompt."""
         meta = get_prompt_metadata(PromptKey.JUDGE_GAP_FILLER)
         assert meta.langfuse_name == "cresmo-judge-gap-filler"
-        assert meta.skill_name == "cresmo-gap-filler"
 
     def test_get_prompt_metadata_invalid_key_raises(self) -> None:
         """Verify that looking up an unknown prompt key raises KeyError."""

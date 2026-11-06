@@ -15,8 +15,14 @@ from tests.factories import BatchSourceFactory
 def test_sources_to_dataframe() -> None:
     """Verify that a list of BatchSource items is converted to a Polars DataFrame."""
     sources = [
-        BatchSource(kind=SourceModality.URL, target="https://youtube.com/watch?v=vid1", content_id=ContentId("vid1")),
-        BatchSource(kind=SourceModality.FILE, target="/data/raw/vid2.txt", content_id=ContentId("vid2")),
+        BatchSource(
+            kind=SourceModality.URL,
+            target="https://youtube.com/watch?v=vid1",
+            content_id=ContentId("vid1"),
+        ),
+        BatchSource(
+            kind=SourceModality.FILE, target="/data/raw/vid2.txt", content_id=ContentId("vid2")
+        ),
     ]
 
     df = PolarsBatchProcessor.sources_to_dataframe(sources)
@@ -29,9 +35,21 @@ def test_sources_to_dataframe() -> None:
 
 def test_deduplicate_batch_sources_keeps_unique() -> None:
     """Verify that duplicates are deduplicated by content_id using Polars."""
-    s1 = BatchSource(kind=SourceModality.URL, target="https://youtube.com/watch?v=dup1", content_id=ContentId("dup1"))
-    s2 = BatchSource(kind=SourceModality.URL, target="https://youtube.com/watch?v=dup1", content_id=ContentId("dup1"))
-    s3 = BatchSource(kind=SourceModality.URL, target="https://youtube.com/watch?v=unique2", content_id=ContentId("unique2"))
+    s1 = BatchSource(
+        kind=SourceModality.URL,
+        target="https://youtube.com/watch?v=dup1",
+        content_id=ContentId("dup1"),
+    )
+    s2 = BatchSource(
+        kind=SourceModality.URL,
+        target="https://youtube.com/watch?v=dup1",
+        content_id=ContentId("dup1"),
+    )
+    s3 = BatchSource(
+        kind=SourceModality.URL,
+        target="https://youtube.com/watch?v=unique2",
+        content_id=ContentId("unique2"),
+    )
 
     deduped = PolarsBatchProcessor.deduplicate_batch_sources([s1, s2, s3])
     assert len(deduped) == 2

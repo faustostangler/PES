@@ -82,11 +82,7 @@ class TestExtractRawFileMetadata:
     def test_valid_yaml_frontmatter_with_http_channel(self, tmp_path: Path) -> None:
         f = tmp_path / "test1.md"
         f.write_text(
-            "---\n"
-            "video_id: vid_123\n"
-            "channel: https://youtube.com/@my_chan\n"
-            "---\n"
-            "Transcript body",
+            "---\nvideo_id: vid_123\nchannel: https://youtube.com/@my_chan\n---\nTranscript body",
             encoding="utf-8",
         )
         meta = extract_raw_file_metadata(f)
@@ -96,9 +92,7 @@ class TestExtractRawFileMetadata:
     def test_at_handle_channel_expansion(self, tmp_path: Path) -> None:
         f = tmp_path / "test2.md"
         f.write_text(
-            "---\n"
-            "channel: @pes_science\n"
-            "---\n",
+            "---\nchannel: @pes_science\n---\n",
             encoding="utf-8",
         )
         meta = extract_raw_file_metadata(f)
@@ -107,9 +101,7 @@ class TestExtractRawFileMetadata:
     def test_uc_channel_id_expansion(self, tmp_path: Path) -> None:
         f = tmp_path / "test3.md"
         f.write_text(
-            "---\n"
-            "channel_id: UC1234567890abcdef\n"
-            "---\n",
+            "---\nchannel_id: UC1234567890abcdef\n---\n",
             encoding="utf-8",
         )
         meta = extract_raw_file_metadata(f)
@@ -118,9 +110,7 @@ class TestExtractRawFileMetadata:
     def test_plain_channel_name_preserved(self, tmp_path: Path) -> None:
         f = tmp_path / "test4.md"
         f.write_text(
-            "---\n"
-            "channel_name: PlainChannel\n"
-            "---\n",
+            "---\nchannel_name: PlainChannel\n---\n",
             encoding="utf-8",
         )
         meta = extract_raw_file_metadata(f)
@@ -133,7 +123,9 @@ class TestExtractRawFileMetadata:
 
     def test_unclosed_frontmatter_returns_empty(self, tmp_path: Path) -> None:
         f = tmp_path / "unclosed.md"
-        f.write_text("---\nvideo_id: 123\nchannel: test\nLine 3 without closing fence", encoding="utf-8")
+        f.write_text(
+            "---\nvideo_id: 123\nchannel: test\nLine 3 without closing fence", encoding="utf-8"
+        )
         assert extract_raw_file_metadata(f) == {}
 
     def test_frontmatter_exceeding_50_lines_returns_empty(self, tmp_path: Path) -> None:
@@ -163,7 +155,12 @@ class TestTargetMatchingFunctions:
         assert matches_video_target(criteria, cid) is True
         assert matches_video_target(criteria, "dQw4w9WgXcQ") is True
         assert matches_video_target(criteria, "https://youtube.com/watch?v=dQw4w9WgXcQ") is True
-        assert matches_video_target(criteria, None, url_fallback="https://youtube.com/watch?v=dQw4w9WgXcQ") is True
+        assert (
+            matches_video_target(
+                criteria, None, url_fallback="https://youtube.com/watch?v=dQw4w9WgXcQ"
+            )
+            is True
+        )
         assert matches_video_target(criteria, "oHg5SJYRHA0") is False
 
         # Empty criteria always matches

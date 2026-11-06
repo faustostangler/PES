@@ -1717,7 +1717,10 @@ class TestChannelCatalogHandlerAndUtils:
 
     def test_sanitize_filename(self) -> None:
         assert sanitize_filename("safe_name") == "safe_name"
-        assert sanitize_filename('bad/file:name*with?chars"and<more>|end%') == "bad_file_name_with_chars_and_more__end_"
+        assert (
+            sanitize_filename('bad/file:name*with?chars"and<more>|end%')
+            == "bad_file_name_with_chars_and_more__end_"
+        )
         assert sanitize_filename(ChannelName("  Leading And Trailing  ")) == "Leading And Trailing"
 
     def test_channel_to_slug(self) -> None:
@@ -1792,11 +1795,12 @@ class TestChannelCatalogHandlerAndUtils:
         csv_file = data_dir / "brain.csv"
         assert csv_file.exists()
         csv_content = csv_file.read_text(encoding="utf-8")
-        assert '"channel_category";"channel_name";"filename";"key_concept";"synthesis"' in csv_content
+        assert (
+            '"channel_category";"channel_name";"filename";"key_concept";"synthesis"' in csv_content
+        )
         assert '"Price Discovery"' in csv_content
 
         # Second brain CSV append appends without repeating header
         handler.append_brain_csv_entry(entry)
         csv_twice = csv_file.read_text(encoding="utf-8")
         assert csv_twice.count('"channel_category";"channel_name"') == 1
-
