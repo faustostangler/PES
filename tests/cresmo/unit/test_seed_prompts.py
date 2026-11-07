@@ -15,6 +15,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
+from cresmo import __version__
 from cresmo.infrastructure.adapters.prompt_provider import JsonPromptProvider
 from cresmo.presentation.cli import main
 from cresmo.presentation.commands.seed_prompts import (
@@ -119,7 +120,11 @@ class TestSeedPromptsCLI:
                 name = call.kwargs["name"]
                 assert name in PROMPT_MAPPINGS
                 assert call.kwargs["labels"] == ["production"]
-                assert call.kwargs["tags"] == ["cresmo", "v2"]
+                assert "cresmo" in call.kwargs["tags"]
+                assert f"v{__version__}" in call.kwargs["tags"]
+                assert any(t.startswith("git:") for t in call.kwargs["tags"])
+                assert call.kwargs["config"]["version"] == __version__
+                assert "git_sha" in call.kwargs["config"]
                 assert call.kwargs["type"] == "chat"
                 prompt = call.kwargs["prompt"]
                 assert len(prompt) == 2
@@ -139,7 +144,7 @@ class TestSeedPromptsCLI:
                 in captured.out
             )
             assert (
-                "✔ Registered 'cresmo-gap-filler' in Langfuse [type=chat, label=production]\n"
+                "✔ Registered 'cresmo-gap-filler' in Langfuse [type=chat, label=production"
                 in captured.out
             )
 

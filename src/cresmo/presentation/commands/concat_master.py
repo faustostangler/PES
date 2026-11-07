@@ -80,9 +80,7 @@ def handle_concat_master(
 
         if channel:
             sys.stdout.write(f"Consolidating master documents for channel: '{channel}'...\n")
-            results = use_case.execute(
-                channel_name=ChannelName(channel), max_words=max_words
-            )
+            results = use_case.execute(channel_name=ChannelName(channel), max_words=max_words)
             if not results:
                 sys.stdout.write(f"No enriched documents found for channel '{channel}'.\n")
                 return EXIT_SUCCESS

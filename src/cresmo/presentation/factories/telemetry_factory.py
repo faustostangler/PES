@@ -91,18 +91,18 @@ def _build_mask_hook(
         return None
 
     def mask_otel_spans(*, params: MaskOtelSpansParams) -> MaskOtelSpansResult | None:
-        patches = {}
+        span_patches = {}
         for identifier, span in params.spans.items():
             raw_attrs = span.attributes or {}
             sanitized = anonymizer.mask_span_attributes(raw_attrs)
             if sanitized != raw_attrs:
                 delete_attrs = [k for k in raw_attrs if k not in sanitized]
-                set_attrs = {k: v for k, v in sanitized.items() if raw_attrs.get(k) != v}
-                patches[identifier] = OtelSpanPatch(
+                set_attributes = {k: v for k, v in sanitized.items() if raw_attrs.get(k) != v}
+                span_patches[identifier] = OtelSpanPatch(
                     delete_attributes=tuple(delete_attrs),
-                    set_attributes=set_attrs,
+                    set_attributes=set_attributes,
                 )
-        return MaskOtelSpansResult(span_patches=patches) if patches else None
+        return MaskOtelSpansResult(span_patches=span_patches) if span_patches else None
 
     return mask_otel_spans
 
@@ -130,8 +130,8 @@ def resolve_langfuse_client(
 
     # Active Preflight Probe
     if getattr(settings, "enable_preflight_probes", True):
-        timeout = getattr(settings, "preflight_probe_timeout_seconds", 1.0)
-        if not probe_langfuse_ready(settings.langfuse_host, timeout_seconds=timeout):
+        timeout_seconds = getattr(settings, "preflight_probe_timeout_seconds", 1.0)
+        if not probe_langfuse_ready(settings.langfuse_host, timeout_seconds=timeout_seconds):
             sys.stderr.write(
                 f"[preflight] Langfuse server at '{settings.langfuse_host}' is unreachable. "
                 "Telemetry bypassed to prevent OpenTelemetry retry loops.\n"

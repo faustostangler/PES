@@ -141,10 +141,10 @@ def handle_worker(
                 f"processed={summary.processed_count}, skipped={summary.skipped_count}, failed={summary.failed_count}\n"
             )
 
-            if target_once:
+            if once:
                 break
 
-            time.sleep(target_poll_interval)
+            time.sleep(poll_interval)
 
         return EXIT_SUCCESS
     except KeyboardInterrupt:

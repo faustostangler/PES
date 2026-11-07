@@ -82,49 +82,37 @@ class StageFactory:
         )
 
         # 1. Resolve transform prompt key (explicit -> stage_definition -> convention: PromptKey(stage_name))
-        if transform_prompt_key is not None:
-            effective_transform_prompt_key = transform_prompt_key
-        elif stage_definition and stage_definition.transform_prompt_key is not None:
-            effective_transform_prompt_key = stage_definition.transform_prompt_key
-        else:
-            try:
-                effective_transform_prompt_key = PromptKey(stage_name)
-            except ValueError as err:
-                raise ValueError(
-                    f"Unknown stage '{stage_name}' with no transform_prompt_key provided."
-                ) from err
+        if transform_prompt_key is None:
+            if stage_definition and stage_definition.transform_prompt_key is not None:
+                transform_prompt_key = stage_definition.transform_prompt_key
+            else:
+                try:
+                    transform_prompt_key = PromptKey(stage_name)
+                except ValueError as err:
+                    raise ValueError(
+                        f"Unknown stage '{stage_name}' with no transform_prompt_key provided."
+                    ) from err
 
         # 2. Resolve post processor
-        effective_post_processor = (
-            post_processor
-            if post_processor is not None
-            else (stage_definition.post_processor if stage_definition else None)
-        )
+        if post_processor is None and stage_definition:
+            post_processor = stage_definition.post_processor
 
         # 3. Resolve tunables from settings with call-site overrides
-        effective_temperature = (
-            temperature
-            if temperature is not None
-            else getattr(self.settings, "llm_synthesis_temperature", None)
-        )
-        effective_max_attempts: int = (
-            max_attempts
-            if max_attempts is not None
-            else getattr(self.settings, "judge_max_attempts", 2)
-        )
-        effective_blocking: bool = (
-            blocking if blocking is not None else getattr(self.settings, "judge_blocking", False)
-        )
+        if temperature is None:
+            temperature = getattr(self.settings, "llm_synthesis_temperature", None)
+        if max_attempts is None:
+            max_attempts = getattr(self.settings, "judge_max_attempts", 2)
+        if blocking is None:
+            blocking = getattr(self.settings, "judge_blocking", False)
 
         # 4. Resolve quality evaluation spec (StageEvaluationSpec)
-        effective_eval_spec = eval_spec
-        if effective_eval_spec is None:
-            effective_criteria = (
+        if eval_spec is None:
+            resolved_criteria = (
                 tuple(required_criteria)
                 if required_criteria is not None
                 else (stage_definition.required_criteria if stage_definition else ())
             )
-            effective_candidate_extractor = (
+            resolved_candidate_extractor = (
                 candidate_extractor
                 if candidate_extractor is not None
                 else (
@@ -133,71 +121,60 @@ class StageFactory:
                     else (lambda res: res.text if isinstance(res, CandidateText) else str(res))
                 )
             )
-            effective_source_extractor = (
+            resolved_source_extractor = (
                 source_extractor
                 if source_extractor is not None
                 else (stage_definition.source_extractor if stage_definition else None)
             )
-            effective_eval_metadata = (
+            resolved_eval_metadata = (
                 eval_metadata
                 if eval_metadata is not None
                 else (stage_definition.eval_metadata if stage_definition else {})
             )
 
-            if (
-                effective_criteria
-                or candidate_extractor is not None
-                or source_extractor is not None
-            ):
-                effective_eval_spec = StageEvaluationSpec(
-                    candidate_extractor=effective_candidate_extractor,
-                    required_criteria=effective_criteria,
-                    max_attempts=effective_max_attempts,
-                    source_extractor=effective_source_extractor,
-                    metadata=effective_eval_metadata,
+            if resolved_criteria or candidate_extractor is not None or source_extractor is not None:
+                eval_spec = StageEvaluationSpec(
+                    candidate_extractor=resolved_candidate_extractor,
+                    required_criteria=resolved_criteria,
+                    max_attempts=max_attempts,
+                    source_extractor=resolved_source_extractor,
+                    metadata=resolved_eval_metadata,
                 )
 
         # 5. Resolve judge prompt key
-        effective_judge_prompt_key = (
-            judge_prompt_key
-            if judge_prompt_key is not None
-            else (stage_definition.judge_prompt_key if stage_definition else None)
-        )
+        if judge_prompt_key is None and stage_definition:
+            judge_prompt_key = stage_definition.judge_prompt_key
 
         # 6. Resolve multi-pass and early stopping tunables
-        if max_passes is not None:
-            effective_max_passes = max_passes
-        elif stage_definition and getattr(stage_definition, "max_passes", 1) > 1:
-            effective_max_passes = stage_definition.max_passes
-        elif stage_name == "gap_filler":
-            effective_max_passes = getattr(
-                self.settings,
-                "expansion_max_passes",
-                getattr(self.settings, "gap_filler_passes", 5),
-            )
-        else:
-            effective_max_passes = 1
+        if max_passes is None:
+            if stage_definition and getattr(stage_definition, "max_passes", 1) > 1:
+                max_passes = stage_definition.max_passes
+            elif stage_name == "gap_filler":
+                max_passes = getattr(
+                    self.settings,
+                    "expansion_max_passes",
+                    getattr(self.settings, "gap_filler_passes", 5),
+                )
+            else:
+                max_passes = 1
 
-        if early_stopping_enabled is not None:
-            effective_early_stopping = early_stopping_enabled
-        elif (
-            stage_definition and getattr(stage_definition, "early_stopping_enabled", False)
-        ) or stage_name == "gap_filler":
-            effective_early_stopping = True
-        else:
-            effective_early_stopping = False
+        if early_stopping_enabled is None:
+            early_stopping_enabled = bool(
+                (stage_definition and getattr(stage_definition, "early_stopping_enabled", False))
+                or stage_name == "gap_filler"
+            )
 
         stage_config = StageConfig[TSource, TOutput](
             stage_name=stage_name,
-            transform_prompt_key=effective_transform_prompt_key,
-            judge_prompt_key=effective_judge_prompt_key,
-            eval_spec=effective_eval_spec,
-            post_processor=effective_post_processor,
-            temperature=effective_temperature,
-            max_attempts=effective_max_attempts,
-            blocking=effective_blocking,
-            max_passes=effective_max_passes,
-            early_stopping_enabled=effective_early_stopping,
+            transform_prompt_key=transform_prompt_key,
+            judge_prompt_key=judge_prompt_key,
+            eval_spec=eval_spec,
+            post_processor=post_processor,
+            temperature=temperature,
+            max_attempts=max_attempts,
+            blocking=blocking,
+            max_passes=max_passes,
+            early_stopping_enabled=early_stopping_enabled,
         )
 
         if not has_overrides:

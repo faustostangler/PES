@@ -124,18 +124,18 @@ def _build_mask_hook(
         return None
 
     def mask_otel_spans(*, params: MaskOtelSpansParams) -> MaskOtelSpansResult | None:
-        patches = {}
+        span_patches = {}
         for identifier, span in params.spans.items():
             raw_attrs = span.attributes or {}
             sanitized = anonymizer.mask_span_attributes(raw_attrs)
             if sanitized != raw_attrs:
                 delete_attrs = [k for k in raw_attrs if k not in sanitized]
-                set_attrs = {k: v for k, v in sanitized.items() if raw_attrs.get(k) != v}
-                patches[identifier] = OtelSpanPatch(
+                set_attributes = {k: v for k, v in sanitized.items() if raw_attrs.get(k) != v}
+                span_patches[identifier] = OtelSpanPatch(
                     delete_attributes=tuple(delete_attrs),
-                    set_attributes=set_attrs,
+                    set_attributes=set_attributes,
                 )
-        return MaskOtelSpansResult(span_patches=patches) if patches else None
+        return MaskOtelSpansResult(span_patches=span_patches) if span_patches else None
 
     return mask_otel_spans
 
@@ -163,8 +163,8 @@ def resolve_langfuse_client(
 
     # Active Preflight Probe
     if getattr(settings, "enable_preflight_probes", True):
-        timeout = getattr(settings, "preflight_probe_timeout_seconds", 1.0)
-        if not probe_langfuse_ready(settings.langfuse_host, timeout_seconds=timeout):
+        timeout_seconds = getattr(settings, "preflight_probe_timeout_seconds", 1.0)
+        if not probe_langfuse_ready(settings.langfuse_host, timeout_seconds=timeout_seconds):
             sys.stderr.write(
                 f"[preflight] Langfuse server at '{settings.langfuse_host}' is unreachable. "
                 "Telemetry bypassed to prevent OpenTelemetry retry loops.\n"
@@ -222,41 +222,39 @@ def build_pipeline(
     Returns:
         Configured and wired CresmoPipeline ready for execution.
     """
-    resolved_settings = resolve_shared_settings(settings)
-    resolved_settings.ensure_directories()
+    settings = resolve_shared_settings(settings)
+    settings.ensure_directories()
 
     # 0. Structured Logging Configuration (ADR-025)
     configure_logging(
-        level=resolved_settings.log_level,
-        fmt=resolved_settings.log_format,
+        level=settings.log_level,
+        fmt=settings.log_format,
     )
 
     # 1. Observability & Security
-    anonymizer = build_anonymizer_adapter(resolved_settings)
-    langfuse_client = resolve_langfuse_client(resolved_settings, anonymizer=anonymizer)
-    telemetry_port = build_telemetry_adapter(resolved_settings, langfuse_client=langfuse_client)
+    anonymizer = build_anonymizer_adapter(settings)
+    langfuse_client = resolve_langfuse_client(settings, anonymizer=anonymizer)
+    telemetry_port = build_telemetry_adapter(settings, langfuse_client=langfuse_client)
 
     # 2. Ingestion, Persistence & Idempotency
-    media_ingestion_port = build_media_ingestion_adapter(resolved_settings)
-    vault_port = build_vault_adapter(resolved_settings)
-    ledger_port = SqliteLedgerAdapter(db_path=resolved_settings.sqlite_ledger_path)
+    media_ingestion_port = build_media_ingestion_adapter(settings)
+    vault_port = build_vault_adapter(settings)
+    ledger_port = SqliteLedgerAdapter(db_path=settings.sqlite_ledger_path)
 
     # 3. SRE & DORA Metrics Telemetry
-    metrics_port = build_metrics_adapter(resolved_settings)
+    metrics_port = build_metrics_adapter(settings)
 
     # 4. Prompt Governance, Cognitive & Judge LLM Engines
-    prompt_provider = build_prompt_provider(resolved_settings, langfuse_client=langfuse_client)
-    llm_synthesis_port = build_gemini_synthesis_adapter(
-        resolved_settings, langfuse_client=langfuse_client
-    )
+    prompt_provider = build_prompt_provider(settings, langfuse_client=langfuse_client)
+    synthesis_adapter = build_gemini_synthesis_adapter(settings, langfuse_client=langfuse_client)
     llm_indexing_port = build_indexing_adapter(
-        resolved_settings,
-        synthesis_adapter=llm_synthesis_port,
+        settings,
+        synthesis_adapter=synthesis_adapter,
         web_index=web_index,
         langfuse_client=langfuse_client,
     )
-    llm_judge_port = build_llm_judge_adapter(
-        resolved_settings,
+    llm_judge = build_llm_judge_adapter(
+        settings,
         langfuse_client=langfuse_client,
         prompt_provider=prompt_provider,
     )
@@ -266,16 +264,16 @@ def build_pipeline(
     )
 
     # 5. Pipeline Stage Runner & Closed-Loop Verifier (ADR-030, ADR-031)
-    stage_factory = StageFactory(settings=resolved_settings)
+    stage_factory = StageFactory(settings=settings)
     stage_runner = PipelineStageRunner(
         PipelineDependencies(
             telemetry_port=telemetry_port,
             metrics_port=metrics_port,
-            llm_judge=llm_judge_port,
-            judge_blocking=getattr(resolved_settings, "judge_blocking", False),
-            judge_max_attempts=getattr(resolved_settings, "judge_max_attempts", 2),
+            llm_judge=llm_judge,
+            judge_blocking=getattr(settings, "judge_blocking", False),
+            judge_max_attempts=getattr(settings, "judge_max_attempts", 2),
             prompt_provider=prompt_provider,
-            llm_transformation_port=llm_synthesis_port,
+            llm_transformation_port=synthesis_adapter,
             stage_factory=stage_factory,
             critique_synthesizer=critique_synthesizer,
             ledger_port=ledger_port,
@@ -283,17 +281,15 @@ def build_pipeline(
     )
 
     # 6. Pipeline Assembly
-    effective_batch_size = (
-        batch_size_override if batch_size_override is not None else resolved_settings.batch_size
-    )
+    batch_size = batch_size_override if batch_size_override is not None else settings.batch_size
 
     return CresmoPipeline(
         media_ingestion_port=media_ingestion_port,
         vault_port=vault_port,
         stage_runner=stage_runner,
         ledger_port=ledger_port,
-        batch_size=effective_batch_size,
-        settings=resolved_settings,
+        batch_size=batch_size,
+        settings=settings,
         llm_indexing_port=llm_indexing_port,
     )
 
@@ -307,8 +303,8 @@ def build_stage_runner(settings: CresmoSettings | None = None) -> PipelineStageR
     Returns:
         Fully wired PipelineStageRunner with LLM transformation and telemetry adapters.
     """
-    resolved_settings = resolve_shared_settings(settings)
-    pipeline = build_pipeline(resolved_settings)
+    settings = resolve_shared_settings(settings)
+    pipeline = build_pipeline(settings)
     return pipeline.stage_runner
 
 
@@ -318,9 +314,9 @@ def build_sync_channel_use_case(
     check_ffmpeg: bool = True,
 ) -> SyncChannelUseCase:
     """Construct SyncChannelUseCase with all ports and dependencies wired."""
-    resolved_settings = resolve_shared_settings(settings)
-    pipeline = build_pipeline(resolved_settings, batch_size_override=batch_size_override)
-    preflight_checker = build_preflight_checker(resolved_settings, check_ffmpeg=check_ffmpeg)
+    settings = resolve_shared_settings(settings)
+    pipeline = build_pipeline(settings, batch_size_override=batch_size_override)
+    preflight_checker = build_preflight_checker(settings, check_ffmpeg=check_ffmpeg)
 
     if pipeline.ledger_port is None:
         raise RuntimeError("Ledger port must be wired for channel sync.")
@@ -373,4 +369,3 @@ __all__ = [
     "resolve_langfuse_client",
     "resolve_shared_settings",
 ]
-

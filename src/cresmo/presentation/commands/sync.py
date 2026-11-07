@@ -230,7 +230,7 @@ def _sync_channel_list(
         total_skipped += summary.skipped_count
         total_failed += summary.failed_count
         sys.stdout.write(
-            f"[{ch_url}] discovered={summary.total_discovered} "
+            f"[{channel_url}] discovered={summary.total_discovered} "
             f"processed={summary.processed_count} "
             f"skipped={summary.skipped_count} "
             f"failed={summary.failed_count} "

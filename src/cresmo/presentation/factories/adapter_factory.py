@@ -53,15 +53,15 @@ def build_media_ingestion_adapter(
     settings: CresmoSettings | None = None,
 ) -> NativeMediaIngestionAdapter:
     """Instantiate and wire NativeMediaIngestionAdapter with resolved settings and active cookies."""
-    resolved_settings = resolve_shared_settings(settings)
-    headers_path = getattr(resolved_settings, "browser_headers_path", None)
+    settings = resolve_shared_settings(settings)
+    headers_path = getattr(settings, "browser_headers_path", None)
     header_generator = RandomHeaderGenerator(headers_path=headers_path)
-    cookie_file = _resolve_cookie_file(resolved_settings)
-    whisper_workers = getattr(resolved_settings, "whisper_workers", 1)
+    cookie_file = _resolve_cookie_file(settings)
+    whisper_concurrency_limit = getattr(settings, "whisper_workers", 1)
 
     return NativeMediaIngestionAdapter(
         header_generator=header_generator,
-        whisper_concurrency_limit=whisper_workers,
+        whisper_concurrency_limit=whisper_concurrency_limit,
         cookie_file=cookie_file,
     )
 
@@ -70,16 +70,16 @@ def build_vault_adapter(
     settings: CresmoSettings | None = None,
 ) -> ObsidianVaultAdapter:
     """Instantiate and wire ObsidianVaultAdapter from application settings."""
-    resolved_settings = resolve_shared_settings(settings)
+    settings = resolve_shared_settings(settings)
     return ObsidianVaultAdapter(
-        vault_dir=resolved_settings.vault_dir,
-        raw_dir=resolved_settings.raw_dir,
-        enriched_dir=resolved_settings.enriched_dir,
-        fluid_dir=resolved_settings.fluid_dir,
-        master_dir=resolved_settings.master_dir,
-        data_dir=resolved_settings.data_dir,
-        mocs_dir=resolved_settings.mocs_dir,
-        index_path=resolved_settings.index_path,
+        vault_dir=settings.vault_dir,
+        raw_dir=settings.raw_dir,
+        enriched_dir=settings.enriched_dir,
+        fluid_dir=settings.fluid_dir,
+        master_dir=settings.master_dir,
+        data_dir=settings.data_dir,
+        mocs_dir=settings.mocs_dir,
+        index_path=settings.index_path,
     )
 
 
@@ -88,14 +88,14 @@ def build_preflight_checker(
     check_ffmpeg: bool = True,
 ) -> PreflightHealthChecker:
     """Construct PreflightHealthChecker with resolved settings."""
-    resolved_settings = resolve_shared_settings(settings)
+    settings = resolve_shared_settings(settings)
     return PreflightHealthChecker(
-        gemini_api_key=resolved_settings.gemini_api_key,
-        vault_dir=resolved_settings.vault_dir,
-        sqlite_ledger_path=resolved_settings.sqlite_ledger_path,
+        gemini_api_key=settings.gemini_api_key,
+        vault_dir=settings.vault_dir,
+        sqlite_ledger_path=settings.sqlite_ledger_path,
         check_ffmpeg=check_ffmpeg,
-        langfuse_host=resolved_settings.langfuse_host,
-        ollama_base_url=resolved_settings.ollama_base_url,
+        langfuse_host=settings.langfuse_host,
+        ollama_base_url=settings.ollama_base_url,
     )
 
 
@@ -104,17 +104,17 @@ def build_prompt_provider(
     langfuse_client: Any | None = None,
 ) -> PromptProviderPort:
     """Instantiate PromptProviderPort with Langfuse decorator and local Json fallback."""
-    resolved_settings = resolve_shared_settings(settings)
-    json_prompt_provider = JsonPromptProvider(
-        prompts_path=resolved_settings.prompts_path,
-        skills_dir=resolved_settings.skills_dir,
-        language=resolved_settings.language,
-        settings=resolved_settings,
+    settings = resolve_shared_settings(settings)
+    fallback_provider = JsonPromptProvider(
+        prompts_path=settings.prompts_path,
+        skills_dir=settings.skills_dir,
+        language=settings.language,
+        settings=settings,
     )
     return LangfusePromptProvider(
         langfuse_client=langfuse_client,
-        fallback_provider=json_prompt_provider,
-        label=resolved_settings.langfuse_prompt_label,
+        fallback_provider=fallback_provider,
+        label=settings.langfuse_prompt_label,
     )
 
 
@@ -123,14 +123,14 @@ def build_gemini_synthesis_adapter(
     langfuse_client: Any | None = None,
 ) -> GeminiLLMAdapter:
     """Instantiate and wire GeminiLLMAdapter for core synthesis workflows."""
-    resolved_settings = resolve_shared_settings(settings)
-    api_keys = [k.get_secret_value() for k in resolved_settings.gemini_api_keys]
+    settings = resolve_shared_settings(settings)
+    api_keys = [k.get_secret_value() for k in settings.gemini_api_keys]
     return GeminiLLMAdapter(
         api_keys=api_keys,
-        model_name=resolved_settings.gemini_model,
-        fallback_model_name=resolved_settings.gemini_fallback_model,
+        model_name=settings.gemini_model,
+        fallback_model_name=settings.gemini_fallback_model,
         langfuse_client=langfuse_client,
-        default_temperature=resolved_settings.llm_synthesis_temperature,
+        default_temperature=settings.llm_synthesis_temperature,
     )
 
 
@@ -143,30 +143,30 @@ def build_indexing_adapter(
     api_keys: list[str] | None = None,
 ) -> LLMTransformationPort:
     """Instantiate LLM adapter for indexing, selecting between local Ollama and Gemini API."""
-    resolved_settings = resolve_shared_settings(settings)
-    if web_index or resolved_settings.indexing_provider == "gemini":
+    settings = resolve_shared_settings(settings)
+    if web_index or settings.indexing_provider == "gemini":
         if (
             synthesis_adapter is not None
             and isinstance(synthesis_adapter, GeminiLLMAdapter)
             and model_override is None
         ):
             return synthesis_adapter
-        keys = api_keys or [k.get_secret_value() for k in resolved_settings.gemini_api_keys]
+        api_keys = api_keys or [k.get_secret_value() for k in settings.gemini_api_keys]
         return GeminiLLMAdapter(
-            api_keys=keys,
-            model_name=model_override or resolved_settings.gemini_model,
-            fallback_model_name=resolved_settings.gemini_fallback_model,
+            api_keys=api_keys,
+            model_name=model_override or settings.gemini_model,
+            fallback_model_name=settings.gemini_fallback_model,
             langfuse_client=langfuse_client,
-            default_temperature=resolved_settings.llm_indexing_temperature,
+            default_temperature=settings.llm_indexing_temperature,
         )
 
     return OllamaLLMAdapter(
-        base_url=resolved_settings.ollama_base_url,
-        model=model_override or resolved_settings.ollama_model,
-        timeout_seconds=resolved_settings.ollama_timeout_seconds,
-        default_temperature=resolved_settings.llm_indexing_temperature,
-        num_predict=resolved_settings.ollama_num_predict,
+        base_url=settings.ollama_base_url,
+        model=model_override or settings.ollama_model,
+        timeout_seconds=settings.ollama_timeout_seconds,
+        default_temperature=settings.llm_indexing_temperature,
+        num_predict=settings.ollama_num_predict,
         langfuse_client=langfuse_client,
-        keep_alive=resolved_settings.ollama_keep_alive,
-        warmup_timeout_seconds=resolved_settings.ollama_warmup_timeout_seconds,
+        keep_alive=settings.ollama_keep_alive,
+        warmup_timeout_seconds=settings.ollama_warmup_timeout_seconds,
     )

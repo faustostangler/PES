@@ -98,9 +98,7 @@ def handle_export_cookies(
     """
     browser = getattr(args, "browser", browser) if args is not None else browser
     output = getattr(args, "output", output) if args is not None else output
-    require_auth = (
-        getattr(args, "require_auth", require_auth) if args is not None else require_auth
-    )
+    require_auth = getattr(args, "require_auth", require_auth) if args is not None else require_auth
     force = getattr(args, "force", force) if args is not None else force
 
     try:
@@ -115,9 +113,7 @@ def handle_export_cookies(
             )
             return EXIT_SUCCESS
 
-        sys.stdout.write(
-            f"[cookies] Extracting YouTube cookies from browser '{browser}'...\n"
-        )
+        sys.stdout.write(f"[cookies] Extracting YouTube cookies from browser '{browser}'...\n")
         success = export_cookies_from_browser(
             browser=browser,
             output_file=output_file,
@@ -133,7 +129,7 @@ def handle_export_cookies(
             )
             return EXIT_INGESTION_ERROR
 
-        sys.stdout.write(f"[cookies] Successfully saved cookies to: {output_path}\n")
+        sys.stdout.write(f"[cookies] Successfully saved cookies to: {output_file}\n")
         return EXIT_SUCCESS
 
     except Exception as exc:  # noqa: BLE001

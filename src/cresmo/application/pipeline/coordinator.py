@@ -144,16 +144,19 @@ class CresmoPipeline:
                 raise ValueError("Either stage_runner or llm_synthesis_port must be provided")
             self.telemetry_port = telemetry_port or NoOpTelemetryPort()
             self.metrics_port = metrics_port or NoOpMetricsPort()
+            llm_judge = llm_judge_port
+            llm_transformation_port = llm_synthesis_port
+            prompt_provider = prompt_provider or NoOpPromptProviderPort()
             stage_factory = StageFactory(settings=self.settings)
             self.stage_runner = PipelineStageRunner(
                 PipelineDependencies(
                     telemetry_port=self.telemetry_port,
                     metrics_port=self.metrics_port,
-                    llm_judge=llm_judge_port,
+                    llm_judge=llm_judge,
                     judge_blocking=getattr(self.settings, "judge_blocking", False),
                     judge_max_attempts=getattr(self.settings, "judge_max_attempts", 2),
-                    prompt_provider=prompt_provider or NoOpPromptProviderPort(),
-                    llm_transformation_port=llm_synthesis_port,
+                    prompt_provider=prompt_provider,
+                    llm_transformation_port=llm_transformation_port,
                     stage_factory=stage_factory,
                     critique_synthesizer=critique_synthesizer,
                     ledger_port=self.ledger_port,
@@ -218,7 +221,7 @@ class CresmoPipeline:
         user_identity = user or UserIdentity.anonymous()
 
         raw_text = _extract_source_text(raw)
-        root_telemetry_metadata: dict[str, Any] = {
+        metadata: dict[str, Any] = {
             "source": "transcript",
             "channel_id": str(channel.id) if channel.id else "",
             "channel_name": channel.name,
@@ -232,20 +235,18 @@ class CresmoPipeline:
             resolved_batch_id = (
                 batch_id.value if isinstance(batch_id, BatchId) else batch_id.strip()
             )
-            root_telemetry_metadata["batch_id"] = resolved_batch_id
+            metadata["batch_id"] = resolved_batch_id
         if raw.provenance.url:
-            root_telemetry_metadata["video_url"] = raw.provenance.url
+            metadata["video_url"] = raw.provenance.url
         if raw.provenance.publication_date:
-            root_telemetry_metadata["publication_date"] = (
-                raw.provenance.publication_date.isoformat()
-            )
+            metadata["publication_date"] = raw.provenance.publication_date.isoformat()
 
         # Trace root Level 1: cresmo.synthesis_pipeline (ADR-037)
         with self.telemetry_port.start_pipeline_session(
             session_id=session_id,
             user_id=user_identity,
             channel_tenant_id=channel.tenant_key,
-            metadata=root_telemetry_metadata,
+            metadata=metadata,
             trace_name="cresmo.synthesis_pipeline",
         ):
             if early_result := self._check_idempotent_exit(raw, entry, force_reprocess):
@@ -442,14 +443,14 @@ class CresmoPipeline:
         batch_id: BatchId | str | None = None,
     ) -> list[PipelineResult]:
         """Run the end-to-end synthesis pipeline sequentially for all video URLs in a manifest file."""
-        resolved_batch_id = batch_id or BatchId.generate()
+        batch_id = batch_id or BatchId.generate()
         return [
             self.run_for_video(
-                video_url=url,
+                video_url=video_url,
                 gap_filler_passes=gap_filler_passes,
                 force_reprocess=force_reprocess,
                 user=user,
-                batch_id=resolved_batch_id,
+                batch_id=batch_id,
             )
-            for url in load_manifest_urls(manifest_path)
+            for video_url in load_manifest_urls(manifest_path)
         ]

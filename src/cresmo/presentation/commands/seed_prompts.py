@@ -12,11 +12,14 @@ Conforms to:
 
 from __future__ import annotations
 
+import os
+import subprocess
 import sys
 from typing import Annotated, Any
 
 import typer
 
+from cresmo import __version__
 from cresmo.infrastructure.adapters.prompts import (
     JsonPromptProvider,
     load_prompt_catalog,
@@ -34,6 +37,24 @@ from cresmo.presentation.exit_codes import (
 PROMPT_MAPPINGS: dict[str, str] = {
     spec.langfuse_name: spec.key.value for spec in load_prompt_catalog().values()
 }
+
+
+def _resolve_git_sha() -> str:
+    """Resolve current Git commit short SHA from environment or git CLI."""
+    env_sha = os.environ.get("GIT_SHA")
+    if env_sha:
+        return env_sha[:8]
+    try:
+        out = subprocess.check_output(
+            ["git", "rev-parse", "--short=8", "HEAD"],
+            stderr=subprocess.DEVNULL,
+            text=True,
+        ).strip()
+        if out:
+            return out
+    except Exception:  # noqa: BLE001, S110
+        pass
+    return "unknown"
 
 
 def seed_prompts(
@@ -106,6 +127,10 @@ def handle_seed_prompts(
 
     success_count = 0
     failure_count = 0
+    git_sha = _resolve_git_sha()
+    tags = ["cresmo", f"v{__version__}", f"git:{git_sha}"]
+    prompt_config = {"git_sha": git_sha, "version": __version__}
+
     for name, key in PROMPT_MAPPINGS.items():
         system_prompt, user_prompt = provider.get_chat_prompt_template(key)
         chat_prompt = [
@@ -117,11 +142,12 @@ def handle_seed_prompts(
                 name=name,
                 prompt=chat_prompt,
                 labels=[label],
-                tags=["cresmo", "v2"],
+                tags=tags,
+                config=prompt_config,
                 type="chat",
             )
             sys.stdout.write(
-                f"✔ Registered '{name}' in Langfuse [type=chat, label={label}]\n"
+                f"✔ Registered '{name}' in Langfuse [type=chat, label={label}, version={__version__}, git={git_sha}]\n"
             )
             success_count += 1
         except Exception as exc:  # noqa: BLE001

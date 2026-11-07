@@ -69,7 +69,7 @@ def build_llm_judge_adapter(
         )
 
     # 2. Instantiate Fallback Provider if enabled
-    resilient_judge: LlmJudgePort
+    inner_judge: LlmJudgePort
     if enable_fallback:
         fallback: LlmJudgePort = OllamaJudgeAdapter(
             base_url=settings.ollama_base_url,
@@ -78,16 +78,16 @@ def build_llm_judge_adapter(
             pass_threshold=settings.judge_pass_threshold,
             prompt_provider=prompt_provider,
         )
-        resilient_judge = ResilientCompositeJudgeAdapter(primary=primary, fallback=fallback)
+        inner_judge = ResilientCompositeJudgeAdapter(primary=primary, fallback=fallback)
     else:
         # Metrological isolation for calibration: no fallback failover
-        resilient_judge = primary
+        inner_judge = primary
 
     # 3. Wrap in Mechanical Preflight Gate
-    preflight_judge = MechanicalPreflightJudgeDecorator(inner_judge=resilient_judge)
+    inner_judge = MechanicalPreflightJudgeDecorator(inner_judge=inner_judge)
 
     # 5. Decorate with Langfuse Telemetry Emission
     return LangfuseJudgeDecorator(
-        inner_judge=preflight_judge,
+        inner_judge=inner_judge,
         langfuse_client=langfuse_client,
     )
