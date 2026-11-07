@@ -72,27 +72,24 @@ def handle_concat_master(
         Process exit code integer.
     """
     if args is not None:
-        target_channel = getattr(args, "channel", None)
-        target_max_words = getattr(args, "max_words", None)
-    else:
-        target_channel = channel
-        target_max_words = max_words
+        channel = getattr(args, "channel", None)
+        max_words = getattr(args, "max_words", None)
     try:
         settings = resolve_shared_settings()
         use_case = build_concat_master_use_case(settings=settings)
 
-        if target_channel:
-            sys.stdout.write(f"Consolidating master documents for channel: '{target_channel}'...\n")
+        if channel:
+            sys.stdout.write(f"Consolidating master documents for channel: '{channel}'...\n")
             results = use_case.execute(
-                channel_name=ChannelName(target_channel), max_words=target_max_words
+                channel_name=ChannelName(channel), max_words=max_words
             )
             if not results:
-                sys.stdout.write(f"No enriched documents found for channel '{target_channel}'.\n")
+                sys.stdout.write(f"No enriched documents found for channel '{channel}'.\n")
                 return EXIT_SUCCESS
 
             total_words = sum(r.word_count for r in results)
             sys.stdout.write(
-                f"Generated {len(results)} master document(s) for '{target_channel}' ({total_words:,} words):\n"
+                f"Generated {len(results)} master document(s) for '{channel}' ({total_words:,} words):\n"
             )
             for r in results:
                 sys.stdout.write(
@@ -102,7 +99,7 @@ def handle_concat_master(
             return EXIT_SUCCESS
 
         sys.stdout.write("Consolidating master documents across all channels in enriched/...\n")
-        all_results = use_case.execute_all(max_words=target_max_words)
+        all_results = use_case.execute_all(max_words=max_words)
         if not all_results:
             sys.stdout.write("No enriched channel directories found to consolidate.\n")
             return EXIT_SUCCESS

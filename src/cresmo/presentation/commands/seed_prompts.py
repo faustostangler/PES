@@ -12,13 +12,15 @@ Conforms to:
 
 from __future__ import annotations
 
-import re
 import sys
 from typing import Annotated, Any
 
 import typer
 
-from cresmo.infrastructure.adapters.prompts import PROMPT_REGISTRY, JsonPromptProvider
+from cresmo.infrastructure.adapters.prompts import (
+    JsonPromptProvider,
+    load_prompt_catalog,
+)
 from cresmo.presentation.composition import (
     resolve_langfuse_client,
     resolve_shared_settings,
@@ -30,7 +32,7 @@ from cresmo.presentation.exit_codes import (
 )
 
 PROMPT_MAPPINGS: dict[str, str] = {
-    meta.langfuse_name: meta.key.value for meta in PROMPT_REGISTRY.values()
+    spec.langfuse_name: spec.key.value for spec in load_prompt_catalog().values()
 }
 
 
@@ -55,11 +57,6 @@ def seed_prompts(
         raise typer.Exit(code=code)
 
 
-def _to_mustache(text: str) -> str:
-    """Convert Python single-brace template variables {var} to Langfuse Mustache {{var}}."""
-    return re.sub(r"(?<!\{)\{([a-zA-Z_][a-zA-Z0-9_]*)\}(?!\})", r"{{\1}}", text)
-
-
 def handle_seed_prompts(
     args: Any = None,
     label: str = "production",
@@ -75,26 +72,24 @@ def handle_seed_prompts(
     Returns:
         Process exit code conforming to exit_codes.py.
     """
-    target_label = (
+    label = (
         getattr(args, "label", label) or "production"
         if args is not None
         else (label or "production")
     )
-    target_dry_run = getattr(args, "dry_run", dry_run) if args is not None else dry_run
+    dry_run = getattr(args, "dry_run", dry_run) if args is not None else dry_run
 
     settings = resolve_shared_settings()
     provider = JsonPromptProvider()
 
-    if target_dry_run:
+    if dry_run:
         sys.stdout.write(
             f"[dry-run] Rendering {len(PROMPT_MAPPINGS)} Chat-Native prompt templates:\n"
         )
         for name, key in PROMPT_MAPPINGS.items():
-            sys_inst, user_tpl = provider.get_chat_prompt_template(key)
-            sys_mustache = _to_mustache(sys_inst)
-            user_mustache = _to_mustache(user_tpl)
-            preview_sys = sys_mustache[:50].replace("\n", " ")
-            preview_usr = user_mustache[:50].replace("\n", " ")
+            system_prompt, user_prompt = provider.get_chat_prompt_template(key)
+            preview_sys = system_prompt[:50].replace("\n", " ")
+            preview_usr = user_prompt[:50].replace("\n", " ")
             sys.stdout.write(
                 f"- {name} (key={key}): [system] {preview_sys}... | [user] {preview_usr}...\n"
             )
@@ -111,22 +106,22 @@ def handle_seed_prompts(
 
     success_count = 0
     failure_count = 0
-    for name, json_key in PROMPT_MAPPINGS.items():
-        sys_inst, user_tpl = provider.get_chat_prompt_template(json_key)
+    for name, key in PROMPT_MAPPINGS.items():
+        system_prompt, user_prompt = provider.get_chat_prompt_template(key)
         chat_prompt = [
-            {"role": "system", "content": _to_mustache(sys_inst)},
-            {"role": "user", "content": _to_mustache(user_tpl)},
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt},
         ]
         try:
             client.create_prompt(
                 name=name,
                 prompt=chat_prompt,
-                labels=[target_label],
+                labels=[label],
                 tags=["cresmo", "v2"],
                 type="chat",
             )
             sys.stdout.write(
-                f"✔ Registered '{name}' in Langfuse [type=chat, label={target_label}]\n"
+                f"✔ Registered '{name}' in Langfuse [type=chat, label={label}]\n"
             )
             success_count += 1
         except Exception as exc:  # noqa: BLE001

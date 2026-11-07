@@ -11,13 +11,17 @@ from cresmo.domain.taxonomy import classify_channel
 from cresmo.domain.value_objects import ChannelName, PromptKey
 from cresmo.domain.value_objects.prompt import ChatPrompt
 from cresmo.infrastructure.adapters.prompt_provider import (
-    PROMPT_REGISTRY,
     JsonPromptProvider,
 )
 from cresmo.infrastructure.adapters.prompts.builders import (
     PROMPT_BUILDER_REGISTRY,
     PromptBuilderRegistry,
+    PromptTemplateHost,
 )
+
+
+def _dummy_builder(provider: PromptTemplateHost, **context: Any) -> ChatPrompt:
+    return ChatPrompt.from_system_and_user(system="s", user="u")
 
 
 class TestChannelTaxonomy:
@@ -131,7 +135,7 @@ class TestJsonPromptProvider:
         assert "Main body text." in long_p
         assert "Supplementary info." in long_p
         assert "Fernand Braudel" in long_s
-        assert long_s.startswith(PROMPT_REGISTRY[PromptKey.LONG_EXPANDER].description)
+        assert long_s.startswith(provider.catalog[PromptKey.LONG_EXPANDER].description)
         assert "longitudinal" in long_p.lower()
         assert not long_p.startswith(long_s[:30])
 
@@ -144,7 +148,7 @@ class TestJsonPromptProvider:
         assert isinstance(wide_s, str)
         assert "Longitudinally expanded text." in wide_p
         assert "Karl Jaspers" in wide_s
-        assert wide_s.startswith(PROMPT_REGISTRY[PromptKey.WIDE_EXPANDER].description)
+        assert wide_s.startswith(provider.catalog[PromptKey.WIDE_EXPANDER].description)
         assert "synchronic" in wide_p.lower()
         assert not wide_p.startswith(wide_s[:30])
 
@@ -247,7 +251,7 @@ class TestJsonPromptProvider:
             file_name="custom.txt",
             source_text="text",
         )
-        expected_desc = PROMPT_REGISTRY[PromptKey.GAP_FILLER].description
+        expected_desc = provider.catalog[PromptKey.GAP_FILLER].description
         assert (
             prompt1.get_last_user_content()
             == f"{expected_desc}: Pass 1/3 for Custom Channel with source: text"
@@ -272,12 +276,12 @@ class TestJsonPromptProvider:
         prompt_long = provider.get_prompt(
             PromptKey.LONG_EXPANDER, compendium_body="Body", complementary_info="Info"
         )
-        expected_long_desc = PROMPT_REGISTRY[PromptKey.LONG_EXPANDER].description
+        expected_long_desc = provider.catalog[PromptKey.LONG_EXPANDER].description
         assert prompt_long.get_last_user_content() == f"{expected_long_desc}: Body + Info"
         assert prompt_long.system_prompt == expected_long_desc
 
         prompt_wide = provider.get_prompt(PromptKey.WIDE_EXPANDER, current_text="WideText")
-        expected_wide_desc = PROMPT_REGISTRY[PromptKey.WIDE_EXPANDER].description
+        expected_wide_desc = provider.catalog[PromptKey.WIDE_EXPANDER].description
         assert prompt_wide.get_last_user_content() == f"{expected_wide_desc}: WideText"
         assert prompt_wide.system_prompt == expected_wide_desc
 
@@ -287,7 +291,7 @@ class TestJsonPromptProvider:
             channel_name=ChannelName("Channel"),
             compendium_body="Body",
         )
-        expected_inv_desc = PROMPT_REGISTRY[PromptKey.ATOMIC_INVENTORY].description
+        expected_inv_desc = provider.catalog[PromptKey.ATOMIC_INVENTORY].description
         assert (
             prompt_inv.get_last_user_content() == f"{expected_inv_desc}: Title on Channel with Body"
         )
@@ -300,7 +304,7 @@ class TestJsonPromptProvider:
             compendium_body="Body",
             inventory_json='[{"title": "T1"}]',
         )
-        expected_j_inv_desc = PROMPT_REGISTRY[PromptKey.JUDGE_ATOMIC_INVENTORY].description
+        expected_j_inv_desc = provider.catalog[PromptKey.JUDGE_ATOMIC_INVENTORY].description
         assert (
             prompt_j_inv.get_last_user_content()
             == f'{expected_j_inv_desc}: Title on Channel with [{{"title": "T1"}}]'
@@ -314,7 +318,7 @@ class TestJsonPromptProvider:
             compendium_body="Body",
             targets_json="Targets",
         )
-        expected_batch_desc = PROMPT_REGISTRY[PromptKey.ATOMIC_BATCH].description
+        expected_batch_desc = provider.catalog[PromptKey.ATOMIC_BATCH].description
         assert (
             prompt_batch.get_last_user_content()
             == f"{expected_batch_desc}: Title on Channel body Body targets Targets"
@@ -322,7 +326,7 @@ class TestJsonPromptProvider:
         assert prompt_batch.system_prompt == expected_batch_desc
 
         prompt_mocs = provider.get_prompt(PromptKey.RECONCILE_MOCS, notes_json="Notes")
-        expected_mocs_desc = PROMPT_REGISTRY[PromptKey.RECONCILE_MOCS].description
+        expected_mocs_desc = provider.catalog[PromptKey.RECONCILE_MOCS].description
         assert prompt_mocs.get_last_user_content() == f"{expected_mocs_desc}: Notes"
         assert prompt_mocs.system_prompt == expected_mocs_desc
 
@@ -568,7 +572,7 @@ class TestPromptBuilderRegistry:
         registry = PromptBuilderRegistry()
         registry.register(
             PromptKey.FLUID_PROSE,
-            lambda p, **c: ChatPrompt.from_system_and_user(system="s", user="u"),
+            _dummy_builder,
         )
         registry.freeze()
         assert registry.is_frozen
@@ -578,20 +582,20 @@ class TestPromptBuilderRegistry:
         with pytest.raises(RuntimeError, match="frozen"):
             registry.register(
                 PromptKey.LONG_EXPANDER,
-                lambda p, **c: ChatPrompt.from_system_and_user(system="s", user="u"),
+                _dummy_builder,
             )
 
         with pytest.raises(RuntimeError, match="frozen"):
 
             @registry.register(PromptKey.WIDE_EXPANDER)
-            def _fn(p: Any, **c: Any) -> ChatPrompt:
+            def _fn(provider: PromptTemplateHost, **context: Any) -> ChatPrompt:
                 return ChatPrompt.from_system_and_user(system="s", user="u")
 
     def test_registry_completeness_validation(self) -> None:
         registry = PromptBuilderRegistry()
         registry.register(
             PromptKey.FLUID_PROSE,
-            lambda p, **c: ChatPrompt.from_system_and_user(system="s", user="u"),
+            _dummy_builder,
         )
 
         import pytest

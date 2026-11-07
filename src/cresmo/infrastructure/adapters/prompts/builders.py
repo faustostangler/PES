@@ -9,10 +9,7 @@ from collections.abc import Callable, Iterable, Iterator
 from dataclasses import dataclass, field
 from typing import Any, Protocol, overload, runtime_checkable
 
-from cresmo.domain.value_objects import ChannelName, ChatPrompt
-from cresmo.infrastructure.adapters.prompts.registry import (
-    PromptKey,
-)
+from cresmo.domain.value_objects import ChannelName, ChatPrompt, PromptKey
 from cresmo.infrastructure.config import CresmoSettings
 
 
@@ -93,7 +90,6 @@ def build_raw_index_concepts_rewrite(provider: PromptTemplateHost, **context: An
         PromptKey.RAW_INDEX_CONCEPTS_REWRITE.value,
         previous_output=context.get("previous_output", ""),
         language=lang,
-        language_upper=lang.upper(),
     )
 
 

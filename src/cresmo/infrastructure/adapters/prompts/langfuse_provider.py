@@ -5,7 +5,7 @@ Conforms to ADR-014 and ADR-017:
     - Guaranteed Availability: When Langfuse is offline, unreachable, or fails, falls back immediately
       to the injected JsonPromptProvider with zero pipeline downtime.
     - Tracks active prompt object/version for linking to LLM generation observations.
-    - Uses canonical PROMPT_REGISTRY to eliminate duplicated hardcoded prompt names.
+    - Uses canonical PromptCatalog to eliminate duplicated hardcoded prompt names.
 """
 
 from __future__ import annotations
@@ -18,10 +18,7 @@ from langfuse.api.core import ApiError
 
 from cresmo.application.ports import PromptProviderPort
 from cresmo.domain.value_objects import ChannelName, ChatMessage, ChatPrompt, MessageRole
-from cresmo.infrastructure.adapters.prompts.registry import (
-    PROMPT_REGISTRY,
-    PromptKey,
-)
+from cresmo.domain.value_objects.prompt import PromptKey
 from cresmo.infrastructure.config import CresmoSettings
 
 logger = structlog.get_logger(__name__)
@@ -215,21 +212,18 @@ class LangfusePromptProvider(PromptProviderPort):
         if self._client is None:
             return self._fallback.get_prompt(key, **context)
 
-        prompt_descriptor = PROMPT_REGISTRY.get(key)
-        if prompt_descriptor is None:
-            logger.warning(
-                "[LangfusePromptProvider] No registry descriptor found for prompt key '%s'. "
-                "Triggering lazy fallback.",
-                key.value,
-            )
-            return self._fallback.get_prompt(key, **context)
+        catalog = getattr(self._fallback, "catalog", None)
+        if catalog is not None and key in catalog:
+            prompt_name = catalog[key].langfuse_name
+        else:
+            prompt_name = f"cresmo-{key.value.replace('_', '-')}"
 
         try:
             if isinstance(context.get("channel_name"), ChannelName):
                 context["channel_name"] = context["channel_name"].value
 
             return self._resolve_chat_prompt(
-                prompt_name=prompt_descriptor.langfuse_name,
+                prompt_name=prompt_name,
                 **context,
             )
         except Exception as exc:  # noqa: BLE001 — Resilient fallback to local provider on remote/compilation failure

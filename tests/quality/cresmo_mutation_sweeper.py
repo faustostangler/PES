@@ -347,8 +347,8 @@ MODULE_TEST_MAP: dict[str, list[str]] = {
     "src/cresmo/infrastructure/adapters/prompts/langfuse_provider.py": [
         "tests/cresmo/unit/test_langfuse_prompt_provider.py",
     ],
-    "src/cresmo/infrastructure/adapters/prompts/registry.py": [
-        "tests/cresmo/unit/test_prompt_registry.py",
+    "src/cresmo/infrastructure/adapters/prompts/catalog.py": [
+        "tests/cresmo/unit/test_prompt_catalog.py",
     ],
     # Wave 6: Telemetry
     "src/cresmo/infrastructure/adapters/telemetry/noop.py": [
@@ -479,7 +479,7 @@ WAVE_DEFINITIONS: dict[str, list[str]] = {
         "src/cresmo/infrastructure/adapters/prompts/builders.py",
         "src/cresmo/infrastructure/adapters/prompts/json_provider.py",
         "src/cresmo/infrastructure/adapters/prompts/langfuse_provider.py",
-        "src/cresmo/infrastructure/adapters/prompts/registry.py",
+        "src/cresmo/infrastructure/adapters/prompts/catalog.py",
         "src/cresmo/infrastructure/adapters/telemetry/noop.py",
         "src/cresmo/infrastructure/adapters/telemetry/thread_naming.py",
         "src/cresmo/presentation/factories/adapter_factory.py",
@@ -799,12 +799,16 @@ def set_pyproject_only_mutate(target_path: str, test_files: Sequence[str] | None
     original = pyproject.read_text(encoding="utf-8")
 
     # Clean any stale only_mutate/runner entries first (idempotent recovery)
-    clean_original = re.sub(r'only_mutate\s*=\s*\[.*?\]\n?', '', original)
-    clean_original = re.sub(r'runner\s*=\s*".*?"\n?', '', clean_original)
+    clean_original = re.sub(r"only_mutate\s*=\s*\[.*?\]\n?", "", original)
+    clean_original = re.sub(r'runner\s*=\s*".*?"\n?', "", clean_original)
 
     mutmut_section = '[tool.mutmut]\nsource_paths = ["src"]\n'
     if mutmut_section in clean_original:
-        tests_arg = " ".join(test_files) if test_files else "tests/shared_kernel tests/identity tests/cresmo"
+        tests_arg = (
+            " ".join(test_files)
+            if test_files
+            else "tests/shared_kernel tests/identity tests/cresmo"
+        )
         new_content = clean_original.replace(
             mutmut_section,
             f'{mutmut_section}only_mutate = ["{target_path}"]\nrunner = "pytest -x {tests_arg}"\n',
@@ -969,7 +973,9 @@ def sweep(
         elif wave in WAVE_DEFINITIONS:
             targets = WAVE_DEFINITIONS[wave]
         else:
-            print(f"❌ Error: Invalid wave '{wave}'. Valid choices: {list(WAVE_DEFINITIONS.keys()) + ['all']}")
+            print(
+                f"❌ Error: Invalid wave '{wave}'. Valid choices: {list(WAVE_DEFINITIONS.keys()) + ['all']}"
+            )
             raise typer.Exit(code=1)
     else:
         ctx = click.get_current_context()

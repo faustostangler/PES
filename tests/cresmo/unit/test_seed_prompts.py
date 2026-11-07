@@ -19,7 +19,6 @@ from cresmo.infrastructure.adapters.prompt_provider import JsonPromptProvider
 from cresmo.presentation.cli import main
 from cresmo.presentation.commands.seed_prompts import (
     PROMPT_MAPPINGS,
-    _to_mustache,
     handle_seed_prompts,
 )
 from cresmo.presentation.exit_codes import (
@@ -32,17 +31,12 @@ from cresmo.presentation.exit_codes import (
 class TestSeedPromptsCLI:
     """Test suite for the seed-prompts presentation command."""
 
-    def test_to_mustache_transformations(self) -> None:
-        """Verify single brace {var} conversion to {{var}} without double-escaping."""
-        assert (
-            _to_mustache("Hello {name}, your ID is {id_num}")
-            == "Hello {{name}}, your ID is {{id_num}}"
-        )
-        assert (
-            _to_mustache("Already {{mustache}} stays {{mustache}}")
-            == "Already {{mustache}} stays {{mustache}}"
-        )
-        assert _to_mustache("Plain text without variables") == "Plain text without variables"
+    def test_templates_use_native_mustache_syntax(self) -> None:
+        """Verify templates contain native Mustache {{var}} syntax."""
+        provider = JsonPromptProvider()
+        sys_p, user_p = provider.get_chat_prompt_template("fluid_prose")
+        assert provider.language in sys_p
+        assert "{{raw_text}}" in user_p
 
     def test_seed_prompts_cli_help(self) -> None:
         """Verify seed-prompts CLI displays help and options."""
@@ -68,10 +62,8 @@ class TestSeedPromptsCLI:
         provider = JsonPromptProvider()
         for lf_name, json_key in PROMPT_MAPPINGS.items():
             sys_inst, user_tpl = provider.get_chat_prompt_template(json_key)
-            sys_mustache = _to_mustache(sys_inst)
-            user_mustache = _to_mustache(user_tpl)
-            preview_sys = sys_mustache[:50].replace("\n", " ")
-            preview_usr = user_mustache[:50].replace("\n", " ")
+            preview_sys = sys_inst[:50].replace("\n", " ")
+            preview_usr = user_tpl[:50].replace("\n", " ")
             expected_line = f"- {lf_name} (key={json_key}): [system] {preview_sys}... | [user] {preview_usr}...\n"
             assert expected_line in captured.out
         assert (
@@ -136,8 +128,8 @@ class TestSeedPromptsCLI:
                 expected_sys, expected_usr = provider.get_chat_prompt_template(
                     PROMPT_MAPPINGS[name]
                 )
-                assert prompt[0]["content"] == _to_mustache(expected_sys)
-                assert prompt[1]["content"] == _to_mustache(expected_usr)
+                assert prompt[0]["content"] == expected_sys
+                assert prompt[1]["content"] == expected_usr
                 assert len(prompt[0]["content"]) > 0
                 assert len(prompt[1]["content"]) > 0
 

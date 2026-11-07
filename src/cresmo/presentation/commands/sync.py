@@ -179,13 +179,13 @@ def _sync_direct_videos(
     total_processed = 0
     total_failed = 0
     for video_ref in video_ids:
-        target_url = (
+        channel_url = (
             video_ref
             if video_ref.startswith(("http://", "https://"))
             else f"https://www.youtube.com/watch?v={video_ref}"
         )
         query = ChannelFeedQuery(
-            channel_url=target_url,
+            channel_url=channel_url,
             lookback_days=getattr(args, "lookback", 7 * 52 * 2),
             max_videos=1,
         )
@@ -214,9 +214,9 @@ def _sync_channel_list(
     total_skipped = 0
     total_failed = 0
 
-    for ch_url in channels_to_sync:
+    for channel_url in channels_to_sync:
         query = ChannelFeedQuery(
-            channel_url=ch_url,
+            channel_url=channel_url,
             lookback_days=getattr(args, "lookback", 7 * 52 * 2),
             max_videos=getattr(args, "max_videos", 250),
         )
@@ -373,8 +373,8 @@ def _resolve_channels_for_sync(
     # Mode: category or full manifest — read from manifest and filter
     lines = _read_manifest_lines(manifest_path)
     channels: list[str] = []
-    for line in lines:
-        norm = normalize_to_uploads_playlist_url(line)
-        if filter_criteria.is_empty() or filter_criteria.matches_category(channel_url=line):
+    for channel_url in lines:
+        norm = normalize_to_uploads_playlist_url(channel_url)
+        if filter_criteria.is_empty() or filter_criteria.matches_category(channel_url=channel_url):
             channels.append(norm)
     return channels

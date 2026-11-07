@@ -553,7 +553,7 @@ def _build_batch_discovery_query(
     settings: CresmoSettings,
 ) -> BatchDiscoveryQuery:
     """Build strongly-typed discovery query from parsed CLI arguments and settings."""
-    enable_crawl = (
+    enable_channel_crawler = (
         False
         if getattr(args, "no_crawl", False)
         else getattr(settings, "enable_channel_crawler", True)
@@ -571,7 +571,7 @@ def _build_batch_discovery_query(
         lookback_days=settings.days_lookback,
         channel_max_videos=args.channel_max_videos,
         discovery_workers=settings.channel_discovery_workers,
-        enable_channel_crawler=enable_crawl,
+        enable_channel_crawler=enable_channel_crawler,
         filter_criteria=filter_criteria,
         queue_maxsize=settings.discovery_queue_maxsize,
     )
@@ -591,15 +591,15 @@ def _process_single_batch_item(
     """
     try:
         if source.kind is SourceModality.FILE:
-            target_path = Path(source.target)
-            if not is_processable_transcript_file(target_path):
+            file_path = Path(source.target)
+            if not is_processable_transcript_file(file_path):
                 sys.stdout.write(
-                    f"{item_prefix} [SKIPPED] [{target_path.name}] "
+                    f"{item_prefix} [SKIPPED] [{file_path.name}] "
                     "Ignored internal Cresmo artifact or system index.\n"
                 )
                 return "skipped"
             result = pipeline.run_for_text_file(
-                file_path=target_path,
+                file_path=file_path,
                 gap_filler_passes=args.passes,
                 force_reprocess=args.force_reprocess,
                 batch_id=batch_id,
