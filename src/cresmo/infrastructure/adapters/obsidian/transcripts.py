@@ -49,8 +49,8 @@ class TranscriptVaultHandler:
         channel_dir = self.raw_dir / sanitize_filename(transcript.channel.name)
         file_path = channel_dir / f"{transcript.content.id.value}.md"
 
-        desc = transcript.provenance.description or ""
-        desc_indented = "\n".join("  " + l for l in desc.splitlines())
+        description = transcript.provenance.description or ""
+        desc_indented = "\n".join("  " + line for line in description.splitlines())
         date_str = (
             transcript.provenance.publication_date.strftime("%Y%m%d")
             if transcript.provenance.publication_date
@@ -60,14 +60,16 @@ class TranscriptVaultHandler:
         escaped_title = raw_title.replace('"', '\\"')
         escaped_channel = transcript.channel.name.replace('"', '\\"')
         escaped_category = (transcript.channel.category or "uncategorized").replace('"', '\\"')
-        channel_id_val = transcript.channel.id.value if transcript.channel.id else "unknown_channel"
+        channel_id_value = (
+            transcript.channel.id.value if transcript.channel.id else "unknown_channel"
+        )
 
         yaml_header = (
             f"---\n"
             f'video_title: "{escaped_title}"\n'
             f"video_id: {transcript.content.id.value}\n"
             f'channel_name: "{escaped_channel}"\n'
-            f"channel_id: {channel_id_val}\n"
+            f"channel_id: {channel_id_value}\n"
             f'channel_category: "{escaped_category}"\n'
             f"url: {transcript.provenance.url}\n"
             f"video_date: {date_str}\n"
@@ -105,30 +107,32 @@ class TranscriptVaultHandler:
                 content=content,
             )
 
-        fm_text, body = match.groups()
-        meta = yaml.safe_load(fm_text) or {}
-        ch_name = str(meta.get("channel_name") or meta.get("channel") or file_path.parent.name)
-        title = str(meta.get("video_title") or meta.get("title") or "")
-        ch_id = str(meta.get("channel_id") or "")
-        ch_cat = str(meta.get("channel_category") or meta.get("domain") or "")
-        url = str(meta.get("url") or meta.get("source_url") or "")
-        raw_date = meta.get("video_date") or meta.get("upload_date")
+        frontmatter_text, body = match.groups()
+        metadata = yaml.safe_load(frontmatter_text) or {}
+        channel_name = str(
+            metadata.get("channel_name") or metadata.get("channel") or file_path.parent.name
+        )
+        title = str(metadata.get("video_title") or metadata.get("title") or "")
+        raw_channel_id = str(metadata.get("channel_id") or "")
+        channel_category = str(metadata.get("channel_category") or metadata.get("domain") or "")
+        source_url = str(metadata.get("url") or metadata.get("source_url") or "")
+        raw_date = metadata.get("video_date") or metadata.get("upload_date")
         upload_date = None
         if raw_date:
             date_str = str(raw_date).strip()
             if len(date_str) == ISO_DATE_COMPACT_LENGTH and date_str.isdigit():
                 with contextlib.suppress(ValueError):
                     upload_date = datetime.strptime(date_str, "%Y%m%d").replace(tzinfo=UTC).date()
-        desc = str(meta.get("video_description") or "")
+        video_description = str(metadata.get("video_description") or "")
 
         channel = Channel(
-            name=ch_name,
-            id=ChannelId.from_string(ch_id) if ch_id else None,
-            category=ch_cat,
+            name=channel_name,
+            id=ChannelId.from_string(raw_channel_id) if raw_channel_id else None,
+            category=channel_category,
         )
         provenance = MediaProvenance.create(
-            url=url,
-            description=desc,
+            url=source_url,
+            description=video_description,
             publication_date=upload_date,
         )
         content = Content.create(
@@ -147,19 +151,19 @@ class TranscriptVaultHandler:
         channel_dir = self.enriched_dir / sanitize_filename(compendium.channel_name)
         file_path = channel_dir / f"{compendium.content_id.value}.md"
 
-        desc = compendium.video_description or ""
-        desc_indented = "\n".join("  " + l for l in desc.splitlines())
+        description = compendium.video_description or ""
+        desc_indented = "\n".join("  " + line for line in description.splitlines())
         escaped_title = compendium.title.value.replace('"', '\\"')
         escaped_channel = str(compendium.channel_name).replace('"', '\\"')
         escaped_category = (compendium.channel_category or "uncategorized").replace('"', '\\"')
-        channel_id_val = compendium.channel_id or "unknown_channel"
+        channel_id_value = compendium.channel_id or "unknown_channel"
 
         yaml_header = (
             f"---\n"
             f'video_title: "{escaped_title}"\n'
             f"video_id: {compendium.content_id.value}\n"
             f'channel_name: "{escaped_channel}"\n'
-            f"channel_id: {channel_id_val}\n"
+            f"channel_id: {channel_id_value}\n"
             f'channel_category: "{escaped_category}"\n'
             f"url: {compendium.source_url}\n"
             f"video_date: {compendium.video_date}\n"
@@ -190,8 +194,8 @@ class TranscriptVaultHandler:
         if not match:
             return None
 
-        fm_text, raw_body = match.groups()
-        meta = yaml.safe_load(fm_text) or {}
+        frontmatter_text, raw_body = match.groups()
+        metadata = yaml.safe_load(frontmatter_text) or {}
 
         # Split into main body and complementary info
         parts = raw_body.split("## Informações Complementares")
@@ -203,35 +207,37 @@ class TranscriptVaultHandler:
             body_lines = body_part.splitlines()
             body_part = "\n".join(body_lines[1:]).strip()
 
-        ch_name = str(meta.get("channel_name") or meta.get("channel") or file_path.parent.name)
-        title = str(meta.get("video_title") or meta.get("title") or file_path.stem)
-        ch_id = str(meta.get("channel_id") or "")
-        ch_cat = str(meta.get("channel_category") or meta.get("domain") or "")
-        url = str(meta.get("url") or meta.get("source_url") or "")
-        v_date = str(meta.get("video_date") or "")
-        desc = str(meta.get("video_description") or "")
+        channel_name = str(
+            metadata.get("channel_name") or metadata.get("channel") or file_path.parent.name
+        )
+        title = str(metadata.get("video_title") or metadata.get("title") or file_path.stem)
+        raw_channel_id = str(metadata.get("channel_id") or "")
+        channel_category = str(metadata.get("channel_category") or metadata.get("domain") or "")
+        source_url = str(metadata.get("url") or metadata.get("source_url") or "")
+        video_date = str(metadata.get("video_date") or "")
+        video_description = str(metadata.get("video_description") or "")
 
         return EnrichedCompendium(
             content_id=content_id,
-            channel_name=ChannelName(ch_name),
+            channel_name=ChannelName(channel_name),
             title=NoteTitle(title),
             body=body_part,
             complementary_info=comp_part,
-            pass_count=int(meta.get("pass_count", 1)),
-            channel_id=ChannelId.from_string(ch_id) if ch_id else None,
-            channel_category=ch_cat,
-            source_url=url,
-            video_date=v_date,
-            video_description=desc,
+            pass_count=int(metadata.get("pass_count", 1)),
+            channel_id=ChannelId.from_string(raw_channel_id) if raw_channel_id else None,
+            channel_category=channel_category,
+            source_url=source_url,
+            video_date=video_date,
+            video_description=video_description,
         )
 
     def get_enriched_files_for_channel(self, channel_name: ChannelName) -> list[Path]:
         """Retrieve sorted list of all enriched markdown file paths for a given channel."""
-        ch_dir = self.enriched_dir / sanitize_filename(channel_name)
-        if not ch_dir.exists() or not ch_dir.is_dir():
+        channel_dir = self.enriched_dir / sanitize_filename(channel_name)
+        if not channel_dir.exists() or not channel_dir.is_dir():
             return []
         return sorted(
-            p for p in ch_dir.glob("*.md") if p.is_file() and not p.name.startswith(("_", "."))
+            p for p in channel_dir.glob("*.md") if p.is_file() and not p.name.startswith(("_", "."))
         )
 
     def save_fluid_transcript(self, transcript: FluidTranscript) -> None:
@@ -239,8 +245,8 @@ class TranscriptVaultHandler:
         channel_dir = self.fluid_dir / sanitize_filename(transcript.channel.name)
         file_path = channel_dir / f"{transcript.content.id.value}.md"
 
-        desc = transcript.provenance.description or ""
-        desc_indented = "\n".join("  " + l for l in desc.splitlines())
+        description = transcript.provenance.description or ""
+        desc_indented = "\n".join("  " + line for line in description.splitlines())
         date_str = (
             transcript.provenance.publication_date.strftime("%Y%m%d")
             if transcript.provenance.publication_date
@@ -250,14 +256,16 @@ class TranscriptVaultHandler:
         escaped_title = raw_title.replace('"', '\\"')
         escaped_channel = transcript.channel.name.replace('"', '\\"')
         escaped_category = (transcript.channel.category or "uncategorized").replace('"', '\\"')
-        channel_id_val = transcript.channel.id.value if transcript.channel.id else "unknown_channel"
+        channel_id_value = (
+            transcript.channel.id.value if transcript.channel.id else "unknown_channel"
+        )
 
         yaml_header = (
             f"---\n"
             f'video_title: "{escaped_title}"\n'
             f"video_id: {transcript.content.id.value}\n"
             f'channel_name: "{escaped_channel}"\n'
-            f"channel_id: {channel_id_val}\n"
+            f"channel_id: {channel_id_value}\n"
             f'channel_category: "{escaped_category}"\n'
             f"url: {transcript.provenance.url}\n"
             f"video_date: {date_str}\n"
@@ -295,30 +303,32 @@ class TranscriptVaultHandler:
                 content=content,
             )
 
-        fm_text, body = match.groups()
-        meta = yaml.safe_load(fm_text) or {}
-        ch_name = str(meta.get("channel_name") or meta.get("channel") or file_path.parent.name)
-        title = str(meta.get("video_title") or meta.get("title") or "")
-        ch_id = str(meta.get("channel_id") or "")
-        ch_cat = str(meta.get("channel_category") or meta.get("domain") or "")
-        url = str(meta.get("url") or meta.get("source_url") or "")
-        raw_date = meta.get("video_date") or meta.get("upload_date")
+        frontmatter_text, body = match.groups()
+        metadata = yaml.safe_load(frontmatter_text) or {}
+        channel_name = str(
+            metadata.get("channel_name") or metadata.get("channel") or file_path.parent.name
+        )
+        title = str(metadata.get("video_title") or metadata.get("title") or "")
+        raw_channel_id = str(metadata.get("channel_id") or "")
+        channel_category = str(metadata.get("channel_category") or metadata.get("domain") or "")
+        source_url = str(metadata.get("url") or metadata.get("source_url") or "")
+        raw_date = metadata.get("video_date") or metadata.get("upload_date")
         upload_date = None
         if raw_date:
             date_str = str(raw_date).strip()
             if len(date_str) == ISO_DATE_COMPACT_LENGTH and date_str.isdigit():
                 with contextlib.suppress(ValueError):
                     upload_date = datetime.strptime(date_str, "%Y%m%d").replace(tzinfo=UTC).date()
-        desc = str(meta.get("video_description") or "")
+        video_description = str(metadata.get("video_description") or "")
 
         channel = Channel(
-            name=ch_name,
-            id=ChannelId.from_string(ch_id) if ch_id else None,
-            category=ch_cat,
+            name=channel_name,
+            id=ChannelId.from_string(raw_channel_id) if raw_channel_id else None,
+            category=channel_category,
         )
         provenance = MediaProvenance.create(
-            url=url,
-            description=desc,
+            url=source_url,
+            description=video_description,
             publication_date=upload_date,
         )
         content = Content.create(
@@ -334,9 +344,9 @@ class TranscriptVaultHandler:
 
     def get_fluid_files_for_channel(self, channel_name: ChannelName) -> list[Path]:
         """Retrieve sorted list of all fluid markdown file paths for a given channel."""
-        ch_dir = self.fluid_dir / sanitize_filename(channel_name)
-        if not ch_dir.exists() or not ch_dir.is_dir():
+        channel_dir = self.fluid_dir / sanitize_filename(channel_name)
+        if not channel_dir.exists() or not channel_dir.is_dir():
             return []
         return sorted(
-            p for p in ch_dir.glob("*.md") if p.is_file() and not p.name.startswith(("_", "."))
+            p for p in channel_dir.glob("*.md") if p.is_file() and not p.name.startswith(("_", "."))
         )

@@ -13,7 +13,6 @@ Conforms to:
 
 from __future__ import annotations
 
-import subprocess
 import sys
 from collections.abc import Sequence
 
@@ -88,29 +87,6 @@ app.command(
     name="seed-prompts",
     help="Synchronize canonical prompt templates into Langfuse prompt management",
 )(seed_prompts)
-
-
-def ensure_infrastructure() -> None:
-    """Execute 'make up' to ensure containerized services and healthchecks are ready."""
-    try:
-        subprocess.run(["make", "up"], check=True)
-    except (subprocess.CalledProcessError, FileNotFoundError) as exc:
-        sys.stderr.write(f"Infrastructure boot failed: {exc}\n")
-        raise typer.Exit(code=EXIT_INTERNAL_ERROR) from exc
-
-
-@app.callback(invoke_without_command=False)
-def main_callback(
-    skip_up: bool = typer.Option(
-        False,
-        "--skip-up",
-        help="Skip automated 'make up' infrastructure check.",
-        envvar="CRESMO_SKIP_UP",
-    ),
-) -> None:
-    """Ensure infrastructure is up and healthy before dispatching subcommands."""
-    if not skip_up:
-        ensure_infrastructure()
 
 
 def main(argv: Sequence[str] | None = None) -> int:

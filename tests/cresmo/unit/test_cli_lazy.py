@@ -132,3 +132,12 @@ assert "torch" not in sys.modules, "torch eagerly imported by NativeMediaIngesti
         assert query_no_crawl.enable_channel_crawler is False, (
             "Passing no_crawl=True must force crawl to False"
         )
+
+    def test_cli_is_pure_humble_object_without_subprocess_bootstrapping(self) -> None:
+        """Verify CLI entrypoint is a pure Humble Object without auto-spawning make/docker."""
+        import cresmo.presentation.cli as cli_mod
+
+        # Guarantee no infrastructure orchestration functions leak into cli
+        assert not hasattr(cli_mod, "ensure_infrastructure")
+        assert not hasattr(cli_mod, "should_ensure_infrastructure")
+        assert cli_mod.__all__ == ["app", "main"]
