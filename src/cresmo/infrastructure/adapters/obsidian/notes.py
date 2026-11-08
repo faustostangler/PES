@@ -167,13 +167,15 @@ class AtomicNoteVaultHandler:
         )
         if cc_match:
             cc_text = cc_match.group(1)
-            prec = re.search(r"- Precursores:\s*(.*)", cc_text)
-            lat = re.search(r"- Eventos Laterais:\s*(.*)", cc_text)
-            aft = re.search(r"- Desdobramentos:\s*(.*)", cc_text)
+            precursors_match = re.search(r"- Precursores:\s*(.*)", cc_text)
+            lateral_events_match = re.search(r"- Eventos Laterais:\s*(.*)", cc_text)
+            aftermath_match = re.search(r"- Desdobramentos:\s*(.*)", cc_text)
             cross_context = CrossContextRelations(
-                precursors=prec.group(1).strip() if prec else "",
-                lateral_events=lat.group(1).strip() if lat else "",
-                aftermath=aft.group(1).strip() if aft else "",
+                precursors=precursors_match.group(1).strip() if precursors_match else "",
+                lateral_events=lateral_events_match.group(1).strip()
+                if lateral_events_match
+                else "",
+                aftermath=aftermath_match.group(1).strip() if aftermath_match else "",
             )
 
         try:
@@ -269,9 +271,9 @@ class AtomicNoteVaultHandler:
         except (json.JSONDecodeError, OSError):
             return
 
-        k = key.lower().strip()
-        if k in index:
-            del index[k]
+        normalized_key = key.lower().strip()
+        if normalized_key in index:
+            del index[normalized_key]
             atomic_write(
                 self.index_path,
                 json.dumps(index, ensure_ascii=False, indent=2),

@@ -585,24 +585,28 @@ class PipelineStageRunner:
         fallback: _StageRet | Callable[[], _StageRet] | None = None,
     ) -> _StageRet | None:
         """Execute a pipeline stage wrapped with telemetry spans, metrics, and error handling."""
-        ch = channel or Channel(name=_as_str(channel_name) or "unknown", id=channel_id)
-        cid = (
+        resolved_channel = channel or Channel(
+            name=_as_str(channel_name) or "unknown", id=channel_id
+        )
+        resolved_content_id = (
             content.id
             if content is not None
             else (ContentId.from_string(content_id) if content_id else ContentId("unknown"))
         )
-        cnt = content or Content(id=cid, title=content_title)
+        resolved_content = content or Content(id=resolved_content_id, title=content_title)
         try:
             with self._measure_stage(
                 stage_name=stage_name,
-                channel=ch,
-                content=cnt,
+                channel=resolved_channel,
+                content=resolved_content,
             ):
                 return fn()
         except Exception as exc:
             if fatal:
                 raise
-            logger.warning("[Pipeline] %s skipped for %s: %s", stage_name, cnt.id.value, exc)
+            logger.warning(
+                "[Pipeline] %s skipped for %s: %s", stage_name, resolved_content.id.value, exc
+            )
             return fallback() if callable(fallback) else fallback
 
     def record_session_completion(

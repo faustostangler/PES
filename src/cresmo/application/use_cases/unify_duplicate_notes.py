@@ -122,10 +122,12 @@ def _merge_cross_contexts(
         return cc_a
     if cc_a is None:
         return cc_b
-    pre = cc_a.precursors or cc_b.precursors
-    lat = cc_a.lateral_events or cc_b.lateral_events
-    aft = cc_a.aftermath or cc_b.aftermath
-    return CrossContextRelations(precursors=pre, lateral_events=lat, aftermath=aft)
+    precursors = cc_a.precursors or cc_b.precursors
+    lateral_events = cc_a.lateral_events or cc_b.lateral_events
+    aftermath = cc_a.aftermath or cc_b.aftermath
+    return CrossContextRelations(
+        precursors=precursors, lateral_events=lateral_events, aftermath=aftermath
+    )
 
 
 class UnifyDuplicateNotesUseCase:

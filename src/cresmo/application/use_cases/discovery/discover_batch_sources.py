@@ -273,21 +273,21 @@ class DiscoverBatchSourcesUseCase:
         (millisecond latency), while launching channel feed crawling in a concurrent background thread.
         Conforms to ADR-010 (Streaming-First Unification).
         """
-        q = query or BatchDiscoveryQuery()
-        if q.explicit_manifest is not None:
-            yield from self._load_explicit_manifest(q.explicit_manifest)
+        discovery_query = query or BatchDiscoveryQuery()
+        if discovery_query.explicit_manifest is not None:
+            yield from self._load_explicit_manifest(discovery_query.explicit_manifest)
             return
 
         acc = _BatchSourceAccumulator()
-        state = self._collect_fast_path_sources(q, acc)
+        state = self._collect_fast_path_sources(discovery_query, acc)
 
-        if self.media_ingestion_port is None or not q.enable_channel_crawler:
-            yield from self._execute_sync_fallback(q, acc, state)
+        if self.media_ingestion_port is None or not discovery_query.enable_channel_crawler:
+            yield from self._execute_sync_fallback(discovery_query, acc, state)
             return
 
         maxsize = (
-            q.queue_maxsize
-            if q.queue_maxsize is not None
+            discovery_query.queue_maxsize
+            if discovery_query.queue_maxsize is not None
             else getattr(self.settings, "discovery_queue_maxsize", 50)
         )
         stream_queue: queue.Queue[BatchSource | None | Exception] = queue.Queue(maxsize=maxsize)
@@ -305,7 +305,7 @@ class DiscoverBatchSourcesUseCase:
 
         crawler_thread = threading.Thread(
             target=self._run_crawler_producer,
-            args=(q, acc, state, stream_queue, stop_event),
+            args=(discovery_query, acc, state, stream_queue, stop_event),
             name="CresmoCrawlerProducer",
             daemon=True,
         )
@@ -321,10 +321,10 @@ class DiscoverBatchSourcesUseCase:
         if urls:
             self._notify(f"[manifest] Loaded {len(urls)} URLs from {manifest_path.name}\n")
         sources: list[BatchSource] = []
-        for u in urls:
+        for url in urls:
             try:
-                cid = ContentId.from_url_or_token(u)
+                content_id = ContentId.from_url_or_token(url)
             except (ValueError, TypeError):
-                cid = None
-            sources.append(BatchSource(kind=SourceModality.URL, target=u, content_id=cid))
+                content_id = None
+            sources.append(BatchSource(kind=SourceModality.URL, target=url, content_id=content_id))
         return sources

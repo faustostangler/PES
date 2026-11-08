@@ -104,9 +104,11 @@ class SourceTranscript:
         if content is not None:
             resolved_content = content
         else:
-            cid = ContentId.from_string(content_id) if content_id else ContentId("unknown")
+            resolved_content_id = (
+                ContentId.from_string(content_id) if content_id else ContentId("unknown")
+            )
             resolved_content = Content(
-                id=cid,
+                id=resolved_content_id,
                 title=title,
                 body=body or "",
             )
@@ -135,22 +137,27 @@ class SourceTranscript:
         metadata: dict[str, Any] | None = None,
     ) -> SourceTranscript:
         """Factory constructing SourceTranscript from primitive parameters."""
-        ch = Channel(
+        channel_vo = Channel(
             name=channel_name,
             id=channel_id,
             category=channel_category,
         )
-        prov = MediaProvenance.create(
+        provenance_vo = MediaProvenance.create(
             url=source_url,
             description=video_description,
             publication_date=publication_date,
         )
-        cnt = Content(
+        content_vo = Content(
             id=ContentId.from_string(content_id),
             title=title,
             body=body,
         )
-        return cls(channel=ch, provenance=prov, content=cnt, metadata=metadata or {})
+        return cls(
+            channel=channel_vo,
+            provenance=provenance_vo,
+            content=content_vo,
+            metadata=metadata or {},
+        )
 
 
 @dataclass(frozen=True, slots=True)
@@ -216,9 +223,11 @@ class FluidTranscript:
         if content is not None:
             resolved_content = content
         else:
-            cid = ContentId.from_string(content_id) if content_id else ContentId("unknown")
+            resolved_content_id = (
+                ContentId.from_string(content_id) if content_id else ContentId("unknown")
+            )
             resolved_content = Content(
-                id=cid,
+                id=resolved_content_id,
                 title=title,
                 body=body or "",
             )
@@ -253,22 +262,27 @@ class FluidTranscript:
         metadata: dict[str, Any] | None = None,
     ) -> FluidTranscript:
         """Factory constructing FluidTranscript from primitive parameters."""
-        ch = Channel(
+        channel_vo = Channel(
             name=channel_name,
             id=channel_id,
             category=channel_category,
         )
-        prov = MediaProvenance.create(
+        provenance_vo = MediaProvenance.create(
             url=source_url,
             description=video_description,
             publication_date=publication_date,
         )
-        cnt = Content(
+        content_vo = Content(
             id=ContentId.from_string(content_id),
             title=title,
             body=body,
         )
-        return cls(channel=ch, provenance=prov, content=cnt, metadata=metadata or {})
+        return cls(
+            channel=channel_vo,
+            provenance=provenance_vo,
+            content=content_vo,
+            metadata=metadata or {},
+        )
 
 
 @dataclass(frozen=True, slots=True)

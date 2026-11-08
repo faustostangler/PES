@@ -50,7 +50,7 @@ class TranscriptVaultHandler:
         file_path = channel_dir / f"{transcript.content.id.value}.md"
 
         description = transcript.provenance.description or ""
-        desc_indented = "\n".join("  " + line for line in description.splitlines())
+        indented_description = "\n".join("  " + line for line in description.splitlines())
         date_str = (
             transcript.provenance.publication_date.strftime("%Y%m%d")
             if transcript.provenance.publication_date
@@ -74,7 +74,7 @@ class TranscriptVaultHandler:
             f"url: {transcript.provenance.url}\n"
             f"video_date: {date_str}\n"
             f"video_description: |\n"
-            f"{desc_indented}\n"
+            f"{indented_description}\n"
             f"---"
         )
         content = f"{yaml_header}\n\n{transcript.content.body}"
@@ -152,7 +152,7 @@ class TranscriptVaultHandler:
         file_path = channel_dir / f"{compendium.content_id.value}.md"
 
         description = compendium.video_description or ""
-        desc_indented = "\n".join("  " + line for line in description.splitlines())
+        indented_description = "\n".join("  " + line for line in description.splitlines())
         escaped_title = compendium.title.value.replace('"', '\\"')
         escaped_channel = str(compendium.channel_name).replace('"', '\\"')
         escaped_category = (compendium.channel_category or "uncategorized").replace('"', '\\"')
@@ -169,7 +169,7 @@ class TranscriptVaultHandler:
             f"video_date: {compendium.video_date}\n"
             f"pass_count: {compendium.pass_count}\n"
             f"video_description: |\n"
-            f"{desc_indented}\n"
+            f"{indented_description}\n"
             f"---"
         )
         body_text = (
@@ -200,7 +200,7 @@ class TranscriptVaultHandler:
         # Split into main body and complementary info
         parts = raw_body.split("## Informações Complementares")
         body_part = parts[0].strip()
-        comp_part = parts[1].strip() if len(parts) > 1 else ""
+        complementary_part = parts[1].strip() if len(parts) > 1 else ""
 
         # Strip initial # title if present
         if body_part.startswith("# "):
@@ -222,7 +222,7 @@ class TranscriptVaultHandler:
             channel_name=ChannelName(channel_name),
             title=NoteTitle(title),
             body=body_part,
-            complementary_info=comp_part,
+            complementary_info=complementary_part,
             pass_count=int(metadata.get("pass_count", 1)),
             channel_id=ChannelId.from_string(raw_channel_id) if raw_channel_id else None,
             channel_category=channel_category,
@@ -246,7 +246,7 @@ class TranscriptVaultHandler:
         file_path = channel_dir / f"{transcript.content.id.value}.md"
 
         description = transcript.provenance.description or ""
-        desc_indented = "\n".join("  " + line for line in description.splitlines())
+        indented_description = "\n".join("  " + line for line in description.splitlines())
         date_str = (
             transcript.provenance.publication_date.strftime("%Y%m%d")
             if transcript.provenance.publication_date
@@ -270,7 +270,7 @@ class TranscriptVaultHandler:
             f"url: {transcript.provenance.url}\n"
             f"video_date: {date_str}\n"
             f"video_description: |\n"
-            f"{desc_indented}\n"
+            f"{indented_description}\n"
             f"---"
         )
         content = f"{yaml_header}\n\n{transcript.content.body}"

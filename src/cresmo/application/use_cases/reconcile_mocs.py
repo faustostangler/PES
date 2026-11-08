@@ -120,13 +120,13 @@ class ReconcileMOCsUseCase:
             raw_associated = entry.get("associated_notes", [])
             seen_associated: set[str] = set()
             associated_notes: list[NoteTitle] = []
-            for n in raw_associated:
-                if isinstance(n, str) and n.strip():
-                    nt = NoteTitle(n)
-                    k = nt.value.lower()
-                    if k not in seen_associated:
-                        seen_associated.add(k)
-                        associated_notes.append(nt)
+            for raw_note in raw_associated:
+                if isinstance(raw_note, str) and raw_note.strip():
+                    note_title = NoteTitle(raw_note)
+                    note_key = note_title.value.lower()
+                    if note_key not in seen_associated:
+                        seen_associated.add(note_key)
+                        associated_notes.append(note_title)
 
             if not associated_notes:
                 continue

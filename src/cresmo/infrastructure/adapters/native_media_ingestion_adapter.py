@@ -334,19 +334,19 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
     ) -> tuple[SourceTranscript, ChannelId | None]:
         """Construct domain SourceTranscript entity from resolved metadata and body."""
         actual_video_id = str(info.get("id") or self._extract_video_id(video_url))
-        cid = ContentId.extract_from_text(actual_video_id) or ContentId.from_url_or_token(
+        content_id = ContentId.extract_from_text(actual_video_id) or ContentId.from_url_or_token(
             actual_video_id
         )
-        c_name = ChannelName.from_string(channel_name)
-        category, _ = classify_channel(c_name)
+        resolved_channel_name = ChannelName.from_string(channel_name)
+        category, _ = classify_channel(resolved_channel_name)
         upload_date = self._parse_upload_date(info.get("upload_date"))
 
-        raw_cid = str(info.get("channel_id") or info.get("uploader_id") or "").strip()
-        ch_id = ChannelId.extract_from_text(raw_cid)
+        raw_channel_id = str(info.get("channel_id") or info.get("uploader_id") or "").strip()
+        resolved_channel_id = ChannelId.extract_from_text(raw_channel_id)
 
         channel = Channel(
-            name=c_name,
-            id=ch_id,
+            name=resolved_channel_name,
+            id=resolved_channel_id,
             category=category,
             url=str(info.get("channel_url") or "") or None,
         )
@@ -356,7 +356,7 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             publication_date=upload_date,
         )
         content = Content.create(
-            id=cid,
+            id=content_id,
             title=str(info.get("title") or ""),
             body=body,
         )
@@ -365,7 +365,7 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             provenance=provenance,
             content=content,
         )
-        return transcript, ch_id
+        return transcript, resolved_channel_id
 
     def ingest_single_video(
         self,
@@ -398,14 +398,14 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
                 keep_audio=keep_audio,
             )
 
-            transcript, ch_id = self._build_raw_transcript_aggregate(
+            transcript, resolved_channel_id = self._build_raw_transcript_aggregate(
                 video_url=video_url,
                 info=info,
                 body=body,
                 channel_name=channel_name,
             )
-            if ch_id:
-                channel_id = ch_id.value
+            if resolved_channel_id:
+                channel_id = resolved_channel_id.value
             return transcript
         except Exception:
             status = "failure"

@@ -135,10 +135,12 @@ DEFAULT_FLUID_PROSE_WEIGHTS: dict[JudgeCriterion, float] = {
     JudgeCriterion.AUTHORIAL_VOICE: 0.10,
 }
 
-DEFAULT_MECHANICAL_VETO_CRITERIA: frozenset[JudgeCriterion] = frozenset({
-    JudgeCriterion.SEMANTIC_FAITHFULNESS,
-    JudgeCriterion.NER_PRESERVATION,
-})
+DEFAULT_MECHANICAL_VETO_CRITERIA: frozenset[JudgeCriterion] = frozenset(
+    {
+        JudgeCriterion.SEMANTIC_FAITHFULNESS,
+        JudgeCriterion.NER_PRESERVATION,
+    }
+)
 
 GAP_FILLER_CANONICAL_WEIGHTS: dict[JudgeCriterion, float] = {
     JudgeCriterion.FACTUAL_GROUNDING: 0.25,
@@ -148,10 +150,12 @@ GAP_FILLER_CANONICAL_WEIGHTS: dict[JudgeCriterion, float] = {
     JudgeCriterion.AUTHORIAL_NATURALISM: 0.15,
 }
 
-GAP_FILLER_MECHANICAL_VETO_CRITERIA: frozenset[JudgeCriterion] = frozenset({
-    JudgeCriterion.FACTUAL_GROUNDING,
-    JudgeCriterion.COMPLEMENTARY_SUBSTANCE,
-})
+GAP_FILLER_MECHANICAL_VETO_CRITERIA: frozenset[JudgeCriterion] = frozenset(
+    {
+        JudgeCriterion.FACTUAL_GROUNDING,
+        JudgeCriterion.COMPLEMENTARY_SUBSTANCE,
+    }
+)
 
 
 def compute_composite_verdict(
@@ -183,23 +187,23 @@ def compute_composite_verdict(
         return 0.0, False, False, ()
 
     active_weights = weights or DEFAULT_FLUID_PROSE_WEIGHTS
-    active_veto = (
-        veto_criteria if veto_criteria is not None else DEFAULT_MECHANICAL_VETO_CRITERIA
-    )
+    active_veto = veto_criteria if veto_criteria is not None else DEFAULT_MECHANICAL_VETO_CRITERIA
 
     weighted_sum = 0.0
     total_weight = 0.0
     veto_reasons: list[str] = []
 
-    for cs in scores:
-        w = active_weights.get(cs.criterion, 1.0)
-        weighted_sum += cs.score * w
-        total_weight += w
+    for criterion_score in scores:
+        weight = active_weights.get(criterion_score.criterion, 1.0)
+        weighted_sum += criterion_score.score * weight
+        total_weight += weight
 
-        if cs.criterion in active_veto and (cs.score < veto_threshold or not cs.passed):
+        if criterion_score.criterion in active_veto and (
+            criterion_score.score < veto_threshold or not criterion_score.passed
+        ):
             veto_reasons.append(
-                f"Mechanical Veto on critical criterion '{cs.criterion.value}': "
-                f"score {cs.score:.2f} < threshold {veto_threshold:.2f}"
+                f"Mechanical Veto on critical criterion '{criterion_score.criterion.value}': "
+                f"score {criterion_score.score:.2f} < threshold {veto_threshold:.2f}"
             )
 
     overall_score = round(weighted_sum / total_weight, 4) if total_weight > 0.0 else 0.0

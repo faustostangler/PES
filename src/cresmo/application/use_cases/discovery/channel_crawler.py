@@ -132,22 +132,24 @@ class ChannelFeedCrawlerService:
                 try:
                     discovered_urls = future.result()
                 except Exception as exc:  # noqa: BLE001
-                    u = future_to_url[future]
-                    self._notify(f"[crawler] Warning: Failed to probe feed for {u}: {exc}\n")
+                    failed_url = future_to_url[future]
+                    self._notify(
+                        f"[crawler] Warning: Failed to probe feed for {failed_url}: {exc}\n"
+                    )
                     continue
 
                 for d_url in discovered_urls:
                     if stop_event is not None and stop_event.is_set():
                         break
-                    cid = ContentId.extract_from_text(d_url)
-                    vid_token = cid or d_url
+                    content_id = ContentId.extract_from_text(d_url)
+                    video_token = content_id or d_url
                     # Stage B: Skip if already in raw lake or already queued
-                    if not acc.has_seen(vid_token):
+                    if not acc.has_seen(video_token):
                         # ADR-012: apply video ID filter before scheduling ingestion
-                        if not matches_video_target(criteria, cid or d_url, d_url):
+                        if not matches_video_target(criteria, content_id or d_url, d_url):
                             continue
                         added = acc.add_source(
-                            kind=SourceModality.URL, target=d_url, content_id=cid
+                            kind=SourceModality.URL, target=d_url, content_id=content_id
                         )
                         if added is not None:
                             discovered_count += 1
@@ -173,15 +175,15 @@ class ChannelFeedCrawlerService:
             discovered = self.media_ingestion_port.discover_channel_feed(feed_query)
             in_window: list[str] = []
             for item in discovered:
-                pub = getattr(item, "published_at", None)
-                if pub is not None:
-                    if pub.tzinfo is None:
-                        pub = pub.replace(tzinfo=UTC)
-                    if pub < cutoff:
+                published_at = getattr(item, "published_at", None)
+                if published_at is not None:
+                    if published_at.tzinfo is None:
+                        published_at = published_at.replace(tzinfo=UTC)
+                    if published_at < cutoff:
                         continue
-                u = getattr(item, "media_url", None) or getattr(item, "url", "")
-                if u:
-                    in_window.append(u)
+                media_url = getattr(item, "media_url", None) or getattr(item, "url", "")
+                if media_url:
+                    in_window.append(media_url)
             return in_window
         except Exception as exc:  # noqa: BLE001
             self._notify(f"[crawler] Warning: Failed to probe {chan_url}: {exc}\n")

@@ -88,9 +88,9 @@ def _resolve_metadata(
     )
     channel_name = ChannelName(channel_raw)
 
-    raw_cid = meta.get("channel_id")
-    channel_id_obj: ChannelId | None = (
-        ChannelId.from_string(str(raw_cid)) if raw_cid else ChannelId("priority_text")
+    raw_channel_id = meta.get("channel_id")
+    resolved_channel_id: ChannelId | None = (
+        ChannelId.from_string(str(raw_channel_id)) if raw_channel_id else ChannelId("priority_text")
     )
     category = str(
         meta.get("channel_category") or meta.get("domain") or classify_channel(channel_name)[0]
@@ -102,7 +102,7 @@ def _resolve_metadata(
     return (
         title,
         channel_name,
-        channel_id_obj,
+        resolved_channel_id,
         category,
         source_url,
         video_description,
@@ -142,19 +142,25 @@ def load_transcript_from_file(file_path: Path) -> SourceTranscript:
 
     content_id = _derive_content_id(file_path.stem, raw_body)
     body, meta = _extract_frontmatter(raw_body, file_path.name)
-    title, ch_name, ch_id, category, source_url, description, pub_date = _resolve_metadata(
-        meta, file_path, file_path.stem
-    )
+    (
+        title,
+        channel_name,
+        channel_id,
+        category,
+        source_url,
+        description,
+        publication_date,
+    ) = _resolve_metadata(meta, file_path, file_path.stem)
 
     channel = Channel(
-        name=ch_name,
-        id=ch_id,
+        name=channel_name,
+        id=channel_id,
         category=category,
     )
     provenance = MediaProvenance.create(
         url=source_url,
         description=description,
-        publication_date=pub_date,
+        publication_date=publication_date,
     )
     content = Content.create(
         id=content_id,
