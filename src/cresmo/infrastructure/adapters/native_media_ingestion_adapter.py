@@ -27,7 +27,6 @@ from pathlib import Path
 from typing import Any, cast
 
 import structlog
-import whisper
 import yt_dlp
 
 from cresmo.application.ports import MediaIngestionPort, MetricsPort
@@ -242,6 +241,8 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
                 shutil.copy2(audio_file, dest_audio)
 
             try:
+                import whisper  # Isolated heavy ML runtime lazy load per ADR-026/ADR-053
+
                 with self._whisper_semaphore:
                     model = whisper.load_model(whisper_model)
                     transcription_result = model.transcribe(str(audio_file))

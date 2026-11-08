@@ -27,10 +27,8 @@ from cresmo.domain.entities import (
     UserIdentity,
 )
 
-try:
-    from langfuse import propagate_attributes
-except ImportError:  # pragma: no cover
-    propagate_attributes = None  # type: ignore[assignment]
+# Defer langfuse import to runtime per ADR-026/ADR-053
+propagate_attributes: Any = None
 
 logger = structlog.get_logger(__name__)
 
@@ -380,9 +378,11 @@ class OpenTelemetryAdapter(TelemetryPort):
             root_operation, attributes=session_attributes
         ) as span:
             propagation_context: Any = nullcontext()
-            if self._langfuse is not None and propagate_attributes is not None:
+            if self._langfuse is not None:
                 try:
-                    propagation_context = propagate_attributes(
+                    from langfuse import propagate_attributes as langfuse_propagate
+
+                    propagation_context = langfuse_propagate(
                         session_id=session_id.value,
                         user_id=normalized_user.value,
                         tags=tags,

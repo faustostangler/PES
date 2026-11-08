@@ -14,7 +14,6 @@ from http import HTTPStatus
 from typing import Any
 
 import structlog
-from langfuse.api.core import ApiError
 
 from cresmo.application.ports import PromptProviderPort
 from cresmo.domain.value_objects import ChannelName, ChatMessage, ChatPrompt, MessageRole
@@ -24,9 +23,20 @@ from cresmo.infrastructure.config import CresmoSettings
 logger = structlog.get_logger(__name__)
 
 
-def _handle_api_error(exc: ApiError, prompt_name: str, label: str) -> None:
+def _get_api_error_type() -> type[Exception]:
+    """Resolve Langfuse ApiError lazily per ADR-026/ADR-053."""
+    try:
+        from langfuse.api.core import ApiError
+
+        return ApiError
+    except ImportError:
+        return Exception
+
+
+def _handle_api_error(exc: Any, prompt_name: str, label: str) -> None:
     """Log structured warning for Langfuse API errors."""
-    if exc.status_code == HTTPStatus.NOT_FOUND:
+    status_code = getattr(exc, "status_code", None)
+    if status_code == HTTPStatus.NOT_FOUND:
         logger.warning(
             "[LangfusePromptProvider] Prompt '%s' not found in Langfuse (404). "
             "Create it in Langfuse Cloud or use label='%s'. Using local fallback.",
@@ -38,8 +48,8 @@ def _handle_api_error(exc: ApiError, prompt_name: str, label: str) -> None:
             "[LangfusePromptProvider] Langfuse API error fetching '%s' (HTTP %s: %s). "
             "Using local fallback.",
             prompt_name,
-            exc.status_code,
-            exc.body,
+            status_code,
+            getattr(exc, "body", None),
         )
 
 
@@ -176,11 +186,12 @@ class LangfusePromptProvider(PromptProviderPort):
                 return _extract_prompt_messages(compiled_messages, kwargs)
 
             raise ValueError(f"Prompt '{prompt_name}' does not implement compile()")
-        except ApiError as exc:
-            _handle_api_error(exc, prompt_name, self._label)
-            raise
         except Exception as exc:
-            if not isinstance(exc, (ApiError, ValueError)):
+            api_err_type = _get_api_error_type()
+            if isinstance(exc, api_err_type):
+                _handle_api_error(exc, prompt_name, self._label)
+                raise
+            if not isinstance(exc, ValueError):
                 logger.warning(
                     "[LangfusePromptProvider] Transient error fetching prompt '%s' (%s: %s).",
                     prompt_name,

@@ -14,9 +14,6 @@ from collections.abc import Callable
 from typing import Any
 
 import structlog
-from langfuse import Langfuse
-from langfuse.span_filter import is_default_export_span
-from langfuse.types import MaskOtelSpansParams, MaskOtelSpansResult, OtelSpanPatch
 
 from cresmo.application.ports import (
     AnonymizerPort,
@@ -73,6 +70,7 @@ def _clean_langfuse_env() -> None:
 
 def _build_should_export_span() -> Callable[[Any], bool]:
     """Build filter predicate checking default spans and cresmo.* scopes."""
+    from langfuse.span_filter import is_default_export_span
 
     def should_export_cresmo_span(span: Any) -> bool:
         if is_default_export_span(span):
@@ -85,12 +83,14 @@ def _build_should_export_span() -> Callable[[Any], bool]:
 
 def _build_mask_hook(
     anonymizer: AnonymizerPort | None,
-) -> Callable[..., MaskOtelSpansResult | None] | None:
+) -> Callable[..., Any] | None:
     """Construct export-stage span attribute masking hook if anonymizer is provided."""
     if anonymizer is None:
         return None
 
-    def mask_otel_spans(*, params: MaskOtelSpansParams) -> MaskOtelSpansResult | None:
+    def mask_otel_spans(*, params: Any) -> Any:
+        from langfuse.types import MaskOtelSpansResult, OtelSpanPatch
+
         span_patches = {}
         for identifier, span in params.spans.items():
             raw_attrs = span.attributes or {}
@@ -160,11 +160,12 @@ def resolve_langfuse_client(
             init_kwargs["mask_otel_spans"] = mask_hook
 
         langfuse_module = sys.modules.get("langfuse")
-        langfuse_cls = (
-            getattr(langfuse_module, "Langfuse", Langfuse)
-            if langfuse_module is not None
-            else Langfuse
-        )
+        if langfuse_module is not None:
+            langfuse_cls = langfuse_module.Langfuse
+        else:
+            from langfuse import Langfuse as imported_langfuse
+
+            langfuse_cls = imported_langfuse
         client = langfuse_cls(**init_kwargs)
         name_telemetry_threads(client)
         return client

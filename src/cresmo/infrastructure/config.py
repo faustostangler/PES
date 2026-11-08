@@ -375,7 +375,7 @@ class CresmoSettings(BaseSettings):
         description="Whether to automatically extract cookies from browser if cookies_file is absent or expired.",
     )
     enable_channel_crawler: bool = Field(
-        default=True,
+        default=False,
         description="Whether batch discovery automatically crawls 365d uploads across all channels by default.",
     )
     require_auth_cookies: bool = Field(

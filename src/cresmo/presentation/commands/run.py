@@ -142,11 +142,18 @@ def run(
             help="Scan local raw transcript lake for unprocessed files (default: False)",
         ),
     ] = False,
+    crawl: Annotated[
+        bool,
+        typer.Option(
+            "--crawl",
+            help="Enable crawling remote channel feeds for new uploads (default: False for fast execution)",
+        ),
+    ] = False,
     no_crawl: Annotated[
         bool,
         typer.Option(
             "--no-crawl",
-            help="Disable crawling channel feeds and strictly process manifest seed items",
+            help="[Deprecated] Disable crawling channel feeds (now default behavior per ADR-053)",
         ),
     ] = False,
     web_index: Annotated[
@@ -211,6 +218,7 @@ def run(
         lookback: int | None
         channel_max_videos: int
         scan_raw: bool
+        crawl: bool
         no_crawl: bool
         web_index: bool
         channels: list[str] | None
@@ -227,6 +235,7 @@ def run(
     args.lookback = lookback
     args.channel_max_videos = channel_max_videos
     args.scan_raw = scan_raw
+    args.crawl = crawl
     args.no_crawl = no_crawl
     args.web_index = web_index
     args.channels = channels
@@ -553,11 +562,15 @@ def _build_batch_discovery_query(
     settings: CresmoSettings,
 ) -> BatchDiscoveryQuery:
     """Build strongly-typed discovery query from parsed CLI arguments and settings."""
-    enable_channel_crawler = (
-        False
-        if getattr(args, "no_crawl", False)
-        else getattr(settings, "enable_channel_crawler", True)
-    )
+    crawl_requested = getattr(args, "crawl", False)
+    no_crawl_requested = getattr(args, "no_crawl", False)
+
+    if no_crawl_requested:
+        enable_channel_crawler = False
+    elif crawl_requested:
+        enable_channel_crawler = True
+    else:
+        enable_channel_crawler = getattr(settings, "enable_channel_crawler", False)
 
     filter_criteria = SyncFilterCriteria.from_strings(
         channels=getattr(args, "channels", None) or [],

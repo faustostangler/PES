@@ -91,7 +91,7 @@ def my_function():
   3. Local Cresmo package imports
 * Variable assignments (`logger = ...`, `TypeVar`, `_StageRet`) MUST be placed AFTER all imports are declared.
 * Side effects (such as eager plugin initialization) MUST NOT execute at module import time; they must be encapsulated in explicit startup hooks or bootstrap functions within `composition.py`.
-* Local imports (`PLC0415`) are strictly prohibited unless dealing with an optional, extremely heavy vendor library specifically isolated within a dedicated lazy-loading adapter.
+* Local imports (`PLC0415`) are strictly prohibited unless dealing with an optional, extremely heavy vendor library specifically isolated within a dedicated lazy-loading adapter or deferred CLI subcommand handler per [ADR-053](ADR-053-lazy-presentation-cli-loading-and-subcommand-decoupling.md) (Fast CLI / "CLI a Jato").
 
 ---
 

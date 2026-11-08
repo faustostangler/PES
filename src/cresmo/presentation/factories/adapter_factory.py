@@ -9,26 +9,27 @@ Conforms to:
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from cresmo.application.ports import (
     LLMTransformationPort,
     PromptProviderPort,
 )
 from cresmo.application.services.preflight import PreflightHealthChecker
-from cresmo.infrastructure.adapters.gemini_adapter import GeminiLLMAdapter
 from cresmo.infrastructure.adapters.header_generator import RandomHeaderGenerator
 from cresmo.infrastructure.adapters.native_media_ingestion_adapter import (
     NativeMediaIngestionAdapter,
 )
 from cresmo.infrastructure.adapters.obsidian_vault_adapter import ObsidianVaultAdapter
-from cresmo.infrastructure.adapters.ollama_llm_adapter import OllamaLLMAdapter
 from cresmo.infrastructure.adapters.prompt_provider import (
     JsonPromptProvider,
     LangfusePromptProvider,
 )
 from cresmo.infrastructure.config import CresmoSettings
 from cresmo.presentation.factories.settings_factory import resolve_shared_settings
+
+if TYPE_CHECKING:
+    from cresmo.infrastructure.adapters.gemini_adapter import GeminiLLMAdapter
 
 
 def _resolve_cookie_file(settings: CresmoSettings) -> Path | None:
@@ -123,6 +124,8 @@ def build_gemini_synthesis_adapter(
     langfuse_client: Any | None = None,
 ) -> GeminiLLMAdapter:
     """Instantiate and wire GeminiLLMAdapter for core synthesis workflows."""
+    from cresmo.infrastructure.adapters.gemini_adapter import GeminiLLMAdapter
+
     settings = resolve_shared_settings(settings)
     api_keys = [k.get_secret_value() for k in settings.gemini_api_keys]
     return GeminiLLMAdapter(
@@ -143,6 +146,8 @@ def build_indexing_adapter(
     api_keys: list[str] | None = None,
 ) -> LLMTransformationPort:
     """Instantiate LLM adapter for indexing, selecting between local Ollama and Gemini API."""
+    from cresmo.infrastructure.adapters.gemini_adapter import GeminiLLMAdapter
+
     settings = resolve_shared_settings(settings)
     if web_index or settings.indexing_provider == "gemini":
         if (
@@ -159,6 +164,8 @@ def build_indexing_adapter(
             langfuse_client=langfuse_client,
             default_temperature=settings.llm_indexing_temperature,
         )
+
+    from cresmo.infrastructure.adapters.ollama_llm_adapter import OllamaLLMAdapter
 
     return OllamaLLMAdapter(
         base_url=settings.ollama_base_url,

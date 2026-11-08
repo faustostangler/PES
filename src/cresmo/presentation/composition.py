@@ -22,9 +22,6 @@ from collections.abc import Callable
 from typing import Any
 
 import structlog
-from langfuse import Langfuse  # very slow import
-from langfuse.span_filter import is_default_export_span
-from langfuse.types import MaskOtelSpansParams, MaskOtelSpansResult, OtelSpanPatch
 
 from cresmo.application.pipeline import (
     CresmoPipeline,  # slow import
@@ -40,7 +37,6 @@ from cresmo.application.services.preflight import (
     probe_http_endpoint,
 )
 from cresmo.application.use_cases.sync_channel import SyncChannelUseCase
-from cresmo.infrastructure.adapters.ollama_critique_adapter import OllamaCritiqueAdapter
 from cresmo.infrastructure.adapters.opentelemetry_adapter import (
     name_telemetry_threads,
 )
@@ -106,6 +102,7 @@ def _clean_langfuse_env() -> None:
 
 def _build_should_export_span() -> Callable[[Any], bool]:
     """Build filter predicate checking default spans and cresmo.* scopes."""
+    from langfuse.span_filter import is_default_export_span
 
     def should_export_cresmo_span(span: Any) -> bool:
         if is_default_export_span(span):
@@ -118,12 +115,14 @@ def _build_should_export_span() -> Callable[[Any], bool]:
 
 def _build_mask_hook(
     anonymizer: AnonymizerPort | None,
-) -> Callable[..., MaskOtelSpansResult | None] | None:
+) -> Callable[..., Any] | None:
     """Construct export-stage span attribute masking hook if anonymizer is provided."""
     if anonymizer is None:
         return None
 
-    def mask_otel_spans(*, params: MaskOtelSpansParams) -> MaskOtelSpansResult | None:
+    def mask_otel_spans(*, params: Any) -> Any:
+        from langfuse.types import MaskOtelSpansResult, OtelSpanPatch
+
         span_patches = {}
         for identifier, span in params.spans.items():
             raw_attrs = span.attributes or {}
@@ -193,11 +192,12 @@ def resolve_langfuse_client(
             init_kwargs["mask_otel_spans"] = mask_hook
 
         langfuse_module = sys.modules.get("langfuse")
-        langfuse_cls = (
-            getattr(langfuse_module, "Langfuse", Langfuse)
-            if langfuse_module is not None
-            else Langfuse
-        )
+        if langfuse_module is not None:
+            langfuse_cls = langfuse_module.Langfuse
+        else:
+            from langfuse import Langfuse as imported_langfuse
+
+            langfuse_cls = imported_langfuse
         client = langfuse_cls(**init_kwargs)
         name_telemetry_threads(client)
         return client
@@ -258,6 +258,10 @@ def build_pipeline(
         langfuse_client=langfuse_client,
         prompt_provider=prompt_provider,
     )
+    from cresmo.infrastructure.adapters.ollama_critique_adapter import (
+        OllamaCritiqueAdapter,
+    )
+
     critique_synthesizer = OllamaCritiqueAdapter(
         llm_transformation_port=llm_indexing_port,
         prompt_provider=prompt_provider,

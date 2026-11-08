@@ -72,6 +72,7 @@ In this repository, architectural decisions evolve continuously through test-dri
 | [**ADR-042**](ADR-042-typer-presentation-cli.md) | 2026-10-14 | Modern Typer Presentation CLI Driving Adapter | Presentation / CLI | `ACCEPTED` | **Supersedes ADR-002**. Eliminates legacy argparse in favor of Typer + Rich with fail-fast boundary validation. |
 | [**ADR-043**](ADR-043-fluid-transcript-vault-persistence-and-checkpointing.md) | 2026-10-18 | Fluid Transcript Vault Persistence, Checkpointing, and Lineage Observability | Storage / Checkpointing | `ACCEPTED` | Extends VaultRepositoryPort and Obsidian Vault adapter to persist normalized fluid transcripts in data/fluid/ with atomic checkpointing. |
 | [**ADR-044**](ADR-044-structlog-structured-logging-unification.md) | 2026-10-20 | Structlog Structured Logging Unification and Stdlib Logging Elimination | Observability / Infra | `ACCEPTED` | **Supersedes ADR-025 in part**. Eliminates stdlib logging in favor of native structlog with OTel trace correlation and Loki JSON output. |
+| [**ADR-053**](ADR-053-lazy-presentation-cli-loading-and-subcommand-decoupling.md) | 2026-11-07 | Lazy Presentation CLI Loading, Subcommand Decoupling, and Default-Fast Ingestion | Presentation / CLI | `ACCEPTED` | Implements PEP 562 dynamic command loading ("CLI a Jato"), isolates heavy vendor runtimes (Whisper, Langfuse), inverts channel crawling to opt-in `--crawl`, and cleans developer launch tooling. |
 
 ---
 
