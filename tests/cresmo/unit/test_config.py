@@ -54,7 +54,7 @@ class TestCresmoSettings:
         assert settings.sqlite_ledger_path == settings.data_dir / "cresmo_ledger.db"
         assert settings.browser_cookies == "firefox"
         assert settings.auto_extract_cookies is True
-        assert settings.enable_channel_crawler is True
+        assert settings.enable_channel_crawler is False
         assert settings.require_auth_cookies is False
         assert settings.concat_max_words == 500_000
         assert settings.brain_csv_path == settings.data_dir / "brain.csv"

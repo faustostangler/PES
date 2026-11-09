@@ -219,7 +219,9 @@ async def job_extract_audio(
             "text_length": len(body),
         }
     except Exception as exc:
-        logger.error("Audio extraction failed [content_id=%s, try=%d]: %s", content_id, job_try, exc)
+        logger.error(
+            "Audio extraction failed [content_id=%s, try=%d]: %s", content_id, job_try, exc
+        )
         if job_try < _DEFAULT_MAX_RETRIES:
             raise Retry(defer=job_try * _DEFAULT_RETRY_DELAY_SECONDS) from exc
         return {"status": "FAILED", "content_id": content_id, "error": str(exc)}

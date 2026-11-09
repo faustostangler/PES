@@ -165,6 +165,7 @@ class TestAdapterFactory:
     """Hermetic unit tests for adapter factory."""
 
     def test_resolve_cookie_file(self, tmp_path: Path, mock_settings: CresmoSettings) -> None:
+        mock_settings.cookies_file = None
         # None when not found
         assert _resolve_cookie_file(mock_settings) is None
 

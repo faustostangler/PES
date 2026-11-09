@@ -27,8 +27,14 @@ from cresmo.domain.entities import (
     UserIdentity,
 )
 
-# Defer langfuse import to runtime per ADR-026/ADR-053
-propagate_attributes: Any = None
+
+# Defer langfuse import to runtime per ADR-026/ADR-053/ADR-055
+def propagate_attributes(**kwargs: Any) -> Any:
+    """Propagate trace attributes lazily through Langfuse context (ADR-055)."""
+    from langfuse import propagate_attributes as _real_propagate
+
+    return _real_propagate(**kwargs)
+
 
 logger = structlog.get_logger(__name__)
 
@@ -380,9 +386,7 @@ class OpenTelemetryAdapter(TelemetryPort):
             propagation_context: Any = nullcontext()
             if self._langfuse is not None:
                 try:
-                    from langfuse import propagate_attributes as langfuse_propagate
-
-                    propagation_context = langfuse_propagate(
+                    propagation_context = propagate_attributes(
                         session_id=session_id.value,
                         user_id=normalized_user.value,
                         tags=tags,
@@ -631,7 +635,9 @@ class OpenTelemetryAdapter(TelemetryPort):
         if current_span and current_span.is_recording():
             if input_payload is not None:
                 serialized_in = (
-                    json.dumps(input_payload, default=str) if isinstance(input_payload, dict) else input_payload
+                    json.dumps(input_payload, default=str)
+                    if isinstance(input_payload, dict)
+                    else input_payload
                 )
                 current_span.set_attribute("input.value", serialized_in)
                 current_span.set_attribute("langfuse.observation.input", serialized_in)

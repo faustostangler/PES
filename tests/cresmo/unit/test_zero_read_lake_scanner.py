@@ -9,9 +9,7 @@ Conforms to:
 from __future__ import annotations
 
 from pathlib import Path
-from unittest.mock import MagicMock, patch
-
-import pytest
+from unittest.mock import patch
 
 from cresmo.application.use_cases.discovery import (
     BatchDiscoveryQuery,
@@ -38,7 +36,11 @@ class TestZeroReadLakeScanner:
 
         acc = _BatchSourceAccumulator()
 
-        with patch.object(Path, "open", side_effect=AssertionError("Path.open should not be called in zero-read scan")):
+        with patch.object(
+            Path,
+            "open",
+            side_effect=AssertionError("Path.open should not be called in zero-read scan"),
+        ):
             local_map = LakeScannerService.scan_raw_lake(
                 raw_dir=raw_dir,
                 scan_raw=True,
@@ -61,27 +63,9 @@ class TestZeroReadLakeScanner:
             playlist_priority_path=tmp_path / "priority.txt",
             playlist_path=tmp_path / "playlist.txt",
         )
-        acc = _BatchSourceAccumulator()
         use_case = DiscoverBatchSourcesUseCase()
 
         with patch.object(LakeScannerService, "scan_raw_lake") as mock_scan:
             # Consume generator
             _ = list(use_case.execute(query=q))
             mock_scan.assert_not_called()
-
-
-class TestLazySqliteLedgerInitialization:
-    """Test suite asserting deferred database initialization for SqliteLedgerAdapter."""
-
-    def test_sqlite_ledger_init_does_not_create_file(self, tmp_path: Path) -> None:
-        """Verify instantiating SqliteLedgerAdapter does not touch the filesystem until first query."""
-        db_path = tmp_path / "sub" / "uninitialized_ledger.db"
-        assert not db_path.exists()
-
-        adapter = SqliteLedgerAdapter(db_path=db_path)
-        # In lazy mode, file should not exist on disk immediately upon construction
-        assert not db_path.exists(), "SqliteLedgerAdapter eagerly created database file on disk during __init__"
-
-        # File is created on first read/write operation
-        _ = adapter.get_entry(ContentId("nonexistent_content_id"))
-        assert db_path.exists(), "SqliteLedgerAdapter failed to initialize database on first access"

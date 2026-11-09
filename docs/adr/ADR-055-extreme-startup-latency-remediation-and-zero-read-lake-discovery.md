@@ -1,7 +1,7 @@
 # ADR-055: Comprehensive Presentation CLI Lazy Dispatching, Zero-Read Lake Scanning, and Deferred Adapter Initialization
 
 ## Status
-PROPOSED (Turn 1 — Upfront Planning)
+ACCEPTED (Turn 3 — Green + Refactor)
 
 ## Context
 Running `cresmo run` or debugging through VS Code / Antigravity IDE (F5) encounters severe multi-stage startup latency on developer workstations when the repository and virtual environment reside on mechanical storage (`/dev/sda1` 5400 RPM SATA HDD, NTFS via FUSE):

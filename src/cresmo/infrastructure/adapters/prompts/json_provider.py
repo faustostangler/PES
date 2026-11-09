@@ -90,6 +90,7 @@ class JsonPromptProvider(PromptProviderPort):
         self._skill_cache: dict[str, str] = {}
         self._catalog: PromptCatalog | None = None
         self._templates: dict[str, dict[str, Any]] = {}
+        self._load_templates()
 
     def _ensure_templates_loaded(self) -> None:
         """Lazily load catalog and custom templates on first access (ADR-055)."""
@@ -204,8 +205,8 @@ class JsonPromptProvider(PromptProviderPort):
         entry = self.templates.get(key_str, {})
         if entry.get("description"):
             return str(entry["description"])
-        if key_str in self._catalog:
-            return self._catalog[key_str].description
+        if key_str in self.catalog:
+            return self.catalog[key_str].description
         return ""
 
     def _build_context_replacements(

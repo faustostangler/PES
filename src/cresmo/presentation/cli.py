@@ -20,7 +20,7 @@ from typing import Any
 
 import click
 import typer
-from typer.core import TyperGroup
+from typer.core import TyperCommand, TyperGroup
 
 from cresmo.presentation.exit_codes import (
     EXIT_CONFIG_OR_USAGE_ERROR,
@@ -77,55 +77,67 @@ _LAZY_COMMANDS: dict[str, tuple[str, str, str]] = {
 }
 
 
-class LazyCommand(click.Command):
+class LazyCommand(TyperCommand):
     """Click Command wrapper executing on-demand dynamic module import per ADR-055."""
 
     def __init__(self, name: str, module_path: str, func_name: str, help_text: str) -> None:
         super().__init__(name=name, help=help_text)
         self.module_path = module_path
         self.func_name = func_name
-        self._real_cmd: click.Command | None = None
+        self._real_cmd: Any = None
 
-    def _load_cmd(self) -> click.Command:
+    def _load_cmd(self) -> Any:
         if self._real_cmd is None:
             mod = importlib.import_module(self.module_path)
             func = getattr(mod, self.func_name)
             sub_app = typer.Typer()
             sub_app.command(name=self.name, help=self.help)(func)
-            self._real_cmd = typer.main.get_command(sub_app)
+            cmd = typer.main.get_command(sub_app)
+            self._real_cmd = cmd
+        assert self._real_cmd is not None
         return self._real_cmd
 
-    def parse_args(self, ctx: click.Context, args: list[str]) -> list[str]:
+    def parse_args(self, ctx: Any, args: list[str]) -> list[str]:
         real_cmd = self._load_cmd()
         self.params = real_cmd.params
-        return real_cmd.parse_args(ctx, args)
+        res = real_cmd.parse_args(ctx, args)
+        return list(res)
 
-    def invoke(self, ctx: click.Context) -> Any:
+    def invoke(self, ctx: Any) -> Any:
         return self._load_cmd().invoke(ctx)
 
-    def get_help(self, ctx: click.Context) -> str:
-        return self._load_cmd().get_help(ctx)
+    def get_help(self, ctx: Any) -> str:
+        return str(self._load_cmd().get_help(ctx))
 
-    def format_help(self, ctx: click.Context, formatter: click.HelpFormatter) -> None:
-        return self._load_cmd().format_help(ctx, formatter)
+    def format_help(self, ctx: Any, formatter: Any) -> None:
+        self._load_cmd().format_help(ctx, formatter)
 
 
 class LazyTyperGroup(TyperGroup):
     """Custom TyperGroup deferring subcommand module imports until explicit execution (ADR-055)."""
 
-    def list_commands(self, ctx: click.Context) -> list[str]:
-        base_cmds = set(super().list_commands(ctx))
-        return sorted(list(base_cmds.union(_LAZY_COMMANDS.keys())))
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        for cmd_name, (mod_path, func_name, help_text) in _LAZY_COMMANDS.items():
+            self.commands[cmd_name] = LazyCommand(cmd_name, mod_path, func_name, help_text)
 
-    def get_command(self, ctx: click.Context, cmd_name: str) -> click.Command | None:
-        if cmd_name in self.commands:
-            return self.commands[cmd_name]
+    def list_commands(self, ctx: Any) -> list[str]:
+        base_cmds = set(super().list_commands(ctx))
+        return sorted(base_cmds.union(_LAZY_COMMANDS.keys()))
+
+    def get_command(self, ctx: Any, cmd_name: str) -> Any:
         if cmd_name in _LAZY_COMMANDS:
-            mod_path, func_name, help_text = _LAZY_COMMANDS[cmd_name]
-            cmd = LazyCommand(cmd_name, mod_path, func_name, help_text)
-            self.commands[cmd_name] = cmd
-            return cmd
+            if cmd_name not in self.commands or not isinstance(
+                self.commands[cmd_name], LazyCommand
+            ):
+                mod_path, func_name, help_text = _LAZY_COMMANDS[cmd_name]
+                self.commands[cmd_name] = LazyCommand(cmd_name, mod_path, func_name, help_text)
+            return self.commands[cmd_name]
         return super().get_command(ctx, cmd_name)
+
+
+def _lazy_command_stub() -> None:
+    """Empty callback stub to satisfy Typer command registration during inspection."""
 
 
 app = typer.Typer(
@@ -137,14 +149,19 @@ app = typer.Typer(
     context_settings={"help_option_names": ["-h", "--help"]},
 )
 
+for _cmd_name, (_, _, _help_text) in _LAZY_COMMANDS.items():
+    app.registered_commands.append(
+        typer.models.CommandInfo(
+            name=_cmd_name,
+            callback=_lazy_command_stub,
+            help=_help_text,
+        )
+    )
+
 
 @app.callback()
 def _main_callback() -> None:
     """Cresmo Knowledge Synthesis root entrypoint."""
-
-
-for _cmd_name, (_mod_path, _func_name, _help_text) in _LAZY_COMMANDS.items():
-    app.registered_commands.append(typer.models.CommandInfo(name=_cmd_name, help=_help_text))
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -163,14 +180,16 @@ def main(argv: Sequence[str] | None = None) -> int:
         exit_result = app(args=list(argv) if argv is not None else None, standalone_mode=False)
         return EXIT_SUCCESS if exit_result is None else int(exit_result)
     except typer.Exit as exc:
-        return exc.exit_code
+        return int(exc.exit_code)
     except click.exceptions.Exit as exc:
-        return exc.exit_code
+        return int(exc.exit_code)
     except typer.exceptions.TyperException as exc:
-        return getattr(exc, "exit_code", EXIT_CONFIG_OR_USAGE_ERROR)
+        code = getattr(exc, "exit_code", EXIT_CONFIG_OR_USAGE_ERROR)
+        return int(code) if isinstance(code, int) else EXIT_CONFIG_OR_USAGE_ERROR
     except click.ClickException as exc:
         sys.stderr.write(f"Usage error: {exc}\n")
-        return getattr(exc, "exit_code", EXIT_CONFIG_OR_USAGE_ERROR)
+        code = getattr(exc, "exit_code", EXIT_CONFIG_OR_USAGE_ERROR)
+        return int(code) if isinstance(code, int) else EXIT_CONFIG_OR_USAGE_ERROR
     except SystemExit as exc:
         return exc.code if isinstance(exc.code, int) else EXIT_CONFIG_OR_USAGE_ERROR
     except Exception as exc:  # noqa: BLE001
