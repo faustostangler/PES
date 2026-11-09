@@ -307,7 +307,7 @@ class PipelineStageRunner:
             **pass_kwargs,
         )
 
-        curr_text = llm_port.transform(
+        current_text = llm_port.transform(
             prompt=chat_prompt,
             temperature=stage_config.temperature,
             trace_id=f"{active_trace_id}_pass_1" if max_passes > 1 else active_trace_id,
@@ -336,7 +336,7 @@ class PipelineStageRunner:
                     pass_num=pass_index,
                     prev_pass_num=pass_index - 1,
                     total_passes=max_passes,
-                    current_text=curr_text,
+                    current_text=current_text,
                 )
                 new_text = llm_port.transform(
                     prompt=chat_prompt,
@@ -350,17 +350,17 @@ class PipelineStageRunner:
                 # Layer 1: Check mechanical saturation between passes
                 if getattr(
                     stage_config, "early_stopping_enabled", False
-                ) and check_complementary_mechanical_saturation(curr_text, new_text):
+                ) and check_complementary_mechanical_saturation(current_text, new_text):
                     logger.info(
                         "[StageRunner] Mechanical saturation reached at pass %d/%d. Halting early.",
                         pass_index,
                         max_passes,
                     )
                     is_saturated = True
-                    curr_text = new_text
+                    current_text = new_text
                     break
 
-                curr_text = new_text
+                current_text = new_text
 
         candidate_metadata: dict[str, Any] = {
             "channel_id": context.channel.id.value if context.channel.id else "",
@@ -374,7 +374,7 @@ class PipelineStageRunner:
             candidate_metadata["is_saturated"] = is_saturated
 
         return CandidateText(
-            text=curr_text,
+            text=current_text,
             stage_name=stage_config.stage_name,
             metadata=candidate_metadata,
         )

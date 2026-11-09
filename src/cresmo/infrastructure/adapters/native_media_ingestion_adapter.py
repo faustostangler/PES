@@ -27,7 +27,6 @@ from pathlib import Path
 from typing import Any, cast
 
 import structlog
-import yt_dlp
 
 from cresmo.application.ports import MediaIngestionPort, MetricsPort
 from cresmo.domain.entities import SourceTranscript
@@ -104,7 +103,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         self._whisper_semaphore = threading.BoundedSemaphore(max(1, whisper_concurrency_limit))
         self._cookie_file: Path | None = Path(cookie_file).resolve() if cookie_file else None
         self._js_runtime_name: str | None = js_runtime_name or self._detect_js_runtime()
-        ensure_yt_dlp_plugins_loaded()
         if metrics_port is None:
             self._metrics_port: MetricsPort = NoOpMetricsAdapter()
         else:
@@ -221,6 +219,9 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             )
 
             try:
+                import yt_dlp
+
+                ensure_yt_dlp_plugins_loaded()
                 with yt_dlp.YoutubeDL(cast(Any, ydl_opts)) as ydl:
                     ydl.download([video_url])
             except Exception as exc:  # noqa: BLE001
@@ -265,6 +266,9 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             }
         )
         try:
+            import yt_dlp
+
+            ensure_yt_dlp_plugins_loaded()
             with yt_dlp.YoutubeDL(cast(Any, ydl_opts)) as ydl:
                 info = ydl.extract_info(video_url, download=False)
         except Exception as exc:  # noqa: BLE001
@@ -448,6 +452,9 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             }
         )
         try:
+            import yt_dlp
+
+            ensure_yt_dlp_plugins_loaded()
             with yt_dlp.YoutubeDL(cast(Any, ydl_opts)) as ydl:
                 info = ydl.extract_info(video_url, download=False)
         except Exception as exc:  # noqa: BLE001 - Non-fatal discovery failure

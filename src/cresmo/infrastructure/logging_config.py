@@ -25,19 +25,19 @@ class CresmoOTelTraceCorrelationFilter(logging.Filter):
     def filter(self, record: logging.LogRecord) -> bool:
         """Enrich LogRecord with otelTraceID, otelSpanID, and session_id."""
         span = trace.get_current_span()
-        ctx = span.get_span_context() if span else None
-        if ctx and ctx.trace_id:
-            record.otelTraceID = format(ctx.trace_id, "032x")
-            record.otelSpanID = format(ctx.span_id, "016x")
+        span_context = span.get_span_context() if span else None
+        if span_context and span_context.trace_id:
+            record.otelTraceID = format(span_context.trace_id, "032x")
+            record.otelSpanID = format(span_context.span_id, "016x")
         else:
             record.otelTraceID = "0" * 32
             record.otelSpanID = "0" * 16
 
         record.session_id = ""
         if hasattr(span, "attributes") and span.attributes:
-            sid = span.attributes.get("langfuse.session.id")
-            if sid:
-                record.session_id = str(sid)
+            session_id_attr = span.attributes.get("langfuse.session.id")
+            if session_id_attr:
+                record.session_id = str(session_id_attr)
         return True
 
 
@@ -48,19 +48,19 @@ def add_opentelemetry_context(
 ) -> MutableMapping[str, Any]:
     """Structlog processor injecting OTel trace_id, span_id, and session_id into event_dict."""
     span = trace.get_current_span()
-    ctx = span.get_span_context() if span else None
-    if ctx and ctx.trace_id:
-        event_dict["otelTraceID"] = format(ctx.trace_id, "032x")
-        event_dict["otelSpanID"] = format(ctx.span_id, "016x")
+    span_context = span.get_span_context() if span else None
+    if span_context and span_context.trace_id:
+        event_dict["otelTraceID"] = format(span_context.trace_id, "032x")
+        event_dict["otelSpanID"] = format(span_context.span_id, "016x")
     else:
         event_dict["otelTraceID"] = "0" * 32
         event_dict["otelSpanID"] = "0" * 16
 
     event_dict["session_id"] = ""
     if hasattr(span, "attributes") and span.attributes:
-        sid = span.attributes.get("langfuse.session.id")
-        if sid:
-            event_dict["session_id"] = str(sid)
+        session_id_attr = span.attributes.get("langfuse.session.id")
+        if session_id_attr:
+            event_dict["session_id"] = str(session_id_attr)
     return event_dict
 
 
@@ -145,4 +145,3 @@ def configure_logging(level: str = "WARNING", fmt: str = "json") -> None:
 
 
 get_logger = structlog.get_logger
-

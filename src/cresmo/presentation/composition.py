@@ -333,23 +333,25 @@ def build_sync_channel_use_case(
     )
 
 
-# Register hooks into infrastructure arq worker to eliminate reverse coupling per ADR-048 and ADR-051
-try:
-    from cresmo.infrastructure.workers.arq_worker import (
-        register_media_ingestion_factory,
-        register_stage_runner_factory,
-        register_sync_channel_factory,
-    )
+def bind_arq_worker_factories() -> None:
+    """Register hooks into infrastructure arq worker to eliminate reverse coupling per ADR-048, ADR-051, and ADR-055."""
+    try:
+        from cresmo.infrastructure.workers.arq_worker import (
+            register_media_ingestion_factory,
+            register_stage_runner_factory,
+            register_sync_channel_factory,
+        )
 
-    register_stage_runner_factory(build_stage_runner)
-    register_media_ingestion_factory(build_media_ingestion_adapter)
-    register_sync_channel_factory(build_sync_channel_use_case)
-except ImportError:
-    pass
+        register_stage_runner_factory(build_stage_runner)
+        register_media_ingestion_factory(build_media_ingestion_adapter)
+        register_sync_channel_factory(build_sync_channel_use_case)
+    except ImportError:
+        pass
 
 
 __all__ = [
     "PreflightHealthChecker",
+    "bind_arq_worker_factories",
     "build_anonymizer_adapter",
     "build_concat_master_use_case",
     "build_discover_batch_sources_use_case",

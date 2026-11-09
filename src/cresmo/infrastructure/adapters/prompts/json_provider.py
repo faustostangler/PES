@@ -88,14 +88,26 @@ class JsonPromptProvider(PromptProviderPort):
         )
         self._registry: PromptBuilderRegistry = registry or PROMPT_BUILDER_REGISTRY
         self._skill_cache: dict[str, str] = {}
-        self._catalog: PromptCatalog = PromptCatalog({})
+        self._catalog: PromptCatalog | None = None
         self._templates: dict[str, dict[str, Any]] = {}
-        self._load_templates()
+
+    def _ensure_templates_loaded(self) -> None:
+        """Lazily load catalog and custom templates on first access (ADR-055)."""
+        if self._catalog is None:
+            self._load_templates()
 
     @property
     def catalog(self) -> PromptCatalog:
         """Immutable PromptCatalog instance holding validated PromptSpec definitions."""
+        self._ensure_templates_loaded()
+        assert self._catalog is not None
         return self._catalog
+
+    @property
+    def templates(self) -> dict[str, dict[str, Any]]:
+        """Dictionary of raw template dictionaries indexed by prompt key."""
+        self._ensure_templates_loaded()
+        return self._templates
 
     def _load_templates(self) -> None:
         """Load bundled prompt catalog and overlay optional custom prompts file."""
@@ -172,24 +184,24 @@ class JsonPromptProvider(PromptProviderPort):
         else:
             skills = entry.get("skills", [])
             if not skills and "skill_name" in entry:
-                sn = entry["skill_name"]
-                skills = [sn] if sn else []
+                skill_name = entry["skill_name"]
+                skills = [skill_name] if skill_name else []
         if isinstance(skills, list) and skills:
             blocks = [self._get_skill_block(str(name)) for name in skills]
-            return "".join(b for b in blocks if b)
+            return "".join(block for block in blocks if block)
         return ""
 
     @staticmethod
     def _safe_format(template: str, **kwargs: Any) -> str:
         """Safely substitute named {{keys}} or {keys} without failing on literal JSON braces."""
         result = template
-        for key, val in kwargs.items():
-            result = result.replace(f"{{{{{key}}}}}", str(val)).replace(f"{{{key}}}", str(val))
+        for key, value in kwargs.items():
+            result = result.replace(f"{{{{{key}}}}}", str(value)).replace(f"{{{key}}}", str(value))
         return result
 
     def _get_description_for_key(self, key_str: str) -> str:
         """Resolve canonical prompt description from template overlay or catalog."""
-        entry = self._templates.get(key_str, {})
+        entry = self.templates.get(key_str, {})
         if entry.get("description"):
             return str(entry["description"])
         if key_str in self._catalog:
@@ -256,7 +268,7 @@ class JsonPromptProvider(PromptProviderPort):
             Tuple of (system_prompt, user_prompt).
         """
         key_str = key.value if isinstance(key, PromptKey) else key
-        entry = self._templates.get(key_str, {})
+        entry = self.templates.get(key_str, {})
         replacements = self._build_context_replacements(key_str, entry)
 
         system_prompt = entry.get("system_prompt", "")
@@ -295,7 +307,7 @@ class JsonPromptProvider(PromptProviderPort):
         **kwargs: Any,
     ) -> ChatPrompt:
         """Format (system_prompt, user_prompt) pair into a ChatPrompt for a given template key."""
-        entry = self._templates.get(template_key, {})
+        entry = self.templates.get(template_key, {})
         description = self._get_description_for_key(template_key)
         skill_block = self._resolve_skill_block(entry)
         system_template = entry.get("system_prompt", "")
@@ -329,7 +341,7 @@ class JsonPromptProvider(PromptProviderPort):
         **kwargs: Any,
     ) -> ChatPrompt:
         """Format a single user prompt into a ChatPrompt for a given template key."""
-        entry = self._templates.get(template_key, {})
+        entry = self.templates.get(template_key, {})
         description = self._get_description_for_key(template_key)
         user_template = entry.get("user_prompt", "")
         user_prompt = self._safe_format(

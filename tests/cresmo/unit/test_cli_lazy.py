@@ -37,6 +37,49 @@ assert not intersection, f"Heavy modules eagerly loaded on cli import: {intersec
             f"CLI eagerly loaded heavy modules:\nSTDOUT: {proc.stdout}\nSTDERR: {proc.stderr}"
         )
 
+    def test_cli_import_does_not_load_pipeline_composition_or_arq_redis(self) -> None:
+        """Verify importing cresmo.presentation.cli does not load pipeline, composition, arq, or redis per ADR-055."""
+        code = """
+import sys
+import cresmo.presentation.cli
+
+loaded = set(sys.modules.keys())
+banned_modules = {
+    "cresmo.application.pipeline",
+    "cresmo.presentation.composition",
+    "cresmo.infrastructure.workers.arq_worker",
+    "redis",
+    "arq",
+    "yt_dlp",
+}
+intersection = banned_modules.intersection(loaded)
+assert not intersection, f"Banned modules eagerly loaded on cli import: {intersection}"
+"""
+        proc = subprocess.run(
+            [sys.executable, "-c", code], capture_output=True, text=True, check=False
+        )
+        assert proc.returncode == 0, (
+            f"CLI eagerly loaded banned modules:\nSTDOUT: {proc.stdout}\nSTDERR: {proc.stderr}"
+        )
+
+    def test_composition_import_does_not_eagerly_load_arq_or_redis(self) -> None:
+        """Verify importing cresmo.presentation.composition does not eagerly trigger arq/redis side-effects per ADR-055."""
+        code = """
+import sys
+import cresmo.presentation.composition
+
+loaded = set(sys.modules.keys())
+banned_side_effects = {"arq", "redis", "cresmo.infrastructure.workers.arq_worker"}
+intersection = banned_side_effects.intersection(loaded)
+assert not intersection, f"Composition root eagerly loaded arq/redis side-effects: {intersection}"
+"""
+        proc = subprocess.run(
+            [sys.executable, "-c", code], capture_output=True, text=True, check=False
+        )
+        assert proc.returncode == 0, (
+            f"Composition eagerly loaded arq/redis:\nSTDOUT: {proc.stdout}\nSTDERR: {proc.stderr}"
+        )
+
     def test_native_media_ingestion_adapter_does_not_load_whisper_on_import(self) -> None:
         """Verify importing NativeMediaIngestionAdapter does not import whisper or torch."""
         code = """

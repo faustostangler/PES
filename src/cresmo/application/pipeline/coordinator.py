@@ -66,31 +66,39 @@ from cresmo.domain.value_objects import (
 logger = structlog.get_logger(__name__)
 
 
-def _extract_source_text(raw: Any) -> str:
+def _extract_source_text(source_target: Any) -> str:
     """Extract raw transcript text from SourceTranscript triad or duck-typed raw sources."""
-    content = getattr(raw, "content", None)
+    content = getattr(source_target, "content", None)
     if content is not None:
         body = getattr(content, "body", None)
         if isinstance(body, str) and body:
             return body
-    body = getattr(raw, "body", None)
+    body = getattr(source_target, "body", None)
     if isinstance(body, str) and body:
         return body
-    text = getattr(raw, "text", None)
+    text = getattr(source_target, "text", None)
     if isinstance(text, str) and text:
         return text
     return ""
 
 
-def _extract_fluid_text(fluid: Any) -> str:
+def _extract_fluid_text(source: Any) -> str:
     """Extract synthesized fluid prose text from FluidTranscript, EnrichedCompendium, or duck-typed candidate."""
-    comp_body = getattr(fluid, "body", None)
-    comp_info = getattr(fluid, "complementary_info", None)
-    if isinstance(comp_body, str) and isinstance(comp_info, str) and comp_body and comp_info:
-        return f"{comp_body}\n\n## Informações Complementares\n\n{comp_info}"
-    if isinstance(comp_body, str) and comp_body:
-        return comp_body
-    text = getattr(fluid, "text", None)
+    content = getattr(source, "content", None)
+    body = (
+        getattr(content, "body", None) if content is not None else getattr(source, "body", None)
+    )
+    complementary_info = getattr(source, "complementary_info", None)
+    if (
+        isinstance(body, str)
+        and isinstance(complementary_info, str)
+        and body
+        and complementary_info
+    ):
+        return f"{body}\n\n## Informações Complementares\n\n{complementary_info}"
+    if isinstance(body, str) and body:
+        return body
+    text = getattr(source, "text", None)
     if isinstance(text, str) and text:
         return text
     return ""
@@ -198,8 +206,8 @@ class CresmoPipeline:
         """Asynchronously trigger warmup across pipeline LLM ports."""
         if self.llm_indexing_port is not None:
             self.llm_indexing_port.warmup(timeout_seconds=timeout_seconds)
-        runner_llm = getattr(self.stage_runner, "llm_transformation_port", None)
-        if runner_llm is not None and runner_llm is not self.llm_indexing_port:
+        runner_llm_port = getattr(self.stage_runner, "llm_transformation_port", None)
+        if runner_llm_port is not None and runner_llm_port is not self.llm_indexing_port:
             self.stage_runner.warmup(timeout_seconds=timeout_seconds)
 
     def execute(

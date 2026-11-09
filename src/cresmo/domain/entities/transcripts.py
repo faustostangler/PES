@@ -15,7 +15,7 @@ from __future__ import annotations
 import datetime
 import re
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, Self
 
 from cresmo.domain.exceptions import (
     CompendiumStructureError,
@@ -43,17 +43,16 @@ _COMPLEMENTARY_REGEX = re.compile(
 
 
 @dataclass(frozen=True, slots=True)
-class SourceTranscript:
-    """SourceTranscript Aggregate: Verbatim spoken transcript and origin metadata.
+class StageTranscript:
+    """Base domain envelope for transcripts across pipeline stages.
 
-    Conforms to ADR-038: Pure Value Object Triad Composition.
-    Strictly composed of the Value Object triad:
+    Conforms to ADR-038 (Pure Value Object Triad Composition) and ADR-054
+    (Unified Stage Transcript Envelope and Stage-Invariant Polymorphism).
+    Composed of the Value Object triad:
     1. channel: Channel (Origin / Creator - channel_id & channel_name)
     2. provenance: MediaProvenance (Acquisition & Temporal Context)
     3. content: Content (Textual Artifact & Payload - content_id, content_title, body)
-
-    Invariants:
-        content.body cannot be whitespace or empty (pure audio silence rejected per SPEC-001: §2.2).
+    4. metadata: dict[str, Any] (Stage Provenance & Lineage)
     """
 
     channel: Channel
@@ -79,7 +78,7 @@ class SourceTranscript:
         channel_category: str = "",
         video_description: str = "",
     ) -> None:
-        """Construct SourceTranscript with pure Triad Value Objects or ergonomic factory parameters."""
+        """Construct StageTranscript with pure Triad Value Objects or ergonomic factory parameters."""
         resolved_date = publication_date or upload_date
 
         if channel is not None:
@@ -113,17 +112,44 @@ class SourceTranscript:
                 body=body or "",
             )
 
-        if not resolved_content.body.strip():
-            raise DomainValidationError("SourceTranscript body cannot be empty or whitespace.")
-
         object.__setattr__(self, "channel", resolved_channel)
         object.__setattr__(self, "provenance", resolved_provenance)
         object.__setattr__(self, "content", resolved_content)
         object.__setattr__(self, "metadata", metadata or {})
 
+        self._validate_stage_invariants()
+
+    def _validate_stage_invariants(self) -> None:
+        """Template hook for concrete stage invariant enforcement."""
+
+    @property
+    def body(self) -> str:
+        """Textual payload of the transcript stage."""
+        return self.content.body
+
+    @property
+    def title(self) -> str:
+        """Cognitive title of the content payload."""
+        return self.content.title
+
+    @property
+    def content_id(self) -> ContentId:
+        """Algorithmic ContentId identifier."""
+        return self.content.id
+
+    @property
+    def channel_name(self) -> str:
+        """Cognitive channel/creator name."""
+        return self.channel.name
+
+    @property
+    def channel_id(self) -> ChannelId | None:
+        """Algorithmic channel/creator identifier."""
+        return self.channel.id
+
     @classmethod
     def create(
-        cls,
+        cls: type[Self],
         *,
         channel_name: str | ChannelName,
         content_id: str | ContentId,
@@ -135,8 +161,8 @@ class SourceTranscript:
         publication_date: datetime.date | datetime.datetime | str | None = None,
         video_description: str = "",
         metadata: dict[str, Any] | None = None,
-    ) -> SourceTranscript:
-        """Factory constructing SourceTranscript from primitive parameters."""
+    ) -> Self:
+        """Factory constructing StageTranscript from primitive parameters."""
         channel_vo = Channel(
             name=channel_name,
             id=channel_id,
@@ -160,11 +186,30 @@ class SourceTranscript:
         )
 
 
-@dataclass(frozen=True, slots=True)
-class FluidTranscript:
+@dataclass(frozen=True, slots=True, init=False)
+class SourceTranscript(StageTranscript):
+    """SourceTranscript Aggregate: Verbatim spoken transcript and origin metadata.
+
+    Conforms to ADR-038: Pure Value Object Triad Composition and ADR-054.
+    Strictly composed of the Value Object triad:
+    1. channel: Channel (Origin / Creator - channel_id & channel_name)
+    2. provenance: MediaProvenance (Acquisition & Temporal Context)
+    3. content: Content (Textual Artifact & Payload - content_id, content_title, body)
+
+    Invariants:
+        content.body cannot be whitespace or empty (pure audio silence rejected per SPEC-001: §2.2).
+    """
+
+    def _validate_stage_invariants(self) -> None:
+        if not self.content.body.strip():
+            raise DomainValidationError("SourceTranscript body cannot be empty or whitespace.")
+
+
+@dataclass(frozen=True, slots=True, init=False)
+class FluidTranscript(StageTranscript):
     """FluidTranscript Aggregate: Detranscribed clean fluid prose without orality noise.
 
-    Conforms to ADR-028, ADR-031, and ADR-038 (Pure Value Object Triad Composition).
+    Conforms to ADR-028, ADR-031, ADR-038, and ADR-054.
     Strictly composed of the Value Object triad:
     1. channel: Channel (Origin / Creator - channel_id & channel_name)
     2. provenance: MediaProvenance (Acquisition & Temporal Context)
@@ -175,64 +220,8 @@ class FluidTranscript:
         content.body must be continuous prose without Markdown tables (| ... |).
     """
 
-    channel: Channel
-    provenance: MediaProvenance
-    content: Content
-    metadata: dict[str, Any] = field(default_factory=dict)
-
-    def __init__(
-        self,
-        channel: Channel | None = None,
-        provenance: MediaProvenance | None = None,
-        content: Content | None = None,
-        *,
-        metadata: dict[str, Any] | None = None,
-        content_id: ContentId | str | None = None,
-        channel_name: ChannelName | str | None = None,
-        body: str | None = None,
-        title: str = "",
-        source_url: str = "",
-        publication_date: datetime.date | datetime.datetime | str | None = None,
-        upload_date: datetime.date | datetime.datetime | str | None = None,
-        channel_id: ChannelId | str | None = None,
-        channel_category: str = "",
-        video_description: str = "",
-    ) -> None:
-        """Construct FluidTranscript with pure Triad Value Objects or ergonomic factory parameters."""
-        resolved_date = publication_date or upload_date
-
-        if channel is not None:
-            resolved_channel = channel
-        else:
-            resolved_channel_name = channel_name or ""
-            resolved_channel = Channel(
-                name=resolved_channel_name,
-                id=channel_id,
-                category=channel_category,
-            )
-
-        if provenance is not None:
-            resolved_provenance = provenance
-        else:
-            resolved_provenance = MediaProvenance.create(
-                url=source_url,
-                description=video_description,
-                publication_date=resolved_date,
-            )
-
-        if content is not None:
-            resolved_content = content
-        else:
-            resolved_content_id = (
-                ContentId.from_string(content_id) if content_id else ContentId("unknown")
-            )
-            resolved_content = Content(
-                id=resolved_content_id,
-                title=title,
-                body=body or "",
-            )
-
-        cleaned_body = resolved_content.body.strip()
+    def _validate_stage_invariants(self) -> None:
+        cleaned_body = self.content.body.strip()
         if not cleaned_body:
             raise DomainValidationError("FluidTranscript body cannot be empty or whitespace.")
 
@@ -240,49 +229,6 @@ class FluidTranscript:
             raise CompendiumStructureError(
                 "FluidTranscript body must be continuous prose and cannot contain Markdown tables."
             )
-
-        object.__setattr__(self, "channel", resolved_channel)
-        object.__setattr__(self, "provenance", resolved_provenance)
-        object.__setattr__(self, "content", resolved_content)
-        object.__setattr__(self, "metadata", metadata or {})
-
-    @classmethod
-    def create(
-        cls,
-        *,
-        channel_name: str | ChannelName,
-        content_id: str | ContentId,
-        body: str,
-        title: str = "",
-        channel_id: str | ChannelId | None = None,
-        channel_category: str = "",
-        source_url: str = "",
-        publication_date: datetime.date | datetime.datetime | str | None = None,
-        video_description: str = "",
-        metadata: dict[str, Any] | None = None,
-    ) -> FluidTranscript:
-        """Factory constructing FluidTranscript from primitive parameters."""
-        channel_vo = Channel(
-            name=channel_name,
-            id=channel_id,
-            category=channel_category,
-        )
-        provenance_vo = MediaProvenance.create(
-            url=source_url,
-            description=video_description,
-            publication_date=publication_date,
-        )
-        content_vo = Content(
-            id=ContentId.from_string(content_id),
-            title=title,
-            body=body,
-        )
-        return cls(
-            channel=channel_vo,
-            provenance=provenance_vo,
-            content=content_vo,
-            metadata=metadata or {},
-        )
 
 
 @dataclass(frozen=True, slots=True)
@@ -345,9 +291,9 @@ def post_process_fluid_transcript(
         extracted_title = source.content.title or "Untitled Compendium"
         body = current_text
 
-    comp_match = _COMPLEMENTARY_REGEX.search(body)
-    if comp_match:
-        body = body[: comp_match.start()].strip()
+    complementary_match = _COMPLEMENTARY_REGEX.search(body)
+    if complementary_match:
+        body = body[: complementary_match.start()].strip()
 
     if not body:
         raise CompendiumStructureError(

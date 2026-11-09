@@ -284,8 +284,6 @@ def handle_run(args: Any) -> int:
             if args.lookback is not None:
                 settings.days_lookback = args.lookback
 
-            settings.ensure_directories()
-
             # Active Preflight Validation
             preflight_checker = build_preflight_checker(settings=settings, check_ffmpeg=True)
             preflight_res = preflight_checker.check_all()
@@ -370,13 +368,13 @@ def execute_single_video_run(pipeline: CresmoPipeline, args: Any) -> int:
         Process exit code integer.
     """
     if args.dry_run:
-        raw = pipeline.ingest_raw_transcript.execute(video_url=args.url)
-        if raw is None:
+        raw_transcript = pipeline.ingest_raw_transcript.execute(video_url=args.url)
+        if raw_transcript is None:
             sys.stderr.write(f"Dry-run ingestion returned no transcript for {args.url}\n")
             return EXIT_INGESTION_ERROR
         sys.stdout.write(
-            f"Dry run successful for [{raw.content.id.value}]: "
-            f"Transcript length: {len(raw.content.body)} characters.\n"
+            f"Dry run successful for [{raw_transcript.content.id.value}]: "
+            f"Transcript length: {len(raw_transcript.content.body)} characters.\n"
         )
         return EXIT_SUCCESS
 
@@ -393,15 +391,15 @@ def execute_single_video_run(pipeline: CresmoPipeline, args: Any) -> int:
         return EXIT_SUCCESS
     if result.success:
         try:
-            raw = pipeline.vault_port.get_raw_transcript(result.content_id)
-            if raw and raw.channel.name:
+            raw_transcript = pipeline.vault_port.get_raw_transcript(result.content_id)
+            if raw_transcript and raw_transcript.channel.name:
                 concat_master = build_concat_master_use_case(
                     settings=pipeline.settings
                     if isinstance(pipeline.settings, CresmoSettings)
                     else None,
                     vault_port=pipeline.vault_port,
                 )
-                concat_master.execute(ChannelName(raw.channel.name))
+                concat_master.execute(ChannelName(raw_transcript.channel.name))
         except Exception as exc:  # noqa: BLE001
             sys.stderr.write(f"Warning: Master consolidation failed: {exc}\n")
 

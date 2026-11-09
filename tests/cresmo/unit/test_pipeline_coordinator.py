@@ -87,6 +87,20 @@ class TestTextExtractionHelpers:
         assert _extract_source_text(None) == ""
 
     def test_extract_fluid_text_shapes(self) -> None:
+        # Pure Value Object triad shape (FluidTranscript with content.body)
+        fluid_triad = MagicMock()
+        fluid_triad.content.body = "Fluid prose from content triad"
+        fluid_triad.complementary_info = None
+        assert _extract_fluid_text(fluid_triad) == "Fluid prose from content triad"
+
+        # Pure Value Object triad with complementary_info
+        fluid_triad_with_comp = MagicMock()
+        fluid_triad_with_comp.content.body = "Fluid prose body"
+        fluid_triad_with_comp.complementary_info = "Supplementary encyclopedic data"
+        assert _extract_fluid_text(fluid_triad_with_comp) == (
+            "Fluid prose body\n\n## Informações Complementares\n\nSupplementary encyclopedic data"
+        )
+
         # Body shape
         fluid_body = MagicMock(spec=["body"])
         fluid_body.body = "Fluid body prose"

@@ -269,6 +269,13 @@ async def startup(ctx: dict[str, Any]) -> None:
     logger.info("Starting ARQ Worker for Cresmo Knowledge Engine...")
     from cresmo.infrastructure.config import resolve_shared_settings
 
+    try:
+        from cresmo.presentation.composition import bind_arq_worker_factories
+
+        bind_arq_worker_factories()
+    except ImportError:
+        pass
+
     ctx["settings"] = resolve_shared_settings()
 
 

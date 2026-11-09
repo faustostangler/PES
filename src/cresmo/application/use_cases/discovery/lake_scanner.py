@@ -170,6 +170,7 @@ class LakeScannerService:
         scan_raw: bool,
         acc: _BatchSourceAccumulator,
         filter_criteria: SyncFilterCriteria | None = None,
+        extract_frontmatter: bool = True,
     ) -> dict[str, str]:
         """Scan raw transcripts lake, extract channel metadata, and register existing files."""
         criteria = filter_criteria or SyncFilterCriteria()
@@ -182,10 +183,18 @@ class LakeScannerService:
             if not is_processable_transcript_file(rf):
                 continue
             stem = rf.stem
-            meta = extract_raw_file_metadata(rf)
-            vid_front = meta.get("video_id")
-            chan_url = meta.get("channel")
-            canonical_vid = vid_front or stem
+            canonical_vid = stem
+            parent_dir = rf.parent
+            chan_url: str | None = None
+
+            if extract_frontmatter:
+                meta = extract_raw_file_metadata(rf)
+                vid_front = meta.get("video_id")
+                chan_url = meta.get("channel")
+                if vid_front:
+                    canonical_vid = vid_front
+            elif parent_dir != raw_dir and parent_dir.name != (raw_dir.name if raw_dir else ""):
+                chan_url = parent_dir.name
 
             already_seen = acc.has_seen(stem) or acc.has_seen(canonical_vid)
 

@@ -122,12 +122,12 @@ _SYMBOL_TO_MODULE: dict[str, str] = {
 
 def __getattr__(name: str) -> Any:
     """Lazily import and resolve command symbols on demand per PEP 562 and ADR-053."""
-    mod_path = _SYMBOL_TO_MODULE.get(name)
-    if mod_path is not None:
-        mod = importlib.import_module(mod_path)
-        attr = getattr(mod, name)
-        globals()[name] = attr
-        return attr
+    module_path = _SYMBOL_TO_MODULE.get(name)
+    if module_path is not None:
+        resolved_module = importlib.import_module(module_path)
+        resolved_attribute = getattr(resolved_module, name)
+        globals()[name] = resolved_attribute
+        return resolved_attribute
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 

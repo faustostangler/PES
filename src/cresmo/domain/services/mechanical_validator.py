@@ -115,17 +115,17 @@ def validate_gap_filler_mechanical_invariants(text: str) -> list[str]:
         )
 
     # 4. Mandatory '## Informações Complementares' section
-    comp_match = _COMPLEMENTARY_REGEX.search(stripped)
-    if not comp_match:
+    complementary_match = _COMPLEMENTARY_REGEX.search(stripped)
+    if not complementary_match:
         violations.append(
             "Missing mandatory complementary section '## Informações Complementares'."
         )
         main_body = stripped
-        comp_section = ""
+        complementary_section = ""
     else:
-        main_body = stripped[: comp_match.start()].strip()
-        comp_section = stripped[comp_match.end() :].strip()
-        if not comp_section:
+        main_body = stripped[: complementary_match.start()].strip()
+        complementary_section = stripped[complementary_match.end() :].strip()
+        if not complementary_section:
             violations.append("Section '## Informações Complementares' is empty.")
         if not main_body:
             violations.append("Main body text before '## Informações Complementares' is empty.")
@@ -145,7 +145,7 @@ def validate_gap_filler_mechanical_invariants(text: str) -> list[str]:
         violations.append("Main body must contain zero blockquotes ('>').")
 
     # 8. Zero Bullet Points in complementary section (must be numbered continuous paragraphs)
-    if comp_section and _BULLET_LINE_PATTERN.search(comp_section):
+    if complementary_section and _BULLET_LINE_PATTERN.search(complementary_section):
         violations.append(
             "Complementary section must contain zero bullet points or list markers ('*', '-', '+'). "
             "Use numbered continuous paragraphs ('1. ', '2. ')."
@@ -157,17 +157,17 @@ def validate_gap_filler_mechanical_invariants(text: str) -> list[str]:
 _NUMBERED_ITEM_PATTERN = re.compile(r"^\s*\d+\.\s+", re.MULTILINE)
 
 
-def count_complementary_items(comp_text: str) -> int:
+def count_complementary_items(complementary_text: str) -> int:
     """Count discrete numbered items or distinct paragraphs in complementary section."""
-    numbered = _NUMBERED_ITEM_PATTERN.findall(comp_text)
+    numbered = _NUMBERED_ITEM_PATTERN.findall(complementary_text)
     if numbered:
         return len(numbered)
-    paragraphs = [p for p in comp_text.split("\n\n") if p.strip()]
+    paragraphs = [paragraph for paragraph in complementary_text.split("\n\n") if paragraph.strip()]
     return len(paragraphs) if paragraphs else 1
 
 
 def check_complementary_mechanical_saturation(
-    prev_text: str,
+    previous_text: str,
     current_text: str,
     max_delta_items: int = 5,
 ) -> bool:
@@ -178,25 +178,29 @@ def check_complementary_mechanical_saturation(
     2. NER Overlap: 100% of bolded entities (**...**) in current complementary section
        were already present in previous pass (zero new entities introduced).
     """
-    prev_comp = extract_complementary_section(prev_text)
-    curr_comp = extract_complementary_section(current_text)
+    previous_complementary = extract_complementary_section(previous_text)
+    current_complementary = extract_complementary_section(current_text)
 
-    if not prev_comp or not curr_comp:
+    if not previous_complementary or not current_complementary:
         return False
 
-    prev_items = count_complementary_items(prev_comp)
-    curr_items = count_complementary_items(curr_comp)
+    previous_items_count = count_complementary_items(previous_complementary)
+    current_items_count = count_complementary_items(current_complementary)
 
-    delta_items = abs(curr_items - prev_items)
-    if delta_items >= max_delta_items:
+    delta_item_count = abs(current_items_count - previous_items_count)
+    if delta_item_count >= max_delta_items:
         return False
 
-    prev_entities = {
-        e.strip().lower() for e in _BOLD_ENTITY_PATTERN.findall(prev_comp) if e.strip()
+    previous_entities = {
+        entity.strip().lower()
+        for entity in _BOLD_ENTITY_PATTERN.findall(previous_complementary)
+        if entity.strip()
     }
-    curr_entities = {
-        e.strip().lower() for e in _BOLD_ENTITY_PATTERN.findall(curr_comp) if e.strip()
+    current_entities = {
+        entity.strip().lower()
+        for entity in _BOLD_ENTITY_PATTERN.findall(current_complementary)
+        if entity.strip()
     }
 
     # If any new bold entity was introduced in the current pass, not saturated yet
-    return curr_entities.issubset(prev_entities)
+    return current_entities.issubset(previous_entities)

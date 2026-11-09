@@ -25,19 +25,19 @@ def _name_langfuse_threads(langfuse_client: Any) -> None:
     for idx, consumer in enumerate(getattr(resources, "_ingestion_consumers", [])):
         consumer.name = f"LangfuseScoreIngestionConsumer-{idx}"
 
-    pc = getattr(resources, "prompt_cache", None)
-    if pc:
-        ptm = getattr(pc, "_task_manager", None)
-        if ptm:
-            for idx, consumer in enumerate(getattr(ptm, "_consumers", [])):
+    prompt_cache = getattr(resources, "prompt_cache", None)
+    if prompt_cache:
+        prompt_task_manager = getattr(prompt_cache, "_task_manager", None)
+        if prompt_task_manager:
+            for idx, consumer in enumerate(getattr(prompt_task_manager, "_consumers", [])):
                 consumer.name = f"LangfusePromptCacheConsumer-{idx}"
 
 
 def _name_otel_threads() -> None:
     """Assign canonical name to OpenTelemetry batch span processor thread."""
-    for t in threading.enumerate():
-        if t.name == "OtelBatchSpanRecordProcessor":
-            t.name = "CresmoOtelBatchSpanProcessor"
+    for thread in threading.enumerate():
+        if thread.name == "OtelBatchSpanRecordProcessor":
+            thread.name = "CresmoOtelBatchSpanProcessor"
 
 
 def name_telemetry_threads(langfuse_client: Any | None = None) -> None:

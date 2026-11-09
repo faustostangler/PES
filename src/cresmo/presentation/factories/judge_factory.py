@@ -11,14 +11,6 @@ from typing import Any
 
 from cresmo.application.ports import PromptProviderPort
 from cresmo.application.ports.llm_judge_port import LlmJudgePort
-from cresmo.infrastructure.adapters.judges.composite_judge import ResilientCompositeJudgeAdapter
-from cresmo.infrastructure.adapters.judges.gemini_judge import GeminiJudgeAdapter
-from cresmo.infrastructure.adapters.judges.langfuse_decorator import LangfuseJudgeDecorator
-from cresmo.infrastructure.adapters.judges.ollama_judge import OllamaJudgeAdapter
-from cresmo.infrastructure.adapters.judges.preflight_decorator import (
-    MechanicalPreflightJudgeDecorator,
-)
-from cresmo.infrastructure.adapters.judges.typesafe_judge import TypeSafeJudgeAdapter
 from cresmo.infrastructure.config import CresmoSettings
 
 
@@ -44,6 +36,8 @@ def build_llm_judge_adapter(
     primary: LlmJudgePort
     provider = settings.judge_provider.lower().strip()
     if provider == "gemini":
+        from cresmo.infrastructure.adapters.judges.gemini_judge import GeminiJudgeAdapter
+
         primary = GeminiJudgeAdapter(
             api_keys=[k.get_secret_value() for k in settings.gemini_api_keys],
             model=settings.judge_gemini_model,
@@ -53,6 +47,8 @@ def build_llm_judge_adapter(
             timeout_seconds=settings.gemini_timeout_seconds,
         )
     elif provider == "ollama":
+        from cresmo.infrastructure.adapters.judges.ollama_judge import OllamaJudgeAdapter
+
         primary = OllamaJudgeAdapter(
             base_url=settings.ollama_base_url,
             model=settings.ollama_model,
@@ -61,6 +57,8 @@ def build_llm_judge_adapter(
             prompt_provider=prompt_provider,
         )
     else:
+        from cresmo.infrastructure.adapters.judges.typesafe_judge import TypeSafeJudgeAdapter
+
         primary = TypeSafeJudgeAdapter(
             api_key=settings.typesafe_api_key.get_secret_value(),
             model=settings.typesafe_model,
@@ -71,6 +69,11 @@ def build_llm_judge_adapter(
     # 2. Instantiate Fallback Provider if enabled
     inner_judge: LlmJudgePort
     if enable_fallback:
+        from cresmo.infrastructure.adapters.judges.composite_judge import (
+            ResilientCompositeJudgeAdapter,
+        )
+        from cresmo.infrastructure.adapters.judges.ollama_judge import OllamaJudgeAdapter
+
         fallback: LlmJudgePort = OllamaJudgeAdapter(
             base_url=settings.ollama_base_url,
             model=settings.ollama_model,
@@ -84,6 +87,11 @@ def build_llm_judge_adapter(
         inner_judge = primary
 
     # 3. Wrap in Mechanical Preflight Gate
+    from cresmo.infrastructure.adapters.judges.langfuse_decorator import LangfuseJudgeDecorator
+    from cresmo.infrastructure.adapters.judges.preflight_decorator import (
+        MechanicalPreflightJudgeDecorator,
+    )
+
     inner_judge = MechanicalPreflightJudgeDecorator(inner_judge=inner_judge)
 
     # 5. Decorate with Langfuse Telemetry Emission

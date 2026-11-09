@@ -26,6 +26,7 @@ from cresmo.domain.entities.notes import (
 from cresmo.domain.entities.transcripts import (
     FluidTranscript,
     SourceTranscript,
+    StageTranscript,
     Transcript,
     post_process_fluid_transcript,
 )
@@ -54,6 +55,7 @@ __all__ = [
     "NoteType",
     "PipelineSessionId",
     "SourceTranscript",
+    "StageTranscript",
     "Transcript",
     "UserIdentity",
     "post_process_enriched_compendium",

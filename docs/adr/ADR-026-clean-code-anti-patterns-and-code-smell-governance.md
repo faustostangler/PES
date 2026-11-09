@@ -30,6 +30,7 @@ During the recursive architectural audit across all layers (Domain, Application,
 12. **Acúmulo de Múltiplas Responsabilidades em Módulos de Apresentação (Violação de SRP):** Presentation command modules accumulating disparate concerns (CLI argument conversion, streaming batch processing, resource management/garbage collection, and RAG consolidation) instead of maintaining bounded, laser-focused responsibilities.
 13. **Hardcoded Fallbacks Operacionais em Funções de Construção e Adapters (Violação de SSOT e 12-Factor Fator III):** Hardcoding literal operational values (e.g. `dict.get("language", "Português do Brasil")`, `x or "hardcoded"`) as inline fallbacks across builders and adapters instead of sourcing all operational defaults strictly from the Single Source of Truth (`config.py` / `CresmoSettings`). When global configuration or environment variables change, these scattered hardcoded fallbacks silently ignore system configuration when context keys are absent.
 14. **Eager Fallback Evaluation e Degradação Antecipada (Violação de Circuit Breaking & Resiliência Lazy):** Pre-evaluating, instantiating, or parsing fallback assets (e.g., local disk templates, regexes, secondary models, or downstream services) on the happy path *before* attempting the primary/remote provider. This burns CPU/IO cycles unnecessarily on 100% of healthy requests, creates failure contagion, and inverts the semantics of graceful degradation.
+15. **Nomes Crípticos, Variáveis Truncadas e Abreviações Anti-DDD (Violação Clean Code / Ubiquitous Language):** O uso de variáveis abreviadas ou truncadas (`ch_`, `cid`, `fm_`, `desc`, `curr_`, `prev_`, `comp_`, `fmt`, `k`, `u`, `p`), que fragmentam a legibilidade, violam a Ubiquitous Language e introduzem ruído cognitivo nas camadas de Domínio, Aplicação, Infraestrutura e Apresentação.
 
 This ADR formally codifies the governance rules, anti-patterns, and required implementations to eliminate these smells across the codebase.
 
@@ -60,6 +61,7 @@ This ADR formally codifies the governance rules, anti-patterns, and required imp
 |  [Rule 17] Zero Hardcoded Fallbacks     --> SSOT Config Fallbacks; Zero Ad-Hoc Literal Defaults      |
 |  [Rule 18] Zero Convenience Accessors    --> Direct Canonical Navigation; Zero Delegation Shims     |
 |  [Rule 19] Strict Lazy Fallback Execution--> Zero Eager Evaluation; On-Demand Degradation Only      |
+|  [Rule 20] Anti-Cryptic Naming (Ubiquitous Language) --> Zero Truncated Identifiers; Canonical Equivalences|
 +---------------------------------------------------------------------------------------------------+
 ```
 
@@ -785,6 +787,107 @@ class LangfusePromptProvider(PromptProviderPort):
 
 ---
 
+### Rule 20: Anti-Cryptic Naming & Ubiquitous Language Identifiers (Zero Cryptic Abbreviations & Truncations)
+
+#### 20.1 The Anti-Pattern
+Using cryptic abbreviations, arbitrary truncated identifiers, single-letter variable names outside standard mathematical indices, or concatenated shortened prefixes (`ch_`, `cid`, `fm_`, `desc`, `curr_`, `prev_`, `comp_`, `fmt`, `k`, `u`, `p`). This practice obscures the domain model, introduces translation drift, impairs searchability (`grep`), and forces cognitive deciphering:
+
+```python
+# ANTI-PATTERN: Cryptic abbreviations and truncated variables
+def get_fluid_transcript(self, content_id: ContentId) -> FluidTranscript | None:
+    fm_text, body = match.groups()
+    meta = yaml.safe_load(fm_text) or {}
+    ch_name = str(meta.get("channel_name") or "")
+    ch_id = str(meta.get("channel_id") or "")
+    ch_cat = str(meta.get("channel_category") or "")
+    desc = str(meta.get("video_description") or "")
+    # ...
+```
+
+#### 20.2 The Standard & Canonical Equivalences
+1. **Full Domain Words (Ubiquitous Language):** All identifiers (local variables, function arguments, loop variables, attributes) MUST use full, explicit English domain terms conforming strictly to [`docs/GLOSSARY.md`](../GLOSSARY.md).
+2. **Zero Prefix/Suffix Truncation:** Prefixes like `ch_` (channel), `fm_` (frontmatter), `comp_` (complementary or compendium), `curr_` (current), `prev_` (previous), and `desc_` (description) are strictly prohibited.
+3. **No Single-Letter Naming Outside Standard Loops:** Variables such as `u`, `p`, `k`, `n`, `b`, `t`, `w` in list comprehensions, dictionary lookups, or method signatures MUST be replaced with meaningful nouns describing the domain element.
+4. **Canonical Equivalence Catalog:** The repository codifies the following canonical equivalences across all four architecture layers:
+
+| Layer / Subsystem | Deprecated Cryptic Name | Canonical Domain Equivalent | Architectural Justification |
+| :--- | :--- | :--- | :--- |
+| **Domain: Transcripts** | `cid` | `resolved_content_id` | Clarifies primitive-to-VO resolution |
+| **Domain: Transcripts** | `ch` | `channel_vo` | Disambiguates entity instance from string |
+| **Domain: Transcripts** | `prov` | `provenance_vo` | Explicit Value Object instantiation |
+| **Domain: Transcripts** | `cnt` | `content_vo` | Explicit Value Object instantiation |
+| **Domain: Transcripts** | `comp_match` | `complementary_match` | Explicit regex match object |
+| **Domain: Quality Gate** | `cs` | `criterion_score` | Explicit domain concept in evaluation |
+| **Domain: Quality Gate** | `w` | `weight` | Explicit weighting factor in composite score |
+| **Domain: Validator** | `comp_match` | `complementary_match` | Explicit regex match object |
+| **Domain: Validator** | `comp_section` | `complementary_section` | Explicit document section reference |
+| **Domain: Validator** | `comp_text` | `complementary_text` | Explicit document section string |
+| **Domain: Validator** | `prev_text` / `curr_text` | `previous_text` / `current_text` | Unabbreviated temporal state |
+| **Domain: Validator** | `prev_comp` / `curr_comp` | `previous_complementary` / `current_complementary` | Unabbreviated section tracking |
+| **Domain: Validator** | `prev_items` / `curr_items` | `previous_items_count` / `current_items_count` | Explicit quantitative metric |
+| **Domain: Validator** | `delta_items` | `delta_item_count` | Explicit delta metric |
+| **Domain: Validator** | `prev_entities` / `curr_entities` | `previous_entities` / `current_entities` | Explicit entity set |
+| **Domain: Validator** | `p` (in split) | `paragraph` | Meaningful comprehension variable |
+| **Application: Coordinator** | `comp_body` | `main_body` | Clean distinction from complementary info |
+| **Application: Coordinator** | `comp_info` | `complementary_info` | Unabbreviated attribute name |
+| **Application: Coordinator** | `fluid` (in helper) | `source` / `fluid_source` | Poly-typed input parameter |
+| **Application: Coordinator** | `raw` (in helper) | `source_target` | Poly-typed input parameter |
+| **Application: Coordinator** | `runner_llm` | `runner_llm_port` | Explicit port role suffix (ADR-019) |
+| **Application: Stage Runner** | `curr_text` | `current_text` | Aligns with `build_transform_prompt(current_text=...)` |
+| **Application: Stage Runner** | `ch` | `resolved_channel` | Clear variable resolution |
+| **Application: Stage Runner** | `cid` | `resolved_content_id` | Clear variable resolution |
+| **Application: Stage Runner** | `cnt` | `resolved_content` | Clear variable resolution |
+| **Application: Loader** | `raw_cid` | `raw_channel_id` | Unabbreviated channel ID |
+| **Application: Loader** | `channel_id_obj` | `resolved_channel_id` | Type-clean naming |
+| **Application: Loader** | `ch_name`, `ch_id` | `channel_name`, `channel_id` | Full domain names in tuple unpacking |
+| **Application: Loader** | `pub_date` | `publication_date` | Full domain attribute |
+| **Application: Concat** | `cn` | `channel_name` | Direct domain argument reuse |
+| **Application: MOCs** | `n` | `raw_note` | Meaningful loop iteration |
+| **Application: MOCs** | `nt` | `note_title` | Value object instance |
+| **Application: MOCs** | `k` | `note_key` | Map lookup key |
+| **Application: Resolution** | `pre`, `lat`, `aft` | `precursors`, `lateral_events`, `aftermath` | Unabbreviated triad attributes |
+| **Application: Crawler** | `u` | `failed_url` / `media_url` | Explicit URL context |
+| **Application: Crawler** | `cid` | `content_id` | Value object instance |
+| **Application: Crawler** | `vid_token` | `video_token` | Unabbreviated token string |
+| **Application: Crawler** | `pub` | `published_at` | Unabbreviated timestamp |
+| **Application: Discovery** | `q` | `discovery_query` | Full DTO parameter name |
+| **Application: Discovery** | `u` (in urls) | `url` | Meaningful comprehension variable |
+| **Application: Discovery** | `pf` | `priority_file` | Meaningful file iteration |
+| **Application: Discovery** | `vid` | `video_id` | Meaningful video ID |
+| **Application: Discovery** | `pu` | `priority_url` | Meaningful priority manifest item |
+| **Application: Discovery** | `mu` | `main_url` | Meaningful playlist item |
+| **Application: Discovery** | `src` | `batch_source` | Concrete entity instance |
+| **Application: Discovery** | `cb` | `callback` | Explicit callable |
+| **Application: JSON Parser** | `i`, `n` | `current_index`, `total_length` | Clean parser index tracking |
+| **Application: JSON Parser** | `open_ch`, `close_ch` | `open_char`, `close_char` | Unabbreviated character token |
+| **Infrastructure: Obsidian** | `fm_text` | `frontmatter_text` | Unabbreviated raw YAML frontmatter |
+| **Infrastructure: Obsidian** | `meta` | `metadata` | Clean dictionary reference |
+| **Infrastructure: Obsidian** | `ch_name`, `ch_id`, `ch_cat` | `channel_name`, `raw_channel_id`, `channel_category` | Unabbreviated metadata attributes |
+| **Infrastructure: Obsidian** | `desc`, `desc_indented` | `description`, `indented_description` | Clear text representations |
+| **Infrastructure: Obsidian** | `v_date` | `video_date` | Unabbreviated date string |
+| **Infrastructure: Obsidian** | `ch_dir` | `channel_dir` | Unabbreviated filesystem directory |
+| **Infrastructure: Obsidian** | `channel_id_val` | `channel_id_value` | Unabbreviated primitive string value |
+| **Infrastructure: Obsidian** | `comp_part` | `complementary_part` | Clean section slice naming |
+| **Infrastructure: Obsidian** | `prec`, `lat`, `aft` | `precursors_match`, `lateral_events_match`, `aftermath_match` | Explicit regex match objects |
+| **Infrastructure: Obsidian** | `k` | `normalized_key` | Clean index lookup key |
+| **Infrastructure: Media** | `fmt` | `format_candidate` | Clean iteration variable |
+| **Infrastructure: Media** | `orig_keys` | `original_keys` | Unabbreviated subtitle track keys |
+| **Infrastructure: Media** | `c_name` | `resolved_channel_name` | Explicit ChannelName VO instance |
+| **Infrastructure: Config** | `val`, `orig_decode` | `value`, `original_decoder` | Clean callable and value names |
+| **Infrastructure: Config** | `orig_dot`, `orig_env` | `original_dotenv_decoder`, `original_env_decoder` | Explicit decoder hook names |
+| **Infrastructure: Prompts** | `sn` | `skill_name` | Full skill name identifier |
+| **Infrastructure: Prompts** | `b` (in blocks) | `block` | Meaningful comprehension variable |
+| **Infrastructure: Prompts** | `val` | `value` | Clean dictionary value |
+| **Infrastructure: Telemetry** | `pc`, `ptm` | `prompt_cache`, `prompt_task_manager` | Explicit internal resources |
+| **Infrastructure: Telemetry** | `t` (in threads) | `thread` | Explicit thread iteration |
+| **Infrastructure: Logging** | `ctx` | `span_context` | Unambiguous OTel span context |
+| **Infrastructure: Logging** | `sid` | `session_id_attr` | Clear attribute reference |
+| **Presentation: CLI** | `res` | `exit_result` | Explicit Typer exit code |
+| **Presentation: CLI** | `mod_path`, `mod`, `attr` | `module_path`, `resolved_module`, `resolved_attribute` | Clear PEP 562 dynamic resolution |
+| **Presentation: Commands** | `raw` | `raw_transcript` | Clear transcript reference |
+
+---
+
 ## 3. Enforcement & Quality Gates
 
 
@@ -807,3 +910,4 @@ The following Ruff rules and architecture checks are enforced across the entire 
 | **`RULE-017`**| Hardcoded operational fallback strings | **BLOCKING** | Sourced strictly from `config.py` / `CresmoSettings` |
 | **`RULE-018`**| Zero convenience accessors & property aliases | **BLOCKING** | Direct canonical aggregate navigation |
 | **`RULE-019`**| Eager fallback evaluation | **BLOCKING** | Prohibited; lazy evaluation on failure/offline only |
+| **`RULE-020`**| Zero cryptic abbreviations & truncations | **BLOCKING** | Full Ubiquitous Language terms across all layers |

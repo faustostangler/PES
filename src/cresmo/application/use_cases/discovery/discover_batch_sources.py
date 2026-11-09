@@ -96,9 +96,16 @@ class DiscoverBatchSourcesUseCase:
         )
 
         raw_dir = q.raw_dir if q.raw_dir is not None else self.settings.raw_dir
-        local_video_channel_map = LakeScannerService.scan_raw_lake(
-            raw_dir, q.scan_raw, acc, q.filter_criteria
-        )
+        if q.scan_raw or q.enable_channel_crawler:
+            local_video_channel_map = LakeScannerService.scan_raw_lake(
+                raw_dir,
+                q.scan_raw,
+                acc,
+                q.filter_criteria,
+                extract_frontmatter=q.enable_channel_crawler,
+            )
+        else:
+            local_video_channel_map = {}
 
         playlist_priority_path = (
             q.playlist_priority_path

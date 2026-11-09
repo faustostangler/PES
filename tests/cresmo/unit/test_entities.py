@@ -1506,3 +1506,91 @@ class TestPostProcessFluidTranscriptInvariantsAndRegex:
         assert res.content.id == ContentId("preserve_cid")
         assert res.content.id.value == "preserve_cid"
         assert res.content.body == "Processed prose body."
+
+
+class TestStageTranscriptUnifiedEnvelope:
+    """ADR-054: Unified Stage Transcript Envelope and Stage-Invariant Polymorphism."""
+
+    def test_stage_transcript_hierarchy(self) -> None:
+        from cresmo.domain.entities import FluidTranscript, SourceTranscript, StageTranscript
+
+        assert issubclass(SourceTranscript, StageTranscript)
+        assert issubclass(FluidTranscript, StageTranscript)
+
+    def test_stage_transcript_triad_and_convenience_properties(self) -> None:
+        from cresmo.domain.entities import SourceTranscript, StageTranscript
+        from cresmo.domain.value_objects import (
+            Channel,
+            ChannelId,
+            Content,
+            ContentId,
+            MediaProvenance,
+        )
+
+        ch = Channel(name="Test Creator", id=ChannelId("UC_triad_123"))
+        prov = MediaProvenance.create(url="https://youtu.be/triad123", description="Triad test")
+        cnt = Content(id=ContentId("triad123"), title="Triad Title", body="Triad verbatim body")
+
+        st: StageTranscript = SourceTranscript(channel=ch, provenance=prov, content=cnt, metadata={"stage": "raw"})
+
+        # Pure triad verification
+        assert st.channel is ch
+        assert st.provenance is prov
+        assert st.content is cnt
+        assert st.metadata == {"stage": "raw"}
+
+        # Convenience accessors (ADR-054)
+        assert st.body == "Triad verbatim body"
+        assert st.title == "Triad Title"
+        assert st.content_id == ContentId("triad123")
+        assert st.channel_name == "Test Creator"
+        assert st.channel_id == ChannelId("UC_triad_123")
+
+    def test_stage_transcript_shared_ergonomic_init(self) -> None:
+        from cresmo.domain.entities import FluidTranscript, SourceTranscript
+
+        raw = SourceTranscript(
+            content_id="ergo123",
+            channel_name="Ergo Channel",
+            title="Ergo Title",
+            body="Ergo source body",
+            source_url="https://youtube.com/watch?v=ergo123",
+            channel_id="UC_ergo",
+        )
+        assert raw.content_id == ContentId("ergo123")
+        assert raw.channel_name == "Ergo Channel"
+        assert raw.title == "Ergo Title"
+        assert raw.body == "Ergo source body"
+
+        fluid = FluidTranscript(
+            content_id="ergo123",
+            channel_name="Ergo Channel",
+            title="Ergo Title",
+            body="Ergo fluid body without tables",
+            source_url="https://youtube.com/watch?v=ergo123",
+            channel_id="UC_ergo",
+        )
+        assert fluid.content_id == ContentId("ergo123")
+        assert fluid.channel_name == "Ergo Channel"
+        assert fluid.title == "Ergo Title"
+        assert fluid.body == "Ergo fluid body without tables"
+
+    def test_stage_transcript_invariant_polymorphism(self) -> None:
+        from cresmo.domain.entities import FluidTranscript, SourceTranscript
+        from cresmo.domain.exceptions import CompendiumStructureError, DomainValidationError
+
+        # Empty body rejected on both
+        with pytest.raises(DomainValidationError):
+            SourceTranscript(channel_name="Ch", content_id="c1", body="   ")
+        with pytest.raises(DomainValidationError):
+            FluidTranscript(channel_name="Ch", content_id="c1", body="   ")
+
+        # Table is permitted in SourceTranscript (verbatim)
+        table_text = "| Col1 | Col2 |\n| --- | --- |\n| Val1 | Val2 |"
+        raw_with_table = SourceTranscript(channel_name="Ch", content_id="c1", body=table_text)
+        assert raw_with_table.body == table_text
+
+        # Table is strictly forbidden in FluidTranscript (continuous prose)
+        with pytest.raises(CompendiumStructureError, match="cannot contain Markdown tables"):
+            FluidTranscript(channel_name="Ch", content_id="c1", body=table_text)
+

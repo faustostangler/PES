@@ -13,7 +13,6 @@ from datetime import UTC, date, datetime
 from typing import Any
 
 import structlog
-import yt_dlp.plugins
 
 logger = structlog.get_logger(__name__)
 
@@ -23,8 +22,10 @@ _ILLEGAL_FS_CHARS = re.compile(r'[\\/*?:"<>|%]')
 
 
 def ensure_yt_dlp_plugins_loaded() -> None:
-    """Eagerly load yt-dlp plugins to prevent background thread importlib lock deadlocks."""
+    """Load yt-dlp plugins to prevent background thread importlib lock deadlocks (ADR-055)."""
     try:
+        import yt_dlp.plugins
+
         yt_dlp.plugins.load_all_plugins()
     except Exception as exc:  # noqa: BLE001
         logger.debug("Failed to load yt-dlp plugins: %s", exc)
@@ -63,9 +64,9 @@ def is_native_subtitle_url(url: str | None) -> bool:
 
 def find_matching_format_url(formats: list[dict[str, Any]]) -> str | None:
     """Scan subtitle format candidates for valid non-translated json3 track."""
-    for fmt in formats:
-        url = fmt.get("url")
-        if fmt.get("ext") == "json3" and is_native_subtitle_url(url):
+    for format_candidate in formats:
+        url = format_candidate.get("url")
+        if format_candidate.get("ext") == "json3" and is_native_subtitle_url(url):
             return str(url)
     return None
 
@@ -93,11 +94,13 @@ def find_in_auto_captions(
     is_pt_video: bool,
 ) -> str | None:
     """Search in automatic captions prioritizing explicit original tracks (*-orig)."""
-    orig_keys = [k for k in auto_captions if k.endswith("-orig") or k == "orig"]
-    orig_keys.sort(
-        key=lambda k: 0 if (is_pt_video and "pt" in k) or (not is_pt_video and "en" in k) else 1
+    original_keys = [key for key in auto_captions if key.endswith("-orig") or key == "orig"]
+    original_keys.sort(
+        key=lambda key: (
+            0 if (is_pt_video and "pt" in key) or (not is_pt_video and "en" in key) else 1
+        )
     )
-    for lang in orig_keys:
+    for lang in original_keys:
         url = find_matching_format_url(auto_captions[lang])
         if url:
             return url
