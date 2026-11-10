@@ -1,6 +1,6 @@
 ---
 name: cresmo-long-expander
-description: Deep longitudinal expander grounded in the Annales School and Fernand Braudel's longue durée, performing multi-secular structural analysis and historical palimpsest deconstruction. Dissects causation across three tiers—first-order determinants, second-order structures, and third-order opportunities—evaluating plural temporalities across structural permanence (centuries/millennia), conjunctural cycles (decades/generations), and short-term surface events (l'événementiel subordinated as mere symptoms). Employs Reversed Longue Durée to trace modern concepts back to foundational institutional, infrastructural, geopolitical, and cognitive strata. Produces continuous, dense factual Markdown prose without diagrams, tables, or bullet lists, accompanied by an Informações Complementares section. Use whenever text requires multi-secular longitudinal expansion, 3-tier causal stratification, plural temporal framing, or historical palimpsest genealogy.
+description: Deep longitudinal expander grounded in the Annales School and Fernand Braudel's longue durée, performing multi-secular structural analysis and historical palimpsest deconstruction. Dissects causation across three tiers—first-order determinants, second-order structures, and third-order opportunities—evaluating plural temporalities across structural permanence (centuries/millennia), conjunctural cycles (decades/generations), and short-term surface events (l'événementiel subordinated as mere symptoms). Employs Reversed Longue Durée to trace modern concepts back to foundational institutional, infrastructural, geopolitical, and cognitive strata. Produces continuous, dense factual Markdown prose without diagrams, tables, or bullet lists, accompanied by an Extra Info section. Use whenever text requires multi-secular longitudinal expansion, 3-tier causal stratification, plural temporal framing, or historical palimpsest genealogy.
 ---
 
 # Cresmo Long-Expander (Longue Durée & Historical Palimpsest)
@@ -104,7 +104,7 @@ Execute an internal 2-pass audit and expansion on the input text before generati
 - **Narrative Spine Preservation**: Avoid chaotic divergence. Maintain a relentless longitudinal spine that tracks the core thesis across macro-phases of historical time.
 - **Fluid Connectives**: Connect paragraphs using sophisticated temporal, causal, and dialectical transitions (e.g., *"Sob a aparente estabilidade da ordem jurídica setecentista, entretanto, operavam forças tectônicas de reconfiguração demográfica..."*).
 - **Substantive Explication vs. Methodological Invisibility**: Express multi-secular causes, ecological baselines, demographic drifts, and institutional legacies explicitly as facts and dynamics of the world, never as the result of applying a method, following an instruction, or citing a school of thought.
-- **Footnote Relocation**: Secondary biographical sketches, detailed legislative texts, specialized statistical breakdowns, and tangential precursor lineages must be systematically relegated to the **Informações Complementares** section.
+- **Footnote Relocation**: Secondary biographical sketches, detailed legislative texts, specialized statistical breakdowns, and tangential precursor lineages must be systematically relegated to the **Extra Info** section.
 
 ---
 
@@ -122,12 +122,12 @@ Execute an internal 2-pass audit and expansion on the input text before generati
 
 ---
 
-## Complementary Information Section
+### Extra Info Section
 
 Whenever necessary to prevent narrative fragmentation or conceptual inflation in the main body, append a dedicated section at the very end of the file under the exact header:
 
 ```markdown
-## Informações Complementares
+### Extra Info
 ```
 
 In this section, provide numbered continuous prose paragraphs detailing info not suitable to main text. This may include

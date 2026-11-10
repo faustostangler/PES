@@ -16,6 +16,7 @@ from cresmo.domain.entities import (
     MapOfContent,
     PipelineSessionId,
     SourceTranscript,
+    StageTranscript,
     Transcript,
     UserIdentity,
     post_process_fluid_transcript,
@@ -93,9 +94,86 @@ class TestSourceTranscript:
         assert transcript.provenance.url == "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
         assert transcript.provenance.publication_date == pub
 
+    def test_source_transcript_mismatch_provenance_url_raises_validation_error(self) -> None:
+        with pytest.raises(DomainValidationError, match="ContentId mismatch"):
+            SourceTranscript(
+                content_id=ContentId("vid_aaa_1234"),
+                channel_name=ChannelName("Channel"),
+                source_url="https://www.youtube.com/watch?v=vid_bbb_5678",
+                body="Body text",
+            )
+
+    def test_source_transcript_infers_content_id_from_source_url(self) -> None:
+        st = SourceTranscript(
+            channel_name=ChannelName("Channel"),
+            source_url="https://youtu.be/inferred_123",
+            body="Body text",
+        )
+        assert st.content.id == ContentId("inferred_123")
+
+    def test_channel_url_dynamic_fallback(self) -> None:
+        from cresmo.domain.value_objects import Channel
+
+        ch1 = Channel(name="MyChannel", id=ChannelId("UC_auto_url_1"))
+        assert ch1.url == "https://www.youtube.com/channel/UC_auto_url_1"
+
+        ch2 = Channel(
+            name="MyChannel", id=ChannelId("UC_auto_url_1"), url="https://youtube.com/@custom"
+        )
+        assert ch2.url == "https://youtube.com/@custom"
+
+        ch3 = Channel(
+            name="MyChannel",
+            id=ChannelId("UC_auto_url_1"),
+            url="https://www.youtube.com/channel/UC_auto_url_1",
+        )
+        assert ch3.url == "https://www.youtube.com/channel/UC_auto_url_1"
+        assert ch3._url is None
+
+        ch4 = Channel(name="MyChannel")
+        assert ch4.url is None
+
+    def test_content_create_with_inferred_id_from_url(self) -> None:
+        from cresmo.domain.value_objects import Content
+
+        cnt = Content.create(
+            url="https://youtube.com/watch?v=extracted_abc", title="Title", body="Body"
+        )
+        assert cnt.id == ContentId("extracted_abc")
+
 
 class TestEnrichedCompendium:
     """SPEC-001 §2.2: EnrichedCompendium invariants and edge cases."""
+
+    def test_enriched_compendium_is_stage_transcript_and_supports_pure_triad(self) -> None:
+        """ADR-054: EnrichedCompendium must inherit from StageTranscript and support pure 3-VO Triad."""
+        channel = Channel(
+            name="Example Channel", id="UC1234567890abcdef", category="Political Science"
+        )
+        prov = MediaProvenance.create(
+            url="https://youtube.com/watch?v=dQw4w9WgXcQ", publication_date="2024-03-15"
+        )
+        content = Content(
+            id="dQw4w9WgXcQ",
+            title="Teoria das Elites",
+            body="Continuous fluid prose without tables.",
+        )
+        comp = EnrichedCompendium(
+            channel=channel,
+            provenance=prov,
+            content=content,
+            complementary_info="Detailed historical and empirical datasets.",
+            pass_count=3,
+        )
+        assert isinstance(comp, StageTranscript)
+        assert comp.channel == channel
+        assert comp.provenance == prov
+        assert comp.content == content
+        assert comp.content_id == ContentId("dQw4w9WgXcQ")
+        assert comp.title == NoteTitle("Teoria das Elites")
+        assert comp.body == "Continuous fluid prose without tables."
+        assert comp.complementary_info == "Detailed historical and empirical datasets."
+        assert comp.pass_count == 3
 
     def test_valid_enriched_compendium_with_all_fields(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
@@ -226,7 +304,7 @@ class TestEnrichedCompendium:
         title = NoteTitle("Teoria das Elites")
         with pytest.raises(
             CompendiumStructureError,
-            match=r"^EnrichedCompendium must contain a non-empty 'Informações Complementares' section\.$",
+            match=r"^EnrichedCompendium must contain a non-empty 'Extra Info' section\.$",
         ):
             EnrichedCompendium(
                 content_id=cid,
@@ -237,7 +315,7 @@ class TestEnrichedCompendium:
             )
         with pytest.raises(
             CompendiumStructureError,
-            match=r"^EnrichedCompendium must contain a non-empty 'Informações Complementares' section\.$",
+            match=r"^EnrichedCompendium must contain a non-empty 'Extra Info' section\.$",
         ):
             EnrichedCompendium(
                 content_id=cid,
@@ -1446,9 +1524,7 @@ class TestPostProcessFluidTranscriptInvariantsAndRegex:
         st = SourceTranscript(channel_name="Chan", content_id="c1", body="Raw")
         base = "Main core prose narrative that must be preserved."
 
-        res1 = post_process_fluid_transcript(
-            f"{base}\n\n## Informações Complementares\nDetails to drop.", st
-        )
+        res1 = post_process_fluid_transcript(f"{base}\n\n### Extra Info\nDetails to drop.", st)
         assert res1.content.body == base
 
         res2 = post_process_fluid_transcript(
@@ -1461,9 +1537,7 @@ class TestPostProcessFluidTranscriptInvariantsAndRegex:
         )
         assert res3.content.body == base
 
-        res4 = post_process_fluid_transcript(
-            f"{base}\n\n## **Informações Complementares**\nBold to drop.", st
-        )
+        res4 = post_process_fluid_transcript(f"{base}\n\n## **Extra Info**\nBold to drop.", st)
         assert res4.content.body == base
 
         res5 = post_process_fluid_transcript(
@@ -1484,9 +1558,7 @@ class TestPostProcessFluidTranscriptInvariantsAndRegex:
             CompendiumStructureError,
             match=r"^Generated fluid prose body is empty for 'c_err_1'\.$",
         ):
-            post_process_fluid_transcript(
-                "# Header\n\n## Informações Complementares\nExtra notes.", st
-            )
+            post_process_fluid_transcript("# Header\n\n### Extra Info\nExtra notes.", st)
 
         with pytest.raises(
             CompendiumStructureError,
@@ -1531,7 +1603,9 @@ class TestStageTranscriptUnifiedEnvelope:
         prov = MediaProvenance.create(url="https://youtu.be/triad123", description="Triad test")
         cnt = Content(id=ContentId("triad123"), title="Triad Title", body="Triad verbatim body")
 
-        st: StageTranscript = SourceTranscript(channel=ch, provenance=prov, content=cnt, metadata={"stage": "raw"})
+        st: StageTranscript = SourceTranscript(
+            channel=ch, provenance=prov, content=cnt, metadata={"stage": "raw"}
+        )
 
         # Pure triad verification
         assert st.channel is ch
@@ -1593,4 +1667,3 @@ class TestStageTranscriptUnifiedEnvelope:
         # Table is strictly forbidden in FluidTranscript (continuous prose)
         with pytest.raises(CompendiumStructureError, match="cannot contain Markdown tables"):
             FluidTranscript(channel_name="Ch", content_id="c1", body=table_text)
-

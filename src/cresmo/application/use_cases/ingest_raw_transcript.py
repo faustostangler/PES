@@ -53,12 +53,12 @@ class IngestRawTranscriptUseCase:
         Returns:
             SourceTranscript domain aggregate if ingestion succeeded, or None on failure.
         """
-        transcript = self.ingestion_port.ingest_single_video(
+        raw = self.ingestion_port.ingest_single_video(
             video_url=video_url,
             output_dir=self.raw_storage_dir,
             whisper_model=whisper_model,
             keep_audio=keep_audio,
         )
-        if transcript is not None:
-            self.vault_port.save_transcript(transcript)
-        return transcript
+        if raw is not None:
+            self.vault_port.save_transcript(raw)
+        return raw

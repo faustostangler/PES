@@ -127,7 +127,7 @@ class TestTransformFluidProse:
             "# Vilfredo Pareto e a Teoria das Elites\n\n"
             "## As Oligarquias Organizadas\n\n"
             "A teoria da circulação das elites postula que minorias organizadas governam maiorias.\n\n"
-            "## Informações Complementares\n\n"
+            "### Extra Info\n\n"
             "Acidentalmente gerado e deve ser removido pelo transformador."
         )
         llm_port = MockLLMAdapter(responses=[llm_response])
@@ -141,7 +141,7 @@ class TestTransformFluidProse:
         assert fluid.provenance.url == "https://youtube.com/watch?v=dQw4w9WgXcQ"
         assert "## As Oligarquias Organizadas" in fluid.content.body
         assert "A teoria da circulação das elites postula" in fluid.content.body
-        assert "## Informações Complementares" not in fluid.content.body
+        assert "### Extra Info" not in fluid.content.body
         assert "Acidentalmente gerado" not in fluid.content.body
 
     def test_transform_fluid_prose_init_validations(self) -> None:
@@ -261,7 +261,7 @@ class TestFillGapsFluidProse:
             channel_name=ChannelName("Example Channel"),
             body="Raw spoken text.",
         )
-        llm_response = "# Title\n\nBody.\n\n## Informações Complementares\n\nComp."
+        llm_response = "# Title\n\nBody.\n\n### Extra Info\n\nComp."
         llm_port = MockLLMAdapter(responses=[llm_response, llm_response, llm_response])
         vault_port = InMemoryVaultAdapter()
 
@@ -283,7 +283,7 @@ class TestFillGapsFluidProse:
             body="Body text to expand.",
         )
         llm_response = (
-            "# Title\n\nExpanded body.\n\n## Informações Complementares\n\nComplementary text."
+            "# Title\n\nExpanded body.\n\n### Extra Info\n\nComplementary text."
         )
         llm_port = MockLLMAdapter(responses=[llm_response, llm_response, llm_response])
         vault_port = InMemoryVaultAdapter()
@@ -358,7 +358,7 @@ class TestFillGapsFluidProse:
         llm_response = (
             "# Teoria das Elites\n\n"
             "A circulação das elites postula que minorias organizadas governam maiorias.\n\n"
-            "## Informações Complementares\n\n"
+            "### Extra Info\n\n"
             "Dados empíricos e análises contextuais aprofundadas."
         )
         llm_port = MockLLMAdapter(responses=[llm_response, llm_response, llm_response])
@@ -413,7 +413,7 @@ class TestFillGapsFluidProse:
         )
         llm_response = (
             "Body text without an H1 markdown title.\n\n"
-            "## Informações Complementares\n\n"
+            "### Extra Info\n\n"
             "Complementary details."
         )
         llm_port = MockLLMAdapter(responses=[llm_response])
@@ -474,14 +474,14 @@ class TestFillGapsFluidProse:
             channel_name=ChannelName("Example Channel"),
             body="Raw spoken text.",
         )
-        llm_response = "# H1 Title\n\nPrimary text.\n\n## Informações Complementares\n\n   "
+        llm_response = "# H1 Title\n\nPrimary text.\n\n### Extra Info\n\n   "
         llm_port = MockLLMAdapter(responses=[llm_response])
         vault_port = InMemoryVaultAdapter()
 
         use_case = FillGapsUseCase(llm_port, vault_port)
         with pytest.raises(
             CompendiumStructureError,
-            match=r"^EnrichedCompendium must contain a non-empty 'Informações Complementares' section\.$",
+            match=r"^EnrichedCompendium must contain a non-empty 'Extra Info' section\.$",
         ):
             use_case.execute(fluid, passes=1)
 
@@ -499,7 +499,7 @@ class TestFillGapsFluidProse:
         use_case = FillGapsUseCase(llm_port, vault_port)
         with pytest.raises(
             CompendiumStructureError,
-            match=r"Missing mandatory section '## Informações Complementares'",
+            match=r"Missing mandatory section '### Extra Info'",
         ):
             use_case.execute(fluid, passes=1)
 
@@ -513,7 +513,7 @@ class TestFillGapsFluidProse:
             video_description="Video description text.",
             upload_date=None,
         )
-        llm_response = "# H1 Title\n\nPrimary text.\n\n## Informações Complementares\n\nValid complementary info."
+        llm_response = "# H1 Title\n\nPrimary text.\n\n### Extra Info\n\nValid complementary info."
         llm_port = MockLLMAdapter(responses=[llm_response])
         vault_port = InMemoryVaultAdapter()
 
@@ -542,13 +542,13 @@ class TestExpandLongitudinalSynchronic:
         long_response = (
             "# Teoria das Elites (Longitudinal)\n\n"
             "Longitudinal analysis tracing Roman patricians through medieval baronies.\n\n"
-            "## Informações Complementares\n\n"
+            "### Extra Info\n\n"
             "Longitudinal footnotes and multi-secular metrics."
         )
         wide_response = (
             "# Teoria das Elites (Synchronic)\n\n"
             "Expanded continuous prose integrating longue durée causal analysis and axial networks.\n\n"
-            "## Informações Complementares\n\n"
+            "### Extra Info\n\n"
             "Multi-secular historical indices and global trade matrices."
         )
         llm_port = MockLLMAdapter(responses=[long_response, wide_response])
@@ -624,7 +624,7 @@ class TestExpandLongitudinalSynchronic:
             complementary_info="Initial complementary info.",
         )
         long_response = "Long response."
-        wide_response = "Wide response text.\n\n## Informações Complementares\n\n   "
+        wide_response = "Wide response text.\n\n### Extra Info\n\n   "
         llm_port = MockLLMAdapter(responses=[long_response, wide_response])
         vault_port = InMemoryVaultAdapter()
         use_case = ExpandCompendiumUseCase(llm_port, vault_port)
@@ -657,7 +657,7 @@ class TestExpandLongitudinalSynchronic:
             complementary_info="Initial complementary info.",
         )
         long_response = "Long response text."
-        wide_response = "Expanded body.\n\n## Informações Complementares\n\nExact tag notes."
+        wide_response = "Expanded body.\n\n### Extra Info\n\nExact tag notes."
         llm_port = MockLLMAdapter(responses=[long_response, wide_response])
         vault_port = InMemoryVaultAdapter()
 

@@ -61,7 +61,7 @@ _NOOP_BUILDERS: dict[PromptKey, Callable[[dict[str, Any]], tuple[str, str]]] = {
     ),
     PromptKey.LONG_EXPANDER: lambda c: (
         "You are Cresmo Long-Expander.",
-        f"Take the following enriched Markdown document and apply longitudinal analysis:\n\n{c.get('compendium_body', '')}\n\n## Informações Complementares\n{c.get('complementary_info', '')}",
+        f"Take the following enriched Markdown document and apply longitudinal analysis:\n\n{c.get('compendium_body', '')}\n\n### Extra Info\n{c.get('complementary_info', '')}",
     ),
     PromptKey.WIDE_EXPANDER: lambda c: (
         "You are Cresmo Wide-Expander.",

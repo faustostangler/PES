@@ -70,14 +70,14 @@ def validate_fluid_prose_mechanical_invariants(text: str) -> list[str]:
 
 
 _COMPLEMENTARY_REGEX = re.compile(
-    r"^\s*##\s+Informações\s+Complementares\s*$",
+    r"^\s*###\s+Extra\s+Info\s*$",
     re.MULTILINE,
 )
 _BOLD_ENTITY_PATTERN = re.compile(r"\*\*([^*]+)\*\*")
 
 
 def extract_complementary_section(text: str) -> str:
-    """Extract text from the mandatory '## Informações Complementares' section."""
+    """Extract text from the mandatory '### Extra Info' section."""
     match = _COMPLEMENTARY_REGEX.search(text)
     if not match:
         return ""
@@ -114,11 +114,11 @@ def validate_gap_filler_mechanical_invariants(text: str) -> list[str]:
             "Text must contain zero em-dashes ('—'). Use commas or separate sentences."
         )
 
-    # 4. Mandatory '## Informações Complementares' section
+    # 4. Mandatory '### Extra Info' section
     complementary_match = _COMPLEMENTARY_REGEX.search(stripped)
     if not complementary_match:
         violations.append(
-            "Missing mandatory complementary section '## Informações Complementares'."
+            "Missing mandatory complementary section '### Extra Info'."
         )
         main_body = stripped
         complementary_section = ""
@@ -126,9 +126,9 @@ def validate_gap_filler_mechanical_invariants(text: str) -> list[str]:
         main_body = stripped[: complementary_match.start()].strip()
         complementary_section = stripped[complementary_match.end() :].strip()
         if not complementary_section:
-            violations.append("Section '## Informações Complementares' is empty.")
+            violations.append("Section '### Extra Info' is empty.")
         if not main_body:
-            violations.append("Main body text before '## Informações Complementares' is empty.")
+            violations.append("Main body text before '### Extra Info' is empty.")
 
     # 5. Zero Markdown Tables in main body
     if _TABLE_LINE_PATTERN.search(main_body) or ("|" in main_body and "-|-" in main_body):

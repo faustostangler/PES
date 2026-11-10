@@ -7,7 +7,7 @@ description: Performs deep epistemic gap analysis and conceptual expansion on te
 
 ## Overview
 
-The `ghost-writer-expander` skill performs systematic knowledge gap audits and narrative expansions on existing drafts. Using a two-stage process—an internal Socratic & Historical-Scientific audit followed by textual expansion—it enriches drafts with realistic data, precise statistics, verified real-world examples, and precursor history, applying the author's baroque-naturalist prose identity as defined in the `ghost-writer-style` guide.
+The `ghost-writer-expander` skill performs systematic knowledge gap audits and narrative expansions on existing texts. Using a two-stage process—an internal Socratic & Historical-Scientific audit followed by textual expansion—it enriches drafts with realistic data, precise statistics, verified real-world examples, and precursor history, applying the author's baroque-naturalist prose identity as defined in the `ghost-writer-style` guide.
 
 All outputs generated must be saved directly to Markdown (.md) files (such as `03_expanded.md`). Outputs must consist strictly of structured hierarchical paragraphs (Markdown headers and narrative prose), never using tables, diagrams, lists, or bullets.
 
@@ -86,3 +86,4 @@ Sem imagens, diagramas, tabelas, fórmulas, LaTeX, blocos de destaque, bullets o
 A saída expandida deve ser gravada diretamente em um arquivo Markdown (.md) no local designado (como `playground/ghost-writer/<article_slug>/03_expanded.md`).
 O arquivo deve conter estritamente o texto formatado em parágrafos estruturados hierarquicamente.
 É proibido utilizar tabelas, diagramas, listas ou bullets. Não faça comentários nem introduções/conclusões conversacionais.
+

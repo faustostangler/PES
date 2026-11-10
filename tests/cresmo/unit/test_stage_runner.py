@@ -2503,7 +2503,7 @@ class TestStageRunnerStageExecutionAndFallback:
 
         mock_trans = MagicMock()
         mock_trans.transform.return_value = (
-            "## Test\n\nContent\n\n## Informações Complementares\n1. Info"
+            "## Test\n\nContent\n\n### Extra Info\n1. Info"
         )
 
         runner = PipelineStageRunner(

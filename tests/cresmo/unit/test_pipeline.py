@@ -116,7 +116,7 @@ class SmartMockLLMAdapter(MockLLMAdapter):
         return (
             "# Teoria das Elites\n\n"
             "A teoria da circulação das elites postula que minorias organizadas governam maiorias.\n\n"
-            "## Informações Complementares\n\n"
+            "### Extra Info\n\n"
             "Análise sociológica e precursores históricos."
         )
 

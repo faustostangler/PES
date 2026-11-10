@@ -42,6 +42,7 @@ from cresmo.application.ports import (
     VaultRepositoryPort,
 )
 from cresmo.domain.entities import (
+    EnrichedCompendium,
     FluidTranscript,
     SourceTranscript,
     UserIdentity,
@@ -98,7 +99,7 @@ class TestTextExtractionHelpers:
         fluid_triad_with_comp.content.body = "Fluid prose body"
         fluid_triad_with_comp.complementary_info = "Supplementary encyclopedic data"
         assert _extract_fluid_text(fluid_triad_with_comp) == (
-            "Fluid prose body\n\n## Informações Complementares\n\nSupplementary encyclopedic data"
+            "Fluid prose body\n\n### Extra Info\n\nSupplementary encyclopedic data"
         )
 
         # Body shape
@@ -408,13 +409,19 @@ class TestCresmoPipelineExecutionAndIdempotency:
         assert meta["video_url"] == "https://youtube.com/watch?v=1234567"
         assert meta["publication_date"] == "2024-05-20"
 
-        # Verify execute_stage calls (fluid_prose active; downstream stages commented)
-        assert mock_runner.execute_stage.call_count == 1
+        # Verify execute_stage calls for conveyor pipeline (fluid_prose and gap_filler)
+        assert mock_runner.execute_stage.call_count == 2
         first_call = mock_runner.execute_stage.call_args_list[0]
         assert first_call[0][0] == "fluid_prose"
         assert first_call[1]["source"] is sample_source_transcript
         assert first_call[1]["context"].content.id == ContentId("c1234567")
         assert first_call[1]["context"].user_identity == user
+
+        second_call = mock_runner.execute_stage.call_args_list[1]
+        assert second_call[0][0] == "gap_filler"
+        assert second_call[1]["source"] is mock_runner.execute_stage.return_value
+        assert second_call[1]["context"].content.id == ContentId("c1234567")
+        assert second_call[1]["max_passes"] == 3
 
         # Verify record_session_output with all canonical fields
         mock_t.record_session_output.assert_called_once()
@@ -641,7 +648,7 @@ class TestCresmoPipelineExecutionAndIdempotency:
         res = pipeline.execute(sample_source_transcript, force_reprocess=True)
         assert res.already_processed is False
         assert res.success is True
-        assert mock_runner.execute_stage.call_count == 1
+        assert mock_runner.execute_stage.call_count == 2
 
     def test_execute_stage_failure_propagates_exception(
         self, sample_source_transcript: SourceTranscript
@@ -965,8 +972,42 @@ class TestCresmoPipelineRunForSources:
             assert isinstance(call_kwargs["batch_id"], BatchId)
 
     def test_pipeline_fluid_prose_checkpoint_skips_stage_runner(self) -> None:
-        """Verify pipeline reuses cached FluidTranscript when force_reprocess is False per ADR-043."""
+        """Verify pipeline reuses cached FluidTranscript and EnrichedCompendium when force_reprocess is False per ADR-043."""
         cid = ContentId("vid_cached_fluid")
+        raw = SourceTranscript(
+            content_id=cid,
+            channel_name=ChannelName("Channel Test"),
+            body="Verbatim spoken text.",
+        )
+        cached_fluid = FluidTranscript(
+            content_id=cid,
+            channel_name=ChannelName("Channel Test"),
+            body="## Cached Detranscribed Prose",
+        )
+        cached_compendium = MagicMock(spec=EnrichedCompendium)
+        mock_ingestion = MagicMock(spec=MediaIngestionPort)
+        mock_vault = MagicMock(spec=VaultRepositoryPort)
+        mock_vault.get_raw_transcript.return_value = raw
+        mock_vault.get_fluid_transcript.return_value = cached_fluid
+        mock_vault.get_enriched_compendium.return_value = cached_compendium
+        mock_runner = MagicMock(spec=PipelineStageRunner)
+
+        pipeline = CresmoPipeline(
+            media_ingestion_port=mock_ingestion,
+            vault_port=mock_vault,
+            stage_runner=mock_runner,
+        )
+
+        result = pipeline.execute(raw, force_reprocess=False)
+
+        assert result.success is True
+        assert result.fluid_transcript == cached_fluid
+        assert result.compendium == cached_compendium
+        mock_runner.execute_stage.assert_not_called()
+
+    def test_pipeline_cached_fluid_only_executes_gap_filler(self) -> None:
+        """Verify pipeline reuses cached fluid but executes gap_filler when compendium is not cached."""
+        cid = ContentId("vid_cached_fluid_only")
         raw = SourceTranscript(
             content_id=cid,
             channel_name=ChannelName("Channel Test"),
@@ -981,7 +1022,9 @@ class TestCresmoPipelineRunForSources:
         mock_vault = MagicMock(spec=VaultRepositoryPort)
         mock_vault.get_raw_transcript.return_value = raw
         mock_vault.get_fluid_transcript.return_value = cached_fluid
+        mock_vault.get_enriched_compendium.return_value = None
         mock_runner = MagicMock(spec=PipelineStageRunner)
+        mock_runner.execute_stage.return_value = MagicMock(body="New enriched body")
 
         pipeline = CresmoPipeline(
             media_ingestion_port=mock_ingestion,
@@ -993,4 +1036,7 @@ class TestCresmoPipelineRunForSources:
 
         assert result.success is True
         assert result.fluid_transcript == cached_fluid
-        mock_runner.execute_stage.assert_not_called()
+        mock_runner.execute_stage.assert_called_once()
+        first_call = mock_runner.execute_stage.call_args_list[0]
+        assert first_call[0][0] == "gap_filler"
+        assert first_call[1]["source"] == cached_fluid

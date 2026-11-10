@@ -93,7 +93,7 @@ INDEX_JSON_FILENAME: str = "_index.json"
 
 # --- Markers & Tag Delimiters ---
 TAG_MARKDOWN_H2: str = "## "
-TAG_COMPLEMENTARY_INFO: str = "## Informações Complementares"
+TAG_COMPLEMENTARY_INFO: str = "### Extra Info"
 
 # --- Compiled Regular Expressions ---
 YT_ID_PATTERN: re.Pattern[str] = re.compile(r"^.*-([a-zA-Z0-9_-]{11})$")
@@ -311,7 +311,7 @@ CRESMO_LONG_EXPANDER_PROMPT_TASK: str = (
     "(genealogies of overlapping, sedimented institutional layers).\n"
     "Purge any remaining oralities, bullet lists, tables, diagrams, LaTeX, and YAML metadata. "
     "Produce continuous, highly dense factual Markdown prose without diagrams, tables, or bullet lists, "
-    "preserving the '## Informações Complementares' section for deep secondary lineages.\n"
+    "preserving the '### Extra Info' section for deep secondary lineages.\n"
 )
 CRESMO_WIDE_EXPANDER_PROMPT_TASK: str = (
     "You are Cresmo Wide-Expander (Synchronic Cross-Sections, Axial Time & Global Connected History).\n"
@@ -321,7 +321,7 @@ CRESMO_WIDE_EXPANDER_PROMPT_TASK: str = (
     "2) Parallelism & Analogy (independent societies responding similarly to common systemic pressures with zero or minimal contact, such as pristine state formation or Axial Age ethical/philosophical revolutions).\n"
     "Purge all bullet lists, tables, diagrams, LaTeX, and YAML metadata. "
     "Produce continuous, highly dense factual Markdown prose without diagrams, tables, or bullet lists, "
-    "enriching the '## Informações Complementares' section with trans-civilizational comparative dossiers.\n"
+    "enriching the '### Extra Info' section with trans-civilizational comparative dossiers.\n"
 )
 STAGE3_PRE_PROMPT: str = (
     "You are Cresmo Atomic. Extract atomic Obsidian notes from the enriched text as a structured JSON array of note objects.\n"
@@ -529,9 +529,7 @@ def is_valid_enriched_markdown(file_path: Path, min_bytes: int = MIN_VALID_OUTPU
         # Must contain the mandatory complementary info section
         has_complementary = (
             TAG_COMPLEMENTARY_INFO in content
-            or "Informações Complementares" in content
-            or "Informacoes Complementares" in content
-            or "Complementary Information" in content
+            or "Extra Info" in content
         )
         return is_valid_enriched_markdown_content(content, min_bytes=min_bytes)
     except Exception:
@@ -546,9 +544,7 @@ def is_valid_enriched_markdown_content(content: str, min_bytes: int = MIN_VALID_
     has_header = TAG_MARKDOWN_H2 in content_clean or "\n# " in content_clean or content_clean.startswith("# ")
     has_complementary = (
         TAG_COMPLEMENTARY_INFO in content_clean
-        or "Informações Complementares" in content_clean
-        or "Informacoes Complementares" in content_clean
-        or "Complementary Information" in content_clean
+        or "Extra Info" in content_clean
     )
     return has_header and has_complementary
 
@@ -678,8 +674,8 @@ def cresmo_gap_filler(
         if llm is not None:
             transformed = llm.transform(prompt=prompt, system_instruction=task_prompt)
             if not is_valid_enriched_markdown_content(transformed, MIN_VALID_OUTPUT_BYTES):
-                if "## Informações Complementares" not in transformed:
-                    transformed += "\n\n## Informações Complementares\n- Contexto empírico e referências complementares adicionais.\n"
+                if "### Extra Info" not in transformed:
+                    transformed += "\n\n### Extra Info\n- Contexto empírico e referências complementares adicionais.\n"
             enriched_file.write_text(transformed, encoding="utf-8")
             current_text = transformed
             print(f"  ✓ [Stage 2 {pass_label} Success] Enriched text updated via LLM Adapter -> {enriched_file}")
@@ -847,8 +843,8 @@ def cresmo_expander(
         if llm is not None:
             expanded = llm.transform(prompt=prompt, system_instruction=task_prompt)
             if not is_valid_enriched_markdown_content(expanded, MIN_VALID_OUTPUT_BYTES):
-                if "## Informações Complementares" not in expanded:
-                    expanded += "\n\n## Informações Complementares\n- Contexto longitudinal e analítico complementar.\n"
+                if "### Extra Info" not in expanded:
+                    expanded += "\n\n### Extra Info\n- Contexto longitudinal e analítico complementar.\n"
             enriched_file.write_text(expanded, encoding="utf-8")
             current_text = expanded
             print(f"  ✓ [Stage Expander - {step_tag} Success] Enriched text updated via LLM Adapter -> {enriched_file}")

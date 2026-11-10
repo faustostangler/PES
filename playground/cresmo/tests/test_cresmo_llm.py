@@ -20,7 +20,7 @@ def test_llm_transformation_port_is_abstract():
 
 def test_mock_llm_adapter_implements_port():
     """Verify MockLLMAdapter conforms to LLMTransformationPort contract and records calls."""
-    adapter = MockLLMAdapter(canned_response="# Enriched Content\n\n## Informações Complementares\n- Grounding note")
+    adapter = MockLLMAdapter(canned_response="# Enriched Content\n\n### Extra Info\n- Grounding note")
     assert isinstance(adapter, LLMTransformationPort)
 
     result = adapter.transform(
@@ -28,7 +28,7 @@ def test_mock_llm_adapter_implements_port():
         system_instruction="You are Cresmo Expander",
     )
 
-    assert "## Informações Complementares" in result
+    assert "### Extra Info" in result
     assert len(adapter.call_history) == 1
     assert adapter.call_history[0]["prompt"] == "Process this transcript"
     assert adapter.call_history[0]["system_instruction"] == "You are Cresmo Expander"
@@ -63,7 +63,7 @@ def test_gemini_api_adapter_calls_genai_client():
 
     mock_client = MagicMock()
     mock_response = MagicMock()
-    mock_response.text = "# Enriched Output\n\nEmpirical prose.\n\n## Informações Complementares\nDetails."
+    mock_response.text = "# Enriched Output\n\nEmpirical prose.\n\n### Extra Info\nDetails."
     mock_response.usage_metadata = MagicMock(prompt_token_count=10, candidates_token_count=20, total_token_count=30)
     mock_client.models.generate_content.return_value = mock_response
 
@@ -92,7 +92,7 @@ def test_gemini_api_adapter_retry_on_transient_failure():
 
     mock_client = MagicMock()
     mock_response = MagicMock()
-    mock_response.text = "# Successful After Retry\n\n## Informações Complementares\nValid."
+    mock_response.text = "# Successful After Retry\n\n### Extra Info\nValid."
 
     # Fail once with connection error, then succeed
     mock_client.models.generate_content.side_effect = [

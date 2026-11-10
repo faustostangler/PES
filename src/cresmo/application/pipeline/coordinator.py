@@ -25,7 +25,11 @@ from typing import Any
 import structlog
 
 from cresmo.application.pipeline.context import PipelineExecutionContext
-from cresmo.application.pipeline.models import PipelineDependencies, PipelineResult
+from cresmo.application.pipeline.models import (
+    PipelineDependencies,
+    PipelineResult,
+    StageConveyorStep,
+)
 from cresmo.application.pipeline.stage_factory import StageFactory
 from cresmo.application.pipeline.stage_runner import PipelineStageRunner
 from cresmo.application.pipeline.transcript_loader import (
@@ -51,6 +55,7 @@ from cresmo.application.ports import (
 )
 from cresmo.application.use_cases import IngestRawTranscriptUseCase
 from cresmo.domain.entities import (
+    EnrichedCompendium,
     FluidTranscript,
     PipelineSessionId,
     SourceTranscript,
@@ -85,9 +90,7 @@ def _extract_source_text(source_target: Any) -> str:
 def _extract_fluid_text(source: Any) -> str:
     """Extract synthesized fluid prose text from FluidTranscript, EnrichedCompendium, or duck-typed candidate."""
     content = getattr(source, "content", None)
-    body = (
-        getattr(content, "body", None) if content is not None else getattr(source, "body", None)
-    )
+    body = getattr(content, "body", None) if content is not None else getattr(source, "body", None)
     complementary_info = getattr(source, "complementary_info", None)
     if (
         isinstance(body, str)
@@ -95,7 +98,7 @@ def _extract_fluid_text(source: Any) -> str:
         and body
         and complementary_info
     ):
-        return f"{body}\n\n## Informações Complementares\n\n{complementary_info}"
+        return f"{body}\n\n### Extra Info\n\n{complementary_info}"
     if isinstance(body, str) and body:
         return body
     text = getattr(source, "text", None)
@@ -275,55 +278,61 @@ class CresmoPipeline:
             )
 
             # =========================================================================
-            # CRESMO STAGES CONVEYOR PIPELINE
+            # CRESMO STAGES CONVEYOR PIPELINE (ADR-007, ADR-043, ADR-054)
             # =========================================================================
+            conveyor_steps: list[StageConveyorStep] = [
+                StageConveyorStep(
+                    name="fluid_prose",
+                    artifact_type=FluidTranscript,
+                    cache_getter=lambda vault, cid: vault.get_fluid_transcript(cid),
+                    cache_saver=lambda vault, item: vault.save_fluid_transcript(item),
+                ),
+                StageConveyorStep(
+                    name="gap_filler",
+                    artifact_type=EnrichedCompendium,
+                    cache_getter=lambda vault, cid: vault.get_enriched_compendium(cid),
+                    cache_saver=lambda vault, item: vault.save_enriched_compendium(item),
+                ),
+            ]
 
-            # Stage 1: Fluid Prose (Checkpoint-aware per ADR-043 / SPEC-043)
-            fluid = None
-            if not force_reprocess:
-                cached = self.vault_port.get_fluid_transcript(content.id)
-                if isinstance(cached, FluidTranscript):
-                    fluid = cached
-                    logger.info(
-                        "Reusing cached fluid transcript for content_id '%s'",
-                        content.id.value,
+            stage_artifacts: dict[str, Any] = {"raw": raw}
+            current_source: Any = raw
+
+            for step in conveyor_steps:
+                artifact = None
+                if not force_reprocess and step.cache_getter:
+                    cached = step.cache_getter(self.vault_port, content.id)
+                    if isinstance(cached, step.artifact_type):
+                        artifact = cached
+                        logger.info(
+                            "Reusing cached %s for content_id '%s'",
+                            step.name,
+                            content.id.value,
+                        )
+
+                if artifact is None:
+                    extra_kwargs: dict[str, Any] = {}
+                    if step.name == "gap_filler":
+                        extra_kwargs["max_passes"] = gap_filler_passes
+
+                    artifact = self.stage_runner.execute_stage(
+                        step.name,
+                        source=current_source,
+                        context=execution_context,
+                        **extra_kwargs,
                     )
+                    if isinstance(artifact, step.artifact_type) and step.cache_saver:
+                        step.cache_saver(self.vault_port, artifact)
 
-            if fluid is None:
-                fluid = self.stage_runner.execute_stage(
-                    "fluid_prose",
-                    source=raw,
-                    context=execution_context,
-                )
-                if isinstance(fluid, FluidTranscript):
-                    self.vault_port.save_fluid_transcript(fluid)
+                stage_artifacts[step.name] = artifact
+                current_source = artifact
 
-            # temp debug by senior architect. keep commented.
-            # # Stage 2: Gap Filler
-            # gaps = self.stage_runner.execute_stage(
-            #     "gap_filler",
-            #     source=fluid,
-            #     context=execution_context,
-            # )
-            gaps: Any = fluid
+            fluid: Any = stage_artifacts["fluid_prose"]
+            gaps: Any = stage_artifacts["gap_filler"]
 
-            # Stage 3: Long Expander
-            # long_exp = self.stage_runner.execute_stage("long_expander", source=gaps, context=execution_context)
-
-            # Stage 4: Wide Expander
-            # wide_exp = self.stage_runner.execute_stage("wide_expander", source=long_exp, context=execution_context)
-
-            # Stage 5: Raw Indexing (reordered: after wide_expander and before atomic_inventory)
-            # index = self.stage_runner.execute_stage("raw_indexing", source=wide_exp, context=execution_context)
-
-            # Stage 6: Atomic Inventory
-            # inventory = self.stage_runner.execute_stage("atomic_inventory", source=wide_exp, context=execution_context)
-
-            # Stage 7: Atomic Batch
-            # notes = self.stage_runner.execute_stage("atomic_batch", source=inventory, context=execution_context)
-
-            # Stage 8: Reconcile MOCs
-            # mocs = self.stage_runner.execute_stage("reconcile_mocs", source=notes, context=execution_context)
+            # Note: Subsequent conveyor stages (long_expander, wide_expander, raw_indexing,
+            # atomic_inventory, atomic_batch, reconcile_mocs) will be appended to conveyor_steps
+            # sequentially once their domain VOs conform to StageTranscript (ADR-054).
 
             synthesized_text = _extract_fluid_text(gaps) or _extract_fluid_text(fluid)
             raw_word_count = len(raw_text.split())

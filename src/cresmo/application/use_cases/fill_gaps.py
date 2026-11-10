@@ -29,10 +29,10 @@ from cresmo.domain.value_objects import NoteTitle, PromptKey
 
 # Extracts title from markdown H1 header
 _TITLE_H1_PATTERN = re.compile(r"^\s*#\s+(.+)$", re.MULTILINE)
-_COMPLEMENTARY_TAG = "## Informações Complementares"
+_COMPLEMENTARY_TAG = "### Extra Info"
 # Resilient regex matching variations of the mandatory complementary section header
 _COMPLEMENTARY_REGEX = re.compile(
-    r"^\s*#{2,3}\s+\*?\*?(?:Informa[cç][oõ]es\s+Complementares|Notas\s+Complementares|Informa[cç][oõ]es\s+Adicionais)\*?\*?.*$",
+    r"^\s*#{2,3}\s+\*?\*?(?:Extra\s+Info|Notas\s+Complementares|Informa[cç][oõ]es\s+Adicionais)\*?\*?.*$",
     re.MULTILINE | re.IGNORECASE,
 )
 
@@ -152,7 +152,7 @@ class FillGapsUseCase:
 
         if not complementary_information:
             raise CompendiumStructureError(
-                "EnrichedCompendium must contain a non-empty 'Informações Complementares' section."
+                "EnrichedCompendium must contain a non-empty 'Extra Info' section."
             )
 
         pub_date = fluid_transcript.provenance.publication_date

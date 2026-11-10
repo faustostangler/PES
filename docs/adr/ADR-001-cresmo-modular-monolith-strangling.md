@@ -86,7 +86,7 @@ We will strangulate the legacy procedural code in `playground/cresmo/` and `play
 
 ### Entities & Aggregates
 - `RawTranscript`: Root aggregate for Raw Transcript Ingestion, containing `ContentId`, source metadata, and verbatim body.
-- `EnrichedCompendium`: Aggregate for Fluid Prose Gap Filler and Longitudinal/Synchronic Expansion, validating that the body contains dense continuous prose and the mandatory `## Informações Complementares`.
+- `EnrichedCompendium`: Aggregate for Fluid Prose Gap Filler and Longitudinal/Synchronic Expansion, validating that the body contains dense continuous prose and the mandatory `### Extra Info`.
 - `AtomicNote`: Rich domain entity encapsulating frontmatter metadata, contextual definition, typed connections, causal matrix, and cross-context links (Inventory Discovery & Batched Atomic Synthesis). Invariants verified at instantiation (no empty titles, valid type, non-empty definition).
 - `MapOfContent`: Aggregate representing thematic MOCs (MOC Reconciliation), ensuring bidirectional links and zero orphaned notes.
 

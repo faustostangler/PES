@@ -142,7 +142,7 @@ class EnrichedCompendiumFactory(DataclassFactory[EnrichedCompendium]):
 
     @classmethod
     def complementary_info(cls) -> str:
-        return "## Informações Complementares\nContexto histórico enciclopédico e notas prosopográficas."
+        return "### Extra Info\nContexto histórico enciclopédico e notas prosopográficas."
 
     @classmethod
     def pass_count(cls) -> int:

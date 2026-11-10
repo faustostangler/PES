@@ -96,7 +96,7 @@ SEED_CALIBRATION_DATA: list[dict[str, Any]] = [
                 "quaisquer pretensões anexionistas de monarcas cristãos vizinhos.\n\n"
                 "Esse ato diplomático coroou um esforço de décadas iniciado no Tratado de Zamora em 1143, subordinando "
                 "a legitimidade jurídica do novo reino ao pagamento anual de um censo de dois marcos de ouro à corte romana.\n\n"
-                "## Informações Complementares\n\n"
+                "### Extra Info\n\n"
                 "1. O Tratado de Zamora de outubro de 1143 contou com a mediação do cardeal Guido de Vico, legado papal na Península Ibérica.\n\n"
                 "2. O censo pago por Afonso Henriques à Santa Sé foi elevado de quatro onças de ouro anuais em 1144 para dois marcos de ouro em 1179."
             ),
@@ -133,7 +133,7 @@ SEED_CALIBRATION_DATA: list[dict[str, Any]] = [
                 "processamento em trocas de contexto em vez de executar consultas analíticas úteis.\n\n"
                 "Essas perturbações confirmam a necessidade de dimensionar corretamente o agrupamento de conexões "
                 "e revisar a modelagem de consultas para preservar a estabilidade da camada de persistência.\n\n"
-                "## Informações Complementares\n\n"
+                "### Extra Info\n\n"
                 "1. O gerenciador de conexões PgBouncer opera em três modos distintos de agrupamento: sessão, transação e instrução.\n\n"
                 "2. O comando EXPLAIN ANALYZE do PostgreSQL executa a consulta e retorna o plano de execução real juntamente com os custos."
             ),

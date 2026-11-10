@@ -43,7 +43,7 @@ def test_gap_filler_mechanical_invariants_valid() -> None:
         "Em 1096, o rei **Afonso VI de Leão** concedeu o governo a **Henrique de Borgonha**, "
         "recompensando o auxílio militar prestado contra os mouros. "
         "A autonomia política emergiu das tensões entre a nobreza local e a aristocracia galega.\n\n"
-        "## Informações Complementares\n\n"
+        "### Extra Info\n\n"
         "1. **Henrique de Borgonha** (1066-1112) pertencia à linhagem capetiana da Borgonha, "
         "tendo liderado contingentes cruzados no âmbito da Reconquista ibérica.\n"
         "2. A doação régia de 1096 estabeleceu laços de vassalagem estrita com a coroa leonesa."
@@ -53,16 +53,16 @@ def test_gap_filler_mechanical_invariants_valid() -> None:
 
 
 def test_gap_filler_mechanical_invariants_missing_complementary_section() -> None:
-    """Verify missing '## Informações Complementares' triggers a mechanical violation."""
+    """Verify missing '### Extra Info' triggers a mechanical violation."""
     invalid_text = "## O Surgimento de Portugal\n\nTexto corrido sem seção complementar alguma."
     violations = validate_gap_filler_mechanical_invariants(invalid_text)
-    assert any("Informações Complementares" in v for v in violations)
+    assert any('Extra Info' in v for v in violations)
 
 
 def test_gap_filler_mechanical_invariants_empty_complementary_section() -> None:
     """Verify empty complementary section triggers a mechanical violation."""
     invalid_text = (
-        "## O Surgimento de Portugal\n\nTexto corrido principal.\n\n## Informações Complementares\n"
+        "## O Surgimento de Portugal\n\nTexto corrido principal.\n\n### Extra Info\n"
     )
     violations = validate_gap_filler_mechanical_invariants(invalid_text)
     assert any("empty" in v.lower() for v in violations)
@@ -73,7 +73,7 @@ def test_gap_filler_mechanical_invariants_prohibits_em_dash_and_tables() -> None
     text_with_em_dash = (
         "## Título\n\n"
         "O rei — figura central — viajou.\n\n"
-        "## Informações Complementares\n\n"
+        "### Extra Info\n\n"
         "1. Detalhes."
     )
     assert any(
@@ -83,7 +83,7 @@ def test_gap_filler_mechanical_invariants_prohibits_em_dash_and_tables() -> None
     text_with_table = (
         "## Título\n\n"
         "| Col1 | Col2 |\n| --- | --- |\n| A | B |\n\n"
-        "## Informações Complementares\n\n"
+        "### Extra Info\n\n"
         "1. Detalhes."
     )
     assert any(
@@ -94,7 +94,7 @@ def test_gap_filler_mechanical_invariants_prohibits_em_dash_and_tables() -> None
 def test_gap_filler_mechanical_invariants_prohibits_bullets_in_main_body() -> None:
     """Verify bullet points in main body are rejected by mechanical preflight."""
     text_with_bullets = (
-        "## Título\n\n* Item 1\n* Item 2\n\n## Informações Complementares\n\n1. Detalhes."
+        "## Título\n\n* Item 1\n* Item 2\n\n### Extra Info\n\n1. Detalhes."
     )
     assert any(
         "bullet" in v.lower() for v in validate_gap_filler_mechanical_invariants(text_with_bullets)
@@ -105,13 +105,13 @@ def test_check_complementary_mechanical_saturation_detected() -> None:
     """Verify saturation detected when delta words < 5% and 100% of bold entities match."""
     prev_draft = (
         "## Corpo Principal\n\nTexto.\n\n"
-        "## Informações Complementares\n\n"
+        "### Extra Info\n\n"
         "1. **Henrique de Borgonha** nasceu em 1066 e casou com **Teresa de Leão** em 1093."
     )
     # Current draft rephrases slightly: same bold entities, word delta < 5%
     curr_draft = (
         "## Corpo Principal\n\nTexto expandido.\n\n"
-        "## Informações Complementares\n\n"
+        "### Extra Info\n\n"
         "1. O nobre **Henrique de Borgonha** nasceu no ano 1066 e casou com **Teresa de Leão** em 1093."
     )
     is_saturated = check_complementary_mechanical_saturation(prev_draft, curr_draft)
@@ -122,12 +122,12 @@ def test_check_complementary_mechanical_saturation_not_detected_when_new_entitie
     """Verify saturation NOT triggered when new bold entities (NER) are added."""
     prev_draft = (
         "## Corpo Principal\n\nTexto.\n\n"
-        "## Informações Complementares\n\n"
+        "### Extra Info\n\n"
         "1. **Henrique de Borgonha** governou o condado."
     )
     curr_draft = (
         "## Corpo Principal\n\nTexto.\n\n"
-        "## Informações Complementares\n\n"
+        "### Extra Info\n\n"
         "1. **Henrique de Borgonha** governou o condado.\n"
         "2. **Afonso Henriques** consolidou a autonomia no **Tratado de Zamora**."
     )
@@ -149,7 +149,7 @@ def test_post_process_enriched_compendium() -> None:
         "# Fundação de Portugal\n\n"
         "## O Condado Portucalense\n\n"
         "Prosa densa expandida sem tabelas e sem travessões.\n\n"
-        "## Informações Complementares\n\n"
+        "### Extra Info\n\n"
         "1. **Afonso Henriques** foi o primeiro rei de Portugal."
     )
 
@@ -159,7 +159,7 @@ def test_post_process_enriched_compendium() -> None:
     assert isinstance(compendium, EnrichedCompendium)
     assert compendium.content_id == ContentId("vid_123")
     assert compendium.title.value == "Fundação de Portugal"
-    assert "## Informações Complementares" not in compendium.body
+    assert "### Extra Info" not in compendium.body
     assert "Afonso Henriques" in compendium.complementary_info
     assert compendium.source_url == "https://youtube.com/watch?v=vid_123"
 

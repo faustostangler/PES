@@ -29,6 +29,7 @@ from cresmo.domain.value_objects import (
     Content,
     ContentId,
     MediaProvenance,
+    NoteTitle,
 )
 
 # Regex matching Markdown tables (| header | header | \n | --- | --- |)
@@ -37,7 +38,7 @@ _TABLE_PATTERN = re.compile(r"\|.*\|.*\n\|[\s:-]+\|", re.MULTILINE)
 _TITLE_H1_PATTERN = re.compile(r"^\s*#\s+(.+)$", re.MULTILINE)
 # Matches any accidental complementary information section headers
 _COMPLEMENTARY_REGEX = re.compile(
-    r"^\s*#{2,3}\s+\*?\*?(?:Informa[cç][oõ]es\s+Complementares|Notas\s+Complementares|Informa[cç][oõ]es\s+Adicionais)\*?\*?.*$",
+    r"^\s*#{2,3}\s+\*?\*?(?:Extra\s+Info|Informa[cç][oõ]es\s+Complementares|Notas\s+Complementares|Informa[cç][oõ]es\s+Adicionais)\*?\*?.*$",
     re.MULTILINE | re.IGNORECASE,
 )
 
@@ -103,9 +104,14 @@ class StageTranscript:
         if content is not None:
             resolved_content = content
         else:
-            resolved_content_id = (
-                ContentId.from_string(content_id) if content_id else ContentId("unknown")
-            )
+            if content_id:
+                resolved_content_id = ContentId.from_string(content_id)
+            elif source_url:
+                extracted = ContentId.extract_from_text(source_url)
+                resolved_content_id = extracted if extracted else ContentId("unknown")
+            else:
+                resolved_content_id = ContentId("unknown")
+
             resolved_content = Content(
                 id=resolved_content_id,
                 title=title,
@@ -128,7 +134,7 @@ class StageTranscript:
         return self.content.body
 
     @property
-    def title(self) -> str:
+    def title(self) -> NoteTitle | str:
         """Cognitive title of the content payload."""
         return self.content.title
 
@@ -138,7 +144,7 @@ class StageTranscript:
         return self.content.id
 
     @property
-    def channel_name(self) -> str:
+    def channel_name(self) -> ChannelName | str:
         """Cognitive channel/creator name."""
         return self.channel.name
 
@@ -203,6 +209,13 @@ class SourceTranscript(StageTranscript):
     def _validate_stage_invariants(self) -> None:
         if not self.content.body.strip():
             raise DomainValidationError("SourceTranscript body cannot be empty or whitespace.")
+        if self.provenance.url:
+            extracted_cid = ContentId.extract_from_text(self.provenance.url)
+            if extracted_cid is not None and extracted_cid != self.content.id:
+                raise DomainValidationError(
+                    f"ContentId mismatch: content.id '{self.content.id.value}' does not match "
+                    f"ID extracted from provenance.url '{self.provenance.url}' ('{extracted_cid.value}')."
+                )
 
 
 @dataclass(frozen=True, slots=True, init=False)

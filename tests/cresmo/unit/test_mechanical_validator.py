@@ -206,7 +206,7 @@ def test_multiple_simultaneous_violations() -> None:
 def test_extract_complementary_section() -> None:
     text_with = (
         "## Corpo Principal\n\nTexto de análise.\n\n"
-        "## Informações Complementares\n\n1. Primeiro detalhe.\n\n2. Segundo detalhe."
+        "### Extra Info\n\n1. Primeiro detalhe.\n\n2. Segundo detalhe."
     )
     assert extract_complementary_section(text_with) == "1. Primeiro detalhe.\n\n2. Segundo detalhe."
     assert extract_complementary_section("## Apenas Corpo\n\nSem seção adicional.") == ""
@@ -226,14 +226,14 @@ def test_count_complementary_items() -> None:
 def test_check_complementary_mechanical_saturation() -> None:
     prev_text = (
         "## Corpo\n\nTexto.\n\n"
-        "## Informações Complementares\n\n"
+        "### Extra Info\n\n"
         "1. Contexto sobre **Banco Central** e **Inflação**.\n\n"
         "2. Análise da taxa **Selic**."
     )
     # Saturated pass: same or subset of entities, item delta <= 5
     curr_saturated = (
         "## Corpo\n\nTexto.\n\n"
-        "## Informações Complementares\n\n"
+        "### Extra Info\n\n"
         "1. Contexto aprofundado sobre **Banco Central**.\n\n"
         "2. Análise da taxa **Selic**."
     )
@@ -242,7 +242,7 @@ def test_check_complementary_mechanical_saturation() -> None:
     # Unsaturated pass: introduces new entity **Ministério da Fazenda**
     curr_new_entity = (
         "## Corpo\n\nTexto.\n\n"
-        "## Informações Complementares\n\n"
+        "### Extra Info\n\n"
         "1. Contexto com **Banco Central** e **Ministério da Fazenda**."
     )
     assert check_complementary_mechanical_saturation(prev_text, curr_new_entity) is False
@@ -253,7 +253,7 @@ def test_check_complementary_mechanical_saturation() -> None:
 
     # Unsaturated pass: length delta >= max_delta_items (5)
     huge_items = "\n\n".join([f"{i}. Item de detalhe." for i in range(1, 10)])
-    curr_too_large = f"## Corpo\n\nTexto.\n\n## Informações Complementares\n\n{huge_items}"
+    curr_too_large = f"## Corpo\n\nTexto.\n\n### Extra Info\n\n{huge_items}"
     assert (
         check_complementary_mechanical_saturation(prev_text, curr_too_large, max_delta_items=5)
         is False
@@ -264,7 +264,7 @@ def test_validate_gap_filler_mechanical_invariants() -> None:
     valid_gap_filler = (
         "## Título Principal\n\n"
         "Parágrafo introdutório sobre o tema sem listas ou tabelas.\n\n"
-        "## Informações Complementares\n\n"
+        "### Extra Info\n\n"
         "1. Detalhe contextual numerado.\n\n"
         "2. Segundo detalhe com **Entidade**."
     )

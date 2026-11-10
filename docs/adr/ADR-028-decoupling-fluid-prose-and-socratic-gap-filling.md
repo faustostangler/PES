@@ -25,7 +25,7 @@ In the current Cresmo Knowledge Synthesis Engine ([`src/cresmo/application/pipel
 2. **Coupling of Detranscription and Socratic Gap Filling:**
    `FillGapsUseCase` ([`src/cresmo/application/use_cases/fill_gaps.py`](../../src/cresmo/application/use_cases/fill_gaps.py)) coupled two distinct responsibilities into a single stage:
    - *Responsibility A (Detranscription & Fluid Prose):* Purging oralities, rewriting into third-person neutral narrative, and verifying NER spelling.
-   - *Responsibility B (Socratic Gap Filling):* Conducting an epistemic gap audit across 6 dimensions, stratifying causality, and constructing the mandatory `## Informações Complementares` section.
+   - *Responsibility B (Socratic Gap Filling):* Conducting an epistemic gap audit across 6 dimensions, stratifying causality, and constructing the mandatory `### Extra Info` section.
 3. **Missing Intermediate Domain Aggregate:**
    There is currently no domain entity representing clean, normalized fluid prose decoupled from the Socratic compendium with complementary info.
 
@@ -53,7 +53,7 @@ The canonical execution sequence in `CresmoPipeline` is updated to:
      - Conceptually reorganizes the text into formal third-person neutral narrative prose.
      - Verifies and standardizes spelling of Named Entities (NER: historical actors, institutions, places, treaties, dates, canonical concepts).
      - Strictly enforces `cresmo-style-guide`: continuous prose starting directly with `##` on Line 1, zero bullet points, zero markdown tables, zero em-dashes (`—`), zero binary antithetical contrast formulas (`não X, mas Y`).
-     - Does *not* perform Socratic gap expansion and does *not* create `## Informações Complementares`.
+     - Does *not* perform Socratic gap expansion and does *not* create `### Extra Info`.
    - **Output:** `FluidTranscript` domain aggregate.
 
 2. **Stage 2: `raw_indexing` (`IndexRawTranscriptsUseCase`):**
@@ -64,7 +64,7 @@ The canonical execution sequence in `CresmoPipeline` is updated to:
 
 3. **Stage 3: `gap_filler` (`FillGapsUseCase`):**
    - **Input:** `FluidTranscript`.
-   - **Transform:** Executes Socratic gap audit across 6 epistemic dimensions over `gap_filler_passes` cycles. Generates and enriches the mandatory `## Informações Complementares` section with numbered continuous paragraphs for secondary lineages, biographies, and granular data.
+   - **Transform:** Executes Socratic gap audit across 6 epistemic dimensions over `gap_filler_passes` cycles. Generates and enriches the mandatory `### Extra Info` section with numbered continuous paragraphs for secondary lineages, biographies, and granular data.
    - **Output:** `EnrichedCompendium` domain aggregate.
 
 4. **Stages 4 through 8:**

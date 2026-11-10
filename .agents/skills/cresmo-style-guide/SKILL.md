@@ -31,11 +31,11 @@ Terceira Pessoa Onisciente: Visão panorâmica, análise profunda, articulação
 ### Cenário como Agente Narrativo
 O espaço não é neutro. Ele atua sobre os personagens, espelha a tese, amplifica o conflito. Espaço simbólico (O cenário representa algo maior que ele mesmo), Espaço de opressão (O ambiente prende, controla ou violenta o personagem) ou Espaço que revela o personagem (O local reflete o estado emocional ou a identidade do personagem). 
 ## Refinamentos
-Eliminar "gordura estrutural", intensificar o subtexto, substituir clichês por imagens próprias e garantir a consistência da voz autoral
+Eliminar "gordura estrutural", intensificar o subtexto, substituir clichês por imagens próprias e garantir a consistência da voz autoral. 
 Evite antíteses conceituais fortes, a polarização discursiva e suavize as antonímias binárias (negações excludentes); opte por gradação progressiva sem ruptura dramática, ou foque no aspecto que interessa e remova o polo oposto para não ter que negá-lo por contraste. Por exemplo, substitua "Não se trata procurar problemas, mas de encontrar soluções" por "A abordagem escolhida concentra-se no desenvolvimento de soluções" (direto, propositivo e sem oposição binária) ou por '"Partindo da análise do cenário, a abordagem avança rapidamente para a construção de soluções" (o polo negativo serve de degrau para a solução)
 ## Os Pilares Essenciais de Voz Autoral
 ### Explicações de Segunda Ordem ou mais
-Nunca descreva fenômenos ao pé da letra. Identifique os mecanismos que produzem os fenômenos e, especialmente, os mecanismos que reproduzem os próprios mecanismos, recursivamente e recursivamente. O interesse analítico recai sobre a causalidade, os ciclos de feedback, a dependência da trajetória e os efeitos emergentes de longo prazo.
+Nunca descreva fenômenos ao pé da letra. Identifique os mecanismos que produzem os fenômenos e, especialmente, os mecanismos que reproduzem os próprios mecanismos, recursivamente. O interesse analítico recai sobre a causalidade, os ciclos de feedback, a dependência da trajetória e os efeitos emergentes de longo prazo.
 ### Cautela Metodológica
 O texto pode iniciar em um registro quase científico e transitar para conclusões filosóficas ou políticas mais amplas. Essa oscilação é uma característica deliberada da voz, mas o autor deve estar ciente do risco de apresentar hipóteses interpretativas com o mesmo peso probatório que resultados empiricamente estabelecidos. Quando o texto transita entre níveis de análise, sinalize claramente o status epistêmico: evidências consolidadas, inferência plausível ou hipótese original.
 ## DNA Literário (Coordenadas Estilísticas, Não Modelos a Imitar)
@@ -53,7 +53,7 @@ use sentences with: informative analysis, cultural references, technical-broad b
 avoid sentences that lack creative grammar. 
 avoid sentences that are: overly formal, excessive complex sentences, rich but shallow. 
 avoid sentences with: sophisticated clarity, mechanical precision, robotic formality, impersonal tone, mechanical transitions, excessive pure technical jargon
-use sentences with: informative analysis, cultural references, technical-broad balance, qualitative focus
+use sentences with: informative analysis, cultural references, technical-broad balance, qualitative focus. 
 Não use metonímias. 
 Não é jornalismo acessível: Não simplifique a complexidade para um leitor leigo. O leitor deve compreender o texto por meio de uma prosa rigorosa e articulada, e não por meio de resumos excessivamente simplificados.
 Não use jargão jurídico acadêmico: Não se esconda atrás de jargões impenetráveis ​​ou formalismo processual.
@@ -61,13 +61,13 @@ Não faça denúncias moralistas: Persuada por meio da densidade factual e da co
 Neutralidade enciclopédica (Narrador-detetive): O autor assume o papel de um narrador-detetive. O texto adota uma postura analítica assertiva, em vez de uma neutralidade passiva.
 Nada de erudição ornamental: Toda referência histórica ou citação científica deve possuir um peso estrutural. A erudição deve servir ao argumento, e não servir como mera exibição por parte do autor.
 Não use a polarização discursiva nem negações excludentes. Evite antíteses conceituais fortes, a polarização discursiva e suavize as negações excludentes; opte por gradação progressiva sem ruptura dramática, ou foque no aspecto que interessa e remova o polo oposto para não ter que negá-lo por contraste. Por exemplo, substitua "Não se trata procurar problemas, mas de encontrar soluções" por "A abordagem escolhida concentra-se no desenvolvimento de soluções" (direto, propositivo e sem oposição binária) ou por '"Partindo da análise do cenário, a abordagem avança rapidamente para a construção de soluções" (o polo negativo serve de degrau para a solução) 
- Nada de travessões: É terminantemente proibido o uso de travessões (`—`) em qualquer parte do texto. Utilize vírgulas, estruturas entre parênteses ou frases distintas.
+Nada de travessões: É terminantemente proibido o uso de travessões (`—`) em qualquer parte do texto. Utilize vírgulas, estruturas entre parênteses ou frases distintas.
 ### Vocabulário Restrito
 Evite o uso destes o lema e seus derivados (no sentido indicado), suas famílias lexicais, e os verbos e suas formas nominais/cognatos:
 Forjar (moldar, criar), operar (fazer, construir), moldar (criar, preparar), abrigar
 Fardo (peso ontológico), 
 ## Regras de Formatação e Tipografia
- Prosa contínua: O conteúdo deve consistir exclusivamente em parágrafos hierarquizados (`##`, `###`) e prosa narrativa. É terminantemente proibido o uso de tabelas, diagramas, listas com marcadores (`*`, `-`), listas numeradas, blocos em LaTeX ou citações em bloco (`>`).
+ Prosa contínua: O conteúdo deve consistir exclusivamente em parágrafos hierarquizados ainhados (`##`, `###` e menores) e prosa narrativa. É terminantemente proibido o uso de tabelas, diagramas, listas com marcadores (`*`, `-`), listas numeradas, blocos em LaTeX ou citações em bloco (`>`).
 Negrito (`...`): Deve ser aplicado na primeira ocorrência de nomes próprios importantes, conceitos fundamentais e termos técnicos cruciais. Não repita o negrito em ocorrências posteriores.
 Itálico (`_..._`): Deve ser aplicado em obras culturais (livros, filmes, tratados), nomes de softwares ou hardwares e termos em língua estrangeira ainda não incorporados à língua portuguesa.
 

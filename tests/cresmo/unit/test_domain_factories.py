@@ -39,7 +39,7 @@ def test_enriched_compendium_factory() -> None:
     assert compendium.pass_count >= 1
     assert compendium.body != ""
     assert "|" not in compendium.body or "---" not in compendium.body
-    assert "Informações Complementares" in compendium.complementary_info
+    assert 'Extra Info' in compendium.complementary_info
 
 
 def test_ledger_entry_factory() -> None:

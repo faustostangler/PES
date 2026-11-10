@@ -83,7 +83,7 @@ def test_stage2_sentinel_omitted_on_subsequent_passes(tmp_path: Path, monkeypatc
         channel_dir = output_dir / "ANCAPSU"
         channel_dir.mkdir(parents=True, exist_ok=True)
         enriched_target = channel_dir / "test_raw.md"
-        enriched_target.write_text("## Resumo Abrangente\n" + "x" * 600 + "\n## Informações Complementares\nComp info", encoding="utf-8")
+        enriched_target.write_text("## Resumo Abrangente\n" + "x" * 600 + "\n### Extra Info\nComp info", encoding="utf-8")
 
     monkeypatch.setattr(cresmo_pipeline, "clear_session_history", mock_clear_session)
     monkeypatch.setattr(cresmo_pipeline, "send_agent_message", mock_send_agent_message)
@@ -112,7 +112,7 @@ def test_cresmo_expander_two_inner_steps(tmp_path: Path, monkeypatch):
     enriched_dir = tmp_path / "enriched" / "ANCAPSU"
     enriched_dir.mkdir(parents=True, exist_ok=True)
     enriched_file = enriched_dir / "vid123.md"
-    enriched_file.write_text("## Resumo Abrangente\nInitial content\n## Informações Complementares\nInitial notes", encoding="utf-8")
+    enriched_file.write_text("## Resumo Abrangente\nInitial content\n### Extra Info\nInitial notes", encoding="utf-8")
 
     raw_file = tmp_path / "raw.txt"
     raw_file.write_text("Raw text", encoding="utf-8")
@@ -127,7 +127,7 @@ def test_cresmo_expander_two_inner_steps(tmp_path: Path, monkeypatch):
     def mock_send_agent_message(prompt, session_id):
         prompts_sent.append(prompt)
         enriched_file.write_text(
-            f"## Resumo Abrangente\nExpanded step {len(prompts_sent)}\n" + "x" * 600 + "\n## Informações Complementares\nNotes",
+            f"## Resumo Abrangente\nExpanded step {len(prompts_sent)}\n" + "x" * 600 + "\n### Extra Info\nNotes",
             encoding="utf-8",
         )
 

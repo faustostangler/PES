@@ -29,7 +29,7 @@ from cresmo.domain.value_objects import Channel, PromptKey
 
 # Resilient regex matching variations of the mandatory complementary section header
 _COMPLEMENTARY_REGEX = re.compile(
-    r"^\s*#{2,3}\s+\*?\*?(?:Informa[cç][oõ]es\s+Complementares|Notas\s+Complementares|Informa[cç][oõ]es\s+Adicionais)\*?\*?.*$",
+    r"^\s*#{2,3}\s+\*?\*?(?:Extra\s+Info|Notas\s+Complementares|Informa[cç][oõ]es\s+Adicionais)\*?\*?.*$",
     re.MULTILINE | re.IGNORECASE,
 )
 _TITLE_H1_PATTERN = re.compile(r"^\s*#\s+.+$", re.MULTILINE)

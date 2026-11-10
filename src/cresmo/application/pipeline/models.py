@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from cresmo.application.ports import (
     CritiqueSynthesizerPort,
@@ -29,6 +30,19 @@ from cresmo.domain.value_objects import (
     ContentId,
     RawIndexEntry,
 )
+
+if TYPE_CHECKING:
+    from cresmo.application.ports import VaultRepositoryPort
+
+
+@dataclass(frozen=True, slots=True)
+class StageConveyorStep:
+    """Declarative specification for a conveyor pipeline stage (ADR-007, ADR-043, ADR-054)."""
+
+    name: str
+    artifact_type: type
+    cache_getter: Callable[[VaultRepositoryPort, ContentId], Any | None] | None = None
+    cache_saver: Callable[[VaultRepositoryPort, Any], None] | None = None
 
 
 @dataclass(frozen=True, slots=True)

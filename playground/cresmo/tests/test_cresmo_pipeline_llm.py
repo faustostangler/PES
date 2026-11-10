@@ -17,7 +17,7 @@ def test_gap_filler_with_llm_adapter(tmp_path: Path):
     mock_response = (
         "## Resumo Analítico\n\n"
         + "Texto contínuo sem oralidades com densidade histórica.\n" * 20
-        + "\n\n## Informações Complementares\n"
+        + "\n\n### Extra Info\n"
         + "- Fato histórico 1\n"
         + "- Fato histórico 2\n"
     )
@@ -36,7 +36,7 @@ def test_gap_filler_with_llm_adapter(tmp_path: Path):
     assert enriched_file.exists()
     assert len(adapter.call_history) == 2
     assert "## Resumo Analítico" in enriched_file.read_text(encoding="utf-8")
-    assert "## Informações Complementares" in enriched_file.read_text(encoding="utf-8")
+    assert "### Extra Info" in enriched_file.read_text(encoding="utf-8")
 
 
 def test_expander_with_llm_adapter(tmp_path: Path):
@@ -45,7 +45,7 @@ def test_expander_with_llm_adapter(tmp_path: Path):
     enriched_dir.mkdir(parents=True, exist_ok=True)
     enriched_file = enriched_dir / "vid_exp.md"
     enriched_file.write_text(
-        "## Base Text\n" + "x" * 600 + "\n## Informações Complementares\nInitial notes",
+        "## Base Text\n" + "x" * 600 + "\n### Extra Info\nInitial notes",
         encoding="utf-8",
     )
 
@@ -55,7 +55,7 @@ def test_expander_with_llm_adapter(tmp_path: Path):
     mock_response = (
         "## Expanded Compendium\n\n"
         + "Longue durée analysis and synchronic cross-sections.\n" * 20
-        + "\n\n## Informações Complementares\n"
+        + "\n\n### Extra Info\n"
         + "- Comparative civilizational dossier\n"
     )
     adapter = MockLLMAdapter(canned_response=mock_response)
@@ -81,7 +81,7 @@ def test_notes_with_llm_adapter(tmp_path: Path):
     enriched_dir.mkdir(parents=True, exist_ok=True)
     enriched_file = enriched_dir / "vid_notes.md"
     enriched_file.write_text(
-        "## Enriched Topic\n" + "Valid enriched content.\n" * 30 + "\n## Informações Complementares\nDetails.",
+        "## Enriched Topic\n" + "Valid enriched content.\n" * 30 + "\n### Extra Info\nDetails.",
         encoding="utf-8",
     )
 

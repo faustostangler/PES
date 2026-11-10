@@ -49,7 +49,7 @@ Purges speech noise, oralities, hesitations, verbal crutches, direct audience in
 Target Skill File: [`cresmo-fluid-prose`](file:///home/stangler/gamer_d/Fausto%20Stangler/Documentos/Python/PES/.agents/skills/cresmo-fluid-prose/SKILL.md)
 
 #### cresmo-gap-filler
-Conducts Socratic gap audit across 6 Epistemic Dimensions, causal stratification (structural, conjunctural, triggers), precursor tracking, and multi-pass epistemic densification on fluid prose transcripts. Constructs and enriches the mandatory `## Informações Complementares` section with numbered continuous paragraphs for secondary lineages, biographies, and granular data. Executed during Stage 3 (`gap_filler`).
+Conducts Socratic gap audit across 6 Epistemic Dimensions, causal stratification (structural, conjunctural, triggers), precursor tracking, and multi-pass epistemic densification on fluid prose transcripts. Constructs and enriches the mandatory `### Extra Info` section with numbered continuous paragraphs for secondary lineages, biographies, and granular data. Executed during Stage 3 (`gap_filler`).
 Target Skill File: [`cresmo-gap-filler`](file:///home/stangler/gamer_d/Fausto%20Stangler/Documentos/Python/PES/.agents/skills/cresmo-gap-filler/SKILL.md)
 
 #### cresmo-long-expander
@@ -86,7 +86,7 @@ Sequence: Ingestion -> `cresmo-fluid-prose` -> `raw_indexing` -> `cresmo-gap-fil
 - **Stage 1 (Raw Ingestion)**: Ingests YouTube audio/playlists to `playground/cresmo/raw/<channel_name>/<video_id>.txt` with YAML metadata.
 - **Stage 1.5 (Fluid Prose - `cresmo-fluid-prose`)**: Purges speech noise, oralities, hesitations, verbal crutches, diagrams, tables, and bullet lists. Conducts fact-checking and NER normalization, producing continuous fluid Markdown prose (`FluidTranscript`).
 - **Stage 2 (Catalog Indexing - `raw_indexing`)**: Extracts concise key concepts, summaries, and paratactic synthesis exclusively from the clean `FluidTranscript`, updating `_canal.md` and `brain.csv`. Standalone indexing of unnormalized raw files is strictly prohibited.
-- **Stage 3 (Gap Filler & Socratic Audit - `cresmo-gap-filler`)**: Multi-pass Socratic gap audit across 6 Epistemic Dimensions, causal stratification (structural, conjunctural, triggers), and construction of the mandatory `## Informações Complementares` section into `playground/cresmo/enriched/<channel_name>/<video_id>.md`.
+- **Stage 3 (Gap Filler & Socratic Audit - `cresmo-gap-filler`)**: Multi-pass Socratic gap audit across 6 Epistemic Dimensions, causal stratification (structural, conjunctural, triggers), and construction of the mandatory `### Extra Info` section into `playground/cresmo/enriched/<channel_name>/<video_id>.md`.
 - **Stage 4 (Expander - Longitudinal & Synchronic Deep Expansion)**: In-place enrichment of `playground/cresmo/enriched/<channel_name>/<video_id>.md` via `cresmo-long-expander` (*longue durée* and structural palimpsests) followed by `cresmo-wide-expander` (Axial Time and synchronic connected history).
 - **Stage 5 (Atomic Note Generation - `cresmo-atomic`)**: Scans expanded compendium and extracts candidate inventory and autonomous atomic note objects in `playground/cresmo/enriched/<channel_name>/<video_id>.json`.
 - **Stage 6 (Proliferation & Indexing)**: Deterministically unpacks JSON into individual atomic `.md` files under `playground/cresmo/wiki/<note_type>/[Exact Note Title].md` and updates `playground/cresmo/wiki/_index.json`.
@@ -120,7 +120,7 @@ Stage Outputs:
 - **Stage 1 Output (Raw Ingestion - `cresmo_ingestion`)**: `playground/cresmo/raw/<channel_name>/<video_id>.txt` (Raw transcript text with YouTube YAML frontmatter metadata).
 - **Stage 1.5 Output (Fluid Prose - `cresmo-fluid-prose`)**: Clean, authoritative, continuous Markdown prose in third-person neutral narrative without speech noise or conversational markers (`FluidTranscript`).
 - **Stage 2 Output (Catalog Indexing - `raw_indexing`)**: Incremental append to `playground/cresmo/wiki/_canal.md` and global tabular catalog (`brain.csv`).
-- **Stage 3 Output (Gap Filler - `cresmo-gap-filler`)**: `playground/cresmo/enriched/<channel_name>/<video_id>.md` (Progressive multi-pass Socratic gap densification with mandatory `## Informações Complementares`).
+- **Stage 3 Output (Gap Filler - `cresmo-gap-filler`)**: `playground/cresmo/enriched/<channel_name>/<video_id>.md` (Progressive multi-pass Socratic gap densification with mandatory `### Extra Info`).
 - **Stage 4 Output (Expander - `cresmo-long-expander` & `cresmo-wide-expander`)**: In-place expansion of `playground/cresmo/enriched/<channel_name>/<video_id>.md` across Braudelian *longue durée* and Jaspers Axial Time.
 - **Stage 5 Output (Atomic Note Generation - `cresmo-atomic`)**: `playground/cresmo/enriched/<channel_name>/<video_id>.json` (Strictly autonomous JSON array of note objects with Obsidian YAML frontmatter, strict typologies, and WikiLinks).
 - **Stage 6 Output (Proliferation & Indexing - `parse_and_proliferate_notes`)**: Individual Atomic Note `.md` files placed in `playground/cresmo/wiki/<note_type>/[Exact Note Title].md` and global registry updates in `playground/cresmo/wiki/_index.json`.
@@ -146,7 +146,7 @@ When pipeline stages (specifically Stage 3/4 narrative densification and Stage 5
 3. **Execute Stage 1 (Raw Ingestion)**: Ingest transcript from source URL or YouTube channel, outputting `playground/cresmo/raw/<channel_name>/<video_id>.txt` with standardized YAML header.
 4. **Execute Stage 1.5 (Fluid Prose - `cresmo-fluid-prose`)**: Purge all speech noise, conversational filler, diagrams, and bullet lists, standardizing Named Entities (NER) into continuous narrative prose (`FluidTranscript`).
 5. **Execute Stage 2 (Catalog Indexing - `raw_indexing`)**: Extract key concept, summary, and paratactic synthesis from `FluidTranscript`, appending to channel catalog and `brain.csv`.
-6. **Execute Stage 3 (Gap Filler - `cresmo-gap-filler`)**: Process fluid prose through multi-pass Socratic gap audit, stratifying causality (structural, conjunctural, triggers) and constructing the mandatory `## Informações Complementares` section in `playground/cresmo/enriched/<channel_name>/<video_id>.md`.
+6. **Execute Stage 3 (Gap Filler - `cresmo-gap-filler`)**: Process fluid prose through multi-pass Socratic gap audit, stratifying causality (structural, conjunctural, triggers) and constructing the mandatory `### Extra Info` section in `playground/cresmo/enriched/<channel_name>/<video_id>.md`.
 7. **Execute Stage 4 (Expander - Longitudinal & Synchronic Deep Expansion)**: In-place deepen `playground/cresmo/enriched/<channel_name>/<video_id>.md`:
    - Step 1: Run `cresmo-long-expander` to incorporate Fernand Braudel's *longue durée*, multi-secular structural forces, 3-tier causal stratification, and historical palimpsests.
    - Step 2: Run `cresmo-wide-expander` to incorporate Karl Jaspers' Axial Time (*Achsenzeit*), synchronic horizontal cross-sections, and trans-civilizational comparative dossiers.

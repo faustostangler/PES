@@ -3,6 +3,10 @@
 Conforms to:
 - SPEC-001: §2.2 (Entities & Aggregates Lifecycle and Invariants)
 - ADR-001: Modular Monolith Domain Integrity
+- ADR-028: Decoupling Fluid Prose Detranscription and Socratic Gap Filling
+- ADR-031: CandidateText and Stage Descriptor Abstractions
+- ADR-038: Pure Value Object Triad Composition for Transcripts and Zero Property Sprawl
+- ADR-054: Unified Stage Transcript Envelope and Stage-Invariant Polymorphism
 """
 
 from __future__ import annotations
@@ -12,106 +16,168 @@ import re
 from dataclasses import dataclass
 from typing import Any
 
+from cresmo.domain.entities.transcripts import _TABLE_PATTERN, StageTranscript
 from cresmo.domain.exceptions import CompendiumStructureError
 from cresmo.domain.value_objects import (
+    Channel,
     ChannelId,
     ChannelName,
+    Content,
     ContentId,
+    MediaProvenance,
     NoteTitle,
 )
 
-# Regex matching Markdown tables (| header | header | \n | --- | --- |)
-_TABLE_PATTERN = re.compile(r"\|.*\|.*\n\|[\s:-]+\|", re.MULTILINE)
 
-
-@dataclass(frozen=True)
-class EnrichedCompendium:
+@dataclass(frozen=True, slots=True, init=False)
+class EnrichedCompendium(StageTranscript):
     """EnrichedCompendium Aggregate: Multi-pass enriched fluid prose compendium.
 
-    Represents dense formal prose expanded via Socratic gap-filling and
-    Braudelian longitudinal/Jaspers synchronic cross-sections.
+    Conforms to ADR-028, ADR-031, ADR-038, and ADR-054 (Pure 3-VO Triad Composition).
+    Inherits the 3-VO Triad from StageTranscript:
+    1. channel: Channel
+    2. provenance: MediaProvenance
+    3. content: Content
+    4. metadata: dict[str, Any]
 
-    Attributes:
-        content_id: Strongly-typed canonical media identifier.
-        channel_name: Origin source channel name (ChannelName Value Object).
-        title: Validated NoteTitle of the compendium.
-        body: Continuous fluid prose main narrative.
-        complementary_info: Encyclopedic context, dates, mini-biographies, and secondary details.
+    Stage-specific payload:
+        complementary_info: Encyclopedic context, dates, mini-biographies.
         pass_count: Number of enrichment passes executed (must be >= 1).
-        channel_id: Optional platform channel ID.
-        channel_category: Macro topic classification.
-        source_url: Origin web URL.
-        publication_date: Optional release date (datetime.date).
-        video_date: Backward-compatible timestamp string.
-        video_description: Original creator description.
-
-    Invariants:
-        Per SPEC-001: §2.2 and cresmo-style-guide:
-        1. body cannot be empty and MUST be continuous prose.
-        2. Markdown tables are strictly forbidden in body to preserve narrative density.
-        3. complementary_info must be populated (mandating the '## Informações Complementares' section).
-        4. pass_count must be at least 1.
     """
 
-    content_id: ContentId
-    channel_name: ChannelName | str
-    title: NoteTitle
-    body: str
-    complementary_info: str
+    complementary_info: str = ""
     pass_count: int = 1
-    channel_id: ChannelId | str | None = None
-    channel_category: str = ""
-    source_url: str = ""
-    publication_date: datetime.date | None = None
-    video_date: str = ""
-    video_description: str = ""
 
-    def __post_init__(self) -> None:
-        resolved_channel_name = (
-            self.channel_name
-            if isinstance(self.channel_name, ChannelName)
-            else ChannelName.from_string(self.channel_name)
-        )
-        object.__setattr__(self, "channel_name", resolved_channel_name)
+    def __init__(
+        self,
+        channel: Channel | None = None,
+        provenance: MediaProvenance | None = None,
+        content: Content | None = None,
+        *,
+        complementary_info: str = "",
+        pass_count: int = 1,
+        metadata: dict[str, Any] | None = None,
+        content_id: ContentId | str | None = None,
+        channel_name: ChannelName | str | None = None,
+        body: str | None = None,
+        title: NoteTitle | str = "",
+        source_url: str = "",
+        publication_date: datetime.date | datetime.datetime | str | None = None,
+        upload_date: datetime.date | datetime.datetime | str | None = None,
+        video_date: str = "",
+        channel_id: ChannelId | str | None = None,
+        channel_category: str = "",
+        video_description: str = "",
+    ) -> None:
+        if pass_count < 1:
+            raise CompendiumStructureError("pass_count must be at least 1.")
 
-        if self.channel_id is not None and not isinstance(self.channel_id, ChannelId):
-            object.__setattr__(self, "channel_id", ChannelId.from_string(self.channel_id))
+        object.__setattr__(self, "complementary_info", complementary_info or "")
+        object.__setattr__(self, "pass_count", pass_count)
 
         # Harmonize publication_date and video_date
-        pub_date = self.publication_date
-        if pub_date is None and self.video_date:
+        resolved_date = publication_date or upload_date
+        resolved_video_date = video_date
+        if resolved_date is None and video_date:
             try:
-                raw_video_date = self.video_date.strip()
+                raw_video_date = video_date.strip()
                 if raw_video_date:
-                    pub_date = datetime.date.fromisoformat(raw_video_date[:10])
+                    resolved_date = datetime.date.fromisoformat(raw_video_date[:10])
             except (ValueError, TypeError):
-                pub_date = None
-        resolved_video_date = self.video_date or (pub_date.isoformat() if pub_date else "")
-        object.__setattr__(self, "publication_date", pub_date)
-        object.__setattr__(self, "video_date", resolved_video_date)
+                resolved_date = None
+        if not resolved_video_date and isinstance(resolved_date, datetime.date):
+            resolved_video_date = resolved_date.isoformat()
 
-        cleaned_body = self.body.strip()
+        meta = dict(metadata or {})
+        if resolved_video_date:
+            meta["video_date"] = resolved_video_date
+
+        effective_title = title.value if isinstance(title, NoteTitle) else (title or "")
+
+        StageTranscript.__init__(
+            self,
+            channel=channel,
+            provenance=provenance,
+            content=content,
+            metadata=meta,
+            content_id=content_id,
+            channel_name=channel_name,
+            body=body,
+            title=effective_title,
+            source_url=source_url,
+            publication_date=resolved_date,
+            channel_id=channel_id,
+            channel_category=channel_category,
+            video_description=video_description,
+        )
+
+    def _validate_stage_invariants(self) -> None:
+        cleaned_body = self.content.body.strip()
         cleaned_complementary_info = self.complementary_info.strip()
 
         if not cleaned_body:
             raise CompendiumStructureError("EnrichedCompendium body cannot be empty.")
         if not cleaned_complementary_info:
             raise CompendiumStructureError(
-                "EnrichedCompendium must contain a non-empty 'Informações Complementares' section."
+                "EnrichedCompendium must contain a non-empty 'Extra Info' section."
             )
-        # Structural invariant: reject Markdown tables in primary fluid prose
         if _TABLE_PATTERN.search(cleaned_body):
             raise CompendiumStructureError(
                 "EnrichedCompendium body must be continuous prose and cannot contain Markdown tables."
             )
-        if self.pass_count < 1:
-            raise CompendiumStructureError("pass_count must be at least 1.")
+
+    @property
+    def title(self) -> NoteTitle:
+        """Validated NoteTitle of the compendium."""
+        return NoteTitle(self.content.title)
+
+    @property
+    def channel_name(self) -> ChannelName:
+        """Canonical ChannelName Value Object."""
+        return ChannelName.from_string(self.channel.name)
+
+    @property
+    def channel_id(self) -> ChannelId | None:
+        """Canonical ChannelId Value Object."""
+        return self.channel.id
+
+    @property
+    def channel_category(self) -> str:
+        """Macro topic classification."""
+        return self.channel.category
+
+    @property
+    def source_url(self) -> str:
+        """Origin web URL."""
+        return self.provenance.url or ""
+
+    @property
+    def publication_date(self) -> datetime.date | None:
+        """Release date."""
+        return self.provenance.publication_date
+
+    @property
+    def video_date(self) -> str:
+        """Backward-compatible timestamp string."""
+        return str(
+            self.metadata.get("video_date")
+            or (
+                self.provenance.publication_date.isoformat()
+                if self.provenance.publication_date
+                else ""
+            )
+        )
+
+    @property
+    def video_description(self) -> str:
+        """Original creator description."""
+        return self.provenance.description or ""
 
 
 _TITLE_H1_PATTERN = re.compile(r"^\s*#\s+(.+)$", re.MULTILINE)
 _COMPLEMENTARY_REGEX = re.compile(
-    r"^\s*#{2,3}\s+\*?\*?(?:Informa[cç][oõ]es\s+Complementares|Notas\s+Complementares|Informa[cç][oõ]es\s+Adicionais)\*?\*?.*$",
-    re.MULTILINE | re.IGNORECASE,
+    r"^\s*###\s+Extra\s+Info\s*$",
+    re.MULTILINE,
 )
 
 
@@ -122,9 +188,9 @@ def post_process_enriched_compendium(
 ) -> EnrichedCompendium:
     """Post-process candidate text into a validated EnrichedCompendium domain aggregate.
 
-    Conforms to ADR-028, ADR-031, and ADR-038.
+    Conforms to ADR-028, ADR-031, ADR-038, and ADR-054.
     Strips H1 headers to preserve clean heading hierarchy, segregates the main continuous
-    prose body from the mandatory '## Informações Complementares' section, and maps
+    prose body from the mandatory '### Extra Info' section, and maps
     the pure Value Object triad from the source transcript.
     """
     candidate_text = getattr(candidate, "text", candidate)
@@ -146,7 +212,7 @@ def post_process_enriched_compendium(
     complementary_match = _COMPLEMENTARY_REGEX.search(body)
     if not complementary_match:
         raise CompendiumStructureError(
-            "Missing mandatory complementary information section '## Informações Complementares'."
+            "Missing mandatory complementary information section '### Extra Info'."
         )
 
     main_body = body[: complementary_match.start()].strip()
@@ -156,11 +222,34 @@ def post_process_enriched_compendium(
         raise CompendiumStructureError("EnrichedCompendium body cannot be empty.")
     if not complementary_info:
         raise CompendiumStructureError(
-            "EnrichedCompendium must contain a non-empty 'Informações Complementares' section."
+            "EnrichedCompendium must contain a non-empty 'Extra Info' section."
         )
 
     # Resolve triad attributes from source
+    source_channel = getattr(source, "channel", None)
+    source_provenance = getattr(source, "provenance", None)
     source_content = getattr(source, "content", None)
+
+    channel = (
+        source_channel
+        if isinstance(source_channel, Channel)
+        else Channel(
+            name=getattr(source, "channel_name", "Unknown Channel"),
+            id=getattr(source, "channel_id", None),
+            category=getattr(source, "channel_category", ""),
+        )
+    )
+
+    provenance = (
+        source_provenance
+        if isinstance(source_provenance, MediaProvenance)
+        else MediaProvenance.create(
+            url=getattr(source, "source_url", ""),
+            description=getattr(source, "video_description", ""),
+            publication_date=getattr(source, "publication_date", None),
+        )
+    )
+
     content_id = (
         getattr(source_content, "id", None)
         or getattr(source, "content_id", None)
@@ -169,49 +258,14 @@ def post_process_enriched_compendium(
     if isinstance(content_id, str):
         content_id = ContentId.from_string(content_id)
 
-    raw_channel_name = (
-        getattr(getattr(source, "channel", None), "name", None)
-        or getattr(source, "channel_name", "")
-    )
-    resolved_channel_name: ChannelName | str = (
-        raw_channel_name if isinstance(raw_channel_name, (ChannelName, str)) else ""
-    )
-    channel_id = (
-        getattr(getattr(source, "channel", None), "id", None)
-        or getattr(source, "channel_id", None)
-    )
-    channel_category = (
-        getattr(getattr(source, "channel", None), "category", "")
-        or getattr(source, "channel_category", "")
-    )
-
-    provenance = getattr(source, "provenance", None)
-    source_url = getattr(provenance, "url", "") or getattr(source, "source_url", "")
-    pub_date = (
-        getattr(provenance, "publication_date", None)
-        or getattr(source, "publication_date", None)
-    )
-    video_description = (
-        getattr(provenance, "description", "")
-        or getattr(source, "video_description", "")
-    )
-    video_date = (
-        pub_date.strftime("%Y%m%d")
-        if isinstance(pub_date, datetime.date)
-        else getattr(source, "video_date", "")
-    )
-
     return EnrichedCompendium(
-        content_id=content_id,
-        channel_name=resolved_channel_name,
-        title=NoteTitle(extracted_title),
-        body=main_body,
+        channel=channel,
+        provenance=provenance,
+        content=Content(
+            id=content_id,
+            title=extracted_title,
+            body=main_body,
+        ),
         complementary_info=complementary_info,
         pass_count=max(pass_count, 1),
-        channel_id=channel_id,
-        channel_category=channel_category,
-        source_url=source_url,
-        publication_date=pub_date,
-        video_date=video_date,
-        video_description=video_description,
     )

@@ -120,8 +120,8 @@ def build_and_validate_golden_set() -> list[dict[str, Any]]:
             assert candidate_text.startswith("## "), (
                 f"Item '{item_id}' candidate_text does not start with '## '"
             )
-            assert "## Informações Complementares" in candidate_text, (
-                f"Item '{item_id}' candidate_text missing '## Informações Complementares'"
+            assert "### Extra Info" in candidate_text, (
+                f"Item '{item_id}' candidate_text missing '### Extra Info'"
             )
             comp_section = extract_complementary_section(candidate_text)
             assert comp_section, f"Item '{item_id}' complementary section is empty."

@@ -66,7 +66,7 @@ def test_gap_filler_execution_single_pass_override(
     mock_llm.transform.return_value = (
         "## Fundação de Portugal\n\n"
         "Em 1096, o conde **Henrique de Borgonha** assumiu o governo.\n\n"
-        "## Informações Complementares\n\n"
+        "### Extra Info\n\n"
         "1. **Henrique de Borgonha** (1066-1112) liderou contingentes da Reconquista."
     )
 
@@ -102,20 +102,20 @@ def test_gap_filler_execution_multi_pass_to_completion(
     pass1_text = (
         "## Fundação de Portugal\n\n"
         "Em 1096, o conde **Henrique de Borgonha** assumiu o governo.\n\n"
-        "## Informações Complementares\n\n"
+        "### Extra Info\n\n"
         "1. **Henrique de Borgonha** (1066-1112) liderou contingentes."
     )
     pass2_text = (
         "## Fundação de Portugal\n\n"
         "Em 1096, o conde **Henrique de Borgonha** assumiu o governo sob **Afonso VI**.\n\n"
-        "## Informações Complementares\n\n"
+        "### Extra Info\n\n"
         "1. **Henrique de Borgonha** (1066-1112) liderou contingentes.\n"
         "2. **Afonso VI de Leão** (1040-1109) concedeu o Condado Portucalense."
     )
     pass3_text = (
         "## Fundação de Portugal\n\n"
         "Em 1096, o conde **Henrique de Borgonha** assumiu o governo sob **Afonso VI**.\n\n"
-        "## Informações Complementares\n\n"
+        "### Extra Info\n\n"
         "1. **Henrique de Borgonha** (1066-1112) liderou contingentes.\n"
         "2. **Afonso VI de Leão** (1040-1109) concedeu o Condado Portucalense.\n"
         "3. **Teresa de Leão** (1080-1130) governou como regente."
@@ -160,14 +160,14 @@ def test_gap_filler_execution_early_stopping_on_saturation(
     pass1_text = (
         "## Fundação de Portugal\n\n"
         "O conde **Henrique de Borgonha** governou o território.\n\n"
-        "## Informações Complementares\n\n"
+        "### Extra Info\n\n"
         "1. **Henrique de Borgonha** casou com **Teresa de Leão** em 1093."
     )
     # Pass 2 output (same bold entities, delta items = 0 -> saturated):
     pass2_text = (
         "## Fundação de Portugal\n\n"
         "O nobre conde **Henrique de Borgonha** governou o território ocidental.\n\n"
-        "## Informações Complementares\n\n"
+        "### Extra Info\n\n"
         "1. O nobre **Henrique de Borgonha** casou com a infanta **Teresa de Leão** em 1093."
     )
 

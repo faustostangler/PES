@@ -175,7 +175,7 @@ class TranscriptVaultHandler:
         body_text = (
             f"# {compendium.title.value}\n\n"
             f"{compendium.body}\n\n"
-            f"## Informações Complementares\n\n"
+            f"### Extra Info\n\n"
             f"{compendium.complementary_info}"
         )
         content = f"{yaml_header}\n\n{body_text}"
@@ -198,7 +198,7 @@ class TranscriptVaultHandler:
         metadata = yaml.safe_load(frontmatter_text) or {}
 
         # Split into main body and complementary info
-        parts = raw_body.split("## Informações Complementares")
+        parts = raw_body.split("### Extra Info")
         body_part = parts[0].strip()
         complementary_part = parts[1].strip() if len(parts) > 1 else ""
 

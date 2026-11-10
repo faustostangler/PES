@@ -1357,7 +1357,7 @@ Body text.
         assert (
             "---\n\n# Compêndio Epistêmico\n\n"
             "Corpo analítico denso e estruturado.\n\n"
-            "## Informações Complementares\n\n"
+            "### Extra Info\n\n"
             "Matriz complementar de factualidade e genealogia."
         ) in raw_text
 
@@ -1437,7 +1437,7 @@ video_description: Alternative comp desc
 
 Body without hash title heading directly here.
 
-## Informações Complementares
+### Extra Info
 
 Informações complementares analíticas para teste.
 """,
@@ -1467,7 +1467,7 @@ title: Explicit Title Only
 
 Body text here.
 
-## Informações Complementares
+### Extra Info
 
 Complementary data.
 """,
@@ -1576,7 +1576,7 @@ title: Compendium Title
 Line 1 of body
 Line 2 of body
 
-## Informações Complementares
+### Extra Info
 
 Informações complementares para teste.
 """,
@@ -1599,7 +1599,7 @@ Informações complementares para teste.
     def test_get_enriched_compendium_missing_complementary_raises_error(
         self, storage_paths: tuple[Path, Path, Path]
     ) -> None:
-        """Verify get_enriched_compendium fails when Informações Complementares is absent."""
+        """Verify get_enriched_compendium fails when Extra Info is absent."""
         vault_dir, raw_dir, enriched_dir = storage_paths
         adapter = ObsidianVaultAdapter(
             vault_dir=vault_dir, raw_dir=raw_dir, enriched_dir=enriched_dir

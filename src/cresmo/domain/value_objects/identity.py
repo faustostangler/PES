@@ -341,7 +341,7 @@ class Channel:
     name: str
     id: ChannelId | None = None
     category: str = ""
-    url: str | None = None
+    _url: str | None = None
 
     def __init__(
         self,
@@ -375,10 +375,28 @@ class Channel:
         else:
             resolved_channel_id = None
 
+        clean_url = url.strip() if url else None
+        if (
+            clean_url
+            and resolved_channel_id
+            and clean_url.rstrip("/")
+            == f"https://www.youtube.com/channel/{resolved_channel_id.value}"
+        ):
+            clean_url = None
+
         object.__setattr__(self, "name", clean_name)
         object.__setattr__(self, "id", resolved_channel_id)
         object.__setattr__(self, "category", category.strip() if category else "")
-        object.__setattr__(self, "url", url.strip() if url else None)
+        object.__setattr__(self, "_url", clean_url)
+
+    @property
+    def url(self) -> str | None:
+        """Canonical web URL of creator/channel with dynamic fallback to ChannelId."""
+        if self._url:
+            return self._url
+        if self.id is not None and self.id.is_youtube_canonical:
+            return f"https://www.youtube.com/channel/{self.id.value}"
+        return None
 
     @classmethod
     def from_name(
@@ -448,11 +466,21 @@ class Content:
     @classmethod
     def create(
         cls,
-        id: str | ContentId,
+        id: str | ContentId | None = None,
         title: str = "",
         body: str = "",
+        *,
+        url: str = "",
     ) -> Content:
         """Ergonomic factory constructing Content from primitive strings or Value Objects."""
+        if id is None:
+            if url:
+                extracted = ContentId.extract_from_text(url)
+                if not extracted:
+                    raise DomainValidationError(f"Could not extract ContentId from URL: '{url}'")
+                id = extracted
+            else:
+                raise DomainValidationError("Content requires non-null id or valid url.")
         resolved_content_id = ContentId.from_string(id)
         return cls(
             id=resolved_content_id,

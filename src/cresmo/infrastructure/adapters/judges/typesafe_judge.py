@@ -179,7 +179,7 @@ class TypeSafeJudgeAdapter(LlmJudgePort):
                 questions_payload[criterion.value] = {
                     "type": "score",
                     "instructions": (
-                        "Is the ## Informações Complementares section encyclopedic, numbered, and rich in primary data?"
+                        "Is the ### Extra Info section encyclopedic, numbered, and rich in primary data?"
                     ),
                     "criteria": [
                         "missing, empty, bulleted, or tautological",

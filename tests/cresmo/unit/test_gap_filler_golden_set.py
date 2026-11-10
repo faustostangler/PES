@@ -142,8 +142,8 @@ def test_golden_set_candidate_text_invariants(
         meta = item["metadata"]
 
         assert cand.startswith("## "), f"Item '{item_id}' candidate_text must start with '## '."
-        assert "## Informações Complementares" in cand, (
-            f"Item '{item_id}' missing mandatory '## Informações Complementares'."
+        assert "### Extra Info" in cand, (
+            f"Item '{item_id}' missing mandatory '### Extra Info'."
         )
 
         comp_section = extract_complementary_section(cand)

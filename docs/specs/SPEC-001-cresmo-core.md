@@ -180,7 +180,7 @@ The incremental synthesis processes specified:
 | `NoteType` | `"unknown_tag"` | `NoteTypologyError` |
 | `AtomicNote` | `definition < 20 chars` | `DomainValidationError` |
 | `AtomicNote` | `title in direct_relations` | `SelfReferentialRelationError` |
-| `EnrichedCompendium` | Missing `## Informações Complementares` | `CompendiumStructureError` |
+| `EnrichedCompendium` | Missing `### Extra Info` | `CompendiumStructureError` |
 | `MediaIngestionAdapter` | Upstream YouTube HTTP 429 | `RateLimitExceededError` |
 | `ObsidianVaultAdapter` | Concurrent write collision | `VaultStorageConflictError` |
 
