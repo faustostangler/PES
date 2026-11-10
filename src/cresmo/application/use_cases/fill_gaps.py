@@ -103,7 +103,7 @@ class FillGapsUseCase:
             total_passes=passes,
             channel_name=fluid_transcript.channel.name,
             file_name=file_name,
-            raw_text=fluid_transcript.content.body,
+            raw_text=fluid_transcript.content.text,
             current_text=None,
         )
         current_text = self.llm_synthesis_port.transform(
@@ -122,7 +122,7 @@ class FillGapsUseCase:
                 total_passes=passes,
                 channel_name=fluid_transcript.channel.name,
                 file_name=file_name,
-                raw_text=fluid_transcript.content.body,
+                raw_text=fluid_transcript.content.text,
                 current_text=current_text,
             )
             current_text = self.llm_synthesis_port.transform(

@@ -71,7 +71,7 @@ def test_execute_stage_with_string_identifier_and_factory() -> None:
 
     result = runner.execute_stage("fluid_prose", source=raw, context=ctx)
     assert result.content.id == ctx.content.id
-    assert "Transformed text output." in result.content.body
+    assert "Transformed text output." in result.content.text
     assert mock_llm.transform.call_count == 1
 
 
@@ -156,7 +156,7 @@ def test_execute_stage_closed_loop_critique_synthesizer_integration() -> None:
 
     result = runner.execute_stage("fluid_prose", source=raw, context=ctx)
     assert result.content.id == ctx.content.id
-    assert "Refined candidate text." in result.content.body
+    assert "Refined candidate text." in result.content.text
 
     # Verify synthesizer was called with the failed evaluation
     assert mock_synthesizer.synthesize.call_count == 1

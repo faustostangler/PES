@@ -361,6 +361,9 @@ class StageEvaluationSpec:
             return self.raw_text
         if self.source_extractor:
             return self.source_extractor(source)
-        if hasattr(source, "content") and hasattr(source.content, "body"):
-            return str(source.content.body)
+        if hasattr(source, "content"):
+            if hasattr(source.content, "text"):
+                return str(source.content.text)
+            if hasattr(source.content, "body"):
+                return str(source.content.body)
         return str(source)

@@ -10,14 +10,10 @@ import pytest
 
 from cresmo.domain.entities import (
     AtomicNote,
-    StageTranscript,
-    StageTranscript,
     JudgeFrictionMetric,
     MapOfContent,
     PipelineSessionId,
     StageTranscript,
-    StageTranscript,
-    Transcript,
     UserIdentity,
     post_process_fluid_transcript,
 )
@@ -983,35 +979,9 @@ class TestAdr038PureValueObjectTriadComposition:
         assert fluid.content.id == ContentId("abc")
         assert fluid.channel.id == ChannelId("UC1234567890")
 
-    def test_transcript_aggregate_lifecycle_container(self) -> None:
-        from cresmo.domain.entities import StageTranscript, StageTranscript, Transcript
-        from cresmo.domain.value_objects import (
-            Channel,
-            ChannelId,
-            Content,
-            ContentId,
-            MediaProvenance,
-        )
-
-        ch = Channel(id=ChannelId("UCtest123456"), name="Test Channel")
-        prov = MediaProvenance(url="https://test.url")
-        src_content = Content(id=ContentId("vid_01"), title="Raw Title", body="Raw body")
-        fluid_content = Content(id=ContentId("vid_01"), title="Fluid Title", body="Fluid body")
-
-        source = StageTranscript(channel=ch, provenance=prov, content=src_content)
-        fluid = StageTranscript(channel=ch, provenance=prov, content=fluid_content)
-
-        aggregate = Transcript(source=source, fluid=fluid)
-        assert aggregate.source is source
-        assert aggregate.fluid is fluid
-        assert aggregate.channel == ch
-        assert aggregate.provenance == prov
-        assert aggregate.content == fluid_content
-
     def test_post_process_fluid_transcript_preserves_pure_triad(self) -> None:
         from cresmo.domain.entities import (
             CandidateText,
-            StageTranscript,
             post_process_fluid_transcript,
         )
         from cresmo.domain.value_objects import (
@@ -1046,10 +1016,7 @@ class TestAdr038PureValueObjectTriadComposition:
         """ADR-038: Algorithmic Parity (channel_id - content_id) and Cognitive Parity (channel_name - content_title)."""
         from cresmo.application.pipeline.context import PipelineExecutionContext
         from cresmo.domain.entities import (
-            StageTranscript,
             PipelineSessionId,
-            StageTranscript,
-            Transcript,
             UserIdentity,
         )
         from cresmo.domain.value_objects import (
@@ -1095,16 +1062,6 @@ class TestAdr038PureValueObjectTriadComposition:
         assert fluid.content.id == ContentId("9IbNJ0EsTxI")
         assert fluid.channel.name == "Marcelo Andrade"
         assert fluid.content.title == "A Gênese Estrutural do Condado Portucalense"
-
-        root_tx = Transcript(source=src, fluid=fluid)
-        # Check Transcript root aggregate parity via Value Objects
-        assert root_tx.channel is not None and root_tx.channel.id == ChannelId("UCxyz1234567890ab")
-        assert root_tx.content is not None and root_tx.content.id == ContentId("9IbNJ0EsTxI")
-        assert root_tx.channel is not None and root_tx.channel.name == "Marcelo Andrade"
-        assert (
-            root_tx.content is not None
-            and root_tx.content.title == "A Gênese Estrutural do Condado Portucalense"
-        )
 
         # Check PipelineExecutionContext parity
         sid = PipelineSessionId.create(channel=ch, content_id=content)
@@ -1437,49 +1394,6 @@ class TestFluidTranscriptInvariantsAndEdgeCases:
         assert ft.metadata == {}
 
 
-class TestTranscriptAggregateProperties:
-    """Rigorous invariant tests for Transcript aggregate properties."""
-
-    def test_empty_container(self) -> None:
-        t = Transcript(source=None, fluid=None)
-        assert t.source is None
-        assert t.fluid is None
-        assert t.channel is None
-        assert t.provenance is None
-        assert t.content is None
-
-    def test_source_only(self) -> None:
-        st = StageTranscript(channel_name="SrcChan", body="Raw body")
-        t = Transcript(source=st, fluid=None)
-        assert t.source is st
-        assert t.fluid is None
-        assert t.channel is st.channel
-        assert t.provenance is st.provenance
-        assert t.content is st.content
-
-    def test_fluid_only(self) -> None:
-        ft = StageTranscript(channel_name="FluidChan", body="Fluid body")
-        t = Transcript(source=None, fluid=ft)
-        assert t.source is None
-        assert t.fluid is ft
-        assert t.channel is ft.channel
-        assert t.provenance is ft.provenance
-        assert t.content is ft.content
-
-    def test_fluid_precedence_over_source(self) -> None:
-        st = StageTranscript(channel_name="SrcChan", body="Raw body")
-        ft = StageTranscript(channel_name="FluidChan", body="Fluid body")
-        t = Transcript(source=st, fluid=ft)
-        assert t.source is st
-        assert t.fluid is ft
-        assert t.channel is ft.channel
-        assert t.channel is not st.channel
-        assert t.provenance is ft.provenance
-        assert t.provenance is not st.provenance
-        assert t.content is ft.content
-        assert t.content is not st.content
-
-
 class TestPostProcessFluidTranscriptInvariantsAndRegex:
     """Rigorous invariant and regex matching tests for post_process_fluid_transcript."""
 
@@ -1584,13 +1498,11 @@ class TestStageTranscriptUnifiedEnvelope:
     """ADR-054: Unified Stage Transcript Envelope and Stage-Invariant Polymorphism."""
 
     def test_stage_transcript_hierarchy(self) -> None:
-        from cresmo.domain.entities import StageTranscript, StageTranscript, StageTranscript
+        from cresmo.domain.entities import StageTranscript
+        assert issubclass(StageTranscript, StageTranscript)
 
-        assert issubclass(StageTranscript, StageTranscript)
-        assert issubclass(StageTranscript, StageTranscript)
 
     def test_stage_transcript_triad_and_convenience_properties(self) -> None:
-        from cresmo.domain.entities import StageTranscript, StageTranscript
         from cresmo.domain.value_objects import (
             Channel,
             ChannelId,
@@ -1621,7 +1533,6 @@ class TestStageTranscriptUnifiedEnvelope:
         assert st.channel_id == ChannelId("UC_triad_123")
 
     def test_stage_transcript_shared_ergonomic_init(self) -> None:
-        from cresmo.domain.entities import StageTranscript, StageTranscript
 
         raw = StageTranscript(
             content_id="ergo123",
@@ -1650,7 +1561,6 @@ class TestStageTranscriptUnifiedEnvelope:
         assert fluid.body == "Ergo fluid body without tables"
 
     def test_stage_transcript_invariant_polymorphism(self) -> None:
-        from cresmo.domain.entities import StageTranscript, StageTranscript
         from cresmo.domain.exceptions import CompendiumStructureError, DomainValidationError
 
         # Empty body rejected on both

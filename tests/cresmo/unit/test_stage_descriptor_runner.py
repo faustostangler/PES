@@ -84,7 +84,7 @@ class TestStageConfigRunner:
             stage_name="fluid_prose",
             transform_prompt_key=PromptKey.FLUID_PROSE,
             eval_spec=StageEvaluationSpec(
-                raw_text=source.content.body,
+                raw_text=source.content.text,
                 candidate_extractor=lambda c: c.text if isinstance(c, CandidateText) else str(c),
                 required_criteria=(JudgeCriterion.ORALITY_REMOVAL,),
                 max_attempts=3,
@@ -172,7 +172,7 @@ class TestStageConfigRunner:
             stage_name="fluid_prose",
             transform_prompt_key=PromptKey.FLUID_PROSE,
             eval_spec=StageEvaluationSpec(
-                raw_text=source.content.body,
+                raw_text=source.content.text,
                 candidate_extractor=lambda c: c.text if isinstance(c, CandidateText) else str(c),
                 required_criteria=(JudgeCriterion.ORALITY_REMOVAL,),
                 max_attempts=3,
@@ -308,7 +308,7 @@ class TestStageConfigRunner:
             stage_name="fluid_prose",
             transform_prompt_key=PromptKey.FLUID_PROSE,
             eval_spec=StageEvaluationSpec(
-                raw_text=source.content.body,
+                raw_text=source.content.text,
                 candidate_extractor=capture_candidate,
                 required_criteria=(JudgeCriterion.ORALITY_REMOVAL,),
                 max_attempts=1,

@@ -68,8 +68,8 @@ class StageTranscript:
         if not isinstance(self.content, Content):
             raise TypeError(f"content must be an instance of Content, got {type(self.content).__name__}")
 
-        if not self.content.body.strip():
-            raise DomainValidationError("StageTranscript content.body cannot be empty or whitespace.")
+        if not self.content.text.strip():
+            raise DomainValidationError("StageTranscript content.text cannot be empty or whitespace.")
 
         if not self.content.session_id:
             ch_token = self.channel.id.value if self.channel.id else self.channel.name
@@ -79,7 +79,7 @@ class StageTranscript:
                 Content(
                     id=self.content.id,
                     title=self.content.title,
-                    body=self.content.body,
+                    text=self.content.text,
                     session_id=f"{ch_token}:{self.content.id.value}",
                 ),
             )
@@ -128,7 +128,7 @@ def post_process_fluid_transcript(
         content=Content(
             id=source.content.id,
             title=extracted_title,
-            body=body,
+            text=body,
             session_id=source.content.session_id,
         ),
         metadata=dict(source.metadata),

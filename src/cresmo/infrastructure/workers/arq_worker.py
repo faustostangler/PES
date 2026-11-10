@@ -212,7 +212,7 @@ async def job_extract_audio(
             output_dir=output_dir,
             whisper_model=getattr(settings, "whisper_model", "base"),
         )
-        body = transcript_obj.content.body if transcript_obj else ""
+        body = transcript_obj.content.text if transcript_obj else ""
         return {
             "status": "COMPLETED",
             "content_id": content_id,

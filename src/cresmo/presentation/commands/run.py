@@ -374,7 +374,7 @@ def execute_single_video_run(pipeline: CresmoPipeline, args: Any) -> int:
             return EXIT_INGESTION_ERROR
         sys.stdout.write(
             f"Dry run successful for [{raw_transcript.content.id.value}]: "
-            f"Transcript length: {len(raw_transcript.content.body)} characters.\n"
+            f"Transcript length: {len(raw_transcript.content.text)} characters.\n"
         )
         return EXIT_SUCCESS
 
@@ -519,7 +519,7 @@ def execute_batch_dry_run(pipeline: CresmoPipeline, sources: list[BatchSource]) 
                 ingested += 1
                 sys.stdout.write(
                     f"[{source_index}/{len(sources)}] Dry-run ingested: [{raw_transcript.content.id.value}] "
-                    f"({len(raw_transcript.content.body)} chars)\n"
+                    f"({len(raw_transcript.content.text)} chars)\n"
                 )
             else:
                 sys.stderr.write(

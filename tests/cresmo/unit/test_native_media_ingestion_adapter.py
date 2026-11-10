@@ -86,8 +86,8 @@ class TestNativeMediaIngestionAdapter:
             assert transcript is not None
             assert transcript.content.id == ContentId("dQw4w9WgXcQ")
             assert transcript.channel.name == "Political Theory"
-            assert "A teoria da circulação das elites postula" in transcript.content.body
-            assert "Vilfredo Pareto desenvolveu esta formulação." in transcript.content.body
+            assert "A teoria da circulação das elites postula" in transcript.content.text
+            assert "Vilfredo Pareto desenvolveu esta formulação." in transcript.content.text
 
             # Verify that whisper audio fallback was NOT invoked
             mock_whisper.assert_not_called()
@@ -128,7 +128,7 @@ class TestNativeMediaIngestionAdapter:
             transcript = adapter.ingest_single_video(video_url=video_url, output_dir=tmp_path)
 
             assert transcript is not None
-            assert transcript.content.body == "Transcribed from Whisper"
+            assert transcript.content.text == "Transcribed from Whisper"
             mock_fallback.assert_called_once()
 
     def test_ingest_single_video_whisper_fallback_and_scratch_cleanup(self, tmp_path: Path) -> None:
@@ -182,7 +182,7 @@ class TestNativeMediaIngestionAdapter:
                 assert transcript is not None
                 assert transcript.content.id == ContentId("dQw4w9WgXcQ")
                 assert transcript.channel.name == "Podcast Channel"
-                assert transcript.content.body == "Verbatim audio transcript via Whisper."
+                assert transcript.content.text == "Verbatim audio transcript via Whisper."
 
                 # Verify scratch dir was wiped clean
                 assert len(captured_scratch_dirs) == 1
@@ -308,7 +308,7 @@ class TestNativeMediaIngestionAdapter:
                 )
 
                 assert transcript is not None
-                assert transcript.content.body == "Audio transcript content."
+                assert transcript.content.text == "Audio transcript content."
 
                 # Verify audio was preserved in output_dir / channel_name
                 expected_audio = tmp_path / "KeepAudioChannel" / "keepAudioVid.m4a"
@@ -632,7 +632,7 @@ class TestNativeMediaIngestionAdapter:
             )
 
             assert transcript is not None
-            assert transcript.content.body == "Transcribed from audio fallback."
+            assert transcript.content.text == "Transcribed from audio fallback."
             mock_whisper_fb.assert_called_once()
 
     def test_acl_date_parsing_helpers(self) -> None:
@@ -928,7 +928,7 @@ class TestNativeMediaIngestionAdapter:
         assert transcript.channel.name == "QuantumHub"
         assert transcript.channel.url == "https://youtube.com/@channel123"
         assert transcript.content.title == "Quantum Computing 101"
-        assert transcript.content.body == "Qubits can exist in superposition."
+        assert transcript.content.text == "Qubits can exist in superposition."
         assert transcript.provenance.description == "Intro to qubits and entanglement"
         assert ch_id is not None
         assert ch_id.value == "UC_channel_123"
@@ -1179,7 +1179,7 @@ class TestNativeMediaIngestionAdapter:
             )
             assert transcript is not None
             assert transcript.content.title == "Ingested Title"
-            assert transcript.content.body == "Resolved body text"
+            assert transcript.content.text == "Resolved body text"
             assert transcript.channel.name == "IngestChan"
             assert transcript.channel.id is not None
             assert transcript.channel.id.value == "UC_ingest_123"

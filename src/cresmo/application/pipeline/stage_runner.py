@@ -136,7 +136,7 @@ class PipelineStageRunner:
         stage_config = self._resolve_stage_config(stage, max_passes=max_passes)
         prompt_provider = self._resolve_prompt_provider(prompt_provider)
         llm_port = self._resolve_llm_transformation_port(llm_transformation_port)
-        stage_name = stage_config.stage_name
+        stage = stage_config.stage_name
 
         eval_spec_attempts = (
             stage_config.eval_spec.max_attempts
@@ -153,24 +153,24 @@ class PipelineStageRunner:
         candidate: CandidateText | None = None
         evaluation: JudgeEvaluation | None = None
 
-        with self._measure_stage(stage_name=stage_name, context=context):
+        with self._measure_stage(stage_name=stage, context=context):
             source_content = getattr(source, "content", None)
             source_text = (
                 stage_config.eval_spec.extract_source_text(source)
                 if stage_config.eval_spec
                 else (
-                    source_content.body
+                    source_content.text
                     if isinstance(source_content, Content)
                     else (
-                        getattr(source, "body", None)
-                        or getattr(source, "text", None)
+                        getattr(source, "text", None)
+                        or getattr(source, "body", None)
                         or str(source)
                     )
                 )
             )
             self.telemetry_port.record_stage_io(
                 input_payload={
-                    "stage_name": stage_name,
+                    "stage_name": stage,
                     "source_type": type(source).__name__,
                     "source_characters": len(source_text) if isinstance(source_text, str) else 0,
                     "source_words": len(source_text.split()) if isinstance(source_text, str) else 0,
@@ -203,17 +203,17 @@ class PipelineStageRunner:
 
                 logger.warning(
                     "Quality evaluation for '%s' reported low score on attempt %d/%d (overall=%.2f, passed=%s).",
-                    stage_name,
+                    stage,
                     attempt,
                     effective_max_attempts,
                     evaluation.overall_score,
                     evaluation.passed,
                 )
 
-                critique = self._synthesize_critique(evaluation, stage_name)
+                critique = self._synthesize_critique(evaluation, stage)
                 if attempt < effective_max_attempts:
                     self.metrics_port.increment_counter(
-                        "cresmo_judge_retries_total", 1.0, labels={"stage": stage_name}
+                        "cresmo_judge_retries_total", 1.0, labels={"stage": stage}
                     )
 
             if (
@@ -222,27 +222,27 @@ class PipelineStageRunner:
                 and (stage_config.blocking or self.judge_blocking)
             ):
                 record_stage_quarantine(
-                    stage_name=stage_name,
+                    stage_name=stage,
                     context=context,
                     provenance=getattr(source, "provenance", None),
                     evaluation=evaluation,
-                    critique=critique or self._synthesize_critique(evaluation, stage_name),
+                    critique=critique or self._synthesize_critique(evaluation, stage),
                     effective_max_attempts=effective_max_attempts,
                     ledger_port=self.ledger_port,
                     metrics_port=self.metrics_port,
                 )
 
             if candidate is None:
-                raise DomainValidationError(f"Stage '{stage_name}' produced no candidate text.")
+                raise DomainValidationError(f"Stage '{stage}' produced no candidate text.")
 
             output_obj: _TOutput = stage_config.post_process(candidate, source)
             output_content = getattr(output_obj, "content", None)
             output_text = (
-                output_content.body
+                output_content.text
                 if isinstance(output_content, Content)
                 else (
-                    getattr(output_obj, "body", None)
-                    or getattr(output_obj, "text", None)
+                    getattr(output_obj, "text", None)
+                    or getattr(output_obj, "body", None)
                     or candidate.text
                 )
             )

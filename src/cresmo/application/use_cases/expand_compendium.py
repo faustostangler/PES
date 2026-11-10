@@ -86,12 +86,12 @@ class ExpandCompendiumUseCase:
         ).value
         user_id = user.value if user is not None else UserIdentity.anonymous().value
 
-        source_match = _COMPLEMENTARY_REGEX.search(compendium.content.body)
+        source_match = _COMPLEMENTARY_REGEX.search(compendium.content.text)
         if source_match:
-            source_body = compendium.content.body[: source_match.start()].strip()
-            source_complementary = compendium.content.body[source_match.end() :].strip()
+            source_body = compendium.content.text[: source_match.start()].strip()
+            source_complementary = compendium.content.text[source_match.end() :].strip()
         else:
-            source_body = compendium.content.body.strip()
+            source_body = compendium.content.text.strip()
             source_complementary = ""
 
         long_prompt = self.prompt_provider.get_prompt(

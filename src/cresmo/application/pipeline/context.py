@@ -39,7 +39,7 @@ class PipelineExecutionContext:
                 Content(
                     id=self.content.id,
                     title=self.content.title,
-                    body=self.content.body,
+                    text=self.content.text,
                     session_id=f"{ch_token}:{self.content.id.value}",
                 ),
             )

@@ -396,21 +396,22 @@ class Channel:
 class Content:
     """Canonical domain Value Object representing a media item, transcript, or synthesized prose.
 
-    Encapsulates content identifier, title, textual body payload, and optional session identifier.
+    Encapsulates content identifier, title, textual payload, and optional session identifier.
     Conforms to ADR-019 (Zero Primitive Obsession), ADR-032, ADR-034, and ADR-038 (Pure Triad Composition).
     """
 
     id: ContentId
     title: str = ""
-    body: str = ""
+    text: str = ""
     session_id: str = ""
 
     def __init__(
         self,
         id: ContentId | str,
         title: str = "",
-        body: str = "",
+        text: str = "",
         session_id: str | Any = "",
+        **kwargs: Any,
     ) -> None:
         if id is None:
             raise DomainValidationError("Content requires non-null id.")
@@ -423,10 +424,11 @@ class Content:
         effective_session_id = (
             session_id.value if hasattr(session_id, "value") else str(session_id or "")
         )
+        effective_text = text if text else str(kwargs.get("body", ""))
 
         object.__setattr__(self, "id", resolved_content_id)
         object.__setattr__(self, "title", effective_title.strip() if effective_title else "")
-        object.__setattr__(self, "body", body)
+        object.__setattr__(self, "text", effective_text)
         object.__setattr__(
             self, "session_id", effective_session_id.strip() if effective_session_id else ""
         )
@@ -436,10 +438,11 @@ class Content:
         cls,
         id: str | ContentId | None = None,
         title: str = "",
-        body: str = "",
+        text: str = "",
         session_id: str | Any = "",
         *,
         url: str = "",
+        **kwargs: Any,
     ) -> Content:
         """Ergonomic factory constructing Content from primitive strings or Value Objects."""
         if id is None:
@@ -451,10 +454,11 @@ class Content:
             else:
                 raise DomainValidationError("Content requires non-null id or valid url.")
         resolved_content_id = ContentId.from_string(id)
+        effective_text = text if text else str(kwargs.get("body", ""))
         return cls(
             id=resolved_content_id,
             title=title,
-            body=body,
+            text=effective_text,
             session_id=session_id,
         )
 

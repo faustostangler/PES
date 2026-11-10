@@ -197,7 +197,7 @@ class TestCresmoPipelineOrchestration:
         assert result.fluid_transcript is not None
         assert isinstance(result.fluid_transcript, StageTranscript)
         assert result.fluid_transcript.content.id == cid
-        assert "A teoria da circulação das elites postula" in result.fluid_transcript.content.body
+        assert "A teoria da circulação das elites postula" in result.fluid_transcript.content.text
 
     def test_run_for_video_ingestion_failure_raises_domain_error(self) -> None:
         mock_llm = SmartMockLLMAdapter()
@@ -410,7 +410,7 @@ class TestCresmoPipelineOrchestration:
         assert raw.channel.category == "philosophy"
         assert raw.provenance.url == "https://example.org/etienne"
         assert raw.provenance.description == "Análise de La Boétie"
-        assert "Corpo do texto sobre a servidão voluntária" in raw.content.body
+        assert "Corpo do texto sobre a servidão voluntária" in raw.content.text
 
     def test_run_for_text_file_skips_save_when_already_in_raw_lake(self, tmp_path: Path) -> None:
         """Verify that files residing inside raw_dir lake are not redundantly re-saved to disk."""
@@ -801,7 +801,7 @@ class TestCresmoPipelineOrchestration:
         assert result_bad.success is True
         raw_bad = vault.get_raw_transcript(result_bad.content_id)
         assert raw_bad is not None
-        assert "Body content surviving bad YAML" in raw_bad.content.body
+        assert "Body content surviving bad YAML" in raw_bad.content.text
 
         # Unclosed frontmatter (no closing ---) is treated directly as body
         f_no_close = tmp_path / "no_close.md"
@@ -813,7 +813,7 @@ class TestCresmoPipelineOrchestration:
         assert result_no_close.success is True
         raw_no_close = vault.get_raw_transcript(result_no_close.content_id)
         assert raw_no_close is not None
-        assert "Just plain body text." in raw_no_close.content.body
+        assert "Just plain body text." in raw_no_close.content.text
 
     @pytest.mark.skip(
         reason="Downstream stages 2-8 quarantined pending StageConfig refactoring per ADR-031"

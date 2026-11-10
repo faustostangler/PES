@@ -89,8 +89,8 @@ def test_gap_filler_execution_single_pass_override(
 
     assert isinstance(result, StageTranscript)
     assert result.content.id == ContentId("vid_hist1")
-    assert "Henrique de Borgonha" in result.content.body
-    assert "1066-1112" in result.content.body
+    assert "Henrique de Borgonha" in result.content.text
+    assert "1066-1112" in result.content.text
     assert mock_llm.transform.call_count == 1
 
 
@@ -145,8 +145,8 @@ def test_gap_filler_execution_multi_pass_to_completion(
 
     assert isinstance(result, StageTranscript)
     assert result.content.id == ContentId("vid_hist1")
-    assert "Henrique de Borgonha" in result.content.body
-    assert "Teresa de Leão" in result.content.body
+    assert "Henrique de Borgonha" in result.content.text
+    assert "Teresa de Leão" in result.content.text
     # Proves all 3 passes were executed as declared by domain intelligence
     assert mock_llm.transform.call_count == 3
 

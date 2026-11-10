@@ -213,7 +213,7 @@ class DiscoverAtomicInventoryUseCase:
         if self.llm_judge_port is not None:
             context = EvaluationContext(
                 stage_name="atomic_inventory",
-                raw_text=compendium.content.body,
+                raw_text=compendium.content.text,
                 candidate_text=json.dumps(candidate_data),
                 metadata={
                     "title": compendium.content.title,
@@ -231,7 +231,7 @@ class DiscoverAtomicInventoryUseCase:
                 PromptKey.JUDGE_ATOMIC_INVENTORY,
                 content_title=compendium.content.title,
                 channel_name=compendium.channel.name,
-                compendium_body=compendium.content.body,
+                compendium_body=compendium.content.text,
                 inventory_json=json.dumps(candidate_data),
             )
             judge_response = self.llm_synthesis_port.transform(
@@ -266,7 +266,7 @@ class DiscoverAtomicInventoryUseCase:
             PromptKey.ATOMIC_INVENTORY,
             content_title=compendium.content.title,
             channel_name=compendium.channel.name,
-            compendium_body=compendium.content.body,
+            compendium_body=compendium.content.text,
         )
 
         session_id = PipelineSessionId.create(

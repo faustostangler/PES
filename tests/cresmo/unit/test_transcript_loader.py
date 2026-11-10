@@ -338,7 +338,7 @@ class TestLoadTranscriptFromFile:
         assert transcript.channel.category == "computing"
         assert transcript.provenance.description == "A deep dive into architecture."
         assert transcript.provenance.publication_date == date(2026, 6, 15)
-        assert transcript.content.body == "This is the spoken transcript body."
+        assert transcript.content.text == "This is the spoken transcript body."
         assert isinstance(transcript.content.id, ContentId)
         assert transcript.content.id.value == "test_video"
         assert transcript.provenance.url == f"file://{file_path.resolve()}"
@@ -360,7 +360,7 @@ class TestLoadTranscriptFromFile:
         )
         with caplog.at_level(logging.DEBUG):
             transcript = load_transcript_from_file(file_path)
-        assert transcript.content.body == "Body text with enough length."
+        assert transcript.content.text == "Body text with enough length."
         record = next(
             r
             for r in caplog.records

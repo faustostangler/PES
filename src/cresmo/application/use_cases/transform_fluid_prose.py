@@ -89,7 +89,7 @@ class TransformFluidProseUseCase:
             PromptKey.FLUID_PROSE,
             channel_name=source_transcript.channel.name,
             file_name=file_name,
-            raw_text=source_transcript.content.body,
+            raw_text=source_transcript.content.text,
         )
 
         raw_response = self.llm_synthesis_port.transform(

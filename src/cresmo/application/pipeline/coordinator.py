@@ -72,13 +72,13 @@ logger = structlog.get_logger(__name__)
 def _extract_source_text(source_target: StageTranscript | Any) -> str:
     """Extract raw transcript text from StageTranscript triad."""
     if isinstance(source_target, StageTranscript):
-        return source_target.content.body
+        return source_target.content.text
     content = getattr(source_target, "content", None)
     if content is not None:
-        body = getattr(content, "body", None)
-        if isinstance(body, str) and body:
-            return body
-    text = getattr(source_target, "text", None)
+        text = getattr(content, "text", None) or getattr(content, "body", None)
+        if isinstance(text, str) and text:
+            return text
+    text = getattr(source_target, "text", None) or getattr(source_target, "body", None)
     if isinstance(text, str) and text:
         return text
     return ""
@@ -87,12 +87,16 @@ def _extract_source_text(source_target: StageTranscript | Any) -> str:
 def _extract_fluid_text(source: StageTranscript | Any) -> str:
     """Extract synthesized fluid prose text from StageTranscript envelope."""
     if isinstance(source, StageTranscript):
-        return source.content.body
+        return source.content.text
     content = getattr(source, "content", None)
     if content is not None:
-        body = getattr(content, "body", None)
-        if isinstance(body, str) and body:
-            return body
+        text = getattr(content, "text", None) or getattr(content, "body", None)
+        if isinstance(text, str) and text:
+            return text
+    text = getattr(source, "text", None) or getattr(source, "body", None)
+    if isinstance(text, str) and text:
+        return text
+    return ""
     text = getattr(source, "text", None)
     if isinstance(text, str) and text:
         return text

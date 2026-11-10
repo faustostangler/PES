@@ -41,7 +41,7 @@ class TestSourceTranscript:
         )
         assert transcript.content.id == cid
         assert transcript.channel.name == "Test Channel"
-        assert transcript.content.body == "Continuous raw or source transcript text."
+        assert transcript.content.text == "Continuous raw or source transcript text."
         assert transcript.content.title == "Introduction to Socio-Technical Systems"
         assert transcript.provenance.publication_date == pub
 

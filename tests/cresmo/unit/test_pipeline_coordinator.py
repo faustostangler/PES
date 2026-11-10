@@ -64,7 +64,7 @@ class TestTextExtractionHelpers:
     def test_extract_source_text_shapes(self) -> None:
         # Content body shape (StageTranscript triad)
         raw_content = MagicMock()
-        raw_content.content.body = "Content body text"
+        raw_content.content.text = "Content body text"
         assert _extract_source_text(raw_content) == "Content body text"
 
         # Content without body, fallback to raw.text
@@ -79,7 +79,7 @@ class TestTextExtractionHelpers:
     def test_extract_fluid_text_shapes(self) -> None:
         # Pure Value Object triad shape (StageTranscript with content.body)
         fluid_triad = MagicMock()
-        fluid_triad.content.body = "Fluid prose from content triad"
+        fluid_triad.content.text = "Fluid prose from content triad"
         assert _extract_fluid_text(fluid_triad) == "Fluid prose from content triad"
 
         # Text shape
@@ -376,8 +376,8 @@ class TestCresmoPipelineExecutionAndIdempotency:
         assert meta["channel_name"] == "Economics & Society"
         assert meta["content_id"] == "c1234567"
         assert meta["content_title"] == "Vilfredo Pareto and Circulation of Elites"
-        assert meta["raw_characters"] == len(sample_source_transcript.content.body)
-        assert meta["raw_words"] == len(sample_source_transcript.content.body.split())
+        assert meta["raw_characters"] == len(sample_source_transcript.content.text)
+        assert meta["raw_words"] == len(sample_source_transcript.content.text.split())
         assert meta["gap_filler_passes"] == 3
         assert meta["batch_id"] == batch.value
         assert meta["video_url"] == "https://youtube.com/watch?v=1234567"
@@ -404,15 +404,15 @@ class TestCresmoPipelineExecutionAndIdempotency:
         assert output_payload["stage"] == "gap_filler"
         assert output_payload["stages_completed"] == ["fluid_prose", "gap_filler"]
         assert output_payload["content_title"] == "Polished Pareto Essay"
-        raw_words = len(sample_source_transcript.content.body.split())
-        synth_words = len(FluidOutput.content.body.split())
+        raw_words = len(sample_source_transcript.content.text.split())
+        synth_words = len(FluidOutput.content.text.split())
         assert output_payload["word_count"] == synth_words
-        assert output_payload["char_count"] == len(FluidOutput.content.body)
+        assert output_payload["char_count"] == len(FluidOutput.content.text)
         assert output_payload["source_words"] == raw_words
         assert output_payload["synthesized_words"] == synth_words
         assert output_payload["expansion_ratio"] == round(synth_words / max(raw_words, 1), 3)
-        assert output_payload["source_characters"] == len(sample_source_transcript.content.body)
-        assert output_payload["synthesized_characters"] == len(FluidOutput.content.body)
+        assert output_payload["source_characters"] == len(sample_source_transcript.content.text)
+        assert output_payload["synthesized_characters"] == len(FluidOutput.content.text)
 
     def test_execute_with_minimal_metadata_and_defaults(self) -> None:
         raw_bare = StageTranscript(

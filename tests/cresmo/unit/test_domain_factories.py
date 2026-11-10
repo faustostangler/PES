@@ -28,7 +28,7 @@ def test_source_transcript_factory() -> None:
     transcript = SourceTranscriptFactory.build()
     assert isinstance(transcript, StageTranscript)
     assert transcript.channel.name != ""
-    assert transcript.content.body != ""
+    assert transcript.content.text != ""
     assert transcript.provenance.url != ""
 
 

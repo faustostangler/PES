@@ -205,7 +205,7 @@ class SynthesizeAtomicBatchUseCase:
             PromptKey.ATOMIC_BATCH,
             content_title=compendium.content.title,
             channel_name=compendium.channel.name,
-            compendium_body=compendium.content.body,
+            compendium_body=compendium.content.text,
             targets_json=json.dumps(targets_summary, ensure_ascii=False),
         )
         session_id = PipelineSessionId.create(

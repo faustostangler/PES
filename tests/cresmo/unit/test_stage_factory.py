@@ -108,7 +108,7 @@ def test_stage_factory_builds_fluid_prose_descriptor() -> None:
     processed = descriptor.post_process(candidate, source)
     assert isinstance(processed, StageTranscript)
     assert processed.content.id == source.content.id
-    assert "Synthesized fluid prose." in processed.content.body
+    assert "Synthesized fluid prose." in processed.content.text
 
 
 def test_stage_factory_generic_build_stage_custom_parameters() -> None:
@@ -131,7 +131,7 @@ def test_stage_factory_generic_build_stage_custom_parameters() -> None:
         required_criteria=(JudgeCriterion.INDEX_SYNTHESIS_QUALITY,),
         post_processor=custom_post_processor,
         candidate_extractor=lambda c: f"extracted:{c.text}",
-        source_extractor=lambda s: f"src:{s.content.body}",
+        source_extractor=lambda s: f"src:{s.content.text}",
         temperature=0.15,
         max_attempts=4,
         blocking=True,

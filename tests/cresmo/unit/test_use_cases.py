@@ -139,10 +139,10 @@ class TestTransformFluidProse:
         assert fluid.channel.name == "Example Channel"
         assert fluid.channel.id == ChannelId("UC123456")
         assert fluid.provenance.url == "https://youtube.com/watch?v=dQw4w9WgXcQ"
-        assert "## As Oligarquias Organizadas" in fluid.content.body
-        assert "A teoria da circulação das elites postula" in fluid.content.body
-        assert "### Extra Info" not in fluid.content.body
-        assert "Acidentalmente gerado" not in fluid.content.body
+        assert "## As Oligarquias Organizadas" in fluid.content.text
+        assert "A teoria da circulação das elites postula" in fluid.content.text
+        assert "### Extra Info" not in fluid.content.text
+        assert "Acidentalmente gerado" not in fluid.content.text
 
     def test_transform_fluid_prose_init_validations(self) -> None:
         llm = MockLLMAdapter()
@@ -179,7 +179,7 @@ class TestTransformFluidProse:
 
         assert fluid.content.id == cid
         assert fluid.content.title == "Clean Title"
-        assert fluid.content.body == "Pure narrative body."
+        assert fluid.content.text == "Pure narrative body."
 
         # Prompt provider contract
         mock_pp.get_prompt.assert_called_once_with(

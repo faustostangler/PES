@@ -82,7 +82,7 @@ class TestObsidianVaultAdapter:
         assert retrieved is not None
         assert retrieved.content.id == cid
         assert retrieved.channel.name == "Political Theory"
-        assert "transcript line 1" in retrieved.content.body
+        assert "transcript line 1" in retrieved.content.text
         # ADR-038 parity assertions
         assert retrieved.channel.name == "Political Theory"
         assert retrieved.content.id == cid
@@ -516,7 +516,7 @@ class TestObsidianVaultAdapter:
         assert transcript.provenance.url == f"file://{raw_file.resolve()}"
         assert transcript.provenance.description == ""
         assert transcript.content.title == "no_fm_1234"
-        assert transcript.content.body == "Plain markdown body with no yaml frontmatter at all."
+        assert transcript.content.text == "Plain markdown body with no yaml frontmatter at all."
 
     def test_get_raw_transcript_invalid_date_handled_gracefully(
         self, storage_paths: tuple[Path, Path, Path]
@@ -1221,7 +1221,7 @@ Definição conceitual com mais de vinte caracteres para passar na validação.
         assert retrieved is not None
         assert retrieved.content.id == cid
         assert retrieved.content.title == 'Título com "Aspas"'
-        assert retrieved.content.body == "Transcrição de áudio completa.\nSegunda linha."
+        assert retrieved.content.text == "Transcrição de áudio completa.\nSegunda linha."
         assert retrieved.channel.name == 'Canal "Socio-Político"'
         assert retrieved.channel.id == ChannelId("UC_abc_999")
         assert retrieved.channel.category == 'Categoria "Alpha"'
@@ -1309,7 +1309,7 @@ Alternative transcript body with extra content.
         assert retrieved.provenance.url == "https://youtube.com/watch?v=source_alt"
         assert retrieved.provenance.publication_date == date(2024, 3, 15)
         assert retrieved.provenance.description == "Alternative description text"
-        assert retrieved.content.body == "Alternative transcript body with extra content."
+        assert retrieved.content.text == "Alternative transcript body with extra content."
 
         # Parent directory fallback when channel keys are missing
         cid2 = ContentId("vid_folder_fallback")
@@ -1679,7 +1679,7 @@ Only body here, no complementary section.
         assert retrieved.content.id == cid
         assert retrieved.channel.name == "Ciência e Tecnologia"
         assert retrieved.content.title == "A Engenharia de Software Moderna"
-        assert retrieved.content.body == fluid.content.body
+        assert retrieved.content.text == fluid.content.text
         assert retrieved.provenance.url == "https://youtube.com/watch?v=fluid_test_abc123"
         assert retrieved.provenance.publication_date == date(2026, 6, 15)
 
@@ -1756,7 +1756,7 @@ Only body here, no complementary section.
         retrieved_fluid = adapter.get_stage_transcript("fluid_prose", cid_fluid)
         assert isinstance(retrieved_fluid, StageTranscript)
         assert retrieved_fluid.content.id == cid_fluid
-        assert retrieved_fluid.content.body == fluid.content.body
+        assert retrieved_fluid.content.text == fluid.content.text
 
         cid_comp = ContentId("stage_comp_456")
         comp = StageTranscript(

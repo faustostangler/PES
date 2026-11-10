@@ -107,7 +107,7 @@ class TranscriptVaultHandler:
             f"{indented_description}\n"
             f"---"
         )
-        content = f"{yaml_header}\n\n{transcript.content.body}"
+        content = f"{yaml_header}\n\n{transcript.content.text}"
         atomic_write(file_path, content)
 
     def get_raw_transcript(self, content_id: ContentId) -> StageTranscript | None:
@@ -213,7 +213,7 @@ class TranscriptVaultHandler:
             f"{indented_description}\n"
             f"---"
         )
-        body_payload = compendium.content.body.strip()
+        body_payload = compendium.content.text.strip()
         body_text = f"# {raw_title}\n\n{body_payload}"
         content = f"{yaml_header}\n\n{body_text}"
         atomic_write(file_path, content)
@@ -331,7 +331,7 @@ class TranscriptVaultHandler:
             f"{indented_description}\n"
             f"---"
         )
-        content = f"{yaml_header}\n\n{transcript.content.body}"
+        content = f"{yaml_header}\n\n{transcript.content.text}"
         atomic_write(file_path, content)
 
     def get_fluid_transcript(self, content_id: ContentId) -> StageTranscript | None:

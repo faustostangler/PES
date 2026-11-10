@@ -73,7 +73,7 @@ def post_process_enriched_compendium(
         content=Content(
             id=source.content.id,
             title=str(extracted_title),
-            body=full_body,
+            text=full_body,
             session_id=source.content.session_id,
         ),
         pass_count=max(pass_count, 1),

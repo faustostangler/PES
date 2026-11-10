@@ -822,11 +822,11 @@ class TestContent:
         cnt = Content(
             id=ContentId("dQw4w9WgXcQ"),
             title="Never Gonna Give You Up",
-            body="Never gonna let you down",
+            text="Never gonna let you down",
         )
         assert cnt.id == ContentId("dQw4w9WgXcQ")
         assert cnt.title == "Never Gonna Give You Up"
-        assert cnt.body == "Never gonna let you down"
+        assert cnt.text == "Never gonna let you down"
         assert not hasattr(cnt, "content_id")
         assert not hasattr(cnt, "content_title")
         assert str(cnt) == "dQw4w9WgXcQ"
@@ -837,14 +837,14 @@ class TestContent:
     def test_content_creation_with_string_coercion_and_defaults(self) -> None:
         from cresmo.domain.value_objects import Content, ContentId
 
-        cnt = Content(id="dQw4w9WgXcQ", title="Test Title", body="Textual body")
+        cnt = Content(id="dQw4w9WgXcQ", title="Test Title", text="Textual body")
         assert isinstance(cnt.id, ContentId)
         assert cnt.id.value == "dQw4w9WgXcQ"
-        assert cnt.body == "Textual body"
+        assert cnt.text == "Textual body"
 
         cnt_default = Content(id="dQw4w9WgXcQ")
         assert cnt_default.title == ""
-        assert cnt_default.body == ""
+        assert cnt_default.text == ""
 
     def test_content_create_factory(self) -> None:
         from cresmo.domain.value_objects import Content, ContentId
@@ -852,11 +852,11 @@ class TestContent:
         cnt = Content.create(
             id="dQw4w9WgXcQ",
             title="My Video",
-            body="Synthesized body text",
+            text="Synthesized body text",
         )
         assert cnt.id == ContentId("dQw4w9WgXcQ")
         assert cnt.title == "My Video"
-        assert cnt.body == "Synthesized body text"
+        assert cnt.text == "Synthesized body text"
         assert not hasattr(cnt, "content_id")
         assert not hasattr(cnt, "content_title")
 
@@ -865,7 +865,7 @@ class TestContent:
 
         cnt = Content.create(id="dQw4w9WgXcQ")
         assert cnt.title == ""
-        assert cnt.body == ""
+        assert cnt.text == ""
         assert not hasattr(cnt, "display_title")
 
     def test_content_invalid_id_raises(self) -> None:

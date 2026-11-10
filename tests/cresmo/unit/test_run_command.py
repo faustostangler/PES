@@ -92,7 +92,7 @@ class TestRunCommand:
         # 1. Success
         mock_raw = MagicMock()
         mock_raw.content.id.value = "dry1"
-        mock_raw.content.body = "A" * 150
+        mock_raw.content.text = "A" * 150
         mock_pipeline.ingest_raw_transcript.execute.return_value = mock_raw
 
         assert execute_single_video_run(mock_pipeline, args) == EXIT_SUCCESS
@@ -328,7 +328,7 @@ class TestRunCommand:
 
         mock_raw = MagicMock()
         mock_raw.content.id.value = "dryVid"
-        mock_raw.content.body = "A" * 200
+        mock_raw.content.text = "A" * 200
         mock_pipeline.ingest_raw_transcript.execute.side_effect = [mock_raw, None]
 
         code = execute_batch_dry_run(mock_pipeline, sources)

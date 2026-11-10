@@ -139,7 +139,7 @@ class IndexRawTranscriptsUseCase:
         title = transcript.content.title or video_id.value
 
         # Build prompt from bounded transcript excerpt to preserve context budget
-        excerpt = transcript.content.body.strip()
+        excerpt = transcript.content.text.strip()
         if self.max_chars > 0:
             excerpt = excerpt[: self.max_chars]
 

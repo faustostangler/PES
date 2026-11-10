@@ -52,7 +52,7 @@ class TestADR057MonomorphicStageTranscript:
         assert st.channel == channel
         assert st.provenance == provenance
         assert st.content == content
-        assert st.content.body == "Pure prose without loose arguments.\n\n### Extra Info\n\nExtra encyclopedic notes"
+        assert st.content.text == "Pure prose without loose arguments.\n\n### Extra Info\n\nExtra encyclopedic notes"
         assert st.content.title == "Clean Title"
         assert st.content.id == ContentId("abc123xyz00")
         assert st.pass_count == 2
@@ -81,10 +81,10 @@ class TestADR057MonomorphicStageTranscript:
         )
 
         stage = StageTranscript(channel=channel, provenance=provenance, content=content)
-        assert "| Col 1 | Col 2 |" in stage.content.body
+        assert "| Col 1 | Col 2 |" in stage.content.text
 
         fluid = StageTranscript(channel=channel, provenance=provenance, content=content)
-        assert "| Col 1 | Col 2 |" in fluid.content.body
+        assert "| Col 1 | Col 2 |" in fluid.content.text
 
         comp = StageTranscript(
             channel=channel,
@@ -92,7 +92,7 @@ class TestADR057MonomorphicStageTranscript:
             content=content,
             pass_count=1,
         )
-        assert "| Col 1 | Col 2 |" in comp.content.body
+        assert "| Col 1 | Col 2 |" in comp.content.text
 
     def test_url_mismatch_with_content_id_does_not_raise(self) -> None:
         """ContentId is its own VO; URL divergence in provenance does not fail entity creation."""
