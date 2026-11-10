@@ -1,7 +1,7 @@
 """Use Case: Ingest Raw Transcript.
 
 Orchestrates media crawling and audio/subtitle transcription through MediaIngestionPort
-and persists the resulting SourceTranscript domain aggregate into the vault raw storage.
+and persists the resulting StageTranscript domain aggregate into the vault raw storage.
 
 Conforms to:
 - SPEC-001: §1 (Raw Transcript Ingestion)
@@ -14,7 +14,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from cresmo.application.ports import MediaIngestionPort, VaultRepositoryPort
-from cresmo.domain.entities import SourceTranscript
+from cresmo.domain.entities import StageTranscript
 
 
 class IngestRawTranscriptUseCase:
@@ -42,7 +42,7 @@ class IngestRawTranscriptUseCase:
         video_url: str,
         whisper_model: str = "base",
         keep_audio: bool = False,
-    ) -> SourceTranscript | None:
+    ) -> StageTranscript | None:
         """Execute raw ingestion for a target media item.
 
         Args:
@@ -51,7 +51,7 @@ class IngestRawTranscriptUseCase:
             keep_audio: If True, preserves downloaded audio; otherwise cleans scratch.
 
         Returns:
-            SourceTranscript domain aggregate if ingestion succeeded, or None on failure.
+            StageTranscript domain aggregate if ingestion succeeded, or None on failure.
         """
         raw = self.ingestion_port.ingest_single_video(
             video_url=video_url,

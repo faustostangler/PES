@@ -11,8 +11,8 @@ from datetime import UTC, datetime
 from polyfactory.factories import DataclassFactory
 
 from cresmo.application.use_cases.discovery.models import BatchSource
-from cresmo.domain.entities.compendium import EnrichedCompendium
-from cresmo.domain.entities.transcripts import SourceTranscript
+from cresmo.domain.entities.compendium import StageTranscript
+from cresmo.domain.entities.transcripts import StageTranscript
 from cresmo.domain.value_objects import (
     Channel,
     ChannelId,
@@ -88,10 +88,10 @@ class BatchSourceFactory(DataclassFactory[BatchSource]):
         return ContentId(f"vid_{cls.__faker__.hexify(text='^^^^^^^^^^')}")
 
 
-class SourceTranscriptFactory(DataclassFactory[SourceTranscript]):
-    """Polyfactory generating valid SourceTranscript domain aggregates."""
+class SourceTranscriptFactory(DataclassFactory[StageTranscript]):
+    """Polyfactory generating valid StageTranscript domain aggregates."""
 
-    __model__ = SourceTranscript
+    __model__ = StageTranscript
 
     @classmethod
     def channel(cls) -> Channel:
@@ -110,8 +110,8 @@ class SourceTranscriptFactory(DataclassFactory[SourceTranscript]):
         return ContentFactory.build()
 
 
-class EnrichedCompendiumFactory(DataclassFactory[EnrichedCompendium]):
-    """Polyfactory generating valid EnrichedCompendium aggregates honoring all invariants.
+class EnrichedCompendiumFactory(DataclassFactory[StageTranscript]):
+    """Polyfactory generating valid StageTranscript aggregates honoring all invariants.
 
     Invariants enforced:
     - Non-empty fluid prose body without markdown tables.
@@ -119,7 +119,7 @@ class EnrichedCompendiumFactory(DataclassFactory[EnrichedCompendium]):
     - pass_count >= 1.
     """
 
-    __model__ = EnrichedCompendium
+    __model__ = StageTranscript
 
     @classmethod
     def content_id(cls) -> ContentId:

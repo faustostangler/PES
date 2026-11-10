@@ -2,7 +2,7 @@
 
 **Linked ADR:** [ADR-001](../adr/ADR-001-cresmo-modular-monolith-strangling.md)  
 **Linked Eval Rubric:** [EVAL-001](./EVAL-001-cresmo-synthesis.md)  
-**Status:** Draft  
+**Status:** APPROVED  
 **Date:** 2026-09-10  
 **Bounded Context:** Cresmo Knowledge Synthesis  
 

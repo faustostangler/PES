@@ -1,7 +1,7 @@
 # ADR-051: Elimination of Hardcoded Prompt Strings, Magic Resource Literals, and Settings Injection Alignment
 
 ## Status
-Accepted
+ACCEPTED
 
 ## Context
 ADR-011 mandates zero hardcoded prompts in Python source files and zero scattered magic strings.

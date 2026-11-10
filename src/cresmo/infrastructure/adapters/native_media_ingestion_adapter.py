@@ -29,7 +29,7 @@ from typing import Any, cast
 import structlog
 
 from cresmo.application.ports import MediaIngestionPort, MetricsPort
-from cresmo.domain.entities import SourceTranscript
+from cresmo.domain.entities import StageTranscript
 from cresmo.domain.exceptions import (
     CresmoInfrastructureError,
     DomainValidationError,
@@ -333,8 +333,8 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         info: Mapping[str, Any],
         body: str,
         channel_name: str,
-    ) -> tuple[SourceTranscript, ChannelId | None]:
-        """Construct domain SourceTranscript entity from resolved metadata and body."""
+    ) -> tuple[StageTranscript, ChannelId | None]:
+        """Construct domain StageTranscript entity from resolved metadata and body."""
         actual_video_id = str(info.get("id") or self._extract_video_id(video_url))
         content_id = ContentId.extract_from_text(actual_video_id) or ContentId.from_url_or_token(
             actual_video_id
@@ -362,7 +362,7 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             title=str(info.get("title") or ""),
             body=body,
         )
-        transcript = SourceTranscript(
+        transcript = StageTranscript(
             channel=channel,
             provenance=provenance,
             content=content,
@@ -375,8 +375,8 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         output_dir: Path,
         whisper_model: str = "base",
         keep_audio: bool = False,
-    ) -> SourceTranscript | None:
-        """Ingest single video into SourceTranscript domain aggregate.
+    ) -> StageTranscript | None:
+        """Ingest single video into StageTranscript domain aggregate.
 
         Prioritizes native spoken subtitles. If unavailable, falls back to local
         Whisper transcription with RAII temporary scratch storage.

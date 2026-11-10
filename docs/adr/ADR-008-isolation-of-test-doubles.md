@@ -10,7 +10,7 @@
 
 ## 1. Context
 
-In [`src/cresmo/infrastructure/adapters/mock_adapters.py`](../../src/cresmo/infrastructure/adapters/mock_adapters.py), the codebase maintained in-memory mock adapters (`MockMediaIngestionPort`, `MockLLMTransformationPort`, `MockVaultRepositoryPort`, `MockLedgerRepositoryPort`) implementing the application ports.
+In `src/cresmo/infrastructure/adapters/` (historically `mock_adapters.py`), the codebase maintained in-memory mock adapters (`MockMediaIngestionPort`, `MockLLMTransformationPort`, `MockVaultRepositoryPort`, `MockLedgerRepositoryPort`) implementing the application ports.
 
 ### The Problem
 1. **Production Code Pollution**: Test doubles and spies were located directly in `src/cresmo/infrastructure/adapters/`, violating the separation between production code and test scaffolding.

@@ -17,10 +17,8 @@ import pytest
 
 from cresmo.domain.entities import (
     AtomicNote,
-    EnrichedCompendium,
-    FluidTranscript,
     MapOfContent,
-    SourceTranscript,
+    StageTranscript,
 )
 from cresmo.domain.exceptions import CompendiumStructureError
 from cresmo.domain.value_objects import (
@@ -68,10 +66,14 @@ class TestObsidianVaultAdapter:
             enriched_dir=enriched_dir,
         )
         cid = ContentId("dQw4w9WgXcQ")
-        raw = SourceTranscript(
-            content_id=cid,
-            channel_name=ChannelName("Political Theory"),
-            body="Spoken speech transcript line 1.\nSpoken speech transcript line 2.",
+        raw = StageTranscript(
+            channel=Channel(name=ChannelName("Political Theory")),
+            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=dQw4w9WgXcQ"),
+            content=Content(
+                id=cid,
+                title="Political Theory",
+                body="Spoken speech transcript line 1.\nSpoken speech transcript line 2.",
+            ),
         )
 
         adapter.save_transcript(raw)
@@ -122,18 +124,25 @@ class TestObsidianVaultAdapter:
             enriched_dir=enriched_dir,
         )
         cid = ContentId("dQw4w9WgXcQ")
-        compendium = EnrichedCompendium(
-            content_id=cid,
-            channel_name=ChannelName("Political Theory"),
-            title=NoteTitle("Teoria das Elites"),
-            body="A circulação das elites governa as dinâmicas institucionais.",
+        compendium = StageTranscript(
+            channel=Channel(
+                name=ChannelName("Political Theory"),
+                id=ChannelId("UC_123"),
+                category="politics",
+            ),
+            provenance=MediaProvenance.create(
+                url="https://youtube.com/watch?v=dQw4w9WgXcQ",
+                description="Description text.",
+                publication_date=date(2023, 5, 17),
+            ),
+            content=Content(
+                id=cid,
+                title=NoteTitle("Teoria das Elites"),
+                body="A circulação das elites governa as dinâmicas institucionais.",
+            ),
             complementary_info="Dados históricos e matrizes de poder.",
             pass_count=2,
-            channel_id=ChannelId("UC_123"),
-            channel_category="politics",
-            source_url="https://youtube.com/watch?v=dQw4w9WgXcQ",
-            video_date="20230517",
-            video_description="Description text.",
+            metadata={"video_date": "20230517"},
         )
 
         adapter.save_enriched_compendium(compendium)
@@ -1185,7 +1194,7 @@ Definição conceitual com mais de vinte caracteres para passar na validação.
             title='Título com "Aspas"',
             body="Transcrição de áudio completa.\nSegunda linha.",
         )
-        transcript = SourceTranscript(
+        transcript = StageTranscript(
             channel=channel,
             provenance=provenance,
             content=content,
@@ -1240,7 +1249,7 @@ Definição conceitual com mais de vinte caracteres para passar na validação.
             title="",  # Empty title triggers fallback to content.id.value
             body="Minimum transcript body.",
         )
-        transcript = SourceTranscript(
+        transcript = StageTranscript(
             channel=channel,
             provenance=provenance,
             content=content,
@@ -1326,18 +1335,25 @@ Body text.
             vault_dir=vault_dir, raw_dir=raw_dir, enriched_dir=enriched_dir
         )
         cid = ContentId("comp_rich_001")
-        comp = EnrichedCompendium(
-            content_id=cid,
-            channel_name=ChannelName('Canal "Avançado"'),
-            title=NoteTitle("Compêndio Epistêmico"),
-            body="Corpo analítico denso e estruturado.",
+        comp = StageTranscript(
+            channel=Channel(
+                name=ChannelName('Canal "Avançado"'),
+                id=ChannelId("UC_comp_777"),
+                category='Categoria "Beta"',
+            ),
+            provenance=MediaProvenance.create(
+                url="https://youtube.com/watch?v=comp_rich_001",
+                description="Linha 1\nLinha 2",
+                publication_date=date(2024, 5, 20),
+            ),
+            content=Content(
+                id=cid,
+                title=NoteTitle("Compêndio Epistêmico"),
+                body="Corpo analítico denso e estruturado.",
+            ),
             complementary_info="Matriz complementar de factualidade e genealogia.",
             pass_count=3,
-            channel_id=ChannelId("UC_comp_777"),
-            channel_category='Categoria "Beta"',
-            source_url="https://youtube.com/watch?v=comp_rich_001",
-            video_date="20240520",
-            video_description="Linha 1\nLinha 2",
+            metadata={"video_date": "20240520"},
         )
 
         adapter.save_enriched_compendium(comp)
@@ -1384,18 +1400,16 @@ Body text.
             vault_dir=vault_dir, raw_dir=raw_dir, enriched_dir=enriched_dir
         )
         cid = ContentId("comp_min_002")
-        comp = EnrichedCompendium(
-            content_id=cid,
-            channel_name=ChannelName("Simple Channel"),
-            title=NoteTitle("Minimal Compendium"),
-            body="Minimal compendium body.",
+        comp = StageTranscript(
+            channel=Channel(name=ChannelName("Simple Channel")),
+            provenance=MediaProvenance.create(url=""),
+            content=Content(
+                id=cid,
+                title=NoteTitle("Minimal Compendium"),
+                body="Minimal compendium body.",
+            ),
             complementary_info="Informações complementares mínimas.",
             pass_count=1,
-            channel_id=None,
-            channel_category="",
-            source_url="",
-            video_date="",
-            video_description="",
         )
 
         adapter.save_enriched_compendium(comp)
@@ -1635,7 +1649,7 @@ Only body here, no complementary section.
             fluid_dir=fluid_dir,
         )
         cid = ContentId("fluid_test_abc123")
-        fluid = FluidTranscript(
+        fluid = StageTranscript(
             channel=Channel(name="Ciência e Tecnologia", id=ChannelId("UC_TECH")),
             provenance=MediaProvenance.create(
                 url="https://youtube.com/watch?v=fluid_test_abc123",
@@ -1697,7 +1711,7 @@ Only body here, no complementary section.
         )
         ch_name = ChannelName("Filosofia Política")
         for i in (1, 2):
-            fluid = FluidTranscript(
+            fluid = StageTranscript(
                 channel=Channel(name=ch_name),
                 provenance=MediaProvenance.create(url=f"https://yt.com/{i}"),
                 content=Content.create(
@@ -1710,6 +1724,76 @@ Only body here, no complementary section.
         assert len(files) == 2
         file_stems = {f.stem for f in files}
         assert file_stems == {"phil_1", "phil_2"}
+
+    def test_save_and_get_stage_transcript_polymorphic(
+        self, storage_paths: tuple[Path, Path, Path], tmp_path: Path
+    ) -> None:
+        """Verify save_stage_transcript and get_stage_transcript polymorphic roundtrip."""
+        vault_dir, raw_dir, enriched_dir = storage_paths
+        fluid_dir = tmp_path / "data" / "fluid"
+        adapter = ObsidianVaultAdapter(
+            vault_dir=vault_dir,
+            raw_dir=raw_dir,
+            enriched_dir=enriched_dir,
+            fluid_dir=fluid_dir,
+        )
+
+        cid_fluid = ContentId("stage_fluid_123")
+        fluid = StageTranscript(
+            channel=Channel(name="Canal Teste", id=ChannelId("UC_TEST")),
+            provenance=MediaProvenance.create(
+                url="https://youtube.com/watch?v=stage_fluid_123",
+                publication_date=date(2026, 6, 15),
+            ),
+            content=Content.create(
+                id=cid_fluid,
+                title="Titulo Fluido",
+                body="## Prosa Fluida\n\nTexto denso sem oralidades.",
+            ),
+        )
+        adapter.save_stage_transcript("fluid_prose", fluid)
+
+        retrieved_fluid = adapter.get_stage_transcript("fluid_prose", cid_fluid)
+        assert isinstance(retrieved_fluid, StageTranscript)
+        assert retrieved_fluid.content.id == cid_fluid
+        assert retrieved_fluid.content.body == fluid.content.body
+
+        cid_comp = ContentId("stage_comp_456")
+        comp = StageTranscript(
+            channel=Channel(name="Canal Teste", id=ChannelId("UC_TEST")),
+            provenance=MediaProvenance.create(
+                url="https://youtube.com/watch?v=stage_comp_456",
+                publication_date=date(2026, 6, 15),
+            ),
+            content=Content.create(
+                id=cid_comp,
+                title="Titulo Compendio",
+                body="## Prosa Expandida\n\nCorpo do compendio.",
+            ),
+            complementary_info="1. Contexto complementar detalhado.",
+            pass_count=2,
+        )
+        adapter.save_stage_transcript("gap_filler", comp)
+
+        retrieved_comp = adapter.get_stage_transcript("gap_filler", cid_comp)
+        assert isinstance(retrieved_comp, StageTranscript)
+        assert retrieved_comp.content.id == cid_comp
+        assert retrieved_comp.complementary_info == "1. Contexto complementar detalhado."
+        assert retrieved_comp.pass_count == 2
+
+    def test_get_stage_transcript_missing_returns_none(
+        self, storage_paths: tuple[Path, Path, Path], tmp_path: Path
+    ) -> None:
+        """Verify get_stage_transcript returns None when stage or content ID is absent."""
+        vault_dir, raw_dir, enriched_dir = storage_paths
+        adapter = ObsidianVaultAdapter(
+            vault_dir=vault_dir,
+            raw_dir=raw_dir,
+            enriched_dir=enriched_dir,
+            fluid_dir=tmp_path / "data" / "fluid",
+        )
+        assert adapter.get_stage_transcript("fluid_prose", ContentId("nonexistent")) is None
+        assert adapter.get_stage_transcript("unknown_stage", ContentId("nonexistent")) is None
 
 
 class TestChannelCatalogHandlerAndUtils:

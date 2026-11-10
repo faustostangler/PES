@@ -30,8 +30,8 @@ from cresmo.application.use_cases.index_raw_transcripts import (
     parse_judge_boolean,
 )
 from cresmo.domain.entities import (
-    EnrichedCompendium,
     PipelineSessionId,
+    StageTranscript,
     UserIdentity,
 )
 from cresmo.domain.exceptions import DomainValidationError, NoteTypologyError
@@ -195,7 +195,7 @@ class DiscoverAtomicInventoryUseCase:
     def _evaluate_candidate_inventory(
         self,
         candidate_data: Any,
-        compendium: EnrichedCompendium,
+        compendium: StageTranscript,
         judge_trace_id: str,
         session_id: str,
         user_id: str,
@@ -253,7 +253,7 @@ class DiscoverAtomicInventoryUseCase:
 
     def execute(
         self,
-        compendium: EnrichedCompendium,
+        compendium: StageTranscript,
         user: UserIdentity | None = None,
     ) -> AtomicEntityInventory:
         """Execute discovery scan with deterministic guardrails and iterative LLM judge loop.

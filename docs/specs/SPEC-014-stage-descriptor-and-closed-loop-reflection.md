@@ -25,7 +25,7 @@ It formalizes:
 ## 2. Domain Entities, Value Objects & Exceptions
 
 ### 2.1 `SourceTranscript` Aggregate
-In [`src/cresmo/domain/entities.py`](../../src/cresmo/domain/entities.py):
+In [`src/cresmo/domain/entities/`](../../src/cresmo/domain/entities/):
 - **Contract**: Canonical input aggregate across all pipeline stages. Replaces `RawTranscript` with zero legacy shims per ADR-010.
 - **Attributes**:
   - `content_id: ContentId`: Canonical media identifier.

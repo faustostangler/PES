@@ -126,7 +126,7 @@ def test_golden_set_source_text_invariants(
 def test_golden_set_candidate_text_invariants(
     golden_set_items: list[dict[str, Any]],
 ) -> None:
-    """Validate that candidate_text adheres to FluidTranscript structure."""
+    """Validate that candidate_text adheres to StageTranscript structure."""
     for item in golden_set_items:
         cand = item["input"]["candidate_text"].strip()
         item_id = item["id"]

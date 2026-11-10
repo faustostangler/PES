@@ -1,7 +1,11 @@
 # ADR-056: Native Media Ingestion Channel Name Deduplication and Domain Triad Simplification
 
 ## Status
-ACCEPTED (Turn 3 — Green + Refactor)
+ACCEPTED (PARTIALLY REFINED by [`ADR-057`](ADR-057-monomorphic-stage-transcript-envelope-and-pure-triad-ingestion.md))
+
+> [!WARNING]
+> **REFINEMENT NOTICE (ADR-057):**  
+> §3's fallback automatic inference in `StageTranscript.__init__` and §4's `SourceTranscript._validate_stage_invariants()` URL-ContentId cross-validation were **SUPERSEDED by [`ADR-057`](ADR-057-monomorphic-stage-transcript-envelope-and-pure-triad-ingestion.md)**, which eliminated primitive fallbacks in domain entity initialization and removed URL regex cross-coupling from core domain invariants.
 
 ## Context
 1. **Ingestion Duplication & Telemetry Drift**:

@@ -17,7 +17,7 @@ from cresmo.application.use_cases.index_raw_transcripts import (
     is_valid_synthesis_paragraph,
     parse_judge_boolean,
 )
-from cresmo.domain.entities import FluidTranscript, SourceTranscript
+from cresmo.domain.entities import StageTranscript, StageTranscript
 from cresmo.domain.exceptions import DomainValidationError
 from cresmo.domain.value_objects import ChannelName, ContentId
 from cresmo.infrastructure.adapters.prompt_provider import JsonPromptProvider
@@ -54,7 +54,7 @@ class TestIndexRawTranscriptsUseCase:
             prompt_provider=prompt_provider,
         )
 
-        transcript = FluidTranscript(
+        transcript = StageTranscript(
             content_id=ContentId("vid11111111"),
             channel_name=ChannelName("Political Theory"),
             title="Vilfredo Pareto and Elites",
@@ -133,7 +133,7 @@ class TestIndexRawTranscriptsUseCase:
             prompt_provider=prompt_provider,
         )
 
-        transcript = FluidTranscript(
+        transcript = StageTranscript(
             content_id=ContentId("vid11111111"),
             channel_name=ChannelName("Political Theory"),
             title="Vilfredo Pareto and Elites",
@@ -177,7 +177,7 @@ class TestIndexRawTranscriptsUseCase:
             prompt_provider=prompt_provider,
         )
 
-        transcript = FluidTranscript(
+        transcript = StageTranscript(
             content_id=ContentId("vid22222222"),
             channel_name=ChannelName("Economics"),
             title="Nash Equilibrium",
@@ -204,7 +204,7 @@ class TestIndexRawTranscriptsUseCase:
             prompt_provider=prompt_provider,
         )
 
-        transcript = FluidTranscript(
+        transcript = StageTranscript(
             content_id=ContentId("vid33333333"),
             channel_name=ChannelName("Tech Channel"),
             title="AI Systems",
@@ -232,7 +232,7 @@ class TestIndexRawTranscriptsUseCase:
         assert has_exc
 
     def test_index_raw_rejects_raw_transcript(self) -> None:
-        """ADR-028: IndexRawTranscriptsUseCase strictly rejects SourceTranscript."""
+        """ADR-028: IndexRawTranscriptsUseCase strictly rejects StageTranscript."""
         vault = InMemoryVaultAdapter()
         llm = MockLLMAdapter()
         prompt_provider = JsonPromptProvider()
@@ -241,7 +241,7 @@ class TestIndexRawTranscriptsUseCase:
             llm=llm,
             prompt_provider=prompt_provider,
         )
-        raw = SourceTranscript(
+        raw = StageTranscript(
             content_id=ContentId("vidraw001"),
             channel_name=ChannelName("Canal Teste"),
             title="Video Raw",
@@ -249,13 +249,13 @@ class TestIndexRawTranscriptsUseCase:
         )
         with pytest.raises(
             DomainValidationError,
-            match="IndexRawTranscriptsUseCase strictly requires FluidTranscript, got: SourceTranscript",
+            match="IndexRawTranscriptsUseCase strictly requires StageTranscript, got: StageTranscript",
         ):
             use_case.execute(raw)  # type: ignore[arg-type]
 
         with pytest.raises(
             DomainValidationError,
-            match="IndexRawTranscriptsUseCase strictly requires FluidTranscript, got: int",
+            match="IndexRawTranscriptsUseCase strictly requires StageTranscript, got: int",
         ):
             use_case.execute(12345)  # type: ignore[arg-type]
 
@@ -284,7 +284,7 @@ class TestIndexRawTranscriptsUseCase:
             max_rewrites=3,
         )
 
-        transcript = FluidTranscript(
+        transcript = StageTranscript(
             content_id=ContentId("vid44444444"),
             channel_name=ChannelName("Political Theory"),
             title="Vilfredo Pareto and Elites",
@@ -330,7 +330,7 @@ class TestIndexRawTranscriptsUseCase:
             max_rewrites=2,
         )
 
-        transcript = FluidTranscript(
+        transcript = StageTranscript(
             content_id=ContentId("vid55555555"),
             channel_name=ChannelName("Theory"),
             title="Theoretical Notes",
@@ -376,7 +376,7 @@ class TestIndexRawTranscriptsUseCase:
             max_rewrites=2,
         )
 
-        transcript = FluidTranscript(
+        transcript = StageTranscript(
             content_id=ContentId("vid77777777"),
             channel_name=ChannelName("Philosophy"),
             title="Concept Analysis",
@@ -421,7 +421,7 @@ class TestIndexRawTranscriptsUseCase:
             max_rewrites=2,
         )
 
-        transcript = FluidTranscript(
+        transcript = StageTranscript(
             content_id=ContentId("vid88888888"),
             channel_name=ChannelName("Sociology"),
             title="Social Dynamics",
@@ -466,7 +466,7 @@ class TestIndexRawTranscriptsUseCase:
             max_rewrites=2,
         )
 
-        transcript = FluidTranscript(
+        transcript = StageTranscript(
             content_id=ContentId("vid99999999"),
             channel_name=ChannelName("Political Theory"),
             title="Pareto Dynamics",
@@ -510,7 +510,7 @@ class TestIndexRawTranscriptsUseCase:
             max_rewrites=2,
         )
 
-        transcript = FluidTranscript(
+        transcript = StageTranscript(
             content_id=ContentId("vidsize123"),
             channel_name=ChannelName("General"),
             title="Size Validation Test",
@@ -557,7 +557,7 @@ class TestIndexRawTranscriptsUseCase:
             max_rewrites=0,  # Unbounded / infinite loop mode
         )
 
-        transcript = FluidTranscript(
+        transcript = StageTranscript(
             content_id=ContentId("vidinfinite"),
             channel_name=ChannelName("Perseverance"),
             title="Infinite Retries",
@@ -621,7 +621,7 @@ class TestIndexRawTranscriptsUseCase:
             language="Português do Brasil",
         )
 
-        transcript = FluidTranscript(
+        transcript = StageTranscript(
             content_id=ContentId("vid66666666"),
             channel_name=ChannelName("Science"),
             title="Physics",
@@ -799,7 +799,7 @@ class TestIndexRawTranscriptsUseCase:
             max_chars=1,
         )
 
-        transcript = FluidTranscript(
+        transcript = StageTranscript(
             content_id=ContentId("vid_notitle_99"),
             channel_name=ChannelName("3blue1brown"),
             title="",
@@ -831,7 +831,7 @@ class TestIndexRawTranscriptsUseCase:
         use_case._distiller = mock_distiller
 
         user = UserIdentity("custom_user_123")
-        transcript = FluidTranscript(
+        transcript = StageTranscript(
             content_id=ContentId("vid_args_1"),
             channel_name=ChannelName("TestChannel"),
             channel_id=ChannelId("chan_id_1"),
@@ -898,7 +898,7 @@ class TestIndexRawTranscriptsUseCase:
         )
 
         # Case A: explicit category with whitespace
-        transcript_explicit = FluidTranscript(
+        transcript_explicit = StageTranscript(
             content_id=ContentId("vid_cat_1"),
             channel_name=ChannelName("Generic"),
             channel_category="  Epistemology  ",
@@ -910,7 +910,7 @@ class TestIndexRawTranscriptsUseCase:
         assert entry_explicit.channel_category == "Epistemology"
 
         # Case B: empty category -> auto-classify by channel name
-        transcript_classified = FluidTranscript(
+        transcript_classified = StageTranscript(
             content_id=ContentId("vid_cat_2"),
             channel_name=ChannelName("3blue1brown"),
             channel_category="",

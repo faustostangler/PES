@@ -8,12 +8,15 @@ Conforms to:
 from __future__ import annotations
 
 import contextlib
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime
 from pathlib import Path
 
 import yaml
 
-from cresmo.domain.entities import EnrichedCompendium, FluidTranscript, SourceTranscript
+from cresmo.domain.entities import (
+    StageTranscript,
+)
+from cresmo.domain.exceptions import CompendiumStructureError
 from cresmo.domain.value_objects import (
     Channel,
     ChannelId,
@@ -21,7 +24,6 @@ from cresmo.domain.value_objects import (
     Content,
     ContentId,
     MediaProvenance,
-    NoteTitle,
 )
 from cresmo.infrastructure.adapters.obsidian.utils import (
     _FRONTMATTER_PATTERN,
@@ -44,7 +46,35 @@ class TranscriptVaultHandler:
         self.enriched_dir = enriched_dir
         self.fluid_dir = fluid_dir or (raw_dir.parent / "fluid")
 
-    def save_transcript(self, transcript: SourceTranscript) -> None:
+    def save_stage_transcript(self, stage_name: str, transcript: StageTranscript) -> None:
+        """Persist stage transcript envelope atomically into stage directory."""
+        match stage_name:
+            case "raw":
+                self.save_transcript(transcript)
+            case "fluid_prose":
+                self.save_fluid_transcript(transcript)
+            case "gap_filler":
+                self.save_enriched_compendium(transcript)
+            case _:
+                raise KeyError(
+                    f"Unsupported stage '{stage_name}' for stage transcript persistence."
+                )
+
+    def get_stage_transcript(
+        self, stage_name: str, content_id: ContentId
+    ) -> StageTranscript | None:
+        """Retrieve persisted stage transcript envelope by stage name and content ID."""
+        match stage_name:
+            case "raw":
+                return self.get_raw_transcript(content_id)
+            case "fluid_prose":
+                return self.get_fluid_transcript(content_id)
+            case "gap_filler":
+                return self.get_enriched_compendium(content_id)
+            case _:
+                return None
+
+    def save_transcript(self, transcript: StageTranscript) -> None:
         """Persist source transcript with canonical YAML frontmatter."""
         channel_dir = self.raw_dir / sanitize_filename(transcript.channel.name)
         file_path = channel_dir / f"{transcript.content.id.value}.md"
@@ -80,7 +110,7 @@ class TranscriptVaultHandler:
         content = f"{yaml_header}\n\n{transcript.content.body}"
         atomic_write(file_path, content)
 
-    def get_raw_transcript(self, content_id: ContentId) -> SourceTranscript | None:
+    def get_raw_transcript(self, content_id: ContentId) -> StageTranscript | None:
         """Retrieve source transcript by searching raw/ directory."""
         target_name = f"{content_id.value}.md"
         matched = list(self.raw_dir.glob(f"**/{target_name}"))
@@ -101,7 +131,7 @@ class TranscriptVaultHandler:
                 title=file_path.stem,
                 body=text,
             )
-            return SourceTranscript(
+            return StageTranscript(
                 channel=channel,
                 provenance=provenance,
                 content=content,
@@ -140,13 +170,13 @@ class TranscriptVaultHandler:
             title=title,
             body=body.strip(),
         )
-        return SourceTranscript(
+        return StageTranscript(
             channel=channel,
             provenance=provenance,
             content=content,
         )
 
-    def save_enriched_compendium(self, compendium: EnrichedCompendium) -> None:
+    def save_enriched_compendium(self, compendium: StageTranscript) -> None:
         """Persist enriched compendium directly into enriched/ directory with canonical YAML frontmatter."""
         channel_dir = self.enriched_dir / sanitize_filename(compendium.channel_name)
         file_path = channel_dir / f"{compendium.content_id.value}.md"
@@ -181,7 +211,7 @@ class TranscriptVaultHandler:
         content = f"{yaml_header}\n\n{body_text}"
         atomic_write(file_path, content)
 
-    def get_enriched_compendium(self, content_id: ContentId) -> EnrichedCompendium | None:
+    def get_enriched_compendium(self, content_id: ContentId) -> StageTranscript | None:
         """Retrieve enriched compendium by content ID."""
         target_name = f"{content_id.value}.md"
         matched = list(self.enriched_dir.glob(f"**/{target_name}"))
@@ -201,6 +231,8 @@ class TranscriptVaultHandler:
         parts = raw_body.split("### Extra Info")
         body_part = parts[0].strip()
         complementary_part = parts[1].strip() if len(parts) > 1 else ""
+        if not complementary_part:
+            raise CompendiumStructureError(f"Missing mandatory section '### Extra Info' in {file_path}")
 
         # Strip initial # title if present
         if body_part.startswith("# "):
@@ -217,18 +249,36 @@ class TranscriptVaultHandler:
         video_date = str(metadata.get("video_date") or "")
         video_description = str(metadata.get("video_description") or "")
 
-        return EnrichedCompendium(
-            content_id=content_id,
-            channel_name=ChannelName(channel_name),
-            title=NoteTitle(title),
+        channel = Channel(
+            name=ChannelName(channel_name),
+            id=ChannelId.from_string(raw_channel_id) if raw_channel_id else None,
+            category=channel_category,
+        )
+        publication_date = None
+        if video_date:
+            try:
+                publication_date = date.fromisoformat(video_date[:10])
+            except (ValueError, TypeError):
+                publication_date = None
+
+        provenance = MediaProvenance.create(
+            url=source_url,
+            description=video_description,
+            publication_date=publication_date,
+        )
+        content = Content.create(
+            id=content_id,
+            title=title,
             body=body_part,
+        )
+
+        return StageTranscript(
+            channel=channel,
+            provenance=provenance,
+            content=content,
             complementary_info=complementary_part,
             pass_count=int(metadata.get("pass_count", 1)),
-            channel_id=ChannelId.from_string(raw_channel_id) if raw_channel_id else None,
-            channel_category=channel_category,
-            source_url=source_url,
-            video_date=video_date,
-            video_description=video_description,
+            metadata={"video_date": video_date} if video_date else {},
         )
 
     def get_enriched_files_for_channel(self, channel_name: ChannelName) -> list[Path]:
@@ -240,7 +290,7 @@ class TranscriptVaultHandler:
             p for p in channel_dir.glob("*.md") if p.is_file() and not p.name.startswith(("_", "."))
         )
 
-    def save_fluid_transcript(self, transcript: FluidTranscript) -> None:
+    def save_fluid_transcript(self, transcript: StageTranscript) -> None:
         """Persist fluid transcript with canonical YAML frontmatter into fluid/ directory."""
         channel_dir = self.fluid_dir / sanitize_filename(transcript.channel.name)
         file_path = channel_dir / f"{transcript.content.id.value}.md"
@@ -276,7 +326,7 @@ class TranscriptVaultHandler:
         content = f"{yaml_header}\n\n{transcript.content.body}"
         atomic_write(file_path, content)
 
-    def get_fluid_transcript(self, content_id: ContentId) -> FluidTranscript | None:
+    def get_fluid_transcript(self, content_id: ContentId) -> StageTranscript | None:
         """Retrieve fluid transcript by searching fluid/ directory."""
         target_name = f"{content_id.value}.md"
         matched = list(self.fluid_dir.glob(f"**/{target_name}"))
@@ -297,7 +347,7 @@ class TranscriptVaultHandler:
                 title=file_path.stem,
                 body=text,
             )
-            return FluidTranscript(
+            return StageTranscript(
                 channel=channel,
                 provenance=provenance,
                 content=content,
@@ -336,7 +386,7 @@ class TranscriptVaultHandler:
             title=title,
             body=body.strip(),
         )
-        return FluidTranscript(
+        return StageTranscript(
             channel=channel,
             provenance=provenance,
             content=content,

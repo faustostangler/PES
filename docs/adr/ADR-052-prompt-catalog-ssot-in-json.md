@@ -1,7 +1,7 @@
 # ADR-052: Prompt Catalog SSOT Consolidation in JSON Resource
 
 ## Status
-Accepted (Supercedes §1 of ADR-050)
+ACCEPTED (SUPERSEDES §1 of ADR-050)
 
 ## Context
 Previously, prompt definitions and metadata were fragmented across three separate representations:

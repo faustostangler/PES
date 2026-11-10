@@ -13,10 +13,8 @@ from pathlib import Path
 
 from cresmo.domain.entities import (
     AtomicNote,
-    EnrichedCompendium,
-    FluidTranscript,
     MapOfContent,
-    SourceTranscript,
+    StageTranscript,
 )
 from cresmo.domain.value_objects import (
     ChannelName,
@@ -35,44 +33,69 @@ class VaultRepositoryPort(ABC):
     """
 
     @abstractmethod
-    def save_transcript(self, transcript: SourceTranscript) -> None:
+    def save_transcript(self, transcript: StageTranscript) -> None:
         """Persist source transcript to storage directory.
 
         Args:
-            transcript: SourceTranscript domain aggregate containing verbatim text and metadata.
+            transcript: StageTranscript domain aggregate containing verbatim text and metadata.
         """
         raise NotImplementedError("Persist source transcript atomically.")
 
     @abstractmethod
-    def get_raw_transcript(self, content_id: ContentId) -> SourceTranscript | None:
+    def get_raw_transcript(self, content_id: ContentId) -> StageTranscript | None:
         """Retrieve raw transcript by content ID.
 
         Args:
             content_id: Target unique content identifier.
 
         Returns:
-            SourceTranscript aggregate or None if not present in storage.
+            StageTranscript aggregate or None if not present in storage.
         """
         raise NotImplementedError("Retrieve raw transcript by content ID.")
 
     @abstractmethod
-    def save_fluid_transcript(self, transcript: FluidTranscript) -> None:
+    def save_stage_transcript(self, stage_name: str, transcript: StageTranscript) -> None:
+        """Persist stage transcript envelope atomically into stage directory (ADR-054).
+
+        Args:
+            stage_name: Unique pipeline stage identifier (e.g. 'fluid_prose', 'gap_filler').
+            transcript: Validated StageTranscript domain aggregate.
+        """
+        raise NotImplementedError("Persist stage transcript atomically.")
+
+    @abstractmethod
+    def get_stage_transcript(
+        self, stage_name: str, content_id: ContentId
+    ) -> StageTranscript | None:
+        """Retrieve persisted stage transcript envelope by stage name and content ID (ADR-054).
+
+        Args:
+            stage_name: Unique pipeline stage identifier (e.g. 'fluid_prose', 'gap_filler').
+            content_id: Target unique content identifier.
+
+        Returns:
+            StageTranscript domain aggregate or None if not present in storage.
+        """
+        raise NotImplementedError("Retrieve stage transcript by content ID.")
+
+    @abstractmethod
+    def save_fluid_transcript(self, transcript: StageTranscript) -> None:
         """Persist normalized fluid prose transcript directly into fluid/ directory with YAML frontmatter.
 
         Args:
-            transcript: Validated FluidTranscript aggregate containing clean continuous narrative prose.
+            transcript: Validated StageTranscript aggregate containing clean continuous narrative prose.
         """
         raise NotImplementedError("Persist fluid transcript atomically.")
 
     @abstractmethod
-    def get_fluid_transcript(self, content_id: ContentId) -> FluidTranscript | None:
+    def get_fluid_transcript(self, content_id: ContentId) -> StageTranscript | None:
         """Retrieve normalized fluid prose transcript by content ID from fluid/ directory.
 
         Args:
             content_id: Target unique content identifier.
 
         Returns:
-            FluidTranscript aggregate or None if not found in storage.
+            StageTranscript aggregate or None if not found in storage.
         """
         raise NotImplementedError("Retrieve fluid transcript by content ID.")
 
@@ -89,7 +112,7 @@ class VaultRepositoryPort(ABC):
         raise NotImplementedError("List fluid transcripts by channel.")
 
     @abstractmethod
-    def save_enriched_compendium(self, compendium: EnrichedCompendium) -> None:
+    def save_enriched_compendium(self, compendium: StageTranscript) -> None:
         """Persist enriched compendium directly into enriched/ directory.
 
         Args:
@@ -98,14 +121,14 @@ class VaultRepositoryPort(ABC):
         raise NotImplementedError("Persist enriched compendium atomically.")
 
     @abstractmethod
-    def get_enriched_compendium(self, content_id: ContentId) -> EnrichedCompendium | None:
+    def get_enriched_compendium(self, content_id: ContentId) -> StageTranscript | None:
         """Retrieve enriched compendium by content ID.
 
         Args:
             content_id: Target unique content identifier.
 
         Returns:
-            EnrichedCompendium aggregate or None if not present in storage.
+            StageTranscript aggregate or None if not present in storage.
         """
         raise NotImplementedError("Retrieve enriched compendium by content ID.")
 

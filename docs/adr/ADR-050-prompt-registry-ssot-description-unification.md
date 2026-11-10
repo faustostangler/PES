@@ -1,7 +1,11 @@
 # ADR-050: Elimination of Prompt Task Duplication and SSOT Consolidation in PROMPT_REGISTRY
 
 ## Status
-Accepted
+DEPRECATED (SUPERSEDED by [`ADR-052`](ADR-052-prompt-catalog-ssot-in-json.md))
+
+> [!WARNING]
+> **SUPERSEDED NOTICE (ADR-052):**  
+> §1 of this ADR established `PROMPT_REGISTRY` in `registry.py` as the Single Source of Truth (SSOT). This was completely **SUPERSEDED by [`ADR-052`](ADR-052-prompt-catalog-ssot-in-json.md)**, which removed `registry.py` in favor of declarative prompt metadata in `prompts.json` validated through `PromptSpec` and bijective `load_prompt_catalog()` in `catalog.py`.
 
 ## Context
 In previous iterations, prompt definitions maintained descriptions and synthesis responsibilities in two separate locations:

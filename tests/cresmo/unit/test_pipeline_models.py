@@ -29,10 +29,10 @@ from cresmo.application.ports import (
 from cresmo.application.use_cases import DeduplicationReport
 from cresmo.domain.entities import (
     AtomicNote,
-    EnrichedCompendium,
-    FluidTranscript,
+    StageTranscript,
+    StageTranscript,
     MapOfContent,
-    SourceTranscript,
+    StageTranscript,
 )
 from cresmo.domain.value_objects import (
     AtomicEntityInventory,
@@ -161,10 +161,10 @@ class TestPipelineResult:
         cid = ContentId("c1234567")
         mock_note = MagicMock(spec=AtomicNote)
         mock_moc = MagicMock(spec=MapOfContent)
-        mock_source = MagicMock(spec=SourceTranscript)
-        mock_fluid = MagicMock(spec=FluidTranscript)
+        mock_source = MagicMock(spec=StageTranscript)
+        mock_fluid = MagicMock(spec=StageTranscript)
         mock_idx = MagicMock(spec=RawIndexEntry)
-        mock_compendium = MagicMock(spec=EnrichedCompendium)
+        mock_compendium = MagicMock(spec=StageTranscript)
         mock_inventory = MagicMock(spec=AtomicEntityInventory)
         mock_dedup = MagicMock(spec=DeduplicationReport)
 

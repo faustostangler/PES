@@ -11,7 +11,7 @@ from unittest.mock import MagicMock
 
 from cresmo.application.ports import MediaIngestionPort, VaultRepositoryPort
 from cresmo.application.use_cases.ingest_raw_transcript import IngestRawTranscriptUseCase
-from cresmo.domain.entities import SourceTranscript
+from cresmo.domain.entities import StageTranscript
 from cresmo.domain.value_objects import ChannelName, ContentId
 from tests.doubles.mock_adapters import InMemoryVaultAdapter
 
@@ -40,7 +40,7 @@ class TestIngestRawTranscriptUseCase:
     def test_execute_success_and_kwargs_forwarding(self) -> None:
         """Verify explicit parameters are forwarded to ingestion port and saved in vault."""
         mock_ingestion = MagicMock(spec=MediaIngestionPort)
-        canned = SourceTranscript(
+        canned = StageTranscript(
             content_id=ContentId("vid12345"),
             channel_name=ChannelName("Science Channel"),
             body="Raw audio text transcript.",
@@ -71,7 +71,7 @@ class TestIngestRawTranscriptUseCase:
     def test_execute_default_parameters(self) -> None:
         """Verify default parameters (whisper_model='base', keep_audio=False, output_dir=Path('raw'))."""
         mock_ingestion = MagicMock(spec=MediaIngestionPort)
-        canned = SourceTranscript(
+        canned = StageTranscript(
             content_id=ContentId("vid_default_01"),
             channel_name=ChannelName("Default Channel"),
             body="Default transcript body.",

@@ -11,7 +11,7 @@ Conforms to:
 - ADR-013: Iterative LLM-as-a-Judge Indexing Loops
 - ADR-019: SOTA KISS Nomenclature & Value Objects
 - ADR-026: Clean Code Anti-Patterns & Code Smell Governance (Modularization)
-- ADR-028: Strict Rejection of Standalone Raw Indexing & Universal FluidTranscript Contract
+- ADR-028: Strict Rejection of Standalone Raw Indexing & Universal StageTranscript Contract
 """
 
 from cresmo.application.use_cases.indexing import (

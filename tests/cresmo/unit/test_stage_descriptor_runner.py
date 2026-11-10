@@ -1,7 +1,7 @@
 """Hermetic Unit Tests for StageConfig and Closed-Loop Reflection in PipelineStageRunner.
 
 Conforms to:
-    - ADR-031: Standardized StageConfig, SourceTranscript, CandidateText, and Closed-Loop Reflection Quality Fabric
+    - ADR-031: Standardized StageConfig, StageTranscript, CandidateText, and Closed-Loop Reflection Quality Fabric
     - SPEC-014: Standardized Stage Execution and Decision-Model Quality Fabric Specification
 """
 
@@ -20,7 +20,7 @@ from cresmo.application.ports import (
     NoOpTelemetryPort,
     PromptProviderPort,
 )
-from cresmo.domain.entities import PipelineSessionId, SourceTranscript, UserIdentity
+from cresmo.domain.entities import PipelineSessionId, StageTranscript, UserIdentity
 from cresmo.domain.value_objects import (
     CandidateText,
     Channel,
@@ -70,13 +70,13 @@ class TestStageConfigRunner:
             llm_judge=mock_judge,
         )
 
-        source = SourceTranscript(
+        source = StageTranscript(
             content_id=ContentId("content_test"),
             channel_name=ChannelName("Channel Alpha"),
             body="Um, so basically, this is raw spoken text.",
         )
 
-        descriptor = StageConfig[SourceTranscript, CandidateText](
+        descriptor = StageConfig[StageTranscript, CandidateText](
             stage_name="fluid_prose",
             transform_prompt_key=PromptKey.FLUID_PROSE,
             eval_spec=StageEvaluationSpec(
@@ -156,13 +156,13 @@ class TestStageConfigRunner:
             llm_judge=mock_judge,
         )
 
-        source = SourceTranscript(
+        source = StageTranscript(
             content_id=ContentId("content_retry"),
             channel_name=ChannelName("Channel Beta"),
             body="Text with oralities.",
         )
 
-        descriptor = StageConfig[SourceTranscript, CandidateText](
+        descriptor = StageConfig[StageTranscript, CandidateText](
             stage_name="fluid_prose",
             transform_prompt_key=PromptKey.FLUID_PROSE,
             eval_spec=StageEvaluationSpec(
@@ -212,17 +212,17 @@ class TestStageConfigRunner:
             llm_judge=None,
         )
 
-        source = SourceTranscript(
+        source = StageTranscript(
             content_id=ContentId("content_post"),
             channel_name=ChannelName("Channel Gamma"),
             body="Raw spoken text.",
         )
 
-        def sample_post_processor(candidate: CandidateText, src: SourceTranscript) -> str:
+        def sample_post_processor(candidate: CandidateText, src: StageTranscript) -> str:
             # Strip header
             return candidate.text.replace("# Header Title\n", "").strip()
 
-        descriptor = StageConfig[SourceTranscript, str](
+        descriptor = StageConfig[StageTranscript, str](
             stage_name="fluid_prose",
             transform_prompt_key=PromptKey.FLUID_PROSE,
             post_processor=sample_post_processor,
@@ -284,7 +284,7 @@ class TestStageConfigRunner:
             llm_judge=mock_judge,
         )
 
-        source = SourceTranscript(
+        source = StageTranscript(
             content_id=ContentId("content_999"),
             channel_name=ChannelName("Sandeco Channel"),
             channel_id=ChannelId("UC_SAND123"),
@@ -292,7 +292,7 @@ class TestStageConfigRunner:
             body="Raw spoken body transcript.",
         )
 
-        descriptor = StageConfig[SourceTranscript, CandidateText](
+        descriptor = StageConfig[StageTranscript, CandidateText](
             stage_name="fluid_prose",
             transform_prompt_key=PromptKey.FLUID_PROSE,
             eval_spec=StageEvaluationSpec(
@@ -383,7 +383,7 @@ class TestStageConfigRunner:
             llm_judge=mock_judge,
         )
 
-        descriptor = StageConfig[SourceTranscript, CandidateText](
+        descriptor = StageConfig[StageTranscript, CandidateText](
             stage_name="fluid_prose",
             transform_prompt_key=PromptKey.FLUID_PROSE,
             eval_spec=StageEvaluationSpec(
@@ -392,7 +392,7 @@ class TestStageConfigRunner:
             ),
         )
 
-        source = SourceTranscript(
+        source = StageTranscript(
             body="Raw ground truth",
             channel_name=ChannelName("Channel A"),
             content_id=ContentId("content_isolated"),
@@ -676,16 +676,16 @@ class TestStageConfigPromptBuilding:
     def test_post_process_invokes_callable_with_exact_candidate_and_source(self) -> None:
         received_args: list[tuple[Any, Any]] = []
 
-        def custom_processor(cand: CandidateText, src: SourceTranscript) -> str:
+        def custom_processor(cand: CandidateText, src: StageTranscript) -> str:
             received_args.append((cand, src))
             return f"Processed: {src.channel.name} -> {cand.text}"
 
-        cfg = StageConfig[SourceTranscript, str](
+        cfg = StageConfig[StageTranscript, str](
             stage_name="test_stage",
             transform_prompt_key=PromptKey.FLUID_PROSE,
             post_processor=custom_processor,
         )
-        src = SourceTranscript(
+        src = StageTranscript(
             content_id=ContentId("cid1"),
             channel_name=ChannelName("ChanA"),
             body="source_body",

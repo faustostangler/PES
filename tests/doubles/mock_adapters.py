@@ -18,10 +18,11 @@ from cresmo.application.ports import (
 )
 from cresmo.domain.entities import (
     AtomicNote,
-    EnrichedCompendium,
-    FluidTranscript,
+    StageTranscript,
+    StageTranscript,
     MapOfContent,
-    SourceTranscript,
+    StageTranscript,
+    StageTranscript,
 )
 from cresmo.domain.value_objects import (
     ChannelFeedQuery,
@@ -39,7 +40,7 @@ class MockMediaIngestionPort(MediaIngestionPort):
 
     def __init__(
         self,
-        canned_transcript: SourceTranscript | None = None,
+        canned_transcript: StageTranscript | None = None,
         canned_feed: list[DiscoveredMediaItem] | None = None,
         canned_channel_url: str | None = None,
     ) -> None:
@@ -62,7 +63,7 @@ class MockMediaIngestionPort(MediaIngestionPort):
         output_dir: Path,
         whisper_model: str = "base",
         keep_audio: bool = False,
-    ) -> SourceTranscript | None:
+    ) -> StageTranscript | None:
         self.ingest_single_calls.append(video_url)
         return self.canned_transcript
 
@@ -95,9 +96,7 @@ class MockLLMAdapter(LLMTransformationPort):
         self.call_history.append(
             {
                 "prompt": prompt,
-                "system_prompt": prompt.system_prompt
-                if isinstance(prompt, ChatPrompt)
-                else None,
+                "system_prompt": prompt.system_prompt if isinstance(prompt, ChatPrompt) else None,
                 "temperature": temperature,
                 "trace_id": trace_id,
                 "session_id": session_id,
@@ -113,9 +112,9 @@ class InMemoryVaultAdapter(VaultRepositoryPort):
     """In-memory mock for VaultRepositoryPort."""
 
     def __init__(self) -> None:
-        self.raw_transcripts: dict[str, SourceTranscript] = {}
-        self.fluid_transcripts: dict[str, FluidTranscript] = {}
-        self.compendiums: dict[str, EnrichedCompendium] = {}
+        self.raw_transcripts: dict[str, StageTranscript] = {}
+        self.fluid_transcripts: dict[str, StageTranscript] = {}
+        self.compendiums: dict[str, StageTranscript] = {}
         self.atomic_notes: dict[str, AtomicNote] = {}
         self.index_entries: dict[str, dict[str, Any]] = {}
         self.mocs: dict[str, MapOfContent] = {}
@@ -165,22 +164,46 @@ class InMemoryVaultAdapter(VaultRepositoryPort):
         for k in keys_to_del:
             del self.master_documents[k]
 
-    def save_transcript(self, transcript: SourceTranscript) -> None:
+    def save_transcript(self, transcript: StageTranscript) -> None:
         self.raw_transcripts[transcript.content.id.value] = transcript
 
-    def get_raw_transcript(self, content_id: ContentId) -> SourceTranscript | None:
+    def get_raw_transcript(self, content_id: ContentId) -> StageTranscript | None:
         return self.raw_transcripts.get(content_id.value)
 
-    def save_enriched_compendium(self, compendium: EnrichedCompendium) -> None:
+    def save_enriched_compendium(self, compendium: StageTranscript) -> None:
         self.compendiums[compendium.content_id.value] = compendium
 
-    def get_enriched_compendium(self, content_id: ContentId) -> EnrichedCompendium | None:
+    def get_enriched_compendium(self, content_id: ContentId) -> StageTranscript | None:
         return self.compendiums.get(content_id.value)
 
-    def save_fluid_transcript(self, transcript: FluidTranscript) -> None:
+    def save_stage_transcript(self, stage_name: str, transcript: StageTranscript) -> None:
+        match stage_name:
+            case "raw":
+                self.save_transcript(transcript)
+            case "fluid_prose":
+                self.save_fluid_transcript(transcript)
+            case "gap_filler":
+                self.save_enriched_compendium(transcript)
+            case _:
+                self.save_fluid_transcript(transcript)
+
+    def get_stage_transcript(
+        self, stage_name: str, content_id: ContentId
+    ) -> StageTranscript | None:
+        match stage_name:
+            case "raw":
+                return self.get_raw_transcript(content_id)
+            case "fluid_prose":
+                return self.get_fluid_transcript(content_id)
+            case "gap_filler":
+                return self.get_enriched_compendium(content_id)
+            case _:
+                return None
+
+    def save_fluid_transcript(self, transcript: StageTranscript) -> None:
         self.fluid_transcripts[transcript.content.id.value] = transcript
 
-    def get_fluid_transcript(self, content_id: ContentId) -> FluidTranscript | None:
+    def get_fluid_transcript(self, content_id: ContentId) -> StageTranscript | None:
         return self.fluid_transcripts.get(content_id.value)
 
     def get_fluid_files_for_channel(self, channel_name: ChannelName) -> list[Path]:

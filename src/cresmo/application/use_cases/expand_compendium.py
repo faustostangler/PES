@@ -20,12 +20,12 @@ from cresmo.application.ports import (
     VaultRepositoryPort,
 )
 from cresmo.domain.entities import (
-    EnrichedCompendium,
     PipelineSessionId,
+    StageTranscript,
     UserIdentity,
 )
 from cresmo.domain.exceptions import CompendiumStructureError
-from cresmo.domain.value_objects import Channel, PromptKey
+from cresmo.domain.value_objects import Channel, Content, PromptKey
 
 # Resilient regex matching variations of the mandatory complementary section header
 _COMPLEMENTARY_REGEX = re.compile(
@@ -64,17 +64,17 @@ class ExpandCompendiumUseCase:
 
     def execute(
         self,
-        compendium: EnrichedCompendium,
+        compendium: StageTranscript,
         user: UserIdentity | None = None,
-    ) -> EnrichedCompendium:
+    ) -> StageTranscript:
         """Execute dual expansion in-place.
 
         Args:
-            compendium: EnrichedCompendium aggregate from fluid prose synthesis.
+            compendium: StageTranscript aggregate from fluid prose synthesis.
             user: Optional executing UserIdentity principal (defaults to anonymous).
 
         Returns:
-            Updated EnrichedCompendium aggregate enriched with multi-secular and synchronic depth.
+            Updated StageTranscript aggregate enriched with multi-secular and synchronic depth.
 
         Raises:
             CompendiumStructureError: If complementary information section is missing or empty.
@@ -125,19 +125,17 @@ class ExpandCompendiumUseCase:
         if not complementary_information:
             raise CompendiumStructureError("Missing complementary info in expansion.")
 
-        updated = EnrichedCompendium(
-            content_id=compendium.content_id,
-            channel_name=compendium.channel_name,
-            title=compendium.title,
-            body=body,
+        updated = StageTranscript(
+            channel=compendium.channel,
+            provenance=compendium.provenance,
+            content=Content.create(
+                id=compendium.content_id,
+                title=compendium.title,
+                body=body,
+            ),
             complementary_info=complementary_information,
-            pass_count=compendium.pass_count + 1,
-            channel_id=compendium.channel_id,
-            channel_category=compendium.channel_category,
-            source_url=compendium.source_url,
-            publication_date=compendium.publication_date,
-            video_date=compendium.video_date,
-            video_description=compendium.video_description,
+            pass_count=compendium.pass_count + 1 if compendium.pass_count else 2,
+            metadata=dict(compendium.metadata),
         )
         self.vault_port.save_enriched_compendium(updated)
         return updated

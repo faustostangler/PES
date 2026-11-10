@@ -1,7 +1,11 @@
 # ADR-054: Unified Stage Transcript Envelope and Stage-Invariant Polymorphism
 
 ## Status
-ACCEPTED (Turn 3 — TDD Green + Refactor)
+ACCEPTED (PARTIALLY SUPERSEDED and REFINED by [`ADR-057`](ADR-057-monomorphic-stage-transcript-envelope-and-pure-triad-ingestion.md))
+
+> [!WARNING]
+> **REFINEMENT NOTICE (ADR-057):**  
+> While ADR-054 introduced `StageTranscript` and established the 3-VO Triad hierarchy, §1's convenience keyword argument initialization (`content_id`, `source_url`, `body`) and Markdown syntax table validation (`_TABLE_PATTERN`) were **SUPERSEDED by [`ADR-057`](ADR-057-monomorphic-stage-transcript-envelope-and-pure-triad-ingestion.md)**. `StageTranscript` is strictly monomorphic with pure VO injection, relegating formatting and Markdown checks to stage descriptors and `LlmJudgePort`.
 
 ## Context
 Across the Cresmo pipeline (`src/cresmo/domain/entities/`), transcripts undergo sequential transformations across multiple pipeline stages:

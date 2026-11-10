@@ -7,9 +7,9 @@ from cresmo.application.pipeline.stage_descriptor import StageConfig
 from cresmo.application.pipeline.stage_factory import StageFactory
 from cresmo.application.ports import DefaultPipelineSettings
 from cresmo.domain.entities import (
-    FluidTranscript,
+    StageTranscript,
     PipelineSessionId,
-    SourceTranscript,
+    StageTranscript,
     UserIdentity,
 )
 from cresmo.domain.value_objects import (
@@ -94,7 +94,7 @@ def test_stage_factory_builds_fluid_prose_descriptor() -> None:
     assert factory("fluid_prose") is descriptor
 
     # Verify source text extraction
-    source = SourceTranscript(
+    source = StageTranscript(
         content_id=ContentId("c123"),
         channel_name=ChannelName("Ch"),
         body="Verbatim source audio.",
@@ -106,9 +106,9 @@ def test_stage_factory_builds_fluid_prose_descriptor() -> None:
     candidate = CandidateText("Synthesized fluid prose.", stage_name="fluid_prose")
     assert descriptor.eval_spec.candidate_extractor(candidate) == "Synthesized fluid prose."
 
-    # Verify post processor produces FluidTranscript
+    # Verify post processor produces StageTranscript
     processed = descriptor.post_process(candidate, source)
-    assert isinstance(processed, FluidTranscript)
+    assert isinstance(processed, StageTranscript)
     assert processed.content.id == source.content.id
     assert "Synthesized fluid prose." in processed.content.body
 
@@ -123,7 +123,7 @@ def test_stage_factory_generic_build_stage_custom_parameters() -> None:
     factory = StageFactory(settings=settings)
 
     # Injected custom post processor and extractors
-    def custom_post_processor(candidate: CandidateText, source: FluidTranscript) -> dict[str, str]:
+    def custom_post_processor(candidate: CandidateText, source: StageTranscript) -> dict[str, str]:
         return {"output": candidate.text, "source_id": source.content.id.value}
 
     descriptor = factory.build_stage(
@@ -155,7 +155,7 @@ def test_stage_factory_generic_build_stage_custom_parameters() -> None:
     candidate = CandidateText("raw response", stage_name="custom_analysis_stage")
     assert descriptor.eval_spec.candidate_extractor(candidate) == "extracted:raw response"
 
-    dummy_source = FluidTranscript(
+    dummy_source = StageTranscript(
         content_id=ContentId("dummy_content"),
         channel_name=ChannelName("dummy_channel"),
         body="dummy body",

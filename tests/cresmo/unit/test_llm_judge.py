@@ -897,8 +897,8 @@ class TestCoordinatorLlmJudgeIntegration:
 
     def test_coordinator_triggers_llm_judge_for_fluid_prose(self) -> None:
         from cresmo.application.pipeline.coordinator import CresmoPipeline
-        from cresmo.domain.entities import SourceTranscript
-        from cresmo.domain.value_objects import ChannelName, ContentId
+        from cresmo.domain.entities import StageTranscript
+        from cresmo.domain.value_objects import Channel, ChannelName, Content, ContentId, MediaProvenance
         from cresmo.infrastructure.config import CresmoSettings
         from tests.cresmo.unit.test_pipeline import SmartMockLLMAdapter
         from tests.doubles.mock_adapters import (
@@ -908,10 +908,10 @@ class TestCoordinatorLlmJudgeIntegration:
         )
 
         cid = ContentId("vid_coord_1")
-        canned_raw = SourceTranscript(
-            content_id=cid,
-            channel_name=ChannelName("Test Channel"),
-            body="Raw audio text with uh and um.",
+        canned_raw = StageTranscript(
+            channel=Channel(name="Test Channel"),
+            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=vid_coord_1"),
+            content=Content(id=cid, title="Test", body="Raw audio text with uh and um."),
         )
         mock_llm = SmartMockLLMAdapter()
         mock_ingestion = MockMediaIngestionPort(canned_transcript=canned_raw)
@@ -957,9 +957,9 @@ class TestCoordinatorLlmJudgeIntegration:
 
     def test_coordinator_blocking_mode_raises_on_quality_failure(self) -> None:
         from cresmo.application.pipeline.coordinator import CresmoPipeline
-        from cresmo.domain.entities import SourceTranscript
+        from cresmo.domain.entities import StageTranscript
         from cresmo.domain.exceptions import DomainValidationError
-        from cresmo.domain.value_objects import ChannelName, ContentId
+        from cresmo.domain.value_objects import Channel, ChannelName, Content, ContentId, MediaProvenance
         from cresmo.infrastructure.config import CresmoSettings
         from tests.cresmo.unit.test_pipeline import SmartMockLLMAdapter
         from tests.doubles.mock_adapters import (
@@ -969,10 +969,10 @@ class TestCoordinatorLlmJudgeIntegration:
         )
 
         cid = ContentId("vid_coord_2")
-        canned_raw = SourceTranscript(
-            content_id=cid,
-            channel_name=ChannelName("Test Channel"),
-            body="Raw audio.",
+        canned_raw = StageTranscript(
+            channel=Channel(name="Test Channel"),
+            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=vid_coord_2"),
+            content=Content(id=cid, title="Test", body="Raw audio."),
         )
         mock_llm = SmartMockLLMAdapter()
         mock_ingestion = MockMediaIngestionPort(canned_transcript=canned_raw)
@@ -1007,8 +1007,8 @@ class TestCoordinatorLlmJudgeIntegration:
         from unittest.mock import MagicMock
 
         from cresmo.application.pipeline.coordinator import CresmoPipeline
-        from cresmo.domain.entities import SourceTranscript
-        from cresmo.domain.value_objects import ChannelName, ContentId
+        from cresmo.domain.entities import StageTranscript
+        from cresmo.domain.value_objects import Channel, ChannelName, Content, ContentId, MediaProvenance
         from cresmo.infrastructure.config import CresmoSettings
         from tests.cresmo.unit.test_pipeline import SmartMockLLMAdapter
         from tests.doubles.mock_adapters import (
@@ -1018,10 +1018,10 @@ class TestCoordinatorLlmJudgeIntegration:
         )
 
         cid = ContentId("vid_coord_telemetry")
-        canned_raw = SourceTranscript(
-            content_id=cid,
-            channel_name=ChannelName("Test Channel"),
-            body="Raw audio text with speech noise.",
+        canned_raw = StageTranscript(
+            channel=Channel(name="Test Channel"),
+            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=vid_coord_telemetry"),
+            content=Content(id=cid, title="Test", body="Raw audio text with speech noise."),
         )
         mock_llm = SmartMockLLMAdapter()
         mock_ingestion = MockMediaIngestionPort(canned_transcript=canned_raw)

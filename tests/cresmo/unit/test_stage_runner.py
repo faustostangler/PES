@@ -29,6 +29,7 @@ from cresmo.domain.value_objects import (
     CriterionScore,
     JudgeCriterion,
     JudgeEvaluation,
+    MediaProvenance,
     PromptKey,
     StageEvaluationSpec,
 )
@@ -296,7 +297,7 @@ class TestPipelineStageRunnerEvaluatedStage:
         """Verify execute_stage cleanly consumes PipelineExecutionContext."""
         from cresmo.application.pipeline.context import PipelineExecutionContext
         from cresmo.application.pipeline.stage_descriptor import StageConfig
-        from cresmo.domain.entities import PipelineSessionId, SourceTranscript, UserIdentity
+        from cresmo.domain.entities import PipelineSessionId, StageTranscript, UserIdentity
         from cresmo.domain.value_objects import CandidateText, PromptKey
         from cresmo.infrastructure.adapters.prompt_provider import JsonPromptProvider
         from tests.doubles.mock_adapters import MockLLMAdapter
@@ -322,15 +323,15 @@ class TestPipelineStageRunnerEvaluatedStage:
             content=content,
         )
 
-        descriptor = StageConfig[SourceTranscript, CandidateText](
+        descriptor = StageConfig[StageTranscript, CandidateText](
             stage_name="fluid_prose",
             transform_prompt_key=PromptKey.FLUID_PROSE,
         )
 
-        source = SourceTranscript(
-            content_id=ContentId("vid_ctx_1"),
-            channel_name=ChannelName("CtxChannel"),
-            body="Raw speech text.",
+        source = StageTranscript(
+            channel=Channel(name="CtxChannel"),
+            provenance=MediaProvenance(),
+            content=Content(id=ContentId("vid_ctx_1"), title="CtxTitle", body="Raw speech text."),
         )
 
         result = runner.execute_stage(descriptor, source, context=ctx)
@@ -969,7 +970,7 @@ class TestStageRunnerExecuteStageRetriesAndQuarantine:
     """Verifies end-to-end execute_stage telemetry recording, retries, and quarantine metrics."""
 
     def test_execute_stage_retries_and_metrics(self) -> None:
-        from cresmo.domain.entities import SourceTranscript
+        from cresmo.domain.entities import StageTranscript
 
         mock_t = MagicMock(spec=TelemetryPort)
         mock_m = MagicMock()
@@ -1007,7 +1008,7 @@ class TestStageRunnerExecuteStageRetriesAndQuarantine:
             llm_transformation_port=mock_llm,
         )
 
-        stage_cfg = StageConfig[SourceTranscript, CandidateText](
+        stage_cfg = StageConfig[StageTranscript, CandidateText](
             stage_name="fluid_prose",
             transform_prompt_key=PromptKey.FLUID_PROSE,
             eval_spec=StageEvaluationSpec(
@@ -1018,10 +1019,10 @@ class TestStageRunnerExecuteStageRetriesAndQuarantine:
             ),
         )
 
-        source = SourceTranscript(
-            content_id=ContentId("vid_retry_1"),
-            channel_name=ChannelName("RetCh"),
-            body="Source audio text words.",
+        source = StageTranscript(
+            channel=Channel(name="RetCh", id=ChannelId("UC_ret")),
+            provenance=MediaProvenance(),
+            content=Content(id=ContentId("vid_retry_1"), title="Retry Title", body="Source audio text words."),
         )
         ctx = PipelineExecutionContext(
             session_id=PipelineSessionId("ret_sess:1"),
@@ -1043,7 +1044,7 @@ class TestStageRunnerExecuteStageRetriesAndQuarantine:
         mock_t.record_stage_io.assert_any_call(
             input_payload={
                 "stage_name": "fluid_prose",
-                "source_type": "SourceTranscript",
+                "source_type": "StageTranscript",
                 "source_characters": len("source text"),
                 "source_words": len(["source", "text"]),
             }
@@ -1058,7 +1059,7 @@ class TestStageRunnerExecuteStageRetriesAndQuarantine:
         )
 
     def test_execute_stage_completed_unblocking_status(self) -> None:
-        from cresmo.domain.entities import SourceTranscript
+        from cresmo.domain.entities import StageTranscript
 
         mock_t = MagicMock(spec=TelemetryPort)
         mock_m = MagicMock()
@@ -1086,7 +1087,7 @@ class TestStageRunnerExecuteStageRetriesAndQuarantine:
             llm_transformation_port=mock_llm,
         )
 
-        stage_cfg = StageConfig[SourceTranscript, CandidateText](
+        stage_cfg = StageConfig[StageTranscript, CandidateText](
             stage_name="fluid_prose",
             transform_prompt_key=PromptKey.FLUID_PROSE,
             eval_spec=StageEvaluationSpec(
@@ -1097,10 +1098,10 @@ class TestStageRunnerExecuteStageRetriesAndQuarantine:
             ),
         )
 
-        source = SourceTranscript(
-            content_id=ContentId("vid_unblock"),
-            channel_name=ChannelName("UnblockCh"),
-            body="Source text words.",
+        source = StageTranscript(
+            channel=Channel(name="UnblockCh"),
+            provenance=MediaProvenance(),
+            content=Content(id=ContentId("vid_unblock"), title="Unblock Title", body="Source text words."),
         )
         ctx = PipelineExecutionContext(
             session_id=PipelineSessionId("unblock_sess:1"),
@@ -1123,7 +1124,7 @@ class TestStageRunnerExecuteStageRetriesAndQuarantine:
         )
 
     def test_execute_stage_quarantine_recorded_when_blocking(self) -> None:
-        from cresmo.domain.entities import SourceTranscript
+        from cresmo.domain.entities import StageTranscript
 
         mock_t = MagicMock(spec=TelemetryPort)
         mock_m = MagicMock()
@@ -1153,7 +1154,7 @@ class TestStageRunnerExecuteStageRetriesAndQuarantine:
             llm_transformation_port=mock_llm,
         )
 
-        stage_cfg = StageConfig[SourceTranscript, CandidateText](
+        stage_cfg = StageConfig[StageTranscript, CandidateText](
             stage_name="fluid_prose",
             transform_prompt_key=PromptKey.FLUID_PROSE,
             blocking=True,
@@ -1165,10 +1166,10 @@ class TestStageRunnerExecuteStageRetriesAndQuarantine:
             ),
         )
 
-        source = SourceTranscript(
-            content_id=ContentId("vid_quarantine"),
-            channel_name=ChannelName("QuarantineCh"),
-            body="Source text words.",
+        source = StageTranscript(
+            channel=Channel(name="QuarantineCh", id=ChannelId("UC_quarantine")),
+            provenance=MediaProvenance(),
+            content=Content(id=ContentId("vid_quarantine"), title="Quarantine Title", body="Source text words."),
         )
         ctx = PipelineExecutionContext(
             session_id=PipelineSessionId("quarantine_sess:1"),

@@ -29,9 +29,9 @@ from cresmo.application.use_cases import (
 from cresmo.application.use_cases.synthesize_atomic_batch import _norm_honorific
 from cresmo.domain.entities import (
     AtomicNote,
-    EnrichedCompendium,
-    FluidTranscript,
-    SourceTranscript,
+    StageTranscript,
+    StageTranscript,
+    StageTranscript,
     UserIdentity,
 )
 from cresmo.domain.exceptions import (
@@ -83,7 +83,7 @@ class TestIngestRawTranscript:
 
     def test_ingest_single_video_success(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
-        canned = SourceTranscript(
+        canned = StageTranscript(
             content_id=cid,
             channel_name=ChannelName("Example Channel"),
             body="Raw spoken audio transcript.",
@@ -111,11 +111,11 @@ class TestIngestRawTranscript:
 
 
 class TestTransformFluidProse:
-    """SPEC-011: Pure linguistic detranscription into FluidTranscript."""
+    """SPEC-011: Pure linguistic detranscription into StageTranscript."""
 
     def test_transform_fluid_prose_success(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
-        raw = SourceTranscript(
+        raw = StageTranscript(
             content_id=cid,
             channel_name=ChannelName("Example Channel"),
             body="Fala pessoal, hoje vamos ver Pareto, né? Tipo assim, minorias governam.",
@@ -159,7 +159,7 @@ class TestTransformFluidProse:
 
     def test_transform_fluid_prose_with_temperature_user_and_prompt_provider(self) -> None:
         cid = ContentId("vid_tfp123")
-        raw = SourceTranscript(
+        raw = StageTranscript(
             content_id=cid,
             channel_name=ChannelName("Channel Alpha"),
             body="Spoken oral transcript text.",
@@ -201,7 +201,7 @@ class TestTransformFluidProse:
     def test_transform_fluid_prose_persists_to_vault_when_configured(self) -> None:
         """Verify TransformFluidProseUseCase invokes vault_port.save_fluid_transcript per ADR-043."""
         cid = ContentId("vid_tfp_persist")
-        raw = SourceTranscript(
+        raw = StageTranscript(
             content_id=cid,
             channel_name=ChannelName("Channel Beta"),
             body="Spoken oral transcript text.",
@@ -223,12 +223,12 @@ class TestTransformFluidProse:
         use_case = TransformFluidProseUseCase(llm_port)
         with pytest.raises(
             DomainValidationError,
-            match=r"^TransformFluidProseUseCase expects SourceTranscript, got: str$",
+            match=r"^TransformFluidProseUseCase expects StageTranscript, got: str$",
         ):
             use_case.execute("invalid string")  # type: ignore[arg-type]
 
     def test_transform_fluid_prose_empty_body_raises_error(self) -> None:
-        raw = SourceTranscript(
+        raw = StageTranscript(
             content_id=ContentId("empty12345"),
             channel_name=ChannelName("Example Channel"),
             body="Raw text",
@@ -243,7 +243,7 @@ class TestTransformFluidProse:
 
 
 class TestFillGapsFluidProse:
-    """SPEC-001 Scenario 2.1 & SPEC-011: Socratic Gap Filler on FluidTranscript."""
+    """SPEC-001 Scenario 2.1 & SPEC-011: Socratic Gap Filler on StageTranscript."""
 
     def test_fill_gaps_init_validation(self) -> None:
         vault = InMemoryVaultAdapter()
@@ -256,7 +256,7 @@ class TestFillGapsFluidProse:
 
     def test_fill_gaps_temperature_and_default_passes(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
-        fluid = FluidTranscript(
+        fluid = StageTranscript(
             content_id=cid,
             channel_name=ChannelName("Example Channel"),
             body="Raw spoken text.",
@@ -277,7 +277,7 @@ class TestFillGapsFluidProse:
 
     def test_fill_gaps_prompt_provider_contract_and_trace_id(self) -> None:
         cid = ContentId("vid_abc123")
-        fluid = FluidTranscript(
+        fluid = StageTranscript(
             content_id=cid,
             channel_name=ChannelName("Example Channel"),
             body="Body text to expand.",
@@ -332,8 +332,8 @@ class TestFillGapsFluidProse:
         assert llm_port.call_history[2]["trace_id"] == "vid_abc123_gap_fill_pass_3"
 
     def test_fill_gaps_rejects_raw_transcript(self) -> None:
-        """ADR-028 Invariant: FillGapsUseCase strictly rejects SourceTranscript."""
-        raw = SourceTranscript(
+        """ADR-028 Invariant: FillGapsUseCase strictly rejects StageTranscript."""
+        raw = StageTranscript(
             content_id=ContentId("vidraw001"),
             channel_name=ChannelName("Test"),
             body="Raw spoken text.",
@@ -341,13 +341,13 @@ class TestFillGapsFluidProse:
         use_case = FillGapsUseCase(MockLLMAdapter(), InMemoryVaultAdapter())
         with pytest.raises(
             DomainValidationError,
-            match=r"^FillGapsUseCase strictly requires FluidTranscript, got: SourceTranscript$",
+            match=r"^FillGapsUseCase strictly requires StageTranscript, got: StageTranscript$",
         ):
             use_case.execute(raw)  # type: ignore[arg-type]
 
     def test_fill_gaps_success(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
-        fluid = FluidTranscript(
+        fluid = StageTranscript(
             content_id=cid,
             channel_name=ChannelName("Example Channel"),
             body="Spoken text without structure.",
@@ -405,7 +405,7 @@ class TestFillGapsFluidProse:
 
     def test_fill_gaps_title_fallback_to_fluid_transcript_title(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
-        fluid = FluidTranscript(
+        fluid = StageTranscript(
             content_id=cid,
             channel_name=ChannelName("Example Channel"),
             body="Raw spoken text.",
@@ -426,7 +426,7 @@ class TestFillGapsFluidProse:
 
     def test_fill_gaps_title_fallback_to_default_when_no_fluid_title(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
-        fluid = FluidTranscript(
+        fluid = StageTranscript(
             content_id=cid,
             channel_name=ChannelName("Example Channel"),
             body="Raw spoken text.",
@@ -446,7 +446,7 @@ class TestFillGapsFluidProse:
 
     def test_fill_gaps_alternative_regex_header_informacoes_adicionais(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
-        fluid = FluidTranscript(
+        fluid = StageTranscript(
             content_id=cid,
             channel_name=ChannelName("Example Channel"),
             body="Raw spoken text.",
@@ -469,7 +469,7 @@ class TestFillGapsFluidProse:
 
     def test_fill_gaps_empty_complementary_section_raises_error(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
-        fluid = FluidTranscript(
+        fluid = StageTranscript(
             content_id=cid,
             channel_name=ChannelName("Example Channel"),
             body="Raw spoken text.",
@@ -481,13 +481,13 @@ class TestFillGapsFluidProse:
         use_case = FillGapsUseCase(llm_port, vault_port)
         with pytest.raises(
             CompendiumStructureError,
-            match=r"^EnrichedCompendium must contain a non-empty 'Extra Info' section\.$",
+            match=r"^StageTranscript must contain a non-empty 'Extra Info' section\.$",
         ):
             use_case.execute(fluid, passes=1)
 
     def test_fill_gaps_missing_complementary_section_raises_error(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
-        fluid = FluidTranscript(
+        fluid = StageTranscript(
             content_id=cid,
             channel_name=ChannelName("Example Channel"),
             body="Raw spoken text.",
@@ -505,7 +505,7 @@ class TestFillGapsFluidProse:
 
     def test_fill_gaps_preserves_optional_metadata_and_date(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
-        fluid = FluidTranscript(
+        fluid = StageTranscript(
             content_id=cid,
             channel_name=ChannelName("Example Channel"),
             body="Raw spoken text.",
@@ -529,7 +529,7 @@ class TestExpandLongitudinalSynchronic:
 
     def test_expand_success(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
-        initial_compendium = EnrichedCompendium(
+        initial_compendium = StageTranscript(
             content_id=cid,
             channel_name=ChannelName("Example Channel"),
             title=NoteTitle("Teoria das Elites"),
@@ -595,7 +595,7 @@ class TestExpandLongitudinalSynchronic:
 
     def test_expand_missing_complementary_tag_falls_back_to_original(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
-        initial_compendium = EnrichedCompendium(
+        initial_compendium = StageTranscript(
             content_id=cid,
             channel_name=ChannelName("Example Channel"),
             title=NoteTitle("Teoria das Elites"),
@@ -616,7 +616,7 @@ class TestExpandLongitudinalSynchronic:
 
     def test_expand_empty_complementary_raises_error(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
-        initial_compendium = EnrichedCompendium(
+        initial_compendium = StageTranscript(
             content_id=cid,
             channel_name=ChannelName("Example Channel"),
             title=NoteTitle("Teoria das Elites"),
@@ -649,7 +649,7 @@ class TestExpandLongitudinalSynchronic:
 
     def test_expand_temperature_and_user_and_trace_ids(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
-        initial_compendium = EnrichedCompendium(
+        initial_compendium = StageTranscript(
             content_id=cid,
             channel_name=ChannelName("Example Channel"),
             title=NoteTitle("Teoria das Elites"),
@@ -676,7 +676,7 @@ class TestExpandLongitudinalSynchronic:
 
     def test_expand_with_regex_variations_notas_complementares(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
-        initial_compendium = EnrichedCompendium(
+        initial_compendium = StageTranscript(
             content_id=cid,
             channel_name=ChannelName("Example Channel"),
             title=NoteTitle("Teoria das Elites"),
@@ -697,7 +697,7 @@ class TestExpandLongitudinalSynchronic:
 
     def test_expand_preserves_distinct_metadata_and_dates(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
-        initial_compendium = EnrichedCompendium(
+        initial_compendium = StageTranscript(
             content_id=cid,
             channel_name=ChannelName("Example Channel"),
             title=NoteTitle("Teoria das Elites"),
@@ -733,7 +733,7 @@ class TestDiscoverAtomicInventory:
 
     def test_discover_inventory_success(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
-        compendium = EnrichedCompendium(
+        compendium = StageTranscript(
             content_id=cid,
             channel_name=ChannelName("Example Channel"),
             title=NoteTitle("Teoria das Elites"),
@@ -770,7 +770,7 @@ class TestDiscoverAtomicInventory:
     def test_discover_inventory_uses_channel_id_when_available(self) -> None:
         """When ChannelId is available on the compendium, session_id and user_id use the ID."""
         cid = ContentId("dQw4w9WgXcQ")
-        compendium = EnrichedCompendium(
+        compendium = StageTranscript(
             content_id=cid,
             channel_name=ChannelName("Example Channel"),
             channel_id=ChannelId("UC_TestChannelId"),
@@ -790,7 +790,7 @@ class TestDiscoverAtomicInventory:
 
     def test_discover_inventory_deduplicates_case_insensitively(self) -> None:
         cid = ContentId("dQw4w9XcQ")
-        compendium = EnrichedCompendium(
+        compendium = StageTranscript(
             content_id=cid,
             channel_name=ChannelName("Example Channel"),
             title=NoteTitle("Teoria das Elites"),
@@ -814,7 +814,7 @@ class TestDiscoverAtomicInventory:
 
     def test_discover_inventory_skips_malformed_entries_and_defaults_type(self) -> None:
         cid = ContentId("dQw4w9XcQ")
-        compendium = EnrichedCompendium(
+        compendium = StageTranscript(
             content_id=cid,
             channel_name=ChannelName("Example Channel"),
             title=NoteTitle("Teoria das Elites"),
@@ -843,7 +843,7 @@ class TestDiscoverAtomicInventory:
 
     def test_discover_inventory_non_list_json_raises_domain_validation_error(self) -> None:
         cid = ContentId("dQw4w9XcQ")
-        compendium = EnrichedCompendium(
+        compendium = StageTranscript(
             content_id=cid,
             channel_name=ChannelName("Example Channel"),
             title=NoteTitle("Teoria das Elites"),
@@ -866,7 +866,7 @@ class TestSynthesizeAtomicBatch:
 
     def test_synthesize_batch_success(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
-        compendium = EnrichedCompendium(
+        compendium = StageTranscript(
             content_id=cid,
             channel_name=ChannelName("Example Channel"),
             title=NoteTitle("Teoria das Elites"),
@@ -942,7 +942,7 @@ class TestSynthesizeAtomicBatch:
     def test_synthesize_batch_uses_channel_id_when_available(self) -> None:
         """When ChannelId is available on the compendium, session_id and user_id use the ID."""
         cid = ContentId("dQw4w9WgXcQ")
-        compendium = EnrichedCompendium(
+        compendium = StageTranscript(
             content_id=cid,
             channel_name=ChannelName("Example Channel"),
             channel_id=ChannelId("UC_TestChannelId"),
@@ -983,7 +983,7 @@ class TestSynthesizeAtomicBatch:
 
     def test_synthesize_batch_non_list_json_raises_domain_validation_error(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
-        compendium = EnrichedCompendium(
+        compendium = StageTranscript(
             content_id=cid,
             channel_name=ChannelName("Example Channel"),
             title=NoteTitle("Teoria das Elites"),
@@ -1004,7 +1004,7 @@ class TestSynthesizeAtomicBatch:
 
     def test_synthesize_batch_short_definition_raises_domain_validation_error(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
-        compendium = EnrichedCompendium(
+        compendium = StageTranscript(
             content_id=cid,
             channel_name=ChannelName("Example Channel"),
             title=NoteTitle("Teoria das Elites"),
@@ -1027,7 +1027,7 @@ class TestSynthesizeAtomicBatch:
 
     def test_synthesize_batch_existing_note_exact_match_skips_llm(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
-        compendium = EnrichedCompendium(
+        compendium = StageTranscript(
             content_id=cid,
             channel_name=ChannelName("Example Channel"),
             title=NoteTitle("Teoria das Elites"),
@@ -1054,7 +1054,7 @@ class TestSynthesizeAtomicBatch:
 
     def test_synthesize_batch_existing_note_alias_match_skips_llm(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
-        compendium = EnrichedCompendium(
+        compendium = StageTranscript(
             content_id=cid,
             channel_name=ChannelName("Example Channel"),
             title=NoteTitle("Teoria das Elites"),
@@ -1082,7 +1082,7 @@ class TestSynthesizeAtomicBatch:
 
     def test_synthesize_batch_existing_note_honorific_match_skips_llm(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
-        compendium = EnrichedCompendium(
+        compendium = StageTranscript(
             content_id=cid,
             channel_name=ChannelName("Example Channel"),
             title=NoteTitle("História do Brasil"),
@@ -1110,7 +1110,7 @@ class TestSynthesizeAtomicBatch:
 
     def test_synthesize_batch_partitions_chunks_by_batch_size(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
-        compendium = EnrichedCompendium(
+        compendium = StageTranscript(
             content_id=cid,
             channel_name=ChannelName("Example Channel"),
             title=NoteTitle("Teoria das Elites"),
@@ -1174,7 +1174,7 @@ class TestSynthesizeAtomicBatch:
 
     def test_synthesize_batch_skips_malformed_entries_and_defaults_type(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
-        compendium = EnrichedCompendium(
+        compendium = StageTranscript(
             content_id=cid,
             channel_name=ChannelName("Example Channel"),
             title=NoteTitle("Teoria das Elites"),
@@ -1308,7 +1308,7 @@ class TestUseCasesEdgeCases:
 
     def test_fill_gaps_missing_complementary_info_raises_error(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
-        fluid = FluidTranscript(
+        fluid = StageTranscript(
             content_id=cid,
             channel_name=ChannelName("Example Channel"),
             body="Clean fluid text without structure.",
@@ -1323,7 +1323,7 @@ class TestUseCasesEdgeCases:
 
     def test_discover_inventory_non_list_raises_error(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
-        compendium = EnrichedCompendium(
+        compendium = StageTranscript(
             content_id=cid,
             channel_name=ChannelName("Example Channel"),
             title=NoteTitle("Teoria das Elites"),
@@ -1338,7 +1338,7 @@ class TestUseCasesEdgeCases:
 
     def test_discover_inventory_empty_items_raises_error(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
-        compendium = EnrichedCompendium(
+        compendium = StageTranscript(
             content_id=cid,
             channel_name=ChannelName("Example Channel"),
             title=NoteTitle("Teoria das Elites"),
@@ -1353,7 +1353,7 @@ class TestUseCasesEdgeCases:
 
     def test_synthesize_batch_non_list_raises_error(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
-        compendium = EnrichedCompendium(
+        compendium = StageTranscript(
             content_id=cid,
             channel_name=ChannelName("Example Channel"),
             title=NoteTitle("Teoria das Elites"),

@@ -18,7 +18,7 @@ from cresmo.application.pipeline.transcript_loader import (
     load_manifest_urls,
     load_transcript_from_file,
 )
-from cresmo.domain.entities import SourceTranscript
+from cresmo.domain.entities import StageTranscript
 from cresmo.domain.exceptions import CresmoDomainError
 from cresmo.domain.value_objects import ContentId
 
@@ -76,7 +76,7 @@ class TestEnsureTranscriptSaved:
         file_path.write_text("content", encoding="utf-8")
 
         mock_vault = MagicMock()
-        mock_transcript = MagicMock(spec=SourceTranscript)
+        mock_transcript = MagicMock(spec=StageTranscript)
 
         ensure_transcript_saved(mock_vault, file_path, mock_transcript, target_dir)
 
@@ -91,7 +91,7 @@ class TestEnsureTranscriptSaved:
         file_path.write_text("content", encoding="utf-8")
 
         mock_vault = MagicMock()
-        mock_transcript = MagicMock(spec=SourceTranscript)
+        mock_transcript = MagicMock(spec=StageTranscript)
 
         ensure_transcript_saved(mock_vault, file_path, mock_transcript, target_dir)
 
@@ -107,7 +107,7 @@ class TestEnsureTranscriptSaved:
 
         mock_vault = MagicMock()
         mock_vault.raw_dir = vault_raw_dir
-        mock_transcript = MagicMock(spec=SourceTranscript)
+        mock_transcript = MagicMock(spec=StageTranscript)
 
         ensure_transcript_saved(mock_vault, file_path, mock_transcript, target_dir=None)
 
@@ -123,7 +123,7 @@ class TestEnsureTranscriptSaved:
 
         mock_vault = MagicMock()
         mock_vault.raw_dir = vault_raw_dir
-        mock_transcript = MagicMock(spec=SourceTranscript)
+        mock_transcript = MagicMock(spec=StageTranscript)
 
         ensure_transcript_saved(mock_vault, file_path, mock_transcript, target_dir=None)
 
@@ -330,7 +330,7 @@ class TestLoadTranscriptFromFile:
 
         transcript = load_transcript_from_file(file_path)
 
-        assert isinstance(transcript, SourceTranscript)
+        assert isinstance(transcript, StageTranscript)
         assert transcript.content.title == "My Video Title"
         assert transcript.channel.name == "Tech Channel"
         assert transcript.channel.id is not None

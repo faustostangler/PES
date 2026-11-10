@@ -2,8 +2,6 @@
 
 from cresmo.domain.entities import (
     AtomicNote,
-    FluidTranscript,
-    SourceTranscript,
     StageTranscript,
     post_process_fluid_transcript,
 )
@@ -19,9 +17,7 @@ __all__ = [
     "AtomicNote",
     "CresmoDomainError",
     "DomainValidationError",
-    "FluidTranscript",
     "LedgerEntry",
-    "SourceTranscript",
     "StageDefinition",
     "StageQuarantinedError",
     "StageRegistry",

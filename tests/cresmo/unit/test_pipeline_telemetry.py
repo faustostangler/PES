@@ -15,7 +15,7 @@ from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 from opentelemetry.sdk.trace.export.in_memory_span_exporter import InMemorySpanExporter
 
 from cresmo.application.pipeline import CresmoPipeline
-from cresmo.domain.entities import SourceTranscript, UserIdentity
+from cresmo.domain.entities import StageTranscript, UserIdentity
 from cresmo.domain.value_objects import BatchId, ChannelId, ChannelName, ContentId
 from cresmo.infrastructure.adapters.opentelemetry_adapter import OpenTelemetryAdapter
 from cresmo.infrastructure.adapters.prompt_provider import JsonPromptProvider
@@ -67,7 +67,7 @@ class TestPipelineTelemetryIntegration:
     ) -> None:
         pipeline, exporter, _ = telemetry_pipeline
 
-        raw = SourceTranscript(
+        raw = StageTranscript(
             content_id=ContentId("yt_sample1234"),
             channel_name=ChannelName("sandeco"),
             body="Aula completa sobre modelos transformadores e atenção multi-cabeça em deep learning.",
@@ -133,7 +133,7 @@ class TestPipelineTelemetryIntegration:
     ) -> None:
         pipeline, exporter, _ = telemetry_pipeline
 
-        raw = SourceTranscript(
+        raw = StageTranscript(
             content_id=ContentId("yt_auth_test_01"),
             channel_name=ChannelName("acropole"),
             body="Aula completa sobre filosofia e estoicismo clássico em Atenas e Roma.",
@@ -171,7 +171,7 @@ class TestPipelineTelemetryIntegration:
     ) -> None:
         pipeline, exporter, _ = telemetry_pipeline
 
-        raw = SourceTranscript(
+        raw = StageTranscript(
             content_id=ContentId("yt_worker_test_01"),
             channel_name=ChannelName("sandeco"),
             body="Aula sobre agentes e automação de pipelines com worker agendado.",
@@ -204,7 +204,7 @@ class TestPipelineTelemetryIntegration:
     ) -> None:
         pipeline, exporter, _ = telemetry_pipeline
 
-        raw = SourceTranscript(
+        raw = StageTranscript(
             content_id=ContentId("yt_chan_id_01"),
             channel_name=ChannelName("acropole"),
             channel_id=ChannelId("UC_acropole123"),
@@ -265,7 +265,7 @@ class TestPipelineTelemetryIntegration:
             metrics_port=metrics_adapter,
         )
 
-        raw = SourceTranscript(
+        raw = StageTranscript(
             content_id=ContentId("yt_metrics_test_01"),
             channel_name=ChannelName("sandeco"),
             channel_id=ChannelId("UC_sandeco_test"),
@@ -328,7 +328,7 @@ class TestPipelineTelemetryIntegration:
         """Verify ADR-035: CresmoPipeline.execute propagates batch_id to root span."""
         pipeline, exporter, _ = telemetry_pipeline
 
-        raw = SourceTranscript(
+        raw = StageTranscript(
             content_id=ContentId("yt_batch_test"),
             channel_name=ChannelName("sandeco"),
             body="Texto para teste de batch_id.",

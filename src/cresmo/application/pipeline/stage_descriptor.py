@@ -3,7 +3,7 @@
 Conforms to:
     - ADR-007: Pipeline Template Method DRY
     - ADR-021: Unified Pipeline Execution Template Method and Telemetry
-    - ADR-031: Standardized StageConfig, SourceTranscript, CandidateText, and Closed-Loop Reflection Quality Fabric
+    - ADR-031: Standardized StageConfig, StageTranscript, CandidateText, and Closed-Loop Reflection Quality Fabric
     - SPEC-014: Standardized Stage Execution and Decision-Model Quality Fabric Specification
 """
 

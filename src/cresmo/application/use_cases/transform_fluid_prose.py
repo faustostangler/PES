@@ -18,9 +18,8 @@ from cresmo.application.ports import (
     VaultRepositoryPort,
 )
 from cresmo.domain.entities import (
-    FluidTranscript,
     PipelineSessionId,
-    SourceTranscript,
+    StageTranscript,
     UserIdentity,
     post_process_fluid_transcript,
 )
@@ -58,25 +57,25 @@ class TransformFluidProseUseCase:
 
     def execute(
         self,
-        source_transcript: SourceTranscript,
+        source_transcript: StageTranscript,
         user: UserIdentity | None = None,
-    ) -> FluidTranscript:
+    ) -> StageTranscript:
         """Execute linguistic detranscription on source spoken transcript.
 
         Args:
-            source_transcript: Source SourceTranscript aggregate with verbatim spoken text.
+            source_transcript: Source StageTranscript aggregate with verbatim spoken text.
             user: Optional executing UserIdentity principal (defaults to anonymous).
 
         Returns:
-            Validated FluidTranscript aggregate containing clean continuous narrative prose.
+            Validated StageTranscript aggregate containing clean continuous narrative prose.
 
         Raises:
-            DomainValidationError: If input is not a SourceTranscript or if generated body is empty.
+            DomainValidationError: If input is not a StageTranscript or if generated body is empty.
             CompendiumStructureError: If generated text violates structural constraints.
         """
-        if not isinstance(source_transcript, SourceTranscript):
+        if not isinstance(source_transcript, StageTranscript):
             raise DomainValidationError(
-                f"TransformFluidProseUseCase expects SourceTranscript, got: {type(source_transcript).__name__}"
+                f"TransformFluidProseUseCase expects StageTranscript, got: {type(source_transcript).__name__}"
             )
 
         file_name = f"{source_transcript.content.id.value}.txt"

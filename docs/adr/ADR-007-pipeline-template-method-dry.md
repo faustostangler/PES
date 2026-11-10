@@ -20,7 +20,7 @@
 
 ## 1. Context
 
-In [`src/cresmo/application/pipeline.py`](../../src/cresmo/application/pipeline.py), the orchestrator supported multiple source ingestion workflows:
+In [`src/cresmo/application/pipeline/`](../../src/cresmo/application/pipeline/), the orchestrator supported multiple source ingestion workflows:
 - `run_for_video(video_url)`: Downloads media via `MediaIngestionPort`, generates raw transcript, and executes synthesis.
 - `run_for_text_file(file_path)`: Directly parses raw local text/markdown file, saves to vault, and executes synthesis.
 

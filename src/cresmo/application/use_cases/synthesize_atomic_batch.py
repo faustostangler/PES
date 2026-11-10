@@ -24,8 +24,8 @@ from cresmo.application.ports import (
 )
 from cresmo.domain.entities import (
     AtomicNote,
-    EnrichedCompendium,
     PipelineSessionId,
+    StageTranscript,
     UserIdentity,
 )
 from cresmo.domain.exceptions import (
@@ -103,7 +103,7 @@ def _partition_inventory_items(
 
 def _parse_single_atomic_note(
     entry: dict[str, Any],
-    compendium: EnrichedCompendium,
+    compendium: StageTranscript,
 ) -> AtomicNote | None:
     """Parse raw dictionary payload from LLM into a validated AtomicNote aggregate."""
     title_str = entry.get("title")
@@ -194,7 +194,7 @@ class SynthesizeAtomicBatchUseCase:
     def _synthesize_chunk(
         self,
         chunk: list[tuple[NoteTitle, NoteType]],
-        compendium: EnrichedCompendium,
+        compendium: StageTranscript,
         user: UserIdentity | None = None,
     ) -> list[AtomicNote]:
         """Synthesize and persist notes for a single batch chunk via LLM."""
@@ -241,7 +241,7 @@ class SynthesizeAtomicBatchUseCase:
     def execute(
         self,
         inventory: AtomicEntityInventory,
-        compendium: EnrichedCompendium,
+        compendium: StageTranscript,
         user: UserIdentity | None = None,
     ) -> list[AtomicNote]:
         """Execute batched atomic note synthesis.

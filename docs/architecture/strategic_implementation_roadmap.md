@@ -1,10 +1,10 @@
 # Strategic Implementation Roadmap: Cresmo Knowledge Monolith
 
 **Governing Method**: Doctor Stangler Architecture Method (Clean/Hexagonal DDD)  
-**Status**: ACTIVE TRACK 8 IN PROGRESS  
-**Date**: 2026-10-02  
-**Completed Sequence**: **Trilha 2 (Done) $\longrightarrow$ Trilha 4 (Done) $\longrightarrow$ Trilha 1 (Done) $\longrightarrow$ Trilha 5 (Done) $\longrightarrow$ Trilha 6 (Done) $\longrightarrow$ Trilha 7 (Done)**  
-**Current Active Track**: **Trilha 8 (Standardized StageConfig Closed-Loop Refinement — ADR-031 / SPEC-014)**  
+**Status**: ACTIVE TRACK 10 IN PROGRESS  
+**Date**: 2026-11-10  
+**Completed Sequence**: **Trilha 2 (Done) $\longrightarrow$ Trilha 4 (Done) $\longrightarrow$ Trilha 1 (Done) $\longrightarrow$ Trilha 5 (Done) $\longrightarrow$ Trilha 6 (Done) $\longrightarrow$ Trilha 7 (Done) $\longrightarrow$ Trilha 8 (Done) $\longrightarrow$ Trilha 9 (Done)**  
+**Current Active Track**: **Trilha 10 (Monomorphic Envelope, Zero-Read Lake, Prompt SSOT & Mutation Blindage — ADR-043–ADR-057)**  
 
 ---
 
@@ -23,12 +23,13 @@ flowchart TD
     T6["Etapa V: Trilha 6<br><b>Telemetry Triad & SRE Platform</b><br>ADR-016, 017, 023, 025, 027<br><b>[COMPLETED]</b>"] -->
     T7["Etapa VI: Trilha 7<br><b>Code Hygiene & Anti-Patterns</b><br>ADR-026 Canon Governance<br><b>[COMPLETED]</b>"] -->
     T8["Etapa VII: Trilha 8<br><b>Quality Judge Fabric & StageConfigs</b><br>ADR-028, 029, 030, 031 / SPEC-014<br><b>[COMPLETED]</b>"] -->
-    T9["Etapa VIII: Trilha 9<br><b>Domain Triad, Atomic Traces & Typer CLI</b><br>ADR-032–042 / SPEC-042<br><b>[ACTIVE / IN PROGRESS]</b>"]
+    T9["Etapa VIII: Trilha 9<br><b>Domain Triad, Atomic Traces & Typer CLI</b><br>ADR-032–042 / SPEC-042<br><b>[COMPLETED]</b>"] -->
+    T10["Etapa IX: Trilha 10<br><b>Monomorphic Envelope, Zero-Read Lake & Prompt SSOT</b><br>ADR-043–ADR-057<br><b>[ACTIVE / IN PROGRESS]</b>"]
 
     classDef done fill:#2a9d8f,stroke:#264653,color:#fff;
     classDef active fill:#e76f51,stroke:#d62828,color:#fff;
-    class T2,T4,T1,T5,T6,T7,T8 done;
-    class T9 active;
+    class T2,T4,T1,T5,T6,T7,T8,T9 done;
+    class T10 active;
 ```
 
 ---
@@ -70,14 +71,22 @@ flowchart TD
   - **Milestone 8.4 (StageConfig & Closed-Loop Reflection)**: Universal `StageConfig`, full elimination of `RawTranscript` in favor of `SourceTranscript`, `CandidateText` VO, `CritiqueSynthesizerPort` reflection retry loops, and 4-step fail-fast quarantine protocol with Stage 1 (`fluid_prose`) reference implementation ([`ADR-031`](../adr/ADR-031-standardized-stage-descriptor-and-closed-loop-refinement.md), [`SPEC-014`](../specs/SPEC-014-stage-descriptor-and-closed-loop-reflection.md)) — `COMPLETED`.
   - **Milestone 8.5 (Progressive Calibration & Canonical Judges)**: Codified Layer 1 mechanical validation, Layer 2 LLM-as-a-Judge, and 5-stage progressive calibration harness ([`ADR-039`](../adr/ADR-039-fluid-prose-canonical-judge-criteria-and-mechanical-gates.md), [`SPEC-015`](../specs/SPEC-015-fluid-prose-quality-gates-and-calibration.md)) — `COMPLETED`.
 
-### Etapa VIII (Trilha 9): Domain Triad Composition, Atomic Telemetry & Typer Presentation CLI — `STATUS: ACTIVE / IN PROGRESS`
+### Etapa VIII (Trilha 9): Domain Triad Composition, Atomic Telemetry & Typer Presentation CLI — `STATUS: COMPLETED`
 - **Sub-Track Milestones**:
   - **Milestone 9.1 (Asymmetric Hybrid Composition & Parity)**: Eliminate *Primitive Obsession Obsession* and *Primitive Obsession Reversa*. Decommission `ChannelTenantId` in favor of `Channel.tenant_key`, remove `video_id`, enforce algorithmic/cognitive parity ([`ADR-032`](../adr/ADR-032-composite-channel-and-content-value-objects.md), [`ADR-033`](../adr/ADR-033-composite-value-objects-identity-parity-and-tenant-simplification.md), [`ADR-034`](../adr/ADR-034-algorithmic-and-cognitive-parity-standard.md)) — `COMPLETED`.
   - **Milestone 9.2 (Atomic Work-Item Traces & Lean Topography)**: Ban the Mega-Trace Monolith (`1 Trace = 1 Work Item`), introduce stage-prefixed evaluation metrics (`{stage}.{criterion}`) with span observation binding, and establish 4-tier lean topography ([`ADR-035`](../adr/ADR-035-atomic-work-item-traces-and-sota-kiss-batch-correlation.md), [`ADR-036`](../adr/ADR-036-clean-telemetry-namespacing-and-observation-binding.md), [`ADR-037`](../adr/ADR-037-lean-telemetry-topography-and-chronological-evaluation.md)) — `COMPLETED`.
   - **Milestone 9.3 (Pure 3-VO Triad Composition)**: Refactor transcripts into pure composition (`Channel`, `MediaProvenance`, `Content`), eliminating `upload_date` aliases and flat property sprawl ([`ADR-038`](../adr/ADR-038-pure-value-object-triad-composition.md)) — `COMPLETED`.
   - **Milestone 9.4 (Dynamic Multi-Skill Prompt Composition)**: Support array of skills (`skills: [...]`) in `JsonPromptProvider`, dynamically binding `cresmo-style-guide` and operational skills without prompt duplication ([`ADR-040`](../adr/ADR-040-dynamic-cross-cutting-skill-block-composition.md), [`SPEC-040`](../specs/SPEC-040-dynamic-cross-cutting-skill-block-composition.md)) — `COMPLETED`.
   - **Milestone 9.5 (Gemini Quota Failover Pool)**: Thread-safe credential leasing and HTTP 429 quota rotation via `GeminiCredentialPool` ([`ADR-041`](../adr/ADR-041-gemini-credential-pool-and-quota-failover.md), [`SPEC-041`](../specs/SPEC-041-gemini-credential-pool-and-quota-failover.md)) — `COMPLETED`.
-  - **Milestone 9.6 (Modern Typer Presentation CLI Adapter)**: Purge legacy `argparse` in favor of Typer + Rich with declarative parameter bounds, type annotations, and fail-fast validation ([`ADR-042`](../adr/ADR-042-typer-presentation-cli.md), [`SPEC-042`](../specs/SPEC-042-typer-cli-presentation.md)) — `ACTIVE`.
+  - **Milestone 9.6 (Modern Typer Presentation CLI Adapter)**: Purge legacy `argparse` in favor of Typer + Rich with declarative parameter bounds, type annotations, and fail-fast validation ([`ADR-042`](../adr/ADR-042-typer-presentation-cli.md), [`SPEC-042`](../specs/SPEC-042-typer-cli-presentation.md)) — `COMPLETED`.
+
+### Etapa IX (Trilha 10): Monomorphic Envelope, Zero-Read Lake, Prompt SSOT & Mutation Blindage — `STATUS: ACTIVE / IN PROGRESS`
+- **Milestone 10.1 (Vault Persistence & Checkpointing)**: FluidTranscript persistence in `data/fluid/` with atomic checkpointing ([`ADR-043`](../adr/ADR-043-fluid-transcript-vault-persistence-and-checkpointing.md), [`SPEC-043`](../specs/SPEC-043-fluid-transcript-persistence-and-checkpointing.md)) — `COMPLETED`.
+- **Milestone 10.2 (Structlog Logging Unification)**: Purge stdlib logging in favor of native structlog with OTel trace correlation ([`ADR-044`](../adr/ADR-044-structlog-structured-logging-unification.md)) — `COMPLETED`.
+- **Milestone 10.3 (Prompt Catalog SSOT in JSON)**: Bijective catalog validation and purge of inline prompt strings ([`ADR-050`](../adr/ADR-050-prompt-registry-ssot-description-unification.md)–[`ADR-052`](../adr/ADR-052-prompt-catalog-ssot-in-json.md), [`SPEC-051`](../specs/SPEC-051-elimination-of-hardcoded-prompt-strings.md), [`SPEC-052`](../specs/SPEC-052-prompt-catalog-ssot-in-json.md)) — `COMPLETED`.
+- **Milestone 10.4 (Extreme Startup Remediation & Zero-Read Lake)**: Lazy CLI subcommand dispatch and Zero-Read Lake discovery ([`ADR-053`](../adr/ADR-053-lazy-presentation-cli-loading-and-subcommand-decoupling.md), [`ADR-055`](../adr/ADR-055-extreme-startup-latency-remediation-and-zero-read-lake-discovery.md), [`SPEC-053`](../specs/SPEC-053-lazy-cli-and-zero-read-lake-discovery.md)) — `COMPLETED`.
+- **Milestone 10.5 (Monomorphic StageTranscript Envelope)**: Pure Value Object Triad envelope with zero loose primitive constructor arguments and formatting decoupled from domain ([`ADR-054`](../adr/ADR-054-unified-stage-transcript-envelope.md), [`ADR-056`](../adr/ADR-056-native-media-ingestion-channel-name-deduplication.md), [`ADR-057`](../adr/ADR-057-monomorphic-stage-transcript-envelope-and-pure-triad-ingestion.md), [`SPEC-057`](../specs/SPEC-057-monomorphic-stage-transcript-envelope.md)) — `COMPLETED`.
+- **Milestone 10.6 (Mutation Blindage)**: Core domain 100% blindage and Application layer >= 99% kill rate ([`ADR-048`](../adr/ADR-048-architectural-remediation-and-comprehensive-mutation-blindage.md), [`ADR-049`](../adr/ADR-049-application-layer-mutation-blindage-and-conveyor-integration-readiness.md)) — `COMPLETED`.
 
 ---
 
@@ -92,12 +101,13 @@ flowchart TD
 | **Etapa V** | **Trilha 6** | Telemetry Triad & SRE Platform | `ADR-016`, `ADR-023`, `ADR-025`, `ADR-027` | `SPEC-008`, `SPEC-010` | `COMPLETED` | Prometheus Golden Signals & Loki Logs |
 | **Etapa VI** | **Trilha 7** | Clean Code Hygiene & Anti-Patterns | `ADR-026` | Architecture Canon | `COMPLETED` | Ruff clean, zero god files, strict typing |
 | **Etapa VII** | **Trilha 8** | Quality Judge Fabric & StageConfigs | `ADR-028`–`ADR-031`, `ADR-039` | `SPEC-011`–`SPEC-015` | `COMPLETED` | Hermetic TDD, closed-loop reflection, quarantine |
-| **Etapa VIII** | **Trilha 9** | Domain Triad, Atomic Traces & Typer CLI | `ADR-032`–`ADR-042` | `SPEC-040`–`SPEC-042` | `ACTIVE` | Zero Primitive Obsession, 1 Trace = 1 Work Item, Typer CLI |
+| **Etapa VIII** | **Trilha 9** | Domain Triad, Atomic Traces & Typer CLI | `ADR-032`–`ADR-042` | `SPEC-040`–`SPEC-042` | `COMPLETED` | Zero Primitive Obsession, 1 Trace = 1 Work Item, Typer CLI |
+| **Etapa IX** | **Trilha 10** | Monomorphic Envelope, Zero-Read Lake & Prompt SSOT | `ADR-043`–`ADR-057` | `SPEC-043`, `SPEC-047`–`SPEC-057` | `ACTIVE` | Zero-Read Lake, Monomorphic Triad, 100% Domain Mutation |
 
 ---
 
 ## 4. Next Immediate Action
 
-Under **Etapa VIII (Trilha 9: Milestone 9.6)**:
-1. Complete remaining test adjustments for `test_pipeline_coordinator.py`, `test_cli.py`, and `test_preflight_checker.py` ensuring full pass-rate with Typer and composite triad models.
-2. Advance downstream stage registrations under the universal `StageConfig` fabric.
+Under **Etapa IX (Trilha 10)**:
+1. Complete integration of `cresmo-conveyor` branch into `main`.
+2. Evaluate and finalize `ADR-045` (Cognitive-Load-Tiered Pipeline & Model Cascading).

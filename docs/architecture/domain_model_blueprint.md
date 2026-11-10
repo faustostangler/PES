@@ -2,8 +2,8 @@
 
 **Context**: Cresmo Knowledge Synthesis  
 **Phase**: Phase 1 — Stereoscopy  
-**Status**: APPROVED SPECIFICATION (SYNCHRONIZED WITH ADR-033 & ADR-038)  
-**Governing ADRs**: [`ADR-000`](../adr/ADR-000-patterns-antipatterns.md), [`ADR-001`](../adr/ADR-001-cresmo-modular-monolith-strangling.md), [`ADR-019`](../adr/ADR-019-sota-kiss-nomenclature-and-channel-name-value-object.md), [`ADR-028`](../adr/ADR-028-decoupling-fluid-prose-and-socratic-gap-filling.md), [`ADR-031`](../adr/ADR-031-standardized-stage-descriptor-and-closed-loop-refinement.md), [`ADR-032`](../adr/ADR-032-composite-channel-and-content-value-objects.md), [`ADR-033`](../adr/ADR-033-composite-value-objects-identity-parity-and-tenant-simplification.md), [`ADR-038`](../adr/ADR-038-pure-value-object-triad-composition.md)  
+**Status**: APPROVED SPECIFICATION (SYNCHRONIZED WITH ADR-033, ADR-038, ADR-054, ADR-056, ADR-057)  
+**Governing ADRs**: [`ADR-000`](../adr/ADR-000-patterns-antipatterns.md), [`ADR-001`](../adr/ADR-001-cresmo-modular-monolith-strangling.md), [`ADR-019`](../adr/ADR-019-sota-kiss-nomenclature-and-channel-name-value-object.md), [`ADR-028`](../adr/ADR-028-decoupling-fluid-prose-and-socratic-gap-filling.md), [`ADR-031`](../adr/ADR-031-standardized-stage-descriptor-and-closed-loop-refinement.md), [`ADR-032`](../adr/ADR-032-composite-channel-and-content-value-objects.md), [`ADR-033`](../adr/ADR-033-composite-value-objects-identity-parity-and-tenant-simplification.md), [`ADR-038`](../adr/ADR-038-pure-value-object-triad-composition.md), [`ADR-054`](../adr/ADR-054-unified-stage-transcript-envelope.md), [`ADR-056`](../adr/ADR-056-native-media-ingestion-channel-name-deduplication.md), [`ADR-057`](../adr/ADR-057-monomorphic-stage-transcript-envelope-and-pure-triad-ingestion.md)  
 
 ---
 
@@ -18,7 +18,7 @@ All business concepts must be modeled as immutable Value Objects enforcing domai
 - **Invariants**:
   - Must not be empty or whitespace-only.
   - Rejects path traversal and command injection tokens.
-  - Matches regex `^[a-zA-Z0-9_-]{8,64}$`.
+  - Matches regex `^[a-zA-Z0-9_-]{1,64}$`.
 
 #### `ChannelId`
 - **Definition**: Strongly-typed canonical platform creator identifier (e.g. YouTube `UC...`).
@@ -114,40 +114,33 @@ Per [`ADR-038`](../adr/ADR-038-pure-value-object-triad-composition.md), all tran
 └────────────────────────────────────────────────────────────────────────┘
 ```
 
-### 2.1 `SourceTranscript` Aggregate (ADR-010, ADR-031, ADR-038)
-- **Root Entity**: `SourceTranscript` (Canonical input entity; replacing deprecated `RawTranscript`).
+## 3. Domain Entities & StageTranscript Hierarchy (ADR-038, ADR-054, ADR-057)
+
+Per [`ADR-054`](../adr/ADR-054-unified-stage-transcript-envelope.md) and [`ADR-057`](../adr/ADR-057-monomorphic-stage-transcript-envelope-and-pure-triad-ingestion.md), all stage transcripts inherit from the monomorphic base envelope `StageTranscript`, encapsulating the 3-VO Triad (`channel: Channel`, `provenance: MediaProvenance`, `content: Content`) and pure property accessors (`body`, `title`, `content_id`, `channel_name`, `channel_id`).
+
+### 3.1 `StageTranscript` Base Aggregate
 - **Composition**:
   - `channel: Channel`
   - `provenance: MediaProvenance`
-  - `content: Content` (holds verbatim spoken text or source markdown)
-  - `metadata: dict[str, Any]` (extensible non-domain telemetry metadata)
+  - `content: Content`
+  - `metadata: dict[str, Any]` (telemetry, trace lineage)
+  - `complementary_info: str = ""` (encyclopedic extra notes)
+  - `pass_count: int | None = None` (number of enrichment passes, validated `>= 1` when present)
 - **Invariants**:
-  - `content.body` must not be empty or whitespace (audio silence rejected).
-  - `content.id` and `channel.name` must be valid at construction.
-  - Algorithmic parity (`channel.id` + `content.id`) and Cognitive parity (`channel.name` + `content.title`) enforced structurally.
+  - `channel`, `provenance`, and `content` must be strongly typed instances.
+  - `content.body` cannot be empty or whitespace.
+  - Syntax and formatting checks (e.g. Markdown tables) are decoupled from domain invariants and handled by Stage Descriptors and `LlmJudgePort` per ADR-057.
 
-### 2.2 `FluidTranscript` Aggregate (ADR-028, ADR-038)
-- **Root Entity**: `FluidTranscript` (Stage 1 linguistic normalization output).
-- **Composition**:
-  - `channel: Channel`
-  - `provenance: MediaProvenance`
-  - `content: Content` (holds third-person neutral prose free of speech noise and oralities)
-  - `metadata: dict[str, Any]`
-- **Invariants**:
-  - `content.body` must be continuous narrative prose; markdown tables and bulleted lists are forbidden in the core narrative.
-  - Preserves exact identity parity with originating `SourceTranscript`.
+### 3.2 `SourceTranscript` and `FluidTranscript`
+- Thin specialized aliases/subclasses inheriting directly from `StageTranscript` with zero constructor divergence:
+  - `SourceTranscript`: Verbatim spoken transcript and origin metadata.
+  - `FluidTranscript`: Detranscribed continuous fluid prose.
 
-### 2.3 `EnrichedCompendium` Aggregate
-- **Root Entity**: `EnrichedCompendium` (Historical and scientific gap-filling output).
-- **Attributes**:
-  - `content_id: ContentId`
-  - `channel: Channel`
-  - `title: NoteTitle`
-  - `body: str` (Continuous fluid prose)
-  - `complementary_info: str` (Historical & scientific data)
-  - `pass_count: int >= 1`
+### 3.3 `EnrichedCompendium` Aggregate (ADR-028, ADR-054, ADR-057)
+- **Root Entity**: `EnrichedCompendium(StageTranscript)`
+- Inherits the pure 3-VO Triad and adds stage-specific payload accessors for `complementary_info` and `pass_count`.
 
-### 2.4 `AtomicNote` Aggregate
+### 3.4 `AtomicNote` Aggregate
 - **Root Entity**: `AtomicNote` (Atomic Second Brain note).
 - **Attributes**:
   - `title: NoteTitle`
@@ -159,7 +152,7 @@ Per [`ADR-038`](../adr/ADR-038-pure-value-object-triad-composition.md), all tran
   - `causal_matrix: CausalMatrix | None`
   - `cross_context: CrossContextRelations | None`
 
-### 2.5 `MapOfContent` (MOC) Aggregate
+### 3.5 `MapOfContent` (MOC) Aggregate
 - **Root Entity**: `MapOfContent` (High-level conceptual index note).
 - **Attributes**:
   - `title: NoteTitle`
@@ -169,7 +162,7 @@ Per [`ADR-038`](../adr/ADR-038-pure-value-object-triad-composition.md), all tran
 
 ---
 
-## 3. Domain Events
+## 4. Domain Events
 
 Cross-aggregate lifecycle changes produce immutable domain events:
 - `SourceTranscriptIngestedEvent(content_id: ContentId, timestamp: datetime.datetime)`

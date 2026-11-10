@@ -26,8 +26,8 @@ from cresmo.domain.entities import (
     PipelineSessionId,
     UserIdentity,
 )
-from cresmo.domain.entities.compendium import EnrichedCompendium
-from cresmo.domain.entities.transcripts import FluidTranscript
+from cresmo.domain.entities.compendium import StageTranscript
+from cresmo.domain.entities.transcripts import StageTranscript
 from cresmo.domain.value_objects import (
     Channel,
     ChannelId,
@@ -47,8 +47,8 @@ def sample_context() -> PipelineExecutionContext:
 
 
 @pytest.fixture
-def sample_fluid_transcript() -> FluidTranscript:
-    return FluidTranscript.create(
+def sample_fluid_transcript() -> StageTranscript:
+    return StageTranscript.create(
         channel_name="Historia",
         content_id="vid_hist1",
         title="Fundação",
@@ -59,9 +59,9 @@ def sample_fluid_transcript() -> FluidTranscript:
 
 def test_gap_filler_execution_single_pass_override(
     sample_context: PipelineExecutionContext,
-    sample_fluid_transcript: FluidTranscript,
+    sample_fluid_transcript: StageTranscript,
 ) -> None:
-    """Verify gap_filler transforms FluidTranscript into EnrichedCompendium when max_passes=1 override is provided."""
+    """Verify gap_filler transforms StageTranscript into StageTranscript when max_passes=1 override is provided."""
     mock_llm = MagicMock(spec=LLMTransformationPort)
     mock_llm.transform.return_value = (
         "## Fundação de Portugal\n\n"
@@ -87,7 +87,7 @@ def test_gap_filler_execution_single_pass_override(
         max_passes=1,
     )
 
-    assert isinstance(result, EnrichedCompendium)
+    assert isinstance(result, StageTranscript)
     assert result.content_id == ContentId("vid_hist1")
     assert "Henrique de Borgonha" in result.body
     assert "1066-1112" in result.complementary_info
@@ -96,7 +96,7 @@ def test_gap_filler_execution_single_pass_override(
 
 def test_gap_filler_execution_multi_pass_to_completion(
     sample_context: PipelineExecutionContext,
-    sample_fluid_transcript: FluidTranscript,
+    sample_fluid_transcript: StageTranscript,
 ) -> None:
     """Verify gap_filler iterates through all 3 passes by domain default when non-saturated."""
     pass1_text = (
@@ -143,7 +143,7 @@ def test_gap_filler_execution_multi_pass_to_completion(
         max_passes=3,
     )
 
-    assert isinstance(result, EnrichedCompendium)
+    assert isinstance(result, StageTranscript)
     assert result.content_id == ContentId("vid_hist1")
     assert "Henrique de Borgonha" in result.body
     assert "Teresa de Leão" in result.complementary_info
@@ -153,7 +153,7 @@ def test_gap_filler_execution_multi_pass_to_completion(
 
 def test_gap_filler_execution_early_stopping_on_saturation(
     sample_context: PipelineExecutionContext,
-    sample_fluid_transcript: FluidTranscript,
+    sample_fluid_transcript: StageTranscript,
 ) -> None:
     """Verify gap_filler stops before max_passes when mechanical saturation is detected."""
     # Pass 1 output:
@@ -191,6 +191,6 @@ def test_gap_filler_execution_early_stopping_on_saturation(
         context=sample_context,
     )
 
-    assert isinstance(result, EnrichedCompendium)
+    assert isinstance(result, StageTranscript)
     # Proves early stopping occurred at pass 2 (pass 3 was never called)
     assert mock_llm.transform.call_count == 2

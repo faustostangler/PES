@@ -9,10 +9,10 @@ Conforms to:
 from __future__ import annotations
 
 from cresmo.domain.entities.compendium import (
-    EnrichedCompendium,
+    StageTranscript,
     post_process_enriched_compendium,
 )
-from cresmo.domain.entities.transcripts import FluidTranscript
+from cresmo.domain.entities.transcripts import StageTranscript
 from cresmo.domain.services.mechanical_validator import (
     check_complementary_mechanical_saturation,
     validate_gap_filler_mechanical_invariants,
@@ -136,8 +136,8 @@ def test_check_complementary_mechanical_saturation_not_detected_when_new_entitie
 
 
 def test_post_process_enriched_compendium() -> None:
-    """Verify post_process_enriched_compendium maps FluidTranscript triad to EnrichedCompendium."""
-    source_fluid = FluidTranscript.create(
+    """Verify post_process_enriched_compendium maps StageTranscript triad to StageTranscript."""
+    source_fluid = StageTranscript.create(
         channel_name="Canal História",
         content_id="vid_123",
         title="Fundação de Portugal",
@@ -156,7 +156,7 @@ def test_post_process_enriched_compendium() -> None:
     candidate = CandidateText(text=candidate_text, stage_name="gap_filler")
     compendium = post_process_enriched_compendium(candidate, source_fluid)
 
-    assert isinstance(compendium, EnrichedCompendium)
+    assert isinstance(compendium, StageTranscript)
     assert compendium.content_id == ContentId("vid_123")
     assert compendium.title.value == "Fundação de Portugal"
     assert "### Extra Info" not in compendium.body

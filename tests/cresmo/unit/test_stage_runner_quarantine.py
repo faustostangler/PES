@@ -20,7 +20,7 @@ from cresmo.application.ports import (
     NoOpPromptProviderPort,
     NoOpTelemetryPort,
 )
-from cresmo.domain.entities import PipelineSessionId, SourceTranscript, UserIdentity
+from cresmo.domain.entities import PipelineSessionId, StageTranscript, UserIdentity
 from cresmo.domain.exceptions import StageQuarantinedError
 from cresmo.domain.value_objects import (
     Channel,
@@ -64,7 +64,7 @@ def test_execute_stage_with_string_identifier_and_factory() -> None:
     )
 
     ctx = _create_sample_context()
-    raw = SourceTranscript(
+    raw = StageTranscript(
         content_id=ctx.content.id,
         channel_name=ChannelName(ctx.channel.name),
         body="Original source transcript.",
@@ -87,7 +87,7 @@ def test_execute_stage_string_without_factory_raises_value_error() -> None:
     )
 
     ctx = _create_sample_context()
-    raw = SourceTranscript(
+    raw = StageTranscript(
         content_id=ctx.content.id,
         channel_name=ChannelName(ctx.channel.name),
         body="Some text",
@@ -149,7 +149,7 @@ def test_execute_stage_closed_loop_critique_synthesizer_integration() -> None:
     )
 
     ctx = _create_sample_context()
-    raw = SourceTranscript(
+    raw = StageTranscript(
         content_id=ctx.content.id,
         channel_name=ChannelName(ctx.channel.name),
         body="Verbatim transcript with hesitation.",
@@ -214,7 +214,7 @@ def test_execute_stage_fail_fast_quarantine_protocol() -> None:
     )
 
     ctx = _create_sample_context()
-    raw = SourceTranscript(
+    raw = StageTranscript(
         content_id=ctx.content.id,
         channel_name=ChannelName(ctx.channel.name),
         body="Text that repeatedly fails.",

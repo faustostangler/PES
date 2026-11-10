@@ -55,10 +55,8 @@ from cresmo.application.ports import (
 )
 from cresmo.application.use_cases import IngestRawTranscriptUseCase
 from cresmo.domain.entities import (
-    EnrichedCompendium,
-    FluidTranscript,
     PipelineSessionId,
-    SourceTranscript,
+    StageTranscript,
     UserIdentity,
 )
 from cresmo.domain.exceptions import CresmoDomainError
@@ -71,8 +69,10 @@ from cresmo.domain.value_objects import (
 logger = structlog.get_logger(__name__)
 
 
-def _extract_source_text(source_target: Any) -> str:
-    """Extract raw transcript text from SourceTranscript triad or duck-typed raw sources."""
+def _extract_source_text(source_target: StageTranscript | Any) -> str:
+    """Extract raw transcript text from StageTranscript triad or duck-typed raw sources."""
+    if isinstance(source_target, StageTranscript):
+        return source_target.body
     content = getattr(source_target, "content", None)
     if content is not None:
         body = getattr(content, "body", None)
@@ -87,8 +87,12 @@ def _extract_source_text(source_target: Any) -> str:
     return ""
 
 
-def _extract_fluid_text(source: Any) -> str:
-    """Extract synthesized fluid prose text from FluidTranscript, EnrichedCompendium, or duck-typed candidate."""
+def _extract_fluid_text(source: StageTranscript | Any) -> str:
+    """Extract synthesized fluid prose text from StageTranscript envelope or duck-typed candidate."""
+    if isinstance(source, StageTranscript):
+        if source.complementary_info:
+            return f"{source.body}\n\n### Extra Info\n\n{source.complementary_info}"
+        return source.body
     content = getattr(source, "content", None)
     body = getattr(content, "body", None) if content is not None else getattr(source, "body", None)
     complementary_info = getattr(source, "complementary_info", None)
@@ -215,7 +219,7 @@ class CresmoPipeline:
 
     def execute(
         self,
-        raw: SourceTranscript,
+        raw: StageTranscript,
         gap_filler_passes: int = 3,
         force_reprocess: bool = False,
         user: UserIdentity | None = None,
@@ -278,21 +282,11 @@ class CresmoPipeline:
             )
 
             # =========================================================================
-            # CRESMO STAGES CONVEYOR PIPELINE (ADR-007, ADR-043, ADR-054)
+            # CRESMO STAGES CONVEYOR PIPELINE (ADR-007, ADR-043, ADR-054, ADR-057)
             # =========================================================================
             conveyor_steps: list[StageConveyorStep] = [
-                StageConveyorStep(
-                    name="fluid_prose",
-                    artifact_type=FluidTranscript,
-                    cache_getter=lambda vault, cid: vault.get_fluid_transcript(cid),
-                    cache_saver=lambda vault, item: vault.save_fluid_transcript(item),
-                ),
-                StageConveyorStep(
-                    name="gap_filler",
-                    artifact_type=EnrichedCompendium,
-                    cache_getter=lambda vault, cid: vault.get_enriched_compendium(cid),
-                    cache_saver=lambda vault, item: vault.save_enriched_compendium(item),
-                ),
+                StageConveyorStep(name="fluid_prose"),
+                StageConveyorStep(name="gap_filler"),
             ]
 
             stage_artifacts: dict[str, Any] = {"raw": raw}
@@ -300,8 +294,12 @@ class CresmoPipeline:
 
             for step in conveyor_steps:
                 artifact = None
-                if not force_reprocess and step.cache_getter:
-                    cached = step.cache_getter(self.vault_port, content.id)
+                if not force_reprocess:
+                    cached = (
+                        step.cache_getter(self.vault_port, content.id)
+                        if step.cache_getter
+                        else self.vault_port.get_stage_transcript(step.name, content.id)
+                    )
                     if isinstance(cached, step.artifact_type):
                         artifact = cached
                         logger.info(
@@ -321,8 +319,11 @@ class CresmoPipeline:
                         context=execution_context,
                         **extra_kwargs,
                     )
-                    if isinstance(artifact, step.artifact_type) and step.cache_saver:
-                        step.cache_saver(self.vault_port, artifact)
+                    if isinstance(artifact, step.artifact_type):
+                        if step.cache_saver:
+                            step.cache_saver(self.vault_port, artifact)
+                        elif isinstance(artifact, StageTranscript):
+                            self.vault_port.save_stage_transcript(step.name, artifact)
 
                 stage_artifacts[step.name] = artifact
                 current_source = artifact
@@ -369,7 +370,7 @@ class CresmoPipeline:
 
     def _check_idempotent_exit(
         self,
-        raw: SourceTranscript,
+        raw: StageTranscript,
         entry: RawIndexEntry | None,
         force_reprocess: bool,
     ) -> PipelineResult | None:

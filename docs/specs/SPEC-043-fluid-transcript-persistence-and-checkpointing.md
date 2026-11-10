@@ -2,7 +2,7 @@
 
 **Context:** Cresmo Knowledge Synthesis  
 **Phase:** Phase 2 — Refractometry (Precision Test Specifications)  
-**Status:** PROPOSED SPECIFICATION  
+**Status:** ACCEPTED SPECIFICATION  
 **Governing ADR:** [`ADR-043`](../adr/ADR-043-fluid-transcript-vault-persistence-and-checkpointing.md)  
 **Related Specs:** [`SPEC-001`](SPEC-001-cresmo-core.md), [`SPEC-011`](SPEC-011-fluid-prose-detranscription-and-gap-filler-decoupling.md)
 

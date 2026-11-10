@@ -1,7 +1,7 @@
-"""Hermetic Unit Tests for SourceTranscript, CandidateText, and Typed Verdict Value Objects.
+"""Hermetic Unit Tests for StageTranscript, CandidateText, and Typed Verdict Value Objects.
 
 Conforms to:
-    - ADR-031: Standardized StageConfig, SourceTranscript, CandidateText, and Closed-Loop Reflection Quality Fabric
+    - ADR-031: Standardized StageConfig, StageTranscript, CandidateText, and Closed-Loop Reflection Quality Fabric
     - SPEC-014: Standardized Stage Execution and Decision-Model Quality Fabric Specification
 """
 
@@ -11,7 +11,7 @@ import datetime
 
 import pytest
 
-from cresmo.domain.entities import SourceTranscript
+from cresmo.domain.entities import StageTranscript
 from cresmo.domain.exceptions import DomainValidationError
 from cresmo.domain.value_objects import (
     CandidateText,
@@ -27,12 +27,12 @@ from cresmo.domain.value_objects import (
 
 
 class TestSourceTranscript:
-    """Test suite for SourceTranscript domain aggregate/VO."""
+    """Test suite for StageTranscript domain aggregate/VO."""
 
     def test_valid_source_transcript_instantiation(self) -> None:
         cid = ContentId("video_123")
         pub = datetime.date(2026, 1, 15)
-        transcript = SourceTranscript(
+        transcript = StageTranscript(
             content_id=cid,
             channel_name=ChannelName("Test Channel"),
             body="Continuous raw or source transcript text.",
@@ -46,7 +46,7 @@ class TestSourceTranscript:
         assert transcript.provenance.publication_date == pub
 
     def test_source_transcript_string_coercion(self) -> None:
-        transcript = SourceTranscript(
+        transcript = StageTranscript(
             content_id=ContentId("video_456"),
             channel_name="Raw Channel String",
             body="Sample body content",
@@ -58,7 +58,7 @@ class TestSourceTranscript:
 
     def test_source_transcript_empty_body_raises(self) -> None:
         with pytest.raises(DomainValidationError, match="body cannot be empty"):
-            SourceTranscript(
+            StageTranscript(
                 content_id=ContentId("video_empty"),
                 channel_name=ChannelName("Channel"),
                 body="   \n\t  ",

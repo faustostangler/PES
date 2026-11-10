@@ -114,7 +114,7 @@ def test_golden_set_size_and_criteria_distribution(
 def test_golden_set_source_text_invariants(
     golden_set_items: list[dict[str, Any]],
 ) -> None:
-    """Validate that input raw_text is a valid, de-oralized FluidTranscript."""
+    """Validate that input raw_text is a valid, de-oralized StageTranscript."""
     for item in golden_set_items:
         raw_text = item["input"]["raw_text"].strip()
         item_id = item["id"]
@@ -123,7 +123,7 @@ def test_golden_set_source_text_invariants(
             f"Item '{item_id}' raw_text too short: {len(raw_text.split())} words."
         )
         assert raw_text.startswith("## "), (
-            f"Item '{item_id}' raw_text must start with '## ' (FluidTranscript contract)."
+            f"Item '{item_id}' raw_text must start with '## ' (StageTranscript contract)."
         )
 
         violations = validate_fluid_prose_mechanical_invariants(raw_text)
@@ -135,7 +135,7 @@ def test_golden_set_source_text_invariants(
 def test_golden_set_candidate_text_invariants(
     golden_set_items: list[dict[str, Any]],
 ) -> None:
-    """Validate that candidate_text follows EnrichedCompendium structural rules."""
+    """Validate that candidate_text follows StageTranscript structural rules."""
     for item in golden_set_items:
         cand = item["input"]["candidate_text"].strip()
         item_id = item["id"]

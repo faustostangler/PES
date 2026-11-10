@@ -1,6 +1,6 @@
 # SPEC-047: Discovery Lake I/O Optimization and On-Demand Lake Scanning Specifications
 
-**Status:** PROPOSED  
+**Status:** ACCEPTED  
 **Governing ADR:** [`ADR-047`](../adr/ADR-047-discovery-lake-io-optimization-and-lazy-scan.md)  
 **Date:** 2026-10-25  
 **Domain Layer:** `cresmo.application.use_cases.discovery`, `cresmo.presentation.commands`

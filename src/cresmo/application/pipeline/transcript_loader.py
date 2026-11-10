@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING, Any
 import structlog
 import yaml
 
-from cresmo.domain.entities import SourceTranscript
+from cresmo.domain.entities import StageTranscript
 from cresmo.domain.exceptions import CresmoDomainError
 from cresmo.domain.taxonomy import classify_channel
 from cresmo.domain.value_objects import (
@@ -110,8 +110,8 @@ def _resolve_metadata(
     )
 
 
-def load_transcript_from_file(file_path: Path) -> SourceTranscript:
-    """Parse and construct SourceTranscript domain entity from a local file.
+def load_transcript_from_file(file_path: Path) -> StageTranscript:
+    """Parse and construct StageTranscript domain entity from a local file.
 
     Handles YAML frontmatter metadata overrides and enforces security invariants:
     - Rejects internal Cresmo system files and index databases
@@ -122,7 +122,7 @@ def load_transcript_from_file(file_path: Path) -> SourceTranscript:
         file_path: Path to the transcript markdown or text file.
 
     Returns:
-        Validated SourceTranscript domain aggregate root.
+        Validated StageTranscript domain aggregate root.
 
     Raises:
         CresmoDomainError: If file is missing, empty, or a reserved system artifact.
@@ -167,7 +167,7 @@ def load_transcript_from_file(file_path: Path) -> SourceTranscript:
         title=title,
         body=body,
     )
-    return SourceTranscript(
+    return StageTranscript(
         channel=channel,
         provenance=provenance,
         content=content,
@@ -198,7 +198,7 @@ def is_subpath(target_path: Path, parent_dir: Path | None) -> bool:
 def ensure_transcript_saved(
     vault_port: VaultRepositoryPort,
     file_path: Path,
-    transcript: SourceTranscript,
+    transcript: StageTranscript,
     target_dir: Path | None = None,
 ) -> None:
     """Persist transcript via vault_port if not already located inside target_dir.

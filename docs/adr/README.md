@@ -16,9 +16,9 @@ In this repository, architectural decisions evolve continuously through test-dri
 > [`ADR-000: Patterns and Anti-Patterns Catalog`](ADR-000-patterns-antipatterns.md) is the **Foundational Supreme Canon**. It has **absolute overarching priority over all ADRs in the repository, regardless of publication date**. All architectural patterns defined in ADR-000 are authoritative; all items marked with an asterisk (`*`) are strictly prohibited anti-patterns that must never be introduced or tolerated.
 >
 > ### Invariant 2: Lex Posterior Derogat Priori (More Recent Overrides Older)
-> For all subsequent decisions (ADR-001 through ADR-042), **more recent ADRs supersede and override older ADRs**. In the event of any semantic ambiguity, interface drift, or operational conflict:
+> For all subsequent decisions (ADR-001 through ADR-057), **more recent ADRs supersede and override older ADRs**. In the event of any semantic ambiguity, interface drift, or operational conflict:
 > - If an older ADR says to do **A** and a more recent ADR says to do **B**, **B is authoritative** and **A is deprecated / superseded**.
-> - All decisions previously designated as `PROPOSED` or `IN REVIEW` are officially **ACCEPTED** as ratified canon.
+> - All decisions previously designated as `PROPOSED` or `IN REVIEW` are officially **ACCEPTED** as ratified canon (with the sole exception of exploratory proposals explicitly marked `PROPOSED`, such as ADR-045).
 > - Downstream implementations, specifications, and tests must strictly adhere to the higher-numbered ADR.
 
 ---
@@ -72,8 +72,19 @@ In this repository, architectural decisions evolve continuously through test-dri
 | [**ADR-042**](ADR-042-typer-presentation-cli.md) | 2026-10-14 | Modern Typer Presentation CLI Driving Adapter | Presentation / CLI | `ACCEPTED` | **Supersedes ADR-002**. Eliminates legacy argparse in favor of Typer + Rich with fail-fast boundary validation. |
 | [**ADR-043**](ADR-043-fluid-transcript-vault-persistence-and-checkpointing.md) | 2026-10-18 | Fluid Transcript Vault Persistence, Checkpointing, and Lineage Observability | Storage / Checkpointing | `ACCEPTED` | Extends VaultRepositoryPort and Obsidian Vault adapter to persist normalized fluid transcripts in data/fluid/ with atomic checkpointing. |
 | [**ADR-044**](ADR-044-structlog-structured-logging-unification.md) | 2026-10-20 | Structlog Structured Logging Unification and Stdlib Logging Elimination | Observability / Infra | `ACCEPTED` | **Supersedes ADR-025 in part**. Eliminates stdlib logging in favor of native structlog with OTel trace correlation and Loki JSON output. |
+| [**ADR-045**](ADR-045-cognitive-load-tiered-pipeline-and-evaluator-escalation.md) | 2026-10-21 | Cognitive-Load-Tiered Pipeline, Heterogeneous Generator Architecture, and Evaluator Escalation | Cognitive / Architecture | `PROPOSED` | Establishes heterogeneous generator allocation across pipeline stages and 3-tier quality gate escalation. |
+| [**ADR-046**](ADR-046-unified-state-driven-gap-filler-prompt.md) | 2026-10-25 | Unified State-Driven Gap Filler Prompt | Cognitive / Prompts | `ACCEPTED` | Unifies multi-pass gap filling under a single state-driven prompt adhering to Cresmo style guide and causal stratification. |
+| [**ADR-047**](ADR-047-discovery-lake-io-optimization-and-lazy-scan.md) | 2026-10-25 | Discovery Lake I/O Optimization and On-Demand Lake Scanning | Ingestion / Performance | `ACCEPTED` | Replaces full directory scans during discovery with lazy scanning and in-memory path resolution. Refined by ADR-055. |
+| [**ADR-048**](ADR-048-architectural-remediation-and-comprehensive-mutation-blindage.md) | 2026-10-31 | Architectural Remediation and Comprehensive Mutation Blindage | Testing & Quality | `ACCEPTED` | Re-establishes 100.0% mutation kill rate in core domain and repairs presentation entrypoint syntax blockers. |
+| [**ADR-049**](ADR-049-application-layer-mutation-blindage-and-conveyor-integration-readiness.md) | 2026-10-31 | Application Layer Mutation Blindage (>=99.0%) and Conveyor Integration Readiness | Testing & Quality | `ACCEPTED` | Hardens Application layer mutation coverage to >= 99.0% with granular use case fixtures. |
+| [**ADR-050**](ADR-050-prompt-registry-ssot-description-unification.md) | 2026-11-04 | Elimination of Prompt Task Duplication and SSOT Consolidation in PROMPT_REGISTRY | Cognitive / Prompts | `DEPRECATED` | **SUPERSEDED by ADR-052**. Established PROMPT_REGISTRY in registry.py before catalog migration. |
+| [**ADR-051**](ADR-051-elimination-of-hardcoded-prompt-strings-and-resource-literals.md) | 2026-11-05 | Elimination of Hardcoded Prompt Strings, Magic Resource Literals, and Settings Injection Alignment | Infrastructure / Config | `ACCEPTED` | Purges inline fallback prompts in builders.py and aligns JsonPromptProvider with settings SSOT. |
+| [**ADR-052**](ADR-052-prompt-catalog-ssot-in-json.md) | 2026-11-06 | Prompt Catalog SSOT Consolidation in JSON Resource | Cognitive / Prompts | `ACCEPTED` | **Supersedes §1 of ADR-050**. Consolidates prompt templates and metadata in prompts.json with PromptSpec and bijective validation. |
 | [**ADR-053**](ADR-053-lazy-presentation-cli-loading-and-subcommand-decoupling.md) | 2026-11-07 | Lazy Presentation CLI Loading, Subcommand Decoupling, and Default-Fast Ingestion | Presentation / CLI | `ACCEPTED` | Implements PEP 562 dynamic command loading ("CLI a Jato"), isolates heavy vendor runtimes (Whisper, Langfuse), inverts channel crawling to opt-in `--crawl`, and cleans developer launch tooling. |
-| [**ADR-054**](ADR-054-unified-stage-transcript-envelope.md) | 2026-11-09 | Unified Stage Transcript Envelope and Stage-Invariant Polymorphism | DDD Tático / Entidades | `ACCEPTED` | Introduces `StageTranscript` base aggregate unifying the 3-VO Triad (`Channel`, `MediaProvenance`, `Content`), eliminating duplicate constructors, providing direct property delegation (`body`, `title`, `content_id`), and standardizing template invariant validation. |
+| [**ADR-054**](ADR-054-unified-stage-transcript-envelope.md) | 2026-11-09 | Unified Stage Transcript Envelope and Stage-Invariant Polymorphism | DDD Tático / Entidades | `ACCEPTED` | **Partially superseded and refined by ADR-057**. Introduces `StageTranscript` base aggregate unifying the 3-VO Triad (`Channel`, `MediaProvenance`, `Content`). |
+| [**ADR-055**](ADR-055-extreme-startup-latency-remediation-and-zero-read-lake-discovery.md) | 2026-11-09 | Comprehensive Presentation CLI Lazy Dispatching, Zero-Read Lake Scanning, and Deferred Adapter Initialization | Presentation / Performance | `ACCEPTED` | Extends ADR-047 and ADR-053 with Zero-Read Metadata Extraction across 1,000+ lake files, lazy Typer dispatching, and deferred SQLite/adapters setup. |
+| [**ADR-056**](ADR-056-native-media-ingestion-channel-name-deduplication.md) | 2026-11-09 | Native Media Ingestion Channel Name Deduplication and Domain Triad Simplification | Ingestion / DDD Tático | `ACCEPTED` | **Partially refined by ADR-057**. Sanitizes channel extraction, derives canonical YouTube channel URL, and auto-infers ContentId from URL. |
+| [**ADR-057**](ADR-057-monomorphic-stage-transcript-envelope-and-pure-triad-ingestion.md) | 2026-11-10 | Monomorphic StageTranscript Envelope and Pure Triad Ingestion | DDD Tático / Entidades | `ACCEPTED` | **Refines ADR-038, ADR-054, and ADR-056**. Enforces strictly monomorphic `StageTranscript`, removes Markdown table parsing from domain invariants, and enforces pure VO construction with zero loose primitive shims. |
 
 ---
 
@@ -97,11 +108,15 @@ graph TD
         A030["ADR-030: Quality Gate Retry Fabric"]
         A031["ADR-031: StageConfig & Reflection Fabric"]
         A038["ADR-038: Pure 3-VO Triad Composition"]
+        A054["ADR-054: Unified Stage Transcript Envelope"]
+        A057["ADR-057: Monomorphic StageTranscript Envelope"]
         A002 -. superseded by .-> A042
         A007 -. superseded by .-> A021
         A021 -. refined by .-> A030
         A030 --> A031
         A031 --> A038
+        A038 --> A054
+        A054 -. refined by .-> A057
     end
 
     subgraph Ingestion ["2. Media Ingestion & Feed Synchronization"]
@@ -110,9 +125,15 @@ graph TD
         A010["ADR-010: Zero Legacy Shims"]
         A012["ADR-012: Multi-Criteria Sync Filtering"]
         A015["ADR-015: Artifact Exclusion Invariants"]
+        A047["ADR-047: Discovery Lake IO Optimization"]
+        A055["ADR-055: Zero-Read Lake Scanning & Lazy Dispatch"]
+        A056["ADR-056: Ingestion Channel Deduplication"]
         A001 -. isb.ai ACL replaced by .-> A004
         A009 -. tightened by .-> A010
         A010 --> A012 --> A015
+        A015 --> A047
+        A047 --> A055
+        A004 --> A056
     end
 
     subgraph Cognitive ["3. AI Cognitive Engine & Prompt Governance"]
@@ -125,7 +146,11 @@ graph TD
         A029["ADR-029: Unified LlmJudgePort"]
         A039["ADR-039: Canonical Judge Criteria & Gates"]
         A040["ADR-040: Dynamic Multi-Skill Composition"]
-        A045["ADR-045: Cognitive-Load-Tiered Pipeline & Escalation (PROPOSED)"]
+        A045["ADR-045: Cognitive-Load-Tiered Pipeline (PROPOSED)"]
+        A046["ADR-046: Unified State-Driven Gap Filler Prompt"]
+        A050["ADR-050: Prompt Task SSOT (Deprecated)"]
+        A051["ADR-051: Elimination of Hardcoded Prompt Strings"]
+        A052["ADR-052: Prompt Catalog SSOT in JSON"]
         A011 --> A013
         A013 --> A024
         A017 --> A022
@@ -134,6 +159,10 @@ graph TD
         A024 --> A029
         A029 --> A039
         A039 --> A045
+        A028 --> A046
+        A040 --> A050
+        A050 -. superseded by .-> A052
+        A051 --> A052
     end
 
     subgraph SRE ["4. Observability, Telemetry & SRE Platform"]
@@ -146,8 +175,10 @@ graph TD
         A035["ADR-035: Atomic Traces (Anti Mega-Trace)"]
         A036["ADR-036: Clean Namespacing & Observation Binding"]
         A037["ADR-037: 4-Tier Lean Telemetry Topography"]
+        A044["ADR-044: Structlog Logging Unification"]
         A014 --> A016 --> A023 --> A025 --> A027
         A027 --> A034 --> A035 --> A036 --> A037
+        A025 -. superseded in part by .-> A044
     end
 
     subgraph Platform ["5. SOTA-KISS Canon & Supporting Infrastructure"]
@@ -161,9 +192,16 @@ graph TD
         A032["ADR-032: Composite Channel & Content VOs"]
         A033["ADR-033: Asymmetric Hybrid Composition"]
         A041["ADR-041: Gemini Credential Pool Failover"]
+        A043["ADR-043: Fluid Transcript Vault Persistence"]
+        A048["ADR-048: Architectural Remediation & Domain Mutation"]
+        A049["ADR-049: Application Mutation Blindage"]
+        A053["ADR-053: Lazy CLI Loading & Fast-Default"]
         A019 --> A020 --> A026
         A020 --> A032 --> A033
         A005 --> A041
+        A033 --> A043
+        A026 --> A048 --> A049
+        A042 --> A053
     end
 ```
 
@@ -177,12 +215,13 @@ When navigating the architecture, apply these authoritative precedence relations
 - **ADR-000** defines the inviolable patterns and strictly prohibited anti-patterns (`*`).
 - **Precedence Rule:** In any architectural trade-off or PR review, prohibitions in ADR-000 take absolute precedence over later compromises or expediency shortcuts.
 
-### 4.1 Pipeline Orchestration (ADR-021 overrides ADR-007; ADR-028 & ADR-031 refine ADR-021)
+### 4.1 Pipeline Orchestration (ADR-021 overrides ADR-007; ADR-028, ADR-031, ADR-054 & ADR-057 refine ADR-021)
 - **ADR-007** originally scoped the Template Method to downstream synthesis (`_synthesize_transcript`), leaving raw transcript indexing duplicated and outside the telemetry session span.
 - **ADR-021** hoisted the Template Method to `CresmoPipeline.execute(...)` as the single root execution span.
 - **ADR-028** decoupled fluid prose and placed it as Stage 1 *before* `raw_indexing`, ensuring clean normalized prose enters catalog indexing.
 - **ADR-031** introduced `PipelineStageRunner.run_evaluated_stage` and universal `StageConfig`, replacing monolithic coordinator dispatch.
-- **Precedence Rule:** Implementations must strictly follow **ADR-028** and **ADR-031**.
+- **ADR-054** and **ADR-057** unified stage outputs under the monomorphic `StageTranscript` envelope (`Channel`, `MediaProvenance`, `Content`), enabling declarative stage conveyor execution (`StageConveyorStep`).
+- **Precedence Rule:** Implementations must strictly follow **ADR-028**, **ADR-031**, and **ADR-057**.
 
 ### 4.2 Legacy Elimination (ADR-010 overrides ADR-009 Backward Compatibility)
 - **ADR-009** introduced streaming batch source discovery but preserved backward compatibility shims (`execute_stream` alongside `execute(query) -> list`).
@@ -230,6 +269,23 @@ When navigating the architecture, apply these authoritative precedence relations
 - Establishes heterogeneous generator allocation across the 4 Cresmo stages (Lightweight for `fluid_prose`, Frontier for `gap_filler`, Structured Mode for `cresmo_atomic`, Algorithmic Native for `mocs`).
 - Introduces 3-tier quality gates: Tier 0 (Mechanical/Pydantic zero-cost filters), Tier 1 (`LlmJudgePort` evaluation), Tier 2 (Model Cascading or Reflective Diagnostic Self-Repair).
 - **Precedence Rule (Pending Approval):** Once accepted, stages must not execute uniform global model configurations; they must declare explicit generator tiers and escalation policies.
+
+### 4.11 Prompt Catalog SSOT Consolidation (ADR-052 supersedes ADR-050; ADR-051 extends ADR-011)
+- **ADR-050** established `PROMPT_REGISTRY` in Python code (`registry.py`).
+- **ADR-052** completely superseded §1 of ADR-050 by retiring `registry.py` and establishing `prompts.json` as the Single Source of Truth for prompt templates and metadata, validated via Pydantic `PromptSpec` and bijective `load_prompt_catalog()` in `catalog.py`.
+- **ADR-051** purged inline fallback strings from `builders.py` and aligned resource loading with `CresmoSettings`.
+- **Precedence Rule:** All prompt templates and descriptions reside exclusively in `prompts.json` and are accessed via `PromptCatalog`. Zero prompt strings exist in Python source files.
+
+### 4.12 Presentation CLI Fast-Default and Lazy Dispatching (ADR-053 & ADR-055 extend ADR-042 & ADR-047)
+- **ADR-053** implemented PEP 562 lazy loading ("CLI a Jato") and inverted channel crawler behavior (`--crawl` opt-in).
+- **ADR-055** introduced custom lazy Typer command dispatching and Zero-Read Metadata Extraction across 1,000+ raw lake files, reducing startup and loop initialization latency from >100s to <100ms.
+- **Precedence Rule:** All CLI command registration and external runtime loading (Whisper, Langfuse, SQLite DDL) must remain deferred until explicitly invoked.
+
+### 4.13 Monomorphic StageTranscript Envelope (ADR-057 refines ADR-038, ADR-054 & ADR-056)
+- **ADR-054** introduced `StageTranscript` base class but retained loose primitive keyword arguments in its constructor and Markdown table verification regex (`_TABLE_PATTERN`) in domain invariants.
+- **ADR-056** introduced automatic `content_id` extraction in `StageTranscript.__init__` and URL-ContentId cross-validation in `SourceTranscript`.
+- **ADR-057** superseded the loose primitive constructors and domain Markdown table checks: `StageTranscript` is strictly monomorphic with pure Value Object triad injection (`Channel`, `MediaProvenance`, `Content`). Markdown syntax verification is delegated to stage descriptors, prompt specifications, and `LlmJudgePort`.
+- **Precedence Rule:** Domain entities accept only pure Value Objects during construction. Formatting validation belongs to the evaluation layer.
 
 ---
 

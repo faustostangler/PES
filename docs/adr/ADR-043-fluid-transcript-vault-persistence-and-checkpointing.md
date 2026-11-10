@@ -1,6 +1,6 @@
 # ADR-043: Fluid Transcript Vault Persistence, Checkpointing, and Lineage Observability
 
-**Status:** PROPOSED  
+**Status:** ACCEPTED  
 **Date:** 2026-10-18  
 **Decision Makers:** Lead Architect (Fausto Stangler), Systems Architect (Doctor Stangler Committee)  
 **Governing Method:** Doctor Stangler Architecture Method (Clean/Hexagonal DDD Modular Monolith, KISS & Fail-Fast Principles, ADR-First)  

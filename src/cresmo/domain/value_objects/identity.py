@@ -457,7 +457,8 @@ class Content:
         else:
             raise DomainValidationError(f"Invalid content id type: {type(effective_id)}")
 
-        effective_title = content_title if not title and content_title else title
+        raw_title = content_title if not title and content_title else title
+        effective_title = raw_title.value if hasattr(raw_title, "value") else str(raw_title or "")
 
         object.__setattr__(self, "id", resolved_content_id)
         object.__setattr__(self, "title", effective_title.strip() if effective_title else "")

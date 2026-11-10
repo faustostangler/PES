@@ -1,7 +1,7 @@
 # ADR-053: Lazy Presentation CLI Loading, Subcommand Decoupling, and Default-Fast Ingestion
 
 ## Status
-ACCEPTED (Turn 3 — TDD Green + Refactor)
+ACCEPTED
 
 ## Context
 Running CLI subcommands or querying `--help` on the Cresmo CLI (`cresmo.presentation.cli`) experiences startup latency exceeding 60-70 seconds on developer environments, particularly on FUSE/NTFS storage volumes (`/dev/sda1` on `/mnt/gamer_d`).

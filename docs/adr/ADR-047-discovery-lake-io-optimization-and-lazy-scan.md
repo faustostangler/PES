@@ -1,11 +1,11 @@
 # ADR-047: Discovery Lake I/O Optimization and On-Demand Lake Scanning
 
-**Status:** PROPOSED  
+**Status:** ACCEPTED  
 **Date:** 2026-10-25  
 **Decision Makers:** Lead Architect (Fausto Stangler), Systems Architect (Doctor Stangler Committee)  
 **Governing Method:** Doctor Stangler Architecture Method (Clean/Hexagonal DDD Modular Monolith, KISS & Fail-Fast Principles, ADR-First)  
 **Glossary Reference:** [`docs/GLOSSARY.md`](../GLOSSARY.md), [`CONTEXT.md`](../../CONTEXT.md)  
-**Related ADRs:** [`ADR-002`](ADR-002-cresmo-presentation-cli.md), [`ADR-009`](ADR-009-streaming-batch-source-discovery-producer-consumer-pattern.md), [`ADR-012`](ADR-012-multi-criteria-sync-filtering-and-alphabetical-feed-ordering.md), [`ADR-042`](ADR-042-typer-presentation-cli.md)
+**Related ADRs:** [`ADR-002`](ADR-002-cresmo-presentation-cli.md), [`ADR-009`](ADR-009-streaming-batch-source-discovery-producer-consumer.md), [`ADR-012`](ADR-012-multi-criteria-sync-filtering-and-alphabetical-feed-ordering.md), [`ADR-042`](ADR-042-typer-presentation-cli.md)
 
 ---
 
