@@ -17,7 +17,7 @@ from cresmo.application.pipeline.context import PipelineExecutionContext
 from cresmo.application.pipeline.stage_descriptor import StageConfig
 from cresmo.application.pipeline.stage_runner import PipelineStageRunner
 from cresmo.application.ports import NoOpMetricsPort, NoOpTelemetryPort, TelemetryPort
-from cresmo.domain.entities import PipelineSessionId, UserIdentity
+from cresmo.domain.entities import PipelineSessionId, StageTranscript, UserIdentity
 from cresmo.domain.exceptions import DomainValidationError, StageQuarantinedError
 from cresmo.domain.value_objects import (
     CandidateText,
@@ -332,7 +332,7 @@ class TestPipelineStageRunnerEvaluatedStage:
         source = StageTranscript(
             channel=Channel(name="CtxChannel"),
             provenance=MediaProvenance(),
-            content=Content(id=ContentId("vid_ctx_1"), title="CtxTitle", body="Raw speech text."),
+            content=Content(id=ContentId("vid_ctx_1"), title="CtxTitle", text="Raw speech text."),
         )
 
         result = runner.execute_stage(descriptor, source, context=ctx)
@@ -413,7 +413,7 @@ class TestPipelineStageRunnerEvaluatedStage:
 
         from cresmo.application.pipeline.context import PipelineExecutionContext
         from cresmo.application.pipeline.stage_descriptor import StageConfig
-        from cresmo.domain.entities import PipelineSessionId, UserIdentity
+        from cresmo.domain.entities import PipelineSessionId, StageTranscript, UserIdentity
         from cresmo.domain.value_objects import CandidateText, PromptKey
 
         provider = TracerProvider()
@@ -519,7 +519,7 @@ class TestStageRunnerHelperAndInit:
 
     def test_as_str_exhaustive(self) -> None:
         from cresmo.application.pipeline.stage_runner import _as_str
-        from cresmo.domain.entities import PipelineSessionId, UserIdentity
+        from cresmo.domain.entities import PipelineSessionId, StageTranscript, UserIdentity
         from cresmo.domain.value_objects import ChannelId, ChannelName, ContentId
 
         assert _as_str(None) == ""
@@ -1021,7 +1021,7 @@ class TestStageRunnerExecuteStageRetriesAndQuarantine:
         source = StageTranscript(
             channel=Channel(name="RetCh", id=ChannelId("UC_ret")),
             provenance=MediaProvenance(),
-            content=Content(id=ContentId("vid_retry_1"), title="Retry Title", body="Source audio text words."),
+            content=Content(id=ContentId("vid_retry_1"), title="Retry Title", text="Source audio text words."),
         )
         ctx = PipelineExecutionContext(
             user_identity=UserIdentity.worker(),
@@ -1101,7 +1101,7 @@ class TestStageRunnerExecuteStageRetriesAndQuarantine:
         source = StageTranscript(
             channel=Channel(name="UnblockCh"),
             provenance=MediaProvenance(),
-            content=Content(id=ContentId("vid_unblock"), title="Unblock Title", body="Source text words."),
+            content=Content(id=ContentId("vid_unblock"), title="Unblock Title", text="Source text words."),
         )
         ctx = PipelineExecutionContext(
             user_identity=UserIdentity.worker(),
@@ -1170,7 +1170,7 @@ class TestStageRunnerExecuteStageRetriesAndQuarantine:
         source = StageTranscript(
             channel=Channel(name="QuarantineCh", id=ChannelId("UC_quarantine")),
             provenance=MediaProvenance(),
-            content=Content(id=ContentId("vid_quarantine"), title="Quarantine Title", body="Source text words."),
+            content=Content(id=ContentId("vid_quarantine"), title="Quarantine Title", text="Source text words."),
         )
         ctx = PipelineExecutionContext(
             user_identity=UserIdentity.worker(),
@@ -1816,21 +1816,23 @@ class TestStageRunnerStageExecutionAndFallback:
             content=Content.create(id=ContentId("c1234567"), title="Ex Title", session_id="s:1"),
         )
 
-        # Case 1: source has .body string, eval_spec is None
-        class SourceWithBody:
-            body = "Source body text here"
-
-        cfg1 = StageConfig[SourceWithBody, CandidateText](
+        # Case 1: source is StageTranscript
+        src_stage = StageTranscript(
+            channel=Channel(name="ExChan", id=ChannelId("UC_ex")),
+            provenance=MediaProvenance(),
+            content=Content(id=ContentId("c1234567"), title="Ex Title", text="Source body text here"),
+        )
+        cfg1 = StageConfig[StageTranscript, CandidateText](
             stage_name="fluid_prose",
             transform_prompt_key=PromptKey.FLUID_PROSE,
             eval_spec=None,
         )
-        res1 = runner.execute_stage(cfg1, SourceWithBody(), context=ctx)
+        res1 = runner.execute_stage(cfg1, src_stage, context=ctx)
         assert res1.text == "Prose text"
         mock_t.record_stage_io.assert_any_call(
             input_payload={
                 "stage_name": "fluid_prose",
-                "source_type": "SourceWithBody",
+                "source_type": "StageTranscript",
                 "source_characters": len("Source body text here"),
                 "source_words": len(["Source", "body", "text", "here"]),
             }
@@ -1858,7 +1860,7 @@ class TestStageRunnerStageExecutionAndFallback:
 
         # Case 3: source has .content that is Content
         class SourceWithContent:
-            content = Content(id=ContentId("c1234567"), body="Content body text")
+            content = Content(id=ContentId("c1234567"), text="Content body text")
 
         mock_t.reset_mock()
         cfg3 = StageConfig[SourceWithContent, CandidateText](
@@ -2305,7 +2307,7 @@ class TestStageRunnerStageExecutionAndFallback:
         prov = MediaProvenance(url="https://youtube.com/watch?v=123", description="video")
         source_with_prov = MagicMock()
         source_with_prov.provenance = prov
-        source_with_prov.content = Content(id=ContentId("c123"), body="Source prov text")
+        source_with_prov.content = Content(id=ContentId("c123"), text="Source prov text")
 
         runner_blocking = PipelineStageRunner(
             telemetry_port=mock_t,
@@ -2380,20 +2382,20 @@ class TestStageRunnerStageExecutionAndFallback:
             mock_record_quar2.assert_called_once()
 
         # Source with non-string text (int)
-        class SourceWithIntBody:
-            body = 999
+        class SourceWithIntText:
+            text = 999
 
-        cfg_int_src = StageConfig[SourceWithIntBody, CandidateText](
+        cfg_int_src = StageConfig[SourceWithIntText, CandidateText](
             stage_name="fluid_prose",
             transform_prompt_key=PromptKey.FLUID_PROSE,
             eval_spec=None,
         )
         mock_t.reset_mock()
-        runner_j1.execute_stage(cfg_int_src, SourceWithIntBody(), context=ctx)
+        runner_j1.execute_stage(cfg_int_src, SourceWithIntText(), context=ctx)
         mock_t.record_stage_io.assert_any_call(
             input_payload={
                 "stage_name": "fluid_prose",
-                "source_type": "SourceWithIntBody",
+                "source_type": "SourceWithIntText",
                 "source_characters": 0,
                 "source_words": 0,
             }
@@ -2403,7 +2405,7 @@ class TestStageRunnerStageExecutionAndFallback:
         # 1. output_obj has .content that is Content
         class OutputWithContent:
             def __init__(self) -> None:
-                self.content = Content(id=ContentId("c123"), body="Content obj body")
+                self.content = Content(id=ContentId("c123"), text="Content obj body")
 
         cfg_content = StageConfig[MagicMock, OutputWithContent](
             stage_name="fluid_prose",
@@ -2422,46 +2424,45 @@ class TestStageRunnerStageExecutionAndFallback:
             }
         )
 
-        # 2. output_obj has .body string
-        class OutputWithBody:
+        # 2. output_obj has .content (StageTranscript or Content)
+        class OutputWithStage:
             def __init__(self) -> None:
-                self.body = "Body obj string"
+                self.content = Content(id=ContentId("c123"), text="Content obj text")
 
-        cfg_body = StageConfig[MagicMock, OutputWithBody](
+        cfg_stage = StageConfig[MagicMock, OutputWithStage](
             stage_name="fluid_prose",
             transform_prompt_key=PromptKey.FLUID_PROSE,
             eval_spec=None,
-            post_processor=lambda cand, src: OutputWithBody(),
+            post_processor=lambda cand, src: OutputWithStage(),
         )
         mock_t.reset_mock()
-        runner_j1.execute_stage(cfg_body, MagicMock(), context=ctx)
+        runner_j1.execute_stage(cfg_stage, MagicMock(), context=ctx)
         mock_t.record_stage_io.assert_any_call(
             output_payload={
                 "status": "APPROVED",
-                "output_characters": len("Body obj string"),
-                "output_words": len(["Body", "obj", "string"]),
+                "output_characters": len("Content obj text"),
+                "output_words": len(["Content", "obj", "text"]),
                 "attempts": 1,
             }
         )
 
-        # 3. output_obj has .text string
-        class OutputWithText:
-            def __init__(self) -> None:
-                self.text = "Text obj string"
+        # 3. output_obj defaults to candidate.text
+        class OutputBare:
+            pass
 
-        cfg_text = StageConfig[MagicMock, OutputWithText](
+        cfg_bare = StageConfig[MagicMock, OutputBare](
             stage_name="fluid_prose",
             transform_prompt_key=PromptKey.FLUID_PROSE,
             eval_spec=None,
-            post_processor=lambda cand, src: OutputWithText(),
+            post_processor=lambda cand, src: OutputBare(),
         )
         mock_t.reset_mock()
-        runner_j1.execute_stage(cfg_text, MagicMock(), context=ctx)
+        runner_j1.execute_stage(cfg_bare, MagicMock(), context=ctx)
         mock_t.record_stage_io.assert_any_call(
             output_payload={
                 "status": "APPROVED",
-                "output_characters": len("Text obj string"),
-                "output_words": len(["Text", "obj", "string"]),
+                "output_characters": len("Candidate output text"),
+                "output_words": len(["Candidate", "output", "text"]),
                 "attempts": 1,
             }
         )

@@ -411,7 +411,6 @@ class Content:
         title: str = "",
         text: str = "",
         session_id: str | Any = "",
-        **kwargs: Any,
     ) -> None:
         if id is None:
             raise DomainValidationError("Content requires non-null id.")
@@ -424,11 +423,10 @@ class Content:
         effective_session_id = (
             session_id.value if hasattr(session_id, "value") else str(session_id or "")
         )
-        effective_text = text if text else str(kwargs.get("body", ""))
 
         object.__setattr__(self, "id", resolved_content_id)
         object.__setattr__(self, "title", effective_title.strip() if effective_title else "")
-        object.__setattr__(self, "text", effective_text)
+        object.__setattr__(self, "text", text)
         object.__setattr__(
             self, "session_id", effective_session_id.strip() if effective_session_id else ""
         )
@@ -442,7 +440,6 @@ class Content:
         session_id: str | Any = "",
         *,
         url: str = "",
-        **kwargs: Any,
     ) -> Content:
         """Ergonomic factory constructing Content from primitive strings or Value Objects."""
         if id is None:
@@ -454,11 +451,10 @@ class Content:
             else:
                 raise DomainValidationError("Content requires non-null id or valid url.")
         resolved_content_id = ContentId.from_string(id)
-        effective_text = text if text else str(kwargs.get("body", ""))
         return cls(
             id=resolved_content_id,
             title=title,
-            text=effective_text,
+            text=text,
             session_id=session_id,
         )
 

@@ -161,11 +161,7 @@ class PipelineStageRunner:
                 else (
                     source_content.text
                     if isinstance(source_content, Content)
-                    else (
-                        getattr(source, "text", None)
-                        or getattr(source, "body", None)
-                        or str(source)
-                    )
+                    else (getattr(source, "text", None) or str(source))
                 )
             )
             self.telemetry_port.record_stage_io(
@@ -237,15 +233,12 @@ class PipelineStageRunner:
 
             output_obj: _TOutput = stage_config.post_process(candidate, source)
             output_content = getattr(output_obj, "content", None)
-            output_text = (
-                output_content.text
-                if isinstance(output_content, Content)
-                else (
-                    getattr(output_obj, "text", None)
-                    or getattr(output_obj, "body", None)
-                    or candidate.text
-                )
-            )
+            if isinstance(output_content, Content):
+                output_text = output_content.text
+            elif hasattr(output_obj, "text"):
+                output_text = output_obj.text
+            else:
+                output_text = candidate.text
             self.telemetry_port.record_stage_io(
                 output_payload={
                     "status": (

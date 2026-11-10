@@ -141,7 +141,7 @@ class ExpandCompendiumUseCase:
             content=Content.create(
                 id=compendium.content.id,
                 title=compendium.content.title,
-                body=full_body,
+                text=full_body,
             ),
             pass_count=compendium.pass_count + 1 if compendium.pass_count else 2,
             metadata=dict(compendium.metadata),

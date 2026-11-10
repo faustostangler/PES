@@ -1715,7 +1715,7 @@ Only body here, no complementary section.
                 channel=Channel(name=ch_name),
                 provenance=MediaProvenance.create(url=f"https://yt.com/{i}"),
                 content=Content.create(
-                    id=ContentId(f"phil_{i}"), title=f"Title {i}", body=f"## Body {i}"
+                    id=ContentId(f"phil_{i}"), title=f"Title {i}", text=f"## Body {i}"
                 ),
             )
             adapter.save_fluid_transcript(fluid)

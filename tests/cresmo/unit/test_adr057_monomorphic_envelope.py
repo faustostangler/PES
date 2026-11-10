@@ -68,7 +68,7 @@ class TestADR057MonomorphicStageTranscript:
         """StageTranscript must not accept missing channel, provenance or content."""
         with pytest.raises(TypeError):
             # Attempting legacy instantiation without triad VOs
-            StageTranscript(channel_name="Loose Name", body="Loose Body")  # type: ignore[call-arg]
+            StageTranscript(channel_name="Loose Name", text="Loose Body")  # type: ignore[call-arg]
 
     def test_markdown_tables_are_allowed_in_domain_entity(self) -> None:
         """Domain entity does NOT reject markdown tables; syntax checks belong to LLM/Judge."""
@@ -111,7 +111,7 @@ class TestADR057MonomorphicStageTranscript:
         """pass_count must be int >= 1 when provided."""
         channel = Channel(name="Test Channel")
         provenance = MediaProvenance.create(url="https://example.com")
-        content = Content(id=ContentId("cid1"), title="T", body="Valid body.")
+        content = Content(id=ContentId("cid1"), title="T", text="Valid body.")
 
         with pytest.raises(CompendiumStructureError, match="pass_count must be at least 1"):
             StageTranscript(

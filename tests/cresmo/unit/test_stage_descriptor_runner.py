@@ -573,7 +573,7 @@ class TestStageConfigPromptBuilding:
 
         # 1. Source with content.body
         class SourceContentBody:
-            content = Content(id="vid_1001", body="extracted from content.body")
+            content = Content(id="vid_1001", text="extracted from content.body")
 
         cfg.build_transform_prompt(mock_provider, source=SourceContentBody(), context=ctx)
         assert mock_provider.get_prompt.call_args[1]["raw_text"] == "extracted from content.body"

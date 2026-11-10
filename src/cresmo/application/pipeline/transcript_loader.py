@@ -165,7 +165,7 @@ def load_transcript_from_file(file_path: Path) -> StageTranscript:
     content = Content.create(
         id=content_id,
         title=title,
-        body=body,
+        text=body,
     )
     return StageTranscript(
         channel=channel,

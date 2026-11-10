@@ -66,7 +66,7 @@ def test_execute_stage_with_string_identifier_and_factory() -> None:
     raw = StageTranscript(
         channel=Channel(name=ChannelName(ctx.channel.name)),
         provenance=MediaProvenance.empty(),
-        content=Content(id=ctx.content.id, body="Original source transcript."),
+        content=Content(id=ctx.content.id, text="Original source transcript."),
     )
 
     result = runner.execute_stage("fluid_prose", source=raw, context=ctx)
@@ -89,7 +89,7 @@ def test_execute_stage_string_without_factory_raises_value_error() -> None:
     raw = StageTranscript(
         channel=Channel(name=ChannelName(ctx.channel.name)),
         provenance=MediaProvenance.empty(),
-        content=Content(id=ctx.content.id, body="Some text"),
+        content=Content(id=ctx.content.id, text="Some text"),
     )
 
     with pytest.raises(ValueError, match="Cannot resolve stage 'fluid_prose' from string"):
@@ -151,7 +151,7 @@ def test_execute_stage_closed_loop_critique_synthesizer_integration() -> None:
     raw = StageTranscript(
         channel=Channel(name=ChannelName(ctx.channel.name)),
         provenance=MediaProvenance.empty(),
-        content=Content(id=ctx.content.id, body="Verbatim transcript with hesitation."),
+        content=Content(id=ctx.content.id, text="Verbatim transcript with hesitation."),
     )
 
     result = runner.execute_stage("fluid_prose", source=raw, context=ctx)
@@ -216,7 +216,7 @@ def test_execute_stage_fail_fast_quarantine_protocol() -> None:
     raw = StageTranscript(
         channel=Channel(name=ChannelName(ctx.channel.name)),
         provenance=MediaProvenance.empty(),
-        content=Content(id=ctx.content.id, body="Text that repeatedly fails."),
+        content=Content(id=ctx.content.id, text="Text that repeatedly fails."),
     )
 
     with pytest.raises(StageQuarantinedError) as exc_info:

@@ -361,9 +361,7 @@ class StageEvaluationSpec:
             return self.raw_text
         if self.source_extractor:
             return self.source_extractor(source)
-        if hasattr(source, "content"):
-            if hasattr(source.content, "text"):
-                return str(source.content.text)
-            if hasattr(source.content, "body"):
-                return str(source.content.body)
+        content = getattr(source, "content", None)
+        if content is not None and hasattr(content, "text"):
+            return str(content.text)
         return str(source)

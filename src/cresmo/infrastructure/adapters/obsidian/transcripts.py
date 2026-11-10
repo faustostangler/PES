@@ -129,7 +129,7 @@ class TranscriptVaultHandler:
             content = Content.create(
                 id=content_id,
                 title=file_path.stem,
-                body=text,
+                text=text,
             )
             return StageTranscript(
                 channel=channel,
@@ -168,7 +168,7 @@ class TranscriptVaultHandler:
         content = Content.create(
             id=content_id,
             title=title,
-            body=body.strip(),
+            text=body.strip(),
         )
         return StageTranscript(
             channel=channel,
@@ -278,7 +278,7 @@ class TranscriptVaultHandler:
         content = Content.create(
             id=content_id,
             title=title,
-            body=full_body,
+            text=full_body,
         )
 
         return StageTranscript(
@@ -353,7 +353,7 @@ class TranscriptVaultHandler:
             content = Content.create(
                 id=content_id,
                 title=file_path.stem,
-                body=text,
+                text=text,
             )
             return StageTranscript(
                 channel=channel,
@@ -392,7 +392,7 @@ class TranscriptVaultHandler:
         content = Content.create(
             id=content_id,
             title=title,
-            body=body.strip(),
+            text=body.strip(),
         )
         return StageTranscript(
             channel=channel,

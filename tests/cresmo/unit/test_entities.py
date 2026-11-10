@@ -133,7 +133,7 @@ class TestSourceTranscript:
         from cresmo.domain.value_objects import Content
 
         cnt = Content.create(
-            url="https://youtube.com/watch?v=extracted_abc", title="Title", body="Body"
+            url="https://youtube.com/watch?v=extracted_abc", title="Title", text="Body"
         )
         assert cnt.id == ContentId("extracted_abc")
 
@@ -512,7 +512,7 @@ class TestMapOfContent:
     def test_source_transcript_empty_channel_raises_error(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
         with pytest.raises(DomainValidationError, match="ChannelName cannot be empty"):
-            StageTranscript(content_id=cid, channel_name=ChannelName("   "), body="Valid body.")
+            StageTranscript(content_id=cid, channel_name=ChannelName("   "), text="Valid body.")
 
 
 class TestPipelineSessionId:
@@ -994,7 +994,7 @@ class TestAdr038PureValueObjectTriadComposition:
 
         ch = Channel(id=ChannelId("UCtest123456"), name="Test Channel", category="history")
         prov = MediaProvenance(url="https://source.url", description="Origin desc")
-        src_content = Content(id=ContentId("vid_02"), title="Original Title", body="Raw body text")
+        src_content = Content(id=ContentId("vid_02"), title="Original Title", text="Raw body text")
 
         source = StageTranscript(channel=ch, provenance=prov, content=src_content)
         candidate = CandidateText(
@@ -1068,7 +1068,7 @@ class TestAdr038PureValueObjectTriadComposition:
         ctx = PipelineExecutionContext(
             user_identity=UserIdentity.anonymous(),
             channel=ch,
-            content=Content(id=content.id, title=content.title, body=content.body, session_id=sid.value),
+            content=Content(id=content.id, title=content.title, text=content.body, session_id=sid.value),
         )
         assert ctx.channel.id == ChannelId("UCxyz1234567890ab")
         assert ctx.content.id == ContentId("9IbNJ0EsTxI")
@@ -1081,7 +1081,7 @@ class TestSourceTranscriptInvariantsAndEdgeCases:
     """Rigorous invariant and boundary tests for StageTranscript aggregate."""
 
     def test_init_defaults_when_minimal_args_passed(self) -> None:
-        st = StageTranscript(channel_name="Minimal Channel", body="Spoken prose.")
+        st = StageTranscript(channel_name="Minimal Channel", text="Spoken prose.")
         assert st.content.title == ""
         assert st.provenance.url == ""
         assert st.channel.category == ""
@@ -1091,35 +1091,35 @@ class TestSourceTranscriptInvariantsAndEdgeCases:
         assert st.channel.id is None
 
     def test_init_content_id_fallback_to_unknown(self) -> None:
-        st1 = StageTranscript(channel_name="Channel A", body="Spoken prose.", content_id=None)
+        st1 = StageTranscript(channel_name="Channel A", text="Spoken prose.", content_id=None)
         assert st1.content.id == ContentId("unknown")
         assert st1.content.id.value == "unknown"
 
-        st2 = StageTranscript(channel_name="Channel B", body="Spoken prose.")
+        st2 = StageTranscript(channel_name="Channel B", text="Spoken prose.")
         assert st2.content.id == ContentId("unknown")
         assert st2.content.id.value == "unknown"
 
     def test_init_channel_name_empty_or_none_raises_error(self) -> None:
         with pytest.raises(DomainValidationError, match="Channel name cannot be empty"):
-            StageTranscript(channel_name=None, body="Spoken prose.")
+            StageTranscript(channel_name=None, text="Spoken prose.")
         with pytest.raises(DomainValidationError, match="Channel name cannot be empty"):
-            StageTranscript(channel_name="", body="Spoken prose.")
+            StageTranscript(channel_name="", text="Spoken prose.")
 
     def test_init_publication_and_upload_date_resolution(self) -> None:
         pub = datetime.date(2023, 1, 1)
         upl = datetime.date(2022, 1, 1)
         st_both = StageTranscript(
-            channel_name="C", body="B", publication_date=pub, upload_date=upl
+            channel_name="C", text="B", publication_date=pub, upload_date=upl
         )
         assert st_both.provenance.publication_date == pub
 
         st_upl = StageTranscript(
-            channel_name="C", body="B", publication_date=None, upload_date=upl
+            channel_name="C", text="B", publication_date=None, upload_date=upl
         )
         assert st_upl.provenance.publication_date == upl
 
         st_none = StageTranscript(
-            channel_name="C", body="B", publication_date=None, upload_date=None
+            channel_name="C", text="B", publication_date=None, upload_date=None
         )
         assert st_none.provenance.publication_date is None
 
@@ -1153,22 +1153,22 @@ class TestSourceTranscriptInvariantsAndEdgeCases:
             DomainValidationError,
             match=r"^StageTranscript body cannot be empty or whitespace\.$",
         ):
-            StageTranscript(channel_name="C", body="")
+            StageTranscript(channel_name="C", text="")
         with pytest.raises(
             DomainValidationError,
             match=r"^StageTranscript body cannot be empty or whitespace\.$",
         ):
-            StageTranscript(channel_name="C", body="   \n\t  ")
+            StageTranscript(channel_name="C", text="   \n\t  ")
         with pytest.raises(
             DomainValidationError,
             match=r"^StageTranscript body cannot be empty or whitespace\.$",
         ):
-            StageTranscript(channel_name="C", body=None)
+            StageTranscript(channel_name="C", text=None)
 
     def test_init_metadata_handling(self) -> None:
-        st_none = StageTranscript(channel_name="C", body="B", metadata=None)
+        st_none = StageTranscript(channel_name="C", text="B", metadata=None)
         assert st_none.metadata == {}
-        st_dict = StageTranscript(channel_name="C", body="B", metadata={"key": "val"})
+        st_dict = StageTranscript(channel_name="C", text="B", metadata={"key": "val"})
         assert st_dict.metadata == {"key": "val"}
 
     def test_create_factory_all_args(self) -> None:
@@ -1227,7 +1227,7 @@ class TestFluidTranscriptInvariantsAndEdgeCases:
     """Rigorous invariant and boundary tests for StageTranscript aggregate."""
 
     def test_init_defaults_when_minimal_args_passed(self) -> None:
-        ft = StageTranscript(channel_name="Clean Channel", body="Fluid prose content.")
+        ft = StageTranscript(channel_name="Clean Channel", text="Fluid prose content.")
         assert ft.content.title == ""
         assert ft.provenance.url == ""
         assert ft.channel.category == ""
@@ -1241,7 +1241,7 @@ class TestFluidTranscriptInvariantsAndEdgeCases:
         prov = MediaProvenance.create(
             url="https://url", description="desc", publication_date="2024-01-01"
         )
-        cnt = Content(id=ContentId("vo_id"), title="VO Title", body="Clean prose.")
+        cnt = Content(id=ContentId("vo_id"), title="VO Title", text="Clean prose.")
         ft = StageTranscript(channel=ch, provenance=prov, content=cnt, metadata={"a": 1})
         assert ft.channel is ch
         assert ft.provenance is prov
@@ -1249,31 +1249,31 @@ class TestFluidTranscriptInvariantsAndEdgeCases:
         assert ft.metadata == {"a": 1}
 
     def test_init_content_id_fallback_to_unknown(self) -> None:
-        ft1 = StageTranscript(channel_name="Channel A", body="Fluid prose.", content_id=None)
+        ft1 = StageTranscript(channel_name="Channel A", text="Fluid prose.", content_id=None)
         assert ft1.content.id == ContentId("unknown")
         assert ft1.content.id.value == "unknown"
 
-        ft2 = StageTranscript(channel_name="Channel B", body="Fluid prose.")
+        ft2 = StageTranscript(channel_name="Channel B", text="Fluid prose.")
         assert ft2.content.id == ContentId("unknown")
         assert ft2.content.id.value == "unknown"
 
     def test_init_channel_name_empty_or_none_raises_error(self) -> None:
         with pytest.raises(DomainValidationError, match="Channel name cannot be empty"):
-            StageTranscript(channel_name=None, body="Fluid prose.")
+            StageTranscript(channel_name=None, text="Fluid prose.")
         with pytest.raises(DomainValidationError, match="Channel name cannot be empty"):
-            StageTranscript(channel_name="", body="Fluid prose.")
+            StageTranscript(channel_name="", text="Fluid prose.")
 
     def test_init_publication_and_upload_date_resolution(self) -> None:
         pub = datetime.date(2023, 1, 1)
         upl = datetime.date(2022, 1, 1)
-        ft_both = StageTranscript(channel_name="C", body="B", publication_date=pub, upload_date=upl)
+        ft_both = StageTranscript(channel_name="C", text="B", publication_date=pub, upload_date=upl)
         assert ft_both.provenance.publication_date == pub
 
-        ft_upl = StageTranscript(channel_name="C", body="B", publication_date=None, upload_date=upl)
+        ft_upl = StageTranscript(channel_name="C", text="B", publication_date=None, upload_date=upl)
         assert ft_upl.provenance.publication_date == upl
 
         ft_none = StageTranscript(
-            channel_name="C", body="B", publication_date=None, upload_date=None
+            channel_name="C", text="B", publication_date=None, upload_date=None
         )
         assert ft_none.provenance.publication_date is None
 
@@ -1307,17 +1307,17 @@ class TestFluidTranscriptInvariantsAndEdgeCases:
             DomainValidationError,
             match=r"^StageTranscript body cannot be empty or whitespace\.$",
         ):
-            StageTranscript(channel_name="C", body="")
+            StageTranscript(channel_name="C", text="")
         with pytest.raises(
             DomainValidationError,
             match=r"^StageTranscript body cannot be empty or whitespace\.$",
         ):
-            StageTranscript(channel_name="C", body="   \n\t  ")
+            StageTranscript(channel_name="C", text="   \n\t  ")
         with pytest.raises(
             DomainValidationError,
             match=r"^StageTranscript body cannot be empty or whitespace\.$",
         ):
-            StageTranscript(channel_name="C", body=None)
+            StageTranscript(channel_name="C", text=None)
 
     def test_init_rejects_markdown_tables(self) -> None:
         table_start = "| Header 1 | Header 2 |\n| --- | --- |\n| Cell 1 | Cell 2 |"
@@ -1325,7 +1325,7 @@ class TestFluidTranscriptInvariantsAndEdgeCases:
             CompendiumStructureError,
             match=r"^StageTranscript body must be continuous prose and cannot contain Markdown tables\.$",
         ):
-            StageTranscript(channel_name="C", body=table_start)
+            StageTranscript(channel_name="C", text=table_start)
 
         table_middle = (
             "Leading paragraph text.\n\n| Header 1 | Header 2 |\n| :--- | ---: |\n| Val 1 | Val 2 |"
@@ -1334,12 +1334,12 @@ class TestFluidTranscriptInvariantsAndEdgeCases:
             CompendiumStructureError,
             match=r"^StageTranscript body must be continuous prose and cannot contain Markdown tables\.$",
         ):
-            StageTranscript(channel_name="C", body=table_middle)
+            StageTranscript(channel_name="C", text=table_middle)
 
     def test_init_metadata_handling(self) -> None:
-        ft_none = StageTranscript(channel_name="C", body="B", metadata=None)
+        ft_none = StageTranscript(channel_name="C", text="B", metadata=None)
         assert ft_none.metadata == {}
-        ft_dict = StageTranscript(channel_name="C", body="B", metadata={"key": "val"})
+        ft_dict = StageTranscript(channel_name="C", text="B", metadata={"key": "val"})
         assert ft_dict.metadata == {"key": "val"}
 
     def test_create_factory_all_args(self) -> None:
@@ -1399,7 +1399,7 @@ class TestPostProcessFluidTranscriptInvariantsAndRegex:
 
     def test_candidate_as_candidatetext_and_raw_str(self) -> None:
         st = StageTranscript(
-            channel_name="Chan", content_id="c1", title="Default Title", body="Raw"
+            channel_name="Chan", content_id="c1", title="Default Title", text="Raw"
         )
 
         res1 = post_process_fluid_transcript("   Prose body text.   ", st)
@@ -1412,7 +1412,7 @@ class TestPostProcessFluidTranscriptInvariantsAndRegex:
         assert res2.content.title == "Default Title"
 
     def test_title_h1_extraction_and_stripping(self) -> None:
-        st = StageTranscript(channel_name="Chan", content_id="c1", title="Old Title", body="Raw")
+        st = StageTranscript(channel_name="Chan", content_id="c1", title="Old Title", text="Raw")
         text = "# Primary Extracted Heading\n\nThis is the remaining narrative body."
         res = post_process_fluid_transcript(text, st)
         assert res.content.title == "Primary Extracted Heading"
@@ -1425,17 +1425,17 @@ class TestPostProcessFluidTranscriptInvariantsAndRegex:
 
     def test_fallback_titles_when_h1_missing(self) -> None:
         st_with_title = StageTranscript(
-            channel_name="Chan", content_id="c1", title="Original Title", body="Raw"
+            channel_name="Chan", content_id="c1", title="Original Title", text="Raw"
         )
         res1 = post_process_fluid_transcript("Body without H1 header.", st_with_title)
         assert res1.content.title == "Original Title"
 
-        st_no_title = StageTranscript(channel_name="Chan", content_id="c1", title="", body="Raw")
+        st_no_title = StageTranscript(channel_name="Chan", content_id="c1", title="", text="Raw")
         res2 = post_process_fluid_transcript("Body without H1 header.", st_no_title)
         assert res2.content.title == "Untitled Compendium"
 
     def test_complementary_sections_stripping(self) -> None:
-        st = StageTranscript(channel_name="Chan", content_id="c1", body="Raw")
+        st = StageTranscript(channel_name="Chan", content_id="c1", text="Raw")
         base = "Main core prose narrative that must be preserved."
 
         res1 = post_process_fluid_transcript(f"{base}\n\n### Extra Info\nDetails to drop.", st)
@@ -1460,7 +1460,7 @@ class TestPostProcessFluidTranscriptInvariantsAndRegex:
         assert res5.content.body == base
 
     def test_empty_body_raises_compendium_structure_error(self) -> None:
-        st = StageTranscript(channel_name="Chan", content_id="c_err_1", body="Raw")
+        st = StageTranscript(channel_name="Chan", content_id="c_err_1", text="Raw")
 
         with pytest.raises(
             CompendiumStructureError,
@@ -1483,7 +1483,7 @@ class TestPostProcessFluidTranscriptInvariantsAndRegex:
     def test_preserves_pure_triad_and_content_id(self) -> None:
         ch = Channel(name="Preserved Channel", id=ChannelId("UC_preserve"))
         prov = MediaProvenance.create(url="https://url", description="desc")
-        cnt = Content(id=ContentId("preserve_cid"), title="Orig", body="Body")
+        cnt = Content(id=ContentId("preserve_cid"), title="Orig", text="Body")
         st = StageTranscript(channel=ch, provenance=prov, content=cnt)
 
         res = post_process_fluid_transcript("Processed prose body.", st)
@@ -1513,7 +1513,7 @@ class TestStageTranscriptUnifiedEnvelope:
 
         ch = Channel(name="Test Creator", id=ChannelId("UC_triad_123"))
         prov = MediaProvenance.create(url="https://youtu.be/triad123", description="Triad test")
-        cnt = Content(id=ContentId("triad123"), title="Triad Title", body="Triad verbatim body")
+        cnt = Content(id=ContentId("triad123"), title="Triad Title", text="Triad verbatim body")
 
         st: StageTranscript = StageTranscript(
             channel=ch, provenance=prov, content=cnt, metadata={"stage": "raw"}
@@ -1565,15 +1565,15 @@ class TestStageTranscriptUnifiedEnvelope:
 
         # Empty body rejected on both
         with pytest.raises(DomainValidationError):
-            StageTranscript(channel_name="Ch", content_id="c1", body="   ")
+            StageTranscript(channel_name="Ch", content_id="c1", text="   ")
         with pytest.raises(DomainValidationError):
-            StageTranscript(channel_name="Ch", content_id="c1", body="   ")
+            StageTranscript(channel_name="Ch", content_id="c1", text="   ")
 
         # Table is permitted in StageTranscript (verbatim)
         table_text = "| Col1 | Col2 |\n| --- | --- |\n| Val1 | Val2 |"
-        raw_with_table = StageTranscript(channel_name="Ch", content_id="c1", body=table_text)
+        raw_with_table = StageTranscript(channel_name="Ch", content_id="c1", text=table_text)
         assert raw_with_table.body == table_text
 
         # Table is strictly forbidden in StageTranscript (continuous prose)
         with pytest.raises(CompendiumStructureError, match="cannot contain Markdown tables"):
-            StageTranscript(channel_name="Ch", content_id="c1", body=table_text)
+            StageTranscript(channel_name="Ch", content_id="c1", text=table_text)

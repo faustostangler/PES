@@ -95,7 +95,7 @@ def test_stage_factory_builds_fluid_prose_descriptor() -> None:
     source = StageTranscript(
         channel=Channel(name=ChannelName("Ch")),
         provenance=MediaProvenance.empty(),
-        content=Content(id=ContentId("c123"), body="Verbatim source audio."),
+        content=Content(id=ContentId("c123"), text="Verbatim source audio."),
     )
     extracted = descriptor.eval_spec.extract_source_text(source)
     assert extracted == "Verbatim source audio."
@@ -156,7 +156,7 @@ def test_stage_factory_generic_build_stage_custom_parameters() -> None:
     dummy_source = StageTranscript(
         channel=Channel(name=ChannelName("dummy_channel")),
         provenance=MediaProvenance.empty(),
-        content=Content(id=ContentId("dummy_content"), body="dummy body"),
+        content=Content(id=ContentId("dummy_content"), text="dummy body"),
     )
     assert descriptor.eval_spec.extract_source_text(dummy_source) == "src:dummy body"
 

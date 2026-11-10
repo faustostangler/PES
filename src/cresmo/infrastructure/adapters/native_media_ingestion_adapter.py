@@ -360,7 +360,7 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         content = Content.create(
             id=content_id,
             title=str(info.get("title") or ""),
-            body=body,
+            text=body,
         )
         transcript = StageTranscript(
             channel=channel,

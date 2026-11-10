@@ -126,7 +126,7 @@ async def job_process_pipeline_stage(
             content=Content(
                 id=ContentId(content_id),
                 title=content_id,
-                body=source_payload,
+                text=source_payload,
                 session_id=session_key,
             ),
         )

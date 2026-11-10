@@ -911,7 +911,7 @@ class TestCoordinatorLlmJudgeIntegration:
         canned_raw = StageTranscript(
             channel=Channel(name="Test Channel"),
             provenance=MediaProvenance.create(url="https://youtube.com/watch?v=vid_coord_1"),
-            content=Content(id=cid, title="Test", body="Raw audio text with uh and um."),
+            content=Content(id=cid, title="Test", text="Raw audio text with uh and um."),
         )
         mock_llm = SmartMockLLMAdapter()
         mock_ingestion = MockMediaIngestionPort(canned_transcript=canned_raw)
@@ -972,7 +972,7 @@ class TestCoordinatorLlmJudgeIntegration:
         canned_raw = StageTranscript(
             channel=Channel(name="Test Channel"),
             provenance=MediaProvenance.create(url="https://youtube.com/watch?v=vid_coord_2"),
-            content=Content(id=cid, title="Test", body="Raw audio."),
+            content=Content(id=cid, title="Test", text="Raw audio."),
         )
         mock_llm = SmartMockLLMAdapter()
         mock_ingestion = MockMediaIngestionPort(canned_transcript=canned_raw)
@@ -1021,7 +1021,7 @@ class TestCoordinatorLlmJudgeIntegration:
         canned_raw = StageTranscript(
             channel=Channel(name="Test Channel"),
             provenance=MediaProvenance.create(url="https://youtube.com/watch?v=vid_coord_telemetry"),
-            content=Content(id=cid, title="Test", body="Raw audio text with speech noise."),
+            content=Content(id=cid, title="Test", text="Raw audio text with speech noise."),
         )
         mock_llm = SmartMockLLMAdapter()
         mock_ingestion = MockMediaIngestionPort(canned_transcript=canned_raw)

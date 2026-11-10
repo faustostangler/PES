@@ -162,7 +162,7 @@ class FillGapsUseCase:
             content=Content.create(
                 id=fluid_transcript.content.id,
                 title=extracted_title,
-                body=full_body,
+                text=full_body,
             ),
             pass_count=passes,
             metadata=dict(fluid_transcript.metadata),

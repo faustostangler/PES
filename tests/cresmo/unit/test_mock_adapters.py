@@ -127,7 +127,7 @@ class TestInMemoryVaultAdapter:
     def test_raw_transcript_crud(self) -> None:
         vault = InMemoryVaultAdapter()
         cid = ContentId("transTest123")
-        raw = StageTranscript(content_id=cid, channel_name=ChannelName("Ch"), body="Text")
+        raw = StageTranscript(content_id=cid, channel_name=ChannelName("Ch"), text="Text")
         assert vault.get_raw_transcript(cid) is None
 
         vault.save_transcript(raw)
