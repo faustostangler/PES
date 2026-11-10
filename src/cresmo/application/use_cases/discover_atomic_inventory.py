@@ -37,8 +37,6 @@ from cresmo.domain.entities import (
 from cresmo.domain.exceptions import DomainValidationError, NoteTypologyError
 from cresmo.domain.value_objects import (
     AtomicEntityInventory,
-    ChannelId,
-    ChannelName,
     ChatPrompt,
     EvaluationContext,
     JudgeCriterion,
@@ -204,7 +202,7 @@ class DiscoverAtomicInventoryUseCase:
         if not self.judge_enabled:
             if not isinstance(candidate_data, list):
                 raise DomainValidationError(
-                    f"Expected JSON array of entities for '{compendium.title.value}', got: {type(candidate_data).__name__}"
+                    f"Expected JSON array of entities for '{compendium.content.title}', got: {type(candidate_data).__name__}"
                 )
             return True
 
@@ -215,15 +213,11 @@ class DiscoverAtomicInventoryUseCase:
         if self.llm_judge_port is not None:
             context = EvaluationContext(
                 stage_name="atomic_inventory",
-                raw_text=compendium.body,
+                raw_text=compendium.content.body,
                 candidate_text=json.dumps(candidate_data),
                 metadata={
-                    "title": compendium.title.value,
-                    "channel": (
-                        compendium.channel_name.value
-                        if isinstance(compendium.channel_name, ChannelName)
-                        else compendium.channel_name
-                    ),
+                    "title": compendium.content.title,
+                    "channel": compendium.channel.name,
                 },
                 trace_id=judge_trace_id,
                 required_criteria=(JudgeCriterion.INVENTORY_COHERENCE,),
@@ -235,9 +229,9 @@ class DiscoverAtomicInventoryUseCase:
         if not isinstance(self.prompt_provider, NoOpPromptProviderPort):
             judge_prompt = self.prompt_provider.get_prompt(
                 PromptKey.JUDGE_ATOMIC_INVENTORY,
-                content_title=compendium.title.value,
-                channel_name=compendium.channel_name,
-                compendium_body=compendium.body,
+                content_title=compendium.content.title,
+                channel_name=compendium.channel.name,
+                compendium_body=compendium.content.body,
                 inventory_json=json.dumps(candidate_data),
             )
             judge_response = self.llm_synthesis_port.transform(
@@ -270,20 +264,17 @@ class DiscoverAtomicInventoryUseCase:
         """
         chat_prompt = self.prompt_provider.get_prompt(
             PromptKey.ATOMIC_INVENTORY,
-            content_title=compendium.title.value,
-            channel_name=compendium.channel_name,
-            compendium_body=compendium.body,
+            content_title=compendium.content.title,
+            channel_name=compendium.channel.name,
+            compendium_body=compendium.content.body,
         )
 
         session_id = PipelineSessionId.create(
-            channel=compendium.channel_name,
-            content_id=compendium.content_id,
-            channel_id=compendium.channel_id
-            if isinstance(compendium.channel_id, ChannelId)
-            else None,
+            channel=compendium.channel,
+            content_id=compendium.content,
         ).value
         user_id = user.value if user is not None else UserIdentity.anonymous().value
-        content_id = compendium.content_id.value
+        content_id = compendium.content.id.value
 
         for retries in range(self.max_rewrites + 1):
             trace_suffix = "" if retries == 0 else f"_retry_{retries}"
@@ -313,12 +304,12 @@ class DiscoverAtomicInventoryUseCase:
                 break
         else:
             raise DomainValidationError(
-                f"Candidate entity inventory rejected by LLM-as-a-judge for '{compendium.title.value}'."
+                f"Candidate entity inventory rejected by LLM-as-a-judge for '{compendium.content.title}'."
             )
 
         if not isinstance(candidate_data, list):
             raise DomainValidationError(
-                f"Expected JSON array of entities for '{compendium.title.value}', got: {type(candidate_data).__name__}"
+                f"Expected JSON array of entities for '{compendium.content.title}', got: {type(candidate_data).__name__}"
             )
-        items = _parse_and_deduplicate_items(candidate_data, compendium.title.value)
+        items = _parse_and_deduplicate_items(candidate_data, compendium.content.title)
         return AtomicEntityInventory(items=items)

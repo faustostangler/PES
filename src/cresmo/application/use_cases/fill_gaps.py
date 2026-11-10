@@ -154,15 +154,16 @@ class FillGapsUseCase:
                 "StageTranscript must contain a non-empty 'Extra Info' section."
             )
 
+        full_body = f"{body}\n\n### Extra Info\n\n{complementary_information}"
+
         compendium = StageTranscript(
             channel=fluid_transcript.channel,
             provenance=fluid_transcript.provenance,
             content=Content.create(
                 id=fluid_transcript.content.id,
                 title=extracted_title,
-                body=body,
+                body=full_body,
             ),
-            complementary_info=complementary_information,
             pass_count=passes,
             metadata=dict(fluid_transcript.metadata),
         )

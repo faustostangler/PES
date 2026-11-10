@@ -78,7 +78,7 @@ def generate_stage_candidate[TSource, TOutput](
         prompt=chat_prompt,
         temperature=stage_config.temperature,
         trace_id=f"{active_trace_id}_pass_1" if max_passes > 1 else active_trace_id,
-        session_id=context.session_id.value,
+        session_id=context.content.session_id,
         user_id=context.user_identity.value,
     )
 
@@ -108,7 +108,7 @@ def generate_stage_candidate[TSource, TOutput](
                 prompt=chat_prompt,
                 temperature=stage_config.temperature,
                 trace_id=f"{active_trace_id}_pass_{pass_index}",
-                session_id=context.session_id.value,
+                session_id=context.content.session_id,
                 user_id=context.user_identity.value,
             )
             actual_passes = pass_index

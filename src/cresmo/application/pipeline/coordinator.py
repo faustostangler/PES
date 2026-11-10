@@ -28,7 +28,6 @@ from cresmo.application.pipeline.context import PipelineExecutionContext
 from cresmo.application.pipeline.models import (
     PipelineDependencies,
     PipelineResult,
-    StageConveyorStep,
 )
 from cresmo.application.pipeline.stage_factory import StageFactory
 from cresmo.application.pipeline.stage_runner import PipelineStageRunner
@@ -60,6 +59,7 @@ from cresmo.domain.entities import (
     UserIdentity,
 )
 from cresmo.domain.exceptions import CresmoDomainError
+from cresmo.domain.stage_registry import StageName
 from cresmo.domain.value_objects import (
     BatchId,
     RawIndexEntry,
@@ -70,17 +70,14 @@ logger = structlog.get_logger(__name__)
 
 
 def _extract_source_text(source_target: StageTranscript | Any) -> str:
-    """Extract raw transcript text from StageTranscript triad or duck-typed raw sources."""
+    """Extract raw transcript text from StageTranscript triad."""
     if isinstance(source_target, StageTranscript):
-        return source_target.body
+        return source_target.content.body
     content = getattr(source_target, "content", None)
     if content is not None:
         body = getattr(content, "body", None)
         if isinstance(body, str) and body:
             return body
-    body = getattr(source_target, "body", None)
-    if isinstance(body, str) and body:
-        return body
     text = getattr(source_target, "text", None)
     if isinstance(text, str) and text:
         return text
@@ -88,23 +85,14 @@ def _extract_source_text(source_target: StageTranscript | Any) -> str:
 
 
 def _extract_fluid_text(source: StageTranscript | Any) -> str:
-    """Extract synthesized fluid prose text from StageTranscript envelope or duck-typed candidate."""
+    """Extract synthesized fluid prose text from StageTranscript envelope."""
     if isinstance(source, StageTranscript):
-        if source.complementary_info:
-            return f"{source.body}\n\n### Extra Info\n\n{source.complementary_info}"
-        return source.body
+        return source.content.body
     content = getattr(source, "content", None)
-    body = getattr(content, "body", None) if content is not None else getattr(source, "body", None)
-    complementary_info = getattr(source, "complementary_info", None)
-    if (
-        isinstance(body, str)
-        and isinstance(complementary_info, str)
-        and body
-        and complementary_info
-    ):
-        return f"{body}\n\n### Extra Info\n\n{complementary_info}"
-    if isinstance(body, str) and body:
-        return body
+    if content is not None:
+        body = getattr(content, "body", None)
+        if isinstance(body, str) and body:
+            return body
     text = getattr(source, "text", None)
     if isinstance(text, str) and text:
         return text
@@ -229,10 +217,7 @@ class CresmoPipeline:
         """Execute the end-to-end synthesis pipeline (canonical Template Method)."""
         channel = raw.channel
         content = raw.content
-        session_id = PipelineSessionId.create(
-            channel=channel,
-            content_id=content,
-        )
+        session_id = PipelineSessionId(content.session_id)
         user_identity = user or UserIdentity.anonymous()
 
         raw_text = _extract_source_text(raw)
@@ -275,7 +260,6 @@ class CresmoPipeline:
                 return early_result
 
             execution_context = PipelineExecutionContext(
-                session_id=session_id,
                 user_identity=user_identity,
                 channel=channel,
                 content=content,
@@ -284,10 +268,10 @@ class CresmoPipeline:
             # =========================================================================
             # CRESMO STAGES CONVEYOR PIPELINE (ADR-007, ADR-043, ADR-054, ADR-057)
             # =========================================================================
-            conveyor_steps: list[StageConveyorStep] = [
-                StageConveyorStep(name="fluid_prose"),
-                StageConveyorStep(name="gap_filler"),
-            ]
+            conveyor_steps: tuple[StageName, ...] = (
+                StageName.FLUID_PROSE,
+                StageName.GAP_FILLER,
+            )
 
             stage_artifacts: dict[str, Any] = {"raw": raw}
             current_source: Any = raw
@@ -295,41 +279,34 @@ class CresmoPipeline:
             for step in conveyor_steps:
                 artifact = None
                 if not force_reprocess:
-                    cached = (
-                        step.cache_getter(self.vault_port, content.id)
-                        if step.cache_getter
-                        else self.vault_port.get_stage_transcript(step.name, content.id)
-                    )
-                    if isinstance(cached, step.artifact_type):
+                    cached = self.vault_port.get_stage_transcript(step, content.id)
+                    if isinstance(cached, StageTranscript):
                         artifact = cached
                         logger.info(
                             "Reusing cached %s for content_id '%s'",
-                            step.name,
+                            step,
                             content.id.value,
                         )
 
                 if artifact is None:
                     extra_kwargs: dict[str, Any] = {}
-                    if step.name == "gap_filler":
+                    if step == StageName.GAP_FILLER:
                         extra_kwargs["max_passes"] = gap_filler_passes
 
                     artifact = self.stage_runner.execute_stage(
-                        step.name,
+                        step,
                         source=current_source,
                         context=execution_context,
                         **extra_kwargs,
                     )
-                    if isinstance(artifact, step.artifact_type):
-                        if step.cache_saver:
-                            step.cache_saver(self.vault_port, artifact)
-                        elif isinstance(artifact, StageTranscript):
-                            self.vault_port.save_stage_transcript(step.name, artifact)
+                    if isinstance(artifact, StageTranscript):
+                        self.vault_port.save_stage_transcript(step, artifact)
 
-                stage_artifacts[step.name] = artifact
+                stage_artifacts[step] = artifact
                 current_source = artifact
 
-            fluid: Any = stage_artifacts["fluid_prose"]
-            gaps: Any = stage_artifacts["gap_filler"]
+            fluid: Any = stage_artifacts[StageName.FLUID_PROSE]
+            gaps: Any = stage_artifacts[StageName.GAP_FILLER]
 
             # Note: Subsequent conveyor stages (long_expander, wide_expander, raw_indexing,
             # atomic_inventory, atomic_batch, reconcile_mocs) will be appended to conveyor_steps
@@ -341,8 +318,14 @@ class CresmoPipeline:
             expansion_ratio = round(synthesized_word_count / max(raw_word_count, 1), 3)
 
             # Trace output (ADR-037 canonical DDD metrics)
-            raw_title = getattr(gaps, "title", getattr(fluid, "title", content.title))
-            resolved_title = str(getattr(raw_title, "value", raw_title or ""))
+            gaps_content = getattr(gaps, "content", None)
+            fluid_content = getattr(fluid, "content", None)
+            resolved_title = str(
+                getattr(gaps_content, "title", None)
+                or getattr(fluid_content, "title", None)
+                or content.title
+                or ""
+            )
             self.telemetry_port.record_session_output(
                 {
                     "status": "COMPLETED",

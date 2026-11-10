@@ -30,7 +30,7 @@ Eliminate all convenience keyword arguments in `StageTranscript.__init__`. Calle
 Remove `_TABLE_PATTERN` and all Markdown table rejection checks from `StageTranscript` and subclasses. Formatting compliance is governed by Stage Descriptors, LLM prompts, and `LlmJudgePort` evaluators.
 
 ### 4. Complete Decommissioning of Subclasses
-Completely remove `SourceTranscript`, `FluidTranscript`, `EnrichedCompendium`, and `Transcript` across the entire codebase (`src/` and `tests/`). All ports, use cases, pipeline coordinators, and infrastructure adapters operate strictly on the single monomorphic `StageTranscript` envelope (`StageConveyorStep.artifact_type` defaults to `StageTranscript`).
+Completely remove `SourceTranscript`, `FluidTranscript`, `EnrichedCompendium`, and `Transcript` across the entire codebase (`src/` and `tests/`). All ports, use cases, pipeline coordinators, and infrastructure adapters operate strictly on the single monomorphic `StageTranscript` envelope and `StageName(StrEnum)` conveyor steps.
 
 ---
 

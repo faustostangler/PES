@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from dataclasses import dataclass, field
+from enum import StrEnum
 from typing import Any, ClassVar
 
 from cresmo.domain.entities import (
@@ -11,6 +12,13 @@ from cresmo.domain.entities import (
     post_process_fluid_transcript,
 )
 from cresmo.domain.value_objects import JudgeCriterion, PromptKey
+
+
+class StageName(StrEnum):
+    """Canonical enumeration of conveyor pipeline stage identifiers."""
+
+    FLUID_PROSE = "fluid_prose"
+    GAP_FILLER = "gap_filler"
 
 
 @dataclass(frozen=True, slots=True)
@@ -35,7 +43,7 @@ class StageRegistry:
     """
 
     _SPECS: ClassVar[dict[str, StageDefinition]] = {
-        "fluid_prose": StageDefinition(
+        StageName.FLUID_PROSE: StageDefinition(
             transform_prompt_key=PromptKey.FLUID_PROSE,
             judge_prompt_key=PromptKey.JUDGE_FLUID_PROSE,
             required_criteria=(
@@ -48,7 +56,7 @@ class StageRegistry:
             ),
             post_processor=post_process_fluid_transcript,
         ),
-        "gap_filler": StageDefinition(
+        StageName.GAP_FILLER: StageDefinition(
             transform_prompt_key=PromptKey.GAP_FILLER,
             judge_prompt_key=PromptKey.JUDGE_GAP_FILLER,
             required_criteria=(

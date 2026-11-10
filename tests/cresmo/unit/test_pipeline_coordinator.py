@@ -67,16 +67,7 @@ class TestTextExtractionHelpers:
         raw_content.content.body = "Content body text"
         assert _extract_source_text(raw_content) == "Content body text"
 
-        # Content without body attribute (AttributeError if default omitted in getattr)
-        raw_content_no_body = MagicMock(content=object(), body="Fallback from raw.body")
-        assert _extract_source_text(raw_content_no_body) == "Fallback from raw.body"
-
-        # Content without body, fallback to raw.body
-        raw_body = MagicMock(spec=["body"])
-        raw_body.body = "Raw body text"
-        assert _extract_source_text(raw_body) == "Raw body text"
-
-        # Raw without body, fallback to raw.text
+        # Content without body, fallback to raw.text
         raw_text = MagicMock(spec=["text"])
         raw_text.text = "Raw text only"
         assert _extract_source_text(raw_text) == "Raw text only"
@@ -89,21 +80,7 @@ class TestTextExtractionHelpers:
         # Pure Value Object triad shape (StageTranscript with content.body)
         fluid_triad = MagicMock()
         fluid_triad.content.body = "Fluid prose from content triad"
-        fluid_triad.complementary_info = None
         assert _extract_fluid_text(fluid_triad) == "Fluid prose from content triad"
-
-        # Pure Value Object triad with complementary_info
-        fluid_triad_with_comp = MagicMock()
-        fluid_triad_with_comp.content.body = "Fluid prose body"
-        fluid_triad_with_comp.complementary_info = "Supplementary encyclopedic data"
-        assert _extract_fluid_text(fluid_triad_with_comp) == (
-            "Fluid prose body\n\n### Extra Info\n\nSupplementary encyclopedic data"
-        )
-
-        # Body shape
-        fluid_body = MagicMock(spec=["body"])
-        fluid_body.body = "Fluid body prose"
-        assert _extract_fluid_text(fluid_body) == "Fluid body prose"
 
         # Text shape
         fluid_text = MagicMock(spec=["text"])
@@ -352,9 +329,10 @@ class TestCresmoPipelineExecutionAndIdempotency:
         mock_runner = MagicMock(spec=PipelineStageRunner)
 
         class FluidOutput:
-            title = "Polished Pareto Essay"
-            body = (
-                "Synthesized Pareto prose text with higher conceptual density and no verbal noise."
+            content = Content(
+                id=ContentId("c1234567"),
+                title="Polished Pareto Essay",
+                body="Synthesized Pareto prose text with higher conceptual density and no verbal noise.",
             )
 
         mock_runner.execute_stage.return_value = FluidOutput()
@@ -427,14 +405,14 @@ class TestCresmoPipelineExecutionAndIdempotency:
         assert output_payload["stages_completed"] == ["fluid_prose", "gap_filler"]
         assert output_payload["content_title"] == "Polished Pareto Essay"
         raw_words = len(sample_source_transcript.content.body.split())
-        synth_words = len(FluidOutput.body.split())
+        synth_words = len(FluidOutput.content.body.split())
         assert output_payload["word_count"] == synth_words
-        assert output_payload["char_count"] == len(FluidOutput.body)
+        assert output_payload["char_count"] == len(FluidOutput.content.body)
         assert output_payload["source_words"] == raw_words
         assert output_payload["synthesized_words"] == synth_words
         assert output_payload["expansion_ratio"] == round(synth_words / max(raw_words, 1), 3)
         assert output_payload["source_characters"] == len(sample_source_transcript.content.body)
-        assert output_payload["synthesized_characters"] == len(FluidOutput.body)
+        assert output_payload["synthesized_characters"] == len(FluidOutput.content.body)
 
     def test_execute_with_minimal_metadata_and_defaults(self) -> None:
         raw_bare = StageTranscript(
@@ -485,7 +463,11 @@ class TestCresmoPipelineExecutionAndIdempotency:
         mock_runner = MagicMock(spec=PipelineStageRunner)
 
         class MultiWordFluid:
-            body = "One two three four five six seven eight nine ten"
+            content = Content(
+                id=ContentId("c1word"),
+                title="T",
+                body="One two three four five six seven eight nine ten",
+            )
 
         mock_runner.execute_stage.return_value = MultiWordFluid()
         mock_t = MagicMock(spec=TelemetryPort)

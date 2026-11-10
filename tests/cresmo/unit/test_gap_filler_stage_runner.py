@@ -23,37 +23,37 @@ from cresmo.application.ports import (
     NoOpTelemetryPort,
 )
 from cresmo.domain.entities import (
-    PipelineSessionId,
+    StageTranscript,
     UserIdentity,
 )
-from cresmo.domain.entities.compendium import StageTranscript
-from cresmo.domain.entities.transcripts import StageTranscript
 from cresmo.domain.value_objects import (
     Channel,
     ChannelId,
     Content,
     ContentId,
+    MediaProvenance,
 )
 
 
 @pytest.fixture
 def sample_context() -> PipelineExecutionContext:
     return PipelineExecutionContext(
-        session_id=PipelineSessionId("sess:gap_filler"),
         user_identity=UserIdentity.worker(),
         channel=Channel(name="Historia", id=ChannelId("UC_hist")),
-        content=Content.create(id=ContentId("vid_hist1"), title="Fundação"),
+        content=Content.create(id=ContentId("vid_hist1"), title="Fundação", session_id="sess:gap_filler"),
     )
 
 
 @pytest.fixture
 def sample_fluid_transcript() -> StageTranscript:
-    return StageTranscript.create(
-        channel_name="Historia",
-        content_id="vid_hist1",
-        title="Fundação",
-        body="## Fundação de Portugal\n\nTexto fluido sem oralidades.",
-        source_url="https://youtube.com/watch?v=vid_hist1",
+    return StageTranscript(
+        channel=Channel(name="Historia", id=ChannelId("UC_hist")),
+        provenance=MediaProvenance.create(url="https://youtube.com/watch?v=vid_hist1"),
+        content=Content.create(
+            id="vid_hist1",
+            title="Fundação",
+            body="## Fundação de Portugal\n\nTexto fluido sem oralidades.",
+        ),
     )
 
 
@@ -88,9 +88,9 @@ def test_gap_filler_execution_single_pass_override(
     )
 
     assert isinstance(result, StageTranscript)
-    assert result.content_id == ContentId("vid_hist1")
-    assert "Henrique de Borgonha" in result.body
-    assert "1066-1112" in result.complementary_info
+    assert result.content.id == ContentId("vid_hist1")
+    assert "Henrique de Borgonha" in result.content.body
+    assert "1066-1112" in result.content.body
     assert mock_llm.transform.call_count == 1
 
 
@@ -144,9 +144,9 @@ def test_gap_filler_execution_multi_pass_to_completion(
     )
 
     assert isinstance(result, StageTranscript)
-    assert result.content_id == ContentId("vid_hist1")
-    assert "Henrique de Borgonha" in result.body
-    assert "Teresa de Leão" in result.complementary_info
+    assert result.content.id == ContentId("vid_hist1")
+    assert "Henrique de Borgonha" in result.content.body
+    assert "Teresa de Leão" in result.content.body
     # Proves all 3 passes were executed as declared by domain intelligence
     assert mock_llm.transform.call_count == 3
 

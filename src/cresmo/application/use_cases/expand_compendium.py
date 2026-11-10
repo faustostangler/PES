@@ -25,7 +25,7 @@ from cresmo.domain.entities import (
     UserIdentity,
 )
 from cresmo.domain.exceptions import CompendiumStructureError
-from cresmo.domain.value_objects import Channel, Content, PromptKey
+from cresmo.domain.value_objects import Content, PromptKey
 
 # Resilient regex matching variations of the mandatory complementary section header
 _COMPLEMENTARY_REGEX = re.compile(
@@ -81,20 +81,28 @@ class ExpandCompendiumUseCase:
             DomainValidationError: If construction invariants are violated.
         """
         session_id = PipelineSessionId.create(
-            channel=Channel(name=compendium.channel_name, id=compendium.channel_id),
-            content_id=compendium.content_id,
+            channel=compendium.channel,
+            content_id=compendium.content,
         ).value
         user_id = user.value if user is not None else UserIdentity.anonymous().value
 
+        source_match = _COMPLEMENTARY_REGEX.search(compendium.content.body)
+        if source_match:
+            source_body = compendium.content.body[: source_match.start()].strip()
+            source_complementary = compendium.content.body[source_match.end() :].strip()
+        else:
+            source_body = compendium.content.body.strip()
+            source_complementary = ""
+
         long_prompt = self.prompt_provider.get_prompt(
             PromptKey.LONG_EXPANDER,
-            compendium_body=compendium.body,
-            complementary_info=compendium.complementary_info,
+            compendium_body=source_body,
+            complementary_info=source_complementary,
         )
         longitudinal_expansion = self.llm_synthesis_port.transform(
             prompt=long_prompt,
             temperature=self.temperature,
-            trace_id=f"{compendium.content_id.value}_longitudinal",
+            trace_id=f"{compendium.content.id.value}_longitudinal",
             session_id=session_id,
             user_id=user_id,
         )
@@ -106,7 +114,7 @@ class ExpandCompendiumUseCase:
         synchronic_expansion = self.llm_synthesis_port.transform(
             prompt=wide_prompt,
             temperature=self.temperature,
-            trace_id=f"{compendium.content_id.value}_synchronic",
+            trace_id=f"{compendium.content.id.value}_synchronic",
             session_id=session_id,
             user_id=user_id,
         )
@@ -117,7 +125,7 @@ class ExpandCompendiumUseCase:
             complementary_information = synchronic_expansion[complementary_match.end() :].strip()
         else:
             body = synchronic_expansion.strip()
-            complementary_information = compendium.complementary_info
+            complementary_information = source_complementary
 
         # Strip any leading H1 # Title from body if generated
         body = _TITLE_H1_PATTERN.sub("", body).strip()
@@ -125,15 +133,16 @@ class ExpandCompendiumUseCase:
         if not complementary_information:
             raise CompendiumStructureError("Missing complementary info in expansion.")
 
+        full_body = f"{body}\n\n### Extra Info\n\n{complementary_information}"
+
         updated = StageTranscript(
             channel=compendium.channel,
             provenance=compendium.provenance,
             content=Content.create(
-                id=compendium.content_id,
-                title=compendium.title,
-                body=body,
+                id=compendium.content.id,
+                title=compendium.content.title,
+                body=full_body,
             ),
-            complementary_info=complementary_information,
             pass_count=compendium.pass_count + 1 if compendium.pass_count else 2,
             metadata=dict(compendium.metadata),
         )

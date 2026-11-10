@@ -8,8 +8,6 @@ from cresmo.application.pipeline.stage_factory import StageFactory
 from cresmo.application.ports import DefaultPipelineSettings
 from cresmo.domain.entities import (
     StageTranscript,
-    PipelineSessionId,
-    StageTranscript,
     UserIdentity,
 )
 from cresmo.domain.value_objects import (
@@ -20,6 +18,7 @@ from cresmo.domain.value_objects import (
     Content,
     ContentId,
     JudgeCriterion,
+    MediaProvenance,
     PromptKey,
 )
 
@@ -27,15 +26,15 @@ from cresmo.domain.value_objects import (
 def test_pipeline_execution_context_creation() -> None:
     """Verify PipelineExecutionContext holds all execution provenance fields."""
     channel = Channel(name="Test Channel", id=ChannelId("UC_test123"))
-    content = Content.create(id=ContentId("test_vid"), title="Test Content")
+    content = Content.create(id=ContentId("test_vid"), title="Test Content", session_id="test_chan:test_vid")
     ctx = PipelineExecutionContext(
-        session_id=PipelineSessionId("test_chan:test_vid"),
         user_identity=UserIdentity.worker(),
         channel=channel,
         content=content,
     )
 
-    assert ctx.session_id.value == "test_chan:test_vid"
+    assert not hasattr(ctx, "session_id")
+    assert ctx.content.session_id == "test_chan:test_vid"
     assert ctx.user_identity.is_anonymous is False
     assert ctx.channel.name == "Test Channel"
     assert ctx.content.id.value == "test_vid"
@@ -53,9 +52,8 @@ def test_pipeline_execution_context_creation() -> None:
 def test_pipeline_execution_context_composite_creation() -> None:
     """Verify PipelineExecutionContext receives composite Channel and Content VOs (ADR-032)."""
     channel = Channel.from_name("Test Channel", id="UC_test123")
-    content = Content.create("test_vid", title="Sample Title")
+    content = Content.create("test_vid", title="Sample Title", session_id="test_chan:test_vid")
     ctx = PipelineExecutionContext(
-        session_id=PipelineSessionId("test_chan:test_vid"),
         user_identity=UserIdentity.worker(),
         channel=channel,
         content=content,
@@ -95,9 +93,9 @@ def test_stage_factory_builds_fluid_prose_descriptor() -> None:
 
     # Verify source text extraction
     source = StageTranscript(
-        content_id=ContentId("c123"),
-        channel_name=ChannelName("Ch"),
-        body="Verbatim source audio.",
+        channel=Channel(name=ChannelName("Ch")),
+        provenance=MediaProvenance.empty(),
+        content=Content(id=ContentId("c123"), body="Verbatim source audio."),
     )
     extracted = descriptor.eval_spec.extract_source_text(source)
     assert extracted == "Verbatim source audio."
@@ -156,9 +154,9 @@ def test_stage_factory_generic_build_stage_custom_parameters() -> None:
     assert descriptor.eval_spec.candidate_extractor(candidate) == "extracted:raw response"
 
     dummy_source = StageTranscript(
-        content_id=ContentId("dummy_content"),
-        channel_name=ChannelName("dummy_channel"),
-        body="dummy body",
+        channel=Channel(name=ChannelName("dummy_channel")),
+        provenance=MediaProvenance.empty(),
+        content=Content(id=ContentId("dummy_content"), body="dummy body"),
     )
     assert descriptor.eval_spec.extract_source_text(dummy_source) == "src:dummy body"
 

@@ -315,9 +315,10 @@ class TestPipelineStageRunnerEvaluatedStage:
         )
 
         channel = Channel(name="CtxChannel")
-        content = Content.create(id=ContentId("vid_ctx_1"), title="CtxTitle")
+        content = Content.create(
+            id=ContentId("vid_ctx_1"), title="CtxTitle", session_id="ch_test:vid_ctx_1"
+        )
         ctx = PipelineExecutionContext(
-            session_id=PipelineSessionId("ch_test:vid_ctx_1"),
             user_identity=UserIdentity.worker(),
             channel=channel,
             content=content,
@@ -440,10 +441,9 @@ class TestPipelineStageRunnerEvaluatedStage:
         )
 
         context = PipelineExecutionContext(
-            session_id=PipelineSessionId.create(channel="test_chan", content_id="test_vid"),
             user_identity=UserIdentity.anonymous(),
             channel=Channel(name="TestChan"),
-            content=Content(id=ContentId("test_vid")),
+            content=Content(id=ContentId("test_vid"), session_id="test_chan:test_vid"),
         )
 
         candidate = CandidateText(text="candidate prose", stage_name="fluid_prose")
@@ -490,10 +490,9 @@ class TestPipelineStageRunnerEvaluatedStage:
         )
 
         context = PipelineExecutionContext(
-            session_id=PipelineSessionId.create(channel="test_chan", content_id="test_vid"),
             user_identity=UserIdentity.anonymous(),
             channel=Channel(name="TestChan"),
-            content=Content(id=ContentId("test_vid")),
+            content=Content(id=ContentId("test_vid"), session_id="test_chan:test_vid"),
         )
         candidate = CandidateText(text="candidate prose", stage_name="fluid_prose")
 
@@ -1025,10 +1024,11 @@ class TestStageRunnerExecuteStageRetriesAndQuarantine:
             content=Content(id=ContentId("vid_retry_1"), title="Retry Title", body="Source audio text words."),
         )
         ctx = PipelineExecutionContext(
-            session_id=PipelineSessionId("ret_sess:1"),
             user_identity=UserIdentity.worker(),
             channel=Channel(name="RetCh", id=ChannelId("UC_ret")),
-            content=Content.create(id=ContentId("vid_retry_1"), title="Retry Title"),
+            content=Content.create(
+                id=ContentId("vid_retry_1"), title="Retry Title", session_id="ret_sess:1"
+            ),
         )
 
         result = runner.execute_stage(stage_cfg, source, context=ctx)
@@ -1104,10 +1104,11 @@ class TestStageRunnerExecuteStageRetriesAndQuarantine:
             content=Content(id=ContentId("vid_unblock"), title="Unblock Title", body="Source text words."),
         )
         ctx = PipelineExecutionContext(
-            session_id=PipelineSessionId("unblock_sess:1"),
             user_identity=UserIdentity.worker(),
             channel=Channel(name="UnblockCh"),
-            content=Content.create(id=ContentId("vid_unblock"), title="Unblock Title"),
+            content=Content.create(
+                id=ContentId("vid_unblock"), title="Unblock Title", session_id="unblock_sess:1"
+            ),
         )
 
         result = runner.execute_stage(stage_cfg, source, context=ctx)
@@ -1172,10 +1173,13 @@ class TestStageRunnerExecuteStageRetriesAndQuarantine:
             content=Content(id=ContentId("vid_quarantine"), title="Quarantine Title", body="Source text words."),
         )
         ctx = PipelineExecutionContext(
-            session_id=PipelineSessionId("quarantine_sess:1"),
             user_identity=UserIdentity.worker(),
             channel=Channel(name="QuarantineCh", id=ChannelId("UC_quarantine")),
-            content=Content.create(id=ContentId("vid_quarantine"), title="Quarantine Title"),
+            content=Content.create(
+                id=ContentId("vid_quarantine"),
+                title="Quarantine Title",
+                session_id="quarantine_sess:1",
+            ),
         )
 
         with pytest.raises(StageQuarantinedError) as exc_info:
@@ -1213,10 +1217,11 @@ class TestStageRunnerCandidateGenerationAndEvaluation:
         mock_stage_cfg.build_transform_prompt.return_value = "Formatted prompt"
 
         ctx = PipelineExecutionContext(
-            session_id=PipelineSessionId("sess:123"),
             user_identity=UserIdentity.worker(),
             channel=Channel(name="TechChan", id=ChannelId("UC_tech")),
-            content=Content.create(id=ContentId("c1234567"), title="Ep 1"),
+            content=Content.create(
+                id=ContentId("c1234567"), title="Ep 1", session_id="sess:123"
+            ),
         )
 
         candidate = runner._generate_candidate(
@@ -1265,10 +1270,11 @@ class TestStageRunnerCandidateGenerationAndEvaluation:
         mock_stage_cfg.build_transform_prompt.return_value = "P"
 
         ctx = PipelineExecutionContext(
-            session_id=PipelineSessionId("sess:456"),
             user_identity=UserIdentity.worker(),
             channel=Channel(name="NoIdChan", id=None),
-            content=Content.create(id=ContentId("c7654321"), title="Ep 2"),
+            content=Content.create(
+                id=ContentId("c7654321"), title="Ep 2", session_id="sess:456"
+            ),
         )
 
         mock_pp = MagicMock()
@@ -1301,10 +1307,9 @@ class TestStageRunnerCandidateGenerationAndEvaluation:
         mock_stage_cfg = MagicMock()
         mock_stage_cfg.eval_spec = None
         ctx = PipelineExecutionContext(
-            session_id=PipelineSessionId("s:1"),
             user_identity=UserIdentity.worker(),
             channel=Channel(name="Ch"),
-            content=Content.create(id=ContentId("c1234567"), title="T"),
+            content=Content.create(id=ContentId("c1234567"), title="T", session_id="s:1"),
         )
         cand = CandidateText(text="hello", stage_name="s", metadata={})
         assert (
@@ -1377,10 +1382,9 @@ class TestStageRunnerCandidateGenerationAndEvaluation:
         )
 
         ctx = PipelineExecutionContext(
-            session_id=PipelineSessionId("s:1"),
             user_identity=UserIdentity.worker(),
             channel=Channel(name="Ch", id=ChannelId("UC_1")),
-            content=Content.create(id=ContentId("c1234567"), title="Ep 1"),
+            content=Content.create(id=ContentId("c1234567"), title="Ep 1", session_id="s:1"),
         )
         cand = CandidateText(text="cleaned prose", stage_name="fluid_prose", metadata={})
 
@@ -1465,10 +1469,9 @@ class TestStageRunnerCandidateGenerationAndEvaluation:
             ),
         )
         ctx = PipelineExecutionContext(
-            session_id=PipelineSessionId("s:2"),
             user_identity=UserIdentity.worker(),
             channel=Channel(name="Ch", id=None),
-            content=Content.create(id=ContentId("c1234567"), title="Ep 2"),
+            content=Content.create(id=ContentId("c1234567"), title="Ep 2", session_id="s:2"),
         )
         cand = CandidateText(text="imperfect", stage_name="fluid_prose", metadata={})
 
@@ -1808,10 +1811,9 @@ class TestStageRunnerStageExecutionAndFallback:
         )
 
         ctx = PipelineExecutionContext(
-            session_id=PipelineSessionId("s:1"),
             user_identity=UserIdentity.worker(),
             channel=Channel(name="ExChan", id=ChannelId("UC_ex")),
-            content=Content.create(id=ContentId("c1234567"), title="Ex Title"),
+            content=Content.create(id=ContentId("c1234567"), title="Ex Title", session_id="s:1"),
         )
 
         # Case 1: source has .body string, eval_spec is None
@@ -2178,10 +2180,9 @@ class TestStageRunnerStageExecutionAndFallback:
         runner = PipelineStageRunner(telemetry_port=mock_t, metrics_port=mock_m)
 
         ctx = PipelineExecutionContext(
-            session_id=PipelineSessionId("s:1"),
             user_identity=UserIdentity.worker(),
             channel=Channel(name="Chan", id=ChannelId("UC_1")),
-            content=Content.create(id=ContentId("c1234567"), title="Title"),
+            content=Content.create(id=ContentId("c1234567"), title="Title", session_id="s:1"),
         )
 
         mock_pp = MagicMock()
@@ -2515,10 +2516,11 @@ class TestStageRunnerStageExecutionAndFallback:
             prompt_provider=MagicMock(),
         )
         ctx = PipelineExecutionContext(
-            session_id=PipelineSessionId("ret_sess:1"),
             user_identity=UserIdentity.worker(),
             channel=Channel(name="RetCh", id=ChannelId("UC_ret")),
-            content=Content.create(id=ContentId("vid_retry_1"), title="Retry Title"),
+            content=Content.create(
+                id=ContentId("vid_retry_1"), title="Retry Title", session_id="ret_sess:1"
+            ),
         )
 
         runner.execute_stage(

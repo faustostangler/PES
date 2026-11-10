@@ -90,26 +90,6 @@ class PipelineSessionId:
 
         return cls(value=f"{channel_identifier}:{content_identifier}")
 
-    @property
-    def channel_id(self) -> str:
-        """Algorithmic channel identifier token stored in the session key (ID or name)."""
-        parts = self.value.split(":")
-        return (
-            parts[1]
-            if parts[0] == "content" and len(parts) == LEGACY_SESSION_ID_PARTS
-            else parts[0]
-        )
-
-    @property
-    def content_id(self) -> str:
-        """Content identifier stored in the session key."""
-        parts = self.value.split(":")
-        return (
-            parts[2]
-            if parts[0] == "content" and len(parts) == LEGACY_SESSION_ID_PARTS
-            else parts[1]
-        )
-
 
 @dataclass(frozen=True)
 class UserIdentity:

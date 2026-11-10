@@ -97,7 +97,7 @@ async def job_process_pipeline_stage(
 
     try:
         from cresmo.application.pipeline.context import PipelineExecutionContext
-        from cresmo.domain.entities import PipelineSessionId, UserIdentity
+        from cresmo.domain.entities import UserIdentity
         from cresmo.domain.value_objects import (
             Channel,
             ChannelId,
@@ -121,13 +121,13 @@ async def job_process_pipeline_stage(
 
         session_key = f"{channel}:{content_id}"
         exec_context = PipelineExecutionContext(
-            session_id=PipelineSessionId(session_key),
             user_identity=UserIdentity("arq-worker"),
-            channel=Channel(channel_id=ChannelId(channel), channel_name=ChannelName(channel)),
+            channel=Channel(name=ChannelName(channel), id=ChannelId(channel)),
             content=Content(
-                content_id=ContentId(content_id),
-                content_title=content_id,
+                id=ContentId(content_id),
+                title=content_id,
                 body=source_payload,
+                session_id=session_key,
             ),
         )
 

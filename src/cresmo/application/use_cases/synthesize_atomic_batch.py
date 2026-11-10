@@ -35,7 +35,6 @@ from cresmo.domain.exceptions import (
 from cresmo.domain.value_objects import (
     AtomicEntityInventory,
     CausalMatrix,
-    ChannelId,
     CrossContextRelations,
     NoteTitle,
     NoteType,
@@ -151,9 +150,9 @@ def _parse_single_atomic_note(
         note_type=note_type,
         definition=definition,
         content_tags=content_tags,
-        domain=str(entry.get("domain", compendium.channel_name)),
+        domain=str(entry.get("domain", compendium.channel.name)),
         cluster=str(entry.get("cluster", "")),
-        source=str(entry.get("source", compendium.title.value)),
+        source=str(entry.get("source", compendium.content.title)),
         aliases=aliases,
         direct_relations=relations,
         causal_matrix=causal_matrix,
@@ -204,23 +203,20 @@ class SynthesizeAtomicBatchUseCase:
 
         chat_prompt = self.prompt_provider.get_prompt(
             PromptKey.ATOMIC_BATCH,
-            content_title=compendium.title.value,
-            channel_name=compendium.channel_name,
-            compendium_body=compendium.body,
+            content_title=compendium.content.title,
+            channel_name=compendium.channel.name,
+            compendium_body=compendium.content.body,
             targets_json=json.dumps(targets_summary, ensure_ascii=False),
         )
         session_id = PipelineSessionId.create(
-            channel=compendium.channel_name,
-            content_id=compendium.content_id,
-            channel_id=compendium.channel_id
-            if isinstance(compendium.channel_id, ChannelId)
-            else None,
+            channel=compendium.channel,
+            content_id=compendium.content,
         ).value
         user_id = user.value if user is not None else UserIdentity.anonymous().value
         response = self.llm_synthesis_port.transform(
             prompt=chat_prompt,
             temperature=self.temperature,
-            trace_id=f"{compendium.content_id.value}_atomic_batch",
+            trace_id=f"{compendium.content.id.value}_atomic_batch",
             session_id=session_id,
             user_id=user_id,
         )

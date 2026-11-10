@@ -14,7 +14,6 @@ Conforms to:
 
 from __future__ import annotations
 
-import datetime
 import re
 from dataclasses import dataclass, field
 from typing import Any
@@ -26,12 +25,8 @@ from cresmo.domain.exceptions import (
 from cresmo.domain.value_objects import (
     CandidateText,
     Channel,
-    ChannelId,
-    ChannelName,
     Content,
-    ContentId,
     MediaProvenance,
-    NoteTitle,
 )
 
 # Matches Markdown H1 title header
@@ -48,21 +43,19 @@ class StageTranscript:
     """Monomorphic domain envelope for transcripts across all pipeline stages.
 
     Conforms to ADR-038 (Pure Value Object Triad Composition), ADR-054, and ADR-057.
-    Composed of the pure Value Object triad:
-    1. channel: Channel (Origin / Creator - channel_id & channel_name)
-    2. provenance: MediaProvenance (Acquisition & Temporal Context)
-    3. content: Content (Textual Artifact & Payload - content_id, content_title, body)
-    4. metadata: dict[str, Any] (Stage Provenance & Lineage)
-    5. complementary_info: str (Encyclopedic context, dates, mini-biographies)
-    6. pass_count: int | None (Number of enrichment passes executed, >= 1 when present)
+    Composed strictly of the pure Value Object triad without duplicate property aliases:
+    1. channel: Channel (Origin / Creator - id, name, category, url)
+    2. provenance: MediaProvenance (Acquisition & Temporal Context - url, description, publication_date)
+    3. content: Content (Textual Artifact & Payload - id, title, body)
+    4. pass_count: int | None (Number of enrichment passes executed, >= 1 when present)
+    5. metadata: dict[str, Any] (Stage Provenance & Lineage)
     """
 
     channel: Channel
     provenance: MediaProvenance
     content: Content
-    metadata: dict[str, Any] = field(default_factory=dict)
-    complementary_info: str = ""
     pass_count: int | None = None
+    metadata: dict[str, Any] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
         """Enforce domain invariants and type validity on pure triad components."""
@@ -78,68 +71,24 @@ class StageTranscript:
         if not self.content.body.strip():
             raise DomainValidationError("StageTranscript content.body cannot be empty or whitespace.")
 
+        if not self.content.session_id:
+            ch_token = self.channel.id.value if self.channel.id else self.channel.name
+            object.__setattr__(
+                self,
+                "content",
+                Content(
+                    id=self.content.id,
+                    title=self.content.title,
+                    body=self.content.body,
+                    session_id=f"{ch_token}:{self.content.id.value}",
+                ),
+            )
+
         if self.pass_count is not None:
             if not isinstance(self.pass_count, int):
                 raise CompendiumStructureError("pass_count must be an integer.")
             if self.pass_count < 1:
                 raise CompendiumStructureError("pass_count must be at least 1.")
-
-    @property
-    def body(self) -> str:
-        """Textual payload of the transcript stage."""
-        return self.content.body
-
-    @property
-    def title(self) -> NoteTitle:
-        """Validated NoteTitle of the transcript payload."""
-        return NoteTitle(self.content.title) if self.content.title.strip() else NoteTitle("Untitled Compendium")
-
-    @property
-    def content_id(self) -> ContentId:
-        """Algorithmic ContentId identifier."""
-        return self.content.id
-
-    @property
-    def channel_name(self) -> ChannelName:
-        """Canonical ChannelName Value Object."""
-        return ChannelName.from_string(self.channel.name)
-
-    @property
-    def channel_id(self) -> ChannelId | None:
-        """Algorithmic channel/creator identifier."""
-        return self.channel.id
-
-    @property
-    def channel_category(self) -> str:
-        """Macro topic classification."""
-        return self.channel.category
-
-    @property
-    def source_url(self) -> str:
-        """Origin web URL."""
-        return self.provenance.url or ""
-
-    @property
-    def publication_date(self) -> datetime.date | None:
-        """Release date."""
-        return self.provenance.publication_date
-
-    @property
-    def video_date(self) -> str:
-        """Formatted timestamp string."""
-        return str(
-            self.metadata.get("video_date")
-            or (
-                self.provenance.publication_date.isoformat()
-                if self.provenance.publication_date
-                else ""
-            )
-        )
-
-    @property
-    def video_description(self) -> str:
-        """Original creator description."""
-        return self.provenance.description or ""
 
 
 def post_process_fluid_transcript(
@@ -180,6 +129,7 @@ def post_process_fluid_transcript(
             id=source.content.id,
             title=extracted_title,
             body=body,
+            session_id=source.content.session_id,
         ),
         metadata=dict(source.metadata),
     )

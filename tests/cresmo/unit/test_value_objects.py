@@ -540,7 +540,7 @@ class TestChannelId:
             cid.uploads_playlist_url
             == "https://www.youtube.com/playlist?list=UU_x5XG1OV2P6uZZ5FSM9Ttw"
         )
-        assert cid.canonical_url == "https://www.youtube.com/channel/UC_x5XG1OV2P6uZZ5FSM9Ttw"
+        assert not hasattr(cid, "canonical_url")
 
     def test_synthetic_channel_id(self) -> None:
         from cresmo.domain.value_objects import ChannelId
@@ -550,7 +550,7 @@ class TestChannelId:
         assert cid.is_youtube_canonical is False
         assert cid.uploads_playlist_id is None
         assert cid.uploads_playlist_url is None
-        assert cid.canonical_url == "priority_text"
+        assert not hasattr(cid, "canonical_url")
 
     def test_channel_id_boundaries_and_invalid_raises(self) -> None:
         from cresmo.domain.exceptions import DomainValidationError
@@ -721,7 +721,7 @@ class TestChannel:
         assert not hasattr(ch, "channel_name")
         assert ch.category == "News"
         assert ch.url == "https://www.youtube.com/@canaldomeio"
-        assert ch.canonical_url == "https://www.youtube.com/@canaldomeio"
+        assert not hasattr(ch, "canonical_url")
         assert str(ch) == "Canal do Meio"
 
     def test_channel_creation_with_string_coercion_and_defaults(self) -> None:
@@ -736,26 +736,11 @@ class TestChannel:
         assert isinstance(ch.id, ChannelId)
         assert ch.id.value == "UC_x5XG1OV2P6uZZ5FSM9Ttw"
         assert ch.category == ""
-        assert ch.url is None
+        assert ch.url == "https://www.youtube.com/channel/UC_x5XG1OV2P6uZZ5FSM9Ttw"
 
         ch_empty_id = Channel(name="Fabio Akita", id="")
         assert ch_empty_id.id is None
-
-    def test_channel_kwargs_aliases(self) -> None:
-        from cresmo.domain.value_objects import Channel, ChannelId
-
-        ch = Channel(
-            channel_name="AliasName",
-            channel_id="UC_x5XG1OV2P6uZZ5FSM9Ttw",
-        )
-        assert ch.name == "AliasName"
-        assert ch.id == ChannelId("UC_x5XG1OV2P6uZZ5FSM9Ttw")
-
-        ch_override = Channel(
-            name="PrimaryName",
-            channel_name="IgnoredName",
-        )
-        assert ch_override.name == "PrimaryName"
+        assert ch_empty_id.url == "https://www.youtube.com/@Fabio Akita"
 
     def test_channel_from_name_factory(self) -> None:
         from cresmo.domain.value_objects import Channel, ChannelId
@@ -768,13 +753,13 @@ class TestChannel:
         assert ch.name == "Veritasium"
         assert ch.id == ChannelId("UCHnyfMqiRRG1u-2MsSQLbXA")
         assert ch.category == "Science"
-        assert ch.canonical_url == "https://www.youtube.com/channel/UCHnyfMqiRRG1u-2MsSQLbXA"
+        assert ch.url == "https://www.youtube.com/channel/UCHnyfMqiRRG1u-2MsSQLbXA"
 
         ch_min = Channel.from_name(name="Minimal")
         assert ch_min.name == "Minimal"
         assert ch_min.id is None
         assert ch_min.category == ""
-        assert ch_min.url is None
+        assert ch_min.url == "https://www.youtube.com/@Minimal"
 
         ch_with_url = Channel.from_name(
             name="CustomUrl",
@@ -782,11 +767,11 @@ class TestChannel:
         )
         assert ch_with_url.url == "https://example.com/custom"
 
-    def test_channel_canonical_url_fallback(self) -> None:
+    def test_channel_url_fallback(self) -> None:
         from cresmo.domain.value_objects import Channel
 
         ch = Channel.from_name(name="NonCanonicalChannel")
-        assert ch.canonical_url == "https://www.youtube.com/@NonCanonicalChannel"
+        assert ch.url == "https://www.youtube.com/@NonCanonicalChannel"
 
     def test_channel_tenant_key(self) -> None:
         from cresmo.domain.value_objects import Channel
@@ -860,25 +845,6 @@ class TestContent:
         cnt_default = Content(id="dQw4w9WgXcQ")
         assert cnt_default.title == ""
         assert cnt_default.body == ""
-
-    def test_content_kwargs_aliases_and_overrides(self) -> None:
-        from cresmo.domain.value_objects import Content, ContentId
-
-        cnt = Content(
-            content_id="alt_content_id",
-            content_title="CustomTitle",
-        )
-        assert cnt.id == ContentId("alt_content_id")
-        assert cnt.title == "CustomTitle"
-
-        cnt_override = Content(
-            id="primary_id",
-            content_id="ignored_id",
-            title="PrimaryTitle",
-            content_title="IgnoredTitle",
-        )
-        assert cnt_override.id == ContentId("primary_id")
-        assert cnt_override.title == "PrimaryTitle"
 
     def test_content_create_factory(self) -> None:
         from cresmo.domain.value_objects import Content, ContentId

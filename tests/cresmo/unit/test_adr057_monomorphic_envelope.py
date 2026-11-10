@@ -21,7 +21,6 @@ from cresmo.domain.value_objects import (
     Content,
     ContentId,
     MediaProvenance,
-    NoteTitle,
 )
 
 
@@ -38,7 +37,8 @@ class TestADR057MonomorphicStageTranscript:
         content = Content(
             id=ContentId("abc123xyz00"),
             title="Clean Title",
-            body="Pure prose without loose arguments.",
+            body="Pure prose without loose arguments.\n\n### Extra Info\n\nExtra encyclopedic notes",
+            session_id="UC123:abc123xyz00",
         )
 
         st = StageTranscript(
@@ -46,18 +46,23 @@ class TestADR057MonomorphicStageTranscript:
             provenance=provenance,
             content=content,
             metadata={"source": "test"},
-            complementary_info="Extra encyclopedic notes",
             pass_count=2,
         )
 
         assert st.channel == channel
         assert st.provenance == provenance
         assert st.content == content
-        assert st.body == "Pure prose without loose arguments."
-        assert st.title == NoteTitle("Clean Title")
-        assert st.content_id == ContentId("abc123xyz00")
-        assert st.complementary_info == "Extra encyclopedic notes"
+        assert st.content.body == "Pure prose without loose arguments.\n\n### Extra Info\n\nExtra encyclopedic notes"
+        assert st.content.title == "Clean Title"
+        assert st.content.id == ContentId("abc123xyz00")
         assert st.pass_count == 2
+        assert not hasattr(st, "body")
+        assert not hasattr(st, "title")
+        assert not hasattr(st, "content_id")
+        assert not hasattr(st, "channel_name")
+        assert not hasattr(st, "channel_id")
+        assert not hasattr(st, "channel_category")
+        assert not hasattr(st, "complementary_info")
 
     def test_rejection_of_missing_triad_value_objects(self) -> None:
         """StageTranscript must not accept missing channel, provenance or content."""
@@ -75,21 +80,19 @@ class TestADR057MonomorphicStageTranscript:
             body="## Header\n\n| Col 1 | Col 2 |\n| --- | --- |\n| A | B |\n\nProse continues.",
         )
 
-        # Neither StageTranscript, StageTranscript nor StageTranscript should reject tables
         stage = StageTranscript(channel=channel, provenance=provenance, content=content)
-        assert "| Col 1 | Col 2 |" in stage.body
+        assert "| Col 1 | Col 2 |" in stage.content.body
 
         fluid = StageTranscript(channel=channel, provenance=provenance, content=content)
-        assert "| Col 1 | Col 2 |" in fluid.body
+        assert "| Col 1 | Col 2 |" in fluid.content.body
 
         comp = StageTranscript(
             channel=channel,
             provenance=provenance,
             content=content,
-            complementary_info="Info",
             pass_count=1,
         )
-        assert "| Col 1 | Col 2 |" in comp.body
+        assert "| Col 1 | Col 2 |" in comp.content.body
 
     def test_url_mismatch_with_content_id_does_not_raise(self) -> None:
         """ContentId is its own VO; URL divergence in provenance does not fail entity creation."""
@@ -102,7 +105,7 @@ class TestADR057MonomorphicStageTranscript:
         )
 
         source = StageTranscript(channel=channel, provenance=provenance, content=content)
-        assert source.content_id == ContentId("local_file_id")
+        assert source.content.id == ContentId("local_file_id")
 
     def test_pass_count_type_validation(self) -> None:
         """pass_count must be int >= 1 when provided."""

@@ -220,7 +220,7 @@ When navigating the architecture, apply these authoritative precedence relations
 - **ADR-021** hoisted the Template Method to `CresmoPipeline.execute(...)` as the single root execution span.
 - **ADR-028** decoupled fluid prose and placed it as Stage 1 *before* `raw_indexing`, ensuring clean normalized prose enters catalog indexing.
 - **ADR-031** introduced `PipelineStageRunner.run_evaluated_stage` and universal `StageConfig`, replacing monolithic coordinator dispatch.
-- **ADR-054** and **ADR-057** unified stage outputs under the monomorphic `StageTranscript` envelope (`Channel`, `MediaProvenance`, `Content`), enabling declarative stage conveyor execution (`StageConveyorStep`).
+- **ADR-054** and **ADR-057** unified stage outputs under the monomorphic `StageTranscript` envelope (`Channel`, `MediaProvenance`, `Content`), enabling declarative stage conveyor execution (`StageName`).
 - **Precedence Rule:** Implementations must strictly follow **ADR-028**, **ADR-031**, and **ADR-057**.
 
 ### 4.2 Legacy Elimination (ADR-010 overrides ADR-009 Backward Compatibility)

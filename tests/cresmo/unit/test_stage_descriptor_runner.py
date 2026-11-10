@@ -20,7 +20,7 @@ from cresmo.application.ports import (
     NoOpTelemetryPort,
     PromptProviderPort,
 )
-from cresmo.domain.entities import PipelineSessionId, StageTranscript, UserIdentity
+from cresmo.domain.entities import StageTranscript, UserIdentity
 from cresmo.domain.value_objects import (
     CandidateText,
     Channel,
@@ -33,6 +33,7 @@ from cresmo.domain.value_objects import (
     CriterionScore,
     JudgeCriterion,
     JudgeEvaluation,
+    MediaProvenance,
     MessageRole,
     PromptKey,
     StageEvaluationSpec,
@@ -71,9 +72,12 @@ class TestStageConfigRunner:
         )
 
         source = StageTranscript(
-            content_id=ContentId("content_test"),
-            channel_name=ChannelName("Channel Alpha"),
-            body="Um, so basically, this is raw spoken text.",
+            channel=Channel(name=ChannelName("Channel Alpha")),
+            provenance=MediaProvenance.empty(),
+            content=Content(
+                id=ContentId("content_test"),
+                body="Um, so basically, this is raw spoken text.",
+            ),
         )
 
         descriptor = StageConfig[StageTranscript, CandidateText](
@@ -88,7 +92,6 @@ class TestStageConfigRunner:
         )
 
         ctx = PipelineExecutionContext(
-            session_id=PipelineSessionId.create(source.channel, source.content),
             user_identity=UserIdentity.worker(),
             channel=source.channel,
             content=source.content,
@@ -157,9 +160,12 @@ class TestStageConfigRunner:
         )
 
         source = StageTranscript(
-            content_id=ContentId("content_retry"),
-            channel_name=ChannelName("Channel Beta"),
-            body="Text with oralities.",
+            channel=Channel(name=ChannelName("Channel Beta")),
+            provenance=MediaProvenance.empty(),
+            content=Content(
+                id=ContentId("content_retry"),
+                body="Text with oralities.",
+            ),
         )
 
         descriptor = StageConfig[StageTranscript, CandidateText](
@@ -174,7 +180,6 @@ class TestStageConfigRunner:
         )
 
         ctx = PipelineExecutionContext(
-            session_id=PipelineSessionId.create(source.channel, source.content),
             user_identity=UserIdentity.worker(),
             channel=source.channel,
             content=source.content,
@@ -213,9 +218,12 @@ class TestStageConfigRunner:
         )
 
         source = StageTranscript(
-            content_id=ContentId("content_post"),
-            channel_name=ChannelName("Channel Gamma"),
-            body="Raw spoken text.",
+            channel=Channel(name=ChannelName("Channel Gamma")),
+            provenance=MediaProvenance.empty(),
+            content=Content(
+                id=ContentId("content_post"),
+                body="Raw spoken text.",
+            ),
         )
 
         def sample_post_processor(candidate: CandidateText, src: StageTranscript) -> str:
@@ -229,7 +237,6 @@ class TestStageConfigRunner:
         )
 
         ctx = PipelineExecutionContext(
-            session_id=PipelineSessionId.create(source.channel, source.content),
             user_identity=UserIdentity.worker(),
             channel=source.channel,
             content=source.content,
@@ -285,11 +292,16 @@ class TestStageConfigRunner:
         )
 
         source = StageTranscript(
-            content_id=ContentId("content_999"),
-            channel_name=ChannelName("Sandeco Channel"),
-            channel_id=ChannelId("UC_SAND123"),
-            title="SOTA DDD Architecture",
-            body="Raw spoken body transcript.",
+            channel=Channel(
+                name=ChannelName("Sandeco Channel"),
+                id=ChannelId("UC_SAND123"),
+            ),
+            provenance=MediaProvenance.empty(),
+            content=Content(
+                id=ContentId("content_999"),
+                title="SOTA DDD Architecture",
+                body="Raw spoken body transcript.",
+            ),
         )
 
         descriptor = StageConfig[StageTranscript, CandidateText](
@@ -304,7 +316,6 @@ class TestStageConfigRunner:
         )
 
         ctx = PipelineExecutionContext(
-            session_id=PipelineSessionId.create(source.channel, source.content),
             user_identity=UserIdentity.worker(),
             channel=source.channel,
             content=source.content,
@@ -393,12 +404,14 @@ class TestStageConfigRunner:
         )
 
         source = StageTranscript(
-            body="Raw ground truth",
-            channel_name=ChannelName("Channel A"),
-            content_id=ContentId("content_isolated"),
+            channel=Channel(name=ChannelName("Channel A")),
+            provenance=MediaProvenance.empty(),
+            content=Content(
+                id=ContentId("content_isolated"),
+                body="Raw ground truth",
+            ),
         )
         ctx = PipelineExecutionContext(
-            session_id=PipelineSessionId.create(source.channel, source.content),
             user_identity=UserIdentity.worker(),
             channel=source.channel,
             content=source.content,
@@ -466,10 +479,9 @@ class TestStageConfigPromptBuilding:
             transform_prompt_key=PromptKey.FLUID_PROSE,
         )
         ctx = PipelineExecutionContext(
-            session_id=PipelineSessionId("sess:1"),
             user_identity=UserIdentity.worker(),
             channel=Channel(name="MyChan", id=ChannelId("UC_chan")),
-            content=Content(id=ContentId("vid_c123"), title="MyTitle"),
+            content=Content(id=ContentId("vid_c123"), title="MyTitle", session_id="sess:1"),
         )
         result = cfg.build_transform_prompt(
             mock_provider,
@@ -498,10 +510,9 @@ class TestStageConfigPromptBuilding:
             transform_prompt_key=PromptKey.FLUID_PROSE,
         )
         ctx = PipelineExecutionContext(
-            session_id=PipelineSessionId("sess:2"),
             user_identity=UserIdentity.worker(),
             channel=Channel(name="NamedChannel", id=None),
-            content=Content(id=ContentId("vid_c123"), title="MyTitle"),
+            content=Content(id=ContentId("vid_c123"), title="MyTitle", session_id="sess:2"),
         )
         cfg.build_transform_prompt(
             mock_provider,
@@ -523,10 +534,9 @@ class TestStageConfigPromptBuilding:
             transform_prompt_key=PromptKey.FLUID_PROSE,
         )
         ctx = PipelineExecutionContext(
-            session_id=PipelineSessionId("sess:3"),
             user_identity=UserIdentity.worker(),
             channel=Channel(name="CustomChan", id=ChannelId("UC_chan")),
-            content=Content(id=ContentId("vid_c456"), title="CustomTitle"),
+            content=Content(id=ContentId("vid_c456"), title="CustomTitle", session_id="sess:3"),
         )
         cfg.build_transform_prompt(
             mock_provider,
@@ -556,10 +566,9 @@ class TestStageConfigPromptBuilding:
             transform_prompt_key=PromptKey.FLUID_PROSE,
         )
         ctx = PipelineExecutionContext(
-            session_id=PipelineSessionId("sess:4"),
             user_identity=UserIdentity.worker(),
             channel=Channel(name="Chan"),
-            content=Content(id=ContentId("vid_1001")),
+            content=Content(id=ContentId("vid_1001"), session_id="sess:4"),
         )
 
         # 1. Source with content.body
@@ -608,10 +617,9 @@ class TestStageConfigPromptBuilding:
             transform_prompt_key=PromptKey.FLUID_PROSE,
         )
         ctx = PipelineExecutionContext(
-            session_id=PipelineSessionId("sess:5"),
             user_identity=UserIdentity.worker(),
             channel=Channel(name="Chan"),
-            content=Content(id=ContentId("vid_1001")),
+            content=Content(id=ContentId("vid_1001"), session_id="sess:5"),
         )
         result = cfg.build_transform_prompt(
             mock_provider,
@@ -650,10 +658,9 @@ class TestStageConfigPromptBuilding:
             transform_prompt_key=PromptKey.FLUID_PROSE,
         )
         ctx = PipelineExecutionContext(
-            session_id=PipelineSessionId("sess:6"),
             user_identity=UserIdentity.worker(),
             channel=Channel(name="Chan"),
-            content=Content(id=ContentId("vid_1001")),
+            content=Content(id=ContentId("vid_1001"), session_id="sess:6"),
         )
         result = cfg.build_transform_prompt(
             mock_provider,
@@ -686,9 +693,12 @@ class TestStageConfigPromptBuilding:
             post_processor=custom_processor,
         )
         src = StageTranscript(
-            content_id=ContentId("cid1"),
-            channel_name=ChannelName("ChanA"),
-            body="source_body",
+            channel=Channel(name=ChannelName("ChanA")),
+            provenance=MediaProvenance.empty(),
+            content=Content(
+                id=ContentId("cid1"),
+                body="source_body",
+            ),
         )
         cand = CandidateText(stage_name="test_stage", text="candidate_body")
         out = cfg.post_process(cand, src)

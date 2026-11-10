@@ -178,36 +178,43 @@ class TranscriptVaultHandler:
 
     def save_enriched_compendium(self, compendium: StageTranscript) -> None:
         """Persist enriched compendium directly into enriched/ directory with canonical YAML frontmatter."""
-        channel_dir = self.enriched_dir / sanitize_filename(compendium.channel_name)
-        file_path = channel_dir / f"{compendium.content_id.value}.md"
+        channel_dir = self.enriched_dir / sanitize_filename(compendium.channel.name)
+        file_path = channel_dir / f"{compendium.content.id.value}.md"
 
-        description = compendium.video_description or ""
+        description = compendium.provenance.description or ""
         indented_description = "\n".join("  " + line for line in description.splitlines())
-        escaped_title = compendium.title.value.replace('"', '\\"')
-        escaped_channel = str(compendium.channel_name).replace('"', '\\"')
-        escaped_category = (compendium.channel_category or "uncategorized").replace('"', '\\"')
-        channel_id_value = compendium.channel_id or "unknown_channel"
+        raw_title = compendium.content.title or "Untitled Compendium"
+        escaped_title = raw_title.replace('"', '\\"')
+        escaped_channel = compendium.channel.name.replace('"', '\\"')
+        escaped_category = (compendium.channel.category or "uncategorized").replace('"', '\\"')
+        channel_id_value = (
+            compendium.channel.id.value if compendium.channel.id else "unknown_channel"
+        )
+        video_date_str = str(
+            compendium.metadata.get("video_date")
+            or (
+                compendium.provenance.publication_date.isoformat()
+                if compendium.provenance.publication_date
+                else ""
+            )
+        )
 
         yaml_header = (
             f"---\n"
             f'video_title: "{escaped_title}"\n'
-            f"video_id: {compendium.content_id.value}\n"
+            f"video_id: {compendium.content.id.value}\n"
             f'channel_name: "{escaped_channel}"\n'
             f"channel_id: {channel_id_value}\n"
             f'channel_category: "{escaped_category}"\n'
-            f"url: {compendium.source_url}\n"
-            f"video_date: {compendium.video_date}\n"
+            f"url: {compendium.provenance.url}\n"
+            f"video_date: {video_date_str}\n"
             f"pass_count: {compendium.pass_count}\n"
             f"video_description: |\n"
             f"{indented_description}\n"
             f"---"
         )
-        body_text = (
-            f"# {compendium.title.value}\n\n"
-            f"{compendium.body}\n\n"
-            f"### Extra Info\n\n"
-            f"{compendium.complementary_info}"
-        )
+        body_payload = compendium.content.body.strip()
+        body_text = f"# {raw_title}\n\n{body_payload}"
         content = f"{yaml_header}\n\n{body_text}"
         atomic_write(file_path, content)
 
@@ -227,7 +234,7 @@ class TranscriptVaultHandler:
         frontmatter_text, raw_body = match.groups()
         metadata = yaml.safe_load(frontmatter_text) or {}
 
-        # Split into main body and complementary info
+        # Validate mandatory section '### Extra Info'
         parts = raw_body.split("### Extra Info")
         body_part = parts[0].strip()
         complementary_part = parts[1].strip() if len(parts) > 1 else ""
@@ -238,6 +245,8 @@ class TranscriptVaultHandler:
         if body_part.startswith("# "):
             body_lines = body_part.splitlines()
             body_part = "\n".join(body_lines[1:]).strip()
+
+        full_body = f"{body_part}\n\n### Extra Info\n\n{complementary_part}"
 
         channel_name = str(
             metadata.get("channel_name") or metadata.get("channel") or file_path.parent.name
@@ -269,14 +278,13 @@ class TranscriptVaultHandler:
         content = Content.create(
             id=content_id,
             title=title,
-            body=body_part,
+            body=full_body,
         )
 
         return StageTranscript(
             channel=channel,
             provenance=provenance,
             content=content,
-            complementary_info=complementary_part,
             pass_count=int(metadata.get("pass_count", 1)),
             metadata={"video_date": video_date} if video_date else {},
         )

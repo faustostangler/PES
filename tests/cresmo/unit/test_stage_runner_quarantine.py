@@ -38,9 +38,8 @@ from cresmo.domain.value_objects import (
 
 def _create_sample_context() -> PipelineExecutionContext:
     channel = Channel(name="Test Channel", id=ChannelId("UC_test"))
-    content = Content.create(id=ContentId("content_123"), title="Sample Content")
+    content = Content.create(id=ContentId("content_123"), title="Sample Content", session_id="test_chan:content_123")
     return PipelineExecutionContext(
-        session_id=PipelineSessionId("test_chan:content_123"),
         user_identity=UserIdentity.worker(),
         channel=channel,
         content=content,
@@ -65,9 +64,9 @@ def test_execute_stage_with_string_identifier_and_factory() -> None:
 
     ctx = _create_sample_context()
     raw = StageTranscript(
-        content_id=ctx.content.id,
-        channel_name=ChannelName(ctx.channel.name),
-        body="Original source transcript.",
+        channel=Channel(name=ChannelName(ctx.channel.name)),
+        provenance=MediaProvenance.empty(),
+        content=Content(id=ctx.content.id, body="Original source transcript."),
     )
 
     result = runner.execute_stage("fluid_prose", source=raw, context=ctx)
@@ -88,9 +87,9 @@ def test_execute_stage_string_without_factory_raises_value_error() -> None:
 
     ctx = _create_sample_context()
     raw = StageTranscript(
-        content_id=ctx.content.id,
-        channel_name=ChannelName(ctx.channel.name),
-        body="Some text",
+        channel=Channel(name=ChannelName(ctx.channel.name)),
+        provenance=MediaProvenance.empty(),
+        content=Content(id=ctx.content.id, body="Some text"),
     )
 
     with pytest.raises(ValueError, match="Cannot resolve stage 'fluid_prose' from string"):
@@ -150,9 +149,9 @@ def test_execute_stage_closed_loop_critique_synthesizer_integration() -> None:
 
     ctx = _create_sample_context()
     raw = StageTranscript(
-        content_id=ctx.content.id,
-        channel_name=ChannelName(ctx.channel.name),
-        body="Verbatim transcript with hesitation.",
+        channel=Channel(name=ChannelName(ctx.channel.name)),
+        provenance=MediaProvenance.empty(),
+        content=Content(id=ctx.content.id, body="Verbatim transcript with hesitation."),
     )
 
     result = runner.execute_stage("fluid_prose", source=raw, context=ctx)
@@ -215,9 +214,9 @@ def test_execute_stage_fail_fast_quarantine_protocol() -> None:
 
     ctx = _create_sample_context()
     raw = StageTranscript(
-        content_id=ctx.content.id,
-        channel_name=ChannelName(ctx.channel.name),
-        body="Text that repeatedly fails.",
+        channel=Channel(name=ChannelName(ctx.channel.name)),
+        provenance=MediaProvenance.empty(),
+        content=Content(id=ctx.content.id, body="Text that repeatedly fails."),
     )
 
     with pytest.raises(StageQuarantinedError) as exc_info:

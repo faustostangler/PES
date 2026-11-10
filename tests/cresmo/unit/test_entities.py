@@ -1109,15 +1109,15 @@ class TestAdr038PureValueObjectTriadComposition:
         # Check PipelineExecutionContext parity
         sid = PipelineSessionId.create(channel=ch, content_id=content)
         ctx = PipelineExecutionContext(
-            session_id=sid,
             user_identity=UserIdentity.anonymous(),
             channel=ch,
-            content=content,
+            content=Content(id=content.id, title=content.title, body=content.body, session_id=sid.value),
         )
         assert ctx.channel.id == ChannelId("UCxyz1234567890ab")
         assert ctx.content.id == ContentId("9IbNJ0EsTxI")
         assert ctx.channel.name == "Marcelo Andrade"
         assert ctx.content.title == "A Gênese Estrutural do Condado Portucalense"
+        assert ctx.content.session_id == sid.value
 
 
 class TestSourceTranscriptInvariantsAndEdgeCases:
