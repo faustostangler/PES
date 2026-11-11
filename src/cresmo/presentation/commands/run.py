@@ -391,7 +391,7 @@ def execute_single_video_run(pipeline: CresmoPipeline, args: Any) -> int:
         return EXIT_SUCCESS
     if result.success:
         try:
-            raw_transcript = pipeline.vault_port.get_raw_transcript(result.content_id)
+            raw_transcript = pipeline.vault_port.get_stage_transcript("raw", result.content_id)
             if raw_transcript and raw_transcript.channel.name:
                 concat_master = build_concat_master_use_case(
                     settings=pipeline.settings

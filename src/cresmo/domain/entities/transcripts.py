@@ -46,7 +46,7 @@ class StageTranscript:
     Composed strictly of the pure Value Object triad without duplicate property aliases:
     1. channel: Channel (Origin / Creator - id, name, category, url)
     2. provenance: MediaProvenance (Acquisition & Temporal Context - url, description, publication_date)
-    3. content: Content (Textual Artifact & Payload - id, title, body)
+    3. content: Content (Textual Artifact & Payload - id, title, text)
     4. pass_count: int | None (Number of enrichment passes executed, >= 1 when present)
     5. metadata: dict[str, Any] (Stage Provenance & Lineage)
     """

@@ -52,7 +52,7 @@ def sample_fluid_transcript() -> StageTranscript:
         content=Content.create(
             id="vid_hist1",
             title="Fundação",
-            body="## Fundação de Portugal\n\nTexto fluido sem oralidades.",
+            text="## Fundação de Portugal\n\nTexto fluido sem oralidades.",
         ),
     )
 

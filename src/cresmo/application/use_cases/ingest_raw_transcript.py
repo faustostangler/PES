@@ -60,5 +60,5 @@ class IngestRawTranscriptUseCase:
             keep_audio=keep_audio,
         )
         if raw is not None:
-            self.vault_port.save_transcript(raw)
+            self.vault_port.save_stage_transcript("raw", raw)
         return raw

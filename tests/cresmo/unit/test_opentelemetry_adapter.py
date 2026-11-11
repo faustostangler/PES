@@ -39,8 +39,8 @@ class TestTelemetryValueObjects:
     def test_pipeline_session_id_valid(self) -> None:
         session_id = PipelineSessionId.create(channel="sandeco", content_id="yt_12345678")
         assert session_id.value == "sandeco:yt_12345678"
-        assert not hasattr(session_id, "channel_id")
-        assert not hasattr(session_id, "content_id")
+        assert session_id.channel_id == "sandeco"
+        assert session_id.content_id == "yt_12345678"
         assert not hasattr(session_id, "video_id")
         assert not hasattr(session_id, "channel_token")
 

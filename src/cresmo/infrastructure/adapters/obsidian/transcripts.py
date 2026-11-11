@@ -16,7 +16,7 @@ import yaml
 from cresmo.domain.entities import (
     StageTranscript,
 )
-from cresmo.domain.exceptions import CompendiumStructureError
+from cresmo.domain.stage_registry import StageName
 from cresmo.domain.value_objects import (
     Channel,
     ChannelId,
@@ -41,50 +41,34 @@ class TranscriptVaultHandler:
         raw_dir: Path,
         enriched_dir: Path,
         fluid_dir: Path | None = None,
+        data_dir: Path | None = None,
     ) -> None:
-        self.raw_dir = raw_dir
-        self.enriched_dir = enriched_dir
-        self.fluid_dir = fluid_dir or (raw_dir.parent / "fluid")
+        self.raw_dir = Path(raw_dir)
+        self.enriched_dir = Path(enriched_dir)
+        self.data_dir = Path(data_dir).resolve() if data_dir is not None else self.raw_dir.parent
+        self.fluid_dir = Path(fluid_dir) if fluid_dir is not None else (self.data_dir / "fluid")
 
-    def save_stage_transcript(self, stage_name: str, transcript: StageTranscript) -> None:
-        """Persist stage transcript envelope atomically into stage directory."""
-        match stage_name:
-            case "raw":
-                self.save_transcript(transcript)
-            case "fluid_prose":
-                self.save_fluid_transcript(transcript)
-            case "gap_filler":
-                self.save_enriched_compendium(transcript)
-            case _:
-                raise KeyError(
-                    f"Unsupported stage '{stage_name}' for stage transcript persistence."
-                )
+    def resolve_stage_dir(self, stage: str | StageName) -> Path:
+        """Resolve dynamic stage directory following canonical data/{stage} structure (ADR-058)."""
+        stage_key = stage.value if hasattr(stage, "value") else str(stage).strip()
+        if stage_key == "raw":
+            return self.raw_dir
+        if stage_key == "fluid":
+            return self.fluid_dir
+        if stage_key == "enriched":
+            return self.enriched_dir
+        return self.data_dir / stage_key
 
-    def get_stage_transcript(
-        self, stage_name: str, content_id: ContentId
-    ) -> StageTranscript | None:
-        """Retrieve persisted stage transcript envelope by stage name and content ID."""
-        match stage_name:
-            case "raw":
-                return self.get_raw_transcript(content_id)
-            case "fluid_prose":
-                return self.get_fluid_transcript(content_id)
-            case "gap_filler":
-                return self.get_enriched_compendium(content_id)
-            case _:
-                return None
-
-    def save_transcript(self, transcript: StageTranscript) -> None:
-        """Persist source transcript with canonical YAML frontmatter."""
-        channel_dir = self.raw_dir / sanitize_filename(transcript.channel.name)
-        file_path = channel_dir / f"{transcript.content.id.value}.md"
-
+    def _format_stage_frontmatter(
+        self, transcript: StageTranscript, stage_name: str = ""
+    ) -> str:
+        """Format canonical monomorphic YAML frontmatter for any stage transcript (ADR-058)."""
         description = transcript.provenance.description or ""
         indented_description = "\n".join("  " + line for line in description.splitlines())
         date_str = (
             transcript.provenance.publication_date.strftime("%Y%m%d")
             if transcript.provenance.publication_date
-            else ""
+            else str(transcript.metadata.get("video_date") or "")
         )
         raw_title = transcript.content.title or transcript.content.id.value
         escaped_title = raw_title.replace('"', '\\"')
@@ -94,33 +78,60 @@ class TranscriptVaultHandler:
             transcript.channel.id.value if transcript.channel.id else "unknown_channel"
         )
 
-        yaml_header = (
-            f"---\n"
-            f'video_title: "{escaped_title}"\n'
-            f"video_id: {transcript.content.id.value}\n"
-            f'channel_name: "{escaped_channel}"\n'
-            f"channel_id: {channel_id_value}\n"
-            f'channel_category: "{escaped_category}"\n'
-            f"url: {transcript.provenance.url}\n"
-            f"video_date: {date_str}\n"
-            f"video_description: |\n"
-            f"{indented_description}\n"
-            f"---"
-        )
-        content = f"{yaml_header}\n\n{transcript.content.text}"
+        lines = [
+            "---",
+            f'video_title: "{escaped_title}"',
+            f"video_id: {transcript.content.id.value}",
+            f'channel_name: "{escaped_channel}"',
+            f"channel_id: {channel_id_value}",
+            f'channel_category: "{escaped_category}"',
+            f"url: {transcript.provenance.url}",
+            f"video_date: {date_str}",
+        ]
+        if transcript.pass_count is not None:
+            lines.append(f"pass_count: {transcript.pass_count}")
+        lines.extend([
+            "video_description: |",
+            f"{indented_description}",
+            "---",
+        ])
+        return "\n".join(lines)
+
+    def save_stage_transcript(
+        self,
+        stage: str | StageName,
+        transcript: StageTranscript,
+        *,
+        target_dir: Path | None = None,
+    ) -> None:
+        """Persist stage transcript envelope atomically with canonical YAML frontmatter (ADR-058)."""
+        stage_key = stage.value if hasattr(stage, "value") else str(stage).strip()
+        base_dir = target_dir or self.resolve_stage_dir(stage_key)
+        channel_dir = base_dir / sanitize_filename(transcript.channel.name)
+        file_path = channel_dir / f"{transcript.content.id.value}.md"
+
+        yaml_header = self._format_stage_frontmatter(transcript, stage_key)
+        raw_title = transcript.content.title or "Untitled Compendium"
+        body_payload = transcript.content.text.strip()
+        if (
+            stage_key in ("gap_filler", "enriched") or target_dir == self.enriched_dir
+        ) and not body_payload.startswith("# "):
+            body_text = f"# {raw_title}\n\n{body_payload}"
+        else:
+            body_text = body_payload
+
+        content = f"{yaml_header}\n\n{body_text}"
         atomic_write(file_path, content)
 
-    def get_raw_transcript(self, content_id: ContentId) -> StageTranscript | None:
-        """Retrieve source transcript by searching raw/ directory."""
-        target_name = f"{content_id.value}.md"
-        matched = list(self.raw_dir.glob(f"**/{target_name}"))
-        if not matched:
-            return None
-
-        file_path = matched[0]
+    def _deserialize_stage_transcript(
+        self, file_path: Path, content_id: ContentId, stage_key: str = ""
+    ) -> StageTranscript | None:
+        """Internal helper to deserialize a markdown stage file into a monomorphic StageTranscript."""
         text = file_path.read_text(encoding="utf-8")
         match = _FRONTMATTER_PATTERN.match(text)
         if not match:
+            if stage_key in ("gap_filler", "enriched"):
+                return None
             channel = Channel(name=file_path.parent.name)
             provenance = MediaProvenance.create(
                 url=f"file://{file_path.resolve()}",
@@ -137,12 +148,19 @@ class TranscriptVaultHandler:
                 content=content,
             )
 
-        frontmatter_text, body = match.groups()
+        frontmatter_text, raw_body = match.groups()
         metadata = yaml.safe_load(frontmatter_text) or {}
+
         channel_name = str(
             metadata.get("channel_name") or metadata.get("channel") or file_path.parent.name
         )
-        title = str(metadata.get("video_title") or metadata.get("title") or "")
+        raw_title_meta = metadata.get("video_title") or metadata.get("title")
+        if raw_title_meta:
+            title = str(raw_title_meta)
+        elif stage_key in ("gap_filler", "enriched"):
+            title = file_path.stem
+        else:
+            title = ""
         raw_channel_id = str(metadata.get("channel_id") or "")
         channel_category = str(metadata.get("channel_category") or metadata.get("domain") or "")
         source_url = str(metadata.get("url") or metadata.get("source_url") or "")
@@ -153,258 +171,92 @@ class TranscriptVaultHandler:
             if len(date_str) == ISO_DATE_COMPACT_LENGTH and date_str.isdigit():
                 with contextlib.suppress(ValueError):
                     upload_date = datetime.strptime(date_str, "%Y%m%d").replace(tzinfo=UTC).date()
+            else:
+                try:
+                    upload_date = date.fromisoformat(date_str[:10])
+                except (ValueError, TypeError):
+                    upload_date = None
         video_description = str(metadata.get("video_description") or "")
 
-        channel = Channel(
-            name=channel_name,
-            id=ChannelId.from_string(raw_channel_id) if raw_channel_id else None,
-            category=channel_category,
-        )
-        provenance = MediaProvenance.create(
-            url=source_url,
-            description=video_description,
-            publication_date=upload_date,
-        )
-        content = Content.create(
-            id=content_id,
-            title=title,
-            text=body.strip(),
-        )
-        return StageTranscript(
-            channel=channel,
-            provenance=provenance,
-            content=content,
-        )
-
-    def save_enriched_compendium(self, compendium: StageTranscript) -> None:
-        """Persist enriched compendium directly into enriched/ directory with canonical YAML frontmatter."""
-        channel_dir = self.enriched_dir / sanitize_filename(compendium.channel.name)
-        file_path = channel_dir / f"{compendium.content.id.value}.md"
-
-        description = compendium.provenance.description or ""
-        indented_description = "\n".join("  " + line for line in description.splitlines())
-        raw_title = compendium.content.title or "Untitled Compendium"
-        escaped_title = raw_title.replace('"', '\\"')
-        escaped_channel = compendium.channel.name.replace('"', '\\"')
-        escaped_category = (compendium.channel.category or "uncategorized").replace('"', '\\"')
-        channel_id_value = (
-            compendium.channel.id.value if compendium.channel.id else "unknown_channel"
-        )
-        video_date_str = str(
-            compendium.metadata.get("video_date")
-            or (
-                compendium.provenance.publication_date.isoformat()
-                if compendium.provenance.publication_date
-                else ""
-            )
-        )
-
-        yaml_header = (
-            f"---\n"
-            f'video_title: "{escaped_title}"\n'
-            f"video_id: {compendium.content.id.value}\n"
-            f'channel_name: "{escaped_channel}"\n'
-            f"channel_id: {channel_id_value}\n"
-            f'channel_category: "{escaped_category}"\n'
-            f"url: {compendium.provenance.url}\n"
-            f"video_date: {video_date_str}\n"
-            f"pass_count: {compendium.pass_count}\n"
-            f"video_description: |\n"
-            f"{indented_description}\n"
-            f"---"
-        )
-        body_payload = compendium.content.text.strip()
-        body_text = f"# {raw_title}\n\n{body_payload}"
-        content = f"{yaml_header}\n\n{body_text}"
-        atomic_write(file_path, content)
-
-    def get_enriched_compendium(self, content_id: ContentId) -> StageTranscript | None:
-        """Retrieve enriched compendium by content ID."""
-        target_name = f"{content_id.value}.md"
-        matched = list(self.enriched_dir.glob(f"**/{target_name}"))
-        if not matched:
-            return None
-
-        file_path = matched[0]
-        text = file_path.read_text(encoding="utf-8")
-        match = _FRONTMATTER_PATTERN.match(text)
-        if not match:
-            return None
-
-        frontmatter_text, raw_body = match.groups()
-        metadata = yaml.safe_load(frontmatter_text) or {}
-
-        # Validate mandatory section '### Extra Info'
-        parts = raw_body.split("### Extra Info")
-        body_part = parts[0].strip()
-        complementary_part = parts[1].strip() if len(parts) > 1 else ""
-        if not complementary_part:
-            raise CompendiumStructureError(f"Missing mandatory section '### Extra Info' in {file_path}")
-
-        # Strip initial # title if present
-        if body_part.startswith("# "):
-            body_lines = body_part.splitlines()
-            body_part = "\n".join(body_lines[1:]).strip()
-
-        full_body = f"{body_part}\n\n### Extra Info\n\n{complementary_part}"
-
-        channel_name = str(
-            metadata.get("channel_name") or metadata.get("channel") or file_path.parent.name
-        )
-        title = str(metadata.get("video_title") or metadata.get("title") or file_path.stem)
-        raw_channel_id = str(metadata.get("channel_id") or "")
-        channel_category = str(metadata.get("channel_category") or metadata.get("domain") or "")
-        source_url = str(metadata.get("url") or metadata.get("source_url") or "")
-        video_date = str(metadata.get("video_date") or "")
-        video_description = str(metadata.get("video_description") or "")
+        raw_pass_count = metadata.get("pass_count")
+        pass_count: int | None = None
+        if raw_pass_count is not None:
+            with contextlib.suppress(ValueError, TypeError):
+                pass_count = int(raw_pass_count)
 
         channel = Channel(
             name=ChannelName(channel_name),
             id=ChannelId.from_string(raw_channel_id) if raw_channel_id else None,
             category=channel_category,
         )
-        publication_date = None
-        if video_date:
-            try:
-                publication_date = date.fromisoformat(video_date[:10])
-            except (ValueError, TypeError):
-                publication_date = None
-
-        provenance = MediaProvenance.create(
-            url=source_url,
-            description=video_description,
-            publication_date=publication_date,
-        )
-        content = Content.create(
-            id=content_id,
-            title=title,
-            text=full_body,
-        )
-
-        return StageTranscript(
-            channel=channel,
-            provenance=provenance,
-            content=content,
-            pass_count=int(metadata.get("pass_count", 1)),
-            metadata={"video_date": video_date} if video_date else {},
-        )
-
-    def get_enriched_files_for_channel(self, channel_name: ChannelName) -> list[Path]:
-        """Retrieve sorted list of all enriched markdown file paths for a given channel."""
-        channel_dir = self.enriched_dir / sanitize_filename(channel_name)
-        if not channel_dir.exists() or not channel_dir.is_dir():
-            return []
-        return sorted(
-            p for p in channel_dir.glob("*.md") if p.is_file() and not p.name.startswith(("_", "."))
-        )
-
-    def save_fluid_transcript(self, transcript: StageTranscript) -> None:
-        """Persist fluid transcript with canonical YAML frontmatter into fluid/ directory."""
-        channel_dir = self.fluid_dir / sanitize_filename(transcript.channel.name)
-        file_path = channel_dir / f"{transcript.content.id.value}.md"
-
-        description = transcript.provenance.description or ""
-        indented_description = "\n".join("  " + line for line in description.splitlines())
-        date_str = (
-            transcript.provenance.publication_date.strftime("%Y%m%d")
-            if transcript.provenance.publication_date
-            else ""
-        )
-        raw_title = transcript.content.title or transcript.content.id.value
-        escaped_title = raw_title.replace('"', '\\"')
-        escaped_channel = transcript.channel.name.replace('"', '\\"')
-        escaped_category = (transcript.channel.category or "uncategorized").replace('"', '\\"')
-        channel_id_value = (
-            transcript.channel.id.value if transcript.channel.id else "unknown_channel"
-        )
-
-        yaml_header = (
-            f"---\n"
-            f'video_title: "{escaped_title}"\n'
-            f"video_id: {transcript.content.id.value}\n"
-            f'channel_name: "{escaped_channel}"\n'
-            f"channel_id: {channel_id_value}\n"
-            f'channel_category: "{escaped_category}"\n'
-            f"url: {transcript.provenance.url}\n"
-            f"video_date: {date_str}\n"
-            f"video_description: |\n"
-            f"{indented_description}\n"
-            f"---"
-        )
-        content = f"{yaml_header}\n\n{transcript.content.text}"
-        atomic_write(file_path, content)
-
-    def get_fluid_transcript(self, content_id: ContentId) -> StageTranscript | None:
-        """Retrieve fluid transcript by searching fluid/ directory."""
-        target_name = f"{content_id.value}.md"
-        matched = list(self.fluid_dir.glob(f"**/{target_name}"))
-        if not matched:
-            return None
-
-        file_path = matched[0]
-        text = file_path.read_text(encoding="utf-8")
-        match = _FRONTMATTER_PATTERN.match(text)
-        if not match:
-            channel = Channel(name=file_path.parent.name)
-            provenance = MediaProvenance.create(
-                url=f"file://{file_path.resolve()}",
-                description="",
-            )
-            content = Content.create(
-                id=content_id,
-                title=file_path.stem,
-                text=text,
-            )
-            return StageTranscript(
-                channel=channel,
-                provenance=provenance,
-                content=content,
-            )
-
-        frontmatter_text, body = match.groups()
-        metadata = yaml.safe_load(frontmatter_text) or {}
-        channel_name = str(
-            metadata.get("channel_name") or metadata.get("channel") or file_path.parent.name
-        )
-        title = str(metadata.get("video_title") or metadata.get("title") or "")
-        raw_channel_id = str(metadata.get("channel_id") or "")
-        channel_category = str(metadata.get("channel_category") or metadata.get("domain") or "")
-        source_url = str(metadata.get("url") or metadata.get("source_url") or "")
-        raw_date = metadata.get("video_date") or metadata.get("upload_date")
-        upload_date = None
-        if raw_date:
-            date_str = str(raw_date).strip()
-            if len(date_str) == ISO_DATE_COMPACT_LENGTH and date_str.isdigit():
-                with contextlib.suppress(ValueError):
-                    upload_date = datetime.strptime(date_str, "%Y%m%d").replace(tzinfo=UTC).date()
-        video_description = str(metadata.get("video_description") or "")
-
-        channel = Channel(
-            name=channel_name,
-            id=ChannelId.from_string(raw_channel_id) if raw_channel_id else None,
-            category=channel_category,
-        )
         provenance = MediaProvenance.create(
             url=source_url,
             description=video_description,
             publication_date=upload_date,
         )
+
+        body_payload = raw_body.strip()
+        if "### Extra Info" in body_payload and body_payload.startswith("# "):
+            body_lines = body_payload.splitlines()
+            body_payload = "\n".join(body_lines[1:]).strip()
+
         content = Content.create(
             id=content_id,
             title=title,
-            text=body.strip(),
+            text=body_payload,
+            session_id=f"{channel.id.value if channel.id else channel.name}:{content_id.value}",
         )
         return StageTranscript(
             channel=channel,
             provenance=provenance,
             content=content,
+            pass_count=pass_count,
+            metadata={"video_date": str(raw_date)} if raw_date else {},
         )
+
+    def get_stage_transcript(
+        self, stage: str | StageName, content_id: ContentId
+    ) -> StageTranscript | None:
+        """Retrieve persisted stage transcript envelope by stage name and content ID (ADR-058)."""
+        stage_key = stage.value if hasattr(stage, "value") else str(stage).strip()
+        stage_dir = self.resolve_stage_dir(stage_key)
+        target_name = f"{content_id.value}.md"
+
+        matched = list(stage_dir.glob(f"**/{target_name}")) if stage_dir.exists() else []
+        if not matched:
+            if stage_key in ("fluid_prose", "fluid") and self.fluid_dir.exists() and self.fluid_dir != stage_dir:
+                matched = list(self.fluid_dir.glob(f"**/{target_name}"))
+            elif stage_key in ("gap_filler", "enriched") and self.enriched_dir.exists() and self.enriched_dir != stage_dir:
+                matched = list(self.enriched_dir.glob(f"**/{target_name}"))
+            elif stage_key == "raw" and self.raw_dir.exists() and self.raw_dir != stage_dir:
+                matched = list(self.raw_dir.glob(f"**/{target_name}"))
+
+        if not matched:
+            return None
+
+        file_path = matched[0]
+        return self._deserialize_stage_transcript(file_path, content_id, stage_key=stage_key)
+
+    def get_enriched_files_for_channel(self, channel_name: ChannelName) -> list[Path]:
+        """Retrieve sorted list of all enriched markdown file paths for a given channel."""
+        ch_name = sanitize_filename(channel_name)
+        candidates: set[Path] = set()
+        for d in (self.resolve_stage_dir("gap_filler"), self.enriched_dir):
+            ch_dir = d / ch_name
+            if ch_dir.exists() and ch_dir.is_dir():
+                candidates.update(
+                    p for p in ch_dir.glob("*.md") if p.is_file() and not p.name.startswith(("_", "."))
+                )
+        return sorted(candidates)
 
     def get_fluid_files_for_channel(self, channel_name: ChannelName) -> list[Path]:
         """Retrieve sorted list of all fluid markdown file paths for a given channel."""
-        channel_dir = self.fluid_dir / sanitize_filename(channel_name)
-        if not channel_dir.exists() or not channel_dir.is_dir():
-            return []
-        return sorted(
-            p for p in channel_dir.glob("*.md") if p.is_file() and not p.name.startswith(("_", "."))
-        )
+        ch_name = sanitize_filename(channel_name)
+        candidates: set[Path] = set()
+        for d in (self.resolve_stage_dir("fluid_prose"), self.fluid_dir):
+            ch_dir = d / ch_name
+            if ch_dir.exists() and ch_dir.is_dir():
+                candidates.update(
+                    p for p in ch_dir.glob("*.md") if p.is_file() and not p.name.startswith(("_", "."))
+                )
+        return sorted(candidates)

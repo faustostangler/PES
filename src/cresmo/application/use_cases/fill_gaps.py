@@ -167,5 +167,5 @@ class FillGapsUseCase:
             pass_count=passes,
             metadata=dict(fluid_transcript.metadata),
         )
-        self.vault_port.save_enriched_compendium(compendium)
+        self.vault_port.save_stage_transcript("gap_filler", compendium)
         return compendium

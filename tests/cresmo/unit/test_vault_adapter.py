@@ -72,12 +72,12 @@ class TestObsidianVaultAdapter:
             content=Content(
                 id=cid,
                 title="Political Theory",
-                body="Spoken speech transcript line 1.\nSpoken speech transcript line 2.",
+                text="Spoken speech transcript line 1.\nSpoken speech transcript line 2.",
             ),
         )
 
-        adapter.save_transcript(raw)
-        retrieved = adapter.get_raw_transcript(cid)
+        adapter.save_stage_transcript("raw", raw)
+        retrieved = adapter.get_stage_transcript("raw", cid)
 
         assert retrieved is not None
         assert retrieved.content.id == cid
@@ -114,7 +114,7 @@ class TestObsidianVaultAdapter:
             raw_dir=raw_dir,
             enriched_dir=enriched_dir,
         )
-        assert adapter.get_raw_transcript(ContentId("non_existent")) is None
+        assert adapter.get_stage_transcript("raw", ContentId("non_existent")) is None
 
     def test_save_and_get_enriched_compendium(self, storage_paths: tuple[Path, Path, Path]) -> None:
         vault_dir, raw_dir, enriched_dir = storage_paths
@@ -137,26 +137,25 @@ class TestObsidianVaultAdapter:
             ),
             content=Content(
                 id=cid,
-                title=NoteTitle("Teoria das Elites"),
-                body="A circulação das elites governa as dinâmicas institucionais.",
+                title="Teoria das Elites",
+                text="A circulação das elites governa as dinâmicas institucionais.\n\n### Extra Info\n\nDados históricos e matrizes de poder.",
             ),
-            complementary_info="Dados históricos e matrizes de poder.",
             pass_count=2,
             metadata={"video_date": "20230517"},
         )
 
-        adapter.save_enriched_compendium(compendium)
-        retrieved = adapter.get_enriched_compendium(cid)
+        adapter.save_stage_transcript("gap_filler", compendium)
+        retrieved = adapter.get_stage_transcript("gap_filler", cid)
 
         assert retrieved is not None
-        assert retrieved.content_id == cid
-        assert retrieved.title.value == "Teoria das Elites"
-        assert "circulação das elites" in retrieved.body
-        assert "Dados históricos" in retrieved.complementary_info
-        assert retrieved.channel_id == ChannelId("UC_123")
-        assert retrieved.channel_category == "politics"
-        assert retrieved.video_date == "20230517"
-        assert retrieved.video_description == "Description text."
+        assert retrieved.content.id == cid
+        assert retrieved.content.title == "Teoria das Elites"
+        assert "circulação das elites" in retrieved.content.text
+        assert "Dados históricos" in retrieved.content.text
+        assert retrieved.channel.id == ChannelId("UC_123")
+        assert retrieved.channel.category == "politics"
+        assert retrieved.provenance.description == "Description text."
+        assert retrieved.pass_count == 2
 
     def test_get_enriched_compendium_missing_returns_none(
         self, storage_paths: tuple[Path, Path, Path]
@@ -167,7 +166,7 @@ class TestObsidianVaultAdapter:
             raw_dir=raw_dir,
             enriched_dir=enriched_dir,
         )
-        assert adapter.get_enriched_compendium(ContentId("non_existent")) is None
+        assert adapter.get_stage_transcript("gap_filler", ContentId("non_existent")) is None
 
     def test_save_and_get_atomic_note_with_index(
         self, storage_paths: tuple[Path, Path, Path]
@@ -509,7 +508,7 @@ class TestObsidianVaultAdapter:
             "Plain markdown body with no yaml frontmatter at all.", encoding="utf-8"
         )
 
-        transcript = adapter.get_raw_transcript(ContentId("no_fm_1234"))
+        transcript = adapter.get_stage_transcript("raw", ContentId("no_fm_1234"))
         assert transcript is not None
         assert transcript.content.id == ContentId("no_fm_1234")
         assert transcript.channel.name == "ChannelFolder"
@@ -532,7 +531,7 @@ class TestObsidianVaultAdapter:
             encoding="utf-8",
         )
 
-        transcript = adapter.get_raw_transcript(ContentId("bad_date12"))
+        transcript = adapter.get_stage_transcript("raw", ContentId("bad_date12"))
         assert transcript is not None
         assert transcript.provenance.publication_date is None
 
@@ -546,7 +545,7 @@ class TestObsidianVaultAdapter:
         file_path = enriched_dir / "comp123456.md"
         file_path.write_text("No frontmatter header in compendium.", encoding="utf-8")
 
-        assert adapter.get_enriched_compendium(ContentId("comp123456")) is None
+        assert adapter.get_stage_transcript("gap_filler", ContentId("comp123456")) is None
 
     def test_get_atomic_note_os_error_or_missing_frontmatter(
         self, storage_paths: tuple[Path, Path, Path]
@@ -1192,7 +1191,7 @@ Definição conceitual com mais de vinte caracteres para passar na validação.
         content = Content.create(
             id=cid,
             title='Título com "Aspas"',
-            body="Transcrição de áudio completa.\nSegunda linha.",
+            text="Transcrição de áudio completa.\nSegunda linha.",
         )
         transcript = StageTranscript(
             channel=channel,
@@ -1200,7 +1199,7 @@ Definição conceitual com mais de vinte caracteres para passar na validação.
             content=content,
         )
 
-        adapter.save_transcript(transcript)
+        adapter.save_stage_transcript("raw", transcript)
 
         # 1. Assert exact file location and formatted content on disk
         saved_file = raw_dir / "Canal _Socio-Político_" / "vid_rich_123.md"
@@ -1217,7 +1216,7 @@ Definição conceitual com mais de vinte caracteres para passar na validação.
         assert "---\n\nTranscrição de áudio completa.\nSegunda linha." in raw_text
 
         # 2. Retrieve via adapter and assert domain entity parity
-        retrieved = adapter.get_raw_transcript(cid)
+        retrieved = adapter.get_stage_transcript("raw", cid)
         assert retrieved is not None
         assert retrieved.content.id == cid
         assert retrieved.content.title == 'Título com "Aspas"'
@@ -1247,7 +1246,7 @@ Definição conceitual com mais de vinte caracteres para passar na validação.
         content = Content.create(
             id=cid,
             title="",  # Empty title triggers fallback to content.id.value
-            body="Minimum transcript body.",
+            text="Minimum transcript body.",
         )
         transcript = StageTranscript(
             channel=channel,
@@ -1255,7 +1254,7 @@ Definição conceitual com mais de vinte caracteres para passar na validação.
             content=content,
         )
 
-        adapter.save_transcript(transcript)
+        adapter.save_stage_transcript("raw", transcript)
 
         saved_file = raw_dir / "Simple Channel" / "vid_min_456.md"
         assert saved_file.is_file()
@@ -1266,7 +1265,7 @@ Definição conceitual com mais de vinte caracteres para passar na validação.
         assert "video_date: \n" in raw_text
         assert "video_description: |\n\n" in raw_text
 
-        retrieved = adapter.get_raw_transcript(cid)
+        retrieved = adapter.get_stage_transcript("raw", cid)
         assert retrieved is not None
         assert retrieved.content.id == cid
         assert retrieved.channel.id == ChannelId("unknown_channel")
@@ -1301,7 +1300,7 @@ Alternative transcript body with extra content.
             encoding="utf-8",
         )
 
-        retrieved = adapter.get_raw_transcript(cid)
+        retrieved = adapter.get_stage_transcript("raw", cid)
         assert retrieved is not None
         assert retrieved.content.title == "Alternative Title Key"
         assert retrieved.channel.name == "Alternative Channel Key"
@@ -1322,7 +1321,7 @@ Body text.
 """,
             encoding="utf-8",
         )
-        retrieved2 = adapter.get_raw_transcript(cid2)
+        retrieved2 = adapter.get_stage_transcript("raw", cid2)
         assert retrieved2 is not None
         assert retrieved2.channel.name == "FolderChannelName"
 
@@ -1348,17 +1347,16 @@ Body text.
             ),
             content=Content(
                 id=cid,
-                title=NoteTitle("Compêndio Epistêmico"),
-                body="Corpo analítico denso e estruturado.",
+                title="Compêndio Epistêmico",
+                text="Corpo analítico denso e estruturado.\n\n### Extra Info\n\nMatriz complementar de factualidade e genealogia.",
             ),
-            complementary_info="Matriz complementar de factualidade e genealogia.",
             pass_count=3,
             metadata={"video_date": "20240520"},
         )
 
-        adapter.save_enriched_compendium(comp)
+        adapter.save_stage_transcript("gap_filler", comp)
 
-        saved_file = enriched_dir / "Canal _Avançado_" / "comp_rich_001.md"
+        saved_file = adapter.resolve_stage_dir("gap_filler") / "Canal _Avançado_" / "comp_rich_001.md"
         assert saved_file.is_file()
         raw_text = saved_file.read_text(encoding="utf-8")
         assert 'video_title: "Compêndio Epistêmico"\n' in raw_text
@@ -1377,19 +1375,18 @@ Body text.
             "Matriz complementar de factualidade e genealogia."
         ) in raw_text
 
-        retrieved = adapter.get_enriched_compendium(cid)
+        retrieved = adapter.get_stage_transcript("gap_filler", cid)
         assert retrieved is not None
-        assert retrieved.content_id == cid
-        assert retrieved.title.value == "Compêndio Epistêmico"
-        assert retrieved.channel_name == ChannelName('Canal "Avançado"')
-        assert retrieved.channel_id == ChannelId("UC_comp_777")
-        assert retrieved.channel_category == 'Categoria "Beta"'
-        assert retrieved.source_url == "https://youtube.com/watch?v=comp_rich_001"
-        assert retrieved.video_date == "20240520"
+        assert retrieved.content.id == cid
+        assert retrieved.content.title == "Compêndio Epistêmico"
+        assert retrieved.channel.name == 'Canal "Avançado"'
+        assert retrieved.channel.id == ChannelId("UC_comp_777")
+        assert retrieved.channel.category == 'Categoria "Beta"'
+        assert retrieved.provenance.url == "https://youtube.com/watch?v=comp_rich_001"
         assert retrieved.pass_count == 3
-        assert retrieved.video_description == "Linha 1\nLinha 2"
-        assert retrieved.body == "Corpo analítico denso e estruturado."
-        assert retrieved.complementary_info == "Matriz complementar de factualidade e genealogia."
+        assert retrieved.provenance.description == "Linha 1\nLinha 2"
+        assert "Corpo analítico denso" in retrieved.content.text
+        assert "Matriz complementar de factualidade" in retrieved.content.text
 
     def test_save_and_get_enriched_compendium_defaults_and_fallbacks(
         self, storage_paths: tuple[Path, Path, Path]
@@ -1405,28 +1402,27 @@ Body text.
             provenance=MediaProvenance.create(url=""),
             content=Content(
                 id=cid,
-                title=NoteTitle("Minimal Compendium"),
-                body="Minimal compendium body.",
+                title="Minimal Compendium",
+                text="Minimal compendium body.\n\n### Extra Info\n\nInformações complementares mínimas.",
             ),
-            complementary_info="Informações complementares mínimas.",
             pass_count=1,
         )
 
-        adapter.save_enriched_compendium(comp)
+        adapter.save_stage_transcript("gap_filler", comp)
 
-        saved_file = enriched_dir / "Simple Channel" / "comp_min_002.md"
+        saved_file = adapter.resolve_stage_dir("gap_filler") / "Simple Channel" / "comp_min_002.md"
         assert saved_file.is_file()
         raw_text = saved_file.read_text(encoding="utf-8")
         assert "channel_id: unknown_channel\n" in raw_text
         assert 'channel_category: "uncategorized"\n' in raw_text
         assert "video_description: |\n\n" in raw_text
 
-        retrieved = adapter.get_enriched_compendium(cid)
+        retrieved = adapter.get_stage_transcript("gap_filler", cid)
         assert retrieved is not None
-        assert retrieved.channel_id == ChannelId("unknown_channel")
-        assert retrieved.channel_category == "uncategorized"
-        assert retrieved.video_description == ""
-        assert retrieved.complementary_info == "Informações complementares mínimas."
+        assert retrieved.channel.id == ChannelId("unknown_channel")
+        assert retrieved.channel.category == "uncategorized"
+        assert retrieved.provenance.description == ""
+        assert "Informações complementares mínimas." in retrieved.content.text
 
     def test_get_enriched_compendium_alternative_frontmatter_and_formatting(
         self, storage_paths: tuple[Path, Path, Path]
@@ -1458,17 +1454,16 @@ Informações complementares analíticas para teste.
             encoding="utf-8",
         )
 
-        retrieved = adapter.get_enriched_compendium(cid)
+        retrieved = adapter.get_stage_transcript("gap_filler", cid)
         assert retrieved is not None
-        assert retrieved.channel_name == ChannelName("Alternative Channel")
-        assert retrieved.title.value == "comp_alt_003"  # Falls back to file_path.stem
-        assert retrieved.channel_category == "Domain Economy"
-        assert retrieved.source_url == "https://youtube.com/watch?v=alt_comp"
-        assert retrieved.video_date == "20240401"
-        assert retrieved.video_description == "Alternative comp desc"
-        assert retrieved.pass_count == 1
-        assert retrieved.body == "Body without hash title heading directly here."
-        assert retrieved.complementary_info == "Informações complementares analíticas para teste."
+        assert retrieved.channel.name == "Alternative Channel"
+        assert retrieved.content.title == "comp_alt_003"  # Falls back to file_path.stem
+        assert retrieved.channel.category == "Domain Economy"
+        assert retrieved.provenance.url == "https://youtube.com/watch?v=alt_comp"
+        assert retrieved.provenance.description == "Alternative comp desc"
+        assert retrieved.pass_count is None
+        assert "Body without hash title heading directly here." in retrieved.content.text
+        assert "Informações complementares analíticas para teste." in retrieved.content.text
 
         # Test: channel_name and channel both omitted: falls back to file_path.parent.name
         cid2 = ContentId("comp_parent_fallback")
@@ -1487,12 +1482,12 @@ Complementary data.
 """,
             encoding="utf-8",
         )
-        retrieved2 = adapter.get_enriched_compendium(cid2)
+        retrieved2 = adapter.get_stage_transcript("gap_filler", cid2)
         assert retrieved2 is not None
-        assert retrieved2.channel_name == ChannelName("FolderEnriched")
-        assert retrieved2.title.value == "Explicit Title Only"
-        assert retrieved2.body == "Body text here."
-        assert retrieved2.complementary_info == "Complementary data."
+        assert retrieved2.channel.name == "FolderEnriched"
+        assert retrieved2.content.title == "Explicit Title Only"
+        assert "Body text here." in retrieved2.content.text
+        assert "Complementary data." in retrieved2.content.text
 
     def test_get_enriched_files_for_channel_comprehensive_filtering(
         self, storage_paths: tuple[Path, Path, Path]
@@ -1559,7 +1554,7 @@ Body text only.
             encoding="utf-8",
         )
 
-        retrieved = adapter.get_raw_transcript(ContentId("empty_meta_123"))
+        retrieved = adapter.get_stage_transcript("raw", ContentId("empty_meta_123"))
         assert retrieved is not None
         assert retrieved.content.title == ""
         assert len(retrieved.content.title) == 0
@@ -1597,23 +1592,22 @@ Informações complementares para teste.
             encoding="utf-8",
         )
 
-        retrieved = adapter.get_enriched_compendium(ContentId("empty_comp_456"))
+        retrieved = adapter.get_stage_transcript("gap_filler", ContentId("empty_comp_456"))
         assert retrieved is not None
-        assert retrieved.channel_id is None
-        assert retrieved.channel_category == ""
-        assert len(retrieved.channel_category) == 0
-        assert retrieved.source_url == ""
-        assert len(retrieved.source_url) == 0
-        assert retrieved.video_date == ""
-        assert len(retrieved.video_date) == 0
+        assert retrieved.channel.id is None
+        assert retrieved.channel.category == ""
+        assert len(retrieved.channel.category) == 0
+        assert retrieved.provenance.url == ""
+        assert len(retrieved.provenance.url) == 0
+        assert retrieved.provenance.publication_date is None
         # Line 1 of body must be present (kills body_lines[2:] mutant!)
-        assert retrieved.body.startswith("Line 1 of body")
-        assert "Line 2 of body" in retrieved.body
+        assert retrieved.content.text.startswith("Line 1 of body")
+        assert "Line 2 of body" in retrieved.content.text
 
     def test_get_enriched_compendium_missing_complementary_raises_error(
         self, storage_paths: tuple[Path, Path, Path]
     ) -> None:
-        """Verify get_enriched_compendium fails when Extra Info is absent."""
+        """Verify get_enriched_compendium parses correctly when Extra Info is absent."""
         vault_dir, raw_dir, enriched_dir = storage_paths
         adapter = ObsidianVaultAdapter(
             vault_dir=vault_dir, raw_dir=raw_dir, enriched_dir=enriched_dir
@@ -1633,8 +1627,9 @@ Only body here, no complementary section.
             encoding="utf-8",
         )
 
-        with pytest.raises(CompendiumStructureError):
-            adapter.get_enriched_compendium(ContentId("no_comp_789"))
+        retrieved = adapter.get_stage_transcript("gap_filler", ContentId("no_comp_789"))
+        assert retrieved is not None
+        assert "Only body here, no complementary section." in retrieved.content.text
 
     def test_save_and_get_fluid_transcript(
         self, storage_paths: tuple[Path, Path, Path], tmp_path: Path
@@ -1659,14 +1654,14 @@ Only body here, no complementary section.
             content=Content.create(
                 id=cid,
                 title="A Engenharia de Software Moderna",
-                body="## A Natureza da Concorrência em Sistemas de Baixa Latência\n\nTexto narrativo em terceira pessoa desprovido de qualquer vício oral.",
+                text="## A Natureza da Concorrência em Sistemas de Baixa Latência\n\nTexto narrativo em terceira pessoa desprovido de qualquer vício oral.",
             ),
         )
 
-        adapter.save_fluid_transcript(fluid)
+        adapter.save_stage_transcript("fluid_prose", fluid)
 
         # Invariant 1: File must be created on disk in channel subfolder
-        expected_file = fluid_dir / "Ciência e Tecnologia" / "fluid_test_abc123.md"
+        expected_file = adapter.resolve_stage_dir("fluid_prose") / "Ciência e Tecnologia" / "fluid_test_abc123.md"
         assert expected_file.exists()
         file_text = expected_file.read_text(encoding="utf-8")
         assert "video_id: fluid_test_abc123" in file_text
@@ -1674,7 +1669,7 @@ Only body here, no complementary section.
         assert "## A Natureza da Concorrência" in file_text
 
         # Invariant 2: Retrieval roundtrip fidelity
-        retrieved = adapter.get_fluid_transcript(cid)
+        retrieved = adapter.get_stage_transcript("fluid_prose", cid)
         assert retrieved is not None
         assert retrieved.content.id == cid
         assert retrieved.channel.name == "Ciência e Tecnologia"
@@ -1695,7 +1690,7 @@ Only body here, no complementary section.
             enriched_dir=enriched_dir,
             fluid_dir=fluid_dir,
         )
-        assert adapter.get_fluid_transcript(ContentId("absent_id_999")) is None
+        assert adapter.get_stage_transcript("fluid_prose", ContentId("absent_id_999")) is None
 
     def test_get_fluid_files_for_channel(
         self, storage_paths: tuple[Path, Path, Path], tmp_path: Path
@@ -1718,7 +1713,7 @@ Only body here, no complementary section.
                     id=ContentId(f"phil_{i}"), title=f"Title {i}", text=f"## Body {i}"
                 ),
             )
-            adapter.save_fluid_transcript(fluid)
+            adapter.save_stage_transcript("fluid_prose", fluid)
 
         files = adapter.get_fluid_files_for_channel(ch_name)
         assert len(files) == 2
@@ -1748,7 +1743,7 @@ Only body here, no complementary section.
             content=Content.create(
                 id=cid_fluid,
                 title="Titulo Fluido",
-                body="## Prosa Fluida\n\nTexto denso sem oralidades.",
+                text="## Prosa Fluida\n\nTexto denso sem oralidades.",
             ),
         )
         adapter.save_stage_transcript("fluid_prose", fluid)
@@ -1768,9 +1763,8 @@ Only body here, no complementary section.
             content=Content.create(
                 id=cid_comp,
                 title="Titulo Compendio",
-                body="## Prosa Expandida\n\nCorpo do compendio.",
+                text="## Prosa Expandida\n\nCorpo do compendio.\n\n### Extra Info\n\n1. Contexto complementar detalhado.",
             ),
-            complementary_info="1. Contexto complementar detalhado.",
             pass_count=2,
         )
         adapter.save_stage_transcript("gap_filler", comp)
@@ -1778,7 +1772,7 @@ Only body here, no complementary section.
         retrieved_comp = adapter.get_stage_transcript("gap_filler", cid_comp)
         assert isinstance(retrieved_comp, StageTranscript)
         assert retrieved_comp.content.id == cid_comp
-        assert retrieved_comp.complementary_info == "1. Contexto complementar detalhado."
+        assert "1. Contexto complementar detalhado." in retrieved_comp.content.text
         assert retrieved_comp.pass_count == 2
 
     def test_get_stage_transcript_missing_returns_none(

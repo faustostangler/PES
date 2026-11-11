@@ -37,7 +37,7 @@ class TestADR057MonomorphicStageTranscript:
         content = Content(
             id=ContentId("abc123xyz00"),
             title="Clean Title",
-            body="Pure prose without loose arguments.\n\n### Extra Info\n\nExtra encyclopedic notes",
+            text="Pure prose without loose arguments.\n\n### Extra Info\n\nExtra encyclopedic notes",
             session_id="UC123:abc123xyz00",
         )
 
@@ -57,6 +57,7 @@ class TestADR057MonomorphicStageTranscript:
         assert st.content.id == ContentId("abc123xyz00")
         assert st.pass_count == 2
         assert not hasattr(st, "body")
+        assert not hasattr(st.content, "body")
         assert not hasattr(st, "title")
         assert not hasattr(st, "content_id")
         assert not hasattr(st, "channel_name")
@@ -77,7 +78,7 @@ class TestADR057MonomorphicStageTranscript:
         content = Content(
             id=ContentId("cid_with_table"),
             title="Table Test",
-            body="## Header\n\n| Col 1 | Col 2 |\n| --- | --- |\n| A | B |\n\nProse continues.",
+            text="## Header\n\n| Col 1 | Col 2 |\n| --- | --- |\n| A | B |\n\nProse continues.",
         )
 
         stage = StageTranscript(channel=channel, provenance=provenance, content=content)
@@ -101,7 +102,7 @@ class TestADR057MonomorphicStageTranscript:
         content = Content(
             id=ContentId("local_file_id"),
             title="Different IDs",
-            body="Valid body content.",
+            text="Valid body content.",
         )
 
         source = StageTranscript(channel=channel, provenance=provenance, content=content)

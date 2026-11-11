@@ -146,5 +146,5 @@ class ExpandCompendiumUseCase:
             pass_count=compendium.pass_count + 1 if compendium.pass_count else 2,
             metadata=dict(compendium.metadata),
         )
-        self.vault_port.save_enriched_compendium(updated)
+        self.vault_port.save_stage_transcript("gap_filler", updated)
         return updated

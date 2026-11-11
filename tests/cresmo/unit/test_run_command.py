@@ -144,7 +144,7 @@ class TestRunCommand:
         mock_pipeline.settings = CresmoSettings()
         mock_raw = MagicMock()
         mock_raw.channel.name = "Fabio Akita"
-        mock_pipeline.vault_port.get_raw_transcript.return_value = mock_raw
+        mock_pipeline.vault_port.get_stage_transcript.return_value = mock_raw
 
         args = Namespace(
             url="https://youtube.com/watch?v=success1",
@@ -168,8 +168,8 @@ class TestRunCommand:
             mock_build_concat.return_value = mock_concat_uc
 
             assert execute_single_video_run(mock_pipeline, args) == EXIT_SUCCESS
-            mock_pipeline.vault_port.get_raw_transcript.assert_called_once_with(
-                ContentId("success1")
+            mock_pipeline.vault_port.get_stage_transcript.assert_called_once_with(
+                "raw", ContentId("success1")
             )
             mock_build_concat.assert_called_once_with(
                 settings=mock_pipeline.settings,
@@ -189,7 +189,7 @@ class TestRunCommand:
         """Verify master consolidation warning when vault lookup or consolidation raises."""
         mock_pipeline = MagicMock()
         mock_pipeline.settings = CresmoSettings()
-        mock_pipeline.vault_port.get_raw_transcript.side_effect = RuntimeError("Vault locked")
+        mock_pipeline.vault_port.get_stage_transcript.side_effect = RuntimeError("Vault locked")
 
         args = Namespace(
             url="https://youtube.com/watch?v=warn1",

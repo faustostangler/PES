@@ -532,7 +532,7 @@ class TestCresmoPipelineExecutionAndIdempotency:
         mock_runner = MagicMock(spec=PipelineStageRunner)
 
         compendium_mock = MagicMock()
-        mock_vault.get_enriched_compendium.return_value = compendium_mock
+        mock_vault.get_stage_transcript.return_value = compendium_mock
         raw_idx = MagicMock(spec=RawIndexEntry)
 
         pipeline = CresmoPipeline(
@@ -686,9 +686,8 @@ class TestCresmoPipelineRunForSources:
         )
 
         sample_raw = MagicMock(spec=StageTranscript)
-        sample_raw.content = Content(id=ContentId("v123"), title="Vid Title")
+        sample_raw.content = Content(id=ContentId("v123"), title="Vid Title", text="Transcript text")
         sample_raw.channel = Channel(name="ChanVid", id=None)
-        sample_raw.body = "Transcript text"
         sample_raw.provenance = MediaProvenance(
             url="https://youtube.com/watch?v=v123", description=""
         )
@@ -971,9 +970,6 @@ class TestCresmoPipelineRunForSources:
         cached_compendium = MagicMock(spec=StageTranscript)
         mock_ingestion = MagicMock(spec=MediaIngestionPort)
         mock_vault = MagicMock(spec=VaultRepositoryPort)
-        mock_vault.get_raw_transcript.return_value = raw
-        mock_vault.get_fluid_transcript.return_value = cached_fluid
-        mock_vault.get_enriched_compendium.return_value = cached_compendium
         mock_vault.get_stage_transcript.side_effect = lambda stage, cid: (
             cached_fluid if stage == "fluid_prose" else cached_compendium
         )
@@ -1007,9 +1003,6 @@ class TestCresmoPipelineRunForSources:
         )
         mock_ingestion = MagicMock(spec=MediaIngestionPort)
         mock_vault = MagicMock(spec=VaultRepositoryPort)
-        mock_vault.get_raw_transcript.return_value = raw
-        mock_vault.get_fluid_transcript.return_value = cached_fluid
-        mock_vault.get_enriched_compendium.return_value = None
         mock_vault.get_stage_transcript.side_effect = lambda stage, cid: (
             cached_fluid if stage == "fluid_prose" else None
         )

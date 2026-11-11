@@ -85,6 +85,8 @@ In this repository, architectural decisions evolve continuously through test-dri
 | [**ADR-055**](ADR-055-extreme-startup-latency-remediation-and-zero-read-lake-discovery.md) | 2026-11-09 | Comprehensive Presentation CLI Lazy Dispatching, Zero-Read Lake Scanning, and Deferred Adapter Initialization | Presentation / Performance | `ACCEPTED` | Extends ADR-047 and ADR-053 with Zero-Read Metadata Extraction across 1,000+ lake files, lazy Typer dispatching, and deferred SQLite/adapters setup. |
 | [**ADR-056**](ADR-056-native-media-ingestion-channel-name-deduplication.md) | 2026-11-09 | Native Media Ingestion Channel Name Deduplication and Domain Triad Simplification | Ingestion / DDD Tático | `ACCEPTED` | **Partially refined by ADR-057**. Sanitizes channel extraction, derives canonical YouTube channel URL, and auto-infers ContentId from URL. |
 | [**ADR-057**](ADR-057-monomorphic-stage-transcript-envelope-and-pure-triad-ingestion.md) | 2026-11-10 | Monomorphic StageTranscript Envelope and Pure Triad Ingestion | DDD Tático / Entidades | `ACCEPTED` | **Refines ADR-038, ADR-054, and ADR-056**. Enforces strictly monomorphic `StageTranscript`, removes Markdown table parsing from domain invariants, and enforces pure VO construction with zero loose primitive shims. |
+| [**ADR-058**](ADR-058-unified-stage-transcript-persistence-and-dynamic-path-resolution.md) | 2026-11-10 | Unified Stage Transcript Persistence and Dynamic Path Resolution | Infra / Storage | `ACCEPTED` | **Refines ADR-043, ADR-054, and ADR-057**. Consolidates `save_stage_transcript` and `get_stage_transcript` with dynamic path resolution (`data/{stage}/{channel_name}/{content_id}.md`), eliminating triplicated YAML serialization. |
+| [**ADR-059**](ADR-059-monomorphic-vault-repository-port-and-legacy-stage-method-elimination.md) | 2026-11-10 | Monomorphic Vault Repository Port and Legacy Stage Method Elimination | Storage / Ports & Adapters | `ACCEPTED` | **Complements ADR-058**. Eliminates legacy triplicated methods (`save_transcript`, `save_fluid_transcript`, `save_enriched_compendium`) from VaultRepositoryPort, ObsidianVaultAdapter, and Mock adapters in favor of monomorphic `save_stage_transcript` and `get_stage_transcript`. |
 
 ---
 
@@ -286,6 +288,11 @@ When navigating the architecture, apply these authoritative precedence relations
 - **ADR-056** introduced automatic `content_id` extraction in `StageTranscript.__init__` and URL-ContentId cross-validation in `SourceTranscript`.
 - **ADR-057** superseded the loose primitive constructors and domain Markdown table checks: `StageTranscript` is strictly monomorphic with pure Value Object triad injection (`Channel`, `MediaProvenance`, `Content`). Markdown syntax verification is delegated to stage descriptors, prompt specifications, and `LlmJudgePort`.
 - **Precedence Rule:** Domain entities accept only pure Value Objects during construction. Formatting validation belongs to the evaluation layer.
+
+### 4.14 Unified Stage Transcript Persistence (ADR-058 refines ADR-043, ADR-054 & ADR-057)
+- **ADR-043** specified separate persistence for fluid transcripts in `data/fluid/`.
+- **ADR-058** unifies persistence across all conveyor stages under dynamic path resolution: `data/{stage}/{channel_name}/{content_id}.md`. Eliminates triplication across `save_transcript`, `save_fluid_transcript`, and `save_enriched_compendium` into a single canonical `save_stage_transcript` engine with monomorphic YAML frontmatter formatting.
+- **Precedence Rule:** All stage artifact persistence routes through `save_stage_transcript` with dynamic directory resolution. Hardcoded stage-matching in storage adapters is deprecated.
 
 ---
 

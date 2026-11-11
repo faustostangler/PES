@@ -16,6 +16,7 @@ from cresmo.domain.entities import (
     MapOfContent,
     StageTranscript,
 )
+from cresmo.domain.stage_registry import StageName
 from cresmo.domain.value_objects import (
     ChannelName,
     ContentId,
@@ -28,76 +29,49 @@ from cresmo.domain.value_objects import (
 class VaultRepositoryPort(ABC):
     """Hexagonal Persistence Port for the Obsidian Second Brain vault and raw/enriched storage.
 
-    Conforms to ADR-001 and SPEC-001. Enforces atomic file writes, YAML frontmatter serialization,
-    tiered index synchronization (_index.json), and bidirectional WikiLink reconciliation.
+    Conforms to ADR-001, SPEC-001, ADR-058, and ADR-059. Enforces atomic file writes,
+    monomorphic YAML frontmatter serialization, tiered index synchronization (_index.json),
+    and bidirectional WikiLink reconciliation.
     """
 
     @abstractmethod
-    def save_transcript(self, transcript: StageTranscript) -> None:
-        """Persist source transcript to storage directory.
-
+    def resolve_stage_dir(self, stage_name: str | StageName) -> Path:
+        """Resolve dynamic stage directory following canonical data/{stage} structure (ADR-058).
+        
         Args:
-            transcript: StageTranscript domain aggregate containing verbatim text and metadata.
-        """
-        raise NotImplementedError("Persist source transcript atomically.")
-
-    @abstractmethod
-    def get_raw_transcript(self, content_id: ContentId) -> StageTranscript | None:
-        """Retrieve raw transcript by content ID.
-
-        Args:
-            content_id: Target unique content identifier.
+            stage_name: Unique pipeline stage identifier or enum.
 
         Returns:
-            StageTranscript aggregate or None if not present in storage.
+            Resolved filesystem Path to the stage data directory.
         """
-        raise NotImplementedError("Retrieve raw transcript by content ID.")
+        raise NotImplementedError("Resolve stage directory by stage name.")
 
     @abstractmethod
-    def save_stage_transcript(self, stage_name: str, transcript: StageTranscript) -> None:
-        """Persist stage transcript envelope atomically into stage directory (ADR-054).
+    def save_stage_transcript(
+        self, stage_name: str | StageName, transcript: StageTranscript
+    ) -> None:
+        """Persist stage transcript envelope atomically into stage directory (ADR-054, ADR-058, ADR-059).
 
         Args:
-            stage_name: Unique pipeline stage identifier (e.g. 'fluid_prose', 'gap_filler').
+            stage_name: Unique pipeline stage identifier or enum (e.g. 'raw', 'fluid_prose', 'gap_filler').
             transcript: Validated StageTranscript domain aggregate.
         """
         raise NotImplementedError("Persist stage transcript atomically.")
 
     @abstractmethod
     def get_stage_transcript(
-        self, stage_name: str, content_id: ContentId
+        self, stage_name: str | StageName, content_id: ContentId
     ) -> StageTranscript | None:
-        """Retrieve persisted stage transcript envelope by stage name and content ID (ADR-054).
+        """Retrieve persisted stage transcript envelope by stage name and content ID (ADR-054, ADR-058, ADR-059).
 
         Args:
-            stage_name: Unique pipeline stage identifier (e.g. 'fluid_prose', 'gap_filler').
+            stage_name: Unique pipeline stage identifier or enum (e.g. 'raw', 'fluid_prose', 'gap_filler').
             content_id: Target unique content identifier.
 
         Returns:
             StageTranscript domain aggregate or None if not present in storage.
         """
         raise NotImplementedError("Retrieve stage transcript by content ID.")
-
-    @abstractmethod
-    def save_fluid_transcript(self, transcript: StageTranscript) -> None:
-        """Persist normalized fluid prose transcript directly into fluid/ directory with YAML frontmatter.
-
-        Args:
-            transcript: Validated StageTranscript aggregate containing clean continuous narrative prose.
-        """
-        raise NotImplementedError("Persist fluid transcript atomically.")
-
-    @abstractmethod
-    def get_fluid_transcript(self, content_id: ContentId) -> StageTranscript | None:
-        """Retrieve normalized fluid prose transcript by content ID from fluid/ directory.
-
-        Args:
-            content_id: Target unique content identifier.
-
-        Returns:
-            StageTranscript aggregate or None if not found in storage.
-        """
-        raise NotImplementedError("Retrieve fluid transcript by content ID.")
 
     @abstractmethod
     def get_fluid_files_for_channel(self, channel_name: ChannelName) -> list[Path]:
@@ -110,27 +84,6 @@ class VaultRepositoryPort(ABC):
             List of resolved filesystem Paths to .md fluid transcript files.
         """
         raise NotImplementedError("List fluid transcripts by channel.")
-
-    @abstractmethod
-    def save_enriched_compendium(self, compendium: StageTranscript) -> None:
-        """Persist enriched compendium directly into enriched/ directory.
-
-        Args:
-            compendium: Validated multi-pass fluid prose compendium.
-        """
-        raise NotImplementedError("Persist enriched compendium atomically.")
-
-    @abstractmethod
-    def get_enriched_compendium(self, content_id: ContentId) -> StageTranscript | None:
-        """Retrieve enriched compendium by content ID.
-
-        Args:
-            content_id: Target unique content identifier.
-
-        Returns:
-            StageTranscript aggregate or None if not present in storage.
-        """
-        raise NotImplementedError("Retrieve enriched compendium by content ID.")
 
     @abstractmethod
     def save_atomic_note(self, note: AtomicNote) -> None:

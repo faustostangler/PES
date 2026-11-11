@@ -833,6 +833,7 @@ class TestContent:
         assert not hasattr(cnt, "url")
         assert not hasattr(cnt, "publication_date")
         assert not hasattr(cnt, "modality")
+        assert not hasattr(cnt, "body")
 
     def test_content_creation_with_string_coercion_and_defaults(self) -> None:
         from cresmo.domain.value_objects import Content, ContentId

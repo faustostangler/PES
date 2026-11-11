@@ -19,6 +19,7 @@ from cresmo.domain.value_objects import (
     CandidateText,
     ChatMessage,
     ChatPrompt,
+    Content,
     MessageRole,
     PromptKey,
     StageEvaluationSpec,
@@ -63,12 +64,13 @@ class StageConfig[TSource, TOutput]:
     ) -> ChatPrompt:
         """Resolve ChatPrompt, injecting closed-loop reflection critique on retry."""
         effective_channel_id = context.channel.id.value if context.channel.id else ""
-        raw_text = (
-            getattr(getattr(source, "content", None), "body", None)
-            or getattr(source, "body", None)
-            or getattr(source, "text", None)
-            or str(source)
+        source_content = getattr(source, "content", None)
+        raw_text_val = (
+            source_content.text
+            if isinstance(source_content, Content)
+            else (getattr(source, "text", None) or str(source))
         )
+        raw_text = str(raw_text_val)
         effective_key = prompt_key or self.transform_prompt_key
         base_prompt: ChatPrompt = prompt_provider.get_prompt(
             effective_key,

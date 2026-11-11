@@ -209,4 +209,4 @@ def ensure_transcript_saved(
     vault_target_dir = getattr(vault_port, "raw_dir", None)
     if is_subpath(file_path, target_dir) or is_subpath(file_path, vault_target_dir):
         return
-    vault_port.save_transcript(transcript)
+    vault_port.save_stage_transcript("raw", transcript)

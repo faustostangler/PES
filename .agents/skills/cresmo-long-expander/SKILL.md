@@ -15,7 +15,7 @@ Inspired by **Annales School** and **Fernand Braudel's *longue durée***, it inv
 
 It also used a Reversed Longue Durée to evaluate the interdisciplinary nature of posterior facts, by identifying the first order facts and structures that led to the emergence of the modern concept, evaluating the plural temporalities (short term factua and near-real-time events), medium term conjunctural (cycles of decades or generations) and long term structural (structural or permanence factors). 
 
-Furthermore, it uncovers the **Factual Palimpsest**: the genealogy of overlapping, sedimented layers of modern bedrock that are still visible and influence the present. 
+Furthermore, it uncovers the **Factual Palimpsest**: the genealogy of overlapping, sedimented layers of modern bedrock history that are still visible and influence the present. 
 
 **Target File Location**: Save output directly to:
 `cresmo/enriched/<channel_name>/<video_id>.md` (the designated `.md` target path).
@@ -24,7 +24,7 @@ Furthermore, it uncovers the **Factual Palimpsest**: the genealogy of overlappin
 
 ## Foundational Pillars: The Longue Durée Paradigm
 
-When expanding any text, identify the main fact and its context, then identify the first order factors (determinants), second order factors (structures) and third order factors (opportunities) that led to the emergence of the modern concept, evaluating the plural temporalities (short term factual and near-real-time events), medium term conjunctural (cycles of decades or generations) and long term structural (structural or permanence factors). 
+When expanding any text, identify the main fact and its context, then identify the first order factors (determinants), second order factors (structures) and third order factors (opportunities) that led to the emergence of each concept, evaluating the plural temporalities (short term factual and near-real-time events), medium term conjunctural (cycles of decades or generations) and long term structural (structural or permanence factors). 
 
 This structure should be included and reflected in the substantive organization of the text, but strictly as an internal organizational logic. *(**Crucial**: These analytical tiers and paradigms are cognitive tools to guide research and prose architecture; they must NEVER be explicitly labeled, cited, or exposed in the generated text.)* 
 
@@ -44,7 +44,7 @@ Consider any ot these aspects (or others) if relevant to the main topic in the o
 - **Devaluation Directive**: The surface event is never treated as a primary cause, but merely as a momentary crest on an oceanic wave—a symptom or sudden trigger revealing tensions accumulated over centuries within the deep structure.
 
 ### 4. Historical Palimpsest (Genealogia de Camadas Sobrepostas)
-- Every modern institution, infrastructure, or concept is an overwritten manuscript, consider these   suggestions:
+- Every modern institution, infrastructure, or concept is an overwritten manuscript, consider these suggestions:
   - **Infrastructural Palimpsest**: Bronze Age caravans becoming Roman paved roads, turning into medieval pilgrimage routes, canal routes, railway alignments, and finally fiber-optic pipelines.
   - **Institutional Palimpsest**: Roman administrative law sedimented under medieval Canon law, reworked by the Napoleonic Code, and lingering beneath contemporary regulatory bureaucracies.
   - **Linguistic and Conceptual Palimpsest**: Etymological layers where modern socio-political categories conceal theological concepts secularized over half a millennium.

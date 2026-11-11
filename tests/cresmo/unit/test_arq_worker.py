@@ -66,7 +66,7 @@ async def test_job_extract_audio_mock_execution() -> None:
     """Verify that job_extract_audio executes via injected ingestion adapter."""
 
     class MockTranscriptContent:
-        body = "extracted transcript text"
+        text = "extracted transcript text"
 
     class MockTranscript:
         content = MockTranscriptContent()

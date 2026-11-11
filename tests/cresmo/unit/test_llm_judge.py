@@ -916,7 +916,7 @@ class TestCoordinatorLlmJudgeIntegration:
         mock_llm = SmartMockLLMAdapter()
         mock_ingestion = MockMediaIngestionPort(canned_transcript=canned_raw)
         vault_port = InMemoryVaultAdapter()
-        vault_port.save_transcript(canned_raw)
+        vault_port.save_stage_transcript("raw", canned_raw)
         ledger_port = InMemoryLedgerAdapter()
 
         mock_judge = MagicMock()
@@ -977,7 +977,7 @@ class TestCoordinatorLlmJudgeIntegration:
         mock_llm = SmartMockLLMAdapter()
         mock_ingestion = MockMediaIngestionPort(canned_transcript=canned_raw)
         vault_port = InMemoryVaultAdapter()
-        vault_port.save_transcript(canned_raw)
+        vault_port.save_stage_transcript("raw", canned_raw)
         ledger_port = InMemoryLedgerAdapter()
 
         mock_judge = MagicMock()
@@ -1026,7 +1026,7 @@ class TestCoordinatorLlmJudgeIntegration:
         mock_llm = SmartMockLLMAdapter()
         mock_ingestion = MockMediaIngestionPort(canned_transcript=canned_raw)
         vault_port = InMemoryVaultAdapter()
-        vault_port.save_transcript(canned_raw)
+        vault_port.save_stage_transcript("raw", canned_raw)
         ledger_port = InMemoryLedgerAdapter()
         mock_telemetry = MagicMock()
 

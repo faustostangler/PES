@@ -102,5 +102,5 @@ class TransformFluidProseUseCase:
 
         fluid_transcript = post_process_fluid_transcript(raw_response, source_transcript)
         if self.vault_port is not None:
-            self.vault_port.save_fluid_transcript(fluid_transcript)
+            self.vault_port.save_stage_transcript("fluid_prose", fluid_transcript)
         return fluid_transcript

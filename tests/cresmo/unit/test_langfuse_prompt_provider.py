@@ -166,7 +166,7 @@ class TestLangfusePromptProvider:
         Must fall back silently (with a WARNING, not an exception).
         """
         mock_client = MagicMock()
-        mock_client.get_prompt.side_effect = ApiError(status_code=404, text="Not Found")
+        mock_client.get_prompt.side_effect = ApiError(status_code=404, body="Not Found")
 
         provider = LangfusePromptProvider(
             langfuse_client=mock_client,
@@ -194,7 +194,7 @@ class TestLangfusePromptProvider:
     ) -> None:
         """ApiError with a non-404 status (e.g. 500) must also fall back gracefully."""
         mock_client = MagicMock()
-        mock_client.get_prompt.side_effect = ApiError(status_code=500, text="Internal Server Error")
+        mock_client.get_prompt.side_effect = ApiError(status_code=500, body="Internal Server Error")
 
         provider = LangfusePromptProvider(
             langfuse_client=mock_client,

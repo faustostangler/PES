@@ -949,7 +949,7 @@ class TestNativeMediaIngestionAdapter:
             body="body",
             channel_name="Chan",
         )
-        assert transcript.channel.url is None
+        assert transcript.channel.url == "https://www.youtube.com/@Chan"
         assert ch_id is not None
         assert ch_id.value == "uploader_xyz"
 

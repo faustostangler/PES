@@ -15,12 +15,15 @@ from cresmo.domain.entities import StageTranscript
 from cresmo.domain.exceptions import DomainValidationError
 from cresmo.domain.value_objects import (
     CandidateText,
+    Channel,
     ChannelId,
     ChannelName,
+    Content,
     ContentId,
     CriterionScore,
     JudgeCriterion,
     JudgeEvaluation,
+    MediaProvenance,
     TypedVerdict,
     VerdictType,
 )
@@ -33,11 +36,13 @@ class TestSourceTranscript:
         cid = ContentId("video_123")
         pub = datetime.date(2026, 1, 15)
         transcript = StageTranscript(
-            content_id=cid,
-            channel_name=ChannelName("Test Channel"),
-            body="Continuous raw or source transcript text.",
-            title="Introduction to Socio-Technical Systems",
-            publication_date=pub,
+            channel=Channel(name="Test Channel"),
+            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=video_123", publication_date=pub),
+            content=Content(
+                id=cid,
+                title="Introduction to Socio-Technical Systems",
+                text="Continuous raw or source transcript text.",
+            ),
         )
         assert transcript.content.id == cid
         assert transcript.channel.name == "Test Channel"
@@ -47,21 +52,23 @@ class TestSourceTranscript:
 
     def test_source_transcript_string_coercion(self) -> None:
         transcript = StageTranscript(
-            content_id=ContentId("video_456"),
-            channel_name="Raw Channel String",
-            body="Sample body content",
-            channel_id="UC1234567890123456789012",
+            channel=Channel(name="Raw Channel String", id="UC1234567890123456789012"),
+            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=video_456"),
+            content=Content(id="video_456", text="Sample body content"),
         )
         assert transcript.channel.name == "Raw Channel String"
         assert isinstance(transcript.channel.id, ChannelId)
         assert transcript.channel.id == ChannelId("UC1234567890123456789012")
 
-    def test_source_transcript_empty_body_raises(self) -> None:
-        with pytest.raises(DomainValidationError, match="body cannot be empty"):
+    def test_source_transcript_empty_text_raises(self) -> None:
+        with pytest.raises(DomainValidationError, match="content.text cannot be empty"):
             StageTranscript(
-                content_id=ContentId("video_empty"),
-                channel_name=ChannelName("Channel"),
-                body="   \n\t  ",
+                channel=Channel(name="Channel"),
+                provenance=MediaProvenance.create(url="https://youtube.com/watch?v=video_empty"),
+                content=Content(
+                    id=ContentId("video_empty"),
+                    text="   \n\t  ",
+                ),
             )
 
 

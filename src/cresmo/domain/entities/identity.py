@@ -90,6 +90,22 @@ class PipelineSessionId:
 
         return cls(value=f"{channel_identifier}:{content_identifier}")
 
+    @property
+    def channel_id(self) -> str:
+        """Extract the channel identifier from the session id."""
+        parts = self.value.split(":")
+        if len(parts) == LEGACY_SESSION_ID_PARTS and parts[0] == "content":
+            return parts[1]
+        return parts[0]
+
+    @property
+    def content_id(self) -> str:
+        """Extract the content identifier from the session id."""
+        parts = self.value.split(":")
+        if len(parts) == LEGACY_SESSION_ID_PARTS and parts[0] == "content":
+            return parts[2]
+        return parts[1]
+
 
 @dataclass(frozen=True)
 class UserIdentity:

@@ -41,10 +41,13 @@ from cresmo.domain.exceptions import (
 from cresmo.domain.value_objects import (
     AtomicEntityInventory,
     CausalMatrix,
+    Channel,
     ChannelId,
     ChannelName,
+    Content,
     ContentId,
     CrossContextRelations,
+    MediaProvenance,
     NoteTitle,
     NoteType,
     PromptKey,
@@ -84,9 +87,9 @@ class TestIngestRawTranscript:
     def test_ingest_single_video_success(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
         canned = StageTranscript(
-            content_id=cid,
-            channel_name=ChannelName("Example Channel"),
-            body="Raw spoken audio transcript.",
+            channel=Channel(name="Example Channel"),
+            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=dQw4w9WgXcQ"),
+            content=Content(id=cid, title="Example Channel", text="Raw spoken audio transcript."),
         )
         ingestion_port = MockMediaIngestionPort(canned_transcript=canned)
         vault_port = InMemoryVaultAdapter()
@@ -96,7 +99,7 @@ class TestIngestRawTranscript:
 
         assert result is not None
         assert result.content.id == cid
-        assert vault_port.get_raw_transcript(cid) == canned
+        assert vault_port.get_stage_transcript("raw", cid) == canned
         assert ingestion_port.ingest_single_calls == ["https://youtube.com/watch?v=dQw4w9WgXcQ"]
 
     def test_ingest_single_video_none_returns_none(self) -> None:
@@ -116,12 +119,16 @@ class TestTransformFluidProse:
     def test_transform_fluid_prose_success(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
         raw = StageTranscript(
-            content_id=cid,
-            channel_name=ChannelName("Example Channel"),
-            body="Fala pessoal, hoje vamos ver Pareto, né? Tipo assim, minorias governam.",
-            upload_date=datetime(2023, 5, 17, 12, 0, tzinfo=UTC),
-            channel_id=ChannelId("UC123456"),
-            source_url="https://youtube.com/watch?v=dQw4w9WgXcQ",
+            channel=Channel(name="Example Channel", id=ChannelId("UC123456")),
+            provenance=MediaProvenance.create(
+                url="https://youtube.com/watch?v=dQw4w9WgXcQ",
+                publication_date=datetime(2023, 5, 17, 12, 0, tzinfo=UTC).date(),
+            ),
+            content=Content(
+                id=cid,
+                title="Example Channel",
+                text="Fala pessoal, hoje vamos ver Pareto, né? Tipo assim, minorias governam.",
+            ),
         )
         llm_response = (
             "# Vilfredo Pareto e a Teoria das Elites\n\n"
@@ -160,10 +167,9 @@ class TestTransformFluidProse:
     def test_transform_fluid_prose_with_temperature_user_and_prompt_provider(self) -> None:
         cid = ContentId("vid_tfp123")
         raw = StageTranscript(
-            content_id=cid,
-            channel_name=ChannelName("Channel Alpha"),
-            body="Spoken oral transcript text.",
-            channel_id=ChannelId("UC_ALPHA"),
+            channel=Channel(name="Channel Alpha", id=ChannelId("UC_ALPHA")),
+            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=vid_tfp123"),
+            content=Content(id=cid, title="Channel Alpha", text="Spoken oral transcript text."),
         )
         llm = MockLLMAdapter(responses=["# Clean Title\n\nPure narrative body."])
         mock_pp = MagicMock(spec=PromptProviderPort)
@@ -199,12 +205,12 @@ class TestTransformFluidProse:
         assert call["session_id"] == "UC_ALPHA:vid_tfp123"
 
     def test_transform_fluid_prose_persists_to_vault_when_configured(self) -> None:
-        """Verify TransformFluidProseUseCase invokes vault_port.save_fluid_transcript per ADR-043."""
+        """Verify TransformFluidProseUseCase invokes vault_port.save_stage_transcript per ADR-043/ADR-059."""
         cid = ContentId("vid_tfp_persist")
         raw = StageTranscript(
-            content_id=cid,
-            channel_name=ChannelName("Channel Beta"),
-            body="Spoken oral transcript text.",
+            channel=Channel(name="Channel Beta"),
+            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=vid_tfp_persist"),
+            content=Content(id=cid, title="Channel Beta", text="Spoken oral transcript text."),
         )
         llm = MockLLMAdapter(responses=["# Clean Title\n\n## Clean Body\n\nPure narrative body."])
         mock_vault = MagicMock(spec=VaultRepositoryPort)
@@ -215,7 +221,7 @@ class TestTransformFluidProse:
         )
         fluid = use_case.execute(raw)
 
-        mock_vault.save_fluid_transcript.assert_called_once_with(fluid)
+        mock_vault.save_stage_transcript.assert_called_once_with("fluid_prose", fluid)
         assert fluid.content.id == cid
 
     def test_transform_fluid_prose_rejects_non_raw_transcript(self) -> None:
@@ -229,9 +235,9 @@ class TestTransformFluidProse:
 
     def test_transform_fluid_prose_empty_body_raises_error(self) -> None:
         raw = StageTranscript(
-            content_id=ContentId("empty12345"),
-            channel_name=ChannelName("Example Channel"),
-            body="Raw text",
+            channel=Channel(name="Example Channel"),
+            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=empty12345"),
+            content=Content(id=ContentId("empty12345"), title="Example Channel", text="Raw text"),
         )
         llm_port = MockLLMAdapter(responses=["   "])
         use_case = TransformFluidProseUseCase(llm_port)
@@ -257,9 +263,9 @@ class TestFillGapsFluidProse:
     def test_fill_gaps_temperature_and_default_passes(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
         fluid = StageTranscript(
-            content_id=cid,
-            channel_name=ChannelName("Example Channel"),
-            body="Raw spoken text.",
+            channel=Channel(name="Example Channel"),
+            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=dQw4w9WgXcQ"),
+            content=Content(id=cid, title="Example Channel", text="Raw spoken text."),
         )
         llm_response = "# Title\n\nBody.\n\n### Extra Info\n\nComp."
         llm_port = MockLLMAdapter(responses=[llm_response, llm_response, llm_response])
@@ -278,9 +284,9 @@ class TestFillGapsFluidProse:
     def test_fill_gaps_prompt_provider_contract_and_trace_id(self) -> None:
         cid = ContentId("vid_abc123")
         fluid = StageTranscript(
-            content_id=cid,
-            channel_name=ChannelName("Example Channel"),
-            body="Body text to expand.",
+            channel=Channel(name="Example Channel"),
+            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=vid_abc123"),
+            content=Content(id=cid, title="Example Channel", text="Body text to expand."),
         )
         llm_response = (
             "# Title\n\nExpanded body.\n\n### Extra Info\n\nComplementary text."
@@ -332,28 +338,23 @@ class TestFillGapsFluidProse:
         assert llm_port.call_history[2]["trace_id"] == "vid_abc123_gap_fill_pass_3"
 
     def test_fill_gaps_rejects_raw_transcript(self) -> None:
-        """ADR-028 Invariant: FillGapsUseCase strictly rejects StageTranscript."""
-        raw = StageTranscript(
-            content_id=ContentId("vidraw001"),
-            channel_name=ChannelName("Test"),
-            body="Raw spoken text.",
-        )
+        """ADR-028 Invariant: FillGapsUseCase strictly rejects invalid input."""
         use_case = FillGapsUseCase(MockLLMAdapter(), InMemoryVaultAdapter())
         with pytest.raises(
             DomainValidationError,
-            match=r"^FillGapsUseCase strictly requires StageTranscript, got: StageTranscript$",
+            match=r"^FillGapsUseCase strictly requires StageTranscript, got: str$",
         ):
-            use_case.execute(raw)  # type: ignore[arg-type]
+            use_case.execute("not_a_stage_transcript")  # type: ignore[arg-type]
 
     def test_fill_gaps_success(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
         fluid = StageTranscript(
-            content_id=cid,
-            channel_name=ChannelName("Example Channel"),
-            body="Spoken text without structure.",
-            upload_date=datetime(2023, 5, 17, 12, 0, tzinfo=UTC),
-            channel_id=ChannelId("UC123456"),
-            source_url="https://youtube.com/watch?v=dQw4w9WgXcQ",
+            channel=Channel(name="Example Channel", id=ChannelId("UC123456")),
+            provenance=MediaProvenance.create(
+                url="https://youtube.com/watch?v=dQw4w9WgXcQ",
+                publication_date=datetime(2023, 5, 17, 12, 0, tzinfo=UTC).date(),
+            ),
+            content=Content(id=cid, title="Example Channel", text="Spoken text without structure."),
         )
         llm_response = (
             "# Teoria das Elites\n\n"
@@ -367,23 +368,18 @@ class TestFillGapsFluidProse:
         use_case = FillGapsUseCase(llm_port, vault_port)
         compendium = use_case.execute(fluid, passes=3)
 
-        assert compendium.content_id == cid
-        assert compendium.title.value == "Teoria das Elites"
-        assert compendium.channel_name == ChannelName("Example Channel")
-        assert compendium.channel_id == ChannelId("UC123456")
-        assert compendium.video_date == "20230517"
-        assert compendium.source_url == "https://youtube.com/watch?v=dQw4w9WgXcQ"
-        assert (
-            compendium.body
-            == "A circulação das elites postula que minorias organizadas governam maiorias."
-        )
-        assert (
-            compendium.complementary_info == "Dados empíricos e análises contextuais aprofundadas."
-        )
+        assert compendium.content.id == cid
+        assert compendium.content.title == "Teoria das Elites"
+        assert compendium.channel.name == "Example Channel"
+        assert compendium.channel.id == ChannelId("UC123456")
+        assert compendium.provenance.url == "https://youtube.com/watch?v=dQw4w9WgXcQ"
+        assert "A circulação das elites postula que minorias organizadas governam maiorias." in compendium.content.text
+        assert "### Extra Info" in compendium.content.text
+        assert "Dados empíricos e análises contextuais aprofundadas." in compendium.content.text
         assert compendium.pass_count == 3
-        assert compendium.publication_date == fluid.provenance.publication_date
-        assert compendium.publication_date is not None
-        assert vault_port.get_enriched_compendium(cid) == compendium
+        assert compendium.provenance.publication_date == fluid.provenance.publication_date
+        assert compendium.provenance.publication_date is not None
+        assert vault_port.get_stage_transcript("gap_filler", cid) == compendium
 
         # Verify strict behavioral port interactions
         assert len(llm_port.call_history) == 3
@@ -406,10 +402,9 @@ class TestFillGapsFluidProse:
     def test_fill_gaps_title_fallback_to_fluid_transcript_title(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
         fluid = StageTranscript(
-            content_id=cid,
-            channel_name=ChannelName("Example Channel"),
-            body="Raw spoken text.",
-            title="Raw Video Title",
+            channel=Channel(name="Example Channel"),
+            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=dQw4w9WgXcQ"),
+            content=Content(id=cid, title="Raw Video Title", text="Raw spoken text."),
         )
         llm_response = (
             "Body text without an H1 markdown title.\n\n"
@@ -422,15 +417,14 @@ class TestFillGapsFluidProse:
         use_case = FillGapsUseCase(llm_port, vault_port)
         compendium = use_case.execute(fluid, passes=1)
 
-        assert compendium.title.value == "Raw Video Title"
+        assert compendium.content.title == "Raw Video Title"
 
     def test_fill_gaps_title_fallback_to_default_when_no_fluid_title(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
         fluid = StageTranscript(
-            content_id=cid,
-            channel_name=ChannelName("Example Channel"),
-            body="Raw spoken text.",
-            title="",
+            channel=Channel(name="Example Channel"),
+            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=dQw4w9WgXcQ"),
+            content=Content(id=cid, title="", text="Raw spoken text."),
         )
         llm_response = (
             "Body text without H1 header.\n\n## Notas Complementares\n\nComplementary details."
@@ -441,15 +435,15 @@ class TestFillGapsFluidProse:
         use_case = FillGapsUseCase(llm_port, vault_port)
         compendium = use_case.execute(fluid, passes=1)
 
-        assert compendium.title.value == "Untitled Compendium"
-        assert compendium.complementary_info == "Complementary details."
+        assert compendium.content.title == "Untitled Compendium"
+        assert "Complementary details." in compendium.content.text
 
     def test_fill_gaps_alternative_regex_header_informacoes_adicionais(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
         fluid = StageTranscript(
-            content_id=cid,
-            channel_name=ChannelName("Example Channel"),
-            body="Raw spoken text.",
+            channel=Channel(name="Example Channel"),
+            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=dQw4w9WgXcQ"),
+            content=Content(id=cid, title="Example Channel", text="Raw spoken text."),
         )
         llm_response = (
             "# H1 Title\n\n"
@@ -463,16 +457,16 @@ class TestFillGapsFluidProse:
         use_case = FillGapsUseCase(llm_port, vault_port)
         compendium = use_case.execute(fluid, passes=1)
 
-        assert compendium.title.value == "H1 Title"
-        assert compendium.body == "Primary text."
-        assert compendium.complementary_info == "Additional notes and context."
+        assert compendium.content.title == "H1 Title"
+        assert "Primary text." in compendium.content.text
+        assert "Additional notes and context." in compendium.content.text
 
     def test_fill_gaps_empty_complementary_section_raises_error(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
         fluid = StageTranscript(
-            content_id=cid,
-            channel_name=ChannelName("Example Channel"),
-            body="Raw spoken text.",
+            channel=Channel(name="Example Channel"),
+            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=dQw4w9WgXcQ"),
+            content=Content(id=cid, title="Example Channel", text="Raw spoken text."),
         )
         llm_response = "# H1 Title\n\nPrimary text.\n\n### Extra Info\n\n   "
         llm_port = MockLLMAdapter(responses=[llm_response])
@@ -488,9 +482,9 @@ class TestFillGapsFluidProse:
     def test_fill_gaps_missing_complementary_section_raises_error(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
         fluid = StageTranscript(
-            content_id=cid,
-            channel_name=ChannelName("Example Channel"),
-            body="Raw spoken text.",
+            channel=Channel(name="Example Channel"),
+            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=dQw4w9WgXcQ"),
+            content=Content(id=cid, title="Example Channel", text="Raw spoken text."),
         )
         llm_response = "# H1 Title\n\nPrimary text without any complementary section."
         llm_port = MockLLMAdapter(responses=[llm_response])
@@ -506,12 +500,12 @@ class TestFillGapsFluidProse:
     def test_fill_gaps_preserves_optional_metadata_and_date(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
         fluid = StageTranscript(
-            content_id=cid,
-            channel_name=ChannelName("Example Channel"),
-            body="Raw spoken text.",
-            channel_category="tech_ai",
-            video_description="Video description text.",
-            upload_date=None,
+            channel=Channel(name="Example Channel", category="tech_ai"),
+            provenance=MediaProvenance.create(
+                url="https://youtube.com/watch?v=dQw4w9WgXcQ",
+                description="Video description text.",
+            ),
+            content=Content(id=cid, title="Example Channel", text="Raw spoken text."),
         )
         llm_response = "# H1 Title\n\nPrimary text.\n\n### Extra Info\n\nValid complementary info."
         llm_port = MockLLMAdapter(responses=[llm_response])
@@ -519,9 +513,9 @@ class TestFillGapsFluidProse:
 
         use_case = FillGapsUseCase(llm_port, vault_port)
         comp = use_case.execute(fluid, passes=1)
-        assert comp.channel_category == "tech_ai"
-        assert comp.video_description == "Video description text."
-        assert comp.video_date == ""
+        assert comp.channel.category == "tech_ai"
+        assert comp.provenance.description == "Video description text."
+        assert comp.provenance.publication_date is None
 
 
 class TestExpandLongitudinalSynchronic:
@@ -530,14 +524,14 @@ class TestExpandLongitudinalSynchronic:
     def test_expand_success(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
         initial_compendium = StageTranscript(
-            content_id=cid,
-            channel_name=ChannelName("Example Channel"),
-            title=NoteTitle("Teoria das Elites"),
-            body="Continuous prose body describing elites.",
-            complementary_info="Initial complementary info.",
+            channel=Channel(name="Example Channel", id=ChannelId("UC_Test")),
+            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=dQw4w9WgXcQ"),
+            content=Content(
+                id=cid,
+                title="Teoria das Elites",
+                text="Continuous prose body describing elites.\n\n### Extra Info\n\nInitial complementary info.",
+            ),
             pass_count=1,
-            channel_id=ChannelId("UC_Test"),
-            source_url="https://youtube.com/watch?v=dQw4w9WgXcQ",
         )
         long_response = (
             "# Teoria das Elites (Longitudinal)\n\n"
@@ -557,20 +551,17 @@ class TestExpandLongitudinalSynchronic:
         use_case = ExpandCompendiumUseCase(llm_port, vault_port)
         updated = use_case.execute(initial_compendium)
 
-        assert updated.content_id == cid
+        assert updated.content.id == cid
         assert updated.pass_count == 2
-        assert updated.channel_id == "UC_Test"
-        assert updated.source_url == "https://youtube.com/watch?v=dQw4w9WgXcQ"
-        assert updated.title == initial_compendium.title
-        assert updated.title.value == "Teoria das Elites"
-        assert "longue durée" in updated.body
+        assert updated.channel.id == ChannelId("UC_Test")
+        assert updated.provenance.url == "https://youtube.com/watch?v=dQw4w9WgXcQ"
+        assert updated.content.title == initial_compendium.content.title
+        assert updated.content.title == "Teoria das Elites"
+        assert "longue durée" in updated.content.text
         # Leading H1 must be stripped from body
-        assert not updated.body.startswith("#")
-        assert (
-            updated.complementary_info
-            == "Multi-secular historical indices and global trade matrices."
-        )
-        assert vault_port.get_enriched_compendium(cid) == updated
+        assert not updated.content.text.startswith("#")
+        assert "Multi-secular historical indices and global trade matrices." in updated.content.text
+        assert vault_port.get_stage_transcript("gap_filler", cid) == updated
 
         # Verify strict port interactions
         assert len(llm_port.call_history) == 2
@@ -596,11 +587,13 @@ class TestExpandLongitudinalSynchronic:
     def test_expand_missing_complementary_tag_falls_back_to_original(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
         initial_compendium = StageTranscript(
-            content_id=cid,
-            channel_name=ChannelName("Example Channel"),
-            title=NoteTitle("Teoria das Elites"),
-            body="Continuous prose body.",
-            complementary_info="Original complementary info.",
+            channel=Channel(name="Example Channel"),
+            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=dQw4w9WgXcQ"),
+            content=Content(
+                id=cid,
+                title="Teoria das Elites",
+                text="Continuous prose body.\n\n### Extra Info\n\nOriginal complementary info.",
+            ),
         )
         long_response = "Long response without section header."
         wide_response = "Wide response without section header."
@@ -610,18 +603,20 @@ class TestExpandLongitudinalSynchronic:
         use_case = ExpandCompendiumUseCase(llm_port, vault_port)
         updated = use_case.execute(initial_compendium)
 
-        assert updated.title == initial_compendium.title
-        assert updated.body == "Wide response without section header."
-        assert updated.complementary_info == "Original complementary info."
+        assert updated.content.title == initial_compendium.content.title
+        assert "Wide response without section header." in updated.content.text
+        assert "Original complementary info." in updated.content.text
 
     def test_expand_empty_complementary_raises_error(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
         initial_compendium = StageTranscript(
-            content_id=cid,
-            channel_name=ChannelName("Example Channel"),
-            title=NoteTitle("Teoria das Elites"),
-            body="Continuous prose body.",
-            complementary_info="Initial complementary info.",
+            channel=Channel(name="Example Channel"),
+            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=dQw4w9WgXcQ"),
+            content=Content(
+                id=cid,
+                title="Teoria das Elites",
+                text="Continuous prose body.\n\n### Extra Info\n\nInitial complementary info.",
+            ),
         )
         long_response = "Long response."
         wide_response = "Wide response text.\n\n### Extra Info\n\n   "
@@ -650,11 +645,13 @@ class TestExpandLongitudinalSynchronic:
     def test_expand_temperature_and_user_and_trace_ids(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
         initial_compendium = StageTranscript(
-            content_id=cid,
-            channel_name=ChannelName("Example Channel"),
-            title=NoteTitle("Teoria das Elites"),
-            body="Continuous prose body.",
-            complementary_info="Initial complementary info.",
+            channel=Channel(name="Example Channel"),
+            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=dQw4w9WgXcQ"),
+            content=Content(
+                id=cid,
+                title="Teoria das Elites",
+                text="Continuous prose body.\n\n### Extra Info\n\nInitial complementary info.",
+            ),
         )
         long_response = "Long response text."
         wide_response = "Expanded body.\n\n### Extra Info\n\nExact tag notes."
@@ -665,7 +662,7 @@ class TestExpandLongitudinalSynchronic:
         user = UserIdentity("usr_special")
         updated = use_case.execute(initial_compendium, user=user)
 
-        assert updated.pass_count == initial_compendium.pass_count + 1
+        assert updated.pass_count == (initial_compendium.pass_count or 1) + 1
         assert len(llm_port.call_history) == 2
         assert llm_port.call_history[0]["temperature"] == 0.85
         assert llm_port.call_history[1]["temperature"] == 0.85
@@ -677,11 +674,13 @@ class TestExpandLongitudinalSynchronic:
     def test_expand_with_regex_variations_notas_complementares(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
         initial_compendium = StageTranscript(
-            content_id=cid,
-            channel_name=ChannelName("Example Channel"),
-            title=NoteTitle("Teoria das Elites"),
-            body="Continuous prose body.",
-            complementary_info="Initial complementary info.",
+            channel=Channel(name="Example Channel"),
+            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=dQw4w9WgXcQ"),
+            content=Content(
+                id=cid,
+                title="Teoria das Elites",
+                text="Continuous prose body.\n\n### Extra Info\n\nInitial complementary info.",
+            ),
         )
         long_response = "Long response text."
         wide_response = (
@@ -692,23 +691,24 @@ class TestExpandLongitudinalSynchronic:
 
         use_case = ExpandCompendiumUseCase(llm_port, vault_port)
         updated = use_case.execute(initial_compendium)
-        assert updated.body == "Expanded body."
-        assert updated.complementary_info == "Notas content."
+        assert "Expanded body." in updated.content.text
+        assert "Notas content." in updated.content.text
 
     def test_expand_preserves_distinct_metadata_and_dates(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
         initial_compendium = StageTranscript(
-            content_id=cid,
-            channel_name=ChannelName("Example Channel"),
-            title=NoteTitle("Teoria das Elites"),
-            body="Continuous prose body.",
-            complementary_info="Initial complementary info.",
-            channel_id=ChannelId("UC_XYZ"),
-            channel_category="Direita",
-            source_url="https://youtube.com/watch?v=dQw4w9WgXcQ",
-            publication_date=date(2021, 1, 1),
-            video_date="20220202",
-            video_description="A deep video description.",
+            channel=Channel(name="Example Channel", id=ChannelId("UC_XYZ"), category="Direita"),
+            provenance=MediaProvenance.create(
+                url="https://youtube.com/watch?v=dQw4w9WgXcQ",
+                publication_date=date(2021, 1, 1),
+                description="A deep video description.",
+            ),
+            content=Content(
+                id=cid,
+                title="Teoria das Elites",
+                text="Continuous prose body.\n\n### Extra Info\n\nInitial complementary info.",
+            ),
+            metadata={"video_date": "20220202"},
         )
         long_response = "Long response text."
         wide_response = "Expanded body.\n\n## Informações Adicionais\n\nAdicionais content."
@@ -717,15 +717,15 @@ class TestExpandLongitudinalSynchronic:
 
         use_case = ExpandCompendiumUseCase(llm_port, vault_port)
         updated = use_case.execute(initial_compendium)
-        assert updated.content_id == cid
-        assert updated.channel_name == ChannelName("Example Channel")
-        assert updated.channel_id == "UC_XYZ"
-        assert updated.channel_category == "Direita"
-        assert updated.source_url == "https://youtube.com/watch?v=dQw4w9WgXcQ"
-        assert updated.publication_date == date(2021, 1, 1)
-        assert updated.video_date == "20220202"
-        assert updated.video_description == "A deep video description."
-        assert updated.complementary_info == "Adicionais content."
+        assert updated.content.id == cid
+        assert updated.channel.name == "Example Channel"
+        assert updated.channel.id == ChannelId("UC_XYZ")
+        assert updated.channel.category == "Direita"
+        assert updated.provenance.url == "https://youtube.com/watch?v=dQw4w9WgXcQ"
+        assert updated.provenance.publication_date == date(2021, 1, 1)
+        assert updated.metadata.get("video_date") == "20220202"
+        assert updated.provenance.description == "A deep video description."
+        assert "Adicionais content." in updated.content.text
 
 
 class TestDiscoverAtomicInventory:
@@ -734,11 +734,13 @@ class TestDiscoverAtomicInventory:
     def test_discover_inventory_success(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
         compendium = StageTranscript(
-            content_id=cid,
-            channel_name=ChannelName("Example Channel"),
-            title=NoteTitle("Teoria das Elites"),
-            body="Continuous body describing Vilfredo Pareto and Gaetano Mosca.",
-            complementary_info="Complementary info.",
+            channel=Channel(name="Example Channel"),
+            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=dQw4w9WgXcQ"),
+            content=Content(
+                id=cid,
+                title="Teoria das Elites",
+                text="Continuous body describing Vilfredo Pareto and Gaetano Mosca.\n\n### Extra Info\n\nComplementary info.",
+            ),
         )
         llm_json = json.dumps(
             [
@@ -771,12 +773,13 @@ class TestDiscoverAtomicInventory:
         """When ChannelId is available on the compendium, session_id and user_id use the ID."""
         cid = ContentId("dQw4w9WgXcQ")
         compendium = StageTranscript(
-            content_id=cid,
-            channel_name=ChannelName("Example Channel"),
-            channel_id=ChannelId("UC_TestChannelId"),
-            title=NoteTitle("Teoria das Elites"),
-            body="Continuous body describing Vilfredo Pareto and Gaetano Mosca.",
-            complementary_info="Complementary info.",
+            channel=Channel(name="Example Channel", id=ChannelId("UC_TestChannelId")),
+            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=dQw4w9WgXcQ"),
+            content=Content(
+                id=cid,
+                title="Teoria das Elites",
+                text="Continuous body describing Vilfredo Pareto and Gaetano Mosca.\n\n### Extra Info\n\nComplementary info.",
+            ),
         )
         llm_json = json.dumps([{"title": "Vilfredo Pareto", "type": "entity"}])
         llm_port = MockLLMAdapter(responses=[llm_json])
@@ -791,11 +794,13 @@ class TestDiscoverAtomicInventory:
     def test_discover_inventory_deduplicates_case_insensitively(self) -> None:
         cid = ContentId("dQw4w9XcQ")
         compendium = StageTranscript(
-            content_id=cid,
-            channel_name=ChannelName("Example Channel"),
-            title=NoteTitle("Teoria das Elites"),
-            body="Body content.",
-            complementary_info="Complementary info.",
+            channel=Channel(name="Example Channel"),
+            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=dQw4w9XcQ"),
+            content=Content(
+                id=cid,
+                title="Teoria das Elites",
+                text="Body content.\n\n### Extra Info\n\nComplementary info.",
+            ),
         )
         llm_json = json.dumps(
             [
@@ -815,11 +820,13 @@ class TestDiscoverAtomicInventory:
     def test_discover_inventory_skips_malformed_entries_and_defaults_type(self) -> None:
         cid = ContentId("dQw4w9XcQ")
         compendium = StageTranscript(
-            content_id=cid,
-            channel_name=ChannelName("Example Channel"),
-            title=NoteTitle("Teoria das Elites"),
-            body="Body content.",
-            complementary_info="Complementary info.",
+            channel=Channel(name="Example Channel"),
+            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=dQw4w9XcQ"),
+            content=Content(
+                id=cid,
+                title="Teoria das Elites",
+                text="Body content.\n\n### Extra Info\n\nComplementary info.",
+            ),
         )
         llm_json = json.dumps(
             [
@@ -844,11 +851,13 @@ class TestDiscoverAtomicInventory:
     def test_discover_inventory_non_list_json_raises_domain_validation_error(self) -> None:
         cid = ContentId("dQw4w9XcQ")
         compendium = StageTranscript(
-            content_id=cid,
-            channel_name=ChannelName("Example Channel"),
-            title=NoteTitle("Teoria das Elites"),
-            body="Body content.",
-            complementary_info="Complementary info.",
+            channel=Channel(name="Example Channel"),
+            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=dQw4w9XcQ"),
+            content=Content(
+                id=cid,
+                title="Teoria das Elites",
+                text="Body content.\n\n### Extra Info\n\nComplementary info.",
+            ),
         )
         llm_json = json.dumps({"not": "a list", "title": "Vilfredo Pareto"})
         llm_port = MockLLMAdapter(responses=[llm_json])
@@ -867,11 +876,13 @@ class TestSynthesizeAtomicBatch:
     def test_synthesize_batch_success(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
         compendium = StageTranscript(
-            content_id=cid,
-            channel_name=ChannelName("Example Channel"),
-            title=NoteTitle("Teoria das Elites"),
-            body="Continuous body describing elites.",
-            complementary_info="Complementary info.",
+            channel=Channel(name="Example Channel"),
+            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=dQw4w9WgXcQ"),
+            content=Content(
+                id=cid,
+                title="Teoria das Elites",
+                text="Continuous body describing elites.\n\n### Extra Info\n\nComplementary info.",
+            ),
         )
         inv = AtomicEntityInventory(items=((NoteTitle("Vilfredo Pareto"), NoteType.ENTITY),))
 
@@ -943,12 +954,13 @@ class TestSynthesizeAtomicBatch:
         """When ChannelId is available on the compendium, session_id and user_id use the ID."""
         cid = ContentId("dQw4w9WgXcQ")
         compendium = StageTranscript(
-            content_id=cid,
-            channel_name=ChannelName("Example Channel"),
-            channel_id=ChannelId("UC_TestChannelId"),
-            title=NoteTitle("Teoria das Elites"),
-            body="Continuous body describing elites.",
-            complementary_info="Complementary info.",
+            channel=Channel(name="Example Channel", id=ChannelId("UC_TestChannelId")),
+            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=dQw4w9WgXcQ"),
+            content=Content(
+                id=cid,
+                title="Teoria das Elites",
+                text="Continuous body describing elites.\n\n### Extra Info\n\nComplementary info.",
+            ),
         )
         inv = AtomicEntityInventory(items=((NoteTitle("Vilfredo Pareto"), NoteType.ENTITY),))
         batch_json = json.dumps(
@@ -984,11 +996,13 @@ class TestSynthesizeAtomicBatch:
     def test_synthesize_batch_non_list_json_raises_domain_validation_error(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
         compendium = StageTranscript(
-            content_id=cid,
-            channel_name=ChannelName("Example Channel"),
-            title=NoteTitle("Teoria das Elites"),
-            body="Continuous body describing elites.",
-            complementary_info="Complementary info.",
+            channel=Channel(name="Example Channel"),
+            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=dQw4w9WgXcQ"),
+            content=Content(
+                id=cid,
+                title="Teoria das Elites",
+                text="Continuous body describing elites.\n\n### Extra Info\n\nComplementary info.",
+            ),
         )
         inv = AtomicEntityInventory(items=((NoteTitle("Vilfredo Pareto"), NoteType.ENTITY),))
         llm_json = json.dumps({"title": "Vilfredo Pareto", "type": "entity"})
@@ -1005,11 +1019,13 @@ class TestSynthesizeAtomicBatch:
     def test_synthesize_batch_short_definition_raises_domain_validation_error(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
         compendium = StageTranscript(
-            content_id=cid,
-            channel_name=ChannelName("Example Channel"),
-            title=NoteTitle("Teoria das Elites"),
-            body="Continuous body describing elites.",
-            complementary_info="Complementary info.",
+            channel=Channel(name="Example Channel"),
+            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=dQw4w9WgXcQ"),
+            content=Content(
+                id=cid,
+                title="Teoria das Elites",
+                text="Continuous body describing elites.\n\n### Extra Info\n\nComplementary info.",
+            ),
         )
         inv = AtomicEntityInventory(items=((NoteTitle("Vilfredo Pareto"), NoteType.ENTITY),))
         llm_json = json.dumps(
@@ -1028,11 +1044,13 @@ class TestSynthesizeAtomicBatch:
     def test_synthesize_batch_existing_note_exact_match_skips_llm(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
         compendium = StageTranscript(
-            content_id=cid,
-            channel_name=ChannelName("Example Channel"),
-            title=NoteTitle("Teoria das Elites"),
-            body="Continuous body describing elites.",
-            complementary_info="Complementary info.",
+            channel=Channel(name="Example Channel"),
+            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=dQw4w9WgXcQ"),
+            content=Content(
+                id=cid,
+                title="Teoria das Elites",
+                text="Continuous body describing elites.\n\n### Extra Info\n\nComplementary info.",
+            ),
         )
         existing = AtomicNote(
             title=NoteTitle("Vilfredo Pareto"),
@@ -1055,11 +1073,13 @@ class TestSynthesizeAtomicBatch:
     def test_synthesize_batch_existing_note_alias_match_skips_llm(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
         compendium = StageTranscript(
-            content_id=cid,
-            channel_name=ChannelName("Example Channel"),
-            title=NoteTitle("Teoria das Elites"),
-            body="Continuous body describing elites.",
-            complementary_info="Complementary info.",
+            channel=Channel(name="Example Channel"),
+            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=dQw4w9WgXcQ"),
+            content=Content(
+                id=cid,
+                title="Teoria das Elites",
+                text="Continuous body describing elites.\n\n### Extra Info\n\nComplementary info.",
+            ),
         )
         existing = AtomicNote(
             title=NoteTitle("Vilfredo Pareto"),
@@ -1083,11 +1103,13 @@ class TestSynthesizeAtomicBatch:
     def test_synthesize_batch_existing_note_honorific_match_skips_llm(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
         compendium = StageTranscript(
-            content_id=cid,
-            channel_name=ChannelName("Example Channel"),
-            title=NoteTitle("História do Brasil"),
-            body="Continuous body.",
-            complementary_info="Complementary info.",
+            channel=Channel(name="Example Channel"),
+            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=dQw4w9WgXcQ"),
+            content=Content(
+                id=cid,
+                title="História do Brasil",
+                text="Continuous body.\n\n### Extra Info\n\nComplementary info.",
+            ),
         )
         existing = AtomicNote(
             title=NoteTitle("Dom Pedro II"),
@@ -1111,11 +1133,13 @@ class TestSynthesizeAtomicBatch:
     def test_synthesize_batch_partitions_chunks_by_batch_size(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
         compendium = StageTranscript(
-            content_id=cid,
-            channel_name=ChannelName("Example Channel"),
-            title=NoteTitle("Teoria das Elites"),
-            body="Continuous body.",
-            complementary_info="Complementary info.",
+            channel=Channel(name="Example Channel"),
+            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=dQw4w9WgXcQ"),
+            content=Content(
+                id=cid,
+                title="Teoria das Elites",
+                text="Continuous body.\n\n### Extra Info\n\nComplementary info.",
+            ),
         )
         inv = AtomicEntityInventory(
             items=(
@@ -1175,11 +1199,13 @@ class TestSynthesizeAtomicBatch:
     def test_synthesize_batch_skips_malformed_entries_and_defaults_type(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
         compendium = StageTranscript(
-            content_id=cid,
-            channel_name=ChannelName("Example Channel"),
-            title=NoteTitle("Teoria das Elites"),
-            body="Continuous body.",
-            complementary_info="Complementary info.",
+            channel=Channel(name="Example Channel"),
+            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=dQw4w9WgXcQ"),
+            content=Content(
+                id=cid,
+                title="Teoria das Elites",
+                text="Continuous body.\n\n### Extra Info\n\nComplementary info.",
+            ),
         )
         inv = AtomicEntityInventory(items=((NoteTitle("Vilfredo Pareto"), NoteType.ENTITY),))
         batch_json = json.dumps(
@@ -1309,9 +1335,9 @@ class TestUseCasesEdgeCases:
     def test_fill_gaps_missing_complementary_info_raises_error(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
         fluid = StageTranscript(
-            content_id=cid,
-            channel_name=ChannelName("Example Channel"),
-            body="Clean fluid text without structure.",
+            channel=Channel(name="Example Channel"),
+            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=dQw4w9WgXcQ"),
+            content=Content(id=cid, title="Example Channel", text="Clean fluid text without structure."),
         )
         llm_response = "# Teoria das Elites\n\nOnly body text without complementary info section."
         llm_port = MockLLMAdapter(responses=[llm_response])
@@ -1324,11 +1350,13 @@ class TestUseCasesEdgeCases:
     def test_discover_inventory_non_list_raises_error(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
         compendium = StageTranscript(
-            content_id=cid,
-            channel_name=ChannelName("Example Channel"),
-            title=NoteTitle("Teoria das Elites"),
-            body="Body content.",
-            complementary_info="Complementary info.",
+            channel=Channel(name="Example Channel"),
+            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=dQw4w9WgXcQ"),
+            content=Content(
+                id=cid,
+                title="Teoria das Elites",
+                text="Body content.\n\n### Extra Info\n\nComplementary info.",
+            ),
         )
         llm_port = MockLLMAdapter(responses=['{"not_a_list": true}'])
         use_case = DiscoverAtomicInventoryUseCase(llm_port)
@@ -1339,11 +1367,13 @@ class TestUseCasesEdgeCases:
     def test_discover_inventory_empty_items_raises_error(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
         compendium = StageTranscript(
-            content_id=cid,
-            channel_name=ChannelName("Example Channel"),
-            title=NoteTitle("Teoria das Elites"),
-            body="Body content.",
-            complementary_info="Complementary info.",
+            channel=Channel(name="Example Channel"),
+            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=dQw4w9WgXcQ"),
+            content=Content(
+                id=cid,
+                title="Teoria das Elites",
+                text="Body content.\n\n### Extra Info\n\nComplementary info.",
+            ),
         )
         llm_port = MockLLMAdapter(responses=["[]"])
         use_case = DiscoverAtomicInventoryUseCase(llm_port)
@@ -1354,11 +1384,13 @@ class TestUseCasesEdgeCases:
     def test_synthesize_batch_non_list_raises_error(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
         compendium = StageTranscript(
-            content_id=cid,
-            channel_name=ChannelName("Example Channel"),
-            title=NoteTitle("Teoria das Elites"),
-            body="Body content.",
-            complementary_info="Complementary info.",
+            channel=Channel(name="Example Channel"),
+            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=dQw4w9WgXcQ"),
+            content=Content(
+                id=cid,
+                title="Teoria das Elites",
+                text="Body content.\n\n### Extra Info\n\nComplementary info.",
+            ),
         )
         inv = AtomicEntityInventory(items=((NoteTitle("Vilfredo Pareto"), NoteType.ENTITY),))
         llm_port = MockLLMAdapter(responses=['{"not_a_list": true}'])

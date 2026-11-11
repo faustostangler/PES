@@ -17,6 +17,7 @@ from cresmo.domain.value_objects import JudgeCriterion, PromptKey
 class StageName(StrEnum):
     """Canonical enumeration of conveyor pipeline stage identifiers."""
 
+    RAW = "raw"
     FLUID_PROSE = "fluid_prose"
     GAP_FILLER = "gap_filler"
 

@@ -76,7 +76,7 @@ class TestStageConfigRunner:
             provenance=MediaProvenance.empty(),
             content=Content(
                 id=ContentId("content_test"),
-                body="Um, so basically, this is raw spoken text.",
+                text="Um, so basically, this is raw spoken text.",
             ),
         )
 
@@ -164,7 +164,7 @@ class TestStageConfigRunner:
             provenance=MediaProvenance.empty(),
             content=Content(
                 id=ContentId("content_retry"),
-                body="Text with oralities.",
+                text="Text with oralities.",
             ),
         )
 
@@ -222,7 +222,7 @@ class TestStageConfigRunner:
             provenance=MediaProvenance.empty(),
             content=Content(
                 id=ContentId("content_post"),
-                body="Raw spoken text.",
+                text="Raw spoken text.",
             ),
         )
 
@@ -300,7 +300,7 @@ class TestStageConfigRunner:
             content=Content(
                 id=ContentId("content_999"),
                 title="SOTA DDD Architecture",
-                body="Raw spoken body transcript.",
+                text="Raw spoken body transcript.",
             ),
         )
 
@@ -408,7 +408,7 @@ class TestStageConfigRunner:
             provenance=MediaProvenance.empty(),
             content=Content(
                 id=ContentId("content_isolated"),
-                body="Raw ground truth",
+                text="Raw ground truth",
             ),
         )
         ctx = PipelineExecutionContext(
@@ -571,28 +571,21 @@ class TestStageConfigPromptBuilding:
             content=Content(id=ContentId("vid_1001"), session_id="sess:4"),
         )
 
-        # 1. Source with content.body
-        class SourceContentBody:
-            content = Content(id="vid_1001", text="extracted from content.body")
+        # 1. Source with content.text
+        class SourceContentText:
+            content = Content(id="vid_1001", text="extracted from content.text")
 
-        cfg.build_transform_prompt(mock_provider, source=SourceContentBody(), context=ctx)
-        assert mock_provider.get_prompt.call_args[1]["raw_text"] == "extracted from content.body"
+        cfg.build_transform_prompt(mock_provider, source=SourceContentText(), context=ctx)
+        assert mock_provider.get_prompt.call_args[1]["raw_text"] == "extracted from content.text"
 
-        # 2. Source with body attribute
-        class SourceBody:
-            body = "extracted from body"
-
-        cfg.build_transform_prompt(mock_provider, source=SourceBody(), context=ctx)
-        assert mock_provider.get_prompt.call_args[1]["raw_text"] == "extracted from body"
-
-        # 3. Source with text attribute
+        # 2. Source with text attribute
         class SourceText:
             text = "extracted from text"
 
         cfg.build_transform_prompt(mock_provider, source=SourceText(), context=ctx)
         assert mock_provider.get_prompt.call_args[1]["raw_text"] == "extracted from text"
 
-        # 4. Fallback to str(source)
+        # 3. Fallback to str(source)
         class CustomObj:
             def __str__(self) -> str:
                 return "custom_str_repr"
@@ -697,7 +690,7 @@ class TestStageConfigPromptBuilding:
             provenance=MediaProvenance.empty(),
             content=Content(
                 id=ContentId("cid1"),
-                body="source_body",
+                text="source_body",
             ),
         )
         cand = CandidateText(stage_name="test_stage", text="candidate_body")

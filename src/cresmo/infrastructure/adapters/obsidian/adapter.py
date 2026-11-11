@@ -20,6 +20,7 @@ from cresmo.domain.entities import (
     MapOfContent,
     StageTranscript,
 )
+from cresmo.domain.stage_registry import StageName
 from cresmo.domain.value_objects import (
     ChannelName,
     ContentId,
@@ -71,6 +72,7 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
             raw_dir=self.raw_dir,
             enriched_dir=self.enriched_dir,
             fluid_dir=self.fluid_dir,
+            data_dir=self.data_dir,
         )
         self._notes = AtomicNoteVaultHandler(
             vault_dir=self.vault_dir,
@@ -90,36 +92,23 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
         """Atomically write text content using temp-file replace pattern."""
         atomic_write(target_path, content)
 
-    # --- Transcripts & Compendiums ---
+    # --- Transcripts & Compendiums (ADR-058, ADR-059) ---
 
-    def save_transcript(self, transcript: StageTranscript) -> None:
-        self._transcripts.save_transcript(transcript)
+    def resolve_stage_dir(self, stage_name: str | StageName) -> Path:
+        return self._transcripts.resolve_stage_dir(stage_name)
 
-    def get_raw_transcript(self, content_id: ContentId) -> StageTranscript | None:
-        return self._transcripts.get_raw_transcript(content_id)
-
-    def save_enriched_compendium(self, compendium: StageTranscript) -> None:
-        self._transcripts.save_enriched_compendium(compendium)
-
-    def get_enriched_compendium(self, content_id: ContentId) -> StageTranscript | None:
-        return self._transcripts.get_enriched_compendium(content_id)
-
-    def get_enriched_files_for_channel(self, channel_name: ChannelName) -> list[Path]:
-        return self._transcripts.get_enriched_files_for_channel(channel_name)
-
-    def save_stage_transcript(self, stage_name: str, transcript: StageTranscript) -> None:
+    def save_stage_transcript(
+        self, stage_name: str | StageName, transcript: StageTranscript
+    ) -> None:
         self._transcripts.save_stage_transcript(stage_name, transcript)
 
     def get_stage_transcript(
-        self, stage_name: str, content_id: ContentId
+        self, stage_name: str | StageName, content_id: ContentId
     ) -> StageTranscript | None:
         return self._transcripts.get_stage_transcript(stage_name, content_id)
 
-    def save_fluid_transcript(self, transcript: StageTranscript) -> None:
-        self._transcripts.save_fluid_transcript(transcript)
-
-    def get_fluid_transcript(self, content_id: ContentId) -> StageTranscript | None:
-        return self._transcripts.get_fluid_transcript(content_id)
+    def get_enriched_files_for_channel(self, channel_name: ChannelName) -> list[Path]:
+        return self._transcripts.get_enriched_files_for_channel(channel_name)
 
     def get_fluid_files_for_channel(self, channel_name: ChannelName) -> list[Path]:
         return self._transcripts.get_fluid_files_for_channel(channel_name)

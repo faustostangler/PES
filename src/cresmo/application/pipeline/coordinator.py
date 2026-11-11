@@ -81,10 +81,6 @@ def _extract_fluid_text(source: StageTranscript | Any) -> str:
     if isinstance(source, StageTranscript):
         return source.content.text
     return ""
-    text = getattr(source, "text", None)
-    if isinstance(text, str) and text:
-        return text
-    return ""
 
 
 class CresmoPipeline:
@@ -261,7 +257,7 @@ class CresmoPipeline:
                 StageName.GAP_FILLER,
             )
 
-            stage_artifacts: dict[str, Any] = {"raw": raw}
+            stage_artifacts: dict[StageName, Any] = {StageName.RAW: raw}
             current_source: Any = raw
 
             for step in conveyor_steps:
@@ -365,7 +361,7 @@ class CresmoPipeline:
                 success=True,
                 source_transcript=raw,
                 index_entry=entry,
-                compendium=self.vault_port.get_enriched_compendium(content_id),
+                compendium=self.vault_port.get_stage_transcript("gap_filler", content_id),
                 already_processed=True,
             )
         return None

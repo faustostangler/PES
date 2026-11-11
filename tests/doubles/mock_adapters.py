@@ -18,12 +18,10 @@ from cresmo.application.ports import (
 )
 from cresmo.domain.entities import (
     AtomicNote,
-    StageTranscript,
-    StageTranscript,
     MapOfContent,
     StageTranscript,
-    StageTranscript,
 )
+from cresmo.domain.stage_registry import StageName
 from cresmo.domain.value_objects import (
     ChannelFeedQuery,
     ChannelName,
@@ -112,6 +110,7 @@ class InMemoryVaultAdapter(VaultRepositoryPort):
     """In-memory mock for VaultRepositoryPort."""
 
     def __init__(self) -> None:
+        self.stage_transcripts: dict[str, dict[str, StageTranscript]] = {}
         self.raw_transcripts: dict[str, StageTranscript] = {}
         self.fluid_transcripts: dict[str, StageTranscript] = {}
         self.compendiums: dict[str, StageTranscript] = {}
@@ -164,47 +163,35 @@ class InMemoryVaultAdapter(VaultRepositoryPort):
         for k in keys_to_del:
             del self.master_documents[k]
 
-    def save_transcript(self, transcript: StageTranscript) -> None:
-        self.raw_transcripts[transcript.content.id.value] = transcript
+    def resolve_stage_dir(self, stage_name: str | StageName) -> Path:
+        key = stage_name.value if hasattr(stage_name, "value") else str(stage_name)
+        return Path("/tmp/data") / key
 
-    def get_raw_transcript(self, content_id: ContentId) -> StageTranscript | None:
-        return self.raw_transcripts.get(content_id.value)
-
-    def save_enriched_compendium(self, compendium: StageTranscript) -> None:
-        self.compendiums[compendium.content_id.value] = compendium
-
-    def get_enriched_compendium(self, content_id: ContentId) -> StageTranscript | None:
-        return self.compendiums.get(content_id.value)
-
-    def save_stage_transcript(self, stage_name: str, transcript: StageTranscript) -> None:
-        match stage_name:
-            case "raw":
-                self.save_transcript(transcript)
-            case "fluid_prose":
-                self.save_fluid_transcript(transcript)
-            case "gap_filler":
-                self.save_enriched_compendium(transcript)
-            case _:
-                self.save_fluid_transcript(transcript)
+    def save_stage_transcript(
+        self, stage_name: str | StageName, transcript: StageTranscript
+    ) -> None:
+        key = stage_name.value if hasattr(stage_name, "value") else str(stage_name)
+        self.stage_transcripts.setdefault(key, {})[transcript.content.id.value] = transcript
+        if key == "raw":
+            self.raw_transcripts[transcript.content.id.value] = transcript
+        elif key == "fluid_prose":
+            self.fluid_transcripts[transcript.content.id.value] = transcript
+        elif key == "gap_filler":
+            self.compendiums[transcript.content.id.value] = transcript
 
     def get_stage_transcript(
-        self, stage_name: str, content_id: ContentId
+        self, stage_name: str | StageName, content_id: ContentId
     ) -> StageTranscript | None:
-        match stage_name:
-            case "raw":
-                return self.get_raw_transcript(content_id)
-            case "fluid_prose":
-                return self.get_fluid_transcript(content_id)
-            case "gap_filler":
-                return self.get_enriched_compendium(content_id)
-            case _:
-                return None
-
-    def save_fluid_transcript(self, transcript: StageTranscript) -> None:
-        self.fluid_transcripts[transcript.content.id.value] = transcript
-
-    def get_fluid_transcript(self, content_id: ContentId) -> StageTranscript | None:
-        return self.fluid_transcripts.get(content_id.value)
+        key = stage_name.value if hasattr(stage_name, "value") else str(stage_name)
+        if key in self.stage_transcripts and content_id.value in self.stage_transcripts[key]:
+            return self.stage_transcripts[key][content_id.value]
+        if key == "raw":
+            return self.raw_transcripts.get(content_id.value)
+        if key == "fluid_prose":
+            return self.fluid_transcripts.get(content_id.value)
+        if key == "gap_filler":
+            return self.compendiums.get(content_id.value)
+        return None
 
     def get_fluid_files_for_channel(self, channel_name: ChannelName) -> list[Path]:
         return list(self.channel_fluid_files.get(channel_name.value, []))

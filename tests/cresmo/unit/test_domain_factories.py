@@ -37,9 +37,9 @@ def test_enriched_compendium_factory() -> None:
     compendium = EnrichedCompendiumFactory.build()
     assert isinstance(compendium, StageTranscript)
     assert compendium.pass_count >= 1
-    assert compendium.body != ""
-    assert "|" not in compendium.body or "---" not in compendium.body
-    assert 'Extra Info' in compendium.complementary_info
+    assert compendium.content.text != ""
+    assert "|" not in compendium.content.text or "---" not in compendium.content.text
+    assert 'Extra Info' in compendium.content.text
 
 
 def test_ledger_entry_factory() -> None:

@@ -51,9 +51,8 @@ class TestDiscoverAtomicInventoryJudge:
             content=Content(
                 id=ContentId("vid_inv_1234"),
                 title="The Longue Durée of Mediterranean Trade",
-                body="Fernand Braudel analyzes the Mediterranean basin across centuries.",
+                text="Fernand Braudel analyzes the Mediterranean basin across centuries.\n\n### Extra Info\n\n1. Detailed chronological notes on Venetian commerce.",
             ),
-            complementary_info="1. Detailed chronological notes on Venetian commerce.",
         )
 
     def test_guardrail_accepts_valid_inventory(self) -> None:
@@ -298,9 +297,8 @@ class TestDiscoverAtomicInventoryJudge:
             content=Content(
                 id=ContentId("vid_inv_empty"),
                 title="Unique Compendium Alpha",
-                body="Valid narrative body text.",
+                text="Valid narrative body text.\n\n### Extra Info\n\nComplementary context.",
             ),
-            complementary_info="Complementary context.",
         )
         llm = MockLLMAdapter(responses=[json.dumps([])])
         use_case = DiscoverAtomicInventoryUseCase(
@@ -324,9 +322,8 @@ class TestDiscoverAtomicInventoryJudge:
             content=Content(
                 id=ContentId("vid_inv_1234"),
                 title="The Longue Durée of Mediterranean Trade",
-                body="Fernand Braudel analyzes the Mediterranean basin across centuries.",
+                text="Fernand Braudel analyzes the Mediterranean basin across centuries.\n\n### Extra Info\n\n1. Detailed chronological notes on Venetian commerce.",
             ),
-            complementary_info="1. Detailed chronological notes on Venetian commerce.",
         )
         llm_vo = MockLLMAdapter(responses=[json.dumps([{"title": "Entity A", "type": "entity"}])])
         use_case_vo = DiscoverAtomicInventoryUseCase(
@@ -343,9 +340,8 @@ class TestDiscoverAtomicInventoryJudge:
             content=Content(
                 id=ContentId("vid_inv_1234"),
                 title="The Longue Durée of Mediterranean Trade",
-                body="Fernand Braudel analyzes the Mediterranean basin across centuries.",
+                text="Fernand Braudel analyzes the Mediterranean basin across centuries.\n\n### Extra Info\n\n1. Detailed chronological notes on Venetian commerce.",
             ),
-            complementary_info="1. Detailed chronological notes on Venetian commerce.",
         )
         llm_str = MockLLMAdapter(responses=[json.dumps([{"title": "Entity A", "type": "entity"}])])
         use_case_str = DiscoverAtomicInventoryUseCase(
@@ -380,7 +376,7 @@ class TestDiscoverAtomicInventoryJudge:
         mock_judge.evaluate.assert_called_once()
         ctx = mock_judge.evaluate.call_args[0][0]
         assert ctx.stage_name == "atomic_inventory"
-        assert ctx.raw_text == sample_compendium.body
+        assert ctx.raw_text == sample_compendium.content.text
         assert ctx.candidate_text == json.dumps(cand_list)
         assert ctx.metadata == {
             "title": "The Longue Durée of Mediterranean Trade",
@@ -458,16 +454,16 @@ class TestDiscoverAtomicInventoryJudge:
         # Call 1: extraction prompt
         extract_call = mock_provider.get_prompt.call_args_list[0]
         assert extract_call[0][0] == PromptKey.ATOMIC_INVENTORY
-        assert extract_call[1]["content_title"] == sample_compendium.title.value
-        assert extract_call[1]["channel_name"] == sample_compendium.channel_name
-        assert extract_call[1]["compendium_body"] == sample_compendium.body
+        assert extract_call[1]["content_title"] == sample_compendium.content.title
+        assert extract_call[1]["channel_name"] == sample_compendium.channel.name
+        assert extract_call[1]["compendium_body"] == sample_compendium.content.text
 
         # Call 2: judge prompt
         judge_call = mock_provider.get_prompt.call_args_list[1]
         assert judge_call[0][0] == PromptKey.JUDGE_ATOMIC_INVENTORY
-        assert judge_call[1]["content_title"] == sample_compendium.title.value
-        assert judge_call[1]["channel_name"] == sample_compendium.channel_name
-        assert judge_call[1]["compendium_body"] == sample_compendium.body
+        assert judge_call[1]["content_title"] == sample_compendium.content.title
+        assert judge_call[1]["channel_name"] == sample_compendium.channel.name
+        assert judge_call[1]["compendium_body"] == sample_compendium.content.text
         assert judge_call[1]["inventory_json"] == json.dumps(cand_list)
 
     def test_evaluate_candidate_inventory_fallback_returns_true_when_no_judge_or_provider(

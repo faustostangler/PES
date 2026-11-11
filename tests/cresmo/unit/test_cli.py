@@ -22,9 +22,12 @@ from cresmo.domain.exceptions import (
     SecurityViolationError,
 )
 from cresmo.domain.value_objects import (
+    Channel,
     ChannelFeedQuery,
     ChannelName,
+    Content,
     ContentId,
+    MediaProvenance,
     PipelineStatus,
     SyncSummary,
 )
@@ -227,9 +230,13 @@ class TestCresmoCLI:
     def test_cli_run_dry_run_invokes_only_ingest(self) -> None:
         mock_pipeline = MagicMock()
         mock_raw = StageTranscript(
-            content_id=ContentId("dQw4w9WgXcQ"),
-            channel_name=ChannelName("TestChannel"),
-            body="Verbatim transcript content.",
+            channel=Channel(name=ChannelName("TestChannel")),
+            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=dQw4w9WgXcQ"),
+            content=Content(
+                id=ContentId("dQw4w9WgXcQ"),
+                title="Test Title",
+                text="Verbatim transcript content.",
+            ),
         )
         mock_pipeline.ingest_raw_transcript.execute.return_value = mock_raw
 
@@ -277,9 +284,13 @@ class TestCresmoCLI:
 
         mock_pipeline = MagicMock()
         mock_raw = StageTranscript(
-            content_id=ContentId("video11111111"),
-            channel_name=ChannelName("TestChan"),
-            body="Content",
+            channel=Channel(name=ChannelName("TestChan")),
+            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=video11111111"),
+            content=Content(
+                id=ContentId("video11111111"),
+                title="Test Title",
+                text="Content",
+            ),
         )
         mock_pipeline.ingest_raw_transcript.execute.return_value = mock_raw
 

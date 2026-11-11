@@ -95,7 +95,7 @@ class TestEnsureTranscriptSaved:
 
         ensure_transcript_saved(mock_vault, file_path, mock_transcript, target_dir)
 
-        mock_vault.save_transcript.assert_called_once_with(mock_transcript)
+        mock_vault.save_stage_transcript.assert_called_once_with("raw", mock_transcript)
 
     def test_file_inside_vault_raw_dir_skips_save_when_target_dir_none(
         self, tmp_path: Path
@@ -111,7 +111,7 @@ class TestEnsureTranscriptSaved:
 
         ensure_transcript_saved(mock_vault, file_path, mock_transcript, target_dir=None)
 
-        mock_vault.save_transcript.assert_not_called()
+        mock_vault.save_stage_transcript.assert_not_called()
 
     def test_file_outside_vault_raw_dir_and_target_none_saves(self, tmp_path: Path) -> None:
         vault_raw_dir = tmp_path / "vault_raw"
@@ -127,7 +127,7 @@ class TestEnsureTranscriptSaved:
 
         ensure_transcript_saved(mock_vault, file_path, mock_transcript, target_dir=None)
 
-        mock_vault.save_transcript.assert_called_once_with(mock_transcript)
+        mock_vault.save_stage_transcript.assert_called_once_with("raw", mock_transcript)
 
 
 class TestContentIdDerivation:
@@ -472,4 +472,4 @@ def test_coordinator_run_for_text_file_passes_raw_dir(tmp_path: Path) -> None:
     pipeline.run_for_text_file(file_path)
 
     # Since file_path is in incoming/ and not in custom_raw/, it must be persisted via vault_port mock
-    mock_vault.save_transcript.assert_called_once()
+    mock_vault.save_stage_transcript.assert_called_once()

@@ -11,19 +11,21 @@ from pathlib import Path
 
 from cresmo.domain.entities import (
     AtomicNote,
-    StageTranscript,
     MapOfContent,
     StageTranscript,
 )
 from cresmo.domain.value_objects import (
     CausalMatrix,
+    Channel,
     ChannelFeedQuery,
     ChannelName,
     ChatPrompt,
+    Content,
     ContentId,
     CrossContextRelations,
     DiscoveredMediaItem,
     LedgerEntry,
+    MediaProvenance,
     NoteTitle,
     NoteType,
     PipelineStatus,
@@ -72,9 +74,9 @@ class TestMockMediaIngestionPort:
     def test_ingest_single_video_records_and_returns_canned(self, tmp_path: Path) -> None:
         cid = ContentId("singleVid123")
         transcript = StageTranscript(
-            content_id=cid,
-            channel_name=ChannelName("Channel"),
-            body="Spoken text",
+            channel=Channel(name="Channel"),
+            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=singleVid123"),
+            content=Content(id=cid, title="Channel", text="Spoken text"),
         )
         port = MockMediaIngestionPort(canned_transcript=transcript)
         result = port.ingest_single_video(
@@ -127,26 +129,28 @@ class TestInMemoryVaultAdapter:
     def test_raw_transcript_crud(self) -> None:
         vault = InMemoryVaultAdapter()
         cid = ContentId("transTest123")
-        raw = StageTranscript(content_id=cid, channel_name=ChannelName("Ch"), text="Text")
-        assert vault.get_raw_transcript(cid) is None
+        raw = StageTranscript(
+            channel=Channel(name="Ch"),
+            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=transTest123"),
+            content=Content(id=cid, title="Ch", text="Text"),
+        )
+        assert vault.get_stage_transcript("raw", cid) is None
 
-        vault.save_transcript(raw)
-        assert vault.get_raw_transcript(cid) is raw
+        vault.save_stage_transcript("raw", raw)
+        assert vault.get_stage_transcript("raw", cid) is raw
 
     def test_enriched_compendium_crud(self) -> None:
         vault = InMemoryVaultAdapter()
         cid = ContentId("compTest123")
         comp = StageTranscript(
-            content_id=cid,
-            channel_name=ChannelName("Ch"),
-            title=NoteTitle("T"),
-            body="Body",
-            complementary_info="Info",
+            channel=Channel(name="Ch"),
+            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=compTest123"),
+            content=Content(id=cid, title="T", text="Body"),
         )
-        assert vault.get_enriched_compendium(cid) is None
+        assert vault.get_stage_transcript("gap_filler", cid) is None
 
-        vault.save_enriched_compendium(comp)
-        assert vault.get_enriched_compendium(cid) is comp
+        vault.save_stage_transcript("gap_filler", comp)
+        assert vault.get_stage_transcript("gap_filler", cid) is comp
 
     def test_atomic_note_and_index_crud(self) -> None:
         vault = InMemoryVaultAdapter()

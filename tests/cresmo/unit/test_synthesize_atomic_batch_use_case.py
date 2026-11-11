@@ -47,9 +47,8 @@ def sample_compendium() -> StageTranscript:
         content=Content(
             id=ContentId("dQw4w9WgXcQ"),
             title="Teoria das Elites",
-            body="Continuous body describing elites and power structures in society.",
+            text="Continuous body describing elites and power structures in society.\n\n### Extra Info\n\nComplementary info.",
         ),
-        complementary_info="Complementary info.",
     )
 
 
@@ -214,8 +213,8 @@ class TestSynthesizeAtomicBatchUseCase:
         assert len(notes) == 1
         note = notes[0]
         assert note.note_type == NoteType.CONCEPT
-        assert note.domain == str(sample_compendium.channel_name)
-        assert note.source == sample_compendium.title.value
+        assert note.domain == str(sample_compendium.channel.name)
+        assert note.source == sample_compendium.content.title
         assert note.cluster == ""
         assert note.causal_matrix is None
         assert note.cross_context is None
@@ -509,9 +508,8 @@ class TestSynthesizeAtomicBatchUseCase:
             content=Content(
                 id=ContentId("content123"),
                 title="Alpha Title",
-                body="Continuous text for channel alpha.",
+                text="Continuous text for channel alpha.",
             ),
-            complementary_info="Complementary context.",
         )
         inv = AtomicEntityInventory(items=((NoteTitle("Alpha Entity"), NoteType.ENTITY),))
         batch_payload = json.dumps(
@@ -542,10 +540,10 @@ class TestSynthesizeAtomicBatchUseCase:
         # Verify exact prompt key and keyword arguments
         assert call_args[0] == PromptKey.ATOMIC_BATCH
         assert call_kwargs["content_title"] == "Alpha Title"
-        assert call_kwargs["content_title"] == compendium_no_cid.title.value
-        assert call_kwargs["channel_name"] == compendium_no_cid.channel_name
+        assert call_kwargs["content_title"] == compendium_no_cid.content.title
+        assert call_kwargs["channel_name"] == compendium_no_cid.channel.name
         assert call_kwargs["compendium_body"] == "Continuous text for channel alpha."
-        assert call_kwargs["compendium_body"] == compendium_no_cid.body
+        assert call_kwargs["compendium_body"] == compendium_no_cid.content.text
         assert "targets_json" in call_kwargs
 
         targets = json.loads(call_kwargs["targets_json"])

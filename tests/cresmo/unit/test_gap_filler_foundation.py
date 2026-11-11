@@ -20,8 +20,11 @@ from cresmo.domain.services.mechanical_validator import (
 from cresmo.domain.stage_registry import StageRegistry
 from cresmo.domain.value_objects import (
     CandidateText,
+    Channel,
+    Content,
     ContentId,
     JudgeCriterion,
+    MediaProvenance,
     PromptKey,
 )
 
@@ -137,12 +140,14 @@ def test_check_complementary_mechanical_saturation_not_detected_when_new_entitie
 
 def test_post_process_enriched_compendium() -> None:
     """Verify post_process_enriched_compendium maps StageTranscript triad to StageTranscript."""
-    source_fluid = StageTranscript.create(
-        channel_name="Canal História",
-        content_id="vid_123",
-        title="Fundação de Portugal",
-        body="## Origens\n\nTexto em prosa fluida.",
-        source_url="https://youtube.com/watch?v=vid_123",
+    source_fluid = StageTranscript(
+        channel=Channel(name="Canal História"),
+        provenance=MediaProvenance.create(url="https://youtube.com/watch?v=vid_123"),
+        content=Content(
+            id=ContentId("vid_123"),
+            title="Fundação de Portugal",
+            text="## Origens\n\nTexto em prosa fluida.",
+        ),
     )
 
     candidate_text = (
@@ -157,11 +162,11 @@ def test_post_process_enriched_compendium() -> None:
     compendium = post_process_enriched_compendium(candidate, source_fluid)
 
     assert isinstance(compendium, StageTranscript)
-    assert compendium.content_id == ContentId("vid_123")
-    assert compendium.title.value == "Fundação de Portugal"
-    assert "### Extra Info" not in compendium.body
-    assert "Afonso Henriques" in compendium.complementary_info
-    assert compendium.source_url == "https://youtube.com/watch?v=vid_123"
+    assert compendium.content.id == ContentId("vid_123")
+    assert compendium.content.title == "Fundação de Portugal"
+    assert "### Extra Info" in compendium.content.text
+    assert "Afonso Henriques" in compendium.content.text
+    assert compendium.provenance.url == "https://youtube.com/watch?v=vid_123"
 
 
 def test_stage_registry_contains_gap_filler() -> None:
