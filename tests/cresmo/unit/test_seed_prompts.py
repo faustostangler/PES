@@ -49,7 +49,7 @@ class TestSeedPromptsCLI:
         tpl = provider.get_raw_prompt_template("gap_filler")
         assert isinstance(tpl, str)
         assert len(tpl) > 0
-        assert "SKILL SPECIFICATION" in tpl or "Transcript" in tpl or "source_text" in tpl
+        assert "Transcrição:" in tpl and "{{raw_text}}" in tpl
 
     def test_seed_prompts_dry_run(self, capsys: pytest.CaptureFixture[str]) -> None:
         """Verify --dry-run prints template previews and exits with SUCCESS without API calls."""

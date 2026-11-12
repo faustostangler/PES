@@ -81,10 +81,9 @@ class TestJsonPromptProvider:
         assert "Source fluid transcript." in user_msg
         assert "Candidate compendium text." in user_msg
 
-    def test_gap_filler_unified_prompt_build_and_refine_modes(self) -> None:
+    def test_gap_filler_prompt_embeds_skill_and_style_guide(self) -> None:
         provider = JsonPromptProvider()
 
-        # Mode 1: BUILD (pass 1, no current_text)
         prompt1 = provider.get_prompt(
             PromptKey.GAP_FILLER,
             pass_num=1,
@@ -96,14 +95,16 @@ class TestJsonPromptProvider:
         s1 = prompt1.system_prompt or ""
         p1 = prompt1.get_last_user_content()
         assert isinstance(s1, str)
-        assert "ITERATION PROTOCOL" in s1
-        assert "Pass: 1/3" in p1
-        assert "Tech Channel" in p1
-        assert "test.txt" in p1
-        assert "<source_text>\nSource fluid text here.\n</source_text>" in p1
-        assert "<draft" not in p1
+        assert "Your Skill:" in s1
+        assert "cresmo-gap-filler:\n" in s1
+        assert "Cresmo Style Guide:" in s1
+        assert "# Guia de Estilo Cresmo" in s1
+        assert "{{cresmo-style-guide}}" not in s1
+        assert "{{skill_block}}" not in s1
+        assert s1.count("# Guia de Estilo Cresmo") == 1
+        assert "Português do Brasil" in s1
+        assert "Transcrição:\nSource fluid text here." in p1
 
-        # Mode 2: REFINE (pass 2, with current_text)
         prompt2 = provider.get_prompt(
             PromptKey.GAP_FILLER,
             pass_num=2,
@@ -114,12 +115,7 @@ class TestJsonPromptProvider:
             current_text="Draft from pass 1.",
         )
         s2 = prompt2.system_prompt or ""
-        p2 = prompt2.get_last_user_content()
-        assert isinstance(s2, str)
-        assert s1 == s2  # Unified system prompt across passes
-        assert "Pass: 2/3" in p2
-        assert "<source_text>\nSource fluid text here.\n</source_text>" in p2
-        assert '<draft pass="1">\nDraft from pass 1.\n</draft>' in p2
+        assert s1 == s2
 
     def test_long_and_wide_expander_prompts(self) -> None:
         provider = JsonPromptProvider()

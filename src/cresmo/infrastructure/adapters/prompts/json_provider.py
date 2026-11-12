@@ -16,6 +16,7 @@ from __future__ import annotations
 import json
 import re
 import sys
+from collections.abc import Iterable
 from pathlib import Path
 from typing import Any
 
@@ -178,17 +179,63 @@ class JsonPromptProvider(PromptProviderPort):
             return ""
         return f"\n\n{skill_name}:\n{content}"
 
-    def _resolve_skill_block(self, entry: dict[str, Any] | PromptSpec) -> str:
-        """Resolve combined skill specification blocks for an entry or spec."""
+    def _extract_entry_skills(self, entry: dict[str, Any] | PromptSpec) -> list[str]:
+        """Extract ordered skill identifiers from a PromptSpec or raw template entry."""
         if isinstance(entry, PromptSpec):
-            skills = entry.skills
-        else:
-            skills = entry.get("skills", [])
-            if not skills and "skill_name" in entry:
-                skill_name = entry["skill_name"]
-                skills = [skill_name] if skill_name else []
-        if isinstance(skills, list) and skills:
-            blocks = [self._get_skill_block(str(name)) for name in skills]
+            return [str(name) for name in entry.skills]
+        skills = entry.get("skills", [])
+        if not skills and "skill_name" in entry:
+            skill_name = entry["skill_name"]
+            skills = [skill_name] if skill_name else []
+        return [str(name) for name in skills] if isinstance(skills, list) else []
+
+    def _resolve_skill_replacements(
+        self,
+        entry: dict[str, Any] | PromptSpec,
+        *templates: str,
+    ) -> dict[str, str]:
+        """Resolve individual skill contents for explicit {{skill_name}} template tags."""
+        replacements: dict[str, str] = {}
+        candidate_names = list(self._extract_entry_skills(entry))
+        for tpl in templates:
+            if not tpl:
+                continue
+            for match in re.finditer(r"\{\{([a-zA-Z0-9_\-]+)\}\}|\{([a-zA-Z0-9_\-]+)\}", tpl):
+                token = match.group(1) or match.group(2)
+                if (
+                    token
+                    and "-" in token
+                    and token not in candidate_names
+                ):
+                    candidate_names.append(token)
+        for name in candidate_names:
+            content = self._get_skill_content(name)
+            if content:
+                replacements[name] = content
+        return replacements
+
+    @staticmethod
+    def _referenced_skill_names(template: str, skill_names: Iterable[str]) -> set[str]:
+        """Return skill names explicitly referenced via {{skill}} or {skill} in template."""
+        if not template:
+            return set()
+        return {
+            name
+            for name in skill_names
+            if f"{{{{{name}}}}}" in template or f"{{{name}}}" in template
+        }
+
+    def _resolve_skill_block(
+        self,
+        entry: dict[str, Any] | PromptSpec,
+        exclude: set[str] | None = None,
+    ) -> str:
+        """Resolve combined skill specification blocks for an entry or spec."""
+        skills = self._extract_entry_skills(entry)
+        if exclude:
+            skills = [name for name in skills if name not in exclude]
+        if skills:
+            blocks = [self._get_skill_block(name) for name in skills]
             return "".join(block for block in blocks if block)
         return ""
 
@@ -213,14 +260,21 @@ class JsonPromptProvider(PromptProviderPort):
         self,
         key_str: str,
         entry: dict[str, Any] | PromptSpec,
+        *templates: str,
         **extra_kwargs: Any,
     ) -> dict[str, str]:
         """Build dictionary of static and dynamic context replacements for template tags."""
-        skill_block = self._resolve_skill_block(entry)
+        skill_replacements = self._resolve_skill_replacements(entry, *templates)
+        explicitly_referenced = self._referenced_skill_names(
+            "\n".join(t for t in templates if t),
+            skill_replacements.keys(),
+        )
+        skill_block = self._resolve_skill_block(entry, exclude=explicitly_referenced)
         description = self._get_description_for_key(key_str)
 
         default_lang = self.language or CresmoSettings.DEFAULT_LANGUAGE
         replacements: dict[str, str] = {
+            **skill_replacements,
             "description": description,
             "skill_block": skill_block,
             "language": default_lang,
@@ -270,14 +324,18 @@ class JsonPromptProvider(PromptProviderPort):
         """
         key_str = key.value if isinstance(key, PromptKey) else key
         entry = self.templates.get(key_str, {})
-        replacements = self._build_context_replacements(key_str, entry)
+        raw_system_prompt = entry.get("system_prompt", "")
+        raw_user_prompt = entry.get("user_prompt", "")
+        replacements = self._build_context_replacements(
+            key_str, entry, raw_system_prompt, raw_user_prompt
+        )
 
-        system_prompt = entry.get("system_prompt", "")
+        system_prompt = raw_system_prompt
         if not system_prompt and replacements.get("description"):
             system_prompt = replacements["description"]
         system_prompt = self._replace_template_tags(system_prompt, replacements)
 
-        user_prompt = entry.get("user_prompt", "")
+        user_prompt = raw_user_prompt
         if not user_prompt and replacements.get("description") and not system_prompt:
             user_prompt = replacements["description"]
         user_prompt = self._replace_template_tags(user_prompt, replacements)
@@ -310,26 +368,29 @@ class JsonPromptProvider(PromptProviderPort):
         """Format (system_prompt, user_prompt) pair into a ChatPrompt for a given template key."""
         entry = self.templates.get(template_key, {})
         description = self._get_description_for_key(template_key)
-        skill_block = self._resolve_skill_block(entry)
         system_template = entry.get("system_prompt", "")
+        user_template = entry.get("user_prompt", "")
+        skill_replacements = self._resolve_skill_replacements(
+            entry, system_template, user_template
+        )
+        explicitly_referenced = self._referenced_skill_names(
+            f"{system_template}\n{user_template}",
+            skill_replacements.keys(),
+        )
+        skill_block = self._resolve_skill_block(entry, exclude=explicitly_referenced)
+        format_kwargs = {
+            **skill_replacements,
+            "description": description,
+            "skill_block": skill_block,
+            **kwargs,
+        }
         if system_template:
-            system_prompt = self._safe_format(
-                system_template,
-                description=description,
-                skill_block=skill_block,
-                **kwargs,
-            )
+            system_prompt = self._safe_format(system_template, **format_kwargs)
         else:
             system_prompt = (
                 f"{description}\n\n{skill_block}".strip() if (description or skill_block) else ""
             )
-        user_template = entry.get("user_prompt", "")
-        user_prompt = self._safe_format(
-            user_template,
-            description=description,
-            skill_block=skill_block,
-            **kwargs,
-        )
+        user_prompt = self._safe_format(user_template, **format_kwargs)
         return ChatPrompt.from_system_and_user(
             user=user_prompt,
             system=system_prompt if system_prompt else None,
