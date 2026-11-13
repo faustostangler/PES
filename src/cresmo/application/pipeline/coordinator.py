@@ -262,7 +262,7 @@ class CresmoPipeline:
 
             for step in conveyor_steps:
                 if step == StageName.GAP_FILLER:
-                    breakpoint()
+                    pass
                 artifact = None
                 if not force_reprocess:
                     cached = self.vault_port.get_stage_transcript(step, content.id)

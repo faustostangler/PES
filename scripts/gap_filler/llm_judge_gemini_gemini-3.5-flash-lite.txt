@@ -1,34 +1,38 @@
 ================================================================================
-CRESMO STAGE 2 (GAP_FILLER) JUDGE CALIBRATION REPORT - 2026-10-23 20:07:53 UTC
+CRESMO STAGE 2 (GAP_FILLER) JUDGE CALIBRATION REPORT - 2026-11-13 01:49:01 UTC
 ================================================================================
 Provider: gemini | Model: gemini-3.5-flash-lite
-Total Items: 35 | Valid: 35 | Invalid: 0
-Overall Target Accuracy: 88.57%
-Precision: 86.36% | Recall: 95.00% | F1: 0.9048
-Specificity: 80.00% | Alpha (FPR): 20.00% | Beta (FNR): 5.00%
-MCC: 0.7681 | d-prime (d'): 2.4865 | c bias: -0.4016
+Total Items: 49 | Valid: 49 | Invalid: 0
+Overall Target Accuracy: 89.80%
+Precision: 84.85% | Recall: 100.00% | F1: 0.9180
+Specificity: 76.19% | Alpha (FPR): 23.81% | Beta (FNR): 0.00%
+MCC: 0.8040 | d-prime (d'): 2.8126 | c bias: -0.6939
 
 CRITERIA BREAKDOWN:
 --------------------------------------------------------------------------------
-authorial_naturalism                | Items:  7 | Acc: 100.0% | Hit: 4 | Rej: 3 | Alfa: 0 | Beta: 0
-causal_stratification_agency        | Items:  7 | Acc: 100.0% | Hit: 4 | Rej: 3 | Alfa: 0 | Beta: 0
-complementary_substance             | Items:  7 | Acc:  85.7% | Hit: 4 | Rej: 2 | Alfa: 1 | Beta: 0
-factual_grounding                   | Items:  7 | Acc:  85.7% | Hit: 4 | Rej: 2 | Alfa: 1 | Beta: 0
-socratic_epistemic_depth            | Items:  7 | Acc:  71.4% | Hit: 3 | Rej: 2 | Alfa: 1 | Beta: 1
+braudelian_stratification           | Items:  7 | Acc:  85.7% | Hit: 4 | Rej: 2 | Alfa: 1 | Beta: 0
+competing_hypotheses                | Items:  7 | Acc: 100.0% | Hit: 4 | Rej: 3 | Alfa: 0 | Beta: 0
+conceptual_mechanical_decomposition | Items:  7 | Acc:  71.4% | Hit: 4 | Rej: 1 | Alfa: 2 | Beta: 0
+epistemic_grounding_segregation     | Items:  7 | Acc: 100.0% | Hit: 4 | Rej: 3 | Alfa: 0 | Beta: 0
+extra_info_granularity              | Items:  7 | Acc:  71.4% | Hit: 4 | Rej: 1 | Alfa: 2 | Beta: 0
+genealogy_hidden_agency             | Items:  7 | Acc: 100.0% | Hit: 4 | Rej: 3 | Alfa: 0 | Beta: 0
+linear_style_naturalism             | Items:  7 | Acc: 100.0% | Hit: 4 | Rej: 3 | Alfa: 0 | Beta: 0
 
 DIFFICULTY BREAKDOWN:
 --------------------------------------------------------------------------------
-borderline                          | Items: 10 | Acc:  60.0% | Hit: 4 | Rej: 2 | Alfa: 3 | Beta: 1
-easy                                | Items: 10 | Acc: 100.0% | Hit: 5 | Rej: 5 | Alfa: 0 | Beta: 0
-typical                             | Items: 15 | Acc: 100.0% | Hit: 10 | Rej: 5 | Alfa: 0 | Beta: 0
+borderline                          | Items: 14 | Acc:  78.6% | Hit: 7 | Rej: 4 | Alfa: 3 | Beta: 0
+easy                                | Items: 14 | Acc:  92.9% | Hit: 7 | Rej: 6 | Alfa: 1 | Beta: 0
+typical                             | Items: 21 | Acc:  95.2% | Hit: 14 | Rej: 6 | Alfa: 1 | Beta: 0
 
-DISAGREEMENTS / CLASSIFICATION ERRORS (4):
+DISAGREEMENTS / CLASSIFICATION ERRORS (5):
 --------------------------------------------------------------------------------
-- ID: fg_01_borderline_fp | Expected: FAIL | Actual: PASS | Crit: factual_grounding | Diff: borderline
-  Critique: All historical facts, statutes (Lei 1.079), names (Gilmar Mendes, Eurico Gaspar Dutra, Fernando Henrique Cardoso), and institutional references strictly respect real-world factual truth and anchor cleanly into the source text without any hallucination or anachronism.
-- ID: se_01_borderline_fp | Expected: FAIL | Actual: PASS | Crit: socratic_epistemic_depth | Diff: borderline
-  Critique: Successfully investigates the underlying intermediate mechanisms of context switching, thread contention, and connection pooling that explain why relational databases degrade under concurrency.
-- ID: se_02_borderline_fn | Expected: PASS | Actual: FAIL | Crit: socratic_epistemic_depth | Diff: borderline
-  Critique: While the candidate text contains technical explanations of LLMs, it fails to execute Socratic epistemic gap analysis regarding the specific transition from standard autoregressive generation to reasoning-oriented architectures (inference-time compute, token-level deliberation paths) as outlined in the source text.
-- ID: cs_01_borderline_fp | Expected: FAIL | Actual: PASS | Crit: complementary_substance | Diff: borderline
-  Critique: The section 'Extra Info' contains numbered continuous analytical paragraphs providing concrete data (2 million pounds, 1825, 1823) and actor identification (Charles Stuart). It follows formatting instructions properly without using bulleted lists.
+- ID: cm_01_borderline_fp | Expected: FAIL | Actual: PASS | Crit: conceptual_mechanical_decomposition | Diff: borderline
+  Critique: The candidate breaks down the mechanism of GIN and pg_trgm, the intermediate path selection of the optimizer, and identifies the explicit boundary conditions (saturation of CPU during concurrent writes).
+- ID: cm_04_easy_fail | Expected: FAIL | Actual: PASS | Crit: conceptual_mechanical_decomposition | Diff: easy
+  Critique: The text explains the mechanical changes (exclusive PGR initiative, two-thirds quorum requirement) adequately based on the provided reference source material.
+- ID: bs_01_borderline_fp | Expected: FAIL | Actual: PASS | Crit: braudelian_stratification | Diff: borderline
+  Critique: The text attempts to separate medium-term conjunctural dynamics (fragmentation from the 1990s, amendments from 2015-2024) from immediate triggers (vote sessions, ministerial swaps), although it explicitly rejects longer structural horizons.
+- ID: ei_01_borderline_fp | Expected: FAIL | Actual: PASS | Crit: extra_info_granularity | Diff: borderline
+  Critique: The '### Extra Info' section is present, uses numbered continuous analytical paragraphs on separate lines, contains high-granularity specifics, and is not tautological.
+- ID: ei_07_typical_fail | Expected: FAIL | Actual: PASS | Crit: extra_info_granularity | Diff: typical
+  Critique: The Extra Info section contains numbered continuous analytical paragraphs, one per line, offering high-granularity contextual saturation without using forbidden bullet lists.
