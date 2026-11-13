@@ -18,6 +18,7 @@ import pytest
 from cresmo.domain.entities import (
     AtomicNote,
     EnrichedCompendium,
+    FluidTranscript,
     MapOfContent,
     SourceTranscript,
 )
@@ -34,6 +35,12 @@ from cresmo.domain.value_objects import (
     NoteTitle,
     NoteType,
     RawIndexEntry,
+)
+from cresmo.infrastructure.adapters.obsidian.catalog import ChannelCatalogHandler
+from cresmo.infrastructure.adapters.obsidian.utils import (
+    atomic_write,
+    channel_to_slug,
+    sanitize_filename,
 )
 from cresmo.infrastructure.adapters.obsidian_vault_adapter import ObsidianVaultAdapter
 
@@ -1616,3 +1623,182 @@ Only body here, no complementary section.
 
         with pytest.raises(CompendiumStructureError):
             adapter.get_enriched_compendium(ContentId("no_comp_789"))
+
+    def test_save_and_get_fluid_transcript(
+        self, storage_paths: tuple[Path, Path, Path], tmp_path: Path
+    ) -> None:
+        """Verify save_fluid_transcript and get_fluid_transcript roundtrip per ADR-043 and SPEC-043."""
+        vault_dir, raw_dir, enriched_dir = storage_paths
+        fluid_dir = tmp_path / "data" / "fluid"
+        adapter = ObsidianVaultAdapter(
+            vault_dir=vault_dir,
+            raw_dir=raw_dir,
+            enriched_dir=enriched_dir,
+            fluid_dir=fluid_dir,
+        )
+        cid = ContentId("fluid_test_abc123")
+        fluid = FluidTranscript(
+            channel=Channel(name="Ciência e Tecnologia", id=ChannelId("UC_TECH")),
+            provenance=MediaProvenance.create(
+                url="https://youtube.com/watch?v=fluid_test_abc123",
+                publication_date=date(2026, 6, 15),
+                description="Descrição detalhada sobre arquitetura de sistemas.",
+            ),
+            content=Content.create(
+                id=cid,
+                title="A Engenharia de Software Moderna",
+                body="## A Natureza da Concorrência em Sistemas de Baixa Latência\n\nTexto narrativo em terceira pessoa desprovido de qualquer vício oral.",
+            ),
+        )
+
+        adapter.save_fluid_transcript(fluid)
+
+        # Invariant 1: File must be created on disk in channel subfolder
+        expected_file = fluid_dir / "Ciência e Tecnologia" / "fluid_test_abc123.md"
+        assert expected_file.exists()
+        file_text = expected_file.read_text(encoding="utf-8")
+        assert "video_id: fluid_test_abc123" in file_text
+        assert 'channel_name: "Ciência e Tecnologia"' in file_text
+        assert "## A Natureza da Concorrência" in file_text
+
+        # Invariant 2: Retrieval roundtrip fidelity
+        retrieved = adapter.get_fluid_transcript(cid)
+        assert retrieved is not None
+        assert retrieved.content.id == cid
+        assert retrieved.channel.name == "Ciência e Tecnologia"
+        assert retrieved.content.title == "A Engenharia de Software Moderna"
+        assert retrieved.content.body == fluid.content.body
+        assert retrieved.provenance.url == "https://youtube.com/watch?v=fluid_test_abc123"
+        assert retrieved.provenance.publication_date == date(2026, 6, 15)
+
+    def test_get_fluid_transcript_missing_returns_none(
+        self, storage_paths: tuple[Path, Path, Path], tmp_path: Path
+    ) -> None:
+        """Verify get_fluid_transcript returns None when content ID is not present."""
+        vault_dir, raw_dir, enriched_dir = storage_paths
+        fluid_dir = tmp_path / "data" / "fluid"
+        adapter = ObsidianVaultAdapter(
+            vault_dir=vault_dir,
+            raw_dir=raw_dir,
+            enriched_dir=enriched_dir,
+            fluid_dir=fluid_dir,
+        )
+        assert adapter.get_fluid_transcript(ContentId("absent_id_999")) is None
+
+    def test_get_fluid_files_for_channel(
+        self, storage_paths: tuple[Path, Path, Path], tmp_path: Path
+    ) -> None:
+        """Verify get_fluid_files_for_channel lists all fluid markdown files."""
+        vault_dir, raw_dir, enriched_dir = storage_paths
+        fluid_dir = tmp_path / "data" / "fluid"
+        adapter = ObsidianVaultAdapter(
+            vault_dir=vault_dir,
+            raw_dir=raw_dir,
+            enriched_dir=enriched_dir,
+            fluid_dir=fluid_dir,
+        )
+        ch_name = ChannelName("Filosofia Política")
+        for i in (1, 2):
+            fluid = FluidTranscript(
+                channel=Channel(name=ch_name),
+                provenance=MediaProvenance.create(url=f"https://yt.com/{i}"),
+                content=Content.create(
+                    id=ContentId(f"phil_{i}"), title=f"Title {i}", body=f"## Body {i}"
+                ),
+            )
+            adapter.save_fluid_transcript(fluid)
+
+        files = adapter.get_fluid_files_for_channel(ch_name)
+        assert len(files) == 2
+        file_stems = {f.stem for f in files}
+        assert file_stems == {"phil_1", "phil_2"}
+
+
+class TestChannelCatalogHandlerAndUtils:
+    """Hermetic unit tests for obsidian catalog handler and filesystem utilities."""
+
+    def test_sanitize_filename(self) -> None:
+        assert sanitize_filename("safe_name") == "safe_name"
+        assert sanitize_filename('bad/file:name*with?chars"and<more>|end%') == "bad_file_name_with_chars_and_more__end_"
+        assert sanitize_filename(ChannelName("  Leading And Trailing  ")) == "Leading And Trailing"
+
+    def test_channel_to_slug(self) -> None:
+        assert channel_to_slug("My Channel Name") == "My_Channel_Name"
+        assert channel_to_slug("Channel / With * Illegal") == "Channel___With___Illegal"
+        assert channel_to_slug(ChannelName("Poli Sci")) == "Poli_Sci"
+
+    def test_atomic_write(self, tmp_path: Path) -> None:
+        target = tmp_path / "sub" / "dir" / "file.txt"
+        atomic_write(target, "atomic content")
+        assert target.exists()
+        assert target.read_text(encoding="utf-8") == "atomic content"
+
+    def test_catalog_handler_index_paths_and_parsing(self, tmp_path: Path) -> None:
+        raw_dir = tmp_path / "raw"
+        data_dir = tmp_path / "data"
+        handler = ChannelCatalogHandler(raw_dir=raw_dir, data_dir=data_dir)
+
+        ch = ChannelName("Tech Channel")
+        idx_path = handler.get_channel_index_path(ch)
+        assert idx_path == raw_dir / "_index_Tech Channel.md"
+
+        # Missing file returns empty set
+        assert handler.get_indexed_video_ids_for_channel(ch) == set()
+
+        # Write index file with both format patterns and an invalid id
+        idx_path.parent.mkdir(parents=True, exist_ok=True)
+        idx_path.write_text(
+            "# Canal: Tech\n\n"
+            "- **Video ID**: `vid00000001`\n"
+            "- [vid00000002](https://youtube.com/watch?v=vid00000002)\n"
+            "- **Video ID**: `invalid video id with spaces`\n",
+            encoding="utf-8",
+        )
+        video_ids = handler.get_indexed_video_ids_for_channel(ch)
+        assert ContentId("vid00000001") in video_ids
+        assert ContentId("vid00000002") in video_ids
+
+    def test_catalog_handler_append_entries(self, tmp_path: Path) -> None:
+        raw_dir = tmp_path / "raw"
+        data_dir = tmp_path / "data"
+        handler = ChannelCatalogHandler(raw_dir=raw_dir, data_dir=data_dir)
+
+        ch = ChannelName("Economics")
+        entry = RawIndexEntry(
+            channel_name=ch,
+            channel_category="Social Sciences",
+            video_id=ContentId("vid_econ_01"),
+            title="Market Mechanisms",
+            key_concept="Price Discovery",
+            synthesis="Prices coordinate dispersed knowledge efficiently across economic agents.",
+            summary="Study of market price signaling.",
+            excerpt="Excerpt body text.",
+            url="https://youtube.com/watch?v=vid_econ_01",
+        )
+
+        # First append creates file with header
+        handler.append_channel_index_entry(ch, entry)
+        idx_path = handler.get_channel_index_path(ch)
+        assert idx_path.exists()
+        content = idx_path.read_text(encoding="utf-8")
+        assert "# Canal: Economics" in content
+        assert "Price Discovery" in content
+
+        # Second append does not duplicate header
+        handler.append_channel_index_entry(ch, entry)
+        content_twice = idx_path.read_text(encoding="utf-8")
+        assert content_twice.count("# Canal: Economics") == 1
+
+        # Brain CSV append creates header with semicolon delimiter
+        handler.append_brain_csv_entry(entry)
+        csv_file = data_dir / "brain.csv"
+        assert csv_file.exists()
+        csv_content = csv_file.read_text(encoding="utf-8")
+        assert '"channel_category";"channel_name";"filename";"key_concept";"synthesis"' in csv_content
+        assert '"Price Discovery"' in csv_content
+
+        # Second brain CSV append appends without repeating header
+        handler.append_brain_csv_entry(entry)
+        csv_twice = csv_file.read_text(encoding="utf-8")
+        assert csv_twice.count('"channel_category";"channel_name"') == 1
+

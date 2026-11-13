@@ -1,32 +1,33 @@
 """Prompt Provider Adapters Facade.
 
-Conforms to ADR-001 (Modular Monolith Domain Integrity) and
-ADR-017 (Prompt Management with Langfuse & Local Fallback).
+Conforms to ADR-001 (Modular Monolith Domain Integrity),
+ADR-017 (Prompt Management with Langfuse & Local Fallback), and
+ADR-052 (Prompt Catalog SSOT Consolidation in JSON Resource).
 
 This module re-exports components from `cresmo.infrastructure.adapters.prompts`
-for seamless backward-compatibility.
+for unified catalog access.
 """
 
 from __future__ import annotations
 
 from cresmo.infrastructure.adapters.prompts import (
-    LANGFUSE_TO_PROMPT_KEY,
-    PROMPT_REGISTRY,
     JsonPromptProvider,
     LangfusePromptProvider,
+    PromptCatalog,
+    PromptCatalogError,
     PromptKey,
-    PromptMetadata,
-    get_prompt_metadata,
+    PromptSpec,
+    load_prompt_catalog,
 )
 from cresmo.infrastructure.adapters.prompts.json_provider import _CANDIDATE_SKILLS_DIRS
 
 __all__ = [
-    "LANGFUSE_TO_PROMPT_KEY",
-    "PROMPT_REGISTRY",
     "_CANDIDATE_SKILLS_DIRS",
     "JsonPromptProvider",
     "LangfusePromptProvider",
+    "PromptCatalog",
+    "PromptCatalogError",
     "PromptKey",
-    "PromptMetadata",
-    "get_prompt_metadata",
+    "PromptSpec",
+    "load_prompt_catalog",
 ]

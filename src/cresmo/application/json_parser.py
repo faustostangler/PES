@@ -37,13 +37,13 @@ def _find_balanced_closing_brace(text: str, start: int) -> int | None:
     """Find the index of the matching closing brace for a JSON block starting at start."""
     depth = 0
     in_string = False
-    escape = 0
+    escape = False
     for i in range(start, len(text)):
         char = text[i]
-        if escape == 1:
-            escape = 0
+        if escape:
+            escape = False
         elif char == "\\":
-            escape = 1 if in_string else 0
+            escape = in_string
         elif char == '"':
             in_string = not in_string
         elif in_string is False:
@@ -69,27 +69,27 @@ def _extract_individual_objects(text: str) -> list[dict[str, Any]]:
         List of successfully decoded dictionary objects.
     """
     objects: list[dict[str, Any]] = []
-    i = 0
-    n = len(text)
-    for _ in range(n):
-        if i >= n:
+    current_index = 0
+    total_length = len(text)
+    for _ in range(total_length):
+        if current_index >= total_length:
             break
-        if text[i] == "{":
-            end = _find_balanced_closing_brace(text, i)
+        if text[current_index] == "{":
+            end = _find_balanced_closing_brace(text, current_index)
             if end is not None:
-                parsed = _parse_json_candidate(text[i:end])
+                parsed = _parse_json_candidate(text[current_index:end])
                 if isinstance(parsed, dict):
                     objects.append(parsed)
-                i = end
+                current_index = end
                 continue
-        i += 1
+        current_index += 1
     return objects
 
 
-def _extract_bracketed(text: str, open_ch: str, close_ch: str) -> str | None:
-    """Extract substring enclosed between first open_ch and last close_ch."""
-    start = text.find(open_ch)
-    end = text.rfind(close_ch)
+def _extract_bracketed(text: str, open_char: str, close_char: str) -> str | None:
+    """Extract substring enclosed between first open_char and last close_char."""
+    start = text.find(open_char)
+    end = text.rfind(close_char)
     if start != -1 and end > start:
         return text[start : end + 1].strip()
     return None

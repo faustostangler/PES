@@ -7,35 +7,27 @@ Conforms to:
 
 from __future__ import annotations
 
-import logging
 from typing import Any
 
 from cresmo.application.ports import PromptProviderPort
 from cresmo.application.ports.llm_judge_port import LlmJudgePort
-from cresmo.infrastructure.adapters.judges.composite_judge import ResilientCompositeJudgeAdapter
-from cresmo.infrastructure.adapters.judges.gemini_judge import GeminiJudgeAdapter
-from cresmo.infrastructure.adapters.judges.langfuse_decorator import LangfuseJudgeDecorator
-from cresmo.infrastructure.adapters.judges.ollama_judge import OllamaJudgeAdapter
-from cresmo.infrastructure.adapters.judges.preflight_decorator import (
-    MechanicalPreflightJudgeDecorator,
-)
-from cresmo.infrastructure.adapters.judges.typesafe_judge import TypeSafeJudgeAdapter
 from cresmo.infrastructure.config import CresmoSettings
-
-logger = logging.getLogger(__name__)
 
 
 def build_llm_judge_adapter(
     settings: CresmoSettings,
     langfuse_client: Any | None = None,
     prompt_provider: PromptProviderPort | None = None,
+    enable_fallback: bool = True,
 ) -> LlmJudgePort:
-    """Build a resilient, decorated LlmJudgePort instance based on application settings.
+    """Build a decorated LlmJudgePort instance based on application settings.
 
     Args:
         settings: Validated Cresmo application settings.
         langfuse_client: Optional Langfuse client for direct score telemetry ingestion.
         prompt_provider: Optional prompt provider port for externalized judge instructions.
+        enable_fallback: Whether to wrap primary with fallback composite adapter (default: True).
+            Set to False during calibration to maintain strict metrological benchmark isolation.
 
     Returns:
         LlmJudgePort: Resilient multi-provider judge wrapped in telemetry decorator.
@@ -44,14 +36,19 @@ def build_llm_judge_adapter(
     primary: LlmJudgePort
     provider = settings.judge_provider.lower().strip()
     if provider == "gemini":
+        from cresmo.infrastructure.adapters.judges.gemini_judge import GeminiJudgeAdapter
+
         primary = GeminiJudgeAdapter(
             api_keys=[k.get_secret_value() for k in settings.gemini_api_keys],
             model=settings.judge_gemini_model,
             pass_threshold=settings.judge_pass_threshold,
             temperature=settings.judge_temperature,
             prompt_provider=prompt_provider,
+            timeout_seconds=settings.gemini_timeout_seconds,
         )
     elif provider == "ollama":
+        from cresmo.infrastructure.adapters.judges.ollama_judge import OllamaJudgeAdapter
+
         primary = OllamaJudgeAdapter(
             base_url=settings.ollama_base_url,
             model=settings.ollama_model,
@@ -60,6 +57,8 @@ def build_llm_judge_adapter(
             prompt_provider=prompt_provider,
         )
     else:
+        from cresmo.infrastructure.adapters.judges.typesafe_judge import TypeSafeJudgeAdapter
+
         primary = TypeSafeJudgeAdapter(
             api_key=settings.typesafe_api_key.get_secret_value(),
             model=settings.typesafe_model,
@@ -67,23 +66,36 @@ def build_llm_judge_adapter(
             pass_threshold=settings.judge_pass_threshold,
         )
 
-    # 2. Instantiate Fallback Provider (Default is local Ollama)
-    fallback: LlmJudgePort = OllamaJudgeAdapter(
-        base_url=settings.ollama_base_url,
-        model=settings.ollama_model,
-        timeout_seconds=settings.ollama_timeout_seconds,
-        pass_threshold=settings.judge_pass_threshold,
-        prompt_provider=prompt_provider,
+    # 2. Instantiate Fallback Provider if enabled
+    inner_judge: LlmJudgePort
+    if enable_fallback:
+        from cresmo.infrastructure.adapters.judges.composite_judge import (
+            ResilientCompositeJudgeAdapter,
+        )
+        from cresmo.infrastructure.adapters.judges.ollama_judge import OllamaJudgeAdapter
+
+        fallback: LlmJudgePort = OllamaJudgeAdapter(
+            base_url=settings.ollama_base_url,
+            model=settings.ollama_model,
+            timeout_seconds=settings.ollama_timeout_seconds,
+            pass_threshold=settings.judge_pass_threshold,
+            prompt_provider=prompt_provider,
+        )
+        inner_judge = ResilientCompositeJudgeAdapter(primary=primary, fallback=fallback)
+    else:
+        # Metrological isolation for calibration: no fallback failover
+        inner_judge = primary
+
+    # 3. Wrap in Mechanical Preflight Gate
+    from cresmo.infrastructure.adapters.judges.langfuse_decorator import LangfuseJudgeDecorator
+    from cresmo.infrastructure.adapters.judges.preflight_decorator import (
+        MechanicalPreflightJudgeDecorator,
     )
 
-    # 3. Wrap in Resilient Composite
-    resilient_judge = ResilientCompositeJudgeAdapter(primary=primary, fallback=fallback)
-
-    # 4. Wrap in Mechanical Preflight Gate
-    preflight_judge = MechanicalPreflightJudgeDecorator(inner_judge=resilient_judge)
+    inner_judge = MechanicalPreflightJudgeDecorator(inner_judge=inner_judge)
 
     # 5. Decorate with Langfuse Telemetry Emission
     return LangfuseJudgeDecorator(
-        inner_judge=preflight_judge,
+        inner_judge=inner_judge,
         langfuse_client=langfuse_client,
     )

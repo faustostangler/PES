@@ -8,11 +8,12 @@ Conforms to:
 from __future__ import annotations
 
 import json
-import logging
 import re
 import time
 from typing import Any
 
+import httpx
+import structlog
 from google import genai
 from google.genai import errors, types
 from tenacity import (
@@ -25,29 +26,34 @@ from tenacity import (
 from cresmo.application.ports import PromptProviderPort
 from cresmo.application.ports.llm_judge_port import LlmJudgePort
 from cresmo.domain.value_objects import (
-    CriterionScore,
     EvaluationContext,
-    JudgeCriterion,
     JudgeEvaluation,
     MessageRole,
     PromptKey,
+    resolve_stage_scoring_policy,
 )
 from cresmo.infrastructure.adapters.gemini_pool import (
     GeminiCredentialPool,
     is_quota_exhausted_error,
 )
+from cresmo.infrastructure.adapters.judges.criterion_parser import (
+    JudgeResponseOutputSchema,
+    parse_criteria_scores,
+)
 from cresmo.infrastructure.adapters.prompts import JsonPromptProvider
 from cresmo.infrastructure.config import (
+    DEFAULT_GEMINI_TIMEOUT_SECONDS,
     DEFAULT_JUDGE_GEMINI_MODEL,
     DEFAULT_JUDGE_PASS_THRESHOLD,
     DEFAULT_JUDGE_TEMPERATURE,
 )
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 DEFAULT_PASS_THRESHOLD: float = DEFAULT_JUDGE_PASS_THRESHOLD
 DEFAULT_MODEL: str = DEFAULT_JUDGE_GEMINI_MODEL
 DEFAULT_TEMPERATURE: float = DEFAULT_JUDGE_TEMPERATURE
+DEFAULT_TIMEOUT_SECONDS: float = DEFAULT_GEMINI_TIMEOUT_SECONDS
 
 
 def _clean_json_markdown(text: str) -> str:
@@ -59,26 +65,41 @@ def _clean_json_markdown(text: str) -> str:
     return cleaned
 
 
+TRANSIENT_NETWORK_PATTERNS: tuple[str, ...] = (
+    "503",
+    "429",
+    "UNAVAILABLE",
+    "ResourceExhausted",
+    "RESOURCE_EXHAUSTED",
+    "high demand",
+    "rate limit",
+    "quota",
+    "Connection reset",
+    "connection reset",
+    "Server disconnected",
+    "RemoteDisconnected",
+    "RemoteProtocolError",
+    "broken pipe",
+    "peer closed",
+    "connection closed",
+    "closed before response",
+    "timed out",
+    "timeout",
+    "socket.timeout",
+)
+
+
 def _is_transient_genai_error(exc: BaseException) -> bool:
-    """Determine if a Gemini API exception represents a temporary, retryable condition (e.g. 429)."""
+    """Determine if a Gemini API exception represents a temporary, retryable condition."""
+    if isinstance(
+        exc, (ConnectionError, TimeoutError, httpx.TransportError, httpx.TimeoutException)
+    ):
+        return True
     if isinstance(exc, errors.APIError):
         code = getattr(exc, "code", None)
         return code in (429, 500, 502, 503, 504)
     msg = str(exc)
-    return any(
-        pattern in msg
-        for pattern in (
-            "503",
-            "429",
-            "UNAVAILABLE",
-            "ResourceExhausted",
-            "RESOURCE_EXHAUSTED",
-            "high demand",
-            "rate limit",
-            "quota",
-            "Connection reset",
-        )
-    )
+    return any(pattern in msg for pattern in TRANSIENT_NETWORK_PATTERNS)
 
 
 def _is_transient_cluster_error(exc: BaseException) -> bool:
@@ -96,7 +117,7 @@ def _is_transient_cluster_error(exc: BaseException) -> bool:
 @retry(
     retry=retry_if_exception(_is_transient_cluster_error),
     wait=wait_random_exponential(min=1, max=10),
-    stop=stop_after_attempt(3),
+    stop=stop_after_attempt(4),
     reraise=True,
 )
 def _generate_content_with_retry(
@@ -126,6 +147,7 @@ class GeminiJudgeAdapter(LlmJudgePort):
         prompt_provider: PromptProviderPort | None = None,
         credential_pool: GeminiCredentialPool | None = None,
         api_keys: list[str] | None = None,
+        timeout_seconds: float = DEFAULT_TIMEOUT_SECONDS,
     ) -> None:
         """Initialize the Gemini judge adapter.
 
@@ -138,6 +160,7 @@ class GeminiJudgeAdapter(LlmJudgePort):
             prompt_provider: Optional PromptProviderPort for externalized prompt templates.
             credential_pool: Optional injected GeminiCredentialPool for quota rotation.
             api_keys: Optional list of raw API keys to initialize credential pool.
+            timeout_seconds: Socket and request timeout in seconds for GenAI HTTP calls.
         """
         self._model = model
         self._api_key = api_key
@@ -145,21 +168,25 @@ class GeminiJudgeAdapter(LlmJudgePort):
         self._pass_threshold = pass_threshold
         self._temperature = temperature
         self._prompt_provider = prompt_provider or JsonPromptProvider()
+        self._timeout_seconds = timeout_seconds
 
         # Initialize credential pool if configured
         self._pool: GeminiCredentialPool | None = None
         if credential_pool is not None:
             self._pool = credential_pool
         elif api_keys is not None and len(api_keys) > 0:
-            self._pool = GeminiCredentialPool(keys=api_keys)
+            self._pool = GeminiCredentialPool(keys=api_keys, timeout=timeout_seconds)
         elif client is not None:
             self._pool = GeminiCredentialPool(
                 keys=["mock-key"],
                 client_factory=lambda _: client,
+                timeout=timeout_seconds,
             )
         elif api_key:
             parts = [p.strip() for p in api_key.split(",") if p.strip()]
-            self._pool = GeminiCredentialPool(keys=parts if parts else [api_key])
+            self._pool = GeminiCredentialPool(
+                keys=parts if parts else [api_key], timeout=timeout_seconds
+            )
 
     @property
     def client(self) -> Any:
@@ -172,7 +199,10 @@ class GeminiJudgeAdapter(LlmJudgePort):
                     "Gemini API key must be provided explicitly via api_key or client. "
                     "Bypassing Pydantic Settings via direct os.getenv is prohibited (ADR-026 Rule 9)."
                 )
-            self._client = genai.Client(api_key=self._api_key)
+            self._client = genai.Client(
+                api_key=self._api_key,
+                http_options=types.HttpOptions(timeout=int(self._timeout_seconds * 1000)),
+            )
         return self._client
 
     def evaluate(self, context: EvaluationContext) -> JudgeEvaluation:
@@ -180,8 +210,17 @@ class GeminiJudgeAdapter(LlmJudgePort):
         start_time = time.perf_counter()
         criteria_names = [c.value for c in context.required_criteria]
 
+        if context.stage_name == "gap_filler":
+            prompt_key = PromptKey.JUDGE_GAP_FILLER
+        elif context.stage_name == "fluid_prose":
+            prompt_key = PromptKey.JUDGE_FLUID_PROSE
+        else:
+            try:
+                prompt_key = PromptKey(f"judge_{context.stage_name}")
+            except ValueError:
+                prompt_key = PromptKey.JUDGE_FLUID_PROSE
         chat_prompt = self._prompt_provider.get_prompt(
-            PromptKey.LLM_JUDGE,
+            prompt_key,
             stage_name=context.stage_name,
             criteria_json=json.dumps(criteria_names),
             source_text=context.raw_text,
@@ -191,8 +230,9 @@ class GeminiJudgeAdapter(LlmJudgePort):
         try:
             config = types.GenerateContentConfig(
                 temperature=self._temperature,
-                system_instruction=chat_prompt.system_instruction,
+                system_instruction=chat_prompt.system_prompt,
                 response_mime_type="application/json",
+                response_schema=JudgeResponseOutputSchema,
                 automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=True),
             )
             contents = [
@@ -230,23 +270,13 @@ class GeminiJudgeAdapter(LlmJudgePort):
             logger.error("Failed to parse Gemini judge response as JSON: %s", raw_response_text)
             raise ValueError(f"Gemini judge returned non-JSON output: {raw_response_text}") from err
 
-        criteria_scores_list: list[CriterionScore] = []
-        for item in parsed.get("criteria", []):
-            try:
-                crit_enum = JudgeCriterion(item["criterion"])
-                score_val = max(0.0, min(1.0, float(item["score"])))
-                passed_val = bool(item.get("passed", score_val >= self._pass_threshold))
-                criteria_scores_list.append(
-                    CriterionScore(
-                        criterion=crit_enum,
-                        score=score_val,
-                        passed=passed_val,
-                        reasoning=str(item.get("reasoning", "")),
-                    )
-                )
-            except (ValueError, KeyError) as parse_item_err:
-                logger.debug("Skipping unparseable judge criterion item: %s", parse_item_err)
+        criteria_scores_list = parse_criteria_scores(
+            raw_criteria=parsed.get("criteria", []),
+            pass_threshold=self._pass_threshold,
+            logger_instance=logger,
+        )
 
+        weights, veto_criteria = resolve_stage_scoring_policy(context.stage_name)
         return JudgeEvaluation.create_with_composite_verdict(
             target_stage=context.stage_name,
             criteria_scores=criteria_scores_list,
@@ -254,6 +284,8 @@ class GeminiJudgeAdapter(LlmJudgePort):
             pass_threshold=self._pass_threshold,
             latency_ms=latency_ms,
             trace_id=context.trace_id,
+            weights=weights,
+            veto_criteria=veto_criteria,
         )
 
     @property

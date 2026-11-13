@@ -54,6 +54,15 @@ def test_stage_registry_fluid_prose_spec() -> None:
     assert spec.post_processor is not None
 
 
+def test_stage_registry_gap_filler_spec() -> None:
+    """Verify StageRegistry provides gap_filler specification with default max_passes=5."""
+    assert StageRegistry.contains("gap_filler") is True
+    spec = StageRegistry.get("gap_filler")
+    assert isinstance(spec, StageDefinition)
+    assert spec.max_passes == 5
+    assert spec.early_stopping_enabled is True
+
+
 def test_stage_registry_unknown_stage_raises_key_error() -> None:
     """Verify requesting an unregistered stage raises KeyError with helpful message."""
     assert StageRegistry.contains("unknown_stage") is False

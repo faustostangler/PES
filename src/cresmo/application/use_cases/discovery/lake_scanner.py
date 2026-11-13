@@ -88,16 +88,16 @@ class LakeScannerService:
         criteria = filter_criteria or SyncFilterCriteria()
         priority_channels: list[str] = []
         priority_files = load_transcript_files(priority_texts_dir)
-        for pf in priority_files:
-            if not is_processable_transcript_file(pf):
+        for priority_file in priority_files:
+            if not is_processable_transcript_file(priority_file):
                 continue
-            meta = extract_raw_file_metadata(pf)
+            meta = extract_raw_file_metadata(priority_file)
             raw_chan = meta.get("channel") or meta.get("channel_id")
-            vid = meta.get("video_id") or pf.stem
+            video_id = meta.get("video_id") or priority_file.stem
 
             matches = True
             if not criteria.is_empty():
-                if criteria.video_ids and not matches_video_target(criteria, vid):
+                if criteria.video_ids and not matches_video_target(criteria, video_id):
                     matches = False
                 if criteria.channels and (
                     not raw_chan or not matches_channel_target(criteria, raw_chan)
@@ -109,7 +109,7 @@ class LakeScannerService:
                     matches = False
 
             if matches:
-                resolved_pf = str(pf.resolve())
+                resolved_pf = str(priority_file.absolute())
                 acc.add_source(kind=SourceModality.FILE, target=resolved_pf)
 
             if raw_chan and (
@@ -136,30 +136,32 @@ class LakeScannerService:
         priority_channels: list[str] = []
         unresolved_videos: list[str] = []
         priority_urls = read_manifest_lines(playlist_priority_path)
-        for pu in priority_urls:
-            if is_channel_or_playlist_feed(pu):
-                if _matches_channel_and_category(criteria, pu):
-                    norm_chan = normalize_to_uploads_playlist_url(pu)
+        for priority_url in priority_urls:
+            if is_channel_or_playlist_feed(priority_url):
+                if _matches_channel_and_category(criteria, priority_url):
+                    norm_chan = normalize_to_uploads_playlist_url(priority_url)
                     if norm_chan not in priority_channels:
                         priority_channels.append(norm_chan)
                 continue
 
-            cid = ContentId.extract_from_text(pu)
-            vid_str = cid.value if cid else None
-            local_chan = local_video_channel_map.get(vid_str) if vid_str else None
+            content_id = ContentId.extract_from_text(priority_url)
+            video_id_str = content_id.value if content_id else None
+            local_chan = local_video_channel_map.get(video_id_str) if video_id_str else None
 
-            if _matches_video_entry(criteria, cid, pu, local_chan) and not (
-                cid and acc.has_seen(cid)
+            if _matches_video_entry(criteria, content_id, priority_url, local_chan) and not (
+                content_id and acc.has_seen(content_id)
             ):
-                acc.add_source(kind=SourceModality.URL, target=pu, content_id=cid)
+                acc.add_source(kind=SourceModality.URL, target=priority_url, content_id=content_id)
 
             if local_chan:
                 if _matches_channel_and_category(criteria, local_chan):
                     norm_local = normalize_to_uploads_playlist_url(local_chan)
                     if norm_local not in priority_channels:
                         priority_channels.append(norm_local)
-            elif pu not in unresolved_videos and _is_unresolved_video_candidate(criteria, cid, pu):
-                unresolved_videos.append(pu)
+            elif priority_url not in unresolved_videos and _is_unresolved_video_candidate(
+                criteria, content_id, priority_url
+            ):
+                unresolved_videos.append(priority_url)
         return priority_channels, unresolved_videos
 
     @staticmethod
@@ -168,6 +170,7 @@ class LakeScannerService:
         scan_raw: bool,
         acc: _BatchSourceAccumulator,
         filter_criteria: SyncFilterCriteria | None = None,
+        extract_frontmatter: bool = True,
     ) -> dict[str, str]:
         """Scan raw transcripts lake, extract channel metadata, and register existing files."""
         criteria = filter_criteria or SyncFilterCriteria()
@@ -180,10 +183,18 @@ class LakeScannerService:
             if not is_processable_transcript_file(rf):
                 continue
             stem = rf.stem
-            meta = extract_raw_file_metadata(rf)
-            vid_front = meta.get("video_id")
-            chan_url = meta.get("channel")
-            canonical_vid = vid_front or stem
+            canonical_vid = stem
+            parent_dir = rf.parent
+            chan_url: str | None = None
+
+            if extract_frontmatter:
+                meta = extract_raw_file_metadata(rf)
+                vid_front = meta.get("video_id")
+                chan_url = meta.get("channel")
+                if vid_front:
+                    canonical_vid = vid_front
+            elif parent_dir != raw_dir and parent_dir.name != (raw_dir.name if raw_dir else ""):
+                chan_url = parent_dir.name
 
             already_seen = acc.has_seen(stem) or acc.has_seen(canonical_vid)
 
@@ -209,7 +220,7 @@ class LakeScannerService:
                     ):
                         matches = False
                 if matches:
-                    resolved_rf = str(rf.resolve())
+                    resolved_rf = str(rf.absolute())
                     if not any(s.target == resolved_rf for s in acc.sources):
                         acc.sources.append(
                             BatchSource(kind=SourceModality.FILE, target=resolved_rf)
@@ -240,21 +251,23 @@ class LakeScannerService:
                 channels_to_probe.append(c_url)
 
         main_urls = read_manifest_lines(playlist_path)
-        for mu in main_urls:
-            if is_channel_or_playlist_feed(mu):
-                if mu not in probed_channels and _matches_channel_and_category(criteria, mu):
-                    probed_channels.add(mu)
-                    channels_to_probe.append(mu)
+        for main_url in main_urls:
+            if is_channel_or_playlist_feed(main_url):
+                if main_url not in probed_channels and _matches_channel_and_category(
+                    criteria, main_url
+                ):
+                    probed_channels.add(main_url)
+                    channels_to_probe.append(main_url)
                 continue
 
-            cid = ContentId.extract_from_text(mu)
-            vid_str = cid.value if cid else None
-            local_chan = local_video_channel_map.get(vid_str) if vid_str else None
+            content_id = ContentId.extract_from_text(main_url)
+            video_id_str = content_id.value if content_id else None
+            local_chan = local_video_channel_map.get(video_id_str) if video_id_str else None
 
-            if _matches_video_entry(criteria, cid, mu, local_chan) and not (
-                cid and acc.has_seen(cid)
+            if _matches_video_entry(criteria, content_id, main_url, local_chan) and not (
+                content_id and acc.has_seen(content_id)
             ):
-                acc.add_source(kind=SourceModality.URL, target=mu, content_id=cid)
+                acc.add_source(kind=SourceModality.URL, target=main_url, content_id=content_id)
 
             if local_chan:
                 if local_chan not in probed_channels and _matches_channel_and_category(
@@ -262,8 +275,10 @@ class LakeScannerService:
                 ):
                     probed_channels.add(local_chan)
                     channels_to_probe.append(local_chan)
-            elif mu not in remote_videos and _is_unresolved_video_candidate(criteria, cid, mu):
-                remote_videos.append(mu)
+            elif main_url not in remote_videos and _is_unresolved_video_candidate(
+                criteria, content_id, main_url
+            ):
+                remote_videos.append(main_url)
 
         # ADR-012: Enforce strict alphabetical ordering of channels before feed probing
         channels_to_probe = sorted(channels_to_probe, key=lambda c: c.lower())

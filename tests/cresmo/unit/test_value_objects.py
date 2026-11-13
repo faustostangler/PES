@@ -519,8 +519,8 @@ class TestSourceModality:
     def test_source_modality_members(self) -> None:
         from cresmo.domain.value_objects import SourceModality
 
-        assert SourceModality.FILE == "file"
-        assert SourceModality.URL == "url"
+        assert SourceModality.FILE.value == "file"
+        assert SourceModality.URL.value == "url"
         assert SourceModality("file") is SourceModality.FILE
         assert SourceModality("url") is SourceModality.URL
 
@@ -540,7 +540,7 @@ class TestChannelId:
             cid.uploads_playlist_url
             == "https://www.youtube.com/playlist?list=UU_x5XG1OV2P6uZZ5FSM9Ttw"
         )
-        assert cid.canonical_url == "https://www.youtube.com/channel/UC_x5XG1OV2P6uZZ5FSM9Ttw"
+        assert not hasattr(cid, "canonical_url")
 
     def test_synthetic_channel_id(self) -> None:
         from cresmo.domain.value_objects import ChannelId
@@ -550,7 +550,7 @@ class TestChannelId:
         assert cid.is_youtube_canonical is False
         assert cid.uploads_playlist_id is None
         assert cid.uploads_playlist_url is None
-        assert cid.canonical_url == "priority_text"
+        assert not hasattr(cid, "canonical_url")
 
     def test_channel_id_boundaries_and_invalid_raises(self) -> None:
         from cresmo.domain.exceptions import DomainValidationError
@@ -721,7 +721,7 @@ class TestChannel:
         assert not hasattr(ch, "channel_name")
         assert ch.category == "News"
         assert ch.url == "https://www.youtube.com/@canaldomeio"
-        assert ch.canonical_url == "https://www.youtube.com/@canaldomeio"
+        assert not hasattr(ch, "canonical_url")
         assert str(ch) == "Canal do Meio"
 
     def test_channel_creation_with_string_coercion_and_defaults(self) -> None:
@@ -736,26 +736,11 @@ class TestChannel:
         assert isinstance(ch.id, ChannelId)
         assert ch.id.value == "UC_x5XG1OV2P6uZZ5FSM9Ttw"
         assert ch.category == ""
-        assert ch.url is None
+        assert ch.url == "https://www.youtube.com/channel/UC_x5XG1OV2P6uZZ5FSM9Ttw"
 
         ch_empty_id = Channel(name="Fabio Akita", id="")
         assert ch_empty_id.id is None
-
-    def test_channel_kwargs_aliases(self) -> None:
-        from cresmo.domain.value_objects import Channel, ChannelId
-
-        ch = Channel(
-            channel_name="AliasName",
-            channel_id="UC_x5XG1OV2P6uZZ5FSM9Ttw",
-        )
-        assert ch.name == "AliasName"
-        assert ch.id == ChannelId("UC_x5XG1OV2P6uZZ5FSM9Ttw")
-
-        ch_override = Channel(
-            name="PrimaryName",
-            channel_name="IgnoredName",
-        )
-        assert ch_override.name == "PrimaryName"
+        assert ch_empty_id.url == "https://www.youtube.com/@Fabio Akita"
 
     def test_channel_from_name_factory(self) -> None:
         from cresmo.domain.value_objects import Channel, ChannelId
@@ -768,13 +753,13 @@ class TestChannel:
         assert ch.name == "Veritasium"
         assert ch.id == ChannelId("UCHnyfMqiRRG1u-2MsSQLbXA")
         assert ch.category == "Science"
-        assert ch.canonical_url == "https://www.youtube.com/channel/UCHnyfMqiRRG1u-2MsSQLbXA"
+        assert ch.url == "https://www.youtube.com/channel/UCHnyfMqiRRG1u-2MsSQLbXA"
 
         ch_min = Channel.from_name(name="Minimal")
         assert ch_min.name == "Minimal"
         assert ch_min.id is None
         assert ch_min.category == ""
-        assert ch_min.url is None
+        assert ch_min.url == "https://www.youtube.com/@Minimal"
 
         ch_with_url = Channel.from_name(
             name="CustomUrl",
@@ -782,11 +767,11 @@ class TestChannel:
         )
         assert ch_with_url.url == "https://example.com/custom"
 
-    def test_channel_canonical_url_fallback(self) -> None:
+    def test_channel_url_fallback(self) -> None:
         from cresmo.domain.value_objects import Channel
 
         ch = Channel.from_name(name="NonCanonicalChannel")
-        assert ch.canonical_url == "https://www.youtube.com/@NonCanonicalChannel"
+        assert ch.url == "https://www.youtube.com/@NonCanonicalChannel"
 
     def test_channel_tenant_key(self) -> None:
         from cresmo.domain.value_objects import Channel
@@ -837,48 +822,30 @@ class TestContent:
         cnt = Content(
             id=ContentId("dQw4w9WgXcQ"),
             title="Never Gonna Give You Up",
-            body="Never gonna let you down",
+            text="Never gonna let you down",
         )
         assert cnt.id == ContentId("dQw4w9WgXcQ")
         assert cnt.title == "Never Gonna Give You Up"
-        assert cnt.body == "Never gonna let you down"
+        assert cnt.text == "Never gonna let you down"
         assert not hasattr(cnt, "content_id")
         assert not hasattr(cnt, "content_title")
         assert str(cnt) == "dQw4w9WgXcQ"
         assert not hasattr(cnt, "url")
         assert not hasattr(cnt, "publication_date")
         assert not hasattr(cnt, "modality")
+        assert not hasattr(cnt, "body")
 
     def test_content_creation_with_string_coercion_and_defaults(self) -> None:
         from cresmo.domain.value_objects import Content, ContentId
 
-        cnt = Content(id="dQw4w9WgXcQ", title="Test Title", body="Textual body")
+        cnt = Content(id="dQw4w9WgXcQ", title="Test Title", text="Textual body")
         assert isinstance(cnt.id, ContentId)
         assert cnt.id.value == "dQw4w9WgXcQ"
-        assert cnt.body == "Textual body"
+        assert cnt.text == "Textual body"
 
         cnt_default = Content(id="dQw4w9WgXcQ")
         assert cnt_default.title == ""
-        assert cnt_default.body == ""
-
-    def test_content_kwargs_aliases_and_overrides(self) -> None:
-        from cresmo.domain.value_objects import Content, ContentId
-
-        cnt = Content(
-            content_id="alt_content_id",
-            content_title="CustomTitle",
-        )
-        assert cnt.id == ContentId("alt_content_id")
-        assert cnt.title == "CustomTitle"
-
-        cnt_override = Content(
-            id="primary_id",
-            content_id="ignored_id",
-            title="PrimaryTitle",
-            content_title="IgnoredTitle",
-        )
-        assert cnt_override.id == ContentId("primary_id")
-        assert cnt_override.title == "PrimaryTitle"
+        assert cnt_default.text == ""
 
     def test_content_create_factory(self) -> None:
         from cresmo.domain.value_objects import Content, ContentId
@@ -886,11 +853,11 @@ class TestContent:
         cnt = Content.create(
             id="dQw4w9WgXcQ",
             title="My Video",
-            body="Synthesized body text",
+            text="Synthesized body text",
         )
         assert cnt.id == ContentId("dQw4w9WgXcQ")
         assert cnt.title == "My Video"
-        assert cnt.body == "Synthesized body text"
+        assert cnt.text == "Synthesized body text"
         assert not hasattr(cnt, "content_id")
         assert not hasattr(cnt, "content_title")
 
@@ -899,7 +866,7 @@ class TestContent:
 
         cnt = Content.create(id="dQw4w9WgXcQ")
         assert cnt.title == ""
-        assert cnt.body == ""
+        assert cnt.text == ""
         assert not hasattr(cnt, "display_title")
 
     def test_content_invalid_id_raises(self) -> None:
@@ -925,3 +892,63 @@ class TestContent:
         cnt = Content.create(id="dQw4w9WgXcQ")
         with pytest.raises((FrozenInstanceError, AttributeError)):
             cnt.title = "Changed"  # type: ignore
+
+
+class TestRawIndexEntry:
+    def test_to_markdown_block(self) -> None:
+        from cresmo.domain.value_objects import ChannelName, ContentId, RawIndexEntry
+
+        entry = RawIndexEntry(
+            video_id=ContentId("dQw4w9WgXcQ"),
+            url="https://youtube.com/watch?v=dQw4w9WgXcQ",
+            title="Never Gonna Give You Up",
+            channel_name=ChannelName("RickAstleyVEVO"),
+            key_concept="Pop Music Video",
+            synthesis="A landmark 1980s music video that defined internet meme culture.",
+        )
+        md = entry.to_markdown_block()
+        assert "### [Never Gonna Give You Up](https://youtube.com/watch?v=dQw4w9WgXcQ)" in md
+        assert "- **Video ID**: `dQw4w9WgXcQ` | **Conceito**: Pop Music Video" in md
+        assert "A landmark 1980s music video that defined internet meme culture." in md
+
+    def test_to_csv_row(self) -> None:
+        from cresmo.domain.value_objects import ChannelName, ContentId, RawIndexEntry
+
+        entry = RawIndexEntry(
+            video_id=ContentId("dQw4w9WgXcQ"),
+            url="https://youtube.com/watch?v=dQw4w9WgXcQ",
+            title="Never Gonna Give You Up",
+            channel_name=ChannelName("RickAstleyVEVO"),
+            key_concept="Pop Music Video",
+            synthesis="A landmark 1980s music video.",
+            channel_category="Music",
+            summary="Full summary text.",
+            excerpt="Short excerpt.",
+        )
+        row = entry.to_csv_row()
+        assert row == [
+            "Music",
+            "RickAstleyVEVO",
+            "dQw4w9WgXcQ.md",
+            "Pop Music Video",
+            "A landmark 1980s music video.",
+        ]
+
+    def test_validation_errors(self) -> None:
+        from cresmo.domain.exceptions import DomainValidationError
+        from cresmo.domain.value_objects import ChannelName, ContentId, RawIndexEntry
+
+        cid = ContentId("dQw4w9WgXcQ")
+        cname = ChannelName("RickAstleyVEVO")
+
+        with pytest.raises(DomainValidationError, match="url cannot be empty"):
+            RawIndexEntry(cid, "", "Title", cname, "Concept", "Synthesis")
+
+        with pytest.raises(DomainValidationError, match="title cannot be empty"):
+            RawIndexEntry(cid, "https://url", "", cname, "Concept", "Synthesis")
+
+        with pytest.raises(DomainValidationError, match="key_concept cannot be empty"):
+            RawIndexEntry(cid, "https://url", "Title", cname, "", "Synthesis")
+
+        with pytest.raises(DomainValidationError, match="synthesis cannot be empty"):
+            RawIndexEntry(cid, "https://url", "Title", cname, "Concept", "")

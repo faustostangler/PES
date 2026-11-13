@@ -18,7 +18,7 @@ def test_cresmo_notes_batched_creates_inventory_and_all_notes(tmp_path: Path) ->
     enriched_dir.mkdir(parents=True, exist_ok=True)
     enriched_file = enriched_dir / "vid_test.md"
     enriched_file.write_text(
-        "## Deep Analysis\n\nLongue durée analysis of multiple concepts.\n\n## Informações Complementares\nDetails.",
+        "## Deep Analysis\n\nLongue durée analysis of multiple concepts.\n\n### Extra Info\nDetails.",
         encoding="utf-8",
     )
 
@@ -98,7 +98,7 @@ def test_cresmo_notes_batched_resumes_interrupted_run(tmp_path: Path) -> None:
     enriched_dir = tmp_path / "enriched" / "TestChannel"
     enriched_dir.mkdir(parents=True, exist_ok=True)
     enriched_file = enriched_dir / "vid_resume.md"
-    enriched_file.write_text("## Topic\nContent\n## Informações Complementares\nNotes.", encoding="utf-8")
+    enriched_file.write_text("## Topic\nContent\n### Extra Info\nNotes.", encoding="utf-8")
 
     json_file = enriched_dir / "vid_resume.json"
     # Pre-existing file with full inventory (6 items), but only batch 1 (3 items) was generated
@@ -153,7 +153,7 @@ def test_cresmo_notes_batched_skips_when_fully_complete(tmp_path: Path) -> None:
     enriched_dir = tmp_path / "enriched" / "TestChannel"
     enriched_dir.mkdir(parents=True, exist_ok=True)
     enriched_file = enriched_dir / "vid_done.md"
-    enriched_file.write_text("## Topic\nContent\n## Informações Complementares\nNotes.", encoding="utf-8")
+    enriched_file.write_text("## Topic\nContent\n### Extra Info\nNotes.", encoding="utf-8")
 
     json_file = enriched_dir / "vid_done.json"
     inventory = [{"title": f"Done {i}", "type": "concept"} for i in range(1, 6)]

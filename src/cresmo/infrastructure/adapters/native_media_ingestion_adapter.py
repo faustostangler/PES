@@ -15,7 +15,6 @@ Conforms to:
 from __future__ import annotations
 
 import json
-import logging
 import shutil
 import tempfile
 import threading
@@ -27,11 +26,10 @@ from http import HTTPStatus
 from pathlib import Path
 from typing import Any, cast
 
-import whisper
-import yt_dlp
+import structlog
 
 from cresmo.application.ports import MediaIngestionPort, MetricsPort
-from cresmo.domain.entities import SourceTranscript
+from cresmo.domain.entities import StageTranscript
 from cresmo.domain.exceptions import (
     CresmoInfrastructureError,
     DomainValidationError,
@@ -65,7 +63,7 @@ from cresmo.infrastructure.adapters.media.subtitles import (
 )
 from cresmo.infrastructure.adapters.noop_metrics_adapter import NoOpMetricsAdapter
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 # Re-exports for backwards compatibility
 _ensure_yt_dlp_plugins_loaded = ensure_yt_dlp_plugins_loaded
@@ -105,7 +103,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         self._whisper_semaphore = threading.BoundedSemaphore(max(1, whisper_concurrency_limit))
         self._cookie_file: Path | None = Path(cookie_file).resolve() if cookie_file else None
         self._js_runtime_name: str | None = js_runtime_name or self._detect_js_runtime()
-        ensure_yt_dlp_plugins_loaded()
         if metrics_port is None:
             self._metrics_port: MetricsPort = NoOpMetricsAdapter()
         else:
@@ -195,21 +192,21 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             raise IngestionNetworkError(f"Ingestion network connectivity error: {msg}") from exc
         raise CresmoInfrastructureError(f"Media extraction infrastructure error: {msg}") from exc
 
+    def _extract_channel_name(self, info: Mapping[str, Any]) -> str:
+        """Extract and sanitize channel/uploader name from yt-dlp metadata."""
+        return self._sanitize_fs_name(
+            str(info.get("channel") or info.get("uploader") or "Unknown_Channel")
+        )
+
     def _transcribe_audio_fallback(
         self,
         video_url: str,
         output_dir: Path,
         whisper_model: str,
         keep_audio: bool,
-        info: Mapping[str, Any] | None = None,
-    ) -> tuple[str, str]:
+        channel_name: str = "Unknown_Channel",
+    ) -> str:
         """Download audio to ephemeral scratch dir, transcribe via Whisper, and clean up."""
-        channel_name = "Unknown_Channel"
-        if info:
-            channel_name = self._sanitize_fs_name(
-                str(info.get("channel") or info.get("uploader") or "Unknown_Channel")
-            )
-
         with tempfile.TemporaryDirectory(prefix="cresmo_scratch_") as scratch_str:
             scratch_path = Path(scratch_str)
             ydl_opts: dict[str, Any] = self._build_ydl_opts(
@@ -222,6 +219,9 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             )
 
             try:
+                import yt_dlp
+
+                ensure_yt_dlp_plugins_loaded()
                 with yt_dlp.YoutubeDL(cast(Any, ydl_opts)) as ydl:
                     ydl.download([video_url])
             except Exception as exc:  # noqa: BLE001
@@ -242,6 +242,8 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
                 shutil.copy2(audio_file, dest_audio)
 
             try:
+                import whisper  # Isolated heavy ML runtime lazy load per ADR-026/ADR-053
+
                 with self._whisper_semaphore:
                     model = whisper.load_model(whisper_model)
                     transcription_result = model.transcribe(str(audio_file))
@@ -249,7 +251,7 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             except Exception as exc:
                 raise CresmoInfrastructureError(f"Whisper transcription failed: {exc}") from exc
 
-        return body, channel_name
+        return str(body)
 
     _parse_upload_date = staticmethod(parse_upload_date)
     _parse_published_datetime = staticmethod(parse_published_datetime)
@@ -264,6 +266,9 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             }
         )
         try:
+            import yt_dlp
+
+            ensure_yt_dlp_plugins_loaded()
             with yt_dlp.YoutubeDL(cast(Any, ydl_opts)) as ydl:
                 info = ydl.extract_info(video_url, download=False)
         except Exception as exc:  # noqa: BLE001
@@ -281,11 +286,9 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         output_dir: Path,
         whisper_model: str,
         keep_audio: bool,
-    ) -> tuple[str, str]:
+        channel_name: str = "Unknown_Channel",
+    ) -> str:
         """Resolve transcript text either from native subtitles or Whisper fallback."""
-        channel_name = self._sanitize_fs_name(
-            str(info.get("channel") or info.get("uploader") or "Unknown_Channel")
-        )
         actual_video_id = str(info.get("id") or self._extract_video_id(video_url))
 
         # Check for native subtitles (rejecting tlang=)
@@ -309,12 +312,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
 
         # If subtitles were absent, malformed, or empty, trigger Whisper fallback
         if not body:
-            body, channel_name = self._transcribe_audio_fallback(
+            body = self._transcribe_audio_fallback(
                 video_url=video_url,
                 output_dir=output_dir,
                 whisper_model=whisper_model,
                 keep_audio=keep_audio,
-                info=info,
+                channel_name=channel_name,
             )
 
         if not body:
@@ -322,7 +325,7 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
                 f"Extracted transcript body is empty for video ID '{actual_video_id}'."
             )
 
-        return body, channel_name
+        return str(body)
 
     def _build_raw_transcript_aggregate(
         self,
@@ -330,22 +333,22 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         info: Mapping[str, Any],
         body: str,
         channel_name: str,
-    ) -> tuple[SourceTranscript, ChannelId | None]:
-        """Construct domain SourceTranscript entity from resolved metadata and body."""
+    ) -> tuple[StageTranscript, ChannelId | None]:
+        """Construct domain StageTranscript entity from resolved metadata and body."""
         actual_video_id = str(info.get("id") or self._extract_video_id(video_url))
-        cid = ContentId.extract_from_text(actual_video_id) or ContentId.from_url_or_token(
+        content_id = ContentId.extract_from_text(actual_video_id) or ContentId.from_url_or_token(
             actual_video_id
         )
-        c_name = ChannelName.from_string(channel_name)
-        category, _ = classify_channel(c_name)
+        resolved_channel_name = ChannelName.from_string(channel_name)
+        category, _ = classify_channel(resolved_channel_name)
         upload_date = self._parse_upload_date(info.get("upload_date"))
 
-        raw_cid = str(info.get("channel_id") or info.get("uploader_id") or "").strip()
-        ch_id = ChannelId.extract_from_text(raw_cid)
+        raw_channel_id = str(info.get("channel_id") or info.get("uploader_id") or "").strip()
+        resolved_channel_id = ChannelId.extract_from_text(raw_channel_id)
 
         channel = Channel(
-            name=c_name,
-            id=ch_id,
+            name=resolved_channel_name,
+            id=resolved_channel_id,
             category=category,
             url=str(info.get("channel_url") or "") or None,
         )
@@ -355,16 +358,16 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             publication_date=upload_date,
         )
         content = Content.create(
-            id=cid,
+            id=content_id,
             title=str(info.get("title") or ""),
-            body=body,
+            text=body,
         )
-        transcript = SourceTranscript(
+        transcript = StageTranscript(
             channel=channel,
             provenance=provenance,
             content=content,
         )
-        return transcript, ch_id
+        return transcript, resolved_channel_id
 
     def ingest_single_video(
         self,
@@ -372,8 +375,8 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         output_dir: Path,
         whisper_model: str = "base",
         keep_audio: bool = False,
-    ) -> SourceTranscript | None:
-        """Ingest single video into SourceTranscript domain aggregate.
+    ) -> StageTranscript | None:
+        """Ingest single video into StageTranscript domain aggregate.
 
         Prioritizes native spoken subtitles. If unavailable, falls back to local
         Whisper transcription with RAII temporary scratch storage.
@@ -389,22 +392,25 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
                 status = "failure"
                 return None
 
-            body, channel_name = self._resolve_transcript_body(
+            channel_name = self._extract_channel_name(info)
+
+            body = self._resolve_transcript_body(
                 video_url=video_url,
                 info=info,
                 output_dir=output_dir,
                 whisper_model=whisper_model,
                 keep_audio=keep_audio,
+                channel_name=channel_name,
             )
 
-            transcript, ch_id = self._build_raw_transcript_aggregate(
+            transcript, resolved_channel_id = self._build_raw_transcript_aggregate(
                 video_url=video_url,
                 info=info,
                 body=body,
                 channel_name=channel_name,
             )
-            if ch_id:
-                channel_id = ch_id.value
+            if resolved_channel_id:
+                channel_id = resolved_channel_id.value
             return transcript
         except Exception:
             status = "failure"
@@ -447,6 +453,9 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             }
         )
         try:
+            import yt_dlp
+
+            ensure_yt_dlp_plugins_loaded()
             with yt_dlp.YoutubeDL(cast(Any, ydl_opts)) as ydl:
                 info = ydl.extract_info(video_url, download=False)
         except Exception as exc:  # noqa: BLE001 - Non-fatal discovery failure

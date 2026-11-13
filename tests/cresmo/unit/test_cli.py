@@ -13,7 +13,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from cresmo.application.pipeline import PipelineResult
-from cresmo.domain.entities import SourceTranscript
+from cresmo.domain.entities import StageTranscript
 from cresmo.domain.exceptions import (
     DomainValidationError,
     IngestionNetworkError,
@@ -22,9 +22,12 @@ from cresmo.domain.exceptions import (
     SecurityViolationError,
 )
 from cresmo.domain.value_objects import (
+    Channel,
     ChannelFeedQuery,
     ChannelName,
+    Content,
     ContentId,
+    MediaProvenance,
     PipelineStatus,
     SyncSummary,
 )
@@ -226,10 +229,14 @@ class TestCresmoCLI:
 
     def test_cli_run_dry_run_invokes_only_ingest(self) -> None:
         mock_pipeline = MagicMock()
-        mock_raw = SourceTranscript(
-            content_id=ContentId("dQw4w9WgXcQ"),
-            channel_name=ChannelName("TestChannel"),
-            body="Verbatim transcript content.",
+        mock_raw = StageTranscript(
+            channel=Channel(name=ChannelName("TestChannel")),
+            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=dQw4w9WgXcQ"),
+            content=Content(
+                id=ContentId("dQw4w9WgXcQ"),
+                title="Test Title",
+                text="Verbatim transcript content.",
+            ),
         )
         mock_pipeline.ingest_raw_transcript.execute.return_value = mock_raw
 
@@ -276,10 +283,14 @@ class TestCresmoCLI:
         )
 
         mock_pipeline = MagicMock()
-        mock_raw = SourceTranscript(
-            content_id=ContentId("video11111111"),
-            channel_name=ChannelName("TestChan"),
-            body="Content",
+        mock_raw = StageTranscript(
+            channel=Channel(name=ChannelName("TestChan")),
+            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=video11111111"),
+            content=Content(
+                id=ContentId("video11111111"),
+                title="Test Title",
+                text="Content",
+            ),
         )
         mock_pipeline.ingest_raw_transcript.execute.return_value = mock_raw
 
@@ -658,6 +669,42 @@ class TestCresmoCLI:
                 "  • Unified into [[Dom Afonso Henriques]]: [[D. Afonso Henriques]], [[Rei Fundador]] (3 links rewritten)\n"
                 in captured.out
             )
+
+    def test_cli_dedupe_with_vault_flags_and_verbose(
+        self, capsys: pytest.CaptureFixture[str], tmp_path: Path
+    ) -> None:
+        from cresmo.application.use_cases.unify_duplicate_notes import DeduplicationReport
+
+        mock_use_case = MagicMock()
+        mock_use_case.execute.return_value = DeduplicationReport(clusters=())
+
+        custom_vault = tmp_path / "custom_vault"
+        custom_vault.mkdir()
+
+        mock_settings = MagicMock()
+        mock_copied_settings = MagicMock()
+        mock_copied_settings.vault_dir = custom_vault
+        mock_settings.model_copy.return_value = mock_copied_settings
+
+        with (
+            patch(
+                "cresmo.presentation.commands.dedupe.resolve_shared_settings",
+                return_value=mock_settings,
+            ),
+            patch(
+                "cresmo.presentation.commands.dedupe.build_unify_duplicates_use_case",
+                return_value=mock_use_case,
+            ) as mock_builder,
+        ):
+            exit_code = main(["dedupe", "--vault", str(custom_vault), "--dry-run", "--verbose"])
+            assert exit_code == EXIT_SUCCESS
+            mock_settings.model_copy.assert_called_once_with(
+                update={"vault_dir": custom_vault.resolve()}
+            )
+            mock_builder.assert_called_once_with(settings=mock_copied_settings)
+            captured = capsys.readouterr()
+            assert f"Vault directory: {custom_vault}" in captured.out
+            assert "Dry-run mode: True" in captured.out
 
     def test_cli_dedupe_exception_returns_code_1(self, capsys: pytest.CaptureFixture[str]) -> None:
         mock_use_case = MagicMock()
@@ -1123,7 +1170,7 @@ class TestCresmoCLI:
                 url=None,
                 manifest=None,
                 dry_run=False,
-                no_scan_raw=True,
+                scan_raw=False,
                 batch_size=None,
                 lookback=10,
                 channel_max_videos=50,
@@ -1144,7 +1191,7 @@ class TestCresmoCLI:
                 url=None,
                 manifest=None,
                 dry_run=False,
-                no_scan_raw=True,
+                scan_raw=False,
                 batch_size=None,
                 lookback=None,
                 channel_max_videos=50,
@@ -1175,7 +1222,7 @@ class TestCresmoCLI:
                 url=None,
                 manifest=None,
                 dry_run=False,
-                no_scan_raw=True,
+                scan_raw=False,
                 batch_size=None,
                 lookback=14,
                 channel_max_videos=10,
@@ -1215,7 +1262,7 @@ class TestCresmoCLI:
                 url=None,
                 manifest=None,
                 dry_run=False,
-                no_scan_raw=False,
+                scan_raw=False,
                 batch_size=None,
                 lookback=None,
                 channel_max_videos=50,
@@ -1230,7 +1277,7 @@ class TestCresmoCLI:
                 url=None,
                 manifest=None,
                 dry_run=False,
-                no_scan_raw=False,
+                scan_raw=False,
                 batch_size=None,
                 lookback=None,
                 channel_max_videos=50,

@@ -10,11 +10,18 @@ from unittest.mock import patch
 from cresmo.domain.taxonomy import classify_channel
 from cresmo.domain.value_objects import ChannelName, PromptKey
 from cresmo.domain.value_objects.prompt import ChatPrompt
-from cresmo.infrastructure.adapters.prompt_provider import JsonPromptProvider
+from cresmo.infrastructure.adapters.prompt_provider import (
+    JsonPromptProvider,
+)
 from cresmo.infrastructure.adapters.prompts.builders import (
     PROMPT_BUILDER_REGISTRY,
     PromptBuilderRegistry,
+    PromptTemplateHost,
 )
+
+
+def _dummy_builder(provider: PromptTemplateHost, **context: Any) -> ChatPrompt:
+    return ChatPrompt.from_system_and_user(system="s", user="u")
 
 
 class TestChannelTaxonomy:
@@ -47,68 +54,70 @@ class TestJsonPromptProvider:
     def test_default_prompt_provider_loads_bundled_json(self) -> None:
         provider = JsonPromptProvider()
         assert len(provider._templates) > 0
-        assert "gap_filler_pass1" in provider._templates
-        assert "gap_filler_pass_subsequent" in provider._templates
+        assert "gap_filler" in provider._templates
         assert "long_expander" in provider._templates
         assert "wide_expander" in provider._templates
         assert "atomic_inventory" in provider._templates
         assert "atomic_batch" in provider._templates
         assert "reconcile_mocs" in provider._templates
+        assert "judge_gap_filler" in provider._templates
 
-    def test_gap_filler_differentiates_pass1_and_subsequent_passes(self) -> None:
+    def test_judge_gap_filler_prompt_formatting(self) -> None:
+        provider = JsonPromptProvider()
+        prompt = provider.get_prompt(
+            PromptKey.JUDGE_GAP_FILLER,
+            stage_name="gap_filler",
+            criteria_json='["epistemic_grounding_segregation", "conceptual_mechanical_decomposition"]',
+            source_text="Source fluid transcript.",
+            candidate_text="Candidate compendium text.",
+        )
+        assert prompt.system_prompt is not None
+        assert "epistemic_grounding_segregation" in prompt.system_prompt
+        assert "conceptual_mechanical_decomposition" in prompt.system_prompt
+        assert "braudelian_stratification" in prompt.system_prompt
+        assert "genealogy_hidden_agency" in prompt.system_prompt
+        assert "competing_hypotheses" in prompt.system_prompt
+        assert "extra_info_granularity" in prompt.system_prompt
+        assert "linear_style_naturalism" in prompt.system_prompt
+        user_msg = prompt.get_last_user_content()
+        assert "Source fluid transcript." in user_msg
+        assert "Candidate compendium text." in user_msg
+
+    def test_gap_filler_prompt_embeds_skill_and_style_guide(self) -> None:
         provider = JsonPromptProvider()
 
         prompt1 = provider.get_prompt(
-            PromptKey.GAP_FILLER_PASS1,
+            PromptKey.GAP_FILLER,
             pass_num=1,
             total_passes=3,
             channel_name=ChannelName("Tech Channel"),
             file_name="test.txt",
-            raw_text="Raw text here.",
+            source_text="Source fluid text here.",
         )
-        s1 = prompt1.system_instruction or ""
+        s1 = prompt1.system_prompt or ""
         p1 = prompt1.get_last_user_content()
         assert isinstance(s1, str)
-        assert len(s1) > 0
-        assert "Pass 1/3" in p1
-        assert "Tech Channel" in p1
-        assert "test.txt" in p1
-        assert "Raw text here." in p1
+        assert "Your Skill:" in s1
+        assert "cresmo-gap-filler:\n" in s1
+        assert "Cresmo Style Guide:" in s1
+        assert "# Guia de Estilo Cresmo" in s1
+        assert "{{cresmo-style-guide}}" not in s1
+        assert "{{skill_block}}" not in s1
+        assert s1.count("# Guia de Estilo Cresmo") == 1
+        assert "Português do Brasil" in s1
+        assert "Transcrição:\nSource fluid text here." in p1
 
         prompt2 = provider.get_prompt(
-            PromptKey.GAP_FILLER_PASS_SUBSEQUENT,
+            PromptKey.GAP_FILLER,
             pass_num=2,
             total_passes=3,
             channel_name=ChannelName("Tech Channel"),
             file_name="test.txt",
-            raw_text="Raw text here.",
+            source_text="Source fluid text here.",
             current_text="Draft from pass 1.",
         )
-        s2 = prompt2.system_instruction or ""
-        p2 = prompt2.get_last_user_content()
-        assert isinstance(s2, str)
-        assert len(s2) > 0
-        assert "Pass 2/3" in p2
-        assert "PASS 1 TO ENRICH" in p2
-        assert "Tech Channel" in p2
-        assert "Draft from pass 1." in p2
-        assert p1 != p2
-
-    def test_gap_filler_subsequent_passes_fallback_when_current_text_is_none(self) -> None:
-        provider = JsonPromptProvider()
-        prompt2 = provider.get_prompt(
-            PromptKey.GAP_FILLER_PASS_SUBSEQUENT,
-            pass_num=2,
-            total_passes=3,
-            channel_name=ChannelName("Tech Channel"),
-            file_name="test.txt",
-            raw_text="Fallback to raw when current_text is None.",
-            current_text=None,
-        )
-        s2 = prompt2.system_instruction or ""
-        p2 = prompt2.get_last_user_content()
-        assert isinstance(s2, str)
-        assert "Fallback to raw when current_text is None." in p2
+        s2 = prompt2.system_prompt or ""
+        assert s1 == s2
 
     def test_long_and_wide_expander_prompts(self) -> None:
         provider = JsonPromptProvider()
@@ -118,13 +127,13 @@ class TestJsonPromptProvider:
             compendium_body="Main body text.",
             complementary_info="Supplementary info.",
         )
-        long_s = long_prompt.system_instruction or ""
+        long_s = long_prompt.system_prompt or ""
         long_p = long_prompt.get_last_user_content()
         assert isinstance(long_s, str)
         assert "Main body text." in long_p
         assert "Supplementary info." in long_p
         assert "Fernand Braudel" in long_s
-        assert long_s.startswith("You are Cresmo Long-Expander")
+        assert long_s.startswith(provider.catalog[PromptKey.LONG_EXPANDER].description)
         assert "longitudinal" in long_p.lower()
         assert not long_p.startswith(long_s[:30])
 
@@ -132,12 +141,12 @@ class TestJsonPromptProvider:
             PromptKey.WIDE_EXPANDER,
             current_text="Longitudinally expanded text.",
         )
-        wide_s = wide_prompt.system_instruction or ""
+        wide_s = wide_prompt.system_prompt or ""
         wide_p = wide_prompt.get_last_user_content()
         assert isinstance(wide_s, str)
         assert "Longitudinally expanded text." in wide_p
         assert "Karl Jaspers" in wide_s
-        assert wide_s.startswith("You are Cresmo Wide-Expander")
+        assert wide_s.startswith(provider.catalog[PromptKey.WIDE_EXPANDER].description)
         assert "synchronic" in wide_p.lower()
         assert not wide_p.startswith(wide_s[:30])
 
@@ -150,7 +159,7 @@ class TestJsonPromptProvider:
             channel_name=ChannelName("Channel Name"),
             compendium_body="Enriched content body.",
         )
-        inv_s = inv_prompt.system_instruction or ""
+        inv_s = inv_prompt.system_prompt or ""
         inv_p = inv_prompt.get_last_user_content()
         assert isinstance(inv_s, str)
         assert "Compendium Title" in inv_p
@@ -164,7 +173,7 @@ class TestJsonPromptProvider:
             compendium_body="Enriched content body.",
             inventory_json='[{"title": "Target 1", "type": "entity"}]',
         )
-        judge_inv_s = judge_inv_prompt.system_instruction or ""
+        judge_inv_s = judge_inv_prompt.system_prompt or ""
         judge_inv_p = judge_inv_prompt.get_last_user_content()
         assert isinstance(judge_inv_s, str)
         assert "Compendium Title" in judge_inv_p
@@ -179,7 +188,7 @@ class TestJsonPromptProvider:
             compendium_body="Enriched content body.",
             targets_json='[{"title": "Target 1"}]',
         )
-        batch_s = batch_prompt.system_instruction or ""
+        batch_s = batch_prompt.system_prompt or ""
         batch_p = batch_prompt.get_last_user_content()
         assert isinstance(batch_s, str)
         assert "Compendium Title" in batch_p
@@ -190,7 +199,7 @@ class TestJsonPromptProvider:
             PromptKey.RECONCILE_MOCS,
             notes_json='[{"title": "Note 1"}]',
         )
-        mocs_s = mocs_prompt.system_instruction or ""
+        mocs_s = mocs_prompt.system_prompt or ""
         mocs_p = mocs_prompt.get_last_user_content()
         assert isinstance(mocs_s, str)
         assert "vault atomic notes to reconcile" in mocs_p.lower()
@@ -198,46 +207,34 @@ class TestJsonPromptProvider:
 
     def test_custom_prompts_json_override(self, tmp_path: Path) -> None:
         custom_prompts = {
-            "gap_filler_pass1": {
-                "task": "Custom Task 1",
+            "gap_filler": {
                 "skill_name": "none",
-                "template": "{task}: Custom Pass 1 for {channel_name} in {file_name} with {raw_text} (total: {total_passes})",
-            },
-            "gap_filler_pass_subsequent": {
-                "task": "Custom Task 2",
-                "skill_name": "none",
-                "template": "{task}: Custom Pass {pass_num}/{total_passes} (prev {prev_pass_num}) for {channel_name} with {raw_text} & {current_text}",
+                "user_prompt": "{description}: Pass {pass_num}/{total_passes} for {channel_name} with source: {source_text}{draft_section}",
             },
             "long_expander": {
-                "task": "Custom Long",
                 "skill_name": "none",
-                "template": "{task}: {compendium_body} + {complementary_info}",
+                "user_prompt": "{description}: {compendium_body} + {complementary_info}",
             },
             "wide_expander": {
-                "task": "Custom Wide",
                 "skill_name": "none",
-                "template": "{task}: {text}",
+                "user_prompt": "{description}: {text}",
             },
             "atomic_inventory": {
-                "task": "Custom Inv",
                 "skill_name": "none",
-                "template": "{task}: {content_title} on {channel_name} with {compendium_body}",
+                "user_prompt": "{description}: {content_title} on {channel_name} with {compendium_body}",
             },
             "atomic_batch": {
-                "task": "Custom Batch",
                 "skill_name": "none",
-                "template": "{task}: {content_title} on {channel_name} body {compendium_body} targets {targets_json}",
+                "user_prompt": "{description}: {content_title} on {channel_name} body {compendium_body} targets {targets_json}",
             },
             "reconcile_mocs": {
-                "task": "Custom MOC",
                 "skill_name": "none",
-                "template": "{task}: {notes_json}",
+                "user_prompt": "{description}: {notes_json}",
             },
             "judge_atomic_inventory": {
-                "task": "Custom Judge Inventory",
                 "skill_name": "none",
-                "system_instruction": "Custom Judge System Instruction",
-                "template": "{task}: {content_title} on {channel_name} with {inventory_json}",
+                "system_prompt": "Custom Judge System Instruction",
+                "user_prompt": "{description}: {content_title} on {channel_name} with {inventory_json}",
             },
         }
         custom_file = tmp_path / "custom_prompts.json"
@@ -245,43 +242,46 @@ class TestJsonPromptProvider:
 
         provider = JsonPromptProvider(prompts_path=custom_file)
         prompt1 = provider.get_prompt(
-            PromptKey.GAP_FILLER_PASS1,
+            PromptKey.GAP_FILLER,
             pass_num=1,
             total_passes=3,
             channel_name=ChannelName("Custom Channel"),
             file_name="custom.txt",
-            raw_text="text",
+            source_text="text",
         )
+        expected_desc = provider.catalog[PromptKey.GAP_FILLER].description
         assert (
             prompt1.get_last_user_content()
-            == "Custom Task 1: Custom Pass 1 for Custom Channel in custom.txt with text (total: 3)"
+            == f"{expected_desc}: Pass 1/3 for Custom Channel with source: text"
         )
-        assert prompt1.system_instruction == "Custom Task 1"
+        assert prompt1.system_prompt == expected_desc
 
         prompt2 = provider.get_prompt(
-            PromptKey.GAP_FILLER_PASS_SUBSEQUENT,
+            PromptKey.GAP_FILLER,
             pass_num=2,
             total_passes=3,
             channel_name=ChannelName("Custom Channel"),
             file_name="custom.txt",
-            raw_text="raw",
+            source_text="text",
             current_text="draft",
         )
         assert (
             prompt2.get_last_user_content()
-            == "Custom Task 2: Custom Pass 2/3 (prev 1) for Custom Channel with raw & draft"
+            == f'{expected_desc}: Pass 2/3 for Custom Channel with source: text\n<draft pass="1">\ndraft\n</draft>\n'
         )
-        assert prompt2.system_instruction == "Custom Task 2"
+        assert prompt2.system_prompt == expected_desc
 
         prompt_long = provider.get_prompt(
             PromptKey.LONG_EXPANDER, compendium_body="Body", complementary_info="Info"
         )
-        assert prompt_long.get_last_user_content() == "Custom Long: Body + Info"
-        assert prompt_long.system_instruction == "Custom Long"
+        expected_long_desc = provider.catalog[PromptKey.LONG_EXPANDER].description
+        assert prompt_long.get_last_user_content() == f"{expected_long_desc}: Body + Info"
+        assert prompt_long.system_prompt == expected_long_desc
 
         prompt_wide = provider.get_prompt(PromptKey.WIDE_EXPANDER, current_text="WideText")
-        assert prompt_wide.get_last_user_content() == "Custom Wide: WideText"
-        assert prompt_wide.system_instruction == "Custom Wide"
+        expected_wide_desc = provider.catalog[PromptKey.WIDE_EXPANDER].description
+        assert prompt_wide.get_last_user_content() == f"{expected_wide_desc}: WideText"
+        assert prompt_wide.system_prompt == expected_wide_desc
 
         prompt_inv = provider.get_prompt(
             PromptKey.ATOMIC_INVENTORY,
@@ -289,8 +289,11 @@ class TestJsonPromptProvider:
             channel_name=ChannelName("Channel"),
             compendium_body="Body",
         )
-        assert prompt_inv.get_last_user_content() == "Custom Inv: Title on Channel with Body"
-        assert prompt_inv.system_instruction == "Custom Inv"
+        expected_inv_desc = provider.catalog[PromptKey.ATOMIC_INVENTORY].description
+        assert (
+            prompt_inv.get_last_user_content() == f"{expected_inv_desc}: Title on Channel with Body"
+        )
+        assert prompt_inv.system_prompt == expected_inv_desc
 
         prompt_j_inv = provider.get_prompt(
             PromptKey.JUDGE_ATOMIC_INVENTORY,
@@ -299,11 +302,12 @@ class TestJsonPromptProvider:
             compendium_body="Body",
             inventory_json='[{"title": "T1"}]',
         )
+        expected_j_inv_desc = provider.catalog[PromptKey.JUDGE_ATOMIC_INVENTORY].description
         assert (
             prompt_j_inv.get_last_user_content()
-            == 'Custom Judge Inventory: Title on Channel with [{"title": "T1"}]'
+            == f'{expected_j_inv_desc}: Title on Channel with [{{"title": "T1"}}]'
         )
-        assert prompt_j_inv.system_instruction == "Custom Judge System Instruction"
+        assert prompt_j_inv.system_prompt == "Custom Judge System Instruction"
 
         prompt_batch = provider.get_prompt(
             PromptKey.ATOMIC_BATCH,
@@ -312,22 +316,24 @@ class TestJsonPromptProvider:
             compendium_body="Body",
             targets_json="Targets",
         )
+        expected_batch_desc = provider.catalog[PromptKey.ATOMIC_BATCH].description
         assert (
             prompt_batch.get_last_user_content()
-            == "Custom Batch: Title on Channel body Body targets Targets"
+            == f"{expected_batch_desc}: Title on Channel body Body targets Targets"
         )
-        assert prompt_batch.system_instruction == "Custom Batch"
+        assert prompt_batch.system_prompt == expected_batch_desc
 
         prompt_mocs = provider.get_prompt(PromptKey.RECONCILE_MOCS, notes_json="Notes")
-        assert prompt_mocs.get_last_user_content() == "Custom MOC: Notes"
-        assert prompt_mocs.system_instruction == "Custom MOC"
+        expected_mocs_desc = provider.catalog[PromptKey.RECONCILE_MOCS].description
+        assert prompt_mocs.get_last_user_content() == f"{expected_mocs_desc}: Notes"
+        assert prompt_mocs.system_prompt == expected_mocs_desc
 
     def test_custom_prompts_file_corrupted_falls_back_to_bundled(self, tmp_path: Path) -> None:
         bad_file = tmp_path / "corrupted.json"
         bad_file.write_text("NOT VALID JSON", encoding="utf-8")
 
         provider = JsonPromptProvider(prompts_path=bad_file)
-        assert "gap_filler_pass1" in provider._templates
+        assert "gap_filler" in provider._templates
         assert len(provider._templates) > 0
 
     def test_bundled_resource_load_failure_clears_templates(self) -> None:
@@ -365,7 +371,7 @@ class TestJsonPromptProvider:
 
         provider = JsonPromptProvider(skills_dir=skills_dir)
         block = provider._get_skill_block("cresmo-sample")
-        assert "--- SKILL SPECIFICATION (cresmo-sample) ---" in block
+        assert "cresmo-sample:\n" in block
         assert "Skill documentation content" in block
 
         # Cached call
@@ -399,135 +405,26 @@ class TestJsonPromptProvider:
         formatted = JsonPromptProvider._safe_format(template, task="Extract", value="TestVal")
         assert formatted == 'Task: Extract. Schema: {{"key": "TestVal", "list": [1, 2]}}'
 
-    def test_fallbacks_when_template_is_empty(self) -> None:
+    def test_empty_user_template_fails_fast_without_hardcoded_fallbacks(self) -> None:
+        """Verify zero inline hardcoded prompt fallbacks exist when user template is empty."""
+        import pytest
+
+        from cresmo.domain.exceptions import DomainValidationError
+
         provider = JsonPromptProvider()
-        # Clear out templates to trigger all hardcoded fallbacks
         provider._templates = {
-            "gap_filler_pass1": {"task": "Clean raw", "template": ""},
-            "gap_filler_pass_subsequent": {"task": "Deepen prose", "template": ""},
-            "long_expander": {"task": "Longue Duree", "template": ""},
-            "wide_expander": {"task": "Axial Time", "template": ""},
-            "atomic_inventory": {"task": "Extract Items", "template": ""},
-            "atomic_batch": {"task": "Synthesize Notes", "template": ""},
-            "reconcile_mocs": {"task": "Map MOCs", "template": ""},
+            "gap_filler": {"user_prompt": ""},
         }
 
-        # Gap filler pass 1 fallback
-        prompt1 = provider.get_prompt(
-            PromptKey.GAP_FILLER_PASS1,
-            pass_num=1,
-            total_passes=2,
-            channel_name=ChannelName("ChName"),
-            file_name="f.txt",
-            raw_text="RawText",
-        )
-        s1 = prompt1.system_instruction or ""
-        p1 = prompt1.get_last_user_content()
-        assert "Clean raw" in s1
-        assert "Source Channel: ChName" in p1
-        assert "File: f.txt" in p1
-        assert "Transcript:\nRawText" in p1
-        assert "## Informações Complementares" in p1
-
-        # Gap filler pass 2 fallback with current_text
-        prompt2 = provider.get_prompt(
-            PromptKey.GAP_FILLER_PASS_SUBSEQUENT,
-            pass_num=2,
-            total_passes=2,
-            channel_name=ChannelName("ChName"),
-            file_name="f.txt",
-            raw_text="RawText",
-            current_text="DraftText",
-        )
-        s2 = prompt2.system_instruction or ""
-        p2 = prompt2.get_last_user_content()
-        assert "Deepen prose" in s2
-        assert "Source Channel: ChName" in p2
-        assert "--- ORIGINAL RAW TRANSCRIPT (GROUND TRUTH REFERENCE) ---\nRawText" in p2
-        assert "--- PREVIOUS PASS EXPANDED COMPENDIUM DRAFT (PASS 1 TO ENRICH) ---\nDraftText" in p2
-        assert "Execute Socratic gap filling and theoretical densification." in p2
-
-        # Gap filler pass 2 fallback without current_text
-        prompt2_none = provider.get_prompt(
-            PromptKey.GAP_FILLER_PASS_SUBSEQUENT,
-            pass_num=2,
-            total_passes=2,
-            channel_name=ChannelName("ChName"),
-            file_name="f.txt",
-            raw_text="RawText",
-            current_text=None,
-        )
-        s2_none = prompt2_none.system_instruction or ""
-        p2_none = prompt2_none.get_last_user_content()
-        assert "Deepen prose" in s2_none
-        assert (
-            "--- PREVIOUS PASS EXPANDED COMPENDIUM DRAFT (PASS 1 TO ENRICH) ---\nRawText" in p2_none
-        )
-
-        # Long expander fallback
-        prompt_long = provider.get_prompt(
-            PromptKey.LONG_EXPANDER,
-            compendium_body="BodyText",
-            complementary_info="ComplementaryText",
-        )
-        s_long = prompt_long.system_instruction or ""
-        p_long = prompt_long.get_last_user_content()
-        assert "Longue Duree" in s_long
-        assert "Content:\nBodyText" in p_long
-        assert "## Informações Complementares\nComplementaryText" in p_long
-
-        # Wide expander fallback
-        prompt_wide = provider.get_prompt(PromptKey.WIDE_EXPANDER, current_text="WideText")
-        s_wide = prompt_wide.system_instruction or ""
-        p_wide = prompt_wide.get_last_user_content()
-        assert "Axial Time" in s_wide
-        assert "WideText" in p_wide
-        assert p_wide.endswith("WideText")
-
-        # Atomic inventory fallback
-        prompt_inv = provider.get_prompt(
-            PromptKey.ATOMIC_INVENTORY,
-            content_title="Title",
-            channel_name=ChannelName("Channel"),
-            compendium_body="Body",
-        )
-        s_inv = prompt_inv.system_instruction or ""
-        p_inv = prompt_inv.get_last_user_content()
-        assert "Extract Items" in s_inv
-        assert "Title: Title" in p_inv
-        assert "Channel: Channel" in p_inv
-        assert "Content:\nBody" in p_inv
-        assert (
-            'Output strictly a JSON array: [{"title": "...", "type": "entity|concept|event|process"}]'
-            in p_inv
-        )
-
-        # Atomic batch fallback
-        prompt_batch = provider.get_prompt(
-            PromptKey.ATOMIC_BATCH,
-            content_title="Title",
-            channel_name=ChannelName("Channel"),
-            compendium_body="Body",
-            targets_json='[{"title": "E1"}]',
-        )
-        s_batch = prompt_batch.system_instruction or ""
-        p_batch = prompt_batch.get_last_user_content()
-        assert "Synthesize Notes" in s_batch
-        assert "Source Compendium Title: Title" in p_batch
-        assert "Source Channel: Channel" in p_batch
-        assert "Source Context:\nBody" in p_batch
-        assert 'Target Entities to Synthesize in this batch:\n[{"title": "E1"}]' in p_batch
-        assert "Output strictly a JSON array of note objects." in p_batch
-
-        # MOCs fallback
-        prompt_mocs = provider.get_prompt(
-            PromptKey.RECONCILE_MOCS, notes_json='[{"title": "Note1"}]'
-        )
-        s_mocs = prompt_mocs.system_instruction or ""
-        p_mocs = prompt_mocs.get_last_user_content()
-        assert "Map MOCs" in s_mocs
-        assert 'Atomic Notes in Vault:\n[{"title": "Note1"}]' in p_mocs
-        assert "Output strictly a JSON array of MOC objects." in p_mocs
+        with pytest.raises(DomainValidationError, match="ChatMessage content cannot be empty"):
+            provider.get_prompt(
+                PromptKey.GAP_FILLER,
+                pass_num=1,
+                total_passes=2,
+                channel_name=ChannelName("ChName"),
+                file_name="f.txt",
+                source_text="RawText",
+            )
 
     def test_get_raw_index_3_pass_prompts(self) -> None:
         provider = JsonPromptProvider()
@@ -542,7 +439,7 @@ class TestJsonPromptProvider:
             transcript_excerpt="A circulação de elites explica a alternância de poder.",
             language="Português do Brasil",
         )
-        concepts_system_instructions = concepts_prompt.system_instruction or ""
+        concepts_system_instructions = concepts_prompt.system_prompt or ""
         concepts_user_prompt = concepts_prompt.get_last_user_content()
         assert "comma-separated" in concepts_system_instructions.lower()
         assert "Vilfredo Pareto and Elites" in concepts_user_prompt
@@ -555,7 +452,7 @@ class TestJsonPromptProvider:
             transcript_excerpt="A circulação de elites explica a alternância de poder.",
             language="Português do Brasil",
         )
-        summary_system_instructions = summary_prompt.system_instruction or ""
+        summary_system_instructions = summary_prompt.system_prompt or ""
         summary_user_prompt = summary_prompt.get_last_user_content()
         assert "synthesize" in summary_system_instructions.lower()
         assert "Português do Brasil" in summary_system_instructions
@@ -569,7 +466,7 @@ class TestJsonPromptProvider:
             summary="A circulação de elites explica a alternância de poder.",
             language="Português do Brasil",
         )
-        synthesis_system_instructions = synthesis_prompt.system_instruction or ""
+        synthesis_system_instructions = synthesis_prompt.system_prompt or ""
         synthesis_user_prompt = synthesis_prompt.get_last_user_content()
         assert "paratactic" in synthesis_system_instructions.lower()
         assert "ner" in synthesis_system_instructions.lower()
@@ -594,7 +491,7 @@ class TestJsonPromptProvider:
             summary="Resumo fiel da circulação das elites.",
             language="Português do Brasil",
         )
-        summary_judge_system_instructions = summary_judge_prompt.system_instruction or ""
+        summary_judge_system_instructions = summary_judge_prompt.system_prompt or ""
         summary_judge_user_prompt = summary_judge_prompt.get_last_user_content()
         assert "impartial" in summary_judge_system_instructions.lower()
         assert "evaluator" in summary_judge_system_instructions.lower()
@@ -612,7 +509,7 @@ class TestJsonPromptProvider:
             concepts="Circulação de Elites, Pareto",
             language="Português do Brasil",
         )
-        concepts_judge_system_instructions = concepts_judge_prompt.system_instruction or ""
+        concepts_judge_system_instructions = concepts_judge_prompt.system_prompt or ""
         concepts_judge_user_prompt = concepts_judge_prompt.get_last_user_content()
         assert "impartial" in concepts_judge_system_instructions.lower()
         assert "strictly with 'true' or 'false'" in concepts_judge_system_instructions.lower()
@@ -629,7 +526,7 @@ class TestJsonPromptProvider:
             synthesis="A circulação de elites reflete a alternância política segundo Pareto.",
             language="Português do Brasil",
         )
-        synthesis_judge_system_instructions = synthesis_judge_prompt.system_instruction or ""
+        synthesis_judge_system_instructions = synthesis_judge_prompt.system_prompt or ""
         synthesis_judge_user_prompt = synthesis_judge_prompt.get_last_user_content()
         assert "impartial evaluator" in synthesis_judge_system_instructions.lower()
         assert "strictly with 'true' or 'false'" in synthesis_judge_system_instructions.lower()
@@ -673,7 +570,7 @@ class TestPromptBuilderRegistry:
         registry = PromptBuilderRegistry()
         registry.register(
             PromptKey.FLUID_PROSE,
-            lambda p, **c: ChatPrompt.from_system_and_user(system="s", user="u"),
+            _dummy_builder,
         )
         registry.freeze()
         assert registry.is_frozen
@@ -683,20 +580,20 @@ class TestPromptBuilderRegistry:
         with pytest.raises(RuntimeError, match="frozen"):
             registry.register(
                 PromptKey.LONG_EXPANDER,
-                lambda p, **c: ChatPrompt.from_system_and_user(system="s", user="u"),
+                _dummy_builder,
             )
 
         with pytest.raises(RuntimeError, match="frozen"):
 
             @registry.register(PromptKey.WIDE_EXPANDER)
-            def _fn(p: Any, **c: Any) -> ChatPrompt:
+            def _fn(provider: PromptTemplateHost, **context: Any) -> ChatPrompt:
                 return ChatPrompt.from_system_and_user(system="s", user="u")
 
     def test_registry_completeness_validation(self) -> None:
         registry = PromptBuilderRegistry()
         registry.register(
             PromptKey.FLUID_PROSE,
-            lambda p, **c: ChatPrompt.from_system_and_user(system="s", user="u"),
+            _dummy_builder,
         )
 
         import pytest
@@ -720,7 +617,7 @@ class TestPromptBuilderRegistry:
 
         provider = JsonPromptProvider(registry=mock_registry)
         prompt = provider.get_prompt(PromptKey.FLUID_PROSE, content_title="Custom Injection")
-        assert prompt.system_instruction == "Injected System"
+        assert prompt.system_prompt == "Injected System"
         assert prompt.get_last_user_content() == "Injected User: Custom Injection"
 
     def test_unsupported_key_raises_value_error(self) -> None:
@@ -742,8 +639,8 @@ class TestPromptBuilderRegistry:
             "multi_skill_test": {
                 "task": "Test Multi Skill Task",
                 "skills": ["skill-a", "skill-b"],
-                "system_instruction": "{task}\n\n{skill_block}",
-                "template": "Run task with {input_val}",
+                "system_prompt": "{task}\n\n{skill_block}",
+                "user_prompt": "Run task with {input_val}",
             }
         }
         prompts_file = tmp_path / "prompts.json"
@@ -751,9 +648,9 @@ class TestPromptBuilderRegistry:
 
         provider = JsonPromptProvider(prompts_path=prompts_file, skills_dir=skills_dir)
         sys_inst, user_tpl = provider.get_chat_prompt_template("multi_skill_test")
-        assert "--- SKILL SPECIFICATION (skill-a) ---" in sys_inst
+        assert "skill-a:\n" in sys_inst
         assert "Skill A Spec Content" in sys_inst
-        assert "--- SKILL SPECIFICATION (skill-b) ---" in sys_inst
+        assert "skill-b:\n" in sys_inst
         assert "Skill B Spec Content" in sys_inst
         assert user_tpl == "Run task with {input_val}"
 
@@ -765,10 +662,9 @@ class TestPromptBuilderRegistry:
             file_name="test.txt",
             raw_text="Test spoken raw transcript content.",
         )
-        sys_inst = prompt.system_instruction or ""
-        assert "--- SKILL SPECIFICATION (cresmo-style-guide) ---" in sys_inst
-        assert "--- SKILL SPECIFICATION (cresmo-fluid-prose) ---" in sys_inst
-        assert "The 4 Core Style Pillars" in sys_inst
+        sys_inst = prompt.system_prompt or ""
+        assert "cresmo-style-guide:\n" in sys_inst
+        assert "cresmo-fluid-prose:\n" in sys_inst
         assert "Daniel Dennett" in sys_inst
         assert "Emil Cioran" in sys_inst
         assert "Friedrich Nietzsche" in sys_inst
@@ -776,3 +672,43 @@ class TestPromptBuilderRegistry:
         assert "Nassim Nicholas Taleb" in sys_inst
         assert "Test spoken raw transcript content." in prompt.get_last_user_content()
 
+    def test_json_prompt_provider_respects_settings_paths(self, tmp_path: Path) -> None:
+        """Verify JsonPromptProvider respects prompts_path and skills_dir from settings."""
+        custom_prompts_file = tmp_path / "custom_settings_prompts.json"
+        custom_skills_dir = tmp_path / "custom_settings_skills"
+        custom_skills_dir.mkdir()
+        (custom_skills_dir / "cresmo-custom").mkdir()
+        (custom_skills_dir / "cresmo-custom" / "SKILL.md").write_text(
+            "Custom Skill Doc", encoding="utf-8"
+        )
+
+        custom_prompts = {
+            "fluid_prose": {
+                "skill_name": "cresmo-custom",
+                "system_prompt": "Custom System {cresmo-custom}",
+                "user_prompt": "Custom User {raw_text}",
+            }
+        }
+        custom_prompts_file.write_text(json.dumps(custom_prompts), encoding="utf-8")
+
+        from unittest.mock import Mock
+
+        mock_settings = Mock()
+        mock_settings.prompts_path = custom_prompts_file
+        mock_settings.skills_dir = custom_skills_dir
+        mock_settings.language = "en-US"
+
+        provider = JsonPromptProvider(settings=mock_settings)
+        assert provider.prompts_path == custom_prompts_file
+        assert provider.skills_dir == custom_skills_dir
+        assert provider.language == "en-US"
+
+    def test_builders_have_zero_inline_prompt_fallbacks(self) -> None:
+        """Verify builders.py contains zero inline prompt fallback blocks per ADR-011 and ADR-051."""
+        import inspect
+
+        from cresmo.infrastructure.adapters.prompts import builders
+
+        source = inspect.getsource(builders)
+        assert "if not template and not system_template:" not in source
+        assert "Transform raw transcript into clean, continuous fluid prose" not in source

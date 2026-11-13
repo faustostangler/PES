@@ -44,19 +44,17 @@ def build_sync_channel_use_case(
     """Construct SyncChannelUseCase with all ports and dependencies wired."""
     from cresmo.presentation.composition import build_pipeline
 
-    resolved_settings = resolve_shared_settings(settings)
-    active_pipeline = pipeline or build_pipeline(
-        resolved_settings, batch_size_override=batch_size_override
-    )
-    preflight_checker = build_preflight_checker(resolved_settings, check_ffmpeg=check_ffmpeg)
+    settings = resolve_shared_settings(settings)
+    pipeline = pipeline or build_pipeline(settings, batch_size_override=batch_size_override)
+    preflight_checker = build_preflight_checker(settings, check_ffmpeg=check_ffmpeg)
 
-    if active_pipeline.ledger_port is None:
+    if pipeline.ledger_port is None:
         raise RuntimeError("Ledger port must be wired for channel sync.")
 
     return SyncChannelUseCase(
-        media_ingestion_port=active_pipeline.media_ingestion_port,
-        ledger_port=active_pipeline.ledger_port,
-        pipeline=active_pipeline,
+        media_ingestion_port=pipeline.media_ingestion_port,
+        ledger_port=pipeline.ledger_port,
+        pipeline=pipeline,
         preflight_checker=preflight_checker,
     )
 
@@ -65,8 +63,8 @@ def build_unify_duplicates_use_case(
     settings: CresmoSettings | None = None,
 ) -> UnifyDuplicateNotesUseCase:
     """Construct UnifyDuplicateNotesUseCase with ObsidianVaultAdapter wired."""
-    resolved_settings = resolve_shared_settings(settings)
-    vault_port = build_vault_adapter(resolved_settings)
+    settings = resolve_shared_settings(settings)
+    vault_port = build_vault_adapter(settings)
     return UnifyDuplicateNotesUseCase(vault_port=vault_port)
 
 
@@ -76,11 +74,11 @@ def build_discover_batch_sources_use_case(
     progress_callback: Callable[[str], object] | None = None,
 ) -> DiscoverBatchSourcesUseCase:
     """Construct DiscoverBatchSourcesUseCase with injected or default NativeMediaIngestionAdapter."""
-    resolved_settings = resolve_shared_settings(settings)
-    resolved_media_port = media_ingestion_port or build_media_ingestion_adapter(resolved_settings)
+    settings = resolve_shared_settings(settings)
+    media_ingestion_port = media_ingestion_port or build_media_ingestion_adapter(settings)
     return DiscoverBatchSourcesUseCase(
-        media_ingestion_port=resolved_media_port,
-        settings=resolved_settings,
+        media_ingestion_port=media_ingestion_port,
+        settings=settings,
         progress_callback=progress_callback,
     )
 
@@ -90,11 +88,11 @@ def build_concat_master_use_case(
     vault_port: VaultRepositoryPort | None = None,
 ) -> ConcatMasterUseCase:
     """Instantiate ConcatMasterUseCase with configured dependencies."""
-    resolved_settings = resolve_shared_settings(settings)
-    resolved_vault = vault_port or build_vault_adapter(resolved_settings)
+    settings = resolve_shared_settings(settings)
+    vault_port = vault_port or build_vault_adapter(settings)
     return ConcatMasterUseCase(
-        vault_port=resolved_vault,
-        settings=resolved_settings,
+        vault_port=vault_port,
+        settings=settings,
     )
 
 
@@ -104,30 +102,30 @@ def build_index_raw_use_case(
     model_override: str | None = None,
 ) -> IndexRawTranscriptsUseCase:
     """Instantiate IndexRawTranscriptsUseCase selecting between local Ollama and Gemini Web API."""
-    resolved_settings = resolve_shared_settings(settings)
-    vault_port = build_vault_adapter(resolved_settings)
-    anonymizer = build_anonymizer_adapter(resolved_settings)
-    langfuse_client = resolve_langfuse_client(resolved_settings, anonymizer=anonymizer)
-    prompt_provider = build_prompt_provider(resolved_settings, langfuse_client=langfuse_client)
-    llm = build_indexing_adapter(
-        resolved_settings,
+    settings = resolve_shared_settings(settings)
+    vault_port = build_vault_adapter(settings)
+    anonymizer = build_anonymizer_adapter(settings)
+    langfuse_client = resolve_langfuse_client(settings, anonymizer=anonymizer)
+    prompt_provider = build_prompt_provider(settings, langfuse_client=langfuse_client)
+    llm_indexing_port = build_indexing_adapter(
+        settings,
         web_index=web_index,
         model_override=model_override,
         langfuse_client=langfuse_client,
     )
     llm_judge_port = build_llm_judge_adapter(
-        resolved_settings,
+        settings,
         langfuse_client=langfuse_client,
         prompt_provider=prompt_provider,
     )
 
     return IndexRawTranscriptsUseCase(
         vault_port=vault_port,
-        llm_indexing_port=llm,
+        llm_indexing_port=llm_indexing_port,
         prompt_provider=prompt_provider,
-        max_chars=resolved_settings.raw_index_max_chars,
-        temperature=resolved_settings.llm_indexing_temperature,
-        language=resolved_settings.language,
-        max_rewrites=resolved_settings.raw_index_max_attempts,
+        max_chars=settings.raw_index_max_chars,
+        temperature=settings.llm_indexing_temperature,
+        language=settings.language,
+        max_rewrites=settings.raw_index_max_attempts,
         llm_judge_port=llm_judge_port,
     )

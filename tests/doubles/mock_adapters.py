@@ -18,10 +18,10 @@ from cresmo.application.ports import (
 )
 from cresmo.domain.entities import (
     AtomicNote,
-    EnrichedCompendium,
     MapOfContent,
-    SourceTranscript,
+    StageTranscript,
 )
+from cresmo.domain.stage_registry import StageName
 from cresmo.domain.value_objects import (
     ChannelFeedQuery,
     ChannelName,
@@ -38,7 +38,7 @@ class MockMediaIngestionPort(MediaIngestionPort):
 
     def __init__(
         self,
-        canned_transcript: SourceTranscript | None = None,
+        canned_transcript: StageTranscript | None = None,
         canned_feed: list[DiscoveredMediaItem] | None = None,
         canned_channel_url: str | None = None,
     ) -> None:
@@ -61,7 +61,7 @@ class MockMediaIngestionPort(MediaIngestionPort):
         output_dir: Path,
         whisper_model: str = "base",
         keep_audio: bool = False,
-    ) -> SourceTranscript | None:
+    ) -> StageTranscript | None:
         self.ingest_single_calls.append(video_url)
         return self.canned_transcript
 
@@ -94,9 +94,7 @@ class MockLLMAdapter(LLMTransformationPort):
         self.call_history.append(
             {
                 "prompt": prompt,
-                "system_instruction": prompt.system_instruction
-                if isinstance(prompt, ChatPrompt)
-                else None,
+                "system_prompt": prompt.system_prompt if isinstance(prompt, ChatPrompt) else None,
                 "temperature": temperature,
                 "trace_id": trace_id,
                 "session_id": session_id,
@@ -112,13 +110,16 @@ class InMemoryVaultAdapter(VaultRepositoryPort):
     """In-memory mock for VaultRepositoryPort."""
 
     def __init__(self) -> None:
-        self.raw_transcripts: dict[str, SourceTranscript] = {}
-        self.compendiums: dict[str, EnrichedCompendium] = {}
+        self.stage_transcripts: dict[str, dict[str, StageTranscript]] = {}
+        self.raw_transcripts: dict[str, StageTranscript] = {}
+        self.fluid_transcripts: dict[str, StageTranscript] = {}
+        self.compendiums: dict[str, StageTranscript] = {}
         self.atomic_notes: dict[str, AtomicNote] = {}
         self.index_entries: dict[str, dict[str, Any]] = {}
         self.mocs: dict[str, MapOfContent] = {}
         self.master_documents: dict[tuple[str, str, int], str] = {}
         self.channel_enriched_files: dict[str, list[Path]] = {}
+        self.channel_fluid_files: dict[str, list[Path]] = {}
         self.channel_raw_indexes: dict[str, list[RawIndexEntry]] = {}
         self.brain_csv_entries: list[RawIndexEntry] = []
 
@@ -162,17 +163,38 @@ class InMemoryVaultAdapter(VaultRepositoryPort):
         for k in keys_to_del:
             del self.master_documents[k]
 
-    def save_transcript(self, transcript: SourceTranscript) -> None:
-        self.raw_transcripts[transcript.content.id.value] = transcript
+    def resolve_stage_dir(self, stage_name: str | StageName) -> Path:
+        key = stage_name.value if hasattr(stage_name, "value") else str(stage_name)
+        return Path("/tmp/data") / key
 
-    def get_raw_transcript(self, content_id: ContentId) -> SourceTranscript | None:
-        return self.raw_transcripts.get(content_id.value)
+    def save_stage_transcript(
+        self, stage_name: str | StageName, transcript: StageTranscript
+    ) -> None:
+        key = stage_name.value if hasattr(stage_name, "value") else str(stage_name)
+        self.stage_transcripts.setdefault(key, {})[transcript.content.id.value] = transcript
+        if key == "raw":
+            self.raw_transcripts[transcript.content.id.value] = transcript
+        elif key == "fluid_prose":
+            self.fluid_transcripts[transcript.content.id.value] = transcript
+        elif key == "gap_filler":
+            self.compendiums[transcript.content.id.value] = transcript
 
-    def save_enriched_compendium(self, compendium: EnrichedCompendium) -> None:
-        self.compendiums[compendium.content_id.value] = compendium
+    def get_stage_transcript(
+        self, stage_name: str | StageName, content_id: ContentId
+    ) -> StageTranscript | None:
+        key = stage_name.value if hasattr(stage_name, "value") else str(stage_name)
+        if key in self.stage_transcripts and content_id.value in self.stage_transcripts[key]:
+            return self.stage_transcripts[key][content_id.value]
+        if key == "raw":
+            return self.raw_transcripts.get(content_id.value)
+        if key == "fluid_prose":
+            return self.fluid_transcripts.get(content_id.value)
+        if key == "gap_filler":
+            return self.compendiums.get(content_id.value)
+        return None
 
-    def get_enriched_compendium(self, content_id: ContentId) -> EnrichedCompendium | None:
-        return self.compendiums.get(content_id.value)
+    def get_fluid_files_for_channel(self, channel_name: ChannelName) -> list[Path]:
+        return list(self.channel_fluid_files.get(channel_name.value, []))
 
     def save_atomic_note(self, note: AtomicNote) -> None:
         self.atomic_notes[note.title.value.lower()] = note

@@ -12,12 +12,13 @@ Conforms to:
 
 from __future__ import annotations
 
-import logging
 import queue
 import threading
 from collections.abc import Callable, Iterator
 from dataclasses import dataclass
 from pathlib import Path
+
+import structlog
 
 from cresmo.application.ports import (
     DefaultPipelineSettings,
@@ -40,7 +41,7 @@ from cresmo.domain.value_objects import (
     normalize_to_uploads_playlist_url,
 )
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 _DEFAULT_STREAM_QUEUE_TIMEOUT_SECONDS: float = 0.2
 _DEFAULT_STREAM_ERROR_TIMEOUT_SECONDS: float = 2.0
@@ -95,9 +96,20 @@ class DiscoverBatchSourcesUseCase:
         )
 
         raw_dir = q.raw_dir if q.raw_dir is not None else self.settings.raw_dir
-        local_video_channel_map = LakeScannerService.scan_raw_lake(
-            raw_dir, q.scan_raw, acc, q.filter_criteria
-        )
+        if q.scan_raw or q.enable_channel_crawler:
+            needs_frontmatter = bool(
+                q.enable_channel_crawler
+                or (q.filter_criteria is not None and not q.filter_criteria.is_empty())
+            )
+            local_video_channel_map = LakeScannerService.scan_raw_lake(
+                raw_dir,
+                q.scan_raw,
+                acc,
+                q.filter_criteria,
+                extract_frontmatter=needs_frontmatter,
+            )
+        else:
+            local_video_channel_map = {}
 
         playlist_priority_path = (
             q.playlist_priority_path
@@ -272,21 +284,21 @@ class DiscoverBatchSourcesUseCase:
         (millisecond latency), while launching channel feed crawling in a concurrent background thread.
         Conforms to ADR-010 (Streaming-First Unification).
         """
-        q = query or BatchDiscoveryQuery()
-        if q.explicit_manifest is not None:
-            yield from self._load_explicit_manifest(q.explicit_manifest)
+        discovery_query = query or BatchDiscoveryQuery()
+        if discovery_query.explicit_manifest is not None:
+            yield from self._load_explicit_manifest(discovery_query.explicit_manifest)
             return
 
         acc = _BatchSourceAccumulator()
-        state = self._collect_fast_path_sources(q, acc)
+        state = self._collect_fast_path_sources(discovery_query, acc)
 
-        if self.media_ingestion_port is None or not q.enable_channel_crawler:
-            yield from self._execute_sync_fallback(q, acc, state)
+        if self.media_ingestion_port is None or not discovery_query.enable_channel_crawler:
+            yield from self._execute_sync_fallback(discovery_query, acc, state)
             return
 
         maxsize = (
-            q.queue_maxsize
-            if q.queue_maxsize is not None
+            discovery_query.queue_maxsize
+            if discovery_query.queue_maxsize is not None
             else getattr(self.settings, "discovery_queue_maxsize", 50)
         )
         stream_queue: queue.Queue[BatchSource | None | Exception] = queue.Queue(maxsize=maxsize)
@@ -304,7 +316,7 @@ class DiscoverBatchSourcesUseCase:
 
         crawler_thread = threading.Thread(
             target=self._run_crawler_producer,
-            args=(q, acc, state, stream_queue, stop_event),
+            args=(discovery_query, acc, state, stream_queue, stop_event),
             name="CresmoCrawlerProducer",
             daemon=True,
         )
@@ -320,10 +332,10 @@ class DiscoverBatchSourcesUseCase:
         if urls:
             self._notify(f"[manifest] Loaded {len(urls)} URLs from {manifest_path.name}\n")
         sources: list[BatchSource] = []
-        for u in urls:
+        for url in urls:
             try:
-                cid = ContentId.from_url_or_token(u)
+                content_id = ContentId.from_url_or_token(url)
             except (ValueError, TypeError):
-                cid = None
-            sources.append(BatchSource(kind=SourceModality.URL, target=u, content_id=cid))
+                content_id = None
+            sources.append(BatchSource(kind=SourceModality.URL, target=url, content_id=content_id))
         return sources

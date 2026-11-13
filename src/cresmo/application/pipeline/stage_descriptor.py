@@ -3,7 +3,7 @@
 Conforms to:
     - ADR-007: Pipeline Template Method DRY
     - ADR-021: Unified Pipeline Execution Template Method and Telemetry
-    - ADR-031: Standardized StageConfig, SourceTranscript, CandidateText, and Closed-Loop Reflection Quality Fabric
+    - ADR-031: Standardized StageConfig, StageTranscript, CandidateText, and Closed-Loop Reflection Quality Fabric
     - SPEC-014: Standardized Stage Execution and Decision-Model Quality Fabric Specification
 """
 
@@ -19,6 +19,7 @@ from cresmo.domain.value_objects import (
     CandidateText,
     ChatMessage,
     ChatPrompt,
+    Content,
     MessageRole,
     PromptKey,
     StageEvaluationSpec,
@@ -63,12 +64,13 @@ class StageConfig[TSource, TOutput]:
     ) -> ChatPrompt:
         """Resolve ChatPrompt, injecting closed-loop reflection critique on retry."""
         effective_channel_id = context.channel.id.value if context.channel.id else ""
-        raw_text = (
-            getattr(getattr(source, "content", None), "body", None)
-            or getattr(source, "body", None)
-            or getattr(source, "text", None)
-            or str(source)
+        source_content = getattr(source, "content", None)
+        raw_text_val = (
+            source_content.text
+            if isinstance(source_content, Content)
+            else (getattr(source, "text", None) or str(source))
         )
+        raw_text = str(raw_text_val)
         effective_key = prompt_key or self.transform_prompt_key
         base_prompt: ChatPrompt = prompt_provider.get_prompt(
             effective_key,
@@ -100,14 +102,14 @@ class StageConfig[TSource, TOutput]:
             else:
                 new_messages.append(msg)
 
-        if not new_messages and base_prompt.system_instruction:
+        if not new_messages and base_prompt.system_prompt:
             new_messages.append(
                 ChatMessage(role=MessageRole.USER, content=critique_feedback.strip())
             )
 
         return ChatPrompt(
             messages=tuple(new_messages),
-            system_instruction=base_prompt.system_instruction,
+            system_prompt=base_prompt.system_prompt,
         )
 
     def post_process(self, candidate: CandidateText, source: TSource) -> TOutput:

@@ -10,7 +10,12 @@ from identity.domain.exceptions import (
     InactiveUserError,
     InvalidCredentialsError,
 )
-from identity.domain.value_objects import Email
+from identity.domain.value_objects import Email, HashedPassword
+
+# Canonical RFC 9106 Argon2id dummy hash for constant-time negative lookups
+DUMMY_ARGON2_HASH = HashedPassword(
+    "$argon2id$v=19$m=65536,t=3,p=4$c29tZXNhbHQ$RdescudvJCsgqlfreSAeYQ"
+)
 
 
 class AuthenticateUserUseCase:
@@ -31,13 +36,14 @@ class AuthenticateUserUseCase:
         user = self._user_repo.get_by_email(email)
 
         if user is None:
+            self._password_hasher.verify(dto.password, DUMMY_ARGON2_HASH)
             raise InvalidCredentialsError("Invalid email or password.")
-
-        if not user.is_active:
-            raise InactiveUserError(f"User account '{email.value}' is deactivated.")
 
         if not self._password_hasher.verify(dto.password, user.hashed_password):
             raise InvalidCredentialsError("Invalid email or password.")
+
+        if not user.is_active:
+            raise InactiveUserError("User account is deactivated.")
 
         access_token = self._token_service.create_access_token(user)
 

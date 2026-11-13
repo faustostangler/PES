@@ -7,25 +7,63 @@ Whisper audio extraction) with automated retries, timeouts, and graceful shutdow
 Conforms to:
 - ADR-003: PES Production Architecture & Telemetry
 - ADR-005: Multi-Role 12-Factor Container & Settings
-- Technology Stack Reference §2 (Camada 1: Distributed Task Queue)
+- Technology Stack Reference §2 (Layer 1: Distributed Task Queue)
 """
 
 from __future__ import annotations
 
-import logging
 import os
+from collections.abc import Callable
 from pathlib import Path
 from typing import Any, ClassVar
 
+import structlog
 from arq import Retry
 from arq.connections import RedisSettings
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 # Timeout configurations per job profile
 _DEFAULT_JOB_TIMEOUT_SECONDS: int = 600  # 10 minutes for long synthesis/transcription
 _DEFAULT_MAX_RETRIES: int = 3
 _DEFAULT_RETRY_DELAY_SECONDS: int = 15
+
+_STAGE_RUNNER_FACTORY: Callable[..., Any] | None = None
+_MEDIA_INGESTION_FACTORY: Callable[..., Any] | None = None
+_SYNC_CHANNEL_FACTORY: Callable[..., Any] | None = None
+
+
+def register_stage_runner_factory(factory: Callable[..., Any]) -> None:
+    """Register stage runner builder hook to decouple infrastructure from presentation (ADR-048)."""
+    global _STAGE_RUNNER_FACTORY
+    _STAGE_RUNNER_FACTORY = factory
+
+
+def get_stage_runner_factory() -> Callable[..., Any] | None:
+    """Return registered stage runner builder hook."""
+    return _STAGE_RUNNER_FACTORY
+
+
+def register_media_ingestion_factory(factory: Callable[..., Any]) -> None:
+    """Register media ingestion builder hook to decouple infrastructure from presentation (ADR-051)."""
+    global _MEDIA_INGESTION_FACTORY
+    _MEDIA_INGESTION_FACTORY = factory
+
+
+def get_media_ingestion_factory() -> Callable[..., Any] | None:
+    """Return registered media ingestion builder hook."""
+    return _MEDIA_INGESTION_FACTORY
+
+
+def register_sync_channel_factory(factory: Callable[..., Any]) -> None:
+    """Register sync channel use case builder hook to decouple infrastructure from presentation (ADR-051)."""
+    global _SYNC_CHANNEL_FACTORY
+    _SYNC_CHANNEL_FACTORY = factory
+
+
+def get_sync_channel_factory() -> Callable[..., Any] | None:
+    """Return registered sync channel use case builder hook."""
+    return _SYNC_CHANNEL_FACTORY
 
 
 async def job_process_pipeline_stage(
@@ -59,7 +97,7 @@ async def job_process_pipeline_stage(
 
     try:
         from cresmo.application.pipeline.context import PipelineExecutionContext
-        from cresmo.domain.entities import PipelineSessionId, UserIdentity
+        from cresmo.domain.entities import UserIdentity
         from cresmo.domain.value_objects import (
             Channel,
             ChannelId,
@@ -67,20 +105,29 @@ async def job_process_pipeline_stage(
             Content,
             ContentId,
         )
-        from cresmo.presentation.composition import build_stage_runner, resolve_shared_settings
+        from cresmo.infrastructure.config import resolve_shared_settings
 
         settings = ctx.get("settings") or resolve_shared_settings()
-        stage_runner = ctx.get("stage_runner") or build_stage_runner(settings=settings)
+        stage_runner = ctx.get("stage_runner")
+        if stage_runner is None:
+            factory = ctx.get("stage_runner_factory") or _STAGE_RUNNER_FACTORY
+            if factory is not None:
+                stage_runner = factory(settings=settings)
+            else:
+                raise RuntimeError(
+                    "Stage runner factory not configured in worker context. "
+                    "Register via register_stage_runner_factory() or inject ctx['stage_runner']."
+                )
 
         session_key = f"{channel}:{content_id}"
         exec_context = PipelineExecutionContext(
-            session_id=PipelineSessionId(session_key),
             user_identity=UserIdentity("arq-worker"),
-            channel=Channel(channel_id=ChannelId(channel), channel_name=ChannelName(channel)),
+            channel=Channel(name=ChannelName(channel), id=ChannelId(channel)),
             content=Content(
-                content_id=ContentId(content_id),
-                content_title=content_id,
-                body=source_payload,
+                id=ContentId(content_id),
+                title=content_id,
+                text=source_payload,
+                session_id=session_key,
             ),
         )
 
@@ -135,15 +182,29 @@ async def job_extract_audio(
     logger.info("Executing audio extraction job [content_id=%s, job_id=%s]", content_id, job_id)
 
     try:
-        from cresmo.presentation.composition import (
-            build_media_ingestion_adapter,
-            resolve_shared_settings,
-        )
+        from cresmo.infrastructure.config import resolve_shared_settings
 
         settings = ctx.get("settings") or resolve_shared_settings()
-        ingestion_adapter = ctx.get("ingestion_adapter") or build_media_ingestion_adapter(
-            settings=settings
-        )
+        ingestion_adapter = ctx.get("ingestion_adapter")
+        if ingestion_adapter is None:
+            factory = ctx.get("media_ingestion_factory") or _MEDIA_INGESTION_FACTORY
+            if factory is not None:
+                ingestion_adapter = factory(settings=settings)
+            else:
+                from cresmo.infrastructure.adapters.header_generator import RandomHeaderGenerator
+                from cresmo.infrastructure.adapters.native_media_ingestion_adapter import (
+                    NativeMediaIngestionAdapter,
+                )
+
+                headers_path = getattr(settings, "browser_headers_path", None)
+                cookie_file = getattr(settings, "cookies_file", None)
+                header_generator = RandomHeaderGenerator(headers_path=headers_path)
+                whisper_workers = getattr(settings, "whisper_workers", 1)
+                ingestion_adapter = NativeMediaIngestionAdapter(
+                    header_generator=header_generator,
+                    cookie_file=Path(cookie_file) if cookie_file else None,
+                    whisper_concurrency_limit=whisper_workers,
+                )
 
         output_dir = Path(getattr(settings, "raw_dir", "data/raw"))
         transcript_obj = ingestion_adapter.ingest_single_video(
@@ -151,14 +212,16 @@ async def job_extract_audio(
             output_dir=output_dir,
             whisper_model=getattr(settings, "whisper_model", "base"),
         )
-        body = transcript_obj.content.body if transcript_obj else ""
+        body = transcript_obj.content.text if transcript_obj else ""
         return {
             "status": "COMPLETED",
             "content_id": content_id,
             "text_length": len(body),
         }
     except Exception as exc:
-        logger.error("Audio extraction failed [content_id=%s, try=%d]: %s", content_id, job_try, exc)
+        logger.error(
+            "Audio extraction failed [content_id=%s, try=%d]: %s", content_id, job_try, exc
+        )
         if job_try < _DEFAULT_MAX_RETRIES:
             raise Retry(defer=job_try * _DEFAULT_RETRY_DELAY_SECONDS) from exc
         return {"status": "FAILED", "content_id": content_id, "error": str(exc)}
@@ -173,13 +236,19 @@ async def job_sync_feed(
     """Execute channel polling and feed synchronization as an isolated Redis task."""
     logger.info("Executing sync feed job [channel_url=%s, max_videos=%d]", channel_url, max_videos)
     from cresmo.domain.value_objects import ChannelFeedQuery
-    from cresmo.presentation.composition import (
-        build_sync_channel_use_case,
-        resolve_shared_settings,
-    )
+    from cresmo.infrastructure.config import resolve_shared_settings
 
     settings = ctx.get("settings") or resolve_shared_settings()
-    sync_use_case = build_sync_channel_use_case(settings=settings)
+    sync_use_case = ctx.get("sync_channel_use_case")
+    if sync_use_case is None:
+        factory = ctx.get("sync_channel_factory") or _SYNC_CHANNEL_FACTORY
+        if factory is not None:
+            sync_use_case = factory(settings=settings)
+        else:
+            raise RuntimeError(
+                "Sync channel use case not configured in worker context. "
+                "Register via register_sync_channel_factory() or inject ctx['sync_channel_use_case']."
+            )
 
     query = ChannelFeedQuery(
         channel_url=channel_url,
@@ -200,7 +269,14 @@ async def job_sync_feed(
 async def startup(ctx: dict[str, Any]) -> None:
     """Initialize shared connections, settings, and telemetry on worker boot."""
     logger.info("Starting ARQ Worker for Cresmo Knowledge Engine...")
-    from cresmo.presentation.composition import resolve_shared_settings
+    from cresmo.infrastructure.config import resolve_shared_settings
+
+    try:
+        from cresmo.presentation.composition import bind_arq_worker_factories
+
+        bind_arq_worker_factories()
+    except ImportError:
+        pass
 
     ctx["settings"] = resolve_shared_settings()
 

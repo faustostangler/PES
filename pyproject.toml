@@ -39,6 +39,7 @@ dependencies = [
     "selectolax>=0.3.0",
     "redis>=5.2.0",
     "arq>=0.26.0",
+    "structlog>=24.4.0",
 ]
 
 [project.scripts]
@@ -51,6 +52,15 @@ python_version = "3.13"
 plugins = ["pydantic.mypy"]
 explicit_package_bases = true
 mypy_path = ["src", "."]
+
+[[tool.mypy.overrides]]
+module = [
+    "yt_dlp",
+    "yt_dlp.*",
+    "whisper",
+    "whisper.*",
+]
+ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 testpaths = [
@@ -84,6 +94,7 @@ dev = [
     "ruff>=0.8.0",
     "mypy>=1.13.0",
     "aiosqlite>=0.20.0",
+    "types-pyyaml>=6.0.12.20260906",
 ]
 
 [tool.ruff]
@@ -105,8 +116,11 @@ packages = ["src/cresmo", "src/identity", "src/shared_kernel"]
 
 [tool.mutmut]
 source_paths = ["src"]
+only_mutate = ["src/cresmo/application/use_cases/indexing/distiller.py"]
+runner = "pytest -x tests/cresmo/unit/test_indexing_distiller.py tests/cresmo/unit/test_index_raw_transcripts_use_case.py tests/cresmo/unit/test_indexing_validators.py"
 also_copy = [
     ".env",
+    ".agents",
 ]
 
 [tool.coverage.report]

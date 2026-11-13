@@ -22,9 +22,10 @@ from pathlib import Path
 from typing import Any
 
 try:
+    import yt_dlp
     import yt_dlp.cookies
 except ImportError:
-    yt_dlp = None  # type: ignore[assignment]
+    yt_dlp = None
 
 AUTH_COOKIE_NAMES: frozenset[str] = frozenset(
     {

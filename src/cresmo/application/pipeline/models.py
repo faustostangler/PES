@@ -17,10 +17,8 @@ from cresmo.application.ports import (
 from cresmo.application.use_cases import DeduplicationReport
 from cresmo.domain.entities import (
     AtomicNote,
-    EnrichedCompendium,
-    FluidTranscript,
     MapOfContent,
-    SourceTranscript,
+    StageTranscript,
 )
 from cresmo.domain.value_objects import (
     AtomicEntityInventory,
@@ -39,7 +37,7 @@ class PipelineDependencies:
     metrics_port: MetricsPort
     llm_judge: LlmJudgePort | None = None
     judge_blocking: bool = False
-    judge_max_attempts: int = 1
+    judge_max_attempts: int = 2
     prompt_provider: PromptProviderPort | None = None
     llm_transformation_port: LLMTransformationPort | None = None
     stage_factory: Any | None = None
@@ -72,9 +70,9 @@ class PipelineResult:
         success: True if all stages completed successfully without unhandled errors.
         synthesized_notes: Tuple of all newly synthesized AtomicNote domain aggregates.
         reconciled_mocs: Tuple of MapOfContent aggregates updated or created.
-        source_transcript: Optional SourceTranscript aggregate root from raw ingestion.
+        source_transcript: Optional StageTranscript aggregate root from raw ingestion.
         index_entry: Optional RawIndexEntry catalog projection from raw indexing.
-        compendium: Optional EnrichedCompendium aggregate root from fluid prose & expansion.
+        compendium: Optional StageTranscript aggregate root from fluid prose & expansion.
         inventory: Optional AtomicEntityInventory value object from inventory discovery.
         dedup_report: Optional DeduplicationReport execution summary from duplicate unification.
         duplicates_unified: Total count of duplicate notes consolidated during duplicate unification.
@@ -86,10 +84,10 @@ class PipelineResult:
     success: bool
     synthesized_notes: tuple[AtomicNote, ...] = ()
     reconciled_mocs: tuple[MapOfContent, ...] = ()
-    source_transcript: SourceTranscript | None = None
-    fluid_transcript: FluidTranscript | None = None
+    source_transcript: StageTranscript | None = None
+    fluid_transcript: StageTranscript | None = None
     index_entry: RawIndexEntry | None = None
-    compendium: EnrichedCompendium | None = None
+    compendium: StageTranscript | None = None
     inventory: AtomicEntityInventory | None = None
     dedup_report: DeduplicationReport | None = None
     duplicates_unified: int = 0

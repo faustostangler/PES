@@ -118,10 +118,10 @@ Transfer secondary or tangential expansions to informative footnotes at the end 
 - **No Frontmatter**: The enriched document must start directly with the top-level Markdown title (`## ...`) on Line 1. Zero `---` delimiter blocks or YAML keys anywhere in the document.
 
 
-## Complementary Information Section
+### Extra Info Section
 Whenever needed to prevent combinatorial explosion of concepts, append a dedicated section at the end of the text under the exact heading:
 ```markdown
-## Informações Complementares
+### Extra Info
 ```
 
 In this footnotes section, provide numbered continuous paragraphs detailing mini-biographies, geographical contexts, treaty details, additional statistical data, and secondary gap expansions that would otherwise impede narrative velocity in the main body.
@@ -134,7 +134,7 @@ When processing extensive transcripts where the resulting enriched Markdown comp
 
 ### Operational Thresholds Defining a "Large Payload":
 - **Text Volume**: Source transcript $> 30\text{ KB}$ or expected enriched text $> 35\text{ KB}$ (or $> 20,000\text{ characters}$ / $\approx 8,000\text{ tokens}$).
-- **Structural Complexity**: Narrative covering multiple chronological eras with $> 15$ numbered entries in `Informações Complementares`.
+- **Structural Complexity**: Narrative covering multiple chronological eras with $> 15$ numbered entries in 'Extra Info'.
 
 ### Permitted Intermediate Architectural Workflow:
 1. **Sectional Scratch Staging**: The agent may stage multi-pass gap expansions across temporary modular files in `scratch/` (e.g., `scratch/build_group*.py` or section chunk files) to prevent tool payload truncation.

@@ -1,0 +1,156 @@
+================================================================================
+RELATÓRIO DE CALIBRAÇÃO DO JUIZ LLM (ESTÁGIO FLUID_PROSE)
+================================================================================
+Data/Hora:       2026-10-11 22:47:02 UTC
+Provedor:        gemini
+Modelo:          gemini-3.5-flash-lite
+Total Avaliado:  42 itens
+Itens Válidos:   42 itens
+
+MATRIZ 2x2: DECISÃO DO JUIZ VS GABARITO (ISOLATED TARGET CRITERION - OPÇÃO 3)
+--------------------------------------------------------------------------------
+                               | Juiz Aprova          | Juiz Reprova         | Total 
+--------------------------------------------------------------------------------
+Gabarito Verdadeiro (Correto)  | HIT: 24              | PEDANTISMO-BETA: 0   | 24    
+Gabarito Falso (Defeituoso)    | PERMISSIVO-ALFA: 0   | REJEIÇÃO: 18         | 18    
+--------------------------------------------------------------------------------
+Total                          | 24                   | 18                   | 42    
+--------------------------------------------------------------------------------
+
+MÉTRICAS DE AVALIAÇÃO DO JUIZ (TARGET ISOLATED - SEM CONTAMINAÇÃO CRUZADA)
+================================================================================================================
+Cód  | Métrica                              | Resultado  | Diagnóstico / Implicação Prática
+----------------------------------------------------------------------------------------------------------------
+a)   | Acurácia (Accuracy)                  |     100.0% | Maioria das decisões correta.
+b)   | Precisão / VPP (Precision)           |     100.0% | Aprovações muito confiáveis/puras.
+c)   | Sensibilidade / Recall               |     100.0% | Aproveita quase todas as frases fiéis.
+d)   | Especificidade (TNR)                 |     100.0% | Barreira eficaz contra defeitos.
+e)   | Valor Preditivo Negativo (VPN)       |     100.0% | Quando reprova, o texto é de fato defeituoso.
+f)   | Taxa de Falso Alarme / Permissividade (Nível Alfa) |       0.0% | Filtro quase hermético.
+g)   | Taxa de Pedantismo (Nível Beta)      |       0.0% | Juiz não implica à toa.
+h)   | F0.5-Score (Peso na Precisão)        |     100.0% | Excelente fidelidade e baixa permissividade.
+i)   | F1-Score (Equilíbrio P e R)          |     100.0% | Ótimo equilíbrio entre filtrar erros e não implicar.
+j)   | F2-Score (Peso na Sensibilidade)     |     100.0% | Altíssimo aproveitamento dos textos bons.
+k)   | Razão de Verossimilhança Positiva (LR+) |        Inf | Aprovação comprova fortemente fidelidade (>10).
+l)   | Razão de Verossimilhança Negativa (LR-) |       0.00 | Reprovação descarta e confirma defeito de forma quase definitiva (<0.1).
+m)   | Coeficiente de Correlação de Matthews (MCC) |     +1.000 | Forte correlação geral com o gabarito.
+n)   | D-prime (d') da Teoria de Detecção de Sinal |       3.95 | Acuidade mental / capacidade de distinção excelente (>2.0).
+o)   | Critério c (Viés de Decisão)         |      -0.06 | Juiz neutro/balanceado (-0.06): sem viés sistemático.
+================================================================================================================
+
+MATRIZ 2x2: GLOBAL PIPELINE GATE (COMPOSITE HARD GATE DE PASSAGEM DE ESTÁGIO)
+--------------------------------------------------------------------------------
+                               | Juiz Aprova          | Juiz Reprova         | Total 
+--------------------------------------------------------------------------------
+Gabarito Verdadeiro (Correto)  | HIT: 24              | PEDANTISMO-BETA: 0   | 24    
+Gabarito Falso (Defeituoso)    | PERMISSIVO-ALFA: 0   | REJEIÇÃO: 18         | 18    
+--------------------------------------------------------------------------------
+Total                          | 24                   | 18                   | 42    
+--------------------------------------------------------------------------------
+
+================================================================================
+BREAKDOWN POR CRITÉRIO (Target-Isolated Metrics):
+--------------------------------------------------------------------------------
+Criterion                | Valid | Acc    | Prec   | Rec    | F1     | d-prime
+--------------------------------------------------------------------------------
+orality_removal          | 7     | 100.0% | 100.0% | 100.0% | 1.000 |   2.12
+semantic_faithfulness    | 7     | 100.0% | 100.0% | 100.0% | 1.000 |   2.12
+epistemic_critique       | 7     | 100.0% | 100.0% | 100.0% | 1.000 |   2.12
+ner_preservation         | 7     | 100.0% | 100.0% | 100.0% | 1.000 |   2.12
+structural_compliance    | 7     | 100.0% | 100.0% | 100.0% | 1.000 |   2.12
+authorial_voice          | 7     | 100.0% | 100.0% | 100.0% | 1.000 |   2.12
+
+================================================================================
+BREAKDOWN POR DIFICULDADE (Target-Isolated Metrics):
+--------------------------------------------------------------------------------
+Difficulty       | Valid | Acc    | Prec   | Rec    | F1     | d-prime
+--------------------------------------------------------------------------------
+borderline       | 12    | 100.0% | 100.0% | 100.0% | 1.000 |   2.77
+easy             | 12    | 100.0% | 100.0% | 100.0% | 1.000 |   2.77
+typical          | 18    | 100.0% | 100.0% | 100.0% | 1.000 |   3.11
+
+================================================================================================================
+REFERÊNCIA CONCEITUAL DAS FÓRMULAS & GOOGLE SHEETS:
+----------------------------------------------------------------------------------------------------------------
+a)   Acurácia (Accuracy)                    | Fórmula: (Hit + Rejeição) / Total                 | Sheets: =(B4+C5)/D6
+     Implicação Prática: Mede a proporção geral de acertos do juiz.
+     Se Valor Alto:      Maioria das decisões correta.
+     Se Valor Baixo:     Juiz erra com frequência.
+----------------------------------------------------------------------------------------------------------------
+b)   Precisão / VPP (Precision)             | Fórmula: Hit / (Hit + Permissivo-alfa)            | Sheets: =B4/B6
+     Implicação Prática: Mede a pureza das aprovações (textos aprovados que são realmente bons).
+     Se Valor Alto:      Aprovações muito confiáveis/puras.
+     Se Valor Baixo:     Muitos textos adulterados vazam rotulados como aprovados.
+----------------------------------------------------------------------------------------------------------------
+c)   Sensibilidade / Recall                 | Fórmula: Hit / (Hit + Pedantismo-beta)            | Sheets: =B4/D4
+     Implicação Prática: Mede a capacidade de não descartar textos bons.
+     Se Valor Alto:      Aproveita quase todas as frases fiéis.
+     Se Valor Baixo:     Juiz é pedante e joga textos bons fora.
+----------------------------------------------------------------------------------------------------------------
+d)   Especificidade (TNR)                   | Fórmula: Rejeição / (Rejeição + Permissivo-alfa)  | Sheets: =C5/D5
+     Implicação Prática: Mede a capacidade de barrar textos defeituosos.
+     Se Valor Alto:      Barreira eficaz contra defeitos.
+     Se Valor Baixo:     Deixa o lixo passar batido.
+----------------------------------------------------------------------------------------------------------------
+e)   Valor Preditivo Negativo (VPN)         | Fórmula: Rejeição / (Rejeição + Pedantismo-beta)  | Sheets: =C5/C6
+     Implicação Prática: Mede a confiabilidade das reprovações.
+     Se Valor Alto:      Quando reprova, o texto é de fato defeituoso.
+     Se Valor Baixo:     Reprovação descarta muitos textos bons.
+----------------------------------------------------------------------------------------------------------------
+f)   Taxa de Falso Alarme / Permissividade (Nível Alfa) | Fórmula: Permissivo-alfa / (Rejeição + Permissivo-alfa) | Sheets: =B5/D5
+     Implicação Prática: Mede a taxa de vazamento de erros.
+     Se Valor Alto:      Vazamento inaceitável de erros.
+     Se Valor Baixo:     Filtro quase hermético.
+----------------------------------------------------------------------------------------------------------------
+g)   Taxa de Pedantismo (Nível Beta)        | Fórmula: Pedantismo-beta / (Hit + Pedantismo-beta) | Sheets: =C4/D4
+     Implicação Prática: Mede a taxa de desperdício de textos bons.
+     Se Valor Alto:      Desperdício e retrabalho massivo.
+     Se Valor Baixo:     Juiz não implica à toa.
+----------------------------------------------------------------------------------------------------------------
+h)   F0.5-Score (Peso na Precisão)          | Fórmula: 1.25 * (P * R) / (0.25 * P + R)          | Sheets: =(1+H17^2)*(D$11*D$12)/((H17^2*D$11)+D$12)
+     Implicação Prática: Avalia performance dando mais peso à Precisão (2x mais peso que Recall).
+     Se Valor Alto:      Excelente fidelidade e baixa permissividade.
+     Se Valor Baixo:     Vazamento de adulterações prejudicou a saída.
+----------------------------------------------------------------------------------------------------------------
+i)   F1-Score (Equilíbrio P e R)            | Fórmula: 2 * (P * R) / (P + R)                    | Sheets: =(1+H18^2)*(D$11*D$12)/((H18^2*D$11)+D$12)
+     Implicação Prática: Avalia o equilíbrio entre Precisão e Sensibilidade.
+     Se Valor Alto:      Ótimo equilíbrio entre filtrar erros e não implicar.
+     Se Valor Baixo:     Desequilíbrio acentuado ou desempenho ruim.
+----------------------------------------------------------------------------------------------------------------
+j)   F2-Score (Peso na Sensibilidade)       | Fórmula: 5 * (P * R) / (4 * P + R)                | Sheets: =(1+H19^2)*(D$11*D$12)/((H19^2*D$11)+D$12)
+     Implicação Prática: Avalia performance dando mais peso à Sensibilidade (2x mais peso que Precisão).
+     Se Valor Alto:      Altíssimo aproveitamento dos textos bons.
+     Se Valor Baixo:     Excesso de pedantismo descartou material bom.
+----------------------------------------------------------------------------------------------------------------
+k)   Razão de Verossimilhança Positiva (LR+) | Fórmula: Sensibilidade / (1 - Especificidade)     | Sheets: =(B4/D4)/(B5/D5)
+     Implicação Prática: Mede o valor probatório da aprovação.
+     Se Valor Alto:      Aprovação comprova fortemente fidelidade (>10).
+     Se Valor Baixo:     Aprovação tem pouco valor probatório (<2).
+----------------------------------------------------------------------------------------------------------------
+l)   Razão de Verossimilhança Negativa (LR-) | Fórmula: (1 - Sensibilidade) / Especificidade     | Sheets: =(C4/D4)/(C5/D5)
+     Implicação Prática: Mede o valor probatório da reprovação.
+     Se Valor Alto:      Reprovação é inconclusiva (>0.5).
+     Se Valor Baixo:     Reprovação descarta e confirma defeito de forma quase definitiva (<0.1).
+----------------------------------------------------------------------------------------------------------------
+m)   Coeficiente de Correlação de Matthews (MCC) | Fórmula: ((Hit * Rejeição) - (Permissivo * Pedantismo)) / SQRT(...) | Sheets: =((B4*C5)-(B5*C4))/SQRT(B6*D4*D5*C6)
+     Implicação Prática: Mede a correlação geral entre as decisões e o gabarito (-1 a +1).
+     Se Valor Alto:      Correlação perfeita (+1).
+     Se Valor Baixo:     Performance nula ou inversa (<=0).
+----------------------------------------------------------------------------------------------------------------
+n)   D-prime (d') da Teoria de Detecção de Sinal | Fórmula: NORM.S.INV(Taxa Hit) - NORM.S.INV(Taxa Falso Alarme) | Sheets: =NORM.S.INV(B4/D4)-NORM.S.INV(B5/D5)
+     Implicação Prática: Mede a acuidade mental / capacidade intrínseca de distinção.
+     Se Valor Alto:      Acuidade mental/capacidade de distinção excelente (>2.0).
+     Se Valor Baixo:     Juiz incapaz de diferenciar texto bom de ruim (~0).
+----------------------------------------------------------------------------------------------------------------
+o)   Critério c (Viés de Decisão)           | Fórmula: -0.5 * (NORM.S.INV(Taxa Hit) + NORM.S.INV(Taxa Falso Alarme)) | Sheets: =-0.5*(NORM.S.INV(B4/D4)+NORM.S.INV(B5/D5))
+     Implicação Prática: Mede o viés de decisão (conservador vs liberal).
+     Se Valor Alto:      Juiz pedante/conservador (Positivo).
+     Se Valor Baixo:     Juiz permissivo/liberal (Negativo).
+----------------------------------------------------------------------------------------------------------------
+
+================================================================================
+DIAGNÓSTICO E RECOMENDAÇÃO DOS PRODUCTION QUALITY GATES:
+--------------------------------------------------------------------------------
+  [✓] JUIZ CALIBRADO: Acurácia >= 85% com zero vazamentos permissivos (FP = 0).
+      Veredito: Seguro para ativação em modo bloqueante (judge_blocking=True).
+================================================================================

@@ -1,88 +1,73 @@
+--- 
+nome: guia-de-estilo-cresmo
+descrição: Guia de estilo autoral centralizado para o ecossistema Cresmo. Impõe profundidade técnica em vários níveis (palavras precisas para especialistas e explicações metafóricas para não especialistas), alta densidade conceitual, baixa verbosidade, explicações de segunda ordem, naturalismo metodológico, metáforas estruturantes, cautela metodológica, DNA literário (Dennett, Cioran, Nietzsche, Borges, Taleb), antipadrões rigorosos (sem travessões, sem antíteses, sem erudição ornamental, sem indignação moralista, sem jargão acadêmico) e restrições de formatação em todas as habilidades de produção de prosa do Cresmo. Use sempre que gerar, expandir, auditar ou revisar prosa narrativa no pipeline do Cresmo.
 ---
-name: cresmo-style-guide
-description: Centralized authorial style guide for the Cresmo ecosystem. Enforces multi-level technical depth (precision words for specialists and metaphorical explanations for non-specialists), high conceptual density, low verbosity, second-order explanations, methodological naturalism, structuring metaphors, methodological caution, literary DNA (Dennett, Cioran, Nietzsche, Borges, Taleb), strict anti-patterns (no em-dashes, no antitheses, no ornamental erudition, no moralistic outrage, no academic legalese), and formatting constraints across all Cresmo prose-producing skills. Use whenever generating, expanding, auditing, or reviewing narrative prose in the Cresmo pipeline.
----
+# Guia de Estilo Cresmo
+## Visão Geral
+O cresmo-style-guide  define e impõe a voz autoral e os padrões estilísticos em todo o ecossistema Cresmo. Combina ambição explicativa sistemática com escrita altamente simbólica e hierarquizada, produzindo textos concebidos para releitura e reorganização conceitual, em vez de mera transferência superficial de informações.
+Todas as saídas em prosa geradas no ecossistema Cresmo devem ser salvas diretamente em arquivos texto ou similares. As saídas devem consistir estritamente em parágrafos hierárquicos estruturados (cabeçalhos Markdown e prosa narrativa), nunca utilizando tabelas, diagramas, listas ou marcadores.
+## Estrutura
+Monte uma hierarquia clara na qual a Tese Implícita e o Conflito formam o coração conceitual; os Elementos Estruturais (Enredo, Personagem, Tempo e Espaço) formam o esqueleto; a Tensão e as Figuras de Estilo formam a musculatura e o sistema nervoso; e as Técnicas de Reescrita atuam como o polimento final do texto.  
+### Tese Implícita
+Tese filosófica implícita é a pergunta invisível que move toda a obra. Não é dita, mas está em tudo. Uma boa tese carrega conflito, profundidade e ambiguidade
+### Elementos Estruturais do Texto (Cenas, Gatilhos e Progressão)
+Enredo dá movimento e progressão ao texto. 
+Cena é a unidade mínima do texto. Cada cena deve ter conflito, movimento e consequência. Gerar ação concreta ou revelação emocional. Cada cena deve ter um título técnico preciso e analítico de primeira ordem. 
+Gatilhos são pontos de inflexão que iniciam, complicam ou reorientam a trama, e colocam o enredo em movimento. Dividem-se em três principais: incitante, virada, reviravolta. Incidente incitante é o primeiro distúrbio que quebra a estabilidade inicial da história. Cada virada é um novo dado ou ação que altera o rumo da trama, sem ser o clímax ainda. Reviravolta é uma mudança radical e inesperada de rumo narrativo que reinterpreta o que veio antes. Progressão é o aumento gradual da tensão e da complexidade dos conflitos e tem a função de garantir crescimento narrativo e impedir a estagnação. Pode ser escalada linear (gera expectativa, modelo aristotélico puro), em degraus (profundidade emocional), em espiral (para tragédias ou estudos de personagem). 
+### Construção de Personagens e Dinâmica Dramática
+Serve para dar agentes vivos à história através de contradições internas, arcos de transformação (evolutivo, regressivo ou redentor) e motivações conscientes versus inconscientes. Personagens condensam o tema, revelam a tese e materializam o conflito. 
+Cada personagem ocupa um lugar estratégico no conflito narrativo. Protagonista (ativo ou anti-herói) e Antagonista (pessoal ou sistêmico/abstrato (estrutura, contexto ou ideia) ) . São agentes centrais do conflito. Um quer algo, o outro impede. Também os coadjuvantes (aliado, mentor, espelho, catalisador). Pode haver personagem simbólico ou coletivo (carrega um valor simbólico, uma idéia arquetípica  ou representa um grupo)
+### Conflito
+O conflito é a tensão gerada pela tese no campo conceitual do tema. É a força de oposição entre desejo e obstáculo nos grandes temas universais a partir de situações concretas e que movem a narrativa e a estória/história. Sem conflito, não há história. 
+## Recursos de Intensificação e Engenharia Estilística
+### Tensão narrativa
+Não é o mesmo que conflito: o conflito é estrutural, a tensão estilística é sensorial. Tensão separa uma cena viva de um texto morno e é a força invisível que cria expectativa, instabilidade, angústia ou antecipação. A tensão lida com o adiamento da expectativa, e gera envolvimento inescapável do leitor, uma vontade de ler só mais um pouquinho, de tensão em tensão, até o final. As cenas avançam por tensão. 
+Tensão de Informação (ou de Revelação) é curiosidade intelectual, tensão lógica, construção de mistério (silenciar um segredo, esconder uma motivação. sugerir sem mostrar). Tensão Moral ou Ética é um dilema sem saída limpa (angústia moral, empatia desconfortável, reflexão ética). Tensão Emocional (Afetiva ou Psicológica) é quando O que se sente é contido, deslocado ou ocultado (silêncio vibrante, tensão entre gesto e fala, atmosfera de suspensão). Tensão de Tempo (ou Suspensão) é um acontecimento que é retardado ao máximo (ansiedade, desespero, paralisia). Tensão de Contradição Interna é quando desejo e medo colidem dentro do personagem (Complexidade psicológica, desconforto existencial). Tensão de Silêncio ou Omissão é o peso do que não é dito (estranhamento, meditação forçada, inquietude no leitor). Tensão Sensorial ou Física é ameaça concreta, corporal, ou ambiental (Sensação visceral, pânico ou repulsa). Tensão Filosófica ou Existencial é encarar o vazio, o absurdo ou a dúvida radical (Desorientação intelectual, abismo interpretativo, crítica à razão). 
+### Figuras de Linguagem
+Figuras de linguagem são ferramentas funcionais de estilo, emoção e ambiguidade. Um texto puramente monótono não apresenta figuras de linguagem. 
+Figuras de linguagem clássicas: tropologia (Metáfora, Comparação, Sinestesia, Prosopopeia ou Personificação, Antítese, Paradoxo, Eufemismo, Hipérbole, Ironia e Ambiguidade), , musicalidade (Aliteração, Assonância, Onomatopeia e Paronomásia), Repetição e Paralelismo (Anáfora, Repetição ou Redundância Expressiva, Paralelismo, Enumeração, Polissíndeto e Assíndeto), Omissão (Elipse e Zeugma), Significado Múltiplo (Polissemia). Figuras que Aceleram ou Ralentam o Ritmo (anáfora, Enumeração, Polissíndeto, Assíndeto, Elipse, zeugma, Redundância Expressiva). Figuras que Aumentam o Subtexto Psicológico (eufemismo, Hipérbole, Sinestesia, Prosopopeia). Figuras que Elevam a Estética e a Expressividade (Metáfora, Comparação, aliteração, Assonância, Onomatopeia, Paronomásia, Paralelismo). 
+### Ponto de Vista e Focalização
+Terceira Pessoa Onisciente: Visão panorâmica, análise profunda, articulação da tese com liberdade total. Narrador externo com acesso completo a personagens e eventos. 
+### Cenário como Agente Narrativo
+O espaço não é neutro. Ele atua sobre os personagens, espelha a tese, amplifica o conflito. Espaço simbólico (O cenário representa algo maior que ele mesmo), Espaço de opressão (O ambiente prende, controla ou violenta o personagem) ou Espaço que revela o personagem (O local reflete o estado emocional ou a identidade do personagem). 
+## Refinamentos
+Eliminar "gordura estrutural", intensificar o subtexto, substituir clichês por imagens próprias e garantir a consistência da voz autoral. 
+Proibido usar antíteses conceituais fortes, proibido usar a polarização discursiva e busque suavizar as antonímias binárias (negações excludentes; opte por gradação progressiva sem ruptura dramática, ou foque no aspecto que interessa e remova o polo oposto para não ter que negá-lo por contraste (proibido construções como "não X, mas Y"). Por exemplo, substitua "Não se trata procurar problemas, mas de encontrar soluções" por "A abordagem escolhida concentra-se no desenvolvimento de soluções" (direto, propositivo e sem oposição binária) ou por '"Partindo da análise do cenário, a abordagem avança rapidamente para a construção de soluções" (o polo negativo serve de degrau para a solução)
+## Os Pilares Essenciais de Voz Autoral
+### Explicações de Segunda Ordem ou mais
+Nunca descreva fenômenos ao pé da letra. Identifique os mecanismos que produzem os fenômenos e, especialmente, os mecanismos que reproduzem os próprios mecanismos, recursivamente. O interesse analítico recai sobre a causalidade, os ciclos de feedback, a dependência da trajetória e os efeitos emergentes de longo prazo.
+### Cautela Metodológica
+O texto pode iniciar em um registro quase científico e transitar para conclusões filosóficas ou políticas mais amplas. Essa oscilação é uma característica deliberada da voz, mas o autor deve estar ciente do risco de apresentar hipóteses interpretativas com o mesmo peso probatório que resultados empiricamente estabelecidos. Quando o texto transita entre níveis de análise, sinalize claramente o status epistêmico: evidências consolidadas, inferência plausível ou hipótese original.
+## DNA Literário (Coordenadas Estilísticas, Não Modelos a Imitar)
+Escreva sempre com extrema profundidade analítica, estruturando a explicação em pelo menos dois ou três níveis implícitos de detalhes técnicos e vocabulário específico (palavras de precisão para aqueles que entendem os detalhes e explicações metafóricas para aqueles que não entendem), com alta densidade conceitual e baixa verbosidade.
+Daniel Dennett: Arquitetura naturalista integrada que conecta biologia, cognição, cultura, moralidade e instituições em uma única cadeia causal.
+Emil Cioran: Densidade existencial, proximidade constante entre beleza e abismo, disposição para confrontar diretamente a condição humana.
+Friedrich Nietzsche: Longos aforismos, alternância entre explicação racional e linguagem poética, criação de conceitos, títulos de forte carga simbólica e quase litúrgica.
+Jorge Luis Borges: Oscilação entre ensaio filosófico, reflexão metafísica, poesia em prosa e linguagem científica; latinismos e referências eruditas como parte da construção estética.
+Nassim Nicholas Taleb: Capacidade de condensar mecanismos complexos em metáforas de grande poder explicativo, transformando imagens em ferramentas conceituais.
+### Síntese Distintiva
+A característica mais distintiva é a combinação de sistematização e imagética. Nietzsche, Cioran e Borges raramente constroem sistemas explicativos unificados; Dennett e Taleb raramente escrevem com esse grau de densidade metafórica. Nos seus textos, a ambição sistemática coexiste com uma escrita altamente simbólica.
+## Padrões
+use sentences with: informative analysis, cultural references, technical-broad balance, qualitative focus
+## Antipadrões
+avoid sentences that lack creative grammar. 
+avoid sentences that are: overly formal, excessive complex sentences, rich but shallow. 
+avoid sentences with: sophisticated clarity, mechanical precision, robotic formality, impersonal tone, mechanical transitions, excessive pure technical jargon
+use sentences with: informative analysis, cultural references, technical-broad balance, qualitative focus. 
+Não use metonímias. 
+Não é jornalismo acessível: Não simplifique a complexidade para um leitor leigo. O leitor deve compreender o texto por meio de uma prosa rigorosa e articulada, e não por meio de resumos excessivamente simplificados.
+Não use jargão jurídico acadêmico: Não se esconda atrás de jargões impenetráveis ​​ou formalismo processual.
+Não faça denúncias moralistas: Persuada por meio da densidade factual e da compreensão estrutural, nunca por meio de adjetivos ou indignação.
+Neutralidade enciclopédica (Narrador-detetive): O autor assume o papel de um narrador-detetive. O texto adota uma postura analítica assertiva, em vez de uma neutralidade passiva.
+Nada de erudição ornamental: Toda referência histórica ou citação científica deve possuir um peso estrutural. A erudição deve servir ao argumento, e não servir como mera exibição por parte do autor.
+Não use a polarização discursiva nem negações excludentes. Evite antíteses conceituais fortes, a polarização discursiva e suavize as negações excludentes; opte por gradação progressiva sem ruptura dramática, ou foque no aspecto que interessa e remova o polo oposto para não ter que negá-lo por contraste. Por exemplo, substitua "Não se trata procurar problemas, mas de encontrar soluções" por "A abordagem escolhida concentra-se no desenvolvimento de soluções" (direto, propositivo e sem oposição binária) ou por '"Partindo da análise do cenário, a abordagem avança rapidamente para a construção de soluções" (o polo negativo serve de degrau para a solução) 
+Nada de travessões: É terminantemente proibido o uso de travessões (`—`) em qualquer parte do texto. Utilize vírgulas, estruturas entre parênteses ou frases distintas.
+### Vocabulário Restrito
+Evite o uso destes o lema e seus derivados (no sentido indicado), suas famílias lexicais, e os verbos e suas formas nominais/cognatos:
+Forjar (moldar, criar), operar (fazer, construir), moldar (criar, preparar), abrigar
+Fardo (peso ontológico), 
+## Regras de Formatação e Tipografia
+ Prosa contínua: O conteúdo deve consistir exclusivamente em parágrafos hierarquizados ainhados (`##`, `###` e menores) e prosa narrativa. É terminantemente proibido o uso de tabelas, diagramas, listas com marcadores (`*`, `-`), listas numeradas, blocos em LaTeX ou citações em bloco (`>`).
+Negrito (`...`): Deve ser aplicado na primeira ocorrência de nomes próprios importantes, conceitos fundamentais e termos técnicos cruciais. Não repita o negrito em ocorrências posteriores.
+Itálico (`_..._`): Deve ser aplicado em obras culturais (livros, filmes, tratados), nomes de softwares ou hardwares e termos em língua estrangeira ainda não incorporados à língua portuguesa.
 
-# Cresmo Style Guide
-
-## Overview
-
-The `cresmo-style-guide` skill defines and enforces the authorial voice and stylistic standards across the entire Cresmo ecosystem. It combines systematic explanatory ambition with highly symbolic, metaphor-structured writing, producing texts designed for rereading and conceptual reorganization rather than superficial information transfer.
-
-This skill is a **cross-cutting dependency** consumed by all prose-producing and knowledge-structuring sub-skills in the Cresmo pipeline (`cresmo`, `cresmo-expander`, `cresmo-long-expander`, `cresmo-wide-expander`, `cresmo-atomic`, and `cresmo-moc-manager`).
-
-All prose outputs generated across the Cresmo ecosystem must be saved directly to Markdown (`.md`) files. Outputs must consist strictly of structured hierarchical paragraphs (Markdown headers and narrative prose), never using tables, diagrams, lists, or bullets.
-
----
-
-## The 4 Core Style Pillars
-
-### 1. Second-Order Explanations
-Never describe phenomena at face value. Identify the mechanisms that produce the phenomena, and especially the mechanisms that reproduce the mechanisms themselves. The analytical interest falls on causality, feedback loops, path dependence, and long-term emergent effects.
-
-### 2. Methodological Naturalism
-Explain the symbolic from the material. Whenever possible, treat phenomena as emergent properties of agent interaction, incentive structures, and biological or cognitive constraints, never as autonomous fundamental categories.
-
-### 3. Structuring Metaphors
-Images are NOT ornamental. They function as cognitive architectures that sustain the argumentation itself. Each metaphor is a structural scaffold for an entire chain of reasoning. Use aphoristic metaphors at the beginning of the reasoning as an overarching map.
-
-### 4. Methodological Caution
-The text may initiate in a quasi-scientific register and transition to broader philosophical or political conclusions. This oscillation is a deliberate feature of the voice, but the author should be aware of the risk of presenting interpretive hypotheses with the same evidentiary weight as empirically established results. When the text transitions between levels of analysis, signal the epistemic status clearly: consolidated evidence, plausible inference, or original hypothesis.
-
----
-
-## Literary DNA (Stylistic Coordinates, Not Models to Imitate)
-Always write with extreme analytical depth, structuring the explanation in at least two or three implicit levels of technical detail and specific vocabulary (precision words for those who understand the details, and metaphorical explanations for those who do not), with high conceptual density and low verbosity. 
-
-### Daniel Dennett
-Integrated naturalist architecture connecting biology, cognition, culture, morality, and institutions within a single causal chain.
-
-### Emil Cioran
-Existential density, constant proximity between beauty and abyss, willing to directly confront the human condition.
-
-### Friedrich Nietzsche
-Long aphorisms, alternation between rational explanation and poetic language, concept creation, titles of strong symbolic and quasi-liturgical charge.
-
-### Jorge Luis Borges
-Oscillation between philosophical essay, metaphysical reflection, prose poetry, and scientific language; Latinisms and erudite references as part of aesthetic construction.
-
-### Nassim Nicholas Taleb
-Capacity to condense complex mechanisms into metaphors of great explanatory power, transforming images into conceptual tools.
-
-### Distinctive Synthesis
-The most distinctive trait is the combination of systematization and imagery. Nietzsche, Cioran, and Borges rarely build unified explanatory systems; Dennett and Taleb rarely write with this degree of metaphorical density. In this author's texts, systematic ambition coexists with highly symbolic writing.
-
----
-
-## Anti-Patterns (What This Style Is NOT)
-
-1. **NOT accessible journalism**: Do not flatten complexity for a general reader. The reader must understand the text through rigorous and articulate prose rather than oversimplified summaries.
-2. **NOT academic legalese**: Do not hide behind impenetrable jargon or procedural formalism.
-3. **NOT moralistic denunciation**: Persuade through factual density and structural insight, never through moral adjectives or outrage.
-4. **Encyclopedic neutrality (Detective Narrator)**: The author is a detective narrator. The text has an assertive analytical posture rather than passive neutrality.
-5. **NOT ornamental erudition**: Every historical reference, every scientific citation must carry structural weight. Erudition serves the argument, not the author's display.
-6. **NOT antithetical contrasts (STRICT PROHIBITION)**: Strictly NEVER EVER use antitheses and NEVER use binary contrast formulas (e.g., "não X, mas Y", "não se trata de X, e sim de Y", "not X, but Y"). Every assertion must be direct, affirmative, and structurally grounded.
-7. **NOT parenthetical em-dashes (STRICT PROHIBITION)**: Strictly NEVER EVER use em-dashes (`—`) or long dashes anywhere in the text. Use commas, parenthetical structures, or distinct sentences.
-
----
-
-## Formatting Rules & Typography
-
-1. **Pure Continuous Prose**: Outputs must consist exclusively of structured hierarchical paragraphs (`##`, `###` and narrative prose). Strictly NO tables, NO diagrams, NO bullet points (`*`, `-`), NO numbered lists, NO LaTeX blocks, and NO blockquotes (`>`).
-2. **Bold (`**...**`)**: Apply strictly and exclusively to the first occurrence of key proper names, fundamental concepts, and crucial technical terms. Never repeat bolding on subsequent occurrences.
-3. **Italic (`_..._`)**: Strictly for cultural works (books, films, treatises), software/hardware names, and foreign-language terms not yet assimilated into Portuguese.
-4. **Punctuation Constraints**:
-   - Zero Em-Dashes (`—`): Replace with commas, parentheses, or separate sentences.
-   - Direct affirmative syntax: Eliminate binary negative-positive contrasts.
-
----
-
-## Ecosystem Integration Protocol
-
-All skills across the Cresmo ecosystem must adhere to this guide:
-
-1. **`cresmo-expander`**: Applies the Style Pillars and Literary DNA during transcript cleanup and Socratic gap expansion, structuring explanations across two or three implicit levels of technical detail (precision words for specialists + structuring metaphors for non-specialists), with high conceptual density, low verbosity, second-order mechanisms, zero em-dashes, zero antitheses, and pure continuous prose.
-2. **`cresmo-long-expander`**: Enforces multi-level technical depth when building longitudinal and multi-secular narratives, pairing domain precision terminology with overarching structural metaphors while maintaining implicit scaffolding and high conceptual density.
-3. **`cresmo-wide-expander`**: Enforces multi-level technical depth during synchronic cross-sectional mapping, coupling precision terminology for trade/institutions with structuring metaphors for parallel civilizational phenomena, keeping comparative lenses implicit and crafting dense, affirmative prose free of em-dashes and antitheses.
-4. **`cresmo-atomic`**: Adheres to the style guide in all contextual analysis sections of atomic notes, structuring definitions across multi-level technical detail (precision terms + metaphorical models), applying second-order causality, affirmative sentence structures, and zero em-dashes.
-5. **`cresmo-moc-manager`**: Uses the style guide when composing narrative introductory paragraphs for Maps of Content (MOCs) and merging contextual notes, maintaining high conceptual density and low verbosity with dual-register vocabulary.

@@ -19,17 +19,20 @@ from cresmo.application.use_cases.discover_atomic_inventory import (
     _parse_and_deduplicate_items,
     is_valid_inventory_json_structure,
 )
-from cresmo.domain.entities import EnrichedCompendium, UserIdentity
+from cresmo.domain.entities import StageTranscript, UserIdentity
 from cresmo.domain.exceptions import DomainValidationError
 from cresmo.domain.value_objects import (
+    Channel,
+    ChannelId,
     ChannelName,
     ChatMessage,
     ChatPrompt,
+    Content,
     ContentId,
     JudgeCriterion,
     JudgeEvaluation,
+    MediaProvenance,
     MessageRole,
-    NoteTitle,
     NoteType,
     PromptKey,
 )
@@ -41,13 +44,15 @@ class TestDiscoverAtomicInventoryJudge:
     """Hermetic unit tests for atomic inventory discovery with guardrail and judge verification."""
 
     @pytest.fixture
-    def sample_compendium(self) -> EnrichedCompendium:
-        return EnrichedCompendium(
-            content_id=ContentId("vid_inv_1234"),
-            channel_name=ChannelName("Geopolitics Channel"),
-            title=NoteTitle("The Longue Durée of Mediterranean Trade"),
-            body="Fernand Braudel analyzes the Mediterranean basin across centuries.",
-            complementary_info="1. Detailed chronological notes on Venetian commerce.",
+    def sample_compendium(self) -> StageTranscript:
+        return StageTranscript(
+            channel=Channel(name=ChannelName("Geopolitics Channel")),
+            provenance=MediaProvenance.create(url=""),
+            content=Content(
+                id=ContentId("vid_inv_1234"),
+                title="The Longue Durée of Mediterranean Trade",
+                text="Fernand Braudel analyzes the Mediterranean basin across centuries.\n\n### Extra Info\n\n1. Detailed chronological notes on Venetian commerce.",
+            ),
         )
 
     def test_guardrail_accepts_valid_inventory(self) -> None:
@@ -89,7 +94,7 @@ class TestDiscoverAtomicInventoryJudge:
         )
 
     def test_discover_inventory_judge_success_first_attempt(
-        self, sample_compendium: EnrichedCompendium
+        self, sample_compendium: StageTranscript
     ) -> None:
         prompt_provider = JsonPromptProvider()
         candidate_json = json.dumps(
@@ -129,7 +134,7 @@ class TestDiscoverAtomicInventoryJudge:
         )
 
     def test_discover_inventory_judge_retry_loop(
-        self, sample_compendium: EnrichedCompendium
+        self, sample_compendium: StageTranscript
     ) -> None:
         prompt_provider = JsonPromptProvider()
         cand1 = json.dumps([{"title": "Alucinacao Espuria", "type": "entity"}])
@@ -160,7 +165,7 @@ class TestDiscoverAtomicInventoryJudge:
         assert llm.call_history[3]["trace_id"] == "vid_inv_1234_inventory_judge_retry_1"
 
     def test_discover_inventory_fast_fail_guardrail_skips_judge(
-        self, sample_compendium: EnrichedCompendium
+        self, sample_compendium: StageTranscript
     ) -> None:
         prompt_provider = JsonPromptProvider()
         # Attempt 0: malformed JSON (not a list) -> fails Gate 1, judge is skipped!
@@ -185,7 +190,7 @@ class TestDiscoverAtomicInventoryJudge:
         assert llm.call_history[2]["trace_id"] == "vid_inv_1234_inventory_judge_retry_1"
 
     def test_discover_inventory_exhausts_retries_raises_domain_error(
-        self, sample_compendium: EnrichedCompendium
+        self, sample_compendium: StageTranscript
     ) -> None:
         prompt_provider = JsonPromptProvider()
         cand = json.dumps([{"title": "Nó Questionável", "type": "concept"}])
@@ -261,7 +266,7 @@ class TestDiscoverAtomicInventoryJudge:
         assert use_case.judge_enabled is False
 
     def test_judge_disabled_evaluates_list_guardrail(
-        self, sample_compendium: EnrichedCompendium
+        self, sample_compendium: StageTranscript
     ) -> None:
         llm = MockLLMAdapter(responses=[json.dumps([{"title": "Alpha", "type": "concept"}])])
         use_case = DiscoverAtomicInventoryUseCase(
@@ -286,12 +291,14 @@ class TestDiscoverAtomicInventoryJudge:
     def test_execute_empty_candidate_items_raises_error_with_compendium_title(
         self,
     ) -> None:
-        compendium = EnrichedCompendium(
-            content_id=ContentId("vid_inv_empty"),
-            channel_name=ChannelName("Test Channel"),
-            title=NoteTitle("Unique Compendium Alpha"),
-            body="Valid narrative body text.",
-            complementary_info="Complementary context.",
+        compendium = StageTranscript(
+            channel=Channel(name=ChannelName("Test Channel")),
+            provenance=MediaProvenance.create(url=""),
+            content=Content(
+                id=ContentId("vid_inv_empty"),
+                title="Unique Compendium Alpha",
+                text="Valid narrative body text.\n\n### Extra Info\n\nComplementary context.",
+            ),
         )
         llm = MockLLMAdapter(responses=[json.dumps([])])
         use_case = DiscoverAtomicInventoryUseCase(
@@ -307,16 +314,16 @@ class TestDiscoverAtomicInventoryJudge:
     def test_discover_inventory_session_id_resolves_channel_id(
         self,
     ) -> None:
-        from cresmo.domain.value_objects import ChannelId
 
         # 1. ChannelId Value Object
-        compendium_vo = EnrichedCompendium(
-            content_id=ContentId("vid_inv_1234"),
-            channel_name=ChannelName("Geopolitics Channel"),
-            title=NoteTitle("The Longue Durée of Mediterranean Trade"),
-            body="Fernand Braudel analyzes the Mediterranean basin across centuries.",
-            complementary_info="1. Detailed chronological notes on Venetian commerce.",
-            channel_id=ChannelId("ch_geo_vo"),
+        compendium_vo = StageTranscript(
+            channel=Channel(name=ChannelName("Geopolitics Channel"), id=ChannelId("ch_geo_vo")),
+            provenance=MediaProvenance.create(url=""),
+            content=Content(
+                id=ContentId("vid_inv_1234"),
+                title="The Longue Durée of Mediterranean Trade",
+                text="Fernand Braudel analyzes the Mediterranean basin across centuries.\n\n### Extra Info\n\n1. Detailed chronological notes on Venetian commerce.",
+            ),
         )
         llm_vo = MockLLMAdapter(responses=[json.dumps([{"title": "Entity A", "type": "entity"}])])
         use_case_vo = DiscoverAtomicInventoryUseCase(
@@ -326,14 +333,15 @@ class TestDiscoverAtomicInventoryJudge:
         use_case_vo.execute(compendium_vo)
         assert llm_vo.call_history[0]["session_id"] == "ch_geo_vo:vid_inv_1234"
 
-        # 2. ChannelId raw string
-        compendium_str = EnrichedCompendium(
-            content_id=ContentId("vid_inv_1234"),
-            channel_name=ChannelName("Geopolitics Channel"),
-            title=NoteTitle("The Longue Durée of Mediterranean Trade"),
-            body="Fernand Braudel analyzes the Mediterranean basin across centuries.",
-            complementary_info="1. Detailed chronological notes on Venetian commerce.",
-            channel_id="ch_geo_raw_str",
+        # 2. ChannelId raw string via Channel constructor
+        compendium_str = StageTranscript(
+            channel=Channel(name=ChannelName("Geopolitics Channel"), id="ch_geo_raw_str"),
+            provenance=MediaProvenance.create(url=""),
+            content=Content(
+                id=ContentId("vid_inv_1234"),
+                title="The Longue Durée of Mediterranean Trade",
+                text="Fernand Braudel analyzes the Mediterranean basin across centuries.\n\n### Extra Info\n\n1. Detailed chronological notes on Venetian commerce.",
+            ),
         )
         llm_str = MockLLMAdapter(responses=[json.dumps([{"title": "Entity A", "type": "entity"}])])
         use_case_str = DiscoverAtomicInventoryUseCase(
@@ -344,7 +352,7 @@ class TestDiscoverAtomicInventoryJudge:
         assert llm_str.call_history[0]["session_id"] == "ch_geo_raw_str:vid_inv_1234"
 
     def test_discover_inventory_delegates_to_llm_judge_port_with_complete_context(
-        self, sample_compendium: EnrichedCompendium
+        self, sample_compendium: StageTranscript
     ) -> None:
         cand_list = [{"title": "Bacia do Mediterrâneo", "type": "entity"}]
         cand = json.dumps(cand_list, ensure_ascii=False)
@@ -368,7 +376,7 @@ class TestDiscoverAtomicInventoryJudge:
         mock_judge.evaluate.assert_called_once()
         ctx = mock_judge.evaluate.call_args[0][0]
         assert ctx.stage_name == "atomic_inventory"
-        assert ctx.raw_text == sample_compendium.body
+        assert ctx.raw_text == sample_compendium.content.text
         assert ctx.candidate_text == json.dumps(cand_list)
         assert ctx.metadata == {
             "title": "The Longue Durée of Mediterranean Trade",
@@ -378,7 +386,7 @@ class TestDiscoverAtomicInventoryJudge:
         assert ctx.required_criteria == (JudgeCriterion.INVENTORY_COHERENCE,)
 
     def test_discover_inventory_multiple_retries_and_user_identity_logging(
-        self, sample_compendium: EnrichedCompendium, caplog: pytest.LogCaptureFixture
+        self, sample_compendium: StageTranscript, caplog: pytest.LogCaptureFixture
     ) -> None:
         prompt_provider = JsonPromptProvider()
         cand1 = json.dumps([{"title": "Bad 1", "type": "concept"}])
@@ -420,7 +428,7 @@ class TestDiscoverAtomicInventoryJudge:
         )
 
     def test_fallback_judge_prompt_provider_argument_fidelity(
-        self, sample_compendium: EnrichedCompendium
+        self, sample_compendium: StageTranscript
     ) -> None:
         cand_list = [{"title": "Bacia do Mediterrâneo", "type": "entity"}]
         cand = json.dumps(cand_list, ensure_ascii=False)
@@ -446,20 +454,20 @@ class TestDiscoverAtomicInventoryJudge:
         # Call 1: extraction prompt
         extract_call = mock_provider.get_prompt.call_args_list[0]
         assert extract_call[0][0] == PromptKey.ATOMIC_INVENTORY
-        assert extract_call[1]["content_title"] == sample_compendium.title.value
-        assert extract_call[1]["channel_name"] == sample_compendium.channel_name
-        assert extract_call[1]["compendium_body"] == sample_compendium.body
+        assert extract_call[1]["content_title"] == sample_compendium.content.title
+        assert extract_call[1]["channel_name"] == sample_compendium.channel.name
+        assert extract_call[1]["compendium_body"] == sample_compendium.content.text
 
         # Call 2: judge prompt
         judge_call = mock_provider.get_prompt.call_args_list[1]
         assert judge_call[0][0] == PromptKey.JUDGE_ATOMIC_INVENTORY
-        assert judge_call[1]["content_title"] == sample_compendium.title.value
-        assert judge_call[1]["channel_name"] == sample_compendium.channel_name
-        assert judge_call[1]["compendium_body"] == sample_compendium.body
+        assert judge_call[1]["content_title"] == sample_compendium.content.title
+        assert judge_call[1]["channel_name"] == sample_compendium.channel.name
+        assert judge_call[1]["compendium_body"] == sample_compendium.content.text
         assert judge_call[1]["inventory_json"] == json.dumps(cand_list)
 
     def test_evaluate_candidate_inventory_fallback_returns_true_when_no_judge_or_provider(
-        self, sample_compendium: EnrichedCompendium
+        self, sample_compendium: StageTranscript
     ) -> None:
         use_case = DiscoverAtomicInventoryUseCase(
             llm_synthesis_port=MockLLMAdapter(),

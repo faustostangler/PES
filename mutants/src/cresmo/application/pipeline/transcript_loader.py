@@ -3,11 +3,11 @@
 from __future__ import annotations
 
 import hashlib
-import logging
 import re
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
+import structlog
 import yaml
 
 from cresmo.domain.entities import SourceTranscript
@@ -26,7 +26,7 @@ from cresmo.domain.value_objects import (
 if TYPE_CHECKING:
     from cresmo.application.ports.storage import VaultRepositoryPort
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 _MIN_CONTENT_ID_LENGTH: int = 8
 _MAX_CONTENT_ID_LENGTH: int = 64

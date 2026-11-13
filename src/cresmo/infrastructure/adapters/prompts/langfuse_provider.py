@@ -5,31 +5,38 @@ Conforms to ADR-014 and ADR-017:
     - Guaranteed Availability: When Langfuse is offline, unreachable, or fails, falls back immediately
       to the injected JsonPromptProvider with zero pipeline downtime.
     - Tracks active prompt object/version for linking to LLM generation observations.
-    - Uses canonical PROMPT_REGISTRY to eliminate duplicated hardcoded prompt names.
+    - Uses canonical PromptCatalog to eliminate duplicated hardcoded prompt names.
 """
 
 from __future__ import annotations
 
-import logging
 from http import HTTPStatus
 from typing import Any
 
-from langfuse.api.core import ApiError
+import structlog
 
 from cresmo.application.ports import PromptProviderPort
 from cresmo.domain.value_objects import ChannelName, ChatMessage, ChatPrompt, MessageRole
-from cresmo.infrastructure.adapters.prompts.registry import (
-    PROMPT_REGISTRY,
-    PromptKey,
-)
+from cresmo.domain.value_objects.prompt import PromptKey
 from cresmo.infrastructure.config import CresmoSettings
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 
-def _handle_api_error(exc: ApiError, prompt_name: str, label: str) -> None:
+def _get_api_error_type() -> type[Exception]:
+    """Resolve Langfuse ApiError lazily per ADR-026/ADR-053."""
+    try:
+        from langfuse.api.core import ApiError
+
+        return ApiError
+    except ImportError:
+        return Exception
+
+
+def _handle_api_error(exc: Any, prompt_name: str, label: str) -> None:
     """Log structured warning for Langfuse API errors."""
-    if exc.status_code == HTTPStatus.NOT_FOUND:
+    status_code = getattr(exc, "status_code", None)
+    if status_code == HTTPStatus.NOT_FOUND:
         logger.warning(
             "[LangfusePromptProvider] Prompt '%s' not found in Langfuse (404). "
             "Create it in Langfuse Cloud or use label='%s'. Using local fallback.",
@@ -41,8 +48,8 @@ def _handle_api_error(exc: ApiError, prompt_name: str, label: str) -> None:
             "[LangfusePromptProvider] Langfuse API error fetching '%s' (HTTP %s: %s). "
             "Using local fallback.",
             prompt_name,
-            exc.status_code,
-            exc.body,
+            status_code,
+            getattr(exc, "body", None),
         )
 
 
@@ -61,7 +68,7 @@ def _extract_prompt_messages(
             f"Expected compiled_messages to be a list, got {type(compiled_messages).__name__}"
         )
 
-    system_instruction: str | None = None
+    system_prompt: str | None = None
     messages: list[ChatMessage] = []
 
     for msg in compiled_messages:
@@ -82,10 +89,10 @@ def _extract_prompt_messages(
             content = content.replace(f"{{{key}}}", str(value))
 
         if raw_role == "system":
-            if system_instruction:
-                system_instruction = f"{system_instruction}\n\n{content}"
+            if system_prompt:
+                system_prompt = f"{system_prompt}\n\n{content}"
             else:
-                system_instruction = content
+                system_prompt = content
         elif raw_role in ("user", "human"):
             messages.append(ChatMessage(role=MessageRole.USER, content=content))
         elif raw_role in ("assistant", "model", "ai"):
@@ -93,14 +100,14 @@ def _extract_prompt_messages(
         else:
             messages.append(ChatMessage(role=MessageRole.USER, content=content))
 
-    if not messages and not system_instruction:
+    if not messages and not system_prompt:
         raise ValueError(
-            "Langfuse chat prompt must contain at least one valid message or system instruction."
+            "Langfuse chat prompt must contain at least one valid message or system prompt."
         )
 
     return ChatPrompt(
         messages=tuple(messages),
-        system_instruction=system_instruction,
+        system_prompt=system_prompt,
     )
 
 
@@ -175,15 +182,16 @@ class LangfusePromptProvider(PromptProviderPort):
 
             if hasattr(prompt, "compile"):
                 compiled_messages = prompt.compile(**kwargs)
-                # Converte a estrutura do SDK do Langfuse no Value Object do domínio ChatPrompt
+                # Convert Langfuse SDK structure into ChatPrompt domain Value Object
                 return _extract_prompt_messages(compiled_messages, kwargs)
 
             raise ValueError(f"Prompt '{prompt_name}' does not implement compile()")
-        except ApiError as exc:
-            _handle_api_error(exc, prompt_name, self._label)
-            raise
         except Exception as exc:
-            if not isinstance(exc, (ApiError, ValueError)):
+            api_err_type = _get_api_error_type()
+            if isinstance(exc, api_err_type):
+                _handle_api_error(exc, prompt_name, self._label)
+                raise
+            if not isinstance(exc, ValueError):
                 logger.warning(
                     "[LangfusePromptProvider] Transient error fetching prompt '%s' (%s: %s).",
                     prompt_name,
@@ -215,21 +223,18 @@ class LangfusePromptProvider(PromptProviderPort):
         if self._client is None:
             return self._fallback.get_prompt(key, **context)
 
-        prompt_descriptor = PROMPT_REGISTRY.get(key)
-        if prompt_descriptor is None:
-            logger.warning(
-                "[LangfusePromptProvider] No registry descriptor found for prompt key '%s'. "
-                "Triggering lazy fallback.",
-                key.value,
-            )
-            return self._fallback.get_prompt(key, **context)
+        catalog = getattr(self._fallback, "catalog", None)
+        if catalog is not None and key in catalog:
+            prompt_name = catalog[key].langfuse_name
+        else:
+            prompt_name = f"cresmo-{key.value.replace('_', '-')}"
 
         try:
             if isinstance(context.get("channel_name"), ChannelName):
                 context["channel_name"] = context["channel_name"].value
 
             return self._resolve_chat_prompt(
-                prompt_name=prompt_descriptor.langfuse_name,
+                prompt_name=prompt_name,
                 **context,
             )
         except Exception as exc:  # noqa: BLE001 — Resilient fallback to local provider on remote/compilation failure

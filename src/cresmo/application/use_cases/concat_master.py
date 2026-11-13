@@ -18,6 +18,7 @@ from cresmo.application.ports import (
     PipelineSettingsProtocol,
     VaultRepositoryPort,
 )
+from cresmo.domain.exceptions import DomainValidationError
 from cresmo.domain.taxonomy import classify_channel
 from cresmo.domain.value_objects import ChannelName, ContentId, MasterDocumentResult
 
@@ -115,9 +116,8 @@ class ConcatMasterUseCase:
         Returns:
             List of MasterDocumentResult value objects representing created parts.
         """
-        cn = channel_name
         effective_max = max_words if max_words is not None else self.settings.concat_max_words
-        files = self.vault_port.get_enriched_files_for_channel(cn)
+        files = self.vault_port.get_enriched_files_for_channel(channel_name)
         if not files:
             return []
 
@@ -150,7 +150,10 @@ class ConcatMasterUseCase:
         # Chronological sort: oldest first (ascending by sort_date, then file name)
         docs.sort(key=lambda doc_tuple: (doc_tuple[0], doc_tuple[1]))
 
-        assert resolved_category is not None
+        if resolved_category is None:
+            raise DomainValidationError(
+                f"Channel category could not be resolved for '{channel_name.value}'."
+            )
         channel_category = resolved_category
 
         # Group documents into parts without ever splitting a single file
@@ -172,7 +175,7 @@ class ConcatMasterUseCase:
 
         # Clear prior master parts for this channel
         self.vault_port.clear_master_documents_for_channel(
-            channel_name=cn,
+            channel_name=channel_name,
             channel_category=channel_category,
         )
 
@@ -183,7 +186,7 @@ class ConcatMasterUseCase:
             video_ids: tuple[ContentId, ...] = tuple(doc[1] for doc in part_docs)
 
             out_path = self.vault_port.save_master_document(
-                channel_name=cn,
+                channel_name=channel_name,
                 channel_category=channel_category,
                 part_number=part_num,
                 content=merged_content,
@@ -191,7 +194,7 @@ class ConcatMasterUseCase:
 
             results.append(
                 MasterDocumentResult(
-                    channel_name=cn,
+                    channel_name=channel_name,
                     channel_category=channel_category,
                     output_path=out_path,
                     part_number=part_num,

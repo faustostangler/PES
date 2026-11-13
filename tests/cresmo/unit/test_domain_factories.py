@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 from cresmo.application.use_cases.discovery.models import BatchSource
-from cresmo.domain.entities.compendium import EnrichedCompendium
-from cresmo.domain.entities.transcripts import SourceTranscript
+from cresmo.domain.entities.compendium import StageTranscript
+from cresmo.domain.entities.transcripts import StageTranscript
 from cresmo.domain.value_objects import LedgerEntry, PipelineStatus, SourceModality
 from tests.factories import (
     BatchSourceFactory,
@@ -24,22 +24,22 @@ def test_batch_source_factory() -> None:
 
 
 def test_source_transcript_factory() -> None:
-    """Verify that SourceTranscriptFactory generates valid SourceTranscript aggregates."""
+    """Verify that SourceTranscriptFactory generates valid StageTranscript aggregates."""
     transcript = SourceTranscriptFactory.build()
-    assert isinstance(transcript, SourceTranscript)
+    assert isinstance(transcript, StageTranscript)
     assert transcript.channel.name != ""
-    assert transcript.content.body != ""
+    assert transcript.content.text != ""
     assert transcript.provenance.url != ""
 
 
 def test_enriched_compendium_factory() -> None:
     """Verify that EnrichedCompendiumFactory honors domain invariants."""
     compendium = EnrichedCompendiumFactory.build()
-    assert isinstance(compendium, EnrichedCompendium)
+    assert isinstance(compendium, StageTranscript)
     assert compendium.pass_count >= 1
-    assert compendium.body != ""
-    assert "|" not in compendium.body or "---" not in compendium.body
-    assert "Informações Complementares" in compendium.complementary_info
+    assert compendium.content.text != ""
+    assert "|" not in compendium.content.text or "---" not in compendium.content.text
+    assert 'Extra Info' in compendium.content.text
 
 
 def test_ledger_entry_factory() -> None:

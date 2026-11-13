@@ -15,7 +15,7 @@ from typing import Any
 import yaml
 
 from cresmo.domain.entities import AtomicNote
-from cresmo.domain.exceptions import NoteTypologyError
+from cresmo.domain.exceptions import DomainValidationError, NoteTypologyError
 from cresmo.domain.value_objects import (
     CausalMatrix,
     CrossContextRelations,
@@ -24,7 +24,6 @@ from cresmo.domain.value_objects import (
 )
 from cresmo.infrastructure.adapters.obsidian.utils import (
     _FRONTMATTER_PATTERN,
-    MIN_NOTE_DEFINITION_LENGTH,
     atomic_write,
     sanitize_filename,
 )
@@ -135,8 +134,6 @@ class AtomicNoteVaultHandler:
             body,
         )
         definition = def_match.group(1).strip() if def_match else body.strip()
-        if len(definition) < MIN_NOTE_DEFINITION_LENGTH:
-            definition = f"Definição contextual de {title.value} com análise teórica substancial."
 
         # Parse direct relations
         relations: list[NoteTitle] = []
@@ -170,28 +167,33 @@ class AtomicNoteVaultHandler:
         )
         if cc_match:
             cc_text = cc_match.group(1)
-            prec = re.search(r"- Precursores:\s*(.*)", cc_text)
-            lat = re.search(r"- Eventos Laterais:\s*(.*)", cc_text)
-            aft = re.search(r"- Desdobramentos:\s*(.*)", cc_text)
+            precursors_match = re.search(r"- Precursores:\s*(.*)", cc_text)
+            lateral_events_match = re.search(r"- Eventos Laterais:\s*(.*)", cc_text)
+            aftermath_match = re.search(r"- Desdobramentos:\s*(.*)", cc_text)
             cross_context = CrossContextRelations(
-                precursors=prec.group(1).strip() if prec else "",
-                lateral_events=lat.group(1).strip() if lat else "",
-                aftermath=aft.group(1).strip() if aft else "",
+                precursors=precursors_match.group(1).strip() if precursors_match else "",
+                lateral_events=lateral_events_match.group(1).strip()
+                if lateral_events_match
+                else "",
+                aftermath=aftermath_match.group(1).strip() if aftermath_match else "",
             )
 
-        return AtomicNote(
-            title=title,
-            note_type=note_type,
-            definition=definition,
-            content_tags=tuple(meta.get("tags", ())),
-            domain=meta.get("domain", ""),
-            cluster=meta.get("cluster", ""),
-            source=meta.get("source", ""),
-            aliases=tuple(meta.get("aliases", ())),
-            direct_relations=tuple(relations),
-            causal_matrix=causal_matrix,
-            cross_context=cross_context,
-        )
+        try:
+            return AtomicNote(
+                title=title,
+                note_type=note_type,
+                definition=definition,
+                content_tags=tuple(meta.get("tags", ())),
+                domain=meta.get("domain", ""),
+                cluster=meta.get("cluster", ""),
+                source=meta.get("source", ""),
+                aliases=tuple(meta.get("aliases", ())),
+                direct_relations=tuple(relations),
+                causal_matrix=causal_matrix,
+                cross_context=cross_context,
+            )
+        except DomainValidationError:
+            return None
 
     def get_atomic_note_by_title(self, title: NoteTitle) -> AtomicNote | None:
         """Retrieve atomic note by searching index or vault directory."""
@@ -269,9 +271,9 @@ class AtomicNoteVaultHandler:
         except (json.JSONDecodeError, OSError):
             return
 
-        k = key.lower().strip()
-        if k in index:
-            del index[k]
+        normalized_key = key.lower().strip()
+        if normalized_key in index:
+            del index[normalized_key]
             atomic_write(
                 self.index_path,
                 json.dumps(index, ensure_ascii=False, indent=2),

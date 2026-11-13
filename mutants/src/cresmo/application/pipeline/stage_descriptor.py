@@ -48,6 +48,8 @@ class StageConfig[TSource, TOutput]:
     temperature: float | None = None
     max_attempts: int = 1
     blocking: bool = False
+    max_passes: int = 1
+    early_stopping_enabled: bool = False
 
     def build_transform_prompt(
         self,
@@ -56,6 +58,7 @@ class StageConfig[TSource, TOutput]:
         *,
         context: PipelineExecutionContext,
         critique: str | None = None,
+        prompt_key: PromptKey | None = None,
         **extra_context: Any,
     ) -> ChatPrompt:
         """Resolve ChatPrompt, injecting closed-loop reflection critique on retry."""
@@ -66,8 +69,9 @@ class StageConfig[TSource, TOutput]:
             or getattr(source, "text", None)
             or str(source)
         )
+        effective_key = prompt_key or self.transform_prompt_key
         base_prompt: ChatPrompt = prompt_provider.get_prompt(
-            self.transform_prompt_key,
+            effective_key,
             channel_name=context.channel.name,
             channel_id=effective_channel_id,
             content_id=context.content.id.value,
@@ -96,14 +100,14 @@ class StageConfig[TSource, TOutput]:
             else:
                 new_messages.append(msg)
 
-        if not new_messages and base_prompt.system_instruction:
+        if not new_messages and base_prompt.system_prompt:
             new_messages.append(
                 ChatMessage(role=MessageRole.USER, content=critique_feedback.strip())
             )
 
         return ChatPrompt(
             messages=tuple(new_messages),
-            system_instruction=base_prompt.system_instruction,
+            system_prompt=base_prompt.system_prompt,
         )
 
     def post_process(self, candidate: CandidateText, source: TSource) -> TOutput:

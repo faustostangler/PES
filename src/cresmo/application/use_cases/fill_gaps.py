@@ -19,20 +19,19 @@ from cresmo.application.ports import (
     VaultRepositoryPort,
 )
 from cresmo.domain.entities import (
-    EnrichedCompendium,
-    FluidTranscript,
     PipelineSessionId,
+    StageTranscript,
     UserIdentity,
 )
 from cresmo.domain.exceptions import CompendiumStructureError, DomainValidationError
-from cresmo.domain.value_objects import NoteTitle, PromptKey
+from cresmo.domain.value_objects import Content, PromptKey
 
 # Extracts title from markdown H1 header
 _TITLE_H1_PATTERN = re.compile(r"^\s*#\s+(.+)$", re.MULTILINE)
-_COMPLEMENTARY_TAG = "## Informações Complementares"
+_COMPLEMENTARY_TAG = "### Extra Info"
 # Resilient regex matching variations of the mandatory complementary section header
 _COMPLEMENTARY_REGEX = re.compile(
-    r"^\s*#{2,3}\s+\*?\*?(?:Informa[cç][oõ]es\s+Complementares|Notas\s+Complementares|Informa[cç][oõ]es\s+Adicionais)\*?\*?.*$",
+    r"^\s*#{2,3}\s+\*?\*?(?:Extra\s+Info|Notas\s+Complementares|Informa[cç][oõ]es\s+Adicionais)\*?\*?.*$",
     re.MULTILINE | re.IGNORECASE,
 )
 
@@ -66,27 +65,27 @@ class FillGapsUseCase:
 
     def execute(
         self,
-        fluid_transcript: FluidTranscript,
+        fluid_transcript: StageTranscript,
         passes: int = 3,
         user: UserIdentity | None = None,
-    ) -> EnrichedCompendium:
+    ) -> StageTranscript:
         """Execute multi-pass progressive Socratic gap enrichment on fluid prose.
 
         Args:
-            fluid_transcript: Source FluidTranscript aggregate with normalized prose.
+            fluid_transcript: Source StageTranscript aggregate with normalized prose.
             passes: Number of sequential Socratic expansion cycles (default: 3).
             user: Optional executing UserIdentity principal (defaults to anonymous).
 
         Returns:
-            Validated EnrichedCompendium aggregate with segregated body and complementary info.
+            Validated StageTranscript aggregate with segregated body and complementary info.
 
         Raises:
             CompendiumStructureError: If the mandatory complementary info section is missing or empty.
-            DomainValidationError: If input is not a FluidTranscript or invariants are violated.
+            DomainValidationError: If input is not a StageTranscript or invariants are violated.
         """
-        if not isinstance(fluid_transcript, FluidTranscript):
+        if not isinstance(fluid_transcript, StageTranscript):
             raise DomainValidationError(
-                f"FillGapsUseCase strictly requires FluidTranscript, got: {type(fluid_transcript).__name__}"
+                f"FillGapsUseCase strictly requires StageTranscript, got: {type(fluid_transcript).__name__}"
             )
 
         file_name = f"{fluid_transcript.content.id.value}.txt"
@@ -99,12 +98,12 @@ class FillGapsUseCase:
 
         # Pass 1: Initial Socratic gap filling
         chat_prompt = self.prompt_provider.get_prompt(
-            PromptKey.GAP_FILLER_PASS1,
+            PromptKey.GAP_FILLER,
             pass_num=1,
             total_passes=passes,
             channel_name=fluid_transcript.channel.name,
             file_name=file_name,
-            raw_text=fluid_transcript.content.body,
+            raw_text=fluid_transcript.content.text,
             current_text=None,
         )
         current_text = self.llm_synthesis_port.transform(
@@ -118,12 +117,12 @@ class FillGapsUseCase:
         # Subsequent passes: Progressive enrichment over current text
         for pass_index in range(1, passes):
             chat_prompt = self.prompt_provider.get_prompt(
-                PromptKey.GAP_FILLER_PASS_SUBSEQUENT,
+                PromptKey.GAP_FILLER,
                 pass_num=pass_index + 1,
                 total_passes=passes,
                 channel_name=fluid_transcript.channel.name,
                 file_name=file_name,
-                raw_text=fluid_transcript.content.body,
+                raw_text=fluid_transcript.content.text,
                 current_text=current_text,
             )
             current_text = self.llm_synthesis_port.transform(
@@ -152,23 +151,21 @@ class FillGapsUseCase:
 
         if not complementary_information:
             raise CompendiumStructureError(
-                "EnrichedCompendium must contain a non-empty 'Informações Complementares' section."
+                "StageTranscript must contain a non-empty 'Extra Info' section."
             )
 
-        pub_date = fluid_transcript.provenance.publication_date
-        video_date = pub_date.strftime("%Y%m%d") if pub_date else ""
-        compendium = EnrichedCompendium(
-            content_id=fluid_transcript.content.id,
-            channel_name=fluid_transcript.channel.name,
-            title=NoteTitle(extracted_title),
-            body=body,
-            complementary_info=complementary_information,
+        full_body = f"{body}\n\n### Extra Info\n\n{complementary_information}"
+
+        compendium = StageTranscript(
+            channel=fluid_transcript.channel,
+            provenance=fluid_transcript.provenance,
+            content=Content.create(
+                id=fluid_transcript.content.id,
+                title=extracted_title,
+                text=full_body,
+            ),
             pass_count=passes,
-            channel_id=fluid_transcript.channel.id,
-            channel_category=fluid_transcript.channel.category,
-            source_url=fluid_transcript.provenance.url,
-            video_date=video_date,
-            video_description=fluid_transcript.provenance.description,
+            metadata=dict(fluid_transcript.metadata),
         )
-        self.vault_port.save_enriched_compendium(compendium)
+        self.vault_port.save_stage_transcript("gap_filler", compendium)
         return compendium

@@ -19,12 +19,16 @@ Conforms to:
 
 from __future__ import annotations
 
-import logging
 from pathlib import Path
 from typing import Any
 
+import structlog
+
 from cresmo.application.pipeline.context import PipelineExecutionContext
-from cresmo.application.pipeline.models import PipelineDependencies, PipelineResult
+from cresmo.application.pipeline.models import (
+    PipelineDependencies,
+    PipelineResult,
+)
 from cresmo.application.pipeline.stage_factory import StageFactory
 from cresmo.application.pipeline.stage_runner import PipelineStageRunner
 from cresmo.application.pipeline.transcript_loader import (
@@ -51,46 +55,31 @@ from cresmo.application.ports import (
 from cresmo.application.use_cases import IngestRawTranscriptUseCase
 from cresmo.domain.entities import (
     PipelineSessionId,
-    SourceTranscript,
+    StageTranscript,
     UserIdentity,
 )
 from cresmo.domain.exceptions import CresmoDomainError
+from cresmo.domain.stage_registry import StageName
 from cresmo.domain.value_objects import (
     BatchId,
     RawIndexEntry,
     is_processable_transcript_file,
 )
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 
-def _extract_source_text(raw: Any) -> str:
-    """Extract raw transcript text from SourceTranscript triad or duck-typed raw sources."""
-    content = getattr(raw, "content", None)
-    if content is not None:
-        body = getattr(content, "body", None)
-        if body:
-            return body
-    body = getattr(raw, "body", None)
-    if body:
-        return body
-    text = getattr(raw, "text", None)
-    if text:
-        return text
+def _extract_source_text(source_target: StageTranscript | Any) -> str:
+    """Extract raw transcript text from StageTranscript triad."""
+    if isinstance(source_target, StageTranscript):
+        return source_target.content.text
     return ""
 
 
-def _extract_fluid_text(fluid: Any) -> str:
-    """Extract synthesized fluid prose text from FluidTranscript, EnrichedCompendium, or duck-typed candidate."""
-    comp_body = getattr(fluid, "body", None)
-    comp_info = getattr(fluid, "complementary_info", None)
-    if comp_body and comp_info:
-        return f"{comp_body}\n\n## Informações Complementares\n\n{comp_info}"
-    if comp_body:
-        return comp_body
-    text = getattr(fluid, "text", None)
-    if text:
-        return text
+def _extract_fluid_text(source: StageTranscript | Any) -> str:
+    """Extract synthesized fluid prose text from StageTranscript envelope."""
+    if isinstance(source, StageTranscript):
+        return source.content.text
     return ""
 
 
@@ -142,16 +131,19 @@ class CresmoPipeline:
                 raise ValueError("Either stage_runner or llm_synthesis_port must be provided")
             self.telemetry_port = telemetry_port or NoOpTelemetryPort()
             self.metrics_port = metrics_port or NoOpMetricsPort()
+            llm_judge = llm_judge_port
+            llm_transformation_port = llm_synthesis_port
+            prompt_provider = prompt_provider or NoOpPromptProviderPort()
             stage_factory = StageFactory(settings=self.settings)
             self.stage_runner = PipelineStageRunner(
                 PipelineDependencies(
                     telemetry_port=self.telemetry_port,
                     metrics_port=self.metrics_port,
-                    llm_judge=llm_judge_port,
+                    llm_judge=llm_judge,
                     judge_blocking=getattr(self.settings, "judge_blocking", False),
-                    judge_max_attempts=getattr(self.settings, "judge_max_attempts", 1),
-                    prompt_provider=prompt_provider or NoOpPromptProviderPort(),
-                    llm_transformation_port=llm_synthesis_port,
+                    judge_max_attempts=getattr(self.settings, "judge_max_attempts", 2),
+                    prompt_provider=prompt_provider,
+                    llm_transformation_port=llm_transformation_port,
                     stage_factory=stage_factory,
                     critique_synthesizer=critique_synthesizer,
                     ledger_port=self.ledger_port,
@@ -193,13 +185,13 @@ class CresmoPipeline:
         """Asynchronously trigger warmup across pipeline LLM ports."""
         if self.llm_indexing_port is not None:
             self.llm_indexing_port.warmup(timeout_seconds=timeout_seconds)
-        runner_llm = getattr(self.stage_runner, "llm_transformation_port", None)
-        if runner_llm is not None and runner_llm is not self.llm_indexing_port:
+        runner_llm_port = getattr(self.stage_runner, "llm_transformation_port", None)
+        if runner_llm_port is not None and runner_llm_port is not self.llm_indexing_port:
             self.stage_runner.warmup(timeout_seconds=timeout_seconds)
 
     def execute(
         self,
-        raw: SourceTranscript,
+        raw: StageTranscript,
         gap_filler_passes: int = 3,
         force_reprocess: bool = False,
         user: UserIdentity | None = None,
@@ -209,14 +201,11 @@ class CresmoPipeline:
         """Execute the end-to-end synthesis pipeline (canonical Template Method)."""
         channel = raw.channel
         content = raw.content
-        session_id = PipelineSessionId.create(
-            channel=channel,
-            content_id=content,
-        )
+        session_id = PipelineSessionId(content.session_id)
         user_identity = user or UserIdentity.anonymous()
 
         raw_text = _extract_source_text(raw)
-        root_telemetry_metadata: dict[str, Any] = {
+        metadata: dict[str, Any] = {
             "source": "transcript",
             "channel_id": str(channel.id) if channel.id else "",
             "channel_name": channel.name,
@@ -230,20 +219,18 @@ class CresmoPipeline:
             resolved_batch_id = (
                 batch_id.value if isinstance(batch_id, BatchId) else batch_id.strip()
             )
-            root_telemetry_metadata["batch_id"] = resolved_batch_id
+            metadata["batch_id"] = resolved_batch_id
         if raw.provenance.url:
-            root_telemetry_metadata["video_url"] = raw.provenance.url
+            metadata["video_url"] = raw.provenance.url
         if raw.provenance.publication_date:
-            root_telemetry_metadata["publication_date"] = (
-                raw.provenance.publication_date.isoformat()
-            )
+            metadata["publication_date"] = raw.provenance.publication_date.isoformat()
 
         # Trace root Level 1: cresmo.synthesis_pipeline (ADR-037)
         with self.telemetry_port.start_pipeline_session(
             session_id=session_id,
             user_id=user_identity,
             channel_tenant_id=channel.tenant_key,
-            metadata=root_telemetry_metadata,
+            metadata=metadata,
             trace_name="cresmo.synthesis_pipeline",
         ):
             if early_result := self._check_idempotent_exit(raw, entry, force_reprocess):
@@ -257,47 +244,59 @@ class CresmoPipeline:
                 return early_result
 
             execution_context = PipelineExecutionContext(
-                session_id=session_id,
                 user_identity=user_identity,
                 channel=channel,
                 content=content,
             )
 
             # =========================================================================
-            # ESTEIRA DE ESTÁGIOS CRESMO (CONVEYOR PIPELINE)
+            # CRESMO STAGES CONVEYOR PIPELINE (ADR-007, ADR-043, ADR-054, ADR-057)
             # =========================================================================
-
-            # Estágio 1: Fluid Prose
-            fluid = self.stage_runner.execute_stage(
-                "fluid_prose",
-                source=raw,
-                context=execution_context,
+            conveyor_steps: tuple[StageName, ...] = (
+                StageName.FLUID_PROSE,
+                StageName.GAP_FILLER,
             )
 
-            # Estágio 2: Gap Filler
-            gaps = self.stage_runner.execute_stage(
-                "gap_filler",
-                source=fluid,
-                context=execution_context,
-            )
+            stage_artifacts: dict[StageName, Any] = {StageName.RAW: raw}
+            current_source: Any = raw
 
-            # Estágio 3: Long Expander
-            # long_exp = self.stage_runner.execute_stage("long_expander", source=gaps, context=execution_context)
+            for step in conveyor_steps:
+                if step == StageName.GAP_FILLER:
+                    pass
+                artifact = None
+                if not force_reprocess:
+                    cached = self.vault_port.get_stage_transcript(step, content.id)
+                    if isinstance(cached, StageTranscript):
+                        artifact = cached
+                        logger.info(
+                            "Reusing cached %s for content_id '%s'",
+                            step,
+                            content.id.value,
+                        )
 
-            # Estágio 4: Wide Expander
-            # wide_exp = self.stage_runner.execute_stage("wide_expander", source=long_exp, context=execution_context)
+                if artifact is None:
+                    extra_kwargs: dict[str, Any] = {}
+                    if step == StageName.GAP_FILLER:
+                        extra_kwargs["max_passes"] = gap_filler_passes
 
-            # Estágio 5: Raw Indexing (reordenado: após wide_expander e antes de atomic_inventory)
-            # index = self.stage_runner.execute_stage("raw_indexing", source=wide_exp, context=execution_context)
+                    artifact = self.stage_runner.execute_stage(
+                        step,
+                        source=current_source,
+                        context=execution_context,
+                        **extra_kwargs,
+                    )
+                    if isinstance(artifact, StageTranscript):
+                        self.vault_port.save_stage_transcript(step, artifact)
 
-            # Estágio 6: Atomic Inventory
-            # inventory = self.stage_runner.execute_stage("atomic_inventory", source=wide_exp, context=execution_context)
+                stage_artifacts[step] = artifact
+                current_source = artifact
 
-            # Estágio 7: Atomic Batch
-            # notes = self.stage_runner.execute_stage("atomic_batch", source=inventory, context=execution_context)
+            fluid: Any = stage_artifacts[StageName.FLUID_PROSE]
+            gaps: Any = stage_artifacts[StageName.GAP_FILLER]
 
-            # Estágio 8: Reconcile MOCs
-            # mocs = self.stage_runner.execute_stage("reconcile_mocs", source=notes, context=execution_context)
+            # Note: Subsequent conveyor stages (long_expander, wide_expander, raw_indexing,
+            # atomic_inventory, atomic_batch, reconcile_mocs) will be appended to conveyor_steps
+            # sequentially once their domain VOs conform to StageTranscript (ADR-054).
 
             synthesized_text = _extract_fluid_text(gaps) or _extract_fluid_text(fluid)
             raw_word_count = len(raw_text.split())
@@ -305,8 +304,14 @@ class CresmoPipeline:
             expansion_ratio = round(synthesized_word_count / max(raw_word_count, 1), 3)
 
             # Trace output (ADR-037 canonical DDD metrics)
-            raw_title = getattr(gaps, "title", getattr(fluid, "title", content.title))
-            resolved_title = str(getattr(raw_title, "value", raw_title or ""))
+            gaps_content = getattr(gaps, "content", None)
+            fluid_content = getattr(fluid, "content", None)
+            resolved_title = str(
+                getattr(gaps_content, "title", None)
+                or getattr(fluid_content, "title", None)
+                or content.title
+                or ""
+            )
             self.telemetry_port.record_session_output(
                 {
                     "status": "COMPLETED",
@@ -334,7 +339,7 @@ class CresmoPipeline:
 
     def _check_idempotent_exit(
         self,
-        raw: SourceTranscript,
+        raw: StageTranscript,
         entry: RawIndexEntry | None,
         force_reprocess: bool,
     ) -> PipelineResult | None:
@@ -358,7 +363,7 @@ class CresmoPipeline:
                 success=True,
                 source_transcript=raw,
                 index_entry=entry,
-                compendium=self.vault_port.get_enriched_compendium(content_id),
+                compendium=self.vault_port.get_stage_transcript("gap_filler", content_id),
                 already_processed=True,
             )
         return None
@@ -425,14 +430,14 @@ class CresmoPipeline:
         batch_id: BatchId | str | None = None,
     ) -> list[PipelineResult]:
         """Run the end-to-end synthesis pipeline sequentially for all video URLs in a manifest file."""
-        resolved_batch_id = batch_id or BatchId.generate()
+        batch_id = batch_id or BatchId.generate()
         return [
             self.run_for_video(
-                video_url=url,
+                video_url=video_url,
                 gap_filler_passes=gap_filler_passes,
                 force_reprocess=force_reprocess,
                 user=user,
-                batch_id=resolved_batch_id,
+                batch_id=batch_id,
             )
-            for url in load_manifest_urls(manifest_path)
+            for video_url in load_manifest_urls(manifest_path)
         ]

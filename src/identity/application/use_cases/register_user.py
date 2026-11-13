@@ -7,7 +7,11 @@ from typing import Final
 from identity.application.dtos import RegisterUserRequestDTO, RegisterUserResponseDTO
 from identity.application.ports import PasswordHasherPort, UserRepositoryPort
 from identity.domain.entities import User
-from identity.domain.exceptions import UserAlreadyExistsError, WeakPasswordError
+from identity.domain.exceptions import (
+    InvalidRoleError,
+    UserAlreadyExistsError,
+    WeakPasswordError,
+)
 from identity.domain.value_objects import Email, Role, UserId
 
 MIN_PASSWORD_LENGTH: Final[int] = 8
@@ -40,8 +44,8 @@ class RegisterUserUseCase:
         for r in dto.roles:
             try:
                 parsed_roles.append(Role(r.lower()))
-            except ValueError:
-                parsed_roles.append(Role.USER)
+            except ValueError as e:
+                raise InvalidRoleError(f"Invalid role: '{r}'.") from e
 
         user_id = UserId(f"usr_{uuid.uuid4().hex}")
         user = User(

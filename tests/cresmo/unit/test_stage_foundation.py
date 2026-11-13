@@ -1,7 +1,7 @@
-"""Hermetic Unit Tests for SourceTranscript, CandidateText, and Typed Verdict Value Objects.
+"""Hermetic Unit Tests for StageTranscript, CandidateText, and Typed Verdict Value Objects.
 
 Conforms to:
-    - ADR-031: Standardized StageConfig, SourceTranscript, CandidateText, and Closed-Loop Reflection Quality Fabric
+    - ADR-031: Standardized StageConfig, StageTranscript, CandidateText, and Closed-Loop Reflection Quality Fabric
     - SPEC-014: Standardized Stage Execution and Decision-Model Quality Fabric Specification
 """
 
@@ -11,57 +11,64 @@ import datetime
 
 import pytest
 
-from cresmo.domain.entities import SourceTranscript
+from cresmo.domain.entities import StageTranscript
 from cresmo.domain.exceptions import DomainValidationError
 from cresmo.domain.value_objects import (
     CandidateText,
+    Channel,
     ChannelId,
     ChannelName,
+    Content,
     ContentId,
     CriterionScore,
     JudgeCriterion,
     JudgeEvaluation,
+    MediaProvenance,
     TypedVerdict,
     VerdictType,
 )
 
 
 class TestSourceTranscript:
-    """Test suite for SourceTranscript domain aggregate/VO."""
+    """Test suite for StageTranscript domain aggregate/VO."""
 
     def test_valid_source_transcript_instantiation(self) -> None:
         cid = ContentId("video_123")
         pub = datetime.date(2026, 1, 15)
-        transcript = SourceTranscript(
-            content_id=cid,
-            channel_name=ChannelName("Test Channel"),
-            body="Continuous raw or source transcript text.",
-            title="Introduction to Socio-Technical Systems",
-            publication_date=pub,
+        transcript = StageTranscript(
+            channel=Channel(name="Test Channel"),
+            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=video_123", publication_date=pub),
+            content=Content(
+                id=cid,
+                title="Introduction to Socio-Technical Systems",
+                text="Continuous raw or source transcript text.",
+            ),
         )
         assert transcript.content.id == cid
         assert transcript.channel.name == "Test Channel"
-        assert transcript.content.body == "Continuous raw or source transcript text."
+        assert transcript.content.text == "Continuous raw or source transcript text."
         assert transcript.content.title == "Introduction to Socio-Technical Systems"
         assert transcript.provenance.publication_date == pub
 
     def test_source_transcript_string_coercion(self) -> None:
-        transcript = SourceTranscript(
-            content_id=ContentId("video_456"),
-            channel_name="Raw Channel String",
-            body="Sample body content",
-            channel_id="UC1234567890123456789012",
+        transcript = StageTranscript(
+            channel=Channel(name="Raw Channel String", id="UC1234567890123456789012"),
+            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=video_456"),
+            content=Content(id="video_456", text="Sample body content"),
         )
         assert transcript.channel.name == "Raw Channel String"
         assert isinstance(transcript.channel.id, ChannelId)
         assert transcript.channel.id == ChannelId("UC1234567890123456789012")
 
-    def test_source_transcript_empty_body_raises(self) -> None:
-        with pytest.raises(DomainValidationError, match="body cannot be empty"):
-            SourceTranscript(
-                content_id=ContentId("video_empty"),
-                channel_name=ChannelName("Channel"),
-                body="   \n\t  ",
+    def test_source_transcript_empty_text_raises(self) -> None:
+        with pytest.raises(DomainValidationError, match="content.text cannot be empty"):
+            StageTranscript(
+                channel=Channel(name="Channel"),
+                provenance=MediaProvenance.create(url="https://youtube.com/watch?v=video_empty"),
+                content=Content(
+                    id=ContentId("video_empty"),
+                    text="   \n\t  ",
+                ),
             )
 
 

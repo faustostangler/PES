@@ -55,17 +55,13 @@ _NOOP_BUILDERS: dict[PromptKey, Callable[[dict[str, Any]], tuple[str, str]]] = {
         f"You are Cresmo Fluid Prose Detranscriptor (cresmo-fluid-prose). Channel: {c.get('channel_name', '')}.",
         f"Transform raw transcript into clean, continuous fluid prose in third-person neutral narrative:\nFile: {c.get('file_name', '')}\n\nTranscript:\n{c.get('raw_text', '')}",
     ),
-    PromptKey.GAP_FILLER_PASS1: lambda c: (
+    PromptKey.GAP_FILLER: lambda c: (
         f"You are Cresmo Expander. Enrich transcript for {c.get('channel_name', '')}.",
-        f"Pass 1 of {c.get('total_passes', 1)} for {c.get('channel_name', '')} (file: {c.get('file_name', '')}):\nRaw transcript:\n{c.get('raw_text', '')}",
-    ),
-    PromptKey.GAP_FILLER_PASS_SUBSEQUENT: lambda c: (
-        f"You are Cresmo Expander. Enrich transcript for {c.get('channel_name', '')}.",
-        f"Pass {c.get('pass_num', 2)} of {c.get('total_passes', 2)} for {c.get('channel_name', '')} (file: {c.get('file_name', '')}):\nRaw transcript: {c.get('raw_text', '')}\nCurrent text:\n{c.get('current_text', '')}",
+        f"Pass {c.get('pass_num', 1)} of {c.get('total_passes', 1)} for {c.get('channel_name', '')} (file: {c.get('file_name', '')}):\nRaw transcript:\n{c.get('source_text') or c.get('raw_text', '')}\nCurrent text:\n{c.get('current_text', '')}",
     ),
     PromptKey.LONG_EXPANDER: lambda c: (
         "You are Cresmo Long-Expander.",
-        f"Take the following enriched Markdown document and apply longitudinal analysis:\n\n{c.get('compendium_body', '')}\n\n## Informações Complementares\n{c.get('complementary_info', '')}",
+        f"Take the following enriched Markdown document and apply longitudinal analysis:\n\n{c.get('compendium_body', '')}\n\n### Extra Info\n{c.get('complementary_info', '')}",
     ),
     PromptKey.WIDE_EXPANDER: lambda c: (
         "You are Cresmo Wide-Expander.",
@@ -115,7 +111,7 @@ _NOOP_BUILDERS: dict[PromptKey, Callable[[dict[str, Any]], tuple[str, str]]] = {
         f"You are Judge. Language: {c.get('language', DEFAULT_LANGUAGE)}.",
         f"Title: {c.get('content_title', '')}\nExcerpt:\n{c.get('transcript_excerpt', '')}\nSynthesis:\n{c.get('synthesis', '')}",
     ),
-    PromptKey.LLM_JUDGE: lambda c: (
+    PromptKey.JUDGE_FLUID_PROSE: lambda c: (
         "You are a rigorous, calibrated Quality Evaluation Judge for knowledge synthesis pipelines. You must return ONLY a valid JSON object matching the criteria structure.",
         f"Stage: {c.get('stage_name', '')}\nRequired Criteria to Evaluate: {c.get('criteria_json', '[]')}\n\n--- SOURCE REFERENCE TEXT ---\n{c.get('source_text', '')}\n\n--- CANDIDATE TEXT ---\n{c.get('candidate_text', '')}\n\nEvaluate now and output the JSON verdict.",
     ),
@@ -139,4 +135,4 @@ class NoOpPromptProviderPort(PromptProviderPort):
         if builder is None:
             raise ValueError(f"Unsupported prompt key: {key}")
         sys_inst, user_prompt = builder(context)
-        return ChatPrompt.single_turn(user_prompt=user_prompt, system_instruction=sys_inst)
+        return ChatPrompt.single_turn(user_prompt=user_prompt, system_prompt=sys_inst)

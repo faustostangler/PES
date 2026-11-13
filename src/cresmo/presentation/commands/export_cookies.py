@@ -96,44 +96,40 @@ def handle_export_cookies(
     Returns:
         Process exit code integer.
     """
-    target_browser = getattr(args, "browser", browser) if args is not None else browser
-    target_output = getattr(args, "output", output) if args is not None else output
-    target_require_auth = (
-        getattr(args, "require_auth", require_auth) if args is not None else require_auth
-    )
-    target_force = getattr(args, "force", force) if args is not None else force
+    browser = getattr(args, "browser", browser) if args is not None else browser
+    output = getattr(args, "output", output) if args is not None else output
+    require_auth = getattr(args, "require_auth", require_auth) if args is not None else require_auth
+    force = getattr(args, "force", force) if args is not None else force
 
     try:
         settings = resolve_shared_settings()
-        output_file = target_output or settings.cookies_file or (settings.data_dir / "cookies.txt")
-        output_path = Path(output_file).resolve()
+        resolved_output = output or settings.cookies_file or (settings.data_dir / "cookies.txt")
+        output_file = Path(resolved_output).resolve()
 
-        if output_path.exists() and not target_force and has_valid_auth_cookies(output_path):
+        if output_file.exists() and not force and has_valid_auth_cookies(output_file):
             sys.stdout.write(
-                f"[cookies] Valid authenticated cookies already exist: {output_path} "
-                f"({output_path.stat().st_size} bytes). Use --force to re-extract.\n"
+                f"[cookies] Valid authenticated cookies already exist: {output_file} "
+                f"({output_file.stat().st_size} bytes). Use --force to re-extract.\n"
             )
             return EXIT_SUCCESS
 
-        sys.stdout.write(
-            f"[cookies] Extracting YouTube cookies from browser '{target_browser}'...\n"
-        )
+        sys.stdout.write(f"[cookies] Extracting YouTube cookies from browser '{browser}'...\n")
         success = export_cookies_from_browser(
-            browser=target_browser,
-            output_file=output_path,
-            require_auth=target_require_auth,
+            browser=browser,
+            output_file=output_file,
+            require_auth=require_auth,
             verbose=True,
         )
 
         if not success:
             sys.stderr.write(
-                f"[cookies] ERROR: Failed to extract YouTube cookies from '{target_browser}'.\n"
-                f"[cookies] Action required: Please open {target_browser.capitalize()}, log in to YouTube, "
-                f"and then run 'cresmo export-cookies --browser {target_browser}'.\n"
+                f"[cookies] ERROR: Failed to extract YouTube cookies from '{browser}'.\n"
+                f"[cookies] Action required: Please open {browser.capitalize()}, log in to YouTube, "
+                f"and then run 'cresmo export-cookies --browser {browser}'.\n"
             )
             return EXIT_INGESTION_ERROR
 
-        sys.stdout.write(f"[cookies] Successfully saved cookies to: {output_path}\n")
+        sys.stdout.write(f"[cookies] Successfully saved cookies to: {output_file}\n")
         return EXIT_SUCCESS
 
     except Exception as exc:  # noqa: BLE001

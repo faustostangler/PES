@@ -117,7 +117,7 @@ class TestMockLLMAdapter:
 
         assert len(adapter.call_history) == 3
         assert adapter.call_history[0]["prompt"] == p1
-        assert adapter.call_history[0]["system_instruction"] == "Sys 1"
+        assert adapter.call_history[0]["system_prompt"] == "Sys 1"
         assert adapter.call_history[0]["temperature"] == 0.7
 
 

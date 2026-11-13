@@ -13,6 +13,7 @@ import re
 import uuid
 from dataclasses import dataclass
 from enum import Enum
+from typing import Any
 
 from cresmo.domain.exceptions import DomainValidationError
 from cresmo.domain.value_objects.constants import (
@@ -235,13 +236,6 @@ class ChannelId:
             return f"https://www.youtube.com/playlist?list={playlist_id}"
         return None
 
-    @property
-    def canonical_url(self) -> str:
-        """Generate canonical YouTube channel URL or return identity."""
-        if self.is_youtube_canonical:
-            return f"https://www.youtube.com/channel/{self.value}"
-        return self.value
-
     def __str__(self) -> str:
         return self.value
 
@@ -345,40 +339,37 @@ class Channel:
 
     def __init__(
         self,
-        name: str | ChannelName | None = None,
+        name: str | ChannelName,
         id: ChannelId | str | None = None,
         category: str = "",
         url: str | None = None,
-        *,
-        channel_name: str | ChannelName | None = None,
-        channel_id: ChannelId | str | None = None,
     ) -> None:
-        effective_name = channel_name if name is None else name
-        effective_id = channel_id if id is None else id
-
-        raw_name = (
-            effective_name.value
-            if isinstance(effective_name, ChannelName)
-            else (effective_name or "")
-        )
+        raw_name = name.value if isinstance(name, ChannelName) else (name or "")
         clean_name = raw_name.strip()
         if not clean_name:
             raise DomainValidationError("Channel name cannot be empty or whitespace.")
 
         clean_name = ChannelName.from_string(clean_name).value
 
-        if effective_id is not None and effective_id != "":
-            if isinstance(effective_id, (ChannelId, str)):
-                resolved_channel_id = ChannelId.from_string(effective_id)
+        if id is not None and id != "":
+            if isinstance(id, (ChannelId, str)):
+                resolved_channel_id = ChannelId.from_string(id)
             else:
-                raise DomainValidationError(f"Invalid channel id type: {type(effective_id)}")
+                raise DomainValidationError(f"Invalid channel id type: {type(id)}")
         else:
             resolved_channel_id = None
+
+        clean_url = url.strip() if url else None
+        if not clean_url:
+            if resolved_channel_id is not None and resolved_channel_id.is_youtube_canonical:
+                clean_url = f"https://www.youtube.com/channel/{resolved_channel_id.value}"
+            else:
+                clean_url = f"https://www.youtube.com/@{clean_name}"
 
         object.__setattr__(self, "name", clean_name)
         object.__setattr__(self, "id", resolved_channel_id)
         object.__setattr__(self, "category", category.strip() if category else "")
-        object.__setattr__(self, "url", url.strip() if url else None)
+        object.__setattr__(self, "url", clean_url)
 
     @classmethod
     def from_name(
@@ -397,15 +388,6 @@ class Channel:
         token = self.id.value if self.id else self.name
         return f"channel:{token}"
 
-    @property
-    def canonical_url(self) -> str:
-        """Derive the canonical public URL for this channel."""
-        if self.url:
-            return self.url
-        if self.id and self.id.is_youtube_canonical:
-            return self.id.canonical_url
-        return f"https://www.youtube.com/@{self.name}"
-
     def __str__(self) -> str:
         return self.name
 
@@ -414,50 +396,66 @@ class Channel:
 class Content:
     """Canonical domain Value Object representing a media item, transcript, or synthesized prose.
 
-    Encapsulates content identifier, title, and textual body payload.
+    Encapsulates content identifier, title, textual payload, and optional session identifier.
     Conforms to ADR-019 (Zero Primitive Obsession), ADR-032, ADR-034, and ADR-038 (Pure Triad Composition).
     """
 
     id: ContentId
     title: str = ""
-    body: str = ""
+    text: str = ""
+    session_id: str = ""
 
     def __init__(
         self,
-        id: ContentId | str | None = None,
+        id: ContentId | str,
         title: str = "",
-        body: str = "",
-        *,
-        content_id: ContentId | str | None = None,
-        content_title: str | None = None,
+        text: str = "",
+        session_id: str | Any = "",
     ) -> None:
-        effective_id = content_id if id is None else id
-        if effective_id is None:
+        if id is None:
             raise DomainValidationError("Content requires non-null id.")
-        if isinstance(effective_id, (ContentId, str)):
-            resolved_content_id = ContentId.from_string(effective_id)
+        if isinstance(id, (ContentId, str)):
+            resolved_content_id = ContentId.from_string(id)
         else:
-            raise DomainValidationError(f"Invalid content id type: {type(effective_id)}")
+            raise DomainValidationError(f"Invalid content id type: {type(id)}")
 
-        effective_title = content_title if not title and content_title else title
+        effective_title = title.value if hasattr(title, "value") else str(title or "")
+        effective_session_id = (
+            session_id.value if hasattr(session_id, "value") else str(session_id or "")
+        )
 
         object.__setattr__(self, "id", resolved_content_id)
         object.__setattr__(self, "title", effective_title.strip() if effective_title else "")
-        object.__setattr__(self, "body", body)
+        object.__setattr__(self, "text", text)
+        object.__setattr__(
+            self, "session_id", effective_session_id.strip() if effective_session_id else ""
+        )
 
     @classmethod
     def create(
         cls,
-        id: str | ContentId,
+        id: str | ContentId | None = None,
         title: str = "",
-        body: str = "",
+        text: str = "",
+        session_id: str | Any = "",
+        *,
+        url: str = "",
     ) -> Content:
         """Ergonomic factory constructing Content from primitive strings or Value Objects."""
+        if id is None:
+            if url:
+                extracted = ContentId.extract_from_text(url)
+                if not extracted:
+                    raise DomainValidationError(f"Could not extract ContentId from URL: '{url}'")
+                id = extracted
+            else:
+                raise DomainValidationError("Content requires non-null id or valid url.")
         resolved_content_id = ContentId.from_string(id)
         return cls(
             id=resolved_content_id,
             title=title,
-            body=body,
+            text=text,
+            session_id=session_id,
         )
 
     def __str__(self) -> str:

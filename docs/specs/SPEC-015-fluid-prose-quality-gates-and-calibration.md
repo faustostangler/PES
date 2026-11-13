@@ -71,7 +71,7 @@ Each semantic criterion is scored in $[0.0, 1.0]$. The pass threshold is individ
 
 ---
 
-## 4. Calibration Harness (`scripts/fluid_prose/llm_judge/calibrate.py`)
+## 4. Calibration Harness (`scripts/calibrate_judges.py`)
 
 Emits scores to Langfuse:
 - `judge_exact_match`

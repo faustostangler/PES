@@ -15,13 +15,14 @@ Conforms to:
 from __future__ import annotations
 
 import gc
-import logging
 import sys
 from collections.abc import Iterable, Iterator, Sized
 from pathlib import Path
 from typing import Annotated, Any
 
+import structlog
 import typer
+from opentelemetry import trace
 from pydantic import ValidationError
 
 from cresmo.application.pipeline import CresmoPipeline
@@ -44,6 +45,7 @@ from cresmo.domain.value_objects import (
     SyncFilterCriteria,
     is_processable_transcript_file,
 )
+from cresmo.infrastructure.adapters.gemini_pool import CredentialPoolExhaustedError
 from cresmo.infrastructure.config import CresmoSettings
 from cresmo.infrastructure.system import get_process_rss_bytes
 from cresmo.presentation.composition import (
@@ -61,7 +63,7 @@ from cresmo.presentation.exit_codes import (
     EXIT_SUCCESS,
 )
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 
 def run(
@@ -92,7 +94,7 @@ def run(
             "--passes",
             min=1,
             max=10,
-            help="Refinement passes for gap filler (default: 3)",
+            help="Refinement passes for text expansion (default: 3)",
         ),
     ] = 3,
     batch_size: Annotated[
@@ -133,18 +135,25 @@ def run(
             help="Maximum candidate videos to inspect per channel feed (default: 50)",
         ),
     ] = 50,
-    no_scan_raw: Annotated[
+    scan_raw: Annotated[
         bool,
         typer.Option(
-            "--no-scan-raw",
-            help="Skip scanning existing local markdown transcripts in data/raw/",
+            "--scan-raw",
+            help="Scan local raw transcript lake for unprocessed files (default: False)",
+        ),
+    ] = False,
+    crawl: Annotated[
+        bool,
+        typer.Option(
+            "--crawl",
+            help="Enable crawling remote channel feeds for new uploads (default: False for fast execution)",
         ),
     ] = False,
     no_crawl: Annotated[
         bool,
         typer.Option(
             "--no-crawl",
-            help="Disable crawling channel feeds and strictly process manifest seed items",
+            help="[Deprecated] Disable crawling channel feeds (now default behavior per ADR-053)",
         ),
     ] = False,
     web_index: Annotated[
@@ -208,7 +217,8 @@ def run(
         force_reprocess: bool
         lookback: int | None
         channel_max_videos: int
-        no_scan_raw: bool
+        scan_raw: bool
+        crawl: bool
         no_crawl: bool
         web_index: bool
         channels: list[str] | None
@@ -224,7 +234,8 @@ def run(
     args.force_reprocess = force_reprocess
     args.lookback = lookback
     args.channel_max_videos = channel_max_videos
-    args.no_scan_raw = no_scan_raw
+    args.scan_raw = scan_raw
+    args.crawl = crawl
     args.no_crawl = no_crawl
     args.web_index = web_index
     args.channels = channels
@@ -266,45 +277,45 @@ def handle_run(args: Any) -> int:
     Returns:
         Process exit code integer.
     """
-    try:
-        settings = CresmoSettings()
-        if args.lookback is not None:
-            settings.days_lookback = args.lookback
+    tracer = trace.get_tracer("cresmo.cli")
+    with tracer.start_as_current_span("cresmo.run"):
+        try:
+            settings = CresmoSettings()
+            if args.lookback is not None:
+                settings.days_lookback = args.lookback
 
-        settings.ensure_directories()
+            # Active Preflight Validation
+            preflight_checker = build_preflight_checker(settings=settings, check_ffmpeg=True)
+            preflight_res = preflight_checker.check_all()
+            preflight_res.assert_healthy()
+            for warning in preflight_res.warnings:
+                sys.stderr.write(f"[preflight warning] {warning}\n")
 
-        # Active Preflight Validation
-        preflight_checker = build_preflight_checker(settings=settings, check_ffmpeg=True)
-        preflight_res = preflight_checker.check_all()
-        preflight_res.assert_healthy()
-        for warning in preflight_res.warnings:
-            sys.stderr.write(f"[preflight warning] {warning}\n")
+            pipeline = build_pipeline(
+                settings=settings,
+                batch_size_override=args.batch_size,
+                web_index=getattr(args, "web_index", False),
+            )
 
-        pipeline = build_pipeline(
-            settings=settings,
-            batch_size_override=args.batch_size,
-            web_index=getattr(args, "web_index", False),
-        )
-
-        return _execute_run_pipeline(args, settings, pipeline)
-    except RateLimitExceededError as exc:
-        sys.stderr.write(f"Rate limit exceeded: {exc}\n")
-        return EXIT_RATE_LIMIT_EXCEEDED
-    except IngestionNetworkError as exc:
-        sys.stderr.write(f"Ingestion network error: {exc}\n")
-        return EXIT_INGESTION_ERROR
-    except PreflightError as exc:
-        sys.stderr.write(f"Preflight error: {exc}\n")
-        return EXIT_CONFIG_OR_USAGE_ERROR
-    except (DomainValidationError, CresmoDomainError) as exc:
-        sys.stderr.write(f"Domain validation error: {exc}\n")
-        return EXIT_DOMAIN_VALIDATION_ERROR
-    except ValidationError as exc:
-        sys.stderr.write(f"Configuration error: {exc}\n")
-        return EXIT_CONFIG_OR_USAGE_ERROR
-    except Exception as exc:  # noqa: BLE001
-        sys.stderr.write(f"Unexpected internal error: {exc}\n")
-        return EXIT_INTERNAL_ERROR
+            return _execute_run_pipeline(args, settings, pipeline)
+        except RateLimitExceededError as exc:
+            sys.stderr.write(f"Rate limit exceeded: {exc}\n")
+            return EXIT_RATE_LIMIT_EXCEEDED
+        except IngestionNetworkError as exc:
+            sys.stderr.write(f"Ingestion network error: {exc}\n")
+            return EXIT_INGESTION_ERROR
+        except PreflightError as exc:
+            sys.stderr.write(f"Preflight error: {exc}\n")
+            return EXIT_CONFIG_OR_USAGE_ERROR
+        except (DomainValidationError, CresmoDomainError) as exc:
+            sys.stderr.write(f"Domain validation error: {exc}\n")
+            return EXIT_DOMAIN_VALIDATION_ERROR
+        except ValidationError as exc:
+            sys.stderr.write(f"Configuration error: {exc}\n")
+            return EXIT_CONFIG_OR_USAGE_ERROR
+        except Exception as exc:  # noqa: BLE001
+            sys.stderr.write(f"Unexpected internal error: {exc}\n")
+            return EXIT_INTERNAL_ERROR
 
 
 def _execute_run_pipeline(
@@ -322,21 +333,21 @@ def _execute_run_pipeline(
     query = _build_batch_discovery_query(args, settings)
 
     if args.dry_run:
-        sources = list(
+        dry_run_sources = list(
             load_batch_sources(
                 query=query,
                 settings=settings,
                 media_ingestion_port=pipeline.media_ingestion_port,
             )
         )
-        if not sources:
+        if not dry_run_sources:
             manifest_display = str(args.manifest) if args.manifest else "data/playlist.txt"
             sys.stdout.write(
                 f"No sources found to process (manifest: {manifest_display}, "
-                f"raw lake scan: {not args.no_scan_raw}).\n"
+                f"raw lake scan: {getattr(args, 'scan_raw', False)}).\n"
             )
             return EXIT_SUCCESS
-        return execute_batch_dry_run(pipeline, sources)
+        return execute_batch_dry_run(pipeline, dry_run_sources)
 
     sources = load_batch_sources(
         query=query,
@@ -357,13 +368,13 @@ def execute_single_video_run(pipeline: CresmoPipeline, args: Any) -> int:
         Process exit code integer.
     """
     if args.dry_run:
-        raw = pipeline.ingest_raw_transcript.execute(video_url=args.url)
-        if raw is None:
+        raw_transcript = pipeline.ingest_raw_transcript.execute(video_url=args.url)
+        if raw_transcript is None:
             sys.stderr.write(f"Dry-run ingestion returned no transcript for {args.url}\n")
             return EXIT_INGESTION_ERROR
         sys.stdout.write(
-            f"Dry run successful for [{raw.content.id.value}]: "
-            f"Transcript length: {len(raw.content.body)} characters.\n"
+            f"Dry run successful for [{raw_transcript.content.id.value}]: "
+            f"Transcript length: {len(raw_transcript.content.text)} characters.\n"
         )
         return EXIT_SUCCESS
 
@@ -380,15 +391,15 @@ def execute_single_video_run(pipeline: CresmoPipeline, args: Any) -> int:
         return EXIT_SUCCESS
     if result.success:
         try:
-            raw = pipeline.vault_port.get_raw_transcript(result.content_id)
-            if raw and raw.channel.name:
+            raw_transcript = pipeline.vault_port.get_stage_transcript("raw", result.content_id)
+            if raw_transcript and raw_transcript.channel.name:
                 concat_master = build_concat_master_use_case(
                     settings=pipeline.settings
                     if isinstance(pipeline.settings, CresmoSettings)
                     else None,
                     vault_port=pipeline.vault_port,
                 )
-                concat_master.execute(ChannelName(raw.channel.name))
+                concat_master.execute(ChannelName(raw_transcript.channel.name))
         except Exception as exc:  # noqa: BLE001
             sys.stderr.write(f"Warning: Master consolidation failed: {exc}\n")
 
@@ -423,6 +434,7 @@ def execute_batch_run(
     skipped = 0
     failed = 0
     batch_id = BatchId.generate()
+    aborted_by_quota = False
 
     total_count_suffix = f"/{len(sources)}" if isinstance(sources, Sized) else ""
 
@@ -442,6 +454,14 @@ def execute_batch_run(
                 skipped += 1
             else:
                 failed += 1
+        except CredentialPoolExhaustedError as exc:
+            failed += 1
+            aborted_by_quota = True
+            sys.stderr.write(
+                f"{item_prefix} [COOLDOWN ABORT] {source.target}: {exc}\n"
+                f"Halting batch processing immediately (fail-fast cooldown).\n"
+            )
+            break
         finally:
             _drain_telemetry_and_memory(pipeline)
 
@@ -451,7 +471,7 @@ def execute_batch_run(
         manifest_display = str(args.manifest) if args.manifest else "data/playlist.txt"
         sys.stdout.write(
             f"No sources found to process (manifest: {manifest_display}, "
-            f"raw lake scan: {not args.no_scan_raw}).\n"
+            f"raw lake scan: {getattr(args, 'scan_raw', False)}).\n"
         )
         return EXIT_SUCCESS
 
@@ -464,6 +484,8 @@ def execute_batch_run(
     )
 
     _consolidate_master_if_needed(pipeline, completed)
+    if aborted_by_quota:
+        return EXIT_RATE_LIMIT_EXCEEDED
     return EXIT_SUCCESS if failed == 0 else EXIT_INTERNAL_ERROR
 
 
@@ -497,7 +519,7 @@ def execute_batch_dry_run(pipeline: CresmoPipeline, sources: list[BatchSource]) 
                 ingested += 1
                 sys.stdout.write(
                     f"[{source_index}/{len(sources)}] Dry-run ingested: [{raw_transcript.content.id.value}] "
-                    f"({len(raw_transcript.content.body)} chars)\n"
+                    f"({len(raw_transcript.content.text)} chars)\n"
                 )
             else:
                 sys.stderr.write(
@@ -538,11 +560,15 @@ def _build_batch_discovery_query(
     settings: CresmoSettings,
 ) -> BatchDiscoveryQuery:
     """Build strongly-typed discovery query from parsed CLI arguments and settings."""
-    enable_crawl = (
-        False
-        if getattr(args, "no_crawl", False)
-        else getattr(settings, "enable_channel_crawler", True)
-    )
+    crawl_requested = getattr(args, "crawl", False)
+    no_crawl_requested = getattr(args, "no_crawl", False)
+
+    if no_crawl_requested:
+        enable_channel_crawler = False
+    elif crawl_requested:
+        enable_channel_crawler = True
+    else:
+        enable_channel_crawler = getattr(settings, "enable_channel_crawler", False)
 
     filter_criteria = SyncFilterCriteria.from_strings(
         channels=getattr(args, "channels", None) or [],
@@ -552,11 +578,11 @@ def _build_batch_discovery_query(
 
     return BatchDiscoveryQuery(
         explicit_manifest=args.manifest,
-        scan_raw=not args.no_scan_raw,
+        scan_raw=getattr(args, "scan_raw", False),
         lookback_days=settings.days_lookback,
         channel_max_videos=args.channel_max_videos,
         discovery_workers=settings.channel_discovery_workers,
-        enable_channel_crawler=enable_crawl,
+        enable_channel_crawler=enable_channel_crawler,
         filter_criteria=filter_criteria,
         queue_maxsize=settings.discovery_queue_maxsize,
     )
@@ -576,15 +602,15 @@ def _process_single_batch_item(
     """
     try:
         if source.kind is SourceModality.FILE:
-            target_path = Path(source.target)
-            if not is_processable_transcript_file(target_path):
+            file_path = Path(source.target)
+            if not is_processable_transcript_file(file_path):
                 sys.stdout.write(
-                    f"{item_prefix} [SKIPPED] [{target_path.name}] "
+                    f"{item_prefix} [SKIPPED] [{file_path.name}] "
                     "Ignored internal Cresmo artifact or system index.\n"
                 )
                 return "skipped"
             result = pipeline.run_for_text_file(
-                file_path=target_path,
+                file_path=file_path,
                 gap_filler_passes=args.passes,
                 force_reprocess=args.force_reprocess,
                 batch_id=batch_id,
@@ -614,6 +640,9 @@ def _process_single_batch_item(
 
         sys.stderr.write(f"{item_prefix} [ERROR] {source.target}: {result.error_message}\n")
         return "failed"
+    except CredentialPoolExhaustedError:
+        # Re-raise so execute_batch_run can abort the loop immediately per ADR-041 fail-fast policy
+        raise
     except RateLimitExceededError as exc:
         sys.stderr.write(f"{item_prefix} [RATE LIMIT] {source.target}: {exc}\n")
         return "failed"

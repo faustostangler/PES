@@ -17,10 +17,10 @@ from pathlib import Path
 from cresmo.application.ports import VaultRepositoryPort
 from cresmo.domain.entities import (
     AtomicNote,
-    EnrichedCompendium,
     MapOfContent,
-    SourceTranscript,
+    StageTranscript,
 )
+from cresmo.domain.stage_registry import StageName
 from cresmo.domain.value_objects import (
     ChannelName,
     ContentId,
@@ -50,6 +50,7 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
         vault_dir: Path,
         raw_dir: Path,
         enriched_dir: Path,
+        fluid_dir: Path | None = None,
         master_dir: Path | None = None,
         data_dir: Path | None = None,
         mocs_dir: Path | None = None,
@@ -59,6 +60,7 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
         self.raw_dir = Path(raw_dir).resolve()
         self.enriched_dir = Path(enriched_dir).resolve()
         self.data_dir = Path(data_dir).resolve() if data_dir else self.raw_dir.parent
+        self.fluid_dir = Path(fluid_dir).resolve() if fluid_dir else (self.data_dir / "fluid")
         self.master_dir = Path(master_dir).resolve() if master_dir else (self.data_dir / "master")
 
         self.mocs_dir = Path(mocs_dir).resolve() if mocs_dir else (self.vault_dir / "MOCs")
@@ -69,6 +71,8 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
         self._transcripts = TranscriptVaultHandler(
             raw_dir=self.raw_dir,
             enriched_dir=self.enriched_dir,
+            fluid_dir=self.fluid_dir,
+            data_dir=self.data_dir,
         )
         self._notes = AtomicNoteVaultHandler(
             vault_dir=self.vault_dir,
@@ -88,22 +92,26 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
         """Atomically write text content using temp-file replace pattern."""
         atomic_write(target_path, content)
 
-    # --- Transcripts & Compendiums ---
+    # --- Transcripts & Compendiums (ADR-058, ADR-059) ---
 
-    def save_transcript(self, transcript: SourceTranscript) -> None:
-        self._transcripts.save_transcript(transcript)
+    def resolve_stage_dir(self, stage_name: str | StageName) -> Path:
+        return self._transcripts.resolve_stage_dir(stage_name)
 
-    def get_raw_transcript(self, content_id: ContentId) -> SourceTranscript | None:
-        return self._transcripts.get_raw_transcript(content_id)
+    def save_stage_transcript(
+        self, stage_name: str | StageName, transcript: StageTranscript
+    ) -> None:
+        self._transcripts.save_stage_transcript(stage_name, transcript)
 
-    def save_enriched_compendium(self, compendium: EnrichedCompendium) -> None:
-        self._transcripts.save_enriched_compendium(compendium)
-
-    def get_enriched_compendium(self, content_id: ContentId) -> EnrichedCompendium | None:
-        return self._transcripts.get_enriched_compendium(content_id)
+    def get_stage_transcript(
+        self, stage_name: str | StageName, content_id: ContentId
+    ) -> StageTranscript | None:
+        return self._transcripts.get_stage_transcript(stage_name, content_id)
 
     def get_enriched_files_for_channel(self, channel_name: ChannelName) -> list[Path]:
         return self._transcripts.get_enriched_files_for_channel(channel_name)
+
+    def get_fluid_files_for_channel(self, channel_name: ChannelName) -> list[Path]:
+        return self._transcripts.get_fluid_files_for_channel(channel_name)
 
     # --- Atomic Notes ---
 

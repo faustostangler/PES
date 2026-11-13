@@ -17,7 +17,7 @@ from cresmo.domain.value_objects.quality import (
     JudgeCriterion,
     JudgeEvaluation,
 )
-from scripts.calibrate_fluid_prose_judge import (
+from scripts.fluid_prose.llm_judge.calibrate import (
     ConfusionMatrix,
     evaluate_single_item,
     run_local_calibration,

@@ -14,7 +14,7 @@ from sqlalchemy.orm import DeclarativeBase
 from cresmo.application.ports import LedgerRepositoryPort
 from cresmo.domain.value_objects import ChannelName, ContentId, LedgerEntry, PipelineStatus
 from cresmo.infrastructure.adapters.database import PostgresLedgerAdapter
-from cresmo.infrastructure.database.models import Base
+from cresmo.infrastructure.database.models import Base, OutboxRow
 
 
 @pytest.fixture
@@ -133,3 +133,34 @@ async def test_native_async_methods(ledger_adapter: PostgresLedgerAdapter) -> No
 
     all_entries = await ledger_adapter.list_entries_async(limit=10)
     assert len(all_entries) >= 1
+
+    # Verify native save_entry_async
+    async_entry = LedgerEntry(
+        content_id=ContentId("async_content_002"),
+        media_url="https://youtube.com/watch?v=async_content_002",
+        title="Async Saved Title",
+        channel_name=ChannelName("AsyncChannel"),
+        status=PipelineStatus.RUNNING,
+        notes_count=42,
+    )
+    await ledger_adapter.save_entry_async(async_entry)
+    fetched = await ledger_adapter.get_entry_async(ContentId("async_content_002"))
+    assert fetched is not None
+    assert fetched.title == "Async Saved Title"
+    assert fetched.notes_count == 42
+
+
+def test_outbox_row_schema_and_instantiation() -> None:
+    """Verify OutboxRow attributes and default values."""
+    now = datetime.now(UTC)
+    row = OutboxRow(
+        event_id="evt_001",
+        event_type="TranscriptIndexed",
+        payload='{"key": "value"}',
+        created_at=now,
+    )
+    assert row.event_id == "evt_001"
+    assert row.event_type == "TranscriptIndexed"
+    assert row.payload == '{"key": "value"}'
+    assert row.created_at == now
+    assert row.__tablename__ == "cresmo_outbox"

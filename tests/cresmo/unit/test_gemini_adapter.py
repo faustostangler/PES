@@ -162,7 +162,7 @@ class TestGeminiLLMAdapter:
             )
 
         mock_span.set_attribute.assert_any_call("gen_ai.system", "google")
-        mock_span.set_attribute.assert_any_call("gen_ai.request.model", "gemini-3.5-flash-lite")
+        mock_span.set_attribute.assert_any_call("gen_ai.request.model", "gemini-4-hydrogen")
         mock_span.set_attribute.assert_any_call("gen_ai.usage.input_tokens", 2)
         mock_span.set_attribute.assert_any_call("gen_ai.usage.output_tokens", 3)
         mock_span.set_attribute.assert_any_call("langfuse.observation.type", "generation")
@@ -304,14 +304,17 @@ class TestGeminiLLMAdapter:
                 genai_client=None,
                 langfuse_client=None,
             )
-            mock_client_cls.assert_called_once_with(api_key="secret-key")
+            mock_client_cls.assert_called_once()
+            call_kwargs = mock_client_cls.call_args.kwargs
+            assert call_kwargs["api_key"] == "secret-key"
+            assert call_kwargs["http_options"].timeout == 60000
             assert adapter._client == mock_client_cls.return_value
 
     def test_default_initialization_attributes(self) -> None:
         mock_client = MagicMock()
         adapter = GeminiLLMAdapter(genai_client=mock_client)
-        assert adapter.model_name == "gemini-3.5-flash-lite"
-        assert adapter.fallback_model_name == "gemini-3.1-flash-lite"
+        assert adapter.model_name == "gemini-4-hydrogen"
+        assert adapter.fallback_model_name == "gemini-3.8-flash"
         assert adapter.max_output_tokens == 8192
         assert adapter.default_temperature == 0.2
 
@@ -482,4 +485,3 @@ class TestGeminiLLMAdapter:
         assert client2.models.generate_content.call_count == 0
         # Primary key must still be primary (NOT cooled down)
         assert pool.lease()[0] == "k1"
-

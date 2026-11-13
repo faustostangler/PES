@@ -14,7 +14,38 @@ from cresmo.infrastructure.adapters.prompts.registry import PromptKey
 from cresmo.infrastructure.config import CresmoSettings
 
 
-def _resolve_language(provider: Any, context: dict[str, Any]) -> str:
+@runtime_checkable
+class PromptTemplateHost(Protocol):
+    """Protocol for provider hosting paired and single turn prompt templates."""
+
+    settings: Any
+    _templates: dict[str, Any]
+
+    @property
+    def language(self) -> str | None: ...
+
+    def _format_paired_prompt(self, template_key: str, **kwargs: Any) -> ChatPrompt: ...
+    def _format_single_prompt(self, template_key: str, **kwargs: Any) -> ChatPrompt: ...
+    def _get_skill_block(self, skill_name: str) -> str: ...
+    def _resolve_skill_block(self, entry: dict[str, Any]) -> str: ...
+
+
+@runtime_checkable
+class PromptBuilder(Protocol):
+    """First-class callable signature for prompt formatting builders.
+
+    Args:
+        provider: Enclosing prompt provider adapter instance.
+        **context: Keyword arguments for prompt formatting.
+
+    Returns:
+        ChatPrompt domain value object.
+    """
+
+    def __call__(self, provider: PromptTemplateHost, **context: Any) -> ChatPrompt: ...
+
+
+def _resolve_language(provider: PromptTemplateHost, context: dict[str, Any]) -> str:
     """Resolve target language adhering to SSOT configuration hierarchy.
 
     Order of precedence:
@@ -36,7 +67,7 @@ def _resolve_content_title(context: dict[str, Any]) -> str:
     return str(context.get("content_title") or context.get("title") or "")
 
 
-def build_raw_index_summary(provider: Any, **context: Any) -> ChatPrompt:
+def build_raw_index_summary(provider: PromptTemplateHost, **context: Any) -> ChatPrompt:
     return provider._format_paired_prompt(
         PromptKey.RAW_INDEX_SUMMARY.value,
         content_title=_resolve_content_title(context),
@@ -45,7 +76,7 @@ def build_raw_index_summary(provider: Any, **context: Any) -> ChatPrompt:
     )
 
 
-def build_raw_index_concepts(provider: Any, **context: Any) -> ChatPrompt:
+def build_raw_index_concepts(provider: PromptTemplateHost, **context: Any) -> ChatPrompt:
     return provider._format_paired_prompt(
         PromptKey.RAW_INDEX_CONCEPTS.value,
         content_title=_resolve_content_title(context),
@@ -54,7 +85,7 @@ def build_raw_index_concepts(provider: Any, **context: Any) -> ChatPrompt:
     )
 
 
-def build_raw_index_concepts_rewrite(provider: Any, **context: Any) -> ChatPrompt:
+def build_raw_index_concepts_rewrite(provider: PromptTemplateHost, **context: Any) -> ChatPrompt:
     lang = _resolve_language(provider, context)
     return provider._format_single_prompt(
         PromptKey.RAW_INDEX_CONCEPTS_REWRITE.value,
@@ -64,7 +95,7 @@ def build_raw_index_concepts_rewrite(provider: Any, **context: Any) -> ChatPromp
     )
 
 
-def build_raw_index_synthesis(provider: Any, **context: Any) -> ChatPrompt:
+def build_raw_index_synthesis(provider: PromptTemplateHost, **context: Any) -> ChatPrompt:
     return provider._format_paired_prompt(
         PromptKey.RAW_INDEX_SYNTHESIS.value,
         channel_name=context.get("channel_name", ""),
@@ -74,7 +105,7 @@ def build_raw_index_synthesis(provider: Any, **context: Any) -> ChatPrompt:
     )
 
 
-def build_judge_raw_index_summary(provider: Any, **context: Any) -> ChatPrompt:
+def build_judge_raw_index_summary(provider: PromptTemplateHost, **context: Any) -> ChatPrompt:
     return provider._format_paired_prompt(
         PromptKey.JUDGE_RAW_INDEX_SUMMARY.value,
         content_title=_resolve_content_title(context),
@@ -84,7 +115,7 @@ def build_judge_raw_index_summary(provider: Any, **context: Any) -> ChatPrompt:
     )
 
 
-def build_judge_raw_index_concepts(provider: Any, **context: Any) -> ChatPrompt:
+def build_judge_raw_index_concepts(provider: PromptTemplateHost, **context: Any) -> ChatPrompt:
     return provider._format_paired_prompt(
         PromptKey.JUDGE_RAW_INDEX_CONCEPTS.value,
         content_title=_resolve_content_title(context),
@@ -94,7 +125,7 @@ def build_judge_raw_index_concepts(provider: Any, **context: Any) -> ChatPrompt:
     )
 
 
-def build_judge_raw_index_synthesis(provider: Any, **context: Any) -> ChatPrompt:
+def build_judge_raw_index_synthesis(provider: PromptTemplateHost, **context: Any) -> ChatPrompt:
     transcript_excerpt = context.get("transcript_excerpt", "")
     return provider._format_paired_prompt(
         PromptKey.JUDGE_RAW_INDEX_SYNTHESIS.value,
@@ -106,14 +137,17 @@ def build_judge_raw_index_synthesis(provider: Any, **context: Any) -> ChatPrompt
     )
 
 
-def build_fluid_prose(provider: Any, **context: Any) -> ChatPrompt:
+def build_fluid_prose(provider: PromptTemplateHost, **context: Any) -> ChatPrompt:
     key = PromptKey.FLUID_PROSE.value
     entry = provider._templates.get(key, {})
     task = entry.get("task", "")
-    skill_name = entry.get("skill_name", "cresmo-fluid-prose")
-    template = entry.get("template", "")
-    system_template = entry.get("system_instruction", "")
-    skill_block = provider._get_skill_block(skill_name)
+    template = entry.get("user_prompt", "")
+    system_template = entry.get("system_prompt", "")
+    skill_block = (
+        provider._resolve_skill_block(entry)
+        if hasattr(provider, "_resolve_skill_block")
+        else provider._get_skill_block(entry.get("skill_name", "cresmo-fluid-prose"))
+    )
     channel_name = context.get("channel_name", "")
     file_name = context.get("file_name", "")
     raw_text = context.get("raw_text", "")
@@ -138,25 +172,35 @@ def build_fluid_prose(provider: Any, **context: Any) -> ChatPrompt:
     )
 
 
-def build_gap_filler_pass1(provider: Any, **context: Any) -> ChatPrompt:
-    key = PromptKey.GAP_FILLER_PASS1.value
+def build_gap_filler(provider: PromptTemplateHost, **context: Any) -> ChatPrompt:
+    key = PromptKey.GAP_FILLER.value
     entry = provider._templates.get(key, {})
     task = entry.get("task", "")
     skill_name = entry.get("skill_name", "cresmo-gap-filler")
-    template = entry.get("template", "")
-    system_template = entry.get("system_instruction", "")
+    template = entry.get("user_prompt", "")
+    system_template = entry.get("system_prompt", "")
     skill_block = provider._get_skill_block(skill_name)
     channel_name = context.get("channel_name", "")
     file_name = context.get("file_name", "")
-    raw_text = context.get("raw_text", "")
+    source_text = context.get("source_text") or context.get("raw_text", "")
+    current_text = context.get("current_text")
+    pass_num = context.get("pass_num", 1)
     total_passes = context.get("total_passes", 1)
+    language = _resolve_language(provider, context)
+
+    draft_section = (
+        f'\n<draft pass="{pass_num - 1}">\n{current_text}\n</draft>\n'
+        if current_text
+        else ""
+    )
 
     if not template and not system_template:
         sys_inst = f"{task}\n\n{skill_block}".strip()
         user_p = (
             f"Source Channel: {channel_name}\n"
             f"File: {file_name}\n\n"
-            f"Transcript:\n{raw_text}\n\n"
+            f"<source_text>\n{source_text}\n</source_text>\n"
+            f"{draft_section}\n"
             "Transform into continuous fluid Markdown prose with analytical headings (## and ###) "
             "and mandatory '## Informações Complementares' section."
         )
@@ -164,56 +208,26 @@ def build_gap_filler_pass1(provider: Any, **context: Any) -> ChatPrompt:
 
     return provider._format_paired_prompt(
         key,
-        total_passes=total_passes,
-        channel_name=channel_name,
-        file_name=file_name,
-        raw_text=raw_text,
-    )
-
-
-def build_gap_filler_subsequent(provider: Any, **context: Any) -> ChatPrompt:
-    key = PromptKey.GAP_FILLER_PASS_SUBSEQUENT.value
-    entry = provider._templates.get(key, {})
-    task = entry.get("task", "")
-    skill_name = entry.get("skill_name", "cresmo-expander")
-    template = entry.get("template", "")
-    system_template = entry.get("system_instruction", "")
-    skill_block = provider._get_skill_block(skill_name)
-    pass_num = context.get("pass_num", 2)
-    total_passes = context.get("total_passes", 2)
-    channel_name = context.get("channel_name", "")
-    raw_text = context.get("raw_text", "")
-    current_text = context.get("current_text")
-    prev_draft = current_text if current_text is not None else raw_text
-
-    if not template and not system_template:
-        sys_inst = f"{task}\n\n{skill_block}".strip()
-        user_p = (
-            f"Source Channel: {channel_name}\n\n"
-            f"--- ORIGINAL RAW TRANSCRIPT (GROUND TRUTH REFERENCE) ---\n{raw_text}\n\n"
-            f"--- PREVIOUS PASS EXPANDED COMPENDIUM DRAFT (PASS {pass_num - 1} TO ENRICH) ---\n{prev_draft}\n\n"
-            "Execute Socratic gap filling and theoretical densification."
-        )
-        return ChatPrompt.from_system_and_user(user=user_p, system=sys_inst if sys_inst else None)
-
-    return provider._format_paired_prompt(
-        key,
+        language=language,
         pass_num=pass_num,
         total_passes=total_passes,
         prev_pass_num=pass_num - 1,
         channel_name=channel_name,
-        raw_text=raw_text,
-        current_text=prev_draft,
+        file_name=file_name,
+        source_text=source_text,
+        raw_text=source_text,
+        current_text=current_text or "",
+        draft_section=draft_section,
     )
 
 
-def build_long_expander(provider: Any, **context: Any) -> ChatPrompt:
+def build_long_expander(provider: PromptTemplateHost, **context: Any) -> ChatPrompt:
     key = PromptKey.LONG_EXPANDER.value
     entry = provider._templates.get(key, {})
     task = entry.get("task", "")
     skill_name = entry.get("skill_name", "cresmo-long-expander")
-    template = entry.get("template", "")
-    system_template = entry.get("system_instruction", "")
+    template = entry.get("user_prompt", "")
+    system_template = entry.get("system_prompt", "")
     skill_block = provider._get_skill_block(skill_name)
     compendium_body = context.get("compendium_body", "")
     complementary_info = context.get("complementary_info", "")
@@ -232,13 +246,13 @@ def build_long_expander(provider: Any, **context: Any) -> ChatPrompt:
     )
 
 
-def build_wide_expander(provider: Any, **context: Any) -> ChatPrompt:
+def build_wide_expander(provider: PromptTemplateHost, **context: Any) -> ChatPrompt:
     key = PromptKey.WIDE_EXPANDER.value
     entry = provider._templates.get(key, {})
     task = entry.get("task", "")
     skill_name = entry.get("skill_name", "cresmo-wide-expander")
-    template = entry.get("template", "")
-    system_template = entry.get("system_instruction", "")
+    template = entry.get("user_prompt", "")
+    system_template = entry.get("system_prompt", "")
     skill_block = provider._get_skill_block(skill_name)
     current_text = context.get("current_text", "")
 
@@ -255,13 +269,13 @@ def build_wide_expander(provider: Any, **context: Any) -> ChatPrompt:
     )
 
 
-def build_atomic_inventory(provider: Any, **context: Any) -> ChatPrompt:
+def build_atomic_inventory(provider: PromptTemplateHost, **context: Any) -> ChatPrompt:
     key = PromptKey.ATOMIC_INVENTORY.value
     entry = provider._templates.get(key, {})
     task = entry.get("task", "")
     skill_name = entry.get("skill_name", "cresmo-atomic")
-    template = entry.get("template", "")
-    system_template = entry.get("system_instruction", "")
+    template = entry.get("user_prompt", "")
+    system_template = entry.get("system_prompt", "")
     skill_block = provider._get_skill_block(skill_name)
     content_title = _resolve_content_title(context)
     channel_name = context.get("channel_name", "")
@@ -285,7 +299,7 @@ def build_atomic_inventory(provider: Any, **context: Any) -> ChatPrompt:
     )
 
 
-def build_judge_atomic_inventory(provider: Any, **context: Any) -> ChatPrompt:
+def build_judge_atomic_inventory(provider: PromptTemplateHost, **context: Any) -> ChatPrompt:
     channel_name = context.get("channel_name", "")
     ch_str = channel_name.value if isinstance(channel_name, ChannelName) else channel_name
     return provider._format_paired_prompt(
@@ -297,13 +311,13 @@ def build_judge_atomic_inventory(provider: Any, **context: Any) -> ChatPrompt:
     )
 
 
-def build_atomic_batch(provider: Any, **context: Any) -> ChatPrompt:
+def build_atomic_batch(provider: PromptTemplateHost, **context: Any) -> ChatPrompt:
     key = PromptKey.ATOMIC_BATCH.value
     entry = provider._templates.get(key, {})
     task = entry.get("task", "")
     skill_name = entry.get("skill_name", "cresmo-atomic")
-    template = entry.get("template", "")
-    system_template = entry.get("system_instruction", "")
+    template = entry.get("user_prompt", "")
+    system_template = entry.get("system_prompt", "")
     skill_block = provider._get_skill_block(skill_name)
     content_title = _resolve_content_title(context)
     channel_name = context.get("channel_name", "")
@@ -330,13 +344,13 @@ def build_atomic_batch(provider: Any, **context: Any) -> ChatPrompt:
     )
 
 
-def build_reconcile_mocs(provider: Any, **context: Any) -> ChatPrompt:
+def build_reconcile_mocs(provider: PromptTemplateHost, **context: Any) -> ChatPrompt:
     key = PromptKey.RECONCILE_MOCS.value
     entry = provider._templates.get(key, {})
     task = entry.get("task", "")
     skill_name = entry.get("skill_name", "cresmo-moc-manager")
-    template = entry.get("template", "")
-    system_template = entry.get("system_instruction", "")
+    template = entry.get("user_prompt", "")
+    system_template = entry.get("system_prompt", "")
     skill_block = provider._get_skill_block(skill_name)
     notes_json = context.get("notes_json", "")
 
@@ -353,38 +367,33 @@ def build_reconcile_mocs(provider: Any, **context: Any) -> ChatPrompt:
     )
 
 
-def build_llm_judge(provider: Any, **context: Any) -> ChatPrompt:
+def build_judge_fluid_prose(provider: PromptTemplateHost, **context: Any) -> ChatPrompt:
     return provider._format_paired_prompt(
-        PromptKey.LLM_JUDGE.value,
-        stage_name=context.get("stage_name", ""),
+        PromptKey.JUDGE_FLUID_PROSE.value,
+        stage_name=context.get("stage_name", "fluid_prose"),
         criteria_json=context.get("criteria_json", "[]"),
         source_text=context.get("source_text", ""),
         candidate_text=context.get("candidate_text", ""),
     )
 
 
-def build_ollama_critique(provider: Any, **context: Any) -> ChatPrompt:
+def build_judge_gap_filler(provider: PromptTemplateHost, **context: Any) -> ChatPrompt:
+    return provider._format_paired_prompt(
+        PromptKey.JUDGE_GAP_FILLER.value,
+        stage_name=context.get("stage_name", "gap_filler"),
+        criteria_json=context.get("criteria_json", "[]"),
+        source_text=context.get("source_text", ""),
+        candidate_text=context.get("candidate_text", ""),
+    )
+
+
+def build_ollama_critique(provider: PromptTemplateHost, **context: Any) -> ChatPrompt:
     return provider._format_paired_prompt(
         PromptKey.OLLAMA_CRITIQUE.value,
         stage_name=context.get("stage_name", ""),
         overall_score=context.get("overall_score", ""),
         criteria_failures=context.get("criteria_failures", ""),
     )
-
-
-@runtime_checkable
-class PromptBuilder(Protocol):
-    """First-class callable signature for prompt formatting builders.
-
-    Args:
-        provider: Enclosing prompt provider adapter instance.
-        **context: Keyword arguments for prompt formatting.
-
-    Returns:
-        ChatPrompt domain value object.
-    """
-
-    def __call__(self, provider: Any, /, **context: Any) -> ChatPrompt: ...
 
 
 @dataclass
@@ -488,8 +497,7 @@ def create_default_prompt_builder_registry() -> PromptBuilderRegistry:
     """Instantiate, populate, validate, and freeze the canonical PromptBuilderRegistry."""
     registry = PromptBuilderRegistry()
     registry.register(PromptKey.FLUID_PROSE, build_fluid_prose)
-    registry.register(PromptKey.GAP_FILLER_PASS1, build_gap_filler_pass1)
-    registry.register(PromptKey.GAP_FILLER_PASS_SUBSEQUENT, build_gap_filler_subsequent)
+    registry.register(PromptKey.GAP_FILLER, build_gap_filler)
     registry.register(PromptKey.LONG_EXPANDER, build_long_expander)
     registry.register(PromptKey.WIDE_EXPANDER, build_wide_expander)
     registry.register(PromptKey.ATOMIC_INVENTORY, build_atomic_inventory)
@@ -503,7 +511,8 @@ def create_default_prompt_builder_registry() -> PromptBuilderRegistry:
     registry.register(PromptKey.JUDGE_RAW_INDEX_SUMMARY, build_judge_raw_index_summary)
     registry.register(PromptKey.JUDGE_RAW_INDEX_CONCEPTS, build_judge_raw_index_concepts)
     registry.register(PromptKey.JUDGE_RAW_INDEX_SYNTHESIS, build_judge_raw_index_synthesis)
-    registry.register(PromptKey.LLM_JUDGE, build_llm_judge)
+    registry.register(PromptKey.JUDGE_FLUID_PROSE, build_judge_fluid_prose)
+    registry.register(PromptKey.JUDGE_GAP_FILLER, build_judge_gap_filler)
     registry.register(PromptKey.OLLAMA_CRITIQUE, build_ollama_critique)
 
     registry.validate_completeness()

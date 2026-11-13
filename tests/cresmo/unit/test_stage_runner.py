@@ -17,7 +17,7 @@ from cresmo.application.pipeline.context import PipelineExecutionContext
 from cresmo.application.pipeline.stage_descriptor import StageConfig
 from cresmo.application.pipeline.stage_runner import PipelineStageRunner
 from cresmo.application.ports import NoOpMetricsPort, NoOpTelemetryPort, TelemetryPort
-from cresmo.domain.entities import PipelineSessionId, UserIdentity
+from cresmo.domain.entities import PipelineSessionId, StageTranscript, UserIdentity
 from cresmo.domain.exceptions import DomainValidationError, StageQuarantinedError
 from cresmo.domain.value_objects import (
     CandidateText,
@@ -29,6 +29,7 @@ from cresmo.domain.value_objects import (
     CriterionScore,
     JudgeCriterion,
     JudgeEvaluation,
+    MediaProvenance,
     PromptKey,
     StageEvaluationSpec,
 )
@@ -296,7 +297,7 @@ class TestPipelineStageRunnerEvaluatedStage:
         """Verify execute_stage cleanly consumes PipelineExecutionContext."""
         from cresmo.application.pipeline.context import PipelineExecutionContext
         from cresmo.application.pipeline.stage_descriptor import StageConfig
-        from cresmo.domain.entities import PipelineSessionId, SourceTranscript, UserIdentity
+        from cresmo.domain.entities import PipelineSessionId, StageTranscript, UserIdentity
         from cresmo.domain.value_objects import CandidateText, PromptKey
         from cresmo.infrastructure.adapters.prompt_provider import JsonPromptProvider
         from tests.doubles.mock_adapters import MockLLMAdapter
@@ -314,23 +315,24 @@ class TestPipelineStageRunnerEvaluatedStage:
         )
 
         channel = Channel(name="CtxChannel")
-        content = Content.create(id=ContentId("vid_ctx_1"), title="CtxTitle")
+        content = Content.create(
+            id=ContentId("vid_ctx_1"), title="CtxTitle", session_id="ch_test:vid_ctx_1"
+        )
         ctx = PipelineExecutionContext(
-            session_id=PipelineSessionId("ch_test:vid_ctx_1"),
             user_identity=UserIdentity.worker(),
             channel=channel,
             content=content,
         )
 
-        descriptor = StageConfig[SourceTranscript, CandidateText](
+        descriptor = StageConfig[StageTranscript, CandidateText](
             stage_name="fluid_prose",
             transform_prompt_key=PromptKey.FLUID_PROSE,
         )
 
-        source = SourceTranscript(
-            content_id=ContentId("vid_ctx_1"),
-            channel_name=ChannelName("CtxChannel"),
-            body="Raw speech text.",
+        source = StageTranscript(
+            channel=Channel(name="CtxChannel"),
+            provenance=MediaProvenance(),
+            content=Content(id=ContentId("vid_ctx_1"), title="CtxTitle", text="Raw speech text."),
         )
 
         result = runner.execute_stage(descriptor, source, context=ctx)
@@ -411,7 +413,7 @@ class TestPipelineStageRunnerEvaluatedStage:
 
         from cresmo.application.pipeline.context import PipelineExecutionContext
         from cresmo.application.pipeline.stage_descriptor import StageConfig
-        from cresmo.domain.entities import PipelineSessionId, UserIdentity
+        from cresmo.domain.entities import PipelineSessionId, StageTranscript, UserIdentity
         from cresmo.domain.value_objects import CandidateText, PromptKey
 
         provider = TracerProvider()
@@ -439,10 +441,9 @@ class TestPipelineStageRunnerEvaluatedStage:
         )
 
         context = PipelineExecutionContext(
-            session_id=PipelineSessionId.create(channel="test_chan", content_id="test_vid"),
             user_identity=UserIdentity.anonymous(),
             channel=Channel(name="TestChan"),
-            content=Content(id=ContentId("test_vid")),
+            content=Content(id=ContentId("test_vid"), session_id="test_chan:test_vid"),
         )
 
         candidate = CandidateText(text="candidate prose", stage_name="fluid_prose")
@@ -489,10 +490,9 @@ class TestPipelineStageRunnerEvaluatedStage:
         )
 
         context = PipelineExecutionContext(
-            session_id=PipelineSessionId.create(channel="test_chan", content_id="test_vid"),
             user_identity=UserIdentity.anonymous(),
             channel=Channel(name="TestChan"),
-            content=Content(id=ContentId("test_vid")),
+            content=Content(id=ContentId("test_vid"), session_id="test_chan:test_vid"),
         )
         candidate = CandidateText(text="candidate prose", stage_name="fluid_prose")
 
@@ -519,7 +519,7 @@ class TestStageRunnerHelperAndInit:
 
     def test_as_str_exhaustive(self) -> None:
         from cresmo.application.pipeline.stage_runner import _as_str
-        from cresmo.domain.entities import PipelineSessionId, UserIdentity
+        from cresmo.domain.entities import PipelineSessionId, StageTranscript, UserIdentity
         from cresmo.domain.value_objects import ChannelId, ChannelName, ContentId
 
         assert _as_str(None) == ""
@@ -550,7 +550,7 @@ class TestStageRunnerHelperAndInit:
 
         runner = PipelineStageRunner(telemetry_port=mock_t, metrics_port=mock_m)
         assert runner.judge_blocking is False
-        assert runner.judge_max_attempts == 1
+        assert runner.judge_max_attempts == 2
         assert runner.prompt_provider is None
         assert runner.llm_transformation_port is None
         assert runner.stage_factory is None
@@ -969,7 +969,7 @@ class TestStageRunnerExecuteStageRetriesAndQuarantine:
     """Verifies end-to-end execute_stage telemetry recording, retries, and quarantine metrics."""
 
     def test_execute_stage_retries_and_metrics(self) -> None:
-        from cresmo.domain.entities import SourceTranscript
+        from cresmo.domain.entities import StageTranscript
 
         mock_t = MagicMock(spec=TelemetryPort)
         mock_m = MagicMock()
@@ -1007,7 +1007,7 @@ class TestStageRunnerExecuteStageRetriesAndQuarantine:
             llm_transformation_port=mock_llm,
         )
 
-        stage_cfg = StageConfig[SourceTranscript, CandidateText](
+        stage_cfg = StageConfig[StageTranscript, CandidateText](
             stage_name="fluid_prose",
             transform_prompt_key=PromptKey.FLUID_PROSE,
             eval_spec=StageEvaluationSpec(
@@ -1018,16 +1018,17 @@ class TestStageRunnerExecuteStageRetriesAndQuarantine:
             ),
         )
 
-        source = SourceTranscript(
-            content_id=ContentId("vid_retry_1"),
-            channel_name=ChannelName("RetCh"),
-            body="Source audio text words.",
+        source = StageTranscript(
+            channel=Channel(name="RetCh", id=ChannelId("UC_ret")),
+            provenance=MediaProvenance(),
+            content=Content(id=ContentId("vid_retry_1"), title="Retry Title", text="Source audio text words."),
         )
         ctx = PipelineExecutionContext(
-            session_id=PipelineSessionId("ret_sess:1"),
             user_identity=UserIdentity.worker(),
             channel=Channel(name="RetCh", id=ChannelId("UC_ret")),
-            content=Content.create(id=ContentId("vid_retry_1"), title="Retry Title"),
+            content=Content.create(
+                id=ContentId("vid_retry_1"), title="Retry Title", session_id="ret_sess:1"
+            ),
         )
 
         result = runner.execute_stage(stage_cfg, source, context=ctx)
@@ -1043,7 +1044,7 @@ class TestStageRunnerExecuteStageRetriesAndQuarantine:
         mock_t.record_stage_io.assert_any_call(
             input_payload={
                 "stage_name": "fluid_prose",
-                "source_type": "SourceTranscript",
+                "source_type": "StageTranscript",
                 "source_characters": len("source text"),
                 "source_words": len(["source", "text"]),
             }
@@ -1058,7 +1059,7 @@ class TestStageRunnerExecuteStageRetriesAndQuarantine:
         )
 
     def test_execute_stage_completed_unblocking_status(self) -> None:
-        from cresmo.domain.entities import SourceTranscript
+        from cresmo.domain.entities import StageTranscript
 
         mock_t = MagicMock(spec=TelemetryPort)
         mock_m = MagicMock()
@@ -1086,7 +1087,7 @@ class TestStageRunnerExecuteStageRetriesAndQuarantine:
             llm_transformation_port=mock_llm,
         )
 
-        stage_cfg = StageConfig[SourceTranscript, CandidateText](
+        stage_cfg = StageConfig[StageTranscript, CandidateText](
             stage_name="fluid_prose",
             transform_prompt_key=PromptKey.FLUID_PROSE,
             eval_spec=StageEvaluationSpec(
@@ -1097,16 +1098,17 @@ class TestStageRunnerExecuteStageRetriesAndQuarantine:
             ),
         )
 
-        source = SourceTranscript(
-            content_id=ContentId("vid_unblock"),
-            channel_name=ChannelName("UnblockCh"),
-            body="Source text words.",
+        source = StageTranscript(
+            channel=Channel(name="UnblockCh"),
+            provenance=MediaProvenance(),
+            content=Content(id=ContentId("vid_unblock"), title="Unblock Title", text="Source text words."),
         )
         ctx = PipelineExecutionContext(
-            session_id=PipelineSessionId("unblock_sess:1"),
             user_identity=UserIdentity.worker(),
             channel=Channel(name="UnblockCh"),
-            content=Content.create(id=ContentId("vid_unblock"), title="Unblock Title"),
+            content=Content.create(
+                id=ContentId("vid_unblock"), title="Unblock Title", session_id="unblock_sess:1"
+            ),
         )
 
         result = runner.execute_stage(stage_cfg, source, context=ctx)
@@ -1123,7 +1125,7 @@ class TestStageRunnerExecuteStageRetriesAndQuarantine:
         )
 
     def test_execute_stage_quarantine_recorded_when_blocking(self) -> None:
-        from cresmo.domain.entities import SourceTranscript
+        from cresmo.domain.entities import StageTranscript
 
         mock_t = MagicMock(spec=TelemetryPort)
         mock_m = MagicMock()
@@ -1153,7 +1155,7 @@ class TestStageRunnerExecuteStageRetriesAndQuarantine:
             llm_transformation_port=mock_llm,
         )
 
-        stage_cfg = StageConfig[SourceTranscript, CandidateText](
+        stage_cfg = StageConfig[StageTranscript, CandidateText](
             stage_name="fluid_prose",
             transform_prompt_key=PromptKey.FLUID_PROSE,
             blocking=True,
@@ -1165,16 +1167,19 @@ class TestStageRunnerExecuteStageRetriesAndQuarantine:
             ),
         )
 
-        source = SourceTranscript(
-            content_id=ContentId("vid_quarantine"),
-            channel_name=ChannelName("QuarantineCh"),
-            body="Source text words.",
+        source = StageTranscript(
+            channel=Channel(name="QuarantineCh", id=ChannelId("UC_quarantine")),
+            provenance=MediaProvenance(),
+            content=Content(id=ContentId("vid_quarantine"), title="Quarantine Title", text="Source text words."),
         )
         ctx = PipelineExecutionContext(
-            session_id=PipelineSessionId("quarantine_sess:1"),
             user_identity=UserIdentity.worker(),
             channel=Channel(name="QuarantineCh", id=ChannelId("UC_quarantine")),
-            content=Content.create(id=ContentId("vid_quarantine"), title="Quarantine Title"),
+            content=Content.create(
+                id=ContentId("vid_quarantine"),
+                title="Quarantine Title",
+                session_id="quarantine_sess:1",
+            ),
         )
 
         with pytest.raises(StageQuarantinedError) as exc_info:
@@ -1212,10 +1217,11 @@ class TestStageRunnerCandidateGenerationAndEvaluation:
         mock_stage_cfg.build_transform_prompt.return_value = "Formatted prompt"
 
         ctx = PipelineExecutionContext(
-            session_id=PipelineSessionId("sess:123"),
             user_identity=UserIdentity.worker(),
             channel=Channel(name="TechChan", id=ChannelId("UC_tech")),
-            content=Content.create(id=ContentId("c1234567"), title="Ep 1"),
+            content=Content.create(
+                id=ContentId("c1234567"), title="Ep 1", session_id="sess:123"
+            ),
         )
 
         candidate = runner._generate_candidate(
@@ -1264,10 +1270,11 @@ class TestStageRunnerCandidateGenerationAndEvaluation:
         mock_stage_cfg.build_transform_prompt.return_value = "P"
 
         ctx = PipelineExecutionContext(
-            session_id=PipelineSessionId("sess:456"),
             user_identity=UserIdentity.worker(),
             channel=Channel(name="NoIdChan", id=None),
-            content=Content.create(id=ContentId("c7654321"), title="Ep 2"),
+            content=Content.create(
+                id=ContentId("c7654321"), title="Ep 2", session_id="sess:456"
+            ),
         )
 
         mock_pp = MagicMock()
@@ -1300,10 +1307,9 @@ class TestStageRunnerCandidateGenerationAndEvaluation:
         mock_stage_cfg = MagicMock()
         mock_stage_cfg.eval_spec = None
         ctx = PipelineExecutionContext(
-            session_id=PipelineSessionId("s:1"),
             user_identity=UserIdentity.worker(),
             channel=Channel(name="Ch"),
-            content=Content.create(id=ContentId("c1234567"), title="T"),
+            content=Content.create(id=ContentId("c1234567"), title="T", session_id="s:1"),
         )
         cand = CandidateText(text="hello", stage_name="s", metadata={})
         assert (
@@ -1376,10 +1382,9 @@ class TestStageRunnerCandidateGenerationAndEvaluation:
         )
 
         ctx = PipelineExecutionContext(
-            session_id=PipelineSessionId("s:1"),
             user_identity=UserIdentity.worker(),
             channel=Channel(name="Ch", id=ChannelId("UC_1")),
-            content=Content.create(id=ContentId("c1234567"), title="Ep 1"),
+            content=Content.create(id=ContentId("c1234567"), title="Ep 1", session_id="s:1"),
         )
         cand = CandidateText(text="cleaned prose", stage_name="fluid_prose", metadata={})
 
@@ -1464,10 +1469,9 @@ class TestStageRunnerCandidateGenerationAndEvaluation:
             ),
         )
         ctx = PipelineExecutionContext(
-            session_id=PipelineSessionId("s:2"),
             user_identity=UserIdentity.worker(),
             channel=Channel(name="Ch", id=None),
-            content=Content.create(id=ContentId("c1234567"), title="Ep 2"),
+            content=Content.create(id=ContentId("c1234567"), title="Ep 2", session_id="s:2"),
         )
         cand = CandidateText(text="imperfect", stage_name="fluid_prose", metadata={})
 
@@ -1807,27 +1811,28 @@ class TestStageRunnerStageExecutionAndFallback:
         )
 
         ctx = PipelineExecutionContext(
-            session_id=PipelineSessionId("s:1"),
             user_identity=UserIdentity.worker(),
             channel=Channel(name="ExChan", id=ChannelId("UC_ex")),
-            content=Content.create(id=ContentId("c1234567"), title="Ex Title"),
+            content=Content.create(id=ContentId("c1234567"), title="Ex Title", session_id="s:1"),
         )
 
-        # Case 1: source has .body string, eval_spec is None
-        class SourceWithBody:
-            body = "Source body text here"
-
-        cfg1 = StageConfig[SourceWithBody, CandidateText](
+        # Case 1: source is StageTranscript
+        src_stage = StageTranscript(
+            channel=Channel(name="ExChan", id=ChannelId("UC_ex")),
+            provenance=MediaProvenance(),
+            content=Content(id=ContentId("c1234567"), title="Ex Title", text="Source body text here"),
+        )
+        cfg1 = StageConfig[StageTranscript, CandidateText](
             stage_name="fluid_prose",
             transform_prompt_key=PromptKey.FLUID_PROSE,
             eval_spec=None,
         )
-        res1 = runner.execute_stage(cfg1, SourceWithBody(), context=ctx)
+        res1 = runner.execute_stage(cfg1, src_stage, context=ctx)
         assert res1.text == "Prose text"
         mock_t.record_stage_io.assert_any_call(
             input_payload={
                 "stage_name": "fluid_prose",
-                "source_type": "SourceWithBody",
+                "source_type": "StageTranscript",
                 "source_characters": len("Source body text here"),
                 "source_words": len(["Source", "body", "text", "here"]),
             }
@@ -1855,7 +1860,7 @@ class TestStageRunnerStageExecutionAndFallback:
 
         # Case 3: source has .content that is Content
         class SourceWithContent:
-            content = Content(id=ContentId("c1234567"), body="Content body text")
+            content = Content(id=ContentId("c1234567"), text="Content body text")
 
         mock_t.reset_mock()
         cfg3 = StageConfig[SourceWithContent, CandidateText](
@@ -2177,10 +2182,9 @@ class TestStageRunnerStageExecutionAndFallback:
         runner = PipelineStageRunner(telemetry_port=mock_t, metrics_port=mock_m)
 
         ctx = PipelineExecutionContext(
-            session_id=PipelineSessionId("s:1"),
             user_identity=UserIdentity.worker(),
             channel=Channel(name="Chan", id=ChannelId("UC_1")),
-            content=Content.create(id=ContentId("c1234567"), title="Title"),
+            content=Content.create(id=ContentId("c1234567"), title="Title", session_id="s:1"),
         )
 
         mock_pp = MagicMock()
@@ -2303,7 +2307,7 @@ class TestStageRunnerStageExecutionAndFallback:
         prov = MediaProvenance(url="https://youtube.com/watch?v=123", description="video")
         source_with_prov = MagicMock()
         source_with_prov.provenance = prov
-        source_with_prov.content = Content(id=ContentId("c123"), body="Source prov text")
+        source_with_prov.content = Content(id=ContentId("c123"), text="Source prov text")
 
         runner_blocking = PipelineStageRunner(
             telemetry_port=mock_t,
@@ -2378,20 +2382,20 @@ class TestStageRunnerStageExecutionAndFallback:
             mock_record_quar2.assert_called_once()
 
         # Source with non-string text (int)
-        class SourceWithIntBody:
-            body = 999
+        class SourceWithIntText:
+            text = 999
 
-        cfg_int_src = StageConfig[SourceWithIntBody, CandidateText](
+        cfg_int_src = StageConfig[SourceWithIntText, CandidateText](
             stage_name="fluid_prose",
             transform_prompt_key=PromptKey.FLUID_PROSE,
             eval_spec=None,
         )
         mock_t.reset_mock()
-        runner_j1.execute_stage(cfg_int_src, SourceWithIntBody(), context=ctx)
+        runner_j1.execute_stage(cfg_int_src, SourceWithIntText(), context=ctx)
         mock_t.record_stage_io.assert_any_call(
             input_payload={
                 "stage_name": "fluid_prose",
-                "source_type": "SourceWithIntBody",
+                "source_type": "SourceWithIntText",
                 "source_characters": 0,
                 "source_words": 0,
             }
@@ -2401,7 +2405,7 @@ class TestStageRunnerStageExecutionAndFallback:
         # 1. output_obj has .content that is Content
         class OutputWithContent:
             def __init__(self) -> None:
-                self.content = Content(id=ContentId("c123"), body="Content obj body")
+                self.content = Content(id=ContentId("c123"), text="Content obj body")
 
         cfg_content = StageConfig[MagicMock, OutputWithContent](
             stage_name="fluid_prose",
@@ -2420,46 +2424,45 @@ class TestStageRunnerStageExecutionAndFallback:
             }
         )
 
-        # 2. output_obj has .body string
-        class OutputWithBody:
+        # 2. output_obj has .content (StageTranscript or Content)
+        class OutputWithStage:
             def __init__(self) -> None:
-                self.body = "Body obj string"
+                self.content = Content(id=ContentId("c123"), text="Content obj text")
 
-        cfg_body = StageConfig[MagicMock, OutputWithBody](
+        cfg_stage = StageConfig[MagicMock, OutputWithStage](
             stage_name="fluid_prose",
             transform_prompt_key=PromptKey.FLUID_PROSE,
             eval_spec=None,
-            post_processor=lambda cand, src: OutputWithBody(),
+            post_processor=lambda cand, src: OutputWithStage(),
         )
         mock_t.reset_mock()
-        runner_j1.execute_stage(cfg_body, MagicMock(), context=ctx)
+        runner_j1.execute_stage(cfg_stage, MagicMock(), context=ctx)
         mock_t.record_stage_io.assert_any_call(
             output_payload={
                 "status": "APPROVED",
-                "output_characters": len("Body obj string"),
-                "output_words": len(["Body", "obj", "string"]),
+                "output_characters": len("Content obj text"),
+                "output_words": len(["Content", "obj", "text"]),
                 "attempts": 1,
             }
         )
 
-        # 3. output_obj has .text string
-        class OutputWithText:
-            def __init__(self) -> None:
-                self.text = "Text obj string"
+        # 3. output_obj defaults to candidate.text
+        class OutputBare:
+            pass
 
-        cfg_text = StageConfig[MagicMock, OutputWithText](
+        cfg_bare = StageConfig[MagicMock, OutputBare](
             stage_name="fluid_prose",
             transform_prompt_key=PromptKey.FLUID_PROSE,
             eval_spec=None,
-            post_processor=lambda cand, src: OutputWithText(),
+            post_processor=lambda cand, src: OutputBare(),
         )
         mock_t.reset_mock()
-        runner_j1.execute_stage(cfg_text, MagicMock(), context=ctx)
+        runner_j1.execute_stage(cfg_bare, MagicMock(), context=ctx)
         mock_t.record_stage_io.assert_any_call(
             output_payload={
                 "status": "APPROVED",
-                "output_characters": len("Text obj string"),
-                "output_words": len(["Text", "obj", "string"]),
+                "output_characters": len("Candidate output text"),
+                "output_words": len(["Candidate", "output", "text"]),
                 "attempts": 1,
             }
         )
@@ -2495,14 +2498,16 @@ class TestStageRunnerStageExecutionAndFallback:
 
         cfg = StageConfig[MagicMock, CandidateText](
             stage_name="gap_filler",
-            transform_prompt_key=PromptKey.GAP_FILLER_PASS1,
+            transform_prompt_key=PromptKey.GAP_FILLER,
             max_passes=2,
             eval_spec=None,
         )
         mock_factory.build_stage.return_value = cfg
 
         mock_trans = MagicMock()
-        mock_trans.transform.return_value = "## Test\n\nContent\n\n## Informações Complementares\n1. Info"
+        mock_trans.transform.return_value = (
+            "## Test\n\nContent\n\n### Extra Info\n1. Info"
+        )
 
         runner = PipelineStageRunner(
             telemetry_port=mock_t,
@@ -2512,10 +2517,11 @@ class TestStageRunnerStageExecutionAndFallback:
             prompt_provider=MagicMock(),
         )
         ctx = PipelineExecutionContext(
-            session_id=PipelineSessionId("ret_sess:1"),
             user_identity=UserIdentity.worker(),
             channel=Channel(name="RetCh", id=ChannelId("UC_ret")),
-            content=Content.create(id=ContentId("vid_retry_1"), title="Retry Title"),
+            content=Content.create(
+                id=ContentId("vid_retry_1"), title="Retry Title", session_id="ret_sess:1"
+            ),
         )
 
         runner.execute_stage(
@@ -2526,5 +2532,3 @@ class TestStageRunnerStageExecutionAndFallback:
         )
 
         mock_factory.build_stage.assert_called_once_with("gap_filler", max_passes=2)
-
-

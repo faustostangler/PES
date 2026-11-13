@@ -27,13 +27,17 @@ from cresmo.application.ports import (
     NoOpTelemetryPort,
     PromptProviderPort,
 )
-from cresmo.domain.entities import EnrichedCompendium, FluidTranscript, SourceTranscript
+from cresmo.domain.entities import StageTranscript, StageTranscript, StageTranscript
 from cresmo.domain.exceptions import CresmoDomainError
 from cresmo.domain.value_objects import (
     BatchId,
+    Channel,
     ChannelId,
     ChannelName,
+    ChatPrompt,
+    Content,
     ContentId,
+    MediaProvenance,
     NoteTitle,
     RawIndexEntry,
 )
@@ -50,18 +54,22 @@ class SmartMockLLMAdapter(MockLLMAdapter):
 
     def transform(
         self,
-        prompt: str,
-        system_instruction: str | None = None,
+        prompt: Any,
         temperature: float | None = None,
         *,
         trace_id: str | None = None,
         session_id: str | None = None,
         user_id: str | None = None,
+        system_prompt: str | None = None,
     ) -> str:
+        sys_str = prompt.system_prompt if isinstance(prompt, ChatPrompt) else system_prompt
+        prompt_text = (
+            prompt.get_last_user_content() if isinstance(prompt, ChatPrompt) else str(prompt)
+        )
         self.call_history.append(
             {
                 "prompt": prompt,
-                "system_instruction": system_instruction,
+                "system_prompt": sys_str,
                 "temperature": temperature,
                 "trace_id": trace_id,
                 "session_id": session_id,
@@ -87,7 +95,7 @@ class SmartMockLLMAdapter(MockLLMAdapter):
                 '"direct_relations": ["Teoria das Elites"], '
                 '"causal_matrix": {"cause": "Heterogeneidade social", "effect": "Substituição cíclica de lideranças"}}]'
             )
-        combined = f"{system_instruction or ''} {prompt}".lower()
+        combined = f"{sys_str or ''} {prompt_text}".lower()
         if "atomic inventory" in combined or (trace_id and "inventory" in trace_id):
             return '[{"title": "Vilfredo Pareto", "type": "entity"}]'
         if "target entities to synthesize" in combined or "targets_json" in combined:
@@ -111,7 +119,7 @@ class SmartMockLLMAdapter(MockLLMAdapter):
         return (
             "# Teoria das Elites\n\n"
             "A teoria da circulação das elites postula que minorias organizadas governam maiorias.\n\n"
-            "## Informações Complementares\n\n"
+            "### Extra Info\n\n"
             "Análise sociológica e precursores históricos."
         )
 
@@ -124,7 +132,7 @@ class TestCresmoPipelineOrchestration:
     )
     def test_pipeline_full_cycle_success(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
-        canned_raw = SourceTranscript(
+        canned_raw = StageTranscript(
             content_id=cid,
             channel_name=ChannelName("Political Theory"),
             body="Raw spoken audio transcript regarding Vilfredo Pareto and elites.",
@@ -162,12 +170,12 @@ class TestCresmoPipelineOrchestration:
         assert ledger_port.is_processed(cid) is True
 
     def test_pipeline_stage1_fluid_prose_execution(self) -> None:
-        """Verify CresmoPipeline Stage 1 executes with SourceTranscript via StageConfig."""
+        """Verify CresmoPipeline Stage 1 executes with StageTranscript via StageConfig."""
         cid = ContentId("vid_stage1_iso")
-        canned_source = SourceTranscript(
-            content_id=cid,
-            channel_name=ChannelName("Political Theory"),
-            body="Raw spoken audio transcript regarding Vilfredo Pareto and elites.",
+        canned_source = StageTranscript(
+            channel=Channel(name="Political Theory"),
+            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=vid_stage1_iso"),
+            content=Content(id=cid, title="Political Theory", text="Raw spoken audio transcript regarding Vilfredo Pareto and elites."),
         )
 
         mock_llm = SmartMockLLMAdapter()
@@ -190,9 +198,9 @@ class TestCresmoPipelineOrchestration:
         assert result.content_id == cid
         assert result.source_transcript is canned_source
         assert result.fluid_transcript is not None
-        assert isinstance(result.fluid_transcript, FluidTranscript)
+        assert isinstance(result.fluid_transcript, StageTranscript)
         assert result.fluid_transcript.content.id == cid
-        assert "A teoria da circulação das elites postula" in result.fluid_transcript.content.body
+        assert "A teoria da circulação das elites postula" in result.fluid_transcript.content.text
 
     def test_run_for_video_ingestion_failure_raises_domain_error(self) -> None:
         mock_llm = SmartMockLLMAdapter()
@@ -212,10 +220,10 @@ class TestCresmoPipelineOrchestration:
 
     def test_run_for_video_idempotent_skip_when_already_processed(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
-        canned_raw = SourceTranscript(
-            content_id=cid,
-            channel_name=ChannelName("Political Theory"),
-            body="Some text",
+        canned_raw = StageTranscript(
+            channel=Channel(name="Political Theory"),
+            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=dQw4w9WgXcQ"),
+            content=Content(id=cid, title="Political Theory", text="Some text"),
         )
         ledger = InMemoryLedgerAdapter()
         ledger.mark_processed(cid)
@@ -237,10 +245,10 @@ class TestCresmoPipelineOrchestration:
     )
     def test_run_for_video_force_reprocess_bypasses_ledger(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
-        canned_raw = SourceTranscript(
-            content_id=cid,
-            channel_name=ChannelName("Political Theory"),
-            body="Some text",
+        canned_raw = StageTranscript(
+            channel=Channel(name="Political Theory"),
+            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=dQw4w9WgXcQ"),
+            content=Content(id=cid, title="Political Theory", text="Some text"),
         )
         ledger = InMemoryLedgerAdapter()
         ledger.mark_processed(cid)
@@ -265,21 +273,23 @@ class TestCresmoPipelineOrchestration:
     )
     def test_run_for_video_resumes_when_expanded_compendium_exists(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
-        canned_raw = SourceTranscript(
-            content_id=cid,
-            channel_name=ChannelName("Political Theory"),
-            body="Raw transcript",
+        canned_raw = StageTranscript(
+            channel=Channel(name="Political Theory"),
+            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=dQw4w9WgXcQ"),
+            content=Content(id=cid, title="Political Theory", text="Raw transcript"),
         )
         vault = InMemoryVaultAdapter()
-        compendium = EnrichedCompendium(
-            content_id=cid,
-            channel_name=ChannelName("Political Theory"),
-            body="Pre-existing expanded compendium",
-            complementary_info="Complementary information",
-            title=NoteTitle("Pre-existing Title"),
+        compendium = StageTranscript(
+            channel=Channel(name="Political Theory"),
+            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=dQw4w9WgXcQ"),
+            content=Content(
+                id=cid,
+                title="Pre-existing Title",
+                text="Pre-existing expanded compendium\n\n### Extra Info\n\nComplementary information",
+            ),
             pass_count=3,
         )
-        vault.save_enriched_compendium(compendium)
+        vault.save_stage_transcript("gap_filler", compendium)
 
         llm = SmartMockLLMAdapter()
 
@@ -370,7 +380,7 @@ class TestCresmoPipelineOrchestration:
         assert len(res.synthesized_notes) == 1
         assert res.synthesized_notes[0].title.value == "Vilfredo Pareto"
         assert ledger.is_processed(res.content_id) is True
-        assert vault.get_raw_transcript(res.content_id) is not None
+        assert vault.get_stage_transcript("raw", res.content_id) is not None
 
     def test_run_for_text_file_frontmatter_metadata_parsing(self, tmp_path: Path) -> None:
         text_file = tmp_path / "custom_doc_file.md"
@@ -397,7 +407,7 @@ class TestCresmoPipelineOrchestration:
 
         res = pipeline.run_for_text_file(text_file)
         assert res.success is True
-        raw = vault.get_raw_transcript(res.content_id)
+        raw = vault.get_stage_transcript("raw", res.content_id)
         assert raw is not None
         assert raw.content.title == "Discurso sobre a Servidão Voluntária"
         assert raw.channel.name == "Filosofia Política"
@@ -405,7 +415,7 @@ class TestCresmoPipelineOrchestration:
         assert raw.channel.category == "philosophy"
         assert raw.provenance.url == "https://example.org/etienne"
         assert raw.provenance.description == "Análise de La Boétie"
-        assert "Corpo do texto sobre a servidão voluntária" in raw.content.body
+        assert "Corpo do texto sobre a servidão voluntária" in raw.content.text
 
     def test_run_for_text_file_skips_save_when_already_in_raw_lake(self, tmp_path: Path) -> None:
         """Verify that files residing inside raw_dir lake are not redundantly re-saved to disk."""
@@ -419,7 +429,7 @@ class TestCresmoPipelineOrchestration:
         )
 
         vault = InMemoryVaultAdapter()
-        vault.save_transcript = MagicMock(wraps=vault.save_transcript)  # type: ignore[method-assign]
+        vault.save_stage_transcript = MagicMock(wraps=vault.save_stage_transcript)  # type: ignore[method-assign]
 
         pipeline = CresmoPipeline(
             media_ingestion_port=MockMediaIngestionPort(),
@@ -431,8 +441,12 @@ class TestCresmoPipelineOrchestration:
 
         res = pipeline.run_for_text_file(raw_file)
         assert res.success is True
-        # Assert save_transcript was bypassed to prevent redundant disk I/O
-        vault.save_transcript.assert_not_called()
+        # Assert raw stage persistence was bypassed to prevent redundant disk I/O
+        raw_calls = [
+            c for c in vault.save_stage_transcript.call_args_list
+            if c.args and (c.args[0] == "raw" or getattr(c.args[0], "value", None) == "raw")
+        ]
+        assert len(raw_calls) == 0
 
         # For an external file outside raw_dir, verify it IS saved into raw lake
         ext_dir = tmp_path / "priority_texts"
@@ -442,7 +456,11 @@ class TestCresmoPipelineOrchestration:
 
         result_external = pipeline.run_for_text_file(ext_file)
         assert result_external.success is True
-        vault.save_transcript.assert_called_once()
+        external_raw_calls = [
+            c for c in vault.save_stage_transcript.call_args_list
+            if c.args and (c.args[0] == "raw" or getattr(c.args[0], "value", None) == "raw")
+        ]
+        assert len(external_raw_calls) == 1
 
     def test_run_for_text_file_short_stem_fallback_hash(self, tmp_path: Path) -> None:
         short_file = tmp_path / "ab.txt"
@@ -536,10 +554,10 @@ class TestCresmoPipelineOrchestration:
         )
 
         cid = ContentId("dQw4w9WgXcQ")
-        canned_raw = SourceTranscript(
-            content_id=cid,
-            channel_name=ChannelName("Political Theory"),
-            body="Raw transcript content",
+        canned_raw = StageTranscript(
+            channel=Channel(name="Political Theory"),
+            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=dQw4w9WgXcQ"),
+            content=Content(id=cid, title="Political Theory", text="Raw transcript content"),
         )
         pipeline = CresmoPipeline(
             media_ingestion_port=MockMediaIngestionPort(canned_transcript=canned_raw),
@@ -563,10 +581,10 @@ class TestCresmoPipelineOrchestration:
             encoding="utf-8",
         )
 
-        canned_raw = SourceTranscript(
-            content_id=ContentId("vidSample"),
-            channel_name=ChannelName("Political Theory"),
-            body="Raw transcript content for batch manifest test",
+        canned_raw = StageTranscript(
+            channel=Channel(name="Political Theory"),
+            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=vidSample"),
+            content=Content(id=ContentId("vidSample"), title="Political Theory", text="Raw transcript content for batch manifest test"),
         )
         pipeline = CresmoPipeline(
             media_ingestion_port=MockMediaIngestionPort(canned_transcript=canned_raw),
@@ -643,7 +661,7 @@ class TestCresmoPipelineOrchestration:
     )
     def test_run_for_video_gap_filler_passes_and_idempotency_attributes(self) -> None:
         cid = ContentId("videoPassTest1")
-        canned_raw = SourceTranscript(
+        canned_raw = StageTranscript(
             content_id=cid,
             channel_name=ChannelName("Political Theory"),
             body="Raw spoken audio transcript regarding Vilfredo Pareto and elites.",
@@ -662,7 +680,7 @@ class TestCresmoPipelineOrchestration:
             "https://youtube.com/watch?v=videoPassTest1", gap_filler_passes=2
         )
         assert res.success is True
-        comp = vault.get_enriched_compendium(cid)
+        comp = vault.get_stage_transcript("gap_filler", cid)
         assert comp is not None
         assert comp.pass_count == 3
 
@@ -737,7 +755,7 @@ class TestCresmoPipelineOrchestration:
 
         res = pipeline.run_for_text_file(text_file, gap_filler_passes=4)
         assert res.success is True
-        comp = vault.get_enriched_compendium(res.content_id)
+        comp = vault.get_stage_transcript("gap_filler", res.content_id)
         assert comp is not None
         assert comp.pass_count == 5
 
@@ -777,7 +795,7 @@ class TestCresmoPipelineOrchestration:
 
         result_variant = pipeline.run_for_text_file(f_var)
         assert result_variant.success is True
-        raw = vault.get_raw_transcript(result_variant.content_id)
+        raw = vault.get_stage_transcript("raw", result_variant.content_id)
         assert raw is not None
         assert raw.content.title == "Alternative Title"
         assert raw.channel.name == "Alternative Channel"
@@ -794,9 +812,9 @@ class TestCresmoPipelineOrchestration:
         )
         result_bad = pipeline.run_for_text_file(f_bad_yaml)
         assert result_bad.success is True
-        raw_bad = vault.get_raw_transcript(result_bad.content_id)
+        raw_bad = vault.get_stage_transcript("raw", result_bad.content_id)
         assert raw_bad is not None
-        assert "Body content surviving bad YAML" in raw_bad.content.body
+        assert "Body content surviving bad YAML" in raw_bad.content.text
 
         # Unclosed frontmatter (no closing ---) is treated directly as body
         f_no_close = tmp_path / "no_close.md"
@@ -806,9 +824,9 @@ class TestCresmoPipelineOrchestration:
         )
         result_no_close = pipeline.run_for_text_file(f_no_close)
         assert result_no_close.success is True
-        raw_no_close = vault.get_raw_transcript(result_no_close.content_id)
+        raw_no_close = vault.get_stage_transcript("raw", result_no_close.content_id)
         assert raw_no_close is not None
-        assert "Just plain body text." in raw_no_close.content.body
+        assert "Just plain body text." in raw_no_close.content.text
 
     @pytest.mark.skip(
         reason="Downstream stages 2-8 quarantined pending StageConfig refactoring per ADR-031"
@@ -821,7 +839,7 @@ class TestCresmoPipelineOrchestration:
         )
 
         cid = ContentId("paramVid123")
-        canned_raw = SourceTranscript(
+        canned_raw = StageTranscript(
             content_id=cid,
             channel_name=ChannelName("Political Theory"),
             body="Raw transcript for manifest param test.",
@@ -839,7 +857,7 @@ class TestCresmoPipelineOrchestration:
         results = pipeline.run_for_manifest(manifest, gap_filler_passes=2)
         assert len(results) == 1
         assert results[0].success is True
-        comp = vault.get_enriched_compendium(cid)
+        comp = vault.get_stage_transcript("gap_filler", cid)
         assert comp is not None
         assert comp.pass_count == 3
 
@@ -857,7 +875,7 @@ class TestCresmoPipelineOrchestration:
     )
     def test_pipeline_run_passes_raw_index_entry_to_synthesize(self) -> None:
         cid = ContentId("entryPass123")
-        canned_raw = SourceTranscript(
+        canned_raw = StageTranscript(
             content_id=cid,
             channel_name=ChannelName("Political Theory"),
             body="Raw transcript body containing substantial philosophical concepts.",
@@ -882,10 +900,10 @@ class TestCresmoPipelineOrchestration:
     def test_pipeline_execute_skips_raw_indexing_when_already_processed_in_ledger(self) -> None:
         """Verify that execute() evaluates ledger idempotency before raw indexing."""
         cid = ContentId("idempotentVideo123")
-        canned_raw = SourceTranscript(
-            content_id=cid,
-            channel_name=ChannelName("Political Theory"),
-            body="Raw transcript content.",
+        canned_raw = StageTranscript(
+            channel=Channel(name="Political Theory"),
+            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=idempotentVideo123"),
+            content=Content(id=cid, title="Political Theory", text="Raw transcript content."),
         )
         ledger = InMemoryLedgerAdapter()
         ledger.mark_processed(cid)
@@ -919,7 +937,7 @@ class TestCresmoPipelineOrchestration:
     def test_pipeline_execute_handles_raw_indexing_failure_gracefully(self) -> None:
         """Verify that execute() logs a warning and proceeds when raw indexing fails (fatal=False)."""
         cid = ContentId("failIndex123")
-        canned_raw = SourceTranscript(
+        canned_raw = StageTranscript(
             content_id=cid,
             channel_name=ChannelName("Political Theory"),
             body="Raw transcript content for graceful degradation check.",
@@ -932,7 +950,7 @@ class TestCresmoPipelineOrchestration:
         )
 
         def failing_index_execute(
-            transcript: FluidTranscript,
+            transcript: StageTranscript,
             force: bool = False,
             user: Any = None,
         ) -> RawIndexEntry | None:

@@ -18,17 +18,20 @@ from cresmo.application.use_cases.synthesize_atomic_batch import (
 )
 from cresmo.domain.entities import (
     AtomicNote,
-    EnrichedCompendium,
+    StageTranscript,
     UserIdentity,
 )
 from cresmo.domain.exceptions import DomainValidationError
 from cresmo.domain.value_objects import (
     AtomicEntityInventory,
     CausalMatrix,
+    Channel,
     ChannelId,
     ChannelName,
+    Content,
     ContentId,
     CrossContextRelations,
+    MediaProvenance,
     NoteTitle,
     NoteType,
     PromptKey,
@@ -37,14 +40,15 @@ from tests.doubles.mock_adapters import InMemoryVaultAdapter, MockLLMAdapter
 
 
 @pytest.fixture
-def sample_compendium() -> EnrichedCompendium:
-    return EnrichedCompendium(
-        content_id=ContentId("dQw4w9WgXcQ"),
-        channel_name=ChannelName("Example Channel"),
-        channel_id=ChannelId("UC_TestChannelId"),
-        title=NoteTitle("Teoria das Elites"),
-        body="Continuous body describing elites and power structures in society.",
-        complementary_info="Complementary info.",
+def sample_compendium() -> StageTranscript:
+    return StageTranscript(
+        channel=Channel(name=ChannelName("Example Channel"), id=ChannelId("UC_TestChannelId")),
+        provenance=MediaProvenance.create(url=""),
+        content=Content(
+            id=ContentId("dQw4w9WgXcQ"),
+            title="Teoria das Elites",
+            text="Continuous body describing elites and power structures in society.\n\n### Extra Info\n\nComplementary info.",
+        ),
     )
 
 
@@ -107,7 +111,7 @@ class TestSynthesizeAtomicBatchUseCase:
 
     def test_synthesize_batch_success_with_all_fields_and_persistence(
         self,
-        sample_compendium: EnrichedCompendium,
+        sample_compendium: StageTranscript,
     ) -> None:
         """Verify full synthesis with all metadata fields, relations, matrices, and dual persistence."""
         inv = AtomicEntityInventory(items=((NoteTitle("Vilfredo Pareto"), NoteType.ENTITY),))
@@ -187,7 +191,7 @@ class TestSynthesizeAtomicBatchUseCase:
 
     def test_synthesize_batch_default_fields_and_anonymous_user(
         self,
-        sample_compendium: EnrichedCompendium,
+        sample_compendium: StageTranscript,
     ) -> None:
         """Verify defaults for domain, source, cluster, and anonymous user when user=None."""
         inv = AtomicEntityInventory(items=((NoteTitle("Vilfredo Pareto"), NoteType.ENTITY),))
@@ -209,8 +213,8 @@ class TestSynthesizeAtomicBatchUseCase:
         assert len(notes) == 1
         note = notes[0]
         assert note.note_type == NoteType.CONCEPT
-        assert note.domain == str(sample_compendium.channel_name)
-        assert note.source == sample_compendium.title.value
+        assert note.domain == str(sample_compendium.channel.name)
+        assert note.source == sample_compendium.content.title
         assert note.cluster == ""
         assert note.causal_matrix is None
         assert note.cross_context is None
@@ -219,7 +223,7 @@ class TestSynthesizeAtomicBatchUseCase:
 
     def test_synthesize_batch_raises_on_non_list_json(
         self,
-        sample_compendium: EnrichedCompendium,
+        sample_compendium: StageTranscript,
     ) -> None:
         """Verify DomainValidationError when extracted JSON is not a list."""
         inv = AtomicEntityInventory(items=((NoteTitle("Vilfredo Pareto"), NoteType.ENTITY),))
@@ -233,7 +237,7 @@ class TestSynthesizeAtomicBatchUseCase:
 
     def test_synthesize_batch_skips_malformed_entries(
         self,
-        sample_compendium: EnrichedCompendium,
+        sample_compendium: StageTranscript,
     ) -> None:
         """Verify filtering of non-dict entries and missing/empty titles."""
         inv = AtomicEntityInventory(items=((NoteTitle("Vilfredo Pareto"), NoteType.ENTITY),))
@@ -262,7 +266,7 @@ class TestSynthesizeAtomicBatchUseCase:
 
     def test_synthesize_batch_missing_definition_raises_domain_validation_error_with_empty_got(
         self,
-        sample_compendium: EnrichedCompendium,
+        sample_compendium: StageTranscript,
     ) -> None:
         """Verify DomainValidationError matches Got: '' when definition key is omitted."""
         inv = AtomicEntityInventory(items=((NoteTitle("Vilfredo Pareto"), NoteType.ENTITY),))
@@ -276,7 +280,7 @@ class TestSynthesizeAtomicBatchUseCase:
 
     def test_synthesize_batch_caching_and_exact_alias_honorific_lookups(
         self,
-        sample_compendium: EnrichedCompendium,
+        sample_compendium: StageTranscript,
     ) -> None:
         """Verify exact match, alias match, and honorific boundary length normalization cache hits."""
         vault_port = InMemoryVaultAdapter()
@@ -365,7 +369,7 @@ class TestSynthesizeAtomicBatchUseCase:
 
     def test_synthesize_batch_partitions_multiple_chunks(
         self,
-        sample_compendium: EnrichedCompendium,
+        sample_compendium: StageTranscript,
     ) -> None:
         """Verify batch partitioning across multiple chunks conforming to batch_size."""
         inv = AtomicEntityInventory(
@@ -410,7 +414,7 @@ class TestSynthesizeAtomicBatchUseCase:
 
     def test_parse_single_atomic_note_defaults_and_fallbacks(
         self,
-        sample_compendium: EnrichedCompendium,
+        sample_compendium: StageTranscript,
     ) -> None:
         """Verify strict default value assignments and error fallbacks for single note parsing."""
         inv = AtomicEntityInventory(
@@ -498,13 +502,14 @@ class TestSynthesizeAtomicBatchUseCase:
 
     def test_synthesize_chunk_prompt_parameters_and_session_resolution(self) -> None:
         """Verify prompt provider arguments, targets_json keys, and channel_id=None session resolution."""
-        compendium_no_cid = EnrichedCompendium(
-            content_id=ContentId("content123"),
-            channel_name=ChannelName("Channel Alpha"),
-            channel_id=None,
-            title=NoteTitle("Alpha Title"),
-            body="Continuous text for channel alpha.",
-            complementary_info="Complementary context.",
+        compendium_no_cid = StageTranscript(
+            channel=Channel(name=ChannelName("Channel Alpha"), id=None),
+            provenance=MediaProvenance.create(url=""),
+            content=Content(
+                id=ContentId("content123"),
+                title="Alpha Title",
+                text="Continuous text for channel alpha.",
+            ),
         )
         inv = AtomicEntityInventory(items=((NoteTitle("Alpha Entity"), NoteType.ENTITY),))
         batch_payload = json.dumps(
@@ -535,10 +540,10 @@ class TestSynthesizeAtomicBatchUseCase:
         # Verify exact prompt key and keyword arguments
         assert call_args[0] == PromptKey.ATOMIC_BATCH
         assert call_kwargs["content_title"] == "Alpha Title"
-        assert call_kwargs["content_title"] == compendium_no_cid.title.value
-        assert call_kwargs["channel_name"] == compendium_no_cid.channel_name
+        assert call_kwargs["content_title"] == compendium_no_cid.content.title
+        assert call_kwargs["channel_name"] == compendium_no_cid.channel.name
         assert call_kwargs["compendium_body"] == "Continuous text for channel alpha."
-        assert call_kwargs["compendium_body"] == compendium_no_cid.body
+        assert call_kwargs["compendium_body"] == compendium_no_cid.content.text
         assert "targets_json" in call_kwargs
 
         targets = json.loads(call_kwargs["targets_json"])

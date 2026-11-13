@@ -13,7 +13,7 @@ from pathlib import Path
 
 import yaml
 
-from cresmo.domain.entities import EnrichedCompendium, SourceTranscript
+from cresmo.domain.entities import EnrichedCompendium, FluidTranscript, SourceTranscript
 from cresmo.domain.value_objects import (
     Channel,
     ChannelId,
@@ -32,11 +32,17 @@ from cresmo.infrastructure.adapters.obsidian.utils import (
 
 
 class TranscriptVaultHandler:
-    """Handles filesystem persistence and retrieval of source transcripts and enriched compendiums."""
+    """Handles filesystem persistence and retrieval of source transcripts, fluid transcripts, and enriched compendiums."""
 
-    def __init__(self, raw_dir: Path, enriched_dir: Path) -> None:
+    def __init__(
+        self,
+        raw_dir: Path,
+        enriched_dir: Path,
+        fluid_dir: Path | None = None,
+    ) -> None:
         self.raw_dir = raw_dir
         self.enriched_dir = enriched_dir
+        self.fluid_dir = fluid_dir or (raw_dir.parent / "fluid")
 
     def save_transcript(self, transcript: SourceTranscript) -> None:
         """Persist source transcript with canonical YAML frontmatter."""
@@ -222,6 +228,113 @@ class TranscriptVaultHandler:
     def get_enriched_files_for_channel(self, channel_name: ChannelName) -> list[Path]:
         """Retrieve sorted list of all enriched markdown file paths for a given channel."""
         ch_dir = self.enriched_dir / sanitize_filename(channel_name)
+        if not ch_dir.exists() or not ch_dir.is_dir():
+            return []
+        return sorted(
+            p for p in ch_dir.glob("*.md") if p.is_file() and not p.name.startswith(("_", "."))
+        )
+
+    def save_fluid_transcript(self, transcript: FluidTranscript) -> None:
+        """Persist fluid transcript with canonical YAML frontmatter into fluid/ directory."""
+        channel_dir = self.fluid_dir / sanitize_filename(transcript.channel.name)
+        file_path = channel_dir / f"{transcript.content.id.value}.md"
+
+        desc = transcript.provenance.description or ""
+        desc_indented = "\n".join("  " + l for l in desc.splitlines())
+        date_str = (
+            transcript.provenance.publication_date.strftime("%Y%m%d")
+            if transcript.provenance.publication_date
+            else ""
+        )
+        raw_title = transcript.content.title or transcript.content.id.value
+        escaped_title = raw_title.replace('"', '\\"')
+        escaped_channel = transcript.channel.name.replace('"', '\\"')
+        escaped_category = (transcript.channel.category or "uncategorized").replace('"', '\\"')
+        channel_id_val = transcript.channel.id.value if transcript.channel.id else "unknown_channel"
+
+        yaml_header = (
+            f"---\n"
+            f'video_title: "{escaped_title}"\n'
+            f"video_id: {transcript.content.id.value}\n"
+            f'channel_name: "{escaped_channel}"\n'
+            f"channel_id: {channel_id_val}\n"
+            f'channel_category: "{escaped_category}"\n'
+            f"url: {transcript.provenance.url}\n"
+            f"video_date: {date_str}\n"
+            f"video_description: |\n"
+            f"{desc_indented}\n"
+            f"---"
+        )
+        content = f"{yaml_header}\n\n{transcript.content.body}"
+        atomic_write(file_path, content)
+
+    def get_fluid_transcript(self, content_id: ContentId) -> FluidTranscript | None:
+        """Retrieve fluid transcript by searching fluid/ directory."""
+        target_name = f"{content_id.value}.md"
+        matched = list(self.fluid_dir.glob(f"**/{target_name}"))
+        if not matched:
+            return None
+
+        file_path = matched[0]
+        text = file_path.read_text(encoding="utf-8")
+        match = _FRONTMATTER_PATTERN.match(text)
+        if not match:
+            channel = Channel(name=file_path.parent.name)
+            provenance = MediaProvenance.create(
+                url=f"file://{file_path.resolve()}",
+                description="",
+            )
+            content = Content.create(
+                id=content_id,
+                title=file_path.stem,
+                body=text,
+            )
+            return FluidTranscript(
+                channel=channel,
+                provenance=provenance,
+                content=content,
+            )
+
+        fm_text, body = match.groups()
+        meta = yaml.safe_load(fm_text) or {}
+        ch_name = str(meta.get("channel_name") or meta.get("channel") or file_path.parent.name)
+        title = str(meta.get("video_title") or meta.get("title") or "")
+        ch_id = str(meta.get("channel_id") or "")
+        ch_cat = str(meta.get("channel_category") or meta.get("domain") or "")
+        url = str(meta.get("url") or meta.get("source_url") or "")
+        raw_date = meta.get("video_date") or meta.get("upload_date")
+        upload_date = None
+        if raw_date:
+            date_str = str(raw_date).strip()
+            if len(date_str) == ISO_DATE_COMPACT_LENGTH and date_str.isdigit():
+                with contextlib.suppress(ValueError):
+                    upload_date = datetime.strptime(date_str, "%Y%m%d").replace(tzinfo=UTC).date()
+        desc = str(meta.get("video_description") or "")
+
+        channel = Channel(
+            name=ch_name,
+            id=ChannelId.from_string(ch_id) if ch_id else None,
+            category=ch_cat,
+        )
+        provenance = MediaProvenance.create(
+            url=url,
+            description=desc,
+            publication_date=upload_date,
+        )
+        content = Content.create(
+            id=content_id,
+            title=title,
+            body=body.strip(),
+        )
+        return FluidTranscript(
+            channel=channel,
+            provenance=provenance,
+            content=content,
+        )
+
+    def get_fluid_files_for_channel(self, channel_name: ChannelName) -> list[Path]:
+        """Retrieve sorted list of all fluid markdown file paths for a given channel."""
+        ch_dir = self.fluid_dir / sanitize_filename(channel_name)
         if not ch_dir.exists() or not ch_dir.is_dir():
             return []
         return sorted(

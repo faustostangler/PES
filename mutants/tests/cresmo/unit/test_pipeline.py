@@ -33,6 +33,7 @@ from cresmo.domain.value_objects import (
     BatchId,
     ChannelId,
     ChannelName,
+    ChatPrompt,
     ContentId,
     NoteTitle,
     RawIndexEntry,
@@ -50,18 +51,20 @@ class SmartMockLLMAdapter(MockLLMAdapter):
 
     def transform(
         self,
-        prompt: str,
-        system_instruction: str | None = None,
+        prompt: Any,
         temperature: float | None = None,
         *,
         trace_id: str | None = None,
         session_id: str | None = None,
         user_id: str | None = None,
+        system_prompt: str | None = None,
     ) -> str:
+        sys_str = prompt.system_prompt if isinstance(prompt, ChatPrompt) else system_prompt
+        prompt_text = prompt.get_last_user_content() if isinstance(prompt, ChatPrompt) else str(prompt)
         self.call_history.append(
             {
                 "prompt": prompt,
-                "system_instruction": system_instruction,
+                "system_prompt": sys_str,
                 "temperature": temperature,
                 "trace_id": trace_id,
                 "session_id": session_id,
@@ -87,7 +90,7 @@ class SmartMockLLMAdapter(MockLLMAdapter):
                 '"direct_relations": ["Teoria das Elites"], '
                 '"causal_matrix": {"cause": "Heterogeneidade social", "effect": "Substituição cíclica de lideranças"}}]'
             )
-        combined = f"{system_instruction or ''} {prompt}".lower()
+        combined = f"{sys_str or ''} {prompt_text}".lower()
         if "atomic inventory" in combined or (trace_id and "inventory" in trace_id):
             return '[{"title": "Vilfredo Pareto", "type": "entity"}]'
         if "target entities to synthesize" in combined or "targets_json" in combined:

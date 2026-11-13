@@ -10,12 +10,12 @@ Conforms to:
 - ADR-011: Zero Hardcoded Tunables and Self-Healing Output Validation
 - ADR-013: Iterative LLM-as-a-Judge Indexing Loops
 - ADR-019: SOTA KISS Nomenclature & Value Objects
-- ADR-028: Strict Rejection of Standalone Raw Indexing & Universal FluidTranscript Contract
+- ADR-028: Strict Rejection of Standalone Raw Indexing & Universal StageTranscript Contract
 """
 
 from __future__ import annotations
 
-import logging
+import structlog
 
 from cresmo.application.ports import (
     LlmJudgePort,
@@ -25,7 +25,7 @@ from cresmo.application.ports import (
 )
 from cresmo.application.ports.settings import DEFAULT_LANGUAGE
 from cresmo.application.use_cases.indexing.distiller import LLMTranscriptDistiller
-from cresmo.domain.entities import FluidTranscript, UserIdentity
+from cresmo.domain.entities import StageTranscript, UserIdentity
 from cresmo.domain.exceptions import DomainValidationError
 from cresmo.domain.taxonomy import classify_channel
 from cresmo.domain.value_objects import (
@@ -33,7 +33,7 @@ from cresmo.domain.value_objects import (
     RawIndexEntry,
 )
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 
 class IndexRawTranscriptsUseCase:
@@ -44,7 +44,7 @@ class IndexRawTranscriptsUseCase:
         - SPEC-011: Fluid Prose Detranscription and Gap Filler Decoupling
         - ADR-001: Modular Monolith Domain Integrity
         - ADR-011: Zero Hardcoded Tunables and Self-Healing Output Validation
-        - ADR-028: Strict Rejection of Standalone Raw Indexing & Universal FluidTranscript Contract
+        - ADR-028: Strict Rejection of Standalone Raw Indexing & Universal StageTranscript Contract
 
     Attributes:
         vault_port: Repository port for reading transcripts and appending indexes.
@@ -109,17 +109,17 @@ class IndexRawTranscriptsUseCase:
 
     def execute(
         self,
-        transcript: FluidTranscript,
+        transcript: StageTranscript,
         force: bool = False,
         user: UserIdentity | None = None,
     ) -> RawIndexEntry | None:
         """Index a single fluid transcript incrementally if not already indexed (Primary entrypoint).
 
-        Conforms to ADR-028: strictly requires FluidTranscript input. Standalone raw indexing is rejected.
+        Conforms to ADR-028: strictly requires StageTranscript input. Standalone raw indexing is rejected.
         """
-        if not isinstance(transcript, FluidTranscript):
+        if not isinstance(transcript, StageTranscript):
             raise DomainValidationError(
-                f"IndexRawTranscriptsUseCase strictly requires FluidTranscript, got: {type(transcript).__name__}"
+                f"IndexRawTranscriptsUseCase strictly requires StageTranscript, got: {type(transcript).__name__}"
             )
 
         video_id = transcript.content.id
@@ -139,7 +139,7 @@ class IndexRawTranscriptsUseCase:
         title = transcript.content.title or video_id.value
 
         # Build prompt from bounded transcript excerpt to preserve context budget
-        excerpt = transcript.content.body.strip()
+        excerpt = transcript.content.text.strip()
         if self.max_chars > 0:
             excerpt = excerpt[: self.max_chars]
 

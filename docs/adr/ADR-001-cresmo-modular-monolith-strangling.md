@@ -1,8 +1,12 @@
 # ADR-001: Strangling Cresmo into Hexagonal Modular Monolith with Media Ingestion ACL and Vault Port
 
-**Status:** ACCEPTED  
+**Status:** ACCEPTED (Foundational Strangling Architecture)  
 **Date:** 2026-09-10  
 **Decision Makers:** Lead Architect (Fausto Stangler), Stereoscopist (Doctor Stangler Committee)  
+**Lineage & Evolution Notes:**  
+- **Media Ingestion ACL**: The transitional ACL wrapping legacy `playground/isb.ai` was **DEPRECATED and DECOMMISSIONED by [`ADR-004`](ADR-004-native-media-ingestion-decommissioning.md)** in favor of `NativeMediaIngestionAdapter`.
+- **Domain Aggregates**: The transitional `RawTranscript` domain entity was **DEPRECATED and SUPERSEDED by `SourceTranscript`** per [`ADR-010`](ADR-010-zero-legacy-shims-and-streaming-first-unification.md), [`ADR-031`](ADR-031-standardized-stage-descriptor-and-closed-loop-refinement.md), and [`ADR-038`](ADR-038-pure-value-object-triad-composition.md) (Pure 3-VO Triad Composition).
+- **Presentation Layer**: Initial entrypoints were refined and superseded by [`ADR-042`](ADR-042-typer-presentation-cli.md).
 
 ---
 
@@ -82,7 +86,7 @@ We will strangulate the legacy procedural code in `playground/cresmo/` and `play
 
 ### Entities & Aggregates
 - `RawTranscript`: Root aggregate for Raw Transcript Ingestion, containing `ContentId`, source metadata, and verbatim body.
-- `EnrichedCompendium`: Aggregate for Fluid Prose Gap Filler and Longitudinal/Synchronic Expansion, validating that the body contains dense continuous prose and the mandatory `## Informações Complementares`.
+- `EnrichedCompendium`: Aggregate for Fluid Prose Gap Filler and Longitudinal/Synchronic Expansion, validating that the body contains dense continuous prose and the mandatory `### Extra Info`.
 - `AtomicNote`: Rich domain entity encapsulating frontmatter metadata, contextual definition, typed connections, causal matrix, and cross-context links (Inventory Discovery & Batched Atomic Synthesis). Invariants verified at instantiation (no empty titles, valid type, non-empty definition).
 - `MapOfContent`: Aggregate representing thematic MOCs (MOC Reconciliation), ensuring bidirectional links and zero orphaned notes.
 

@@ -111,26 +111,26 @@ def handle_worker(
     Returns:
         Process exit code integer.
     """
-    target_channel = getattr(args, "channel", channel) if args is not None else channel
-    target_poll_interval = (
+    channel = getattr(args, "channel", channel) if args is not None else channel
+    poll_interval = (
         getattr(args, "poll_interval", poll_interval) if args is not None else poll_interval
     )
-    target_lookback = getattr(args, "lookback", lookback) if args is not None else lookback
-    target_max_videos = getattr(args, "max_videos", max_videos) if args is not None else max_videos
-    target_once = getattr(args, "once", once) if args is not None else once
+    lookback_days = getattr(args, "lookback", lookback) if args is not None else lookback
+    max_videos = getattr(args, "max_videos", max_videos) if args is not None else max_videos
+    once = getattr(args, "once", once) if args is not None else once
 
     try:
         settings = resolve_shared_settings()
         use_case = build_sync_channel_use_case(settings=settings)
         query = ChannelFeedQuery(
-            channel_url=target_channel or "",
-            lookback_days=target_lookback,
-            max_videos=target_max_videos,
+            channel_url=channel or "",
+            lookback_days=lookback_days,
+            max_videos=max_videos,
         )
         heartbeat_file = Path(tempfile.gettempdir()) / "cresmo_worker.heartbeat"
 
         sys.stdout.write(
-            f"Starting ChannelPollingDaemon for '{target_channel}' (interval: {target_poll_interval}s)...\n"
+            f"Starting ChannelPollingDaemon for '{channel}' (interval: {poll_interval}s)...\n"
         )
 
         while True:
@@ -141,10 +141,10 @@ def handle_worker(
                 f"processed={summary.processed_count}, skipped={summary.skipped_count}, failed={summary.failed_count}\n"
             )
 
-            if target_once:
+            if once:
                 break
 
-            time.sleep(target_poll_interval)
+            time.sleep(poll_interval)
 
         return EXIT_SUCCESS
     except KeyboardInterrupt:

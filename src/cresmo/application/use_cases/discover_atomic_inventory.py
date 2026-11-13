@@ -14,9 +14,10 @@ Conforms to:
 from __future__ import annotations
 
 import json
-import logging
 import re
 from typing import Any
+
+import structlog
 
 from cresmo.application.json_parser import extract_json_data
 from cresmo.application.ports import (
@@ -29,15 +30,13 @@ from cresmo.application.use_cases.index_raw_transcripts import (
     parse_judge_boolean,
 )
 from cresmo.domain.entities import (
-    EnrichedCompendium,
     PipelineSessionId,
+    StageTranscript,
     UserIdentity,
 )
 from cresmo.domain.exceptions import DomainValidationError, NoteTypologyError
 from cresmo.domain.value_objects import (
     AtomicEntityInventory,
-    ChannelId,
-    ChannelName,
     ChatPrompt,
     EvaluationContext,
     JudgeCriterion,
@@ -46,7 +45,7 @@ from cresmo.domain.value_objects import (
     PromptKey,
 )
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 _BIG_ENDIAN_YEAR_REGEX = re.compile(r"^\d{4}")
 
@@ -177,7 +176,7 @@ class DiscoverAtomicInventoryUseCase:
         trace_id: str,
         session_id: str,
         user_id: str,
-    ) -> list[Any]:
+    ) -> Any:
         """Query LLM synthesis port and extract candidate JSON inventory."""
         raw_response = self.llm_synthesis_port.transform(
             prompt=prompt,
@@ -194,7 +193,7 @@ class DiscoverAtomicInventoryUseCase:
     def _evaluate_candidate_inventory(
         self,
         candidate_data: Any,
-        compendium: EnrichedCompendium,
+        compendium: StageTranscript,
         judge_trace_id: str,
         session_id: str,
         user_id: str,
@@ -203,7 +202,7 @@ class DiscoverAtomicInventoryUseCase:
         if not self.judge_enabled:
             if not isinstance(candidate_data, list):
                 raise DomainValidationError(
-                    f"Expected JSON array of entities for '{compendium.title.value}', got: {type(candidate_data).__name__}"
+                    f"Expected JSON array of entities for '{compendium.content.title}', got: {type(candidate_data).__name__}"
                 )
             return True
 
@@ -214,15 +213,11 @@ class DiscoverAtomicInventoryUseCase:
         if self.llm_judge_port is not None:
             context = EvaluationContext(
                 stage_name="atomic_inventory",
-                raw_text=compendium.body,
+                raw_text=compendium.content.text,
                 candidate_text=json.dumps(candidate_data),
                 metadata={
-                    "title": compendium.title.value,
-                    "channel": (
-                        compendium.channel_name.value
-                        if isinstance(compendium.channel_name, ChannelName)
-                        else compendium.channel_name
-                    ),
+                    "title": compendium.content.title,
+                    "channel": compendium.channel.name,
                 },
                 trace_id=judge_trace_id,
                 required_criteria=(JudgeCriterion.INVENTORY_COHERENCE,),
@@ -234,9 +229,9 @@ class DiscoverAtomicInventoryUseCase:
         if not isinstance(self.prompt_provider, NoOpPromptProviderPort):
             judge_prompt = self.prompt_provider.get_prompt(
                 PromptKey.JUDGE_ATOMIC_INVENTORY,
-                content_title=compendium.title.value,
-                channel_name=compendium.channel_name,
-                compendium_body=compendium.body,
+                content_title=compendium.content.title,
+                channel_name=compendium.channel.name,
+                compendium_body=compendium.content.text,
                 inventory_json=json.dumps(candidate_data),
             )
             judge_response = self.llm_synthesis_port.transform(
@@ -252,7 +247,7 @@ class DiscoverAtomicInventoryUseCase:
 
     def execute(
         self,
-        compendium: EnrichedCompendium,
+        compendium: StageTranscript,
         user: UserIdentity | None = None,
     ) -> AtomicEntityInventory:
         """Execute discovery scan with deterministic guardrails and iterative LLM judge loop.
@@ -269,20 +264,17 @@ class DiscoverAtomicInventoryUseCase:
         """
         chat_prompt = self.prompt_provider.get_prompt(
             PromptKey.ATOMIC_INVENTORY,
-            content_title=compendium.title.value,
-            channel_name=compendium.channel_name,
-            compendium_body=compendium.body,
+            content_title=compendium.content.title,
+            channel_name=compendium.channel.name,
+            compendium_body=compendium.content.text,
         )
 
         session_id = PipelineSessionId.create(
-            channel=compendium.channel_name,
-            content_id=compendium.content_id,
-            channel_id=compendium.channel_id
-            if isinstance(compendium.channel_id, ChannelId)
-            else None,
+            channel=compendium.channel,
+            content_id=compendium.content,
         ).value
         user_id = user.value if user is not None else UserIdentity.anonymous().value
-        content_id = compendium.content_id.value
+        content_id = compendium.content.id.value
 
         for retries in range(self.max_rewrites + 1):
             trace_suffix = "" if retries == 0 else f"_retry_{retries}"
@@ -312,8 +304,12 @@ class DiscoverAtomicInventoryUseCase:
                 break
         else:
             raise DomainValidationError(
-                f"Candidate entity inventory rejected by LLM-as-a-judge for '{compendium.title.value}'."
+                f"Candidate entity inventory rejected by LLM-as-a-judge for '{compendium.content.title}'."
             )
 
-        items = _parse_and_deduplicate_items(candidate_data, compendium.title.value)
+        if not isinstance(candidate_data, list):
+            raise DomainValidationError(
+                f"Expected JSON array of entities for '{compendium.content.title}', got: {type(candidate_data).__name__}"
+            )
+        items = _parse_and_deduplicate_items(candidate_data, compendium.content.title)
         return AtomicEntityInventory(items=items)

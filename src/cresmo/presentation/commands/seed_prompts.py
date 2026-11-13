@@ -12,14 +12,18 @@ Conforms to:
 
 from __future__ import annotations
 
-import logging
-import re
+import os
+import subprocess
 import sys
 from typing import Annotated, Any
 
 import typer
 
-from cresmo.infrastructure.adapters.prompts import PROMPT_REGISTRY, JsonPromptProvider
+from cresmo import __version__
+from cresmo.infrastructure.adapters.prompts import (
+    JsonPromptProvider,
+    load_prompt_catalog,
+)
 from cresmo.presentation.composition import (
     resolve_langfuse_client,
     resolve_shared_settings,
@@ -30,11 +34,27 @@ from cresmo.presentation.exit_codes import (
     EXIT_SUCCESS,
 )
 
-logger = logging.getLogger(__name__)
-
 PROMPT_MAPPINGS: dict[str, str] = {
-    meta.langfuse_name: meta.key.value for meta in PROMPT_REGISTRY.values()
+    spec.langfuse_name: spec.key.value for spec in load_prompt_catalog().values()
 }
+
+
+def _resolve_git_sha() -> str:
+    """Resolve current Git commit short SHA from environment or git CLI."""
+    env_sha = os.environ.get("GIT_SHA")
+    if env_sha:
+        return env_sha[:8]
+    try:
+        out = subprocess.check_output(
+            ["git", "rev-parse", "--short=8", "HEAD"],
+            stderr=subprocess.DEVNULL,
+            text=True,
+        ).strip()
+        if out:
+            return out
+    except Exception:  # noqa: BLE001, S110
+        pass
+    return "unknown"
 
 
 def seed_prompts(
@@ -58,11 +78,6 @@ def seed_prompts(
         raise typer.Exit(code=code)
 
 
-def _to_mustache(text: str) -> str:
-    """Convert Python single-brace template variables {var} to Langfuse Mustache {{var}}."""
-    return re.sub(r"(?<!\{)\{([a-zA-Z_][a-zA-Z0-9_]*)\}(?!\})", r"{{\1}}", text)
-
-
 def handle_seed_prompts(
     args: Any = None,
     label: str = "production",
@@ -78,28 +93,26 @@ def handle_seed_prompts(
     Returns:
         Process exit code conforming to exit_codes.py.
     """
-    target_label = (
+    label = (
         getattr(args, "label", label) or "production"
         if args is not None
         else (label or "production")
     )
-    target_dry_run = getattr(args, "dry_run", dry_run) if args is not None else dry_run
+    dry_run = getattr(args, "dry_run", dry_run) if args is not None else dry_run
 
     settings = resolve_shared_settings()
     provider = JsonPromptProvider()
 
-    if target_dry_run:
+    if dry_run:
         sys.stdout.write(
             f"[dry-run] Rendering {len(PROMPT_MAPPINGS)} Chat-Native prompt templates:\n"
         )
-        for lf_name, json_key in PROMPT_MAPPINGS.items():
-            sys_inst, user_tpl = provider.get_chat_prompt_template(json_key)
-            sys_mustache = _to_mustache(sys_inst)
-            user_mustache = _to_mustache(user_tpl)
-            preview_sys = sys_mustache[:50].replace("\n", " ")
-            preview_usr = user_mustache[:50].replace("\n", " ")
+        for name, key in PROMPT_MAPPINGS.items():
+            system_prompt, user_prompt = provider.get_chat_prompt_template(key)
+            preview_sys = system_prompt[:50].replace("\n", " ")
+            preview_usr = user_prompt[:50].replace("\n", " ")
             sys.stdout.write(
-                f"- {lf_name} (key={json_key}): [system] {preview_sys}... | [user] {preview_usr}...\n"
+                f"- {name} (key={key}): [system] {preview_sys}... | [user] {preview_usr}...\n"
             )
         sys.stdout.write(f"[dry-run] Completed preview of {len(PROMPT_MAPPINGS)} chat prompts.\n")
         return EXIT_SUCCESS
@@ -114,26 +127,31 @@ def handle_seed_prompts(
 
     success_count = 0
     failure_count = 0
-    for lf_name, json_key in PROMPT_MAPPINGS.items():
-        sys_inst, user_tpl = provider.get_chat_prompt_template(json_key)
+    git_sha = _resolve_git_sha()
+    tags = ["cresmo", f"v{__version__}", f"git:{git_sha}"]
+    prompt_config = {"git_sha": git_sha, "version": __version__}
+
+    for name, key in PROMPT_MAPPINGS.items():
+        system_prompt, user_prompt = provider.get_chat_prompt_template(key)
         chat_prompt = [
-            {"role": "system", "content": _to_mustache(sys_inst)},
-            {"role": "user", "content": _to_mustache(user_tpl)},
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt},
         ]
         try:
             client.create_prompt(
-                name=lf_name,
+                name=name,
                 prompt=chat_prompt,
-                labels=[target_label],
-                tags=["cresmo", "v2"],
+                labels=[label],
+                tags=tags,
+                config=prompt_config,
                 type="chat",
             )
             sys.stdout.write(
-                f"✔ Registered '{lf_name}' in Langfuse [type=chat, label={target_label}]\n"
+                f"✔ Registered '{name}' in Langfuse [type=chat, label={label}, version={__version__}, git={git_sha}]\n"
             )
             success_count += 1
         except Exception as exc:  # noqa: BLE001
-            sys.stderr.write(f"✘ Failed to register '{lf_name}': {exc}\n")
+            sys.stderr.write(f"✘ Failed to register '{name}': {exc}\n")
             failure_count += 1
 
     sys.stdout.write(

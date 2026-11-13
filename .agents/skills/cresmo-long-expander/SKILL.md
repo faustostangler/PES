@@ -1,6 +1,6 @@
 ---
 name: cresmo-long-expander
-description: Deep longitudinal expander grounded in the Annales School and Fernand Braudel's longue durée, performing multi-secular structural analysis and historical palimpsest deconstruction. Dissects causation across three tiers—first-order determinants, second-order structures, and third-order opportunities—evaluating plural temporalities across structural permanence (centuries/millennia), conjunctural cycles (decades/generations), and short-term surface events (l'événementiel subordinated as mere symptoms). Employs Reversed Longue Durée to trace modern concepts back to foundational institutional, infrastructural, geopolitical, and cognitive strata. Produces continuous, dense factual Markdown prose without diagrams, tables, or bullet lists, accompanied by an Informações Complementares section. Use whenever text requires multi-secular longitudinal expansion, 3-tier causal stratification, plural temporal framing, or historical palimpsest genealogy.
+description: Deep longitudinal expander grounded in the Annales School and Fernand Braudel's longue durée, performing multi-secular structural analysis and historical palimpsest deconstruction. Dissects causation across three tiers—first-order determinants, second-order structures, and third-order opportunities—evaluating plural temporalities across structural permanence (centuries/millennia), conjunctural cycles (decades/generations), and short-term surface events (l'événementiel subordinated as mere symptoms). Employs Reversed Longue Durée to trace modern concepts back to foundational institutional, infrastructural, geopolitical, and cognitive strata. Produces continuous, dense factual Markdown prose without diagrams, tables, or bullet lists, accompanied by an Extra Info section. Use whenever text requires multi-secular longitudinal expansion, 3-tier causal stratification, plural temporal framing, or historical palimpsest genealogy.
 ---
 
 # Cresmo Long-Expander (Longue Durée & Historical Palimpsest)
@@ -15,7 +15,7 @@ Inspired by **Annales School** and **Fernand Braudel's *longue durée***, it inv
 
 It also used a Reversed Longue Durée to evaluate the interdisciplinary nature of posterior facts, by identifying the first order facts and structures that led to the emergence of the modern concept, evaluating the plural temporalities (short term factua and near-real-time events), medium term conjunctural (cycles of decades or generations) and long term structural (structural or permanence factors). 
 
-Furthermore, it uncovers the **Factual Palimpsest**: the genealogy of overlapping, sedimented layers of modern bedrock that are still visible and influence the present. 
+Furthermore, it uncovers the **Factual Palimpsest**: the genealogy of overlapping, sedimented layers of modern bedrock history that are still visible and influence the present. 
 
 **Target File Location**: Save output directly to:
 `cresmo/enriched/<channel_name>/<video_id>.md` (the designated `.md` target path).
@@ -24,7 +24,7 @@ Furthermore, it uncovers the **Factual Palimpsest**: the genealogy of overlappin
 
 ## Foundational Pillars: The Longue Durée Paradigm
 
-When expanding any text, identify the main fact and its context, then identify the first order factors (determinants), second order factors (structures) and third order factors (opportunities) that led to the emergence of the modern concept, evaluating the plural temporalities (short term factual and near-real-time events), medium term conjunctural (cycles of decades or generations) and long term structural (structural or permanence factors). 
+When expanding any text, identify the main fact and its context, then identify the first order factors (determinants), second order factors (structures) and third order factors (opportunities) that led to the emergence of each concept, evaluating the plural temporalities (short term factual and near-real-time events), medium term conjunctural (cycles of decades or generations) and long term structural (structural or permanence factors). 
 
 This structure should be included and reflected in the substantive organization of the text, but strictly as an internal organizational logic. *(**Crucial**: These analytical tiers and paradigms are cognitive tools to guide research and prose architecture; they must NEVER be explicitly labeled, cited, or exposed in the generated text.)* 
 
@@ -44,7 +44,7 @@ Consider any ot these aspects (or others) if relevant to the main topic in the o
 - **Devaluation Directive**: The surface event is never treated as a primary cause, but merely as a momentary crest on an oceanic wave—a symptom or sudden trigger revealing tensions accumulated over centuries within the deep structure.
 
 ### 4. Historical Palimpsest (Genealogia de Camadas Sobrepostas)
-- Every modern institution, infrastructure, or concept is an overwritten manuscript, consider these   suggestions:
+- Every modern institution, infrastructure, or concept is an overwritten manuscript, consider these suggestions:
   - **Infrastructural Palimpsest**: Bronze Age caravans becoming Roman paved roads, turning into medieval pilgrimage routes, canal routes, railway alignments, and finally fiber-optic pipelines.
   - **Institutional Palimpsest**: Roman administrative law sedimented under medieval Canon law, reworked by the Napoleonic Code, and lingering beneath contemporary regulatory bureaucracies.
   - **Linguistic and Conceptual Palimpsest**: Etymological layers where modern socio-political categories conceal theological concepts secularized over half a millennium.
@@ -104,7 +104,7 @@ Execute an internal 2-pass audit and expansion on the input text before generati
 - **Narrative Spine Preservation**: Avoid chaotic divergence. Maintain a relentless longitudinal spine that tracks the core thesis across macro-phases of historical time.
 - **Fluid Connectives**: Connect paragraphs using sophisticated temporal, causal, and dialectical transitions (e.g., *"Sob a aparente estabilidade da ordem jurídica setecentista, entretanto, operavam forças tectônicas de reconfiguração demográfica..."*).
 - **Substantive Explication vs. Methodological Invisibility**: Express multi-secular causes, ecological baselines, demographic drifts, and institutional legacies explicitly as facts and dynamics of the world, never as the result of applying a method, following an instruction, or citing a school of thought.
-- **Footnote Relocation**: Secondary biographical sketches, detailed legislative texts, specialized statistical breakdowns, and tangential precursor lineages must be systematically relegated to the **Informações Complementares** section.
+- **Footnote Relocation**: Secondary biographical sketches, detailed legislative texts, specialized statistical breakdowns, and tangential precursor lineages must be systematically relegated to the **Extra Info** section.
 
 ---
 
@@ -122,12 +122,12 @@ Execute an internal 2-pass audit and expansion on the input text before generati
 
 ---
 
-## Complementary Information Section
+### Extra Info Section
 
 Whenever necessary to prevent narrative fragmentation or conceptual inflation in the main body, append a dedicated section at the very end of the file under the exact header:
 
 ```markdown
-## Informações Complementares
+### Extra Info
 ```
 
 In this section, provide numbered continuous prose paragraphs detailing info not suitable to main text. This may include

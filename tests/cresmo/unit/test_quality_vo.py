@@ -397,22 +397,15 @@ class TestStageEvaluationSpec:
         spec = StageEvaluationSpec(source_extractor=lambda s: f"extracted:{s}")
         assert spec.extract_source_text("hello") == "extracted:hello"
 
-    def test_extract_source_text_from_content_body(self) -> None:
+    def test_extract_source_text_from_content_text(self) -> None:
         class FakeContent:
-            body = "body from content"
+            text = "text from content"
 
         class FakeSource:
             content = FakeContent()
 
         spec = StageEvaluationSpec()
-        assert spec.extract_source_text(FakeSource()) == "body from content"
-
-    def test_extract_source_text_from_direct_body(self) -> None:
-        class FakeSource:
-            body = "direct body"
-
-        spec = StageEvaluationSpec()
-        assert spec.extract_source_text(FakeSource()) == "direct body"
+        assert spec.extract_source_text(FakeSource()) == "text from content"
 
     def test_extract_source_text_fallback_to_str(self) -> None:
         spec = StageEvaluationSpec()
@@ -420,7 +413,7 @@ class TestStageEvaluationSpec:
 
 
 class TestWeightedAverageAndMechanicalVeto:
-    """Tests for Média Ponderada + Mechanical Veto (Two-Layered Quality Gate)."""
+    """Tests for Weighted Average + Mechanical Veto (Two-Layered Quality Gate)."""
 
     def test_perfect_scores_pass_without_veto(self) -> None:
         scores = (
@@ -524,4 +517,3 @@ class TestWeightedAverageAndMechanicalVeto:
         assert eval_res.overall_score == pytest.approx(0.75, abs=1e-3)
         assert eval_res.is_vetoed is False
         assert eval_res.passed is False
-

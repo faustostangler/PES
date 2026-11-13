@@ -4,12 +4,12 @@ Conforms to:
 - SPEC-001: §2.2 (Entities & Aggregates Lifecycle and Invariants)
 - ADR-001: Modular Monolith Domain Integrity
 - ADR-026: Rule 5 (Bounded Modularity < 500 LOC per file)
+- ADR-057: Monomorphic StageTranscript Envelope and Pure Triad Ingestion
 """
 
 from __future__ import annotations
 
 from cresmo.domain.entities.compendium import (
-    EnrichedCompendium,
     post_process_enriched_compendium,
 )
 from cresmo.domain.entities.identity import (
@@ -24,9 +24,7 @@ from cresmo.domain.entities.notes import (
     MapOfContent,
 )
 from cresmo.domain.entities.transcripts import (
-    FluidTranscript,
-    SourceTranscript,
-    Transcript,
+    StageTranscript,
     post_process_fluid_transcript,
 )
 from cresmo.domain.value_objects import (
@@ -46,15 +44,12 @@ __all__ = [
     "ChannelId",
     "ChannelName",
     "ContentId",
-    "EnrichedCompendium",
-    "FluidTranscript",
     "JudgeFrictionMetric",
     "MapOfContent",
     "NoteTitle",
     "NoteType",
     "PipelineSessionId",
-    "SourceTranscript",
-    "Transcript",
+    "StageTranscript",
     "UserIdentity",
     "post_process_enriched_compendium",
     "post_process_fluid_transcript",

@@ -18,7 +18,7 @@ from cresmo.application.pipeline.transcript_loader import (
     load_manifest_urls,
     load_transcript_from_file,
 )
-from cresmo.domain.entities import SourceTranscript
+from cresmo.domain.entities import StageTranscript
 from cresmo.domain.exceptions import CresmoDomainError
 from cresmo.domain.value_objects import ContentId
 
@@ -76,7 +76,7 @@ class TestEnsureTranscriptSaved:
         file_path.write_text("content", encoding="utf-8")
 
         mock_vault = MagicMock()
-        mock_transcript = MagicMock(spec=SourceTranscript)
+        mock_transcript = MagicMock(spec=StageTranscript)
 
         ensure_transcript_saved(mock_vault, file_path, mock_transcript, target_dir)
 
@@ -91,11 +91,11 @@ class TestEnsureTranscriptSaved:
         file_path.write_text("content", encoding="utf-8")
 
         mock_vault = MagicMock()
-        mock_transcript = MagicMock(spec=SourceTranscript)
+        mock_transcript = MagicMock(spec=StageTranscript)
 
         ensure_transcript_saved(mock_vault, file_path, mock_transcript, target_dir)
 
-        mock_vault.save_transcript.assert_called_once_with(mock_transcript)
+        mock_vault.save_stage_transcript.assert_called_once_with("raw", mock_transcript)
 
     def test_file_inside_vault_raw_dir_skips_save_when_target_dir_none(
         self, tmp_path: Path
@@ -107,11 +107,11 @@ class TestEnsureTranscriptSaved:
 
         mock_vault = MagicMock()
         mock_vault.raw_dir = vault_raw_dir
-        mock_transcript = MagicMock(spec=SourceTranscript)
+        mock_transcript = MagicMock(spec=StageTranscript)
 
         ensure_transcript_saved(mock_vault, file_path, mock_transcript, target_dir=None)
 
-        mock_vault.save_transcript.assert_not_called()
+        mock_vault.save_stage_transcript.assert_not_called()
 
     def test_file_outside_vault_raw_dir_and_target_none_saves(self, tmp_path: Path) -> None:
         vault_raw_dir = tmp_path / "vault_raw"
@@ -123,11 +123,11 @@ class TestEnsureTranscriptSaved:
 
         mock_vault = MagicMock()
         mock_vault.raw_dir = vault_raw_dir
-        mock_transcript = MagicMock(spec=SourceTranscript)
+        mock_transcript = MagicMock(spec=StageTranscript)
 
         ensure_transcript_saved(mock_vault, file_path, mock_transcript, target_dir=None)
 
-        mock_vault.save_transcript.assert_called_once_with(mock_transcript)
+        mock_vault.save_stage_transcript.assert_called_once_with("raw", mock_transcript)
 
 
 class TestContentIdDerivation:
@@ -205,11 +205,8 @@ class TestFrontmatterParsing:
             for r in caplog.records
             if r.levelno == logging.DEBUG and "malformed.md" in r.getMessage()
         )
-        assert record.msg == "[pipeline] Malformed YAML frontmatter in '%s', retaining defaults: %s"
-        args = record.args
-        assert isinstance(args, tuple)
-        assert args[0] == "malformed.md"
-        assert isinstance(args[1], Exception)
+        assert "[pipeline] Malformed YAML frontmatter in 'malformed.md'" in record.getMessage()
+        assert "retaining defaults" in record.getMessage()
 
 
 class TestMetadataResolution:
@@ -333,7 +330,7 @@ class TestLoadTranscriptFromFile:
 
         transcript = load_transcript_from_file(file_path)
 
-        assert isinstance(transcript, SourceTranscript)
+        assert isinstance(transcript, StageTranscript)
         assert transcript.content.title == "My Video Title"
         assert transcript.channel.name == "Tech Channel"
         assert transcript.channel.id is not None
@@ -341,7 +338,7 @@ class TestLoadTranscriptFromFile:
         assert transcript.channel.category == "computing"
         assert transcript.provenance.description == "A deep dive into architecture."
         assert transcript.provenance.publication_date == date(2026, 6, 15)
-        assert transcript.content.body == "This is the spoken transcript body."
+        assert transcript.content.text == "This is the spoken transcript body."
         assert isinstance(transcript.content.id, ContentId)
         assert transcript.content.id.value == "test_video"
         assert transcript.provenance.url == f"file://{file_path.resolve()}"
@@ -363,15 +360,14 @@ class TestLoadTranscriptFromFile:
         )
         with caplog.at_level(logging.DEBUG):
             transcript = load_transcript_from_file(file_path)
-        assert transcript.content.body == "Body text with enough length."
+        assert transcript.content.text == "Body text with enough length."
         record = next(
             r
             for r in caplog.records
             if r.levelno == logging.DEBUG and "bad_yaml.md" in r.getMessage()
         )
-        args = record.args
-        assert isinstance(args, tuple)
-        assert args[0] == "bad_yaml.md"
+        assert "[pipeline] Malformed YAML frontmatter in 'bad_yaml.md'" in record.getMessage()
+        assert "retaining defaults" in record.getMessage()
 
     def test_load_transcript_enforces_utf8_encoding(self, tmp_path: Path) -> None:
         file_path = tmp_path / "encoding_test.md"
@@ -476,4 +472,4 @@ def test_coordinator_run_for_text_file_passes_raw_dir(tmp_path: Path) -> None:
     pipeline.run_for_text_file(file_path)
 
     # Since file_path is in incoming/ and not in custom_raw/, it must be persisted via vault_port mock
-    mock_vault.save_transcript.assert_called_once()
+    mock_vault.save_stage_transcript.assert_called_once()

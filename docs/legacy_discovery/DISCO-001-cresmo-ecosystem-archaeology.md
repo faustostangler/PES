@@ -77,9 +77,9 @@ PES/
 ### 3.2 Stage 2: Socratic Gap-Filling & Fluid Prose Expansion (`cresmo_gap_filler`)
 1. **Target Directory Isolation**: All expanded transcripts are saved exclusively to `playground/cresmo/enriched/[Channel_Name]/[Video_ID].md`. Output is strictly forbidden from writing back to `raw/`.
 2. **Multi-Pass Progressive Enrichment**: Default 3 sequential passes (`stage2_passes=3`):
-   - **Pass 1**: Converts raw spoken transcript into dense, continuous prose, purging oralities, colloquialisms, hesitations, first-person speech, bullet points, and tables. Appends a mandatory `## Informações Complementares` section.
+   - **Pass 1**: Converts raw spoken transcript into dense, continuous prose, purging oralities, colloquialisms, hesitations, first-person speech, bullet points, and tables. Appends a mandatory `### Extra Info` section.
    - **Passes 2+**: Audits previous pass for epistemic gaps, adds verified historical/scientific context, figures, and structural metaphors.
-3. **Validation Invariants**: File must exceed `min_valid_output_bytes` (300 bytes) and contain the `## Informações Complementares` section to be considered valid.
+3. **Validation Invariants**: File must exceed `min_valid_output_bytes` (300 bytes) and contain the `### Extra Info` section to be considered valid.
 
 ### 3.3 Stage 2.5: Deep Longitudinal & Synchronic Expansion (`cresmo_expander`)
 1. **Sequential Dual Expansion**:
@@ -137,7 +137,7 @@ Raw spoken transcript body text starts here...
 
 Continuous, dense prose without bullet lists, tables, or speech oralities...
 
-## Informações Complementares
+### Extra Info
 
 Factual data, historical context, references, and epistemic expansions...
 ```

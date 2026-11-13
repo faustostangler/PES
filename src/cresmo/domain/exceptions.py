@@ -69,7 +69,7 @@ class CompendiumStructureError(CresmoDomainError):
     """Raised when an Enriched Compendium violates fluid prose structural invariants.
 
     Enforces continuous prose (rejection of raw tables or bullet lists) and the
-    mandatory presence of the '## Informações Complementares' section per SPEC-001: §2.2.
+    mandatory presence of the '### Extra Info' section per SPEC-001: §2.2.
     """
 
 

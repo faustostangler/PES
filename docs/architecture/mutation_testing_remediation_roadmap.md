@@ -1,6 +1,6 @@
 # Strategic Roadmap & Specification: Mutation Testing Remediation (Phase 4 Treatment)
 
-**Document Identifier**: `DOC-ARCH-007 / SPEC-007`  
+**Document Identifier**: `DOC-ARCH-007`  
 **Governing Method**: Doctor Stangler Architecture Method (Clean/Hexagonal DDD & TDD)  
 **Status**: EXECUTED & VERIFIED (Quality Gate Operational)  
 **Author**: Antigravity AI Pair Implementer & Principal Socio-Technical Architect  

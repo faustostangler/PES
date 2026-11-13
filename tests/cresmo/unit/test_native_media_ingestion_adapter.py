@@ -86,8 +86,8 @@ class TestNativeMediaIngestionAdapter:
             assert transcript is not None
             assert transcript.content.id == ContentId("dQw4w9WgXcQ")
             assert transcript.channel.name == "Political Theory"
-            assert "A teoria da circulação das elites postula" in transcript.content.body
-            assert "Vilfredo Pareto desenvolveu esta formulação." in transcript.content.body
+            assert "A teoria da circulação das elites postula" in transcript.content.text
+            assert "Vilfredo Pareto desenvolveu esta formulação." in transcript.content.text
 
             # Verify that whisper audio fallback was NOT invoked
             mock_whisper.assert_not_called()
@@ -123,12 +123,12 @@ class TestNativeMediaIngestionAdapter:
             mock_ydl = MagicMock()
             mock_ydl.extract_info.return_value = fake_info
             mock_ydl_cls.return_value.__enter__.return_value = mock_ydl
-            mock_fallback.return_value = ("Transcribed from Whisper", "Machine Channel")
+            mock_fallback.return_value = "Transcribed from Whisper"
 
             transcript = adapter.ingest_single_video(video_url=video_url, output_dir=tmp_path)
 
             assert transcript is not None
-            assert transcript.content.body == "Transcribed from Whisper"
+            assert transcript.content.text == "Transcribed from Whisper"
             mock_fallback.assert_called_once()
 
     def test_ingest_single_video_whisper_fallback_and_scratch_cleanup(self, tmp_path: Path) -> None:
@@ -182,7 +182,7 @@ class TestNativeMediaIngestionAdapter:
                 assert transcript is not None
                 assert transcript.content.id == ContentId("dQw4w9WgXcQ")
                 assert transcript.channel.name == "Podcast Channel"
-                assert transcript.content.body == "Verbatim audio transcript via Whisper."
+                assert transcript.content.text == "Verbatim audio transcript via Whisper."
 
                 # Verify scratch dir was wiped clean
                 assert len(captured_scratch_dirs) == 1
@@ -308,7 +308,7 @@ class TestNativeMediaIngestionAdapter:
                 )
 
                 assert transcript is not None
-                assert transcript.content.body == "Audio transcript content."
+                assert transcript.content.text == "Audio transcript content."
 
                 # Verify audio was preserved in output_dir / channel_name
                 expected_audio = tmp_path / "KeepAudioChannel" / "keepAudioVid.m4a"
@@ -356,7 +356,7 @@ class TestNativeMediaIngestionAdapter:
             }
             mock_ydl_cls.return_value.__enter__.return_value = mock_ydl
 
-            with patch.object(adapter, "_transcribe_audio_fallback", return_value=("Text", "Chan")):
+            with patch.object(adapter, "_transcribe_audio_fallback", return_value="Text"):
                 adapter.ingest_single_video(
                     "https://youtube.com/watch?v=mock_video_12345", output_dir=tmp_path
                 )
@@ -580,16 +580,15 @@ class TestNativeMediaIngestionAdapter:
             mock_model.transcribe.return_value = {"text": "Transcribed speech content."}
             mock_whisper_load.return_value = mock_model
 
-            body, channel = adapter._transcribe_audio_fallback(
+            body = adapter._transcribe_audio_fallback(
                 video_url="https://youtube.com/watch?v=dQw4w9WgXcQ",
                 output_dir=tmp_path,
                 whisper_model="base",
                 keep_audio=True,
-                info={"channel": "Test Channel"},
+                channel_name="Test Channel",
             )
 
             assert body == "Transcribed speech content."
-            assert channel == "Test Channel"
             # Verify audio was copied to output_dir / Test Channel
             preserved_audio = tmp_path / "Test Channel" / "dQw4w9WgXcQ.m4a"
             assert preserved_audio.exists()
@@ -620,7 +619,7 @@ class TestNativeMediaIngestionAdapter:
             patch.object(
                 adapter,
                 "_transcribe_audio_fallback",
-                return_value=("Transcribed from audio fallback.", "Fallback_Channel"),
+                return_value="Transcribed from audio fallback.",
             ) as mock_whisper_fb,
         ):
             mock_ydl = MagicMock()
@@ -633,7 +632,7 @@ class TestNativeMediaIngestionAdapter:
             )
 
             assert transcript is not None
-            assert transcript.content.body == "Transcribed from audio fallback."
+            assert transcript.content.text == "Transcribed from audio fallback."
             mock_whisper_fb.assert_called_once()
 
     def test_acl_date_parsing_helpers(self) -> None:
@@ -794,7 +793,6 @@ class TestNativeMediaIngestionAdapter:
 
     def test_transcribe_audio_fallback_keep_audio_and_cleanup(self, tmp_path: Path) -> None:
         adapter = NativeMediaIngestionAdapter()
-        fake_info = {"channel": "Science Today", "uploader": "SciUploader"}
         dummy_audio_name = "test_audio.m4a"
 
         def mock_ydl_download(urls: list[str]) -> None:
@@ -818,16 +816,15 @@ class TestNativeMediaIngestionAdapter:
             mock_model.transcribe.return_value = {"text": "  Transcribed text content  "}
             mock_load_model.return_value = mock_model
 
-            body, channel = adapter._transcribe_audio_fallback(
+            body = adapter._transcribe_audio_fallback(
                 video_url="https://youtube.com/watch?v=123",
                 output_dir=tmp_path,
                 whisper_model="tiny",
                 keep_audio=True,
-                info=fake_info,
+                channel_name="Science Today",
             )
 
             assert body == "Transcribed text content"
-            assert channel == "Science Today"
             saved_audio = tmp_path / "Science Today" / dummy_audio_name
             assert saved_audio.exists()
             assert saved_audio.read_bytes() == b"dummy audio bytes"
@@ -849,15 +846,15 @@ class TestNativeMediaIngestionAdapter:
         }
         raw_json3 = json.dumps({"events": [{"segs": [{"utf8": "Primeiro paragrafo falado."}]}]})
         with patch.object(adapter, "_fetch_url_content", return_value=raw_json3) as mock_fetch:
-            body, chan = adapter._resolve_transcript_body(
+            body = adapter._resolve_transcript_body(
                 video_url="https://youtube.com/watch?v=sub_success",
                 info=fake_info,
                 output_dir=tmp_path,
                 whisper_model="base",
                 keep_audio=False,
+                channel_name="MyChannel",
             )
             assert body == "Primeiro paragrafo falado."
-            assert chan == "MyChannel"
             mock_fetch.assert_called_once_with("https://subs.google.com/timedtext?v=sub_success")
 
     def test_transcribe_audio_fallback_no_downloaded_file_raises_error(
@@ -877,7 +874,7 @@ class TestNativeMediaIngestionAdapter:
                     output_dir=tmp_path,
                     whisper_model="base",
                     keep_audio=False,
-                    info={"uploader": "UploaderOnly"},
+                    channel_name="UploaderOnly",
                 )
 
     def test_transcribe_audio_fallback_whisper_error_raises_infra_error(
@@ -909,7 +906,7 @@ class TestNativeMediaIngestionAdapter:
                     output_dir=tmp_path,
                     whisper_model="base",
                     keep_audio=False,
-                    info=None,
+                    channel_name="Unknown_Channel",
                 )
 
     def test_build_raw_transcript_aggregate_attributes(self) -> None:
@@ -931,7 +928,7 @@ class TestNativeMediaIngestionAdapter:
         assert transcript.channel.name == "QuantumHub"
         assert transcript.channel.url == "https://youtube.com/@channel123"
         assert transcript.content.title == "Quantum Computing 101"
-        assert transcript.content.body == "Qubits can exist in superposition."
+        assert transcript.content.text == "Qubits can exist in superposition."
         assert transcript.provenance.description == "Intro to qubits and entanglement"
         assert ch_id is not None
         assert ch_id.value == "UC_channel_123"
@@ -952,7 +949,7 @@ class TestNativeMediaIngestionAdapter:
             body="body",
             channel_name="Chan",
         )
-        assert transcript.channel.url is None
+        assert transcript.channel.url == "https://www.youtube.com/@Chan"
         assert ch_id is not None
         assert ch_id.value == "uploader_xyz"
 
@@ -1050,7 +1047,7 @@ class TestNativeMediaIngestionAdapter:
             "cresmo_media_ingestion_duration_seconds_count",
             {
                 "channel_id": "",
-                "channel_name": "Unknown_Channel",
+                "channel_name": "FailChan",
                 "modality": "url",
                 "status": "failure",
             },
@@ -1063,7 +1060,7 @@ class TestNativeMediaIngestionAdapter:
         adapter = NativeMediaIngestionAdapter()
         with (
             patch.object(adapter, "_find_native_subtitle_url", return_value=None),
-            patch.object(adapter, "_transcribe_audio_fallback", return_value=("", "Chan")),
+            patch.object(adapter, "_transcribe_audio_fallback", return_value=""),
             pytest.raises(DomainValidationError, match="Extracted transcript body is empty"),
         ):
             adapter._resolve_transcript_body(
@@ -1101,19 +1098,17 @@ class TestNativeMediaIngestionAdapter:
         with (
             patch.object(adapter, "_find_native_subtitle_url", return_value="https://subs.url"),
             patch.object(adapter, "_fetch_url_content", return_value="invalid json {{{"),
-            patch.object(
-                adapter, "_transcribe_audio_fallback", return_value=("Fallback body", "Chan")
-            ),
+            patch.object(adapter, "_transcribe_audio_fallback", return_value="Fallback body"),
         ):
-            body, chan = adapter._resolve_transcript_body(
+            body = adapter._resolve_transcript_body(
                 video_url="https://youtube.com/watch?v=sub_err",
                 info={"id": "sub_err", "channel": "Chan"},
                 output_dir=tmp_path,
                 whisper_model="base",
                 keep_audio=False,
+                channel_name="Chan",
             )
             assert body == "Fallback body"
-            assert chan == "Chan"
             assert "Failed to fetch or parse native subtitles" in caplog.text
             assert "Falling back to Whisper" in caplog.text
 
@@ -1173,7 +1168,7 @@ class TestNativeMediaIngestionAdapter:
             patch.object(
                 adapter,
                 "_resolve_transcript_body",
-                return_value=("Resolved body text", "IngestChan"),
+                return_value="Resolved body text",
             ),
         ):
             transcript = adapter.ingest_single_video(
@@ -1184,7 +1179,48 @@ class TestNativeMediaIngestionAdapter:
             )
             assert transcript is not None
             assert transcript.content.title == "Ingested Title"
-            assert transcript.content.body == "Resolved body text"
+            assert transcript.content.text == "Resolved body text"
             assert transcript.channel.name == "IngestChan"
             assert transcript.channel.id is not None
             assert transcript.channel.id.value == "UC_ingest_123"
+
+    def test_extract_channel_name_fallback_hierarchy(self) -> None:
+        adapter = NativeMediaIngestionAdapter()
+        # 1. Prefer 'channel'
+        assert (
+            adapter._extract_channel_name({"channel": "PrimaryChannel", "uploader": "Ignored"})
+            == "PrimaryChannel"
+        )
+        # 2. Fall back to 'uploader'
+        assert adapter._extract_channel_name({"uploader": "FallbackUploader"}) == "FallbackUploader"
+        # 3. Default to 'Unknown_Channel'
+        assert adapter._extract_channel_name({}) == "Unknown_Channel"
+
+    def test_ingest_single_video_resolve_body_failure_records_resolved_channel_in_metrics(
+        self, tmp_path: Path
+    ) -> None:
+        mock_metrics = MagicMock()
+        adapter = NativeMediaIngestionAdapter(metrics_port=mock_metrics)
+        fake_info = {
+            "id": "vid_err_429",
+            "channel": "RobustChannel",
+            "channel_id": "UC_robust_1",
+        }
+        with (
+            patch.object(adapter, "_fetch_video_metadata", return_value=fake_info),
+            patch.object(
+                adapter,
+                "_resolve_transcript_body",
+                side_effect=RateLimitExceededError("HTTP 429"),
+            ),
+            pytest.raises(RateLimitExceededError),
+        ):
+            adapter.ingest_single_video(
+                video_url="https://youtube.com/watch?v=vid_err_429",
+                output_dir=tmp_path,
+            )
+
+        mock_metrics.observe_histogram.assert_called_once()
+        call_labels = mock_metrics.observe_histogram.call_args[1]["labels"]
+        assert call_labels["channel_name"] == "RobustChannel"
+        assert call_labels["status"] == "failure"

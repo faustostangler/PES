@@ -1,6 +1,6 @@
 # ADR-042: Modern Typer Presentation CLI Driving Adapter
 
-**Status:** PROPOSED  
+**Status:** ACCEPTED (SUPERSEDES [`ADR-002`](ADR-002-cresmo-presentation-cli.md))  
 **Date:** 2026-10-13  
 **Decision Makers:** Lead Architect (Fausto Stangler), Systems Architect (Doctor Stangler Committee)  
 **Governing Method:** Doctor Stangler Architecture Method (Clean/Hexagonal DDD Modular Monolith, KISS & Fail-Fast Principles, ADR-First)  

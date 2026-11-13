@@ -9,18 +9,14 @@ Conforms to:
 
 from __future__ import annotations
 
-import argparse
 from pathlib import Path
+from types import SimpleNamespace as Namespace
 from unittest.mock import MagicMock, patch
 
 import pytest
 
-from cresmo.infrastructure.adapters.cookie_extractor import SUPPORTED_BROWSERS
 from cresmo.presentation.cli import main
-from cresmo.presentation.commands.export_cookies import (
-    handle_export_cookies,
-    register_subparser,
-)
+from cresmo.presentation.commands.export_cookies import handle_export_cookies
 from cresmo.presentation.exit_codes import (
     EXIT_CONFIG_OR_USAGE_ERROR,
     EXIT_INGESTION_ERROR,
@@ -31,44 +27,9 @@ from cresmo.presentation.exit_codes import (
 class TestExportCookiesCommand:
     """Test suite for cresmo export-cookies presentation command."""
 
-    def test_register_subparser(self) -> None:
-        """Verify export-cookies subparser configuration, argument flags, choices, and defaults."""
-        mock_subparsers = MagicMock()
-        mock_parser = MagicMock()
-        mock_subparsers.add_parser.return_value = mock_parser
-
-        register_subparser(mock_subparsers)
-
-        mock_subparsers.add_parser.assert_called_once_with(
-            "export-cookies",
-            help="Extract and validate YouTube authentication cookies from installed web browsers",
-        )
-        assert mock_parser.add_argument.call_count == 4
-        mock_parser.add_argument.assert_any_call(
-            "--browser",
-            choices=list(SUPPORTED_BROWSERS),
-            default="firefox",
-            help="Target browser to extract cookies from (default: firefox)",
-        )
-        mock_parser.add_argument.assert_any_call(
-            "--output",
-            type=Path,
-            default=None,
-            help="Destination path for Netscape cookies file (default: data/cookies.txt)",
-        )
-        mock_parser.add_argument.assert_any_call(
-            "--require-auth",
-            action="store_true",
-            default=False,
-            help="Strictly require authenticated session cookies (SID, SSID, LOGIN_INFO)",
-        )
-        mock_parser.add_argument.assert_any_call(
-            "--force",
-            action="store_true",
-            default=False,
-            help="Force re-extraction even if a valid cookie file already exists",
-        )
-        mock_parser.set_defaults.assert_called_once_with(handler=handle_export_cookies)
+    def test_export_cookies_cli_help(self) -> None:
+        """Verify export-cookies CLI displays help and options."""
+        assert main(["export-cookies", "--help"]) == EXIT_SUCCESS
 
     def test_cookies_already_exist_and_valid_without_force(
         self, tmp_path: Path, capsys: pytest.CaptureFixture[str]
@@ -81,7 +42,7 @@ class TestExportCookiesCommand:
         mock_settings.cookies_file = None
         mock_settings.data_dir = tmp_path
 
-        args = argparse.Namespace(
+        args = Namespace(
             browser="firefox",
             output=cookie_file,
             require_auth=False,
@@ -125,7 +86,7 @@ class TestExportCookiesCommand:
         mock_settings.cookies_file = None
         mock_settings.data_dir = tmp_path
 
-        args = argparse.Namespace(
+        args = Namespace(
             browser="chrome",
             output=cookie_file,
             require_auth=True,
@@ -173,7 +134,7 @@ class TestExportCookiesCommand:
         mock_settings.cookies_file = None
         mock_settings.data_dir = tmp_path
 
-        args = argparse.Namespace(
+        args = Namespace(
             browser="brave",
             output=cookie_file,
             require_auth=False,
@@ -219,7 +180,7 @@ class TestExportCookiesCommand:
         mock_settings.cookies_file = None
         mock_settings.data_dir = tmp_path
 
-        args = argparse.Namespace(
+        args = Namespace(
             browser="chromium",
             output=cookie_file,
             require_auth=True,
@@ -259,7 +220,7 @@ class TestExportCookiesCommand:
         self, tmp_path: Path, capsys: pytest.CaptureFixture[str]
     ) -> None:
         """Verify unexpected runtime exceptions write to stderr and return EXIT_CONFIG_OR_USAGE_ERROR (2)."""
-        args = argparse.Namespace(
+        args = Namespace(
             browser="firefox",
             output=tmp_path / "cookies.txt",
             require_auth=False,
@@ -286,7 +247,7 @@ class TestExportCookiesCommand:
         mock_settings.cookies_file = target_cookies
         mock_settings.data_dir = tmp_path
 
-        args = argparse.Namespace(
+        args = Namespace(
             browser="edge",
             output=None,
             require_auth=False,
@@ -318,7 +279,7 @@ class TestExportCookiesCommand:
         mock_settings.cookies_file = None
         mock_settings.data_dir = tmp_path
 
-        args = argparse.Namespace(
+        args = Namespace(
             browser="firefox",
             output=None,
             require_auth=False,

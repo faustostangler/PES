@@ -8,15 +8,12 @@ Conforms to:
 
 from __future__ import annotations
 
-import logging
 import os
 import sys
 from collections.abc import Callable
 from typing import Any
 
-from langfuse import Langfuse
-from langfuse.span_filter import is_default_export_span
-from langfuse.types import MaskOtelSpansParams, MaskOtelSpansResult, OtelSpanPatch
+import structlog
 
 from cresmo.application.ports import (
     AnonymizerPort,
@@ -40,22 +37,27 @@ from cresmo.infrastructure.adapters.prometheus_metrics_adapter import (
 from cresmo.infrastructure.config import CresmoSettings
 from cresmo.presentation.factories.settings_factory import resolve_shared_settings
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 
-def probe_langfuse_ready(host: str, timeout_seconds: float = 1.0) -> bool:
+def probe_langfuse_ready(host: str, timeout_seconds: float = 2.0) -> bool:
     """Active preflight probe verifying whether the Langfuse server is responding to health pings.
 
     Args:
         host: Root Langfuse endpoint URL (e.g. 'http://localhost:3000').
-        timeout_seconds: Probe socket timeout in seconds (default: 1.0s).
+        timeout_seconds: Probe socket timeout in seconds (default: 2.0s).
 
     Returns:
         True if the server responded with HTTP < 500, False if unreachable or timed out.
     """
     normalized_host = host.rstrip("/")
     probe_url = f"{normalized_host}/api/public/health"
-    return probe_http_endpoint(probe_url, timeout_seconds=timeout_seconds)
+    if probe_http_endpoint(probe_url, timeout_seconds=timeout_seconds):
+        return True
+    if "localhost" in normalized_host:
+        fallback_url = probe_url.replace("localhost", "127.0.0.1")
+        return probe_http_endpoint(fallback_url, timeout_seconds=timeout_seconds)
+    return False
 
 
 def _clean_langfuse_env() -> None:
@@ -68,6 +70,7 @@ def _clean_langfuse_env() -> None:
 
 def _build_should_export_span() -> Callable[[Any], bool]:
     """Build filter predicate checking default spans and cresmo.* scopes."""
+    from langfuse.span_filter import is_default_export_span
 
     def should_export_cresmo_span(span: Any) -> bool:
         if is_default_export_span(span):
@@ -80,24 +83,26 @@ def _build_should_export_span() -> Callable[[Any], bool]:
 
 def _build_mask_hook(
     anonymizer: AnonymizerPort | None,
-) -> Callable[..., MaskOtelSpansResult | None] | None:
+) -> Callable[..., Any] | None:
     """Construct export-stage span attribute masking hook if anonymizer is provided."""
     if anonymizer is None:
         return None
 
-    def mask_otel_spans(*, params: MaskOtelSpansParams) -> MaskOtelSpansResult | None:
-        patches = {}
+    def mask_otel_spans(*, params: Any) -> Any:
+        from langfuse.types import MaskOtelSpansResult, OtelSpanPatch
+
+        span_patches = {}
         for identifier, span in params.spans.items():
             raw_attrs = span.attributes or {}
             sanitized = anonymizer.mask_span_attributes(raw_attrs)
             if sanitized != raw_attrs:
                 delete_attrs = [k for k in raw_attrs if k not in sanitized]
-                set_attrs = {k: v for k, v in sanitized.items() if raw_attrs.get(k) != v}
-                patches[identifier] = OtelSpanPatch(
+                set_attributes = {k: v for k, v in sanitized.items() if raw_attrs.get(k) != v}
+                span_patches[identifier] = OtelSpanPatch(
                     delete_attributes=tuple(delete_attrs),
-                    set_attributes=set_attrs,
+                    set_attributes=set_attributes,
                 )
-        return MaskOtelSpansResult(span_patches=patches) if patches else None
+        return MaskOtelSpansResult(span_patches=span_patches) if span_patches else None
 
     return mask_otel_spans
 
@@ -125,8 +130,8 @@ def resolve_langfuse_client(
 
     # Active Preflight Probe
     if getattr(settings, "enable_preflight_probes", True):
-        timeout = getattr(settings, "preflight_probe_timeout_seconds", 1.0)
-        if not probe_langfuse_ready(settings.langfuse_host, timeout_seconds=timeout):
+        timeout_seconds = getattr(settings, "preflight_probe_timeout_seconds", 1.0)
+        if not probe_langfuse_ready(settings.langfuse_host, timeout_seconds=timeout_seconds):
             sys.stderr.write(
                 f"[preflight] Langfuse server at '{settings.langfuse_host}' is unreachable. "
                 "Telemetry bypassed to prevent OpenTelemetry retry loops.\n"
@@ -155,11 +160,12 @@ def resolve_langfuse_client(
             init_kwargs["mask_otel_spans"] = mask_hook
 
         langfuse_module = sys.modules.get("langfuse")
-        langfuse_cls = (
-            getattr(langfuse_module, "Langfuse", Langfuse)
-            if langfuse_module is not None
-            else Langfuse
-        )
+        if langfuse_module is not None:
+            langfuse_cls = langfuse_module.Langfuse
+        else:
+            from langfuse import Langfuse as imported_langfuse
+
+            langfuse_cls = imported_langfuse
         client = langfuse_cls(**init_kwargs)
         name_telemetry_threads(client)
         return client

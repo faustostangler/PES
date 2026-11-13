@@ -10,8 +10,11 @@ Conforms to:
 
 from __future__ import annotations
 
-import argparse
 import sys
+from pathlib import Path
+from typing import Annotated, Any
+
+import typer
 
 from cresmo.presentation.composition import (
     build_unify_duplicates_use_case,
@@ -23,24 +26,38 @@ from cresmo.presentation.exit_codes import (
 )
 
 
-def register_subparser(subparsers: argparse._SubParsersAction) -> None:
-    """Register 'dedupe' subcommand parser.
+def dedupe(
+    vault: Annotated[
+        Path | None,
+        typer.Option(
+            "--vault",
+            file_okay=False,
+            dir_okay=True,
+            resolve_path=True,
+            help="Path to Obsidian vault directory override",
+        ),
+    ] = None,
+    dry_run: Annotated[
+        bool,
+        typer.Option("--dry-run", help="Simulate deduplication without modifying notes"),
+    ] = False,
+    verbose: Annotated[
+        bool,
+        typer.Option("--verbose", "-v", help="Enable verbose output"),
+    ] = False,
+) -> None:
+    """Execute graph entity resolution, non-destructive merging, and link rewriting."""
+    _ = (vault, dry_run, verbose)
+    code = handle_dedupe(None)
+    if code != EXIT_SUCCESS:
+        raise typer.Exit(code=code)
 
-    Args:
-        subparsers: Root CLI subparsers action object.
-    """
-    dedupe_parser = subparsers.add_parser(
-        "dedupe",
-        help="Execute graph entity resolution, non-destructive merging, and link rewriting",
-    )
-    dedupe_parser.set_defaults(handler=handle_dedupe)
 
-
-def handle_dedupe(args: argparse.Namespace) -> int:
+def handle_dedupe(args: Any = None) -> int:
     """Unify duplicate atomic notes across the Obsidian vault graph.
 
     Args:
-        args: Parsed CLI argument namespace.
+        args: Parsed CLI argument namespace or None.
 
     Returns:
         Process exit code integer.

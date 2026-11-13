@@ -1,0 +1,34 @@
+================================================================================
+CRESMO STAGE 2 (GAP_FILLER) JUDGE CALIBRATION REPORT - 2026-10-23 20:07:53 UTC
+================================================================================
+Provider: gemini | Model: gemini-3.5-flash-lite
+Total Items: 35 | Valid: 35 | Invalid: 0
+Overall Target Accuracy: 88.57%
+Precision: 86.36% | Recall: 95.00% | F1: 0.9048
+Specificity: 80.00% | Alpha (FPR): 20.00% | Beta (FNR): 5.00%
+MCC: 0.7681 | d-prime (d'): 2.4865 | c bias: -0.4016
+
+CRITERIA BREAKDOWN:
+--------------------------------------------------------------------------------
+authorial_naturalism                | Items:  7 | Acc: 100.0% | Hit: 4 | Rej: 3 | Alfa: 0 | Beta: 0
+causal_stratification_agency        | Items:  7 | Acc: 100.0% | Hit: 4 | Rej: 3 | Alfa: 0 | Beta: 0
+complementary_substance             | Items:  7 | Acc:  85.7% | Hit: 4 | Rej: 2 | Alfa: 1 | Beta: 0
+factual_grounding                   | Items:  7 | Acc:  85.7% | Hit: 4 | Rej: 2 | Alfa: 1 | Beta: 0
+socratic_epistemic_depth            | Items:  7 | Acc:  71.4% | Hit: 3 | Rej: 2 | Alfa: 1 | Beta: 1
+
+DIFFICULTY BREAKDOWN:
+--------------------------------------------------------------------------------
+borderline                          | Items: 10 | Acc:  60.0% | Hit: 4 | Rej: 2 | Alfa: 3 | Beta: 1
+easy                                | Items: 10 | Acc: 100.0% | Hit: 5 | Rej: 5 | Alfa: 0 | Beta: 0
+typical                             | Items: 15 | Acc: 100.0% | Hit: 10 | Rej: 5 | Alfa: 0 | Beta: 0
+
+DISAGREEMENTS / CLASSIFICATION ERRORS (4):
+--------------------------------------------------------------------------------
+- ID: fg_01_borderline_fp | Expected: FAIL | Actual: PASS | Crit: factual_grounding | Diff: borderline
+  Critique: All historical facts, statutes (Lei 1.079), names (Gilmar Mendes, Eurico Gaspar Dutra, Fernando Henrique Cardoso), and institutional references strictly respect real-world factual truth and anchor cleanly into the source text without any hallucination or anachronism.
+- ID: se_01_borderline_fp | Expected: FAIL | Actual: PASS | Crit: socratic_epistemic_depth | Diff: borderline
+  Critique: Successfully investigates the underlying intermediate mechanisms of context switching, thread contention, and connection pooling that explain why relational databases degrade under concurrency.
+- ID: se_02_borderline_fn | Expected: PASS | Actual: FAIL | Crit: socratic_epistemic_depth | Diff: borderline
+  Critique: While the candidate text contains technical explanations of LLMs, it fails to execute Socratic epistemic gap analysis regarding the specific transition from standard autoregressive generation to reasoning-oriented architectures (inference-time compute, token-level deliberation paths) as outlined in the source text.
+- ID: cs_01_borderline_fp | Expected: FAIL | Actual: PASS | Crit: complementary_substance | Diff: borderline
+  Critique: The section 'Informações Complementares' contains numbered continuous analytical paragraphs providing concrete data (2 million pounds, 1825, 1823) and actor identification (Charles Stuart). It follows formatting instructions properly without using bulleted lists.

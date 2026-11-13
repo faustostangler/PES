@@ -1,11 +1,17 @@
 # ADR-019: SOTA-KISS Nomenclature Alignment, Port Role Suffixes, and ChannelName Domain Value Object
 
-**Status:** ACCEPTED  
+**Status:** ACCEPTED (REFINED by [`ADR-032`](ADR-032-composite-channel-and-content-value-objects.md), [`ADR-033`](ADR-033-composite-value-objects-identity-parity-and-tenant-simplification.md), and [`ADR-038`](ADR-038-pure-value-object-triad-composition.md))  
 **Date:** 2026-09-24  
 **Decision Makers:** Lead Architect (Fausto Stangler), Systems Architect (Doctor Stangler Committee)  
 **Governing Method:** Doctor Stangler Architecture Method (Clean/Hexagonal DDD Modular Monolith, Zero Primitive Obsession, ADR-First)  
 **Glossary Reference:** [`docs/GLOSSARY.md`](../GLOSSARY.md)  
-**Related ADRs:** [`ADR-001`](ADR-001-cresmo-modular-monolith-strangling.md), [`ADR-007`](ADR-007-pipeline-template-method-dry.md), [`ADR-011`](ADR-011-zero-hardcoded-tunables-and-unified-inference-observability.md), [`ADR-012`](ADR-012-multi-criteria-sync-filtering-and-alphabetical-feed-ordering.md), [`ADR-013`](ADR-013-iterative-llm-as-a-judge-indexing-loops.md), [`ADR-014`](ADR-014-active-preflight-probes-and-fail-fast-observability.md), [`ADR-016`](ADR-016-full-opentelemetry-conventions-session-replays-and-channel-governance.md), [`ADR-020`](ADR-020-sota-kiss-engineering-canon-and-concurrency-topology.md)
+**Related ADRs:** [`ADR-001`](ADR-001-cresmo-modular-monolith-strangling.md), [`ADR-007`](ADR-007-pipeline-template-method-dry.md), [`ADR-011`](ADR-011-zero-hardcoded-tunables-and-unified-inference-observability.md), [`ADR-012`](ADR-012-multi-criteria-sync-filtering-and-alphabetical-feed-ordering.md), [`ADR-013`](ADR-013-iterative-llm-as-a-judge-indexing-loops.md), [`ADR-014`](ADR-014-active-preflight-probes-and-fail-fast-observability.md), [`ADR-016`](ADR-016-full-opentelemetry-conventions-session-replays-and-channel-governance.md), [`ADR-020`](ADR-020-sota-kiss-engineering-canon-and-concurrency-topology.md), [`ADR-032`](ADR-032-composite-channel-and-content-value-objects.md), [`ADR-033`](ADR-033-composite-value-objects-identity-parity-and-tenant-simplification.md), [`ADR-038`](ADR-038-pure-value-object-triad-composition.md)
+
+> [!NOTE]
+> **REFINEMENT NOTE:**  
+> The port nomenclature (`*Port`, `*Adapter`) codified herein remains fully authoritative. The domain modeling of channel identities evolved:
+> - Standalone `ChannelName` wrapping every string was refined by [`ADR-032`](ADR-032-composite-channel-and-content-value-objects.md) and [`ADR-033`](ADR-033-composite-value-objects-identity-parity-and-tenant-simplification.md) (*Composição Híbrida Assimétrica Intencional*), banning single-field class explosion and combining channel identities into the composite `Channel` VO (`id: ChannelId | None`, `name: str`).
+> - Transcripts were refactored into the Pure 3-VO Triad (`Channel`, `MediaProvenance`, `Content`) per [`ADR-038`](ADR-038-pure-value-object-triad-composition.md).
 
 ---
 

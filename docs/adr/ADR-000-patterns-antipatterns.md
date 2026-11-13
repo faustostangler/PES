@@ -1,4 +1,20 @@
-Use this patterns and antipatterns* as a guide to create a better code.
+# ADR-000: Architectural Patterns and Anti-Patterns Reference Catalog
+
+**Status:** ACCEPTED (Foundational Supreme Canon)  
+**Date:** 2026-09-10  
+**Decision Makers:** Lead Architect (Fausto Stangler), Systems Architect (Doctor Stangler Committee)  
+**Governing Method:** Doctor Stangler Architecture Method (Clean/Hexagonal DDD Modular Monolith, SOTA-KISS)  
+**Precedence Invariant:** **Absolute Supreme Priority**. This reference list has overarching priority over all ADRs in this repository, regardless of publication date. All patterns listed herein are authoritative; all items marked with an asterisk (`*`) are strictly prohibited anti-patterns.  
+**Related ADRs:** [`ADR-020`](ADR-020-sota-kiss-engineering-canon-and-concurrency-topology.md), [`ADR-026`](ADR-026-clean-code-anti-patterns-and-code-smell-governance.md), [`ADR-033`](ADR-033-composite-value-objects-identity-parity-and-tenant-simplification.md), [`ADR-035`](ADR-035-atomic-work-item-traces-and-sota-kiss-batch-correlation.md), [`ADR-036`](ADR-036-clean-telemetry-namespacing-and-observation-binding.md), [`ADR-037`](ADR-037-lean-telemetry-topography-and-chronological-evaluation.md), [`ADR-038`](ADR-038-pure-value-object-triad-composition.md)  
+
+---
+
+## 1. Catalog Intent & Governing Authority
+
+Use these patterns and anti-patterns (items marked with `*`) as an inviolable baseline guide to engineer resilient, maintainable, and deterministic code. In any architectural deliberation or code review, the prohibitions and patterns in this catalog override downstream compromises.
+
+---
+
 
 ### Tratamento de Exceções, Resiliência e Falhas
 

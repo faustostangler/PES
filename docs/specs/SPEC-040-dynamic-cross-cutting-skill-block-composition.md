@@ -27,7 +27,7 @@
      ```json
      "skills": ["cresmo-style-guide", "cresmo-fluid-prose"]
      ```
-   - The `system_instruction` of `"fluid_prose"` must begin with `{task}\n\n{skill_block}`.
+   - The `system_instruction` of `"fluid_prose"` must begin with `{{description}}\n\n{{skill_block}}` (formerly `{task}` in early iterations, deprecated and superseded by ADR-050 and ADR-052).
    - Static duplication of `cresmo-style-guide` pillars and DNA in the JSON is purged, preserving only stage-specific mechanical execution invariants (zero em-dashes, affirmative syntax, line-start invariants, enumeration serialization contract, and Stage 1 boundary contract).
    - In `src/cresmo/infrastructure/adapters/prompts/builders.py`, `build_fluid_prose` must resolve `skill_block` using the provider's multi-skill capability for fallback mode as well.
 
@@ -58,7 +58,7 @@
 2. **Green Phase:**
    - Update `JsonPromptProvider._resolve_skill_block_from_entry(entry)` in `json_provider.py`.
    - Update `build_fluid_prose` in `builders.py` to use `_resolve_skill_block_from_entry`.
-   - Update `"fluid_prose"` in `src/cresmo/infrastructure/resources/prompts.json` to use `"skills": ["cresmo-style-guide", "cresmo-fluid-prose"]` and `{task}\n\n{skill_block}`.
+   - Update `"fluid_prose"` in `src/cresmo/infrastructure/resources/prompts.json` to use `"skills": ["cresmo-style-guide", "cresmo-fluid-prose"]` and `{{description}}\n\n{{skill_block}}` (`{task}` alias deprecated per ADR-050/ADR-052).
    - Verify tests pass (Green).
 3. **Refactor Phase:**
    - Run full unit test suite and mutation/lint check.

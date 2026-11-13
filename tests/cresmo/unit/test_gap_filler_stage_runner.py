@@ -23,50 +23,50 @@ from cresmo.application.ports import (
     NoOpTelemetryPort,
 )
 from cresmo.domain.entities import (
-    PipelineSessionId,
+    StageTranscript,
     UserIdentity,
 )
-from cresmo.domain.entities.compendium import EnrichedCompendium
-from cresmo.domain.entities.transcripts import FluidTranscript
 from cresmo.domain.value_objects import (
     Channel,
     ChannelId,
     Content,
     ContentId,
+    MediaProvenance,
 )
 
 
 @pytest.fixture
 def sample_context() -> PipelineExecutionContext:
     return PipelineExecutionContext(
-        session_id=PipelineSessionId("sess:gap_filler"),
         user_identity=UserIdentity.worker(),
         channel=Channel(name="Historia", id=ChannelId("UC_hist")),
-        content=Content.create(id=ContentId("vid_hist1"), title="Fundação"),
+        content=Content.create(id=ContentId("vid_hist1"), title="Fundação", session_id="sess:gap_filler"),
     )
 
 
 @pytest.fixture
-def sample_fluid_transcript() -> FluidTranscript:
-    return FluidTranscript.create(
-        channel_name="Historia",
-        content_id="vid_hist1",
-        title="Fundação",
-        body="## Fundação de Portugal\n\nTexto fluido sem oralidades.",
-        source_url="https://youtube.com/watch?v=vid_hist1",
+def sample_fluid_transcript() -> StageTranscript:
+    return StageTranscript(
+        channel=Channel(name="Historia", id=ChannelId("UC_hist")),
+        provenance=MediaProvenance.create(url="https://youtube.com/watch?v=vid_hist1"),
+        content=Content.create(
+            id="vid_hist1",
+            title="Fundação",
+            text="## Fundação de Portugal\n\nTexto fluido sem oralidades.",
+        ),
     )
 
 
 def test_gap_filler_execution_single_pass_override(
     sample_context: PipelineExecutionContext,
-    sample_fluid_transcript: FluidTranscript,
+    sample_fluid_transcript: StageTranscript,
 ) -> None:
-    """Verify gap_filler transforms FluidTranscript into EnrichedCompendium when max_passes=1 override is provided."""
+    """Verify gap_filler transforms StageTranscript into StageTranscript when max_passes=1 override is provided."""
     mock_llm = MagicMock(spec=LLMTransformationPort)
     mock_llm.transform.return_value = (
         "## Fundação de Portugal\n\n"
         "Em 1096, o conde **Henrique de Borgonha** assumiu o governo.\n\n"
-        "## Informações Complementares\n\n"
+        "### Extra Info\n\n"
         "1. **Henrique de Borgonha** (1066-1112) liderou contingentes da Reconquista."
     )
 
@@ -87,35 +87,35 @@ def test_gap_filler_execution_single_pass_override(
         max_passes=1,
     )
 
-    assert isinstance(result, EnrichedCompendium)
-    assert result.content_id == ContentId("vid_hist1")
-    assert "Henrique de Borgonha" in result.body
-    assert "1066-1112" in result.complementary_info
+    assert isinstance(result, StageTranscript)
+    assert result.content.id == ContentId("vid_hist1")
+    assert "Henrique de Borgonha" in result.content.text
+    assert "1066-1112" in result.content.text
     assert mock_llm.transform.call_count == 1
 
 
 def test_gap_filler_execution_multi_pass_to_completion(
     sample_context: PipelineExecutionContext,
-    sample_fluid_transcript: FluidTranscript,
+    sample_fluid_transcript: StageTranscript,
 ) -> None:
     """Verify gap_filler iterates through all 3 passes by domain default when non-saturated."""
     pass1_text = (
         "## Fundação de Portugal\n\n"
         "Em 1096, o conde **Henrique de Borgonha** assumiu o governo.\n\n"
-        "## Informações Complementares\n\n"
+        "### Extra Info\n\n"
         "1. **Henrique de Borgonha** (1066-1112) liderou contingentes."
     )
     pass2_text = (
         "## Fundação de Portugal\n\n"
         "Em 1096, o conde **Henrique de Borgonha** assumiu o governo sob **Afonso VI**.\n\n"
-        "## Informações Complementares\n\n"
+        "### Extra Info\n\n"
         "1. **Henrique de Borgonha** (1066-1112) liderou contingentes.\n"
         "2. **Afonso VI de Leão** (1040-1109) concedeu o Condado Portucalense."
     )
     pass3_text = (
         "## Fundação de Portugal\n\n"
         "Em 1096, o conde **Henrique de Borgonha** assumiu o governo sob **Afonso VI**.\n\n"
-        "## Informações Complementares\n\n"
+        "### Extra Info\n\n"
         "1. **Henrique de Borgonha** (1066-1112) liderou contingentes.\n"
         "2. **Afonso VI de Leão** (1040-1109) concedeu o Condado Portucalense.\n"
         "3. **Teresa de Leão** (1080-1130) governou como regente."
@@ -124,7 +124,9 @@ def test_gap_filler_execution_multi_pass_to_completion(
     mock_llm = MagicMock(spec=LLMTransformationPort)
     mock_llm.transform.side_effect = [pass1_text, pass2_text, pass3_text]
 
-    stage_factory = StageFactory(settings=DefaultPipelineSettings())
+    stage_factory = StageFactory(
+        settings=DefaultPipelineSettings(expansion_max_passes=3, gap_filler_passes=3)
+    )
 
     runner = PipelineStageRunner(
         telemetry_port=NoOpTelemetryPort(),
@@ -138,33 +140,34 @@ def test_gap_filler_execution_multi_pass_to_completion(
         "gap_filler",
         source=sample_fluid_transcript,
         context=sample_context,
+        max_passes=3,
     )
 
-    assert isinstance(result, EnrichedCompendium)
-    assert result.content_id == ContentId("vid_hist1")
-    assert "Henrique de Borgonha" in result.body
-    assert "Teresa de Leão" in result.complementary_info
+    assert isinstance(result, StageTranscript)
+    assert result.content.id == ContentId("vid_hist1")
+    assert "Henrique de Borgonha" in result.content.text
+    assert "Teresa de Leão" in result.content.text
     # Proves all 3 passes were executed as declared by domain intelligence
     assert mock_llm.transform.call_count == 3
 
 
 def test_gap_filler_execution_early_stopping_on_saturation(
     sample_context: PipelineExecutionContext,
-    sample_fluid_transcript: FluidTranscript,
+    sample_fluid_transcript: StageTranscript,
 ) -> None:
     """Verify gap_filler stops before max_passes when mechanical saturation is detected."""
     # Pass 1 output:
     pass1_text = (
         "## Fundação de Portugal\n\n"
         "O conde **Henrique de Borgonha** governou o território.\n\n"
-        "## Informações Complementares\n\n"
+        "### Extra Info\n\n"
         "1. **Henrique de Borgonha** casou com **Teresa de Leão** em 1093."
     )
     # Pass 2 output (same bold entities, delta items = 0 -> saturated):
     pass2_text = (
         "## Fundação de Portugal\n\n"
         "O nobre conde **Henrique de Borgonha** governou o território ocidental.\n\n"
-        "## Informações Complementares\n\n"
+        "### Extra Info\n\n"
         "1. O nobre **Henrique de Borgonha** casou com a infanta **Teresa de Leão** em 1093."
     )
 
@@ -188,6 +191,6 @@ def test_gap_filler_execution_early_stopping_on_saturation(
         context=sample_context,
     )
 
-    assert isinstance(result, EnrichedCompendium)
+    assert isinstance(result, StageTranscript)
     # Proves early stopping occurred at pass 2 (pass 3 was never called)
     assert mock_llm.transform.call_count == 2

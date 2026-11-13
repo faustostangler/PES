@@ -1,7 +1,7 @@
 """Hermetic Unit Tests for StageConfig and Closed-Loop Reflection in PipelineStageRunner.
 
 Conforms to:
-    - ADR-031: Standardized StageConfig, SourceTranscript, CandidateText, and Closed-Loop Reflection Quality Fabric
+    - ADR-031: Standardized StageConfig, StageTranscript, CandidateText, and Closed-Loop Reflection Quality Fabric
     - SPEC-014: Standardized Stage Execution and Decision-Model Quality Fabric Specification
 """
 
@@ -20,7 +20,7 @@ from cresmo.application.ports import (
     NoOpTelemetryPort,
     PromptProviderPort,
 )
-from cresmo.domain.entities import PipelineSessionId, SourceTranscript, UserIdentity
+from cresmo.domain.entities import StageTranscript, UserIdentity
 from cresmo.domain.value_objects import (
     CandidateText,
     Channel,
@@ -33,6 +33,7 @@ from cresmo.domain.value_objects import (
     CriterionScore,
     JudgeCriterion,
     JudgeEvaluation,
+    MediaProvenance,
     MessageRole,
     PromptKey,
     StageEvaluationSpec,
@@ -70,17 +71,20 @@ class TestStageConfigRunner:
             llm_judge=mock_judge,
         )
 
-        source = SourceTranscript(
-            content_id=ContentId("content_test"),
-            channel_name=ChannelName("Channel Alpha"),
-            body="Um, so basically, this is raw spoken text.",
+        source = StageTranscript(
+            channel=Channel(name=ChannelName("Channel Alpha")),
+            provenance=MediaProvenance.empty(),
+            content=Content(
+                id=ContentId("content_test"),
+                text="Um, so basically, this is raw spoken text.",
+            ),
         )
 
-        descriptor = StageConfig[SourceTranscript, CandidateText](
+        descriptor = StageConfig[StageTranscript, CandidateText](
             stage_name="fluid_prose",
             transform_prompt_key=PromptKey.FLUID_PROSE,
             eval_spec=StageEvaluationSpec(
-                raw_text=source.content.body,
+                raw_text=source.content.text,
                 candidate_extractor=lambda c: c.text if isinstance(c, CandidateText) else str(c),
                 required_criteria=(JudgeCriterion.ORALITY_REMOVAL,),
                 max_attempts=3,
@@ -88,7 +92,6 @@ class TestStageConfigRunner:
         )
 
         ctx = PipelineExecutionContext(
-            session_id=PipelineSessionId.create(source.channel, source.content),
             user_identity=UserIdentity.worker(),
             channel=source.channel,
             content=source.content,
@@ -156,17 +159,20 @@ class TestStageConfigRunner:
             llm_judge=mock_judge,
         )
 
-        source = SourceTranscript(
-            content_id=ContentId("content_retry"),
-            channel_name=ChannelName("Channel Beta"),
-            body="Text with oralities.",
+        source = StageTranscript(
+            channel=Channel(name=ChannelName("Channel Beta")),
+            provenance=MediaProvenance.empty(),
+            content=Content(
+                id=ContentId("content_retry"),
+                text="Text with oralities.",
+            ),
         )
 
-        descriptor = StageConfig[SourceTranscript, CandidateText](
+        descriptor = StageConfig[StageTranscript, CandidateText](
             stage_name="fluid_prose",
             transform_prompt_key=PromptKey.FLUID_PROSE,
             eval_spec=StageEvaluationSpec(
-                raw_text=source.content.body,
+                raw_text=source.content.text,
                 candidate_extractor=lambda c: c.text if isinstance(c, CandidateText) else str(c),
                 required_criteria=(JudgeCriterion.ORALITY_REMOVAL,),
                 max_attempts=3,
@@ -174,7 +180,6 @@ class TestStageConfigRunner:
         )
 
         ctx = PipelineExecutionContext(
-            session_id=PipelineSessionId.create(source.channel, source.content),
             user_identity=UserIdentity.worker(),
             channel=source.channel,
             content=source.content,
@@ -212,24 +217,26 @@ class TestStageConfigRunner:
             llm_judge=None,
         )
 
-        source = SourceTranscript(
-            content_id=ContentId("content_post"),
-            channel_name=ChannelName("Channel Gamma"),
-            body="Raw spoken text.",
+        source = StageTranscript(
+            channel=Channel(name=ChannelName("Channel Gamma")),
+            provenance=MediaProvenance.empty(),
+            content=Content(
+                id=ContentId("content_post"),
+                text="Raw spoken text.",
+            ),
         )
 
-        def sample_post_processor(candidate: CandidateText, src: SourceTranscript) -> str:
+        def sample_post_processor(candidate: CandidateText, src: StageTranscript) -> str:
             # Strip header
             return candidate.text.replace("# Header Title\n", "").strip()
 
-        descriptor = StageConfig[SourceTranscript, str](
+        descriptor = StageConfig[StageTranscript, str](
             stage_name="fluid_prose",
             transform_prompt_key=PromptKey.FLUID_PROSE,
             post_processor=sample_post_processor,
         )
 
         ctx = PipelineExecutionContext(
-            session_id=PipelineSessionId.create(source.channel, source.content),
             user_identity=UserIdentity.worker(),
             channel=source.channel,
             content=source.content,
@@ -284,19 +291,24 @@ class TestStageConfigRunner:
             llm_judge=mock_judge,
         )
 
-        source = SourceTranscript(
-            content_id=ContentId("content_999"),
-            channel_name=ChannelName("Sandeco Channel"),
-            channel_id=ChannelId("UC_SAND123"),
-            title="SOTA DDD Architecture",
-            body="Raw spoken body transcript.",
+        source = StageTranscript(
+            channel=Channel(
+                name=ChannelName("Sandeco Channel"),
+                id=ChannelId("UC_SAND123"),
+            ),
+            provenance=MediaProvenance.empty(),
+            content=Content(
+                id=ContentId("content_999"),
+                title="SOTA DDD Architecture",
+                text="Raw spoken body transcript.",
+            ),
         )
 
-        descriptor = StageConfig[SourceTranscript, CandidateText](
+        descriptor = StageConfig[StageTranscript, CandidateText](
             stage_name="fluid_prose",
             transform_prompt_key=PromptKey.FLUID_PROSE,
             eval_spec=StageEvaluationSpec(
-                raw_text=source.content.body,
+                raw_text=source.content.text,
                 candidate_extractor=capture_candidate,
                 required_criteria=(JudgeCriterion.ORALITY_REMOVAL,),
                 max_attempts=1,
@@ -304,7 +316,6 @@ class TestStageConfigRunner:
         )
 
         ctx = PipelineExecutionContext(
-            session_id=PipelineSessionId.create(source.channel, source.content),
             user_identity=UserIdentity.worker(),
             channel=source.channel,
             content=source.content,
@@ -383,7 +394,7 @@ class TestStageConfigRunner:
             llm_judge=mock_judge,
         )
 
-        descriptor = StageConfig[SourceTranscript, CandidateText](
+        descriptor = StageConfig[StageTranscript, CandidateText](
             stage_name="fluid_prose",
             transform_prompt_key=PromptKey.FLUID_PROSE,
             eval_spec=StageEvaluationSpec(
@@ -392,13 +403,15 @@ class TestStageConfigRunner:
             ),
         )
 
-        source = SourceTranscript(
-            body="Raw ground truth",
-            channel_name=ChannelName("Channel A"),
-            content_id=ContentId("content_isolated"),
+        source = StageTranscript(
+            channel=Channel(name=ChannelName("Channel A")),
+            provenance=MediaProvenance.empty(),
+            content=Content(
+                id=ContentId("content_isolated"),
+                text="Raw ground truth",
+            ),
         )
         ctx = PipelineExecutionContext(
-            session_id=PipelineSessionId.create(source.channel, source.content),
             user_identity=UserIdentity.worker(),
             channel=source.channel,
             content=source.content,
@@ -457,7 +470,7 @@ class TestStageConfigPromptBuilding:
         mock_provider = MagicMock(spec=PromptProviderPort)
         base_prompt = ChatPrompt(
             messages=(ChatMessage(role=MessageRole.USER, content="User instruction"),),
-            system_instruction="System instruction",
+            system_prompt="System instruction",
         )
         mock_provider.get_prompt.return_value = base_prompt
 
@@ -466,10 +479,9 @@ class TestStageConfigPromptBuilding:
             transform_prompt_key=PromptKey.FLUID_PROSE,
         )
         ctx = PipelineExecutionContext(
-            session_id=PipelineSessionId("sess:1"),
             user_identity=UserIdentity.worker(),
             channel=Channel(name="MyChan", id=ChannelId("UC_chan")),
-            content=Content(id=ContentId("vid_c123"), title="MyTitle"),
+            content=Content(id=ContentId("vid_c123"), title="MyTitle", session_id="sess:1"),
         )
         result = cfg.build_transform_prompt(
             mock_provider,
@@ -498,10 +510,9 @@ class TestStageConfigPromptBuilding:
             transform_prompt_key=PromptKey.FLUID_PROSE,
         )
         ctx = PipelineExecutionContext(
-            session_id=PipelineSessionId("sess:2"),
             user_identity=UserIdentity.worker(),
             channel=Channel(name="NamedChannel", id=None),
-            content=Content(id=ContentId("vid_c123"), title="MyTitle"),
+            content=Content(id=ContentId("vid_c123"), title="MyTitle", session_id="sess:2"),
         )
         cfg.build_transform_prompt(
             mock_provider,
@@ -523,10 +534,9 @@ class TestStageConfigPromptBuilding:
             transform_prompt_key=PromptKey.FLUID_PROSE,
         )
         ctx = PipelineExecutionContext(
-            session_id=PipelineSessionId("sess:3"),
             user_identity=UserIdentity.worker(),
             channel=Channel(name="CustomChan", id=ChannelId("UC_chan")),
-            content=Content(id=ContentId("vid_c456"), title="CustomTitle"),
+            content=Content(id=ContentId("vid_c456"), title="CustomTitle", session_id="sess:3"),
         )
         cfg.build_transform_prompt(
             mock_provider,
@@ -556,34 +566,26 @@ class TestStageConfigPromptBuilding:
             transform_prompt_key=PromptKey.FLUID_PROSE,
         )
         ctx = PipelineExecutionContext(
-            session_id=PipelineSessionId("sess:4"),
             user_identity=UserIdentity.worker(),
             channel=Channel(name="Chan"),
-            content=Content(id=ContentId("vid_1001")),
+            content=Content(id=ContentId("vid_1001"), session_id="sess:4"),
         )
 
-        # 1. Source with content.body
-        class SourceContentBody:
-            content = Content(id="vid_1001", body="extracted from content.body")
+        # 1. Source with content.text
+        class SourceContentText:
+            content = Content(id="vid_1001", text="extracted from content.text")
 
-        cfg.build_transform_prompt(mock_provider, source=SourceContentBody(), context=ctx)
-        assert mock_provider.get_prompt.call_args[1]["raw_text"] == "extracted from content.body"
+        cfg.build_transform_prompt(mock_provider, source=SourceContentText(), context=ctx)
+        assert mock_provider.get_prompt.call_args[1]["raw_text"] == "extracted from content.text"
 
-        # 2. Source with body attribute
-        class SourceBody:
-            body = "extracted from body"
-
-        cfg.build_transform_prompt(mock_provider, source=SourceBody(), context=ctx)
-        assert mock_provider.get_prompt.call_args[1]["raw_text"] == "extracted from body"
-
-        # 3. Source with text attribute
+        # 2. Source with text attribute
         class SourceText:
             text = "extracted from text"
 
         cfg.build_transform_prompt(mock_provider, source=SourceText(), context=ctx)
         assert mock_provider.get_prompt.call_args[1]["raw_text"] == "extracted from text"
 
-        # 4. Fallback to str(source)
+        # 3. Fallback to str(source)
         class CustomObj:
             def __str__(self) -> str:
                 return "custom_str_repr"
@@ -599,7 +601,7 @@ class TestStageConfigPromptBuilding:
                 ChatMessage(role=MessageRole.ASSISTANT, content="Example assistant response"),
                 ChatMessage(role=MessageRole.USER, content="Actual task instruction"),
             ),
-            system_instruction="System prompt directive",
+            system_prompt="System prompt directive",
         )
         mock_provider.get_prompt.return_value = base_prompt
 
@@ -608,10 +610,9 @@ class TestStageConfigPromptBuilding:
             transform_prompt_key=PromptKey.FLUID_PROSE,
         )
         ctx = PipelineExecutionContext(
-            session_id=PipelineSessionId("sess:5"),
             user_identity=UserIdentity.worker(),
             channel=Channel(name="Chan"),
-            content=Content(id=ContentId("vid_1001")),
+            content=Content(id=ContentId("vid_1001"), session_id="sess:5"),
         )
         result = cfg.build_transform_prompt(
             mock_provider,
@@ -635,13 +636,13 @@ class TestStageConfigPromptBuilding:
             "Colloquialism detected: 'tipo assim'.\n"
             "Please correct these defects in your output."
         )
-        assert result.system_instruction == "System prompt directive"
+        assert result.system_prompt == "System prompt directive"
 
     def test_build_transform_prompt_with_critique_empty_messages_system_only(self) -> None:
         mock_provider = MagicMock(spec=PromptProviderPort)
         base_prompt = ChatPrompt(
             messages=(),
-            system_instruction="System only directive",
+            system_prompt="System only directive",
         )
         mock_provider.get_prompt.return_value = base_prompt
 
@@ -650,10 +651,9 @@ class TestStageConfigPromptBuilding:
             transform_prompt_key=PromptKey.FLUID_PROSE,
         )
         ctx = PipelineExecutionContext(
-            session_id=PipelineSessionId("sess:6"),
             user_identity=UserIdentity.worker(),
             channel=Channel(name="Chan"),
-            content=Content(id=ContentId("vid_1001")),
+            content=Content(id=ContentId("vid_1001"), session_id="sess:6"),
         )
         result = cfg.build_transform_prompt(
             mock_provider,
@@ -671,24 +671,27 @@ class TestStageConfigPromptBuilding:
             "Please correct these defects in your output."
         )
         assert result.messages[0].content == expected_content
-        assert result.system_instruction == "System only directive"
+        assert result.system_prompt == "System only directive"
 
     def test_post_process_invokes_callable_with_exact_candidate_and_source(self) -> None:
         received_args: list[tuple[Any, Any]] = []
 
-        def custom_processor(cand: CandidateText, src: SourceTranscript) -> str:
+        def custom_processor(cand: CandidateText, src: StageTranscript) -> str:
             received_args.append((cand, src))
             return f"Processed: {src.channel.name} -> {cand.text}"
 
-        cfg = StageConfig[SourceTranscript, str](
+        cfg = StageConfig[StageTranscript, str](
             stage_name="test_stage",
             transform_prompt_key=PromptKey.FLUID_PROSE,
             post_processor=custom_processor,
         )
-        src = SourceTranscript(
-            content_id=ContentId("cid1"),
-            channel_name=ChannelName("ChanA"),
-            body="source_body",
+        src = StageTranscript(
+            channel=Channel(name=ChannelName("ChanA")),
+            provenance=MediaProvenance.empty(),
+            content=Content(
+                id=ContentId("cid1"),
+                text="source_body",
+            ),
         )
         cand = CandidateText(stage_name="test_stage", text="candidate_body")
         out = cfg.post_process(cand, src)

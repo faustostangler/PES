@@ -92,23 +92,19 @@ class PipelineSessionId:
 
     @property
     def channel_id(self) -> str:
-        """Algorithmic channel identifier token stored in the session key (ID or name)."""
+        """Extract the channel identifier from the session id."""
         parts = self.value.split(":")
-        return (
-            parts[1]
-            if parts[0] == "content" and len(parts) == LEGACY_SESSION_ID_PARTS
-            else parts[0]
-        )
+        if len(parts) == LEGACY_SESSION_ID_PARTS and parts[0] == "content":
+            return parts[1]
+        return parts[0]
 
     @property
     def content_id(self) -> str:
-        """Content identifier stored in the session key."""
+        """Extract the content identifier from the session id."""
         parts = self.value.split(":")
-        return (
-            parts[2]
-            if parts[0] == "content" and len(parts) == LEGACY_SESSION_ID_PARTS
-            else parts[1]
-        )
+        if len(parts) == LEGACY_SESSION_ID_PARTS and parts[0] == "content":
+            return parts[2]
+        return parts[1]
 
 
 @dataclass(frozen=True)

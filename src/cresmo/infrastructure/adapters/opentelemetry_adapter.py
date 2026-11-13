@@ -11,11 +11,11 @@ Conforms to ADR-016:
 from __future__ import annotations
 
 import json
-import logging
 from collections.abc import Generator
 from contextlib import contextmanager, nullcontext
 from typing import Any, Final
 
+import structlog
 from opentelemetry import trace
 from opentelemetry.trace import Tracer
 
@@ -27,12 +27,16 @@ from cresmo.domain.entities import (
     UserIdentity,
 )
 
-try:
-    from langfuse import propagate_attributes
-except ImportError:  # pragma: no cover
-    propagate_attributes = None
 
-logger = logging.getLogger(__name__)
+# Defer langfuse import to runtime per ADR-026/ADR-053/ADR-055
+def propagate_attributes(**kwargs: Any) -> Any:
+    """Propagate trace attributes lazily through Langfuse context (ADR-055)."""
+    from langfuse import propagate_attributes as _real_propagate
+
+    return _real_propagate(**kwargs)
+
+
+logger = structlog.get_logger(__name__)
 
 DEFAULT_PIPELINE_VERSION: str = "cresmo:v2"
 OTEL_FLUSH_TIMEOUT_MS: int = 2000
@@ -149,6 +153,14 @@ def _resolve_identity_from_string(user_id: str) -> tuple[UserIdentity, str | Non
     return UserIdentity.identified(subject=user_id, provider="oauth"), None
 
 
+def _parse_session_parts(session_id: PipelineSessionId) -> tuple[str, str]:
+    """Extract (channel_token, content_token) from PipelineSessionId value."""
+    parts = session_id.value.split(":")
+    if parts[0] == "content" and len(parts) == 3:
+        return parts[1], parts[2]
+    return parts[0], parts[1]
+
+
 def _resolve_user_identity_and_tenant(
     user_id: UserIdentity | str,
     channel_tenant_id: str | None,
@@ -168,7 +180,8 @@ def _resolve_user_identity_and_tenant(
         normalized_user = UserIdentity.anonymous()
 
     if resolved_tenant is None:
-        resolved_tenant = f"channel:{session_id.channel_id}"
+        channel_token, _ = _parse_session_parts(session_id)
+        resolved_tenant = f"channel:{channel_token}"
 
     return normalized_user, resolved_tenant
 
@@ -227,13 +240,14 @@ def _build_session_span_attributes(
     metadata: dict[str, Any],
 ) -> tuple[dict[str, Any], list[str]]:
     """Assemble atomic OpenTelemetry and Langfuse session span attributes and tags."""
+    channel_token, content_token = _parse_session_parts(session_id)
     # 1. Resolve Algorithmic Pair (ID - ID Parity: Machines & Indexes)
-    content_id = session_id.content_id
-    channel_id = str(metadata.get("channel_id") or session_id.channel_id or "").strip()
+    content_id = content_token
+    channel_id = str(metadata.get("channel_id") or channel_token or "").strip()
 
     # 2. Resolve Cognitive Pair (TXT - TXT Parity: Humans & Observability)
     resolved_channel_name = str(
-        metadata.get("channel_name") or metadata.get("channel") or session_id.channel_id
+        metadata.get("channel_name") or metadata.get("channel") or channel_token
     ).strip()
     content_title = str(
         metadata.get("title") or metadata.get("content_title") or content_id
@@ -380,7 +394,7 @@ class OpenTelemetryAdapter(TelemetryPort):
             root_operation, attributes=session_attributes
         ) as span:
             propagation_context: Any = nullcontext()
-            if self._langfuse is not None and propagate_attributes is not None:
+            if self._langfuse is not None:
                 try:
                     propagation_context = propagate_attributes(
                         session_id=session_id.value,
@@ -473,12 +487,13 @@ class OpenTelemetryAdapter(TelemetryPort):
 
         current_span = trace.get_current_span()
         if current_span and current_span.is_recording():
+            channel_token, _ = _parse_session_parts(session_id)
             current_span.add_event(
                 "judge_evaluation",
                 attributes={
                     "judge.session_id": session_id.value,
                     "judge.content_id": content_id.value,
-                    "judge.channel_id": session_id.channel_id,
+                    "judge.channel_id": channel_token,
                     "judge.iteration": iteration,
                     "judge.max_iterations": max_iterations,
                     "judge.verdict": verdict,
@@ -513,10 +528,11 @@ class OpenTelemetryAdapter(TelemetryPort):
         """
         current_span = trace.get_current_span()
         if current_span and current_span.is_recording():
+            channel_token, _ = _parse_session_parts(session_id)
             event_attributes: dict[str, Any] = {
                 "eval.session_id": session_id.value,
                 "eval.content_id": content_id.value,
-                "eval.channel_id": session_id.channel_id,
+                "eval.channel_id": channel_token,
                 "eval.coherence_score": score,
             }
             output_payload: dict[str, Any] = {"coherence_score": score}
@@ -631,7 +647,9 @@ class OpenTelemetryAdapter(TelemetryPort):
         if current_span and current_span.is_recording():
             if input_payload is not None:
                 serialized_in = (
-                    json.dumps(input_payload, default=str) if isinstance(input_payload, dict) else input_payload
+                    json.dumps(input_payload, default=str)
+                    if isinstance(input_payload, dict)
+                    else input_payload
                 )
                 current_span.set_attribute("input.value", serialized_in)
                 current_span.set_attribute("langfuse.observation.input", serialized_in)

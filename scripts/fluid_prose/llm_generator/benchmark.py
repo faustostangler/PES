@@ -18,19 +18,22 @@ Conforms to:
 
 from __future__ import annotations
 
-import argparse
 import contextlib
 import json
-import logging
 import os
 import re
 import statistics
 import sys
 import time
+from collections.abc import Sequence
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
+from typing import Annotated, Any
+
+import click
+import structlog
+import typer
 
 # Ensure project root and src are in sys.path
 REPO_ROOT = Path(__file__).resolve().parents[3]
@@ -54,8 +57,7 @@ from cresmo.infrastructure.config import CresmoSettings
 from cresmo.presentation.factories.adapter_factory import build_prompt_provider
 from cresmo.presentation.factories.judge_factory import build_llm_judge_adapter
 
-logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
-logger = logging.getLogger("benchmark_generators")
+logger = structlog.get_logger("benchmark_generators")
 
 CANONICAL_CRITERIA: tuple[JudgeCriterion, ...] = (
     JudgeCriterion.ORALITY_REMOVAL,
@@ -66,14 +68,7 @@ CANONICAL_CRITERIA: tuple[JudgeCriterion, ...] = (
     JudgeCriterion.AUTHORIAL_VOICE,
 )
 
-ALL_BENCHMARK_MODELS: list[str] = [
-    "gemini:gemini-3.5-flash",
-    "gemini:gemini-2.5-flash",
-    # "ollama:qwen2.5:latest",
-    # "ollama:gemma4:latest",
-    # "ollama:deepseek-r1:7b",
-    # "ollama:llama3:latest",
-]
+ALL_BENCHMARK_MODELS: list[str] = CresmoSettings().generator_benchmark_models
 
 
 @dataclass(frozen=True)
@@ -162,9 +157,9 @@ def parse_raw_transcript_file(file_path: Path) -> BenchmarkSample:
             for line in frontmatter_raw.splitlines():
                 line = line.strip()
                 if line.startswith("channel_name:"):
-                    channel_name = line.split(":", 1)[1].strip().strip('"\'')
+                    channel_name = line.split(":", 1)[1].strip().strip("\"'")
                 elif line.startswith("video_title:"):
-                    content_title = line.split(":", 1)[1].strip().strip('"\'')
+                    content_title = line.split(":", 1)[1].strip().strip("\"'")
 
     return BenchmarkSample(
         sample_id=file_path.stem,
@@ -224,7 +219,9 @@ def load_benchmark_samples(
 
     # Case 3: Fallback to Golden Set items if data/raw has fewer than 2 transcripts
     if len(samples) < 2:
-        golden_path = REPO_ROOT / "data" / "golden_sets" / "fluid_prose_golden_set.json"
+        golden_path = (
+            REPO_ROOT / "scripts" / "fluid_prose" / "golden_sets" / "fluid_prose_golden_set.json"
+        )
         if golden_path.exists():
             data = json.loads(golden_path.read_text(encoding="utf-8"))
             seen_texts: set[str] = set()
@@ -459,7 +456,10 @@ def run_benchmark_for_model(
             cs.score for r in results for cs in r.evaluation.criteria_scores if cs.criterion == crit
         ]
         crit_passes = sum(
-            1 for r in results for cs in r.evaluation.criteria_scores if cs.criterion == crit and cs.passed
+            1
+            for r in results
+            for cs in r.evaluation.criteria_scores
+            if cs.criterion == crit and cs.passed
         )
         total_crit = len(crit_scores)
         crit_fails = total_crit - crit_passes
@@ -564,14 +564,16 @@ def format_model_report(summary: ModelBenchmarkSummary) -> str:
             f"{cs.min_score:5.2f} | {cs.stdev_score:5.2f} | {status_flag}"
         )
 
-    lines.extend([
-        "=" * 102,
-        "",
-        "=" * 90,
-        "3. DETALHAMENTO ITEM A ITEM (TRANSCRIÇÃO, PROSA GERADA E VEREDITO DO JUIZ)",
-        "=" * 90,
-        "",
-    ])
+    lines.extend(
+        [
+            "=" * 102,
+            "",
+            "=" * 90,
+            "3. DETALHAMENTO ITEM A ITEM (TRANSCRIÇÃO, PROSA GERADA E VEREDITO DO JUIZ)",
+            "=" * 90,
+            "",
+        ]
+    )
 
     for idx, r in enumerate(summary.sample_results, start=1):
         if r.evaluation.is_vetoed:
@@ -581,26 +583,32 @@ def format_model_report(summary: ModelBenchmarkSummary) -> str:
         else:
             status_tag = "REPROVADO [FAIL]"
 
-        lines.extend([
-            "-" * 90,
-            f"AMOSTRA #{idx:02d} | ID: {r.sample.sample_id} | Foco: {r.sample.criterion_focus}",
-            f"Canal: {r.sample.channel_name} | Título: {r.sample.content_title}",
-            f"Veredito do Juiz: {status_tag} | Overall Score: {r.evaluation.overall_score:.4f}",
-            f"Tempo Geração: {r.generation_latency_seconds:.2f}s | Tempo Avaliação: {r.judge_latency_seconds:.2f}s",
-        ])
+        lines.extend(
+            [
+                "-" * 90,
+                f"AMOSTRA #{idx:02d} | ID: {r.sample.sample_id} | Foco: {r.sample.criterion_focus}",
+                f"Canal: {r.sample.channel_name} | Título: {r.sample.content_title}",
+                f"Veredito do Juiz: {status_tag} | Overall Score: {r.evaluation.overall_score:.4f}",
+                f"Tempo Geração: {r.generation_latency_seconds:.2f}s | Tempo Avaliação: {r.judge_latency_seconds:.2f}s",
+            ]
+        )
         if r.evaluation.is_vetoed and r.evaluation.veto_reasons:
             lines.append(f"Motivo do Veto Mecânico: {'; '.join(r.evaluation.veto_reasons)}")
-        lines.extend([
-            "-" * 90,
-            "",
-            "--- [ENTRADA: TRANSCRIÇÃO BRUTA (RAW TEXT)] ---",
-            r.sample.raw_text.strip(),
-            "",
-            "--- [SAÍDA: PROSA FLUIDA GERADA PELO MODELO (CANDIDATE TEXT)] ---",
-            r.candidate_text.strip() if r.candidate_text.strip() else "[GERAÇÃO VAZIA OU FALHOU]",
-            "",
-            "--- [AVALIAÇÃO DETALHADA DO JUIZ POR CRITÉRIO] ---",
-        ])
+        lines.extend(
+            [
+                "-" * 90,
+                "",
+                "--- [ENTRADA: TRANSCRIÇÃO BRUTA (RAW TEXT)] ---",
+                r.sample.raw_text.strip(),
+                "",
+                "--- [SAÍDA: PROSA FLUIDA GERADA PELO MODELO (CANDIDATE TEXT)] ---",
+                r.candidate_text.strip()
+                if r.candidate_text.strip()
+                else "[GERAÇÃO VAZIA OU FALHOU]",
+                "",
+                "--- [AVALIAÇÃO DETALHADA DO JUIZ POR CRITÉRIO] ---",
+            ]
+        )
 
         for score in r.evaluation.criteria_scores:
             c_status = "PASS" if score.passed else "FAIL"
@@ -616,65 +624,76 @@ def format_model_report(summary: ModelBenchmarkSummary) -> str:
 
         lines.extend(["", ""])
 
-    lines.extend([
-        "=" * 90,
-        "FIM DO RELATÓRIO DO MODELO",
-        "=" * 90,
-    ])
+    lines.extend(
+        [
+            "=" * 90,
+            "FIM DO RELATÓRIO DO MODELO",
+            "=" * 90,
+        ]
+    )
 
     return "\n".join(lines)
 
 
-def main() -> int:
-    """CLI Entrypoint for generator benchmark execution."""
-    parser = argparse.ArgumentParser(
-        description="Benchmark and evaluate candidate generator LLMs for Fluid Prose against canonical judge."
-    )
-    parser.add_argument(
-        "--models",
-        nargs="+",
-        default=ALL_BENCHMARK_MODELS,
-        help=(
-            "List of model identifiers to test sequentially (default: all canonical models - "
-            "'gemini:gemini-3.5-flash' 'gemini:gemini-2.5-flash' 'ollama:qwen2.5:latest' "
-            "'ollama:gemma4:latest' 'ollama:deepseek-r1:7b' 'ollama:llama3:latest' or 'all')"
-        ),
-    )
-    parser.add_argument(
-        "--input",
-        type=Path,
-        default=None,
-        help="Path to specific transcript file or directory of raw transcripts (default: scripts/fluid_prose/llm_generator/samples).",
-    )
-    parser.add_argument(
-        "--limit",
-        type=int,
-        default=None,
-        help="Maximum number of transcript samples to evaluate per model.",
-    )
-    parser.add_argument(
-        "--output-dir",
-        type=Path,
-        default=REPO_ROOT / "scripts" / "fluid_prose",
-        help="Directory to save individual model report files (default: scripts/fluid_prose).",
-    )
-    parser.add_argument(
-        "--temperature",
-        type=float,
-        default=0.2,
-        help="Sampling temperature for generator models (default: 0.2).",
-    )
-    parser.add_argument(
-        "--pacing",
-        type=float,
-        default=1.0,
-        help="Inter-request sleep delay in seconds to respect rate limits (default: 1.0).",
-    )
+app = typer.Typer(
+    name="benchmark-generator",
+    help="Benchmark and evaluate candidate generator LLMs for Fluid Prose against canonical judge.",
+    no_args_is_help=False,
+    context_settings={"help_option_names": ["-h", "--help"]},
+)
 
-    args = parser.parse_args()
+
+@app.command()
+def benchmark(
+    models: Annotated[
+        list[str] | None,
+        typer.Option(
+            "--models",
+            help=(
+                "List of model identifiers to test sequentially (default: configured in "
+                "CresmoSettings.generator_benchmark_models)"
+            ),
+        ),
+    ] = None,
+    input_path: Annotated[
+        Path | None,
+        typer.Option(
+            "--input",
+            help="Path to specific transcript file or directory of raw transcripts",
+        ),
+    ] = None,
+    limit: Annotated[
+        int | None,
+        typer.Option(
+            "--limit",
+            help="Maximum number of transcript samples to evaluate per model.",
+        ),
+    ] = None,
+    output_dir: Annotated[
+        Path,
+        typer.Option(
+            "--output-dir",
+            help="Directory to save individual model report files",
+        ),
+    ] = REPO_ROOT / "scripts" / "fluid_prose",
+    temperature: Annotated[
+        float,
+        typer.Option(
+            "--temperature",
+            help="Sampling temperature for generator models (default: 0.2).",
+        ),
+    ] = 0.2,
+    pacing: Annotated[
+        float,
+        typer.Option(
+            "--pacing",
+            help="Inter-request sleep delay in seconds to respect rate limits (default: 1.0).",
+        ),
+    ] = 1.0,
+) -> None:
     settings = CresmoSettings()
     settings.ensure_directories()
-    args.output_dir.mkdir(parents=True, exist_ok=True)
+    output_dir.mkdir(parents=True, exist_ok=True)
 
     # Propagate Langfuse environment variables to silence client initialization warnings
     if settings.langfuse_public_key:
@@ -685,15 +704,15 @@ def main() -> int:
         os.environ["LANGFUSE_HOST"] = settings.langfuse_host
 
     # 1. Resolve Target Models
-    raw_models = args.models
+    raw_models = models if models else list(ALL_BENCHMARK_MODELS)
     if "all" in [m.lower() for m in raw_models]:
         raw_models = list(ALL_BENCHMARK_MODELS)
 
     # 2. Load Samples
-    samples = load_benchmark_samples(input_path=args.input, limit=args.limit)
+    samples = load_benchmark_samples(input_path=input_path, limit=limit)
     if not samples:
         logger.error("Nenhuma amostra de transcrição encontrada para benchmark!")
-        return 1
+        raise typer.Exit(code=1)
 
     print(f"📦 Amostras carregadas para o benchmark: {len(samples)}")
     for i, s in enumerate(samples, 1):
@@ -712,7 +731,7 @@ def main() -> int:
     for spec in raw_models:
         provider, model_name = resolve_model_spec(spec)
         filename_slug = sanitize_filename(provider, model_name)
-        output_file = args.output_dir / f"llm_generator_{filename_slug}.txt"
+        output_file = output_dir / f"llm_generator_{filename_slug}.txt"
 
         try:
             summary = run_benchmark_for_model(
@@ -722,8 +741,8 @@ def main() -> int:
                 settings=settings,
                 prompt_provider=prompt_provider,
                 judge_adapter=judge_adapter,
-                temperature=args.temperature,
-                pacing_seconds=args.pacing,
+                temperature=temperature,
+                pacing_seconds=pacing,
             )
 
             report_text = format_model_report(summary)
@@ -745,7 +764,30 @@ def main() -> int:
             prompt_provider._langfuse.flush()
 
     print("🏁 Todos os benchmarks solicitados foram concluídos!")
-    return 0
+
+
+def main(argv: Sequence[str] | None = None) -> int:
+    """CLI Entrypoint for generator benchmark execution.
+
+    Args:
+        argv: Optional sequence of CLI arguments. If None, uses sys.argv[1:].
+
+    Returns:
+        Process exit code integer.
+    """
+    try:
+        res = app(args=list(argv) if argv is not None else None, standalone_mode=False)
+        return 0 if res is None else int(res)
+    except typer.Exit as exc:
+        return exc.exit_code
+    except click.ClickException as exc:
+        sys.stderr.write(f"Usage error: {exc}\n")
+        return getattr(exc, "exit_code", 2)
+    except SystemExit as exc:
+        return exc.code if isinstance(exc.code, int) else 2
+    except Exception as exc:  # noqa: BLE001
+        sys.stderr.write(f"Unexpected error: {exc}\n")
+        return 1
 
 
 if __name__ == "__main__":

@@ -90,7 +90,7 @@ Execute an internal 2-pass audit on the input text before composing the final ex
 - **Concrete Empirical Anchors**: Enrich every comparison with exact dates, names of contemporaneous peoples, and verified historical facts.
 - **Narrative Velocity and Seamless Syntax**: Use rich transitional conjunctions of simultaneity and contrast (e.g., *"Enquanto a bacia do Mediterrâneo enfrentava o colapso de suas rotas mercantis de bronze, a bacia do Rio Amarelo testemunhava, em perfeita sincronia temporal, a transição para a metalurgia do ferro sob as convulsões da Dinastia Zhou..."*).
 - **Substantive Explication vs. Methodological Invisibility**: The comparative cross-sections and trans-regional parallels must be explicit in their historical detail (dates, civilizations, networks, ecological crises), while the analytical categories used to discover them remain completely invisible to the reader.
-- **Footnote Relocation**: Secondary biographical sketches, detailed legislative texts, specialized statistical breakdowns, and tangential precursor lineages must be systematically relegated to the **Informações Complementares** section.
+- **Footnote Relocation**: Secondary biographical sketches, detailed legislative texts, specialized statistical breakdowns, and tangential precursor lineages must be systematically relegated to the **Extra Info** section.
 
 
 ---
@@ -109,12 +109,12 @@ Execute an internal 2-pass audit on the input text before composing the final ex
 
 ---
 
-## Complementary Information Section
+### Extra Info Section
 
 Whenever necessary to prevent narrative fragmentation or conceptual inflation in the main body, append a dedicated section at the very end of the file under the exact header:
 
 ```markdown
-## Informações Complementares
+### Extra Info
 ```
 
 In this section, provide numbered continuous prose paragraphs detailing info not suitable to main text. 

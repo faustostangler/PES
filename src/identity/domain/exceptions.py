@@ -31,3 +31,7 @@ class InvalidCredentialsError(IdentityDomainError):
 
 class UserAlreadyExistsError(IdentityDomainError):
     """Raised when registering a user with an already registered email."""
+
+
+class InvalidRoleError(IdentityDomainError):
+    """Raised when an authorization role fails domain invariants."""

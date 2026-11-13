@@ -24,7 +24,7 @@ video_id: "12345"
 Texto contínuo da análise macroeconômica sem listas ou tabelas.
 Apresenta densidade conceitual e fatos históricos empíricos verificáveis.
 
-## Informações Complementares
+### Extra Info
 
 1. O Porto de Mariel constitui um polo logístico regional.
 2. O BNDES operou linhas de financiamento para bens de engenharia.
@@ -51,7 +51,7 @@ Texto contínuo sem a seção final obrigatória de informações complementares
 def test_is_valid_enriched_markdown_too_short(tmp_path: Path):
     """Verify is_valid_enriched_markdown returns False if size is below minimum threshold."""
     f = tmp_path / "short.md"
-    f.write_text("## Intro\n## Informações Complementares\n", encoding="utf-8")
+    f.write_text("## Intro\n### Extra Info\n", encoding="utf-8")
     assert is_valid_enriched_markdown(f, min_bytes=300) is False
 
 

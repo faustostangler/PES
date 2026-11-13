@@ -7,11 +7,8 @@ Conforms to:
 
 from __future__ import annotations
 
-import logging
 from collections.abc import Callable
 from typing import Any, cast
-
-import yt_dlp
 
 from cresmo.domain.value_objects import (
     ChannelFeedQuery,
@@ -22,8 +19,6 @@ from cresmo.domain.value_objects import (
     normalize_to_uploads_playlist_url,
 )
 from cresmo.infrastructure.adapters.media.subtitles import parse_published_datetime
-
-logger = logging.getLogger(__name__)
 
 
 def discover_channel_feed_items(
@@ -45,6 +40,8 @@ def discover_channel_feed_items(
     )
 
     try:
+        import yt_dlp
+
         with yt_dlp.YoutubeDL(cast(Any, opts)) as ydl:
             info = ydl.extract_info(target_url, download=False)
             # Fallback to original channel_url if uploads playlist returned empty

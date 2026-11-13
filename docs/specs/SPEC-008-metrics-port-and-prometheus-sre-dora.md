@@ -13,7 +13,7 @@
 This specification establishes the exact behavioral contracts, type definitions, numerical invariants, boundary limits, and acceptance criteria for implementing the **`MetricsPort`**, **`PrometheusMetricsAdapter`**, **SRE Golden Signals**, and **DORA Metrics** in the Cresmo Modular Monolith.
 
 It formalizes the separation between:
-1. **GenAI / LLM Observability:** Hierarchical traces, token usage, and qualitative evaluation scores governed by `TelemetryPort` and Langfuse v4 ([ADR-016](ADR-016-full-opentelemetry-conventions-session-replays-and-channel-governance.md)).
+1. **GenAI / LLM Observability:** Hierarchical traces, token usage, and qualitative evaluation scores governed by `TelemetryPort` and Langfuse v4 ([ADR-016](../adr/ADR-016-full-opentelemetry-conventions-session-replays-and-channel-governance.md)).
 2. **Infrastructure & Operational Confiability:** Time-series Golden Signals (Latency, Traffic, Errors, Saturation) governed by `MetricsPort` and Prometheus v3.x.
 3. **Engineering Velocity (DORA Four Keys):** Quantitative delivery metrics measuring deployment frequency, lead time, change failure rate, and recovery time.
 

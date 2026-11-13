@@ -20,7 +20,7 @@ from cresmo.application.ports import (
     NoOpPromptProviderPort,
     NoOpTelemetryPort,
 )
-from cresmo.domain.entities import PipelineSessionId, SourceTranscript, UserIdentity
+from cresmo.domain.entities import PipelineSessionId, StageTranscript, UserIdentity
 from cresmo.domain.exceptions import StageQuarantinedError
 from cresmo.domain.value_objects import (
     Channel,
@@ -38,9 +38,8 @@ from cresmo.domain.value_objects import (
 
 def _create_sample_context() -> PipelineExecutionContext:
     channel = Channel(name="Test Channel", id=ChannelId("UC_test"))
-    content = Content.create(id=ContentId("content_123"), title="Sample Content")
+    content = Content.create(id=ContentId("content_123"), title="Sample Content", session_id="test_chan:content_123")
     return PipelineExecutionContext(
-        session_id=PipelineSessionId("test_chan:content_123"),
         user_identity=UserIdentity.worker(),
         channel=channel,
         content=content,
@@ -64,15 +63,15 @@ def test_execute_stage_with_string_identifier_and_factory() -> None:
     )
 
     ctx = _create_sample_context()
-    raw = SourceTranscript(
-        content_id=ctx.content.id,
-        channel_name=ChannelName(ctx.channel.name),
-        body="Original source transcript.",
+    raw = StageTranscript(
+        channel=Channel(name=ChannelName(ctx.channel.name)),
+        provenance=MediaProvenance.empty(),
+        content=Content(id=ctx.content.id, text="Original source transcript."),
     )
 
     result = runner.execute_stage("fluid_prose", source=raw, context=ctx)
     assert result.content.id == ctx.content.id
-    assert "Transformed text output." in result.content.body
+    assert "Transformed text output." in result.content.text
     assert mock_llm.transform.call_count == 1
 
 
@@ -87,10 +86,10 @@ def test_execute_stage_string_without_factory_raises_value_error() -> None:
     )
 
     ctx = _create_sample_context()
-    raw = SourceTranscript(
-        content_id=ctx.content.id,
-        channel_name=ChannelName(ctx.channel.name),
-        body="Some text",
+    raw = StageTranscript(
+        channel=Channel(name=ChannelName(ctx.channel.name)),
+        provenance=MediaProvenance.empty(),
+        content=Content(id=ctx.content.id, text="Some text"),
     )
 
     with pytest.raises(ValueError, match="Cannot resolve stage 'fluid_prose' from string"):
@@ -149,15 +148,15 @@ def test_execute_stage_closed_loop_critique_synthesizer_integration() -> None:
     )
 
     ctx = _create_sample_context()
-    raw = SourceTranscript(
-        content_id=ctx.content.id,
-        channel_name=ChannelName(ctx.channel.name),
-        body="Verbatim transcript with hesitation.",
+    raw = StageTranscript(
+        channel=Channel(name=ChannelName(ctx.channel.name)),
+        provenance=MediaProvenance.empty(),
+        content=Content(id=ctx.content.id, text="Verbatim transcript with hesitation."),
     )
 
     result = runner.execute_stage("fluid_prose", source=raw, context=ctx)
     assert result.content.id == ctx.content.id
-    assert "Refined candidate text." in result.content.body
+    assert "Refined candidate text." in result.content.text
 
     # Verify synthesizer was called with the failed evaluation
     assert mock_synthesizer.synthesize.call_count == 1
@@ -214,10 +213,10 @@ def test_execute_stage_fail_fast_quarantine_protocol() -> None:
     )
 
     ctx = _create_sample_context()
-    raw = SourceTranscript(
-        content_id=ctx.content.id,
-        channel_name=ChannelName(ctx.channel.name),
-        body="Text that repeatedly fails.",
+    raw = StageTranscript(
+        channel=Channel(name=ChannelName(ctx.channel.name)),
+        provenance=MediaProvenance.empty(),
+        content=Content(id=ctx.content.id, text="Text that repeatedly fails."),
     )
 
     with pytest.raises(StageQuarantinedError) as exc_info:
@@ -535,5 +534,7 @@ def test_record_stage_quarantine_ledger_exception_resilience(
     mock_metrics.increment_counter.assert_called_once()
     error_records = [r for r in caplog.records if r.levelname == "ERROR"]
     assert len(error_records) == 1
-    assert error_records[0].msg == "Failed to record quarantine entry in ledger for %s: %s"
-    assert error_records[0].args == ("vid_err", mock_ledger.get_entry.side_effect)
+    assert (
+        "Failed to record quarantine entry in ledger for vid_err: Database locked"
+        in error_records[0].getMessage()
+    )

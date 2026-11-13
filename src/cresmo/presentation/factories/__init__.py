@@ -4,7 +4,6 @@ Re-exports settings, telemetry, adapter, and use case factory builders.
 """
 
 from cresmo.presentation.factories.adapter_factory import (
-    _resolve_cookie_file,
     build_gemini_synthesis_adapter,
     build_indexing_adapter,
     build_media_ingestion_adapter,
@@ -34,7 +33,6 @@ from cresmo.presentation.factories.use_case_factory import (
 )
 
 __all__ = [
-    "_resolve_cookie_file",
     "build_anonymizer_adapter",
     "build_concat_master_use_case",
     "build_discover_batch_sources_use_case",

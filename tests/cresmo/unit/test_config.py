@@ -44,7 +44,7 @@ class TestCresmoSettings:
     """Validate settings defaults and derived property invariants."""
 
     def test_default_paths_anchor_to_workspace(self) -> None:
-        settings = CresmoSettings()
+        settings = CresmoSettings(_env_file=None)
         assert settings.data_dir.name == "data"
         assert settings.vault_dir.name == "vault"
         assert settings.raw_dir == settings.data_dir / "raw"
@@ -54,7 +54,7 @@ class TestCresmoSettings:
         assert settings.sqlite_ledger_path == settings.data_dir / "cresmo_ledger.db"
         assert settings.browser_cookies == "firefox"
         assert settings.auto_extract_cookies is True
-        assert settings.enable_channel_crawler is True
+        assert settings.enable_channel_crawler is False
         assert settings.require_auth_cookies is False
         assert settings.concat_max_words == 500_000
         assert settings.brain_csv_path == settings.data_dir / "brain.csv"
@@ -71,15 +71,30 @@ class TestCresmoSettings:
         assert not hasattr(settings, "raw_index_temperature")
         assert settings.llm_synthesis_temperature == 0.2
         assert settings.llm_indexing_temperature == 0.2
+        assert settings.expansion_max_passes == 5
+        assert settings.judge_max_attempts == 2
+        assert settings.raw_index_max_attempts == 2
+        assert settings.inventory_max_attempts == 2
+        assert settings.max_retries == 2
+
+    def test_max_retries_alias_and_env_override(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        settings = CresmoSettings()
+        assert settings.max_retries == 2
+        assert settings.judge_max_attempts == 2
+
+        monkeypatch.setenv("CRESMO_MAX_RETRIES", "4")
+        overridden = CresmoSettings()
+        assert overridden.max_retries == 4
+        assert overridden.judge_max_attempts == 4
 
     def test_ollama_num_predict_defaults_and_env_override(
         self, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        settings = CresmoSettings()
+        settings = CresmoSettings(_env_file=None)
         assert settings.ollama_num_predict == 0
 
         monkeypatch.setenv("CRESMO_OLLAMA_NUM_PREDICT", "450")
-        overridden = CresmoSettings()
+        overridden = CresmoSettings(_env_file=None)
         assert overridden.ollama_num_predict == 450
 
     def test_temperature_validation_bounds(self) -> None:
@@ -156,3 +171,41 @@ class TestCresmoSettings:
         custom_env.write_text("CRESMO_OLLAMA_MODEL=deepseek-r1:14b\n", encoding="utf-8")
         settings = CresmoSettings(_env_file=custom_env)
         assert settings.ollama_model == "deepseek-r1:14b"
+
+    def test_calibration_and_benchmark_models_defaults_and_env_override(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """Verify calibration and benchmark models defaults and safe comma-separated env parsing."""
+        settings = CresmoSettings()
+        assert settings.gemini_model == "gemini-4-hydrogen"
+        assert settings.judge_gemini_model == "gemini-4-hydrogen"
+        assert settings.benchmark_models == [
+            "gemini:gemini-4-hydrogen",
+            "gemini:gemini-3.8-flash",
+            "gemini:gemini-3.5-flash-lite",
+        ]
+        assert settings.judge_calibration_models == settings.benchmark_models
+        assert settings.generator_benchmark_models == settings.benchmark_models
+
+        monkeypatch.setenv(
+            "BENCHMARK_MODELS",
+            "gemini:gemini-3.5-flash-lite, ollama:qwen2.5:14b",
+        )
+        overridden = CresmoSettings()
+        assert overridden.benchmark_models == [
+            "gemini:gemini-3.5-flash-lite",
+            "ollama:qwen2.5:14b",
+        ]
+        assert overridden.judge_calibration_models == overridden.benchmark_models
+        assert overridden.generator_benchmark_models == overridden.benchmark_models
+
+    def test_gemini_timeout_seconds_defaults_and_env_override(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """Verify gemini_timeout_seconds defaults to 60.0 and supports env override."""
+        settings = CresmoSettings()
+        assert settings.gemini_timeout_seconds == 60.0
+
+        monkeypatch.setenv("GEMINI_TIMEOUT_SECONDS", "45.0")
+        overridden = CresmoSettings()
+        assert overridden.gemini_timeout_seconds == 45.0

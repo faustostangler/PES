@@ -12,7 +12,7 @@ Em seu trabalho seminal de **1951** intitulado _Prediction and Entropy of Printe
 
 Os resultados revelaram que, dispondo de uma janela de contexto de pelo menos cem caracteres anteriores, o inglês impresso possui uma entropia de aproximadamente um bit por caractere. Essa taxa reduzida evidencia uma redundância linguística superior a setenta e cinco por cento. Sete décadas após as investigações de Shannon, a compressão computacional prática que se aproxima desse limite ideal deixou de ser uma simples sonda da inteligência humana para se tornar a base da engenharia de redes neurais e Grandes Modelos de Linguagem, onde a minimização da **entropia cruzada** equivale à construção de compressores de dados ótimos.
 
-## Informações Complementares
+### Extra Info
 
 1. **Mary Elizabeth Moore Shannon** (conhecida como Betty Shannon, 1916–2017) foi uma matemática e pesquisadora norte-americana que colaborou com seu marido Claude Shannon em diversos experimentos práticos e na construção de dispositivos automatizados na Bell Labs.
 
@@ -53,7 +53,7 @@ A demonstração da inevitabilidade estrutural desse padrão baseia-se na aplica
 
 Com vinte e dois cubos da mesma cor, o número total de pares distintos de centros de cubos que podem ser formados é dado pela combinação de vinte e dois tomados dois a dois, resultando em duzentas e trinta e uma conexões aos pares. Em uma grade tridimensional discreta de quatro por quatro por quatro, o número de distâncias quadráticas inteiras possíveis entre quaisquer dois pontos é estritamente limitado. Aplicando novamente o Princípio das Gavetas de Dirichlet sobre o conjunto das duzentas e trinta e uma conexões distribuídas entre as poucas distâncias geométricas permitidas na grade, garante-se que pelo menos uma distância específica deve se repetir em múltiplos pares disjuntos, demonstrando a existência inescapável de seis pares disjuntos da mesma cor com distâncias equivalentes.
 
-## Informações Complementares
+### Extra Info
 
 1. A **Olimpíada Britânica de Matemática** (_British Mathematical Olympiad_ - BMO) é a competição nacional de matemática de alto nível para estudantes do ensino secundário no Reino Unido, organizada pela _United Kingdom Mathematics Trust_ (UKMT).
 
@@ -95,7 +95,7 @@ A segunda dimensão do problema consiste em demonstrar matematicamente a optimal
 
 O **Teorema da Codificação Sem Ruído de Shannon**, formulado em **1948** por **Claude Shannon**, estabelece que o limite inferior intransponível para o comprimento médio de codificação de qualquer fonte estocástica é dado estritamente pela **entropia de Shannon**. Como a esperança matemática do conteúdo informativo nessa distribuição específica coincide exatamente com um ponto setenta e cinco bits por símbolo, é rigorosamente impossível construir qualquer algoritmo de compressão sem perda mais eficiente para essa fonte, demonstrando a equivalência fundamental entre previsão probabilística e compressão ótima de dados.
 
-## Informações Complementares
+### Extra Info
 
 1. **Claude Elwood Shannon** (1916–2001) formalizou a teoria matemática da comunicação no Bell Labs. O enigma da codificação de comandos espaciais ilustra o conceito central de que o conteúdo informativo de um símbolo é inversamente proporcional à sua probabilidade de ocorrência.
 
@@ -142,7 +142,7 @@ A diferença estrita entre a entropia cruzada obtida por um código subótimo e 
 
 A razão matemática pela qual a entropia cruzada é a única função de perda estritamente adequada para a otimização estatística de modelos de linguagem pode ser demonstrada rigorosamente através do método dos **Multiplicadores de Lagrange**. Ao buscar a minimização da perda média ponderada sujeita à restrição de que a soma das probabilidades do vocabulário seja igual a um, a condição necessária de tangência exige que a derivada da função de perda seja inversamente proporcional à probabilidade predita. Essa propriedade analítica é exclusiva da função logarítmica, provando que o pré-treinamento por entropia cruzada é rigorosamente equivalente a treinar o modelo para se tornar o compressor de dados ideal.
 
-## Informações Complementares
+### Extra Info
 
 1. **Solomon Kullback** (1907–1994) e **Richard Leibler** (1914–2003) foram matemáticos e cryptanalistas norte-americanos que introduziram a divergência de Kullback-Leibler em 1951 como a informação relativa de amostragem entre duas distribuições probabilísticas.
 
@@ -192,7 +192,7 @@ A aplicação da teoria da informação à linguagem natural exige considerar o 
 
 Os experimentos de Shannon demonstraram que a linguagem natural possui elevadíssima redundância estrutural, permitindo comprimir o inglês impresso para taxas próximas a um bit por caractere quando um contexto amplo está disponível. No aprendizado de máquina moderno e nos modelos de linguagem baseados em arquiteturas de transformadores, a otimização da função de perda por **entropia cruzada** representa precisamente a tentativa computacional de aproximar o modelo estatístico do compressor ideal, reafirmando que a capacidade preditiva e a compressão são manifestações equivalentes da inteligência estrutural.
 
-## Informações Complementares
+### Extra Info
 
 1. **Claude Elwood Shannon** (1916–2001) foi um matemático e engenheiro eletricista norte-americano considerado o pai da teoria da informação. Sua dissertação de mestrado no MIT formalizou o uso da álgebra booleana em circuitos digitais, e seu artigo seminal de 1948 estabeleceu os fundamentos matemáticos das comunicações modernas.
 
@@ -241,7 +241,7 @@ A resolução elegante do problema prescinde de integrais complexas ao aplicar a
 
 Consequentemente, a probabilidade de que qualquer par individual de cordas aleatórias se cruze é estritamente igual a um terço. Para um conjunto de $N$ cordas aleatórias, o número total de pares possíveis de cordas é dado pela combinação de $N$ tomados dois a dois. Multiplicando essa contagem pela probabilidade individual de intersecção, obtém-se a fórmula fechada do valor esperado como sendo $N$ vezes $N$ menos um dividido por seis. Para dez cordas, o valor esperado é exatamente quinze intersecções, enquanto para cem cordas, o valor esperado atinge mil seiscentas e cinquenta intersecções.
 
-## Informações Complementares
+### Extra Info
 
 1. **Joseph Louis François Bertrand** (1822–1900) foi um influente matemático francês cujo paradoxo da probabilidade geométrica, apresentado em sua obra de 1889 _Calcul des Probabilités_, reformulou a compreensão sobre a importância das medidas de Haar e da simetria invariante em problemas probabilísticos contínuos.
 

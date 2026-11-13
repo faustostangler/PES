@@ -1,11 +1,11 @@
 # ADR-009: Streaming Batch Source Discovery via Producer-Consumer Pattern
 
-**Status:** ACCEPTED  
+**Status:** ACCEPTED (Section 2.5 SUPERSEDED by [`ADR-010`](ADR-010-zero-legacy-shims-and-streaming-first-unification.md))  
 **Date:** 2026-09-17  
 **Decision Makers:** Lead Architect (Fausto Stangler), Systems Architect (Doctor Stangler Committee)  
 **Governing Method:** Doctor Stangler Architecture Method (Clean/Hexagonal DDD Modular Monolith)  
 **Glossary Reference:** [`docs/GLOSSARY.md`](../GLOSSARY.md)  
-**Related ADRs:** [`ADR-010`](ADR-010-zero-legacy-shims-and-streaming-first-unification.md), [`ADR-012`](ADR-012-multi-criteria-sync-filtering-and-alphabetical-feed-ordering.md), [`ADR-020`](ADR-020-sota-kiss-engineering-canon-and-concurrency-topology.md)  
+**Related ADRs:** [`ADR-010`](ADR-010-zero-legacy-shims-and-streaming-first-unification.md) *(Supersedes Section 2.5)*, [`ADR-012`](ADR-012-multi-criteria-sync-filtering-and-alphabetical-feed-ordering.md), [`ADR-020`](ADR-020-sota-kiss-engineering-canon-and-concurrency-topology.md)  
 
 ---
 
@@ -53,8 +53,16 @@ To eliminate Time-of-Check to Time-of-Use race conditions when pushing discovere
   ```
 - All modifications to internal source sets in `_BatchSourceAccumulator` are guarded by reentrant mutex locks (`self._lock`).
 
-### 2.5 Streaming Generator & Dual Interface
-`DiscoverBatchSourcesUseCase` exposes:
+### 2.5 Streaming Generator & Dual Interface *(DEPRECATED / SUPERSEDED by ADR-010)*
+
+> [!WARNING]
+> **SUPERSEDED SECTION:**  
+> The dual interface pattern (`execute` returning materialized `list` vs `execute_stream` returning `Iterator`) and transitional wrapper functions have been **DEPRECATED and REMOVED** per [`ADR-010: Zero Legacy Shims and Streaming-First Unification Principle`](ADR-010-zero-legacy-shims-and-streaming-first-unification.md).
+> - `DiscoverBatchSourcesUseCase.execute` is now the canonical, pure streaming method returning `Iterator[BatchSource]`.
+> - `execute_stream` was purged.
+> - Callers requiring full collections materialize explicitly via `list(stream)`.
+
+`DiscoverBatchSourcesUseCase` originally exposed:
 - `execute_stream(query) -> Iterator[BatchSource]`: Yields items incrementally as soon as they become available.
 - `execute(query) -> list[BatchSource]`: Maintains 100% backward compatibility by returning `list(self.execute_stream(query))`.
 

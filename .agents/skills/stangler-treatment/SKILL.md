@@ -27,8 +27,8 @@ Before executing quality checks:
 
 ## 2. Quality & Verification Protocol
 
-### Step 1: Mutation Testing
-Execute mutation testing using `[ENV_EXEC] [MUTATION_EXEC]`. You must verify results against the following targets:
+### Step 1: Mutation Testing (Delegate to `stangler-pathologist`)
+Whenever subagent tools are available, delegate mutation execution and survivor eradication to [stangler-pathologist](../stangler-pathologist/SKILL.md), which spawns an isolated `mutant-hunter` subagent (`Workspace="branch"`) so raw `mutmut` logs and `mutants/` artifacts never pollute the primary workspace or main context. Otherwise, execute mutation testing using `[ENV_EXEC] [MUTATION_EXEC]`. Verify results against the following targets:
 
 | Layer | Mutant Survival Target | Rationale |
 |-------|----------------------|-----------|\
@@ -102,6 +102,9 @@ If an Eval dimension fails (score below the blocking threshold):
    - **Golden dataset gap**: The test input may be outside the model's effective capability range — add an adversarial example and document in the rubric.
 3. **Re-run the full quality gate** after remediation: `[MUTATION_EXEC]` + `[EVAL_EXEC]`.
 4. The implementation is **not complete** until both mutation survivors = 0 AND Eval gate passes.
+
+### Step 5: Pre-Commit Architectural Audit (Delegate to `stangler-scheimpflug`)
+Before staging or committing changes, activate [stangler-scheimpflug](../stangler-scheimpflug/SKILL.md) to spawn an isolated `strict-clean-architect` subagent that inspects the pending `git diff` for Hexagonal boundary leaks, Anti-Mirroring compliance, forbidden `src.` import prefixes, and strict typing integrity.
 
 ---
 

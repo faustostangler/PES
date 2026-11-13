@@ -92,7 +92,7 @@ class PreflightHealthChecker:
         self._langfuse_host = langfuse_host
         self._ollama_base_url = ollama_base_url
 
-    def check_langfuse_probe(self, host: str, timeout_seconds: float = 1.0) -> bool:
+    def check_langfuse_probe(self, host: str, timeout_seconds: float = 2.0) -> bool:
         """Active preflight probe to verify if Langfuse server health endpoint is responding.
 
         Args:
@@ -104,7 +104,12 @@ class PreflightHealthChecker:
         """
         normalized_host = host.rstrip("/")
         probe_url = f"{normalized_host}/api/public/health"
-        return probe_http_endpoint(probe_url, timeout_seconds=timeout_seconds)
+        if probe_http_endpoint(probe_url, timeout_seconds=timeout_seconds):
+            return True
+        if "localhost" in normalized_host:
+            fallback_url = probe_url.replace("localhost", "127.0.0.1")
+            return probe_http_endpoint(fallback_url, timeout_seconds=timeout_seconds)
+        return False
 
     def check_ollama_probe(self, base_url: str, timeout_seconds: float = 1.0) -> bool:
         """Active preflight probe to verify if local Ollama daemon is responding.

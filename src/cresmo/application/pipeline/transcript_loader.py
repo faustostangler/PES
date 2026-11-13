@@ -3,14 +3,14 @@
 from __future__ import annotations
 
 import hashlib
-import logging
 import re
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
+import structlog
 import yaml
 
-from cresmo.domain.entities import SourceTranscript
+from cresmo.domain.entities import StageTranscript
 from cresmo.domain.exceptions import CresmoDomainError
 from cresmo.domain.taxonomy import classify_channel
 from cresmo.domain.value_objects import (
@@ -26,7 +26,7 @@ from cresmo.domain.value_objects import (
 if TYPE_CHECKING:
     from cresmo.application.ports.storage import VaultRepositoryPort
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 _MIN_CONTENT_ID_LENGTH: int = 8
 _MAX_CONTENT_ID_LENGTH: int = 64
@@ -88,9 +88,9 @@ def _resolve_metadata(
     )
     channel_name = ChannelName(channel_raw)
 
-    raw_cid = meta.get("channel_id")
-    channel_id_obj: ChannelId | None = (
-        ChannelId.from_string(str(raw_cid)) if raw_cid else ChannelId("priority_text")
+    raw_channel_id = meta.get("channel_id")
+    resolved_channel_id: ChannelId | None = (
+        ChannelId.from_string(str(raw_channel_id)) if raw_channel_id else ChannelId("priority_text")
     )
     category = str(
         meta.get("channel_category") or meta.get("domain") or classify_channel(channel_name)[0]
@@ -102,7 +102,7 @@ def _resolve_metadata(
     return (
         title,
         channel_name,
-        channel_id_obj,
+        resolved_channel_id,
         category,
         source_url,
         video_description,
@@ -110,8 +110,8 @@ def _resolve_metadata(
     )
 
 
-def load_transcript_from_file(file_path: Path) -> SourceTranscript:
-    """Parse and construct SourceTranscript domain entity from a local file.
+def load_transcript_from_file(file_path: Path) -> StageTranscript:
+    """Parse and construct StageTranscript domain entity from a local file.
 
     Handles YAML frontmatter metadata overrides and enforces security invariants:
     - Rejects internal Cresmo system files and index databases
@@ -122,7 +122,7 @@ def load_transcript_from_file(file_path: Path) -> SourceTranscript:
         file_path: Path to the transcript markdown or text file.
 
     Returns:
-        Validated SourceTranscript domain aggregate root.
+        Validated StageTranscript domain aggregate root.
 
     Raises:
         CresmoDomainError: If file is missing, empty, or a reserved system artifact.
@@ -142,26 +142,32 @@ def load_transcript_from_file(file_path: Path) -> SourceTranscript:
 
     content_id = _derive_content_id(file_path.stem, raw_body)
     body, meta = _extract_frontmatter(raw_body, file_path.name)
-    title, ch_name, ch_id, category, source_url, description, pub_date = _resolve_metadata(
-        meta, file_path, file_path.stem
-    )
+    (
+        title,
+        channel_name,
+        channel_id,
+        category,
+        source_url,
+        description,
+        publication_date,
+    ) = _resolve_metadata(meta, file_path, file_path.stem)
 
     channel = Channel(
-        name=ch_name,
-        id=ch_id,
+        name=channel_name,
+        id=channel_id,
         category=category,
     )
     provenance = MediaProvenance.create(
         url=source_url,
         description=description,
-        publication_date=pub_date,
+        publication_date=publication_date,
     )
     content = Content.create(
         id=content_id,
         title=title,
-        body=body,
+        text=body,
     )
-    return SourceTranscript(
+    return StageTranscript(
         channel=channel,
         provenance=provenance,
         content=content,
@@ -192,7 +198,7 @@ def is_subpath(target_path: Path, parent_dir: Path | None) -> bool:
 def ensure_transcript_saved(
     vault_port: VaultRepositoryPort,
     file_path: Path,
-    transcript: SourceTranscript,
+    transcript: StageTranscript,
     target_dir: Path | None = None,
 ) -> None:
     """Persist transcript via vault_port if not already located inside target_dir.
@@ -203,4 +209,4 @@ def ensure_transcript_saved(
     vault_target_dir = getattr(vault_port, "raw_dir", None)
     if is_subpath(file_path, target_dir) or is_subpath(file_path, vault_target_dir):
         return
-    vault_port.save_transcript(transcript)
+    vault_port.save_stage_transcript("raw", transcript)

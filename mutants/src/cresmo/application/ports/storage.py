@@ -14,6 +14,7 @@ from pathlib import Path
 from cresmo.domain.entities import (
     AtomicNote,
     EnrichedCompendium,
+    FluidTranscript,
     MapOfContent,
     SourceTranscript,
 )
@@ -53,6 +54,39 @@ class VaultRepositoryPort(ABC):
             SourceTranscript aggregate or None if not present in storage.
         """
         raise NotImplementedError("Retrieve raw transcript by content ID.")
+
+    @abstractmethod
+    def save_fluid_transcript(self, transcript: FluidTranscript) -> None:
+        """Persist normalized fluid prose transcript directly into fluid/ directory with YAML frontmatter.
+
+        Args:
+            transcript: Validated FluidTranscript aggregate containing clean continuous narrative prose.
+        """
+        raise NotImplementedError("Persist fluid transcript atomically.")
+
+    @abstractmethod
+    def get_fluid_transcript(self, content_id: ContentId) -> FluidTranscript | None:
+        """Retrieve normalized fluid prose transcript by content ID from fluid/ directory.
+
+        Args:
+            content_id: Target unique content identifier.
+
+        Returns:
+            FluidTranscript aggregate or None if not found in storage.
+        """
+        raise NotImplementedError("Retrieve fluid transcript by content ID.")
+
+    @abstractmethod
+    def get_fluid_files_for_channel(self, channel_name: ChannelName) -> list[Path]:
+        """Retrieve all persisted fluid transcript paths for a given channel.
+
+        Args:
+            channel_name: Target channel name.
+
+        Returns:
+            List of resolved filesystem Paths to .md fluid transcript files.
+        """
+        raise NotImplementedError("List fluid transcripts by channel.")
 
     @abstractmethod
     def save_enriched_compendium(self, compendium: EnrichedCompendium) -> None:

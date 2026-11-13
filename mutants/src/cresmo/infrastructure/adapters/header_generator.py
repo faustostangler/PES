@@ -13,12 +13,13 @@ from __future__ import annotations
 
 import importlib.resources
 import json
-import logging
 import random
 from pathlib import Path
 from typing import Any
 
-logger = logging.getLogger(__name__)
+import structlog
+
+logger = structlog.get_logger(__name__)
 
 _DEFAULT_FALLBACK_PROFILES: tuple[dict[str, str], ...] = (
     {

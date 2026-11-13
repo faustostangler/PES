@@ -172,13 +172,13 @@ class _BatchSourceAccumulator:
 
             _record_seen_identifiers(self.seen_vids, dedup_token, resolved_id, raw_id, target)
 
-            src = BatchSource(kind=kind, target=target, content_id=resolved_id)
-            self.sources.append(src)
-            cb = self.on_source_added
+            batch_source = BatchSource(kind=kind, target=target, content_id=resolved_id)
+            self.sources.append(batch_source)
+            callback = self.on_source_added
 
-        if cb is not None:
-            cb(src)
-        return src
+        if callback is not None:
+            callback(batch_source)
+        return batch_source
 
     def register_identifier(self, target_str: str | ContentId) -> None:
         """Register video ID or path stem into the deduplication set."""
@@ -189,11 +189,11 @@ class _BatchSourceAccumulator:
                 return
             self.seen_vids.add(target_str)
             try:
-                cid = ContentId.from_url_or_token(target_str)
-                self.seen_vids.add(cid)
-                self.seen_vids.add(cid.value)
+                content_id = ContentId.from_url_or_token(target_str)
+                self.seen_vids.add(content_id)
+                self.seen_vids.add(content_id.value)
             except (ValueError, TypeError):
-                cid = None
+                content_id = None
             stem = Path(target_str).stem
             if stem:
                 self.seen_vids.add(stem)
@@ -206,10 +206,10 @@ class _BatchSourceAccumulator:
             if isinstance(identifier, ContentId):
                 return identifier.value in self.seen_vids
             try:
-                cid = ContentId.from_url_or_token(identifier)
-                if cid in self.seen_vids or cid.value in self.seen_vids:
+                content_id = ContentId.from_url_or_token(identifier)
+                if content_id in self.seen_vids or content_id.value in self.seen_vids:
                     return True
             except (ValueError, TypeError):
-                cid = None
+                content_id = None
             stem = Path(identifier).stem
             return stem in self.seen_vids if stem else False

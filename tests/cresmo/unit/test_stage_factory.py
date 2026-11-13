@@ -7,9 +7,7 @@ from cresmo.application.pipeline.stage_descriptor import StageConfig
 from cresmo.application.pipeline.stage_factory import StageFactory
 from cresmo.application.ports import DefaultPipelineSettings
 from cresmo.domain.entities import (
-    FluidTranscript,
-    PipelineSessionId,
-    SourceTranscript,
+    StageTranscript,
     UserIdentity,
 )
 from cresmo.domain.value_objects import (
@@ -20,6 +18,7 @@ from cresmo.domain.value_objects import (
     Content,
     ContentId,
     JudgeCriterion,
+    MediaProvenance,
     PromptKey,
 )
 
@@ -27,15 +26,15 @@ from cresmo.domain.value_objects import (
 def test_pipeline_execution_context_creation() -> None:
     """Verify PipelineExecutionContext holds all execution provenance fields."""
     channel = Channel(name="Test Channel", id=ChannelId("UC_test123"))
-    content = Content.create(id=ContentId("test_vid"), title="Test Content")
+    content = Content.create(id=ContentId("test_vid"), title="Test Content", session_id="test_chan:test_vid")
     ctx = PipelineExecutionContext(
-        session_id=PipelineSessionId("test_chan:test_vid"),
         user_identity=UserIdentity.worker(),
         channel=channel,
         content=content,
     )
 
-    assert ctx.session_id.value == "test_chan:test_vid"
+    assert not hasattr(ctx, "session_id")
+    assert ctx.content.session_id == "test_chan:test_vid"
     assert ctx.user_identity.is_anonymous is False
     assert ctx.channel.name == "Test Channel"
     assert ctx.content.id.value == "test_vid"
@@ -53,9 +52,8 @@ def test_pipeline_execution_context_creation() -> None:
 def test_pipeline_execution_context_composite_creation() -> None:
     """Verify PipelineExecutionContext receives composite Channel and Content VOs (ADR-032)."""
     channel = Channel.from_name("Test Channel", id="UC_test123")
-    content = Content.create("test_vid", title="Sample Title")
+    content = Content.create("test_vid", title="Sample Title", session_id="test_chan:test_vid")
     ctx = PipelineExecutionContext(
-        session_id=PipelineSessionId("test_chan:test_vid"),
         user_identity=UserIdentity.worker(),
         channel=channel,
         content=content,
@@ -94,10 +92,10 @@ def test_stage_factory_builds_fluid_prose_descriptor() -> None:
     assert factory("fluid_prose") is descriptor
 
     # Verify source text extraction
-    source = SourceTranscript(
-        content_id=ContentId("c123"),
-        channel_name=ChannelName("Ch"),
-        body="Verbatim source audio.",
+    source = StageTranscript(
+        channel=Channel(name=ChannelName("Ch")),
+        provenance=MediaProvenance.empty(),
+        content=Content(id=ContentId("c123"), text="Verbatim source audio."),
     )
     extracted = descriptor.eval_spec.extract_source_text(source)
     assert extracted == "Verbatim source audio."
@@ -106,11 +104,11 @@ def test_stage_factory_builds_fluid_prose_descriptor() -> None:
     candidate = CandidateText("Synthesized fluid prose.", stage_name="fluid_prose")
     assert descriptor.eval_spec.candidate_extractor(candidate) == "Synthesized fluid prose."
 
-    # Verify post processor produces FluidTranscript
+    # Verify post processor produces StageTranscript
     processed = descriptor.post_process(candidate, source)
-    assert isinstance(processed, FluidTranscript)
+    assert isinstance(processed, StageTranscript)
     assert processed.content.id == source.content.id
-    assert "Synthesized fluid prose." in processed.content.body
+    assert "Synthesized fluid prose." in processed.content.text
 
 
 def test_stage_factory_generic_build_stage_custom_parameters() -> None:
@@ -123,7 +121,7 @@ def test_stage_factory_generic_build_stage_custom_parameters() -> None:
     factory = StageFactory(settings=settings)
 
     # Injected custom post processor and extractors
-    def custom_post_processor(candidate: CandidateText, source: FluidTranscript) -> dict[str, str]:
+    def custom_post_processor(candidate: CandidateText, source: StageTranscript) -> dict[str, str]:
         return {"output": candidate.text, "source_id": source.content.id.value}
 
     descriptor = factory.build_stage(
@@ -133,7 +131,7 @@ def test_stage_factory_generic_build_stage_custom_parameters() -> None:
         required_criteria=(JudgeCriterion.INDEX_SYNTHESIS_QUALITY,),
         post_processor=custom_post_processor,
         candidate_extractor=lambda c: f"extracted:{c.text}",
-        source_extractor=lambda s: f"src:{s.content.body}",
+        source_extractor=lambda s: f"src:{s.content.text}",
         temperature=0.15,
         max_attempts=4,
         blocking=True,
@@ -155,10 +153,10 @@ def test_stage_factory_generic_build_stage_custom_parameters() -> None:
     candidate = CandidateText("raw response", stage_name="custom_analysis_stage")
     assert descriptor.eval_spec.candidate_extractor(candidate) == "extracted:raw response"
 
-    dummy_source = FluidTranscript(
-        content_id=ContentId("dummy_content"),
-        channel_name=ChannelName("dummy_channel"),
-        body="dummy body",
+    dummy_source = StageTranscript(
+        channel=Channel(name=ChannelName("dummy_channel")),
+        provenance=MediaProvenance.empty(),
+        content=Content(id=ContentId("dummy_content"), text="dummy body"),
     )
     assert descriptor.eval_spec.extract_source_text(dummy_source) == "src:dummy body"
 
@@ -255,7 +253,7 @@ def test_stage_factory_settings_defaults_fallback() -> None:
     factory = StageFactory(settings=BareSettings())  # type: ignore[arg-type]
     descriptor = factory.build_stage("long_expander")
     assert descriptor.temperature is None
-    assert descriptor.max_attempts == 1
+    assert descriptor.max_attempts == 2
     assert descriptor.blocking is False
 
 

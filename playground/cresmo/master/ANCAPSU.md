@@ -40,7 +40,7 @@ O presidente da Câmara, Hugo Motta, buscou resguardar seu capital político e e
 
 A resolução pragmática do impasse reafirma que a superação do autoritarismo judicial e das tensões políticas domésticas não decorre de salvaguardas externas ou milagres diplomáticos, mas resulta do balanço concreto de forças institucionais, da estratégia endógena de sobrevivência e da capacidade dos agentes políticos em navegar a dinâmica transacional do poder.
 
-## Informações Complementares
+### Extra Info
 
 1. A deputada federal **Carla Zambelli** Salgado de Oliveira, eleita em 2018 pelo PSL e reeleita em 2022 pelo Partido Liberal com 946.244 votos como a segunda deputada federal mais votada do estado de São Paulo, notabilizou-se como uma das principais lideranças do ativismo conservador e aliada de primeira hora do ex-presidente Jair Bolsonaro.
 
@@ -162,7 +162,7 @@ Tal comportamento corporativo corporifica com precisão o postulado da **[[Restr
 
 Sob as premissas da **[[Escola Austríaca de Economia]]**, formuladas por **[[Ludwig von Mises]]** em seu célebre exame sobre o **[[Problema do Cálculo Econômico]]** sob o monopólio estatal e ampliadas por **[[Murray Rothbard]]** em **[[1974 A Anatomia do Estado]]**, a coerção governamental sobre serviços de comunicação postal bloqueia a descoberta de preços autênticos e perturba a alocação intertemporal de capital. A narrativa estatal de que o monopólio é necessário para garantir a universalização do serviço dissimula uma engrenagem de subsídios cruzados ineficientes e privilégios corporativos. A crise no pagamento do décimo terceiro salário demonstra empiricamente que a tutela estatal desestabiliza a sustentabilidade do emprego, penaliza os próprios servidores e sobrecarrega a sociedade com déficits orçamentários contínuos.
 
-## Informações Complementares
+### Extra Info
 
 1. A **Empresa Brasileira de Correios e Telégrafos** (ECT), empresa pública instituída pelo Decreto-Lei nº 509 de 20 de março de 1969 e regida pela Lei Postal nº 6.538 de 22 de junho de 1978, detém o monopólio constitucional sobre os serviços de carta, cartão postal e correspondência agrupada, operando em regime concorrencial no segmento de encomendas e logística de comércio eletrônico.
 
@@ -303,7 +303,7 @@ Sob a perspectiva epistemológica da **Escola Austríaca de Economia** e da teor
 
 Nesse cenário, a abrupta descompressão da Lei Magnitsky desmistifica a ilusão da salvação externa pela via de intervenções estrangeiras unilaterais. A aposta ingênua de que a administração do presidente **Donald Trump** submeteria a estratégia geopolítica dos Estados Unidos a uma cruzada benevolente contra abusos jurisdicionais no Brasil desconsiderou os fundamentos imutáveis da **Realpolitik**. No sistema internacional, os Estados nacionais atuam guiados pela maximização estrita de poder, segurança e vantagens econômicas, utilizando mecanismos sancionatórios como alavancas temporárias de barganha. A preservação duradoura da liberdade e a contenção do arbítrio institucional não derivam da tutela de impérios forasteiros, mas dependem unicamente da maturidade conceitual, da responsabilidade individual e da firme mobilização da sociedade civil no cenário doméstico.
 
-## Informações Complementares
+### Extra Info
 
 1. O administrador de empresas e líder político Fábio Salustino Mesquita de Faria exerceu mandatos parlamentares ininterruptos na Câmara dos Deputados entre 2007 e 2023 em representação do Rio Grande do Norte. Durante seu período como ministro das Comunicações, de 2020 a 2022, coordenou a elaboração técnica do leilão das faixas de 700 MHz, 2,3 GHz, 3,5 GHz e 26 GHz para a implementação da infraestrutura de tecnologia de quinta geração no território nacional, além de articular a modernização das normas de radiodifusão e conectividade pública.
 
@@ -510,7 +510,7 @@ Nesse novo ambiente de circulação informacional, iniciativas autônomas como a
 
 A viabilidade comercial de produções como o longa-metragem _Dark Horse_, financiado integralmente por capital privado e estruturado para distribuição digital e internacional, simboliza o declínio do poder de veto exercido pelo corporativismo estatal sobre o imaginário popular. Ao recorrerem a fiscalizações sindicais punitivas, tentativas de judicialização e campanhas de desgaste midiático, as agências corporativas revelam sua fragilidade estratégica diante da livre concorrência informacional. A desintermediação promovida pelas plataformas digitais consagra a **Soberania do Consumidor**, transferindo o poder de arbitragem cultural das mãos de burocratas e dirigentes sindicais para a escolha voluntária dos cidadãos em um mercado livre e plural de ideias.
 
-## Informações Complementares
+### Extra Info
 
 1. O projeto cinematográfico internacional _Dark Horse_ foi estruturado como uma biografia dramática centrada na ascensão eleitoral de Jair Bolsonaro durante a campanha presidencial de 2018, cobrindo o atentado a faca sofrido em Juiz de Fora em 6 de setembro de 2018, as sucessivas cirurgias de emergência e a vitória eleitoral contra a estrutura partidária tradicional. A expressão anglo-saxã _dark horse_ deriva do vocabulário do turfe do século dezenove e consagrou-se na ciência política para caracterizar candidatos inicialmente improváveis que alcançam vitórias expressivas contrariando o favoritismo das elites estabelecidas.
 
@@ -577,7 +577,7 @@ A fundamentação praxeológica da **Escola Austríaca de Economia**, alicerçad
 
 Dessa constatação emerge o imperativo de superar o messianismo político internacional. Nem a ingerência de potências estrangeiras nem a celebração de pactos secretos entre cúpulas oligárquicas são capazes de instaurar uma ordem jurídica justa. A preservação da liberdade e a contenção do arbítrio do poder estatal decorrem unicamente da **Ação Humana** consciente, da firmeza doutrinária e da mobilização autônoma da sociedade civil no exercício intransigente de suas prerrogativas fundamentais.
 
-## Informações Complementares
+### Extra Info
 
 1. O diplomata e estadista Osvaldo Euclides de Sousa Aranha presidiu com notável liderança a Assembleia Geral das Nações Unidas entre 1947 e 1948, articulando a aprovação do plano de partilha territorial que culminou na independência do Estado de Israel. Em reconhecimento à sua contribuição decisiva, o governo israelense e instituições civis batizaram logradouros públicos em Tel Aviv, Ramat Gan e Jerusalém com seu nome, mantendo memoriais dedicados ao diplomata brasileiro.
 
@@ -752,7 +752,7 @@ Em contrapartida, defensores da constitucionalidade da emenda demonstram que a f
 
 O desfecho dessa contenda institucional demarcará o equilíbrio de forças entre o parlamento soberano e o tribunal guardião da Constituição. Caso a Suprema Corte decida anular a emenda aprovada pelo Congresso Nacional, o Brasil vivenciará uma grave crise de competências institucionais, aprofundando o debate sobre a necessidade de reformas estruturais na jurisdição constitucional e na contenção do ativismo judicial.
 
-## Informações Complementares
+### Extra Info
 
 1. A **Proposta de Emenda à Constituição nº 48 de 2023** foi apresentada no Senado Federal sob a liderança de parlamentares ligados à Frente Parlamentar da Agropecuária (FPA), visando a responder à decisão do STF no Tema 1.031 de repercussão geral.
 
@@ -859,7 +859,7 @@ No contexto da infraestrutura de mobilidade urbana da capital paulista, a introd
 
 A justificativa oficial ancorada no **[[Paternalismo Estatal]]** e na retórica da preservação da segurança viária dissimula uma engrenagem de **[[Busca de Rendas]]** (_rent-seeking_), na qual o poder político restringe a soberania do consumidor em benefício de oligopólios de transporte aliados. Conforme postulado por **[[Murray Rothbard]]** em **[[1974 A Anatomia do Estado]]**, a coerção regulatória impõe um custo invisível sobre os indivíduos ao privá-los de alternativas voluntárias e eficientes de locomoção, subordinando as escolhas contratuais privadas aos imperativos de sustentação política e financiamento eleitoral do Executivo municipal. Diante dessas barreiras estatais, ganham relevância arquiteturas tecnológicas de transporte descentralizado e código aberto, a exemplo da plataforma **[[Arcade City]]**, que eliminam intermediários corporativos e contornam a fiscalização municipal por meio de conexões diretas ponto a ponto entre usuários e motoristas.
 
-## Informações Complementares
+### Extra Info
 
 1. O prefeito **Ricardo Nunes**, filiado ao Movimento Democrático Brasileiro (MDB), assumiu a Prefeitura de São Paulo em maio de 2021 após o falecimento de Bruno Covas e foi reeleito no pleito de outubro de 2024, adotando diretrizes intervencionistas no ordenamento do trânsito e na regulação das concessionárias de transporte público da capital.
 
@@ -1023,7 +1023,7 @@ Essa contenda institucional local espelha uma tendência global de tentativas de
 
 Em última instância, o insucesso do banimento demonstra que a **Internet** foi concebida sob uma premissa técnica imune ao controle centralizado. Projetada originariamente durante a **Guerra Fria** pelo Departamento de Defesa dos Estados Unidos na forma da rede **ARPANET**, a arquitetura de comutação de pacotes e roteamento distribuído foi desenhada para superar interrupções físicas e bloqueios sistêmicos. O funcionamento intrínseco de protocolos livres, redes anônimas como o **Tor** e servidores privados virtuais autoconfigurados reitera que nenhum comando legislativo possui o poder de revogar a física dos dados, confirmando que a proteção efetiva da infância reside na responsabilidade dos pais e na educação digital, e jamais na censura centralizada promovida pelo Estado.
 
-## Informações Complementares
+### Extra Info
 
 1. O **Online Safety Amendment (Social Media Minimum Age) Act 2024** constitui emenda à legislação de segurança cibernética australiana de 2021, aprovada após rápido trâmite legislativo com a fixação de multas de até 49,5 milhões de dólares australianos para provedores que negligenciarem a verificação de idade.
 
@@ -1140,7 +1140,7 @@ Paralelamente, a degradação da autoridade moral do tribunal reavivou no Parlam
 
 A erosão da narrativa de autopreservação institucional adotada pelo STF nos últimos anos revela os custos sistêmicos da hipertrofia judicial e da politização da justiça. Ao abandonarem a postura de contenção para atuar como árbitros supremos da vida econômica e partidária da nação, os ministros submeteram o Judiciário às mesmas dinâmicas de desgaste, denúncia e responsabilização que caracterizam a arena política, instaurando um ponto de inflexão na história institucional brasileira.
 
-## Informações Complementares
+### Extra Info
 
 1. O **Banco Master**, anteriormente denominado Banco Máxima, é uma instituição bancária múltipla brasileira que expandiu expressivamente suas operações a partir de 2018 sob a gestão do banqueiro **Daniel Vorcaro**, especializando-se em crédito consignado, operações estruturadas e intermediação de precatórios e ativos estressados.
 
@@ -1251,7 +1251,7 @@ Sob o prisma teórico do marxismo cultural e da teoria política de **[[Antonio 
 
 A advertência de José Dirceu sobre a necessidade de uma "revolução" para barrar a alternância democrática de poder expõe a natureza intrinsecamente coercitiva da dominação estatal descrita por **[[Murray Rothbard]]** em **[[1974 A Anatomia do Estado]]**. Quando a ideologia legitimadora e os subterfúgios da democracia formal tornam-se insuficientes para garantir a submissão voluntária dos cidadãos pagadores de impostos, a casta burocrática recorre sem disfarces ao poder coercitivo e à intervenção institucional para perpetuar seu domínio parasitário sobre os recursos da nação.
 
-## Informações Complementares
+### Extra Info
 
 1. O ex-ministro **José Dirceu**, ex-presidente do Partido dos Trabalhadores e principal articulador político do primeiro mandato do governo Lula, foi condenado penalmente no âmbito do escândalo do Mensalão (Ação Penal 470) e na Operação Lava Jato, mantendo proeminência como conselheiro e formulador estratégico de longo prazo da esquerda brasileira.
 
@@ -1374,7 +1374,7 @@ A cobertura editorial desempenhada por analistas políticos como **Matheus Leit�
 
 A rejeição qualificada do veto presidencial pelo Congresso Nacional consolidará o parlamento como o epicentro de mediação dos conflitos institucionais na ordem política contemporânea. Ao exercer a competência originária de conformação da política criminal mediante a derrubada de vetos por maioria absoluta, o Poder Legislativo não apenas assegura a vigência da nova escala penal, mas também reafirma a prevalência do princípio da legalidade estrita sobre a dosimetria judicializada, fixando um novo paradigma de equilíbrio harmônico e independência entre os poderes da República Federativa do Brasil.
 
-## Informações Complementares
+### Extra Info
 
 1. O **Projeto de Lei da Dosimetria Penal** altera substancialmente o regime de aplicação de penas para as figuras típicas descritas nos artigos 359-L (abolição violenta do Estado Democrático de Direito) e 359-M (golpe de Estado) do Código Penal, introduzidos pela Lei nº 14.197/2021 em substituição à Lei de Segurança Nacional (Lei nº 7.170/1983). A modificação normativa veda o cúmulo material indiscriminado quando as condutas decorrem de um mesmo contexto causal e temporal, aplicando a regra do concurso formal ou o princípio da consunção criminal.
 
@@ -1505,7 +1505,7 @@ Nesse novo ecossistema descentralizado, canais digitais de jornalismo e opinião
 
 A passividade com que as lideranças partidárias entregaram os documentos probatórios corrobora as formulações da **Teoria das Elites** sistematizadas por **Vilfredo Pareto**, **Gaetano Mosca** e **Robert Michels**, os quais demonstraram que todas as organizações humanas, inclusive as democracias liberais formais, são governadas por minorias organizadas que cooperam nos bastidores para perpetuar seus privilégios de classe contra a maioria desorganizada da sociedade. A capitulação da CPMI do INSS perante o Supremo Tribunal Federal consagra a subordinação das instituições representativas à autopreservação das elites dirigentes, aprofundando o ceticismo cívico e acelerando o colapso da credibilidade da ordem republicana perante os cidadãos.
 
-## Informações Complementares
+### Extra Info
 
 1. A Comissão Parlamentar Mista de Inquérito do INSS (CPMI do INSS) foi instaurada no Congresso Nacional para apurar denúncias de fraudes sistêmicas, descontos associativos não autorizados e práticas abusivas na concessão de empréstimos consignados incidentes sobre a folha de proventos de mais de trinta milhões de aposentados e pensionistas vinculados à Previdência Social.
 
@@ -1663,7 +1663,7 @@ A repercussão jurídica desse dever indeclinável de custódia foi intensificad
 
 Sob a ótica de análise do economista e cientista político **[[Peter Turguniev]]**, veiculada no canal **[[ANCAPSU]]**, a controvérsia em torno da autorização do exame de ultrassonografia desnuda as contradições intrínsecas ao monopólio estatal da jurisdição e da coerção penal. A subordinação de atos diagnósticos e cirúrgicos elementares à discricionariedade concentrada de um único magistrado evidencia a vulnerabilidade do indivíduo perante a burocracia do poder público. Sob o referencial jusnaturalista da Escola Austríaca de Economia e da crítica libertária, esse arranjo processual reproduz os postulados do **[[Direito Penal do Inimigo]]**, modelo teórico estruturado pelo jurista alemão **[[Günther Jakobs]]** no qual o réu de exceção é despojado de suas prerrogativas de cidadão e tratado como ameaça política existencial, aplicando-se sobre ele um regime de tutela hipervigilante, dilatação cautelar e neutralização social que contraria os fundamentos deontológicos do devido processo legal e da inviolabilidade da pessoa humana.
 
-## Informações Complementares
+### Extra Info
 
 1. O ministro Alexandre de Moraes atuou como promotor de justiça do Ministério Público de São Paulo, exerceu as funções de Secretário da Segurança Pública do Estado de São Paulo e Ministro da Justiça e Segurança Pública no governo Michel Temer, antes de sua indicação e sabatina no Senado Federal para integrar a Suprema Corte em março de 2017, consolidando-se como relator de inquéritos sobre atos de conspiração institucional e ações de execução penal contra lideranças políticas de oposição.
 2. O ex-presidente Jair Messias Bolsonaro chefiou o Poder Executivo federal do Brasil entre 1º de janeiro de 2019 e 31 de dezembro de 2022, tendo exercido sete mandatos eletivos contínuos como deputado federal pelo estado do Rio de Janeiro; sua condição clínica crônica decorre de seis cirurgias abdominais de grande porte realizadas para desobstrução entérica, lise de aderências e reparação da fáscia após o atentado a faca sofrido na campanha eleitoral de 2018.
@@ -1798,7 +1798,7 @@ A evolução da pré-candidatura de Flávio Bolsonaro impõe um dilema tático d
 
 Nesse contexto, a habilidade de Flávio Bolsonaro em dosar a firmeza ideológica do bolsonarismo com uma postura de diálogo institucional determinará a extensão de sua capacidade de atração sobre o eleitorado indeciso e setores do empresariado nacional. O pleito presidencial de 2026 delineia-se, portanto, não apenas como uma alternância ordinária entre agremiações partidárias, mas como um julgamento plebiscitário acerca dos limites do ativismo judicial, da autonomia do Poder Legislativo e da higidez das garantias constitucionais no Brasil.
 
-## Informações Complementares
+### Extra Info
 
 1. O senador Flávio Nantes Bolsonaro cumpre mandato pelo Estado do Rio de Janeiro após ter sido eleito pelo Partido Social Liberal em 2018 com mais de 4,38 milhões de votos, filiando-se subsequentemente ao Partido Liberal. Sua trajetória política anterior compreendeu quatro mandatos consecutivos na Assembleia Legislativa do Estado do Rio de Janeiro entre 2003 e 2019, período em que presidiu comissões temáticas voltadas à segurança pública e à defesa dos direitos civis.
 
@@ -1944,7 +1944,7 @@ A insolvência crônica dos modelos redistributivos encontra explicação analí
 
 Sob o prisma analítico de **Peter Turguniev** no canal **ANCAPSU**, o triunfo da direita no Chile confirma a superioridade irrefutável do sistema de preços livres e da livre concorrência sobre o intervencionismo coercitivo, conforme demonstrado no **Individualismo Metodológico** e na praxeologia de **Ludwig von Mises** e **Murray Rothbard** no âmbito da **Escola Austríaca de Economia**. A circulação desregulada de ideias na era digital e o surgimento de tecnologias incensuráveis de preservação patrimonial como o **Bitcoin** imunizam os indivíduos contra a coerção burocrática, consolidando uma nova era de soberania individual e dinamismo econômico na América do Sul.
 
-## Informações Complementares
+### Extra Info
 
 1. José Antonio Kast é um advogado, empresário e político chileno, fundador do Partido Republicano do Chile e líder da Frente Social Cristiano. Formado pela Pontifícia Universidade Católica do Chile, notabilizou-se por uma plataforma de segurança pública rigorosa, enxugamento do Estado e defesa do livre mercado, conquistando a presidência da República no segundo turno de dezembro de 2025.
 
@@ -2046,7 +2046,7 @@ Essa escalada repressiva foi potencializada pela transposição dos dispositivos
 
 A ausência de freios institucionais e a hesitação dos líderes partidários em fazer valer os instrumentos constitucionais de controle retroalimentam a expansão judicial sobre a política representativa. A menos que o Congresso Nacional afirme sua soberania originária na definição da perda de mandatos e no resguardo de suas competências típicas, a dinâmica institucional brasileira permanecerá subordinada à tutela jurisdicional, solapando as bases materiais do Estado de Direito e a integridade do regime republicano.
 
-## Informações Complementares
+### Extra Info
 
 1. O artigo 55, parágrafo segundo, da **Constituição Federal de 1988** estabelece que, nos casos dos incisos I (infração a proibições do mandato), II (conduta incompatível com o decoro) e VI (condenação criminal transitada em julgado), a perda do mandato será decidida pela Câmara dos Deputados ou pelo Senado Federal, por maioria absoluta de votos, mediante provocação da respectiva Mesa ou de partido político representado no Congresso Nacional, assegurada ampla defesa ao parlamentar.
 
@@ -2191,7 +2191,7 @@ A tragédia registrada na Praia de Bondi expõe com crueza as falhas estruturais
 
 A análise institucional libertária demonstra que a delegação absoluta da preservação da integridade física a monopólios burocráticos estatais produz uma perigosa ilusão de proteção. Pelo contrário, a preservação irrestrita do direito natural à legítima defesa e a descentralização de capacidades defensivas no seio da sociedade civil constituem os fundamentos indispensáveis de resiliência e dissuasão para a salvaguarda de vidas inocentes em face da tirania e do extremismo armado.
 
-## Informações Complementares
+### Extra Info
 
 1. A Praia de Bondi é uma das referências litorâneas e turísticas mais proeminentes da Austrália, localizada na jurisdição municipal de Waverley, a aproximadamente sete quilômetros a leste do distrito financeiro central de Sydney. A área circundante abriga historicamente uma das comunidades judaicas mais representativas da Oceania, caracterizada pela presença de congregações sinagogais centenárias, colégios diurnos confessionais, associações de auxílio mútuo e instituições culturais que convivem com a intensa dinâmica turística e esportiva da costa de Nova Gales do Sul.
 
@@ -2336,7 +2336,7 @@ Conforme exposto nas análises editoriais de **Peter Turguniev** no canal **ANCA
 
 A desmistificação do paternalismo estatal evidencia que a verdadeira segurança do consumidor repousa nos mecanismos de reputação, avaliações mútuas e concorrência aberta proporcionados pelas plataformas livres, e não na proliferação de exigências cartoriais concebidas para alimentar privilégios tributários e corporativistas.
 
-## Informações Complementares
+### Extra Info
 
 1. A Agência Nacional de Telecomunicações foi criada pela Lei nº 9.472 de 16 de julho de 1997 (Lei Geral de Telecomunicações), como parte do programa de desestatização e privatização do sistema Telebrás durante o governo do presidente Fernando Henrique Cardoso. Instituída sob a natureza jurídica de autarquia especial vinculada ao Ministério das Comunicações, a agência detém atribuições regulatórias sobre a concessão, permissão e fiscalização da exploração de serviços de telecomunicações no país.
 
@@ -2450,7 +2450,7 @@ Esse comportamento corporativo reflete a aplicação clássica dos mecanismos de
 
 A consolidação desse precedente vincula as decisões futuras do plenário, criando uma barreira de difícil superação para futuras tentativas de cassação fundadas exclusivamente em inquéritos judiciais sem trânsito em julgado ou em quebras de decoro parlamentar controvertidas. O Congresso Nacional sinaliza, dessa forma, que a soberania de seus membros é um atributo inegociável perante pressões de outros poderes da República, reafirmando que a independência do mandato representativo constitui o núcleo duro do regime democrático.
 
-## Informações Complementares
+### Extra Info
 
 1. O quórum constitucional para a perda de mandato de Deputado Federal ou Senador da República, disciplinado no artigo 55, parágrafo segundo, da **Constituição Federal de 1988**, exige votação nominal e a manifestação favorável da maioria absoluta dos membros da Casa (mínimo de duzentos e cinquenta e sete deputados e quarenta e um senadores).
 
@@ -2561,7 +2561,7 @@ A análise comparada entre a dinâmica de contestação cívica na Europa Orient
 
 Essa passividade cultural mitiga os riscos de conflitos sangrentos nas ruas, mas, por outro lado, perpetua a blindagem das oligarquias do establishment congressual e judiciário sob a lógica da **Ação Coletiva** de **Mancur Olson**, na qual custos difusos geram acomodação popular frente a benefícios estatais concentrados nas mãos de minorias organizadas. A construção de uma cultura de contestação legítima e constante, desprovida de violência física mas dotada de firmeza conceitual e massiva presença nas ruas, constitui o elemento indispensável para conter os abusos estatais e frear o avanço de regimes intervencionistas no cenário político contemporâneo.
 
-## Informações Complementares
+### Extra Info
 
 1. O primeiro-ministro Rosen Dimitrov Zhelyazkov é jurista e político búlgaro filiado ao partido GERB, tendo atuado previamente como presidente da Assembleia Nacional da Bulgária e ministro dos Transportes, Tecnologia da Informação e Comunicações antes de liderar o gabinete executivo nacional.
 
@@ -2716,7 +2716,7 @@ No horizonte do Poder Executivo, as projeções consensuais entre os articulador
 
 Dessa forma, o encerramento do processo da dosimetria penal explicita a supremacia da negociação de coalizão e da acomodação institucional sobre os ímpetos de radicalização partidária, revelando como a tramitação de expedientes criminais perante a Suprema Corte atua como variável estratégica na conformação da legislação nacional.
 
-## Informações Complementares
+### Extra Info
 
 1. Paulo Pereira da Silva, identificado no cenário nacional como Paulinho da Força, emergiu no sindicalismo metalúrgico durante as mobilizações fabris do estado de São Paulo no final do século vinte, exercendo a presidência da central Força Sindical a partir de 1991 e elegendo-se deputado federal sucessivamente desde 2007. Em 2013, liderou a criação do partido Solidariedade, tendo sido condenado pela Primeira Turma do STF em 2020 na Ação Penal 565 a uma pena de dez anos e dois meses de reclusão por suposto desvio de recursos do BNDES no âmbito da Operação Santa Teresa, condenação que posteriormente enfrentou complexos incidentes de embargos e prescrição.
 
@@ -2862,7 +2862,7 @@ No plano internacional, as divergências entre modelos regulatórios transparece
 
 A crítica substantiva a esse intervencionismo encontra seu ápice na abordagem da **Escola Austríaca de Economia**, formulada nos tratados de **Ludwig von Mises** e **Friedrich Hayek**. Sob a ótica praxeológica, o trabalho humano constitui uma mercadoria subjetivamente valorada que envolve desutilidade marginal, de modo que apenas a soberania das partes contratantes, desimpedida de coerção estatal, é capaz de coordenar preferências temporais e níveis salariais de equilíbrio. A difusão dessa matriz teórica por canais independentes, com destaque para a rede **ANCAPSU** conduzida pelo analista **Peter Turguniev**, consolidou no debate público a refutação da falácia segundo a qual o Estado protege o trabalhador, demonstrando que a emancipação econômica e o enriquecimento real das famílias dependem estritamente do aumento da produtividade, da poupança privada, da liberdade contratual irrestrita e da eliminação dos monopólios sindicais e burocráticos.
 
-## Informações Complementares
+### Extra Info
 
 1. A Proposta de Emenda à Constituição (PEC) que propõe o fim da jornada na escala de trabalho 6x1 foi pautada na Comissão de Constituição e Justiça e de Cidadania do Senado Federal no encerramento do ano legislativo de 2025, estabelecendo a redução progressiva do limite semanal de 44 para 40 horas e, subsequentemente, a razão de uma hora anual até o teto de 36 horas semanais sem redução nominal de salários.
 
@@ -3064,7 +3064,7 @@ Esse comportamento institucional encontra rigorosa elucidação nos modelos da *
 
 Por fim, a cooperação técnica e operacional de órgãos policiais e periciais nesse ecossistema coercitivo reflete os postulados experimentais de **[[Stanley Milgram]]** sobre o **[[Estado Agêntico]]**. Sob esse influxo psicológico, servidores públicos inseridos em estruturas burocráticas hierarquizadas tendem a transferir a responsabilidade moral de suas deliberações para a autoridade superior que emitiu a ordem, executando comandos estatais sem escrutínio ético individual. Desse modo, a exigência de contraperícias oficiais para exames médicos elementares corrobora o axioma libertário de que o monopólio estatal da jurisdição tende a anular garantias individuais sempre que a preservação da hegemonia política do soberano entra em conflito com a dignidade da pessoa humana.
 
-## Informações Complementares
+### Extra Info
 
 1. O histórico médico-cirúrgico de Jair Bolsonaro teve início em 6 de setembro de 2018, quando foi vítima de um atentado por arma branca em Juiz de Fora, Minas Gerais, sofrendo choque hipovolêmico grave decorrente da transecção de vasos mesentéricos e de perfurações múltiplas no intestino delgado e cólon transverso. Operado emergencialmente na Santa Casa de Misericórdia de Juiz de Fora e subsequentemente transferido para o Hospital Israelita Albert Einstein, em São Paulo, o paciente foi submetido a sucessivas laparotomias exploradoras conduzidas pelo Dr. Antônio Luiz Macedo, enfrentando episódios repetidos de obstrução intestinal por bridas e aderências peritoneais, colostomia temporária, reconstrução de trânsito e fechamento de parede com colocação de telas de reforço.
 
@@ -3190,7 +3190,7 @@ Essa ineficiência sistêmica encontra sustentação nos modelos da **[[Teoria d
 
 Em síntese, as propostas governamentais que prometem reerguer a estatal mediante a criação de novas plataformas digitais ou incursões no comércio virtual representam tentativas fúteis de contornar as leis imutáveis da economia de mercado. Diante da superioridade técnica da iniciativa privada no ecossistema logístico moderno, a única via moralmente justa e economicamente sustentável consiste na revogação do monopólio postal remanescente e na privatização irrestrita da empresa, transferindo integralmente o risco operacional aos agentes econômicos e estancando em definitivo a drenagem de recursos dos pagadores de impostos.
 
-## Informações Complementares
+### Extra Info
 
 1. A Empresa Brasileira de Correios e Telégrafos foi instituída pelo Decreto-Lei nº 509, de 20 de março de 1969, substituindo o antigo Departamento de Correios e Telégrafos em meio à modernização administrativa do regime militar, detendo um patrimônio imobiliário de milhares de edifícios urbanos e uma força de trabalho de dezenas de milhares de carteiros, operadores de triagem e atendentes comerciais distribuídos em agências próprias e franqueadas.
 
@@ -3332,7 +3332,7 @@ O reposicionamento do Big Brother Brasil sinaliza uma transformação paradigmá
 
 Nesse novo cenário de convergência digital, a vantagem competitiva do Grupo Globo desloca-se da posse e controle exclusivo de canais técnicos de distribuição para a sua capacidade especializada de criação, curadoria e gestão de propriedade intelectual com alto apelo de massa e repercussão social. Em consequência dessa reorganização, o Globoplay tende a consolidar seu papel como um repositório especializado de catálogo histórico, produções dramatúrgicas autorais e eventos segmentados, enquanto as plataformas abertas de hiperescala passam a operar como as grandes praças públicas de distribuição, engajamento e monetização comercial em tempo real.
 
-## Informações Complementares
+### Extra Info
 
 1. O formato original do reality show **Big Brother** foi concebido nos Países Baixos pelo produtor de televisão **John de Mol** em **1997** e levado ao ar pela primeira vez pelo canal **Veronica** em **setembro de 1999**, sob realização da produtora **Endemol**. Inspirado diretamente na narrativa distópica do romance _1984_ de **George Orwell**, o formato estruturou a dinâmica de isolamento social com monitoramento eletrônico ininterrupto e eliminação por sufrágio popular direto, sendo adaptado e licenciado internacionalmente em mais de setenta países pela **Banijay Entertainment**.
 
@@ -3428,7 +3428,7 @@ A viabilidade competitiva do bloco oposicionista para as eleições presidenciai
 
 O esgotamento eleitoral de projetos hegemônicos na América Latina, a exemplo do declínio dramático da esquerda nas eleições da **Bolívia**, demonstra que crises de balanço de pagamentos, inflação de alimentos e escassez de divisas internacionais sobrepõem-se a disputas internas de facções partidárias. Na experiência boliviana, a recessão econômica e a quebra das reservas do Banco Central desarticularam o bloco governista de forma irreversível, comprovando que a deterioração das condições materiais de vida da população atua como a força motriz determinante da alternância de poder. No cenário brasileiro, a persistência do desequilíbrio fiscal e a elevação das taxas de juros mantêm a frente conservadora em posição de expressiva competitividade eleitoral, independentemente das reconfigurações pontuais de seus arranjos de chapa.
 
-## Informações Complementares
+### Extra Info
 
 1. O senador **Flávio Bolsonaro** representa o estado do Rio de Janeiro no Senado Federal desde sua posse em fevereiro de **2019**, após cumprir quatro mandatos consecutivos como deputado estadual na Assembleia Legislativa do Rio de Janeiro. No parlamento federal, atua como o principal articulador político do **Partido Liberal** (**PL**) em composições institucionais estratégicas envolvendo as mesas diretoras do Congresso Nacional e a interlocução com magistrados dos tribunais superiores.
 
@@ -3548,7 +3548,7 @@ A configuração geográfica das eleições presidenciais brasileiras revela tra
 
 Esse comportamento é explicado teoricamente pela **Teoria do Eleitor Mediano**, formulada pelo cientista político **Anthony Downs**, e pelo modelo do **Voto Econômico Retrospectivo**, desenvolvido por **Morris Fiorina**. O eleitorado despolarizado decide seu voto a partir da avaliação prática do poder de compra, da taxa de desemprego e da segurança pública. Em um contexto macroeconômico caracterizado pela elevação da carga tributária, expansão de déficits orçamentários e incertezas institucionais sob a gestão petista, a candidatura de Flávio Bolsonaro ganha tração para reconquistar os estratos médios urbanos no segundo turno, cumprindo a dinâmica bipolar prevista pela **Lei de Duverger** e delineando a disputa pelo controle do Poder Executivo em 2026.
 
-## Informações Complementares
+### Extra Info
 
 1. O **Instituto GERP** (Grupo de Estudos e Realizações de Pesquisas) é uma tradicional instituição de pesquisa de opinião pública e mercado fundada no Brasil em 1989. O instituto consolidou-se no segmento de levantamentos eleitorais quantitativos com amostragem probabilística estratificada, utilizando predominantemente o método de coleta por Entrevistas Telefônicas Assistidas por Computador (_Computer-Assisted Telephone Interviewing_ - CATI) com checagem de cotas por gênero, faixa etária, escolaridade e região geográfica.
 
@@ -3751,7 +3751,7 @@ Essa transição epistemológica reitera os postulados do teórico da comunicaç
 
 Em perspectiva conclusiva, a execução do Big Brother Brasil 26 servirá como um experimento empírico determinante para o futuro da indústria audiovisual na América Latina. Caso a monetização programática e a atração de novas receitas compensem o desgaste do modelo fechado do Globoplay, a TV Globo acelerará sua transição de canal verticalizado para estúdio de produção aberto, redefinindo as bases de convivência entre as companhias históricas de conteúdo e as plataformas mundiais de tecnologia.
 
-## Informações Complementares
+### Extra Info
 
 1. O Grupo Globo é o maior conglomerado de comunicação social e entretenimento da América Latina, estruturado a partir da fundação do diário O Globo em 1925 por Irineu Marinho e ampliado por Roberto Marinho com a inauguração da TV Globo em abril de 1965, estendendo sua presença para canais de televisão por assinatura, radiodifusão, publicações impressas, plataformas digitais e investimentos em infraestrutura de tecnologia da informação.
 
@@ -3921,7 +3921,7 @@ Conforme articulado pelo analista **Peter Turguniev** em suas exposições na pl
 
 A construção continuada de redes de cooperação descentralizada e a adesão incondicional aos preceitos do **Individualismo Metodológico** e do **Princípio da Não-Agressão** conformam a resposta prática contra o arbítrio e a degradação institucional. Ao desvincular seu patrimônio e suas decisões vitais dos incentivos corruptores da burocracia governamental, o indivíduo soberano rompe com o ciclo de dependência estatal, consolidando as bases materiais e éticas para o florescimento de uma ordem social espontânea e genuinamente livre.
 
-## Informações Complementares
+### Extra Info
 
 1. A Lei Magnitsky Global de Responsabilidade sobre Direitos Humanos é um estatuto federal dos Estados Unidos aprovado pelo Congresso em 2016 e assinado pelo presidente Barack Obama, consubstanciando a expansão universal da legislação de 2012 voltada originalmente contra autoridades russas implicadas na tortura e morte do auditor tributário Sergei Magnitsky. O diploma faculta à Casa Branca a faculdade de congelar bens, interditar acessos ao sistema financeiro denominado em dólares e revogar autorizações de entrada de agentes estrangeiros perpetradores de corrupção sistêmica e violações severas a direitos individuais e garantias civis.
 
@@ -4071,7 +4071,7 @@ Conforme exposto analiticamente por **Peter Turguniev** nas transmissões da pla
 
 A verdadeira emancipação humana exige a compreensão do **Individualismo Metodológico** e a aplicação irrestrita do **Princípio da Não-Agressão**, formalizado pelo filósofo **Murray Rothbard** a partir da distinção sociológica de **Franz Oppenheimer** entre os meios econômicos e os meios políticos de apropriação de riqueza. Ao dissociar sua segurança patrimonial das incertezas da política partidária e adotar ferramentas tecnológicas de soberania financeira como o **Bitcoin**, o cidadão constrói defesas concretas contra o arbítrio estatal, pavimentando o florescimento de uma ordem social espontânea baseada no livre mercado e na responsabilidade individual.
 
-## Informações Complementares
+### Extra Info
 
 1. José Antonio Kast Rist é um advogado e político chileno, nascido em 1966 em Santiago, fundador do Partido Republicano do Chile e da coalizão Frente Social Cristão. Ex-deputado nacional por múltiplos mandatos entre 2002 e 2018, Kast consolidou sua liderança nacional através de uma plataforma defensora da ordem pública, livre iniciativa, desregulamentação econômica, segurança nas fronteiras e preservação dos valores familiares e constitucionais tradicionais.
 
@@ -4180,7 +4180,7 @@ Esse processo de declínio civilizacional encontra estrita correspondência nas 
 
 Diante da falência dos mecanismos institucionais de contenção do gigantismo estatal e da iminente perda de solvência da moeda fiduciária inflacionada, os cidadãos produtivos desvinculam-se da tutela governamental por meio de protocolos criptográficos descentralizados e da acumulação de **[[Bitcoin]]**. A incapacidade do Estado soberano de taxar fluxos computacionais peer-to-peer e de restringir a livre circulação de ativos inconfiscáveis pavimenta a transição histórica irreversível em direção ao **[[Ancapistão]]**, ordenamento social voluntário onde a soberania individual, a propriedade privada e os contratos descentralizados substituem definitivamente a coerção do planejamento central.
 
-## Informações Complementares
+### Extra Info
 
 1. A Revista Oeste é um veículo jornalístico digital brasileiro de orientação liberal-conservadora fundado em março de 2020 por jornalistas como J.R. Guzzo e Augusto Nunes, consagrando-se pela publicação de edições temáticas dedicadas ao diagnóstico do risco fiscal, das liberdades civis e do crescimento do aparato estatal no Brasil.
 
@@ -4327,7 +4327,7 @@ Essa mecânica de realocação de fatores produtivos vincula-se dialeticamente a
 
 No terreno da estabilidade financeira corporativa, essa trajetória converge com a **[[Hipótese da Instabilidade Financeira]]** estruturada por **[[Hyman Minsky]]**, demonstrando como períodos prolongados de calmaria e expectativas favoráveis induzem as empresas a migrar gradualmente de posturas financeiras protegidas (_hedge finance_) para arranjos especulativos e, em situações de euforia extrema, esquemas de financiamento do tipo Ponzi, nos quais o fluxo operacional de caixa torna-se insuficiente para saldar até mesmo os encargos financeiros correntes da dívida. A decisão da Oracle de concentrar seu balanço corporativo em uma aposta alavancada na infraestrutura de processamento de inteligência artificial define uma encruzilhada financeira sem precedentes: a conquista de uma posição hegemônica no fornecimento de capacidade computacional de hiperescala para o ecossistema tecnológico global ou a ocorrência de uma severa contração patrimonial decorrente da rápida desvalorização contábil e operacional de seus ativos imobilizados.
 
-## Informações Complementares
+### Extra Info
 
 1. A **Oracle Corporation** foi fundada em **1977** sob a denominação original de _Software Development Laboratories_ (SDL) pelos engenheiros de sistemas **Larry Ellison**, **Bob Miner** e **Ed Oates**, alcançando projeção internacional pioneira ao introduzir a primeira versão comercial de um banco de dados relacional baseado na teoria matemática de **Edgar F. Codd** e na linguagem SQL, contratada inicialmente pela Agência Central de Inteligência dos Estados Unidos através do codinome _Project Oracle_.
 
@@ -4496,7 +4496,7 @@ Conforme sintetizado pelo analista **Peter Turguniev** em suas intervenções no
 
 A verdadeira harmonia entre os gêneros e a pacificação das relações sociais não se alcançam por meio de decretos policiais ou tribunais de exceção, mas mediante a responsabilidade individual, a cooperação voluntária e o respeito irrestrito aos contratos livres. Ao rejeitar as ilusões do paternalismo estatal, os indivíduos constroem as bases de uma sociedade aberta, na qual a dignidade humana floresce sem a tutela espoliadora do Estado.
 
-## Informações Complementares
+### Extra Info
 
 1. A Lei nº 7.716, sancionada em 5 de janeiro de 1989 e conhecida originariamente como Lei Caó em homenagem ao seu autor, o deputado federal Carlos Alberto de Oliveira, define os crimes resultantes de preconceito de raça ou de cor no ordenamento jurídico brasileiro. O diploma foi concebido para dar efetividade ao mandado de criminalização insculpido no artigo 5º, inciso XLII, da Constituição Federal de 1988, que determina a inafiançabilidade e a imprescritibilidade dessas infrações penais sob pena de reclusão.
 
@@ -4599,7 +4599,7 @@ A revogação parcial da liminar e o reencaminhamento da matéria para o parlame
 
 A estabilidade da ordem constitucional repousa no equilíbrio dinâmico de **freios e contrapesos** (_checks and balances_), no qual nenhum dos poderes da República pode arrogar-se a condição de árbitro absoluto e imune a mecanismos externos de prestação de contas. A preservação da prerrogativa congressual de legislar sobre a dosimetria, os ritos e as condições de admissibilidade do impeachment reafirma a soberania do poder legislativo eleito, restaurando a previsibilidade institucional necessária para o funcionamento do Estado de Direito.
 
-## Informações Complementares
+### Extra Info
 
 1. O ministro **Gilmar Mendes** é o decano do Supremo Tribunal Federal, nomeado pelo presidente Fernando Henrique Cardoso em **2002**. Conhecido por sua expressiva influência nos bastidores dos três poderes e por sua atuação doutrinária em Direito Constitucional, o magistrado foi cofundador do **Instituto Brasileiro de Ensino, Desenvolvimento e Pesquisa** (**IDP**), centro acadêmico de pós-graduação e direito sediado em Brasília.
 
@@ -4693,7 +4693,7 @@ A edificação contínua de privilégios processuais no cume do Estado encontra 
 
 Conforme demonstrado nas análises do comentarista **Peter Turguniev** no canal **ANCAPSU**, a prerrogativa de um tribunal para definir monocraticamente o alcance de suas próprias imunidades agride frontalmente a máxima basilar do direito natural que veda à autoridade atuar como juiz em causa própria (_nemo judex in causa sua_). Como evidenciado pelo filósofo **Murray Rothbard** no tratado _A Anatomia do Estado_, a partir da distinção clássica de **Franz Oppenheimer** entre os meios econômicos da produção voluntária e os meios políticos da coerção tributária, o Estado consolida-se como uma estrutura monopolista voltada a perenizar sua hegemonia parasitária sobre os produtores de riqueza. A superação desse modelo centralizado e a conquista da emancipação individual repousam nos fundamentos teóricos da **Escola Austríaca de Economia**, no rigor do **Individualismo Metodológico** desenvolvido por **Ludwig von Mises** e na adoção de tecnologias de desintermediação e soberania patrimonial como o **Bitcoin**.
 
-## Informações Complementares
+### Extra Info
 
 1. A Ação Penal 937 foi um julgamento paradigmático concluído pelo plenário do Supremo Tribunal Federal em 3 de maio de 2018 sob a relatoria do ministro Luís Roberto Barroso. O tribunal definiu na ocasião a tese segundo a qual o foro especial alcançava apenas os crimes cometidos durante o mandato representativo e em razão das atribuições funcionais, determinando o envio dos autos às varas de primeira instância assim que cessada a investidura no cargo público.
 
@@ -4807,7 +4807,7 @@ Sob o prisma da dogmática processual e do **Direito Processual Civil**, o relac
 
 A preservação da higidez do Estado Democrático de Direito impõe a adoção urgente de protocolos objetivos de governança institucional, _compliance_ anticorrupção e quarentenas rigorosas para familiares de autoridades com prerrogativa de jurisdição extraordinária. A tolerância com zonas de opacidade financeira corrói o princípio republicano da impessoalidade e aprofunda o ceticismo da sociedade civil quanto à neutralidade das decisões emanadas pelo guardião supremo da **Constituição de 1988**.
 
-## Informações Complementares
+### Extra Info
 
 1. O empresário e investidor **Daniel Vorcaro** assumiu o controle acionário do **Banco Master** (antigo Banco Máxima) a partir de sua reformulação societária em **2018**, transformando a instituição em uma das entidades financeiras de mais célere expansão no mercado nacional mediante a aquisição massiva de precatórios, créditos estressados e carteiras de empréstimos consignados.
 
@@ -4961,7 +4961,7 @@ A transição prática dos agentes econômicos para o ecossistema de ativos desc
 
 No plano das plataformas de intermediação, corretoras internacionais de liquidez como a **CoinEx**, sediada em **Hong Kong**, viabilizam múltiplas portas de acesso ao mercado de criptoativos, abrangendo as **Transações Peer-to-Peer**, operações de balcão e liquidações instantâneas integradas ao sistema de pagamentos **PIX**. O uso de moedas estáveis colateralizadas, tais como o **Tether USD**, atua como instrumento intermediário de liquidação cambial entre moedas fiduciárias locais e ativos descentralizados. Concomitantemente, o avanço dos marcos regulatórios domésticos sobre prestadores de serviços de ativos virtuais evidencia a necessidade de discernimento geográfico e ratifica a premissa de que a custódia pessoal soberana em carteiras privadas permanece como o padrão definitivo de blindagem financeira individual.
 
-## Informações Complementares
+### Extra Info
 
 1. O **Federal Reserve** (Fed), estabelecido pelo Congresso dos Estados Unidos por meio do _Federal Reserve Act_ em 1913, desempenha as funções de autoridade bancária central norte-americana. Seu órgão superior de formulação de política monetária, o **Federal Open Market Committee** (FOMC), reúne-se ordinariamente oito vezes ao ano para calibrar a taxa básica de juros e supervisionar a dimensão dos ativos detidos pelo sistema bancário central.
 
@@ -5185,7 +5185,7 @@ A mesma dinâmica punitiva repetiu-se em **1999**, quando o chanceler **Roberto 
 
 A aplicação da pena de prisão perpétua contra Alejandro Gil confirma que o totalitarismo burocrático é incapaz de tolerar reformas estruturais sem desestabilizar seu controle político. Ao condenar o executor técnico das reformas econômicas em um processo sigiloso e sem garantias, o regime cubano opta pelo reforço da autocracia coercitiva em detrimento da racionalidade econômica, perpetuando o ciclo de miséria, desabastecimento e colapso social em toda a ilha caribenha.
 
-## Informações Complementares
+### Extra Info
 
 1. O economista **Alejandro Gil Fernández** chefiou o Ministério da Economia e Planejamento de Cuba de **julho de 2018** a **fevereiro de 2024** e ocupou a função de Vice-Primeiro-Ministro a partir de **dezembro de 2019**, liderando os projetos de unificação monetária que extinguiram o Peso Conversível (CUC) em **2021** e as normas de abertura para micro, pequenas e médias empresas privadas.
 
@@ -5345,7 +5345,7 @@ A análise veiculada pelo comunicador e analista independente **Peter Turguniev*
 
 Nessa perspectiva, as manobras processuais destinadas a postergar a assistência médica necessária configuram uma manifestação de crueldade burocrática, cuja finalidade implícita reside na desmoralização pública e na aniquilação física do dissidente. Ao ultrapassar os limites da legalidade estrita em nome da defesa abstrata da ordem democrática, o ativismo judicial consolida uma autocracia velada, confirmando a tese libertária de que a concentração de poder no aparato estatal resulta inevitavelmente na destruição das liberdades civis e na desumanização dos indivíduos submetidos à sua tutela.
 
-## Informações Complementares
+### Extra Info
 
 1. O ex-presidente **Jair Bolsonaro** foi alvo de um atentado a facada em **6 de setembro de 2018** na cidade de Juiz de Fora (MG), desferido por **Adélio Bispo de Oliveira**. A lesão causou perfurações nos vasos mesentéricos e no intestino delgado e grosso, exigindo uma laparotomia exploradora de urgência, colostomia temporária e quatro intervenções cirúrgicas subsequentes para desobstrução de bridas e reconstrução do trânsito intestinal.
 
@@ -5543,7 +5543,7 @@ Sob o prisma analítico de **Peter Turguniev** veiculado na plataforma **ANCAPSU
 
 Como demonstrado por **Murray Rothbard** no tratado _A Anatomia do Estado_ e aprofundado por **Hans-Hermann Hoppe** na defesa da secessão privada e da desestatização radical, a emancipação efetiva do indivíduo perante o Leviatã contemporâneo consolida-se por meio do uso de tecnologias de desintermediação e autocustódia como o **Bitcoin**. A adoção de ativos digitais matematicamente escassos e incensuráveis confere aos cidadãos uma reserva de valor soberana e transportável, imune a congelamentos judiciais e confiscos cambiais, garantindo a autonomia individual independentemente da jurisdição territorial em que se estabeleçam.
 
-## Informações Complementares
+### Extra Info
 
 1. Charles Tiebout foi um economista norte-americano e docente na Northwestern University, autor do artigo clássico _A Pure Theory of Local Expenditures_ (1956). Sua tese demonstrou formalmente que a fragmentação do poder estatal em jurisdições concorrentes viabiliza uma alocação ótima de recursos e restringe o poder de tributação discricionário dos governos.
 
@@ -5648,7 +5648,7 @@ Essa dinâmica desvela o mecanismo analítico delineado por **[[Frédéric Basti
 
 Ao suprimir a soberania dos consumidores e substituir o veredito do público pelo arbítrio de conselhos corporativos vinculados à ANCINE e ao Ministério da Cultura, o intervencionismo estatal deprime o dinamismo criativo, institucionaliza o compadrio e asfixia a inovação artística. O verdadeiro desenvolvimento cultural pressupõe a extinção dos privilégios cartoriais e a plena exposição dos produtores à soberania do público consumidor, assegurando que o florescimento artístico decorra exclusivamente da cooperação voluntária e da livre apreciação da sociedade civil.
 
-## Informações Complementares
+### Extra Info
 
 1. O ator, diretor e produtor cinematográfico **Wagner Moura**, consagrado nacionalmente por sua atuação como o Capitão Nascimento no longa-metragem **Tropa de Elite** (2007) e internacionalmente pela interpretação de Pablo Escobar na série _Narcos_, dirigiu a cinebiografia **Marighella** (2019/2021), obra financiada por meio do Fundo Setorial do Audiovisual e da Ancine que gerou intensos debates judiciais e políticos sobre o direcionamento de recursos estatais a produções biográficas de figuras guerrilheiras.
 
@@ -5823,7 +5823,7 @@ No âmbito da análise crítica veiculada por **Peter Turguniev** na rede de can
 
 ---
 
-## Informações Complementares
+### Extra Info
 
 1. A **Lei Magnitsky Global de Responsabilidade sobre Direitos Humanos** (_Global Magnitsky Human Rights Accountability Act_), sancionada pelo Congresso dos Estados Unidos em dezembro de 2016 e inspirada no caso do advogado e auditor russo **Sergei Magnitsky** que denunciou fraudes fiscais de duzentos e trinta milhões de dólares praticadas por funcionários estatais e faleceu sob custódia em Moscou em 2009 por iniciativa do investidor **Bill Browder**, autoriza o Executivo norte-americano a congelar ativos financeiros, barrar transações em moeda fiduciária internacional e proibir a concessão de vistos a estrangeiros acusados de corrupção sistêmica ou violação reiterada a garantias fundamentais.
 
@@ -6013,7 +6013,7 @@ Apesar da expressiva desregulamentação no setor pedagógico, a persistência d
 
 No plano do direito comparado, a reforma brasileira aproxima o ordenamento nacional da prática consagrada nos Estados Unidos da América e em diversos países da Europa ocidental, onde o treinamento prático de condução é historicamente conduzido no âmbito privado ou familiar, cabendo ao Estado unicamente a aplicação do teste de aptidão final. Ao desmantelar cartórios protegidos e simplificar procedimentos registrais, a administração federal reduz os custos de transação do cidadão e redefine as relações entre a tutela estatal e a autonomia individual no espaço público.
 
-## Informações Complementares
+### Extra Info
 
 1. O Conselho Nacional de Trânsito (CONTRAN) é o órgão superior normativo e consultivo do Sistema Nacional de Trânsito, presidido pelo dirigente do órgão executivo de trânsito da União e integrado por representantes de múltiplos ministérios federais, responsável por regulamentar a aplicação do Código de Trânsito Brasileiro.
 
@@ -6172,7 +6172,7 @@ A superação de arranjos autocráticos e da hipertrofia judicial não se alcan�
 
 ---
 
-## Informações Complementares
+### Extra Info
 
 1. O advogado norte-americano **Martin De Luca** atua como sócio da banca **De Luca Levine** e representa interesses corporativos e do ex-presidente Donald Trump em litígios perante o Tribunal Distrital dos Estados Unidos para o Distrito Sul da Flórida, concentrando-se em controvérsias de Primeira Emenda, extraterritorialidade de ordens judiciais estrangeiras e bloqueio de contas em plataformas de mídia social como a rede **X** e o **Rumble**.
 
@@ -6351,7 +6351,7 @@ A finalização do ciclo normativo dependerá do cumprimento rigoroso dos ritos 
 
 A derrubada do veto presidencial pela maioria absoluta de deputados e senadores viabilizará a imediata promulgação da lei pelo presidente do Congresso Nacional, deflagrando a interposição em massa de pedidos de **revisão criminal de sentença penal** perante os juízos de execução e o plenário do Supremo Tribunal Federal. No tabuleiro político nacional, o desfecho vitorioso dessa articulação consolida o protagonismo do senador **Flávio Bolsonaro** e fortalece a coordenação eleitoral do campo de oposição em torno do governador paulista **Tarcísio de Freitas** para as eleições presidenciais de **2026**, inaugurando uma etapa de superioridade tática do parlamento na mediação das tensões institucionais do país.
 
-## Informações Complementares
+### Extra Info
 
 1. O deputado federal **Hugo Motta** (Republicanos-PB) ascendeu à presidência da Câmara dos Deputados em **fevereiro de 2025**, consolidando uma ampla aliança suprapartidária com bancadas do centro, da oposição e de setores governistas moderados para viabilizar pautas de consenso institucional.
 
@@ -6476,7 +6476,7 @@ Sob o prisma da praxeologia e da **Escola Austríaca de Economia**, frequentemen
 
 Em conclusão, a trajetória da Kalshi marca a transição dos mercados preditivos de uma curiosidade acadêmica para uma infraestrutura financeira indispensável da era da informação. Ao permitir que a humanidade precifique a incerteza futura com precisão matemática através da cooperação voluntária e da livre iniciativa, a empresa cofundada pela cientista brasileira comprova a eficácia superior dos mecanismos descentralizados de mercado frente a tentativas regulatórias de controle estatal do fluxo de dados e probabilidades globais.
 
-## Informações Complementares
+### Extra Info
 
 1. Luana Lopes Lara é uma cientista da computação, matemática e empresária brasileira, cofundadora da Kalshi e reconhecida internacionalmente em 2025 como a mais jovem mulher bilionária do mundo sem herança familiar, tendo iniciado sua formação na Escola do Teatro Bolshoi no Brasil e concluído seus estudos no Massachusetts Institute of Technology.
 
@@ -6626,7 +6626,7 @@ Sob essa ótica analítica, as relações diplomáticas entre nações soberanas
 
 A superação definitiva dessa ilusão institucional impõe o reconhecimento de que a liberdade de expressão, o devido processo legal e a proteção aos direitos de propriedade não são concedidos graciosamente por arbítrios palacianos ou pressões diplomáticas externas. A genuína contenção do poder coercitivo estatal e a defesa da autonomia individual dependem da construção de salvaguardas tecnológicas descentralizadas, da soberania informacional propiciada por sistemas criptográficos e da rejeição categórica a qualquer forma de dependência em relação à tutela monopolista do Estado.
 
-## Informações Complementares
+### Extra Info
 
 1. A **Lei Magnitsky Global** (_Global Magnitsky Human Rights Accountability Act_), sancionada pelo Congresso dos Estados Unidos em **dezembro de 2016** no âmbito do _National Defense Authorization Act_, conferiu ao Presidente norte-americano a autoridade discricionária para determinar o congelamento de ativos patrimoniais, a proibição de transações comerciais sob jurisdição norte-americana e o cancelamento de vistos consulares de indivíduos estrangeiros comprovadamente envolvidos em esquemas de corrupção de grande escala ou em atos graves de violação aos direitos humanos internacionalmente tutelados.
 

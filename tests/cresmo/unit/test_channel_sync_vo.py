@@ -643,9 +643,9 @@ class TestNormalizeToUploadsPlaylistUrl:
         expected = "https://www.youtube.com/playlist?list=UU1234567890123456789012"
         assert normalize_to_uploads_playlist_url(cid) == expected
 
-        # ChannelId without uploads playlist URL falls back to canonical URL
+        # ChannelId without uploads playlist URL falls back to value
         cid_no_uploads = ChannelId("custom_channel")
-        assert normalize_to_uploads_playlist_url(cid_no_uploads) == cid_no_uploads.canonical_url
+        assert normalize_to_uploads_playlist_url(cid_no_uploads) == cid_no_uploads.value
 
     def test_empty_and_whitespace(self) -> None:
         assert normalize_to_uploads_playlist_url("") == ""

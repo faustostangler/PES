@@ -10,9 +10,9 @@ COMPOSE_FILES := -f docker-compose.langfuse.yml -f docker-compose.monitoring.yml
 
 .PHONY: up
 up:
-	@echo "Starting all required services..."
-	docker compose $(COMPOSE_FILES) up -d
-	@echo "All services are up and running."
+	@echo "Starting all required services and waiting for healthchecks..."
+	docker compose $(COMPOSE_FILES) up -d --wait
+	@echo "All services are up and healthy."
 
 .PHONY: down
 down:

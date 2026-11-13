@@ -23,8 +23,7 @@ class TestPromptRegistry:
         """Verify that all 15 canonical PromptKey members are registered in PROMPT_REGISTRY."""
         expected_keys = {
             "fluid_prose",
-            "gap_filler_pass1",
-            "gap_filler_pass_subsequent",
+            "gap_filler",
             "long_expander",
             "wide_expander",
             "atomic_inventory",
@@ -38,7 +37,8 @@ class TestPromptRegistry:
             "judge_raw_index_summary",
             "judge_raw_index_concepts",
             "judge_raw_index_synthesis",
-            "llm_judge",
+            "judge_fluid_prose",
+            "judge_gap_filler",
             "ollama_critique",
         }
         assert len(PromptKey) == 18
@@ -62,11 +62,11 @@ class TestPromptRegistry:
 
     def test_get_prompt_metadata_by_key_and_string(self) -> None:
         """Verify lookup by PromptKey enum and raw string."""
-        meta_enum = get_prompt_metadata(PromptKey.GAP_FILLER_PASS1)
-        meta_str = get_prompt_metadata("gap_filler_pass1")
+        meta_enum = get_prompt_metadata(PromptKey.GAP_FILLER)
+        meta_str = get_prompt_metadata("gap_filler")
 
         assert meta_enum == meta_str
-        assert meta_enum.langfuse_name == "cresmo-gap-filler-pass1"
+        assert meta_enum.langfuse_name == "cresmo-gap-filler"
         assert meta_enum.skill_name == "cresmo-gap-filler"
 
     def test_get_prompt_metadata_fluid_prose(self) -> None:
@@ -74,6 +74,12 @@ class TestPromptRegistry:
         meta = get_prompt_metadata(PromptKey.FLUID_PROSE)
         assert meta.langfuse_name == "cresmo-fluid-prose"
         assert meta.skill_name == "cresmo-fluid-prose"
+
+    def test_get_prompt_metadata_judge_gap_filler(self) -> None:
+        """Verify lookup for specialized judge_gap_filler prompt."""
+        meta = get_prompt_metadata(PromptKey.JUDGE_GAP_FILLER)
+        assert meta.langfuse_name == "cresmo-judge-gap-filler"
+        assert meta.skill_name == "cresmo-gap-filler"
 
     def test_get_prompt_metadata_invalid_key_raises(self) -> None:
         """Verify that looking up an unknown prompt key raises KeyError."""

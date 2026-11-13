@@ -24,8 +24,7 @@ class TestPromptKeyAndMessageRole:
     def test_prompt_key_values(self) -> None:
         expected = {
             PromptKey.FLUID_PROSE: "fluid_prose",
-            PromptKey.GAP_FILLER_PASS1: "gap_filler_pass1",
-            PromptKey.GAP_FILLER_PASS_SUBSEQUENT: "gap_filler_pass_subsequent",
+            PromptKey.GAP_FILLER: "gap_filler",
             PromptKey.LONG_EXPANDER: "long_expander",
             PromptKey.WIDE_EXPANDER: "wide_expander",
             PromptKey.ATOMIC_INVENTORY: "atomic_inventory",
@@ -39,11 +38,13 @@ class TestPromptKeyAndMessageRole:
             PromptKey.JUDGE_RAW_INDEX_SUMMARY: "judge_raw_index_summary",
             PromptKey.JUDGE_RAW_INDEX_CONCEPTS: "judge_raw_index_concepts",
             PromptKey.JUDGE_RAW_INDEX_SYNTHESIS: "judge_raw_index_synthesis",
-            PromptKey.LLM_JUDGE: "llm_judge",
+            PromptKey.JUDGE_FLUID_PROSE: "judge_fluid_prose",
+            PromptKey.JUDGE_GAP_FILLER: "judge_gap_filler",
             PromptKey.OLLAMA_CRITIQUE: "ollama_critique",
         }
         for key, val in expected.items():
             assert key.value == val
+        assert not hasattr(PromptKey, "GAP_FILLER_REFINE")
 
     def test_message_role_values(self) -> None:
         assert MessageRole.SYSTEM.value == "system"
@@ -86,9 +87,9 @@ class TestChatPromptValueObject:
     def test_single_turn_factory(self) -> None:
         prompt = ChatPrompt.single_turn(
             user_prompt="Summarize this text",
-            system_instruction="You are a senior analyst",
+            system_prompt="You are a senior analyst",
         )
-        assert prompt.system_instruction == "You are a senior analyst"
+        assert prompt.system_prompt == "You are a senior analyst"
         assert len(prompt.messages) == 1
         assert prompt.messages[0].role == MessageRole.USER
         assert prompt.messages[0].content == "Summarize this text"
@@ -99,7 +100,7 @@ class TestChatPromptValueObject:
             user="Analyze this data",
             system="System persona",
         )
-        assert prompt.system_instruction == "System persona"
+        assert prompt.system_prompt == "System persona"
         assert len(prompt.messages) == 1
         assert prompt.messages[0].role == MessageRole.USER
         assert prompt.messages[0].content == "Analyze this data"
@@ -107,7 +108,7 @@ class TestChatPromptValueObject:
 
     def test_multi_turn_with_few_shots(self) -> None:
         prompt = ChatPrompt(
-            system_instruction="Strict style guide",
+            system_prompt="Strict style guide",
             messages=(
                 ChatMessage(role=MessageRole.USER, content="Raw 1"),
                 ChatMessage(role=MessageRole.ASSISTANT, content="Clean 1"),
@@ -117,38 +118,38 @@ class TestChatPromptValueObject:
         assert len(prompt.messages) == 3
         assert prompt.get_last_user_content() == "Raw 2"
 
-    def test_with_turn_returns_new_immutable_instance_and_preserves_system_instruction(
+    def test_with_turn_returns_new_immutable_instance_and_preserves_system_prompt(
         self,
     ) -> None:
         base = ChatPrompt.single_turn(
             user_prompt="Initial prompt",
-            system_instruction="System context instructions",
+            system_prompt="System context instructions",
         )
         turn2 = base.with_turn(MessageRole.ASSISTANT, "Generated text")
         turn3 = turn2.with_turn(MessageRole.USER, "Critique: fix parataxis")
 
         assert len(base.messages) == 1
-        assert base.system_instruction == "System context instructions"
+        assert base.system_prompt == "System context instructions"
 
         assert len(turn2.messages) == 2
-        assert turn2.system_instruction == "System context instructions"
+        assert turn2.system_prompt == "System context instructions"
         assert turn2.messages[1].role == MessageRole.ASSISTANT
         assert turn2.messages[1].content == "Generated text"
 
         assert len(turn3.messages) == 3
-        assert turn3.system_instruction == "System context instructions"
+        assert turn3.system_prompt == "System context instructions"
         assert turn3.get_last_user_content() == "Critique: fix parataxis"
 
     def test_get_last_user_content_when_no_user_message(self) -> None:
         prompt = ChatPrompt(
-            system_instruction="System prompt",
+            system_prompt="System prompt",
             messages=(ChatMessage(role=MessageRole.ASSISTANT, content="Hi"),),
         )
         assert prompt.get_last_user_content() == ""
 
-    def test_system_instruction_only_is_valid(self) -> None:
-        prompt = ChatPrompt(messages=(), system_instruction="System only instruction")
-        assert prompt.system_instruction == "System only instruction"
+    def test_system_prompt_only_is_valid(self) -> None:
+        prompt = ChatPrompt(messages=(), system_prompt="System only instruction")
+        assert prompt.system_prompt == "System only instruction"
         assert prompt.messages == ()
         assert prompt.get_last_user_content() == ""
 
@@ -158,13 +159,13 @@ class TestChatPromptValueObject:
     ) -> None:
         with pytest.raises(
             DomainValidationError,
-            match=r"^ChatPrompt must have at least one message or system_instruction\.$",
+            match=r"^ChatPrompt must have at least one message or system_prompt\.$",
         ):
-            ChatPrompt(messages=(), system_instruction=invalid_sys)
+            ChatPrompt(messages=(), system_prompt=invalid_sys)
 
-    def test_to_dict_list_with_system_instruction_and_messages(self) -> None:
+    def test_to_dict_list_with_system_prompt_and_messages(self) -> None:
         prompt = ChatPrompt(
-            system_instruction="Act as editor",
+            system_prompt="Act as editor",
             messages=(
                 ChatMessage(role=MessageRole.USER, content="Text to edit"),
                 ChatMessage(role=MessageRole.ASSISTANT, content="Edited text"),
@@ -177,10 +178,10 @@ class TestChatPromptValueObject:
             {"role": "assistant", "content": "Edited text"},
         ]
 
-    def test_to_dict_list_without_system_instruction(self) -> None:
+    def test_to_dict_list_without_system_prompt(self) -> None:
         prompt = ChatPrompt(
             messages=(ChatMessage(role=MessageRole.USER, content="Hello"),),
-            system_instruction=None,
+            system_prompt=None,
         )
         dict_list = prompt.to_dict_list()
         assert dict_list == [

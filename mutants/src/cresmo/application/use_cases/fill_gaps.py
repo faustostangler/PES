@@ -99,7 +99,7 @@ class FillGapsUseCase:
 
         # Pass 1: Initial Socratic gap filling
         chat_prompt = self.prompt_provider.get_prompt(
-            PromptKey.GAP_FILLER_PASS1,
+            PromptKey.GAP_FILLER,
             pass_num=1,
             total_passes=passes,
             channel_name=fluid_transcript.channel.name,
@@ -118,7 +118,7 @@ class FillGapsUseCase:
         # Subsequent passes: Progressive enrichment over current text
         for pass_index in range(1, passes):
             chat_prompt = self.prompt_provider.get_prompt(
-                PromptKey.GAP_FILLER_PASS_SUBSEQUENT,
+                PromptKey.GAP_FILLER,
                 pass_num=pass_index + 1,
                 total_passes=passes,
                 channel_name=fluid_transcript.channel.name,

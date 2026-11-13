@@ -106,7 +106,7 @@ All 8 Maps of Content generated in `playground/cresmo/wiki/MOCs/` were audited f
    - Configured `gemini-3.5-flash-lite` as default primary model and `gemini-3.1-flash-lite` as fallback.
    - Implemented `@retry` with random exponential backoff (`tenacity`) on transient HTTP 429 and 503 errors.
 3. **Multi-Pass Regex Flexibility (`fill_gaps_fluid_prose.py`)**:
-   - Added case-insensitive heading matching for `## Informações Complementares` variants.
+   - Added case-insensitive heading matching for `### Extra Info` variants.
 4. **Pipeline Resumption & Caching (`pipeline.py` & `synthesize_atomic_batch.py`)**:
    - Automated incremental reuse of cached compendiums and already-synthesized atomic notes, preventing redundant LLM expenditure upon task resumption.
 

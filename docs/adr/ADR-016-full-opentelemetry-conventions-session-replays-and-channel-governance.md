@@ -1,11 +1,19 @@
 # ADR-016: Full OpenTelemetry Semantic Conventions, Unified Session Replays, and Channel FinOps Governance
 
-**Status:** ACCEPTED  
+**Status:** ACCEPTED (PARTIALLY SUPERSEDED by [`ADR-027`](ADR-027-unified-telemetry-vocabulary-and-langfuse-conventions.md), [`ADR-033`](ADR-033-composite-value-objects-identity-parity-and-tenant-simplification.md), [`ADR-035`](ADR-035-atomic-work-item-traces-and-sota-kiss-batch-correlation.md), and [`ADR-037`](ADR-037-lean-telemetry-topography-and-chronological-evaluation.md))  
 **Date:** 2026-09-20  
 **Decision Makers:** Lead Architect (Fausto Stangler), Systems Architect (Doctor Stangler Committee)  
 **Governing Method:** Doctor Stangler Architecture Method (Clean/Hexagonal DDD Modular Monolith, 12-Factor App)  
 **Glossary Reference:** [`docs/GLOSSARY.md`](../GLOSSARY.md)  
-**Related ADRs:** [`ADR-001`](ADR-001-cresmo-modular-monolith-strangling.md), [`ADR-003`](ADR-003-pes-production-architecture.md), [`ADR-005`](ADR-005-multi-role-12factor-container-architecture.md), [`ADR-011`](ADR-011-zero-hardcoded-tunables-and-unified-inference-observability.md), [`ADR-013`](ADR-013-iterative-llm-as-a-judge-indexing-loops.md), [`ADR-014`](ADR-014-active-preflight-probes-and-fail-fast-observability.md)
+**Related ADRs:** [`ADR-001`](ADR-001-cresmo-modular-monolith-strangling.md), [`ADR-003`](ADR-003-pes-production-architecture.md), [`ADR-005`](ADR-005-multi-role-12factor-container-architecture.md), [`ADR-011`](ADR-011-zero-hardcoded-tunables-and-unified-inference-observability.md), [`ADR-013`](ADR-013-iterative-llm-as-a-judge-indexing-loops.md), [`ADR-014`](ADR-014-active-preflight-probes-and-fail-fast-observability.md), [`ADR-027`](ADR-027-unified-telemetry-vocabulary-and-langfuse-conventions.md), [`ADR-033`](ADR-033-composite-value-objects-identity-parity-and-tenant-simplification.md), [`ADR-035`](ADR-035-atomic-work-item-traces-and-sota-kiss-batch-correlation.md), [`ADR-037`](ADR-037-lean-telemetry-topography-and-chronological-evaluation.md)
+
+> [!WARNING]
+> **PARTIALLY SUPERSEDED CONVENTIONS:**  
+> While this ADR established the foundational OpenTelemetry and Langfuse integration, specific patterns were subsequently superseded:
+> 1. **`ChannelTenantId` Decommissioning**: The standalone `ChannelTenantId` VO is **DEPRECATED and DECOMMISSIONED** per [`ADR-033`](ADR-033-composite-value-objects-identity-parity-and-tenant-simplification.md). Cost center identity is now an intrinsic responsibility of the composite `Channel` VO via `channel.tenant_key`.
+> 2. **Session Replay Format**: The session identifier format evolved from `content:{channel}:{id}` to `{channel_id}:{video_id}` ([`ADR-027`](ADR-027-unified-telemetry-vocabulary-and-langfuse-conventions.md)) and was finalized to `{channel_id}:{content_id}` ([`ADR-033`](ADR-033-composite-value-objects-identity-parity-and-tenant-simplification.md), [`ADR-035`](ADR-035-atomic-work-item-traces-and-sota-kiss-batch-correlation.md)), eradicating `video_id`.
+> 3. **Mega-Trace Monolith Prohibition**: The monolithic single trace spanning multiple batch items was designated an anti-pattern and **SUPERSEDED** by `1 Trace = 1 Work Item` per [`ADR-035`](ADR-035-atomic-work-item-traces-and-sota-kiss-batch-correlation.md).
+> 4. **Telemetry Topography**: Homonymous trace root naming was **SUPERSEDED** by the 4-tier lean topography in [`ADR-037`](ADR-037-lean-telemetry-topography-and-chronological-evaluation.md) (Trace: `cresmo.synthesis_pipeline`, Root Span: `pipeline.coordinator`).
 
 ---
 

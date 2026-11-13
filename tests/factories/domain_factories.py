@@ -11,8 +11,8 @@ from datetime import UTC, datetime
 from polyfactory.factories import DataclassFactory
 
 from cresmo.application.use_cases.discovery.models import BatchSource
-from cresmo.domain.entities.compendium import EnrichedCompendium
-from cresmo.domain.entities.transcripts import SourceTranscript
+from cresmo.domain.entities.compendium import StageTranscript
+from cresmo.domain.entities.transcripts import StageTranscript
 from cresmo.domain.value_objects import (
     Channel,
     ChannelId,
@@ -65,7 +65,7 @@ class ContentFactory(DataclassFactory[Content]):
         return cls.__faker__.sentence(nb_words=4)
 
     @classmethod
-    def body(cls) -> str:
+    def text(cls) -> str:
         return cls.__faker__.paragraph(nb_sentences=3)
 
 
@@ -88,10 +88,10 @@ class BatchSourceFactory(DataclassFactory[BatchSource]):
         return ContentId(f"vid_{cls.__faker__.hexify(text='^^^^^^^^^^')}")
 
 
-class SourceTranscriptFactory(DataclassFactory[SourceTranscript]):
-    """Polyfactory generating valid SourceTranscript domain aggregates."""
+class SourceTranscriptFactory(DataclassFactory[StageTranscript]):
+    """Polyfactory generating valid StageTranscript domain aggregates."""
 
-    __model__ = SourceTranscript
+    __model__ = StageTranscript
 
     @classmethod
     def channel(cls) -> Channel:
@@ -110,39 +110,40 @@ class SourceTranscriptFactory(DataclassFactory[SourceTranscript]):
         return ContentFactory.build()
 
 
-class EnrichedCompendiumFactory(DataclassFactory[EnrichedCompendium]):
-    """Polyfactory generating valid EnrichedCompendium aggregates honoring all invariants.
+class EnrichedCompendiumFactory(DataclassFactory[StageTranscript]):
+    """Polyfactory generating valid StageTranscript aggregates honoring all invariants.
 
     Invariants enforced:
     - Non-empty fluid prose body without markdown tables.
-    - Non-empty complementary information section.
+    - Non-empty complementary information section inside content.text.
     - pass_count >= 1.
     """
 
-    __model__ = EnrichedCompendium
+    __model__ = StageTranscript
 
     @classmethod
-    def content_id(cls) -> ContentId:
-        return ContentId(f"comp_{cls.__faker__.hexify(text='^^^^^^^^^^')}")
+    def channel(cls) -> Channel:
+        return ChannelFactory.build()
 
     @classmethod
-    def channel_name(cls) -> ChannelName:
-        return ChannelName(cls.__faker__.company())
-
-    @classmethod
-    def title(cls) -> NoteTitle:
-        return NoteTitle(cls.__faker__.sentence(nb_words=5))
-
-    @classmethod
-    def body(cls) -> str:
-        return (
-            "Esta é uma narrativa contínua sem tabelas markdown, "
-            "estruturada de acordo com os princípios da longa duração e rigor historiográfico."
+    def provenance(cls) -> MediaProvenance:
+        return MediaProvenance(
+            url=f"https://youtube.com/watch?v={cls.__faker__.hexify(text='^^^^^^^^^^')}",
+            description="Sample transcript metadata",
+            publication_date=datetime.now(UTC).date(),
         )
 
     @classmethod
-    def complementary_info(cls) -> str:
-        return "## Informações Complementares\nContexto histórico enciclopédico e notas prosopográficas."
+    def content(cls) -> Content:
+        return Content(
+            id=ContentId(f"comp_{cls.__faker__.hexify(text='^^^^^^^^^^')}"),
+            title=cls.__faker__.sentence(nb_words=5),
+            text=(
+                "Esta é uma narrativa contínua sem tabelas markdown, "
+                "estruturada de acordo com os princípios da longa duração e rigor historiográfico.\n\n"
+                "### Extra Info\n\nContexto histórico enciclopédico e notas prosopográficas."
+            ),
+        )
 
     @classmethod
     def pass_count(cls) -> int:

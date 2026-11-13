@@ -13,10 +13,10 @@ from pathlib import Path
 
 from cresmo.domain.entities import (
     AtomicNote,
-    EnrichedCompendium,
     MapOfContent,
-    SourceTranscript,
+    StageTranscript,
 )
+from cresmo.domain.stage_registry import StageName
 from cresmo.domain.value_objects import (
     ChannelName,
     ContentId,
@@ -29,51 +29,61 @@ from cresmo.domain.value_objects import (
 class VaultRepositoryPort(ABC):
     """Hexagonal Persistence Port for the Obsidian Second Brain vault and raw/enriched storage.
 
-    Conforms to ADR-001 and SPEC-001. Enforces atomic file writes, YAML frontmatter serialization,
-    tiered index synchronization (_index.json), and bidirectional WikiLink reconciliation.
+    Conforms to ADR-001, SPEC-001, ADR-058, and ADR-059. Enforces atomic file writes,
+    monomorphic YAML frontmatter serialization, tiered index synchronization (_index.json),
+    and bidirectional WikiLink reconciliation.
     """
 
     @abstractmethod
-    def save_transcript(self, transcript: SourceTranscript) -> None:
-        """Persist source transcript to storage directory.
-
+    def resolve_stage_dir(self, stage_name: str | StageName) -> Path:
+        """Resolve dynamic stage directory following canonical data/{stage} structure (ADR-058).
+        
         Args:
-            transcript: SourceTranscript domain aggregate containing verbatim text and metadata.
+            stage_name: Unique pipeline stage identifier or enum.
+
+        Returns:
+            Resolved filesystem Path to the stage data directory.
         """
-        raise NotImplementedError("Persist source transcript atomically.")
+        raise NotImplementedError("Resolve stage directory by stage name.")
 
     @abstractmethod
-    def get_raw_transcript(self, content_id: ContentId) -> SourceTranscript | None:
-        """Retrieve raw transcript by content ID.
+    def save_stage_transcript(
+        self, stage_name: str | StageName, transcript: StageTranscript
+    ) -> None:
+        """Persist stage transcript envelope atomically into stage directory (ADR-054, ADR-058, ADR-059).
 
         Args:
+            stage_name: Unique pipeline stage identifier or enum (e.g. 'raw', 'fluid_prose', 'gap_filler').
+            transcript: Validated StageTranscript domain aggregate.
+        """
+        raise NotImplementedError("Persist stage transcript atomically.")
+
+    @abstractmethod
+    def get_stage_transcript(
+        self, stage_name: str | StageName, content_id: ContentId
+    ) -> StageTranscript | None:
+        """Retrieve persisted stage transcript envelope by stage name and content ID (ADR-054, ADR-058, ADR-059).
+
+        Args:
+            stage_name: Unique pipeline stage identifier or enum (e.g. 'raw', 'fluid_prose', 'gap_filler').
             content_id: Target unique content identifier.
 
         Returns:
-            SourceTranscript aggregate or None if not present in storage.
+            StageTranscript domain aggregate or None if not present in storage.
         """
-        raise NotImplementedError("Retrieve raw transcript by content ID.")
+        raise NotImplementedError("Retrieve stage transcript by content ID.")
 
     @abstractmethod
-    def save_enriched_compendium(self, compendium: EnrichedCompendium) -> None:
-        """Persist enriched compendium directly into enriched/ directory.
+    def get_fluid_files_for_channel(self, channel_name: ChannelName) -> list[Path]:
+        """Retrieve all persisted fluid transcript paths for a given channel.
 
         Args:
-            compendium: Validated multi-pass fluid prose compendium.
-        """
-        raise NotImplementedError("Persist enriched compendium atomically.")
-
-    @abstractmethod
-    def get_enriched_compendium(self, content_id: ContentId) -> EnrichedCompendium | None:
-        """Retrieve enriched compendium by content ID.
-
-        Args:
-            content_id: Target unique content identifier.
+            channel_name: Target channel name.
 
         Returns:
-            EnrichedCompendium aggregate or None if not present in storage.
+            List of resolved filesystem Paths to .md fluid transcript files.
         """
-        raise NotImplementedError("Retrieve enriched compendium by content ID.")
+        raise NotImplementedError("List fluid transcripts by channel.")
 
     @abstractmethod
     def save_atomic_note(self, note: AtomicNote) -> None:

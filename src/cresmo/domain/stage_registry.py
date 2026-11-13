@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from dataclasses import dataclass, field
+from enum import StrEnum
 from typing import Any, ClassVar
 
 from cresmo.domain.entities import (
@@ -11,6 +12,14 @@ from cresmo.domain.entities import (
     post_process_fluid_transcript,
 )
 from cresmo.domain.value_objects import JudgeCriterion, PromptKey
+
+
+class StageName(StrEnum):
+    """Canonical enumeration of conveyor pipeline stage identifiers."""
+
+    RAW = "raw"
+    FLUID_PROSE = "fluid_prose"
+    GAP_FILLER = "gap_filler"
 
 
 @dataclass(frozen=True, slots=True)
@@ -35,8 +44,9 @@ class StageRegistry:
     """
 
     _SPECS: ClassVar[dict[str, StageDefinition]] = {
-        "fluid_prose": StageDefinition(
+        StageName.FLUID_PROSE: StageDefinition(
             transform_prompt_key=PromptKey.FLUID_PROSE,
+            judge_prompt_key=PromptKey.JUDGE_FLUID_PROSE,
             required_criteria=(
                 JudgeCriterion.ORALITY_REMOVAL,
                 JudgeCriterion.SEMANTIC_FAITHFULNESS,
@@ -47,30 +57,35 @@ class StageRegistry:
             ),
             post_processor=post_process_fluid_transcript,
         ),
-        "gap_filler": StageDefinition(
-            transform_prompt_key=PromptKey.GAP_FILLER_PASS1,
+        StageName.GAP_FILLER: StageDefinition(
+            transform_prompt_key=PromptKey.GAP_FILLER,
+            judge_prompt_key=PromptKey.JUDGE_GAP_FILLER,
             required_criteria=(
-                JudgeCriterion.FACTUAL_GROUNDING,
-                JudgeCriterion.SOCRATIC_EPISTEMIC_DEPTH,
-                JudgeCriterion.CAUSAL_STRATIFICATION_AGENCY,
-                JudgeCriterion.COMPLEMENTARY_SUBSTANCE,
-                JudgeCriterion.AUTHORIAL_NATURALISM,
+                JudgeCriterion.EPISTEMIC_GROUNDING_SEGREGATION,
+                JudgeCriterion.CONCEPTUAL_MECHANICAL_DECOMPOSITION,
+                JudgeCriterion.BRAUDELIAN_STRATIFICATION,
+                JudgeCriterion.GENEALOGY_HIDDEN_AGENCY,
+                JudgeCriterion.COMPETING_HYPOTHESES,
+                JudgeCriterion.EXTRA_INFO_GRANULARITY,
+                JudgeCriterion.LINEAR_STYLE_NATURALISM,
             ),
             post_processor=post_process_enriched_compendium,
             eval_metadata={
                 "weights": {
-                    JudgeCriterion.FACTUAL_GROUNDING.value: 0.25,
-                    JudgeCriterion.SOCRATIC_EPISTEMIC_DEPTH.value: 0.25,
-                    JudgeCriterion.CAUSAL_STRATIFICATION_AGENCY.value: 0.20,
-                    JudgeCriterion.COMPLEMENTARY_SUBSTANCE.value: 0.15,
-                    JudgeCriterion.AUTHORIAL_NATURALISM.value: 0.15,
+                    JudgeCriterion.EPISTEMIC_GROUNDING_SEGREGATION.value: 0.20,
+                    JudgeCriterion.CONCEPTUAL_MECHANICAL_DECOMPOSITION.value: 0.15,
+                    JudgeCriterion.BRAUDELIAN_STRATIFICATION.value: 0.15,
+                    JudgeCriterion.GENEALOGY_HIDDEN_AGENCY.value: 0.15,
+                    JudgeCriterion.COMPETING_HYPOTHESES.value: 0.15,
+                    JudgeCriterion.EXTRA_INFO_GRANULARITY.value: 0.10,
+                    JudgeCriterion.LINEAR_STYLE_NATURALISM.value: 0.10,
                 },
                 "veto_criteria": [
-                    JudgeCriterion.FACTUAL_GROUNDING.value,
-                    JudgeCriterion.COMPLEMENTARY_SUBSTANCE.value,
+                    JudgeCriterion.EPISTEMIC_GROUNDING_SEGREGATION.value,
+                    JudgeCriterion.EXTRA_INFO_GRANULARITY.value,
                 ],
             },
-            max_passes=3,
+            max_passes=5,
             early_stopping_enabled=True,
         ),
         # "long_expander": StageDefinition(

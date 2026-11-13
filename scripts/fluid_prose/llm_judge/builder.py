@@ -24,7 +24,7 @@ from scripts.fluid_prose.llm_judge.criterion_orality import ITEMS_ORALITY
 from scripts.fluid_prose.llm_judge.criterion_structure import ITEMS_STRUCTURE
 from scripts.fluid_prose.llm_judge.criterion_voice import ITEMS_VOICE
 
-OUTPUT_PATH = REPO_ROOT / "data" / "golden_sets" / "fluid_prose_golden_set.json"
+OUTPUT_PATH = REPO_ROOT / "scripts" / "fluid_prose" / "golden_sets" / "fluid_prose_golden_set.json"
 
 EXPECTED_CRITERIA = {
     "orality_removal": ITEMS_ORALITY,
