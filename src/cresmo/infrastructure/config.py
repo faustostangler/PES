@@ -34,12 +34,13 @@ DEFAULT_LANGFUSE_PROMPT_LABEL: str = "production"
 DEFAULT_PROMPTS_RESOURCE_PACKAGE: str = "cresmo.infrastructure.resources"
 DEFAULT_PROMPTS_RESOURCE_NAME: str = "prompts.json"
 DEFAULT_JUDGE_PASS_THRESHOLD: float = 0.9
-DEFAULT_GEMINI_MODEL: str = "gemini-3.5-flash-lite"
+DEFAULT_GEMINI_MODEL: str = "gemini:gemini-3.8-flash"
 DEFAULT_JUDGE_GEMINI_MODEL: str = DEFAULT_GEMINI_MODEL
 DEFAULT_JUDGE_TEMPERATURE: float = 0.0
 DEFAULT_GEMINI_TIMEOUT_SECONDS: float = 60.0
 DEFAULT_BENCHMARK_MODELS: list[str] = [
-    "gemini:gemini-3.5-flash",
+    "gemini:gemini-4-hydrogen",
+    "gemini:gemini-3.8-flash",
     "gemini:gemini-3.5-flash-lite",
     # "ollama:qwen2.5:latest",
     # "ollama:gemma4:latest",
@@ -394,7 +395,7 @@ class CresmoSettings(BaseSettings):
         description="Default Gemini model variant for pipeline stages.",
     )
     gemini_fallback_model: str = Field(
-        default="gemini-3.1-flash-lite",
+        default="gemini-3.8-flash",
         description="Fallback Gemini model variant if primary hits quota or demand spikes.",
     )
     prometheus_enabled: bool = Field(
@@ -690,11 +691,13 @@ class CresmoSettings(BaseSettings):
     )
     gap_filler_judge_weights: dict[str, float] = Field(
         default_factory=lambda: {
-            "factual_grounding": 0.25,
-            "socratic_epistemic_depth": 0.25,
-            "causal_stratification_agency": 0.20,
-            "complementary_substance": 0.15,
-            "authorial_naturalism": 0.15,
+            "epistemic_grounding_segregation": 0.20,
+            "conceptual_mechanical_decomposition": 0.15,
+            "braudelian_stratification": 0.15,
+            "genealogy_hidden_agency": 0.15,
+            "competing_hypotheses": 0.15,
+            "extra_info_granularity": 0.10,
+            "linear_style_naturalism": 0.10,
         },
         validation_alias=AliasChoices(
             "gap_filler_judge_weights",

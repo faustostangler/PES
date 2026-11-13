@@ -26,13 +26,14 @@ class JudgeCriterion(str, Enum):
     EPISTEMIC_CRITIQUE = "epistemic_critique"
     AUTHORIAL_VOICE = "authorial_voice"
 
-    # Stage 2: Specialized Gap Filler Criteria
-    FACTUAL_GROUNDING = "factual_grounding"
-    SOCRATIC_EPISTEMIC_DEPTH = "socratic_epistemic_depth"
-    CAUSAL_STRATIFICATION_AGENCY = "causal_stratification_agency"
-    COMPLEMENTARY_SUBSTANCE = "complementary_substance"
-    AUTHORIAL_NATURALISM = "authorial_naturalism"
-    EPISTEMIC_SATURATION = "epistemic_saturation"
+    # Stage 2: Specialized Gap Filler Criteria (ADR-060)
+    EPISTEMIC_GROUNDING_SEGREGATION = "epistemic_grounding_segregation"
+    CONCEPTUAL_MECHANICAL_DECOMPOSITION = "conceptual_mechanical_decomposition"
+    BRAUDELIAN_STRATIFICATION = "braudelian_stratification"
+    GENEALOGY_HIDDEN_AGENCY = "genealogy_hidden_agency"
+    COMPETING_HYPOTHESES = "competing_hypotheses"
+    EXTRA_INFO_GRANULARITY = "extra_info_granularity"
+    LINEAR_STYLE_NATURALISM = "linear_style_naturalism"
 
     # Downstream Stages
     INVENTORY_COHERENCE = "inventory_coherence"
@@ -143,19 +144,30 @@ DEFAULT_MECHANICAL_VETO_CRITERIA: frozenset[JudgeCriterion] = frozenset(
 )
 
 GAP_FILLER_CANONICAL_WEIGHTS: dict[JudgeCriterion, float] = {
-    JudgeCriterion.FACTUAL_GROUNDING: 0.25,
-    JudgeCriterion.SOCRATIC_EPISTEMIC_DEPTH: 0.25,
-    JudgeCriterion.CAUSAL_STRATIFICATION_AGENCY: 0.20,
-    JudgeCriterion.COMPLEMENTARY_SUBSTANCE: 0.15,
-    JudgeCriterion.AUTHORIAL_NATURALISM: 0.15,
+    JudgeCriterion.EPISTEMIC_GROUNDING_SEGREGATION: 0.20,
+    JudgeCriterion.CONCEPTUAL_MECHANICAL_DECOMPOSITION: 0.15,
+    JudgeCriterion.BRAUDELIAN_STRATIFICATION: 0.15,
+    JudgeCriterion.GENEALOGY_HIDDEN_AGENCY: 0.15,
+    JudgeCriterion.COMPETING_HYPOTHESES: 0.15,
+    JudgeCriterion.EXTRA_INFO_GRANULARITY: 0.10,
+    JudgeCriterion.LINEAR_STYLE_NATURALISM: 0.10,
 }
 
 GAP_FILLER_MECHANICAL_VETO_CRITERIA: frozenset[JudgeCriterion] = frozenset(
     {
-        JudgeCriterion.FACTUAL_GROUNDING,
-        JudgeCriterion.COMPLEMENTARY_SUBSTANCE,
+        JudgeCriterion.EPISTEMIC_GROUNDING_SEGREGATION,
+        JudgeCriterion.EXTRA_INFO_GRANULARITY,
     }
 )
+
+
+def resolve_stage_scoring_policy(
+    stage_name: str,
+) -> tuple[dict[JudgeCriterion, float], frozenset[JudgeCriterion]]:
+    """Resolve canonical criterion weights and mechanical veto criteria for a pipeline stage."""
+    if stage_name == "gap_filler":
+        return GAP_FILLER_CANONICAL_WEIGHTS, GAP_FILLER_MECHANICAL_VETO_CRITERIA
+    return DEFAULT_FLUID_PROSE_WEIGHTS, DEFAULT_MECHANICAL_VETO_CRITERIA
 
 
 def compute_composite_verdict(

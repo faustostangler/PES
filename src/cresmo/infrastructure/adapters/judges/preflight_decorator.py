@@ -75,7 +75,7 @@ class MechanicalPreflightJudgeDecorator(LlmJudgePort):
                     violations_msg,
                 )
                 criterion_score = CriterionScore(
-                    criterion=JudgeCriterion.COMPLEMENTARY_SUBSTANCE,
+                    criterion=JudgeCriterion.EXTRA_INFO_GRANULARITY,
                     score=0.0,
                     passed=False,
                     reasoning=f"Mechanical invariants failed: {violations_msg}",

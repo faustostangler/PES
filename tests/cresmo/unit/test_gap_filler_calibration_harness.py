@@ -32,7 +32,7 @@ def test_evaluate_single_item_with_mock_judge() -> None:
         overall_score=0.95,
         criteria_scores=(
             CriterionScore(
-                criterion=JudgeCriterion.FACTUAL_GROUNDING,
+                criterion=JudgeCriterion.EPISTEMIC_GROUNDING_SEGREGATION,
                 score=0.95,
                 passed=True,
                 reasoning="Factual details confirmed",
@@ -42,13 +42,13 @@ def test_evaluate_single_item_with_mock_judge() -> None:
     )
 
     item = {
-        "id": "fg_01_pass",
+        "id": "eg_01_pass",
         "input": {
             "raw_text": "Transcrição fluida original",
             "candidate_text": "## Texto Expandido\n\nCorpo em prosa com detalhes.",
         },
         "expected_output": {"verdict": "PASS"},
-        "metadata": {"criterion": "factual_grounding"},
+        "metadata": {"criterion": "epistemic_grounding_segregation"},
     }
 
     result = evaluate_single_item(mock_judge, item)

@@ -30,6 +30,7 @@ from cresmo.domain.value_objects import (
     JudgeEvaluation,
     MessageRole,
     PromptKey,
+    resolve_stage_scoring_policy,
 )
 from cresmo.infrastructure.adapters.gemini_pool import (
     GeminiCredentialPool,
@@ -275,6 +276,7 @@ class GeminiJudgeAdapter(LlmJudgePort):
             logger_instance=logger,
         )
 
+        weights, veto_criteria = resolve_stage_scoring_policy(context.stage_name)
         return JudgeEvaluation.create_with_composite_verdict(
             target_stage=context.stage_name,
             criteria_scores=criteria_scores_list,
@@ -282,6 +284,8 @@ class GeminiJudgeAdapter(LlmJudgePort):
             pass_threshold=self._pass_threshold,
             latency_ms=latency_ms,
             trace_id=context.trace_id,
+            weights=weights,
+            veto_criteria=veto_criteria,
         )
 
     @property

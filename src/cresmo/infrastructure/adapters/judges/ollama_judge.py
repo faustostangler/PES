@@ -21,6 +21,7 @@ from cresmo.domain.value_objects import (
     EvaluationContext,
     JudgeEvaluation,
     PromptKey,
+    resolve_stage_scoring_policy,
 )
 from cresmo.infrastructure.adapters.judges.criterion_parser import parse_criteria_scores
 from cresmo.infrastructure.adapters.prompts import JsonPromptProvider
@@ -124,6 +125,7 @@ class OllamaJudgeAdapter(LlmJudgePort):
             logger_instance=logger,
         )
 
+        weights, veto_criteria = resolve_stage_scoring_policy(context.stage_name)
         return JudgeEvaluation.create_with_composite_verdict(
             target_stage=context.stage_name,
             criteria_scores=criteria_scores_list,
@@ -131,6 +133,8 @@ class OllamaJudgeAdapter(LlmJudgePort):
             pass_threshold=self._pass_threshold,
             latency_ms=latency_ms,
             trace_id=context.trace_id,
+            weights=weights,
+            veto_criteria=veto_criteria,
         )
 
     @property

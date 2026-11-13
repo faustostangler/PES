@@ -231,12 +231,12 @@ class PipelineStageRunner:
             if candidate is None:
                 raise DomainValidationError(f"Stage '{stage}' produced no candidate text.")
 
-            output_obj: _TOutput = stage_config.post_process(candidate, source)
-            output_content = getattr(output_obj, "content", None)
+            output_object: _TOutput = stage_config.post_process(candidate, source)
+            output_content = getattr(output_object, "content", None)
             if isinstance(output_content, Content):
                 output_text = output_content.text
-            elif hasattr(output_obj, "text"):
-                output_text = output_obj.text
+            elif hasattr(output_object, "text"):
+                output_text = output_object.text
             else:
                 output_text = candidate.text
             self.telemetry_port.record_stage_io(
@@ -251,7 +251,7 @@ class PipelineStageRunner:
                     "attempts": attempt,
                 }
             )
-            return output_obj
+            return output_object
 
     def _generate_candidate(
         self,

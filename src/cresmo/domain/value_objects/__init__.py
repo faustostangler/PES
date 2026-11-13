@@ -71,6 +71,7 @@ from cresmo.domain.value_objects.quality import (
     TypedVerdict,
     VerdictType,
     compute_composite_verdict,
+    resolve_stage_scoring_policy,
 )
 from cresmo.domain.value_objects.sync import (
     SyncFilterCriteria,
@@ -127,4 +128,5 @@ __all__ = [
     "compute_composite_verdict",
     "is_processable_transcript_file",
     "normalize_to_uploads_playlist_url",
+    "resolve_stage_scoring_policy",
 ]

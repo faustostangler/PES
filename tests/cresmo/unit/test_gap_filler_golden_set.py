@@ -10,6 +10,7 @@ Conforms to:
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 from typing import Any
 
@@ -27,12 +28,26 @@ GOLDEN_SET_PATH = (
     REPO_ROOT / "scripts" / "gap_filler" / "golden_sets" / "gap_filler_golden_set.json"
 )
 
-EXPECTED_CRITERIA = {
-    JudgeCriterion.FACTUAL_GROUNDING.value,
-    JudgeCriterion.SOCRATIC_EPISTEMIC_DEPTH.value,
-    JudgeCriterion.CAUSAL_STRATIFICATION_AGENCY.value,
-    JudgeCriterion.COMPLEMENTARY_SUBSTANCE.value,
-    JudgeCriterion.AUTHORIAL_NATURALISM.value,
+CRITERION_PREFIXES: dict[str, str] = {
+    JudgeCriterion.EPISTEMIC_GROUNDING_SEGREGATION.value: "eg_",
+    JudgeCriterion.CONCEPTUAL_MECHANICAL_DECOMPOSITION.value: "cm_",
+    JudgeCriterion.BRAUDELIAN_STRATIFICATION.value: "bs_",
+    JudgeCriterion.GENEALOGY_HIDDEN_AGENCY.value: "gh_",
+    JudgeCriterion.COMPETING_HYPOTHESES.value: "ch_",
+    JudgeCriterion.EXTRA_INFO_GRANULARITY.value: "ei_",
+    JudgeCriterion.LINEAR_STYLE_NATURALISM.value: "ls_",
+}
+EXPECTED_CRITERIA = set(CRITERION_PREFIXES.keys())
+RESTRICTED_VOCAB_RE = re.compile(r"\b(?:forj|oper|mold|abrig|fardo)\w*\b", re.IGNORECASE)
+BINARY_ANTITHESIS_RE = re.compile(
+    r"\bnão\s+(?:apenas|somente|só|se trata|se resum\w+|decorre|reside|desempenha|constitui|é|era|foi|são|foram)"
+    r"[^.!?\n]{1,120}\b(?:mas|e sim|senão)\b",
+    re.IGNORECASE,
+)
+SYNTHETIC_VIDEO_PREFIXES = ("tel_", "fin_", "ach_")
+MECHANICAL_EXEMPTIONS = {
+    "bullet_markers_in_complementary",
+    "em_dash_style_violation",
 }
 
 
@@ -52,9 +67,9 @@ def golden_set_items() -> list[dict[str, Any]]:
 def test_golden_set_size_and_criteria_distribution(
     golden_set_items: list[dict[str, Any]],
 ) -> None:
-    """Validate 35 items total, 5 criteria x 7 items, 20 PASS / 15 FAIL."""
-    assert len(golden_set_items) == 35, (
-        f"Expected exactly 35 items (5 criteria x 7), got {len(golden_set_items)}."
+    """Validate 49 items total, 7 criteria x 7 items, 28 PASS / 21 FAIL."""
+    assert len(golden_set_items) == 49, (
+        f"Expected exactly 49 items (7 criteria x 7), got {len(golden_set_items)}."
     )
 
     seen_ids: set[str] = set()
@@ -96,19 +111,19 @@ def test_golden_set_size_and_criteria_distribution(
         else:
             total_fail += 1
 
-    assert total_pass == 20, f"Expected 20 PASS, got {total_pass}"
-    assert total_fail == 15, f"Expected 15 FAIL, got {total_fail}"
+    assert total_pass == 28, f"Expected 28 PASS, got {total_pass}"
+    assert total_fail == 21, f"Expected 21 FAIL, got {total_fail}"
 
     for crit, counts in criterion_counts.items():
         assert counts["PASS"] == 4, f"Criterion '{crit}' has {counts['PASS']} PASS, expected 4"
         assert counts["FAIL"] == 3, f"Criterion '{crit}' has {counts['FAIL']} FAIL, expected 3"
 
-    assert difficulty_counts["borderline"]["PASS"] == 5
-    assert difficulty_counts["borderline"]["FAIL"] == 5
-    assert difficulty_counts["easy"]["PASS"] == 5
-    assert difficulty_counts["easy"]["FAIL"] == 5
-    assert difficulty_counts["typical"]["PASS"] == 10
-    assert difficulty_counts["typical"]["FAIL"] == 5
+    assert difficulty_counts["borderline"]["PASS"] == 7
+    assert difficulty_counts["borderline"]["FAIL"] == 7
+    assert difficulty_counts["easy"]["PASS"] == 7
+    assert difficulty_counts["easy"]["FAIL"] == 7
+    assert difficulty_counts["typical"]["PASS"] == 14
+    assert difficulty_counts["typical"]["FAIL"] == 7
 
 
 def test_golden_set_source_text_invariants(
@@ -142,16 +157,14 @@ def test_golden_set_candidate_text_invariants(
         meta = item["metadata"]
 
         assert cand.startswith("## "), f"Item '{item_id}' candidate_text must start with '## '."
-        assert "### Extra Info" in cand, (
-            f"Item '{item_id}' missing mandatory '### Extra Info'."
-        )
+        assert "### Extra Info" in cand, f"Item '{item_id}' missing mandatory '### Extra Info'."
 
         comp_section = extract_complementary_section(cand)
         assert comp_section, f"Item '{item_id}' complementary section is empty."
 
-        # If it's NOT an intentional mechanical defect item (e.g. cs_04 testing bullet formatting),
-        # it must pass full gap_filler mechanical validation
-        if meta.get("expected_anomaly") != "bullet_markers_in_complementary":
+        # If it's NOT an intentional mechanical defect item (e.g. ei_04 testing bullet formatting
+        # or ls_07 testing em-dash violation), it must pass full gap_filler mechanical validation
+        if meta.get("expected_anomaly") not in MECHANICAL_EXEMPTIONS:
             violations = validate_gap_filler_mechanical_invariants(cand)
             assert not violations, (
                 f"Item '{item_id}' has unintended mechanical violations: {violations}"
@@ -161,14 +174,22 @@ def test_golden_set_candidate_text_invariants(
 def test_golden_set_metadata_and_defect_isolation(
     golden_set_items: list[dict[str, Any]],
 ) -> None:
-    """Validate defect isolation and anomaly attribution."""
+    """Validate ADR-060 canonical prefixes, authentic video_ids, and strict orthogonality."""
     for item in golden_set_items:
         item_id = item["id"]
         meta = item["metadata"]
+        criterion = meta["criterion"]
         verdict = item["expected_output"]["verdict"]
+        cand = item["input"]["candidate_text"].strip()
 
-        assert "video_id" in meta and len(meta["video_id"]) >= 3, (
-            f"Item '{item_id}' missing valid video_id."
+        expected_prefix = CRITERION_PREFIXES[criterion]
+        assert item_id.startswith(expected_prefix), (
+            f"Item '{item_id}' must use canonical ADR-060 prefix '{expected_prefix}'."
+        )
+
+        video_id = meta.get("video_id", "")
+        assert len(video_id) >= 3 and not video_id.startswith(SYNTHETIC_VIDEO_PREFIXES), (
+            f"Item '{item_id}' must reference an authentic FluidTranscript video_id, got '{video_id}'."
         )
 
         if verdict == "PASS":
@@ -184,4 +205,33 @@ def test_golden_set_metadata_and_defect_isolation(
             )
             assert meta.get("defect_location") not in (None, "none", ""), (
                 f"FAIL item '{item_id}' must specify defect_location."
+            )
+
+        # Cross-criterion orthogonality: zero style-ban leaks outside linear_style_naturalism FAIL
+        is_style_fail = (
+            criterion == JudgeCriterion.LINEAR_STYLE_NATURALISM.value and verdict == "FAIL"
+        )
+        if not is_style_fail:
+            vocab_hits = RESTRICTED_VOCAB_RE.findall(cand)
+            assert not vocab_hits, (
+                f"Item '{item_id}' leaks restricted vocabulary outside style FAIL: {vocab_hits}"
+            )
+            antithesis_hits = BINARY_ANTITHESIS_RE.findall(cand)
+            assert not antithesis_hits, (
+                f"Item '{item_id}' leaks binary antithesis outside style FAIL: {antithesis_hits}"
+            )
+
+        # Extra Info must contain >= 2 numbered continuous paragraphs unless testing extra_info_granularity FAIL
+        is_extra_fail = (
+            criterion == JudgeCriterion.EXTRA_INFO_GRANULARITY.value and verdict == "FAIL"
+        )
+        if not is_extra_fail:
+            comp_section = extract_complementary_section(cand) or ""
+            numbered = [
+                line.strip()
+                for line in comp_section.splitlines()
+                if re.match(r"^\d+\.\s", line.strip())
+            ]
+            assert len(numbered) >= 2, (
+                f"Item '{item_id}' must have >= 2 numbered Extra Info items, got {len(numbered)}."
             )

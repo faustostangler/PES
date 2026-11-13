@@ -19,6 +19,7 @@ from cresmo.domain.value_objects.quality import (
     EvaluationContext,
     JudgeCriterion,
     JudgeEvaluation,
+    resolve_stage_scoring_policy,
 )
 from cresmo.infrastructure.config import DEFAULT_JUDGE_PASS_THRESHOLD
 
@@ -139,72 +140,89 @@ class TypeSafeJudgeAdapter(LlmJudgePort):
                         "exemplary paratactic synthesis",
                     ],
                 }
-            elif criterion == JudgeCriterion.FACTUAL_GROUNDING:
+            elif criterion == JudgeCriterion.EPISTEMIC_GROUNDING_SEGREGATION:
                 questions_payload[criterion.value] = {
                     "type": "score",
                     "instructions": (
-                        "Are all expanded concepts and claims historically and scientifically grounded with zero hallucinations?"
+                        "Are all facts, dates, and primary sources grounded with strict segregation between First-Order Facts and Interpretive Models?"
                     ),
                     "criteria": [
-                        "contains fabricated or anachronistic facts",
-                        "mostly grounded with minor inaccuracies",
-                        "completely grounded in factual truth",
+                        "contains fabricated facts, anachronisms, or unattributed interpretive claims",
+                        "mostly grounded with minor epistemic lapses",
+                        "completely grounded in factual truth with strict fact/model segregation",
                     ],
                 }
-            elif criterion == JudgeCriterion.SOCRATIC_EPISTEMIC_DEPTH:
+            elif criterion == JudgeCriterion.CONCEPTUAL_MECHANICAL_DECOMPOSITION:
                 questions_payload[criterion.value] = {
                     "type": "score",
                     "instructions": (
-                        "Does the text eliminate explanatory voids and demonstrate intermediate mechanisms across Socratic dimensions?"
+                        "Does the text provide non-circular definitions with boundary conditions and complete A -> B -> C intermediate mechanisms?"
                     ),
                     "criteria": [
-                        "superficial with teleological shortcuts",
-                        "partially dense with some mechanisms explained",
-                        "deeply articulated causal mechanisms and premises",
+                        "circular definitions or unexplained causal leaps",
+                        "partially articulated mechanisms with minor gaps",
+                        "complete ontological boundaries and step-by-step intermediate gearing",
                     ],
                 }
-            elif criterion == JudgeCriterion.CAUSAL_STRATIFICATION_AGENCY:
+            elif criterion == JudgeCriterion.BRAUDELIAN_STRATIFICATION:
                 questions_payload[criterion.value] = {
                     "type": "score",
                     "instructions": (
-                        "Does the text stratify causality across 3 tiers and expose non-spontaneous agency and latent networks?"
+                        "Does the text stratify causality across structural invariants, conjunctural buildup, and immediate triggers?"
                     ),
                     "criteria": [
-                        "naive spontaneous events without temporal depth",
-                        "partially stratified with some institutional context",
-                        "exemplary 3-tier stratification and latent network analysis",
+                        "flattens causation onto surface events without temporal depth",
+                        "partially stratified across some temporal scales",
+                        "exemplary 3-tier Braudelian causal stratification",
                     ],
                 }
-            elif criterion == JudgeCriterion.COMPLEMENTARY_SUBSTANCE:
+            elif criterion == JudgeCriterion.GENEALOGY_HIDDEN_AGENCY:
                 questions_payload[criterion.value] = {
                     "type": "score",
                     "instructions": (
-                        "Is the ### Extra Info section encyclopedic, numbered, and rich in primary data?"
+                        "Does the text track precursors, documented relational networks, and material Cui Bono incentives without inventing conspiracies?"
+                    ),
+                    "criteria": [
+                        "naive lone-genius or spontaneous-agency framing",
+                        "partial precursor or network context",
+                        "rigorous genealogy, documented networks, and hypothesis-framed payoffs",
+                    ],
+                }
+            elif criterion == JudgeCriterion.COMPETING_HYPOTHESES:
+                questions_payload[criterion.value] = {
+                    "type": "score",
+                    "instructions": (
+                        "Does the text stress-test edge cases and evaluate mutually exclusive competing hypotheses via Popperian falsification?"
+                    ),
+                    "criteria": [
+                        "dogmatic single-hypothesis confirmation lacking counter-arguments",
+                        "mentions alternatives without diagnostic refutation",
+                        "rigorous ACH evaluation ranking surviving hypotheses by refutation",
+                    ],
+                }
+            elif criterion == JudgeCriterion.EXTRA_INFO_GRANULARITY:
+                questions_payload[criterion.value] = {
+                    "type": "score",
+                    "instructions": (
+                        "Is ### Extra Info numbered, non-tautological, and populated with high-granularity specifics migrated from the main body?"
                     ),
                     "criteria": [
                         "missing, empty, bulleted, or tautological",
-                        "acceptable notes with minor omissions",
-                        "rich standalone encyclopedic substance with Big-Endian dates",
+                        "acceptable granularity with minor omissions",
+                        "rich numbered high-granularity specifics protecting core narrative flow",
                     ],
                 }
-            elif criterion == JudgeCriterion.AUTHORIAL_NATURALISM:
+            elif criterion == JudgeCriterion.LINEAR_STYLE_NATURALISM:
                 questions_payload[criterion.value] = {
                     "type": "score",
                     "instructions": (
-                        "Does the text maintain the Detective Narrator voice, methodological naturalism, and zero binary antitheses?"
+                        "Does the text maintain linear progression, formal connectives, Detective Narrator naturalism, and zero style-guide bans?"
                     ),
                     "criteria": [
-                        "moralistic commentary or binary antitheses present",
-                        "moderately naturalistic voice with minor lapses",
-                        "exemplary naturalistic analysis with zero antitheses",
+                        "meta-discourse, links, em-dashes, antitheses, or restricted vocabulary present",
+                        "mostly linear and naturalistic with minor stylistic lapses",
+                        "exemplary linear prose strictly compliant with cresmo-style-guide",
                     ],
-                }
-            elif criterion == JudgeCriterion.EPISTEMIC_SATURATION:
-                questions_payload[criterion.value] = {
-                    "type": "noul",
-                    "instructions": (
-                        "Has the compendium reached epistemic saturation with negligible new marginal information?"
-                    ),
                 }
 
         state_payload = {
@@ -276,6 +294,7 @@ class TypeSafeJudgeAdapter(LlmJudgePort):
                 )
             )
 
+        weights, veto_criteria = resolve_stage_scoring_policy(context.stage_name)
         return JudgeEvaluation.create_with_composite_verdict(
             target_stage=context.stage_name,
             criteria_scores=criteria_scores_list,
@@ -283,6 +302,8 @@ class TypeSafeJudgeAdapter(LlmJudgePort):
             pass_threshold=self._pass_threshold,
             latency_ms=latency_ms,
             trace_id=context.trace_id,
+            weights=weights,
+            veto_criteria=veto_criteria,
         )
 
     @property

@@ -67,16 +67,18 @@ class TestJsonPromptProvider:
         prompt = provider.get_prompt(
             PromptKey.JUDGE_GAP_FILLER,
             stage_name="gap_filler",
-            criteria_json='["factual_grounding", "socratic_epistemic_depth"]',
+            criteria_json='["epistemic_grounding_segregation", "conceptual_mechanical_decomposition"]',
             source_text="Source fluid transcript.",
             candidate_text="Candidate compendium text.",
         )
         assert prompt.system_prompt is not None
-        assert "factual_grounding" in prompt.system_prompt
-        assert "socratic_epistemic_depth" in prompt.system_prompt
-        assert "causal_stratification_agency" in prompt.system_prompt
-        assert "complementary_substance" in prompt.system_prompt
-        assert "authorial_naturalism" in prompt.system_prompt
+        assert "epistemic_grounding_segregation" in prompt.system_prompt
+        assert "conceptual_mechanical_decomposition" in prompt.system_prompt
+        assert "braudelian_stratification" in prompt.system_prompt
+        assert "genealogy_hidden_agency" in prompt.system_prompt
+        assert "competing_hypotheses" in prompt.system_prompt
+        assert "extra_info_granularity" in prompt.system_prompt
+        assert "linear_style_naturalism" in prompt.system_prompt
         user_msg = prompt.get_last_user_content()
         assert "Source fluid transcript." in user_msg
         assert "Candidate compendium text." in user_msg

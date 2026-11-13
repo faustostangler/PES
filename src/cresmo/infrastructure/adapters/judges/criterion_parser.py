@@ -48,8 +48,8 @@ def parse_criteria_scores(
     and key variations across different LLM families (e.g. Gemini, Ollama, Qwen):
     1. Supports list of dicts: `[{"criterion": "...", "score": 0.9}]`
     2. Supports key aliases: `criterion`, `name`, `criterion_name`, `id`, `criterion_id`.
-    3. Supports dict representations: `{"factual_grounding": {"score": 0.9, ...}}`.
-    4. Supports single-key criterion objects: `[{"factual_grounding": {"score": 0.9}}]`.
+    3. Supports dict representations: `{"epistemic_grounding_segregation": {"score": 0.9, ...}}`.
+    4. Supports single-key criterion objects: `[{"epistemic_grounding_segregation": {"score": 0.9}}]`.
     5. Safely skips non-criterion/meta objects while logging raw payload context.
 
     Args:

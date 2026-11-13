@@ -162,7 +162,7 @@ class TestGeminiLLMAdapter:
             )
 
         mock_span.set_attribute.assert_any_call("gen_ai.system", "google")
-        mock_span.set_attribute.assert_any_call("gen_ai.request.model", "gemini-3.5-flash-lite")
+        mock_span.set_attribute.assert_any_call("gen_ai.request.model", "gemini-4-hydrogen")
         mock_span.set_attribute.assert_any_call("gen_ai.usage.input_tokens", 2)
         mock_span.set_attribute.assert_any_call("gen_ai.usage.output_tokens", 3)
         mock_span.set_attribute.assert_any_call("langfuse.observation.type", "generation")
@@ -313,8 +313,8 @@ class TestGeminiLLMAdapter:
     def test_default_initialization_attributes(self) -> None:
         mock_client = MagicMock()
         adapter = GeminiLLMAdapter(genai_client=mock_client)
-        assert adapter.model_name == "gemini-3.5-flash-lite"
-        assert adapter.fallback_model_name == "gemini-3.1-flash-lite"
+        assert adapter.model_name == "gemini-4-hydrogen"
+        assert adapter.fallback_model_name == "gemini-3.8-flash"
         assert adapter.max_output_tokens == 8192
         assert adapter.default_temperature == 0.2
 

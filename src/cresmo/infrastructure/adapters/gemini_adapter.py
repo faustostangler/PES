@@ -132,8 +132,8 @@ class GeminiLLMAdapter(LLMTransformationPort):
     def __init__(
         self,
         api_key: str | None = None,
-        model_name: str = "gemini-3.5-flash-lite",
-        fallback_model_name: str | None = "gemini-3.1-flash-lite",
+        model_name: str = "gemini-4-hydrogen",
+        fallback_model_name: str | None = "gemini-3.8-flash",
         max_output_tokens: int = 8192,
         genai_client: Any | None = None,
         langfuse_client: Langfuse | None = None,

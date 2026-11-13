@@ -267,7 +267,7 @@ class TestGeminiJudgeAdapter:
             {
                 "criteria": [
                     {
-                        "criterion": "factual_grounding",
+                        "criterion": "epistemic_grounding_segregation",
                         "score": 0.95,
                         "passed": True,
                         "reasoning": "Fully grounded in real-world facts.",
@@ -293,7 +293,7 @@ class TestGeminiJudgeAdapter:
             stage_name="gap_filler",
             raw_text="source transcript",
             candidate_text="candidate compendium",
-            required_criteria=(JudgeCriterion.FACTUAL_GROUNDING,),
+            required_criteria=(JudgeCriterion.EPISTEMIC_GROUNDING_SEGREGATION,),
         )
         evaluation = adapter.evaluate(context)
 
@@ -312,7 +312,7 @@ class TestGeminiJudgeAdapter:
             {
                 "criteria": [
                     {
-                        "criterion": "factual_grounding",
+                        "criterion": "epistemic_grounding_segregation",
                         "score": 0.95,
                         "passed": True,
                         "reasoning": "Accurate grounding.",
@@ -329,7 +329,7 @@ class TestGeminiJudgeAdapter:
             stage_name="gap_filler",
             raw_text="source",
             candidate_text="candidate",
-            required_criteria=(JudgeCriterion.FACTUAL_GROUNDING,),
+            required_criteria=(JudgeCriterion.EPISTEMIC_GROUNDING_SEGREGATION,),
         )
         adapter.evaluate(context)
 
@@ -350,13 +350,13 @@ class TestGeminiJudgeAdapter:
             {
                 "criteria": [
                     {
-                        "name": "factual_grounding",
+                        "name": "epistemic_grounding_segregation",
                         "score": 0.95,
                         "passed": True,
                         "reasoning": "Valid via name alias.",
                     },
                     {
-                        "criterion_name": "socratic_epistemic_depth",
+                        "criterion_name": "conceptual_mechanical_decomposition",
                         "score": 0.92,
                         "passed": True,
                         "reasoning": "Valid via criterion_name alias.",
@@ -378,20 +378,62 @@ class TestGeminiJudgeAdapter:
             raw_text="source",
             candidate_text="candidate",
             required_criteria=(
-                JudgeCriterion.FACTUAL_GROUNDING,
-                JudgeCriterion.SOCRATIC_EPISTEMIC_DEPTH,
+                JudgeCriterion.EPISTEMIC_GROUNDING_SEGREGATION,
+                JudgeCriterion.CONCEPTUAL_MECHANICAL_DECOMPOSITION,
             ),
         )
         evaluation = adapter.evaluate(context)
 
         assert evaluation.passed is True
         assert len(evaluation.criteria_scores) == 2
-        fg = evaluation.get_score(JudgeCriterion.FACTUAL_GROUNDING)
+        fg = evaluation.get_score(JudgeCriterion.EPISTEMIC_GROUNDING_SEGREGATION)
         assert fg is not None
         assert fg.score == 0.95
-        depth = evaluation.get_score(JudgeCriterion.SOCRATIC_EPISTEMIC_DEPTH)
+        depth = evaluation.get_score(JudgeCriterion.CONCEPTUAL_MECHANICAL_DECOMPOSITION)
         assert depth is not None
         assert depth.score == 0.92
+
+    def test_gemini_judge_enforces_gap_filler_mechanical_veto_and_weights(self) -> None:
+        mock_genai_client = MagicMock()
+        mock_response = MagicMock()
+        mock_response.text = json.dumps(
+            {
+                "criteria": [
+                    {"criterion": "epistemic_grounding_segregation", "score": 0.50, "passed": False, "reasoning": "Fabricated fact."},
+                    {"criterion": "conceptual_mechanical_decomposition", "score": 1.0, "passed": True, "reasoning": "Ok."},
+                    {"criterion": "braudelian_stratification", "score": 1.0, "passed": True, "reasoning": "Ok."},
+                    {"criterion": "genealogy_hidden_agency", "score": 1.0, "passed": True, "reasoning": "Ok."},
+                    {"criterion": "competing_hypotheses", "score": 1.0, "passed": True, "reasoning": "Ok."},
+                    {"criterion": "extra_info_granularity", "score": 1.0, "passed": True, "reasoning": "Ok."},
+                    {"criterion": "linear_style_naturalism", "score": 1.0, "passed": True, "reasoning": "Ok."},
+                ],
+                "overall_score": 0.90,
+                "passed": True,
+            }
+        )
+        mock_genai_client.models.generate_content.return_value = mock_response
+
+        adapter = GeminiJudgeAdapter(client=mock_genai_client, pass_threshold=0.80)
+        context = EvaluationContext(
+            stage_name="gap_filler",
+            raw_text="source",
+            candidate_text="candidate",
+            required_criteria=(
+                JudgeCriterion.EPISTEMIC_GROUNDING_SEGREGATION,
+                JudgeCriterion.CONCEPTUAL_MECHANICAL_DECOMPOSITION,
+                JudgeCriterion.BRAUDELIAN_STRATIFICATION,
+                JudgeCriterion.GENEALOGY_HIDDEN_AGENCY,
+                JudgeCriterion.COMPETING_HYPOTHESES,
+                JudgeCriterion.EXTRA_INFO_GRANULARITY,
+                JudgeCriterion.LINEAR_STYLE_NATURALISM,
+            ),
+        )
+        evaluation = adapter.evaluate(context)
+
+        # Weighted score: 0.50*0.20 + 1.0*0.80 = 0.90 >= 0.80, but Mechanical Veto MUST reject
+        assert evaluation.overall_score == 0.9
+        assert evaluation.is_vetoed is True
+        assert evaluation.passed is False
 
     def test_transient_network_and_disconnect_error_detection(self) -> None:
         from cresmo.infrastructure.adapters.judges.gemini_judge import (
@@ -534,7 +576,7 @@ class TestOllamaJudgeAdapter:
                 {
                     "criteria": [
                         {
-                            "criterion": "factual_grounding",
+                            "criterion": "epistemic_grounding_segregation",
                             "score": 0.90,
                             "passed": True,
                             "reasoning": "Grounded.",
@@ -561,7 +603,7 @@ class TestOllamaJudgeAdapter:
             stage_name="gap_filler",
             raw_text="source raw",
             candidate_text="cand text",
-            required_criteria=(JudgeCriterion.FACTUAL_GROUNDING,),
+            required_criteria=(JudgeCriterion.EPISTEMIC_GROUNDING_SEGREGATION,),
         )
         evaluation = adapter.evaluate(context)
 
@@ -629,11 +671,13 @@ class TestTypeSafeJudgeAdapter:
         mock_post_resp.json.return_value = {
             "nouls": dict[str, Any](),
             "scores": {
-                "factual_grounding": {"score": 0.92, "confidence": 0.95},
-                "socratic_epistemic_depth": {"score": 0.88, "confidence": 0.90},
-                "causal_stratification_agency": {"score": 0.85, "confidence": 0.88},
-                "complementary_substance": {"score": 0.90, "confidence": 0.92},
-                "authorial_naturalism": {"score": 0.87, "confidence": 0.89},
+                "epistemic_grounding_segregation": {"score": 0.92, "confidence": 0.95},
+                "conceptual_mechanical_decomposition": {"score": 0.88, "confidence": 0.90},
+                "braudelian_stratification": {"score": 0.85, "confidence": 0.88},
+                "genealogy_hidden_agency": {"score": 0.89, "confidence": 0.91},
+                "competing_hypotheses": {"score": 0.86, "confidence": 0.87},
+                "extra_info_granularity": {"score": 0.90, "confidence": 0.92},
+                "linear_style_naturalism": {"score": 0.87, "confidence": 0.89},
             },
         }
         mock_http_client.post.return_value = mock_post_resp
@@ -648,21 +692,23 @@ class TestTypeSafeJudgeAdapter:
             raw_text="source text",
             candidate_text="candidate compendium text",
             required_criteria=(
-                JudgeCriterion.FACTUAL_GROUNDING,
-                JudgeCriterion.SOCRATIC_EPISTEMIC_DEPTH,
-                JudgeCriterion.CAUSAL_STRATIFICATION_AGENCY,
-                JudgeCriterion.COMPLEMENTARY_SUBSTANCE,
-                JudgeCriterion.AUTHORIAL_NATURALISM,
+                JudgeCriterion.EPISTEMIC_GROUNDING_SEGREGATION,
+                JudgeCriterion.CONCEPTUAL_MECHANICAL_DECOMPOSITION,
+                JudgeCriterion.BRAUDELIAN_STRATIFICATION,
+                JudgeCriterion.GENEALOGY_HIDDEN_AGENCY,
+                JudgeCriterion.COMPETING_HYPOTHESES,
+                JudgeCriterion.EXTRA_INFO_GRANULARITY,
+                JudgeCriterion.LINEAR_STYLE_NATURALISM,
             ),
         )
         evaluation = adapter.evaluate(context)
 
         assert evaluation.passed is True
-        assert len(evaluation.criteria_scores) == 5
-        score_fg = evaluation.get_score(JudgeCriterion.FACTUAL_GROUNDING)
-        assert score_fg is not None
-        assert score_fg.score == 0.92
-        assert score_fg.passed is True
+        assert len(evaluation.criteria_scores) == 7
+        score_eg = evaluation.get_score(JudgeCriterion.EPISTEMIC_GROUNDING_SEGREGATION)
+        assert score_eg is not None
+        assert score_eg.score == 0.92
+        assert score_eg.passed is True
 
 
 class TestResilientCompositeJudgeAdapter:
@@ -952,8 +998,8 @@ class TestCoordinatorLlmJudgeIntegration:
         if mock_judge.evaluate.call_count >= 2:
             gap_eval_ctx = mock_judge.evaluate.call_args_list[1][0][0]
             assert gap_eval_ctx.stage_name == "gap_filler"
-            assert JudgeCriterion.FACTUAL_GROUNDING in gap_eval_ctx.required_criteria
-            assert JudgeCriterion.SOCRATIC_EPISTEMIC_DEPTH in gap_eval_ctx.required_criteria
+            assert JudgeCriterion.EPISTEMIC_GROUNDING_SEGREGATION in gap_eval_ctx.required_criteria
+            assert JudgeCriterion.CONCEPTUAL_MECHANICAL_DECOMPOSITION in gap_eval_ctx.required_criteria
 
     def test_coordinator_blocking_mode_raises_on_quality_failure(self) -> None:
         from cresmo.application.pipeline.coordinator import CresmoPipeline

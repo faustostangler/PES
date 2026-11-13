@@ -69,7 +69,7 @@ def upload_golden_set(
 
         dataset_desc = (
             description
-            or "Cresmo Stage 2 (gap_filler) Canonical 35-item Golden Dataset for LLM Judge Calibration."
+            or "Cresmo Stage 2 (gap_filler) Canonical 49-item Golden Dataset (ADR-060) for LLM Judge Calibration."
         )
 
         # Ensure dataset container exists
@@ -77,10 +77,10 @@ def upload_golden_set(
             name=dataset_name,
             description=dataset_desc,
             metadata={
-                "version": "1.0.0",
+                "version": "2.0.0",
                 "stage": "gap_filler",
                 "total_items": len(items),
-                "criteria_count": 5,
+                "criteria_count": 7,
             },
         )
         logger.info(

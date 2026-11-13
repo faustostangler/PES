@@ -177,10 +177,11 @@ class TestCresmoSettings:
     ) -> None:
         """Verify calibration and benchmark models defaults and safe comma-separated env parsing."""
         settings = CresmoSettings()
-        assert settings.gemini_model == "gemini-3.5-flash-lite"
-        assert settings.judge_gemini_model == "gemini-3.5-flash-lite"
+        assert settings.gemini_model == "gemini-4-hydrogen"
+        assert settings.judge_gemini_model == "gemini-4-hydrogen"
         assert settings.benchmark_models == [
-            "gemini:gemini-3.5-flash",
+            "gemini:gemini-4-hydrogen",
+            "gemini:gemini-3.8-flash",
             "gemini:gemini-3.5-flash-lite",
         ]
         assert settings.judge_calibration_models == settings.benchmark_models

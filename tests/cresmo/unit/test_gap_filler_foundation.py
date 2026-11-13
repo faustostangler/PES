@@ -31,12 +31,30 @@ from cresmo.domain.value_objects import (
 
 def test_gap_filler_judge_criteria_enum() -> None:
     """Verify specialized gap_filler criteria are registered in JudgeCriterion."""
-    assert JudgeCriterion.FACTUAL_GROUNDING == "factual_grounding"
-    assert JudgeCriterion.SOCRATIC_EPISTEMIC_DEPTH == "socratic_epistemic_depth"
-    assert JudgeCriterion.CAUSAL_STRATIFICATION_AGENCY == "causal_stratification_agency"
-    assert JudgeCriterion.COMPLEMENTARY_SUBSTANCE == "complementary_substance"
-    assert JudgeCriterion.AUTHORIAL_NATURALISM == "authorial_naturalism"
-    assert JudgeCriterion.EPISTEMIC_SATURATION == "epistemic_saturation"
+    assert JudgeCriterion.EPISTEMIC_GROUNDING_SEGREGATION == "epistemic_grounding_segregation"
+    assert JudgeCriterion.CONCEPTUAL_MECHANICAL_DECOMPOSITION == "conceptual_mechanical_decomposition"
+    assert JudgeCriterion.BRAUDELIAN_STRATIFICATION == "braudelian_stratification"
+    assert JudgeCriterion.GENEALOGY_HIDDEN_AGENCY == "genealogy_hidden_agency"
+    assert JudgeCriterion.COMPETING_HYPOTHESES == "competing_hypotheses"
+    assert JudgeCriterion.EXTRA_INFO_GRANULARITY == "extra_info_granularity"
+    assert JudgeCriterion.LINEAR_STYLE_NATURALISM == "linear_style_naturalism"
+
+
+def test_gap_filler_scoring_policy_and_weights() -> None:
+    """Verify gap_filler scoring policy returns 7 canonical weights summing to 1.0 and 2 vetoes."""
+    from cresmo.domain.value_objects import (
+        GAP_FILLER_CANONICAL_WEIGHTS,
+        GAP_FILLER_MECHANICAL_VETO_CRITERIA,
+        resolve_stage_scoring_policy,
+    )
+
+    weights, vetoes = resolve_stage_scoring_policy("gap_filler")
+    assert weights == GAP_FILLER_CANONICAL_WEIGHTS
+    assert len(weights) == 7
+    assert round(sum(weights.values()), 6) == 1.0
+    assert vetoes == GAP_FILLER_MECHANICAL_VETO_CRITERIA
+    assert JudgeCriterion.EPISTEMIC_GROUNDING_SEGREGATION in vetoes
+    assert JudgeCriterion.EXTRA_INFO_GRANULARITY in vetoes
 
 
 def test_gap_filler_mechanical_invariants_valid() -> None:
@@ -174,6 +192,12 @@ def test_stage_registry_contains_gap_filler() -> None:
     assert StageRegistry.contains("gap_filler") is True
     spec = StageRegistry.get("gap_filler")
     assert spec.transform_prompt_key == PromptKey.GAP_FILLER
-    assert JudgeCriterion.FACTUAL_GROUNDING in spec.required_criteria
-    assert JudgeCriterion.COMPLEMENTARY_SUBSTANCE in spec.required_criteria
+    assert len(spec.required_criteria) == 7
+    assert JudgeCriterion.EPISTEMIC_GROUNDING_SEGREGATION in spec.required_criteria
+    assert JudgeCriterion.CONCEPTUAL_MECHANICAL_DECOMPOSITION in spec.required_criteria
+    assert JudgeCriterion.BRAUDELIAN_STRATIFICATION in spec.required_criteria
+    assert JudgeCriterion.GENEALOGY_HIDDEN_AGENCY in spec.required_criteria
+    assert JudgeCriterion.COMPETING_HYPOTHESES in spec.required_criteria
+    assert JudgeCriterion.EXTRA_INFO_GRANULARITY in spec.required_criteria
+    assert JudgeCriterion.LINEAR_STYLE_NATURALISM in spec.required_criteria
     assert spec.post_processor is not None

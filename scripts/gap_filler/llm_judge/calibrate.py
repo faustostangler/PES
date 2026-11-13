@@ -79,7 +79,7 @@ def sanitize_report_filename(provider: str, model_name: str) -> str:
 # Canonical seed dataset items for quick dry-run
 SEED_CALIBRATION_DATA: list[dict[str, Any]] = [
     {
-        "id": "seed_01_pass_factual_grounding",
+        "id": "eg_seed_01_pass",
         "input": {
             "raw_text": (
                 "## A Posse de Afonso Henriques e a Bula Manifestis Probatum\n\n"
@@ -89,21 +89,21 @@ SEED_CALIBRATION_DATA: list[dict[str, Any]] = [
             ),
             "candidate_text": (
                 "## A Autonomia Feudal e a Legitimação Apostólica do Reino de Portugal\n\n"
-                "A consolidação política da independência portucalense exigiu não apenas vitórias campais "
-                "contra os exércitos de Afonso VII de Leão, mas a inserção direta na rede de suserania da Santa Sé. "
-                "Em 23 de maio de 1179, o papa **Alexandre III** promulgou a célebre bula **Manifestis Probatum**, "
-                "declarando **Afonso Henriques** rei soberano de Portugal e outorgando proteção apostólica contra "
-                "quaisquer pretensões anexionistas de monarcas cristãos vizinhos.\n\n"
-                "Esse ato diplomático coroou um esforço de décadas iniciado no Tratado de Zamora em 1143, subordinando "
+                "A consolidação política da independência portucalense articulou vitórias campais "
+                "contra os exércitos de Afonso VII de Leão e a inserção direta na rede de suserania da Santa Sé. "
+                "Em 1179-05-23, o papa Alexandre III promulgou a bula Manifestis Probatum, "
+                "declarando Afonso Henriques rei soberano de Portugal e outorgando proteção apostólica contra "
+                "reivindicações anexionistas de monarcas cristãos vizinhos.\n\n"
+                "Esse ato diplomático coroou um esforço de décadas iniciado no Tratado de Zamora em 1143-10-05, subordinando "
                 "a legitimidade jurídica do novo reino ao pagamento anual de um censo de dois marcos de ouro à corte romana.\n\n"
                 "### Extra Info\n\n"
-                "1. O Tratado de Zamora de outubro de 1143 contou com a mediação do cardeal Guido de Vico, legado papal na Península Ibérica.\n\n"
+                "1. O Tratado de Zamora de 1143-10-05 contou com a mediação do cardeal Guido de Vico, legado papal na Península Ibérica.\n"
                 "2. O censo pago por Afonso Henriques à Santa Sé foi elevado de quatro onças de ouro anuais em 1144 para dois marcos de ouro em 1179."
             ),
         },
         "expected_output": {"verdict": "PASS"},
         "metadata": {
-            "criterion": "factual_grounding",
+            "criterion": "epistemic_grounding_segregation",
             "difficulty": "easy",
             "expected_anomaly": "none",
             "defect_location": "none",
@@ -112,7 +112,7 @@ SEED_CALIBRATION_DATA: list[dict[str, Any]] = [
         },
     },
     {
-        "id": "seed_02_fail_socratic_epistemic_depth",
+        "id": "cm_seed_02_fail",
         "input": {
             "raw_text": (
                 "## Concorrência e Gargalos em Bancos Relacionais sob Alta Carga\n\n"
@@ -124,23 +124,21 @@ SEED_CALIBRATION_DATA: list[dict[str, Any]] = [
             "candidate_text": (
                 "## O Esgotamento de Recursos em Bancos Relacionais sob Concorrência Extrema\n\n"
                 "Em cenários de estresse computacional caracterizados por taxas elevadas de transações simultâneas, "
-                "a arquitetura do **PostgreSQL** manifesta variações desproporcionais na latência percebida pelos clientes. "
-                "A saturação de conexões sem pooling adequado impõe um ônus operacional que degrada o rendimento global "
-                "da aplicação sob teste de estresse na infraestrutura em contêineres **Docker**.\n\n"
+                "a arquitetura do PostgreSQL manifesta variações desproporcionais na latência percebida pelos clientes. "
+                "A saturação de conexões sem pooling adequado impõe um ônus que degrada o rendimento global "
+                "da aplicação sob teste de estresse na infraestrutura em contêineres Docker.\n\n"
                 "A degradação manifesta-se através de disputas intensas por recursos compartilhados, onde diferentes "
                 "processos disputam o acesso aos mesmos registros de tabelas financeiras. A sobrecarga de gerenciar "
-                "dezenas de processos paralelos força o núcleo do sistema operacional a despender ciclos valiosos de "
-                "processamento em trocas de contexto em vez de executar consultas analíticas úteis.\n\n"
-                "Essas perturbações confirmam a necessidade de dimensionar corretamente o agrupamento de conexões "
-                "e revisar a modelagem de consultas para preservar a estabilidade da camada de persistência.\n\n"
+                "dezenas de processos paralelos força o núcleo do sistema operacional a despender ciclos de "
+                "processamento em trocas de contexto.\n\n"
                 "### Extra Info\n\n"
-                "1. O gerenciador de conexões PgBouncer opera em três modos distintos de agrupamento: sessão, transação e instrução.\n\n"
+                "1. O gerenciador de conexões PgBouncer gerencia três modos distintos de agrupamento: sessão, transação e instrução.\n"
                 "2. O comando EXPLAIN ANALYZE do PostgreSQL executa a consulta e retorna o plano de execução real juntamente com os custos."
             ),
         },
         "expected_output": {"verdict": "FAIL"},
         "metadata": {
-            "criterion": "socratic_epistemic_depth",
+            "criterion": "conceptual_mechanical_decomposition",
             "difficulty": "borderline",
             "expected_anomaly": "explanatory_vacuum_missing_mvcc_intermediate_mechanisms",
             "defect_location": "paragraph_2",
@@ -404,11 +402,13 @@ def evaluate_single_item(judge: Any, item: dict[str, Any]) -> ItemEvaluationResu
         raw_text=raw_text,
         candidate_text=candidate_text,
         required_criteria=(
-            JudgeCriterion.FACTUAL_GROUNDING,
-            JudgeCriterion.SOCRATIC_EPISTEMIC_DEPTH,
-            JudgeCriterion.CAUSAL_STRATIFICATION_AGENCY,
-            JudgeCriterion.COMPLEMENTARY_SUBSTANCE,
-            JudgeCriterion.AUTHORIAL_NATURALISM,
+            JudgeCriterion.EPISTEMIC_GROUNDING_SEGREGATION,
+            JudgeCriterion.CONCEPTUAL_MECHANICAL_DECOMPOSITION,
+            JudgeCriterion.BRAUDELIAN_STRATIFICATION,
+            JudgeCriterion.GENEALOGY_HIDDEN_AGENCY,
+            JudgeCriterion.COMPETING_HYPOTHESES,
+            JudgeCriterion.EXTRA_INFO_GRANULARITY,
+            JudgeCriterion.LINEAR_STYLE_NATURALISM,
         ),
     )
 
