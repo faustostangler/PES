@@ -1,5 +1,7 @@
-"""PostgreSQL Ledger Persistence Adapter for Cresmo.
+"""# FUTURE / DEFERRED: PostgreSQL Ledger Persistence Adapter for Cresmo.
 
+Active CLI wires SqliteLedgerAdapter; PostgresLedgerAdapter is preserved with tests
+for horizontal database scaling per ADR-062.
 Implements LedgerRepositoryPort with SQLAlchemy 2.0 Async and asyncpg,
 providing transactional ACID guarantees, connection pooling, and multi-process
 concurrency safety adhering to ADR-001, ADR-003, and the Doctor Stangler Method.
@@ -23,7 +25,7 @@ from sqlalchemy.ext.asyncio import (
 
 from cresmo.application.ports import LedgerRepositoryPort
 from cresmo.domain.value_objects import ChannelName, ContentId, LedgerEntry, PipelineStatus
-from cresmo.infrastructure.database.models import Base, LedgerEntryRow
+from cresmo.infrastructure.persistence.models import Base, LedgerEntryRow
 
 T = TypeVar("T")
 
@@ -118,7 +120,9 @@ class PostgresLedgerAdapter(LedgerRepositoryPort):
     async def is_processed_async(self, content_id: ContentId) -> bool:
         """Asynchronously check whether a content item has already completed."""
         async with self._session_factory() as session:
-            stmt = select(LedgerEntryRow.status).where(LedgerEntryRow.content_id == content_id.value)
+            stmt = select(LedgerEntryRow.status).where(
+                LedgerEntryRow.content_id == content_id.value
+            )
             result = await session.execute(stmt)
             status = result.scalar_one_or_none()
             if status is None:
@@ -190,11 +194,7 @@ class PostgresLedgerAdapter(LedgerRepositoryPort):
     async def list_entries_async(self, limit: int = 100) -> list[LedgerEntry]:
         """Asynchronously list recently recorded ledger entries."""
         async with self._session_factory() as session:
-            stmt = (
-                select(LedgerEntryRow)
-                .order_by(LedgerEntryRow.updated_at.desc())
-                .limit(limit)
-            )
+            stmt = select(LedgerEntryRow).order_by(LedgerEntryRow.updated_at.desc()).limit(limit)
             result = await session.execute(stmt)
             rows = result.scalars().all()
             return [self._row_to_entry(row) for row in rows]

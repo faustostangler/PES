@@ -46,8 +46,7 @@ import cresmo.presentation.cli
 loaded = set(sys.modules.keys())
 banned_modules = {
     "cresmo.application.pipeline",
-    "cresmo.presentation.composition",
-    "cresmo.infrastructure.workers.arq_worker",
+    "cresmo.bootstrap.composition",
     "redis",
     "arq",
     "yt_dlp",
@@ -63,13 +62,13 @@ assert not intersection, f"Banned modules eagerly loaded on cli import: {interse
         )
 
     def test_composition_import_does_not_eagerly_load_arq_or_redis(self) -> None:
-        """Verify importing cresmo.presentation.composition does not eagerly trigger arq/redis side-effects per ADR-055."""
+        """Verify importing cresmo.bootstrap.composition does not eagerly trigger arq/redis side-effects per ADR-055."""
         code = """
 import sys
-import cresmo.presentation.composition
+import cresmo.bootstrap.composition
 
 loaded = set(sys.modules.keys())
-banned_side_effects = {"arq", "redis", "cresmo.infrastructure.workers.arq_worker"}
+banned_side_effects = {"arq", "redis"}
 intersection = banned_side_effects.intersection(loaded)
 assert not intersection, f"Composition root eagerly loaded arq/redis side-effects: {intersection}"
 """
@@ -84,7 +83,7 @@ assert not intersection, f"Composition root eagerly loaded arq/redis side-effect
         """Verify importing NativeMediaIngestionAdapter does not import whisper or torch."""
         code = """
 import sys
-from cresmo.infrastructure.adapters.native_media_ingestion_adapter import NativeMediaIngestionAdapter
+from cresmo.infrastructure.adapters.media.native_media_ingestion_adapter import NativeMediaIngestionAdapter
 
 assert "whisper" not in sys.modules, "whisper eagerly imported by NativeMediaIngestionAdapter"
 assert "torch" not in sys.modules, "torch eagerly imported by NativeMediaIngestionAdapter"

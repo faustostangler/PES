@@ -116,19 +116,31 @@ class TestTokenHashValueObject:
     def test_invalid_token_hash_direct_instantiation(self) -> None:
         with pytest.raises(Exception) as exc_empty:
             TokenHash("")
-        assert exc_empty.value.args[0] == "TokenHash must be a 64-character lowercase hexadecimal string."
+        assert (
+            exc_empty.value.args[0]
+            == "TokenHash must be a 64-character lowercase hexadecimal string."
+        )
 
         with pytest.raises(Exception) as exc_int:
             TokenHash(12345)  # type: ignore[arg-type]
-        assert exc_int.value.args[0] == "TokenHash must be a 64-character lowercase hexadecimal string."
+        assert (
+            exc_int.value.args[0]
+            == "TokenHash must be a 64-character lowercase hexadecimal string."
+        )
 
         with pytest.raises(Exception) as exc_short:
             TokenHash("abc")
-        assert exc_short.value.args[0] == "TokenHash must be a 64-character lowercase hexadecimal string."
+        assert (
+            exc_short.value.args[0]
+            == "TokenHash must be a 64-character lowercase hexadecimal string."
+        )
 
         with pytest.raises(Exception) as exc_upper:
             TokenHash("A" * 64)
-        assert exc_upper.value.args[0] == "TokenHash must be a 64-character lowercase hexadecimal string."
+        assert (
+            exc_upper.value.args[0]
+            == "TokenHash must be a 64-character lowercase hexadecimal string."
+        )
 
     def test_from_raw_token_derives_sha256(self) -> None:
         raw = "cresmo_pat_sample_secret_key_12345"

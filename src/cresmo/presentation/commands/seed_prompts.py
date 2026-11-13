@@ -12,7 +12,6 @@ Conforms to:
 
 from __future__ import annotations
 
-import os
 import subprocess
 import sys
 from typing import Annotated, Any
@@ -20,13 +19,13 @@ from typing import Annotated, Any
 import typer
 
 from cresmo import __version__
+from cresmo.bootstrap.composition import (
+    resolve_langfuse_client,
+    resolve_shared_settings,
+)
 from cresmo.infrastructure.adapters.prompts import (
     JsonPromptProvider,
     load_prompt_catalog,
-)
-from cresmo.presentation.composition import (
-    resolve_langfuse_client,
-    resolve_shared_settings,
 )
 from cresmo.presentation.exit_codes import (
     EXIT_CONFIG_OR_USAGE_ERROR,
@@ -39,11 +38,10 @@ PROMPT_MAPPINGS: dict[str, str] = {
 }
 
 
-def _resolve_git_sha() -> str:
-    """Resolve current Git commit short SHA from environment or git CLI."""
-    env_sha = os.environ.get("GIT_SHA")
-    if env_sha:
-        return env_sha[:8]
+def _resolve_git_sha(configured_sha: str | None = None) -> str:
+    """Resolve current Git commit short SHA from injected config or git CLI."""
+    if configured_sha and configured_sha.strip():
+        return configured_sha.strip()[:8]
     try:
         out = subprocess.check_output(
             ["git", "rev-parse", "--short=8", "HEAD"],
@@ -127,7 +125,8 @@ def handle_seed_prompts(
 
     success_count = 0
     failure_count = 0
-    git_sha = _resolve_git_sha()
+    raw_git_sha = getattr(settings, "git_sha", None)
+    git_sha = _resolve_git_sha(raw_git_sha if isinstance(raw_git_sha, str) else None)
     tags = ["cresmo", f"v{__version__}", f"git:{git_sha}"]
     prompt_config = {"git_sha": git_sha, "version": __version__}
 

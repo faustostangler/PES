@@ -43,7 +43,9 @@ class TestIngestRawTranscriptUseCase:
         canned = StageTranscript(
             channel=Channel(name="Science Channel"),
             provenance=MediaProvenance.create(url="https://youtube.com/watch?v=vid12345"),
-            content=Content(id=ContentId("vid12345"), title="Science Channel", text="Raw audio text transcript."),
+            content=Content(
+                id=ContentId("vid12345"), title="Science Channel", text="Raw audio text transcript."
+            ),
         )
         mock_ingestion.ingest_single_video.return_value = canned
         vault_port = InMemoryVaultAdapter()
@@ -74,7 +76,11 @@ class TestIngestRawTranscriptUseCase:
         canned = StageTranscript(
             channel=Channel(name="Default Channel"),
             provenance=MediaProvenance.create(url="https://youtube.com/watch?v=vid_default_01"),
-            content=Content(id=ContentId("vid_default_01"), title="Default Channel", text="Default transcript body."),
+            content=Content(
+                id=ContentId("vid_default_01"),
+                title="Default Channel",
+                text="Default transcript body.",
+            ),
         )
         mock_ingestion.ingest_single_video.return_value = canned
         vault_port = InMemoryVaultAdapter()

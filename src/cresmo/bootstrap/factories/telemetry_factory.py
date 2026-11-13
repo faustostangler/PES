@@ -20,22 +20,22 @@ from cresmo.application.ports import (
     MetricsPort,
     TelemetryPort,
 )
-from cresmo.application.services.preflight import probe_http_endpoint
-from cresmo.infrastructure.adapters.anonymizer_adapter import (
+from cresmo.bootstrap.factories.settings_factory import resolve_shared_settings
+from cresmo.infrastructure.adapters.anonymization.anonymizer_adapter import (
     NoOpAnonymizerAdapter,
     RegexAnonymizerAdapter,
 )
-from cresmo.infrastructure.adapters.noop_metrics_adapter import NoOpMetricsAdapter
-from cresmo.infrastructure.adapters.opentelemetry_adapter import (
+from cresmo.infrastructure.adapters.metrics.noop_metrics_adapter import NoOpMetricsAdapter
+from cresmo.infrastructure.adapters.metrics.prometheus_metrics_adapter import (
+    PrometheusMetricsAdapter,
+)
+from cresmo.infrastructure.adapters.system.preflight_probe_adapter import probe_http_endpoint
+from cresmo.infrastructure.adapters.telemetry.opentelemetry_adapter import (
     NoOpTelemetryAdapter,
     OpenTelemetryAdapter,
     name_telemetry_threads,
 )
-from cresmo.infrastructure.adapters.prometheus_metrics_adapter import (
-    PrometheusMetricsAdapter,
-)
 from cresmo.infrastructure.config import CresmoSettings
-from cresmo.presentation.factories.settings_factory import resolve_shared_settings
 
 logger = structlog.get_logger(__name__)
 
@@ -68,9 +68,15 @@ def _clean_langfuse_env() -> None:
     os.environ.pop("OTEL_EXPORTER_OTLP_TIMEOUT", None)
 
 
+def is_default_export_span(span: Any) -> bool:
+    """Evaluate default Langfuse span export criteria lazily (ADR-055)."""
+    from langfuse.span_filter import is_default_export_span as _real_is_default_export_span
+
+    return _real_is_default_export_span(span)
+
+
 def _build_should_export_span() -> Callable[[Any], bool]:
     """Build filter predicate checking default spans and cresmo.* scopes."""
-    from langfuse.span_filter import is_default_export_span
 
     def should_export_cresmo_span(span: Any) -> bool:
         if is_default_export_span(span):
@@ -105,6 +111,35 @@ def _build_mask_hook(
         return MaskOtelSpansResult(span_patches=span_patches) if span_patches else None
 
     return mask_otel_spans
+
+
+def _resolve_langfuse_class() -> Any:
+    """Resolve active Langfuse class lazily, supporting test mocks and patches (ADR-055)."""
+    cur = globals().get("Langfuse")
+    if cur is not None and cur is not _LAZY_LANGFUSE_SENTINEL:
+        return cur
+    mod = sys.modules.get("langfuse")
+    if mod is not None and hasattr(mod, "Langfuse"):
+        return mod.Langfuse
+    from langfuse import Langfuse as _RealLangfuse
+
+    return _RealLangfuse
+
+
+class _LazyLangfuse:
+    """Lazy callable proxy for Langfuse client instantiation (ADR-055)."""
+
+    def __call__(self, *args: Any, **kwargs: Any) -> Any:
+        cls = _resolve_langfuse_class()
+        if cls is self or cls is _LAZY_LANGFUSE_SENTINEL:
+            from langfuse import Langfuse as _RealLangfuse
+
+            return _RealLangfuse(*args, **kwargs)
+        return cls(*args, **kwargs)
+
+
+_LAZY_LANGFUSE_SENTINEL = _LazyLangfuse()
+Langfuse: Any = _LAZY_LANGFUSE_SENTINEL
 
 
 def resolve_langfuse_client(
@@ -159,14 +194,7 @@ def resolve_langfuse_client(
         if mask_hook is not None:
             init_kwargs["mask_otel_spans"] = mask_hook
 
-        langfuse_module = sys.modules.get("langfuse")
-        if langfuse_module is not None:
-            langfuse_cls = langfuse_module.Langfuse
-        else:
-            from langfuse import Langfuse as imported_langfuse
-
-            langfuse_cls = imported_langfuse
-        client = langfuse_cls(**init_kwargs)
+        client = Langfuse(**init_kwargs)
         name_telemetry_threads(client)
         return client
     except Exception as exc:  # noqa: BLE001

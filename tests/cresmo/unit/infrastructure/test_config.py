@@ -129,6 +129,8 @@ class TestCresmoSettings:
             settings.vault_dir,
             settings.mocs_dir,
             settings.raw_dir,
+            settings.fluid_dir,
+            settings.gap_filler_dir,
             settings.enriched_dir,
             settings.master_dir,
             settings.priority_texts_dir,
@@ -136,8 +138,18 @@ class TestCresmoSettings:
             assert d.exists()
             assert d.is_dir()
 
+        assert settings.fluid_dir == settings.data_dir / "fluid_prose"
+        assert settings.gap_filler_dir == settings.data_dir / "gap_filler"
+
         # Idempotent second run verifies exist_ok=True
         settings.ensure_directories()
+
+    def test_git_sha_env_override(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        settings = CresmoSettings(_env_file=None)
+        assert settings.git_sha is None
+        monkeypatch.setenv("GIT_SHA", "abcdef123456")
+        overridden = CresmoSettings(_env_file=None)
+        assert overridden.git_sha == "abcdef123456"
 
     def test_discovery_queue_maxsize_defaults_and_validation(
         self, monkeypatch: pytest.MonkeyPatch
@@ -176,9 +188,14 @@ class TestCresmoSettings:
         self, monkeypatch: pytest.MonkeyPatch
     ) -> None:
         """Verify calibration and benchmark models defaults and safe comma-separated env parsing."""
+        from cresmo.infrastructure.config import (
+            DEFAULT_GEMINI_MODEL,
+            DEFAULT_JUDGE_GEMINI_MODEL,
+        )
+
         settings = CresmoSettings()
-        assert settings.gemini_model == "gemini-4-hydrogen"
-        assert settings.judge_gemini_model == "gemini-4-hydrogen"
+        assert settings.gemini_model == DEFAULT_GEMINI_MODEL
+        assert settings.judge_gemini_model == DEFAULT_JUDGE_GEMINI_MODEL
         assert settings.benchmark_models == [
             "gemini:gemini-4-hydrogen",
             "gemini:gemini-3.8-flash",

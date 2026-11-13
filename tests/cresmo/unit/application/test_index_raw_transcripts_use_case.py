@@ -12,15 +12,22 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from cresmo.application.use_cases.index_raw_transcripts import (
+from cresmo.application.ports import ChannelTaxonomyPort
+from cresmo.application.use_cases.indexing import (
     IndexRawTranscriptsUseCase,
     is_valid_synthesis_paragraph,
     parse_judge_boolean,
 )
 from cresmo.domain.entities import StageTranscript
 from cresmo.domain.exceptions import DomainValidationError
-from cresmo.domain.value_objects import Channel, ChannelId, ChannelName, Content, ContentId, MediaProvenance
-from cresmo.infrastructure.adapters.prompt_provider import JsonPromptProvider
+from cresmo.domain.value_objects import (
+    Channel,
+    ChannelName,
+    Content,
+    ContentId,
+    MediaProvenance,
+)
+from cresmo.infrastructure.adapters.prompts import JsonPromptProvider
 from tests.doubles.mock_adapters import InMemoryVaultAdapter, MockLLMAdapter
 
 _SAMPLE_VALID_SYNTHESIS = (
@@ -57,7 +64,11 @@ class TestIndexRawTranscriptsUseCase:
         transcript = StageTranscript(
             channel=Channel(name=ChannelName("Political Theory")),
             provenance=MediaProvenance.create(url="https://youtube.com/watch?v=vid11111111"),
-            content=Content(id=ContentId("vid11111111"), title="Vilfredo Pareto and Elites", text="A teoria sociológica de Vilfredo Pareto enfatiza a inevitabilidade das oligarquias."),
+            content=Content(
+                id=ContentId("vid11111111"),
+                title="Vilfredo Pareto and Elites",
+                text="A teoria sociológica de Vilfredo Pareto enfatiza a inevitabilidade das oligarquias.",
+            ),
         )
 
         entry = use_case.execute(transcript)
@@ -133,8 +144,12 @@ class TestIndexRawTranscriptsUseCase:
 
         transcript = StageTranscript(
             channel=Channel(name=ChannelName("Political Theory")),
-            provenance=MediaProvenance.create(url=f"https://youtube.com/watch?v={ContentId("vid11111111").value}"),
-            content=Content(id=ContentId("vid11111111"), title="Vilfredo Pareto and Elites", text="Body text..."),
+            provenance=MediaProvenance.create(
+                url=f"https://youtube.com/watch?v={ContentId('vid11111111').value}"
+            ),
+            content=Content(
+                id=ContentId("vid11111111"), title="Vilfredo Pareto and Elites", text="Body text..."
+            ),
         )
 
         # Index once
@@ -176,8 +191,14 @@ class TestIndexRawTranscriptsUseCase:
 
         transcript = StageTranscript(
             channel=Channel(name=ChannelName("Economics")),
-            provenance=MediaProvenance.create(url=f"https://youtube.com/watch?v={ContentId("vid22222222").value}"),
-            content=Content(id=ContentId("vid22222222"), title="Nash Equilibrium", text="Jogo não-cooperativo..."),
+            provenance=MediaProvenance.create(
+                url=f"https://youtube.com/watch?v={ContentId('vid22222222').value}"
+            ),
+            content=Content(
+                id=ContentId("vid22222222"),
+                title="Nash Equilibrium",
+                text="Jogo não-cooperativo...",
+            ),
         )
 
         entry = use_case.execute(transcript)
@@ -202,7 +223,9 @@ class TestIndexRawTranscriptsUseCase:
 
         transcript = StageTranscript(
             channel=Channel(name=ChannelName("Tech Channel")),
-            provenance=MediaProvenance.create(url=f"https://youtube.com/watch?v={ContentId("vid33333333").value}"),
+            provenance=MediaProvenance.create(
+                url=f"https://youtube.com/watch?v={ContentId('vid33333333').value}"
+            ),
             content=Content(id=ContentId("vid33333333"), title="AI Systems", text="AI body..."),
         )
 
@@ -275,8 +298,14 @@ class TestIndexRawTranscriptsUseCase:
 
         transcript = StageTranscript(
             channel=Channel(name=ChannelName("Political Theory")),
-            provenance=MediaProvenance.create(url=f"https://youtube.com/watch?v={ContentId("vid44444444").value}"),
-            content=Content(id=ContentId("vid44444444"), title="Vilfredo Pareto and Elites", text="A teoria sociológica de Vilfredo Pareto..."),
+            provenance=MediaProvenance.create(
+                url=f"https://youtube.com/watch?v={ContentId('vid44444444').value}"
+            ),
+            content=Content(
+                id=ContentId("vid44444444"),
+                title="Vilfredo Pareto and Elites",
+                text="A teoria sociológica de Vilfredo Pareto...",
+            ),
         )
 
         entry = use_case.execute(transcript)
@@ -320,8 +349,12 @@ class TestIndexRawTranscriptsUseCase:
 
         transcript = StageTranscript(
             channel=Channel(name=ChannelName("Theory")),
-            provenance=MediaProvenance.create(url=f"https://youtube.com/watch?v={ContentId("vid55555555").value}"),
-            content=Content(id=ContentId("vid55555555"), title="Theoretical Notes", text="Conteúdo..."),
+            provenance=MediaProvenance.create(
+                url=f"https://youtube.com/watch?v={ContentId('vid55555555').value}"
+            ),
+            content=Content(
+                id=ContentId("vid55555555"), title="Theoretical Notes", text="Conteúdo..."
+            ),
         )
 
         entry = use_case.execute(transcript)
@@ -365,8 +398,14 @@ class TestIndexRawTranscriptsUseCase:
 
         transcript = StageTranscript(
             channel=Channel(name=ChannelName("Philosophy")),
-            provenance=MediaProvenance.create(url=f"https://youtube.com/watch?v={ContentId("vid77777777").value}"),
-            content=Content(id=ContentId("vid77777777"), title="Concept Analysis", text="Detailed text on philosophy..."),
+            provenance=MediaProvenance.create(
+                url=f"https://youtube.com/watch?v={ContentId('vid77777777').value}"
+            ),
+            content=Content(
+                id=ContentId("vid77777777"),
+                title="Concept Analysis",
+                text="Detailed text on philosophy...",
+            ),
         )
 
         entry = use_case.execute(transcript)
@@ -409,8 +448,14 @@ class TestIndexRawTranscriptsUseCase:
 
         transcript = StageTranscript(
             channel=Channel(name=ChannelName("Sociology")),
-            provenance=MediaProvenance.create(url=f"https://youtube.com/watch?v={ContentId("vid88888888").value}"),
-            content=Content(id=ContentId("vid88888888"), title="Social Dynamics", text="Sociology transcript body..."),
+            provenance=MediaProvenance.create(
+                url=f"https://youtube.com/watch?v={ContentId('vid88888888').value}"
+            ),
+            content=Content(
+                id=ContentId("vid88888888"),
+                title="Social Dynamics",
+                text="Sociology transcript body...",
+            ),
         )
 
         entry = use_case.execute(transcript)
@@ -453,8 +498,14 @@ class TestIndexRawTranscriptsUseCase:
 
         transcript = StageTranscript(
             channel=Channel(name=ChannelName("Political Theory")),
-            provenance=MediaProvenance.create(url=f"https://youtube.com/watch?v={ContentId("vid99999999").value}"),
-            content=Content(id=ContentId("vid99999999"), title="Pareto Dynamics", text="Sociological dynamics..."),
+            provenance=MediaProvenance.create(
+                url=f"https://youtube.com/watch?v={ContentId('vid99999999').value}"
+            ),
+            content=Content(
+                id=ContentId("vid99999999"),
+                title="Pareto Dynamics",
+                text="Sociological dynamics...",
+            ),
         )
 
         entry = use_case.execute(transcript)
@@ -496,8 +547,12 @@ class TestIndexRawTranscriptsUseCase:
 
         transcript = StageTranscript(
             channel=Channel(name=ChannelName("General")),
-            provenance=MediaProvenance.create(url=f"https://youtube.com/watch?v={ContentId("vidsize123").value}"),
-            content=Content(id=ContentId("vidsize123"), title="Size Validation Test", text="Body content..."),
+            provenance=MediaProvenance.create(
+                url=f"https://youtube.com/watch?v={ContentId('vidsize123').value}"
+            ),
+            content=Content(
+                id=ContentId("vidsize123"), title="Size Validation Test", text="Body content..."
+            ),
         )
 
         entry = use_case.execute(transcript)
@@ -542,8 +597,14 @@ class TestIndexRawTranscriptsUseCase:
 
         transcript = StageTranscript(
             channel=Channel(name=ChannelName("Perseverance")),
-            provenance=MediaProvenance.create(url=f"https://youtube.com/watch?v={ContentId("vidinfinite").value}"),
-            content=Content(id=ContentId("vidinfinite"), title="Infinite Retries", text="Infinite attempt body..."),
+            provenance=MediaProvenance.create(
+                url=f"https://youtube.com/watch?v={ContentId('vidinfinite').value}"
+            ),
+            content=Content(
+                id=ContentId("vidinfinite"),
+                title="Infinite Retries",
+                text="Infinite attempt body...",
+            ),
         )
 
         entry = use_case.execute(transcript)
@@ -605,8 +666,12 @@ class TestIndexRawTranscriptsUseCase:
 
         transcript = StageTranscript(
             channel=Channel(name=ChannelName("Science")),
-            provenance=MediaProvenance.create(url=f"https://youtube.com/watch?v={ContentId("vid66666666").value}"),
-            content=Content(id=ContentId("vid66666666"), title="Physics", text="Physics transcript..."),
+            provenance=MediaProvenance.create(
+                url=f"https://youtube.com/watch?v={ContentId('vid66666666').value}"
+            ),
+            content=Content(
+                id=ContentId("vid66666666"), title="Physics", text="Physics transcript..."
+            ),
         )
 
         entry = use_case.execute(transcript)
@@ -782,7 +847,9 @@ class TestIndexRawTranscriptsUseCase:
 
         transcript = StageTranscript(
             channel=Channel(name=ChannelName("3blue1brown")),
-            provenance=MediaProvenance.create(url=f"https://youtube.com/watch?v={ContentId("vid_notitle_99").value}"),
+            provenance=MediaProvenance.create(
+                url=f"https://youtube.com/watch?v={ContentId('vid_notitle_99').value}"
+            ),
             content=Content(id=ContentId("vid_notitle_99"), title="", text="Long body text..."),
         )
 
@@ -813,7 +880,9 @@ class TestIndexRawTranscriptsUseCase:
         user = UserIdentity("custom_user_123")
         transcript = StageTranscript(
             channel=Channel(name=ChannelName("TestChannel"), id=ChannelId("chan_id_1")),
-            provenance=MediaProvenance.create(url=f"https://youtube.com/watch?v={ContentId("vid_args_1").value}"),
+            provenance=MediaProvenance.create(
+                url=f"https://youtube.com/watch?v={ContentId('vid_args_1').value}"
+            ),
             content=Content(id=ContentId("vid_args_1"), title="Title Test", text="Body Test"),
         )
 
@@ -868,17 +937,27 @@ class TestIndexRawTranscriptsUseCase:
                 "true",
             ]
         )
+
+        class _StubTaxonomy(ChannelTaxonomyPort):
+            def classify(self, channel_name: ChannelName | str) -> tuple[str, str]:
+                if str(channel_name).lower() == "3blue1brown":
+                    return "engineering", "perennial"
+                return "uncategorized", "volatile"
+
         prompt_provider = JsonPromptProvider()
         use_case = IndexRawTranscriptsUseCase(
             vault_port=vault,
             llm_indexing_port=llm,
             prompt_provider=prompt_provider,
+            taxonomy_port=_StubTaxonomy(),
         )
 
         # Case A: explicit category with whitespace
         transcript_explicit = StageTranscript(
             channel=Channel(name=ChannelName("Generic"), category="  Epistemology  "),
-            provenance=MediaProvenance.create(url=f"https://youtube.com/watch?v={ContentId("vid_cat_1").value}"),
+            provenance=MediaProvenance.create(
+                url=f"https://youtube.com/watch?v={ContentId('vid_cat_1').value}"
+            ),
             content=Content(id=ContentId("vid_cat_1"), title="Title", text="Body"),
         )
         entry_explicit = use_case.execute(transcript_explicit)
@@ -888,7 +967,9 @@ class TestIndexRawTranscriptsUseCase:
         # Case B: empty category -> auto-classify by channel name
         transcript_classified = StageTranscript(
             channel=Channel(name=ChannelName("3blue1brown"), category=""),
-            provenance=MediaProvenance.create(url=f"https://youtube.com/watch?v={ContentId("vid_cat_2").value}"),
+            provenance=MediaProvenance.create(
+                url=f"https://youtube.com/watch?v={ContentId('vid_cat_2').value}"
+            ),
             content=Content(id=ContentId("vid_cat_2"), title="Title", text="Body"),
         )
         entry_classified = use_case.execute(transcript_classified)

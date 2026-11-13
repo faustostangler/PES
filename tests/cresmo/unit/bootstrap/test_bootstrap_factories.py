@@ -15,11 +15,40 @@ from pydantic import SecretStr
 
 from cresmo.application.services.preflight import PreflightHealthChecker
 from cresmo.application.use_cases.concat_master import ConcatMasterUseCase
-from cresmo.application.use_cases.discover_batch_sources import DiscoverBatchSourcesUseCase
-from cresmo.application.use_cases.index_raw_transcripts import IndexRawTranscriptsUseCase
+from cresmo.application.use_cases.discovery import DiscoverBatchSourcesUseCase
+from cresmo.application.use_cases.indexing import IndexRawTranscriptsUseCase
 from cresmo.application.use_cases.sync_channel import SyncChannelUseCase
 from cresmo.application.use_cases.unify_duplicate_notes import UnifyDuplicateNotesUseCase
-from cresmo.infrastructure.adapters.anonymizer_adapter import (
+from cresmo.bootstrap.factories.adapter_factory import (
+    _resolve_cookie_file,
+    build_indexing_adapter,
+    build_preflight_checker,
+    build_prompt_provider,
+    build_vault_adapter,
+)
+from cresmo.bootstrap.factories.judge_factory import build_llm_judge_adapter
+from cresmo.bootstrap.factories.settings_factory import (
+    get_shared_settings,
+    reset_shared_settings,
+    resolve_shared_settings,
+)
+from cresmo.bootstrap.factories.telemetry_factory import (
+    _build_mask_hook,
+    _build_should_export_span,
+    _clean_langfuse_env,
+    build_anonymizer_adapter,
+    build_metrics_adapter,
+    build_telemetry_adapter,
+    probe_langfuse_ready,
+)
+from cresmo.bootstrap.factories.use_case_factory import (
+    build_concat_master_use_case,
+    build_discover_batch_sources_use_case,
+    build_index_raw_use_case,
+    build_sync_channel_use_case,
+    build_unify_duplicates_use_case,
+)
+from cresmo.infrastructure.adapters.anonymization.anonymizer_adapter import (
     NoOpAnonymizerAdapter,
     RegexAnonymizerAdapter,
 )
@@ -30,44 +59,17 @@ from cresmo.infrastructure.adapters.judges.preflight_decorator import (
     MechanicalPreflightJudgeDecorator,
 )
 from cresmo.infrastructure.adapters.judges.typesafe_judge import TypeSafeJudgeAdapter
-from cresmo.infrastructure.adapters.noop_metrics_adapter import NoOpMetricsAdapter
-from cresmo.infrastructure.adapters.obsidian_vault_adapter import ObsidianVaultAdapter
-from cresmo.infrastructure.adapters.opentelemetry_adapter import NoOpTelemetryAdapter
-from cresmo.infrastructure.adapters.prometheus_metrics_adapter import PrometheusMetricsAdapter
-from cresmo.infrastructure.adapters.prompt_provider import (
+from cresmo.infrastructure.adapters.metrics.noop_metrics_adapter import NoOpMetricsAdapter
+from cresmo.infrastructure.adapters.metrics.prometheus_metrics_adapter import (
+    PrometheusMetricsAdapter,
+)
+from cresmo.infrastructure.adapters.obsidian import ObsidianVaultAdapter
+from cresmo.infrastructure.adapters.prompts import (
     JsonPromptProvider,
     LangfusePromptProvider,
 )
+from cresmo.infrastructure.adapters.telemetry.opentelemetry_adapter import NoOpTelemetryAdapter
 from cresmo.infrastructure.config import CresmoSettings
-from cresmo.presentation.factories.adapter_factory import (
-    _resolve_cookie_file,
-    build_indexing_adapter,
-    build_preflight_checker,
-    build_prompt_provider,
-    build_vault_adapter,
-)
-from cresmo.presentation.factories.judge_factory import build_llm_judge_adapter
-from cresmo.presentation.factories.settings_factory import (
-    get_shared_settings,
-    reset_shared_settings,
-    resolve_shared_settings,
-)
-from cresmo.presentation.factories.telemetry_factory import (
-    _build_mask_hook,
-    _build_should_export_span,
-    _clean_langfuse_env,
-    build_anonymizer_adapter,
-    build_metrics_adapter,
-    build_telemetry_adapter,
-    probe_langfuse_ready,
-)
-from cresmo.presentation.factories.use_case_factory import (
-    build_concat_master_use_case,
-    build_discover_batch_sources_use_case,
-    build_index_raw_use_case,
-    build_sync_channel_use_case,
-    build_unify_duplicates_use_case,
-)
 
 
 @pytest.fixture
@@ -113,7 +115,7 @@ class TestTelemetryFactory:
 
     def test_probe_langfuse_ready_success_and_fallback(self) -> None:
         with patch(
-            "cresmo.presentation.factories.telemetry_factory.probe_http_endpoint"
+            "cresmo.bootstrap.factories.telemetry_factory.probe_http_endpoint"
         ) as mock_probe:
             mock_probe.side_effect = [False, True]
             res = probe_langfuse_ready("http://localhost:3000")

@@ -21,6 +21,7 @@ from pathlib import Path
 import structlog
 
 from cresmo.application.ports import (
+    ChannelTaxonomyPort,
     DefaultPipelineSettings,
     MediaIngestionPort,
     PipelineSettingsProtocol,
@@ -65,14 +66,17 @@ class DiscoverBatchSourcesUseCase:
         media_ingestion_port: MediaIngestionPort | None = None,
         settings: PipelineSettingsProtocol | None = None,
         progress_callback: Callable[[str], object] | None = None,
+        taxonomy_port: ChannelTaxonomyPort | None = None,
     ) -> None:
         """Initialize use case with injected media ingestion adapter and optional settings."""
         self.media_ingestion_port = media_ingestion_port
         self.settings = settings or DefaultPipelineSettings()
         self.progress_callback = progress_callback
+        self.taxonomy_port = taxonomy_port
         self._crawler_service = ChannelFeedCrawlerService(
             media_ingestion_port=self.media_ingestion_port,  # type: ignore[arg-type]
             notify_fn=self._notify,
+            taxonomy_port=self.taxonomy_port,
         )
 
     def _notify(self, message: str) -> None:
@@ -92,7 +96,10 @@ class DiscoverBatchSourcesUseCase:
             else self.settings.priority_texts_dir
         )
         priority_text_channels = LakeScannerService.collect_priority_texts(
-            priority_texts_dir, acc, q.filter_criteria
+            priority_texts_dir,
+            acc,
+            q.filter_criteria,
+            taxonomy_port=self.taxonomy_port,
         )
 
         raw_dir = q.raw_dir if q.raw_dir is not None else self.settings.raw_dir
@@ -107,6 +114,7 @@ class DiscoverBatchSourcesUseCase:
                 acc,
                 q.filter_criteria,
                 extract_frontmatter=needs_frontmatter,
+                taxonomy_port=self.taxonomy_port,
             )
         else:
             local_video_channel_map = {}
@@ -118,7 +126,11 @@ class DiscoverBatchSourcesUseCase:
         )
         priority_url_channels, unresolved_priority_video_seeds = (
             LakeScannerService.collect_priority_urls(
-                playlist_priority_path, local_video_channel_map, acc, q.filter_criteria
+                playlist_priority_path,
+                local_video_channel_map,
+                acc,
+                q.filter_criteria,
+                taxonomy_port=self.taxonomy_port,
             )
         )
 
@@ -145,7 +157,11 @@ class DiscoverBatchSourcesUseCase:
             yield src
         yielded_so_far = len(acc.sources)
         LakeScannerService.classify_seeds(
-            state.playlist_path, state.local_video_channel_map, acc, q.filter_criteria
+            state.playlist_path,
+            state.local_video_channel_map,
+            acc,
+            q.filter_criteria,
+            taxonomy_port=self.taxonomy_port,
         )
         for src in acc.sources[yielded_so_far:]:
             yield src
@@ -168,7 +184,11 @@ class DiscoverBatchSourcesUseCase:
 
         try:
             channels_to_probe, remote_videos, probed_channels = LakeScannerService.classify_seeds(
-                state.playlist_path, state.local_video_channel_map, acc, q.filter_criteria
+                state.playlist_path,
+                state.local_video_channel_map,
+                acc,
+                q.filter_criteria,
+                taxonomy_port=self.taxonomy_port,
             )
 
             for pch in state.priority_text_channels + state.priority_url_channels:

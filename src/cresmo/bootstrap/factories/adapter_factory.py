@@ -12,24 +12,27 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 from cresmo.application.ports import (
+    ChannelTaxonomyPort,
     LLMTransformationPort,
     PromptProviderPort,
 )
 from cresmo.application.services.preflight import PreflightHealthChecker
-from cresmo.infrastructure.adapters.header_generator import RandomHeaderGenerator
-from cresmo.infrastructure.adapters.native_media_ingestion_adapter import (
+from cresmo.bootstrap.factories.settings_factory import resolve_shared_settings
+from cresmo.infrastructure.adapters.media.native_media_ingestion_adapter import (
     NativeMediaIngestionAdapter,
 )
-from cresmo.infrastructure.adapters.obsidian_vault_adapter import ObsidianVaultAdapter
-from cresmo.infrastructure.adapters.prompt_provider import (
+from cresmo.infrastructure.adapters.obsidian import ObsidianVaultAdapter
+from cresmo.infrastructure.adapters.prompts import (
     JsonPromptProvider,
+    JsonTaxonomyCatalogAdapter,
     LangfusePromptProvider,
 )
+from cresmo.infrastructure.adapters.scrapers.header_generator import RandomHeaderGenerator
+from cresmo.infrastructure.adapters.system.preflight_probe_adapter import PreflightProbeAdapter
 from cresmo.infrastructure.config import CresmoSettings
-from cresmo.presentation.factories.settings_factory import resolve_shared_settings
 
 if TYPE_CHECKING:
-    from cresmo.infrastructure.adapters.gemini_adapter import GeminiLLMAdapter
+    from cresmo.infrastructure.adapters.llm.gemini_adapter import GeminiLLMAdapter
 
 
 def _resolve_cookie_file(settings: CresmoSettings) -> Path | None:
@@ -50,6 +53,16 @@ def _resolve_cookie_file(settings: CresmoSettings) -> Path | None:
     return None
 
 
+def build_taxonomy_adapter(
+    settings: CresmoSettings | None = None,
+) -> ChannelTaxonomyPort:
+    """Instantiate ChannelTaxonomyPort backed by bundled or custom taxonomy JSON."""
+    settings = resolve_shared_settings(settings)
+    raw_path = getattr(settings, "taxonomy_path", None)
+    taxonomy_path = raw_path if isinstance(raw_path, Path) else None
+    return JsonTaxonomyCatalogAdapter(taxonomy_path=taxonomy_path)
+
+
 def build_media_ingestion_adapter(
     settings: CresmoSettings | None = None,
 ) -> NativeMediaIngestionAdapter:
@@ -59,11 +72,13 @@ def build_media_ingestion_adapter(
     header_generator = RandomHeaderGenerator(headers_path=headers_path)
     cookie_file = _resolve_cookie_file(settings)
     whisper_concurrency_limit = getattr(settings, "whisper_workers", 1)
+    taxonomy_port = build_taxonomy_adapter(settings)
 
     return NativeMediaIngestionAdapter(
         header_generator=header_generator,
         whisper_concurrency_limit=whisper_concurrency_limit,
         cookie_file=cookie_file,
+        taxonomy_port=taxonomy_port,
     )
 
 
@@ -94,6 +109,7 @@ def build_preflight_checker(
         gemini_api_key=settings.gemini_api_key,
         vault_dir=settings.vault_dir,
         sqlite_ledger_path=settings.sqlite_ledger_path,
+        probe_port=PreflightProbeAdapter(),
         check_ffmpeg=check_ffmpeg,
         langfuse_host=settings.langfuse_host,
         ollama_base_url=settings.ollama_base_url,
@@ -124,7 +140,7 @@ def build_gemini_synthesis_adapter(
     langfuse_client: Any | None = None,
 ) -> GeminiLLMAdapter:
     """Instantiate and wire GeminiLLMAdapter for core synthesis workflows."""
-    from cresmo.infrastructure.adapters.gemini_adapter import GeminiLLMAdapter
+    from cresmo.infrastructure.adapters.llm.gemini_adapter import GeminiLLMAdapter
 
     settings = resolve_shared_settings(settings)
     api_keys = [k.get_secret_value() for k in settings.gemini_api_keys]
@@ -146,7 +162,7 @@ def build_indexing_adapter(
     api_keys: list[str] | None = None,
 ) -> LLMTransformationPort:
     """Instantiate LLM adapter for indexing, selecting between local Ollama and Gemini API."""
-    from cresmo.infrastructure.adapters.gemini_adapter import GeminiLLMAdapter
+    from cresmo.infrastructure.adapters.llm.gemini_adapter import GeminiLLMAdapter
 
     settings = resolve_shared_settings(settings)
     if web_index or settings.indexing_provider == "gemini":
@@ -165,7 +181,7 @@ def build_indexing_adapter(
             default_temperature=settings.llm_indexing_temperature,
         )
 
-    from cresmo.infrastructure.adapters.ollama_llm_adapter import OllamaLLMAdapter
+    from cresmo.infrastructure.adapters.llm.ollama_llm_adapter import OllamaLLMAdapter
 
     return OllamaLLMAdapter(
         base_url=settings.ollama_base_url,

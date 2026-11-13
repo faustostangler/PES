@@ -69,9 +69,7 @@ class ChatPrompt:
     system_prompt: str | None = None
 
     def __post_init__(self) -> None:
-        if not self.messages and (
-            not self.system_prompt or not self.system_prompt.strip()
-        ):
+        if not self.messages and (not self.system_prompt or not self.system_prompt.strip()):
             raise DomainValidationError(
                 "ChatPrompt must have at least one message or system_prompt."
             )

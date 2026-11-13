@@ -8,11 +8,8 @@ Conforms to:
 
 from __future__ import annotations
 
-from cresmo.domain.entities.compendium import (
-    StageTranscript,
-    post_process_enriched_compendium,
-)
 from cresmo.domain.entities.transcripts import StageTranscript
+from cresmo.domain.services.compendium import post_process_enriched_compendium
 from cresmo.domain.services.mechanical_validator import (
     check_complementary_mechanical_saturation,
     validate_gap_filler_mechanical_invariants,
@@ -32,7 +29,9 @@ from cresmo.domain.value_objects import (
 def test_gap_filler_judge_criteria_enum() -> None:
     """Verify specialized gap_filler criteria are registered in JudgeCriterion."""
     assert JudgeCriterion.EPISTEMIC_GROUNDING_SEGREGATION == "epistemic_grounding_segregation"
-    assert JudgeCriterion.CONCEPTUAL_MECHANICAL_DECOMPOSITION == "conceptual_mechanical_decomposition"
+    assert (
+        JudgeCriterion.CONCEPTUAL_MECHANICAL_DECOMPOSITION == "conceptual_mechanical_decomposition"
+    )
     assert JudgeCriterion.BRAUDELIAN_STRATIFICATION == "braudelian_stratification"
     assert JudgeCriterion.GENEALOGY_HIDDEN_AGENCY == "genealogy_hidden_agency"
     assert JudgeCriterion.COMPETING_HYPOTHESES == "competing_hypotheses"
@@ -77,14 +76,12 @@ def test_gap_filler_mechanical_invariants_missing_complementary_section() -> Non
     """Verify missing '### Extra Info' triggers a mechanical violation."""
     invalid_text = "## O Surgimento de Portugal\n\nTexto corrido sem seção complementar alguma."
     violations = validate_gap_filler_mechanical_invariants(invalid_text)
-    assert any('Extra Info' in v for v in violations)
+    assert any("Extra Info" in v for v in violations)
 
 
 def test_gap_filler_mechanical_invariants_empty_complementary_section() -> None:
     """Verify empty complementary section triggers a mechanical violation."""
-    invalid_text = (
-        "## O Surgimento de Portugal\n\nTexto corrido principal.\n\n### Extra Info\n"
-    )
+    invalid_text = "## O Surgimento de Portugal\n\nTexto corrido principal.\n\n### Extra Info\n"
     violations = validate_gap_filler_mechanical_invariants(invalid_text)
     assert any("empty" in v.lower() for v in violations)
 
@@ -92,20 +89,14 @@ def test_gap_filler_mechanical_invariants_empty_complementary_section() -> None:
 def test_gap_filler_mechanical_invariants_prohibits_em_dash_and_tables() -> None:
     """Verify em-dashes and markdown tables are rejected by mechanical preflight."""
     text_with_em_dash = (
-        "## Título\n\n"
-        "O rei — figura central — viajou.\n\n"
-        "### Extra Info\n\n"
-        "1. Detalhes."
+        "## Título\n\nO rei — figura central — viajou.\n\n### Extra Info\n\n1. Detalhes."
     )
     assert any(
         "em-dash" in v.lower() for v in validate_gap_filler_mechanical_invariants(text_with_em_dash)
     )
 
     text_with_table = (
-        "## Título\n\n"
-        "| Col1 | Col2 |\n| --- | --- |\n| A | B |\n\n"
-        "### Extra Info\n\n"
-        "1. Detalhes."
+        "## Título\n\n| Col1 | Col2 |\n| --- | --- |\n| A | B |\n\n### Extra Info\n\n1. Detalhes."
     )
     assert any(
         "table" in v.lower() for v in validate_gap_filler_mechanical_invariants(text_with_table)
@@ -114,9 +105,7 @@ def test_gap_filler_mechanical_invariants_prohibits_em_dash_and_tables() -> None
 
 def test_gap_filler_mechanical_invariants_prohibits_bullets_in_main_body() -> None:
     """Verify bullet points in main body are rejected by mechanical preflight."""
-    text_with_bullets = (
-        "## Título\n\n* Item 1\n* Item 2\n\n### Extra Info\n\n1. Detalhes."
-    )
+    text_with_bullets = "## Título\n\n* Item 1\n* Item 2\n\n### Extra Info\n\n1. Detalhes."
     assert any(
         "bullet" in v.lower() for v in validate_gap_filler_mechanical_invariants(text_with_bullets)
     )

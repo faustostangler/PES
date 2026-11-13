@@ -12,7 +12,7 @@ from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import UTC, datetime, timedelta
 
-from cresmo.application.ports import MediaIngestionPort
+from cresmo.application.ports import ChannelTaxonomyPort, MediaIngestionPort
 from cresmo.application.use_cases.discovery.manifests import (
     matches_category_target,
     matches_channel_target,
@@ -36,9 +36,11 @@ class ChannelFeedCrawlerService:
         self,
         media_ingestion_port: MediaIngestionPort,
         notify_fn: Callable[[str], None] | None = None,
+        taxonomy_port: ChannelTaxonomyPort | None = None,
     ) -> None:
         self.media_ingestion_port = media_ingestion_port
         self._notify = notify_fn or (lambda msg: None)
+        self._taxonomy_port = taxonomy_port
 
     def resolve_remote_channels(
         self,
@@ -79,7 +81,11 @@ class ChannelFeedCrawlerService:
                         chan_clean = resolved_chan.strip()
                         if criteria.is_empty() or (
                             matches_channel_target(criteria, chan_clean)
-                            and matches_category_target(criteria, chan_clean)
+                            and matches_category_target(
+                                criteria,
+                                chan_clean,
+                                taxonomy_port=self._taxonomy_port,
+                            )
                         ):
                             probed_channels.add(chan_clean)
                             channels_to_probe.append(chan_clean)

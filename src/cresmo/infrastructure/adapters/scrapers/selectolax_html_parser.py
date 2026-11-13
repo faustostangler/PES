@@ -1,5 +1,6 @@
-"""High-Performance Selectolax HTML Parser Adapter for Cresmo.
+"""# FUTURE / DEFERRED: High-Performance Selectolax HTML Parser Adapter for Cresmo.
 
+Reserved web-scraping DOM parser per ADR-062; currently not wired into active YouTube ingestion.
 Leverages the Modest/Lexbor C engines via Selectolax for sub-millisecond
 HTML DOM tree extraction, reducing page parsing latency by up to 90%
 compared to pure-Python parsers.

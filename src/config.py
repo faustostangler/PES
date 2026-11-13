@@ -19,6 +19,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 from cresmo.infrastructure.config import CresmoSettings
 
 
+# FUTURE / DEFERRED: Multi-user IAM runtime configuration reserved per ADR-062.
 class IamSettings(BaseSettings):
     """Configuration settings for IAM Bounded Context."""
 
@@ -74,4 +75,3 @@ __all__ = [
     "IdentitySettings",
     "get_config",
 ]
-

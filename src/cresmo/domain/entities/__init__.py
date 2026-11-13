@@ -9,9 +9,6 @@ Conforms to:
 
 from __future__ import annotations
 
-from cresmo.domain.entities.compendium import (
-    post_process_enriched_compendium,
-)
 from cresmo.domain.entities.identity import (
     PIPELINE_SESSION_ID_PART_COUNT,
     JudgeFrictionMetric,
@@ -51,6 +48,5 @@ __all__ = [
     "PipelineSessionId",
     "StageTranscript",
     "UserIdentity",
-    "post_process_enriched_compendium",
     "post_process_fluid_transcript",
 ]

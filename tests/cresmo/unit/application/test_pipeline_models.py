@@ -29,8 +29,6 @@ from cresmo.application.ports import (
 from cresmo.application.use_cases import DeduplicationReport
 from cresmo.domain.entities import (
     AtomicNote,
-    StageTranscript,
-    StageTranscript,
     MapOfContent,
     StageTranscript,
 )

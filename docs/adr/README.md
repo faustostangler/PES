@@ -16,7 +16,7 @@ In this repository, architectural decisions evolve continuously through test-dri
 > [`ADR-000: Patterns and Anti-Patterns Catalog`](ADR-000-patterns-antipatterns.md) is the **Foundational Supreme Canon**. It has **absolute overarching priority over all ADRs in the repository, regardless of publication date**. All architectural patterns defined in ADR-000 are authoritative; all items marked with an asterisk (`*`) are strictly prohibited anti-patterns that must never be introduced or tolerated.
 >
 > ### Invariant 2: Lex Posterior Derogat Priori (More Recent Overrides Older)
-> For all subsequent decisions (ADR-001 through ADR-057), **more recent ADRs supersede and override older ADRs**. In the event of any semantic ambiguity, interface drift, or operational conflict:
+> For all subsequent decisions (ADR-001 through ADR-062), **more recent ADRs supersede and override older ADRs**. In the event of any semantic ambiguity, interface drift, or operational conflict:
 > - If an older ADR says to do **A** and a more recent ADR says to do **B**, **B is authoritative** and **A is deprecated / superseded**.
 > - All decisions previously designated as `PROPOSED` or `IN REVIEW` are officially **ACCEPTED** as ratified canon (with the sole exception of exploratory proposals explicitly marked `PROPOSED`, such as ADR-045).
 > - Downstream implementations, specifications, and tests must strictly adhere to the higher-numbered ADR.
@@ -87,6 +87,9 @@ In this repository, architectural decisions evolve continuously through test-dri
 | [**ADR-057**](ADR-057-monomorphic-stage-transcript-envelope-and-pure-triad-ingestion.md) | 2026-11-10 | Monomorphic StageTranscript Envelope and Pure Triad Ingestion | DDD Tático / Entidades | `ACCEPTED` | **Refines ADR-038, ADR-054, and ADR-056**. Enforces strictly monomorphic `StageTranscript`, removes Markdown table parsing from domain invariants, and enforces pure VO construction with zero loose primitive shims. |
 | [**ADR-058**](ADR-058-unified-stage-transcript-persistence-and-dynamic-path-resolution.md) | 2026-11-10 | Unified Stage Transcript Persistence and Dynamic Path Resolution | Infra / Storage | `ACCEPTED` | **Refines ADR-043, ADR-054, and ADR-057**. Consolidates `save_stage_transcript` and `get_stage_transcript` with dynamic path resolution (`data/{stage}/{channel_name}/{content_id}.md`), eliminating triplicated YAML serialization. |
 | [**ADR-059**](ADR-059-monomorphic-vault-repository-port-and-legacy-stage-method-elimination.md) | 2026-11-10 | Monomorphic Vault Repository Port and Legacy Stage Method Elimination | Storage / Ports & Adapters | `ACCEPTED` | **Complements ADR-058**. Eliminates legacy triplicated methods (`save_transcript`, `save_fluid_transcript`, `save_enriched_compendium`) from VaultRepositoryPort, ObsidianVaultAdapter, and Mock adapters in favor of monomorphic `save_stage_transcript` and `get_stage_transcript`. |
+| [**ADR-060**](ADR-060-gap-filler-judge-criteria-v2.md) | 2026-11-12 | Gap Filler Judge Criteria v2 | Cognitive / Evaluation | `ACCEPTED` | Defines 7 canonical Gap Filler LLM Judge criteria (`braudelian_stratification`, `competing_hypotheses`, `conceptual_mechanical_decomposition`, `epistemic_grounding_segregation`, `extra_info_granularity`, `genealogy_hidden_agency`, `linear_style_naturalism`). |
+| [**ADR-061**](ADR-061-unified-zero-fallback-judge-calibration-cli.md) | 2026-11-12 | Unified Zero-Fallback Judge Calibration CLI | Cognitive / Evaluation | `ACCEPTED` | Unifies offline judge calibration CLI across stages with `enable_fallback=False` and cooldown-aware checkpointing. **Implementation relocated to `evals/calibrate_judges.py` & `src/cresmo/application/evals/` per ADR-062**. |
+| [**ADR-062**](ADR-062-structural-consolidation-evals-ssot-and-bootstrap-separation.md) | 2026-11-13 | Structural Consolidation, JSON Evals SSOT, Bootstrap Separation, and Repository Hygiene | Architecture Canon / Platform | `ACCEPTED` | Purges dormant/residual shims, promotes JSON Golden Sets as SSOT in `evals/`, extracts `src/cresmo/bootstrap/` and `PreflightProbePort`/`ChannelTaxonomyPort`, organizes adapters & tests, tracks runtime `SKILL.md` SSOT, and cleans git/CI/container hygiene. |
 
 ---
 
@@ -153,6 +156,8 @@ graph TD
         A050["ADR-050: Prompt Task SSOT (Deprecated)"]
         A051["ADR-051: Elimination of Hardcoded Prompt Strings"]
         A052["ADR-052: Prompt Catalog SSOT in JSON"]
+        A060["ADR-060: Gap Filler Judge Criteria v2"]
+        A061["ADR-061: Zero-Fallback Calibration CLI"]
         A011 --> A013
         A013 --> A024
         A017 --> A022
@@ -165,6 +170,7 @@ graph TD
         A040 --> A050
         A050 -. superseded by .-> A052
         A051 --> A052
+        A039 --> A060 --> A061
     end
 
     subgraph SRE ["4. Observability, Telemetry & SRE Platform"]
@@ -198,12 +204,15 @@ graph TD
         A048["ADR-048: Architectural Remediation & Domain Mutation"]
         A049["ADR-049: Application Mutation Blindage"]
         A053["ADR-053: Lazy CLI Loading & Fast-Default"]
+        A062["ADR-062: Structural Consolidation & Hygiene"]
         A019 --> A020 --> A026
         A020 --> A032 --> A033
         A005 --> A041
         A033 --> A043
         A026 --> A048 --> A049
         A042 --> A053
+        A049 --> A062
+        A053 --> A062
     end
 ```
 

@@ -16,10 +16,18 @@ from opentelemetry.sdk.trace.export.in_memory_span_exporter import InMemorySpanE
 
 from cresmo.application.pipeline import CresmoPipeline
 from cresmo.domain.entities import StageTranscript, UserIdentity
-from cresmo.domain.value_objects import BatchId, Channel, ChannelId, ChannelName, Content, ContentId, MediaProvenance
-from cresmo.infrastructure.adapters.opentelemetry_adapter import OpenTelemetryAdapter
-from cresmo.infrastructure.adapters.prompt_provider import JsonPromptProvider
-from tests.cresmo.unit.test_pipeline import SmartMockLLMAdapter
+from cresmo.domain.value_objects import (
+    BatchId,
+    Channel,
+    ChannelId,
+    ChannelName,
+    Content,
+    ContentId,
+    MediaProvenance,
+)
+from cresmo.infrastructure.adapters.prompts import JsonPromptProvider
+from cresmo.infrastructure.adapters.telemetry.opentelemetry_adapter import OpenTelemetryAdapter
+from tests.cresmo.unit.application.test_pipeline import SmartMockLLMAdapter
 from tests.doubles.mock_adapters import (
     InMemoryLedgerAdapter,
     InMemoryVaultAdapter,
@@ -69,8 +77,14 @@ class TestPipelineTelemetryIntegration:
 
         raw = StageTranscript(
             channel=Channel(name=ChannelName("sandeco")),
-            provenance=MediaProvenance.create(url=f"https://youtube.com/watch?v={ContentId("yt_sample1234").value}"),
-            content=Content(id=ContentId("yt_sample1234"), title="Modelos Transformadores", text="Aula completa sobre modelos transformadores e atenção multi-cabeça em deep learning."),
+            provenance=MediaProvenance.create(
+                url=f"https://youtube.com/watch?v={ContentId('yt_sample1234').value}"
+            ),
+            content=Content(
+                id=ContentId("yt_sample1234"),
+                title="Modelos Transformadores",
+                text="Aula completa sobre modelos transformadores e atenção multi-cabeça em deep learning.",
+            ),
         )
 
         result = pipeline.execute(raw=raw, gap_filler_passes=1)
@@ -134,8 +148,14 @@ class TestPipelineTelemetryIntegration:
 
         raw = StageTranscript(
             channel=Channel(name=ChannelName("acropole")),
-            provenance=MediaProvenance.create(url=f"https://youtube.com/watch?v={ContentId("yt_auth_test_01").value}"),
-            content=Content(id=ContentId("yt_auth_test_01"), title="Estoicismo Clássico", text="Aula completa sobre filosofia e estoicismo clássico em Atenas e Roma."),
+            provenance=MediaProvenance.create(
+                url=f"https://youtube.com/watch?v={ContentId('yt_auth_test_01').value}"
+            ),
+            content=Content(
+                id=ContentId("yt_auth_test_01"),
+                title="Estoicismo Clássico",
+                text="Aula completa sobre filosofia e estoicismo clássico em Atenas e Roma.",
+            ),
         )
 
         user = UserIdentity.identified(subject="fausto@cresmo.ai", provider="oauth")
@@ -171,8 +191,14 @@ class TestPipelineTelemetryIntegration:
 
         raw = StageTranscript(
             channel=Channel(name=ChannelName("sandeco")),
-            provenance=MediaProvenance.create(url=f"https://youtube.com/watch?v={ContentId("yt_worker_test_01").value}"),
-            content=Content(id=ContentId("yt_worker_test_01"), title="Automação com Workers", text="Aula sobre agentes e automação de pipelines com worker agendado."),
+            provenance=MediaProvenance.create(
+                url=f"https://youtube.com/watch?v={ContentId('yt_worker_test_01').value}"
+            ),
+            content=Content(
+                id=ContentId("yt_worker_test_01"),
+                title="Automação com Workers",
+                text="Aula sobre agentes e automação de pipelines com worker agendado.",
+            ),
         )
 
         user = UserIdentity.worker()
@@ -203,8 +229,14 @@ class TestPipelineTelemetryIntegration:
 
         raw = StageTranscript(
             channel=Channel(name=ChannelName("acropole"), id=ChannelId("UC_acropole123")),
-            provenance=MediaProvenance.create(url=f"https://youtube.com/watch?v={ContentId("yt_chan_id_01").value}"),
-            content=Content(id=ContentId("yt_chan_id_01"), title="Estoicismo e Virtude", text="Aula completa sobre filosofia e estoicismo clássico em Atenas e Roma."),
+            provenance=MediaProvenance.create(
+                url=f"https://youtube.com/watch?v={ContentId('yt_chan_id_01').value}"
+            ),
+            content=Content(
+                id=ContentId("yt_chan_id_01"),
+                title="Estoicismo e Virtude",
+                text="Aula completa sobre filosofia e estoicismo clássico em Atenas e Roma.",
+            ),
         )
 
         result = pipeline.execute(raw=raw, gap_filler_passes=1)
@@ -238,7 +270,7 @@ class TestPipelineTelemetryIntegration:
         """SPEC-008 Scenario 5: Verifies pipeline records stage duration histograms and counters."""
         from prometheus_client import CollectorRegistry
 
-        from cresmo.infrastructure.adapters.prometheus_metrics_adapter import (
+        from cresmo.infrastructure.adapters.metrics.prometheus_metrics_adapter import (
             PrometheusMetricsAdapter,
         )
 
@@ -262,8 +294,14 @@ class TestPipelineTelemetryIntegration:
 
         raw = StageTranscript(
             channel=Channel(name=ChannelName("sandeco"), id=ChannelId("UC_sandeco_test")),
-            provenance=MediaProvenance.create(url=f"https://youtube.com/watch?v={ContentId("yt_metrics_test_01").value}"),
-            content=Content(id=ContentId("yt_metrics_test_01"), title="Arquitetura Hexagonal", text="Aula completa sobre arquitetura hexagonal e métricas de observabilidade."),
+            provenance=MediaProvenance.create(
+                url=f"https://youtube.com/watch?v={ContentId('yt_metrics_test_01').value}"
+            ),
+            content=Content(
+                id=ContentId("yt_metrics_test_01"),
+                title="Arquitetura Hexagonal",
+                text="Aula completa sobre arquitetura hexagonal e métricas de observabilidade.",
+            ),
         )
 
         result = pipeline.execute(raw=raw, gap_filler_passes=1)
@@ -323,8 +361,14 @@ class TestPipelineTelemetryIntegration:
 
         raw = StageTranscript(
             channel=Channel(name=ChannelName("sandeco")),
-            provenance=MediaProvenance.create(url=f"https://youtube.com/watch?v={ContentId("yt_batch_test").value}"),
-            content=Content(id=ContentId("yt_batch_test"), title="Batch ID Test", text="Texto para teste de batch_id."),
+            provenance=MediaProvenance.create(
+                url=f"https://youtube.com/watch?v={ContentId('yt_batch_test').value}"
+            ),
+            content=Content(
+                id=ContentId("yt_batch_test"),
+                title="Batch ID Test",
+                text="Texto para teste de batch_id.",
+            ),
         )
 
         batch_id = BatchId.generate()

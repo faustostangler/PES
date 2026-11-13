@@ -25,6 +25,7 @@ def _patch_python313_threading_shutdown() -> None:
     the context manager protocol.
     """
     if hasattr(threading, "_DeleteDummyThreadOnDel"):
+
         def _safe_dummy_del(self: Any) -> None:
             lock = getattr(threading, "_active_limbo_lock", None)
             if lock is not None:

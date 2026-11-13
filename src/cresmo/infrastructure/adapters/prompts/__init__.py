@@ -16,13 +16,21 @@ from cresmo.infrastructure.adapters.prompts.catalog import (
 )
 from cresmo.infrastructure.adapters.prompts.json_provider import JsonPromptProvider
 from cresmo.infrastructure.adapters.prompts.langfuse_provider import LangfusePromptProvider
+from cresmo.infrastructure.adapters.prompts.taxonomy_catalog import (
+    JsonTaxonomyCatalogAdapter,
+    TaxonomyCatalogError,
+    load_taxonomy_catalog,
+)
 
 __all__ = [
     "JsonPromptProvider",
+    "JsonTaxonomyCatalogAdapter",
     "LangfusePromptProvider",
     "PromptCatalog",
     "PromptCatalogError",
     "PromptKey",
     "PromptSpec",
+    "TaxonomyCatalogError",
     "load_prompt_catalog",
+    "load_taxonomy_catalog",
 ]

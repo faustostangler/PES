@@ -9,27 +9,27 @@ Conforms to:
 from __future__ import annotations
 
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 import pytest
 
+from cresmo.application.evals import (
+    STAGE_SPECS,
+    CalibrationCheckpointStore,
+    ConfusionMatrix,
+    evaluate_single_item,
+    parse_model_specs,
+    parse_stage_specs,
+    run_calibration_suite,
+    run_stage_calibration,
+)
 from cresmo.application.ports.llm_judge_port import LlmJudgePort
 from cresmo.domain.value_objects.quality import (
     CriterionScore,
     JudgeCriterion,
     JudgeEvaluation,
 )
-from cresmo.infrastructure.adapters.gemini_pool import CredentialPoolExhaustedError
-from scripts.calibrate_judges import (
-    STAGE_SPECS,
-    CalibrationCheckpointStore,
-    ConfusionMatrix,
-    evaluate_single_item,
-    main,
-    parse_model_specs,
-    parse_stage_specs,
-    run_stage_calibration,
-)
+from cresmo.infrastructure.adapters.llm.gemini_pool import CredentialPoolExhaustedError
 
 
 def test_stage_specs_cover_all_stages_with_canonical_criteria() -> None:
@@ -367,29 +367,41 @@ def test_cli_always_disables_fallback_and_runs_all_stages_by_default(tmp_path: P
         failed_eval_gf,
     ]
 
-    with (
-        patch(
-            "scripts.calibrate_judges.build_llm_judge_adapter", return_value=mock_judge
-        ) as m_factory,
-        patch("scripts.calibrate_judges.DEFAULT_CHECKPOINT_DIR", tmp_path / "checkpoints"),
-        patch("scripts.calibrate_judges.DEFAULT_REPORTS_DIR", tmp_path / "reports"),
-    ):
-        exit_code = main(
-            [
-                "--seed-only",
-                "--models",
-                "gemini:gemini-4-hydrogen",
-                "--delay",
-                "0.0",
-                "--jitter",
-                "0.0",
-            ]
-        )
+    factory_calls: list[dict[str, object]] = []
 
-    assert exit_code == 0
-    assert m_factory.call_count == 2  # both fluid_prose and gap_filler ran by default
-    for call in m_factory.call_args_list:
-        assert call.kwargs["enable_fallback"] is False
+    def _fake_factory(
+        *,
+        provider: str,
+        model: str,
+        threshold: float,
+        enable_fallback: bool,
+    ) -> LlmJudgePort:
+        factory_calls.append(
+            {
+                "provider": provider,
+                "model": model,
+                "threshold": threshold,
+                "enable_fallback": enable_fallback,
+            }
+        )
+        return mock_judge
+
+    outcome = run_calibration_suite(
+        selected_stages=parse_stage_specs(None, None),
+        selected_models=parse_model_specs(["gemini:gemini-4-hydrogen"], None, "gemini"),
+        judge_factory=_fake_factory,
+        stage_thresholds={"fluid_prose": 0.75, "gap_filler": 0.75},
+        seed_only=True,
+        checkpoint_dir=tmp_path / "checkpoints",
+        reports_dir=tmp_path / "reports",
+        delay=0.0,
+        jitter=0.0,
+    )
+
+    assert not outcome.has_errors
+    assert len(factory_calls) == 2  # both fluid_prose and gap_filler ran by default
+    for call in factory_calls:
+        assert call["enable_fallback"] is False
 
 
 def test_parse_helpers_handle_comma_and_repeated_flags() -> None:

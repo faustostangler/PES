@@ -46,22 +46,22 @@ class TranscriptVaultHandler:
         self.raw_dir = Path(raw_dir)
         self.enriched_dir = Path(enriched_dir)
         self.data_dir = Path(data_dir).resolve() if data_dir is not None else self.raw_dir.parent
-        self.fluid_dir = Path(fluid_dir) if fluid_dir is not None else (self.data_dir / "fluid")
+        self.fluid_dir = (
+            Path(fluid_dir) if fluid_dir is not None else (self.data_dir / "fluid_prose")
+        )
 
     def resolve_stage_dir(self, stage: str | StageName) -> Path:
         """Resolve dynamic stage directory following canonical data/{stage} structure (ADR-058)."""
         stage_key = stage.value if hasattr(stage, "value") else str(stage).strip()
         if stage_key == "raw":
             return self.raw_dir
-        if stage_key == "fluid":
+        if stage_key in ("fluid", "fluid_prose"):
             return self.fluid_dir
         if stage_key == "enriched":
             return self.enriched_dir
         return self.data_dir / stage_key
 
-    def _format_stage_frontmatter(
-        self, transcript: StageTranscript, stage_name: str = ""
-    ) -> str:
+    def _format_stage_frontmatter(self, transcript: StageTranscript, stage_name: str = "") -> str:
         """Format canonical monomorphic YAML frontmatter for any stage transcript (ADR-058)."""
         description = transcript.provenance.description or ""
         indented_description = "\n".join("  " + line for line in description.splitlines())
@@ -90,11 +90,13 @@ class TranscriptVaultHandler:
         ]
         if transcript.pass_count is not None:
             lines.append(f"pass_count: {transcript.pass_count}")
-        lines.extend([
-            "video_description: |",
-            f"{indented_description}",
-            "---",
-        ])
+        lines.extend(
+            [
+                "video_description: |",
+                f"{indented_description}",
+                "---",
+            ]
+        )
         return "\n".join(lines)
 
     def save_stage_transcript(
@@ -224,9 +226,17 @@ class TranscriptVaultHandler:
 
         matched = list(stage_dir.glob(f"**/{target_name}")) if stage_dir.exists() else []
         if not matched:
-            if stage_key in ("fluid_prose", "fluid") and self.fluid_dir.exists() and self.fluid_dir != stage_dir:
+            if (
+                stage_key in ("fluid_prose", "fluid")
+                and self.fluid_dir.exists()
+                and self.fluid_dir != stage_dir
+            ):
                 matched = list(self.fluid_dir.glob(f"**/{target_name}"))
-            elif stage_key in ("gap_filler", "enriched") and self.enriched_dir.exists() and self.enriched_dir != stage_dir:
+            elif (
+                stage_key in ("gap_filler", "enriched")
+                and self.enriched_dir.exists()
+                and self.enriched_dir != stage_dir
+            ):
                 matched = list(self.enriched_dir.glob(f"**/{target_name}"))
             elif stage_key == "raw" and self.raw_dir.exists() and self.raw_dir != stage_dir:
                 matched = list(self.raw_dir.glob(f"**/{target_name}"))
@@ -245,7 +255,9 @@ class TranscriptVaultHandler:
             ch_dir = d / ch_name
             if ch_dir.exists() and ch_dir.is_dir():
                 candidates.update(
-                    p for p in ch_dir.glob("*.md") if p.is_file() and not p.name.startswith(("_", "."))
+                    p
+                    for p in ch_dir.glob("*.md")
+                    if p.is_file() and not p.name.startswith(("_", "."))
                 )
         return sorted(candidates)
 
@@ -257,6 +269,8 @@ class TranscriptVaultHandler:
             ch_dir = d / ch_name
             if ch_dir.exists() and ch_dir.is_dir():
                 candidates.update(
-                    p for p in ch_dir.glob("*.md") if p.is_file() and not p.name.startswith(("_", "."))
+                    p
+                    for p in ch_dir.glob("*.md")
+                    if p.is_file() and not p.name.startswith(("_", "."))
                 )
         return sorted(candidates)

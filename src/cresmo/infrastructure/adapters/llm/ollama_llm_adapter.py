@@ -12,7 +12,6 @@ Conforms to:
 from __future__ import annotations
 
 import json
-import os
 import threading
 import time
 import urllib.error
@@ -27,7 +26,7 @@ from opentelemetry import trace
 from cresmo.application.ports import LLMTransformationPort
 from cresmo.domain.exceptions import LLMInfrastructureError
 from cresmo.domain.value_objects import ChatPrompt
-from cresmo.infrastructure.adapters.opentelemetry_adapter import annotate_llm_span
+from cresmo.infrastructure.adapters.telemetry.opentelemetry_adapter import annotate_llm_span
 
 __all__ = ["OllamaLLMAdapter", "trace"]
 
@@ -86,15 +85,7 @@ class OllamaLLMAdapter(LLMTransformationPort):
         self._warmup_thread: threading.Thread | None = None
         self._warmup_error: Exception | None = None
 
-        if langfuse_client is not None:
-            self._langfuse: Langfuse | None = langfuse_client
-        elif os.environ.get("LANGFUSE_PUBLIC_KEY"):
-            try:
-                self._langfuse = Langfuse()
-            except Exception:  # noqa: BLE001
-                self._langfuse = None
-        else:
-            self._langfuse = None
+        self._langfuse: Langfuse | None = langfuse_client
 
     @property
     def is_warmed_up(self) -> bool:

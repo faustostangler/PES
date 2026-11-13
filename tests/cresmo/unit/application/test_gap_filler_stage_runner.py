@@ -40,7 +40,9 @@ def sample_context() -> PipelineExecutionContext:
     return PipelineExecutionContext(
         user_identity=UserIdentity.worker(),
         channel=Channel(name="Historia", id=ChannelId("UC_hist")),
-        content=Content.create(id=ContentId("vid_hist1"), title="Fundação", session_id="sess:gap_filler"),
+        content=Content.create(
+            id=ContentId("vid_hist1"), title="Fundação", session_id="sess:gap_filler"
+        ),
     )
 
 

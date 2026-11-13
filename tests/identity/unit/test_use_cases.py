@@ -190,7 +190,9 @@ class TestRegisterUserUseCase:
         assert saved.updated_at is not None
         assert saved.updated_at >= before
 
-    def test_register_passes_explicit_domain_entity_fields(self, monkeypatch: pytest.MonkeyPatch) -> None:
+    def test_register_passes_explicit_domain_entity_fields(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
         repo = InMemoryUserRepository()
         hasher = DummyPasswordHasher()
         use_case = RegisterUserUseCase(user_repo=repo, password_hasher=hasher)
@@ -274,7 +276,10 @@ class TestRegisterUserUseCase:
 
         with pytest.raises(UserAlreadyExistsError) as exc_info:
             use_case.execute(dto)
-        assert exc_info.value.args[0] == "User with email 'duplicate@example.com' is already registered."
+        assert (
+            exc_info.value.args[0]
+            == "User with email 'duplicate@example.com' is already registered."
+        )
 
     def test_register_with_invalid_role_raises_error(self) -> None:
         repo = InMemoryUserRepository()
@@ -435,17 +440,22 @@ class TestPersonalAccessTokenUseCases:
     def test_create_pat_without_expiration(self) -> None:
         pat_repo = InMemoryPATRepository()
         create_uc = CreatePersonalAccessTokenUseCase(pat_repo=pat_repo)
-        created = create_uc.execute(CreatePATRequestDTO(user_id="usr_noexp", name="Infinite Token", expires_in_days=None))
+        created = create_uc.execute(
+            CreatePATRequestDTO(user_id="usr_noexp", name="Infinite Token", expires_in_days=None)
+        )
         assert created.expires_at is None
 
     def test_create_pat_explicit_entropy_bytes(self, monkeypatch: pytest.MonkeyPatch) -> None:
         import secrets
+
         pat_repo = InMemoryPATRepository()
         create_uc = CreatePersonalAccessTokenUseCase(pat_repo=pat_repo)
         called_nbytes = []
+
         def fake_token(nbytes: int | None = None) -> str:
             called_nbytes.append(nbytes)
             return "x" * 43
+
         monkeypatch.setattr(secrets, "token_urlsafe", fake_token)
         create_uc.execute(CreatePATRequestDTO(user_id="usr_1", name="Test"))
         assert called_nbytes == [32]
@@ -465,9 +475,11 @@ class TestPersonalAccessTokenUseCases:
 
         passed_kwargs: dict[str, Any] = {}
         original_init = AuthenticatedUserDTO.__init__
+
         def spy_dto_init(self: AuthenticatedUserDTO, *args: Any, **kwargs: Any) -> None:
             passed_kwargs.update(kwargs)
             original_init(self, *args, **kwargs)
+
         monkeypatch.setattr(AuthenticatedUserDTO, "__init__", spy_dto_init)
 
         validate_uc.execute(created.raw_token)
@@ -557,7 +569,10 @@ class TestPersonalAccessTokenUseCases:
         validate_uc = ValidatePersonalAccessTokenUseCase(pat_repo=pat_repo, user_repo=user_repo)
         with pytest.raises(InvalidTokenError) as exc_missing:
             validate_uc.execute(raw)
-        assert exc_missing.value.args[0] == "User account associated with this token is inactive or not found."
+        assert (
+            exc_missing.value.args[0]
+            == "User account associated with this token is inactive or not found."
+        )
 
         # Inactive user
         inactive_user = User(
@@ -580,7 +595,10 @@ class TestPersonalAccessTokenUseCases:
         pat_repo.save(pat_inactive)
         with pytest.raises(InvalidTokenError) as exc_inact:
             validate_uc.execute(raw_inactive)
-        assert exc_inact.value.args[0] == "User account associated with this token is inactive or not found."
+        assert (
+            exc_inact.value.args[0]
+            == "User account associated with this token is inactive or not found."
+        )
 
 
 class TestListPersonalAccessTokensUseCase:
@@ -589,8 +607,16 @@ class TestListPersonalAccessTokensUseCase:
         create_uc = CreatePersonalAccessTokenUseCase(pat_repo=pat_repo)
         list_uc = ListPersonalAccessTokensUseCase(pat_repo=pat_repo)
 
-        t1 = create_uc.execute(CreatePATRequestDTO(user_id="usr_1", name="Token 1", scopes=["cresmo:sync"], expires_in_days=10))
-        t2 = create_uc.execute(CreatePATRequestDTO(user_id="usr_1", name="Token 2", scopes=["cresmo:admin"], expires_in_days=None))
+        t1 = create_uc.execute(
+            CreatePATRequestDTO(
+                user_id="usr_1", name="Token 1", scopes=["cresmo:sync"], expires_in_days=10
+            )
+        )
+        t2 = create_uc.execute(
+            CreatePATRequestDTO(
+                user_id="usr_1", name="Token 2", scopes=["cresmo:admin"], expires_in_days=None
+            )
+        )
         create_uc.execute(CreatePATRequestDTO(user_id="usr_2", name="Token Other", scopes=[]))
 
         # Simulate usage on t1
@@ -680,7 +706,9 @@ class TestValidateTokenUseCase:
         user_repo.save(user)
 
         class CustomClaimsTokenService(TokenServicePort):
-            def create_access_token(self, user: User, expires_delta: timedelta | None = None) -> str:
+            def create_access_token(
+                self, user: User, expires_delta: timedelta | None = None
+            ) -> str:
                 return "custom_token"
 
             def decode_access_token(self, token: str) -> dict[str, Any]:
@@ -690,7 +718,9 @@ class TestValidateTokenUseCase:
                     "scopes": ["cresmo:read", "cresmo:sync"],
                 }
 
-        use_case = ValidateTokenUseCase(token_service=CustomClaimsTokenService(), user_repo=user_repo)
+        use_case = ValidateTokenUseCase(
+            token_service=CustomClaimsTokenService(), user_repo=user_repo
+        )
         auth_user = use_case.execute("custom_token")
 
         assert auth_user.user_id == "usr_custom_claims"
@@ -701,7 +731,9 @@ class TestValidateTokenUseCase:
         user_repo = InMemoryUserRepository()
 
         class MissingSubTokenService(TokenServicePort):
-            def create_access_token(self, user: User, expires_delta: timedelta | None = None) -> str:
+            def create_access_token(
+                self, user: User, expires_delta: timedelta | None = None
+            ) -> str:
                 return "token"
 
             def decode_access_token(self, token: str) -> dict[str, Any]:
@@ -743,5 +775,3 @@ class TestValidateTokenUseCase:
         with pytest.raises(InvalidTokenError, match="inactive or not found") as exc_info:
             use_case.execute(token)
         assert exc_info.value.args[0] == "User account is inactive or not found."
-
-

@@ -749,7 +749,9 @@ class TestCresmoCLI:
 
     def test_load_batch_sources_includes_raw_directory(self, tmp_path: Path) -> None:
         """Verify local raw transcript lake files are loaded into Tier 2."""
-        from cresmo.application.use_cases.discover_batch_sources import BatchDiscoveryQuery
+        from cresmo.application.use_cases.discovery.discover_batch_sources import (
+            BatchDiscoveryQuery,
+        )
         from cresmo.presentation.commands.run import load_batch_sources
 
         settings = MagicMock(spec=CresmoSettings)
@@ -779,7 +781,9 @@ class TestCresmoCLI:
         """Verify channel URLs in playlist.txt trigger discover_channel_feed with lookback window."""
         from datetime import UTC, datetime, timedelta
 
-        from cresmo.application.use_cases.discover_batch_sources import BatchDiscoveryQuery
+        from cresmo.application.use_cases.discovery.discover_batch_sources import (
+            BatchDiscoveryQuery,
+        )
         from cresmo.domain.value_objects import ContentId, DiscoveredMediaItem
         from cresmo.presentation.commands.run import load_batch_sources
 
@@ -831,7 +835,9 @@ class TestCresmoCLI:
         """Verify video URLs in playlist.txt resolve parent channel and query its feed."""
         from datetime import UTC, datetime, timedelta
 
-        from cresmo.application.use_cases.discover_batch_sources import BatchDiscoveryQuery
+        from cresmo.application.use_cases.discovery.discover_batch_sources import (
+            BatchDiscoveryQuery,
+        )
         from cresmo.domain.value_objects import ContentId, DiscoveredMediaItem
         from cresmo.presentation.commands.run import load_batch_sources
 
@@ -886,7 +892,9 @@ class TestCresmoCLI:
         """Verify multiple videos from the same channel trigger channel feed query only once."""
         from datetime import UTC, datetime, timedelta
 
-        from cresmo.application.use_cases.discover_batch_sources import BatchDiscoveryQuery
+        from cresmo.application.use_cases.discovery.discover_batch_sources import (
+            BatchDiscoveryQuery,
+        )
         from cresmo.domain.value_objects import ContentId, DiscoveredMediaItem
         from cresmo.presentation.commands.run import load_batch_sources
 
@@ -937,7 +945,9 @@ class TestCresmoCLI:
         """Verify channel is extracted from local raw frontmatter without remote resolution call."""
         from datetime import UTC, datetime, timedelta
 
-        from cresmo.application.use_cases.discover_batch_sources import BatchDiscoveryQuery
+        from cresmo.application.use_cases.discovery.discover_batch_sources import (
+            BatchDiscoveryQuery,
+        )
         from cresmo.domain.value_objects import ChannelName, ContentId, DiscoveredMediaItem
         from cresmo.presentation.commands.run import load_batch_sources
 
@@ -1040,7 +1050,7 @@ class TestCresmoCLI:
         assert code == EXIT_INTERNAL_ERROR
 
     def test_execute_batch_dry_run_with_text_file_and_failed_url(self, tmp_path: Path) -> None:
-        from cresmo.application.use_cases.discover_batch_sources import BatchSource
+        from cresmo.application.use_cases.discovery.discover_batch_sources import BatchSource
         from cresmo.domain.value_objects import SourceModality
         from cresmo.presentation.commands.run import execute_batch_dry_run
 
@@ -1060,7 +1070,7 @@ class TestCresmoCLI:
 
     def test_execute_batch_run_with_file_and_exceptions(self, tmp_path: Path) -> None:
 
-        from cresmo.application.use_cases.discover_batch_sources import BatchSource
+        from cresmo.application.use_cases.discovery.discover_batch_sources import BatchSource
         from cresmo.domain.value_objects import SourceModality
         from cresmo.presentation.commands.run import execute_batch_run
 
@@ -1121,7 +1131,7 @@ class TestCresmoCLI:
     ) -> None:
         """Verify ADR-035: batch run generates a single BatchId shared by all items in the run."""
 
-        from cresmo.application.use_cases.discover_batch_sources import BatchSource
+        from cresmo.application.use_cases.discovery.discover_batch_sources import BatchSource
         from cresmo.domain.value_objects import BatchId, SourceModality
         from cresmo.presentation.commands.run import execute_batch_run
 

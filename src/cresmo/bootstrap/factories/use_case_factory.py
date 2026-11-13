@@ -12,24 +12,25 @@ from typing import TYPE_CHECKING
 
 from cresmo.application.ports import MediaIngestionPort, VaultRepositoryPort
 from cresmo.application.use_cases.concat_master import ConcatMasterUseCase
-from cresmo.application.use_cases.discover_batch_sources import DiscoverBatchSourcesUseCase
-from cresmo.application.use_cases.index_raw_transcripts import IndexRawTranscriptsUseCase
+from cresmo.application.use_cases.discovery import DiscoverBatchSourcesUseCase
+from cresmo.application.use_cases.indexing import IndexRawTranscriptsUseCase
 from cresmo.application.use_cases.sync_channel import SyncChannelUseCase
 from cresmo.application.use_cases.unify_duplicate_notes import UnifyDuplicateNotesUseCase
-from cresmo.infrastructure.config import CresmoSettings
-from cresmo.presentation.factories.adapter_factory import (
+from cresmo.bootstrap.factories.adapter_factory import (
     build_indexing_adapter,
     build_media_ingestion_adapter,
     build_preflight_checker,
     build_prompt_provider,
+    build_taxonomy_adapter,
     build_vault_adapter,
 )
-from cresmo.presentation.factories.judge_factory import build_llm_judge_adapter
-from cresmo.presentation.factories.settings_factory import resolve_shared_settings
-from cresmo.presentation.factories.telemetry_factory import (
+from cresmo.bootstrap.factories.judge_factory import build_llm_judge_adapter
+from cresmo.bootstrap.factories.settings_factory import resolve_shared_settings
+from cresmo.bootstrap.factories.telemetry_factory import (
     build_anonymizer_adapter,
     resolve_langfuse_client,
 )
+from cresmo.infrastructure.config import CresmoSettings
 
 if TYPE_CHECKING:
     from cresmo.application.pipeline import CresmoPipeline
@@ -42,7 +43,7 @@ def build_sync_channel_use_case(
     pipeline: CresmoPipeline | None = None,
 ) -> SyncChannelUseCase:
     """Construct SyncChannelUseCase with all ports and dependencies wired."""
-    from cresmo.presentation.composition import build_pipeline
+    from cresmo.bootstrap.composition import build_pipeline
 
     settings = resolve_shared_settings(settings)
     pipeline = pipeline or build_pipeline(settings, batch_size_override=batch_size_override)
@@ -76,10 +77,12 @@ def build_discover_batch_sources_use_case(
     """Construct DiscoverBatchSourcesUseCase with injected or default NativeMediaIngestionAdapter."""
     settings = resolve_shared_settings(settings)
     media_ingestion_port = media_ingestion_port or build_media_ingestion_adapter(settings)
+    taxonomy_port = build_taxonomy_adapter(settings)
     return DiscoverBatchSourcesUseCase(
         media_ingestion_port=media_ingestion_port,
         settings=settings,
         progress_callback=progress_callback,
+        taxonomy_port=taxonomy_port,
     )
 
 
@@ -90,9 +93,11 @@ def build_concat_master_use_case(
     """Instantiate ConcatMasterUseCase with configured dependencies."""
     settings = resolve_shared_settings(settings)
     vault_port = vault_port or build_vault_adapter(settings)
+    taxonomy_port = build_taxonomy_adapter(settings)
     return ConcatMasterUseCase(
         vault_port=vault_port,
         settings=settings,
+        taxonomy_port=taxonomy_port,
     )
 
 
@@ -119,6 +124,8 @@ def build_index_raw_use_case(
         prompt_provider=prompt_provider,
     )
 
+    taxonomy_port = build_taxonomy_adapter(settings)
+
     return IndexRawTranscriptsUseCase(
         vault_port=vault_port,
         llm_indexing_port=llm_indexing_port,
@@ -128,4 +135,5 @@ def build_index_raw_use_case(
         language=settings.language,
         max_rewrites=settings.raw_index_max_attempts,
         llm_judge_port=llm_judge_port,
+        taxonomy_port=taxonomy_port,
     )

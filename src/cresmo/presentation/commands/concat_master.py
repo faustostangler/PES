@@ -15,11 +15,11 @@ from typing import Annotated, Any
 
 import typer
 
-from cresmo.domain.value_objects import ChannelName
-from cresmo.presentation.composition import (
+from cresmo.bootstrap.composition import (
     build_concat_master_use_case,
     resolve_shared_settings,
 )
+from cresmo.domain.value_objects import ChannelName
 from cresmo.presentation.exit_codes import (
     EXIT_INTERNAL_ERROR,
     EXIT_SUCCESS,

@@ -581,7 +581,9 @@ class TestCresmoPipelineExecutionAndIdempotency:
         raw_no_chid = StageTranscript(
             channel=Channel(name="NoChIdChan", id=None),
             provenance=MediaProvenance.create(url=""),
-            content=Content(id=ContentId("c_no_chid"), title="T", text="Text for no chid transcript"),
+            content=Content(
+                id=ContentId("c_no_chid"), title="T", text="Text for no chid transcript"
+            ),
         )
         mock_ledger = MagicMock(spec=LedgerRepositoryPort)
         mock_ledger.is_processed.return_value = True
@@ -686,7 +688,9 @@ class TestCresmoPipelineRunForSources:
         )
 
         sample_raw = MagicMock(spec=StageTranscript)
-        sample_raw.content = Content(id=ContentId("v123"), title="Vid Title", text="Transcript text")
+        sample_raw.content = Content(
+            id=ContentId("v123"), title="Vid Title", text="Transcript text"
+        )
         sample_raw.channel = Channel(name="ChanVid", id=None)
         sample_raw.provenance = MediaProvenance(
             url="https://youtube.com/watch?v=v123", description=""
@@ -819,7 +823,7 @@ class TestCresmoPipelineRunForSources:
                 batch_id="text_batch",
             )
             mock_warmup.assert_called_once()
-            mock_load.assert_called_once_with(file_path)
+            mock_load.assert_called_once_with(file_path, taxonomy_port=pipeline.taxonomy_port)
             mock_ensure.assert_called_once_with(
                 mock_vault,
                 file_path,

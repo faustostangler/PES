@@ -6,7 +6,7 @@ against raw spoken transcripts, submitting generated fluid prose to the calibrat
 canonical LLM Judge (Gemini 3.5 Flash Lite) across all 6 canonical criteria.
 
 Each evaluated model writes its own independent, comprehensive report file
-to disk (scripts/fluid_prose/llm_generator_{model}.txt) with zero unified tables,
+to disk (reports/generator/llm_generator_{model}.txt) with zero unified tables,
 preserving full traceability of candidate prose, statistical quality gates,
 criterion-by-criterion compliance matrices, and per-sample judge evaluations.
 
@@ -34,15 +34,18 @@ from typing import Annotated, Any
 import click
 import structlog
 import typer
+from dotenv import load_dotenv
 
 # Ensure project root and src are in sys.path
-REPO_ROOT = Path(__file__).resolve().parents[3]
+REPO_ROOT = Path(__file__).resolve().parent.parent
 SRC_DIR = REPO_ROOT / "src"
 for path in (str(SRC_DIR), str(REPO_ROOT)):
     if path not in sys.path:
         sys.path.insert(0, path)
 
 from cresmo.application.ports import LLMTransformationPort, PromptProviderPort
+from cresmo.bootstrap.factories.adapter_factory import build_prompt_provider
+from cresmo.bootstrap.factories.judge_factory import build_llm_judge_adapter
 from cresmo.domain.value_objects.prompt import PromptKey
 from cresmo.domain.value_objects.quality import (
     DEFAULT_FLUID_PROSE_WEIGHTS,
@@ -51,11 +54,9 @@ from cresmo.domain.value_objects.quality import (
     JudgeCriterion,
     JudgeEvaluation,
 )
-from cresmo.infrastructure.adapters.gemini_adapter import GeminiLLMAdapter
-from cresmo.infrastructure.adapters.ollama_llm_adapter import OllamaLLMAdapter
+from cresmo.infrastructure.adapters.llm.gemini_adapter import GeminiLLMAdapter
+from cresmo.infrastructure.adapters.llm.ollama_llm_adapter import OllamaLLMAdapter
 from cresmo.infrastructure.config import CresmoSettings
-from cresmo.presentation.factories.adapter_factory import build_prompt_provider
-from cresmo.presentation.factories.judge_factory import build_llm_judge_adapter
 
 logger = structlog.get_logger("benchmark_generators")
 
@@ -67,8 +68,6 @@ CANONICAL_CRITERIA: tuple[JudgeCriterion, ...] = (
     JudgeCriterion.STRUCTURAL_COMPLIANCE,
     JudgeCriterion.AUTHORIAL_VOICE,
 )
-
-ALL_BENCHMARK_MODELS: list[str] = CresmoSettings().generator_benchmark_models
 
 
 @dataclass(frozen=True)
@@ -199,11 +198,11 @@ def load_benchmark_samples(
         else:
             samples.append(parse_raw_transcript_file(input_path))
 
-    # Case 2: Directory provided (or default current llm_generator/samples folder)
+    # Case 2: Directory provided (or default evals/datasets/samples folder)
     target_dir = (
         input_path
         if (input_path is not None and input_path.is_dir())
-        else (Path(__file__).resolve().parent / "samples")
+        else (Path(__file__).resolve().parent / "datasets" / "samples")
     )
     if not samples and target_dir.exists():
         found_files = sorted(list(target_dir.rglob("*.md")) + list(target_dir.rglob("*.txt")))
@@ -219,9 +218,7 @@ def load_benchmark_samples(
 
     # Case 3: Fallback to Golden Set items if data/raw has fewer than 2 transcripts
     if len(samples) < 2:
-        golden_path = (
-            REPO_ROOT / "scripts" / "fluid_prose" / "golden_sets" / "fluid_prose_golden_set.json"
-        )
+        golden_path = Path(__file__).resolve().parent / "datasets" / "fluid_prose_golden_set.json"
         if golden_path.exists():
             data = json.loads(golden_path.read_text(encoding="utf-8"))
             seen_texts: set[str] = set()
@@ -675,7 +672,7 @@ def benchmark(
             "--output-dir",
             help="Directory to save individual model report files",
         ),
-    ] = REPO_ROOT / "scripts" / "fluid_prose",
+    ] = REPO_ROOT / "reports" / "generator",
     temperature: Annotated[
         float,
         typer.Option(
@@ -691,6 +688,7 @@ def benchmark(
         ),
     ] = 1.0,
 ) -> None:
+    load_dotenv(REPO_ROOT / ".env", override=False)
     settings = CresmoSettings()
     settings.ensure_directories()
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -704,9 +702,10 @@ def benchmark(
         os.environ["LANGFUSE_HOST"] = settings.langfuse_host
 
     # 1. Resolve Target Models
-    raw_models = models if models else list(ALL_BENCHMARK_MODELS)
+    default_models = list(settings.generator_benchmark_models)
+    raw_models = models if models else default_models
     if "all" in [m.lower() for m in raw_models]:
-        raw_models = list(ALL_BENCHMARK_MODELS)
+        raw_models = default_models
 
     # 2. Load Samples
     samples = load_benchmark_samples(input_path=input_path, limit=limit)

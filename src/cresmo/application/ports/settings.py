@@ -36,6 +36,12 @@ class PipelineSettingsProtocol(Protocol):
     def raw_dir(self) -> Path: ...
 
     @property
+    def fluid_dir(self) -> Path: ...
+
+    @property
+    def gap_filler_dir(self) -> Path: ...
+
+    @property
     def enriched_dir(self) -> Path: ...
 
     @property
@@ -90,6 +96,8 @@ class DefaultPipelineSettings:
     batch_size: int = 5
     concat_max_words: int = 50000
     raw_dir: Path = Path("data/raw")
+    fluid_dir: Path = Path("data/fluid_prose")
+    gap_filler_dir: Path = Path("data/gap_filler")
     enriched_dir: Path = Path("data/enriched")
     priority_texts_dir: Path | None = None
     playlist_path: Path = Path("data/playlist.txt")

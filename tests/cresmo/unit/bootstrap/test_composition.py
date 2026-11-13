@@ -24,39 +24,11 @@ from cresmo.application.pipeline import (
 from cresmo.application.ports import MediaIngestionPort
 from cresmo.application.services.preflight import PreflightHealthChecker
 from cresmo.application.use_cases.concat_master import ConcatMasterUseCase
-from cresmo.application.use_cases.discover_batch_sources import DiscoverBatchSourcesUseCase
-from cresmo.application.use_cases.index_raw_transcripts import IndexRawTranscriptsUseCase
+from cresmo.application.use_cases.discovery import DiscoverBatchSourcesUseCase
+from cresmo.application.use_cases.indexing import IndexRawTranscriptsUseCase
 from cresmo.application.use_cases.sync_channel import SyncChannelUseCase
 from cresmo.application.use_cases.unify_duplicate_notes import UnifyDuplicateNotesUseCase
-from cresmo.infrastructure.adapters.anonymizer_adapter import (
-    NoOpAnonymizerAdapter,
-    RegexAnonymizerAdapter,
-)
-from cresmo.infrastructure.adapters.gemini_adapter import GeminiLLMAdapter
-from cresmo.infrastructure.adapters.judges.langfuse_decorator import LangfuseJudgeDecorator
-from cresmo.infrastructure.adapters.native_media_ingestion_adapter import (
-    NativeMediaIngestionAdapter,
-)
-from cresmo.infrastructure.adapters.noop_metrics_adapter import NoOpMetricsAdapter
-from cresmo.infrastructure.adapters.obsidian_vault_adapter import ObsidianVaultAdapter
-from cresmo.infrastructure.adapters.ollama_llm_adapter import OllamaLLMAdapter
-from cresmo.infrastructure.adapters.opentelemetry_adapter import (
-    NoOpTelemetryAdapter,
-    OpenTelemetryAdapter,
-)
-from cresmo.infrastructure.adapters.prometheus_metrics_adapter import (
-    PrometheusMetricsAdapter,
-)
-from cresmo.infrastructure.adapters.prompt_provider import (
-    JsonPromptProvider,
-    LangfusePromptProvider,
-)
-from cresmo.infrastructure.adapters.sqlite_ledger_adapter import SqliteLedgerAdapter
-from cresmo.infrastructure.config import CresmoSettings
-from cresmo.presentation.composition import (
-    _build_mask_hook,
-    _build_should_export_span,
-    _clean_langfuse_env,
+from cresmo.bootstrap.composition import (
     build_anonymizer_adapter,
     build_concat_master_use_case,
     build_discover_batch_sources_use_case,
@@ -75,6 +47,36 @@ from cresmo.presentation.composition import (
     resolve_langfuse_client,
     resolve_shared_settings,
 )
+from cresmo.bootstrap.factories.telemetry_factory import (
+    _build_mask_hook,
+    _build_should_export_span,
+    _clean_langfuse_env,
+)
+from cresmo.infrastructure.adapters.anonymization.anonymizer_adapter import (
+    NoOpAnonymizerAdapter,
+    RegexAnonymizerAdapter,
+)
+from cresmo.infrastructure.adapters.judges.langfuse_decorator import LangfuseJudgeDecorator
+from cresmo.infrastructure.adapters.llm.gemini_adapter import GeminiLLMAdapter
+from cresmo.infrastructure.adapters.llm.ollama_llm_adapter import OllamaLLMAdapter
+from cresmo.infrastructure.adapters.media.native_media_ingestion_adapter import (
+    NativeMediaIngestionAdapter,
+)
+from cresmo.infrastructure.adapters.metrics.noop_metrics_adapter import NoOpMetricsAdapter
+from cresmo.infrastructure.adapters.metrics.prometheus_metrics_adapter import (
+    PrometheusMetricsAdapter,
+)
+from cresmo.infrastructure.adapters.obsidian import ObsidianVaultAdapter
+from cresmo.infrastructure.adapters.prompts import (
+    JsonPromptProvider,
+    LangfusePromptProvider,
+)
+from cresmo.infrastructure.adapters.telemetry.opentelemetry_adapter import (
+    NoOpTelemetryAdapter,
+    OpenTelemetryAdapter,
+)
+from cresmo.infrastructure.config import CresmoSettings
+from cresmo.infrastructure.persistence.sqlite_ledger_adapter import SqliteLedgerAdapter
 
 
 class TestCompositionRoot:
@@ -109,7 +111,7 @@ class TestCompositionRoot:
     def test_build_pipeline_wires_prompt_provider_to_llm_judge(
         self, test_settings: CresmoSettings
     ) -> None:
-        with patch("cresmo.presentation.composition.build_llm_judge_adapter") as mock_build_judge:
+        with patch("cresmo.bootstrap.composition.build_llm_judge_adapter") as mock_build_judge:
             build_pipeline(settings=test_settings)
             mock_build_judge.assert_called_once()
             _, kwargs = mock_build_judge.call_args
@@ -155,7 +157,7 @@ class TestCompositionRoot:
     def test_factory_functions_fallback_to_default_settings(
         self, test_settings: CresmoSettings
     ) -> None:
-        with patch("cresmo.presentation.composition.CresmoSettings", return_value=test_settings):
+        with patch("cresmo.bootstrap.composition.CresmoSettings", return_value=test_settings):
             p = build_pipeline(settings=None)
             assert isinstance(p, CresmoPipeline)
 
@@ -185,7 +187,10 @@ class TestCompositionRoot:
         mock_langfuse_cls = MagicMock(return_value=mock_langfuse_instance)
 
         with (
-            patch("cresmo.presentation.composition.probe_langfuse_ready", return_value=True),
+            patch(
+                "cresmo.bootstrap.factories.telemetry_factory.probe_langfuse_ready",
+                return_value=True,
+            ),
             patch.dict("sys.modules", {"langfuse": MagicMock(Langfuse=mock_langfuse_cls)}),
         ):
             pipeline = build_pipeline(settings=settings_with_langfuse)
@@ -232,7 +237,9 @@ class TestCompositionRoot:
             langfuse_host="http://localhost:3000",
         )
 
-        with patch("cresmo.presentation.composition.probe_langfuse_ready", return_value=False):
+        with patch(
+            "cresmo.bootstrap.factories.telemetry_factory.probe_langfuse_ready", return_value=False
+        ):
             pipeline = build_pipeline(settings=settings_with_langfuse)
             assert isinstance(pipeline, CresmoPipeline)
             assert isinstance(pipeline.llm_synthesis_port, GeminiLLMAdapter)
@@ -261,7 +268,10 @@ class TestCompositionRoot:
         )
 
         with (
-            patch("cresmo.presentation.composition.probe_langfuse_ready", return_value=True),
+            patch(
+                "cresmo.bootstrap.factories.telemetry_factory.probe_langfuse_ready",
+                return_value=True,
+            ),
             patch("langfuse.Langfuse", side_effect=RuntimeError("Langfuse init failed")),
         ):
             pipeline = build_pipeline(settings=settings_with_langfuse)
@@ -309,10 +319,10 @@ class TestCompositionRoot:
         assert isinstance(pipeline.llm_indexing_port, OllamaLLMAdapter)
 
     def test_probe_langfuse_ready_url_construction(self) -> None:
-        from cresmo.presentation.composition import probe_langfuse_ready
+        from cresmo.bootstrap.composition import probe_langfuse_ready
 
         with patch(
-            "cresmo.presentation.composition.probe_http_endpoint", return_value=True
+            "cresmo.bootstrap.factories.telemetry_factory.probe_http_endpoint", return_value=True
         ) as mock_probe:
             assert probe_langfuse_ready("http://localhost:3000/serviceX") is True
             mock_probe.assert_called_once_with(
@@ -321,10 +331,10 @@ class TestCompositionRoot:
             )
 
     def test_probe_langfuse_ready_strips_trailing_slash(self) -> None:
-        from cresmo.presentation.composition import probe_langfuse_ready
+        from cresmo.bootstrap.composition import probe_langfuse_ready
 
         with patch(
-            "cresmo.presentation.composition.probe_http_endpoint", return_value=True
+            "cresmo.bootstrap.factories.telemetry_factory.probe_http_endpoint", return_value=True
         ) as mock_probe:
             assert (
                 probe_langfuse_ready("http://localhost:3000/serviceX/", timeout_seconds=0.5) is True
@@ -345,7 +355,7 @@ class TestCompositionRoot:
             langfuse_host="http://host1:3000",
         )
         with patch(
-            "cresmo.presentation.composition.probe_langfuse_ready", return_value=False
+            "cresmo.bootstrap.factories.telemetry_factory.probe_langfuse_ready", return_value=False
         ) as mock_probe:
             assert resolve_langfuse_client(s1) is None
             mock_probe.assert_called_once_with("http://host1:3000", timeout_seconds=2.0)
@@ -366,7 +376,7 @@ class TestCompositionRoot:
             preflight_probe_timeout_seconds=3.5,
         )
         with patch(
-            "cresmo.presentation.composition.probe_langfuse_ready", return_value=False
+            "cresmo.bootstrap.factories.telemetry_factory.probe_langfuse_ready", return_value=False
         ) as mock_probe2:
             assert resolve_langfuse_client(s2) is None
             mock_probe2.assert_called_once_with("http://host2:3000", timeout_seconds=3.5)
@@ -377,7 +387,7 @@ class TestCompositionRoot:
             langfuse_host="http://hostmiss:3000",
         )
         with patch(
-            "cresmo.presentation.composition.probe_langfuse_ready", return_value=False
+            "cresmo.bootstrap.factories.telemetry_factory.probe_langfuse_ready", return_value=False
         ) as mock_probe_miss:
             assert resolve_langfuse_client(s_missing_probe_attrs) is None  # type: ignore[arg-type]
             mock_probe_miss.assert_called_once_with("http://hostmiss:3000", timeout_seconds=1.0)
@@ -412,7 +422,7 @@ class TestCompositionRoot:
     def test_build_sync_channel_use_case_raises_runtime_error_when_ledger_port_missing(
         self, test_settings: CresmoSettings
     ) -> None:
-        with patch("cresmo.presentation.composition.build_pipeline") as mock_build_pipeline:
+        with patch("cresmo.bootstrap.composition.build_pipeline") as mock_build_pipeline:
             mock_pipeline = MagicMock(spec=CresmoPipeline)
             mock_pipeline.ledger_port = None
             mock_build_pipeline.return_value = mock_pipeline
@@ -521,7 +531,7 @@ class TestCompositionRoot:
 
         # 1. Default export span returns True
         with patch(
-            "cresmo.presentation.composition.is_default_export_span", return_value=True
+            "cresmo.bootstrap.factories.telemetry_factory.is_default_export_span", return_value=True
         ) as mock_default:
             span_default = SimpleNamespace()
             assert predicate(span_default) is True
@@ -529,7 +539,8 @@ class TestCompositionRoot:
 
         # 2. Not default export, but starts with cresmo.
         with patch(
-            "cresmo.presentation.composition.is_default_export_span", return_value=False
+            "cresmo.bootstrap.factories.telemetry_factory.is_default_export_span",
+            return_value=False,
         ) as mock_not_default:
             span_cresmo = SimpleNamespace(
                 instrumentation_scope=SimpleNamespace(name="cresmo.pipeline.runner")
@@ -606,7 +617,9 @@ class TestCompositionRoot:
 
         with (
             patch("langfuse.Langfuse", mock_langfuse_cls),
-            patch("cresmo.presentation.composition.name_telemetry_threads") as mock_name_threads,
+            patch(
+                "cresmo.bootstrap.factories.telemetry_factory.name_telemetry_threads"
+            ) as mock_name_threads,
         ):
             client = resolve_langfuse_client(settings, anonymizer=mock_anonymizer)
             assert client is mock_client
@@ -636,8 +649,8 @@ class TestCompositionRoot:
         )
         with (
             patch.dict("sys.modules", {"langfuse": SimpleNamespace()}),
-            patch("cresmo.presentation.composition.Langfuse", mock_langfuse_cls),
-            patch("cresmo.presentation.composition.name_telemetry_threads"),
+            patch("cresmo.bootstrap.factories.telemetry_factory.Langfuse", mock_langfuse_cls),
+            patch("cresmo.bootstrap.factories.telemetry_factory.name_telemetry_threads"),
         ):
             resolve_langfuse_client(s_missing_timeout_env)  # type: ignore[arg-type]
             _, kwargs_def = mock_langfuse_cls.call_args
@@ -707,7 +720,7 @@ class TestCompositionRoot:
         assert uc_false.preflight_checker._check_ffmpeg is False
 
         # 3. None settings defaults correctly
-        with patch("cresmo.presentation.composition.CresmoSettings", return_value=test_settings):
+        with patch("cresmo.bootstrap.composition.CresmoSettings", return_value=test_settings):
             uc_default = build_sync_channel_use_case(settings=None, check_ffmpeg=False)
             assert uc_default.pipeline is not None
             assert uc_default.media_ingestion_port is not None
@@ -717,7 +730,7 @@ class TestCompositionRoot:
         self, test_settings: CresmoSettings
     ) -> None:
         with (
-            patch("cresmo.presentation.composition.configure_logging") as mock_logging,
+            patch("cresmo.bootstrap.composition.configure_logging") as mock_logging,
             patch(
                 "cresmo.infrastructure.config.CresmoSettings.ensure_directories"
             ) as mock_ensure_dirs,
@@ -773,35 +786,35 @@ class TestCompositionRoot:
 
         with (
             patch(
-                "cresmo.presentation.composition.build_anonymizer_adapter",
+                "cresmo.bootstrap.composition.build_anonymizer_adapter",
                 return_value=mock_anon_adapter,
             ) as mock_anon,
             patch(
-                "cresmo.presentation.composition.resolve_langfuse_client",
+                "cresmo.bootstrap.composition.resolve_langfuse_client",
                 return_value=mock_lf_client,
             ) as mock_lf,
             patch(
-                "cresmo.presentation.composition.build_telemetry_adapter",
+                "cresmo.bootstrap.composition.build_telemetry_adapter",
                 return_value=mock_tel_adapter,
             ) as mock_tel,
             patch(
-                "cresmo.presentation.composition.build_media_ingestion_adapter",
+                "cresmo.bootstrap.composition.build_media_ingestion_adapter",
                 return_value=mock_ingest_adapter,
             ) as mock_ingest,
             patch(
-                "cresmo.presentation.composition.build_prompt_provider",
+                "cresmo.bootstrap.composition.build_prompt_provider",
                 return_value=mock_prompt_prov,
             ) as mock_prompt,
             patch(
-                "cresmo.presentation.composition.build_gemini_synthesis_adapter",
+                "cresmo.bootstrap.composition.build_gemini_synthesis_adapter",
                 return_value=mock_synth_adapter,
             ) as mock_gemini,
             patch(
-                "cresmo.presentation.composition.build_indexing_adapter",
+                "cresmo.bootstrap.composition.build_indexing_adapter",
                 return_value=mock_index_adapter,
             ) as mock_idx,
             patch(
-                "cresmo.presentation.composition.build_llm_judge_adapter",
+                "cresmo.bootstrap.composition.build_llm_judge_adapter",
                 return_value=mock_judge_adapter,
             ) as mock_judge,
             patch("cresmo.infrastructure.config.CresmoSettings.ensure_directories"),
@@ -830,7 +843,7 @@ class TestCompositionRoot:
     def test_build_sync_channel_use_case_wires_preflight_checker_with_settings(
         self, test_settings: CresmoSettings
     ) -> None:
-        with patch("cresmo.presentation.composition.build_preflight_checker") as mock_pfc:
+        with patch("cresmo.bootstrap.composition.build_preflight_checker") as mock_pfc:
             mock_pfc.return_value = MagicMock()
             build_sync_channel_use_case(settings=test_settings, check_ffmpeg=True)
             mock_pfc.assert_called_once_with(test_settings, check_ffmpeg=True)

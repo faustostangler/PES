@@ -26,7 +26,7 @@ from cresmo.domain.entities import (
     UserIdentity,
 )
 from cresmo.domain.exceptions import DomainValidationError
-from cresmo.infrastructure.adapters.opentelemetry_adapter import (
+from cresmo.infrastructure.adapters.telemetry.opentelemetry_adapter import (
     NoOpTelemetryAdapter,
     OpenTelemetryAdapter,
     annotate_llm_span,
@@ -513,7 +513,9 @@ def test_name_telemetry_threads_assigns_canonical_names() -> None:
     """Verify name_telemetry_threads assigns canonical thread names per ADR-020 Pillar 5."""
     from unittest.mock import MagicMock
 
-    from cresmo.infrastructure.adapters.opentelemetry_adapter import name_telemetry_threads
+    from cresmo.infrastructure.adapters.telemetry.opentelemetry_adapter import (
+        name_telemetry_threads,
+    )
 
     # Setup mock consumers
     mock_media_consumer = MagicMock()
@@ -747,7 +749,7 @@ def test_start_pipeline_session_propagates_trace_name_and_identity_metadata(
     """
     from unittest.mock import MagicMock
 
-    import cresmo.infrastructure.adapters.opentelemetry_adapter as otel_module
+    import cresmo.infrastructure.adapters.telemetry.opentelemetry_adapter as otel_module
 
     captured: dict[str, object] = {}
 
@@ -1100,7 +1102,7 @@ class TestIdentityResolutionExtended:
     """Test string and polymorphic identity resolution functions."""
 
     def test_resolve_identity_from_string_system(self) -> None:
-        from cresmo.infrastructure.adapters.opentelemetry_adapter import (
+        from cresmo.infrastructure.adapters.telemetry.opentelemetry_adapter import (
             _resolve_identity_from_string,
         )
 
@@ -1111,7 +1113,7 @@ class TestIdentityResolutionExtended:
         assert tenant is None
 
     def test_resolve_identity_from_string_channel(self) -> None:
-        from cresmo.infrastructure.adapters.opentelemetry_adapter import (
+        from cresmo.infrastructure.adapters.telemetry.opentelemetry_adapter import (
             _resolve_identity_from_string,
         )
 
@@ -1122,7 +1124,7 @@ class TestIdentityResolutionExtended:
         assert tenant == "channel:sandeco:sub"
 
     def test_resolve_identity_from_string_anonymous(self) -> None:
-        from cresmo.infrastructure.adapters.opentelemetry_adapter import (
+        from cresmo.infrastructure.adapters.telemetry.opentelemetry_adapter import (
             _resolve_identity_from_string,
         )
 
@@ -1134,7 +1136,7 @@ class TestIdentityResolutionExtended:
         assert tenant is None
 
     def test_resolve_identity_from_string_user_structured(self) -> None:
-        from cresmo.infrastructure.adapters.opentelemetry_adapter import (
+        from cresmo.infrastructure.adapters.telemetry.opentelemetry_adapter import (
             _resolve_identity_from_string,
         )
 
@@ -1154,12 +1156,12 @@ class TestIdentityResolutionExtended:
     def test_resolve_identity_from_string_user_short(self) -> None:
         from unittest.mock import patch
 
-        from cresmo.infrastructure.adapters.opentelemetry_adapter import (
+        from cresmo.infrastructure.adapters.telemetry.opentelemetry_adapter import (
             _resolve_identity_from_string,
         )
 
         with patch(
-            "cresmo.infrastructure.adapters.opentelemetry_adapter.UserIdentity.identified",
+            "cresmo.infrastructure.adapters.telemetry.opentelemetry_adapter.UserIdentity.identified",
             wraps=UserIdentity.identified,
         ) as mock_id:
             ident, tenant = _resolve_identity_from_string("user:bob")
@@ -1172,12 +1174,12 @@ class TestIdentityResolutionExtended:
     def test_resolve_identity_from_string_fallback(self) -> None:
         from unittest.mock import patch
 
-        from cresmo.infrastructure.adapters.opentelemetry_adapter import (
+        from cresmo.infrastructure.adapters.telemetry.opentelemetry_adapter import (
             _resolve_identity_from_string,
         )
 
         with patch(
-            "cresmo.infrastructure.adapters.opentelemetry_adapter.UserIdentity.identified",
+            "cresmo.infrastructure.adapters.telemetry.opentelemetry_adapter.UserIdentity.identified",
             wraps=UserIdentity.identified,
         ) as mock_id:
             ident, tenant = _resolve_identity_from_string("plain_user_123")
@@ -1188,7 +1190,7 @@ class TestIdentityResolutionExtended:
             mock_id.assert_called_once_with(subject="plain_user_123", provider="oauth")
 
     def test_resolve_user_identity_and_tenant_variants(self) -> None:
-        from cresmo.infrastructure.adapters.opentelemetry_adapter import (
+        from cresmo.infrastructure.adapters.telemetry.opentelemetry_adapter import (
             _resolve_user_identity_and_tenant,
         )
 
@@ -1232,7 +1234,7 @@ class TestLangfusePayloadAndSessionAttributesExtended:
     """Test _build_langfuse_input_payload and _build_session_span_attributes."""
 
     def test_build_langfuse_input_payload_all_keys(self) -> None:
-        from cresmo.infrastructure.adapters.opentelemetry_adapter import (
+        from cresmo.infrastructure.adapters.telemetry.opentelemetry_adapter import (
             _build_langfuse_input_payload,
         )
 
@@ -1281,7 +1283,7 @@ class TestLangfusePayloadAndSessionAttributesExtended:
         assert attrs["langfuse.trace.input"] == attrs["input.value"]
 
     def test_build_langfuse_input_payload_channel_and_title_fallbacks(self) -> None:
-        from cresmo.infrastructure.adapters.opentelemetry_adapter import (
+        from cresmo.infrastructure.adapters.telemetry.opentelemetry_adapter import (
             _build_langfuse_input_payload,
         )
 
@@ -1341,7 +1343,7 @@ class TestLangfusePayloadAndSessionAttributesExtended:
         assert "langfuse.trace.input" not in attrs4
 
     def test_build_session_span_attributes_variants(self) -> None:
-        from cresmo.infrastructure.adapters.opentelemetry_adapter import (
+        from cresmo.infrastructure.adapters.telemetry.opentelemetry_adapter import (
             _build_session_span_attributes,
         )
 
@@ -1599,7 +1601,7 @@ class TestOpenTelemetryAdapterRecordMethodsAndFlushExtended:
         mock_span.set_attribute.assert_not_called()
 
     def test_open_telemetry_adapter_init_defaults(self) -> None:
-        from cresmo.infrastructure.adapters.opentelemetry_adapter import (
+        from cresmo.infrastructure.adapters.telemetry.opentelemetry_adapter import (
             DEFAULT_PIPELINE_VERSION,
         )
 
@@ -1614,7 +1616,7 @@ class TestOpenTelemetryAdapterRecordMethodsAndFlushExtended:
     def test_flush_exceptions_and_fallbacks(self) -> None:
         from unittest.mock import MagicMock, patch
 
-        from cresmo.infrastructure.adapters.opentelemetry_adapter import (
+        from cresmo.infrastructure.adapters.telemetry.opentelemetry_adapter import (
             OTEL_FLUSH_TIMEOUT_MS,
         )
 
@@ -1680,7 +1682,7 @@ class TestOpenTelemetryAdapterRecordMethodsAndFlushExtended:
         content_id = ContentId("c123")
 
         with patch(
-            "cresmo.infrastructure.adapters.opentelemetry_adapter.JudgeFrictionMetric",
+            "cresmo.infrastructure.adapters.telemetry.opentelemetry_adapter.JudgeFrictionMetric",
             wraps=JudgeFrictionMetric,
         ) as mock_jfm:
             adapter.record_judge_evaluation(
@@ -1699,7 +1701,7 @@ class TestOpenTelemetryAdapterRecordMethodsAndFlushExtended:
         with (
             patch("opentelemetry.trace.get_tracer") as mock_get_tracer,
             patch(
-                "cresmo.infrastructure.adapters.opentelemetry_adapter.name_telemetry_threads"
+                "cresmo.infrastructure.adapters.telemetry.opentelemetry_adapter.name_telemetry_threads"
             ) as mock_name_threads,
         ):
             OpenTelemetryAdapter(langfuse_client=mock_client)
@@ -1715,7 +1717,7 @@ class TestOpenTelemetryAdapterRecordMethodsAndFlushExtended:
         with (
             patch("opentelemetry.trace.get_tracer_provider", return_value=mock_tp),
             patch(
-                "cresmo.infrastructure.adapters.opentelemetry_adapter.logger.debug"
+                "cresmo.infrastructure.adapters.telemetry.opentelemetry_adapter.logger.debug"
             ) as mock_debug,
         ):
             adapter.flush()
@@ -1729,7 +1731,7 @@ class TestOpenTelemetryAdapterRecordMethodsAndFlushExtended:
         with (
             patch("langfuse.get_client", side_effect=ImportError("No langfuse")),
             patch(
-                "cresmo.infrastructure.adapters.opentelemetry_adapter.logger.debug"
+                "cresmo.infrastructure.adapters.telemetry.opentelemetry_adapter.logger.debug"
             ) as mock_debug,
             patch("opentelemetry.trace.get_tracer_provider", return_value=mock_tp),
         ):
@@ -1748,7 +1750,7 @@ class TestOpenTelemetryAdapterRecordMethodsAndFlushExtended:
         content_id = ContentId("c1")
 
         with patch(
-            "cresmo.infrastructure.adapters.opentelemetry_adapter.logger.debug"
+            "cresmo.infrastructure.adapters.telemetry.opentelemetry_adapter.logger.debug"
         ) as mock_debug:
             adapter.record_score("score1", 0.5)
             mock_debug.assert_called_with(

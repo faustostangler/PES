@@ -18,8 +18,10 @@ from __future__ import annotations
 import structlog
 
 from cresmo.application.ports import (
+    ChannelTaxonomyPort,
     LlmJudgePort,
     LLMTransformationPort,
+    NoOpChannelTaxonomyPort,
     PromptProviderPort,
     VaultRepositoryPort,
 )
@@ -27,7 +29,6 @@ from cresmo.application.ports.settings import DEFAULT_LANGUAGE
 from cresmo.application.use_cases.indexing.distiller import LLMTranscriptDistiller
 from cresmo.domain.entities import StageTranscript, UserIdentity
 from cresmo.domain.exceptions import DomainValidationError
-from cresmo.domain.taxonomy import classify_channel
 from cresmo.domain.value_objects import (
     ChannelName,
     RawIndexEntry,
@@ -66,6 +67,7 @@ class IndexRawTranscriptsUseCase:
         language: str = DEFAULT_LANGUAGE,
         max_rewrites: int = 3,
         llm_judge_port: LlmJudgePort | None = None,
+        taxonomy_port: ChannelTaxonomyPort | None = None,
         *,
         vault_repo: VaultRepositoryPort | None = None,
         llm: LLMTransformationPort | None = None,
@@ -93,6 +95,7 @@ class IndexRawTranscriptsUseCase:
         self.language = language
         self.max_rewrites = max_rewrites
         self.llm_judge_port = llm_judge_port
+        self.taxonomy_port: ChannelTaxonomyPort = taxonomy_port or NoOpChannelTaxonomyPort()
 
         self._distiller = LLMTranscriptDistiller(
             llm_indexing_port=self.llm_indexing_port,
@@ -188,7 +191,7 @@ class IndexRawTranscriptsUseCase:
 
         category = transcript.channel.category.strip() if transcript.channel.category else ""
         if not category:
-            category, _ = classify_channel(channel_name)
+            category, _ = self.taxonomy_port.classify(channel_name)
 
         entry = RawIndexEntry(
             video_id=transcript.content.id,

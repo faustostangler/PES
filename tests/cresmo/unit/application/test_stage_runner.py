@@ -297,9 +297,9 @@ class TestPipelineStageRunnerEvaluatedStage:
         """Verify execute_stage cleanly consumes PipelineExecutionContext."""
         from cresmo.application.pipeline.context import PipelineExecutionContext
         from cresmo.application.pipeline.stage_descriptor import StageConfig
-        from cresmo.domain.entities import PipelineSessionId, StageTranscript, UserIdentity
+        from cresmo.domain.entities import StageTranscript, UserIdentity
         from cresmo.domain.value_objects import CandidateText, PromptKey
-        from cresmo.infrastructure.adapters.prompt_provider import JsonPromptProvider
+        from cresmo.infrastructure.adapters.prompts import JsonPromptProvider
         from tests.doubles.mock_adapters import MockLLMAdapter
 
         telemetry = NoOpTelemetryPort()
@@ -413,7 +413,7 @@ class TestPipelineStageRunnerEvaluatedStage:
 
         from cresmo.application.pipeline.context import PipelineExecutionContext
         from cresmo.application.pipeline.stage_descriptor import StageConfig
-        from cresmo.domain.entities import PipelineSessionId, StageTranscript, UserIdentity
+        from cresmo.domain.entities import UserIdentity
         from cresmo.domain.value_objects import CandidateText, PromptKey
 
         provider = TracerProvider()
@@ -519,7 +519,7 @@ class TestStageRunnerHelperAndInit:
 
     def test_as_str_exhaustive(self) -> None:
         from cresmo.application.pipeline.stage_runner import _as_str
-        from cresmo.domain.entities import PipelineSessionId, StageTranscript, UserIdentity
+        from cresmo.domain.entities import PipelineSessionId, UserIdentity
         from cresmo.domain.value_objects import ChannelId, ChannelName, ContentId
 
         assert _as_str(None) == ""
@@ -1021,7 +1021,9 @@ class TestStageRunnerExecuteStageRetriesAndQuarantine:
         source = StageTranscript(
             channel=Channel(name="RetCh", id=ChannelId("UC_ret")),
             provenance=MediaProvenance(),
-            content=Content(id=ContentId("vid_retry_1"), title="Retry Title", text="Source audio text words."),
+            content=Content(
+                id=ContentId("vid_retry_1"), title="Retry Title", text="Source audio text words."
+            ),
         )
         ctx = PipelineExecutionContext(
             user_identity=UserIdentity.worker(),
@@ -1101,7 +1103,9 @@ class TestStageRunnerExecuteStageRetriesAndQuarantine:
         source = StageTranscript(
             channel=Channel(name="UnblockCh"),
             provenance=MediaProvenance(),
-            content=Content(id=ContentId("vid_unblock"), title="Unblock Title", text="Source text words."),
+            content=Content(
+                id=ContentId("vid_unblock"), title="Unblock Title", text="Source text words."
+            ),
         )
         ctx = PipelineExecutionContext(
             user_identity=UserIdentity.worker(),
@@ -1170,7 +1174,9 @@ class TestStageRunnerExecuteStageRetriesAndQuarantine:
         source = StageTranscript(
             channel=Channel(name="QuarantineCh", id=ChannelId("UC_quarantine")),
             provenance=MediaProvenance(),
-            content=Content(id=ContentId("vid_quarantine"), title="Quarantine Title", text="Source text words."),
+            content=Content(
+                id=ContentId("vid_quarantine"), title="Quarantine Title", text="Source text words."
+            ),
         )
         ctx = PipelineExecutionContext(
             user_identity=UserIdentity.worker(),
@@ -1219,9 +1225,7 @@ class TestStageRunnerCandidateGenerationAndEvaluation:
         ctx = PipelineExecutionContext(
             user_identity=UserIdentity.worker(),
             channel=Channel(name="TechChan", id=ChannelId("UC_tech")),
-            content=Content.create(
-                id=ContentId("c1234567"), title="Ep 1", session_id="sess:123"
-            ),
+            content=Content.create(id=ContentId("c1234567"), title="Ep 1", session_id="sess:123"),
         )
 
         candidate = runner._generate_candidate(
@@ -1272,9 +1276,7 @@ class TestStageRunnerCandidateGenerationAndEvaluation:
         ctx = PipelineExecutionContext(
             user_identity=UserIdentity.worker(),
             channel=Channel(name="NoIdChan", id=None),
-            content=Content.create(
-                id=ContentId("c7654321"), title="Ep 2", session_id="sess:456"
-            ),
+            content=Content.create(id=ContentId("c7654321"), title="Ep 2", session_id="sess:456"),
         )
 
         mock_pp = MagicMock()
@@ -1820,7 +1822,9 @@ class TestStageRunnerStageExecutionAndFallback:
         src_stage = StageTranscript(
             channel=Channel(name="ExChan", id=ChannelId("UC_ex")),
             provenance=MediaProvenance(),
-            content=Content(id=ContentId("c1234567"), title="Ex Title", text="Source body text here"),
+            content=Content(
+                id=ContentId("c1234567"), title="Ex Title", text="Source body text here"
+            ),
         )
         cfg1 = StageConfig[StageTranscript, CandidateText](
             stage_name="fluid_prose",
@@ -2505,9 +2509,7 @@ class TestStageRunnerStageExecutionAndFallback:
         mock_factory.build_stage.return_value = cfg
 
         mock_trans = MagicMock()
-        mock_trans.transform.return_value = (
-            "## Test\n\nContent\n\n### Extra Info\n1. Info"
-        )
+        mock_trans.transform.return_value = "## Test\n\nContent\n\n### Extra Info\n1. Info"
 
         runner = PipelineStageRunner(
             telemetry_port=mock_t,

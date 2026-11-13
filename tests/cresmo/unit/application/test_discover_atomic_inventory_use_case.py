@@ -36,7 +36,7 @@ from cresmo.domain.value_objects import (
     NoteType,
     PromptKey,
 )
-from cresmo.infrastructure.adapters.prompt_provider import JsonPromptProvider
+from cresmo.infrastructure.adapters.prompts import JsonPromptProvider
 from tests.doubles.mock_adapters import MockLLMAdapter
 
 
@@ -133,9 +133,7 @@ class TestDiscoverAtomicInventoryJudge:
             in llm.call_history[1]["prompt"].get_last_user_content()
         )
 
-    def test_discover_inventory_judge_retry_loop(
-        self, sample_compendium: StageTranscript
-    ) -> None:
+    def test_discover_inventory_judge_retry_loop(self, sample_compendium: StageTranscript) -> None:
         prompt_provider = JsonPromptProvider()
         cand1 = json.dumps([{"title": "Alucinacao Espuria", "type": "entity"}])
         cand2 = json.dumps(

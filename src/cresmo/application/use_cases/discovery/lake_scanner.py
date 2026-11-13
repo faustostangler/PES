@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from cresmo.application.ports import ChannelTaxonomyPort
 from cresmo.application.use_cases.discovery.manifests import (
     extract_raw_file_metadata,
     is_channel_or_playlist_feed,
@@ -31,12 +32,16 @@ from cresmo.domain.value_objects import (
 )
 
 
-def _matches_channel_and_category(criteria: SyncFilterCriteria, chan_target: str) -> bool:
+def _matches_channel_and_category(
+    criteria: SyncFilterCriteria,
+    chan_target: str,
+    taxonomy_port: ChannelTaxonomyPort | None = None,
+) -> bool:
     """Check if channel target satisfies both channel target and category target criteria."""
     if criteria.is_empty():
         return True
     return matches_channel_target(criteria, chan_target) and matches_category_target(
-        criteria, chan_target
+        criteria, chan_target, taxonomy_port=taxonomy_port
     )
 
 
@@ -45,6 +50,7 @@ def _matches_video_entry(
     cid: ContentId | None,
     url: str,
     local_chan: str | None,
+    taxonomy_port: ChannelTaxonomyPort | None = None,
 ) -> bool:
     """Evaluate whether a video entry satisfies video, channel, and category filter criteria."""
     if criteria.is_empty():
@@ -55,7 +61,10 @@ def _matches_video_entry(
         return False
     return not (
         criteria.categories
-        and (not local_chan or not matches_category_target(criteria, local_chan))
+        and (
+            not local_chan
+            or not matches_category_target(criteria, local_chan, taxonomy_port=taxonomy_port)
+        )
     )
 
 
@@ -83,6 +92,7 @@ class LakeScannerService:
         priority_texts_dir: Path | None,
         acc: _BatchSourceAccumulator,
         filter_criteria: SyncFilterCriteria | None = None,
+        taxonomy_port: ChannelTaxonomyPort | None = None,
     ) -> list[str]:
         """Collect local priority text/markdown files that bypass audio transcription."""
         criteria = filter_criteria or SyncFilterCriteria()
@@ -104,7 +114,8 @@ class LakeScannerService:
                 ):
                     matches = False
                 if criteria.categories and (
-                    not raw_chan or not matches_category_target(criteria, raw_chan)
+                    not raw_chan
+                    or not matches_category_target(criteria, raw_chan, taxonomy_port=taxonomy_port)
                 ):
                     matches = False
 
@@ -116,7 +127,7 @@ class LakeScannerService:
                 criteria.is_empty()
                 or (
                     matches_channel_target(criteria, raw_chan)
-                    and matches_category_target(criteria, raw_chan)
+                    and matches_category_target(criteria, raw_chan, taxonomy_port=taxonomy_port)
                 )
             ):
                 norm_chan = normalize_to_uploads_playlist_url(raw_chan)
@@ -130,6 +141,7 @@ class LakeScannerService:
         local_video_channel_map: dict[str, str],
         acc: _BatchSourceAccumulator,
         filter_criteria: SyncFilterCriteria | None = None,
+        taxonomy_port: ChannelTaxonomyPort | None = None,
     ) -> tuple[list[str], list[str]]:
         """Collect priority URLs scheduled for immediate processing."""
         criteria = filter_criteria or SyncFilterCriteria()
@@ -138,7 +150,9 @@ class LakeScannerService:
         priority_urls = read_manifest_lines(playlist_priority_path)
         for priority_url in priority_urls:
             if is_channel_or_playlist_feed(priority_url):
-                if _matches_channel_and_category(criteria, priority_url):
+                if _matches_channel_and_category(
+                    criteria, priority_url, taxonomy_port=taxonomy_port
+                ):
                     norm_chan = normalize_to_uploads_playlist_url(priority_url)
                     if norm_chan not in priority_channels:
                         priority_channels.append(norm_chan)
@@ -148,13 +162,17 @@ class LakeScannerService:
             video_id_str = content_id.value if content_id else None
             local_chan = local_video_channel_map.get(video_id_str) if video_id_str else None
 
-            if _matches_video_entry(criteria, content_id, priority_url, local_chan) and not (
-                content_id and acc.has_seen(content_id)
-            ):
+            if _matches_video_entry(
+                criteria,
+                content_id,
+                priority_url,
+                local_chan,
+                taxonomy_port=taxonomy_port,
+            ) and not (content_id and acc.has_seen(content_id)):
                 acc.add_source(kind=SourceModality.URL, target=priority_url, content_id=content_id)
 
             if local_chan:
-                if _matches_channel_and_category(criteria, local_chan):
+                if _matches_channel_and_category(criteria, local_chan, taxonomy_port=taxonomy_port):
                     norm_local = normalize_to_uploads_playlist_url(local_chan)
                     if norm_local not in priority_channels:
                         priority_channels.append(norm_local)
@@ -171,6 +189,7 @@ class LakeScannerService:
         acc: _BatchSourceAccumulator,
         filter_criteria: SyncFilterCriteria | None = None,
         extract_frontmatter: bool = True,
+        taxonomy_port: ChannelTaxonomyPort | None = None,
     ) -> dict[str, str]:
         """Scan raw transcripts lake, extract channel metadata, and register existing files."""
         criteria = filter_criteria or SyncFilterCriteria()
@@ -216,7 +235,10 @@ class LakeScannerService:
                     ):
                         matches = False
                     if criteria.categories and (
-                        not chan_url or not matches_category_target(criteria, chan_url)
+                        not chan_url
+                        or not matches_category_target(
+                            criteria, chan_url, taxonomy_port=taxonomy_port
+                        )
                     ):
                         matches = False
                 if matches:
@@ -234,6 +256,7 @@ class LakeScannerService:
         local_video_channel_map: dict[str, str],
         acc: _BatchSourceAccumulator,
         filter_criteria: SyncFilterCriteria | None = None,
+        taxonomy_port: ChannelTaxonomyPort | None = None,
     ) -> tuple[list[str], list[str], set[str]]:
         """Classify seed playlist entries into direct video URLs, feeds, and channel lookups.
 
@@ -246,7 +269,9 @@ class LakeScannerService:
 
         # Seed channels discovered from the local raw lake
         for c_url in local_video_channel_map.values():
-            if c_url not in probed_channels and _matches_channel_and_category(criteria, c_url):
+            if c_url not in probed_channels and _matches_channel_and_category(
+                criteria, c_url, taxonomy_port=taxonomy_port
+            ):
                 probed_channels.add(c_url)
                 channels_to_probe.append(c_url)
 
@@ -254,7 +279,7 @@ class LakeScannerService:
         for main_url in main_urls:
             if is_channel_or_playlist_feed(main_url):
                 if main_url not in probed_channels and _matches_channel_and_category(
-                    criteria, main_url
+                    criteria, main_url, taxonomy_port=taxonomy_port
                 ):
                     probed_channels.add(main_url)
                     channels_to_probe.append(main_url)
@@ -264,14 +289,18 @@ class LakeScannerService:
             video_id_str = content_id.value if content_id else None
             local_chan = local_video_channel_map.get(video_id_str) if video_id_str else None
 
-            if _matches_video_entry(criteria, content_id, main_url, local_chan) and not (
-                content_id and acc.has_seen(content_id)
-            ):
+            if _matches_video_entry(
+                criteria,
+                content_id,
+                main_url,
+                local_chan,
+                taxonomy_port=taxonomy_port,
+            ) and not (content_id and acc.has_seen(content_id)):
                 acc.add_source(kind=SourceModality.URL, target=main_url, content_id=content_id)
 
             if local_chan:
                 if local_chan not in probed_channels and _matches_channel_and_category(
-                    criteria, local_chan
+                    criteria, local_chan, taxonomy_port=taxonomy_port
                 ):
                     probed_channels.add(local_chan)
                     channels_to_probe.append(local_chan)

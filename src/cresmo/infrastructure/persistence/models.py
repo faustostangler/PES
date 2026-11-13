@@ -1,5 +1,7 @@
-"""SQLAlchemy 2.0 ORM persistence models for Cresmo.
+"""# FUTURE / DEFERRED: SQLAlchemy 2.0 ORM persistence models for Cresmo.
 
+Active CLI uses SQLite (`SqliteLedgerAdapter`); PostgreSQL + Transactional Outbox
+models are reserved for distributed persistence scaling per ADR-062.
 Strictly segregated inside the Infrastructure layer adhering to Hexagonal Architecture.
 Domain entities (e.g. LedgerEntry) NEVER inherit from DeclarativeBase.
 """
@@ -29,7 +31,9 @@ class LedgerEntryRow(Base):
     channel: Mapped[str] = mapped_column(String(128), index=True)
     status: Mapped[str] = mapped_column(String(32), index=True)
     updated_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC)
+        DateTime(timezone=True),
+        default=lambda: datetime.now(UTC),
+        onupdate=lambda: datetime.now(UTC),
     )
     payload: Mapped[str | None] = mapped_column(Text, nullable=True)
 

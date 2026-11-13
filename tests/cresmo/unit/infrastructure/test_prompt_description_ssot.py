@@ -15,7 +15,7 @@ class TestPromptDescriptionSsot:
     def test_prompts_json_contains_zero_task_keys_and_zero_task_placeholders(self) -> None:
         """Enforces that prompts.json has completely purged the 'task' key and {task} token."""
         json_path = (
-            Path(__file__).resolve().parents[3]
+            Path(__file__).resolve().parents[4]
             / "src"
             / "cresmo"
             / "infrastructure"

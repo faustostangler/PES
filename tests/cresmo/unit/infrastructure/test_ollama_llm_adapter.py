@@ -18,7 +18,7 @@ from opentelemetry.trace import SpanContext, TraceFlags
 
 from cresmo.domain.exceptions import LLMInfrastructureError
 from cresmo.domain.value_objects.prompt import ChatPrompt
-from cresmo.infrastructure.adapters.ollama_llm_adapter import OllamaLLMAdapter
+from cresmo.infrastructure.adapters.llm.ollama_llm_adapter import OllamaLLMAdapter
 
 
 class TestOllamaLLMAdapter:
@@ -162,7 +162,7 @@ class TestOllamaLLMAdapter:
         with (
             patch("urllib.request.urlopen") as mock_urlopen,
             patch(
-                "cresmo.infrastructure.adapters.ollama_llm_adapter.trace.get_current_span",
+                "cresmo.infrastructure.adapters.llm.ollama_llm_adapter.trace.get_current_span",
                 return_value=mock_span,
             ),
         ):

@@ -16,7 +16,7 @@ from langfuse.api.core import ApiError
 from cresmo.application.ports import PromptProviderPort
 from cresmo.domain.value_objects import ChannelName, PromptKey
 from cresmo.domain.value_objects.prompt import ChatPrompt
-from cresmo.infrastructure.adapters.prompt_provider import (
+from cresmo.infrastructure.adapters.prompts import (
     JsonPromptProvider,
     LangfusePromptProvider,
 )

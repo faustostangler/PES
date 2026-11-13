@@ -17,6 +17,7 @@ from cresmo.application.ports.critique_synthesizer import CritiqueSynthesizerPor
 from cresmo.application.ports.llm_judge_port import LlmJudgePort
 from cresmo.application.ports.media import MediaIngestionPort
 from cresmo.application.ports.metrics import MetricsPort, NoOpMetricsPort
+from cresmo.application.ports.preflight import PreflightProbePort
 from cresmo.application.ports.prompt import NoOpPromptProviderPort, PromptProviderPort
 from cresmo.application.ports.settings import (
     DefaultPipelineSettings,
@@ -26,6 +27,10 @@ from cresmo.application.ports.storage import (
     LedgerRepositoryPort,
     VaultRepositoryPort,
 )
+from cresmo.application.ports.taxonomy import (
+    ChannelTaxonomyPort,
+    NoOpChannelTaxonomyPort,
+)
 from cresmo.application.ports.telemetry import (
     NoOpTelemetryPort,
     TelemetryPort,
@@ -34,6 +39,7 @@ from cresmo.application.ports.transformation import LLMTransformationPort
 
 __all__ = [
     "AnonymizerPort",
+    "ChannelTaxonomyPort",
     "CritiqueSynthesizerPort",
     "DefaultPipelineSettings",
     "LLMTransformationPort",
@@ -41,10 +47,12 @@ __all__ = [
     "LlmJudgePort",
     "MediaIngestionPort",
     "MetricsPort",
+    "NoOpChannelTaxonomyPort",
     "NoOpMetricsPort",
     "NoOpPromptProviderPort",
     "NoOpTelemetryPort",
     "PipelineSettingsProtocol",
+    "PreflightProbePort",
     "PromptProviderPort",
     "TelemetryPort",
     "VaultRepositoryPort",

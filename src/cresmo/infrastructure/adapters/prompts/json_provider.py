@@ -15,7 +15,6 @@ from __future__ import annotations
 
 import json
 import re
-import sys
 from collections.abc import Iterable
 from pathlib import Path
 from typing import Any
@@ -144,9 +143,7 @@ class JsonPromptProvider(PromptProviderPort):
         """
         if custom_dir is not None and custom_dir.exists():
             return custom_dir
-        facade_mod = sys.modules.get("cresmo.infrastructure.adapters.prompt_provider")
-        candidates = getattr(facade_mod, "_CANDIDATE_SKILLS_DIRS", _CANDIDATE_SKILLS_DIRS)
-        for candidate in candidates:
+        for candidate in _CANDIDATE_SKILLS_DIRS:
             if candidate.exists():
                 return candidate
         return None
@@ -202,11 +199,7 @@ class JsonPromptProvider(PromptProviderPort):
                 continue
             for match in re.finditer(r"\{\{([a-zA-Z0-9_\-]+)\}\}|\{([a-zA-Z0-9_\-]+)\}", tpl):
                 token = match.group(1) or match.group(2)
-                if (
-                    token
-                    and "-" in token
-                    and token not in candidate_names
-                ):
+                if token and "-" in token and token not in candidate_names:
                     candidate_names.append(token)
         for name in candidate_names:
             content = self._get_skill_content(name)
@@ -370,9 +363,7 @@ class JsonPromptProvider(PromptProviderPort):
         description = self._get_description_for_key(template_key)
         system_template = entry.get("system_prompt", "")
         user_template = entry.get("user_prompt", "")
-        skill_replacements = self._resolve_skill_replacements(
-            entry, system_template, user_template
-        )
+        skill_replacements = self._resolve_skill_replacements(entry, system_template, user_template)
         explicitly_referenced = self._referenced_skill_names(
             f"{system_template}\n{user_template}",
             skill_replacements.keys(),

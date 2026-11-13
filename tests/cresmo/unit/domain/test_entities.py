@@ -65,16 +65,6 @@ class TestChannelUrlAndContentCreation:
         assert cnt.id == ContentId("extracted_abc")
 
 
-
-
-
-
-
-
-
-
-
-
 class TestAtomicNote:
     """SPEC-001 §2.2: AtomicNote invariants."""
 
@@ -747,15 +737,15 @@ class TestAdr038PureValueObjectTriadComposition:
         ctx = PipelineExecutionContext(
             user_identity=UserIdentity.anonymous(),
             channel=ch,
-            content=Content(id=content.id, title=content.title, text=content.text, session_id=sid.value),
+            content=Content(
+                id=content.id, title=content.title, text=content.text, session_id=sid.value
+            ),
         )
         assert ctx.channel.id == ChannelId("UCxyz1234567890ab")
         assert ctx.content.id == ContentId("9IbNJ0EsTxI")
         assert ctx.channel.name == "Marcelo Andrade"
         assert ctx.content.title == "A Gênese Estrutural do Condado Portucalense"
         assert ctx.content.session_id == sid.value
-
-
 
 
 class TestPostProcessFluidTranscriptInvariantsAndRegex:

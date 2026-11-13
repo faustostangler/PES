@@ -11,7 +11,6 @@ from datetime import UTC, datetime
 from polyfactory.factories import DataclassFactory
 
 from cresmo.application.use_cases.discovery.models import BatchSource
-from cresmo.domain.entities.compendium import StageTranscript
 from cresmo.domain.entities.transcripts import StageTranscript
 from cresmo.domain.value_objects import (
     Channel,
@@ -21,7 +20,6 @@ from cresmo.domain.value_objects import (
     ContentId,
     LedgerEntry,
     MediaProvenance,
-    NoteTitle,
     PipelineStatus,
     SourceModality,
 )

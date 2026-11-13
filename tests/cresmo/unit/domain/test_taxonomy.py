@@ -6,19 +6,51 @@ case normalization, and default fallback per SPEC-001 §2.
 
 from __future__ import annotations
 
+from pathlib import Path
+
 import pytest
 
+from cresmo.application.ports import ChannelTaxonomyPort, NoOpChannelTaxonomyPort
 from cresmo.domain.taxonomy import (
     DEFAULT_CHANNEL_CATEGORY,
     DEFAULT_CHANNEL_DOMAIN,
+    TaxonomyCatalog,
     _extract_channel_candidates,
-    classify_channel,
+    classify_channel_from_catalog,
 )
 from cresmo.domain.value_objects import ChannelName
+from cresmo.infrastructure.adapters.prompts.taxonomy_catalog import (
+    JsonTaxonomyCatalogAdapter,
+    TaxonomyCatalogError,
+)
 
 
 class TestDomainTaxonomy:
-    """Hermetic unit tests for classify_channel taxonomy resolution."""
+    """Hermetic unit tests for pure domain taxonomy resolution and JSON catalog adapter."""
+
+    def test_pure_classify_channel_from_catalog(self) -> None:
+        catalog: TaxonomyCatalog = {
+            "politics_br": ("volatile", frozenset({"ancapsu", "visão libertária"})),
+            "tech_ai": ("perennial", frozenset({"fabio akita"})),
+        }
+        assert classify_channel_from_catalog("ancapsu", catalog) == ("politics_br", "volatile")
+        assert classify_channel_from_catalog("  VISÃO LIBERTÁRIA  ", catalog) == (
+            "politics_br",
+            "volatile",
+        )
+        assert classify_channel_from_catalog(ChannelName("Fabio Akita"), catalog) == (
+            "tech_ai",
+            "perennial",
+        )
+        assert classify_channel_from_catalog("https://youtube.com/@ancapsu/about", catalog) == (
+            "politics_br",
+            "volatile",
+        )
+        assert classify_channel_from_catalog("unknown channel", catalog) == (
+            "uncategorized",
+            "volatile",
+        )
+        assert NoOpChannelTaxonomyPort().classify("ancapsu") == ("uncategorized", "volatile")
 
     @pytest.mark.parametrize(
         ("channel_name", "expected_domain", "expected_volatility"),
@@ -75,7 +107,8 @@ class TestDomainTaxonomy:
         expected_domain: str,
         expected_volatility: str,
     ) -> None:
-        domain, volatility = classify_channel(channel_name)
+        adapter: ChannelTaxonomyPort = JsonTaxonomyCatalogAdapter()
+        domain, volatility = adapter.classify(channel_name)
         assert domain == expected_domain
         assert volatility == expected_volatility
 
@@ -84,9 +117,24 @@ class TestDomainTaxonomy:
         assert DEFAULT_CHANNEL_CATEGORY == "volatile"
 
     def test_classify_channel_with_channel_name_vo(self) -> None:
-        domain, volatility = classify_channel(ChannelName("Fabio Akita"))
+        adapter = JsonTaxonomyCatalogAdapter()
+        domain, volatility = adapter.classify(ChannelName("Fabio Akita"))
         assert domain == "tech_ai"
         assert volatility == "perennial"
+
+    def test_json_adapter_custom_path_and_invalid_schema(self, tmp_path: Path) -> None:
+        custom_file = tmp_path / "custom_taxonomy.json"
+        custom_file.write_text(
+            '{"custom_domain": {"volatility": "perennial", "channels": ["MyChannel"]}}',
+            encoding="utf-8",
+        )
+        custom_adapter = JsonTaxonomyCatalogAdapter(taxonomy_path=custom_file)
+        assert custom_adapter.classify("mychannel") == ("custom_domain", "perennial")
+
+        bad_file = tmp_path / "bad_taxonomy.json"
+        bad_file.write_text("{not valid json", encoding="utf-8")
+        with pytest.raises(TaxonomyCatalogError):
+            JsonTaxonomyCatalogAdapter(taxonomy_path=bad_file)
 
     def test_extract_channel_candidates_url_with_at_sign(self) -> None:
         candidates = _extract_channel_candidates("https://www.youtube.com/@ancapsu")
@@ -163,17 +211,18 @@ class TestDomainTaxonomy:
         assert c3 == ["///"]
 
     def test_classify_channel_with_urls_and_handles(self) -> None:
+        adapter = JsonTaxonomyCatalogAdapter()
         # Classify via URL with /@
-        d1, v1 = classify_channel("https://www.youtube.com/@ancapsu/about")
+        d1, v1 = adapter.classify("https://www.youtube.com/@ancapsu/about")
         assert d1 == "politics_br"
         assert v1 == "volatile"
 
         # Classify via handle @
-        d2, v2 = classify_channel("@ancapsu")
+        d2, v2 = adapter.classify("@ancapsu")
         assert d2 == "politics_br"
         assert v2 == "volatile"
 
         # Classify via standard URL /
-        d3, v3 = classify_channel("https://youtube.com/c/ancapsu")
+        d3, v3 = adapter.classify("https://youtube.com/c/ancapsu")
         assert d3 == "politics_br"
         assert v3 == "volatile"

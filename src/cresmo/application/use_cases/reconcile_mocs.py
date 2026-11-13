@@ -12,13 +12,13 @@ from __future__ import annotations
 
 import json
 
-from cresmo.application.json_parser import extract_json_data
 from cresmo.application.ports import (
     LLMTransformationPort,
     NoOpPromptProviderPort,
     PromptProviderPort,
     VaultRepositoryPort,
 )
+from cresmo.application.services.json_parser import extract_json_data
 from cresmo.domain.entities import MapOfContent, PipelineSessionId, UserIdentity
 from cresmo.domain.exceptions import DomainValidationError
 from cresmo.domain.value_objects import NoteTitle, PromptKey

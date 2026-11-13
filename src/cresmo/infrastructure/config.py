@@ -33,6 +33,8 @@ _WORKSPACE_DIR = find_workspace_root()
 DEFAULT_LANGFUSE_PROMPT_LABEL: str = "production"
 DEFAULT_PROMPTS_RESOURCE_PACKAGE: str = "cresmo.infrastructure.resources"
 DEFAULT_PROMPTS_RESOURCE_NAME: str = "prompts.json"
+DEFAULT_TAXONOMY_RESOURCE_PACKAGE: str = "cresmo.infrastructure.resources"
+DEFAULT_TAXONOMY_RESOURCE_NAME: str = "taxonomy.json"
 DEFAULT_JUDGE_PASS_THRESHOLD: float = 0.9
 DEFAULT_GEMINI_MODEL: str = "gemini:gemini-3.8-flash"
 DEFAULT_JUDGE_GEMINI_MODEL: str = DEFAULT_GEMINI_MODEL
@@ -78,6 +80,8 @@ class CresmoSettings(BaseSettings):
     DEFAULT_LANGFUSE_PROMPT_LABEL: ClassVar[str] = DEFAULT_LANGFUSE_PROMPT_LABEL
     DEFAULT_PROMPTS_RESOURCE_PACKAGE: ClassVar[str] = DEFAULT_PROMPTS_RESOURCE_PACKAGE
     DEFAULT_PROMPTS_RESOURCE_NAME: ClassVar[str] = DEFAULT_PROMPTS_RESOURCE_NAME
+    DEFAULT_TAXONOMY_RESOURCE_PACKAGE: ClassVar[str] = DEFAULT_TAXONOMY_RESOURCE_PACKAGE
+    DEFAULT_TAXONOMY_RESOURCE_NAME: ClassVar[str] = DEFAULT_TAXONOMY_RESOURCE_NAME
     DEFAULT_JUDGE_PASS_THRESHOLD: ClassVar[float] = DEFAULT_JUDGE_PASS_THRESHOLD
     DEFAULT_GEMINI_MODEL: ClassVar[str] = DEFAULT_GEMINI_MODEL
     DEFAULT_JUDGE_GEMINI_MODEL: ClassVar[str] = DEFAULT_GEMINI_MODEL
@@ -257,7 +261,12 @@ class CresmoSettings(BaseSettings):
     @property
     def fluid_dir(self) -> Path:
         """Directory for intermediate detranscribed fluid prose transcripts."""
-        return self.data_dir / "fluid"
+        return self.data_dir / "fluid_prose"
+
+    @property
+    def gap_filler_dir(self) -> Path:
+        """Directory for deep gap-filled prose transcripts."""
+        return self.data_dir / "gap_filler"
 
     @property
     def enriched_dir(self) -> Path:
@@ -338,6 +347,8 @@ class CresmoSettings(BaseSettings):
             self.vault_dir,
             self.mocs_dir,
             self.raw_dir,
+            self.fluid_dir,
+            self.gap_filler_dir,
             self.enriched_dir,
             self.master_dir,
             self.priority_texts_dir,
@@ -358,6 +369,10 @@ class CresmoSettings(BaseSettings):
     prompts_path: Path | None = Field(
         default=None,
         description="Optional custom path to LLM prompt templates JSON file.",
+    )
+    taxonomy_path: Path | None = Field(
+        default=None,
+        description="Optional custom path to channel taxonomy catalog JSON file.",
     )
     skills_dir: Path | None = Field(
         default=None,
@@ -389,6 +404,11 @@ class CresmoSettings(BaseSettings):
             "pipeline_version", "PIPELINE_VERSION", "CRESMO_PIPELINE_VERSION"
         ),
         description="Canonical pipeline version tag emitted to OpenTelemetry spans and Langfuse traces.",
+    )
+    git_sha: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("git_sha", "GIT_SHA", "CRESMO_GIT_SHA"),
+        description="Optional Git commit SHA propagated from runtime or CI environment.",
     )
     gemini_model: str = Field(
         default=DEFAULT_GEMINI_MODEL,
@@ -667,6 +687,7 @@ class CresmoSettings(BaseSettings):
     def max_retries(self) -> int:
         """Backward-compatible property alias for judge_max_attempts."""
         return self.judge_max_attempts
+
     judge_pass_threshold: float = Field(
         default=DEFAULT_JUDGE_PASS_THRESHOLD,
         ge=0.0,

@@ -13,7 +13,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from cresmo.infrastructure.adapters.gemini_pool import (
+from cresmo.infrastructure.adapters.llm.gemini_pool import (
     CredentialPoolExhaustedError,
     GeminiCredentialPool,
 )
@@ -101,7 +101,7 @@ class TestGeminiQuotaAndErrorScoping:
     """Hermetic unit tests for 429 quota scoping and retryDelay extraction."""
 
     def test_is_quota_exhausted_identifies_429_variants(self) -> None:
-        from cresmo.infrastructure.adapters.gemini_pool import is_quota_exhausted_error
+        from cresmo.infrastructure.adapters.llm.gemini_pool import is_quota_exhausted_error
 
         assert is_quota_exhausted_error(RuntimeError("429 Resource has been exhausted")) is True
         assert (
@@ -111,7 +111,7 @@ class TestGeminiQuotaAndErrorScoping:
         assert is_quota_exhausted_error(RuntimeError("Too Many Requests: rate limit hit")) is True
 
     def test_is_quota_exhausted_rejects_503_and_other_errors(self) -> None:
-        from cresmo.infrastructure.adapters.gemini_pool import is_quota_exhausted_error
+        from cresmo.infrastructure.adapters.llm.gemini_pool import is_quota_exhausted_error
 
         # 503 MUST NEVER trigger rotation (ADR-041 §2.3)
         assert (
@@ -129,7 +129,7 @@ class TestGeminiQuotaAndErrorScoping:
         assert is_quota_exhausted_error(ValueError("Invalid argument")) is False
 
     def test_parse_retry_delay_from_error(self) -> None:
-        from cresmo.infrastructure.adapters.gemini_pool import parse_retry_delay_from_error
+        from cresmo.infrastructure.adapters.llm.gemini_pool import parse_retry_delay_from_error
 
         msg1 = "ResourceExhausted: 429 Quota exceeded. Please retry in 33968s."
         assert parse_retry_delay_from_error(RuntimeError(msg1)) == 33968.0

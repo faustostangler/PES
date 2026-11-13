@@ -60,16 +60,22 @@ class StageTranscript:
     def __post_init__(self) -> None:
         """Enforce domain invariants and type validity on pure triad components."""
         if not isinstance(self.channel, Channel):
-            raise TypeError(f"channel must be an instance of Channel, got {type(self.channel).__name__}")
+            raise TypeError(
+                f"channel must be an instance of Channel, got {type(self.channel).__name__}"
+            )
         if not isinstance(self.provenance, MediaProvenance):
             raise TypeError(
                 f"provenance must be an instance of MediaProvenance, got {type(self.provenance).__name__}"
             )
         if not isinstance(self.content, Content):
-            raise TypeError(f"content must be an instance of Content, got {type(self.content).__name__}")
+            raise TypeError(
+                f"content must be an instance of Content, got {type(self.content).__name__}"
+            )
 
         if not self.content.text.strip():
-            raise DomainValidationError("StageTranscript content.text cannot be empty or whitespace.")
+            raise DomainValidationError(
+                "StageTranscript content.text cannot be empty or whitespace."
+            )
 
         if not self.content.session_id:
             ch_token = self.channel.id.value if self.channel.id else self.channel.name

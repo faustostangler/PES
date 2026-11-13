@@ -18,9 +18,10 @@ from cresmo.application.pipeline.transcript_loader import (
     load_manifest_urls,
     load_transcript_from_file,
 )
+from cresmo.application.ports import ChannelTaxonomyPort
 from cresmo.domain.entities import StageTranscript
 from cresmo.domain.exceptions import CresmoDomainError
-from cresmo.domain.value_objects import ContentId
+from cresmo.domain.value_objects import ChannelName, ContentId
 
 
 class TestIsSubpath:
@@ -272,9 +273,20 @@ class TestMetadataResolution:
         assert category == "philosophy"
 
     def test_taxonomy_fallback_for_category(self, tmp_path: Path) -> None:
+        class _StubTaxonomy(ChannelTaxonomyPort):
+            def classify(self, channel_name: ChannelName | str) -> tuple[str, str]:
+                if str(channel_name).lower() == "brasil paralelo":
+                    return "politics_br", "volatile"
+                return "uncategorized", "volatile"
+
         meta: dict[str, str] = {}
         file_path = tmp_path / "brasil paralelo" / "test.md"
-        _, ch_name, _, category, *_, _ = _resolve_metadata(meta, file_path, "test")
+        _, ch_name, _, category, *_, _ = _resolve_metadata(
+            meta,
+            file_path,
+            "test",
+            taxonomy_port=_StubTaxonomy(),
+        )
         assert ch_name.value == "brasil paralelo"
         assert category == "politics_br"
 

@@ -226,13 +226,9 @@ def record_session_completion_telemetry(
 
     item_count = len(inventory.items) if hasattr(inventory, "items") else 1
     sess_vo = (
-        session_id
-        if isinstance(session_id, PipelineSessionId)
-        else PipelineSessionId(session_id)
+        session_id if isinstance(session_id, PipelineSessionId) else PipelineSessionId(session_id)
     )
-    cnt_vo = (
-        content_id if isinstance(content_id, ContentId) else ContentId.from_string(content_id)
-    )
+    cnt_vo = content_id if isinstance(content_id, ContentId) else ContentId.from_string(content_id)
     telemetry_port.record_session_coherence(
         session_id=sess_vo,
         content_id=cnt_vo,

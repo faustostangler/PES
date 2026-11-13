@@ -7,10 +7,9 @@ from pathlib import Path
 from typing import Any
 from unittest.mock import patch
 
-from cresmo.domain.taxonomy import classify_channel
 from cresmo.domain.value_objects import ChannelName, PromptKey
 from cresmo.domain.value_objects.prompt import ChatPrompt
-from cresmo.infrastructure.adapters.prompt_provider import (
+from cresmo.infrastructure.adapters.prompts import (
     JsonPromptProvider,
 )
 from cresmo.infrastructure.adapters.prompts.builders import (
@@ -18,6 +17,7 @@ from cresmo.infrastructure.adapters.prompts.builders import (
     PromptBuilderRegistry,
     PromptTemplateHost,
 )
+from cresmo.infrastructure.adapters.prompts.taxonomy_catalog import JsonTaxonomyCatalogAdapter
 
 
 def _dummy_builder(provider: PromptTemplateHost, **context: Any) -> ChatPrompt:
@@ -25,25 +25,27 @@ def _dummy_builder(provider: PromptTemplateHost, **context: Any) -> ChatPrompt:
 
 
 class TestChannelTaxonomy:
-    """Hermetic unit tests for channel classification."""
+    """Hermetic unit tests for JSON-backed channel classification."""
 
     def test_known_politics_br_channel(self) -> None:
-        category, volatility = classify_channel("ancapsu")
+        category, volatility = JsonTaxonomyCatalogAdapter().classify("ancapsu")
         assert category == "politics_br"
         assert volatility == "volatile"
 
     def test_known_tech_ai_channel(self) -> None:
-        category, volatility = classify_channel("Fabio Akita")
+        category, volatility = JsonTaxonomyCatalogAdapter().classify("Fabio Akita")
         assert category == "tech_ai"
         assert volatility == "perennial"
 
     def test_known_finance_channel(self) -> None:
-        category, volatility = classify_channel("Fernando Ulrich")
+        category, volatility = JsonTaxonomyCatalogAdapter().classify("Fernando Ulrich")
         assert category == "finance"
         assert volatility == "perennial"
 
     def test_unknown_channel_fallback(self) -> None:
-        category, volatility = classify_channel("Some Unknown Channel Name 12345")
+        category, volatility = JsonTaxonomyCatalogAdapter().classify(
+            "Some Unknown Channel Name 12345"
+        )
         assert category == "uncategorized"
         assert volatility == "volatile"
 
@@ -349,14 +351,17 @@ class TestJsonPromptProvider:
 
         # Custom does not exist, check fallback
         non_existent = tmp_path / "non_existent"
-        with patch("cresmo.infrastructure.adapters.prompt_provider._CANDIDATE_SKILLS_DIRS", ()):
+        with patch(
+            "cresmo.infrastructure.adapters.prompts.json_provider._CANDIDATE_SKILLS_DIRS",
+            (),
+        ):
             assert JsonPromptProvider._resolve_skills_dir(non_existent) is None
 
         # Candidate exists
         candidate_dir = tmp_path / "candidate_skills"
         candidate_dir.mkdir()
         with patch(
-            "cresmo.infrastructure.adapters.prompt_provider._CANDIDATE_SKILLS_DIRS",
+            "cresmo.infrastructure.adapters.prompts.json_provider._CANDIDATE_SKILLS_DIRS",
             (candidate_dir,),
         ):
             assert JsonPromptProvider._resolve_skills_dir(non_existent) == candidate_dir

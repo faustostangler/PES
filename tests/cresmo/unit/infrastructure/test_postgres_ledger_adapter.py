@@ -13,8 +13,8 @@ from sqlalchemy.orm import DeclarativeBase
 
 from cresmo.application.ports import LedgerRepositoryPort
 from cresmo.domain.value_objects import ChannelName, ContentId, LedgerEntry, PipelineStatus
-from cresmo.infrastructure.adapters.database import PostgresLedgerAdapter
-from cresmo.infrastructure.database.models import Base, OutboxRow
+from cresmo.infrastructure.persistence.models import Base, OutboxRow
+from cresmo.infrastructure.persistence.postgres_ledger_adapter import PostgresLedgerAdapter
 
 
 @pytest.fixture

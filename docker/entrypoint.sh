@@ -40,8 +40,8 @@ case "$ROLE" in
         exec cresmo sync
         ;;
     api)
-        echo "[Cresmo 12-Factor Container] Starting API server on port ${PORT:-8000}..."
-        exec uvicorn cresmo.presentation.api:app --host 0.0.0.0 --port "${PORT:-8000}"
+        echo "[Cresmo 12-Factor Container] ERROR: ROLE=api is not implemented yet (identity deferred per ADR-062)." >&2
+        exit 1
         ;;
     *)
         exec "$@"

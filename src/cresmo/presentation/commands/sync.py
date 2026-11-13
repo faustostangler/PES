@@ -22,8 +22,14 @@ import typer
 from pydantic import ValidationError
 
 if TYPE_CHECKING:
+    from cresmo.application.ports import ChannelTaxonomyPort
     from cresmo.application.use_cases.sync_channel import SyncChannelUseCase
 
+from cresmo.bootstrap.composition import (
+    build_sync_channel_use_case,
+    build_taxonomy_adapter,
+    resolve_shared_settings,
+)
 from cresmo.domain.exceptions import (
     DomainValidationError,
     IngestionNetworkError,
@@ -35,10 +41,6 @@ from cresmo.domain.value_objects import (
     ChannelFeedQuery,
     SyncFilterCriteria,
     normalize_to_uploads_playlist_url,
-)
-from cresmo.presentation.composition import (
-    build_sync_channel_use_case,
-    resolve_shared_settings,
 )
 from cresmo.presentation.exit_codes import (
     EXIT_CONFIG_OR_USAGE_ERROR,
@@ -281,9 +283,11 @@ def handle_sync(args: Any) -> int:
         manifest_path = args.manifest or settings.playlist_path
 
         # Collect target channel URLs
+        taxonomy_port = build_taxonomy_adapter(settings)
         channels_to_sync = _resolve_channels_for_sync(
             manifest_path=manifest_path,
             filter_criteria=filter_criteria,
+            taxonomy_port=taxonomy_port,
         )
 
         if not channels_to_sync:
@@ -353,12 +357,13 @@ def _read_manifest_lines(path: Path | None) -> list[str]:
 def _resolve_channels_for_sync(
     manifest_path: Path | None,
     filter_criteria: SyncFilterCriteria,
+    taxonomy_port: ChannelTaxonomyPort | None = None,
 ) -> list[str]:
     """Collect channel URLs from manifest applying filter_criteria.
 
     When filter_criteria.channels is non-empty, each token is treated as a direct
     channel reference (name, handle, or URL).  When filter_criteria.categories is
-    non-empty, every manifest entry is evaluated against the domain taxonomy.
+    non-empty, every manifest entry is evaluated against the injected channel taxonomy.
     When no criteria are set, all manifest channels are returned.
 
     ADR-012: Returned list is **not** yet sorted; the caller enforces alphabetical order.
@@ -371,10 +376,14 @@ def _resolve_channels_for_sync(
         ]
 
     # Mode: category or full manifest — read from manifest and filter
+    classifier = taxonomy_port.classify if taxonomy_port is not None else None
     lines = _read_manifest_lines(manifest_path)
     channels: list[str] = []
     for channel_url in lines:
         norm = normalize_to_uploads_playlist_url(channel_url)
-        if filter_criteria.is_empty() or filter_criteria.matches_category(channel_url=channel_url):
+        if filter_criteria.is_empty() or filter_criteria.matches_category(
+            channel_url=channel_url,
+            classifier=classifier,
+        ):
             channels.append(norm)
     return channels

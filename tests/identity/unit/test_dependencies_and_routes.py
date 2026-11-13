@@ -168,7 +168,9 @@ class TestIdentityRoutes:
         client = TestClient(app)
         return client, mock_container
 
-    def test_register_duplicate_email_returns_409(self, test_app: tuple[TestClient, MagicMock]) -> None:
+    def test_register_duplicate_email_returns_409(
+        self, test_app: tuple[TestClient, MagicMock]
+    ) -> None:
         from identity.domain.exceptions import UserAlreadyExistsError
 
         client, mock_container = test_app
@@ -183,7 +185,9 @@ class TestIdentityRoutes:
         assert response.status_code == status.HTTP_409_CONFLICT
         assert "already exists" in response.json()["detail"]
 
-    def test_login_invalid_credentials_returns_401(self, test_app: tuple[TestClient, MagicMock]) -> None:
+    def test_login_invalid_credentials_returns_401(
+        self, test_app: tuple[TestClient, MagicMock]
+    ) -> None:
         from identity.domain.exceptions import InvalidCredentialsError
 
         client, mock_container = test_app
@@ -213,7 +217,9 @@ class TestIdentityRoutes:
         assert response.status_code == status.HTTP_403_FORBIDDEN
         assert "deactivated" in response.json()["detail"]
 
-    def test_revoke_nonexistent_pat_returns_404(self, test_app: tuple[TestClient, MagicMock]) -> None:
+    def test_revoke_nonexistent_pat_returns_404(
+        self, test_app: tuple[TestClient, MagicMock]
+    ) -> None:
         client, mock_container = test_app
         mock_user = AuthenticatedUserDTO(user_id="usr_owner")
         mock_container.validate_token_uc.execute.return_value = mock_user

@@ -10,9 +10,9 @@ from typing import TYPE_CHECKING, Any
 import structlog
 import yaml
 
+from cresmo.application.ports import ChannelTaxonomyPort, NoOpChannelTaxonomyPort
 from cresmo.domain.entities import StageTranscript
 from cresmo.domain.exceptions import CresmoDomainError
-from cresmo.domain.taxonomy import classify_channel
 from cresmo.domain.value_objects import (
     Channel,
     ChannelId,
@@ -74,6 +74,7 @@ def _resolve_metadata(
     meta: dict[str, Any],
     file_path: Path,
     stem: str,
+    taxonomy_port: ChannelTaxonomyPort | None = None,
 ) -> tuple[str, ChannelName, ChannelId | None, str, str, str, str | None]:
     """Resolve entity attributes combining explicit frontmatter and path conventions."""
     title = str(
@@ -92,8 +93,11 @@ def _resolve_metadata(
     resolved_channel_id: ChannelId | None = (
         ChannelId.from_string(str(raw_channel_id)) if raw_channel_id else ChannelId("priority_text")
     )
+    resolved_taxonomy = taxonomy_port or NoOpChannelTaxonomyPort()
     category = str(
-        meta.get("channel_category") or meta.get("domain") or classify_channel(channel_name)[0]
+        meta.get("channel_category")
+        or meta.get("domain")
+        or resolved_taxonomy.classify(channel_name)[0]
     )
     source_url = str(meta.get("url") or f"file://{file_path.resolve()}")
     video_description = str(meta.get("video_description") or "")
@@ -110,7 +114,10 @@ def _resolve_metadata(
     )
 
 
-def load_transcript_from_file(file_path: Path) -> StageTranscript:
+def load_transcript_from_file(
+    file_path: Path,
+    taxonomy_port: ChannelTaxonomyPort | None = None,
+) -> StageTranscript:
     """Parse and construct StageTranscript domain entity from a local file.
 
     Handles YAML frontmatter metadata overrides and enforces security invariants:
@@ -150,7 +157,7 @@ def load_transcript_from_file(file_path: Path) -> StageTranscript:
         source_url,
         description,
         publication_date,
-    ) = _resolve_metadata(meta, file_path, file_path.stem)
+    ) = _resolve_metadata(meta, file_path, file_path.stem, taxonomy_port=taxonomy_port)
 
     channel = Channel(
         name=channel_name,

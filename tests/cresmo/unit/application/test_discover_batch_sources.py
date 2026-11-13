@@ -14,7 +14,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from cresmo.application.use_cases.discover_batch_sources import (
+from cresmo.application.use_cases.discovery import (
     BatchDiscoveryQuery,
     BatchSource,
     DiscoverBatchSourcesUseCase,
@@ -1243,9 +1243,18 @@ class TestDiscoverBatchSourcesUseCase:
         mock_ingestion = MagicMock()
         mock_ingestion.discover_channel_feed.return_value = []
 
+        from cresmo.application.ports import ChannelTaxonomyPort
+
+        class _StubTaxonomy(ChannelTaxonomyPort):
+            def classify(self, channel_name: object) -> tuple[str, str]:
+                if "ancapsu" in str(channel_name).lower():
+                    return "politics_br", "volatile"
+                return "engineering", "perennial"
+
         use_case = DiscoverBatchSourcesUseCase(
             media_ingestion_port=mock_ingestion,
             settings=CresmoSettings(_env_file=None),
+            taxonomy_port=_StubTaxonomy(),
         )
 
         # Filter strictly by 'politics_br'; isolate from real settings with empty paths
@@ -1542,18 +1551,20 @@ class TestDiscoverBatchSourcesUseCase:
             directory: Path | None,
             acc: _BatchSourceAccumulator,
             filter_criteria: SyncFilterCriteria | None = None,
+            taxonomy_port: object | None = None,
         ) -> list[str]:
             passed_filter_texts.append(filter_criteria)
-            return orig_texts(directory, acc, filter_criteria)
+            return orig_texts(directory, acc, filter_criteria, taxonomy_port=taxonomy_port)  # type: ignore[arg-type]
 
         def spy_urls(
             path: Path | None,
             local_map: dict[str, str],
             acc: _BatchSourceAccumulator,
             filter_criteria: SyncFilterCriteria | None = None,
+            taxonomy_port: object | None = None,
         ) -> tuple[list[str], list[str]]:
             passed_filter_urls.append(filter_criteria)
-            return orig_urls(path, local_map, acc, filter_criteria)
+            return orig_urls(path, local_map, acc, filter_criteria, taxonomy_port=taxonomy_port)  # type: ignore[arg-type]
 
         monkeypatch.setattr(LakeScannerService, "collect_priority_texts", spy_texts)
         monkeypatch.setattr(LakeScannerService, "collect_priority_urls", spy_urls)

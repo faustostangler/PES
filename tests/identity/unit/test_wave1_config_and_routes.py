@@ -23,7 +23,9 @@ class TestWave1RootConfig:
         assert isinstance(settings.iam, IamSettings)
         assert settings.iam.jwt_algorithm == "HS256"
 
-    def test_iam_secret_key_fails_fast_when_under_32_characters(self, monkeypatch: pytest.MonkeyPatch) -> None:
+    def test_iam_secret_key_fails_fast_when_under_32_characters(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
         """IAM_JWT_SECRET_KEY must be at least 32 characters or fail fast with ValidationError."""
         from config import IamSettings
 

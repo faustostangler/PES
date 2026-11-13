@@ -10,6 +10,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Final
 
+from cresmo.application.ports import ChannelTaxonomyPort
 from cresmo.domain.value_objects import (
     ChannelId,
     ChannelName,
@@ -91,11 +92,19 @@ def matches_channel_target(criteria: SyncFilterCriteria, chan_target: str) -> bo
     return criteria.matches_channel(channel_name=ChannelName(chan_target))
 
 
-def matches_category_target(criteria: SyncFilterCriteria, chan_target: str) -> bool:
+def matches_category_target(
+    criteria: SyncFilterCriteria,
+    chan_target: str,
+    taxonomy_port: ChannelTaxonomyPort | None = None,
+) -> bool:
     """Evaluate whether a channel's category matches the filter criteria."""
+    classifier = taxonomy_port.classify if taxonomy_port is not None else None
     if chan_target.startswith(("http", "@")):
-        return criteria.matches_category(channel_url=chan_target)
-    return criteria.matches_category(channel_name=ChannelName(chan_target))
+        return criteria.matches_category(channel_url=chan_target, classifier=classifier)
+    return criteria.matches_category(
+        channel_name=ChannelName(chan_target),
+        classifier=classifier,
+    )
 
 
 def matches_video_target(

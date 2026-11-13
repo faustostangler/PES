@@ -27,7 +27,7 @@ from cresmo.application.ports import (
     NoOpTelemetryPort,
     PromptProviderPort,
 )
-from cresmo.domain.entities import StageTranscript, StageTranscript, StageTranscript
+from cresmo.domain.entities import StageTranscript
 from cresmo.domain.exceptions import CresmoDomainError
 from cresmo.domain.value_objects import (
     BatchId,
@@ -38,7 +38,6 @@ from cresmo.domain.value_objects import (
     Content,
     ContentId,
     MediaProvenance,
-    NoteTitle,
     RawIndexEntry,
 )
 from tests.doubles.mock_adapters import (
@@ -175,7 +174,11 @@ class TestCresmoPipelineOrchestration:
         canned_source = StageTranscript(
             channel=Channel(name="Political Theory"),
             provenance=MediaProvenance.create(url="https://youtube.com/watch?v=vid_stage1_iso"),
-            content=Content(id=cid, title="Political Theory", text="Raw spoken audio transcript regarding Vilfredo Pareto and elites."),
+            content=Content(
+                id=cid,
+                title="Political Theory",
+                text="Raw spoken audio transcript regarding Vilfredo Pareto and elites.",
+            ),
         )
 
         mock_llm = SmartMockLLMAdapter()
@@ -443,7 +446,8 @@ class TestCresmoPipelineOrchestration:
         assert res.success is True
         # Assert raw stage persistence was bypassed to prevent redundant disk I/O
         raw_calls = [
-            c for c in vault.save_stage_transcript.call_args_list
+            c
+            for c in vault.save_stage_transcript.call_args_list
             if c.args and (c.args[0] == "raw" or getattr(c.args[0], "value", None) == "raw")
         ]
         assert len(raw_calls) == 0
@@ -457,7 +461,8 @@ class TestCresmoPipelineOrchestration:
         result_external = pipeline.run_for_text_file(ext_file)
         assert result_external.success is True
         external_raw_calls = [
-            c for c in vault.save_stage_transcript.call_args_list
+            c
+            for c in vault.save_stage_transcript.call_args_list
             if c.args and (c.args[0] == "raw" or getattr(c.args[0], "value", None) == "raw")
         ]
         assert len(external_raw_calls) == 1
@@ -584,7 +589,11 @@ class TestCresmoPipelineOrchestration:
         canned_raw = StageTranscript(
             channel=Channel(name="Political Theory"),
             provenance=MediaProvenance.create(url="https://youtube.com/watch?v=vidSample"),
-            content=Content(id=ContentId("vidSample"), title="Political Theory", text="Raw transcript content for batch manifest test"),
+            content=Content(
+                id=ContentId("vidSample"),
+                title="Political Theory",
+                text="Raw transcript content for batch manifest test",
+            ),
         )
         pipeline = CresmoPipeline(
             media_ingestion_port=MockMediaIngestionPort(canned_transcript=canned_raw),

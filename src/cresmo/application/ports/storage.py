@@ -37,7 +37,7 @@ class VaultRepositoryPort(ABC):
     @abstractmethod
     def resolve_stage_dir(self, stage_name: str | StageName) -> Path:
         """Resolve dynamic stage directory following canonical data/{stage} structure (ADR-058).
-        
+
         Args:
             stage_name: Unique pipeline stage identifier or enum.
 

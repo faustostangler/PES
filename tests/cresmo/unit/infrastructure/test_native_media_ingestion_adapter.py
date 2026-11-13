@@ -24,7 +24,7 @@ from cresmo.domain.exceptions import (
     RateLimitExceededError,
 )
 from cresmo.domain.value_objects import ChannelFeedQuery, ChannelId, ContentId
-from cresmo.infrastructure.adapters.native_media_ingestion_adapter import (
+from cresmo.infrastructure.adapters.media.native_media_ingestion_adapter import (
     NativeMediaIngestionAdapter,
 )
 
@@ -713,7 +713,7 @@ class TestNativeMediaIngestionAdapter:
         """SPEC-008 Scenario 6: Ingestion Latency Recording via MetricsPort."""
         from prometheus_client import CollectorRegistry
 
-        from cresmo.infrastructure.adapters.prometheus_metrics_adapter import (
+        from cresmo.infrastructure.adapters.metrics.prometheus_metrics_adapter import (
             PrometheusMetricsAdapter,
         )
 
@@ -1019,7 +1019,7 @@ class TestNativeMediaIngestionAdapter:
     def test_ingest_single_video_exception_records_failure_metric(self, tmp_path: Path) -> None:
         from prometheus_client import CollectorRegistry
 
-        from cresmo.infrastructure.adapters.prometheus_metrics_adapter import (
+        from cresmo.infrastructure.adapters.metrics.prometheus_metrics_adapter import (
             PrometheusMetricsAdapter,
         )
 

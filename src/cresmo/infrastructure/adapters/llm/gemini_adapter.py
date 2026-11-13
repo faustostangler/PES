@@ -13,7 +13,6 @@ Conforms to:
 
 from __future__ import annotations
 
-import os
 from typing import Any
 
 import httpx
@@ -25,11 +24,11 @@ from tenacity import retry, retry_if_exception, stop_after_attempt, wait_random_
 
 from cresmo.application.ports import LLMTransformationPort
 from cresmo.domain.value_objects import ChatPrompt, MessageRole
-from cresmo.infrastructure.adapters.gemini_pool import (
+from cresmo.infrastructure.adapters.llm.gemini_pool import (
     GeminiCredentialPool,
     is_quota_exhausted_error,
 )
-from cresmo.infrastructure.adapters.opentelemetry_adapter import annotate_llm_span
+from cresmo.infrastructure.adapters.telemetry.opentelemetry_adapter import annotate_llm_span
 from cresmo.infrastructure.config import DEFAULT_GEMINI_TIMEOUT_SECONDS
 
 __all__ = ["GeminiLLMAdapter", "trace"]
@@ -162,13 +161,8 @@ class GeminiLLMAdapter(LLMTransformationPort):
         self.default_temperature = default_temperature
         self.timeout_seconds = timeout_seconds
 
-        # Step 1: Initialize Langfuse client if configured
-        if langfuse_client is not None:
-            self._langfuse: Langfuse | None = langfuse_client
-        elif os.environ.get("LANGFUSE_PUBLIC_KEY"):
-            self._langfuse = Langfuse()
-        else:
-            self._langfuse = None
+        # Step 1: Assign explicit Langfuse client when provided by composition root
+        self._langfuse: Langfuse | None = langfuse_client
 
         # Step 2: Initialize Credential Pool & Client
         if credential_pool is not None:
@@ -182,12 +176,7 @@ class GeminiLLMAdapter(LLMTransformationPort):
                 timeout=timeout_seconds,
             )
         else:
-            raw = (
-                api_key
-                or os.environ.get("GEMINI_API_KEYS")
-                or os.environ.get("GEMINI_API_KEY")
-                or ""
-            )
+            raw = api_key or ""
             parts = [p.strip() for p in raw.split(",") if p.strip()]
             self._pool = GeminiCredentialPool(
                 keys=parts if parts else [""], timeout=timeout_seconds

@@ -17,11 +17,11 @@ from typing import Annotated, Any
 
 import typer
 
-from cresmo.infrastructure.adapters.cookie_extractor import (
+from cresmo.bootstrap.composition import resolve_shared_settings
+from cresmo.infrastructure.adapters.scrapers.cookie_extractor import (
     export_cookies_from_browser,
     has_valid_auth_cookies,
 )
-from cresmo.presentation.composition import resolve_shared_settings
 from cresmo.presentation.exit_codes import (
     EXIT_CONFIG_OR_USAGE_ERROR,
     EXIT_INGESTION_ERROR,

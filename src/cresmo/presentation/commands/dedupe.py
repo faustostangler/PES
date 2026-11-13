@@ -16,7 +16,7 @@ from typing import Annotated, Any
 
 import typer
 
-from cresmo.presentation.composition import (
+from cresmo.bootstrap.composition import (
     build_unify_duplicates_use_case,
     resolve_shared_settings,
 )

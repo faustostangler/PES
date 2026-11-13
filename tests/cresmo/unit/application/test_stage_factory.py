@@ -26,7 +26,9 @@ from cresmo.domain.value_objects import (
 def test_pipeline_execution_context_creation() -> None:
     """Verify PipelineExecutionContext holds all execution provenance fields."""
     channel = Channel(name="Test Channel", id=ChannelId("UC_test123"))
-    content = Content.create(id=ContentId("test_vid"), title="Test Content", session_id="test_chan:test_vid")
+    content = Content.create(
+        id=ContentId("test_vid"), title="Test Content", session_id="test_chan:test_vid"
+    )
     ctx = PipelineExecutionContext(
         user_identity=UserIdentity.worker(),
         channel=channel,

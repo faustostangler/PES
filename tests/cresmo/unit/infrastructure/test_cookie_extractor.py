@@ -9,8 +9,8 @@ from pathlib import Path
 from typing import Any
 from unittest.mock import MagicMock, call, patch
 
-from cresmo.infrastructure.adapters import cookie_extractor
-from cresmo.infrastructure.adapters.cookie_extractor import (
+from cresmo.infrastructure.adapters.scrapers import cookie_extractor
+from cresmo.infrastructure.adapters.scrapers.cookie_extractor import (
     AUTH_COOKIE_NAMES,
     COOKIE_NAME_REGEX,
     COOKIE_VALUE_REGEX,
@@ -284,7 +284,7 @@ class TestExportCookiesFromBrowser:
 
         with (
             patch(
-                "cresmo.infrastructure.adapters.cookie_extractor._extract_raw_cookies",
+                "cresmo.infrastructure.adapters.scrapers.cookie_extractor._extract_raw_cookies",
                 return_value=[guest_cookie],
             ),
             patch("sys.stdout", new_callable=io.StringIO) as mock_stdout,
@@ -301,7 +301,7 @@ class TestExportCookiesFromBrowser:
     ) -> None:
         out_file = tmp_path / "extracted.txt"
         with patch(
-            "cresmo.infrastructure.adapters.cookie_extractor._extract_raw_cookies",
+            "cresmo.infrastructure.adapters.scrapers.cookie_extractor._extract_raw_cookies",
             return_value=None,
         ):
             assert not export_cookies_from_browser("firefox", out_file)
@@ -311,7 +311,7 @@ class TestExportCookiesFromBrowser:
         out_file = tmp_path / "extracted.txt"
         invalid_cookie = make_cookie(name="bad name with spaces", value="val")
         with patch(
-            "cresmo.infrastructure.adapters.cookie_extractor._extract_raw_cookies",
+            "cresmo.infrastructure.adapters.scrapers.cookie_extractor._extract_raw_cookies",
             return_value=[invalid_cookie],
         ):
             assert not export_cookies_from_browser("firefox", out_file)
@@ -323,7 +323,7 @@ class TestExportCookiesFromBrowser:
         out_file = tmp_path / "extracted.txt"
         guest_cookie = make_cookie(name="PREF", value="f1=123", domain=".youtube.com")
         with patch(
-            "cresmo.infrastructure.adapters.cookie_extractor._extract_raw_cookies",
+            "cresmo.infrastructure.adapters.scrapers.cookie_extractor._extract_raw_cookies",
             return_value=[guest_cookie],
         ):
             assert not export_cookies_from_browser("firefox", out_file, require_auth=True)
@@ -336,7 +336,7 @@ class TestExportCookiesFromBrowser:
         guest_cookie = make_cookie(name="PREF", value="f1=123", domain=".youtube.com")
         with (
             patch(
-                "cresmo.infrastructure.adapters.cookie_extractor._extract_raw_cookies",
+                "cresmo.infrastructure.adapters.scrapers.cookie_extractor._extract_raw_cookies",
                 return_value=[guest_cookie],
             ),
             patch("sys.stdout", new_callable=io.StringIO) as mock_stdout,
@@ -354,7 +354,7 @@ class TestExportCookiesFromBrowser:
         google_cookie = make_cookie(name="NID", value="google_token", domain=".google.com")
         with (
             patch(
-                "cresmo.infrastructure.adapters.cookie_extractor._extract_raw_cookies",
+                "cresmo.infrastructure.adapters.scrapers.cookie_extractor._extract_raw_cookies",
                 return_value=[auth_cookie, google_cookie],
             ),
             patch("sys.stdout", new_callable=io.StringIO) as mock_stdout,
@@ -371,7 +371,7 @@ class TestExportCookiesFromBrowser:
         deep_out = tmp_path / "deep" / "nested" / "cookies.txt"
         valid_cookie = make_cookie(name="PREF", value="val", domain=".youtube.com")
         with patch(
-            "cresmo.infrastructure.adapters.cookie_extractor._extract_raw_cookies",
+            "cresmo.infrastructure.adapters.scrapers.cookie_extractor._extract_raw_cookies",
             return_value=[valid_cookie],
         ):
             assert export_cookies_from_browser("firefox", deep_out)
@@ -382,7 +382,7 @@ class TestExportCookiesFromBrowser:
         valid_cookie = make_cookie(name="PREF", value="val", domain=".youtube.com")
         with (
             patch(
-                "cresmo.infrastructure.adapters.cookie_extractor._extract_raw_cookies",
+                "cresmo.infrastructure.adapters.scrapers.cookie_extractor._extract_raw_cookies",
                 return_value=[valid_cookie],
             ) as mock_extract,
             patch("http.cookiejar.MozillaCookieJar.__init__", return_value=None) as mock_jar_init,
@@ -403,7 +403,7 @@ class TestExportCookiesFromBrowser:
         invalid_cookie = make_cookie(name="BAD NAME WITH SPACE", value="val")
         valid_cookie = make_cookie(name="PREF", value="val", domain=".youtube.com")
         with patch(
-            "cresmo.infrastructure.adapters.cookie_extractor._extract_raw_cookies",
+            "cresmo.infrastructure.adapters.scrapers.cookie_extractor._extract_raw_cookies",
             return_value=[invalid_cookie, valid_cookie],
         ):
             assert export_cookies_from_browser("firefox", out_file)
@@ -417,7 +417,7 @@ class TestExportCookiesFromBrowser:
         yt2 = make_cookie(name="YSC", value="val2", domain=".youtube.com")
         with (
             patch(
-                "cresmo.infrastructure.adapters.cookie_extractor._extract_raw_cookies",
+                "cresmo.infrastructure.adapters.scrapers.cookie_extractor._extract_raw_cookies",
                 return_value=[yt1, yt2],
             ),
             patch("sys.stdout", new_callable=io.StringIO) as mock_stdout,
@@ -432,7 +432,7 @@ class TestExportCookiesAuto:
     def test_export_cookies_auto_default_browser(self, tmp_path: Path) -> None:
         out_file = tmp_path / "auto_def.txt"
         with patch(
-            "cresmo.infrastructure.adapters.cookie_extractor.export_cookies_from_browser"
+            "cresmo.infrastructure.adapters.scrapers.cookie_extractor.export_cookies_from_browser"
         ) as mock_exp:
             mock_exp.return_value = True
             assert export_cookies_auto(out_file)
@@ -443,7 +443,7 @@ class TestExportCookiesAuto:
     def test_export_cookies_auto_preferred_browser_priority(self, tmp_path: Path) -> None:
         out_file = tmp_path / "auto.txt"
         with patch(
-            "cresmo.infrastructure.adapters.cookie_extractor.export_cookies_from_browser"
+            "cresmo.infrastructure.adapters.scrapers.cookie_extractor.export_cookies_from_browser"
         ) as mock_exp:
             mock_exp.return_value = True
             assert export_cookies_auto(out_file, preferred_browser="chrome", verbose=True)
@@ -454,7 +454,7 @@ class TestExportCookiesAuto:
     def test_export_cookies_auto_checks_all_browsers_in_order(self, tmp_path: Path) -> None:
         out_file = tmp_path / "auto_all.txt"
         with patch(
-            "cresmo.infrastructure.adapters.cookie_extractor.export_cookies_from_browser",
+            "cresmo.infrastructure.adapters.scrapers.cookie_extractor.export_cookies_from_browser",
             return_value=False,
         ) as mock_exp:
             assert not export_cookies_auto(out_file, preferred_browser=None)
@@ -466,7 +466,7 @@ class TestExportCookiesAuto:
     def test_export_cookies_auto_unknown_browser_priority(self, tmp_path: Path) -> None:
         out_file = tmp_path / "auto.txt"
         with patch(
-            "cresmo.infrastructure.adapters.cookie_extractor.export_cookies_from_browser"
+            "cresmo.infrastructure.adapters.scrapers.cookie_extractor.export_cookies_from_browser"
         ) as mock_exp:
             mock_exp.side_effect = [False, True]
             assert export_cookies_auto(out_file, preferred_browser="unknown_browser")
@@ -480,7 +480,7 @@ class TestExportCookiesAuto:
     def test_export_cookies_auto_second_pass_fallback(self, tmp_path: Path) -> None:
         out_file = tmp_path / "auto.txt"
         with patch(
-            "cresmo.infrastructure.adapters.cookie_extractor.export_cookies_from_browser"
+            "cresmo.infrastructure.adapters.scrapers.cookie_extractor.export_cookies_from_browser"
         ) as mock_exp:
             mock_exp.side_effect = [False, False, False, False, False, True]
             assert export_cookies_auto(out_file, preferred_browser="firefox")
@@ -503,7 +503,7 @@ class TestEnsureCookiesFile:
         existing_file.write_text("\n".join(lines))
 
         with patch(
-            "cresmo.infrastructure.adapters.cookie_extractor.export_cookies_from_browser"
+            "cresmo.infrastructure.adapters.scrapers.cookie_extractor.export_cookies_from_browser"
         ) as mock_exp:
             resolved = ensure_cookies_file(existing_file, browser="firefox", max_age_hours=24)
             assert resolved == existing_file
@@ -527,7 +527,7 @@ class TestEnsureCookiesFile:
             patch("time.time", return_value=now),
             patch.object(Path, "stat", return_value=stat_exact),
             patch(
-                "cresmo.infrastructure.adapters.cookie_extractor.export_cookies_from_browser"
+                "cresmo.infrastructure.adapters.scrapers.cookie_extractor.export_cookies_from_browser"
             ) as mock_exp,
         ):
             resolved = ensure_cookies_file(existing_file)
@@ -543,7 +543,7 @@ class TestEnsureCookiesFile:
             patch("time.time", return_value=now),
             patch.object(Path, "stat", return_value=stat_over),
             patch(
-                "cresmo.infrastructure.adapters.cookie_extractor.export_cookies_from_browser",
+                "cresmo.infrastructure.adapters.scrapers.cookie_extractor.export_cookies_from_browser",
                 return_value=True,
             ) as mock_exp,
         ):
@@ -565,7 +565,7 @@ class TestEnsureCookiesFile:
             patch("time.time", return_value=now),
             patch.object(Path, "stat", return_value=stat_just_over),
             patch(
-                "cresmo.infrastructure.adapters.cookie_extractor.export_cookies_from_browser",
+                "cresmo.infrastructure.adapters.scrapers.cookie_extractor.export_cookies_from_browser",
                 return_value=True,
             ) as mock_exp,
         ):
@@ -590,7 +590,7 @@ class TestEnsureCookiesFile:
         assert not has_valid_auth_cookies(guest_file)
 
         with patch(
-            "cresmo.infrastructure.adapters.cookie_extractor.export_cookies_from_browser",
+            "cresmo.infrastructure.adapters.scrapers.cookie_extractor.export_cookies_from_browser",
             return_value=True,
         ) as mock_exp:
             resolved = ensure_cookies_file(guest_file, browser="chrome")
@@ -615,7 +615,7 @@ class TestEnsureCookiesFile:
             patch("time.time", return_value=now),
             patch.object(Path, "stat", return_value=stat_over),
             patch(
-                "cresmo.infrastructure.adapters.cookie_extractor.export_cookies_from_browser",
+                "cresmo.infrastructure.adapters.scrapers.cookie_extractor.export_cookies_from_browser",
                 return_value=True,
             ) as mock_exp,
         ):
@@ -630,7 +630,7 @@ class TestEnsureCookiesFile:
         assert len(f50.read_bytes()) == 50
 
         with patch(
-            "cresmo.infrastructure.adapters.cookie_extractor.export_cookies_from_browser"
+            "cresmo.infrastructure.adapters.scrapers.cookie_extractor.export_cookies_from_browser"
         ) as mock_exp:
             # Size 50 and valid auth cookies -> does NOT refresh
             resolved = ensure_cookies_file(f50, max_age_hours=0)
@@ -642,7 +642,7 @@ class TestEnsureCookiesFile:
         assert len(f49.read_bytes()) == 49
 
         with patch(
-            "cresmo.infrastructure.adapters.cookie_extractor.export_cookies_from_browser",
+            "cresmo.infrastructure.adapters.scrapers.cookie_extractor.export_cookies_from_browser",
             return_value=True,
         ) as mock_exp:
             # Size 49 -> MUST refresh even if max_age_hours=0
@@ -658,7 +658,7 @@ class TestEnsureCookiesFile:
         ]
         valid_file.write_text("\n".join(lines))
         with patch(
-            "cresmo.infrastructure.adapters.cookie_extractor.export_cookies_from_browser"
+            "cresmo.infrastructure.adapters.scrapers.cookie_extractor.export_cookies_from_browser"
         ) as mock_exp:
             resolved = ensure_cookies_file(valid_file, browser="firefox", max_age_hours=0)
             assert resolved == valid_file
@@ -668,11 +668,11 @@ class TestEnsureCookiesFile:
         out_file = tmp_path / "fresh.txt"
         with (
             patch(
-                "cresmo.infrastructure.adapters.cookie_extractor.export_cookies_from_browser",
+                "cresmo.infrastructure.adapters.scrapers.cookie_extractor.export_cookies_from_browser",
                 return_value=False,
             ) as mock_browser,
             patch(
-                "cresmo.infrastructure.adapters.cookie_extractor.export_cookies_auto",
+                "cresmo.infrastructure.adapters.scrapers.cookie_extractor.export_cookies_auto",
                 return_value=True,
             ) as mock_auto,
         ):
@@ -691,10 +691,10 @@ class TestEnsureCookiesFile:
         out_file.write_text("dummy active cookies")
         with (
             patch(
-                "cresmo.infrastructure.adapters.cookie_extractor.export_cookies_from_browser"
+                "cresmo.infrastructure.adapters.scrapers.cookie_extractor.export_cookies_from_browser"
             ) as mock_browser,
             patch(
-                "cresmo.infrastructure.adapters.cookie_extractor.export_cookies_auto",
+                "cresmo.infrastructure.adapters.scrapers.cookie_extractor.export_cookies_auto",
                 return_value=True,
             ) as mock_auto,
         ):
@@ -711,11 +711,11 @@ class TestEnsureCookiesFile:
         f1.write_text("x")
         with (
             patch(
-                "cresmo.infrastructure.adapters.cookie_extractor.export_cookies_from_browser",
+                "cresmo.infrastructure.adapters.scrapers.cookie_extractor.export_cookies_from_browser",
                 return_value=False,
             ),
             patch(
-                "cresmo.infrastructure.adapters.cookie_extractor.export_cookies_auto",
+                "cresmo.infrastructure.adapters.scrapers.cookie_extractor.export_cookies_auto",
                 return_value=False,
             ),
         ):
@@ -726,11 +726,11 @@ class TestEnsureCookiesFile:
         f0.touch()
         with (
             patch(
-                "cresmo.infrastructure.adapters.cookie_extractor.export_cookies_from_browser",
+                "cresmo.infrastructure.adapters.scrapers.cookie_extractor.export_cookies_from_browser",
                 return_value=False,
             ),
             patch(
-                "cresmo.infrastructure.adapters.cookie_extractor.export_cookies_auto",
+                "cresmo.infrastructure.adapters.scrapers.cookie_extractor.export_cookies_auto",
                 return_value=False,
             ),
         ):
@@ -740,11 +740,11 @@ class TestEnsureCookiesFile:
         f_missing = tmp_path / "missing.txt"
         with (
             patch(
-                "cresmo.infrastructure.adapters.cookie_extractor.export_cookies_from_browser",
+                "cresmo.infrastructure.adapters.scrapers.cookie_extractor.export_cookies_from_browser",
                 return_value=False,
             ),
             patch(
-                "cresmo.infrastructure.adapters.cookie_extractor.export_cookies_auto",
+                "cresmo.infrastructure.adapters.scrapers.cookie_extractor.export_cookies_auto",
                 return_value=False,
             ),
         ):
@@ -755,7 +755,7 @@ class TestEnsureCookiesFile:
         f0 = tmp_path / "success_size0.txt"
         f0.touch()
         with patch(
-            "cresmo.infrastructure.adapters.cookie_extractor.export_cookies_from_browser",
+            "cresmo.infrastructure.adapters.scrapers.cookie_extractor.export_cookies_from_browser",
             return_value=True,
         ):
             assert ensure_cookies_file(f0) is None
@@ -764,7 +764,7 @@ class TestEnsureCookiesFile:
         f1 = tmp_path / "success_size1.txt"
         f1.write_text("x")
         with patch(
-            "cresmo.infrastructure.adapters.cookie_extractor.export_cookies_from_browser",
+            "cresmo.infrastructure.adapters.scrapers.cookie_extractor.export_cookies_from_browser",
             return_value=True,
         ):
             assert ensure_cookies_file(f1) == f1

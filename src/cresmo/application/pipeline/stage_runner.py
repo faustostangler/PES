@@ -337,9 +337,7 @@ class PipelineStageRunner:
         fallback: _StageRet | Callable[[], _StageRet] | None = None,
     ) -> _StageRet | None:
         """Execute a pipeline stage wrapped with telemetry spans, metrics, and error handling."""
-        resolved_channel = channel or Channel(
-            name=as_str(channel_name) or "unknown", id=channel_id
-        )
+        resolved_channel = channel or Channel(name=as_str(channel_name) or "unknown", id=channel_id)
         resolved_content_id = (
             content.id
             if content is not None

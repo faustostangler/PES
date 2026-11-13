@@ -45,8 +45,9 @@ COPY pyproject.toml uv.lock ./
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --frozen --no-dev --no-install-project
 
-# Copy application source code and entrypoint
+# Copy application source code, runtime Cresmo skills, and entrypoint
 COPY src/ ./src/
+COPY .agents/skills/ ./.agents/skills/
 COPY docker/ ./docker/
 RUN chmod +x docker/entrypoint.sh
 

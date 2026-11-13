@@ -8,8 +8,8 @@ Evaluates mutmut mutation testing outcomes against Doctor Stangler Architecture 
 - System Gate: 0 Timeouts / Infinite Loops.
 
 Usage:
-    uv run python tests/quality/run_mutation_gate.py [--enforce-all]
-    uv run python tests/quality/run_mutation_gate.py [--enforce-domain] [--enforce-application] [--enforce-infrastructure]
+    uv run python tools/quality/run_mutation_gate.py [--enforce-all]
+    uv run python tools/quality/run_mutation_gate.py [--enforce-domain] [--enforce-application] [--enforce-infrastructure]
 """
 
 from __future__ import annotations

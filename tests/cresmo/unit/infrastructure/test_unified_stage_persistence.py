@@ -30,12 +30,14 @@ from cresmo.infrastructure.adapters.obsidian.transcripts import TranscriptVaultH
 
 
 @pytest.fixture
-def data_vault_setup(tmp_path: Path) -> tuple[Path, Path, TranscriptVaultHandler, ObsidianVaultAdapter]:
+def data_vault_setup(
+    tmp_path: Path,
+) -> tuple[Path, Path, TranscriptVaultHandler, ObsidianVaultAdapter]:
     data_dir = tmp_path / "data"
     vault_dir = tmp_path / "vault"
     raw_dir = data_dir / "raw"
     enriched_dir = data_dir / "enriched"
-    fluid_dir = data_dir / "fluid"
+    fluid_dir = data_dir / "fluid_prose"
 
     for d in (data_dir, vault_dir, raw_dir, enriched_dir, fluid_dir):
         d.mkdir(parents=True, exist_ok=True)
@@ -62,7 +64,9 @@ def _make_sample_transcript(
     pass_count: int | None = None,
 ) -> StageTranscript:
     return StageTranscript(
-        channel=Channel(name=ChannelName(channel_name_str), id=ChannelId("UC_STANGLER"), category="Tech"),
+        channel=Channel(
+            name=ChannelName(channel_name_str), id=ChannelId("UC_STANGLER"), category="Tech"
+        ),
         provenance=MediaProvenance.create(
             url=f"https://youtube.com/watch?v={content_id_str}",
             description="Sample video description\nLine 2 of description",
@@ -195,4 +199,3 @@ class TestADR058UnifiedStagePersistence:
         loaded_comp = adapter.get_stage_transcript("gap_filler", ContentId("compat_comp"))
         assert loaded_comp is not None
         assert loaded_comp.content.id == ContentId("compat_comp")
-

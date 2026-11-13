@@ -7,10 +7,8 @@ from dataclasses import dataclass, field
 from enum import StrEnum
 from typing import Any, ClassVar
 
-from cresmo.domain.entities import (
-    post_process_enriched_compendium,
-    post_process_fluid_transcript,
-)
+from cresmo.domain.entities import post_process_fluid_transcript
+from cresmo.domain.services.compendium import post_process_enriched_compendium
 from cresmo.domain.value_objects import JudgeCriterion, PromptKey
 
 
@@ -88,6 +86,7 @@ class StageRegistry:
             max_passes=5,
             early_stopping_enabled=True,
         ),
+        # FUTURE / DEFERRED: Upcoming synthesis conveyor stages preserved for future rollout.
         # "long_expander": StageDefinition(
         #     transform_prompt_key=PromptKey.LONG_EXPANDER,
         #     required_criteria=(

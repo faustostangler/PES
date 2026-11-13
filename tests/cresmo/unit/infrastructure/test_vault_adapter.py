@@ -20,7 +20,6 @@ from cresmo.domain.entities import (
     MapOfContent,
     StageTranscript,
 )
-from cresmo.domain.exceptions import CompendiumStructureError
 from cresmo.domain.value_objects import (
     CausalMatrix,
     Channel,
@@ -34,13 +33,13 @@ from cresmo.domain.value_objects import (
     NoteType,
     RawIndexEntry,
 )
+from cresmo.infrastructure.adapters.obsidian import ObsidianVaultAdapter
 from cresmo.infrastructure.adapters.obsidian.catalog import ChannelCatalogHandler
 from cresmo.infrastructure.adapters.obsidian.utils import (
     atomic_write,
     channel_to_slug,
     sanitize_filename,
 )
-from cresmo.infrastructure.adapters.obsidian_vault_adapter import ObsidianVaultAdapter
 
 
 @pytest.fixture
@@ -491,7 +490,7 @@ class TestObsidianVaultAdapter:
         ],
     )
     def test_sanitize_filename_exhaustive(self, raw_name: str, expected: str) -> None:
-        from cresmo.infrastructure.adapters.obsidian_vault_adapter import sanitize_filename
+        from cresmo.infrastructure.adapters.obsidian import sanitize_filename
 
         assert sanitize_filename(raw_name) == expected
 
@@ -1356,7 +1355,9 @@ Body text.
 
         adapter.save_stage_transcript("gap_filler", comp)
 
-        saved_file = adapter.resolve_stage_dir("gap_filler") / "Canal _Avançado_" / "comp_rich_001.md"
+        saved_file = (
+            adapter.resolve_stage_dir("gap_filler") / "Canal _Avançado_" / "comp_rich_001.md"
+        )
         assert saved_file.is_file()
         raw_text = saved_file.read_text(encoding="utf-8")
         assert 'video_title: "Compêndio Epistêmico"\n' in raw_text
@@ -1661,7 +1662,11 @@ Only body here, no complementary section.
         adapter.save_stage_transcript("fluid_prose", fluid)
 
         # Invariant 1: File must be created on disk in channel subfolder
-        expected_file = adapter.resolve_stage_dir("fluid_prose") / "Ciência e Tecnologia" / "fluid_test_abc123.md"
+        expected_file = (
+            adapter.resolve_stage_dir("fluid_prose")
+            / "Ciência e Tecnologia"
+            / "fluid_test_abc123.md"
+        )
         assert expected_file.exists()
         file_text = expected_file.read_text(encoding="utf-8")
         assert "video_id: fluid_test_abc123" in file_text

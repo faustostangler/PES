@@ -15,7 +15,7 @@ from google.genai import errors
 from opentelemetry.trace import SpanContext, TraceFlags
 
 from cresmo.domain.value_objects.prompt import ChatPrompt
-from cresmo.infrastructure.adapters.gemini_adapter import (
+from cresmo.infrastructure.adapters.llm.gemini_adapter import (
     GeminiLLMAdapter,
     _is_transient_genai_error,
 )
@@ -151,7 +151,7 @@ class TestGeminiLLMAdapter:
         mock_span.get_span_context.return_value = DUMMY_SPAN_CONTEXT
 
         with patch(
-            "cresmo.infrastructure.adapters.gemini_adapter.trace.get_current_span",
+            "cresmo.infrastructure.adapters.llm.gemini_adapter.trace.get_current_span",
             return_value=mock_span,
         ):
             adapter.transform(
@@ -256,7 +256,7 @@ class TestGeminiLLMAdapter:
         mock_span.get_span_context.return_value = DUMMY_SPAN_CONTEXT
 
         with patch(
-            "cresmo.infrastructure.adapters.gemini_adapter.trace.get_current_span",
+            "cresmo.infrastructure.adapters.llm.gemini_adapter.trace.get_current_span",
             return_value=mock_span,
         ):
             adapter.transform(prompt=ChatPrompt.single_turn("One two three four five"))
@@ -278,7 +278,7 @@ class TestGeminiLLMAdapter:
         mock_span.get_span_context.return_value = DUMMY_SPAN_CONTEXT
 
         with patch(
-            "cresmo.infrastructure.adapters.gemini_adapter.trace.get_current_span",
+            "cresmo.infrastructure.adapters.llm.gemini_adapter.trace.get_current_span",
             return_value=mock_span,
         ):
             result = adapter.transform(
@@ -380,15 +380,14 @@ class TestGeminiLLMAdapter:
         assert calls[0].kwargs["model"] == "gemini-3.5-flash-lite"
         assert calls[1].kwargs["model"] == "gemini-3.1-flash-lite"
 
-    def test_init_langfuse_from_environ(self) -> None:
-        with (
-            patch.dict(os.environ, {"LANGFUSE_PUBLIC_KEY": "pk-12345"}),
-            patch("cresmo.infrastructure.adapters.gemini_adapter.Langfuse") as mock_lf,
-        ):
-            mock_instance = MagicMock()
-            mock_lf.return_value = mock_instance
+    def test_init_langfuse_ignores_environ_without_explicit_client(self) -> None:
+        with patch.dict(os.environ, {"LANGFUSE_PUBLIC_KEY": "pk-12345"}):
             adapter = GeminiLLMAdapter(genai_client=MagicMock())
-            assert adapter._langfuse is mock_instance
+            assert adapter._langfuse is None
+
+        mock_lf = MagicMock()
+        adapter_injected = GeminiLLMAdapter(genai_client=MagicMock(), langfuse_client=mock_lf)
+        assert adapter_injected._langfuse is mock_lf
 
     def test_init_langfuse_none_without_env(self) -> None:
         with patch.dict(os.environ, {}, clear=True):
@@ -440,7 +439,7 @@ class TestGeminiLLMAdapter:
             assert "[GeminiLLMAdapter] Langfuse flush skipped: flush failed" in caplog.text
 
     def test_transform_rotates_api_key_on_429(self) -> None:
-        from cresmo.infrastructure.adapters.gemini_pool import GeminiCredentialPool
+        from cresmo.infrastructure.adapters.llm.gemini_pool import GeminiCredentialPool
 
         client1 = MagicMock(name="client-1")
         client2 = MagicMock(name="client-2")
@@ -463,7 +462,7 @@ class TestGeminiLLMAdapter:
         assert pool.lease()[0] == "k2"
 
     def test_transform_does_not_rotate_key_on_503(self) -> None:
-        from cresmo.infrastructure.adapters.gemini_pool import GeminiCredentialPool
+        from cresmo.infrastructure.adapters.llm.gemini_pool import GeminiCredentialPool
 
         client1 = MagicMock(name="client-1")
         client2 = MagicMock(name="client-2")

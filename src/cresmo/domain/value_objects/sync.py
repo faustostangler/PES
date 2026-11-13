@@ -11,7 +11,11 @@ from collections.abc import Iterable
 from dataclasses import dataclass
 
 from cresmo.domain.exceptions import DomainValidationError
-from cresmo.domain.taxonomy import classify_channel
+from cresmo.domain.taxonomy import (
+    ChannelClassifierFn,
+    TaxonomyCatalog,
+    classify_channel_from_catalog,
+)
 from cresmo.domain.value_objects.identity import ChannelName, ContentId
 from cresmo.domain.value_objects.media import PipelineStatus
 
@@ -130,11 +134,13 @@ class SyncFilterCriteria:
         self,
         channel_name: ChannelName | str | None = None,
         channel_url: str | None = None,
+        classifier: ChannelClassifierFn | None = None,
+        catalog: TaxonomyCatalog | None = None,
     ) -> bool:
         """Evaluate whether a channel matches the configured category criteria.
 
         Per ADR-012, checks both domain name (e.g. 'politics_br') and volatility type
-        (e.g. 'volatile' or 'perennial') returned by classify_channel.
+        (e.g. 'volatile' or 'perennial') resolved via the injected classifier or catalog.
         """
         if not self.categories:
             return True
@@ -143,7 +149,10 @@ class SyncFilterCriteria:
         if not target:
             return False
 
-        domain, volatility_category = classify_channel(target)
+        if classifier is not None:
+            domain, volatility_category = classifier(target)
+        else:
+            domain, volatility_category = classify_channel_from_catalog(target, catalog or {})
         domain_lower = domain.lower()
         volatility_lower = volatility_category.lower()
 

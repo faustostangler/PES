@@ -12,7 +12,7 @@ from __future__ import annotations
 import pytest
 
 from cresmo.application.ports import AnonymizerPort
-from cresmo.infrastructure.adapters.anonymizer_adapter import (
+from cresmo.infrastructure.adapters.anonymization.anonymizer_adapter import (
     NoOpAnonymizerAdapter,
     RegexAnonymizerAdapter,
 )

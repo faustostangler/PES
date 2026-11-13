@@ -23,10 +23,8 @@ from cresmo.domain.services.mechanical_validator import (
 )
 from cresmo.domain.value_objects.quality import JudgeCriterion
 
-REPO_ROOT = Path(__file__).resolve().parents[3]
-GOLDEN_SET_PATH = (
-    REPO_ROOT / "scripts" / "gap_filler" / "golden_sets" / "gap_filler_golden_set.json"
-)
+REPO_ROOT = Path(__file__).resolve().parents[4]
+GOLDEN_SET_PATH = REPO_ROOT / "evals" / "datasets" / "gap_filler_golden_set.json"
 
 CRITERION_PREFIXES: dict[str, str] = {
     JudgeCriterion.EPISTEMIC_GROUNDING_SEGREGATION.value: "eg_",
@@ -54,10 +52,7 @@ MECHANICAL_EXEMPTIONS = {
 @pytest.fixture(scope="module")
 def golden_set_items() -> list[dict[str, Any]]:
     """Load the canonical gap_filler golden dataset."""
-    assert GOLDEN_SET_PATH.exists(), (
-        f"Golden dataset not found at {GOLDEN_SET_PATH}. "
-        "Run `python scripts/gap_filler/llm_judge/builder.py` to generate it."
-    )
+    assert GOLDEN_SET_PATH.exists(), f"Golden dataset SSOT not found at {GOLDEN_SET_PATH}."
     with open(GOLDEN_SET_PATH, encoding="utf-8") as f:
         items = json.load(f)
     assert isinstance(items, list), "Golden set root must be a list of items."

@@ -243,10 +243,13 @@ class TestGeminiJudgeAdapter:
 
         adapter = GeminiJudgeAdapter(client=mock_genai_client, temperature=0.7)
         assert adapter.temperature == 0.7
-        from cresmo.infrastructure.adapters.judges.gemini_judge import DEFAULT_PASS_THRESHOLD
+        from cresmo.infrastructure.adapters.judges.gemini_judge import (
+            DEFAULT_MODEL,
+            DEFAULT_PASS_THRESHOLD,
+        )
 
         assert adapter.pass_threshold == DEFAULT_PASS_THRESHOLD
-        assert adapter.model == "gemini-3.5-flash-lite"
+        assert adapter.model == DEFAULT_MODEL
 
         context = EvaluationContext(
             stage_name="fluid_prose",
@@ -399,13 +402,48 @@ class TestGeminiJudgeAdapter:
         mock_response.text = json.dumps(
             {
                 "criteria": [
-                    {"criterion": "epistemic_grounding_segregation", "score": 0.50, "passed": False, "reasoning": "Fabricated fact."},
-                    {"criterion": "conceptual_mechanical_decomposition", "score": 1.0, "passed": True, "reasoning": "Ok."},
-                    {"criterion": "braudelian_stratification", "score": 1.0, "passed": True, "reasoning": "Ok."},
-                    {"criterion": "genealogy_hidden_agency", "score": 1.0, "passed": True, "reasoning": "Ok."},
-                    {"criterion": "competing_hypotheses", "score": 1.0, "passed": True, "reasoning": "Ok."},
-                    {"criterion": "extra_info_granularity", "score": 1.0, "passed": True, "reasoning": "Ok."},
-                    {"criterion": "linear_style_naturalism", "score": 1.0, "passed": True, "reasoning": "Ok."},
+                    {
+                        "criterion": "epistemic_grounding_segregation",
+                        "score": 0.50,
+                        "passed": False,
+                        "reasoning": "Fabricated fact.",
+                    },
+                    {
+                        "criterion": "conceptual_mechanical_decomposition",
+                        "score": 1.0,
+                        "passed": True,
+                        "reasoning": "Ok.",
+                    },
+                    {
+                        "criterion": "braudelian_stratification",
+                        "score": 1.0,
+                        "passed": True,
+                        "reasoning": "Ok.",
+                    },
+                    {
+                        "criterion": "genealogy_hidden_agency",
+                        "score": 1.0,
+                        "passed": True,
+                        "reasoning": "Ok.",
+                    },
+                    {
+                        "criterion": "competing_hypotheses",
+                        "score": 1.0,
+                        "passed": True,
+                        "reasoning": "Ok.",
+                    },
+                    {
+                        "criterion": "extra_info_granularity",
+                        "score": 1.0,
+                        "passed": True,
+                        "reasoning": "Ok.",
+                    },
+                    {
+                        "criterion": "linear_style_naturalism",
+                        "score": 1.0,
+                        "passed": True,
+                        "reasoning": "Ok.",
+                    },
                 ],
                 "overall_score": 0.90,
                 "passed": True,
@@ -857,8 +895,8 @@ class TestLlmJudgeFactory:
     """Test suite for build_llm_judge_adapter DI factory."""
 
     def test_build_llm_judge_adapter_creates_composite_decorator(self) -> None:
+        from cresmo.bootstrap.factories.judge_factory import build_llm_judge_adapter
         from cresmo.infrastructure.config import CresmoSettings
-        from cresmo.presentation.factories.judge_factory import build_llm_judge_adapter
 
         settings = CresmoSettings(judge_provider="gemini")
         judge = build_llm_judge_adapter(settings, langfuse_client=None)
@@ -871,8 +909,8 @@ class TestLlmJudgeFactory:
         assert isinstance(composite._fallback, OllamaJudgeAdapter)
 
     def test_build_llm_judge_adapter_typesafe_provider(self) -> None:
+        from cresmo.bootstrap.factories.judge_factory import build_llm_judge_adapter
         from cresmo.infrastructure.config import CresmoSettings
-        from cresmo.presentation.factories.judge_factory import build_llm_judge_adapter
 
         settings = CresmoSettings(judge_provider="typesafe")
         judge = build_llm_judge_adapter(settings, langfuse_client=None)
@@ -885,8 +923,8 @@ class TestLlmJudgeFactory:
         assert isinstance(composite._fallback, OllamaJudgeAdapter)
 
     def test_build_llm_judge_adapter_ollama_provider(self) -> None:
+        from cresmo.bootstrap.factories.judge_factory import build_llm_judge_adapter
         from cresmo.infrastructure.config import CresmoSettings
-        from cresmo.presentation.factories.judge_factory import build_llm_judge_adapter
 
         settings = CresmoSettings(judge_provider="ollama")
         judge = build_llm_judge_adapter(settings, langfuse_client=None)
@@ -899,8 +937,8 @@ class TestLlmJudgeFactory:
         assert isinstance(composite._fallback, OllamaJudgeAdapter)
 
     def test_build_llm_judge_adapter_injects_configured_tunables(self) -> None:
+        from cresmo.bootstrap.factories.judge_factory import build_llm_judge_adapter
         from cresmo.infrastructure.config import CresmoSettings
-        from cresmo.presentation.factories.judge_factory import build_llm_judge_adapter
 
         settings = CresmoSettings(
             judge_provider="gemini",
@@ -926,8 +964,8 @@ class TestLlmJudgeFactory:
 
     def test_build_llm_judge_adapter_without_fallback_bypasses_composite(self) -> None:
         """Verify build_llm_judge_adapter with enable_fallback=False returns primary adapter directly."""
+        from cresmo.bootstrap.factories.judge_factory import build_llm_judge_adapter
         from cresmo.infrastructure.config import CresmoSettings
-        from cresmo.presentation.factories.judge_factory import build_llm_judge_adapter
 
         settings = CresmoSettings(judge_provider="gemini")
         judge = build_llm_judge_adapter(settings, langfuse_client=None, enable_fallback=False)
@@ -944,9 +982,14 @@ class TestCoordinatorLlmJudgeIntegration:
     def test_coordinator_triggers_llm_judge_for_fluid_prose(self) -> None:
         from cresmo.application.pipeline.coordinator import CresmoPipeline
         from cresmo.domain.entities import StageTranscript
-        from cresmo.domain.value_objects import Channel, ChannelName, Content, ContentId, MediaProvenance
+        from cresmo.domain.value_objects import (
+            Channel,
+            Content,
+            ContentId,
+            MediaProvenance,
+        )
         from cresmo.infrastructure.config import CresmoSettings
-        from tests.cresmo.unit.test_pipeline import SmartMockLLMAdapter
+        from tests.cresmo.unit.application.test_pipeline import SmartMockLLMAdapter
         from tests.doubles.mock_adapters import (
             InMemoryLedgerAdapter,
             InMemoryVaultAdapter,
@@ -999,15 +1042,22 @@ class TestCoordinatorLlmJudgeIntegration:
             gap_eval_ctx = mock_judge.evaluate.call_args_list[1][0][0]
             assert gap_eval_ctx.stage_name == "gap_filler"
             assert JudgeCriterion.EPISTEMIC_GROUNDING_SEGREGATION in gap_eval_ctx.required_criteria
-            assert JudgeCriterion.CONCEPTUAL_MECHANICAL_DECOMPOSITION in gap_eval_ctx.required_criteria
+            assert (
+                JudgeCriterion.CONCEPTUAL_MECHANICAL_DECOMPOSITION in gap_eval_ctx.required_criteria
+            )
 
     def test_coordinator_blocking_mode_raises_on_quality_failure(self) -> None:
         from cresmo.application.pipeline.coordinator import CresmoPipeline
         from cresmo.domain.entities import StageTranscript
         from cresmo.domain.exceptions import DomainValidationError
-        from cresmo.domain.value_objects import Channel, ChannelName, Content, ContentId, MediaProvenance
+        from cresmo.domain.value_objects import (
+            Channel,
+            Content,
+            ContentId,
+            MediaProvenance,
+        )
         from cresmo.infrastructure.config import CresmoSettings
-        from tests.cresmo.unit.test_pipeline import SmartMockLLMAdapter
+        from tests.cresmo.unit.application.test_pipeline import SmartMockLLMAdapter
         from tests.doubles.mock_adapters import (
             InMemoryLedgerAdapter,
             InMemoryVaultAdapter,
@@ -1054,9 +1104,14 @@ class TestCoordinatorLlmJudgeIntegration:
 
         from cresmo.application.pipeline.coordinator import CresmoPipeline
         from cresmo.domain.entities import StageTranscript
-        from cresmo.domain.value_objects import Channel, ChannelName, Content, ContentId, MediaProvenance
+        from cresmo.domain.value_objects import (
+            Channel,
+            Content,
+            ContentId,
+            MediaProvenance,
+        )
         from cresmo.infrastructure.config import CresmoSettings
-        from tests.cresmo.unit.test_pipeline import SmartMockLLMAdapter
+        from tests.cresmo.unit.application.test_pipeline import SmartMockLLMAdapter
         from tests.doubles.mock_adapters import (
             InMemoryLedgerAdapter,
             InMemoryVaultAdapter,
@@ -1066,7 +1121,9 @@ class TestCoordinatorLlmJudgeIntegration:
         cid = ContentId("vid_coord_telemetry")
         canned_raw = StageTranscript(
             channel=Channel(name="Test Channel"),
-            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=vid_coord_telemetry"),
+            provenance=MediaProvenance.create(
+                url="https://youtube.com/watch?v=vid_coord_telemetry"
+            ),
             content=Content(id=cid, title="Test", text="Raw audio text with speech noise."),
         )
         mock_llm = SmartMockLLMAdapter()

@@ -27,9 +27,15 @@ from pydantic import ValidationError
 
 from cresmo.application.pipeline import CresmoPipeline
 from cresmo.application.ports import MediaIngestionPort
-from cresmo.application.use_cases.discover_batch_sources import (
+from cresmo.application.use_cases.discovery import (
     BatchDiscoveryQuery,
     BatchSource,
+)
+from cresmo.bootstrap.composition import (
+    build_concat_master_use_case,
+    build_discover_batch_sources_use_case,
+    build_pipeline,
+    build_preflight_checker,
 )
 from cresmo.domain.exceptions import (
     CresmoDomainError,
@@ -45,15 +51,9 @@ from cresmo.domain.value_objects import (
     SyncFilterCriteria,
     is_processable_transcript_file,
 )
-from cresmo.infrastructure.adapters.gemini_pool import CredentialPoolExhaustedError
+from cresmo.infrastructure.adapters.llm.gemini_pool import CredentialPoolExhaustedError
 from cresmo.infrastructure.config import CresmoSettings
 from cresmo.infrastructure.system import get_process_rss_bytes
-from cresmo.presentation.composition import (
-    build_concat_master_use_case,
-    build_discover_batch_sources_use_case,
-    build_pipeline,
-    build_preflight_checker,
-)
 from cresmo.presentation.exit_codes import (
     EXIT_CONFIG_OR_USAGE_ERROR,
     EXIT_DOMAIN_VALIDATION_ERROR,

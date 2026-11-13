@@ -3,28 +3,29 @@
 Re-exports settings, telemetry, adapter, and use case factory builders.
 """
 
-from cresmo.presentation.factories.adapter_factory import (
+from cresmo.bootstrap.factories.adapter_factory import (
     build_gemini_synthesis_adapter,
     build_indexing_adapter,
     build_media_ingestion_adapter,
     build_preflight_checker,
     build_prompt_provider,
+    build_taxonomy_adapter,
     build_vault_adapter,
 )
-from cresmo.presentation.factories.judge_factory import build_llm_judge_adapter
-from cresmo.presentation.factories.settings_factory import (
+from cresmo.bootstrap.factories.judge_factory import build_llm_judge_adapter
+from cresmo.bootstrap.factories.settings_factory import (
     get_shared_settings,
     reset_shared_settings,
     resolve_shared_settings,
 )
-from cresmo.presentation.factories.telemetry_factory import (
+from cresmo.bootstrap.factories.telemetry_factory import (
     build_anonymizer_adapter,
     build_metrics_adapter,
     build_telemetry_adapter,
     probe_langfuse_ready,
     resolve_langfuse_client,
 )
-from cresmo.presentation.factories.use_case_factory import (
+from cresmo.bootstrap.factories.use_case_factory import (
     build_concat_master_use_case,
     build_discover_batch_sources_use_case,
     build_index_raw_use_case,
@@ -45,6 +46,7 @@ __all__ = [
     "build_preflight_checker",
     "build_prompt_provider",
     "build_sync_channel_use_case",
+    "build_taxonomy_adapter",
     "build_telemetry_adapter",
     "build_unify_duplicates_use_case",
     "build_vault_adapter",

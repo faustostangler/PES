@@ -5,6 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 from unittest.mock import MagicMock
 
+from cresmo.application.ports import ChannelTaxonomyPort
 from cresmo.application.use_cases.concat_master import (
     SENTINEL_FALLBACK_SORT_DATE,
     ConcatMasterUseCase,
@@ -51,9 +52,18 @@ class TestConcatMasterUseCase:
         assert sort_date_fallback == 99_999_999
 
         # 3. Missing channel_category falls back to taxonomy classification (3blue1brown -> engineering)
+        class _StubTaxonomy(ChannelTaxonomyPort):
+            def classify(self, channel_name: ChannelName | str) -> tuple[str, str]:
+                if str(channel_name).lower() == "3blue1brown":
+                    return "engineering", "perennial"
+                return "uncategorized", "volatile"
+
         content_no_cat = "---\nvideo_id: vid_1\nvideo_date: 20230101\n---\nBody"
         _, fallback_cat, _ = parse_metadata_from_content(
-            content_no_cat, channel_name=ChannelName("3blue1brown"), fallback_stem="fallback"
+            content_no_cat,
+            channel_name=ChannelName("3blue1brown"),
+            fallback_stem="fallback",
+            taxonomy_port=_StubTaxonomy(),
         )
         assert fallback_cat == "engineering"
 
@@ -253,6 +263,12 @@ class TestConcatMasterUseCase:
         mock_f_valid.read_text.assert_called_with(encoding="utf-8")
 
     def test_execute_channel_category_fallback_when_files_omit_it(self, tmp_path: Path) -> None:
+        class _StubTaxonomy(ChannelTaxonomyPort):
+            def classify(self, channel_name: ChannelName | str) -> tuple[str, str]:
+                if str(channel_name).lower() == "3blue1brown":
+                    return "engineering", "perennial"
+                return "uncategorized", "volatile"
+
         settings = CresmoSettings(data_dir=tmp_path / "data", vault_dir=tmp_path / "vault")
         vault = InMemoryVaultAdapter()
 
@@ -266,7 +282,11 @@ class TestConcatMasterUseCase:
         )
 
         vault.channel_enriched_files["3blue1brown"] = [f]
-        use_case = ConcatMasterUseCase(vault_port=vault, settings=settings)
+        use_case = ConcatMasterUseCase(
+            vault_port=vault,
+            settings=settings,
+            taxonomy_port=_StubTaxonomy(),
+        )
         results = use_case.execute(ChannelName("3blue1brown"))
 
         assert len(results) == 1

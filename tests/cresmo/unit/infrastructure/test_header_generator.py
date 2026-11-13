@@ -11,7 +11,7 @@ from pathlib import Path
 
 import pytest
 
-from cresmo.infrastructure.adapters.header_generator import RandomHeaderGenerator
+from cresmo.infrastructure.adapters.scrapers.header_generator import RandomHeaderGenerator
 
 
 class TestRandomHeaderGenerator:

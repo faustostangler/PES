@@ -32,13 +32,13 @@ from cresmo.domain.value_objects import (
     PromptKey,
     resolve_stage_scoring_policy,
 )
-from cresmo.infrastructure.adapters.gemini_pool import (
-    GeminiCredentialPool,
-    is_quota_exhausted_error,
-)
 from cresmo.infrastructure.adapters.judges.criterion_parser import (
     JudgeResponseOutputSchema,
     parse_criteria_scores,
+)
+from cresmo.infrastructure.adapters.llm.gemini_pool import (
+    GeminiCredentialPool,
+    is_quota_exhausted_error,
 )
 from cresmo.infrastructure.adapters.prompts import JsonPromptProvider
 from cresmo.infrastructure.config import (

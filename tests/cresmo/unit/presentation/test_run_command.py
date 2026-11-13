@@ -18,7 +18,10 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from cresmo.application.pipeline import PipelineResult
-from cresmo.application.use_cases.discover_batch_sources import BatchDiscoveryQuery, BatchSource
+from cresmo.application.use_cases.discovery.discover_batch_sources import (
+    BatchDiscoveryQuery,
+    BatchSource,
+)
 from cresmo.domain.exceptions import (
     DomainValidationError,
     IngestionNetworkError,
@@ -30,7 +33,7 @@ from cresmo.domain.value_objects import (
     ContentId,
     SourceModality,
 )
-from cresmo.infrastructure.adapters.gemini_pool import CredentialPoolExhaustedError
+from cresmo.infrastructure.adapters.llm.gemini_pool import CredentialPoolExhaustedError
 from cresmo.infrastructure.config import CresmoSettings
 from cresmo.presentation.commands.run import (
     _build_batch_discovery_query,

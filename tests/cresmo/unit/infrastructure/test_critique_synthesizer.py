@@ -11,7 +11,7 @@ from cresmo.domain.value_objects import (
     JudgeEvaluation,
     VerdictType,
 )
-from cresmo.infrastructure.adapters.ollama_critique_adapter import OllamaCritiqueAdapter
+from cresmo.infrastructure.adapters.llm.ollama_critique_adapter import OllamaCritiqueAdapter
 
 
 def test_critique_synthesizer_passed_evaluation_returns_empty() -> None:

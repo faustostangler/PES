@@ -1,5 +1,6 @@
-"""Polars Batch Ingestion & Columnar Processor for Cresmo.
+"""# FUTURE / DEFERRED: Polars Batch Ingestion & Columnar Processor for Cresmo.
 
+Reserved high-volume columnar batch engine per ADR-062; currently not wired into CLI.
 Provides zero-copy, multi-threaded DataFrame processing for batch discovery,
 manifest indexing, and source deduplication using Apache Arrow and Polars.
 """
@@ -81,16 +82,18 @@ class PolarsBatchProcessor:
             return []
 
         df = cls.sources_to_dataframe(sources)
-        deduped_df = (
-            df.sort("priority", descending=True)
-            .unique(subset=["content_id"], keep="first", maintain_order=True)
+        deduped_df = df.sort("priority", descending=True).unique(
+            subset=["content_id"], keep="first", maintain_order=True
         )
 
         content_id_map = {
-            (s.content_id.value if s.content_id else Path(s.target).stem): s
-            for s in sources
+            (s.content_id.value if s.content_id else Path(s.target).stem): s for s in sources
         }
-        return [content_id_map[cid] for cid in deduped_df["content_id"].to_list() if cid in content_id_map]
+        return [
+            content_id_map[cid]
+            for cid in deduped_df["content_id"].to_list()
+            if cid in content_id_map
+        ]
 
     @classmethod
     def export_to_parquet(cls, sources: list[BatchSource], destination_path: Path | str) -> Path:

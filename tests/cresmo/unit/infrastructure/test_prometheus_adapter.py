@@ -13,7 +13,7 @@ import prometheus_client
 import pytest
 from prometheus_client import REGISTRY, CollectorRegistry, Histogram, generate_latest
 
-from cresmo.infrastructure.adapters.prometheus_metrics_adapter import (
+from cresmo.infrastructure.adapters.metrics.prometheus_metrics_adapter import (
     PrometheusMetricsAdapter,
     get_latest_metrics,
     start_metrics_server,
@@ -529,7 +529,7 @@ class TestPrometheusMetricsAdapter:
         with (
             patch("prometheus_client.start_http_server") as mock_start,
             patch(
-                "cresmo.infrastructure.adapters.prometheus_metrics_adapter.logger"
+                "cresmo.infrastructure.adapters.metrics.prometheus_metrics_adapter.logger"
             ) as mock_logger,
         ):
             start_metrics_server()
@@ -545,7 +545,7 @@ class TestPrometheusMetricsAdapter:
         with (
             patch("prometheus_client.start_http_server") as mock_start,
             patch(
-                "cresmo.infrastructure.adapters.prometheus_metrics_adapter.logger"
+                "cresmo.infrastructure.adapters.metrics.prometheus_metrics_adapter.logger"
             ) as mock_logger,
         ):
             start_metrics_server(port=9999, addr="127.0.0.1", registry=registry)

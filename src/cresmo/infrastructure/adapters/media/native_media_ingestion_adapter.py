@@ -29,6 +29,7 @@ from typing import Any, cast
 import structlog
 
 from cresmo.application.ports import MediaIngestionPort, MetricsPort
+from cresmo.application.ports.taxonomy import ChannelTaxonomyPort
 from cresmo.domain.entities import StageTranscript
 from cresmo.domain.exceptions import (
     CresmoInfrastructureError,
@@ -36,7 +37,6 @@ from cresmo.domain.exceptions import (
     IngestionNetworkError,
     RateLimitExceededError,
 )
-from cresmo.domain.taxonomy import classify_channel
 from cresmo.domain.value_objects import (
     Channel,
     ChannelFeedQuery,
@@ -47,7 +47,6 @@ from cresmo.domain.value_objects import (
     DiscoveredMediaItem,
     MediaProvenance,
 )
-from cresmo.infrastructure.adapters.header_generator import RandomHeaderGenerator
 from cresmo.infrastructure.adapters.media.feed import (
     discover_channel_feed_items,
     extract_channel_url_from_info,
@@ -61,7 +60,9 @@ from cresmo.infrastructure.adapters.media.subtitles import (
     parse_upload_date,
     reconstruct_json3_paragraphs,
 )
-from cresmo.infrastructure.adapters.noop_metrics_adapter import NoOpMetricsAdapter
+from cresmo.infrastructure.adapters.metrics.noop_metrics_adapter import NoOpMetricsAdapter
+from cresmo.infrastructure.adapters.prompts.taxonomy_catalog import JsonTaxonomyCatalogAdapter
+from cresmo.infrastructure.adapters.scrapers.header_generator import RandomHeaderGenerator
 
 logger = structlog.get_logger(__name__)
 
@@ -87,6 +88,7 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         cookie_file: Path | str | None = None,
         js_runtime_name: str | None = None,
         metrics_port: MetricsPort | None = None,
+        taxonomy_port: ChannelTaxonomyPort | None = None,
     ) -> None:
         """Initialize NativeMediaIngestionAdapter.
 
@@ -97,6 +99,7 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             cookie_file: Optional path to Netscape cookies file for YouTube authentication.
             js_runtime_name: Optional explicit JavaScript runtime name for yt-dlp ('node', 'deno', 'bun').
             metrics_port: Optional MetricsPort instance for Prometheus time-series metrics.
+            taxonomy_port: Optional taxonomy classifier port (defaults to bundled JsonTaxonomyCatalogAdapter).
         """
         self.request_timeout = request_timeout
         self._header_generator = header_generator or RandomHeaderGenerator()
@@ -107,6 +110,7 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             self._metrics_port: MetricsPort = NoOpMetricsAdapter()
         else:
             self._metrics_port = metrics_port
+        self._taxonomy_port: ChannelTaxonomyPort = taxonomy_port or JsonTaxonomyCatalogAdapter()
 
     def _detect_js_runtime(self) -> str | None:
         """Auto-detect available JavaScript runtime for yt-dlp challenge solving."""
@@ -340,7 +344,7 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             actual_video_id
         )
         resolved_channel_name = ChannelName.from_string(channel_name)
-        category, _ = classify_channel(resolved_channel_name)
+        category, _ = self._taxonomy_port.classify(resolved_channel_name)
         upload_date = self._parse_upload_date(info.get("upload_date"))
 
         raw_channel_id = str(info.get("channel_id") or info.get("uploader_id") or "").strip()

@@ -16,7 +16,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from cresmo import __version__
-from cresmo.infrastructure.adapters.prompt_provider import JsonPromptProvider
+from cresmo.infrastructure.adapters.prompts import JsonPromptProvider
 from cresmo.presentation.cli import main
 from cresmo.presentation.commands.seed_prompts import (
     PROMPT_MAPPINGS,

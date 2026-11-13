@@ -12,7 +12,7 @@ import time
 import pytest
 
 from cresmo.application.ports import MetricsPort
-from cresmo.infrastructure.adapters.noop_metrics_adapter import NoOpMetricsAdapter
+from cresmo.infrastructure.adapters.metrics.noop_metrics_adapter import NoOpMetricsAdapter
 
 
 class TestMetricsPortContract:

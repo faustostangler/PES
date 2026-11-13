@@ -60,7 +60,7 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
         self.raw_dir = Path(raw_dir).resolve()
         self.enriched_dir = Path(enriched_dir).resolve()
         self.data_dir = Path(data_dir).resolve() if data_dir else self.raw_dir.parent
-        self.fluid_dir = Path(fluid_dir).resolve() if fluid_dir else (self.data_dir / "fluid")
+        self.fluid_dir = Path(fluid_dir).resolve() if fluid_dir else (self.data_dir / "fluid_prose")
         self.master_dir = Path(master_dir).resolve() if master_dir else (self.data_dir / "master")
 
         self.mocs_dir = Path(mocs_dir).resolve() if mocs_dir else (self.vault_dir / "MOCs")

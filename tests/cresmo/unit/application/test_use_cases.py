@@ -7,7 +7,7 @@ Pure, hermetic tests using Mock Ports (0 external I/O) with strict port verifica
 from __future__ import annotations
 
 import json
-from datetime import UTC, date, datetime
+from datetime import date
 from unittest.mock import MagicMock
 
 import pytest
@@ -15,22 +15,17 @@ import pytest
 from cresmo.application.ports import (
     NoOpPromptProviderPort,
     PromptProviderPort,
-    VaultRepositoryPort,
 )
 from cresmo.application.use_cases import (
     DiscoverAtomicInventoryUseCase,
     ExpandCompendiumUseCase,
-    FillGapsUseCase,
     IngestRawTranscriptUseCase,
     ReconcileMOCsUseCase,
     SynthesizeAtomicBatchUseCase,
-    TransformFluidProseUseCase,
 )
 from cresmo.application.use_cases.synthesize_atomic_batch import _norm_honorific
 from cresmo.domain.entities import (
     AtomicNote,
-    StageTranscript,
-    StageTranscript,
     StageTranscript,
     UserIdentity,
 )
@@ -43,14 +38,12 @@ from cresmo.domain.value_objects import (
     CausalMatrix,
     Channel,
     ChannelId,
-    ChannelName,
     Content,
     ContentId,
     CrossContextRelations,
     MediaProvenance,
     NoteTitle,
     NoteType,
-    PromptKey,
 )
 from tests.doubles.mock_adapters import (
     InMemoryVaultAdapter,
@@ -111,411 +104,6 @@ class TestIngestRawTranscript:
 
         assert result is None
         assert len(vault_port.raw_transcripts) == 0
-
-
-class TestTransformFluidProse:
-    """SPEC-011: Pure linguistic detranscription into StageTranscript."""
-
-    def test_transform_fluid_prose_success(self) -> None:
-        cid = ContentId("dQw4w9WgXcQ")
-        raw = StageTranscript(
-            channel=Channel(name="Example Channel", id=ChannelId("UC123456")),
-            provenance=MediaProvenance.create(
-                url="https://youtube.com/watch?v=dQw4w9WgXcQ",
-                publication_date=datetime(2023, 5, 17, 12, 0, tzinfo=UTC).date(),
-            ),
-            content=Content(
-                id=cid,
-                title="Example Channel",
-                text="Fala pessoal, hoje vamos ver Pareto, né? Tipo assim, minorias governam.",
-            ),
-        )
-        llm_response = (
-            "# Vilfredo Pareto e a Teoria das Elites\n\n"
-            "## As Oligarquias Organizadas\n\n"
-            "A teoria da circulação das elites postula que minorias organizadas governam maiorias.\n\n"
-            "### Extra Info\n\n"
-            "Acidentalmente gerado e deve ser removido pelo transformador."
-        )
-        llm_port = MockLLMAdapter(responses=[llm_response])
-        use_case = TransformFluidProseUseCase(llm_port)
-        fluid = use_case.execute(raw)
-
-        assert fluid.content.id == cid
-        assert fluid.content.title == "Vilfredo Pareto e a Teoria das Elites"
-        assert fluid.channel.name == "Example Channel"
-        assert fluid.channel.id == ChannelId("UC123456")
-        assert fluid.provenance.url == "https://youtube.com/watch?v=dQw4w9WgXcQ"
-        assert "## As Oligarquias Organizadas" in fluid.content.text
-        assert "A teoria da circulação das elites postula" in fluid.content.text
-        assert "### Extra Info" not in fluid.content.text
-        assert "Acidentalmente gerado" not in fluid.content.text
-
-    def test_transform_fluid_prose_init_validations(self) -> None:
-        llm = MockLLMAdapter()
-        vault = InMemoryVaultAdapter()
-
-        with pytest.raises(ValueError, match=r"^llm_synthesis_port must be provided$"):
-            TransformFluidProseUseCase(None)  # type: ignore[arg-type]
-
-        uc = TransformFluidProseUseCase(llm, vault_port=vault, temperature=0.65)
-        assert uc.llm_synthesis_port is llm
-        assert uc.vault_port is vault
-        assert uc.temperature == 0.65
-        assert isinstance(uc.prompt_provider, NoOpPromptProviderPort)
-
-    def test_transform_fluid_prose_with_temperature_user_and_prompt_provider(self) -> None:
-        cid = ContentId("vid_tfp123")
-        raw = StageTranscript(
-            channel=Channel(name="Channel Alpha", id=ChannelId("UC_ALPHA")),
-            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=vid_tfp123"),
-            content=Content(id=cid, title="Channel Alpha", text="Spoken oral transcript text."),
-        )
-        llm = MockLLMAdapter(responses=["# Clean Title\n\nPure narrative body."])
-        mock_pp = MagicMock(spec=PromptProviderPort)
-        mock_pp.get_prompt.return_value = MagicMock()
-
-        use_case = TransformFluidProseUseCase(
-            llm_synthesis_port=llm,
-            prompt_provider=mock_pp,
-            temperature=0.75,
-        )
-        user = UserIdentity("usr_prose_editor")
-        fluid = use_case.execute(raw, user=user)
-
-        assert fluid.content.id == cid
-        assert fluid.content.title == "Clean Title"
-        assert fluid.content.text == "Pure narrative body."
-
-        # Prompt provider contract
-        mock_pp.get_prompt.assert_called_once_with(
-            PromptKey.FLUID_PROSE,
-            channel_name=ChannelName("Channel Alpha"),
-            file_name="vid_tfp123.txt",
-            raw_text="Spoken oral transcript text.",
-        )
-
-        # LLM call contract
-        assert len(llm.call_history) == 1
-        call = llm.call_history[0]
-        assert call["prompt"] is mock_pp.get_prompt.return_value
-        assert call["temperature"] == 0.75
-        assert call["trace_id"] == "vid_tfp123_fluid_prose"
-        assert call["user_id"] == "usr_prose_editor"
-        assert call["session_id"] == "UC_ALPHA:vid_tfp123"
-
-    def test_transform_fluid_prose_persists_to_vault_when_configured(self) -> None:
-        """Verify TransformFluidProseUseCase invokes vault_port.save_stage_transcript per ADR-043/ADR-059."""
-        cid = ContentId("vid_tfp_persist")
-        raw = StageTranscript(
-            channel=Channel(name="Channel Beta"),
-            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=vid_tfp_persist"),
-            content=Content(id=cid, title="Channel Beta", text="Spoken oral transcript text."),
-        )
-        llm = MockLLMAdapter(responses=["# Clean Title\n\n## Clean Body\n\nPure narrative body."])
-        mock_vault = MagicMock(spec=VaultRepositoryPort)
-
-        use_case = TransformFluidProseUseCase(
-            llm_synthesis_port=llm,
-            vault_port=mock_vault,
-        )
-        fluid = use_case.execute(raw)
-
-        mock_vault.save_stage_transcript.assert_called_once_with("fluid_prose", fluid)
-        assert fluid.content.id == cid
-
-    def test_transform_fluid_prose_rejects_non_raw_transcript(self) -> None:
-        llm_port = MockLLMAdapter()
-        use_case = TransformFluidProseUseCase(llm_port)
-        with pytest.raises(
-            DomainValidationError,
-            match=r"^TransformFluidProseUseCase expects StageTranscript, got: str$",
-        ):
-            use_case.execute("invalid string")  # type: ignore[arg-type]
-
-    def test_transform_fluid_prose_empty_body_raises_error(self) -> None:
-        raw = StageTranscript(
-            channel=Channel(name="Example Channel"),
-            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=empty12345"),
-            content=Content(id=ContentId("empty12345"), title="Example Channel", text="Raw text"),
-        )
-        llm_port = MockLLMAdapter(responses=["   "])
-        use_case = TransformFluidProseUseCase(llm_port)
-        with pytest.raises(
-            CompendiumStructureError,
-            match=r"^Generated fluid prose body is empty for 'empty12345'\.$",
-        ):
-            use_case.execute(raw)
-
-
-class TestFillGapsFluidProse:
-    """SPEC-001 Scenario 2.1 & SPEC-011: Socratic Gap Filler on StageTranscript."""
-
-    def test_fill_gaps_init_validation(self) -> None:
-        vault = InMemoryVaultAdapter()
-        llm = MockLLMAdapter()
-        with pytest.raises(ValueError, match=r"^llm_synthesis_port must be provided$"):
-            FillGapsUseCase(None, vault)  # type: ignore[arg-type]
-
-        with pytest.raises(ValueError, match=r"^vault_port must be provided$"):
-            FillGapsUseCase(llm, None)  # type: ignore[arg-type]
-
-    def test_fill_gaps_temperature_and_default_passes(self) -> None:
-        cid = ContentId("dQw4w9WgXcQ")
-        fluid = StageTranscript(
-            channel=Channel(name="Example Channel"),
-            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=dQw4w9WgXcQ"),
-            content=Content(id=cid, title="Example Channel", text="Raw spoken text."),
-        )
-        llm_response = "# Title\n\nBody.\n\n### Extra Info\n\nComp."
-        llm_port = MockLLMAdapter(responses=[llm_response, llm_response, llm_response])
-        vault_port = InMemoryVaultAdapter()
-
-        use_case = FillGapsUseCase(llm_port, vault_port, temperature=0.7)
-        # Calling without passes defaults to passes=3
-        compendium = use_case.execute(fluid)
-
-        assert compendium.pass_count == 3
-        assert len(llm_port.call_history) == 3
-        assert all(call["temperature"] == 0.7 for call in llm_port.call_history)
-        assert llm_port.call_history[1]["temperature"] == 0.7
-        assert llm_port.call_history[2]["temperature"] == 0.7
-
-    def test_fill_gaps_prompt_provider_contract_and_trace_id(self) -> None:
-        cid = ContentId("vid_abc123")
-        fluid = StageTranscript(
-            channel=Channel(name="Example Channel"),
-            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=vid_abc123"),
-            content=Content(id=cid, title="Example Channel", text="Body text to expand."),
-        )
-        llm_response = (
-            "# Title\n\nExpanded body.\n\n### Extra Info\n\nComplementary text."
-        )
-        llm_port = MockLLMAdapter(responses=[llm_response, llm_response, llm_response])
-        vault_port = InMemoryVaultAdapter()
-        mock_pp = MagicMock(spec=PromptProviderPort)
-        mock_pp.get_prompt.return_value = MagicMock()
-
-        use_case = FillGapsUseCase(llm_port, vault_port, prompt_provider=mock_pp)
-        compendium = use_case.execute(fluid, passes=3)
-
-        assert compendium.pass_count == 3
-        assert mock_pp.get_prompt.call_count == 3
-
-        # Pass 1: pass_num=1, current_text=None
-        call0 = mock_pp.get_prompt.call_args_list[0]
-        assert call0[0][0] == PromptKey.GAP_FILLER
-        assert call0[1]["pass_num"] == 1
-        assert call0[1]["total_passes"] == 3
-        assert call0[1]["channel_name"] == ChannelName("Example Channel")
-        assert call0[1]["file_name"] == "vid_abc123.txt"
-        assert call0[1]["raw_text"] == "Body text to expand."
-        assert call0[1]["current_text"] is None
-
-        # Pass 2: pass_num=2, current_text is previous pass output
-        call1 = mock_pp.get_prompt.call_args_list[1]
-        assert call1[0][0] == PromptKey.GAP_FILLER
-        assert call1[1]["pass_num"] == 2
-        assert call1[1]["total_passes"] == 3
-        assert call1[1]["channel_name"] == ChannelName("Example Channel")
-        assert call1[1]["file_name"] == "vid_abc123.txt"
-        assert call1[1]["raw_text"] == "Body text to expand."
-        assert call1[1]["current_text"] == llm_response
-
-        # Pass 3: pass_num=3, current_text is previous pass output
-        call2 = mock_pp.get_prompt.call_args_list[2]
-        assert call2[0][0] == PromptKey.GAP_FILLER
-        assert call2[1]["pass_num"] == 3
-        assert call2[1]["total_passes"] == 3
-        assert call2[1]["channel_name"] == ChannelName("Example Channel")
-        assert call2[1]["file_name"] == "vid_abc123.txt"
-        assert call2[1]["raw_text"] == "Body text to expand."
-        assert call2[1]["current_text"] == llm_response
-
-        # Verify trace IDs for all 3 passes
-        assert llm_port.call_history[0]["trace_id"] == "vid_abc123_gap_fill_pass_1"
-        assert llm_port.call_history[1]["trace_id"] == "vid_abc123_gap_fill_pass_2"
-        assert llm_port.call_history[2]["trace_id"] == "vid_abc123_gap_fill_pass_3"
-
-    def test_fill_gaps_rejects_raw_transcript(self) -> None:
-        """ADR-028 Invariant: FillGapsUseCase strictly rejects invalid input."""
-        use_case = FillGapsUseCase(MockLLMAdapter(), InMemoryVaultAdapter())
-        with pytest.raises(
-            DomainValidationError,
-            match=r"^FillGapsUseCase strictly requires StageTranscript, got: str$",
-        ):
-            use_case.execute("not_a_stage_transcript")  # type: ignore[arg-type]
-
-    def test_fill_gaps_success(self) -> None:
-        cid = ContentId("dQw4w9WgXcQ")
-        fluid = StageTranscript(
-            channel=Channel(name="Example Channel", id=ChannelId("UC123456")),
-            provenance=MediaProvenance.create(
-                url="https://youtube.com/watch?v=dQw4w9WgXcQ",
-                publication_date=datetime(2023, 5, 17, 12, 0, tzinfo=UTC).date(),
-            ),
-            content=Content(id=cid, title="Example Channel", text="Spoken text without structure."),
-        )
-        llm_response = (
-            "# Teoria das Elites\n\n"
-            "A circulação das elites postula que minorias organizadas governam maiorias.\n\n"
-            "### Extra Info\n\n"
-            "Dados empíricos e análises contextuais aprofundadas."
-        )
-        llm_port = MockLLMAdapter(responses=[llm_response, llm_response, llm_response])
-        vault_port = InMemoryVaultAdapter()
-
-        use_case = FillGapsUseCase(llm_port, vault_port)
-        compendium = use_case.execute(fluid, passes=3)
-
-        assert compendium.content.id == cid
-        assert compendium.content.title == "Teoria das Elites"
-        assert compendium.channel.name == "Example Channel"
-        assert compendium.channel.id == ChannelId("UC123456")
-        assert compendium.provenance.url == "https://youtube.com/watch?v=dQw4w9WgXcQ"
-        assert "A circulação das elites postula que minorias organizadas governam maiorias." in compendium.content.text
-        assert "### Extra Info" in compendium.content.text
-        assert "Dados empíricos e análises contextuais aprofundadas." in compendium.content.text
-        assert compendium.pass_count == 3
-        assert compendium.provenance.publication_date == fluid.provenance.publication_date
-        assert compendium.provenance.publication_date is not None
-        assert vault_port.get_stage_transcript("gap_filler", cid) == compendium
-
-        # Verify strict behavioral port interactions
-        assert len(llm_port.call_history) == 3
-        assert all(c["session_id"] == "UC123456:dQw4w9WgXcQ" for c in llm_port.call_history)
-        assert all(c["user_id"] == "anonymous" for c in llm_port.call_history)
-        # Pass 1 contains raw body and channel name
-        assert (
-            "Spoken text without structure."
-            in llm_port.call_history[0]["prompt"].get_last_user_content()
-        )
-        assert "Example Channel" in llm_port.call_history[0]["prompt"].get_last_user_content()
-        # Pass 2 and 3 receive current_text from previous pass
-        assert (
-            "A circulação das elites" in llm_port.call_history[1]["prompt"].get_last_user_content()
-        )
-        assert (
-            "A circulação das elites" in llm_port.call_history[2]["prompt"].get_last_user_content()
-        )
-
-    def test_fill_gaps_title_fallback_to_fluid_transcript_title(self) -> None:
-        cid = ContentId("dQw4w9WgXcQ")
-        fluid = StageTranscript(
-            channel=Channel(name="Example Channel"),
-            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=dQw4w9WgXcQ"),
-            content=Content(id=cid, title="Raw Video Title", text="Raw spoken text."),
-        )
-        llm_response = (
-            "Body text without an H1 markdown title.\n\n"
-            "### Extra Info\n\n"
-            "Complementary details."
-        )
-        llm_port = MockLLMAdapter(responses=[llm_response])
-        vault_port = InMemoryVaultAdapter()
-
-        use_case = FillGapsUseCase(llm_port, vault_port)
-        compendium = use_case.execute(fluid, passes=1)
-
-        assert compendium.content.title == "Raw Video Title"
-
-    def test_fill_gaps_title_fallback_to_default_when_no_fluid_title(self) -> None:
-        cid = ContentId("dQw4w9WgXcQ")
-        fluid = StageTranscript(
-            channel=Channel(name="Example Channel"),
-            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=dQw4w9WgXcQ"),
-            content=Content(id=cid, title="", text="Raw spoken text."),
-        )
-        llm_response = (
-            "Body text without H1 header.\n\n## Notas Complementares\n\nComplementary details."
-        )
-        llm_port = MockLLMAdapter(responses=[llm_response])
-        vault_port = InMemoryVaultAdapter()
-
-        use_case = FillGapsUseCase(llm_port, vault_port)
-        compendium = use_case.execute(fluid, passes=1)
-
-        assert compendium.content.title == "Untitled Compendium"
-        assert "Complementary details." in compendium.content.text
-
-    def test_fill_gaps_alternative_regex_header_informacoes_adicionais(self) -> None:
-        cid = ContentId("dQw4w9WgXcQ")
-        fluid = StageTranscript(
-            channel=Channel(name="Example Channel"),
-            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=dQw4w9WgXcQ"),
-            content=Content(id=cid, title="Example Channel", text="Raw spoken text."),
-        )
-        llm_response = (
-            "# H1 Title\n\n"
-            "Primary text.\n\n"
-            "### Informações Adicionais\n\n"
-            "Additional notes and context."
-        )
-        llm_port = MockLLMAdapter(responses=[llm_response])
-        vault_port = InMemoryVaultAdapter()
-
-        use_case = FillGapsUseCase(llm_port, vault_port)
-        compendium = use_case.execute(fluid, passes=1)
-
-        assert compendium.content.title == "H1 Title"
-        assert "Primary text." in compendium.content.text
-        assert "Additional notes and context." in compendium.content.text
-
-    def test_fill_gaps_empty_complementary_section_raises_error(self) -> None:
-        cid = ContentId("dQw4w9WgXcQ")
-        fluid = StageTranscript(
-            channel=Channel(name="Example Channel"),
-            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=dQw4w9WgXcQ"),
-            content=Content(id=cid, title="Example Channel", text="Raw spoken text."),
-        )
-        llm_response = "# H1 Title\n\nPrimary text.\n\n### Extra Info\n\n   "
-        llm_port = MockLLMAdapter(responses=[llm_response])
-        vault_port = InMemoryVaultAdapter()
-
-        use_case = FillGapsUseCase(llm_port, vault_port)
-        with pytest.raises(
-            CompendiumStructureError,
-            match=r"^StageTranscript must contain a non-empty 'Extra Info' section\.$",
-        ):
-            use_case.execute(fluid, passes=1)
-
-    def test_fill_gaps_missing_complementary_section_raises_error(self) -> None:
-        cid = ContentId("dQw4w9WgXcQ")
-        fluid = StageTranscript(
-            channel=Channel(name="Example Channel"),
-            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=dQw4w9WgXcQ"),
-            content=Content(id=cid, title="Example Channel", text="Raw spoken text."),
-        )
-        llm_response = "# H1 Title\n\nPrimary text without any complementary section."
-        llm_port = MockLLMAdapter(responses=[llm_response])
-        vault_port = InMemoryVaultAdapter()
-
-        use_case = FillGapsUseCase(llm_port, vault_port)
-        with pytest.raises(
-            CompendiumStructureError,
-            match=r"Missing mandatory section '### Extra Info'",
-        ):
-            use_case.execute(fluid, passes=1)
-
-    def test_fill_gaps_preserves_optional_metadata_and_date(self) -> None:
-        cid = ContentId("dQw4w9WgXcQ")
-        fluid = StageTranscript(
-            channel=Channel(name="Example Channel", category="tech_ai"),
-            provenance=MediaProvenance.create(
-                url="https://youtube.com/watch?v=dQw4w9WgXcQ",
-                description="Video description text.",
-            ),
-            content=Content(id=cid, title="Example Channel", text="Raw spoken text."),
-        )
-        llm_response = "# H1 Title\n\nPrimary text.\n\n### Extra Info\n\nValid complementary info."
-        llm_port = MockLLMAdapter(responses=[llm_response])
-        vault_port = InMemoryVaultAdapter()
-
-        use_case = FillGapsUseCase(llm_port, vault_port)
-        comp = use_case.execute(fluid, passes=1)
-        assert comp.channel.category == "tech_ai"
-        assert comp.provenance.description == "Video description text."
-        assert comp.provenance.publication_date is None
 
 
 class TestExpandLongitudinalSynchronic:
@@ -1331,21 +919,6 @@ class TestReconcileMOCs:
 
 class TestUseCasesEdgeCases:
     """Boundary conditions and exception branch coverage."""
-
-    def test_fill_gaps_missing_complementary_info_raises_error(self) -> None:
-        cid = ContentId("dQw4w9WgXcQ")
-        fluid = StageTranscript(
-            channel=Channel(name="Example Channel"),
-            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=dQw4w9WgXcQ"),
-            content=Content(id=cid, title="Example Channel", text="Clean fluid text without structure."),
-        )
-        llm_response = "# Teoria das Elites\n\nOnly body text without complementary info section."
-        llm_port = MockLLMAdapter(responses=[llm_response])
-        vault_port = InMemoryVaultAdapter()
-
-        use_case = FillGapsUseCase(llm_port, vault_port)
-        with pytest.raises(CompendiumStructureError):
-            use_case.execute(fluid, passes=1)
 
     def test_discover_inventory_non_list_raises_error(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")

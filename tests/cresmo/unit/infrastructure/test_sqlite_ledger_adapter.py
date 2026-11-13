@@ -12,7 +12,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from cresmo.domain.value_objects import ChannelName, ContentId, LedgerEntry, PipelineStatus
-from cresmo.infrastructure.adapters.sqlite_ledger_adapter import SqliteLedgerAdapter
+from cresmo.infrastructure.persistence.sqlite_ledger_adapter import SqliteLedgerAdapter
 
 
 class TestSqliteLedgerAdapter:

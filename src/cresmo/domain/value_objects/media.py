@@ -176,13 +176,10 @@ def normalize_to_uploads_playlist_url(channel_ref: str | ChannelId) -> str:
         Canonical YouTube uploads playlist URL or sanitized /videos endpoint.
     """
     if isinstance(channel_ref, ChannelId):
-        return (
-            channel_ref.uploads_playlist_url
-            or (
-                f"https://www.youtube.com/channel/{channel_ref.value}"
-                if channel_ref.is_youtube_canonical
-                else channel_ref.value
-            )
+        return channel_ref.uploads_playlist_url or (
+            f"https://www.youtube.com/channel/{channel_ref.value}"
+            if channel_ref.is_youtube_canonical
+            else channel_ref.value
         )
 
     cleaned = channel_ref.strip()

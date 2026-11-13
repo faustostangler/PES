@@ -52,7 +52,10 @@ class TestADR057MonomorphicStageTranscript:
         assert st.channel == channel
         assert st.provenance == provenance
         assert st.content == content
-        assert st.content.text == "Pure prose without loose arguments.\n\n### Extra Info\n\nExtra encyclopedic notes"
+        assert (
+            st.content.text
+            == "Pure prose without loose arguments.\n\n### Extra Info\n\nExtra encyclopedic notes"
+        )
         assert st.content.title == "Clean Title"
         assert st.content.id == ContentId("abc123xyz00")
         assert st.pass_count == 2
@@ -129,4 +132,3 @@ class TestADR057MonomorphicStageTranscript:
                 content=content,
                 pass_count="invalid",  # type: ignore[arg-type]
             )
-

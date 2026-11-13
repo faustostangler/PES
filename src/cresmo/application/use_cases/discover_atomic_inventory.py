@@ -19,14 +19,14 @@ from typing import Any
 
 import structlog
 
-from cresmo.application.json_parser import extract_json_data
 from cresmo.application.ports import (
     LlmJudgePort,
     LLMTransformationPort,
     NoOpPromptProviderPort,
     PromptProviderPort,
 )
-from cresmo.application.use_cases.index_raw_transcripts import (
+from cresmo.application.services.json_parser import extract_json_data
+from cresmo.application.use_cases.indexing import (
     parse_judge_boolean,
 )
 from cresmo.domain.entities import (

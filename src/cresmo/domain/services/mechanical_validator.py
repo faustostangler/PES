@@ -117,9 +117,7 @@ def validate_gap_filler_mechanical_invariants(text: str) -> list[str]:
     # 4. Mandatory '### Extra Info' section
     complementary_match = _COMPLEMENTARY_REGEX.search(stripped)
     if not complementary_match:
-        violations.append(
-            "Missing mandatory complementary section '### Extra Info'."
-        )
+        violations.append("Missing mandatory complementary section '### Extra Info'.")
         main_body = stripped
         complementary_section = ""
     else:

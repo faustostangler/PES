@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from cresmo.application.use_cases.discovery.models import BatchSource
-from cresmo.domain.entities.compendium import StageTranscript
 from cresmo.domain.entities.transcripts import StageTranscript
 from cresmo.domain.value_objects import LedgerEntry, PipelineStatus, SourceModality
 from tests.factories import (
@@ -39,7 +38,7 @@ def test_enriched_compendium_factory() -> None:
     assert compendium.pass_count >= 1
     assert compendium.content.text != ""
     assert "|" not in compendium.content.text or "---" not in compendium.content.text
-    assert 'Extra Info' in compendium.content.text
+    assert "Extra Info" in compendium.content.text
 
 
 def test_ledger_entry_factory() -> None:

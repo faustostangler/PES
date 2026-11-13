@@ -15,9 +15,9 @@ Features:
 - Detailed survivor diff inspection
 
 Usage:
-    uv run python tests/quality/cresmo_mutation_sweeper.py --wave domain
-    uv run python tests/quality/cresmo_mutation_sweeper.py --file src/cresmo/domain/entities/identity.py
-    uv run python tests/quality/cresmo_mutation_sweeper.py --file src/cresmo/domain/entities/identity.py --show-survivors
+    uv run python tools/quality/cresmo_mutation_sweeper.py --wave domain
+    uv run python tools/quality/cresmo_mutation_sweeper.py --file src/cresmo/domain/entities/identity.py
+    uv run python tools/quality/cresmo_mutation_sweeper.py --file src/cresmo/domain/entities/identity.py --show-survivors
 """
 
 from __future__ import annotations
@@ -37,364 +37,385 @@ import typer
 
 # Mapping of source modules/patterns to their mirrored unit test suites
 MODULE_TEST_MAP: dict[str, list[str]] = {
-    # Wave 1: Domain Entities
+    # Wave 1: Domain Entities & Services
     "src/cresmo/domain/entities/identity.py": [
-        "tests/cresmo/unit/test_entities.py",
+        "tests/cresmo/unit/domain/test_entities.py",
     ],
     "src/cresmo/domain/entities/transcripts.py": [
-        "tests/cresmo/unit/test_entities.py",
+        "tests/cresmo/unit/domain/test_entities.py",
+        "tests/cresmo/unit/domain/test_monomorphic_stage_transcript.py",
+        "tests/cresmo/unit/domain/test_stage_foundation.py",
     ],
     "src/cresmo/domain/entities/notes.py": [
-        "tests/cresmo/unit/test_entities.py",
+        "tests/cresmo/unit/domain/test_entities.py",
     ],
-    "src/cresmo/domain/entities/compendium.py": [
-        "tests/cresmo/unit/test_entities.py",
+    "src/cresmo/domain/exceptions.py": [
+        "tests/cresmo/unit/domain/test_entities.py",
+        "tests/cresmo/unit/domain/test_value_objects.py",
+    ],
+    "src/cresmo/domain/services/compendium.py": [
+        "tests/cresmo/unit/domain/test_compendium.py",
+        "tests/cresmo/unit/domain/test_entities.py",
+        "tests/cresmo/unit/domain/test_gap_filler_foundation.py",
     ],
     # Wave 1: Domain Value Objects
     "src/cresmo/domain/value_objects/identity.py": [
-        "tests/cresmo/unit/test_value_objects.py",
-        "tests/cresmo/unit/test_batch_id.py",
-        "tests/cresmo/unit/test_channel_sync_vo.py",
+        "tests/cresmo/unit/domain/test_value_objects.py",
+        "tests/cresmo/unit/domain/test_batch_id.py",
+        "tests/cresmo/unit/domain/test_channel_sync_vo.py",
     ],
     "src/cresmo/domain/value_objects/sync.py": [
-        "tests/cresmo/unit/test_channel_sync_vo.py",
-        "tests/cresmo/unit/test_value_objects.py",
+        "tests/cresmo/unit/domain/test_channel_sync_vo.py",
+        "tests/cresmo/unit/domain/test_value_objects.py",
     ],
     "src/cresmo/domain/value_objects/prompt.py": [
-        "tests/cresmo/unit/test_chat_prompt_vo.py",
-        "tests/cresmo/unit/test_value_objects.py",
+        "tests/cresmo/unit/domain/test_chat_prompt_vo.py",
+        "tests/cresmo/unit/domain/test_value_objects.py",
     ],
     "src/cresmo/domain/value_objects/media.py": [
-        "tests/cresmo/unit/test_channel_sync_vo.py",
-        "tests/cresmo/unit/test_value_objects.py",
+        "tests/cresmo/unit/domain/test_channel_sync_vo.py",
+        "tests/cresmo/unit/domain/test_value_objects.py",
     ],
     "src/cresmo/domain/value_objects/ledger.py": [
-        "tests/cresmo/unit/test_channel_sync_vo.py",
-        "tests/cresmo/unit/test_raw_index_entry_vo.py",
-        "tests/cresmo/unit/test_value_objects.py",
+        "tests/cresmo/unit/domain/test_channel_sync_vo.py",
+        "tests/cresmo/unit/domain/test_raw_index_entry_vo.py",
+        "tests/cresmo/unit/domain/test_value_objects.py",
     ],
     "src/cresmo/domain/value_objects/notes.py": [
-        "tests/cresmo/unit/test_value_objects.py",
+        "tests/cresmo/unit/domain/test_value_objects.py",
     ],
     "src/cresmo/domain/value_objects/quality.py": [
-        "tests/cresmo/unit/test_quality_vo.py",
-        "tests/cresmo/unit/test_value_objects.py",
+        "tests/cresmo/unit/domain/test_quality_vo.py",
+        "tests/cresmo/unit/domain/test_value_objects.py",
     ],
     "src/cresmo/domain/value_objects/constants.py": [
-        "tests/cresmo/unit/test_domain_constants.py",
-        "tests/cresmo/unit/test_value_objects.py",
+        "tests/cresmo/unit/domain/test_domain_constants.py",
+        "tests/cresmo/unit/domain/test_value_objects.py",
     ],
     "src/cresmo/domain/stage_registry.py": [
-        "tests/cresmo/unit/test_stage_registry.py",
+        "tests/cresmo/unit/domain/test_stage_registry.py",
     ],
     "src/cresmo/domain/taxonomy.py": [
-        "tests/cresmo/unit/test_taxonomy.py",
+        "tests/cresmo/unit/domain/test_taxonomy.py",
     ],
     "src/cresmo/domain/services/mechanical_validator.py": [
-        "tests/cresmo/unit/test_mechanical_validator.py",
+        "tests/cresmo/unit/domain/test_mechanical_validator.py",
+        "tests/cresmo/unit/domain/test_gap_filler_foundation.py",
     ],
     # Wave 2: Application Pipeline Engine
     "src/cresmo/application/pipeline/quarantine.py": [
-        "tests/cresmo/unit/test_stage_runner_quarantine.py",
+        "tests/cresmo/unit/application/test_stage_runner_quarantine.py",
     ],
     "src/cresmo/application/pipeline/stage_runner.py": [
-        "tests/cresmo/unit/test_stage_runner.py",
-        "tests/cresmo/unit/test_stage_runner_quarantine.py",
+        "tests/cresmo/unit/application/test_stage_runner.py",
+        "tests/cresmo/unit/application/test_stage_runner_quarantine.py",
     ],
     "src/cresmo/application/pipeline/stage_descriptor.py": [
-        "tests/cresmo/unit/test_stage_descriptor_runner.py",
+        "tests/cresmo/unit/application/test_stage_descriptor_runner.py",
+        "tests/cresmo/unit/application/test_gap_filler_stage_runner.py",
     ],
     "src/cresmo/application/pipeline/stage_factory.py": [
-        "tests/cresmo/unit/test_stage_factory.py",
+        "tests/cresmo/unit/application/test_stage_factory.py",
     ],
     "src/cresmo/application/pipeline/transcript_loader.py": [
-        "tests/cresmo/unit/test_transcript_loader.py",
+        "tests/cresmo/unit/application/test_transcript_loader.py",
     ],
     "src/cresmo/application/pipeline/coordinator.py": [
-        "tests/cresmo/unit/test_pipeline.py",
-        "tests/cresmo/unit/test_pipeline_telemetry.py",
-        "tests/cresmo/unit/test_pipeline_coordinator.py",
+        "tests/cresmo/unit/application/test_pipeline.py",
+        "tests/cresmo/unit/application/test_pipeline_telemetry.py",
+        "tests/cresmo/unit/application/test_pipeline_coordinator.py",
     ],
     "src/cresmo/application/pipeline/context.py": [
-        "tests/cresmo/unit/test_pipeline_execution_context.py",
-        "tests/cresmo/unit/test_stage_foundation.py",
-        "tests/cresmo/unit/test_stage_runner.py",
+        "tests/cresmo/unit/application/test_pipeline_execution_context.py",
+        "tests/cresmo/unit/domain/test_stage_foundation.py",
+        "tests/cresmo/unit/application/test_stage_runner.py",
     ],
     "src/cresmo/application/pipeline/models.py": [
-        "tests/cresmo/unit/test_pipeline_models.py",
-        "tests/cresmo/unit/test_stage_foundation.py",
+        "tests/cresmo/unit/application/test_pipeline_models.py",
+        "tests/cresmo/unit/domain/test_stage_foundation.py",
     ],
-    # Wave 2: Application Core Utilities & Services
-    "src/cresmo/application/json_parser.py": [
-        "tests/cresmo/unit/test_json_parser.py",
+    # Wave 2: Application Core Utilities, Evals & Services
+    "src/cresmo/application/evals/calibration_metrics.py": [
+        "tests/cresmo/unit/application/test_calibration_metrics.py",
+        "tests/cresmo/unit/application/test_calibrate_judges.py",
+    ],
+    "src/cresmo/application/evals/calibration_runner.py": [
+        "tests/cresmo/unit/application/test_calibration_runner.py",
+        "tests/cresmo/unit/application/test_calibrate_judges.py",
+    ],
+    "src/cresmo/application/services/json_parser.py": [
+        "tests/cresmo/unit/application/test_json_parser.py",
     ],
     "src/cresmo/application/services/preflight.py": [
-        "tests/cresmo/unit/test_preflight_checker.py",
-        "tests/cresmo/unit/test_preflight_decorator.py",
+        "tests/cresmo/unit/application/test_preflight_checker.py",
+        "tests/cresmo/unit/infrastructure/test_preflight_decorator.py",
     ],
     # Wave 3: Application Use Cases
     "src/cresmo/application/use_cases/concat_master.py": [
-        "tests/cresmo/unit/test_concat_master_use_case.py",
-    ],
-    "src/cresmo/application/use_cases/fill_gaps.py": [
-        "tests/cresmo/unit/test_use_cases.py",
+        "tests/cresmo/unit/application/test_concat_master_use_case.py",
     ],
     "src/cresmo/application/use_cases/expand_compendium.py": [
-        "tests/cresmo/unit/test_use_cases.py",
-    ],
-    "src/cresmo/application/use_cases/transform_fluid_prose.py": [
-        "tests/cresmo/unit/test_use_cases.py",
+        "tests/cresmo/unit/application/test_use_cases.py",
     ],
     "src/cresmo/application/use_cases/unify_duplicate_notes.py": [
-        "tests/cresmo/unit/test_unify_duplicates.py",
+        "tests/cresmo/unit/application/test_unify_duplicates.py",
     ],
     "src/cresmo/application/use_cases/discover_atomic_inventory.py": [
-        "tests/cresmo/unit/test_discover_atomic_inventory_use_case.py",
+        "tests/cresmo/unit/application/test_discover_atomic_inventory_use_case.py",
     ],
     "src/cresmo/application/use_cases/discovery/discover_batch_sources.py": [
-        "tests/cresmo/unit/test_discover_batch_sources.py",
+        "tests/cresmo/unit/application/test_discover_batch_sources.py",
     ],
     "src/cresmo/application/use_cases/indexing/index_raw_transcripts.py": [
-        "tests/cresmo/unit/test_index_raw_transcripts_use_case.py",
+        "tests/cresmo/unit/application/test_index_raw_transcripts_use_case.py",
     ],
     "src/cresmo/application/use_cases/ingest_raw_transcript.py": [
-        "tests/cresmo/unit/test_ingest_raw_transcript_use_case.py",
+        "tests/cresmo/unit/application/test_ingest_raw_transcript_use_case.py",
     ],
     "src/cresmo/application/use_cases/reconcile_mocs.py": [
-        "tests/cresmo/unit/test_reconcile_mocs_use_case.py",
+        "tests/cresmo/unit/application/test_reconcile_mocs_use_case.py",
     ],
     "src/cresmo/application/use_cases/sync_channel.py": [
-        "tests/cresmo/unit/test_sync_channel_use_case.py",
+        "tests/cresmo/unit/application/test_sync_channel_use_case.py",
     ],
     "src/cresmo/application/use_cases/synthesize_atomic_batch.py": [
-        "tests/cresmo/unit/test_synthesize_atomic_batch_use_case.py",
+        "tests/cresmo/unit/application/test_synthesize_atomic_batch_use_case.py",
     ],
     # Wave 4: Infrastructure
     "src/cresmo/infrastructure/adapters/obsidian/adapter.py": [
-        "tests/cresmo/unit/test_vault_adapter.py",
+        "tests/cresmo/unit/infrastructure/test_vault_adapter.py",
+        "tests/cresmo/unit/infrastructure/test_unified_stage_persistence.py",
     ],
     "src/cresmo/infrastructure/adapters/obsidian/notes.py": [
-        "tests/cresmo/unit/test_vault_adapter.py",
+        "tests/cresmo/unit/infrastructure/test_vault_adapter.py",
     ],
     "src/cresmo/infrastructure/adapters/obsidian/transcripts.py": [
-        "tests/cresmo/unit/test_vault_adapter.py",
+        "tests/cresmo/unit/infrastructure/test_vault_adapter.py",
+        "tests/cresmo/unit/infrastructure/test_unified_stage_persistence.py",
     ],
     "src/cresmo/infrastructure/adapters/obsidian/mocs.py": [
-        "tests/cresmo/unit/test_vault_adapter.py",
+        "tests/cresmo/unit/infrastructure/test_vault_adapter.py",
     ],
-    "src/cresmo/infrastructure/adapters/opentelemetry_adapter.py": [
-        "tests/cresmo/unit/test_opentelemetry_adapter.py",
+    "src/cresmo/infrastructure/adapters/telemetry/opentelemetry_adapter.py": [
+        "tests/cresmo/unit/infrastructure/test_opentelemetry_adapter.py",
     ],
-    "src/cresmo/infrastructure/adapters/prometheus_metrics_adapter.py": [
-        "tests/cresmo/unit/test_prometheus_adapter.py",
+    "src/cresmo/infrastructure/adapters/metrics/prometheus_metrics_adapter.py": [
+        "tests/cresmo/unit/infrastructure/test_prometheus_adapter.py",
+        "tests/cresmo/unit/infrastructure/test_metrics_port.py",
     ],
-    "src/cresmo/infrastructure/adapters/anonymizer_adapter.py": [
-        "tests/cresmo/unit/test_anonymizer_adapter.py",
+    "src/cresmo/infrastructure/adapters/anonymization/anonymizer_adapter.py": [
+        "tests/cresmo/unit/infrastructure/test_anonymizer_adapter.py",
     ],
-    "src/cresmo/infrastructure/adapters/cookie_extractor.py": [
-        "tests/cresmo/unit/test_cookie_extractor.py",
+    "src/cresmo/infrastructure/adapters/scrapers/cookie_extractor.py": [
+        "tests/cresmo/unit/infrastructure/test_cookie_extractor.py",
+    ],
+    "src/cresmo/infrastructure/adapters/system/preflight_probe_adapter.py": [
+        "tests/cresmo/unit/application/test_preflight_checker.py",
+        "tests/cresmo/unit/bootstrap/test_bootstrap_factories.py",
     ],
     "src/cresmo/infrastructure/paths.py": [
-        "tests/cresmo/unit/test_paths.py",
+        "tests/cresmo/unit/infrastructure/test_paths.py",
     ],
     "src/cresmo/infrastructure/system.py": [
-        "tests/cresmo/unit/test_system.py",
+        "tests/cresmo/unit/infrastructure/test_system.py",
     ],
     "src/cresmo/infrastructure/logging_config.py": [
-        "tests/cresmo/unit/test_logging_config.py",
+        "tests/cresmo/unit/infrastructure/test_logging_config.py",
     ],
     "src/cresmo/infrastructure/config.py": [
-        "tests/cresmo/unit/test_config.py",
+        "tests/cresmo/unit/infrastructure/test_config.py",
     ],
-    "src/cresmo/infrastructure/adapters/sqlite_ledger_adapter.py": [
-        "tests/cresmo/unit/test_sqlite_ledger_adapter.py",
+    "src/cresmo/infrastructure/persistence/sqlite_ledger_adapter.py": [
+        "tests/cresmo/unit/infrastructure/test_sqlite_ledger_adapter.py",
     ],
-    "src/cresmo/infrastructure/adapters/header_generator.py": [
-        "tests/cresmo/unit/test_header_generator.py",
+    "src/cresmo/infrastructure/adapters/scrapers/header_generator.py": [
+        "tests/cresmo/unit/infrastructure/test_header_generator.py",
     ],
-    "src/cresmo/infrastructure/adapters/gemini_adapter.py": [
-        "tests/cresmo/unit/test_gemini_adapter.py",
+    "src/cresmo/infrastructure/adapters/llm/gemini_adapter.py": [
+        "tests/cresmo/unit/infrastructure/test_gemini_adapter.py",
     ],
-    "src/cresmo/infrastructure/adapters/native_media_ingestion_adapter.py": [
-        "tests/cresmo/unit/test_native_media_ingestion_adapter.py",
+    "src/cresmo/infrastructure/adapters/media/native_media_ingestion_adapter.py": [
+        "tests/cresmo/unit/infrastructure/test_native_media_ingestion_adapter.py",
     ],
-    "src/cresmo/infrastructure/adapters/obsidian_vault_adapter.py": [
-        "tests/cresmo/unit/test_vault_adapter.py",
+    # Wave 5: Bootstrap & Presentation
+    "src/cresmo/bootstrap/composition.py": [
+        "tests/cresmo/unit/bootstrap/test_composition.py",
+        "tests/cresmo/unit/presentation/test_cli.py",
     ],
-    "src/cresmo/infrastructure/adapters/prompt_provider.py": [
-        "tests/cresmo/unit/test_prompt_provider.py",
+    "src/cresmo/bootstrap/factories/adapter_factory.py": [
+        "tests/cresmo/unit/bootstrap/test_composition.py",
+        "tests/cresmo/unit/bootstrap/test_bootstrap_factories.py",
     ],
-    # Wave 5: Presentation
+    "src/cresmo/bootstrap/factories/judge_factory.py": [
+        "tests/cresmo/unit/bootstrap/test_composition.py",
+        "tests/cresmo/unit/bootstrap/test_bootstrap_factories.py",
+        "tests/cresmo/unit/infrastructure/test_llm_judge.py",
+    ],
+    "src/cresmo/bootstrap/factories/settings_factory.py": [
+        "tests/cresmo/unit/bootstrap/test_composition.py",
+        "tests/cresmo/unit/bootstrap/test_bootstrap_factories.py",
+    ],
+    "src/cresmo/bootstrap/factories/telemetry_factory.py": [
+        "tests/cresmo/unit/bootstrap/test_composition.py",
+        "tests/cresmo/unit/bootstrap/test_bootstrap_factories.py",
+    ],
+    "src/cresmo/bootstrap/factories/use_case_factory.py": [
+        "tests/cresmo/unit/bootstrap/test_composition.py",
+        "tests/cresmo/unit/bootstrap/test_bootstrap_factories.py",
+    ],
     "src/cresmo/presentation/cli.py": [
-        "tests/cresmo/unit/test_cli.py",
-    ],
-    "src/cresmo/presentation/composition.py": [
-        "tests/cresmo/unit/test_composition.py",
-        "tests/cresmo/unit/test_cli.py",
+        "tests/cresmo/unit/presentation/test_cli.py",
+        "tests/cresmo/unit/presentation/test_cli_lazy.py",
     ],
     "src/cresmo/presentation/commands/check_config.py": [
-        "tests/cresmo/unit/test_cli.py",
-        "tests/cresmo/unit/test_preflight_checker.py",
+        "tests/cresmo/unit/presentation/test_cli.py",
+        "tests/cresmo/unit/application/test_preflight_checker.py",
     ],
     "src/cresmo/presentation/commands/dedupe.py": [
-        "tests/cresmo/unit/test_cli.py",
-        "tests/cresmo/unit/test_unify_duplicates.py",
+        "tests/cresmo/unit/presentation/test_cli.py",
+        "tests/cresmo/unit/application/test_unify_duplicates.py",
     ],
     "src/cresmo/presentation/commands/run.py": [
-        "tests/cresmo/unit/test_run_command.py",
-        "tests/cresmo/unit/test_cli.py",
+        "tests/cresmo/unit/presentation/test_run_command.py",
+        "tests/cresmo/unit/presentation/test_cli.py",
     ],
     "src/cresmo/presentation/commands/sync.py": [
-        "tests/cresmo/unit/test_sync_command.py",
-        "tests/cresmo/unit/test_cli.py",
-        "tests/cresmo/unit/test_sync_channel_use_case.py",
+        "tests/cresmo/unit/presentation/test_sync_command.py",
+        "tests/cresmo/unit/presentation/test_cli.py",
+        "tests/cresmo/unit/application/test_sync_channel_use_case.py",
     ],
     "src/cresmo/presentation/commands/worker.py": [
-        "tests/cresmo/unit/test_worker_command.py",
-        "tests/cresmo/unit/test_cli.py",
+        "tests/cresmo/unit/presentation/test_worker_command.py",
+        "tests/cresmo/unit/presentation/test_cli.py",
     ],
     "src/cresmo/presentation/commands/concat_master.py": [
-        "tests/cresmo/unit/test_concat_master_command.py",
-        "tests/cresmo/unit/test_cli.py",
-        "tests/cresmo/unit/test_concat_master_use_case.py",
+        "tests/cresmo/unit/presentation/test_concat_master_command.py",
+        "tests/cresmo/unit/presentation/test_cli.py",
+        "tests/cresmo/unit/application/test_concat_master_use_case.py",
     ],
     "src/cresmo/presentation/commands/seed_prompts.py": [
-        "tests/cresmo/unit/test_seed_prompts.py",
-        "tests/cresmo/unit/test_cli.py",
+        "tests/cresmo/unit/presentation/test_seed_prompts.py",
+        "tests/cresmo/unit/presentation/test_cli.py",
     ],
     "src/cresmo/presentation/commands/export_cookies.py": [
-        "tests/cresmo/unit/test_export_cookies.py",
-        "tests/cresmo/unit/test_cli.py",
-        "tests/cresmo/unit/test_cookie_extractor.py",
+        "tests/cresmo/unit/presentation/test_export_cookies.py",
+        "tests/cresmo/unit/presentation/test_cli.py",
+        "tests/cresmo/unit/infrastructure/test_cookie_extractor.py",
     ],
     # Wave 6: Discovery Modules
     "src/cresmo/application/use_cases/discovery/channel_crawler.py": [
-        "tests/cresmo/unit/test_channel_crawler.py",
-        "tests/cresmo/unit/test_discover_batch_sources.py",
+        "tests/cresmo/unit/application/test_channel_crawler.py",
+        "tests/cresmo/unit/application/test_discover_batch_sources.py",
     ],
     "src/cresmo/application/use_cases/discovery/lake_scanner.py": [
-        "tests/cresmo/unit/test_lake_scanner.py",
-        "tests/cresmo/unit/test_discover_batch_sources.py",
+        "tests/cresmo/unit/application/test_lake_scanner.py",
+        "tests/cresmo/unit/application/test_zero_read_lake_scanner.py",
+        "tests/cresmo/unit/application/test_discover_batch_sources.py",
     ],
     "src/cresmo/application/use_cases/discovery/manifests.py": [
-        "tests/cresmo/unit/test_discovery_manifests.py",
-        "tests/cresmo/unit/test_discover_batch_sources.py",
+        "tests/cresmo/unit/application/test_discovery_manifests.py",
+        "tests/cresmo/unit/application/test_discover_batch_sources.py",
     ],
     "src/cresmo/application/use_cases/discovery/models.py": [
-        "tests/cresmo/unit/test_discovery_models.py",
-        "tests/cresmo/unit/test_discover_batch_sources.py",
+        "tests/cresmo/unit/application/test_discovery_models.py",
+        "tests/cresmo/unit/application/test_discover_batch_sources.py",
     ],
     # Wave 6: Indexing Modules
     "src/cresmo/application/use_cases/indexing/distiller.py": [
-        "tests/cresmo/unit/test_indexing_distiller.py",
-        "tests/cresmo/unit/test_index_raw_transcripts_use_case.py",
-        "tests/cresmo/unit/test_indexing_validators.py",
+        "tests/cresmo/unit/application/test_indexing_distiller.py",
+        "tests/cresmo/unit/application/test_index_raw_transcripts_use_case.py",
+        "tests/cresmo/unit/application/test_indexing_validators.py",
     ],
     "src/cresmo/application/use_cases/indexing/validators.py": [
-        "tests/cresmo/unit/test_indexing_validators.py",
-        "tests/cresmo/unit/test_index_raw_transcripts_use_case.py",
+        "tests/cresmo/unit/application/test_indexing_validators.py",
+        "tests/cresmo/unit/application/test_index_raw_transcripts_use_case.py",
     ],
     # Wave 6: Judges Adapters
     "src/cresmo/infrastructure/adapters/judges/composite_judge.py": [
-        "tests/cresmo/unit/test_llm_judge.py",
+        "tests/cresmo/unit/infrastructure/test_llm_judge.py",
     ],
     "src/cresmo/infrastructure/adapters/judges/gemini_judge.py": [
-        "tests/cresmo/unit/test_llm_judge.py",
+        "tests/cresmo/unit/infrastructure/test_llm_judge.py",
     ],
     "src/cresmo/infrastructure/adapters/judges/langfuse_decorator.py": [
-        "tests/cresmo/unit/test_llm_judge.py",
+        "tests/cresmo/unit/infrastructure/test_llm_judge.py",
     ],
     "src/cresmo/infrastructure/adapters/judges/ollama_judge.py": [
-        "tests/cresmo/unit/test_llm_judge.py",
+        "tests/cresmo/unit/infrastructure/test_llm_judge.py",
     ],
     "src/cresmo/infrastructure/adapters/judges/preflight_decorator.py": [
-        "tests/cresmo/unit/test_preflight_decorator.py",
-        "tests/cresmo/unit/test_llm_judge.py",
+        "tests/cresmo/unit/infrastructure/test_preflight_decorator.py",
+        "tests/cresmo/unit/infrastructure/test_llm_judge.py",
     ],
     "src/cresmo/infrastructure/adapters/judges/typesafe_judge.py": [
-        "tests/cresmo/unit/test_llm_judge.py",
+        "tests/cresmo/unit/infrastructure/test_llm_judge.py",
     ],
     # Wave 6: Media Adapters
     "src/cresmo/infrastructure/adapters/media/feed.py": [
-        "tests/cresmo/unit/test_native_media_ingestion_adapter.py",
+        "tests/cresmo/unit/infrastructure/test_native_media_ingestion_adapter.py",
     ],
     "src/cresmo/infrastructure/adapters/media/subtitles.py": [
-        "tests/cresmo/unit/test_native_media_ingestion_adapter.py",
+        "tests/cresmo/unit/infrastructure/test_native_media_ingestion_adapter.py",
     ],
     # Wave 6: Metrics & Obsidian Helpers
-    "src/cresmo/infrastructure/adapters/noop_metrics_adapter.py": [
-        "tests/cresmo/unit/test_metrics_port.py",
+    "src/cresmo/infrastructure/adapters/metrics/noop_metrics_adapter.py": [
+        "tests/cresmo/unit/infrastructure/test_metrics_port.py",
     ],
     "src/cresmo/infrastructure/adapters/obsidian/catalog.py": [
-        "tests/cresmo/unit/test_vault_adapter.py",
+        "tests/cresmo/unit/infrastructure/test_vault_adapter.py",
     ],
     "src/cresmo/infrastructure/adapters/obsidian/utils.py": [
-        "tests/cresmo/unit/test_vault_adapter.py",
+        "tests/cresmo/unit/infrastructure/test_vault_adapter.py",
     ],
     # Wave 6: Ollama & Prompt Adapters
-    "src/cresmo/infrastructure/adapters/ollama_critique_adapter.py": [
-        "tests/cresmo/unit/test_critique_synthesizer.py",
+    "src/cresmo/infrastructure/adapters/llm/ollama_critique_adapter.py": [
+        "tests/cresmo/unit/infrastructure/test_critique_synthesizer.py",
     ],
-    "src/cresmo/infrastructure/adapters/ollama_llm_adapter.py": [
-        "tests/cresmo/unit/test_ollama_llm_adapter.py",
+    "src/cresmo/infrastructure/adapters/llm/ollama_llm_adapter.py": [
+        "tests/cresmo/unit/infrastructure/test_ollama_llm_adapter.py",
     ],
     "src/cresmo/infrastructure/adapters/prompts/builders.py": [
-        "tests/cresmo/unit/test_prompt_provider.py",
+        "tests/cresmo/unit/infrastructure/test_prompt_provider.py",
     ],
     "src/cresmo/infrastructure/adapters/prompts/json_provider.py": [
-        "tests/cresmo/unit/test_prompt_provider.py",
+        "tests/cresmo/unit/infrastructure/test_prompt_provider.py",
+        "tests/cresmo/unit/infrastructure/test_prompt_description_ssot.py",
     ],
     "src/cresmo/infrastructure/adapters/prompts/langfuse_provider.py": [
-        "tests/cresmo/unit/test_langfuse_prompt_provider.py",
+        "tests/cresmo/unit/infrastructure/test_langfuse_prompt_provider.py",
     ],
     "src/cresmo/infrastructure/adapters/prompts/catalog.py": [
-        "tests/cresmo/unit/test_prompt_catalog.py",
+        "tests/cresmo/unit/infrastructure/test_prompt_catalog.py",
+    ],
+    "src/cresmo/infrastructure/adapters/prompts/taxonomy_catalog.py": [
+        "tests/cresmo/unit/domain/test_taxonomy.py",
+        "tests/cresmo/unit/infrastructure/test_prompt_catalog.py",
     ],
     # Wave 6: Telemetry
     "src/cresmo/infrastructure/adapters/telemetry/noop.py": [
-        "tests/cresmo/unit/test_opentelemetry_adapter.py",
+        "tests/cresmo/unit/infrastructure/test_opentelemetry_adapter.py",
     ],
     "src/cresmo/infrastructure/adapters/telemetry/thread_naming.py": [
-        "tests/cresmo/unit/test_opentelemetry_adapter.py",
+        "tests/cresmo/unit/infrastructure/test_opentelemetry_adapter.py",
     ],
-    # Wave 6: Presentation Factories
-    "src/cresmo/presentation/factories/adapter_factory.py": [
-        "tests/cresmo/unit/test_composition.py",
-    ],
-    "src/cresmo/presentation/factories/judge_factory.py": [
-        "tests/cresmo/unit/test_composition.py",
-        "tests/cresmo/unit/test_llm_judge.py",
-    ],
-    "src/cresmo/presentation/factories/settings_factory.py": [
-        "tests/cresmo/unit/test_composition.py",
-    ],
-    "src/cresmo/presentation/factories/telemetry_factory.py": [
-        "tests/cresmo/unit/test_composition.py",
-    ],
-    "src/cresmo/presentation/factories/use_case_factory.py": [
-        "tests/cresmo/unit/test_composition.py",
-    ],
-    # Wave 0 (ADR-048): Cresmo Infrastructure unmapped modules
+    # Wave 0 (ADR-048) & Deferred Infrastructure Modules
     "src/cresmo/infrastructure/adapters/data/polars_batch_processor.py": [
-        "tests/cresmo/unit/test_polars_batch_processor.py",
+        "tests/cresmo/unit/infrastructure/test_polars_batch_processor.py",
     ],
-    "src/cresmo/infrastructure/adapters/database/postgres_ledger_adapter.py": [
-        "tests/cresmo/unit/test_postgres_ledger_adapter.py",
+    "src/cresmo/infrastructure/persistence/postgres_ledger_adapter.py": [
+        "tests/cresmo/unit/infrastructure/test_postgres_ledger_adapter.py",
     ],
-    "src/cresmo/infrastructure/adapters/gemini_pool.py": [
-        "tests/cresmo/unit/test_gemini_pool.py",
+    "src/cresmo/infrastructure/adapters/llm/gemini_pool.py": [
+        "tests/cresmo/unit/infrastructure/test_gemini_pool.py",
     ],
     "src/cresmo/infrastructure/adapters/judges/criterion_parser.py": [
-        "tests/cresmo/unit/test_criterion_parser.py",
+        "tests/cresmo/unit/infrastructure/test_criterion_parser.py",
     ],
     "src/cresmo/infrastructure/adapters/scrapers/selectolax_html_parser.py": [
-        "tests/cresmo/unit/test_selectolax_html_parser.py",
+        "tests/cresmo/unit/infrastructure/test_selectolax_html_parser.py",
     ],
-    "src/cresmo/infrastructure/database/models.py": [
-        "tests/cresmo/unit/test_postgres_ledger_adapter.py",
-    ],
-    "src/cresmo/infrastructure/workers/arq_worker.py": [
-        "tests/cresmo/unit/test_arq_worker.py",
+    "src/cresmo/infrastructure/persistence/models.py": [
+        "tests/cresmo/unit/infrastructure/test_postgres_ledger_adapter.py",
     ],
     # Shared Kernel Context
     "src/shared_kernel/security.py": [
@@ -471,28 +492,30 @@ WAVE_DEFINITIONS: dict[str, list[str]] = {
         "src/cresmo/infrastructure/adapters/judges/typesafe_judge.py",
         "src/cresmo/infrastructure/adapters/media/feed.py",
         "src/cresmo/infrastructure/adapters/media/subtitles.py",
-        "src/cresmo/infrastructure/adapters/noop_metrics_adapter.py",
+        "src/cresmo/infrastructure/adapters/metrics/noop_metrics_adapter.py",
         "src/cresmo/infrastructure/adapters/obsidian/catalog.py",
         "src/cresmo/infrastructure/adapters/obsidian/utils.py",
-        "src/cresmo/infrastructure/adapters/ollama_critique_adapter.py",
-        "src/cresmo/infrastructure/adapters/ollama_llm_adapter.py",
+        "src/cresmo/infrastructure/adapters/llm/ollama_critique_adapter.py",
+        "src/cresmo/infrastructure/adapters/llm/ollama_llm_adapter.py",
         "src/cresmo/infrastructure/adapters/prompts/builders.py",
         "src/cresmo/infrastructure/adapters/prompts/json_provider.py",
         "src/cresmo/infrastructure/adapters/prompts/langfuse_provider.py",
         "src/cresmo/infrastructure/adapters/prompts/catalog.py",
+        "src/cresmo/infrastructure/adapters/prompts/taxonomy_catalog.py",
         "src/cresmo/infrastructure/adapters/telemetry/noop.py",
         "src/cresmo/infrastructure/adapters/telemetry/thread_naming.py",
-        "src/cresmo/presentation/factories/adapter_factory.py",
-        "src/cresmo/presentation/factories/judge_factory.py",
-        "src/cresmo/presentation/factories/settings_factory.py",
-        "src/cresmo/presentation/factories/telemetry_factory.py",
-        "src/cresmo/presentation/factories/use_case_factory.py",
+        "src/cresmo/bootstrap/factories/adapter_factory.py",
+        "src/cresmo/bootstrap/factories/judge_factory.py",
+        "src/cresmo/bootstrap/factories/settings_factory.py",
+        "src/cresmo/bootstrap/factories/telemetry_factory.py",
+        "src/cresmo/bootstrap/factories/use_case_factory.py",
     ],
     "domain": [
         "src/cresmo/domain/entities/identity.py",
         "src/cresmo/domain/entities/transcripts.py",
         "src/cresmo/domain/entities/notes.py",
-        "src/cresmo/domain/entities/compendium.py",
+        "src/cresmo/domain/exceptions.py",
+        "src/cresmo/domain/services/compendium.py",
         "src/cresmo/domain/value_objects/identity.py",
         "src/cresmo/domain/value_objects/sync.py",
         "src/cresmo/domain/value_objects/prompt.py",
@@ -514,14 +537,14 @@ WAVE_DEFINITIONS: dict[str, list[str]] = {
         "src/cresmo/application/pipeline/coordinator.py",
         "src/cresmo/application/pipeline/context.py",
         "src/cresmo/application/pipeline/models.py",
-        "src/cresmo/application/json_parser.py",
+        "src/cresmo/application/evals/calibration_metrics.py",
+        "src/cresmo/application/evals/calibration_runner.py",
+        "src/cresmo/application/services/json_parser.py",
         "src/cresmo/application/services/preflight.py",
     ],
     "use_cases": [
         "src/cresmo/application/use_cases/concat_master.py",
-        "src/cresmo/application/use_cases/fill_gaps.py",
         "src/cresmo/application/use_cases/expand_compendium.py",
-        "src/cresmo/application/use_cases/transform_fluid_prose.py",
         "src/cresmo/application/use_cases/unify_duplicate_notes.py",
         "src/cresmo/application/use_cases/discover_atomic_inventory.py",
         "src/cresmo/application/use_cases/discovery/discover_batch_sources.py",
@@ -536,40 +559,37 @@ WAVE_DEFINITIONS: dict[str, list[str]] = {
         "src/cresmo/infrastructure/adapters/obsidian/notes.py",
         "src/cresmo/infrastructure/adapters/obsidian/transcripts.py",
         "src/cresmo/infrastructure/adapters/obsidian/mocs.py",
-        "src/cresmo/infrastructure/adapters/opentelemetry_adapter.py",
-        "src/cresmo/infrastructure/adapters/prometheus_metrics_adapter.py",
-        "src/cresmo/infrastructure/adapters/anonymizer_adapter.py",
-        "src/cresmo/infrastructure/adapters/cookie_extractor.py",
+        "src/cresmo/infrastructure/adapters/telemetry/opentelemetry_adapter.py",
+        "src/cresmo/infrastructure/adapters/metrics/prometheus_metrics_adapter.py",
+        "src/cresmo/infrastructure/adapters/anonymization/anonymizer_adapter.py",
+        "src/cresmo/infrastructure/adapters/scrapers/cookie_extractor.py",
+        "src/cresmo/infrastructure/adapters/system/preflight_probe_adapter.py",
         "src/cresmo/infrastructure/paths.py",
         "src/cresmo/infrastructure/system.py",
         "src/cresmo/infrastructure/logging_config.py",
         "src/cresmo/infrastructure/config.py",
-        "src/cresmo/infrastructure/adapters/sqlite_ledger_adapter.py",
-        "src/cresmo/infrastructure/adapters/gemini_adapter.py",
-        "src/cresmo/infrastructure/adapters/header_generator.py",
-        "src/cresmo/infrastructure/adapters/native_media_ingestion_adapter.py",
-        "src/cresmo/infrastructure/adapters/obsidian_vault_adapter.py",
-        "src/cresmo/infrastructure/adapters/prompt_provider.py",
+        "src/cresmo/infrastructure/persistence/sqlite_ledger_adapter.py",
+        "src/cresmo/infrastructure/adapters/llm/gemini_adapter.py",
+        "src/cresmo/infrastructure/adapters/scrapers/header_generator.py",
+        "src/cresmo/infrastructure/adapters/media/native_media_ingestion_adapter.py",
         "src/cresmo/infrastructure/adapters/data/polars_batch_processor.py",
-        "src/cresmo/infrastructure/adapters/database/postgres_ledger_adapter.py",
-        "src/cresmo/infrastructure/adapters/gemini_pool.py",
+        "src/cresmo/infrastructure/persistence/postgres_ledger_adapter.py",
+        "src/cresmo/infrastructure/adapters/llm/gemini_pool.py",
         "src/cresmo/infrastructure/adapters/judges/criterion_parser.py",
         "src/cresmo/infrastructure/adapters/scrapers/selectolax_html_parser.py",
-        "src/cresmo/infrastructure/database/models.py",
-        "src/cresmo/infrastructure/workers/arq_worker.py",
+        "src/cresmo/infrastructure/persistence/models.py",
     ],
     "cresmo_unmapped_infra": [
         "src/cresmo/infrastructure/adapters/data/polars_batch_processor.py",
-        "src/cresmo/infrastructure/adapters/database/postgres_ledger_adapter.py",
-        "src/cresmo/infrastructure/adapters/gemini_pool.py",
+        "src/cresmo/infrastructure/persistence/postgres_ledger_adapter.py",
+        "src/cresmo/infrastructure/adapters/llm/gemini_pool.py",
         "src/cresmo/infrastructure/adapters/judges/criterion_parser.py",
         "src/cresmo/infrastructure/adapters/scrapers/selectolax_html_parser.py",
-        "src/cresmo/infrastructure/database/models.py",
-        "src/cresmo/infrastructure/workers/arq_worker.py",
+        "src/cresmo/infrastructure/persistence/models.py",
     ],
     "presentation": [
+        "src/cresmo/bootstrap/composition.py",
         "src/cresmo/presentation/cli.py",
-        "src/cresmo/presentation/composition.py",
         "src/cresmo/presentation/commands/check_config.py",
         "src/cresmo/presentation/commands/dedupe.py",
         "src/cresmo/presentation/commands/run.py",
@@ -682,37 +702,36 @@ def sync_source_to_mutants() -> int:
                 if not (tests_dir / rel).exists():
                     p.unlink(missing_ok=True)
 
-    # Also sync scripts/
-    scripts_dir = Path("scripts")
-    mutants_scripts_dir = Path("mutants/scripts")
-    if scripts_dir.exists():
-        for s_file in scripts_dir.glob("**/*"):
-            if s_file.is_file() and not s_file.name.endswith((".pyc", ".pyo")):
-                rel = s_file.relative_to(scripts_dir)
-                target = mutants_scripts_dir / rel
-                target.parent.mkdir(parents=True, exist_ok=True)
-                if not target.exists() or s_file.read_bytes() != target.read_bytes():
-                    shutil.copy2(s_file, target)
-                    count += 1
-
-    # Also sync .agents/
-    agents_dir = Path(".agents")
+    # Sync only runtime .agents/skills/cresmo*/SKILL.md files needed by PromptProvider
+    agents_skills_dir = Path(".agents/skills")
     mutants_agents_dir = Path("mutants/.agents")
-    if agents_dir.exists():
-        for a_file in agents_dir.glob("**/*"):
-            if a_file.is_file() and not a_file.name.endswith((".pyc", ".pyo")):
-                rel = a_file.relative_to(agents_dir)
-                target = mutants_agents_dir / rel
+    if agents_skills_dir.exists():
+        for skill_md in agents_skills_dir.glob("cresmo*/SKILL.md"):
+            rel = skill_md.relative_to(Path(".agents"))
+            target = mutants_agents_dir / rel
+            target.parent.mkdir(parents=True, exist_ok=True)
+            if not target.exists() or skill_md.read_bytes() != target.read_bytes():
+                shutil.copy2(skill_md, target)
+                count += 1
+
+    # Sync evals/datasets artifacts needed by golden-set invariant tests in mutants/
+    evals_datasets_dir = Path("evals/datasets")
+    mutants_evals_datasets_dir = Path("mutants/evals/datasets")
+    if evals_datasets_dir.exists():
+        for dataset_file in evals_datasets_dir.rglob("*"):
+            if dataset_file.is_file():
+                rel = dataset_file.relative_to(evals_datasets_dir)
+                target = mutants_evals_datasets_dir / rel
                 target.parent.mkdir(parents=True, exist_ok=True)
-                if not target.exists() or a_file.read_bytes() != target.read_bytes():
-                    shutil.copy2(a_file, target)
+                if not target.exists() or dataset_file.read_bytes() != target.read_bytes():
+                    shutil.copy2(dataset_file, target)
                     count += 1
     return count
 
 
 def collect_pytest_nodes(test_files: Sequence[str]) -> list[str]:
     """Collect pytest test node IDs for given test files."""
-    cmd = ["uv", "run", "pytest", *test_files, "--collect-only", "-q"]
+    cmd = [sys.executable, "-m", "pytest", *test_files, "--collect-only", "-q"]
     proc = subprocess.run(cmd, capture_output=True, text=True, check=False)
     nodes: list[str] = []
     for line in proc.stdout.splitlines():
@@ -794,24 +813,32 @@ def seed_mutmut_stats(source_path: Path, test_nodes: Sequence[str]) -> None:
 
 
 def set_pyproject_only_mutate(target_path: str, test_files: Sequence[str] | None = None) -> str:
-    """Set only_mutate and targeted runner in pyproject.toml and return original file content."""
+    """Set only_mutate and mutmut v3 pytest test selection in pyproject.toml."""
     pyproject = Path("pyproject.toml")
     original = pyproject.read_text(encoding="utf-8")
 
-    # Clean any stale only_mutate/runner entries first (idempotent recovery)
-    clean_original = re.sub(r"only_mutate\s*=\s*\[.*?\]\n?", "", original)
+    # Clean any stale only_mutate / runner / pytest_add_cli_args_test_selection entries first
+    clean_original = re.sub(r"only_mutate\s*=\s*\[.*?\]\n?", "", original, flags=re.DOTALL)
     clean_original = re.sub(r'runner\s*=\s*".*?"\n?', "", clean_original)
+    clean_original = re.sub(
+        r"pytest_add_cli_args_test_selection\s*=\s*\[.*?\]\n?",
+        "",
+        clean_original,
+        flags=re.DOTALL,
+    )
 
     mutmut_section = '[tool.mutmut]\nsource_paths = ["src"]\n'
     if mutmut_section in clean_original:
-        tests_arg = (
-            " ".join(test_files)
+        selected_tests = (
+            list(test_files)
             if test_files
-            else "tests/shared_kernel tests/identity tests/cresmo"
+            else ["tests/shared_kernel", "tests/identity", "tests/cresmo"]
         )
+        tests_toml = json.dumps(selected_tests)
         new_content = clean_original.replace(
             mutmut_section,
-            f'{mutmut_section}only_mutate = ["{target_path}"]\nrunner = "pytest -x {tests_arg}"\n',
+            f'{mutmut_section}only_mutate = ["{target_path}"]\n'
+            f"pytest_add_cli_args_test_selection = {tests_toml}\n",
         )
         pyproject.write_text(new_content, encoding="utf-8")
     return clean_original
@@ -845,14 +872,18 @@ def run_mutation_on_module(
     # 2. Identify tests
     test_files = MODULE_TEST_MAP.get(source_path_str)
     if not test_files:
-        # Fallback to test matching basename
-        candidate = Path(f"tests/cresmo/unit/test_{source_path.name}")
-        if candidate.exists():
-            test_files = [str(candidate)]
+        # Fallback to layer test matching basename across layered unit suites
+        layer_candidates = [
+            Path(f"tests/cresmo/unit/{layer}/test_{source_path.name}")
+            for layer in ("domain", "application", "infrastructure", "bootstrap", "presentation")
+        ]
+        existing = [str(c) for c in layer_candidates if c.exists()]
+        if existing:
+            test_files = existing
         else:
             test_files = [
-                "tests/cresmo/unit/test_entities.py",
-                "tests/cresmo/unit/test_value_objects.py",
+                "tests/cresmo/unit/domain/test_entities.py",
+                "tests/cresmo/unit/domain/test_value_objects.py",
             ]
 
     print(f"  🧪 Mirrored Test Suites: {', '.join(test_files)}")
@@ -878,7 +909,7 @@ def run_mutation_on_module(
         if mod_parts.parts and mod_parts.parts[0] == "src":
             mod_parts = Path(*mod_parts.parts[1:])
         pattern = f"*{str(mod_parts.with_suffix('')).replace('/', '.')}*"
-        cmd = ["uv", "run", "mutmut", "run", pattern]
+        cmd = [sys.executable, "-m", "mutmut", "run", pattern]
         res = subprocess.run(
             cmd,
             capture_output=True,
@@ -914,7 +945,7 @@ def run_mutation_on_module(
         print(f"\n  🔍 SURVIVING MUTANT DIFFS ({len(survived_keys)}):")
         for k in survived_keys:
             diff_proc = subprocess.run(
-                ["uv", "run", "mutmut", "show", k],
+                [sys.executable, "-m", "mutmut", "show", k],
                 capture_output=True,
                 text=True,
                 check=False,

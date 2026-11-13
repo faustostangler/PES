@@ -20,7 +20,7 @@ from cresmo.application.ports import (
     NoOpPromptProviderPort,
     NoOpTelemetryPort,
 )
-from cresmo.domain.entities import PipelineSessionId, StageTranscript, UserIdentity
+from cresmo.domain.entities import StageTranscript, UserIdentity
 from cresmo.domain.exceptions import StageQuarantinedError
 from cresmo.domain.value_objects import (
     Channel,
@@ -38,7 +38,9 @@ from cresmo.domain.value_objects import (
 
 def _create_sample_context() -> PipelineExecutionContext:
     channel = Channel(name="Test Channel", id=ChannelId("UC_test"))
-    content = Content.create(id=ContentId("content_123"), title="Sample Content", session_id="test_chan:content_123")
+    content = Content.create(
+        id=ContentId("content_123"), title="Sample Content", session_id="test_chan:content_123"
+    )
     return PipelineExecutionContext(
         user_identity=UserIdentity.worker(),
         channel=channel,

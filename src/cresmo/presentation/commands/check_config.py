@@ -17,9 +17,9 @@ from typing import Annotated, Any
 import typer
 from pydantic import ValidationError
 
+from cresmo.bootstrap.composition import build_preflight_checker
 from cresmo.domain.exceptions import PreflightError
 from cresmo.infrastructure.config import CresmoSettings
-from cresmo.presentation.composition import build_preflight_checker
 from cresmo.presentation.exit_codes import (
     EXIT_CONFIG_OR_USAGE_ERROR,
     EXIT_INTERNAL_ERROR,

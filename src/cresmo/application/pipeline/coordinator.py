@@ -2,12 +2,12 @@
 
 Orchestrates the cognitive synthesis pipeline per ADR-007 (Template Method) and ADR-021:
 - Raw Ingestion (MediaIngestionPort ACL)
-- Raw Indexing (IndexRawTranscriptsUseCase)
-- Fluid Prose Synthesis (FillGapsUseCase)
-- Longitudinal & Synchronic Expansion (ExpandCompendiumUseCase)
-- Holistic Inventory Discovery (DiscoverAtomicInventoryUseCase)
-- Batched Atomic Synthesis (SynthesizeAtomicBatchUseCase)
-- Map of Content Reconciliation (ReconcileMOCsUseCase)
+- Raw Indexing (IndexRawTranscriptsUseCase)  # FUTURE / DEFERRED
+- Fluid Prose & Gap Expansion (PipelineStageRunner)
+- Longitudinal & Synchronic Expansion (ExpandCompendiumUseCase)  # FUTURE / DEFERRED
+- Holistic Inventory Discovery (DiscoverAtomicInventoryUseCase)  # FUTURE / DEFERRED
+- Batched Atomic Synthesis (SynthesizeAtomicBatchUseCase)  # FUTURE / DEFERRED
+- Map of Content Reconciliation (ReconcileMOCsUseCase)  # FUTURE / DEFERRED
 - Duplicate Unification & Entity Resolution (UnifyDuplicateNotesUseCase)
 
 Conforms to:
@@ -37,6 +37,7 @@ from cresmo.application.pipeline.transcript_loader import (
     load_transcript_from_file,
 )
 from cresmo.application.ports import (
+    ChannelTaxonomyPort,
     CritiqueSynthesizerPort,
     DefaultPipelineSettings,
     LedgerRepositoryPort,
@@ -44,6 +45,7 @@ from cresmo.application.ports import (
     LLMTransformationPort,
     MediaIngestionPort,
     MetricsPort,
+    NoOpChannelTaxonomyPort,
     NoOpMetricsPort,
     NoOpPromptProviderPort,
     NoOpTelemetryPort,
@@ -106,6 +108,7 @@ class CresmoPipeline:
         prompt_provider: PromptProviderPort | None = None,
         llm_judge_port: LlmJudgePort | None = None,
         critique_synthesizer: CritiqueSynthesizerPort | None = None,
+        taxonomy_port: ChannelTaxonomyPort | None = None,
     ) -> None:
         self.media_ingestion_port = media_ingestion_port
 
@@ -113,6 +116,7 @@ class CresmoPipeline:
             raise ValueError("vault_port must be provided")
         self.vault_port = vault_port
         self.ledger_port = ledger_port
+        self.taxonomy_port: ChannelTaxonomyPort = taxonomy_port or NoOpChannelTaxonomyPort()
         self.batch_size = batch_size
         self.settings: PipelineSettingsProtocol = settings or DefaultPipelineSettings()
 
@@ -261,8 +265,6 @@ class CresmoPipeline:
             current_source: Any = raw
 
             for step in conveyor_steps:
-                if step == StageName.GAP_FILLER:
-                    pass
                 artifact = None
                 if not force_reprocess:
                     cached = self.vault_port.get_stage_transcript(step, content.id)
@@ -405,7 +407,7 @@ class CresmoPipeline:
                 "and cannot be processed as a transcript."
             )
         self.warmup()
-        raw = load_transcript_from_file(file_path)
+        raw = load_transcript_from_file(file_path, taxonomy_port=self.taxonomy_port)
         ensure_transcript_saved(
             self.vault_port,
             file_path,

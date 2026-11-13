@@ -17,7 +17,6 @@ from cresmo.domain.value_objects import (
     CandidateText,
     Channel,
     ChannelId,
-    ChannelName,
     Content,
     ContentId,
     CriterionScore,
@@ -37,7 +36,9 @@ class TestSourceTranscript:
         pub = datetime.date(2026, 1, 15)
         transcript = StageTranscript(
             channel=Channel(name="Test Channel"),
-            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=video_123", publication_date=pub),
+            provenance=MediaProvenance.create(
+                url="https://youtube.com/watch?v=video_123", publication_date=pub
+            ),
             content=Content(
                 id=cid,
                 title="Introduction to Socio-Technical Systems",

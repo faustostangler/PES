@@ -88,4 +88,3 @@ class TestAuthenticatedUser:
         assert user1 == user2
         assert hash(user1) == hash(user2)
         assert user1 != user3
-

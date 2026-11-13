@@ -134,4 +134,3 @@ class RevokePersonalAccessTokenUseCase:
 
     def execute(self, token_id: str, user_id: UserId) -> bool:
         return self._pat_repo.revoke(token_id, user_id)
-

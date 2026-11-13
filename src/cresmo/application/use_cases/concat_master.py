@@ -14,12 +14,13 @@ from __future__ import annotations
 import re
 
 from cresmo.application.ports import (
+    ChannelTaxonomyPort,
     DefaultPipelineSettings,
+    NoOpChannelTaxonomyPort,
     PipelineSettingsProtocol,
     VaultRepositoryPort,
 )
 from cresmo.domain.exceptions import DomainValidationError
-from cresmo.domain.taxonomy import classify_channel
 from cresmo.domain.value_objects import ChannelName, ContentId, MasterDocumentResult
 
 CHUNK_SEPARATOR: str = "\n\n---\n\n"
@@ -42,11 +43,18 @@ def count_words(text: str) -> int:
 
 
 def parse_metadata_from_content(
-    content: str, channel_name: ChannelName, fallback_stem: str
+    content: str,
+    channel_name: ChannelName,
+    fallback_stem: str,
+    taxonomy_port: ChannelTaxonomyPort | None = None,
 ) -> tuple[int, str, ContentId]:
     """Extract (video_date, channel_category, video_id) from YAML frontmatter.
 
     Args:
+        content: Raw markdown document content.
+        channel_name: Creator channel name used for deterministic fallback classification.
+        fallback_stem: Filename stem fallback when video_id frontmatter is absent.
+        taxonomy_port: Optional taxonomy classification port for fallback resolution.
         content: Raw markdown text with YAML frontmatter.
         channel_name: Channel identifier for fallback categorization.
         fallback_stem: File stem fallback if video_id is absent.
@@ -65,7 +73,8 @@ def parse_metadata_from_content(
     if category_match and category_match.group(1).strip():
         category = category_match.group(1).strip()
     else:
-        category, _ = classify_channel(channel_name)
+        resolved_taxonomy = taxonomy_port or NoOpChannelTaxonomyPort()
+        category, _ = resolved_taxonomy.classify(channel_name)
 
     # 3. Parse video_id
     video_id_match = _VIDEO_ID_PATTERN.search(content)
@@ -92,15 +101,18 @@ class ConcatMasterUseCase:
         self,
         vault_port: VaultRepositoryPort,
         settings: PipelineSettingsProtocol | None = None,
+        taxonomy_port: ChannelTaxonomyPort | None = None,
     ) -> None:
-        """Initialize use case with vault port and operational settings.
+        """Initialize use case with vault port, operational settings, and taxonomy port.
 
         Args:
             vault_port: Port providing file read and master document write capabilities.
             settings: Configuration settings holding target word caps.
+            taxonomy_port: Port classifying channels into macro taxonomy categories.
         """
         self.vault_port = vault_port
         self.settings = settings if settings is not None else DefaultPipelineSettings()
+        self.taxonomy_port = taxonomy_port or NoOpChannelTaxonomyPort()
 
     def execute(
         self,
@@ -137,6 +149,7 @@ class ConcatMasterUseCase:
                 content=content,
                 channel_name=channel_name,
                 fallback_stem=file_path.stem,
+                taxonomy_port=self.taxonomy_port,
             )
             if resolved_category is None:
                 resolved_category = category

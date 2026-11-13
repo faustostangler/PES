@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import pytest
 
-from cresmo.application.json_parser import (
+from cresmo.application.services.json_parser import (
     _TRAILING_COMMA_PATTERN,
     _extract_bracketed,
     _extract_individual_objects,
@@ -247,7 +247,7 @@ class TestJsonParser:
     ) -> None:
         from unittest.mock import MagicMock
 
-        import cresmo.application.json_parser as jp
+        import cresmo.application.services.json_parser as jp
 
         mock_step5 = MagicMock(
             side_effect=AssertionError("Step 5 should not be reached for valid step 4 object")

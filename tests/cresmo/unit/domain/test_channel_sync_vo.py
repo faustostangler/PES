@@ -17,6 +17,7 @@ from cresmo.domain.exceptions import (
     PreflightError,
     SecurityViolationError,
 )
+from cresmo.domain.taxonomy import TaxonomyCatalog
 from cresmo.domain.value_objects import (
     Channel,
     ChannelFeedQuery,
@@ -570,24 +571,38 @@ class TestSyncFilterCriteria:
     def test_matches_category_evaluates_domain_name_vs_volatility(self) -> None:
         # Category list has both domain name ("politics_br") and volatility type ("perennial")
         criteria = SyncFilterCriteria(categories=("politics_br", "perennial"))
+        catalog: TaxonomyCatalog = {
+            "politics_br": ("volatile", frozenset({"ancapsu"})),
+            "engineering": ("perennial", frozenset({"3blue1brown"})),
+            "entertainment": ("volatile", frozenset({"canal 90"})),
+        }
 
         # Ancapsu -> domain='politics_br', category_type='volatile' -> MATCHES via domain!
-        assert criteria.matches_category(ChannelName("ancapsu")) is True
+        assert criteria.matches_category(ChannelName("ancapsu"), catalog=catalog) is True
 
         # 3blue1brown -> domain='engineering', category_type='perennial' -> MATCHES via volatility!
-        assert criteria.matches_category(ChannelName("3blue1brown")) is True
+        assert criteria.matches_category(ChannelName("3blue1brown"), catalog=catalog) is True
 
         # Canal 90 -> domain='entertainment', category_type='volatile' -> REJECTED (neither matches)
-        assert criteria.matches_category(ChannelName("canal 90")) is False
+        assert criteria.matches_category(ChannelName("canal 90"), catalog=catalog) is False
 
         # Fallback with channel_url when channel_name is None
         assert (
-            criteria.matches_category(channel_name=None, channel_url="https://youtube.com/@ancapsu")
+            criteria.matches_category(
+                channel_name=None,
+                channel_url="https://youtube.com/@ancapsu",
+                catalog=catalog,
+            )
             is True
         )
-        assert criteria.matches_category(channel_name=None, channel_url=None) is False
+        assert (
+            criteria.matches_category(channel_name=None, channel_url=None, catalog=catalog) is False
+        )
         c_dummy_cat = SyncFilterCriteria(categories=("XXXX",))
-        assert c_dummy_cat.matches_category(channel_name=None, channel_url=None) is False
+        assert (
+            c_dummy_cat.matches_category(channel_name=None, channel_url=None, catalog=catalog)
+            is False
+        )
 
     def test_matches_video_by_id_and_url(self) -> None:
         criteria = SyncFilterCriteria(video_ids=("vid12345", "dQw4w9WgXcQ"))

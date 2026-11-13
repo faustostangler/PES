@@ -36,11 +36,7 @@ class PersonalAccessToken:
         if self.is_revoked:
             return False
         if self.expires_at is not None:
-            exp = (
-                self.expires_at
-                if self.expires_at.tzinfo
-                else self.expires_at.replace(tzinfo=UTC)
-            )
+            exp = self.expires_at if self.expires_at.tzinfo else self.expires_at.replace(tzinfo=UTC)
             chk = now if now.tzinfo else now.replace(tzinfo=UTC)
             if chk >= exp:
                 return False
