@@ -1,0 +1,758 @@
+[
+  {
+    "id": "orality_01_borderline_fp",
+    "input": {
+      "raw_text": "fala galera beleza? hoje o tema é microsserviços versus monólitos, né? a galera vê as big techs usando kafka e barramento assíncrono e sai copiando por pura pressão da modinha do mercado, sem ter maturidade nenhuma de governança. aí enche de complexidade cognitiva e latência de rede que superam qualquer ganho de escalabilidade, e ninguém consegue debugar na produção. como eu sempre falo aqui nos meus vídeos, a galera divide o banco de dados antes da hora, fragmenta o modelo de domínio e cria um monólito distribuído que sofre com transação falhando na rede e perde toda a observabilidade dos dados em alta concorrência. manter um monólito bem modular numa única unidade de implantação reduz os custos de orquestração e diminui demais o tempo de recuperação quando dá pau na consistência eventual.",
+      "candidate_text": "## A Arquitetura de Microsserviços e a Prematuridade da Distribuição\n\nA transição arquitetural de sistemas monolíticos para topologias distribuídas frequentemente decorre de pressões miméticas do ecossistema tecnológico e não de requisitos operacionais tangíveis. A adoção precoce de barramentos de mensageria assíncrona introduz camadas de complexidade cognitiva e latência de rede que superam os ganhos nominais de escalabilidade em organizações com baixa maturidade de governança.\n\nConforme discutido anteriormente em nossos vídeos, a fragmentação prematura de modelos de domínio em bancos de dados isolados culmina na formação de monólitos distribuídos. Esse padrão acopla serviços por meio de transações fracassadas na rede, multiplicando pontos únicos de falha e obscurecendo a observabilidade do ciclo de vida dos dados em ambientes de alta concorrência.\n\nA manutenção de uma arquitetura coesa e modular sob uma única unidade de implantação mitiga custos de orquestração e reduz substancialmente o tempo médio de recuperação diante de falhas de consistência eventual."
+    },
+    "expected_output": {
+      "verdict": "FAIL"
+    },
+    "metadata": {
+      "criterion": "orality_removal",
+      "difficulty": "borderline",
+      "expected_anomaly": "conversational_channel_self_reference",
+      "defect_location": "paragraph_2",
+      "video_id": "KFwoOkNFojs",
+      "target_verdict": "FAIL"
+    }
+  },
+  {
+    "id": "orality_02_borderline_fn",
+    "input": {
+      "raw_text": "né, então, tipo assim, cara, se você olhar o linux lá no começo nos anos noventa, o linus torvalds não quis saber de microkernel do andrew tanenbaum no minix, tá ligado? na teoria acadêmica do tanenbaum era lindo isolar sistema de arquivos e rede em processos separados no espaço de usuário, mas no hardware x86 da época a troca de contexto entre processos e a passagem de mensagens interprocessos deixava tudo lerdo demais. aí teve aquele debate famoso na usenet em 1992 onde o tanenbaum chamou o linux de obsoleto e o linus bateu de volta na lata mostrando que sistema operacional de larga escala precisa rodar no anel zero com memória compartilhada. juntando drivers, escalonador de processos e memória virtual num espaço contínuo do núcleo, ele provou que performance real depende de cortar o overhead de troca de privilégios em cargas pesadas de i/o.",
+      "candidate_text": "## O Debate Arquitetural entre Monólitos e Microkernels no Unix\n\nO desenvolvimento inicial do núcleo **Linux** por **Linus Torvalds** na década de 1990 representou uma deliberação pragmática fundamentada nas restrições de desempenho da arquitetura x86. Em oposição ao modelo de microkernel preconizado por **Andrew Tanenbaum** no sistema acadêmico **MINIX**, a abordagem monolítica privilegiou o acesso direto aos subsistemas de hardware dentro do espaço de endereçamento do anel zero.\n\nA disputa teórica travada na Usenet em 1992 evidenciou a tensão entre pureza de isolamento modular e eficiência operacional. Os microkernels segregavam sistemas de arquivos e gerenciamento de rede em processos independentes no espaço de usuário, exigindo múltiplas trocas de contexto e passagem de mensagens interprocessos que penalizavam severamente a taxa de processamento dos computadores pessoais daquela era.\n\nAo consolidar os drivers, o escalonador de processos e o subsistema de memória virtual no espaço contínuo do núcleo, o projeto demonstrou que a viabilidade de um sistema operacional de larga escala depende da minimização do overhead de troca de privilégios de execução sob cargas intensivas de entrada e saída."
+    },
+    "expected_output": {
+      "verdict": "PASS"
+    },
+    "metadata": {
+      "criterion": "orality_removal",
+      "difficulty": "borderline",
+      "expected_anomaly": "none",
+      "defect_location": "none",
+      "video_id": "-yGHG3pnHLg",
+      "target_verdict": "PASS"
+    }
+  },
+  {
+    "id": "orality_03_easy_pass",
+    "input": {
+      "raw_text": "bom dia a todos, né, hoje a gente vai conversar sobre a batalha de são mamede em 1128. o afonso henriques, moleque de vinte anos, peitou a própria mãe, a condessa dona teresa de leão. ela tava mancomunada com a aristocracia galega, principalmente a linhagem do fernão peres de trava, e a nobreza territorial de entre-douro-e-minho percebeu que o condado portucalense fundado pelo henrique de borgonha ia acabar subordinado à dinâmica sucessória do reino da galiza e leão. aí os cavaleiros portugueses se juntaram ao jovem herdeiro, deram uma surra militar neles nos campos de guimarães, assumiram a regência territorial e começaram o distanciamento diplomático pra romper a vassalagem leonesa de vez.",
+      "candidate_text": "## A Batalha de São Mamede e a Autonomia Portucalense\n\nEm 1128, a **Batalha de São Mamede** configurou o evento decisivo para a consolidação institucional do futuro reino de Portugal. O confronto armado polarizou a nobreza portucalense, liderada pelo infante **Dom Afonso Henriques**, contra as forças leais à sua mãe, a condessa **Dona Teresa de Leão**, e à sua facção aliada oriunda da aristocracia galega.\n\nA aproximação política entre a condessa regente e a linhagem de **Fernão Peres de Trava** ameaçava subordinar os interesses senhoriais do Entre-Douro-e-Minho às dinâmicas sucessórias do **Reino da Galiza** e **Leão**. A nobreza territorial portucalense percebeu essa articulação como uma dissolução do patrimônio de soberania estabelecido na concessão condal de **Henrique de Borgonha**.\n\nA vitória militar de Afonso Henriques nos campos de Guimarães transferiu o comando efetivo da regência para as mãos da linhagem herdeira, assegurando a autonomia decisória sobre o território e inaugurando o processo de distanciamento diplomático em relação à vassalagem leonesa."
+    },
+    "expected_output": {
+      "verdict": "PASS"
+    },
+    "metadata": {
+      "criterion": "orality_removal",
+      "difficulty": "easy",
+      "expected_anomaly": "none",
+      "defect_location": "none",
+      "video_id": "9IbNJ0EsTxI",
+      "target_verdict": "PASS"
+    }
+  },
+  {
+    "id": "orality_04_easy_fail",
+    "input": {
+      "raw_text": "a inflação no brasil nos anos oitenta e começo dos noventa era uma loucura total, a indexação generalizada de preços e salários alimentava a memória inflacionária e a maquininha de remarcar preço no supermercado trabalhava sem parar. os sucessivos congelamentos de preço do governo fracassaram. aí em 1994 a equipe econômica criou a urv como uma moeda contábil de transição pra alinhar contratos e preços relativos antes de converter tudo pro real, quebrando a espiral de expectativas adaptativas. tudo isso apoiado em rigor fiscal e abertura comercial. não esquece de deixar o like e ativar o sininho pra receber mais conteúdos.",
+      "candidate_text": "## A Dinâmica da Inércia Inflacionária e a Estruturação do Plano Real\n\nDurante as décadas de 1980 e o início dos anos 1990, a economia brasileira enfrentou um regime de hiperinflação crônica sustentado pelo mecanismo da indexação generalizada de preços e salários. A memória inflacionária alimentava remarcações preventivas diárias, anulando sucessivos planos heterodoxos de congelamento artificial de preços executados pelo poder público.\n\nEm 1994, a equipe econômica concebeu a **Unidade Real de Valor** como uma moeda contábil estável de transição, desvinculada do curso forçado da moeda corrente. Esse arranjo engenhoso alinhou os contratos e preços relativos antes da conversão monetária definitiva para o Real, quebrando a espiral de expectativas adaptativas que corroía o poder de compra da população.\n\nA estabilização monetária dependeu também de rigor fiscal e da liberalização comercial externa para conter pressões oligopolistas locais. Deixe seu like e ative o sininho de notificações para não perder nenhuma das nossas próximas aulas de análise macroeconômica e finanças."
+    },
+    "expected_output": {
+      "verdict": "FAIL"
+    },
+    "metadata": {
+      "criterion": "orality_removal",
+      "difficulty": "easy",
+      "expected_anomaly": "youtube_channel_cta",
+      "defect_location": "paragraph_3",
+      "video_id": "MRG6d9bQC8Q",
+      "target_verdict": "FAIL"
+    }
+  },
+  {
+    "id": "orality_05_typical_pass_1",
+    "input": {
+      "raw_text": "olá pessoal, tudo bem? então, nessa aula de hoje eu vou tentar explicar pra vocês como funciona o algoritmo de retropropagação, o backpropagation nas redes neurais profundas. muita gente acha que é um bicho de sete cabeças, mas na verdade é só a regra da cadeia do cálculo diferencial aplicada em grafos computacionais pra achar a taxa de variação da função de perda em relação a cada peso. você primeiro joga os vetores de entrada pelas camadas intermediárias na etapa direta, fazendo transformações afins seguidas por ativações não lineares até gerar as predições finais. aí quantifica o desvio do treino, e na volta você calcula os gradientes parciais retrocedendo da saída até o início. isso aí viabiliza usar o gradiente descendente estocástico pra calibrar milhões de parâmetros sem fazer derivada na mão.",
+      "candidate_text": "## O Algoritmo de Retropropagação em Redes Neurais Artificiais\n\nO treinamento supervisionado de **redes neurais profundas** fundamenta-se no algoritmo de **retropropagação** do erro através da arquitetura de pesos sinápticos. O mecanismo operacional consiste na aplicação sistemática da regra da cadeia do cálculo diferencial sobre um grafo computacional orientado, mensurando a taxa de variação da função de perda em relação a cada parâmetro ajustável do modelo.\n\nA etapa direta propaga os vetores de entrada pelas camadas intermediárias, aplicando transformações afins seguidas por funções de ativação não lineares até a produção das predições finais. Uma vez quantificado o desvio empírico em relação aos rótulos de treinamento, a etapa reversa calcula os gradientes parciais retrocedendo progressivamente da camada de saída até as camadas iniciais.\n\nEssa formulação matemática viabiliza o emprego de métodos de otimização baseados no gradiente descendente estocástico, permitindo o ajuste simultâneo de milhões de coeficientes ponderados sem a necessidade de diferenciações manuais exaustivas."
+    },
+    "expected_output": {
+      "verdict": "PASS"
+    },
+    "metadata": {
+      "criterion": "orality_removal",
+      "difficulty": "typical",
+      "expected_anomaly": "none",
+      "defect_location": "none",
+      "video_id": "ARQBBKnfP_c",
+      "target_verdict": "PASS"
+    }
+  },
+  {
+    "id": "orality_06_typical_pass_2",
+    "input": {
+      "raw_text": "aí você pensa assim, né, por que o império romano caiu no ocidente no ano de 476? não foi uma invasão repentina do nada, foi um processo lento de desintegração fiscal e militar. o sistema tributário central quebrou e a hiperinflação gerada pela desvalorização do teor metálico das moedas acabou com a grana do estado pra manter o exército. a defesa das fronteiras foi terceirizada pros mercenários germânicos, transferindo a violência pra chefes tribais sem lealdade a roma ou ravena. com o comércio do mediterrâneo destruído, as cidades ficaram sem comida e a população fugiu pro campo pras propriedades agrárias autossuficientes, virando colonos que prefiguraram a servidão feudal da idade média.",
+      "candidate_text": "## Os Mecanismos Estruturais da Desintegração do Império Romano Ocidental\n\nA queda institucional do **Império Romano do Ocidente** em 476 da Era Comum não representou uma ruptura catastrófica instantânea, mas o desfecho de uma prolongada erosão socioeconômica e militar. A crise do sistema tributário centralizado, combinada com a hiperinflação gerada pela desvalorização contínua do conteúdo metálico das moedas, incapacitou o poder imperial de financiar a infraestrutura militar permanente.\n\nA dependência crônica de contingentes mercenários germânicos para guarnecer as fronteiras imperiais transferiu o monopólio da violência para comandantes tribais sem lealdade institucional à burocracia de Roma ou Ravena. Simultaneamente, a escassez de recursos públicos desarticulou as malhas de comércio regional do Mediterrâneo, inviabilizando o abastecimento regular dos grandes centros urbanos.\n\nEsse estrangulamento mercantil acelerou o êxodo populacional em direção às propriedades agrárias autossuficientes, consolidando o regime de colonato que prefigurou a estrutura feudal de servidão característica do período medieval europeu."
+    },
+    "expected_output": {
+      "verdict": "PASS"
+    },
+    "metadata": {
+      "criterion": "orality_removal",
+      "difficulty": "typical",
+      "expected_anomaly": "none",
+      "defect_location": "none",
+      "video_id": "Un1QtE5swEU",
+      "target_verdict": "PASS"
+    }
+  },
+  {
+    "id": "orality_07_typical_fail",
+    "input": {
+      "raw_text": "o estreito de malaca, entre a malásia e sumatra, é por onde passa quase 80% do petróleo que vai pra china vindo do oriente médio e da áfrica, sabe? se aquilo ali for bloqueado por uma esquadra aeronaval inimiga numa guerra, as fábricas de cantão e xangai ficam sem combustível e param em questão de poucas semanas. essa fraqueza molda toda a estratégia militar chinesa. por isso pequim investe pesado no cinturão e rota, construindo oleodutos terrestres pelo paquistão e mianmar pra ligar o oceano índico ao território deles sem passar pelo mar.",
+      "candidate_text": "## O Estreito de Malaca e a Vulnerabilidade Energética Chinesa\n\nO **Estreito de Malaca** configura o mais crítico ponto de estrangulamento geoestratégico da economia global contemporânea. Localizado entre a península da Malásia e a ilha de Sumatra, esse corredor marítimo canaliza aproximadamente 80% do petróleo bruto importado pela **República Popular da China** proveniente do **Oriente Médio** e da **África**.\n\nVeja bem, meus amigos, se uma esquadra aeronaval adversária impuser um bloqueio operacional a essa via navegável, as reservas estratégicas de combustíveis fósseis das indústrias costeiras de Cantão e Xangai sofrerão colapso severo no horizonte de poucas semanas. Essa vulnerabilidade condiciona diretamente a formulação de segurança nacional.\n\nPara contornar esse dilema geográfico, a liderança de **Pequim** investe vultosos aportes na iniciativa do **Cinturão** e **Rota**, priorizando oleodutos terrestres que cortam **Mianmar** e o **Paquistão** para conectar o **Oceano Índico** diretamente ao território continental."
+    },
+    "expected_output": {
+      "verdict": "FAIL"
+    },
+    "metadata": {
+      "criterion": "orality_removal",
+      "difficulty": "typical",
+      "expected_anomaly": "colloquial_verbal_tic_leakage",
+      "defect_location": "paragraph_2",
+      "video_id": "ZEZ7UIq14Wo",
+      "target_verdict": "FAIL"
+    }
+  },
+  {
+    "id": "faith_01_borderline_fp",
+    "input": {
+      "raw_text": "a defesa aérea de israel com a cúpula de ferro, o domo de ferro, foi projetada pela corporação estatal rafael advanced defense systems pra proteger a infraestrutura civil contra foguetes e projéteis balísticos de curto alcance lançados de gaza ou do líbano. o arranjo operacional usa radar de varredura eletrônica e faz o cálculo preditivo da trajetória de impacto antes de autorizar o disparo defensivo. cada míssil interceptador tamir custa uns cinquenta mil dólares, enquanto o artefato rudimentar do hamas custa trezentos dólares. essa disparidade gera uma taxa contínua de atrito fiscal ao orçamento nacional e cria uma exaustão orçamentária que evidencia que a eficácia puramente tática não anula a dependência estratégica dos subsídios industriais e financiamento militar dos estados unidos em conflitos prolongados.",
+      "candidate_text": "## A Assimetria Econômica dos Sistemas de Defesa Aérea em Israel\n\nO sistema de interceptação antimíssil **Domo de Ferro**, desenvolvido pela corporação estatal **Rafael Advanced Defense Systems**, cumpre papel central na preservação da infraestrutura civil israelense contra projéteis balísticos de curto alcance. O arranjo operacional baseia-se na detecção por radar de varredura eletrônica e cálculo preditivo da trajetória de impacto antes do disparo defensivo.\n\nA sustentação financeira desse complexo balístico foi formalizada no protocolo anexo aos **Acordos de Camp David** firmados em 1978 sob mediação direta do presidente **Jimmy Carter**, garantindo repasses perenes de armamentos guiados. Contudo, a disparidade entre o custo unitário do interceptador **Tamir** e os artefatos rudimentares de baixo custo impõe uma taxa contínua de atrito fiscal ao orçamento nacional.\n\nEssa dinâmica de exaustão orçamentária evidencia que a eficácia puramente tática de uma barreira antiaérea não neutraliza a dependência estratégica de subsídios industriais externos perante conflitos de atrito prolongado."
+    },
+    "expected_output": {
+      "verdict": "FAIL"
+    },
+    "metadata": {
+      "criterion": "semantic_faithfulness",
+      "difficulty": "borderline",
+      "expected_anomaly": "subtle_historical_anachronism_hallucination",
+      "defect_location": "paragraph_2",
+      "video_id": "eYFTRQHaPgw",
+      "target_verdict": "FAIL"
+    }
+  },
+  {
+    "id": "faith_02_borderline_fn",
+    "input": {
+      "raw_text": "quando a gente olha o bloco de atenção auto-supervisionada em transformers, você tem três projeções lineares: as matrizes de query, key e value, consulta, chave e valor, projetando em subespaços de dimensão reduzida. o que a query faz é perguntar a busca semântica da palavra, e a key é o rótulo do que cada elemento oferece. a similaridade direcional entre o vetor de query e as chaves é dada pelo produto escalar. aí você divide pela raiz quadrada da dimensão da chave pra variância dos gradientes não explodir, e a função softmax transforma isso numa distribuição estocástica de probabilidades de relevância mútua. no final, essa soma ponderada multiplica a matriz de valores pra condensar as relações sintáticas e semânticas de longo alcance, superando o gargalo de compressão sequencial das redes neurais recorrentes antigas.",
+      "candidate_text": "## A Geometria do Mecanismo de Atenção em Arquiteturas Transformer\n\nO bloco de atenção auto-supervisionada em redes neurais de processamento de linguagem formaliza a recuperação associativa de contexto mediante três projeções lineares distintas dos vetores de incorporação: as matrizes de consulta (**Query**), chave (**Key**) e valor (**Value**). Cada posição no fluxo textual projeta suas representações nesses subespaços de dimensão reduzida.\n\nA similaridade direcional entre o vetor de consulta de um determinado termo e os vetores de chave de todos os demais elementos da sequência é quantificada através do produto escalar. O escalonamento pela raiz quadrada da dimensão da chave estabiliza a variância dos gradientes, enquanto a função softmax normaliza essas grandezas em uma distribuição estocástica de probabilidades que pondera a relevância contextual mútua.\n\nA soma ponderada resultante sobre a matriz de valores produz um vetor contextualizado que condensa as relações sintáticas e semânticas de longo alcance, contornando o gargalo de compressão sequencial típico das redes recorrentes."
+    },
+    "expected_output": {
+      "verdict": "PASS"
+    },
+    "metadata": {
+      "criterion": "semantic_faithfulness",
+      "difficulty": "borderline",
+      "expected_anomaly": "none",
+      "defect_location": "none",
+      "video_id": "l6DKRf-fAAM",
+      "target_verdict": "PASS"
+    }
+  },
+  {
+    "id": "faith_03_easy_pass",
+    "input": {
+      "raw_text": "a ilha de taiwan concentra a fabricação mundial de semicondutores e circuitos integrados de ponta abaixo de cinco nanômetros através da fundição tsmc, abastecendo as cadeias automotivas, computacionais e aeroespaciais das potências ocidentais. se a china continental fizer uma intervenção militar hostil no estreito de taiwan, paralisa a economia global inteira. além disso, as máquinas avançadas de litografia ultravioleta extrema da empresa holandesa asml instaladas na ilha contam com mecanismos de desativação remota pra impedir que invasores capturem a tecnologia. esse arranjo cria o chamado escudo de silício, onde a dependência mútua eleva o custo geopolítico de qualquer agressão unilateral a níveis proibitivos.",
+      "candidate_text": "## A Hegemonia da TSMC em Taiwan e a Geopolítica dos Semicondutores\n\nA concentração da capacidade de fabricação de circuitos integrados de ponta na ilha de **Taiwan**, liderada pela fundição **TSMC**, estabeleceu uma dependência estrutural assimétrica para a economia global. A produção dos chips litográficos abaixo de cinco nanômetros atende às principais cadeias de valor dos setores automotivo, computacional e aeroespacial das potências ocidentais.\n\nUma intervenção militar hostil deflagrada pela **República Popular da China** através do Estreito de Taiwan provocaria a interrupção abrupta do fornecimento global de componentes eletrônicos essenciais. Ademais, os sistemas avançados de litografia ultravioleta extrema fornecidos pela fabricante holandesa **ASML** possuem dispositivos de desativação remota concebidos para impedir a apropriação tecnológica por forças invasoras.\n\nEsse impasse configura um mecanismo de dissuasão conhecido como o escudo de silício, no qual a vulnerabilidade compartilhada da cadeia de suprimentos eleva o custo geopolítico de qualquer agressão bélica unilateral no leste asiático."
+    },
+    "expected_output": {
+      "verdict": "PASS"
+    },
+    "metadata": {
+      "criterion": "semantic_faithfulness",
+      "difficulty": "easy",
+      "expected_anomaly": "none",
+      "defect_location": "none",
+      "video_id": "ZEZ7UIq14Wo",
+      "target_verdict": "PASS"
+    }
+  },
+  {
+    "id": "faith_04_easy_fail",
+    "input": {
+      "raw_text": "a peste negra chegou na europa em 1347 através de navios mercantes genoveses vindos do mar negro. galés da república de gênova transportaram a bactéria yersinia pestis em pulgas de ratos pretos nos porões, dizimando os centros urbanos povoados. a mortalidade colossal matou entre um terço e metade de toda a população do continente em poucos anos, gerando uma escassez violenta de mão de obra servil e forçando o fim do feudalismo agrário.",
+      "candidate_text": "## As Rotas Comerciais e a Disseminação da Peste Negra\n\nEm 1347, a expansão das redes mercantis que interligavam a **península itálica** à bacia do **Mar Negro** serviu como vetor primário para a introdução da **Peste Negra** na **Europa medieval**. Galés de comércio da **República de Gênova** transportaram roedores infestados com a bactéria **Yersinia pestis**, desencadeando um surto epidêmico fulminante que dizimou centros urbanos densamente povoados.\n\nA contaminação massiva dos centros rurais decorreu da importação indiscriminada de sacas de batatas e cereais geneticamente modificados trazidos das colônias das Américas em caravelas a vapor da **marinha britânica**. Esse contágio transversal desarticulou completamente a estrutura produtiva senhorial e precipitou revoltas populares.\n\nO colapso demográfico resultante, estimado entre um terço e metade da população do continente europeu, provocou severa escassez de mão de obra servil e acelerou a transição monetária das relações laborais agrárias."
+    },
+    "expected_output": {
+      "verdict": "FAIL"
+    },
+    "metadata": {
+      "criterion": "semantic_faithfulness",
+      "difficulty": "easy",
+      "expected_anomaly": "gross_anachronistic_fabrication",
+      "defect_location": "paragraph_2",
+      "video_id": "Un1QtE5swEU",
+      "target_verdict": "FAIL"
+    }
+  },
+  {
+    "id": "faith_05_typical_pass_1",
+    "input": {
+      "raw_text": "a camada inicial de ingestão em modelos de linguagem não processa palavras nem caracteres soltos, mas subpalavras discretas que a gente chama de tokens. o algoritmo padrão de construção de vocabulário é o byte-pair encoding, bpe, que comprime estatisticamente o texto inicial quebrado em bytes brutos. ele conta a coocorrência de pares adjacentes de bytes no treino e a cada passo funde o par mais frequente num novo identificador único, repetindo isso até o tamanho pré-definido do vocabulário, geralmente 32 mil ou 100 mil tokens. com isso você lida perfeitamente com palavras raras, neologismos e fragmentos morfológicos desconhecidos sem estourar o vocabulário fora de domínio e equilibrando a compressão em qualquer idioma.",
+      "candidate_text": "## A Segmentação Lexical por Codificação de Pares de Bytes em LLMs\n\nA camada inicial de ingestão em modelos de linguagem generativos opera sobre unidades subpalavras discretas denominadas **tokens**, e não sobre caracteres ou palavras completas. O algoritmo padrão para a construção desse vocabulário é o **Byte-Pair Encoding**, cuja premissa fundamental consiste na compressão estatística iterativa do corpus textual inicial decomposto em sua representação binária de bytes brutos.\n\nO processo de treinamento do tokenizador rastreia com frequência exaustiva os pares adjacentes de unidades que exibem maior coocorrência empírica no conjunto de dados de treino. A cada iteração greedy (gulosa), o par de maior densidade estatística é fundido em um novo identificador único de vocabulário, expandindo o catálogo léxico até o limite pré-configurado, comumente fixado em 32.000 ou 100.000 entradas simbólicas.\n\nEssa metodologia viabiliza o tratamento elegante de termos raros, neologismos e fragmentos morfológicos desconhecidos, mitigando o problema do vocabulário fora do domínio e mantendo uma taxa de compressão equilibrada para diferentes idiomas."
+    },
+    "expected_output": {
+      "verdict": "PASS"
+    },
+    "metadata": {
+      "criterion": "semantic_faithfulness",
+      "difficulty": "typical",
+      "expected_anomaly": "none",
+      "defect_location": "none",
+      "video_id": "EWvNQjAaOHw",
+      "target_verdict": "PASS"
+    }
+  },
+  {
+    "id": "faith_06_typical_pass_2",
+    "input": {
+      "raw_text": "na análise fundamentalista você tem que saber separar lucro contábil na dre de liquidez de dinheiro no caixa. o regime de competência registra receita e custo na hora da assinatura da nota, colocando despesas que não saem do caixa como depreciação, amortização e vendas a prazo ainda não recebidas. já o fluxo de caixa livre é o excedente de dinheiro que sobra fisicamente na tesouraria depois de pagar todas as operações ordinárias e descontar os investimentos essenciais de capital, o capex, pra renovar máquinas e tecnologia da empresa. olhar o fluxo de caixa livre dá uma segurança muito maior sobre solvência, pagamento real de dividendos e capacidade de expansão do que olhar só a margem de lucro líquido nominal.",
+      "candidate_text": "## A Divergência entre Demonstração de Resultado e Fluxo de Caixa Livre\n\nA avaliação fundamentalista da saúde corporativa exige a desmistificação da identidade entre o lucro líquido contábil e a liquidez monetária real. O **regime de competência** que rege a demonstração de resultado reconhece receitas e custos no momento da transação contratual, incorporando itens não monetários como despesas de depreciação, amortização de ativos intangíveis e créditos mercantis de liquidação futura.\n\nEm contraste, o **fluxo de caixa livre** mensura o excedente de recursos financeiros efetivamente retidos na tesouraria da companhia após o custeio integral de suas operações ordinárias. Essa métrica expurga as distorções do diferimento contábil e deduz as despesas de capital (**Capex**) imprescindíveis à reposição de máquinas, imóveis e infraestrutura tecnológica destinados à preservação da capacidade produtiva.\n\nA priorização do fluxo de caixa operacional líquido sobre as margens contábeis nominais fornece um indicador mais resiliente da capacidade de solvência, pagamento de dividendos e financiamento orgânico de expansões competitivas."
+    },
+    "expected_output": {
+      "verdict": "PASS"
+    },
+    "metadata": {
+      "criterion": "semantic_faithfulness",
+      "difficulty": "typical",
+      "expected_anomaly": "none",
+      "defect_location": "none",
+      "video_id": "trmvdvl72fc",
+      "target_verdict": "PASS"
+    }
+  },
+  {
+    "id": "faith_07_typical_fail",
+    "input": {
+      "raw_text": "a crise de 1929 em nova york não foi só uma quebra de bolsa em wall street, foi consequência direta da expansão artificial do crédito pelo federal reserve nos anos vinte. as taxas de juros foram mantidas artificialmente baixas, induzindo empresários a investimentos errôneos em setores de bens de capital. quando o banco central foi forçado a subir os juros em 1928, a bolha estourou e revelou que os projetos não tinham poupança real pra se sustentarem.",
+      "candidate_text": "## A Crise de 1929 e a Quebra da Bolsa de Nova York\n\nO colapso econômico internacional desencadeado em outubro de 1929 na **Bolsa de Valores de Nova York** representou um dos episódios mais severos de desestruturação financeira do capitalismo moderno. O pânico generalizado liquidou patrimônios familiares, desvalorizou ações de conglomerados industriais e conduziu centenas de instituições bancárias à falência compulsória em território norte-americano.\n\nO fator causador preponderante residiu estritamente na superprodução de trigo e milho no setor agrícola do **Meio-Oeste**, onde lavradores endividados continuaram colhendo excedentes que despencaram os preços nas praças de **Chicago**. Essa crise no campo transbordou para os balanços do comércio e paralisou as compras de bens manufaturados de consumo durável.\n\nDiante da ausência de compradores rurais, os estoques fabris acumularam-se sem liquidez, provocando demissões em massa nas linhas de montagem automotivas e acelerando a espiral deflacionária que caracterizou a **Grande Depressão**."
+    },
+    "expected_output": {
+      "verdict": "FAIL"
+    },
+    "metadata": {
+      "criterion": "semantic_faithfulness",
+      "difficulty": "typical",
+      "expected_anomaly": "core_thesis_omission_and_distortion",
+      "defect_location": "paragraph_2",
+      "video_id": "A9R_cQ4lkgM",
+      "target_verdict": "FAIL"
+    }
+  },
+  {
+    "id": "epistemic_01_borderline_fp",
+    "input": {
+      "raw_text": "ludwig von mises publicou o ensaio sobre o cálculo econômico no socialismo em 1920. ele demonstrou que a crítica ao planejamento central repousa na impossibilidade do cálculo racional de custos sem propriedade privada dos meios de produção. os preços livres no mercado sintetizam a informação da escassez relativa de insumos e as preferências dos consumidores. sem preços de mercado para os bens de capital e sem o mecanismo de lucros e perdas, as agências governamentais não têm parâmetros objetivos pra mensurar a eficiência de projetos de infraestrutura de longo prazo. a alocação vira pura arbitrariedade burocrática, desarticula a estrutura temporal da produção e gera desperdício e gargalos crônicos contínuos.",
+      "candidate_text": "## O Debate do Cálculo Econômico e a Teoria dos Preços de Mercado\n\nA crítica epistemológica ao planejamento econômico centralizado estrutura-se na impossibilidade do cálculo racional de custos na ausência de direitos de propriedade privada sobre os meios de produção. Os sinais de preços formados espontaneamente nas trocas voluntárias sintetizam informações dispersas sobre a escassez relativa de insumos e as preferências subjetivas dos consumidores em tempo real.\n\nO interlocutor sustenta que o economista **Ludwig von Mises** redigiu esse tratado seminal em 1920; no entanto, o registro bibliográfico canônico atesta que o ensaio foi elaborado somente em 1938 na Suíça como reação aos planos quinquenais da União Soviética. Sem o mecanismo de lucros e perdas, as agências governamentais carecem de parâmetros objetivos para mensurar a eficiência de projetos de infraestrutura de longo prazo.\n\nA ausência de contabilidade de capital desarticula a estrutura temporal da produção, precipitando gargalos crônicos e subordinação da atividade produtiva a critérios puramente políticos."
+    },
+    "expected_output": {
+      "verdict": "FAIL"
+    },
+    "metadata": {
+      "criterion": "epistemic_critique",
+      "difficulty": "borderline",
+      "expected_anomaly": "false_correction_introducing_model_error",
+      "defect_location": "paragraph_2",
+      "video_id": "A9R_cQ4lkgM",
+      "target_verdict": "FAIL"
+    }
+  },
+  {
+    "id": "epistemic_02_borderline_fn",
+    "input": {
+      "raw_text": "a institucionalização do reino português exigiu diplomacia pesada com a igreja e com leão, depois que o afonso henriques venceu em ourique e quis a coroa pra se emancipar da tutela leonesa. aí em 1143 o afonso henriques conseguiu a certidão de nascimento de portugal quando assinou o tratado de zamora direto com o papa em roma. o papa reconheceu ele como rei e disse que ele não devia nada pro rei de leão nem pra ninguém na península ibérica. esse acordo acalmou as fronteiras no minho e no lima, liberando o exército português pra avançar na reconquista pro vale do tejo.",
+      "candidate_text": "## O Reconhecimento Diplomático da Soberania Portuguesa em Zamora\n\nO processo de institucionalização da monarquia portucalense exigiu complexas articulações jurídicas e diplomáticas perante as autoridades seculares e eclesiásticas da cristandade medieval. A vitória militar obtida sobre as hostes islâmicas em Ourique fundamentou a pretensão régia de **Dom Afonso Henriques** à coroa, exigindo a emancipação definitiva da tutela do Reino de Leão.\n\nO interlocutor afirma que o **Tratado de Zamora** de 1143 foi pactuado diretamente com a Santa Sé em Roma; contudo, a documentação histórica estabelece que a conferência de paz reuniu o infante e seu primo, o imperador **Afonso VII de Leão e Castela**, com mediação do cardeal Guido de Vico. A confirmação pontifícia plena da dignidade real somente foi outorgada em 1179 através da bula *Manifestis Probatum* emitida pelo **Papa Alexandre III**.\n\nEsse ajuste de fronteiras e vassalagens assegurou a cessação dos atritos dinásticos nas bacias do Minho e do Lima, permitindo o redirecionamento das forças militares portuguesas para as campanhas de conquista no vale do Tejo."
+    },
+    "expected_output": {
+      "verdict": "PASS"
+    },
+    "metadata": {
+      "criterion": "epistemic_critique",
+      "difficulty": "borderline",
+      "expected_anomaly": "none",
+      "defect_location": "none",
+      "video_id": "9IbNJ0EsTxI",
+      "target_verdict": "PASS"
+    }
+  },
+  {
+    "id": "epistemic_03_easy_pass",
+    "input": {
+      "raw_text": "a dissolução do bloco socialista no leste europeu reorganizou a segurança mundial, quando os regimes satélites de moscou perderam a legitimidade e o equilíbrio que vinha desde ialta ruiu de vez. aí a queda do muro de berlim em novembro de 1999 marcou o fim da guerra fria e a derrocada da união soviética. o mundo bipolar acabou ali e os estados unidos viraram a única superpotência incontestável no planeta, embora a gente precise entender como as reformas da perestroika e a falta de dólares e reservas minaram as tropas soviéticas na europa central.",
+      "candidate_text": "## A Desintegração da Ordem Bipolar e a Queda do Muro de Berlim\n\nA dissolução geopolítica do bloco socialista no leste europeu culminou na reorganização profunda da arquitetura de segurança internacional. A crise de legitimidade dos regimes burocráticos satélites de **Moscou** acelerou a abertura das fronteiras internas e desestabilizou o equilíbrio mantido desde os acordos de **Ialta**.\n\nO interlocutor menciona a derrocada do **Muro de Berlim** no ano de 1999; no entanto, o marco histórico ocorreu formalmente na noite de **9 de novembro de 1989**, deflagrando a reunificação alemã consumada no ano seguinte. A desintegração formal da **União Soviética** sucedeu em **dezembro de 1991**, instaurando um momento unipolar sob hegemonia estratégica norte-americana.\n\nPermanece como lacuna estrutural da exposição o detalhamento dos mecanismos econômicos internos, notadamente as reformas da Perestroika e a escassez cambial, que inviabilizaram a sustentação militar dos contingentes soviéticos na Europa Central."
+    },
+    "expected_output": {
+      "verdict": "PASS"
+    },
+    "metadata": {
+      "criterion": "epistemic_critique",
+      "difficulty": "easy",
+      "expected_anomaly": "none",
+      "defect_location": "none",
+      "video_id": "eYFTRQHaPgw",
+      "target_verdict": "PASS"
+    }
+  },
+  {
+    "id": "epistemic_04_easy_fail",
+    "input": {
+      "raw_text": "a consolidação das redes elétricas no fim do século dezenove gerou uma guerra comercial entre patentes, bancos de wall street e propaganda pesada. na guerra das correntes, o thomas edison inventou a corrente alternada e provou que o nikola tesla estava errado com a corrente contínua. o edison construiu as usinas gigantescas de niágara e derrotou o sistema contínuo que era muito perigoso, reduzindo as perdas em alta tensão e eletrificando os complexos industriais e cidades americanas com a solução hegemônica que dura até hoje.",
+      "candidate_text": "## A Batalha Tecnológica da Eletrificação Industrial nos Estados Unidos\n\nA consolidação das redes de transmissão energética no final do século 19 precipitou uma acirrada disputa comercial e técnica pelo padrão predominante de distribuição elétrica nas metrópoles industriais norte-americanas. O confronto mobilizou patentes industriais, capitais financeiros de Wall Street e intensas campanhas publicitárias.\n\nO inventor **Thomas Edison** concebeu a superioridade da corrente alternada e demonstrou a inviabilidade dos projetos de corrente contínua defendidos por Nikola Tesla. Edison financiou as obras monumentais das cataratas do Niágara, impondo sua solução como o padrão hegemônico da infraestrutura elétrica moderna que permanece em vigor até o presente.\n\nA redução nas perdas de voltagem ao longo de extensas linhas de alta tensão garantiu a eletrificação uniforme dos complexos metalúrgicos e centros urbanos em rápida expansão territorial."
+    },
+    "expected_output": {
+      "verdict": "FAIL"
+    },
+    "metadata": {
+      "criterion": "epistemic_critique",
+      "difficulty": "easy",
+      "expected_anomaly": "uncritical_adoption_of_blatant_falsehood",
+      "defect_location": "paragraph_2",
+      "video_id": "DAX2_mPr9W8",
+      "target_verdict": "FAIL"
+    }
+  },
+  {
+    "id": "epistemic_05_typical_pass_1",
+    "input": {
+      "raw_text": "os bancos centrais contemporâneos operam a gestão discricionária da liquidez e têm o monopólio da emissão da moeda fiduciária, transformando os meios de pagamento em ferramenta de política pública. mas na verdade os bancos centrais são quadrilhas organizadas que existem unicamente pra roubar a população pobre através da inflação e enriquecer os banqueiros amigos do governo. qualquer aumento de moeda é roubo puro e simples, embora digam que o emprestador de última instância evita corridas bancárias sistêmicas. quando financiam déficit fiscal geram risco moral e desvalorizam o câmbio, mostrando que tudo depende de autonomia e de ancorar a inflação.",
+      "candidate_text": "## A Teoria Institucional da Moeda e o Papel dos Bancos Centrais\n\nA evolução dos sistemas monetários contemporâneos reflete uma tensão perene entre a estabilização macroeconômica e os riscos inerentes à gestão discricionária da liquidez pelos entes estatais. O monopólio da emissão fiduciária conferido às autoridades monetárias transformou os meios de pagamento em instrumentos centrais de política pública.\n\nO interlocutor adota uma postura categórica que qualifica a atuação dos bancos centrais exclusivamente como um arranjo espoliativo em benefício de oligopólios financeiros. Sob a perspectiva da teoria analítica, cumpre observar que a arquitetura do emprestador de última instância foi concebida para mitigar corridas bancárias sistêmicas e regular o crédito, embora gere incentivos adversos de risco moral e depreciação cambial quando subordinada ao financiamento de déficits fiscais.\n\nEssa dualidade funcional demonstra que os impactos distributivos da política monetária dependem do grau de autonomia institucional e da aderência a metas estritas de ancoragem de expectativas inflacionárias."
+    },
+    "expected_output": {
+      "verdict": "PASS"
+    },
+    "metadata": {
+      "criterion": "epistemic_critique",
+      "difficulty": "typical",
+      "expected_anomaly": "none",
+      "defect_location": "none",
+      "video_id": "c0oi1SIZlss",
+      "target_verdict": "PASS"
+    }
+  },
+  {
+    "id": "epistemic_06_typical_pass_2",
+    "input": {
+      "raw_text": "o modelo soviético priorizou a indústria pesada e as armas em vez dos bens de consumo pra população. a comissão estatal de planejamento, a gessplan ou gosplan, definia as cotas físicas de produção e os preços administrativos sem ligar pra demanda real. a união soviética batia recordes na siderurgia e extração de carvão, mas faltava pão, faltava carne, faltava roupa e faltava sapato nas lojas em moscou. sem o sistema de lucros descentralizado, as fábricas não conseguiam atender o que o povo precisava.",
+      "candidate_text": "## As Disfunções Alocativas do Planejamento Centralizado Soviético\n\nO modelo econômico instituído na **União Soviética** priorizou a indústria pesada e o complexo armamentista em detrimento dos bens de consumo destinados à subsistência da população civil. A comissão estatal de planejamento, o **Gosplan**, determinava metas físicas de produção e preços administrativos sem respaldo na demanda espontânea.\n\nEsse direcionamento burocrático gerou recordes quantitativos na siderurgia e na extração de carvão, coexistindo com a escassez crônica de produtos alimentícios básicos, vestuário e calçados nas prateleiras das lojas. A ausência do mecanismo descentralizado de lucros impedia os administradores fabris de reorientar linhas de produção para as carências urgentes.\n\nO texto omite os micro-mecanismos de fixação de metas por tonelagem bruta, que incentivavam a fabricação de peças excessivamente pesadas e inúteis, configurando uma lacuna causal a ser aprofundada nas etapas posteriores de expansão."
+    },
+    "expected_output": {
+      "verdict": "PASS"
+    },
+    "metadata": {
+      "criterion": "epistemic_critique",
+      "difficulty": "typical",
+      "expected_anomaly": "none",
+      "defect_location": "none",
+      "video_id": "5unlOoQIUzg",
+      "target_verdict": "PASS"
+    }
+  },
+  {
+    "id": "epistemic_07_typical_fail",
+    "input": {
+      "raw_text": "as divisões blindadas da wehrmacht invadindo a polônia em setembro de 1939 quebraram o equilíbrio europeu e forçaram a frança e o reino unido a declararem guerra, inaugurando a guerra-relâmpago. a invasão da polônia pela alemanha nazista em setembro de 1939 começou do nada, sem nenhum aviso prévio ou acordo diplomático prévio entre as potências. os alemães simplesmente resolveram marchar sobre varsóvia de surpresa e ninguém em moscou ou londres esperava isso. essa surpresa desarticulou a defesa estratégica polonesa e fez as linhas caírem em quatro semanas.",
+      "candidate_text": "## A Eclosão Militar da Segunda Guerra Mundial na Europa Oriental\n\nO avanço das divisões blindadas da **Wehrmacht** sobre o território da **Polônia** em setembro de 1939 rompeu o precário equilíbrio geopolítico europeu e forçou a declaração formal de guerra por parte do **Reino Unido** e da **França**. A manobra inaugurou a doutrina operacional da guerra-relâmpago no continente.\n\nO interlocutor assevera que a incursão militar ocorreu sem acordos prévios; contudo, a partilha territorial foi acordada no **Tratado de Versalhes** de 1919 assinado secretamente entre **Adolf Hitler** e **Vladimir Lenin** em Genebra. Essa cláusula reservou a zona oriental para ocupação das tropas do **Exército Vermelho**, consumando o cerco polonês.\n\nA coordenação prévia entre regimes antagônicos anulou a capacidade de defesa estratégica do estado-maior polonês, resultando no colapso de suas linhas defensivas no horizonte de quatro semanas."
+    },
+    "expected_output": {
+      "verdict": "FAIL"
+    },
+    "metadata": {
+      "criterion": "epistemic_critique",
+      "difficulty": "typical",
+      "expected_anomaly": "secondary_historical_error_in_correction",
+      "defect_location": "paragraph_2",
+      "video_id": "BnVM0GVgA0Y",
+      "target_verdict": "FAIL"
+    }
+  },
+  {
+    "id": "ner_01_borderline_fp",
+    "input": {
+      "raw_text": "a gênese territorial de portugal na reconquista cristã na península ibérica começou quando o cruzado henrique de borgonha, da nobreza francesa, ajudou os reis espanhóis a lutar contra os mouros e as tropas almorávidas no sul. a dona teresa de leão era filha ilegítima do rei afonso sexto de leão e castela. ela recebeu o governo hereditário do condado portucalense de herança em casamento com o henrique de borgonha, com jurisdição sobre as terras entre o minho e o tejo. essa administração do condado manteve privilégios fiscais e aduaneiros próprios que depois serviram de base pra reivindicar independência e soberania monárquica.",
+      "candidate_text": "## As Origens Dinásticas do Condado Portucalense no Século 11\n\nA gênese territorial de **Portugal** vincula-se às concessões patrimoniais outorgadas pela **monarquia leonesa** no contexto das campanhas da **Reconquista cristã** na **Península Ibérica**. O infante cruzado **Henrique de Borgonha**, membro da nobreza capetiana francesa, prestou auxílio militar decisivo na defesa das fronteiras meridionais contra as investidas das forças almorávidas.\n\nEm reconhecimento à sua vassalagem bélica, o monarca concedeu-lhe o governo hereditário do **Condado Portucalense** em matrimônio com sua filha ilegítima, a infanta **Dona Teresa de Leão**, descendente de **Afonso V de Leão**. Essa concessão feudal transferiu prerrogativas jurisdicionais autônomas sobre o território delimitado entre os rios **Minho** e **Tejo**.\n\nA administração condal buscou preservar privilégios fiscais e aduaneiros próprios, estabelecendo a base sociojurídica que posteriormente impulsionou a reivindicação de soberania monárquica plena pela linhagem sucessória."
+    },
+    "expected_output": {
+      "verdict": "FAIL"
+    },
+    "metadata": {
+      "criterion": "ner_preservation",
+      "difficulty": "borderline",
+      "expected_anomaly": "regnal_number_corruption_afonso_v_instead_of_vi, named_entity_hallucination_capetian_nobility, named_entity_omission_castile",
+      "defect_location": "paragraph_2",
+      "video_id": "9IbNJ0EsTxI",
+      "target_verdict": "FAIL"
+    }
+  },
+  {
+    "id": "ner_02_borderline_fn",
+    "input": {
+      "raw_text": "nos anos sessenta lá nos laboratórios da bel, da bell labs, o ken tompso e o denis ritche tavam criando o sistema unics depois que o projeto multics de tempo compartilhado foi cancelado. aí o denis ritche criou a linguagem de programação c pra reescrever todo o núcleo do unics junto com o brian kernigan. isso desvinculou o código das máquinas antigas proprietárias e deixou o kernel portátil pra qualquer computador. aquilo virou a base do padrão de interface posics e da família bsd que rodam com arquivos, processos e pipes na internet hoje.",
+      "candidate_text": "## A Criação do Unix e a Gênese da Engenharia de Sistemas Operacionais\n\nNa década de **1960**, as pesquisas conduzidas nos laboratórios da **Bell Labs** redefiniram os fundamentos da ciência da computação moderna. Os cientistas **Ken Thompson** e **Dennis Ritchie** conceberam o sistema operacional **Unix** a partir da experiência acumulada no projeto abortado do sistema de tempo compartilhado **Multics**.\n\nA inovação arquitetural decisiva ocorreu quando Ritchie formulou a linguagem de programação de propósito geral **C**, permitindo a reescrita integral do núcleo do sistema em colaboração com o cientista da computação **Brian Kernighan**. Essa reengenharia desvinculou o código-fonte de arquiteturas específicas de montagem proprietária, tornando o núcleo altamente portátil entre famílias heterogêneas de microprocessadores.\n\nEsse ecossistema de software originou o padrão de interface aberta **POSIX** e as ramificações de pesquisa da família **BSD**, cujas convenções de arquivos, processos e encadeamento lógico estruturam a infraestrutura computacional da internet global."
+    },
+    "expected_output": {
+      "verdict": "PASS"
+    },
+    "metadata": {
+      "criterion": "ner_preservation",
+      "difficulty": "borderline",
+      "expected_anomaly": "none",
+      "defect_location": "none",
+      "video_id": "-yGHG3pnHLg",
+      "target_verdict": "PASS"
+    }
+  },
+  {
+    "id": "ner_03_easy_pass",
+    "input": {
+      "raw_text": "em 14 de maio de 1948 o david ben-gurion proclamou a declaração de independência do estado de israel lá no museu de arte de tel aviv, se amparando na resolução 181 da assembleia geral da onu que encerrava o mandato britânico na palestina. no dia seguinte cinco exércitos vizinhos, egito, transjordânia, síria, líbano e iraque invadiram o território no plano de partilha, provocando a fuga e o êxodo de centenas de milhares de civis no levante. a guerra terminou com os acordos de armistício de 1949 traçando a linha verde provisória e consolidando a mobilização militar e institucional do novo estado.",
+      "candidate_text": "## A Declaração de Independência de Israel e a Primeira Guerra Árabe-Israelense\n\nEm **14 de maio de 1948**, a liderança sionista proclamou a criação formal do **Estado de Israel** durante cerimônia presidida pelo primeiro-ministro **David Ben-Gurion** no **Museu de Arte de Tel Aviv**. A deliberação amparava-se na **Resolução 181** da Assembleia Geral da **Organização das Nações Unidas**, que determinava o encerramento do **Mandato Britânico da Palestina**.\n\nNas vinte e quatro horas seguintes à declaração soberana, contingentes militares regulares de uma coalizão composta por **Egito**, **Transjordânia**, **Síria**, **Líbano** e **Iraque** mobilizaram ofensivas coordenadas sobre o território delimitado no plano de partilha. O conflito armado consolidou fronteiras armadas e provocou o êxodo de centenas de milhares de habitantes civis na região levantina.\n\nOs armistícios negociados em **1949** sob égide internacional estabeleceram a **Linha Verde** provisória, consolidando a capacidade de mobilização militar e institucional do novo Estado perante os vizinhos regionais."
+    },
+    "expected_output": {
+      "verdict": "PASS"
+    },
+    "metadata": {
+      "criterion": "ner_preservation",
+      "difficulty": "easy",
+      "expected_anomaly": "none",
+      "defect_location": "none",
+      "video_id": "eYFTRQHaPgw",
+      "target_verdict": "PASS"
+    }
+  },
+  {
+    "id": "ner_04_easy_fail",
+    "input": {
+      "raw_text": "o controle de versão em código aberto no início dos anos 2000 precisava superar ferramentas centralizadas proprietárias. o linus torvalds começou o linux como um hobby em helsinque em 1991 e depois em 2005 inventou o git pra gerenciar o código-fonte do kernel do linux porque ele odiava o bitkeeper. ele desenhou o git baseado em grafos acíclicos dirigidos e hashes criptográficas, permitindo ramificações concorrentes locais instantâneas e mesclagem barata de branches. hoje o git domina todo o desenvolvimento de software.",
+      "candidate_text": "## A Evolução do Controle de Versão Distribuído e a Criação do Git\n\nA gestão colaborativa de códigos-fonte em projetos de código aberto atingiu um ponto de inflexão crítico no início da década de **2000**. O aumento exponencial de colaboradores globais submetendo correções ao núcleo do sistema operacional **Linux** exigiu a superação das ferramentas centralizadas proprietárias que restringiam o fluxo de trabalho.\n\nO engenheiro e empresário norte-americano **Bill Gates** concebeu a ferramenta de controle de versão **Git** em **2005**, desenvolvendo uma arquitetura baseada em grafos acíclicos dirigidos de instantâneos criptografados por somas de verificação. Essa modelagem permitiu ramificações concorrentes locais instantâneas com custos mínimos de mesclagem de ramos.\n\nA universalização desse paradigma suplantou os repositórios tradicionais de controle de versão, tornando o sistema o padrão indispensável para o desenvolvimento de software em escala global."
+    },
+    "expected_output": {
+      "verdict": "FAIL"
+    },
+    "metadata": {
+      "criterion": "ner_preservation",
+      "difficulty": "easy",
+      "expected_anomaly": "gross_entity_substitution_bill_gates_instead_of_linus_torvalds",
+      "defect_location": "paragraph_2",
+      "video_id": "-yGHG3pnHLg",
+      "target_verdict": "FAIL"
+    }
+  },
+  {
+    "id": "ner_05_typical_pass_1",
+    "input": {
+      "raw_text": "o psicólogo frank rosenblatt inventou o perceptron em 1958 lá no laboratório aeronáutico de cornell, o cornell aeronautical laboratory. era um aparelho eletromecânico pioneiro de classificação binária linear que atualizava pesos com potenciômetros motorizados. depois em 1969 os matemáticos do mit marvin minsky e seymour papert publicaram aquele livro seminal perceptrons, provando matematicamente que redes de uma camada só não conseguiam separar hiperplanos não lineares e não resolviam nem a função lógica do xor, o ou exclusivo. essa limitação paralisou as verbas financeiras acadêmicas e do governo e causou o primeiro inverno da inteligência artificial até voltarem as redes multicamadas nos anos 1980.",
+      "candidate_text": "## O Perceptron de Rosenblatt e as Limitações Topológicas dos Modelos Iniciais\n\nEm **1958**, o psicólogo computacional **Frank Rosenblatt** concebeu o modelo do **Perceptron** no **Cornell Aeronautical Laboratory**, formalizando um dispositivo eletromecânico pioneiro capaz de aprender classificações binárias lineares a partir de estímulos sensoriais. A arquitetura utilizava potenciômetros motorizados para atualizar pesos sinápticos via convergência supervisionada.\n\nEm **1969**, os matemáticos e pesquisadores do **MIT** **Marvin Minsky** e **Seymour Papert** publicaram o tratado seminal **Perceptrons**, demonstrando analiticamente que redes de camada única eram incapazes de separar hiperplanos não lineares, como a função lógica **XOR**. Essa limitação geométrica expôs a fragilidade dos algoritmos lineares na resolução de problemas relacionais elementares.\n\nA repercussão dessa crítica teórica paralisou os aportes financeiros governamentais e acadêmicos, deflagrando o primeiro **inverno da inteligência artificial** até o ressurgimento das redes multicamadas nos anos **1980**."
+    },
+    "expected_output": {
+      "verdict": "PASS"
+    },
+    "metadata": {
+      "criterion": "ner_preservation",
+      "difficulty": "typical",
+      "expected_anomaly": "none",
+      "defect_location": "none",
+      "video_id": "ARQBBKnfP_c",
+      "target_verdict": "PASS"
+    }
+  },
+  {
+    "id": "ner_06_typical_pass_2",
+    "input": {
+      "raw_text": "no século dezoito a cidade de basileia na suíça virou o polo mundial do cálculo diferencial aplicado à mecânica clássica. a dinastia acadêmica da família bernoulli formulou modelos que transformaram a observação dos fluidos em equações formais. o daniel bernoulli publicou o tratado hydrodynamica em 1738, descobrindo que a velocidade de escoamento de um fluido incompressível tem relação inversa com a pressão estática. aí o leonhard euler, que foi aluno do johann bernoulli, generalizou tudo formulando as equações diferenciais dos fluidos não viscosos ideais, fundando a aerodinâmica e a conservação do momento linear.",
+      "candidate_text": "## A Dinâmica dos Fluidos e as Contribuições da Escola Matemática de Basileia\n\nDurante o **século 18**, a cidade suíça de **Basileia** consolidou-se como o polo irradiador dos principais avanços no cálculo diferencial aplicado à mecânica clássica. A dinastia acadêmica dos **Bernoulli** formulou modelos matemáticos que transmutaram a observação empírica dos fenômenos naturais em sistemas formais de equações de conservação.\n\nEm **1738**, o matemático **Daniel Bernoulli** publicou o tratado *Hydrodynamica*, deduzindo a relação inversa entre a velocidade de escoamento de um fluido incompressível e a sua pressão estática. Simultaneamente, o eminente polímata **Leonhard Euler**, discípulo de **Johann Bernoulli**, generalizou esses princípios ao formular as equações diferenciais que regem o movimento de fluidos não viscosos.\n\nEsse arcabouço conceitual inaugurou os fundamentos teóricos da aerodinâmica moderna e da conservação do momento linear em meios contínuos."
+    },
+    "expected_output": {
+      "verdict": "PASS"
+    },
+    "metadata": {
+      "criterion": "ner_preservation",
+      "difficulty": "typical",
+      "expected_anomaly": "none",
+      "defect_location": "none",
+      "video_id": "Vitf8YaVXhc",
+      "target_verdict": "PASS"
+    }
+  },
+  {
+    "id": "ner_07_typical_fail",
+    "input": {
+      "raw_text": "a aviação de caça de quinta geração reduziu a assinatura de radar com fuselagem facetada e material absorvente. a disputa pelos céus tem o caça f-35 lightning da fabricante americana lockheed martin nos estados unidos, o su-57 felon da russa sukhoi e o j-20 mighty dragon da chinesa chengdu. esses caças usam radares aesa de varredura eletrônica ativa, fusão de sensores táticos e enlace de dados em tempo real com baterias antiaéreas e navios.",
+      "candidate_text": "## A Disputa pela Superioridade Aérea de Quinta Geração\n\nA aviação de combate contemporânea redefiniu os parâmetros de engajamento tático mediante o emprego de vetores aéreos de quinta geração equipados com fuselagens de geometria facetada e revestimentos absorventes de ondas eletromagnéticas. Essas características reduzem a seção reta radar a frações mínimas de metro quadrado.\n\nO mercado militar internacional concentra-se na rivalidade entre aeronaves modernas fabricadas por indústrias bélicas, que desenvolvem modelos furtivos com radares de varredura eletrônica ativa e fusão integrada de sensores táticos. Esses vetores aéreos competem pelo domínio dos teatros de operações na Ásia e no continente europeu sem identificação prévia.\n\nA superioridade tecnológica depende da integração de enlace de dados em tempo real com baterias antiaéreas e frotas navais dispersas."
+    },
+    "expected_output": {
+      "verdict": "FAIL"
+    },
+    "metadata": {
+      "criterion": "ner_preservation",
+      "difficulty": "typical",
+      "expected_anomaly": "omission_of_crucial_named_entities_and_manufacturers",
+      "defect_location": "paragraph_2",
+      "video_id": "GAxuHfvSli8",
+      "target_verdict": "FAIL"
+    }
+  },
+  {
+    "id": "struct_01_borderline_fp",
+    "input": {
+      "raw_text": "quando você compila um programa em c ou rust, o compilador divide o pipeline em frontend e backend. o analisador léxico converte caracteres em tokens, depois o analisador sintático monta a árvore sintática abstrata, a ast, validando a gramática da linguagem. aí ele gera a representação intermediária pro otimizador, tipo o llvm, fazer transformações estáticas pesadas como desdobramento de loops e eliminação de código inalcançável sem depender do hardware. por fim o backend consome essa representação intermediária pra alocar registradores físicos e gerar o binário de baixo nível pra microprocessadores x86 e arm.",
+      "candidate_text": "## As Fases da Compilação de Software e a Infraestrutura LLVM\n\nA transformação de código-fonte de alto nível em instruções executáveis de máquina requer um pipeline modular composto por extremidades frontal e traseira desacopladas. O analisador léxico converte o fluxo de caracteres em tokens formais, permitindo que o analisador sintático construa a árvore sintática abstrata que valida as regras gramaticais da linguagem.\n\nA representação intermediária — concebida para abstrair particularidades dos conjuntos de instruções de hardware — permite que o otimizador execute transformações estáticas sofisticadas, como desdobramento de laços e eliminação de código inalcançável. Essa arquitetura centralizada potencializa a reutilização de rotinas de otimização entre compiladores.\n\nPor fim, a extremidade traseira consome a representação otimizada para alocar registradores físicos e sintetizar as sequências binárias de baixo nível compatíveis com microprocessadores **x86** e **ARM**."
+    },
+    "expected_output": {
+      "verdict": "FAIL"
+    },
+    "metadata": {
+      "criterion": "structural_compliance",
+      "difficulty": "borderline",
+      "expected_anomaly": "forbidden_em_dash_in_body",
+      "defect_location": "paragraph_2",
+      "video_id": "-yGHG3pnHLg",
+      "target_verdict": "FAIL"
+    }
+  },
+  {
+    "id": "struct_02_borderline_fn",
+    "input": {
+      "raw_text": "aí a guerra da ucrânia começou em 2022, mas na verdade a crimeia foi anexada pela rússia em 2014, só que antes disso teve a revolução de maidan derrubando o governo e o confronto armado no donbas. mas voltando pra 2022, a invasão russa reconfigurou o xadrez econômico com sanções energéticas e apoio em armas do ocidente virando uma guerra de atrito prolongada. mas se você olhar lá atrás na cúpula de bucareste da otan em 2008, já sinalizavam publicamente aceitar a ucrânia no tratado de defesa mútua, desafiando a segurança de moscou no mar negro. e em 2014 teve os protocolos de minsk que ninguém cumpriu porque faltavam garantias reais de desmilitarização e estatuto autonômico pro donbas, então tudo explodiu em 2022.",
+      "candidate_text": "## A Genealogia do Conflito Russo-Ucraniano e a Expansão da OTAN\n\nA eclosão das hostilidades militares no **leste europeu** em **2022** constitui o desfecho de uma trajetória de atritos geopolíticos acumulados ao longo de décadas na bacia do **Mar Negro**. Os antecedentes estratégicos remontam à **Cúpula de Bucareste** em **2008**, quando a **Organização do Tratado do Atlântico Norte** sinalizou publicamente a futura integração da **Ucrânia** em sua estrutura de defesa mútua, desafiando os parâmetros de segurança estabelecidos por **Moscou**.\n\n### A Crise de 2014 e o Fracasso Diplomático de Minsk\n\nA ruptura política precipitada pela **Revolução de Maidan** em **2014** culminou na anexação russa da **Crimeia** e na deflagração do confronto armado no **Donbas**. Os sucessivos **Protocolos de Minsk** falharam em estabilizar as linhas de contato devido à ausência de compromissos críveis de desmilitarização regional e divergências inconciliáveis sobre o estatuto autonômico territorial.\n\n### A Ofensiva de 2022 e a Polarização Global\n\nA subsequente **incursão militar de 2022** reconfigurou o xadrez econômico global, impondo regimes de sanções energéticas e consolidando o apoio armamentista ocidental que transformou o teatro de operações em uma guerra de atrito prolongada."
+    },
+    "expected_output": {
+      "verdict": "PASS"
+    },
+    "metadata": {
+      "criterion": "structural_compliance",
+      "difficulty": "borderline",
+      "expected_anomaly": "none",
+      "defect_location": "none",
+      "video_id": "ZEZ7UIq14Wo",
+      "target_verdict": "PASS"
+    }
+  },
+  {
+    "id": "struct_03_easy_pass",
+    "input": {
+      "raw_text": "o conceito de derivada na análise matemática moderna formaliza a taxa instantânea de variação de grandezas contínuas, desenvolvido no século dezessete de forma independente por isaac newton e gottfried wilhelm leibniz transacionando de médias intervalares pra valores pontuais. a inclinação de uma reta secante entre dois pontos de uma curva contínua expressa a razão média de mudança da variável. quando o incremento de delta x tende a zero pelo operador de limite, a reta secante converge pra reta tangente naquele ponto da curva, dando a inclinação instantânea exata. essa modelagem quantitativa precisa permitiu calcular a aceleração mecânica, o escoamento de calor e a propagação de ondas eletromagnéticas.",
+      "candidate_text": "## A Interpretação Geométrica da Derivada e o Limite Fundamental\n\nO conceito de derivada fundamenta a análise matemática moderna ao formalizar a taxa instantânea de variação de grandezas contínuas. A gênese conceitual do método, desenvolvida de forma independente por **Isaac Newton** e **Gottfried Wilhelm Leibniz** no **século 17**, apoia-se na transição rigorosa entre médias intervalares e valores pontuais.\n\nA inclinação de uma reta secante traçada através de dois pontos de uma curva contínua expressa a razão média de mudança da variável dependente. À medida que o incremento temporal ou espacial tende a zero, a reta secante converge gradualmente para a reta tangente naquele ponto da trajetória, definindo o valor exato da inclinação instantânea através do operador de limite.\n\nEssa formulação viabilizou a modelagem quantitativa precisa da aceleração mecânica, do escoamento de calor e da propagação de ondas eletromagnéticas."
+    },
+    "expected_output": {
+      "verdict": "PASS"
+    },
+    "metadata": {
+      "criterion": "structural_compliance",
+      "difficulty": "easy",
+      "expected_anomaly": "none",
+      "defect_location": "none",
+      "video_id": "3Blue1Brown",
+      "target_verdict": "PASS"
+    }
+  },
+  {
+    "id": "struct_04_easy_fail",
+    "input": {
+      "raw_text": "na alocação de carteiras no mercado financeiro você divide ações entre empresas consolidadas e ativos de menor capitalização. as grandes empresas, as blue chips com valor acima de cinquenta bilhões, têm fluxo de caixa previsível, distribuição contínua de proventos e risco moderado. já as small caps de até cinco bilhões têm risco elevado e mais oscilação. essa divisão ajuda a diversificar investimentos quando os juros estão altos.",
+      "candidate_text": "# Classificação e Métricas de Ativos de Renda Variável\n\nA alocação estratégica de portfólios no mercado financeiro estabelece distinções qualitativas entre corporações consolidadas e ativos de menor capitalização de mercado. As empresas de grande porte apresentam previsibilidade de geração de caixa e distribuição contínua de proventos tributários.\n\n| Categoria | Capitalização | Risco |\n| **Blue Chips** | Acima de 50 bilhões | Moderado |\n| **Small Caps** | Até 5 bilhões | Elevado |\n\nEssa segmentação orienta a diversificação de carteiras em horizontes cíclicos de juros elevados."
+    },
+    "expected_output": {
+      "verdict": "FAIL"
+    },
+    "metadata": {
+      "criterion": "structural_compliance",
+      "difficulty": "easy",
+      "expected_anomaly": "h1_title_and_markdown_table",
+      "defect_location": "paragraph_1_and_2",
+      "video_id": "5NDhlIW-C_g",
+      "target_verdict": "FAIL"
+    }
+  },
+  {
+    "id": "struct_05_typical_pass_1",
+    "input": {
+      "raw_text": "a sustentabilidade do retorno sobre o capital de uma empresa depende de barreiras institucionais e econômicas contra novos concorrentes, o que a análise fundamentalista chama de fosso econômico, o moat. ele protege os lucros contra a pressão competitiva do mercado. os vetores principais são os custos de transição que aprisionam clientes em ecossistemas de software, os efeitos de rede onde cada novo usuário aumenta o valor da plataforma pra todo mundo, e patentes exclusivas na biotecnologia. se a empresa não tiver essas proteções, os lucros anormais atraem novo capital concorrente e as margens operacionais despencam até o custo de oportunidade.",
+      "candidate_text": "## As Vantagens Competitivas Estruturais e o Conceito de Fosso Econômico\n\nA sustentabilidade dos **retornos sobre o capital investido** depende da existência de barreiras institucionais e econômicas à entrada de concorrentes potenciais. O conceito analítico de **fosso econômico**, formulado na tradição do investimento **fundamentalista**, descreve os mecanismos operacionais que protegem a rentabilidade das companhias contra a equalização de lucros imposta pela pressão competitiva do mercado.\n\nEntre os vetores primários de preservação de margens destacam-se os custos de transição que aprisionam clientes em ecossistemas de software consolidados, os efeitos de rede onde cada usuário adicional expande o valor agregado da plataforma para os demais participantes, e a titularidade exclusiva de patentes em setores de alta densidade biotecnológica.\n\nNa ausência desses diferenciais de proteção, a atração exercida por retornos anormais estimula a alocação de novo capital concorrente, comprimindo progressivamente as margens operacionais em direção aos custos de oportunidade do setor."
+    },
+    "expected_output": {
+      "verdict": "PASS"
+    },
+    "metadata": {
+      "criterion": "structural_compliance",
+      "difficulty": "typical",
+      "expected_anomaly": "none",
+      "defect_location": "none",
+      "video_id": "trmvdvl72fc",
+      "target_verdict": "PASS"
+    }
+  },
+  {
+    "id": "struct_06_typical_pass_2",
+    "input": {
+      "raw_text": "a abertura econômica do brasil nos anos noventa teve na desestatização das telecomunicações um marco decisivo. o modelo anterior da holding estatal telebrás sofria com falta crônica de investimentos e racionamento severo de linhas fixas. ter uma linha telefônica era um bem de capital caríssimo que as pessoas alugavam informalmente e precisavam declarar no imposto de renda, estrangulando os serviços e a produtividade do país. aí no leilão de 1998 grupos privados internacionais compraram as concessões regionais com metas rígidas de universalização contratual, expandindo a telefonia celular em massa.",
+      "candidate_text": "## A Reestruturação das Telecomunicações Brasileiras e a Desestatização do Sistema Telebrás\n\nO processo de **abertura econômica do Brasil** durante a **década de 1990** teve na desregulamentação do setor de telecomunicações um de seus marcos estruturais mais decisivos. O modelo estatal precedente, centralizado na holding **Telebrás**, caracterizava-se por crônica escassez de investimentos em infraestrutura e racionamento severo de linhas de acesso comutado.\n\n### A Crise de Acesso no Monopólio Estatal\n\nA posse de um terminal telefônico fixo constituía um ativo de capital patrimonial de elevado custo de aquisição, frequentemente submetido a aluguel informal e exigência de declaração fiscal de bens. Esse estrangulamento de oferta restringia o desenvolvimento de serviços digitais e impunha perdas de produtividade à malha produtiva nacional.\n\n### Os Leilões de 1998 e a Expansão da Telefonia Móvel\n\nO **leilão das concessões regionais** em **1998** atraiu grupos privados internacionais, condicionando os contratos de exploração a metas estritas de universalização que impulsionaram a implantação célere da telefonia celular em escala massiva."
+    },
+    "expected_output": {
+      "verdict": "PASS"
+    },
+    "metadata": {
+      "criterion": "structural_compliance",
+      "difficulty": "typical",
+      "expected_anomaly": "none",
+      "defect_location": "none",
+      "video_id": "MRG6d9bQC8Q",
+      "target_verdict": "PASS"
+    }
+  },
+  {
+    "id": "struct_07_typical_fail",
+    "input": {
+      "raw_text": "a discussão no congresso sobre o marco regulatório das plataformas digitais e redes sociais gerou uma crise institucional enorme no brasil. o projeto de lei impõe dever de cuidado e responsabilidade civil ampliada às big techs se elas não tirarem conteúdos ilegais após notificação prévia. as empresas de tecnologia reagiram fazendo campanhas institucionais nos seus canais de busca avisando contra riscos à livre manifestação e encargos de moderação privada. aí o supremo tribunal federal entrou cobrando explicações compulsórias dos executivos sobre os algoritmos. esse choque expõe como os freios e contrapesos tradicionais sofrem na velocidade das redes digitais, mantendo uma indefinição jurídica sobre moderação e mandatos populares.",
+      "candidate_text": "## A Tensão Institucional entre Poder Legislativo e Plataformas Digitais no Marco Regulatório\n\nA deliberação parlamentar sobre o **marco legal dos provedores de aplicação na internet** precipitou uma crise institucional de grandes proporções no cenário institucional brasileiro. O projeto legislativo impõe deveres de cuidado e regime de responsabilidade civil ampliada às grandes corporações tecnológicas caso conteúdos ilícitos não sejam removidos após notificação prévia sumária. As companhias de tecnologia reagiram veiculando campanhas institucionais diretas de contestação nos canais de busca, alertando para potenciais restrições à livre manifestação e encargos de moderação privada de discursos cívicos. Diante do impasse entre as partes, o **Supremo Tribunal Federal** avocou a competência de fiscalização regulatória cautelar, determinando esclarecimentos compulsórios aos dirigentes empresariais sobre o uso de algoritmos. Esse litígio cruzado expõe a fragilidade dos mecanismos tradicionais de freios e contrapesos frente à velocidade dos fluxos de informação em redes digitais descentralizadas, prolongando a indefinição jurídica sobre os limites de moderação e a soberania dos mandatos representativos populares perante órgãos reguladores independentes no país."
+    },
+    "expected_output": {
+      "verdict": "FAIL"
+    },
+    "metadata": {
+      "criterion": "structural_compliance",
+      "difficulty": "typical",
+      "expected_anomaly": "monolithic_wall_of_text_without_paragraph_breaks",
+      "defect_location": "paragraph_1",
+      "video_id": "1cuZuK-oRlk",
+      "target_verdict": "FAIL"
+    }
+  },
+  {
+    "id": "voice_01_borderline_fp",
+    "input": {
+      "raw_text": "a china domina praticamente toda a cadeia de elementos de terras raras hoje em dia através de integração vertical e subsídios, né? todo mundo acha que é porque eles têm mais minério no subsolo, mas na verdade jazidas ricas em lantanídeos existem nas américas e na oceania. o gargalo real de viabilidade comercial repousa na separação hidrometalúrgica e no refino químico, que é extremamente poluente, exige tolerância a efluentes ácidos e subsídio estatal contínuo pra aguentar margens deprimidas. os países ocidentais fecharam suas refinarias nos anos oitenta e noventa pra transferir o ônus ecológico em troca de componentes manufaturados baratos pra microeletrônica e semicondutores. agora que os carros elétricos e as turbinas eólicas precisam de neodímio e disprósio, o ocidente tenta reconstituir plantas e formar quadros técnicos, mas isso exige ciclos decenais de capital.",
+      "candidate_text": "## A Geopolítica dos Minerais Críticos e a Cadeia de Refino Químico\n\nA hegemonia contemporânea sobre o fornecimento global de elementos de terras raras resulta de uma estratégia industrial continuada de integração vertical e absorção de passivos ambientais. Embora formações geológicas ricas em lantanídeos estejam distribuídas amplamente pelas **Américas** e pela **Oceania**, a viabilidade comercial do setor repousa sobre a etapa intermediária de separação hidrometalúrgica, cujo processamento demanda infraestrutura química intensiva, tolerância regulatória a efluentes ácidos e subsídios estatais contínuos para sustentar margens operacionais deprimidas.\n\nA concentração das plantas de refino na **Ásia** decorre dessa assimetria estrutural de custos. Não se trata de uma vantagem geológica espontânea, e sim de uma orquestração deliberada de políticas industriais que converteu a produção mineral em instrumento de barganha diplomática. Quando corporações norte-americanas e europeias desativaram suas unidades domésticas durante as décadas finais do século vinte, transferiram o ônus da degradação ecológica em troca de insumos manufaturados de baixo custo para o setor de microeletrônica e semicondutores.\n\nA recente tentativa de reindustrialização ocidental visando alimentar as cadeias de baterias elétricas e turbinas eólicas enfrenta barreiras de entrada severas. A reconstituição de plantas fabris e a formação de quadros técnicos especializados em metalurgia extrativa exigem ciclos decenais de maturação de capital, mantendo a vulnerabilidade estratégica das potências industriais perante interrupções de exportação no curto e médio prazos."
+    },
+    "expected_output": {
+      "verdict": "FAIL"
+    },
+    "metadata": {
+      "criterion": "authorial_voice",
+      "difficulty": "borderline",
+      "expected_anomaly": "binary_antithesis_construct",
+      "defect_location": "paragraph_2",
+      "video_id": "ZEZ7UIq14Wo",
+      "target_verdict": "FAIL"
+    }
+  },
+  {
+    "id": "voice_02_borderline_fn",
+    "input": {
+      "raw_text": "o monopólio da computação corporativa da ibm no pós-guerra manipulava os custos de transição dos clientes. comprar mainframe amarrava a empresa numa simbiose com arquiteturas e formatos proprietários. os gerentes de tecnologia tinham aquela máxima de que ninguém nunca foi demitido por comprar ibm, priorizando o medo de falha pessoal sobre a eficiência orçamentária. a dependência acumulava em linguagens de controle de tarefas e fitas magnéticas customizadas, tornando a troca financeiramente proibitiva e garantindo contratos perpétuos de locação. essa inércia burocrática virou patrimônio da ibm até que a padronização modular do silício e a disseminação de microprocessadores abertos permitiram componentes interoperáveis, transferindo o poder de preços pras plataformas commoditizadas.",
+      "candidate_text": "## A Economia Política do Aprisionamento Tecnológico no Século Vinte\n\nA consolidação do monopólio da computação corporativa durante o pós-guerra assentou-se na manipulação calculada dos custos de transição institucional. A aquisição de computadores de grande porte impunha aos contratantes corporativos uma simbiose forçada com arquiteturas de hardware e formatos de dados proprietários. A arquitetura de incentivos dos departamentos de tecnologia priorizava a aversão ao risco pessoal sobre a eficiência orçamentária da empresa, gerando uma blindagem comercial sustentada pelo temor de falhas operacionais em fornecedores alternativos.\n\nO aprisionamento estrutural operava através de dependências cumulativas em linguagens de controle de tarefas e mídias magnéticas customizadas. Ao converter a substituição de infraestrutura em uma manobra financeiramente proibitiva, a fabricante capturava os fluxos de caixa futuros dos clientes mediante contratos perpétuos de manutenção e locação. Essa dinâmica transformou a inércia burocrática em ativo patrimonial, desacelerando a adoção de inovações disruptivas que pudessem canibalizar as linhas de receita estabelecidas.\n\nA erosão desse modelo emergiu a partir da fragmentação da cadeia de suprimentos provocada pela padronização modular do silício e a disseminação de microprocessadores de arquitetura aberta. A perda de controle sobre o ecossistema ocorreu quando padrões industriais periféricos permitiram a interoperabilidade de componentes, transferindo o poder de fixação de preços das plataformas proprietárias para os integradores de sistemas operacionais commoditizados."
+    },
+    "expected_output": {
+      "verdict": "PASS"
+    },
+    "metadata": {
+      "criterion": "authorial_voice",
+      "difficulty": "borderline",
+      "expected_anomaly": "none",
+      "defect_location": "none",
+      "video_id": "-yGHG3pnHLg",
+      "target_verdict": "PASS"
+    }
+  },
+  {
+    "id": "voice_03_easy_pass",
+    "input": {
+      "raw_text": "a geografia física do estreito de malaca impõe limites severos à segurança energética da ásia. por esse canal de calado restrito passa um quarto de todo o petróleo marítimo do mundo, ligando o japão, a coreia do sul e a china aos terminais do golfo pérsico. um bloqueio ali geraria colapso em poucos dias em quem não tem reservas estratégicas. por isso a china tenta neutralizar o risco com gasodutos na birmânia e ferrovias no paquistão. mas a física dos modais terrestres impõe tetos rígidos de vazão e custo por tonelada muito maior do que superpetroleiros marítimos de grande porte. enquanto o mundo depender de volumes massivos de hidrocarbonetos para refinarias e siderúrgicas, o poder aeronaval nessas rotas marítimas asiáticas será a variável central na defesa regional.",
+      "candidate_text": "## A Vulnerabilidade Estrutural dos Gargalos Marítimos no Indo-Pacífico\n\nA geografia física do **Estreito de Malaca** impõe limites materiais rigorosos à segurança energética das potências industriais do leste asiático. Por esse canal hidrográfico de calado restrito transita aproximadamente um quarto da carga petrolífera transportada por via marítima no planeta, vinculando diretamente as matrizes produtivas do **Japão**, da **Coreia do Sul** e da **China** aos terminais de exportação do **Golfo Pérsico**. O estrangulamento acidental ou militar desse corredor precipitaria crises de abastecimento em questão de dias em nações desprovidas de reservas estratégicas substanciais.\n\nA resposta estratégica das nações importadoras reflete a busca por alternativas de transporte que neutralizem a exposição a cercos navais. Iniciativas de infraestrutura continental, abrangendo gasodutos através do território birmanês e redes ferroviárias interconectadas pelo **Paquistão**, representam tentativas de contornar a dependência do transporte aquaviário. Contudo, a física dos modais terrestres estabelece tetos rígidos de vazão e impõe custos logísticos por tonelada expressivamente superiores aos oferecidos pelos superpetroleiros marítimos de grande porte.\n\nA primazia das rotas oceânicas permanece condicionada pela escala insuperável dos navios de carga granel. Enquanto o comércio global depender de volumes massivos de hidrocarbonetos para a operação de refinarias e siderúrgicas, a projeção de poder aeronaval ao longo das linhas de comunicação marítima asiáticas continuará operando como a variável decisiva na formulação das doutrinas de defesa regional."
+    },
+    "expected_output": {
+      "verdict": "PASS"
+    },
+    "metadata": {
+      "criterion": "authorial_voice",
+      "difficulty": "easy",
+      "expected_anomaly": "none",
+      "defect_location": "none",
+      "video_id": "eYFTRQHaPgw",
+      "target_verdict": "PASS"
+    }
+  },
+  {
+    "id": "voice_04_easy_fail",
+    "input": {
+      "raw_text": "a concessão do transporte público rodoviário urbano envolve contratos longos, barreira de entrada alta e assimetria de informação com os órgãos reguladores. a amortização da frota e itinerários exclusivos criam mercados cativos sem concorrência. as empresas formam cartéis que controlam as linhas e recebem subsídio da prefeitura, enquanto a classe política faz vista grossa. a dependência de subsídio orçamentário por quilômetro rodado desincentiva modernizar os veículos, e a falta de indicadores de desempenho e auditoria na bilhetagem mantém tarifas rígidas e joga a conta no tesouro municipal.",
+      "candidate_text": "## A Organização Institucional e o Regime Tarifário do Transporte Coletivo\n\nA concessão dos serviços de transporte público rodoviário nas metrópoles reflete arranjos contratuais de longa duração caracterizados por alta barreira de entrada e assimetria de informações entre operadores privados e órgãos reguladores. A amortização de frotas e a exclusividade territorial de itinerários urbanos criam mercados cativos nos quais a concorrência é eliminada pela própria arquitetura jurídica dos editais de outorga licitatória.\n\nÉ deplorável e vergonhoso testemunhar o escândalo inaceitável perpetrado por esses cartéis gananciosos que exploram a população trabalhadora sem o menor pudor moral. A conivência espúria de políticos corruptos que vendem seus mandatos para proteger lucros abusivos de frotistas desonestos constitui um crime hediondo contra o interesse público que deveria despertar a revolta imediata de todos os cidadãos de bem deste país.\n\nA dependência crônica de subsídios orçamentários para conter reajustes na tarifa ao passageiro perpetua um modelo de remuneração por quilômetro rodado que desincentiva a modernização veicular. A ausência de indicadores objetivos de desempenho e auditoria independente de bilhetagem consolida a rigidez da estrutura tarifária, transferindo passivos contábeis ao tesouro municipal."
+    },
+    "expected_output": {
+      "verdict": "FAIL"
+    },
+    "metadata": {
+      "criterion": "authorial_voice",
+      "difficulty": "easy",
+      "expected_anomaly": "moralistic_outrage_and_preaching",
+      "defect_location": "paragraph_2",
+      "video_id": "DnJfhPj0MvA",
+      "target_verdict": "FAIL"
+    }
+  },
+  {
+    "id": "voice_05_typical_pass_1",
+    "input": {
+      "raw_text": "a introdução de coletores automáticos de lixo em máquinas virtuais redistribuiu custos no desenvolvimento de software, trocando alocação determinística pelo rastreamento probabilístico de objetos na memória. isso evita erros de corrupção de ponteiros, mas cobra sobretaxa em pausas de stop the world durante marcação e compactação. quando o heap tem dezenas de gigas de objetos vivos, suspender as threads pra inspecionar grafos de referência explode a latência de cauda nos percentis superiores, quebrando prazos de consenso distribuído e disparando timeouts falsos na rede. por isso linguagens com controle estático de escopo e posse na compilação são adotadas pra manter o determinismo temporal indispensável em transações de tempo real.",
+      "candidate_text": "## A Termodinâmica Computacional do Gerenciamento Automático de Memória\n\nA introdução de coletores automáticos de lixo em máquinas virtuais redistribuiu os custos de desenvolvimento de software, substituindo a alocação determinística de recursos pelo rastreamento probabilístico do ciclo de vida de estruturas na memória. Embora essa abstração elimine classes volumosas de vulnerabilidades ligadas a corrupção de ponteiros, ela impõe uma sobretaxa computacional periódica sob a forma de pausas de execução durante as fases de marcação e compactação de espaços de endereçamento densos.\n\nO impacto dessa penalidade amplia-se em arquiteturas com volumes elevados de objetos residentes em memória primária. A suspensão dos fluxos de trabalho da aplicação para permitir a inspeção segura de grafos de referência deteriora a latência de cauda nos percentis superiores, gerando desvios temporais críticos que desestabilizam protocolos de consenso distribuído e disparam alertas falsos de inoperância de nós de processamento em redes de baixa latência.\n\nA adoção de linguagens baseadas em controle explícito de propriedade de memória reflete a necessidade de eliminar essa variabilidade estocástica em ambientes de tempo real estrito. Ao antecipar a liberação de recursos para o momento da compilação por meio de verificação estática de escopo, o sistema preserva o determinismo temporal indispensável para a manutenção de vazão contínua em infraestruturas transacionais de missão crítica."
+    },
+    "expected_output": {
+      "verdict": "PASS"
+    },
+    "metadata": {
+      "criterion": "authorial_voice",
+      "difficulty": "typical",
+      "expected_anomaly": "none",
+      "defect_location": "none",
+      "video_id": "9a1MH3Ip1ZQ",
+      "target_verdict": "PASS"
+    }
+  },
+  {
+    "id": "voice_06_typical_pass_2",
+    "input": {
+      "raw_text": "resolver gargalos de processamento com replicação assíncrona em bancos relacionais altera a semântica da aplicação. o intervalo de tempo entre gravar no nó mestre e propagar o log pros secundários cria uma defasagem em que clientes leem dados desatualizados. aí na tela o usuário acha que o cadastro não funcionou e clica várias vezes, sobrecarregando o primário com mais escritas redundantes e aumentando o atraso de replicação. pra lidar com isso, a engenharia direciona leituras críticas pro nó de escrita e usa identificadores de versão na sessão, tratando consistência como um orçamento negociável perante as restrições físicas de concorrência.",
+      "candidate_text": "## A Mecânica da Consistência Eventual e os Custos Ocultos da Leitura Replicada\n\nA mitigação de gargalos de processamento em bancos de dados relacionais por meio da replicação assíncrona altera a semântica transacional das aplicações corporativas. A desconexão temporal entre a gravação no nó primário e a propagação do log de transações para as instâncias secundárias introduz uma janela de defasagem na qual clientes conectados recebem visões anacrônicas do estado do sistema, expondo incongruências que desafiam as expectativas intuitivas de linearidade.\n\nAs ramificações dessa defasagem manifestam-se no comportamento reativo dos usuários na interface gráfica. A percepção aparente de falha diante de atualizações cadastrais ainda não refletidas nas leituras secundárias estimula comandos redundantes que sobrecarregam o nó primário com gravações desnecessárias. Esse ciclo de retroalimentação agrava o atraso de replicação da infraestrutura e degrada a confiabilidade percebida do serviço sem que ocorram falhas formais de rede.\n\nO enfrentamento desse atrito exige a reformulação dos contratos entre camadas de apresentação e armazenamento. O encaminhamento direcionado de leituras sensíveis ao nó de escrita e o emprego de identificadores de versão na sessão do cliente equilibram a vazão agregada do cluster e a coerência observável da experiência do usuário, tratando a consistência como um orçamento de engenharia negociável perante restrições físicas de concorrência."
+    },
+    "expected_output": {
+      "verdict": "PASS"
+    },
+    "metadata": {
+      "criterion": "authorial_voice",
+      "difficulty": "typical",
+      "expected_anomaly": "none",
+      "defect_location": "none",
+      "video_id": "85fhyazvI8Y",
+      "target_verdict": "PASS"
+    }
+  },
+  {
+    "id": "voice_07_typical_fail",
+    "input": {
+      "raw_text": "a disseminação de métodos ágeis no mundo corporativo reflete a busca por previsibilidade orçamentária e controle de produtividade do trabalho técnico. reuniões iterativas e estimativas de esforço foram absorvidas pela hierarquia como auditoria interna, afetando a autonomia dos engenheiros em prol de cadências padronizadas. a velocidade de fechar cartões no jira vira a métrica principal de sucesso, subordinando a saúde arquitetural de longo prazo. isso acumula dívida técnica, esgota as equipes e prioriza a burocracia em vez de resolver os problemas de negócio.",
+      "candidate_text": "## A Institucionalização dos Métodos Ágeis e a Burocratização do Desenvolvimento\n\nA disseminação das metodologias ágeis no ambiente corporativo contemporâneo reflete a demanda por instrumentos de previsibilidade orçamentária e controle de produtividade sobre o trabalho técnico intelectual. Cerimônias iterativas e métricas de estimativa de esforço foram absorvidas pelas hierarquias gerenciais como mecanismos de auditoria interna, reconfigurando a autonomia operacional de equipes de engenharia em prol de cadências de entrega padronizadas.\n\nEssa dinâmica prolifera nas organizações não pela busca de excelência técnica, mas pelo imperativo de vigilância administrativa. As lideranças executivas adotam frameworks ágeis não como facilitadores de fluxo de trabalho, e sim como ferramentas políticas de prestação de contas que transformam a velocidade de fechamento de cartões na métrica suprema de sucesso, relegando a saúde arquitetural de longo prazo dos repositórios a uma posição subordinada.\n\nO resultado prático dessa ritualização manifesta-se na proliferação de débitos técnicos e no esgotamento de equipes. A substituição da engenharia de domínio por rotinas estéreis de aferição quantitativa compromete a sustentabilidade dos sistemas digitais, consolidando estruturas organizacionais orientadas para a conformidade burocrática em detrimento da solução pragmática de problemas de negócio."
+    },
+    "expected_output": {
+      "verdict": "FAIL"
+    },
+    "metadata": {
+      "criterion": "authorial_voice",
+      "difficulty": "typical",
+      "expected_anomaly": "recurrent_binary_antithesis",
+      "defect_location": "paragraph_2",
+      "video_id": "ytTJtfg9HCw",
+      "target_verdict": "FAIL"
+    }
+  }
+]
