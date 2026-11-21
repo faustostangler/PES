@@ -131,11 +131,13 @@ class TestTelemetryFactory:
         assert "LANGFUSE_SECRET_KEY" not in os.environ
         assert "LANGFUSE_HOST" not in os.environ
 
-    def test_build_should_export_span(self) -> None:
+    def test_build_should_export_span(self, capsys: pytest.CaptureFixture[str]) -> None:
         predicate = _build_should_export_span()
         span_mock = MagicMock()
         span_mock.instrumentation_scope.name = "cresmo.pipeline"
         assert predicate(span_mock) is True
+        captured = capsys.readouterr()
+        assert captured.out == ""
 
     def test_build_mask_hook(self) -> None:
         assert _build_mask_hook(None) is None
@@ -161,6 +163,20 @@ class TestTelemetryFactory:
         mock_settings.langfuse_public_key = ""
         adapter = build_telemetry_adapter(mock_settings)
         assert isinstance(adapter, NoOpTelemetryAdapter)
+
+    def test_build_telemetry_adapter_wires_dynamic_version_and_git_sha(
+        self, mock_settings: CresmoSettings
+    ) -> None:
+        from cresmo.infrastructure.adapters.telemetry.opentelemetry_adapter import (
+            OpenTelemetryAdapter,
+        )
+
+        mock_settings.git_sha = "12345678abcdef"
+        mock_langfuse = MagicMock()
+        adapter = build_telemetry_adapter(mock_settings, langfuse_client=mock_langfuse)
+        assert isinstance(adapter, OpenTelemetryAdapter)
+        assert adapter._pipeline_version == mock_settings.pipeline_version
+        assert adapter._git_sha == "12345678"
 
 
 class TestAdapterFactory:
@@ -193,6 +209,93 @@ class TestAdapterFactory:
     def test_build_preflight_checker(self, mock_settings: CresmoSettings) -> None:
         checker = build_preflight_checker(mock_settings)
         assert isinstance(checker, PreflightHealthChecker)
+
+    def test_build_gemini_credential_pool_uses_settings_and_handles_empty_keys(
+        self, tmp_path: Path
+    ) -> None:
+        """Verify SPEC-1: build_gemini_credential_pool uses configured keys/timeout or returns None."""
+        from cresmo.bootstrap.factories.adapter_factory import build_gemini_credential_pool
+        from cresmo.infrastructure.adapters.llm.gemini_pool import GeminiCredentialPool
+
+        settings = CresmoSettings(
+            gemini_api_keys=[SecretStr("KEY_A"), SecretStr("KEY_B")],
+            vault_dir=tmp_path / "vault",
+            gemini_timeout_seconds=240.0,
+        )
+        pool = build_gemini_credential_pool(settings)
+        assert isinstance(pool, GeminiCredentialPool)
+        assert pool.key_count == 2
+        assert pool.timeout == 240.0
+
+        empty_settings = CresmoSettings(
+            gemini_api_key=SecretStr(""),
+            gemini_api_keys=[],
+            vault_dir=tmp_path / "vault_empty",
+        )
+        assert build_gemini_credential_pool(empty_settings) is None
+
+    def test_factories_reuse_injected_credential_pool(self, tmp_path: Path) -> None:
+        """Verify SPEC-2: synthesis, indexing, and judge factories reuse injected credential_pool."""
+        from cresmo.bootstrap.factories.adapter_factory import build_gemini_synthesis_adapter
+        from cresmo.infrastructure.adapters.llm.gemini_adapter import GeminiLLMAdapter
+        from cresmo.infrastructure.adapters.llm.gemini_pool import GeminiCredentialPool
+
+        settings = CresmoSettings(
+            gemini_api_key=SecretStr("KEY_1,KEY_2"),
+            vault_dir=tmp_path / "vault",
+            judge_provider="gemini",
+        )
+        shared_pool = GeminiCredentialPool(keys=["KEY_1", "KEY_2"], timeout=120.0)
+
+        synth = build_gemini_synthesis_adapter(settings, credential_pool=shared_pool)
+        assert isinstance(synth, GeminiLLMAdapter)
+        assert synth._pool is shared_pool
+
+        indexing = build_indexing_adapter(settings, web_index=True, credential_pool=shared_pool)
+        assert isinstance(indexing, GeminiLLMAdapter)
+        assert indexing._pool is shared_pool
+
+        judge = build_llm_judge_adapter(
+            settings, enable_fallback=False, credential_pool=shared_pool
+        )
+        assert isinstance(judge, LangfuseJudgeDecorator)
+        assert isinstance(judge._inner_judge, MechanicalPreflightJudgeDecorator)
+        assert isinstance(judge._inner_judge._inner_judge, GeminiJudgeAdapter)
+        assert judge._inner_judge._inner_judge._pool is shared_pool
+
+    def test_factories_propagate_thinking_level_and_max_output_tokens(self, tmp_path: Path) -> None:
+        """Verify synthesis, indexing, and judge factories propagate thinking_level and max_output_tokens."""
+        from cresmo.bootstrap.factories.adapter_factory import build_gemini_synthesis_adapter
+        from cresmo.infrastructure.adapters.llm.gemini_adapter import GeminiLLMAdapter
+
+        settings = CresmoSettings(
+            gemini_api_key=SecretStr("KEY_THINKING_1"),
+            vault_dir=tmp_path / "vault",
+            judge_provider="gemini",
+            gemini_thinking_level="minimal",
+            judge_gemini_thinking_level="medium",
+            gemini_max_output_tokens=16_384,
+        )
+
+        synth = build_gemini_synthesis_adapter(settings)
+        assert isinstance(synth, GeminiLLMAdapter)
+        assert synth.thinking_level == "minimal"
+        assert synth.max_output_tokens == 16_384
+
+        indexing = build_indexing_adapter(
+            settings, web_index=True, model_override="gemini-3.6-flash"
+        )
+        assert isinstance(indexing, GeminiLLMAdapter)
+        assert indexing.thinking_level == "minimal"
+        assert indexing.max_output_tokens == 16_384
+
+        judge = build_llm_judge_adapter(settings, enable_fallback=False)
+        assert isinstance(judge, LangfuseJudgeDecorator)
+        assert isinstance(judge._inner_judge, MechanicalPreflightJudgeDecorator)
+        primary_judge = judge._inner_judge._inner_judge
+        assert isinstance(primary_judge, GeminiJudgeAdapter)
+        assert primary_judge.thinking_level == "medium"
+        assert primary_judge.max_output_tokens == 16_384
 
 
 class TestJudgeFactory:
@@ -234,6 +337,30 @@ class TestUseCaseFactory:
     def test_build_index_raw_use_case(self, mock_settings: CresmoSettings) -> None:
         use_case = build_index_raw_use_case(settings=mock_settings)
         assert isinstance(use_case, IndexRawTranscriptsUseCase)
+
+    def test_build_index_raw_use_case_shares_gemini_credential_pool(self, tmp_path: Path) -> None:
+        """Verify SPEC-4: build_index_raw_use_case shares one GeminiCredentialPool across indexing and judge."""
+        from cresmo.infrastructure.adapters.judges.composite_judge import (
+            ResilientCompositeJudgeAdapter,
+        )
+        from cresmo.infrastructure.adapters.llm.gemini_adapter import GeminiLLMAdapter
+
+        settings = CresmoSettings(
+            gemini_api_key=SecretStr("KEY_IDX_1,KEY_IDX_2"),
+            vault_dir=tmp_path / "vault",
+            judge_provider="gemini",
+            langfuse_enabled=False,
+        )
+        use_case = build_index_raw_use_case(settings=settings, web_index=True)
+
+        assert isinstance(use_case.llm_indexing_port, GeminiLLMAdapter)
+        assert isinstance(use_case.llm_judge_port, LangfuseJudgeDecorator)
+        preflight = use_case.llm_judge_port._inner_judge
+        assert isinstance(preflight, MechanicalPreflightJudgeDecorator)
+        composite = preflight._inner_judge
+        assert isinstance(composite, ResilientCompositeJudgeAdapter)
+        assert isinstance(composite._primary, GeminiJudgeAdapter)
+        assert use_case.llm_indexing_port._pool is composite._primary._pool
 
     def test_build_concat_master_use_case(self, mock_settings: CresmoSettings) -> None:
         use_case = build_concat_master_use_case(settings=mock_settings)

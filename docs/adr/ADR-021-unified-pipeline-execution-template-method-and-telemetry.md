@@ -13,7 +13,7 @@
 > While ADR-021 definitively superseded ADR-007 by hoisting the template method to `CresmoPipeline.execute(...)`, key components were subsequently superseded:
 > 1. **Stage Execution Sequence**: Section 2.2 placed `raw_indexing` before `fluid_prose`. This was **SUPERSEDED by [`ADR-028`](ADR-028-decoupling-fluid-prose-and-socratic-gap-filling.md)**, which decoupled fluid prose and designated it as Stage 1 prior to catalog indexing for linguistic normalization.
 > 2. **Stage Orchestration Fabric**: Direct coordinator stage dispatch was **SUPERSEDED by [`ADR-030`](ADR-030-stage-quality-gate-and-evaluator-retry-fabric.md)** and [`ADR-031`](ADR-031-standardized-stage-descriptor-and-closed-loop-refinement.md) through declarative `StageConfig` and `PipelineStageRunner.run_evaluated_stage`.
-> 3. **Mega-Trace Prohibition**: The single root span encapsulating all batch items was **SUPERSEDED by [`ADR-035`](ADR-035-atomic-work-item-traces-and-sota-kiss-batch-correlation.md)** (`1 Trace = 1 Work Item`) and [`ADR-037`](ADR-037-lean-telemetry-topography-and-chronological-evaluation.md) (Trace: `cresmo.synthesis_pipeline`, Root Span: `pipeline.coordinator`).
+> 3. **Mega-Trace Prohibition**: The single root span encapsulating all batch items was **SUPERSEDED by [`ADR-035`](ADR-035-atomic-work-item-traces-and-sota-kiss-batch-correlation.md)** (`1 Trace = 1 Work Item`), [`ADR-037`](ADR-037-lean-telemetry-topography-and-chronological-evaluation.md), and [`ADR-063`](ADR-063-lean-telemetry-v2-zero-attribute-duplication-and-dynamic-versioning.md) (Trace: `cresmo.synthesis_pipeline`, Root Span: `cresmo.pipeline.coordinator`).
 
 ---
 

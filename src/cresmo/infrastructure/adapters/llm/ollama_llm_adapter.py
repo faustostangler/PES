@@ -23,7 +23,7 @@ import structlog
 from langfuse import Langfuse, observe
 from opentelemetry import trace
 
-from cresmo.application.ports import LLMTransformationPort
+from cresmo.application.ports import LLM_GENERATION_SPAN_NAME, LLMTransformationPort
 from cresmo.domain.exceptions import LLMInfrastructureError
 from cresmo.domain.value_objects import ChatPrompt
 from cresmo.infrastructure.adapters.telemetry.opentelemetry_adapter import annotate_llm_span
@@ -317,6 +317,7 @@ class OllamaLLMAdapter(LLMTransformationPort):
         prompt: ChatPrompt,
         temperature: float | None = None,
         *,
+        thinking_level: str | None = None,
         trace_id: str | None = None,
         session_id: str | None = None,
         user_id: str | None = None,
@@ -326,6 +327,7 @@ class OllamaLLMAdapter(LLMTransformationPort):
         Args:
             prompt: Domain ChatPrompt containing sequential messages and optional system instruction.
             temperature: Sampling temperature override. Defaults to self.default_temperature.
+            thinking_level: Ignored by local Ollama provider (retained for port LSP parity).
             trace_id: Optional trace ID (e.g. ContentId).
             session_id: Pipeline session identifier.
             user_id: Operator or channel identifier.
@@ -336,6 +338,7 @@ class OllamaLLMAdapter(LLMTransformationPort):
         Raises:
             LLMInfrastructureError: If Ollama daemon is unreachable or returns HTTP error.
         """
+        _ = thinking_level
         response_text = self._execute_transform(
             prompt=prompt,
             temperature=temperature,
@@ -361,7 +364,7 @@ class OllamaLLMAdapter(LLMTransformationPort):
 
         return response_text
 
-    @observe(name="cresmo.llm.generate", as_type="generation")
+    @observe(name=LLM_GENERATION_SPAN_NAME, as_type="generation")
     def _execute_transform(
         self,
         prompt: ChatPrompt,

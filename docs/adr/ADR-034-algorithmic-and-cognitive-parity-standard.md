@@ -1,6 +1,6 @@
 # ADR-034: Algorithmic (ID-ID) and Cognitive (TXT-TXT) Parity Standard across Telemetry, Observability, and Pipeline Contexts
 
-**Status:** ACCEPTED  
+**Status:** ACCEPTED *(Partially refined by [`ADR-063`](ADR-063-lean-telemetry-v2-zero-attribute-duplication-and-dynamic-versioning.md): loose `langfuse.input.*` span attributes decommissioned in favor of canonical `cresmo.*` attributes and JSON `input.value`/`langfuse.trace.input`)*  
 **Date:** 2026-10-03  
 **Decision Makers:** Lead Architect (Fausto Stangler), Systems Architect (Doctor Stangler Committee)  
 **Governing Method:** Doctor Stangler Architecture Method (Clean/Hexagonal DDD Modular Monolith, KISS & Fail-Fast Principles, ADR-First)  

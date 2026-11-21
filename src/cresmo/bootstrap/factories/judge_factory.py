@@ -7,11 +7,14 @@ Conforms to:
 
 from __future__ import annotations
 
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from cresmo.application.ports import PromptProviderPort
 from cresmo.application.ports.llm_judge_port import LlmJudgePort
 from cresmo.infrastructure.config import CresmoSettings
+
+if TYPE_CHECKING:
+    from cresmo.infrastructure.adapters.llm.gemini_pool import GeminiCredentialPool
 
 
 def build_llm_judge_adapter(
@@ -19,6 +22,7 @@ def build_llm_judge_adapter(
     langfuse_client: Any | None = None,
     prompt_provider: PromptProviderPort | None = None,
     enable_fallback: bool = True,
+    credential_pool: GeminiCredentialPool | None = None,
 ) -> LlmJudgePort:
     """Build a decorated LlmJudgePort instance based on application settings.
 
@@ -28,6 +32,7 @@ def build_llm_judge_adapter(
         prompt_provider: Optional prompt provider port for externalized judge instructions.
         enable_fallback: Whether to wrap primary with fallback composite adapter (default: True).
             Set to False during calibration to maintain strict metrological benchmark isolation.
+        credential_pool: Optional shared GeminiCredentialPool for cross-adapter cooldown sync.
 
     Returns:
         LlmJudgePort: Resilient multi-provider judge wrapped in telemetry decorator.
@@ -42,8 +47,10 @@ def build_llm_judge_adapter(
             api_keys=[k.get_secret_value() for k in settings.gemini_api_keys],
             model=settings.judge_gemini_model,
             pass_threshold=settings.judge_pass_threshold,
-            temperature=settings.judge_temperature,
+            thinking_level=settings.judge_gemini_thinking_level,
+            max_output_tokens=settings.gemini_max_output_tokens,
             prompt_provider=prompt_provider,
+            credential_pool=credential_pool,
             timeout_seconds=settings.gemini_timeout_seconds,
         )
     elif provider == "ollama":

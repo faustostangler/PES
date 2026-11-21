@@ -29,6 +29,7 @@ from google import genai
 from google.genai import errors, types
 
 from cresmo.domain.exceptions import RateLimitExceededError
+from cresmo.infrastructure.config import DEFAULT_GEMINI_TIMEOUT_SECONDS
 
 __all__ = [
     "CredentialPoolExhaustedError",
@@ -149,7 +150,7 @@ class GeminiCredentialPool:
     - As soon as index 0's cooldown expires, the next lease() immediately picks index 0.
     """
 
-    DEFAULT_TIMEOUT: float = 60.0
+    DEFAULT_TIMEOUT: float = DEFAULT_GEMINI_TIMEOUT_SECONDS
 
     def __init__(
         self,

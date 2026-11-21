@@ -4,6 +4,7 @@ Re-exports settings, telemetry, adapter, and use case factory builders.
 """
 
 from cresmo.bootstrap.factories.adapter_factory import (
+    build_gemini_credential_pool,
     build_gemini_synthesis_adapter,
     build_indexing_adapter,
     build_media_ingestion_adapter,
@@ -37,6 +38,7 @@ __all__ = [
     "build_anonymizer_adapter",
     "build_concat_master_use_case",
     "build_discover_batch_sources_use_case",
+    "build_gemini_credential_pool",
     "build_gemini_synthesis_adapter",
     "build_index_raw_use_case",
     "build_indexing_adapter",

@@ -25,6 +25,7 @@ class LLMTransformationPort(ABC):
         prompt: ChatPrompt,
         temperature: float | None = None,
         *,
+        thinking_level: str | None = None,
         trace_id: str | None = None,
         session_id: str | None = None,
         user_id: str | None = None,
@@ -33,7 +34,8 @@ class LLMTransformationPort(ABC):
 
         Args:
             prompt: Canonical ChatPrompt value object with system prompt and messages.
-            temperature: Sampling temperature override.
+            temperature: Sampling temperature override (used by local providers; ignored by Gemini).
+            thinking_level: Optional reasoning effort override ('minimal', 'low', 'medium', 'high', 'xhigh').
             trace_id: Optional trace ID (e.g. ContentId or session key).
             session_id: Pipeline session identifier.
             user_id: Operator or channel identifier.

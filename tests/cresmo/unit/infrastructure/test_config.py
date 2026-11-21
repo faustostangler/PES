@@ -169,11 +169,35 @@ class TestCresmoSettings:
     def test_pipeline_version_default_and_env_override(
         self, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        """Verify pipeline_version defaults to cresmo:v2 and supports PIPELINE_VERSION override per ADR-026 Rule 9."""
-        settings = CresmoSettings()
-        assert settings.pipeline_version == "cresmo:v2"
+        """Verify pipeline_version resolves dynamically and unifies env override on CRESMO_PIPELINE_VERSION (ADR-026, ADR-063)."""
+        import importlib.metadata
+        from unittest.mock import patch
 
-        monkeypatch.setenv("PIPELINE_VERSION", "cresmo:v3-canary")
+        from cresmo.infrastructure.config import resolve_default_pipeline_version
+
+        expected_version = f"cresmo:v{importlib.metadata.version('pes')}"
+        assert resolve_default_pipeline_version() == expected_version
+        assert expected_version != "cresmo:v2"
+
+        settings = CresmoSettings()
+        assert settings.pipeline_version == expected_version
+
+        with patch(
+            "importlib.metadata.version",
+            side_effect=importlib.metadata.PackageNotFoundError("pes"),
+        ):
+            assert resolve_default_pipeline_version() == "cresmo:v0.0.0-dev"
+
+        # Python kwarg construction works via field name
+        explicit = CresmoSettings(pipeline_version="cresmo:v9-kwarg")
+        assert explicit.pipeline_version == "cresmo:v9-kwarg"
+
+        # Legacy unprefixed PIPELINE_VERSION is ignored (unified on CRESMO_PIPELINE_VERSION)
+        monkeypatch.setenv("PIPELINE_VERSION", "cresmo:v-legacy-ignored")
+        assert CresmoSettings().pipeline_version == expected_version
+
+        # Canonical Bounded Context env var overrides default
+        monkeypatch.setenv("CRESMO_PIPELINE_VERSION", "cresmo:v3-canary")
         overridden = CresmoSettings()
         assert overridden.pipeline_version == "cresmo:v3-canary"
 
@@ -197,9 +221,9 @@ class TestCresmoSettings:
         assert settings.gemini_model == DEFAULT_GEMINI_MODEL
         assert settings.judge_gemini_model == DEFAULT_JUDGE_GEMINI_MODEL
         assert settings.benchmark_models == [
-            "gemini:gemini-4-hydrogen",
-            "gemini:gemini-3.8-flash",
             "gemini:gemini-3.5-flash-lite",
+            "gemini:gemini-3.8-flash",
+            "gemini:gemini-4-hydrogen",
         ]
         assert settings.judge_calibration_models == settings.benchmark_models
         assert settings.generator_benchmark_models == settings.benchmark_models
@@ -219,10 +243,109 @@ class TestCresmoSettings:
     def test_gemini_timeout_seconds_defaults_and_env_override(
         self, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        """Verify gemini_timeout_seconds defaults to 60.0 and supports env override."""
-        settings = CresmoSettings()
-        assert settings.gemini_timeout_seconds == 60.0
+        """Verify gemini_timeout_seconds defaults to 300.0 and supports env override."""
+        settings = CresmoSettings(_env_file=None)
+        assert settings.gemini_timeout_seconds == 300.0
 
         monkeypatch.setenv("GEMINI_TIMEOUT_SECONDS", "45.0")
-        overridden = CresmoSettings()
+        overridden = CresmoSettings(_env_file=None)
         assert overridden.gemini_timeout_seconds == 45.0
+
+    def test_default_gemini_model_has_no_provider_prefix(self) -> None:
+        """Verify DEFAULT_GEMINI_MODEL and settings defaults omit the 'gemini:' prefix."""
+        from cresmo.infrastructure.config import DEFAULT_GEMINI_MODEL
+
+        settings = CresmoSettings(_env_file=None)
+        assert DEFAULT_GEMINI_MODEL == "gemini-3.5-flash-lite"
+        assert settings.gemini_model == "gemini-3.5-flash-lite"
+        assert settings.gemini_fallback_model == "gemini-3.6-flash"
+        assert settings.gemini_fallback_model != settings.gemini_model
+        assert settings.judge_gemini_model == "gemini-3.5-flash-lite"
+        assert not settings.gemini_model.startswith("gemini:")
+
+    def test_free_tier_models_catalog_exported_from_root_and_cresmo_config(self) -> None:
+        """Verify GEMINI_FREE_TIER_MODELS exposes all 11 Free-Tier models and excludes paid-only models."""
+        import config as root_config
+        from cresmo.infrastructure.config import GEMINI_FREE_TIER_MODELS
+
+        expected_free_tier = (
+            "gemini-3.5-flash-lite",
+            "gemini-3.8-flash",
+            "gemini-3.6-flash",
+            "gemini-4-hydrogen",
+            "gemini-3.1-flash-lite",
+            "gemini-3-flash-preview",
+            "gemma-4-31b-it",
+            "gemma-4-26b-a4b-it",
+            "gemini-2.5-flash-lite",
+            "gemini-2.5-flash",
+            "gemini-2.5-pro",
+        )
+        assert GEMINI_FREE_TIER_MODELS == expected_free_tier
+        assert root_config.GEMINI_FREE_TIER_MODELS == GEMINI_FREE_TIER_MODELS
+        assert hasattr(root_config, "GeminiFreeTierModel")
+        assert hasattr(root_config, "GeminiThinkingLevel")
+        assert hasattr(root_config, "GEMINI_THINKING_LEVELS")
+
+        for paid_only in (
+            "gemini-4-carbon",
+            "gemini-4-argon",
+            "gemini-4-neon",
+            "gemini-3.1-pro-preview",
+        ):
+            assert paid_only not in GEMINI_FREE_TIER_MODELS
+
+    def test_gemini_thinking_level_defaults_normalization_and_validation(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """Verify gemini_thinking_level and judge_gemini_thinking_level defaults, normalization, and validation."""
+        from pydantic import ValidationError
+
+        from cresmo.infrastructure.config import DEFAULT_GEMINI_THINKING_LEVEL
+
+        settings = CresmoSettings(_env_file=None)
+        assert DEFAULT_GEMINI_THINKING_LEVEL == "low"
+        assert settings.gemini_thinking_level == "low"
+        assert settings.judge_gemini_thinking_level == "low"
+
+        monkeypatch.setenv("GEMINI_THINKING_LEVEL", " HIGH ")
+        monkeypatch.setenv("JUDGE_GEMINI_THINKING_LEVEL", " Minimal ")
+        overridden = CresmoSettings(_env_file=None)
+        assert overridden.gemini_thinking_level == "high"
+        assert overridden.judge_gemini_thinking_level == "minimal"
+
+        monkeypatch.setenv("CRESMO_GEMINI_THINKING_LEVEL", "medium")
+        monkeypatch.setenv("CRESMO_JUDGE_GEMINI_THINKING_LEVEL", "xhigh")
+        prefixed = CresmoSettings(_env_file=None)
+        assert prefixed.gemini_thinking_level == "medium"
+        assert prefixed.judge_gemini_thinking_level == "xhigh"
+
+        with pytest.raises(ValidationError):
+            CresmoSettings(_env_file=None, gemini_thinking_level="ultra")  # type: ignore[arg-type]
+
+        with pytest.raises(ValidationError):
+            CresmoSettings(_env_file=None, judge_gemini_thinking_level="invalid")  # type: ignore[arg-type]
+
+    def test_gemini_max_output_tokens_defaults_override_and_validation(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """Verify gemini_max_output_tokens defaults to 32768, supports env override, and enforces bounds."""
+        from pydantic import ValidationError
+
+        from cresmo.infrastructure.config import DEFAULT_GEMINI_MAX_OUTPUT_TOKENS
+
+        settings = CresmoSettings(_env_file=None)
+        assert DEFAULT_GEMINI_MAX_OUTPUT_TOKENS == 32_768
+        assert settings.gemini_max_output_tokens == 32_768
+
+        monkeypatch.setenv("GEMINI_MAX_OUTPUT_TOKENS", "16384")
+        overridden = CresmoSettings(_env_file=None)
+        assert overridden.gemini_max_output_tokens == 16_384
+
+        with pytest.raises(ValidationError):
+            CresmoSettings(_env_file=None, gemini_max_output_tokens=128)
+
+    def test_deprecated_judge_temperature_removed(self) -> None:
+        """Verify deprecated Gemini sampling tunable judge_temperature is removed from settings."""
+        settings = CresmoSettings(_env_file=None)
+        assert not hasattr(settings, "judge_temperature")

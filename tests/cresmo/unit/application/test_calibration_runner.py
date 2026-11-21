@@ -147,6 +147,14 @@ class TestSpecAndCliParsingHelpers:
     def test_resolve_model_spec_handles_explicit_prefixes_and_heuristics(self) -> None:
         assert resolve_model_spec("  Ollama : llama3:8b ") == ("ollama", "llama3:8b")
         assert resolve_model_spec("gemini-4-hydrogen") == ("gemini", "gemini-4-hydrogen")
+        assert resolve_model_spec("gemma-4-31b-it", default_provider="ollama") == (
+            "gemini",
+            "gemma-4-31b-it",
+        )
+        assert resolve_model_spec("gemma-4-26b-a4b-it", default_provider="ollama") == (
+            "gemini",
+            "gemma-4-26b-a4b-it",
+        )
         assert resolve_model_spec("GEMINI-pro", default_provider="ollama") == (
             "gemini",
             "GEMINI-pro",

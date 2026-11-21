@@ -79,10 +79,17 @@ def _build_should_export_span() -> Callable[[Any], bool]:
     """Build filter predicate checking default spans and cresmo.* scopes."""
 
     def should_export_cresmo_span(span: Any) -> bool:
-        if is_default_export_span(span):
-            return True
         scope = getattr(span, "instrumentation_scope", None)
-        return scope is not None and scope.name.startswith("cresmo.")
+        scope_name = getattr(scope, "name", None)
+        span_name = getattr(span, "name", None)
+        is_default = is_default_export_span(span)
+        is_cresmo = scope is not None and scope.name.startswith("cresmo.")
+        export = is_default or is_cresmo
+        print(
+            f"[SPAN DEBUG] name={span_name!r} scope={scope_name!r} "
+            f"default={is_default} cresmo={is_cresmo} -> export={export}"
+        )
+        return export
 
     return should_export_cresmo_span
 
@@ -223,6 +230,7 @@ def build_telemetry_adapter(
         return OpenTelemetryAdapter(
             langfuse_client=langfuse_client,
             pipeline_version=resolved_settings.pipeline_version,
+            git_sha=resolved_settings.git_sha,
         )
     return NoOpTelemetryAdapter()
 

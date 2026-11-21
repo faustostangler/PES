@@ -12,10 +12,9 @@ import re
 import time
 from typing import Any
 
-import httpx
 import structlog
 from google import genai
-from google.genai import errors, types
+from google.genai import types
 from tenacity import (
     retry,
     retry_if_exception,
@@ -36,24 +35,31 @@ from cresmo.infrastructure.adapters.judges.criterion_parser import (
     JudgeResponseOutputSchema,
     parse_criteria_scores,
 )
-from cresmo.infrastructure.adapters.llm.gemini_pool import (
-    GeminiCredentialPool,
-    is_quota_exhausted_error,
+from cresmo.infrastructure.adapters.llm.gemini_common import (
+    build_thinking_config,
+    is_transient_cluster_error,
+    is_transient_genai_error,
+    log_gemini_retry_attempt,
 )
+from cresmo.infrastructure.adapters.llm.gemini_pool import GeminiCredentialPool
 from cresmo.infrastructure.adapters.prompts import JsonPromptProvider
 from cresmo.infrastructure.config import (
+    DEFAULT_GEMINI_MAX_OUTPUT_TOKENS,
+    DEFAULT_GEMINI_THINKING_LEVEL,
     DEFAULT_GEMINI_TIMEOUT_SECONDS,
     DEFAULT_JUDGE_GEMINI_MODEL,
     DEFAULT_JUDGE_PASS_THRESHOLD,
-    DEFAULT_JUDGE_TEMPERATURE,
 )
 
 logger = structlog.get_logger(__name__)
 
 DEFAULT_PASS_THRESHOLD: float = DEFAULT_JUDGE_PASS_THRESHOLD
 DEFAULT_MODEL: str = DEFAULT_JUDGE_GEMINI_MODEL
-DEFAULT_TEMPERATURE: float = DEFAULT_JUDGE_TEMPERATURE
+DEFAULT_THINKING_LEVEL: str = DEFAULT_GEMINI_THINKING_LEVEL
 DEFAULT_TIMEOUT_SECONDS: float = DEFAULT_GEMINI_TIMEOUT_SECONDS
+
+_is_transient_genai_error = is_transient_genai_error
+_is_transient_cluster_error = is_transient_cluster_error
 
 
 def _clean_json_markdown(text: str) -> str:
@@ -65,59 +71,11 @@ def _clean_json_markdown(text: str) -> str:
     return cleaned
 
 
-TRANSIENT_NETWORK_PATTERNS: tuple[str, ...] = (
-    "503",
-    "429",
-    "UNAVAILABLE",
-    "ResourceExhausted",
-    "RESOURCE_EXHAUSTED",
-    "high demand",
-    "rate limit",
-    "quota",
-    "Connection reset",
-    "connection reset",
-    "Server disconnected",
-    "RemoteDisconnected",
-    "RemoteProtocolError",
-    "broken pipe",
-    "peer closed",
-    "connection closed",
-    "closed before response",
-    "timed out",
-    "timeout",
-    "socket.timeout",
-)
-
-
-def _is_transient_genai_error(exc: BaseException) -> bool:
-    """Determine if a Gemini API exception represents a temporary, retryable condition."""
-    if isinstance(
-        exc, (ConnectionError, TimeoutError, httpx.TransportError, httpx.TimeoutException)
-    ):
-        return True
-    if isinstance(exc, errors.APIError):
-        code = getattr(exc, "code", None)
-        return code in (429, 500, 502, 503, 504)
-    msg = str(exc)
-    return any(pattern in msg for pattern in TRANSIENT_NETWORK_PATTERNS)
-
-
-def _is_transient_cluster_error(exc: BaseException) -> bool:
-    """Determine if an exception represents a retryable 5xx or cluster network condition.
-
-    CRITICAL INVARIANT (ADR-041 §2.3):
-    HTTP 429 (quota exhaustion) is NOT retried here because it must immediately trigger
-    credential rotation via GeminiCredentialPool.
-    """
-    if is_quota_exhausted_error(exc):
-        return False
-    return _is_transient_genai_error(exc)
-
-
 @retry(
     retry=retry_if_exception(_is_transient_cluster_error),
     wait=wait_random_exponential(min=1, max=10),
-    stop=stop_after_attempt(4),
+    stop=stop_after_attempt(3),
+    before_sleep=log_gemini_retry_attempt,
     reraise=True,
 )
 def _generate_content_with_retry(
@@ -126,7 +84,7 @@ def _generate_content_with_retry(
     contents: Any,
     config: Any,
 ) -> Any:
-    """Generate content with automatic exponential backoff for transient cluster errors (5xx)."""
+    """Generate content with bounded exponential backoff for transient cluster errors (5xx)."""
     return client.models.generate_content(
         model=model,
         contents=contents,
@@ -143,7 +101,8 @@ class GeminiJudgeAdapter(LlmJudgePort):
         api_key: str | None = None,
         model: str = DEFAULT_MODEL,
         pass_threshold: float = DEFAULT_PASS_THRESHOLD,
-        temperature: float = DEFAULT_TEMPERATURE,
+        thinking_level: str | None = DEFAULT_THINKING_LEVEL,
+        max_output_tokens: int = DEFAULT_GEMINI_MAX_OUTPUT_TOKENS,
         prompt_provider: PromptProviderPort | None = None,
         credential_pool: GeminiCredentialPool | None = None,
         api_keys: list[str] | None = None,
@@ -156,17 +115,20 @@ class GeminiJudgeAdapter(LlmJudgePort):
             api_key: Google Gemini API key string.
             model: Gemini model name for evaluation.
             pass_threshold: Minimum score threshold for passing criteria and overall evaluation.
-            temperature: Sampling temperature for deterministic generation.
+            thinking_level: Reasoning effort level ('minimal', 'low', 'medium', 'high', 'xhigh').
+            max_output_tokens: Bounded token ceiling (thinking + JSON output).
             prompt_provider: Optional PromptProviderPort for externalized prompt templates.
             credential_pool: Optional injected GeminiCredentialPool for quota rotation.
             api_keys: Optional list of raw API keys to initialize credential pool.
             timeout_seconds: Socket and request timeout in seconds for GenAI HTTP calls.
         """
-        self._model = model
+        # ACL boundary hygiene: strip optional provider routing prefix ("gemini:")
+        self._model = model.removeprefix("gemini:")
         self._api_key = api_key
         self._client = client
         self._pass_threshold = pass_threshold
-        self._temperature = temperature
+        self._thinking_level = thinking_level
+        self._max_output_tokens = max_output_tokens
         self._prompt_provider = prompt_provider or JsonPromptProvider()
         self._timeout_seconds = timeout_seconds
 
@@ -229,10 +191,14 @@ class GeminiJudgeAdapter(LlmJudgePort):
 
         try:
             config = types.GenerateContentConfig(
-                temperature=self._temperature,
+                max_output_tokens=self._max_output_tokens,
                 system_instruction=chat_prompt.system_prompt,
                 response_mime_type="application/json",
                 response_schema=JudgeResponseOutputSchema,
+                thinking_config=build_thinking_config(
+                    model=self._model,
+                    thinking_level=self._thinking_level,
+                ),
                 automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=True),
             )
             contents = [
@@ -294,9 +260,14 @@ class GeminiJudgeAdapter(LlmJudgePort):
         return self._pass_threshold
 
     @property
-    def temperature(self) -> float:
-        """Return the sampling temperature."""
-        return self._temperature
+    def thinking_level(self) -> str | None:
+        """Return the configured thinking effort level."""
+        return self._thinking_level
+
+    @property
+    def max_output_tokens(self) -> int:
+        """Return the configured max output tokens ceiling."""
+        return self._max_output_tokens
 
     @property
     def model(self) -> str:
@@ -307,6 +278,6 @@ class GeminiJudgeAdapter(LlmJudgePort):
 __all__ = [
     "DEFAULT_MODEL",
     "DEFAULT_PASS_THRESHOLD",
-    "DEFAULT_TEMPERATURE",
+    "DEFAULT_THINKING_LEVEL",
     "GeminiJudgeAdapter",
 ]

@@ -96,7 +96,7 @@ class TestPipelineTelemetryIntegration:
 
         # Identify root span
         root_span = next(
-            s for s in spans if s.name in ("pipeline.coordinator", "cresmo.pipeline.execution")
+            s for s in spans if s.name == "cresmo.pipeline.coordinator"
         )
         assert root_span.attributes is not None
         assert root_span.context is not None
@@ -167,7 +167,7 @@ class TestPipelineTelemetryIntegration:
         root_span = next(
             s
             for s in spans
-            if s.name in ("pipeline.coordinator", "cresmo.pipeline.execution")
+            if s.name == "cresmo.pipeline.coordinator"
             and s.attributes is not None
             and s.attributes.get("cresmo.content.id") == "yt_auth_test_01"
         )
@@ -210,7 +210,7 @@ class TestPipelineTelemetryIntegration:
         root_span = next(
             s
             for s in spans
-            if s.name in ("pipeline.coordinator", "cresmo.pipeline.execution")
+            if s.name == "cresmo.pipeline.coordinator"
             and s.attributes is not None
             and s.attributes.get("cresmo.content.id") == "yt_worker_test_01"
         )
@@ -247,7 +247,7 @@ class TestPipelineTelemetryIntegration:
         root_span = next(
             s
             for s in spans
-            if s.name in ("pipeline.coordinator", "cresmo.pipeline.execution")
+            if s.name == "cresmo.pipeline.coordinator"
             and s.attributes is not None
             and s.attributes.get("cresmo.content.id") == "yt_chan_id_01"
         )
@@ -378,7 +378,7 @@ class TestPipelineTelemetryIntegration:
 
         spans = exporter.get_finished_spans()
         root_span = next(
-            s for s in spans if s.name in ("pipeline.coordinator", "cresmo.pipeline.execution")
+            s for s in spans if s.name == "cresmo.pipeline.coordinator"
         )
         assert root_span.attributes is not None
         assert root_span.attributes["cresmo.batch_id"] == batch_id.value

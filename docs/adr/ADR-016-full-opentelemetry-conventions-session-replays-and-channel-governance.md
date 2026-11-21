@@ -13,7 +13,7 @@
 > 1. **`ChannelTenantId` Decommissioning**: The standalone `ChannelTenantId` VO is **DEPRECATED and DECOMMISSIONED** per [`ADR-033`](ADR-033-composite-value-objects-identity-parity-and-tenant-simplification.md). Cost center identity is now an intrinsic responsibility of the composite `Channel` VO via `channel.tenant_key`.
 > 2. **Session Replay Format**: The session identifier format evolved from `content:{channel}:{id}` to `{channel_id}:{video_id}` ([`ADR-027`](ADR-027-unified-telemetry-vocabulary-and-langfuse-conventions.md)) and was finalized to `{channel_id}:{content_id}` ([`ADR-033`](ADR-033-composite-value-objects-identity-parity-and-tenant-simplification.md), [`ADR-035`](ADR-035-atomic-work-item-traces-and-sota-kiss-batch-correlation.md)), eradicating `video_id`.
 > 3. **Mega-Trace Monolith Prohibition**: The monolithic single trace spanning multiple batch items was designated an anti-pattern and **SUPERSEDED** by `1 Trace = 1 Work Item` per [`ADR-035`](ADR-035-atomic-work-item-traces-and-sota-kiss-batch-correlation.md).
-> 4. **Telemetry Topography**: Homonymous trace root naming was **SUPERSEDED** by the 4-tier lean topography in [`ADR-037`](ADR-037-lean-telemetry-topography-and-chronological-evaluation.md) (Trace: `cresmo.synthesis_pipeline`, Root Span: `pipeline.coordinator`).
+> 4. **Telemetry Topography**: Homonymous trace root naming was **SUPERSEDED** by the 4-tier lean topography in [`ADR-037`](ADR-037-lean-telemetry-topography-and-chronological-evaluation.md) and [`ADR-063`](ADR-063-lean-telemetry-v2-zero-attribute-duplication-and-dynamic-versioning.md) (Trace: `cresmo.synthesis_pipeline`, Root Span: `cresmo.pipeline.coordinator`).
 
 ---
 

@@ -2,11 +2,11 @@
 
 | Field       | Value                                                              |
 |-------------|--------------------------------------------------------------------|
-| **Status**  | ACCEPTED                                                           |
+| **Status**  | ACCEPTED (REFINED by [`ADR-063`](ADR-063-lean-telemetry-v2-zero-attribute-duplication-and-dynamic-versioning.md)) |
 | **Date**    | 2026-10-07                                                         |
 | **Authors** | Lead Architect (Fausto Stangler), Systems Architect (Doctor Stangler Committee) |
 | **Scope**   | Cross-Cutting Observability & SRE — Domain, Application, Infrastructure |
-| **Relates** | ADR-000, ADR-016, ADR-021, ADR-027, ADR-029, ADR-030, ADR-031, ADR-034, ADR-035, ADR-036 |
+| **Relates** | ADR-000, ADR-016, ADR-021, ADR-027, ADR-029, ADR-030, ADR-031, ADR-034, ADR-035, ADR-036, ADR-063 |
 
 ---
 
@@ -68,7 +68,7 @@ We establish a clean, strictly chronological 4-tier telemetry topography:
 
 ### Pillar 1: Semantic Separation of Trace and Root Span
 - **Trace Name:** `cresmo.synthesis_pipeline` (represents the end-to-end synthesis run).
-- **Root Span Name:** `pipeline.coordinator` (represents `PipelineCoordinator.execute`).
+- **Root Span Name:** `pipeline.coordinator` *(updated to `cresmo.pipeline.coordinator` by [`ADR-063`](ADR-063-lean-telemetry-v2-zero-attribute-duplication-and-dynamic-versioning.md) for 100% Bounded Context namespace consistency across all 4 tiers)*.
 
 ### Pillar 2: Chronological Stage Evaluation Span (`Tier 3B`)
 - Candidate evaluation MUST be wrapped in a dedicated child span: `cresmo.stage.{stage_name}.evaluation`.

@@ -27,6 +27,9 @@ class PipelineSettingsProtocol(Protocol):
     def indexing_provider(self) -> str: ...
 
     @property
+    def gemini_thinking_level(self) -> str: ...
+
+    @property
     def batch_size(self) -> int: ...
 
     @property
@@ -93,6 +96,7 @@ class DefaultPipelineSettings:
     language: str = DEFAULT_LANGUAGE
     llm_synthesis_temperature: float = 0.7
     indexing_provider: str = "gemini"
+    gemini_thinking_level: str = "low"
     batch_size: int = 5
     concat_max_words: int = 50000
     raw_dir: Path = Path("data/raw")

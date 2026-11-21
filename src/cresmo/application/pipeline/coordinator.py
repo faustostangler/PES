@@ -37,6 +37,7 @@ from cresmo.application.pipeline.transcript_loader import (
     load_transcript_from_file,
 )
 from cresmo.application.ports import (
+    SYNTHESIS_PIPELINE_TRACE_NAME,
     ChannelTaxonomyPort,
     CritiqueSynthesizerPort,
     DefaultPipelineSettings,
@@ -218,6 +219,7 @@ class CresmoPipeline:
             "raw_characters": len(raw_text),
             "raw_words": len(raw_text.split()),
             "gap_filler_passes": gap_filler_passes,
+            "force_reprocess": force_reprocess,
         }
         if batch_id:
             resolved_batch_id = (
@@ -229,13 +231,13 @@ class CresmoPipeline:
         if raw.provenance.publication_date:
             metadata["publication_date"] = raw.provenance.publication_date.isoformat()
 
-        # Trace root Level 1: cresmo.synthesis_pipeline (ADR-037)
+        # Trace root Level 1: SYNTHESIS_PIPELINE_TRACE_NAME (ADR-037)
         with self.telemetry_port.start_pipeline_session(
             session_id=session_id,
             user_id=user_identity,
             channel_tenant_id=channel.tenant_key,
             metadata=metadata,
-            trace_name="cresmo.synthesis_pipeline",
+            trace_name=SYNTHESIS_PIPELINE_TRACE_NAME,
         ):
             if early_result := self._check_idempotent_exit(raw, entry, force_reprocess):
                 self.telemetry_port.record_session_output(
@@ -262,6 +264,7 @@ class CresmoPipeline:
             )
 
             stage_artifacts: dict[StageName, Any] = {StageName.RAW: raw}
+            cached_stages: list[str] = []
             current_source: Any = raw
 
             for step in conveyor_steps:
@@ -270,6 +273,7 @@ class CresmoPipeline:
                     cached = self.vault_port.get_stage_transcript(step, content.id)
                     if isinstance(cached, StageTranscript):
                         artifact = cached
+                        cached_stages.append(step.value)
                         logger.info(
                             "Reusing cached %s for content_id '%s'",
                             step,
@@ -314,11 +318,18 @@ class CresmoPipeline:
                 or content.title
                 or ""
             )
+            cache_hit_count = len(cached_stages)
+            cache_hit_ratio = round(cache_hit_count / max(len(conveyor_steps), 1), 3)
             self.telemetry_port.record_session_output(
                 {
                     "status": "COMPLETED",
                     "stage": "gap_filler",
                     "stages_completed": ["fluid_prose", "gap_filler"],
+                    "stages_reused_from_cache": cached_stages,
+                    "cache_hit_count": cache_hit_count,
+                    "cache_hit_ratio": cache_hit_ratio,
+                    "force_reprocess": force_reprocess,
+                    "gap_filler_passes": gap_filler_passes,
                     "content_title": resolved_title,
                     "word_count": synthesized_word_count,
                     "char_count": len(synthesized_text),

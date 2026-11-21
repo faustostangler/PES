@@ -17,6 +17,7 @@ from cresmo.application.use_cases.indexing import IndexRawTranscriptsUseCase
 from cresmo.application.use_cases.sync_channel import SyncChannelUseCase
 from cresmo.application.use_cases.unify_duplicate_notes import UnifyDuplicateNotesUseCase
 from cresmo.bootstrap.factories.adapter_factory import (
+    build_gemini_credential_pool,
     build_indexing_adapter,
     build_media_ingestion_adapter,
     build_preflight_checker,
@@ -112,16 +113,24 @@ def build_index_raw_use_case(
     anonymizer = build_anonymizer_adapter(settings)
     langfuse_client = resolve_langfuse_client(settings, anonymizer=anonymizer)
     prompt_provider = build_prompt_provider(settings, langfuse_client=langfuse_client)
+    uses_gemini = (
+        web_index
+        or settings.indexing_provider == "gemini"
+        or settings.judge_provider.lower().strip() == "gemini"
+    )
+    gemini_pool = build_gemini_credential_pool(settings) if uses_gemini else None
     llm_indexing_port = build_indexing_adapter(
         settings,
         web_index=web_index,
         model_override=model_override,
         langfuse_client=langfuse_client,
+        credential_pool=gemini_pool,
     )
     llm_judge_port = build_llm_judge_adapter(
         settings,
         langfuse_client=langfuse_client,
         prompt_provider=prompt_provider,
+        credential_pool=gemini_pool,
     )
 
     taxonomy_port = build_taxonomy_adapter(settings)

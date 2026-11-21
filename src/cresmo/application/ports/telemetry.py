@@ -10,13 +10,17 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from collections.abc import Generator
 from contextlib import AbstractContextManager, contextmanager
-from typing import Any
+from typing import Any, Final
 
 from cresmo.domain.entities import (
     PipelineSessionId,
     UserIdentity,
 )
 from cresmo.domain.value_objects import ContentId
+
+SYNTHESIS_PIPELINE_TRACE_NAME: Final[str] = "cresmo.synthesis_pipeline"
+PIPELINE_ROOT_SPAN_NAME: Final[str] = "cresmo.pipeline.coordinator"
+LLM_GENERATION_SPAN_NAME: Final[str] = "cresmo.llm.generate"
 
 
 class TelemetryPort(ABC):
@@ -42,7 +46,7 @@ class TelemetryPort(ABC):
             user_id: UserIdentity (anonymous or identified OAuth user), or string.
             channel_tenant_id: Optional Channel tenant identifier for cost and volume aggregation.
             metadata: Additional contextual metadata (e.g. source, pipeline version).
-            trace_name: Optional canonical root operation name (defaults to cresmo.pipeline.execution).
+            trace_name: Optional canonical root operation name (defaults to SYNTHESIS_PIPELINE_TRACE_NAME).
 
         Returns:
             ContextManager managing the root span lifecycle.

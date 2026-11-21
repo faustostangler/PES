@@ -144,7 +144,6 @@ app = typer.Typer(
     cls=LazyTyperGroup,
     name="cresmo",
     help="Cresmo Knowledge Synthesis",
-    no_args_is_help=True,
     add_completion=True,
     context_settings={"help_option_names": ["-h", "--help"]},
 )
@@ -177,7 +176,10 @@ def main(argv: Sequence[str] | None = None) -> int:
         Process exit code integer conforming to the exit code taxonomy in exit_codes.py.
     """
     try:
-        exit_result = app(args=list(argv) if argv is not None else None, standalone_mode=False)
+        args = list(argv) if argv is not None else sys.argv[1:]
+        if not args:
+            args = ["run"]
+        exit_result = app(args=args, standalone_mode=False)
         return EXIT_SUCCESS if exit_result is None else int(exit_result)
     except typer.Exit as exc:
         return int(exc.exit_code)

@@ -285,12 +285,12 @@ PIPELINE_VERSION = "cresmo:v2"  # VIOLATION: Operational tunable in package root
 
 #### 9.2 The Standard & Remediation
 1. **Packaging Metadata Only in `__init__.py`:** The package root `__init__.py` MUST strictly contain packaging metadata (`__version__` and `__all__`).
-2. **Centralized SSOT in `CresmoSettings`:** All operational identifiers, pipeline versions, and telemetry lineage tags MUST be declared as fields in `CresmoSettings` (`src/cresmo/infrastructure/config.py`) using Pydantic Settings V2:
+2. **Centralized SSOT in `CresmoSettings`:** All operational identifiers, pipeline versions, and telemetry lineage tags MUST be declared as fields in `CresmoSettings` (`src/cresmo/infrastructure/config.py`) using Pydantic Settings V2 *(default refined by [`ADR-063`](ADR-063-lean-telemetry-v2-zero-attribute-duplication-and-dynamic-versioning.md) to resolve dynamically via `importlib.metadata`)*:
    ```python
    pipeline_version: str = Field(
-       default="cresmo:v2",
+       default_factory=resolve_default_pipeline_version,
        description="Canonical pipeline version tag emitted to OpenTelemetry spans and Langfuse traces.",
-       validation_alias=AliasChoices("PIPELINE_VERSION", "pipeline_version"),
+       validation_alias="CRESMO_PIPELINE_VERSION",
    )
    ```
 3. **Explicit Dependency Injection:** Adapters requiring the pipeline version MUST receive it via constructor injection (`OpenTelemetryAdapter(..., pipeline_version=settings.pipeline_version)`) wired at the Composition Root (`composition.py`), never importing from `cresmo.__init__`.

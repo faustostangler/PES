@@ -136,7 +136,7 @@ class PipelineStageRunner:
         stage_config = self._resolve_stage_config(stage, max_passes=max_passes)
         prompt_provider = self._resolve_prompt_provider(prompt_provider)
         llm_port = self._resolve_llm_transformation_port(llm_transformation_port)
-        stage = stage_config.stage_name
+        stage_name = stage_config.stage_name
 
         eval_spec_attempts = (
             stage_config.eval_spec.max_attempts
@@ -153,7 +153,7 @@ class PipelineStageRunner:
         candidate: CandidateText | None = None
         evaluation: JudgeEvaluation | None = None
 
-        with self._measure_stage(stage_name=stage, context=context):
+        with self._measure_stage(stage_name=stage_name, context=context):
             source_content = getattr(source, "content", None)
             source_text = (
                 stage_config.eval_spec.extract_source_text(source)
@@ -164,12 +164,13 @@ class PipelineStageRunner:
                     else (getattr(source, "text", None) or str(source))
                 )
             )
+            source_words = len(source_text.split()) if isinstance(source_text, str) else 0
             self.telemetry_port.record_stage_io(
                 input_payload={
-                    "stage_name": stage,
+                    "stage_name": stage_name,
                     "source_type": type(source).__name__,
                     "source_characters": len(source_text) if isinstance(source_text, str) else 0,
-                    "source_words": len(source_text.split()) if isinstance(source_text, str) else 0,
+                    "source_words": source_words,
                 }
             )
 
@@ -199,17 +200,17 @@ class PipelineStageRunner:
 
                 logger.warning(
                     "Quality evaluation for '%s' reported low score on attempt %d/%d (overall=%.2f, passed=%s).",
-                    stage,
+                    stage_name,
                     attempt,
                     effective_max_attempts,
                     evaluation.overall_score,
                     evaluation.passed,
                 )
 
-                critique = self._synthesize_critique(evaluation, stage)
+                critique = self._synthesize_critique(evaluation, stage_name)
                 if attempt < effective_max_attempts:
                     self.metrics_port.increment_counter(
-                        "cresmo_judge_retries_total", 1.0, labels={"stage": stage}
+                        "cresmo_judge_retries_total", 1.0, labels={"stage": stage_name}
                     )
 
             if (
@@ -218,18 +219,18 @@ class PipelineStageRunner:
                 and (stage_config.blocking or self.judge_blocking)
             ):
                 record_stage_quarantine(
-                    stage_name=stage,
+                    stage_name=stage_name,
                     context=context,
                     provenance=getattr(source, "provenance", None),
                     evaluation=evaluation,
-                    critique=critique or self._synthesize_critique(evaluation, stage),
+                    critique=critique or self._synthesize_critique(evaluation, stage_name),
                     effective_max_attempts=effective_max_attempts,
                     ledger_port=self.ledger_port,
                     metrics_port=self.metrics_port,
                 )
 
             if candidate is None:
-                raise DomainValidationError(f"Stage '{stage}' produced no candidate text.")
+                raise DomainValidationError(f"Stage '{stage_name}' produced no candidate text.")
 
             output_object: _TOutput = stage_config.post_process(candidate, source)
             output_content = getattr(output_object, "content", None)
@@ -239,6 +240,7 @@ class PipelineStageRunner:
                 output_text = output_object.text
             else:
                 output_text = candidate.text
+            output_words = len(output_text.split()) if isinstance(output_text, str) else 0
             self.telemetry_port.record_stage_io(
                 output_payload={
                     "status": (
@@ -247,8 +249,14 @@ class PipelineStageRunner:
                         else "COMPLETED_UNBLOCKING"
                     ),
                     "output_characters": len(output_text) if isinstance(output_text, str) else 0,
-                    "output_words": len(output_text.split()) if isinstance(output_text, str) else 0,
+                    "output_words": output_words,
                     "attempts": attempt,
+                    "retries": attempt - 1,
+                    "expansion_ratio": round(output_words / max(source_words, 1), 3),
+                    "judge_passed": evaluation.passed if evaluation is not None else None,
+                    "judge_overall_score": (
+                        evaluation.overall_score if evaluation is not None else None
+                    ),
                 }
             )
             return output_object

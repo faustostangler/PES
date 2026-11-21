@@ -372,6 +372,7 @@ class TestCresmoPipelineExecutionAndIdempotency:
         assert meta["raw_characters"] == len(sample_source_transcript.content.text)
         assert meta["raw_words"] == len(sample_source_transcript.content.text.split())
         assert meta["gap_filler_passes"] == 3
+        assert meta["force_reprocess"] is False
         assert meta["batch_id"] == batch.value
         assert meta["video_url"] == "https://youtube.com/watch?v=1234567"
         assert meta["publication_date"] == "2024-05-20"
@@ -406,6 +407,57 @@ class TestCresmoPipelineExecutionAndIdempotency:
         assert output_payload["expansion_ratio"] == round(synth_words / max(raw_words, 1), 3)
         assert output_payload["source_characters"] == len(sample_source_transcript.content.text)
         assert output_payload["synthesized_characters"] == len(fluid_res.content.text)
+        assert output_payload["stages_reused_from_cache"] == []
+        assert output_payload["cache_hit_count"] == 0
+        assert output_payload["cache_hit_ratio"] == 0.0
+        assert output_payload["force_reprocess"] is False
+        assert output_payload["gap_filler_passes"] == 3
+
+    def test_execute_records_stage_cache_hit_insights(
+        self, sample_source_transcript: StageTranscript
+    ) -> None:
+        """Verify ADR-063 session output tracks cached stages and cache_hit_ratio."""
+        mock_ingestion = MagicMock(spec=MediaIngestionPort)
+        mock_vault = MagicMock(spec=VaultRepositoryPort)
+        mock_t = MagicMock(spec=TelemetryPort)
+        mock_runner = MagicMock(spec=PipelineStageRunner)
+
+        cached_fluid = StageTranscript(
+            channel=sample_source_transcript.channel,
+            provenance=sample_source_transcript.provenance,
+            content=Content(
+                id=sample_source_transcript.content.id,
+                title="Cached Fluid",
+                text="Cached fluid prose body.",
+            ),
+        )
+        fresh_gaps = StageTranscript(
+            channel=sample_source_transcript.channel,
+            provenance=sample_source_transcript.provenance,
+            content=Content(
+                id=sample_source_transcript.content.id,
+                title="Fresh Gaps",
+                text="Expanded fresh gap filler prose body with deeper analysis.",
+            ),
+        )
+        mock_vault.get_stage_transcript.side_effect = [cached_fluid, None]
+        mock_runner.execute_stage.return_value = fresh_gaps
+
+        pipeline = CresmoPipeline(
+            media_ingestion_port=mock_ingestion,
+            vault_port=mock_vault,
+            telemetry_port=mock_t,
+            stage_runner=mock_runner,
+        )
+        res = pipeline.execute(sample_source_transcript, gap_filler_passes=2, force_reprocess=False)
+
+        assert res.success is True
+        output_payload = mock_t.record_session_output.call_args[0][0]
+        assert output_payload["stages_reused_from_cache"] == ["fluid_prose"]
+        assert output_payload["cache_hit_count"] == 1
+        assert output_payload["cache_hit_ratio"] == 0.5
+        assert output_payload["force_reprocess"] is False
+        assert output_payload["gap_filler_passes"] == 2
 
     def test_execute_with_minimal_metadata_and_defaults(self) -> None:
         raw_bare = StageTranscript(

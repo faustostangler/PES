@@ -229,7 +229,9 @@ class TestGeminiJudgeAdapter:
         assert eval_lenient.passed is True
         assert eval_lenient.criteria_scores[0].passed is True
 
-    def test_gemini_judge_respects_custom_temperature(self) -> None:
+    def test_gemini_judge_applies_thinking_level_and_omits_deprecated_temperature(self) -> None:
+        from google.genai import types
+
         mock_genai_client = MagicMock()
         mock_response = MagicMock()
         mock_response.text = json.dumps(
@@ -241,8 +243,9 @@ class TestGeminiJudgeAdapter:
         )
         mock_genai_client.models.generate_content.return_value = mock_response
 
-        adapter = GeminiJudgeAdapter(client=mock_genai_client, temperature=0.7)
-        assert adapter.temperature == 0.7
+        adapter = GeminiJudgeAdapter(client=mock_genai_client, thinking_level="minimal")
+        assert adapter.thinking_level == "minimal"
+        assert not hasattr(adapter, "temperature")
         from cresmo.infrastructure.adapters.judges.gemini_judge import (
             DEFAULT_MODEL,
             DEFAULT_PASS_THRESHOLD,
@@ -261,7 +264,10 @@ class TestGeminiJudgeAdapter:
 
         _, kwargs = mock_genai_client.models.generate_content.call_args
         config = kwargs["config"]
-        assert config.temperature == 0.7
+        assert config.temperature is None
+        assert config.thinking_config is not None
+        assert config.thinking_config.thinking_level == types.ThinkingLevel.MINIMAL
+        assert config.max_output_tokens == 32_768
 
     def test_gemini_judge_uses_judge_gap_filler_for_gap_filler_stage(self) -> None:
         mock_genai_client = MagicMock()
@@ -502,6 +508,18 @@ class TestGeminiJudgeAdapter:
         assert judge._timeout_seconds == 45.0
         assert judge._pool is not None
         assert judge._pool.timeout == 45.0
+
+    def test_gemini_judge_normalizes_provider_prefix_on_model(self) -> None:
+        """Verify ACL strips leading 'gemini:' provider prefix from judge model."""
+        mock_client = MagicMock()
+        judge = GeminiJudgeAdapter(model="gemini:gemini-3.8-flash", client=mock_client)
+        assert judge.model == "gemini-3.8-flash"
+
+    def test_transient_504_deadline_exceeded_returns_true(self) -> None:
+        """Verify 504 DEADLINE_EXCEEDED error string is classified as transient."""
+        from cresmo.infrastructure.adapters.judges.gemini_judge import _is_transient_genai_error
+
+        assert _is_transient_genai_error(RuntimeError("504 DEADLINE_EXCEEDED")) is True
 
 
 class TestOllamaJudgeAdapter:
@@ -944,7 +962,7 @@ class TestLlmJudgeFactory:
             judge_provider="gemini",
             judge_pass_threshold=0.88,
             judge_gemini_model="gemini-custom-judge",
-            judge_temperature=0.15,
+            judge_gemini_thinking_level="medium",
         )
         judge = build_llm_judge_adapter(settings, langfuse_client=None)
 
@@ -956,7 +974,8 @@ class TestLlmJudgeFactory:
         assert isinstance(primary, GeminiJudgeAdapter)
         assert primary.pass_threshold == 0.88
         assert primary.model == "gemini-custom-judge"
-        assert primary.temperature == 0.15
+        assert primary.thinking_level == "medium"
+        assert not hasattr(primary, "temperature")
 
         fallback = inner._fallback
         assert isinstance(fallback, OllamaJudgeAdapter)

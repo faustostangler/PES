@@ -32,12 +32,18 @@ from cresmo.application.ports.taxonomy import (
     NoOpChannelTaxonomyPort,
 )
 from cresmo.application.ports.telemetry import (
+    LLM_GENERATION_SPAN_NAME,
+    PIPELINE_ROOT_SPAN_NAME,
+    SYNTHESIS_PIPELINE_TRACE_NAME,
     NoOpTelemetryPort,
     TelemetryPort,
 )
 from cresmo.application.ports.transformation import LLMTransformationPort
 
 __all__ = [
+    "LLM_GENERATION_SPAN_NAME",
+    "PIPELINE_ROOT_SPAN_NAME",
+    "SYNTHESIS_PIPELINE_TRACE_NAME",
     "AnonymizerPort",
     "ChannelTaxonomyPort",
     "CritiqueSynthesizerPort",

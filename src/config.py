@@ -16,7 +16,18 @@ from pathlib import Path
 from pydantic import AliasChoices, Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-from cresmo.infrastructure.config import CresmoSettings
+from cresmo.infrastructure.config import (
+    DEFAULT_GEMINI_FALLBACK_MODEL,
+    DEFAULT_GEMINI_MAX_OUTPUT_TOKENS,
+    DEFAULT_GEMINI_MODEL,
+    DEFAULT_GEMINI_THINKING_LEVEL,
+    DEFAULT_JUDGE_GEMINI_MODEL,
+    GEMINI_FREE_TIER_MODELS,
+    GEMINI_THINKING_LEVELS,
+    CresmoSettings,
+    GeminiFreeTierModel,
+    GeminiThinkingLevel,
+)
 
 
 # FUTURE / DEFERRED: Multi-user IAM runtime configuration reserved per ADR-062.
@@ -69,8 +80,17 @@ def get_config() -> AppConfig:
 
 
 __all__ = [
+    "DEFAULT_GEMINI_FALLBACK_MODEL",
+    "DEFAULT_GEMINI_MAX_OUTPUT_TOKENS",
+    "DEFAULT_GEMINI_MODEL",
+    "DEFAULT_GEMINI_THINKING_LEVEL",
+    "DEFAULT_JUDGE_GEMINI_MODEL",
+    "GEMINI_FREE_TIER_MODELS",
+    "GEMINI_THINKING_LEVELS",
     "AppConfig",
     "CresmoSettings",
+    "GeminiFreeTierModel",
+    "GeminiThinkingLevel",
     "IamSettings",
     "IdentitySettings",
     "get_config",

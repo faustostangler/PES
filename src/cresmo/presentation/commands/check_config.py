@@ -64,6 +64,15 @@ def handle_check_config(args: Any = None) -> int:
         sys.stdout.write(f"- Vault Root: {settings.vault_dir}\n")
         sys.stdout.write(f"- SQLite Ledger: {settings.sqlite_ledger_path}\n")
         sys.stdout.write(f"- Gemini Model: {settings.gemini_model}\n")
+        fallback_model = getattr(settings, "gemini_fallback_model", None)
+        if isinstance(fallback_model, str) and fallback_model:
+            sys.stdout.write(f"- Gemini Fallback Model: {fallback_model}\n")
+        thinking_level = getattr(settings, "gemini_thinking_level", None)
+        if isinstance(thinking_level, str) and thinking_level:
+            sys.stdout.write(f"- Gemini Thinking Level: {thinking_level}\n")
+        judge_model = getattr(settings, "judge_gemini_model", None)
+        if isinstance(judge_model, str) and judge_model:
+            sys.stdout.write(f"- Judge Gemini Model: {judge_model}\n")
         sys.stdout.write(f"- Batch Size: {settings.batch_size}\n")
         lf_pk = getattr(settings, "langfuse_public_key", "")
         lf_sk = getattr(settings, "langfuse_secret_key", None)

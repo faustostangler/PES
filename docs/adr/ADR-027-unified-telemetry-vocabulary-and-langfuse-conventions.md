@@ -2,7 +2,7 @@
 
 | Field       | Value                                                              |
 |-------------|--------------------------------------------------------------------|
-| **Status**  | ACCEPTED (PARTIALLY SUPERSEDED by [`ADR-033`](ADR-033-composite-value-objects-identity-parity-and-tenant-simplification.md), [`ADR-035`](ADR-035-atomic-work-item-traces-and-sota-kiss-batch-correlation.md), and [`ADR-037`](ADR-037-lean-telemetry-topography-and-chronological-evaluation.md)) |
+| **Status**  | ACCEPTED (PARTIALLY SUPERSEDED by [`ADR-033`](ADR-033-composite-value-objects-identity-parity-and-tenant-simplification.md), [`ADR-035`](ADR-035-atomic-work-item-traces-and-sota-kiss-batch-correlation.md), [`ADR-037`](ADR-037-lean-telemetry-topography-and-chronological-evaluation.md), and [`ADR-063`](ADR-063-lean-telemetry-v2-zero-attribute-duplication-and-dynamic-versioning.md)) |
 | **Date**    | 2026-09-30                                                         |
 | **Authors** | Lead Architect (Fausto Stangler), Systems Architect (Doctor Stangler Committee) |
 | **Scope**   | Cross-Cutting Telemetry & Observability — Domain, Application, Infrastructure, Presentation |

@@ -25,6 +25,7 @@ from cresmo.application.pipeline import (
 from cresmo.application.services.preflight import PreflightHealthChecker
 from cresmo.application.use_cases.sync_channel import SyncChannelUseCase
 from cresmo.bootstrap.factories.adapter_factory import (
+    build_gemini_credential_pool,
     build_gemini_synthesis_adapter,
     build_indexing_adapter,
     build_media_ingestion_adapter,
@@ -97,17 +98,24 @@ def build_pipeline(
 
     # 4. Prompt Governance, Cognitive & Judge LLM Engines
     prompt_provider = build_prompt_provider(settings, langfuse_client=langfuse_client)
-    synthesis_adapter = build_gemini_synthesis_adapter(settings, langfuse_client=langfuse_client)
+    gemini_pool = build_gemini_credential_pool(settings)
+    synthesis_adapter = build_gemini_synthesis_adapter(
+        settings,
+        langfuse_client=langfuse_client,
+        credential_pool=gemini_pool,
+    )
     llm_indexing_port = build_indexing_adapter(
         settings,
         synthesis_adapter=synthesis_adapter,
         web_index=web_index,
         langfuse_client=langfuse_client,
+        credential_pool=gemini_pool,
     )
     llm_judge = build_llm_judge_adapter(
         settings,
         langfuse_client=langfuse_client,
         prompt_provider=prompt_provider,
+        credential_pool=gemini_pool,
     )
     from cresmo.infrastructure.adapters.llm.ollama_critique_adapter import (
         OllamaCritiqueAdapter,
@@ -191,6 +199,7 @@ __all__ = [
     "build_anonymizer_adapter",
     "build_concat_master_use_case",
     "build_discover_batch_sources_use_case",
+    "build_gemini_credential_pool",
     "build_gemini_synthesis_adapter",
     "build_index_raw_use_case",
     "build_indexing_adapter",

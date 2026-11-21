@@ -262,7 +262,8 @@ def build_generator_adapter(
         return GeminiLLMAdapter(
             api_keys=api_keys,
             model_name=model_name,
-            default_temperature=temperature,
+            max_output_tokens=settings.gemini_max_output_tokens,
+            thinking_level=settings.gemini_thinking_level,
         )
 
     if prov == "ollama":
@@ -289,7 +290,7 @@ def resolve_model_spec(spec: str) -> tuple[str, str]:
             return prefix.lower(), remainder
 
     # Auto-detection heuristic
-    if spec.lower().startswith("gemini"):
+    if spec.lower().startswith(("gemini", "gemma")):
         return "gemini", spec
 
     return "ollama", spec

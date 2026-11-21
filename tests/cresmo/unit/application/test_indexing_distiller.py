@@ -39,7 +39,9 @@ class DummyTransformationPort(LLMTransformationPort):
     def transform(
         self,
         prompt: str,
-        temperature: float = 0.2,
+        temperature: float | None = 0.2,
+        *,
+        thinking_level: str | None = None,
         trace_id: str | None = None,
         session_id: str | None = None,
         user_id: str | None = None,
@@ -48,6 +50,7 @@ class DummyTransformationPort(LLMTransformationPort):
             {
                 "prompt": prompt,
                 "temperature": temperature,
+                "thinking_level": thinking_level,
                 "trace_id": trace_id,
                 "session_id": session_id,
                 "user_id": user_id,

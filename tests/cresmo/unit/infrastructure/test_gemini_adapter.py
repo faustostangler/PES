@@ -11,13 +11,17 @@ import os
 from unittest.mock import MagicMock, patch
 
 import pytest
-from google.genai import errors
+from google.genai import errors, types
 from opentelemetry.trace import SpanContext, TraceFlags
 
 from cresmo.domain.value_objects.prompt import ChatPrompt
 from cresmo.infrastructure.adapters.llm.gemini_adapter import (
     GeminiLLMAdapter,
     _is_transient_genai_error,
+)
+from cresmo.infrastructure.adapters.llm.gemini_common import (
+    build_thinking_config,
+    resolve_effective_thinking_level,
 )
 
 DUMMY_SPAN_CONTEXT = SpanContext(trace_id=1, span_id=1, is_remote=False, trace_flags=TraceFlags(1))
@@ -78,6 +82,17 @@ class TestTransientErrorClassification:
         err = ValueError("Invalid operation argument")
         assert _is_transient_genai_error(err) is False
 
+    @pytest.mark.parametrize(
+        "msg",
+        [
+            "504 DEADLINE_EXCEEDED",
+            "Error 504: Deadline expired",
+        ],
+    )
+    def test_transient_504_deadline_exceeded_patterns_return_true(self, msg: str) -> None:
+        """Verify 504 DEADLINE_EXCEEDED and deadline expired errors are classified as transient."""
+        assert _is_transient_genai_error(RuntimeError(msg)) is True
+
 
 class TestGeminiLLMAdapter:
     """Hermetic unit tests for GeminiLLMAdapter."""
@@ -118,24 +133,43 @@ class TestGeminiLLMAdapter:
         assert len(call_kwargs["contents"]) == 1
         assert call_kwargs["contents"][0].role == "user"
         assert call_kwargs["contents"][0].parts[0].text == "Analyze the circulation of elites."
-        assert call_kwargs["config"].temperature == 0.7
+        assert call_kwargs["config"].temperature is None
+        assert call_kwargs["config"].thinking_config is not None
+        assert call_kwargs["config"].thinking_config.thinking_level == types.ThinkingLevel.LOW
         assert call_kwargs["config"].max_output_tokens == 4096
         assert call_kwargs["config"].system_instruction == "Act as a political scientist."
         assert call_kwargs["config"].automatic_function_calling.disable is True
 
-    def test_transform_uses_default_temperature_when_none(self) -> None:
-        mock_response = MagicMock(text="Default temp text", usage_metadata=None)
+    def test_transform_applies_thinking_level_and_omits_deprecated_temperature(self) -> None:
+        mock_response = MagicMock(text="Low thinking text", usage_metadata=None)
         mock_genai_client = MagicMock()
         mock_genai_client.models.generate_content.return_value = mock_response
 
         adapter = GeminiLLMAdapter(
+            model_name="gemini-3.5-flash-lite",
             genai_client=mock_genai_client,
             langfuse_client=None,
         )
         adapter.transform(prompt=ChatPrompt.single_turn("Default test"))
 
-        call_kwargs = mock_genai_client.models.generate_content.call_args[1]
-        assert call_kwargs["config"].temperature == 0.2
+        default_call_kwargs = mock_genai_client.models.generate_content.call_args[1]
+        assert default_call_kwargs["config"].temperature is None
+        assert default_call_kwargs["config"].thinking_config is not None
+        assert (
+            default_call_kwargs["config"].thinking_config.thinking_level == types.ThinkingLevel.LOW
+        )
+
+        adapter.transform(
+            prompt=ChatPrompt.single_turn("Minimal test"),
+            thinking_level="minimal",
+        )
+        override_call_kwargs = mock_genai_client.models.generate_content.call_args[1]
+        assert override_call_kwargs["config"].temperature is None
+        assert override_call_kwargs["config"].thinking_config is not None
+        assert (
+            override_call_kwargs["config"].thinking_config.thinking_level
+            == types.ThinkingLevel.MINIMAL
+        )
 
     def test_transform_emits_full_telemetry_metadata(self) -> None:
         mock_response = MagicMock(text="Output with telemetry", usage_metadata=None)
@@ -162,14 +196,44 @@ class TestGeminiLLMAdapter:
             )
 
         mock_span.set_attribute.assert_any_call("gen_ai.system", "google")
-        mock_span.set_attribute.assert_any_call("gen_ai.request.model", "gemini-4-hydrogen")
+        mock_span.set_attribute.assert_any_call("gen_ai.request.model", "gemini-3.5-flash-lite")
         mock_span.set_attribute.assert_any_call("gen_ai.usage.input_tokens", 2)
         mock_span.set_attribute.assert_any_call("gen_ai.usage.output_tokens", 3)
         mock_span.set_attribute.assert_any_call("langfuse.observation.type", "generation")
         mock_span.set_attribute.assert_any_call("langfuse.session.id", "raw_index_Philosophy")
         mock_span.set_attribute.assert_any_call("langfuse.user.id", "Philosophy")
         mock_span.set_attribute.assert_any_call("cresmo.trace_id", "vid123_concepts")
-        mock_span.set_attribute.assert_any_call("cresmo.temperature", 0.2)
+        mock_span.set_attribute.assert_any_call("cresmo.thinking_level", "low")
+        emitted_keys = [call.args[0] for call in mock_span.set_attribute.call_args_list]
+        assert "cresmo.temperature" not in emitted_keys
+
+    def test_transform_emits_reasoning_tokens_from_usage_metadata(self) -> None:
+        mock_response = MagicMock(
+            text="Output with thinking usage",
+            usage_metadata=MagicMock(
+                prompt_token_count=120,
+                candidates_token_count=45,
+                thoughts_token_count=64,
+            ),
+        )
+        mock_genai_client = MagicMock()
+        mock_genai_client.models.generate_content.return_value = mock_response
+
+        adapter = GeminiLLMAdapter(genai_client=mock_genai_client)
+        mock_span = MagicMock()
+        mock_span.is_recording.return_value = True
+        mock_span.get_span_context.return_value = DUMMY_SPAN_CONTEXT
+
+        with patch(
+            "cresmo.infrastructure.adapters.llm.gemini_adapter.trace.get_current_span",
+            return_value=mock_span,
+        ):
+            adapter.transform(prompt=ChatPrompt.single_turn("Reasoned prompt"))
+
+        mock_span.set_attribute.assert_any_call("gen_ai.usage.input_tokens", 120)
+        mock_span.set_attribute.assert_any_call("gen_ai.usage.output_tokens", 45)
+        mock_span.set_attribute.assert_any_call("gen_ai.usage.reasoning_tokens", 64)
+        mock_span.set_attribute.assert_any_call("cresmo.thinking_level", "low")
 
     def test_transform_retries_on_transient_error(self) -> None:
         mock_response = MagicMock(text="Success after retry", usage_metadata=None)
@@ -307,16 +371,17 @@ class TestGeminiLLMAdapter:
             mock_client_cls.assert_called_once()
             call_kwargs = mock_client_cls.call_args.kwargs
             assert call_kwargs["api_key"] == "secret-key"
-            assert call_kwargs["http_options"].timeout == 60000
+            assert call_kwargs["http_options"].timeout == 300000
             assert adapter._client == mock_client_cls.return_value
 
     def test_default_initialization_attributes(self) -> None:
         mock_client = MagicMock()
         adapter = GeminiLLMAdapter(genai_client=mock_client)
-        assert adapter.model_name == "gemini-4-hydrogen"
-        assert adapter.fallback_model_name == "gemini-3.8-flash"
-        assert adapter.max_output_tokens == 8192
-        assert adapter.default_temperature == 0.2
+        assert adapter.model_name == "gemini-3.5-flash-lite"
+        assert adapter.fallback_model_name == "gemini-3.6-flash"
+        assert adapter.max_output_tokens == 32_768
+        assert adapter.thinking_level == "low"
+        assert not hasattr(adapter, "default_temperature")
 
     def test_transient_api_error_all_codes_individually(self) -> None:
         for c in (429, 500, 502, 503, 504):
@@ -484,3 +549,94 @@ class TestGeminiLLMAdapter:
         assert client2.models.generate_content.call_count == 0
         # Primary key must still be primary (NOT cooled down)
         assert pool.lease()[0] == "k1"
+
+    def test_init_normalizes_gemini_provider_prefix_on_models(self) -> None:
+        """Verify ACL strips leading 'gemini:' provider prefix from primary and fallback models."""
+        mock_response = MagicMock(text="Normalized output", usage_metadata=None)
+        mock_client = MagicMock()
+        mock_client.models.generate_content.return_value = mock_response
+
+        adapter = GeminiLLMAdapter(
+            model_name="gemini:gemini-3.8-flash",
+            fallback_model_name="gemini:gemini-3.8-flash",
+            genai_client=mock_client,
+            langfuse_client=None,
+        )
+
+        assert adapter.model_name == "gemini-3.8-flash"
+        assert adapter.fallback_model_name == "gemini-3.8-flash"
+
+        result = adapter.transform(prompt=ChatPrompt.single_turn("Normalize model name"))
+        assert result == "Normalized output"
+        call_kwargs = mock_client.models.generate_content.call_args.kwargs
+        assert call_kwargs["model"] == "gemini-3.8-flash"
+
+    def test_transform_fallback_recomputes_thinking_config_for_fallback_model(self) -> None:
+        """Verify fallback call clamps thinking_level appropriately for the fallback model."""
+        mock_fallback_response = MagicMock(text="Fallback clamped", usage_metadata=None)
+        mock_client = MagicMock()
+        mock_client.models.generate_content.side_effect = [
+            ValueError("Primary failed"),
+            mock_fallback_response,
+        ]
+
+        adapter = GeminiLLMAdapter(
+            model_name="gemini-4-hydrogen",
+            fallback_model_name="gemini-3.6-flash",
+            thinking_level="xhigh",
+            genai_client=mock_client,
+            langfuse_client=None,
+        )
+        result = adapter.transform(prompt=ChatPrompt.single_turn("Fallback clamping test"))
+        assert result == "Fallback clamped"
+        assert mock_client.models.generate_content.call_count == 2
+        fallback_kwargs = mock_client.models.generate_content.call_args_list[1].kwargs
+        assert fallback_kwargs["model"] == "gemini-3.6-flash"
+        assert fallback_kwargs["config"].thinking_config is not None
+        assert fallback_kwargs["config"].thinking_config.thinking_level == types.ThinkingLevel.HIGH
+
+
+class TestThinkingLevelClamping:
+    """Hermetic unit tests for model-aware thinking_level resolution and ThinkingConfig building."""
+
+    @pytest.mark.parametrize(
+        ("model", "requested", "expected"),
+        [
+            ("gemini-3.5-flash-lite", "minimal", "minimal"),
+            ("gemini-3.5-flash-lite", "low", "low"),
+            ("gemini-3.5-flash-lite", "medium", "medium"),
+            ("gemini-3.5-flash-lite", "high", "high"),
+            ("gemini-3.5-flash-lite", "xhigh", "high"),
+            ("gemini-3.8-flash", "minimal", "low"),
+            ("gemini-3.8-flash", "low", "low"),
+            ("gemini-3.8-flash", "xhigh", "high"),
+            ("gemini-4-hydrogen", "minimal", "low"),
+            ("gemini-4-hydrogen", "xhigh", "xhigh"),
+            ("gemma-4-31b-it", "low", "minimal"),
+            ("gemma-4-31b-it", "minimal", "minimal"),
+            ("gemma-4-31b-it", "medium", "high"),
+            ("gemma-4-31b-it", "high", "high"),
+            ("gemma-4-26b-a4b-it", "low", "minimal"),
+            ("gemma-4-26b-a4b-it", "high", "high"),
+            ("gemini-2.5-flash", "minimal", "low"),
+            ("gemini-2.5-flash", "low", "low"),
+            ("gemini-3.5-flash-lite", None, None),
+        ],
+    )
+    def test_resolve_effective_thinking_level(
+        self, model: str, requested: str | None, expected: str | None
+    ) -> None:
+        assert resolve_effective_thinking_level(model, requested) == expected
+
+    def test_build_thinking_config_returns_none_when_unset(self) -> None:
+        assert build_thinking_config("gemini-3.5-flash-lite", None) is None
+
+    def test_build_thinking_config_maps_gemma_low_to_minimal(self) -> None:
+        cfg = build_thinking_config("gemma-4-31b-it", "low")
+        assert cfg is not None
+        assert cfg.thinking_level == types.ThinkingLevel.MINIMAL
+
+    def test_build_thinking_config_supports_xhigh_for_gemini_4_hydrogen(self) -> None:
+        cfg = build_thinking_config("gemini-4-hydrogen", "xhigh")
+        assert cfg is not None
+        assert str(cfg.thinking_level).lower().endswith("xhigh")

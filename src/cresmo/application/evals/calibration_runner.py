@@ -469,7 +469,7 @@ def resolve_model_spec(spec: str, default_provider: str = "gemini") -> tuple[str
         provider, model_name = cleaned.split(":", 1)
         return provider.strip().lower(), model_name.strip()
     lower = cleaned.lower()
-    if lower.startswith("gemini"):
+    if lower.startswith(("gemini", "gemma")):
         return "gemini", cleaned
     if lower.startswith("ollama"):
         return "ollama", cleaned

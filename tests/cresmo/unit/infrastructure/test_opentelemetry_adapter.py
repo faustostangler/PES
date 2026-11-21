@@ -161,9 +161,7 @@ class TestOpenTelemetryAdapter:
         # Spans finish from inside out: raw_indexing, fluid_prose, then root pipeline
         raw_indexing_span = next(s for s in spans if s.name == "cresmo.stage.raw_indexing")
         fluid_prose_span = next(s for s in spans if s.name == "cresmo.stage.fluid_prose")
-        root_span = next(
-            s for s in spans if s.name in ("pipeline.coordinator", "cresmo.pipeline.execution")
-        )
+        root_span = next(s for s in spans if s.name == "cresmo.pipeline.coordinator")
 
         # Root span must have official Langfuse OTel attributes
         assert root_span.attributes is not None
@@ -173,27 +171,33 @@ class TestOpenTelemetryAdapter:
         assert root_span.attributes["cresmo.tenant_id"] == "channel:sandeco"
         assert root_span.attributes["cresmo.user.is_anonymous"] is True
         assert root_span.attributes["cresmo.user.provider"] == "channel"
+        from cresmo.infrastructure.config import resolve_default_pipeline_version
+
+        expected_version = resolve_default_pipeline_version()
         assert tuple(root_span.attributes["langfuse.trace.tags"]) == (
             "sandeco",
-            "cresmo:v2",
+            expected_version,
             "auth:channel",
         )
+        assert root_span.attributes["cresmo.pipeline.version"] == expected_version
         assert root_span.attributes["cresmo.content.id"] == "vid_test_123"
         assert "cresmo.video.id" not in root_span.attributes
         assert root_span.attributes["cresmo.content.title"] == "Machiavelli and Modern State"
         assert root_span.attributes["cresmo.channel.name"] == "sandeco"
         assert root_span.attributes["cresmo.channel.id"] == "UC_Sandeco123"
+        assert root_span.attributes["cresmo.content.source"] == "cli"
         assert "cresmo.content_id" not in root_span.attributes
         assert "cresmo.content_title" not in root_span.attributes
         assert "cresmo.channel" not in root_span.attributes
         assert "cresmo.channel_id" not in root_span.attributes
 
-        # Zero metadata duplication for first-class canonical keys
-        assert root_span.attributes["cresmo.metadata.source"] == "cli"
+        # Zero metadata duplication for first-class canonical keys (ADR-037, ADR-063)
+        assert "cresmo.metadata.source" not in root_span.attributes
         assert "cresmo.metadata.channel" not in root_span.attributes
         assert "cresmo.metadata.channel_id" not in root_span.attributes
         assert "cresmo.metadata.content_id" not in root_span.attributes
         assert "cresmo.metadata.title" not in root_span.attributes
+        assert not any(k.startswith("langfuse.input.") for k in root_span.attributes)
 
         # ADR-037 Lean canonical input payload (zero duplicate aliases)
         input_payload_str = str(root_span.attributes.get("input.value"))
@@ -235,9 +239,7 @@ class TestOpenTelemetryAdapter:
             )
 
         root_span = next(
-            s
-            for s in exporter.get_finished_spans()
-            if s.name in ("pipeline.coordinator", "cresmo.pipeline.execution")
+            s for s in exporter.get_finished_spans() if s.name == "cresmo.pipeline.coordinator"
         )
         assert len(root_span.events) == 1
         event = root_span.events[0]
@@ -268,9 +270,7 @@ class TestOpenTelemetryAdapter:
             )
 
         root_span = next(
-            s
-            for s in exporter.get_finished_spans()
-            if s.name in ("pipeline.coordinator", "cresmo.pipeline.execution")
+            s for s in exporter.get_finished_spans() if s.name == "cresmo.pipeline.coordinator"
         )
         event = next(e for e in root_span.events if e.name == "session_coherence")
         assert event.attributes is not None
@@ -280,12 +280,18 @@ class TestOpenTelemetryAdapter:
         assert event.attributes["eval.coherence_score"] == 0.92
         assert event.attributes["eval.details.wikilink_count"] == 14
         assert root_span.attributes is not None
-        assert root_span.attributes["langfuse.output.coherence_score"] == "0.92"
-        assert root_span.attributes["langfuse.output.wikilink_count"] == "14"
-        assert json.loads(str(root_span.attributes["langfuse.output"])) == {
+        assert "langfuse.output.coherence_score" not in root_span.attributes
+        assert "langfuse.output.wikilink_count" not in root_span.attributes
+        assert "langfuse.output" not in root_span.attributes
+        expected_coherence_payload = {
             "coherence_score": 0.92,
             "wikilink_count": 14,
         }
+        assert json.loads(str(root_span.attributes["output.value"])) == expected_coherence_payload
+        assert (
+            json.loads(str(root_span.attributes["langfuse.observation.output"]))
+            == expected_coherence_payload
+        )
 
     def test_pipeline_session_with_anonymous_user(
         self,
@@ -302,9 +308,7 @@ class TestOpenTelemetryAdapter:
             pass
 
         spans = exporter.get_finished_spans()
-        root_span = next(
-            s for s in spans if s.name in ("pipeline.coordinator", "cresmo.pipeline.execution")
-        )
+        root_span = next(s for s in spans if s.name == "cresmo.pipeline.coordinator")
         assert root_span.attributes is not None
         assert root_span.attributes["langfuse.session.id"] == "sandeco:vid_anon_01"
         assert root_span.attributes["langfuse.user.id"] == "anonymous"
@@ -332,9 +336,7 @@ class TestOpenTelemetryAdapter:
             pass
 
         spans = exporter.get_finished_spans()
-        root_span = next(
-            s for s in spans if s.name in ("pipeline.coordinator", "cresmo.pipeline.execution")
-        )
+        root_span = next(s for s in spans if s.name == "cresmo.pipeline.coordinator")
         assert root_span.attributes is not None
         assert root_span.attributes["langfuse.session.id"] == "sandeco:vid_auth_01"
         assert root_span.attributes["langfuse.user.id"] == "user:google:alice@corp.com"
@@ -363,9 +365,7 @@ class TestOpenTelemetryAdapter:
             pass
 
         spans = exporter.get_finished_spans()
-        root_span = next(
-            s for s in spans if s.name in ("pipeline.coordinator", "cresmo.pipeline.execution")
-        )
+        root_span = next(s for s in spans if s.name == "cresmo.pipeline.coordinator")
         assert root_span.attributes is not None
         assert root_span.attributes["langfuse.session.id"] == "sandeco:vid_worker_01"
         assert root_span.attributes["langfuse.user.id"] == "system:worker"
@@ -644,9 +644,7 @@ def test_universal_algorithmic_and_cognitive_parity_adr034() -> None:
         pass
 
     spans = exporter.get_finished_spans()
-    root_span = next(
-        s for s in spans if s.name in ("pipeline.coordinator", "cresmo.pipeline.execution")
-    )
+    root_span = next(s for s in spans if s.name == "cresmo.pipeline.coordinator")
     attrs = root_span.attributes or {}
 
     # Algorithmic Pair (ID - ID)
@@ -678,9 +676,7 @@ def test_start_pipeline_session_with_batch_id_adr035() -> None:
         pass
 
     spans = exporter.get_finished_spans()
-    root_span = next(
-        s for s in spans if s.name in ("pipeline.coordinator", "cresmo.pipeline.execution")
-    )
+    root_span = next(s for s in spans if s.name == "cresmo.pipeline.coordinator")
     attrs = root_span.attributes or {}
 
     assert attrs["cresmo.batch_id"] == batch_key
@@ -717,9 +713,7 @@ def test_start_pipeline_session_sets_otel_observation_input_attributes() -> None
         pass
 
     spans = exporter.get_finished_spans()
-    root_span = next(
-        s for s in spans if s.name in ("pipeline.coordinator", "cresmo.pipeline.execution")
-    )
+    root_span = next(s for s in spans if s.name == "cresmo.pipeline.coordinator")
     attrs = root_span.attributes or {}
 
     expected_dict = {
@@ -809,15 +803,13 @@ def test_record_session_output_sets_otel_and_langfuse_output_attributes() -> Non
         adapter.record_session_output(output_payload)
 
     spans = exporter.get_finished_spans()
-    root_span = next(
-        s for s in spans if s.name in ("pipeline.coordinator", "cresmo.pipeline.execution")
-    )
+    root_span = next(s for s in spans if s.name == "cresmo.pipeline.coordinator")
     attrs = root_span.attributes or {}
 
     expected_serialized = json.dumps(output_payload)
     assert attrs["output.value"] == expected_serialized
     assert attrs["langfuse.observation.output"] == expected_serialized
-    assert attrs["langfuse.output"] == expected_serialized
+    assert "langfuse.output" not in attrs
     assert attrs["langfuse.trace.output"] == expected_serialized
     assert attrs["cresmo.output.status"] == "COMPLETED"
     assert attrs["cresmo.output.stage"] == "fluid_prose"
@@ -849,7 +841,7 @@ class TestAdr037LeanTelemetryAndEvaluationSpan:
     """Unit tests for ADR-037 Lean Telemetry Topography and Chronological Evaluation Spans."""
 
     def test_default_root_span_and_trace_separation(self) -> None:
-        """Verify default root span name is pipeline.coordinator and trace name is cresmo.synthesis_pipeline."""
+        """Verify default root span name is cresmo.pipeline.coordinator and trace name is cresmo.synthesis_pipeline (ADR-063)."""
         exporter = InMemorySpanExporter()
         provider = TracerProvider()
         provider.add_span_processor(SimpleSpanProcessor(exporter))
@@ -868,8 +860,26 @@ class TestAdr037LeanTelemetryAndEvaluationSpan:
         assert len(spans) == 1
         root_span = spans[0]
         attrs = root_span.attributes or {}
-        assert root_span.name == "pipeline.coordinator"
+        assert root_span.name == "cresmo.pipeline.coordinator"
         assert attrs.get("langfuse.trace.name") == "cresmo.synthesis_pipeline"
+
+    def test_all_canonical_telemetry_identifiers_enforce_cresmo_namespace(self) -> None:
+        """Verify ADR-063 Bounded Context namespace consistency across all 4 telemetry tiers."""
+        from cresmo.application.ports import (
+            LLM_GENERATION_SPAN_NAME,
+            PIPELINE_ROOT_SPAN_NAME,
+            SYNTHESIS_PIPELINE_TRACE_NAME,
+        )
+
+        assert SYNTHESIS_PIPELINE_TRACE_NAME == "cresmo.synthesis_pipeline"
+        assert PIPELINE_ROOT_SPAN_NAME == "cresmo.pipeline.coordinator"
+        assert LLM_GENERATION_SPAN_NAME == "cresmo.llm.generate"
+        for identifier in (
+            SYNTHESIS_PIPELINE_TRACE_NAME,
+            PIPELINE_ROOT_SPAN_NAME,
+            LLM_GENERATION_SPAN_NAME,
+        ):
+            assert identifier.startswith("cresmo.")
 
     def test_lean_input_payload_has_no_duplicate_aliases(self) -> None:
         """Verify input payload uses canonical keys only and removes redundant alias keys."""
@@ -992,6 +1002,40 @@ class TestAdr037LeanTelemetryAndEvaluationSpan:
         attrs = span.attributes or {}
         assert attrs.get("gen_ai.request.temperature") == 0.7
         assert attrs.get("gen_ai.request.max_tokens") == 8192
+
+    def test_annotate_llm_span_records_thinking_level_and_reasoning_tokens(self) -> None:
+        """Verify annotate_llm_span records cresmo.thinking_level and gen_ai.usage.reasoning_tokens."""
+        exporter = InMemorySpanExporter()
+        provider = TracerProvider()
+        provider.add_span_processor(SimpleSpanProcessor(exporter))
+        tracer = provider.get_tracer("cresmo.test")
+
+        with tracer.start_as_current_span("test.llm.thinking"):
+            annotate_llm_span(
+                system="google",
+                model="gemini-3.5-flash-lite",
+                prompt_tokens=100,
+                candidate_tokens=50,
+                thinking_level="low",
+                thinking_tokens=128,
+            )
+
+        with tracer.start_as_current_span("test.llm.no_thinking"):
+            annotate_llm_span(
+                system="ollama",
+                model="qwen2.5:7b",
+                prompt_tokens=20,
+                candidate_tokens=10,
+            )
+
+        spans = exporter.get_finished_spans()
+        attrs_thinking = spans[0].attributes or {}
+        assert attrs_thinking.get("cresmo.thinking_level") == "low"
+        assert attrs_thinking.get("gen_ai.usage.reasoning_tokens") == 128
+
+        attrs_plain = spans[1].attributes or {}
+        assert "cresmo.thinking_level" not in attrs_plain
+        assert "gen_ai.usage.reasoning_tokens" not in attrs_plain
 
 
 def _create_mock_non_recording_span() -> Any:
@@ -1259,16 +1303,8 @@ class TestLangfusePayloadAndSessionAttributesExtended:
 
         assert "cresmo.metadata.batch_id" not in attrs
         assert attrs["cresmo.metadata.custom_key"] == "custom_val"
-        assert "langfuse.input.title" not in attrs
-        assert "langfuse.input.channel" not in attrs
-        assert attrs["langfuse.input.batch_id"] == "batch_99"
-        assert attrs["langfuse.input.video_url"] == "https://youtu.be/test"
-        assert attrs["langfuse.input.raw_characters"] == "5000"
-        assert attrs["langfuse.input.raw_words"] == "800"
-        assert attrs["langfuse.input.channel_id"] == "cid_1"
-        assert attrs["langfuse.input.content_id"] == "cnt_1"
-        assert attrs["langfuse.input.channel_name"] == "ignored_chan_in_loop"
-        assert attrs["langfuse.input.content_title"] == "ignored_title_in_loop"
+        # ADR-063: Zero loose langfuse.input.* attribute duplication
+        assert not any(k.startswith("langfuse.input.") for k in attrs)
 
         payload = json.loads(attrs["input.value"])
         assert payload["batch_id"] == "batch_99"
@@ -1297,10 +1333,12 @@ class TestLangfusePayloadAndSessionAttributesExtended:
             content_title="param_t",
             attributes=attrs1,
         )
-        assert attrs1["langfuse.input.channel_name"] == "cname"
-        assert attrs1["langfuse.input.content_title"] == "ctitle"
-        assert "langfuse.input.channel_id" not in attrs1
-        assert "langfuse.input.content_id" not in attrs1
+        assert not any(k.startswith("langfuse.input.") for k in attrs1)
+        payload1 = json.loads(attrs1["input.value"])
+        assert payload1["channel_name"] == "cname"
+        assert payload1["content_title"] == "ctitle"
+        assert "channel_id" not in payload1
+        assert "content_id" not in payload1
 
         # Case 2: channel and title from metadata
         attrs2: dict[str, Any] = {}
@@ -1312,8 +1350,10 @@ class TestLangfusePayloadAndSessionAttributesExtended:
             content_title="param_t",
             attributes=attrs2,
         )
-        assert attrs2["langfuse.input.channel_name"] == "chan2"
-        assert attrs2["langfuse.input.content_title"] == "tit2"
+        assert not any(k.startswith("langfuse.input.") for k in attrs2)
+        payload2 = json.loads(attrs2["input.value"])
+        assert payload2["channel_name"] == "chan2"
+        assert payload2["content_title"] == "tit2"
 
         # Case 3: from fallback parameters when metadata empty
         attrs3: dict[str, Any] = {}
@@ -1325,8 +1365,10 @@ class TestLangfusePayloadAndSessionAttributesExtended:
             content_title="param_t",
             attributes=attrs3,
         )
-        assert attrs3["langfuse.input.channel_name"] == "param_c"
-        assert attrs3["langfuse.input.content_title"] == "param_t"
+        assert not any(k.startswith("langfuse.input.") for k in attrs3)
+        payload3 = json.loads(attrs3["input.value"])
+        assert payload3["channel_name"] == "param_c"
+        assert payload3["content_title"] == "param_t"
 
         # Case 4: all empty -> no input payload serialized
         attrs4: dict[str, Any] = {}
@@ -1405,6 +1447,62 @@ class TestLangfusePayloadAndSessionAttributesExtended:
         # 4. Metadata empty verifies content_title in input.value falls back to content_id
         input_payload2 = json.loads(attrs2["input.value"])
         assert input_payload2["content_title"] == "cnt_beta"
+
+    def test_adr063_analytical_attributes_and_git_sha(self) -> None:
+        """Verify ADR-063 first-class cresmo.pipeline.* and cresmo.content.* attributes without metadata duplication."""
+        exporter = InMemorySpanExporter()
+        provider = TracerProvider()
+        provider.add_span_processor(SimpleSpanProcessor(exporter))
+        tracer = provider.get_tracer("cresmo.test")
+        adapter = OpenTelemetryAdapter(
+            tracer=tracer,
+            pipeline_version="cresmo:v0.1.0",
+            git_sha="abcdef123456",
+        )
+
+        session_id = PipelineSessionId.create(channel="chan_a", content_id="cnt_a")
+        with adapter.start_pipeline_session(
+            session_id=session_id,
+            user_id=UserIdentity.anonymous(),
+            metadata={
+                "source": "transcript",
+                "channel_id": "chan_a",
+                "channel_name": "Channel A",
+                "content_id": "cnt_a",
+                "content_title": "Title A",
+                "raw_words": 4200,
+                "raw_characters": 25000,
+                "gap_filler_passes": 3,
+                "force_reprocess": True,
+                "publication_date": "2026-11-20",
+            },
+        ):
+            pass
+
+        root_span = exporter.get_finished_spans()[0]
+        attrs = root_span.attributes or {}
+
+        assert attrs["cresmo.pipeline.version"] == "cresmo:v0.1.0"
+        assert attrs["cresmo.pipeline.git_sha"] == "abcdef12"
+        assert attrs["cresmo.pipeline.gap_filler_passes"] == 3
+        assert attrs["cresmo.pipeline.force_reprocess"] is True
+        assert attrs["cresmo.content.source"] == "transcript"
+        assert attrs["cresmo.content.word_count"] == 4200
+        assert attrs["cresmo.content.char_count"] == 25000
+        assert attrs["cresmo.content.publication_date"] == "2026-11-20"
+        assert "git:abcdef12" in attrs["langfuse.trace.tags"]
+
+        # Zero duplication into cresmo.metadata.* or langfuse.input.*
+        for promoted_key in (
+            "source",
+            "raw_words",
+            "raw_characters",
+            "gap_filler_passes",
+            "force_reprocess",
+            "publication_date",
+        ):
+            assert f"cresmo.metadata.{promoted_key}" not in attrs
+        assert not any(k.startswith("langfuse.input.") for k in attrs)
 
 
 class TestOpenTelemetryAdapterRecordMethodsAndFlushExtended:
@@ -1604,14 +1702,19 @@ class TestOpenTelemetryAdapterRecordMethodsAndFlushExtended:
         from cresmo.infrastructure.adapters.telemetry.opentelemetry_adapter import (
             DEFAULT_PIPELINE_VERSION,
         )
+        from cresmo.infrastructure.config import resolve_default_pipeline_version
 
         adapter = OpenTelemetryAdapter()
         assert adapter._tracer is not None
+        assert DEFAULT_PIPELINE_VERSION == resolve_default_pipeline_version()
+        assert DEFAULT_PIPELINE_VERSION != "cresmo:v2"
         assert adapter._pipeline_version == DEFAULT_PIPELINE_VERSION
+        assert adapter._git_sha is None
         assert adapter._langfuse is None
 
-        adapter2 = OpenTelemetryAdapter(pipeline_version="custom:v99")
+        adapter2 = OpenTelemetryAdapter(pipeline_version="custom:v99", git_sha="deadbeef9999")
         assert adapter2._pipeline_version == "custom:v99"
+        assert adapter2._git_sha == "deadbeef"
 
     def test_flush_exceptions_and_fallbacks(self) -> None:
         from unittest.mock import MagicMock, patch

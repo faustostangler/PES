@@ -780,6 +780,7 @@ class TestCompositionRoot:
         mock_tel_adapter = MagicMock()
         mock_ingest_adapter = MagicMock()
         mock_prompt_prov = MagicMock()
+        mock_pool = MagicMock()
         mock_synth_adapter = MagicMock()
         mock_index_adapter = MagicMock()
         mock_judge_adapter = MagicMock()
@@ -806,6 +807,10 @@ class TestCompositionRoot:
                 return_value=mock_prompt_prov,
             ) as mock_prompt,
             patch(
+                "cresmo.bootstrap.composition.build_gemini_credential_pool",
+                return_value=mock_pool,
+            ) as mock_pool_builder,
+            patch(
                 "cresmo.bootstrap.composition.build_gemini_synthesis_adapter",
                 return_value=mock_synth_adapter,
             ) as mock_gemini,
@@ -825,17 +830,24 @@ class TestCompositionRoot:
             mock_tel.assert_called_once_with(test_settings, langfuse_client=mock_lf_client)
             mock_ingest.assert_called_once_with(test_settings)
             mock_prompt.assert_called_once_with(test_settings, langfuse_client=mock_lf_client)
-            mock_gemini.assert_called_once_with(test_settings, langfuse_client=mock_lf_client)
+            mock_pool_builder.assert_called_once_with(test_settings)
+            mock_gemini.assert_called_once_with(
+                test_settings,
+                langfuse_client=mock_lf_client,
+                credential_pool=mock_pool,
+            )
             mock_idx.assert_called_once_with(
                 test_settings,
                 synthesis_adapter=mock_synth_adapter,
                 web_index=False,
                 langfuse_client=mock_lf_client,
+                credential_pool=mock_pool,
             )
             mock_judge.assert_called_once_with(
                 test_settings,
                 langfuse_client=mock_lf_client,
                 prompt_provider=mock_prompt_prov,
+                credential_pool=mock_pool,
             )
             assert pipeline.media_ingestion_port is mock_ingest_adapter
             assert pipeline.llm_indexing_port is mock_index_adapter
@@ -847,3 +859,70 @@ class TestCompositionRoot:
             mock_pfc.return_value = MagicMock()
             build_sync_channel_use_case(settings=test_settings, check_ffmpeg=True)
             mock_pfc.assert_called_once_with(test_settings, check_ffmpeg=True)
+
+    def test_gemini_timeout_seconds_wired_into_synthesis_and_indexing_adapters(
+        self, tmp_path: Path
+    ) -> None:
+        """Verify settings.gemini_timeout_seconds propagates to synthesis and web_index adapters."""
+        settings = CresmoSettings(
+            gemini_api_key=SecretStr("TEST_FAKE_KEY_FOR_TIMEOUT"),
+            vault_dir=tmp_path / "vault",
+            gemini_timeout_seconds=180.0,
+        )
+
+        synthesis_adapter = build_gemini_synthesis_adapter(settings, langfuse_client=None)
+        assert isinstance(synthesis_adapter, GeminiLLMAdapter)
+        assert synthesis_adapter.timeout_seconds == 180.0
+        assert synthesis_adapter._pool is not None
+        assert synthesis_adapter._pool.timeout == 180.0
+
+        indexing_adapter = build_indexing_adapter(settings, web_index=True)
+        assert isinstance(indexing_adapter, GeminiLLMAdapter)
+        assert indexing_adapter.timeout_seconds == 180.0
+        assert indexing_adapter._pool is not None
+        assert indexing_adapter._pool.timeout == 180.0
+
+    def test_build_pipeline_shares_single_gemini_credential_pool_across_synthesis_and_judge(
+        self, tmp_path: Path
+    ) -> None:
+        """Verify SPEC-3: build_pipeline injects identical GeminiCredentialPool into synthesis and judge."""
+        from cresmo.infrastructure.adapters.judges.composite_judge import (
+            ResilientCompositeJudgeAdapter,
+        )
+        from cresmo.infrastructure.adapters.judges.gemini_judge import GeminiJudgeAdapter
+        from cresmo.infrastructure.adapters.judges.langfuse_decorator import LangfuseJudgeDecorator
+        from cresmo.infrastructure.adapters.judges.preflight_decorator import (
+            MechanicalPreflightJudgeDecorator,
+        )
+
+        settings = CresmoSettings(
+            gemini_api_keys=[SecretStr("KEY_PRIMARY_POOL"), SecretStr("KEY_SECONDARY_POOL")],
+            vault_dir=tmp_path / "vault",
+            judge_provider="gemini",
+            langfuse_enabled=False,
+            prometheus_enabled=False,
+        )
+
+        pipeline = build_pipeline(settings=settings, web_index=True)
+
+        synthesis_adapter = pipeline.llm_synthesis_port
+        assert isinstance(synthesis_adapter, GeminiLLMAdapter)
+
+        # Unwrap LangfuseJudgeDecorator -> MechanicalPreflightJudgeDecorator -> ResilientCompositeJudgeAdapter -> GeminiJudgeAdapter
+        judge_adapter = pipeline.llm_judge
+        assert isinstance(judge_adapter, LangfuseJudgeDecorator)
+        preflight = judge_adapter._inner_judge
+        assert isinstance(preflight, MechanicalPreflightJudgeDecorator)
+        composite = preflight._inner_judge
+        assert isinstance(composite, ResilientCompositeJudgeAdapter)
+        primary_judge = composite._primary
+        assert isinstance(primary_judge, GeminiJudgeAdapter)
+
+        assert synthesis_adapter._pool is primary_judge._pool
+
+        # Cooldown reported on synthesis pool must immediately rotate judge lease to secondary key
+        primary_key, _, _ = synthesis_adapter._pool.lease()
+        synthesis_adapter._pool.report_quota_exhausted(primary_key, 300.0)
+        assert primary_judge._pool is not None
+        judge_key, _, _ = primary_judge._pool.lease()
+        assert judge_key == "KEY_SECONDARY_POOL"

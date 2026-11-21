@@ -19,13 +19,18 @@ import structlog
 from opentelemetry import trace
 from opentelemetry.trace import Tracer
 
-from cresmo.application.ports import TelemetryPort
+from cresmo.application.ports import (
+    PIPELINE_ROOT_SPAN_NAME,
+    SYNTHESIS_PIPELINE_TRACE_NAME,
+    TelemetryPort,
+)
 from cresmo.domain.entities import (
     ContentId,
     JudgeFrictionMetric,
     PipelineSessionId,
     UserIdentity,
 )
+from cresmo.infrastructure.config import resolve_default_pipeline_version
 
 
 # Defer langfuse import to runtime per ADR-026/ADR-053/ADR-055
@@ -38,9 +43,10 @@ def propagate_attributes(**kwargs: Any) -> Any:
 
 logger = structlog.get_logger(__name__)
 
-DEFAULT_PIPELINE_VERSION: str = "cresmo:v2"
+DEFAULT_PIPELINE_VERSION: str = resolve_default_pipeline_version()
 OTEL_FLUSH_TIMEOUT_MS: int = 2000
 _MIN_STRUCTURED_USER_PARTS: Final[int] = 3
+_GIT_SHA_SHORT_LENGTH: Final[int] = 8
 # Infra limit: Langfuse drops propagated attribute values longer than 200 characters.
 _LANGFUSE_PROPAGATED_VALUE_MAX_CHARS: Final[int] = 200
 
@@ -67,6 +73,15 @@ _CANONICAL_ROOT_METADATA_KEYS: frozenset[str] = frozenset(
         "channel_name",
         "channel_id",
         "content_id",
+        "source",
+        "raw_words",
+        "raw_characters",
+        "gap_filler_passes",
+        "force_reprocess",
+        "publication_date",
+        "pipeline_version",
+        "version",
+        "git_sha",
     }
 )
 
@@ -88,6 +103,8 @@ def annotate_llm_span(
     trace_id: str | None = None,
     temperature: float | None = None,
     max_tokens: int | None = None,
+    thinking_level: str | None = None,
+    thinking_tokens: int | None = None,
 ) -> None:
     """Annotate the current OpenTelemetry span with GenAI Semantic Conventions.
 
@@ -109,6 +126,8 @@ def annotate_llm_span(
         trace_id: Optional domain trace identifier (e.g. ContentId).
         temperature: Optional sampling temperature override for diagnostics.
         max_tokens: Optional maximum output tokens limit.
+        thinking_level: Optional effective thinking effort level ('minimal', 'low', 'medium', 'high', 'xhigh').
+        thinking_tokens: Optional count of internal reasoning/thought tokens generated.
     """
     current_span = trace.get_current_span()
     if not (current_span and current_span.is_recording()):
@@ -130,6 +149,10 @@ def annotate_llm_span(
         current_span.set_attribute("cresmo.temperature", temperature)
     if max_tokens is not None:
         current_span.set_attribute("gen_ai.request.max_tokens", max_tokens)
+    if thinking_level is not None:
+        current_span.set_attribute("cresmo.thinking_level", thinking_level)
+    if thinking_tokens is not None:
+        current_span.set_attribute("gen_ai.usage.reasoning_tokens", thinking_tokens)
 
 
 def _resolve_identity_from_string(user_id: str) -> tuple[UserIdentity, str | None]:
@@ -194,36 +217,29 @@ def _build_langfuse_input_payload(
     content_title: str,
     attributes: dict[str, Any],
 ) -> None:
-    """Populate OpenTelemetry and Langfuse metadata attributes and JSON input payload."""
+    """Populate OpenTelemetry metadata attributes and canonical JSON input payload (ADR-037, ADR-063)."""
     input_payload: dict[str, Any] = {}
     for key, value in metadata.items():
         formatted_value = str(value)
         if key not in _CANONICAL_ROOT_METADATA_KEYS:
             attributes[f"cresmo.metadata.{key}"] = formatted_value
         if key in _LANGFUSE_INPUT_KEYS and key not in ("title", "channel"):
-            attributes[f"langfuse.input.{key}"] = formatted_value
             input_payload[key] = formatted_value
 
-    # ID-ID Parity: Symmetrically guarantee channel_id and content_id in langfuse.input
+    # ID-ID Parity: Symmetrically guarantee channel_id and content_id in canonical input payload
     if channel_id:
-        attributes["langfuse.input.channel_id"] = channel_id
         input_payload["channel_id"] = channel_id
     if content_id:
-        attributes["langfuse.input.content_id"] = content_id
         input_payload["content_id"] = content_id
 
-    # TXT-TXT Parity: Symmetrically guarantee channel_name and content_title in canonical input payload (ADR-037)
+    # TXT-TXT Parity: Symmetrically guarantee channel_name and content_title in canonical input payload
     resolved_channel = metadata.get("channel_name") or metadata.get("channel") or channel_name
     if resolved_channel:
-        formatted_channel = str(resolved_channel)
-        attributes["langfuse.input.channel_name"] = formatted_channel
-        input_payload["channel_name"] = formatted_channel
+        input_payload["channel_name"] = str(resolved_channel)
 
     resolved_title = metadata.get("content_title") or metadata.get("title") or content_title
     if resolved_title:
-        formatted_title = str(resolved_title)
-        attributes["langfuse.input.content_title"] = formatted_title
-        input_payload["content_title"] = formatted_title
+        input_payload["content_title"] = str(resolved_title)
 
     if input_payload:
         serialized_input = json.dumps(input_payload)
@@ -232,12 +248,32 @@ def _build_langfuse_input_payload(
         attributes["langfuse.trace.input"] = serialized_input
 
 
+def _attach_analytical_root_attributes(
+    metadata: dict[str, Any],
+    attributes: dict[str, Any],
+) -> None:
+    """Attach first-class cresmo.pipeline.* and cresmo.content.* analytical attributes (ADR-063)."""
+    if (source := metadata.get("source")) is not None and str(source).strip():
+        attributes["cresmo.content.source"] = str(source).strip()
+    if (raw_words := metadata.get("raw_words")) is not None:
+        attributes["cresmo.content.word_count"] = int(raw_words)
+    if (raw_characters := metadata.get("raw_characters")) is not None:
+        attributes["cresmo.content.char_count"] = int(raw_characters)
+    if (pub_date := metadata.get("publication_date")) is not None and str(pub_date).strip():
+        attributes["cresmo.content.publication_date"] = str(pub_date).strip()
+    if (passes := metadata.get("gap_filler_passes")) is not None:
+        attributes["cresmo.pipeline.gap_filler_passes"] = int(passes)
+    if (force_reprocess := metadata.get("force_reprocess")) is not None:
+        attributes["cresmo.pipeline.force_reprocess"] = bool(force_reprocess)
+
+
 def _build_session_span_attributes(
     session_id: PipelineSessionId,
     user: UserIdentity,
     tenant: str,
     pipeline_version: str,
     metadata: dict[str, Any],
+    git_sha: str | None = None,
 ) -> tuple[dict[str, Any], list[str]]:
     """Assemble atomic OpenTelemetry and Langfuse session span attributes and tags."""
     channel_token, content_token = _parse_session_parts(session_id)
@@ -260,6 +296,8 @@ def _build_session_span_attributes(
         "langfuse.session.id": session_id.value,
         "langfuse.user.id": user.value,
         "langfuse.trace.tags": tags,
+        # Pipeline Lineage (ADR-063)
+        "cresmo.pipeline.version": pipeline_version,
         # Algorithmic Pair (ID - ID Parity)
         "cresmo.channel.id": channel_id,
         "cresmo.content.id": content_id,
@@ -272,6 +310,12 @@ def _build_session_span_attributes(
         "cresmo.user.provider": user.provider,
     }
 
+    if git_sha:
+        clean_sha = git_sha.strip()[:_GIT_SHA_SHORT_LENGTH]
+        if clean_sha:
+            attributes["cresmo.pipeline.git_sha"] = clean_sha
+            tags.append(f"git:{clean_sha}")
+
     if user.subject:
         attributes["cresmo.user.subject"] = user.subject
 
@@ -281,6 +325,8 @@ def _build_session_span_attributes(
         clean_batch_id = str(batch_id).strip()
         attributes["cresmo.batch_id"] = clean_batch_id
         tags.append(f"batch:{clean_batch_id}")
+
+    _attach_analytical_root_attributes(metadata=metadata, attributes=attributes)
 
     _build_langfuse_input_payload(
         metadata=metadata,
@@ -327,17 +373,22 @@ class OpenTelemetryAdapter(TelemetryPort):
         tracer: Tracer | None = None,
         langfuse_client: Any | None = None,
         pipeline_version: str | None = None,
+        git_sha: str | None = None,
     ) -> None:
-        """Initialize OpenTelemetryAdapter with tracer, optional Langfuse client and pipeline version.
+        """Initialize OpenTelemetryAdapter with tracer, optional Langfuse client and pipeline lineage.
 
         Args:
             tracer: Configured OpenTelemetry Tracer instance.
             langfuse_client: Optional Langfuse client for session/trace scoring.
             pipeline_version: Operational pipeline version tag (defaults to DEFAULT_PIPELINE_VERSION).
+            git_sha: Optional Git commit SHA for execution lineage attribution (ADR-063).
         """
         self._tracer = tracer or trace.get_tracer("cresmo.pipeline")
         self._langfuse = langfuse_client
         self._pipeline_version = pipeline_version or DEFAULT_PIPELINE_VERSION
+        self._git_sha: str | None = (
+            git_sha.strip()[:_GIT_SHA_SHORT_LENGTH] if (git_sha and git_sha.strip()) else None
+        )
         name_telemetry_threads(langfuse_client)
 
     @contextmanager
@@ -356,7 +407,7 @@ class OpenTelemetryAdapter(TelemetryPort):
             user_id: UserIdentity (anonymous, identified IAM, or system:worker) or string.
             channel_tenant_id: Optional Channel tenant identifier for cost and volume aggregation.
             metadata: Additional contextual metadata.
-            trace_name: Optional canonical root operation name (defaults to cresmo.pipeline.execution).
+            trace_name: Optional canonical root operation name (defaults to SYNTHESIS_PIPELINE_TRACE_NAME).
 
         Yields:
             The active root OpenTelemetry span.
@@ -373,19 +424,28 @@ class OpenTelemetryAdapter(TelemetryPort):
             or self._pipeline_version
         )
 
+        raw_git_sha = effective_metadata.get("git_sha") or self._git_sha
+        resolved_git_sha = (
+            str(raw_git_sha).strip()[:_GIT_SHA_SHORT_LENGTH]
+            if (raw_git_sha is not None and str(raw_git_sha).strip())
+            else None
+        )
+
         session_attributes, tags = _build_session_span_attributes(
             session_id=session_id,
             user=normalized_user,
             tenant=tenant,
             pipeline_version=pipeline_version,
             metadata=effective_metadata,
+            git_sha=resolved_git_sha,
         )
 
         # ADR-037: Semantic separation between Trace (business transaction) and Root Span (orchestrator)
-        resolved_trace_name = trace_name or "cresmo.synthesis_pipeline"
-        root_operation = (
-            "pipeline.coordinator"
-            if trace_name in (None, "cresmo.pipeline.execution", "cresmo.synthesis_pipeline")
+        resolved_trace_name = trace_name or SYNTHESIS_PIPELINE_TRACE_NAME
+        root_operation: str = (
+            PIPELINE_ROOT_SPAN_NAME
+            if trace_name is None
+            or trace_name in ("cresmo.pipeline.execution", SYNTHESIS_PIPELINE_TRACE_NAME)
             else trace_name
         )
         session_attributes["langfuse.trace.name"] = resolved_trace_name
@@ -539,11 +599,10 @@ class OpenTelemetryAdapter(TelemetryPort):
             if details:
                 for detail_key, detail_value in details.items():
                     event_attributes[f"eval.details.{detail_key}"] = detail_value
-                    # Explicit root output summary according to Langfuse best practices
-                    current_span.set_attribute(f"langfuse.output.{detail_key}", str(detail_value))
                     output_payload[detail_key] = detail_value
-            current_span.set_attribute("langfuse.output.coherence_score", str(score))
-            current_span.set_attribute("langfuse.output", json.dumps(output_payload))
+            serialized_coherence = json.dumps(output_payload)
+            current_span.set_attribute("output.value", serialized_coherence)
+            current_span.set_attribute("langfuse.observation.output", serialized_coherence)
             current_span.add_event("session_coherence", attributes=event_attributes)
 
         if self._langfuse is not None:
@@ -612,10 +671,9 @@ class OpenTelemetryAdapter(TelemetryPort):
     def record_session_output(self, output: dict[str, Any]) -> None:
         """Record structured business outcome payload on the active root session span.
 
-        Adheres to CNCF OpenTelemetry and Langfuse semantic conventions:
+        Adheres to CNCF OpenTelemetry and Langfuse semantic conventions (ADR-037, ADR-063):
         - output.value (standard OpenTelemetry convention)
         - langfuse.observation.output (Langfuse observation convention)
-        - langfuse.output (Langfuse legacy convention)
         - langfuse.trace.output (Langfuse root trace convention)
         - cresmo.output.* (granular diagnostic attributes)
 
@@ -627,7 +685,6 @@ class OpenTelemetryAdapter(TelemetryPort):
             serialized_output = json.dumps(output, default=str)
             current_span.set_attribute("output.value", serialized_output)
             current_span.set_attribute("langfuse.observation.output", serialized_output)
-            current_span.set_attribute("langfuse.output", serialized_output)
             current_span.set_attribute("langfuse.trace.output", serialized_output)
             for key, val in output.items():
                 current_span.set_attribute(f"cresmo.output.{key}", str(val))

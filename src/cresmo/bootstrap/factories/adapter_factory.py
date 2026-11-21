@@ -33,6 +33,7 @@ from cresmo.infrastructure.config import CresmoSettings
 
 if TYPE_CHECKING:
     from cresmo.infrastructure.adapters.llm.gemini_adapter import GeminiLLMAdapter
+    from cresmo.infrastructure.adapters.llm.gemini_pool import GeminiCredentialPool
 
 
 def _resolve_cookie_file(settings: CresmoSettings) -> Path | None:
@@ -135,9 +136,30 @@ def build_prompt_provider(
     )
 
 
+def build_gemini_credential_pool(
+    settings: CresmoSettings | None = None,
+) -> GeminiCredentialPool | None:
+    """Instantiate a shared GeminiCredentialPool from configured API keys and timeout."""
+    from cresmo.infrastructure.adapters.llm.gemini_pool import GeminiCredentialPool
+
+    settings = resolve_shared_settings(settings)
+    api_keys = [
+        k.get_secret_value().strip()
+        for k in settings.gemini_api_keys
+        if k.get_secret_value().strip()
+    ]
+    if not api_keys:
+        return None
+    return GeminiCredentialPool(
+        keys=api_keys,
+        timeout=settings.gemini_timeout_seconds,
+    )
+
+
 def build_gemini_synthesis_adapter(
     settings: CresmoSettings | None = None,
     langfuse_client: Any | None = None,
+    credential_pool: GeminiCredentialPool | None = None,
 ) -> GeminiLLMAdapter:
     """Instantiate and wire GeminiLLMAdapter for core synthesis workflows."""
     from cresmo.infrastructure.adapters.llm.gemini_adapter import GeminiLLMAdapter
@@ -148,8 +170,11 @@ def build_gemini_synthesis_adapter(
         api_keys=api_keys,
         model_name=settings.gemini_model,
         fallback_model_name=settings.gemini_fallback_model,
+        max_output_tokens=settings.gemini_max_output_tokens,
+        thinking_level=settings.gemini_thinking_level,
         langfuse_client=langfuse_client,
-        default_temperature=settings.llm_synthesis_temperature,
+        credential_pool=credential_pool,
+        timeout_seconds=settings.gemini_timeout_seconds,
     )
 
 
@@ -160,6 +185,7 @@ def build_indexing_adapter(
     model_override: str | None = None,
     langfuse_client: Any | None = None,
     api_keys: list[str] | None = None,
+    credential_pool: GeminiCredentialPool | None = None,
 ) -> LLMTransformationPort:
     """Instantiate LLM adapter for indexing, selecting between local Ollama and Gemini API."""
     from cresmo.infrastructure.adapters.llm.gemini_adapter import GeminiLLMAdapter
@@ -177,8 +203,11 @@ def build_indexing_adapter(
             api_keys=api_keys,
             model_name=model_override or settings.gemini_model,
             fallback_model_name=settings.gemini_fallback_model,
+            max_output_tokens=settings.gemini_max_output_tokens,
+            thinking_level=settings.gemini_thinking_level,
             langfuse_client=langfuse_client,
-            default_temperature=settings.llm_indexing_temperature,
+            credential_pool=credential_pool,
+            timeout_seconds=settings.gemini_timeout_seconds,
         )
 
     from cresmo.infrastructure.adapters.llm.ollama_llm_adapter import OllamaLLMAdapter

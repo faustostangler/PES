@@ -1057,6 +1057,10 @@ class TestStageRunnerExecuteStageRetriesAndQuarantine:
                 "output_characters": len("Final polished prose text"),
                 "output_words": len(["Final", "polished", "prose", "text"]),
                 "attempts": 2,
+                "retries": 1,
+                "expansion_ratio": round(4 / 2, 3),
+                "judge_passed": True,
+                "judge_overall_score": 0.92,
             }
         )
 
@@ -1125,6 +1129,10 @@ class TestStageRunnerExecuteStageRetriesAndQuarantine:
                 "output_characters": len("Unblocked imperfect text"),
                 "output_words": len(["Unblocked", "imperfect", "text"]),
                 "attempts": 1,
+                "retries": 0,
+                "expansion_ratio": round(3 / 2, 3),
+                "judge_passed": False,
+                "judge_overall_score": 0.45,
             }
         )
 
@@ -2425,6 +2433,10 @@ class TestStageRunnerStageExecutionAndFallback:
                 "output_characters": len("Content obj body"),
                 "output_words": len(["Content", "obj", "body"]),
                 "attempts": 1,
+                "retries": 0,
+                "expansion_ratio": 3.0,
+                "judge_passed": None,
+                "judge_overall_score": None,
             }
         )
 
@@ -2447,6 +2459,10 @@ class TestStageRunnerStageExecutionAndFallback:
                 "output_characters": len("Content obj text"),
                 "output_words": len(["Content", "obj", "text"]),
                 "attempts": 1,
+                "retries": 0,
+                "expansion_ratio": 3.0,
+                "judge_passed": None,
+                "judge_overall_score": None,
             }
         )
 
@@ -2468,6 +2484,10 @@ class TestStageRunnerStageExecutionAndFallback:
                 "output_characters": len("Candidate output text"),
                 "output_words": len(["Candidate", "output", "text"]),
                 "attempts": 1,
+                "retries": 0,
+                "expansion_ratio": 3.0,
+                "judge_passed": None,
+                "judge_overall_score": None,
             }
         )
 
@@ -2490,6 +2510,10 @@ class TestStageRunnerStageExecutionAndFallback:
                 "output_characters": 0,
                 "output_words": 0,
                 "attempts": 1,
+                "retries": 0,
+                "expansion_ratio": 0.0,
+                "judge_passed": None,
+                "judge_overall_score": None,
             }
         )
 

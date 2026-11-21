@@ -15,10 +15,11 @@ Conforms to:
 from __future__ import annotations
 
 import functools
+import importlib.metadata
 from pathlib import Path
-from typing import Any, ClassVar, Self
+from typing import Any, ClassVar, Literal, Self
 
-from pydantic import AliasChoices, Field, SecretStr, model_validator
+from pydantic import AliasChoices, Field, SecretStr, field_validator, model_validator
 from pydantic_settings import (
     BaseSettings,
     PydanticBaseSettingsSource,
@@ -36,14 +37,55 @@ DEFAULT_PROMPTS_RESOURCE_NAME: str = "prompts.json"
 DEFAULT_TAXONOMY_RESOURCE_PACKAGE: str = "cresmo.infrastructure.resources"
 DEFAULT_TAXONOMY_RESOURCE_NAME: str = "taxonomy.json"
 DEFAULT_JUDGE_PASS_THRESHOLD: float = 0.9
-DEFAULT_GEMINI_MODEL: str = "gemini:gemini-3.8-flash"
+
+GeminiFreeTierModel = Literal[
+    "gemini-3.5-flash-lite",
+    "gemini-3.8-flash",
+    "gemini-3.6-flash",
+    "gemini-4-hydrogen",
+    "gemini-3.1-flash-lite",
+    "gemini-3-flash-preview",
+    "gemma-4-31b-it",
+    "gemma-4-26b-a4b-it",
+    "gemini-2.5-flash-lite",
+    "gemini-2.5-flash",
+    "gemini-2.5-pro",
+]
+GEMINI_FREE_TIER_MODELS: tuple[str, ...] = (
+    "gemini-3.5-flash-lite",
+    "gemini-3.8-flash",
+    "gemini-3.6-flash",
+    "gemini-4-hydrogen",
+    "gemini-3.1-flash-lite",
+    "gemini-3-flash-preview",
+    "gemma-4-31b-it",
+    "gemma-4-26b-a4b-it",
+    "gemini-2.5-flash-lite",
+    "gemini-2.5-flash",
+    "gemini-2.5-pro",
+)
+GeminiThinkingLevel = Literal["minimal", "low", "medium", "high", "xhigh"]
+GEMINI_THINKING_LEVELS: tuple[str, ...] = ("minimal", "low", "medium", "high", "xhigh")
+
+DEFAULT_GEMINI_MODEL: str = "gemini-3.5-flash-lite"
+DEFAULT_GEMINI_FALLBACK_MODEL: str = "gemini-3.6-flash"
 DEFAULT_JUDGE_GEMINI_MODEL: str = DEFAULT_GEMINI_MODEL
-DEFAULT_JUDGE_TEMPERATURE: float = 0.0
-DEFAULT_GEMINI_TIMEOUT_SECONDS: float = 60.0
+DEFAULT_GEMINI_THINKING_LEVEL: GeminiThinkingLevel = "low"
+DEFAULT_GEMINI_MAX_OUTPUT_TOKENS: int = 32_768
+DEFAULT_GEMINI_TIMEOUT_SECONDS: float = 300.0
 DEFAULT_BENCHMARK_MODELS: list[str] = [
-    "gemini:gemini-4-hydrogen",
-    "gemini:gemini-3.8-flash",
     "gemini:gemini-3.5-flash-lite",
+    "gemini:gemini-3.8-flash",
+    "gemini:gemini-4-hydrogen",
+    # Remaining Free-Tier text/multimodal options (GEMINI_FREE_TIER_MODELS):
+    # "gemini:gemini-3.6-flash",
+    # "gemini:gemini-3.1-flash-lite",
+    # "gemini:gemini-3-flash-preview",
+    # "gemini:gemma-4-31b-it",
+    # "gemini:gemma-4-26b-a4b-it",
+    # "gemini:gemini-2.5-flash-lite",
+    # "gemini:gemini-2.5-flash",
+    # "gemini:gemini-2.5-pro",
     # "ollama:qwen2.5:latest",
     # "ollama:gemma4:latest",
     # "ollama:deepseek-r1:7b",
@@ -51,6 +93,15 @@ DEFAULT_BENCHMARK_MODELS: list[str] = [
 ]
 DEFAULT_JUDGE_CALIBRATION_MODELS: list[str] = DEFAULT_BENCHMARK_MODELS
 DEFAULT_GENERATOR_BENCHMARK_MODELS: list[str] = DEFAULT_BENCHMARK_MODELS
+
+
+def resolve_default_pipeline_version() -> str:
+    """Resolve canonical pipeline version dynamically from distribution metadata (ADR-063)."""
+    try:
+        pkg_version = importlib.metadata.version("pes")
+    except importlib.metadata.PackageNotFoundError:
+        pkg_version = "0.0.0-dev"
+    return f"cresmo:v{pkg_version}"
 
 
 class CresmoSettings(BaseSettings):
@@ -83,9 +134,13 @@ class CresmoSettings(BaseSettings):
     DEFAULT_TAXONOMY_RESOURCE_PACKAGE: ClassVar[str] = DEFAULT_TAXONOMY_RESOURCE_PACKAGE
     DEFAULT_TAXONOMY_RESOURCE_NAME: ClassVar[str] = DEFAULT_TAXONOMY_RESOURCE_NAME
     DEFAULT_JUDGE_PASS_THRESHOLD: ClassVar[float] = DEFAULT_JUDGE_PASS_THRESHOLD
+    GEMINI_FREE_TIER_MODELS: ClassVar[tuple[str, ...]] = GEMINI_FREE_TIER_MODELS
+    GEMINI_THINKING_LEVELS: ClassVar[tuple[str, ...]] = GEMINI_THINKING_LEVELS
     DEFAULT_GEMINI_MODEL: ClassVar[str] = DEFAULT_GEMINI_MODEL
+    DEFAULT_GEMINI_FALLBACK_MODEL: ClassVar[str] = DEFAULT_GEMINI_FALLBACK_MODEL
     DEFAULT_JUDGE_GEMINI_MODEL: ClassVar[str] = DEFAULT_GEMINI_MODEL
-    DEFAULT_JUDGE_TEMPERATURE: ClassVar[float] = DEFAULT_JUDGE_TEMPERATURE
+    DEFAULT_GEMINI_THINKING_LEVEL: ClassVar[GeminiThinkingLevel] = DEFAULT_GEMINI_THINKING_LEVEL
+    DEFAULT_GEMINI_MAX_OUTPUT_TOKENS: ClassVar[int] = DEFAULT_GEMINI_MAX_OUTPUT_TOKENS
     DEFAULT_BENCHMARK_MODELS: ClassVar[list[str]] = DEFAULT_BENCHMARK_MODELS
     DEFAULT_JUDGE_CALIBRATION_MODELS: ClassVar[list[str]] = DEFAULT_BENCHMARK_MODELS
     DEFAULT_GENERATOR_BENCHMARK_MODELS: ClassVar[list[str]] = DEFAULT_BENCHMARK_MODELS
@@ -153,6 +208,8 @@ class CresmoSettings(BaseSettings):
             values["_env_file"] = _env_file
         if "gemini_api_key" in values and "gemini_api_keys" not in values:
             values["gemini_api_keys"] = values["gemini_api_key"]
+        if "pipeline_version" in values and "CRESMO_PIPELINE_VERSION" not in values:
+            values["CRESMO_PIPELINE_VERSION"] = values.pop("pipeline_version")
         super().__init__(*args, **values)
 
     # =========================================================================
@@ -399,10 +456,8 @@ class CresmoSettings(BaseSettings):
         description="Whether to fail-fast if no valid authenticated YouTube session cookies are found.",
     )
     pipeline_version: str = Field(
-        default="cresmo:v2",
-        validation_alias=AliasChoices(
-            "pipeline_version", "PIPELINE_VERSION", "CRESMO_PIPELINE_VERSION"
-        ),
+        default_factory=resolve_default_pipeline_version,
+        validation_alias="CRESMO_PIPELINE_VERSION",
         description="Canonical pipeline version tag emitted to OpenTelemetry spans and Langfuse traces.",
     )
     git_sha: str | None = Field(
@@ -412,11 +467,43 @@ class CresmoSettings(BaseSettings):
     )
     gemini_model: str = Field(
         default=DEFAULT_GEMINI_MODEL,
-        description="Default Gemini model variant for pipeline stages.",
+        description=(
+            "Default Gemini model variant for pipeline stages. "
+            f"Free-tier catalog (GEMINI_FREE_TIER_MODELS): {', '.join(GEMINI_FREE_TIER_MODELS)}."
+        ),
     )
     gemini_fallback_model: str = Field(
-        default="gemini-3.8-flash",
-        description="Fallback Gemini model variant if primary hits quota or demand spikes.",
+        default=DEFAULT_GEMINI_FALLBACK_MODEL,
+        description=(
+            "Fallback Gemini model variant if primary hits demand spikes or errors "
+            "(distinct from gemini_model; see GEMINI_FREE_TIER_MODELS)."
+        ),
+    )
+    gemini_thinking_level: GeminiThinkingLevel = Field(
+        default=DEFAULT_GEMINI_THINKING_LEVEL,
+        validation_alias=AliasChoices(
+            "CRESMO_GEMINI_THINKING_LEVEL",
+            "GEMINI_THINKING_LEVEL",
+            "gemini_thinking_level",
+        ),
+        description=(
+            "Reasoning effort level for Gemini generation ('minimal', 'low', 'medium', 'high', 'xhigh'; "
+            "automatically clamped per target model)."
+        ),
+    )
+    gemini_max_output_tokens: int = Field(
+        default=DEFAULT_GEMINI_MAX_OUTPUT_TOKENS,
+        ge=256,
+        le=1_048_576,
+        validation_alias=AliasChoices(
+            "CRESMO_GEMINI_MAX_OUTPUT_TOKENS",
+            "GEMINI_MAX_OUTPUT_TOKENS",
+            "gemini_max_output_tokens",
+        ),
+        description=(
+            "Maximum output token ceiling (thinking + response tokens) for Gemini requests "
+            "(default: 32768, safe across Gemma 4 32K and Gemini 3.5+/4 64K sync caps)."
+        ),
     )
     prometheus_enabled: bool = Field(
         default=True,
@@ -612,7 +699,7 @@ class CresmoSettings(BaseSettings):
             "llm_synthesis_temperature",
             "CRESMO_LLM_SYNTHESIS_TEMPERATURE",
         ),
-        description="Default sampling temperature for generative synthesis and expansion stages.",
+        description="Sampling temperature for local Ollama generative synthesis (ignored on Gemini 3.5+/4).",
     )
     llm_indexing_temperature: float = Field(
         default=0.2,
@@ -622,7 +709,7 @@ class CresmoSettings(BaseSettings):
             "llm_indexing_temperature",
             "CRESMO_LLM_INDEXING_TEMPERATURE",
         ),
-        description="Sampling temperature for raw transcript conceptual indexing.",
+        description="Sampling temperature for local Ollama conceptual indexing (ignored on Gemini 3.5+/4).",
     )
 
     raw_index_max_attempts: int = Field(
@@ -734,19 +821,32 @@ class CresmoSettings(BaseSettings):
             "CRESMO_JUDGE_GEMINI_MODEL",
             "JUDGE_GEMINI_MODEL",
         ),
-        description="Gemini model variant for quality judge evaluations.",
-    )
-    judge_temperature: float = Field(
-        default=DEFAULT_JUDGE_TEMPERATURE,
-        ge=0.0,
-        le=2.0,
-        validation_alias=AliasChoices(
-            "judge_temperature",
-            "CRESMO_JUDGE_TEMPERATURE",
-            "JUDGE_TEMPERATURE",
+        description=(
+            "Gemini model variant for quality judge evaluations "
+            "(defaults to fast Free-Tier gemini-3.5-flash-lite)."
         ),
-        description="Sampling temperature for quality judge evaluation models.",
     )
+    judge_gemini_thinking_level: GeminiThinkingLevel = Field(
+        default=DEFAULT_GEMINI_THINKING_LEVEL,
+        validation_alias=AliasChoices(
+            "CRESMO_JUDGE_GEMINI_THINKING_LEVEL",
+            "JUDGE_GEMINI_THINKING_LEVEL",
+            "judge_gemini_thinking_level",
+        ),
+        description=(
+            "Reasoning effort level for Gemini quality judge evaluations "
+            "('minimal', 'low', 'medium', 'high', 'xhigh'; default: 'low')."
+        ),
+    )
+
+    @field_validator("gemini_thinking_level", "judge_gemini_thinking_level", mode="before")
+    @classmethod
+    def _normalize_thinking_level(cls, value: Any) -> Any:
+        """Normalize thinking level strings by stripping whitespace and lowercasing."""
+        if isinstance(value, str):
+            return value.strip().lower()
+        return value
+
     benchmark_models: list[str] = Field(
         default_factory=lambda: list(DEFAULT_BENCHMARK_MODELS),
         validation_alias=AliasChoices(
@@ -798,15 +898,23 @@ def resolve_shared_settings(settings: CresmoSettings | None = None) -> CresmoSet
 
 __all__ = [
     "DEFAULT_BENCHMARK_MODELS",
+    "DEFAULT_GEMINI_FALLBACK_MODEL",
+    "DEFAULT_GEMINI_MAX_OUTPUT_TOKENS",
     "DEFAULT_GEMINI_MODEL",
+    "DEFAULT_GEMINI_THINKING_LEVEL",
+    "DEFAULT_GEMINI_TIMEOUT_SECONDS",
     "DEFAULT_GENERATOR_BENCHMARK_MODELS",
     "DEFAULT_JUDGE_CALIBRATION_MODELS",
     "DEFAULT_JUDGE_GEMINI_MODEL",
     "DEFAULT_JUDGE_PASS_THRESHOLD",
-    "DEFAULT_JUDGE_TEMPERATURE",
     "DEFAULT_LANGFUSE_PROMPT_LABEL",
+    "GEMINI_FREE_TIER_MODELS",
+    "GEMINI_THINKING_LEVELS",
     "CresmoSettings",
+    "GeminiFreeTierModel",
+    "GeminiThinkingLevel",
     "get_shared_settings",
     "reset_shared_settings",
+    "resolve_default_pipeline_version",
     "resolve_shared_settings",
 ]
