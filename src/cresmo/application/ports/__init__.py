@@ -32,18 +32,28 @@ from cresmo.application.ports.taxonomy import (
     NoOpChannelTaxonomyPort,
 )
 from cresmo.application.ports.telemetry import (
+    LLM_GENERATION_FALLBACK_SPAN_NAME,
     LLM_GENERATION_SPAN_NAME,
     PIPELINE_ROOT_SPAN_NAME,
-    SYNTHESIS_PIPELINE_TRACE_NAME,
+    PIPELINE_TRACE_NAME,
     NoOpTelemetryPort,
     TelemetryPort,
+    active_telemetry_pass,
+    active_telemetry_stage,
+    format_stage_generation_span_name,
+    format_stage_judge_span_name,
+    format_stage_span_name,
+    get_active_telemetry_pass,
+    get_active_telemetry_stage,
+    resolve_llm_generation_span_name,
 )
 from cresmo.application.ports.transformation import LLMTransformationPort
 
 __all__ = [
+    "LLM_GENERATION_FALLBACK_SPAN_NAME",
     "LLM_GENERATION_SPAN_NAME",
     "PIPELINE_ROOT_SPAN_NAME",
-    "SYNTHESIS_PIPELINE_TRACE_NAME",
+    "PIPELINE_TRACE_NAME",
     "AnonymizerPort",
     "ChannelTaxonomyPort",
     "CritiqueSynthesizerPort",
@@ -62,4 +72,12 @@ __all__ = [
     "PromptProviderPort",
     "TelemetryPort",
     "VaultRepositoryPort",
+    "active_telemetry_pass",
+    "active_telemetry_stage",
+    "format_stage_generation_span_name",
+    "format_stage_judge_span_name",
+    "format_stage_span_name",
+    "get_active_telemetry_pass",
+    "get_active_telemetry_stage",
+    "resolve_llm_generation_span_name",
 ]

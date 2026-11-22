@@ -15,6 +15,7 @@ from typing import Any
 
 from cresmo.application.pipeline.context import PipelineExecutionContext
 from cresmo.application.ports.prompt import PromptProviderPort
+from cresmo.domain.stage_registry import SaturationPolicy, never_saturate
 from cresmo.domain.value_objects import (
     CandidateText,
     ChatMessage,
@@ -24,6 +25,29 @@ from cresmo.domain.value_objects import (
     PromptKey,
     StageEvaluationSpec,
 )
+
+
+def _append_to_last_user_message(prompt: ChatPrompt, suffix: str) -> ChatPrompt:
+    """Append contextual draft or critique feedback to the final user turn of a ChatPrompt."""
+    updated_messages: list[ChatMessage] = []
+    appended = False
+    last_index = len(prompt.messages) - 1
+    for i, msg in enumerate(prompt.messages):
+        if i == last_index and msg.role == MessageRole.USER:
+            updated_messages.append(
+                ChatMessage(role=MessageRole.USER, content=f"{msg.content}{suffix}")
+            )
+            appended = True
+        else:
+            updated_messages.append(msg)
+
+    if not appended:
+        updated_messages.append(ChatMessage(role=MessageRole.USER, content=suffix.strip()))
+
+    return ChatPrompt(
+        messages=tuple(updated_messages),
+        system_prompt=prompt.system_prompt,
+    )
 
 
 @dataclass(frozen=True)
@@ -50,7 +74,14 @@ class StageConfig[TSource, TOutput]:
     max_attempts: int = 1
     blocking: bool = False
     max_passes: int = 1
-    early_stopping_enabled: bool = False
+    saturation_policy: SaturationPolicy = never_saturate
+
+    def __post_init__(self) -> None:
+        """Fail-fast validation for StageConfig invariants."""
+        if not callable(self.saturation_policy):
+            raise TypeError(
+                f"StageConfig.saturation_policy must be callable, got {type(self.saturation_policy).__name__}."
+            )
 
     def build_transform_prompt(
         self,
@@ -72,6 +103,24 @@ class StageConfig[TSource, TOutput]:
         )
         raw_text = str(raw_text_val)
         effective_key = prompt_key or self.transform_prompt_key
+
+        raw_current_text = extra_context.get("current_text")
+        current_draft = (
+            raw_current_text
+            if isinstance(raw_current_text, str) and raw_current_text.strip()
+            else None
+        )
+        provider_kwargs = dict(extra_context)
+        draft_section = ""
+        if current_draft is not None:
+            raw_prev_pass = extra_context.get("prev_pass_num")
+            raw_pass_num = extra_context.get("pass_num", 2)
+            prev_pass_val = (
+                int(raw_prev_pass) if raw_prev_pass is not None else max(1, int(raw_pass_num) - 1)
+            )
+            draft_section = f'\n<draft pass="{prev_pass_val}">\n{current_draft}\n</draft>\n'
+            provider_kwargs.setdefault("draft_section", draft_section)
+
         base_prompt: ChatPrompt = prompt_provider.get_prompt(
             effective_key,
             channel_name=context.channel.name,
@@ -80,8 +129,31 @@ class StageConfig[TSource, TOutput]:
             content_title=context.content.title,
             file_name=f"{context.content.id.value}.txt",
             raw_text=raw_text,
-            **extra_context,
+            **provider_kwargs,
         )
+
+        # Fail-safe invariant: preserve Pass N-1 draft chaining even if remote prompt lacks {{draft_section}}
+        if current_draft is not None:
+            normalized_draft = current_draft.strip()
+            draft_already_rendered = any(
+                normalized_draft in msg.content for msg in base_prompt.messages
+            )
+            if not draft_already_rendered:
+                pass_num = extra_context.get("pass_num")
+                total_passes = extra_context.get("total_passes")
+                pass_header = (
+                    f"Pass {pass_num}/{total_passes} — REFINE mode"
+                    if pass_num and total_passes
+                    else "REFINE mode"
+                )
+                draft_fallback_block = (
+                    f"\n\n[{pass_header}: Iterative Expansion]\n"
+                    f"Preserve verified facts, structure, and citations from the previous draft below, "
+                    f"and iteratively deepen remaining conceptual, causal, historical, and Extra Info gaps "
+                    f"without discarding prior work. If no verifiable gap remains, return the draft unchanged."
+                    f"{draft_section}"
+                )
+                base_prompt = _append_to_last_user_message(base_prompt, draft_fallback_block)
 
         if not critique:
             return base_prompt
@@ -92,25 +164,7 @@ class StageConfig[TSource, TOutput]:
             f"{critique}\n"
             f"Please correct these defects in your output."
         )
-
-        new_messages: list[ChatMessage] = []
-        for i, msg in enumerate(base_prompt.messages):
-            if i == len(base_prompt.messages) - 1 and msg.role == MessageRole.USER:
-                new_messages.append(
-                    ChatMessage(role=MessageRole.USER, content=f"{msg.content}{critique_feedback}")
-                )
-            else:
-                new_messages.append(msg)
-
-        if not new_messages and base_prompt.system_prompt:
-            new_messages.append(
-                ChatMessage(role=MessageRole.USER, content=critique_feedback.strip())
-            )
-
-        return ChatPrompt(
-            messages=tuple(new_messages),
-            system_prompt=base_prompt.system_prompt,
-        )
+        return _append_to_last_user_message(base_prompt, critique_feedback)
 
     def post_process(self, candidate: CandidateText, source: TSource) -> TOutput:
         """Execute post-processing transformation on CandidateText or cast candidate directly."""

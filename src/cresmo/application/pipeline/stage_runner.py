@@ -21,7 +21,6 @@ from cresmo.application.pipeline.quarantine import record_stage_quarantine
 from cresmo.application.pipeline.stage_descriptor import StageConfig
 from cresmo.application.pipeline.stage_execution import (
     evaluate_stage_candidate,
-    execute_evaluated_stage_loop,
     generate_stage_candidate,
 )
 from cresmo.application.pipeline.stage_telemetry import (
@@ -58,7 +57,6 @@ from cresmo.domain.value_objects import (
     Content,
     ContentId,
     JudgeEvaluation,
-    StageEvaluationSpec,
 )
 
 if TYPE_CHECKING:
@@ -301,33 +299,6 @@ class PipelineStageRunner:
             candidate,
             context=context,
             attempt=attempt,
-        )
-
-    def run_evaluated_stage(
-        self,
-        stage_name: str,
-        fn: Callable[[], _StageRet],
-        *,
-        channel_name: ChannelName | str,
-        content_id: ContentId | str,
-        eval_spec: StageEvaluationSpec | None = None,
-        channel_id: ChannelId | str | None = None,
-        content_title: str = "",
-        fatal: bool = True,
-        fallback: _StageRet | Callable[[], _StageRet] | None = None,
-    ) -> _StageRet | None:
-        """Execute a pipeline stage within a closed-loop quality evaluation gate with retries (Legacy ADR-030)."""
-        return execute_evaluated_stage_loop(
-            self,
-            stage_name,
-            fn,
-            channel_name=channel_name,
-            content_id=content_id,
-            eval_spec=eval_spec,
-            channel_id=channel_id,
-            content_title=content_title,
-            fatal=fatal,
-            fallback=fallback,
         )
 
     def run_stage(

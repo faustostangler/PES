@@ -95,9 +95,7 @@ class TestPipelineTelemetryIntegration:
         assert len(spans) >= 6  # Root + child stage spans
 
         # Identify root span
-        root_span = next(
-            s for s in spans if s.name == "cresmo.pipeline.coordinator"
-        )
+        root_span = next(s for s in spans if s.name == "cresmo.coordinator")
         assert root_span.attributes is not None
         assert root_span.context is not None
         assert root_span.attributes["langfuse.session.id"] == "sandeco:yt_sample1234"
@@ -114,20 +112,20 @@ class TestPipelineTelemetryIntegration:
 
         # Check all child stage spans are tied to the root trace_id
         stage_names = {
-            "cresmo.stage.raw_indexing",
-            "cresmo.stage.fluid_prose",
-            "cresmo.stage.expansion",
-            "cresmo.stage.inventory",
-            "cresmo.stage.atomic_batch",
-            "cresmo.stage.mocs",
-            "cresmo.stage.duplicate_unification",
+            "cresmo.raw_indexing",
+            "cresmo.fluid_prose",
+            "cresmo.expansion",
+            "cresmo.inventory",
+            "cresmo.atomic_batch",
+            "cresmo.mocs",
+            "cresmo.duplicate_unification",
         }
 
-        finished_stage_names = {s.name for s in spans if s.name.startswith("cresmo.stage.")}
+        finished_stage_names = {s.name for s in spans if s.name != "cresmo.coordinator"}
         assert stage_names.issubset(finished_stage_names)
 
         for span in spans:
-            if span.name.startswith("cresmo.stage."):
+            if span.name != "cresmo.coordinator":
                 assert span.context is not None
                 assert span.parent is not None
                 assert span.context.trace_id == root_span.context.trace_id
@@ -167,7 +165,7 @@ class TestPipelineTelemetryIntegration:
         root_span = next(
             s
             for s in spans
-            if s.name == "cresmo.pipeline.coordinator"
+            if s.name == "cresmo.coordinator"
             and s.attributes is not None
             and s.attributes.get("cresmo.content.id") == "yt_auth_test_01"
         )
@@ -210,7 +208,7 @@ class TestPipelineTelemetryIntegration:
         root_span = next(
             s
             for s in spans
-            if s.name == "cresmo.pipeline.coordinator"
+            if s.name == "cresmo.coordinator"
             and s.attributes is not None
             and s.attributes.get("cresmo.content.id") == "yt_worker_test_01"
         )
@@ -247,7 +245,7 @@ class TestPipelineTelemetryIntegration:
         root_span = next(
             s
             for s in spans
-            if s.name == "cresmo.pipeline.coordinator"
+            if s.name == "cresmo.coordinator"
             and s.attributes is not None
             and s.attributes.get("cresmo.content.id") == "yt_chan_id_01"
         )
@@ -377,11 +375,60 @@ class TestPipelineTelemetryIntegration:
         assert result.success is True
 
         spans = exporter.get_finished_spans()
-        root_span = next(
-            s for s in spans if s.name == "cresmo.pipeline.coordinator"
-        )
+        root_span = next(s for s in spans if s.name == "cresmo.coordinator")
         assert root_span.attributes is not None
         assert root_span.attributes["cresmo.batch_id"] == batch_id.value
         tags = root_span.attributes["langfuse.trace.tags"]
         assert isinstance(tags, (list, tuple))
         assert f"batch:{batch_id.value}" in tags
+
+    def test_execute_emits_hierarchical_coordinator_and_stage_spans_adr065(
+        self,
+        telemetry_pipeline: tuple[CresmoPipeline, InMemorySpanExporter, InMemoryVaultAdapter],
+    ) -> None:
+        """Verify active conveyor emits cresmo.pipeline -> cresmo.coordinator -> cresmo.{stage_name}."""
+        from cresmo.application.ports import get_active_telemetry_stage
+
+        pipeline, exporter, _ = telemetry_pipeline
+        observed_stages_during_transform: list[str | None] = []
+        assert pipeline.llm_synthesis_port is not None
+        original_transform = pipeline.llm_synthesis_port.transform
+
+        def _spy_transform(*args: object, **kwargs: object) -> str:
+            observed_stages_during_transform.append(get_active_telemetry_stage())
+            return original_transform(*args, **kwargs)  # type: ignore[arg-type]
+
+        pipeline.llm_synthesis_port.transform = _spy_transform  # type: ignore[method-assign]
+
+        raw = StageTranscript(
+            channel=Channel(name=ChannelName("sandeco")),
+            provenance=MediaProvenance.create(
+                url=f"https://youtube.com/watch?v={ContentId('yt_adr065_01').value}"
+            ),
+            content=Content(
+                id=ContentId("yt_adr065_01"),
+                title="Hierarquia de Telemetria",
+                text="Aula completa sobre hierarquia de spans no pipeline Cresmo.",
+            ),
+        )
+
+        result = pipeline.execute(raw=raw, gap_filler_passes=1)
+        assert result.success is True
+        assert get_active_telemetry_stage() is None
+        assert "fluid_prose" in observed_stages_during_transform
+        assert "gap_filler" in observed_stages_during_transform
+
+        spans = exporter.get_finished_spans()
+        root_span = next(s for s in spans if s.name == "cresmo.coordinator")
+        assert root_span.attributes is not None
+        assert root_span.attributes["langfuse.trace.name"] == "cresmo.pipeline"
+
+        child_spans = {s.name: s for s in spans if s.name != "cresmo.coordinator"}
+        assert {"cresmo.fluid_prose", "cresmo.gap_filler"}.issubset(child_spans.keys())
+        assert root_span.context is not None
+        for child_name in ("cresmo.fluid_prose", "cresmo.gap_filler"):
+            child_span = child_spans[child_name]
+            assert child_span.context is not None
+            assert child_span.parent is not None
+            assert child_span.context.trace_id == root_span.context.trace_id
+            assert child_span.parent.span_id == root_span.context.span_id

@@ -459,3 +459,42 @@ class TestOllamaLLMAdapter:
             assert all(results)
             assert adapter.is_warmed_up is True
             assert mock_urlopen.call_count == 2
+
+    def test_transform_emits_stage_scoped_and_standalone_langfuse_names(self) -> None:
+        """Verify OllamaLLMAdapter resolves cresmo.{stage}.generate inside stage and cresmo.llm.generate outside."""
+        from cresmo.application.ports import active_telemetry_stage
+
+        adapter = OllamaLLMAdapter(
+            base_url="http://localhost:11434",
+            model="qwen2.5:7b",
+        )
+        adapter._is_warmed_up = True
+        mock_response_data = {"response": "Observed stage output", "done": True}
+
+        mock_lf = MagicMock()
+        mock_cm = MagicMock()
+        mock_cm.__enter__.return_value = MagicMock()
+        mock_lf.start_as_current_observation.return_value = mock_cm
+
+        with (
+            patch("urllib.request.urlopen") as mock_urlopen,
+            patch("langfuse._client.observe.get_client", return_value=mock_lf),
+        ):
+            mock_resp = MagicMock()
+            mock_resp.read.return_value = json.dumps(mock_response_data).encode("utf-8")
+            mock_resp.__enter__.return_value = mock_resp
+            mock_urlopen.return_value = mock_resp
+
+            assert (
+                adapter.transform(ChatPrompt.single_turn("Standalone")) == "Observed stage output"
+            )
+            with active_telemetry_stage("gap_filler"):
+                assert (
+                    adapter.transform(ChatPrompt.single_turn("GapFiller"))
+                    == "Observed stage output"
+                )
+
+        observation_names = [
+            call.kwargs["name"] for call in mock_lf.start_as_current_observation.call_args_list
+        ]
+        assert observation_names == ["cresmo.llm.generate", "cresmo.gap_filler.generate"]

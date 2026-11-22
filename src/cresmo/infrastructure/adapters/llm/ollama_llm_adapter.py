@@ -20,13 +20,16 @@ from http import HTTPStatus
 from typing import Any
 
 import structlog
-from langfuse import Langfuse, observe
+from langfuse import Langfuse
 from opentelemetry import trace
 
-from cresmo.application.ports import LLM_GENERATION_SPAN_NAME, LLMTransformationPort
+from cresmo.application.ports import LLMTransformationPort
 from cresmo.domain.exceptions import LLMInfrastructureError
 from cresmo.domain.value_objects import ChatPrompt
-from cresmo.infrastructure.adapters.telemetry.opentelemetry_adapter import annotate_llm_span
+from cresmo.infrastructure.adapters.telemetry.opentelemetry_adapter import (
+    annotate_llm_span,
+    observe_llm_generation,
+)
 
 __all__ = ["OllamaLLMAdapter", "trace"]
 
@@ -364,7 +367,7 @@ class OllamaLLMAdapter(LLMTransformationPort):
 
         return response_text
 
-    @observe(name=LLM_GENERATION_SPAN_NAME, as_type="generation")
+    @observe_llm_generation
     def _execute_transform(
         self,
         prompt: ChatPrompt,

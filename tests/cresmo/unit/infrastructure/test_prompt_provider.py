@@ -107,7 +107,9 @@ class TestJsonPromptProvider:
         assert "{{skill_block}}" not in s1
         assert s1.count("# Guia de Estilo Cresmo") == 1
         assert "Português do Brasil" in s1
+        assert "<draft" in s1
         assert "Transcrição:\nSource fluid text here." in p1
+        assert "<draft" not in p1
 
         prompt2 = provider.get_prompt(
             PromptKey.GAP_FILLER,
@@ -119,7 +121,10 @@ class TestJsonPromptProvider:
             current_text="Draft from pass 1.",
         )
         s2 = prompt2.system_prompt or ""
+        p2 = prompt2.get_last_user_content()
         assert s1 == s2
+        assert "Source fluid text here." in p2
+        assert '<draft pass="1">\nDraft from pass 1.\n</draft>' in p2
 
     def test_long_and_wide_expander_prompts(self) -> None:
         provider = JsonPromptProvider()

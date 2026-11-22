@@ -11,7 +11,7 @@ from collections.abc import Generator
 from contextlib import contextmanager
 from typing import Any
 
-from cresmo.application.ports import TelemetryPort
+from cresmo.application.ports import TelemetryPort, active_telemetry_stage
 from cresmo.domain.entities import (
     ContentId,
     PipelineSessionId,
@@ -46,8 +46,9 @@ class NoOpTelemetryAdapter(TelemetryPort):
         attributes: dict[str, Any] | None = None,
     ) -> Generator[Any]:
         """No-op stage span context manager."""
-        _ = (stage_name, attributes)
-        yield None
+        _ = attributes
+        with active_telemetry_stage(stage_name):
+            yield None
 
     def record_judge_evaluation(
         self,

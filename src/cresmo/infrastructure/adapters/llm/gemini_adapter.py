@@ -17,11 +17,11 @@ from typing import Any
 
 import structlog
 from google.genai import types
-from langfuse import Langfuse, observe
+from langfuse import Langfuse
 from opentelemetry import trace
 from tenacity import retry, retry_if_exception, stop_after_attempt, wait_random_exponential
 
-from cresmo.application.ports import LLM_GENERATION_SPAN_NAME, LLMTransformationPort
+from cresmo.application.ports import LLMTransformationPort
 from cresmo.domain.value_objects import ChatPrompt, MessageRole
 from cresmo.infrastructure.adapters.llm.gemini_common import (
     build_thinking_config,
@@ -31,10 +31,15 @@ from cresmo.infrastructure.adapters.llm.gemini_common import (
     resolve_effective_thinking_level,
 )
 from cresmo.infrastructure.adapters.llm.gemini_pool import (
+    CredentialPoolExhaustedError,
     GeminiCredentialPool,
     is_quota_exhausted_error,
 )
-from cresmo.infrastructure.adapters.telemetry.opentelemetry_adapter import annotate_llm_span
+from cresmo.infrastructure.adapters.telemetry.opentelemetry_adapter import (
+    annotate_llm_span,
+    observe_llm_generation,
+    observe_llm_generation_fallback,
+)
 from cresmo.infrastructure.config import (
     DEFAULT_GEMINI_FALLBACK_MODEL,
     DEFAULT_GEMINI_MAX_OUTPUT_TOKENS,
@@ -181,14 +186,37 @@ class GeminiLLMAdapter(LLMTransformationPort):
         Returns:
             Generated response text.
         """
-        response_text = self._execute_transform(
-            prompt=prompt,
-            temperature=temperature,
-            thinking_level=thinking_level,
-            trace_id=trace_id,
-            session_id=session_id,
-            user_id=user_id,
-        )
+        try:
+            response_text = self._execute_transform(
+                prompt=prompt,
+                temperature=temperature,
+                thinking_level=thinking_level,
+                trace_id=trace_id,
+                session_id=session_id,
+                user_id=user_id,
+            )
+        except Exception as exc:
+            if (
+                isinstance(exc, CredentialPoolExhaustedError)
+                or is_quota_exhausted_error(exc)
+                or not self.fallback_model_name
+                or self.fallback_model_name == self.model_name
+            ):
+                raise
+            logger.warning(
+                "[GeminiLLMAdapter] Primary model '%s' failed (%s). Failing over to '%s'.",
+                self.model_name,
+                exc,
+                self.fallback_model_name,
+            )
+            response_text = self._execute_fallback_transform(
+                prompt=prompt,
+                temperature=temperature,
+                thinking_level=thinking_level,
+                trace_id=trace_id,
+                session_id=session_id,
+                user_id=user_id,
+            )
 
         client = self._langfuse
         if client is None:
@@ -221,8 +249,8 @@ class GeminiLLMAdapter(LLMTransformationPort):
             automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=True),
         )
 
-    # Trace level 3: cresmo.llm.generate (ADR-063 SSOT)
-    @observe(name=LLM_GENERATION_SPAN_NAME, as_type="generation")
+    # Trace level 3A: cresmo.{stage_name}.generate (ADR-065)
+    @observe_llm_generation
     def _execute_transform(
         self,
         prompt: ChatPrompt,
@@ -233,62 +261,75 @@ class GeminiLLMAdapter(LLMTransformationPort):
         session_id: str | None = None,
         user_id: str | None = None,
     ) -> str:
-        """Internal worker executing model generation within an active Langfuse generation observation."""
+        """Internal worker executing primary model generation within a stage-scoped Langfuse observation."""
         _ = temperature
+        return self._run_model_generation(
+            model=self.model_name,
+            prompt=prompt,
+            thinking_level=thinking_level,
+            trace_id=trace_id,
+            session_id=session_id,
+            user_id=user_id,
+        )
+
+    # Trace level 3A (Failover): cresmo.{stage_name}.generate_fallback (ADR-065)
+    @observe_llm_generation_fallback
+    def _execute_fallback_transform(
+        self,
+        prompt: ChatPrompt,
+        temperature: float | None = None,
+        *,
+        thinking_level: str | None = None,
+        trace_id: str | None = None,
+        session_id: str | None = None,
+        user_id: str | None = None,
+    ) -> str:
+        """Internal worker executing fallback model generation within a dedicated fallback observation."""
+        _ = temperature
+        fallback_model = self.fallback_model_name
+        if not fallback_model:
+            raise RuntimeError("Fallback model invoked without fallback_model_name configured.")
+        return self._run_model_generation(
+            model=fallback_model,
+            prompt=prompt,
+            thinking_level=thinking_level,
+            trace_id=trace_id,
+            session_id=session_id,
+            user_id=user_id,
+        )
+
+    def _run_model_generation(
+        self,
+        *,
+        model: str,
+        prompt: ChatPrompt,
+        thinking_level: str | None,
+        trace_id: str | None,
+        session_id: str | None,
+        user_id: str | None,
+    ) -> str:
+        """Build GenAI request, invoke credential pool with failover, and annotate active OTel span."""
         requested_thinking_level = self.thinking_level if thinking_level is None else thinking_level
-
-        contents: list[types.Content] = []
-        for msg in prompt.messages:
-            role = "model" if msg.role == MessageRole.ASSISTANT else "user"
-            contents.append(
-                types.Content(
-                    role=role,
-                    parts=[types.Part.from_text(text=msg.content)],
-                )
+        contents = [
+            types.Content(
+                role="model" if msg.role == MessageRole.ASSISTANT else "user",
+                parts=[types.Part.from_text(text=msg.content)],
             )
-
-        active_model = self.model_name
-
-        def _do_generate(client: Any) -> Any:
-            nonlocal active_model
-            primary_config = self._build_generation_config(
-                model=active_model,
-                system_prompt=prompt.system_prompt,
-                thinking_level=requested_thinking_level,
+            for msg in prompt.messages
+        ]
+        config = self._build_generation_config(
+            model=model,
+            system_prompt=prompt.system_prompt,
+            thinking_level=requested_thinking_level,
+        )
+        response = self._pool.execute_with_failover(
+            lambda client: _generate_with_retry(
+                client=client,
+                model=model,
+                contents=contents,
+                config=config,
             )
-            try:
-                return _generate_with_retry(
-                    client=client,
-                    model=active_model,
-                    contents=contents,
-                    config=primary_config,
-                )
-            except Exception as exc:
-                if is_quota_exhausted_error(exc):
-                    # HTTP 429 quota depletion bubbles up to execute_with_failover
-                    raise
-                if self.fallback_model_name and self.fallback_model_name != self.model_name:
-                    logger.warning(
-                        "[GeminiLLMAdapter] Primary model '%s' failed (%s). Failing over to '%s'.",
-                        self.model_name,
-                        exc,
-                        self.fallback_model_name,
-                    )
-                    active_model = self.fallback_model_name
-                    fallback_config = self._build_generation_config(
-                        model=active_model,
-                        system_prompt=prompt.system_prompt,
-                        thinking_level=requested_thinking_level,
-                    )
-                    return _generate_with_retry(
-                        client=client,
-                        model=active_model,
-                        contents=contents,
-                        config=fallback_config,
-                    )
-                raise
-
-        response = self._pool.execute_with_failover(_do_generate)
+        )
 
         response_text = response.text or ""
 
@@ -302,14 +343,14 @@ class GeminiLLMAdapter(LLMTransformationPort):
         raw_thoughts_tokens = getattr(usage_meta, "thoughts_token_count", None)
         thinking_tokens = raw_thoughts_tokens if isinstance(raw_thoughts_tokens, int) else None
         effective_thinking_level = resolve_effective_thinking_level(
-            model=active_model,
+            model=model,
             thinking_level=requested_thinking_level,
         )
 
         # OpenTelemetry GenAI Semantic Conventions & Langfuse span decoration
         annotate_llm_span(
             system="google",
-            model=active_model,
+            model=model,
             prompt_tokens=prompt_tokens,
             candidate_tokens=candidate_tokens,
             session_id=session_id,

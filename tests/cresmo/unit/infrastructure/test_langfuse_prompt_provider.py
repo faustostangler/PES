@@ -287,3 +287,47 @@ class TestLangfusePromptProvider:
         raw_prompt = raw_res.get_last_user_content()
         assert isinstance(raw_sys, str)
         assert "Pareto" in raw_prompt
+
+    def test_gap_filler_normalizes_draft_section_for_langfuse_compile(
+        self, fallback_provider: JsonPromptProvider
+    ) -> None:
+        mock_client = MagicMock()
+        mock_prompt_obj = MagicMock()
+        mock_prompt_obj.compile.return_value = [
+            {"role": "system", "content": "System"},
+            {"role": "user", "content": "Compiled user"},
+        ]
+        mock_prompt_obj.version = 4
+        mock_client.get_prompt.return_value = mock_prompt_obj
+
+        provider = LangfusePromptProvider(
+            langfuse_client=mock_client,
+            fallback_provider=fallback_provider,
+            label="production",
+        )
+
+        provider.get_prompt(
+            PromptKey.GAP_FILLER,
+            pass_num=1,
+            total_passes=3,
+            channel_name=ChannelName("sandeco"),
+            file_name="ep01.md",
+            raw_text="Source text.",
+        )
+        pass1_kwargs = mock_prompt_obj.compile.call_args_list[0].kwargs
+        assert pass1_kwargs["source_text"] == "Source text."
+        assert pass1_kwargs["draft_section"] == ""
+
+        provider.get_prompt(
+            PromptKey.GAP_FILLER,
+            pass_num=2,
+            prev_pass_num=1,
+            total_passes=3,
+            channel_name=ChannelName("sandeco"),
+            file_name="ep01.md",
+            raw_text="Source text.",
+            current_text="Pass 1 output.",
+        )
+        pass2_kwargs = mock_prompt_obj.compile.call_args_list[1].kwargs
+        assert pass2_kwargs["source_text"] == "Source text."
+        assert pass2_kwargs["draft_section"] == '\n<draft pass="1">\nPass 1 output.\n</draft>\n'

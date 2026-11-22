@@ -640,3 +640,148 @@ class TestThinkingLevelClamping:
         cfg = build_thinking_config("gemini-4-hydrogen", "xhigh")
         assert cfg is not None
         assert str(cfg.thinking_level).lower().endswith("xhigh")
+
+
+class TestAdr065StageScopedGenerationTelemetry:
+    """Verify dynamic stage-scoped generation and fallback observation naming (ADR-065)."""
+
+    def test_transform_emits_stage_scoped_and_standalone_generation_names(self) -> None:
+        from cresmo.application.ports import active_telemetry_stage
+
+        mock_response = MagicMock(text="Stage output", usage_metadata=None)
+        mock_client = MagicMock()
+        mock_client.models.generate_content.return_value = mock_response
+
+        mock_lf = MagicMock()
+        mock_cm = MagicMock()
+        mock_cm.__enter__.return_value = MagicMock()
+        mock_lf.start_as_current_observation.return_value = mock_cm
+
+        adapter = GeminiLLMAdapter(genai_client=mock_client, langfuse_client=None)
+
+        with patch("langfuse._client.observe.get_client", return_value=mock_lf):
+            assert adapter.transform(ChatPrompt.single_turn("Standalone call")) == "Stage output"
+            with active_telemetry_stage("fluid_prose"):
+                assert adapter.transform(ChatPrompt.single_turn("In-stage call")) == "Stage output"
+
+        observation_names = [
+            call.kwargs["name"] for call in mock_lf.start_as_current_observation.call_args_list
+        ]
+        assert observation_names == ["cresmo.llm.generate", "cresmo.fluid_prose.generate"]
+        assert all(
+            call.kwargs["as_type"] == "generation"
+            for call in mock_lf.start_as_current_observation.call_args_list
+        )
+
+    def test_transform_fallback_emits_separate_fallback_observation(self) -> None:
+        from cresmo.application.ports import active_telemetry_stage
+
+        mock_fallback_response = MagicMock(text="Recovered by fallback", usage_metadata=None)
+        mock_client = MagicMock()
+        mock_client.models.generate_content.side_effect = [
+            ValueError("Primary failed"),
+            mock_fallback_response,
+            ValueError("Primary failed standalone"),
+            mock_fallback_response,
+        ]
+
+        mock_lf = MagicMock()
+        mock_obs = MagicMock()
+        mock_cm = MagicMock()
+        mock_cm.__enter__.return_value = mock_obs
+        mock_lf.start_as_current_observation.return_value = mock_cm
+
+        adapter = GeminiLLMAdapter(
+            model_name="gemini-3.5-flash-lite",
+            fallback_model_name="gemini-3.6-flash",
+            genai_client=mock_client,
+            langfuse_client=None,
+        )
+
+        with patch("langfuse._client.observe.get_client", return_value=mock_lf):
+            with active_telemetry_stage("fluid_prose"):
+                assert (
+                    adapter.transform(ChatPrompt.single_turn("Stage fallback"))
+                    == "Recovered by fallback"
+                )
+            assert (
+                adapter.transform(ChatPrompt.single_turn("Standalone fallback"))
+                == "Recovered by fallback"
+            )
+
+        observation_names = [
+            call.kwargs["name"] for call in mock_lf.start_as_current_observation.call_args_list
+        ]
+        assert observation_names == [
+            "cresmo.fluid_prose.generate",
+            "cresmo.fluid_prose.generate_fallback",
+            "cresmo.llm.generate",
+            "cresmo.llm.generate_fallback",
+        ]
+        error_updates = [
+            call for call in mock_obs.update.call_args_list if call.kwargs.get("level") == "ERROR"
+        ]
+        assert len(error_updates) == 2
+
+    def test_transform_does_not_failover_model_when_credential_pool_exhausted(self) -> None:
+        from cresmo.infrastructure.adapters.llm.gemini_pool import (
+            CredentialPoolExhaustedError,
+            GeminiCredentialPool,
+        )
+
+        client1 = MagicMock()
+        client1.models.generate_content.side_effect = RuntimeError(
+            "429 RESOURCE_EXHAUSTED: retry in 60s"
+        )
+        pool = GeminiCredentialPool(keys=["k1"], client_factory=lambda _: client1)
+        adapter = GeminiLLMAdapter(
+            model_name="gemini-3.5-flash-lite",
+            fallback_model_name="gemini-3.6-flash",
+            credential_pool=pool,
+        )
+
+        with pytest.raises(CredentialPoolExhaustedError):
+            adapter.transform(ChatPrompt.single_turn("Quota exhausted"))
+
+        assert client1.models.generate_content.call_count == 1
+        assert client1.models.generate_content.call_args.kwargs["model"] == "gemini-3.5-flash-lite"
+
+    def test_transform_and_fallback_include_active_pass_number(self) -> None:
+        from cresmo.application.ports import active_telemetry_pass, active_telemetry_stage
+
+        mock_fallback_response = MagicMock(text="Pass 2 fallback output", usage_metadata=None)
+        mock_client = MagicMock()
+        mock_client.models.generate_content.side_effect = [
+            ValueError("Primary failed on pass 2"),
+            mock_fallback_response,
+        ]
+
+        mock_lf = MagicMock()
+        mock_cm = MagicMock()
+        mock_cm.__enter__.return_value = MagicMock()
+        mock_lf.start_as_current_observation.return_value = mock_cm
+
+        adapter = GeminiLLMAdapter(
+            model_name="gemini-3.5-flash-lite",
+            fallback_model_name="gemini-3.6-flash",
+            genai_client=mock_client,
+            langfuse_client=None,
+        )
+
+        with (
+            patch("langfuse._client.observe.get_client", return_value=mock_lf),
+            active_telemetry_stage("gap_filler"),
+            active_telemetry_pass(2),
+        ):
+            assert (
+                adapter.transform(ChatPrompt.single_turn("Pass 2 prompt"))
+                == "Pass 2 fallback output"
+            )
+
+        observation_names = [
+            call.kwargs["name"] for call in mock_lf.start_as_current_observation.call_args_list
+        ]
+        assert observation_names == [
+            "cresmo.gap_filler.generate.pass_2",
+            "cresmo.gap_filler.generate_fallback.pass_2",
+        ]

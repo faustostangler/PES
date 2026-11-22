@@ -60,238 +60,7 @@ class TestStageEvaluationSpec:
 
 
 class TestPipelineStageRunnerEvaluatedStage:
-    """Test suite for PipelineStageRunner.run_evaluated_stage closed-loop quality gate."""
-
-    def test_run_evaluated_stage_without_spec_executes_once(self) -> None:
-        telemetry = NoOpTelemetryPort()
-        metrics = NoOpMetricsPort()
-        mock_judge = MagicMock()
-
-        runner = PipelineStageRunner(
-            telemetry_port=telemetry,
-            metrics_port=metrics,
-            llm_judge=mock_judge,
-        )
-
-        call_count = 0
-
-        def sample_action() -> str:
-            nonlocal call_count
-            call_count += 1
-            return "Generated Result"
-
-        result = runner.run_evaluated_stage(
-            "fluid_prose",
-            sample_action,
-            channel_name=ChannelName("Test Channel"),
-            content_id=ContentId("content_1"),
-            eval_spec=None,
-        )
-
-        assert result == "Generated Result"
-        assert call_count == 1
-        assert mock_judge.evaluate.call_count == 0
-
-    def test_run_evaluated_stage_without_judge_executes_once(self) -> None:
-        telemetry = NoOpTelemetryPort()
-        metrics = NoOpMetricsPort()
-
-        runner = PipelineStageRunner(
-            telemetry_port=telemetry,
-            metrics_port=metrics,
-            llm_judge=None,
-        )
-
-        spec = StageEvaluationSpec(
-            raw_text="Raw",
-            candidate_extractor=lambda res: str(res),
-            required_criteria=(JudgeCriterion.ORALITY_REMOVAL,),
-            max_attempts=3,
-        )
-
-        result = runner.run_evaluated_stage(
-            "fluid_prose",
-            lambda: "Direct Output",
-            channel_name=ChannelName("Test Channel"),
-            content_id=ContentId("content_2"),
-            eval_spec=spec,
-        )
-
-        assert result == "Direct Output"
-
-    def test_run_evaluated_stage_passes_first_attempt(self) -> None:
-        telemetry = NoOpTelemetryPort()
-        metrics = NoOpMetricsPort()
-        mock_judge = MagicMock()
-
-        mock_judge.evaluate.return_value = JudgeEvaluation(
-            target_stage="fluid_prose",
-            passed=True,
-            overall_score=0.95,
-            criteria_scores=(),
-            provider="gemini",
-        )
-
-        runner = PipelineStageRunner(
-            telemetry_port=telemetry,
-            metrics_port=metrics,
-            llm_judge=mock_judge,
-        )
-
-        spec = StageEvaluationSpec(
-            raw_text="Raw Source",
-            candidate_extractor=lambda res: str(res),
-            required_criteria=(JudgeCriterion.ORALITY_REMOVAL,),
-            max_attempts=3,
-        )
-
-        result = runner.run_evaluated_stage(
-            "fluid_prose",
-            lambda: "Clean Prose",
-            channel_name=ChannelName("Test Channel"),
-            content_id=ContentId("content_3"),
-            eval_spec=spec,
-        )
-
-        assert result == "Clean Prose"
-        assert mock_judge.evaluate.call_count == 1
-        eval_ctx = mock_judge.evaluate.call_args[0][0]
-        assert eval_ctx.stage_name == "fluid_prose"
-        assert eval_ctx.candidate_text == "Clean Prose"
-        assert eval_ctx.raw_text == "Raw Source"
-
-    def test_run_evaluated_stage_retries_on_failure_and_succeeds(self) -> None:
-        telemetry = NoOpTelemetryPort()
-        metrics = NoOpMetricsPort()
-        mock_judge = MagicMock()
-
-        fail_eval = JudgeEvaluation(
-            target_stage="fluid_prose",
-            passed=False,
-            overall_score=0.40,
-            criteria_scores=(),
-            provider="gemini",
-        )
-        pass_eval = JudgeEvaluation(
-            target_stage="fluid_prose",
-            passed=True,
-            overall_score=0.90,
-            criteria_scores=(),
-            provider="gemini",
-        )
-        mock_judge.evaluate.side_effect = [fail_eval, pass_eval]
-
-        runner = PipelineStageRunner(
-            telemetry_port=telemetry,
-            metrics_port=metrics,
-            llm_judge=mock_judge,
-        )
-
-        attempts = 0
-
-        def flaky_action() -> str:
-            nonlocal attempts
-            attempts += 1
-            if attempts == 1:
-                return "Draft with filler words"
-            return "Refined clean prose"
-
-        spec = StageEvaluationSpec(
-            raw_text="Raw Source",
-            candidate_extractor=lambda res: str(res),
-            required_criteria=(JudgeCriterion.ORALITY_REMOVAL,),
-            max_attempts=3,
-        )
-
-        result = runner.run_evaluated_stage(
-            "fluid_prose",
-            flaky_action,
-            channel_name=ChannelName("Test Channel"),
-            content_id=ContentId("content_4"),
-            eval_spec=spec,
-        )
-
-        assert result == "Refined clean prose"
-        assert attempts == 2
-        assert mock_judge.evaluate.call_count == 2
-
-    def test_run_evaluated_stage_fails_all_attempts_non_blocking_returns_candidate(self) -> None:
-        telemetry = NoOpTelemetryPort()
-        metrics = NoOpMetricsPort()
-        mock_judge = MagicMock()
-
-        fail_eval = JudgeEvaluation(
-            target_stage="fluid_prose",
-            passed=False,
-            overall_score=0.50,
-            criteria_scores=(),
-            provider="gemini",
-        )
-        mock_judge.evaluate.return_value = fail_eval
-
-        runner = PipelineStageRunner(
-            telemetry_port=telemetry,
-            metrics_port=metrics,
-            llm_judge=mock_judge,
-            judge_blocking=False,
-        )
-
-        spec = StageEvaluationSpec(
-            raw_text="Raw Source",
-            candidate_extractor=lambda res: str(res),
-            required_criteria=(JudgeCriterion.ORALITY_REMOVAL,),
-            max_attempts=2,
-        )
-
-        result = runner.run_evaluated_stage(
-            "fluid_prose",
-            lambda: "Candidate With Imperfections",
-            channel_name=ChannelName("Test Channel"),
-            content_id=ContentId("content_5"),
-            eval_spec=spec,
-        )
-
-        assert result == "Candidate With Imperfections"
-        assert mock_judge.evaluate.call_count == 2
-
-    def test_run_evaluated_stage_fails_all_attempts_blocking_raises_domain_error(self) -> None:
-        telemetry = NoOpTelemetryPort()
-        metrics = NoOpMetricsPort()
-        mock_judge = MagicMock()
-
-        fail_eval = JudgeEvaluation(
-            target_stage="fluid_prose",
-            passed=False,
-            overall_score=0.42,
-            criteria_scores=(),
-            provider="gemini",
-        )
-        mock_judge.evaluate.return_value = fail_eval
-
-        runner = PipelineStageRunner(
-            telemetry_port=telemetry,
-            metrics_port=metrics,
-            llm_judge=mock_judge,
-            judge_blocking=True,
-        )
-
-        spec = StageEvaluationSpec(
-            raw_text="Raw Source",
-            candidate_extractor=lambda res: str(res),
-            required_criteria=(JudgeCriterion.ORALITY_REMOVAL,),
-            max_attempts=2,
-        )
-
-        with pytest.raises(DomainValidationError, match="fluid_prose quality evaluation failed"):
-            runner.run_evaluated_stage(
-                "fluid_prose",
-                lambda: "Failed Candidate",
-                channel_name=ChannelName("Test Channel"),
-                content_id=ContentId("content_6"),
-                eval_spec=spec,
-            )
-
-        assert mock_judge.evaluate.call_count == 2
+    """Test suite for PipelineStageRunner.execute_stage closed-loop quality gate."""
 
     def test_execute_stage_with_pipeline_execution_context(self) -> None:
         """Verify execute_stage cleanly consumes PipelineExecutionContext."""
@@ -448,7 +217,7 @@ class TestPipelineStageRunnerEvaluatedStage:
 
         candidate = CandidateText(text="candidate prose", stage_name="fluid_prose")
 
-        with tracer.start_as_current_span("cresmo.stage.fluid_prose"):
+        with tracer.start_as_current_span("cresmo.fluid_prose"):
             result = runner._evaluate_candidate(
                 stage_config,
                 source="source text",
@@ -1705,107 +1474,6 @@ class TestStageRunnerStageExecutionAndFallback:
             },
         )
 
-    def test_run_evaluated_stage_delegation_without_judge_or_eval_spec(self) -> None:
-        mock_t = MagicMock(spec=TelemetryPort)
-        mock_m = MagicMock()
-        runner = PipelineStageRunner(telemetry_port=mock_t, metrics_port=mock_m, llm_judge=None)
-
-        res = runner.run_evaluated_stage(
-            "delegated_stage",
-            lambda: "delegated_val",
-            channel_name="DChan",
-            content_id="c1234567",
-            channel_id="UC_d",
-            content_title="DTitle",
-            fatal=False,
-            fallback="fb",
-        )
-        assert res == "delegated_val"
-
-    def test_run_evaluated_stage_candidate_none_returns_fallback(self) -> None:
-        mock_t = MagicMock(spec=TelemetryPort)
-        mock_m = MagicMock()
-        mock_judge = MagicMock()
-        runner = PipelineStageRunner(
-            telemetry_port=mock_t, metrics_port=mock_m, llm_judge=mock_judge
-        )
-
-        spec = StageEvaluationSpec(
-            raw_text="raw",
-            candidate_extractor=lambda res: res,
-        )
-
-        # When run_stage returns None (e.g. failing_fn with fatal=False)
-        res = runner.run_evaluated_stage(
-            "empty_stage",
-            lambda: None,
-            channel_name="EChan",
-            content_id="c1234567",
-            eval_spec=spec,
-            fallback=lambda: "empty_fallback",
-        )
-        assert res == "empty_fallback"
-
-    def test_run_evaluated_stage_retries_and_blocking_threshold(self) -> None:
-        mock_t = MagicMock(spec=TelemetryPort)
-        mock_m = MagicMock()
-        mock_judge = MagicMock()
-
-        eval_fail = JudgeEvaluation(
-            target_stage="eval_stage",
-            passed=False,
-            overall_score=0.40,
-            criteria_scores=(),
-            provider="gemini",
-        )
-        mock_judge.evaluate.return_value = eval_fail
-
-        runner_blocking = PipelineStageRunner(
-            telemetry_port=mock_t,
-            metrics_port=mock_m,
-            llm_judge=mock_judge,
-            judge_blocking=True,
-            judge_max_attempts=2,
-        )
-
-        cand_mock = MagicMock()
-        cand_mock.title = "MockCandTitle"
-
-        spec = StageEvaluationSpec(
-            raw_text="raw text",
-            candidate_extractor=lambda res: "extracted",
-            max_attempts=2,
-        )
-
-        with pytest.raises(
-            DomainValidationError,
-            match=r"eval_stage quality evaluation failed threshold after 2 attempts: 0\.40",
-        ):
-            runner_blocking.run_evaluated_stage(
-                "eval_stage",
-                lambda: cand_mock,
-                channel_name="EvalCh",
-                content_id="c1234567",
-                channel_id="UC_eval",
-                eval_spec=spec,
-            )
-
-        # Check retries counter incremented on attempt 1
-        mock_m.increment_counter.assert_any_call(
-            "cresmo_judge_retries_total", 1.0, labels={"stage": "eval_stage"}
-        )
-        # Check evaluation counter incremented for both attempts
-        mock_m.increment_counter.assert_any_call(
-            "cresmo_judge_evaluations_total",
-            1.0,
-            labels={"stage": "eval_stage", "passed": "false", "attempt": "1"},
-        )
-        mock_m.increment_counter.assert_any_call(
-            "cresmo_judge_evaluations_total",
-            1.0,
-            labels={"stage": "eval_stage", "passed": "false", "attempt": "2"},
-        )
-
     def test_execute_stage_source_and_output_text_extractions(self) -> None:
         mock_t = MagicMock(spec=TelemetryPort)
         mock_m = MagicMock()
@@ -1910,281 +1578,6 @@ class TestStageRunnerStageExecutionAndFallback:
                 "source_words": len(["Bare", "source", "string", "representation"]),
             }
         )
-
-    def test_run_evaluated_stage_success_first_and_second_attempt_and_unblocking(
-        self, caplog: pytest.LogCaptureFixture
-    ) -> None:
-        mock_t = MagicMock(spec=TelemetryPort)
-        mock_m = MagicMock()
-        mock_judge = MagicMock()
-
-        runner = PipelineStageRunner(
-            telemetry_port=mock_t,
-            metrics_port=mock_m,
-            llm_judge=mock_judge,
-            judge_blocking=False,
-            judge_max_attempts=2,
-        )
-
-        eval_pass = JudgeEvaluation(
-            target_stage="fluid_prose",
-            passed=True,
-            overall_score=0.95,
-            criteria_scores=(),
-            provider="gemini",
-        )
-        eval_fail = JudgeEvaluation(
-            target_stage="fluid_prose",
-            passed=False,
-            overall_score=0.45,
-            criteria_scores=(),
-            provider="gemini",
-        )
-
-        class CandidateWithTitle:
-            def __init__(self, title: str, text: str) -> None:
-                self.title = title
-                self.text = text
-
-        cand1 = CandidateWithTitle("Cand1Title", "Candidate body 1")
-        spec = StageEvaluationSpec(
-            raw_text="raw source",
-            candidate_extractor=lambda res: res.text,
-            max_attempts=2,
-            metadata={"spec_key": "spec_val"},
-            required_criteria=(JudgeCriterion.SEMANTIC_FAITHFULNESS,),
-        )
-
-        # Case 1: First attempt passes
-        mock_judge.evaluate.return_value = eval_pass
-        res = runner.run_evaluated_stage(
-            "fluid_prose",
-            lambda: cand1,
-            channel_name="ChanOne",
-            content_id="c1234567",
-            channel_id="UC_1",
-            content_title="ExplicitTitle",
-            eval_spec=spec,
-        )
-        assert res is cand1
-        eval_ctx1 = mock_judge.evaluate.call_args[0][0]
-        assert eval_ctx1.stage_name == "fluid_prose"
-        assert eval_ctx1.raw_text == "raw source"
-        assert eval_ctx1.candidate_text == "Candidate body 1"
-        assert eval_ctx1.trace_id == "cresmo_UC_1_c1234567"
-        assert eval_ctx1.required_criteria == (JudgeCriterion.SEMANTIC_FAITHFULNESS,)
-        assert eval_ctx1.metadata == {
-            "channel_id": "UC_1",
-            "content_id": "c1234567",
-            "channel_name": "ChanOne",
-            "content_title": "ExplicitTitle",
-            "attempt": 1,
-            "spec_key": "spec_val",
-        }
-        mock_m.increment_counter.assert_called_with(
-            "cresmo_judge_evaluations_total",
-            1.0,
-            labels={"stage": "fluid_prose", "passed": "true", "attempt": "1"},
-        )
-
-        # Case 2: Attempt 1 fails, attempt 2 passes (fallback to candidate.title when content_title is empty)
-        mock_judge.reset_mock()
-        mock_m.reset_mock()
-        mock_judge.evaluate.side_effect = [eval_fail, eval_pass]
-
-        with caplog.at_level("WARNING"):
-            res2 = runner.run_evaluated_stage(
-                "fluid_prose",
-                lambda: cand1,
-                channel_name="ChanOne",
-                content_id="c1234567",
-                channel_id=None,
-                content_title="",
-                eval_spec=spec,
-            )
-            assert res2 is cand1
-            assert (
-                "LLM judge reported low score for 'fluid_prose' on attempt 1/2 (overall=0.45, passed=False)."
-                in caplog.text
-            )
-
-        eval_ctx2_att1 = mock_judge.evaluate.call_args_list[0][0][0]
-        assert eval_ctx2_att1.metadata["content_title"] == "Cand1Title"
-        assert eval_ctx2_att1.metadata["channel_id"] == ""
-        assert eval_ctx2_att1.metadata["attempt"] == 1
-        assert eval_ctx2_att1.trace_id == "cresmo_ChanOne_c1234567"
-        # Check retry counter incremented exactly once across the 2 attempts
-        retries_calls = [
-            c
-            for c in mock_m.increment_counter.call_args_list
-            if c[0][0] == "cresmo_judge_retries_total"
-        ]
-        assert len(retries_calls) == 1
-        assert (
-            caplog.records[0].message
-            == "LLM judge reported low score for 'fluid_prose' on attempt 1/2 (overall=0.45, passed=False)."
-        )
-
-        # Case 3: Candidate has no title attribute and content_title is empty
-        cand_no_title = object()
-        spec_simple = StageEvaluationSpec(
-            raw_text="raw",
-            candidate_extractor=lambda res: "cand",
-            max_attempts=1,
-        )
-        mock_judge.evaluate.side_effect = None
-        mock_judge.evaluate.return_value = eval_pass
-        runner.run_evaluated_stage(
-            "fluid_prose",
-            lambda: cand_no_title,
-            channel_name="ChanOne",
-            content_id="c1234567",
-            channel_id=None,
-            content_title="",
-            eval_spec=spec_simple,
-        )
-        assert mock_judge.evaluate.call_args[0][0].metadata["content_title"] == ""
-
-        # Case 4: Non-blocking exhausts all attempts without passing
-        mock_judge.evaluate.return_value = eval_fail
-        with caplog.at_level("WARNING"):
-            res4 = runner.run_evaluated_stage(
-                "fluid_prose",
-                lambda: cand1,
-                channel_name="ChanOne",
-                content_id="c1234567",
-                channel_id="UC_1",
-                eval_spec=spec,
-            )
-            assert res4 is cand1
-            assert (
-                caplog.records[-1].message
-                == "Quality evaluation for 'fluid_prose' exhausted all 2 attempts without passing. Returning candidate as judge_blocking is False."
-            )
-
-        # Case 5: Delegates all parameters to run_stage when fn fails with fatal=False and fallback
-        def fail_fn() -> None:
-            raise RuntimeError("Stage failed")
-
-        fallback_cand = CandidateWithTitle("FB", "Fallback body")
-        caplog.clear()
-        with caplog.at_level("WARNING"):
-            fallback_res = runner.run_evaluated_stage(
-                "fluid_prose",
-                fail_fn,
-                channel_name="ChanOne",
-                content_id="c1234567",
-                channel_id="UC_1",
-                content_title="Ep 1",
-                fatal=False,
-                fallback=fallback_cand,
-                eval_spec=spec,
-            )
-            assert fallback_res is fallback_cand
-            assert (
-                caplog.records[0].message
-                == "[Pipeline] fluid_prose skipped for c1234567: Stage failed"
-            )
-            assert (
-                caplog.records[-1].message
-                == "Quality evaluation for 'fluid_prose' exhausted all 2 attempts without passing. Returning candidate as judge_blocking is False."
-            )
-            mock_t.start_stage_span.assert_called_with(
-                "fluid_prose",
-                attributes={
-                    "channel.id": "UC_1",
-                    "content.id": "c1234567",
-                    "channel.name": "ChanOne",
-                    "content.title": "Ep 1",
-                },
-            )
-
-    def test_run_evaluated_stage_max_attempts_permutations_and_fallback(self) -> None:
-        mock_t = MagicMock(spec=TelemetryPort)
-        mock_m = MagicMock()
-        mock_judge = MagicMock()
-
-        eval_fail = JudgeEvaluation(
-            target_stage="fluid_prose",
-            passed=False,
-            overall_score=0.40,
-            criteria_scores=(),
-            provider="gemini",
-        )
-        mock_judge.evaluate.return_value = eval_fail
-
-        # Permutation 1: eval_spec.max_attempts=3, judge_max_attempts=1
-        runner1 = PipelineStageRunner(
-            telemetry_port=mock_t,
-            metrics_port=mock_m,
-            llm_judge=mock_judge,
-            judge_blocking=True,
-            judge_max_attempts=1,
-        )
-        spec3 = StageEvaluationSpec(
-            raw_text="raw",
-            candidate_extractor=lambda res: "cand",
-            max_attempts=3,
-        )
-        with pytest.raises(
-            DomainValidationError, match=r"failed threshold after 3 attempts: 0\.40"
-        ):
-            runner1.run_evaluated_stage(
-                "fluid_prose",
-                lambda: "cand",
-                channel_name="Chan",
-                content_id="c123",
-                eval_spec=spec3,
-            )
-        assert mock_judge.evaluate.call_count == 3
-
-        # Permutation 2: eval_spec.max_attempts=1, judge_max_attempts=3
-        mock_judge.reset_mock()
-        runner2 = PipelineStageRunner(
-            telemetry_port=mock_t,
-            metrics_port=mock_m,
-            llm_judge=mock_judge,
-            judge_blocking=True,
-            judge_max_attempts=3,
-        )
-        spec1 = StageEvaluationSpec(
-            raw_text="raw",
-            candidate_extractor=lambda res: "cand",
-            max_attempts=1,
-        )
-        with pytest.raises(
-            DomainValidationError, match=r"failed threshold after 3 attempts: 0\.40"
-        ):
-            runner2.run_evaluated_stage(
-                "fluid_prose",
-                lambda: "cand",
-                channel_name="Chan",
-                content_id="c123",
-                eval_spec=spec1,
-            )
-        assert mock_judge.evaluate.call_count == 3
-
-        # Permutation 3: eval_spec.max_attempts=0, judge_max_attempts=0 and judge_blocking=True
-        runner0 = PipelineStageRunner(
-            telemetry_port=mock_t,
-            metrics_port=mock_m,
-            llm_judge=mock_judge,
-            judge_blocking=True,
-            judge_max_attempts=0,
-        )
-        spec0 = MagicMock()
-        spec0.max_attempts = 0
-        with pytest.raises(
-            DomainValidationError,
-            match=r"^fluid_prose quality evaluation failed threshold after 0 attempts: 0\.00$",
-        ):
-            runner0.run_evaluated_stage(
-                "fluid_prose",
-                lambda: "cand",
-                channel_name="Chan",
-                content_id="c123",
-                eval_spec=spec0,
-            )
 
     def test_execute_stage_extended_branches_and_outputs(
         self, caplog: pytest.LogCaptureFixture
@@ -2558,3 +1951,70 @@ class TestStageRunnerStageExecutionAndFallback:
         )
 
         mock_factory.build_stage.assert_called_once_with("gap_filler", max_passes=2)
+
+    def test_measure_stage_execution_sets_active_telemetry_stage_with_mocked_port(self) -> None:
+        from cresmo.application.pipeline.stage_telemetry import measure_stage_execution
+        from cresmo.application.ports import get_active_telemetry_stage
+
+        mock_t = MagicMock(spec=TelemetryPort)
+        mock_m = MagicMock()
+        ctx = PipelineExecutionContext(
+            user_identity=UserIdentity.worker(),
+            channel=Channel(name="RetCh", id=ChannelId("UC_ret")),
+            content=Content.create(
+                id=ContentId("vid_stage_ctx"), title="Stage Ctx Title", session_id="ret_sess:2"
+            ),
+        )
+
+        assert get_active_telemetry_stage() is None
+        with measure_stage_execution(mock_t, mock_m, stage_name="fluid_prose", context=ctx):
+            assert get_active_telemetry_stage() == "fluid_prose"
+        assert get_active_telemetry_stage() is None
+
+    def test_measure_stage_execution_flushes_after_stage_span_closes(self) -> None:
+        from collections.abc import Generator
+        from contextlib import contextmanager
+        from typing import Any
+
+        from cresmo.application.pipeline.stage_telemetry import measure_stage_execution
+
+        events: list[str] = []
+
+        class RecordingTelemetry(NoOpTelemetryPort):
+            @contextmanager
+            def start_stage_span(
+                self,
+                stage_name: str,
+                attributes: dict[str, Any] | None = None,
+            ) -> Generator[Any]:
+                _ = (stage_name, attributes)
+                events.append("stage_enter")
+                try:
+                    yield None
+                finally:
+                    events.append("stage_exit")
+
+            def flush(self) -> None:
+                events.append("flush")
+
+        telemetry = RecordingTelemetry()
+        mock_m = MagicMock()
+        ctx = PipelineExecutionContext(
+            user_identity=UserIdentity.worker(),
+            channel=Channel(name="RetCh", id=ChannelId("UC_ret")),
+            content=Content.create(
+                id=ContentId("vid_stage_flush"), title="Flush Title", session_id="ret_sess:3"
+            ),
+        )
+
+        with measure_stage_execution(telemetry, mock_m, stage_name="gap_filler", context=ctx):
+            events.append("body")
+        assert events == ["stage_enter", "body", "stage_exit", "flush"]
+
+        events.clear()
+        with (
+            pytest.raises(RuntimeError, match="stage boom"),
+            measure_stage_execution(telemetry, mock_m, stage_name="gap_filler", context=ctx),
+        ):
+            raise RuntimeError("stage boom")
+        assert events == ["stage_enter", "stage_exit", "flush"]

@@ -5,7 +5,12 @@ from __future__ import annotations
 import pytest
 
 from cresmo.domain.exceptions import CresmoDomainError, DomainValidationError, StageQuarantinedError
-from cresmo.domain.stage_registry import StageDefinition, StageRegistry
+from cresmo.domain.stage_registry import (
+    StageDefinition,
+    StageRegistry,
+    gap_filler_saturation_policy,
+    never_saturate,
+)
 from cresmo.domain.value_objects import (
     JudgeCriterion,
     PipelineStatus,
@@ -55,12 +60,19 @@ def test_stage_registry_fluid_prose_spec() -> None:
 
 
 def test_stage_registry_gap_filler_spec() -> None:
-    """Verify StageRegistry provides gap_filler specification with default max_passes=5."""
+    """Verify StageRegistry provides gap_filler specification with default max_passes=5 and saturation_policy."""
     assert StageRegistry.contains("gap_filler") is True
     spec = StageRegistry.get("gap_filler")
     assert isinstance(spec, StageDefinition)
     assert spec.max_passes == 5
-    assert spec.early_stopping_enabled is True
+    assert spec.saturation_policy is gap_filler_saturation_policy
+    assert not hasattr(spec, "early_stopping_enabled")
+    assert not hasattr(spec, "saturation_checker")
+    assert spec.saturation_policy("Draft one", None) is False
+
+    fluid_spec = StageRegistry.get("fluid_prose")
+    assert fluid_spec.saturation_policy is never_saturate
+    assert fluid_spec.saturation_policy("Any text", "Prev text") is False
 
 
 def test_stage_registry_unknown_stage_raises_key_error() -> None:

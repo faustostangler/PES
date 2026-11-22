@@ -16,8 +16,10 @@ from collections.abc import Generator, Sequence
 from contextlib import contextmanager
 from typing import Any
 
+from opentelemetry import trace
+
 from cresmo.application.pipeline.context import PipelineExecutionContext
-from cresmo.application.ports import MetricsPort, TelemetryPort
+from cresmo.application.ports import MetricsPort, TelemetryPort, active_telemetry_stage
 from cresmo.application.use_cases import DeduplicationReport
 from cresmo.domain.entities import (
     AtomicNote,
@@ -59,9 +61,7 @@ def resolve_active_trace_id(
 ) -> str:
     """Resolve active OpenTelemetry 32-hex trace ID or construct deterministic fallback ID."""
     if current_span_getter is None:
-        from cresmo.application.pipeline import stage_runner as _sr
-
-        current_span_getter = _sr.trace.get_current_span
+        current_span_getter = trace.get_current_span
     span = current_span_getter()
     ctx = span.get_span_context() if span else None
     if ctx and ctx.trace_id:
@@ -265,32 +265,36 @@ def measure_stage_execution(
         "channel.name": effective_channel.name,
         "content.title": effective_content.title,
     }
-    with telemetry_port.start_stage_span(stage_name, attributes=stage_attributes):
-        try:
-            yield
-        except Exception as exc:
-            status = "failure"
-            from cresmo.application.pipeline import stage_runner as _sr
-
-            current_span = _sr.trace.get_current_span()
-            if current_span and current_span.is_recording():
-                current_span.record_exception(exc)
-                current_span.set_status(_sr.trace.StatusCode.ERROR, str(exc))
-                current_span.set_attribute("langfuse.observation.level", "ERROR")
-            record_error_metric(
-                metrics_port,
-                exc=exc,
-                stage_name=stage_name,
-                channel=effective_channel,
-                content=effective_content,
-            )
-            raise
-        finally:
-            record_duration_metric(
-                metrics_port,
-                elapsed=time.perf_counter() - start_time,
-                stage_name=stage_name,
-                channel=effective_channel,
-                content=effective_content,
-                status=status,
-            )
+    try:
+        with (
+            telemetry_port.start_stage_span(stage_name, attributes=stage_attributes),
+            active_telemetry_stage(stage_name),
+        ):
+            try:
+                yield
+            except Exception as exc:
+                status = "failure"
+                current_span = trace.get_current_span()
+                if current_span and current_span.is_recording():
+                    current_span.record_exception(exc)
+                    current_span.set_status(trace.StatusCode.ERROR, str(exc))
+                    current_span.set_attribute("langfuse.observation.level", "ERROR")
+                record_error_metric(
+                    metrics_port,
+                    exc=exc,
+                    stage_name=stage_name,
+                    channel=effective_channel,
+                    content=effective_content,
+                )
+                raise
+            finally:
+                record_duration_metric(
+                    metrics_port,
+                    elapsed=time.perf_counter() - start_time,
+                    stage_name=stage_name,
+                    channel=effective_channel,
+                    content=effective_content,
+                    status=status,
+                )
+    finally:
+        telemetry_port.flush()

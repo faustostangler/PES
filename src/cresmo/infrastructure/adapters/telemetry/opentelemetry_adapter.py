@@ -11,8 +11,9 @@ Conforms to ADR-016:
 from __future__ import annotations
 
 import json
-from collections.abc import Generator
+from collections.abc import Callable, Generator
 from contextlib import contextmanager, nullcontext
+from functools import wraps
 from typing import Any, Final
 
 import structlog
@@ -21,8 +22,13 @@ from opentelemetry.trace import Tracer
 
 from cresmo.application.ports import (
     PIPELINE_ROOT_SPAN_NAME,
-    SYNTHESIS_PIPELINE_TRACE_NAME,
+    PIPELINE_TRACE_NAME,
     TelemetryPort,
+    active_telemetry_stage,
+    format_stage_judge_span_name,
+    format_stage_span_name,
+    get_active_telemetry_pass,
+    resolve_llm_generation_span_name,
 )
 from cresmo.domain.entities import (
     ContentId,
@@ -92,6 +98,34 @@ from cresmo.infrastructure.adapters.telemetry import (
 )
 
 
+def _build_llm_generation_observer[**P, R](
+    func: Callable[P, R],
+    *,
+    fallback: bool,
+) -> Callable[P, R]:
+    """Wrap an LLM worker so its Langfuse generation name resolves at call creation time."""
+
+    @wraps(func)
+    def _wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
+        from langfuse import observe
+
+        span_name = resolve_llm_generation_span_name(fallback=fallback)
+        observed = observe(name=span_name, as_type="generation")(func)
+        return observed(*args, **kwargs)
+
+    return _wrapper
+
+
+def observe_llm_generation[**P, R](func: Callable[P, R]) -> Callable[P, R]:
+    """Decorate primary LLM generation worker with dynamic stage-scoped observation name (ADR-065)."""
+    return _build_llm_generation_observer(func, fallback=False)
+
+
+def observe_llm_generation_fallback[**P, R](func: Callable[P, R]) -> Callable[P, R]:
+    """Decorate fallback LLM generation worker with dynamic stage-scoped fallback name (ADR-065)."""
+    return _build_llm_generation_observer(func, fallback=True)
+
+
 def annotate_llm_span(
     *,
     system: str,
@@ -153,6 +187,8 @@ def annotate_llm_span(
         current_span.set_attribute("cresmo.thinking_level", thinking_level)
     if thinking_tokens is not None:
         current_span.set_attribute("gen_ai.usage.reasoning_tokens", thinking_tokens)
+    if (active_pass := get_active_telemetry_pass()) is not None:
+        current_span.set_attribute("cresmo.pass_num", active_pass)
 
 
 def _resolve_identity_from_string(user_id: str) -> tuple[UserIdentity, str | None]:
@@ -407,7 +443,7 @@ class OpenTelemetryAdapter(TelemetryPort):
             user_id: UserIdentity (anonymous, identified IAM, or system:worker) or string.
             channel_tenant_id: Optional Channel tenant identifier for cost and volume aggregation.
             metadata: Additional contextual metadata.
-            trace_name: Optional canonical root operation name (defaults to SYNTHESIS_PIPELINE_TRACE_NAME).
+            trace_name: Optional canonical root operation name (defaults to PIPELINE_TRACE_NAME).
 
         Yields:
             The active root OpenTelemetry span.
@@ -440,12 +476,13 @@ class OpenTelemetryAdapter(TelemetryPort):
             git_sha=resolved_git_sha,
         )
 
-        # ADR-037: Semantic separation between Trace (business transaction) and Root Span (orchestrator)
-        resolved_trace_name = trace_name or SYNTHESIS_PIPELINE_TRACE_NAME
+        # ADR-037 & ADR-065: Semantic separation between Trace (cresmo.pipeline) and Root Span (cresmo.coordinator)
+        resolved_trace_name = trace_name or PIPELINE_TRACE_NAME
         root_operation: str = (
             PIPELINE_ROOT_SPAN_NAME
             if trace_name is None
-            or trace_name in ("cresmo.pipeline.execution", SYNTHESIS_PIPELINE_TRACE_NAME)
+            or trace_name
+            in ("cresmo.pipeline.execution", "cresmo.synthesis_pipeline", PIPELINE_TRACE_NAME)
             else trace_name
         )
         session_attributes["langfuse.trace.name"] = resolved_trace_name
@@ -484,9 +521,12 @@ class OpenTelemetryAdapter(TelemetryPort):
         Yields:
             The active child stage span.
         """
-        # Trace level 2 (stage) spans: cresmo.stage.fluid_prose, cresmo.stage.transcript_indexing, etc.
-        span_name = f"cresmo.stage.{stage_name}"
-        with self._tracer.start_as_current_span(span_name) as span:
+        # Trace level 2 (stage) spans: cresmo.fluid_prose, cresmo.gap_filler, etc. (ADR-065)
+        span_name = format_stage_span_name(stage_name)
+        with (
+            self._tracer.start_as_current_span(span_name) as span,
+            active_telemetry_stage(stage_name),
+        ):
             span.set_attribute("langfuse.observation.type", "span")
             if attributes:
                 for attribute_key, attribute_value in attributes.items():
@@ -500,7 +540,7 @@ class OpenTelemetryAdapter(TelemetryPort):
         attempt: int = 1,
         attributes: dict[str, Any] | None = None,
     ) -> Generator[Any]:
-        """Create child OpenTelemetry span demarcating candidate evaluation by LLM judge (ADR-037).
+        """Create child OpenTelemetry span demarcating candidate evaluation by LLM judge (ADR-037, ADR-065).
 
         Chronologically positioned AFTER candidate generation to reflect true causal evaluation order.
 
@@ -512,7 +552,7 @@ class OpenTelemetryAdapter(TelemetryPort):
         Yields:
             The active child evaluation span.
         """
-        span_name = f"cresmo.stage.{stage_name}.evaluation"
+        span_name = format_stage_judge_span_name(stage_name)
         with self._tracer.start_as_current_span(span_name) as span:
             span.set_attribute("langfuse.observation.type", "span")
             span.set_attribute("judge.attempt", attempt)
@@ -752,4 +792,6 @@ __all__ = [
     "OpenTelemetryAdapter",
     "annotate_llm_span",
     "name_telemetry_threads",
+    "observe_llm_generation",
+    "observe_llm_generation_fallback",
 ]

@@ -673,6 +673,107 @@ class TestStageConfigPromptBuilding:
         assert result.messages[0].content == expected_content
         assert result.system_prompt == "System only directive"
 
+    def test_build_transform_prompt_appends_draft_when_provider_omits_current_text(self) -> None:
+        mock_provider = MagicMock(spec=PromptProviderPort)
+        mock_provider.get_prompt.return_value = ChatPrompt(
+            messages=(ChatMessage(role=MessageRole.USER, content="Transcrição:\nsource text"),),
+            system_prompt="System prompt",
+        )
+        cfg = StageConfig[str, str](
+            stage_name="gap_filler",
+            transform_prompt_key=PromptKey.GAP_FILLER,
+        )
+        ctx = PipelineExecutionContext(
+            user_identity=UserIdentity.worker(),
+            channel=Channel(name="Chan", id=ChannelId("UC_1")),
+            content=Content(id=ContentId("vid_draft1"), title="Title", session_id="sess:d1"),
+        )
+
+        result = cfg.build_transform_prompt(
+            mock_provider,
+            source="source text",
+            context=ctx,
+            pass_num=2,
+            prev_pass_num=1,
+            total_passes=3,
+            current_text="Pass 1 expanded text.",
+        )
+
+        passed_kwargs = mock_provider.get_prompt.call_args.kwargs
+        assert (
+            passed_kwargs["draft_section"]
+            == '\n<draft pass="1">\nPass 1 expanded text.\n</draft>\n'
+        )
+        user_msg = result.get_last_user_content()
+        assert "Transcrição:\nsource text" in user_msg
+        assert "Pass 2/3 — REFINE mode" in user_msg
+        assert '<draft pass="1">\nPass 1 expanded text.\n</draft>' in user_msg
+
+    def test_build_transform_prompt_does_not_duplicate_draft_when_provider_renders_it(self) -> None:
+        mock_provider = MagicMock(spec=PromptProviderPort)
+        already_rendered = (
+            'Transcrição:\nsource text\n<draft pass="1">\nPass 1 expanded text.\n</draft>\n'
+        )
+        mock_provider.get_prompt.return_value = ChatPrompt(
+            messages=(ChatMessage(role=MessageRole.USER, content=already_rendered),),
+            system_prompt="System prompt",
+        )
+        cfg = StageConfig[str, str](
+            stage_name="gap_filler",
+            transform_prompt_key=PromptKey.GAP_FILLER,
+        )
+        ctx = PipelineExecutionContext(
+            user_identity=UserIdentity.worker(),
+            channel=Channel(name="Chan", id=ChannelId("UC_1")),
+            content=Content(id=ContentId("vid_draft2"), title="Title", session_id="sess:d2"),
+        )
+
+        result = cfg.build_transform_prompt(
+            mock_provider,
+            source="source text",
+            context=ctx,
+            pass_num=2,
+            prev_pass_num=1,
+            total_passes=3,
+            current_text="Pass 1 expanded text.",
+        )
+
+        user_msg = result.get_last_user_content()
+        assert user_msg == already_rendered
+        assert user_msg.count("<draft pass=") == 1
+
+    def test_build_transform_prompt_preserves_draft_and_critique_ordering(self) -> None:
+        mock_provider = MagicMock(spec=PromptProviderPort)
+        mock_provider.get_prompt.return_value = ChatPrompt(
+            messages=(ChatMessage(role=MessageRole.USER, content="Base source prompt"),),
+        )
+        cfg = StageConfig[str, str](
+            stage_name="gap_filler",
+            transform_prompt_key=PromptKey.GAP_FILLER,
+        )
+        ctx = PipelineExecutionContext(
+            user_identity=UserIdentity.worker(),
+            channel=Channel(name="Chan", id=ChannelId("UC_1")),
+            content=Content(id=ContentId("vid_draft3"), title="Title", session_id="sess:d3"),
+        )
+
+        result = cfg.build_transform_prompt(
+            mock_provider,
+            source="raw",
+            context=ctx,
+            critique="Deepen causal mechanism.",
+            pass_num=2,
+            prev_pass_num=1,
+            total_passes=3,
+            current_text="Pass 1 text.",
+        )
+
+        user_msg = result.get_last_user_content()
+        draft_idx = user_msg.find('<draft pass="1">\nPass 1 text.\n</draft>')
+        critique_idx = user_msg.find("[PREVIOUS ATTEMPT QUALITY FEEDBACK]")
+        assert draft_idx != -1
+        assert critique_idx > draft_idx
+
     def test_post_process_invokes_callable_with_exact_candidate_and_source(self) -> None:
         received_args: list[tuple[Any, Any]] = []
 

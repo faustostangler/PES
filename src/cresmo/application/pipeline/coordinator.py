@@ -37,7 +37,7 @@ from cresmo.application.pipeline.transcript_loader import (
     load_transcript_from_file,
 )
 from cresmo.application.ports import (
-    SYNTHESIS_PIPELINE_TRACE_NAME,
+    PIPELINE_TRACE_NAME,
     ChannelTaxonomyPort,
     CritiqueSynthesizerPort,
     DefaultPipelineSettings,
@@ -231,124 +231,127 @@ class CresmoPipeline:
         if raw.provenance.publication_date:
             metadata["publication_date"] = raw.provenance.publication_date.isoformat()
 
-        # Trace root Level 1: SYNTHESIS_PIPELINE_TRACE_NAME (ADR-037)
-        with self.telemetry_port.start_pipeline_session(
-            session_id=session_id,
-            user_id=user_identity,
-            channel_tenant_id=channel.tenant_key,
-            metadata=metadata,
-            trace_name=SYNTHESIS_PIPELINE_TRACE_NAME,
-        ):
-            if early_result := self._check_idempotent_exit(raw, entry, force_reprocess):
+        # Trace root Level 1: PIPELINE_TRACE_NAME (ADR-037, ADR-065)
+        try:
+            with self.telemetry_port.start_pipeline_session(
+                session_id=session_id,
+                user_id=user_identity,
+                channel_tenant_id=channel.tenant_key,
+                metadata=metadata,
+                trace_name=PIPELINE_TRACE_NAME,
+            ):
+                if early_result := self._check_idempotent_exit(raw, entry, force_reprocess):
+                    self.telemetry_port.record_session_output(
+                        {
+                            "status": "SKIPPED_IDEMPOTENT",
+                            "reason": "Existing content already processed",
+                            "content_id": content.id.value,
+                        }
+                    )
+                    return early_result
+
+                execution_context = PipelineExecutionContext(
+                    user_identity=user_identity,
+                    channel=channel,
+                    content=content,
+                )
+
+                # =========================================================================
+                # CRESMO STAGES CONVEYOR PIPELINE (ADR-007, ADR-043, ADR-054, ADR-057)
+                # =========================================================================
+                conveyor_steps: tuple[StageName, ...] = (
+                    StageName.FLUID_PROSE,
+                    StageName.GAP_FILLER,
+                )
+
+                stage_artifacts: dict[StageName, Any] = {StageName.RAW: raw}
+                cached_stages: list[str] = []
+                current_source: Any = raw
+
+                for step in conveyor_steps:
+                    artifact = None
+                    if not force_reprocess:
+                        cached = self.vault_port.get_stage_transcript(step, content.id)
+                        if isinstance(cached, StageTranscript):
+                            artifact = cached
+                            cached_stages.append(step.value)
+                            logger.info(
+                                "Reusing cached %s for content_id '%s'",
+                                step,
+                                content.id.value,
+                            )
+
+                    if artifact is None:
+                        extra_kwargs: dict[str, Any] = {}
+                        if step == StageName.GAP_FILLER:
+                            extra_kwargs["max_passes"] = gap_filler_passes
+
+                        artifact = self.stage_runner.execute_stage(
+                            step,
+                            source=current_source,
+                            context=execution_context,
+                            **extra_kwargs,
+                        )
+                        if isinstance(artifact, StageTranscript):
+                            self.vault_port.save_stage_transcript(step, artifact)
+
+                    stage_artifacts[step] = artifact
+                    current_source = artifact
+
+                fluid: Any = stage_artifacts[StageName.FLUID_PROSE]
+                gaps: Any = stage_artifacts[StageName.GAP_FILLER]
+
+                # Note: Subsequent conveyor stages (long_expander, wide_expander, raw_indexing,
+                # atomic_inventory, atomic_batch, reconcile_mocs) will be appended to conveyor_steps
+                # sequentially once their domain VOs conform to StageTranscript (ADR-054).
+
+                synthesized_text = _extract_fluid_text(gaps) or _extract_fluid_text(fluid)
+                raw_word_count = len(raw_text.split())
+                synthesized_word_count = len(synthesized_text.split())
+                expansion_ratio = round(synthesized_word_count / max(raw_word_count, 1), 3)
+
+                # Trace output (ADR-037 canonical DDD metrics)
+                gaps_content = getattr(gaps, "content", None)
+                fluid_content = getattr(fluid, "content", None)
+                resolved_title = str(
+                    getattr(gaps_content, "title", None)
+                    or getattr(fluid_content, "title", None)
+                    or content.title
+                    or ""
+                )
+                cache_hit_count = len(cached_stages)
+                cache_hit_ratio = round(cache_hit_count / max(len(conveyor_steps), 1), 3)
                 self.telemetry_port.record_session_output(
                     {
-                        "status": "SKIPPED_IDEMPOTENT",
-                        "reason": "Existing content already processed",
-                        "content_id": content.id.value,
+                        "status": "COMPLETED",
+                        "stage": "gap_filler",
+                        "stages_completed": ["fluid_prose", "gap_filler"],
+                        "stages_reused_from_cache": cached_stages,
+                        "cache_hit_count": cache_hit_count,
+                        "cache_hit_ratio": cache_hit_ratio,
+                        "force_reprocess": force_reprocess,
+                        "gap_filler_passes": gap_filler_passes,
+                        "content_title": resolved_title,
+                        "word_count": synthesized_word_count,
+                        "char_count": len(synthesized_text),
+                        "source_words": raw_word_count,
+                        "synthesized_words": synthesized_word_count,
+                        "expansion_ratio": expansion_ratio,
+                        "source_characters": len(raw_text),
+                        "synthesized_characters": len(synthesized_text),
                     }
                 )
-                return early_result
 
-            execution_context = PipelineExecutionContext(
-                user_identity=user_identity,
-                channel=channel,
-                content=content,
-            )
-
-            # =========================================================================
-            # CRESMO STAGES CONVEYOR PIPELINE (ADR-007, ADR-043, ADR-054, ADR-057)
-            # =========================================================================
-            conveyor_steps: tuple[StageName, ...] = (
-                StageName.FLUID_PROSE,
-                StageName.GAP_FILLER,
-            )
-
-            stage_artifacts: dict[StageName, Any] = {StageName.RAW: raw}
-            cached_stages: list[str] = []
-            current_source: Any = raw
-
-            for step in conveyor_steps:
-                artifact = None
-                if not force_reprocess:
-                    cached = self.vault_port.get_stage_transcript(step, content.id)
-                    if isinstance(cached, StageTranscript):
-                        artifact = cached
-                        cached_stages.append(step.value)
-                        logger.info(
-                            "Reusing cached %s for content_id '%s'",
-                            step,
-                            content.id.value,
-                        )
-
-                if artifact is None:
-                    extra_kwargs: dict[str, Any] = {}
-                    if step == StageName.GAP_FILLER:
-                        extra_kwargs["max_passes"] = gap_filler_passes
-
-                    artifact = self.stage_runner.execute_stage(
-                        step,
-                        source=current_source,
-                        context=execution_context,
-                        **extra_kwargs,
-                    )
-                    if isinstance(artifact, StageTranscript):
-                        self.vault_port.save_stage_transcript(step, artifact)
-
-                stage_artifacts[step] = artifact
-                current_source = artifact
-
-            fluid: Any = stage_artifacts[StageName.FLUID_PROSE]
-            gaps: Any = stage_artifacts[StageName.GAP_FILLER]
-
-            # Note: Subsequent conveyor stages (long_expander, wide_expander, raw_indexing,
-            # atomic_inventory, atomic_batch, reconcile_mocs) will be appended to conveyor_steps
-            # sequentially once their domain VOs conform to StageTranscript (ADR-054).
-
-            synthesized_text = _extract_fluid_text(gaps) or _extract_fluid_text(fluid)
-            raw_word_count = len(raw_text.split())
-            synthesized_word_count = len(synthesized_text.split())
-            expansion_ratio = round(synthesized_word_count / max(raw_word_count, 1), 3)
-
-            # Trace output (ADR-037 canonical DDD metrics)
-            gaps_content = getattr(gaps, "content", None)
-            fluid_content = getattr(fluid, "content", None)
-            resolved_title = str(
-                getattr(gaps_content, "title", None)
-                or getattr(fluid_content, "title", None)
-                or content.title
-                or ""
-            )
-            cache_hit_count = len(cached_stages)
-            cache_hit_ratio = round(cache_hit_count / max(len(conveyor_steps), 1), 3)
-            self.telemetry_port.record_session_output(
-                {
-                    "status": "COMPLETED",
-                    "stage": "gap_filler",
-                    "stages_completed": ["fluid_prose", "gap_filler"],
-                    "stages_reused_from_cache": cached_stages,
-                    "cache_hit_count": cache_hit_count,
-                    "cache_hit_ratio": cache_hit_ratio,
-                    "force_reprocess": force_reprocess,
-                    "gap_filler_passes": gap_filler_passes,
-                    "content_title": resolved_title,
-                    "word_count": synthesized_word_count,
-                    "char_count": len(synthesized_text),
-                    "source_words": raw_word_count,
-                    "synthesized_words": synthesized_word_count,
-                    "expansion_ratio": expansion_ratio,
-                    "source_characters": len(raw_text),
-                    "synthesized_characters": len(synthesized_text),
-                }
-            )
-
-            return PipelineResult(
-                content_id=content.id,
-                success=True,
-                source_transcript=raw,
-                fluid_transcript=fluid,
-                compendium=gaps,
-                index_entry=entry,
-            )
+                return PipelineResult(
+                    content_id=content.id,
+                    success=True,
+                    source_transcript=raw,
+                    fluid_transcript=fluid,
+                    compendium=gaps,
+                    index_entry=entry,
+                )
+        finally:
+            self.telemetry_port.flush()
 
     def _check_idempotent_exit(
         self,

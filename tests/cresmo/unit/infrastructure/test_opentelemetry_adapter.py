@@ -158,10 +158,10 @@ class TestOpenTelemetryAdapter:
         spans = exporter.get_finished_spans()
         assert len(spans) == 3
 
-        # Spans finish from inside out: raw_indexing, fluid_prose, then root pipeline
-        raw_indexing_span = next(s for s in spans if s.name == "cresmo.stage.raw_indexing")
-        fluid_prose_span = next(s for s in spans if s.name == "cresmo.stage.fluid_prose")
-        root_span = next(s for s in spans if s.name == "cresmo.pipeline.coordinator")
+        # Spans finish from inside out: raw_indexing, fluid_prose, then root coordinator
+        raw_indexing_span = next(s for s in spans if s.name == "cresmo.raw_indexing")
+        fluid_prose_span = next(s for s in spans if s.name == "cresmo.fluid_prose")
+        root_span = next(s for s in spans if s.name == "cresmo.coordinator")
 
         # Root span must have official Langfuse OTel attributes
         assert root_span.attributes is not None
@@ -238,9 +238,7 @@ class TestOpenTelemetryAdapter:
                 verdict="PASS",
             )
 
-        root_span = next(
-            s for s in exporter.get_finished_spans() if s.name == "cresmo.pipeline.coordinator"
-        )
+        root_span = next(s for s in exporter.get_finished_spans() if s.name == "cresmo.coordinator")
         assert len(root_span.events) == 1
         event = root_span.events[0]
         assert event.name == "judge_evaluation"
@@ -269,9 +267,7 @@ class TestOpenTelemetryAdapter:
                 details={"wikilink_count": 14},
             )
 
-        root_span = next(
-            s for s in exporter.get_finished_spans() if s.name == "cresmo.pipeline.coordinator"
-        )
+        root_span = next(s for s in exporter.get_finished_spans() if s.name == "cresmo.coordinator")
         event = next(e for e in root_span.events if e.name == "session_coherence")
         assert event.attributes is not None
         assert event.attributes["eval.session_id"] == "sandeco:vid_coherence_01"
@@ -308,7 +304,7 @@ class TestOpenTelemetryAdapter:
             pass
 
         spans = exporter.get_finished_spans()
-        root_span = next(s for s in spans if s.name == "cresmo.pipeline.coordinator")
+        root_span = next(s for s in spans if s.name == "cresmo.coordinator")
         assert root_span.attributes is not None
         assert root_span.attributes["langfuse.session.id"] == "sandeco:vid_anon_01"
         assert root_span.attributes["langfuse.user.id"] == "anonymous"
@@ -336,7 +332,7 @@ class TestOpenTelemetryAdapter:
             pass
 
         spans = exporter.get_finished_spans()
-        root_span = next(s for s in spans if s.name == "cresmo.pipeline.coordinator")
+        root_span = next(s for s in spans if s.name == "cresmo.coordinator")
         assert root_span.attributes is not None
         assert root_span.attributes["langfuse.session.id"] == "sandeco:vid_auth_01"
         assert root_span.attributes["langfuse.user.id"] == "user:google:alice@corp.com"
@@ -365,7 +361,7 @@ class TestOpenTelemetryAdapter:
             pass
 
         spans = exporter.get_finished_spans()
-        root_span = next(s for s in spans if s.name == "cresmo.pipeline.coordinator")
+        root_span = next(s for s in spans if s.name == "cresmo.coordinator")
         assert root_span.attributes is not None
         assert root_span.attributes["langfuse.session.id"] == "sandeco:vid_worker_01"
         assert root_span.attributes["langfuse.user.id"] == "system:worker"
@@ -644,7 +640,7 @@ def test_universal_algorithmic_and_cognitive_parity_adr034() -> None:
         pass
 
     spans = exporter.get_finished_spans()
-    root_span = next(s for s in spans if s.name == "cresmo.pipeline.coordinator")
+    root_span = next(s for s in spans if s.name == "cresmo.coordinator")
     attrs = root_span.attributes or {}
 
     # Algorithmic Pair (ID - ID)
@@ -676,7 +672,7 @@ def test_start_pipeline_session_with_batch_id_adr035() -> None:
         pass
 
     spans = exporter.get_finished_spans()
-    root_span = next(s for s in spans if s.name == "cresmo.pipeline.coordinator")
+    root_span = next(s for s in spans if s.name == "cresmo.coordinator")
     attrs = root_span.attributes or {}
 
     assert attrs["cresmo.batch_id"] == batch_key
@@ -713,7 +709,7 @@ def test_start_pipeline_session_sets_otel_observation_input_attributes() -> None
         pass
 
     spans = exporter.get_finished_spans()
-    root_span = next(s for s in spans if s.name == "cresmo.pipeline.coordinator")
+    root_span = next(s for s in spans if s.name == "cresmo.coordinator")
     attrs = root_span.attributes or {}
 
     expected_dict = {
@@ -767,7 +763,7 @@ def test_start_pipeline_session_propagates_trace_name_and_identity_metadata(
     ):
         pass
 
-    assert captured["trace_name"] == "cresmo.synthesis_pipeline"
+    assert captured["trace_name"] == "cresmo.pipeline"
     metadata = captured["metadata"]
     assert isinstance(metadata, dict)
     assert metadata["content_id"] == "content_42"
@@ -803,7 +799,7 @@ def test_record_session_output_sets_otel_and_langfuse_output_attributes() -> Non
         adapter.record_session_output(output_payload)
 
     spans = exporter.get_finished_spans()
-    root_span = next(s for s in spans if s.name == "cresmo.pipeline.coordinator")
+    root_span = next(s for s in spans if s.name == "cresmo.coordinator")
     attrs = root_span.attributes or {}
 
     expected_serialized = json.dumps(output_payload)
@@ -841,7 +837,7 @@ class TestAdr037LeanTelemetryAndEvaluationSpan:
     """Unit tests for ADR-037 Lean Telemetry Topography and Chronological Evaluation Spans."""
 
     def test_default_root_span_and_trace_separation(self) -> None:
-        """Verify default root span name is cresmo.pipeline.coordinator and trace name is cresmo.synthesis_pipeline (ADR-063)."""
+        """Verify default root span name is cresmo.coordinator and trace name is cresmo.pipeline (ADR-065)."""
         exporter = InMemorySpanExporter()
         provider = TracerProvider()
         provider.add_span_processor(SimpleSpanProcessor(exporter))
@@ -860,24 +856,46 @@ class TestAdr037LeanTelemetryAndEvaluationSpan:
         assert len(spans) == 1
         root_span = spans[0]
         attrs = root_span.attributes or {}
-        assert root_span.name == "cresmo.pipeline.coordinator"
-        assert attrs.get("langfuse.trace.name") == "cresmo.synthesis_pipeline"
+        assert root_span.name == "cresmo.coordinator"
+        assert attrs.get("langfuse.trace.name") == "cresmo.pipeline"
 
     def test_all_canonical_telemetry_identifiers_enforce_cresmo_namespace(self) -> None:
-        """Verify ADR-063 Bounded Context namespace consistency across all 4 telemetry tiers."""
+        """Verify ADR-065 Bounded Context namespace consistency across all 4 telemetry tiers."""
         from cresmo.application.ports import (
+            LLM_GENERATION_FALLBACK_SPAN_NAME,
             LLM_GENERATION_SPAN_NAME,
             PIPELINE_ROOT_SPAN_NAME,
-            SYNTHESIS_PIPELINE_TRACE_NAME,
+            PIPELINE_TRACE_NAME,
+            format_stage_generation_span_name,
+            format_stage_judge_span_name,
+            format_stage_span_name,
         )
 
-        assert SYNTHESIS_PIPELINE_TRACE_NAME == "cresmo.synthesis_pipeline"
-        assert PIPELINE_ROOT_SPAN_NAME == "cresmo.pipeline.coordinator"
+        assert PIPELINE_TRACE_NAME == "cresmo.pipeline"
+        assert PIPELINE_ROOT_SPAN_NAME == "cresmo.coordinator"
         assert LLM_GENERATION_SPAN_NAME == "cresmo.llm.generate"
+        assert LLM_GENERATION_FALLBACK_SPAN_NAME == "cresmo.llm.generate_fallback"
+        assert format_stage_span_name("fluid_prose") == "cresmo.fluid_prose"
+        assert format_stage_generation_span_name("fluid_prose") == "cresmo.fluid_prose.generate"
+        assert (
+            format_stage_generation_span_name("fluid_prose", fallback=True)
+            == "cresmo.fluid_prose.generate_fallback"
+        )
+        assert format_stage_generation_span_name(None) == "cresmo.llm.generate"
+        assert (
+            format_stage_generation_span_name(None, fallback=True) == "cresmo.llm.generate_fallback"
+        )
+        assert format_stage_judge_span_name("fluid_prose") == "cresmo.fluid_prose.judge"
+
         for identifier in (
-            SYNTHESIS_PIPELINE_TRACE_NAME,
+            PIPELINE_TRACE_NAME,
             PIPELINE_ROOT_SPAN_NAME,
             LLM_GENERATION_SPAN_NAME,
+            LLM_GENERATION_FALLBACK_SPAN_NAME,
+            format_stage_span_name("fluid_prose"),
+            format_stage_generation_span_name("fluid_prose"),
+            format_stage_generation_span_name("fluid_prose", fallback=True),
+            format_stage_judge_span_name("fluid_prose"),
         ):
             assert identifier.startswith("cresmo.")
 
@@ -938,8 +956,8 @@ class TestAdr037LeanTelemetryAndEvaluationSpan:
 
         spans = exporter.get_finished_spans()
         assert len(spans) == 2
-        eval_span_data = next(s for s in spans if s.name == "cresmo.stage.fluid_prose.evaluation")
-        stage_span_data = next(s for s in spans if s.name == "cresmo.stage.fluid_prose")
+        eval_span_data = next(s for s in spans if s.name == "cresmo.fluid_prose.judge")
+        stage_span_data = next(s for s in spans if s.name == "cresmo.fluid_prose")
 
         # Verify hierarchy
         assert eval_span_data.parent is not None
@@ -1887,3 +1905,259 @@ class TestOpenTelemetryAdapterRecordMethodsAndFlushExtended:
                 mock_debug.assert_called_with(
                     "[OpenTelemetryAdapter] OpenTelemetry tracer provider flush skipped: %s", err_tp
                 )
+
+
+class TestAdr065HierarchicalStageScopedTelemetry:
+    """Unit tests for ADR-065 hierarchical stage-scoped trace/span nomenclature and dynamic generation names."""
+
+    def test_format_stage_helpers_trim_whitespace_and_reject_blank(self) -> None:
+        from cresmo.application.ports import (
+            format_stage_generation_span_name,
+            format_stage_judge_span_name,
+            format_stage_span_name,
+        )
+
+        assert format_stage_span_name("  fluid_prose  ") == "cresmo.fluid_prose"
+        assert format_stage_judge_span_name(" fluid_prose ") == "cresmo.fluid_prose.judge"
+        assert format_stage_generation_span_name(" fluid_prose ") == "cresmo.fluid_prose.generate"
+        assert (
+            format_stage_generation_span_name(" fluid_prose ", fallback=True)
+            == "cresmo.fluid_prose.generate_fallback"
+        )
+        assert format_stage_generation_span_name("   ") == "cresmo.llm.generate"
+        assert (
+            format_stage_generation_span_name("   ", fallback=True)
+            == "cresmo.llm.generate_fallback"
+        )
+
+        with pytest.raises(ValueError, match="non-empty"):
+            format_stage_span_name("   ")
+        with pytest.raises(ValueError, match="non-empty"):
+            format_stage_judge_span_name("")
+
+    def test_active_telemetry_stage_nesting_and_exception_cleanup(self) -> None:
+        from cresmo.application.ports import (
+            active_telemetry_stage,
+            get_active_telemetry_stage,
+            resolve_llm_generation_span_name,
+        )
+
+        assert get_active_telemetry_stage() is None
+        assert resolve_llm_generation_span_name() == "cresmo.llm.generate"
+        assert resolve_llm_generation_span_name(fallback=True) == "cresmo.llm.generate_fallback"
+
+        with active_telemetry_stage("fluid_prose"):
+            assert get_active_telemetry_stage() == "fluid_prose"
+            assert resolve_llm_generation_span_name() == "cresmo.fluid_prose.generate"
+            assert (
+                resolve_llm_generation_span_name(fallback=True)
+                == "cresmo.fluid_prose.generate_fallback"
+            )
+            with active_telemetry_stage("gap_filler"):
+                assert get_active_telemetry_stage() == "gap_filler"
+                assert resolve_llm_generation_span_name() == "cresmo.gap_filler.generate"
+            assert get_active_telemetry_stage() == "fluid_prose"
+
+            with pytest.raises(RuntimeError, match="boom"), active_telemetry_stage("nested_fail"):
+                assert get_active_telemetry_stage() == "nested_fail"
+                raise RuntimeError("boom")
+            assert get_active_telemetry_stage() == "fluid_prose"
+
+        assert get_active_telemetry_stage() is None
+
+    def test_stage_spans_activate_telemetry_stage_across_adapters(self) -> None:
+        from cresmo.application.ports import (
+            NoOpTelemetryPort,
+            get_active_telemetry_stage,
+            resolve_llm_generation_span_name,
+        )
+
+        provider = TracerProvider()
+        otel_adapter = OpenTelemetryAdapter(tracer=provider.get_tracer("cresmo.test"))
+        noop_adapter = NoOpTelemetryAdapter()
+        noop_port = NoOpTelemetryPort()
+
+        assert get_active_telemetry_stage() is None
+        for adapter_instance in (otel_adapter, noop_adapter, noop_port):
+            with adapter_instance.start_stage_span("gap_filler"):
+                assert get_active_telemetry_stage() == "gap_filler"
+                assert resolve_llm_generation_span_name() == "cresmo.gap_filler.generate"
+                assert (
+                    resolve_llm_generation_span_name(fallback=True)
+                    == "cresmo.gap_filler.generate_fallback"
+                )
+            assert get_active_telemetry_stage() is None
+
+    def test_observe_llm_generation_and_fallback_resolve_stage_name_at_creation(self) -> None:
+        from unittest.mock import MagicMock, patch
+
+        from cresmo.infrastructure.adapters.telemetry.opentelemetry_adapter import (
+            observe_llm_generation,
+            observe_llm_generation_fallback,
+        )
+
+        @observe_llm_generation
+        def _primary(x: int) -> int:
+            return x + 1
+
+        @observe_llm_generation_fallback
+        def _fallback(x: int) -> int:
+            return x + 2
+
+        provider = TracerProvider()
+        otel_adapter = OpenTelemetryAdapter(tracer=provider.get_tracer("cresmo.test"))
+
+        mock_client = MagicMock()
+        mock_cm = MagicMock()
+        mock_obs = MagicMock()
+        mock_cm.__enter__.return_value = mock_obs
+        mock_client.start_as_current_observation.return_value = mock_cm
+
+        with patch("langfuse._client.observe.get_client", return_value=mock_client):
+            assert _primary(10) == 11
+            assert _fallback(10) == 12
+            with otel_adapter.start_stage_span("fluid_prose"):
+                assert _primary(20) == 21
+                assert _fallback(20) == 22
+
+        observed_calls = [
+            (call.kwargs["name"], call.kwargs["as_type"])
+            for call in mock_client.start_as_current_observation.call_args_list
+        ]
+        assert observed_calls == [
+            ("cresmo.llm.generate", "generation"),
+            ("cresmo.llm.generate_fallback", "generation"),
+            ("cresmo.fluid_prose.generate", "generation"),
+            ("cresmo.fluid_prose.generate_fallback", "generation"),
+        ]
+
+    def test_format_stage_generation_span_name_with_pass_num_and_validation(self) -> None:
+        from cresmo.application.ports import format_stage_generation_span_name
+
+        assert (
+            format_stage_generation_span_name("gap_filler", pass_num=1)
+            == "cresmo.gap_filler.generate.pass_1"
+        )
+        assert (
+            format_stage_generation_span_name("gap_filler", fallback=True, pass_num=2)
+            == "cresmo.gap_filler.generate_fallback.pass_2"
+        )
+        assert format_stage_generation_span_name(None, pass_num=2) == "cresmo.llm.generate.pass_2"
+        assert (
+            format_stage_generation_span_name(None, fallback=True, pass_num=3)
+            == "cresmo.llm.generate_fallback.pass_3"
+        )
+
+        with pytest.raises(ValueError, match="positive integer"):
+            format_stage_generation_span_name("gap_filler", pass_num=0)
+        with pytest.raises(ValueError, match="positive integer"):
+            format_stage_generation_span_name("gap_filler", pass_num=-1)
+
+    def test_active_telemetry_pass_lifecycle_and_stage_boundary_isolation(self) -> None:
+        from cresmo.application.ports import (
+            active_telemetry_pass,
+            active_telemetry_stage,
+            get_active_telemetry_pass,
+            resolve_llm_generation_span_name,
+        )
+
+        assert get_active_telemetry_pass() is None
+        with pytest.raises(ValueError, match="positive integer"), active_telemetry_pass(0):
+            pass
+
+        with active_telemetry_stage("gap_filler"):
+            assert get_active_telemetry_pass() is None
+            with active_telemetry_pass(2):
+                assert get_active_telemetry_pass() == 2
+                assert resolve_llm_generation_span_name() == "cresmo.gap_filler.generate.pass_2"
+                assert (
+                    resolve_llm_generation_span_name(fallback=True)
+                    == "cresmo.gap_filler.generate_fallback.pass_2"
+                )
+                with active_telemetry_stage("inner_stage"):
+                    assert get_active_telemetry_pass() is None
+                    assert resolve_llm_generation_span_name() == "cresmo.inner_stage.generate"
+                assert get_active_telemetry_pass() == 2
+
+                with pytest.raises(RuntimeError, match="boom"), active_telemetry_pass(3):
+                    assert get_active_telemetry_pass() == 3
+                    raise RuntimeError("boom")
+                assert get_active_telemetry_pass() == 2
+            assert get_active_telemetry_pass() is None
+
+        assert get_active_telemetry_pass() is None
+
+    def test_observe_llm_generation_includes_sequential_pass_at_creation(self) -> None:
+        from unittest.mock import MagicMock, patch
+
+        from cresmo.application.ports import active_telemetry_pass
+        from cresmo.infrastructure.adapters.telemetry.opentelemetry_adapter import (
+            observe_llm_generation,
+            observe_llm_generation_fallback,
+        )
+
+        @observe_llm_generation
+        def _primary(x: int) -> int:
+            return x + 1
+
+        @observe_llm_generation_fallback
+        def _fallback(x: int) -> int:
+            return x + 2
+
+        provider = TracerProvider()
+        otel_adapter = OpenTelemetryAdapter(tracer=provider.get_tracer("cresmo.test"))
+
+        mock_client = MagicMock()
+        mock_cm = MagicMock()
+        mock_cm.__enter__.return_value = MagicMock()
+        mock_client.start_as_current_observation.return_value = mock_cm
+
+        with (
+            patch("langfuse._client.observe.get_client", return_value=mock_client),
+            otel_adapter.start_stage_span("gap_filler"),
+        ):
+            with active_telemetry_pass(1):
+                assert _primary(1) == 2
+            with active_telemetry_pass(2):
+                assert _primary(2) == 3
+                assert _fallback(2) == 4
+
+        observed_calls = [
+            (call.kwargs["name"], call.kwargs["as_type"])
+            for call in mock_client.start_as_current_observation.call_args_list
+        ]
+        assert observed_calls == [
+            ("cresmo.gap_filler.generate.pass_1", "generation"),
+            ("cresmo.gap_filler.generate.pass_2", "generation"),
+            ("cresmo.gap_filler.generate_fallback.pass_2", "generation"),
+        ]
+
+    def test_annotate_llm_span_records_pass_num_when_active(self) -> None:
+        from cresmo.application.ports import active_telemetry_pass
+
+        exporter = InMemorySpanExporter()
+        provider = TracerProvider()
+        provider.add_span_processor(SimpleSpanProcessor(exporter))
+        tracer = provider.get_tracer("cresmo.test")
+
+        with tracer.start_as_current_span("with.pass"), active_telemetry_pass(2):
+            annotate_llm_span(
+                system="google",
+                model="gemini-3.5-flash-lite",
+                prompt_tokens=10,
+                candidate_tokens=5,
+            )
+
+        with tracer.start_as_current_span("without.pass"):
+            annotate_llm_span(
+                system="google",
+                model="gemini-3.5-flash-lite",
+                prompt_tokens=10,
+                candidate_tokens=5,
+            )
+
+        spans = exporter.get_finished_spans()
+        with_pass = next(s for s in spans if s.name == "with.pass")
+        without_pass = next(s for s in spans if s.name == "without.pass")
+        assert (with_pass.attributes or {}).get("cresmo.pass_num") == 2
+        assert "cresmo.pass_num" not in (without_pass.attributes or {})

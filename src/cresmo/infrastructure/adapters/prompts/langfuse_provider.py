@@ -233,6 +233,21 @@ class LangfusePromptProvider(PromptProviderPort):
             if isinstance(context.get("channel_name"), ChannelName):
                 context["channel_name"] = context["channel_name"].value
 
+            if key == PromptKey.GAP_FILLER:
+                source_text = context.get("source_text") or context.get("raw_text", "")
+                context.setdefault("source_text", source_text)
+                current_text = context.get("current_text")
+                pass_num = context.get("pass_num", 1)
+                prev_pass_num = context.get("prev_pass_num")
+                if prev_pass_num is None:
+                    prev_pass_num = max(0, int(pass_num) - 1)
+                draft_section = (
+                    f'\n<draft pass="{prev_pass_num}">\n{current_text}\n</draft>\n'
+                    if current_text
+                    else ""
+                )
+                context.setdefault("draft_section", draft_section)
+
             return self._resolve_chat_prompt(
                 prompt_name=prompt_name,
                 **context,

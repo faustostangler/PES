@@ -362,7 +362,7 @@ class TestCresmoPipelineExecutionAndIdempotency:
         sess_call = mock_t.start_pipeline_session.call_args[1]
         assert sess_call["user_id"] == user
         assert sess_call["channel_tenant_id"] == sample_source_transcript.channel.tenant_key
-        assert sess_call["trace_name"] == "cresmo.synthesis_pipeline"
+        assert sess_call["trace_name"] == "cresmo.pipeline"
         meta = sess_call["metadata"]
         assert meta["source"] == "transcript"
         assert meta["channel_id"] == "UC_econ101"
@@ -1079,3 +1079,61 @@ class TestCresmoPipelineRunForSources:
         first_call = mock_runner.execute_stage.call_args_list[0]
         assert first_call[0][0] == "gap_filler"
         assert first_call[1]["source"] == cached_fluid
+
+    def test_execute_flushes_telemetry_after_root_session_span_closes(self) -> None:
+        """Verify CresmoPipeline.execute flushes closed root session span cleanly on success and failure."""
+        from collections.abc import Generator
+        from contextlib import contextmanager
+        from typing import Any
+
+        events: list[str] = []
+
+        class RecordingTelemetry(NoOpTelemetryPort):
+            @contextmanager
+            def start_pipeline_session(
+                self,
+                session_id: Any,
+                user_id: Any,
+                channel_tenant_id: str | None = None,
+                metadata: dict[str, Any] | None = None,
+                trace_name: str | None = None,
+            ) -> Generator[Any]:
+                _ = (session_id, user_id, channel_tenant_id, metadata, trace_name)
+                events.append("session_enter")
+                try:
+                    yield None
+                finally:
+                    events.append("session_exit")
+
+            def flush(self) -> None:
+                events.append("flush")
+
+        cid = ContentId("vid_root_flush")
+        raw = StageTranscript(
+            channel=Channel(name=ChannelName("Channel Test")),
+            provenance=MediaProvenance.create(url=""),
+            content=Content(id=cid, title="T", text="Verbatim spoken text."),
+        )
+        mock_ingestion = MagicMock(spec=MediaIngestionPort)
+        mock_vault = MagicMock(spec=VaultRepositoryPort)
+        mock_vault.get_stage_transcript.return_value = None
+        mock_runner = MagicMock(spec=PipelineStageRunner)
+        mock_runner.execute_stage.return_value = MagicMock(text="Stage output")
+        telemetry = RecordingTelemetry()
+
+        pipeline = CresmoPipeline(
+            media_ingestion_port=mock_ingestion,
+            vault_port=mock_vault,
+            stage_runner=mock_runner,
+            telemetry_port=telemetry,
+        )
+
+        result = pipeline.execute(raw, force_reprocess=True)
+        assert result.success is True
+        assert events == ["session_enter", "session_exit", "flush"]
+
+        events.clear()
+        mock_runner.execute_stage.side_effect = RuntimeError("pipeline boom")
+        with pytest.raises(RuntimeError, match="pipeline boom"):
+            pipeline.execute(raw, force_reprocess=True)
+        assert events == ["session_enter", "session_exit", "flush"]

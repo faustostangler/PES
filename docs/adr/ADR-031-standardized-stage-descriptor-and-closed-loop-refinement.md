@@ -168,6 +168,7 @@ When a judge fails an evaluation on attempt $N < \text{max\_attempts}$:
    - <Improvement Suggestion>
    ```
 3. OpenTelemetry and Prometheus record the retry with `status="reflection_retry"`.
+4. **Multi-Pass Final-Pass Critique Targeting (refined by ADR-046):** For multi-pass stages (`max_passes > 1`), `generate_stage_candidate` injects the retry `critique` strictly on the **final pass** (`pass_index == max_passes`, or a single terminal critique-directed pass triggered immediately after early mechanical saturation at `pass_index < max_passes`). Earlier constructive BUILD/REFINE passes remain undisturbed while guaranteeing judge feedback is always applied before re-evaluation.
 
 ---
 

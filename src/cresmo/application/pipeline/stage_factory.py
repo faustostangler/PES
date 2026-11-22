@@ -7,7 +7,12 @@ from typing import Any, TypeVar
 
 from cresmo.application.pipeline.stage_descriptor import StageConfig
 from cresmo.application.ports import PipelineSettingsProtocol
-from cresmo.domain.stage_registry import StageDefinition, StageRegistry
+from cresmo.domain.stage_registry import (
+    SaturationPolicy,
+    StageDefinition,
+    StageRegistry,
+    never_saturate,
+)
 from cresmo.domain.value_objects import (
     CandidateText,
     JudgeCriterion,
@@ -47,7 +52,7 @@ class StageFactory:
         eval_spec: StageEvaluationSpec | None = None,
         eval_metadata: dict[str, Any] | None = None,
         max_passes: int | None = None,
-        early_stopping_enabled: bool | None = None,
+        saturation_policy: SaturationPolicy | None = None,
     ) -> StageConfig[TSource, TOutput]:
         """Build or retrieve a standardized StageConfig for any pipeline stage.
 
@@ -70,7 +75,7 @@ class StageFactory:
                 eval_spec,
                 eval_metadata,
                 max_passes,
-                early_stopping_enabled,
+                saturation_policy,
             )
         )
 
@@ -145,24 +150,23 @@ class StageFactory:
         if judge_prompt_key is None and stage_definition:
             judge_prompt_key = stage_definition.judge_prompt_key
 
-        # 6. Resolve multi-pass and early stopping tunables
+        # 6. Resolve multi-pass and saturation policy tunables
         if max_passes is None:
-            if stage_definition and getattr(stage_definition, "max_passes", 1) > 1:
-                max_passes = stage_definition.max_passes
-            elif stage_name == "gap_filler":
-                max_passes = getattr(
-                    self.settings,
-                    "expansion_max_passes",
-                    getattr(self.settings, "gap_filler_passes", 5),
-                )
-            else:
-                max_passes = 1
-
-        if early_stopping_enabled is None:
-            early_stopping_enabled = bool(
-                (stage_definition and getattr(stage_definition, "early_stopping_enabled", False))
-                or stage_name == "gap_filler"
+            max_passes = (
+                stage_definition.max_passes
+                if stage_definition and stage_definition.max_passes > 1
+                else 1
             )
+
+        resolved_saturation_policy: SaturationPolicy = (
+            saturation_policy
+            if saturation_policy is not None
+            else (
+                stage_definition.saturation_policy
+                if stage_definition is not None
+                else never_saturate
+            )
+        )
 
         stage_config = StageConfig[TSource, TOutput](
             stage_name=stage_name,
@@ -174,7 +178,7 @@ class StageFactory:
             max_attempts=max_attempts,
             blocking=blocking,
             max_passes=max_passes,
-            early_stopping_enabled=early_stopping_enabled,
+            saturation_policy=resolved_saturation_policy,
         )
 
         if not has_overrides:

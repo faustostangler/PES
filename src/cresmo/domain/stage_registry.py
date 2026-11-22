@@ -9,7 +9,39 @@ from typing import Any, ClassVar
 
 from cresmo.domain.entities import post_process_fluid_transcript
 from cresmo.domain.services.compendium import post_process_enriched_compendium
+from cresmo.domain.services.mechanical_validator import (
+    check_complementary_mechanical_saturation,
+)
 from cresmo.domain.value_objects import JudgeCriterion, PromptKey
+
+SaturationPolicy = Callable[[str, str | None], bool]
+
+
+def never_saturate(_current_text: str, _previous_text: str | None = None) -> bool:
+    """Default Null-Object saturation policy for stages without early stopping."""
+    return False
+
+
+def gap_filler_saturation_policy(current_text: str, previous_text: str | None = None) -> bool:
+    """Evaluate gap-filler saturation delegating to mechanical validator."""
+    if previous_text is None:
+        return False
+    return check_complementary_mechanical_saturation(previous_text, current_text)
+
+
+SaturationPolicy = Callable[[str, str | None], bool]
+
+
+def never_saturate(_current_text: str, _previous_text: str | None = None) -> bool:
+    """Default Null-Object saturation policy for stages without early stopping."""
+    return False
+
+
+def gap_filler_saturation_policy(current_text: str, previous_text: str | None = None) -> bool:
+    """Evaluate gap-filler saturation delegating to mechanical validator."""
+    if previous_text is None:
+        return False
+    return check_complementary_mechanical_saturation(previous_text, current_text)
 
 
 class StageName(StrEnum):
@@ -32,7 +64,7 @@ class StageDefinition:
     candidate_extractor: Callable[..., str] | None = None
     eval_metadata: dict[str, Any] = field(default_factory=dict)
     max_passes: int = 1
-    early_stopping_enabled: bool = False
+    saturation_policy: SaturationPolicy = never_saturate
 
 
 class StageRegistry:
@@ -84,7 +116,7 @@ class StageRegistry:
                 ],
             },
             max_passes=5,
-            early_stopping_enabled=True,
+            saturation_policy=gap_filler_saturation_policy,
         ),
         # FUTURE / DEFERRED: Upcoming synthesis conveyor stages preserved for future rollout.
         # "long_expander": StageDefinition(
