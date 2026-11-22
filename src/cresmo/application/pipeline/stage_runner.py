@@ -280,6 +280,7 @@ class PipelineStageRunner:
             attempt=attempt,
             active_trace_id=self._get_active_trace_id(context=context),
             critique=critique,
+            telemetry_port=self.telemetry_port,
         )
 
     def _evaluate_candidate(

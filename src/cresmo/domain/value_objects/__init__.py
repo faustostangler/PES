@@ -21,6 +21,14 @@ from cresmo.domain.value_objects.constants import (
     RESERVED_SYSTEM_FILENAMES,
     is_processable_transcript_file,
 )
+from cresmo.domain.value_objects.convergence import (
+    ConvergenceMode,
+    SaturationPolicy,
+    SaturationReason,
+    SaturationThresholds,
+    SaturationVerdict,
+    never_saturate,
+)
 from cresmo.domain.value_objects.identity import (
     BatchId,
     Channel,
@@ -104,6 +112,7 @@ __all__ = [
     "ChatPrompt",
     "Content",
     "ContentId",
+    "ConvergenceMode",
     "CriterionScore",
     "CrossContextRelations",
     "DiscoveredMediaItem",
@@ -119,6 +128,10 @@ __all__ = [
     "PipelineStatus",
     "PromptKey",
     "RawIndexEntry",
+    "SaturationPolicy",
+    "SaturationReason",
+    "SaturationThresholds",
+    "SaturationVerdict",
     "SourceModality",
     "StageEvaluationSpec",
     "SyncFilterCriteria",
@@ -127,6 +140,7 @@ __all__ = [
     "VerdictType",
     "compute_composite_verdict",
     "is_processable_transcript_file",
+    "never_saturate",
     "normalize_to_uploads_playlist_url",
     "resolve_stage_scoring_policy",
 ]

@@ -26,6 +26,7 @@ from cresmo.application.ports import (
     TelemetryPort,
     active_telemetry_stage,
     format_stage_judge_span_name,
+    format_stage_saturation_span_name,
     format_stage_span_name,
     get_active_telemetry_pass,
     resolve_llm_generation_span_name,
@@ -560,6 +561,33 @@ class OpenTelemetryAdapter(TelemetryPort):
             if attributes:
                 for k, v in attributes.items():
                     span.set_attribute(k, v)
+            yield span
+
+    @contextmanager
+    def start_stage_saturation_span(
+        self,
+        stage_name: str,
+        pass_num: int = 1,
+        attributes: dict[str, Any] | None = None,
+    ) -> Generator[Any]:
+        """Create child OpenTelemetry span demarcating pass saturation evaluation (ADR-066).
+
+        Args:
+            stage_name: Identifier for the active pipeline stage.
+            pass_num: 1-based refinement pass index.
+            attributes: Optional scalar saturation diagnostic attributes.
+
+        Yields:
+            The active child saturation span.
+        """
+        span_name = format_stage_saturation_span_name(stage_name, pass_num=pass_num)
+        with self._tracer.start_as_current_span(span_name) as span:
+            span.set_attribute("langfuse.observation.type", "span")
+            span.set_attribute("cresmo.pass_num", pass_num)
+            if attributes:
+                for key, value in attributes.items():
+                    if isinstance(value, (bool, int, float, str)):
+                        span.set_attribute(key, value)
             yield span
 
     def record_judge_evaluation(

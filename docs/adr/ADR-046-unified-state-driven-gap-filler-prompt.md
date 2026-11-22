@@ -3,7 +3,10 @@
 **Status:** ACCEPTED  
 **Date:** 2026-10-25  
 **Decision Makers:** Lead Architect (Fausto Stangler)  
-**Related ADRs:** [`ADR-028`](ADR-028-decoupling-fluid-prose-and-socratic-gap-filling.md), [`ADR-031`](ADR-031-standardized-stage-descriptor-and-closed-loop-refinement.md), [`ADR-040`](ADR-040-dynamic-cross-cutting-skill-block-composition.md), [`ADR-065`](ADR-065-hierarchical-stage-scoped-telemetry-nomenclature.md)
+**Related ADRs:** [`ADR-028`](ADR-028-decoupling-fluid-prose-and-socratic-gap-filling.md), [`ADR-031`](ADR-031-standardized-stage-descriptor-and-closed-loop-refinement.md), [`ADR-040`](ADR-040-dynamic-cross-cutting-skill-block-composition.md), [`ADR-065`](ADR-065-hierarchical-stage-scoped-telemetry-nomenclature.md), [`ADR-066`](ADR-066-hybrid-semantic-saturation-and-text-embedding-adapters.md)
+
+> [!NOTE]
+> **Refinement (`ADR-066`):** Copy-back saturation exit (*"return the draft unchanged"*) and `check_complementary_mechanical_saturation` are superseded. `REFINE` mode emits `<NO_NEW_GAPS/>` on saturation, `stage_execution.py` tracks `baseline_text` from Pass 1 and restores it via `SaturationVerdict.preserve_baseline`, and `HybridSaturationEvaluator` drives convergence.
 
 ---
 

@@ -6,18 +6,18 @@ from collections.abc import Callable, Sequence
 from typing import Any, TypeVar
 
 from cresmo.application.pipeline.stage_descriptor import StageConfig
-from cresmo.application.ports import PipelineSettingsProtocol
-from cresmo.domain.stage_registry import (
-    SaturationPolicy,
-    StageDefinition,
-    StageRegistry,
-    never_saturate,
-)
+from cresmo.application.ports import PipelineSettingsProtocol, TextEmbeddingPort
+from cresmo.application.services.hybrid_saturation import HybridSaturationEvaluator
+from cresmo.domain.stage_registry import StageDefinition, StageRegistry
 from cresmo.domain.value_objects import (
     CandidateText,
+    ConvergenceMode,
     JudgeCriterion,
     PromptKey,
+    SaturationPolicy,
+    SaturationThresholds,
     StageEvaluationSpec,
+    never_saturate,
 )
 
 TSource = TypeVar("TSource")
@@ -32,9 +32,29 @@ class StageFactory:
     Delegates domain metadata resolution to StageRegistry.
     """
 
-    def __init__(self, settings: PipelineSettingsProtocol) -> None:
+    def __init__(
+        self,
+        settings: PipelineSettingsProtocol,
+        embedding_port: TextEmbeddingPort | None = None,
+    ) -> None:
         self.settings = settings
+        self._embedding_port = embedding_port
         self._cache: dict[str, StageConfig[Any, Any]] = {}
+
+    def _build_saturation_thresholds(self) -> SaturationThresholds:
+        """Build SaturationThresholds from settings with safe defaults for minimal settings objects."""
+        return SaturationThresholds(
+            lexical_identity_threshold=float(
+                getattr(self.settings, "saturation_lexical_threshold", 0.95)
+            ),
+            max_lexical_word_delta=float(getattr(self.settings, "saturation_max_word_delta", 0.03)),
+            semantic_similarity_threshold=float(
+                getattr(self.settings, "saturation_semantic_threshold", 0.88)
+            ),
+            max_novel_paragraphs_for_saturation=int(
+                getattr(self.settings, "saturation_max_novel_paragraphs", 0)
+            ),
+        )
 
     def build_stage(
         self,
@@ -158,15 +178,19 @@ class StageFactory:
                 else 1
             )
 
-        resolved_saturation_policy: SaturationPolicy = (
-            saturation_policy
-            if saturation_policy is not None
-            else (
-                stage_definition.saturation_policy
-                if stage_definition is not None
-                else never_saturate
+        resolved_saturation_policy: SaturationPolicy
+        if saturation_policy is not None:
+            resolved_saturation_policy = saturation_policy
+        elif (
+            stage_definition is not None
+            and stage_definition.convergence_mode == ConvergenceMode.HYBRID_SEMANTIC
+        ):
+            resolved_saturation_policy = HybridSaturationEvaluator(
+                embedding_port=self._embedding_port,
+                thresholds=self._build_saturation_thresholds(),
             )
-        )
+        else:
+            resolved_saturation_policy = never_saturate
 
         stage_config = StageConfig[TSource, TOutput](
             stage_name=stage_name,

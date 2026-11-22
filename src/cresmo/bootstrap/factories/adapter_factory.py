@@ -15,6 +15,7 @@ from cresmo.application.ports import (
     ChannelTaxonomyPort,
     LLMTransformationPort,
     PromptProviderPort,
+    TextEmbeddingPort,
 )
 from cresmo.application.services.preflight import PreflightHealthChecker
 from cresmo.bootstrap.factories.settings_factory import resolve_shared_settings
@@ -222,3 +223,47 @@ def build_indexing_adapter(
         keep_alive=settings.ollama_keep_alive,
         warmup_timeout_seconds=settings.ollama_warmup_timeout_seconds,
     )
+
+
+def build_embedding_adapter(
+    settings: CresmoSettings | None = None,
+    credential_pool: GeminiCredentialPool | None = None,
+) -> TextEmbeddingPort:
+    """Instantiate resilient text embedding adapter configured from application settings."""
+    from cresmo.infrastructure.adapters.embeddings import (
+        GeminiEmbeddingAdapter,
+        OllamaEmbeddingAdapter,
+        ResilientEmbeddingAdapter,
+        TfidfEmbeddingAdapter,
+    )
+
+    settings = resolve_shared_settings(settings)
+    provider = str(getattr(settings, "embedding_provider", "gemini")).strip().lower()
+
+    if provider == "tfidf":
+        return TfidfEmbeddingAdapter()
+
+    if provider == "ollama":
+        ollama_adapter = OllamaEmbeddingAdapter(
+            base_url=settings.ollama_base_url,
+            model=settings.ollama_embedding_model,
+        )
+        return ResilientEmbeddingAdapter(ollama_adapter, TfidfEmbeddingAdapter())
+
+    if provider == "gemini":
+        api_keys = [
+            k.get_secret_value().strip()
+            for k in settings.gemini_api_keys
+            if k.get_secret_value().strip()
+        ]
+        if credential_pool is None and not api_keys:
+            return TfidfEmbeddingAdapter()
+        gemini_adapter = GeminiEmbeddingAdapter(
+            model_name=settings.gemini_embedding_model,
+            dimensions=settings.gemini_embedding_dimensions,
+            credential_pool=credential_pool,
+            api_keys=api_keys or None,
+        )
+        return ResilientEmbeddingAdapter(gemini_adapter, TfidfEmbeddingAdapter())
+
+    return TfidfEmbeddingAdapter()

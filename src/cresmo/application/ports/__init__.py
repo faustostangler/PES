@@ -14,6 +14,7 @@ from __future__ import annotations
 
 from cresmo.application.ports.anonymizer import AnonymizerPort
 from cresmo.application.ports.critique_synthesizer import CritiqueSynthesizerPort
+from cresmo.application.ports.embedding import TextEmbeddingPort
 from cresmo.application.ports.llm_judge_port import LlmJudgePort
 from cresmo.application.ports.media import MediaIngestionPort
 from cresmo.application.ports.metrics import MetricsPort, NoOpMetricsPort
@@ -42,6 +43,7 @@ from cresmo.application.ports.telemetry import (
     active_telemetry_stage,
     format_stage_generation_span_name,
     format_stage_judge_span_name,
+    format_stage_saturation_span_name,
     format_stage_span_name,
     get_active_telemetry_pass,
     get_active_telemetry_stage,
@@ -71,11 +73,13 @@ __all__ = [
     "PreflightProbePort",
     "PromptProviderPort",
     "TelemetryPort",
+    "TextEmbeddingPort",
     "VaultRepositoryPort",
     "active_telemetry_pass",
     "active_telemetry_stage",
     "format_stage_generation_span_name",
     "format_stage_judge_span_name",
+    "format_stage_saturation_span_name",
     "format_stage_span_name",
     "get_active_telemetry_pass",
     "get_active_telemetry_stage",

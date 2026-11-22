@@ -25,6 +25,7 @@ from cresmo.application.pipeline import (
 from cresmo.application.services.preflight import PreflightHealthChecker
 from cresmo.application.use_cases.sync_channel import SyncChannelUseCase
 from cresmo.bootstrap.factories.adapter_factory import (
+    build_embedding_adapter,
     build_gemini_credential_pool,
     build_gemini_synthesis_adapter,
     build_indexing_adapter,
@@ -127,7 +128,8 @@ def build_pipeline(
     )
 
     # 5. Pipeline Stage Runner & Closed-Loop Verifier (ADR-030, ADR-031)
-    stage_factory = StageFactory(settings=settings)
+    embedding_port = build_embedding_adapter(settings, credential_pool=gemini_pool)
+    stage_factory = StageFactory(settings=settings, embedding_port=embedding_port)
     stage_runner = PipelineStageRunner(
         PipelineDependencies(
             telemetry_port=telemetry_port,
@@ -199,6 +201,7 @@ __all__ = [
     "build_anonymizer_adapter",
     "build_concat_master_use_case",
     "build_discover_batch_sources_use_case",
+    "build_embedding_adapter",
     "build_gemini_credential_pool",
     "build_gemini_synthesis_adapter",
     "build_index_raw_use_case",

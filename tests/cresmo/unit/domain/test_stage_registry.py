@@ -8,10 +8,9 @@ from cresmo.domain.exceptions import CresmoDomainError, DomainValidationError, S
 from cresmo.domain.stage_registry import (
     StageDefinition,
     StageRegistry,
-    gap_filler_saturation_policy,
-    never_saturate,
 )
 from cresmo.domain.value_objects import (
+    ConvergenceMode,
     JudgeCriterion,
     PipelineStatus,
 )
@@ -60,19 +59,17 @@ def test_stage_registry_fluid_prose_spec() -> None:
 
 
 def test_stage_registry_gap_filler_spec() -> None:
-    """Verify StageRegistry provides gap_filler specification with default max_passes=5 and saturation_policy."""
+    """Verify StageRegistry provides gap_filler specification with default max_passes=5 and convergence_mode."""
     assert StageRegistry.contains("gap_filler") is True
     spec = StageRegistry.get("gap_filler")
     assert isinstance(spec, StageDefinition)
     assert spec.max_passes == 5
-    assert spec.saturation_policy is gap_filler_saturation_policy
+    assert spec.convergence_mode is ConvergenceMode.HYBRID_SEMANTIC
     assert not hasattr(spec, "early_stopping_enabled")
     assert not hasattr(spec, "saturation_checker")
-    assert spec.saturation_policy("Draft one", None) is False
 
     fluid_spec = StageRegistry.get("fluid_prose")
-    assert fluid_spec.saturation_policy is never_saturate
-    assert fluid_spec.saturation_policy("Any text", "Prev text") is False
+    assert fluid_spec.convergence_mode is ConvergenceMode.NONE
 
 
 def test_stage_registry_unknown_stage_raises_key_error() -> None:

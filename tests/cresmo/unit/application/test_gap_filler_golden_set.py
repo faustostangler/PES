@@ -16,10 +16,10 @@ from typing import Any
 
 import pytest
 
-from cresmo.domain.services.mechanical_validator import (
-    extract_complementary_section,
-    validate_fluid_prose_mechanical_invariants,
-    validate_gap_filler_mechanical_invariants,
+from cresmo.domain.services.prose_syntax_guard import (
+    extract_extra_info_section,
+    validate_fluid_prose_syntax,
+    validate_gap_filler_syntax,
 )
 from cresmo.domain.value_objects.quality import JudgeCriterion
 
@@ -136,7 +136,7 @@ def test_golden_set_source_text_invariants(
             f"Item '{item_id}' raw_text must start with '## ' (StageTranscript contract)."
         )
 
-        violations = validate_fluid_prose_mechanical_invariants(raw_text)
+        violations = validate_fluid_prose_syntax(raw_text)
         assert not violations, (
             f"Item '{item_id}' raw_text has fluid_prose mechanical violations: {violations}"
         )
@@ -154,13 +154,13 @@ def test_golden_set_candidate_text_invariants(
         assert cand.startswith("## "), f"Item '{item_id}' candidate_text must start with '## '."
         assert "### Extra Info" in cand, f"Item '{item_id}' missing mandatory '### Extra Info'."
 
-        comp_section = extract_complementary_section(cand)
+        comp_section = extract_extra_info_section(cand)
         assert comp_section, f"Item '{item_id}' complementary section is empty."
 
         # If it's NOT an intentional mechanical defect item (e.g. ei_04 testing bullet formatting
         # or ls_07 testing em-dash violation), it must pass full gap_filler mechanical validation
         if meta.get("expected_anomaly") not in MECHANICAL_EXEMPTIONS:
-            violations = validate_gap_filler_mechanical_invariants(cand)
+            violations = validate_gap_filler_syntax(cand)
             assert not violations, (
                 f"Item '{item_id}' has unintended mechanical violations: {violations}"
             )
@@ -221,7 +221,7 @@ def test_golden_set_metadata_and_defect_isolation(
             criterion == JudgeCriterion.EXTRA_INFO_GRANULARITY.value and verdict == "FAIL"
         )
         if not is_extra_fail:
-            comp_section = extract_complementary_section(cand) or ""
+            comp_section = extract_extra_info_section(cand) or ""
             numbered = [
                 line.strip()
                 for line in comp_section.splitlines()

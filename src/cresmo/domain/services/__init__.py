@@ -3,17 +3,35 @@
 from __future__ import annotations
 
 from cresmo.domain.services.compendium import post_process_enriched_compendium
-from cresmo.domain.services.mechanical_validator import (
-    check_complementary_mechanical_saturation,
-    extract_complementary_section,
-    validate_fluid_prose_mechanical_invariants,
-    validate_gap_filler_mechanical_invariants,
+from cresmo.domain.services.convergence_evaluator import (
+    NO_NEW_GAPS_SENTINEL,
+    compute_maxsim_novelty,
+    compute_ngram_jaccard,
+    compute_word_delta_ratio,
+    cosine_similarity,
+    evaluate_lexical_convergence,
+    evaluate_semantic_convergence,
+    is_explicit_stop_sentinel,
+    segment_semantic_units,
+)
+from cresmo.domain.services.prose_syntax_guard import (
+    extract_extra_info_section,
+    validate_fluid_prose_syntax,
+    validate_gap_filler_syntax,
 )
 
 __all__ = [
-    "check_complementary_mechanical_saturation",
-    "extract_complementary_section",
+    "NO_NEW_GAPS_SENTINEL",
+    "compute_maxsim_novelty",
+    "compute_ngram_jaccard",
+    "compute_word_delta_ratio",
+    "cosine_similarity",
+    "evaluate_lexical_convergence",
+    "evaluate_semantic_convergence",
+    "extract_extra_info_section",
+    "is_explicit_stop_sentinel",
     "post_process_enriched_compendium",
-    "validate_fluid_prose_mechanical_invariants",
-    "validate_gap_filler_mechanical_invariants",
+    "segment_semantic_units",
+    "validate_fluid_prose_syntax",
+    "validate_gap_filler_syntax",
 ]

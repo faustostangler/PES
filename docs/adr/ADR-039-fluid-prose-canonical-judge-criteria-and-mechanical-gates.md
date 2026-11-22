@@ -5,7 +5,10 @@
 **Decision Makers:** Lead Architect (Fausto Stangler), Systems Architect (Doctor Stangler Committee)  
 **Governing Method:** Doctor Stangler Architecture Method (Clean/Hexagonal DDD Modular Monolith, KISS & Fail-Fast Principles, ADR-First)  
 **Glossary Reference:** [`docs/GLOSSARY.md`](../GLOSSARY.md)  
-**Related ADRs:** [`ADR-001`](ADR-001-cresmo-modular-monolith-strangling.md), [`ADR-017`](ADR-017-langfuse-v4-prompt-management-and-anonymizer-governance.md), [`ADR-023`](ADR-023-prometheus-sre-golden-signals-and-dora-metrics-platform.md), [`ADR-028`](ADR-028-decoupling-fluid-prose-and-socratic-gap-filling.md), [`ADR-029`](ADR-029-unified-quality-judge-port-and-evaluator-adapters.md), [`ADR-030`](ADR-030-stage-quality-gate-and-evaluator-retry-fabric.md), [`ADR-031`](ADR-031-standardized-stage-descriptor-and-closed-loop-refinement.md), [`ADR-036`](ADR-036-clean-telemetry-namespacing-and-observation-binding.md)
+**Related ADRs:** [`ADR-001`](ADR-001-cresmo-modular-monolith-strangling.md), [`ADR-017`](ADR-017-langfuse-v4-prompt-management-and-anonymizer-governance.md), [`ADR-023`](ADR-023-prometheus-sre-golden-signals-and-dora-metrics-platform.md), [`ADR-028`](ADR-028-decoupling-fluid-prose-and-socratic-gap-filling.md), [`ADR-029`](ADR-029-unified-quality-judge-port-and-evaluator-adapters.md), [`ADR-030`](ADR-030-stage-quality-gate-and-evaluator-retry-fabric.md), [`ADR-031`](ADR-031-standardized-stage-descriptor-and-closed-loop-refinement.md), [`ADR-036`](ADR-036-clean-telemetry-namespacing-and-observation-binding.md), [`ADR-066`](ADR-066-hybrid-semantic-saturation-and-text-embedding-adapters.md)
+
+> [!NOTE]
+> **Refinement (`ADR-066`):** `mechanical_validator.py` is deleted (`ADR-010`). Layer 1 deterministic syntactic pre-flight guards now reside in `src/cresmo/domain/services/prose_syntax_guard.py`, cleanly decoupled from inter-pass convergence evaluation (`convergence_evaluator.py` and `HybridSaturationEvaluator`).
 
 ---
 

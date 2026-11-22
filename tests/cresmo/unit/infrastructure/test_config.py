@@ -349,3 +349,53 @@ class TestCresmoSettings:
         """Verify deprecated Gemini sampling tunable judge_temperature is removed from settings."""
         settings = CresmoSettings(_env_file=None)
         assert not hasattr(settings, "judge_temperature")
+
+    def test_embedding_and_saturation_settings_defaults_env_overrides_and_bounds(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """Verify embedding and hybrid saturation defaults, CRESMO_* overrides, and Pydantic bounds."""
+        from pydantic import ValidationError
+
+        settings = CresmoSettings(_env_file=None)
+        assert settings.embedding_provider == "gemini"
+        assert settings.gemini_embedding_model == "gemini-embedding-001"
+        assert settings.gemini_embedding_dimensions == 768
+        assert settings.ollama_embedding_model == "nomic-embed-text"
+        assert settings.saturation_lexical_threshold == 0.95
+        assert settings.saturation_max_word_delta == 0.03
+        assert settings.saturation_semantic_threshold == 0.88
+        assert settings.saturation_max_novel_paragraphs == 0
+
+        monkeypatch.setenv("CRESMO_EMBEDDING_PROVIDER", "ollama")
+        monkeypatch.setenv("CRESMO_GEMINI_EMBEDDING_MODEL", "text-embedding-004")
+        monkeypatch.setenv("CRESMO_GEMINI_EMBEDDING_DIMENSIONS", "256")
+        monkeypatch.setenv("CRESMO_OLLAMA_EMBEDDING_MODEL", "mxbai-embed-large")
+        monkeypatch.setenv("CRESMO_SATURATION_LEXICAL_THRESHOLD", "0.90")
+        monkeypatch.setenv("CRESMO_SATURATION_MAX_WORD_DELTA", "0.05")
+        monkeypatch.setenv("CRESMO_SATURATION_SEMANTIC_THRESHOLD", "0.85")
+        monkeypatch.setenv("CRESMO_SATURATION_MAX_NOVEL_PARAGRAPHS", "2")
+
+        overridden = CresmoSettings(_env_file=None)
+        assert overridden.embedding_provider == "ollama"
+        assert overridden.gemini_embedding_model == "text-embedding-004"
+        assert overridden.gemini_embedding_dimensions == 256
+        assert overridden.ollama_embedding_model == "mxbai-embed-large"
+        assert overridden.saturation_lexical_threshold == 0.90
+        assert overridden.saturation_max_word_delta == 0.05
+        assert overridden.saturation_semantic_threshold == 0.85
+        assert overridden.saturation_max_novel_paragraphs == 2
+
+        invalid_cases: list[dict[str, object]] = [
+            {"gemini_embedding_dimensions": 0},
+            {"gemini_embedding_dimensions": -128},
+            {"saturation_lexical_threshold": 0.0},
+            {"saturation_lexical_threshold": 1.01},
+            {"saturation_max_word_delta": -0.01},
+            {"saturation_max_word_delta": 1.01},
+            {"saturation_semantic_threshold": 0.0},
+            {"saturation_semantic_threshold": 1.01},
+            {"saturation_max_novel_paragraphs": -1},
+        ]
+        for invalid_kwargs in invalid_cases:
+            with pytest.raises(ValidationError):
+                CresmoSettings(_env_file=None, **invalid_kwargs)  # type: ignore[arg-type]

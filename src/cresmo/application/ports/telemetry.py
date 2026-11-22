@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from collections.abc import Generator
-from contextlib import AbstractContextManager, contextmanager
+from contextlib import AbstractContextManager, contextmanager, nullcontext
 from contextvars import ContextVar
 from typing import Any, Final
 
@@ -75,6 +75,17 @@ def format_stage_generation_span_name(
 def format_stage_judge_span_name(stage_name: str) -> str:
     """Return canonical Tier 3B judge evaluation span name (``cresmo.{stage_name}.judge``)."""
     return f"cresmo.{_normalize_stage_name(stage_name)}.judge"
+
+
+def format_stage_saturation_span_name(
+    stage_name: str,
+    pass_num: int | None = None,
+) -> str:
+    """Return canonical Tier 3C saturation evaluation span name, optionally pass-scoped."""
+    base = f"cresmo.{_normalize_stage_name(stage_name)}.saturation"
+    if pass_num is not None:
+        return f"{base}.pass_{_validate_pass_num(pass_num)}"
+    return base
 
 
 def get_active_telemetry_stage() -> str | None:
@@ -280,6 +291,27 @@ class TelemetryPort(ABC):
         """
         raise NotImplementedError
 
+    def start_stage_saturation_span(
+        self,
+        stage_name: str,
+        pass_num: int = 1,
+        attributes: dict[str, Any] | None = None,
+    ) -> AbstractContextManager[Any]:
+        """Create child OpenTelemetry span demarcating pass saturation evaluation.
+
+        Default no-op context manager allows existing test doubles to remain compatible.
+
+        Args:
+            stage_name: Identifier for the active pipeline stage.
+            pass_num: 1-based refinement pass index.
+            attributes: Optional scalar saturation diagnostic attributes.
+
+        Returns:
+            ContextManager managing the child saturation span.
+        """
+        _ = (stage_name, pass_num, attributes)
+        return nullcontext()
+
     def flush(self) -> None:
         """Flush pending spans, metrics, and buffer queues to backend telemetry collectors.
 
@@ -364,6 +396,27 @@ class NoOpTelemetryPort(TelemetryPort):
         output_payload: dict[str, Any] | str | None = None,
     ) -> None:
         """No-op stage I/O recorder."""
+
+    def start_stage_saturation_span(
+        self,
+        stage_name: str,
+        pass_num: int = 1,
+        attributes: dict[str, Any] | None = None,
+    ) -> AbstractContextManager[Any]:
+        """Create child OpenTelemetry span demarcating pass saturation evaluation.
+
+        Default no-op context manager allows existing test doubles to remain compatible.
+
+        Args:
+            stage_name: Identifier for the active pipeline stage.
+            pass_num: 1-based refinement pass index.
+            attributes: Optional scalar saturation diagnostic attributes.
+
+        Returns:
+            ContextManager managing the child saturation span.
+        """
+        _ = (stage_name, pass_num, attributes)
+        return nullcontext()
 
     def flush(self) -> None:
         """No-op flush."""

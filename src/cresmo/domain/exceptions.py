@@ -115,3 +115,11 @@ class LLMInfrastructureError(CresmoInfrastructureError):
 
     Wraps provider-specific failures (e.g., Google GenAI or Ollama socket errors).
     """
+
+
+class EmbeddingInfrastructureError(CresmoInfrastructureError):
+    """Raised when an external or local text embedding call fails or returns invalid vectors.
+
+    Wraps provider-specific failures (e.g., Google GenAI, Ollama HTTP, or dimension mismatches)
+    behind the Anti-Corruption Layer.
+    """

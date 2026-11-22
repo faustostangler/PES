@@ -208,8 +208,20 @@ class CresmoSettings(BaseSettings):
             values["_env_file"] = _env_file
         if "gemini_api_key" in values and "gemini_api_keys" not in values:
             values["gemini_api_keys"] = values["gemini_api_key"]
-        if "pipeline_version" in values and "CRESMO_PIPELINE_VERSION" not in values:
-            values["CRESMO_PIPELINE_VERSION"] = values.pop("pipeline_version")
+        python_to_env_aliases = (
+            ("pipeline_version", "CRESMO_PIPELINE_VERSION"),
+            ("embedding_provider", "CRESMO_EMBEDDING_PROVIDER"),
+            ("gemini_embedding_model", "CRESMO_GEMINI_EMBEDDING_MODEL"),
+            ("gemini_embedding_dimensions", "CRESMO_GEMINI_EMBEDDING_DIMENSIONS"),
+            ("ollama_embedding_model", "CRESMO_OLLAMA_EMBEDDING_MODEL"),
+            ("saturation_lexical_threshold", "CRESMO_SATURATION_LEXICAL_THRESHOLD"),
+            ("saturation_max_word_delta", "CRESMO_SATURATION_MAX_WORD_DELTA"),
+            ("saturation_semantic_threshold", "CRESMO_SATURATION_SEMANTIC_THRESHOLD"),
+            ("saturation_max_novel_paragraphs", "CRESMO_SATURATION_MAX_NOVEL_PARAGRAPHS"),
+        )
+        for py_name, env_alias in python_to_env_aliases:
+            if py_name in values and env_alias not in values:
+                values[env_alias] = values.pop(py_name)
         super().__init__(*args, **values)
 
     # =========================================================================
@@ -632,6 +644,63 @@ class CresmoSettings(BaseSettings):
         validation_alias=AliasChoices("indexing_provider", "CRESMO_INDEXING_PROVIDER"),
         description="Provider for raw transcript conceptual indexing: 'ollama' (default local) or 'gemini' (cloud API).",
     )
+    embedding_provider: Literal["gemini", "ollama", "tfidf"] = Field(
+        default="gemini",
+        validation_alias="CRESMO_EMBEDDING_PROVIDER",
+        description="Text embedding provider for hybrid semantic pass saturation ('gemini', 'ollama', or 'tfidf').",
+    )
+    gemini_embedding_model: str = Field(
+        default="gemini-embedding-001",
+        validation_alias="CRESMO_GEMINI_EMBEDDING_MODEL",
+        description="Google Gemini model identifier used for text embeddings.",
+    )
+    gemini_embedding_dimensions: int = Field(
+        default=768,
+        ge=1,
+        validation_alias="CRESMO_GEMINI_EMBEDDING_DIMENSIONS",
+        description="Output vector dimensionality requested from Gemini embeddings.",
+    )
+    ollama_embedding_model: str = Field(
+        default="nomic-embed-text",
+        validation_alias="CRESMO_OLLAMA_EMBEDDING_MODEL",
+        description="Local Ollama model identifier used for text embeddings.",
+    )
+    saturation_lexical_threshold: float = Field(
+        default=0.95,
+        gt=0.0,
+        le=1.0,
+        validation_alias="CRESMO_SATURATION_LEXICAL_THRESHOLD",
+        description="Minimum n-gram Jaccard similarity required for Tier 1 lexical saturation.",
+    )
+    saturation_max_word_delta: float = Field(
+        default=0.03,
+        ge=0.0,
+        le=1.0,
+        validation_alias="CRESMO_SATURATION_MAX_WORD_DELTA",
+        description="Maximum relative word-count delta allowed for Tier 1 lexical saturation.",
+    )
+    saturation_semantic_threshold: float = Field(
+        default=0.88,
+        gt=0.0,
+        le=1.0,
+        validation_alias="CRESMO_SATURATION_SEMANTIC_THRESHOLD",
+        description="Minimum cosine similarity threshold to consider a unit semantically covered.",
+    )
+    saturation_max_novel_paragraphs: int = Field(
+        default=0,
+        ge=0,
+        validation_alias="CRESMO_SATURATION_MAX_NOVEL_PARAGRAPHS",
+        description="Maximum novel semantic units tolerated while classifying a pass as saturated.",
+    )
+
+    @field_validator("embedding_provider", mode="before")
+    @classmethod
+    def _normalize_embedding_provider(cls, value: Any) -> Any:
+        """Normalize embedding provider string by stripping whitespace and lowercasing."""
+        if isinstance(value, str):
+            return value.strip().lower()
+        return value
+
     gemini_timeout_seconds: float = Field(
         default=DEFAULT_GEMINI_TIMEOUT_SECONDS,
         ge=1.0,

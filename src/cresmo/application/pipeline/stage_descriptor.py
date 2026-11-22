@@ -15,7 +15,6 @@ from typing import Any
 
 from cresmo.application.pipeline.context import PipelineExecutionContext
 from cresmo.application.ports.prompt import PromptProviderPort
-from cresmo.domain.stage_registry import SaturationPolicy, never_saturate
 from cresmo.domain.value_objects import (
     CandidateText,
     ChatMessage,
@@ -23,8 +22,21 @@ from cresmo.domain.value_objects import (
     Content,
     MessageRole,
     PromptKey,
+    SaturationPolicy,
     StageEvaluationSpec,
+    never_saturate,
 )
+
+
+def extract_stage_source_text(source: Any) -> str:
+    """Extract canonical raw text from StageTranscript-like objects, Content wrappers, or strings."""
+    source_content = getattr(source, "content", None)
+    raw_text_val = (
+        source_content.text
+        if isinstance(source_content, Content)
+        else (getattr(source, "text", None) or str(source))
+    )
+    return str(raw_text_val)
 
 
 def _append_to_last_user_message(prompt: ChatPrompt, suffix: str) -> ChatPrompt:
@@ -95,13 +107,7 @@ class StageConfig[TSource, TOutput]:
     ) -> ChatPrompt:
         """Resolve ChatPrompt, injecting closed-loop reflection critique on retry."""
         effective_channel_id = context.channel.id.value if context.channel.id else ""
-        source_content = getattr(source, "content", None)
-        raw_text_val = (
-            source_content.text
-            if isinstance(source_content, Content)
-            else (getattr(source, "text", None) or str(source))
-        )
-        raw_text = str(raw_text_val)
+        raw_text = extract_stage_source_text(source)
         effective_key = prompt_key or self.transform_prompt_key
 
         raw_current_text = extra_context.get("current_text")

@@ -15,8 +15,8 @@ from typing import Any
 
 import pytest
 
-from cresmo.domain.services.mechanical_validator import (
-    validate_fluid_prose_mechanical_invariants,
+from cresmo.domain.services.prose_syntax_guard import (
+    validate_fluid_prose_syntax,
 )
 from cresmo.domain.value_objects.quality import JudgeCriterion
 
@@ -139,7 +139,7 @@ def test_golden_set_candidate_text_invariants(
 
         # For valid PASS items, must strictly pass all mechanical preflight invariants
         if verdict == "PASS":
-            violations = validate_fluid_prose_mechanical_invariants(cand)
+            violations = validate_fluid_prose_syntax(cand)
             assert not violations, (
                 f"PASS Item '{item_id}' failed mechanical validation: {violations}"
             )

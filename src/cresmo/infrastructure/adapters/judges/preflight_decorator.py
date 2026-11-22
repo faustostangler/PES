@@ -10,9 +10,9 @@ from __future__ import annotations
 import structlog
 
 from cresmo.application.ports.llm_judge_port import LlmJudgePort
-from cresmo.domain.services.mechanical_validator import (
-    validate_fluid_prose_mechanical_invariants,
-    validate_gap_filler_mechanical_invariants,
+from cresmo.domain.services.prose_syntax_guard import (
+    validate_fluid_prose_syntax,
+    validate_gap_filler_syntax,
 )
 from cresmo.domain.value_objects.quality import (
     CriterionScore,
@@ -40,7 +40,7 @@ class MechanicalPreflightJudgeDecorator(LlmJudgePort):
         """Short-circuit evaluation if deterministic mechanical invariants fail."""
         # Layer 1: Check mechanical syntax for fluid_prose stage
         if context.stage_name == "fluid_prose":
-            violations = validate_fluid_prose_mechanical_invariants(context.candidate_text)
+            violations = validate_fluid_prose_syntax(context.candidate_text)
             if violations:
                 violations_msg = "; ".join(violations)
                 logger.info(
@@ -67,7 +67,7 @@ class MechanicalPreflightJudgeDecorator(LlmJudgePort):
 
         # Layer 1: Check mechanical syntax for gap_filler stage
         elif context.stage_name == "gap_filler":
-            violations = validate_gap_filler_mechanical_invariants(context.candidate_text)
+            violations = validate_gap_filler_syntax(context.candidate_text)
             if violations:
                 violations_msg = "; ".join(violations)
                 logger.info(

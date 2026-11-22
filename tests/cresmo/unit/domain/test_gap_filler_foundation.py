@@ -10,10 +10,8 @@ from __future__ import annotations
 
 from cresmo.domain.entities.transcripts import StageTranscript
 from cresmo.domain.services.compendium import post_process_enriched_compendium
-from cresmo.domain.services.mechanical_validator import (
-    check_complementary_mechanical_saturation,
-    validate_gap_filler_mechanical_invariants,
-)
+from cresmo.domain.services.convergence_evaluator import evaluate_semantic_convergence
+from cresmo.domain.services.prose_syntax_guard import validate_gap_filler_syntax
 from cresmo.domain.stage_registry import StageRegistry
 from cresmo.domain.value_objects import (
     CandidateText,
@@ -23,6 +21,8 @@ from cresmo.domain.value_objects import (
     JudgeCriterion,
     MediaProvenance,
     PromptKey,
+    SaturationReason,
+    SaturationThresholds,
 )
 
 
@@ -68,21 +68,21 @@ def test_gap_filler_mechanical_invariants_valid() -> None:
         "tendo liderado contingentes cruzados no âmbito da Reconquista ibérica.\n"
         "2. A doação régia de 1096 estabeleceu laços de vassalagem estrita com a coroa leonesa."
     )
-    violations = validate_gap_filler_mechanical_invariants(valid_text)
+    violations = validate_gap_filler_syntax(valid_text)
     assert violations == []
 
 
 def test_gap_filler_mechanical_invariants_missing_complementary_section() -> None:
     """Verify missing '### Extra Info' triggers a mechanical violation."""
     invalid_text = "## O Surgimento de Portugal\n\nTexto corrido sem seção complementar alguma."
-    violations = validate_gap_filler_mechanical_invariants(invalid_text)
+    violations = validate_gap_filler_syntax(invalid_text)
     assert any("Extra Info" in v for v in violations)
 
 
 def test_gap_filler_mechanical_invariants_empty_complementary_section() -> None:
     """Verify empty complementary section triggers a mechanical violation."""
     invalid_text = "## O Surgimento de Portugal\n\nTexto corrido principal.\n\n### Extra Info\n"
-    violations = validate_gap_filler_mechanical_invariants(invalid_text)
+    violations = validate_gap_filler_syntax(invalid_text)
     assert any("empty" in v.lower() for v in violations)
 
 
@@ -91,58 +91,60 @@ def test_gap_filler_mechanical_invariants_prohibits_em_dash_and_tables() -> None
     text_with_em_dash = (
         "## Título\n\nO rei — figura central — viajou.\n\n### Extra Info\n\n1. Detalhes."
     )
-    assert any(
-        "em-dash" in v.lower() for v in validate_gap_filler_mechanical_invariants(text_with_em_dash)
-    )
+    assert any("em-dash" in v.lower() for v in validate_gap_filler_syntax(text_with_em_dash))
 
     text_with_table = (
         "## Título\n\n| Col1 | Col2 |\n| --- | --- |\n| A | B |\n\n### Extra Info\n\n1. Detalhes."
     )
-    assert any(
-        "table" in v.lower() for v in validate_gap_filler_mechanical_invariants(text_with_table)
-    )
+    assert any("table" in v.lower() for v in validate_gap_filler_syntax(text_with_table))
 
 
 def test_gap_filler_mechanical_invariants_prohibits_bullets_in_main_body() -> None:
     """Verify bullet points in main body are rejected by mechanical preflight."""
     text_with_bullets = "## Título\n\n* Item 1\n* Item 2\n\n### Extra Info\n\n1. Detalhes."
-    assert any(
-        "bullet" in v.lower() for v in validate_gap_filler_mechanical_invariants(text_with_bullets)
-    )
+    assert any("bullet" in v.lower() for v in validate_gap_filler_syntax(text_with_bullets))
 
 
-def test_check_complementary_mechanical_saturation_detected() -> None:
-    """Verify saturation detected when delta words < 5% and 100% of bold entities match."""
-    prev_draft = (
-        "## Corpo Principal\n\nTexto.\n\n"
-        "### Extra Info\n\n"
-        "1. **Henrique de Borgonha** nasceu em 1066 e casou com **Teresa de Leão** em 1093."
+def test_semantic_convergence_plateau_detected() -> None:
+    """Verify semantic plateau is detected when all candidate units match baseline vectors above threshold."""
+    baseline_vectors = [[1.0, 0.0], [0.0, 1.0]]
+    current_vectors = [[0.99, 0.14], [0.14, 0.99]]
+
+    verdict = evaluate_semantic_convergence(
+        baseline_vectors,
+        current_vectors,
+        SaturationThresholds(semantic_similarity_threshold=0.88),
+        lexical_jaccard=0.45,
+        word_delta_ratio=0.05,
+        provider="semantic",
     )
-    # Current draft rephrases slightly: same bold entities, word delta < 5%
-    curr_draft = (
-        "## Corpo Principal\n\nTexto expandido.\n\n"
-        "### Extra Info\n\n"
-        "1. O nobre **Henrique de Borgonha** nasceu no ano 1066 e casou com **Teresa de Leão** em 1093."
-    )
-    is_saturated = check_complementary_mechanical_saturation(prev_draft, curr_draft)
-    assert is_saturated is True
+
+    assert verdict.is_saturated is True
+    assert verdict.reason is SaturationReason.SEMANTIC_PLATEAU
+    assert verdict.preserve_baseline is True
+    assert verdict.novel_paragraphs == 0
+    assert verdict.total_paragraphs == 2
 
 
-def test_check_complementary_mechanical_saturation_not_detected_when_new_entities_added() -> None:
-    """Verify saturation NOT triggered when new bold entities (NER) are added."""
-    prev_draft = (
-        "## Corpo Principal\n\nTexto.\n\n"
-        "### Extra Info\n\n"
-        "1. **Henrique de Borgonha** governou o condado."
+def test_semantic_convergence_novel_content_detected_when_new_unit_added() -> None:
+    """Verify semantic saturation is NOT triggered when a candidate unit introduces orthogonal semantics."""
+    baseline_vectors = [[1.0, 0.0]]
+    current_vectors = [[1.0, 0.0], [0.0, 1.0]]
+
+    verdict = evaluate_semantic_convergence(
+        baseline_vectors,
+        current_vectors,
+        SaturationThresholds(semantic_similarity_threshold=0.88),
+        lexical_jaccard=0.40,
+        word_delta_ratio=0.25,
+        provider="semantic",
     )
-    curr_draft = (
-        "## Corpo Principal\n\nTexto.\n\n"
-        "### Extra Info\n\n"
-        "1. **Henrique de Borgonha** governou o condado.\n"
-        "2. **Afonso Henriques** consolidou a autonomia no **Tratado de Zamora**."
-    )
-    is_saturated = check_complementary_mechanical_saturation(prev_draft, curr_draft)
-    assert is_saturated is False
+
+    assert verdict.is_saturated is False
+    assert verdict.reason is SaturationReason.NOVEL_CONTENT
+    assert verdict.preserve_baseline is False
+    assert verdict.novel_paragraphs == 1
+    assert verdict.total_paragraphs == 2
 
 
 def test_post_process_enriched_compendium() -> None:

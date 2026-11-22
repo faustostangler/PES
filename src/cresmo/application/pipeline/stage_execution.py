@@ -16,19 +16,24 @@ import structlog
 from opentelemetry import trace
 
 from cresmo.application.pipeline.context import PipelineExecutionContext
-from cresmo.application.pipeline.stage_descriptor import StageConfig
+from cresmo.application.pipeline.stage_descriptor import (
+    StageConfig,
+    extract_stage_source_text,
+)
 from cresmo.application.pipeline.stage_telemetry import attach_evaluation_span_attributes
 from cresmo.application.ports import (
     LlmJudgePort,
     LLMTransformationPort,
     PromptProviderPort,
+    TelemetryPort,
     active_telemetry_pass,
 )
-from cresmo.domain.stage_registry import StageName
 from cresmo.domain.value_objects import (
     CandidateText,
     EvaluationContext,
     JudgeEvaluation,
+    SaturationReason,
+    SaturationVerdict,
 )
 
 logger = structlog.get_logger(__name__)
@@ -44,29 +49,30 @@ def generate_stage_candidate[TSource, TOutput](
     attempt: int,
     active_trace_id: str,
     critique: str | None = None,
+    telemetry_port: TelemetryPort | None = None,
 ) -> CandidateText:
     """Build prompt and invoke LLM transformation port to generate CandidateText (multi-pass aware)."""
     raw_max_passes = getattr(stage_config, "max_passes", 1)
     max_passes = raw_max_passes if isinstance(raw_max_passes, int) and raw_max_passes > 0 else 1
     is_multi_pass = max_passes > 1
 
-    previous_text: str | None = None
+    source_text = extract_stage_source_text(source)
+    draft_text: str | None = None
+    baseline_text: str = source_text
     current_text = ""
     passes_executed = 0
     is_saturated = False
     pending_final_critique = False
+    saturation_history: list[dict[str, Any]] = []
 
     for pass_index in range(1, max_passes + 1):
-        if stage_config.stage_name == StageName.GAP_FILLER: # stage specific debug
-            pass
-
         is_final_pass = pass_index == max_passes or pending_final_critique
         pass_prompt_context: dict[str, Any] = (
             {"pass_num": pass_index, "total_passes": max_passes} if is_multi_pass else {}
         )
-        if previous_text is not None:
+        if draft_text is not None:
             pass_prompt_context["prev_pass_num"] = pass_index - 1
-            pass_prompt_context["current_text"] = previous_text
+            pass_prompt_context["current_text"] = draft_text
         if is_multi_pass:
             logger.info(
                 "[StageRunner] Executing pass %d/%d for %s...",
@@ -101,24 +107,58 @@ def generate_stage_candidate[TSource, TOutput](
             is_saturated = True
             break
 
-e        if stage_config.saturation_policy(current_text, previous_text):
-            if critique and pass_index < max_passes:
-                logger.info(
-                    "[StageRunner] Mechanical saturation reached at pass %d/%d; scheduling final critique pass.",
-                    pass_index,
-                    max_passes,
-                )
-                pending_final_critique = True
-            else:
-                logger.info(
-                    "[StageRunner] Mechanical saturation reached at pass %d/%d. Halting early.",
-                    pass_index,
-                    max_passes,
-                )
-                is_saturated = True
-                break
+        raw_verdict: Any = stage_config.saturation_policy(
+            baseline_text,
+            current_text,
+            pass_index,
+        )
+        if isinstance(raw_verdict, SaturationVerdict):
+            verdict = raw_verdict
+            if verdict.preserve_baseline:
+                current_text = baseline_text
 
-        previous_text = current_text
+            if telemetry_port is not None and verdict.reason is not SaturationReason.DISABLED:
+                span_attrs: dict[str, Any] = {
+                    "cresmo.saturation.is_saturated": verdict.is_saturated,
+                    "cresmo.saturation.reason": verdict.reason.value,
+                    "cresmo.saturation.lexical_jaccard": verdict.lexical_jaccard,
+                    "cresmo.saturation.word_delta_ratio": verdict.word_delta_ratio,
+                    "cresmo.saturation.max_novelty": verdict.max_novelty,
+                    "cresmo.saturation.novel_paragraphs": verdict.novel_paragraphs,
+                    "cresmo.saturation.total_paragraphs": verdict.total_paragraphs,
+                    "cresmo.saturation.preserve_baseline": verdict.preserve_baseline,
+                    "cresmo.saturation.provider": verdict.provider,
+                }
+                with telemetry_port.start_stage_saturation_span(
+                    stage_config.stage_name,
+                    pass_num=pass_index,
+                    attributes=span_attrs,
+                ):
+                    pass
+
+            history_entry = verdict.to_metadata_dict()
+            history_entry["pass_num"] = pass_index
+            saturation_history.append(history_entry)
+
+            if verdict.is_saturated:
+                if critique and pass_index < max_passes:
+                    logger.info(
+                        "[StageRunner] Mechanical saturation reached at pass %d/%d; scheduling final critique pass.",
+                        pass_index,
+                        max_passes,
+                    )
+                    pending_final_critique = True
+                else:
+                    logger.info(
+                        "[StageRunner] Mechanical saturation reached at pass %d/%d. Halting early.",
+                        pass_index,
+                        max_passes,
+                    )
+                    is_saturated = True
+                    break
+
+        baseline_text = current_text
+        draft_text = current_text
 
     candidate_metadata: dict[str, Any] = {
         "channel_id": context.channel.id.value if context.channel.id else "",
@@ -130,6 +170,7 @@ e        if stage_config.saturation_policy(current_text, previous_text):
     if is_multi_pass:
         candidate_metadata["passes_executed"] = passes_executed
         candidate_metadata["is_saturated"] = is_saturated
+        candidate_metadata["saturation_history"] = saturation_history
 
     return CandidateText(
         text=current_text,

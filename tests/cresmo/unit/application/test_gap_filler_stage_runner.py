@@ -157,21 +157,15 @@ def test_gap_filler_execution_early_stopping_on_saturation(
     sample_context: PipelineExecutionContext,
     sample_fluid_transcript: StageTranscript,
 ) -> None:
-    """Verify gap_filler stops before max_passes when mechanical saturation is detected."""
-    # Pass 1 output:
+    """Verify gap_filler stops before max_passes when convergence saturation is detected."""
     pass1_text = (
         "## Fundação de Portugal\n\n"
-        "O conde **Henrique de Borgonha** governou o território.\n\n"
+        "O conde **Henrique de Borgonha** governou o território ocidental com apoio régio.\n\n"
         "### Extra Info\n\n"
         "1. **Henrique de Borgonha** casou com **Teresa de Leão** em 1093."
     )
-    # Pass 2 output (same bold entities, delta items = 0 -> saturated):
-    pass2_text = (
-        "## Fundação de Portugal\n\n"
-        "O nobre conde **Henrique de Borgonha** governou o território ocidental.\n\n"
-        "### Extra Info\n\n"
-        "1. O nobre **Henrique de Borgonha** casou com a infanta **Teresa de Leão** em 1093."
-    )
+    # Pass 2 returns identical content -> triggers Layer 1 lexical identity saturation
+    pass2_text = pass1_text
 
     mock_llm = MagicMock(spec=LLMTransformationPort)
     mock_llm.transform.side_effect = [pass1_text, pass2_text, "pass 3 should not be called"]
@@ -393,21 +387,18 @@ def test_multi_pass_early_saturation_with_critique_runs_terminal_critique_pass(
     sample_context: PipelineExecutionContext,
     sample_fluid_transcript: StageTranscript,
 ) -> None:
-    """Verify early mechanical saturation schedules a single terminal critique pass without wasting remaining passes."""
+    """Verify early saturation schedules a single terminal critique pass without wasting remaining passes."""
     from cresmo.application.pipeline.stage_descriptor import StageConfig
     from cresmo.application.pipeline.stage_execution import generate_stage_candidate
-    from cresmo.domain.stage_registry import gap_filler_saturation_policy
+    from cresmo.application.services.hybrid_saturation import HybridSaturationEvaluator
     from cresmo.domain.value_objects import PromptKey
     from cresmo.infrastructure.adapters.prompts import JsonPromptProvider
 
     pass1_text = (
-        "## Title\n\nDraft one.\n\n### Extra Info\n\n"
+        "## Title\n\nDraft one describing military governance in 1096.\n\n### Extra Info\n\n"
         "1. **Henrique de Borgonha** casou com **Teresa de Leão**."
     )
-    pass2_text = (
-        "## Title\n\nDraft two.\n\n### Extra Info\n\n"
-        "1. **Henrique de Borgonha** e **Teresa de Leão** consolidaram o condado."
-    )
+    pass2_text = pass1_text
     pass3_text = (
         "## Title\n\nCritique fixed final draft.\n\n### Extra Info\n\n"
         "1. **Henrique de Borgonha** e **Teresa de Leão** em 1096."
@@ -430,7 +421,7 @@ def test_multi_pass_early_saturation_with_critique_runs_terminal_critique_pass(
         stage_name="gap_filler",
         transform_prompt_key=PromptKey.GAP_FILLER,
         max_passes=5,
-        saturation_policy=gap_filler_saturation_policy,
+        saturation_policy=HybridSaturationEvaluator(),
     )
     candidate = generate_stage_candidate(
         cfg,
@@ -458,20 +449,40 @@ def test_saturation_policy_can_halt_immediately_on_pass_1(
     sample_context: PipelineExecutionContext,
     sample_fluid_transcript: StageTranscript,
 ) -> None:
-    """Verify saturation_policy owns halting and can break on pass 1 without waiting for pass 2."""
+    """Verify Pass 1 receives source text as baseline_text and saturation_policy can halt on pass 1."""
     from cresmo.application.pipeline.stage_descriptor import StageConfig
     from cresmo.application.pipeline.stage_execution import generate_stage_candidate
     from cresmo.domain.value_objects import PromptKey
+    from cresmo.domain.value_objects.convergence import SaturationReason, SaturationVerdict
     from cresmo.infrastructure.adapters.prompts import JsonPromptProvider
 
     mock_llm = MagicMock(spec=LLMTransformationPort)
     mock_llm.transform.side_effect = ["Pass 1 already SATURATED.", "Should never execute pass 2."]
 
+    recorded_calls: list[tuple[str, str, int]] = []
+
+    def _pass1_policy(baseline_text: str, current_text: str, pass_index: int) -> SaturationVerdict:
+        recorded_calls.append((baseline_text, current_text, pass_index))
+        saturated = "SATURATED" in current_text
+        return SaturationVerdict(
+            is_saturated=saturated,
+            reason=(
+                SaturationReason.LEXICAL_IDENTITY if saturated else SaturationReason.NOVEL_CONTENT
+            ),
+            lexical_jaccard=1.0 if saturated else 0.0,
+            word_delta_ratio=0.0 if saturated else 1.0,
+            max_novelty=0.0 if saturated else 1.0,
+            novel_paragraphs=0 if saturated else 1,
+            total_paragraphs=1,
+            preserve_baseline=False,
+            provider="test",
+        )
+
     cfg = StageConfig[StageTranscript, StageTranscript](
         stage_name="gap_filler",
         transform_prompt_key=PromptKey.GAP_FILLER,
         max_passes=5,
-        saturation_policy=lambda current_text, _previous_text=None: "SATURATED" in current_text,
+        saturation_policy=_pass1_policy,
     )
     candidate = generate_stage_candidate(
         cfg,
@@ -483,6 +494,9 @@ def test_saturation_policy_can_halt_immediately_on_pass_1(
         active_trace_id="trace_pass1_sat",
     )
 
+    assert recorded_calls == [
+        (sample_fluid_transcript.content.text, "Pass 1 already SATURATED.", 1)
+    ]
     assert mock_llm.transform.call_count == 1
     assert candidate.metadata["passes_executed"] == 1
     assert candidate.metadata["is_saturated"] is True
@@ -540,3 +554,161 @@ def test_single_pass_with_critique_applies_critique_on_pass_1(
     assert len(prompts_seen) == 1
     assert "[PREVIOUS ATTEMPT QUALITY FEEDBACK]" in prompts_seen[0]
     assert "Remove colloquialism." in prompts_seen[0]
+
+
+def test_preserve_baseline_rollback_and_saturation_history_on_explicit_sentinel_pass_2(
+    sample_context: PipelineExecutionContext,
+    sample_fluid_transcript: StageTranscript,
+) -> None:
+    """Verify <NO_NEW_GAPS/> on Pass 2 reverts candidate.text to pass1_text and records saturation_history."""
+    from cresmo.application.pipeline.stage_descriptor import StageConfig
+    from cresmo.application.pipeline.stage_execution import generate_stage_candidate
+    from cresmo.application.services.hybrid_saturation import HybridSaturationEvaluator
+    from cresmo.domain.services.convergence_evaluator import NO_NEW_GAPS_SENTINEL
+    from cresmo.domain.value_objects import PromptKey
+    from cresmo.domain.value_objects.convergence import SaturationReason
+    from cresmo.infrastructure.adapters.prompts import JsonPromptProvider
+
+    pass1_text = (
+        "## Fundação de Portugal\n\n"
+        "O conde **Henrique de Borgonha** governou o território ocidental.\n\n"
+        "### Extra Info\n\n"
+        "1. **Henrique de Borgonha** casou com **Teresa de Leão** em 1093."
+    )
+    mock_llm = MagicMock(spec=LLMTransformationPort)
+    mock_llm.transform.side_effect = [
+        pass1_text,
+        NO_NEW_GAPS_SENTINEL,
+        "should not execute pass 3",
+    ]
+
+    cfg = StageConfig[StageTranscript, StageTranscript](
+        stage_name="gap_filler",
+        transform_prompt_key=PromptKey.GAP_FILLER,
+        max_passes=5,
+        saturation_policy=HybridSaturationEvaluator(),
+    )
+    candidate = generate_stage_candidate(
+        cfg,
+        sample_fluid_transcript,
+        context=sample_context,
+        prompt_provider=JsonPromptProvider(),
+        llm_port=mock_llm,
+        attempt=1,
+        active_trace_id="trace_rollback",
+    )
+
+    assert mock_llm.transform.call_count == 2
+    assert candidate.metadata["passes_executed"] == 2
+    assert candidate.metadata["is_saturated"] is True
+    assert candidate.text == pass1_text
+    assert NO_NEW_GAPS_SENTINEL not in candidate.text
+
+    history = candidate.metadata["saturation_history"]
+    assert isinstance(history, list)
+    assert len(history) == 2
+    expected_keys = {
+        "is_saturated",
+        "reason",
+        "lexical_jaccard",
+        "word_delta_ratio",
+        "max_novelty",
+        "novel_paragraphs",
+        "total_paragraphs",
+        "preserve_baseline",
+        "provider",
+    }
+    assert expected_keys.issubset(history[0].keys())
+    assert expected_keys.issubset(history[1].keys())
+    assert history[0]["is_saturated"] is False
+    assert history[0]["reason"] == SaturationReason.NOVEL_CONTENT.value
+    assert history[0]["preserve_baseline"] is False
+    assert history[1]["is_saturated"] is True
+    assert history[1]["reason"] == SaturationReason.EXPLICIT_SENTINEL.value
+    assert history[1]["preserve_baseline"] is True
+
+
+def test_generate_stage_candidate_invokes_saturation_span_per_pass(
+    sample_context: PipelineExecutionContext,
+    sample_fluid_transcript: StageTranscript,
+) -> None:
+    """Verify telemetry_port.start_stage_saturation_span is invoked per pass (cresmo.gap_filler.saturation.pass_N)."""
+    from contextlib import nullcontext
+
+    from cresmo.application.pipeline.stage_descriptor import StageConfig
+    from cresmo.application.pipeline.stage_execution import generate_stage_candidate
+    from cresmo.application.ports.telemetry import (
+        TelemetryPort,
+        format_stage_saturation_span_name,
+    )
+    from cresmo.application.services.hybrid_saturation import HybridSaturationEvaluator
+    from cresmo.domain.services.convergence_evaluator import NO_NEW_GAPS_SENTINEL
+    from cresmo.domain.value_objects import PromptKey
+    from cresmo.infrastructure.adapters.prompts import JsonPromptProvider
+
+    pass1_text = (
+        "## Fundação de Portugal\n\n"
+        "O conde **Henrique de Borgonha** governou o território ocidental.\n\n"
+        "### Extra Info\n\n"
+        "1. **Henrique de Borgonha** casou com **Teresa de Leão** em 1093."
+    )
+    mock_llm = MagicMock(spec=LLMTransformationPort)
+    mock_llm.transform.side_effect = [pass1_text, NO_NEW_GAPS_SENTINEL]
+
+    spy_telemetry = MagicMock(spec=TelemetryPort)
+    spy_telemetry.start_stage_saturation_span.return_value = nullcontext()
+
+    cfg = StageConfig[StageTranscript, StageTranscript](
+        stage_name="gap_filler",
+        transform_prompt_key=PromptKey.GAP_FILLER,
+        max_passes=3,
+        saturation_policy=HybridSaturationEvaluator(),
+    )
+    generate_stage_candidate(
+        cfg,
+        sample_fluid_transcript,
+        context=sample_context,
+        prompt_provider=JsonPromptProvider(),
+        llm_port=mock_llm,
+        attempt=1,
+        active_trace_id="trace_sat_spans",
+        telemetry_port=spy_telemetry,
+    )
+
+    assert spy_telemetry.start_stage_saturation_span.call_count == 2
+    observed_passes: list[tuple[str, int]] = []
+    for call in spy_telemetry.start_stage_saturation_span.call_args_list:
+        stage_arg = call.kwargs["stage_name"] if "stage_name" in call.kwargs else call.args[0]
+        pass_arg = call.kwargs["pass_num"] if "pass_num" in call.kwargs else call.args[1]
+        observed_passes.append((stage_arg, pass_arg))
+
+    assert observed_passes == [("gap_filler", 1), ("gap_filler", 2)]
+    assert (
+        format_stage_saturation_span_name("gap_filler", 1) == "cresmo.gap_filler.saturation.pass_1"
+    )
+    assert (
+        format_stage_saturation_span_name("gap_filler", 2) == "cresmo.gap_filler.saturation.pass_2"
+    )
+
+
+def test_stage_factory_wires_hybrid_saturation_and_never_saturate() -> None:
+    """Verify StageFactory binds HybridSaturationEvaluator for gap_filler and never_saturate for fluid_prose."""
+    from cresmo.application.ports.embedding import TextEmbeddingPort
+    from cresmo.application.services.hybrid_saturation import HybridSaturationEvaluator
+    from cresmo.domain.value_objects.convergence import ConvergenceMode, never_saturate
+
+    mock_embedding_port = MagicMock(spec=TextEmbeddingPort)
+    mock_embedding_port.provider_name = "gemini"
+
+    factory = StageFactory(
+        settings=DefaultPipelineSettings(),
+        embedding_port=mock_embedding_port,
+    )
+
+    gap_cfg = factory.build_stage("gap_filler")
+    fluid_cfg = factory.build_stage("fluid_prose")
+
+    assert isinstance(gap_cfg.saturation_policy, HybridSaturationEvaluator)
+    assert gap_cfg.saturation_policy.embedding_port is mock_embedding_port
+    assert gap_cfg.saturation_policy.mode is ConvergenceMode.HYBRID_SEMANTIC
+    assert fluid_cfg.saturation_policy is never_saturate
