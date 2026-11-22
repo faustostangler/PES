@@ -81,15 +81,23 @@ def _build_ngram_shingles(tokens: list[str], n: int) -> set[tuple[str, ...]]:
     return {tuple(tokens[i : i + n]) for i in range(len(tokens) - n + 1)}
 
 
-def segment_semantic_units(text: str) -> tuple[str, ...]:
+def segment_semantic_units(
+    text: str,
+    *,
+    long_unit_word_cutoff: int = LONG_UNIT_WORD_CUTOFF,
+    sliding_window_sentences: int = SLIDING_WINDOW_SENTENCES,
+    sliding_window_overlap: int = SLIDING_WINDOW_OVERLAP,
+) -> tuple[str, ...]:
     """Segment markdown compendia into discrete paragraph, item, and window semantic units.
 
-    Units exceeding ``LONG_UNIT_WORD_CUTOFF`` (120 words) are conditionally sub-chunked
-    into overlapping 3-sentence sliding windows (1-sentence overlap) to avoid
-    intra-paragraph embedding dilution.
+    Units exceeding ``long_unit_word_cutoff`` words are conditionally sub-chunked
+    into overlapping sentence sliding windows to avoid intra-paragraph embedding dilution.
 
     Args:
         text: Markdown compendium text containing main body and optional '### Extra Info'.
+        long_unit_word_cutoff: Word-count threshold above which a unit is sub-chunked.
+        sliding_window_sentences: Number of sentences per sliding window.
+        sliding_window_overlap: Number of overlapping sentences between consecutive windows.
 
     Returns:
         tuple[str, ...]: Ordered semantic units with markdown headings and stop sentinels excluded.
@@ -112,25 +120,38 @@ def segment_semantic_units(text: str) -> tuple[str, ...]:
             and line.strip() != NO_NEW_GAPS_SENTINEL
         ]
         for unit in _split_kept_block_lines(kept_lines):
-            units.extend(_apply_long_unit_sliding_window(unit))
+            units.extend(
+                _apply_long_unit_sliding_window(
+                    unit,
+                    word_cutoff=long_unit_word_cutoff,
+                    window_sentences=sliding_window_sentences,
+                    window_overlap=sliding_window_overlap,
+                )
+            )
 
     return tuple(units)
 
 
-def _apply_long_unit_sliding_window(unit: str) -> list[str]:
-    """Slice units exceeding LONG_UNIT_WORD_CUTOFF words into overlapping 3-sentence windows."""
-    if len(_tokenize_words(unit)) <= LONG_UNIT_WORD_CUTOFF:
+def _apply_long_unit_sliding_window(
+    unit: str,
+    *,
+    word_cutoff: int = LONG_UNIT_WORD_CUTOFF,
+    window_sentences: int = SLIDING_WINDOW_SENTENCES,
+    window_overlap: int = SLIDING_WINDOW_OVERLAP,
+) -> list[str]:
+    """Slice units exceeding word_cutoff words into overlapping sentence windows."""
+    if len(_tokenize_words(unit)) <= word_cutoff:
         return [unit]
 
     sentences = _split_sentences(unit)
-    if len(sentences) <= SLIDING_WINDOW_SENTENCES:
+    if len(sentences) <= window_sentences:
         return [unit]
 
-    stride = SLIDING_WINDOW_SENTENCES - SLIDING_WINDOW_OVERLAP
+    stride = window_sentences - window_overlap
     windows: list[str] = []
     start = 0
     while True:
-        end = start + SLIDING_WINDOW_SENTENCES
+        end = start + window_sentences
         windows.append(" ".join(sentences[start:end]))
         if end >= len(sentences):
             return windows
@@ -237,9 +258,9 @@ def compute_ngram_jaccard(baseline_text: str, current_text: str, n: int = 3) -> 
     curr_shingles = _build_ngram_shingles(curr_tokens, n)
     union = base_shingles | curr_shingles
     return len(base_shingles & curr_shingles) / len(union)
-
-
 def compute_word_delta_ratio(baseline_text: str, current_text: str) -> float:
+
+
     """Compute relative word-count delta ratio between baseline and current text.
 
     Args:
@@ -331,6 +352,10 @@ def evaluate_lexical_convergence(
     current_text: str,
     thresholds: SaturationThresholds | None = None,
     pass_index: int = 2,
+    *,
+    lexical_jaccard: float | None = None,
+    word_delta_ratio: float | None = None,
+    current_unit_count: int | None = None,
 ) -> SaturationVerdict | None:
     """Evaluate Tier 1 sentinel and lexical convergence gates before semantic embedding.
 
@@ -339,22 +364,44 @@ def evaluate_lexical_convergence(
         current_text: Candidate text produced by the current pass.
         thresholds: Saturation threshold configuration; defaults to SaturationThresholds().
         pass_index: One-based pass index being evaluated.
+        lexical_jaccard: Optional precomputed n-gram Jaccard similarity.
+        word_delta_ratio: Optional precomputed relative word-count delta ratio.
+        current_unit_count: Optional precomputed semantic unit count for current_text.
 
     Returns:
         SaturationVerdict | None: Saturation verdict if Tier 1 short-circuits, else None.
     """
     active_thresholds = thresholds if thresholds is not None else SaturationThresholds()
     is_sentinel = is_explicit_stop_sentinel(current_text, pass_index=pass_index)
-    lexical_jaccard = compute_ngram_jaccard(baseline_text, current_text)
-    word_delta_ratio = compute_word_delta_ratio(baseline_text, current_text)
-    total_paragraphs = len(segment_semantic_units(current_text))
+    resolved_jaccard = (
+        compute_ngram_jaccard(baseline_text, current_text)
+        if lexical_jaccard is None
+        else lexical_jaccard
+    )
+    resolved_word_delta = (
+        compute_word_delta_ratio(baseline_text, current_text)
+        if word_delta_ratio is None
+        else word_delta_ratio
+    )
+    total_paragraphs = (
+        len(
+            segment_semantic_units(
+                current_text,
+                long_unit_word_cutoff=active_thresholds.long_unit_word_cutoff,
+                sliding_window_sentences=active_thresholds.sliding_window_sentences,
+                sliding_window_overlap=active_thresholds.sliding_window_overlap,
+            )
+        )
+        if current_unit_count is None
+        else current_unit_count
+    )
 
     if is_sentinel:
         return SaturationVerdict(
             is_saturated=True,
             reason=SaturationReason.EXPLICIT_SENTINEL,
-            lexical_jaccard=lexical_jaccard,
-            word_delta_ratio=word_delta_ratio,
+            lexical_jaccard=resolved_jaccard,
+            word_delta_ratio=resolved_word_delta,
             max_novelty=0.0,
             novel_paragraphs=0,
             total_paragraphs=total_paragraphs,
@@ -363,14 +410,14 @@ def evaluate_lexical_convergence(
         )
 
     if (
-        lexical_jaccard >= active_thresholds.lexical_identity_threshold
-        and word_delta_ratio <= active_thresholds.max_lexical_word_delta
+        resolved_jaccard >= active_thresholds.lexical_identity_threshold
+        and resolved_word_delta <= active_thresholds.max_lexical_word_delta
     ):
         return SaturationVerdict(
             is_saturated=True,
             reason=SaturationReason.LEXICAL_IDENTITY,
-            lexical_jaccard=lexical_jaccard,
-            word_delta_ratio=word_delta_ratio,
+            lexical_jaccard=resolved_jaccard,
+            word_delta_ratio=resolved_word_delta,
             max_novelty=0.0,
             novel_paragraphs=0,
             total_paragraphs=total_paragraphs,

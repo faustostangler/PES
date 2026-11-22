@@ -101,19 +101,33 @@ class HybridSaturationEvaluator:
         if self.mode is ConvergenceMode.NONE:
             return never_saturate(baseline_text, current_text, pass_index)
 
+        lexical_jaccard = compute_ngram_jaccard(baseline_text, current_text)
+        word_delta_ratio = compute_word_delta_ratio(baseline_text, current_text)
+        current_units = segment_semantic_units(
+            current_text,
+            long_unit_word_cutoff=self.thresholds.long_unit_word_cutoff,
+            sliding_window_sentences=self.thresholds.sliding_window_sentences,
+            sliding_window_overlap=self.thresholds.sliding_window_overlap,
+        )
+
         lexical_verdict = evaluate_lexical_convergence(
             baseline_text,
             current_text,
             thresholds=self.thresholds,
             pass_index=pass_index,
+            lexical_jaccard=lexical_jaccard,
+            word_delta_ratio=word_delta_ratio,
+            current_unit_count=len(current_units),
         )
         if lexical_verdict is not None:
             return lexical_verdict
 
-        lexical_jaccard = compute_ngram_jaccard(baseline_text, current_text)
-        word_delta_ratio = compute_word_delta_ratio(baseline_text, current_text)
-        baseline_units = segment_semantic_units(baseline_text)
-        current_units = segment_semantic_units(current_text)
+        baseline_units = segment_semantic_units(
+            baseline_text,
+            long_unit_word_cutoff=self.thresholds.long_unit_word_cutoff,
+            sliding_window_sentences=self.thresholds.sliding_window_sentences,
+            sliding_window_overlap=self.thresholds.sliding_window_overlap,
+        )
 
         if not current_units:
             return SaturationVerdict(

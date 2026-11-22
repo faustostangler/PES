@@ -360,7 +360,9 @@ class TestStageConfigRunner:
 
     def test_trace_id_fallback_prioritizes_analytical_channel_id(self) -> None:
         """Verify fallback trace ID prefers analytical channel_id over human channel_name."""
-        trace_id = PipelineStageRunner._get_active_trace_id(
+        from cresmo.application.pipeline.stage_telemetry import resolve_active_trace_id
+
+        trace_id = resolve_active_trace_id(
             channel_id="UC_CHAN_123",
             content_id="content_abc",
             channel_name="Human Channel Name",

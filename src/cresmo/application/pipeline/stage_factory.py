@@ -54,6 +54,15 @@ class StageFactory:
             max_novel_paragraphs_for_saturation=int(
                 getattr(self.settings, "saturation_max_novel_paragraphs", 0)
             ),
+            long_unit_word_cutoff=int(
+                getattr(self.settings, "saturation_long_unit_word_cutoff", 120)
+            ),
+            sliding_window_sentences=int(
+                getattr(self.settings, "saturation_sliding_window_sentences", 3)
+            ),
+            sliding_window_overlap=int(
+                getattr(self.settings, "saturation_sliding_window_overlap", 1)
+            ),
         )
 
     def build_stage(

@@ -2,14 +2,15 @@
 
 Conforms to:
     - ADR-029: Unified LlmJudgePort, Decision-Model Evaluators, and Resilient Multi-Provider Adapters
+    - ADR-070: Unified Hexagonal Telemetry Port & Typed Span Handle
     - SPEC-012: LLM Judge Evaluators, Multi-Provider Adapters, and Langfuse Telemetry
 """
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
-from cresmo.application.ports import PromptProviderPort
+from cresmo.application.ports import PromptProviderPort, TelemetryPort
 from cresmo.application.ports.llm_judge_port import LlmJudgePort
 from cresmo.infrastructure.config import CresmoSettings
 
@@ -19,7 +20,7 @@ if TYPE_CHECKING:
 
 def build_llm_judge_adapter(
     settings: CresmoSettings,
-    langfuse_client: Any | None = None,
+    telemetry_port: TelemetryPort | None = None,
     prompt_provider: PromptProviderPort | None = None,
     enable_fallback: bool = True,
     credential_pool: GeminiCredentialPool | None = None,
@@ -28,7 +29,7 @@ def build_llm_judge_adapter(
 
     Args:
         settings: Validated Cresmo application settings.
-        langfuse_client: Optional Langfuse client for direct score telemetry ingestion.
+        telemetry_port: Optional Hexagonal TelemetryPort for criterion score ingestion.
         prompt_provider: Optional prompt provider port for externalized judge instructions.
         enable_fallback: Whether to wrap primary with fallback composite adapter (default: True).
             Set to False during calibration to maintain strict metrological benchmark isolation.
@@ -94,15 +95,15 @@ def build_llm_judge_adapter(
         inner_judge = primary
 
     # 3. Wrap in Mechanical Preflight Gate
-    from cresmo.infrastructure.adapters.judges.langfuse_decorator import LangfuseJudgeDecorator
     from cresmo.infrastructure.adapters.judges.preflight_decorator import (
         MechanicalPreflightJudgeDecorator,
     )
+    from cresmo.infrastructure.adapters.judges.telemetry_decorator import TelemetryJudgeDecorator
 
     inner_judge = MechanicalPreflightJudgeDecorator(inner_judge=inner_judge)
 
-    # 5. Decorate with Langfuse Telemetry Emission
-    return LangfuseJudgeDecorator(
+    # 4. Decorate with Hexagonal Telemetry Emission
+    return TelemetryJudgeDecorator(
         inner_judge=inner_judge,
-        langfuse_client=langfuse_client,
+        telemetry_port=telemetry_port,
     )

@@ -22,12 +22,13 @@ from cresmo.domain.value_objects.quality import (
 )
 from cresmo.infrastructure.adapters.judges.composite_judge import ResilientCompositeJudgeAdapter
 from cresmo.infrastructure.adapters.judges.gemini_judge import GeminiJudgeAdapter
-from cresmo.infrastructure.adapters.judges.langfuse_decorator import LangfuseJudgeDecorator
 from cresmo.infrastructure.adapters.judges.ollama_judge import OllamaJudgeAdapter
 from cresmo.infrastructure.adapters.judges.preflight_decorator import (
     MechanicalPreflightJudgeDecorator,
 )
+from cresmo.infrastructure.adapters.judges.telemetry_decorator import TelemetryJudgeDecorator
 from cresmo.infrastructure.adapters.judges.typesafe_judge import TypeSafeJudgeAdapter
+from tests.doubles.telemetry_fake import InMemoryTelemetryPort
 
 
 class TestQualityValueObjects:
@@ -814,12 +815,12 @@ class TestResilientCompositeJudgeAdapter:
         fallback.evaluate.assert_called_once_with(context)
 
 
-class TestLangfuseJudgeDecorator:
-    """Test suite for Langfuse telemetry emission decorator."""
+class TestTelemetryJudgeDecoratorWiring:
+    """Test suite for TelemetryJudgeDecorator emission and factory wiring (ADR-070)."""
 
-    def test_emits_scores_for_each_criterion_when_client_present(self) -> None:
+    def test_emits_scores_for_each_criterion_when_telemetry_port_present(self) -> None:
         mock_judge = MagicMock()
-        mock_langfuse = MagicMock()
+        telemetry = InMemoryTelemetryPort()
 
         s1 = CriterionScore(JudgeCriterion.ORALITY_REMOVAL, 0.95, True, reasoning="Clean")
         s2 = CriterionScore(JudgeCriterion.SEMANTIC_FAITHFULNESS, 0.88, True, reasoning="Faithful")
@@ -833,7 +834,7 @@ class TestLangfuseJudgeDecorator:
         )
         mock_judge.evaluate.return_value = mock_eval
 
-        decorator = LangfuseJudgeDecorator(inner_judge=mock_judge, langfuse_client=mock_langfuse)
+        decorator = TelemetryJudgeDecorator(inner_judge=mock_judge, telemetry_port=telemetry)
         context = EvaluationContext(
             stage_name="fluid_prose",
             raw_text="r",
@@ -843,23 +844,22 @@ class TestLangfuseJudgeDecorator:
 
         result = decorator.evaluate(context)
         assert result == mock_eval
-        assert mock_langfuse.create_score.call_count == 2
-        mock_langfuse.create_score.assert_any_call(
-            trace_id="tr-test-777",
-            name="fluid_prose.orality_removal",
-            value=0.95,
-            comment="Clean",
+        assert len(telemetry.scores) == 2
+        assert (telemetry.scores[0].name, telemetry.scores[0].value, telemetry.scores[0].comment) == (
+            "fluid_prose.orality_removal",
+            0.95,
+            "Clean",
         )
-        mock_langfuse.create_score.assert_any_call(
-            trace_id="tr-test-777",
-            name="fluid_prose.semantic_faithfulness",
-            value=0.88,
-            comment="Faithful",
+        assert (telemetry.scores[1].name, telemetry.scores[1].value, telemetry.scores[1].comment) == (
+            "fluid_prose.semantic_faithfulness",
+            0.88,
+            "Faithful",
         )
+        assert telemetry.scores[0].trace_id == "tr-test-777"
 
     def test_emits_scores_with_observation_id_binding(self) -> None:
         mock_judge = MagicMock()
-        mock_langfuse = MagicMock()
+        telemetry = InMemoryTelemetryPort()
 
         s1 = CriterionScore(JudgeCriterion.NER_PRESERVATION, 0.99, True, reasoning="Preserved")
         mock_eval = JudgeEvaluation(
@@ -872,7 +872,7 @@ class TestLangfuseJudgeDecorator:
         )
         mock_judge.evaluate.return_value = mock_eval
 
-        decorator = LangfuseJudgeDecorator(inner_judge=mock_judge, langfuse_client=mock_langfuse)
+        decorator = TelemetryJudgeDecorator(inner_judge=mock_judge, telemetry_port=telemetry)
         context = EvaluationContext(
             stage_name="fluid_prose",
             raw_text="r",
@@ -883,15 +883,14 @@ class TestLangfuseJudgeDecorator:
 
         result = decorator.evaluate(context)
         assert result == mock_eval
-        mock_langfuse.create_score.assert_called_once_with(
-            trace_id="tr-test-999",
-            name="fluid_prose.ner_preservation",
-            value=0.99,
-            comment="Preserved",
-            observation_id="obs_span_abc123",
-        )
+        assert len(telemetry.scores) == 1
+        assert telemetry.scores[0].trace_id == "tr-test-999"
+        assert telemetry.scores[0].name == "fluid_prose.ner_preservation"
+        assert telemetry.scores[0].value == 0.99
+        assert telemetry.scores[0].comment == "Preserved"
+        assert telemetry.scores[0].observation_id == "obs_span_abc123"
 
-    def test_safe_bypass_when_langfuse_client_is_none(self) -> None:
+    def test_safe_bypass_when_telemetry_port_is_none(self) -> None:
         mock_judge = MagicMock()
         mock_eval = JudgeEvaluation(
             target_stage="fluid_prose",
@@ -902,7 +901,7 @@ class TestLangfuseJudgeDecorator:
         )
         mock_judge.evaluate.return_value = mock_eval
 
-        decorator = LangfuseJudgeDecorator(inner_judge=mock_judge, langfuse_client=None)
+        decorator = TelemetryJudgeDecorator(inner_judge=mock_judge, telemetry_port=None)
         context = EvaluationContext(stage_name="fluid_prose", raw_text="r", candidate_text="c")
 
         result = decorator.evaluate(context)
@@ -917,9 +916,9 @@ class TestLlmJudgeFactory:
         from cresmo.infrastructure.config import CresmoSettings
 
         settings = CresmoSettings(judge_provider="gemini")
-        judge = build_llm_judge_adapter(settings, langfuse_client=None)
+        judge = build_llm_judge_adapter(settings, telemetry_port=None)
 
-        assert isinstance(judge, LangfuseJudgeDecorator)
+        assert isinstance(judge, TelemetryJudgeDecorator)
         assert isinstance(judge._inner_judge, MechanicalPreflightJudgeDecorator)
         composite = judge._inner_judge._inner_judge
         assert isinstance(composite, ResilientCompositeJudgeAdapter)
@@ -931,9 +930,9 @@ class TestLlmJudgeFactory:
         from cresmo.infrastructure.config import CresmoSettings
 
         settings = CresmoSettings(judge_provider="typesafe")
-        judge = build_llm_judge_adapter(settings, langfuse_client=None)
+        judge = build_llm_judge_adapter(settings, telemetry_port=None)
 
-        assert isinstance(judge, LangfuseJudgeDecorator)
+        assert isinstance(judge, TelemetryJudgeDecorator)
         assert isinstance(judge._inner_judge, MechanicalPreflightJudgeDecorator)
         composite = judge._inner_judge._inner_judge
         assert isinstance(composite, ResilientCompositeJudgeAdapter)
@@ -945,9 +944,9 @@ class TestLlmJudgeFactory:
         from cresmo.infrastructure.config import CresmoSettings
 
         settings = CresmoSettings(judge_provider="ollama")
-        judge = build_llm_judge_adapter(settings, langfuse_client=None)
+        judge = build_llm_judge_adapter(settings, telemetry_port=None)
 
-        assert isinstance(judge, LangfuseJudgeDecorator)
+        assert isinstance(judge, TelemetryJudgeDecorator)
         assert isinstance(judge._inner_judge, MechanicalPreflightJudgeDecorator)
         composite = judge._inner_judge._inner_judge
         assert isinstance(composite, ResilientCompositeJudgeAdapter)
@@ -964,9 +963,9 @@ class TestLlmJudgeFactory:
             judge_gemini_model="gemini-custom-judge",
             judge_gemini_thinking_level="medium",
         )
-        judge = build_llm_judge_adapter(settings, langfuse_client=None)
+        judge = build_llm_judge_adapter(settings, telemetry_port=None)
 
-        assert isinstance(judge, LangfuseJudgeDecorator)
+        assert isinstance(judge, TelemetryJudgeDecorator)
         assert isinstance(judge._inner_judge, MechanicalPreflightJudgeDecorator)
         inner = judge._inner_judge._inner_judge
         assert isinstance(inner, ResilientCompositeJudgeAdapter)
@@ -987,9 +986,9 @@ class TestLlmJudgeFactory:
         from cresmo.infrastructure.config import CresmoSettings
 
         settings = CresmoSettings(judge_provider="gemini")
-        judge = build_llm_judge_adapter(settings, langfuse_client=None, enable_fallback=False)
+        judge = build_llm_judge_adapter(settings, telemetry_port=None, enable_fallback=False)
 
-        assert isinstance(judge, LangfuseJudgeDecorator)
+        assert isinstance(judge, TelemetryJudgeDecorator)
         assert isinstance(judge._inner_judge, MechanicalPreflightJudgeDecorator)
         assert isinstance(judge._inner_judge._inner_judge, GeminiJudgeAdapter)
         assert not isinstance(judge._inner_judge._inner_judge, ResilientCompositeJudgeAdapter)
@@ -1119,7 +1118,6 @@ class TestCoordinatorLlmJudgeIntegration:
 
     def test_coordinator_records_session_output_on_success(self) -> None:
         """Verify CresmoPipeline records high-signal outcome to telemetry port upon completion."""
-        from unittest.mock import MagicMock
 
         from cresmo.application.pipeline.coordinator import CresmoPipeline
         from cresmo.domain.entities import StageTranscript
@@ -1150,7 +1148,7 @@ class TestCoordinatorLlmJudgeIntegration:
         vault_port = InMemoryVaultAdapter()
         vault_port.save_stage_transcript("raw", canned_raw)
         ledger_port = InMemoryLedgerAdapter()
-        mock_telemetry = MagicMock()
+        telemetry = InMemoryTelemetryPort()
 
         settings = CresmoSettings(judge_blocking=False)
         pipeline = CresmoPipeline(
@@ -1159,13 +1157,14 @@ class TestCoordinatorLlmJudgeIntegration:
             vault_port=vault_port,
             ledger_port=ledger_port,
             settings=settings,
-            telemetry_port=mock_telemetry,
+            telemetry_port=telemetry,
         )
 
         pipeline.execute(canned_raw)
 
-        mock_telemetry.record_session_output.assert_called_once()
-        recorded_output = mock_telemetry.record_session_output.call_args[0][0]
+        root_span = next(s for s in telemetry.spans if s.is_root)
+        assert len(root_span.outputs) == 1
+        recorded_output = root_span.outputs[0]
         assert recorded_output["status"] == "COMPLETED"
         assert recorded_output["stage"] == "gap_filler"
         assert recorded_output["stages_completed"] == ["fluid_prose", "gap_filler"]

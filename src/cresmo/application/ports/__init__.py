@@ -6,6 +6,7 @@ adapters (media scraping, LLM APIs, Obsidian filesystem storage, status ledgers,
 Conforms to:
 - ADR-001: Modular Monolith Domain Integrity (Ports & Adapters)
 - ADR-004: Native Media Ingestion Decommissioning & Pure Python Adapter
+- ADR-070: Unified Hexagonal Telemetry Port & Typed Span Handle
 - SPEC-001: Core Knowledge Synthesis Specifications
 - SPEC-004: Native Media Ingestion Specifications
 """
@@ -41,10 +42,17 @@ from cresmo.application.ports.taxonomy import (
 from cresmo.application.ports.telemetry import (
     LLM_GENERATION_FALLBACK_SPAN_NAME,
     LLM_GENERATION_SPAN_NAME,
+    NOOP_TELEMETRY_SPAN,
     PIPELINE_ROOT_SPAN_NAME,
     PIPELINE_TRACE_NAME,
     NoOpTelemetryPort,
+    NoOpTelemetrySpan,
+    SessionTelemetrySpec,
+    SpanKind,
+    TelemetryAttributeValue,
+    TelemetryPayload,
     TelemetryPort,
+    TelemetrySpan,
     active_telemetry_pass,
     active_telemetry_stage,
     format_stage_generation_span_name,
@@ -60,6 +68,7 @@ from cresmo.application.ports.transformation import LLMTransformationPort
 __all__ = [
     "LLM_GENERATION_FALLBACK_SPAN_NAME",
     "LLM_GENERATION_SPAN_NAME",
+    "NOOP_TELEMETRY_SPAN",
     "PIPELINE_ROOT_SPAN_NAME",
     "PIPELINE_TRACE_NAME",
     "AnonymizerPort",
@@ -79,11 +88,17 @@ __all__ = [
     "NoOpProcessRuntimePort",
     "NoOpPromptProviderPort",
     "NoOpTelemetryPort",
+    "NoOpTelemetrySpan",
     "PipelineSettingsProtocol",
     "PreflightProbePort",
     "ProcessRuntimePort",
     "PromptProviderPort",
+    "SessionTelemetrySpec",
+    "SpanKind",
+    "TelemetryAttributeValue",
+    "TelemetryPayload",
     "TelemetryPort",
+    "TelemetrySpan",
     "TextEmbeddingPort",
     "VaultRepositoryPort",
     "active_telemetry_pass",

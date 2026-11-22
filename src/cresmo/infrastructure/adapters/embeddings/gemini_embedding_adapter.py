@@ -21,6 +21,7 @@ from cresmo.infrastructure.adapters.llm.gemini_pool import GeminiCredentialPool
 DEFAULT_GEMINI_EMBEDDING_MODEL: Final[str] = "gemini-embedding-001"
 DEFAULT_GEMINI_EMBEDDING_DIMENSIONS: Final[int] = 768
 GEMINI_EMBED_MAX_BATCH_SIZE: Final[int] = 100
+GEMINI_EMBED_TASK_TYPE: Final[str] = "SEMANTIC_SIMILARITY"
 
 
 class GeminiEmbeddingAdapter(TextEmbeddingPort):
@@ -119,7 +120,7 @@ class GeminiEmbeddingAdapter(TextEmbeddingPort):
         from google.genai import types
 
         config = types.EmbedContentConfig(
-            task_type="SEMANTIC_SIMILARITY",
+            task_type=GEMINI_EMBED_TASK_TYPE,
             output_dimensionality=self.dimensions,
         )
 

@@ -4,6 +4,7 @@ Conforms to:
 - ADR-014: Fail-Fast Preflight Probing & Telemetry Circuit Breaking
 - ADR-017: Langfuse Otel Span Masking and Scrubbing
 - ADR-027: Unified Telemetry Vocabulary and Langfuse Conventions
+- ADR-070: Unified Hexagonal Telemetry Port & Typed Span Handle
 """
 
 from __future__ import annotations
@@ -18,6 +19,7 @@ import structlog
 from cresmo.application.ports import (
     AnonymizerPort,
     MetricsPort,
+    NoOpTelemetryPort,
     TelemetryPort,
 )
 from cresmo.bootstrap.factories.settings_factory import resolve_shared_settings
@@ -31,7 +33,6 @@ from cresmo.infrastructure.adapters.metrics.prometheus_metrics_adapter import (
 )
 from cresmo.infrastructure.adapters.system.preflight_probe_adapter import probe_http_endpoint
 from cresmo.infrastructure.adapters.telemetry.opentelemetry_adapter import (
-    NoOpTelemetryAdapter,
     OpenTelemetryAdapter,
     name_telemetry_threads,
 )
@@ -80,16 +81,9 @@ def _build_should_export_span() -> Callable[[Any], bool]:
 
     def should_export_cresmo_span(span: Any) -> bool:
         scope = getattr(span, "instrumentation_scope", None)
-        scope_name = getattr(scope, "name", None)
-        span_name = getattr(span, "name", None)
         is_default = is_default_export_span(span)
         is_cresmo = scope is not None and scope.name.startswith("cresmo.")
-        export = is_default or is_cresmo
-        print(
-            f"[SPAN DEBUG] name={span_name!r} scope={scope_name!r} "
-            f"default={is_default} cresmo={is_cresmo} -> export={export}"
-        )
-        return export
+        return is_default or is_cresmo
 
     return should_export_cresmo_span
 
@@ -224,7 +218,7 @@ def build_telemetry_adapter(
     settings: TelemetrySettings | None = None,
     langfuse_client: Any | None = None,
 ) -> TelemetryPort:
-    """Instantiate TelemetryPort adapter choosing between OpenTelemetry and NoOp."""
+    """Instantiate TelemetryPort choosing between OpenTelemetryAdapter and canonical NoOpTelemetryPort."""
     resolved_settings = settings if settings is not None else resolve_shared_settings(None)
     if langfuse_client is not None:
         return OpenTelemetryAdapter(
@@ -232,7 +226,7 @@ def build_telemetry_adapter(
             pipeline_version=resolved_settings.pipeline_version,
             git_sha=resolved_settings.git_sha,
         )
-    return NoOpTelemetryAdapter()
+    return NoOpTelemetryPort()
 
 
 def build_metrics_adapter(

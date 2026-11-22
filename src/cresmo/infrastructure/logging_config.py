@@ -1,4 +1,4 @@
-"""Centralized structured logging for Loki integration per ADR-025 and ADR-044.
+"""Centralized structured logging for Loki integration per ADR-025, ADR-044, and ADR-070.
 
 Configures structlog and stdlib logging with JSON formatter (python-json-logger) and
 OpenTelemetry trace correlation filter/processor for Grafana Loki -> Langfuse pivot.
@@ -15,6 +15,25 @@ import structlog
 from opentelemetry import trace
 
 
+def _extract_otel_log_context() -> tuple[str, str, str]:
+    """Extract (otelTraceID, otelSpanID, session_id) from active OTel span with zero fallback."""
+    span = trace.get_current_span()
+    span_context = span.get_span_context() if span else None
+    if span_context and span_context.trace_id:
+        otel_trace_id = format(span_context.trace_id, "032x")
+        otel_span_id = format(span_context.span_id, "016x")
+    else:
+        otel_trace_id = "0" * 32
+        otel_span_id = "0" * 16
+
+    session_id = ""
+    if hasattr(span, "attributes") and span.attributes:
+        session_id_attr = span.attributes.get("langfuse.session.id")
+        if session_id_attr:
+            session_id = str(session_id_attr)
+    return otel_trace_id, otel_span_id, session_id
+
+
 class CresmoOTelTraceCorrelationFilter(logging.Filter):
     """Inject OTel trace_id, span_id, and session_id into every log record.
 
@@ -24,20 +43,10 @@ class CresmoOTelTraceCorrelationFilter(logging.Filter):
 
     def filter(self, record: logging.LogRecord) -> bool:
         """Enrich LogRecord with otelTraceID, otelSpanID, and session_id."""
-        span = trace.get_current_span()
-        span_context = span.get_span_context() if span else None
-        if span_context and span_context.trace_id:
-            record.otelTraceID = format(span_context.trace_id, "032x")
-            record.otelSpanID = format(span_context.span_id, "016x")
-        else:
-            record.otelTraceID = "0" * 32
-            record.otelSpanID = "0" * 16
-
-        record.session_id = ""
-        if hasattr(span, "attributes") and span.attributes:
-            session_id_attr = span.attributes.get("langfuse.session.id")
-            if session_id_attr:
-                record.session_id = str(session_id_attr)
+        otel_trace_id, otel_span_id, session_id = _extract_otel_log_context()
+        record.otelTraceID = otel_trace_id
+        record.otelSpanID = otel_span_id
+        record.session_id = session_id
         return True
 
 
@@ -47,20 +56,11 @@ def add_opentelemetry_context(
     event_dict: MutableMapping[str, Any],
 ) -> MutableMapping[str, Any]:
     """Structlog processor injecting OTel trace_id, span_id, and session_id into event_dict."""
-    span = trace.get_current_span()
-    span_context = span.get_span_context() if span else None
-    if span_context and span_context.trace_id:
-        event_dict["otelTraceID"] = format(span_context.trace_id, "032x")
-        event_dict["otelSpanID"] = format(span_context.span_id, "016x")
-    else:
-        event_dict["otelTraceID"] = "0" * 32
-        event_dict["otelSpanID"] = "0" * 16
-
-    event_dict["session_id"] = ""
-    if hasattr(span, "attributes") and span.attributes:
-        session_id_attr = span.attributes.get("langfuse.session.id")
-        if session_id_attr:
-            event_dict["session_id"] = str(session_id_attr)
+    _ = (logger, method_name)
+    otel_trace_id, otel_span_id, session_id = _extract_otel_log_context()
+    event_dict["otelTraceID"] = otel_trace_id
+    event_dict["otelSpanID"] = otel_span_id
+    event_dict["session_id"] = session_id
     return event_dict
 
 

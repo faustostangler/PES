@@ -35,6 +35,12 @@ def _validate_non_negative_int(value: int, field_name: str) -> None:
         raise DomainValidationError(f"{field_name} must be a non-negative integer, got {value!r}.")
 
 
+def _validate_positive_int(value: int, field_name: str) -> None:
+    """Validate non-boolean integer >= 1."""
+    if isinstance(value, bool) or not isinstance(value, int) or value < 1:
+        raise DomainValidationError(f"{field_name} must be a positive integer, got {value!r}.")
+
+
 class ConvergenceMode(StrEnum):
     """Declarative convergence evaluation strategy for multi-pass synthesis stages."""
 
@@ -67,6 +73,9 @@ class SaturationThresholds:
     max_lexical_word_delta: float = 0.03
     semantic_similarity_threshold: float = 0.88
     max_novel_paragraphs_for_saturation: int = 0
+    long_unit_word_cutoff: int = 120
+    sliding_window_sentences: int = 3
+    sliding_window_overlap: int = 1
 
     def __post_init__(self) -> None:
         """Enforce construction-time numerical bounds and type invariants."""
@@ -89,6 +98,14 @@ class SaturationThresholds:
             self.max_novel_paragraphs_for_saturation,
             "max_novel_paragraphs_for_saturation",
         )
+        _validate_positive_int(self.long_unit_word_cutoff, "long_unit_word_cutoff")
+        _validate_positive_int(self.sliding_window_sentences, "sliding_window_sentences")
+        _validate_non_negative_int(self.sliding_window_overlap, "sliding_window_overlap")
+        if self.sliding_window_overlap >= self.sliding_window_sentences:
+            raise DomainValidationError(
+                f"sliding_window_overlap ({self.sliding_window_overlap}) must be less than "
+                f"sliding_window_sentences ({self.sliding_window_sentences})."
+            )
 
 
 @dataclass(frozen=True, slots=True)

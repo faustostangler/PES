@@ -5,6 +5,7 @@ Conforms to:
 - ADR-028: Multi-pass early stopping and mechanical saturation
 - ADR-030: Stage Quality Gate & Evaluator Closed-Loop Retry Fabric
 - ADR-031: CandidateText and Stage Descriptor Abstractions
+- ADR-070: Unified Hexagonal Telemetry Port & Typed Span Handle (Zero OTel SDK in Application)
 """
 
 from __future__ import annotations
@@ -13,7 +14,6 @@ from contextlib import AbstractContextManager, nullcontext
 from typing import Any
 
 import structlog
-from opentelemetry import trace
 
 from cresmo.application.pipeline.context import PipelineExecutionContext
 from cresmo.application.pipeline.stage_descriptor import (
@@ -25,10 +25,12 @@ from cresmo.application.ports import (
     LlmJudgePort,
     LLMTransformationPort,
     PromptProviderPort,
+    TelemetryAttributeValue,
     TelemetryPort,
     active_telemetry_pass,
+    format_stage_judge_span_name,
+    format_stage_saturation_span_name,
 )
-from cresmo.domain.stage_registry import StageName
 from cresmo.domain.value_objects import (
     CandidateText,
     EvaluationContext,
@@ -68,10 +70,12 @@ def _record_saturation_verdict(
     """Emit scalar saturation telemetry span and append structured pass verdict history."""
     metadata_entry = verdict.to_metadata_dict()
     if telemetry_port is not None and verdict.reason is not SaturationReason.DISABLED:
-        span_attrs = {f"cresmo.saturation.{key}": val for key, val in metadata_entry.items()}
-        with telemetry_port.start_stage_saturation_span(
-            stage_name,
-            pass_num=pass_index,
+        span_attrs: dict[str, TelemetryAttributeValue] = {"cresmo.pass_num": pass_index}
+        for key, val in metadata_entry.items():
+            if isinstance(val, (bool, int, float, str)):
+                span_attrs[f"cresmo.saturation.{key}"] = val
+        with telemetry_port.start_span(
+            format_stage_saturation_span_name(stage_name, pass_num=pass_index),
             attributes=span_attrs,
         ):
             pass
@@ -106,9 +110,8 @@ def generate_stage_candidate[TSource, TOutput](
     saturation_history: list[dict[str, Any]] = []
 
     for pass_index in range(1, max_passes + 1):
-        if stage_config.stage_name == StageName.GAP_FILLER:  # stage specific debug, keep it
-            pass
         is_final_pass = pass_index == max_passes or pending_final_critique
+
         pass_prompt_context = _build_pass_prompt_context(
             pass_index=pass_index,
             max_passes=max_passes,
@@ -227,22 +230,15 @@ def evaluate_stage_candidate[TSource, TOutput](
     if runner.llm_judge is None or stage_config.eval_spec is None:
         return None
 
-    active_trace_id = runner._get_active_trace_id(context=context)
-
-    with runner.telemetry_port.start_stage_evaluation_span(
-        stage_name=stage_config.stage_name,
-        attempt=attempt,
+    with runner.telemetry_port.start_span(
+        format_stage_judge_span_name(stage_config.stage_name),
         attributes={
             "judge.stage_name": stage_config.stage_name,
             "judge.attempt": attempt,
         },
-    ):
-        current_span = trace.get_current_span()
-        active_observation_id: str | None = None
-        if current_span and current_span.is_recording():
-            span_context = current_span.get_span_context()
-            if span_context.is_valid:
-                active_observation_id = f"{span_context.span_id:016x}"
+    ) as eval_span:
+        active_trace_id = runner._get_active_trace_id(context=context, span=eval_span)
+        active_observation_id = eval_span.span_id if eval_span is not None else None
 
         eval_context = EvaluationContext(
             stage_name=stage_config.stage_name,
@@ -264,5 +260,5 @@ def evaluate_stage_candidate[TSource, TOutput](
         llm_judge: LlmJudgePort = runner.llm_judge
         evaluation = llm_judge.evaluate(eval_context)
         runner._record_evaluation_metrics(stage_config.stage_name, evaluation.passed, attempt)
-        attach_evaluation_span_attributes(current_span, evaluation)
+        attach_evaluation_span_attributes(eval_span, evaluation)
         return evaluation

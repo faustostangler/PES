@@ -1,4 +1,4 @@
-"""Quarantine handling protocol for quarantined stages (ADR-031)."""
+"""Quarantine handling protocol for quarantined stages (ADR-031, ADR-070)."""
 
 from __future__ import annotations
 
@@ -6,9 +6,13 @@ from datetime import UTC, datetime
 from typing import TYPE_CHECKING
 
 import structlog
-from opentelemetry import trace
 
-from cresmo.application.ports import LedgerRepositoryPort, MetricsPort
+from cresmo.application.ports import (
+    LedgerRepositoryPort,
+    MetricsPort,
+    NoOpTelemetryPort,
+    TelemetryPort,
+)
 from cresmo.domain.exceptions import StageQuarantinedError
 from cresmo.domain.value_objects import (
     Channel,
@@ -39,6 +43,7 @@ def record_stage_quarantine(
     effective_max_attempts: int,
     ledger_port: LedgerRepositoryPort | None,
     metrics_port: MetricsPort,
+    telemetry_port: TelemetryPort | None = None,
     provenance: MediaProvenance | None = None,
     media_url: str = "",
     content_id: ContentId | None = None,
@@ -46,7 +51,7 @@ def record_stage_quarantine(
     channel_id: ChannelId | str | None = None,
     content_title: str = "",
 ) -> None:
-    """Execute the 4-step fail-fast quarantine protocol per ADR-031."""
+    """Execute the 4-step fail-fast quarantine protocol per ADR-031 and ADR-070."""
     if context is not None:
         channel = context.channel
         content = context.content
@@ -111,21 +116,22 @@ def record_stage_quarantine(
                 ledger_err,
             )
 
-    span = trace.get_current_span()
-    if span:
-        span.set_attribute("quarantined", True)
-        span.set_attribute("quarantine.stage", stage_name)
-        span.set_attribute("quarantine.critique", critique or "")
-        span.set_attribute("quarantine.attempts", effective_max_attempts)
-        span.set_attribute("quarantine.overall_score", evaluation.overall_score)
-        # ID-ID Parity: Algorithmic Identifiers
-        effective_channel_id = channel_id_string or channel_name_string
-        span.set_attribute("cresmo.content.id", resolved_cid.value)
-        span.set_attribute("cresmo.channel.id", effective_channel_id)
-        # TXT-TXT Parity: Cognitive Display Names
-        effective_content_title = resolved_title or resolved_cid.value
-        span.set_attribute("cresmo.channel.name", channel_name_string)
-        span.set_attribute("cresmo.content.title", effective_content_title)
+    active_telemetry = telemetry_port or NoOpTelemetryPort()
+    effective_channel_id = channel_id_string or channel_name_string
+    effective_content_title = resolved_title or resolved_cid.value
+    active_telemetry.current_span().set_attributes(
+        {
+            "quarantined": True,
+            "quarantine.stage": stage_name,
+            "quarantine.critique": critique or "",
+            "quarantine.attempts": effective_max_attempts,
+            "quarantine.overall_score": evaluation.overall_score,
+            "cresmo.content.id": resolved_cid.value,
+            "cresmo.channel.id": effective_channel_id,
+            "cresmo.channel.name": channel_name_string,
+            "cresmo.content.title": effective_content_title,
+        }
+    )
 
     metrics_port.increment_counter(
         "cresmo_stage_quarantines_total",

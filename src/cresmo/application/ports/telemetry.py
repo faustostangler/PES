@@ -1,29 +1,35 @@
-"""Hexagonal Telemetry Port and Null-Object implementation.
+"""Hexagonal Telemetry Port, typed span handle, and canonical Null-Object implementation.
 
 Conforms to:
 - ADR-016: Distributed Tracing & Langfuse Convention
 - ADR-027: Unified Telemetry Vocabulary & Langfuse Conventions
 - ADR-065: Hierarchical Stage-Scoped Telemetry Nomenclature
+- ADR-070: Unified Hexagonal Telemetry Port & Typed Span Handle
 """
 
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from collections.abc import Generator
+from collections.abc import Generator, Mapping, Sequence
 from contextlib import AbstractContextManager, contextmanager, nullcontext
 from contextvars import ContextVar
-from typing import Any, Final
+from dataclasses import dataclass, field
+from enum import StrEnum
+from types import MappingProxyType
+from typing import Final, Protocol
 
 from cresmo.domain.entities import (
     PipelineSessionId,
     UserIdentity,
 )
-from cresmo.domain.value_objects import ContentId
 
 PIPELINE_TRACE_NAME: Final[str] = "cresmo.pipeline"
 PIPELINE_ROOT_SPAN_NAME: Final[str] = "cresmo.coordinator"
 LLM_GENERATION_SPAN_NAME: Final[str] = "cresmo.llm.generate"
 LLM_GENERATION_FALLBACK_SPAN_NAME: Final[str] = "cresmo.llm.generate_fallback"
+
+type TelemetryAttributeValue = str | int | float | bool | tuple[str, ...]
+type TelemetryPayload = Mapping[str, object] | Sequence[object] | str
 
 _ACTIVE_TELEMETRY_STAGE: ContextVar[str | None] = ContextVar(
     "cresmo_active_telemetry_stage",
@@ -33,6 +39,126 @@ _ACTIVE_TELEMETRY_PASS: ContextVar[int | None] = ContextVar(
     "cresmo_active_telemetry_pass",
     default=None,
 )
+
+
+class SpanKind(StrEnum):
+    """Canonical observation kinds mapped by concrete telemetry adapters."""
+
+    SPAN = "span"
+    GENERATION = "generation"
+
+
+@dataclass(frozen=True, slots=True)
+class SessionTelemetrySpec:
+    """Immutable Value Object encapsulating root pipeline session telemetry metadata."""
+
+    session_id: PipelineSessionId
+    user_id: UserIdentity
+    channel_tenant_id: str | None = None
+    trace_name: str | None = None
+    channel_id: str = ""
+    channel_name: str = ""
+    content_id: str = ""
+    content_title: str = ""
+    source: str = "transcript"
+    raw_characters: int = 0
+    raw_words: int = 0
+    gap_filler_passes: int = 1
+    force_reprocess: bool = False
+    batch_id: str | None = None
+    video_url: str | None = None
+    publication_date: str | None = None
+    pipeline_version: str | None = None
+    git_sha: str | None = None
+    extra_metadata: Mapping[str, TelemetryAttributeValue] = field(default_factory=dict)
+
+    def __post_init__(self) -> None:
+        if isinstance(self.raw_characters, bool) or self.raw_characters < 0:
+            raise ValueError("raw_characters must be >= 0")
+        if isinstance(self.raw_words, bool) or self.raw_words < 0:
+            raise ValueError("raw_words must be >= 0")
+        if isinstance(self.gap_filler_passes, bool) or self.gap_filler_passes < 1:
+            raise ValueError("gap_filler_passes must be >= 1")
+        object.__setattr__(self, "extra_metadata", MappingProxyType(dict(self.extra_metadata)))
+
+
+class TelemetrySpan(Protocol):
+    """Framework-agnostic handle to an active telemetry observation span."""
+
+    @property
+    def trace_id(self) -> str | None:
+        """Return 32-character hex trace identifier when active, else None."""
+        ...
+
+    @property
+    def span_id(self) -> str | None:
+        """Return 16-character hex span/observation identifier when active, else None."""
+        ...
+
+    def set_attributes(self, attributes: Mapping[str, TelemetryAttributeValue]) -> None:
+        """Attach typed diagnostic attributes to the active span."""
+        ...
+
+    def set_input(self, payload: TelemetryPayload) -> None:
+        """Record structured or textual input payload on the active span."""
+        ...
+
+    def set_output(self, payload: TelemetryPayload) -> None:
+        """Record structured or textual output payload on the active span."""
+        ...
+
+    def add_event(
+        self,
+        name: str,
+        attributes: Mapping[str, TelemetryAttributeValue] | None = None,
+    ) -> None:
+        """Append a named domain or diagnostic event onto the active span."""
+        ...
+
+    def record_error(self, exc: BaseException) -> None:
+        """Mark the active span as failed and record exception diagnostics."""
+        ...
+
+
+class NoOpTelemetrySpan:
+    """Hermetic Null-Object TelemetrySpan performing zero side effects."""
+
+    @property
+    def trace_id(self) -> str | None:
+        """Always returns None when telemetry tracing is inactive."""
+        return None
+
+    @property
+    def span_id(self) -> str | None:
+        """Always returns None when telemetry tracing is inactive."""
+        return None
+
+    def set_attributes(self, attributes: Mapping[str, TelemetryAttributeValue]) -> None:
+        """No-op attribute attachment."""
+        _ = attributes
+
+    def set_input(self, payload: TelemetryPayload) -> None:
+        """No-op input payload attachment."""
+        _ = payload
+
+    def set_output(self, payload: TelemetryPayload) -> None:
+        """No-op output payload attachment."""
+        _ = payload
+
+    def add_event(
+        self,
+        name: str,
+        attributes: Mapping[str, TelemetryAttributeValue] | None = None,
+    ) -> None:
+        """No-op span event recorder."""
+        _ = (name, attributes)
+
+    def record_error(self, exc: BaseException) -> None:
+        """No-op span exception recorder."""
+        _ = exc
+
+
+NOOP_TELEMETRY_SPAN: Final[NoOpTelemetrySpan] = NoOpTelemetrySpan()
 
 
 def _normalize_stage_name(stage_name: str) -> str:
@@ -139,246 +265,128 @@ def resolve_llm_generation_span_name(
 
 
 class TelemetryPort(ABC):
-    """Hexagonal Port for OpenTelemetry distributed tracing, session replays, and FinOps metrics.
+    """Hexagonal Port for distributed tracing, LLM generations, and clinical scores.
 
-    Conforms to ADR-016. Decouples application use cases from concrete telemetry backends
-    (OpenTelemetry SDK, Langfuse API, Prometheus).
+    Conforms to ADR-016 and ADR-070. Decouples application use cases and adapters from
+    concrete OpenTelemetry and Langfuse SDKs through a minimal 5-method contract.
     """
 
     @abstractmethod
-    def start_pipeline_session(
+    def start_session(
         self,
-        session_id: PipelineSessionId,
-        user_id: UserIdentity | str,
-        channel_tenant_id: str | None = None,
-        metadata: dict[str, Any] | None = None,
-        trace_name: str | None = None,
-    ) -> AbstractContextManager[Any]:
-        """Initiate root OpenTelemetry span binding session_id and user_id attributes.
+        spec: SessionTelemetrySpec,
+    ) -> AbstractContextManager[TelemetrySpan]:
+        """Initiate root telemetry session span, propagate identity metadata, and flush on exit.
 
         Args:
-            session_id: Canonical multi-stage content session identifier.
-            user_id: UserIdentity (anonymous or identified OAuth user), or string.
-            channel_tenant_id: Optional Channel tenant identifier for cost and volume aggregation.
-            metadata: Additional contextual metadata (e.g. source, pipeline version).
-            trace_name: Optional canonical root operation name (defaults to PIPELINE_TRACE_NAME).
+            spec: Immutable SessionTelemetrySpec containing session identity, content metrics,
+                conveyor options, and lineage metadata.
 
         Returns:
-            ContextManager managing the root span lifecycle.
+            Context manager yielding a TelemetrySpan handle bound to the root pipeline span.
         """
         raise NotImplementedError
 
     @abstractmethod
-    def start_stage_span(
+    def start_span(
         self,
-        stage_name: str,
-        attributes: dict[str, Any] | None = None,
-    ) -> AbstractContextManager[Any]:
-        """Create child OpenTelemetry span demarcating a discrete pipeline stage.
+        name: str,
+        *,
+        kind: SpanKind = SpanKind.SPAN,
+        attributes: Mapping[str, TelemetryAttributeValue] | None = None,
+        stage_name: str | None = None,
+        record_exceptions: bool = True,
+        flush_on_exit: bool = False,
+    ) -> AbstractContextManager[TelemetrySpan]:
+        """Create a child observation span (stage, judge, saturation, generation, or custom op).
 
         Args:
-            stage_name: Identifier for the active pipeline stage.
-            attributes: Optional key-value attributes to attach to the stage span.
+            name: Canonical dot-delimited observation name (e.g. ``cresmo.fluid_prose``).
+            kind: Observation kind classifying standard spans vs LLM generations.
+            attributes: Optional typed initial attributes attached on span creation.
+            stage_name: Optional pipeline stage name bound to contextvars for nested generation naming.
+            record_exceptions: When True, marks span ERROR and records uncaught exceptions.
+            flush_on_exit: When True, invokes flush() deterministically after span completion.
 
         Returns:
-            ContextManager managing the child stage span.
+            Context manager yielding a TelemetrySpan handle bound to the newly opened child span.
         """
         raise NotImplementedError
 
     @abstractmethod
-    def start_stage_evaluation_span(
-        self,
-        stage_name: str,
-        attempt: int = 1,
-        attributes: dict[str, Any] | None = None,
-    ) -> AbstractContextManager[Any]:
-        """Create child OpenTelemetry span demarcating candidate evaluation by LLM judge (ADR-037).
-
-        Chronologically positioned AFTER candidate generation to reflect true causal evaluation order.
-
-        Args:
-            stage_name: Identifier for the active pipeline stage.
-            attempt: 1-based candidate generation attempt.
-            attributes: Optional evaluation diagnostic attributes.
+    def current_span(self) -> TelemetrySpan:
+        """Return handle to the active span, or NOOP_TELEMETRY_SPAN outside an active span.
 
         Returns:
-            ContextManager managing the child evaluation span.
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def record_judge_evaluation(
-        self,
-        session_id: PipelineSessionId,
-        content_id: ContentId,
-        iteration: int,
-        max_iterations: int,
-        verdict: str,
-    ) -> None:
-        """Record an LLM-as-a-judge evaluation iteration and its friction ratio.
-
-        Args:
-            session_id: Content session identifier.
-            content_id: Media content identifier.
-            iteration: 1-based attempt index.
-            max_iterations: Configured retry ceiling.
-            verdict: PASS or NEEDS_REWRITE verdict.
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def record_session_coherence(
-        self,
-        session_id: PipelineSessionId,
-        content_id: ContentId,
-        score: float,
-        details: dict[str, Any] | None = None,
-    ) -> None:
-        """Record an end-to-end session coherence evaluation score.
-
-        Args:
-            session_id: Content session identifier.
-            content_id: Media content identifier.
-            score: Coherence score in [0.0, 1.0].
-            details: Supporting diagnostic attributes (e.g. wikilink counts).
+            Active TelemetrySpan handle or NOOP_TELEMETRY_SPAN when no recording span is active.
         """
         raise NotImplementedError
 
     @abstractmethod
     def record_score(
         self,
+        *,
         name: str,
         value: float,
         comment: str | None = None,
         trace_id: str | None = None,
         observation_id: str | None = None,
     ) -> None:
-        """Record an arbitrary evaluation or clinical score to telemetry backend.
+        """Record an evaluation or clinical score bound to trace/observation context.
 
         Args:
-            name: Identifier for the score (e.g. 'style_compliance', 'faithfulness').
-            value: Score metric value.
-            comment: Optional explanatory context or rubric details.
-            trace_id: Optional trace ID to associate score with directly.
-            observation_id: Optional observation / span ID to bind score in-context.
+            name: Score metric identifier (e.g. ``session_coherence`` or criterion name).
+            value: Numeric score value.
+            comment: Optional human-readable diagnostic or judge reasoning text.
+            trace_id: Optional 32-char hex trace identifier; falls back to active span context.
+            observation_id: Optional 16-char hex observation identifier; falls back to active span.
         """
         raise NotImplementedError
-
-    @abstractmethod
-    def record_session_output(self, output: dict[str, Any]) -> None:
-        """Record structured business outcome payload on the active root session span.
-
-        Adheres to CNCF OpenTelemetry and Langfuse semantic conventions.
-
-        Args:
-            output: Structured dictionary representing high-signal execution results.
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def record_stage_io(
-        self,
-        input_payload: dict[str, Any] | str | None = None,
-        output_payload: dict[str, Any] | str | None = None,
-    ) -> None:
-        """Record domain input and output summaries on the active stage span (ADR-037).
-
-        Populates Langfuse stage inspection panels (Input/Output tabs).
-
-        Args:
-            input_payload: Structured dict or text received by stage.
-            output_payload: Structured dict or text produced by stage.
-        """
-        raise NotImplementedError
-
-    def start_stage_saturation_span(
-        self,
-        stage_name: str,
-        pass_num: int = 1,
-        attributes: dict[str, Any] | None = None,
-    ) -> AbstractContextManager[Any]:
-        """Create child OpenTelemetry span demarcating pass saturation evaluation.
-
-        Default no-op context manager allows existing test doubles to remain compatible.
-
-        Args:
-            stage_name: Identifier for the active pipeline stage.
-            pass_num: 1-based refinement pass index.
-            attributes: Optional scalar saturation diagnostic attributes.
-
-        Returns:
-            ContextManager managing the child saturation span.
-        """
-        _ = (stage_name, pass_num, attributes)
-        return nullcontext()
 
     def flush(self) -> None:
-        """Flush pending spans, metrics, and buffer queues to backend telemetry collectors.
+        """Flush buffered spans and scores to backend telemetry collectors.
 
-        Default no-op implementation allowing concrete adapters to gracefully drain
-        in-memory buffers without raising NotImplementedError.
+        Adapters should perform bounded, fail-silent flushes and never raise telemetry transport
+        exceptions into application control flow.
         """
 
 
 class NoOpTelemetryPort(TelemetryPort):
-    """Hermetic Null-Object implementation of TelemetryPort for offline/test environments."""
+    """Canonical Null-Object TelemetryPort for offline, preflight-bypassed, and test runs."""
 
     @contextmanager
-    def start_pipeline_session(
+    def start_session(
         self,
-        session_id: PipelineSessionId,
-        user_id: UserIdentity | str,
-        channel_tenant_id: str | None = None,
-        metadata: dict[str, Any] | None = None,
-        trace_name: str | None = None,
-    ) -> Generator[Any]:
-        """No-op session context manager."""
-        _ = (session_id, user_id, channel_tenant_id, metadata, trace_name)
-        yield None
+        spec: SessionTelemetrySpec,
+    ) -> Generator[TelemetrySpan]:
+        """No-op root session context manager yielding NOOP_TELEMETRY_SPAN."""
+        _ = spec
+        yield NOOP_TELEMETRY_SPAN
 
     @contextmanager
-    def start_stage_span(
+    def start_span(
         self,
-        stage_name: str,
-        attributes: dict[str, Any] | None = None,
-    ) -> Generator[Any]:
-        """No-op stage span context manager."""
-        _ = attributes
-        with active_telemetry_stage(stage_name):
-            yield None
+        name: str,
+        *,
+        kind: SpanKind = SpanKind.SPAN,
+        attributes: Mapping[str, TelemetryAttributeValue] | None = None,
+        stage_name: str | None = None,
+        record_exceptions: bool = True,
+        flush_on_exit: bool = False,
+    ) -> Generator[TelemetrySpan]:
+        """No-op child span context manager preserving active_telemetry_stage scope."""
+        _ = (name, kind, attributes, record_exceptions, flush_on_exit)
+        stage_ctx = active_telemetry_stage(stage_name) if stage_name is not None else nullcontext()
+        with stage_ctx:
+            yield NOOP_TELEMETRY_SPAN
 
-    @contextmanager
-    def start_stage_evaluation_span(
-        self,
-        stage_name: str,
-        attempt: int = 1,
-        attributes: dict[str, Any] | None = None,
-    ) -> Generator[Any]:
-        """No-op stage evaluation span context manager."""
-        _ = (stage_name, attempt, attributes)
-        yield None
-
-    def record_judge_evaluation(
-        self,
-        session_id: PipelineSessionId,
-        content_id: ContentId,
-        iteration: int,
-        max_iterations: int,
-        verdict: str,
-    ) -> None:
-        """No-op judge evaluation recorder."""
-
-    def record_session_coherence(
-        self,
-        session_id: PipelineSessionId,
-        content_id: ContentId,
-        score: float,
-        details: dict[str, Any] | None = None,
-    ) -> None:
-        """No-op session coherence recorder."""
+    def current_span(self) -> TelemetrySpan:
+        """Return singleton NOOP_TELEMETRY_SPAN."""
+        return NOOP_TELEMETRY_SPAN
 
     def record_score(
         self,
+        *,
         name: str,
         value: float,
         comment: str | None = None,
@@ -386,37 +394,7 @@ class NoOpTelemetryPort(TelemetryPort):
         observation_id: str | None = None,
     ) -> None:
         """No-op score recorder."""
-
-    def record_session_output(self, output: dict[str, Any]) -> None:
-        """No-op session output recorder."""
-
-    def record_stage_io(
-        self,
-        input_payload: dict[str, Any] | str | None = None,
-        output_payload: dict[str, Any] | str | None = None,
-    ) -> None:
-        """No-op stage I/O recorder."""
-
-    def start_stage_saturation_span(
-        self,
-        stage_name: str,
-        pass_num: int = 1,
-        attributes: dict[str, Any] | None = None,
-    ) -> AbstractContextManager[Any]:
-        """Create child OpenTelemetry span demarcating pass saturation evaluation.
-
-        Default no-op context manager allows existing test doubles to remain compatible.
-
-        Args:
-            stage_name: Identifier for the active pipeline stage.
-            pass_num: 1-based refinement pass index.
-            attributes: Optional scalar saturation diagnostic attributes.
-
-        Returns:
-            ContextManager managing the child saturation span.
-        """
-        _ = (stage_name, pass_num, attributes)
-        return nullcontext()
+        _ = (name, value, comment, trace_id, observation_id)
 
     def flush(self) -> None:
         """No-op flush."""

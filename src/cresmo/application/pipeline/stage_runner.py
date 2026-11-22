@@ -4,6 +4,7 @@ Conforms to:
 - ADR-026: Rule 5 (Bounded Modularity < 500 LOC), Rule 7 (Parameter Objects)
 - ADR-030: Stage Quality Gate & Evaluator Closed-Loop Retry Fabric
 - ADR-031: CandidateText and Stage Descriptor Abstractions, Reflection, and Quarantine
+- ADR-070: Unified Hexagonal Telemetry Port & Typed Span Handle
 """
 
 from __future__ import annotations
@@ -13,7 +14,6 @@ from contextlib import contextmanager
 from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 import structlog
-from opentelemetry import trace
 
 from cresmo.application.pipeline.context import PipelineExecutionContext
 from cresmo.application.pipeline.models import PipelineDependencies
@@ -40,6 +40,7 @@ from cresmo.application.ports import (
     MetricsPort,
     PromptProviderPort,
     TelemetryPort,
+    TelemetrySpan,
 )
 from cresmo.application.use_cases import DeduplicationReport
 from cresmo.domain.entities import (
@@ -64,7 +65,7 @@ if TYPE_CHECKING:
 
 logger = structlog.get_logger(__name__)
 
-__all__ = ["PipelineStageRunner", "_as_str", "trace"]
+__all__ = ["PipelineStageRunner", "_as_str"]
 _as_str = as_str
 _StageRet = TypeVar("_StageRet")
 _TSource = TypeVar("_TSource")
@@ -149,7 +150,7 @@ class PipelineStageRunner:
         llm_transformation_port: LLMTransformationPort | None = None,
         max_passes: int | None = None,
     ) -> _TOutput:
-        """Execute a standardized pipeline stage with closed-loop reflection, critique, and telemetry (ADR-031)."""
+        """Execute a standardized pipeline stage with closed-loop reflection, critique, and telemetry."""
         stage_config = self._resolve_stage_config(stage, max_passes=max_passes)
         prompt_provider = self._resolve_prompt_provider(prompt_provider)
         llm_port = self._resolve_llm_transformation_port(llm_transformation_port)
@@ -170,15 +171,15 @@ class PipelineStageRunner:
         candidate: CandidateText | None = None
         evaluation: JudgeEvaluation | None = None
 
-        with self._measure_stage(stage_name=stage_name, context=context):
+        with self._measure_stage(stage_name=stage_name, context=context) as stage_span:
             source_text = (
                 stage_config.eval_spec.extract_source_text(source)
                 if stage_config.eval_spec
                 else _extract_stage_telemetry_text(source)
             )
             source_words = len(source_text.split()) if isinstance(source_text, str) else 0
-            self.telemetry_port.record_stage_io(
-                input_payload={
+            stage_span.set_input(
+                {
                     "stage_name": stage_name,
                     "source_type": type(source).__name__,
                     "source_characters": len(source_text) if isinstance(source_text, str) else 0,
@@ -196,7 +197,6 @@ class PipelineStageRunner:
                     attempt=attempt,
                     critique=critique,
                 )
-                self.telemetry_port.flush()
 
                 evaluation = self._evaluate_candidate(
                     stage_config,
@@ -205,7 +205,6 @@ class PipelineStageRunner:
                     context=context,
                     attempt=attempt,
                 )
-                self.telemetry_port.flush()
 
                 if evaluation is None or evaluation.passed:
                     break
@@ -239,6 +238,7 @@ class PipelineStageRunner:
                     effective_max_attempts=effective_max_attempts,
                     ledger_port=self.ledger_port,
                     metrics_port=self.metrics_port,
+                    telemetry_port=self.telemetry_port,
                 )
 
             if candidate is None:
@@ -246,15 +246,15 @@ class PipelineStageRunner:
 
             output_object: _TOutput = stage_config.post_process(candidate, source)
             output_text = _extract_stage_telemetry_text(output_object, fallback=candidate.text)
-            output_words = len(output_text.split()) if isinstance(output_text, str) else 0
-            self.telemetry_port.record_stage_io(
-                output_payload={
+            output_words = len(output_text.split())
+            stage_span.set_output(
+                {
                     "status": (
                         "APPROVED"
                         if (evaluation is None or evaluation.passed)
                         else "COMPLETED_UNBLOCKING"
                     ),
-                    "output_characters": len(output_text) if isinstance(output_text, str) else 0,
+                    "output_characters": len(output_text),
                     "output_words": output_words,
                     "attempts": attempt,
                     "retries": attempt - 1,
@@ -358,7 +358,7 @@ class PipelineStageRunner:
         dedup_report: DeduplicationReport,
         channel_id: ChannelId | str | None = None,
     ) -> None:
-        """Record completed process metrics and session coherence evaluation score."""
+        """Record completed atomic_notes metrics and session coherence evaluation telemetry."""
         record_session_completion_telemetry(
             self.metrics_port,
             self.telemetry_port,
@@ -380,7 +380,7 @@ class PipelineStageRunner:
         context: PipelineExecutionContext | None = None,
         channel: Channel | None = None,
         content: Content | None = None,
-    ) -> Generator[None]:
+    ) -> Generator[TelemetrySpan]:
         with measure_stage_execution(
             self.telemetry_port,
             self.metrics_port,
@@ -388,8 +388,8 @@ class PipelineStageRunner:
             context=context,
             channel=channel,
             content=content,
-        ):
-            yield
+        ) as stage_span:
+            yield stage_span
 
     def _resolve_prompt_provider(
         self, prompt_provider: PromptProviderPort | None
@@ -430,7 +430,29 @@ class PipelineStageRunner:
         return stage
 
     _resolve_stage_descriptor = _resolve_stage_config
-    _get_active_trace_id = staticmethod(resolve_active_trace_id)
+
+    def _get_active_trace_id(
+        self,
+        channel: Channel | ChannelId | ChannelName | str | None = None,
+        content: Content | ContentId | str | None = None,
+        *,
+        context: PipelineExecutionContext | None = None,
+        channel_id: ChannelId | str | None = None,
+        channel_name: ChannelName | str | None = None,
+        content_id: ContentId | str | None = None,
+        span: TelemetrySpan | None = None,
+    ) -> str:
+        """Resolve active trace ID from TelemetryPort or build deterministic fallback."""
+        return resolve_active_trace_id(
+            channel=channel,
+            content=content,
+            context=context,
+            channel_id=channel_id,
+            channel_name=channel_name,
+            content_id=content_id,
+            telemetry_port=self.telemetry_port,
+            span=span,
+        )
 
     def _synthesize_critique(self, evaluation: JudgeEvaluation, stage_name: str) -> str:
         if self.critique_synthesizer is not None:
@@ -471,8 +493,5 @@ class PipelineStageRunner:
 
     def _record_evaluation_metrics(self, stage_name: str, passed: bool, attempt: int) -> None:
         record_evaluation_metric(
-            self.metrics_port,
-            stage_name=stage_name,
-            passed=passed,
-            attempt=attempt,
+            self.metrics_port, stage_name=stage_name, passed=passed, attempt=attempt
         )

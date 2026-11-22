@@ -29,6 +29,7 @@ from cresmo.bootstrap.factories.judge_factory import build_llm_judge_adapter
 from cresmo.bootstrap.factories.settings_factory import resolve_shared_settings
 from cresmo.bootstrap.factories.telemetry_factory import (
     build_anonymizer_adapter,
+    build_telemetry_adapter,
     resolve_langfuse_client,
 )
 from cresmo.infrastructure.config import CresmoSettings
@@ -112,6 +113,7 @@ def build_index_raw_use_case(
     vault_port = build_vault_adapter(settings)
     anonymizer = build_anonymizer_adapter(settings)
     langfuse_client = resolve_langfuse_client(settings, anonymizer=anonymizer)
+    telemetry_port = build_telemetry_adapter(settings, langfuse_client=langfuse_client)
     prompt_provider = build_prompt_provider(settings, langfuse_client=langfuse_client)
     uses_gemini = (
         web_index
@@ -123,12 +125,12 @@ def build_index_raw_use_case(
         settings,
         web_index=web_index,
         model_override=model_override,
-        langfuse_client=langfuse_client,
+        telemetry_port=telemetry_port,
         credential_pool=gemini_pool,
     )
     llm_judge_port = build_llm_judge_adapter(
         settings,
-        langfuse_client=langfuse_client,
+        telemetry_port=telemetry_port,
         prompt_provider=prompt_provider,
         credential_pool=gemini_pool,
     )

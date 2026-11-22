@@ -1,13 +1,15 @@
-"""Production LLM adapter integrating Google Gemini API and Langfuse Observability.
+"""Production LLM adapter integrating Google Gemini API with injected Hexagonal TelemetryPort.
 
-Adheres to EVAL-001 rubrics and stangler-surgery telemetry standards, capturing
-prompt versions, trace IDs, latency, token counts, and structured outputs. Acts
-as an Anti-Corruption Layer (ACL) shielding the domain core from vendor-specific
-types and transient HTTP 429/503 network anomalies.
+Adheres to EVAL-001 rubrics and ADR-070 unified telemetry standards, capturing
+generation spans, trace IDs, latency, token counts, thinking telemetry, and structured I/O
+through TelemetryPort. Acts as an Anti-Corruption Layer (ACL) shielding the domain core
+from vendor-specific types and transient HTTP 429/503 network anomalies.
 
 Conforms to:
     - ADR-001: Modular Monolith Domain Integrity
     - ADR-003: PES Production Architecture & Telemetry
+    - ADR-065: Hierarchical Stage-Scoped Telemetry Nomenclature
+    - ADR-070: Unified Hexagonal Telemetry Port & Typed Span Handle
     - EVAL-001: LLM Synthesis Evaluation Rubrics
 """
 
@@ -17,11 +19,15 @@ from typing import Any
 
 import structlog
 from google.genai import types
-from langfuse import Langfuse
-from opentelemetry import trace
 from tenacity import retry, retry_if_exception, stop_after_attempt, wait_random_exponential
 
-from cresmo.application.ports import LLMTransformationPort
+from cresmo.application.ports import (
+    LLMTransformationPort,
+    NoOpTelemetryPort,
+    SpanKind,
+    TelemetryPort,
+    resolve_llm_generation_span_name,
+)
 from cresmo.domain.value_objects import ChatPrompt, MessageRole
 from cresmo.infrastructure.adapters.llm.gemini_common import (
     build_thinking_config,
@@ -35,11 +41,7 @@ from cresmo.infrastructure.adapters.llm.gemini_pool import (
     GeminiCredentialPool,
     is_quota_exhausted_error,
 )
-from cresmo.infrastructure.adapters.telemetry.opentelemetry_adapter import (
-    annotate_llm_span,
-    observe_llm_generation,
-    observe_llm_generation_fallback,
-)
+from cresmo.infrastructure.adapters.telemetry.genai import build_genai_attributes
 from cresmo.infrastructure.config import (
     DEFAULT_GEMINI_FALLBACK_MODEL,
     DEFAULT_GEMINI_MAX_OUTPUT_TOKENS,
@@ -48,7 +50,7 @@ from cresmo.infrastructure.config import (
     DEFAULT_GEMINI_TIMEOUT_SECONDS,
 )
 
-__all__ = ["GeminiLLMAdapter", "trace"]
+__all__ = ["GeminiLLMAdapter"]
 
 logger = structlog.get_logger(__name__)
 
@@ -88,11 +90,11 @@ def _generate_with_retry(
 
 
 class GeminiLLMAdapter(LLMTransformationPort):
-    """Production LLM adapter with Google Gemini API and Langfuse telemetry.
+    """Production LLM adapter with Google Gemini API and injected TelemetryPort.
 
     Implements LLMTransformationPort as an Anti-Corruption Layer (ACL), wrapping
     Google GenAI client calls with bounded retries, model failover, thinking_level
-    control, and detailed token usage tracking sent to Langfuse.
+    control, and detailed token usage tracking recorded through TelemetryPort.
 
     Attributes:
         model_name: Primary Gemini model variant.
@@ -109,12 +111,12 @@ class GeminiLLMAdapter(LLMTransformationPort):
         max_output_tokens: int = DEFAULT_GEMINI_MAX_OUTPUT_TOKENS,
         thinking_level: str | None = DEFAULT_GEMINI_THINKING_LEVEL,
         genai_client: Any | None = None,
-        langfuse_client: Langfuse | None = None,
+        telemetry_port: TelemetryPort | None = None,
         credential_pool: GeminiCredentialPool | None = None,
         api_keys: list[str] | None = None,
         timeout_seconds: float = DEFAULT_GEMINI_TIMEOUT_SECONDS,
     ) -> None:
-        """Initialize GeminiLLMAdapter with model configuration and telemetry clients.
+        """Initialize GeminiLLMAdapter with model configuration and injected TelemetryPort.
 
         Args:
             api_key: Optional Gemini API key string. If None, SDK looks for GEMINI_API_KEY env.
@@ -123,7 +125,7 @@ class GeminiLLMAdapter(LLMTransformationPort):
             max_output_tokens: Maximum token output limit (thinking + response) per generation.
             thinking_level: Reasoning effort level ('minimal', 'low', 'medium', 'high', 'xhigh').
             genai_client: Optional injected GenAI client for testing.
-            langfuse_client: Optional injected Langfuse client for testing.
+            telemetry_port: Optional injected Hexagonal TelemetryPort (defaults to NoOpTelemetryPort).
             credential_pool: Optional injected GeminiCredentialPool for quota rotation.
             api_keys: Optional list of raw API keys to initialize credential pool.
             timeout_seconds: Socket and request timeout in seconds for GenAI HTTP calls.
@@ -136,11 +138,8 @@ class GeminiLLMAdapter(LLMTransformationPort):
         self.max_output_tokens = max_output_tokens
         self.thinking_level = thinking_level
         self.timeout_seconds = timeout_seconds
+        self._telemetry: TelemetryPort = telemetry_port or NoOpTelemetryPort()
 
-        # Step 1: Assign explicit Langfuse client when provided by composition root
-        self._langfuse: Langfuse | None = langfuse_client
-
-        # Step 2: Initialize Credential Pool & Client
         if credential_pool is not None:
             self._pool = credential_pool
         elif api_keys is not None and len(api_keys) > 0:
@@ -173,7 +172,7 @@ class GeminiLLMAdapter(LLMTransformationPort):
         session_id: str | None = None,
         user_id: str | None = None,
     ) -> str:
-        """Execute text transformation contract with immediate Langfuse telemetry synchronization.
+        """Execute text transformation contract with primary/fallback failover and TelemetryPort.
 
         Args:
             prompt: Domain ChatPrompt containing sequential messages and optional system instruction.
@@ -186,14 +185,16 @@ class GeminiLLMAdapter(LLMTransformationPort):
         Returns:
             Generated response text.
         """
+        _ = temperature
         try:
-            response_text = self._execute_transform(
+            return self._run_model_generation(
+                model=self.model_name,
                 prompt=prompt,
-                temperature=temperature,
                 thinking_level=thinking_level,
                 trace_id=trace_id,
                 session_id=session_id,
                 user_id=user_id,
+                fallback=False,
             )
         except Exception as exc:
             if (
@@ -209,31 +210,15 @@ class GeminiLLMAdapter(LLMTransformationPort):
                 exc,
                 self.fallback_model_name,
             )
-            response_text = self._execute_fallback_transform(
+            return self._run_model_generation(
+                model=self.fallback_model_name,
                 prompt=prompt,
-                temperature=temperature,
                 thinking_level=thinking_level,
                 trace_id=trace_id,
                 session_id=session_id,
                 user_id=user_id,
+                fallback=True,
             )
-
-        client = self._langfuse
-        if client is None:
-            try:
-                from langfuse import get_client
-
-                client = get_client()
-            except Exception:  # noqa: BLE001
-                client = None
-
-        if client is not None:
-            try:
-                client.flush()
-            except Exception as exc:  # noqa: BLE001
-                logger.debug("[GeminiLLMAdapter] Langfuse flush skipped: %s", exc)
-
-        return response_text
 
     def _build_generation_config(
         self,
@@ -249,55 +234,6 @@ class GeminiLLMAdapter(LLMTransformationPort):
             automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=True),
         )
 
-    # Trace level 3A: cresmo.{stage_name}.generate (ADR-065)
-    @observe_llm_generation
-    def _execute_transform(
-        self,
-        prompt: ChatPrompt,
-        temperature: float | None = None,
-        *,
-        thinking_level: str | None = None,
-        trace_id: str | None = None,
-        session_id: str | None = None,
-        user_id: str | None = None,
-    ) -> str:
-        """Internal worker executing primary model generation within a stage-scoped Langfuse observation."""
-        _ = temperature
-        return self._run_model_generation(
-            model=self.model_name,
-            prompt=prompt,
-            thinking_level=thinking_level,
-            trace_id=trace_id,
-            session_id=session_id,
-            user_id=user_id,
-        )
-
-    # Trace level 3A (Failover): cresmo.{stage_name}.generate_fallback (ADR-065)
-    @observe_llm_generation_fallback
-    def _execute_fallback_transform(
-        self,
-        prompt: ChatPrompt,
-        temperature: float | None = None,
-        *,
-        thinking_level: str | None = None,
-        trace_id: str | None = None,
-        session_id: str | None = None,
-        user_id: str | None = None,
-    ) -> str:
-        """Internal worker executing fallback model generation within a dedicated fallback observation."""
-        _ = temperature
-        fallback_model = self.fallback_model_name
-        if not fallback_model:
-            raise RuntimeError("Fallback model invoked without fallback_model_name configured.")
-        return self._run_model_generation(
-            model=fallback_model,
-            prompt=prompt,
-            thinking_level=thinking_level,
-            trace_id=trace_id,
-            session_id=session_id,
-            user_id=user_id,
-        )
-
     def _run_model_generation(
         self,
         *,
@@ -307,8 +243,10 @@ class GeminiLLMAdapter(LLMTransformationPort):
         trace_id: str | None,
         session_id: str | None,
         user_id: str | None,
+        fallback: bool = False,
     ) -> str:
-        """Build GenAI request, invoke credential pool with failover, and annotate active OTel span."""
+        """Build GenAI request, invoke credential pool with failover, and record generation span."""
+        span_name = resolve_llm_generation_span_name(fallback=fallback)
         requested_thinking_level = self.thinking_level if thinking_level is None else thinking_level
         contents = [
             types.Content(
@@ -322,43 +260,47 @@ class GeminiLLMAdapter(LLMTransformationPort):
             system_prompt=prompt.system_prompt,
             thinking_level=requested_thinking_level,
         )
-        response = self._pool.execute_with_failover(
-            lambda client: _generate_with_retry(
-                client=client,
-                model=model,
-                contents=contents,
-                config=config,
+
+        with self._telemetry.start_span(span_name, kind=SpanKind.GENERATION) as span:
+            span.set_input(prompt.to_dict_list())
+            response = self._pool.execute_with_failover(
+                lambda client: _generate_with_retry(
+                    client=client,
+                    model=model,
+                    contents=contents,
+                    config=config,
+                )
             )
-        )
+            response_text = response.text or ""
 
-        response_text = response.text or ""
+            usage_meta = getattr(response, "usage_metadata", None)
+            total_prompt_words = sum(len(m.content.split()) for m in prompt.messages)
+            prompt_tokens = getattr(usage_meta, "prompt_token_count", 0) or total_prompt_words
+            candidate_tokens = getattr(usage_meta, "candidates_token_count", 0) or len(
+                response_text.split()
+            )
+            raw_thoughts_tokens = getattr(usage_meta, "thoughts_token_count", None)
+            thinking_tokens = (
+                raw_thoughts_tokens if isinstance(raw_thoughts_tokens, int) else None
+            )
+            effective_thinking_level = resolve_effective_thinking_level(
+                model=model,
+                thinking_level=requested_thinking_level,
+            )
 
-        # Extract usage metadata
-        usage_meta = getattr(response, "usage_metadata", None)
-        total_prompt_words = sum(len(m.content.split()) for m in prompt.messages)
-        prompt_tokens = getattr(usage_meta, "prompt_token_count", 0) or total_prompt_words
-        candidate_tokens = getattr(usage_meta, "candidates_token_count", 0) or len(
-            response_text.split()
-        )
-        raw_thoughts_tokens = getattr(usage_meta, "thoughts_token_count", None)
-        thinking_tokens = raw_thoughts_tokens if isinstance(raw_thoughts_tokens, int) else None
-        effective_thinking_level = resolve_effective_thinking_level(
-            model=model,
-            thinking_level=requested_thinking_level,
-        )
-
-        # OpenTelemetry GenAI Semantic Conventions & Langfuse span decoration
-        annotate_llm_span(
-            system="google",
-            model=model,
-            prompt_tokens=prompt_tokens,
-            candidate_tokens=candidate_tokens,
-            session_id=session_id,
-            user_id=user_id,
-            trace_id=trace_id,
-            max_tokens=self.max_output_tokens,
-            thinking_level=effective_thinking_level,
-            thinking_tokens=thinking_tokens,
-        )
-
-        return response_text
+            span.set_attributes(
+                build_genai_attributes(
+                    system="google",
+                    model=model,
+                    prompt_tokens=prompt_tokens,
+                    candidate_tokens=candidate_tokens,
+                    session_id=session_id,
+                    user_id=user_id,
+                    trace_id=trace_id,
+                    max_tokens=self.max_output_tokens,
+                    thinking_level=effective_thinking_level,
+                    thinking_tokens=thinking_tokens,
+                )
+            )
+            span.set_output(response_text)
+            return response_text

@@ -1,19 +1,22 @@
-"""Unit tests for GeminiLLMAdapter with Langfuse telemetry.
+"""Unit tests for GeminiLLMAdapter with injected Hexagonal TelemetryPort.
 
 Ensures proper delegation to google-genai client, transient error classification,
-retry behavior, fallback model execution, and Langfuse span observation.
+retry behavior, fallback model execution, and TelemetryPort generation spans (ADR-065, ADR-070).
 """
 
 from __future__ import annotations
 
-import logging
-import os
 from unittest.mock import MagicMock, patch
 
 import pytest
 from google.genai import errors, types
-from opentelemetry.trace import SpanContext, TraceFlags
 
+from cresmo.application.ports import (
+    NoOpTelemetryPort,
+    SpanKind,
+    active_telemetry_pass,
+    active_telemetry_stage,
+)
 from cresmo.domain.value_objects.prompt import ChatPrompt
 from cresmo.infrastructure.adapters.llm.gemini_adapter import (
     GeminiLLMAdapter,
@@ -23,8 +26,7 @@ from cresmo.infrastructure.adapters.llm.gemini_common import (
     build_thinking_config,
     resolve_effective_thinking_level,
 )
-
-DUMMY_SPAN_CONTEXT = SpanContext(trace_id=1, span_id=1, is_remote=False, trace_flags=TraceFlags(1))
+from tests.doubles.telemetry_fake import InMemoryTelemetryPort
 
 
 class TestTransientErrorClassification:
@@ -104,15 +106,14 @@ class TestGeminiLLMAdapter:
 
         mock_genai_client = MagicMock()
         mock_genai_client.models.generate_content.return_value = mock_response
-
-        mock_langfuse = MagicMock()
+        telemetry = InMemoryTelemetryPort()
 
         adapter = GeminiLLMAdapter(
             api_key="test-api-key",
             model_name="gemini-2.5-flash",
             max_output_tokens=4096,
             genai_client=mock_genai_client,
-            langfuse_client=mock_langfuse,
+            telemetry_port=telemetry,
         )
 
         result = adapter.transform(
@@ -127,6 +128,7 @@ class TestGeminiLLMAdapter:
         )
 
         assert result == "Generated analytical synthesis content."
+        assert telemetry.flush_count == 0
         mock_genai_client.models.generate_content.assert_called_once()
         call_kwargs = mock_genai_client.models.generate_content.call_args[1]
         assert call_kwargs["model"] == "gemini-2.5-flash"
@@ -148,7 +150,6 @@ class TestGeminiLLMAdapter:
         adapter = GeminiLLMAdapter(
             model_name="gemini-3.5-flash-lite",
             genai_client=mock_genai_client,
-            langfuse_client=None,
         )
         adapter.transform(prompt=ChatPrompt.single_turn("Default test"))
 
@@ -175,37 +176,34 @@ class TestGeminiLLMAdapter:
         mock_response = MagicMock(text="Output with telemetry", usage_metadata=None)
         mock_genai_client = MagicMock()
         mock_genai_client.models.generate_content.return_value = mock_response
+        telemetry = InMemoryTelemetryPort()
 
         adapter = GeminiLLMAdapter(
             genai_client=mock_genai_client,
+            telemetry_port=telemetry,
         )
 
-        mock_span = MagicMock()
-        mock_span.is_recording.return_value = True
-        mock_span.get_span_context.return_value = DUMMY_SPAN_CONTEXT
+        adapter.transform(
+            prompt=ChatPrompt.single_turn("Test prompt"),
+            trace_id="vid123_concepts",
+            session_id="raw_index_Philosophy",
+            user_id="Philosophy",
+        )
 
-        with patch(
-            "cresmo.infrastructure.adapters.llm.gemini_adapter.trace.get_current_span",
-            return_value=mock_span,
-        ):
-            adapter.transform(
-                prompt=ChatPrompt.single_turn("Test prompt"),
-                trace_id="vid123_concepts",
-                session_id="raw_index_Philosophy",
-                user_id="Philosophy",
-            )
-
-        mock_span.set_attribute.assert_any_call("gen_ai.system", "google")
-        mock_span.set_attribute.assert_any_call("gen_ai.request.model", "gemini-3.5-flash-lite")
-        mock_span.set_attribute.assert_any_call("gen_ai.usage.input_tokens", 2)
-        mock_span.set_attribute.assert_any_call("gen_ai.usage.output_tokens", 3)
-        mock_span.set_attribute.assert_any_call("langfuse.observation.type", "generation")
-        mock_span.set_attribute.assert_any_call("langfuse.session.id", "raw_index_Philosophy")
-        mock_span.set_attribute.assert_any_call("langfuse.user.id", "Philosophy")
-        mock_span.set_attribute.assert_any_call("cresmo.trace_id", "vid123_concepts")
-        mock_span.set_attribute.assert_any_call("cresmo.thinking_level", "low")
-        emitted_keys = [call.args[0] for call in mock_span.set_attribute.call_args_list]
-        assert "cresmo.temperature" not in emitted_keys
+        assert len(telemetry.spans) == 1
+        gen_span = telemetry.spans[0]
+        assert gen_span.name == "cresmo.llm.generate"
+        assert gen_span.kind is SpanKind.GENERATION
+        assert gen_span.attributes["gen_ai.system"] == "google"
+        assert gen_span.attributes["gen_ai.request.model"] == "gemini-3.5-flash-lite"
+        assert gen_span.attributes["gen_ai.usage.input_tokens"] == 2
+        assert gen_span.attributes["gen_ai.usage.output_tokens"] == 3
+        assert gen_span.attributes["langfuse.session.id"] == "raw_index_Philosophy"
+        assert gen_span.attributes["langfuse.user.id"] == "Philosophy"
+        assert gen_span.attributes["cresmo.trace_id"] == "vid123_concepts"
+        assert gen_span.attributes["cresmo.thinking_level"] == "low"
+        assert "cresmo.temperature" not in gen_span.attributes
+        assert gen_span.outputs == ["Output with telemetry"]
 
     def test_transform_emits_reasoning_tokens_from_usage_metadata(self) -> None:
         mock_response = MagicMock(
@@ -218,27 +216,20 @@ class TestGeminiLLMAdapter:
         )
         mock_genai_client = MagicMock()
         mock_genai_client.models.generate_content.return_value = mock_response
+        telemetry = InMemoryTelemetryPort()
 
-        adapter = GeminiLLMAdapter(genai_client=mock_genai_client)
-        mock_span = MagicMock()
-        mock_span.is_recording.return_value = True
-        mock_span.get_span_context.return_value = DUMMY_SPAN_CONTEXT
+        adapter = GeminiLLMAdapter(genai_client=mock_genai_client, telemetry_port=telemetry)
+        adapter.transform(prompt=ChatPrompt.single_turn("Reasoned prompt"))
 
-        with patch(
-            "cresmo.infrastructure.adapters.llm.gemini_adapter.trace.get_current_span",
-            return_value=mock_span,
-        ):
-            adapter.transform(prompt=ChatPrompt.single_turn("Reasoned prompt"))
-
-        mock_span.set_attribute.assert_any_call("gen_ai.usage.input_tokens", 120)
-        mock_span.set_attribute.assert_any_call("gen_ai.usage.output_tokens", 45)
-        mock_span.set_attribute.assert_any_call("gen_ai.usage.reasoning_tokens", 64)
-        mock_span.set_attribute.assert_any_call("cresmo.thinking_level", "low")
+        attrs = telemetry.spans[0].attributes
+        assert attrs["gen_ai.usage.input_tokens"] == 120
+        assert attrs["gen_ai.usage.output_tokens"] == 45
+        assert attrs["gen_ai.usage.reasoning_tokens"] == 64
+        assert attrs["cresmo.thinking_level"] == "low"
 
     def test_transform_retries_on_transient_error(self) -> None:
         mock_response = MagicMock(text="Success after retry", usage_metadata=None)
         mock_genai_client = MagicMock()
-        # Fail first with transient 503, then succeed
         mock_genai_client.models.generate_content.side_effect = [
             RuntimeError("503 UNAVAILABLE: high demand"),
             mock_response,
@@ -247,7 +238,6 @@ class TestGeminiLLMAdapter:
         adapter = GeminiLLMAdapter(
             model_name="gemini-2.5-flash",
             genai_client=mock_genai_client,
-            langfuse_client=None,
         )
 
         result = adapter.transform(prompt=ChatPrompt.single_turn("Test retry"))
@@ -257,7 +247,6 @@ class TestGeminiLLMAdapter:
     def test_transform_falls_back_to_secondary_model_on_failure(self) -> None:
         mock_fallback_response = MagicMock(text="Fallback model response", usage_metadata=None)
         mock_genai_client = MagicMock()
-        # Primary fails with non-retryable error, fallback succeeds
         mock_genai_client.models.generate_content.side_effect = [
             ValueError("Primary model failure"),
             mock_fallback_response,
@@ -267,7 +256,6 @@ class TestGeminiLLMAdapter:
             model_name="gemini-3.5-flash-lite",
             fallback_model_name="gemini-3.1-flash-lite",
             genai_client=mock_genai_client,
-            langfuse_client=None,
         )
 
         result = adapter.transform(prompt=ChatPrompt.single_turn("Test fallback"))
@@ -286,7 +274,6 @@ class TestGeminiLLMAdapter:
             model_name="gemini-3.5-flash-lite",
             fallback_model_name=None,
             genai_client=mock_genai_client,
-            langfuse_client=None,
         )
 
         with pytest.raises(ValueError, match="Fatal model error"):
@@ -300,7 +287,6 @@ class TestGeminiLLMAdapter:
             model_name="gemini-3.5-flash-lite",
             fallback_model_name="gemini-3.5-flash-lite",
             genai_client=mock_genai_client,
-            langfuse_client=None,
         )
 
         with pytest.raises(ValueError, match="Same model error"):
@@ -310,63 +296,32 @@ class TestGeminiLLMAdapter:
         mock_response = MagicMock(text="Three words text", usage_metadata=None)
         mock_genai_client = MagicMock()
         mock_genai_client.models.generate_content.return_value = mock_response
+        telemetry = InMemoryTelemetryPort()
 
         adapter = GeminiLLMAdapter(
             genai_client=mock_genai_client,
+            telemetry_port=telemetry,
         )
+        adapter.transform(prompt=ChatPrompt.single_turn("One two three four five"))
 
-        mock_span = MagicMock()
-        mock_span.is_recording.return_value = True
-        mock_span.get_span_context.return_value = DUMMY_SPAN_CONTEXT
+        attrs = telemetry.spans[0].attributes
+        assert attrs["gen_ai.usage.input_tokens"] == 5
+        assert attrs["gen_ai.usage.output_tokens"] == 3
 
-        with patch(
-            "cresmo.infrastructure.adapters.llm.gemini_adapter.trace.get_current_span",
-            return_value=mock_span,
-        ):
-            adapter.transform(prompt=ChatPrompt.single_turn("One two three four five"))
-
-        mock_span.set_attribute.assert_any_call("gen_ai.usage.input_tokens", 5)
-        mock_span.set_attribute.assert_any_call("gen_ai.usage.output_tokens", 3)
-
-    def test_transform_works_with_non_recording_span(self) -> None:
+    def test_transform_works_with_default_noop_telemetry_port(self) -> None:
         mock_response = MagicMock(text="Output text", usage_metadata=None)
         mock_genai_client = MagicMock()
         mock_genai_client.models.generate_content.return_value = mock_response
 
-        adapter = GeminiLLMAdapter(
-            genai_client=mock_genai_client,
-        )
-
-        mock_span = MagicMock()
-        mock_span.is_recording.return_value = False
-        mock_span.get_span_context.return_value = DUMMY_SPAN_CONTEXT
-
-        with patch(
-            "cresmo.infrastructure.adapters.llm.gemini_adapter.trace.get_current_span",
-            return_value=mock_span,
-        ):
-            result = adapter.transform(
-                prompt=ChatPrompt.single_turn("Test telemetry with non-recording span")
-            )
-            assert result == "Output text"
-            mock_span.set_attribute.assert_not_called()
-            assert result == "Output text"
-            mock_span.set_attribute.assert_not_called()
-
-    def test_init_without_langfuse_or_env(self) -> None:
-        with patch.dict("os.environ", {}, clear=True):
-            adapter = GeminiLLMAdapter(
-                genai_client=MagicMock(),
-                langfuse_client=None,
-            )
-            assert adapter._langfuse is None
+        adapter = GeminiLLMAdapter(genai_client=mock_genai_client)
+        assert isinstance(adapter._telemetry, NoOpTelemetryPort)
+        assert adapter.transform(prompt=ChatPrompt.single_turn("NoOp test")) == "Output text"
 
     def test_init_creates_genai_client_when_none(self) -> None:
         with patch("google.genai.Client") as mock_client_cls:
             adapter = GeminiLLMAdapter(
                 api_key="secret-key",
                 genai_client=None,
-                langfuse_client=None,
             )
             mock_client_cls.assert_called_once()
             call_kwargs = mock_client_cls.call_args.kwargs
@@ -388,44 +343,10 @@ class TestGeminiLLMAdapter:
             err = errors.APIError(code=c, response_json={})
             assert _is_transient_genai_error(err) is True
 
-    def test_transform_flushes_langfuse_client(self) -> None:
-        mock_client = MagicMock()
-        mock_response = MagicMock()
-        mock_response.text = "Generated output"
-        mock_client.models.generate_content.return_value = mock_response
-
-        mock_langfuse = MagicMock()
-        adapter = GeminiLLMAdapter(
-            genai_client=mock_client,
-            langfuse_client=mock_langfuse,
-        )
-
-        res = adapter.transform(ChatPrompt.single_turn("hello"))
-        assert res == "Generated output"
-        mock_langfuse.flush.assert_called_once()
-
-    def test_transform_langfuse_flush_exception_swallowed(self) -> None:
-        mock_client = MagicMock()
-        mock_response = MagicMock()
-        mock_response.text = "Output"
-        mock_client.models.generate_content.return_value = mock_response
-
-        mock_langfuse = MagicMock()
-        mock_langfuse.flush.side_effect = RuntimeError("Telemetry flush timed out")
-        adapter = GeminiLLMAdapter(
-            genai_client=mock_client,
-            langfuse_client=mock_langfuse,
-        )
-
-        res = adapter.transform(ChatPrompt.single_turn("hello"))
-        assert res == "Output"
-
     def test_transform_switches_to_fallback_model_on_exception(self) -> None:
         mock_client = MagicMock()
         mock_response = MagicMock()
         mock_response.text = "Fallback output"
-
-        # First call fails on primary model, second call succeeds on fallback model
         mock_client.models.generate_content.side_effect = [
             RuntimeError("Primary model failed"),
             mock_response,
@@ -435,7 +356,6 @@ class TestGeminiLLMAdapter:
             genai_client=mock_client,
             model_name="gemini-3.5-flash-lite",
             fallback_model_name="gemini-3.1-flash-lite",
-            langfuse_client=None,
         )
 
         res = adapter.transform(ChatPrompt.single_turn("trigger fallback"))
@@ -444,64 +364,6 @@ class TestGeminiLLMAdapter:
         calls = mock_client.models.generate_content.call_args_list
         assert calls[0].kwargs["model"] == "gemini-3.5-flash-lite"
         assert calls[1].kwargs["model"] == "gemini-3.1-flash-lite"
-
-    def test_init_langfuse_ignores_environ_without_explicit_client(self) -> None:
-        with patch.dict(os.environ, {"LANGFUSE_PUBLIC_KEY": "pk-12345"}):
-            adapter = GeminiLLMAdapter(genai_client=MagicMock())
-            assert adapter._langfuse is None
-
-        mock_lf = MagicMock()
-        adapter_injected = GeminiLLMAdapter(genai_client=MagicMock(), langfuse_client=mock_lf)
-        assert adapter_injected._langfuse is mock_lf
-
-    def test_init_langfuse_none_without_env(self) -> None:
-        with patch.dict(os.environ, {}, clear=True):
-            adapter = GeminiLLMAdapter(genai_client=MagicMock())
-            assert adapter._langfuse is None
-
-    def test_transform_langfuse_fallback_get_client_and_flush(self) -> None:
-        mock_client = MagicMock()
-        mock_response = MagicMock()
-        mock_response.text = "Output"
-        mock_response.usage_metadata = None
-        mock_client.models.generate_content.return_value = mock_response
-
-        mock_langfuse_client = MagicMock()
-        with (
-            patch.dict(os.environ, {}, clear=True),
-            patch("langfuse.get_client", return_value=mock_langfuse_client),
-        ):
-            adapter = GeminiLLMAdapter(
-                genai_client=mock_client,
-                langfuse_client=None,
-            )
-            res = adapter.transform(ChatPrompt.single_turn("hello"))
-            assert res == "Output"
-            mock_langfuse_client.flush.assert_called_once()
-
-    def test_transform_langfuse_flush_exception_logged_at_debug(
-        self, caplog: pytest.LogCaptureFixture
-    ) -> None:
-        mock_client = MagicMock()
-        mock_response = MagicMock()
-        mock_response.text = "Output"
-        mock_response.usage_metadata = None
-        mock_client.models.generate_content.return_value = mock_response
-
-        mock_langfuse_client = MagicMock()
-        mock_langfuse_client.flush.side_effect = RuntimeError("flush failed")
-        with (
-            caplog.at_level(logging.DEBUG),
-            patch.dict(os.environ, {}, clear=True),
-            patch("langfuse.get_client", return_value=mock_langfuse_client),
-        ):
-            adapter = GeminiLLMAdapter(
-                genai_client=mock_client,
-                langfuse_client=None,
-            )
-            res = adapter.transform(ChatPrompt.single_turn("hello"))
-            assert res == "Output"
-            assert "[GeminiLLMAdapter] Langfuse flush skipped: flush failed" in caplog.text
 
     def test_transform_rotates_api_key_on_429(self) -> None:
         from cresmo.infrastructure.adapters.llm.gemini_pool import GeminiCredentialPool
@@ -523,7 +385,6 @@ class TestGeminiLLMAdapter:
         assert result == "Success from secondary key"
         assert client1.models.generate_content.call_count == 1
         assert client2.models.generate_content.call_count == 1
-        # Primary key must be in cooldown, so next lease returns k2
         assert pool.lease()[0] == "k2"
 
     def test_transform_does_not_rotate_key_on_503(self) -> None:
@@ -531,7 +392,6 @@ class TestGeminiLLMAdapter:
 
         client1 = MagicMock(name="client-1")
         client2 = MagicMock(name="client-2")
-        # 503 on first try, then succeeds on retry with SAME client
         mock_resp = MagicMock(text="Recovered from 503", usage_metadata=None)
         client1.models.generate_content.side_effect = [
             RuntimeError("503 UNAVAILABLE: high demand"),
@@ -547,7 +407,6 @@ class TestGeminiLLMAdapter:
         assert result == "Recovered from 503"
         assert client1.models.generate_content.call_count == 2
         assert client2.models.generate_content.call_count == 0
-        # Primary key must still be primary (NOT cooled down)
         assert pool.lease()[0] == "k1"
 
     def test_init_normalizes_gemini_provider_prefix_on_models(self) -> None:
@@ -560,7 +419,6 @@ class TestGeminiLLMAdapter:
             model_name="gemini:gemini-3.8-flash",
             fallback_model_name="gemini:gemini-3.8-flash",
             genai_client=mock_client,
-            langfuse_client=None,
         )
 
         assert adapter.model_name == "gemini-3.8-flash"
@@ -585,7 +443,6 @@ class TestGeminiLLMAdapter:
             fallback_model_name="gemini-3.6-flash",
             thinking_level="xhigh",
             genai_client=mock_client,
-            langfuse_client=None,
         )
         result = adapter.transform(prompt=ChatPrompt.single_turn("Fallback clamping test"))
         assert result == "Fallback clamped"
@@ -643,39 +500,27 @@ class TestThinkingLevelClamping:
 
 
 class TestAdr065StageScopedGenerationTelemetry:
-    """Verify dynamic stage-scoped generation and fallback observation naming (ADR-065)."""
+    """Verify dynamic stage-scoped generation and fallback observation naming via TelemetryPort."""
 
     def test_transform_emits_stage_scoped_and_standalone_generation_names(self) -> None:
-        from cresmo.application.ports import active_telemetry_stage
-
         mock_response = MagicMock(text="Stage output", usage_metadata=None)
         mock_client = MagicMock()
         mock_client.models.generate_content.return_value = mock_response
+        telemetry = InMemoryTelemetryPort()
 
-        mock_lf = MagicMock()
-        mock_cm = MagicMock()
-        mock_cm.__enter__.return_value = MagicMock()
-        mock_lf.start_as_current_observation.return_value = mock_cm
+        adapter = GeminiLLMAdapter(genai_client=mock_client, telemetry_port=telemetry)
 
-        adapter = GeminiLLMAdapter(genai_client=mock_client, langfuse_client=None)
+        assert adapter.transform(ChatPrompt.single_turn("Standalone call")) == "Stage output"
+        with active_telemetry_stage("fluid_prose"):
+            assert adapter.transform(ChatPrompt.single_turn("In-stage call")) == "Stage output"
 
-        with patch("langfuse._client.observe.get_client", return_value=mock_lf):
-            assert adapter.transform(ChatPrompt.single_turn("Standalone call")) == "Stage output"
-            with active_telemetry_stage("fluid_prose"):
-                assert adapter.transform(ChatPrompt.single_turn("In-stage call")) == "Stage output"
-
-        observation_names = [
-            call.kwargs["name"] for call in mock_lf.start_as_current_observation.call_args_list
+        assert [s.name for s in telemetry.spans] == [
+            "cresmo.llm.generate",
+            "cresmo.fluid_prose.generate",
         ]
-        assert observation_names == ["cresmo.llm.generate", "cresmo.fluid_prose.generate"]
-        assert all(
-            call.kwargs["as_type"] == "generation"
-            for call in mock_lf.start_as_current_observation.call_args_list
-        )
+        assert all(s.kind is SpanKind.GENERATION for s in telemetry.spans)
 
     def test_transform_fallback_emits_separate_fallback_observation(self) -> None:
-        from cresmo.application.ports import active_telemetry_stage
-
         mock_fallback_response = MagicMock(text="Recovered by fallback", usage_metadata=None)
         mock_client = MagicMock()
         mock_client.models.generate_content.side_effect = [
@@ -684,44 +529,35 @@ class TestAdr065StageScopedGenerationTelemetry:
             ValueError("Primary failed standalone"),
             mock_fallback_response,
         ]
-
-        mock_lf = MagicMock()
-        mock_obs = MagicMock()
-        mock_cm = MagicMock()
-        mock_cm.__enter__.return_value = mock_obs
-        mock_lf.start_as_current_observation.return_value = mock_cm
+        telemetry = InMemoryTelemetryPort()
 
         adapter = GeminiLLMAdapter(
             model_name="gemini-3.5-flash-lite",
             fallback_model_name="gemini-3.6-flash",
             genai_client=mock_client,
-            langfuse_client=None,
+            telemetry_port=telemetry,
         )
 
-        with patch("langfuse._client.observe.get_client", return_value=mock_lf):
-            with active_telemetry_stage("fluid_prose"):
-                assert (
-                    adapter.transform(ChatPrompt.single_turn("Stage fallback"))
-                    == "Recovered by fallback"
-                )
+        with active_telemetry_stage("fluid_prose"):
             assert (
-                adapter.transform(ChatPrompt.single_turn("Standalone fallback"))
+                adapter.transform(ChatPrompt.single_turn("Stage fallback"))
                 == "Recovered by fallback"
             )
+        assert (
+            adapter.transform(ChatPrompt.single_turn("Standalone fallback"))
+            == "Recovered by fallback"
+        )
 
-        observation_names = [
-            call.kwargs["name"] for call in mock_lf.start_as_current_observation.call_args_list
-        ]
-        assert observation_names == [
+        assert [s.name for s in telemetry.spans] == [
             "cresmo.fluid_prose.generate",
             "cresmo.fluid_prose.generate_fallback",
             "cresmo.llm.generate",
             "cresmo.llm.generate_fallback",
         ]
-        error_updates = [
-            call for call in mock_obs.update.call_args_list if call.kwargs.get("level") == "ERROR"
-        ]
-        assert len(error_updates) == 2
+        assert len(telemetry.spans[0].errors) == 1
+        assert len(telemetry.spans[1].errors) == 0
+        assert len(telemetry.spans[2].errors) == 1
+        assert len(telemetry.spans[3].errors) == 0
 
     def test_transform_does_not_failover_model_when_credential_pool_exhausted(self) -> None:
         from cresmo.infrastructure.adapters.llm.gemini_pool import (
@@ -747,41 +583,29 @@ class TestAdr065StageScopedGenerationTelemetry:
         assert client1.models.generate_content.call_args.kwargs["model"] == "gemini-3.5-flash-lite"
 
     def test_transform_and_fallback_include_active_pass_number(self) -> None:
-        from cresmo.application.ports import active_telemetry_pass, active_telemetry_stage
-
         mock_fallback_response = MagicMock(text="Pass 2 fallback output", usage_metadata=None)
         mock_client = MagicMock()
         mock_client.models.generate_content.side_effect = [
             ValueError("Primary failed on pass 2"),
             mock_fallback_response,
         ]
-
-        mock_lf = MagicMock()
-        mock_cm = MagicMock()
-        mock_cm.__enter__.return_value = MagicMock()
-        mock_lf.start_as_current_observation.return_value = mock_cm
+        telemetry = InMemoryTelemetryPort()
 
         adapter = GeminiLLMAdapter(
             model_name="gemini-3.5-flash-lite",
             fallback_model_name="gemini-3.6-flash",
             genai_client=mock_client,
-            langfuse_client=None,
+            telemetry_port=telemetry,
         )
 
-        with (
-            patch("langfuse._client.observe.get_client", return_value=mock_lf),
-            active_telemetry_stage("gap_filler"),
-            active_telemetry_pass(2),
-        ):
+        with active_telemetry_stage("gap_filler"), active_telemetry_pass(2):
             assert (
                 adapter.transform(ChatPrompt.single_turn("Pass 2 prompt"))
                 == "Pass 2 fallback output"
             )
 
-        observation_names = [
-            call.kwargs["name"] for call in mock_lf.start_as_current_observation.call_args_list
-        ]
-        assert observation_names == [
+        assert [s.name for s in telemetry.spans] == [
             "cresmo.gap_filler.generate.pass_2",
             "cresmo.gap_filler.generate_fallback.pass_2",
         ]
+        assert telemetry.spans[1].attributes["cresmo.pass_num"] == 2

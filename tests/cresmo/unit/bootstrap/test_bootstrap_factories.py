@@ -13,6 +13,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 from pydantic import SecretStr
 
+from cresmo.application.ports import NoOpTelemetryPort
 from cresmo.application.services.preflight import PreflightHealthChecker
 from cresmo.application.use_cases.concat_master import ConcatMasterUseCase
 from cresmo.application.use_cases.discovery import DiscoverBatchSourcesUseCase
@@ -55,11 +56,11 @@ from cresmo.infrastructure.adapters.anonymization.anonymizer_adapter import (
     RegexAnonymizerAdapter,
 )
 from cresmo.infrastructure.adapters.judges.gemini_judge import GeminiJudgeAdapter
-from cresmo.infrastructure.adapters.judges.langfuse_decorator import LangfuseJudgeDecorator
 from cresmo.infrastructure.adapters.judges.ollama_judge import OllamaJudgeAdapter
 from cresmo.infrastructure.adapters.judges.preflight_decorator import (
     MechanicalPreflightJudgeDecorator,
 )
+from cresmo.infrastructure.adapters.judges.telemetry_decorator import TelemetryJudgeDecorator
 from cresmo.infrastructure.adapters.judges.typesafe_judge import TypeSafeJudgeAdapter
 from cresmo.infrastructure.adapters.metrics.noop_metrics_adapter import NoOpMetricsAdapter
 from cresmo.infrastructure.adapters.metrics.prometheus_metrics_adapter import (
@@ -70,7 +71,6 @@ from cresmo.infrastructure.adapters.prompts import (
     JsonPromptProvider,
     LangfusePromptProvider,
 )
-from cresmo.infrastructure.adapters.telemetry.opentelemetry_adapter import NoOpTelemetryAdapter
 from cresmo.infrastructure.config import (
     CresmoSettings,
     LlmSettings,
@@ -169,7 +169,7 @@ class TestTelemetryFactory:
     def test_build_telemetry_adapter_disabled(self, mock_settings: CresmoSettings) -> None:
         mock_settings.langfuse_public_key = ""
         adapter = build_telemetry_adapter(mock_settings)
-        assert isinstance(adapter, NoOpTelemetryAdapter)
+        assert isinstance(adapter, NoOpTelemetryPort)
 
     def test_build_telemetry_adapter_wires_dynamic_version_and_git_sha(
         self, mock_settings: CresmoSettings
@@ -235,7 +235,7 @@ class TestAdapterFactory:
         assert build_indexing_adapter(llm) is not None
         assert isinstance(build_anonymizer_adapter(telemetry), NoOpAnonymizerAdapter)
         assert isinstance(build_metrics_adapter(telemetry), NoOpMetricsAdapter)
-        assert isinstance(build_telemetry_adapter(telemetry), NoOpTelemetryAdapter)
+        assert isinstance(build_telemetry_adapter(telemetry), NoOpTelemetryPort)
 
     def test_build_vault_adapter(self, mock_settings: CresmoSettings) -> None:
         vault = build_vault_adapter(mock_settings)
@@ -302,7 +302,7 @@ class TestAdapterFactory:
         judge = build_llm_judge_adapter(
             settings, enable_fallback=False, credential_pool=shared_pool
         )
-        assert isinstance(judge, LangfuseJudgeDecorator)
+        assert isinstance(judge, TelemetryJudgeDecorator)
         assert isinstance(judge._inner_judge, MechanicalPreflightJudgeDecorator)
         assert isinstance(judge._inner_judge._inner_judge, GeminiJudgeAdapter)
         assert judge._inner_judge._inner_judge._pool is shared_pool
@@ -334,7 +334,7 @@ class TestAdapterFactory:
         assert indexing.max_output_tokens == 16_384
 
         judge = build_llm_judge_adapter(settings, enable_fallback=False)
-        assert isinstance(judge, LangfuseJudgeDecorator)
+        assert isinstance(judge, TelemetryJudgeDecorator)
         assert isinstance(judge._inner_judge, MechanicalPreflightJudgeDecorator)
         primary_judge = judge._inner_judge._inner_judge
         assert isinstance(primary_judge, GeminiJudgeAdapter)
@@ -348,31 +348,32 @@ class TestJudgeFactory:
     def test_build_llm_judge_adapter_gemini(self, mock_settings: CresmoSettings) -> None:
         mock_settings.judge_provider = "gemini"
         judge = build_llm_judge_adapter(mock_settings, enable_fallback=False)
-        assert isinstance(judge, LangfuseJudgeDecorator)
+        assert isinstance(judge, TelemetryJudgeDecorator)
         assert isinstance(judge._inner_judge, MechanicalPreflightJudgeDecorator)
         assert isinstance(judge._inner_judge._inner_judge, GeminiJudgeAdapter)
 
     def test_build_llm_judge_adapter_ollama(self, mock_settings: CresmoSettings) -> None:
         mock_settings.judge_provider = "ollama"
         judge = build_llm_judge_adapter(mock_settings, enable_fallback=False)
-        assert isinstance(judge, LangfuseJudgeDecorator)
+        assert isinstance(judge, TelemetryJudgeDecorator)
         assert isinstance(judge._inner_judge, MechanicalPreflightJudgeDecorator)
         assert isinstance(judge._inner_judge._inner_judge, OllamaJudgeAdapter)
 
     def test_build_llm_judge_adapter_typesafe(self, mock_settings: CresmoSettings) -> None:
         mock_settings.judge_provider = "typesafe"
         judge = build_llm_judge_adapter(mock_settings, enable_fallback=False)
-        assert isinstance(judge, LangfuseJudgeDecorator)
+        assert isinstance(judge, TelemetryJudgeDecorator)
         assert isinstance(judge._inner_judge, MechanicalPreflightJudgeDecorator)
         assert isinstance(judge._inner_judge._inner_judge, TypeSafeJudgeAdapter)
 
     def test_build_llm_judge_adapter_with_telemetry(self, mock_settings: CresmoSettings) -> None:
         mock_settings.judge_provider = "gemini"
-        langfuse_mock = MagicMock()
+        telemetry_port = NoOpTelemetryPort()
         judge = build_llm_judge_adapter(
-            mock_settings, langfuse_client=langfuse_mock, enable_fallback=False
+            mock_settings, telemetry_port=telemetry_port, enable_fallback=False
         )
-        assert isinstance(judge, LangfuseJudgeDecorator)
+        assert isinstance(judge, TelemetryJudgeDecorator)
+        assert judge._telemetry is telemetry_port
 
 
 class TestUseCaseFactory:
@@ -398,7 +399,7 @@ class TestUseCaseFactory:
         use_case = build_index_raw_use_case(settings=settings, web_index=True)
 
         assert isinstance(use_case.llm_indexing_port, GeminiLLMAdapter)
-        assert isinstance(use_case.llm_judge_port, LangfuseJudgeDecorator)
+        assert isinstance(use_case.llm_judge_port, TelemetryJudgeDecorator)
         preflight = use_case.llm_judge_port._inner_judge
         assert isinstance(preflight, MechanicalPreflightJudgeDecorator)
         composite = preflight._inner_judge

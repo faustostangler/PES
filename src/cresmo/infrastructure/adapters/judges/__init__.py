@@ -2,6 +2,7 @@
 
 Conforms to:
     - ADR-029: Unified LlmJudgePort, Decision-Model Evaluators, and Resilient Multi-Provider Adapters
+    - ADR-070: Unified Hexagonal Telemetry Port & Typed Span Handle
     - SPEC-012: LLM Judge Evaluators, Multi-Provider Adapters, and Langfuse Telemetry
 """
 
@@ -14,17 +15,17 @@ from cresmo.infrastructure.adapters.judges.criterion_parser import (
     parse_criteria_scores,
 )
 from cresmo.infrastructure.adapters.judges.gemini_judge import GeminiJudgeAdapter
-from cresmo.infrastructure.adapters.judges.langfuse_decorator import LangfuseJudgeDecorator
 from cresmo.infrastructure.adapters.judges.ollama_judge import OllamaJudgeAdapter
+from cresmo.infrastructure.adapters.judges.telemetry_decorator import TelemetryJudgeDecorator
 from cresmo.infrastructure.adapters.judges.typesafe_judge import TypeSafeJudgeAdapter
 
 __all__ = [
     "GeminiJudgeAdapter",
     "JudgeCriterionOutputSchema",
     "JudgeResponseOutputSchema",
-    "LangfuseJudgeDecorator",
     "OllamaJudgeAdapter",
     "ResilientCompositeJudgeAdapter",
+    "TelemetryJudgeDecorator",
     "TypeSafeJudgeAdapter",
     "parse_criteria_scores",
 ]

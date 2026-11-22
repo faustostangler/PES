@@ -6,6 +6,8 @@ diagnostics when the local daemon is not running.
 
 Conforms to:
     - ADR-001: Modular Monolith Domain Integrity
+    - ADR-065: Hierarchical Stage-Scoped Telemetry Nomenclature
+    - ADR-070: Unified Hexagonal Telemetry Port & Typed Span Handle
     - SPEC-001: Core Knowledge Synthesis Specifications
 """
 
@@ -20,18 +22,19 @@ from http import HTTPStatus
 from typing import Any
 
 import structlog
-from langfuse import Langfuse
-from opentelemetry import trace
 
-from cresmo.application.ports import LLMTransformationPort
+from cresmo.application.ports import (
+    LLMTransformationPort,
+    NoOpTelemetryPort,
+    SpanKind,
+    TelemetryPort,
+    resolve_llm_generation_span_name,
+)
 from cresmo.domain.exceptions import LLMInfrastructureError
 from cresmo.domain.value_objects import ChatPrompt
-from cresmo.infrastructure.adapters.telemetry.opentelemetry_adapter import (
-    annotate_llm_span,
-    observe_llm_generation,
-)
+from cresmo.infrastructure.adapters.telemetry.genai import build_genai_attributes
 
-__all__ = ["OllamaLLMAdapter", "trace"]
+__all__ = ["OllamaLLMAdapter"]
 
 logger = structlog.get_logger(__name__)
 
@@ -43,7 +46,7 @@ class OllamaLLMAdapter(LLMTransformationPort):
 
     Acts as an Anti-Corruption Layer (ACL) shielding domain and application layers from
     urllib HTTP transport anomalies, translating raw socket errors into domain LLMInfrastructureError
-    and transmitting telemetry spans to Langfuse.
+    and recording generation telemetry spans through TelemetryPort.
 
     Attributes:
         base_url: Root endpoint URL of the Ollama server (e.g. 'http://localhost:11434').
@@ -59,11 +62,11 @@ class OllamaLLMAdapter(LLMTransformationPort):
         timeout_seconds: float = 60.0,
         default_temperature: float = 0.2,
         num_predict: int = 0,
-        langfuse_client: Langfuse | None = None,
+        telemetry_port: TelemetryPort | None = None,
         keep_alive: str = "1h",
         warmup_timeout_seconds: float = 300.0,
     ) -> None:
-        """Initialize Ollama LLM adapter.
+        """Initialize Ollama LLM adapter with model settings and injected TelemetryPort.
 
         Args:
             base_url: Ollama daemon HTTP base endpoint.
@@ -71,7 +74,7 @@ class OllamaLLMAdapter(LLMTransformationPort):
             timeout_seconds: Maximum time to wait for generation response before raising.
             default_temperature: Default generation sampling temperature.
             num_predict: Maximum tokens predicted by model (0 means unconstrained / model default).
-            langfuse_client: Optional injected Langfuse telemetry client.
+            telemetry_port: Optional injected Hexagonal TelemetryPort (defaults to NoOpTelemetryPort).
             keep_alive: Duration to keep model in VRAM/RAM (e.g. '1h', '60m', '-1' for indefinite).
             warmup_timeout_seconds: Extended socket timeout in seconds for initial model preload.
         """
@@ -87,8 +90,7 @@ class OllamaLLMAdapter(LLMTransformationPort):
         self._warmup_lock = threading.RLock()
         self._warmup_thread: threading.Thread | None = None
         self._warmup_error: Exception | None = None
-
-        self._langfuse: Langfuse | None = langfuse_client
+        self._telemetry: TelemetryPort = telemetry_port or NoOpTelemetryPort()
 
     @property
     def is_warmed_up(self) -> bool:
@@ -325,7 +327,7 @@ class OllamaLLMAdapter(LLMTransformationPort):
         session_id: str | None = None,
         user_id: str | None = None,
     ) -> str:
-        """Execute text transformation on local Ollama instance with immediate Langfuse synchronization.
+        """Execute text transformation on local Ollama instance inside a TelemetryPort generation span.
 
         Args:
             prompt: Domain ChatPrompt containing sequential messages and optional system instruction.
@@ -342,127 +344,100 @@ class OllamaLLMAdapter(LLMTransformationPort):
             LLMInfrastructureError: If Ollama daemon is unreachable or returns HTTP error.
         """
         _ = thinking_level
-        response_text = self._execute_transform(
-            prompt=prompt,
-            temperature=temperature,
-            trace_id=trace_id,
-            session_id=session_id,
-            user_id=user_id,
-        )
+        span_name = resolve_llm_generation_span_name(fallback=False)
 
-        client = getattr(self, "_langfuse", None)
-        if client is None:
-            try:
-                from langfuse import get_client
+        with self._telemetry.start_span(span_name, kind=SpanKind.GENERATION) as span:
+            if not self._is_warmed_up:
+                self.wait_for_warmup()
 
-                client = get_client()
-            except Exception:  # noqa: BLE001
-                client = None
-
-        if client is not None:
-            try:
-                client.flush()
-            except Exception as exc:  # noqa: BLE001
-                logger.debug("[OllamaLLMAdapter] Langfuse flush skipped: %s", exc)
-
-        return response_text
-
-    @observe_llm_generation
-    def _execute_transform(
-        self,
-        prompt: ChatPrompt,
-        temperature: float | None = None,
-        *,
-        trace_id: str | None = None,
-        session_id: str | None = None,
-        user_id: str | None = None,
-    ) -> str:
-        """Internal worker executing model generation within an active Langfuse generation observation."""
-        if not self._is_warmed_up:
-            self.wait_for_warmup()
-
-        effective_temperature = temperature if temperature is not None else self.default_temperature
-        endpoint = f"{self.base_url}/api/chat"
-        options: dict[str, Any] = {
-            "temperature": effective_temperature,
-        }
-        if self.num_predict > 0:
-            options["num_predict"] = self.num_predict
-
-        messages = prompt.to_dict_list()
-        payload: dict[str, Any] = {
-            "model": self.model,
-            "messages": messages,
-            "stream": False,
-            "keep_alive": self.keep_alive,
-            "options": options,
-        }
-
-        data = json.dumps(payload).encode("utf-8")
-        req = urllib.request.Request(
-            endpoint,
-            data=data,
-            headers={"Content-Type": "application/json"},
-            method="POST",
-        )
-
-        try:
-            with urllib.request.urlopen(req, timeout=self.timeout_seconds) as response:
-                raw_body = response.read().decode("utf-8")
-                response_json = json.loads(raw_body)
-                msg_obj = response_json.get("message")
-                if isinstance(msg_obj, dict):
-                    generated_text = str(msg_obj.get("content", "")).strip()
-                else:
-                    generated_text = str(response_json.get("response", "")).strip()
-
-                total_prompt_words = sum(len(m.content.split()) for m in prompt.messages)
-                prompt_tokens = response_json.get("prompt_eval_count") or total_prompt_words
-                candidate_tokens = response_json.get("eval_count") or len(generated_text.split())
-
-                # OpenTelemetry GenAI Semantic Conventions & Langfuse span decoration
-                annotate_llm_span(
-                    system="ollama",
-                    model=self.model,
-                    prompt_tokens=prompt_tokens,
-                    candidate_tokens=candidate_tokens,
-                    session_id=session_id,
-                    user_id=user_id,
-                    trace_id=trace_id,
-                )
-
-                return generated_text
-
-        except TimeoutError as exc:
-            msg = (
-                f"Ollama timed out at {self.base_url} ({self.timeout_seconds:.0f}s). "
-                "Run 'ollama serve' or pass '--web-index'."
+            effective_temperature = (
+                temperature if temperature is not None else self.default_temperature
             )
-            logger.warning("[OllamaLLMAdapter] %s", msg)
-            raise LLMInfrastructureError(msg) from exc
-        except urllib.error.HTTPError as exc:
-            msg = (
-                f"Ollama HTTP {exc.code} at {self.base_url}: {exc.reason}. "
-                "Run 'ollama list' to verify model."
+            endpoint = f"{self.base_url}/api/chat"
+            options: dict[str, Any] = {"temperature": effective_temperature}
+            if self.num_predict > 0:
+                options["num_predict"] = self.num_predict
+
+            messages = prompt.to_dict_list()
+            span.set_input(messages)
+
+            payload: dict[str, Any] = {
+                "model": self.model,
+                "messages": messages,
+                "stream": False,
+                "keep_alive": self.keep_alive,
+                "options": options,
+            }
+
+            data = json.dumps(payload).encode("utf-8")
+            req = urllib.request.Request(
+                endpoint,
+                data=data,
+                headers={"Content-Type": "application/json"},
+                method="POST",
             )
-            logger.warning("[OllamaLLMAdapter] %s", msg)
-            raise LLMInfrastructureError(msg) from exc
-        except urllib.error.URLError as exc:
-            if isinstance(getattr(exc, "reason", None), TimeoutError):
+
+            try:
+                with urllib.request.urlopen(req, timeout=self.timeout_seconds) as response:
+                    raw_body = response.read().decode("utf-8")
+                    response_json = json.loads(raw_body)
+                    msg_obj = response_json.get("message")
+                    if isinstance(msg_obj, dict):
+                        generated_text = str(msg_obj.get("content", "")).strip()
+                    else:
+                        generated_text = str(response_json.get("response", "")).strip()
+
+                    total_prompt_words = sum(len(m.content.split()) for m in prompt.messages)
+                    prompt_tokens = response_json.get("prompt_eval_count") or total_prompt_words
+                    candidate_tokens = response_json.get("eval_count") or len(
+                        generated_text.split()
+                    )
+
+                    span.set_attributes(
+                        build_genai_attributes(
+                            system="ollama",
+                            model=self.model,
+                            prompt_tokens=prompt_tokens,
+                            candidate_tokens=candidate_tokens,
+                            session_id=session_id,
+                            user_id=user_id,
+                            trace_id=trace_id,
+                        )
+                    )
+                    span.set_output(generated_text)
+                    return generated_text
+
+            except TimeoutError as exc:
                 msg = (
                     f"Ollama timed out at {self.base_url} ({self.timeout_seconds:.0f}s). "
                     "Run 'ollama serve' or pass '--web-index'."
                 )
-            else:
+                logger.warning("[OllamaLLMAdapter] %s", msg)
+                raise LLMInfrastructureError(msg) from exc
+            except urllib.error.HTTPError as exc:
                 msg = (
-                    f"Ollama unreachable at {self.base_url}. "
+                    f"Ollama HTTP {exc.code} at {self.base_url}: {exc.reason}. "
+                    "Run 'ollama list' to verify model."
+                )
+                logger.warning("[OllamaLLMAdapter] %s", msg)
+                raise LLMInfrastructureError(msg) from exc
+            except urllib.error.URLError as exc:
+                if isinstance(getattr(exc, "reason", None), TimeoutError):
+                    msg = (
+                        f"Ollama timed out at {self.base_url} ({self.timeout_seconds:.0f}s). "
+                        "Run 'ollama serve' or pass '--web-index'."
+                    )
+                else:
+                    msg = (
+                        f"Ollama unreachable at {self.base_url}. "
+                        "Run 'ollama serve' or pass '--web-index'."
+                    )
+                logger.warning("[OllamaLLMAdapter] %s", msg)
+                raise LLMInfrastructureError(msg) from exc
+            except Exception as exc:
+                msg = (
+                    f"Ollama error at {self.base_url}: {exc}. "
                     "Run 'ollama serve' or pass '--web-index'."
                 )
-            logger.warning("[OllamaLLMAdapter] %s", msg)
-            raise LLMInfrastructureError(msg) from exc
-        except Exception as exc:
-            msg = (
-                f"Ollama error at {self.base_url}: {exc}. Run 'ollama serve' or pass '--web-index'."
-            )
-            logger.warning("[OllamaLLMAdapter] %s", msg)
-            raise LLMInfrastructureError(msg) from exc
+                logger.warning("[OllamaLLMAdapter] %s", msg)
+                raise LLMInfrastructureError(msg) from exc

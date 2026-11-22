@@ -27,6 +27,7 @@ from cresmo.application.pipeline.coordinator import (
 )
 from cresmo.application.pipeline.stage_factory import StageFactory
 from cresmo.application.ports import (
+    ChannelTaxonomyPort,
     CritiqueSynthesizerPort,
     DefaultPipelineSettings,
     LedgerRepositoryPort,
@@ -34,6 +35,7 @@ from cresmo.application.ports import (
     LLMTransformationPort,
     MediaIngestionPort,
     MetricsPort,
+    NoOpChannelTaxonomyPort,
     NoOpMetricsPort,
     NoOpPromptProviderPort,
     NoOpTelemetryPort,
@@ -46,6 +48,7 @@ from cresmo.domain.entities import (
     UserIdentity,
 )
 from cresmo.domain.exceptions import CresmoDomainError
+from cresmo.domain.stage_registry import StageName
 from cresmo.domain.value_objects import (
     BatchId,
     Channel,
@@ -56,6 +59,7 @@ from cresmo.domain.value_objects import (
     MediaProvenance,
     RawIndexEntry,
 )
+from tests.doubles.telemetry_fake import InMemoryTelemetryPort
 
 
 class TestTextExtractionHelpers:
@@ -128,6 +132,12 @@ class TestCresmoPipelineInitializationAndProperties:
             stage_runner=runner,
         )
 
+        assert pipeline.media_ingestion_port is mock_ingestion
+        assert pipeline.vault_port is mock_vault
+        assert pipeline.batch_size == 5
+        assert isinstance(pipeline.taxonomy_port, NoOpChannelTaxonomyPort)
+        assert pipeline.ingest_raw_transcript.ingestion_port is mock_ingestion
+        assert pipeline.ingest_raw_transcript.vault_port is mock_vault
         assert pipeline.stage_runner is runner
         assert pipeline.telemetry_port is mock_t
         assert pipeline.metrics_port is mock_m
@@ -166,6 +176,7 @@ class TestCresmoPipelineInitializationAndProperties:
         mock_prompt = MagicMock(spec=PromptProviderPort)
         mock_synth = MagicMock(spec=CritiqueSynthesizerPort)
         mock_ledger = MagicMock(spec=LedgerRepositoryPort)
+        mock_taxonomy = MagicMock(spec=ChannelTaxonomyPort)
 
         settings = DefaultPipelineSettings(judge_blocking=True, judge_max_attempts=4)
 
@@ -180,10 +191,12 @@ class TestCresmoPipelineInitializationAndProperties:
             llm_judge_port=mock_judge,
             critique_synthesizer=mock_synth,
             ledger_port=mock_ledger,
+            taxonomy_port=mock_taxonomy,
             settings=settings,
             batch_size=10,
         )
 
+        assert pipeline.taxonomy_port is mock_taxonomy
         assert pipeline.telemetry_port is mock_t
         assert pipeline.metrics_port is mock_m
         assert pipeline.llm_indexing_port is mock_llm_index
@@ -314,11 +327,20 @@ class TestCresmoPipelineExecutionAndIdempotency:
     ) -> None:
         mock_ingestion = MagicMock(spec=MediaIngestionPort)
         mock_vault = MagicMock(spec=VaultRepositoryPort)
-        mock_t = MagicMock(spec=TelemetryPort)
+        telemetry = InMemoryTelemetryPort()
         mock_m = MagicMock(spec=MetricsPort)
         mock_runner = MagicMock(spec=PipelineStageRunner)
 
         fluid_res = StageTranscript(
+            channel=sample_source_transcript.channel,
+            provenance=sample_source_transcript.provenance,
+            content=Content(
+                id=ContentId("c1234567"),
+                title="Polished Fluid Title",
+                text="Synthesized fluid prose text.",
+            ),
+        )
+        gaps_res = StageTranscript(
             channel=sample_source_transcript.channel,
             provenance=sample_source_transcript.provenance,
             content=Content(
@@ -328,13 +350,13 @@ class TestCresmoPipelineExecutionAndIdempotency:
             ),
         )
 
-        mock_runner.execute_stage.return_value = fluid_res
+        mock_runner.execute_stage.side_effect = [fluid_res, gaps_res]
 
         pipeline = CresmoPipeline(
             media_ingestion_port=mock_ingestion,
             vault_port=mock_vault,
             stage_runner=mock_runner,
-            telemetry_port=mock_t,
+            telemetry_port=telemetry,
             metrics_port=mock_m,
         )
 
@@ -354,28 +376,42 @@ class TestCresmoPipelineExecutionAndIdempotency:
         assert res.success is True
         assert res.content_id == ContentId("c1234567")
         assert res.source_transcript is sample_source_transcript
-        assert res.fluid_transcript is mock_runner.execute_stage.return_value
+        assert res.fluid_transcript is fluid_res
+        assert res.compendium is gaps_res
         assert res.index_entry is raw_idx
 
-        # Verify start_pipeline_session metadata
-        mock_t.start_pipeline_session.assert_called_once()
-        sess_call = mock_t.start_pipeline_session.call_args[1]
-        assert sess_call["user_id"] == user
-        assert sess_call["channel_tenant_id"] == sample_source_transcript.channel.tenant_key
-        assert sess_call["trace_name"] == "cresmo.pipeline"
-        meta = sess_call["metadata"]
-        assert meta["source"] == "transcript"
-        assert meta["channel_id"] == "UC_econ101"
-        assert meta["channel_name"] == "Economics & Society"
-        assert meta["content_id"] == "c1234567"
-        assert meta["content_title"] == "Vilfredo Pareto and Circulation of Elites"
-        assert meta["raw_characters"] == len(sample_source_transcript.content.text)
-        assert meta["raw_words"] == len(sample_source_transcript.content.text.split())
-        assert meta["gap_filler_passes"] == 3
-        assert meta["force_reprocess"] is False
-        assert meta["batch_id"] == batch.value
-        assert meta["video_url"] == "https://youtube.com/watch?v=1234567"
-        assert meta["publication_date"] == "2024-05-20"
+        # Verify stage transcripts saved with exact stage identifiers
+        assert mock_vault.save_stage_transcript.call_count == 2
+        assert mock_vault.save_stage_transcript.call_args_list[0].args == (
+            StageName.FLUID_PROSE,
+            fluid_res,
+        )
+        assert mock_vault.save_stage_transcript.call_args_list[1].args == (
+            StageName.GAP_FILLER,
+            gaps_res,
+        )
+
+        # Verify SessionTelemetrySpec passed to start_session
+        assert len(telemetry.spans) == 1
+        root_span = telemetry.spans[0]
+        assert root_span.is_root is True
+        spec = root_span.session_spec
+        assert spec is not None
+        assert spec.user_id == user
+        assert spec.channel_tenant_id == sample_source_transcript.channel.tenant_key
+        assert spec.trace_name == "cresmo.pipeline"
+        assert spec.source == "transcript"
+        assert spec.channel_id == "UC_econ101"
+        assert spec.channel_name == "Economics & Society"
+        assert spec.content_id == "c1234567"
+        assert spec.content_title == "Vilfredo Pareto and Circulation of Elites"
+        assert spec.raw_characters == len(sample_source_transcript.content.text)
+        assert spec.raw_words == len(sample_source_transcript.content.text.split())
+        assert spec.gap_filler_passes == 3
+        assert spec.force_reprocess is False
+        assert spec.batch_id == batch.value
+        assert spec.video_url == "https://youtube.com/watch?v=1234567"
+        assert spec.publication_date == "2024-05-20"
 
         # Verify execute_stage calls for conveyor pipeline (fluid_prose and gap_filler)
         assert mock_runner.execute_stage.call_count == 2
@@ -387,26 +423,26 @@ class TestCresmoPipelineExecutionAndIdempotency:
 
         second_call = mock_runner.execute_stage.call_args_list[1]
         assert second_call[0][0] == "gap_filler"
-        assert second_call[1]["source"] is mock_runner.execute_stage.return_value
+        assert second_call[1]["source"] is fluid_res
         assert second_call[1]["context"].content.id == ContentId("c1234567")
         assert second_call[1]["max_passes"] == 3
 
-        # Verify record_session_output with all canonical fields
-        mock_t.record_session_output.assert_called_once()
-        output_payload = mock_t.record_session_output.call_args[0][0]
+        # Verify root_span.set_output with all canonical fields
+        assert len(root_span.outputs) == 1
+        output_payload = root_span.outputs[0]
         assert output_payload["status"] == "COMPLETED"
         assert output_payload["stage"] == "gap_filler"
         assert output_payload["stages_completed"] == ["fluid_prose", "gap_filler"]
         assert output_payload["content_title"] == "Polished Pareto Essay"
         raw_words = len(sample_source_transcript.content.text.split())
-        synth_words = len(fluid_res.content.text.split())
+        synth_words = len(gaps_res.content.text.split())
         assert output_payload["word_count"] == synth_words
-        assert output_payload["char_count"] == len(fluid_res.content.text)
+        assert output_payload["char_count"] == len(gaps_res.content.text)
         assert output_payload["source_words"] == raw_words
         assert output_payload["synthesized_words"] == synth_words
         assert output_payload["expansion_ratio"] == round(synth_words / max(raw_words, 1), 3)
         assert output_payload["source_characters"] == len(sample_source_transcript.content.text)
-        assert output_payload["synthesized_characters"] == len(fluid_res.content.text)
+        assert output_payload["synthesized_characters"] == len(gaps_res.content.text)
         assert output_payload["stages_reused_from_cache"] == []
         assert output_payload["cache_hit_count"] == 0
         assert output_payload["cache_hit_ratio"] == 0.0
@@ -414,12 +450,14 @@ class TestCresmoPipelineExecutionAndIdempotency:
         assert output_payload["gap_filler_passes"] == 3
 
     def test_execute_records_stage_cache_hit_insights(
-        self, sample_source_transcript: StageTranscript
+        self,
+        sample_source_transcript: StageTranscript,
+        caplog: pytest.LogCaptureFixture,
     ) -> None:
         """Verify ADR-063 session output tracks cached stages and cache_hit_ratio."""
         mock_ingestion = MagicMock(spec=MediaIngestionPort)
         mock_vault = MagicMock(spec=VaultRepositoryPort)
-        mock_t = MagicMock(spec=TelemetryPort)
+        telemetry = InMemoryTelemetryPort()
         mock_runner = MagicMock(spec=PipelineStageRunner)
 
         cached_fluid = StageTranscript(
@@ -446,13 +484,20 @@ class TestCresmoPipelineExecutionAndIdempotency:
         pipeline = CresmoPipeline(
             media_ingestion_port=mock_ingestion,
             vault_port=mock_vault,
-            telemetry_port=mock_t,
+            telemetry_port=telemetry,
             stage_runner=mock_runner,
         )
-        res = pipeline.execute(sample_source_transcript, gap_filler_passes=2, force_reprocess=False)
+        with caplog.at_level("INFO"):
+            res = pipeline.execute(
+                sample_source_transcript, gap_filler_passes=2, force_reprocess=False
+            )
 
         assert res.success is True
-        output_payload = mock_t.record_session_output.call_args[0][0]
+        assert any(
+            record.getMessage() == "Reusing cached fluid_prose for content_id 'c1234567'"
+            for record in caplog.records
+        )
+        output_payload = telemetry.spans[0].outputs[0]
         assert output_payload["stages_reused_from_cache"] == ["fluid_prose"]
         assert output_payload["cache_hit_count"] == 1
         assert output_payload["cache_hit_ratio"] == 0.5
@@ -472,7 +517,7 @@ class TestCresmoPipelineExecutionAndIdempotency:
 
         mock_ingestion = MagicMock(spec=MediaIngestionPort)
         mock_vault = MagicMock(spec=VaultRepositoryPort)
-        mock_t = MagicMock(spec=TelemetryPort)
+        telemetry = InMemoryTelemetryPort()
         mock_runner = MagicMock(spec=PipelineStageRunner)
 
         class BareFluid:
@@ -484,20 +529,20 @@ class TestCresmoPipelineExecutionAndIdempotency:
             media_ingestion_port=mock_ingestion,
             vault_port=mock_vault,
             stage_runner=mock_runner,
-            telemetry_port=mock_t,
+            telemetry_port=telemetry,
         )
 
         res = pipeline.execute(raw_bare, user=None, batch_id="  str_batch_id  ")
         assert res.success is True
 
-        sess_call = mock_t.start_pipeline_session.call_args[1]
-        assert sess_call["user_id"] == UserIdentity.anonymous()
-        meta = sess_call["metadata"]
-        assert meta["channel_id"] == ""
-        assert meta["gap_filler_passes"] == 3
-        assert meta["batch_id"] == "str_batch_id"
-        assert "video_url" not in meta
-        assert "publication_date" not in meta
+        spec = telemetry.spans[0].session_spec
+        assert spec is not None
+        assert spec.user_id == UserIdentity.anonymous()
+        assert spec.channel_id == ""
+        assert spec.gap_filler_passes == 3
+        assert spec.batch_id == "str_batch_id"
+        assert spec.video_url is None
+        assert spec.publication_date is None
 
     def test_execute_expansion_ratio_when_source_has_single_word(self) -> None:
         raw_one_word = StageTranscript(
@@ -506,9 +551,6 @@ class TestCresmoPipelineExecutionAndIdempotency:
             content=Content(id=ContentId("c1word"), title="T", text="Word"),
         )
         mock_runner = MagicMock(spec=PipelineStageRunner)
-
-        class MultiWordFluid(StageTranscript):
-            pass
 
         multi_word = StageTranscript(
             channel=raw_one_word.channel,
@@ -521,17 +563,17 @@ class TestCresmoPipelineExecutionAndIdempotency:
         )
 
         mock_runner.execute_stage.return_value = multi_word
-        mock_t = MagicMock(spec=TelemetryPort)
+        telemetry = InMemoryTelemetryPort()
 
         pipeline = CresmoPipeline(
             media_ingestion_port=MagicMock(spec=MediaIngestionPort),
             vault_port=MagicMock(spec=VaultRepositoryPort),
             stage_runner=mock_runner,
-            telemetry_port=mock_t,
+            telemetry_port=telemetry,
         )
 
         pipeline.execute(raw_one_word)
-        payload = mock_t.record_session_output.call_args[0][0]
+        payload = telemetry.spans[0].outputs[0]
         # 10 synth words / max(1 raw word, 1) == 10.0
         assert payload["expansion_ratio"] == 10.0
 
@@ -558,18 +600,72 @@ class TestCresmoPipelineExecutionAndIdempotency:
         )
 
         mock_runner.execute_stage.return_value = fluid_obj
-        mock_t = MagicMock(spec=TelemetryPort)
+        telemetry = InMemoryTelemetryPort()
 
         pipeline = CresmoPipeline(
             media_ingestion_port=MagicMock(spec=MediaIngestionPort),
             vault_port=MagicMock(spec=VaultRepositoryPort),
             stage_runner=mock_runner,
-            telemetry_port=mock_t,
+            telemetry_port=telemetry,
         )
 
         pipeline.execute(raw)
-        payload = mock_t.record_session_output.call_args[0][0]
+        payload = telemetry.spans[0].outputs[0]
         assert payload["content_title"] == "Original Content Title"
+
+    def test_execute_title_and_synthesized_text_fallback_precedence(self) -> None:
+        """Verify root output title and text fall back from gaps -> fluid -> raw -> empty string."""
+        raw = StageTranscript(
+            channel=Channel(name=ChannelName("PrecedenceChan")),
+            provenance=MediaProvenance.create(url=""),
+            content=Content(
+                id=ContentId("c_prec_01"),
+                title="Raw Title",
+                text="Raw body words.",
+            ),
+        )
+        fluid = StageTranscript(
+            channel=raw.channel,
+            provenance=raw.provenance,
+            content=Content(
+                id=raw.content.id,
+                title="Fluid Title Only",
+                text="Fluid synthesized body text.",
+            ),
+        )
+
+        class BareGaps:
+            pass
+
+        mock_runner = MagicMock(spec=PipelineStageRunner)
+        mock_runner.execute_stage.side_effect = [fluid, BareGaps()]
+        telemetry = InMemoryTelemetryPort()
+        pipeline = CresmoPipeline(
+            media_ingestion_port=MagicMock(spec=MediaIngestionPort),
+            vault_port=MagicMock(spec=VaultRepositoryPort),
+            stage_runner=mock_runner,
+            telemetry_port=telemetry,
+        )
+
+        pipeline.execute(raw, force_reprocess=True)
+        payload = telemetry.spans[0].outputs[0]
+        assert payload["content_title"] == "Fluid Title Only"
+        assert payload["synthesized_characters"] == len("Fluid synthesized body text.")
+        assert payload["synthesized_words"] == 4
+
+        raw_untitled = StageTranscript(
+            channel=Channel(name=ChannelName("PrecedenceChan")),
+            provenance=MediaProvenance.create(url=""),
+            content=Content(
+                id=ContentId("c_prec_02"),
+                title="",
+                text="Raw untitled text.",
+            ),
+        )
+        mock_runner.execute_stage.side_effect = [BareGaps(), BareGaps()]
+        pipeline.execute(raw_untitled, force_reprocess=True)
+        untitled_payload = telemetry.spans[1].outputs[0]
+        assert untitled_payload["content_title"] == ""
 
     def test_execute_idempotent_skip_when_in_ledger_and_not_force_reprocess(
         self, sample_source_transcript: StageTranscript
@@ -579,7 +675,7 @@ class TestCresmoPipelineExecutionAndIdempotency:
         mock_ledger = MagicMock(spec=LedgerRepositoryPort)
         mock_ledger.is_processed.return_value = True
 
-        mock_t = MagicMock(spec=TelemetryPort)
+        telemetry = InMemoryTelemetryPort()
         mock_m = MagicMock(spec=MetricsPort)
         mock_runner = MagicMock(spec=PipelineStageRunner)
 
@@ -592,7 +688,7 @@ class TestCresmoPipelineExecutionAndIdempotency:
             vault_port=mock_vault,
             stage_runner=mock_runner,
             ledger_port=mock_ledger,
-            telemetry_port=mock_t,
+            telemetry_port=telemetry,
             metrics_port=mock_m,
         )
 
@@ -609,14 +705,17 @@ class TestCresmoPipelineExecutionAndIdempotency:
         assert isinstance(res.synthesized_notes, tuple)
         assert isinstance(res.reconciled_mocs, tuple)
         mock_runner.execute_stage.assert_not_called()
+        mock_vault.get_stage_transcript.assert_called_once_with(
+            "gap_filler", sample_source_transcript.content.id
+        )
 
-        mock_t.record_session_output.assert_called_once_with(
+        assert telemetry.spans[0].outputs == [
             {
                 "status": "SKIPPED_IDEMPOTENT",
                 "reason": "Existing content already processed",
                 "content_id": "c1234567",
             }
-        )
+        ]
         mock_m.increment_counter.assert_called_once_with(
             "cresmo_transcripts_processed_total",
             1.0,
@@ -951,7 +1050,7 @@ class TestCresmoPipelineRunForSources:
             patch(
                 "cresmo.application.pipeline.coordinator.load_manifest_urls",
                 return_value=["https://youtube.com/watch?v=1", "https://youtube.com/watch?v=2"],
-            ),
+            ) as mock_load_manifest,
             patch.object(pipeline, "run_for_video", side_effect=[res1, res2]) as mock_run_video,
         ):
             results = pipeline.run_for_manifest(
@@ -961,6 +1060,7 @@ class TestCresmoPipelineRunForSources:
                 user=user,
                 batch_id=batch,
             )
+            mock_load_manifest.assert_called_once_with(manifest_file)
             assert results == [res1, res2]
             assert mock_run_video.call_count == 2
             mock_run_video.assert_any_call(
@@ -1082,32 +1182,6 @@ class TestCresmoPipelineRunForSources:
 
     def test_execute_flushes_telemetry_after_root_session_span_closes(self) -> None:
         """Verify CresmoPipeline.execute flushes closed root session span cleanly on success and failure."""
-        from collections.abc import Generator
-        from contextlib import contextmanager
-        from typing import Any
-
-        events: list[str] = []
-
-        class RecordingTelemetry(NoOpTelemetryPort):
-            @contextmanager
-            def start_pipeline_session(
-                self,
-                session_id: Any,
-                user_id: Any,
-                channel_tenant_id: str | None = None,
-                metadata: dict[str, Any] | None = None,
-                trace_name: str | None = None,
-            ) -> Generator[Any]:
-                _ = (session_id, user_id, channel_tenant_id, metadata, trace_name)
-                events.append("session_enter")
-                try:
-                    yield None
-                finally:
-                    events.append("session_exit")
-
-            def flush(self) -> None:
-                events.append("flush")
-
         cid = ContentId("vid_root_flush")
         raw = StageTranscript(
             channel=Channel(name=ChannelName("Channel Test")),
@@ -1119,7 +1193,7 @@ class TestCresmoPipelineRunForSources:
         mock_vault.get_stage_transcript.return_value = None
         mock_runner = MagicMock(spec=PipelineStageRunner)
         mock_runner.execute_stage.return_value = MagicMock(text="Stage output")
-        telemetry = RecordingTelemetry()
+        telemetry = InMemoryTelemetryPort()
 
         pipeline = CresmoPipeline(
             media_ingestion_port=mock_ingestion,
@@ -1130,10 +1204,21 @@ class TestCresmoPipelineRunForSources:
 
         result = pipeline.execute(raw, force_reprocess=True)
         assert result.success is True
-        assert events == ["session_enter", "session_exit", "flush"]
+        assert telemetry.spans[0].session_spec is not None
+        assert telemetry.spans[0].session_spec.force_reprocess is True
+        assert telemetry.spans[0].session_spec.batch_id is None
+        assert telemetry.lifecycle_events == [
+            "session_enter:cresmo.pipeline",
+            "session_exit:cresmo.pipeline",
+            "flush",
+        ]
 
-        events.clear()
+        telemetry.lifecycle_events.clear()
         mock_runner.execute_stage.side_effect = RuntimeError("pipeline boom")
         with pytest.raises(RuntimeError, match="pipeline boom"):
             pipeline.execute(raw, force_reprocess=True)
-        assert events == ["session_enter", "session_exit", "flush"]
+        assert telemetry.lifecycle_events == [
+            "session_enter:cresmo.pipeline",
+            "session_exit:cresmo.pipeline",
+            "flush",
+        ]

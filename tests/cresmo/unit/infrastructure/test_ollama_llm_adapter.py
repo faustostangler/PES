@@ -14,11 +14,12 @@ from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest
-from opentelemetry.trace import SpanContext, TraceFlags
 
+from cresmo.application.ports import SpanKind, active_telemetry_stage
 from cresmo.domain.exceptions import LLMInfrastructureError
 from cresmo.domain.value_objects.prompt import ChatPrompt
 from cresmo.infrastructure.adapters.llm.ollama_llm_adapter import OllamaLLMAdapter
+from tests.doubles.telemetry_fake import InMemoryTelemetryPort
 
 
 class TestOllamaLLMAdapter:
@@ -138,10 +139,12 @@ class TestOllamaLLMAdapter:
             assert body["options"]["temperature"] == 0.35
 
     def test_transform_emits_langfuse_generation_telemetry(self) -> None:
-        """Verify that OllamaLLMAdapter passes token counts and metrics to OpenTelemetry span."""
+        """Verify that OllamaLLMAdapter emits generation span and GenAI attributes via TelemetryPort."""
+        telemetry = InMemoryTelemetryPort()
         adapter = OllamaLLMAdapter(
             base_url="http://localhost:11434",
             model="qwen2.5:7b",
+            telemetry_port=telemetry,
         )
 
         mock_response_data = {
@@ -153,19 +156,7 @@ class TestOllamaLLMAdapter:
             "eval_duration": 400_000_000,
         }
 
-        mock_span = MagicMock()
-        mock_span.is_recording.return_value = True
-        mock_span.get_span_context.return_value = SpanContext(
-            trace_id=1, span_id=1, is_remote=False, trace_flags=TraceFlags(1)
-        )
-
-        with (
-            patch("urllib.request.urlopen") as mock_urlopen,
-            patch(
-                "cresmo.infrastructure.adapters.llm.ollama_llm_adapter.trace.get_current_span",
-                return_value=mock_span,
-            ),
-        ):
+        with patch("urllib.request.urlopen") as mock_urlopen:
             mock_resp = MagicMock()
             mock_resp.read.return_value = json.dumps(mock_response_data).encode("utf-8")
             mock_resp.__enter__.return_value = mock_resp
@@ -178,13 +169,18 @@ class TestOllamaLLMAdapter:
             )
 
             assert result == "Observed output"
-            mock_span.set_attribute.assert_any_call("gen_ai.system", "ollama")
-            mock_span.set_attribute.assert_any_call("gen_ai.request.model", "qwen2.5:7b")
-            mock_span.set_attribute.assert_any_call("gen_ai.usage.input_tokens", 50)
-            mock_span.set_attribute.assert_any_call("gen_ai.usage.output_tokens", 120)
-            mock_span.set_attribute.assert_any_call("langfuse.observation.type", "generation")
-            mock_span.set_attribute.assert_any_call("langfuse.session.id", "session-42")
-            mock_span.set_attribute.assert_any_call("cresmo.trace_id", "cresmo-trace-1")
+            assert len(telemetry.spans) == 1
+            gen_span = telemetry.spans[0]
+            assert gen_span.kind is SpanKind.GENERATION
+            assert gen_span.name == "cresmo.llm.generate"
+            assert gen_span.attributes["gen_ai.system"] == "ollama"
+            assert gen_span.attributes["gen_ai.request.model"] == "qwen2.5:7b"
+            assert gen_span.attributes["gen_ai.usage.input_tokens"] == 50
+            assert gen_span.attributes["gen_ai.usage.output_tokens"] == 120
+            assert gen_span.attributes["langfuse.session.id"] == "session-42"
+            assert gen_span.attributes["cresmo.trace_id"] == "cresmo-trace-1"
+            assert gen_span.outputs == ["Observed output"]
+            assert telemetry.flush_count == 0
 
     def test_transform_omits_num_predict_when_zero_or_negative(self) -> None:
         """Verify that when num_predict is 0 (default), num_predict is omitted from options."""
@@ -462,24 +458,16 @@ class TestOllamaLLMAdapter:
 
     def test_transform_emits_stage_scoped_and_standalone_langfuse_names(self) -> None:
         """Verify OllamaLLMAdapter resolves cresmo.{stage}.generate inside stage and cresmo.llm.generate outside."""
-        from cresmo.application.ports import active_telemetry_stage
-
+        telemetry = InMemoryTelemetryPort()
         adapter = OllamaLLMAdapter(
             base_url="http://localhost:11434",
             model="qwen2.5:7b",
+            telemetry_port=telemetry,
         )
         adapter._is_warmed_up = True
         mock_response_data = {"response": "Observed stage output", "done": True}
 
-        mock_lf = MagicMock()
-        mock_cm = MagicMock()
-        mock_cm.__enter__.return_value = MagicMock()
-        mock_lf.start_as_current_observation.return_value = mock_cm
-
-        with (
-            patch("urllib.request.urlopen") as mock_urlopen,
-            patch("langfuse._client.observe.get_client", return_value=mock_lf),
-        ):
+        with patch("urllib.request.urlopen") as mock_urlopen:
             mock_resp = MagicMock()
             mock_resp.read.return_value = json.dumps(mock_response_data).encode("utf-8")
             mock_resp.__enter__.return_value = mock_resp
@@ -494,7 +482,8 @@ class TestOllamaLLMAdapter:
                     == "Observed stage output"
                 )
 
-        observation_names = [
-            call.kwargs["name"] for call in mock_lf.start_as_current_observation.call_args_list
+        assert [s.name for s in telemetry.spans] == [
+            "cresmo.llm.generate",
+            "cresmo.gap_filler.generate",
         ]
-        assert observation_names == ["cresmo.llm.generate", "cresmo.gap_filler.generate"]
+        assert all(s.kind is SpanKind.GENERATION for s in telemetry.spans)

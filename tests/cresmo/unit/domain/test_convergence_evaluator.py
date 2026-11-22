@@ -320,6 +320,31 @@ def test_segment_semantic_units_long_paragraph_sliding_window_cutoff() -> None:
     baroque_3 = " ".join(_make_sentence(f"z{i}_", 41) for i in range(3))
     assert segment_semantic_units(baroque_3) == (baroque_3,)
 
+    # Custom configurable cutoff and sliding window parameters
+    custom_units = segment_semantic_units(
+        long_5,
+        long_unit_word_cutoff=200,
+    )
+    assert custom_units == (long_5,)
+    custom_win4 = segment_semantic_units(
+        long_5,
+        long_unit_word_cutoff=50,
+        sliding_window_sentences=4,
+        sliding_window_overlap=2,
+    )
+    assert custom_win4 == (
+        f"{s0} {s1} {s2} {s3}",
+        f"{s2} {s3} {s4}",
+    )
+
+    # SaturationThresholds sliding-window validation bounds
+    with pytest.raises(DomainValidationError):
+        SaturationThresholds(long_unit_word_cutoff=0)
+    with pytest.raises(DomainValidationError):
+        SaturationThresholds(sliding_window_sentences=0)
+    with pytest.raises(DomainValidationError):
+        SaturationThresholds(sliding_window_sentences=3, sliding_window_overlap=3)
+
 
 def test_segment_semantic_units_sentence_boundary_guards_abbreviations_and_markers() -> None:
     padding = " ".join(f"contexto{i}" for i in range(30))

@@ -381,11 +381,17 @@ def test_multi_pass_injects_critique_only_on_final_pass(
     assert candidate.metadata["passes_executed"] == 3
     assert candidate.metadata["is_saturated"] is False
     assert candidate.text == outputs[2]
+    assert [c.kwargs["trace_id"] for c in mock_llm.transform.call_args_list] == [
+        "trace_critique_3_pass_1",
+        "trace_critique_3_pass_2",
+        "trace_critique_3_pass_3",
+    ]
 
 
 def test_multi_pass_early_saturation_with_critique_runs_terminal_critique_pass(
     sample_context: PipelineExecutionContext,
     sample_fluid_transcript: StageTranscript,
+    caplog: pytest.LogCaptureFixture,
 ) -> None:
     """Verify early saturation schedules a single terminal critique pass without wasting remaining passes."""
     from cresmo.application.pipeline.stage_descriptor import StageConfig
@@ -423,17 +429,27 @@ def test_multi_pass_early_saturation_with_critique_runs_terminal_critique_pass(
         max_passes=5,
         saturation_policy=HybridSaturationEvaluator(),
     )
-    candidate = generate_stage_candidate(
-        cfg,
-        sample_fluid_transcript,
-        context=sample_context,
-        prompt_provider=JsonPromptProvider(),
-        llm_port=mock_llm,
-        attempt=2,
-        active_trace_id="trace_critique_sat",
-        critique="Fix grounding defect.",
-    )
+    with caplog.at_level("INFO"):
+        candidate = generate_stage_candidate(
+            cfg,
+            sample_fluid_transcript,
+            context=sample_context,
+            prompt_provider=JsonPromptProvider(),
+            llm_port=mock_llm,
+            attempt=2,
+            active_trace_id="trace_critique_sat",
+            critique="Fix grounding defect.",
+        )
 
+    assert any(
+        r.getMessage() == "[StageRunner] Executing pass 1/5 for gap_filler..."
+        for r in caplog.records
+    )
+    assert any(
+        r.getMessage()
+        == "[StageRunner] Saturation reached at pass 2/5; scheduling final critique pass."
+        for r in caplog.records
+    )
     assert len(prompts_seen) == 3
     assert "[PREVIOUS ATTEMPT QUALITY FEEDBACK]" not in prompts_seen[0]
     assert "[PREVIOUS ATTEMPT QUALITY FEEDBACK]" not in prompts_seen[1]
@@ -448,6 +464,7 @@ def test_multi_pass_early_saturation_with_critique_runs_terminal_critique_pass(
 def test_saturation_policy_can_halt_immediately_on_pass_1(
     sample_context: PipelineExecutionContext,
     sample_fluid_transcript: StageTranscript,
+    caplog: pytest.LogCaptureFixture,
 ) -> None:
     """Verify Pass 1 receives source text as baseline_text and saturation_policy can halt on pass 1."""
     from cresmo.application.pipeline.stage_descriptor import StageConfig
@@ -484,16 +501,22 @@ def test_saturation_policy_can_halt_immediately_on_pass_1(
         max_passes=5,
         saturation_policy=_pass1_policy,
     )
-    candidate = generate_stage_candidate(
-        cfg,
-        sample_fluid_transcript,
-        context=sample_context,
-        prompt_provider=JsonPromptProvider(),
-        llm_port=mock_llm,
-        attempt=1,
-        active_trace_id="trace_pass1_sat",
-    )
+    with caplog.at_level("INFO"):
+        candidate = generate_stage_candidate(
+            cfg,
+            sample_fluid_transcript,
+            context=sample_context,
+            prompt_provider=JsonPromptProvider(),
+            llm_port=mock_llm,
+            attempt=1,
+            active_trace_id="trace_pass1_sat",
+        )
 
+    assert any(
+        r.getMessage()
+        == "[StageRunner] Saturation reached at pass 1/5 (lexical_identity). Halting early."
+        for r in caplog.records
+    )
     assert recorded_calls == [
         (sample_fluid_transcript.content.text, "Pass 1 already SATURATED.", 1)
     ]
@@ -620,9 +643,11 @@ def test_preserve_baseline_rollback_and_saturation_history_on_explicit_sentinel_
     }
     assert expected_keys.issubset(history[0].keys())
     assert expected_keys.issubset(history[1].keys())
+    assert history[0]["pass_num"] == 1
     assert history[0]["is_saturated"] is False
     assert history[0]["reason"] == SaturationReason.NOVEL_CONTENT.value
     assert history[0]["preserve_baseline"] is False
+    assert history[1]["pass_num"] == 2
     assert history[1]["is_saturated"] is True
     assert history[1]["reason"] == SaturationReason.EXPLICIT_SENTINEL.value
     assert history[1]["preserve_baseline"] is True
@@ -632,19 +657,15 @@ def test_generate_stage_candidate_invokes_saturation_span_per_pass(
     sample_context: PipelineExecutionContext,
     sample_fluid_transcript: StageTranscript,
 ) -> None:
-    """Verify telemetry_port.start_stage_saturation_span is invoked per pass (cresmo.gap_filler.saturation.pass_N)."""
-    from contextlib import nullcontext
-
+    """Verify telemetry_port.start_span emits saturation span per pass (cresmo.gap_filler.saturation.pass_N)."""
     from cresmo.application.pipeline.stage_descriptor import StageConfig
     from cresmo.application.pipeline.stage_execution import generate_stage_candidate
-    from cresmo.application.ports.telemetry import (
-        TelemetryPort,
-        format_stage_saturation_span_name,
-    )
+    from cresmo.application.ports.telemetry import format_stage_saturation_span_name
     from cresmo.application.services.hybrid_saturation import HybridSaturationEvaluator
     from cresmo.domain.services.convergence_evaluator import NO_NEW_GAPS_SENTINEL
     from cresmo.domain.value_objects import PromptKey
     from cresmo.infrastructure.adapters.prompts import JsonPromptProvider
+    from tests.doubles.telemetry_fake import InMemoryTelemetryPort
 
     pass1_text = (
         "## Fundação de Portugal\n\n"
@@ -655,8 +676,7 @@ def test_generate_stage_candidate_invokes_saturation_span_per_pass(
     mock_llm = MagicMock(spec=LLMTransformationPort)
     mock_llm.transform.side_effect = [pass1_text, NO_NEW_GAPS_SENTINEL]
 
-    spy_telemetry = MagicMock(spec=TelemetryPort)
-    spy_telemetry.start_stage_saturation_span.return_value = nullcontext()
+    spy_telemetry = InMemoryTelemetryPort()
 
     cfg = StageConfig[StageTranscript, StageTranscript](
         stage_name="gap_filler",
@@ -675,14 +695,14 @@ def test_generate_stage_candidate_invokes_saturation_span_per_pass(
         telemetry_port=spy_telemetry,
     )
 
-    assert spy_telemetry.start_stage_saturation_span.call_count == 2
-    observed_passes: list[tuple[str, int]] = []
-    for call in spy_telemetry.start_stage_saturation_span.call_args_list:
-        stage_arg = call.kwargs["stage_name"] if "stage_name" in call.kwargs else call.args[0]
-        pass_arg = call.kwargs["pass_num"] if "pass_num" in call.kwargs else call.args[1]
-        observed_passes.append((stage_arg, pass_arg))
-
-    assert observed_passes == [("gap_filler", 1), ("gap_filler", 2)]
+    assert len(spy_telemetry.spans) == 2
+    assert [span.name for span in spy_telemetry.spans] == [
+        format_stage_saturation_span_name("gap_filler", 1),
+        format_stage_saturation_span_name("gap_filler", 2),
+    ]
+    assert spy_telemetry.spans[0].attributes["cresmo.pass_num"] == 1
+    assert spy_telemetry.spans[1].attributes["cresmo.pass_num"] == 2
+    assert spy_telemetry.spans[1].attributes["cresmo.saturation.is_saturated"] is True
     assert (
         format_stage_saturation_span_name("gap_filler", 1) == "cresmo.gap_filler.saturation.pass_1"
     )
@@ -825,7 +845,10 @@ def test_generate_stage_candidate_rejects_non_verdict_saturation_policy_return(
         saturation_policy=lambda _b, _c, _p: True,  # type: ignore[arg-type,return-value]
     )
 
-    with pytest.raises(TypeError, match="SaturationVerdict"):
+    with pytest.raises(
+        TypeError,
+        match=r"^StageConfig\.saturation_policy must return SaturationVerdict, got bool\.$",
+    ):
         generate_stage_candidate(
             cfg,
             sample_fluid_transcript,
@@ -835,3 +858,132 @@ def test_generate_stage_candidate_rejects_non_verdict_saturation_policy_return(
             attempt=1,
             active_trace_id="trace_bad_verdict",
         )
+
+
+def test_stage_execution_pass_context_and_boundary_contracts(
+    sample_context: PipelineExecutionContext,
+    sample_fluid_transcript: StageTranscript,
+) -> None:
+    """Verify _build_pass_prompt_context and generate_stage_candidate boundary invariants."""
+    from cresmo.application.pipeline.stage_descriptor import StageConfig
+    from cresmo.application.pipeline.stage_execution import (
+        _build_pass_prompt_context,
+        generate_stage_candidate,
+    )
+    from cresmo.domain.value_objects import ChatPrompt, PromptKey
+    from cresmo.domain.value_objects.convergence import SaturationReason, SaturationVerdict
+    from cresmo.infrastructure.adapters.prompts import JsonPromptProvider
+
+    # 1. Exact prompt context keys and prev_pass_num arithmetic
+    assert _build_pass_prompt_context(
+        pass_index=3, max_passes=5, is_multi_pass=True, draft_text="prev draft"
+    ) == {
+        "pass_num": 3,
+        "total_passes": 5,
+        "prev_pass_num": 2,
+        "current_text": "prev draft",
+    }
+    assert (
+        _build_pass_prompt_context(pass_index=1, max_passes=1, is_multi_pass=False, draft_text=None)
+        == {}
+    )
+
+    # 2. stage_config missing max_passes attribute defaults safely to single pass (1)
+    class ConfigWithoutMaxPasses:
+        stage_name = "fluid_prose"
+        temperature = None
+
+        def build_transform_prompt(
+            self, _provider: object, _source: object, **_kwargs: object
+        ) -> ChatPrompt:
+            return ChatPrompt.from_system_and_user(system="sys", user="usr")
+
+    mock_llm_default = MagicMock(spec=LLMTransformationPort)
+    mock_llm_default.transform.return_value = "Single pass default."
+    cand_default = generate_stage_candidate(
+        ConfigWithoutMaxPasses(),  # type: ignore[arg-type]
+        sample_fluid_transcript,
+        context=sample_context,
+        prompt_provider=NoOpPromptProviderPort(),
+        llm_port=mock_llm_default,
+        attempt=1,
+        active_trace_id="trace_no_attr",
+    )
+    assert mock_llm_default.transform.call_count == 1
+    assert "passes_executed" not in cand_default.metadata
+
+    # 3. max_passes=0 clamps to 1 and runs single pass
+    mock_llm_zero = MagicMock(spec=LLMTransformationPort)
+    mock_llm_zero.transform.return_value = "Clamped single pass."
+    cfg_zero = StageConfig[StageTranscript, StageTranscript](
+        stage_name="fluid_prose",
+        transform_prompt_key=PromptKey.FLUID_PROSE,
+        max_passes=0,
+    )
+    cand_zero = generate_stage_candidate(
+        cfg_zero,
+        sample_fluid_transcript,
+        context=sample_context,
+        prompt_provider=NoOpPromptProviderPort(),
+        llm_port=mock_llm_zero,
+        attempt=1,
+        active_trace_id="trace_zero_passes",
+    )
+    assert mock_llm_zero.transform.call_count == 1
+    assert cand_zero.text == "Clamped single pass."
+    assert "passes_executed" not in cand_zero.metadata
+
+    # 4. max_passes=2 activates multi-pass, forwards total_passes=2, and saturating on final pass with critique marks is_saturated=True
+    observed_prompt_kwargs: list[dict[str, object]] = []
+
+    class SpyTwoPassConfig:
+        stage_name = "gap_filler"
+        temperature = None
+        max_passes = 2
+
+        def build_transform_prompt(
+            self, _provider: object, _source: object, **kwargs: object
+        ) -> ChatPrompt:
+            observed_prompt_kwargs.append(dict(kwargs))
+            return ChatPrompt.from_system_and_user(system="sys", user="usr")
+
+        def saturation_policy(
+            self, _baseline: str, _current: str, pass_index: int
+        ) -> SaturationVerdict:
+            saturated = pass_index == 2
+            return SaturationVerdict(
+                is_saturated=saturated,
+                reason=(
+                    SaturationReason.LEXICAL_IDENTITY
+                    if saturated
+                    else SaturationReason.NOVEL_CONTENT
+                ),
+                lexical_jaccard=1.0 if saturated else 0.1,
+                word_delta_ratio=0.0 if saturated else 0.5,
+                max_novelty=0.0 if saturated else 0.9,
+                novel_paragraphs=0 if saturated else 1,
+                total_paragraphs=1,
+                preserve_baseline=False,
+                provider="test",
+            )
+
+    mock_llm_two = MagicMock(spec=LLMTransformationPort)
+    mock_llm_two.transform.side_effect = ["Pass 1 text.", "Pass 2 saturated text."]
+    cand_two = generate_stage_candidate(
+        SpyTwoPassConfig(),  # type: ignore[arg-type]
+        sample_fluid_transcript,
+        context=sample_context,
+        prompt_provider=JsonPromptProvider(),
+        llm_port=mock_llm_two,
+        attempt=2,
+        active_trace_id="trace_two_passes",
+        critique="Address residual gaps.",
+    )
+    assert mock_llm_two.transform.call_count == 2
+    assert observed_prompt_kwargs[0]["pass_num"] == 1
+    assert observed_prompt_kwargs[0]["total_passes"] == 2
+    assert observed_prompt_kwargs[1]["pass_num"] == 2
+    assert observed_prompt_kwargs[1]["total_passes"] == 2
+    assert observed_prompt_kwargs[1]["prev_pass_num"] == 1
+    assert cand_two.metadata["passes_executed"] == 2
+    assert cand_two.metadata["is_saturated"] is True

@@ -21,7 +21,7 @@ from cresmo.application.pipeline import (
     PipelineStageRunner,
     StageFactory,
 )
-from cresmo.application.ports import MediaIngestionPort
+from cresmo.application.ports import MediaIngestionPort, NoOpTelemetryPort
 from cresmo.application.services.preflight import PreflightHealthChecker
 from cresmo.application.use_cases.concat_master import ConcatMasterUseCase
 from cresmo.application.use_cases.discovery import DiscoverBatchSourcesUseCase
@@ -56,7 +56,7 @@ from cresmo.infrastructure.adapters.anonymization.anonymizer_adapter import (
     NoOpAnonymizerAdapter,
     RegexAnonymizerAdapter,
 )
-from cresmo.infrastructure.adapters.judges.langfuse_decorator import LangfuseJudgeDecorator
+from cresmo.infrastructure.adapters.judges.telemetry_decorator import TelemetryJudgeDecorator
 from cresmo.infrastructure.adapters.llm.gemini_adapter import GeminiLLMAdapter
 from cresmo.infrastructure.adapters.llm.ollama_llm_adapter import OllamaLLMAdapter
 from cresmo.infrastructure.adapters.media.native_media_ingestion_adapter import (
@@ -72,7 +72,6 @@ from cresmo.infrastructure.adapters.prompts import (
     LangfusePromptProvider,
 )
 from cresmo.infrastructure.adapters.telemetry.opentelemetry_adapter import (
-    NoOpTelemetryAdapter,
     OpenTelemetryAdapter,
 )
 from cresmo.infrastructure.config import CresmoSettings
@@ -200,14 +199,14 @@ class TestCompositionRoot:
             assert pipeline.vault_port.vault_dir == (tmp_path / "vault").resolve()
             assert pipeline.stage_runner.stage_factory is not None
             assert pipeline.stage_runner.stage_factory.settings is settings_with_langfuse
-            assert isinstance(pipeline.stage_runner.llm_judge, LangfuseJudgeDecorator)
-            assert pipeline.stage_runner.llm_judge._langfuse_client is mock_langfuse_instance
+            assert isinstance(pipeline.stage_runner.llm_judge, TelemetryJudgeDecorator)
+            assert pipeline.stage_runner.llm_judge._telemetry is pipeline.telemetry_port
             assert pipeline.llm_indexing_port is not None
             assert pipeline.media_ingestion_port is not None
             assert pipeline.vault_port is not None
             assert pipeline.ledger_port is not None
             assert isinstance(pipeline.llm_synthesis_port, GeminiLLMAdapter)
-            assert pipeline.llm_synthesis_port._langfuse is mock_langfuse_instance
+            assert pipeline.llm_synthesis_port._telemetry is pipeline.telemetry_port
             assert (
                 getattr(pipeline.stage_runner.telemetry_port, "_langfuse", None)
                 is mock_langfuse_instance
@@ -243,7 +242,7 @@ class TestCompositionRoot:
             pipeline = build_pipeline(settings=settings_with_langfuse)
             assert isinstance(pipeline, CresmoPipeline)
             assert isinstance(pipeline.llm_synthesis_port, GeminiLLMAdapter)
-            assert pipeline.llm_synthesis_port._langfuse is None
+            assert isinstance(pipeline.llm_synthesis_port._telemetry, NoOpTelemetryPort)
 
         captured = capsys.readouterr()
         assert "Langfuse server at 'http://localhost:3000' is unreachable" in captured.err
@@ -277,7 +276,7 @@ class TestCompositionRoot:
             pipeline = build_pipeline(settings=settings_with_langfuse)
             assert isinstance(pipeline, CresmoPipeline)
             assert isinstance(pipeline.llm_synthesis_port, GeminiLLMAdapter)
-            assert pipeline.llm_synthesis_port._langfuse is None
+            assert isinstance(pipeline.llm_synthesis_port._telemetry, NoOpTelemetryPort)
 
         expected_msg = "[composition] Failed to initialize Langfuse client: Langfuse init failed"
         assert expected_msg in caplog.text or expected_msg in capsys.readouterr().out
@@ -473,7 +472,7 @@ class TestCompositionRoot:
         assert isinstance(adapter, OpenTelemetryAdapter)
 
         noop = build_telemetry_adapter(test_settings, langfuse_client=None)
-        assert isinstance(noop, NoOpTelemetryAdapter)
+        assert isinstance(noop, NoOpTelemetryPort)
 
     def test_build_metrics_adapter_enabled_and_disabled(self, tmp_path: Path) -> None:
         settings_enabled = CresmoSettings(
@@ -496,7 +495,7 @@ class TestCompositionRoot:
         assert isinstance(provider._fallback, JsonPromptProvider)
 
     def test_build_gemini_synthesis_adapter(self, test_settings: CresmoSettings) -> None:
-        adapter = build_gemini_synthesis_adapter(test_settings, langfuse_client=None)
+        adapter = build_gemini_synthesis_adapter(test_settings, telemetry_port=None)
         assert isinstance(adapter, GeminiLLMAdapter)
         assert adapter.model_name == test_settings.gemini_model
 
@@ -833,19 +832,19 @@ class TestCompositionRoot:
             mock_pool_builder.assert_called_once_with(test_settings)
             mock_gemini.assert_called_once_with(
                 test_settings,
-                langfuse_client=mock_lf_client,
+                telemetry_port=mock_tel_adapter,
                 credential_pool=mock_pool,
             )
             mock_idx.assert_called_once_with(
                 test_settings,
                 synthesis_adapter=mock_synth_adapter,
                 web_index=False,
-                langfuse_client=mock_lf_client,
+                telemetry_port=mock_tel_adapter,
                 credential_pool=mock_pool,
             )
             mock_judge.assert_called_once_with(
                 test_settings,
-                langfuse_client=mock_lf_client,
+                telemetry_port=mock_tel_adapter,
                 prompt_provider=mock_prompt_prov,
                 credential_pool=mock_pool,
             )
@@ -870,7 +869,7 @@ class TestCompositionRoot:
             gemini_timeout_seconds=180.0,
         )
 
-        synthesis_adapter = build_gemini_synthesis_adapter(settings, langfuse_client=None)
+        synthesis_adapter = build_gemini_synthesis_adapter(settings, telemetry_port=None)
         assert isinstance(synthesis_adapter, GeminiLLMAdapter)
         assert synthesis_adapter.timeout_seconds == 180.0
         assert synthesis_adapter._pool is not None
@@ -890,9 +889,11 @@ class TestCompositionRoot:
             ResilientCompositeJudgeAdapter,
         )
         from cresmo.infrastructure.adapters.judges.gemini_judge import GeminiJudgeAdapter
-        from cresmo.infrastructure.adapters.judges.langfuse_decorator import LangfuseJudgeDecorator
         from cresmo.infrastructure.adapters.judges.preflight_decorator import (
             MechanicalPreflightJudgeDecorator,
+        )
+        from cresmo.infrastructure.adapters.judges.telemetry_decorator import (
+            TelemetryJudgeDecorator,
         )
 
         settings = CresmoSettings(
@@ -908,9 +909,9 @@ class TestCompositionRoot:
         synthesis_adapter = pipeline.llm_synthesis_port
         assert isinstance(synthesis_adapter, GeminiLLMAdapter)
 
-        # Unwrap LangfuseJudgeDecorator -> MechanicalPreflightJudgeDecorator -> ResilientCompositeJudgeAdapter -> GeminiJudgeAdapter
+        # Unwrap TelemetryJudgeDecorator -> MechanicalPreflightJudgeDecorator -> ResilientCompositeJudgeAdapter -> GeminiJudgeAdapter
         judge_adapter = pipeline.llm_judge
-        assert isinstance(judge_adapter, LangfuseJudgeDecorator)
+        assert isinstance(judge_adapter, TelemetryJudgeDecorator)
         preflight = judge_adapter._inner_judge
         assert isinstance(preflight, MechanicalPreflightJudgeDecorator)
         composite = preflight._inner_judge
