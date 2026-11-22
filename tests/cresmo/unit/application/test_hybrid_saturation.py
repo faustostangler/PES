@@ -84,7 +84,7 @@ def test_lexical_identity_saturates_without_embedding() -> None:
 
     assert verdict.is_saturated is True
     assert verdict.reason is SaturationReason.LEXICAL_IDENTITY
-    assert verdict.preserve_baseline is True
+    assert verdict.preserve_baseline is False
     assert verdict.lexical_jaccard == pytest.approx(1.0)
     assert verdict.word_delta_ratio == pytest.approx(0.0)
     mock_port.embed_batch.assert_not_called()
@@ -132,7 +132,7 @@ def test_semantic_plateau_calls_embed_batch_once_and_records_provider() -> None:
     assert verdict.reason is SaturationReason.SEMANTIC_PLATEAU
     assert verdict.novel_paragraphs == 0
     assert verdict.total_paragraphs == 2
-    assert verdict.preserve_baseline is True
+    assert verdict.preserve_baseline is False
     assert verdict.provider == "gemini"
 
 
@@ -209,7 +209,7 @@ def test_none_embedding_port_preserves_layer1_and_degrades_layer2_to_novel_conte
     identity_verdict = evaluator.evaluate(baseline, baseline, pass_index=2)
     assert identity_verdict.is_saturated is True
     assert identity_verdict.reason is SaturationReason.LEXICAL_IDENTITY
-    assert identity_verdict.preserve_baseline is True
+    assert identity_verdict.preserve_baseline is False
 
     distinct_current = (
         "## Capítulo\n\n"
@@ -241,3 +241,58 @@ def test_mode_none_returns_disabled_verdict_without_embedding() -> None:
         assert verdict.provider == "disabled"
 
     mock_port.embed_batch.assert_not_called()
+
+
+def test_empty_baseline_with_non_empty_current_returns_novel_content_without_embedding() -> None:
+    """Verify heading-only baseline with populated candidate returns NOVEL_CONTENT, not plateau."""
+    mock_port = MagicMock(spec=TextEmbeddingPort)
+    mock_port.provider_name = "gemini"
+    evaluator = HybridSaturationEvaluator(embedding_port=mock_port)
+
+    verdict = evaluator.evaluate(
+        "## Only Heading",
+        "## Main\n\nNew substantive paragraph.\n\n### Extra Info\n\n1. Detail one.\n2. Detail two.",
+        pass_index=1,
+    )
+
+    mock_port.embed_batch.assert_not_called()
+    assert verdict.is_saturated is False
+    assert verdict.reason is SaturationReason.NOVEL_CONTENT
+    assert verdict.novel_paragraphs == 3
+    assert verdict.total_paragraphs == 3
+    assert verdict.preserve_baseline is False
+
+
+def test_long_paragraph_intra_paragraph_addition_detected_with_tfidf() -> None:
+    """Verify >120-word paragraphs expose novel intra-paragraph additions instead of diluting."""
+    from cresmo.infrastructure.adapters.embeddings import TfidfEmbeddingAdapter
+
+    baseline = (
+        "O Condado Portucalense emergiu como senhorio fronteiriço durante a reconquista ibérica "
+        "no século XI, articulando milícias locais, alianças nobiliárquicas franco-leonesas e "
+        "governança patrimonial em torno de Guimarães e Braga. "
+        "As disputas sucessórias após a morte de Henrique da Borgonha intensificaram o atrito "
+        "entre a regência de Teresa de Leão, apoiada pela casa galega de Trava, e os barões "
+        "portucalenses liderados por Afonso Henriques e Egas Moniz. "
+        "A vitória militar na Batalha de São Mamede reordenou a hierarquia aristocrática no "
+        "noroeste peninsular, permitindo a consolidação administrativa do território e a "
+        "projeção diplomática junto às cortes vizinhas. "
+        "Em paralelo, os concelhos rurais obtiveram cartas de foral que asseguravam "
+        "recrutamento militar permanente, tributação regular e autonomia jurídica perante os "
+        "senhores feudais da região meridional."
+    )
+    added_sentence = (
+        "Posteriormente, a arquitetura hidráulica das levadas madeirenses revolucionou a "
+        "agroindústria açucareira atlântica, conectando engenhos coloniais a mercados flamengos "
+        "de refino e crédito mercantil."
+    )
+    current = f"{baseline} {added_sentence}"
+
+    evaluator = HybridSaturationEvaluator(embedding_port=TfidfEmbeddingAdapter())
+    verdict = evaluator.evaluate(baseline, current, pass_index=2)
+
+    assert len(baseline.split()) > 120
+    assert verdict.is_saturated is False
+    assert verdict.reason is SaturationReason.NOVEL_CONTENT
+    assert verdict.novel_paragraphs >= 1
+    assert verdict.total_paragraphs >= 2

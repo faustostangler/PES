@@ -163,11 +163,6 @@ class SaturationVerdict:
                 f"Saturated reason '{self.reason.value}' requires is_saturated=True."
             )
 
-        if self.preserve_baseline and not self.is_saturated:
-            raise DomainValidationError(
-                "preserve_baseline=True is invalid when is_saturated=False."
-            )
-
     def to_metadata_dict(self) -> dict[str, Any]:
         """Serialize verdict fields into a JSON-compatible dictionary for telemetry and metadata.
 

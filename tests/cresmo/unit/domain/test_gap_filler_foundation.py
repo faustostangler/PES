@@ -121,7 +121,7 @@ def test_semantic_convergence_plateau_detected() -> None:
 
     assert verdict.is_saturated is True
     assert verdict.reason is SaturationReason.SEMANTIC_PLATEAU
-    assert verdict.preserve_baseline is True
+    assert verdict.preserve_baseline is False
     assert verdict.novel_paragraphs == 0
     assert verdict.total_paragraphs == 2
 

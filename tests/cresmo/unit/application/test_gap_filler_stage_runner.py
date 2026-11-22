@@ -712,3 +712,59 @@ def test_stage_factory_wires_hybrid_saturation_and_never_saturate() -> None:
     assert gap_cfg.saturation_policy.embedding_port is mock_embedding_port
     assert gap_cfg.saturation_policy.mode is ConvergenceMode.HYBRID_SEMANTIC
     assert fluid_cfg.saturation_policy is never_saturate
+
+
+def test_pass1_semantic_plateau_keeps_current_text_instead_of_reverting_to_source(
+    sample_context: PipelineExecutionContext,
+    sample_fluid_transcript: StageTranscript,
+) -> None:
+    """Verify Pass 1 SEMANTIC_PLATEAU keeps candidate Extra Info output rather than reverting to fluid source."""
+    from cresmo.application.pipeline.stage_descriptor import StageConfig
+    from cresmo.application.pipeline.stage_execution import generate_stage_candidate
+    from cresmo.application.ports.embedding import TextEmbeddingPort
+    from cresmo.application.services.hybrid_saturation import HybridSaturationEvaluator
+    from cresmo.domain.value_objects import PromptKey
+    from cresmo.domain.value_objects.convergence import SaturationReason
+    from cresmo.infrastructure.adapters.prompts import JsonPromptProvider
+
+    pass1_gap_output = (
+        "## Origens\n\n"
+        f"{sample_fluid_transcript.content.text}\n\n"
+        "### Extra Info\n"
+        "1. First grounded historical note.\n"
+        "2. Second grounded historical note."
+    )
+    mock_llm = MagicMock(spec=LLMTransformationPort)
+    mock_llm.transform.return_value = pass1_gap_output
+
+    # Return identical unit vectors so Layer 2 returns SEMANTIC_PLATEAU on Pass 1
+    mock_emb = MagicMock(spec=TextEmbeddingPort)
+    mock_emb.provider_name = "gemini"
+    mock_emb.embed_batch.return_value = [[1.0, 0.0], [1.0, 0.0], [1.0, 0.0], [1.0, 0.0]]
+
+    cfg = StageConfig[StageTranscript, StageTranscript](
+        stage_name="gap_filler",
+        transform_prompt_key=PromptKey.GAP_FILLER,
+        max_passes=5,
+        saturation_policy=HybridSaturationEvaluator(embedding_port=mock_emb),
+    )
+    candidate = generate_stage_candidate(
+        cfg,
+        sample_fluid_transcript,
+        context=sample_context,
+        prompt_provider=JsonPromptProvider(),
+        llm_port=mock_llm,
+        attempt=1,
+        active_trace_id="trace_pass1_plateau",
+    )
+
+    assert mock_llm.transform.call_count == 1
+    assert candidate.metadata["passes_executed"] == 1
+    assert candidate.metadata["is_saturated"] is True
+    assert (
+        candidate.metadata["saturation_history"][0]["reason"]
+        == SaturationReason.SEMANTIC_PLATEAU.value
+    )
+    assert candidate.metadata["saturation_history"][0]["preserve_baseline"] is False
+    assert candidate.text == pass1_gap_output
+    assert "### Extra Info" in candidate.text

@@ -22,10 +22,51 @@ from cresmo.domain.value_objects.convergence import (
 )
 
 NO_NEW_GAPS_SENTINEL: Final[str] = "<NO_NEW_GAPS/>"
+LONG_UNIT_WORD_CUTOFF: Final[int] = 120
+SLIDING_WINDOW_SENTENCES: Final[int] = 3
+SLIDING_WINDOW_OVERLAP: Final[int] = 1
 
 _BLANK_LINE_SPLIT_PATTERN = re.compile(r"\n\s*\n")
 _HEADING_LINE_PATTERN = re.compile(r"^\s*#{1,6}\s+")
+_NUMBERED_ITEM_LINE_PATTERN = re.compile(r"^\s*\d+\.\s+")
+_SENTENCE_END_CANDIDATE_PATTERN = re.compile(r"[.!?]+[\"'”’)\]]*\s+")
 _WORD_TOKEN_PATTERN = re.compile(r"\w+")
+
+_TITLE_ABBREVIATIONS: Final[frozenset[str]] = frozenset(
+    {
+        "a.c",
+        "aprox",
+        "ca",
+        "cf",
+        "d",
+        "d.c",
+        "dr",
+        "dra",
+        "e.g",
+        "i.e",
+        "núm",
+        "pág",
+        "págs",
+        "pp",
+        "prof",
+        "profa",
+        "s",
+        "séc",
+        "sr",
+        "sra",
+        "srs",
+        "sras",
+        "st",
+        "sta",
+        "sto",
+        "v.g",
+        "vol",
+        "vols",
+    }
+)
+_NUMBERED_REF_ABBREVIATIONS: Final[frozenset[str]] = frozenset(
+    {"art", "cap", "fig", "n", "no", "p", "sec", "tab"}
+)
 
 
 def _tokenize_words(text: str) -> list[str]:
@@ -41,7 +82,11 @@ def _build_ngram_shingles(tokens: list[str], n: int) -> set[tuple[str, ...]]:
 
 
 def segment_semantic_units(text: str) -> tuple[str, ...]:
-    """Segment markdown compendia into discrete paragraph and numbered semantic units.
+    """Segment markdown compendia into discrete paragraph, item, and window semantic units.
+
+    Units exceeding ``LONG_UNIT_WORD_CUTOFF`` (120 words) are conditionally sub-chunked
+    into overlapping 3-sentence sliding windows (1-sentence overlap) to avoid
+    intra-paragraph embedding dilution.
 
     Args:
         text: Markdown compendium text containing main body and optional '### Extra Info'.
@@ -66,11 +111,87 @@ def segment_semantic_units(text: str) -> tuple[str, ...]:
             and not _HEADING_LINE_PATTERN.match(line)
             and line.strip() != NO_NEW_GAPS_SENTINEL
         ]
-        cleaned = "\n".join(kept_lines).strip()
-        if cleaned and cleaned != NO_NEW_GAPS_SENTINEL:
-            units.append(cleaned)
+        for unit in _split_kept_block_lines(kept_lines):
+            units.extend(_apply_long_unit_sliding_window(unit))
 
     return tuple(units)
+
+
+def _apply_long_unit_sliding_window(unit: str) -> list[str]:
+    """Slice units exceeding LONG_UNIT_WORD_CUTOFF words into overlapping 3-sentence windows."""
+    if len(_tokenize_words(unit)) <= LONG_UNIT_WORD_CUTOFF:
+        return [unit]
+
+    sentences = _split_sentences(unit)
+    if len(sentences) <= SLIDING_WINDOW_SENTENCES:
+        return [unit]
+
+    stride = SLIDING_WINDOW_SENTENCES - SLIDING_WINDOW_OVERLAP
+    windows: list[str] = []
+    start = 0
+    while True:
+        end = start + SLIDING_WINDOW_SENTENCES
+        windows.append(" ".join(sentences[start:end]))
+        if end >= len(sentences):
+            return windows
+        start += stride
+
+
+def _split_sentences(paragraph: str) -> list[str]:
+    """Split a paragraph into trimmed sentences while guarding abbreviations and markers."""
+    stripped = paragraph.strip()
+    sentences: list[str] = []
+    start_idx = 0
+    for match in _SENTENCE_END_CANDIDATE_PATTERN.finditer(stripped):
+        if not _is_sentence_boundary(stripped, match.start(), match.end()):
+            continue
+        sentences.append(stripped[start_idx : match.end()].strip())
+        start_idx = match.end()
+
+    sentences.append(stripped[start_idx:].strip())
+    return sentences
+
+
+def _is_sentence_boundary(text: str, boundary_start: int, boundary_end: int) -> bool:
+    """Return True when punctuation and whitespace at boundary delimit a new sentence."""
+    after = text[boundary_end:].lstrip("*_\"'“‘([")
+    if not after:
+        return False
+
+    if text[boundary_start] in ("!", "?"):
+        return True
+
+    if after[0].islower():
+        return False
+
+    prefix_text = text[:boundary_start].strip()
+    cleaned_prefix = prefix_text.rstrip(".")
+    if not cleaned_prefix or cleaned_prefix.isdigit():
+        return False
+
+    lower_stem = prefix_text.rsplit(maxsplit=1)[-1].lstrip("*_\"'“‘([").lower()
+    if lower_stem in _TITLE_ABBREVIATIONS:
+        return False
+
+    return not (lower_stem in _NUMBERED_REF_ABBREVIATIONS and after[0].isdigit())
+
+
+def _split_kept_block_lines(kept_lines: list[str]) -> list[str]:
+    """Split a heading-free block into semantic units, isolating numbered list items."""
+    if not kept_lines:
+        return []
+
+    split_units: list[str] = []
+    current_unit_lines: list[str] = []
+    for line in kept_lines:
+        if _NUMBERED_ITEM_LINE_PATTERN.match(line) and current_unit_lines:
+            split_units.append("\n".join(current_unit_lines))
+            current_unit_lines = [line]
+        else:
+            current_unit_lines.append(line)
+
+    split_units.append("\n".join(current_unit_lines))
+    return split_units
 
 
 def is_explicit_stop_sentinel(text: str, pass_index: int = 2) -> bool:
@@ -253,7 +374,7 @@ def evaluate_lexical_convergence(
             max_novelty=0.0,
             novel_paragraphs=0,
             total_paragraphs=total_paragraphs,
-            preserve_baseline=True,
+            preserve_baseline=False,
             provider="lexical",
         )
 
@@ -299,7 +420,7 @@ def evaluate_semantic_convergence(
             max_novelty=max_novelty,
             novel_paragraphs=novel_paragraphs,
             total_paragraphs=total_paragraphs,
-            preserve_baseline=True,
+            preserve_baseline=False,
             provider=provider,
         )
 

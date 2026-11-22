@@ -247,3 +247,10 @@ def test_validate_gap_filler_syntax() -> None:
     # Bullet list inside Extra Info section
     bullet_in_extra = "## Main Title\n\nValid body paragraph.\n\n### Extra Info\n\n* Bullet detail."
     assert any("bullet" in v.lower() for v in validate_gap_filler_syntax(bullet_in_extra))
+
+    # Empty main body before Extra Info
+    empty_main_body = "### Extra Info\n\n1. Orphan detail."
+    assert any(
+        "main body text before '### extra info' is empty" in v.lower()
+        for v in validate_gap_filler_syntax(empty_main_body)
+    )

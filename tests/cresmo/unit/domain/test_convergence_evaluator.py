@@ -198,6 +198,18 @@ def test_saturation_verdict_invariants_and_metadata_serialization() -> None:
             novel_paragraphs=cast(int, True),
             total_paragraphs=2,
         )
+    for bad_verdict_kwargs in (
+        {"is_saturated": "yes", "reason": SaturationReason.NOVEL_CONTENT},
+        {"is_saturated": False, "reason": SaturationReason.NOVEL_CONTENT, "preserve_baseline": 1},
+        {"is_saturated": False, "reason": "novel_content"},
+        {"is_saturated": False, "reason": SaturationReason.NOVEL_CONTENT, "provider": 123},
+    ):
+        with pytest.raises(DomainValidationError):
+            SaturationVerdict(
+                lexical_jaccard=0.2,
+                word_delta_ratio=0.1,
+                **cast(dict[str, Any], bad_verdict_kwargs),
+            )
 
     plateau = SaturationVerdict(
         is_saturated=True,
@@ -207,7 +219,7 @@ def test_saturation_verdict_invariants_and_metadata_serialization() -> None:
         max_novelty=0.08,
         novel_paragraphs=0,
         total_paragraphs=4,
-        preserve_baseline=True,
+        preserve_baseline=False,
         provider="gemini",
     )
     meta = plateau.to_metadata_dict()
@@ -219,7 +231,7 @@ def test_saturation_verdict_invariants_and_metadata_serialization() -> None:
         "max_novelty": 0.08,
         "novel_paragraphs": 0,
         "total_paragraphs": 4,
-        "preserve_baseline": True,
+        "preserve_baseline": False,
         "provider": "gemini",
     }
     assert type(meta["reason"]) is str
@@ -250,6 +262,87 @@ def test_segment_semantic_units_strips_headings_and_preserves_extra_info() -> No
         "1. Contextual entity detail for central banks.",
         "2. Historical timeline anchor for Bretton Woods.",
     )
+
+    # Single-newline numbered items in Extra Info MUST split into discrete semantic units
+    single_newline_extra = (
+        "## Main Section\n\n"
+        "Main narrative paragraph.\n\n"
+        "### Extra Info\n"
+        "1. First single-newline extra info fact.\n"
+        "2. Second single-newline extra info fact.\n"
+        "3. Third single-newline extra info fact."
+    )
+    assert segment_semantic_units(single_newline_extra) == (
+        "Main narrative paragraph.",
+        "1. First single-newline extra info fact.",
+        "2. Second single-newline extra info fact.",
+        "3. Third single-newline extra info fact.",
+    )
+
+
+def _make_sentence(prefix: str, filler_words: int, ending: str = ".") -> str:
+    """Build a deterministic sentence with exact total word count = 1 + filler_words."""
+    body = " ".join(f"{prefix}{idx}" for idx in range(filler_words))
+    return f"Sentence {body}{ending}" if body else f"Sentence{ending}"
+
+
+def test_segment_semantic_units_long_paragraph_sliding_window_cutoff() -> None:
+    # Exactly 120 words across 5 sentences (5 x 24 words) MUST remain 1 single unit (strict > 120)
+    exact_120 = " ".join(_make_sentence(f"p{i}_", 23) for i in range(5))
+    assert len(exact_120.split()) == 120
+    assert segment_semantic_units(exact_120) == (exact_120,)
+
+    # 121 words across 5 sentences MUST slice into 3-sentence windows with overlap=1 (stride=2)
+    s0 = _make_sentence("a", 23)
+    s1 = _make_sentence("b", 23)
+    s2 = _make_sentence("c", 23)
+    s3 = _make_sentence("d", 23)
+    s4 = _make_sentence("e", 24)
+    long_5 = f"{s0} {s1} {s2} {s3} {s4}"
+    assert len(long_5.split()) == 121
+    assert segment_semantic_units(long_5) == (
+        f"{s0} {s1} {s2}",
+        f"{s2} {s3} {s4}",
+    )
+
+    # 4 sentences (> 120 words) slices into [0,1,2] and [2,3] preserving 1-sentence overlap
+    q0 = _make_sentence("q0_", 30)
+    q1 = _make_sentence("q1_", 30)
+    q2 = _make_sentence("q2_", 30)
+    q3 = _make_sentence("q3_", 30)
+    long_4 = f"{q0} {q1} {q2} {q3}"
+    assert segment_semantic_units(long_4) == (
+        f"{q0} {q1} {q2}",
+        f"{q2} {q3}",
+    )
+
+    # > 120 words concentrated in <= 3 long baroque sentences remains 1 intact unit
+    baroque_3 = " ".join(_make_sentence(f"z{i}_", 41) for i in range(3))
+    assert segment_semantic_units(baroque_3) == (baroque_3,)
+
+
+def test_segment_semantic_units_sentence_boundary_guards_abbreviations_and_markers() -> None:
+    padding = " ".join(f"contexto{i}" for i in range(30))
+    padded_item = (
+        f"1. ... D. Afonso Henriques governou no Séc. XII perto de Sto. Agostinho {padding}. "
+        f"Em 1143 assinou tratados cf. p. 42 e Art. 5 com prata etc. e ouro {padding}! "
+        f"_Afonso_ consolidou o reino em 1143. "
+        f"**1179** trouxe reconhecimento papal com _Bula_ longa {padding}. ("
+    )
+    units = segment_semantic_units(f"### Extra Info\n{padded_item}")
+    assert len(units) == 2
+    assert units[0].startswith("1. ... D. Afonso Henriques governou no Séc. XII")
+    assert "Sto. Agostinho" in units[0]
+    assert "cf. p. 42 e Art. 5 com prata etc. e ouro" in units[0]
+    assert units[0].endswith("_Afonso_ consolidou o reino em 1143.")
+    assert units[1].startswith("_Afonso_ consolidou o reino em 1143.")
+    assert "**1179** trouxe reconhecimento papal" in units[1]
+    assert units[1].endswith(". (")
+
+    ellipsis_prefix = f"... Prefácio {padding}. Segunda parte {padding}. Terceira parte {padding}. Quarta {padding}."
+    ellipsis_units = segment_semantic_units(ellipsis_prefix)
+    assert len(ellipsis_units) == 2
+    assert ellipsis_units[0].startswith("... Prefácio")
 
 
 def test_is_explicit_stop_sentinel_pass_index_and_validation() -> None:
@@ -375,7 +468,7 @@ def test_evaluate_lexical_convergence_gates() -> None:
     assert lexical_verdict.reason is SaturationReason.LEXICAL_IDENTITY
     assert lexical_verdict.lexical_jaccard == pytest.approx(1.0)
     assert lexical_verdict.word_delta_ratio == pytest.approx(0.0)
-    assert lexical_verdict.preserve_baseline is True
+    assert lexical_verdict.preserve_baseline is False
     assert lexical_verdict.provider == "lexical"
     assert lexical_verdict.total_paragraphs == 1
 
@@ -419,7 +512,7 @@ def test_evaluate_semantic_convergence_plateau_and_novel_content() -> None:
     )
     assert plateau_verdict.is_saturated is True
     assert plateau_verdict.reason is SaturationReason.SEMANTIC_PLATEAU
-    assert plateau_verdict.preserve_baseline is True
+    assert plateau_verdict.preserve_baseline is False
     assert plateau_verdict.novel_paragraphs == 0
     assert plateau_verdict.total_paragraphs == 2
     assert plateau_verdict.max_novelty == pytest.approx(0.0)
@@ -455,5 +548,5 @@ def test_evaluate_semantic_convergence_plateau_and_novel_content() -> None:
     assert tolerant_verdict.reason is SaturationReason.SEMANTIC_PLATEAU
     assert tolerant_verdict.novel_paragraphs == 1
     assert tolerant_verdict.total_paragraphs == 2
-    assert tolerant_verdict.preserve_baseline is True
+    assert tolerant_verdict.preserve_baseline is False
     assert tolerant_verdict.provider == "ollama"

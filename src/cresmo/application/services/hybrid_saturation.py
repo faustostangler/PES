@@ -94,21 +94,30 @@ class HybridSaturationEvaluator:
                 provider="none",
             )
 
-        raw_last_provider = getattr(self.embedding_port, "last_provider_name", None)
-        provider = (
-            raw_last_provider
-            if isinstance(raw_last_provider, str) and raw_last_provider
-            else self.embedding_port.provider_name
-        )
-
-        if not baseline_units or not current_units:
-            return evaluate_semantic_convergence(
-                (),
-                (),
-                thresholds=self.thresholds,
+        if not current_units:
+            return SaturationVerdict(
+                is_saturated=True,
+                reason=SaturationReason.SEMANTIC_PLATEAU,
                 lexical_jaccard=lexical_jaccard,
                 word_delta_ratio=word_delta_ratio,
-                provider=provider,
+                max_novelty=0.0,
+                novel_paragraphs=0,
+                total_paragraphs=0,
+                preserve_baseline=False,
+                provider="lexical",
+            )
+
+        if not baseline_units:
+            return SaturationVerdict(
+                is_saturated=False,
+                reason=SaturationReason.NOVEL_CONTENT,
+                lexical_jaccard=lexical_jaccard,
+                word_delta_ratio=word_delta_ratio,
+                max_novelty=1.0,
+                novel_paragraphs=len(current_units),
+                total_paragraphs=len(current_units),
+                preserve_baseline=False,
+                provider="lexical",
             )
 
         vectors = self.embedding_port.embed_batch([*baseline_units, *current_units])

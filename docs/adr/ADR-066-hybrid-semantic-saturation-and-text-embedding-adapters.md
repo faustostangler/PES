@@ -48,7 +48,7 @@ In strict compliance with `ADR-000` and `ADR-010` (**Zero Backward Compatibility
   - `extract_extra_info_section(text: str) -> str`
 - **Pure Mathematical Convergence (`src/cresmo/domain/services/convergence_evaluator.py`):** Pure Python stdlib module (`math` + `re` ONLY; zero external ML, HTTP, or SDK imports) exporting:
   - `NO_NEW_GAPS_SENTINEL: Final[str] = "<NO_NEW_GAPS/>"`
-  - `segment_semantic_units(text: str) -> tuple[str, ...]`: segments compendia into discrete paragraph/numbered semantic units so novelty is measured per unit rather than diluted at document scale.
+  - `segment_semantic_units(text: str) -> tuple[str, ...]`: segments compendia into discrete paragraphs and individual numbered items (`^\s*\d+\.\s+`), conditionally sub-chunking units exceeding `120` words into overlapping 3-sentence sliding windows (overlap `1` sentence) with abbreviation-safe sentence segmentation so novelty is measured without intra-paragraph or block-level dilution.
   - `is_explicit_stop_sentinel(text: str, pass_index: int = 2) -> bool`: validates `pass_index >= 1` (non-`bool`, else `DomainValidationError`), returns `False` on `pass_index == 1`, and on `pass_index > 1` checks `text.strip() == NO_NEW_GAPS_SENTINEL`.
   - `compute_ngram_jaccard(baseline_text: str, current_text: str, n: int = 3) -> float`: deterministic n-gram Jaccard similarity (`n >= 1`, non-`bool`).
   - `compute_word_delta_ratio(baseline_text: str, current_text: str) -> float`: relative word-count delta ratio between baseline and current text.

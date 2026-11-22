@@ -133,13 +133,17 @@ Pure Python stdlib (`math`, `re`, `collections.abc`, `typing`) convergence compu
 
 ```python
 NO_NEW_GAPS_SENTINEL: Final[str] = "<NO_NEW_GAPS/>"
+LONG_UNIT_WORD_CUTOFF: Final[int] = 120
+SLIDING_WINDOW_SENTENCES: Final[int] = 3
+SLIDING_WINDOW_OVERLAP: Final[int] = 1
 ```
 
 1. **`segment_semantic_units(text: str) -> tuple[str, ...]`**:
-   - Normalizes `\r\n` to `\n` and splits on blank-line boundaries (`\n\s*\n`).
+   - Normalizes `\r\n` and `\r` to `\n` and splits on blank-line boundaries (`\n\s*\n`).
    - Strips leading/trailing whitespace from each block.
-   - Ignores blocks that are empty, pure Markdown heading lines (`^#{1,6}\s+`), or standalone `<NO_NEW_GAPS/>` sentinel tokens.
-   - Preserves headings-stripped content across **both** the main body and the `### Extra Info` section (e.g., if a block starts with a heading line followed immediately by a paragraph without a blank line, removes the heading line and preserves the paragraph text; drops the `### Extra Info` heading line while keeping all Extra Info paragraphs/numbered items).
+   - Ignores lines/blocks that are empty, pure Markdown heading lines (`^\s*#{1,6}\s+`), or standalone `<NO_NEW_GAPS/>` sentinel tokens.
+   - Splits numbered list items (`^\s*\d+\.\s+`) within blocks into individual semantic units while keeping non-numbered multi-line paragraphs intact, preserving headings-stripped content across **both** the main body and the `### Extra Info` section so single-newline numbered items are not diluted into a single merged vector.
+   - **Conditional Long-Unit Sliding Window (`> 120` words):** Units with word count `<= 120` remain intact as a single unit. Units with word count `> 120` are segmented using pure-stdlib abbreviation-safe sentence detection (`D.`, `Séc.`, `Sto.`, `Sta.`, `Dr.`, `Prof.`, `Sr.`, `Art. <digit>`, list indices `1.`, lowercase continuations) and sliced into overlapping windows of `3` sentences with overlap `1` sentence (stride `2`); units with `<= 3` sentences remain intact.
 2. **`is_explicit_stop_sentinel(text: str, pass_index: int = 2) -> bool`**:
    - Validates `pass_index >= 1` and `not isinstance(pass_index, bool)` (raises `DomainValidationError` otherwise).
    - **Pass-1 Guard:** When `pass_index == 1`, ALWAYS returns `False` (ignores `<NO_NEW_GAPS/>` to forbid zero-effort stopping on Pass 1).
@@ -178,14 +182,14 @@ NO_NEW_GAPS_SENTINEL: Final[str] = "<NO_NEW_GAPS/>"
    - **Sentinel Check First:** If `is_explicit_stop_sentinel(current_text, pass_index)` is `True`:
      - Returns `SaturationVerdict(is_saturated=True, reason=SaturationReason.EXPLICIT_SENTINEL, lexical_jaccard=lexical_jaccard, word_delta_ratio=word_delta_ratio, max_novelty=0.0, novel_paragraphs=0, total_paragraphs=total_paragraphs, preserve_baseline=True, provider="sentinel")`.
    - **Lexical Identity Check:** If `lexical_jaccard >= resolved_thresholds.lexical_identity_threshold` AND `word_delta_ratio <= resolved_thresholds.max_lexical_word_delta`:
-     - Returns `SaturationVerdict(is_saturated=True, reason=SaturationReason.LEXICAL_IDENTITY, lexical_jaccard=lexical_jaccard, word_delta_ratio=word_delta_ratio, max_novelty=0.0, novel_paragraphs=0, total_paragraphs=total_paragraphs, preserve_baseline=True, provider="lexical")`.
+     - Returns `SaturationVerdict(is_saturated=True, reason=SaturationReason.LEXICAL_IDENTITY, lexical_jaccard=lexical_jaccard, word_delta_ratio=word_delta_ratio, max_novelty=0.0, novel_paragraphs=0, total_paragraphs=total_paragraphs, preserve_baseline=False, provider="lexical")`.
    - Otherwise returns `None` (caller proceeds to Layer 2 semantic evaluation).
 8. **`evaluate_semantic_convergence(baseline_vectors: Sequence[Sequence[float]], current_vectors: Sequence[Sequence[float]], thresholds: SaturationThresholds | None = None, *, lexical_jaccard: float = 0.0, word_delta_ratio: float = 0.0, provider: str = "semantic") -> SaturationVerdict`**:
    - Resolves `resolved_thresholds = thresholds or SaturationThresholds()`.
    - Calls `compute_maxsim_novelty(baseline_vectors, current_vectors, resolved_thresholds.semantic_similarity_threshold)` yielding `(novel_paragraphs, max_novelty, _mean_max_similarity)`.
    - Sets `total_paragraphs = len(current_vectors)`.
    - If `novel_paragraphs <= resolved_thresholds.max_novel_paragraphs_for_saturation`:
-     - Returns `SaturationVerdict(is_saturated=True, reason=SaturationReason.SEMANTIC_PLATEAU, lexical_jaccard=lexical_jaccard, word_delta_ratio=word_delta_ratio, max_novelty=max_novelty, novel_paragraphs=novel_paragraphs, total_paragraphs=total_paragraphs, preserve_baseline=True, provider=provider)`.
+     - Returns `SaturationVerdict(is_saturated=True, reason=SaturationReason.SEMANTIC_PLATEAU, lexical_jaccard=lexical_jaccard, word_delta_ratio=word_delta_ratio, max_novelty=max_novelty, novel_paragraphs=novel_paragraphs, total_paragraphs=total_paragraphs, preserve_baseline=False, provider=provider)`.
    - Else:
      - Returns `SaturationVerdict(is_saturated=False, reason=SaturationReason.NOVEL_CONTENT, lexical_jaccard=lexical_jaccard, word_delta_ratio=word_delta_ratio, max_novelty=max_novelty, novel_paragraphs=novel_paragraphs, total_paragraphs=total_paragraphs, preserve_baseline=False, provider=provider)`.
 
@@ -256,10 +260,10 @@ class HybridSaturationEvaluator:
 3. **Segmentation & Pre-Embedding Metrics:**
    - Computes `lexical_jaccard` and `word_delta_ratio`.
    - Segments `baseline_units = segment_semantic_units(baseline_text)` and `current_units = segment_semantic_units(current_text)`.
-   - If `not current_units`: returns `SaturationVerdict(is_saturated=True, reason=SaturationReason.SEMANTIC_PLATEAU, lexical_jaccard=lexical_jaccard, word_delta_ratio=word_delta_ratio, max_novelty=0.0, novel_paragraphs=0, total_paragraphs=0, preserve_baseline=True, provider="lexical")` without invoking `embed_batch`.
+   - If `not current_units`: returns `SaturationVerdict(is_saturated=True, reason=SaturationReason.SEMANTIC_PLATEAU, lexical_jaccard=lexical_jaccard, word_delta_ratio=word_delta_ratio, max_novelty=0.0, novel_paragraphs=0, total_paragraphs=0, preserve_baseline=False, provider="lexical")` without invoking `embed_batch`.
+   - If `not baseline_units` (and `current_units` is non-empty): returns `SaturationVerdict(is_saturated=False, reason=SaturationReason.NOVEL_CONTENT, lexical_jaccard=lexical_jaccard, word_delta_ratio=word_delta_ratio, max_novelty=1.0, novel_paragraphs=len(current_units), total_paragraphs=len(current_units), preserve_baseline=False, provider="lexical")` without wasting an embedding call.
 4. **Graceful Degradation (`embedding_port is None`):**
    - Logs structured `WARNING` (or `DEBUG` when intentionally unconfigured) and returns `SaturationVerdict(is_saturated=False, reason=SaturationReason.NOVEL_CONTENT, lexical_jaccard=lexical_jaccard, word_delta_ratio=word_delta_ratio, max_novelty=1.0, novel_paragraphs=len(current_units), total_paragraphs=len(current_units), preserve_baseline=False, provider="degraded")`.
-   - If `not baseline_units` and `current_units` is non-empty, returns `NOVEL_CONTENT` with `novel_paragraphs=len(current_units)`, `max_novelty=1.0`, `preserve_baseline=False` without wasting an embedding call.
 5. **Layer 2 Single-Call Batched Embedding:**
    - Concatenates `combined_units = [*baseline_units, *current_units]` and invokes `self.embedding_port.embed_batch(combined_units)` in **exactly one call**.
    - Validates `len(embeddings) == len(combined_units)` (if mismatched, treats as `EmbeddingInfrastructureError` / degrades gracefully).
@@ -298,7 +302,7 @@ Extends `generate_stage_candidate` (`src/cresmo/application/pipeline/stage_execu
      - Evaluates `verdict = evaluator.evaluate(baseline_text, current_text, pass_index=pass_index)`.
      - Appends `{"pass_index": pass_index, **verdict.to_metadata_dict()}` to `saturation_history: list[dict[str, Any]]`.
      - When `verdict.is_saturated` is `True`:
-       - If `verdict.preserve_baseline` is `True`: restores `current_text = baseline_text` so sentinel tokens (`<NO_NEW_GAPS/>`) or uninformative paraphrases never overwrite the verified baseline.
+       - If `verdict.preserve_baseline` is `True` (strictly `EXPLICIT_SENTINEL` `<NO_NEW_GAPS/>`): restores `current_text = baseline_text` so sentinel tokens never overwrite verified prose, whereas `LEXICAL_IDENTITY` and `SEMANTIC_PLATEAU` set `preserve_baseline=False` so `current_text` (such as cleaned formatting or Pass-1 output) is kept.
        - Respects `FinalPassCritiqueInjection` (`ADR-046`): if `critique` is non-empty and `pass_index < max_passes` and not yet `pending_final_critique`, schedules one terminal critique pass (`pending_final_critique = True`); otherwise sets `is_saturated = True` and breaks out of the pass loop.
      - When `verdict.is_saturated` is `False`: updates `previous_text = current_text` and advances to `pass_index + 1`.
 
