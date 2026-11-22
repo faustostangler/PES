@@ -18,6 +18,7 @@ from cresmo.application.ports import (
     LLMTransformationPort,
     ProcessRuntimePort,
     PromptProviderPort,
+    TelemetryPort,
     TextEmbeddingPort,
 )
 from cresmo.application.services.preflight import PreflightHealthChecker
@@ -28,14 +29,16 @@ from cresmo.infrastructure.adapters.media.native_media_ingestion_adapter import 
 from cresmo.infrastructure.adapters.obsidian import ObsidianVaultAdapter
 from cresmo.infrastructure.adapters.prompts import (
     JsonPromptProvider,
-    JsonTaxonomyCatalogAdapter,
     LangfusePromptProvider,
+    PromptCatalog,
+    load_prompt_catalog,
 )
 from cresmo.infrastructure.adapters.scrapers.header_generator import RandomHeaderGenerator
 from cresmo.infrastructure.adapters.system.preflight_probe_adapter import PreflightProbeAdapter
 from cresmo.infrastructure.adapters.system.process_runtime_adapter import (
     SystemProcessRuntimeAdapter,
 )
+from cresmo.infrastructure.adapters.taxonomy import JsonTaxonomyCatalogAdapter
 from cresmo.infrastructure.config import (
     CresmoSettings,
     LlmSettings,
@@ -172,7 +175,7 @@ def build_gemini_credential_pool(
 
 def build_gemini_synthesis_adapter(
     settings: LlmSettings | None = None,
-    langfuse_client: Any | None = None,
+    telemetry_port: TelemetryPort | None = None,
     credential_pool: GeminiCredentialPool | None = None,
 ) -> GeminiLLMAdapter:
     """Instantiate and wire GeminiLLMAdapter for core synthesis workflows."""
@@ -186,7 +189,7 @@ def build_gemini_synthesis_adapter(
         fallback_model_name=resolved.gemini_fallback_model,
         max_output_tokens=resolved.gemini_max_output_tokens,
         thinking_level=resolved.gemini_thinking_level,
-        langfuse_client=langfuse_client,
+        telemetry_port=telemetry_port,
         credential_pool=credential_pool,
         timeout_seconds=resolved.gemini_timeout_seconds,
     )
@@ -197,7 +200,7 @@ def build_indexing_adapter(
     synthesis_adapter: LLMTransformationPort | None = None,
     web_index: bool = False,
     model_override: str | None = None,
-    langfuse_client: Any | None = None,
+    telemetry_port: TelemetryPort | None = None,
     api_keys: list[str] | None = None,
     credential_pool: GeminiCredentialPool | None = None,
 ) -> LLMTransformationPort:
@@ -219,7 +222,7 @@ def build_indexing_adapter(
             fallback_model_name=resolved.gemini_fallback_model,
             max_output_tokens=resolved.gemini_max_output_tokens,
             thinking_level=resolved.gemini_thinking_level,
-            langfuse_client=langfuse_client,
+            telemetry_port=telemetry_port,
             credential_pool=credential_pool,
             timeout_seconds=resolved.gemini_timeout_seconds,
         )
@@ -232,7 +235,7 @@ def build_indexing_adapter(
         timeout_seconds=resolved.ollama_timeout_seconds,
         default_temperature=resolved.llm_indexing_temperature,
         num_predict=resolved.ollama_num_predict,
-        langfuse_client=langfuse_client,
+        telemetry_port=telemetry_port,
         keep_alive=resolved.ollama_keep_alive,
         warmup_timeout_seconds=resolved.ollama_warmup_timeout_seconds,
     )
@@ -291,3 +294,13 @@ def build_embedding_adapter(
 def build_process_runtime_adapter() -> ProcessRuntimePort:
     """Instantiate OS-backed ProcessRuntimePort adapter."""
     return SystemProcessRuntimeAdapter()
+
+
+def build_local_prompt_provider() -> JsonPromptProvider:
+    """Instantiate local manifest + Markdown JsonPromptProvider for seeding/CLI helpers."""
+    return JsonPromptProvider()
+
+
+def load_local_prompt_catalog() -> PromptCatalog:
+    """Load validated local PromptCatalog via bootstrap boundary."""
+    return load_prompt_catalog()

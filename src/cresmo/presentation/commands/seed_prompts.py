@@ -20,12 +20,10 @@ import typer
 
 from cresmo import __version__
 from cresmo.bootstrap.composition import (
+    build_local_prompt_provider,
+    load_local_prompt_catalog,
     resolve_langfuse_client,
     resolve_shared_settings,
-)
-from cresmo.infrastructure.adapters.prompts import (
-    JsonPromptProvider,
-    load_prompt_catalog,
 )
 from cresmo.presentation.exit_codes import (
     EXIT_CONFIG_OR_USAGE_ERROR,
@@ -34,7 +32,7 @@ from cresmo.presentation.exit_codes import (
 )
 
 PROMPT_MAPPINGS: dict[str, str] = {
-    spec.langfuse_name: spec.key.value for spec in load_prompt_catalog().values()
+    spec.langfuse_name: spec.key.value for spec in load_local_prompt_catalog().values()
 }
 
 
@@ -94,7 +92,7 @@ def handle_seed_prompts(
     dry_run = getattr(args, "dry_run", dry_run) if args is not None else dry_run
 
     settings = resolve_shared_settings()
-    provider = JsonPromptProvider()
+    provider = build_local_prompt_provider()
 
     if dry_run:
         sys.stdout.write(

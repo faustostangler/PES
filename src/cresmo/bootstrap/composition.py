@@ -36,12 +36,14 @@ from cresmo.bootstrap.factories.adapter_factory import (
     build_gemini_credential_pool,
     build_gemini_synthesis_adapter,
     build_indexing_adapter,
+    build_local_prompt_provider,
     build_media_ingestion_adapter,
     build_preflight_checker,
     build_process_runtime_adapter,
     build_prompt_provider,
     build_taxonomy_adapter,
     build_vault_adapter,
+    load_local_prompt_catalog,
 )
 from cresmo.bootstrap.factories.judge_factory import build_llm_judge_adapter
 from cresmo.bootstrap.factories.settings_factory import (
@@ -112,19 +114,19 @@ def build_pipeline(
     gemini_pool = build_gemini_credential_pool(settings)
     synthesis_adapter = build_gemini_synthesis_adapter(
         settings,
-        langfuse_client=langfuse_client,
+        telemetry_port=telemetry_port,
         credential_pool=gemini_pool,
     )
     llm_indexing_port = build_indexing_adapter(
         settings,
         synthesis_adapter=synthesis_adapter,
         web_index=web_index,
-        langfuse_client=langfuse_client,
+        telemetry_port=telemetry_port,
         credential_pool=gemini_pool,
     )
     llm_judge = build_llm_judge_adapter(
         settings,
-        langfuse_client=langfuse_client,
+        telemetry_port=telemetry_port,
         prompt_provider=prompt_provider,
         credential_pool=gemini_pool,
     )
@@ -205,6 +207,7 @@ def build_sync_channel_use_case(
         preflight_checker=preflight_checker,
     )
 
+
 def build_run_synthesis_use_case(
     settings: CresmoSettings | None = None,
     *,
@@ -283,6 +286,7 @@ __all__ = [
     "build_gemini_synthesis_adapter",
     "build_index_raw_use_case",
     "build_indexing_adapter",
+    "build_local_prompt_provider",
     "build_media_ingestion_adapter",
     "build_metrics_adapter",
     "build_pipeline",
@@ -299,6 +303,7 @@ __all__ = [
     "build_vault_adapter",
     "get_shared_settings",
     "load_fresh_settings",
+    "load_local_prompt_catalog",
     "probe_http_endpoint",
     "probe_langfuse_ready",
     "reset_shared_settings",

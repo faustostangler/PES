@@ -126,3 +126,50 @@ class TestPromptCatalog:
         catalog = load_prompt_catalog()
         with pytest.raises(KeyError, match="Unknown prompt key: 'nonexistent'"):
             _ = catalog["nonexistent"]
+
+    def test_manifest_rejects_inline_prompt_bodies_and_missing_or_orphan_markdown(
+        self, tmp_path: Path
+    ) -> None:
+        """Verify ADR-071 manifest bans inline system_prompt/user_prompt, missing .md, and orphan dirs."""
+        bundled = load_prompt_catalog()
+        prompts_dir = tmp_path / "prompts"
+        prompts_dir.mkdir()
+        manifest: dict[str, dict[str, object]] = {}
+        for key, spec in bundled.items():
+            key_dir = prompts_dir / key.value
+            key_dir.mkdir()
+            (key_dir / "system.md").write_text(spec.system_prompt, encoding="utf-8")
+            (key_dir / "user.md").write_text(spec.user_prompt, encoding="utf-8")
+            manifest[key.value] = {
+                "description": spec.description,
+                "type": "chat",
+                "skills": list(spec.skills),
+            }
+
+        # 1) Inline system_prompt rejected
+        bad_inline = dict(manifest)
+        bad_inline["fluid_prose"] = {**manifest["fluid_prose"], "system_prompt": "inline forbidden"}
+        bad_file = tmp_path / "prompts.json"
+        bad_file.write_text(json.dumps(bad_inline), encoding="utf-8")
+        with pytest.raises(PromptCatalogError, match="Schema validation failed"):
+            load_prompt_catalog(bad_file)
+
+        # 2) Valid manifest + orphan directory rejected
+        bad_file.write_text(json.dumps(manifest), encoding="utf-8")
+        (prompts_dir / "orphan_stage").mkdir()
+        with pytest.raises(PromptCatalogError, match="Orphan prompt directories"):
+            load_prompt_catalog(bad_file)
+        (prompts_dir / "orphan_stage").rmdir()
+
+        # 3) Missing user.md rejected
+        (prompts_dir / "fluid_prose" / "user.md").unlink()
+        with pytest.raises(PromptCatalogError, match="Missing required Markdown template"):
+            load_prompt_catalog(bad_file)
+
+    def test_prompt_spec_to_langfuse_chat_messages(self) -> None:
+        catalog = load_prompt_catalog()
+        spec = catalog[PromptKey.FLUID_PROSE]
+        msgs = spec.to_langfuse_chat_messages()
+        assert len(msgs) == 2
+        assert msgs[0] == {"role": "system", "content": spec.system_prompt}
+        assert msgs[1] == {"role": "user", "content": spec.user_prompt}

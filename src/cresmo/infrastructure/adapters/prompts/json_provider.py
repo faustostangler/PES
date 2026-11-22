@@ -1,60 +1,35 @@
-"""Decoupled JSON Prompt Provider Adapter.
-
-Loads LLM prompt templates from a centralized JSON resource catalog and integrates
-embedded agent skill specifications (e.g. cresmo-expander, cresmo-atomic),
-guaranteeing complete decoupling from hard-coded strings in domain and application logic.
+"""Local JSON manifest + Markdown Chat-Native PromptProviderPort adapter.
 
 Conforms to:
-    - ADR-001: Modular Monolith Domain Integrity
-    - ADR-017: Prompt Management with Langfuse & Local Fallback
-    - ADR-052: Prompt Catalog SSOT Consolidation in JSON Resource
-    - SPEC-001: Core Knowledge Synthesis Specifications (Prompt Decoupling)
+    - ADR-010: Canonical Naming & Zero Legacy Shims
+    - ADR-052: Langfuse Chat-Native Prompt Catalog & Local JSON Fallback
+    - ADR-071: Langfuse-Mirrored Prompt Resources, Context Normalization Parity & Taxonomy Relocation
+    - SPEC-071: Langfuse-Mirrored Prompt Resources, Context Normalization Parity & Taxonomy Relocation
 """
 
 from __future__ import annotations
 
-import json
-import re
-from collections.abc import Iterable
 from pathlib import Path
 from typing import Any
 
-import structlog
-
 from cresmo.application.ports import PromptProviderPort
-from cresmo.domain.value_objects import ChatPrompt, PromptKey
-from cresmo.infrastructure.adapters.prompts.builders import (
-    PROMPT_BUILDER_REGISTRY,
-    PromptBuilderRegistry,
-)
+from cresmo.domain.value_objects import PromptKey
+from cresmo.domain.value_objects.prompt import ChatPrompt
 from cresmo.infrastructure.adapters.prompts.catalog import (
     PromptCatalog,
     PromptSpec,
     load_prompt_catalog,
 )
-from cresmo.infrastructure.config import CresmoSettings
-from cresmo.infrastructure.paths import find_workspace_root
-
-logger = structlog.get_logger(__name__)
-
-_CANDIDATE_SKILLS_DIRS = (
-    Path.cwd() / ".agents" / "skills",
-    find_workspace_root() / ".agents" / "skills",
+from cresmo.infrastructure.adapters.prompts.context_normalizer import (
+    DEFAULT_LANGUAGE,
+    normalize_prompt_context,
 )
+from cresmo.infrastructure.adapters.prompts.skill_loader import SkillDocumentLoader
+from cresmo.infrastructure.adapters.prompts.template_renderer import TemplateRenderer
 
 
 class JsonPromptProvider(PromptProviderPort):
-    """Hexagonal Adapter providing prompt templates from JSON and embedding skills.
-
-    Acts as an Anti-Corruption Layer (ACL), ensuring prompt engineering templates and
-    agent skill markdown files (.agents/skills) are managed externally from domain code.
-
-    Attributes:
-        prompts_path: Optional explicit filesystem path to a JSON templates file.
-        skills_dir: Resolved directory containing agent skill markdown files.
-        language: Canonical configured target language for prompt generation.
-        settings: Optional runtime settings instance.
-    """
+    """Local prompt provider backed by `prompts.json` manifest + Markdown chat turns."""
 
     def __init__(
         self,
@@ -62,344 +37,124 @@ class JsonPromptProvider(PromptProviderPort):
         skills_dir: Path | None = None,
         language: str | None = None,
         settings: Any | None = None,
-        registry: PromptBuilderRegistry | None = None,
+        *,
+        default_language: str = DEFAULT_LANGUAGE,
+        skill_loader: SkillDocumentLoader | None = None,
+        template_renderer: TemplateRenderer | None = None,
     ) -> None:
-        """Initialize prompt provider and load templates from disk or package resources.
+        resolved_prompts_path = prompts_path
+        if resolved_prompts_path is None and settings is not None:
+            raw_prompts_path = getattr(settings, "prompts_path", None)
+            if isinstance(raw_prompts_path, Path):
+                resolved_prompts_path = raw_prompts_path
 
-        Args:
-            prompts_path: Optional custom path to prompts.json. If None, loads package default.
-            skills_dir: Optional custom path to .agents/skills directory.
-            language: Optional configured target language for prompt generation.
-            settings: Optional runtime settings instance conforming to PipelineSettingsProtocol.
-            registry: Optional first-class PromptBuilderRegistry instance.
-        """
-        self.settings: Any | None = settings
-        self.prompts_path = prompts_path or (
-            getattr(settings, "prompts_path", None) if settings is not None else None
-        )
-        resolved_skills_dir = skills_dir or (
-            getattr(settings, "skills_dir", None) if settings is not None else None
-        )
-        self.skills_dir = self._resolve_skills_dir(resolved_skills_dir)
-        self.language: str = (
+        resolved_skills_dir = skills_dir
+        if resolved_skills_dir is None and settings is not None:
+            raw_skills_dir = getattr(settings, "skills_dir", None)
+            if isinstance(raw_skills_dir, Path):
+                resolved_skills_dir = raw_skills_dir
+
+        settings_lang = getattr(settings, "language", None) if settings is not None else None
+        resolved_lang = (
             language
-            or (getattr(settings, "language", None) if settings is not None else None)
-            or CresmoSettings.DEFAULT_LANGUAGE
+            if isinstance(language, str) and language.strip()
+            else settings_lang
+            if isinstance(settings_lang, str) and settings_lang.strip()
+            else default_language
         )
-        self._registry: PromptBuilderRegistry = registry or PROMPT_BUILDER_REGISTRY
-        self._skill_cache: dict[str, str] = {}
+
+        self.prompts_path = resolved_prompts_path
+        self.skills_dir = resolved_skills_dir
+        self._prompts_path = resolved_prompts_path
+        self.language = resolved_lang
+        self.default_language = resolved_lang
+        self._skill_loader = skill_loader or SkillDocumentLoader(skills_dir=resolved_skills_dir)
+        self._renderer = template_renderer or TemplateRenderer()
         self._catalog: PromptCatalog | None = None
         self._templates: dict[str, dict[str, Any]] = {}
-        self._load_templates()
+        self._ensure_loaded()
 
-    def _ensure_templates_loaded(self) -> None:
-        """Lazily load catalog and custom templates on first access (ADR-055)."""
+    def _ensure_loaded(self) -> None:
         if self._catalog is None:
-            self._load_templates()
+            self._catalog = load_prompt_catalog(path=self._prompts_path)
+            self._templates = {
+                spec.key.value: {
+                    "description": spec.description,
+                    "type": spec.prompt_type,
+                    "system_prompt": spec.system_prompt,
+                    "user_prompt": spec.user_prompt,
+                    "skills": list(spec.skills),
+                    "langfuse_slug": spec.langfuse_slug,
+                }
+                for spec in self._catalog.values()
+            }
 
     @property
     def catalog(self) -> PromptCatalog:
-        """Immutable PromptCatalog instance holding validated PromptSpec definitions."""
-        self._ensure_templates_loaded()
+        """Validated immutable prompt catalog."""
+        self._ensure_loaded()
         assert self._catalog is not None
         return self._catalog
 
     @property
     def templates(self) -> dict[str, dict[str, Any]]:
-        """Dictionary of raw template dictionaries indexed by prompt key."""
-        self._ensure_templates_loaded()
+        """Dictionary view of loaded prompt templates keyed by canonical PromptKey value."""
+        self._ensure_loaded()
         return self._templates
 
-    def _load_templates(self) -> None:
-        """Load bundled prompt catalog and overlay optional custom prompts file."""
-        try:
-            self._catalog = load_prompt_catalog()
-            self._templates = {k.value: spec.model_dump() for k, spec in self._catalog.items()}
-        except Exception as exc:  # noqa: BLE001
-            logger.warning("Failed loading bundled prompt catalog: %s", exc)
-            self._catalog = PromptCatalog({})
-            self._templates = {}
+    def _resolve_spec(self, key: str | PromptKey) -> PromptSpec:
+        return self.catalog[key]
 
-        if self.prompts_path is not None and self.prompts_path.exists():
-            try:
-                custom_data = json.loads(self.prompts_path.read_text(encoding="utf-8"))
-                if isinstance(custom_data, dict):
-                    for k, v in custom_data.items():
-                        if isinstance(v, dict):
-                            self._templates[k] = v
-                    logger.info("Loaded custom prompts from: %s", self.prompts_path)
-            except Exception as exc:  # noqa: BLE001
-                logger.warning("Failed reading custom prompts from %s: %s", self.prompts_path, exc)
-
-    @staticmethod
-    def _resolve_skills_dir(custom_dir: Path | None) -> Path | None:
-        """Resolve valid filesystem path to .agents/skills directory.
-
-        Args:
-            custom_dir: Optional explicitly provided path.
-
-        Returns:
-            Resolved Path instance if valid, or None.
-        """
-        if custom_dir is not None and custom_dir.exists():
-            return custom_dir
-        for candidate in _CANDIDATE_SKILLS_DIRS:
-            if candidate.exists():
-                return candidate
-        return None
-
-    def _get_skill_content(self, skill_name: str) -> str:
-        """Read, sanitize (stripping YAML frontmatter), and cache SKILL.md specification."""
-        if skill_name in self._skill_cache:
-            return self._skill_cache[skill_name]
-
-        if self.skills_dir is not None:
-            skill_file = self.skills_dir / skill_name / "SKILL.md"
-            if skill_file.exists():
-                try:
-                    text = skill_file.read_text(encoding="utf-8").strip()
-                    content_clean = re.sub(
-                        r"^---\s*\n.*?\n---\s*\n?", "", text, flags=re.DOTALL
-                    ).strip()
-                    self._skill_cache[skill_name] = content_clean
-                    return content_clean
-                except Exception as exc:  # noqa: BLE001
-                    logger.warning("Failed reading skill %s: %s", skill_file, exc)
-
-        self._skill_cache[skill_name] = ""
-        return ""
-
-    def _get_skill_block(self, skill_name: str) -> str:
-        """Generate formatted skill specification block if skill is available."""
-        content = self._get_skill_content(skill_name)
-        if not content:
-            return ""
-        return f"\n\n{skill_name}:\n{content}"
-
-    def _extract_entry_skills(self, entry: dict[str, Any] | PromptSpec) -> list[str]:
-        """Extract ordered skill identifiers from a PromptSpec or raw template entry."""
-        if isinstance(entry, PromptSpec):
-            return [str(name) for name in entry.skills]
-        skills = entry.get("skills", [])
-        if not skills and "skill_name" in entry:
-            skill_name = entry["skill_name"]
-            skills = [skill_name] if skill_name else []
-        return [str(name) for name in skills] if isinstance(skills, list) else []
-
-    def _resolve_skill_replacements(
-        self,
-        entry: dict[str, Any] | PromptSpec,
-        *templates: str,
-    ) -> dict[str, str]:
-        """Resolve individual skill contents for explicit {{skill_name}} template tags."""
-        replacements: dict[str, str] = {}
-        candidate_names = list(self._extract_entry_skills(entry))
-        for tpl in templates:
-            if not tpl:
-                continue
-            for match in re.finditer(r"\{\{([a-zA-Z0-9_\-]+)\}\}|\{([a-zA-Z0-9_\-]+)\}", tpl):
-                token = match.group(1) or match.group(2)
-                if token and "-" in token and token not in candidate_names:
-                    candidate_names.append(token)
-        for name in candidate_names:
-            content = self._get_skill_content(name)
-            if content:
-                replacements[name] = content
-        return replacements
-
-    @staticmethod
-    def _referenced_skill_names(template: str, skill_names: Iterable[str]) -> set[str]:
-        """Return skill names explicitly referenced via {{skill}} or {skill} in template."""
-        if not template:
-            return set()
-        return {
-            name
-            for name in skill_names
-            if f"{{{{{name}}}}}" in template or f"{{{name}}}" in template
-        }
-
-    def _resolve_skill_block(
-        self,
-        entry: dict[str, Any] | PromptSpec,
-        exclude: set[str] | None = None,
-    ) -> str:
-        """Resolve combined skill specification blocks for an entry or spec."""
-        skills = self._extract_entry_skills(entry)
-        if exclude:
-            skills = [name for name in skills if name not in exclude]
-        if skills:
-            blocks = [self._get_skill_block(name) for name in skills]
-            return "".join(block for block in blocks if block)
-        return ""
-
-    @staticmethod
-    def _safe_format(template: str, **kwargs: Any) -> str:
-        """Safely substitute named {{keys}} or {keys} without failing on literal JSON braces."""
-        result = template
-        for key, value in kwargs.items():
-            result = result.replace(f"{{{{{key}}}}}", str(value)).replace(f"{{{key}}}", str(value))
-        return result
-
-    def _get_description_for_key(self, key_str: str) -> str:
-        """Resolve canonical prompt description from template overlay or catalog."""
-        entry = self.templates.get(key_str, {})
-        if entry.get("description"):
-            return str(entry["description"])
-        if key_str in self.catalog:
-            return self.catalog[key_str].description
-        return ""
-
-    def _build_context_replacements(
-        self,
-        key_str: str,
-        entry: dict[str, Any] | PromptSpec,
-        *templates: str,
-        **extra_kwargs: Any,
-    ) -> dict[str, str]:
-        """Build dictionary of static and dynamic context replacements for template tags."""
-        skill_replacements = self._resolve_skill_replacements(entry, *templates)
-        explicitly_referenced = self._referenced_skill_names(
-            "\n".join(t for t in templates if t),
-            skill_replacements.keys(),
+    def _build_static_replacements(self, spec: PromptSpec) -> dict[str, str]:
+        replacements = self._skill_loader.build_skill_replacements(
+            skills=spec.skills,
+            templates=(spec.system_prompt, spec.user_prompt),
         )
-        skill_block = self._resolve_skill_block(entry, exclude=explicitly_referenced)
-        description = self._get_description_for_key(key_str)
-
-        default_lang = self.language or CresmoSettings.DEFAULT_LANGUAGE
-        replacements: dict[str, str] = {
-            **skill_replacements,
-            "description": description,
-            "skill_block": skill_block,
-            "language": default_lang,
-        }
-
-        for k, v in extra_kwargs.items():
-            if v is not None:
-                replacements[k] = str(v)
-
+        replacements["description"] = spec.description
+        replacements["language"] = self.default_language
         return replacements
-
-    def _replace_template_tags(self, template: str, replacements: dict[str, str]) -> str:
-        """Find and substitute matching {{key}} or {key} tokens in template, leaving unmatched tokens intact."""
-        if not template:
-            return ""
-
-        def _repl(match: re.Match[str]) -> str:
-            token = match.group(1) or match.group(2)
-            if token in replacements:
-                return replacements[token]
-            return match.group(0)
-
-        return re.sub(r"\{\{([a-zA-Z0-9_\-]+)\}\}|\{([a-zA-Z0-9_\-]+)\}", _repl, template)
 
     def get_raw_prompt_template(self, key: str | PromptKey) -> str:
-        """Retrieve unformatted raw prompt template with embedded skill block.
-
-        Args:
-            key: Key in prompts.json (e.g. 'gap_filler') or PromptKey enum.
-
-        Returns:
-            Raw prompt template string with {skill_block} and {description} resolved.
-        """
-        system_prompt, user_prompt = self.get_chat_prompt_template(key)
-        return user_prompt or system_prompt
+        """Return raw concatenated system + user template with static skills/description resolved."""
+        system_tpl, user_tpl = self.get_chat_prompt_template(key)
+        if system_tpl and user_tpl:
+            return f"{system_tpl}\n\n{user_tpl}"
+        return system_tpl or user_tpl
 
     def get_chat_prompt_template(self, key: str | PromptKey) -> tuple[str, str]:
-        """Retrieve unformatted system prompt and user prompt with embedded skill block.
+        """Return `(system_template, user_template)` with skills resolved and runtime Mustache intact.
 
-        Conforms to ADR-010, ADR-017, ADR-022, and ADR-050 for Chat-Native prompt governance.
-
-        Args:
-            key: Key in prompts.json (e.g. 'gap_filler') or PromptKey enum.
-
-        Returns:
-            Tuple of (system_prompt, user_prompt).
+        Used by `cresmo seed-prompts` to upload Langfuse Chat-Native prompts while keeping
+        runtime placeholders (`{{raw_text}}`, `{{draft_section}}`, etc.) uncompiled.
         """
-        key_str = key.value if isinstance(key, PromptKey) else key
-        entry = self.templates.get(key_str, {})
-        raw_system_prompt = entry.get("system_prompt", "")
-        raw_user_prompt = entry.get("user_prompt", "")
-        replacements = self._build_context_replacements(
-            key_str, entry, raw_system_prompt, raw_user_prompt
-        )
+        spec = self._resolve_spec(key)
+        static_vars = self._build_static_replacements(spec)
+        system_tpl = self._renderer.render(spec.system_prompt, static_vars)
+        user_tpl = self._renderer.render(spec.user_prompt, static_vars)
+        return system_tpl, user_tpl
 
-        system_prompt = raw_system_prompt
-        if not system_prompt and replacements.get("description"):
-            system_prompt = replacements["description"]
-        system_prompt = self._replace_template_tags(system_prompt, replacements)
-
-        user_prompt = raw_user_prompt
-        if not user_prompt and replacements.get("description") and not system_prompt:
-            user_prompt = replacements["description"]
-        user_prompt = self._replace_template_tags(user_prompt, replacements)
-
-        return system_prompt, user_prompt
-
-    def get_prompt(
-        self,
-        key: PromptKey,
-        **context: Any,
-    ) -> ChatPrompt:
-        """Dispatch prompt formatting by canonical PromptKey.
+    def get_prompt(self, key: PromptKey, **context: Any) -> ChatPrompt:
+        """Render a complete local ChatPrompt with shared normalization and Mustache rendering.
 
         Args:
             key: Canonical PromptKey enum member.
-            **context: Template variable substitutions.
+            **context: Runtime template variables (including optional Domain VOs).
 
         Returns:
-            ChatPrompt instance containing messages and optional system prompt.
+            Rendered ``ChatPrompt`` with both system and user turns preserved.
         """
-        builder = self._registry.get(key)
-        return builder(self, **context)
-
-    def _format_paired_prompt(
-        self,
-        template_key: str,
-        /,
-        **kwargs: Any,
-    ) -> ChatPrompt:
-        """Format (system_prompt, user_prompt) pair into a ChatPrompt for a given template key."""
-        entry = self.templates.get(template_key, {})
-        description = self._get_description_for_key(template_key)
-        system_template = entry.get("system_prompt", "")
-        user_template = entry.get("user_prompt", "")
-        skill_replacements = self._resolve_skill_replacements(entry, system_template, user_template)
-        explicitly_referenced = self._referenced_skill_names(
-            f"{system_template}\n{user_template}",
-            skill_replacements.keys(),
-        )
-        skill_block = self._resolve_skill_block(entry, exclude=explicitly_referenced)
-        format_kwargs = {
-            **skill_replacements,
-            "description": description,
-            "skill_block": skill_block,
-            **kwargs,
-        }
-        if system_template:
-            system_prompt = self._safe_format(system_template, **format_kwargs)
-        else:
-            system_prompt = (
-                f"{description}\n\n{skill_block}".strip() if (description or skill_block) else ""
+        spec = self._resolve_spec(key)
+        variables = self._build_static_replacements(spec)
+        variables.update(
+            normalize_prompt_context(
+                key,
+                context,
+                default_language=self.default_language,
             )
-        user_prompt = self._safe_format(user_template, **format_kwargs)
+        )
+        system_rendered = self._renderer.render(spec.system_prompt, variables)
+        user_rendered = self._renderer.render(spec.user_prompt, variables)
         return ChatPrompt.from_system_and_user(
-            user=user_prompt,
-            system=system_prompt if system_prompt else None,
+            system=system_rendered,
+            user=user_rendered,
         )
-
-    def _format_single_prompt(
-        self,
-        template_key: str,
-        /,
-        **kwargs: Any,
-    ) -> ChatPrompt:
-        """Format a single user prompt into a ChatPrompt for a given template key."""
-        entry = self.templates.get(template_key, {})
-        description = self._get_description_for_key(template_key)
-        user_template = entry.get("user_prompt", "")
-        user_prompt = self._safe_format(
-            user_template,
-            description=description,
-            **kwargs,
-        )
-        return ChatPrompt.from_system_and_user(user=user_prompt, system=None)

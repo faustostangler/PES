@@ -61,8 +61,8 @@ from cresmo.infrastructure.adapters.media.subtitles import (
     reconstruct_json3_paragraphs,
 )
 from cresmo.infrastructure.adapters.metrics.noop_metrics_adapter import NoOpMetricsAdapter
-from cresmo.infrastructure.adapters.prompts.taxonomy_catalog import JsonTaxonomyCatalogAdapter
 from cresmo.infrastructure.adapters.scrapers.header_generator import RandomHeaderGenerator
+from cresmo.infrastructure.adapters.taxonomy import JsonTaxonomyCatalogAdapter
 
 logger = structlog.get_logger(__name__)
 

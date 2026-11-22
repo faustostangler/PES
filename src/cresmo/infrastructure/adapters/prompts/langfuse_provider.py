@@ -16,8 +16,12 @@ from typing import Any
 import structlog
 
 from cresmo.application.ports import PromptProviderPort
-from cresmo.domain.value_objects import ChannelName, ChatMessage, ChatPrompt, MessageRole
+from cresmo.domain.value_objects import ChatMessage, ChatPrompt, MessageRole
 from cresmo.domain.value_objects.prompt import PromptKey
+from cresmo.infrastructure.adapters.prompts.context_normalizer import (
+    DEFAULT_LANGUAGE,
+    normalize_prompt_context,
+)
 from cresmo.infrastructure.config import CresmoSettings
 
 logger = structlog.get_logger(__name__)
@@ -230,27 +234,15 @@ class LangfusePromptProvider(PromptProviderPort):
             prompt_name = f"cresmo-{key.value.replace('_', '-')}"
 
         try:
-            if isinstance(context.get("channel_name"), ChannelName):
-                context["channel_name"] = context["channel_name"].value
-
-            if key == PromptKey.GAP_FILLER:
-                source_text = context.get("source_text") or context.get("raw_text", "")
-                context.setdefault("source_text", source_text)
-                current_text = context.get("current_text")
-                pass_num = context.get("pass_num", 1)
-                prev_pass_num = context.get("prev_pass_num")
-                if prev_pass_num is None:
-                    prev_pass_num = max(0, int(pass_num) - 1)
-                draft_section = (
-                    f'\n<draft pass="{prev_pass_num}">\n{current_text}\n</draft>\n'
-                    if current_text
-                    else ""
-                )
-                context.setdefault("draft_section", draft_section)
-
+            default_language = str(getattr(self._fallback, "default_language", DEFAULT_LANGUAGE))
+            normalized_context = normalize_prompt_context(
+                key,
+                context,
+                default_language=default_language,
+            )
             return self._resolve_chat_prompt(
                 prompt_name=prompt_name,
-                **context,
+                **normalized_context,
             )
         except Exception as exc:  # noqa: BLE001 — Resilient fallback to local provider on remote/compilation failure
             logger.warning(
