@@ -365,6 +365,9 @@ class TestCresmoSettings:
         assert settings.saturation_max_word_delta == 0.03
         assert settings.saturation_semantic_threshold == 0.88
         assert settings.saturation_max_novel_paragraphs == 0
+        assert settings.saturation_long_unit_word_cutoff == 120
+        assert settings.saturation_sliding_window_sentences == 3
+        assert settings.saturation_sliding_window_overlap == 1
 
         monkeypatch.setenv("CRESMO_EMBEDDING_PROVIDER", "ollama")
         monkeypatch.setenv("CRESMO_GEMINI_EMBEDDING_MODEL", "text-embedding-004")
@@ -374,6 +377,9 @@ class TestCresmoSettings:
         monkeypatch.setenv("CRESMO_SATURATION_MAX_WORD_DELTA", "0.05")
         monkeypatch.setenv("CRESMO_SATURATION_SEMANTIC_THRESHOLD", "0.85")
         monkeypatch.setenv("CRESMO_SATURATION_MAX_NOVEL_PARAGRAPHS", "2")
+        monkeypatch.setenv("CRESMO_SATURATION_LONG_UNIT_WORD_CUTOFF", "160")
+        monkeypatch.setenv("CRESMO_SATURATION_SLIDING_WINDOW_SENTENCES", "4")
+        monkeypatch.setenv("CRESMO_SATURATION_SLIDING_WINDOW_OVERLAP", "2")
 
         overridden = CresmoSettings(_env_file=None)
         assert overridden.embedding_provider == "ollama"
@@ -384,6 +390,9 @@ class TestCresmoSettings:
         assert overridden.saturation_max_word_delta == 0.05
         assert overridden.saturation_semantic_threshold == 0.85
         assert overridden.saturation_max_novel_paragraphs == 2
+        assert overridden.saturation_long_unit_word_cutoff == 160
+        assert overridden.saturation_sliding_window_sentences == 4
+        assert overridden.saturation_sliding_window_overlap == 2
 
         invalid_cases: list[dict[str, object]] = [
             {"gemini_embedding_dimensions": 0},
@@ -395,6 +404,10 @@ class TestCresmoSettings:
             {"saturation_semantic_threshold": 0.0},
             {"saturation_semantic_threshold": 1.01},
             {"saturation_max_novel_paragraphs": -1},
+            {"saturation_long_unit_word_cutoff": 0},
+            {"saturation_sliding_window_sentences": 0},
+            {"saturation_sliding_window_overlap": -1},
+            {"saturation_sliding_window_sentences": 3, "saturation_sliding_window_overlap": 3},
         ]
         for invalid_kwargs in invalid_cases:
             with pytest.raises(ValidationError):

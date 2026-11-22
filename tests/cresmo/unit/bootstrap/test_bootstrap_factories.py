@@ -22,6 +22,7 @@ from cresmo.application.use_cases.unify_duplicate_notes import UnifyDuplicateNot
 from cresmo.bootstrap.factories.adapter_factory import (
     _resolve_cookie_file,
     build_embedding_adapter,
+    build_gemini_credential_pool,
     build_indexing_adapter,
     build_preflight_checker,
     build_prompt_provider,
@@ -70,7 +71,12 @@ from cresmo.infrastructure.adapters.prompts import (
     LangfusePromptProvider,
 )
 from cresmo.infrastructure.adapters.telemetry.opentelemetry_adapter import NoOpTelemetryAdapter
-from cresmo.infrastructure.config import CresmoSettings
+from cresmo.infrastructure.config import (
+    CresmoSettings,
+    LlmSettings,
+    StorageSettings,
+    TelemetrySettings,
+)
 
 
 @pytest.fixture
@@ -185,14 +191,51 @@ class TestAdapterFactory:
 
     def test_resolve_cookie_file(self, tmp_path: Path, mock_settings: CresmoSettings) -> None:
         mock_settings.cookies_file = None
-        # None when not found
-        assert _resolve_cookie_file(mock_settings) is None
+        workspace_root = tmp_path / "workspace"
+        workspace_root.mkdir(parents=True, exist_ok=True)
 
-        # Existing cookies.txt in data_dir
-        cookie_file = tmp_path / "data" / "cookies.txt"
-        cookie_file.parent.mkdir(parents=True, exist_ok=True)
-        cookie_file.write_text("test cookies", encoding="utf-8")
-        assert _resolve_cookie_file(mock_settings) == cookie_file
+        with patch(
+            "cresmo.bootstrap.factories.adapter_factory.find_workspace_root",
+            return_value=workspace_root,
+        ):
+            # None when not found
+            assert _resolve_cookie_file(mock_settings) is None
+
+            # Delegates to discover_cookies_file for workspace fallback
+            ws_cookies = workspace_root / ".yt_dlp_cookies.txt"
+            ws_cookies.write_text("# Netscape HTTP Cookie File\n", encoding="utf-8")
+            assert _resolve_cookie_file(mock_settings) == ws_cookies
+
+            # Existing non-empty cookies.txt in data_dir takes precedence over workspace
+            cookie_file = tmp_path / "data" / "cookies.txt"
+            cookie_file.parent.mkdir(parents=True, exist_ok=True)
+            cookie_file.write_text("test cookies", encoding="utf-8")
+            assert _resolve_cookie_file(mock_settings) == cookie_file
+
+    def test_segregated_settings_accepted_by_isp_factories(self, tmp_path: Path) -> None:
+        """Verify segregated sub-settings work without instantiating full CresmoSettings (ADR-069)."""
+        storage = StorageSettings(
+            _env_file=None,
+            data_dir=tmp_path / "data",
+            vault_dir=tmp_path / "vault",
+        )
+        llm = LlmSettings(
+            _env_file=None,
+            gemini_api_keys=[SecretStr("isp-key-1")],
+        )
+        telemetry = TelemetrySettings(
+            _env_file=None,
+            anonymization_enabled=False,
+            prometheus_enabled=False,
+            langfuse_public_key="",
+        )
+
+        assert isinstance(build_vault_adapter(storage), ObsidianVaultAdapter)
+        assert build_gemini_credential_pool(llm) is not None
+        assert build_indexing_adapter(llm) is not None
+        assert isinstance(build_anonymizer_adapter(telemetry), NoOpAnonymizerAdapter)
+        assert isinstance(build_metrics_adapter(telemetry), NoOpMetricsAdapter)
+        assert isinstance(build_telemetry_adapter(telemetry), NoOpTelemetryAdapter)
 
     def test_build_vault_adapter(self, mock_settings: CresmoSettings) -> None:
         vault = build_vault_adapter(mock_settings)

@@ -32,7 +32,13 @@ from cresmo.infrastructure.adapters.prompts import (
 )
 from cresmo.infrastructure.adapters.scrapers.header_generator import RandomHeaderGenerator
 from cresmo.infrastructure.adapters.system.preflight_probe_adapter import PreflightProbeAdapter
-from cresmo.infrastructure.config import CresmoSettings
+from cresmo.infrastructure.config import (
+    CresmoSettings,
+    LlmSettings,
+    StorageSettings,
+)
+from cresmo.infrastructure.environment import discover_cookies_file
+from cresmo.infrastructure.paths import find_workspace_root
 
 if TYPE_CHECKING:
     from cresmo.infrastructure.adapters.llm.gemini_adapter import GeminiLLMAdapter
@@ -41,30 +47,29 @@ if TYPE_CHECKING:
 logger = structlog.get_logger(__name__)
 
 
-def _resolve_cookie_file(settings: CresmoSettings) -> Path | None:
-    """Resolve active cookie file from settings or default data directory.
+def _resolve_cookie_file(settings: StorageSettings) -> Path | None:
+    """Resolve active cookie file via pure infrastructure environment discovery.
 
-    Decoupled per ADR-000 and ADR-002: does not invoke browser extraction at startup.
-    Explicit extraction is governed exclusively by the export-cookies CLI command.
+    Decoupled per ADR-000, ADR-002, and ADR-069: delegates candidate probing to
+    ``discover_cookies_file`` without triggering browser extraction at startup.
     """
-    cookie_file = getattr(settings, "cookies_file", None)
-    if cookie_file is not None and Path(cookie_file).exists():
-        return Path(cookie_file)
-
-    data_dir = getattr(settings, "data_dir", None) or Path("data")
-    target_cookie_path = data_dir / "cookies.txt"
-    if target_cookie_path.exists():
-        return target_cookie_path
-
-    return None
+    raw_configured = getattr(settings, "cookies_file", None)
+    configured = Path(raw_configured) if raw_configured is not None else None
+    raw_data_dir = getattr(settings, "data_dir", None)
+    data_dir = Path(raw_data_dir) if raw_data_dir is not None else Path("data")
+    return discover_cookies_file(
+        data_dir=data_dir,
+        workspace_dir=find_workspace_root(),
+        configured=configured,
+    )
 
 
 def build_taxonomy_adapter(
-    settings: CresmoSettings | None = None,
+    settings: StorageSettings | None = None,
 ) -> ChannelTaxonomyPort:
     """Instantiate ChannelTaxonomyPort backed by bundled or custom taxonomy JSON."""
-    settings = resolve_shared_settings(settings)
-    raw_path = getattr(settings, "taxonomy_path", None)
+    resolved = settings if settings is not None else resolve_shared_settings(None)
+    raw_path = getattr(resolved, "taxonomy_path", None)
     taxonomy_path = raw_path if isinstance(raw_path, Path) else None
     return JsonTaxonomyCatalogAdapter(taxonomy_path=taxonomy_path)
 
@@ -89,19 +94,19 @@ def build_media_ingestion_adapter(
 
 
 def build_vault_adapter(
-    settings: CresmoSettings | None = None,
+    settings: StorageSettings | None = None,
 ) -> ObsidianVaultAdapter:
-    """Instantiate and wire ObsidianVaultAdapter from application settings."""
-    settings = resolve_shared_settings(settings)
+    """Instantiate and wire ObsidianVaultAdapter from storage settings."""
+    resolved = settings if settings is not None else resolve_shared_settings(None)
     return ObsidianVaultAdapter(
-        vault_dir=settings.vault_dir,
-        raw_dir=settings.raw_dir,
-        enriched_dir=settings.enriched_dir,
-        fluid_dir=settings.fluid_dir,
-        master_dir=settings.master_dir,
-        data_dir=settings.data_dir,
-        mocs_dir=settings.mocs_dir,
-        index_path=settings.index_path,
+        vault_dir=resolved.vault_dir,
+        raw_dir=resolved.raw_dir,
+        enriched_dir=resolved.enriched_dir,
+        fluid_dir=resolved.fluid_dir,
+        master_dir=resolved.master_dir,
+        data_dir=resolved.data_dir,
+        mocs_dir=resolved.mocs_dir,
+        index_path=resolved.index_path,
     )
 
 
@@ -142,49 +147,49 @@ def build_prompt_provider(
 
 
 def build_gemini_credential_pool(
-    settings: CresmoSettings | None = None,
+    settings: LlmSettings | None = None,
 ) -> GeminiCredentialPool | None:
     """Instantiate a shared GeminiCredentialPool from configured API keys and timeout."""
     from cresmo.infrastructure.adapters.llm.gemini_pool import GeminiCredentialPool
 
-    settings = resolve_shared_settings(settings)
+    resolved = settings if settings is not None else resolve_shared_settings(None)
     api_keys = [
         k.get_secret_value().strip()
-        for k in settings.gemini_api_keys
+        for k in resolved.gemini_api_keys
         if k.get_secret_value().strip()
     ]
     if not api_keys:
         return None
     return GeminiCredentialPool(
         keys=api_keys,
-        timeout=settings.gemini_timeout_seconds,
+        timeout=resolved.gemini_timeout_seconds,
     )
 
 
 def build_gemini_synthesis_adapter(
-    settings: CresmoSettings | None = None,
+    settings: LlmSettings | None = None,
     langfuse_client: Any | None = None,
     credential_pool: GeminiCredentialPool | None = None,
 ) -> GeminiLLMAdapter:
     """Instantiate and wire GeminiLLMAdapter for core synthesis workflows."""
     from cresmo.infrastructure.adapters.llm.gemini_adapter import GeminiLLMAdapter
 
-    settings = resolve_shared_settings(settings)
-    api_keys = [k.get_secret_value() for k in settings.gemini_api_keys]
+    resolved = settings if settings is not None else resolve_shared_settings(None)
+    api_keys = [k.get_secret_value() for k in resolved.gemini_api_keys]
     return GeminiLLMAdapter(
         api_keys=api_keys,
-        model_name=settings.gemini_model,
-        fallback_model_name=settings.gemini_fallback_model,
-        max_output_tokens=settings.gemini_max_output_tokens,
-        thinking_level=settings.gemini_thinking_level,
+        model_name=resolved.gemini_model,
+        fallback_model_name=resolved.gemini_fallback_model,
+        max_output_tokens=resolved.gemini_max_output_tokens,
+        thinking_level=resolved.gemini_thinking_level,
         langfuse_client=langfuse_client,
         credential_pool=credential_pool,
-        timeout_seconds=settings.gemini_timeout_seconds,
+        timeout_seconds=resolved.gemini_timeout_seconds,
     )
 
 
 def build_indexing_adapter(
-    settings: CresmoSettings | None = None,
+    settings: LlmSettings | None = None,
     synthesis_adapter: LLMTransformationPort | None = None,
     web_index: bool = False,
     model_override: str | None = None,
@@ -195,37 +200,37 @@ def build_indexing_adapter(
     """Instantiate LLM adapter for indexing, selecting between local Ollama and Gemini API."""
     from cresmo.infrastructure.adapters.llm.gemini_adapter import GeminiLLMAdapter
 
-    settings = resolve_shared_settings(settings)
-    if web_index or settings.indexing_provider == "gemini":
+    resolved = settings if settings is not None else resolve_shared_settings(None)
+    if web_index or resolved.indexing_provider == "gemini":
         if (
             synthesis_adapter is not None
             and isinstance(synthesis_adapter, GeminiLLMAdapter)
             and model_override is None
         ):
             return synthesis_adapter
-        api_keys = api_keys or [k.get_secret_value() for k in settings.gemini_api_keys]
+        api_keys = api_keys or [k.get_secret_value() for k in resolved.gemini_api_keys]
         return GeminiLLMAdapter(
             api_keys=api_keys,
-            model_name=model_override or settings.gemini_model,
-            fallback_model_name=settings.gemini_fallback_model,
-            max_output_tokens=settings.gemini_max_output_tokens,
-            thinking_level=settings.gemini_thinking_level,
+            model_name=model_override or resolved.gemini_model,
+            fallback_model_name=resolved.gemini_fallback_model,
+            max_output_tokens=resolved.gemini_max_output_tokens,
+            thinking_level=resolved.gemini_thinking_level,
             langfuse_client=langfuse_client,
             credential_pool=credential_pool,
-            timeout_seconds=settings.gemini_timeout_seconds,
+            timeout_seconds=resolved.gemini_timeout_seconds,
         )
 
     from cresmo.infrastructure.adapters.llm.ollama_llm_adapter import OllamaLLMAdapter
 
     return OllamaLLMAdapter(
-        base_url=settings.ollama_base_url,
-        model=model_override or settings.ollama_model,
-        timeout_seconds=settings.ollama_timeout_seconds,
-        default_temperature=settings.llm_indexing_temperature,
-        num_predict=settings.ollama_num_predict,
+        base_url=resolved.ollama_base_url,
+        model=model_override or resolved.ollama_model,
+        timeout_seconds=resolved.ollama_timeout_seconds,
+        default_temperature=resolved.llm_indexing_temperature,
+        num_predict=resolved.ollama_num_predict,
         langfuse_client=langfuse_client,
-        keep_alive=settings.ollama_keep_alive,
-        warmup_timeout_seconds=settings.ollama_warmup_timeout_seconds,
+        keep_alive=resolved.ollama_keep_alive,
+        warmup_timeout_seconds=resolved.ollama_warmup_timeout_seconds,
     )
 
 

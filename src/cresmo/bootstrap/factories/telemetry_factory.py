@@ -35,7 +35,7 @@ from cresmo.infrastructure.adapters.telemetry.opentelemetry_adapter import (
     OpenTelemetryAdapter,
     name_telemetry_threads,
 )
-from cresmo.infrastructure.config import CresmoSettings
+from cresmo.infrastructure.config import TelemetrySettings
 
 logger = structlog.get_logger(__name__)
 
@@ -150,7 +150,7 @@ Langfuse: Any = _LAZY_LANGFUSE_SENTINEL
 
 
 def resolve_langfuse_client(
-    settings: CresmoSettings,
+    settings: TelemetrySettings,
     anonymizer: AnonymizerPort | None = None,
 ) -> Any | None:
     """Instantiate and return Langfuse client if configured and actively reachable.
@@ -211,21 +211,21 @@ def resolve_langfuse_client(
 
 
 def build_anonymizer_adapter(
-    settings: CresmoSettings | None = None,
+    settings: TelemetrySettings | None = None,
 ) -> AnonymizerPort:
     """Instantiate AnonymizerPort adapter based on settings configuration."""
-    resolved_settings = resolve_shared_settings(settings)
+    resolved_settings = settings if settings is not None else resolve_shared_settings(None)
     if getattr(resolved_settings, "anonymization_enabled", True):
         return RegexAnonymizerAdapter()
     return NoOpAnonymizerAdapter()
 
 
 def build_telemetry_adapter(
-    settings: CresmoSettings | None = None,
+    settings: TelemetrySettings | None = None,
     langfuse_client: Any | None = None,
 ) -> TelemetryPort:
     """Instantiate TelemetryPort adapter choosing between OpenTelemetry and NoOp."""
-    resolved_settings = resolve_shared_settings(settings)
+    resolved_settings = settings if settings is not None else resolve_shared_settings(None)
     if langfuse_client is not None:
         return OpenTelemetryAdapter(
             langfuse_client=langfuse_client,
@@ -236,10 +236,10 @@ def build_telemetry_adapter(
 
 
 def build_metrics_adapter(
-    settings: CresmoSettings | None = None,
+    settings: TelemetrySettings | None = None,
 ) -> MetricsPort:
     """Instantiate MetricsPort adapter choosing between Prometheus and NoOp."""
-    resolved_settings = resolve_shared_settings(settings)
+    resolved_settings = settings if settings is not None else resolve_shared_settings(None)
     if getattr(resolved_settings, "prometheus_enabled", True):
         return PrometheusMetricsAdapter()
     return NoOpMetricsAdapter()
