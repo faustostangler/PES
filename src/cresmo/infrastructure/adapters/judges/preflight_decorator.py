@@ -7,6 +7,9 @@ Conforms to:
 
 from __future__ import annotations
 
+from collections.abc import Callable
+from typing import Final
+
 import structlog
 
 from cresmo.application.ports.llm_judge_port import LlmJudgePort
@@ -14,6 +17,7 @@ from cresmo.domain.services.prose_syntax_guard import (
     validate_fluid_prose_syntax,
     validate_gap_filler_syntax,
 )
+from cresmo.domain.stage_registry import StageName
 from cresmo.domain.value_objects.quality import (
     CriterionScore,
     EvaluationContext,
@@ -23,6 +27,11 @@ from cresmo.domain.value_objects.quality import (
 )
 
 logger = structlog.get_logger(__name__)
+
+_STAGE_PREFLIGHT_VALIDATORS: Final[dict[str, tuple[Callable[[str], list[str]], JudgeCriterion]]] = {
+    StageName.FLUID_PROSE: (validate_fluid_prose_syntax, JudgeCriterion.STRUCTURAL_COMPLIANCE),
+    StageName.GAP_FILLER: (validate_gap_filler_syntax, JudgeCriterion.EXTRA_INFO_GRANULARITY),
+}
 
 
 class MechanicalPreflightJudgeDecorator(LlmJudgePort):
@@ -38,44 +47,19 @@ class MechanicalPreflightJudgeDecorator(LlmJudgePort):
 
     def evaluate(self, context: EvaluationContext) -> JudgeEvaluation:
         """Short-circuit evaluation if deterministic mechanical invariants fail."""
-        # Layer 1: Check mechanical syntax for fluid_prose stage
-        if context.stage_name == "fluid_prose":
-            violations = validate_fluid_prose_syntax(context.candidate_text)
+        stage_rule = _STAGE_PREFLIGHT_VALIDATORS.get(context.stage_name)
+        if stage_rule is not None:
+            validator_fn, criterion = stage_rule
+            violations = validator_fn(context.candidate_text)
             if violations:
                 violations_msg = "; ".join(violations)
                 logger.info(
-                    "[MechanicalPreflight] Candidate failed syntactic invariants: %s",
+                    "[MechanicalPreflight] Candidate failed syntactic invariants for %s: %s",
+                    context.stage_name,
                     violations_msg,
                 )
                 criterion_score = CriterionScore(
-                    criterion=JudgeCriterion.STRUCTURAL_COMPLIANCE,
-                    score=0.0,
-                    passed=False,
-                    reasoning=f"Mechanical invariants failed: {violations_msg}",
-                    verdict_type=VerdictType.NOUL,
-                    improvement_suggestion=f"Fix syntax errors: {violations_msg}",
-                )
-                return JudgeEvaluation(
-                    target_stage=context.stage_name,
-                    passed=False,
-                    overall_score=0.0,
-                    criteria_scores=(criterion_score,),
-                    provider="mechanical_preflight",
-                    latency_ms=0.1,
-                    trace_id=context.trace_id,
-                )
-
-        # Layer 1: Check mechanical syntax for gap_filler stage
-        elif context.stage_name == "gap_filler":
-            violations = validate_gap_filler_syntax(context.candidate_text)
-            if violations:
-                violations_msg = "; ".join(violations)
-                logger.info(
-                    "[MechanicalPreflight] Gap filler candidate failed syntactic invariants: %s",
-                    violations_msg,
-                )
-                criterion_score = CriterionScore(
-                    criterion=JudgeCriterion.EXTRA_INFO_GRANULARITY,
+                    criterion=criterion,
                     score=0.0,
                     passed=False,
                     reasoning=f"Mechanical invariants failed: {violations_msg}",

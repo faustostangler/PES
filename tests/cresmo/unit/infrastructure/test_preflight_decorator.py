@@ -76,3 +76,38 @@ def test_delegates_to_inner_judge_when_mechanical_invariants_pass() -> None:
     # Inner judge was called
     mock_inner_judge.evaluate.assert_called_once_with(context)
     assert evaluation == expected_evaluation
+
+
+def test_short_circuits_gap_filler_and_delegates_unmapped_stage() -> None:
+    mock_inner_judge = MagicMock(spec=LlmJudgePort)
+    expected_eval = JudgeEvaluation(
+        target_stage="custom_stage",
+        passed=True,
+        overall_score=0.9,
+        criteria_scores=(),
+        provider="gemini",
+    )
+    mock_inner_judge.evaluate.return_value = expected_eval
+    decorator = MechanicalPreflightJudgeDecorator(inner_judge=mock_inner_judge)
+
+    gap_context = EvaluationContext(
+        stage_name="gap_filler",
+        raw_text="Fluid prose input...",
+        candidate_text="## Título\n\nCorpo sem seção obrigatória.",
+        required_criteria=(JudgeCriterion.EXTRA_INFO_GRANULARITY,),
+    )
+    gap_eval = decorator.evaluate(gap_context)
+
+    mock_inner_judge.evaluate.assert_not_called()
+    assert gap_eval.passed is False
+    assert gap_eval.criteria_scores[0].criterion is JudgeCriterion.EXTRA_INFO_GRANULARITY
+    assert "### Extra Info" in gap_eval.criteria_scores[0].reasoning
+
+    other_context = EvaluationContext(
+        stage_name="custom_stage",
+        raw_text="Raw input",
+        candidate_text="Any output",
+        required_criteria=(),
+    )
+    assert decorator.evaluate(other_context) == expected_eval
+    mock_inner_judge.evaluate.assert_called_once_with(other_context)

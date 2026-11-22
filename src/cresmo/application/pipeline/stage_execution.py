@@ -40,6 +40,46 @@ from cresmo.domain.value_objects import (
 logger = structlog.get_logger(__name__)
 
 
+def _build_pass_prompt_context(
+    *,
+    pass_index: int,
+    max_passes: int,
+    is_multi_pass: bool,
+    draft_text: str | None,
+) -> dict[str, Any]:
+    """Assemble prompt template variables for the active refinement pass."""
+    prompt_context: dict[str, Any] = (
+        {"pass_num": pass_index, "total_passes": max_passes} if is_multi_pass else {}
+    )
+    if draft_text is not None:
+        prompt_context["prev_pass_num"] = pass_index - 1
+        prompt_context["current_text"] = draft_text
+    return prompt_context
+
+
+def _record_saturation_verdict(
+    verdict: SaturationVerdict,
+    *,
+    stage_name: str,
+    pass_index: int,
+    telemetry_port: TelemetryPort | None,
+    saturation_history: list[dict[str, Any]],
+) -> None:
+    """Emit scalar saturation telemetry span and append structured pass verdict history."""
+    metadata_entry = verdict.to_metadata_dict()
+    if telemetry_port is not None and verdict.reason is not SaturationReason.DISABLED:
+        span_attrs = {f"cresmo.saturation.{key}": val for key, val in metadata_entry.items()}
+        with telemetry_port.start_stage_saturation_span(
+            stage_name,
+            pass_num=pass_index,
+            attributes=span_attrs,
+        ):
+            pass
+
+    metadata_entry["pass_num"] = pass_index
+    saturation_history.append(metadata_entry)
+
+
 def generate_stage_candidate[TSource, TOutput](
     stage_config: StageConfig[TSource, TOutput],
     source: TSource,
@@ -57,9 +97,8 @@ def generate_stage_candidate[TSource, TOutput](
     max_passes = raw_max_passes if isinstance(raw_max_passes, int) and raw_max_passes > 0 else 1
     is_multi_pass = max_passes > 1
 
-    source_text = extract_stage_source_text(source)
+    baseline_text = extract_stage_source_text(source)
     draft_text: str | None = None
-    baseline_text: str = source_text
     current_text = ""
     passes_executed = 0
     is_saturated = False
@@ -70,12 +109,12 @@ def generate_stage_candidate[TSource, TOutput](
         if stage_config.stage_name == StageName.GAP_FILLER:  # stage specific debug, keep it
             pass
         is_final_pass = pass_index == max_passes or pending_final_critique
-        pass_prompt_context: dict[str, Any] = (
-            {"pass_num": pass_index, "total_passes": max_passes} if is_multi_pass else {}
+        pass_prompt_context = _build_pass_prompt_context(
+            pass_index=pass_index,
+            max_passes=max_passes,
+            is_multi_pass=is_multi_pass,
+            draft_text=draft_text,
         )
-        if draft_text is not None:
-            pass_prompt_context["prev_pass_num"] = pass_index - 1
-            pass_prompt_context["current_text"] = draft_text
         if is_multi_pass:
             logger.info(
                 "[StageRunner] Executing pass %d/%d for %s...",
@@ -110,55 +149,48 @@ def generate_stage_candidate[TSource, TOutput](
             is_saturated = True
             break
 
-        raw_verdict: Any = stage_config.saturation_policy(
+        if not is_multi_pass:
+            break
+
+        verdict = stage_config.saturation_policy(
             baseline_text,
             current_text,
             pass_index,
         )
-        if isinstance(raw_verdict, SaturationVerdict):
-            verdict = raw_verdict
-            if verdict.preserve_baseline:
-                current_text = baseline_text
+        if not isinstance(verdict, SaturationVerdict):
+            raise TypeError(
+                f"StageConfig.saturation_policy must return SaturationVerdict, "
+                f"got {type(verdict).__name__}."
+            )
 
-            if telemetry_port is not None and verdict.reason is not SaturationReason.DISABLED:
-                span_attrs: dict[str, Any] = {
-                    "cresmo.saturation.is_saturated": verdict.is_saturated,
-                    "cresmo.saturation.reason": verdict.reason.value,
-                    "cresmo.saturation.lexical_jaccard": verdict.lexical_jaccard,
-                    "cresmo.saturation.word_delta_ratio": verdict.word_delta_ratio,
-                    "cresmo.saturation.max_novelty": verdict.max_novelty,
-                    "cresmo.saturation.novel_paragraphs": verdict.novel_paragraphs,
-                    "cresmo.saturation.total_paragraphs": verdict.total_paragraphs,
-                    "cresmo.saturation.preserve_baseline": verdict.preserve_baseline,
-                    "cresmo.saturation.provider": verdict.provider,
-                }
-                with telemetry_port.start_stage_saturation_span(
-                    stage_config.stage_name,
-                    pass_num=pass_index,
-                    attributes=span_attrs,
-                ):
-                    pass
+        if verdict.preserve_baseline:
+            current_text = baseline_text
 
-            history_entry = verdict.to_metadata_dict()
-            history_entry["pass_num"] = pass_index
-            saturation_history.append(history_entry)
+        _record_saturation_verdict(
+            verdict,
+            stage_name=stage_config.stage_name,
+            pass_index=pass_index,
+            telemetry_port=telemetry_port,
+            saturation_history=saturation_history,
+        )
 
-            if verdict.is_saturated:
-                if critique and pass_index < max_passes:
-                    logger.info(
-                        "[StageRunner] Mechanical saturation reached at pass %d/%d; scheduling final critique pass.",
-                        pass_index,
-                        max_passes,
-                    )
-                    pending_final_critique = True
-                else:
-                    logger.info(
-                        "[StageRunner] Mechanical saturation reached at pass %d/%d. Halting early.",
-                        pass_index,
-                        max_passes,
-                    )
-                    is_saturated = True
-                    break
+        if verdict.is_saturated:
+            if critique and pass_index < max_passes:
+                logger.info(
+                    "[StageRunner] Saturation reached at pass %d/%d; scheduling final critique pass.",
+                    pass_index,
+                    max_passes,
+                )
+                pending_final_critique = True
+            else:
+                logger.info(
+                    "[StageRunner] Saturation reached at pass %d/%d (%s). Halting early.",
+                    pass_index,
+                    max_passes,
+                    verdict.reason.value,
+                )
+                is_saturated = True
+                break
 
         baseline_text = current_text
         draft_text = current_text

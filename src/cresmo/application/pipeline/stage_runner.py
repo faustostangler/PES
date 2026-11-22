@@ -71,6 +71,20 @@ _TSource = TypeVar("_TSource")
 _TOutput = TypeVar("_TOutput")
 
 
+def _extract_stage_telemetry_text(obj: Any, *, fallback: str | None = None) -> str:
+    """Extract string text for stage I/O telemetry without coercing non-string .text fields."""
+    nested_content = getattr(obj, "content", None)
+    if isinstance(nested_content, Content):
+        return nested_content.text
+    if hasattr(obj, "text"):
+        raw_text = obj.text
+        if raw_text is not None:
+            return raw_text if isinstance(raw_text, str) else ""
+    if fallback is not None:
+        return fallback
+    return str(obj)
+
+
 class PipelineStageRunner:
     """Encapsulates execution of discrete pipeline stages with telemetry spans, metrics, and error handling."""
 
@@ -90,18 +104,23 @@ class PipelineStageRunner:
         ledger_port: LedgerRepositoryPort | None = None,
     ) -> None:
         """Initialize PipelineStageRunner via PipelineDependencies DTO or keyword arguments."""
-        deps = dependencies or PipelineDependencies(
-            telemetry_port=telemetry_port,  # type: ignore[arg-type]
-            metrics_port=metrics_port,  # type: ignore[arg-type]
-            llm_judge=llm_judge,
-            judge_blocking=judge_blocking,
-            judge_max_attempts=judge_max_attempts,
-            prompt_provider=prompt_provider,
-            llm_transformation_port=llm_transformation_port,
-            stage_factory=stage_factory,
-            critique_synthesizer=critique_synthesizer,
-            ledger_port=ledger_port,
-        )
+        if dependencies is not None:
+            deps = dependencies
+        else:
+            if telemetry_port is None or metrics_port is None:
+                raise ValueError("Both telemetry_port and metrics_port must be provided.")
+            deps = PipelineDependencies(
+                telemetry_port=telemetry_port,
+                metrics_port=metrics_port,
+                llm_judge=llm_judge,
+                judge_blocking=judge_blocking,
+                judge_max_attempts=judge_max_attempts,
+                prompt_provider=prompt_provider,
+                llm_transformation_port=llm_transformation_port,
+                stage_factory=stage_factory,
+                critique_synthesizer=critique_synthesizer,
+                ledger_port=ledger_port,
+            )
         if deps.telemetry_port is None or deps.metrics_port is None:
             raise ValueError("Both telemetry_port and metrics_port must be provided.")
         self.telemetry_port = deps.telemetry_port
@@ -152,15 +171,10 @@ class PipelineStageRunner:
         evaluation: JudgeEvaluation | None = None
 
         with self._measure_stage(stage_name=stage_name, context=context):
-            source_content = getattr(source, "content", None)
             source_text = (
                 stage_config.eval_spec.extract_source_text(source)
                 if stage_config.eval_spec
-                else (
-                    source_content.text
-                    if isinstance(source_content, Content)
-                    else (getattr(source, "text", None) or str(source))
-                )
+                else _extract_stage_telemetry_text(source)
             )
             source_words = len(source_text.split()) if isinstance(source_text, str) else 0
             self.telemetry_port.record_stage_io(
@@ -231,13 +245,7 @@ class PipelineStageRunner:
                 raise DomainValidationError(f"Stage '{stage_name}' produced no candidate text.")
 
             output_object: _TOutput = stage_config.post_process(candidate, source)
-            output_content = getattr(output_object, "content", None)
-            if isinstance(output_content, Content):
-                output_text = output_content.text
-            elif hasattr(output_object, "text"):
-                output_text = output_object.text
-            else:
-                output_text = candidate.text
+            output_text = _extract_stage_telemetry_text(output_object, fallback=candidate.text)
             output_words = len(output_text.split()) if isinstance(output_text, str) else 0
             self.telemetry_port.record_stage_io(
                 output_payload={

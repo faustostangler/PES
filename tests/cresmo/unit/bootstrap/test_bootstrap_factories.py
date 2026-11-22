@@ -21,6 +21,7 @@ from cresmo.application.use_cases.sync_channel import SyncChannelUseCase
 from cresmo.application.use_cases.unify_duplicate_notes import UnifyDuplicateNotesUseCase
 from cresmo.bootstrap.factories.adapter_factory import (
     _resolve_cookie_file,
+    build_embedding_adapter,
     build_indexing_adapter,
     build_preflight_checker,
     build_prompt_provider,
@@ -378,3 +379,41 @@ class TestUseCaseFactory:
         mock_pipeline = MagicMock()
         use_case = build_sync_channel_use_case(settings=mock_settings, pipeline=mock_pipeline)
         assert isinstance(use_case, SyncChannelUseCase)
+
+    def test_build_embedding_adapter_wires_timeouts_and_providers(self, tmp_path: Path) -> None:
+        from cresmo.infrastructure.adapters.embeddings import (
+            GeminiEmbeddingAdapter,
+            OllamaEmbeddingAdapter,
+            ResilientEmbeddingAdapter,
+            TfidfEmbeddingAdapter,
+        )
+
+        gemini_settings = CresmoSettings(
+            _env_file=None,
+            vault_dir=tmp_path / "vault",
+            embedding_provider="gemini",
+            gemini_api_keys=[SecretStr("key-emb-1")],
+            gemini_timeout_seconds=45.0,
+        )
+        gemini_wrapped = build_embedding_adapter(settings=gemini_settings)
+        assert isinstance(gemini_wrapped, ResilientEmbeddingAdapter)
+        assert isinstance(gemini_wrapped.primary, GeminiEmbeddingAdapter)
+        assert gemini_wrapped.primary.timeout_seconds == 45.0
+
+        ollama_settings = CresmoSettings(
+            _env_file=None,
+            vault_dir=tmp_path / "vault",
+            embedding_provider="ollama",
+            ollama_timeout_seconds=12.5,
+        )
+        ollama_wrapped = build_embedding_adapter(settings=ollama_settings)
+        assert isinstance(ollama_wrapped, ResilientEmbeddingAdapter)
+        assert isinstance(ollama_wrapped.primary, OllamaEmbeddingAdapter)
+        assert ollama_wrapped.primary.timeout_seconds == 12.5
+
+        tfidf_settings = CresmoSettings(
+            _env_file=None,
+            vault_dir=tmp_path / "vault",
+            embedding_provider="tfidf",
+        )
+        assert isinstance(build_embedding_adapter(settings=tfidf_settings), TfidfEmbeddingAdapter)

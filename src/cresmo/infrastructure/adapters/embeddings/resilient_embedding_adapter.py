@@ -15,6 +15,7 @@ from collections.abc import Sequence
 import structlog
 
 from cresmo.application.ports.embedding import TextEmbeddingPort
+from cresmo.domain.exceptions import EmbeddingInfrastructureError
 from cresmo.infrastructure.adapters.embeddings.tfidf_embedding_adapter import (
     TfidfEmbeddingAdapter,
 )
@@ -66,6 +67,11 @@ class ResilientEmbeddingAdapter(TextEmbeddingPort):
 
         try:
             vectors = self.primary.embed_batch(texts)
+            if len(vectors) != len(texts):
+                raise EmbeddingInfrastructureError(
+                    f"Primary embedding adapter '{self.primary.provider_name}' returned "
+                    f"{len(vectors)} vectors for {len(texts)} input texts."
+                )
         except Exception as exc:  # noqa: BLE001
             logger.warning(
                 "Primary embedding adapter failed; falling back to secondary provider.",

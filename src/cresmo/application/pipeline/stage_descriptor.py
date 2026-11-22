@@ -15,6 +15,7 @@ from typing import Any
 
 from cresmo.application.pipeline.context import PipelineExecutionContext
 from cresmo.application.ports.prompt import PromptProviderPort
+from cresmo.domain.services.convergence_evaluator import NO_NEW_GAPS_SENTINEL
 from cresmo.domain.value_objects import (
     CandidateText,
     ChatMessage,
@@ -156,7 +157,8 @@ class StageConfig[TSource, TOutput]:
                     f"\n\n[{pass_header}: Iterative Expansion]\n"
                     f"Preserve verified facts, structure, and citations from the previous draft below, "
                     f"and iteratively deepen remaining conceptual, causal, historical, and Extra Info gaps "
-                    f"without discarding prior work. If no verifiable gap remains, return the draft unchanged."
+                    f"without discarding prior work. If no verifiable gap remains, output ONLY "
+                    f"{NO_NEW_GAPS_SENTINEL} and nothing else."
                     f"{draft_section}"
                 )
                 base_prompt = _append_to_last_user_message(base_prompt, draft_fallback_block)

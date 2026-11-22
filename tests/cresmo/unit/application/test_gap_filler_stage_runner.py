@@ -768,3 +768,70 @@ def test_pass1_semantic_plateau_keeps_current_text_instead_of_reverting_to_sourc
     assert candidate.metadata["saturation_history"][0]["preserve_baseline"] is False
     assert candidate.text == pass1_gap_output
     assert "### Extra Info" in candidate.text
+
+
+def test_draft_fallback_block_instructs_no_new_gaps_sentinel_not_copy_back(
+    sample_context: PipelineExecutionContext,
+    sample_fluid_transcript: StageTranscript,
+) -> None:
+    """Verify fallback REFINE draft injection emits <NO_NEW_GAPS/> instruction, never copy-back."""
+    from cresmo.application.pipeline.stage_descriptor import StageConfig
+    from cresmo.domain.services.convergence_evaluator import NO_NEW_GAPS_SENTINEL
+    from cresmo.domain.value_objects import ChatPrompt, PromptKey
+
+    mock_provider = MagicMock()
+    mock_provider.get_prompt.return_value = ChatPrompt.from_system_and_user(
+        system="System prompt",
+        user="Remote prompt template without draft placeholder.",
+    )
+    cfg = StageConfig[StageTranscript, StageTranscript](
+        stage_name="gap_filler",
+        transform_prompt_key=PromptKey.GAP_FILLER,
+        max_passes=3,
+    )
+
+    prompt = cfg.build_transform_prompt(
+        mock_provider,
+        sample_fluid_transcript,
+        context=sample_context,
+        pass_num=2,
+        total_passes=3,
+        prev_pass_num=1,
+        current_text="## Draft\n\nExisting pass 1 draft.",
+    )
+    rendered = prompt.get_last_user_content()
+
+    assert NO_NEW_GAPS_SENTINEL in rendered
+    assert "return the draft unchanged" not in rendered.lower()
+
+
+def test_generate_stage_candidate_rejects_non_verdict_saturation_policy_return(
+    sample_context: PipelineExecutionContext,
+    sample_fluid_transcript: StageTranscript,
+) -> None:
+    """Verify generate_stage_candidate fails fast when saturation_policy returns non-SaturationVerdict."""
+    from cresmo.application.pipeline.stage_descriptor import StageConfig
+    from cresmo.application.pipeline.stage_execution import generate_stage_candidate
+    from cresmo.domain.value_objects import PromptKey
+    from cresmo.infrastructure.adapters.prompts import JsonPromptProvider
+
+    mock_llm = MagicMock(spec=LLMTransformationPort)
+    mock_llm.transform.return_value = "## Draft\n\nCandidate text."
+
+    cfg = StageConfig[StageTranscript, StageTranscript](
+        stage_name="gap_filler",
+        transform_prompt_key=PromptKey.GAP_FILLER,
+        max_passes=3,
+        saturation_policy=lambda _b, _c, _p: True,  # type: ignore[arg-type,return-value]
+    )
+
+    with pytest.raises(TypeError, match="SaturationVerdict"):
+        generate_stage_candidate(
+            cfg,
+            sample_fluid_transcript,
+            context=sample_context,
+            prompt_provider=JsonPromptProvider(),
+            llm_port=mock_llm,
+            attempt=1,
+            active_trace_id="trace_bad_verdict",
+        )

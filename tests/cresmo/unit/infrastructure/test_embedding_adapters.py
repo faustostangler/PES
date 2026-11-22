@@ -503,3 +503,14 @@ class TestResilientEmbeddingAdapter:
         assert result == [[0.5, 0.5]]
         assert fallback.calls == [["single unit"]]
         assert adapter.last_provider_name == "ollama_fallback"
+
+    def test_embed_batch_primary_mismatched_vector_count_triggers_fallback(self) -> None:
+        primary = _FakeEmbeddingPort("gemini", vectors=[[1.0, 0.0]])  # Only 1 vector for 2 inputs
+        fallback = _FakeEmbeddingPort("tfidf", vectors=[[0.2, 0.8], [0.8, 0.2]])
+        adapter = ResilientEmbeddingAdapter(primary=primary, fallback=fallback)
+
+        result = adapter.embed_batch(["first unit", "second unit"])
+
+        assert result == [[0.2, 0.8], [0.8, 0.2]]
+        assert fallback.calls == [["first unit", "second unit"]]
+        assert adapter.last_provider_name == "tfidf_fallback"

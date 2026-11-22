@@ -296,3 +296,68 @@ def test_long_paragraph_intra_paragraph_addition_detected_with_tfidf() -> None:
     assert verdict.reason is SaturationReason.NOVEL_CONTENT
     assert verdict.novel_paragraphs >= 1
     assert verdict.total_paragraphs >= 2
+
+
+def test_embedding_infrastructure_error_degrades_gracefully_to_novel_content() -> None:
+    """Verify EmbeddingInfrastructureError from embed_batch degrades cleanly without crashing."""
+    import structlog.testing
+
+    from cresmo.domain.exceptions import EmbeddingInfrastructureError
+
+    mock_port = MagicMock(spec=TextEmbeddingPort)
+    mock_port.provider_name = "gemini"
+    mock_port.embed_batch.side_effect = EmbeddingInfrastructureError("Upstream 503 unavailable")
+    evaluator = HybridSaturationEvaluator(embedding_port=mock_port)
+
+    baseline = "## Contexto\n\nPrimeiro parágrafo consolidado sobre tributação medieval."
+    current = "## Contexto\n\nSegundo parágrafo sobre navegações atlânticas e feitorias régias."
+
+    with structlog.testing.capture_logs() as captured_logs:
+        verdict = evaluator.evaluate(baseline, current, pass_index=2)
+
+    assert verdict.is_saturated is False
+    assert verdict.reason is SaturationReason.NOVEL_CONTENT
+    assert verdict.preserve_baseline is False
+    assert verdict.provider == "degraded"
+    assert verdict.novel_paragraphs == 1
+    assert verdict.total_paragraphs == 1
+    assert any(entry.get("log_level") == "warning" for entry in captured_logs)
+
+
+def test_mismatched_embedding_vector_count_degrades_gracefully() -> None:
+    """Verify mismatched embed_batch output length degrades cleanly instead of slicing corrupt vectors."""
+    mock_port = MagicMock(spec=TextEmbeddingPort)
+    mock_port.provider_name = "gemini"
+    mock_port.embed_batch.return_value = [[1.0, 0.0]]  # Expected 2 vectors
+    evaluator = HybridSaturationEvaluator(embedding_port=mock_port)
+
+    verdict = evaluator.evaluate(
+        "## A\n\nPrimeiro parágrafo sobre finanças públicas.",
+        "## B\n\nSegundo parágrafo completamente distinto sobre arquitetura naval.",
+        pass_index=2,
+    )
+
+    assert verdict.is_saturated is False
+    assert verdict.reason is SaturationReason.NOVEL_CONTENT
+    assert verdict.preserve_baseline is False
+    assert verdict.provider == "degraded"
+    assert verdict.novel_paragraphs == 1
+    assert verdict.total_paragraphs == 1
+
+
+def test_none_embedding_port_with_empty_current_returns_semantic_plateau() -> None:
+    """Verify heading-only current_text still returns SEMANTIC_PLATEAU even when embedding_port is None."""
+    evaluator = HybridSaturationEvaluator(embedding_port=None)
+
+    verdict = evaluator.evaluate(
+        "## A\n\nParágrafo original consolidado.",
+        "## Apenas Título",
+        pass_index=2,
+    )
+
+    assert verdict.is_saturated is True
+    assert verdict.reason is SaturationReason.SEMANTIC_PLATEAU
+    assert verdict.preserve_baseline is False
+    assert verdict.novel_paragraphs == 0
+    assert verdict.total_paragraphs == 0
+    assert verdict.provider == "lexical"

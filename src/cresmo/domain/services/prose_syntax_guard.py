@@ -36,6 +36,24 @@ def _collect_common_header_and_inline_violations(stripped: str) -> list[str]:
     return violations
 
 
+def _collect_forbidden_block_violations(text: str, *, scope_label: str) -> list[str]:
+    """Validate zero bullets, markdown tables, and blockquotes within a text scope."""
+    violations: list[str] = []
+
+    if _BULLET_LINE_PATTERN.search(text):
+        violations.append(
+            f"{scope_label} must contain zero bullet points or list markers ('*', '-', '+')."
+        )
+
+    if _TABLE_LINE_PATTERN.search(text) or ("|" in text and "-|-" in text):
+        violations.append(f"{scope_label} must contain zero markdown table markers ('|').")
+
+    if _BLOCKQUOTE_LINE_PATTERN.search(text):
+        violations.append(f"{scope_label} must contain zero blockquotes ('>').")
+
+    return violations
+
+
 def extract_extra_info_section(text: str) -> str:
     """Extract stripped content following the mandatory '### Extra Info' heading.
 
@@ -65,15 +83,7 @@ def validate_fluid_prose_syntax(text: str) -> list[str]:
         return ["Text is empty or whitespace."]
 
     violations = _collect_common_header_and_inline_violations(stripped)
-
-    if _BULLET_LINE_PATTERN.search(stripped):
-        violations.append("Text must contain zero bullet points or list markers ('*', '-', '+').")
-
-    if _TABLE_LINE_PATTERN.search(stripped) or ("|" in stripped and "-|-" in stripped):
-        violations.append("Text must contain zero markdown table markers ('|').")
-
-    if _BLOCKQUOTE_LINE_PATTERN.search(stripped):
-        violations.append("Text must contain zero blockquotes ('>').")
+    violations.extend(_collect_forbidden_block_violations(stripped, scope_label="Text"))
 
     body_paragraphs = [
         p.strip() for p in stripped.split("\n\n") if p.strip() and not p.strip().startswith("##")
@@ -114,16 +124,7 @@ def validate_gap_filler_syntax(text: str) -> list[str]:
         if not main_body:
             violations.append("Main body text before '### Extra Info' is empty.")
 
-    if _TABLE_LINE_PATTERN.search(main_body) or ("|" in main_body and "-|-" in main_body):
-        violations.append("Main body must contain zero markdown table markers ('|').")
-
-    if _BULLET_LINE_PATTERN.search(main_body):
-        violations.append(
-            "Main body must contain zero bullet points or list markers ('*', '-', '+')."
-        )
-
-    if _BLOCKQUOTE_LINE_PATTERN.search(main_body):
-        violations.append("Main body must contain zero blockquotes ('>').")
+    violations.extend(_collect_forbidden_block_violations(main_body, scope_label="Main body"))
 
     if complementary_section and _BULLET_LINE_PATTERN.search(complementary_section):
         violations.append(

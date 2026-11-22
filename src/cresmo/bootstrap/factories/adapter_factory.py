@@ -11,6 +11,8 @@ from __future__ import annotations
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
+import structlog
+
 from cresmo.application.ports import (
     ChannelTaxonomyPort,
     LLMTransformationPort,
@@ -35,6 +37,8 @@ from cresmo.infrastructure.config import CresmoSettings
 if TYPE_CHECKING:
     from cresmo.infrastructure.adapters.llm.gemini_adapter import GeminiLLMAdapter
     from cresmo.infrastructure.adapters.llm.gemini_pool import GeminiCredentialPool
+
+logger = structlog.get_logger(__name__)
 
 
 def _resolve_cookie_file(settings: CresmoSettings) -> Path | None:
@@ -247,6 +251,7 @@ def build_embedding_adapter(
         ollama_adapter = OllamaEmbeddingAdapter(
             base_url=settings.ollama_base_url,
             model=settings.ollama_embedding_model,
+            timeout_seconds=settings.ollama_timeout_seconds,
         )
         return ResilientEmbeddingAdapter(ollama_adapter, TfidfEmbeddingAdapter())
 
@@ -263,7 +268,12 @@ def build_embedding_adapter(
             dimensions=settings.gemini_embedding_dimensions,
             credential_pool=credential_pool,
             api_keys=api_keys or None,
+            timeout_seconds=settings.gemini_timeout_seconds,
         )
         return ResilientEmbeddingAdapter(gemini_adapter, TfidfEmbeddingAdapter())
 
+    logger.warning(
+        "Unknown embedding_provider configured; falling back to local TF-IDF adapter.",
+        embedding_provider=provider,
+    )
     return TfidfEmbeddingAdapter()
