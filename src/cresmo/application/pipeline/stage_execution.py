@@ -101,7 +101,7 @@ def generate_stage_candidate[TSource, TOutput](
             is_saturated = True
             break
 
-        if stage_config.saturation_policy(current_text, previous_text):
+e        if stage_config.saturation_policy(current_text, previous_text):
             if critique and pass_index < max_passes:
                 logger.info(
                     "[StageRunner] Mechanical saturation reached at pass %d/%d; scheduling final critique pass.",
