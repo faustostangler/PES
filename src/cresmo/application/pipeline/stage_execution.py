@@ -35,6 +35,7 @@ from cresmo.domain.value_objects import (
     SaturationReason,
     SaturationVerdict,
 )
+from cresmo.domain.stage_registry import StageName
 
 logger = structlog.get_logger(__name__)
 
@@ -66,6 +67,8 @@ def generate_stage_candidate[TSource, TOutput](
     saturation_history: list[dict[str, Any]] = []
 
     for pass_index in range(1, max_passes + 1):
+        if stage_config.stage_name == StageName.GAP_FILLER: # stage specific debug
+            pass
         is_final_pass = pass_index == max_passes or pending_final_critique
         pass_prompt_context: dict[str, Any] = (
             {"pass_num": pass_index, "total_passes": max_passes} if is_multi_pass else {}
