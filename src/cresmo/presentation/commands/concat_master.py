@@ -44,13 +44,8 @@ def concat_master(
             help="Maximum word count per master document (default: 500,000, never splitting files in the middle)",
         ),
     ] = None,
-    verbose: Annotated[
-        bool,
-        typer.Option("--verbose", "-v", help="Enable verbose output"),
-    ] = False,
 ) -> None:
     """Consolidate enriched compendiums into master documents."""
-    _ = verbose
     code = handle_concat_master(None, channel=channel, max_words=max_words)
     if code != EXIT_SUCCESS:
         raise typer.Exit(code=code)

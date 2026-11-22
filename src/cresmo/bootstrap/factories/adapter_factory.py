@@ -16,6 +16,7 @@ import structlog
 from cresmo.application.ports import (
     ChannelTaxonomyPort,
     LLMTransformationPort,
+    ProcessRuntimePort,
     PromptProviderPort,
     TextEmbeddingPort,
 )
@@ -32,6 +33,9 @@ from cresmo.infrastructure.adapters.prompts import (
 )
 from cresmo.infrastructure.adapters.scrapers.header_generator import RandomHeaderGenerator
 from cresmo.infrastructure.adapters.system.preflight_probe_adapter import PreflightProbeAdapter
+from cresmo.infrastructure.adapters.system.process_runtime_adapter import (
+    SystemProcessRuntimeAdapter,
+)
 from cresmo.infrastructure.config import (
     CresmoSettings,
     LlmSettings,
@@ -282,3 +286,8 @@ def build_embedding_adapter(
         embedding_provider=provider,
     )
     return TfidfEmbeddingAdapter()
+
+
+def build_process_runtime_adapter() -> ProcessRuntimePort:
+    """Instantiate OS-backed ProcessRuntimePort adapter."""
+    return SystemProcessRuntimeAdapter()

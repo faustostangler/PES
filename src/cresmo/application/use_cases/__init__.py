@@ -32,6 +32,21 @@ from cresmo.application.use_cases.ingest_raw_transcript import (
 from cresmo.application.use_cases.reconcile_mocs import (  # FUTURE / DEFERRED
     ReconcileMOCsUseCase,
 )
+from cresmo.application.use_cases.run_synthesis import (
+    BatchItemEvent,
+    BatchItemEventKind,
+    RunExitStatus,
+    RunSynthesisOutcome,
+    RunSynthesisRequest,
+    RunSynthesisUseCase,
+)
+from cresmo.application.use_cases.sync_batch import (
+    SyncBatchOutcome,
+    SyncBatchRequest,
+    SyncBatchUseCase,
+    SyncTargetEvent,
+    SyncTargetEventKind,
+)
 from cresmo.application.use_cases.sync_channel import SyncChannelUseCase
 from cresmo.application.use_cases.synthesize_atomic_batch import (  # FUTURE / DEFERRED
     SynthesizeAtomicBatchUseCase,
@@ -44,6 +59,8 @@ from cresmo.application.use_cases.unify_duplicate_notes import (
 
 __all__ = [
     "BatchDiscoveryQuery",
+    "BatchItemEvent",
+    "BatchItemEventKind",
     "BatchSource",
     "ConcatMasterUseCase",
     "DeduplicationReport",
@@ -54,7 +71,16 @@ __all__ = [
     "IndexRawTranscriptsUseCase",
     "IngestRawTranscriptUseCase",
     "ReconcileMOCsUseCase",
+    "RunExitStatus",
+    "RunSynthesisOutcome",
+    "RunSynthesisRequest",
+    "RunSynthesisUseCase",
+    "SyncBatchOutcome",
+    "SyncBatchRequest",
+    "SyncBatchUseCase",
     "SyncChannelUseCase",
+    "SyncTargetEvent",
+    "SyncTargetEventKind",
     "SynthesizeAtomicBatchUseCase",
     "UnifyDuplicateNotesUseCase",
     "is_valid_inventory_json_structure",

@@ -20,6 +20,7 @@ from cresmo.application.ports.media import MediaIngestionPort
 from cresmo.application.ports.metrics import MetricsPort, NoOpMetricsPort
 from cresmo.application.ports.preflight import PreflightProbePort
 from cresmo.application.ports.prompt import NoOpPromptProviderPort, PromptProviderPort
+from cresmo.application.ports.runtime import NoOpProcessRuntimePort, ProcessRuntimePort
 from cresmo.application.ports.settings import (
     DefaultPipelineSettings,
     PipelineSettingsProtocol,
@@ -67,10 +68,12 @@ __all__ = [
     "MetricsPort",
     "NoOpChannelTaxonomyPort",
     "NoOpMetricsPort",
+    "NoOpProcessRuntimePort",
     "NoOpPromptProviderPort",
     "NoOpTelemetryPort",
     "PipelineSettingsProtocol",
     "PreflightProbePort",
+    "ProcessRuntimePort",
     "PromptProviderPort",
     "TelemetryPort",
     "TextEmbeddingPort",

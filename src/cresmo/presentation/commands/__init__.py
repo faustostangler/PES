@@ -2,8 +2,8 @@
 
 Conforms to:
     - ADR-002: Presentation CLI & Humble Object
-    - ADR-026: Clean Code Anti-Patterns & Code Smell Governance
-    - ADR-053: Lazy Presentation CLI Loading, Subcommand Decoupling, and Default-Fast Ingestion
+    - ADR-010: Zero Legacy Shims & Streaming-First Unification
+    - ADR-053 / ADR-067: Lazy Presentation CLI Loading & Run/Sync Use Cases
 """
 
 from __future__ import annotations
@@ -37,19 +37,7 @@ if TYPE_CHECKING:
         handle_export_cookies as handle_export_cookies,
     )
     from cresmo.presentation.commands.run import (
-        execute_batch_dry_run as execute_batch_dry_run,
-    )
-    from cresmo.presentation.commands.run import (
-        execute_batch_run as execute_batch_run,
-    )
-    from cresmo.presentation.commands.run import (
-        execute_single_video_run as execute_single_video_run,
-    )
-    from cresmo.presentation.commands.run import (
         handle_run as handle_run,
-    )
-    from cresmo.presentation.commands.run import (
-        load_batch_sources as load_batch_sources,
     )
     from cresmo.presentation.commands.run import (
         run as run,
@@ -77,9 +65,6 @@ __all__ = [
     "check_config",
     "concat_master",
     "dedupe",
-    "execute_batch_dry_run",
-    "execute_batch_run",
-    "execute_single_video_run",
     "export_cookies",
     "handle_check_config",
     "handle_concat_master",
@@ -89,7 +74,6 @@ __all__ = [
     "handle_seed_prompts",
     "handle_sync",
     "handle_worker",
-    "load_batch_sources",
     "run",
     "seed_prompts",
     "sync",
@@ -107,10 +91,6 @@ _SYMBOL_TO_MODULE: dict[str, str] = {
     "handle_export_cookies": "cresmo.presentation.commands.export_cookies",
     "run": "cresmo.presentation.commands.run",
     "handle_run": "cresmo.presentation.commands.run",
-    "execute_batch_dry_run": "cresmo.presentation.commands.run",
-    "execute_batch_run": "cresmo.presentation.commands.run",
-    "execute_single_video_run": "cresmo.presentation.commands.run",
-    "load_batch_sources": "cresmo.presentation.commands.run",
     "seed_prompts": "cresmo.presentation.commands.seed_prompts",
     "handle_seed_prompts": "cresmo.presentation.commands.seed_prompts",
     "sync": "cresmo.presentation.commands.sync",

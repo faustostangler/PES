@@ -64,13 +64,8 @@ def seed_prompts(
         bool,
         typer.Option("--dry-run", help="Render prompts without transmitting to Langfuse server"),
     ] = False,
-    verbose: Annotated[
-        bool,
-        typer.Option("--verbose", "-v", help="Enable verbose output"),
-    ] = False,
 ) -> None:
     """Synchronize local prompt definitions to the active Langfuse server."""
-    _ = verbose
     code = handle_seed_prompts(None, label=label, dry_run=dry_run)
     if code != EXIT_SUCCESS:
         raise typer.Exit(code=code)

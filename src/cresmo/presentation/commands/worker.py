@@ -71,13 +71,8 @@ def worker(
             help="Execute exactly one polling cycle and terminate cleanly",
         ),
     ] = False,
-    verbose: Annotated[
-        bool,
-        typer.Option("--verbose", "-v", help="Enable verbose output"),
-    ] = False,
 ) -> None:
     """Run continuous polling worker daemon with heartbeat health reporting."""
-    _ = verbose
     code = handle_worker(
         None,
         channel=channel,

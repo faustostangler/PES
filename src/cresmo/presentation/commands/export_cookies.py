@@ -59,13 +59,8 @@ def export_cookies(
             help="Force re-extraction even if a valid cookie file already exists",
         ),
     ] = False,
-    verbose: Annotated[
-        bool,
-        typer.Option("--verbose", "-v", help="Enable verbose output"),
-    ] = False,
 ) -> None:
     """Extract YouTube session cookies from browser into target Netscape file."""
-    _ = verbose
     code = handle_export_cookies(
         None,
         browser=browser,

@@ -6,35 +6,30 @@ and external binaries (ffmpeg) without making billable LLM API requests.
 Conforms to:
     - ADR-002: Presentation CLI & Humble Object
     - ADR-005: Multi-Role 12-Factor Container & Settings
+    - ADR-067: Humble Presentation CLI and Run/Sync Use Cases
     - SPEC-005: Operational Staging Validation
 """
 
 from __future__ import annotations
 
 import sys
-from typing import Annotated, Any
+from typing import Any
 
 import typer
-from pydantic import ValidationError
 
-from cresmo.bootstrap.composition import build_preflight_checker
-from cresmo.domain.exceptions import PreflightError
-from cresmo.infrastructure.config import CresmoSettings
+from cresmo.bootstrap.composition import (
+    build_preflight_checker,
+    load_fresh_settings,
+)
+from cresmo.presentation.error_handler import handle_cli_exception
 from cresmo.presentation.exit_codes import (
     EXIT_CONFIG_OR_USAGE_ERROR,
-    EXIT_INTERNAL_ERROR,
     EXIT_SUCCESS,
 )
 
 
-def check_config(
-    verbose: Annotated[
-        bool,
-        typer.Option("--verbose", "-v", help="Enable verbose output"),
-    ] = False,
-) -> None:
+def check_config() -> None:
     """Validate runtime environment, storage paths, and secrets fail-fast."""
-    _ = verbose
     code = handle_check_config(None)
     if code != EXIT_SUCCESS:
         raise typer.Exit(code=code)
@@ -44,14 +39,14 @@ def handle_check_config(args: Any = None) -> int:
     """Validate runtime environment, storage paths, and secrets.
 
     Args:
-        args: Parsed CLI argument namespace or None.
+        args: Unused legacy positional parameter kept only for zero-arg direct calls.
 
     Returns:
         Process exit code conforming to exit_codes.py.
     """
     _ = args
     try:
-        settings = CresmoSettings()
+        settings = load_fresh_settings()
         checker = build_preflight_checker(settings=settings)
         preflight = checker.check_all()
         if not preflight.is_healthy:
@@ -83,12 +78,5 @@ def handle_check_config(args: Any = None) -> int:
         else:
             sys.stdout.write("- Langfuse Telemetry: Disabled (no credentials configured)\n")
         return EXIT_SUCCESS
-    except ValidationError as exc:
-        sys.stderr.write(f"Configuration validation error:\n{exc}\n")
-        return EXIT_CONFIG_OR_USAGE_ERROR
-    except PreflightError as exc:
-        sys.stderr.write(f"Preflight error: {exc}\n")
-        return EXIT_CONFIG_OR_USAGE_ERROR
     except Exception as exc:  # noqa: BLE001
-        sys.stderr.write(f"Unexpected configuration error: {exc}\n")
-        return EXIT_INTERNAL_ERROR
+        return handle_cli_exception(exc, fallback_prefix="Unexpected configuration error")

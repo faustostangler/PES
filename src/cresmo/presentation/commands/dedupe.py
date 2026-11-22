@@ -5,6 +5,7 @@ and cross-vault inbound WikiLink rewriting per Clean/Hexagonal Architecture.
 
 Conforms to:
     - ADR-002: Presentation CLI & Humble Object
+    - ADR-067: Humble Presentation CLI and Run/Sync Use Cases
     - SPEC-001: Core Knowledge Synthesis Specifications (Deduplication)
 """
 
@@ -20,10 +21,8 @@ from cresmo.bootstrap.composition import (
     build_unify_duplicates_use_case,
     resolve_shared_settings,
 )
-from cresmo.presentation.exit_codes import (
-    EXIT_INTERNAL_ERROR,
-    EXIT_SUCCESS,
-)
+from cresmo.presentation.error_handler import handle_cli_exception
+from cresmo.presentation.exit_codes import EXIT_SUCCESS
 
 
 def dedupe(
@@ -37,17 +36,13 @@ def dedupe(
             help="Path to Obsidian vault directory override",
         ),
     ] = None,
-    dry_run: Annotated[
-        bool,
-        typer.Option("--dry-run", help="Simulate deduplication without modifying notes"),
-    ] = False,
     verbose: Annotated[
         bool,
         typer.Option("--verbose", "-v", help="Enable verbose output"),
     ] = False,
 ) -> None:
     """Execute graph entity resolution, non-destructive merging, and link rewriting."""
-    code = handle_dedupe(vault=vault, dry_run=dry_run, verbose=verbose)
+    code = handle_dedupe(vault=vault, verbose=verbose)
     if code != EXIT_SUCCESS:
         raise typer.Exit(code=code)
 
@@ -55,7 +50,6 @@ def dedupe(
 def handle_dedupe(
     args: Any = None,
     vault: Path | None = None,
-    dry_run: bool = False,
     verbose: bool = False,
 ) -> int:
     """Unify duplicate atomic notes across the Obsidian vault graph.
@@ -63,7 +57,6 @@ def handle_dedupe(
     Args:
         args: Parsed CLI argument namespace or None.
         vault: Optional vault directory path override.
-        dry_run: Whether to simulate deduplication without modifying disk.
         verbose: Whether to emit extended diagnostics.
 
     Returns:
@@ -71,7 +64,6 @@ def handle_dedupe(
     """
     if args is not None:
         vault = getattr(args, "vault", vault)
-        dry_run = getattr(args, "dry_run", dry_run)
         verbose = getattr(args, "verbose", verbose)
 
     try:
@@ -82,7 +74,6 @@ def handle_dedupe(
         report = use_case.execute()
         if verbose:
             sys.stdout.write(f"Vault directory: {settings.vault_dir}\n")
-            sys.stdout.write(f"Dry-run mode: {dry_run}\n")
         sys.stdout.write("Vault Graph Deduplication Summary:\n")
         sys.stdout.write(f"- Duplicate Clusters Unified: {report.duplicates_unified_count}\n")
         sys.stdout.write(f"- Total Inbound WikiLinks Rewritten: {report.total_links_rewritten}\n")
@@ -94,5 +85,4 @@ def handle_dedupe(
             )
         return EXIT_SUCCESS
     except Exception as exc:  # noqa: BLE001
-        sys.stderr.write(f"Deduplication error: {exc}\n")
-        return EXIT_INTERNAL_ERROR
+        return handle_cli_exception(exc, fallback_prefix="Deduplication error")

@@ -16,13 +16,20 @@ Conforms to:
 
 from __future__ import annotations
 
+from collections.abc import Callable
+
 from cresmo.application.pipeline import (
     CresmoPipeline,  # slow import
     PipelineDependencies,
     PipelineStageRunner,
     StageFactory,
 )
+from cresmo.application.ports import MediaIngestionPort, VaultRepositoryPort
 from cresmo.application.services.preflight import PreflightHealthChecker
+from cresmo.application.use_cases.concat_master import ConcatMasterUseCase
+from cresmo.application.use_cases.discovery import DiscoverBatchSourcesUseCase
+from cresmo.application.use_cases.run_synthesis import RunSynthesisUseCase
+from cresmo.application.use_cases.sync_batch import SyncBatchUseCase
 from cresmo.application.use_cases.sync_channel import SyncChannelUseCase
 from cresmo.bootstrap.factories.adapter_factory import (
     build_embedding_adapter,
@@ -31,6 +38,7 @@ from cresmo.bootstrap.factories.adapter_factory import (
     build_indexing_adapter,
     build_media_ingestion_adapter,
     build_preflight_checker,
+    build_process_runtime_adapter,
     build_prompt_provider,
     build_taxonomy_adapter,
     build_vault_adapter,
@@ -38,6 +46,7 @@ from cresmo.bootstrap.factories.adapter_factory import (
 from cresmo.bootstrap.factories.judge_factory import build_llm_judge_adapter
 from cresmo.bootstrap.factories.settings_factory import (
     get_shared_settings,
+    load_fresh_settings,
     reset_shared_settings,
     resolve_shared_settings,
 )
@@ -56,6 +65,7 @@ from cresmo.bootstrap.factories.use_case_factory import (
 )
 from cresmo.infrastructure.adapters.system.preflight_probe_adapter import probe_http_endpoint
 from cresmo.infrastructure.config import CresmoSettings
+from cresmo.infrastructure.environment import ensure_runtime_directories
 from cresmo.infrastructure.logging_config import configure_logging
 from cresmo.infrastructure.persistence.sqlite_ledger_adapter import SqliteLedgerAdapter
 
@@ -195,6 +205,73 @@ def build_sync_channel_use_case(
         preflight_checker=preflight_checker,
     )
 
+def build_run_synthesis_use_case(
+    settings: CresmoSettings | None = None,
+    *,
+    lookback_override: int | None = None,
+    batch_size_override: int | None = None,
+    web_index: bool = False,
+    check_ffmpeg: bool = True,
+) -> RunSynthesisUseCase:
+    """Construct RunSynthesisUseCase with fail-fast preflight and lazy pipeline factories."""
+    overrides = {"days_lookback": lookback_override} if lookback_override is not None else None
+    if settings is None:
+        resolved = load_fresh_settings(overrides=overrides)
+    elif overrides is not None:
+        resolved = settings.model_copy(update=overrides)
+    else:
+        resolved = settings
+
+    preflight_checker = build_preflight_checker(settings=resolved, check_ffmpeg=check_ffmpeg)
+
+    def _discover_factory(
+        media_port: MediaIngestionPort,
+        progress_callback: Callable[[str], object] | None,
+    ) -> DiscoverBatchSourcesUseCase:
+        return build_discover_batch_sources_use_case(
+            settings=resolved,
+            media_ingestion_port=media_port,
+            progress_callback=progress_callback,
+        )
+
+    def _concat_factory(vault_port: VaultRepositoryPort) -> ConcatMasterUseCase:
+        return build_concat_master_use_case(settings=resolved, vault_port=vault_port)
+
+    return RunSynthesisUseCase(
+        settings=resolved,
+        preflight_checker=preflight_checker,
+        pipeline_factory=lambda: build_pipeline(
+            settings=resolved,
+            batch_size_override=batch_size_override,
+            web_index=web_index,
+        ),
+        discover_sources_factory=_discover_factory,
+        concat_master_factory=_concat_factory,
+        runtime_port=build_process_runtime_adapter(),
+    )
+
+
+def build_sync_batch_use_case(
+    settings: CresmoSettings | None = None,
+    *,
+    batch_size_override: int | None = None,
+    check_ffmpeg: bool = True,
+) -> SyncBatchUseCase:
+    """Construct SyncBatchUseCase with ensured runtime directories, channel sync, and taxonomy."""
+    resolved = resolve_shared_settings(settings)
+    ensure_runtime_directories(resolved)
+    sync_channel_use_case = build_sync_channel_use_case(
+        settings=resolved,
+        batch_size_override=batch_size_override,
+        check_ffmpeg=check_ffmpeg,
+    )
+    taxonomy_port = build_taxonomy_adapter(resolved)
+    return SyncBatchUseCase(
+        sync_channel_use_case=sync_channel_use_case,
+        default_manifest_path=resolved.playlist_path,
+        taxonomy_port=taxonomy_port,
+    )
+
 
 __all__ = [
     "PreflightHealthChecker",
@@ -210,14 +287,18 @@ __all__ = [
     "build_metrics_adapter",
     "build_pipeline",
     "build_preflight_checker",
+    "build_process_runtime_adapter",
     "build_prompt_provider",
+    "build_run_synthesis_use_case",
     "build_stage_runner",
+    "build_sync_batch_use_case",
     "build_sync_channel_use_case",
     "build_taxonomy_adapter",
     "build_telemetry_adapter",
     "build_unify_duplicates_use_case",
     "build_vault_adapter",
     "get_shared_settings",
+    "load_fresh_settings",
     "probe_http_endpoint",
     "probe_langfuse_ready",
     "reset_shared_settings",

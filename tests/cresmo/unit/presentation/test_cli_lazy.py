@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import subprocess
 import sys
-from types import SimpleNamespace as Namespace
+from unittest.mock import MagicMock
 
 import pytest
 
@@ -102,9 +102,6 @@ assert "torch" not in sys.modules, "torch eagerly imported by NativeMediaIngesti
             "check_config",
             "concat_master",
             "dedupe",
-            "execute_batch_dry_run",
-            "execute_batch_run",
-            "execute_single_video_run",
             "export_cookies",
             "handle_check_config",
             "handle_concat_master",
@@ -114,7 +111,6 @@ assert "torch" not in sys.modules, "torch eagerly imported by NativeMediaIngesti
             "handle_seed_prompts",
             "handle_sync",
             "handle_worker",
-            "load_batch_sources",
             "run",
             "seed_prompts",
             "sync",
@@ -133,47 +129,28 @@ assert "torch" not in sys.modules, "torch eagerly imported by NativeMediaIngesti
             _ = cmd_pkg.invalid_subcommand
 
     def test_run_command_default_fast_no_crawl(self) -> None:
-        """Verify cresmo run defaults to no crawling (fast path) unless --crawl is passed."""
-        from cresmo.infrastructure.config import CresmoSettings
-        from cresmo.presentation.commands.run import _build_batch_discovery_query
-
-        # Default run arguments (crawl is False by default)
-        args_default = Namespace(
-            manifest=None,
-            scan_raw=False,
-            channel_max_videos=50,
-            crawl=False,
-            no_crawl=False,
+        """Verify RunSynthesisUseCase defaults to no crawling (fast path) unless crawl=True."""
+        from cresmo.application.use_cases.run_synthesis import (
+            RunSynthesisRequest,
+            RunSynthesisUseCase,
         )
+        from cresmo.infrastructure.config import CresmoSettings
+
         settings = CresmoSettings()
-        query_default = _build_batch_discovery_query(args_default, settings)
+        use_case = RunSynthesisUseCase(
+            settings=settings,
+            preflight_checker=MagicMock(),
+            pipeline_factory=MagicMock(),
+            discover_sources_factory=MagicMock(),
+            concat_master_factory=MagicMock(),
+        )
+        query_default = use_case._build_discovery_query(RunSynthesisRequest(crawl=False))
         assert query_default.enable_channel_crawler is False, (
             "Default run must not crawl channel feeds"
         )
 
-        # Explicit opt-in --crawl
-        args_crawl = Namespace(
-            manifest=None,
-            scan_raw=False,
-            channel_max_videos=50,
-            crawl=True,
-            no_crawl=False,
-        )
-        query_crawl = _build_batch_discovery_query(args_crawl, settings)
+        query_crawl = use_case._build_discovery_query(RunSynthesisRequest(crawl=True))
         assert query_crawl.enable_channel_crawler is True, "Passing crawl=True must enable crawler"
-
-        # Backward-compatible --no-crawl
-        args_no_crawl = Namespace(
-            manifest=None,
-            scan_raw=False,
-            channel_max_videos=50,
-            crawl=True,
-            no_crawl=True,
-        )
-        query_no_crawl = _build_batch_discovery_query(args_no_crawl, settings)
-        assert query_no_crawl.enable_channel_crawler is False, (
-            "Passing no_crawl=True must force crawl to False"
-        )
 
     def test_cli_is_pure_humble_object_without_subprocess_bootstrapping(self) -> None:
         """Verify CLI entrypoint is a pure Humble Object without auto-spawning make/docker."""

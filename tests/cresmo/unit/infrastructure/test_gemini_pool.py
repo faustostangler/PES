@@ -13,6 +13,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
+from cresmo.domain.exceptions import QuotaPoolExhaustedError, RateLimitExceededError
 from cresmo.infrastructure.adapters.llm.gemini_pool import (
     CredentialPoolExhaustedError,
     GeminiCredentialPool,
@@ -73,6 +74,8 @@ class TestGeminiCredentialPool:
         with pytest.raises(CredentialPoolExhaustedError) as exc_info:
             pool.lease()
 
+        assert isinstance(exc_info.value, QuotaPoolExhaustedError)
+        assert isinstance(exc_info.value, RateLimitExceededError)
         assert exc_info.value.retry_after_seconds > 0
         assert exc_info.value.retry_after_seconds <= 10.0
 

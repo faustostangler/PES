@@ -9,6 +9,7 @@ from cresmo.bootstrap.factories.adapter_factory import (
     build_indexing_adapter,
     build_media_ingestion_adapter,
     build_preflight_checker,
+    build_process_runtime_adapter,
     build_prompt_provider,
     build_taxonomy_adapter,
     build_vault_adapter,
@@ -16,6 +17,7 @@ from cresmo.bootstrap.factories.adapter_factory import (
 from cresmo.bootstrap.factories.judge_factory import build_llm_judge_adapter
 from cresmo.bootstrap.factories.settings_factory import (
     get_shared_settings,
+    load_fresh_settings,
     reset_shared_settings,
     resolve_shared_settings,
 )
@@ -46,6 +48,7 @@ __all__ = [
     "build_media_ingestion_adapter",
     "build_metrics_adapter",
     "build_preflight_checker",
+    "build_process_runtime_adapter",
     "build_prompt_provider",
     "build_sync_channel_use_case",
     "build_taxonomy_adapter",
@@ -53,6 +56,7 @@ __all__ = [
     "build_unify_duplicates_use_case",
     "build_vault_adapter",
     "get_shared_settings",
+    "load_fresh_settings",
     "probe_langfuse_ready",
     "reset_shared_settings",
     "resolve_langfuse_client",

@@ -103,6 +103,19 @@ class RateLimitExceededError(CresmoInfrastructureError, CresmoDomainError):
     """
 
 
+class QuotaPoolExhaustedError(RateLimitExceededError):
+    """Raised when all credentials in an LLM credential pool are exhausted in cooldown.
+
+    Conforms to:
+        - ADR-041: Gemini Credential Pool and Quota-Aware Failover Rotation
+        - ADR-067: Humble Presentation CLI and Run/Sync Use Cases
+    """
+
+    def __init__(self, message: str = "", *, retry_after_seconds: float = 0.0) -> None:
+        self.retry_after_seconds: float = max(0.0, float(retry_after_seconds))
+        super().__init__(message)
+
+
 class IngestionNetworkError(CresmoInfrastructureError, CresmoDomainError):
     """Raised when media crawling, audio extraction, or transcription fails due to I/O errors.
 

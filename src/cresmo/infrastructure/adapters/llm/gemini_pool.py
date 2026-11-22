@@ -28,7 +28,7 @@ import structlog
 from google import genai
 from google.genai import errors, types
 
-from cresmo.domain.exceptions import RateLimitExceededError
+from cresmo.domain.exceptions import QuotaPoolExhaustedError
 from cresmo.infrastructure.config import DEFAULT_GEMINI_TIMEOUT_SECONDS
 
 __all__ = [
@@ -43,16 +43,16 @@ logger = structlog.get_logger(__name__)
 T = TypeVar("T")
 
 
-class CredentialPoolExhaustedError(RateLimitExceededError, RuntimeError):
+class CredentialPoolExhaustedError(QuotaPoolExhaustedError, RuntimeError):
     """Raised when all credentials in the pool are temporarily in cooldown."""
 
     def __init__(self, retry_after_seconds: float, message: str | None = None) -> None:
-        self.retry_after_seconds = max(0.0, retry_after_seconds)
+        normalized_retry = max(0.0, retry_after_seconds)
         formatted_message = message or (
             f"All Gemini API credentials are currently exhausted in cooldown. "
-            f"Earliest credential will recover in {self.retry_after_seconds:.1f}s."
+            f"Earliest credential will recover in {normalized_retry:.1f}s."
         )
-        super().__init__(formatted_message)
+        super().__init__(formatted_message, retry_after_seconds=normalized_retry)
 
 
 def parse_retry_delay_from_error(exc: BaseException, default_delay: float = 60.0) -> float:
