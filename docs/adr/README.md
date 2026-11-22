@@ -95,6 +95,7 @@ In this repository, architectural decisions evolve continuously through test-dri
 | [**ADR-065**](ADR-065-hierarchical-stage-scoped-telemetry-nomenclature.md) | 2026-11-21 | Hierarchical Stage-Scoped Telemetry Nomenclature & Dynamic Generation Naming | Observability / Telemetry | `ACCEPTED` | **Refines ADR-037 and ADR-063**. Reorganizes the 4-tier trace tree into `cresmo.pipeline` $\to$ `cresmo.coordinator` $\to$ `cresmo.{stage_name}` $\to$ `cresmo.{stage_name}.generate[.pass_{N}]` / `cresmo.{stage_name}.generate_fallback[.pass_{N}]` / `cresmo.{stage_name}.judge` (with standalone `cresmo.llm.generate(_fallback)[.pass_{N}]` outside active stages) via pure `contextvars` propagation and creation-time observation decorators (`observe_llm_generation`, `observe_llm_generation_fallback`). |
 | [**ADR-066**](ADR-066-hybrid-semantic-saturation-and-text-embedding-adapters.md) | 2026-11-21 | Hybrid Semantic Saturation, Pure Convergence Domain, and Hexagonal Text Embedding Adapters | Cresmo Core / Cognitive & Infra | `ACCEPTED` | **Refines ADR-039 and ADR-046; deletes `mechanical_validator.py` per ADR-010**. Splits syntax preflight (`prose_syntax_guard.py`) from pure convergence math (`convergence_evaluator.py`), introduces `SaturationVerdict`/`<NO_NEW_GAPS/>` fixed-point loop, `TextEmbeddingPort`, `HybridSaturationEvaluator`, Gemini/Ollama/TF-IDF resilient embedding adapters, and `cresmo.{stage}.saturation.pass_{N}` Langfuse spans. |
 | [**ADR-067**](ADR-067-humble-presentation-cli-and-run-sync-use-cases.md) | 2026-11-22 | Humble Presentation CLI and Run/Sync Use Cases | Presentation / Application / Domain | `ACCEPTED` | **Refines ADR-002, ADR-010, ADR-026, ADR-053**. Extracts `RunSynthesisUseCase` and `SyncBatchUseCase`, adds `QuotaPoolExhaustedError`, `ProcessRuntimePort`, `load_fresh_settings`, and centralized `error_handler.py`, and purges all 12 dead CLI flags (including destructive `dedupe --dry-run` and `--no-crawl`). |
+| [**ADR-068**](ADR-068-evals-hexagonal-decomposition-and-seed-ssot.md) | 2026-11-22 | Hexagonal Decomposition of Judge Calibration and JSON Seed SSOT | Cognitive / Evaluation | `ACCEPTED` | **Refines ADR-039, ADR-061, ADR-062; deletes `calibration_runner.py` per ADR-010**. Decomposes judge calibration into pure Application modules (`calibration_metrics`, `specs`, `executor`, `suite`), introduces `CalibrationCheckpointPort`/`CalibrationDatasetPort`/`CalibrationReportWriterPort`, externalizes JSON seeds to `evals/datasets/seeds/`, moves ASCII/SDT formatting to `presentation/formatters/calibration_report.py`, and standardizes English identifiers + `CalibrationVerdict(StrEnum)`. |
 | [**ADR-069**](ADR-069-modular-domain-settings-package-and-infrastructure-environment.md) | 2026-11-22 | Modular Domain Settings Package and Pure Infrastructure Environment Helpers | Infrastructure / Config & Bootstrap | `ACCEPTED` | **Deletes monolithic `config.py` per ADR-010**. Decomposes `CresmoSettings` into cohesive `infrastructure/config/` modules (`catalog`, `llm`, `telemetry`, `storage`, `ingestion`, `saturation`, `judge`, `settings`), isolates disk I/O into `infrastructure/environment.py`, and applies ISP across bootstrap factories. |
 
 ---
@@ -218,6 +219,7 @@ graph TD
         A053["ADR-053: Lazy CLI Loading & Fast-Default"]
         A062["ADR-062: Structural Consolidation & Hygiene"]
         A067["ADR-067: Humble Presentation CLI & Run/Sync Use Cases"]
+        A068["ADR-068: Hexagonal Evals Decomposition & Seed SSOT"]
         A069["ADR-069: Modular Domain Settings & Pure Environment"]
         A019 --> A020 --> A026
         A020 --> A032 --> A033
@@ -229,6 +231,7 @@ graph TD
         A053 --> A062
         A053 --> A067
         A062 --> A067
+        A062 --> A068
         A062 --> A069
     end
 ```

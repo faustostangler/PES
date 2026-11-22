@@ -1,11 +1,10 @@
-"""Application-layer evaluation metrics, checkpointing, and calibration runner.
-
-Contains pure, testable Signal Detection Theory metrics, atomic JSON checkpointing,
-and stage-agnostic LLM Judge calibration orchestration decoupled from CLI adapters.
+"""Application-layer pure evaluation models, specifications, executor, and suite orchestrator.
 
 Conforms to:
+    - ADR-039: Progressive LLM-as-a-Judge Calibration Lifecycle
     - ADR-061: Unified Zero-Fallback LLM Judge Calibration CLI
-    - ADR-062: Structural Consolidation & Bootstrap Separation
+    - ADR-068: Hexagonal Decomposition of Judge Calibration and JSON Seed SSOT
+    - SPEC-068: Hexagonal Decomposition of Judge Calibration & Seed SSOT
 """
 
 from __future__ import annotations
@@ -13,67 +12,73 @@ from __future__ import annotations
 from cresmo.application.evals.calibration_metrics import (
     CalibrationResultSet,
     CalibrationSuiteOutcome,
+    CalibrationVerdict,
     ConfusionMatrix,
     ItemEvaluationResult,
-    MetricInfo,
     ModelBenchmarkSummary,
 )
-from cresmo.application.evals.calibration_runner import (
+from cresmo.application.evals.executor import (
+    CalibrationEvent,
+    CalibrationEventKind,
+    CooldownActiveError,
+    JudgeCalibrationFactory,
+    evaluate_single_item,
+    extract_cooldown_seconds,
+    is_transient_retryable_error,
+    run_stage_calibration,
+)
+from cresmo.application.evals.specs import (
     DEFAULT_CHECKPOINT_DIR,
     DEFAULT_DATASETS_DIR,
     DEFAULT_REPORTS_DIR,
-    FLUID_PROSE_SEED_DATA,
-    GAP_FILLER_SEED_DATA,
+    DEFAULT_SEEDS_DIR,
     STAGE_SPECS,
-    CalibrationCheckpointStore,
-    CooldownActiveError,
-    JudgeCalibrationFactory,
+    CalibrationThresholds,
     PromptTemplateLookup,
     StageCalibrationSpec,
     build_stage_specs,
+    classify_verdict,
     compute_config_hash,
-    evaluate_single_item,
-    generate_calibration_report,
-    load_stage_dataset,
     parse_model_specs,
     parse_stage_specs,
-    print_benchmark_summary,
     resolve_model_spec,
-    run_calibration_suite,
-    run_stage_calibration,
     sanitize_report_filename,
-    save_calibration_report,
+)
+from cresmo.application.evals.suite import (
+    ReportContentBuilder,
+    run_calibration_suite,
 )
 
 __all__ = [
     "DEFAULT_CHECKPOINT_DIR",
     "DEFAULT_DATASETS_DIR",
     "DEFAULT_REPORTS_DIR",
-    "FLUID_PROSE_SEED_DATA",
-    "GAP_FILLER_SEED_DATA",
+    "DEFAULT_SEEDS_DIR",
     "STAGE_SPECS",
-    "CalibrationCheckpointStore",
+    "CalibrationEvent",
+    "CalibrationEventKind",
     "CalibrationResultSet",
     "CalibrationSuiteOutcome",
+    "CalibrationThresholds",
+    "CalibrationVerdict",
     "ConfusionMatrix",
     "CooldownActiveError",
     "ItemEvaluationResult",
     "JudgeCalibrationFactory",
-    "MetricInfo",
     "ModelBenchmarkSummary",
     "PromptTemplateLookup",
+    "ReportContentBuilder",
     "StageCalibrationSpec",
     "build_stage_specs",
+    "classify_verdict",
     "compute_config_hash",
     "evaluate_single_item",
-    "generate_calibration_report",
-    "load_stage_dataset",
+    "extract_cooldown_seconds",
+    "is_transient_retryable_error",
     "parse_model_specs",
     "parse_stage_specs",
-    "print_benchmark_summary",
     "resolve_model_spec",
     "run_calibration_suite",
     "run_stage_calibration",
     "sanitize_report_filename",
-    "save_calibration_report",
 ]

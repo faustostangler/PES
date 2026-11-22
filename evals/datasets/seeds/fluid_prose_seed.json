@@ -1,0 +1,77 @@
+[
+  {
+    "id": "item_01_pass_clean_narrative",
+    "input": {
+      "raw_text": "então pessoal hoje a gente vai falar do G. W. F. Hegel, né? ele pensava que a história caminha por contradições e dialética, tá ligado?",
+      "candidate_text": "## A Dialética e o Movimento Histórico\n\nNa filosofia de **G. W. F. Hegel**, o desenvolvimento histórico opera através de contradições dialéticas imanentes. As transformações sociais expressam a superação de contradições estruturais que reorganizam as instituições políticas."
+    },
+    "expected_output": {
+      "verdict": "PASS"
+    },
+    "metadata": {
+      "criterion": "orality_removal",
+      "difficulty": "easy",
+      "category": "valid_transformation"
+    }
+  },
+  {
+    "id": "item_02_fail_youtube_cta",
+    "input": {
+      "raw_text": "não esquece de se inscrever no canal e deixar o like se gostou do vídeo.",
+      "candidate_text": "## Introdução ao Tema\n\nO debate envolve teorias econômicas clássicas. Inscreva-se no canal para acompanhar os próximos episódios."
+    },
+    "expected_output": {
+      "verdict": "FAIL"
+    },
+    "metadata": {
+      "criterion": "orality_removal",
+      "difficulty": "easy",
+      "expected_anomaly": "youtube_cta_leakage"
+    }
+  },
+  {
+    "id": "item_03_fail_mechanical_em_dash",
+    "input": {
+      "raw_text": "ele tomou uma decisão muito dura ali naquele momento histórico.",
+      "candidate_text": "## Contexto Decisório\n\nA deliberação governamental — tomada sem consulta aos parlamentares — precipitou a crise fiscal subsequente."
+    },
+    "expected_output": {
+      "verdict": "FAIL"
+    },
+    "metadata": {
+      "criterion": "structural_compliance",
+      "difficulty": "borderline",
+      "expected_anomaly": "forbidden_em_dash"
+    }
+  },
+  {
+    "id": "item_04_pass_with_epistemic_qualification",
+    "input": {
+      "raw_text": "o tratado de versalhes foi assinado em 1945 bem depois da guerra, todo mundo sabe disso.",
+      "candidate_text": "## Os Tratados Internacionais e a Diplomacia\n\nO interlocutor afirma que o **Tratado de Versalhes** foi firmado em 1945; no entanto, os registros históricos diplomáticos estabelecem sua celebração formal em 1919 ao término da Primeira Guerra Mundial. Esta discrepância temporal requer retificação documental."
+    },
+    "expected_output": {
+      "verdict": "PASS"
+    },
+    "metadata": {
+      "criterion": "epistemic_critique",
+      "difficulty": "typical",
+      "expected_anomaly": "none"
+    }
+  },
+  {
+    "id": "item_05_fail_binary_antithesis",
+    "input": {
+      "raw_text": "não é uma questão simples, é algo muito profundo na sociedade.",
+      "candidate_text": "## Análise Social\n\nNão se trata de uma crise orçamentária simples, e sim de uma ruptura estrutural nos alicerces institucionais do Estado moderno."
+    },
+    "expected_output": {
+      "verdict": "FAIL"
+    },
+    "metadata": {
+      "criterion": "authorial_voice",
+      "difficulty": "borderline",
+      "expected_anomaly": "binary_antithesis"
+    }
+  }
+]

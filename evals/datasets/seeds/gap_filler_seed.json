@@ -1,0 +1,38 @@
+[
+  {
+    "id": "eg_seed_01_pass",
+    "input": {
+      "raw_text": "## A Posse de Afonso Henriques e a Bula Manifestis Probatum\n\nAfonso Henriques declarou a autonomia do Condado Portucalense no século XII. Após anos de conflitos contra o Reino de Leão e campanhas da Reconquista, a corte papal reconheceu formalmente a soberania portuguesa através de documento solene.",
+      "candidate_text": "## A Autonomia Feudal e a Legitimação Apostólica do Reino de Portugal\n\nA consolidação política da independência portucalense articulou vitórias campais contra os exércitos de Afonso VII de Leão e a inserção direta na rede de suserania da Santa Sé. Em 1179-05-23, o papa Alexandre III promulgou a bula Manifestis Probatum, declarando Afonso Henriques rei soberano de Portugal e outorgando proteção apostólica contra reivindicações anexionistas de monarcas cristãos vizinhos.\n\nEsse ato diplomático coroou um esforço de décadas iniciado no Tratado de Zamora em 1143-10-05, subordinando a legitimidade jurídica do novo reino ao pagamento anual de um censo de dois marcos de ouro à corte romana.\n\n### Extra Info\n\n1. O Tratado de Zamora de 1143-10-05 contou com a mediação do cardeal Guido de Vico, legado papal na Península Ibérica.\n2. O censo pago por Afonso Henriques à Santa Sé foi elevado de quatro onças de ouro anuais em 1144 para dois marcos de ouro em 1179."
+    },
+    "expected_output": {
+      "verdict": "PASS"
+    },
+    "metadata": {
+      "criterion": "epistemic_grounding_segregation",
+      "difficulty": "easy",
+      "expected_anomaly": "none",
+      "defect_location": "none",
+      "video_id": "9IbNJ0EsTxI",
+      "target_verdict": "PASS"
+    }
+  },
+  {
+    "id": "cm_seed_02_fail",
+    "input": {
+      "raw_text": "## Concorrência e Gargalos em Bancos Relacionais sob Alta Carga\n\nEm testes de estresse com milhares de requisições simultâneas por segundo, o banco de dados PostgreSQL frequentemente apresenta degradação severa de latência quando as conexões não são limitadas. O esgotamento de recursos decorre da contenção de bloqueios em linhas concorrentes e do custo de context switching entre múltiplos processos no sistema operacional.",
+      "candidate_text": "## O Esgotamento de Recursos em Bancos Relacionais sob Concorrência Extrema\n\nEm cenários de estresse computacional caracterizados por taxas elevadas de transações simultâneas, a arquitetura do PostgreSQL manifesta variações desproporcionais na latência percebida pelos clientes. A saturação de conexões sem pooling adequado impõe um ônus que degrada o rendimento global da aplicação sob teste de estresse na infraestrutura em contêineres Docker.\n\nA degradação manifesta-se através de disputas intensas por recursos compartilhados, onde diferentes processos disputam o acesso aos mesmos registros de tabelas financeiras. A sobrecarga de gerenciar dezenas de processos paralelos força o núcleo do sistema operacional a despender ciclos de processamento em trocas de contexto.\n\n### Extra Info\n\n1. O gerenciador de conexões PgBouncer gerencia três modos distintos de agrupamento: sessão, transação e instrução.\n2. O comando EXPLAIN ANALYZE do PostgreSQL executa a consulta e retorna o plano de execução real juntamente com os custos."
+    },
+    "expected_output": {
+      "verdict": "FAIL"
+    },
+    "metadata": {
+      "criterion": "conceptual_mechanical_decomposition",
+      "difficulty": "borderline",
+      "expected_anomaly": "explanatory_vacuum_missing_mvcc_intermediate_mechanisms",
+      "defect_location": "paragraph_2",
+      "video_id": "-yGHG3pnHLg",
+      "target_verdict": "FAIL"
+    }
+  }
+]

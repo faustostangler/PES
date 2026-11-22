@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Unified Zero-Fallback LLM Judge Calibration CLI with Cooldown Checkpointing.
 
 Thin Humble Object Typer CLI delegating calibration metrics, checkpointing, and
@@ -7,6 +6,8 @@ stage orchestration to `cresmo.application.evals`.
 Conforms to:
     - ADR-061: Unified Zero-Fallback LLM Judge Calibration CLI with Cooldown-Aware Checkpointing
     - ADR-062: Structural Consolidation, Evals SSOT, and Bootstrap Separation
+    - ADR-068: Hexagonal Decomposition of Judge Calibration and JSON Seed SSOT
+    - SPEC-068: Hexagonal Decomposition of Judge Calibration & Seed SSOT
 """
 
 from __future__ import annotations
@@ -37,9 +38,19 @@ from cresmo.application.evals import (
 from cresmo.application.ports.llm_judge_port import LlmJudgePort
 from cresmo.bootstrap.factories.judge_factory import build_llm_judge_adapter
 from cresmo.domain.value_objects.prompt import PromptKey
+from cresmo.infrastructure.adapters.evals import (
+    FileCalibrationReportWriter,
+    JsonCalibrationCheckpointStore,
+    JsonCalibrationDatasetLoader,
+)
 from cresmo.infrastructure.adapters.llm.gemini_pool import is_quota_exhausted_error
 from cresmo.infrastructure.adapters.prompts import load_prompt_catalog
 from cresmo.infrastructure.config import CresmoSettings
+from cresmo.presentation.formatters.calibration_report import (
+    format_benchmark_summary,
+    format_calibration_report,
+    render_calibration_event,
+)
 
 DEFAULT_CHECKPOINT_DIR = REPO_ROOT / "data" / "calibration_checkpoints"
 DEFAULT_REPORTS_DIR = REPO_ROOT / "reports" / "calibration"
@@ -209,9 +220,11 @@ def run_cli(
         judge_factory=_build_judge,
         stage_thresholds=stage_thresholds,
         stage_specs=stage_specs,
+        checkpoint_store=JsonCalibrationCheckpointStore(DEFAULT_CHECKPOINT_DIR),
+        dataset_loader=JsonCalibrationDatasetLoader(),
+        report_writer=FileCalibrationReportWriter(),
         dataset_path=dataset_path,
         seed_only=seed_only,
-        checkpoint_dir=DEFAULT_CHECKPOINT_DIR,
         reports_dir=DEFAULT_REPORTS_DIR,
         output_path=output_path,
         delay=delay,
@@ -219,7 +232,10 @@ def run_cli(
         max_retry_wait=max_retry_wait,
         prompt_lookup=_build_prompt_lookup(),
         is_quota_exhausted=is_quota_exhausted_error,
+        report_builder=format_calibration_report,
+        on_event=render_calibration_event,
     )
+    sys.stdout.write(format_benchmark_summary(outcome.summaries))
     if outcome.has_errors:
         raise typer.Exit(code=1)
 

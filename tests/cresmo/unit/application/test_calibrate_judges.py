@@ -1,9 +1,10 @@
-"""Unit tests for Unified Zero-Fallback Judge Calibration Harness (scripts/calibrate_judges.py).
+"""Unit tests for Unified Zero-Fallback Judge Calibration Harness (evals/calibrate_judges.py).
 
 Conforms to:
     - ADR-061: Unified Zero-Fallback LLM Judge Calibration CLI with Cooldown-Aware Checkpointing
     - ADR-039: Progressive LLM-as-a-Judge Calibration Lifecycle
     - ADR-060: Gap Filler Judge Criteria v2
+    - ADR-068: Hexagonal Decomposition of Judge Calibration and JSON Seed SSOT
 """
 
 from __future__ import annotations
@@ -15,7 +16,7 @@ import pytest
 
 from cresmo.application.evals import (
     STAGE_SPECS,
-    CalibrationCheckpointStore,
+    CalibrationVerdict,
     ConfusionMatrix,
     evaluate_single_item,
     parse_model_specs,
@@ -29,7 +30,13 @@ from cresmo.domain.value_objects.quality import (
     JudgeCriterion,
     JudgeEvaluation,
 )
+from cresmo.infrastructure.adapters.evals import (
+    FileCalibrationReportWriter,
+    JsonCalibrationCheckpointStore,
+    JsonCalibrationDatasetLoader,
+)
 from cresmo.infrastructure.adapters.llm.gemini_pool import CredentialPoolExhaustedError
+from cresmo.presentation.formatters.calibration_report import format_calibration_report
 
 
 def test_stage_specs_cover_all_stages_with_canonical_criteria() -> None:
@@ -43,21 +50,23 @@ def test_stage_specs_cover_all_stages_with_canonical_criteria() -> None:
 
 
 def test_confusion_matrix_sdt_metrics() -> None:
-    perfect = ConfusionMatrix(hit=10, pedantismo_beta=0, permissivo_alfa=0, rejeicao=10)
-    assert perfect.total_valid == 20
+    perfect = ConfusionMatrix(
+        hit=10, false_reject_beta=0, false_accept_alpha=0, correct_rejection=10
+    )
+    assert perfect.total_samples == 20
     assert perfect.accuracy == 1.0
     assert perfect.precision == 1.0
     assert perfect.recall == 1.0
     assert perfect.f1 == 1.0
 
     empty = ConfusionMatrix()
-    assert empty.total_valid == 0
+    assert empty.total_samples == 0
     assert empty.accuracy == 0.0
     assert empty.precision == 0.0
     assert empty.recall == 0.0
     assert empty.f1 == 0.0
 
-    mixed = ConfusionMatrix(hit=8, pedantismo_beta=2, permissivo_alfa=2, rejeicao=8)
+    mixed = ConfusionMatrix(hit=8, false_reject_beta=2, false_accept_alpha=2, correct_rejection=8)
     assert mixed.accuracy == pytest.approx(0.80)
     assert mixed.precision == pytest.approx(0.80)
     assert mixed.recall == pytest.approx(0.80)
@@ -125,7 +134,7 @@ def test_evaluate_single_item_uniform_for_all_stages(
 
 
 def test_checkpoint_resumes_from_previous_point_and_respects_cooldown(tmp_path: Path) -> None:
-    store = CalibrationCheckpointStore(checkpoint_dir=tmp_path)
+    store = JsonCalibrationCheckpointStore(checkpoint_dir=tmp_path)
     items = [
         {
             "id": "item_1",
@@ -232,12 +241,12 @@ def test_checkpoint_resumes_from_previous_point_and_respects_cooldown(tmp_path: 
 
     assert mock_judge.evaluate.call_count == 1  # ONLY item_2 was called!
     assert results.target_isolated.hit == 1
-    assert results.target_isolated.rejeicao == 1
+    assert results.target_isolated.correct_rejection == 1
     assert results.target_isolated.accuracy == 1.0
 
 
 def test_short_cooldown_waits_and_retries_without_abort(tmp_path: Path) -> None:
-    store = CalibrationCheckpointStore(checkpoint_dir=tmp_path)
+    store = JsonCalibrationCheckpointStore(checkpoint_dir=tmp_path)
     items = [
         {
             "id": "eg_01",
@@ -287,7 +296,7 @@ def test_short_cooldown_waits_and_retries_without_abort(tmp_path: Path) -> None:
 
 
 def test_checkpoint_invalidates_items_when_config_hash_changes(tmp_path: Path) -> None:
-    store = CalibrationCheckpointStore(checkpoint_dir=tmp_path)
+    store = JsonCalibrationCheckpointStore(checkpoint_dir=tmp_path)
     store.record_item(
         stage="gap_filler",
         provider="gemini",
@@ -391,14 +400,19 @@ def test_cli_always_disables_fallback_and_runs_all_stages_by_default(tmp_path: P
         selected_models=parse_model_specs(["gemini:gemini-4-hydrogen"], None, "gemini"),
         judge_factory=_fake_factory,
         stage_thresholds={"fluid_prose": 0.75, "gap_filler": 0.75},
+        stage_specs=STAGE_SPECS,
+        checkpoint_store=JsonCalibrationCheckpointStore(checkpoint_dir=tmp_path / "checkpoints"),
+        dataset_loader=JsonCalibrationDatasetLoader(),
+        report_writer=FileCalibrationReportWriter(),
         seed_only=True,
-        checkpoint_dir=tmp_path / "checkpoints",
         reports_dir=tmp_path / "reports",
         delay=0.0,
         jitter=0.0,
+        report_builder=format_calibration_report,
     )
 
     assert not outcome.has_errors
+    assert all(s.status is CalibrationVerdict.APPROVED for s in outcome.summaries)
     assert len(factory_calls) == 2  # both fluid_prose and gap_filler ran by default
     for call in factory_calls:
         assert call["enable_fallback"] is False
