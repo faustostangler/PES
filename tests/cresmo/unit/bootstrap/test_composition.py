@@ -637,6 +637,7 @@ class TestCompositionRoot:
             assert os.environ["LANGFUSE_PUBLIC_KEY"] == "pk-custom"
             assert os.environ["LANGFUSE_SECRET_KEY"] == "sk-custom"
             assert os.environ["LANGFUSE_HOST"] == "http://custom-host:3000"
+            assert os.environ["LANGFUSE_TRACING_ENVIRONMENT"] == "staging"
             assert os.environ["OTEL_EXPORTER_OTLP_TIMEOUT"] == "45"
 
         # Defaults when timeout and environment are completely missing from settings object
@@ -654,8 +655,14 @@ class TestCompositionRoot:
             resolve_langfuse_client(s_missing_timeout_env)  # type: ignore[arg-type]
             _, kwargs_def = mock_langfuse_cls.call_args
             assert kwargs_def["timeout"] == 30
-            assert kwargs_def["environment"] == "development"
+            assert kwargs_def["environment"] == "staging"
+            assert os.environ["LANGFUSE_TRACING_ENVIRONMENT"] == "staging"
             assert os.environ["OTEL_EXPORTER_OTLP_TIMEOUT"] == "30"
+
+        from cresmo.bootstrap.factories.telemetry_factory import _clean_langfuse_env
+
+        _clean_langfuse_env()
+        assert "LANGFUSE_TRACING_ENVIRONMENT" not in os.environ
 
     def test_resolve_langfuse_client_init_exception_logs_warning(
         self, caplog: pytest.LogCaptureFixture

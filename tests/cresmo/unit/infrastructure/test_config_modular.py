@@ -224,6 +224,8 @@ class TestTelemetrySettings:
             "CRESMO_GIT_SHA",
             "LANGFUSE_BASE_URL",
             "LANGFUSE_HOST",
+            "LANGFUSE_TRACING_ENVIRONMENT",
+            "LANGFUSE_ENVIRONMENT",
             "LOG_LEVEL",
             "CRESMO_LOG_LEVEL",
             "LOG_FORMAT",
@@ -235,7 +237,7 @@ class TestTelemetrySettings:
         assert telemetry.pipeline_version.startswith("cresmo:v")
         assert telemetry.git_sha is None
         assert telemetry.langfuse_host == "https://cloud.langfuse.com"
-        assert telemetry.langfuse_environment == "development"
+        assert telemetry.langfuse_environment == "staging"
         assert telemetry.langfuse_prompt_label == "production"
         assert telemetry.langfuse_timeout_seconds == 30
         assert telemetry.anonymization_enabled is True
@@ -252,6 +254,52 @@ class TestTelemetrySettings:
         monkeypatch.setenv("CRESMO_PIPELINE_VERSION", "cresmo:v4-canary")
         env_override = TelemetrySettings(_env_file=None)
         assert env_override.pipeline_version == "cresmo:v4-canary"
+
+    def test_langfuse_environment_aliases_normalization_and_validation(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        from pydantic import ValidationError
+
+        from cresmo.infrastructure.config import (
+            DEFAULT_LANGFUSE_ENVIRONMENT,
+            LANGFUSE_ENVIRONMENT_PATTERN,
+        )
+
+        assert DEFAULT_LANGFUSE_ENVIRONMENT == "staging"
+        assert LANGFUSE_ENVIRONMENT_PATTERN == r"^(?!langfuse)[a-z0-9-_]{1,40}$"
+        assert CresmoSettings.DEFAULT_LANGFUSE_ENVIRONMENT == "staging"
+
+        monkeypatch.delenv("LANGFUSE_TRACING_ENVIRONMENT", raising=False)
+        monkeypatch.delenv("LANGFUSE_ENVIRONMENT", raising=False)
+
+        # Fallback alias LANGFUSE_ENVIRONMENT
+        monkeypatch.setenv("LANGFUSE_ENVIRONMENT", "  Production ")
+        assert TelemetrySettings(_env_file=None).langfuse_environment == "production"
+
+        # Canonical Langfuse SDK env var takes precedence over LANGFUSE_ENVIRONMENT
+        monkeypatch.setenv("LANGFUSE_TRACING_ENVIRONMENT", "QA-Env_2")
+        assert TelemetrySettings(_env_file=None).langfuse_environment == "qa-env_2"
+
+        # Exact 40-char boundary is valid
+        valid_40 = "a" * 40
+        assert (
+            TelemetrySettings(_env_file=None, langfuse_environment=valid_40).langfuse_environment
+            == valid_40
+        )
+
+        # Invalid values fail fast
+        for invalid in (
+            "",
+            "   ",
+            "langfuse",
+            "langfuse-prod",
+            "a" * 41,
+            "prod/1",
+            "prod.1",
+            "prod env",
+        ):
+            with pytest.raises(ValidationError):
+                TelemetrySettings(_env_file=None, langfuse_environment=invalid)
 
     def test_git_sha_langfuse_base_url_and_logging_overrides(
         self, monkeypatch: pytest.MonkeyPatch

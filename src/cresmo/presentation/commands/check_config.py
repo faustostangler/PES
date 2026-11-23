@@ -72,9 +72,12 @@ def handle_check_config(args: Any = None) -> int:
         lf_pk = getattr(settings, "langfuse_public_key", "")
         lf_sk = getattr(settings, "langfuse_secret_key", None)
         lf_host = getattr(settings, "langfuse_host", "https://cloud.langfuse.com")
+        lf_env = getattr(settings, "langfuse_environment", "staging")
         if lf_pk and lf_sk and hasattr(lf_sk, "get_secret_value") and lf_sk.get_secret_value():
             pk_masked = lf_pk[:10] + "..."
-            sys.stdout.write(f"- Langfuse Telemetry: Enabled ({lf_host}, {pk_masked})\n")
+            sys.stdout.write(
+                f"- Langfuse Telemetry: Enabled ({lf_host}, env={lf_env}, {pk_masked})\n"
+            )
         else:
             sys.stdout.write("- Langfuse Telemetry: Disabled (no credentials configured)\n")
         return EXIT_SUCCESS

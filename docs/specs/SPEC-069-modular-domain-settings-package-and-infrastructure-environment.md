@@ -131,7 +131,7 @@ Houses shared domain/provider catalog types, default constants, and version reso
 | `langfuse_secret_key` | `SecretStr` | `SecretStr("")`, aliases `langfuse_secret_key`, `LANGFUSE_SECRET_KEY` |
 | `langfuse_public_key` | `str` | `""`, aliases `langfuse_public_key`, `LANGFUSE_PUBLIC_KEY` |
 | `langfuse_host` | `str` | `"https://cloud.langfuse.com"`, aliases `langfuse_host`, `LANGFUSE_HOST`, `LANGFUSE_BASE_URL` |
-| `langfuse_environment` | `str` | `"development"` |
+| `langfuse_environment` | `str` | `DEFAULT_LANGFUSE_ENVIRONMENT` (`"staging"`), aliases `langfuse_environment`, `LANGFUSE_TRACING_ENVIRONMENT`, `LANGFUSE_ENVIRONMENT`, validated against `^(?!langfuse)[a-z0-9-_]{1,40}$` (`ADR-072`) |
 | `langfuse_prompt_label` | `str` | `DEFAULT_LANGFUSE_PROMPT_LABEL` |
 | `langfuse_timeout_seconds` | `int` | `30` |
 | `prometheus_enabled` | `bool` | `True` |

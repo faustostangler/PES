@@ -36,7 +36,7 @@ from cresmo.infrastructure.adapters.telemetry.opentelemetry_adapter import (
     OpenTelemetryAdapter,
     name_telemetry_threads,
 )
-from cresmo.infrastructure.config import TelemetrySettings
+from cresmo.infrastructure.config import DEFAULT_LANGFUSE_ENVIRONMENT, TelemetrySettings
 
 logger = structlog.get_logger(__name__)
 
@@ -66,6 +66,7 @@ def _clean_langfuse_env() -> None:
     os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
     os.environ.pop("LANGFUSE_SECRET_KEY", None)
     os.environ.pop("LANGFUSE_HOST", None)
+    os.environ.pop("LANGFUSE_TRACING_ENVIRONMENT", None)
     os.environ.pop("OTEL_EXPORTER_OTLP_TIMEOUT", None)
 
 
@@ -186,9 +187,11 @@ def resolve_langfuse_client(
 
     try:
         timeout_sec = getattr(settings, "langfuse_timeout_seconds", 30)
+        resolved_env = getattr(settings, "langfuse_environment", DEFAULT_LANGFUSE_ENVIRONMENT)
         os.environ["LANGFUSE_PUBLIC_KEY"] = settings.langfuse_public_key
         os.environ["LANGFUSE_SECRET_KEY"] = settings.langfuse_secret_key.get_secret_value()
         os.environ["LANGFUSE_HOST"] = settings.langfuse_host
+        os.environ["LANGFUSE_TRACING_ENVIRONMENT"] = resolved_env
         os.environ["OTEL_EXPORTER_OTLP_TIMEOUT"] = str(timeout_sec)
 
         init_kwargs: dict[str, Any] = {
@@ -197,7 +200,7 @@ def resolve_langfuse_client(
             "host": settings.langfuse_host,
             "timeout": timeout_sec,
             "should_export_span": _build_should_export_span(),
-            "environment": getattr(settings, "langfuse_environment", "development"),
+            "environment": resolved_env,
         }
         mask_hook = _build_mask_hook(anonymizer)
         if mask_hook is not None:

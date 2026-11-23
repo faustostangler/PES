@@ -246,7 +246,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         app(args=list(argv) if argv is not None else None, standalone_mode=False)
         return 0
     except click.exceptions.Exit as exc:
-        return int(exc.exit_code)
+        return exc.exit_code
     except SystemExit as exc:
         return exc.code if isinstance(exc.code, int) else 0
 

@@ -11,16 +11,22 @@ Conforms to:
 
 from __future__ import annotations
 
+import re
 from pathlib import Path
 from typing import Any
 
-from pydantic import AliasChoices, Field, SecretStr
+from pydantic import AliasChoices, Field, SecretStr, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from cresmo.infrastructure.config.catalog import (
+    DEFAULT_LANGFUSE_ENVIRONMENT,
     DEFAULT_LANGFUSE_PROMPT_LABEL,
+    LANGFUSE_ENVIRONMENT_PATTERN,
+    _normalize_str_choice,
     resolve_default_pipeline_version,
 )
+
+_LANGFUSE_ENVIRONMENT_REGEX = re.compile(LANGFUSE_ENVIRONMENT_PATTERN)
 
 __all__ = ["TelemetrySettings"]
 
@@ -59,9 +65,29 @@ class TelemetrySettings(BaseSettings):
         description="Langfuse telemetry endpoint URL.",
     )
     langfuse_environment: str = Field(
-        default="development",
+        default=DEFAULT_LANGFUSE_ENVIRONMENT,
+        validation_alias=AliasChoices(
+            "LANGFUSE_TRACING_ENVIRONMENT",
+            "langfuse_environment",
+            "LANGFUSE_ENVIRONMENT",
+        ),
         description="Langfuse telemetry environment (e.g. 'production', 'staging', 'development').",
     )
+
+    @field_validator("langfuse_environment", mode="before")
+    @classmethod
+    def _validate_langfuse_environment(cls, value: Any) -> str:
+        """Normalize and validate Langfuse environment name against official regex (ADR-072)."""
+        normalized = _normalize_str_choice(value)
+        if not isinstance(normalized, str) or not _LANGFUSE_ENVIRONMENT_REGEX.fullmatch(normalized):
+            msg = (
+                "langfuse_environment must match '^(?!langfuse)[a-z0-9-_]{1,40}$' "
+                "(lowercase letters, digits, hyphens, underscores; max 40 chars; "
+                "cannot start with 'langfuse')."
+            )
+            raise ValueError(msg)
+        return normalized
+
     langfuse_prompt_label: str = Field(
         default=DEFAULT_LANGFUSE_PROMPT_LABEL,
         description="Active prompt label tag in Langfuse (e.g. 'production', 'staging').",

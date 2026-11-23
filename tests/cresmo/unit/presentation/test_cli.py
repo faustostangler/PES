@@ -933,6 +933,7 @@ class TestCresmoCLI:
             mock_settings.langfuse_public_key = "pk-lf-1234567890abcdef"
             mock_settings.langfuse_secret_key = SecretStr("sk-lf-secret")
             mock_settings.langfuse_host = "http://custom-host:3000"
+            mock_settings.langfuse_environment = "production"
             mock_settings_cls.return_value = mock_settings
 
             mock_checker = MagicMock()
@@ -943,17 +944,18 @@ class TestCresmoCLI:
             assert code == EXIT_SUCCESS
             captured = capsys.readouterr()
             assert (
-                "- Langfuse Telemetry: Enabled (http://custom-host:3000, pk-lf-1234...)\n"
+                "- Langfuse Telemetry: Enabled (http://custom-host:3000, env=production, pk-lf-1234...)\n"
                 in captured.out
             )
 
-            # 1b. Missing langfuse_host attribute exercises default "https://cloud.langfuse.com"
+            # 1b. Missing langfuse_host and langfuse_environment attributes exercise defaults
             del mock_settings.langfuse_host
+            del mock_settings.langfuse_environment
             code = handle_check_config(Namespace())
             assert code == EXIT_SUCCESS
             captured = capsys.readouterr()
             assert (
-                "- Langfuse Telemetry: Enabled (https://cloud.langfuse.com, pk-lf-1234...)\n"
+                "- Langfuse Telemetry: Enabled (https://cloud.langfuse.com, env=staging, pk-lf-1234...)\n"
                 in captured.out
             )
 

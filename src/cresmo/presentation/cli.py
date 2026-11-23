@@ -182,16 +182,16 @@ def main(argv: Sequence[str] | None = None) -> int:
         exit_result = app(args=args, standalone_mode=False)
         return EXIT_SUCCESS if exit_result is None else int(exit_result)
     except typer.Exit as exc:
-        return int(exc.exit_code)
+        return exc.exit_code
     except click.exceptions.Exit as exc:
-        return int(exc.exit_code)
+        return exc.exit_code
     except typer.exceptions.TyperException as exc:
         code = getattr(exc, "exit_code", EXIT_CONFIG_OR_USAGE_ERROR)
-        return int(code) if isinstance(code, int) else EXIT_CONFIG_OR_USAGE_ERROR
+        return code if isinstance(code, int) else EXIT_CONFIG_OR_USAGE_ERROR
     except click.ClickException as exc:
         sys.stderr.write(f"Usage error: {exc}\n")
         code = getattr(exc, "exit_code", EXIT_CONFIG_OR_USAGE_ERROR)
-        return int(code) if isinstance(code, int) else EXIT_CONFIG_OR_USAGE_ERROR
+        return code if isinstance(code, int) else EXIT_CONFIG_OR_USAGE_ERROR
     except SystemExit as exc:
         return exc.code if isinstance(exc.code, int) else EXIT_CONFIG_OR_USAGE_ERROR
     except Exception as exc:  # noqa: BLE001

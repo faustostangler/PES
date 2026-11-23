@@ -13,6 +13,8 @@ from typing import Any, Literal
 
 from pydantic_settings import PydanticBaseSettingsSource
 
+DEFAULT_LANGFUSE_ENVIRONMENT: str = "staging"
+LANGFUSE_ENVIRONMENT_PATTERN: str = r"^(?!langfuse)[a-z0-9-_]{1,40}$"
 DEFAULT_LANGFUSE_PROMPT_LABEL: str = "production"
 DEFAULT_PROMPTS_RESOURCE_PACKAGE: str = "cresmo.infrastructure.resources"
 DEFAULT_PROMPTS_RESOURCE_NAME: str = "prompts.json"
@@ -139,6 +141,7 @@ __all__ = [
     "DEFAULT_JUDGE_CALIBRATION_MODELS",
     "DEFAULT_JUDGE_GEMINI_MODEL",
     "DEFAULT_JUDGE_PASS_THRESHOLD",
+    "DEFAULT_LANGFUSE_ENVIRONMENT",
     "DEFAULT_LANGFUSE_PROMPT_LABEL",
     "DEFAULT_PROMPTS_RESOURCE_NAME",
     "DEFAULT_PROMPTS_RESOURCE_PACKAGE",
@@ -146,6 +149,7 @@ __all__ = [
     "DEFAULT_TAXONOMY_RESOURCE_PACKAGE",
     "GEMINI_FREE_TIER_MODELS",
     "GEMINI_THINKING_LEVELS",
+    "LANGFUSE_ENVIRONMENT_PATTERN",
     "GeminiFreeTierModel",
     "GeminiThinkingLevel",
     "resolve_default_pipeline_version",
