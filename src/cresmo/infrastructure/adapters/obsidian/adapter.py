@@ -107,8 +107,10 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
     ) -> StageTranscript | None:
         return self._transcripts.get_stage_transcript(stage_name, content_id)
 
-    def get_enriched_files_for_channel(self, channel_name: ChannelName) -> list[Path]:
-        return self._transcripts.get_enriched_files_for_channel(channel_name)
+    def get_stage_files_for_channel(
+        self, stage_name: str | StageName, channel_name: ChannelName
+    ) -> list[Path]:
+        return self._transcripts.get_stage_files_for_channel(stage_name, channel_name)
 
     def get_fluid_files_for_channel(self, channel_name: ChannelName) -> list[Path]:
         return self._transcripts.get_fluid_files_for_channel(channel_name)

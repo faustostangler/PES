@@ -19,8 +19,8 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from cresmo.domain.exceptions import (
-    CompendiumStructureError,
     DomainValidationError,
+    StageTranscriptStructureError,
 )
 from cresmo.domain.value_objects import (
     CandidateText,
@@ -92,9 +92,9 @@ class StageTranscript:
 
         if self.pass_count is not None:
             if not isinstance(self.pass_count, int):
-                raise CompendiumStructureError("pass_count must be an integer.")
+                raise StageTranscriptStructureError("pass_count must be an integer.")
             if self.pass_count < 1:
-                raise CompendiumStructureError("pass_count must be at least 1.")
+                raise StageTranscriptStructureError("pass_count must be at least 1.")
 
 
 def post_process_fluid_transcript(
@@ -124,7 +124,7 @@ def post_process_fluid_transcript(
         body = body[: complementary_match.start()].strip()
 
     if not body:
-        raise CompendiumStructureError(
+        raise StageTranscriptStructureError(
             f"Generated fluid prose body is empty for '{source.content.id.value}'."
         )
 

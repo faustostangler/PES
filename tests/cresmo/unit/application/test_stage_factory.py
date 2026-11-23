@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import pytest
+
 from cresmo.application.pipeline.context import PipelineExecutionContext
 from cresmo.application.pipeline.stage_descriptor import StageConfig
 from cresmo.application.pipeline.stage_factory import StageFactory
@@ -241,9 +243,9 @@ def test_stage_factory_caching_and_overrides_bypass() -> None:
 def test_stage_factory_convention_over_configuration_prompt_key() -> None:
     """Verify stage_name converts via convention to PromptKey when unregistered."""
     factory = StageFactory(settings=DefaultPipelineSettings())
-    descriptor = factory.build_stage("long_expander")
-    assert descriptor.transform_prompt_key == PromptKey.LONG_EXPANDER
-    assert descriptor.stage_name == "long_expander"
+    descriptor = factory.build_stage("atomic_inventory")
+    assert descriptor.transform_prompt_key == PromptKey.ATOMIC_INVENTORY
+    assert descriptor.stage_name == "atomic_inventory"
 
 
 def test_stage_factory_settings_defaults_fallback() -> None:
@@ -253,10 +255,42 @@ def test_stage_factory_settings_defaults_fallback() -> None:
         pass
 
     factory = StageFactory(settings=BareSettings())  # type: ignore[arg-type]
-    descriptor = factory.build_stage("long_expander")
+    descriptor = factory.build_stage("atomic_inventory")
     assert descriptor.temperature is None
     assert descriptor.max_attempts == 2
     assert descriptor.blocking is False
+
+
+def test_stage_factory_resolves_long_expander_max_passes_from_settings() -> None:
+    """Verify StageFactory honors long_expander_max_passes and default budget of 7."""
+    factory_default = StageFactory(settings=DefaultPipelineSettings())
+    desc_default: StageConfig[StageTranscript, StageTranscript] = factory_default.build_stage(
+        "long_expander"
+    )
+    assert desc_default.max_passes == 7
+    assert desc_default.judge_prompt_key == PromptKey.JUDGE_LONG_EXPANDER
+
+    factory_custom = StageFactory(settings=DefaultPipelineSettings(long_expander_max_passes=9))
+    desc_custom: StageConfig[StageTranscript, StageTranscript] = factory_custom.build_stage(
+        "long_expander"
+    )
+    assert desc_custom.max_passes == 9
+
+
+def test_stage_factory_resolves_wide_expander_max_passes_from_settings() -> None:
+    """Verify StageFactory honors expansion_max_passes for wide_expander and default budget of 5."""
+    factory_default = StageFactory(settings=DefaultPipelineSettings())
+    desc_default: StageConfig[StageTranscript, StageTranscript] = factory_default.build_stage(
+        "wide_expander"
+    )
+    assert desc_default.max_passes == 5
+    assert desc_default.judge_prompt_key == PromptKey.JUDGE_WIDE_EXPANDER
+
+    factory_custom = StageFactory(settings=DefaultPipelineSettings(expansion_max_passes=8))
+    desc_custom: StageConfig[StageTranscript, StageTranscript] = factory_custom.build_stage(
+        "wide_expander"
+    )
+    assert desc_custom.max_passes == 8
 
 
 def test_stage_factory_explicit_eval_spec_passed() -> None:
@@ -326,3 +360,126 @@ def test_stage_factory_eval_spec_created_with_only_source_extractor() -> None:
     )
     assert descriptor.eval_spec is not None
     assert descriptor.eval_spec.extract_source_text("dummy") == "only_source"
+
+
+def test_stage_factory_wires_custom_and_default_saturation_thresholds() -> None:
+    """Verify _build_saturation_thresholds maps all 7 settings fields and safe fallbacks."""
+    from cresmo.application.services.hybrid_saturation import HybridSaturationEvaluator
+    from cresmo.domain.value_objects import SaturationThresholds
+
+    class CustomSaturationSettings(DefaultPipelineSettings):
+        saturation_lexical_threshold: float = 0.91
+        saturation_max_word_delta: float = 0.07
+        saturation_semantic_threshold: float = 0.82
+        saturation_max_novel_paragraphs: int = 2
+        saturation_long_unit_word_cutoff: int = 150
+        saturation_sliding_window_sentences: int = 5
+        saturation_sliding_window_overlap: int = 2
+
+    class BareSettings:
+        pass
+
+    custom_factory = StageFactory(settings=CustomSaturationSettings())
+    custom_cfg: StageConfig[StageTranscript, StageTranscript] = custom_factory.build_stage(
+        "gap_filler"
+    )
+    assert isinstance(custom_cfg.saturation_policy, HybridSaturationEvaluator)
+    assert custom_cfg.saturation_policy.thresholds == SaturationThresholds(
+        lexical_identity_threshold=0.91,
+        max_lexical_word_delta=0.07,
+        semantic_similarity_threshold=0.82,
+        max_novel_paragraphs_for_saturation=2,
+        long_unit_word_cutoff=150,
+        sliding_window_sentences=5,
+        sliding_window_overlap=2,
+    )
+
+    bare_factory = StageFactory(settings=BareSettings())  # type: ignore[arg-type]
+    bare_cfg: StageConfig[StageTranscript, StageTranscript] = bare_factory.build_stage(
+        "wide_expander"
+    )
+    assert isinstance(bare_cfg.saturation_policy, HybridSaturationEvaluator)
+    assert bare_cfg.saturation_policy.thresholds == SaturationThresholds(
+        lexical_identity_threshold=0.95,
+        max_lexical_word_delta=0.03,
+        semantic_similarity_threshold=0.88,
+        max_novel_paragraphs_for_saturation=0,
+        long_unit_word_cutoff=120,
+        sliding_window_sentences=3,
+        sliding_window_overlap=1,
+    )
+
+
+def test_stage_factory_max_passes_edge_cases_and_saturation_override(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Verify bool pass guards, unregistered fallback, NONE multi-pass, and policy override."""
+    from cresmo.domain.stage_registry import StageDefinition, StageRegistry
+    from cresmo.domain.value_objects import ConvergenceMode, SaturationReason, SaturationVerdict
+
+    class BareSettings:
+        pass
+
+    class BoolPassSettings(DefaultPipelineSettings):
+        long_expander_max_passes: int = True
+        expansion_max_passes: int = True
+
+    bare_factory = StageFactory(settings=BareSettings())  # type: ignore[arg-type]
+    bare_long: StageConfig[StageTranscript, StageTranscript] = bare_factory.build_stage(
+        "long_expander"
+    )
+    bare_wide: StageConfig[StageTranscript, StageTranscript] = bare_factory.build_stage(
+        "wide_expander"
+    )
+    assert bare_long.max_passes == 7
+    assert bare_wide.max_passes == 5
+
+    bool_factory = StageFactory(settings=BoolPassSettings())
+    bool_long: StageConfig[StageTranscript, StageTranscript] = bool_factory.build_stage(
+        "long_expander"
+    )
+    bool_wide: StageConfig[StageTranscript, StageTranscript] = bool_factory.build_stage(
+        "wide_expander"
+    )
+    assert bool_long.max_passes == 7
+    assert bool_wide.max_passes == 5
+
+    # Explicit saturation_policy override must be preserved verbatim
+    def custom_policy(_baseline: str, _current: str, _pass_index: int) -> SaturationVerdict:
+        return SaturationVerdict(
+            is_saturated=False,
+            reason=SaturationReason.NOVEL_CONTENT,
+            lexical_jaccard=0.0,
+            word_delta_ratio=1.0,
+        )
+
+    overridden_cfg: StageConfig[StageTranscript, StageTranscript] = bool_factory.build_stage(
+        "gap_filler",
+        saturation_policy=custom_policy,
+    )
+    assert overridden_cfg.saturation_policy is custom_policy
+
+    # ConvergenceMode.NONE stage with max_passes=2 must preserve max_passes=2 (not clamp to 1)
+    two_pass_stage = "two_pass_none_stage"
+    StageRegistry.register(
+        two_pass_stage,
+        StageDefinition(
+            transform_prompt_key=PromptKey.FLUID_PROSE,
+            max_passes=2,
+            convergence_mode=ConvergenceMode.NONE,
+        ),
+    )
+    try:
+        none_cfg: StageConfig[StageTranscript, StageTranscript] = bare_factory.build_stage(
+            two_pass_stage
+        )
+        assert none_cfg.max_passes == 2
+    finally:
+        StageRegistry._SPECS.pop(two_pass_stage, None)
+
+    # Defensive fallback=7 when long_expander is absent from StageRegistry and settings
+    monkeypatch.setattr(StageRegistry, "contains", lambda _name: False)
+    unregistered_long: StageConfig[StageTranscript, StageTranscript] = StageFactory(
+        settings=BareSettings()  # type: ignore[arg-type]
+    ).build_stage("long_expander")
+    assert unregistered_long.max_passes == 7

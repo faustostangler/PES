@@ -50,6 +50,14 @@ class PromptProviderPort(ABC):
         return None
 
 
+def _build_judge_noop_prompt(c: dict[str, Any]) -> tuple[str, str]:
+    """Build standard null-object evaluation prompt across judge stages."""
+    return (
+        "You are a rigorous, calibrated Quality Evaluation Judge for knowledge synthesis pipelines. You must return ONLY a valid JSON object matching the criteria structure.",
+        f"Stage: {c.get('stage_name', '')}\nRequired Criteria to Evaluate: {c.get('criteria_json', '[]')}\n\n--- SOURCE REFERENCE TEXT ---\n{c.get('source_text', '')}\n\n--- CANDIDATE TEXT ---\n{c.get('candidate_text', '')}\n\nEvaluate now and output the JSON verdict.",
+    )
+
+
 _NOOP_BUILDERS: dict[PromptKey, Callable[[dict[str, Any]], tuple[str, str]]] = {
     PromptKey.FLUID_PROSE: lambda c: (
         f"You are Cresmo Fluid Prose Detranscriptor (cresmo-fluid-prose). Channel: {c.get('channel_name', '')}.",
@@ -60,12 +68,12 @@ _NOOP_BUILDERS: dict[PromptKey, Callable[[dict[str, Any]], tuple[str, str]]] = {
         f"Pass {c.get('pass_num', 1)} of {c.get('total_passes', 1)} for {c.get('channel_name', '')} (file: {c.get('file_name', '')}):\nRaw transcript:\n{c.get('source_text') or c.get('raw_text', '')}\nCurrent text:\n{c.get('current_text', '')}",
     ),
     PromptKey.LONG_EXPANDER: lambda c: (
-        "You are Cresmo Long-Expander.",
-        f"Take the following enriched Markdown document and apply longitudinal analysis:\n\n{c.get('compendium_body', '')}\n\n### Extra Info\n{c.get('complementary_info', '')}",
+        f"You are Cresmo Long-Expander. Language: {c.get('language', DEFAULT_LANGUAGE)}.",
+        f"Pass {c.get('pass_num', 1)} of {c.get('total_passes', 1)} for {c.get('channel_name', '')}:\nSource text:\n{c.get('source_text') or c.get('raw_text', '')}\nCurrent text:\n{c.get('current_text', '')}",
     ),
     PromptKey.WIDE_EXPANDER: lambda c: (
-        "You are Cresmo Wide-Expander.",
-        f"Take the following longitudinally expanded Markdown document and apply synchronic wide expansion:\n\n{c.get('current_text', '')}",
+        f"You are Cresmo Wide-Expander. Language: {c.get('language', DEFAULT_LANGUAGE)}.",
+        f"Pass {c.get('pass_num', 1)} of {c.get('total_passes', 1)} for {c.get('channel_name', '')}:\nSource text:\n{c.get('source_text') or c.get('raw_text', '')}\nCurrent text:\n{c.get('current_text', '')}",
     ),
     PromptKey.ATOMIC_INVENTORY: lambda c: (
         "You are Cresmo Atomic Inventory Specialist (cresmo-atomic).",
@@ -111,10 +119,10 @@ _NOOP_BUILDERS: dict[PromptKey, Callable[[dict[str, Any]], tuple[str, str]]] = {
         f"You are Judge. Language: {c.get('language', DEFAULT_LANGUAGE)}.",
         f"Title: {c.get('content_title', '')}\nExcerpt:\n{c.get('transcript_excerpt', '')}\nSynthesis:\n{c.get('synthesis', '')}",
     ),
-    PromptKey.JUDGE_FLUID_PROSE: lambda c: (
-        "You are a rigorous, calibrated Quality Evaluation Judge for knowledge synthesis pipelines. You must return ONLY a valid JSON object matching the criteria structure.",
-        f"Stage: {c.get('stage_name', '')}\nRequired Criteria to Evaluate: {c.get('criteria_json', '[]')}\n\n--- SOURCE REFERENCE TEXT ---\n{c.get('source_text', '')}\n\n--- CANDIDATE TEXT ---\n{c.get('candidate_text', '')}\n\nEvaluate now and output the JSON verdict.",
-    ),
+    PromptKey.JUDGE_FLUID_PROSE: _build_judge_noop_prompt,
+    PromptKey.JUDGE_GAP_FILLER: _build_judge_noop_prompt,
+    PromptKey.JUDGE_LONG_EXPANDER: _build_judge_noop_prompt,
+    PromptKey.JUDGE_WIDE_EXPANDER: _build_judge_noop_prompt,
     PromptKey.OLLAMA_CRITIQUE: lambda c: (
         "You are an expert editorial director. Analyze the quality evaluation failure verdict and synthesize at most 3 concise, direct, imperative corrective directives for the generative model to follow on its retry attempt. Output ONLY the directives, with zero preamble.",
         f"Stage '{c.get('stage_name', '')}' failed quality evaluation with overall score {c.get('overall_score', '')}.\nCriteria Failures:\n{c.get('criteria_failures', '')}\n\nPlease output concise, direct instructions to fix these defects:",

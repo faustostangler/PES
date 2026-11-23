@@ -38,7 +38,7 @@ class TestCalibrationSpecs:
         seeds = tmp_path / "custom_seeds"
         specs = build_stage_specs(datasets_dir=ds, seeds_dir=seeds)
 
-        assert set(specs.keys()) == {"fluid_prose", "gap_filler"}
+        assert set(specs.keys()) == {"fluid_prose", "gap_filler", "long_expander", "wide_expander"}
         fp = specs["fluid_prose"]
         assert fp.stage_name == "fluid_prose"
         assert fp.label == "Stage 1: Fluid Prose"
@@ -56,12 +56,37 @@ class TestCalibrationSpecs:
         assert JudgeCriterion.EPISTEMIC_GROUNDING_SEGREGATION in gf.required_criteria
         assert len(gf.required_criteria) == 7
 
+        le = specs["long_expander"]
+        assert le.stage_name == "long_expander"
+        assert le.label == "Stage 3: Long Expander"
+        assert le.prompt_key is PromptKey.JUDGE_LONG_EXPANDER
+        assert le.default_golden_set_path == ds / "long_expander_golden_set.json"
+        assert le.default_seed_path == seeds / "long_expander_seed.json"
+        assert JudgeCriterion.LONGUE_DUREE_STRATIFICATION in le.required_criteria
+        assert len(le.required_criteria) == 5
+
+        we = specs["wide_expander"]
+        assert we.stage_name == "wide_expander"
+        assert we.label == "Stage 4: Wide Expander"
+        assert we.prompt_key is PromptKey.JUDGE_WIDE_EXPANDER
+        assert we.default_golden_set_path == ds / "wide_expander_golden_set.json"
+        assert we.default_seed_path == seeds / "wide_expander_seed.json"
+        assert JudgeCriterion.SYNCHRONIC_CONNECTIVITY in we.required_criteria
+        assert JudgeCriterion.COMPARATIVE_PARALLELISM in we.required_criteria
+        assert len(we.required_criteria) == 5
+
         default_seed_specs = build_stage_specs(datasets_dir=ds)
         assert default_seed_specs["fluid_prose"].default_seed_path == (
             ds / "seeds" / "fluid_prose_seed.json"
         )
         assert default_seed_specs["gap_filler"].default_seed_path == (
             ds / "seeds" / "gap_filler_seed.json"
+        )
+        assert default_seed_specs["long_expander"].default_seed_path == (
+            ds / "seeds" / "long_expander_seed.json"
+        )
+        assert default_seed_specs["wide_expander"].default_seed_path == (
+            ds / "seeds" / "wide_expander_seed.json"
         )
 
     @pytest.mark.parametrize(
@@ -86,8 +111,18 @@ class TestCalibrationSpecs:
         self, tmp_path: Path
     ) -> None:
         specs = build_stage_specs(datasets_dir=tmp_path)
-        assert parse_stage_specs(None, None, stage_specs=specs) == ["fluid_prose", "gap_filler"]
-        assert parse_stage_specs(["all"], None, stage_specs=specs) == ["fluid_prose", "gap_filler"]
+        assert parse_stage_specs(None, None, stage_specs=specs) == [
+            "fluid_prose",
+            "gap_filler",
+            "long_expander",
+            "wide_expander",
+        ]
+        assert parse_stage_specs(["all"], None, stage_specs=specs) == [
+            "fluid_prose",
+            "gap_filler",
+            "long_expander",
+            "wide_expander",
+        ]
         assert parse_stage_specs(
             ["fluid-prose,gap_filler", "fluid_prose"], None, stage_specs=specs
         ) == [
@@ -102,7 +137,10 @@ class TestCalibrationSpecs:
 
         with pytest.raises(
             ValueError,
-            match=r"Unknown stage 'bogus'\. Valid stages: fluid_prose, gap_filler, all\.",
+            match=(
+                r"Unknown stage 'bogus'\. Valid stages: "
+                r"fluid_prose, gap_filler, long_expander, wide_expander, all\."
+            ),
         ):
             parse_stage_specs(["bogus"], None, stage_specs=specs)
 

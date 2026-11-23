@@ -146,9 +146,9 @@ class TestPipelineResult:
         assert res.synthesized_notes == ()
         assert res.reconciled_mocs == ()
         assert res.source_transcript is None
-        assert res.fluid_transcript is None
+        assert dict(res.stage_artifacts) == {}
         assert res.index_entry is None
-        assert res.compendium is None
+        assert res.final_transcript is None
         assert res.inventory is None
         assert res.dedup_report is None
         assert res.duplicates_unified == 0
@@ -156,13 +156,15 @@ class TestPipelineResult:
         assert res.error_message is None
 
     def test_custom_values_and_immutability(self) -> None:
+        from cresmo.domain.stage_registry import StageName
+
         cid = ContentId("c1234567")
         mock_note = MagicMock(spec=AtomicNote)
         mock_moc = MagicMock(spec=MapOfContent)
         mock_source = MagicMock(spec=StageTranscript)
         mock_fluid = MagicMock(spec=StageTranscript)
         mock_idx = MagicMock(spec=RawIndexEntry)
-        mock_compendium = MagicMock(spec=StageTranscript)
+        mock_final = MagicMock(spec=StageTranscript)
         mock_inventory = MagicMock(spec=AtomicEntityInventory)
         mock_dedup = MagicMock(spec=DeduplicationReport)
 
@@ -172,9 +174,12 @@ class TestPipelineResult:
             synthesized_notes=(mock_note,),
             reconciled_mocs=(mock_moc,),
             source_transcript=mock_source,
-            fluid_transcript=mock_fluid,
             index_entry=mock_idx,
-            compendium=mock_compendium,
+            stage_artifacts={
+                StageName.FLUID_PROSE: mock_fluid,
+                StageName.LONG_EXPANDER: mock_final,
+            },
+            final_transcript=mock_final,
             inventory=mock_inventory,
             dedup_report=mock_dedup,
             duplicates_unified=5,
@@ -186,14 +191,17 @@ class TestPipelineResult:
         assert res.synthesized_notes == (mock_note,)
         assert res.reconciled_mocs == (mock_moc,)
         assert res.source_transcript is mock_source
-        assert res.fluid_transcript is mock_fluid
+        assert res.stage_artifacts[StageName.FLUID_PROSE] is mock_fluid
         assert res.index_entry is mock_idx
-        assert res.compendium is mock_compendium
+        assert res.final_transcript is mock_final
         assert res.inventory is mock_inventory
         assert res.dedup_report is mock_dedup
         assert res.duplicates_unified == 5
         assert res.already_processed is True
         assert res.error_message == "Stage timeout"
+
+        with pytest.raises(TypeError):
+            res.stage_artifacts[StageName.GAP_FILLER] = mock_final  # type: ignore[index]
 
         with pytest.raises(FrozenInstanceError):
             res.success = True  # type: ignore[misc]

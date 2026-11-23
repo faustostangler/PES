@@ -96,11 +96,11 @@ def validate_fluid_prose_syntax(text: str) -> list[str]:
     return violations
 
 
-def validate_gap_filler_syntax(text: str) -> list[str]:
-    """Validate deterministic syntactic invariants for gap_filler compendia.
+def validate_expanded_prose_syntax(text: str) -> list[str]:
+    """Validate deterministic syntactic invariants for expanded prose stages.
 
     Args:
-        text: Candidate gap_filler markdown string.
+        text: Candidate expanded markdown string.
 
     Returns:
         list[str]: Diagnostic violation messages. Empty list indicates full syntactic compliance.

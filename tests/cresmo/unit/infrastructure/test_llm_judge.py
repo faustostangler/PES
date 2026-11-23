@@ -1166,7 +1166,12 @@ class TestCoordinatorLlmJudgeIntegration:
         assert len(root_span.outputs) == 1
         recorded_output = root_span.outputs[0]
         assert recorded_output["status"] == "COMPLETED"
-        assert recorded_output["stage"] == "gap_filler"
-        assert recorded_output["stages_completed"] == ["fluid_prose", "gap_filler"]
+        assert recorded_output["stage"] == "wide_expander"
+        assert recorded_output["stages_completed"] == [
+            "fluid_prose",
+            "gap_filler",
+            "long_expander",
+            "wide_expander",
+        ]
         assert "word_count" in recorded_output
         assert "char_count" in recorded_output

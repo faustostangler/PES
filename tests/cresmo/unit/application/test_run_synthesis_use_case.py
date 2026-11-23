@@ -223,7 +223,7 @@ class TestRunSynthesisUseCase:
         assert outcome.single_content_id == "dQw4w9WgXcQ"
         pipeline.run_for_video.assert_called_once_with(
             video_url="https://youtube.com/watch?v=dQw4w9WgXcQ",
-            gap_filler_passes=4,
+            expansion_max_passes=4,
             force_reprocess=True,
         )
         pipeline.vault_port.get_stage_transcript.assert_called_once_with("raw", cid)
@@ -504,13 +504,13 @@ class TestRunSynthesisUseCase:
         assert pipeline.run_for_text_file.call_args_list == [
             call(
                 file_path=tmp_path / "talk_01.txt",
-                gap_filler_passes=5,
+                expansion_max_passes=5,
                 force_reprocess=True,
                 batch_id=outcome.batch_id,
             ),
             call(
                 file_path=tmp_path / "talk_02.txt",
-                gap_filler_passes=5,
+                expansion_max_passes=5,
                 force_reprocess=True,
                 batch_id=outcome.batch_id,
             ),
@@ -518,31 +518,31 @@ class TestRunSynthesisUseCase:
         assert pipeline.run_for_video.call_args_list == [
             call(
                 video_url=vid_skip.target,
-                gap_filler_passes=5,
+                expansion_max_passes=5,
                 force_reprocess=True,
                 batch_id=outcome.batch_id,
             ),
             call(
                 video_url=vid_rate.target,
-                gap_filler_passes=5,
+                expansion_max_passes=5,
                 force_reprocess=True,
                 batch_id=outcome.batch_id,
             ),
             call(
                 video_url=vid_net.target,
-                gap_filler_passes=5,
+                expansion_max_passes=5,
                 force_reprocess=True,
                 batch_id=outcome.batch_id,
             ),
             call(
                 video_url=vid_err.target,
-                gap_filler_passes=5,
+                expansion_max_passes=5,
                 force_reprocess=True,
                 batch_id=outcome.batch_id,
             ),
             call(
                 video_url=vid_fail_res.target,
-                gap_filler_passes=5,
+                expansion_max_passes=5,
                 force_reprocess=True,
                 batch_id=outcome.batch_id,
             ),

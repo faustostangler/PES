@@ -118,7 +118,7 @@ class TestConcatMasterUseCase:
             encoding="utf-8",
         )
 
-        vault.channel_enriched_files["HistoryChannel"] = [f_newest, f_oldest, f_mid]
+        vault.channel_stage_files[("wide_expander", "HistoryChannel")] = [f_newest, f_oldest, f_mid]
 
         use_case = ConcatMasterUseCase(vault_port=vault, settings=settings)
         results = use_case.execute_for_channel(ChannelName("HistoryChannel"))
@@ -165,7 +165,7 @@ class TestConcatMasterUseCase:
             encoding="utf-8",
         )
 
-        vault.channel_enriched_files["OrderChannel"] = [f_new, f_old]
+        vault.channel_stage_files[("wide_expander", "OrderChannel")] = [f_new, f_old]
         use_case = ConcatMasterUseCase(vault_port=vault, settings=settings)
         res = use_case.execute(ChannelName("OrderChannel"))
         assert len(res) == 1
@@ -183,7 +183,7 @@ class TestConcatMasterUseCase:
             encoding="utf-8",
         )
 
-        vault.channel_enriched_files["OrderChannel"] = [f_tie2, f_tie1]
+        vault.channel_stage_files[("wide_expander", "OrderChannel")] = [f_tie2, f_tie1]
         res_tie = use_case.execute(ChannelName("OrderChannel"))
         assert len(res_tie) == 1
         assert res_tie[0].video_ids == (ContentId("a_tie"), ContentId("b_tie"))
@@ -206,7 +206,7 @@ class TestConcatMasterUseCase:
             "---\nvideo_id: a_id2\nvideo_date: 20230101\nchannel_category: science\n---\n\nApple"
         )
 
-        vault.channel_enriched_files["OrderChannel"] = [mock_p1, mock_p2]
+        vault.channel_stage_files[("wide_expander", "OrderChannel")] = [mock_p1, mock_p2]
         res_stable = use_case.execute(ChannelName("OrderChannel"))
         assert len(res_stable) == 1
         assert res_stable[0].video_ids == (ContentId("z_id1"), ContentId("a_id2"))
@@ -224,7 +224,7 @@ class TestConcatMasterUseCase:
             encoding="utf-8",
         )
 
-        vault.channel_enriched_files["StemChannel"] = [f_no_vid]
+        vault.channel_stage_files[("wide_expander", "StemChannel")] = [f_no_vid]
         use_case = ConcatMasterUseCase(vault_port=vault, settings=settings)
         results = use_case.execute(ChannelName("StemChannel"))
 
@@ -253,7 +253,11 @@ class TestConcatMasterUseCase:
             "---\nvideo_id: valid\nvideo_date: 20230101\nchannel_category: tech\n---\n\nValid text"
         )
 
-        vault.channel_enriched_files["SkipChannel"] = [mock_f_err, mock_f_empty, mock_f_valid]
+        vault.channel_stage_files[("wide_expander", "SkipChannel")] = [
+            mock_f_err,
+            mock_f_empty,
+            mock_f_valid,
+        ]
         use_case = ConcatMasterUseCase(vault_port=vault, settings=settings)
         results = use_case.execute(ChannelName("SkipChannel"))
 
@@ -281,7 +285,7 @@ class TestConcatMasterUseCase:
             encoding="utf-8",
         )
 
-        vault.channel_enriched_files["3blue1brown"] = [f]
+        vault.channel_stage_files[("wide_expander", "3blue1brown")] = [f]
         use_case = ConcatMasterUseCase(
             vault_port=vault,
             settings=settings,
@@ -317,7 +321,7 @@ class TestConcatMasterUseCase:
         w2 = count_words(f2.read_text(encoding="utf-8").strip())
         exact_total = w1 + w2
 
-        vault.channel_enriched_files["BoundaryChannel"] = [f1, f2]
+        vault.channel_stage_files[("wide_expander", "BoundaryChannel")] = [f1, f2]
         use_case = ConcatMasterUseCase(vault_port=vault, settings=settings)
         results = use_case.execute(ChannelName("BoundaryChannel"), max_words=exact_total)
 
@@ -377,7 +381,7 @@ class TestConcatMasterUseCase:
 
         effective_limit = max(w1, w2 + w3)
 
-        vault.channel_enriched_files["MultiAccumChannel"] = [f1, f2, f3, f4]
+        vault.channel_stage_files[("wide_expander", "MultiAccumChannel")] = [f1, f2, f3, f4]
         use_case = ConcatMasterUseCase(vault_port=vault, settings=settings)
         results = use_case.execute(ChannelName("MultiAccumChannel"), max_words=effective_limit)
 
@@ -406,7 +410,7 @@ class TestConcatMasterUseCase:
             encoding="utf-8",
         )
 
-        vault.channel_enriched_files["BigDocChannel"] = [f_big]
+        vault.channel_stage_files[("wide_expander", "BigDocChannel")] = [f_big]
 
         use_case = ConcatMasterUseCase(vault_port=vault, settings=settings)
         results = use_case.execute(ChannelName("BigDocChannel"), max_words=500)
@@ -435,7 +439,7 @@ class TestConcatMasterUseCase:
             encoding="utf-8",
         )
 
-        vault.channel_enriched_files["ForwardChannel"] = [f1, f2]
+        vault.channel_stage_files[("wide_expander", "ForwardChannel")] = [f1, f2]
         use_case = ConcatMasterUseCase(vault_port=vault, settings=settings)
 
         # When max_words=150 is passed, it must split into 2 parts (each file is ~108 words)
@@ -446,52 +450,52 @@ class TestConcatMasterUseCase:
     def test_execute_all_filters_directories_and_propagates_parameters(
         self, tmp_path: Path
     ) -> None:
-        enriched_root = tmp_path / "data" / "enriched"
-        enriched_root.mkdir(parents=True)
+        wide_root = tmp_path / "data" / "wide_expander"
+        wide_root.mkdir(parents=True)
 
         # 1. Valid channel directories
-        (enriched_root / "ChannelA").mkdir()
-        (enriched_root / "ChannelB").mkdir()
+        (wide_root / "ChannelA").mkdir()
+        (wide_root / "ChannelB").mkdir()
 
         # 2. Hidden directory starting with '.'
-        (enriched_root / ".hidden_cache").mkdir()
+        (wide_root / ".hidden_cache").mkdir()
 
         # 3. System directory starting with '_'
-        (enriched_root / "_system_templates").mkdir()
+        (wide_root / "_system_templates").mkdir()
 
         # 4. Stray regular file (not directory)
-        (enriched_root / "stray_notes.md").write_text("Stray notes", encoding="utf-8")
+        (wide_root / "stray_notes.md").write_text("Stray notes", encoding="utf-8")
 
         settings = CresmoSettings(data_dir=tmp_path / "data", vault_dir=tmp_path / "vault")
         vault = InMemoryVaultAdapter()
 
         words_100 = " ".join(["word"] * 100)
-        fA1 = enriched_root / "ChannelA" / "a1.md"
+        fA1 = wide_root / "ChannelA" / "a1.md"
         fA1.write_text(
             f"---\nvideo_id: a1\nvideo_date: 20230101\n---\n\n{words_100}", encoding="utf-8"
         )
-        fA2 = enriched_root / "ChannelA" / "a2.md"
+        fA2 = wide_root / "ChannelA" / "a2.md"
         fA2.write_text(
             f"---\nvideo_id: a2\nvideo_date: 20230201\n---\n\n{words_100}", encoding="utf-8"
         )
 
-        fB1 = enriched_root / "ChannelB" / "b1.md"
+        fB1 = wide_root / "ChannelB" / "b1.md"
         fB1.write_text(
             f"---\nvideo_id: b1\nvideo_date: 20230101\n---\n\n{words_100}", encoding="utf-8"
         )
-        fB2 = enriched_root / "ChannelB" / "b2.md"
+        fB2 = wide_root / "ChannelB" / "b2.md"
         fB2.write_text(
             f"---\nvideo_id: b2\nvideo_date: 20230201\n---\n\n{words_100}", encoding="utf-8"
         )
 
-        vault.channel_enriched_files["ChannelA"] = [fA1, fA2]
-        vault.channel_enriched_files["ChannelB"] = [fB1, fB2]
+        vault.channel_stage_files[("wide_expander", "ChannelA")] = [fA1, fA2]
+        vault.channel_stage_files[("wide_expander", "ChannelB")] = [fB1, fB2]
 
         # Also register mock files for the ignored targets so if the filtering fails,
         # execute_for_channel would produce results and contaminate all_results!
-        vault.channel_enriched_files[".hidden_cache"] = [fA1]
-        vault.channel_enriched_files["_system_templates"] = [fA1]
-        vault.channel_enriched_files["stray_notes.md"] = [fA1]
+        vault.channel_stage_files[("wide_expander", ".hidden_cache")] = [fA1]
+        vault.channel_stage_files[("wide_expander", "_system_templates")] = [fA1]
+        vault.channel_stage_files[("wide_expander", "stray_notes.md")] = [fA1]
 
         use_case = ConcatMasterUseCase(vault_port=vault, settings=settings)
 
@@ -509,10 +513,10 @@ class TestConcatMasterUseCase:
         assert len(all_results["ChannelA"]) == 2
         assert len(all_results["ChannelB"]) == 2
 
-        # Test when enriched_root is a regular file (not directory)
+        # Test when wide_expander root is a regular file (not directory)
         file_env = tmp_path / "file_env"
         file_env.mkdir()
-        (file_env / "enriched").write_text("I am a file", encoding="utf-8")
+        (file_env / "wide_expander").write_text("I am a file", encoding="utf-8")
         settings_file_root = CresmoSettings(data_dir=file_env, vault_dir=tmp_path / "vault")
         use_case_file_root = ConcatMasterUseCase(vault_port=vault, settings=settings_file_root)
         assert use_case_file_root.execute_all() == {}

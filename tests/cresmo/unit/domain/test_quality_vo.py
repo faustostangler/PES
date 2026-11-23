@@ -10,6 +10,8 @@ import pytest
 
 from cresmo.domain.exceptions import DomainValidationError
 from cresmo.domain.value_objects.quality import (
+    DEFAULT_FLUID_PROSE_WEIGHTS,
+    DEFAULT_MECHANICAL_VETO_CRITERIA,
     CandidateText,
     CriterionScore,
     EvaluationContext,
@@ -18,6 +20,8 @@ from cresmo.domain.value_objects.quality import (
     StageEvaluationSpec,
     TypedVerdict,
     VerdictType,
+    compute_composite_verdict,
+    resolve_stage_scoring_policy,
 )
 
 
@@ -517,3 +521,229 @@ class TestWeightedAverageAndMechanicalVeto:
         assert eval_res.overall_score == pytest.approx(0.75, abs=1e-3)
         assert eval_res.is_vetoed is False
         assert eval_res.passed is False
+
+    def test_long_expander_scoring_policy_and_empirical_veto(self) -> None:
+        from cresmo.domain.value_objects import (
+            LONG_EXPANDER_CANONICAL_WEIGHTS,
+            LONG_EXPANDER_MECHANICAL_VETO_CRITERIA,
+            resolve_stage_scoring_policy,
+        )
+
+        weights, vetoes = resolve_stage_scoring_policy("long_expander")
+        assert weights == LONG_EXPANDER_CANONICAL_WEIGHTS
+        assert vetoes == LONG_EXPANDER_MECHANICAL_VETO_CRITERIA
+        assert weights[JudgeCriterion.LONGUE_DUREE_STRATIFICATION] == 0.35
+        assert sum(weights.values()) == pytest.approx(1.0)
+        assert JudgeCriterion.EMPIRICAL_HISTORICAL_GROUNDING in vetoes
+        assert JudgeCriterion.EXTRA_INFO_GRANULARITY in vetoes
+
+        # Empirical grounding 0.50 (< 0.80 veto) rejects despite high weighted avg
+        # 0.35*1.0 + 0.25*0.50 + 0.20*1.0 + 0.10*1.0 + 0.10*1.0 = 0.875 >= 0.80
+        scores = (
+            CriterionScore(JudgeCriterion.LONGUE_DUREE_STRATIFICATION, 1.0, True),
+            CriterionScore(JudgeCriterion.EMPIRICAL_HISTORICAL_GROUNDING, 0.50, False),
+            CriterionScore(JudgeCriterion.HISTORICAL_PALIMPSEST, 1.0, True),
+            CriterionScore(JudgeCriterion.EXTRA_INFO_GRANULARITY, 1.0, True),
+            CriterionScore(JudgeCriterion.IMPLICIT_FRAMING_STYLE, 1.0, True),
+        )
+        eval_res = JudgeEvaluation.create_with_composite_verdict(
+            target_stage="long_expander",
+            criteria_scores=scores,
+            provider="gemini",
+        )
+        assert eval_res.overall_score == pytest.approx(0.875, abs=1e-3)
+        assert eval_res.is_vetoed is True
+        assert eval_res.passed is False
+        assert any("empirical_historical_grounding" in r for r in eval_res.veto_reasons)
+
+    def test_wide_expander_scoring_policy_and_empirical_veto(self) -> None:
+        from cresmo.domain.value_objects import (
+            WIDE_EXPANDER_CANONICAL_WEIGHTS,
+            WIDE_EXPANDER_MECHANICAL_VETO_CRITERIA,
+            resolve_stage_scoring_policy,
+        )
+
+        weights, vetoes = resolve_stage_scoring_policy("wide_expander")
+        assert weights == WIDE_EXPANDER_CANONICAL_WEIGHTS
+        assert vetoes == WIDE_EXPANDER_MECHANICAL_VETO_CRITERIA
+        assert weights[JudgeCriterion.SYNCHRONIC_CONNECTIVITY] == 0.30
+        assert weights[JudgeCriterion.COMPARATIVE_PARALLELISM] == 0.30
+        assert sum(weights.values()) == pytest.approx(1.0)
+        assert JudgeCriterion.EMPIRICAL_HISTORICAL_GROUNDING in vetoes
+        assert JudgeCriterion.EXTRA_INFO_GRANULARITY in vetoes
+
+        # Empirical grounding 0.50 (< 0.80 veto) rejects despite high weighted avg
+        # 0.30*1.0 + 0.30*1.0 + 0.20*0.50 + 0.10*1.0 + 0.10*1.0 = 0.90 >= 0.80
+        scores = (
+            CriterionScore(JudgeCriterion.SYNCHRONIC_CONNECTIVITY, 1.0, True),
+            CriterionScore(JudgeCriterion.COMPARATIVE_PARALLELISM, 1.0, True),
+            CriterionScore(JudgeCriterion.EMPIRICAL_HISTORICAL_GROUNDING, 0.50, False),
+            CriterionScore(JudgeCriterion.EXTRA_INFO_GRANULARITY, 1.0, True),
+            CriterionScore(JudgeCriterion.IMPLICIT_FRAMING_STYLE, 1.0, True),
+        )
+        eval_res = JudgeEvaluation.create_with_composite_verdict(
+            target_stage="wide_expander",
+            criteria_scores=scores,
+            provider="gemini",
+        )
+        assert eval_res.overall_score == pytest.approx(0.90, abs=1e-3)
+        assert eval_res.is_vetoed is True
+        assert eval_res.passed is False
+        assert any("empirical_historical_grounding" in r for r in eval_res.veto_reasons)
+
+    def test_compute_composite_verdict_boundaries_defaults_and_fallbacks(self) -> None:
+        # Empty criteria returns zeroed failing verdict
+        assert compute_composite_verdict(()) == (0.0, False, False, ())
+
+        # Zero total_weight falls back safely to 0.0
+        zero_weight_scores = (CriterionScore(JudgeCriterion.ORALITY_REMOVAL, 0.9, True),)
+        assert compute_composite_verdict(
+            zero_weight_scores,
+            weights={JudgeCriterion.ORALITY_REMOVAL: 0.0},
+        ) == (0.0, False, False, ())
+
+        # Unmapped criterion falls back to weight=1.0, dividing by total_weight and rounding to 4 decimals
+        # (0.5 * 1.0 + 1.0 * 0.1) / (1.0 + 0.1) = 0.6 / 1.1 = 0.5455
+        fallback_scores = (
+            CriterionScore(JudgeCriterion.INVENTORY_COHERENCE, 0.5, True),
+            CriterionScore(JudgeCriterion.AUTHORIAL_VOICE, 1.0, True),
+        )
+        overall, passed, is_vetoed, reasons = compute_composite_verdict(fallback_scores)
+        assert overall == 0.5455
+        assert passed is False
+        assert is_vetoed is False
+        assert reasons == ()
+
+        # Exact default pass_threshold=0.80 boundary passes; default veto_threshold=0.80 accepts 0.80
+        boundary_pass = (
+            CriterionScore(JudgeCriterion.SEMANTIC_FAITHFULNESS, 0.80, True),
+            CriterionScore(JudgeCriterion.NER_PRESERVATION, 0.80, True),
+            CriterionScore(JudgeCriterion.ORALITY_REMOVAL, 0.80, True),
+        )
+        assert compute_composite_verdict(boundary_pass) == (0.8, True, False, ())
+
+        # Default veto_threshold=0.80 vetoes 0.79 even when criterion passed=True
+        boundary_veto = (CriterionScore(JudgeCriterion.SEMANTIC_FAITHFULNESS, 0.79, True),)
+        score_v, passed_v, vetoed_v, reasons_v = compute_composite_verdict(boundary_veto)
+        assert score_v == 0.79
+        assert passed_v is False
+        assert vetoed_v is True
+        assert reasons_v == (
+            "Mechanical Veto on critical criterion 'semantic_faithfulness': score 0.79 < threshold 0.80",
+        )
+
+        # Veto criterion with score >= veto_threshold but passed=False still triggers mechanical veto
+        failed_flag_veto = (CriterionScore(JudgeCriterion.SEMANTIC_FAITHFULNESS, 0.90, False),)
+        _, passed_f, vetoed_f, reasons_f = compute_composite_verdict(failed_flag_veto)
+        assert passed_f is False
+        assert vetoed_f is True
+        assert reasons_f == (
+            "Mechanical Veto on critical criterion 'semantic_faithfulness': score 0.90 < threshold 0.80",
+        )
+
+    def test_create_with_composite_verdict_forwards_metadata_and_thresholds(self) -> None:
+        assert resolve_stage_scoring_policy("unknown_stage") == (
+            DEFAULT_FLUID_PROSE_WEIGHTS,
+            DEFAULT_MECHANICAL_VETO_CRITERIA,
+        )
+
+        scores = (
+            CriterionScore(JudgeCriterion.SEMANTIC_FAITHFULNESS, 0.90, True),
+            CriterionScore(JudgeCriterion.NER_PRESERVATION, 0.90, True),
+        )
+
+        default_eval = JudgeEvaluation.create_with_composite_verdict(
+            target_stage="fluid_prose",
+            criteria_scores=scores,
+            provider="gemini",
+        )
+        assert default_eval.target_stage == "fluid_prose"
+        assert default_eval.provider == "gemini"
+        assert default_eval.latency_ms == 0.0
+        assert default_eval.trace_id is None
+        assert default_eval.passed is True
+
+        pass_threshold_failed = JudgeEvaluation.create_with_composite_verdict(
+            target_stage="fluid_prose",
+            criteria_scores=scores,
+            provider="ollama",
+            pass_threshold=0.95,
+            veto_threshold=0.80,
+            latency_ms=12.5,
+            trace_id="trace_custom_99",
+        )
+        assert pass_threshold_failed.target_stage == "fluid_prose"
+        assert pass_threshold_failed.provider == "ollama"
+        assert pass_threshold_failed.latency_ms == 12.5
+        assert pass_threshold_failed.trace_id == "trace_custom_99"
+        assert pass_threshold_failed.is_vetoed is False
+        assert pass_threshold_failed.passed is False
+
+        veto_threshold_failed = JudgeEvaluation.create_with_composite_verdict(
+            target_stage="fluid_prose",
+            criteria_scores=scores,
+            provider="gemini",
+            pass_threshold=0.80,
+            veto_threshold=0.95,
+        )
+        assert veto_threshold_failed.is_vetoed is True
+        assert veto_threshold_failed.passed is False
+
+    def test_extract_critique_veto_header_and_multiple_reasons_formatting(self) -> None:
+        # is_vetoed=True with empty veto_reasons must not emit empty veto prefix
+        no_reasons_eval = JudgeEvaluation(
+            target_stage="fluid_prose",
+            passed=False,
+            overall_score=0.7,
+            criteria_scores=(),
+            provider="gemini",
+            is_vetoed=True,
+            veto_reasons=(),
+        )
+        assert no_reasons_eval.extract_critique() == "Quality threshold not met."
+
+        # is_vetoed=False with non-empty veto_reasons must not emit veto prefix
+        not_vetoed_eval = JudgeEvaluation(
+            target_stage="fluid_prose",
+            passed=False,
+            overall_score=0.7,
+            criteria_scores=(),
+            provider="gemini",
+            is_vetoed=False,
+            veto_reasons=("stale reason",),
+        )
+        assert not_vetoed_eval.extract_critique() == "Quality threshold not met."
+
+        # Multiple veto reasons join with '; ' under exact header
+        multi_veto_eval = JudgeEvaluation(
+            target_stage="fluid_prose",
+            passed=False,
+            overall_score=0.5,
+            criteria_scores=(
+                CriterionScore(
+                    criterion=JudgeCriterion.NER_PRESERVATION,
+                    score=0.5,
+                    passed=False,
+                    reasoning="Missing name",
+                ),
+            ),
+            provider="gemini",
+            is_vetoed=True,
+            veto_reasons=("Veto A", "Veto B"),
+        )
+        assert multi_veto_eval.extract_critique() == (
+            "[CRITICAL MECHANICAL VETO]: Veto A; Veto B\n- ner_preservation: Missing name"
+        )
+
+    def test_extract_source_text_falls_back_when_content_lacks_text_attribute(self) -> None:
+        class _OpaqueContent:
+            pass
+
+        class _SourceWithoutText:
+            content = _OpaqueContent()
+
+            def __str__(self) -> str:
+                return "opaque_source_repr"
+
+        spec = StageEvaluationSpec()
+        assert spec.extract_source_text(_SourceWithoutText()) == "opaque_source_repr"

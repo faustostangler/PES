@@ -86,14 +86,17 @@ def run_cli(
         list[str] | None,
         typer.Option(
             "--stages",
-            help="Stages to calibrate (comma-separated or repeated: fluid_prose, gap_filler, all).",
+            help=(
+                "Stages to calibrate (comma-separated or repeated: "
+                "fluid_prose, gap_filler, long_expander, wide_expander, all)."
+            ),
         ),
     ] = None,
     stage: Annotated[
         str | None,
         typer.Option(
             "--stage",
-            help="Single stage override (e.g. fluid_prose or gap_filler).",
+            help="Single stage override (e.g. fluid_prose, gap_filler, long_expander, wide_expander).",
         ),
     ] = None,
     models: Annotated[
@@ -190,6 +193,12 @@ def run_cli(
         "fluid_prose": threshold if threshold is not None else base_settings.judge_pass_threshold,
         "gap_filler": (
             threshold if threshold is not None else base_settings.gap_filler_judge_threshold
+        ),
+        "long_expander": (
+            threshold if threshold is not None else base_settings.judge_pass_threshold
+        ),
+        "wide_expander": (
+            threshold if threshold is not None else base_settings.judge_pass_threshold
         ),
     }
 

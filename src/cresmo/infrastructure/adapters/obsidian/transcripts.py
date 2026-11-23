@@ -32,6 +32,15 @@ from cresmo.infrastructure.adapters.obsidian.utils import (
     sanitize_filename,
 )
 
+_EXPANDED_STAGES: frozenset[str] = frozenset(
+    {
+        StageName.GAP_FILLER,
+        StageName.LONG_EXPANDER,
+        StageName.WIDE_EXPANDER,
+        "enriched",
+    }
+)
+
 
 class TranscriptVaultHandler:
     """Handles filesystem persistence and retrieval of source transcripts, fluid transcripts, and enriched compendiums."""
@@ -115,9 +124,9 @@ class TranscriptVaultHandler:
         yaml_header = self._format_stage_frontmatter(transcript, stage_key)
         raw_title = transcript.content.title or "Untitled Compendium"
         body_payload = transcript.content.text.strip()
-        if (
-            stage_key in ("gap_filler", "enriched") or target_dir == self.enriched_dir
-        ) and not body_payload.startswith("# "):
+        if (stage_key in _EXPANDED_STAGES or target_dir == self.enriched_dir) and not (
+            body_payload.startswith("# ")
+        ):
             body_text = f"# {raw_title}\n\n{body_payload}"
         else:
             body_text = body_payload
@@ -132,7 +141,7 @@ class TranscriptVaultHandler:
         text = file_path.read_text(encoding="utf-8")
         match = _FRONTMATTER_PATTERN.match(text)
         if not match:
-            if stage_key in ("gap_filler", "enriched"):
+            if stage_key in _EXPANDED_STAGES:
                 return None
             channel = Channel(name=file_path.parent.name)
             provenance = MediaProvenance.create(
@@ -159,7 +168,7 @@ class TranscriptVaultHandler:
         raw_title_meta = metadata.get("video_title") or metadata.get("title")
         if raw_title_meta:
             title = str(raw_title_meta)
-        elif stage_key in ("gap_filler", "enriched"):
+        elif stage_key in _EXPANDED_STAGES:
             title = file_path.stem
         else:
             title = ""
@@ -233,7 +242,7 @@ class TranscriptVaultHandler:
             ):
                 matched = list(self.fluid_dir.glob(f"**/{target_name}"))
             elif (
-                stage_key in ("gap_filler", "enriched")
+                stage_key in (StageName.GAP_FILLER, "enriched")
                 and self.enriched_dir.exists()
                 and self.enriched_dir != stage_dir
             ):
@@ -247,11 +256,20 @@ class TranscriptVaultHandler:
         file_path = matched[0]
         return self._deserialize_stage_transcript(file_path, content_id, stage_key=stage_key)
 
-    def get_enriched_files_for_channel(self, channel_name: ChannelName) -> list[Path]:
-        """Retrieve sorted list of all enriched markdown file paths for a given channel."""
+    def get_stage_files_for_channel(
+        self, stage_name: str | StageName, channel_name: ChannelName
+    ) -> list[Path]:
+        """Retrieve sorted list of all markdown file paths for a stage and channel."""
+        stage_key = stage_name.value if isinstance(stage_name, StageName) else str(stage_name)
         ch_name = sanitize_filename(channel_name)
         candidates: set[Path] = set()
-        for d in (self.resolve_stage_dir("gap_filler"), self.enriched_dir):
+        stage_dirs: list[Path] = [self.resolve_stage_dir(stage_key)]
+        if stage_key == StageName.FLUID_PROSE and self.fluid_dir != stage_dirs[0]:
+            stage_dirs.append(self.fluid_dir)
+        elif stage_key in (StageName.GAP_FILLER, "enriched") and self.enriched_dir != stage_dirs[0]:
+            stage_dirs.append(self.enriched_dir)
+
+        for d in stage_dirs:
             ch_dir = d / ch_name
             if ch_dir.exists() and ch_dir.is_dir():
                 candidates.update(
@@ -263,14 +281,4 @@ class TranscriptVaultHandler:
 
     def get_fluid_files_for_channel(self, channel_name: ChannelName) -> list[Path]:
         """Retrieve sorted list of all fluid markdown file paths for a given channel."""
-        ch_name = sanitize_filename(channel_name)
-        candidates: set[Path] = set()
-        for d in (self.resolve_stage_dir("fluid_prose"), self.fluid_dir):
-            ch_dir = d / ch_name
-            if ch_dir.exists() and ch_dir.is_dir():
-                candidates.update(
-                    p
-                    for p in ch_dir.glob("*.md")
-                    if p.is_file() and not p.name.startswith(("_", "."))
-                )
-        return sorted(candidates)
+        return self.get_stage_files_for_channel(StageName.FLUID_PROSE, channel_name)

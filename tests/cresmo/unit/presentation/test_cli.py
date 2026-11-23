@@ -231,7 +231,7 @@ class TestCresmoCLI:
             assert exit_code == EXIT_SUCCESS
             mock_pipeline.run_for_video.assert_called_once_with(
                 video_url="https://youtube.com/watch?v=dQw4w9WgXcQ",
-                gap_filler_passes=3,
+                expansion_max_passes=None,
                 force_reprocess=False,
             )
 
@@ -276,7 +276,7 @@ class TestCresmoCLI:
             assert isinstance(call_kwargs["settings"], CresmoSettings)
             mock_pipeline.run_for_video.assert_called_once_with(
                 video_url="https://youtube.com/watch?v=dQw4w9WgXcQ",
-                gap_filler_passes=3,
+                expansion_max_passes=3,
                 force_reprocess=False,
             )
 

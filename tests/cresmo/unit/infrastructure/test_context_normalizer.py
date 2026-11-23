@@ -13,9 +13,9 @@ from cresmo.infrastructure.adapters.prompts.context_normalizer import (
 class TestContextNormalizer:
     """Unit tests covering bijective PromptKey coverage, aliases, ChannelName, and GAP_FILLER."""
 
-    def test_schemas_cover_all_18_prompt_keys_bijectively(self) -> None:
+    def test_schemas_cover_all_prompt_keys_bijectively(self) -> None:
         assert set(PROMPT_VARIABLE_SCHEMAS.keys()) == set(PromptKey)
-        assert len(PROMPT_VARIABLE_SCHEMAS) == 18
+        assert len(PROMPT_VARIABLE_SCHEMAS) == len(PromptKey)
 
     def test_channel_name_coercion_and_language_precedence(self) -> None:
         norm_default = normalize_prompt_context(
@@ -66,13 +66,31 @@ class TestContextNormalizer:
         assert pass2["prev_pass_num"] == "1"
         assert pass2["draft_section"] == '\n<draft pass="1">\nDraft from pass 1.\n</draft>\n'
 
-    def test_wide_expander_and_judge_raw_index_aliases(self) -> None:
+    def test_long_and_wide_expander_and_judge_raw_index_aliases(self) -> None:
+        long_pass2 = normalize_prompt_context(
+            PromptKey.LONG_EXPANDER,
+            {
+                "source_text": "Expanded draft.",
+                "pass_num": 2,
+                "current_text": "Long pass 1.",
+            },
+        )
+        assert long_pass2["raw_text"] == "Expanded draft."
+        assert long_pass2["prev_pass_num"] == "1"
+        assert long_pass2["draft_section"] == '\n<draft pass="1">\nLong pass 1.\n</draft>\n'
+
         wide = normalize_prompt_context(
             PromptKey.WIDE_EXPANDER,
-            {"current_text": "Expanded draft."},
+            {
+                "source_text": "Expanded draft.",
+                "pass_num": 2,
+                "current_text": "Wide pass 1.",
+            },
         )
-        assert wide["current_text"] == "Expanded draft."
-        assert wide["text"] == "Expanded draft."
+        assert wide["raw_text"] == "Expanded draft."
+        assert wide["prev_pass_num"] == "1"
+        assert wide["draft_section"] == '\n<draft pass="1">\nWide pass 1.\n</draft>\n'
+        assert "language" in wide
 
         judge_synth = normalize_prompt_context(
             PromptKey.JUDGE_RAW_INDEX_SYNTHESIS,

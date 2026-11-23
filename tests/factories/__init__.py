@@ -5,7 +5,7 @@ from tests.factories.domain_factories import (
     ChannelFactory,
     ContentFactory,
     ContentIdFactory,
-    EnrichedCompendiumFactory,
+    ExpandedTranscriptFactory,
     LedgerEntryFactory,
     SourceTranscriptFactory,
 )
@@ -15,7 +15,7 @@ __all__ = [
     "ChannelFactory",
     "ContentFactory",
     "ContentIdFactory",
-    "EnrichedCompendiumFactory",
+    "ExpandedTranscriptFactory",
     "LedgerEntryFactory",
     "SourceTranscriptFactory",
 ]

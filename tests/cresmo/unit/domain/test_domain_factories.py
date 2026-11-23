@@ -7,7 +7,7 @@ from cresmo.domain.entities.transcripts import StageTranscript
 from cresmo.domain.value_objects import LedgerEntry, PipelineStatus, SourceModality
 from tests.factories import (
     BatchSourceFactory,
-    EnrichedCompendiumFactory,
+    ExpandedTranscriptFactory,
     LedgerEntryFactory,
     SourceTranscriptFactory,
 )
@@ -31,14 +31,14 @@ def test_source_transcript_factory() -> None:
     assert transcript.provenance.url != ""
 
 
-def test_enriched_compendium_factory() -> None:
-    """Verify that EnrichedCompendiumFactory honors domain invariants."""
-    compendium = EnrichedCompendiumFactory.build()
-    assert isinstance(compendium, StageTranscript)
-    assert compendium.pass_count >= 1
-    assert compendium.content.text != ""
-    assert "|" not in compendium.content.text or "---" not in compendium.content.text
-    assert "Extra Info" in compendium.content.text
+def test_expanded_transcript_factory() -> None:
+    """Verify that ExpandedTranscriptFactory honors domain invariants."""
+    expanded = ExpandedTranscriptFactory.build()
+    assert isinstance(expanded, StageTranscript)
+    assert expanded.pass_count >= 1
+    assert expanded.content.text != ""
+    assert "|" not in expanded.content.text or "---" not in expanded.content.text
+    assert "Extra Info" in expanded.content.text
 
 
 def test_ledger_entry_factory() -> None:

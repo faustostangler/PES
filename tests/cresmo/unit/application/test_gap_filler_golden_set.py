@@ -18,8 +18,8 @@ import pytest
 
 from cresmo.domain.services.prose_syntax_guard import (
     extract_extra_info_section,
+    validate_expanded_prose_syntax,
     validate_fluid_prose_syntax,
-    validate_gap_filler_syntax,
 )
 from cresmo.domain.value_objects.quality import JudgeCriterion
 
@@ -160,7 +160,7 @@ def test_golden_set_candidate_text_invariants(
         # If it's NOT an intentional mechanical defect item (e.g. ei_04 testing bullet formatting
         # or ls_07 testing em-dash violation), it must pass full gap_filler mechanical validation
         if meta.get("expected_anomaly") not in MECHANICAL_EXEMPTIONS:
-            violations = validate_gap_filler_syntax(cand)
+            violations = validate_expanded_prose_syntax(cand)
             assert not violations, (
                 f"Item '{item_id}' has unintended mechanical violations: {violations}"
             )

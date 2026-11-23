@@ -114,13 +114,11 @@ class InMemoryVaultAdapter(VaultRepositoryPort):
     def __init__(self) -> None:
         self.stage_transcripts: dict[str, dict[str, StageTranscript]] = {}
         self.raw_transcripts: dict[str, StageTranscript] = {}
-        self.fluid_transcripts: dict[str, StageTranscript] = {}
-        self.compendiums: dict[str, StageTranscript] = {}
         self.atomic_notes: dict[str, AtomicNote] = {}
         self.index_entries: dict[str, dict[str, Any]] = {}
         self.mocs: dict[str, MapOfContent] = {}
         self.master_documents: dict[tuple[str, str, int], str] = {}
-        self.channel_enriched_files: dict[str, list[Path]] = {}
+        self.channel_stage_files: dict[tuple[str, str], list[Path]] = {}
         self.channel_fluid_files: dict[str, list[Path]] = {}
         self.channel_raw_indexes: dict[str, list[RawIndexEntry]] = {}
         self.brain_csv_entries: list[RawIndexEntry] = []
@@ -139,8 +137,11 @@ class InMemoryVaultAdapter(VaultRepositoryPort):
     def append_brain_csv_entry(self, entry: RawIndexEntry) -> None:
         self.brain_csv_entries.append(entry)
 
-    def get_enriched_files_for_channel(self, channel_name: ChannelName) -> list[Path]:
-        return list(self.channel_enriched_files.get(channel_name.value, []))
+    def get_stage_files_for_channel(
+        self, stage_name: str | StageName, channel_name: ChannelName
+    ) -> list[Path]:
+        stage_key = stage_name.value if isinstance(stage_name, StageName) else str(stage_name)
+        return list(self.channel_stage_files.get((stage_key, channel_name.value), []))
 
     def save_master_document(
         self,
@@ -176,10 +177,6 @@ class InMemoryVaultAdapter(VaultRepositoryPort):
         self.stage_transcripts.setdefault(key, {})[transcript.content.id.value] = transcript
         if key == "raw":
             self.raw_transcripts[transcript.content.id.value] = transcript
-        elif key == "fluid_prose":
-            self.fluid_transcripts[transcript.content.id.value] = transcript
-        elif key == "gap_filler":
-            self.compendiums[transcript.content.id.value] = transcript
 
     def get_stage_transcript(
         self, stage_name: str | StageName, content_id: ContentId
@@ -189,10 +186,6 @@ class InMemoryVaultAdapter(VaultRepositoryPort):
             return self.stage_transcripts[key][content_id.value]
         if key == "raw":
             return self.raw_transcripts.get(content_id.value)
-        if key == "fluid_prose":
-            return self.fluid_transcripts.get(content_id.value)
-        if key == "gap_filler":
-            return self.compendiums.get(content_id.value)
         return None
 
     def get_fluid_files_for_channel(self, channel_name: ChannelName) -> list[Path]:

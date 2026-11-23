@@ -7,18 +7,15 @@ Pure, hermetic tests using Mock Ports (0 external I/O) with strict port verifica
 from __future__ import annotations
 
 import json
-from datetime import date
 from unittest.mock import MagicMock
 
 import pytest
 
 from cresmo.application.ports import (
-    NoOpPromptProviderPort,
     PromptProviderPort,
 )
 from cresmo.application.use_cases import (
     DiscoverAtomicInventoryUseCase,
-    ExpandCompendiumUseCase,
     IngestRawTranscriptUseCase,
     ReconcileMOCsUseCase,
     SynthesizeAtomicBatchUseCase,
@@ -27,12 +24,8 @@ from cresmo.application.use_cases.synthesize_atomic_batch import _norm_honorific
 from cresmo.domain.entities import (
     AtomicNote,
     StageTranscript,
-    UserIdentity,
 )
-from cresmo.domain.exceptions import (
-    CompendiumStructureError,
-    DomainValidationError,
-)
+from cresmo.domain.exceptions import DomainValidationError
 from cresmo.domain.value_objects import (
     AtomicEntityInventory,
     CausalMatrix,
@@ -104,216 +97,6 @@ class TestIngestRawTranscript:
 
         assert result is None
         assert len(vault_port.raw_transcripts) == 0
-
-
-class TestExpandLongitudinalSynchronic:
-    """SPEC-001 Scenario 3.1: Braudel & Jaspers Expansion."""
-
-    def test_expand_success(self) -> None:
-        cid = ContentId("dQw4w9WgXcQ")
-        initial_compendium = StageTranscript(
-            channel=Channel(name="Example Channel", id=ChannelId("UC_Test")),
-            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=dQw4w9WgXcQ"),
-            content=Content(
-                id=cid,
-                title="Teoria das Elites",
-                text="Continuous prose body describing elites.\n\n### Extra Info\n\nInitial complementary info.",
-            ),
-            pass_count=1,
-        )
-        long_response = (
-            "# Teoria das Elites (Longitudinal)\n\n"
-            "Longitudinal analysis tracing Roman patricians through medieval baronies.\n\n"
-            "### Extra Info\n\n"
-            "Longitudinal footnotes and multi-secular metrics."
-        )
-        wide_response = (
-            "# Teoria das Elites (Synchronic)\n\n"
-            "Expanded continuous prose integrating longue durée causal analysis and axial networks.\n\n"
-            "### Extra Info\n\n"
-            "Multi-secular historical indices and global trade matrices."
-        )
-        llm_port = MockLLMAdapter(responses=[long_response, wide_response])
-        vault_port = InMemoryVaultAdapter()
-
-        use_case = ExpandCompendiumUseCase(llm_port, vault_port)
-        updated = use_case.execute(initial_compendium)
-
-        assert updated.content.id == cid
-        assert updated.pass_count == 2
-        assert updated.channel.id == ChannelId("UC_Test")
-        assert updated.provenance.url == "https://youtube.com/watch?v=dQw4w9WgXcQ"
-        assert updated.content.title == initial_compendium.content.title
-        assert updated.content.title == "Teoria das Elites"
-        assert "longue durée" in updated.content.text
-        # Leading H1 must be stripped from body
-        assert not updated.content.text.startswith("#")
-        assert "Multi-secular historical indices and global trade matrices." in updated.content.text
-        assert vault_port.get_stage_transcript("gap_filler", cid) == updated
-
-        # Verify strict port interactions
-        assert len(llm_port.call_history) == 2
-        assert all(c["session_id"] == "UC_Test:dQw4w9WgXcQ" for c in llm_port.call_history)
-        assert all(c["user_id"] == "anonymous" for c in llm_port.call_history)
-        # Pass 1: Longitude expander gets initial compendium body and complementary info
-        p0 = llm_port.call_history[0]["prompt"].get_last_user_content()
-        sys0 = llm_port.call_history[0]["system_prompt"] or ""
-        assert "Continuous prose body describing elites." in p0
-        assert "Initial complementary info." in p0
-        assert sys0.startswith("You are Cresmo Long-Expander")
-        assert p0.startswith("Take the following enriched Markdown document")
-        assert not p0.startswith(sys0[:30])
-
-        # Pass 2: Wide expander gets the response from longitudinal expansion
-        p1 = llm_port.call_history[1]["prompt"].get_last_user_content()
-        sys1 = llm_port.call_history[1]["system_prompt"] or ""
-        assert "Longitudinal analysis tracing Roman patricians" in p1
-        assert sys1.startswith("You are Cresmo Wide-Expander")
-        assert p1.startswith("Take the following longitudinally expanded Markdown document")
-        assert not p1.startswith(sys1[:30])
-
-    def test_expand_missing_complementary_tag_falls_back_to_original(self) -> None:
-        cid = ContentId("dQw4w9WgXcQ")
-        initial_compendium = StageTranscript(
-            channel=Channel(name="Example Channel"),
-            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=dQw4w9WgXcQ"),
-            content=Content(
-                id=cid,
-                title="Teoria das Elites",
-                text="Continuous prose body.\n\n### Extra Info\n\nOriginal complementary info.",
-            ),
-        )
-        long_response = "Long response without section header."
-        wide_response = "Wide response without section header."
-        llm_port = MockLLMAdapter(responses=[long_response, wide_response])
-        vault_port = InMemoryVaultAdapter()
-
-        use_case = ExpandCompendiumUseCase(llm_port, vault_port)
-        updated = use_case.execute(initial_compendium)
-
-        assert updated.content.title == initial_compendium.content.title
-        assert "Wide response without section header." in updated.content.text
-        assert "Original complementary info." in updated.content.text
-
-    def test_expand_empty_complementary_raises_error(self) -> None:
-        cid = ContentId("dQw4w9WgXcQ")
-        initial_compendium = StageTranscript(
-            channel=Channel(name="Example Channel"),
-            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=dQw4w9WgXcQ"),
-            content=Content(
-                id=cid,
-                title="Teoria das Elites",
-                text="Continuous prose body.\n\n### Extra Info\n\nInitial complementary info.",
-            ),
-        )
-        long_response = "Long response."
-        wide_response = "Wide response text.\n\n### Extra Info\n\n   "
-        llm_port = MockLLMAdapter(responses=[long_response, wide_response])
-        vault_port = InMemoryVaultAdapter()
-        use_case = ExpandCompendiumUseCase(llm_port, vault_port)
-        with pytest.raises(
-            CompendiumStructureError, match=r"^Missing complementary info in expansion\.$"
-        ):
-            use_case.execute(initial_compendium)
-
-    def test_expand_init_validations(self) -> None:
-        vault_port = InMemoryVaultAdapter()
-        llm_port = MockLLMAdapter()
-
-        with pytest.raises(ValueError, match=r"^llm_synthesis_port must be provided$"):
-            ExpandCompendiumUseCase(None, vault_port)  # type: ignore[arg-type]
-
-        with pytest.raises(ValueError, match=r"^vault_port must be provided$"):
-            ExpandCompendiumUseCase(llm_port, None)  # type: ignore[arg-type]
-
-        uc = ExpandCompendiumUseCase(llm_port, vault_port)
-        assert isinstance(uc.prompt_provider, NoOpPromptProviderPort)
-        assert uc.temperature is None
-
-    def test_expand_temperature_and_user_and_trace_ids(self) -> None:
-        cid = ContentId("dQw4w9WgXcQ")
-        initial_compendium = StageTranscript(
-            channel=Channel(name="Example Channel"),
-            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=dQw4w9WgXcQ"),
-            content=Content(
-                id=cid,
-                title="Teoria das Elites",
-                text="Continuous prose body.\n\n### Extra Info\n\nInitial complementary info.",
-            ),
-        )
-        long_response = "Long response text."
-        wide_response = "Expanded body.\n\n### Extra Info\n\nExact tag notes."
-        llm_port = MockLLMAdapter(responses=[long_response, wide_response])
-        vault_port = InMemoryVaultAdapter()
-
-        use_case = ExpandCompendiumUseCase(llm_port, vault_port, temperature=0.85)
-        user = UserIdentity("usr_special")
-        updated = use_case.execute(initial_compendium, user=user)
-
-        assert updated.pass_count == (initial_compendium.pass_count or 1) + 1
-        assert len(llm_port.call_history) == 2
-        assert llm_port.call_history[0]["temperature"] == 0.85
-        assert llm_port.call_history[1]["temperature"] == 0.85
-        assert llm_port.call_history[0]["user_id"] == "usr_special"
-        assert llm_port.call_history[1]["user_id"] == "usr_special"
-        assert llm_port.call_history[0]["trace_id"] == "dQw4w9WgXcQ_longitudinal"
-        assert llm_port.call_history[1]["trace_id"] == "dQw4w9WgXcQ_synchronic"
-
-    def test_expand_with_regex_variations_notas_complementares(self) -> None:
-        cid = ContentId("dQw4w9WgXcQ")
-        initial_compendium = StageTranscript(
-            channel=Channel(name="Example Channel"),
-            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=dQw4w9WgXcQ"),
-            content=Content(
-                id=cid,
-                title="Teoria das Elites",
-                text="Continuous prose body.\n\n### Extra Info\n\nInitial complementary info.",
-            ),
-        )
-        long_response = "Long response text."
-        wide_response = (
-            "# Leading Title\nExpanded body.\n\n### Notas Complementares\n\nNotas content."
-        )
-        llm_port = MockLLMAdapter(responses=[long_response, wide_response])
-        vault_port = InMemoryVaultAdapter()
-
-        use_case = ExpandCompendiumUseCase(llm_port, vault_port)
-        updated = use_case.execute(initial_compendium)
-        assert "Expanded body." in updated.content.text
-        assert "Notas content." in updated.content.text
-
-    def test_expand_preserves_distinct_metadata_and_dates(self) -> None:
-        cid = ContentId("dQw4w9WgXcQ")
-        initial_compendium = StageTranscript(
-            channel=Channel(name="Example Channel", id=ChannelId("UC_XYZ"), category="Direita"),
-            provenance=MediaProvenance.create(
-                url="https://youtube.com/watch?v=dQw4w9WgXcQ",
-                publication_date=date(2021, 1, 1),
-                description="A deep video description.",
-            ),
-            content=Content(
-                id=cid,
-                title="Teoria das Elites",
-                text="Continuous prose body.\n\n### Extra Info\n\nInitial complementary info.",
-            ),
-            metadata={"video_date": "20220202"},
-        )
-        long_response = "Long response text."
-        wide_response = "Expanded body.\n\n## Informações Adicionais\n\nAdicionais content."
-        llm_port = MockLLMAdapter(responses=[long_response, wide_response])
-        vault_port = InMemoryVaultAdapter()
-
-        use_case = ExpandCompendiumUseCase(llm_port, vault_port)
-        updated = use_case.execute(initial_compendium)
-        assert updated.content.id == cid
-        assert updated.channel.name == "Example Channel"
-        assert updated.channel.id == ChannelId("UC_XYZ")
-        assert updated.channel.category == "Direita"
-        assert updated.provenance.url == "https://youtube.com/watch?v=dQw4w9WgXcQ"
-        assert updated.provenance.publication_date == date(2021, 1, 1)
-        assert updated.metadata.get("video_date") == "20220202"
-        assert updated.provenance.description == "A deep video description."
-        assert "Adicionais content." in updated.content.text
 
 
 class TestDiscoverAtomicInventory:

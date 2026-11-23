@@ -8,7 +8,7 @@ from typing import Any, TypeVar
 from cresmo.application.pipeline.stage_descriptor import StageConfig
 from cresmo.application.ports import PipelineSettingsProtocol, TextEmbeddingPort
 from cresmo.application.services.hybrid_saturation import HybridSaturationEvaluator
-from cresmo.domain.stage_registry import StageDefinition, StageRegistry
+from cresmo.domain.stage_registry import StageDefinition, StageName, StageRegistry
 from cresmo.domain.value_objects import (
     CandidateText,
     ConvergenceMode,
@@ -181,11 +181,30 @@ class StageFactory:
 
         # 6. Resolve multi-pass and saturation policy tunables
         if max_passes is None:
-            max_passes = (
-                stage_definition.max_passes
-                if stage_definition and stage_definition.max_passes > 1
-                else 1
-            )
+            if stage_name == StageName.LONG_EXPANDER:
+                settings_passes = getattr(self.settings, "long_expander_max_passes", None)
+                fallback_passes = stage_definition.max_passes if stage_definition else 7
+                max_passes = (
+                    settings_passes
+                    if isinstance(settings_passes, int) and not isinstance(settings_passes, bool)
+                    else fallback_passes
+                )
+            elif (
+                stage_definition is not None
+                and stage_definition.convergence_mode == ConvergenceMode.HYBRID_SEMANTIC
+            ):
+                settings_passes = getattr(self.settings, "expansion_max_passes", None)
+                max_passes = (
+                    settings_passes
+                    if isinstance(settings_passes, int) and not isinstance(settings_passes, bool)
+                    else stage_definition.max_passes
+                )
+            else:
+                max_passes = (
+                    stage_definition.max_passes
+                    if stage_definition and stage_definition.max_passes > 1
+                    else 1
+                )
 
         resolved_saturation_policy: SaturationPolicy
         if saturation_policy is not None:

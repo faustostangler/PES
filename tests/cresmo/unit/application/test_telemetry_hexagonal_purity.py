@@ -86,7 +86,7 @@ class TestSessionTelemetrySpecAndPortContracts:
             user_id=UserIdentity.worker(),
             raw_characters=0,
             raw_words=0,
-            gap_filler_passes=1,
+            expansion_max_passes=1,
         )
         assert valid.source == "transcript"
         assert valid.force_reprocess is False
@@ -107,18 +107,18 @@ class TestSessionTelemetrySpecAndPortContracts:
                 raw_words=-1,
             )
 
-        with pytest.raises(ValueError, match=r"^gap_filler_passes must be >= 1$"):
+        with pytest.raises(ValueError, match=r"^expansion_max_passes must be >= 1 when provided$"):
             SessionTelemetrySpec(
                 session_id=PipelineSessionId("ch:vid_1"),
                 user_id=UserIdentity.worker(),
-                gap_filler_passes=0,
+                expansion_max_passes=0,
             )
 
-        with pytest.raises(ValueError, match=r"^gap_filler_passes must be >= 1$"):
+        with pytest.raises(ValueError, match=r"^expansion_max_passes must be >= 1 when provided$"):
             SessionTelemetrySpec(
                 session_id=PipelineSessionId("ch:vid_1"),
                 user_id=UserIdentity.worker(),
-                gap_filler_passes=True,
+                expansion_max_passes=True,
             )
 
     def test_telemetry_port_exposes_exact_minimal_method_set(self) -> None:

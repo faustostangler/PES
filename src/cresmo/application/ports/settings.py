@@ -36,6 +36,9 @@ class PipelineSettingsProtocol(Protocol):
     def concat_max_words(self) -> int: ...
 
     @property
+    def data_dir(self) -> Path: ...
+
+    @property
     def raw_dir(self) -> Path: ...
 
     @property
@@ -81,7 +84,7 @@ class PipelineSettingsProtocol(Protocol):
     def expansion_max_passes(self) -> int: ...
 
     @property
-    def gap_filler_passes(self) -> int: ...
+    def long_expander_max_passes(self) -> int: ...
 
 
 DEFAULT_LANGUAGE: str = "Português do Brasil"
@@ -99,6 +102,7 @@ class DefaultPipelineSettings:
     gemini_thinking_level: str = "low"
     batch_size: int = 5
     concat_max_words: int = 50000
+    data_dir: Path = Path("data")
     raw_dir: Path = Path("data/raw")
     fluid_dir: Path = Path("data/fluid_prose")
     gap_filler_dir: Path = Path("data/gap_filler")
@@ -114,7 +118,7 @@ class DefaultPipelineSettings:
     judge_max_attempts: int = 2
     max_retries: int = 2
     expansion_max_passes: int = 5
-    gap_filler_passes: int = 5
+    long_expander_max_passes: int = 7
 
 
 __all__ = [

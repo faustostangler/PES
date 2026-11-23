@@ -33,6 +33,8 @@ class PromptKey(StrEnum):
     JUDGE_RAW_INDEX_SYNTHESIS = "judge_raw_index_synthesis"
     JUDGE_FLUID_PROSE = "judge_fluid_prose"
     JUDGE_GAP_FILLER = "judge_gap_filler"
+    JUDGE_LONG_EXPANDER = "judge_long_expander"
+    JUDGE_WIDE_EXPANDER = "judge_wide_expander"
     OLLAMA_CRITIQUE = "ollama_critique"
 
 

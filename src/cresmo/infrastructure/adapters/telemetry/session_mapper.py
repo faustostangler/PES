@@ -45,7 +45,7 @@ _CANONICAL_ROOT_METADATA_KEYS: Final[frozenset[str]] = frozenset(
         "source",
         "raw_words",
         "raw_characters",
-        "gap_filler_passes",
+        "expansion_max_passes",
         "force_reprocess",
         "publication_date",
         "pipeline_version",
@@ -109,9 +109,11 @@ def build_session_span_attributes(
         "cresmo.user.provider": user.provider,
         "cresmo.content.word_count": spec.raw_words,
         "cresmo.content.char_count": spec.raw_characters,
-        "cresmo.pipeline.gap_filler_passes": spec.gap_filler_passes,
         "cresmo.pipeline.force_reprocess": spec.force_reprocess,
     }
+
+    if spec.expansion_max_passes is not None:
+        attributes["cresmo.pipeline.expansion_max_passes"] = spec.expansion_max_passes
 
     if spec.source.strip():
         attributes["cresmo.content.source"] = spec.source.strip()

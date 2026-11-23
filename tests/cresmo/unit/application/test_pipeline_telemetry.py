@@ -87,7 +87,7 @@ class TestPipelineTelemetryIntegration:
             ),
         )
 
-        result = pipeline.execute(raw=raw, gap_filler_passes=1)
+        result = pipeline.execute(raw=raw, expansion_max_passes=1)
 
         assert result.success is True
 
@@ -157,7 +157,7 @@ class TestPipelineTelemetryIntegration:
         )
 
         user = UserIdentity.identified(subject="fausto@cresmo.ai", provider="oauth")
-        result = pipeline.execute(raw=raw, gap_filler_passes=1, user=user)
+        result = pipeline.execute(raw=raw, expansion_max_passes=1, user=user)
 
         assert result.success is True
 
@@ -200,7 +200,7 @@ class TestPipelineTelemetryIntegration:
         )
 
         user = UserIdentity.worker()
-        result = pipeline.execute(raw=raw, gap_filler_passes=1, user=user)
+        result = pipeline.execute(raw=raw, expansion_max_passes=1, user=user)
 
         assert result.success is True
 
@@ -237,7 +237,7 @@ class TestPipelineTelemetryIntegration:
             ),
         )
 
-        result = pipeline.execute(raw=raw, gap_filler_passes=1)
+        result = pipeline.execute(raw=raw, expansion_max_passes=1)
 
         assert result.success is True
 
@@ -302,7 +302,7 @@ class TestPipelineTelemetryIntegration:
             ),
         )
 
-        result = pipeline.execute(raw=raw, gap_filler_passes=1)
+        result = pipeline.execute(raw=raw, expansion_max_passes=1)
         assert result.success is True
 
         # Check transcript counter
@@ -412,11 +412,13 @@ class TestPipelineTelemetryIntegration:
             ),
         )
 
-        result = pipeline.execute(raw=raw, gap_filler_passes=1)
+        result = pipeline.execute(raw=raw, expansion_max_passes=1)
         assert result.success is True
         assert get_active_telemetry_stage() is None
         assert "fluid_prose" in observed_stages_during_transform
         assert "gap_filler" in observed_stages_during_transform
+        assert "long_expander" in observed_stages_during_transform
+        assert "wide_expander" in observed_stages_during_transform
 
         spans = exporter.get_finished_spans()
         root_span = next(s for s in spans if s.name == "cresmo.coordinator")
@@ -424,9 +426,19 @@ class TestPipelineTelemetryIntegration:
         assert root_span.attributes["langfuse.trace.name"] == "cresmo.pipeline"
 
         child_spans = {s.name: s for s in spans if s.name != "cresmo.coordinator"}
-        assert {"cresmo.fluid_prose", "cresmo.gap_filler"}.issubset(child_spans.keys())
+        assert {
+            "cresmo.fluid_prose",
+            "cresmo.gap_filler",
+            "cresmo.long_expander",
+            "cresmo.wide_expander",
+        }.issubset(child_spans.keys())
         assert root_span.context is not None
-        for child_name in ("cresmo.fluid_prose", "cresmo.gap_filler"):
+        for child_name in (
+            "cresmo.fluid_prose",
+            "cresmo.gap_filler",
+            "cresmo.long_expander",
+            "cresmo.wide_expander",
+        ):
             child_span = child_spans[child_name]
             assert child_span.context is not None
             assert child_span.parent is not None

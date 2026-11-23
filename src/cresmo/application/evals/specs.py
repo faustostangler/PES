@@ -19,7 +19,12 @@ from typing import Any
 
 from cresmo.application.evals.calibration_metrics import CalibrationVerdict, ConfusionMatrix
 from cresmo.domain.value_objects.prompt import PromptKey
-from cresmo.domain.value_objects.quality import JudgeCriterion
+from cresmo.domain.value_objects.quality import (
+    GAP_FILLER_CANONICAL_WEIGHTS,
+    LONG_EXPANDER_CANONICAL_WEIGHTS,
+    WIDE_EXPANDER_CANONICAL_WEIGHTS,
+    JudgeCriterion,
+)
 
 DEFAULT_CHECKPOINT_DIR = Path("data") / "calibration_checkpoints"
 DEFAULT_REPORTS_DIR = Path("reports") / "calibration"
@@ -87,15 +92,23 @@ def build_stage_specs(
             prompt_key=PromptKey.JUDGE_GAP_FILLER,
             default_golden_set_path=datasets_dir / "gap_filler_golden_set.json",
             default_seed_path=resolved_seeds_dir / "gap_filler_seed.json",
-            required_criteria=(
-                JudgeCriterion.EPISTEMIC_GROUNDING_SEGREGATION,
-                JudgeCriterion.CONCEPTUAL_MECHANICAL_DECOMPOSITION,
-                JudgeCriterion.BRAUDELIAN_STRATIFICATION,
-                JudgeCriterion.GENEALOGY_HIDDEN_AGENCY,
-                JudgeCriterion.COMPETING_HYPOTHESES,
-                JudgeCriterion.EXTRA_INFO_GRANULARITY,
-                JudgeCriterion.LINEAR_STYLE_NATURALISM,
-            ),
+            required_criteria=tuple(GAP_FILLER_CANONICAL_WEIGHTS.keys()),
+        ),
+        "long_expander": StageCalibrationSpec(
+            stage_name="long_expander",
+            label="Stage 3: Long Expander",
+            prompt_key=PromptKey.JUDGE_LONG_EXPANDER,
+            default_golden_set_path=datasets_dir / "long_expander_golden_set.json",
+            default_seed_path=resolved_seeds_dir / "long_expander_seed.json",
+            required_criteria=tuple(LONG_EXPANDER_CANONICAL_WEIGHTS.keys()),
+        ),
+        "wide_expander": StageCalibrationSpec(
+            stage_name="wide_expander",
+            label="Stage 4: Wide Expander",
+            prompt_key=PromptKey.JUDGE_WIDE_EXPANDER,
+            default_golden_set_path=datasets_dir / "wide_expander_golden_set.json",
+            default_seed_path=resolved_seeds_dir / "wide_expander_seed.json",
+            required_criteria=tuple(WIDE_EXPANDER_CANONICAL_WEIGHTS.keys()),
         ),
     }
 

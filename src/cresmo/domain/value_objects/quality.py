@@ -35,6 +35,14 @@ class JudgeCriterion(str, Enum):
     EXTRA_INFO_GRANULARITY = "extra_info_granularity"
     LINEAR_STYLE_NATURALISM = "linear_style_naturalism"
 
+    # Stage 3: Long & Wide Expander Criteria (ADR-073)
+    LONGUE_DUREE_STRATIFICATION = "longue_duree_stratification"
+    HISTORICAL_PALIMPSEST = "historical_palimpsest"
+    EMPIRICAL_HISTORICAL_GROUNDING = "empirical_historical_grounding"
+    IMPLICIT_FRAMING_STYLE = "implicit_framing_style"
+    SYNCHRONIC_CONNECTIVITY = "synchronic_connectivity"
+    COMPARATIVE_PARALLELISM = "comparative_parallelism"
+
     # Downstream Stages
     INVENTORY_COHERENCE = "inventory_coherence"
     INDEX_SYNTHESIS_QUALITY = "index_synthesis_quality"
@@ -160,14 +168,53 @@ GAP_FILLER_MECHANICAL_VETO_CRITERIA: frozenset[JudgeCriterion] = frozenset(
     }
 )
 
+LONG_EXPANDER_CANONICAL_WEIGHTS: dict[JudgeCriterion, float] = {
+    JudgeCriterion.LONGUE_DUREE_STRATIFICATION: 0.35,
+    JudgeCriterion.EMPIRICAL_HISTORICAL_GROUNDING: 0.25,
+    JudgeCriterion.HISTORICAL_PALIMPSEST: 0.20,
+    JudgeCriterion.EXTRA_INFO_GRANULARITY: 0.10,
+    JudgeCriterion.IMPLICIT_FRAMING_STYLE: 0.10,
+}
+
+LONG_EXPANDER_MECHANICAL_VETO_CRITERIA: frozenset[JudgeCriterion] = frozenset(
+    {
+        JudgeCriterion.EMPIRICAL_HISTORICAL_GROUNDING,
+        JudgeCriterion.EXTRA_INFO_GRANULARITY,
+    }
+)
+
+WIDE_EXPANDER_CANONICAL_WEIGHTS: dict[JudgeCriterion, float] = {
+    JudgeCriterion.SYNCHRONIC_CONNECTIVITY: 0.30,
+    JudgeCriterion.COMPARATIVE_PARALLELISM: 0.30,
+    JudgeCriterion.EMPIRICAL_HISTORICAL_GROUNDING: 0.20,
+    JudgeCriterion.EXTRA_INFO_GRANULARITY: 0.10,
+    JudgeCriterion.IMPLICIT_FRAMING_STYLE: 0.10,
+}
+
+WIDE_EXPANDER_MECHANICAL_VETO_CRITERIA: frozenset[JudgeCriterion] = frozenset(
+    {
+        JudgeCriterion.EMPIRICAL_HISTORICAL_GROUNDING,
+        JudgeCriterion.EXTRA_INFO_GRANULARITY,
+    }
+)
+
+_STAGE_SCORING_POLICIES: dict[
+    str, tuple[dict[JudgeCriterion, float], frozenset[JudgeCriterion]]
+] = {
+    "gap_filler": (GAP_FILLER_CANONICAL_WEIGHTS, GAP_FILLER_MECHANICAL_VETO_CRITERIA),
+    "long_expander": (LONG_EXPANDER_CANONICAL_WEIGHTS, LONG_EXPANDER_MECHANICAL_VETO_CRITERIA),
+    "wide_expander": (WIDE_EXPANDER_CANONICAL_WEIGHTS, WIDE_EXPANDER_MECHANICAL_VETO_CRITERIA),
+}
+
 
 def resolve_stage_scoring_policy(
     stage_name: str,
 ) -> tuple[dict[JudgeCriterion, float], frozenset[JudgeCriterion]]:
     """Resolve canonical criterion weights and mechanical veto criteria for a pipeline stage."""
-    if stage_name == "gap_filler":
-        return GAP_FILLER_CANONICAL_WEIGHTS, GAP_FILLER_MECHANICAL_VETO_CRITERIA
-    return DEFAULT_FLUID_PROSE_WEIGHTS, DEFAULT_MECHANICAL_VETO_CRITERIA
+    return _STAGE_SCORING_POLICIES.get(
+        stage_name,
+        (DEFAULT_FLUID_PROSE_WEIGHTS, DEFAULT_MECHANICAL_VETO_CRITERIA),
+    )
 
 
 def compute_composite_verdict(
@@ -274,13 +321,14 @@ class JudgeEvaluation:
         veto_criteria: frozenset[JudgeCriterion] | None = None,
     ) -> JudgeEvaluation:
         """Construct JudgeEvaluation with weighted average and mechanical veto resolution."""
+        resolved_weights, resolved_vetoes = resolve_stage_scoring_policy(target_stage)
         scores_tuple = tuple(criteria_scores)
         overall_score, passed, is_vetoed, veto_reasons = compute_composite_verdict(
             criteria_scores=scores_tuple,
             pass_threshold=pass_threshold,
             veto_threshold=veto_threshold,
-            weights=weights,
-            veto_criteria=veto_criteria,
+            weights=weights if weights is not None else resolved_weights,
+            veto_criteria=veto_criteria if veto_criteria is not None else resolved_vetoes,
         )
         return cls(
             target_stage=target_stage,

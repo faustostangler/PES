@@ -13,6 +13,7 @@ from unittest.mock import MagicMock
 import pytest
 
 from cresmo.application.pipeline.context import PipelineExecutionContext
+from cresmo.application.pipeline.stage_descriptor import StageConfig
 from cresmo.application.pipeline.stage_factory import StageFactory
 from cresmo.application.pipeline.stage_runner import PipelineStageRunner
 from cresmo.application.ports import (
@@ -126,9 +127,7 @@ def test_gap_filler_execution_multi_pass_to_completion(
     mock_llm = MagicMock(spec=LLMTransformationPort)
     mock_llm.transform.side_effect = [pass1_text, pass2_text, pass3_text]
 
-    stage_factory = StageFactory(
-        settings=DefaultPipelineSettings(expansion_max_passes=3, gap_filler_passes=3)
-    )
+    stage_factory = StageFactory(settings=DefaultPipelineSettings(expansion_max_passes=3))
 
     runner = PipelineStageRunner(
         telemetry_port=NoOpTelemetryPort(),
@@ -170,7 +169,7 @@ def test_gap_filler_execution_early_stopping_on_saturation(
     mock_llm = MagicMock(spec=LLMTransformationPort)
     mock_llm.transform.side_effect = [pass1_text, pass2_text, "pass 3 should not be called"]
 
-    settings = DefaultPipelineSettings(gap_filler_passes=3)
+    settings = DefaultPipelineSettings(expansion_max_passes=3)
     stage_factory = StageFactory(settings=settings)
 
     runner = PipelineStageRunner(
@@ -243,9 +242,7 @@ def test_gap_filler_multi_pass_chains_previous_output_and_emits_pass_telemetry(
     mock_llm = MagicMock(spec=LLMTransformationPort)
     mock_llm.transform.side_effect = _spy_transform
 
-    stage_factory = StageFactory(
-        settings=DefaultPipelineSettings(expansion_max_passes=3, gap_filler_passes=3)
-    )
+    stage_factory = StageFactory(settings=DefaultPipelineSettings(expansion_max_passes=3))
     runner = PipelineStageRunner(
         telemetry_port=NoOpTelemetryPort(),
         metrics_port=NoOpMetricsPort(),
@@ -987,3 +984,149 @@ def test_stage_execution_pass_context_and_boundary_contracts(
     assert observed_prompt_kwargs[1]["prev_pass_num"] == 1
     assert cand_two.metadata["passes_executed"] == 2
     assert cand_two.metadata["is_saturated"] is True
+
+
+def test_long_expander_reuses_stage_agnostic_build_refine_and_sentinel_stop(
+    sample_context: PipelineExecutionContext,
+    sample_fluid_transcript: StageTranscript,
+) -> None:
+    """Verify long_expander runs BUILD/REFINE + <NO_NEW_GAPS/> early exit via StageFactory."""
+    from cresmo.domain.value_objects import PromptKey
+    from cresmo.infrastructure.adapters.prompts import JsonPromptProvider
+
+    source_gap = StageTranscript(
+        channel=sample_fluid_transcript.channel,
+        provenance=sample_fluid_transcript.provenance,
+        content=Content(
+            id=sample_fluid_transcript.content.id,
+            title="Fundação de Portugal",
+            text=(
+                "## O Condado Portucalense\n\n"
+                "Prosa densa expandida na fase de preenchimento de lacunas.\n\n"
+                "### Extra Info\n\n"
+                "1. Em 1096 **Henrique de Borgonha** recebeu o Condado Portucalense."
+            ),
+        ),
+        pass_count=2,
+    )
+    pass1_long = (
+        "## Estruturas Fiscais e Continuidade Ibérica\n\n"
+        "O Condado Portucalense herdou estruturas municipais romanas e redes paroquiais suevas.\n\n"
+        "### Extra Info\n\n"
+        "1. Os forais de 1096 preservaram costumes fiscais leoneses e moçárabes."
+    )
+    pass2_long = (
+        "## Estruturas Fiscais e Continuidade Ibérica\n\n"
+        "O Condado Portucalense herdou estruturas municipais romanas, redes paroquiais suevas "
+        "e circuitos atlânticos anteriores às cruzadas.\n\n"
+        "### Extra Info\n\n"
+        "1. Os forais de 1096 preservaram costumes fiscais leoneses e moçárabes.\n"
+        "2. O porto do Porto integrava rotas marítimas desde a antiguidade tardia."
+    )
+
+    mock_llm = MagicMock(spec=LLMTransformationPort)
+    mock_llm.transform.side_effect = [pass1_long, pass2_long, "<NO_NEW_GAPS/>"]
+
+    stage_factory = StageFactory(settings=DefaultPipelineSettings(long_expander_max_passes=7))
+    long_descriptor: StageConfig[StageTranscript, StageTranscript] = stage_factory.build_stage(
+        "long_expander"
+    )
+    assert long_descriptor.max_passes == 7
+    assert long_descriptor.transform_prompt_key is PromptKey.LONG_EXPANDER
+
+    runner = PipelineStageRunner(
+        telemetry_port=NoOpTelemetryPort(),
+        metrics_port=NoOpMetricsPort(),
+        prompt_provider=JsonPromptProvider(),
+        llm_transformation_port=mock_llm,
+        stage_factory=stage_factory,
+    )
+
+    result: StageTranscript = runner.execute_stage(
+        "long_expander",
+        source=source_gap,
+        context=sample_context,
+    )
+
+    assert isinstance(result, StageTranscript)
+    assert mock_llm.transform.call_count == 3
+    assert result.pass_count == 3
+    assert "circuitos atlânticos" in result.content.text
+    assert "antiguidade tardia" in result.content.text
+    pass1_call_user = mock_llm.transform.call_args_list[0].kwargs["prompt"].get_last_user_content()
+    pass2_call_user = mock_llm.transform.call_args_list[1].kwargs["prompt"].get_last_user_content()
+    assert "<draft" not in pass1_call_user
+    assert '<draft pass="1">' in pass2_call_user
+
+
+def test_wide_expander_reuses_stage_agnostic_build_refine_and_sentinel_stop(
+    sample_context: PipelineExecutionContext,
+    sample_fluid_transcript: StageTranscript,
+) -> None:
+    """Verify wide_expander runs BUILD/REFINE + <NO_NEW_GAPS/> early exit via StageFactory."""
+    from cresmo.domain.value_objects import PromptKey
+    from cresmo.infrastructure.adapters.prompts import JsonPromptProvider
+
+    source_long = StageTranscript(
+        channel=sample_fluid_transcript.channel,
+        provenance=sample_fluid_transcript.provenance,
+        content=Content(
+            id=sample_fluid_transcript.content.id,
+            title="Crise do Século XVII",
+            text=(
+                "## Estruturas Fiscais de Longa Duração\n\n"
+                "Prosa densa expandida na fase longitudinal.\n\n"
+                "### Extra Info\n\n"
+                "1. Em 1640 a crise monetária ibérica coincidiu com retração agrária."
+            ),
+        ),
+        pass_count=3,
+    )
+    pass1_wide = (
+        "## Redes Sincrônicas da Prata e Paralelismos Agrários\n\n"
+        "A retração monetária de 1640 conectou Potosí, Sevilha e Cantão pela circulação de prata.\n\n"
+        "### Extra Info\n\n"
+        "1. O Galeão de Manila integrou os mercados hispânico e Ming entre 1571 e 1640."
+    )
+    pass2_wide = (
+        "## Redes Sincrônicas da Prata e Paralelismos Agrários\n\n"
+        "A retração monetária de 1640 conectou Potosí, Sevilha e Cantão pela circulação de prata, "
+        "enquanto Tokugawa restringiu o comércio externo no mesmo decênio.\n\n"
+        "### Extra Info\n\n"
+        "1. O Galeão de Manila integrou os mercados hispânico e Ming entre 1571 e 1640.\n"
+        "2. No Japão Tokugawa, o decreto Sakoku de 1639 coincidiu com reordenação fiscal autônoma."
+    )
+
+    mock_llm = MagicMock(spec=LLMTransformationPort)
+    mock_llm.transform.side_effect = [pass1_wide, pass2_wide, "<NO_NEW_GAPS/>"]
+
+    stage_factory = StageFactory(settings=DefaultPipelineSettings(expansion_max_passes=5))
+    wide_descriptor: StageConfig[StageTranscript, StageTranscript] = stage_factory.build_stage(
+        "wide_expander"
+    )
+    assert wide_descriptor.max_passes == 5
+    assert wide_descriptor.transform_prompt_key is PromptKey.WIDE_EXPANDER
+
+    runner = PipelineStageRunner(
+        telemetry_port=NoOpTelemetryPort(),
+        metrics_port=NoOpMetricsPort(),
+        prompt_provider=JsonPromptProvider(),
+        llm_transformation_port=mock_llm,
+        stage_factory=stage_factory,
+    )
+
+    result: StageTranscript = runner.execute_stage(
+        "wide_expander",
+        source=source_long,
+        context=sample_context,
+    )
+
+    assert isinstance(result, StageTranscript)
+    assert mock_llm.transform.call_count == 3
+    assert result.pass_count == 3
+    assert "Sakoku" in result.content.text
+    assert "Potosí" in result.content.text
+    pass1_call_user = mock_llm.transform.call_args_list[0].kwargs["prompt"].get_last_user_content()
+    pass2_call_user = mock_llm.transform.call_args_list[1].kwargs["prompt"].get_last_user_content()
+    assert "<draft" not in pass1_call_user
+    assert '<draft pass="1">' in pass2_call_user

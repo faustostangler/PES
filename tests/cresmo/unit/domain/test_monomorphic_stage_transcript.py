@@ -13,7 +13,7 @@ import datetime
 import pytest
 
 from cresmo.domain.entities import StageTranscript
-from cresmo.domain.exceptions import CompendiumStructureError
+from cresmo.domain.exceptions import StageTranscriptStructureError
 from cresmo.domain.value_objects import (
     Channel,
     ChannelId,
@@ -117,7 +117,7 @@ class TestADR057MonomorphicStageTranscript:
         provenance = MediaProvenance.create(url="https://example.com")
         content = Content(id=ContentId("cid1"), title="T", text="Valid body.")
 
-        with pytest.raises(CompendiumStructureError, match="pass_count must be at least 1"):
+        with pytest.raises(StageTranscriptStructureError, match="pass_count must be at least 1"):
             StageTranscript(
                 channel=channel,
                 provenance=provenance,
@@ -125,7 +125,7 @@ class TestADR057MonomorphicStageTranscript:
                 pass_count=0,
             )
 
-        with pytest.raises(CompendiumStructureError, match="pass_count must be an integer"):
+        with pytest.raises(StageTranscriptStructureError, match="pass_count must be an integer"):
             StageTranscript(
                 channel=channel,
                 provenance=provenance,

@@ -53,8 +53,8 @@ MODULE_TEST_MAP: dict[str, list[str]] = {
         "tests/cresmo/unit/domain/test_entities.py",
         "tests/cresmo/unit/domain/test_value_objects.py",
     ],
-    "src/cresmo/domain/services/compendium.py": [
-        "tests/cresmo/unit/domain/test_compendium.py",
+    "src/cresmo/domain/services/stage_post_processor.py": [
+        "tests/cresmo/unit/domain/test_stage_post_processor.py",
         "tests/cresmo/unit/domain/test_entities.py",
         "tests/cresmo/unit/domain/test_gap_filler_foundation.py",
     ],
@@ -153,9 +153,6 @@ MODULE_TEST_MAP: dict[str, list[str]] = {
     # Wave 3: Application Use Cases
     "src/cresmo/application/use_cases/concat_master.py": [
         "tests/cresmo/unit/application/test_concat_master_use_case.py",
-    ],
-    "src/cresmo/application/use_cases/expand_compendium.py": [
-        "tests/cresmo/unit/application/test_use_cases.py",
     ],
     "src/cresmo/application/use_cases/unify_duplicate_notes.py": [
         "tests/cresmo/unit/application/test_unify_duplicates.py",
@@ -515,7 +512,7 @@ WAVE_DEFINITIONS: dict[str, list[str]] = {
         "src/cresmo/domain/entities/transcripts.py",
         "src/cresmo/domain/entities/notes.py",
         "src/cresmo/domain/exceptions.py",
-        "src/cresmo/domain/services/compendium.py",
+        "src/cresmo/domain/services/stage_post_processor.py",
         "src/cresmo/domain/value_objects/identity.py",
         "src/cresmo/domain/value_objects/sync.py",
         "src/cresmo/domain/value_objects/prompt.py",
@@ -544,7 +541,6 @@ WAVE_DEFINITIONS: dict[str, list[str]] = {
     ],
     "use_cases": [
         "src/cresmo/application/use_cases/concat_master.py",
-        "src/cresmo/application/use_cases/expand_compendium.py",
         "src/cresmo/application/use_cases/unify_duplicate_notes.py",
         "src/cresmo/application/use_cases/discover_atomic_inventory.py",
         "src/cresmo/application/use_cases/discovery/discover_batch_sources.py",

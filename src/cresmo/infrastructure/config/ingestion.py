@@ -97,17 +97,20 @@ class IngestionSettings(BaseSettings):
             "expansion_max_passes",
             "CRESMO_EXPANSION_MAX_PASSES",
             "EXPANSION_MAX_PASSES",
-            "gap_filler_passes",
-            "CRESMO_GAP_FILLER_PASSES",
-            "GAP_FILLER_PASSES",
         ),
         description="Default multi-pass text expansion and refinement limit before mechanical saturation.",
     )
-
-    @property
-    def gap_filler_passes(self) -> int:
-        """Backward-compatible property alias for expansion_max_passes."""
-        return self.expansion_max_passes
+    long_expander_max_passes: int = Field(
+        default=7,
+        ge=1,
+        le=10,
+        validation_alias=AliasChoices(
+            "long_expander_max_passes",
+            "CRESMO_LONG_EXPANDER_MAX_PASSES",
+            "LONG_EXPANDER_MAX_PASSES",
+        ),
+        description="Multi-pass longitudinal expansion budget before mechanical saturation.",
+    )
 
     concat_max_words: int = Field(
         default=500_000,

@@ -5,7 +5,7 @@ Verifies:
 2. Zero KeyError on new or custom pipeline conveyor stages.
 3. Monomorphic canonical YAML frontmatter formatting with optional pass_count.
 4. Roundtrip serialization and deserialization across arbitrary stages.
-5. Backward-compatible delegation wrappers (save_transcript, save_fluid_transcript, save_enriched_compendium).
+5. Stage-specific transcript persistence roundtrips and expanded-stage header extraction.
 """
 
 from __future__ import annotations

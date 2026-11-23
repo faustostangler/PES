@@ -10,8 +10,8 @@ from __future__ import annotations
 
 from cresmo.domain.services.prose_syntax_guard import (
     extract_extra_info_section,
+    validate_expanded_prose_syntax,
     validate_fluid_prose_syntax,
-    validate_gap_filler_syntax,
 )
 
 
@@ -207,50 +207,73 @@ def test_extract_extra_info_section() -> None:
     assert extract_extra_info_section("## Body Only\n\nNo extra info section.") == ""
 
 
-def test_validate_gap_filler_syntax() -> None:
-    valid_gap_filler = (
+def test_validate_expanded_prose_syntax() -> None:
+    valid_expanded = (
         "## Main Title\n\n"
         "Introductory paragraph about the subject without lists or tables.\n\n"
         "### Extra Info\n\n"
         "1. Numbered contextual detail.\n\n"
         "2. Second detail referencing **Entity**."
     )
-    assert validate_gap_filler_syntax(valid_gap_filler) == []
+    assert validate_expanded_prose_syntax(valid_expanded) == []
 
     # Missing mandatory Extra Info section
     missing_comp = "## Main Title\n\nSingle paragraph."
-    violations = validate_gap_filler_syntax(missing_comp)
-    assert any("Missing mandatory complementary section" in v for v in violations)
+    assert validate_expanded_prose_syntax(missing_comp) == [
+        "Missing mandatory complementary section '### Extra Info'."
+    ]
+
+    # Missing Extra Info with forbidden main-body bullet
+    missing_with_bullet = "## Main Title\n\n* Bullet without extra info."
+    assert validate_expanded_prose_syntax(missing_with_bullet) == [
+        "Missing mandatory complementary section '### Extra Info'.",
+        "Main body must contain zero bullet points or list markers ('*', '-', '+').",
+    ]
 
     # Empty or whitespace text
-    assert validate_gap_filler_syntax("") == ["Text is empty or whitespace."]
-    assert validate_gap_filler_syntax("   \n\t ") == ["Text is empty or whitespace."]
+    assert validate_expanded_prose_syntax("") == ["Text is empty or whitespace."]
+    assert validate_expanded_prose_syntax("   \n\t ") == ["Text is empty or whitespace."]
 
     # Em-dash violation
-    em_dash_text = valid_gap_filler + " — with forbidden em-dash."
-    assert any("em-dashes" in v for v in validate_gap_filler_syntax(em_dash_text))
+    em_dash_text = valid_expanded + " — with forbidden em-dash."
+    assert validate_expanded_prose_syntax(em_dash_text) == [
+        "Text must contain zero em-dashes ('—'). Use commas or separate sentences."
+    ]
 
     # Empty Extra Info section
     empty_extra_info = "## Main Title\n\nValid body paragraph.\n\n### Extra Info\n\n   "
-    assert validate_gap_filler_syntax(empty_extra_info) != []
+    assert validate_expanded_prose_syntax(empty_extra_info) == [
+        "Section '### Extra Info' is empty."
+    ]
 
     # Main body violations (table, bullet, blockquote)
     table_in_body = "## Main Title\n\n| Col A | Col B |\n\n### Extra Info\n\n1. Detail."
-    assert any("table" in v.lower() for v in validate_gap_filler_syntax(table_in_body))
+    assert validate_expanded_prose_syntax(table_in_body) == [
+        "Main body must contain zero markdown table markers ('|')."
+    ]
 
     bullet_in_body = "## Main Title\n\n- Bullet item\n\n### Extra Info\n\n1. Detail."
-    assert any("bullet" in v.lower() for v in validate_gap_filler_syntax(bullet_in_body))
+    assert validate_expanded_prose_syntax(bullet_in_body) == [
+        "Main body must contain zero bullet points or list markers ('*', '-', '+')."
+    ]
 
     quote_in_body = "## Main Title\n\n> Quoted line\n\n### Extra Info\n\n1. Detail."
-    assert any("blockquote" in v.lower() for v in validate_gap_filler_syntax(quote_in_body))
+    assert validate_expanded_prose_syntax(quote_in_body) == [
+        "Main body must contain zero blockquotes ('>')."
+    ]
 
     # Bullet list inside Extra Info section
     bullet_in_extra = "## Main Title\n\nValid body paragraph.\n\n### Extra Info\n\n* Bullet detail."
-    assert any("bullet" in v.lower() for v in validate_gap_filler_syntax(bullet_in_extra))
+    assert validate_expanded_prose_syntax(bullet_in_extra) == [
+        (
+            "Complementary section must contain zero bullet points or list markers ('*', '-', '+'). "
+            "Use numbered continuous paragraphs ('1. ', '2. ')."
+        )
+    ]
 
     # Empty main body before Extra Info
     empty_main_body = "### Extra Info\n\n1. Orphan detail."
-    assert any(
-        "main body text before '### extra info' is empty" in v.lower()
-        for v in validate_gap_filler_syntax(empty_main_body)
-    )
+    assert validate_expanded_prose_syntax(empty_main_body) == [
+        "Line 1 must start with '## ' (found: '### Extra Info...')",
+        "Main body text before '### Extra Info' is empty.",
+    ]

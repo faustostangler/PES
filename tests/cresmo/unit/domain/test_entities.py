@@ -18,9 +18,9 @@ from cresmo.domain.entities import (
     post_process_fluid_transcript,
 )
 from cresmo.domain.exceptions import (
-    CompendiumStructureError,
     DomainValidationError,
     SelfReferentialRelationError,
+    StageTranscriptStructureError,
 )
 from cresmo.domain.value_objects import (
     CandidateText,
@@ -821,19 +821,19 @@ class TestPostProcessFluidTranscriptInvariantsAndRegex:
         st = self._make_source("c_err_1", "Default Title")
 
         with pytest.raises(
-            CompendiumStructureError,
+            StageTranscriptStructureError,
             match=r"^Generated fluid prose body is empty for 'c_err_1'\.$",
         ):
             post_process_fluid_transcript("# Only A Header\n", st)
 
         with pytest.raises(
-            CompendiumStructureError,
+            StageTranscriptStructureError,
             match=r"^Generated fluid prose body is empty for 'c_err_1'\.$",
         ):
             post_process_fluid_transcript("# Header\n\n### Extra Info\nExtra notes.", st)
 
         with pytest.raises(
-            CompendiumStructureError,
+            StageTranscriptStructureError,
             match=r"^Generated fluid prose body is empty for 'c_err_1'\.$",
         ):
             post_process_fluid_transcript("   \n   ", st)

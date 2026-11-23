@@ -92,7 +92,7 @@ class RunSynthesisRequest:
 
     url: str | None = None
     manifest: Path | None = None
-    passes: int = 3
+    passes: int | None = None
     batch_size: int | None = None
     dry_run: bool = False
     force_reprocess: bool = False
@@ -225,7 +225,7 @@ class RunSynthesisUseCase:
 
         result = pipeline.run_for_video(
             video_url=video_url,
-            gap_filler_passes=request.passes,
+            expansion_max_passes=request.passes,
             force_reprocess=request.force_reprocess,
         )
         content_id_str = result.content_id.value
@@ -545,14 +545,14 @@ class RunSynthesisUseCase:
                     return "skipped"
                 result = pipeline.run_for_text_file(
                     file_path=file_path,
-                    gap_filler_passes=request.passes,
+                    expansion_max_passes=request.passes,
                     force_reprocess=request.force_reprocess,
                     batch_id=batch_id,
                 )
             else:
                 result = pipeline.run_for_video(
                     video_url=source.target,
-                    gap_filler_passes=request.passes,
+                    expansion_max_passes=request.passes,
                     force_reprocess=request.force_reprocess,
                     batch_id=batch_id,
                 )

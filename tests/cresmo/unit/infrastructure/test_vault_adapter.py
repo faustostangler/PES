@@ -20,6 +20,7 @@ from cresmo.domain.entities import (
     MapOfContent,
     StageTranscript,
 )
+from cresmo.domain.stage_registry import StageName
 from cresmo.domain.value_objects import (
     CausalMatrix,
     Channel,
@@ -619,15 +620,17 @@ class TestObsidianVaultAdapter:
             master_dir=master_dir,
         )
 
-        # 1. Enriched files discovery
-        ch_dir = enriched_dir / "Fabio Akita"
+        # 1. Stage files discovery
+        ch_dir = raw_dir.parent / "wide_expander" / "Fabio Akita"
         ch_dir.mkdir(parents=True, exist_ok=True)
         f1 = ch_dir / "vid1.md"
         f2 = ch_dir / "vid2.md"
         f1.write_text("file 1", encoding="utf-8")
         f2.write_text("file 2", encoding="utf-8")
 
-        files = adapter.get_enriched_files_for_channel(ChannelName("Fabio Akita"))
+        files = adapter.get_stage_files_for_channel(
+            StageName.WIDE_EXPANDER, ChannelName("Fabio Akita")
+        )
         assert len(files) == 2
         assert f1 in files and f2 in files
 
@@ -1489,21 +1492,29 @@ Complementary data.
         assert retrieved2.content.title == "Explicit Title Only"
         assert "Body text here." in retrieved2.content.text
         assert "Complementary data." in retrieved2.content.text
+        # Legacy data/enriched/ fallback must NEVER masquerade as long_expander/wide_expander cache hits
+        assert adapter.get_stage_transcript(StageName.LONG_EXPANDER, cid2) is None
+        assert adapter.get_stage_transcript(StageName.WIDE_EXPANDER, cid2) is None
 
-    def test_get_enriched_files_for_channel_comprehensive_filtering(
+    def test_get_stage_files_for_channel_comprehensive_filtering(
         self, storage_paths: tuple[Path, Path, Path]
     ) -> None:
-        """Verify get_enriched_files_for_channel enforces existence, is_dir, and filename filters."""
+        """Verify get_stage_files_for_channel enforces existence, is_dir, and filename filters."""
         vault_dir, raw_dir, enriched_dir = storage_paths
+        wide_dir = raw_dir.parent / "wide_expander"
         adapter = ObsidianVaultAdapter(
             vault_dir=vault_dir, raw_dir=raw_dir, enriched_dir=enriched_dir
         )
 
         # 1. Non-existent channel directory returns empty list
-        assert adapter.get_enriched_files_for_channel(ChannelName("NonExistent")) == []
+        assert (
+            adapter.get_stage_files_for_channel(StageName.WIDE_EXPANDER, ChannelName("NonExistent"))
+            == []
+        )
 
         # 2. Channel path is a file, not a directory: returns empty list without calling glob
-        file_as_channel = enriched_dir / "FileChannel"
+        wide_dir.mkdir(parents=True, exist_ok=True)
+        file_as_channel = wide_dir / "FileChannel"
         file_as_channel.touch()
         orig_glob = Path.glob
 
@@ -1513,10 +1524,15 @@ Complementary data.
             return orig_glob(self_path, pattern)
 
         with patch.object(Path, "glob", guarded_glob):
-            assert adapter.get_enriched_files_for_channel(ChannelName("FileChannel")) == []
+            assert (
+                adapter.get_stage_files_for_channel(
+                    StageName.WIDE_EXPANDER, ChannelName("FileChannel")
+                )
+                == []
+            )
 
         # 3. Channel directory with mixed valid and invalid files
-        ch_dir = enriched_dir / "TestChannel"
+        ch_dir = wide_dir / "TestChannel"
         ch_dir.mkdir(parents=True, exist_ok=True)
         valid1 = ch_dir / "001_video.md"
         valid2 = ch_dir / "002_video.md"
@@ -1532,7 +1548,9 @@ Complementary data.
         ignored_hidden.write_text("hidden", encoding="utf-8")
         ignored_txt.write_text("txt", encoding="utf-8")
 
-        result = adapter.get_enriched_files_for_channel(ChannelName("TestChannel"))
+        result = adapter.get_stage_files_for_channel(
+            StageName.WIDE_EXPANDER, ChannelName("TestChannel")
+        )
         assert result == [valid1, valid2]
 
     def test_get_raw_transcript_empty_metadata_fallbacks(

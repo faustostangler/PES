@@ -9,9 +9,9 @@ Conforms to:
 from __future__ import annotations
 
 from cresmo.domain.entities.transcripts import StageTranscript
-from cresmo.domain.services.compendium import post_process_enriched_compendium
 from cresmo.domain.services.convergence_evaluator import evaluate_semantic_convergence
-from cresmo.domain.services.prose_syntax_guard import validate_gap_filler_syntax
+from cresmo.domain.services.prose_syntax_guard import validate_expanded_prose_syntax
+from cresmo.domain.services.stage_post_processor import post_process_expanded_transcript
 from cresmo.domain.stage_registry import StageRegistry
 from cresmo.domain.value_objects import (
     CandidateText,
@@ -68,21 +68,21 @@ def test_gap_filler_mechanical_invariants_valid() -> None:
         "tendo liderado contingentes cruzados no âmbito da Reconquista ibérica.\n"
         "2. A doação régia de 1096 estabeleceu laços de vassalagem estrita com a coroa leonesa."
     )
-    violations = validate_gap_filler_syntax(valid_text)
+    violations = validate_expanded_prose_syntax(valid_text)
     assert violations == []
 
 
 def test_gap_filler_mechanical_invariants_missing_complementary_section() -> None:
     """Verify missing '### Extra Info' triggers a mechanical violation."""
     invalid_text = "## O Surgimento de Portugal\n\nTexto corrido sem seção complementar alguma."
-    violations = validate_gap_filler_syntax(invalid_text)
+    violations = validate_expanded_prose_syntax(invalid_text)
     assert any("Extra Info" in v for v in violations)
 
 
 def test_gap_filler_mechanical_invariants_empty_complementary_section() -> None:
     """Verify empty complementary section triggers a mechanical violation."""
     invalid_text = "## O Surgimento de Portugal\n\nTexto corrido principal.\n\n### Extra Info\n"
-    violations = validate_gap_filler_syntax(invalid_text)
+    violations = validate_expanded_prose_syntax(invalid_text)
     assert any("empty" in v.lower() for v in violations)
 
 
@@ -91,18 +91,18 @@ def test_gap_filler_mechanical_invariants_prohibits_em_dash_and_tables() -> None
     text_with_em_dash = (
         "## Título\n\nO rei — figura central — viajou.\n\n### Extra Info\n\n1. Detalhes."
     )
-    assert any("em-dash" in v.lower() for v in validate_gap_filler_syntax(text_with_em_dash))
+    assert any("em-dash" in v.lower() for v in validate_expanded_prose_syntax(text_with_em_dash))
 
     text_with_table = (
         "## Título\n\n| Col1 | Col2 |\n| --- | --- |\n| A | B |\n\n### Extra Info\n\n1. Detalhes."
     )
-    assert any("table" in v.lower() for v in validate_gap_filler_syntax(text_with_table))
+    assert any("table" in v.lower() for v in validate_expanded_prose_syntax(text_with_table))
 
 
 def test_gap_filler_mechanical_invariants_prohibits_bullets_in_main_body() -> None:
     """Verify bullet points in main body are rejected by mechanical preflight."""
     text_with_bullets = "## Título\n\n* Item 1\n* Item 2\n\n### Extra Info\n\n1. Detalhes."
-    assert any("bullet" in v.lower() for v in validate_gap_filler_syntax(text_with_bullets))
+    assert any("bullet" in v.lower() for v in validate_expanded_prose_syntax(text_with_bullets))
 
 
 def test_semantic_convergence_plateau_detected() -> None:
@@ -147,8 +147,8 @@ def test_semantic_convergence_novel_content_detected_when_new_unit_added() -> No
     assert verdict.total_paragraphs == 2
 
 
-def test_post_process_enriched_compendium() -> None:
-    """Verify post_process_enriched_compendium maps StageTranscript triad to StageTranscript."""
+def test_post_process_expanded_transcript() -> None:
+    """Verify post_process_expanded_transcript maps StageTranscript triad to StageTranscript."""
     source_fluid = StageTranscript(
         channel=Channel(name="Canal História"),
         provenance=MediaProvenance.create(url="https://youtube.com/watch?v=vid_123"),
@@ -168,21 +168,27 @@ def test_post_process_enriched_compendium() -> None:
     )
 
     candidate = CandidateText(text=candidate_text, stage_name="gap_filler")
-    compendium = post_process_enriched_compendium(candidate, source_fluid)
+    expanded = post_process_expanded_transcript(candidate, source_fluid)
 
-    assert isinstance(compendium, StageTranscript)
-    assert compendium.content.id == ContentId("vid_123")
-    assert compendium.content.title == "Fundação de Portugal"
-    assert "### Extra Info" in compendium.content.text
-    assert "Afonso Henriques" in compendium.content.text
-    assert compendium.provenance.url == "https://youtube.com/watch?v=vid_123"
+    assert isinstance(expanded, StageTranscript)
+    assert expanded.content.id == ContentId("vid_123")
+    assert expanded.content.title == "Fundação de Portugal"
+    assert "### Extra Info" in expanded.content.text
+    assert "Afonso Henriques" in expanded.content.text
+    assert expanded.provenance.url == "https://youtube.com/watch?v=vid_123"
 
 
 def test_stage_registry_contains_gap_filler() -> None:
-    """Verify gap_filler is officially registered in StageRegistry."""
+    """Verify gap_filler and long_expander are officially registered in StageRegistry."""
     assert StageRegistry.contains("gap_filler") is True
     spec = StageRegistry.get("gap_filler")
     assert spec.transform_prompt_key == PromptKey.GAP_FILLER
+
+    assert StageRegistry.contains("long_expander") is True
+    long_spec = StageRegistry.get("long_expander")
+    assert long_spec.transform_prompt_key == PromptKey.LONG_EXPANDER
+    assert long_spec.judge_prompt_key == PromptKey.JUDGE_LONG_EXPANDER
+    assert long_spec.max_passes == 7
     assert len(spec.required_criteria) == 7
     assert JudgeCriterion.EPISTEMIC_GROUNDING_SEGREGATION in spec.required_criteria
     assert JudgeCriterion.CONCEPTUAL_MECHANICAL_DECOMPOSITION in spec.required_criteria

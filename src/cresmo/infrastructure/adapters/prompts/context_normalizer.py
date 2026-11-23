@@ -25,7 +25,7 @@ class PromptVariableSchema:
     key: PromptKey
     aliases: Mapping[str, tuple[str, ...]]
     include_language: bool = False
-    gap_filler_draft: bool = False
+    iterative_draft: bool = False
 
 
 PROMPT_VARIABLE_SCHEMAS: Mapping[PromptKey, PromptVariableSchema] = {
@@ -45,7 +45,7 @@ PROMPT_VARIABLE_SCHEMAS: Mapping[PromptKey, PromptVariableSchema] = {
             "source_text": ("source_text", "raw_text"),
         },
         include_language=True,
-        gap_filler_draft=True,
+        iterative_draft=True,
     ),
     PromptKey.JUDGE_GAP_FILLER: PromptVariableSchema(
         key=PromptKey.JUDGE_GAP_FILLER,
@@ -57,14 +57,29 @@ PROMPT_VARIABLE_SCHEMAS: Mapping[PromptKey, PromptVariableSchema] = {
     ),
     PromptKey.LONG_EXPANDER: PromptVariableSchema(
         key=PromptKey.LONG_EXPANDER,
+        aliases={
+            "raw_text": ("raw_text", "source_text"),
+            "source_text": ("source_text", "raw_text"),
+        },
+        include_language=True,
+        iterative_draft=True,
+    ),
+    PromptKey.JUDGE_LONG_EXPANDER: PromptVariableSchema(
+        key=PromptKey.JUDGE_LONG_EXPANDER,
         aliases={},
     ),
     PromptKey.WIDE_EXPANDER: PromptVariableSchema(
         key=PromptKey.WIDE_EXPANDER,
         aliases={
-            "current_text": ("current_text", "text"),
-            "text": ("text", "current_text"),
+            "raw_text": ("raw_text", "source_text"),
+            "source_text": ("source_text", "raw_text"),
         },
+        include_language=True,
+        iterative_draft=True,
+    ),
+    PromptKey.JUDGE_WIDE_EXPANDER: PromptVariableSchema(
+        key=PromptKey.JUDGE_WIDE_EXPANDER,
+        aliases={},
     ),
     PromptKey.RAW_INDEX_SUMMARY: PromptVariableSchema(
         key=PromptKey.RAW_INDEX_SUMMARY,
@@ -168,7 +183,7 @@ def normalize_prompt_context(
         raw_lang = normalized.get("language", "").strip()
         normalized["language"] = raw_lang if raw_lang else default_language
 
-    if schema.gap_filler_draft:
+    if schema.iterative_draft:
         raw_pass = context.get("pass_num")
         try:
             pass_num = int(raw_pass) if raw_pass is not None else 1

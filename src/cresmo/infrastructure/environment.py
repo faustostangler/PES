@@ -13,6 +13,8 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any, Protocol, runtime_checkable
 
+from cresmo.domain.stage_registry import StageName
+
 __all__ = [
     "StorageSettingsProtocol",
     "discover_cookies_file",
@@ -88,6 +90,7 @@ def ensure_runtime_directories(
         storage.enriched_dir,
         storage.master_dir,
         storage.priority_texts_dir,
+        *(storage.data_dir / stage.value for stage in StageName),
     ):
         directory.mkdir(parents=True, exist_ok=True)
 

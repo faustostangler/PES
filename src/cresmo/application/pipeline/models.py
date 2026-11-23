@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from collections.abc import Mapping
+from dataclasses import dataclass, field
+from types import MappingProxyType
 from typing import Any
 
 from cresmo.application.ports import (
@@ -20,6 +22,7 @@ from cresmo.domain.entities import (
     MapOfContent,
     StageTranscript,
 )
+from cresmo.domain.stage_registry import StageName
 from cresmo.domain.value_objects import (
     AtomicEntityInventory,
     ChannelId,
@@ -72,7 +75,8 @@ class PipelineResult:
         reconciled_mocs: Tuple of MapOfContent aggregates updated or created.
         source_transcript: Optional StageTranscript aggregate root from raw ingestion.
         index_entry: Optional RawIndexEntry catalog projection from raw indexing.
-        compendium: Optional StageTranscript aggregate root from fluid prose & expansion.
+        stage_artifacts: Read-only mapping of conveyor StageName to StageTranscript output.
+        final_transcript: Terminal conveyor StageTranscript output.
         inventory: Optional AtomicEntityInventory value object from inventory discovery.
         dedup_report: Optional DeduplicationReport execution summary from duplicate unification.
         duplicates_unified: Total count of duplicate notes consolidated during duplicate unification.
@@ -85,11 +89,15 @@ class PipelineResult:
     synthesized_notes: tuple[AtomicNote, ...] = ()
     reconciled_mocs: tuple[MapOfContent, ...] = ()
     source_transcript: StageTranscript | None = None
-    fluid_transcript: StageTranscript | None = None
     index_entry: RawIndexEntry | None = None
-    compendium: StageTranscript | None = None
+    stage_artifacts: Mapping[StageName, StageTranscript] = field(default_factory=dict)
+    final_transcript: StageTranscript | None = None
     inventory: AtomicEntityInventory | None = None
     dedup_report: DeduplicationReport | None = None
     duplicates_unified: int = 0
     already_processed: bool = False
     error_message: str | None = None
+
+    def __post_init__(self) -> None:
+        """Freeze stage_artifacts mapping to preserve PipelineResult immutability."""
+        object.__setattr__(self, "stage_artifacts", MappingProxyType(dict(self.stage_artifacts)))

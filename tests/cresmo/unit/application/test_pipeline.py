@@ -158,8 +158,8 @@ class TestCresmoPipelineOrchestration:
         assert result.source_transcript is canned_raw
         assert result.index_entry is not None
         assert result.index_entry.video_id == cid
-        assert result.compendium is not None
-        assert result.compendium.content_id == cid
+        assert result.final_transcript is not None
+        assert result.final_transcript.content_id == cid
         assert result.inventory is not None
         assert len(result.inventory.items) == 1
         assert result.dedup_report is not None
@@ -199,13 +199,16 @@ class TestCresmoPipelineOrchestration:
             "https://youtube.com/watch?v=vid_stage1_iso"
         )
 
+        from cresmo.domain.stage_registry import StageName
+
         assert result.success is True
         assert result.content_id == cid
         assert result.source_transcript is canned_source
-        assert result.fluid_transcript is not None
-        assert isinstance(result.fluid_transcript, StageTranscript)
-        assert result.fluid_transcript.content.id == cid
-        assert "A teoria da circulação das elites postula" in result.fluid_transcript.content.text
+        fluid_res = result.stage_artifacts.get(StageName.FLUID_PROSE)
+        assert fluid_res is not None
+        assert isinstance(fluid_res, StageTranscript)
+        assert fluid_res.content.id == cid
+        assert "A teoria da circulação das elites postula" in fluid_res.content.text
 
     def test_run_for_video_ingestion_failure_raises_domain_error(self) -> None:
         mock_llm = SmartMockLLMAdapter()
@@ -670,7 +673,7 @@ class TestCresmoPipelineOrchestration:
     @pytest.mark.skip(
         reason="Downstream stages 2-8 quarantined pending StageConfig refactoring per ADR-031"
     )
-    def test_run_for_video_gap_filler_passes_and_idempotency_attributes(self) -> None:
+    def test_run_for_video_expansion_passes_and_idempotency_attributes(self) -> None:
         cid = ContentId("videoPassTest1")
         canned_raw = StageTranscript(
             content_id=cid,
@@ -686,9 +689,9 @@ class TestCresmoPipelineOrchestration:
             ledger_port=ledger,
         )
 
-        # Explicit gap_filler_passes = 2 (fluid prose sets passes=2, expansion increments to 3)
+        # Explicit expansion_max_passes = 2 (fluid prose sets passes=2, expansion increments to 3)
         res = pipeline.run_for_video(
-            "https://youtube.com/watch?v=videoPassTest1", gap_filler_passes=2
+            "https://youtube.com/watch?v=videoPassTest1", expansion_max_passes=2
         )
         assert res.success is True
         comp = vault.get_stage_transcript("gap_filler", cid)
@@ -764,7 +767,7 @@ class TestCresmoPipelineOrchestration:
             ledger_port=ledger,
         )
 
-        res = pipeline.run_for_text_file(text_file, gap_filler_passes=4)
+        res = pipeline.run_for_text_file(text_file, expansion_max_passes=4)
         assert res.success is True
         comp = vault.get_stage_transcript("gap_filler", res.content_id)
         assert comp is not None
@@ -864,8 +867,8 @@ class TestCresmoPipelineOrchestration:
             ledger_port=ledger,
         )
 
-        # Run with gap_filler_passes = 2 (fluid prose sets passes=2, expansion increments to 3)
-        results = pipeline.run_for_manifest(manifest, gap_filler_passes=2)
+        # Run with expansion_max_passes = 2 (fluid prose sets passes=2, expansion increments to 3)
+        results = pipeline.run_for_manifest(manifest, expansion_max_passes=2)
         assert len(results) == 1
         assert results[0].success is True
         comp = vault.get_stage_transcript("gap_filler", cid)
@@ -968,9 +971,11 @@ class TestCresmoPipelineOrchestration:
             raise RuntimeError("Disk write failed during raw indexing")
 
         pipeline.index_raw.execute = failing_index_execute  # type: ignore[assignment,method-assign]
+        from cresmo.domain.stage_registry import StageName
+
         res = pipeline.execute(raw=canned_raw)
 
         assert res.success is True
         assert res.index_entry is None
-        assert res.fluid_transcript is not None
-        assert res.compendium is not None
+        assert res.stage_artifacts[StageName.FLUID_PROSE] is not None
+        assert res.final_transcript is not None

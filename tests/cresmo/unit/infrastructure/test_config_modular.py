@@ -304,6 +304,7 @@ class TestTelemetrySettings:
     def test_git_sha_langfuse_base_url_and_logging_overrides(
         self, monkeypatch: pytest.MonkeyPatch
     ) -> None:
+        monkeypatch.delenv("LANGFUSE_HOST", raising=False)
         monkeypatch.setenv("GIT_SHA", "deadbeef99")
         monkeypatch.setenv("LANGFUSE_BASE_URL", "https://langfuse.internal")
         monkeypatch.setenv("CRESMO_LOG_LEVEL", "DEBUG")
@@ -369,17 +370,22 @@ class TestIngestionSettings:
         assert explicit.subtitle_workers == 7
         assert explicit.channel_discovery_workers == 11
 
-    def test_expansion_max_passes_bounds_and_gap_filler_passes_property(self) -> None:
-        low = IngestionSettings(_env_file=None, expansion_max_passes=1)
-        high = IngestionSettings(_env_file=None, expansion_max_passes=10)
+    def test_expansion_and_long_expander_max_passes_bounds(self) -> None:
+        low = IngestionSettings(_env_file=None, expansion_max_passes=1, long_expander_max_passes=1)
+        high = IngestionSettings(
+            _env_file=None, expansion_max_passes=10, long_expander_max_passes=10
+        )
         assert low.expansion_max_passes == 1
-        assert low.gap_filler_passes == 1
+        assert low.long_expander_max_passes == 1
         assert high.expansion_max_passes == 10
-        assert high.gap_filler_passes == 10
+        assert high.long_expander_max_passes == 10
+        assert IngestionSettings(_env_file=None).long_expander_max_passes == 7
 
         for bad_passes in (0, 11):
             with pytest.raises(ValidationError):
                 IngestionSettings.model_validate({"expansion_max_passes": bad_passes})
+            with pytest.raises(ValidationError):
+                IngestionSettings.model_validate({"long_expander_max_passes": bad_passes})
 
     def test_discovery_queue_maxsize_lower_bound(self) -> None:
         valid = IngestionSettings(_env_file=None, discovery_queue_maxsize=1)
@@ -547,6 +553,7 @@ class TestFlatEnvLoadingAndSharedResolution:
             "CRESMO_OLLAMA_MODEL",
             "GEMINI_THINKING_LEVEL",
             "CRESMO_PIPELINE_VERSION",
+            "LANGFUSE_HOST",
             "LANGFUSE_BASE_URL",
             "GIT_SHA",
             "DATA_DIR",

@@ -84,6 +84,34 @@ def _valid_gap_filler_markdown() -> str:
     )
 
 
+def _valid_long_expander_markdown() -> str:
+    return (
+        "## Inércia Fiscal Multissecular e Soberania Monetária\n\n"
+        "A consolidação dos bancos centrais decorreu de restrições fiscais e ciclos creditícios "
+        "acumulados desde as repúblicas mercantis italianas e as bolsas de Antuérpia e Amsterdã.\n\n"
+        "Ao longo dos séculos, o controle parlamentar da dívida pública transformou tributos de guerra "
+        "temporários em infraestrutura estatal permanente.\n\n"
+        "### Extra Info\n\n"
+        "1. O Banco de Amsterdã em 1609 padronizou compensações cambiais em moeda bancária.\n"
+        "2. O estatuto de 1694 instituiu o Banco da Inglaterra mediante subscrição de títulos de dívida."
+    )
+
+
+def _valid_wide_expander_markdown() -> str:
+    return (
+        "## Sincronias Cambiais Globais e Regimes Fiscais Paralelos\n\n"
+        "Na mesma conjuntura seiscentista em que Amsterdã e Londres estruturavam bancos públicos de "
+        "emissão, o escoamento de prata de Potosí articulava praças europeias, rotas transpacíficas "
+        "pelo Galeão de Manila e reformas tributárias na dinastia Ming.\n\n"
+        "Simultaneamente, formações políticas sem contato cambial direto responderam a choques "
+        "climáticos e fiscais semelhantes mediante centralização de reservas metálicas e estatutos "
+        "alfandegários próprios.\n\n"
+        "### Extra Info\n\n"
+        "1. A Reforma do Chicote Único consolidou tributos em prata na China Ming no século XVI.\n"
+        "2. O shogunato Tokugawa padronizou a cunhagem e o controle comercial em Nagasaki em 1639."
+    )
+
+
 def test_sqlite_vault_taxonomy_pipeline_roundtrip_and_idempotency(tmp_path: Path) -> None:
     """Verify real SQLite ledger, Obsidian vault, taxonomy, prompts, and pipeline conveyor."""
     data_dir = tmp_path / "data"
@@ -109,6 +137,8 @@ def test_sqlite_vault_taxonomy_pipeline_roundtrip_and_idempotency(tmp_path: Path
         responses=[
             _valid_fluid_prose_markdown(),
             _valid_gap_filler_markdown(),
+            _valid_long_expander_markdown(),
+            _valid_wide_expander_markdown(),
         ]
     )
     stage_runner = PipelineStageRunner(
@@ -138,23 +168,33 @@ def test_sqlite_vault_taxonomy_pipeline_roundtrip_and_idempotency(tmp_path: Path
         encoding="utf-8",
     )
 
-    first_result = pipeline.run_for_text_file(raw_input, gap_filler_passes=1)
+    first_result = pipeline.run_for_text_file(raw_input, expansion_max_passes=1)
 
     assert first_result.success is True
     assert not first_result.already_processed
     assert first_result.source_transcript is not None
     assert first_result.source_transcript.channel.name == "ancapsu"
     assert first_result.source_transcript.channel.category != "uncategorized"
-    assert len(llm_adapter.call_history) == 2
+    assert len(llm_adapter.call_history) == 4
 
     saved_fluid = vault_adapter.get_stage_transcript(StageName.FLUID_PROSE, first_result.content_id)
     saved_gap_filler = vault_adapter.get_stage_transcript(
         StageName.GAP_FILLER, first_result.content_id
     )
+    saved_long_expander = vault_adapter.get_stage_transcript(
+        StageName.LONG_EXPANDER, first_result.content_id
+    )
+    saved_wide_expander = vault_adapter.get_stage_transcript(
+        StageName.WIDE_EXPANDER, first_result.content_id
+    )
     assert saved_fluid is not None
     assert saved_gap_filler is not None
+    assert saved_long_expander is not None
+    assert saved_wide_expander is not None
     assert (data_dir / "fluid_prose" / "ancapsu" / "abc123xyz00.md").exists()
     assert (data_dir / "gap_filler" / "ancapsu" / "abc123xyz00.md").exists()
+    assert (data_dir / "long_expander" / "ancapsu" / "abc123xyz00.md").exists()
+    assert (data_dir / "wide_expander" / "ancapsu" / "abc123xyz00.md").exists()
 
     # Mark completion in real SQLite ledger and verify idempotent short-circuit reads Vault artifact
     ledger_adapter.save_entry(
@@ -168,10 +208,10 @@ def test_sqlite_vault_taxonomy_pipeline_roundtrip_and_idempotency(tmp_path: Path
         )
     )
 
-    second_result = pipeline.run_for_text_file(raw_input, gap_filler_passes=1)
+    second_result = pipeline.run_for_text_file(raw_input, expansion_max_passes=1)
 
     assert second_result.success is True
     assert second_result.already_processed is True
-    assert second_result.compendium is not None
-    assert "### Extra Info" in second_result.compendium.content.text
-    assert len(llm_adapter.call_history) == 2
+    assert second_result.final_transcript is not None
+    assert "### Extra Info" in second_result.final_transcript.content.text
+    assert len(llm_adapter.call_history) == 4

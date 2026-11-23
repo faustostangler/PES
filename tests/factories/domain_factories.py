@@ -108,8 +108,8 @@ class SourceTranscriptFactory(DataclassFactory[StageTranscript]):
         return ContentFactory.build()
 
 
-class EnrichedCompendiumFactory(DataclassFactory[StageTranscript]):
-    """Polyfactory generating valid StageTranscript aggregates honoring all invariants.
+class ExpandedTranscriptFactory(DataclassFactory[StageTranscript]):
+    """Polyfactory generating valid expanded StageTranscript aggregates honoring invariants.
 
     Invariants enforced:
     - Non-empty fluid prose body without markdown tables.

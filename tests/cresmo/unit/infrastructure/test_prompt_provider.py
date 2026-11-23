@@ -20,7 +20,7 @@ def _write_custom_prompt_bundle(
     root: Path,
     overrides: dict[str, dict[str, object]],
 ) -> Path:
-    """Write a complete 18-key manifest JSON and sibling `prompts/<key>/{system,user}.md`."""
+    """Write a complete manifest JSON and sibling `prompts/<key>/{system,user}.md`."""
     bundled = load_prompt_catalog()
     prompts_dir = root / "prompts"
     prompts_dir.mkdir(parents=True, exist_ok=True)
@@ -65,6 +65,8 @@ class TestJsonPromptProvider:
             "atomic_batch",
             "reconcile_mocs",
             "judge_gap_filler",
+            "judge_long_expander",
+            "judge_wide_expander",
         ):
             assert key in provider.templates
 
@@ -136,25 +138,39 @@ class TestJsonPromptProvider:
 
         long_prompt = provider.get_prompt(
             PromptKey.LONG_EXPANDER,
-            compendium_body="Main body text.",
-            complementary_info="Supplementary info.",
+            source_text="Gap-filled baseline text.",
+            pass_num=2,
+            current_text="Longitudinal draft pass 1.",
         )
         long_s = long_prompt.system_prompt or ""
         long_p = long_prompt.get_last_user_content()
-        assert "Main body text." in long_p
-        assert "Supplementary info." in long_p
+        assert "Gap-filled baseline text." in long_p
+        assert '<draft pass="1">\nLongitudinal draft pass 1.\n</draft>' in long_p
+        assert "Cresmo Style Guide:\n" in long_s
+        assert "cresmo-long-expander:\n" in long_s
+        assert "voz autoral do narrador naturalista" in long_s
+        assert "BUILD vs. REFINE" in long_s
+        assert "<NO_NEW_GAPS/>" in long_s
         assert "Fernand Braudel" in long_s
-        assert long_s.startswith(provider.catalog[PromptKey.LONG_EXPANDER].description)
 
         wide_prompt = provider.get_prompt(
             PromptKey.WIDE_EXPANDER,
-            current_text="Longitudinally expanded text.",
+            source_text="Longitudinally expanded text.",
+            pass_num=2,
+            current_text="Wide draft pass 1.",
         )
         wide_s = wide_prompt.system_prompt or ""
         wide_p = wide_prompt.get_last_user_content()
         assert "Longitudinally expanded text." in wide_p
-        assert "Karl Jaspers" in wide_s
-        assert wide_s.startswith(provider.catalog[PromptKey.WIDE_EXPANDER].description)
+        assert '<draft pass="1">\nWide draft pass 1.\n</draft>' in wide_p
+        assert "Cresmo Style Guide:\n" in wide_s
+        assert "cresmo-wide-expander:\n" in wide_s
+        assert "voz autoral do narrador naturalista" in wide_s
+        assert "BUILD vs. REFINE" in wide_s
+        assert "<NO_NEW_GAPS/>" in wide_s
+        assert "Synchrony & Connectivity" in wide_s
+        assert "Parallelism & Analogy" in wide_s
+        assert wide_s.startswith("You are the Wide Expander agent within the Cresmo ecosystem.")
 
     def test_inventory_and_batch_notes_and_mocs_prompts(self) -> None:
         provider = JsonPromptProvider()
@@ -314,3 +330,36 @@ class TestJsonPromptProvider:
         chat = provider.get_prompt(PromptKey.FLUID_PROSE, raw_text="Hello")
         assert chat.system_prompt == "Custom System Custom Skill Doc"
         assert chat.get_last_user_content() == "Custom User Hello"
+
+
+def test_noop_prompt_provider_supports_expander_and_judge_keys() -> None:
+    """Verify NoOpPromptProviderPort binds unified raw/current variables and all stage judge keys."""
+    from cresmo.application.ports.prompt import NoOpPromptProviderPort
+
+    noop = NoOpPromptProviderPort()
+    for key in (PromptKey.LONG_EXPANDER, PromptKey.WIDE_EXPANDER):
+        prompt = noop.get_prompt(
+            key,
+            source_text="Unified source prose.",
+            pass_num=2,
+            total_passes=5,
+            current_text="Draft pass 1.",
+            channel_name="TestChan",
+        )
+        user_msg = prompt.get_last_user_content()
+        assert "Unified source prose." in user_msg
+        assert "Draft pass 1." in user_msg
+
+    for judge_key in (
+        PromptKey.JUDGE_GAP_FILLER,
+        PromptKey.JUDGE_LONG_EXPANDER,
+        PromptKey.JUDGE_WIDE_EXPANDER,
+    ):
+        judge_prompt = noop.get_prompt(
+            judge_key,
+            stage_name=judge_key.value.removeprefix("judge_"),
+            criteria_json='["extra_info_granularity"]',
+            source_text="Source",
+            candidate_text="Candidate",
+        )
+        assert "Candidate" in judge_prompt.get_last_user_content()

@@ -145,7 +145,7 @@ class TestConcatMasterCommand:
 
             captured = capsys.readouterr()
             expected_output = (
-                "Consolidating master documents across all channels in enriched/...\n"
+                "Consolidating master documents across all channels in wide_expander/...\n"
                 "\nMaster Consolidation Summary:\n"
                 "- Total Channels Processed: 2\n"
                 "- Master Documents Generated: 3\n"
@@ -175,7 +175,7 @@ class TestConcatMasterCommand:
 
             captured = capsys.readouterr()
             assert captured.out == (
-                "Consolidating master documents across all channels in enriched/...\n"
+                "Consolidating master documents across all channels in wide_expander/...\n"
                 "No enriched channel directories found to consolidate.\n"
             )
             assert captured.err == ""

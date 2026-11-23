@@ -72,6 +72,35 @@ def test_stage_registry_gap_filler_spec() -> None:
     assert fluid_spec.convergence_mode is ConvergenceMode.NONE
 
 
+def test_stage_registry_long_expander_spec() -> None:
+    """Verify StageRegistry configures long_expander with 7 max_passes and 5 criteria."""
+    assert StageRegistry.contains("long_expander") is True
+    spec = StageRegistry.get("long_expander")
+    assert spec.max_passes == 7
+    assert spec.convergence_mode is ConvergenceMode.HYBRID_SEMANTIC
+    assert JudgeCriterion.LONGUE_DUREE_STRATIFICATION in spec.required_criteria
+    assert JudgeCriterion.EMPIRICAL_HISTORICAL_GROUNDING in spec.required_criteria
+    assert JudgeCriterion.HISTORICAL_PALIMPSEST in spec.required_criteria
+    assert JudgeCriterion.EXTRA_INFO_GRANULARITY in spec.required_criteria
+    assert JudgeCriterion.IMPLICIT_FRAMING_STYLE in spec.required_criteria
+    assert spec.eval_metadata["weights"][JudgeCriterion.LONGUE_DUREE_STRATIFICATION.value] == 0.35
+
+
+def test_stage_registry_wide_expander_spec() -> None:
+    """Verify StageRegistry configures wide_expander with 5 max_passes and 5 criteria."""
+    assert StageRegistry.contains("wide_expander") is True
+    spec = StageRegistry.get("wide_expander")
+    assert spec.max_passes == 5
+    assert spec.convergence_mode is ConvergenceMode.HYBRID_SEMANTIC
+    assert JudgeCriterion.SYNCHRONIC_CONNECTIVITY in spec.required_criteria
+    assert JudgeCriterion.COMPARATIVE_PARALLELISM in spec.required_criteria
+    assert JudgeCriterion.EMPIRICAL_HISTORICAL_GROUNDING in spec.required_criteria
+    assert JudgeCriterion.EXTRA_INFO_GRANULARITY in spec.required_criteria
+    assert JudgeCriterion.IMPLICIT_FRAMING_STYLE in spec.required_criteria
+    assert spec.eval_metadata["weights"][JudgeCriterion.SYNCHRONIC_CONNECTIVITY.value] == 0.30
+    assert spec.eval_metadata["weights"][JudgeCriterion.COMPARATIVE_PARALLELISM.value] == 0.30
+
+
 def test_stage_registry_unknown_stage_raises_key_error() -> None:
     """Verify requesting an unregistered stage raises KeyError with helpful message."""
     assert StageRegistry.contains("unknown_stage") is False

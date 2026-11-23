@@ -63,7 +63,7 @@ class SessionTelemetrySpec:
     source: str = "transcript"
     raw_characters: int = 0
     raw_words: int = 0
-    gap_filler_passes: int = 1
+    expansion_max_passes: int | None = None
     force_reprocess: bool = False
     batch_id: str | None = None
     video_url: str | None = None
@@ -77,8 +77,10 @@ class SessionTelemetrySpec:
             raise ValueError("raw_characters must be >= 0")
         if isinstance(self.raw_words, bool) or self.raw_words < 0:
             raise ValueError("raw_words must be >= 0")
-        if isinstance(self.gap_filler_passes, bool) or self.gap_filler_passes < 1:
-            raise ValueError("gap_filler_passes must be >= 1")
+        if self.expansion_max_passes is not None and (
+            isinstance(self.expansion_max_passes, bool) or self.expansion_max_passes < 1
+        ):
+            raise ValueError("expansion_max_passes must be >= 1 when provided")
         object.__setattr__(self, "extra_metadata", MappingProxyType(dict(self.extra_metadata)))
 
 

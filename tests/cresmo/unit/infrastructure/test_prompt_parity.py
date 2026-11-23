@@ -46,10 +46,27 @@ SAMPLE_CONTEXTS: dict[PromptKey, dict[str, Any]] = {
         "criteria_failures": "orality_removal",
     },
     PromptKey.LONG_EXPANDER: {
-        "compendium_body": "Body",
-        "complementary_info": "Extra",
+        "source_text": "Gap filled draft",
+        "pass_num": 2,
+        "current_text": "Long pass 1",
     },
-    PromptKey.WIDE_EXPANDER: {"current_text": "Longitudinal draft"},
+    PromptKey.JUDGE_LONG_EXPANDER: {
+        "stage_name": "long_expander",
+        "criteria_json": '["longue_duree_stratification"]',
+        "source_text": "Gap filled draft",
+        "candidate_text": "Longitudinally expanded draft",
+    },
+    PromptKey.WIDE_EXPANDER: {
+        "source_text": "Longitudinally expanded draft",
+        "pass_num": 2,
+        "current_text": "Wide pass 1",
+    },
+    PromptKey.JUDGE_WIDE_EXPANDER: {
+        "stage_name": "wide_expander",
+        "criteria_json": '["synchronic_connectivity"]',
+        "source_text": "Longitudinally expanded draft",
+        "candidate_text": "Horizontally expanded draft",
+    },
     PromptKey.RAW_INDEX_SUMMARY: {
         "content_title": "Video 1",
         "transcript_excerpt": "Excerpt 1",

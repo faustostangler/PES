@@ -111,3 +111,39 @@ def test_short_circuits_gap_filler_and_delegates_unmapped_stage() -> None:
     )
     assert decorator.evaluate(other_context) == expected_eval
     mock_inner_judge.evaluate.assert_called_once_with(other_context)
+
+
+def test_short_circuits_long_expander_mechanical_invariants() -> None:
+    mock_inner_judge = MagicMock(spec=LlmJudgePort)
+    decorator = MechanicalPreflightJudgeDecorator(inner_judge=mock_inner_judge)
+
+    long_context = EvaluationContext(
+        stage_name="long_expander",
+        raw_text="Gap-filled source...",
+        candidate_text="## Título\n\nCorpo sem seção complementar.",
+        required_criteria=(JudgeCriterion.EXTRA_INFO_GRANULARITY,),
+    )
+    evaluation = decorator.evaluate(long_context)
+
+    mock_inner_judge.evaluate.assert_not_called()
+    assert evaluation.passed is False
+    assert evaluation.criteria_scores[0].criterion is JudgeCriterion.EXTRA_INFO_GRANULARITY
+    assert "### Extra Info" in evaluation.criteria_scores[0].reasoning
+
+
+def test_short_circuits_wide_expander_mechanical_invariants() -> None:
+    mock_inner_judge = MagicMock(spec=LlmJudgePort)
+    decorator = MechanicalPreflightJudgeDecorator(inner_judge=mock_inner_judge)
+
+    wide_context = EvaluationContext(
+        stage_name="wide_expander",
+        raw_text="Longitudinally expanded source...",
+        candidate_text="## Título\n\nCorpo sem seção complementar.",
+        required_criteria=(JudgeCriterion.EXTRA_INFO_GRANULARITY,),
+    )
+    evaluation = decorator.evaluate(wide_context)
+
+    mock_inner_judge.evaluate.assert_not_called()
+    assert evaluation.passed is False
+    assert evaluation.criteria_scores[0].criterion is JudgeCriterion.EXTRA_INFO_GRANULARITY
+    assert "### Extra Info" in evaluation.criteria_scores[0].reasoning

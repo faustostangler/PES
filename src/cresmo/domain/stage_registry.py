@@ -8,8 +8,17 @@ from enum import StrEnum
 from typing import Any, ClassVar
 
 from cresmo.domain.entities import post_process_fluid_transcript
-from cresmo.domain.services.compendium import post_process_enriched_compendium
-from cresmo.domain.value_objects import JudgeCriterion, PromptKey
+from cresmo.domain.services.stage_post_processor import post_process_expanded_transcript
+from cresmo.domain.value_objects import (
+    GAP_FILLER_CANONICAL_WEIGHTS,
+    GAP_FILLER_MECHANICAL_VETO_CRITERIA,
+    LONG_EXPANDER_CANONICAL_WEIGHTS,
+    LONG_EXPANDER_MECHANICAL_VETO_CRITERIA,
+    WIDE_EXPANDER_CANONICAL_WEIGHTS,
+    WIDE_EXPANDER_MECHANICAL_VETO_CRITERIA,
+    JudgeCriterion,
+    PromptKey,
+)
 from cresmo.domain.value_objects.convergence import (
     ConvergenceMode,
     SaturationPolicy,
@@ -32,6 +41,8 @@ class StageName(StrEnum):
     RAW = "raw"
     FLUID_PROSE = "fluid_prose"
     GAP_FILLER = "gap_filler"
+    LONG_EXPANDER = "long_expander"
+    WIDE_EXPANDER = "wide_expander"
 
 
 @dataclass(frozen=True, slots=True)
@@ -72,49 +83,40 @@ class StageRegistry:
         StageName.GAP_FILLER: StageDefinition(
             transform_prompt_key=PromptKey.GAP_FILLER,
             judge_prompt_key=PromptKey.JUDGE_GAP_FILLER,
-            required_criteria=(
-                JudgeCriterion.EPISTEMIC_GROUNDING_SEGREGATION,
-                JudgeCriterion.CONCEPTUAL_MECHANICAL_DECOMPOSITION,
-                JudgeCriterion.BRAUDELIAN_STRATIFICATION,
-                JudgeCriterion.GENEALOGY_HIDDEN_AGENCY,
-                JudgeCriterion.COMPETING_HYPOTHESES,
-                JudgeCriterion.EXTRA_INFO_GRANULARITY,
-                JudgeCriterion.LINEAR_STYLE_NATURALISM,
-            ),
-            post_processor=post_process_enriched_compendium,
+            required_criteria=tuple(GAP_FILLER_CANONICAL_WEIGHTS.keys()),
+            post_processor=post_process_expanded_transcript,
             eval_metadata={
-                "weights": {
-                    JudgeCriterion.EPISTEMIC_GROUNDING_SEGREGATION.value: 0.20,
-                    JudgeCriterion.CONCEPTUAL_MECHANICAL_DECOMPOSITION.value: 0.15,
-                    JudgeCriterion.BRAUDELIAN_STRATIFICATION.value: 0.15,
-                    JudgeCriterion.GENEALOGY_HIDDEN_AGENCY.value: 0.15,
-                    JudgeCriterion.COMPETING_HYPOTHESES.value: 0.15,
-                    JudgeCriterion.EXTRA_INFO_GRANULARITY.value: 0.10,
-                    JudgeCriterion.LINEAR_STYLE_NATURALISM.value: 0.10,
-                },
-                "veto_criteria": [
-                    JudgeCriterion.EPISTEMIC_GROUNDING_SEGREGATION.value,
-                    JudgeCriterion.EXTRA_INFO_GRANULARITY.value,
-                ],
+                "weights": {c.value: w for c, w in GAP_FILLER_CANONICAL_WEIGHTS.items()},
+                "veto_criteria": sorted(c.value for c in GAP_FILLER_MECHANICAL_VETO_CRITERIA),
+            },
+            max_passes=5,
+            convergence_mode=ConvergenceMode.HYBRID_SEMANTIC,
+        ),
+        StageName.LONG_EXPANDER: StageDefinition(
+            transform_prompt_key=PromptKey.LONG_EXPANDER,
+            judge_prompt_key=PromptKey.JUDGE_LONG_EXPANDER,
+            required_criteria=tuple(LONG_EXPANDER_CANONICAL_WEIGHTS.keys()),
+            post_processor=post_process_expanded_transcript,
+            eval_metadata={
+                "weights": {c.value: w for c, w in LONG_EXPANDER_CANONICAL_WEIGHTS.items()},
+                "veto_criteria": sorted(c.value for c in LONG_EXPANDER_MECHANICAL_VETO_CRITERIA),
+            },
+            max_passes=7,
+            convergence_mode=ConvergenceMode.HYBRID_SEMANTIC,
+        ),
+        StageName.WIDE_EXPANDER: StageDefinition(
+            transform_prompt_key=PromptKey.WIDE_EXPANDER,
+            judge_prompt_key=PromptKey.JUDGE_WIDE_EXPANDER,
+            required_criteria=tuple(WIDE_EXPANDER_CANONICAL_WEIGHTS.keys()),
+            post_processor=post_process_expanded_transcript,
+            eval_metadata={
+                "weights": {c.value: w for c, w in WIDE_EXPANDER_CANONICAL_WEIGHTS.items()},
+                "veto_criteria": sorted(c.value for c in WIDE_EXPANDER_MECHANICAL_VETO_CRITERIA),
             },
             max_passes=5,
             convergence_mode=ConvergenceMode.HYBRID_SEMANTIC,
         ),
         # FUTURE / DEFERRED: Upcoming synthesis conveyor stages preserved for future rollout.
-        # "long_expander": StageDefinition(
-        #     transform_prompt_key=PromptKey.LONG_EXPANDER,
-        #     required_criteria=(
-        #         JudgeCriterion.SEMANTIC_FAITHFULNESS,
-        #         JudgeCriterion.STRUCTURAL_COMPLIANCE,
-        #     ),
-        # ),
-        # "wide_expander": StageDefinition(
-        #     transform_prompt_key=PromptKey.WIDE_EXPANDER,
-        #     required_criteria=(
-        #         JudgeCriterion.SEMANTIC_FAITHFULNESS,
-        #         JudgeCriterion.STRUCTURAL_COMPLIANCE,
-        #     ),
-        # ),
         # "atomic_inventory": StageDefinition(
         #     transform_prompt_key=PromptKey.ATOMIC_INVENTORY,
         #     required_criteria=(

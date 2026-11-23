@@ -21,6 +21,7 @@ from cresmo.application.ports import (
     VaultRepositoryPort,
 )
 from cresmo.domain.exceptions import DomainValidationError
+from cresmo.domain.stage_registry import StageName
 from cresmo.domain.value_objects import ChannelName, ContentId, MasterDocumentResult
 
 CHUNK_SEPARATOR: str = "\n\n---\n\n"
@@ -129,7 +130,7 @@ class ConcatMasterUseCase:
             List of MasterDocumentResult value objects representing created parts.
         """
         effective_max = max_words if max_words is not None else self.settings.concat_max_words
-        files = self.vault_port.get_enriched_files_for_channel(channel_name)
+        files = self.vault_port.get_stage_files_for_channel(StageName.WIDE_EXPANDER, channel_name)
         if not files:
             return []
 
@@ -231,18 +232,18 @@ class ConcatMasterUseCase:
         self,
         max_words: int | None = None,
     ) -> dict[str, list[MasterDocumentResult]]:
-        """Discover all channel subdirectories in enriched/ and aggregate each channel.
+        """Discover all channel subdirectories in wide_expander/ and aggregate each channel.
 
         Returns:
             Mapping of channel names to their generated MasterDocumentResult lists.
         """
-        enriched_root = self.settings.enriched_dir
-        if not enriched_root.exists() or not enriched_root.is_dir():
+        terminal_stage_root = self.settings.data_dir / StageName.WIDE_EXPANDER.value
+        if not terminal_stage_root.exists() or not terminal_stage_root.is_dir():
             return {}
 
         channel_dirs = sorted(
             d.name
-            for d in enriched_root.iterdir()
+            for d in terminal_stage_root.iterdir()
             if d.is_dir() and not d.name.startswith((".", "_"))
         )
         all_results: dict[str, list[MasterDocumentResult]] = {}

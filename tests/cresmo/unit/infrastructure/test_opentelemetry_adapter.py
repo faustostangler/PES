@@ -130,7 +130,7 @@ class TestOpenTelemetryAdapterSessionsAndSpans:
             source="transcript",
             raw_characters=500,
             raw_words=90,
-            gap_filler_passes=3,
+            expansion_max_passes=3,
             force_reprocess=False,
             batch_id="batch_xyz",
             video_url="https://youtube.com/watch?v=vid_42",

@@ -70,14 +70,14 @@ def run(
         ),
     ] = None,
     passes: Annotated[
-        int,
+        int | None,
         typer.Option(
             "--passes",
             min=1,
             max=10,
-            help="Refinement passes for text expansion (default: 3)",
+            help="Refinement passes override for expansion stages (default: configured per-stage)",
         ),
-    ] = 3,
+    ] = None,
     batch_size: Annotated[
         int | None,
         typer.Option(

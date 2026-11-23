@@ -40,13 +40,25 @@ from cresmo.presentation.formatters.calibration_report import format_calibration
 
 
 def test_stage_specs_cover_all_stages_with_canonical_criteria() -> None:
-    assert set(STAGE_SPECS.keys()) == {"fluid_prose", "gap_filler"}
+    assert set(STAGE_SPECS.keys()) == {
+        "fluid_prose",
+        "gap_filler",
+        "long_expander",
+        "wide_expander",
+    }
     assert len(STAGE_SPECS["fluid_prose"].required_criteria) == 6
     assert len(STAGE_SPECS["gap_filler"].required_criteria) == 7
+    assert len(STAGE_SPECS["long_expander"].required_criteria) == 5
+    assert len(STAGE_SPECS["wide_expander"].required_criteria) == 5
     assert (
         JudgeCriterion.EPISTEMIC_GROUNDING_SEGREGATION
         in STAGE_SPECS["gap_filler"].required_criteria
     )
+    assert (
+        JudgeCriterion.LONGUE_DUREE_STRATIFICATION in STAGE_SPECS["long_expander"].required_criteria
+    )
+    assert JudgeCriterion.SYNCHRONIC_CONNECTIVITY in STAGE_SPECS["wide_expander"].required_criteria
+    assert JudgeCriterion.COMPARATIVE_PARALLELISM in STAGE_SPECS["wide_expander"].required_criteria
 
 
 def test_confusion_matrix_sdt_metrics() -> None:
@@ -363,9 +375,49 @@ def test_cli_always_disables_fallback_and_runs_all_stages_by_default(tmp_path: P
         ),
         provider="gemini",
     )
+    passed_eval_le = JudgeEvaluation(
+        target_stage="long_expander",
+        passed=True,
+        overall_score=0.95,
+        criteria_scores=tuple(
+            CriterionScore(criterion=c, score=0.95, passed=True, reasoning="ok")
+            for c in STAGE_SPECS["long_expander"].required_criteria
+        ),
+        provider="gemini",
+    )
+    failed_eval_le = JudgeEvaluation(
+        target_stage="long_expander",
+        passed=False,
+        overall_score=0.10,
+        criteria_scores=tuple(
+            CriterionScore(criterion=c, score=0.10, passed=False, reasoning="fail")
+            for c in STAGE_SPECS["long_expander"].required_criteria
+        ),
+        provider="gemini",
+    )
+    passed_eval_we = JudgeEvaluation(
+        target_stage="wide_expander",
+        passed=True,
+        overall_score=0.95,
+        criteria_scores=tuple(
+            CriterionScore(criterion=c, score=0.95, passed=True, reasoning="ok")
+            for c in STAGE_SPECS["wide_expander"].required_criteria
+        ),
+        provider="gemini",
+    )
+    failed_eval_we = JudgeEvaluation(
+        target_stage="wide_expander",
+        passed=False,
+        overall_score=0.10,
+        criteria_scores=tuple(
+            CriterionScore(criterion=c, score=0.10, passed=False, reasoning="fail")
+            for c in STAGE_SPECS["wide_expander"].required_criteria
+        ),
+        provider="gemini",
+    )
 
     mock_judge = MagicMock(spec=LlmJudgePort)
-    # seed items: 5 for fluid_prose (P, F, F, P, F), 2 for gap_filler (P, F)
+    # seed items: 5 fluid_prose, 2 gap_filler, 2 long_expander, 2 wide_expander
     mock_judge.evaluate.side_effect = [
         passed_eval_fp,
         failed_eval_fp,
@@ -374,6 +426,10 @@ def test_cli_always_disables_fallback_and_runs_all_stages_by_default(tmp_path: P
         failed_eval_fp,
         passed_eval_gf,
         failed_eval_gf,
+        passed_eval_le,
+        failed_eval_le,
+        passed_eval_we,
+        failed_eval_we,
     ]
 
     factory_calls: list[dict[str, object]] = []
@@ -399,7 +455,12 @@ def test_cli_always_disables_fallback_and_runs_all_stages_by_default(tmp_path: P
         selected_stages=parse_stage_specs(None, None),
         selected_models=parse_model_specs(["gemini:gemini-4-hydrogen"], None, "gemini"),
         judge_factory=_fake_factory,
-        stage_thresholds={"fluid_prose": 0.75, "gap_filler": 0.75},
+        stage_thresholds={
+            "fluid_prose": 0.75,
+            "gap_filler": 0.75,
+            "long_expander": 0.75,
+            "wide_expander": 0.75,
+        },
         stage_specs=STAGE_SPECS,
         checkpoint_store=JsonCalibrationCheckpointStore(checkpoint_dir=tmp_path / "checkpoints"),
         dataset_loader=JsonCalibrationDatasetLoader(),
@@ -413,13 +474,18 @@ def test_cli_always_disables_fallback_and_runs_all_stages_by_default(tmp_path: P
 
     assert not outcome.has_errors
     assert all(s.status is CalibrationVerdict.APPROVED for s in outcome.summaries)
-    assert len(factory_calls) == 2  # both fluid_prose and gap_filler ran by default
+    assert len(factory_calls) == 4  # all 4 conveyor stages ran by default
     for call in factory_calls:
         assert call["enable_fallback"] is False
 
 
 def test_parse_helpers_handle_comma_and_repeated_flags() -> None:
-    assert parse_stage_specs(None, None) == ["fluid_prose", "gap_filler"]
+    assert parse_stage_specs(None, None) == [
+        "fluid_prose",
+        "gap_filler",
+        "long_expander",
+        "wide_expander",
+    ]
     assert parse_stage_specs(["fluid_prose,gap_filler"], None) == ["fluid_prose", "gap_filler"]
     assert parse_stage_specs(None, "gap_filler") == ["gap_filler"]
     assert parse_model_specs(["gemini:a,gemini:b", "ollama:c"], None, "gemini") == [

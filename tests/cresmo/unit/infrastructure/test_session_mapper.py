@@ -58,7 +58,7 @@ class TestSessionMapper:
             source="transcript",
             raw_characters=420,
             raw_words=75,
-            gap_filler_passes=3,
+            expansion_max_passes=3,
             force_reprocess=True,
             batch_id="20261122_130000_abc123",
             video_url="https://youtube.com/watch?v=vid_01",
@@ -91,7 +91,7 @@ class TestSessionMapper:
         assert attrs["cresmo.content.word_count"] == 75
         assert attrs["cresmo.content.char_count"] == 420
         assert attrs["cresmo.content.publication_date"] == "2024-05-20"
-        assert attrs["cresmo.pipeline.gap_filler_passes"] == 3
+        assert attrs["cresmo.pipeline.expansion_max_passes"] == 3
         assert attrs["cresmo.pipeline.force_reprocess"] is True
         assert attrs["cresmo.metadata.custom_tag"] == "gold"
         assert "cresmo.metadata.channel_id" not in attrs

@@ -224,6 +224,78 @@ class TypeSafeJudgeAdapter(LlmJudgePort):
                         "exemplary linear prose strictly compliant with cresmo-style-guide",
                     ],
                 }
+            elif criterion == JudgeCriterion.LONGUE_DUREE_STRATIFICATION:
+                questions_payload[criterion.value] = {
+                    "type": "score",
+                    "instructions": (
+                        "Does the text ground foreground events in multi-secular material constraints, cyclical institutions, and backward historical lineages?"
+                    ),
+                    "criteria": [
+                        "presentist event-level explanation lacking multi-secular depth",
+                        "partial institutional history with weak material or cyclical invariants",
+                        "deep three-tier diachronic stratification and backward historical tracing",
+                    ],
+                }
+            elif criterion == JudgeCriterion.HISTORICAL_PALIMPSEST:
+                questions_payload[criterion.value] = {
+                    "type": "score",
+                    "instructions": (
+                        "Does the text expose inherited administrative, fiscal, legal, and cognitive strata persisting beneath newer institutional forms?"
+                    ),
+                    "criteria": [
+                        "treats newer regimes or concepts as clean-slate inventions",
+                        "notes isolated historical precursors without systemic continuity",
+                        "thorough excavation of institutional survivals and asynchronous durations",
+                    ],
+                }
+            elif criterion == JudgeCriterion.EMPIRICAL_HISTORICAL_GROUNDING:
+                questions_payload[criterion.value] = {
+                    "type": "score",
+                    "instructions": (
+                        "Are historical dates (big-endian YYYY/YYYY-MM-DD), primary-source treaties, institutional names, and quantitative magnitudes accurate without fabrication?"
+                    ),
+                    "criteria": [
+                        "contains anachronisms, fabricated events, or contradictions of the source core",
+                        "broadly accurate with sparse concrete dates or magnitudes",
+                        "rigorous verifiable historical grounding and faithful empirical continuity",
+                    ],
+                }
+            elif criterion == JudgeCriterion.IMPLICIT_FRAMING_STYLE:
+                questions_payload[criterion.value] = {
+                    "type": "score",
+                    "instructions": (
+                        "Does the prose express structural depth implicitly without naming analytical frameworks while honoring cresmo-style-guide linearity and bans?"
+                    ),
+                    "criteria": [
+                        "explicit methodological labels, meta-discourse, em-dashes, lists, or banned verbs present",
+                        "implicit framing mostly preserved with minor stylistic lapses",
+                        "seamless implicit analytical narrative adhering strictly to cresmo-style-guide",
+                    ],
+                }
+            elif criterion == JudgeCriterion.SYNCHRONIC_CONNECTIVITY:
+                questions_payload[criterion.value] = {
+                    "type": "score",
+                    "instructions": (
+                        "Does the text map simultaneous hemispheric trade flows, monetary/bullion circuits, and shared planetary shocks linked across regions?"
+                    ),
+                    "criteria": [
+                        "treats events purely domestically ignoring synchronous global networks",
+                        "mentions partial regional interactions without material transmission mechanisms",
+                        "rigorous contemporaneous cross-regional connectivity and planetary context",
+                    ],
+                }
+            elif criterion == JudgeCriterion.COMPARATIVE_PARALLELISM:
+                questions_payload[criterion.value] = {
+                    "type": "score",
+                    "instructions": (
+                        "Does the text compare independent societies undergoing convergent structural pressures without fabricating false diffusion?"
+                    ),
+                    "criteria": [
+                        "insular single-society narrative without comparative cross-sections",
+                        "superficial comparison conflating independent convergence with diffusion",
+                        "disciplined comparative civilizational analogies respecting independent agency",
+                    ],
+                }
 
         state_payload = {
             "source_raw": context.raw_text,

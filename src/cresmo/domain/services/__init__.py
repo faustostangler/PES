@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from cresmo.domain.services.compendium import post_process_enriched_compendium
 from cresmo.domain.services.convergence_evaluator import (
     NO_NEW_GAPS_SENTINEL,
     compute_maxsim_novelty,
@@ -16,9 +15,10 @@ from cresmo.domain.services.convergence_evaluator import (
 )
 from cresmo.domain.services.prose_syntax_guard import (
     extract_extra_info_section,
+    validate_expanded_prose_syntax,
     validate_fluid_prose_syntax,
-    validate_gap_filler_syntax,
 )
+from cresmo.domain.services.stage_post_processor import post_process_expanded_transcript
 
 __all__ = [
     "NO_NEW_GAPS_SENTINEL",
@@ -30,8 +30,8 @@ __all__ = [
     "evaluate_semantic_convergence",
     "extract_extra_info_section",
     "is_explicit_stop_sentinel",
-    "post_process_enriched_compendium",
+    "post_process_expanded_transcript",
     "segment_semantic_units",
+    "validate_expanded_prose_syntax",
     "validate_fluid_prose_syntax",
-    "validate_gap_filler_syntax",
 ]

@@ -32,7 +32,7 @@ def concat_master(
         typer.Option(
             "--channel",
             "-c",
-            help="Target specific channel name to consolidate (default: all channels in enriched/)",
+            help="Target specific channel name to consolidate (default: all channels in wide_expander/)",
         ),
     ] = None,
     max_words: Annotated[
@@ -91,7 +91,9 @@ def handle_concat_master(
                 )
             return EXIT_SUCCESS
 
-        sys.stdout.write("Consolidating master documents across all channels in enriched/...\n")
+        sys.stdout.write(
+            "Consolidating master documents across all channels in wide_expander/...\n"
+        )
         all_results = use_case.execute_all(max_words=max_words)
         if not all_results:
             sys.stdout.write("No enriched channel directories found to consolidate.\n")

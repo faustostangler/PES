@@ -229,22 +229,27 @@ class TestLangfusePromptProvider:
         # Test expanders
         long_res = provider.get_prompt(
             PromptKey.LONG_EXPANDER,
-            compendium_body="Body text",
-            complementary_info="Dates and facts",
+            source_text="Body text",
+            pass_num=2,
+            current_text="Long draft pass 1.",
         )
         long_sys = long_res.system_prompt or ""
         long_prompt = long_res.get_last_user_content()
         assert isinstance(long_sys, str)
         assert "Body text" in long_prompt
+        assert '<draft pass="1">\nLong draft pass 1.\n</draft>' in long_prompt
 
         wide_res = provider.get_prompt(
             PromptKey.WIDE_EXPANDER,
-            current_text="Axial text",
+            source_text="Axial text",
+            pass_num=2,
+            current_text="Wide draft pass 1.",
         )
         wide_sys = wide_res.system_prompt or ""
         wide_prompt = wide_res.get_last_user_content()
         assert isinstance(wide_sys, str)
         assert "Axial text" in wide_prompt
+        assert '<draft pass="1">\nWide draft pass 1.\n</draft>' in wide_prompt
 
         inv_res = provider.get_prompt(
             PromptKey.ATOMIC_INVENTORY,

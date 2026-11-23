@@ -65,11 +65,11 @@ class SelfReferentialRelationError(CresmoDomainError):
     """
 
 
-class CompendiumStructureError(CresmoDomainError):
-    """Raised when an Enriched Compendium violates fluid prose structural invariants.
+class StageTranscriptStructureError(CresmoDomainError):
+    """Raised when a stage transcript violates structural prose invariants.
 
-    Enforces continuous prose (rejection of raw tables or bullet lists) and the
-    mandatory presence of the '### Extra Info' section per SPEC-001: §2.2.
+    Enforces continuous prose (rejection of empty bodies, invalid pass counts, or
+    missing/empty '### Extra Info' sections across expanded stages) per SPEC-001: §2.2.
     """
 
 

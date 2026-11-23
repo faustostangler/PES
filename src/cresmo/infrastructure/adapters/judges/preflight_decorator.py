@@ -14,8 +14,8 @@ import structlog
 
 from cresmo.application.ports.llm_judge_port import LlmJudgePort
 from cresmo.domain.services.prose_syntax_guard import (
+    validate_expanded_prose_syntax,
     validate_fluid_prose_syntax,
-    validate_gap_filler_syntax,
 )
 from cresmo.domain.stage_registry import StageName
 from cresmo.domain.value_objects.quality import (
@@ -30,7 +30,15 @@ logger = structlog.get_logger(__name__)
 
 _STAGE_PREFLIGHT_VALIDATORS: Final[dict[str, tuple[Callable[[str], list[str]], JudgeCriterion]]] = {
     StageName.FLUID_PROSE: (validate_fluid_prose_syntax, JudgeCriterion.STRUCTURAL_COMPLIANCE),
-    StageName.GAP_FILLER: (validate_gap_filler_syntax, JudgeCriterion.EXTRA_INFO_GRANULARITY),
+    StageName.GAP_FILLER: (validate_expanded_prose_syntax, JudgeCriterion.EXTRA_INFO_GRANULARITY),
+    StageName.LONG_EXPANDER: (
+        validate_expanded_prose_syntax,
+        JudgeCriterion.EXTRA_INFO_GRANULARITY,
+    ),
+    StageName.WIDE_EXPANDER: (
+        validate_expanded_prose_syntax,
+        JudgeCriterion.EXTRA_INFO_GRANULARITY,
+    ),
 }
 
 

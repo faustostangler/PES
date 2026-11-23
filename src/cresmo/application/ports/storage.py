@@ -165,16 +165,19 @@ class VaultRepositoryPort(ABC):
         raise NotImplementedError("Remove index entry.")
 
     @abstractmethod
-    def get_enriched_files_for_channel(self, channel_name: ChannelName) -> list[Path]:
-        """Retrieve sorted list of all enriched markdown file paths for a given channel.
+    def get_stage_files_for_channel(
+        self, stage_name: str | StageName, channel_name: ChannelName
+    ) -> list[Path]:
+        """Retrieve sorted list of all markdown file paths for a stage and channel.
 
         Args:
+            stage_name: Conveyor stage identifier (StageName enum or canonical string).
             channel_name: Human-readable creator channel name.
 
         Returns:
-            List of Path objects for all channel enriched markdown files.
+            List of Path objects for all channel stage markdown files.
         """
-        raise NotImplementedError("Retrieve enriched file paths for channel.")
+        raise NotImplementedError("Retrieve stage file paths for channel.")
 
     @abstractmethod
     def save_master_document(

@@ -3,8 +3,7 @@
 Orchestrates the cognitive synthesis pipeline per ADR-007 (Template Method), ADR-021, and ADR-070:
 - Raw Ingestion (MediaIngestionPort ACL)
 - Raw Indexing (IndexRawTranscriptsUseCase)  # FUTURE / DEFERRED
-- Fluid Prose & Gap Expansion (PipelineStageRunner)
-- Longitudinal & Synchronic Expansion (ExpandCompendiumUseCase)  # FUTURE / DEFERRED
+- Fluid Prose & Iterative Expansion Stages: fluid_prose -> gap_filler -> long_expander -> wide_expander (PipelineStageRunner)
 - Holistic Inventory Discovery (DiscoverAtomicInventoryUseCase)  # FUTURE / DEFERRED
 - Batched Atomic Synthesis (SynthesizeAtomicBatchUseCase)  # FUTURE / DEFERRED
 - Map of Content Reconciliation (ReconcileMOCsUseCase)  # FUTURE / DEFERRED
@@ -64,14 +63,22 @@ from cresmo.domain.entities import (
     UserIdentity,
 )
 from cresmo.domain.exceptions import CresmoDomainError
-from cresmo.domain.stage_registry import StageName
+from cresmo.domain.stage_registry import StageName, StageRegistry
 from cresmo.domain.value_objects import (
     BatchId,
+    ConvergenceMode,
     RawIndexEntry,
     is_processable_transcript_file,
 )
 
 logger = structlog.get_logger(__name__)
+
+CONVEYOR_STAGES: tuple[StageName, ...] = (
+    StageName.FLUID_PROSE,
+    StageName.GAP_FILLER,
+    StageName.LONG_EXPANDER,
+    StageName.WIDE_EXPANDER,
+)
 
 
 def _extract_source_text(source_target: StageTranscript | Any) -> str:
@@ -199,7 +206,7 @@ class CresmoPipeline:
     def execute(
         self,
         raw: StageTranscript,
-        gap_filler_passes: int = 3,
+        expansion_max_passes: int | None = None,
         force_reprocess: bool = False,
         user: UserIdentity | None = None,
         entry: RawIndexEntry | None = None,
@@ -230,7 +237,7 @@ class CresmoPipeline:
             source="transcript",
             raw_characters=len(raw_text),
             raw_words=len(raw_text.split()),
-            gap_filler_passes=gap_filler_passes,
+            expansion_max_passes=expansion_max_passes,
             force_reprocess=force_reprocess,
             batch_id=resolved_batch_id,
             video_url=raw.provenance.url or None,
@@ -260,18 +267,13 @@ class CresmoPipeline:
             )
 
             # =========================================================================
-            # CRESMO STAGES CONVEYOR PIPELINE (ADR-007, ADR-043, ADR-054, ADR-057)
+            # CRESMO STAGES CONVEYOR PIPELINE (ADR-007, ADR-043, ADR-054, ADR-057, ADR-073)
             # =========================================================================
-            conveyor_steps: tuple[StageName, ...] = (
-                StageName.FLUID_PROSE,
-                StageName.GAP_FILLER,
-            )
-
-            stage_artifacts: dict[StageName, Any] = {StageName.RAW: raw}
+            stage_artifacts: dict[StageName, StageTranscript] = {}
             cached_stages: list[str] = []
             current_source: Any = raw
 
-            for step in conveyor_steps:
+            for step in CONVEYOR_STAGES:
                 artifact = None
                 if not force_reprocess:
                     cached = self.vault_port.get_stage_transcript(step, content.id)
@@ -286,8 +288,13 @@ class CresmoPipeline:
 
                 if artifact is None:
                     extra_kwargs: dict[str, Any] = {}
-                    if step == StageName.GAP_FILLER:
-                        extra_kwargs["max_passes"] = gap_filler_passes
+                    if (
+                        expansion_max_passes is not None
+                        and StageRegistry.contains(step)
+                        and StageRegistry.get(step).convergence_mode
+                        == ConvergenceMode.HYBRID_SEMANTIC
+                    ):
+                        extra_kwargs["max_passes"] = expansion_max_passes
 
                     artifact = self.stage_runner.execute_stage(
                         step,
@@ -301,30 +308,35 @@ class CresmoPipeline:
                 stage_artifacts[step] = artifact
                 current_source = artifact
 
-            fluid: Any = stage_artifacts[StageName.FLUID_PROSE]
-            gaps: Any = stage_artifacts[StageName.GAP_FILLER]
+            final_artifact = stage_artifacts[CONVEYOR_STAGES[-1]]
 
-            # Note: Subsequent conveyor stages (long_expander, wide_expander, raw_indexing,
-            # atomic_inventory, atomic_batch, reconcile_mocs, duplicate_unification) will be
-            # appended to conveyor_steps sequentially once their domain VOs conform to
-            # StageTranscript (ADR-054) and invoke stage_runner.record_session_completion(...).
+            # Note: Subsequent downstream atomic stages (raw_indexing, atomic_inventory,
+            # atomic_batch, reconcile_mocs, duplicate_unification) will be appended once
+            # their domain VOs conform to StageTranscript (ADR-054).
 
-            synthesized_text = _extract_fluid_text(gaps) or _extract_fluid_text(fluid)
+            synthesized_text = ""
+            for step in reversed(CONVEYOR_STAGES):
+                candidate_text = _extract_fluid_text(stage_artifacts.get(step))
+                if candidate_text:
+                    synthesized_text = candidate_text
+                    break
             raw_word_count = len(raw_text.split())
             synthesized_word_count = len(synthesized_text.split())
             expansion_ratio = round(synthesized_word_count / max(raw_word_count, 1), 3)
 
-            gaps_content = getattr(gaps, "content", None)
-            fluid_content = getattr(fluid, "content", None)
-            resolved_title = str(
-                getattr(gaps_content, "title", None)
-                or getattr(fluid_content, "title", None)
-                or content.title
-                or ""
-            )
+            resolved_title = ""
+            for step in reversed(CONVEYOR_STAGES):
+                step_content = getattr(stage_artifacts.get(step), "content", None)
+                step_title = getattr(step_content, "title", None)
+                if step_title:
+                    resolved_title = str(step_title)
+                    break
+            if not resolved_title:
+                resolved_title = str(content.title or "")
+
             cache_hit_count = len(cached_stages)
-            cache_hit_ratio = round(cache_hit_count / max(len(conveyor_steps), 1), 3)
-            completed_stage_names = [step.value for step in conveyor_steps]
+            cache_hit_ratio = round(cache_hit_count / max(len(CONVEYOR_STAGES), 1), 3)
+            completed_stage_names = [step.value for step in CONVEYOR_STAGES]
             root_span.set_output(
                 {
                     "status": "COMPLETED",
@@ -334,7 +346,7 @@ class CresmoPipeline:
                     "cache_hit_count": cache_hit_count,
                     "cache_hit_ratio": cache_hit_ratio,
                     "force_reprocess": force_reprocess,
-                    "gap_filler_passes": gap_filler_passes,
+                    "expansion_max_passes": expansion_max_passes,
                     "content_title": resolved_title,
                     "word_count": synthesized_word_count,
                     "char_count": len(synthesized_text),
@@ -350,8 +362,8 @@ class CresmoPipeline:
                 content_id=content.id,
                 success=True,
                 source_transcript=raw,
-                fluid_transcript=fluid,
-                compendium=gaps,
+                stage_artifacts=stage_artifacts,
+                final_transcript=final_artifact,
                 index_entry=entry,
             )
 
@@ -376,12 +388,18 @@ class CresmoPipeline:
                     "modality": "transcript",
                 },
             )
+            loaded_artifacts: dict[StageName, StageTranscript] = {}
+            for step in CONVEYOR_STAGES:
+                cached = self.vault_port.get_stage_transcript(step, content_id)
+                if cached is not None:
+                    loaded_artifacts[step] = cached
             return PipelineResult(
                 content_id=content_id,
                 success=True,
                 source_transcript=raw,
                 index_entry=entry,
-                compendium=self.vault_port.get_stage_transcript("gap_filler", content_id),
+                stage_artifacts=loaded_artifacts,
+                final_transcript=loaded_artifacts.get(CONVEYOR_STAGES[-1]),
                 already_processed=True,
             )
         return None
@@ -389,7 +407,7 @@ class CresmoPipeline:
     def run_for_video(
         self,
         video_url: str,
-        gap_filler_passes: int = 3,
+        expansion_max_passes: int | None = None,
         force_reprocess: bool = False,
         user: UserIdentity | None = None,
         batch_id: BatchId | str | None = None,
@@ -402,7 +420,7 @@ class CresmoPipeline:
 
         return self.execute(
             raw=raw,
-            gap_filler_passes=gap_filler_passes,
+            expansion_max_passes=expansion_max_passes,
             force_reprocess=force_reprocess,
             user=user,
             batch_id=batch_id,
@@ -411,7 +429,7 @@ class CresmoPipeline:
     def run_for_text_file(
         self,
         file_path: Path,
-        gap_filler_passes: int = 3,
+        expansion_max_passes: int | None = None,
         force_reprocess: bool = False,
         user: UserIdentity | None = None,
         batch_id: BatchId | str | None = None,
@@ -433,7 +451,7 @@ class CresmoPipeline:
 
         return self.execute(
             raw=raw,
-            gap_filler_passes=gap_filler_passes,
+            expansion_max_passes=expansion_max_passes,
             force_reprocess=force_reprocess,
             user=user,
             batch_id=batch_id,
@@ -442,7 +460,7 @@ class CresmoPipeline:
     def run_for_manifest(
         self,
         manifest_path: Path,
-        gap_filler_passes: int = 3,
+        expansion_max_passes: int | None = None,
         force_reprocess: bool = False,
         user: UserIdentity | None = None,
         batch_id: BatchId | str | None = None,
@@ -452,7 +470,7 @@ class CresmoPipeline:
         return [
             self.run_for_video(
                 video_url=video_url,
-                gap_filler_passes=gap_filler_passes,
+                expansion_max_passes=expansion_max_passes,
                 force_reprocess=force_reprocess,
                 user=user,
                 batch_id=batch_id,
