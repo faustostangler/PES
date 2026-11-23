@@ -138,7 +138,7 @@
   - Accepts `inner_judge: LlmJudgePort` and `telemetry_port: TelemetryPort | None = None` (default `NoOpTelemetryPort()`).
   - Emits each criterion score via `self._telemetry.record_score(name=..., value=float(score.score), comment=score.reasoning, trace_id=effective_trace_id, observation_id=context.observation_id)` with fail-silent warning logging and zero inline `flush()`.
 - `bootstrap/`:
-  - `telemetry_factory.py`: removes `print("[SPAN DEBUG] ...")`; `build_telemetry_adapter` returns `OpenTelemetryAdapter(...)` or `NoOpTelemetryPort()`.
+  - `telemetry_factory.py`: retains `print("[SPAN DEBUG] ...")` temporarily (marked `TEMPORARY`) for live OTel export verification; `build_telemetry_adapter` returns `OpenTelemetryAdapter(...)` or `NoOpTelemetryPort()`.
   - `composition.py`, `adapter_factory.py`, `judge_factory.py`, `use_case_factory.py`: pass `telemetry_port` to LLM adapters and judge factory (retaining `langfuse_client` only for `build_telemetry_adapter` and `build_prompt_provider`).
 - `logging_config.py`: extracts `_extract_otel_log_context() -> tuple[str, str, str]` shared by `CresmoOTelTraceCorrelationFilter` and `add_opentelemetry_context`.
 

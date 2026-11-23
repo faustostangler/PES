@@ -81,9 +81,17 @@ def _build_should_export_span() -> Callable[[Any], bool]:
 
     def should_export_cresmo_span(span: Any) -> bool:
         scope = getattr(span, "instrumentation_scope", None)
+        scope_name = getattr(scope, "name", None)
+        span_name = getattr(span, "name", None)
         is_default = is_default_export_span(span)
         is_cresmo = scope is not None and scope.name.startswith("cresmo.")
-        return is_default or is_cresmo
+        export = is_default or is_cresmo
+        # TEMPORARY: Keep span export debug output during ADR-070 OTel verification; remove once stabilized.
+        print(
+            f"[SPAN DEBUG] name={span_name!r} scope={scope_name!r} "
+            f"default={is_default} cresmo={is_cresmo} -> export={export}"
+        )
+        return export
 
     return should_export_cresmo_span
 

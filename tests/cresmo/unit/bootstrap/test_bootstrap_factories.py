@@ -141,10 +141,12 @@ class TestTelemetryFactory:
     def test_build_should_export_span(self, capsys: pytest.CaptureFixture[str]) -> None:
         predicate = _build_should_export_span()
         span_mock = MagicMock()
+        span_mock.name = "cresmo.coordinator"
         span_mock.instrumentation_scope.name = "cresmo.pipeline"
         assert predicate(span_mock) is True
         captured = capsys.readouterr()
-        assert captured.out == ""
+        assert "[SPAN DEBUG]" in captured.out
+        assert "cresmo.pipeline" in captured.out
 
     def test_build_mask_hook(self) -> None:
         assert _build_mask_hook(None) is None
