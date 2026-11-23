@@ -18,6 +18,7 @@ from cresmo.bootstrap.factories.adapter_factory import (
 )
 from cresmo.domain.stage_registry import StageName
 from cresmo.domain.value_objects import (
+    ChannelName,
     CriterionScore,
     EvaluationContext,
     JudgeEvaluation,
@@ -202,7 +203,7 @@ def test_sqlite_vault_taxonomy_pipeline_roundtrip_and_idempotency(tmp_path: Path
             content_id=first_result.content_id,
             media_url="https://youtube.com/watch?v=abc123xyz00",
             title=first_result.source_transcript.content.title,
-            channel_name=first_result.source_transcript.channel.name,
+            channel_name=ChannelName(first_result.source_transcript.channel.name),
             status=PipelineStatus.COMPLETED,
             completed_at=datetime.now(UTC),
         )
