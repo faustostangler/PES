@@ -888,6 +888,28 @@ def get_fluid_transcript(self, content_id: ContentId) -> FluidTranscript | None:
 
 ---
 
+### Rule 21: Multi-Wave & Multi-Agent Worktree Isolation Governance
+
+#### 21.1 The Anti-Pattern
+Executing concurrent refactoring waves or editing subagents while mixing `Workspace="inherit"` with `Workspace="branch"`, modifying shared registry/composition files concurrently (`docs/adr/README.md`, `docs/GLOSSARY.md`, `src/cresmo/application/ports/__init__.py`, `src/cresmo/bootstrap/composition.py`), or invoking the main workspace's editable `.venv` inside an isolated git worktree without overriding `PYTHONPATH`.
+
+* **Failure Vectors (Lesson Learned — Session `4849a187`):**
+  1. **Mixed-Workspace Race Conditions (`Mixed Inherit-and-Branch Concurrency*`):** Running one wave in `Workspace="inherit"` while others run in `Workspace="branch"` causes dirty working-tree contamination, merge collisions, and cross-wave test interference.
+  2. **Shared-Index Drift (`Concurrent Shared-Index Editing*`):** Parallel workers editing `docs/adr/README.md`, `docs/GLOSSARY.md`, `src/cresmo/application/ports/__init__.py`, or `src/cresmo/bootstrap/composition.py` create conflicting hunks and accidental staging of foreign WIP.
+  3. **Editable-Install Import Leak (`Editable-Install Cross-Worktree Import Leak*`):** Running `<repo>/.venv/bin/pytest` or `.venv/bin/mutmut` inside a git worktree without `PYTHONPATH="$PWD/src:$PWD"` resolves `cresmo.*` from the main repo's editable install instead of the isolated branch worktree, yielding false-positive test/mutation runs.
+
+#### 21.2 The Standard & Remediation
+1. **Recommended Mode (Maximum Control & Zero Conflict):** Execute refactoring waves **strictly sequentially** (`Wave 0 → Wave 1 → ... → Wave N`), with one atomic commit and full Stangler Method gates (`ADR → Spec → TDD Red → TDD Green + Refactor → Pathologist → Scheimpflug`) per wave.
+2. **Strict Invariants When Parallelizing Waves:**
+   - **Never** run a wave in `Workspace="inherit"` while other waves run in `Workspace="branch"`. All parallel workers MUST run in isolated `Workspace="branch"` worktrees and export clean patches.
+   - **Never** edit shared hub files (`docs/adr/README.md`, `docs/GLOSSARY.md`, `src/cresmo/application/ports/__init__.py`, `src/cresmo/bootstrap/composition.py`) inside parallel workers; integrate those files exclusively during the central merge step (using hunk-isolated staging when concurrent repo WIP exists).
+3. **Mandatory Worktree `PYTHONPATH` Override:** Inside any isolated branch worktree, ALWAYS execute Python, `pytest`, and `mutmut` with explicit worktree-first `PYTHONPATH`:
+   ```bash
+   PYTHONPATH="$PWD/src:$PWD" "<repo>/.venv/bin/pytest" -p no:cacheprovider ...
+   ```
+
+---
+
 ## 3. Enforcement & Quality Gates
 
 
@@ -911,3 +933,4 @@ The following Ruff rules and architecture checks are enforced across the entire 
 | **`RULE-018`**| Zero convenience accessors & property aliases | **BLOCKING** | Direct canonical aggregate navigation |
 | **`RULE-019`**| Eager fallback evaluation | **BLOCKING** | Prohibited; lazy evaluation on failure/offline only |
 | **`RULE-020`**| Zero cryptic abbreviations & truncations | **BLOCKING** | Full Ubiquitous Language terms across all layers |
+| **`RULE-021`**| Multi-wave & worktree isolation governance | **BLOCKING** | Sequential waves by default; isolated branch worktrees + `PYTHONPATH="$PWD/src:$PWD"` + central merge of shared files |

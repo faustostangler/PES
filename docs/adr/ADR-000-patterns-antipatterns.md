@@ -343,3 +343,13 @@ Telemetry-Induced Cascading Failure*
 Unbound Trace-Level Scoring*
 Uncalibrated Judge Metric Drift*
 Unrecorded Stage I/O*
+
+### Orquestração Multi-Agente, Ondas de Refatoração e Isolamento de Worktrees
+
+Explicit Worktree PYTHONPATH Override (`PYTHONPATH="$PWD/src:$PWD"`)
+Isolated Worktree Branching (Patch-Export Merge)
+Sequential Wave Execution (Atomic Gate-to-Gate Commits)
+Shared-File Central Merge Governance
+Concurrent Shared-Index Editing*
+Editable-Install Cross-Worktree Import Leak*
+Mixed Inherit-and-Branch Concurrency*
