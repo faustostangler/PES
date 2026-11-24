@@ -180,3 +180,29 @@ class TestCresmoSettingsRoot:
         assert settings.ingestion.workers.whisper == 3
         assert settings.ingestion.workers.subtitle == 15
         assert settings.ingestion.workers.channel_discovery == 30
+
+    def test_ingestion_high_throughput_media_settings_defaults_and_overrides(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        defaults = CresmoSettings(_env_file=None)
+        assert defaults.ingestion.whisper_device == "auto"
+        assert defaults.ingestion.whisper_compute_type == "auto"
+        assert defaults.ingestion.whisper_vad_filter is True
+        assert defaults.ingestion.enable_rss_fast_path is True
+
+        monkeypatch.setenv("CRESMO_INGESTION__WHISPER_DEVICE", "cuda")
+        monkeypatch.setenv("CRESMO_INGESTION__WHISPER_COMPUTE_TYPE", "float16")
+        monkeypatch.setenv("CRESMO_INGESTION__WHISPER_VAD_FILTER", "false")
+        monkeypatch.setenv("CRESMO_INGESTION__ENABLE_RSS_FAST_PATH", "false")
+
+        overridden = CresmoSettings(_env_file=None)
+        assert overridden.ingestion.whisper_device == "cuda"
+        assert overridden.ingestion.whisper_compute_type == "float16"
+        assert overridden.ingestion.whisper_vad_filter is False
+        assert overridden.ingestion.enable_rss_fast_path is False
+
+        with pytest.raises(ValidationError):
+            IngestionSettings.model_validate({"whisper_device": "tpu"})
+
+        with pytest.raises(ValidationError):
+            IngestionSettings.model_validate({"whisper_compute_type": "bf16"})

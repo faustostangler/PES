@@ -87,6 +87,10 @@ def build_media_ingestion_adapter(
         whisper_concurrency_limit=resolved.ingestion.workers.whisper,
         cookie_file=cookie_file,
         taxonomy_port=taxonomy_port,
+        whisper_device=resolved.ingestion.whisper_device,
+        whisper_compute_type=resolved.ingestion.whisper_compute_type,
+        whisper_vad_filter=resolved.ingestion.whisper_vad_filter,
+        enable_rss_fast_path=resolved.ingestion.enable_rss_fast_path,
     )
 
 

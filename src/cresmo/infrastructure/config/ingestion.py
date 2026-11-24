@@ -8,7 +8,7 @@ Conforms to:
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Self
+from typing import Literal, Self
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
@@ -82,6 +82,22 @@ class IngestionSettings(BaseModel):
     whisper_model: str = Field(
         default="base",
         description="Whisper STT model variant for audio transcription.",
+    )
+    whisper_device: Literal["auto", "cpu", "cuda"] = Field(
+        default="auto",
+        description="Inference device for FasterWhisperEngine ('auto', 'cpu', or 'cuda').",
+    )
+    whisper_compute_type: Literal["auto", "int8", "int8_float16", "float16", "float32"] = Field(
+        default="auto",
+        description="CTranslate2 quantization/precision mode for FasterWhisperEngine.",
+    )
+    whisper_vad_filter: bool = Field(
+        default=True,
+        description="Whether to apply Silero VAD speech filtering during audio transcription.",
+    )
+    enable_rss_fast_path: bool = Field(
+        default=True,
+        description="Whether to use YouTube Atom RSS feeds as a sub-200ms fast-path before yt-dlp.",
     )
     days_lookback: int = Field(
         default=365,

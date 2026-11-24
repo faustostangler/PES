@@ -15,12 +15,6 @@ from typing import Any
 import structlog
 from google import genai
 from google.genai import types
-from tenacity import (
-    retry,
-    retry_if_exception,
-    stop_after_attempt,
-    wait_random_exponential,
-)
 
 from cresmo.application.ports import PromptProviderPort
 from cresmo.application.ports.llm_judge_port import LlmJudgePort
@@ -37,13 +31,15 @@ from cresmo.infrastructure.adapters.judges.criterion_parser import (
 )
 from cresmo.infrastructure.adapters.llm.gemini_common import (
     build_thinking_config,
+    execute_with_model_failover,
+    generate_content_with_retry,
     is_transient_cluster_error,
     is_transient_genai_error,
-    log_gemini_retry_attempt,
 )
 from cresmo.infrastructure.adapters.llm.gemini_pool import GeminiCredentialPool
 from cresmo.infrastructure.adapters.prompts import JsonPromptProvider
 from cresmo.infrastructure.config import (
+    DEFAULT_GEMINI_FALLBACK_MODEL,
     DEFAULT_GEMINI_MAX_OUTPUT_TOKENS,
     DEFAULT_GEMINI_THINKING_LEVEL,
     DEFAULT_GEMINI_TIMEOUT_SECONDS,
@@ -55,6 +51,7 @@ logger = structlog.get_logger(__name__)
 
 DEFAULT_PASS_THRESHOLD: float = DEFAULT_JUDGE_PASS_THRESHOLD
 DEFAULT_MODEL: str = DEFAULT_JUDGE_GEMINI_MODEL
+DEFAULT_FALLBACK_MODEL: str = DEFAULT_GEMINI_FALLBACK_MODEL
 DEFAULT_THINKING_LEVEL: str = DEFAULT_GEMINI_THINKING_LEVEL
 DEFAULT_TIMEOUT_SECONDS: float = DEFAULT_GEMINI_TIMEOUT_SECONDS
 
@@ -71,27 +68,6 @@ def _clean_json_markdown(text: str) -> str:
     return cleaned
 
 
-@retry(
-    retry=retry_if_exception(_is_transient_cluster_error),
-    wait=wait_random_exponential(min=1, max=10),
-    stop=stop_after_attempt(3),
-    before_sleep=log_gemini_retry_attempt,
-    reraise=True,
-)
-def _generate_content_with_retry(
-    client: Any,
-    model: str,
-    contents: Any,
-    config: Any,
-) -> Any:
-    """Generate content with bounded exponential backoff for transient cluster errors (5xx)."""
-    return client.models.generate_content(
-        model=model,
-        contents=contents,
-        config=config,
-    )
-
-
 class GeminiJudgeAdapter(LlmJudgePort):
     """Quality judge adapter utilizing Google Gemini API with structured outputs."""
 
@@ -100,6 +76,7 @@ class GeminiJudgeAdapter(LlmJudgePort):
         client: Any | None = None,
         api_key: str | None = None,
         model: str = DEFAULT_MODEL,
+        fallback_model: str | None = DEFAULT_FALLBACK_MODEL,
         pass_threshold: float = DEFAULT_PASS_THRESHOLD,
         thinking_level: str | None = DEFAULT_THINKING_LEVEL,
         max_output_tokens: int = DEFAULT_GEMINI_MAX_OUTPUT_TOKENS,
@@ -114,6 +91,7 @@ class GeminiJudgeAdapter(LlmJudgePort):
             client: Pre-configured Google GenAI client instance.
             api_key: Google Gemini API key string.
             model: Gemini model name for evaluation.
+            fallback_model: Secondary Gemini model name used if primary fails after retries.
             pass_threshold: Minimum score threshold for passing criteria and overall evaluation.
             thinking_level: Reasoning effort level ('minimal', 'low', 'medium', 'high', 'xhigh').
             max_output_tokens: Bounded token ceiling (thinking + JSON output).
@@ -124,6 +102,9 @@ class GeminiJudgeAdapter(LlmJudgePort):
         """
         # ACL boundary hygiene: strip optional provider routing prefix ("gemini:")
         self._model = model.removeprefix("gemini:")
+        self._fallback_model = (
+            fallback_model.removeprefix("gemini:") if fallback_model is not None else None
+        )
         self._api_key = api_key
         self._client = client
         self._pass_threshold = pass_threshold
@@ -190,17 +171,6 @@ class GeminiJudgeAdapter(LlmJudgePort):
         )
 
         try:
-            config = types.GenerateContentConfig(
-                max_output_tokens=self._max_output_tokens,
-                system_instruction=chat_prompt.system_prompt,
-                response_mime_type="application/json",
-                response_schema=JudgeResponseOutputSchema,
-                thinking_config=build_thinking_config(
-                    model=self._model,
-                    thinking_level=self._thinking_level,
-                ),
-                automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=True),
-            )
             contents = [
                 types.Content(
                     role="model" if m.role == MessageRole.ASSISTANT else "user",
@@ -208,21 +178,16 @@ class GeminiJudgeAdapter(LlmJudgePort):
                 )
                 for m in chat_prompt.messages
             ]
-
-            def _do_generate(active_client: Any) -> Any:
-                return _generate_content_with_retry(
-                    client=active_client,
-                    model=self._model,
+            raw_response_text = execute_with_model_failover(
+                primary_model=self._model,
+                fallback_model=self._fallback_model,
+                adapter_label="GeminiJudgeAdapter",
+                operation=lambda target_model, _is_fallback: self._invoke_model(
+                    model=target_model,
+                    system_instruction=chat_prompt.system_prompt,
                     contents=contents,
-                    config=config,
-                )
-
-            if self._pool is not None:
-                response = self._pool.execute_with_failover(_do_generate)
-            else:
-                response = _do_generate(self.client)
-
-            raw_response_text = response.text or "{}"
+                ),
+            )
         except Exception as exc:
             # Re-raise to trigger resilient composite failover
             logger.warning("GeminiJudgeAdapter invocation failed: %s", exc)
@@ -269,13 +234,53 @@ class GeminiJudgeAdapter(LlmJudgePort):
         """Return the configured max output tokens ceiling."""
         return self._max_output_tokens
 
+    def _invoke_model(
+        self,
+        *,
+        model: str,
+        system_instruction: str | None,
+        contents: list[types.Content],
+    ) -> str:
+        """Build model-specific config and invoke GenAI with credential pool failover."""
+        config = types.GenerateContentConfig(
+            max_output_tokens=self._max_output_tokens,
+            system_instruction=system_instruction,
+            response_mime_type="application/json",
+            response_schema=JudgeResponseOutputSchema,
+            thinking_config=build_thinking_config(
+                model=model,
+                thinking_level=self._thinking_level,
+            ),
+            automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=True),
+        )
+
+        def _do_generate(active_client: Any) -> Any:
+            return generate_content_with_retry(
+                client=active_client,
+                model=model,
+                contents=contents,
+                config=config,
+            )
+
+        if self._pool is not None:
+            response = self._pool.execute_with_failover(_do_generate)
+        else:
+            response = _do_generate(self.client)
+        return str(response.text or "{}")
+
     @property
     def model(self) -> str:
         """Return the model identifier."""
         return self._model
 
+    @property
+    def fallback_model(self) -> str | None:
+        """Return the secondary fallback model identifier, if configured."""
+        return self._fallback_model
+
 
 __all__ = [
+    "DEFAULT_FALLBACK_MODEL",
     "DEFAULT_MODEL",
     "DEFAULT_PASS_THRESHOLD",
     "DEFAULT_THINKING_LEVEL",

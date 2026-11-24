@@ -19,7 +19,6 @@ from typing import Any
 
 import structlog
 from google.genai import types
-from tenacity import retry, retry_if_exception, stop_after_attempt, wait_random_exponential
 
 from cresmo.application.ports import (
     LLMTransformationPort,
@@ -31,16 +30,13 @@ from cresmo.application.ports import (
 from cresmo.domain.value_objects import ChatPrompt, MessageRole
 from cresmo.infrastructure.adapters.llm.gemini_common import (
     build_thinking_config,
+    execute_with_model_failover,
+    generate_content_with_retry,
     is_transient_cluster_error,
     is_transient_genai_error,
-    log_gemini_retry_attempt,
     resolve_effective_thinking_level,
 )
-from cresmo.infrastructure.adapters.llm.gemini_pool import (
-    CredentialPoolExhaustedError,
-    GeminiCredentialPool,
-    is_quota_exhausted_error,
-)
+from cresmo.infrastructure.adapters.llm.gemini_pool import GeminiCredentialPool
 from cresmo.infrastructure.adapters.telemetry.genai import build_genai_attributes
 from cresmo.infrastructure.config import (
     DEFAULT_GEMINI_FALLBACK_MODEL,
@@ -56,37 +52,6 @@ logger = structlog.get_logger(__name__)
 
 _is_transient_genai_error = is_transient_genai_error
 _is_transient_cluster_error = is_transient_cluster_error
-
-
-@retry(
-    retry=retry_if_exception(_is_transient_cluster_error),
-    wait=wait_random_exponential(min=2, max=20),
-    stop=stop_after_attempt(3),
-    before_sleep=log_gemini_retry_attempt,
-    reraise=True,
-)
-def _generate_with_retry(
-    client: Any,
-    model: str,
-    contents: Any,
-    config: Any,
-) -> Any:
-    """Execute model content generation with bounded exponential backoff on transient errors.
-
-    Args:
-        client: Google GenAI client instance.
-        model: Model identifier string.
-        contents: Input prompt or payload.
-        config: Generation configuration parameters.
-
-    Returns:
-        SDK generation response object.
-    """
-    return client.models.generate_content(
-        model=model,
-        contents=contents,
-        config=config,
-    )
 
 
 class GeminiLLMAdapter(LLMTransformationPort):
@@ -186,39 +151,20 @@ class GeminiLLMAdapter(LLMTransformationPort):
             Generated response text.
         """
         _ = temperature
-        try:
-            return self._run_model_generation(
-                model=self.model_name,
+        return execute_with_model_failover(
+            primary_model=self.model_name,
+            fallback_model=self.fallback_model_name,
+            adapter_label="GeminiLLMAdapter",
+            operation=lambda target_model, is_fallback: self._run_model_generation(
+                model=target_model,
                 prompt=prompt,
                 thinking_level=thinking_level,
                 trace_id=trace_id,
                 session_id=session_id,
                 user_id=user_id,
-                fallback=False,
-            )
-        except Exception as exc:
-            if (
-                isinstance(exc, CredentialPoolExhaustedError)
-                or is_quota_exhausted_error(exc)
-                or not self.fallback_model_name
-                or self.fallback_model_name == self.model_name
-            ):
-                raise
-            logger.warning(
-                "[GeminiLLMAdapter] Primary model '%s' failed (%s). Failing over to '%s'.",
-                self.model_name,
-                exc,
-                self.fallback_model_name,
-            )
-            return self._run_model_generation(
-                model=self.fallback_model_name,
-                prompt=prompt,
-                thinking_level=thinking_level,
-                trace_id=trace_id,
-                session_id=session_id,
-                user_id=user_id,
-                fallback=True,
-            )
+                fallback=is_fallback,
+            ),
+        )
 
     def _build_generation_config(
         self,
@@ -264,7 +210,7 @@ class GeminiLLMAdapter(LLMTransformationPort):
         with self._telemetry.start_span(span_name, kind=SpanKind.GENERATION) as span:
             span.set_input(prompt.to_dict_list())
             response = self._pool.execute_with_failover(
-                lambda client: _generate_with_retry(
+                lambda client: generate_content_with_retry(
                     client=client,
                     model=model,
                     contents=contents,

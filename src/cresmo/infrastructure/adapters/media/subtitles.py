@@ -8,6 +8,7 @@ Conforms to:
 from __future__ import annotations
 
 import re
+import threading
 from collections.abc import Mapping
 from datetime import UTC, date, datetime
 from typing import Any
@@ -19,16 +20,32 @@ logger = structlog.get_logger(__name__)
 SENTENCES_PER_PARAGRAPH_THRESHOLD: int = 4
 ISO_DATE_COMPACT_LENGTH: int = 8
 _ILLEGAL_FS_CHARS = re.compile(r'[\\/*?:"<>|%]')
+_PLUGINS_LOCK = threading.Lock()
+_PLUGINS_LOADED = False
+
+
+def _reset_yt_dlp_plugins_cache() -> None:
+    """Reset one-shot yt-dlp plugin loading cache (intended for hermetic unit tests)."""
+    global _PLUGINS_LOADED
+    with _PLUGINS_LOCK:
+        _PLUGINS_LOADED = False
 
 
 def ensure_yt_dlp_plugins_loaded() -> None:
-    """Load yt-dlp plugins to prevent background thread importlib lock deadlocks (ADR-055)."""
-    try:
-        import yt_dlp.plugins
+    """Load yt-dlp plugins once per process to prevent importlib lock deadlocks (ADR-055/ADR-075)."""
+    global _PLUGINS_LOADED
+    if _PLUGINS_LOADED:
+        return
+    with _PLUGINS_LOCK:
+        if _PLUGINS_LOADED:
+            return
+        try:
+            import yt_dlp.plugins
 
-        yt_dlp.plugins.load_all_plugins()
-    except Exception as exc:  # noqa: BLE001
-        logger.debug("Failed to load yt-dlp plugins: %s", exc)
+            yt_dlp.plugins.load_all_plugins()
+            _PLUGINS_LOADED = True
+        except Exception as exc:  # noqa: BLE001
+            logger.debug("Failed to load yt-dlp plugins: %s", exc)
 
 
 def reconstruct_json3_paragraphs(data: dict[str, Any]) -> str:
@@ -40,7 +57,7 @@ def reconstruct_json3_paragraphs(data: dict[str, Any]) -> str:
     for event in events:
         if "segs" in event and not event.get("aAppend"):
             seg_text = "".join(str(s.get("utf8", "")) for s in event["segs"]).strip()
-            if seg_text and seg_text != "\n":
+            if seg_text:
                 current_sentences.append(seg_text)
                 if len(current_sentences) >= SENTENCES_PER_PARAGRAPH_THRESHOLD or seg_text.endswith(
                     (".", "!", "?")

@@ -26,7 +26,7 @@ import sys
 import cresmo.presentation.cli
 
 loaded = set(sys.modules.keys())
-heavy_modules = {"whisper", "torch", "langfuse"}
+heavy_modules = {"whisper", "faster_whisper", "ctranslate2", "torch", "langfuse"}
 intersection = heavy_modules.intersection(loaded)
 assert not intersection, f"Heavy modules eagerly loaded on cli import: {intersection}"
 """
@@ -80,18 +80,18 @@ assert not intersection, f"Composition root eagerly loaded arq/redis side-effect
         )
 
     def test_native_media_ingestion_adapter_does_not_load_whisper_on_import(self) -> None:
-        """Verify importing NativeMediaIngestionAdapter does not import whisper or torch."""
+        """Verify importing NativeMediaIngestionAdapter does not import faster_whisper, ctranslate2, whisper, or torch."""
         code = """
 import sys
 from cresmo.infrastructure.adapters.media.native_media_ingestion_adapter import NativeMediaIngestionAdapter
 
-assert "whisper" not in sys.modules, "whisper eagerly imported by NativeMediaIngestionAdapter"
-assert "torch" not in sys.modules, "torch eagerly imported by NativeMediaIngestionAdapter"
+for mod in ("whisper", "faster_whisper", "ctranslate2", "torch"):
+    assert mod not in sys.modules, f"{mod} eagerly imported by NativeMediaIngestionAdapter"
 """
         proc = subprocess.run(
             [sys.executable, "-c", code], capture_output=True, text=True, check=False
         )
-        assert proc.returncode == 0, f"Adapter eagerly loaded whisper/torch:\n{proc.stderr}"
+        assert proc.returncode == 0, f"Adapter eagerly loaded ML runtime:\n{proc.stderr}"
 
     def test_commands_package_lazy_getattr(self) -> None:
         """Verify cresmo.presentation.commands resolves all public members dynamically via PEP 562."""

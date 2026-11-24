@@ -39,6 +39,7 @@ def build_llm_judge_adapter(
         primary = GeminiJudgeAdapter(
             api_keys=[k.get_secret_value() for k in gemini_cfg.api_keys],
             model=judge_cfg.gemini.model,
+            fallback_model=gemini_cfg.fallback_model if enable_fallback else None,
             pass_threshold=judge_cfg.pass_threshold,
             thinking_level=judge_cfg.gemini.thinking_level,
             max_output_tokens=gemini_cfg.max_output_tokens,

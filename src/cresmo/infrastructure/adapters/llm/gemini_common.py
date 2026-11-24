@@ -11,12 +11,24 @@ Conforms to:
 
 from __future__ import annotations
 
+from collections.abc import Callable
+from typing import Any
+
 import httpx
 import structlog
 from google.genai import errors, types
-from tenacity import RetryCallState
+from tenacity import (
+    RetryCallState,
+    retry,
+    retry_if_exception,
+    stop_after_attempt,
+    wait_random_exponential,
+)
 
-from cresmo.infrastructure.adapters.llm.gemini_pool import is_quota_exhausted_error
+from cresmo.infrastructure.adapters.llm.gemini_pool import (
+    CredentialPoolExhaustedError,
+    is_quota_exhausted_error,
+)
 from cresmo.infrastructure.config import GEMINI_THINKING_LEVELS
 
 logger = structlog.get_logger(__name__)
@@ -95,6 +107,55 @@ def log_gemini_retry_attempt(retry_state: RetryCallState) -> None:
     )
 
 
+@retry(
+    retry=retry_if_exception(is_transient_cluster_error),
+    wait=wait_random_exponential(min=2, max=20),
+    stop=stop_after_attempt(3),
+    before_sleep=log_gemini_retry_attempt,
+    reraise=True,
+)
+def generate_content_with_retry(
+    client: Any,
+    model: str,
+    contents: Any,
+    config: Any,
+) -> Any:
+    """Execute Google GenAI content generation with bounded exponential backoff on transient errors."""
+    return client.models.generate_content(
+        model=model,
+        contents=contents,
+        config=config,
+    )
+
+
+def execute_with_model_failover[T](
+    *,
+    primary_model: str,
+    fallback_model: str | None,
+    operation: Callable[[str, bool], T],
+    adapter_label: str,
+) -> T:
+    """Execute Gemini model invocation with secondary model failover on non-quota failures."""
+    try:
+        return operation(primary_model, False)
+    except Exception as exc:
+        if (
+            isinstance(exc, CredentialPoolExhaustedError)
+            or is_quota_exhausted_error(exc)
+            or not fallback_model
+            or fallback_model == primary_model
+        ):
+            raise
+        logger.warning(
+            "[%s] Primary model '%s' failed (%s). Failing over to '%s'.",
+            adapter_label,
+            primary_model,
+            exc,
+            fallback_model,
+        )
+        return operation(fallback_model, True)
+
+
 def resolve_effective_thinking_level(
     model: str,
     thinking_level: str | None,
@@ -115,7 +176,7 @@ def resolve_effective_thinking_level(
             f"Unsupported thinking_level '{thinking_level}'. Expected one of {GEMINI_THINKING_LEVELS}."
         )
 
-    normalized_model = model.removeprefix("gemini:").strip().lower()
+    normalized_model = model.removeprefix("gemini-").strip().lower()
 
     if normalized_model.startswith("gemma-4"):
         return "minimal" if level in ("minimal", "low") else "high"
@@ -164,6 +225,8 @@ def build_thinking_config(
 __all__ = [
     "TRANSIENT_NETWORK_PATTERNS",
     "build_thinking_config",
+    "execute_with_model_failover",
+    "generate_content_with_retry",
     "is_transient_cluster_error",
     "is_transient_genai_error",
     "log_gemini_retry_attempt",

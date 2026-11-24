@@ -1,31 +1,34 @@
 """Native Media Ingestion Adapter for Cresmo.
 
-Directly orchestrates yt-dlp and openai-whisper via official Python library APIs.
-Provides robust native subtitle extraction (mitigating HTTP 429), ephemeral
-scratch isolation for audio transcription, and zero legacy isb.ai coupling.
+Directly orchestrates yt-dlp, pooled HTTPX, YouTube Atom RSS discovery, and
+FasterWhisperEngine (CTranslate2) via official Python library APIs.
+Provides manifest-pruned metadata extraction, native subtitle prioritization
+(mitigating HTTP 429), and ephemeral scratch isolation for audio transcription.
 Acts as an Anti-Corruption Layer (ACL) shielding the domain from external
 scraping quirks and third-party media libraries.
 
 Conforms to:
     - ADR-004: Native Media Ingestion Decommissioning
-    - SPEC-004: Native Media Ingestion Specification
     - ADR-026: Clean Code Anti-Patterns & Code Smell Governance
+    - ADR-075: High-Throughput Native Media Ingestion
+    - SPEC-004 / SPEC-075
 """
 
 from __future__ import annotations
 
+import importlib.util
 import json
 import shutil
 import tempfile
 import threading
 import time
-import urllib.error
-import urllib.request
 from collections.abc import Mapping
 from http import HTTPStatus
 from pathlib import Path
-from typing import Any, cast
+from types import TracebackType
+from typing import Any, Final, Self, cast
 
+import httpx
 import structlog
 
 from cresmo.application.ports import MediaIngestionPort, MetricsPort
@@ -60,6 +63,7 @@ from cresmo.infrastructure.adapters.media.subtitles import (
     parse_upload_date,
     reconstruct_json3_paragraphs,
 )
+from cresmo.infrastructure.adapters.media.transcriber import FasterWhisperEngine
 from cresmo.infrastructure.adapters.metrics.noop_metrics_adapter import NoOpMetricsAdapter
 from cresmo.infrastructure.adapters.scrapers.header_generator import RandomHeaderGenerator
 from cresmo.infrastructure.adapters.taxonomy import JsonTaxonomyCatalogAdapter
@@ -69,15 +73,19 @@ logger = structlog.get_logger(__name__)
 # Re-exports for backwards compatibility
 _ensure_yt_dlp_plugins_loaded = ensure_yt_dlp_plugins_loaded
 
+YTDLP_METADATA_SKIP_MANIFESTS: Final[tuple[str, ...]] = ("dash", "hls", "translated_subs")
+DEFAULT_HTTP_MAX_CONNECTIONS: Final[int] = 20
+DEFAULT_HTTP_MAX_KEEPALIVE_CONNECTIONS: Final[int] = 10
+
 
 class NativeMediaIngestionAdapter(MediaIngestionPort):
     """Production Hexagonal adapter for media ingestion using pure Python libraries.
 
-    Encapsulates yt-dlp and Whisper execution behind the MediaIngestionPort contract.
+    Encapsulates yt-dlp, pooled HTTPX, and FasterWhisperEngine behind MediaIngestionPort.
     Shields domain models from low-level subprocesses, network timeouts, and JSON schemas.
 
     Attributes:
-        request_timeout: Socket timeout in seconds for fetching remote subtitle streams.
+        request_timeout: Socket timeout in seconds for fetching remote subtitle and RSS streams.
     """
 
     def __init__(
@@ -89,21 +97,38 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         js_runtime_name: str | None = None,
         metrics_port: MetricsPort | None = None,
         taxonomy_port: ChannelTaxonomyPort | None = None,
+        whisper_device: str = "auto",
+        whisper_compute_type: str = "auto",
+        whisper_vad_filter: bool = True,
+        enable_rss_fast_path: bool = True,
+        http_client: httpx.Client | None = None,
+        transcriber: FasterWhisperEngine | None = None,
     ) -> None:
         """Initialize NativeMediaIngestionAdapter.
 
         Args:
-            request_timeout: Socket timeout in seconds for subtitle HTTP requests.
+            request_timeout: Socket timeout in seconds for subtitle and RSS HTTP requests.
             header_generator: Optional dynamic browser request header generator.
             whisper_concurrency_limit: Maximum concurrent Whisper model executions.
             cookie_file: Optional path to Netscape cookies file for YouTube authentication.
             js_runtime_name: Optional explicit JavaScript runtime name for yt-dlp ('node', 'deno', 'bun').
             metrics_port: Optional MetricsPort instance for Prometheus time-series metrics.
             taxonomy_port: Optional taxonomy classifier port (defaults to bundled JsonTaxonomyCatalogAdapter).
+            whisper_device: Target inference device for FasterWhisperEngine ('auto', 'cpu', 'cuda').
+            whisper_compute_type: CTranslate2 compute type ('auto', 'int8', 'float16', etc.).
+            whisper_vad_filter: Whether to enable Silero VAD speech filtering during transcription.
+            enable_rss_fast_path: Whether to attempt YouTube Atom RSS discovery before yt-dlp.
+            http_client: Optional externally managed httpx.Client for connection pooling or testing.
+            transcriber: Optional FasterWhisperEngine instance for audio transcription fallback.
         """
         self.request_timeout = request_timeout
         self._header_generator = header_generator or RandomHeaderGenerator()
-        self._whisper_semaphore = threading.BoundedSemaphore(max(1, whisper_concurrency_limit))
+        self._transcriber = transcriber or FasterWhisperEngine(
+            concurrency_limit=whisper_concurrency_limit,
+            device=whisper_device,
+            compute_type=whisper_compute_type,
+            vad_filter=whisper_vad_filter,
+        )
         self._cookie_file: Path | None = Path(cookie_file).resolve() if cookie_file else None
         self._js_runtime_name: str | None = js_runtime_name or self._detect_js_runtime()
         if metrics_port is None:
@@ -111,6 +136,46 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         else:
             self._metrics_port = metrics_port
         self._taxonomy_port: ChannelTaxonomyPort = taxonomy_port or JsonTaxonomyCatalogAdapter()
+        self._enable_rss_fast_path = enable_rss_fast_path
+        self._http_client: httpx.Client | None = http_client
+        self._owns_http_client = http_client is None
+        self._http_client_lock = threading.Lock()
+
+    def _get_http_client(self) -> httpx.Client:
+        """Lazily construct and return a pooled, HTTP/2-capable httpx.Client."""
+        if self._http_client is not None:
+            return self._http_client
+        with self._http_client_lock:
+            if self._http_client is None:
+                http2_available = importlib.util.find_spec("h2") is not None
+                self._http_client = httpx.Client(
+                    timeout=self.request_timeout,
+                    limits=httpx.Limits(
+                        max_connections=DEFAULT_HTTP_MAX_CONNECTIONS,
+                        max_keepalive_connections=DEFAULT_HTTP_MAX_KEEPALIVE_CONNECTIONS,
+                    ),
+                    follow_redirects=True,
+                    http2=http2_available,
+                )
+            return self._http_client
+
+    def close(self) -> None:
+        """Close the adapter-owned httpx.Client connection pool if initialized."""
+        with self._http_client_lock:
+            if self._http_client is not None and self._owns_http_client:
+                self._http_client.close()
+                self._http_client = None
+
+    def __enter__(self) -> Self:
+        return self
+
+    def __exit__(
+        self,
+        exc_type: type[BaseException] | None,
+        exc_val: BaseException | None,
+        exc_tb: TracebackType | None,
+    ) -> None:
+        self.close()
 
     def _detect_js_runtime(self) -> str | None:
         """Auto-detect available JavaScript runtime for yt-dlp challenge solving."""
@@ -158,23 +223,20 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         return find_native_subtitle_url(info)
 
     def _fetch_url_content(self, url: str) -> str:
-        """Fetch remote subtitle payload with dynamic browser headers."""
-        req = urllib.request.Request(
-            url,
-            headers=self._header_generator.get_random_headers(),
-        )
+        """Fetch remote subtitle or RSS payload via pooled HTTPX client with dynamic headers."""
+        client = self._get_http_client()
         try:
-            with urllib.request.urlopen(req, timeout=self.request_timeout) as response:
-                raw_bytes: bytes = response.read()
-                return raw_bytes.decode("utf-8")
-        except urllib.error.HTTPError as exc:
-            if exc.code == HTTPStatus.TOO_MANY_REQUESTS:
+            response = client.get(url, headers=self._header_generator.get_random_headers())
+            response.raise_for_status()
+            return response.text
+        except httpx.HTTPStatusError as exc:
+            if exc.response.status_code == HTTPStatus.TOO_MANY_REQUESTS:
                 raise RateLimitExceededError(
-                    f"HTTP 429 Too Many Requests while fetching subtitles: {exc}"
+                    f"HTTP 429 Too Many Requests while fetching URL: {exc}"
                 ) from exc
-            raise IngestionNetworkError(f"HTTP error fetching subtitles: {exc}") from exc
+            raise IngestionNetworkError(f"HTTP error fetching URL: {exc}") from exc
         except Exception as exc:
-            raise IngestionNetworkError(f"Network error fetching subtitles: {exc}") from exc
+            raise IngestionNetworkError(f"Network error fetching URL: {exc}") from exc
 
     def _reconstruct_json3_paragraphs(self, data: dict[str, Any]) -> str:
         """Reconstruct JSON3 subtitle event segments into continuous prose paragraphs."""
@@ -210,7 +272,7 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         keep_audio: bool,
         channel_name: str = "Unknown_Channel",
     ) -> str:
-        """Download audio to ephemeral scratch dir, transcribe via Whisper, and clean up."""
+        """Download audio to ephemeral scratch dir, transcribe via FasterWhisperEngine, and clean up."""
         with tempfile.TemporaryDirectory(prefix="cresmo_scratch_") as scratch_str:
             scratch_path = Path(scratch_str)
             ydl_opts: dict[str, Any] = self._build_ydl_opts(
@@ -245,15 +307,7 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
                 dest_audio = dest_dir / audio_file.name
                 shutil.copy2(audio_file, dest_audio)
 
-            try:
-                import whisper  # Isolated heavy ML runtime lazy load per ADR-026/ADR-053
-
-                with self._whisper_semaphore:
-                    model = whisper.load_model(whisper_model)
-                    transcription_result = model.transcribe(str(audio_file))
-                    body = transcription_result.get("text", "").strip()
-            except Exception as exc:
-                raise CresmoInfrastructureError(f"Whisper transcription failed: {exc}") from exc
+            body = self._transcriber.transcribe(audio_file, model_name=whisper_model)
 
         return str(body)
 
@@ -261,10 +315,14 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
     _parse_published_datetime = staticmethod(parse_published_datetime)
 
     def _fetch_video_metadata(self, video_url: str) -> dict[str, Any] | None:
-        """Extract metadata dictionary from yt-dlp without downloading media."""
+        """Extract metadata dictionary from yt-dlp while pruning DASH/HLS manifest parsing."""
         ydl_opts: dict[str, Any] = self._build_ydl_opts(
             {
                 "skip_download": True,
+                "ignore_no_formats_error": True,
+                "extractor_args": {
+                    "youtube": {"skip": list(YTDLP_METADATA_SKIP_MANIFESTS)},
+                },
                 "quiet": True,
                 "no_warnings": True,
             }
@@ -442,6 +500,8 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             ydl_opts=self._build_ydl_opts({}),
             handle_error=self._handle_yt_dlp_error,
             sanitize_fs_name=self._sanitize_fs_name,
+            fetch_rss_xml=self._fetch_url_content,
+            enable_rss_fast_path=self._enable_rss_fast_path,
         )
 
     def extract_channel_url_from_video(

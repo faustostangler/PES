@@ -522,6 +522,213 @@ class TestGeminiJudgeAdapter:
 
         assert _is_transient_genai_error(RuntimeError("504 DEADLINE_EXCEEDED")) is True
 
+    def test_gemini_judge_and_llm_adapter_share_common_retry_helper(self) -> None:
+        """Verify GeminiJudgeAdapter and GeminiLLMAdapter share gemini_common.generate_content_with_retry."""
+        import cresmo.infrastructure.adapters.judges.gemini_judge as gemini_judge_mod
+        import cresmo.infrastructure.adapters.llm.gemini_adapter as gemini_adapter_mod
+        from cresmo.infrastructure.adapters.llm.gemini_common import generate_content_with_retry
+
+        assert callable(generate_content_with_retry)
+        assert not hasattr(gemini_judge_mod, "_generate_content_with_retry")
+        assert not hasattr(gemini_adapter_mod, "_generate_with_retry")
+
+    def test_gemini_judge_retries_transient_503_then_succeeds(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """Verify GeminiJudgeAdapter retries transient 503 via shared retry helper."""
+        from cresmo.infrastructure.adapters.llm.gemini_common import generate_content_with_retry
+
+        monkeypatch.setattr(generate_content_with_retry.retry, "sleep", lambda _: None)
+
+        mock_client = MagicMock()
+        valid_resp = MagicMock(
+            text=json.dumps(
+                {
+                    "criteria": [
+                        {"criterion": "orality_removal", "score": 0.95, "passed": True}
+                    ],
+                    "overall_score": 0.95,
+                    "passed": True,
+                }
+            )
+        )
+        mock_client.models.generate_content.side_effect = [
+            RuntimeError("503 UNAVAILABLE: high demand"),
+            valid_resp,
+        ]
+
+        judge = GeminiJudgeAdapter(client=mock_client, model="gemini-3.5-flash-lite")
+        context = EvaluationContext(
+            stage_name="fluid_prose",
+            raw_text="raw",
+            candidate_text="cand",
+            required_criteria=(JudgeCriterion.ORALITY_REMOVAL,),
+        )
+        evaluation = judge.evaluate(context)
+
+        assert evaluation.passed is True
+        assert mock_client.models.generate_content.call_count == 2
+
+    def test_gemini_judge_fails_over_to_fallback_model_after_exhausting_3_retries(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """Verify GeminiJudgeAdapter fails over to fallback_model after exhausting 3 primary retries."""
+        from cresmo.infrastructure.adapters.llm.gemini_common import generate_content_with_retry
+
+        monkeypatch.setattr(generate_content_with_retry.retry, "sleep", lambda _: None)
+
+        mock_client = MagicMock()
+        valid_resp = MagicMock(
+            text=json.dumps(
+                {
+                    "criteria": [
+                        {"criterion": "orality_removal", "score": 0.95, "passed": True}
+                    ],
+                    "overall_score": 0.95,
+                    "passed": True,
+                }
+            )
+        )
+        mock_client.models.generate_content.side_effect = [
+            RuntimeError("503 UNAVAILABLE"),
+            RuntimeError("503 UNAVAILABLE"),
+            RuntimeError("503 UNAVAILABLE"),
+            valid_resp,
+        ]
+
+        judge = GeminiJudgeAdapter(
+            client=mock_client,
+            model="gemini-3.5-flash-lite",
+            fallback_model="gemini-3.6-flash",
+        )
+        context = EvaluationContext(
+            stage_name="fluid_prose",
+            raw_text="raw",
+            candidate_text="cand",
+            required_criteria=(JudgeCriterion.ORALITY_REMOVAL,),
+        )
+        evaluation = judge.evaluate(context)
+
+        assert evaluation.passed is True
+        assert mock_client.models.generate_content.call_count == 4
+        calls = mock_client.models.generate_content.call_args_list
+        assert [c.kwargs["model"] for c in calls[:3]] == ["gemini-3.5-flash-lite"] * 3
+        assert calls[3].kwargs["model"] == "gemini-3.6-flash"
+
+    def test_gemini_judge_fallback_recomputes_thinking_config_for_fallback_model(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """Verify fallback call clamps thinking_level appropriately for the fallback judge model."""
+        from google.genai import types
+
+        from cresmo.infrastructure.adapters.llm.gemini_common import generate_content_with_retry
+
+        monkeypatch.setattr(generate_content_with_retry.retry, "sleep", lambda _: None)
+
+        mock_client = MagicMock()
+        valid_resp = MagicMock(
+            text=json.dumps(
+                {
+                    "criteria": [
+                        {"criterion": "orality_removal", "score": 0.95, "passed": True}
+                    ],
+                    "overall_score": 0.95,
+                    "passed": True,
+                }
+            )
+        )
+        mock_client.models.generate_content.side_effect = [
+            ValueError("Primary failed"),
+            valid_resp,
+        ]
+
+        judge = GeminiJudgeAdapter(
+            client=mock_client,
+            model="gemini-4-hydrogen",
+            fallback_model="gemini-3.6-flash",
+            thinking_level="xhigh",
+        )
+        context = EvaluationContext(
+            stage_name="fluid_prose",
+            raw_text="raw",
+            candidate_text="cand",
+            required_criteria=(JudgeCriterion.ORALITY_REMOVAL,),
+        )
+        evaluation = judge.evaluate(context)
+
+        assert evaluation.passed is True
+        assert mock_client.models.generate_content.call_count == 2
+        fallback_kwargs = mock_client.models.generate_content.call_args_list[1].kwargs
+        assert fallback_kwargs["model"] == "gemini-3.6-flash"
+        assert fallback_kwargs["config"].thinking_config is not None
+        assert fallback_kwargs["config"].thinking_config.thinking_level == types.ThinkingLevel.HIGH
+
+    def test_gemini_judge_does_not_failover_model_when_credential_pool_exhausted(self) -> None:
+        """Verify 429 pool exhaustion raises immediately without failing over to secondary model."""
+        from cresmo.infrastructure.adapters.llm.gemini_pool import (
+            CredentialPoolExhaustedError,
+            GeminiCredentialPool,
+        )
+
+        client1 = MagicMock()
+        client1.models.generate_content.side_effect = RuntimeError(
+            "429 RESOURCE_EXHAUSTED: retry in 60s"
+        )
+        pool = GeminiCredentialPool(keys=["k1"], client_factory=lambda _: client1)
+        judge = GeminiJudgeAdapter(
+            credential_pool=pool,
+            model="gemini-3.5-flash-lite",
+            fallback_model="gemini-3.6-flash",
+        )
+        context = EvaluationContext(
+            stage_name="fluid_prose",
+            raw_text="raw",
+            candidate_text="cand",
+            required_criteria=(JudgeCriterion.ORALITY_REMOVAL,),
+        )
+
+        with pytest.raises(CredentialPoolExhaustedError):
+            judge.evaluate(context)
+
+        assert client1.models.generate_content.call_count == 1
+        assert client1.models.generate_content.call_args.kwargs["model"] == "gemini-3.5-flash-lite"
+
+    @pytest.mark.parametrize("fallback_model", [None, "gemini-3.5-flash-lite"])
+    def test_gemini_judge_reraises_when_fallback_model_none_or_same_as_primary(
+        self, fallback_model: str | None
+    ) -> None:
+        """Verify judge re-raises immediately when fallback_model is None or identical to primary."""
+        mock_client = MagicMock()
+        mock_client.models.generate_content.side_effect = ValueError("Fatal error")
+
+        judge = GeminiJudgeAdapter(
+            client=mock_client,
+            model="gemini-3.5-flash-lite",
+            fallback_model=fallback_model,
+        )
+        context = EvaluationContext(
+            stage_name="fluid_prose",
+            raw_text="raw",
+            candidate_text="cand",
+            required_criteria=(JudgeCriterion.ORALITY_REMOVAL,),
+        )
+
+        with pytest.raises(ValueError, match="Fatal error"):
+            judge.evaluate(context)
+
+        assert mock_client.models.generate_content.call_count == 1
+
+    def test_gemini_judge_normalizes_provider_prefix_on_fallback_model(self) -> None:
+        """Verify ACL strips leading 'gemini:' provider prefix from fallback_model."""
+        mock_client = MagicMock()
+        judge = GeminiJudgeAdapter(
+            model="gemini:gemini-3.8-flash",
+            fallback_model="gemini:gemini-3.6-flash",
+            client=mock_client,
+        )
+        assert judge.model == "gemini-3.8-flash"
+        assert judge.fallback_model == "gemini-3.6-flash"
+
 
 class TestOllamaJudgeAdapter:
     """Test suite for local Ollama fallback judge adapter."""
@@ -1009,6 +1216,56 @@ class TestLlmJudgeFactory:
         assert isinstance(judge._inner_judge, MechanicalPreflightJudgeDecorator)
         assert isinstance(judge._inner_judge._inner_judge, GeminiJudgeAdapter)
         assert not isinstance(judge._inner_judge._inner_judge, ResilientCompositeJudgeAdapter)
+
+    def test_build_llm_judge_adapter_propagates_fallback_model_when_enabled(self) -> None:
+        """Verify build_llm_judge_adapter propagates llm.gemini.fallback_model when fallback is enabled."""
+        from cresmo.bootstrap.factories.judge_factory import build_llm_judge_adapter
+        from cresmo.infrastructure.config import (
+            CresmoSettings,
+            GeminiSettings,
+            JudgeSettings,
+            LlmSettings,
+        )
+
+        settings = CresmoSettings(
+            _env_file=None,
+            llm=LlmSettings(gemini=GeminiSettings(fallback_model="gemini-3.6-flash")),
+            judge=JudgeSettings(provider="gemini"),
+        )
+        judge = build_llm_judge_adapter(settings, telemetry_port=None, enable_fallback=True)
+
+        assert isinstance(judge, TelemetryJudgeDecorator)
+        assert isinstance(judge._inner_judge, MechanicalPreflightJudgeDecorator)
+        composite = judge._inner_judge._inner_judge
+        assert isinstance(composite, ResilientCompositeJudgeAdapter)
+        primary = composite._primary
+        assert isinstance(primary, GeminiJudgeAdapter)
+        assert primary.fallback_model == "gemini-3.6-flash"
+
+    def test_build_llm_judge_adapter_disables_fallback_model_when_enable_fallback_false(
+        self,
+    ) -> None:
+        """Verify enable_fallback=False disables secondary Gemini model failover for calibration."""
+        from cresmo.bootstrap.factories.judge_factory import build_llm_judge_adapter
+        from cresmo.infrastructure.config import (
+            CresmoSettings,
+            GeminiSettings,
+            JudgeSettings,
+            LlmSettings,
+        )
+
+        settings = CresmoSettings(
+            _env_file=None,
+            llm=LlmSettings(gemini=GeminiSettings(fallback_model="gemini-3.6-flash")),
+            judge=JudgeSettings(provider="gemini"),
+        )
+        judge = build_llm_judge_adapter(settings, telemetry_port=None, enable_fallback=False)
+
+        assert isinstance(judge, TelemetryJudgeDecorator)
+        assert isinstance(judge._inner_judge, MechanicalPreflightJudgeDecorator)
+        primary = judge._inner_judge._inner_judge
+        assert isinstance(primary, GeminiJudgeAdapter)
+        assert primary.fallback_model is None
 
 
 class TestCoordinatorLlmJudgeIntegration:
