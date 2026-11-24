@@ -35,6 +35,7 @@ from cresmo.infrastructure.adapters.telemetry.session_mapper import (
     build_propagated_trace_metadata,
     build_session_span_attributes,
     resolve_root_operation_name,
+    short_git_sha,
 )
 from cresmo.infrastructure.adapters.telemetry.thread_naming import name_telemetry_threads
 from cresmo.infrastructure.config import resolve_default_pipeline_version
@@ -43,7 +44,6 @@ logger = structlog.get_logger(__name__)
 
 DEFAULT_PIPELINE_VERSION: Final[str] = resolve_default_pipeline_version()
 OTEL_FLUSH_TIMEOUT_MS: Final[int] = 2000
-_GIT_SHA_SHORT_LENGTH: Final[int] = 8
 
 
 # Defer langfuse import to runtime per ADR-026/ADR-053/ADR-055
@@ -67,9 +67,7 @@ class OpenTelemetryAdapter(TelemetryPort):
         self._tracer = tracer or trace.get_tracer("cresmo.pipeline")
         self._langfuse = langfuse_client
         self._pipeline_version = pipeline_version or DEFAULT_PIPELINE_VERSION
-        self._git_sha: str | None = (
-            git_sha.strip()[:_GIT_SHA_SHORT_LENGTH] if (git_sha and git_sha.strip()) else None
-        )
+        self._git_sha: str | None = short_git_sha(git_sha)
         name_telemetry_threads(langfuse_client)
 
     @contextmanager
@@ -79,17 +77,13 @@ class OpenTelemetryAdapter(TelemetryPort):
     ) -> Generator[TelemetrySpan]:
         """Initiate root OpenTelemetry span, bind Langfuse propagation, and flush after exit."""
         effective_version = spec.pipeline_version or self._pipeline_version
-        raw_git_sha = spec.git_sha or self._git_sha
-        effective_git_sha = (
-            raw_git_sha.strip()[:_GIT_SHA_SHORT_LENGTH]
-            if (raw_git_sha and raw_git_sha.strip())
-            else None
-        )
+        effective_git_sha = short_git_sha(spec.git_sha) or self._git_sha
         resolved_trace_name, root_operation = resolve_root_operation_name(spec.trace_name)
         session_attributes, tags, input_payload = build_session_span_attributes(
             spec,
             pipeline_version=effective_version,
             git_sha=effective_git_sha,
+            resolved_trace_name=resolved_trace_name,
         )
 
         # Outer finally drains buffers AFTER the root span closes (ADR-065).
@@ -197,9 +191,7 @@ class OpenTelemetryAdapter(TelemetryPort):
         active_span.add_event("telemetry_score", attributes=event_attributes)
 
         if self._langfuse is not None:
-            score_fn = getattr(self._langfuse, "create_score", None) or getattr(
-                self._langfuse, "score", None
-            )
+            score_fn = getattr(self._langfuse, "create_score", None)
             if callable(score_fn):
                 try:
                     score_arguments: dict[str, Any] = {"name": name, "value": value}

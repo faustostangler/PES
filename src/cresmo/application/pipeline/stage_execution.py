@@ -20,7 +20,10 @@ from cresmo.application.pipeline.stage_descriptor import (
     StageConfig,
     extract_stage_source_text,
 )
-from cresmo.application.pipeline.stage_telemetry import attach_evaluation_span_attributes
+from cresmo.application.pipeline.stage_telemetry import (
+    attach_evaluation_span_attributes,
+    record_evaluation_metric,
+)
 from cresmo.application.ports import (
     LlmJudgePort,
     LLMTransformationPort,
@@ -255,10 +258,16 @@ def evaluate_stage_candidate[TSource, TOutput](
             trace_id=active_trace_id,
             required_criteria=stage_config.eval_spec.required_criteria,
             observation_id=active_observation_id,
+            judge_prompt_key=stage_config.judge_prompt_key,
         )
 
         llm_judge: LlmJudgePort = runner.llm_judge
         evaluation = llm_judge.evaluate(eval_context)
-        runner._record_evaluation_metrics(stage_config.stage_name, evaluation.passed, attempt)
+        record_evaluation_metric(
+            runner.metrics_port,
+            stage_name=stage_config.stage_name,
+            passed=evaluation.passed,
+            attempt=attempt,
+        )
         attach_evaluation_span_attributes(eval_span, evaluation)
         return evaluation

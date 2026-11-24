@@ -9,13 +9,14 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from dataclasses import dataclass, field
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 from cresmo.domain.exceptions import DomainValidationError
+from cresmo.domain.value_objects.prompt import PromptKey
 
 
-class JudgeCriterion(str, Enum):
+class JudgeCriterion(StrEnum):
     """Canonical semantic criteria for stage quality evaluation."""
 
     # Stage 1: Fluid Prose Criteria
@@ -48,14 +49,6 @@ class JudgeCriterion(str, Enum):
     INDEX_SYNTHESIS_QUALITY = "index_synthesis_quality"
 
 
-class VerdictType(str, Enum):
-    """Canonical evaluation return types conforming to decision-model primitives (ADR-031)."""
-
-    NOUL = "noul"  # Boolean / Binary assertion (TypeSafe System One / Jev primitive)
-    CHOICE = "choice"  # Categorical selection among defined options
-    SCORE = "score"  # Scaled numeric rating bounded in [0.0, 1.0]
-
-
 @dataclass(frozen=True, slots=True)
 class CandidateText:
     """Strongly-typed Value Object encapsulating raw intermediate LLM transformation outputs.
@@ -81,29 +74,6 @@ class CandidateText:
 
 
 @dataclass(frozen=True, slots=True)
-class TypedVerdict:
-    """Strongly-typed criterion evaluation verdict with confidence and actionable critique."""
-
-    criterion: JudgeCriterion
-    verdict_type: VerdictType
-    passed: bool
-    score: float
-    choice_value: str | None = None
-    confidence: float | None = None
-    reasoning: str = ""
-    improvement_suggestion: str = ""
-
-    def __post_init__(self) -> None:
-        """Validate typed verdict invariants."""
-        if not (0.0 <= self.score <= 1.0):
-            raise ValueError(f"Score must be between 0.0 and 1.0, got: {self.score}")
-        if self.confidence is not None and not (0.0 <= self.confidence <= 1.0):
-            raise ValueError(
-                f"Confidence must be between 0.0 and 1.0 if provided, got: {self.confidence}"
-            )
-
-
-@dataclass(frozen=True, slots=True)
 class CriterionScore:
     """Immutable evaluation score and verdict for an individual criterion.
 
@@ -113,7 +83,6 @@ class CriterionScore:
         passed: Boolean verdict indicating compliance with stage threshold.
         confidence: Optional calibrated probability confidence in [0.0, 1.0].
         reasoning: Succinct explanation of the score or failure rationale.
-        verdict_type: Evaluation primitive type (defaults to SCORE).
         improvement_suggestion: Optional actionable correction suggestion for closed-loop retries.
     """
 
@@ -122,7 +91,6 @@ class CriterionScore:
     passed: bool
     confidence: float | None = None
     reasoning: str = ""
-    verdict_type: VerdictType = VerdictType.SCORE
     improvement_suggestion: str = ""
 
     def __post_init__(self) -> None:
@@ -387,6 +355,7 @@ class EvaluationContext:
     trace_id: str | None = None
     required_criteria: tuple[JudgeCriterion, ...] = ()
     observation_id: str | None = None
+    judge_prompt_key: PromptKey | None = None
 
 
 @dataclass(frozen=True, slots=True)

@@ -70,11 +70,6 @@ class RandomHeaderGenerator:
         self._profiles: list[dict[str, str]] = []
         self._load_profiles(headers_path)
 
-    @property
-    def profiles(self) -> list[dict[str, str]]:
-        """Return immutable view of loaded browser profiles."""
-        return list(self._profiles)
-
     def get_random_headers(self) -> dict[str, str]:
         """Return a fresh copy of a randomly selected coherent browser header dict.
 
@@ -85,15 +80,6 @@ class RandomHeaderGenerator:
             return dict(_DEFAULT_FALLBACK_PROFILES[0])
         chosen = random.choice(self._profiles)
         return dict(chosen)
-
-    def get_random_user_agent(self) -> str:
-        """Return a random browser User-Agent string.
-
-        Returns:
-            Selected User-Agent string.
-        """
-        headers = self.get_random_headers()
-        return headers.get("User-Agent", _DEFAULT_FALLBACK_PROFILES[0]["User-Agent"])
 
     def _load_profiles(self, headers_path: Path | None) -> None:
         """Load and parse browser profiles with graceful fallback."""

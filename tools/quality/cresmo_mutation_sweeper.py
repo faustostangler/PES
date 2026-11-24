@@ -334,9 +334,6 @@ MODULE_TEST_MAP: dict[str, list[str]] = {
     "src/cresmo/infrastructure/adapters/judges/gemini_judge.py": [
         "tests/cresmo/unit/infrastructure/test_llm_judge.py",
     ],
-    "src/cresmo/infrastructure/adapters/judges/langfuse_decorator.py": [
-        "tests/cresmo/unit/infrastructure/test_llm_judge.py",
-    ],
     "src/cresmo/infrastructure/adapters/judges/ollama_judge.py": [
         "tests/cresmo/unit/infrastructure/test_llm_judge.py",
     ],
@@ -396,9 +393,6 @@ MODULE_TEST_MAP: dict[str, list[str]] = {
         "tests/cresmo/unit/infrastructure/test_opentelemetry_adapter.py",
     ],
     # Wave 0 (ADR-048) & Deferred Infrastructure Modules
-    "src/cresmo/infrastructure/adapters/data/polars_batch_processor.py": [
-        "tests/cresmo/unit/infrastructure/test_polars_batch_processor.py",
-    ],
     "src/cresmo/infrastructure/persistence/postgres_ledger_adapter.py": [
         "tests/cresmo/unit/infrastructure/test_postgres_ledger_adapter.py",
     ],
@@ -407,9 +401,6 @@ MODULE_TEST_MAP: dict[str, list[str]] = {
     ],
     "src/cresmo/infrastructure/adapters/judges/criterion_parser.py": [
         "tests/cresmo/unit/infrastructure/test_criterion_parser.py",
-    ],
-    "src/cresmo/infrastructure/adapters/scrapers/selectolax_html_parser.py": [
-        "tests/cresmo/unit/infrastructure/test_selectolax_html_parser.py",
     ],
     "src/cresmo/infrastructure/persistence/models.py": [
         "tests/cresmo/unit/infrastructure/test_postgres_ledger_adapter.py",
@@ -483,7 +474,6 @@ WAVE_DEFINITIONS: dict[str, list[str]] = {
         "src/cresmo/application/use_cases/indexing/validators.py",
         "src/cresmo/infrastructure/adapters/judges/composite_judge.py",
         "src/cresmo/infrastructure/adapters/judges/gemini_judge.py",
-        "src/cresmo/infrastructure/adapters/judges/langfuse_decorator.py",
         "src/cresmo/infrastructure/adapters/judges/ollama_judge.py",
         "src/cresmo/infrastructure/adapters/judges/preflight_decorator.py",
         "src/cresmo/infrastructure/adapters/judges/typesafe_judge.py",
@@ -568,19 +558,15 @@ WAVE_DEFINITIONS: dict[str, list[str]] = {
         "src/cresmo/infrastructure/adapters/llm/gemini_adapter.py",
         "src/cresmo/infrastructure/adapters/scrapers/header_generator.py",
         "src/cresmo/infrastructure/adapters/media/native_media_ingestion_adapter.py",
-        "src/cresmo/infrastructure/adapters/data/polars_batch_processor.py",
         "src/cresmo/infrastructure/persistence/postgres_ledger_adapter.py",
         "src/cresmo/infrastructure/adapters/llm/gemini_pool.py",
         "src/cresmo/infrastructure/adapters/judges/criterion_parser.py",
-        "src/cresmo/infrastructure/adapters/scrapers/selectolax_html_parser.py",
         "src/cresmo/infrastructure/persistence/models.py",
     ],
     "cresmo_unmapped_infra": [
-        "src/cresmo/infrastructure/adapters/data/polars_batch_processor.py",
         "src/cresmo/infrastructure/persistence/postgres_ledger_adapter.py",
         "src/cresmo/infrastructure/adapters/llm/gemini_pool.py",
         "src/cresmo/infrastructure/adapters/judges/criterion_parser.py",
-        "src/cresmo/infrastructure/adapters/scrapers/selectolax_html_parser.py",
         "src/cresmo/infrastructure/persistence/models.py",
     ],
     "presentation": [

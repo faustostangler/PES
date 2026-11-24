@@ -38,11 +38,20 @@ class TestSqliteLedgerAdapter:
         adapter = SqliteLedgerAdapter(tmp_path / "test.db")
         assert not adapter.is_processed(ContentId("dQw4w9WgXcQ"))
 
-    def test_mark_processed_persists_and_queries_true(self, tmp_path: Path) -> None:
+    def test_save_completed_entry_persists_and_queries_true(self, tmp_path: Path) -> None:
         adapter = SqliteLedgerAdapter(tmp_path / "test.db")
         content_id = ContentId("dQw4w9WgXcQ")
 
-        adapter.mark_processed(content_id)
+        adapter.save_entry(
+            LedgerEntry(
+                content_id=content_id,
+                media_url=f"https://youtube.com/watch?v={content_id.value}",
+                title="Test Video",
+                channel_name=ChannelName("TechChannel"),
+                status=PipelineStatus.COMPLETED,
+                completed_at=datetime.now(UTC),
+            )
+        )
         assert adapter.is_processed(content_id)
 
         entry = adapter.get_entry(content_id)
@@ -134,27 +143,6 @@ class TestSqliteLedgerAdapter:
         assert updated.status == PipelineStatus.COMPLETED
         assert updated.notes_count == 5
 
-    def test_list_entries_orders_by_recency(self, tmp_path: Path) -> None:
-        adapter = SqliteLedgerAdapter(tmp_path / "test.db")
-        for i in range(5):
-            cid = f"testVideo000{i}"
-            adapter.save_entry(
-                LedgerEntry(
-                    content_id=ContentId(cid),
-                    media_url=f"https://youtube.com/watch?v={cid}",
-                    title=f"Video #{i}",
-                    channel_name=ChannelName("Channel"),
-                    status=PipelineStatus.COMPLETED,
-                )
-            )
-
-        entries = adapter.list_entries(limit=3)
-        assert len(entries) == 3
-        # Most recent inserted should be first
-        assert entries[0].content_id.value == "testVideo0004"
-        assert entries[1].content_id.value == "testVideo0003"
-        assert entries[2].content_id.value == "testVideo0002"
-
     def test_concurrent_writes_and_reads_thread_safety(self, tmp_path: Path) -> None:
         adapter = SqliteLedgerAdapter(tmp_path / "test_concurrent.db")
 
@@ -179,8 +167,10 @@ class TestSqliteLedgerAdapter:
             for future in concurrent.futures.as_completed(futures):
                 future.result()
 
-        all_entries = adapter.list_entries(limit=100)
-        assert len(all_entries) == 40
+        for worker_id in range(4):
+            for j in range(10):
+                cid = f"worker{worker_id:02d}item{j:02d}00"
+                assert adapter.get_entry(ContentId(cid)) is not None
 
     def test_in_memory_database_initialization(self) -> None:
         adapter = SqliteLedgerAdapter(":memory:", timeout=10.0)
@@ -195,11 +185,10 @@ class TestSqliteLedgerAdapter:
         adapter = SqliteLedgerAdapter(tmp_path / "test.db")
         for idx, status in enumerate(
             [
-                PipelineStatus.SKIPPED_IDEMPOTENT,
                 PipelineStatus.RUNNING,
                 PipelineStatus.FAILED_INGESTION,
                 PipelineStatus.FAILED_TRANSFORMATION,
-                PipelineStatus.PAUSED_BUDGET,
+                PipelineStatus.QUARANTINED,
             ]
         ):
             cid = ContentId(f"statusTest00{idx}")
@@ -213,30 +202,6 @@ class TestSqliteLedgerAdapter:
                 )
             )
             assert not adapter.is_processed(cid)
-
-    def test_mark_processed_defaults_and_on_conflict_update(self, tmp_path: Path) -> None:
-        adapter = SqliteLedgerAdapter(tmp_path / "test.db")
-        cid = ContentId("defaultsTest01")
-
-        # Initial mark_processed creates with defaults
-        adapter.mark_processed(cid)
-        entry = adapter.get_entry(cid)
-        assert entry is not None
-        assert entry.channel_name == ChannelName("DefaultChannel")
-        assert entry.title == f"Video {cid.value}"
-        assert entry.media_url == f"https://youtube.com/watch?v={cid.value}"
-        assert entry.notes_count == 0
-        assert entry.status == PipelineStatus.COMPLETED
-        assert entry.completed_at is not None
-
-        # Re-marking updates completed_at
-        initial_completed = entry.completed_at
-        adapter.mark_processed(cid)
-        updated = adapter.get_entry(cid)
-        assert updated is not None
-        assert updated.status == PipelineStatus.COMPLETED
-        assert updated.completed_at is not None
-        assert updated.completed_at >= initial_completed
 
     def test_save_entry_started_at_preservation_and_error_message(self, tmp_path: Path) -> None:
         adapter = SqliteLedgerAdapter(tmp_path / "test.db")
@@ -274,23 +239,6 @@ class TestSqliteLedgerAdapter:
         assert retrieved.error_message == "Fatal processing failure"
         assert retrieved.started_at == start_time
         assert retrieved.completed_at is None
-
-    def test_list_entries_default_limit(self, tmp_path: Path) -> None:
-        adapter = SqliteLedgerAdapter(tmp_path / "test.db")
-        for i in range(10):
-            cid = ContentId(f"defaultLimit{i:02d}")
-            adapter.save_entry(
-                LedgerEntry(
-                    content_id=cid,
-                    media_url=f"https://youtube.com/watch?v={cid.value}",
-                    title=f"Video #{i}",
-                    channel_name=ChannelName("Channel"),
-                    status=PipelineStatus.COMPLETED,
-                )
-            )
-        # Calling without limit uses default 100
-        entries = adapter.list_entries()
-        assert len(entries) == 10
 
     def test_init_schema_creates_tables_and_indexes(self, tmp_path: Path) -> None:
         adapter = SqliteLedgerAdapter(tmp_path / "schema_test.db")
@@ -372,30 +320,20 @@ class TestSqliteLedgerAdapter:
         assert retrieved.media_url == "https://youtube.com/watch?v=null_fields_vid"
         assert retrieved.channel_name == ChannelName("NullChannel")
 
-    def test_is_processed_skipped_idempotent_and_non_existent(self, tmp_path: Path) -> None:
+    def test_is_processed_quarantined_and_non_existent(self, tmp_path: Path) -> None:
         adapter = SqliteLedgerAdapter(tmp_path / "test.db")
-        cid_skip = ContentId("vid_skipped_test")
+        cid_quarantined = ContentId("vid_quarantined_test")
         adapter.save_entry(
             LedgerEntry(
-                content_id=cid_skip,
-                media_url="https://youtube.com/watch?v=vid_skipped_test",
-                title="Skipped",
+                content_id=cid_quarantined,
+                media_url="https://youtube.com/watch?v=vid_quarantined_test",
+                title="Quarantined",
                 channel_name=ChannelName("Chan"),
-                status=PipelineStatus.SKIPPED_IDEMPOTENT,
+                status=PipelineStatus.QUARANTINED,
             )
         )
-        assert adapter.is_processed(cid_skip) is False
+        assert adapter.is_processed(cid_quarantined) is False
         assert adapter.get_entry(ContentId("non_existent_id")) is None
-
-    def test_list_entries_limit_parameter_and_default(self, tmp_path: Path) -> None:
-        adapter = SqliteLedgerAdapter(tmp_path / "test.db")
-        for i in range(15):
-            adapter.mark_processed(ContentId(f"lim_vid_{i:02d}"))
-
-        assert len(adapter.list_entries(limit=5)) == 5
-        assert len(adapter.list_entries(limit=10)) == 10
-        assert len(adapter.list_entries(limit=15)) == 15
-        assert len(adapter.list_entries()) == 15
 
     def test_init_creates_nested_parent_directories(self, tmp_path: Path) -> None:
         deep_dir = tmp_path / "deep" / "nested" / "path"
@@ -409,22 +347,6 @@ class TestSqliteLedgerAdapter:
             adapter = SqliteLedgerAdapter(":memory:")
             mock_mkdir.assert_not_called()
             assert adapter._db_path == ":memory:"
-
-    def test_mark_processed_timestamp_timezone_is_utc(self, tmp_path: Path) -> None:
-        adapter = SqliteLedgerAdapter(tmp_path / "test.db")
-        cid = ContentId("utc_tz_test_vid")
-        adapter.mark_processed(cid)
-        entry = adapter.get_entry(cid)
-        assert entry is not None
-        assert entry.completed_at is not None
-        assert entry.completed_at.tzinfo == UTC
-
-    def test_list_entries_default_limit_is_one_hundred(self, tmp_path: Path) -> None:
-        adapter = SqliteLedgerAdapter(tmp_path / "test.db")
-        for i in range(105):
-            adapter.mark_processed(ContentId(f"bulk_limit_{i:03d}"))
-        entries = adapter.list_entries()
-        assert len(entries) == 100
 
     def test_row_to_entry_case_sensitive_mapping_all_columns(self) -> None:
         start_dt = datetime.now(UTC)

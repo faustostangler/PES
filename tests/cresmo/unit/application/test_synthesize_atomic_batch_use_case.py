@@ -178,7 +178,7 @@ class TestSynthesizeAtomicBatchUseCase:
         )
 
         # Dual persistence in vault
-        assert vault_port.get_atomic_note_by_title(NoteTitle("Vilfredo Pareto")) == note
+        assert vault_port.atomic_notes["vilfredo pareto"] == note
         assert vault_port.index_entries["vilfredo pareto"]["title"] == "Vilfredo Pareto"
 
         # Verify LLM call metadata

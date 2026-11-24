@@ -17,7 +17,6 @@ from __future__ import annotations
 import http.cookiejar
 import re
 import sys
-import time
 from pathlib import Path
 from typing import Any
 
@@ -200,98 +199,3 @@ def export_cookies_from_browser(
         )
 
     return True
-
-
-def export_cookies_auto(
-    output_file: Path | str,
-    preferred_browser: str | None = "firefox",
-    verbose: bool = False,
-) -> bool:
-    """Scan installed browsers in priority order and save the best set of YouTube cookies.
-
-    Executes a two-tier extraction strategy:
-    1. First pass: scans installed browsers specifically for authenticated session tokens.
-    2. Second pass: if no authenticated session is found, falls back to guest/unauthenticated cookies.
-
-    Args:
-        output_file: Target path where the Netscape cookie jar will be saved.
-        preferred_browser: Primary browser to attempt first (defaults to 'firefox').
-        verbose: If True, outputs extraction telemetry to stdout.
-
-    Returns:
-        True if cookies were successfully extracted and written; False otherwise.
-    """
-    output_path = Path(output_file).resolve()
-
-    # Prioritize preferred browser (e.g. firefox on Linux)
-    priority: list[str] = []
-    if preferred_browser and preferred_browser in SUPPORTED_BROWSERS:
-        priority.append(preferred_browser)
-    for b in ("firefox", "chrome", "chromium", "brave", "edge"):
-        if b not in priority:
-            priority.append(b)
-
-    # 1. First pass: search strictly for authenticated browser sessions
-    for browser in priority:
-        if export_cookies_from_browser(
-            browser=browser, output_file=output_path, require_auth=True, verbose=verbose
-        ):
-            return True
-
-    # 2. Second pass: fallback to any valid browser cookies (guest/unauthenticated)
-    for browser in priority:
-        if export_cookies_from_browser(
-            browser=browser, output_file=output_path, require_auth=False, verbose=verbose
-        ):
-            return True
-
-    return False
-
-
-def ensure_cookies_file(
-    output_file: Path | str,
-    browser: str | None = "firefox",
-    max_age_hours: int = 12,
-    verbose: bool = False,
-) -> Path | None:
-    """Ensure a valid authenticated cookie file exists on disk.
-
-    Refreshes if missing, expired, or lacking authentication tokens.
-
-    Args:
-        output_file: Destination file path for the Netscape cookie file.
-        browser: Preferred browser candidate for cookie extraction.
-        max_age_hours: Maximum allowable file age before forcing a refresh (default: 12h).
-        verbose: If True, outputs diagnostic messages.
-
-    Returns:
-        Path to a valid, verified cookie file, or None if unavailable.
-    """
-    out_path = Path(output_file).resolve()
-    should_refresh = False
-
-    if (
-        not out_path.exists()
-        or out_path.stat().st_size < MIN_COOKIE_FILE_BYTES
-        or not has_valid_auth_cookies(out_path)
-    ):
-        should_refresh = True
-    elif max_age_hours > 0:
-        age_seconds = time.time() - out_path.stat().st_mtime
-        if age_seconds > max_age_hours * 3600:
-            should_refresh = True
-
-    if should_refresh:
-        success = False
-        if browser:
-            success = export_cookies_from_browser(
-                browser=browser, output_file=out_path, require_auth=True, verbose=verbose
-            )
-        if not success:
-            success = export_cookies_auto(
-                output_file=out_path, preferred_browser=browser, verbose=verbose
-            )
-        if not success:
-            return out_path if out_path.exists() and out_path.stat().st_size > 0 else None
-
-    return out_path if out_path.exists() and out_path.stat().st_size > 0 else None

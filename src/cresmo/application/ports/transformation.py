@@ -25,7 +25,6 @@ class LLMTransformationPort(ABC):
         prompt: ChatPrompt,
         temperature: float | None = None,
         *,
-        thinking_level: str | None = None,
         trace_id: str | None = None,
         session_id: str | None = None,
         user_id: str | None = None,
@@ -35,7 +34,6 @@ class LLMTransformationPort(ABC):
         Args:
             prompt: Canonical ChatPrompt value object with system prompt and messages.
             temperature: Sampling temperature override (used by local providers; ignored by Gemini).
-            thinking_level: Optional reasoning effort override ('minimal', 'low', 'medium', 'high', 'xhigh').
             trace_id: Optional trace ID (e.g. ContentId or session key).
             session_id: Pipeline session identifier.
             user_id: Operator or channel identifier.
@@ -58,18 +56,4 @@ class LLMTransformationPort(ABC):
         Args:
             timeout_seconds: Optional timeout in seconds for background model loading.
         """
-
-    def wait_for_warmup(self, timeout_seconds: float | None = None) -> bool:
-        """Wait at the rendezvous barrier until model warmup completes.
-
-        Default implementation returns True immediately for providers not requiring
-        explicit local memory allocation.
-
-        Args:
-            timeout_seconds: Optional timeout in seconds to wait for warmup.
-
-        Returns:
-            True if warmup completed successfully; False if timed out.
-        """
         _ = timeout_seconds
-        return True

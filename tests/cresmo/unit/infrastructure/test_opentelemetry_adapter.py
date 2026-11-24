@@ -330,22 +330,7 @@ class TestOpenTelemetryAdapterSessionsAndSpans:
             "score.observation_id": "explicit_obs",
         }
 
-        # Fallback to legacy .score() when .create_score is absent + fail-silent exception handling
-        class LegacyLangfuse:
-            def __init__(self) -> None:
-                self.calls: list[dict[str, object]] = []
-
-            def score(self, **kwargs: object) -> None:
-                self.calls.append(kwargs)
-
-        legacy_client = LegacyLangfuse()
-        legacy_adapter = OpenTelemetryAdapter(langfuse_client=legacy_client)
-        legacy_adapter.record_score(name="session_coherence", value=1.0, comment="done")
-        assert legacy_client.calls == [
-            {"name": "session_coherence", "value": 1.0, "comment": "done"}
-        ]
-
-        # Langfuse object with neither create_score nor score is safely ignored without AttributeError
+        # Langfuse object without create_score is safely ignored without AttributeError
         no_score_adapter = OpenTelemetryAdapter(langfuse_client=object())
         no_score_adapter.record_score(name="ignored", value=0.5)
 

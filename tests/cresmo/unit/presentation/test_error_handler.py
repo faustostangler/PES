@@ -19,7 +19,6 @@ from cresmo.domain.exceptions import (
     PreflightError,
     QuotaPoolExhaustedError,
     RateLimitExceededError,
-    SecurityViolationError,
 )
 from cresmo.presentation.error_handler import (
     format_cli_error,
@@ -71,11 +70,6 @@ class TestCliErrorHandler:
                 PreflightError("ffmpeg missing"),
                 EXIT_CONFIG_OR_USAGE_ERROR,
                 "Preflight error: ffmpeg missing",
-            ),
-            (
-                SecurityViolationError("path escape"),
-                EXIT_CONFIG_OR_USAGE_ERROR,
-                "Security boundary violation: path escape",
             ),
             (
                 DomainValidationError("bad domain value"),

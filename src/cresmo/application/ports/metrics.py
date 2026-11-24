@@ -8,6 +8,28 @@ Conforms to:
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from enum import StrEnum
+
+
+class MetricName(StrEnum):
+    """Canonical low-cardinality SRE Golden Signals and DORA metric identifiers."""
+
+    PIPELINE_STAGE_DURATION = "cresmo_pipeline_stage_duration_seconds"
+    MEDIA_INGESTION_DURATION = "cresmo_media_ingestion_duration_seconds"
+    LLM_REQUEST_DURATION = "cresmo_llm_request_duration_seconds"
+    TRANSCRIPTS_PROCESSED = "cresmo_transcripts_processed_total"
+    BATCH_SOURCES_DISCOVERED = "cresmo_batch_sources_discovered_total"
+    PIPELINE_ERRORS = "cresmo_pipeline_errors_total"
+    JUDGE_RETRY_COUNT = "cresmo_judge_retry_count_total"
+    JUDGE_EVALUATIONS = "cresmo_judge_evaluations_total"
+    STAGE_QUARANTINES = "cresmo_stage_quarantines_total"
+    INGESTION_FAILURES = "cresmo_ingestion_failures_total"
+    DISCOVERY_QUEUE_SIZE = "cresmo_discovery_queue_size"
+    PROCESS_RESIDENT_MEMORY_BYTES = "cresmo_process_resident_memory_bytes"
+    GC_COLLECTIONS = "cresmo_gc_collections_total"
+    DORA_DEPLOYMENTS = "cresmo_dora_deployments_total"
+    DORA_LEAD_TIME = "cresmo_dora_lead_time_seconds"
+    DORA_RESTORE_DURATION = "cresmo_dora_restore_duration_seconds"
 
 
 class MetricsPort(ABC):
@@ -69,6 +91,10 @@ class MetricsPort(ABC):
             labels: Optional dimensional key-value pairs.
         """
 
+    def flush(self) -> None:
+        """Flush any buffered metrics to the downstream collector."""
+        return None
+
 
 class NoOpMetricsPort(MetricsPort):
     """Hermetic Null-Object implementation of MetricsPort for offline/test environments."""
@@ -103,3 +129,6 @@ class NoOpMetricsPort(MetricsPort):
     ) -> None:
         """Set the current instantaneous value of a gauge."""
         _ = (name, value, labels)
+
+    def flush(self) -> None:
+        """No-op flush for offline test environments."""

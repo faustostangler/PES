@@ -88,22 +88,6 @@ class ChatPrompt:
             messages=(ChatMessage(role=MessageRole.USER, content=user_prompt),),
         )
 
-    @classmethod
-    def from_system_and_user(
-        cls,
-        user: str,
-        system: str | None = None,
-    ) -> ChatPrompt:
-        """Convenience factory creating a ChatPrompt from user content and optional system prompt."""
-        return cls.single_turn(user_prompt=user, system_prompt=system)
-
-    def with_turn(self, role: MessageRole, content: str) -> ChatPrompt:
-        """Return a new immutable ChatPrompt with an appended message turn."""
-        return ChatPrompt(
-            system_prompt=self.system_prompt,
-            messages=(*self.messages, ChatMessage(role=role, content=content)),
-        )
-
     def get_last_user_content(self) -> str:
         """Extract content of the last user message, or empty string if absent."""
         for msg in reversed(self.messages):

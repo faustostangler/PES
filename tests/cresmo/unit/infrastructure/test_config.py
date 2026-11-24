@@ -77,7 +77,6 @@ class TestCresmoSettingsRoot:
         assert settings.storage.master_dir == settings.storage.data_dir / "master"
         assert settings.storage.index_path == settings.storage.vault_dir / "_index.json"
         assert settings.storage.sqlite_ledger_path == settings.storage.data_dir / "cresmo_ledger.db"
-        assert settings.storage.brain_csv_path == settings.storage.data_dir / "brain.csv"
 
         # Zero legacy flat attributes or ClassVar mirrors
         for removed in (
@@ -159,7 +158,7 @@ class TestCresmoSettingsRoot:
             settings.storage.mocs_dir,
             settings.storage.raw_dir,
             settings.storage.fluid_dir,
-            settings.storage.gap_filler_dir,
+            settings.storage.data_dir / "gap_filler",
             settings.storage.enriched_dir,
             settings.storage.master_dir,
             settings.storage.priority_texts_dir,
@@ -171,14 +170,12 @@ class TestCresmoSettingsRoot:
     ) -> None:
         monkeypatch.setenv("CRESMO_LLM__GEMINI__API_KEYS", "k-env-1, k-env-2")
         monkeypatch.setenv("CRESMO_INGESTION__WORKERS__WHISPER", "3")
-        monkeypatch.delenv("CRESMO_INGESTION__WORKERS__SUBTITLE", raising=False)
         monkeypatch.delenv("CRESMO_INGESTION__WORKERS__CHANNEL_DISCOVERY", raising=False)
 
         settings = CresmoSettings(_env_file=None)
         assert settings.llm.gemini.api_keys == (SecretStr("k-env-1"), SecretStr("k-env-2"))
         assert settings.llm.gemini.primary_api_key().get_secret_value() == "k-env-1"
         assert settings.ingestion.workers.whisper == 3
-        assert settings.ingestion.workers.subtitle == 15
         assert settings.ingestion.workers.channel_discovery == 30
 
     def test_ingestion_high_throughput_media_settings_defaults_and_overrides(

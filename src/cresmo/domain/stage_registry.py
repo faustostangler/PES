@@ -19,19 +19,12 @@ from cresmo.domain.value_objects import (
     JudgeCriterion,
     PromptKey,
 )
-from cresmo.domain.value_objects.convergence import (
-    ConvergenceMode,
-    SaturationPolicy,
-    never_saturate,
-)
+from cresmo.domain.value_objects.convergence import ConvergenceMode
 
 __all__ = [
-    "ConvergenceMode",
-    "SaturationPolicy",
     "StageDefinition",
     "StageName",
     "StageRegistry",
-    "never_saturate",
 ]
 
 
@@ -116,27 +109,6 @@ class StageRegistry:
             max_passes=5,
             convergence_mode=ConvergenceMode.HYBRID_SEMANTIC,
         ),
-        # FUTURE / DEFERRED: Upcoming synthesis conveyor stages preserved for future rollout.
-        # "atomic_inventory": StageDefinition(
-        #     transform_prompt_key=PromptKey.ATOMIC_INVENTORY,
-        #     required_criteria=(
-        #         JudgeCriterion.INVENTORY_COHERENCE,
-        #         JudgeCriterion.STRUCTURAL_COMPLIANCE,
-        #     ),
-        # ),
-        # "atomic_batch": StageDefinition(
-        #     transform_prompt_key=PromptKey.ATOMIC_BATCH,
-        #     required_criteria=(
-        #         JudgeCriterion.STRUCTURAL_COMPLIANCE,
-        #         JudgeCriterion.SEMANTIC_FAITHFULNESS,
-        #     ),
-        # ),
-        # "reconcile_mocs": StageDefinition(
-        #     transform_prompt_key=PromptKey.RECONCILE_MOCS,
-        #     required_criteria=(
-        #         JudgeCriterion.STRUCTURAL_COMPLIANCE,
-        #     ),
-        # ),
     }
 
     @classmethod
@@ -153,13 +125,3 @@ class StageRegistry:
     def contains(cls, stage_name: str) -> bool:
         """Check whether a stage is registered in the domain catalog."""
         return stage_name in cls._SPECS
-
-    @classmethod
-    def register(cls, stage_name: str, spec: StageDefinition) -> None:
-        """Register or override a stage specification dynamically."""
-        cls._SPECS[stage_name] = spec
-
-    @classmethod
-    def all_stages(cls) -> list[str]:
-        """Return list of all registered stage identifiers."""
-        return list(cls._SPECS.keys())

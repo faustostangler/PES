@@ -143,10 +143,10 @@ class TestChannelFeedCrawlerService:
             media_url="https://youtube.com/watch?v=fresh1",
             published_at=now - timedelta(days=2),
         )
-        # 2. Fresh item with naive tz and url only
+        # 2. Fresh item with naive tz
         item2 = DummyFeedItem(
             url="https://youtube.com/watch?v=fresh2",
-            media_url=None,
+            media_url="https://youtube.com/watch?v=fresh2",
             published_at=(now - timedelta(days=3)).replace(tzinfo=None),
         )
         # 3. Old item outside lookback cutoff

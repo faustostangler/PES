@@ -8,12 +8,10 @@ Conforms to:
 from __future__ import annotations
 
 import json
-import re
 import time
 from typing import Any
 
 import structlog
-from google import genai
 from google.genai import types
 
 from cresmo.application.ports import PromptProviderPort
@@ -27,17 +25,16 @@ from cresmo.domain.value_objects import (
 )
 from cresmo.infrastructure.adapters.judges.criterion_parser import (
     JudgeResponseOutputSchema,
+    clean_json_markdown,
     parse_criteria_scores,
 )
 from cresmo.infrastructure.adapters.llm.gemini_common import (
     build_thinking_config,
     execute_with_model_failover,
     generate_content_with_retry,
-    is_transient_cluster_error,
-    is_transient_genai_error,
 )
 from cresmo.infrastructure.adapters.llm.gemini_pool import GeminiCredentialPool
-from cresmo.infrastructure.adapters.prompts import JsonPromptProvider
+from cresmo.infrastructure.adapters.prompts.json_provider import JsonPromptProvider
 from cresmo.infrastructure.config import (
     DEFAULT_GEMINI_FALLBACK_MODEL,
     DEFAULT_GEMINI_MAX_OUTPUT_TOKENS,
@@ -49,24 +46,6 @@ from cresmo.infrastructure.config import (
 
 logger = structlog.get_logger(__name__)
 
-DEFAULT_PASS_THRESHOLD: float = DEFAULT_JUDGE_PASS_THRESHOLD
-DEFAULT_MODEL: str = DEFAULT_JUDGE_GEMINI_MODEL
-DEFAULT_FALLBACK_MODEL: str = DEFAULT_GEMINI_FALLBACK_MODEL
-DEFAULT_THINKING_LEVEL: str = DEFAULT_GEMINI_THINKING_LEVEL
-DEFAULT_TIMEOUT_SECONDS: float = DEFAULT_GEMINI_TIMEOUT_SECONDS
-
-_is_transient_genai_error = is_transient_genai_error
-_is_transient_cluster_error = is_transient_cluster_error
-
-
-def _clean_json_markdown(text: str) -> str:
-    """Strip markdown code fence wrappers from raw JSON response."""
-    cleaned = text.strip()
-    match = re.search(r"```(?:json)?\s*([\s\S]*?)\s*```", cleaned)
-    if match:
-        return match.group(1).strip()
-    return cleaned
-
 
 class GeminiJudgeAdapter(LlmJudgePort):
     """Quality judge adapter utilizing Google Gemini API with structured outputs."""
@@ -75,15 +54,15 @@ class GeminiJudgeAdapter(LlmJudgePort):
         self,
         client: Any | None = None,
         api_key: str | None = None,
-        model: str = DEFAULT_MODEL,
-        fallback_model: str | None = DEFAULT_FALLBACK_MODEL,
-        pass_threshold: float = DEFAULT_PASS_THRESHOLD,
-        thinking_level: str | None = DEFAULT_THINKING_LEVEL,
+        model: str = DEFAULT_JUDGE_GEMINI_MODEL,
+        fallback_model: str | None = DEFAULT_GEMINI_FALLBACK_MODEL,
+        pass_threshold: float = DEFAULT_JUDGE_PASS_THRESHOLD,
+        thinking_level: str | None = DEFAULT_GEMINI_THINKING_LEVEL,
         max_output_tokens: int = DEFAULT_GEMINI_MAX_OUTPUT_TOKENS,
         prompt_provider: PromptProviderPort | None = None,
         credential_pool: GeminiCredentialPool | None = None,
         api_keys: list[str] | None = None,
-        timeout_seconds: float = DEFAULT_TIMEOUT_SECONDS,
+        timeout_seconds: float = DEFAULT_GEMINI_TIMEOUT_SECONDS,
     ) -> None:
         """Initialize the Gemini judge adapter.
 
@@ -105,13 +84,10 @@ class GeminiJudgeAdapter(LlmJudgePort):
         self._fallback_model = (
             fallback_model.removeprefix("gemini:") if fallback_model is not None else None
         )
-        self._api_key = api_key
-        self._client = client
         self._pass_threshold = pass_threshold
         self._thinking_level = thinking_level
         self._max_output_tokens = max_output_tokens
         self._prompt_provider = prompt_provider or JsonPromptProvider()
-        self._timeout_seconds = timeout_seconds
 
         # Initialize credential pool if configured
         self._pool: GeminiCredentialPool | None = None
@@ -133,31 +109,21 @@ class GeminiJudgeAdapter(LlmJudgePort):
 
     @property
     def client(self) -> Any:
-        """Lazy-instantiate the Google GenAI client."""
+        """Return an active leased Google GenAI client from the credential pool."""
         if self._pool is not None:
             return self._pool.lease()[1]
-        if self._client is None:
-            if not self._api_key:
-                raise ValueError(
-                    "Gemini API key must be provided explicitly via api_key or client. "
-                    "Bypassing Pydantic Settings via direct os.getenv is prohibited (ADR-026 Rule 9)."
-                )
-            self._client = genai.Client(
-                api_key=self._api_key,
-                http_options=types.HttpOptions(timeout=int(self._timeout_seconds * 1000)),
-            )
-        return self._client
+        raise ValueError(
+            "Gemini API key must be provided explicitly via api_key or client. "
+            "Bypassing Pydantic Settings via direct os.getenv is prohibited (ADR-026 Rule 9)."
+        )
 
     def evaluate(self, context: EvaluationContext) -> JudgeEvaluation:
         """Evaluate candidate text against raw text across requested criteria."""
         start_time = time.perf_counter()
         criteria_names = [c.value for c in context.required_criteria]
 
-        if context.stage_name == "gap_filler":
-            prompt_key = PromptKey.JUDGE_GAP_FILLER
-        elif context.stage_name == "fluid_prose":
-            prompt_key = PromptKey.JUDGE_FLUID_PROSE
-        else:
+        prompt_key = context.judge_prompt_key
+        if prompt_key is None:
             try:
                 prompt_key = PromptKey(f"judge_{context.stage_name}")
             except ValueError:
@@ -196,7 +162,7 @@ class GeminiJudgeAdapter(LlmJudgePort):
         latency_ms = (time.perf_counter() - start_time) * 1000.0
 
         try:
-            parsed = json.loads(_clean_json_markdown(raw_response_text))
+            parsed = json.loads(clean_json_markdown(raw_response_text))
         except json.JSONDecodeError as err:
             logger.error("Failed to parse Gemini judge response as JSON: %s", raw_response_text)
             raise ValueError(f"Gemini judge returned non-JSON output: {raw_response_text}") from err
@@ -280,9 +246,5 @@ class GeminiJudgeAdapter(LlmJudgePort):
 
 
 __all__ = [
-    "DEFAULT_FALLBACK_MODEL",
-    "DEFAULT_MODEL",
-    "DEFAULT_PASS_THRESHOLD",
-    "DEFAULT_THINKING_LEVEL",
     "GeminiJudgeAdapter",
 ]

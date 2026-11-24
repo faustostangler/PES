@@ -63,10 +63,9 @@ def run(
         Path | None,
         typer.Option(
             "--manifest",
-            "--playlist",
             resolve_path=True,
             exists=True,
-            help="Path to manifest or playlist text file (default: data/playlist.txt)",
+            help="Path to manifest text file (default: data/playlist.txt)",
         ),
     ] = None,
     passes: Annotated[
@@ -76,14 +75,6 @@ def run(
             min=1,
             max=10,
             help="Refinement passes override for expansion stages (default: configured per-stage)",
-        ),
-    ] = None,
-    batch_size: Annotated[
-        int | None,
-        typer.Option(
-            "--batch-size",
-            min=1,
-            help="Batch size override for atomic note synthesis",
         ),
     ] = None,
     dry_run: Annotated[
@@ -165,7 +156,6 @@ def run(
         url=url,
         manifest=manifest,
         passes=passes,
-        batch_size=batch_size,
         dry_run=dry_run,
         force_reprocess=force_reprocess,
         lookback=lookback,
@@ -255,7 +245,6 @@ def handle_run(request: RunSynthesisRequest) -> int:
     try:
         use_case = build_run_synthesis_use_case(
             lookback_override=request.lookback,
-            batch_size_override=request.batch_size,
             web_index=request.web_index,
             check_ffmpeg=True,
         )

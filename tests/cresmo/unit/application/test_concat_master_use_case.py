@@ -88,7 +88,7 @@ class TestConcatMasterUseCase:
         vault = InMemoryVaultAdapter()
         use_case = ConcatMasterUseCase(vault_port=vault)
 
-        results = use_case.execute_for_channel(channel_name=ChannelName("EmptyChannel"))
+        results = use_case.execute(channel_name=ChannelName("EmptyChannel"))
         assert results == []
 
     def test_chronological_sorting_oldest_first(self, tmp_path: Path) -> None:
@@ -118,7 +118,7 @@ class TestConcatMasterUseCase:
         vault.channel_stage_files[("wide_expander", "HistoryChannel")] = [f_newest, f_oldest, f_mid]
 
         use_case = ConcatMasterUseCase(vault_port=vault)
-        results = use_case.execute_for_channel(ChannelName("HistoryChannel"))
+        results = use_case.execute(ChannelName("HistoryChannel"))
 
         assert len(results) == 1
         res = results[0]
@@ -432,7 +432,7 @@ class TestConcatMasterUseCase:
 
         # When max_words=150 is passed, it must split into 2 parts (each file is ~108 words)
         # If mutated to max_words=None or omitted, it uses rollover_policy.max_words (500000) and produces 1 part!
-        results = use_case.execute_for_channel(ChannelName("ForwardChannel"), max_words=150)
+        results = use_case.execute(ChannelName("ForwardChannel"), max_words=150)
         assert len(results) == 2
 
     def test_execute_all_filters_directories_and_propagates_parameters(

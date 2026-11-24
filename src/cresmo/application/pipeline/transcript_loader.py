@@ -13,7 +13,10 @@ import yaml
 from cresmo.application.ports import ChannelTaxonomyPort, NoOpChannelTaxonomyPort
 from cresmo.domain.entities import StageTranscript
 from cresmo.domain.exceptions import CresmoDomainError
+from cresmo.domain.stage_registry import StageName
 from cresmo.domain.value_objects import (
+    MAX_CONTENT_ID_LENGTH,
+    MIN_CONTENT_ID_LENGTH,
     Channel,
     ChannelId,
     ChannelName,
@@ -28,15 +31,14 @@ if TYPE_CHECKING:
 
 logger = structlog.get_logger(__name__)
 
-_MIN_CONTENT_ID_LENGTH: int = 8
-_MAX_CONTENT_ID_LENGTH: int = 64
 _FRONTMATTER_REGEX = re.compile(r"^---\s*\n([\s\S]*?)\n---\s*\n([\s\S]*)$")
 
 
 def _derive_content_id(stem: str, raw_body: str) -> ContentId:
     """Derive deterministic and compliant ContentId string."""
     clean_stem = "".join(c for c in stem if c.isalnum() or c in ("-", "_"))
-    if _MIN_CONTENT_ID_LENGTH <= len(clean_stem) <= _MAX_CONTENT_ID_LENGTH:
+    min_derivable = max(8, MIN_CONTENT_ID_LENGTH)
+    if min_derivable <= len(clean_stem) <= MAX_CONTENT_ID_LENGTH:
         content_id_str = clean_stem
     else:
         prefix = clean_stem[:24] if clean_stem else "text"
@@ -181,17 +183,6 @@ def load_transcript_from_file(
     )
 
 
-def load_manifest_urls(manifest_path: Path) -> list[str]:
-    """Parse a manifest file containing URLs into a list of non-empty target strings."""
-    if not manifest_path.is_file():
-        raise CresmoDomainError(f"Manifest file not found: {manifest_path}")
-
-    lines = manifest_path.read_text(encoding="utf-8").splitlines()
-    return [
-        line_str for line in lines if (line_str := line.strip()) and not line_str.startswith("#")
-    ]
-
-
 def is_subpath(target_path: Path, parent_dir: Path | None) -> bool:
     """Determine whether a target file path is located within a parent directory."""
     if parent_dir is None:
@@ -216,4 +207,4 @@ def ensure_transcript_saved(
     vault_target_dir = getattr(vault_port, "raw_dir", None)
     if is_subpath(file_path, target_dir) or is_subpath(file_path, vault_target_dir):
         return
-    vault_port.save_stage_transcript("raw", transcript)
+    vault_port.save_stage_transcript(StageName.RAW, transcript)

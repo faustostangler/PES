@@ -15,15 +15,12 @@ from cresmo.domain.exceptions import (
     CresmoInfrastructureError,
     DomainValidationError,
     PreflightError,
-    SecurityViolationError,
 )
 from cresmo.domain.taxonomy import TaxonomyCatalog
 from cresmo.domain.value_objects import (
-    Channel,
     ChannelFeedQuery,
     ChannelId,
     ChannelName,
-    Content,
     ContentId,
     DiscoveredMediaItem,
     LedgerEntry,
@@ -40,11 +37,9 @@ class TestPipelineStatus:
 
     def test_pipeline_status_canonical_members(self) -> None:
         assert PipelineStatus.COMPLETED.value == "COMPLETED"
-        assert PipelineStatus.SKIPPED_IDEMPOTENT.value == "SKIPPED_IDEMPOTENT"
         assert PipelineStatus.FAILED_INGESTION.value == "FAILED_INGESTION"
         assert PipelineStatus.FAILED_TRANSFORMATION.value == "FAILED_TRANSFORMATION"
         assert PipelineStatus.RUNNING.value == "RUNNING"
-        assert PipelineStatus.PAUSED_BUDGET.value == "PAUSED_BUDGET"
         assert PipelineStatus.QUARANTINED.value == "QUARANTINED"
 
 
@@ -114,12 +109,6 @@ class TestMediaProvenance:
         assert p_vals.url == "https://u.com"
         assert p_vals.description == "custom desc"
 
-    def test_empty_factory(self) -> None:
-        empty = MediaProvenance.empty()
-        assert empty.url == ""
-        assert empty.description == ""
-        assert empty.publication_date is None
-
 
 class TestDiscoveredMediaItem:
     """Test suite for DiscoveredMediaItem value object."""
@@ -149,29 +138,6 @@ class TestDiscoveredMediaItem:
             channel_name=ChannelName("QuantumHub"),
         )
         assert item.media_url == "http://youtube.com/watch?v=dQw4w9WgXcQ"
-
-    def test_composite_properties(self) -> None:
-        now = datetime.now(UTC)
-        item = DiscoveredMediaItem(
-            content_id=ContentId("dQw4w9WgXcQ"),
-            title="Quantum Computation Lecture 1",
-            published_at=now,
-            media_url="https://youtube.com/watch?v=dQw4w9WgXcQ",
-            channel_name=ChannelName("QuantumHub"),
-        )
-        channel = item.channel
-        assert isinstance(channel, Channel)
-        assert channel.name == ChannelName("QuantumHub")
-
-        prov = item.provenance
-        assert isinstance(prov, MediaProvenance)
-        assert prov.url == "https://youtube.com/watch?v=dQw4w9WgXcQ"
-        assert prov.publication_date == now.date()
-
-        content = item.content
-        assert isinstance(content, Content)
-        assert content.id == ContentId("dQw4w9WgXcQ")
-        assert content.title == "Quantum Computation Lecture 1"
 
     def test_construction_normalizes_and_coerces_fields(self) -> None:
         now = datetime.now(UTC)
@@ -406,10 +372,6 @@ class TestExceptionsHierarchy:
         preflight = PreflightError("Missing credentials")
         assert isinstance(preflight, CresmoInfrastructureError)
         assert not isinstance(preflight, CresmoDomainError)
-
-        security = SecurityViolationError("Path traversal escape")
-        assert isinstance(security, CresmoInfrastructureError)
-        assert not isinstance(security, CresmoDomainError)
 
 
 class TestSyncFilterCriteria:

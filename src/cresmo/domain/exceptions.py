@@ -88,13 +88,6 @@ class PreflightError(CresmoInfrastructureError):
     """
 
 
-class SecurityViolationError(CresmoInfrastructureError):
-    """Raised when a security boundary or filesystem path traversal constraint is violated.
-
-    Prevents unauthorized directory escapes outside configured vault/data roots.
-    """
-
-
 class RateLimitExceededError(CresmoInfrastructureError, CresmoDomainError):
     """Raised when an upstream media source or LLM provider signals HTTP 429 rate limiting.
 

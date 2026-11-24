@@ -18,15 +18,13 @@ from cresmo.domain.value_objects.quality import (
     JudgeCriterion,
     JudgeEvaluation,
     StageEvaluationSpec,
-    TypedVerdict,
-    VerdictType,
     compute_composite_verdict,
     resolve_stage_scoring_policy,
 )
 
 
-class TestJudgeCriterionAndVerdictType:
-    """Test enums and string values."""
+class TestJudgeCriterion:
+    """Test criterion enum values."""
 
     def test_criterion_enum_values(self) -> None:
         assert JudgeCriterion.ORALITY_REMOVAL.value == "orality_removal"
@@ -35,11 +33,6 @@ class TestJudgeCriterionAndVerdictType:
         assert JudgeCriterion.STRUCTURAL_COMPLIANCE.value == "structural_compliance"
         assert JudgeCriterion.INVENTORY_COHERENCE.value == "inventory_coherence"
         assert JudgeCriterion.INDEX_SYNTHESIS_QUALITY.value == "index_synthesis_quality"
-
-    def test_verdict_type_enum_values(self) -> None:
-        assert VerdictType.NOUL.value == "noul"
-        assert VerdictType.CHOICE.value == "choice"
-        assert VerdictType.SCORE.value == "score"
 
 
 class TestCandidateText:
@@ -73,90 +66,6 @@ class TestCandidateText:
             CandidateText(text="Some text", stage_name=empty_stage)
 
 
-class TestTypedVerdict:
-    """Invariants and behaviors of TypedVerdict."""
-
-    def test_valid_typed_verdict(self) -> None:
-        tv = TypedVerdict(
-            criterion=JudgeCriterion.ORALITY_REMOVAL,
-            verdict_type=VerdictType.SCORE,
-            passed=True,
-            score=0.92,
-            choice_value="accepted",
-            confidence=0.95,
-            reasoning="Passed without speech artifacts.",
-            improvement_suggestion="None needed",
-        )
-        assert tv.criterion == JudgeCriterion.ORALITY_REMOVAL
-        assert tv.verdict_type == VerdictType.SCORE
-        assert tv.passed is True
-        assert tv.score == 0.92
-        assert tv.choice_value == "accepted"
-        assert tv.confidence == 0.95
-        assert tv.reasoning == "Passed without speech artifacts."
-        assert tv.improvement_suggestion == "None needed"
-
-    def test_typed_verdict_defaults(self) -> None:
-        tv = TypedVerdict(
-            criterion=JudgeCriterion.NER_PRESERVATION,
-            verdict_type=VerdictType.NOUL,
-            passed=False,
-            score=0.0,
-        )
-        assert tv.choice_value is None
-        assert tv.confidence is None
-        assert tv.reasoning == ""
-        assert tv.improvement_suggestion == ""
-
-    @pytest.mark.parametrize("boundary_score", [0.0, 1.0])
-    def test_score_exact_boundaries(self, boundary_score: float) -> None:
-        tv = TypedVerdict(
-            criterion=JudgeCriterion.NER_PRESERVATION,
-            verdict_type=VerdictType.SCORE,
-            passed=True,
-            score=boundary_score,
-        )
-        assert tv.score == boundary_score
-
-    @pytest.mark.parametrize("invalid_score", [-0.01, 1.01, -1.0, 2.0])
-    def test_invalid_score_raises_value_error(self, invalid_score: float) -> None:
-        with pytest.raises(
-            ValueError,
-            match=rf"^Score must be between 0\.0 and 1\.0, got: {invalid_score}$",
-        ):
-            TypedVerdict(
-                criterion=JudgeCriterion.NER_PRESERVATION,
-                verdict_type=VerdictType.SCORE,
-                passed=False,
-                score=invalid_score,
-            )
-
-    @pytest.mark.parametrize("boundary_confidence", [0.0, 1.0])
-    def test_confidence_exact_boundaries(self, boundary_confidence: float) -> None:
-        tv = TypedVerdict(
-            criterion=JudgeCriterion.NER_PRESERVATION,
-            verdict_type=VerdictType.SCORE,
-            passed=True,
-            score=0.5,
-            confidence=boundary_confidence,
-        )
-        assert tv.confidence == boundary_confidence
-
-    @pytest.mark.parametrize("invalid_confidence", [-0.01, 1.01, -0.5, 1.5])
-    def test_invalid_confidence_raises_value_error(self, invalid_confidence: float) -> None:
-        with pytest.raises(
-            ValueError,
-            match=rf"^Confidence must be between 0\.0 and 1\.0 if provided, got: {invalid_confidence}$",
-        ):
-            TypedVerdict(
-                criterion=JudgeCriterion.NER_PRESERVATION,
-                verdict_type=VerdictType.SCORE,
-                passed=False,
-                score=0.5,
-                confidence=invalid_confidence,
-            )
-
-
 class TestCriterionScore:
     """Invariants and behaviors of CriterionScore."""
 
@@ -167,7 +76,6 @@ class TestCriterionScore:
             passed=True,
             confidence=0.9,
             reasoning="Faithful semantics",
-            verdict_type=VerdictType.SCORE,
             improvement_suggestion="Keep it up",
         )
         assert cs.criterion == JudgeCriterion.SEMANTIC_FAITHFULNESS
@@ -175,7 +83,6 @@ class TestCriterionScore:
         assert cs.passed is True
         assert cs.confidence == 0.9
         assert cs.reasoning == "Faithful semantics"
-        assert cs.verdict_type == VerdictType.SCORE
         assert cs.improvement_suggestion == "Keep it up"
 
     def test_criterion_score_defaults(self) -> None:
@@ -186,7 +93,6 @@ class TestCriterionScore:
         )
         assert cs.confidence is None
         assert cs.reasoning == ""
-        assert cs.verdict_type == VerdictType.SCORE
         assert cs.improvement_suggestion == ""
 
     @pytest.mark.parametrize("boundary_score", [0.0, 1.0])

@@ -13,7 +13,6 @@ Conforms to:
 from __future__ import annotations
 
 import sys
-from typing import Any
 
 import typer
 
@@ -30,21 +29,17 @@ from cresmo.presentation.exit_codes import (
 
 def check_config() -> None:
     """Validate runtime environment, storage paths, and secrets fail-fast."""
-    code = handle_check_config(None)
+    code = handle_check_config()
     if code != EXIT_SUCCESS:
         raise typer.Exit(code=code)
 
 
-def handle_check_config(args: Any = None) -> int:
+def handle_check_config() -> int:
     """Validate runtime environment, storage paths, and secrets.
-
-    Args:
-        args: Unused legacy positional parameter kept only for zero-arg direct calls.
 
     Returns:
         Process exit code conforming to exit_codes.py.
     """
-    _ = args
     try:
         settings = load_fresh_settings()
         checker = build_preflight_checker(settings=settings)

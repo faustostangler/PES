@@ -75,10 +75,14 @@ class DiscoverBatchSourcesUseCase:
         self.discovery_paths: DiscoveryPaths = discovery_paths or DiscoveryPaths()
         self.progress_callback = progress_callback
         self.taxonomy_port = taxonomy_port
-        self._crawler_service = ChannelFeedCrawlerService(
-            media_ingestion_port=self.media_ingestion_port,  # type: ignore[arg-type]
-            notify_fn=self._notify,
-            taxonomy_port=self.taxonomy_port,
+        self._crawler_service = (
+            ChannelFeedCrawlerService(
+                media_ingestion_port=self.media_ingestion_port,
+                notify_fn=self._notify,
+                taxonomy_port=self.taxonomy_port,
+            )
+            if self.media_ingestion_port is not None
+            else None
         )
 
     def _notify(self, message: str) -> None:
@@ -137,7 +141,7 @@ class DiscoverBatchSourcesUseCase:
         )
 
         priority_sources = list(acc.sources)
-        playlist_path = q.playlist_path or q.manifest_path or self.discovery_paths.playlist_path
+        playlist_path = q.playlist_path or self.discovery_paths.playlist_path
 
         return _FastPathDiscoveryState(
             priority_sources=priority_sources,
@@ -207,6 +211,9 @@ class DiscoverBatchSourcesUseCase:
             all_remote_seeds = list(
                 dict.fromkeys(state.unresolved_priority_video_seeds + remote_videos)
             )
+            if self._crawler_service is None:
+                return
+
             if all_remote_seeds:
                 self._crawler_service.resolve_remote_channels(
                     all_remote_seeds,

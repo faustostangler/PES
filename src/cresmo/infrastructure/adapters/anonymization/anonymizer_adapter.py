@@ -67,7 +67,7 @@ class RegexAnonymizerAdapter(AnonymizerPort):
     logging, and external export boundaries.
     """
 
-    def mask_text(self, text: str) -> str:
+    def _mask_text(self, text: str) -> str:
         """Sanitize raw text by replacing emails, secrets, and auth tokens with markers.
 
         Args:
@@ -104,14 +104,14 @@ class RegexAnonymizerAdapter(AnonymizerPort):
                 continue
 
             if isinstance(value, str):
-                result[key] = self.mask_text(value)
+                result[key] = self._mask_text(value)
             elif isinstance(value, Mapping):
                 result[key] = self.mask_mapping(value)
             elif isinstance(value, list):
                 result[key] = [
                     self.mask_mapping(v)
                     if isinstance(v, Mapping)
-                    else self.mask_text(v)
+                    else self._mask_text(v)
                     if isinstance(v, str)
                     else v
                     for v in value
@@ -121,29 +121,10 @@ class RegexAnonymizerAdapter(AnonymizerPort):
 
         return result
 
-    def mask_span_attributes(self, attributes: Mapping[str, Any]) -> dict[str, Any]:
-        """Sanitize OpenTelemetry span attributes before network dispatch.
-
-        Args:
-            attributes: Raw span attributes mapping.
-
-        Returns:
-            Sanitized dictionary safe for export.
-        """
-        return self.mask_mapping(attributes)
-
 
 class NoOpAnonymizerAdapter(AnonymizerPort):
     """Passthrough adapter for testing or when anonymization is explicitly disabled."""
 
-    def mask_text(self, text: str) -> str:
-        """Passthrough text without modification."""
-        return text
-
     def mask_mapping(self, data: Mapping[str, Any]) -> dict[str, Any]:
         """Passthrough dictionary without modification."""
         return dict(data)
-
-    def mask_span_attributes(self, attributes: Mapping[str, Any]) -> dict[str, Any]:
-        """Passthrough attributes without modification."""
-        return dict(attributes)

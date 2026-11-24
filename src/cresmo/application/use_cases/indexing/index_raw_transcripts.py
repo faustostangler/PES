@@ -68,27 +68,20 @@ class IndexRawTranscriptsUseCase:
         max_rewrites: int = 3,
         llm_judge_port: LlmJudgePort | None = None,
         taxonomy_port: ChannelTaxonomyPort | None = None,
-        *,
-        vault_repo: VaultRepositoryPort | None = None,
-        llm: LLMTransformationPort | None = None,
     ) -> None:
         """Initialize IndexRawTranscriptsUseCase with required ports and tunables.
 
         Conforms to ADR-019 (vault_port & llm_indexing_port naming symmetry).
         """
-        resolved_vault = vault_port or vault_repo
-        if resolved_vault is None:
+        if vault_port is None:
             raise ValueError("vault_port is required.")
-        resolved_llm = llm_indexing_port or llm
-        if resolved_llm is None:
+        if llm_indexing_port is None:
             raise ValueError("llm_indexing_port is required.")
         if prompt_provider is None:
             raise ValueError("prompt_provider is required.")
 
-        self.vault_port = resolved_vault
-        self.vault_repo = resolved_vault  # Backward-compatible alias
-        self.llm_indexing_port = resolved_llm
-        self.llm = resolved_llm  # Backward-compatible alias
+        self.vault_port = vault_port
+        self.llm_indexing_port = llm_indexing_port
         self.prompt_provider = prompt_provider
         self.max_chars = max_chars
         self.temperature = temperature
@@ -105,10 +98,6 @@ class IndexRawTranscriptsUseCase:
             max_rewrites=self.max_rewrites,
             llm_judge_port=self.llm_judge_port,
         )
-
-    def warmup(self, timeout_seconds: float | None = None) -> None:
-        """Trigger warmup on the underlying indexing LLM port (ADR-019: direct contract call)."""
-        self.llm_indexing_port.warmup(timeout_seconds=timeout_seconds)
 
     def execute(
         self,

@@ -1,6 +1,8 @@
 {{description}}
 
-{{skill_block}}MANDATORY CORE VAULT & MOC ARCHITECTURE RULES:
+{{skill_block}}
+
+MANDATORY CORE VAULT & MOC ARCHITECTURE RULES:
 1. Zero Orphaned Notes: Every single atomic note MUST be integrated into the hierarchical contextual structure of at least one Map of Content (MOC). Unlinked, floating, or orphaned notes are strictly prohibited.
 2. MOC Hierarchy & Typology:
    - Global Epistemological MOCs: Macro epistemological domain categories (e.g., 'MOC Geopolítica', 'MOC História Contemporânea', 'MOC Economia Política', 'MOC Filosofia e Ciência').

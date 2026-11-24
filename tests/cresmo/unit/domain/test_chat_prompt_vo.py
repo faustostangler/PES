@@ -95,17 +95,6 @@ class TestChatPromptValueObject:
         assert prompt.messages[0].content == "Summarize this text"
         assert prompt.get_last_user_content() == "Summarize this text"
 
-    def test_from_system_and_user_factory(self) -> None:
-        prompt = ChatPrompt.from_system_and_user(
-            user="Analyze this data",
-            system="System persona",
-        )
-        assert prompt.system_prompt == "System persona"
-        assert len(prompt.messages) == 1
-        assert prompt.messages[0].role == MessageRole.USER
-        assert prompt.messages[0].content == "Analyze this data"
-        assert prompt.get_last_user_content() == "Analyze this data"
-
     def test_multi_turn_with_few_shots(self) -> None:
         prompt = ChatPrompt(
             system_prompt="Strict style guide",
@@ -117,28 +106,6 @@ class TestChatPromptValueObject:
         )
         assert len(prompt.messages) == 3
         assert prompt.get_last_user_content() == "Raw 2"
-
-    def test_with_turn_returns_new_immutable_instance_and_preserves_system_prompt(
-        self,
-    ) -> None:
-        base = ChatPrompt.single_turn(
-            user_prompt="Initial prompt",
-            system_prompt="System context instructions",
-        )
-        turn2 = base.with_turn(MessageRole.ASSISTANT, "Generated text")
-        turn3 = turn2.with_turn(MessageRole.USER, "Critique: fix parataxis")
-
-        assert len(base.messages) == 1
-        assert base.system_prompt == "System context instructions"
-
-        assert len(turn2.messages) == 2
-        assert turn2.system_prompt == "System context instructions"
-        assert turn2.messages[1].role == MessageRole.ASSISTANT
-        assert turn2.messages[1].content == "Generated text"
-
-        assert len(turn3.messages) == 3
-        assert turn3.system_prompt == "System context instructions"
-        assert turn3.get_last_user_content() == "Critique: fix parataxis"
 
     def test_get_last_user_content_when_no_user_message(self) -> None:
         prompt = ChatPrompt(

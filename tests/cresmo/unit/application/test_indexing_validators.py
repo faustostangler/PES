@@ -12,14 +12,11 @@ from __future__ import annotations
 from cresmo.application.use_cases.indexing.validators import (
     _FORBIDDEN_PREFIX_REGEX,
     _INDICATIVE_PREFIXES,
-    can_retry,
     clean_concept_line,
     clean_text_line,
     is_valid_concepts_output,
-    is_valid_raw_index_output,
     is_valid_synthesis_paragraph,
     parse_judge_boolean,
-    parse_raw_index_response,
 )
 
 
@@ -55,40 +52,6 @@ class TestForbiddenPrefixRegex:
         ]
         for v in valid:
             assert _FORBIDDEN_PREFIX_REGEX.search(v) is None, f"Unexpected match: {v}"
-
-
-class TestIsValidRawIndexOutput:
-    def test_empty_or_whitespace_is_invalid(self) -> None:
-        assert is_valid_raw_index_output("") is False
-        assert is_valid_raw_index_output("   \n\t  ") is False
-
-    def test_forbidden_prefix_on_first_line_is_invalid(self) -> None:
-        assert is_valid_raw_index_output("Key Concept: DDD\nSíntese aqui") is False
-        assert is_valid_raw_index_output("**Key Concept:** DDD\nSíntese aqui") is False
-        assert is_valid_raw_index_output("Linha 1: Conceito\nLinha 2: Texto") is False
-
-    def test_multiline_valid_output(self) -> None:
-        valid_multiline = "Domain Entities, Value Objects\nThis is the paratactic synthesis describing domain logic."
-        assert is_valid_raw_index_output(valid_multiline) is True
-
-    def test_multiline_exactly_two_lines_without_comma_is_valid(self) -> None:
-        exact_two_lines = "Domain Entities\nParatactic synthesis without any comma"
-        assert is_valid_raw_index_output(exact_two_lines) is True
-
-    def test_forbidden_prefix_wrapped_in_markdown_decorations_is_invalid(self) -> None:
-        assert is_valid_raw_index_output("*Key Concept:* DDD\nSynthesis here") is False
-        assert is_valid_raw_index_output("`Key Concept:` DDD\nSynthesis here") is False
-        assert is_valid_raw_index_output('"Key Concept:" DDD\nSynthesis here') is False
-        assert is_valid_raw_index_output("_Key Concept:_ DDD\nSynthesis here") is False
-        assert is_valid_raw_index_output("# Key Concept: DDD\nSynthesis here") is False
-
-    def test_single_line_with_comma_is_valid(self) -> None:
-        valid_single = "Domain Entities, This is a concise synthesis."
-        assert is_valid_raw_index_output(valid_single) is True
-
-    def test_single_line_without_comma_is_invalid(self) -> None:
-        invalid_single = "Single Line Without Any Comma In It"
-        assert is_valid_raw_index_output(invalid_single) is False
 
 
 class TestIsValidConceptsOutput:
@@ -158,20 +121,6 @@ class TestIsValidSynthesisParagraph:
         assert is_valid_synthesis_paragraph(words_5, min_words=6, max_words=10) is False
 
 
-class TestCanRetry:
-    def test_infinite_retries_when_max_rewrites_non_positive(self) -> None:
-        assert can_retry(attempts=0, max_rewrites=0) is True
-        assert can_retry(attempts=10, max_rewrites=0) is True
-        assert can_retry(attempts=99, max_rewrites=-1) is True
-
-    def test_bounded_retries(self) -> None:
-        assert can_retry(attempts=0, max_rewrites=3) is True
-        assert can_retry(attempts=1, max_rewrites=3) is True
-        assert can_retry(attempts=2, max_rewrites=3) is True
-        assert can_retry(attempts=3, max_rewrites=3) is False
-        assert can_retry(attempts=4, max_rewrites=3) is False
-
-
 class TestParseJudgeBoolean:
     def test_empty_or_whitespace_is_false(self) -> None:
         assert parse_judge_boolean("") is False
@@ -227,55 +176,3 @@ class TestCleanConceptLine:
         assert clean_concept_line("Key Concepts:") == "Síntese Conceitual"
         assert clean_concept_line(":::") == "Síntese Conceitual"
         assert clean_concept_line('***"""___') == "Síntese Conceitual"
-
-
-class TestParseRawIndexResponse:
-    def test_empty_response_uses_fallbacks(self) -> None:
-        c, s = parse_raw_index_response("", fallback_title="Fallback Title")
-        assert c == "Síntese Conceitual"
-        assert s == "Fallback Title"
-
-    def test_multiline_response_parsing(self) -> None:
-        raw = "DDD, Hexagonal\nLine 1 of synthesis\nLine 2 of synthesis"
-        c, s = parse_raw_index_response(raw, fallback_title="Fallback")
-        assert c == "DDD, Hexagonal"
-        assert s == "Line 1 of synthesis Line 2 of synthesis"
-
-    def test_single_line_with_comma_parsing(self) -> None:
-        raw = "Event Sourcing, Appends state transitions to ledger"
-        c, s = parse_raw_index_response(raw, fallback_title="Fallback")
-        assert c == "Event Sourcing"
-        assert s == "Appends state transitions to ledger"
-
-    def test_single_line_without_comma_parsing(self) -> None:
-        raw = "Direct single line summary of content"
-        c, s = parse_raw_index_response(raw, fallback_title="Fallback")
-        assert c == "Síntese Conceitual"
-        assert s == "Direct single line summary of content"
-
-    def test_single_line_with_multiple_commas_splits_on_first_only(self) -> None:
-        raw = "Concept Alpha, Synthesis clause 1, synthesis clause 2, synthesis clause 3"
-        c, s = parse_raw_index_response(raw, fallback_title="Fallback")
-        assert c == "Concept Alpha"
-        assert s == "Synthesis clause 1, synthesis clause 2, synthesis clause 3"
-
-    def test_single_line_with_empty_concept_or_synthesis_uses_fallbacks(self) -> None:
-        c1, s1 = parse_raw_index_response(", Synthesis text here", fallback_title="Fallback")
-        assert c1 == "Síntese Conceitual"
-        assert s1 == "Synthesis text here"
-
-        c2, s2 = parse_raw_index_response("Concept Only,", fallback_title="Fallback Title")
-        assert c2 == "Concept Only"
-        assert s2 == "Fallback Title"
-
-    def test_multiline_with_empty_synthesis_uses_fallback(self) -> None:
-        raw = "Domain Concept\n***\n___"
-        c, s = parse_raw_index_response(raw, fallback_title="Fallback Title")
-        assert c == "Domain Concept"
-        assert s == "Fallback Title"
-
-    def test_fallback_when_parts_empty(self) -> None:
-        raw = "Key Concepts:\n"
-        c, s = parse_raw_index_response(raw, fallback_title="Fallback Title")
-        assert c == "Síntese Conceitual"
-        assert s == "Fallback Title"

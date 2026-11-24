@@ -258,7 +258,7 @@ class TestCalibrationSuite:
             jitter=0.0,
             prompt_lookup=_prompt_lookup,
             report_builder=lambda spec, res, p, m: (
-                f"REPORT:{spec.stage_name}:{p}:{m}:{res.accuracy:.2f}"
+                f"REPORT:{spec.stage_name}:{p}:{m}:{res.overall.accuracy:.2f}"
             ),
             now_fn=lambda: 1000.0,
             on_event=events.append,

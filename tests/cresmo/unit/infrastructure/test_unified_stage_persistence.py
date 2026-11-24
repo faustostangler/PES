@@ -25,7 +25,7 @@ from cresmo.domain.value_objects import (
     ContentId,
     MediaProvenance,
 )
-from cresmo.infrastructure.adapters.obsidian import ObsidianVaultAdapter
+from cresmo.infrastructure.adapters.obsidian.adapter import ObsidianVaultAdapter
 from cresmo.infrastructure.adapters.obsidian.transcripts import TranscriptVaultHandler
 
 

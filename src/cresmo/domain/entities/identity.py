@@ -19,8 +19,6 @@ from cresmo.domain.value_objects import (
 )
 
 CANONICAL_SESSION_ID_PARTS: int = 2
-LEGACY_SESSION_ID_PARTS: int = 3
-PIPELINE_SESSION_ID_PART_COUNT: int = LEGACY_SESSION_ID_PARTS
 
 
 @dataclass(frozen=True)
@@ -38,19 +36,7 @@ class PipelineSessionId:
         if not self.value or not self.value.strip():
             raise ValueError("PipelineSessionId cannot be empty.")
         parts = self.value.split(":")
-        if len(parts) == CANONICAL_SESSION_ID_PARTS:
-            if not parts[0].strip() or not parts[1].strip():
-                raise ValueError(
-                    f"Invalid PipelineSessionId format: '{self.value}'. "
-                    "Expected '{channel_id}:{content_id}'."
-                )
-        elif len(parts) == LEGACY_SESSION_ID_PARTS and parts[0] == "content":
-            if not parts[1].strip() or not parts[2].strip():
-                raise ValueError(
-                    f"Invalid PipelineSessionId format: '{self.value}'. "
-                    "Expected 'content:{channel}:{content_id}'."
-                )
-        else:
+        if len(parts) != CANONICAL_SESSION_ID_PARTS or not parts[0].strip() or not parts[1].strip():
             raise ValueError(
                 f"Invalid PipelineSessionId format: '{self.value}'. "
                 "Expected '{channel_id}:{content_id}'."
@@ -93,18 +79,12 @@ class PipelineSessionId:
     @property
     def channel_id(self) -> str:
         """Extract the channel identifier from the session id."""
-        parts = self.value.split(":")
-        if len(parts) == LEGACY_SESSION_ID_PARTS and parts[0] == "content":
-            return parts[1]
-        return parts[0]
+        return self.value.split(":")[0]
 
     @property
     def content_id(self) -> str:
         """Extract the content identifier from the session id."""
-        parts = self.value.split(":")
-        if len(parts) == LEGACY_SESSION_ID_PARTS and parts[0] == "content":
-            return parts[2]
-        return parts[1]
+        return self.value.split(":")[1]
 
 
 @dataclass(frozen=True)
@@ -115,7 +95,6 @@ class UserIdentity:
     - Anonymous (unauthenticated, guest, CLI): 'anonymous'
     - Identified (authenticated via IAM / OAuth): 'user:iam:alice' or 'user:oauth:subject'
     - Scheduled workers (daemons, batch sync): 'system:worker'
-    - Channel fallback (legacy background worker pipelines): 'channel:...'
     """
 
     value: str
@@ -161,40 +140,3 @@ class UserIdentity:
             provider="system",
             subject=clean_name,
         )
-
-    @classmethod
-    def from_channel(cls, channel: str) -> UserIdentity:
-        """Create a channel-bound fallback user identity for backward compatibility."""
-        if not channel or not channel.strip():
-            raise ValueError("Channel name cannot be empty.")
-        clean_channel = channel.strip()
-        return cls(
-            value=f"channel:{clean_channel}",
-            provider="channel",
-            subject=clean_channel,
-        )
-
-
-@dataclass(frozen=True)
-class JudgeFrictionMetric:
-    """Value Object calculating LLM-as-a-judge retry friction per ADR-013 & ADR-016.
-
-    Friction ratio = (iterations - 1) / (max_iterations - 1).
-    0.0 = perfect first pass; 1.0 = all retries exhausted.
-    """
-
-    iterations: int
-    max_iterations: int
-    verdict: str
-
-    def __post_init__(self) -> None:
-        if self.iterations < 1:
-            raise ValueError("iterations must be >= 1")
-        if self.max_iterations < 1:
-            raise ValueError("max_iterations must be >= 1")
-
-    @property
-    def friction_ratio(self) -> float:
-        if self.iterations <= 1 or self.max_iterations <= 1:
-            return 0.0
-        return min(1.0, (self.iterations - 1) / (self.max_iterations - 1))

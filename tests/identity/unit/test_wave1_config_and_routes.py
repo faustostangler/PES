@@ -13,25 +13,24 @@ from pydantic import ValidationError
 
 
 class TestWave1RootConfig:
-    """Validate unified src/config.py SSOT."""
+    """Validate IAM IdentitySettings SSOT."""
 
-    def test_root_config_imports_cleanly_and_exposes_submodels(self) -> None:
-        """Root src/config.py must provide unified AppConfig with iam and cresmo submodels."""
-        from config import AppConfig, IamSettings
+    def test_identity_settings_imports_cleanly_and_exposes_defaults(self) -> None:
+        """IdentitySettings must provide valid defaults without legacy config.py."""
+        from identity.infrastructure.settings import IdentitySettings
 
-        settings = AppConfig(_env_file=None)
-        assert isinstance(settings.iam, IamSettings)
-        assert settings.iam.jwt_algorithm == "HS256"
+        settings = IdentitySettings(_env_file=None)
+        assert settings.jwt_algorithm == "HS256"
 
     def test_iam_secret_key_fails_fast_when_under_32_characters(
         self, monkeypatch: pytest.MonkeyPatch
     ) -> None:
         """IAM_JWT_SECRET_KEY must be at least 32 characters or fail fast with ValidationError."""
-        from config import IamSettings
+        from identity.infrastructure.settings import IdentitySettings
 
         monkeypatch.setenv("IAM_JWT_SECRET_KEY", "too-short")
         with pytest.raises(ValidationError):
-            IamSettings(_env_file=None)
+            IdentitySettings(_env_file=None)
 
 
 class TestWave1PresentationRouteHardening:

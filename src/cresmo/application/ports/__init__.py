@@ -23,7 +23,7 @@ from cresmo.application.ports.evals import (
 )
 from cresmo.application.ports.llm_judge_port import LlmJudgePort
 from cresmo.application.ports.media import MediaIngestionPort
-from cresmo.application.ports.metrics import MetricsPort, NoOpMetricsPort
+from cresmo.application.ports.metrics import MetricName, MetricsPort, NoOpMetricsPort
 from cresmo.application.ports.preflight import PreflightProbePort
 from cresmo.application.ports.prompt import NoOpPromptProviderPort, PromptProviderPort
 from cresmo.application.ports.runtime import NoOpProcessRuntimePort, ProcessRuntimePort
@@ -77,6 +77,7 @@ __all__ = [
     "LedgerRepositoryPort",
     "LlmJudgePort",
     "MediaIngestionPort",
+    "MetricName",
     "MetricsPort",
     "NoOpChannelTaxonomyPort",
     "NoOpMetricsPort",

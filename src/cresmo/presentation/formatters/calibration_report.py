@@ -27,18 +27,25 @@ from cresmo.application.evals.specs import StageCalibrationSpec
 
 @dataclass(frozen=True, slots=True)
 class MetricInfo:
-    """Presentation descriptor encapsulating formula metadata, Sheets formula, and diagnosis."""
+    """Presentation descriptor summarizing one SDT metric row."""
 
     code: str
     name: str
-    math_formula: str
-    sheets_formula: str
-    value: float
     formatted_value: str
-    practical_implication: str
-    high_meaning: str
-    low_meaning: str
     diagnosis: str
+
+
+def _band_diagnosis(
+    val: float,
+    thresholds: Sequence[tuple[float, str]],
+    default: str,
+    *,
+    upper_bound: bool = False,
+) -> str:
+    for limit, label in thresholds:
+        if (val <= limit) if upper_bound else (val >= limit):
+            return label
+    return default
 
 
 def build_sdt_metric_diagnostics(matrix: ConfusionMatrix) -> list[MetricInfo]:
@@ -66,214 +73,24 @@ def build_sdt_metric_diagnostics(matrix: ConfusionMatrix) -> list[MetricInfo]:
         else f"Balanced/neutral ({c_val:.2f})"
     )
 
-    return [
-        MetricInfo(
-            code="a)",
-            name="Accuracy",
-            math_formula="(Hit + CorrectRej) / Total",
-            sheets_formula="=(B4+C5)/D6",
-            value=matrix.accuracy,
-            formatted_value=f"{matrix.accuracy * 100:.1f}%",
-            practical_implication="Overall proportion of correct verdicts.",
-            high_meaning="Most decisions align with ground truth.",
-            low_meaning="Judge frequently misclassifies items.",
-            diagnosis=(
-                "Acceptable (>=80%)" if matrix.accuracy >= 0.80 else "Below baseline (<80%)"
-            ),
-        ),
-        MetricInfo(
-            code="b)",
-            name="Precision / PPV",
-            math_formula="Hit / (Hit + FalseAccept)",
-            sheets_formula="=B4/B6",
-            value=matrix.precision,
-            formatted_value=f"{matrix.precision * 100:.1f}%",
-            practical_implication="Purity of PASS verdicts.",
-            high_meaning="Approvals rarely pass defective candidates.",
-            low_meaning="Defective candidates leak through PASS gate.",
-            diagnosis="Pure (>=80%)" if matrix.precision >= 0.80 else "Leaky (<80%)",
-        ),
-        MetricInfo(
-            code="c)",
-            name="Recall / Sensitivity",
-            math_formula="Hit / (Hit + FalseReject)",
-            sheets_formula="=B4/D4",
-            value=matrix.recall,
-            formatted_value=f"{matrix.recall * 100:.1f}%",
-            practical_implication="Share of valid candidates approved.",
-            high_meaning="Minimal false rejections of valid work.",
-            low_meaning="Judge is overly pedantic and discards valid work.",
-            diagnosis="Healthy (>=85%)" if matrix.recall >= 0.85 else "Pedantic (<85%)",
-        ),
-        MetricInfo(
-            code="d)",
-            name="Specificity (TNR)",
-            math_formula="CorrectRej / (CorrectRej + FalseAccept)",
-            sheets_formula="=C5/D5",
-            value=matrix.specificity,
-            formatted_value=f"{matrix.specificity * 100:.1f}%",
-            practical_implication="Share of defective candidates caught.",
-            high_meaning="Strong gate against defects.",
-            low_meaning="Defects bypass rejection.",
-            diagnosis="Effective (>=70%)" if matrix.specificity >= 0.70 else "Weak (<70%)",
-        ),
-        MetricInfo(
-            code="e)",
-            name="NPV",
-            math_formula="CorrectRej / (CorrectRej + FalseReject)",
-            sheets_formula="=C5/C6",
-            value=matrix.npv,
-            formatted_value=f"{matrix.npv * 100:.1f}%",
-            practical_implication="Reliability of FAIL verdicts.",
-            high_meaning="Rejections correspond to real defects.",
-            low_meaning="Many valid candidates are rejected.",
-            diagnosis="Reliable (>=75%)" if matrix.npv >= 0.75 else "Noisy (<75%)",
-        ),
-        MetricInfo(
-            code="f)",
-            name="Alpha Rate (FPR)",
-            math_formula="FalseAccept / (CorrectRej + FalseAccept)",
-            sheets_formula="=B5/D5",
-            value=matrix.alpha_fpr,
-            formatted_value=f"{matrix.alpha_fpr * 100:.1f}%",
-            practical_implication="Rate of defective texts leaking through.",
-            high_meaning="Unacceptable defect leakage.",
-            low_meaning="Hermetic quality filter.",
-            diagnosis="Low leak (<=20%)" if matrix.alpha_fpr <= 0.20 else "High leak (>20%)",
-        ),
-        MetricInfo(
-            code="g)",
-            name="Beta Rate (FNR)",
-            math_formula="FalseReject / (Hit + FalseReject)",
-            sheets_formula="=C4/D4",
-            value=matrix.beta_fnr,
-            formatted_value=f"{matrix.beta_fnr * 100:.1f}%",
-            practical_implication="Rate of valid texts wasted in retries.",
-            high_meaning="Excessive self-healing churn.",
-            low_meaning="Low pedantry.",
-            diagnosis="Low churn (<=15%)" if matrix.beta_fnr <= 0.15 else "High churn (>15%)",
-        ),
-        MetricInfo(
-            code="h)",
-            name="F0.5-Score",
-            math_formula="1.25 * (P * R) / (0.25 * P + R)",
-            sheets_formula="=(1+H17^2)*(D$11*D$12)/((H17^2*D$11)+D$12)",
-            value=matrix.f05,
-            formatted_value=f"{matrix.f05 * 100:.1f}%",
-            practical_implication="Precision-weighted harmonic mean (2x Precision).",
-            high_meaning="Strong fidelity and low permissiveness.",
-            low_meaning="Leaked defects degraded gate purity.",
-            diagnosis="Strong (>=80%)" if matrix.f05 >= 0.80 else "Weak (<80%)",
-        ),
-        MetricInfo(
-            code="i)",
-            name="F1-Score",
-            math_formula="2 * (P * R) / (P + R)",
-            sheets_formula="=(1+H18^2)*(D$11*D$12)/((H18^2*D$11)+D$12)",
-            value=matrix.f1,
-            formatted_value=f"{matrix.f1 * 100:.1f}%",
-            practical_implication="Balanced harmonic mean of Precision and Recall.",
-            high_meaning="Well-balanced discrimination.",
-            low_meaning="Precision/Recall imbalance or weak discrimination.",
-            diagnosis="Balanced (>=80%)" if matrix.f1 >= 0.80 else "Unbalanced (<80%)",
-        ),
-        MetricInfo(
-            code="j)",
-            name="F2-Score",
-            math_formula="5 * (P * R) / (4 * P + R)",
-            sheets_formula="=(1+H19^2)*(D$11*D$12)/((H19^2*D$11)+D$12)",
-            value=matrix.f2,
-            formatted_value=f"{matrix.f2 * 100:.1f}%",
-            practical_implication="Recall-weighted harmonic mean (2x Recall).",
-            high_meaning="Preserves nearly all valid texts.",
-            low_meaning="Pedantry discards too much valid output.",
-            diagnosis="Preserving (>=85%)" if matrix.f2 >= 0.85 else "Restrictive (<85%)",
-        ),
-        MetricInfo(
-            code="k)",
-            name="LR+",
-            math_formula="Sensitivity / (1 - Specificity)",
-            sheets_formula="=(B4/D4)/(B5/D5)",
-            value=lr_plus_val,
-            formatted_value=lr_plus_str,
-            practical_implication="Evidentiary weight of a PASS decision.",
-            high_meaning="Strong confirmation of quality (>10).",
-            low_meaning="Weak confirmation (<2).",
-            diagnosis=(
-                "Strong (>=10)"
-                if lr_plus_val >= 10.0
-                else "Moderate (2-10)"
-                if lr_plus_val >= 2.0
-                else "Weak (<2)"
-            ),
-        ),
-        MetricInfo(
-            code="l)",
-            name="LR-",
-            math_formula="(1 - Sensitivity) / Specificity",
-            sheets_formula="=(C4/D4)/(C5/D5)",
-            value=lr_minus_val,
-            formatted_value=lr_minus_str,
-            practical_implication="Evidentiary weight of a FAIL decision.",
-            high_meaning="Inconclusive rejection (>0.5).",
-            low_meaning="Definitive defect confirmation (<0.1).",
-            diagnosis=(
-                "Definitive (<=0.1)"
-                if lr_minus_val <= 0.10
-                else "Moderate (0.1-0.5)"
-                if lr_minus_val <= 0.50
-                else "Inconclusive (>0.5)"
-            ),
-        ),
-        MetricInfo(
-            code="m)",
-            name="Matthews Correlation (MCC)",
-            math_formula="((Hit * CorrectRej) - (FalseAccept * FalseReject)) / SQRT(...)",
-            sheets_formula="=((B4*C5)-(B5*C4))/SQRT(B6*D4*D5*C6)",
-            value=mcc_val,
-            formatted_value=f"{mcc_val:+.3f}",
-            practical_implication="Full confusion matrix correlation in [-1, +1].",
-            high_meaning="Strong alignment with ground truth.",
-            low_meaning="Random or inverted alignment (<=0).",
-            diagnosis=(
-                "Strong (>=0.60)"
-                if mcc_val >= 0.60
-                else "Moderate (>0.20)"
-                if mcc_val > 0.20
-                else "Poor (<=0.20)"
-            ),
-        ),
-        MetricInfo(
-            code="n)",
-            name="D-prime (d')",
-            math_formula="NORM.S.INV(HitRate) - NORM.S.INV(FARate)",
-            sheets_formula="=NORM.S.INV(B4/D4)-NORM.S.INV(B5/D5)",
-            value=dp_val,
-            formatted_value=f"{dp_val:.2f}",
-            practical_implication="Intrinsic signal-vs-noise discrimination acuity.",
-            high_meaning="Excellent discrimination (>=2.0).",
-            low_meaning="Inability to separate valid vs defective (~0).",
-            diagnosis=(
-                "Excellent (>=2.0)"
-                if dp_val >= 2.0
-                else "Moderate (>=1.0)"
-                if dp_val >= 1.0
-                else "Poor (<1.0)"
-            ),
-        ),
-        MetricInfo(
-            code="o)",
-            name="Criterion c (Bias)",
-            math_formula="-0.5 * (NORM.S.INV(HitRate) + NORM.S.INV(FARate))",
-            sheets_formula="=-0.5*(NORM.S.INV(B4/D4)+NORM.S.INV(B5/D5))",
-            value=c_val,
-            formatted_value=f"{c_val:+.2f}",
-            practical_implication="Systematic decision threshold bias.",
-            high_meaning="Pedantic/conservative (+).",
-            low_meaning="Permissive/liberal (-).",
-            diagnosis=c_diag,
-        ),
+    specs: list[tuple[str, str, str, str]] = [
+        ("a)", "Accuracy", f"{matrix.accuracy * 100:.1f}%", _band_diagnosis(matrix.accuracy, [(0.80, "Acceptable (>=80%)")], "Below baseline (<80%)")),
+        ("b)", "Precision / PPV", f"{matrix.precision * 100:.1f}%", _band_diagnosis(matrix.precision, [(0.80, "Pure (>=80%)")], "Leaky (<80%)")),
+        ("c)", "Recall / Sensitivity", f"{matrix.recall * 100:.1f}%", _band_diagnosis(matrix.recall, [(0.85, "Healthy (>=85%)")], "Pedantic (<85%)")),
+        ("d)", "Specificity (TNR)", f"{matrix.specificity * 100:.1f}%", _band_diagnosis(matrix.specificity, [(0.70, "Effective (>=70%)")], "Weak (<70%)")),
+        ("e)", "NPV", f"{matrix.npv * 100:.1f}%", _band_diagnosis(matrix.npv, [(0.75, "Reliable (>=75%)")], "Noisy (<75%)")),
+        ("f)", "Alpha Rate (FPR)", f"{matrix.alpha_fpr * 100:.1f}%", _band_diagnosis(matrix.alpha_fpr, [(0.20, "Low leak (<=20%)")], "High leak (>20%)", upper_bound=True)),
+        ("g)", "Beta Rate (FNR)", f"{matrix.beta_fnr * 100:.1f}%", _band_diagnosis(matrix.beta_fnr, [(0.15, "Low churn (<=15%)")], "High churn (>15%)", upper_bound=True)),
+        ("h)", "F0.5-Score", f"{matrix.f05 * 100:.1f}%", _band_diagnosis(matrix.f05, [(0.80, "Strong (>=80%)")], "Weak (<80%)")),
+        ("i)", "F1-Score", f"{matrix.f1 * 100:.1f}%", _band_diagnosis(matrix.f1, [(0.80, "Balanced (>=80%)")], "Unbalanced (<80%)")),
+        ("j)", "F2-Score", f"{matrix.f2 * 100:.1f}%", _band_diagnosis(matrix.f2, [(0.85, "Preserving (>=85%)")], "Restrictive (<85%)")),
+        ("k)", "LR+", lr_plus_str, _band_diagnosis(lr_plus_val, [(10.0, "Strong (>=10)"), (2.0, "Moderate (2-10)")], "Weak (<2)")),
+        ("l)", "LR-", lr_minus_str, _band_diagnosis(lr_minus_val, [(0.10, "Definitive (<=0.1)"), (0.50, "Moderate (0.1-0.5)")], "Inconclusive (>0.5)", upper_bound=True)),
+        ("m)", "Matthews Correlation (MCC)", f"{mcc_val:+.3f}", "Poor (<=0.20)" if mcc_val <= 0.20 else _band_diagnosis(mcc_val, [(0.60, "Strong (>=0.60)")], "Moderate (>0.20)")),
+        ("n)", "D-prime (d')", f"{dp_val:.2f}", _band_diagnosis(dp_val, [(2.0, "Excellent (>=2.0)"), (1.0, "Moderate (>=1.0)")], "Poor (<1.0)")),
+        ("o)", "Criterion c (Bias)", f"{c_val:+.2f}", c_diag),
     ]
+    return [MetricInfo(code=c, name=n, formatted_value=v, diagnosis=d) for c, n, v, d in specs]
 
 
 def format_confusion_matrix_2x2(title: str, matrix: ConfusionMatrix) -> str:

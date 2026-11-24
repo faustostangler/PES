@@ -444,8 +444,9 @@ class TestNativeMediaIngestionAdapter:
         assert adapter._extract_video_id("local_custom_video_123.mp4") == "local_custom_video_123"
 
     def test_is_native_subtitle_url_none_returns_false(self) -> None:
-        adapter = NativeMediaIngestionAdapter()
-        assert adapter._is_native_subtitle_url(None) is False
+        from cresmo.infrastructure.adapters.media.subtitles import is_native_subtitle_url
+
+        assert is_native_subtitle_url(None) is False
 
     def test_find_native_subtitle_url_non_pt_video(self) -> None:
         adapter = NativeMediaIngestionAdapter()
@@ -662,9 +663,11 @@ class TestNativeMediaIngestionAdapter:
         assert adapter._parse_upload_date("2024") is None
 
         # Published datetime
-        dt = adapter._parse_published_datetime("20240315")
+        from cresmo.infrastructure.adapters.media.subtitles import parse_published_datetime
+
+        dt = parse_published_datetime("20240315")
         assert dt.year == 2024 and dt.month == 3 and dt.day == 15
-        dt_fallback = adapter._parse_published_datetime(None)
+        dt_fallback = parse_published_datetime(None)
         assert isinstance(dt_fallback, datetime)
 
     def test_ingest_single_video_vo_extraction_and_publication_date(self, tmp_path: Path) -> None:
@@ -727,14 +730,15 @@ class TestNativeMediaIngestionAdapter:
 
     def test_ingest_single_video_records_media_ingestion_metrics(self, tmp_path: Path) -> None:
         """SPEC-008 Scenario 6: Ingestion Latency Recording via MetricsPort."""
-        from prometheus_client import CollectorRegistry
+        from opentelemetry.sdk.metrics import MeterProvider
+        from opentelemetry.sdk.metrics.export import InMemoryMetricReader
 
-        from cresmo.infrastructure.adapters.metrics.prometheus_metrics_adapter import (
-            PrometheusMetricsAdapter,
+        from cresmo.infrastructure.adapters.metrics.otlp_metrics_adapter import (
+            OtlpMetricsAdapter,
         )
 
-        registry = CollectorRegistry(auto_describe=True)
-        metrics_adapter = PrometheusMetricsAdapter(registry=registry)
+        reader = InMemoryMetricReader()
+        metrics_adapter = OtlpMetricsAdapter(meter_provider=MeterProvider(metric_readers=[reader]))
 
         adapter = NativeMediaIngestionAdapter(metrics_port=metrics_adapter)
         fake_info = {
@@ -770,16 +774,22 @@ class TestNativeMediaIngestionAdapter:
             )
 
             assert transcript is not None
-            sample_count = registry.get_sample_value(
-                "cresmo_media_ingestion_duration_seconds_count",
-                {
-                    "channel_id": "",
-                    "channel_name": "Sandeco_Channel",
-                    "modality": "url",
-                    "status": "success",
-                },
-            )
-            assert sample_count == 1.0
+            metrics_data = reader.get_metrics_data()
+            assert metrics_data is not None
+            points = [
+                dp
+                for rm in metrics_data.resource_metrics
+                for sm in rm.scope_metrics
+                for m in sm.metrics
+                if m.name == "cresmo_media_ingestion_duration_seconds"
+                for dp in m.data.data_points
+            ]
+            assert len(points) == 1
+            assert dict(points[0].attributes or {}) == {
+                "channel_id": "",
+                "modality": "url",
+                "status": "success",
+            }
 
     def test_handle_yt_dlp_error_exhaustive(self) -> None:
         adapter = NativeMediaIngestionAdapter()
@@ -1104,14 +1114,15 @@ class TestNativeMediaIngestionAdapter:
             assert res is None
 
     def test_ingest_single_video_exception_records_failure_metric(self, tmp_path: Path) -> None:
-        from prometheus_client import CollectorRegistry
+        from opentelemetry.sdk.metrics import MeterProvider
+        from opentelemetry.sdk.metrics.export import InMemoryMetricReader
 
-        from cresmo.infrastructure.adapters.metrics.prometheus_metrics_adapter import (
-            PrometheusMetricsAdapter,
+        from cresmo.infrastructure.adapters.metrics.otlp_metrics_adapter import (
+            OtlpMetricsAdapter,
         )
 
-        registry = CollectorRegistry(auto_describe=True)
-        metrics = PrometheusMetricsAdapter(registry=registry)
+        reader = InMemoryMetricReader()
+        metrics = OtlpMetricsAdapter(meter_provider=MeterProvider(metric_readers=[reader]))
         adapter = NativeMediaIngestionAdapter(metrics_port=metrics)
 
         with (
@@ -1130,16 +1141,22 @@ class TestNativeMediaIngestionAdapter:
                 output_dir=tmp_path,
             )
 
-        sample_count = registry.get_sample_value(
-            "cresmo_media_ingestion_duration_seconds_count",
-            {
-                "channel_id": "",
-                "channel_name": "FailChan",
-                "modality": "url",
-                "status": "failure",
-            },
-        )
-        assert sample_count == 1.0
+        metrics_data = reader.get_metrics_data()
+        assert metrics_data is not None
+        points = [
+            dp
+            for rm in metrics_data.resource_metrics
+            for sm in rm.scope_metrics
+            for m in sm.metrics
+            if m.name == "cresmo_media_ingestion_duration_seconds"
+            for dp in m.data.data_points
+        ]
+        assert len(points) == 1
+        assert dict(points[0].attributes or {}) == {
+            "channel_id": "",
+            "modality": "url",
+            "status": "failure",
+        }
 
     def test_resolve_transcript_body_empty_raises_domain_validation_error(
         self, tmp_path: Path
@@ -1309,7 +1326,8 @@ class TestNativeMediaIngestionAdapter:
 
         mock_metrics.observe_histogram.assert_called_once()
         call_labels = mock_metrics.observe_histogram.call_args[1]["labels"]
-        assert call_labels["channel_name"] == "RobustChannel"
+        assert call_labels["channel_id"] == "UC_robust_1"
+        assert "channel_name" not in call_labels
         assert call_labels["status"] == "failure"
 
 
@@ -1840,7 +1858,6 @@ class TestMediaMutationHardening:
         assert 0.0 <= elapsed < 10.0
         assert labels == {
             "channel_id": "UC1234567890123456789012",
-            "channel_name": "IngestChan",
             "modality": "url",
             "status": "success",
         }
@@ -1856,7 +1873,6 @@ class TestMediaMutationHardening:
             )
         assert mock_metrics.observe_histogram.call_args.kwargs["labels"] == {
             "channel_id": "",
-            "channel_name": "Unknown_Channel",
             "modality": "url",
             "status": "failure",
         }
@@ -1874,7 +1890,6 @@ class TestMediaMutationHardening:
             )
         assert mock_metrics.observe_histogram.call_args.kwargs["labels"] == {
             "channel_id": "",
-            "channel_name": "Unknown_Channel",
             "modality": "url",
             "status": "failure",
         }

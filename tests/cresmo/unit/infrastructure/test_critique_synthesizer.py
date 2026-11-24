@@ -9,7 +9,6 @@ from cresmo.domain.value_objects import (
     CriterionScore,
     JudgeCriterion,
     JudgeEvaluation,
-    VerdictType,
 )
 from cresmo.infrastructure.adapters.llm.ollama_critique_adapter import OllamaCritiqueAdapter
 
@@ -26,7 +25,6 @@ def test_critique_synthesizer_passed_evaluation_returns_empty() -> None:
             CriterionScore(
                 criterion=JudgeCriterion.ORALITY_REMOVAL,
                 passed=True,
-                verdict_type=VerdictType.SCORE,
                 score=0.95,
                 reasoning="Clean prose.",
             ),
@@ -48,7 +46,6 @@ def test_critique_synthesizer_fallback_when_no_llm_port() -> None:
             CriterionScore(
                 criterion=JudgeCriterion.ORALITY_REMOVAL,
                 passed=False,
-                verdict_type=VerdictType.SCORE,
                 score=0.4,
                 reasoning="Contains 'você sabe' and filler words.",
                 improvement_suggestion="Remove filler words.",
@@ -75,18 +72,17 @@ def test_critique_synthesizer_invokes_llm_transformation_port() -> None:
             CriterionScore(
                 criterion=JudgeCriterion.ORALITY_REMOVAL,
                 passed=False,
-                verdict_type=VerdictType.SCORE,
                 score=0.5,
                 reasoning="Orality marks detected.",
             ),
         ),
     )
 
-    result = adapter.synthesize(evaluation, "fluid_prose", trace_id="trace_123")
+    result = adapter.synthesize(evaluation, "fluid_prose")
     assert result == "1. Delete all speech fillers.\n2. Ensure neutral tone."
     mock_llm.transform.assert_called_once()
     _, kwargs = mock_llm.transform.call_args
-    assert kwargs["trace_id"] == "trace_123"
+    assert kwargs["temperature"] == adapter.temperature
 
 
 def test_critique_synthesizer_resilient_fallback_on_exception() -> None:
@@ -104,7 +100,6 @@ def test_critique_synthesizer_resilient_fallback_on_exception() -> None:
             CriterionScore(
                 criterion=JudgeCriterion.SEMANTIC_FAITHFULNESS,
                 passed=False,
-                verdict_type=VerdictType.SCORE,
                 score=0.3,
                 reasoning="Hallucinated statements.",
             ),
@@ -124,7 +119,7 @@ def test_critique_synthesizer_uses_custom_prompt_provider() -> None:
     mock_llm = MagicMock(spec=LLMTransformationPort)
     mock_llm.transform.return_value = "1. Direct instruction."
     mock_prompt_provider = MagicMock()
-    custom_chat_prompt = ChatPrompt.from_system_and_user(system="CUSTOM SYS", user="CUSTOM PROMPT")
+    custom_chat_prompt = ChatPrompt.single_turn(user_prompt="CUSTOM PROMPT", system_prompt="CUSTOM SYS")
     mock_prompt_provider.get_prompt.return_value = custom_chat_prompt
 
     adapter = OllamaCritiqueAdapter(
@@ -140,7 +135,6 @@ def test_critique_synthesizer_uses_custom_prompt_provider() -> None:
             CriterionScore(
                 criterion=JudgeCriterion.ORALITY_REMOVAL,
                 passed=False,
-                verdict_type=VerdictType.SCORE,
                 score=0.4,
                 reasoning="Orality marks detected.",
             ),
@@ -159,5 +153,4 @@ def test_critique_synthesizer_uses_custom_prompt_provider() -> None:
     mock_llm.transform.assert_called_once_with(
         prompt=custom_chat_prompt,
         temperature=0.1,
-        trace_id=None,
     )

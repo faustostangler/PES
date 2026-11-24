@@ -45,7 +45,6 @@ def build_genai_attributes(
         attrs["cresmo.trace_id"] = trace_id
     if temperature is not None:
         attrs["gen_ai.request.temperature"] = temperature
-        attrs["cresmo.temperature"] = temperature
     if max_tokens is not None:
         attrs["gen_ai.request.max_tokens"] = max_tokens
     if thinking_level is not None:

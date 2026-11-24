@@ -21,10 +21,6 @@ class TestSessionMapper:
 
     def test_parse_session_parts_standard_and_content_prefixed(self) -> None:
         assert parse_session_parts(PipelineSessionId("UC_123:vid_456")) == ("UC_123", "vid_456")
-        assert parse_session_parts(PipelineSessionId("content:sandeco:ep01")) == (
-            "sandeco",
-            "ep01",
-        )
         assert parse_session_parts(PipelineSessionId("content:vid_only")) == (
             "content",
             "vid_only",
@@ -34,14 +30,6 @@ class TestSessionMapper:
         assert resolve_root_operation_name(None) == (PIPELINE_TRACE_NAME, PIPELINE_ROOT_SPAN_NAME)
         assert resolve_root_operation_name(PIPELINE_TRACE_NAME) == (
             PIPELINE_TRACE_NAME,
-            PIPELINE_ROOT_SPAN_NAME,
-        )
-        assert resolve_root_operation_name("cresmo.synthesis_pipeline") == (
-            "cresmo.synthesis_pipeline",
-            PIPELINE_ROOT_SPAN_NAME,
-        )
-        assert resolve_root_operation_name("cresmo.pipeline.execution") == (
-            "cresmo.pipeline.execution",
             PIPELINE_ROOT_SPAN_NAME,
         )
         assert resolve_root_operation_name("custom.trace") == ("custom.trace", "custom.trace")

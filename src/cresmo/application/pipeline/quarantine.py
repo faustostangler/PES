@@ -9,17 +9,14 @@ import structlog
 
 from cresmo.application.ports import (
     LedgerRepositoryPort,
+    MetricName,
     MetricsPort,
     NoOpTelemetryPort,
     TelemetryPort,
 )
 from cresmo.domain.exceptions import StageQuarantinedError
 from cresmo.domain.value_objects import (
-    Channel,
-    ChannelId,
     ChannelName,
-    Content,
-    ContentId,
     JudgeEvaluation,
     LedgerEntry,
     MediaProvenance,
@@ -35,9 +32,7 @@ logger = structlog.get_logger(__name__)
 def record_stage_quarantine(
     *,
     stage_name: str,
-    context: PipelineExecutionContext | None = None,
-    channel: Channel | None = None,
-    content: Content | None = None,
+    context: PipelineExecutionContext,
     evaluation: JudgeEvaluation,
     critique: str,
     effective_max_attempts: int,
@@ -45,39 +40,15 @@ def record_stage_quarantine(
     metrics_port: MetricsPort,
     telemetry_port: TelemetryPort | None = None,
     provenance: MediaProvenance | None = None,
-    media_url: str = "",
-    content_id: ContentId | None = None,
-    channel_name: str | ChannelName | None = None,
-    channel_id: ChannelId | str | None = None,
-    content_title: str = "",
 ) -> None:
     """Execute the 4-step fail-fast quarantine protocol per ADR-031 and ADR-070."""
-    if context is not None:
-        channel = context.channel
-        content = context.content
-
-    resolved_cid = content.id if content is not None else content_id
-    if resolved_cid is None:
-        raise ValueError("content or content_id must be provided to record_stage_quarantine")
-
-    if channel is not None:
-        channel_name_string = channel.name
-        channel_name_vo = ChannelName(channel.name)
-        channel_id_string = channel.id.value if channel.id else ""
-    else:
-        channel_name_string = (
-            channel_name.value if isinstance(channel_name, ChannelName) else (channel_name or "")
-        )
-        channel_name_vo = (
-            channel_name
-            if isinstance(channel_name, ChannelName)
-            else ChannelName(channel_name_string or "unknown")
-        )
-        channel_id_string = (
-            channel_id.value if isinstance(channel_id, ChannelId) else (channel_id or "")
-        )
-
-    resolved_title = (content.title if content is not None else content_title) or ""
+    channel = context.channel
+    content = context.content
+    resolved_cid = content.id
+    channel_name_string = channel.name
+    channel_name_vo = ChannelName(channel.name)
+    channel_id_string = channel.id.value if channel.id else ""
+    resolved_title = content.title or ""
 
     if ledger_port is not None:
         try:
@@ -88,11 +59,7 @@ def record_stage_quarantine(
                 else (
                     provenance.url
                     if provenance and provenance.url
-                    else (
-                        media_url
-                        if media_url
-                        else f"https://cresmo.internal/content/{resolved_cid.value}"
-                    )
+                    else f"https://cresmo.internal/content/{resolved_cid.value}"
                 )
             )
             ledger_port.save_entry(
@@ -134,9 +101,9 @@ def record_stage_quarantine(
     )
 
     metrics_port.increment_counter(
-        "cresmo_stage_quarantines_total",
+        MetricName.STAGE_QUARANTINES,
         1.0,
-        labels={"stage": stage_name, "channel_name": channel_name_string},
+        labels={"stage": stage_name, "channel_id": channel_id_string},
     )
 
     raise StageQuarantinedError(

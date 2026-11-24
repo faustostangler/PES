@@ -195,18 +195,6 @@ class AtomicNoteVaultHandler:
         except DomainValidationError:
             return None
 
-    def get_atomic_note_by_title(self, title: NoteTitle) -> AtomicNote | None:
-        """Retrieve atomic note by searching index or vault directory."""
-        sanitized = sanitize_filename(title.value)
-        matched = list(self.vault_dir.glob(f"**/{sanitized}.md"))
-        for p in matched:
-            if "MOCs" in p.parts:
-                continue
-            note = self.parse_atomic_note_file(p)
-            if note and note.title.value.lower() == title.value.lower():
-                return note
-        return None
-
     def get_all_atomic_notes(self) -> list[AtomicNote]:
         """Retrieve all atomic notes in vault/ excluding MOCs."""
         notes: list[AtomicNote] = []
@@ -258,11 +246,11 @@ class AtomicNoteVaultHandler:
             if "MOCs" not in p.parts and p.is_file():
                 p.unlink(missing_ok=True)
 
-        self.remove_index_entry(note.title.value)
+        self._remove_index_entry(note.title.value)
         for alias in note.aliases:
-            self.remove_index_entry(alias)
+            self._remove_index_entry(alias)
 
-    def remove_index_entry(self, key: str) -> None:
+    def _remove_index_entry(self, key: str) -> None:
         """Remove specific canonical title or alias key from master _index.json."""
         if not self.index_path.exists():
             return

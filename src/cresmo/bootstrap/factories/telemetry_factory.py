@@ -19,6 +19,7 @@ import structlog
 from cresmo.application.ports import (
     AnonymizerPort,
     MetricsPort,
+    NoOpMetricsPort,
     NoOpTelemetryPort,
     TelemetryPort,
 )
@@ -27,9 +28,9 @@ from cresmo.infrastructure.adapters.anonymization.anonymizer_adapter import (
     NoOpAnonymizerAdapter,
     RegexAnonymizerAdapter,
 )
-from cresmo.infrastructure.adapters.metrics.noop_metrics_adapter import NoOpMetricsAdapter
-from cresmo.infrastructure.adapters.metrics.prometheus_metrics_adapter import (
-    PrometheusMetricsAdapter,
+from cresmo.infrastructure.adapters.metrics.otlp_metrics_adapter import (
+    OtlpMetricsAdapter,
+    probe_prometheus_ready,
 )
 from cresmo.infrastructure.adapters.system.preflight_probe_adapter import probe_http_endpoint
 from cresmo.infrastructure.adapters.telemetry.opentelemetry_adapter import (
@@ -87,7 +88,7 @@ def _build_should_export_span() -> Callable[[Any], bool]:
         is_default = is_default_export_span(span)
         is_cresmo = scope is not None and scope.name.startswith("cresmo.")
         export = is_default or is_cresmo
-        # TEMPORARY: Keep span export debug output during ADR-070 OTel verification; remove once stabilized.
+        # KEEP FOR NOW (TEMPORARY): Retain span export debug output during ADR-070 OTel verification; remove once stabilized.
         print(
             f"[SPAN DEBUG] name={span_name!r} scope={scope_name!r} "
             f"default={is_default} cresmo={is_cresmo} -> export={export}"
@@ -110,7 +111,7 @@ def _build_mask_hook(
         span_patches = {}
         for identifier, span in params.spans.items():
             raw_attrs = span.attributes or {}
-            sanitized = anonymizer.mask_span_attributes(raw_attrs)
+            sanitized = anonymizer.mask_mapping(raw_attrs)
             if sanitized != raw_attrs:
                 delete_attrs = [k for k in raw_attrs if k not in sanitized]
                 set_attributes = {k: v for k, v in sanitized.items() if raw_attrs.get(k) != v}
@@ -212,7 +213,7 @@ def resolve_langfuse_client(
         name_telemetry_threads(client)
         return client
     except Exception as exc:  # noqa: BLE001
-        logger.warning("[composition] Failed to initialize Langfuse client: %s", exc)
+        logger.warning("Failed to initialize Langfuse client", error=str(exc))
         _clean_langfuse_env()
         return None
 
@@ -245,8 +246,23 @@ def build_telemetry_adapter(
 def build_metrics_adapter(
     settings: ObservabilitySettings | None = None,
 ) -> MetricsPort:
-    """Instantiate MetricsPort adapter choosing between Prometheus and NoOp."""
+    """Instantiate MetricsPort choosing between OtlpMetricsAdapter and NoOpMetricsPort."""
     resolved = settings if settings is not None else resolve_shared_settings(None).observability
-    if resolved.prometheus.enabled:
-        return PrometheusMetricsAdapter()
-    return NoOpMetricsAdapter()
+    if not resolved.prometheus.enabled:
+        return NoOpMetricsPort()
+
+    if resolved.runtime.enable_preflight_probes and not probe_prometheus_ready(
+        resolved.prometheus.endpoint,
+        timeout_seconds=resolved.runtime.preflight_probe_timeout_seconds,
+    ):
+        logger.warning(
+            "[Telemetry] Prometheus endpoint '%s' unreachable on preflight probe; "
+            "falling back to NoOpMetricsPort.",
+            resolved.prometheus.endpoint,
+        )
+        return NoOpMetricsPort()
+
+    return OtlpMetricsAdapter(
+        endpoint=resolved.prometheus.endpoint,
+        service_version=resolved.runtime.pipeline_version,
+    )

@@ -27,18 +27,6 @@ from cresmo.infrastructure.config.catalog import (
 JudgeProviderName = Literal["gemini", "typesafe", "ollama"]
 
 
-def _default_gap_filler_weights() -> dict[str, float]:
-    return {
-        "epistemic_grounding_segregation": 0.20,
-        "conceptual_mechanical_decomposition": 0.15,
-        "braudelian_stratification": 0.15,
-        "genealogy_hidden_agency": 0.15,
-        "competing_hypotheses": 0.15,
-        "extra_info_granularity": 0.10,
-        "linear_style_naturalism": 0.10,
-    }
-
-
 class TypeSafeSettings(BaseModel):
     """Immutable TypeSafe AI System One Jev evaluator settings."""
 
@@ -78,23 +66,6 @@ class JudgeGeminiSettings(BaseModel):
         return normalize_str_choice(value)
 
 
-class GapFillerJudgeSettings(BaseModel):
-    """Immutable gap_filler quality judge threshold and criterion weights."""
-
-    model_config = ConfigDict(frozen=True, extra="forbid")
-
-    threshold: float = Field(
-        default=DEFAULT_JUDGE_PASS_THRESHOLD,
-        ge=0.0,
-        le=1.0,
-        description="Minimum score threshold required for gap_filler judge evaluations to pass.",
-    )
-    weights: dict[str, float] = Field(
-        default_factory=_default_gap_filler_weights,
-        description="Criterion weights for gap_filler stage judge evaluation.",
-    )
-
-
 class JudgeSettings(BaseModel):
     """Composed quality judge, evaluator provider, and benchmark settings."""
 
@@ -103,10 +74,6 @@ class JudgeSettings(BaseModel):
     provider: JudgeProviderName = Field(
         default="gemini",
         description="Primary quality judge provider ('gemini', 'typesafe', 'ollama').",
-    )
-    fallback_provider: JudgeProviderName = Field(
-        default="ollama",
-        description="Fallback quality judge provider when primary fails.",
     )
     blocking: bool = Field(
         default=False,
@@ -129,9 +96,8 @@ class JudgeSettings(BaseModel):
     )
     gemini: JudgeGeminiSettings = Field(default_factory=JudgeGeminiSettings)
     typesafe: TypeSafeSettings = Field(default_factory=TypeSafeSettings)
-    gap_filler: GapFillerJudgeSettings = Field(default_factory=GapFillerJudgeSettings)
 
-    @field_validator("provider", "fallback_provider", mode="before")
+    @field_validator("provider", mode="before")
     @classmethod
     def _normalize_provider(cls, value: Any) -> Any:
         return normalize_str_choice(value)
@@ -143,7 +109,6 @@ class JudgeSettings(BaseModel):
 
 
 __all__ = [
-    "GapFillerJudgeSettings",
     "JudgeGeminiSettings",
     "JudgeProviderName",
     "JudgeSettings",

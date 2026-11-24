@@ -69,7 +69,7 @@ def build_llm_judge_adapter(
         )
 
     inner_judge: LlmJudgePort
-    if enable_fallback:
+    if enable_fallback and provider != "ollama":
         from cresmo.infrastructure.adapters.judges.composite_judge import (
             ResilientCompositeJudgeAdapter,
         )

@@ -14,7 +14,7 @@ from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 from opentelemetry.sdk.trace.export.in_memory_span_exporter import InMemorySpanExporter
 
-from cresmo.application.pipeline import CresmoPipeline
+from cresmo.application.pipeline.coordinator import CresmoPipeline
 from cresmo.domain.entities import StageTranscript, UserIdentity
 from cresmo.domain.value_objects import (
     BatchId,
@@ -25,7 +25,7 @@ from cresmo.domain.value_objects import (
     ContentId,
     MediaProvenance,
 )
-from cresmo.infrastructure.adapters.prompts import JsonPromptProvider
+from cresmo.infrastructure.adapters.prompts.json_provider import JsonPromptProvider
 from cresmo.infrastructure.adapters.telemetry.opentelemetry_adapter import OpenTelemetryAdapter
 from tests.cresmo.unit.application.test_pipeline import SmartMockLLMAdapter
 from tests.doubles.mock_adapters import (
@@ -55,12 +55,26 @@ class TestPipelineTelemetryIntegration:
         media_port = MockMediaIngestionPort()
         prompt_provider = JsonPromptProvider()
 
+        from cresmo.application.pipeline.models import PipelineDependencies
+        from cresmo.application.pipeline.stage_factory import StageFactory
+        from cresmo.application.pipeline.stage_runner import PipelineStageRunner
+        from cresmo.application.ports import NoOpMetricsPort
+        from cresmo.domain.value_objects import StageExecutionPolicy
+
+        runner = PipelineStageRunner(
+            PipelineDependencies(
+                telemetry_port=telemetry_adapter,
+                metrics_port=NoOpMetricsPort(),
+                llm_transformation_port=llm_port,
+                prompt_provider=prompt_provider,
+                stage_factory=StageFactory(policy=StageExecutionPolicy()),
+            )
+        )
         pipeline = CresmoPipeline(
             media_ingestion_port=media_port,
-            llm_synthesis_port=llm_port,
             vault_port=vault_port,
+            stage_runner=runner,
             ledger_port=ledger_port,
-            prompt_provider=prompt_provider,
             telemetry_port=telemetry_adapter,
         )
 
@@ -266,14 +280,15 @@ class TestPipelineTelemetryIntegration:
     )
     def test_pipeline_records_prometheus_metrics_on_stages(self) -> None:
         """SPEC-008 Scenario 5: Verifies pipeline records stage duration histograms and counters."""
-        from prometheus_client import CollectorRegistry
+        from opentelemetry.sdk.metrics import MeterProvider
+        from opentelemetry.sdk.metrics.export import InMemoryMetricReader
 
-        from cresmo.infrastructure.adapters.metrics.prometheus_metrics_adapter import (
-            PrometheusMetricsAdapter,
+        from cresmo.infrastructure.adapters.metrics.otlp_metrics_adapter import (
+            OtlpMetricsAdapter,
         )
 
-        registry = CollectorRegistry(auto_describe=True)
-        metrics_adapter = PrometheusMetricsAdapter(registry=registry)
+        reader = InMemoryMetricReader()
+        metrics_adapter = OtlpMetricsAdapter(meter_provider=MeterProvider(metric_readers=[reader]))
 
         vault_port = InMemoryVaultAdapter()
         ledger_port = InMemoryLedgerAdapter()
@@ -281,12 +296,26 @@ class TestPipelineTelemetryIntegration:
         media_port = MockMediaIngestionPort()
         prompt_provider = JsonPromptProvider()
 
+        from cresmo.application.pipeline.models import PipelineDependencies
+        from cresmo.application.pipeline.stage_factory import StageFactory
+        from cresmo.application.pipeline.stage_runner import PipelineStageRunner
+        from cresmo.application.ports import NoOpTelemetryPort
+        from cresmo.domain.value_objects import StageExecutionPolicy
+
+        runner = PipelineStageRunner(
+            PipelineDependencies(
+                telemetry_port=NoOpTelemetryPort(),
+                metrics_port=metrics_adapter,
+                llm_transformation_port=llm_port,
+                prompt_provider=prompt_provider,
+                stage_factory=StageFactory(policy=StageExecutionPolicy()),
+            )
+        )
         pipeline = CresmoPipeline(
             media_ingestion_port=media_port,
-            llm_synthesis_port=llm_port,
             vault_port=vault_port,
+            stage_runner=runner,
             ledger_port=ledger_port,
-            prompt_provider=prompt_provider,
             metrics_port=metrics_adapter,
         )
 
@@ -305,32 +334,33 @@ class TestPipelineTelemetryIntegration:
         result = pipeline.execute(raw=raw, expansion_max_passes=1)
         assert result.success is True
 
-        # Check transcript counter
-        transcript_sample = registry.get_sample_value(
-            "cresmo_transcripts_processed_total",
+        # Check transcript counter (low-cardinality labels only)
+        data = reader.get_metrics_data()
+        assert data is not None
+        samples: dict[str, list[tuple[dict[str, object], float | int]]] = {}
+        for rm in data.resource_metrics:
+            for sm in rm.scope_metrics:
+                for metric in sm.metrics:
+                    points: list[tuple[dict[str, object], float | int]] = []
+                    for dp in metric.data.data_points:
+                        val = getattr(dp, "value", None)
+                        if val is None:
+                            val = getattr(dp, "count", 0)
+                        points.append((dict(dp.attributes or {}), val))
+                    samples[metric.name] = points
+
+        transcript_points = samples.get("cresmo_transcripts_processed_total", [])
+        assert (
             {
                 "channel_id": "UC_sandeco_test",
-                "channel_name": "sandeco",
-                "content_id": "yt_metrics_test_01",
                 "status": "completed",
                 "modality": "transcript",
             },
-        )
-        assert transcript_sample == 1.0
-
-        # Check atomic notes counter
-        notes_sample = registry.get_sample_value(
-            "cresmo_atomic_notes_synthesized_total",
-            {
-                "channel_id": "UC_sandeco_test",
-                "channel_name": "sandeco",
-                "content_id": "yt_metrics_test_01",
-                "note_type": "all",
-            },
-        )
-        assert notes_sample is not None and notes_sample >= 1.0
+            1.0,
+        ) in transcript_points
 
         # Check stage duration histograms
+        stage_points = samples.get("cresmo_pipeline_stage_duration_seconds", [])
         for stage in (
             "fluid_prose",
             "expansion",
@@ -339,16 +369,14 @@ class TestPipelineTelemetryIntegration:
             "mocs",
             "duplicate_unification",
         ):
-            count = registry.get_sample_value(
-                "cresmo_pipeline_stage_duration_seconds_count",
+            assert (
                 {
                     "stage": stage,
                     "channel_id": "UC_sandeco_test",
-                    "channel_name": "sandeco",
                     "status": "success",
                 },
-            )
-            assert count == 1.0, f"Stage {stage} should have 1 histogram observation"
+                1,
+            ) in stage_points, f"Stage {stage} should have 1 histogram observation"
 
     def test_pipeline_execute_propagates_batch_id_adr035(
         self,
@@ -391,14 +419,14 @@ class TestPipelineTelemetryIntegration:
 
         pipeline, exporter, _ = telemetry_pipeline
         observed_stages_during_transform: list[str | None] = []
-        assert pipeline.llm_synthesis_port is not None
-        original_transform = pipeline.llm_synthesis_port.transform
+        assert pipeline.stage_runner.llm_transformation_port is not None
+        original_transform = pipeline.stage_runner.llm_transformation_port.transform
 
         def _spy_transform(*args: object, **kwargs: object) -> str:
             observed_stages_during_transform.append(get_active_telemetry_stage())
             return original_transform(*args, **kwargs)  # type: ignore[arg-type]
 
-        pipeline.llm_synthesis_port.transform = _spy_transform  # type: ignore[method-assign]
+        pipeline.stage_runner.llm_transformation_port.transform = _spy_transform  # type: ignore[method-assign]
 
         raw = StageTranscript(
             channel=Channel(name=ChannelName("sandeco")),

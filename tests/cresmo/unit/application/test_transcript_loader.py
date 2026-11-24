@@ -15,7 +15,6 @@ from cresmo.application.pipeline.transcript_loader import (
     _resolve_metadata,
     ensure_transcript_saved,
     is_subpath,
-    load_manifest_urls,
     load_transcript_from_file,
 )
 from cresmo.application.ports import ChannelTaxonomyPort
@@ -418,43 +417,8 @@ class TestLoadTranscriptFromFile:
             load_transcript_from_file(empty_file)
 
 
-class TestLoadManifestUrls:
-    """Verifies load_manifest_urls parsing and error handling."""
-
-    def test_load_manifest_urls_success(self, tmp_path: Path) -> None:
-        manifest_file = tmp_path / "urls.txt"
-        manifest_content = (
-            "# This is a comment\n"
-            "\n"
-            "https://youtube.com/watch?v=aaa111\n"
-            "   \n"
-            "# Another comment\n"
-            "  https://youtube.com/watch?v=bbb222  \n"
-        )
-        manifest_file.write_text(manifest_content, encoding="utf-8")
-
-        urls = load_manifest_urls(manifest_file)
-        assert urls == [
-            "https://youtube.com/watch?v=aaa111",
-            "https://youtube.com/watch?v=bbb222",
-        ]
-
-    def test_load_manifest_urls_enforces_utf8_encoding(self, tmp_path: Path) -> None:
-        manifest = tmp_path / "urls_enc.txt"
-        manifest.write_text("https://example.com/item\n", encoding="utf-8")
-        with patch.object(Path, "read_text", wraps=manifest.read_text) as mock_read:
-            load_manifest_urls(manifest)
-            assert mock_read.call_args[1].get("encoding") == "utf-8"
-
-    def test_nonexistent_manifest_raises_error(self, tmp_path: Path) -> None:
-        nonexistent = tmp_path / "missing_urls.txt"
-
-        with pytest.raises(CresmoDomainError, match="Manifest file not found:"):
-            load_manifest_urls(nonexistent)
-
-
 def test_coordinator_run_for_text_file_passes_raw_dir(tmp_path: Path) -> None:
-    from cresmo.application.pipeline import CresmoPipeline
+    from cresmo.application.pipeline.coordinator import CresmoPipeline
     from cresmo.application.pipeline.stage_runner import PipelineStageRunner
     from cresmo.application.ports.storage import VaultRepositoryPort
 

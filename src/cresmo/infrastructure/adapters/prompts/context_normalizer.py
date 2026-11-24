@@ -13,7 +13,7 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import Any
 
-from cresmo.domain.value_objects import DEFAULT_LANGUAGE, ChannelName, PromptKey
+from cresmo.domain.value_objects import DEFAULT_LANGUAGE, PromptKey
 
 __all__ = [
     "DEFAULT_LANGUAGE",
@@ -145,9 +145,7 @@ if set(PROMPT_VARIABLE_SCHEMAS.keys()) != set(PromptKey):
 
 
 def _coerce_value(value: Any) -> str:
-    """Convert runtime context values (including ChannelName VOs) into strings."""
-    if isinstance(value, ChannelName):
-        return str(value)
+    """Convert runtime context values into strings."""
     return str(value)
 
 

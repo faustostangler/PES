@@ -19,7 +19,6 @@ from cresmo.domain.exceptions import (
     IngestionNetworkError,
     PreflightError,
     RateLimitExceededError,
-    SecurityViolationError,
 )
 from cresmo.presentation.exit_codes import (
     EXIT_CONFIG_OR_USAGE_ERROR,
@@ -33,7 +32,6 @@ _EXCEPTION_MAPPINGS: tuple[tuple[type[BaseException], int, str], ...] = (
     (RateLimitExceededError, EXIT_RATE_LIMIT_EXCEEDED, "Rate limit exceeded"),
     (IngestionNetworkError, EXIT_INGESTION_ERROR, "Ingestion network error"),
     (PreflightError, EXIT_CONFIG_OR_USAGE_ERROR, "Preflight error"),
-    (SecurityViolationError, EXIT_CONFIG_OR_USAGE_ERROR, "Security boundary violation"),
     (DomainValidationError, EXIT_DOMAIN_VALIDATION_ERROR, "Domain validation error"),
     (CresmoDomainError, EXIT_DOMAIN_VALIDATION_ERROR, "Domain validation error"),
     (ValidationError, EXIT_CONFIG_OR_USAGE_ERROR, "Configuration error"),

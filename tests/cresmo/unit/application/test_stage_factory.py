@@ -62,7 +62,7 @@ def test_pipeline_execution_context_creation() -> None:
 
 def test_pipeline_execution_context_composite_creation() -> None:
     """Verify PipelineExecutionContext receives composite Channel and Content VOs (ADR-032)."""
-    channel = Channel.from_name("Test Channel", id="UC_test123")
+    channel = Channel("Test Channel", id="UC_test123")
     content = Content.create("test_vid", title="Sample Title", session_id="test_chan:test_vid")
     ctx = PipelineExecutionContext(
         user_identity=UserIdentity.worker(),
@@ -99,13 +99,10 @@ def test_stage_factory_builds_fluid_prose_descriptor() -> None:
     assert JudgeCriterion.ORALITY_REMOVAL in descriptor.eval_spec.required_criteria
     assert JudgeCriterion.SEMANTIC_FAITHFULNESS in descriptor.eval_spec.required_criteria
 
-    # Verify callable interface returns cached instance
-    assert factory("fluid_prose") is descriptor
-
     # Verify source text extraction
     source = StageTranscript(
         channel=Channel(name=ChannelName("Ch")),
-        provenance=MediaProvenance.empty(),
+        provenance=MediaProvenance(),
         content=Content(id=ContentId("c123"), text="Verbatim source audio."),
     )
     extracted = descriptor.eval_spec.extract_source_text(source)
@@ -163,7 +160,7 @@ def test_stage_factory_generic_build_stage_custom_parameters() -> None:
 
     dummy_source = StageTranscript(
         channel=Channel(name=ChannelName("dummy_channel")),
-        provenance=MediaProvenance.empty(),
+        provenance=MediaProvenance(),
         content=Content(id=ContentId("dummy_content"), text="dummy body"),
     )
     assert descriptor.eval_spec.extract_source_text(dummy_source) == "src:dummy body"
@@ -194,13 +191,6 @@ def test_stage_factory_build_stage_minimal_without_criteria() -> None:
     assert descriptor.blocking is False
 
 
-def test_stage_factory_create_stage_alias() -> None:
-    """Verify create_stage and __call__ are exact aliases for build_stage."""
-    factory = StageFactory()
-    assert factory.create_stage == factory.build_stage
-    assert factory("fluid_prose") == factory.build_stage("fluid_prose")
-
-
 def test_stage_factory_unknown_stage_raises_error() -> None:
     """Verify requesting an unknown stage with no prompt key raises ValueError."""
     factory = StageFactory()
@@ -208,22 +198,19 @@ def test_stage_factory_unknown_stage_raises_error() -> None:
         factory.build_stage("nonexistent_stage")
 
 
-def test_stage_factory_uses_domain_stage_registry() -> None:
+def test_stage_factory_uses_domain_stage_registry(monkeypatch: pytest.MonkeyPatch) -> None:
     """Verify StageFactory dynamically resolves specifications from domain StageRegistry."""
     test_stage_name = "dynamic_registered_stage"
     custom_spec = StageDefinition(
         transform_prompt_key=PromptKey.FLUID_PROSE,
         required_criteria=(JudgeCriterion.ORALITY_REMOVAL,),
     )
-    StageRegistry.register(test_stage_name, custom_spec)
-    try:
-        factory = StageFactory()
-        descriptor = factory.build_stage(test_stage_name)
-        assert descriptor.stage_name == test_stage_name
-        assert descriptor.eval_spec is not None
-        assert descriptor.eval_spec.required_criteria == (JudgeCriterion.ORALITY_REMOVAL,)
-    finally:
-        StageRegistry._SPECS.pop(test_stage_name, None)
+    monkeypatch.setitem(StageRegistry._SPECS, test_stage_name, custom_spec)
+    factory = StageFactory()
+    descriptor = factory.build_stage(test_stage_name)
+    assert descriptor.stage_name == test_stage_name
+    assert descriptor.eval_spec is not None
+    assert descriptor.eval_spec.required_criteria == (JudgeCriterion.ORALITY_REMOVAL,)
 
 
 def test_stage_factory_caching_and_overrides_bypass() -> None:
@@ -404,7 +391,8 @@ def test_stage_factory_max_passes_edge_cases_and_saturation_override(
     assert overridden_cfg.saturation_policy is custom_policy
 
     two_pass_stage = "two_pass_none_stage"
-    StageRegistry.register(
+    monkeypatch.setitem(
+        StageRegistry._SPECS,
         two_pass_stage,
         StageDefinition(
             transform_prompt_key=PromptKey.FLUID_PROSE,
@@ -412,13 +400,10 @@ def test_stage_factory_max_passes_edge_cases_and_saturation_override(
             convergence_mode=ConvergenceMode.NONE,
         ),
     )
-    try:
-        none_cfg: StageConfig[StageTranscript, StageTranscript] = default_factory.build_stage(
-            two_pass_stage
-        )
-        assert none_cfg.max_passes == 2
-    finally:
-        StageRegistry._SPECS.pop(two_pass_stage, None)
+    none_cfg: StageConfig[StageTranscript, StageTranscript] = default_factory.build_stage(
+        two_pass_stage
+    )
+    assert none_cfg.max_passes == 2
 
     monkeypatch.setattr(StageRegistry, "contains", lambda _name: False)
     unregistered_long: StageConfig[StageTranscript, StageTranscript] = StageFactory().build_stage(

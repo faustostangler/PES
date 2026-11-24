@@ -23,8 +23,6 @@ from cresmo.domain.value_objects import (
     JudgeCriterion,
     JudgeEvaluation,
     MediaProvenance,
-    TypedVerdict,
-    VerdictType,
 )
 
 
@@ -95,34 +93,8 @@ class TestCandidateText:
             CandidateText(text="Some text", stage_name="")
 
 
-class TestTypedVerdictAndEvaluationCritique:
-    """Test suite for VerdictType, TypedVerdict, and JudgeEvaluation critique extraction."""
-
-    def test_typed_verdict_noul(self) -> None:
-        verdict = TypedVerdict(
-            criterion=JudgeCriterion.ORALITY_REMOVAL,
-            verdict_type=VerdictType.NOUL,
-            passed=True,
-            score=1.0,
-            confidence=0.98,
-            reasoning="All filler words eliminated.",
-        )
-        assert verdict.verdict_type == VerdictType.NOUL
-        assert verdict.passed is True
-        assert verdict.score == 1.0
-
-    def test_typed_verdict_score_and_suggestion(self) -> None:
-        verdict = TypedVerdict(
-            criterion=JudgeCriterion.SEMANTIC_FAITHFULNESS,
-            verdict_type=VerdictType.SCORE,
-            passed=False,
-            score=0.6,
-            reasoning="Omitted discussion of second-order determinants.",
-            improvement_suggestion="Re-include the Annales School causal structure.",
-        )
-        assert verdict.passed is False
-        assert verdict.score == 0.6
-        assert verdict.improvement_suggestion != ""
+class TestEvaluationCritique:
+    """Test suite for JudgeEvaluation critique extraction."""
 
     def test_judge_evaluation_extract_critique_combines_failures(self) -> None:
         score1 = CriterionScore(

@@ -47,11 +47,6 @@ class StorageSettings(BaseModel):
         return self.data_dir / "fluid_prose"
 
     @property
-    def gap_filler_dir(self) -> Path:
-        """Directory for deep gap-filled prose transcripts."""
-        return self.data_dir / "gap_filler"
-
-    @property
     def enriched_dir(self) -> Path:
         """Directory for enriched multi-pass compendiums."""
         return self.data_dir / "enriched"
@@ -89,15 +84,6 @@ class StorageSettings(BaseModel):
         default="playlist-priority.txt",
         description="Filename of the priority video manifest inside data_dir.",
     )
-    brain_csv_filename: str = Field(
-        default="brain.csv",
-        description="Filename of the global conceptual index CSV inside data_dir.",
-    )
-
-    @property
-    def brain_csv_path(self) -> Path:
-        """Absolute path to global brain.csv conceptual index file."""
-        return self.data_dir / self.brain_csv_filename
 
     priority_texts_dirname: str = Field(
         default="priority",

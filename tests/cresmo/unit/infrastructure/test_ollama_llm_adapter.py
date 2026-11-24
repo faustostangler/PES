@@ -33,7 +33,9 @@ class TestOllamaLLMAdapter:
         )
 
         mock_response_data = {
-            "response": "Circulação de Elites\nMinorias governam a sociedade e são ciclicamente substituídas por novas contra-elites.",
+            "message": {
+                "content": "Circulação de Elites\nMinorias governam a sociedade e são ciclicamente substituídas por novas contra-elites."
+            },
             "done": True,
         }
 
@@ -44,9 +46,9 @@ class TestOllamaLLMAdapter:
             mock_urlopen.return_value = mock_resp
 
             result = adapter.transform(
-                prompt=ChatPrompt.from_system_and_user(
-                    system="Act as a domain expert.",
-                    user="Video Title: Pareto\nTranscript...",
+                prompt=ChatPrompt.single_turn(
+                    user_prompt="Video Title: Pareto\nTranscript...",
+                    system_prompt="Act as a domain expert.",
                 ),
                 temperature=0.2,
             )
@@ -94,25 +96,6 @@ class TestOllamaLLMAdapter:
             with pytest.raises(LLMInfrastructureError, match="404"):
                 adapter.transform(ChatPrompt.single_turn("Some prompt"))
 
-    def test_is_available_returns_true_on_success(self) -> None:
-        adapter = OllamaLLMAdapter(base_url="http://localhost:11434")
-
-        with patch("urllib.request.urlopen") as mock_urlopen:
-            mock_resp = MagicMock()
-            mock_resp.status = 200
-            mock_resp.__enter__.return_value = mock_resp
-            mock_urlopen.return_value = mock_resp
-
-            assert adapter.is_available() is True
-
-    def test_is_available_returns_false_on_connection_error(self) -> None:
-        adapter = OllamaLLMAdapter(base_url="http://localhost:11434")
-
-        with patch("urllib.request.urlopen") as mock_urlopen:
-            mock_urlopen.side_effect = urllib.error.URLError("Connection refused")
-
-            assert adapter.is_available() is False
-
     def test_transform_uses_configured_default_temperature(self) -> None:
         """Verify that default_temperature passed in constructor is used when temperature is None."""
         adapter = OllamaLLMAdapter(
@@ -122,7 +105,7 @@ class TestOllamaLLMAdapter:
         )
 
         mock_response_data = {
-            "response": "Clean output",
+            "message": {"content": "Clean output"},
             "done": True,
         }
 
@@ -148,7 +131,7 @@ class TestOllamaLLMAdapter:
         )
 
         mock_response_data = {
-            "response": "Observed output",
+            "message": {"content": "Observed output"},
             "done": True,
             "prompt_eval_count": 50,
             "eval_count": 120,
@@ -189,7 +172,7 @@ class TestOllamaLLMAdapter:
             model="qwen2.5:7b",
             num_predict=0,
         )
-        mock_response_data = {"response": "Clean output", "done": True}
+        mock_response_data = {"message": {"content": "Clean output"}, "done": True}
 
         with patch("urllib.request.urlopen") as mock_urlopen:
             mock_resp = MagicMock()
@@ -209,7 +192,7 @@ class TestOllamaLLMAdapter:
             model="qwen2.5:7b",
             num_predict=500,
         )
-        mock_response_data = {"response": "Clean output", "done": True}
+        mock_response_data = {"message": {"content": "Clean output"}, "done": True}
 
         with patch("urllib.request.urlopen") as mock_urlopen:
             mock_resp = MagicMock()
@@ -245,7 +228,7 @@ class TestOllamaLLMAdapter:
             mock_urlopen.return_value = mock_resp
 
             adapter.warmup()
-            assert adapter.wait_for_warmup() is True
+            assert adapter._wait_for_warmup() is True
             assert adapter.is_warmed_up is True
 
             req = mock_urlopen.call_args_list[0][0][0]
@@ -273,7 +256,7 @@ class TestOllamaLLMAdapter:
 
             adapter.warmup()
             with pytest.raises(LLMInfrastructureError, match="ollama pull"):
-                adapter.wait_for_warmup()
+                adapter._wait_for_warmup()
 
     def test_warmup_timeout_raises_actionable_error(self) -> None:
         """Verify that warmup timeout raises LLMInfrastructureError."""
@@ -288,7 +271,7 @@ class TestOllamaLLMAdapter:
 
             adapter.warmup()
             with pytest.raises(LLMInfrastructureError, match="timed out loading model"):
-                adapter.wait_for_warmup()
+                adapter._wait_for_warmup()
 
     def test_transform_propagates_keep_alive(self) -> None:
         """Verify that transform includes configured keep_alive in every generate request."""
@@ -299,7 +282,7 @@ class TestOllamaLLMAdapter:
         )
         adapter._is_warmed_up = True  # Pre-mark warmed up to test transform payload directly
 
-        mock_response_data = {"response": "Output with keepalive", "done": True}
+        mock_response_data = {"message": {"content": "Output with keepalive"}, "done": True}
 
         with patch("urllib.request.urlopen") as mock_urlopen:
             mock_resp = MagicMock()
@@ -333,12 +316,12 @@ class TestOllamaLLMAdapter:
             assert adapter._warmup_thread is not None
 
             # Rendezvous barrier blocks until thread completes and returns True
-            assert adapter.wait_for_warmup() is True
+            assert adapter._wait_for_warmup() is True
             assert bool(adapter.is_warmed_up) is True
 
-            # Subsequent wait_for_warmup returns immediately without re-invoking urlopen
+            # Subsequent _wait_for_warmup returns immediately without re-invoking urlopen
             mock_urlopen.reset_mock()
-            assert adapter.wait_for_warmup() is True
+            assert adapter._wait_for_warmup() is True
             mock_urlopen.assert_not_called()
 
     def test_warmup_concurrent_calls_prevent_duplicate_threads(self) -> None:
@@ -362,7 +345,7 @@ class TestOllamaLLMAdapter:
             adapter.warmup()
             assert adapter._warmup_thread is initial_thread
 
-            assert adapter.wait_for_warmup() is True
+            assert adapter._wait_for_warmup() is True
             assert adapter.is_warmed_up is True
 
             # Calling warmup after completion is a no-op
@@ -387,7 +370,7 @@ class TestOllamaLLMAdapter:
 
             adapter.warmup()
             with pytest.raises(LLMInfrastructureError, match="ollama pull"):
-                adapter.wait_for_warmup()
+                adapter._wait_for_warmup()
 
     def test_transform_rendezvous_barrier_triggers_warmup_when_cold(self) -> None:
         """Verify that transform automatically invokes rendezvous barrier when adapter is cold."""
@@ -399,7 +382,7 @@ class TestOllamaLLMAdapter:
 
         mock_preload_data = {"done": True, "done_reason": "load"}
         mock_ps_data = {"models": [{"name": "qwen2.5:7b", "size_vram": 4000000000}]}
-        mock_gen_data = {"response": "Transformed text", "done": True}
+        mock_gen_data = {"message": {"content": "Transformed text"}, "done": True}
 
         with patch("urllib.request.urlopen") as mock_urlopen:
             mock_preload_resp = MagicMock()
@@ -449,7 +432,7 @@ class TestOllamaLLMAdapter:
             with concurrent.futures.ThreadPoolExecutor(
                 max_workers=5, thread_name_prefix="TestOllamaWarmupWait"
             ) as executor:
-                futures = [executor.submit(adapter.wait_for_warmup) for _ in range(5)]
+                futures = [executor.submit(adapter._wait_for_warmup) for _ in range(5)]
                 results = [f.result() for f in concurrent.futures.as_completed(futures)]
 
             assert all(results)
@@ -465,7 +448,7 @@ class TestOllamaLLMAdapter:
             telemetry_port=telemetry,
         )
         adapter._is_warmed_up = True
-        mock_response_data = {"response": "Observed stage output", "done": True}
+        mock_response_data = {"message": {"content": "Observed stage output"}, "done": True}
 
         with patch("urllib.request.urlopen") as mock_urlopen:
             mock_resp = MagicMock()

@@ -31,7 +31,12 @@ from typing import Any, Final, Self, cast
 import httpx
 import structlog
 
-from cresmo.application.ports import MediaIngestionPort, MetricsPort
+from cresmo.application.ports import (
+    MediaIngestionPort,
+    MetricName,
+    MetricsPort,
+    NoOpMetricsPort,
+)
 from cresmo.application.ports.taxonomy import ChannelTaxonomyPort
 from cresmo.domain.entities import StageTranscript
 from cresmo.domain.exceptions import (
@@ -58,20 +63,14 @@ from cresmo.infrastructure.adapters.media.subtitles import (
     _ILLEGAL_FS_CHARS,
     ensure_yt_dlp_plugins_loaded,
     find_native_subtitle_url,
-    is_native_subtitle_url,
-    parse_published_datetime,
     parse_upload_date,
     reconstruct_json3_paragraphs,
 )
 from cresmo.infrastructure.adapters.media.transcriber import FasterWhisperEngine
-from cresmo.infrastructure.adapters.metrics.noop_metrics_adapter import NoOpMetricsAdapter
 from cresmo.infrastructure.adapters.scrapers.header_generator import RandomHeaderGenerator
-from cresmo.infrastructure.adapters.taxonomy import JsonTaxonomyCatalogAdapter
+from cresmo.infrastructure.adapters.taxonomy.json_taxonomy_adapter import JsonTaxonomyCatalogAdapter
 
 logger = structlog.get_logger(__name__)
-
-# Re-exports for backwards compatibility
-_ensure_yt_dlp_plugins_loaded = ensure_yt_dlp_plugins_loaded
 
 YTDLP_METADATA_SKIP_MANIFESTS: Final[tuple[str, ...]] = ("dash", "hls", "translated_subs")
 DEFAULT_HTTP_MAX_CONNECTIONS: Final[int] = 20
@@ -132,7 +131,7 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         self._cookie_file: Path | None = Path(cookie_file).resolve() if cookie_file else None
         self._js_runtime_name: str | None = js_runtime_name or self._detect_js_runtime()
         if metrics_port is None:
-            self._metrics_port: MetricsPort = NoOpMetricsAdapter()
+            self._metrics_port: MetricsPort = NoOpMetricsPort()
         else:
             self._metrics_port = metrics_port
         self._taxonomy_port: ChannelTaxonomyPort = taxonomy_port or JsonTaxonomyCatalogAdapter()
@@ -215,8 +214,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         """Sanitize channel or video title for filesystem safety."""
         cleaned = _ILLEGAL_FS_CHARS.sub("_", name).strip()
         return cleaned or "Unknown_Channel"
-
-    _is_native_subtitle_url = staticmethod(is_native_subtitle_url)
 
     def _find_native_subtitle_url(self, info: Mapping[str, Any]) -> str | None:
         """Search for native spoken subtitle URL, strictly rejecting tlang= translations."""
@@ -312,7 +309,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         return str(body)
 
     _parse_upload_date = staticmethod(parse_upload_date)
-    _parse_published_datetime = staticmethod(parse_published_datetime)
 
     def _fetch_video_metadata(self, video_url: str) -> dict[str, Any] | None:
         """Extract metadata dictionary from yt-dlp while pruning DASH/HLS manifest parsing."""
@@ -389,6 +385,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
 
         return str(body)
 
+    @staticmethod
+    def _extract_channel_id(info: Mapping[str, Any]) -> ChannelId | None:
+        """Extract canonical ChannelId from yt-dlp video metadata if present."""
+        raw_channel_id = str(info.get("channel_id") or info.get("uploader_id") or "").strip()
+        return ChannelId.extract_from_text(raw_channel_id)
+
     def _build_raw_transcript_aggregate(
         self,
         video_url: str,
@@ -405,8 +407,7 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         category, _ = self._taxonomy_port.classify(resolved_channel_name)
         upload_date = self._parse_upload_date(info.get("upload_date"))
 
-        raw_channel_id = str(info.get("channel_id") or info.get("uploader_id") or "").strip()
-        resolved_channel_id = ChannelId.extract_from_text(raw_channel_id)
+        resolved_channel_id = self._extract_channel_id(info)
 
         channel = Channel(
             name=resolved_channel_name,
@@ -455,6 +456,9 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
                 return None
 
             channel_name = self._extract_channel_name(info)
+            early_channel_id = self._extract_channel_id(info)
+            if early_channel_id:
+                channel_id = early_channel_id.value
 
             body = self._resolve_transcript_body(
                 video_url=video_url,
@@ -480,11 +484,10 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         finally:
             elapsed = time.perf_counter() - start_time
             self._metrics_port.observe_histogram(
-                "cresmo_media_ingestion_duration_seconds",
+                MetricName.MEDIA_INGESTION_DURATION,
                 elapsed,
                 labels={
                     "channel_id": channel_id,
-                    "channel_name": channel_name,
                     "modality": "url",
                     "status": status,
                 },

@@ -52,7 +52,6 @@ class GeminiEmbeddingAdapter(TextEmbeddingPort):
         self.model_name = model_name
         self.dimensions = dimensions
         self.genai_client = genai_client
-        self.credential_pool = credential_pool
         self.api_keys = api_keys
         self.timeout_seconds = timeout_seconds
         self._pool: GeminiCredentialPool | None = credential_pool

@@ -265,7 +265,9 @@ def test_empty_baseline_with_non_empty_current_returns_novel_content_without_emb
 
 def test_long_paragraph_intra_paragraph_addition_detected_with_tfidf() -> None:
     """Verify >120-word paragraphs expose novel intra-paragraph additions instead of diluting."""
-    from cresmo.infrastructure.adapters.embeddings import TfidfEmbeddingAdapter
+    from cresmo.infrastructure.adapters.embeddings.tfidf_embedding_adapter import (
+        TfidfEmbeddingAdapter,
+    )
 
     baseline = (
         "O Condado Portucalense emergiu como senhorio fronteiriço durante a reconquista ibérica "

@@ -16,7 +16,6 @@ from typing import TYPE_CHECKING
 from cresmo.domain.taxonomy import (
     DEFAULT_CHANNEL_CATEGORY,
     DEFAULT_CHANNEL_DOMAIN,
-    classify_channel_from_catalog,
 )
 
 if TYPE_CHECKING:
@@ -36,12 +35,9 @@ class NoOpChannelTaxonomyPort(ChannelTaxonomyPort):
     """Fallback taxonomy port returning default uncategorized/volatile classification."""
 
     def classify(self, channel_name: ChannelName | str) -> tuple[str, str]:
-        """Return empty-catalog fallback classification via pure domain function."""
+        """Return default uncategorized/volatile classification."""
         _ = channel_name
-        return classify_channel_from_catalog("", {}) or (
-            DEFAULT_CHANNEL_DOMAIN,
-            DEFAULT_CHANNEL_CATEGORY,
-        )
+        return (DEFAULT_CHANNEL_DOMAIN, DEFAULT_CHANNEL_CATEGORY)
 
 
 __all__ = [

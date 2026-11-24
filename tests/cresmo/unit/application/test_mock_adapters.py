@@ -104,7 +104,7 @@ class TestMockLLMAdapter:
 
     def test_transform_default_and_canned_responses(self) -> None:
         adapter = MockLLMAdapter(responses=["First Response", "Second Response"])
-        p1 = ChatPrompt.from_system_and_user(system="Sys 1", user="Prompt 1")
+        p1 = ChatPrompt.single_turn(user_prompt="Prompt 1", system_prompt="Sys 1")
         r1 = adapter.transform(prompt=p1, temperature=0.7)
         assert r1 == "First Response"
 
@@ -155,10 +155,10 @@ class TestInMemoryVaultAdapter:
     def test_atomic_note_and_index_crud(self) -> None:
         vault = InMemoryVaultAdapter()
         note = _create_sample_note("Concept Alpha")
-        assert vault.get_atomic_note_by_title(NoteTitle("Concept Alpha")) is None
+        assert "concept alpha" not in vault.atomic_notes
 
         vault.save_atomic_note(note)
-        assert vault.get_atomic_note_by_title(NoteTitle("concept alpha")) is note
+        assert vault.atomic_notes["concept alpha"] is note
         assert len(vault.get_all_atomic_notes()) == 1
 
         vault.update_index_entry(note)
@@ -166,7 +166,7 @@ class TestInMemoryVaultAdapter:
         assert vault.index_entries["concept alpha"]["title"] == "Concept Alpha"
 
         vault.delete_atomic_note(note)
-        assert vault.get_atomic_note_by_title(NoteTitle("Concept Alpha")) is None
+        assert "concept alpha" not in vault.atomic_notes
         assert "concept alpha" not in vault.index_entries
 
     def test_save_map_of_content(self) -> None:
@@ -199,8 +199,7 @@ class TestInMemoryVaultAdapter:
         updated_count = vault.rewrite_wiki_links(NoteTitle("Old Concept"), NoteTitle("New Concept"))
         assert updated_count == 1
 
-        updated_note = vault.get_atomic_note_by_title(NoteTitle("Target Concept"))
-        assert updated_note is not None
+        updated_note = vault.atomic_notes["target concept"]
         assert "[[New Concept]]" in updated_note.definition
         assert "[[New Concept|custom alias]]" in updated_note.definition
         assert NoteTitle("New Concept") in updated_note.direct_relations
@@ -210,17 +209,16 @@ class TestInMemoryVaultAdapter:
 class TestInMemoryLedgerAdapter:
     """Verifies in-memory LedgerRepositoryPort implementations."""
 
-    def test_ledger_processed_tracking(self) -> None:
+    def test_ledger_entries_crud_and_processed_tracking(self) -> None:
         ledger = InMemoryLedgerAdapter()
-        cid = ContentId("ledgerId001")
-        assert ledger.is_processed(cid) is False
-
-        ledger.mark_processed(cid)
-        assert ledger.is_processed(cid) is True
-
-    def test_ledger_entries_crud_and_pagination(self) -> None:
-        ledger = InMemoryLedgerAdapter()
-        entry1 = LedgerEntry(
+        running_entry = LedgerEntry(
+            content_id=ContentId("entryOne001"),
+            media_url="https://yt.com/1",
+            title="Video 1",
+            channel_name=ChannelName("Ch"),
+            status=PipelineStatus.RUNNING,
+        )
+        completed_entry1 = LedgerEntry(
             content_id=ContentId("entryOne001"),
             media_url="https://yt.com/1",
             title="Video 1",
@@ -235,15 +233,15 @@ class TestInMemoryLedgerAdapter:
             status=PipelineStatus.COMPLETED,
         )
 
-        assert ledger.get_entry(entry1.content_id) is None
+        assert ledger.get_entry(completed_entry1.content_id) is None
+        assert ledger.is_processed(completed_entry1.content_id) is False
 
-        ledger.save_entry(entry1)
+        ledger.save_entry(running_entry)
+        assert ledger.is_processed(running_entry.content_id) is False
+
+        ledger.save_entry(completed_entry1)
         ledger.save_entry(entry2)
 
-        assert ledger.is_processed(entry1.content_id) is True
-        assert ledger.get_entry(entry1.content_id) == entry1
-
-        # Pagination
-        assert len(ledger.list_entries(limit=1, offset=0)) == 1
-        assert len(ledger.list_entries(limit=10, offset=0)) == 2
-        assert len(ledger.list_entries(limit=10, offset=2)) == 0
+        assert ledger.is_processed(completed_entry1.content_id) is True
+        assert ledger.get_entry(completed_entry1.content_id) == completed_entry1
+        assert ledger.get_entry(entry2.content_id) == entry2

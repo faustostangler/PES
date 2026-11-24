@@ -11,7 +11,7 @@ Conforms to:
 from __future__ import annotations
 
 import sys
-from typing import Annotated, Any
+from typing import Annotated
 
 import typer
 
@@ -46,29 +46,24 @@ def concat_master(
     ] = None,
 ) -> None:
     """Consolidate enriched compendiums into master documents."""
-    code = handle_concat_master(None, channel=channel, max_words=max_words)
+    code = handle_concat_master(channel=channel, max_words=max_words)
     if code != EXIT_SUCCESS:
         raise typer.Exit(code=code)
 
 
 def handle_concat_master(
-    args: Any = None,
     channel: str | None = None,
     max_words: int | None = None,
 ) -> int:
     """Consolidate enriched compendiums into master documents.
 
     Args:
-        args: Parsed CLI argument namespace or None.
         channel: Optional channel name string override.
         max_words: Optional maximum words per master document override.
 
     Returns:
         Process exit code integer.
     """
-    if args is not None:
-        channel = getattr(args, "channel", None)
-        max_words = getattr(args, "max_words", None)
     try:
         settings = resolve_shared_settings()
         use_case = build_concat_master_use_case(settings=settings)

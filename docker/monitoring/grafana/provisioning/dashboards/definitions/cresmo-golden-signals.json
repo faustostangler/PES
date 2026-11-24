@@ -30,7 +30,7 @@
     },
     {
       "datasource": { "type": "prometheus", "uid": "Prometheus" },
-      "description": "p95 and p50 duration of pipeline synthesis stages partitioned by stage, channel_name, and channel_id.",
+      "description": "p95 and p50 duration of pipeline synthesis stages partitioned by stage and channel_id.",
       "fieldConfig": {
         "defaults": {
           "custom": {
@@ -51,7 +51,7 @@
         {
           "datasource": { "type": "prometheus", "uid": "Prometheus" },
           "editorMode": "code",
-          "expr": "histogram_quantile(0.95, sum by (le, stage) (rate(cresmo_pipeline_stage_duration_seconds_bucket{channel_name=~\"$channel_name\", channel_id=~\"$channel_id\"}[5m])))",
+          "expr": "histogram_quantile(0.95, sum by (le, stage) (rate(cresmo_pipeline_stage_duration_seconds_bucket{channel_id=~\"$channel_id\"}[5m])))",
           "legendFormat": "{{stage}} (p95)",
           "range": true,
           "refId": "A"
@@ -59,7 +59,7 @@
         {
           "datasource": { "type": "prometheus", "uid": "Prometheus" },
           "editorMode": "code",
-          "expr": "histogram_quantile(0.50, sum by (le, stage) (rate(cresmo_pipeline_stage_duration_seconds_bucket{channel_name=~\"$channel_name\", channel_id=~\"$channel_id\"}[5m])))",
+          "expr": "histogram_quantile(0.50, sum by (le, stage) (rate(cresmo_pipeline_stage_duration_seconds_bucket{channel_id=~\"$channel_id\"}[5m])))",
           "legendFormat": "{{stage}} (p50)",
           "range": true,
           "refId": "B"
@@ -89,7 +89,7 @@
         {
           "datasource": { "type": "prometheus", "uid": "Prometheus" },
           "editorMode": "code",
-          "expr": "histogram_quantile(0.95, sum by (le, modality, status) (rate(cresmo_media_ingestion_duration_seconds_bucket{channel_name=~\"$channel_name\", channel_id=~\"$channel_id\"}[5m])))",
+          "expr": "histogram_quantile(0.95, sum by (le, modality, status) (rate(cresmo_media_ingestion_duration_seconds_bucket{channel_id=~\"$channel_id\"}[5m])))",
           "legendFormat": "{{modality}} - {{status}}",
           "range": true,
           "refId": "A"
@@ -155,7 +155,7 @@
         {
           "datasource": { "type": "prometheus", "uid": "Prometheus" },
           "editorMode": "code",
-          "expr": "sum by (status, modality) (rate(cresmo_transcripts_processed_total{channel_name=~\"$channel_name\", channel_id=~\"$channel_id\", content_id=~\"$content_id\"}[5m]))",
+          "expr": "sum by (status, modality) (rate(cresmo_transcripts_processed_total{channel_id=~\"$channel_id\"}[5m]))",
           "legendFormat": "{{status}} ({{modality}})",
           "range": true,
           "refId": "A"
@@ -164,7 +164,7 @@
     },
     {
       "datasource": { "type": "prometheus", "uid": "Prometheus" },
-      "description": "Rate of discrete Obsidian atomic notes generated across all taxonomies.",
+      "description": "Rate of quality judge evaluations partitioned by stage and pass status.",
       "fieldConfig": {
         "defaults": {
           "custom": {
@@ -179,14 +179,14 @@
       },
       "gridPos": { "h": 8, "w": 8, "x": 8, "y": 10 },
       "id": 5,
-      "title": "Atomic Notes Synthesis Rate",
+      "title": "Judge Evaluations Rate",
       "type": "timeseries",
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "Prometheus" },
           "editorMode": "code",
-          "expr": "sum by (note_type) (rate(cresmo_atomic_notes_synthesized_total{channel_name=~\"$channel_name\", channel_id=~\"$channel_id\", content_id=~\"$content_id\"}[5m]))",
-          "legendFormat": "{{note_type}}",
+          "expr": "sum by (stage, passed) (rate(cresmo_judge_evaluations_total[5m]))",
+          "legendFormat": "{{stage}} ({{passed}})",
           "range": true,
           "refId": "A"
         }
@@ -214,8 +214,8 @@
         {
           "datasource": { "type": "prometheus", "uid": "Prometheus" },
           "editorMode": "code",
-          "expr": "sum by (channel_name, modality) (rate(cresmo_batch_sources_discovered_total{channel_name=~\"$channel_name\", channel_id=~\"$channel_id\"}[5m]))",
-          "legendFormat": "{{channel_name}} ({{modality}})",
+          "expr": "sum by (channel_id, modality) (rate(cresmo_batch_sources_discovered_total{channel_id=~\"$channel_id\"}[5m]))",
+          "legendFormat": "{{channel_id}} ({{modality}})",
           "range": true,
           "refId": "A"
         }
@@ -250,7 +250,7 @@
         {
           "datasource": { "type": "prometheus", "uid": "Prometheus" },
           "editorMode": "code",
-          "expr": "sum by (error_type, stage) (increase(cresmo_pipeline_errors_total{channel_name=~\"$channel_name\", channel_id=~\"$channel_id\", content_id=~\"$content_id\"}[5m]))",
+          "expr": "sum by (error_type, stage) (increase(cresmo_pipeline_errors_total{channel_id=~\"$channel_id\"}[5m]))",
           "legendFormat": "{{error_type}} ({{stage}})",
           "range": true,
           "refId": "A"
@@ -278,8 +278,8 @@
         {
           "datasource": { "type": "prometheus", "uid": "Prometheus" },
           "editorMode": "code",
-          "expr": "sum by (pass_type) (increase(cresmo_judge_retry_count_total{channel_name=~\"$channel_name\", channel_id=~\"$channel_id\", content_id=~\"$content_id\"}[5m]))",
-          "legendFormat": "Pass: {{pass_type}}",
+          "expr": "sum by (stage) (increase(cresmo_judge_retry_count_total[5m]))",
+          "legendFormat": "Stage: {{stage}}",
           "range": true,
           "refId": "A"
         }
@@ -307,7 +307,7 @@
         {
           "datasource": { "type": "prometheus", "uid": "Prometheus" },
           "editorMode": "code",
-          "expr": "sum by (reason) (increase(cresmo_ingestion_failures_total{channel_name=~\"$channel_name\", channel_id=~\"$channel_id\", content_id=~\"$content_id\"}[5m]))",
+          "expr": "sum by (reason) (increase(cresmo_ingestion_failures_total{channel_id=~\"$channel_id\"}[5m]))",
           "legendFormat": "{{reason}}",
           "range": true,
           "refId": "A"
@@ -509,31 +509,7 @@
           "value": "$__all"
         },
         "datasource": { "type": "prometheus", "uid": "Prometheus" },
-        "definition": "label_values(cresmo_pipeline_stage_duration_seconds, channel_name)",
-        "hide": 0,
-        "includeAll": true,
-        "label": "Channel Name",
-        "multi": true,
-        "name": "channel_name",
-        "options": [],
-        "query": {
-          "query": "label_values(cresmo_pipeline_stage_duration_seconds, channel_name)",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 1,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 1,
-        "type": "query"
-      },
-      {
-        "current": {
-          "selected": true,
-          "text": "All",
-          "value": "$__all"
-        },
-        "datasource": { "type": "prometheus", "uid": "Prometheus" },
-        "definition": "label_values(cresmo_pipeline_stage_duration_seconds, channel_id)",
+        "definition": "label_values(cresmo_pipeline_stage_duration_seconds_count, channel_id)",
         "hide": 0,
         "includeAll": true,
         "label": "Channel ID",
@@ -541,31 +517,7 @@
         "name": "channel_id",
         "options": [],
         "query": {
-          "query": "label_values(cresmo_pipeline_stage_duration_seconds, channel_id)",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 1,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 1,
-        "type": "query"
-      },
-      {
-        "current": {
-          "selected": true,
-          "text": "All",
-          "value": "$__all"
-        },
-        "datasource": { "type": "prometheus", "uid": "Prometheus" },
-        "definition": "label_values(cresmo_transcripts_processed_total, content_id)",
-        "hide": 0,
-        "includeAll": true,
-        "label": "Content ID",
-        "multi": true,
-        "name": "content_id",
-        "options": [],
-        "query": {
-          "query": "label_values(cresmo_transcripts_processed_total, content_id)",
+          "query": "label_values(cresmo_pipeline_stage_duration_seconds_count, channel_id)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,

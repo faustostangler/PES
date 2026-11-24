@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
-from typing import Annotated, Any
+from typing import Annotated
 
 import typer
 
@@ -48,24 +48,18 @@ def dedupe(
 
 
 def handle_dedupe(
-    args: Any = None,
     vault: Path | None = None,
     verbose: bool = False,
 ) -> int:
     """Unify duplicate atomic notes across the Obsidian vault graph.
 
     Args:
-        args: Parsed CLI argument namespace or None.
         vault: Optional vault directory path override.
         verbose: Whether to emit extended diagnostics.
 
     Returns:
         Process exit code integer.
     """
-    if args is not None:
-        vault = getattr(args, "vault", vault)
-        verbose = getattr(args, "verbose", verbose)
-
     try:
         settings = resolve_shared_settings()
         if vault is not None:

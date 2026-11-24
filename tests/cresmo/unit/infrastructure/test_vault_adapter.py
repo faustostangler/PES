@@ -34,7 +34,7 @@ from cresmo.domain.value_objects import (
     NoteType,
     RawIndexEntry,
 )
-from cresmo.infrastructure.adapters.obsidian import ObsidianVaultAdapter
+from cresmo.infrastructure.adapters.obsidian.adapter import ObsidianVaultAdapter
 from cresmo.infrastructure.adapters.obsidian.catalog import ChannelCatalogHandler
 from cresmo.infrastructure.adapters.obsidian.utils import (
     atomic_write,
@@ -203,7 +203,8 @@ class TestObsidianVaultAdapter:
         adapter.save_atomic_note(note)
         adapter.update_index_entry(note)
 
-        retrieved = adapter.get_atomic_note_by_title(title)
+        all_notes = adapter.get_all_atomic_notes()
+        retrieved = next((n for n in all_notes if n.title == title), None)
         assert retrieved is not None
         assert retrieved.title.value == "Vilfredo Pareto"
         assert retrieved.note_type == NoteType.ENTITY
@@ -246,12 +247,6 @@ class TestObsidianVaultAdapter:
         assert len(all_notes) == 1
         assert all_notes[0].title.value == "Vilfredo Pareto"
 
-    def test_get_note_subfolder_routing(self) -> None:
-        assert ObsidianVaultAdapter._get_note_subfolder(NoteType.ENTITY) == "entities"
-        assert ObsidianVaultAdapter._get_note_subfolder(NoteType.PROCESS) == "processes"
-        assert ObsidianVaultAdapter._get_note_subfolder(NoteType.CONCEPT) == "concepts"
-        assert ObsidianVaultAdapter._get_note_subfolder(NoteType.EVENT) == "events"
-
     def test_delete_atomic_note_removes_file_and_cleans_index(
         self, storage_paths: tuple[Path, Path, Path]
     ) -> None:
@@ -277,7 +272,7 @@ class TestObsidianVaultAdapter:
         moc_file.write_text("Preserved MOC content", encoding="utf-8")
 
         # Confirm note exists before deletion
-        assert adapter.get_atomic_note_by_title(note.title) is not None
+        assert any(n.title == note.title for n in adapter.get_all_atomic_notes())
         index_data = json.loads(adapter.index_path.read_text(encoding="utf-8"))
         assert "vilfredo pareto" in index_data
         assert "pareto" in index_data
@@ -296,7 +291,7 @@ class TestObsidianVaultAdapter:
         assert any(call.get("missing_ok") is True for call in unlinked_calls)
 
         # File and index entries must be gone, but MOC preserved
-        assert adapter.get_atomic_note_by_title(note.title) is None
+        assert not any(n.title == note.title for n in adapter.get_all_atomic_notes())
         assert moc_file.is_file()
         updated_index = json.loads(adapter.index_path.read_text(encoding="utf-8"))
         assert "vilfredo pareto" not in updated_index
@@ -313,11 +308,11 @@ class TestObsidianVaultAdapter:
         )
 
         # Non-existent index path must return cleanly
-        adapter.remove_index_entry("some_key")
+        adapter._notes._remove_index_entry("some_key")
 
         # Corrupted index JSON must return cleanly without crashing
         adapter.index_path.write_text("{corrupt_json: true", encoding="utf-8")
-        adapter.remove_index_entry("some_key")
+        adapter._notes._remove_index_entry("some_key")
 
     def test_update_index_entry_handles_corrupt_index_gracefully(
         self, storage_paths: tuple[Path, Path, Path]
@@ -398,12 +393,7 @@ class TestObsidianVaultAdapter:
         adapter.save_atomic_note(note)
         adapter.save_map_of_content(moc)
 
-        # get_atomic_note_by_title should return the atomic note, never the MOC
-        retrieved = adapter.get_atomic_note_by_title(note.title)
-        assert retrieved is not None
-        assert retrieved.note_type == NoteType.ENTITY
-
-        # get_all_atomic_notes should return only atomic notes
+        # get_all_atomic_notes should return only atomic notes, never the MOC
         all_notes = adapter.get_all_atomic_notes()
         assert len(all_notes) == 1
         assert all_notes[0].note_type == NoteType.ENTITY
@@ -491,7 +481,7 @@ class TestObsidianVaultAdapter:
         ],
     )
     def test_sanitize_filename_exhaustive(self, raw_name: str, expected: str) -> None:
-        from cresmo.infrastructure.adapters.obsidian import sanitize_filename
+        from cresmo.infrastructure.adapters.obsidian.utils import sanitize_filename
 
         assert sanitize_filename(raw_name) == expected
 
@@ -559,10 +549,10 @@ class TestObsidianVaultAdapter:
         corrupted = concepts_dir / "Corrupted Note.md"
         corrupted.write_text("No frontmatter here.", encoding="utf-8")
 
-        assert adapter.get_atomic_note_by_title(NoteTitle("Corrupted Note")) is None
+        assert adapter._notes.parse_atomic_note_file(corrupted) is None
 
         with patch("pathlib.Path.read_text", side_effect=OSError("Permission denied")):
-            assert adapter.get_atomic_note_by_title(NoteTitle("Corrupted Note")) is None
+            assert adapter._notes.parse_atomic_note_file(corrupted) is None
 
     def test_get_atomic_note_invalid_type_and_short_definition_fallbacks(
         self, storage_paths: tuple[Path, Path, Path]
@@ -579,7 +569,7 @@ class TestObsidianVaultAdapter:
             encoding="utf-8",
         )
 
-        note = adapter.get_atomic_note_by_title(NoteTitle("Fallback Note"))
+        note = adapter._notes.parse_atomic_note_file(note_file)
         assert note is None
 
     def test_rewrite_wiki_links_ignores_unreadable_files(
@@ -728,7 +718,7 @@ class TestObsidianVaultAdapter:
         assert indexed == {"vid11111111"}
 
         # Check channel index file content
-        canal_path = adapter.get_channel_index_path(ChannelName("Canal Teste"))
+        canal_path = adapter._catalog._get_channel_index_path(ChannelName("Canal Teste"))
         assert canal_path.exists()
         assert canal_path.name == "_index_Canal Teste.md"
         md_text = canal_path.read_text(encoding="utf-8")
@@ -791,46 +781,6 @@ class TestObsidianVaultAdapter:
         assert adapter_custom.data_dir == custom_data.resolve()
         assert adapter_custom.master_dir == custom_master.resolve()
 
-    def test_atomic_write_delegation(
-        self, storage_paths: tuple[Path, Path, Path], tmp_path: Path
-    ) -> None:
-        """Verify _atomic_write helper method writes expected text content."""
-        vault_dir, raw_dir, enriched_dir = storage_paths
-        adapter = ObsidianVaultAdapter(
-            vault_dir=vault_dir,
-            raw_dir=raw_dir,
-            enriched_dir=enriched_dir,
-        )
-        target = tmp_path / "sub" / "atomic_test.txt"
-        adapter._atomic_write(target, "atomic write test content")
-        assert target.is_file()
-        assert target.read_text(encoding="utf-8") == "atomic write test content"
-
-    def test_get_note_path_and_parse_file_delegation(
-        self, storage_paths: tuple[Path, Path, Path]
-    ) -> None:
-        """Verify _get_note_path and _parse_atomic_note_file handler delegations."""
-        vault_dir, raw_dir, enriched_dir = storage_paths
-        adapter = ObsidianVaultAdapter(
-            vault_dir=vault_dir,
-            raw_dir=raw_dir,
-            enriched_dir=enriched_dir,
-        )
-        note = AtomicNote(
-            title=NoteTitle("Direct Path Test"),
-            note_type=NoteType.CONCEPT,
-            definition="Definition text with at least 20 chars for domain validation.",
-        )
-        note_path = adapter._get_note_path(note)
-        assert note_path == vault_dir / "concepts" / "Direct Path Test.md"
-
-        # Save and verify _parse_atomic_note_file delegation
-        adapter.save_atomic_note(note)
-        parsed = adapter._parse_atomic_note_file(note_path)
-        assert parsed is not None
-        assert parsed.title == note.title
-        assert parsed.definition == note.definition
-
     def test_remove_index_entry_delegation(self, storage_paths: tuple[Path, Path, Path]) -> None:
         """Verify remove_index_entry handler delegation removes targeted index entry."""
         vault_dir, raw_dir, enriched_dir = storage_paths
@@ -849,97 +799,9 @@ class TestObsidianVaultAdapter:
         raw_index = json.loads(adapter.index_path.read_text(encoding="utf-8"))
         assert key in raw_index
 
-        adapter.remove_index_entry(key)
+        adapter._notes._remove_index_entry(key)
         raw_index_after = json.loads(adapter.index_path.read_text(encoding="utf-8"))
         assert key not in raw_index_after
-
-    def test_parse_atomic_note_file_edge_cases(
-        self, storage_paths: tuple[Path, Path, Path]
-    ) -> None:
-        """Verify boundary definition length, self-relation exclusion, and section parsing fallbacks."""
-        vault_dir, raw_dir, enriched_dir = storage_paths
-        adapter = ObsidianVaultAdapter(
-            vault_dir=vault_dir,
-            raw_dir=raw_dir,
-            enriched_dir=enriched_dir,
-        )
-
-        # 1. Definition length exactly 20 chars: must be preserved, not replaced by fallback
-        exact_20_chars = "12345678901234567890"
-        note_file = vault_dir / "concepts" / "Exact Def Note.md"
-        note_file.parent.mkdir(parents=True, exist_ok=True)
-        content_exact = f"""---
-title: Exact Def Note
-type: concept
----
-
-# [[Exact Def Note]]
-
-## Definição & Análise Contextual
-{exact_20_chars}
-"""
-        note_file.write_text(content_exact, encoding="utf-8")
-        parsed_exact = adapter._parse_atomic_note_file(note_file)
-        assert parsed_exact is not None
-        assert parsed_exact.definition == exact_20_chars
-
-        # 2. Self-relation filtering with case variations & valid external relation
-        self_rel_file = vault_dir / "concepts" / "Self Loop Note.md"
-        content_self_rel = """---
-type: concept
----
-
-# [[Self Loop Note]]
-
-## Definição & Análise Contextual
-Definição conceitual com mais de vinte caracteres para passar na validação.
-
-## Conexões & Relações Diretas
-- [[Self Loop Note]]
-- [[self loop note]]
-- [[SELF LOOP NOTE]]
-- [[External Concept]]
-"""
-        self_rel_file.write_text(content_self_rel, encoding="utf-8")
-        parsed_self_rel = adapter._parse_atomic_note_file(self_rel_file)
-        assert parsed_self_rel is not None
-        # Inherits title from file_path.stem when missing in frontmatter
-        assert parsed_self_rel.title.value == "Self Loop Note"
-        # Self-relations filtered out, external concept kept
-        assert parsed_self_rel.direct_relations == (NoteTitle("External Concept"),)
-
-        # 3. Partial causal matrix and cross-context defaults
-        partial_file = vault_dir / "concepts" / "Partial Sections Note.md"
-        content_partial = """---
-title: Partial Sections Note
-type: 12345
----
-
-# [[Partial Sections Note]]
-
-## Definição & Análise Contextual
-Definição conceitual com mais de vinte caracteres para passar na validação.
-
-## Matriz Causal
-- Causa: Condição Geradora Primária
-- Efeito: Efeito Estrutural Resultante
-
-## Redes de Conexão (Cross-Context)
-- Precursores: Precursores Históricos Relevantes
-"""
-        partial_file.write_text(content_partial, encoding="utf-8")
-        parsed_partial = adapter._parse_atomic_note_file(partial_file)
-        assert parsed_partial is not None
-        # Non-string type falls back to CONCEPT
-        assert parsed_partial.note_type == NoteType.CONCEPT
-        assert parsed_partial.causal_matrix is not None
-        assert parsed_partial.causal_matrix.cause == "Condição Geradora Primária"
-        assert parsed_partial.causal_matrix.effect == "Efeito Estrutural Resultante"
-        assert parsed_partial.causal_matrix.epistemic_attribution == ""
-        assert parsed_partial.cross_context is not None
-        assert parsed_partial.cross_context.precursors == "Precursores Históricos Relevantes"
-        assert parsed_partial.cross_context.lateral_events == ""
-        assert parsed_partial.cross_context.aftermath == ""
 
     def test_remove_index_entry_indentation_and_unicode(
         self, storage_paths: tuple[Path, Path, Path]
@@ -970,14 +832,14 @@ Definição conceitual com mais de vinte caracteres para passar na validação.
         assert '\n  "conceito de ação": {' in raw_index_text
 
         # Remove one entry; the other must remain with exact indent=2 and unescaped unicode
-        adapter.remove_index_entry("conceito de padrão")
+        adapter._notes._remove_index_entry("conceito de padrão")
         raw_after = adapter.index_path.read_text(encoding="utf-8")
         assert "conceito de padrão" not in raw_after
         assert "Conceito de Ação" in raw_after
         assert "\\u" not in raw_after
         assert '\n  "conceito de ação": {' in raw_after
-        assert not '\n   "conceito de ação": {' in raw_after
-        assert not '\n    "conceito de ação": {' in raw_after
+        assert '\n   "conceito de ação": {' not in raw_after
+        assert '\n    "conceito de ação": {' not in raw_after
 
     def test_update_index_entry_payload_and_alias_mapping_exhaustive(
         self, storage_paths: tuple[Path, Path, Path]
@@ -1002,8 +864,8 @@ Definição conceitual com mais de vinte caracteres para passar na validação.
         raw_text = adapter.index_path.read_text(encoding="utf-8")
         # Ensure indent=2 formatting
         assert '\n  "vilfredo pareto": {' in raw_text
-        assert not '\n   "vilfredo pareto": {' in raw_text
-        assert not '\n    "vilfredo pareto": {' in raw_text
+        assert '\n   "vilfredo pareto": {' not in raw_text
+        assert '\n    "vilfredo pareto": {' not in raw_text
         # Ensure ensure_ascii=False formatting (unicode characters not escaped)
         assert "Sociologia das Elites" in raw_text
         assert "\\u" not in raw_text
@@ -1042,134 +904,6 @@ Definição conceitual com mais de vinte caracteres para passar na validação.
         assert index.get("v. pareto") == expected_payload
         assert index.get("pareto") is not None
         assert index.get("v. pareto") is not None
-
-    def test_parse_atomic_note_file_metadata_and_section_fallbacks_exhaustive(
-        self, storage_paths: tuple[Path, Path, Path]
-    ) -> None:
-        """Verify parse_atomic_note_file handles absent metadata, title priority, and section defaults."""
-        vault_dir, raw_dir, enriched_dir = storage_paths
-        adapter = ObsidianVaultAdapter(
-            vault_dir=vault_dir,
-            raw_dir=raw_dir,
-            enriched_dir=enriched_dir,
-        )
-
-        # 1. Frontmatter with explicit title distinct from filename stem
-        note_file_1 = vault_dir / "concepts" / "FilenameStem.md"
-        note_file_1.parent.mkdir(parents=True, exist_ok=True)
-        content_1 = """---
-title: Explicit Note Title
-type: concept
----
-
-# [[Explicit Note Title]]
-
-## Definição & Análise Contextual
-Definição conceitual com mais de vinte caracteres para passar na validação.
-"""
-        note_file_1.write_text(content_1, encoding="utf-8")
-        parsed_1 = adapter._parse_atomic_note_file(note_file_1)
-        assert parsed_1 is not None
-        # Explicit title in frontmatter must override filename stem
-        assert parsed_1.title.value == "Explicit Note Title"
-        assert parsed_1.title.value != "FilenameStem"
-        # Missing domain, cluster, source, aliases, tags must default to empty strings/tuples
-        assert parsed_1.domain == ""
-        assert len(parsed_1.domain) == 0
-        assert parsed_1.cluster == ""
-        assert len(parsed_1.cluster) == 0
-        assert parsed_1.source == ""
-        assert len(parsed_1.source) == 0
-        assert parsed_1.aliases == ()
-        assert parsed_1.content_tags == ()
-        assert parsed_1.causal_matrix is None
-        assert parsed_1.cross_context is None
-
-        # 2. Causal matrix with only epistemic attribution (missing cause and effect)
-        # And Cross-context with only aftermath (missing precursors and lateral events)
-        note_file_2 = vault_dir / "concepts" / "PartialSections.md"
-        content_2 = """---
-title: Partial Sections
-type: concept
-domain: Economia
-cluster: Mercados
-source: Livro A
-tags:
-  - economia
-  - mercados
-aliases:
-  - PS
----
-
-# [[Partial Sections]]
-
-## Definição & Análise Contextual
-Definição conceitual com mais de vinte caracteres para passar na validação.
-
-## Matriz Causal
-- Atribuição Epistêmica: Escola Austríaca
-
-## Redes de Conexão (Cross-Context)
-- Desdobramentos: Regulação Governamental Aumentada
-"""
-        note_file_2.write_text(content_2, encoding="utf-8")
-        parsed_2 = adapter._parse_atomic_note_file(note_file_2)
-        assert parsed_2 is not None
-        assert parsed_2.domain == "Economia"
-        assert parsed_2.cluster == "Mercados"
-        assert parsed_2.source == "Livro A"
-        assert parsed_2.content_tags == ("economia", "mercados")
-        assert parsed_2.aliases == ("PS",)
-
-        assert parsed_2.causal_matrix is not None
-        assert parsed_2.causal_matrix.cause == ""
-        assert len(parsed_2.causal_matrix.cause) == 0
-        assert parsed_2.causal_matrix.effect == ""
-        assert len(parsed_2.causal_matrix.effect) == 0
-        assert parsed_2.causal_matrix.epistemic_attribution == "Escola Austríaca"
-
-        assert parsed_2.cross_context is not None
-        assert parsed_2.cross_context.precursors == ""
-        assert len(parsed_2.cross_context.precursors) == 0
-        assert parsed_2.cross_context.lateral_events == ""
-        assert len(parsed_2.cross_context.lateral_events) == 0
-        assert parsed_2.cross_context.aftermath == "Regulação Governamental Aumentada"
-
-        # 3. Causal matrix with cause and effect (missing epistemic attribution)
-        # And Cross-context with precursors and lateral events (missing aftermath)
-        note_file_3 = vault_dir / "concepts" / "PartialSectionsOpposite.md"
-        content_3 = """---
-title: Partial Sections Opposite
-type: concept
----
-
-# [[Partial Sections Opposite]]
-
-## Definição & Análise Contextual
-Definição conceitual com mais de vinte caracteres para passar na validação.
-
-## Matriz Causal
-- Causa: Expansão Monetária
-- Efeito: Inflação de Preços
-
-## Redes de Conexão (Cross-Context)
-- Precursores: Queda das Taxas de Juros
-- Eventos Laterais: Boom Imobiliário
-"""
-        note_file_3.write_text(content_3, encoding="utf-8")
-        parsed_3 = adapter._parse_atomic_note_file(note_file_3)
-        assert parsed_3 is not None
-        assert parsed_3.causal_matrix is not None
-        assert parsed_3.causal_matrix.cause == "Expansão Monetária"
-        assert parsed_3.causal_matrix.effect == "Inflação de Preços"
-        assert parsed_3.causal_matrix.epistemic_attribution == ""
-        assert len(parsed_3.causal_matrix.epistemic_attribution) == 0
-
-        assert parsed_3.cross_context is not None
-        assert parsed_3.cross_context.precursors == "Queda das Taxas de Juros"
-        assert parsed_3.cross_context.lateral_events == "Boom Imobiliário"
-        assert parsed_3.cross_context.aftermath == ""
-        assert len(parsed_3.cross_context.aftermath) == 0
 
     def test_save_and_get_raw_transcript_rich_metadata_and_escaping(
         self, storage_paths: tuple[Path, Path, Path]
@@ -1275,10 +1009,10 @@ Definição conceitual com mais de vinte caracteres para passar na validação.
         assert retrieved.provenance.publication_date is None
         assert retrieved.provenance.description == ""
 
-    def test_get_raw_transcript_alternative_frontmatter_keys(
+    def test_get_raw_transcript_canonical_frontmatter_and_folder_fallback(
         self, storage_paths: tuple[Path, Path, Path]
     ) -> None:
-        """Verify get_raw_transcript parses alternate frontmatter aliases for channel, title, and domain."""
+        """Verify get_stage_transcript('raw') parses canonical frontmatter and falls back to folder."""
         vault_dir, raw_dir, enriched_dir = storage_paths
         adapter = ObsidianVaultAdapter(
             vault_dir=vault_dir, raw_dir=raw_dir, enriched_dir=enriched_dir
@@ -1289,28 +1023,28 @@ Definição conceitual com mais de vinte caracteres para passar na validação.
         raw_file = ch_folder / "vid_alt_789.md"
         raw_file.write_text(
             """---
-title: Alternative Title Key
-channel: Alternative Channel Key
-domain: Alternative Category Key
-source_url: https://youtube.com/watch?v=source_alt
-upload_date: 20240315
-video_description: Alternative description text
+video_title: Canonical Title Key
+channel_name: Canonical Channel Key
+channel_category: Canonical Category Key
+url: https://youtube.com/watch?v=source_alt
+video_date: 20240315
+video_description: Canonical description text
 ---
 
-Alternative transcript body with extra content.
+Canonical transcript body with extra content.
 """,
             encoding="utf-8",
         )
 
         retrieved = adapter.get_stage_transcript("raw", cid)
         assert retrieved is not None
-        assert retrieved.content.title == "Alternative Title Key"
-        assert retrieved.channel.name == "Alternative Channel Key"
-        assert retrieved.channel.category == "Alternative Category Key"
+        assert retrieved.content.title == "Canonical Title Key"
+        assert retrieved.channel.name == "Canonical Channel Key"
+        assert retrieved.channel.category == "Canonical Category Key"
         assert retrieved.provenance.url == "https://youtube.com/watch?v=source_alt"
         assert retrieved.provenance.publication_date == date(2024, 3, 15)
-        assert retrieved.provenance.description == "Alternative description text"
-        assert retrieved.content.text == "Alternative transcript body with extra content."
+        assert retrieved.provenance.description == "Canonical description text"
+        assert retrieved.content.text == "Canonical transcript body with extra content."
 
         # Parent directory fallback when channel keys are missing
         cid2 = ContentId("vid_folder_fallback")
@@ -1428,23 +1162,23 @@ Body text.
         assert retrieved.provenance.description == ""
         assert "Informações complementares mínimas." in retrieved.content.text
 
-    def test_get_enriched_compendium_alternative_frontmatter_and_formatting(
+    def test_get_enriched_compendium_canonical_frontmatter_and_formatting(
         self, storage_paths: tuple[Path, Path, Path]
     ) -> None:
-        """Verify get_enriched_compendium handles alternative keys and bodies without title headers."""
+        """Verify get_stage_transcript('gap_filler') handles canonical keys and bodies without title headers."""
         vault_dir, raw_dir, enriched_dir = storage_paths
         adapter = ObsidianVaultAdapter(
             vault_dir=vault_dir, raw_dir=raw_dir, enriched_dir=enriched_dir
         )
         cid = ContentId("comp_alt_003")
-        ch_folder = enriched_dir / "FolderEnriched"
+        ch_folder = adapter.resolve_stage_dir("gap_filler") / "FolderEnriched"
         ch_folder.mkdir(parents=True, exist_ok=True)
         file_path = ch_folder / "comp_alt_003.md"
         file_path.write_text(
             """---
-channel: Alternative Channel
-domain: Domain Economy
-source_url: https://youtube.com/watch?v=alt_comp
+channel_name: Canonical Channel
+channel_category: Domain Economy
+url: https://youtube.com/watch?v=alt_comp
 video_date: 20240401
 video_description: Alternative comp desc
 ---
@@ -1460,7 +1194,7 @@ Informações complementares analíticas para teste.
 
         retrieved = adapter.get_stage_transcript("gap_filler", cid)
         assert retrieved is not None
-        assert retrieved.channel.name == "Alternative Channel"
+        assert retrieved.channel.name == "Canonical Channel"
         assert retrieved.content.title == "comp_alt_003"  # Falls back to file_path.stem
         assert retrieved.channel.category == "Domain Economy"
         assert retrieved.provenance.url == "https://youtube.com/watch?v=alt_comp"
@@ -1469,12 +1203,12 @@ Informações complementares analíticas para teste.
         assert "Body without hash title heading directly here." in retrieved.content.text
         assert "Informações complementares analíticas para teste." in retrieved.content.text
 
-        # Test: channel_name and channel both omitted: falls back to file_path.parent.name
+        # Test: channel_name omitted falls back to file_path.parent.name
         cid2 = ContentId("comp_parent_fallback")
         file_path2 = ch_folder / "comp_parent_fallback.md"
         file_path2.write_text(
             """---
-title: Explicit Title Only
+video_title: Explicit Title Only
 ---
 # Explicit Title Only
 
@@ -1592,7 +1326,7 @@ Body text only.
         adapter = ObsidianVaultAdapter(
             vault_dir=vault_dir, raw_dir=raw_dir, enriched_dir=enriched_dir
         )
-        ch_folder = enriched_dir / "EmptyMetaEnriched"
+        ch_folder = adapter.resolve_stage_dir("gap_filler") / "EmptyMetaEnriched"
         ch_folder.mkdir(parents=True, exist_ok=True)
         comp_file = ch_folder / "empty_comp_456.md"
         comp_file.write_text(
@@ -1631,7 +1365,7 @@ Informações complementares para teste.
         adapter = ObsidianVaultAdapter(
             vault_dir=vault_dir, raw_dir=raw_dir, enriched_dir=enriched_dir
         )
-        ch_folder = enriched_dir / "NoCompChannel"
+        ch_folder = adapter.resolve_stage_dir("gap_filler") / "NoCompChannel"
         ch_folder.mkdir(parents=True, exist_ok=True)
         comp_file = ch_folder / "no_comp_789.md"
         comp_file.write_text(
@@ -1714,34 +1448,6 @@ Only body here, no complementary section.
             fluid_dir=fluid_dir,
         )
         assert adapter.get_stage_transcript("fluid_prose", ContentId("absent_id_999")) is None
-
-    def test_get_fluid_files_for_channel(
-        self, storage_paths: tuple[Path, Path, Path], tmp_path: Path
-    ) -> None:
-        """Verify get_fluid_files_for_channel lists all fluid markdown files."""
-        vault_dir, raw_dir, enriched_dir = storage_paths
-        fluid_dir = tmp_path / "data" / "fluid"
-        adapter = ObsidianVaultAdapter(
-            vault_dir=vault_dir,
-            raw_dir=raw_dir,
-            enriched_dir=enriched_dir,
-            fluid_dir=fluid_dir,
-        )
-        ch_name = ChannelName("Filosofia Política")
-        for i in (1, 2):
-            fluid = StageTranscript(
-                channel=Channel(name=ch_name),
-                provenance=MediaProvenance.create(url=f"https://yt.com/{i}"),
-                content=Content.create(
-                    id=ContentId(f"phil_{i}"), title=f"Title {i}", text=f"## Body {i}"
-                ),
-            )
-            adapter.save_stage_transcript("fluid_prose", fluid)
-
-        files = adapter.get_fluid_files_for_channel(ch_name)
-        assert len(files) == 2
-        file_stems = {f.stem for f in files}
-        assert file_stems == {"phil_1", "phil_2"}
 
     def test_save_and_get_stage_transcript_polymorphic(
         self, storage_paths: tuple[Path, Path, Path], tmp_path: Path
@@ -1841,18 +1547,18 @@ class TestChannelCatalogHandlerAndUtils:
         handler = ChannelCatalogHandler(raw_dir=raw_dir, data_dir=data_dir)
 
         ch = ChannelName("Tech Channel")
-        idx_path = handler.get_channel_index_path(ch)
+        idx_path = handler._get_channel_index_path(ch)
         assert idx_path == raw_dir / "_index_Tech Channel.md"
 
         # Missing file returns empty set
         assert handler.get_indexed_video_ids_for_channel(ch) == set()
 
-        # Write index file with both format patterns and an invalid id
+        # Write index file with canonical Video ID format and an invalid id
         idx_path.parent.mkdir(parents=True, exist_ok=True)
         idx_path.write_text(
             "# Canal: Tech\n\n"
             "- **Video ID**: `vid00000001`\n"
-            "- [vid00000002](https://youtube.com/watch?v=vid00000002)\n"
+            "- **Video ID**: `vid00000002`\n"
             "- **Video ID**: `invalid video id with spaces`\n",
             encoding="utf-8",
         )
@@ -1880,7 +1586,7 @@ class TestChannelCatalogHandlerAndUtils:
 
         # First append creates file with header
         handler.append_channel_index_entry(ch, entry)
-        idx_path = handler.get_channel_index_path(ch)
+        idx_path = handler._get_channel_index_path(ch)
         assert idx_path.exists()
         content = idx_path.read_text(encoding="utf-8")
         assert "# Canal: Economics" in content

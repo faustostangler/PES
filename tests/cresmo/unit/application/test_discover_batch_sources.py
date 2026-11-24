@@ -14,17 +14,21 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from cresmo.application.use_cases.discovery import (
-    BatchDiscoveryQuery,
-    BatchSource,
+from cresmo.application.use_cases.discovery.discover_batch_sources import (
     DiscoverBatchSourcesUseCase,
-    DiscoveryPaths,
-    LakeScannerService,
-    _BatchSourceAccumulator,
+)
+from cresmo.application.use_cases.discovery.lake_scanner import LakeScannerService
+from cresmo.application.use_cases.discovery.manifests import (
     extract_raw_file_metadata,
     is_channel_or_playlist_feed,
     load_transcript_files,
     read_manifest_lines,
+)
+from cresmo.application.use_cases.discovery.models import (
+    BatchDiscoveryQuery,
+    BatchSource,
+    DiscoveryPaths,
+    _BatchSourceAccumulator,
 )
 from cresmo.domain.value_objects import (
     ChannelName,
@@ -135,7 +139,7 @@ class TestDiscoverBatchSourcesUseCase:
         )
 
         query = BatchDiscoveryQuery(
-            manifest_path=manifest,
+            playlist_path=manifest,
             raw_dir=raw_dir,
             scan_raw=True,
             playlist_priority_path=tmp_path / "empty_priority.txt",
@@ -169,7 +173,7 @@ class TestDiscoverBatchSourcesUseCase:
         )
 
         query = BatchDiscoveryQuery(
-            manifest_path=manifest,
+            playlist_path=manifest,
             raw_dir=tmp_path / "empty_raw",
             scan_raw=True,
             lookback_days=365,
@@ -209,7 +213,7 @@ class TestDiscoverBatchSourcesUseCase:
         )
 
         query = BatchDiscoveryQuery(
-            manifest_path=manifest,
+            playlist_path=manifest,
             raw_dir=tmp_path / "empty_raw",
             scan_raw=True,
             playlist_priority_path=tmp_path / "empty_priority.txt",
@@ -221,15 +225,7 @@ class TestDiscoverBatchSourcesUseCase:
         assert mock_ingestion.discover_channel_feed.call_count == 1
         assert len(sources) == 2
 
-    def test_batch_source_display_name(self) -> None:
-        file_source = BatchSource(kind=SourceModality.FILE, target="/lake/transcripts/lecture1.md")
-        assert file_source.display_name == "lecture1.md"
-        url_source = BatchSource(
-            kind=SourceModality.URL, target="https://youtube.com/watch?v=12345"
-        )
-        assert url_source.display_name == "https://youtube.com/watch?v=12345"
-
-    def test_batch_source_content_id_and_vid_compatibility(self) -> None:
+    def test_batch_source_content_id_contract(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
         bs = BatchSource(
             kind=SourceModality.URL,
@@ -237,18 +233,8 @@ class TestDiscoverBatchSourcesUseCase:
             content_id=cid,
         )
         assert bs.content_id == cid
-        assert bs.vid == "dQw4w9WgXcQ"
 
-        bs_str = BatchSource(
-            kind=SourceModality.URL,
-            target="https://youtube.com/watch?v=dQw4w9WgXcQ",
-            content_id=cid,
-        )
-        assert isinstance(bs_str.content_id, ContentId)
-        assert bs_str.content_id == cid
-        assert bs_str.vid == "dQw4w9WgXcQ"
-
-    def test_accumulator_tracks_content_id_and_backward_compatibility(self) -> None:
+    def test_accumulator_tracks_content_id(self) -> None:
         acc = _BatchSourceAccumulator()
         cid = ContentId("dQw4w9WgXcQ")
         src = acc.add_source(
@@ -258,13 +244,14 @@ class TestDiscoverBatchSourcesUseCase:
         )
         assert src is not None
         assert src.content_id == cid
-        assert src.vid == "dQw4w9WgXcQ"
         assert acc.has_seen(cid) is True
         assert acc.has_seen("dQw4w9WgXcQ") is True
 
-        # Duplicate detection by ContentId or string
+        # Duplicate detection by ContentId
         dup = acc.add_source(
-            kind=SourceModality.URL, target="https://youtube.com/watch?v=dQw4w9WgXcQ", vid=cid
+            kind=SourceModality.URL,
+            target="https://youtube.com/watch?v=dQw4w9WgXcQ",
+            content_id=cid,
         )
         assert dup is None
 
@@ -374,7 +361,7 @@ class TestDiscoverBatchSourcesUseCase:
         )
 
         query = BatchDiscoveryQuery(
-            manifest_path=manifest,
+            playlist_path=manifest,
             raw_dir=raw_dir,
             scan_raw=False,
             lookback_days=30,
@@ -403,7 +390,7 @@ class TestDiscoverBatchSourcesUseCase:
         )
 
         query = BatchDiscoveryQuery(
-            manifest_path=manifest,
+            playlist_path=manifest,
             raw_dir=tmp_path / "empty_raw",
             scan_raw=False,
             playlist_priority_path=tmp_path / "empty_prio.txt",
@@ -429,7 +416,7 @@ class TestDiscoverBatchSourcesUseCase:
         )
 
         query = BatchDiscoveryQuery(
-            manifest_path=manifest,
+            playlist_path=manifest,
             raw_dir=tmp_path / "empty_raw",
             scan_raw=False,
             playlist_priority_path=tmp_path / "empty_prio.txt",
@@ -550,9 +537,11 @@ class TestDiscoverBatchSourcesUseCase:
 
     def test_batch_source_accumulator_deduplication(self) -> None:
         acc = _BatchSourceAccumulator()
-        # Add with explicit vid
+        # Add with explicit content_id
         acc.add_source(
-            kind=SourceModality.FILE, target="/lake/explicit_vid.md", vid=ContentId("exp_vid_1")
+            kind=SourceModality.FILE,
+            target="/lake/explicit_vid.md",
+            content_id=ContentId("exp_vid_1"),
         )
         assert acc.has_seen("exp_vid_1") is True
         assert acc.has_seen("non_existent") is False
@@ -749,19 +738,19 @@ class TestDiscoverBatchSourcesUseCase:
         item_none_pub.published_at = None
         item_none_pub.media_url = "https://yt.com/watch?v=nonepub123"
 
-        item_fallback_url = MagicMock(spec=["url"])
-        item_fallback_url.url = "https://yt.com/watch?v=fallbackUrl123"
+        item_missing_media_url = MagicMock()
+        item_missing_media_url.published_at = now
+        item_missing_media_url.media_url = None
 
         item_empty_url = MagicMock()
         item_empty_url.published_at = now
         item_empty_url.media_url = ""
-        item_empty_url.url = ""
 
         mock_ingestion.discover_channel_feed.return_value = [
             item_fresh,
             item_old,
             item_none_pub,
-            item_fallback_url,
+            item_missing_media_url,
             item_empty_url,
         ]
 
@@ -780,8 +769,8 @@ class TestDiscoverBatchSourcesUseCase:
 
         assert "https://yt.com/watch?v=fresh123" in urls
         assert "https://yt.com/watch?v=nonepub123" in urls
-        assert "https://yt.com/watch?v=fallbackUrl123" in urls
         assert "https://yt.com/watch?v=old123" not in urls
+        assert len(urls) == 2
 
     def test_execute_settings_fallbacks(self, tmp_path: Path) -> None:
         data_dir = tmp_path / "data"
@@ -938,7 +927,7 @@ class TestDiscoverBatchSourcesUseCase:
         )
 
         query = BatchDiscoveryQuery(
-            manifest_path=playlist_file,
+            playlist_path=playlist_file,
             raw_dir=raw_dir,
             priority_texts_dir=pri_dir,
             playlist_priority_path=tmp_path / "empty_pri_urls.txt",

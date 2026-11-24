@@ -9,19 +9,19 @@ Conforms to:
 from __future__ import annotations
 
 from collections.abc import Callable
-from typing import TYPE_CHECKING
 
 from cresmo.application.ports import MediaIngestionPort, VaultRepositoryPort
 from cresmo.application.use_cases.concat_master import ConcatMasterUseCase
-from cresmo.application.use_cases.discovery import DiscoverBatchSourcesUseCase, DiscoveryPaths
-from cresmo.application.use_cases.indexing import IndexRawTranscriptsUseCase
-from cresmo.application.use_cases.sync_channel import SyncChannelUseCase
+from cresmo.application.use_cases.discovery.discover_batch_sources import (
+    DiscoverBatchSourcesUseCase,
+)
+from cresmo.application.use_cases.discovery.models import DiscoveryPaths
+from cresmo.application.use_cases.indexing.index_raw_transcripts import IndexRawTranscriptsUseCase
 from cresmo.application.use_cases.unify_duplicate_notes import UnifyDuplicateNotesUseCase
 from cresmo.bootstrap.factories.adapter_factory import (
     build_gemini_credential_pool,
     build_indexing_adapter,
     build_media_ingestion_adapter,
-    build_preflight_checker,
     build_prompt_provider,
     build_taxonomy_adapter,
     build_vault_adapter,
@@ -34,33 +34,6 @@ from cresmo.bootstrap.factories.telemetry_factory import (
     resolve_langfuse_client,
 )
 from cresmo.infrastructure.config import CresmoSettings
-
-if TYPE_CHECKING:
-    from cresmo.application.pipeline import CresmoPipeline
-
-
-def build_sync_channel_use_case(
-    settings: CresmoSettings | None = None,
-    batch_size_override: int | None = None,
-    check_ffmpeg: bool = True,
-    pipeline: CresmoPipeline | None = None,
-) -> SyncChannelUseCase:
-    """Construct SyncChannelUseCase with all ports and dependencies wired."""
-    from cresmo.bootstrap.composition import build_pipeline
-
-    resolved = resolve_shared_settings(settings)
-    pipeline = pipeline or build_pipeline(resolved, batch_size_override=batch_size_override)
-    preflight_checker = build_preflight_checker(resolved, check_ffmpeg=check_ffmpeg)
-
-    if pipeline.ledger_port is None:
-        raise RuntimeError("Ledger port must be wired for channel sync.")
-
-    return SyncChannelUseCase(
-        media_ingestion_port=pipeline.media_ingestion_port,
-        ledger_port=pipeline.ledger_port,
-        pipeline=pipeline,
-        preflight_checker=preflight_checker,
-    )
 
 
 def build_unify_duplicates_use_case(

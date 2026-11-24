@@ -13,18 +13,15 @@ Conforms to:
 
 from __future__ import annotations
 
-import re
 from collections.abc import Mapping
 from typing import Any
 
 from cresmo.domain.entities.transcripts import StageTranscript
 from cresmo.domain.exceptions import StageTranscriptStructureError
-from cresmo.domain.value_objects import Content
-
-_TITLE_H1_PATTERN = re.compile(r"^\s*#\s+(.+)$", re.MULTILINE)
-_COMPLEMENTARY_REGEX = re.compile(
-    r"^\s*###\s+Extra\s+Info\s*$",
-    re.MULTILINE,
+from cresmo.domain.value_objects import (
+    EXTRA_INFO_HEADING_PATTERN,
+    TITLE_H1_PATTERN,
+    Content,
 )
 
 
@@ -53,15 +50,15 @@ def post_process_expanded_transcript(
     candidate_text = getattr(candidate, "text", candidate)
     current_text = str(candidate_text).strip()
 
-    title_match = _TITLE_H1_PATTERN.search(current_text)
+    title_match = TITLE_H1_PATTERN.search(current_text)
     if title_match:
         extracted_title = title_match.group(1).strip()
-        body = _TITLE_H1_PATTERN.sub("", current_text).strip()
+        body = TITLE_H1_PATTERN.sub("", current_text).strip()
     else:
         extracted_title = source.content.title or "Untitled Transcript"
         body = current_text
 
-    complementary_match = _COMPLEMENTARY_REGEX.search(body)
+    complementary_match = EXTRA_INFO_HEADING_PATTERN.search(body)
     if not complementary_match:
         raise StageTranscriptStructureError(
             "Missing mandatory complementary information section '### Extra Info'."

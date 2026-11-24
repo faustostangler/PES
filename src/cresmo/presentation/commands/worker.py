@@ -17,7 +17,7 @@ import tempfile
 import time
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Annotated, Any
+from typing import Annotated
 
 import typer
 
@@ -74,7 +74,6 @@ def worker(
 ) -> None:
     """Run continuous polling worker daemon with heartbeat health reporting."""
     code = handle_worker(
-        None,
         channel=channel,
         poll_interval=poll_interval,
         lookback=lookback,
@@ -86,8 +85,7 @@ def worker(
 
 
 def handle_worker(
-    args: Any = None,
-    channel: str | None = None,
+    channel: str = "",
     poll_interval: int = 300,
     lookback: int = 7,
     max_videos: int = 10,
@@ -96,7 +94,6 @@ def handle_worker(
     """Run polling daemon for continuous channel monitoring.
 
     Args:
-        args: Parsed CLI argument namespace or None.
         channel: Target YouTube channel or playlist URL string.
         poll_interval: Polling interval in seconds.
         lookback: Days lookback window.
@@ -106,20 +103,12 @@ def handle_worker(
     Returns:
         Process exit code integer.
     """
-    channel = getattr(args, "channel", channel) if args is not None else channel
-    poll_interval = (
-        getattr(args, "poll_interval", poll_interval) if args is not None else poll_interval
-    )
-    lookback_days = getattr(args, "lookback", lookback) if args is not None else lookback
-    max_videos = getattr(args, "max_videos", max_videos) if args is not None else max_videos
-    once = getattr(args, "once", once) if args is not None else once
-
     try:
         settings = resolve_shared_settings()
         use_case = build_sync_channel_use_case(settings=settings)
         query = ChannelFeedQuery(
-            channel_url=channel or "",
-            lookback_days=lookback_days,
+            channel_url=channel,
+            lookback_days=lookback,
             max_videos=max_videos,
         )
         heartbeat_file = Path(tempfile.gettempdir()) / "cresmo_worker.heartbeat"
@@ -135,6 +124,7 @@ def handle_worker(
                 f"[{datetime.now(UTC).strftime('%H:%M:%S')}] Polled {summary.channel_url}: "
                 f"processed={summary.processed_count}, skipped={summary.skipped_count}, failed={summary.failed_count}\n"
             )
+            use_case.pipeline.metrics_port.flush()
 
             if once:
                 break

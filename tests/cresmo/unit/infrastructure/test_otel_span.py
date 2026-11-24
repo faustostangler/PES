@@ -242,7 +242,6 @@ class TestBuildGenAiAttributes:
             "langfuse.user.id": "system:worker",
             "cresmo.trace_id": "trace_abc",
             "gen_ai.request.temperature": 0.3,
-            "cresmo.temperature": 0.3,
             "gen_ai.request.max_tokens": 8192,
             "cresmo.thinking_level": "low",
             "gen_ai.usage.reasoning_tokens": 64,

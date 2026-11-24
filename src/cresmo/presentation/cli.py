@@ -22,14 +22,15 @@ import click
 import typer
 from typer.core import TyperCommand, TyperGroup
 
+from cresmo.presentation.error_handler import handle_cli_exception
 from cresmo.presentation.exit_codes import (
     EXIT_CONFIG_OR_USAGE_ERROR,
-    EXIT_INTERNAL_ERROR,
     EXIT_SUCCESS,
 )
 
 __all__ = [
     "app",
+    "cli_entrypoint",
     "main",
 ]
 
@@ -145,6 +146,7 @@ app = typer.Typer(
     name="cresmo",
     help="Cresmo Knowledge Synthesis",
     add_completion=True,
+    no_args_is_help=True,
     context_settings={"help_option_names": ["-h", "--help"]},
 )
 
@@ -177,8 +179,6 @@ def main(argv: Sequence[str] | None = None) -> int:
     """
     try:
         args = list(argv) if argv is not None else sys.argv[1:]
-        if not args:
-            args = ["run"]
         exit_result = app(args=args, standalone_mode=False)
         return EXIT_SUCCESS if exit_result is None else int(exit_result)
     except typer.Exit as exc:
@@ -195,9 +195,13 @@ def main(argv: Sequence[str] | None = None) -> int:
     except SystemExit as exc:
         return exc.code if isinstance(exc.code, int) else EXIT_CONFIG_OR_USAGE_ERROR
     except Exception as exc:  # noqa: BLE001
-        sys.stderr.write(f"Unexpected internal error: {exc}\n")
-        return EXIT_INTERNAL_ERROR
+        return handle_cli_exception(exc)
+
+
+def cli_entrypoint() -> None:
+    """Console script entrypoint terminating the process with main()'s exit code."""
+    sys.exit(main())
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    cli_entrypoint()

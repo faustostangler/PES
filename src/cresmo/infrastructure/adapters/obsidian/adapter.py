@@ -25,16 +25,12 @@ from cresmo.domain.value_objects import (
     ChannelName,
     ContentId,
     NoteTitle,
-    NoteType,
     RawIndexEntry,
 )
 from cresmo.infrastructure.adapters.obsidian.catalog import ChannelCatalogHandler
 from cresmo.infrastructure.adapters.obsidian.mocs import MocVaultHandler
 from cresmo.infrastructure.adapters.obsidian.notes import AtomicNoteVaultHandler
 from cresmo.infrastructure.adapters.obsidian.transcripts import TranscriptVaultHandler
-from cresmo.infrastructure.adapters.obsidian.utils import (
-    atomic_write,
-)
 
 
 class ObsidianVaultAdapter(VaultRepositoryPort):
@@ -88,10 +84,6 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
             data_dir=self.data_dir,
         )
 
-    def _atomic_write(self, target_path: Path, content: str) -> None:
-        """Atomically write text content using temp-file replace pattern."""
-        atomic_write(target_path, content)
-
     # --- Transcripts & Compendiums (ADR-058, ADR-059) ---
 
     def resolve_stage_dir(self, stage_name: str | StageName) -> Path:
@@ -112,26 +104,10 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
     ) -> list[Path]:
         return self._transcripts.get_stage_files_for_channel(stage_name, channel_name)
 
-    def get_fluid_files_for_channel(self, channel_name: ChannelName) -> list[Path]:
-        return self._transcripts.get_fluid_files_for_channel(channel_name)
-
     # --- Atomic Notes ---
-
-    @staticmethod
-    def _get_note_subfolder(note_type: NoteType) -> str:
-        return AtomicNoteVaultHandler.get_note_subfolder(note_type)
-
-    def _get_note_path(self, note: AtomicNote) -> Path:
-        return self._notes.get_note_path(note)
 
     def save_atomic_note(self, note: AtomicNote) -> None:
         self._notes.save_atomic_note(note)
-
-    def _parse_atomic_note_file(self, file_path: Path) -> AtomicNote | None:
-        return self._notes.parse_atomic_note_file(file_path)
-
-    def get_atomic_note_by_title(self, title: NoteTitle) -> AtomicNote | None:
-        return self._notes.get_atomic_note_by_title(title)
 
     def get_all_atomic_notes(self) -> list[AtomicNote]:
         return self._notes.get_all_atomic_notes()
@@ -141,9 +117,6 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
 
     def delete_atomic_note(self, note: AtomicNote) -> None:
         self._notes.delete_atomic_note(note)
-
-    def remove_index_entry(self, key: str) -> None:
-        self._notes.remove_index_entry(key)
 
     # --- MOCs & Master Documents ---
 
@@ -170,9 +143,6 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
         self._mocs.clear_master_documents_for_channel(channel_name, channel_category)
 
     # --- Catalog & Tabular Index ---
-
-    def get_channel_index_path(self, channel_name: ChannelName) -> Path:
-        return self._catalog.get_channel_index_path(channel_name)
 
     def get_indexed_video_ids_for_channel(self, channel_name: ChannelName) -> set[ContentId]:
         return self._catalog.get_indexed_video_ids_for_channel(channel_name)

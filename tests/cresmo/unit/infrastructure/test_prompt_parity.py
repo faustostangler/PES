@@ -14,11 +14,9 @@ from unittest.mock import MagicMock
 import pytest
 
 from cresmo.domain.value_objects import ChannelName, PromptKey
-from cresmo.infrastructure.adapters.prompts import (
-    JsonPromptProvider,
-    LangfusePromptProvider,
-    normalize_prompt_context,
-)
+from cresmo.infrastructure.adapters.prompts.context_normalizer import normalize_prompt_context
+from cresmo.infrastructure.adapters.prompts.json_provider import JsonPromptProvider
+from cresmo.infrastructure.adapters.prompts.langfuse_provider import LangfusePromptProvider
 
 SAMPLE_CONTEXTS: dict[PromptKey, dict[str, Any]] = {
     PromptKey.FLUID_PROSE: {"raw_text": "Raw transcript."},

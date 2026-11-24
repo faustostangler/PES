@@ -18,6 +18,10 @@ from typing import Any, Literal
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
 from cresmo.domain.value_objects import PromptKey
+from cresmo.infrastructure.config.catalog import (
+    DEFAULT_PROMPTS_RESOURCE_NAME,
+    DEFAULT_PROMPTS_RESOURCE_PACKAGE,
+)
 
 
 class PromptCatalogError(Exception):
@@ -52,13 +56,6 @@ class PromptSpec(BaseModel):
     def langfuse_name(self) -> str:
         """Deterministic remote Langfuse identifier (e.g. PromptKey.FLUID_PROSE -> cresmo-fluid-prose)."""
         return self.langfuse_slug or f"cresmo-{self.key.value.replace('_', '-')}"
-
-    def to_langfuse_chat_messages(self) -> list[dict[str, str]]:
-        """Serialize prompt turns into Langfuse chat message list format."""
-        return [
-            {"role": "system", "content": self.system_prompt},
-            {"role": "user", "content": self.user_prompt},
-        ]
 
 
 class PromptCatalog(Mapping[PromptKey, PromptSpec]):
@@ -107,15 +104,6 @@ class PromptCatalog(Mapping[PromptKey, PromptSpec]):
                 return key in self._by_langfuse_name
         return False
 
-    def get_by_langfuse_name(self, name: str) -> PromptSpec | None:
-        """Lookup prompt spec by its canonical remote Langfuse name."""
-        return self._by_langfuse_name.get(name)
-
-    @property
-    def langfuse_to_prompt_key(self) -> dict[str, PromptKey]:
-        """Mapping from remote Langfuse names to canonical domain PromptKey."""
-        return {name: spec.key for name, spec in self._by_langfuse_name.items()}
-
 
 def _read_markdown_turn(prompts_root: Any, key_name: str, filename: str) -> str:
     """Read one `{system,user}.md` turn from importlib Traversable or filesystem Path."""
@@ -159,9 +147,11 @@ def load_prompt_catalog(path: Path | None = None) -> PromptCatalog:
             raw_text = path.read_text(encoding="utf-8")
             prompts_root: Any = path.parent / "prompts"
         else:
-            res_root = importlib.resources.files("cresmo.infrastructure.resources")
-            raw_text = res_root.joinpath("prompts.json").read_text(encoding="utf-8")
-            prompts_root = importlib.resources.files("cresmo.infrastructure.resources.prompts")
+            res_root = importlib.resources.files(DEFAULT_PROMPTS_RESOURCE_PACKAGE)
+            raw_text = res_root.joinpath(DEFAULT_PROMPTS_RESOURCE_NAME).read_text(encoding="utf-8")
+            prompts_root = importlib.resources.files(
+                f"{DEFAULT_PROMPTS_RESOURCE_PACKAGE}.prompts"
+            )
     except Exception as exc:
         raise PromptCatalogError(f"Failed to read prompt catalog resource: {exc}") from exc
 
@@ -204,6 +194,21 @@ def load_prompt_catalog(path: Path | None = None) -> PromptCatalog:
 
         system_prompt = _read_markdown_turn(prompts_root, key_member.value, "system.md")
         user_prompt = _read_markdown_turn(prompts_root, key_member.value, "user.md")
+
+        combined_templates = f"{system_prompt}\n{user_prompt}"
+        has_skill_placeholder = "{{skill_block}}" in combined_templates or any(
+            f"{{{{{skill}}}}}" in combined_templates for skill in manifest_entry.skills
+        )
+        if manifest_entry.skills and not has_skill_placeholder:
+            raise PromptCatalogError(
+                f"Prompt '{key_member.value}' declares skills {manifest_entry.skills} "
+                "but neither '{{skill_block}}' nor skill-specific placeholders appear in templates."
+            )
+        if "{{skill_block}}" in combined_templates and not manifest_entry.skills:
+            raise PromptCatalogError(
+                f"Prompt '{key_member.value}' contains '{{{{skill_block}}}}' in templates "
+                "but declares empty skills list in prompts.json."
+            )
 
         specs[key_member] = PromptSpec(
             key=key_member,

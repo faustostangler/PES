@@ -22,7 +22,6 @@ class _StubStorage:
     mocs_dir: Path
     raw_dir: Path
     fluid_dir: Path
-    gap_filler_dir: Path
     enriched_dir: Path
     master_dir: Path
     priority_texts_dir: Path
@@ -37,7 +36,6 @@ def _build_stub_storage(root: Path) -> _StubStorage:
         mocs_dir=vault_dir / "MOCs",
         raw_dir=data_dir / "raw",
         fluid_dir=data_dir / "fluid_prose",
-        gap_filler_dir=data_dir / "gap_filler",
         enriched_dir=data_dir / "enriched",
         master_dir=data_dir / "master",
         priority_texts_dir=data_dir / "priority",
@@ -79,7 +77,7 @@ class TestEnsureRuntimeDirectories:
             storage.mocs_dir,
             storage.raw_dir,
             storage.fluid_dir,
-            storage.gap_filler_dir,
+            storage.data_dir / "gap_filler",
             storage.enriched_dir,
             storage.master_dir,
             storage.priority_texts_dir,
@@ -101,7 +99,7 @@ class TestEnsureRuntimeDirectories:
             stub.mocs_dir,
             stub.raw_dir,
             stub.fluid_dir,
-            stub.gap_filler_dir,
+            stub.data_dir / "gap_filler",
             stub.enriched_dir,
             stub.master_dir,
             stub.priority_texts_dir,

@@ -14,12 +14,10 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from cresmo.application.pipeline import (
-    CresmoPipeline,
-    PipelineDependencies,
-    PipelineResult,
-    PipelineStageRunner,
-)
+from cresmo.application.pipeline.coordinator import CresmoPipeline
+from cresmo.application.pipeline.models import PipelineDependencies, PipelineResult
+from cresmo.application.pipeline.stage_factory import StageFactory
+from cresmo.application.pipeline.stage_runner import PipelineStageRunner
 from cresmo.application.ports import (
     NoOpMetricsPort,
     NoOpPromptProviderPort,
@@ -27,17 +25,19 @@ from cresmo.application.ports import (
     PromptProviderPort,
 )
 from cresmo.domain.entities import StageTranscript
-from cresmo.domain.exceptions import CresmoDomainError
+from cresmo.domain.exceptions import CresmoDomainError, StageQuarantinedError
 from cresmo.domain.value_objects import (
-    BatchId,
     Channel,
     ChannelId,
     ChannelName,
     ChatPrompt,
     Content,
     ContentId,
+    LedgerEntry,
     MediaProvenance,
+    PipelineStatus,
     RawIndexEntry,
+    StageExecutionPolicy,
 )
 from tests.doubles.mock_adapters import (
     InMemoryLedgerAdapter,
@@ -45,6 +45,33 @@ from tests.doubles.mock_adapters import (
     MockLLMAdapter,
     MockMediaIngestionPort,
 )
+
+
+def _make_pipeline(
+    *,
+    media_ingestion_port: Any,
+    vault_port: Any,
+    llm_synthesis_port: Any,
+    ledger_port: Any | None = None,
+    prompt_provider: PromptProviderPort | None = None,
+    llm_indexing_port: Any | None = None,
+) -> CresmoPipeline:
+    runner = PipelineStageRunner(
+        PipelineDependencies(
+            telemetry_port=NoOpTelemetryPort(),
+            metrics_port=NoOpMetricsPort(),
+            llm_transformation_port=llm_synthesis_port,
+            prompt_provider=prompt_provider or NoOpPromptProviderPort(),
+            stage_factory=StageFactory(policy=StageExecutionPolicy()),
+        )
+    )
+    return CresmoPipeline(
+        media_ingestion_port=media_ingestion_port,
+        vault_port=vault_port,
+        stage_runner=runner,
+        ledger_port=ledger_port,
+        llm_indexing_port=llm_indexing_port,
+    )
 
 
 class SmartMockLLMAdapter(MockLLMAdapter):
@@ -55,7 +82,6 @@ class SmartMockLLMAdapter(MockLLMAdapter):
         prompt: Any,
         temperature: float | None = None,
         *,
-        thinking_level: str | None = None,
         trace_id: str | None = None,
         session_id: str | None = None,
         user_id: str | None = None,
@@ -70,7 +96,6 @@ class SmartMockLLMAdapter(MockLLMAdapter):
                 "prompt": prompt,
                 "system_prompt": sys_str,
                 "temperature": temperature,
-                "thinking_level": thinking_level,
                 "trace_id": trace_id,
                 "session_id": session_id,
                 "user_id": user_id,
@@ -187,7 +212,7 @@ class TestCresmoPipelineOrchestration:
         vault_port = InMemoryVaultAdapter()
         ledger_port = InMemoryLedgerAdapter()
 
-        pipeline = CresmoPipeline(
+        pipeline = _make_pipeline(
             media_ingestion_port=mock_ingestion,
             llm_synthesis_port=mock_llm,
             vault_port=vault_port,
@@ -212,7 +237,7 @@ class TestCresmoPipelineOrchestration:
     def test_run_for_video_ingestion_failure_raises_domain_error(self) -> None:
         mock_llm = SmartMockLLMAdapter()
         mock_ingestion = MockMediaIngestionPort(canned_transcript=None)
-        pipeline = CresmoPipeline(
+        pipeline = _make_pipeline(
             media_ingestion_port=mock_ingestion,
             llm_synthesis_port=mock_llm,
             vault_port=InMemoryVaultAdapter(),
@@ -233,9 +258,17 @@ class TestCresmoPipelineOrchestration:
             content=Content(id=cid, title="Political Theory", text="Some text"),
         )
         ledger = InMemoryLedgerAdapter()
-        ledger.mark_processed(cid)
+        ledger.save_entry(
+            LedgerEntry(
+                content_id=cid,
+                media_url="https://youtube.com/watch?v=dQw4w9WgXcQ",
+                title="Political Theory",
+                channel_name=ChannelName("Political Theory"),
+                status=PipelineStatus.COMPLETED,
+            )
+        )
 
-        pipeline = CresmoPipeline(
+        pipeline = _make_pipeline(
             media_ingestion_port=MockMediaIngestionPort(canned_transcript=canned_raw),
             llm_synthesis_port=SmartMockLLMAdapter(),
             vault_port=InMemoryVaultAdapter(),
@@ -258,7 +291,15 @@ class TestCresmoPipelineOrchestration:
             content=Content(id=cid, title="Political Theory", text="Some text"),
         )
         ledger = InMemoryLedgerAdapter()
-        ledger.mark_processed(cid)
+        ledger.save_entry(
+            LedgerEntry(
+                content_id=cid,
+                media_url="https://youtube.com/watch?v=dQw4w9WgXcQ",
+                title="Political Theory",
+                channel_name=ChannelName("Political Theory"),
+                status=PipelineStatus.COMPLETED,
+            )
+        )
 
         pipeline = CresmoPipeline(
             media_ingestion_port=MockMediaIngestionPort(canned_transcript=canned_raw),
@@ -323,7 +364,7 @@ class TestCresmoPipelineOrchestration:
     # =========================================================================
 
     def test_run_for_text_file_missing_raises_error(self, tmp_path: Path) -> None:
-        pipeline = CresmoPipeline(
+        pipeline = _make_pipeline(
             media_ingestion_port=MockMediaIngestionPort(),
             llm_synthesis_port=SmartMockLLMAdapter(),
             vault_port=InMemoryVaultAdapter(),
@@ -333,7 +374,7 @@ class TestCresmoPipelineOrchestration:
             pipeline.run_for_text_file(missing)
 
     def test_run_for_text_file_empty_raises_error(self, tmp_path: Path) -> None:
-        pipeline = CresmoPipeline(
+        pipeline = _make_pipeline(
             media_ingestion_port=MockMediaIngestionPort(),
             llm_synthesis_port=SmartMockLLMAdapter(),
             vault_port=InMemoryVaultAdapter(),
@@ -344,7 +385,7 @@ class TestCresmoPipelineOrchestration:
             pipeline.run_for_text_file(empty_file)
 
     def test_run_for_text_file_rejects_internal_system_artifacts(self, tmp_path: Path) -> None:
-        pipeline = CresmoPipeline(
+        pipeline = _make_pipeline(
             media_ingestion_port=MockMediaIngestionPort(),
             llm_synthesis_port=SmartMockLLMAdapter(),
             vault_port=InMemoryVaultAdapter(),
@@ -405,7 +446,7 @@ class TestCresmoPipelineOrchestration:
         text_file.write_text(content, encoding="utf-8")
 
         vault = InMemoryVaultAdapter()
-        pipeline = CresmoPipeline(
+        pipeline = _make_pipeline(
             media_ingestion_port=MockMediaIngestionPort(),
             llm_synthesis_port=SmartMockLLMAdapter(),
             vault_port=vault,
@@ -438,7 +479,7 @@ class TestCresmoPipelineOrchestration:
         vault = InMemoryVaultAdapter(data_dir=tmp_path)
         vault.save_stage_transcript = MagicMock(wraps=vault.save_stage_transcript)  # type: ignore[method-assign]
 
-        pipeline = CresmoPipeline(
+        pipeline = _make_pipeline(
             media_ingestion_port=MockMediaIngestionPort(),
             llm_synthesis_port=SmartMockLLMAdapter(),
             vault_port=vault,
@@ -474,7 +515,7 @@ class TestCresmoPipelineOrchestration:
         short_file = tmp_path / "ab.txt"
         short_file.write_text("Valid non-empty body content for short stem file.", encoding="utf-8")
 
-        pipeline = CresmoPipeline(
+        pipeline = _make_pipeline(
             media_ingestion_port=MockMediaIngestionPort(),
             llm_synthesis_port=SmartMockLLMAdapter(),
             vault_port=InMemoryVaultAdapter(),
@@ -492,9 +533,17 @@ class TestCresmoPipelineOrchestration:
 
         cid = ContentId("idempotent_doc_file")
         ledger = InMemoryLedgerAdapter()
-        ledger.mark_processed(cid)
+        ledger.save_entry(
+            LedgerEntry(
+                content_id=cid,
+                media_url="https://youtube.com/watch?v=dQw4w9WgXcQ",
+                title="Political Theory",
+                channel_name=ChannelName("Political Theory"),
+                status=PipelineStatus.COMPLETED,
+            )
+        )
 
-        pipeline = CresmoPipeline(
+        pipeline = _make_pipeline(
             media_ingestion_port=MockMediaIngestionPort(),
             llm_synthesis_port=SmartMockLLMAdapter(),
             vault_port=InMemoryVaultAdapter(),
@@ -511,9 +560,17 @@ class TestCresmoPipelineOrchestration:
 
         cid = ContentId("force_reprocess_file")
         ledger = InMemoryLedgerAdapter()
-        ledger.mark_processed(cid)
+        ledger.save_entry(
+            LedgerEntry(
+                content_id=cid,
+                media_url="https://youtube.com/watch?v=dQw4w9WgXcQ",
+                title="Political Theory",
+                channel_name=ChannelName("Political Theory"),
+                status=PipelineStatus.COMPLETED,
+            )
+        )
 
-        pipeline = CresmoPipeline(
+        pipeline = _make_pipeline(
             media_ingestion_port=MockMediaIngestionPort(),
             llm_synthesis_port=SmartMockLLMAdapter(),
             vault_port=InMemoryVaultAdapter(),
@@ -523,126 +580,6 @@ class TestCresmoPipelineOrchestration:
         res = pipeline.run_for_text_file(text_file, force_reprocess=True)
         assert res.already_processed is False
         assert res.success is True
-
-    # =========================================================================
-    # Tests for run_for_manifest
-    # =========================================================================
-
-    def test_run_for_manifest_missing_raises_error(self, tmp_path: Path) -> None:
-        pipeline = CresmoPipeline(
-            media_ingestion_port=MockMediaIngestionPort(),
-            llm_synthesis_port=SmartMockLLMAdapter(),
-            vault_port=InMemoryVaultAdapter(),
-        )
-        missing = tmp_path / "missing_playlist.txt"
-        with pytest.raises(CresmoDomainError, match=r"Manifest file not found:"):
-            pipeline.run_for_manifest(missing)
-
-    def test_run_for_manifest_empty_returns_empty_list(self, tmp_path: Path) -> None:
-        pipeline = CresmoPipeline(
-            media_ingestion_port=MockMediaIngestionPort(),
-            llm_synthesis_port=SmartMockLLMAdapter(),
-            vault_port=InMemoryVaultAdapter(),
-        )
-        empty_manifest = tmp_path / "empty_playlist.txt"
-        empty_manifest.write_text("# Only comments\n\n   # Another comment\n", encoding="utf-8")
-
-        results = pipeline.run_for_manifest(empty_manifest)
-        assert results == []
-
-    def test_run_for_manifest_processes_valid_urls_skipping_comments(self, tmp_path: Path) -> None:
-        manifest = tmp_path / "valid_playlist.txt"
-        manifest.write_text(
-            "# Priority Playlist\n"
-            "https://youtube.com/watch?v=dQw4w9WgXcQ\n"
-            "\n"
-            "# Secondary video\n"
-            "https://youtube.com/watch?v=another12345\n",
-            encoding="utf-8",
-        )
-
-        cid = ContentId("dQw4w9WgXcQ")
-        canned_raw = StageTranscript(
-            channel=Channel(name="Political Theory"),
-            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=dQw4w9WgXcQ"),
-            content=Content(id=cid, title="Political Theory", text="Raw transcript content"),
-        )
-        pipeline = CresmoPipeline(
-            media_ingestion_port=MockMediaIngestionPort(canned_transcript=canned_raw),
-            llm_synthesis_port=SmartMockLLMAdapter(),
-            vault_port=InMemoryVaultAdapter(),
-            ledger_port=InMemoryLedgerAdapter(),
-        )
-
-        results = pipeline.run_for_manifest(manifest)
-        assert len(results) == 2
-        assert results[0].success is True
-        assert results[1].success is True
-
-    def test_run_for_manifest_propagates_single_batch_id_to_all_videos(
-        self, tmp_path: Path
-    ) -> None:
-        """Verify ADR-035: run_for_manifest creates a single BatchId shared by all video items."""
-        manifest = tmp_path / "playlist.txt"
-        manifest.write_text(
-            "https://youtube.com/watch?v=vid111\nhttps://youtube.com/watch?v=vid222\n",
-            encoding="utf-8",
-        )
-
-        canned_raw = StageTranscript(
-            channel=Channel(name="Political Theory"),
-            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=vidSample"),
-            content=Content(
-                id=ContentId("vidSample"),
-                title="Political Theory",
-                text="Raw transcript content for batch manifest test",
-            ),
-        )
-        pipeline = CresmoPipeline(
-            media_ingestion_port=MockMediaIngestionPort(canned_transcript=canned_raw),
-            llm_synthesis_port=SmartMockLLMAdapter(),
-            vault_port=InMemoryVaultAdapter(),
-            ledger_port=InMemoryLedgerAdapter(),
-        )
-
-        captured_batches: list[Any] = []
-        original_run_for_video = pipeline.run_for_video
-
-        def tracking_run_for_video(video_url: str, **kwargs: Any) -> PipelineResult:
-            captured_batches.append(kwargs.get("batch_id"))
-            return original_run_for_video(video_url=video_url, **kwargs)
-
-        pipeline.run_for_video = tracking_run_for_video  # type: ignore
-
-        results = pipeline.run_for_manifest(manifest)
-        assert len(results) == 2
-        assert len(captured_batches) == 2
-        assert isinstance(captured_batches[0], BatchId)
-        assert isinstance(captured_batches[1], BatchId)
-        assert captured_batches[0] == captured_batches[1]
-
-    def test_pipeline_init_defaults_and_custom_options(self) -> None:
-        # Default initialization
-        pipeline_default = CresmoPipeline(
-            media_ingestion_port=MockMediaIngestionPort(),
-            llm_synthesis_port=SmartMockLLMAdapter(),
-            vault_port=InMemoryVaultAdapter(),
-        )
-        assert isinstance(pipeline_default.prompt_provider, PromptProviderPort)
-        assert pipeline_default.batch_size == 5
-
-        # Custom initialization
-        custom_pp = MagicMock()
-        pipeline_custom = CresmoPipeline(
-            media_ingestion_port=MockMediaIngestionPort(),
-            llm_synthesis_port=SmartMockLLMAdapter(),
-            vault_port=InMemoryVaultAdapter(),
-            batch_size=9,
-            prompt_provider=custom_pp,
-        )
-        assert pipeline_custom.prompt_provider is custom_pp
-        assert pipeline_custom.batch_size == 9
-        assert pipeline_custom.stage_runner.prompt_provider is custom_pp
 
     def test_pipeline_init_with_directly_injected_stage_runner(self) -> None:
         """Verify CresmoPipeline accepts a directly injected PipelineStageRunner instance."""
@@ -659,14 +596,12 @@ class TestCresmoPipelineOrchestration:
             media_ingestion_port=MockMediaIngestionPort(),
             vault_port=InMemoryVaultAdapter(),
             stage_runner=stage_runner,
-            batch_size=8,
         )
 
         assert pipeline.stage_runner is stage_runner
         assert pipeline.telemetry_port is stage_runner.telemetry_port
         assert pipeline.metrics_port is stage_runner.metrics_port
-        assert pipeline.llm_synthesis_port is mock_llm
-        assert pipeline.batch_size == 8
+        assert pipeline.stage_runner.llm_transformation_port is mock_llm
 
     @pytest.mark.skip(
         reason="Downstream stages 2-8 quarantined pending StageConfig refactoring per ADR-031"
@@ -708,7 +643,7 @@ class TestCresmoPipelineOrchestration:
         assert result_cached.success is True
 
     def test_run_for_text_file_content_id_derivation_boundaries(self, tmp_path: Path) -> None:
-        pipeline = CresmoPipeline(
+        pipeline = _make_pipeline(
             media_ingestion_port=MockMediaIngestionPort(),
             llm_synthesis_port=SmartMockLLMAdapter(),
             vault_port=InMemoryVaultAdapter(),
@@ -799,7 +734,7 @@ class TestCresmoPipelineOrchestration:
         )
 
         vault = InMemoryVaultAdapter()
-        pipeline = CresmoPipeline(
+        pipeline = _make_pipeline(
             media_ingestion_port=MockMediaIngestionPort(),
             llm_synthesis_port=SmartMockLLMAdapter(),
             vault_port=vault,
@@ -918,10 +853,18 @@ class TestCresmoPipelineOrchestration:
             content=Content(id=cid, title="Political Theory", text="Raw transcript content."),
         )
         ledger = InMemoryLedgerAdapter()
-        ledger.mark_processed(cid)
+        ledger.save_entry(
+            LedgerEntry(
+                content_id=cid,
+                media_url="https://youtube.com/watch?v=dQw4w9WgXcQ",
+                title="Political Theory",
+                channel_name=ChannelName("Political Theory"),
+                status=PipelineStatus.COMPLETED,
+            )
+        )
 
         vault = InMemoryVaultAdapter()
-        pipeline = CresmoPipeline(
+        pipeline = _make_pipeline(
             media_ingestion_port=MockMediaIngestionPort(canned_transcript=canned_raw),
             llm_synthesis_port=SmartMockLLMAdapter(),
             vault_port=vault,
@@ -942,6 +885,87 @@ class TestCresmoPipelineOrchestration:
         assert res.success is True
         assert res.already_processed is True
         assert not stage_executed
+
+    def test_execute_persists_unified_ledger_lifecycle(self) -> None:
+        cid = ContentId("unifiedLedger01")
+        raw = StageTranscript(
+            channel=Channel(name="Political Theory"),
+            provenance=MediaProvenance.create(url="file:///tmp/local.txt"),
+            content=Content(id=cid, title="", text="Raw transcript body."),
+        )
+        ledger = InMemoryLedgerAdapter()
+        pipeline = _make_pipeline(
+            media_ingestion_port=MockMediaIngestionPort(),
+            llm_synthesis_port=SmartMockLLMAdapter(),
+            vault_port=InMemoryVaultAdapter(),
+            ledger_port=ledger,
+        )
+
+        res = pipeline.execute(raw=raw)
+        assert res.success is True
+        assert ledger.is_processed(cid) is True
+        entry = ledger.get_entry(cid)
+        assert entry is not None
+        assert entry.status == PipelineStatus.COMPLETED
+        assert entry.media_url == "https://cresmo.internal/content/unifiedLedger01"
+
+    def test_execute_records_failed_and_preserves_quarantined_in_ledger(self) -> None:
+        cid_fail = ContentId("unifiedFail001")
+        raw_fail = StageTranscript(
+            channel=Channel(name="Political Theory"),
+            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=unifiedFail001"),
+            content=Content(id=cid_fail, title="Fail Video", text="Raw transcript body."),
+        )
+        ledger = InMemoryLedgerAdapter()
+        pipeline = _make_pipeline(
+            media_ingestion_port=MockMediaIngestionPort(),
+            llm_synthesis_port=SmartMockLLMAdapter(),
+            vault_port=InMemoryVaultAdapter(),
+            ledger_port=ledger,
+        )
+
+        def boom(*_args: Any, **_kwargs: Any) -> Any:
+            raise RuntimeError("transient LLM outage")
+
+        pipeline.stage_runner.execute_stage = boom  # type: ignore[assignment,method-assign]
+        with pytest.raises(RuntimeError, match="transient LLM outage"):
+            pipeline.execute(raw=raw_fail)
+        failed_entry = ledger.get_entry(cid_fail)
+        assert failed_entry is not None
+        assert failed_entry.status == PipelineStatus.FAILED_TRANSFORMATION
+        assert failed_entry.error_message == "transient LLM outage"
+
+        cid_quar = ContentId("unifiedQuar001")
+        raw_quar = StageTranscript(
+            channel=Channel(name="Political Theory"),
+            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=unifiedQuar001"),
+            content=Content(id=cid_quar, title="Quar Video", text="Raw transcript body."),
+        )
+
+        def quarantine_hit(*_args: Any, **_kwargs: Any) -> Any:
+            ledger.save_entry(
+                LedgerEntry(
+                    content_id=cid_quar,
+                    media_url="https://youtube.com/watch?v=unifiedQuar001",
+                    title="Quar Video",
+                    channel_name=ChannelName("Political Theory"),
+                    status=PipelineStatus.QUARANTINED,
+                )
+            )
+            raise StageQuarantinedError(
+                stage_name="fluid_prose",
+                content_id=cid_quar.value,
+                attempts=1,
+                critique="crit",
+                overall_score=0.4,
+            )
+
+        pipeline.stage_runner.execute_stage = quarantine_hit  # type: ignore[assignment,method-assign]
+        with pytest.raises(StageQuarantinedError):
+            pipeline.execute(raw=raw_quar)
+        quar_entry = ledger.get_entry(cid_quar)
+        assert quar_entry is not None
+        assert quar_entry.status == PipelineStatus.QUARANTINED
 
     @pytest.mark.skip(
         reason="Downstream stages 2-8 quarantined pending StageConfig refactoring per ADR-031"

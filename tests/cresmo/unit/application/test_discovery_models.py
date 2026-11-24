@@ -9,8 +9,6 @@ Conforms to:
 
 from __future__ import annotations
 
-import pytest
-
 from cresmo.application.use_cases.discovery.models import (
     BatchDiscoveryQuery,
     BatchSource,
@@ -33,35 +31,10 @@ class TestBatchSource:
         assert bs.kind is SourceModality.FILE
         assert bs.target == "/path/to/transcript.md"
         assert bs.content_id == cid
-        assert bs.vid == "dQw4w9WgXcQ"
-        assert bs.display_name == "transcript.md"
 
-    def test_instantiate_with_string_modality_auto_converts(self) -> None:
-        bs_file = BatchSource(kind="file", target="/path/to/video.mp4")  # type: ignore[arg-type]
-        assert bs_file.kind is SourceModality.FILE
-
-        bs_url = BatchSource(kind="url", target="https://youtube.com/watch?v=dQw4w9WgXcQ")  # type: ignore[arg-type]
-        assert bs_url.kind is SourceModality.URL
-        assert bs_url.display_name == "https://youtube.com/watch?v=dQw4w9WgXcQ"
-
-    def test_invalid_modality_raises_value_error(self) -> None:
-        with pytest.raises(ValueError, match="Invalid BatchSource modality"):
-            BatchSource(kind="invalid_kind", target="/path/to/file")  # type: ignore[arg-type]
-
-    def test_instantiate_with_string_content_id_auto_converts(self) -> None:
-        bs = BatchSource(
-            kind=SourceModality.URL,
-            target="https://youtube.com/watch?v=dQw4w9WgXcQ",
-            content_id="dQw4w9WgXcQ",
-        )  # type: ignore[arg-type]
-        assert isinstance(bs.content_id, ContentId)
-        assert bs.content_id.value == "dQw4w9WgXcQ"
-        assert bs.vid == "dQw4w9WgXcQ"
-
-    def test_vid_returns_none_when_content_id_none(self) -> None:
+    def test_default_content_id_none(self) -> None:
         bs = BatchSource(kind=SourceModality.FILE, target="/path/to/file.txt")
         assert bs.content_id is None
-        assert bs.vid is None
 
 
 class TestBatchDiscoveryQuery:
@@ -172,13 +145,13 @@ class TestBatchSourceAccumulator:
         assert len(acc.sources) == 1
         assert len(added) == 1
 
-    def test_add_source_with_vid_and_raw_fallback(self) -> None:
+    def test_add_source_with_content_id_and_raw_fallback(self) -> None:
         acc = _BatchSourceAccumulator(on_source_added=None)
         vid = ContentId("dQw4w9WgXcQ")
         src = acc.add_source(
             kind=SourceModality.FILE,
             target="/unknown/path/unparseable",
-            vid=vid,
+            content_id=vid,
         )
         assert src is not None
         assert src.content_id == vid
@@ -197,36 +170,6 @@ class TestBatchSourceAccumulator:
             target="/another/folder/unresolvable_stem",
         )
         assert dup is None
-
-    def test_register_identifier_and_has_seen(self) -> None:
-        acc = _BatchSourceAccumulator()
-        cid = ContentId("dQw4w9WgXcQ")
-
-        assert acc.has_seen(cid) is False
-        assert acc.has_seen("dQw4w9WgXcQ") is False
-
-        acc.register_identifier(cid)
-        assert acc.has_seen(cid) is True
-        assert acc.has_seen("dQw4w9WgXcQ") is True
-
-        acc.register_identifier("/path/to/stem_file.md")
-        assert acc.has_seen("stem_file") is True
-        assert acc.has_seen("/path/to/stem_file.md") is True
-        assert acc.has_seen("nonexistent") is False
-
-    def test_register_identifier_with_string_url_and_unparseable(self) -> None:
-        acc = _BatchSourceAccumulator()
-        acc.register_identifier("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
-        assert ContentId("dQw4w9WgXcQ") in acc.seen_vids
-        assert "dQw4w9WgXcQ" in acc.seen_vids
-
-        # Fresh accumulator has not seen empty token
-        assert _BatchSourceAccumulator().has_seen("") is False
-
-        # Register unparseable path
-        acc.register_identifier("/path/to/custom_audio.opus")
-        assert acc.has_seen("custom_audio") is True
-        assert acc.has_seen("/path/to/custom_audio.opus") is True
 
     def test_has_seen_various_branches(self) -> None:
         acc = _BatchSourceAccumulator()

@@ -10,7 +10,7 @@ from __future__ import annotations
 import sqlite3
 from collections.abc import Generator
 from contextlib import contextmanager
-from datetime import UTC, datetime
+from datetime import datetime
 from pathlib import Path
 
 from cresmo.application.ports import LedgerRepositoryPort
@@ -104,34 +104,6 @@ class SqliteLedgerAdapter(LedgerRepositoryPort):
                 return False
             return str(row["status"]) == PipelineStatus.COMPLETED.value
 
-    def mark_processed(self, content_id: ContentId) -> None:
-        """Record content item as successfully processed.
-
-        Args:
-            content_id: Video or media identifier to mark completed.
-        """
-        now_iso = datetime.now(UTC).isoformat()
-        with self._get_connection() as conn:
-            conn.execute(
-                """
-                INSERT INTO cresmo_ledger (
-                    content_id, media_url, title, channel_name, status, notes_count, completed_at
-                ) VALUES (?, ?, ?, ?, ?, ?, ?)
-                ON CONFLICT(content_id) DO UPDATE SET
-                    status = excluded.status,
-                    completed_at = excluded.completed_at;
-                """,
-                (
-                    content_id.value,
-                    f"https://youtube.com/watch?v={content_id.value}",
-                    f"Video {content_id.value}",
-                    "DefaultChannel",
-                    PipelineStatus.COMPLETED.value,
-                    0,
-                    now_iso,
-                ),
-            )
-
     def save_entry(self, entry: LedgerEntry) -> None:
         """Persist or update an immutable LedgerEntry audit record atomically.
 
@@ -189,22 +161,6 @@ class SqliteLedgerAdapter(LedgerRepositoryPort):
             if row is None:
                 return None
             return self._row_to_entry(row)
-
-    def list_entries(self, limit: int = 100) -> list[LedgerEntry]:
-        """List recently recorded ledger entries.
-
-        Args:
-            limit: Maximum count of recent records to return.
-
-        Returns:
-            List of LedgerEntry records sorted newest first.
-        """
-        with self._get_connection() as conn:
-            cursor = conn.execute(
-                "SELECT * FROM cresmo_ledger ORDER BY rowid DESC LIMIT ?;",
-                (limit,),
-            )
-            return [self._row_to_entry(row) for row in cursor.fetchall()]
 
     @staticmethod
     def _row_to_entry(row: sqlite3.Row) -> LedgerEntry:

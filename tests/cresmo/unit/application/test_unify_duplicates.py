@@ -118,8 +118,7 @@ class TestUnifyDuplicateNotesUseCase:
         assert "historia" in canonical.content_tags or "portugal" in canonical.content_tags
 
         # Verify inbound WikiLinks were rewritten in ref_note
-        updated_ref = mock_vault.get_atomic_note_by_title(NoteTitle("Tratado de Zamora"))
-        assert updated_ref is not None
+        updated_ref = mock_vault.atomic_notes["tratado de zamora"]
         assert f"[[{canonical.title.value}]]" in updated_ref.definition
 
     def test_no_duplicates_returns_clean_report(self, mock_vault: InMemoryVaultAdapter) -> None:

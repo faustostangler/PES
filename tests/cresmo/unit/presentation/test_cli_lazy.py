@@ -12,8 +12,6 @@ import subprocess
 import sys
 from unittest.mock import MagicMock
 
-import pytest
-
 
 class TestLazyCliLoading:
     """Test suite verifying lazy import boundaries and CLI performance guarantees."""
@@ -93,41 +91,6 @@ for mod in ("whisper", "faster_whisper", "ctranslate2", "torch"):
         )
         assert proc.returncode == 0, f"Adapter eagerly loaded ML runtime:\n{proc.stderr}"
 
-    def test_commands_package_lazy_getattr(self) -> None:
-        """Verify cresmo.presentation.commands resolves all public members dynamically via PEP 562."""
-        import cresmo.presentation.commands as cmd_pkg
-
-        # Verify __all__ completeness
-        expected_all = [
-            "check_config",
-            "concat_master",
-            "dedupe",
-            "export_cookies",
-            "handle_check_config",
-            "handle_concat_master",
-            "handle_dedupe",
-            "handle_export_cookies",
-            "handle_run",
-            "handle_seed_prompts",
-            "handle_sync",
-            "handle_worker",
-            "run",
-            "seed_prompts",
-            "sync",
-            "worker",
-        ]
-        for name in expected_all:
-            assert hasattr(cmd_pkg, name), f"Failed to dynamically resolve {name} from commands"
-            assert getattr(cmd_pkg, name) is not None
-
-        # Verify dir() matches __all__
-        dir_names = set(dir(cmd_pkg))
-        for name in expected_all:
-            assert name in dir_names
-
-        with pytest.raises(AttributeError, match="has no attribute 'invalid_subcommand'"):
-            _ = cmd_pkg.invalid_subcommand
-
     def test_run_command_default_fast_no_crawl(self) -> None:
         """Verify RunSynthesisUseCase defaults to no crawling (fast path) unless crawl=True."""
         from cresmo.application.use_cases.run_synthesis import (
@@ -158,4 +121,4 @@ for mod in ("whisper", "faster_whisper", "ctranslate2", "torch"):
         # Guarantee no infrastructure orchestration functions leak into cli
         assert not hasattr(cli_mod, "ensure_infrastructure")
         assert not hasattr(cli_mod, "should_ensure_infrastructure")
-        assert cli_mod.__all__ == ["app", "main"]
+        assert cli_mod.__all__ == ["app", "cli_entrypoint", "main"]

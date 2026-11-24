@@ -25,8 +25,6 @@ from cresmo.infrastructure.config import DEFAULT_JUDGE_PASS_THRESHOLD
 
 logger = structlog.get_logger(__name__)
 
-DEFAULT_PASS_THRESHOLD: float = DEFAULT_JUDGE_PASS_THRESHOLD
-
 
 class TypeSafeJudgeAdapter(LlmJudgePort):
     """Quality judge adapter utilizing TypeSafe AI (System One Jev) Decision Models."""
@@ -38,7 +36,7 @@ class TypeSafeJudgeAdapter(LlmJudgePort):
         model: str = "jev-latest",
         base_url: str = "https://api.typesafe.ai/v1",
         timeout_seconds: float = 30.0,
-        pass_threshold: float = DEFAULT_PASS_THRESHOLD,
+        pass_threshold: float = DEFAULT_JUDGE_PASS_THRESHOLD,
     ) -> None:
         """Initialize TypeSafe AI judge adapter.
 
@@ -53,7 +51,6 @@ class TypeSafeJudgeAdapter(LlmJudgePort):
         self._api_key = api_key
         self._model = model
         self._base_url = base_url.rstrip("/")
-        self._timeout = timeout_seconds
         self._pass_threshold = pass_threshold
         self._client = http_client or httpx.Client(timeout=timeout_seconds)
 
@@ -378,18 +375,6 @@ class TypeSafeJudgeAdapter(LlmJudgePort):
             veto_criteria=veto_criteria,
         )
 
-    @property
-    def pass_threshold(self) -> float:
-        """Return the minimum score threshold required to pass."""
-        return self._pass_threshold
-
-    @property
-    def model(self) -> str:
-        """Return the model identifier."""
-        return self._model
-
-
 __all__ = [
-    "DEFAULT_PASS_THRESHOLD",
     "TypeSafeJudgeAdapter",
 ]

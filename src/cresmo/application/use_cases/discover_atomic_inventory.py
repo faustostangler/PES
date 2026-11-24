@@ -26,9 +26,7 @@ from cresmo.application.ports import (
     PromptProviderPort,
 )
 from cresmo.application.services.json_parser import extract_json_data
-from cresmo.application.use_cases.indexing import (
-    parse_judge_boolean,
-)
+from cresmo.application.use_cases.indexing.validators import parse_judge_boolean
 from cresmo.domain.entities import (
     PipelineSessionId,
     StageTranscript,

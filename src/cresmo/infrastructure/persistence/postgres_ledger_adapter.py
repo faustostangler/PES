@@ -97,10 +97,6 @@ class PostgresLedgerAdapter(LedgerRepositoryPort):
         """Check whether a content item has already completed all pipeline stages."""
         return self._run_async(self.is_processed_async(content_id))
 
-    def mark_processed(self, content_id: ContentId) -> None:
-        """Record content item as successfully processed."""
-        self._run_async(self.mark_processed_async(content_id))
-
     def save_entry(self, entry: LedgerEntry) -> None:
         """Persist or update an immutable LedgerEntry audit record atomically."""
         self._run_async(self.save_entry_async(entry))
@@ -108,10 +104,6 @@ class PostgresLedgerAdapter(LedgerRepositoryPort):
     def get_entry(self, content_id: ContentId) -> LedgerEntry | None:
         """Retrieve the latest LedgerEntry for a given content ID."""
         return self._run_async(self.get_entry_async(content_id))
-
-    def list_entries(self, limit: int = 100) -> list[LedgerEntry]:
-        """List recently recorded ledger entries."""
-        return self._run_async(self.list_entries_async(limit))
 
     # =========================================================================
     # Native Asynchronous Implementation
@@ -128,28 +120,6 @@ class PostgresLedgerAdapter(LedgerRepositoryPort):
             if status is None:
                 return False
             return status == PipelineStatus.COMPLETED.value
-
-    async def mark_processed_async(self, content_id: ContentId) -> None:
-        """Asynchronously mark content item as completed."""
-        now = datetime.now(UTC)
-        async with self._session_factory() as session, session.begin():
-            existing = await session.get(LedgerEntryRow, content_id.value)
-            if existing is not None:
-                existing.status = PipelineStatus.COMPLETED.value
-                existing.completed_at = now
-                existing.updated_at = now
-            else:
-                new_row = LedgerEntryRow(
-                    content_id=content_id.value,
-                    channel="DefaultChannel",
-                    status=PipelineStatus.COMPLETED.value,
-                    media_url=f"https://youtube.com/watch?v={content_id.value}",
-                    title=f"Video {content_id.value}",
-                    notes_count=0,
-                    completed_at=now,
-                    updated_at=now,
-                )
-                session.add(new_row)
 
     async def save_entry_async(self, entry: LedgerEntry) -> None:
         """Asynchronously persist or update an immutable LedgerEntry audit record."""
@@ -190,14 +160,6 @@ class PostgresLedgerAdapter(LedgerRepositoryPort):
             if row is None:
                 return None
             return self._row_to_entry(row)
-
-    async def list_entries_async(self, limit: int = 100) -> list[LedgerEntry]:
-        """Asynchronously list recently recorded ledger entries."""
-        async with self._session_factory() as session:
-            stmt = select(LedgerEntryRow).order_by(LedgerEntryRow.updated_at.desc()).limit(limit)
-            result = await session.execute(stmt)
-            rows = result.scalars().all()
-            return [self._row_to_entry(row) for row in rows]
 
     # =========================================================================
     # Helpers & Mappers (ACL Translation Boundary)

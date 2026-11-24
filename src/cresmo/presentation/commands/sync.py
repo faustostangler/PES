@@ -59,10 +59,9 @@ def sync(
         Path | None,
         typer.Option(
             "--manifest",
-            "--playlist",
             resolve_path=True,
             exists=True,
-            help="Path to manifest or playlist text file (default: data/playlist.txt)",
+            help="Path to manifest text file (default: data/playlist.txt)",
         ),
     ] = None,
     lookback: Annotated[

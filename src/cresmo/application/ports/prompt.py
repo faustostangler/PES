@@ -40,14 +40,6 @@ class PromptProviderPort(ABC):
         """
         raise NotImplementedError("Implement prompt dispatch contract.")
 
-    def get_last_prompt_version(self, prompt_name: str) -> Any | None:
-        """Return the last resolved version for a given prompt identifier.
-
-        Default implementation returns None for providers that do not track versions.
-        """
-        _ = prompt_name
-        return None
-
 
 def _build_judge_noop_prompt(c: dict[str, Any]) -> tuple[str, str]:
     """Build standard null-object evaluation prompt across judge stages."""

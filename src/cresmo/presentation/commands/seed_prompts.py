@@ -14,7 +14,7 @@ from __future__ import annotations
 
 import subprocess
 import sys
-from typing import Annotated, Any
+from typing import Annotated
 
 import typer
 
@@ -48,7 +48,7 @@ def _resolve_git_sha(configured_sha: str | None = None) -> str:
         ).strip()
         if out:
             return out
-    except Exception:  # noqa: BLE001, S110
+    except Exception:  # noqa: BLE001
         pass
     return "unknown"
 
@@ -64,32 +64,25 @@ def seed_prompts(
     ] = False,
 ) -> None:
     """Synchronize local prompt definitions to the active Langfuse server."""
-    code = handle_seed_prompts(None, label=label, dry_run=dry_run)
+    code = handle_seed_prompts(label=label, dry_run=dry_run)
     if code != EXIT_SUCCESS:
         raise typer.Exit(code=code)
 
 
 def handle_seed_prompts(
-    args: Any = None,
     label: str = "production",
     dry_run: bool = False,
 ) -> int:
     """Synchronize local prompt definitions to the active Langfuse server.
 
     Args:
-        args: Parsed CLI argument namespace or None.
         label: Target prompt label string.
         dry_run: Whether to simulate prompt rendering.
 
     Returns:
         Process exit code conforming to exit_codes.py.
     """
-    label = (
-        getattr(args, "label", label) or "production"
-        if args is not None
-        else (label or "production")
-    )
-    dry_run = getattr(args, "dry_run", dry_run) if args is not None else dry_run
+    label = label or "production"
 
     settings = resolve_shared_settings()
     provider = build_local_prompt_provider()

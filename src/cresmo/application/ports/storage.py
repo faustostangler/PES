@@ -74,18 +74,6 @@ class VaultRepositoryPort(ABC):
         raise NotImplementedError("Retrieve stage transcript by content ID.")
 
     @abstractmethod
-    def get_fluid_files_for_channel(self, channel_name: ChannelName) -> list[Path]:
-        """Retrieve all persisted fluid transcript paths for a given channel.
-
-        Args:
-            channel_name: Target channel name.
-
-        Returns:
-            List of resolved filesystem Paths to .md fluid transcript files.
-        """
-        raise NotImplementedError("List fluid transcripts by channel.")
-
-    @abstractmethod
     def save_atomic_note(self, note: AtomicNote) -> None:
         """Persist individual atomic note with standardized YAML frontmatter.
 
@@ -93,18 +81,6 @@ class VaultRepositoryPort(ABC):
             note: Validated AtomicNote aggregate with taxonomy, tags, and WikiLinks.
         """
         raise NotImplementedError("Render frontmatter and persist atomic note atomically.")
-
-    @abstractmethod
-    def get_atomic_note_by_title(self, title: NoteTitle) -> AtomicNote | None:
-        """Retrieve atomic note by its canonical title.
-
-        Args:
-            title: Canonical NoteTitle of the target note.
-
-        Returns:
-            Parsed AtomicNote aggregate or None if not found.
-        """
-        raise NotImplementedError("Read and parse atomic note by title.")
 
     @abstractmethod
     def get_all_atomic_notes(self) -> list[AtomicNote]:
@@ -154,15 +130,6 @@ class VaultRepositoryPort(ABC):
             Count of markdown files updated with rewritten links.
         """
         raise NotImplementedError("Rewrite wiki links.")
-
-    @abstractmethod
-    def remove_index_entry(self, key: str) -> None:
-        """Remove specific canonical title or alias key from master _index.json.
-
-        Args:
-            key: Title or alias lookup key to purge.
-        """
-        raise NotImplementedError("Remove index entry.")
 
     @abstractmethod
     def get_stage_files_for_channel(
@@ -245,18 +212,6 @@ class VaultRepositoryPort(ABC):
         """
         raise NotImplementedError("Append entry to brain.csv.")
 
-    @abstractmethod
-    def get_channel_index_path(self, channel_name: ChannelName) -> Path:
-        """Return absolute path to channel's _canal.md index file.
-
-        Args:
-            channel_name: Channel identifier.
-
-        Returns:
-            Path to the target _canal.md.
-        """
-        raise NotImplementedError("Return channel index path.")
-
 
 class LedgerRepositoryPort(ABC):
     """Hexagonal Persistence Port for tracking processed content status and idempotency.
@@ -278,15 +233,6 @@ class LedgerRepositoryPort(ABC):
         raise NotImplementedError("Check processed ledger status.")
 
     @abstractmethod
-    def mark_processed(self, content_id: ContentId) -> None:
-        """Record content item as successfully processed.
-
-        Args:
-            content_id: ContentId to mark COMPLETED.
-        """
-        raise NotImplementedError("Record content ID in processed ledger.")
-
-    @abstractmethod
     def save_entry(self, entry: LedgerEntry) -> None:
         """Persist or update an immutable LedgerEntry audit record atomically.
 
@@ -306,15 +252,3 @@ class LedgerRepositoryPort(ABC):
             LedgerEntry or None if no record exists.
         """
         raise NotImplementedError("Retrieve ledger entry.")
-
-    @abstractmethod
-    def list_entries(self, limit: int = 100) -> list[LedgerEntry]:
-        """List recently recorded ledger entries.
-
-        Args:
-            limit: Maximum count of entries to return.
-
-        Returns:
-            List of LedgerEntry records ordered reverse-chronologically.
-        """
-        raise NotImplementedError("List ledger entries.")

@@ -16,10 +16,8 @@ from langfuse.api.core import ApiError
 from cresmo.application.ports import PromptProviderPort
 from cresmo.domain.value_objects import ChannelName, PromptKey
 from cresmo.domain.value_objects.prompt import ChatPrompt
-from cresmo.infrastructure.adapters.prompts import (
-    JsonPromptProvider,
-    LangfusePromptProvider,
-)
+from cresmo.infrastructure.adapters.prompts.json_provider import JsonPromptProvider
+from cresmo.infrastructure.adapters.prompts.langfuse_provider import LangfusePromptProvider
 
 
 class TestLangfusePromptProvider:
@@ -64,8 +62,8 @@ class TestLangfusePromptProvider:
         mock_client.get_prompt.return_value = mock_prompt_obj
 
         mock_fallback = MagicMock(spec=PromptProviderPort)
-        mock_fallback.get_prompt.return_value = ChatPrompt.from_system_and_user(
-            system="fallback_sys", user="fallback_user"
+        mock_fallback.get_prompt.return_value = ChatPrompt.single_turn(
+            user_prompt="fallback_user", system_prompt="fallback_sys"
         )
 
         provider = LangfusePromptProvider(
@@ -92,7 +90,6 @@ class TestLangfusePromptProvider:
         assert args[0] == "cresmo-gap-filler"
         assert kwargs["label"] == "production"
         assert kwargs["type"] == "chat"
-        assert provider.get_last_prompt_version("cresmo-gap-filler") == 3
         # Strict Lazy Fallback (ADR-017 / ADR-026 Rule 19): Zero happy-path fallback execution
         mock_fallback.get_prompt.assert_not_called()
 
@@ -104,8 +101,8 @@ class TestLangfusePromptProvider:
         mock_client.get_prompt.return_value = mock_prompt_obj
 
         mock_fallback = MagicMock(spec=PromptProviderPort)
-        mock_fallback.get_prompt.return_value = ChatPrompt.from_system_and_user(
-            system="fallback_sys", user="fallback_user"
+        mock_fallback.get_prompt.return_value = ChatPrompt.single_turn(
+            user_prompt="fallback_user", system_prompt="fallback_sys"
         )
 
         provider = LangfusePromptProvider(

@@ -5,7 +5,7 @@ from __future__ import annotations
 import hashlib
 import re
 from dataclasses import dataclass
-from enum import Enum
+from enum import StrEnum
 
 from identity.domain.exceptions import (
     InvalidEmailError,
@@ -67,7 +67,7 @@ class HashedPassword:
         return self.value
 
 
-class Role(str, Enum):
+class Role(StrEnum):
     """Authorization role hierarchy."""
 
     ADMIN = "admin"

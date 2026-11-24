@@ -10,7 +10,6 @@ import pytest
 
 from cresmo.domain.entities import (
     AtomicNote,
-    JudgeFrictionMetric,
     MapOfContent,
     PipelineSessionId,
     StageTranscript,
@@ -237,12 +236,13 @@ class TestPipelineSessionId:
         assert sid.channel_id == "Raw String Channel"
         assert not hasattr(sid, "video_id")
 
-    def test_legacy_three_part_format_backward_compatible(self) -> None:
-        """Parsing legacy 'content:{channel}:{content_id}' remains supported."""
-        sid = PipelineSessionId(value="content:Marcelo Andrade:9IbNJ0EsTxI")
-        assert sid.channel_id == "Marcelo Andrade"
-        assert sid.content_id == "9IbNJ0EsTxI"
-        assert not hasattr(sid, "video_id")
+    def test_three_part_format_rejected(self) -> None:
+        """Legacy three-part 'content:{channel}:{content_id}' format is rejected."""
+        with pytest.raises(
+            ValueError,
+            match=r"^Invalid PipelineSessionId format: 'content:Marcelo Andrade:9IbNJ0EsTxI'\. Expected '\{channel_id\}:\{content_id\}'\.$",
+        ):
+            PipelineSessionId(value="content:Marcelo Andrade:9IbNJ0EsTxI")
 
     def test_empty_or_whitespace_session_id_raises_error(self) -> None:
         with pytest.raises(ValueError, match="^PipelineSessionId cannot be empty\\.$"):
@@ -276,37 +276,20 @@ class TestPipelineSessionId:
         assert sid.channel_id == "chan123"
         assert sid.content_id == "content123"
 
-    def test_legacy_three_parts_validation(self) -> None:
-        with pytest.raises(
-            ValueError,
-            match=r"^Invalid PipelineSessionId format: 'other:chan:content'\. Expected '{channel_id}:{content_id}'\.$",
+    def test_three_parts_validation(self) -> None:
+        for invalid in (
+            "other:chan:content",
+            "content::content123",
+            "content:chan:",
+            "content:   :content123",
+            "content:chan:   ",
+            "content:my_chan:my_content",
         ):
-            PipelineSessionId(value="other:chan:content")
-
-        with pytest.raises(
-            ValueError,
-            match=r"^Invalid PipelineSessionId format: 'content::content123'\. Expected 'content:{channel}:{content_id}'\.$",
-        ):
-            PipelineSessionId(value="content::content123")
-        with pytest.raises(
-            ValueError,
-            match=r"^Invalid PipelineSessionId format: 'content:chan:'\. Expected 'content:{channel}:{content_id}'\.$",
-        ):
-            PipelineSessionId(value="content:chan:")
-        with pytest.raises(
-            ValueError,
-            match=r"^Invalid PipelineSessionId format: 'content:   :content123'\. Expected 'content:{channel}:{content_id}'\.$",
-        ):
-            PipelineSessionId(value="content:   :content123")
-        with pytest.raises(
-            ValueError,
-            match=r"^Invalid PipelineSessionId format: 'content:chan:   '\. Expected 'content:{channel}:{content_id}'\.$",
-        ):
-            PipelineSessionId(value="content:chan:   ")
-
-        sid = PipelineSessionId(value="content:my_chan:my_content")
-        assert sid.channel_id == "my_chan"
-        assert sid.content_id == "my_content"
+            with pytest.raises(
+                ValueError,
+                match=rf"^Invalid PipelineSessionId format: '{invalid}'\. Expected '\{{channel_id\}}:\{{content_id\}}'\.$",
+            ):
+                PipelineSessionId(value=invalid)
 
     def test_other_part_counts_raise(self) -> None:
         with pytest.raises(
@@ -460,55 +443,11 @@ class TestUserIdentity:
         assert u_empty.provider == "anonymous"
         assert u_empty.subject == ""
 
-    def test_from_channel(self) -> None:
-        with pytest.raises(ValueError, match="^Channel name cannot be empty\\.$"):
-            UserIdentity.from_channel(channel="")
-        with pytest.raises(ValueError, match="^Channel name cannot be empty\\.$"):
-            UserIdentity.from_channel(channel="   ")
-
-        user = UserIdentity.from_channel(channel="  Marcelo Andrade  ")
-        assert user.value == "channel:Marcelo Andrade"
-        assert user.is_anonymous is True
-        assert user.provider == "channel"
-        assert user.subject == "Marcelo Andrade"
-
     def test_empty_user_identity_raises_error(self) -> None:
         with pytest.raises(ValueError, match="^UserIdentity cannot be empty\\.$"):
             UserIdentity(value="")
         with pytest.raises(ValueError, match="^UserIdentity cannot be empty\\.$"):
             UserIdentity(value="   ")
-
-
-class TestJudgeFrictionMetric:
-    """ADR-013 & ADR-016: LLM Judge Friction Metrics."""
-
-    def test_invalid_iterations_raises(self) -> None:
-        with pytest.raises(ValueError, match="^iterations must be >= 1$"):
-            JudgeFrictionMetric(iterations=0, max_iterations=3, verdict="PASS")
-        with pytest.raises(ValueError, match="^iterations must be >= 1$"):
-            JudgeFrictionMetric(iterations=-1, max_iterations=3, verdict="PASS")
-
-    def test_invalid_max_iterations_raises(self) -> None:
-        with pytest.raises(ValueError, match="^max_iterations must be >= 1$"):
-            JudgeFrictionMetric(iterations=1, max_iterations=0, verdict="PASS")
-        with pytest.raises(ValueError, match="^max_iterations must be >= 1$"):
-            JudgeFrictionMetric(iterations=1, max_iterations=-2, verdict="PASS")
-
-    def test_friction_ratio_boundary_and_calculations(self) -> None:
-        m1 = JudgeFrictionMetric(iterations=1, max_iterations=3, verdict="PASS")
-        assert m1.friction_ratio == 0.0
-
-        m2 = JudgeFrictionMetric(iterations=1, max_iterations=1, verdict="PASS")
-        assert m2.friction_ratio == 0.0
-
-        m3 = JudgeFrictionMetric(iterations=2, max_iterations=3, verdict="PASS")
-        assert m3.friction_ratio == 0.5
-
-        m4 = JudgeFrictionMetric(iterations=3, max_iterations=3, verdict="FAIL")
-        assert m4.friction_ratio == 1.0
-
-        m5 = JudgeFrictionMetric(iterations=5, max_iterations=3, verdict="FAIL")
-        assert m5.friction_ratio == 1.0
 
 
 class TestChannelCompositeValueObjectAndTenantKey:
@@ -649,11 +588,9 @@ class TestAdr038PureValueObjectTriadComposition:
         assert fluid.channel.id == ChannelId("UC1234567890")
 
     def test_post_process_fluid_transcript_preserves_pure_triad(self) -> None:
-        from cresmo.domain.entities import (
-            CandidateText,
-            post_process_fluid_transcript,
-        )
+        from cresmo.domain.entities import post_process_fluid_transcript
         from cresmo.domain.value_objects import (
+            CandidateText,
             Channel,
             ChannelId,
             Content,

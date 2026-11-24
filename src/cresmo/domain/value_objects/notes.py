@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
-from enum import Enum
+from enum import StrEnum
 
 from cresmo.domain.exceptions import DomainValidationError, NoteTypologyError
 from cresmo.domain.value_objects.constants import MAX_NOTE_TITLE_LENGTH
@@ -18,7 +18,7 @@ _BRACKETS_PATTERN = re.compile(r"\[\[(.*?)\]\]")
 _ILLEGAL_CHARS_PATTERN = re.compile(r'[\\/*?:"<>|%]')
 
 
-class NoteType(str, Enum):
+class NoteType(StrEnum):
     """Canonical typology classification for Obsidian Second Brain atomic notes.
 
     Restricts note classification strictly to authorized categories per SPEC-001: §2.1:

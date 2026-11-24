@@ -22,6 +22,7 @@ from cresmo.application.evals.executor import (
     CalibrationEvent,
     CalibrationEventKind,
     JudgeCalibrationFactory,
+    _emit,
     extract_cooldown_seconds,
     run_stage_calibration,
 )
@@ -41,14 +42,6 @@ from cresmo.application.ports.evals import (
 )
 
 ReportContentBuilder = Callable[[StageCalibrationSpec, CalibrationResultSet, str, str], str]
-
-
-def _emit(
-    on_event: Callable[[CalibrationEvent], None] | None,
-    event: CalibrationEvent,
-) -> None:
-    if on_event is not None:
-        on_event(event)
 
 
 def run_calibration_suite(

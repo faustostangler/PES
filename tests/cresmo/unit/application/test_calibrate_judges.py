@@ -14,51 +14,46 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from cresmo.application.evals import (
-    STAGE_SPECS,
-    CalibrationVerdict,
-    ConfusionMatrix,
-    evaluate_single_item,
-    parse_model_specs,
-    parse_stage_specs,
-    run_calibration_suite,
-    run_stage_calibration,
-)
+from cresmo.application.evals.calibration_metrics import CalibrationVerdict, ConfusionMatrix
+from cresmo.application.evals.executor import evaluate_single_item, run_stage_calibration
+from cresmo.application.evals.specs import build_stage_specs, parse_model_specs, parse_stage_specs
+from cresmo.application.evals.suite import run_calibration_suite
 from cresmo.application.ports.llm_judge_port import LlmJudgePort
 from cresmo.domain.value_objects.quality import (
     CriterionScore,
     JudgeCriterion,
     JudgeEvaluation,
 )
-from cresmo.infrastructure.adapters.evals import (
-    FileCalibrationReportWriter,
+from cresmo.infrastructure.adapters.evals.file_report_writer import FileCalibrationReportWriter
+from cresmo.infrastructure.adapters.evals.json_checkpoint_store import (
     JsonCalibrationCheckpointStore,
-    JsonCalibrationDatasetLoader,
 )
+from cresmo.infrastructure.adapters.evals.json_dataset_loader import JsonCalibrationDatasetLoader
 from cresmo.infrastructure.adapters.llm.gemini_pool import CredentialPoolExhaustedError
 from cresmo.presentation.formatters.calibration_report import format_calibration_report
 
 
 def test_stage_specs_cover_all_stages_with_canonical_criteria() -> None:
-    assert set(STAGE_SPECS.keys()) == {
+    stage_specs = build_stage_specs()
+    assert set(stage_specs.keys()) == {
         "fluid_prose",
         "gap_filler",
         "long_expander",
         "wide_expander",
     }
-    assert len(STAGE_SPECS["fluid_prose"].required_criteria) == 6
-    assert len(STAGE_SPECS["gap_filler"].required_criteria) == 7
-    assert len(STAGE_SPECS["long_expander"].required_criteria) == 5
-    assert len(STAGE_SPECS["wide_expander"].required_criteria) == 5
+    assert len(stage_specs["fluid_prose"].required_criteria) == 6
+    assert len(stage_specs["gap_filler"].required_criteria) == 7
+    assert len(stage_specs["long_expander"].required_criteria) == 5
+    assert len(stage_specs["wide_expander"].required_criteria) == 5
     assert (
         JudgeCriterion.EPISTEMIC_GROUNDING_SEGREGATION
-        in STAGE_SPECS["gap_filler"].required_criteria
+        in stage_specs["gap_filler"].required_criteria
     )
     assert (
-        JudgeCriterion.LONGUE_DUREE_STRATIFICATION in STAGE_SPECS["long_expander"].required_criteria
+        JudgeCriterion.LONGUE_DUREE_STRATIFICATION in stage_specs["long_expander"].required_criteria
     )
-    assert JudgeCriterion.SYNCHRONIC_CONNECTIVITY in STAGE_SPECS["wide_expander"].required_criteria
-    assert JudgeCriterion.COMPARATIVE_PARALLELISM in STAGE_SPECS["wide_expander"].required_criteria
+    assert JudgeCriterion.SYNCHRONIC_CONNECTIVITY in stage_specs["wide_expander"].required_criteria
+    assert JudgeCriterion.COMPARATIVE_PARALLELISM in stage_specs["wide_expander"].required_criteria
 
 
 def test_confusion_matrix_sdt_metrics() -> None:
@@ -131,18 +126,18 @@ def test_evaluate_single_item_uniform_for_all_stages(
         "metadata": {"criterion": criterion.value},
     }
 
-    res = evaluate_single_item(mock_judge, STAGE_SPECS[stage_name], item)
-    actual, expected, score, reasoning = res
+    stage_specs = build_stage_specs()
+    res = evaluate_single_item(mock_judge, stage_specs[stage_name], item)
 
-    assert actual == "PASS"
-    assert expected == "PASS"
-    assert score == 0.95
+    assert res.actual == "PASS"
+    assert res.expected == "PASS"
+    assert res.score == 0.95
     assert res.target_actual == "PASS"
     assert res.target_score == 0.95
-    assert reasoning == "Verified"
+    assert res.reasoning == "Verified"
     ctx = mock_judge.evaluate.call_args.args[0]
     assert ctx.stage_name == stage_name
-    assert ctx.required_criteria == STAGE_SPECS[stage_name].required_criteria
+    assert ctx.required_criteria == stage_specs[stage_name].required_criteria
 
 
 def test_checkpoint_resumes_from_previous_point_and_respects_cooldown(tmp_path: Path) -> None:
@@ -202,10 +197,11 @@ def test_checkpoint_resumes_from_previous_point_and_respects_cooldown(tmp_path: 
 
     clock = {"now": 1000.0}
 
+    stage_specs = build_stage_specs()
     with pytest.raises(CredentialPoolExhaustedError):
         run_stage_calibration(
             judge=mock_judge,
-            spec=STAGE_SPECS["fluid_prose"],
+            spec=stage_specs["fluid_prose"],
             items=items,
             provider="gemini",
             model="gemini-4-hydrogen",
@@ -239,7 +235,7 @@ def test_checkpoint_resumes_from_previous_point_and_respects_cooldown(tmp_path: 
 
     results = run_stage_calibration(
         judge=mock_judge,
-        spec=STAGE_SPECS["fluid_prose"],
+        spec=stage_specs["fluid_prose"],
         items=items,
         provider="gemini",
         model="gemini-4-hydrogen",
@@ -288,9 +284,10 @@ def test_short_cooldown_waits_and_retries_without_abort(tmp_path: Path) -> None:
     ]
 
     slept: list[float] = []
+    stage_specs = build_stage_specs()
     results = run_stage_calibration(
         judge=mock_judge,
-        spec=STAGE_SPECS["gap_filler"],
+        spec=stage_specs["gap_filler"],
         items=items,
         provider="gemini",
         model="gemini-4-hydrogen",
@@ -335,13 +332,14 @@ def test_checkpoint_invalidates_items_when_config_hash_changes(tmp_path: Path) -
 
 
 def test_cli_always_disables_fallback_and_runs_all_stages_by_default(tmp_path: Path) -> None:
+    stage_specs = build_stage_specs()
     passed_eval_fp = JudgeEvaluation(
         target_stage="fluid_prose",
         passed=True,
         overall_score=0.95,
         criteria_scores=tuple(
             CriterionScore(criterion=c, score=0.95, passed=True, reasoning="ok")
-            for c in STAGE_SPECS["fluid_prose"].required_criteria
+            for c in stage_specs["fluid_prose"].required_criteria
         ),
         provider="gemini",
     )
@@ -351,7 +349,7 @@ def test_cli_always_disables_fallback_and_runs_all_stages_by_default(tmp_path: P
         overall_score=0.10,
         criteria_scores=tuple(
             CriterionScore(criterion=c, score=0.10, passed=False, reasoning="fail")
-            for c in STAGE_SPECS["fluid_prose"].required_criteria
+            for c in stage_specs["fluid_prose"].required_criteria
         ),
         provider="gemini",
     )
@@ -361,7 +359,7 @@ def test_cli_always_disables_fallback_and_runs_all_stages_by_default(tmp_path: P
         overall_score=0.95,
         criteria_scores=tuple(
             CriterionScore(criterion=c, score=0.95, passed=True, reasoning="ok")
-            for c in STAGE_SPECS["gap_filler"].required_criteria
+            for c in stage_specs["gap_filler"].required_criteria
         ),
         provider="gemini",
     )
@@ -371,7 +369,7 @@ def test_cli_always_disables_fallback_and_runs_all_stages_by_default(tmp_path: P
         overall_score=0.10,
         criteria_scores=tuple(
             CriterionScore(criterion=c, score=0.10, passed=False, reasoning="fail")
-            for c in STAGE_SPECS["gap_filler"].required_criteria
+            for c in stage_specs["gap_filler"].required_criteria
         ),
         provider="gemini",
     )
@@ -381,7 +379,7 @@ def test_cli_always_disables_fallback_and_runs_all_stages_by_default(tmp_path: P
         overall_score=0.95,
         criteria_scores=tuple(
             CriterionScore(criterion=c, score=0.95, passed=True, reasoning="ok")
-            for c in STAGE_SPECS["long_expander"].required_criteria
+            for c in stage_specs["long_expander"].required_criteria
         ),
         provider="gemini",
     )
@@ -391,7 +389,7 @@ def test_cli_always_disables_fallback_and_runs_all_stages_by_default(tmp_path: P
         overall_score=0.10,
         criteria_scores=tuple(
             CriterionScore(criterion=c, score=0.10, passed=False, reasoning="fail")
-            for c in STAGE_SPECS["long_expander"].required_criteria
+            for c in stage_specs["long_expander"].required_criteria
         ),
         provider="gemini",
     )
@@ -401,7 +399,7 @@ def test_cli_always_disables_fallback_and_runs_all_stages_by_default(tmp_path: P
         overall_score=0.95,
         criteria_scores=tuple(
             CriterionScore(criterion=c, score=0.95, passed=True, reasoning="ok")
-            for c in STAGE_SPECS["wide_expander"].required_criteria
+            for c in stage_specs["wide_expander"].required_criteria
         ),
         provider="gemini",
     )
@@ -411,7 +409,7 @@ def test_cli_always_disables_fallback_and_runs_all_stages_by_default(tmp_path: P
         overall_score=0.10,
         criteria_scores=tuple(
             CriterionScore(criterion=c, score=0.10, passed=False, reasoning="fail")
-            for c in STAGE_SPECS["wide_expander"].required_criteria
+            for c in stage_specs["wide_expander"].required_criteria
         ),
         provider="gemini",
     )
@@ -461,7 +459,7 @@ def test_cli_always_disables_fallback_and_runs_all_stages_by_default(tmp_path: P
             "long_expander": 0.75,
             "wide_expander": 0.75,
         },
-        stage_specs=STAGE_SPECS,
+        stage_specs=stage_specs,
         checkpoint_store=JsonCalibrationCheckpointStore(checkpoint_dir=tmp_path / "checkpoints"),
         dataset_loader=JsonCalibrationDatasetLoader(),
         report_writer=FileCalibrationReportWriter(),

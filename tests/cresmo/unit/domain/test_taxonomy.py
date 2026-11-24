@@ -19,7 +19,7 @@ from cresmo.domain.taxonomy import (
     classify_channel_from_catalog,
 )
 from cresmo.domain.value_objects import ChannelName
-from cresmo.infrastructure.adapters.taxonomy import (
+from cresmo.infrastructure.adapters.taxonomy.json_taxonomy_adapter import (
     JsonTaxonomyCatalogAdapter,
     TaxonomyCatalogError,
 )

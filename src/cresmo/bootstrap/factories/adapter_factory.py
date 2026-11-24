@@ -26,21 +26,17 @@ from cresmo.bootstrap.factories.settings_factory import resolve_shared_settings
 from cresmo.infrastructure.adapters.media.native_media_ingestion_adapter import (
     NativeMediaIngestionAdapter,
 )
-from cresmo.infrastructure.adapters.obsidian import ObsidianVaultAdapter
-from cresmo.infrastructure.adapters.prompts import (
-    JsonPromptProvider,
-    LangfusePromptProvider,
-    PromptCatalog,
-    load_prompt_catalog,
-)
+from cresmo.infrastructure.adapters.obsidian.adapter import ObsidianVaultAdapter
+from cresmo.infrastructure.adapters.prompts.catalog import PromptCatalog, load_prompt_catalog
+from cresmo.infrastructure.adapters.prompts.json_provider import JsonPromptProvider
+from cresmo.infrastructure.adapters.prompts.langfuse_provider import LangfusePromptProvider
 from cresmo.infrastructure.adapters.scrapers.header_generator import RandomHeaderGenerator
 from cresmo.infrastructure.adapters.system.preflight_probe_adapter import PreflightProbeAdapter
 from cresmo.infrastructure.adapters.system.process_runtime_adapter import (
     SystemProcessRuntimeAdapter,
 )
-from cresmo.infrastructure.adapters.taxonomy import JsonTaxonomyCatalogAdapter
+from cresmo.infrastructure.adapters.taxonomy.json_taxonomy_adapter import JsonTaxonomyCatalogAdapter
 from cresmo.infrastructure.config import (
-    CookieSettings,
     CresmoSettings,
     GeminiSettings,
     LlmSettings,
@@ -56,12 +52,12 @@ if TYPE_CHECKING:
 logger = structlog.get_logger(__name__)
 
 
-def _resolve_cookie_file(storage: StorageSettings, cookies: CookieSettings) -> Path | None:
+def _resolve_cookie_file(storage: StorageSettings, cookies_file: Path | None) -> Path | None:
     """Resolve active cookie file via pure infrastructure environment discovery."""
     return discover_cookies_file(
         data_dir=storage.data_dir,
         workspace_dir=find_workspace_root(),
-        configured=cookies.file,
+        configured=cookies_file,
     )
 
 
@@ -79,7 +75,7 @@ def build_media_ingestion_adapter(
     """Instantiate and wire NativeMediaIngestionAdapter with resolved settings and active cookies."""
     resolved = resolve_shared_settings(settings)
     header_generator = RandomHeaderGenerator(headers_path=resolved.storage.browser_headers_path)
-    cookie_file = _resolve_cookie_file(resolved.storage, resolved.ingestion.cookies)
+    cookie_file = _resolve_cookie_file(resolved.storage, resolved.ingestion.cookies_file)
     taxonomy_port = build_taxonomy_adapter(resolved.storage)
 
     return NativeMediaIngestionAdapter(
@@ -192,7 +188,6 @@ def build_indexing_adapter(
     web_index: bool = False,
     model_override: str | None = None,
     telemetry_port: TelemetryPort | None = None,
-    api_keys: list[str] | None = None,
     credential_pool: GeminiCredentialPool | None = None,
 ) -> LLMTransformationPort:
     """Instantiate LLM adapter for indexing, selecting between local Ollama and Gemini API."""
@@ -207,7 +202,7 @@ def build_indexing_adapter(
             and model_override is None
         ):
             return synthesis_adapter
-        resolved_keys = api_keys or [k.get_secret_value() for k in gemini_cfg.api_keys]
+        resolved_keys = [k.get_secret_value() for k in gemini_cfg.api_keys]
         return GeminiLLMAdapter(
             api_keys=resolved_keys,
             model_name=model_override or gemini_cfg.model,
@@ -239,10 +234,16 @@ def build_embedding_adapter(
     credential_pool: GeminiCredentialPool | None = None,
 ) -> TextEmbeddingPort:
     """Instantiate resilient text embedding adapter configured from application settings."""
-    from cresmo.infrastructure.adapters.embeddings import (
+    from cresmo.infrastructure.adapters.embeddings.gemini_embedding_adapter import (
         GeminiEmbeddingAdapter,
+    )
+    from cresmo.infrastructure.adapters.embeddings.ollama_embedding_adapter import (
         OllamaEmbeddingAdapter,
+    )
+    from cresmo.infrastructure.adapters.embeddings.resilient_embedding_adapter import (
         ResilientEmbeddingAdapter,
+    )
+    from cresmo.infrastructure.adapters.embeddings.tfidf_embedding_adapter import (
         TfidfEmbeddingAdapter,
     )
 

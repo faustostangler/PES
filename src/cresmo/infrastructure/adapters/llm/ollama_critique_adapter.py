@@ -9,9 +9,9 @@ from cresmo.application.ports import (
     LLMTransformationPort,
     PromptProviderPort,
 )
-from cresmo.domain.value_objects import ChatPrompt, PromptKey
+from cresmo.domain.value_objects import PromptKey
 from cresmo.domain.value_objects.quality import JudgeEvaluation
-from cresmo.infrastructure.adapters.prompts import JsonPromptProvider
+from cresmo.infrastructure.adapters.prompts.json_provider import JsonPromptProvider
 
 logger = structlog.get_logger(__name__)
 
@@ -22,13 +22,11 @@ class OllamaCritiqueAdapter(CritiqueSynthesizerPort):
     def __init__(
         self,
         llm_transformation_port: LLMTransformationPort | None = None,
-        system_prompt: str | None = None,
         temperature: float = 0.1,
         *,
         prompt_provider: PromptProviderPort | None = None,
     ) -> None:
         self.llm_transformation_port = llm_transformation_port
-        self.system_prompt = system_prompt
         self.temperature = temperature
         self._prompt_provider = prompt_provider or JsonPromptProvider()
 
@@ -36,8 +34,6 @@ class OllamaCritiqueAdapter(CritiqueSynthesizerPort):
         self,
         evaluation: JudgeEvaluation,
         stage_name: str,
-        *,
-        trace_id: str | None = None,
     ) -> str:
         """Convert structured JudgeEvaluation failures into directed natural language critique."""
         if evaluation.passed:
@@ -55,20 +51,10 @@ class OllamaCritiqueAdapter(CritiqueSynthesizerPort):
             criteria_failures=fallback_critique,
         )
 
-        effective_prompt = (
-            ChatPrompt(
-                messages=chat_prompt.messages,
-                system_prompt=self.system_prompt,
-            )
-            if self.system_prompt is not None
-            else chat_prompt
-        )
-
         try:
             synthesized = self.llm_transformation_port.transform(
-                prompt=effective_prompt,
+                prompt=chat_prompt,
                 temperature=self.temperature,
-                trace_id=trace_id,
             )
             clean = synthesized.strip()
             return clean if clean else fallback_critique

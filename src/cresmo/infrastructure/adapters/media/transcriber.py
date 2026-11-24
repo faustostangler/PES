@@ -88,8 +88,3 @@ class FasterWhisperEngine:
                 return " ".join(part for part in parts if part).strip()
         except Exception as exc:
             raise CresmoInfrastructureError(f"Whisper transcription failed: {exc}") from exc
-
-    def clear_cache(self) -> None:
-        """Clear cached WhisperModel instances under thread lock."""
-        with self._cache_lock:
-            self._model_cache.clear()

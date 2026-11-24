@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import threading
 from collections.abc import Callable
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 from cresmo.domain.value_objects import (
@@ -33,32 +33,6 @@ class BatchSource:
     target: str
     content_id: ContentId | None = None
 
-    def __post_init__(self) -> None:
-        if isinstance(self.kind, str) and not isinstance(self.kind, SourceModality):
-            try:
-                modality = SourceModality(self.kind.strip().lower())
-            except ValueError as exc:
-                raise ValueError(
-                    f"Invalid BatchSource modality '{self.kind}'. Expected SourceModality.FILE or SourceModality.URL."
-                ) from exc
-            object.__setattr__(self, "kind", modality)
-        if self.content_id is not None and not isinstance(self.content_id, ContentId):
-            object.__setattr__(self, "content_id", ContentId.from_string(self.content_id))
-
-    @property
-    def vid(self) -> str | None:
-        """Backward-compatible accessor for the string representation of content_id."""
-        if self.content_id is None:
-            return None
-        return self.content_id.value if isinstance(self.content_id, ContentId) else self.content_id
-
-    @property
-    def display_name(self) -> str:
-        """Human-readable representation for CLI logs."""
-        if self.kind is SourceModality.FILE:
-            return Path(self.target).name
-        return self.target
-
 
 @dataclass(frozen=True)
 class BatchDiscoveryQuery:
@@ -68,7 +42,6 @@ class BatchDiscoveryQuery:
     """
 
     explicit_manifest: Path | None = None
-    manifest_path: Path | None = None
     priority_texts_dir: Path | None = None
     playlist_priority_path: Path | None = None
     playlist_path: Path | None = None
@@ -78,13 +51,8 @@ class BatchDiscoveryQuery:
     channel_max_videos: int = 50
     discovery_workers: int | None = None
     enable_channel_crawler: bool = True
-    filter_criteria: SyncFilterCriteria = None  # type: ignore[assignment]
+    filter_criteria: SyncFilterCriteria = field(default_factory=SyncFilterCriteria)
     queue_maxsize: int | None = None
-
-    def __post_init__(self) -> None:
-        # Ensure filter_criteria is always a valid SyncFilterCriteria (never None)
-        if self.filter_criteria is None:
-            object.__setattr__(self, "filter_criteria", SyncFilterCriteria())
 
 
 @dataclass(frozen=True, slots=True)
@@ -189,24 +157,6 @@ class _BatchSourceAccumulator:
         if callback is not None:
             callback(batch_source)
         return batch_source
-
-    def register_identifier(self, target_str: str | ContentId) -> None:
-        """Register video ID or path stem into the deduplication set."""
-        with self._lock:
-            if isinstance(target_str, ContentId):
-                self.seen_vids.add(target_str)
-                self.seen_vids.add(target_str.value)
-                return
-            self.seen_vids.add(target_str)
-            try:
-                content_id = ContentId.from_url_or_token(target_str)
-                self.seen_vids.add(content_id)
-                self.seen_vids.add(content_id.value)
-            except (ValueError, TypeError):
-                content_id = None
-            stem = Path(target_str).stem
-            if stem:
-                self.seen_vids.add(stem)
 
     def has_seen(self, identifier: str | ContentId) -> bool:
         """Check if an identifier (video ID, stem, or ContentId) was already registered."""

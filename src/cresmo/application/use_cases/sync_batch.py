@@ -134,10 +134,12 @@ class SyncBatchUseCase:
         )
 
         if filter_criteria.video_ids:
-            return self._sync_direct_videos(
-                video_ids=sorted(filter_criteria.video_ids),
+            return self._sync_targets(
+                targets=sorted(filter_criteria.video_ids),
+                kind=SyncTargetEventKind.VIDEO,
                 request=request,
                 on_event=on_event,
+                manifest_path=None,
             )
 
         manifest_path = request.manifest or self._default_manifest_path
@@ -151,85 +153,39 @@ class SyncBatchUseCase:
 
         # ADR-012: enforce case-insensitive ascending alphabetical processing order
         sorted_channels = sorted(channels_to_sync, key=str.lower)
-        return self._sync_channels(
-            channels_to_sync=sorted_channels,
-            manifest_path=manifest_path,
+        return self._sync_targets(
+            targets=sorted_channels,
+            kind=SyncTargetEventKind.CHANNEL,
             request=request,
             on_event=on_event,
+            manifest_path=manifest_path,
         )
 
-    def _sync_direct_videos(
+    def _sync_targets(
         self,
         *,
-        video_ids: Sequence[str],
+        targets: Sequence[str],
+        kind: SyncTargetEventKind,
         request: SyncBatchRequest,
         on_event: Callable[[SyncTargetEvent], None] | None,
-    ) -> SyncBatchOutcome:
-        total_discovered = 0
-        total_processed = 0
-        total_skipped = 0
-        total_failed = 0
-
-        for video_ref in video_ids:
-            channel_url = (
-                video_ref
-                if video_ref.startswith(("http://", "https://"))
-                else f"https://www.youtube.com/watch?v={video_ref}"
-            )
-            query = ChannelFeedQuery(
-                channel_url=channel_url,
-                lookback_days=request.lookback,
-                max_videos=1,
-            )
-            summary = self._sync_channel_use_case.execute(
-                query=query,
-                dry_run=request.dry_run,
-                force_refresh=request.force_refresh,
-            )
-            total_discovered += summary.total_discovered
-            total_processed += summary.processed_count
-            total_skipped += summary.skipped_count
-            total_failed += summary.failed_count
-            _emit(
-                on_event,
-                SyncTargetEvent(
-                    kind=SyncTargetEventKind.VIDEO,
-                    target=video_ref,
-                    total_discovered=summary.total_discovered,
-                    processed=summary.processed_count,
-                    skipped=summary.skipped_count,
-                    failed=summary.failed_count,
-                    duration_seconds=summary.duration_seconds,
-                ),
-            )
-
-        return SyncBatchOutcome(
-            channels_synced=0,
-            total_discovered=total_discovered,
-            total_processed=total_processed,
-            total_skipped=total_skipped,
-            total_failed=total_failed,
-            direct_video_mode=True,
-        )
-
-    def _sync_channels(
-        self,
-        *,
-        channels_to_sync: list[str],
         manifest_path: Path | None,
-        request: SyncBatchRequest,
-        on_event: Callable[[SyncTargetEvent], None] | None,
     ) -> SyncBatchOutcome:
         total_discovered = 0
         total_processed = 0
         total_skipped = 0
         total_failed = 0
+        is_direct_video = kind is SyncTargetEventKind.VIDEO
 
-        for channel_url in channels_to_sync:
+        for target in targets:
+            channel_url = (
+                target
+                if not is_direct_video or target.startswith(("http://", "https://"))
+                else f"https://www.youtube.com/watch?v={target}"
+            )
             query = ChannelFeedQuery(
                 channel_url=channel_url,
                 lookback_days=request.lookback,
-                max_videos=request.max_videos,
+                max_videos=1 if is_direct_video else request.max_videos,
             )
             summary = self._sync_channel_use_case.execute(
                 query=query,
@@ -243,8 +199,8 @@ class SyncBatchUseCase:
             _emit(
                 on_event,
                 SyncTargetEvent(
-                    kind=SyncTargetEventKind.CHANNEL,
-                    target=channel_url,
+                    kind=kind,
+                    target=target,
                     total_discovered=summary.total_discovered,
                     processed=summary.processed_count,
                     skipped=summary.skipped_count,
@@ -254,12 +210,13 @@ class SyncBatchUseCase:
             )
 
         return SyncBatchOutcome(
-            channels_synced=len(channels_to_sync),
+            channels_synced=0 if is_direct_video else len(targets),
             total_discovered=total_discovered,
             total_processed=total_processed,
             total_skipped=total_skipped,
             total_failed=total_failed,
             manifest_path=manifest_path,
+            direct_video_mode=is_direct_video,
         )
 
     def _resolve_channels(

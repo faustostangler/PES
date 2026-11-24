@@ -10,11 +10,12 @@ from __future__ import annotations
 
 import re
 
+from cresmo.domain.value_objects.constants import EXTRA_INFO_HEADING_PATTERN
+
 _BULLET_LINE_PATTERN = re.compile(r"^\s*[-*+]\s+", re.MULTILINE)
 _BLOCKQUOTE_LINE_PATTERN = re.compile(r"^\s*>", re.MULTILINE)
 _TABLE_LINE_PATTERN = re.compile(r"^\s*\|.*\|\s*$", re.MULTILINE)
 _YAML_DELIMITER_PATTERN = re.compile(r"^---\s*$", re.MULTILINE)
-_EXTRA_INFO_PATTERN = re.compile(r"^\s*###\s+Extra\s+Info\s*$", re.MULTILINE)
 
 
 def _collect_common_header_and_inline_violations(stripped: str) -> list[str]:
@@ -63,7 +64,7 @@ def extract_extra_info_section(text: str) -> str:
     Returns:
         str: Stripped text after the '### Extra Info' heading, or empty string if absent.
     """
-    match = _EXTRA_INFO_PATTERN.search(text)
+    match = EXTRA_INFO_HEADING_PATTERN.search(text)
     if not match:
         return ""
     return text[match.end() :].strip()
@@ -111,7 +112,7 @@ def validate_expanded_prose_syntax(text: str) -> list[str]:
 
     violations = _collect_common_header_and_inline_violations(stripped)
 
-    extra_info_match = _EXTRA_INFO_PATTERN.search(stripped)
+    extra_info_match = EXTRA_INFO_HEADING_PATTERN.search(stripped)
     if not extra_info_match:
         violations.append("Missing mandatory complementary section '### Extra Info'.")
         main_body = stripped

@@ -13,6 +13,7 @@ from unittest.mock import MagicMock
 import pytest
 
 from cresmo.application.pipeline.context import PipelineExecutionContext
+from cresmo.application.pipeline.models import PipelineDependencies
 from cresmo.application.pipeline.stage_descriptor import StageConfig
 from cresmo.application.pipeline.stage_factory import StageFactory
 from cresmo.application.pipeline.stage_runner import PipelineStageRunner
@@ -76,11 +77,13 @@ def test_gap_filler_execution_single_pass_override(
     stage_factory = StageFactory()
 
     runner = PipelineStageRunner(
-        telemetry_port=NoOpTelemetryPort(),
-        metrics_port=NoOpMetricsPort(),
-        prompt_provider=NoOpPromptProviderPort(),
-        llm_transformation_port=mock_llm,
-        stage_factory=stage_factory,
+        PipelineDependencies(
+            telemetry_port=NoOpTelemetryPort(),
+            metrics_port=NoOpMetricsPort(),
+            prompt_provider=NoOpPromptProviderPort(),
+            llm_transformation_port=mock_llm,
+            stage_factory=stage_factory,
+        )
     )
 
     result = runner.execute_stage(
@@ -130,11 +133,13 @@ def test_gap_filler_execution_multi_pass_to_completion(
     stage_factory = StageFactory(policy=StageExecutionPolicy(expansion_max_passes=3))
 
     runner = PipelineStageRunner(
-        telemetry_port=NoOpTelemetryPort(),
-        metrics_port=NoOpMetricsPort(),
-        prompt_provider=NoOpPromptProviderPort(),
-        llm_transformation_port=mock_llm,
-        stage_factory=stage_factory,
+        PipelineDependencies(
+            telemetry_port=NoOpTelemetryPort(),
+            metrics_port=NoOpMetricsPort(),
+            prompt_provider=NoOpPromptProviderPort(),
+            llm_transformation_port=mock_llm,
+            stage_factory=stage_factory,
+        )
     )
 
     result = runner.execute_stage(
@@ -173,11 +178,13 @@ def test_gap_filler_execution_early_stopping_on_saturation(
     stage_factory = StageFactory(policy=policy)
 
     runner = PipelineStageRunner(
-        telemetry_port=NoOpTelemetryPort(),
-        metrics_port=NoOpMetricsPort(),
-        prompt_provider=NoOpPromptProviderPort(),
-        llm_transformation_port=mock_llm,
-        stage_factory=stage_factory,
+        PipelineDependencies(
+            telemetry_port=NoOpTelemetryPort(),
+            metrics_port=NoOpMetricsPort(),
+            prompt_provider=NoOpPromptProviderPort(),
+            llm_transformation_port=mock_llm,
+            stage_factory=stage_factory,
+        )
     )
 
     result = runner.execute_stage(
@@ -201,7 +208,7 @@ def test_gap_filler_multi_pass_chains_previous_output_and_emits_pass_telemetry(
         get_active_telemetry_stage,
         resolve_llm_generation_span_name,
     )
-    from cresmo.infrastructure.adapters.prompts import JsonPromptProvider
+    from cresmo.infrastructure.adapters.prompts.json_provider import JsonPromptProvider
 
     outputs = [
         (
@@ -244,11 +251,13 @@ def test_gap_filler_multi_pass_chains_previous_output_and_emits_pass_telemetry(
 
     stage_factory = StageFactory(policy=StageExecutionPolicy(expansion_max_passes=3))
     runner = PipelineStageRunner(
-        telemetry_port=NoOpTelemetryPort(),
-        metrics_port=NoOpMetricsPort(),
-        prompt_provider=JsonPromptProvider(),
-        llm_transformation_port=mock_llm,
-        stage_factory=stage_factory,
+        PipelineDependencies(
+            telemetry_port=NoOpTelemetryPort(),
+            metrics_port=NoOpMetricsPort(),
+            prompt_provider=JsonPromptProvider(),
+            llm_transformation_port=mock_llm,
+            stage_factory=stage_factory,
+        )
     )
 
     result = runner.execute_stage(
@@ -303,11 +312,13 @@ def test_gap_filler_single_pass_omits_telemetry_pass_suffix(
     mock_llm.transform.side_effect = _spy_transform
 
     runner = PipelineStageRunner(
-        telemetry_port=NoOpTelemetryPort(),
-        metrics_port=NoOpMetricsPort(),
-        prompt_provider=NoOpPromptProviderPort(),
-        llm_transformation_port=mock_llm,
-        stage_factory=StageFactory(policy=StageExecutionPolicy()),
+        PipelineDependencies(
+            telemetry_port=NoOpTelemetryPort(),
+            metrics_port=NoOpMetricsPort(),
+            prompt_provider=NoOpPromptProviderPort(),
+            llm_transformation_port=mock_llm,
+            stage_factory=StageFactory(policy=StageExecutionPolicy()),
+        )
     )
 
     runner.execute_stage(
@@ -328,7 +339,7 @@ def test_multi_pass_injects_critique_only_on_final_pass(
     from cresmo.application.pipeline.stage_descriptor import StageConfig
     from cresmo.application.pipeline.stage_execution import generate_stage_candidate
     from cresmo.domain.value_objects import PromptKey
-    from cresmo.infrastructure.adapters.prompts import JsonPromptProvider
+    from cresmo.infrastructure.adapters.prompts.json_provider import JsonPromptProvider
 
     outputs = [
         "## Title\n\nPass 1.\n\n### Extra Info\n\n1. **Entity A**.",
@@ -395,7 +406,7 @@ def test_multi_pass_early_saturation_with_critique_runs_terminal_critique_pass(
     from cresmo.application.pipeline.stage_execution import generate_stage_candidate
     from cresmo.application.services.hybrid_saturation import HybridSaturationEvaluator
     from cresmo.domain.value_objects import PromptKey
-    from cresmo.infrastructure.adapters.prompts import JsonPromptProvider
+    from cresmo.infrastructure.adapters.prompts.json_provider import JsonPromptProvider
 
     pass1_text = (
         "## Title\n\nDraft one describing military governance in 1096.\n\n### Extra Info\n\n"
@@ -468,7 +479,7 @@ def test_saturation_policy_can_halt_immediately_on_pass_1(
     from cresmo.application.pipeline.stage_execution import generate_stage_candidate
     from cresmo.domain.value_objects import PromptKey
     from cresmo.domain.value_objects.convergence import SaturationReason, SaturationVerdict
-    from cresmo.infrastructure.adapters.prompts import JsonPromptProvider
+    from cresmo.infrastructure.adapters.prompts.json_provider import JsonPromptProvider
 
     mock_llm = MagicMock(spec=LLMTransformationPort)
     mock_llm.transform.side_effect = ["Pass 1 already SATURATED.", "Should never execute pass 2."]
@@ -544,7 +555,7 @@ def test_single_pass_with_critique_applies_critique_on_pass_1(
     from cresmo.application.pipeline.stage_descriptor import StageConfig
     from cresmo.application.pipeline.stage_execution import generate_stage_candidate
     from cresmo.domain.value_objects import PromptKey
-    from cresmo.infrastructure.adapters.prompts import JsonPromptProvider
+    from cresmo.infrastructure.adapters.prompts.json_provider import JsonPromptProvider
 
     prompts_seen: list[str] = []
 
@@ -587,7 +598,7 @@ def test_preserve_baseline_rollback_and_saturation_history_on_explicit_sentinel_
     from cresmo.domain.services.convergence_evaluator import NO_NEW_GAPS_SENTINEL
     from cresmo.domain.value_objects import PromptKey
     from cresmo.domain.value_objects.convergence import SaturationReason
-    from cresmo.infrastructure.adapters.prompts import JsonPromptProvider
+    from cresmo.infrastructure.adapters.prompts.json_provider import JsonPromptProvider
 
     pass1_text = (
         "## Fundação de Portugal\n\n"
@@ -661,7 +672,7 @@ def test_generate_stage_candidate_invokes_saturation_span_per_pass(
     from cresmo.application.services.hybrid_saturation import HybridSaturationEvaluator
     from cresmo.domain.services.convergence_evaluator import NO_NEW_GAPS_SENTINEL
     from cresmo.domain.value_objects import PromptKey
-    from cresmo.infrastructure.adapters.prompts import JsonPromptProvider
+    from cresmo.infrastructure.adapters.prompts.json_provider import JsonPromptProvider
     from tests.doubles.telemetry_fake import InMemoryTelemetryPort
 
     pass1_text = (
@@ -742,7 +753,7 @@ def test_pass1_semantic_plateau_keeps_current_text_instead_of_reverting_to_sourc
     from cresmo.application.services.hybrid_saturation import HybridSaturationEvaluator
     from cresmo.domain.value_objects import PromptKey
     from cresmo.domain.value_objects.convergence import SaturationReason
-    from cresmo.infrastructure.adapters.prompts import JsonPromptProvider
+    from cresmo.infrastructure.adapters.prompts.json_provider import JsonPromptProvider
 
     pass1_gap_output = (
         "## Origens\n\n"
@@ -797,9 +808,9 @@ def test_draft_fallback_block_instructs_no_new_gaps_sentinel_not_copy_back(
     from cresmo.domain.value_objects import ChatPrompt, PromptKey
 
     mock_provider = MagicMock()
-    mock_provider.get_prompt.return_value = ChatPrompt.from_system_and_user(
-        system="System prompt",
-        user="Remote prompt template without draft placeholder.",
+    mock_provider.get_prompt.return_value = ChatPrompt.single_turn(
+        user_prompt="Remote prompt template without draft placeholder.",
+        system_prompt="System prompt",
     )
     cfg = StageConfig[StageTranscript, StageTranscript](
         stage_name="gap_filler",
@@ -830,7 +841,7 @@ def test_generate_stage_candidate_rejects_non_verdict_saturation_policy_return(
     from cresmo.application.pipeline.stage_descriptor import StageConfig
     from cresmo.application.pipeline.stage_execution import generate_stage_candidate
     from cresmo.domain.value_objects import PromptKey
-    from cresmo.infrastructure.adapters.prompts import JsonPromptProvider
+    from cresmo.infrastructure.adapters.prompts.json_provider import JsonPromptProvider
 
     mock_llm = MagicMock(spec=LLMTransformationPort)
     mock_llm.transform.return_value = "## Draft\n\nCandidate text."
@@ -869,7 +880,7 @@ def test_stage_execution_pass_context_and_boundary_contracts(
     )
     from cresmo.domain.value_objects import ChatPrompt, PromptKey
     from cresmo.domain.value_objects.convergence import SaturationReason, SaturationVerdict
-    from cresmo.infrastructure.adapters.prompts import JsonPromptProvider
+    from cresmo.infrastructure.adapters.prompts.json_provider import JsonPromptProvider
 
     # 1. Exact prompt context keys and prev_pass_num arithmetic
     assert _build_pass_prompt_context(
@@ -893,7 +904,7 @@ def test_stage_execution_pass_context_and_boundary_contracts(
         def build_transform_prompt(
             self, _provider: object, _source: object, **_kwargs: object
         ) -> ChatPrompt:
-            return ChatPrompt.from_system_and_user(system="sys", user="usr")
+            return ChatPrompt.single_turn(user_prompt="usr", system_prompt="sys")
 
     mock_llm_default = MagicMock(spec=LLMTransformationPort)
     mock_llm_default.transform.return_value = "Single pass default."
@@ -942,7 +953,7 @@ def test_stage_execution_pass_context_and_boundary_contracts(
             self, _provider: object, _source: object, **kwargs: object
         ) -> ChatPrompt:
             observed_prompt_kwargs.append(dict(kwargs))
-            return ChatPrompt.from_system_and_user(system="sys", user="usr")
+            return ChatPrompt.single_turn(user_prompt="usr", system_prompt="sys")
 
         def saturation_policy(
             self, _baseline: str, _current: str, pass_index: int
@@ -992,7 +1003,7 @@ def test_long_expander_reuses_stage_agnostic_build_refine_and_sentinel_stop(
 ) -> None:
     """Verify long_expander runs BUILD/REFINE + <NO_NEW_GAPS/> early exit via StageFactory."""
     from cresmo.domain.value_objects import PromptKey
-    from cresmo.infrastructure.adapters.prompts import JsonPromptProvider
+    from cresmo.infrastructure.adapters.prompts.json_provider import JsonPromptProvider
 
     source_gap = StageTranscript(
         channel=sample_fluid_transcript.channel,
@@ -1035,11 +1046,13 @@ def test_long_expander_reuses_stage_agnostic_build_refine_and_sentinel_stop(
     assert long_descriptor.transform_prompt_key is PromptKey.LONG_EXPANDER
 
     runner = PipelineStageRunner(
-        telemetry_port=NoOpTelemetryPort(),
-        metrics_port=NoOpMetricsPort(),
-        prompt_provider=JsonPromptProvider(),
-        llm_transformation_port=mock_llm,
-        stage_factory=stage_factory,
+        PipelineDependencies(
+            telemetry_port=NoOpTelemetryPort(),
+            metrics_port=NoOpMetricsPort(),
+            prompt_provider=JsonPromptProvider(),
+            llm_transformation_port=mock_llm,
+            stage_factory=stage_factory,
+        )
     )
 
     result: StageTranscript = runner.execute_stage(
@@ -1065,7 +1078,7 @@ def test_wide_expander_reuses_stage_agnostic_build_refine_and_sentinel_stop(
 ) -> None:
     """Verify wide_expander runs BUILD/REFINE + <NO_NEW_GAPS/> early exit via StageFactory."""
     from cresmo.domain.value_objects import PromptKey
-    from cresmo.infrastructure.adapters.prompts import JsonPromptProvider
+    from cresmo.infrastructure.adapters.prompts.json_provider import JsonPromptProvider
 
     source_long = StageTranscript(
         channel=sample_fluid_transcript.channel,
@@ -1108,11 +1121,13 @@ def test_wide_expander_reuses_stage_agnostic_build_refine_and_sentinel_stop(
     assert wide_descriptor.transform_prompt_key is PromptKey.WIDE_EXPANDER
 
     runner = PipelineStageRunner(
-        telemetry_port=NoOpTelemetryPort(),
-        metrics_port=NoOpMetricsPort(),
-        prompt_provider=JsonPromptProvider(),
-        llm_transformation_port=mock_llm,
-        stage_factory=stage_factory,
+        PipelineDependencies(
+            telemetry_port=NoOpTelemetryPort(),
+            metrics_port=NoOpMetricsPort(),
+            prompt_provider=JsonPromptProvider(),
+            llm_transformation_port=mock_llm,
+            stage_factory=stage_factory,
+        )
     )
 
     result: StageTranscript = runner.execute_stage(

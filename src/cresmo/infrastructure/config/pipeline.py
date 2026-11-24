@@ -37,11 +37,6 @@ class StageBudgetsSettings(BaseModel):
         ge=0,
         description="Maximum LLM judge rewrite attempts for raw indexing (0 means unconstrained).",
     )
-    inventory_max_attempts: int = Field(
-        default=2,
-        ge=0,
-        description="Maximum LLM judge rewrite attempts for atomic inventory discovery (0 means unconstrained).",
-    )
 
 
 class SaturationSettings(BaseModel):

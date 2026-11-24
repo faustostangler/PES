@@ -351,6 +351,7 @@ class TelemetryPort(ABC):
         Adapters should perform bounded, fail-silent flushes and never raise telemetry transport
         exceptions into application control flow.
         """
+        return None
 
 
 class NoOpTelemetryPort(TelemetryPort):

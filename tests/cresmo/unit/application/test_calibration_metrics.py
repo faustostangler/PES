@@ -41,10 +41,10 @@ class TestConfusionMatrixAndModels:
         assert cm.record("PASS", "PASS") == "HIT"
         assert cm.record("FAIL", "ERROR") == "FALSE_REJECT_BETA"
 
-        assert cm.tp == 3
-        assert cm.tn == 2
-        assert cm.fp == 2
-        assert cm.fn == 3
+        assert cm.hit == 3
+        assert cm.correct_rejection == 2
+        assert cm.false_accept_alpha == 2
+        assert cm.false_reject_beta == 3
         assert cm.invalid == 2
         assert cm.total_valid == 6
         assert cm.total_defective == 4
@@ -103,17 +103,17 @@ class TestConfusionMatrixAndModels:
 
     def test_result_set_and_summary_models_expose_expected_fields(self) -> None:
         rs = CalibrationResultSet()
-        assert rs.tp == 0
-        assert rs.fp == 0
-        assert rs.fn == 0
-        assert rs.tn == 0
-        assert rs.invalid == 0
-        assert rs.total_samples == 0
-        assert rs.total_valid == 0
-        assert rs.accuracy == 0.0
-        assert rs.precision == 0.0
-        assert rs.recall == 0.0
-        assert rs.f1 == 0.0
+        assert rs.overall.hit == 0
+        assert rs.overall.false_accept_alpha == 0
+        assert rs.overall.false_reject_beta == 0
+        assert rs.overall.correct_rejection == 0
+        assert rs.overall.invalid == 0
+        assert rs.overall.total_samples == 0
+        assert rs.overall.total_valid == 0
+        assert rs.overall.accuracy == 0.0
+        assert rs.overall.precision == 0.0
+        assert rs.overall.recall == 0.0
+        assert rs.overall.f1 == 0.0
 
         rs.overall.record("PASS", "PASS")
         rs.overall.record("FAIL", "FAIL")
@@ -121,17 +121,17 @@ class TestConfusionMatrixAndModels:
         rs.overall.record("PASS", "FAIL")
         rs.overall.record("BAD", "PASS")
 
-        assert rs.tp == 1
-        assert rs.tn == 1
-        assert rs.fp == 1
-        assert rs.fn == 1
-        assert rs.invalid == 1
-        assert rs.total_samples == 4
-        assert rs.total_valid == 2
-        assert math.isclose(rs.accuracy, 0.5)
-        assert math.isclose(rs.precision, 0.5)
-        assert math.isclose(rs.recall, 0.5)
-        assert math.isclose(rs.f1, 0.5)
+        assert rs.overall.hit == 1
+        assert rs.overall.correct_rejection == 1
+        assert rs.overall.false_accept_alpha == 1
+        assert rs.overall.false_reject_beta == 1
+        assert rs.overall.invalid == 1
+        assert rs.overall.total_samples == 4
+        assert rs.overall.total_valid == 2
+        assert math.isclose(rs.overall.accuracy, 0.5)
+        assert math.isclose(rs.overall.precision, 0.5)
+        assert math.isclose(rs.overall.recall, 0.5)
+        assert math.isclose(rs.overall.f1, 0.5)
 
         item_res = ItemEvaluationResult(
             actual="PASS",
@@ -141,8 +141,12 @@ class TestConfusionMatrixAndModels:
             target_actual="PASS",
             target_score=0.95,
         )
-        actual, expected, score, reasoning = item_res
-        assert (actual, expected, score, reasoning) == ("PASS", "PASS", 0.92, "Clean")
+        assert (item_res.actual, item_res.expected, item_res.score, item_res.reasoning) == (
+            "PASS",
+            "PASS",
+            0.92,
+            "Clean",
+        )
 
         summary = ModelBenchmarkSummary(
             stage="fluid_prose",

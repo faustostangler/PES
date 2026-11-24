@@ -22,12 +22,12 @@ class TestRegexAnonymizerAdapter:
     """Test suite for RegexAnonymizerAdapter compliance."""
 
     @pytest.fixture
-    def anonymizer(self) -> AnonymizerPort:
+    def anonymizer(self) -> RegexAnonymizerAdapter:
         return RegexAnonymizerAdapter()
 
-    def test_mask_text_redacts_email_addresses(self, anonymizer: AnonymizerPort) -> None:
+    def test_mask_text_redacts_email_addresses(self, anonymizer: RegexAnonymizerAdapter) -> None:
         raw_text = "Entre em contato com john.doe@example.com ou suporte@corp.org para detalhes."
-        sanitized = anonymizer.mask_text(raw_text)
+        sanitized = anonymizer._mask_text(raw_text)
         assert "john.doe@example.com" not in sanitized
         assert "suporte@corp.org" not in sanitized
         assert "[REDACTED_EMAIL]" in sanitized
@@ -35,19 +35,23 @@ class TestRegexAnonymizerAdapter:
             sanitized == "Entre em contato com [REDACTED_EMAIL] ou [REDACTED_EMAIL] para detalhes."
         )
 
-    def test_mask_text_redacts_bearer_tokens_and_api_keys(self, anonymizer: AnonymizerPort) -> None:
+    def test_mask_text_redacts_bearer_tokens_and_api_keys(
+        self, anonymizer: RegexAnonymizerAdapter
+    ) -> None:
         raw_text = "Authorization: Bearer sk-ant-api03-abcdef1234567890 and key=AIzaSyD123456789012345678901234567890"
-        sanitized = anonymizer.mask_text(raw_text)
+        sanitized = anonymizer._mask_text(raw_text)
         assert "sk-ant-api03-abcdef1234567890" not in sanitized
         assert sanitized == "Authorization: [REDACTED_SECRET] and key=[REDACTED_SECRET]"
-        assert anonymizer.mask_text("Bearer sk-ant-api03-abcdef1234567890") == "[REDACTED_SECRET]"
+        assert (
+            anonymizer._mask_text("Bearer sk-ant-api03-abcdef1234567890") == "[REDACTED_SECRET]"
+        )
 
-    def test_mask_text_preserves_clean_text(self, anonymizer: AnonymizerPort) -> None:
+    def test_mask_text_preserves_clean_text(self, anonymizer: RegexAnonymizerAdapter) -> None:
         clean = "Uma introdução completa sobre transformers e mecanismos de atenção."
-        assert anonymizer.mask_text(clean) == clean
+        assert anonymizer._mask_text(clean) == clean
 
-    def test_mask_text_empty_string(self, anonymizer: AnonymizerPort) -> None:
-        assert anonymizer.mask_text("") == ""
+    def test_mask_text_empty_string(self, anonymizer: RegexAnonymizerAdapter) -> None:
+        assert anonymizer._mask_text("") == ""
 
     def test_mask_mapping_scrubs_sensitive_keys(self, anonymizer: AnonymizerPort) -> None:
         payload = {
@@ -108,8 +112,8 @@ class TestRegexAnonymizerAdapter:
         assert sanitized[safe_key] == "visible-value"
         assert sanitized[999] == "numeric-key-val"
 
-    def test_mask_span_attributes_strips_cookies_and_redacts_prompts(
-        self, anonymizer: AnonymizerPort
+    def test_mask_mapping_strips_cookies_and_redacts_prompts(
+        self, anonymizer: RegexAnonymizerAdapter
     ) -> None:
         attributes = {
             "cresmo.channel": "sandeco",
@@ -117,7 +121,7 @@ class TestRegexAnonymizerAdapter:
             "gen_ai.prompt.0.content": "Envie feedback para dev@pes.ai sobre o modelo.",
             "gen_ai.usage.input_tokens": 150,
         }
-        sanitized = anonymizer.mask_span_attributes(attributes)
+        sanitized = anonymizer.mask_mapping(attributes)
         assert "http.request.header.cookie" not in sanitized
         assert sanitized["cresmo.channel"] == "sandeco"
         assert sanitized["gen_ai.usage.input_tokens"] == 150
@@ -133,8 +137,6 @@ class TestNoOpAnonymizerAdapter:
 
     def test_noop_passthrough(self) -> None:
         adapter = NoOpAnonymizerAdapter()
-        text = "Contact: test@corp.com"
         mapping = {"cookie": "123"}
-        assert adapter.mask_text(text) == text
+        assert isinstance(adapter, AnonymizerPort)
         assert adapter.mask_mapping(mapping) == mapping
-        assert adapter.mask_span_attributes(mapping) == mapping

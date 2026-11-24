@@ -7,6 +7,7 @@ Conforms to:
 
 from __future__ import annotations
 
+import re
 from typing import Any
 
 import structlog
@@ -15,6 +16,17 @@ from pydantic import BaseModel, Field
 from cresmo.domain.value_objects import CriterionScore, JudgeCriterion
 
 logger = structlog.get_logger(__name__)
+
+_MARKDOWN_JSON_FENCE_PATTERN = re.compile(r"```(?:json)?\s*([\s\S]*?)\s*```")
+
+
+def clean_json_markdown(text: str) -> str:
+    """Strip markdown code fence wrappers from raw JSON response."""
+    cleaned = text.strip()
+    match = _MARKDOWN_JSON_FENCE_PATTERN.search(cleaned)
+    if match:
+        return match.group(1).strip()
+    return cleaned
 
 
 class JudgeCriterionOutputSchema(BaseModel):
@@ -133,5 +145,6 @@ def parse_criteria_scores(
 __all__ = [
     "JudgeCriterionOutputSchema",
     "JudgeResponseOutputSchema",
+    "clean_json_markdown",
     "parse_criteria_scores",
 ]

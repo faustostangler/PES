@@ -9,8 +9,6 @@ Conforms to:
 
 from __future__ import annotations
 
-from typing import Any
-
 from cresmo.infrastructure.config import (
     CresmoSettings,
     get_shared_settings,
@@ -19,16 +17,12 @@ from cresmo.infrastructure.config import (
 )
 
 
-def load_fresh_settings(overrides: dict[str, Any] | None = None) -> CresmoSettings:
-    """Instantiate fresh validated CresmoSettings with optional immutable overrides."""
-    settings = CresmoSettings()
-    if overrides:
-        return settings.model_copy(update=overrides)
-    return settings
+def load_fresh_settings() -> CresmoSettings:
+    """Instantiate fresh validated CresmoSettings directly from environment and .env."""
+    return CresmoSettings()
 
 
 __all__ = [
-    "CresmoSettings",
     "get_shared_settings",
     "load_fresh_settings",
     "reset_shared_settings",

@@ -104,13 +104,7 @@ class JsonTaxonomyCatalogAdapter(ChannelTaxonomyPort):
 
     def __init__(self, taxonomy_path: Path | None = None) -> None:
         """Initialize adapter and eagerly validate the taxonomy JSON catalog."""
-        self.taxonomy_path = taxonomy_path
         self._catalog: TaxonomyCatalog = load_taxonomy_catalog(taxonomy_path=taxonomy_path)
-
-    @property
-    def catalog(self) -> TaxonomyCatalog:
-        """Expose immutable loaded taxonomy catalog."""
-        return self._catalog
 
     def classify(self, channel_name: ChannelName | str) -> tuple[str, str]:
         """Classify source channel deterministically via loaded catalog."""
@@ -120,6 +114,5 @@ class JsonTaxonomyCatalogAdapter(ChannelTaxonomyPort):
 __all__ = [
     "JsonTaxonomyCatalogAdapter",
     "TaxonomyCatalogError",
-    "TaxonomyDomainSpec",
     "load_taxonomy_catalog",
 ]

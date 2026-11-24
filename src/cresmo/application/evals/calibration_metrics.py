@@ -10,7 +10,6 @@ Conforms to:
 from __future__ import annotations
 
 import math
-from collections.abc import Iterator
 from dataclasses import dataclass, field
 from enum import StrEnum
 from statistics import NormalDist
@@ -36,26 +35,6 @@ class ConfusionMatrix:
     false_accept_alpha: int = 0
     correct_rejection: int = 0
     invalid: int = 0
-
-    @property
-    def tp(self) -> int:
-        """True Positives (Hit)."""
-        return self.hit
-
-    @property
-    def fn(self) -> int:
-        """False Negatives (False Reject / Beta error)."""
-        return self.false_reject_beta
-
-    @property
-    def fp(self) -> int:
-        """False Positives (False Accept / Alpha error)."""
-        return self.false_accept_alpha
-
-    @property
-    def tn(self) -> int:
-        """True Negatives (Correct Rejection)."""
-        return self.correct_rejection
 
     @property
     def total_valid(self) -> int:
@@ -233,65 +212,10 @@ class CalibrationResultSet:
     evaluated_items: int = 0
     skipped_from_checkpoint: int = 0
 
-    @property
-    def tp(self) -> int:
-        """Global True Positives."""
-        return self.overall.tp
-
-    @property
-    def fp(self) -> int:
-        """Global False Positives."""
-        return self.overall.fp
-
-    @property
-    def fn(self) -> int:
-        """Global False Negatives."""
-        return self.overall.fn
-
-    @property
-    def tn(self) -> int:
-        """Global True Negatives."""
-        return self.overall.tn
-
-    @property
-    def invalid(self) -> int:
-        """Count of invalid expected verdict entries."""
-        return self.overall.invalid
-
-    @property
-    def total_samples(self) -> int:
-        """Total valid (non-invalid) samples recorded globally."""
-        return self.overall.total_samples
-
-    @property
-    def total_valid(self) -> int:
-        """Total ground-truth PASS items recorded globally."""
-        return self.overall.total_valid
-
-    @property
-    def accuracy(self) -> float:
-        """Global overall accuracy."""
-        return self.overall.accuracy
-
-    @property
-    def precision(self) -> float:
-        """Global precision."""
-        return self.overall.precision
-
-    @property
-    def recall(self) -> float:
-        """Global recall."""
-        return self.overall.recall
-
-    @property
-    def f1(self) -> float:
-        """Global F1 score."""
-        return self.overall.f1
-
 
 @dataclass
 class ItemEvaluationResult:
-    """Evaluation result supporting 4-tuple unpacking and target-criterion slicing."""
+    """Evaluation result encapsulating global and target-criterion outcomes."""
 
     actual: str
     expected: str
@@ -299,13 +223,6 @@ class ItemEvaluationResult:
     reasoning: str
     target_actual: str = ""
     target_score: float = 0.0
-
-    def __iter__(self) -> Iterator[Any]:
-        """Enable unpacking as `(actual, expected, score, reasoning)`."""
-        yield self.actual
-        yield self.expected
-        yield self.score
-        yield self.reasoning
 
 
 @dataclass(frozen=True)

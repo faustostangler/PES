@@ -50,7 +50,7 @@ class CresmoOTelTraceCorrelationFilter(logging.Filter):
         return True
 
 
-def add_opentelemetry_context(
+def _add_opentelemetry_context(
     logger: Any,
     method_name: str,
     event_dict: MutableMapping[str, Any],
@@ -70,9 +70,8 @@ _LOGGING_CONFIGURED: bool = False
 def configure_logging(level: str = "WARNING", fmt: str = "json") -> None:
     """Configure root logger and structlog with JSON or text formatter.
 
-    Idempotent: subsequent calls with the same arguments are no-ops. Calling
-    with different arguments reconfigures. This prevents test-session stream
-    replacement when composition root is exercised across multiple unit tests.
+    Idempotent: subsequent calls after initialization update only the root log level,
+    preventing test-session stream replacement when composition root runs repeatedly.
 
     Args:
         level: Root log level string.
@@ -132,7 +131,7 @@ def configure_logging(level: str = "WARNING", fmt: str = "json") -> None:
             structlog.stdlib.add_logger_name,
             structlog.stdlib.add_log_level,
             structlog.processors.TimeStamper(fmt="iso"),
-            add_opentelemetry_context,
+            _add_opentelemetry_context,
             structlog.processors.StackInfoRenderer(),
             structlog.processors.format_exc_info,
             structlog.stdlib.PositionalArgumentsFormatter(),

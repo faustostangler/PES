@@ -18,6 +18,7 @@ from typing import TYPE_CHECKING
 
 from cresmo.application.ports import (
     MediaIngestionPort,
+    MetricName,
     NoOpProcessRuntimePort,
     ProcessRuntimePort,
     VaultRepositoryPort,
@@ -38,13 +39,12 @@ from cresmo.domain.value_objects import (
 )
 
 if TYPE_CHECKING:
-    from cresmo.application.pipeline import CresmoPipeline
+    from cresmo.application.pipeline.coordinator import CresmoPipeline
     from cresmo.application.use_cases.concat_master import ConcatMasterUseCase
-    from cresmo.application.use_cases.discovery import (
-        BatchDiscoveryQuery,
-        BatchSource,
+    from cresmo.application.use_cases.discovery.discover_batch_sources import (
         DiscoverBatchSourcesUseCase,
     )
+    from cresmo.application.use_cases.discovery.models import BatchDiscoveryQuery, BatchSource
 
 
 class RunExitStatus(StrEnum):
@@ -81,9 +81,6 @@ class BatchItemEvent:
 
     kind: BatchItemEventKind
     message: str
-    item_prefix: str = ""
-    content_id: str | None = None
-    target: str | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -93,7 +90,6 @@ class RunSynthesisRequest:
     url: str | None = None
     manifest: Path | None = None
     passes: int | None = None
-    batch_size: int | None = None
     dry_run: bool = False
     force_reprocess: bool = False
     lookback: int | None = None
@@ -116,12 +112,9 @@ class RunSynthesisOutcome:
     completed: int = 0
     skipped: int = 0
     failed: int = 0
-    aborted_by_quota: bool = False
     total_items: int = 0
     dry_run: bool = False
     empty_sources: bool = False
-    master_parts_generated: int = 0
-    master_channels_count: int = 0
     single_notes_count: int = 0
     single_mocs_count: int = 0
     single_duplicates_unified: int = 0
@@ -157,6 +150,7 @@ class RunSynthesisUseCase:
         ],
         concat_master_factory: Callable[[VaultRepositoryPort], ConcatMasterUseCase],
         runtime_port: ProcessRuntimePort | None = None,
+        runtime_role: str = "cli",
     ) -> None:
         self._discovery_policy = discovery_policy
         self._preflight_checker = preflight_checker
@@ -164,6 +158,7 @@ class RunSynthesisUseCase:
         self._discover_sources_factory = discover_sources_factory
         self._concat_master_factory = concat_master_factory
         self._runtime_port = runtime_port or NoOpProcessRuntimePort()
+        self._runtime_role = runtime_role
 
     def execute(
         self,
@@ -252,7 +247,6 @@ class RunSynthesisUseCase:
                     BatchItemEvent(
                         kind=BatchItemEventKind.MASTER_WARNING,
                         message=f"Warning: Master consolidation failed: {exc}",
-                        content_id=content_id_str,
                     ),
                 )
             return RunSynthesisOutcome(
@@ -315,7 +309,7 @@ class RunSynthesisUseCase:
         )
 
     def _build_discovery_query(self, request: RunSynthesisRequest) -> BatchDiscoveryQuery:
-        from cresmo.application.use_cases.discovery import BatchDiscoveryQuery
+        from cresmo.application.use_cases.discovery.models import BatchDiscoveryQuery
 
         enable_channel_crawler = (
             True if request.crawl else self._discovery_policy.enable_channel_crawler
@@ -327,10 +321,15 @@ class RunSynthesisUseCase:
             video_ids=list(request.video_ids),
         )
 
+        lookback_days = (
+            request.lookback
+            if request.lookback is not None
+            else self._discovery_policy.lookback_days
+        )
         return BatchDiscoveryQuery(
             explicit_manifest=request.manifest,
             scan_raw=request.scan_raw,
-            lookback_days=self._discovery_policy.lookback_days,
+            lookback_days=lookback_days,
             channel_max_videos=request.channel_max_videos,
             discovery_workers=self._discovery_policy.discovery_workers,
             enable_channel_crawler=enable_channel_crawler,
@@ -368,9 +367,7 @@ class RunSynthesisUseCase:
                         on_event,
                         BatchItemEvent(
                             kind=BatchItemEventKind.SKIPPED_ARTIFACT,
-                            message=(f"{item_prefix} Dry-run skipped artifact: [{file_path.name}]"),
-                            item_prefix=item_prefix,
-                            target=source.target,
+                            message=f"{item_prefix} Dry-run skipped artifact: [{file_path.name}]",
                         ),
                     )
                     continue
@@ -383,9 +380,6 @@ class RunSynthesisUseCase:
                         message=(
                             f"{item_prefix} Dry-run text: [{file_path.stem}] ({size_bytes} bytes)"
                         ),
-                        item_prefix=item_prefix,
-                        content_id=file_path.stem,
-                        target=source.target,
                     ),
                 )
             else:
@@ -401,9 +395,6 @@ class RunSynthesisUseCase:
                                 f"{item_prefix} Dry-run ingested: [{content_id}] "
                                 f"({len(raw_transcript.content.text)} chars)"
                             ),
-                            item_prefix=item_prefix,
-                            content_id=content_id,
-                            target=source.target,
                         ),
                     )
                 else:
@@ -412,8 +403,6 @@ class RunSynthesisUseCase:
                         BatchItemEvent(
                             kind=BatchItemEventKind.DRY_RUN_FAILED,
                             message=f"{item_prefix} Ingestion failed for: {source.target}",
-                            item_prefix=item_prefix,
-                            target=source.target,
                         ),
                     )
 
@@ -471,8 +460,6 @@ class RunSynthesisUseCase:
                             f"{item_prefix} [COOLDOWN ABORT] {source.target}: {exc}\n"
                             "Halting batch processing immediately (fail-fast cooldown)."
                         ),
-                        item_prefix=item_prefix,
-                        target=source.target,
                     ),
                 )
                 break
@@ -490,10 +477,8 @@ class RunSynthesisUseCase:
                 scan_raw=request.scan_raw,
             )
 
-        master_parts = 0
-        master_channels = 0
         if completed > 0:
-            master_parts, master_channels = self._consolidate_master(pipeline, on_event)
+            self._consolidate_master(pipeline, on_event)
 
         exit_status = (
             RunExitStatus.RATE_LIMITED
@@ -507,10 +492,7 @@ class RunSynthesisUseCase:
             completed=completed,
             skipped=skipped,
             failed=failed,
-            aborted_by_quota=aborted_by_quota,
             total_items=total_items,
-            master_parts_generated=master_parts,
-            master_channels_count=master_channels,
             manifest_display=manifest_display,
             scan_raw=request.scan_raw,
         )
@@ -537,8 +519,6 @@ class RunSynthesisUseCase:
                                 f"{item_prefix} [SKIPPED] [{file_path.name}] "
                                 "Ignored internal Cresmo artifact or system index."
                             ),
-                            item_prefix=item_prefix,
-                            target=source.target,
                         ),
                     )
                     return "skipped"
@@ -565,9 +545,6 @@ class RunSynthesisUseCase:
                         message=(
                             f"{item_prefix} [SKIPPED] [{content_id}] Already processed in ledger."
                         ),
-                        item_prefix=item_prefix,
-                        content_id=content_id,
-                        target=source.target,
                     ),
                 )
                 return "skipped"
@@ -583,9 +560,6 @@ class RunSynthesisUseCase:
                             f"{len(result.reconciled_mocs)} MOCs reconciled, "
                             f"{result.duplicates_unified} duplicate clusters unified."
                         ),
-                        item_prefix=item_prefix,
-                        content_id=content_id,
-                        target=source.target,
                     ),
                 )
                 return "completed"
@@ -595,9 +569,6 @@ class RunSynthesisUseCase:
                 BatchItemEvent(
                     kind=BatchItemEventKind.ITEM_FAILED,
                     message=f"{item_prefix} [ERROR] {source.target}: {result.error_message}",
-                    item_prefix=item_prefix,
-                    content_id=content_id,
-                    target=source.target,
                 ),
             )
             return "failed"
@@ -609,8 +580,6 @@ class RunSynthesisUseCase:
                 BatchItemEvent(
                     kind=BatchItemEventKind.ITEM_RATE_LIMITED,
                     message=f"{item_prefix} [RATE LIMIT] {source.target}: {exc}",
-                    item_prefix=item_prefix,
-                    target=source.target,
                 ),
             )
             return "failed"
@@ -620,8 +589,6 @@ class RunSynthesisUseCase:
                 BatchItemEvent(
                     kind=BatchItemEventKind.ITEM_NETWORK_ERROR,
                     message=f"{item_prefix} [NETWORK ERROR] {source.target}: {exc}",
-                    item_prefix=item_prefix,
-                    target=source.target,
                 ),
             )
             return "failed"
@@ -631,8 +598,6 @@ class RunSynthesisUseCase:
                 BatchItemEvent(
                     kind=BatchItemEventKind.ITEM_FAILED,
                     message=f"{item_prefix} [FAILED] {source.target}: {exc}",
-                    item_prefix=item_prefix,
-                    target=source.target,
                 ),
             )
             return "failed"
@@ -671,20 +636,21 @@ class RunSynthesisUseCase:
     def _drain_telemetry_and_memory(self, pipeline: CresmoPipeline) -> None:
         try:
             pipeline.telemetry_port.flush()
-        except Exception:  # noqa: BLE001, S110
+        except Exception:  # noqa: BLE001
             pass
         try:
             self._runtime_port.collect_garbage()
             rss_bytes = self._runtime_port.get_process_rss_bytes()
             pipeline.metrics_port.set_gauge(
-                "cresmo_process_resident_memory_bytes",
+                MetricName.PROCESS_RESIDENT_MEMORY_BYTES,
                 rss_bytes,
-                labels={"role": "worker"},
+                labels={"role": self._runtime_role},
             )
             pipeline.metrics_port.increment_counter(
-                "cresmo_gc_collections_total",
+                MetricName.GC_COLLECTIONS,
                 1.0,
                 labels={"generation": "all"},
             )
-        except Exception:  # noqa: BLE001, S110
+            pipeline.metrics_port.flush()
+        except Exception:  # noqa: BLE001
             pass

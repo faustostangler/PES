@@ -163,9 +163,9 @@ class TestGeminiJudgeAdapter:
         mock_genai_client.models.generate_content.return_value = mock_response
 
         mock_prompt_provider = MagicMock()
-        mock_prompt_provider.get_prompt.return_value = ChatPrompt.from_system_and_user(
-            system="CUSTOM GEMINI SYS",
-            user="CUSTOM GEMINI USER",
+        mock_prompt_provider.get_prompt.return_value = ChatPrompt.single_turn(
+            user_prompt="CUSTOM GEMINI USER",
+            system_prompt="CUSTOM GEMINI SYS",
         )
 
         adapter = GeminiJudgeAdapter(
@@ -247,13 +247,13 @@ class TestGeminiJudgeAdapter:
         adapter = GeminiJudgeAdapter(client=mock_genai_client, thinking_level="minimal")
         assert adapter.thinking_level == "minimal"
         assert not hasattr(adapter, "temperature")
-        from cresmo.infrastructure.adapters.judges.gemini_judge import (
-            DEFAULT_MODEL,
-            DEFAULT_PASS_THRESHOLD,
+        from cresmo.infrastructure.config import (
+            DEFAULT_JUDGE_GEMINI_MODEL,
+            DEFAULT_JUDGE_PASS_THRESHOLD,
         )
 
-        assert adapter.pass_threshold == DEFAULT_PASS_THRESHOLD
-        assert adapter.model == DEFAULT_MODEL
+        assert adapter.pass_threshold == DEFAULT_JUDGE_PASS_THRESHOLD
+        assert adapter.model == DEFAULT_JUDGE_GEMINI_MODEL
 
         context = EvaluationContext(
             stage_name="fluid_prose",
@@ -290,9 +290,9 @@ class TestGeminiJudgeAdapter:
         mock_genai_client.models.generate_content.return_value = mock_response
 
         mock_prompt_provider = MagicMock()
-        mock_prompt_provider.get_prompt.return_value = ChatPrompt.from_system_and_user(
-            system="SYSTEM INSTRUCTION FOR GAP FILLER",
-            user="USER PROMPT",
+        mock_prompt_provider.get_prompt.return_value = ChatPrompt.single_turn(
+            user_prompt="USER PROMPT",
+            system_prompt="SYSTEM INSTRUCTION FOR GAP FILLER",
         )
 
         adapter = GeminiJudgeAdapter(
@@ -481,32 +481,31 @@ class TestGeminiJudgeAdapter:
         assert evaluation.passed is False
 
     def test_transient_network_and_disconnect_error_detection(self) -> None:
-        from cresmo.infrastructure.adapters.judges.gemini_judge import (
-            _is_transient_cluster_error,
-            _is_transient_genai_error,
+        from cresmo.infrastructure.adapters.llm.gemini_common import (
+            is_transient_cluster_error,
+            is_transient_genai_error,
         )
 
         disconnect_err = Exception("Server disconnected without sending a response.")
-        assert _is_transient_genai_error(disconnect_err) is True
-        assert _is_transient_cluster_error(disconnect_err) is True
+        assert is_transient_genai_error(disconnect_err) is True
+        assert is_transient_cluster_error(disconnect_err) is True
 
         conn_reset_err = ConnectionResetError("Connection reset by peer")
-        assert _is_transient_genai_error(conn_reset_err) is True
-        assert _is_transient_cluster_error(conn_reset_err) is True
+        assert is_transient_genai_error(conn_reset_err) is True
+        assert is_transient_cluster_error(conn_reset_err) is True
 
         protocol_err = Exception("RemoteProtocolError: peer closed connection")
-        assert _is_transient_genai_error(protocol_err) is True
-        assert _is_transient_cluster_error(protocol_err) is True
+        assert is_transient_genai_error(protocol_err) is True
+        assert is_transient_cluster_error(protocol_err) is True
 
         # Ensure quota exhaustion is NOT handled as cluster error (delegated to pool)
         quota_err = Exception("ResourceExhausted: 429 Resource has been exhausted")
-        assert _is_transient_genai_error(quota_err) is True
-        assert _is_transient_cluster_error(quota_err) is False
+        assert is_transient_genai_error(quota_err) is True
+        assert is_transient_cluster_error(quota_err) is False
 
     def test_gemini_judge_adapter_accepts_timeout_seconds(self) -> None:
         """Verify GeminiJudgeAdapter accepts timeout_seconds and passes it to pool."""
         judge = GeminiJudgeAdapter(api_key="mock-key", timeout_seconds=45.0)
-        assert judge._timeout_seconds == 45.0
         assert judge._pool is not None
         assert judge._pool.timeout == 45.0
 
@@ -518,9 +517,9 @@ class TestGeminiJudgeAdapter:
 
     def test_transient_504_deadline_exceeded_returns_true(self) -> None:
         """Verify 504 DEADLINE_EXCEEDED error string is classified as transient."""
-        from cresmo.infrastructure.adapters.judges.gemini_judge import _is_transient_genai_error
+        from cresmo.infrastructure.adapters.llm.gemini_common import is_transient_genai_error
 
-        assert _is_transient_genai_error(RuntimeError("504 DEADLINE_EXCEEDED")) is True
+        assert is_transient_genai_error(RuntimeError("504 DEADLINE_EXCEEDED")) is True
 
     def test_gemini_judge_and_llm_adapter_share_common_retry_helper(self) -> None:
         """Verify GeminiJudgeAdapter and GeminiLLMAdapter share gemini_common.generate_content_with_retry."""
@@ -738,20 +737,22 @@ class TestOllamaJudgeAdapter:
         mock_post_resp = MagicMock()
         mock_post_resp.status_code = 200
         mock_post_resp.json.return_value = {
-            "response": json.dumps(
-                {
-                    "criteria": [
-                        {
-                            "criterion": "orality_removal",
-                            "score": 0.85,
-                            "passed": True,
-                            "reasoning": "Acceptable cleanup.",
-                        }
-                    ],
-                    "overall_score": 0.85,
-                    "passed": True,
-                }
-            )
+            "message": {
+                "content": json.dumps(
+                    {
+                        "criteria": [
+                            {
+                                "criterion": "orality_removal",
+                                "score": 0.85,
+                                "passed": True,
+                                "reasoning": "Acceptable cleanup.",
+                            }
+                        ],
+                        "overall_score": 0.85,
+                        "passed": True,
+                    }
+                )
+            }
         }
         mock_http_client.post.return_value = mock_post_resp
 
@@ -781,27 +782,29 @@ class TestOllamaJudgeAdapter:
         mock_post_resp = MagicMock()
         mock_post_resp.status_code = 200
         mock_post_resp.json.return_value = {
-            "response": json.dumps(
-                {
-                    "criteria": [
-                        {
-                            "criterion": "orality_removal",
-                            "score": 1.0,
-                            "passed": True,
-                            "reasoning": "Ok",
-                        }
-                    ],
-                    "overall_score": 1.0,
-                    "passed": True,
-                }
-            )
+            "message": {
+                "content": json.dumps(
+                    {
+                        "criteria": [
+                            {
+                                "criterion": "orality_removal",
+                                "score": 1.0,
+                                "passed": True,
+                                "reasoning": "Ok",
+                            }
+                        ],
+                        "overall_score": 1.0,
+                        "passed": True,
+                    }
+                )
+            }
         }
         mock_http_client.post.return_value = mock_post_resp
 
         mock_prompt_provider = MagicMock()
-        mock_prompt_provider.get_prompt.return_value = ChatPrompt.from_system_and_user(
-            system="CUSTOM OLLAMA SYS",
-            user="CUSTOM OLLAMA USER",
+        mock_prompt_provider.get_prompt.return_value = ChatPrompt.single_turn(
+            user_prompt="CUSTOM OLLAMA USER",
+            system_prompt="CUSTOM OLLAMA SYS",
         )
 
         adapter = OllamaJudgeAdapter(
@@ -836,27 +839,29 @@ class TestOllamaJudgeAdapter:
         mock_post_resp = MagicMock()
         mock_post_resp.status_code = 200
         mock_post_resp.json.return_value = {
-            "response": json.dumps(
-                {
-                    "criteria": [
-                        {
-                            "criterion": "epistemic_grounding_segregation",
-                            "score": 0.90,
-                            "passed": True,
-                            "reasoning": "Grounded.",
-                        }
-                    ],
-                    "overall_score": 0.90,
-                    "passed": True,
-                }
-            )
+            "message": {
+                "content": json.dumps(
+                    {
+                        "criteria": [
+                            {
+                                "criterion": "epistemic_grounding_segregation",
+                                "score": 0.90,
+                                "passed": True,
+                                "reasoning": "Grounded.",
+                            }
+                        ],
+                        "overall_score": 0.90,
+                        "passed": True,
+                    }
+                )
+            }
         }
         mock_http_client.post.return_value = mock_post_resp
 
         mock_prompt_provider = MagicMock()
-        mock_prompt_provider.get_prompt.return_value = ChatPrompt.from_system_and_user(
-            system="OLLAMA GAP FILLER SYS",
-            user="OLLAMA GAP FILLER USER",
+        mock_prompt_provider.get_prompt.return_value = ChatPrompt.single_turn(
+            user_prompt="OLLAMA GAP FILLER USER",
+            system_prompt="OLLAMA GAP FILLER SYS",
         )
 
         adapter = OllamaJudgeAdapter(
@@ -1163,10 +1168,7 @@ class TestLlmJudgeFactory:
 
         assert isinstance(judge, TelemetryJudgeDecorator)
         assert isinstance(judge._inner_judge, MechanicalPreflightJudgeDecorator)
-        composite = judge._inner_judge._inner_judge
-        assert isinstance(composite, ResilientCompositeJudgeAdapter)
-        assert isinstance(composite._primary, OllamaJudgeAdapter)
-        assert isinstance(composite._fallback, OllamaJudgeAdapter)
+        assert isinstance(judge._inner_judge._inner_judge, OllamaJudgeAdapter)
 
     def test_build_llm_judge_adapter_injects_configured_tunables(self) -> None:
         from cresmo.bootstrap.factories.judge_factory import build_llm_judge_adapter
@@ -1272,7 +1274,6 @@ class TestCoordinatorLlmJudgeIntegration:
     """Test suite for CresmoPipeline Stage 1 quality evaluation hooking."""
 
     def test_coordinator_triggers_llm_judge_for_fluid_prose(self) -> None:
-        from cresmo.application.pipeline.coordinator import CresmoPipeline
         from cresmo.domain.entities import StageTranscript
         from cresmo.domain.value_objects import (
             Channel,
@@ -1310,13 +1311,35 @@ class TestCoordinatorLlmJudgeIntegration:
         )
         mock_judge.evaluate.return_value = mock_eval
 
+        from cresmo.application.pipeline.coordinator import CresmoPipeline
+        from cresmo.application.pipeline.models import PipelineDependencies
+        from cresmo.application.pipeline.stage_factory import StageFactory
+        from cresmo.application.pipeline.stage_runner import PipelineStageRunner
+        from cresmo.application.ports import (
+            NoOpMetricsPort,
+            NoOpPromptProviderPort,
+            NoOpTelemetryPort,
+        )
+
+        policy = StageExecutionPolicy(judge_blocking=False)
+        runner = PipelineStageRunner(
+            PipelineDependencies(
+                telemetry_port=NoOpTelemetryPort(),
+                metrics_port=NoOpMetricsPort(),
+                llm_judge=mock_judge,
+                judge_blocking=False,
+                prompt_provider=NoOpPromptProviderPort(),
+                llm_transformation_port=mock_llm,
+                stage_factory=StageFactory(policy=policy),
+                ledger_port=ledger_port,
+            )
+        )
         pipeline = CresmoPipeline(
             media_ingestion_port=mock_ingestion,
-            llm_synthesis_port=mock_llm,
             vault_port=vault_port,
+            stage_runner=runner,
             ledger_port=ledger_port,
-            stage_policy=StageExecutionPolicy(judge_blocking=False),
-            llm_judge_port=mock_judge,
+            stage_policy=policy,
         )
 
         pipeline.execute(canned_raw)
@@ -1338,7 +1361,6 @@ class TestCoordinatorLlmJudgeIntegration:
             )
 
     def test_coordinator_blocking_mode_raises_on_quality_failure(self) -> None:
-        from cresmo.application.pipeline.coordinator import CresmoPipeline
         from cresmo.domain.entities import StageTranscript
         from cresmo.domain.exceptions import DomainValidationError
         from cresmo.domain.value_objects import (
@@ -1376,13 +1398,35 @@ class TestCoordinatorLlmJudgeIntegration:
             provider="gemini",
         )
 
+        from cresmo.application.pipeline.coordinator import CresmoPipeline
+        from cresmo.application.pipeline.models import PipelineDependencies
+        from cresmo.application.pipeline.stage_factory import StageFactory
+        from cresmo.application.pipeline.stage_runner import PipelineStageRunner
+        from cresmo.application.ports import (
+            NoOpMetricsPort,
+            NoOpPromptProviderPort,
+            NoOpTelemetryPort,
+        )
+
+        policy = StageExecutionPolicy(judge_blocking=True)
+        runner = PipelineStageRunner(
+            PipelineDependencies(
+                telemetry_port=NoOpTelemetryPort(),
+                metrics_port=NoOpMetricsPort(),
+                llm_judge=mock_judge,
+                judge_blocking=True,
+                prompt_provider=NoOpPromptProviderPort(),
+                llm_transformation_port=mock_llm,
+                stage_factory=StageFactory(policy=policy),
+                ledger_port=ledger_port,
+            )
+        )
         pipeline = CresmoPipeline(
             media_ingestion_port=mock_ingestion,
-            llm_synthesis_port=mock_llm,
             vault_port=vault_port,
+            stage_runner=runner,
             ledger_port=ledger_port,
-            stage_policy=StageExecutionPolicy(judge_blocking=True),
-            llm_judge_port=mock_judge,
+            stage_policy=policy,
         )
 
         with pytest.raises(DomainValidationError, match="Stage 'fluid_prose' quarantined"):
@@ -1391,7 +1435,6 @@ class TestCoordinatorLlmJudgeIntegration:
     def test_coordinator_records_session_output_on_success(self) -> None:
         """Verify CresmoPipeline records high-signal outcome to telemetry port upon completion."""
 
-        from cresmo.application.pipeline.coordinator import CresmoPipeline
         from cresmo.domain.entities import StageTranscript
         from cresmo.domain.value_objects import (
             Channel,
@@ -1422,12 +1465,30 @@ class TestCoordinatorLlmJudgeIntegration:
         ledger_port = InMemoryLedgerAdapter()
         telemetry = InMemoryTelemetryPort()
 
+        from cresmo.application.pipeline.coordinator import CresmoPipeline
+        from cresmo.application.pipeline.models import PipelineDependencies
+        from cresmo.application.pipeline.stage_factory import StageFactory
+        from cresmo.application.pipeline.stage_runner import PipelineStageRunner
+        from cresmo.application.ports import NoOpMetricsPort, NoOpPromptProviderPort
+
+        policy = StageExecutionPolicy(judge_blocking=False)
+        runner = PipelineStageRunner(
+            PipelineDependencies(
+                telemetry_port=telemetry,
+                metrics_port=NoOpMetricsPort(),
+                judge_blocking=False,
+                prompt_provider=NoOpPromptProviderPort(),
+                llm_transformation_port=mock_llm,
+                stage_factory=StageFactory(policy=policy),
+                ledger_port=ledger_port,
+            )
+        )
         pipeline = CresmoPipeline(
             media_ingestion_port=mock_ingestion,
-            llm_synthesis_port=mock_llm,
             vault_port=vault_port,
+            stage_runner=runner,
             ledger_port=ledger_port,
-            stage_policy=StageExecutionPolicy(judge_blocking=False),
+            stage_policy=policy,
             telemetry_port=telemetry,
         )
 

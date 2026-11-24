@@ -11,6 +11,7 @@ from typing import Any
 from unittest.mock import MagicMock
 
 from cresmo.application.pipeline.context import PipelineExecutionContext
+from cresmo.application.pipeline.models import PipelineDependencies
 from cresmo.application.pipeline.stage_descriptor import StageConfig
 from cresmo.application.pipeline.stage_runner import PipelineStageRunner
 from cresmo.application.ports import (
@@ -66,14 +67,16 @@ class TestStageConfigRunner:
 
         prompt_provider = NoOpPromptProviderPort()
         runner = PipelineStageRunner(
-            telemetry_port=telemetry,
-            metrics_port=metrics,
-            llm_judge=mock_judge,
+            PipelineDependencies(
+                telemetry_port=telemetry,
+                metrics_port=metrics,
+                llm_judge=mock_judge,
+            )
         )
 
         source = StageTranscript(
             channel=Channel(name=ChannelName("Channel Alpha")),
-            provenance=MediaProvenance.empty(),
+            provenance=MediaProvenance(),
             content=Content(
                 id=ContentId("content_test"),
                 text="Um, so basically, this is raw spoken text.",
@@ -154,14 +157,16 @@ class TestStageConfigRunner:
 
         prompt_provider = NoOpPromptProviderPort()
         runner = PipelineStageRunner(
-            telemetry_port=telemetry,
-            metrics_port=metrics,
-            llm_judge=mock_judge,
+            PipelineDependencies(
+                telemetry_port=telemetry,
+                metrics_port=metrics,
+                llm_judge=mock_judge,
+            )
         )
 
         source = StageTranscript(
             channel=Channel(name=ChannelName("Channel Beta")),
-            provenance=MediaProvenance.empty(),
+            provenance=MediaProvenance(),
             content=Content(
                 id=ContentId("content_retry"),
                 text="Text with oralities.",
@@ -212,14 +217,16 @@ class TestStageConfigRunner:
 
         prompt_provider = NoOpPromptProviderPort()
         runner = PipelineStageRunner(
-            telemetry_port=telemetry,
-            metrics_port=metrics,
-            llm_judge=None,
+            PipelineDependencies(
+                telemetry_port=telemetry,
+                metrics_port=metrics,
+                llm_judge=None,
+            )
         )
 
         source = StageTranscript(
             channel=Channel(name=ChannelName("Channel Gamma")),
-            provenance=MediaProvenance.empty(),
+            provenance=MediaProvenance(),
             content=Content(
                 id=ContentId("content_post"),
                 text="Raw spoken text.",
@@ -281,14 +288,16 @@ class TestStageConfigRunner:
         mock_llm.transform.return_value = "Symmetric output text."
 
         mock_prompt_provider = MagicMock(spec=NoOpPromptProviderPort())
-        mock_prompt_provider.get_prompt.return_value = ChatPrompt.from_system_and_user(
-            system="sys_instruction", user="user_prompt"
+        mock_prompt_provider.get_prompt.return_value = ChatPrompt.single_turn(
+            user_prompt="user_prompt", system_prompt="sys_instruction"
         )
 
         runner = PipelineStageRunner(
-            telemetry_port=telemetry,
-            metrics_port=metrics,
-            llm_judge=mock_judge,
+            PipelineDependencies(
+                telemetry_port=telemetry,
+                metrics_port=metrics,
+                llm_judge=mock_judge,
+            )
         )
 
         source = StageTranscript(
@@ -296,7 +305,7 @@ class TestStageConfigRunner:
                 name=ChannelName("Sandeco Channel"),
                 id=ChannelId("UC_SAND123"),
             ),
-            provenance=MediaProvenance.empty(),
+            provenance=MediaProvenance(),
             content=Content(
                 id=ContentId("content_999"),
                 title="SOTA DDD Architecture",
@@ -363,9 +372,11 @@ class TestStageConfigRunner:
         from cresmo.application.pipeline.stage_telemetry import resolve_active_trace_id
 
         trace_id = resolve_active_trace_id(
-            channel_id="UC_CHAN_123",
-            content_id="content_abc",
-            channel_name="Human Channel Name",
+            PipelineExecutionContext(
+                user_identity=UserIdentity.worker(),
+                channel=Channel(name="Human Channel Name", id=ChannelId("UC_CHAN_123")),
+                content=Content(id=ContentId("content_abc"), text="placeholder"),
+            )
         )
         assert trace_id == "cresmo_UC_CHAN_123_content_abc"
 
@@ -386,14 +397,16 @@ class TestStageConfigRunner:
         mock_llm.transform.return_value = "Isolated candidate text"
 
         prompt_provider = MagicMock()
-        prompt_provider.get_prompt.return_value = ChatPrompt.from_system_and_user(
-            system="sys instruction", user="user prompt"
+        prompt_provider.get_prompt.return_value = ChatPrompt.single_turn(
+            user_prompt="user prompt", system_prompt="sys instruction"
         )
 
         runner = PipelineStageRunner(
-            telemetry_port=telemetry,
-            metrics_port=metrics,
-            llm_judge=mock_judge,
+            PipelineDependencies(
+                telemetry_port=telemetry,
+                metrics_port=metrics,
+                llm_judge=mock_judge,
+            )
         )
 
         descriptor = StageConfig[StageTranscript, CandidateText](
@@ -407,7 +420,7 @@ class TestStageConfigRunner:
 
         source = StageTranscript(
             channel=Channel(name=ChannelName("Channel A")),
-            provenance=MediaProvenance.empty(),
+            provenance=MediaProvenance(),
             content=Content(
                 id=ContentId("content_isolated"),
                 text="Raw ground truth",
@@ -790,7 +803,7 @@ class TestStageConfigPromptBuilding:
         )
         src = StageTranscript(
             channel=Channel(name=ChannelName("ChanA")),
-            provenance=MediaProvenance.empty(),
+            provenance=MediaProvenance(),
             content=Content(
                 id=ContentId("cid1"),
                 text="source_body",

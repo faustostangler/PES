@@ -6,7 +6,8 @@ import json
 from pathlib import Path
 
 from cresmo.domain.value_objects import PromptKey
-from cresmo.infrastructure.adapters.prompts import JsonPromptProvider, load_prompt_catalog
+from cresmo.infrastructure.adapters.prompts.catalog import load_prompt_catalog
+from cresmo.infrastructure.adapters.prompts.json_provider import JsonPromptProvider
 
 
 class TestPromptDescriptionSsot:

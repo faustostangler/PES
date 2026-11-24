@@ -8,7 +8,6 @@ Conforms to:
 from __future__ import annotations
 
 import json
-import re
 import time
 from typing import Any
 
@@ -23,22 +22,14 @@ from cresmo.domain.value_objects import (
     PromptKey,
     resolve_stage_scoring_policy,
 )
-from cresmo.infrastructure.adapters.judges.criterion_parser import parse_criteria_scores
-from cresmo.infrastructure.adapters.prompts import JsonPromptProvider
+from cresmo.infrastructure.adapters.judges.criterion_parser import (
+    clean_json_markdown,
+    parse_criteria_scores,
+)
+from cresmo.infrastructure.adapters.prompts.json_provider import JsonPromptProvider
 from cresmo.infrastructure.config import DEFAULT_JUDGE_PASS_THRESHOLD
 
 logger = structlog.get_logger(__name__)
-
-DEFAULT_PASS_THRESHOLD: float = DEFAULT_JUDGE_PASS_THRESHOLD
-
-
-def _clean_json_markdown(text: str) -> str:
-    """Strip markdown code fence wrappers from raw JSON response."""
-    cleaned = text.strip()
-    match = re.search(r"```(?:json)?\s*([\s\S]*?)\s*```", cleaned)
-    if match:
-        return match.group(1).strip()
-    return cleaned
 
 
 class OllamaJudgeAdapter(LlmJudgePort):
@@ -50,7 +41,7 @@ class OllamaJudgeAdapter(LlmJudgePort):
         base_url: str = "http://localhost:11434",
         model: str = "qwen2.5:7b",
         timeout_seconds: float = 120.0,
-        pass_threshold: float = DEFAULT_PASS_THRESHOLD,
+        pass_threshold: float = DEFAULT_JUDGE_PASS_THRESHOLD,
         prompt_provider: PromptProviderPort | None = None,
     ) -> None:
         """Initialize Ollama judge adapter.
@@ -65,7 +56,6 @@ class OllamaJudgeAdapter(LlmJudgePort):
         """
         self._base_url = base_url.rstrip("/")
         self._model = model
-        self._timeout = timeout_seconds
         self._pass_threshold = pass_threshold
         self._client = http_client or httpx.Client(timeout=timeout_seconds)
         self._prompt_provider = prompt_provider or JsonPromptProvider()
@@ -75,11 +65,8 @@ class OllamaJudgeAdapter(LlmJudgePort):
         start_time = time.perf_counter()
         criteria_names = [c.value for c in context.required_criteria]
 
-        if context.stage_name == "gap_filler":
-            prompt_key = PromptKey.JUDGE_GAP_FILLER
-        elif context.stage_name == "fluid_prose":
-            prompt_key = PromptKey.JUDGE_FLUID_PROSE
-        else:
+        prompt_key = context.judge_prompt_key
+        if prompt_key is None:
             try:
                 prompt_key = PromptKey(f"judge_{context.stage_name}")
             except ValueError:
@@ -103,10 +90,7 @@ class OllamaJudgeAdapter(LlmJudgePort):
             resp.raise_for_status()
             data = resp.json()
             msg_obj = data.get("message")
-            if isinstance(msg_obj, dict):
-                raw_text = msg_obj.get("content", "{}")
-            else:
-                raw_text = data.get("response", "{}")
+            raw_text = msg_obj.get("content", "{}") if isinstance(msg_obj, dict) else "{}"
         except Exception as exc:
             logger.warning("OllamaJudgeAdapter evaluation failed: %s", exc)
             raise
@@ -114,7 +98,7 @@ class OllamaJudgeAdapter(LlmJudgePort):
         latency_ms = (time.perf_counter() - start_time) * 1000.0
 
         try:
-            parsed = json.loads(_clean_json_markdown(raw_text))
+            parsed = json.loads(clean_json_markdown(raw_text))
         except json.JSONDecodeError as err:
             logger.error("Failed to parse Ollama judge JSON output: %s", raw_text)
             raise ValueError(f"Ollama returned invalid JSON: {raw_text}") from err
@@ -142,13 +126,7 @@ class OllamaJudgeAdapter(LlmJudgePort):
         """Return the minimum score threshold required to pass."""
         return self._pass_threshold
 
-    @property
-    def model(self) -> str:
-        """Return the model identifier."""
-        return self._model
-
 
 __all__ = [
-    "DEFAULT_PASS_THRESHOLD",
     "OllamaJudgeAdapter",
 ]

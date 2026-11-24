@@ -85,14 +85,14 @@ class TestIngestRawTranscriptUseCase:
         mock_ingestion.ingest_single_video.return_value = canned
         vault_port = InMemoryVaultAdapter()
 
-        use_case = IngestRawTranscriptUseCase(mock_ingestion, vault_port)
+        use_case = IngestRawTranscriptUseCase(mock_ingestion, vault_port, default_whisper_model="small")
         result = use_case.execute("https://youtube.com/watch?v=vid_default_01")
 
         assert result is canned
         mock_ingestion.ingest_single_video.assert_called_once_with(
             video_url="https://youtube.com/watch?v=vid_default_01",
             output_dir=Path("raw"),
-            whisper_model="base",
+            whisper_model="small",
             keep_audio=False,
         )
 

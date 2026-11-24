@@ -38,13 +38,21 @@ def test_implements_ledger_repository_port(ledger_adapter: PostgresLedgerAdapter
     assert isinstance(ledger_adapter, LedgerRepositoryPort)
 
 
-def test_sync_is_processed_and_mark_processed(ledger_adapter: PostgresLedgerAdapter) -> None:
-    """Verify synchronous port methods for is_processed and mark_processed."""
+def test_sync_is_processed_reflects_completed_entry(ledger_adapter: PostgresLedgerAdapter) -> None:
+    """Verify is_processed returns False until a COMPLETED LedgerEntry is persisted."""
     content_id = ContentId("test_vid_001")
 
     assert ledger_adapter.is_processed(content_id) is False
 
-    ledger_adapter.mark_processed(content_id)
+    ledger_adapter.save_entry(
+        LedgerEntry(
+            content_id=content_id,
+            media_url="https://youtube.com/watch?v=test_vid_001",
+            title="Test Video",
+            channel_name=ChannelName("TechChannel"),
+            status=PipelineStatus.COMPLETED,
+        )
+    )
     assert ledger_adapter.is_processed(content_id) is True
 
     entry = ledger_adapter.get_entry(content_id)
@@ -100,23 +108,6 @@ def test_sync_save_and_get_entry(ledger_adapter: PostgresLedgerAdapter) -> None:
     assert updated.title == "Test Architectural Evolution Updated"
 
 
-def test_sync_list_entries(ledger_adapter: PostgresLedgerAdapter) -> None:
-    """Verify listing recent ledger entries with ordering and limit."""
-    for i in range(5):
-        entry = LedgerEntry(
-            content_id=ContentId(f"content_{i}"),
-            media_url=f"https://youtube.com/watch?v=content_{i}",
-            title=f"Title {i}",
-            channel_name=ChannelName("Channel"),
-            status=PipelineStatus.COMPLETED,
-            notes_count=i,
-        )
-        ledger_adapter.save_entry(entry)
-
-    entries = ledger_adapter.list_entries(limit=3)
-    assert len(entries) == 3
-
-
 @pytest.mark.asyncio
 async def test_native_async_methods(ledger_adapter: PostgresLedgerAdapter) -> None:
     """Verify direct native asynchronous methods for high-performance FastAPI/ARQ usage."""
@@ -124,15 +115,20 @@ async def test_native_async_methods(ledger_adapter: PostgresLedgerAdapter) -> No
 
     assert await ledger_adapter.is_processed_async(content_id) is False
 
-    await ledger_adapter.mark_processed_async(content_id)
+    await ledger_adapter.save_entry_async(
+        LedgerEntry(
+            content_id=content_id,
+            media_url="https://youtube.com/watch?v=async_content_001",
+            title="Async Video",
+            channel_name=ChannelName("AsyncChannel"),
+            status=PipelineStatus.COMPLETED,
+        )
+    )
     assert await ledger_adapter.is_processed_async(content_id) is True
 
     entry = await ledger_adapter.get_entry_async(content_id)
     assert entry is not None
     assert entry.status == PipelineStatus.COMPLETED
-
-    all_entries = await ledger_adapter.list_entries_async(limit=10)
-    assert len(all_entries) >= 1
 
     # Verify native save_entry_async
     async_entry = LedgerEntry(

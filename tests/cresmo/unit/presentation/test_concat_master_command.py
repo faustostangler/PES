@@ -9,7 +9,6 @@ Conforms to:
 from __future__ import annotations
 
 from pathlib import Path
-from types import SimpleNamespace as Namespace
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -51,8 +50,6 @@ class TestConcatMasterCommand:
         )
         mock_use_case.execute.return_value = [part1, part2]
 
-        args = Namespace(channel="Fabio Akita", max_words=300000)
-
         with (
             patch(
                 "cresmo.presentation.commands.concat_master.resolve_shared_settings",
@@ -63,7 +60,7 @@ class TestConcatMasterCommand:
                 return_value=mock_use_case,
             ) as mock_build_uc,
         ):
-            code = handle_concat_master(args)
+            code = handle_concat_master(channel="Fabio Akita", max_words=300000)
             assert code == EXIT_SUCCESS
             mock_resolve_settings.assert_called_once()
             mock_build_uc.assert_called_once_with(settings=mock_settings)
@@ -88,13 +85,11 @@ class TestConcatMasterCommand:
         mock_use_case = MagicMock()
         mock_use_case.execute.return_value = []
 
-        args = Namespace(channel="UnknownChannel", max_words=None)
-
         with patch(
             "cresmo.presentation.commands.concat_master.build_concat_master_use_case",
             return_value=mock_use_case,
         ):
-            code = handle_concat_master(args)
+            code = handle_concat_master(channel="UnknownChannel", max_words=None)
             assert code == EXIT_SUCCESS
 
             captured = capsys.readouterr()
@@ -133,13 +128,11 @@ class TestConcatMasterCommand:
             "ChannelB": [part_b1, part_b2],
         }
 
-        args = Namespace(channel=None, max_words=500000)
-
         with patch(
             "cresmo.presentation.commands.concat_master.build_concat_master_use_case",
             return_value=mock_use_case,
         ):
-            code = handle_concat_master(args)
+            code = handle_concat_master(channel=None, max_words=500000)
             assert code == EXIT_SUCCESS
             mock_use_case.execute_all.assert_called_once_with(max_words=500000)
 
@@ -164,13 +157,11 @@ class TestConcatMasterCommand:
         mock_use_case = MagicMock()
         mock_use_case.execute_all.return_value = {}
 
-        args = Namespace(channel=None, max_words=None)
-
         with patch(
             "cresmo.presentation.commands.concat_master.build_concat_master_use_case",
             return_value=mock_use_case,
         ):
-            code = handle_concat_master(args)
+            code = handle_concat_master(channel=None, max_words=None)
             assert code == EXIT_SUCCESS
 
             captured = capsys.readouterr()
@@ -182,13 +173,11 @@ class TestConcatMasterCommand:
 
     def test_handle_concat_master_error_handling(self, capsys: pytest.CaptureFixture[str]) -> None:
         """Verify catastrophic failure writes formatted message to stderr and returns EXIT_INTERNAL_ERROR (1)."""
-        args = Namespace(channel=None, max_words=None)
-
         with patch(
             "cresmo.presentation.commands.concat_master.resolve_shared_settings",
             side_effect=OSError("Permission denied writing to /data/master"),
         ):
-            code = handle_concat_master(args)
+            code = handle_concat_master(channel=None, max_words=None)
             assert code == EXIT_INTERNAL_ERROR
 
             captured = capsys.readouterr()

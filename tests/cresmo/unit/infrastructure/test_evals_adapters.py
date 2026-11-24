@@ -10,11 +10,11 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from cresmo.infrastructure.adapters.evals import (
-    FileCalibrationReportWriter,
+from cresmo.infrastructure.adapters.evals.file_report_writer import FileCalibrationReportWriter
+from cresmo.infrastructure.adapters.evals.json_checkpoint_store import (
     JsonCalibrationCheckpointStore,
-    JsonCalibrationDatasetLoader,
 )
+from cresmo.infrastructure.adapters.evals.json_dataset_loader import JsonCalibrationDatasetLoader
 
 
 class TestInfrastructureEvalsAdapters:

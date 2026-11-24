@@ -32,7 +32,6 @@ from cresmo.infrastructure.adapters.llm.gemini_common import (
     build_thinking_config,
     execute_with_model_failover,
     generate_content_with_retry,
-    is_transient_cluster_error,
     is_transient_genai_error,
     resolve_effective_thinking_level,
 )
@@ -51,7 +50,6 @@ __all__ = ["GeminiLLMAdapter"]
 logger = structlog.get_logger(__name__)
 
 _is_transient_genai_error = is_transient_genai_error
-_is_transient_cluster_error = is_transient_cluster_error
 
 
 class GeminiLLMAdapter(LLMTransformationPort):
@@ -118,21 +116,17 @@ class GeminiLLMAdapter(LLMTransformationPort):
         else:
             raw = api_key or ""
             parts = [p.strip() for p in raw.split(",") if p.strip()]
-            self._pool = GeminiCredentialPool(
-                keys=parts if parts else [""], timeout=timeout_seconds
-            )
-
-    @property
-    def _client(self) -> Any:
-        """Active leased client from the credential pool."""
-        return self._pool.lease()[1]
+            if not parts:
+                raise ValueError(
+                    "Gemini API key must be provided explicitly via api_key, api_keys, credential_pool, or genai_client."
+                )
+            self._pool = GeminiCredentialPool(keys=parts, timeout=timeout_seconds)
 
     def transform(
         self,
         prompt: ChatPrompt,
         temperature: float | None = None,
         *,
-        thinking_level: str | None = None,
         trace_id: str | None = None,
         session_id: str | None = None,
         user_id: str | None = None,
@@ -142,7 +136,6 @@ class GeminiLLMAdapter(LLMTransformationPort):
         Args:
             prompt: Domain ChatPrompt containing sequential messages and optional system instruction.
             temperature: Deprecated for Gemini 3.5+/4 (ignored; kept for port LSP parity).
-            thinking_level: Optional reasoning effort override for this call.
             trace_id: Optional trace ID (e.g. ContentId).
             session_id: Pipeline session identifier.
             user_id: Operator or channel identifier.
@@ -158,7 +151,6 @@ class GeminiLLMAdapter(LLMTransformationPort):
             operation=lambda target_model, is_fallback: self._run_model_generation(
                 model=target_model,
                 prompt=prompt,
-                thinking_level=thinking_level,
                 trace_id=trace_id,
                 session_id=session_id,
                 user_id=user_id,
@@ -170,13 +162,12 @@ class GeminiLLMAdapter(LLMTransformationPort):
         self,
         model: str,
         system_prompt: str | None,
-        thinking_level: str | None,
     ) -> types.GenerateContentConfig:
         """Construct GenerateContentConfig without deprecated sampling parameters."""
         return types.GenerateContentConfig(
             max_output_tokens=self.max_output_tokens,
             system_instruction=system_prompt,
-            thinking_config=build_thinking_config(model=model, thinking_level=thinking_level),
+            thinking_config=build_thinking_config(model=model, thinking_level=self.thinking_level),
             automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=True),
         )
 
@@ -185,7 +176,6 @@ class GeminiLLMAdapter(LLMTransformationPort):
         *,
         model: str,
         prompt: ChatPrompt,
-        thinking_level: str | None,
         trace_id: str | None,
         session_id: str | None,
         user_id: str | None,
@@ -193,7 +183,7 @@ class GeminiLLMAdapter(LLMTransformationPort):
     ) -> str:
         """Build GenAI request, invoke credential pool with failover, and record generation span."""
         span_name = resolve_llm_generation_span_name(fallback=fallback)
-        requested_thinking_level = self.thinking_level if thinking_level is None else thinking_level
+        requested_thinking_level = self.thinking_level
         contents = [
             types.Content(
                 role="model" if msg.role == MessageRole.ASSISTANT else "user",
@@ -204,7 +194,6 @@ class GeminiLLMAdapter(LLMTransformationPort):
         config = self._build_generation_config(
             model=model,
             system_prompt=prompt.system_prompt,
-            thinking_level=requested_thinking_level,
         )
 
         with self._telemetry.start_span(span_name, kind=SpanKind.GENERATION) as span:

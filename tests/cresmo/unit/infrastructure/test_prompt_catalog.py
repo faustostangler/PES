@@ -104,22 +104,13 @@ class TestPromptCatalog:
             )
 
     def test_catalog_lookup_by_key_and_string(self) -> None:
-        """Verify lookup by PromptKey enum and raw string."""
+        """Verify lookup by PromptKey enum, key string, and langfuse name."""
         catalog = load_prompt_catalog()
         spec_enum = catalog[PromptKey.GAP_FILLER]
         spec_str = catalog["gap_filler"]
+        spec_lf = catalog["cresmo-mocs-reconciliation"]
         assert spec_enum == spec_str
-
-    def test_catalog_lookup_by_langfuse_name(self) -> None:
-        """Verify reverse lookup by remote Langfuse name."""
-        catalog = load_prompt_catalog()
-        spec = catalog.get_by_langfuse_name("cresmo-mocs-reconciliation")
-        assert spec is not None
-        assert spec.key == PromptKey.RECONCILE_MOCS
-
-        spec_fluid = catalog.get_by_langfuse_name("cresmo-fluid-prose")
-        assert spec_fluid is not None
-        assert spec_fluid.key == PromptKey.FLUID_PROSE
+        assert spec_lf.key == PromptKey.RECONCILE_MOCS
 
     def test_catalog_invalid_key_raises_key_error(self) -> None:
         """Verify that looking up a nonexistent key raises KeyError with exact diagnostic."""
@@ -166,10 +157,32 @@ class TestPromptCatalog:
         with pytest.raises(PromptCatalogError, match="Missing required Markdown template"):
             load_prompt_catalog(bad_file)
 
-    def test_prompt_spec_to_langfuse_chat_messages(self) -> None:
-        catalog = load_prompt_catalog()
-        spec = catalog[PromptKey.FLUID_PROSE]
-        msgs = spec.to_langfuse_chat_messages()
-        assert len(msgs) == 2
-        assert msgs[0] == {"role": "system", "content": spec.system_prompt}
-        assert msgs[1] == {"role": "user", "content": spec.user_prompt}
+    def test_load_catalog_rejects_skill_placeholder_mismatch(self, tmp_path: Path) -> None:
+        """Verify ADR-076 fail-fast bijection between manifest skills and {{skill_block}}."""
+        bundled = load_prompt_catalog()
+        prompts_dir = tmp_path / "prompts"
+        prompts_dir.mkdir()
+        manifest: dict[str, dict[str, object]] = {}
+        for key, spec in bundled.items():
+            key_dir = prompts_dir / key.value
+            key_dir.mkdir()
+            (key_dir / "system.md").write_text(spec.system_prompt, encoding="utf-8")
+            (key_dir / "user.md").write_text(spec.user_prompt, encoding="utf-8")
+            manifest[key.value] = {
+                "description": spec.description,
+                "type": "chat",
+                "skills": list(spec.skills),
+            }
+
+        # 1) Non-empty skills without placeholder -> error
+        bad_skills = {**manifest, "judge_fluid_prose": {**manifest["judge_fluid_prose"], "skills": ["cresmo-fluid-prose"]}}
+        bad_file = tmp_path / "prompts.json"
+        bad_file.write_text(json.dumps(bad_skills), encoding="utf-8")
+        with pytest.raises(PromptCatalogError, match="declares skills"):
+            load_prompt_catalog(bad_file)
+
+        # 2) {{skill_block}} present with empty skills -> error
+        no_skills = {**manifest, "fluid_prose": {**manifest["fluid_prose"], "skills": []}}
+        bad_file.write_text(json.dumps(no_skills), encoding="utf-8")
+        with pytest.raises(PromptCatalogError, match="declares empty skills list"):
+            load_prompt_catalog(bad_file)

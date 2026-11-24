@@ -203,9 +203,5 @@ class StageFactory:
 
         return stage_config
 
-    # SOTA DX: Direct callable interface and aliases
-    __call__ = build_stage
-    create_stage = build_stage
 
-
-__all__ = ["StageDefinition", "StageFactory"]
+__all__ = ["StageFactory"]

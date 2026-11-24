@@ -16,7 +16,7 @@ import pytest
 
 from cresmo.application.ports import NoOpProcessRuntimePort
 from cresmo.application.services.preflight import PreflightResult
-from cresmo.application.use_cases.discovery import BatchDiscoveryQuery, BatchSource
+from cresmo.application.use_cases.discovery.models import BatchDiscoveryQuery, BatchSource
 from cresmo.application.use_cases.run_synthesis import (
     BatchItemEvent,
     BatchItemEventKind,
@@ -239,7 +239,6 @@ class TestRunSynthesisUseCase:
             BatchItemEvent(
                 kind=BatchItemEventKind.MASTER_WARNING,
                 message="Warning: Master consolidation failed: Disk full",
-                content_id="dQw4w9WgXcQ",
             )
         ]
 
@@ -353,35 +352,22 @@ class TestRunSynthesisUseCase:
             BatchItemEvent(
                 kind=BatchItemEventKind.SKIPPED_ARTIFACT,
                 message="[1/5] Dry-run skipped artifact: [_canal.md]",
-                item_prefix="[1/5]",
-                target=str(artifact_file),
             ),
             BatchItemEvent(
                 kind=BatchItemEventKind.DRY_RUN_TEXT,
                 message="[2/5] Dry-run text: [lecture_01] (2048 bytes)",
-                item_prefix="[2/5]",
-                content_id="lecture_01",
-                target=str(valid_file_1),
             ),
             BatchItemEvent(
                 kind=BatchItemEventKind.DRY_RUN_TEXT,
                 message="[3/5] Dry-run text: [lecture_02] (4096 bytes)",
-                item_prefix="[3/5]",
-                content_id="lecture_02",
-                target=str(valid_file_2),
             ),
             BatchItemEvent(
                 kind=BatchItemEventKind.DRY_RUN_URL,
                 message=f"[4/5] Dry-run ingested: [dQw4w9WgXcQ] ({len('transcript body')} chars)",
-                item_prefix="[4/5]",
-                content_id="dQw4w9WgXcQ",
-                target=ok_url,
             ),
             BatchItemEvent(
                 kind=BatchItemEventKind.DRY_RUN_FAILED,
                 message=f"[5/5] Ingestion failed for: {missing_url}",
-                item_prefix="[5/5]",
-                target=missing_url,
             ),
         ]
 
@@ -489,9 +475,6 @@ class TestRunSynthesisUseCase:
         assert outcome.skipped == 2
         assert outcome.failed == 4
         assert outcome.total_items == 8
-        assert outcome.aborted_by_quota is False
-        assert outcome.master_parts_generated == 1
-        assert outcome.master_channels_count == 1
         assert outcome.manifest_display == "data/playlist.txt"
         assert outcome.scan_raw is False
         assert outcome.batch_id is not None
@@ -551,8 +534,6 @@ class TestRunSynthesisUseCase:
             BatchItemEvent(
                 kind=BatchItemEventKind.SKIPPED_ARTIFACT,
                 message="[1] [SKIPPED] [_index.md] Ignored internal Cresmo artifact or system index.",
-                item_prefix="[1]",
-                target=artifact.target,
             ),
             BatchItemEvent(
                 kind=BatchItemEventKind.COMPLETED,
@@ -560,9 +541,6 @@ class TestRunSynthesisUseCase:
                     "[2] [DONE] [talk_01]: 1 atomic notes synthesized, "
                     "0 MOCs reconciled, 0 duplicate clusters unified."
                 ),
-                item_prefix="[2]",
-                content_id="talk_01",
-                target=text_ok_1.target,
             ),
             BatchItemEvent(
                 kind=BatchItemEventKind.COMPLETED,
@@ -570,41 +548,26 @@ class TestRunSynthesisUseCase:
                     "[3] [DONE] [talk_02]: 2 atomic notes synthesized, "
                     "1 MOCs reconciled, 2 duplicate clusters unified."
                 ),
-                item_prefix="[3]",
-                content_id="talk_02",
-                target=text_ok_2.target,
             ),
             BatchItemEvent(
                 kind=BatchItemEventKind.SKIPPED_IDEMPOTENT,
                 message="[4] [SKIPPED] [vid11111111] Already processed in ledger.",
-                item_prefix="[4]",
-                content_id="vid11111111",
-                target=vid_skip.target,
             ),
             BatchItemEvent(
                 kind=BatchItemEventKind.ITEM_RATE_LIMITED,
                 message=f"[5] [RATE LIMIT] {vid_rate.target}: HTTP 429 transient",
-                item_prefix="[5]",
-                target=vid_rate.target,
             ),
             BatchItemEvent(
                 kind=BatchItemEventKind.ITEM_NETWORK_ERROR,
                 message=f"[6] [NETWORK ERROR] {vid_net.target}: Socket reset",
-                item_prefix="[6]",
-                target=vid_net.target,
             ),
             BatchItemEvent(
                 kind=BatchItemEventKind.ITEM_FAILED,
                 message=f"[7] [FAILED] {vid_err.target}: Boom",
-                item_prefix="[7]",
-                target=vid_err.target,
             ),
             BatchItemEvent(
                 kind=BatchItemEventKind.ITEM_FAILED,
                 message=f"[8] [ERROR] {vid_fail_res.target}: Eval gate failed",
-                item_prefix="[8]",
-                content_id="vid55555555",
-                target=vid_fail_res.target,
             ),
             BatchItemEvent(
                 kind=BatchItemEventKind.MASTER_CONSOLIDATED,
@@ -618,7 +581,7 @@ class TestRunSynthesisUseCase:
         pipeline.metrics_port.set_gauge.assert_called_with(
             "cresmo_process_resident_memory_bytes",
             64_000_000.0,
-            labels={"role": "worker"},
+            labels={"role": "cli"},
         )
         pipeline.metrics_port.increment_counter.assert_called_with(
             "cresmo_gc_collections_total",
@@ -651,11 +614,8 @@ class TestRunSynthesisUseCase:
 
         assert outcome.status is RunExitStatus.RATE_LIMITED
         assert outcome.mode == "batch"
-        assert outcome.aborted_by_quota is True
         assert outcome.failed == 2
         assert outcome.total_items == 2
-        assert outcome.master_parts_generated == 0
-        assert outcome.master_channels_count == 0
         assert outcome.manifest_display == "data/playlist.txt"
         assert pipeline.run_for_video.call_count == 2
         concat_master.execute_all.assert_not_called()
@@ -666,8 +626,6 @@ class TestRunSynthesisUseCase:
                 "All keys cooling down\n"
                 "Halting batch processing immediately (fail-fast cooldown)."
             ),
-            item_prefix="[2/3]",
-            target="https://youtube.com/watch?v=vid22222222",
         )
 
     def test_batch_run_empty_and_master_consolidation_failure(self, tmp_path: Path) -> None:
@@ -714,8 +672,6 @@ class TestRunSynthesisUseCase:
         assert outcome.status is RunExitStatus.SUCCESS
         assert outcome.mode == "batch"
         assert outcome.scan_raw is True
-        assert outcome.master_parts_generated == 0
-        assert outcome.master_channels_count == 0
         assert outcome.manifest_display == str(batch_manifest)
         assert events == [
             BatchItemEvent(
@@ -724,9 +680,6 @@ class TestRunSynthesisUseCase:
                     "[1/1] [DONE] [vid11111111]: 0 atomic notes synthesized, "
                     "0 MOCs reconciled, 0 duplicate clusters unified."
                 ),
-                item_prefix="[1/1]",
-                content_id="vid11111111",
-                target="https://youtube.com/watch?v=vid11111111",
             ),
             BatchItemEvent(
                 kind=BatchItemEventKind.MASTER_WARNING,

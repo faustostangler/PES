@@ -11,7 +11,9 @@ from pathlib import Path
 from unittest.mock import patch
 
 from cresmo.application.ports import NoOpProcessRuntimePort
-from cresmo.infrastructure.adapters.system import SystemProcessRuntimeAdapter
+from cresmo.infrastructure.adapters.system.process_runtime_adapter import (
+    SystemProcessRuntimeAdapter,
+)
 
 
 def test_noop_process_runtime_port_returns_deterministic_zeros(tmp_path: Path) -> None:

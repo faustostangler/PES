@@ -92,14 +92,14 @@ def is_transient_cluster_error(exc: BaseException) -> bool:
 
 
 def log_gemini_retry_attempt(retry_state: RetryCallState) -> None:
-    """Emit structured warning before sleeping between Gemini cluster retry attempts."""
+    """Emit structured debug log before sleeping between Gemini cluster retry attempts."""
     exc = (
         retry_state.outcome.exception()
         if retry_state.outcome is not None and retry_state.outcome.failed
         else None
     )
     sleep_seconds = retry_state.next_action.sleep if retry_state.next_action is not None else 0.0
-    logger.warning(
+    logger.debug(
         "[GeminiRetry] Attempt %d failed (%s). Retrying in %.1fs...",
         retry_state.attempt_number,
         exc,
@@ -176,7 +176,7 @@ def resolve_effective_thinking_level(
             f"Unsupported thinking_level '{thinking_level}'. Expected one of {GEMINI_THINKING_LEVELS}."
         )
 
-    normalized_model = model.removeprefix("gemini-").strip().lower()
+    normalized_model = model.removeprefix("gemini:").strip().lower()
 
     if normalized_model.startswith("gemma-4"):
         return "minimal" if level in ("minimal", "low") else "high"

@@ -89,8 +89,6 @@ def _extract_prompt_messages(
             continue
 
         content = str(raw_content)
-        for key, value in kwargs.items():
-            content = content.replace(f"{{{key}}}", str(value))
 
         if raw_role == "system":
             if system_prompt:
@@ -142,11 +140,6 @@ class LangfusePromptProvider(PromptProviderPort):
         self._client = langfuse_client
         self._fallback = fallback_provider
         self._label = label
-        self._last_prompt_versions: dict[str, Any] = {}
-
-    def get_last_prompt_version(self, prompt_name: str) -> Any | None:
-        """Return the last resolved version for a given prompt identifier."""
-        return self._last_prompt_versions.get(prompt_name)
 
     def _resolve_chat_prompt(
         self,
@@ -181,8 +174,6 @@ class LangfusePromptProvider(PromptProviderPort):
                 label=self._label,
                 type="chat",
             )
-            if hasattr(prompt, "version"):
-                self._last_prompt_versions[prompt_name] = prompt.version
 
             if hasattr(prompt, "compile"):
                 compiled_messages = prompt.compile(**kwargs)

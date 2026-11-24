@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
-from typing import Annotated, Any
+from typing import Annotated
 
 import typer
 
@@ -62,7 +62,6 @@ def export_cookies(
 ) -> None:
     """Extract YouTube session cookies from browser into target Netscape file."""
     code = handle_export_cookies(
-        None,
         browser=browser,
         output=output,
         require_auth=require_auth,
@@ -73,7 +72,6 @@ def export_cookies(
 
 
 def handle_export_cookies(
-    args: Any = None,
     browser: str = "firefox",
     output: Path | None = None,
     require_auth: bool = False,
@@ -82,7 +80,6 @@ def handle_export_cookies(
     """Extract YouTube session cookies from browser into target Netscape file.
 
     Args:
-        args: Parsed CLI argument namespace or None.
         browser: Browser name string.
         output: Destination output Path or None.
         require_auth: Strictly require authenticated cookies flag.
@@ -91,15 +88,10 @@ def handle_export_cookies(
     Returns:
         Process exit code integer.
     """
-    browser = getattr(args, "browser", browser) if args is not None else browser
-    output = getattr(args, "output", output) if args is not None else output
-    require_auth = getattr(args, "require_auth", require_auth) if args is not None else require_auth
-    force = getattr(args, "force", force) if args is not None else force
-
     try:
         settings = resolve_shared_settings()
         resolved_output = (
-            output or settings.ingestion.cookies.file or (settings.storage.data_dir / "cookies.txt")
+            output or settings.ingestion.cookies_file or (settings.storage.data_dir / "cookies.txt")
         )
         output_file = Path(resolved_output).resolve()
 

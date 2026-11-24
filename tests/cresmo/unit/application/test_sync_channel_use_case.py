@@ -11,7 +11,8 @@ from unittest.mock import ANY, MagicMock
 
 import pytest
 
-from cresmo.application.pipeline import CresmoPipeline, PipelineResult
+from cresmo.application.pipeline.coordinator import CresmoPipeline
+from cresmo.application.pipeline.models import PipelineResult
 from cresmo.application.ports import LedgerRepositoryPort, MediaIngestionPort
 from cresmo.application.services.preflight import PreflightHealthChecker, PreflightResult
 from cresmo.application.use_cases.sync_channel import SyncChannelUseCase

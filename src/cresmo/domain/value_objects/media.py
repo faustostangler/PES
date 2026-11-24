@@ -9,37 +9,31 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import date, datetime
-from enum import Enum
+from enum import StrEnum
 
 from cresmo.domain.exceptions import DomainValidationError
 from cresmo.domain.value_objects.identity import (
-    Channel,
     ChannelId,
     ChannelName,
-    Content,
     ContentId,
 )
 
 
-class PipelineStatus(str, Enum):
+class PipelineStatus(StrEnum):
     """Canonical execution and idempotency status for media items in the pipeline.
 
     Members:
         COMPLETED: Ingestion and all synthesis stages finished successfully.
-        SKIPPED_IDEMPOTENT: ContentId already processed in ledger; execution bypassed.
         FAILED_INGESTION: Audio download or transcript crawling failed.
         FAILED_TRANSFORMATION: LLM synthesis or schema extraction failed.
         RUNNING: Currently executing active pipeline stages.
-        PAUSED_BUDGET: Token or API rate budget cap reached.
         QUARANTINED: Quality gate evaluation failed after maximum retries; item quarantined.
     """
 
     COMPLETED = "COMPLETED"
-    SKIPPED_IDEMPOTENT = "SKIPPED_IDEMPOTENT"
     FAILED_INGESTION = "FAILED_INGESTION"
     FAILED_TRANSFORMATION = "FAILED_TRANSFORMATION"
     RUNNING = "RUNNING"
-    PAUSED_BUDGET = "PAUSED_BUDGET"
     QUARANTINED = "QUARANTINED"
 
 
@@ -94,11 +88,6 @@ class MediaProvenance:
                 parsed_date = None
         return cls(url=url, description=description, publication_date=parsed_date)
 
-    @classmethod
-    def empty(cls) -> MediaProvenance:
-        """Default empty provenance for synthetic or unit testing scenarios."""
-        return cls()
-
 
 @dataclass(frozen=True)
 class DiscoveredMediaItem:
@@ -135,27 +124,6 @@ class DiscoveredMediaItem:
         object.__setattr__(self, "media_url", cleaned_media_url)
         object.__setattr__(self, "channel_name", resolved_channel_name)
         object.__setattr__(self, "content_id", resolved_content_id)
-
-    @property
-    def channel(self) -> Channel:
-        """Composite Channel Value Object."""
-        return Channel.from_name(name=self.channel_name)
-
-    @property
-    def provenance(self) -> MediaProvenance:
-        """Composite MediaProvenance Value Object."""
-        return MediaProvenance(
-            url=self.media_url,
-            publication_date=self.published_at.date() if self.published_at else None,
-        )
-
-    @property
-    def content(self) -> Content:
-        """Composite Content Value Object."""
-        return Content.create(
-            id=self.content_id,
-            title=self.title,
-        )
 
 
 CHANNEL_TAB_ENDINGS: tuple[str, ...] = ("/videos", "/shorts", "/streams", "/playlists")

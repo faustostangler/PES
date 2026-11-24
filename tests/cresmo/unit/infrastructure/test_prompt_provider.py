@@ -8,11 +8,8 @@ from pathlib import Path
 import pytest
 
 from cresmo.domain.value_objects import ChannelName, PromptKey
-from cresmo.infrastructure.adapters.prompts import (
-    JsonPromptProvider,
-    PromptCatalogError,
-    load_prompt_catalog,
-)
+from cresmo.infrastructure.adapters.prompts.catalog import PromptCatalogError, load_prompt_catalog
+from cresmo.infrastructure.adapters.prompts.json_provider import JsonPromptProvider
 
 
 def _write_custom_prompt_bundle(
@@ -55,7 +52,6 @@ class TestJsonPromptProvider:
 
     def test_default_prompt_provider_loads_bundled_manifest_and_markdown(self) -> None:
         provider = JsonPromptProvider()
-        assert len(provider.templates) == len(PromptKey)
         for key in (
             "gap_filler",
             "long_expander",
@@ -67,7 +63,9 @@ class TestJsonPromptProvider:
             "judge_long_expander",
             "judge_wide_expander",
         ):
-            assert key in provider.templates
+            sys_tpl, user_tpl = provider.get_chat_prompt_template(key)
+            assert sys_tpl
+            assert user_tpl
 
     def test_judge_gap_filler_prompt_formatting(self) -> None:
         provider = JsonPromptProvider()
@@ -324,7 +322,7 @@ class TestJsonPromptProvider:
         )
         assert provider.prompts_path == manifest_file
         assert provider.skills_dir == skills_dir
-        assert provider.language == "en-US"
+        assert provider.default_language == "en-US"
         chat = provider.get_prompt(PromptKey.FLUID_PROSE, raw_text="Hello")
         assert chat.system_prompt == "Custom System Custom Skill Doc"
         assert chat.get_last_user_content() == "Custom User Hello"

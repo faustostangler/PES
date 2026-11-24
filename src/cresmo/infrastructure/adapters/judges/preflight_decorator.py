@@ -23,7 +23,6 @@ from cresmo.domain.value_objects.quality import (
     EvaluationContext,
     JudgeCriterion,
     JudgeEvaluation,
-    VerdictType,
 )
 
 logger = structlog.get_logger(__name__)
@@ -71,7 +70,6 @@ class MechanicalPreflightJudgeDecorator(LlmJudgePort):
                     score=0.0,
                     passed=False,
                     reasoning=f"Mechanical invariants failed: {violations_msg}",
-                    verdict_type=VerdictType.NOUL,
                     improvement_suggestion=f"Fix syntax errors: {violations_msg}",
                 )
                 return JudgeEvaluation(

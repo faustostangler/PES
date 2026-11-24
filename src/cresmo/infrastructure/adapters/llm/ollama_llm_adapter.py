@@ -1,6 +1,6 @@
 """Local Ollama LLM Infrastructure Adapter.
 
-Implements LLMTransformationPort using local Ollama REST API endpoints (/api/generate, /api/tags)
+Implements LLMTransformationPort using local Ollama REST API endpoints (/api/chat, /api/generate, /api/ps)
 without external dependencies, providing zero-quota offline conceptual synthesis with actionable
 diagnostics when the local daemon is not running.
 
@@ -97,23 +97,6 @@ class OllamaLLMAdapter(LLMTransformationPort):
         """Return True if model weights are confirmed to be loaded in memory."""
         with self._warmup_lock:
             return self._is_warmed_up
-
-    def is_available(self) -> bool:
-        """Check whether local Ollama daemon is reachable and responding.
-
-        Returns:
-            True if the /api/tags endpoint responds with HTTP 200 within 2 seconds; False otherwise.
-        """
-        endpoint = f"{self.base_url}/api/tags"
-        req = urllib.request.Request(endpoint, method="GET")
-        try:
-            with urllib.request.urlopen(
-                req, timeout=DEFAULT_HEALTHCHECK_TIMEOUT_SECONDS
-            ) as response:
-                return bool(response.status == HTTPStatus.OK)
-        except (urllib.error.URLError, TimeoutError, OSError) as exc:
-            logger.debug("[OllamaLLMAdapter] is_available probe failed: %s", exc)
-            return False
 
     def _probe_gpu_status(self) -> None:
         """Probe /api/ps to detect CPU-only inference and emit an actionable WARNING.
@@ -278,7 +261,7 @@ class OllamaLLMAdapter(LLMTransformationPort):
         with self._warmup_lock:
             self._dispatch_warmup_locked(timeout_seconds)
 
-    def wait_for_warmup(self, timeout_seconds: float | None = None) -> bool:
+    def _wait_for_warmup(self, timeout_seconds: float | None = None) -> bool:
         """Wait at the rendezvous barrier until model warmup completes.
 
         If background warmup is currently in progress, blocks until weights are in VRAM.
@@ -322,7 +305,6 @@ class OllamaLLMAdapter(LLMTransformationPort):
         prompt: ChatPrompt,
         temperature: float | None = None,
         *,
-        thinking_level: str | None = None,
         trace_id: str | None = None,
         session_id: str | None = None,
         user_id: str | None = None,
@@ -332,7 +314,6 @@ class OllamaLLMAdapter(LLMTransformationPort):
         Args:
             prompt: Domain ChatPrompt containing sequential messages and optional system instruction.
             temperature: Sampling temperature override. Defaults to self.default_temperature.
-            thinking_level: Ignored by local Ollama provider (retained for port LSP parity).
             trace_id: Optional trace ID (e.g. ContentId).
             session_id: Pipeline session identifier.
             user_id: Operator or channel identifier.
@@ -343,12 +324,11 @@ class OllamaLLMAdapter(LLMTransformationPort):
         Raises:
             LLMInfrastructureError: If Ollama daemon is unreachable or returns HTTP error.
         """
-        _ = thinking_level
         span_name = resolve_llm_generation_span_name(fallback=False)
 
         with self._telemetry.start_span(span_name, kind=SpanKind.GENERATION) as span:
             if not self._is_warmed_up:
-                self.wait_for_warmup()
+                self._wait_for_warmup()
 
             effective_temperature = (
                 temperature if temperature is not None else self.default_temperature
@@ -382,10 +362,9 @@ class OllamaLLMAdapter(LLMTransformationPort):
                     raw_body = response.read().decode("utf-8")
                     response_json = json.loads(raw_body)
                     msg_obj = response_json.get("message")
-                    if isinstance(msg_obj, dict):
-                        generated_text = str(msg_obj.get("content", "")).strip()
-                    else:
-                        generated_text = str(response_json.get("response", "")).strip()
+                    generated_text = (
+                        str(msg_obj.get("content", "")).strip() if isinstance(msg_obj, dict) else ""
+                    )
 
                     total_prompt_words = sum(len(m.content.split()) for m in prompt.messages)
                     prompt_tokens = response_json.get("prompt_eval_count") or total_prompt_words

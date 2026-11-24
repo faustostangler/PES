@@ -105,21 +105,13 @@ class LakeScannerService:
             raw_chan = meta.get("channel") or meta.get("channel_id")
             video_id = meta.get("video_id") or priority_file.stem
 
-            matches = True
-            if not criteria.is_empty():
-                if criteria.video_ids and not matches_video_target(criteria, video_id):
-                    matches = False
-                if criteria.channels and (
-                    not raw_chan or not matches_channel_target(criteria, raw_chan)
-                ):
-                    matches = False
-                if criteria.categories and (
-                    not raw_chan
-                    or not matches_category_target(criteria, raw_chan, taxonomy_port=taxonomy_port)
-                ):
-                    matches = False
-
-            if matches:
+            if _matches_video_entry(
+                criteria,
+                None,
+                video_id,
+                raw_chan,
+                taxonomy_port=taxonomy_port,
+            ):
                 resolved_pf = str(priority_file.absolute())
                 acc.add_source(kind=SourceModality.FILE, target=resolved_pf)
 
@@ -225,28 +217,18 @@ class LakeScannerService:
                 local_video_to_channel[canonical_vid] = chan_url
                 local_video_to_channel[stem] = chan_url
 
-            if scan_raw and not already_seen:
-                matches = True
-                if not criteria.is_empty():
-                    if criteria.video_ids and not matches_video_target(criteria, canonical_vid):
-                        matches = False
-                    if criteria.channels and (
-                        not chan_url or not matches_channel_target(criteria, chan_url)
-                    ):
-                        matches = False
-                    if criteria.categories and (
-                        not chan_url
-                        or not matches_category_target(
-                            criteria, chan_url, taxonomy_port=taxonomy_port
-                        )
-                    ):
-                        matches = False
-                if matches:
-                    resolved_rf = str(rf.absolute())
-                    if not any(s.target == resolved_rf for s in acc.sources):
-                        acc.sources.append(
-                            BatchSource(kind=SourceModality.FILE, target=resolved_rf)
-                        )
+            if scan_raw and not already_seen and _matches_video_entry(
+                criteria,
+                None,
+                canonical_vid,
+                chan_url,
+                taxonomy_port=taxonomy_port,
+            ):
+                resolved_rf = str(rf.absolute())
+                if not any(s.target == resolved_rf for s in acc.sources):
+                    acc.sources.append(
+                        BatchSource(kind=SourceModality.FILE, target=resolved_rf)
+                    )
 
         return local_video_to_channel
 

@@ -9,131 +9,60 @@ Conforms to:
 
 from __future__ import annotations
 
-from collections.abc import Callable, Generator, Sequence
+from collections.abc import Generator
 from contextlib import contextmanager
-from typing import TYPE_CHECKING, Any, TypeVar, cast
+from typing import Any, TypeVar, cast
 
 import structlog
 
 from cresmo.application.pipeline.context import PipelineExecutionContext
 from cresmo.application.pipeline.models import PipelineDependencies
 from cresmo.application.pipeline.quarantine import record_stage_quarantine
-from cresmo.application.pipeline.stage_descriptor import StageConfig
+from cresmo.application.pipeline.stage_descriptor import StageConfig, extract_stage_source_text
 from cresmo.application.pipeline.stage_execution import (
     evaluate_stage_candidate,
     generate_stage_candidate,
 )
 from cresmo.application.pipeline.stage_telemetry import (
-    as_str,
     measure_stage_execution,
-    record_duration_metric,
-    record_error_metric,
-    record_evaluation_metric,
-    record_session_completion_telemetry,
     resolve_active_trace_id,
 )
 from cresmo.application.ports import (
-    CritiqueSynthesizerPort,
-    LedgerRepositoryPort,
-    LlmJudgePort,
     LLMTransformationPort,
-    MetricsPort,
+    MetricName,
     PromptProviderPort,
-    TelemetryPort,
     TelemetrySpan,
-)
-from cresmo.application.use_cases import DeduplicationReport
-from cresmo.domain.entities import (
-    AtomicNote,
-    MapOfContent,
-    PipelineSessionId,
 )
 from cresmo.domain.exceptions import DomainValidationError
 from cresmo.domain.value_objects import (
-    AtomicEntityInventory,
     CandidateText,
-    Channel,
-    ChannelId,
-    ChannelName,
-    Content,
-    ContentId,
     JudgeEvaluation,
 )
 
-if TYPE_CHECKING:
-    from cresmo.application.pipeline.stage_factory import StageFactory
-
 logger = structlog.get_logger(__name__)
 
-__all__ = ["PipelineStageRunner", "_as_str"]
-_as_str = as_str
-_StageRet = TypeVar("_StageRet")
+__all__ = ["PipelineStageRunner"]
 _TSource = TypeVar("_TSource")
 _TOutput = TypeVar("_TOutput")
-
-
-def _extract_stage_telemetry_text(obj: Any, *, fallback: str | None = None) -> str:
-    """Extract string text for stage I/O telemetry without coercing non-string .text fields."""
-    nested_content = getattr(obj, "content", None)
-    if isinstance(nested_content, Content):
-        return nested_content.text
-    if hasattr(obj, "text"):
-        raw_text = obj.text
-        if raw_text is not None:
-            return raw_text if isinstance(raw_text, str) else ""
-    if fallback is not None:
-        return fallback
-    return str(obj)
 
 
 class PipelineStageRunner:
     """Encapsulates execution of discrete pipeline stages with telemetry spans, metrics, and error handling."""
 
-    def __init__(
-        self,
-        dependencies: PipelineDependencies | None = None,
-        *,
-        telemetry_port: TelemetryPort | None = None,
-        metrics_port: MetricsPort | None = None,
-        llm_judge: LlmJudgePort | None = None,
-        judge_blocking: bool = False,
-        judge_max_attempts: int = 2,
-        prompt_provider: PromptProviderPort | None = None,
-        llm_transformation_port: LLMTransformationPort | None = None,
-        stage_factory: StageFactory | None = None,
-        critique_synthesizer: CritiqueSynthesizerPort | None = None,
-        ledger_port: LedgerRepositoryPort | None = None,
-    ) -> None:
-        """Initialize PipelineStageRunner via PipelineDependencies DTO or keyword arguments."""
-        if dependencies is not None:
-            deps = dependencies
-        else:
-            if telemetry_port is None or metrics_port is None:
-                raise ValueError("Both telemetry_port and metrics_port must be provided.")
-            deps = PipelineDependencies(
-                telemetry_port=telemetry_port,
-                metrics_port=metrics_port,
-                llm_judge=llm_judge,
-                judge_blocking=judge_blocking,
-                judge_max_attempts=judge_max_attempts,
-                prompt_provider=prompt_provider,
-                llm_transformation_port=llm_transformation_port,
-                stage_factory=stage_factory,
-                critique_synthesizer=critique_synthesizer,
-                ledger_port=ledger_port,
-            )
-        if deps.telemetry_port is None or deps.metrics_port is None:
+    def __init__(self, dependencies: PipelineDependencies) -> None:
+        """Initialize PipelineStageRunner via PipelineDependencies DTO."""
+        if dependencies.telemetry_port is None or dependencies.metrics_port is None:
             raise ValueError("Both telemetry_port and metrics_port must be provided.")
-        self.telemetry_port = deps.telemetry_port
-        self.metrics_port = deps.metrics_port
-        self.llm_judge = deps.llm_judge
-        self.judge_blocking = deps.judge_blocking
-        self.judge_max_attempts = deps.judge_max_attempts
-        self.prompt_provider = deps.prompt_provider
-        self.llm_transformation_port = deps.llm_transformation_port
-        self.stage_factory = deps.stage_factory
-        self.critique_synthesizer = deps.critique_synthesizer
-        self.ledger_port = deps.ledger_port
+        self.telemetry_port = dependencies.telemetry_port
+        self.metrics_port = dependencies.metrics_port
+        self.llm_judge = dependencies.llm_judge
+        self.judge_blocking = dependencies.judge_blocking
+        self.judge_max_attempts = dependencies.judge_max_attempts
+        self.prompt_provider = dependencies.prompt_provider
+        self.llm_transformation_port = dependencies.llm_transformation_port
+        self.stage_factory = dependencies.stage_factory
+        self.critique_synthesizer = dependencies.critique_synthesizer
+        self.ledger_port = dependencies.ledger_port
 
     def warmup(self, timeout_seconds: float | None = None) -> None:
         """Asynchronously trigger warmup for the stage runner LLM transformation port."""
@@ -175,7 +104,7 @@ class PipelineStageRunner:
             source_text = (
                 stage_config.eval_spec.extract_source_text(source)
                 if stage_config.eval_spec
-                else _extract_stage_telemetry_text(source)
+                else extract_stage_source_text(source)
             )
             source_words = len(source_text.split()) if isinstance(source_text, str) else 0
             stage_span.set_input(
@@ -221,7 +150,7 @@ class PipelineStageRunner:
                 critique = self._synthesize_critique(evaluation, stage_name)
                 if attempt < effective_max_attempts:
                     self.metrics_port.increment_counter(
-                        "cresmo_judge_retries_total", 1.0, labels={"stage": stage_name}
+                        MetricName.JUDGE_RETRY_COUNT, 1.0, labels={"stage": stage_name}
                     )
 
             if (
@@ -245,7 +174,7 @@ class PipelineStageRunner:
                 raise DomainValidationError(f"Stage '{stage_name}' produced no candidate text.")
 
             output_object: _TOutput = stage_config.post_process(candidate, source)
-            output_text = _extract_stage_telemetry_text(output_object, fallback=candidate.text)
+            output_text = extract_stage_source_text(output_object) or candidate.text
             output_words = len(output_text.split())
             stage_span.set_output(
                 {
@@ -310,84 +239,18 @@ class PipelineStageRunner:
             attempt=attempt,
         )
 
-    def run_stage(
-        self,
-        stage_name: str,
-        fn: Callable[[], _StageRet],
-        *,
-        channel: Channel | None = None,
-        content: Content | None = None,
-        channel_name: ChannelName | str | None = None,
-        content_id: ContentId | str | None = None,
-        channel_id: ChannelId | str | None = None,
-        content_title: str = "",
-        fatal: bool = True,
-        fallback: _StageRet | Callable[[], _StageRet] | None = None,
-    ) -> _StageRet | None:
-        """Execute a pipeline stage wrapped with telemetry spans, metrics, and error handling."""
-        resolved_channel = channel or Channel(name=as_str(channel_name) or "unknown", id=channel_id)
-        resolved_content_id = (
-            content.id
-            if content is not None
-            else (ContentId.from_string(content_id) if content_id else ContentId("unknown"))
-        )
-        resolved_content = content or Content(id=resolved_content_id, title=content_title)
-        try:
-            with self._measure_stage(
-                stage_name=stage_name,
-                channel=resolved_channel,
-                content=resolved_content,
-            ):
-                return fn()
-        except Exception as exc:
-            if fatal:
-                raise
-            logger.warning(
-                "[Pipeline] %s skipped for %s: %s", stage_name, resolved_content.id.value, exc
-            )
-            return fallback() if callable(fallback) else fallback
-
-    def record_session_completion(
-        self,
-        session_id: PipelineSessionId | str,
-        content_id: ContentId | str,
-        channel_name: ChannelName | str,
-        synthesized_notes: Sequence[AtomicNote],
-        inventory: AtomicEntityInventory,
-        mocs: Sequence[MapOfContent],
-        dedup_report: DeduplicationReport,
-        channel_id: ChannelId | str | None = None,
-    ) -> None:
-        """Record completed atomic_notes metrics and session coherence evaluation telemetry."""
-        record_session_completion_telemetry(
-            self.metrics_port,
-            self.telemetry_port,
-            session_id=session_id,
-            content_id=content_id,
-            channel_name=channel_name,
-            synthesized_notes=synthesized_notes,
-            inventory=inventory,
-            mocs=mocs,
-            dedup_report=dedup_report,
-            channel_id=channel_id,
-        )
-
     @contextmanager
     def _measure_stage(
         self,
         *,
         stage_name: str,
-        context: PipelineExecutionContext | None = None,
-        channel: Channel | None = None,
-        content: Content | None = None,
+        context: PipelineExecutionContext,
     ) -> Generator[TelemetrySpan]:
         with measure_stage_execution(
             self.telemetry_port,
             self.metrics_port,
             stage_name=stage_name,
             context=context,
-            channel=channel,
-            content=content,
         ) as stage_span:
             yield stage_span
 
@@ -429,27 +292,15 @@ class PipelineStageRunner:
             return cast(StageConfig[_TSource, _TOutput], built_stage)
         return stage
 
-    _resolve_stage_descriptor = _resolve_stage_config
-
     def _get_active_trace_id(
         self,
-        channel: Channel | ChannelId | ChannelName | str | None = None,
-        content: Content | ContentId | str | None = None,
         *,
-        context: PipelineExecutionContext | None = None,
-        channel_id: ChannelId | str | None = None,
-        channel_name: ChannelName | str | None = None,
-        content_id: ContentId | str | None = None,
+        context: PipelineExecutionContext,
         span: TelemetrySpan | None = None,
     ) -> str:
         """Resolve active trace ID from TelemetryPort or build deterministic fallback."""
         return resolve_active_trace_id(
-            channel=channel,
-            content=content,
-            context=context,
-            channel_id=channel_id,
-            channel_name=channel_name,
-            content_id=content_id,
+            context,
             telemetry_port=self.telemetry_port,
             span=span,
         )
@@ -458,40 +309,3 @@ class PipelineStageRunner:
         if self.critique_synthesizer is not None:
             return self.critique_synthesizer.synthesize(evaluation, stage_name)
         return evaluation.extract_critique()
-
-    def _record_error_metric(
-        self,
-        exc: Exception,
-        stage_name: str,
-        channel: Channel,
-        content: Content,
-    ) -> None:
-        record_error_metric(
-            self.metrics_port,
-            exc=exc,
-            stage_name=stage_name,
-            channel=channel,
-            content=content,
-        )
-
-    def _record_duration_metric(
-        self,
-        elapsed: float,
-        stage_name: str,
-        channel: Channel,
-        content: Content,
-        status: str,
-    ) -> None:
-        record_duration_metric(
-            self.metrics_port,
-            elapsed=elapsed,
-            stage_name=stage_name,
-            channel=channel,
-            content=content,
-            status=status,
-        )
-
-    def _record_evaluation_metrics(self, stage_name: str, passed: bool, attempt: int) -> None:
-        record_evaluation_metric(
-            self.metrics_port, stage_name=stage_name, passed=passed, attempt=attempt
-        )

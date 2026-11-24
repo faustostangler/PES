@@ -7,6 +7,7 @@ Conforms to:
 
 from __future__ import annotations
 
+import re
 from pathlib import Path
 from typing import Final
 
@@ -16,7 +17,15 @@ MAX_CHANNEL_NAME_LENGTH: int = 120
 MAX_CHANNEL_ID_LENGTH: int = 64
 MIN_CHANNEL_ID_LENGTH: int = 2
 MIN_CANONICAL_CHANNEL_ID_LENGTH: int = 4
+MIN_CONTENT_ID_LENGTH: int = 1
+MAX_CONTENT_ID_LENGTH: int = 64
 MAX_NOTE_TITLE_LENGTH: int = 200
+
+TITLE_H1_PATTERN: Final[re.Pattern[str]] = re.compile(r"^\s*#\s+(.+)$", re.MULTILINE)
+EXTRA_INFO_HEADING_PATTERN: Final[re.Pattern[str]] = re.compile(
+    r"^\s*###\s+Extra\s+Info\s*$",
+    re.MULTILINE,
+)
 
 RESERVED_SYSTEM_FILENAMES: frozenset[str] = frozenset(
     {

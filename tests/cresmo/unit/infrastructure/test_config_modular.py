@@ -9,7 +9,6 @@ from pydantic import SecretStr, ValidationError
 
 import cresmo.infrastructure.config as cresmo_config
 from cresmo.infrastructure.config import (
-    CookieSettings,
     CresmoSettings,
     EmbeddingSettings,
     GeminiSettings,
@@ -69,10 +68,8 @@ class TestModularExports:
         assert cresmo_config.LANGFUSE_ENVIRONMENT_PATTERN == CATALOG_LANGFUSE_ENVIRONMENT_PATTERN
 
         expected = {
-            "CookieSettings",
             "CresmoSettings",
             "EmbeddingSettings",
-            "GapFillerJudgeSettings",
             "GeminiSettings",
             "IngestionSettings",
             "JudgeGeminiSettings",
@@ -187,7 +184,7 @@ class TestObservabilitySettings:
         assert obs.langfuse.prompt_label == "production"
         assert obs.langfuse.timeout_seconds == 30
         assert obs.prometheus.enabled is True
-        assert obs.prometheus.port == 9090
+        assert obs.prometheus.endpoint == "http://localhost:9090"
         assert obs.logging.level == "WARNING"
         assert obs.logging.format == "json"
         assert obs.runtime.pipeline_version.startswith("cresmo:v")
@@ -224,13 +221,11 @@ class TestStorageAndIngestionSettings:
 
         assert storage.raw_dir == data_dir / "raw"
         assert storage.fluid_dir == data_dir / "fluid_prose"
-        assert storage.gap_filler_dir == data_dir / "gap_filler"
         assert storage.enriched_dir == data_dir / "enriched"
         assert storage.master_dir == data_dir / "master"
         assert storage.index_path == vault_dir / "_index.json"
         assert storage.mocs_dir == vault_dir / "MOCs"
         assert storage.sqlite_ledger_path == data_dir / "cresmo_ledger.db"
-        assert storage.brain_csv_path == data_dir / "brain.csv"
         assert storage.playlist_path == data_dir / "playlist.txt"
         assert storage.playlist_priority_path == data_dir / "playlist-priority.txt"
         assert storage.priority_texts_dir == data_dir / "priority"
@@ -238,30 +233,25 @@ class TestStorageAndIngestionSettings:
     def test_worker_pool_frozen_multiples_and_overrides(self) -> None:
         default_workers = WorkerPoolSettings()
         assert default_workers.whisper == 1
-        assert default_workers.subtitle == 5
         assert default_workers.channel_discovery == 10
         assert default_workers.discovery_queue_maxsize == 50
 
         scaled = WorkerPoolSettings(whisper=3)
-        assert scaled.subtitle == 15
         assert scaled.channel_discovery == 30
 
-        explicit = WorkerPoolSettings(whisper=3, subtitle=7, channel_discovery=11)
-        assert explicit.subtitle == 7
+        explicit = WorkerPoolSettings(whisper=3, channel_discovery=11)
         assert explicit.channel_discovery == 11
 
         with pytest.raises(ValidationError):
-            scaled.subtitle = 99  # type: ignore[misc]
+            scaled.whisper = 99  # type: ignore[misc]
 
         with pytest.raises(ValidationError):
             WorkerPoolSettings.model_validate({"discovery_queue_maxsize": 0})
 
-    def test_cookies_settings_defaults(self) -> None:
-        cookies = CookieSettings()
-        assert cookies.browser == "firefox"
-        assert cookies.auto_extract is True
-        assert cookies.require_auth is False
-        assert cookies.file is None
+    def test_ingestion_cookies_file_default(self) -> None:
+        from cresmo.infrastructure.config import IngestionSettings
+
+        assert IngestionSettings().cookies_file is None
 
 
 class TestPipelineAndJudgeSettings:
@@ -272,7 +262,6 @@ class TestPipelineAndJudgeSettings:
         assert budgets.expansion_max_passes == 5
         assert budgets.long_expander_max_passes == 7
         assert budgets.raw_index_max_attempts == 2
-        assert budgets.inventory_max_attempts == 2
 
         for bad in (0, 11):
             with pytest.raises(ValidationError):
@@ -308,12 +297,9 @@ class TestPipelineAndJudgeSettings:
         assert judge.typesafe == TypeSafeSettings()
         assert judge.gemini == JudgeGeminiSettings()
         assert judge.provider == "gemini"
-        assert judge.fallback_provider == "ollama"
         assert judge.blocking is False
         assert judge.max_attempts == 2
         assert judge.pass_threshold == 0.9
-        assert judge.gap_filler.threshold == 0.9
-        assert sum(judge.gap_filler.weights.values()) == pytest.approx(1.0)
         assert judge.benchmark_models == (
             "gemini:gemini-3.5-flash-lite",
             "gemini:gemini-3.8-flash",
@@ -414,7 +400,6 @@ class TestNestedEnvLoadingAndSharedResolution:
         assert settings.judge.blocking is True
         assert settings.judge.max_attempts == 4
         assert settings.ingestion.workers.whisper == 2
-        assert settings.ingestion.workers.subtitle == 10
         assert settings.ingestion.workers.channel_discovery == 20
         assert settings.storage.data_dir == env_data_dir
         assert settings.storage.vault_dir == env_vault_dir

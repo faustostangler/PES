@@ -8,7 +8,6 @@ Conforms to:
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Final
 
 from cresmo.application.ports import ChannelTaxonomyPort
 from cresmo.domain.value_objects import (
@@ -18,8 +17,6 @@ from cresmo.domain.value_objects import (
     SyncFilterCriteria,
     is_processable_transcript_file,
 )
-
-_EXPECTED_FRONTMATTER_SPLIT_PARTS: Final[int] = 3
 
 
 def is_channel_or_playlist_feed(url: str) -> bool:

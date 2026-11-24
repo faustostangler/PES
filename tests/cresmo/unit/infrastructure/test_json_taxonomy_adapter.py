@@ -7,7 +7,7 @@ Conforms to:
 
 from __future__ import annotations
 
-from cresmo.infrastructure.adapters.taxonomy import JsonTaxonomyCatalogAdapter
+from cresmo.infrastructure.adapters.taxonomy.json_taxonomy_adapter import JsonTaxonomyCatalogAdapter
 
 
 class TestJsonTaxonomyCatalogAdapter:

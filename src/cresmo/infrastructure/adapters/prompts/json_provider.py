@@ -47,29 +47,15 @@ class JsonPromptProvider(PromptProviderPort):
 
         self.prompts_path = prompts_path
         self.skills_dir = skills_dir
-        self._prompts_path = prompts_path
-        self.language = resolved_lang
         self.default_language = resolved_lang
         self._skill_loader = skill_loader or SkillDocumentLoader(skills_dir=skills_dir)
         self._renderer = template_renderer or TemplateRenderer()
         self._catalog: PromptCatalog | None = None
-        self._templates: dict[str, dict[str, Any]] = {}
         self._ensure_loaded()
 
     def _ensure_loaded(self) -> None:
         if self._catalog is None:
-            self._catalog = load_prompt_catalog(path=self._prompts_path)
-            self._templates = {
-                spec.key.value: {
-                    "description": spec.description,
-                    "type": spec.prompt_type,
-                    "system_prompt": spec.system_prompt,
-                    "user_prompt": spec.user_prompt,
-                    "skills": list(spec.skills),
-                    "langfuse_slug": spec.langfuse_slug,
-                }
-                for spec in self._catalog.values()
-            }
+            self._catalog = load_prompt_catalog(path=self.prompts_path)
 
     @property
     def catalog(self) -> PromptCatalog:
@@ -77,12 +63,6 @@ class JsonPromptProvider(PromptProviderPort):
         self._ensure_loaded()
         assert self._catalog is not None
         return self._catalog
-
-    @property
-    def templates(self) -> dict[str, dict[str, Any]]:
-        """Dictionary view of loaded prompt templates keyed by canonical PromptKey value."""
-        self._ensure_loaded()
-        return self._templates
 
     def _resolve_spec(self, key: str | PromptKey) -> PromptSpec:
         return self.catalog[key]
@@ -95,13 +75,6 @@ class JsonPromptProvider(PromptProviderPort):
         replacements["description"] = spec.description
         replacements["language"] = self.default_language
         return replacements
-
-    def get_raw_prompt_template(self, key: str | PromptKey) -> str:
-        """Return raw concatenated system + user template with static skills/description resolved."""
-        system_tpl, user_tpl = self.get_chat_prompt_template(key)
-        if system_tpl and user_tpl:
-            return f"{system_tpl}\n\n{user_tpl}"
-        return system_tpl or user_tpl
 
     def get_chat_prompt_template(self, key: str | PromptKey) -> tuple[str, str]:
         """Return `(system_template, user_template)` with skills resolved and runtime Mustache intact.
@@ -136,7 +109,7 @@ class JsonPromptProvider(PromptProviderPort):
         )
         system_rendered = self._renderer.render(spec.system_prompt, variables)
         user_rendered = self._renderer.render(spec.user_prompt, variables)
-        return ChatPrompt.from_system_and_user(
-            system=system_rendered,
-            user=user_rendered,
+        return ChatPrompt.single_turn(
+            user_prompt=user_rendered,
+            system_prompt=system_rendered,
         )

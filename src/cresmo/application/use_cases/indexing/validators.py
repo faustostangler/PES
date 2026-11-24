@@ -9,9 +9,6 @@ Conforms to:
 from __future__ import annotations
 
 import re
-from typing import Final
-
-_MIN_MULTILINE_LINE_COUNT: Final[int] = 2
 
 _INDICATIVE_PREFIXES = (
     "key concept:",
@@ -35,33 +32,6 @@ _FORBIDDEN_PREFIX_REGEX = re.compile(
     r"\s*[:：\-–—]",
     re.IGNORECASE,
 )
-
-
-def is_valid_raw_index_output(raw_output: str) -> bool:
-    """Validate that raw index output conforms to expected structure without forbidden labels.
-
-    Args:
-        raw_output: Generative LLM response text.
-
-    Returns:
-        True if response contains no forbidden prefixes and has valid structure.
-    """
-    clean = raw_output.strip()
-    lines = [line.strip() for line in clean.splitlines() if line.strip()]
-    if not lines:
-        return False
-    first_line = lines[0]
-    if _FORBIDDEN_PREFIX_REGEX.search(first_line):
-        return False
-    clean_first = first_line.strip("\"'`*#_")
-    if _FORBIDDEN_PREFIX_REGEX.search(clean_first):
-        return False
-
-    # Must have either multi-line structure (Line 1: concepts, Line 2+: synthesis)
-    # or single-line comma-delimited structure (<concept>, <synthesis>).
-    if len(lines) >= _MIN_MULTILINE_LINE_COUNT:
-        return True
-    return "," in first_line
 
 
 def is_valid_concepts_output(raw_output: str) -> bool:
@@ -122,27 +92,6 @@ def is_valid_synthesis_paragraph(
     return min_words <= len(words) <= max_words
 
 
-def can_retry(attempts: int, max_rewrites: int) -> bool:
-    """Determine whether another retry attempt is permitted.
-
-    A max_rewrites value of 0 or negative signifies unbounded (infinite) retries.
-
-    Args:
-        attempts: Number of rewrite attempts completed so far.
-        max_rewrites: Configured threshold limit (0 = infinite).
-
-    Returns:
-        True if another attempt is allowed; False otherwise.
-    """
-    if max_rewrites <= 0:
-        return True
-    return attempts < max_rewrites
-
-
-# Backward-compatible alias
-_can_retry = can_retry
-
-
 def parse_judge_boolean(raw_output: str) -> bool:
     """Parse boolean verdict from LLM-as-a-judge deterministic response.
 
@@ -180,9 +129,6 @@ def clean_text_line(text: str) -> str:
     return clean.strip()
 
 
-_clean_text_line = clean_text_line
-
-
 def clean_concept_line(line: str) -> str:
     """Sanitize Line 1 into comma-separated concepts with zero labels or meta-prefixes.
 
@@ -198,53 +144,3 @@ def clean_concept_line(line: str) -> str:
     if parts:
         return ", ".join(parts)
     return clean or "Síntese Conceitual"
-
-
-_clean_concept_line = clean_concept_line
-
-
-def parse_raw_index_response(raw_output: str, fallback_title: str) -> tuple[str, str]:
-    """Parse LLM output into (key_concept, paratactic_synthesis) with fallbacks.
-
-    Supports both:
-    1. Multi-line format:
-       Line 1: Key Concept
-       Line 2+: Paratactic paragraph
-    2. Single-line format:
-       <Key Concept>, <Synthesis sentence>
-
-    Args:
-        raw_output: Generative LLM response text.
-        fallback_title: Video title used as fallback concept if extraction is empty.
-
-    Returns:
-        Tuple of (key_concept, paratactic_synthesis).
-    """
-    clean_output = raw_output.strip()
-    lines = [line.strip() for line in clean_output.splitlines() if line.strip()]
-
-    if not lines:
-        return "Síntese Conceitual", fallback_title
-
-    # Multi-line format
-    if len(lines) >= _MIN_MULTILINE_LINE_COUNT:
-        concept = clean_concept_line(lines[0])
-        synthesis = " ".join(lines[1:])
-        synthesis = clean_text_line(synthesis)
-        if not synthesis:
-            synthesis = fallback_title
-        return concept, synthesis
-
-    # Single-line format (e.g. "Concept, Synthesis")
-    single_line = lines[0]
-    if "," in single_line:
-        part_c, part_s = single_line.split(",", 1)
-        concept = clean_concept_line(part_c)
-        synthesis = clean_text_line(part_s)
-        if not synthesis:
-            synthesis = fallback_title
-        return concept, synthesis
-
-    # If single line without comma, treat line as concept or synthesis
-    cleaned = clean_text_line(single_line)
-    return "Síntese Conceitual", cleaned or fallback_title

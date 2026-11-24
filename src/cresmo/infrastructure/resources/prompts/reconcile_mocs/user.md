@@ -15,7 +15,7 @@ EXECUTION DIRECTIVES:
 Output strictly a single valid JSON array of objects with the following schema:
 [
   {
-    "title": "MOC <Domain Cluster Name or>",
+    "title": "MOC <Domain or Cluster Name>",
     "type": "global_moc" | "sub_moc",
     "domain": "<domain_slug>",
     "cluster": "<cluster_slug>",

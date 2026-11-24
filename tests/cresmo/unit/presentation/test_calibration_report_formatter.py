@@ -40,7 +40,6 @@ class TestCalibrationReportFormatter:
         )
         diagnostics = {m.code: m for m in build_sdt_metric_diagnostics(cm_strong)}
         assert len(diagnostics) == 15
-        assert diagnostics["a)"].sheets_formula == "=(B4+C5)/D6"
         assert diagnostics["a)"].diagnosis == "Acceptable (>=80%)"
         assert diagnostics["k)"].formatted_value == "Inf"
         assert diagnostics["n)"].diagnosis == "Excellent (>=2.0)"

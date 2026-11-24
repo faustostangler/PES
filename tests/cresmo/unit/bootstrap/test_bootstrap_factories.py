@@ -12,12 +12,16 @@ from unittest.mock import MagicMock, patch
 import pytest
 from pydantic import SecretStr
 
-from cresmo.application.ports import NoOpTelemetryPort
+from cresmo.application.ports import (
+    NoOpMetricsPort,
+    NoOpTelemetryPort,
+)
 from cresmo.application.services.preflight import PreflightHealthChecker
 from cresmo.application.use_cases.concat_master import ConcatMasterUseCase
-from cresmo.application.use_cases.discovery import DiscoverBatchSourcesUseCase
-from cresmo.application.use_cases.indexing import IndexRawTranscriptsUseCase
-from cresmo.application.use_cases.sync_channel import SyncChannelUseCase
+from cresmo.application.use_cases.discovery.discover_batch_sources import (
+    DiscoverBatchSourcesUseCase,
+)
+from cresmo.application.use_cases.indexing.index_raw_transcripts import IndexRawTranscriptsUseCase
 from cresmo.application.use_cases.unify_duplicate_notes import UnifyDuplicateNotesUseCase
 from cresmo.bootstrap.factories.adapter_factory import (
     _resolve_cookie_file,
@@ -48,19 +52,22 @@ from cresmo.bootstrap.factories.use_case_factory import (
     build_concat_master_use_case,
     build_discover_batch_sources_use_case,
     build_index_raw_use_case,
-    build_sync_channel_use_case,
     build_unify_duplicates_use_case,
 )
 from cresmo.infrastructure.adapters.anonymization.anonymizer_adapter import (
     NoOpAnonymizerAdapter,
     RegexAnonymizerAdapter,
 )
-from cresmo.infrastructure.adapters.embeddings import (
+from cresmo.infrastructure.adapters.embeddings.gemini_embedding_adapter import (
     GeminiEmbeddingAdapter,
-    OllamaEmbeddingAdapter,
-    ResilientEmbeddingAdapter,
-    TfidfEmbeddingAdapter,
 )
+from cresmo.infrastructure.adapters.embeddings.ollama_embedding_adapter import (
+    OllamaEmbeddingAdapter,
+)
+from cresmo.infrastructure.adapters.embeddings.resilient_embedding_adapter import (
+    ResilientEmbeddingAdapter,
+)
+from cresmo.infrastructure.adapters.embeddings.tfidf_embedding_adapter import TfidfEmbeddingAdapter
 from cresmo.infrastructure.adapters.judges.composite_judge import (
     ResilientCompositeJudgeAdapter,
 )
@@ -73,20 +80,16 @@ from cresmo.infrastructure.adapters.judges.telemetry_decorator import TelemetryJ
 from cresmo.infrastructure.adapters.judges.typesafe_judge import TypeSafeJudgeAdapter
 from cresmo.infrastructure.adapters.llm.gemini_adapter import GeminiLLMAdapter
 from cresmo.infrastructure.adapters.llm.gemini_pool import GeminiCredentialPool
-from cresmo.infrastructure.adapters.metrics.noop_metrics_adapter import NoOpMetricsAdapter
-from cresmo.infrastructure.adapters.metrics.prometheus_metrics_adapter import (
-    PrometheusMetricsAdapter,
+from cresmo.infrastructure.adapters.metrics.otlp_metrics_adapter import (
+    OtlpMetricsAdapter,
 )
-from cresmo.infrastructure.adapters.obsidian import ObsidianVaultAdapter
-from cresmo.infrastructure.adapters.prompts import (
-    JsonPromptProvider,
-    LangfusePromptProvider,
-)
+from cresmo.infrastructure.adapters.obsidian.adapter import ObsidianVaultAdapter
+from cresmo.infrastructure.adapters.prompts.json_provider import JsonPromptProvider
+from cresmo.infrastructure.adapters.prompts.langfuse_provider import LangfusePromptProvider
 from cresmo.infrastructure.adapters.telemetry.opentelemetry_adapter import (
     OpenTelemetryAdapter,
 )
 from cresmo.infrastructure.config import (
-    CookieSettings,
     CresmoSettings,
     EmbeddingSettings,
     GeminiSettings,
@@ -227,10 +230,13 @@ class TestTelemetryFactory:
 
     def test_build_metrics_adapter(self) -> None:
         disabled = ObservabilitySettings(prometheus=PrometheusSettings(enabled=False))
-        assert isinstance(build_metrics_adapter(disabled), NoOpMetricsAdapter)
+        assert isinstance(build_metrics_adapter(disabled), NoOpMetricsPort)
 
-        enabled = ObservabilitySettings(prometheus=PrometheusSettings(enabled=True))
-        assert isinstance(build_metrics_adapter(enabled), PrometheusMetricsAdapter)
+        enabled = ObservabilitySettings(
+            prometheus=PrometheusSettings(enabled=True),
+            runtime=RuntimeTelemetrySettings(enable_preflight_probes=False),
+        )
+        assert isinstance(build_metrics_adapter(enabled), OtlpMetricsAdapter)
 
     def test_build_telemetry_adapter_disabled(self, mock_settings: CresmoSettings) -> None:
         adapter = build_telemetry_adapter(mock_settings.observability)
@@ -251,7 +257,6 @@ class TestAdapterFactory:
     """Hermetic unit tests for adapter factory."""
 
     def test_resolve_cookie_file(self, tmp_path: Path, mock_settings: CresmoSettings) -> None:
-        cookies = CookieSettings(file=None)
         workspace_root = tmp_path / "workspace"
         workspace_root.mkdir(parents=True, exist_ok=True)
 
@@ -259,16 +264,16 @@ class TestAdapterFactory:
             "cresmo.bootstrap.factories.adapter_factory.find_workspace_root",
             return_value=workspace_root,
         ):
-            assert _resolve_cookie_file(mock_settings.storage, cookies) is None
+            assert _resolve_cookie_file(mock_settings.storage, None) is None
 
             ws_cookies = workspace_root / ".yt_dlp_cookies.txt"
             ws_cookies.write_text("# Netscape HTTP Cookie File\n", encoding="utf-8")
-            assert _resolve_cookie_file(mock_settings.storage, cookies) == ws_cookies
+            assert _resolve_cookie_file(mock_settings.storage, None) == ws_cookies
 
             cookie_file = tmp_path / "data" / "cookies.txt"
             cookie_file.parent.mkdir(parents=True, exist_ok=True)
             cookie_file.write_text("test cookies", encoding="utf-8")
-            assert _resolve_cookie_file(mock_settings.storage, cookies) == cookie_file
+            assert _resolve_cookie_file(mock_settings.storage, None) == cookie_file
 
     def test_segregated_settings_accepted_by_isp_factories(self, tmp_path: Path) -> None:
         """Verify segregated sub-settings work without instantiating full CresmoSettings (ADR-074)."""
@@ -289,7 +294,7 @@ class TestAdapterFactory:
         assert build_gemini_credential_pool(llm.gemini) is not None
         assert build_indexing_adapter(llm) is not None
         assert isinstance(build_anonymizer_adapter(obs), NoOpAnonymizerAdapter)
-        assert isinstance(build_metrics_adapter(obs), NoOpMetricsAdapter)
+        assert isinstance(build_metrics_adapter(obs), NoOpMetricsPort)
         assert isinstance(build_telemetry_adapter(obs), NoOpTelemetryPort)
 
     def test_build_vault_adapter(self, mock_settings: CresmoSettings) -> None:
@@ -464,11 +469,6 @@ class TestUseCaseFactory:
     def test_build_discover_batch_sources_use_case(self, mock_settings: CresmoSettings) -> None:
         use_case = build_discover_batch_sources_use_case(settings=mock_settings)
         assert isinstance(use_case, DiscoverBatchSourcesUseCase)
-
-    def test_build_sync_channel_use_case(self, mock_settings: CresmoSettings) -> None:
-        mock_pipeline = MagicMock()
-        use_case = build_sync_channel_use_case(settings=mock_settings, pipeline=mock_pipeline)
-        assert isinstance(use_case, SyncChannelUseCase)
 
     def test_build_embedding_adapter_wires_timeouts_and_providers(self, tmp_path: Path) -> None:
         gemini_settings = CresmoSettings(

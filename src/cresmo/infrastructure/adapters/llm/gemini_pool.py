@@ -173,11 +173,7 @@ class GeminiCredentialPool:
         self._timeout = timeout
         timeout_ms = int(timeout * 1000)
         self._client_factory = client_factory or (
-            lambda k: (
-                genai.Client(api_key=k, http_options=types.HttpOptions(timeout=timeout_ms))
-                if k
-                else genai.Client(http_options=types.HttpOptions(timeout=timeout_ms))
-            )
+            lambda k: genai.Client(api_key=k, http_options=types.HttpOptions(timeout=timeout_ms))
         )
         self._lock = threading.Lock()
 
@@ -187,8 +183,7 @@ class GeminiCredentialPool:
         # Client cache: key_str -> genai.Client instance
         self._clients: dict[str, Any] = {}
         # Pre-instantiate primary client for fail-fast verification
-        if self._keys:
-            self._clients[self._keys[0]] = self._client_factory(self._keys[0])
+        self._clients[self._keys[0]] = self._client_factory(self._keys[0])
 
         # Pre-generate masked aliases: "key#idx:hash4"
         self._aliases: dict[str, str] = {}

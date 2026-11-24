@@ -25,7 +25,6 @@ from cresmo.domain.exceptions import (
     IngestionNetworkError,
     PreflightError,
     RateLimitExceededError,
-    SecurityViolationError,
 )
 from cresmo.presentation.cli import main
 from cresmo.presentation.commands.sync import _render_sync_event, _render_sync_outcome, handle_sync
@@ -142,11 +141,6 @@ class TestSyncCommand:
                 DomainValidationError("Invalid schema"),
                 EXIT_DOMAIN_VALIDATION_ERROR,
                 "Domain validation error:",
-            ),
-            (
-                SecurityViolationError("Path escape"),
-                EXIT_CONFIG_OR_USAGE_ERROR,
-                "Security boundary violation:",
             ),
             (RuntimeError("Unknown bug"), EXIT_INTERNAL_ERROR, "Unexpected sync error:"),
         ],

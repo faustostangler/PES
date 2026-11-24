@@ -103,13 +103,12 @@ class StageConfig[TSource, TOutput]:
         *,
         context: PipelineExecutionContext,
         critique: str | None = None,
-        prompt_key: PromptKey | None = None,
         **extra_context: Any,
     ) -> ChatPrompt:
         """Resolve ChatPrompt, injecting closed-loop reflection critique on retry."""
         effective_channel_id = context.channel.id.value if context.channel.id else ""
         raw_text = extract_stage_source_text(source)
-        effective_key = prompt_key or self.transform_prompt_key
+        effective_key = self.transform_prompt_key
 
         raw_current_text = extra_context.get("current_text")
         current_draft = (

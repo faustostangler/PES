@@ -151,6 +151,7 @@ def evaluate_single_item(
         raw_text=raw_text,
         candidate_text=candidate_text,
         required_criteria=spec.required_criteria,
+        judge_prompt_key=spec.prompt_key,
     )
 
     evaluation = judge.evaluate(context)

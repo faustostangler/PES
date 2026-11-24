@@ -36,7 +36,7 @@ from cresmo.domain.value_objects import (
     NoteType,
     PromptKey,
 )
-from cresmo.infrastructure.adapters.prompts import JsonPromptProvider
+from cresmo.infrastructure.adapters.prompts.json_provider import JsonPromptProvider
 from tests.doubles.mock_adapters import MockLLMAdapter
 
 

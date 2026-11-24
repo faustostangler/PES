@@ -19,53 +19,48 @@ Conforms to:
 
 from __future__ import annotations
 
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
 import structlog
 
 from cresmo.application.pipeline.context import PipelineExecutionContext
-from cresmo.application.pipeline.models import (
-    PipelineDependencies,
-    PipelineResult,
-)
-from cresmo.application.pipeline.stage_factory import StageFactory
+from cresmo.application.pipeline.models import PipelineResult
 from cresmo.application.pipeline.stage_runner import PipelineStageRunner
 from cresmo.application.pipeline.transcript_loader import (
     ensure_transcript_saved,
-    load_manifest_urls,
     load_transcript_from_file,
 )
 from cresmo.application.ports import (
     PIPELINE_TRACE_NAME,
     ChannelTaxonomyPort,
-    CritiqueSynthesizerPort,
     LedgerRepositoryPort,
-    LlmJudgePort,
     LLMTransformationPort,
     MediaIngestionPort,
+    MetricName,
     MetricsPort,
     NoOpChannelTaxonomyPort,
     NoOpMetricsPort,
-    NoOpPromptProviderPort,
     NoOpTelemetryPort,
-    PromptProviderPort,
     SessionTelemetrySpec,
     TelemetryPort,
     VaultRepositoryPort,
 )
-from cresmo.application.use_cases import IngestRawTranscriptUseCase
+from cresmo.application.use_cases.ingest_raw_transcript import IngestRawTranscriptUseCase
 from cresmo.domain.entities import (
     PipelineSessionId,
     StageTranscript,
     UserIdentity,
 )
-from cresmo.domain.exceptions import CresmoDomainError
+from cresmo.domain.exceptions import CresmoDomainError, StageQuarantinedError
 from cresmo.domain.stage_registry import StageName, StageRegistry
 from cresmo.domain.value_objects import (
     BatchId,
+    ChannelName,
     ConvergenceMode,
-    RawIndexEntry,
+    LedgerEntry,
+    PipelineStatus,
     StageExecutionPolicy,
     is_processable_transcript_file,
 )
@@ -80,20 +75,6 @@ CONVEYOR_STAGES: tuple[StageName, ...] = (
 )
 
 
-def _extract_source_text(source_target: StageTranscript | Any) -> str:
-    """Extract raw transcript text from StageTranscript triad."""
-    if isinstance(source_target, StageTranscript):
-        return source_target.content.text
-    return ""
-
-
-def _extract_fluid_text(source: StageTranscript | Any) -> str:
-    """Extract synthesized fluid prose text from StageTranscript envelope."""
-    if isinstance(source, StageTranscript):
-        return source.content.text
-    return ""
-
-
 class CresmoPipeline:
     """Hexagonal Modular Monolith orchestrator for the Cresmo synthesis engine.
 
@@ -105,94 +86,44 @@ class CresmoPipeline:
         self,
         media_ingestion_port: MediaIngestionPort,
         vault_port: VaultRepositoryPort,
-        stage_runner: PipelineStageRunner | None = None,
+        stage_runner: PipelineStageRunner,
         *,
         ledger_port: LedgerRepositoryPort | None = None,
-        batch_size: int = 5,
         stage_policy: StageExecutionPolicy | None = None,
         telemetry_port: TelemetryPort | None = None,
         metrics_port: MetricsPort | None = None,
-        llm_synthesis_port: LLMTransformationPort | None = None,
         llm_indexing_port: LLMTransformationPort | None = None,
-        prompt_provider: PromptProviderPort | None = None,
-        llm_judge_port: LlmJudgePort | None = None,
-        critique_synthesizer: CritiqueSynthesizerPort | None = None,
         taxonomy_port: ChannelTaxonomyPort | None = None,
+        whisper_model: str = "base",
     ) -> None:
         self.media_ingestion_port = media_ingestion_port
 
         if vault_port is None:
             raise ValueError("vault_port must be provided")
+        if stage_runner is None:
+            raise ValueError("stage_runner must be provided")
         self.vault_port = vault_port
+        self.stage_runner = stage_runner
         self.ledger_port = ledger_port
         self.taxonomy_port: ChannelTaxonomyPort = taxonomy_port or NoOpChannelTaxonomyPort()
-        self.batch_size = batch_size
         self.stage_policy: StageExecutionPolicy = stage_policy or StageExecutionPolicy()
-
-        if stage_runner is not None:
-            self.stage_runner = stage_runner
-            self.telemetry_port: TelemetryPort = (
-                telemetry_port
-                or getattr(stage_runner, "telemetry_port", None)
-                or NoOpTelemetryPort()
-            )
-            self.metrics_port: MetricsPort = (
-                metrics_port or getattr(stage_runner, "metrics_port", None) or NoOpMetricsPort()
-            )
-        else:
-            if llm_synthesis_port is None:
-                raise ValueError("Either stage_runner or llm_synthesis_port must be provided")
-            self.telemetry_port = telemetry_port or NoOpTelemetryPort()
-            self.metrics_port = metrics_port or NoOpMetricsPort()
-            llm_judge = llm_judge_port
-            llm_transformation_port = llm_synthesis_port
-            prompt_provider = prompt_provider or NoOpPromptProviderPort()
-            stage_factory = StageFactory(policy=self.stage_policy)
-            self.stage_runner = PipelineStageRunner(
-                PipelineDependencies(
-                    telemetry_port=self.telemetry_port,
-                    metrics_port=self.metrics_port,
-                    llm_judge=llm_judge,
-                    judge_blocking=self.stage_policy.judge_blocking,
-                    judge_max_attempts=self.stage_policy.judge_max_attempts,
-                    prompt_provider=prompt_provider,
-                    llm_transformation_port=llm_transformation_port,
-                    stage_factory=stage_factory,
-                    critique_synthesizer=critique_synthesizer,
-                    ledger_port=self.ledger_port,
-                )
-            )
-
-        self.llm_indexing_port = (
-            llm_indexing_port
-            or getattr(self.stage_runner, "llm_transformation_port", None)
-            or llm_synthesis_port
+        self.telemetry_port: TelemetryPort = (
+            telemetry_port
+            or getattr(stage_runner, "telemetry_port", None)
+            or NoOpTelemetryPort()
+        )
+        self.metrics_port: MetricsPort = (
+            metrics_port or getattr(stage_runner, "metrics_port", None) or NoOpMetricsPort()
+        )
+        self.llm_indexing_port = llm_indexing_port or getattr(
+            self.stage_runner, "llm_transformation_port", None
         )
 
         self.ingest_raw_transcript = IngestRawTranscriptUseCase(
             ingestion_port=self.media_ingestion_port,
             vault_port=self.vault_port,
+            default_whisper_model=whisper_model,
         )
-
-    @property
-    def stage_factory(self) -> StageFactory | None:
-        """Access the stage factory from the stage runner."""
-        return self.stage_runner.stage_factory
-
-    @property
-    def llm_synthesis_port(self) -> LLMTransformationPort | None:
-        """Access the primary LLM transformation port from the stage runner."""
-        return self.stage_runner.llm_transformation_port
-
-    @property
-    def llm_judge(self) -> LlmJudgePort | None:
-        """Access the LLM judge port from the stage runner."""
-        return self.stage_runner.llm_judge
-
-    @property
-    def prompt_provider(self) -> PromptProviderPort | None:
-        """Access the prompt provider from the stage runner."""
-        return self.stage_runner.prompt_provider
 
     def warmup(self, timeout_seconds: float | None = None) -> None:
         """Asynchronously trigger warmup across pipeline LLM ports."""
@@ -208,7 +139,6 @@ class CresmoPipeline:
         expansion_max_passes: int | None = None,
         force_reprocess: bool = False,
         user: UserIdentity | None = None,
-        entry: RawIndexEntry | None = None,
         batch_id: BatchId | str | None = None,
     ) -> PipelineResult:
         """Execute the end-to-end synthesis pipeline (canonical Template Method)."""
@@ -217,7 +147,7 @@ class CresmoPipeline:
         session_id = PipelineSessionId(content.session_id)
         user_identity = user or UserIdentity.anonymous()
 
-        raw_text = _extract_source_text(raw)
+        raw_text = content.text
         resolved_batch_id: str | None = None
         if batch_id:
             resolved_batch_id = (
@@ -249,7 +179,7 @@ class CresmoPipeline:
 
         # Trace root Level 1: PIPELINE_TRACE_NAME (ADR-037, ADR-065, ADR-070)
         with self.telemetry_port.start_session(session_spec) as root_span:
-            if early_result := self._check_idempotent_exit(raw, entry, force_reprocess):
+            if early_result := self._check_idempotent_exit(raw, force_reprocess):
                 root_span.set_output(
                     {
                         "status": "SKIPPED_IDEMPOTENT",
@@ -258,6 +188,16 @@ class CresmoPipeline:
                     }
                 )
                 return early_result
+
+            started_at = datetime.now(UTC)
+            if self.ledger_port is not None:
+                self.ledger_port.save_entry(
+                    self._build_ledger_entry(
+                        raw,
+                        PipelineStatus.RUNNING,
+                        started_at=started_at,
+                    )
+                )
 
             execution_context = PipelineExecutionContext(
                 user_identity=user_identity,
@@ -272,90 +212,139 @@ class CresmoPipeline:
             cached_stages: list[str] = []
             current_source: Any = raw
 
-            for step in CONVEYOR_STAGES:
-                artifact = None
-                if not force_reprocess:
-                    cached = self.vault_port.get_stage_transcript(step, content.id)
-                    if isinstance(cached, StageTranscript):
-                        artifact = cached
-                        cached_stages.append(step.value)
-                        logger.info(
-                            "Reusing cached %s for content_id '%s'",
+            try:
+                for step in CONVEYOR_STAGES:
+                    artifact = None
+                    if not force_reprocess:
+                        cached = self.vault_port.get_stage_transcript(step, content.id)
+                        if isinstance(cached, StageTranscript):
+                            artifact = cached
+                            cached_stages.append(step.value)
+                            logger.info(
+                                "Reusing cached %s for content_id '%s'",
+                                step,
+                                content.id.value,
+                            )
+
+                    if artifact is None:
+                        extra_kwargs: dict[str, Any] = {}
+                        if (
+                            expansion_max_passes is not None
+                            and StageRegistry.contains(step)
+                            and StageRegistry.get(step).convergence_mode
+                            == ConvergenceMode.HYBRID_SEMANTIC
+                        ):
+                            extra_kwargs["max_passes"] = expansion_max_passes
+
+                        if (
+                            step == StageName.GAP_FILLER
+                            or step == StageName.LONG_EXPANDER
+                            or step == StageName.WIDE_EXPANDER
+                        ):
+                            print(f"[STAGE] {step.value}")
+
+                        artifact = self.stage_runner.execute_stage(
                             step,
-                            content.id.value,
+                            source=current_source,
+                            context=execution_context,
+                            **extra_kwargs,
                         )
+                        if isinstance(artifact, StageTranscript):
+                            self.vault_port.save_stage_transcript(step, artifact)
 
-                if artifact is None:
-                    extra_kwargs: dict[str, Any] = {}
-                    if (
-                        expansion_max_passes is not None
-                        and StageRegistry.contains(step)
-                        and StageRegistry.get(step).convergence_mode
-                        == ConvergenceMode.HYBRID_SEMANTIC
-                    ):
-                        extra_kwargs["max_passes"] = expansion_max_passes
+                    stage_artifacts[step] = artifact
+                    current_source = artifact
 
-                    artifact = self.stage_runner.execute_stage(
-                        step,
-                        source=current_source,
-                        context=execution_context,
-                        **extra_kwargs,
+                final_artifact = stage_artifacts[CONVEYOR_STAGES[-1]]
+
+                # Note: Subsequent downstream atomic stages (raw_indexing, atomic_inventory,
+                # atomic_batch, reconcile_mocs, duplicate_unification) will be appended once
+                # their domain VOs conform to StageTranscript (ADR-054).
+
+                synthesized_text = ""
+                for step in reversed(CONVEYOR_STAGES):
+                    step_artifact = stage_artifacts.get(step)
+                    candidate_text = (
+                        step_artifact.content.text
+                        if isinstance(step_artifact, StageTranscript)
+                        else ""
                     )
-                    if isinstance(artifact, StageTranscript):
-                        self.vault_port.save_stage_transcript(step, artifact)
+                    if candidate_text:
+                        synthesized_text = candidate_text
+                        break
+                raw_word_count = len(raw_text.split())
+                synthesized_word_count = len(synthesized_text.split())
+                expansion_ratio = round(synthesized_word_count / max(raw_word_count, 1), 3)
 
-                stage_artifacts[step] = artifact
-                current_source = artifact
+                resolved_title = ""
+                for step in reversed(CONVEYOR_STAGES):
+                    step_content = getattr(stage_artifacts.get(step), "content", None)
+                    step_title = getattr(step_content, "title", None)
+                    if step_title:
+                        resolved_title = str(step_title)
+                        break
+                if not resolved_title:
+                    resolved_title = str(content.title or "")
 
-            final_artifact = stage_artifacts[CONVEYOR_STAGES[-1]]
+                cache_hit_count = len(cached_stages)
+                cache_hit_ratio = round(cache_hit_count / max(len(CONVEYOR_STAGES), 1), 3)
+                completed_stage_names = [step.value for step in CONVEYOR_STAGES]
+                root_span.set_output(
+                    {
+                        "status": "COMPLETED",
+                        "stage": completed_stage_names[-1],
+                        "stages_completed": completed_stage_names,
+                        "stages_reused_from_cache": cached_stages,
+                        "cache_hit_count": cache_hit_count,
+                        "cache_hit_ratio": cache_hit_ratio,
+                        "force_reprocess": force_reprocess,
+                        "expansion_max_passes": expansion_max_passes,
+                        "content_title": resolved_title,
+                        "word_count": synthesized_word_count,
+                        "char_count": len(synthesized_text),
+                        "source_words": raw_word_count,
+                        "synthesized_words": synthesized_word_count,
+                        "expansion_ratio": expansion_ratio,
+                        "source_characters": len(raw_text),
+                        "synthesized_characters": len(synthesized_text),
+                    }
+                )
+            except StageQuarantinedError:
+                raise
+            except Exception as exc:
+                if self.ledger_port is not None:
+                    self.ledger_port.save_entry(
+                        self._build_ledger_entry(
+                            raw,
+                            PipelineStatus.FAILED_TRANSFORMATION,
+                            started_at=started_at,
+                            completed_at=datetime.now(UTC),
+                            error_message=str(exc),
+                        )
+                    )
+                raise
 
-            # Note: Subsequent downstream atomic stages (raw_indexing, atomic_inventory,
-            # atomic_batch, reconcile_mocs, duplicate_unification) will be appended once
-            # their domain VOs conform to StageTranscript (ADR-054).
+            if self.ledger_port is not None:
+                self.ledger_port.save_entry(
+                    self._build_ledger_entry(
+                        raw,
+                        PipelineStatus.COMPLETED,
+                        started_at=started_at,
+                        completed_at=datetime.now(UTC),
+                    )
+                )
 
-            synthesized_text = ""
-            for step in reversed(CONVEYOR_STAGES):
-                candidate_text = _extract_fluid_text(stage_artifacts.get(step))
-                if candidate_text:
-                    synthesized_text = candidate_text
-                    break
-            raw_word_count = len(raw_text.split())
-            synthesized_word_count = len(synthesized_text.split())
-            expansion_ratio = round(synthesized_word_count / max(raw_word_count, 1), 3)
-
-            resolved_title = ""
-            for step in reversed(CONVEYOR_STAGES):
-                step_content = getattr(stage_artifacts.get(step), "content", None)
-                step_title = getattr(step_content, "title", None)
-                if step_title:
-                    resolved_title = str(step_title)
-                    break
-            if not resolved_title:
-                resolved_title = str(content.title or "")
-
-            cache_hit_count = len(cached_stages)
-            cache_hit_ratio = round(cache_hit_count / max(len(CONVEYOR_STAGES), 1), 3)
-            completed_stage_names = [step.value for step in CONVEYOR_STAGES]
-            root_span.set_output(
-                {
-                    "status": "COMPLETED",
-                    "stage": completed_stage_names[-1],
-                    "stages_completed": completed_stage_names,
-                    "stages_reused_from_cache": cached_stages,
-                    "cache_hit_count": cache_hit_count,
-                    "cache_hit_ratio": cache_hit_ratio,
-                    "force_reprocess": force_reprocess,
-                    "expansion_max_passes": expansion_max_passes,
-                    "content_title": resolved_title,
-                    "word_count": synthesized_word_count,
-                    "char_count": len(synthesized_text),
-                    "source_words": raw_word_count,
-                    "synthesized_words": synthesized_word_count,
-                    "expansion_ratio": expansion_ratio,
-                    "source_characters": len(raw_text),
-                    "synthesized_characters": len(synthesized_text),
-                }
+            channel_id = channel.id.value if channel.id else ""
+            self.metrics_port.increment_counter(
+                MetricName.TRANSCRIPTS_PROCESSED,
+                1.0,
+                labels={
+                    "channel_id": channel_id,
+                    "status": "completed",
+                    "modality": "transcript",
+                },
             )
+            self.metrics_port.flush()
 
             return PipelineResult(
                 content_id=content.id,
@@ -363,13 +352,36 @@ class CresmoPipeline:
                 source_transcript=raw,
                 stage_artifacts=stage_artifacts,
                 final_transcript=final_artifact,
-                index_entry=entry,
             )
+
+    @staticmethod
+    def _build_ledger_entry(
+        raw: StageTranscript,
+        status: PipelineStatus,
+        *,
+        started_at: datetime,
+        completed_at: datetime | None = None,
+        error_message: str | None = None,
+    ) -> LedgerEntry:
+        """Build validated LedgerEntry from StageTranscript for unified ledger persistence."""
+        media_url = raw.provenance.url.strip()
+        if not media_url.startswith(("http://", "https://")):
+            media_url = f"https://cresmo.internal/content/{raw.content.id.value}"
+        title = raw.content.title.strip() or f"Content {raw.content.id.value}"
+        return LedgerEntry(
+            content_id=raw.content.id,
+            media_url=media_url,
+            title=title,
+            channel_name=ChannelName.from_string(raw.channel.name),
+            status=status,
+            error_message=error_message,
+            started_at=started_at,
+            completed_at=completed_at,
+        )
 
     def _check_idempotent_exit(
         self,
         raw: StageTranscript,
-        entry: RawIndexEntry | None,
         force_reprocess: bool,
     ) -> PipelineResult | None:
         """Evaluate ledger idempotency guard and return existing result if already processed."""
@@ -377,16 +389,15 @@ class CresmoPipeline:
         if self.ledger_port and self.ledger_port.is_processed(content_id) and not force_reprocess:
             channel_id = raw.channel.id.value if raw.channel.id else ""
             self.metrics_port.increment_counter(
-                "cresmo_transcripts_processed_total",
+                MetricName.TRANSCRIPTS_PROCESSED,
                 1.0,
                 labels={
                     "channel_id": channel_id,
-                    "channel_name": raw.channel.name,
-                    "content_id": content_id.value,
                     "status": "skipped_idempotent",
                     "modality": "transcript",
                 },
             )
+            self.metrics_port.flush()
             loaded_artifacts: dict[StageName, StageTranscript] = {}
             for step in CONVEYOR_STAGES:
                 cached = self.vault_port.get_stage_transcript(step, content_id)
@@ -396,7 +407,6 @@ class CresmoPipeline:
                 content_id=content_id,
                 success=True,
                 source_transcript=raw,
-                index_entry=entry,
                 stage_artifacts=loaded_artifacts,
                 final_transcript=loaded_artifacts.get(CONVEYOR_STAGES[-1]),
                 already_processed=True,
@@ -455,24 +465,3 @@ class CresmoPipeline:
             user=user,
             batch_id=batch_id,
         )
-
-    def run_for_manifest(
-        self,
-        manifest_path: Path,
-        expansion_max_passes: int | None = None,
-        force_reprocess: bool = False,
-        user: UserIdentity | None = None,
-        batch_id: BatchId | str | None = None,
-    ) -> list[PipelineResult]:
-        """Run the end-to-end synthesis pipeline sequentially for all video URLs in a manifest file."""
-        batch_id = batch_id or BatchId.generate()
-        return [
-            self.run_for_video(
-                video_url=video_url,
-                expansion_max_passes=expansion_max_passes,
-                force_reprocess=force_reprocess,
-                user=user,
-                batch_id=batch_id,
-            )
-            for video_url in load_manifest_urls(manifest_path)
-        ]

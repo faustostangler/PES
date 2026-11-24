@@ -15,7 +15,6 @@ import pytest
 from cresmo.application.pipeline.models import (
     PipelineDependencies,
     PipelineResult,
-    StageExecutionOptions,
 )
 from cresmo.application.ports import (
     CritiqueSynthesizerPort,
@@ -26,18 +25,13 @@ from cresmo.application.ports import (
     PromptProviderPort,
     TelemetryPort,
 )
-from cresmo.application.use_cases import DeduplicationReport
 from cresmo.domain.entities import (
     AtomicNote,
     MapOfContent,
     StageTranscript,
 )
 from cresmo.domain.value_objects import (
-    AtomicEntityInventory,
-    ChannelId,
-    ChannelName,
     ContentId,
-    RawIndexEntry,
 )
 
 
@@ -97,43 +91,6 @@ class TestPipelineDependencies:
             deps.judge_blocking = False  # type: ignore[misc]
 
 
-class TestStageExecutionOptions:
-    """Test suite for StageExecutionOptions parameter object."""
-
-    def test_default_values(self) -> None:
-        opts = StageExecutionOptions()
-
-        assert opts.channel_name is None
-        assert opts.content_id is None
-        assert opts.channel_id is None
-        assert opts.session_id is None
-        assert opts.user_id is None
-        assert opts.fatal is True
-        assert opts.fallback is None
-
-    def test_custom_values_and_immutability(self) -> None:
-        opts = StageExecutionOptions(
-            channel_name=ChannelName("Ch1"),
-            content_id=ContentId("c1234567"),
-            channel_id=ChannelId("UC_abc"),
-            session_id="sess_42",
-            user_id="user_admin",
-            fatal=False,
-            fallback="fallback_value",
-        )
-
-        assert opts.channel_name == ChannelName("Ch1")
-        assert opts.content_id == ContentId("c1234567")
-        assert opts.channel_id == ChannelId("UC_abc")
-        assert opts.session_id == "sess_42"
-        assert opts.user_id == "user_admin"
-        assert opts.fatal is False
-        assert opts.fallback == "fallback_value"
-
-        with pytest.raises(FrozenInstanceError):
-            opts.fatal = True  # type: ignore[misc]
-
-
 class TestPipelineResult:
     """Test suite for PipelineResult aggregate."""
 
@@ -147,10 +104,7 @@ class TestPipelineResult:
         assert res.reconciled_mocs == ()
         assert res.source_transcript is None
         assert dict(res.stage_artifacts) == {}
-        assert res.index_entry is None
         assert res.final_transcript is None
-        assert res.inventory is None
-        assert res.dedup_report is None
         assert res.duplicates_unified == 0
         assert res.already_processed is False
         assert res.error_message is None
@@ -163,10 +117,7 @@ class TestPipelineResult:
         mock_moc = MagicMock(spec=MapOfContent)
         mock_source = MagicMock(spec=StageTranscript)
         mock_fluid = MagicMock(spec=StageTranscript)
-        mock_idx = MagicMock(spec=RawIndexEntry)
         mock_final = MagicMock(spec=StageTranscript)
-        mock_inventory = MagicMock(spec=AtomicEntityInventory)
-        mock_dedup = MagicMock(spec=DeduplicationReport)
 
         res = PipelineResult(
             content_id=cid,
@@ -174,14 +125,11 @@ class TestPipelineResult:
             synthesized_notes=(mock_note,),
             reconciled_mocs=(mock_moc,),
             source_transcript=mock_source,
-            index_entry=mock_idx,
             stage_artifacts={
                 StageName.FLUID_PROSE: mock_fluid,
                 StageName.LONG_EXPANDER: mock_final,
             },
             final_transcript=mock_final,
-            inventory=mock_inventory,
-            dedup_report=mock_dedup,
             duplicates_unified=5,
             already_processed=True,
             error_message="Stage timeout",
@@ -192,10 +140,7 @@ class TestPipelineResult:
         assert res.reconciled_mocs == (mock_moc,)
         assert res.source_transcript is mock_source
         assert res.stage_artifacts[StageName.FLUID_PROSE] is mock_fluid
-        assert res.index_entry is mock_idx
         assert res.final_transcript is mock_final
-        assert res.inventory is mock_inventory
-        assert res.dedup_report is mock_dedup
         assert res.duplicates_unified == 5
         assert res.already_processed is True
         assert res.error_message == "Stage timeout"

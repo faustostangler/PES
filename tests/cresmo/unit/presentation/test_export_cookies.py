@@ -10,7 +10,6 @@ Conforms to:
 from __future__ import annotations
 
 from pathlib import Path
-from types import SimpleNamespace as Namespace
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -39,15 +38,8 @@ class TestExportCookiesCommand:
         cookie_file.write_text("# Netscape HTTP Cookie File\n", encoding="utf-8")
 
         mock_settings = MagicMock()
-        mock_settings.ingestion.cookies.file = None
+        mock_settings.ingestion.cookies_file = None
         mock_settings.storage.data_dir = tmp_path
-
-        args = Namespace(
-            browser="firefox",
-            output=cookie_file,
-            require_auth=False,
-            force=False,
-        )
 
         with (
             patch(
@@ -62,7 +54,12 @@ class TestExportCookiesCommand:
                 "cresmo.presentation.commands.export_cookies.export_cookies_from_browser"
             ) as mock_export,
         ):
-            code = handle_export_cookies(args)
+            code = handle_export_cookies(
+                browser="firefox",
+                output=cookie_file,
+                require_auth=False,
+                force=False,
+            )
             assert code == EXIT_SUCCESS
             mock_has_valid.assert_called_once_with(cookie_file.resolve())
             mock_export.assert_not_called()
@@ -83,15 +80,8 @@ class TestExportCookiesCommand:
         cookie_file.write_text("# Netscape HTTP Cookie File\n", encoding="utf-8")
 
         mock_settings = MagicMock()
-        mock_settings.ingestion.cookies.file = None
+        mock_settings.ingestion.cookies_file = None
         mock_settings.storage.data_dir = tmp_path
-
-        args = Namespace(
-            browser="chrome",
-            output=cookie_file,
-            require_auth=True,
-            force=True,
-        )
 
         with (
             patch(
@@ -107,7 +97,12 @@ class TestExportCookiesCommand:
                 return_value=True,
             ) as mock_export,
         ):
-            code = handle_export_cookies(args)
+            code = handle_export_cookies(
+                browser="chrome",
+                output=cookie_file,
+                require_auth=True,
+                force=True,
+            )
             assert code == EXIT_SUCCESS
             mock_export.assert_called_once_with(
                 browser="chrome",
@@ -131,15 +126,8 @@ class TestExportCookiesCommand:
         cookie_file.write_text("invalid cookies", encoding="utf-8")
 
         mock_settings = MagicMock()
-        mock_settings.ingestion.cookies.file = None
+        mock_settings.ingestion.cookies_file = None
         mock_settings.storage.data_dir = tmp_path
-
-        args = Namespace(
-            browser="brave",
-            output=cookie_file,
-            require_auth=False,
-            force=False,
-        )
 
         with (
             patch(
@@ -155,7 +143,12 @@ class TestExportCookiesCommand:
                 return_value=True,
             ) as mock_export,
         ):
-            code = handle_export_cookies(args)
+            code = handle_export_cookies(
+                browser="brave",
+                output=cookie_file,
+                require_auth=False,
+                force=False,
+            )
             assert code == EXIT_SUCCESS
             mock_export.assert_called_once_with(
                 browser="brave",
@@ -177,15 +170,8 @@ class TestExportCookiesCommand:
         cookie_file = tmp_path / "missing_cookies.txt"
 
         mock_settings = MagicMock()
-        mock_settings.ingestion.cookies.file = None
+        mock_settings.ingestion.cookies_file = None
         mock_settings.storage.data_dir = tmp_path
-
-        args = Namespace(
-            browser="chromium",
-            output=cookie_file,
-            require_auth=True,
-            force=False,
-        )
 
         with (
             patch(
@@ -197,7 +183,12 @@ class TestExportCookiesCommand:
                 return_value=False,
             ) as mock_export,
         ):
-            code = handle_export_cookies(args)
+            code = handle_export_cookies(
+                browser="chromium",
+                output=cookie_file,
+                require_auth=True,
+                force=False,
+            )
             assert code == EXIT_INGESTION_ERROR
             mock_export.assert_called_once_with(
                 browser="chromium",
@@ -220,18 +211,16 @@ class TestExportCookiesCommand:
         self, tmp_path: Path, capsys: pytest.CaptureFixture[str]
     ) -> None:
         """Verify unexpected runtime exceptions write to stderr and return EXIT_CONFIG_OR_USAGE_ERROR (2)."""
-        args = Namespace(
-            browser="firefox",
-            output=tmp_path / "cookies.txt",
-            require_auth=False,
-            force=False,
-        )
-
         with patch(
             "cresmo.presentation.commands.export_cookies.resolve_shared_settings",
             side_effect=RuntimeError("Corrupted config store"),
         ):
-            code = handle_export_cookies(args)
+            code = handle_export_cookies(
+                browser="firefox",
+                output=tmp_path / "cookies.txt",
+                require_auth=False,
+                force=False,
+            )
             assert code == EXIT_CONFIG_OR_USAGE_ERROR
 
             captured = capsys.readouterr()
@@ -244,15 +233,8 @@ class TestExportCookiesCommand:
         """Verify output path falls back to settings.cookies_file when --output is None."""
         target_cookies = tmp_path / "custom" / "my_cookies.txt"
         mock_settings = MagicMock()
-        mock_settings.ingestion.cookies.file = target_cookies
+        mock_settings.ingestion.cookies_file = target_cookies
         mock_settings.storage.data_dir = tmp_path
-
-        args = Namespace(
-            browser="edge",
-            output=None,
-            require_auth=False,
-            force=False,
-        )
 
         with (
             patch(
@@ -264,7 +246,12 @@ class TestExportCookiesCommand:
                 return_value=True,
             ) as mock_export,
         ):
-            code = handle_export_cookies(args)
+            code = handle_export_cookies(
+                browser="edge",
+                output=None,
+                require_auth=False,
+                force=False,
+            )
             assert code == EXIT_SUCCESS
             mock_export.assert_called_once_with(
                 browser="edge",
@@ -276,15 +263,8 @@ class TestExportCookiesCommand:
     def test_output_fallback_to_data_dir_cookies_txt(self, tmp_path: Path) -> None:
         """Verify output path falls back to settings.data_dir / 'cookies.txt' when both args and setting are None."""
         mock_settings = MagicMock()
-        mock_settings.ingestion.cookies.file = None
+        mock_settings.ingestion.cookies_file = None
         mock_settings.storage.data_dir = tmp_path
-
-        args = Namespace(
-            browser="firefox",
-            output=None,
-            require_auth=False,
-            force=False,
-        )
 
         with (
             patch(
@@ -296,7 +276,12 @@ class TestExportCookiesCommand:
                 return_value=True,
             ) as mock_export,
         ):
-            code = handle_export_cookies(args)
+            code = handle_export_cookies(
+                browser="firefox",
+                output=None,
+                require_auth=False,
+                force=False,
+            )
             assert code == EXIT_SUCCESS
             mock_export.assert_called_once_with(
                 browser="firefox",
@@ -309,7 +294,7 @@ class TestExportCookiesCommand:
         """Verify main entrypoint invokes export-cookies and executes handler successfully."""
         cookie_path = tmp_path / "cli_cookies.txt"
         mock_settings = MagicMock()
-        mock_settings.ingestion.cookies.file = None
+        mock_settings.ingestion.cookies_file = None
         mock_settings.storage.data_dir = tmp_path
 
         with (

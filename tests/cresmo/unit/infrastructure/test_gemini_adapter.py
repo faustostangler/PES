@@ -18,13 +18,13 @@ from cresmo.application.ports import (
     active_telemetry_stage,
 )
 from cresmo.domain.value_objects.prompt import ChatPrompt
-from cresmo.infrastructure.adapters.llm.gemini_adapter import (
-    GeminiLLMAdapter,
-    _is_transient_genai_error,
-)
+from cresmo.infrastructure.adapters.llm.gemini_adapter import GeminiLLMAdapter
 from cresmo.infrastructure.adapters.llm.gemini_common import (
     build_thinking_config,
     resolve_effective_thinking_level,
+)
+from cresmo.infrastructure.adapters.llm.gemini_common import (
+    is_transient_genai_error as _is_transient_genai_error,
 )
 from tests.doubles.telemetry_fake import InMemoryTelemetryPort
 
@@ -117,9 +117,9 @@ class TestGeminiLLMAdapter:
         )
 
         result = adapter.transform(
-            prompt=ChatPrompt.from_system_and_user(
-                system="Act as a political scientist.",
-                user="Analyze the circulation of elites.",
+            prompt=ChatPrompt.single_turn(
+                user_prompt="Analyze the circulation of elites.",
+                system_prompt="Act as a political scientist.",
             ),
             temperature=0.7,
             trace_id="test-trace-123",
@@ -160,10 +160,12 @@ class TestGeminiLLMAdapter:
             default_call_kwargs["config"].thinking_config.thinking_level == types.ThinkingLevel.LOW
         )
 
-        adapter.transform(
-            prompt=ChatPrompt.single_turn("Minimal test"),
+        minimal_adapter = GeminiLLMAdapter(
+            model_name="gemini-3.5-flash-lite",
             thinking_level="minimal",
+            genai_client=mock_genai_client,
         )
+        minimal_adapter.transform(prompt=ChatPrompt.single_turn("Minimal test"))
         override_call_kwargs = mock_genai_client.models.generate_content.call_args[1]
         assert override_call_kwargs["config"].temperature is None
         assert override_call_kwargs["config"].thinking_config is not None
@@ -327,7 +329,7 @@ class TestGeminiLLMAdapter:
             call_kwargs = mock_client_cls.call_args.kwargs
             assert call_kwargs["api_key"] == "secret-key"
             assert call_kwargs["http_options"].timeout == 300000
-            assert adapter._client == mock_client_cls.return_value
+            assert adapter._pool is not None
 
     def test_default_initialization_attributes(self) -> None:
         mock_client = MagicMock()

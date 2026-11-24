@@ -13,6 +13,7 @@ from typing import TYPE_CHECKING
 from cresmo.application.ports import LedgerRepositoryPort, MediaIngestionPort
 from cresmo.application.services.preflight import PreflightHealthChecker
 from cresmo.domain.entities import UserIdentity
+from cresmo.domain.exceptions import StageQuarantinedError
 from cresmo.domain.value_objects import (
     BatchId,
     ChannelFeedQuery,
@@ -23,7 +24,7 @@ from cresmo.domain.value_objects import (
 )
 
 if TYPE_CHECKING:
-    from cresmo.application.pipeline import CresmoPipeline
+    from cresmo.application.pipeline.coordinator import CresmoPipeline
 
 
 class SyncChannelUseCase:
@@ -154,6 +155,8 @@ class SyncChannelUseCase:
                             completed_at=completed_at,
                         )
                     )
+            except StageQuarantinedError:
+                failed_count += 1
             except Exception as exc:  # noqa: BLE001 - Failure isolation across items
                 failed_count += 1
                 self.ledger_port.save_entry(

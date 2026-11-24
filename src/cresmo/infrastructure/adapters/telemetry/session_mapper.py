@@ -25,14 +25,6 @@ _GIT_SHA_SHORT_LENGTH: Final[int] = 8
 # Infra limit: Langfuse drops propagated attribute values longer than 200 characters.
 _LANGFUSE_PROPAGATED_VALUE_MAX_CHARS: Final[int] = 200
 
-_LEGACY_PIPELINE_TRACE_ALIASES: Final[frozenset[str]] = frozenset(
-    {
-        "cresmo.pipeline.execution",
-        "cresmo.synthesis_pipeline",
-        PIPELINE_TRACE_NAME,
-    }
-)
-
 _CANONICAL_ROOT_METADATA_KEYS: Final[frozenset[str]] = frozenset(
     {
         "batch_id",
@@ -55,18 +47,23 @@ _CANONICAL_ROOT_METADATA_KEYS: Final[frozenset[str]] = frozenset(
 )
 
 
+def short_git_sha(git_sha: str | None) -> str | None:
+    """Normalize and truncate git commit SHA to short length."""
+    if git_sha and git_sha.strip():
+        return git_sha.strip()[:_GIT_SHA_SHORT_LENGTH]
+    return None
+
+
 def parse_session_parts(session_id: PipelineSessionId) -> tuple[str, str]:
     """Extract (channel_token, content_token) from PipelineSessionId value."""
     parts = session_id.value.split(":")
-    if parts[0] == "content" and len(parts) == 3:
-        return parts[1], parts[2]
     return parts[0], parts[1]
 
 
 def resolve_root_operation_name(trace_name: str | None) -> tuple[str, str]:
     """Resolve canonical (trace_name, root_span_name) separation per ADR-037 & ADR-065."""
     resolved_trace_name = trace_name or PIPELINE_TRACE_NAME
-    if trace_name is None or trace_name in _LEGACY_PIPELINE_TRACE_ALIASES:
+    if trace_name is None or trace_name == PIPELINE_TRACE_NAME:
         return resolved_trace_name, PIPELINE_ROOT_SPAN_NAME
     return resolved_trace_name, trace_name
 
@@ -76,6 +73,7 @@ def build_session_span_attributes(
     *,
     pipeline_version: str,
     git_sha: str | None = None,
+    resolved_trace_name: str | None = None,
 ) -> tuple[dict[str, Any], list[str], dict[str, Any]]:
     """Build atomic OTel/Langfuse session span attributes, trace tags, and root input payload."""
     channel_token, content_token = parse_session_parts(spec.session_id)
@@ -90,14 +88,18 @@ def build_session_span_attributes(
     content_title = spec.content_title.strip() or content_id
     tenant = spec.channel_tenant_id or f"channel:{channel_token}"
 
-    resolved_trace_name, _ = resolve_root_operation_name(spec.trace_name)
+    effective_trace_name = (
+        resolved_trace_name
+        if resolved_trace_name is not None
+        else resolve_root_operation_name(spec.trace_name)[0]
+    )
     tags = [resolved_channel_name, pipeline_version, f"auth:{user.provider}"]
 
     attributes: dict[str, Any] = {
         "langfuse.observation.type": "span",
         "langfuse.session.id": spec.session_id.value,
         "langfuse.user.id": user.value,
-        "langfuse.trace.name": resolved_trace_name,
+        "langfuse.trace.name": effective_trace_name,
         "langfuse.trace.tags": tags,
         "cresmo.pipeline.version": pipeline_version,
         "cresmo.channel.id": channel_id,
@@ -121,8 +123,7 @@ def build_session_span_attributes(
     if spec.publication_date and spec.publication_date.strip():
         attributes["cresmo.content.publication_date"] = spec.publication_date.strip()
 
-    if git_sha and git_sha.strip():
-        clean_sha = git_sha.strip()[:_GIT_SHA_SHORT_LENGTH]
+    if clean_sha := short_git_sha(git_sha):
         attributes["cresmo.pipeline.git_sha"] = clean_sha
         tags.append(f"git:{clean_sha}")
 

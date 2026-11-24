@@ -31,6 +31,7 @@ from cresmo.domain.value_objects import (
     NoteTitle,
     RawIndexEntry,
 )
+from cresmo.domain.value_objects.prompt import ChatPrompt
 
 
 class MockMediaIngestionPort(MediaIngestionPort):
@@ -72,9 +73,6 @@ class MockMediaIngestionPort(MediaIngestionPort):
         return getattr(self, "canned_channel_url", None)
 
 
-from cresmo.domain.value_objects.prompt import ChatPrompt
-
-
 class MockLLMAdapter(LLMTransformationPort):
     """In-memory mock for LLMTransformationPort."""
 
@@ -87,7 +85,6 @@ class MockLLMAdapter(LLMTransformationPort):
         prompt: ChatPrompt,
         temperature: float | None = None,
         *,
-        thinking_level: str | None = None,
         trace_id: str | None = None,
         session_id: str | None = None,
         user_id: str | None = None,
@@ -97,7 +94,6 @@ class MockLLMAdapter(LLMTransformationPort):
                 "prompt": prompt,
                 "system_prompt": prompt.system_prompt if isinstance(prompt, ChatPrompt) else None,
                 "temperature": temperature,
-                "thinking_level": thinking_level,
                 "trace_id": trace_id,
                 "session_id": session_id,
                 "user_id": user_id,
@@ -120,13 +116,8 @@ class InMemoryVaultAdapter(VaultRepositoryPort):
         self.mocs: dict[str, MapOfContent] = {}
         self.master_documents: dict[tuple[str, str, int], str] = {}
         self.channel_stage_files: dict[tuple[str, str], list[Path]] = {}
-        self.channel_fluid_files: dict[str, list[Path]] = {}
         self.channel_raw_indexes: dict[str, list[RawIndexEntry]] = {}
         self.brain_csv_entries: list[RawIndexEntry] = []
-
-    def get_channel_index_path(self, channel_name: ChannelName) -> Path:
-        ch = channel_name.value
-        return Path(f"/mock/raw/{ch}/_index_{ch}.md")
 
     def get_indexed_video_ids_for_channel(self, channel_name: ChannelName) -> set[ContentId]:
         entries = self.channel_raw_indexes.get(channel_name.value, [])
@@ -189,14 +180,8 @@ class InMemoryVaultAdapter(VaultRepositoryPort):
             return self.raw_transcripts.get(content_id.value)
         return None
 
-    def get_fluid_files_for_channel(self, channel_name: ChannelName) -> list[Path]:
-        return list(self.channel_fluid_files.get(channel_name.value, []))
-
     def save_atomic_note(self, note: AtomicNote) -> None:
         self.atomic_notes[note.title.value.lower()] = note
-
-    def get_atomic_note_by_title(self, title: NoteTitle) -> AtomicNote | None:
-        return self.atomic_notes.get(title.value.lower())
 
     def get_all_atomic_notes(self) -> list[AtomicNote]:
         return list(self.atomic_notes.values())
@@ -214,11 +199,11 @@ class InMemoryVaultAdapter(VaultRepositoryPort):
 
     def delete_atomic_note(self, note: AtomicNote) -> None:
         self.atomic_notes.pop(note.title.value.lower(), None)
-        self.remove_index_entry(note.title.value.lower())
+        self._remove_index_entry(note.title.value.lower())
         for alias in note.aliases:
-            self.remove_index_entry(alias.lower())
+            self._remove_index_entry(alias.lower())
 
-    def remove_index_entry(self, key: str) -> None:
+    def _remove_index_entry(self, key: str) -> None:
         self.index_entries.pop(key.lower().strip(), None)
 
     def rewrite_wiki_links(self, old_title: NoteTitle, new_title: NoteTitle) -> int:
@@ -262,15 +247,12 @@ class InMemoryLedgerAdapter(LedgerRepositoryPort):
     def is_processed(self, content_id: ContentId) -> bool:
         return content_id.value in self.processed_ids
 
-    def mark_processed(self, content_id: ContentId) -> None:
-        self.processed_ids.add(content_id.value)
-
     def save_entry(self, entry: LedgerEntry) -> None:
-        self.processed_ids.add(entry.content_id.value)
+        if entry.status.value == "COMPLETED":
+            self.processed_ids.add(entry.content_id.value)
+        else:
+            self.processed_ids.discard(entry.content_id.value)
         self.entries[entry.content_id.value] = entry
 
     def get_entry(self, content_id: ContentId) -> LedgerEntry | None:
         return self.entries.get(content_id.value)
-
-    def list_entries(self, limit: int = 100, offset: int = 0) -> list[LedgerEntry]:
-        return list(self.entries.values())[offset : offset + limit]

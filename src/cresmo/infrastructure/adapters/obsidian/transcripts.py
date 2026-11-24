@@ -37,7 +37,6 @@ _EXPANDED_STAGES: frozenset[str] = frozenset(
         StageName.GAP_FILLER,
         StageName.LONG_EXPANDER,
         StageName.WIDE_EXPANDER,
-        "enriched",
     }
 )
 
@@ -56,21 +55,19 @@ class TranscriptVaultHandler:
         self.enriched_dir = Path(enriched_dir)
         self.data_dir = Path(data_dir).resolve() if data_dir is not None else self.raw_dir.parent
         self.fluid_dir = (
-            Path(fluid_dir) if fluid_dir is not None else (self.data_dir / "fluid_prose")
+            Path(fluid_dir) if fluid_dir is not None else (self.data_dir / StageName.FLUID_PROSE.value)
         )
 
     def resolve_stage_dir(self, stage: str | StageName) -> Path:
         """Resolve dynamic stage directory following canonical data/{stage} structure (ADR-058)."""
         stage_key = stage.value if hasattr(stage, "value") else str(stage).strip()
-        if stage_key == "raw":
+        if stage_key == StageName.RAW:
             return self.raw_dir
-        if stage_key in ("fluid", "fluid_prose"):
+        if stage_key == StageName.FLUID_PROSE:
             return self.fluid_dir
-        if stage_key == "enriched":
-            return self.enriched_dir
         return self.data_dir / stage_key
 
-    def _format_stage_frontmatter(self, transcript: StageTranscript, stage_name: str = "") -> str:
+    def _format_stage_frontmatter(self, transcript: StageTranscript) -> str:
         """Format canonical monomorphic YAML frontmatter for any stage transcript (ADR-058)."""
         description = transcript.provenance.description or ""
         indented_description = "\n".join("  " + line for line in description.splitlines())
@@ -121,12 +118,10 @@ class TranscriptVaultHandler:
         channel_dir = base_dir / sanitize_filename(transcript.channel.name)
         file_path = channel_dir / f"{transcript.content.id.value}.md"
 
-        yaml_header = self._format_stage_frontmatter(transcript, stage_key)
+        yaml_header = self._format_stage_frontmatter(transcript)
         raw_title = transcript.content.title or "Untitled Compendium"
         body_payload = transcript.content.text.strip()
-        if (stage_key in _EXPANDED_STAGES or target_dir == self.enriched_dir) and not (
-            body_payload.startswith("# ")
-        ):
+        if stage_key in _EXPANDED_STAGES and not body_payload.startswith("# "):
             body_text = f"# {raw_title}\n\n{body_payload}"
         else:
             body_text = body_payload
@@ -162,10 +157,8 @@ class TranscriptVaultHandler:
         frontmatter_text, raw_body = match.groups()
         metadata = yaml.safe_load(frontmatter_text) or {}
 
-        channel_name = str(
-            metadata.get("channel_name") or metadata.get("channel") or file_path.parent.name
-        )
-        raw_title_meta = metadata.get("video_title") or metadata.get("title")
+        channel_name = str(metadata.get("channel_name") or file_path.parent.name)
+        raw_title_meta = metadata.get("video_title")
         if raw_title_meta:
             title = str(raw_title_meta)
         elif stage_key in _EXPANDED_STAGES:
@@ -173,9 +166,9 @@ class TranscriptVaultHandler:
         else:
             title = ""
         raw_channel_id = str(metadata.get("channel_id") or "")
-        channel_category = str(metadata.get("channel_category") or metadata.get("domain") or "")
-        source_url = str(metadata.get("url") or metadata.get("source_url") or "")
-        raw_date = metadata.get("video_date") or metadata.get("upload_date")
+        channel_category = str(metadata.get("channel_category") or "")
+        source_url = str(metadata.get("url") or "")
+        raw_date = metadata.get("video_date")
         upload_date = None
         if raw_date:
             date_str = str(raw_date).strip()
@@ -235,22 +228,6 @@ class TranscriptVaultHandler:
 
         matched = list(stage_dir.glob(f"**/{target_name}")) if stage_dir.exists() else []
         if not matched:
-            if (
-                stage_key in ("fluid_prose", "fluid")
-                and self.fluid_dir.exists()
-                and self.fluid_dir != stage_dir
-            ):
-                matched = list(self.fluid_dir.glob(f"**/{target_name}"))
-            elif (
-                stage_key in (StageName.GAP_FILLER, "enriched")
-                and self.enriched_dir.exists()
-                and self.enriched_dir != stage_dir
-            ):
-                matched = list(self.enriched_dir.glob(f"**/{target_name}"))
-            elif stage_key == "raw" and self.raw_dir.exists() and self.raw_dir != stage_dir:
-                matched = list(self.raw_dir.glob(f"**/{target_name}"))
-
-        if not matched:
             return None
 
         file_path = matched[0]
@@ -262,23 +239,9 @@ class TranscriptVaultHandler:
         """Retrieve sorted list of all markdown file paths for a stage and channel."""
         stage_key = stage_name.value if isinstance(stage_name, StageName) else str(stage_name)
         ch_name = sanitize_filename(channel_name)
-        candidates: set[Path] = set()
-        stage_dirs: list[Path] = [self.resolve_stage_dir(stage_key)]
-        if stage_key == StageName.FLUID_PROSE and self.fluid_dir != stage_dirs[0]:
-            stage_dirs.append(self.fluid_dir)
-        elif stage_key in (StageName.GAP_FILLER, "enriched") and self.enriched_dir != stage_dirs[0]:
-            stage_dirs.append(self.enriched_dir)
-
-        for d in stage_dirs:
-            ch_dir = d / ch_name
-            if ch_dir.exists() and ch_dir.is_dir():
-                candidates.update(
-                    p
-                    for p in ch_dir.glob("*.md")
-                    if p.is_file() and not p.name.startswith(("_", "."))
-                )
-        return sorted(candidates)
-
-    def get_fluid_files_for_channel(self, channel_name: ChannelName) -> list[Path]:
-        """Retrieve sorted list of all fluid markdown file paths for a given channel."""
-        return self.get_stage_files_for_channel(StageName.FLUID_PROSE, channel_name)
+        ch_dir = self.resolve_stage_dir(stage_key) / ch_name
+        if not ch_dir.exists() or not ch_dir.is_dir():
+            return []
+        return sorted(
+            p for p in ch_dir.glob("*.md") if p.is_file() and not p.name.startswith(("_", "."))
+        )

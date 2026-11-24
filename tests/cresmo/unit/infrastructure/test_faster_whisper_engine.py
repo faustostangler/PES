@@ -99,11 +99,6 @@ class TestFasterWhisperEngine:
             assert mock_whisper_cls.call_count == 2
             mock_whisper_cls.assert_called_with("small", device="cpu", compute_type="int8")
 
-            # clear_cache forces reload on next call
-            engine.clear_cache()
-            engine.transcribe(audio_file, model_name="base")
-            assert mock_whisper_cls.call_count == 3
-
         for call in mock_model_instance.transcribe.call_args_list:
             assert call.args[0] == str(audio_file)
             assert call.kwargs["vad_filter"] is True

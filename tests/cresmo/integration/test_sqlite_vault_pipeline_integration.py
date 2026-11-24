@@ -6,7 +6,9 @@ from datetime import UTC, datetime
 from pathlib import Path
 from unittest.mock import MagicMock
 
-from cresmo.application.pipeline import CresmoPipeline, PipelineStageRunner, StageFactory
+from cresmo.application.pipeline.coordinator import CresmoPipeline
+from cresmo.application.pipeline.stage_factory import StageFactory
+from cresmo.application.pipeline.stage_runner import PipelineStageRunner
 from cresmo.application.ports import (
     LlmJudgePort,
     NoOpMetricsPort,
@@ -28,7 +30,7 @@ from cresmo.domain.value_objects import (
 from cresmo.infrastructure.adapters.judges.preflight_decorator import (
     MechanicalPreflightJudgeDecorator,
 )
-from cresmo.infrastructure.adapters.prompts import JsonPromptProvider
+from cresmo.infrastructure.adapters.prompts.json_provider import JsonPromptProvider
 from cresmo.infrastructure.config import (
     CresmoSettings,
     JudgeSettings,
@@ -151,16 +153,20 @@ def test_sqlite_vault_taxonomy_pipeline_roundtrip_and_idempotency(tmp_path: Path
             _valid_wide_expander_markdown(),
         ]
     )
+    from cresmo.application.pipeline.models import PipelineDependencies
+
     stage_runner = PipelineStageRunner(
-        telemetry_port=NoOpTelemetryPort(),
-        metrics_port=NoOpMetricsPort(),
-        llm_judge=_make_passing_judge(),
-        judge_blocking=True,
-        judge_max_attempts=1,
-        prompt_provider=prompt_provider,
-        llm_transformation_port=llm_adapter,
-        stage_factory=StageFactory(policy=settings.to_stage_execution_policy()),
-        ledger_port=ledger_adapter,
+        PipelineDependencies(
+            telemetry_port=NoOpTelemetryPort(),
+            metrics_port=NoOpMetricsPort(),
+            llm_judge=_make_passing_judge(),
+            judge_blocking=True,
+            judge_max_attempts=1,
+            prompt_provider=prompt_provider,
+            llm_transformation_port=llm_adapter,
+            stage_factory=StageFactory(policy=settings.to_stage_execution_policy()),
+            ledger_port=ledger_adapter,
+        )
     )
     pipeline = CresmoPipeline(
         media_ingestion_port=MockMediaIngestionPort(),

@@ -15,7 +15,6 @@ from uuid import uuid4
 from cresmo.domain.value_objects import ChannelName
 
 ISO_DATE_COMPACT_LENGTH: int = 8
-MIN_NOTE_DEFINITION_LENGTH: int = 20
 
 _ILLEGAL_FILENAME_CHARS = re.compile(r'[\\/*?:"<>|%]')
 _FRONTMATTER_PATTERN = re.compile(r"^---\s*\n([\s\S]*?)\n---\s*\n([\s\S]*)$")

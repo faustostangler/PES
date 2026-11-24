@@ -22,14 +22,14 @@ class ChannelCatalogHandler:
         self.raw_dir = raw_dir
         self.data_dir = data_dir
 
-    def get_channel_index_path(self, channel_name: ChannelName) -> Path:
+    def _get_channel_index_path(self, channel_name: ChannelName) -> Path:
         """Return absolute path to channel's _index_{channel_name}.md."""
         clean_channel = sanitize_filename(channel_name)
         return self.raw_dir / f"_index_{clean_channel}.md"
 
     def get_indexed_video_ids_for_channel(self, channel_name: ChannelName) -> set[ContentId]:
         """Retrieve set of ContentIds already indexed in the channel's _index_{channel_name}.md."""
-        index_file = self.get_channel_index_path(channel_name)
+        index_file = self._get_channel_index_path(channel_name)
         if not index_file.exists() or not index_file.is_file():
             return set()
         try:
@@ -43,16 +43,11 @@ class ChannelCatalogHandler:
                 ids.add(ContentId(match.group(1)))
             except (ValueError, TypeError):
                 continue
-        for match in re.finditer(r"\[([a-zA-Z0-9_-]{1,64})\]\((https?://[^\)]+)\)", content):
-            try:
-                ids.add(ContentId(match.group(1)))
-            except (ValueError, TypeError):
-                continue
         return ids
 
     def append_channel_index_entry(self, channel_name: ChannelName, entry: RawIndexEntry) -> None:
-        """Append raw index entry to data/raw/<channel_name>/_canal.md atomically."""
-        index_file = self.get_channel_index_path(channel_name)
+        """Append raw index entry to data/raw/_index_{channel_name}.md atomically."""
+        index_file = self._get_channel_index_path(channel_name)
         index_file.parent.mkdir(parents=True, exist_ok=True)
 
         header = ""

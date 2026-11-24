@@ -62,7 +62,6 @@ class TestRunHumbleCommand:
 
         req = RunSynthesisRequest(
             passes=4,
-            batch_size=8,
             lookback=14,
             web_index=True,
             crawl=True,
@@ -76,7 +75,6 @@ class TestRunHumbleCommand:
         assert code == EXIT_SUCCESS
         mock_builder.assert_called_once_with(
             lookback_override=14,
-            batch_size_override=8,
             web_index=True,
             check_ffmpeg=True,
         )

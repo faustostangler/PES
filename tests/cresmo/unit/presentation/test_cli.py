@@ -7,22 +7,19 @@ process exit codes per SPEC-002 §4.1 & §4.2.
 from __future__ import annotations
 
 from pathlib import Path
-from types import SimpleNamespace as Namespace
 from unittest.mock import MagicMock, patch
 
 import pytest
 from pydantic import SecretStr
 
-from cresmo.application.pipeline import PipelineResult
+from cresmo.application.pipeline.models import PipelineResult
 from cresmo.application.services.preflight import PreflightResult
-from cresmo.application.use_cases.run_synthesis import RunSynthesisRequest
 from cresmo.domain.entities import StageTranscript
 from cresmo.domain.exceptions import (
     DomainValidationError,
     IngestionNetworkError,
     PreflightError,
     RateLimitExceededError,
-    SecurityViolationError,
 )
 from cresmo.domain.value_objects import (
     Channel,
@@ -71,7 +68,7 @@ class TestCresmoCLI:
         """Verify that cli.__all__ strictly exposes only published entrypoint primitives."""
         import cresmo.presentation.cli as cli_mod
 
-        assert cli_mod.__all__ == ["app", "main"]
+        assert cli_mod.__all__ == ["app", "cli_entrypoint", "main"]
 
     def test_exit_codes_public_all_interface(self) -> None:
         """Verify that exit_codes.__all__ defines the complete canonical taxonomy."""
@@ -86,13 +83,11 @@ class TestCresmoCLI:
             "EXIT_SUCCESS",
         ]
 
-    def test_cli_no_args_defaults_to_run(self) -> None:
-        """Verify running main([]) defaults to dispatching 'run' per CLI entrypoint."""
-        with patch(
-            "cresmo.presentation.commands.run.handle_run", return_value=EXIT_SUCCESS
-        ) as mock_handle:
-            assert main([]) == EXIT_SUCCESS
-            mock_handle.assert_called_once_with(RunSynthesisRequest())
+    def test_cli_no_args_shows_help(self, capsys: pytest.CaptureFixture[str]) -> None:
+        """Verify running main([]) displays help and returns EXIT_CONFIG_OR_USAGE_ERROR."""
+        assert main([]) == EXIT_CONFIG_OR_USAGE_ERROR
+        out, _ = capsys.readouterr()
+        assert "usage:" in out.lower() or "commands" in out.lower()
 
     def test_cli_none_argv_defaults_to_sys_argv(self) -> None:
         mock_checker = MagicMock()
@@ -270,15 +265,12 @@ class TestCresmoCLI:
                     "https://youtube.com/watch?v=dQw4w9WgXcQ",
                     "--passes",
                     "3",
-                    "--batch-size",
-                    "9",
                 ]
             )
 
             assert exit_code == EXIT_SUCCESS
             mock_builder.assert_called_once()
             call_kwargs = mock_builder.call_args.kwargs
-            assert call_kwargs["batch_size_override"] == 9
             assert isinstance(call_kwargs["settings"], CresmoSettings)
             mock_pipeline.run_for_video.assert_called_once_with(
                 video_url="https://youtube.com/watch?v=dQw4w9WgXcQ",
@@ -702,20 +694,6 @@ class TestCresmoCLI:
             exit_code = main(["sync", "--channel", "https://youtube.com/@test"])
             assert exit_code == EXIT_INGESTION_ERROR
 
-    def test_cli_sync_security_violation_returns_code_2(self) -> None:
-        mock_use_case = MagicMock()
-        mock_use_case.execute.side_effect = SecurityViolationError("Traversal detected")
-
-        with (
-            patch("cresmo.bootstrap.composition.ensure_runtime_directories"),
-            patch(
-                "cresmo.bootstrap.composition.build_sync_channel_use_case",
-                return_value=mock_use_case,
-            ),
-        ):
-            exit_code = main(["sync", "--channel", "https://youtube.com/@test"])
-            assert exit_code == EXIT_CONFIG_OR_USAGE_ERROR
-
     def test_cli_sync_preflight_error_returns_code_2(self) -> None:
         mock_use_case = MagicMock()
         mock_use_case.execute.side_effect = PreflightError("Missing tool ffmpeg")
@@ -895,7 +873,6 @@ class TestCresmoCLI:
         settings = CresmoSettings(_env_file=None)
         assert settings.ingestion.days_lookback == 365
         assert settings.ingestion.workers.whisper == 1
-        assert settings.ingestion.workers.subtitle == 5
         assert settings.ingestion.workers.channel_discovery == 10
 
     def test_settings_concurrency_pools_multiples_scaled(self) -> None:
@@ -907,7 +884,6 @@ class TestCresmoCLI:
             ingestion=IngestionSettings(workers=WorkerPoolSettings(whisper=2)),
         )
         assert settings.ingestion.workers.whisper == 2
-        assert settings.ingestion.workers.subtitle == 10
         assert settings.ingestion.workers.channel_discovery == 20
 
     def test_settings_concurrency_pools_explicit_override(self) -> None:
@@ -916,11 +892,10 @@ class TestCresmoCLI:
 
         settings = CresmoSettings(
             _env_file=None,
-            ingestion=IngestionSettings(workers=WorkerPoolSettings(whisper=3, subtitle=7)),
+            ingestion=IngestionSettings(workers=WorkerPoolSettings(whisper=3, channel_discovery=17)),
         )
         assert settings.ingestion.workers.whisper == 3
-        assert settings.ingestion.workers.subtitle == 7
-        assert settings.ingestion.workers.channel_discovery == 30
+        assert settings.ingestion.workers.channel_discovery == 17
 
     def test_cli_worker_flags_removed(self) -> None:
         """Verify that --subtitle-workers, --whisper-workers, and --discovery-workers are rejected."""
@@ -968,7 +943,7 @@ class TestCresmoCLI:
                     )
                 ),
             )
-            code = handle_check_config(Namespace())
+            code = handle_check_config()
             assert code == EXIT_SUCCESS
             captured = capsys.readouterr()
             assert (
@@ -987,7 +962,7 @@ class TestCresmoCLI:
                     )
                 ),
             )
-            code = handle_check_config(Namespace())
+            code = handle_check_config()
             assert code == EXIT_SUCCESS
             captured = capsys.readouterr()
             assert (
@@ -1005,7 +980,7 @@ class TestCresmoCLI:
                     )
                 ),
             )
-            code = handle_check_config(Namespace())
+            code = handle_check_config()
             assert code == EXIT_SUCCESS
             captured = capsys.readouterr()
             assert "- Langfuse Telemetry: Disabled (no credentials configured)\n" in captured.out
@@ -1020,7 +995,7 @@ class TestCresmoCLI:
                     )
                 ),
             )
-            code = handle_check_config(Namespace())
+            code = handle_check_config()
             assert code == EXIT_SUCCESS
             captured = capsys.readouterr()
             assert "- Langfuse Telemetry: Disabled (no credentials configured)\n" in captured.out
@@ -1030,7 +1005,7 @@ class TestCresmoCLI:
             "cresmo.presentation.commands.check_config.load_fresh_settings",
             side_effect=PreflightError("Vault missing"),
         ):
-            code = handle_check_config(Namespace())
+            code = handle_check_config()
             assert code == EXIT_CONFIG_OR_USAGE_ERROR
             captured = capsys.readouterr()
             assert "Preflight error: Vault missing\n" in captured.err
@@ -1046,7 +1021,7 @@ class TestCresmoCLI:
                 Dummy.model_validate({"num": "invalid"})
             except ValidationError as ve:
                 mock_s.side_effect = ve
-            code = handle_check_config(Namespace())
+            code = handle_check_config()
             assert code == EXIT_CONFIG_OR_USAGE_ERROR
             captured = capsys.readouterr()
             assert "Configuration error:" in captured.err
@@ -1056,7 +1031,7 @@ class TestCresmoCLI:
             "cresmo.presentation.commands.check_config.load_fresh_settings",
             side_effect=RuntimeError("Hardware fault"),
         ):
-            code = handle_check_config(Namespace())
+            code = handle_check_config()
             assert code == EXIT_INTERNAL_ERROR
             captured = capsys.readouterr()
             assert "Unexpected configuration error: Hardware fault\n" in captured.err
@@ -1074,7 +1049,7 @@ class TestCresmoCLI:
         code_run_help = main(["run", "--help"])
         assert code_run_help == EXIT_SUCCESS
         out_run, _ = capsys.readouterr()
-        assert "batch-size" in out_run
+        assert "--passes" in out_run
 
     def test_cli_argv_none_uses_sys_argv(self) -> None:
         """Verify that passing argv=None defaults to reading sys.argv[1:]."""
@@ -1086,15 +1061,6 @@ class TestCresmoCLI:
             code = main(None)
             assert code == EXIT_SUCCESS
             assert mock_check.called
-
-    def test_cli_empty_argv_routes_to_default_run(self) -> None:
-        """Verify passing explicit empty list argv=[] routes to default run subcommand."""
-        with patch(
-            "cresmo.presentation.commands.run.handle_run", return_value=EXIT_SUCCESS
-        ) as mock_handle:
-            code = main([])
-            assert code == EXIT_SUCCESS
-            mock_handle.assert_called_once_with(RunSynthesisRequest())
 
     def test_cli_dedupe_exception_returns_internal_error(self) -> None:
         """Verify that unhandled exception in dedupe returns EXIT_INTERNAL_ERROR (1)."""

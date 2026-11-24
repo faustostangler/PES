@@ -28,25 +28,29 @@ for path_entry in (str(SRC_DIR), str(REPO_ROOT)):
     if path_entry not in sys.path:
         sys.path.insert(0, path_entry)
 
-from cresmo.application.evals import (
+from cresmo.application.evals.specs import (  # noqa: E402
     PromptTemplateLookup,
     build_stage_specs,
     parse_model_specs,
     parse_stage_specs,
-    run_calibration_suite,
 )
-from cresmo.application.ports.llm_judge_port import LlmJudgePort
-from cresmo.bootstrap.factories.judge_factory import build_llm_judge_adapter
-from cresmo.domain.value_objects.prompt import PromptKey
-from cresmo.infrastructure.adapters.evals import (
+from cresmo.application.evals.suite import run_calibration_suite  # noqa: E402
+from cresmo.application.ports.llm_judge_port import LlmJudgePort  # noqa: E402
+from cresmo.bootstrap.factories.judge_factory import build_llm_judge_adapter  # noqa: E402
+from cresmo.domain.value_objects.prompt import PromptKey  # noqa: E402
+from cresmo.infrastructure.adapters.evals.file_report_writer import (  # noqa: E402
     FileCalibrationReportWriter,
+)
+from cresmo.infrastructure.adapters.evals.json_checkpoint_store import (  # noqa: E402
     JsonCalibrationCheckpointStore,
+)
+from cresmo.infrastructure.adapters.evals.json_dataset_loader import (  # noqa: E402
     JsonCalibrationDatasetLoader,
 )
-from cresmo.infrastructure.adapters.llm.gemini_pool import is_quota_exhausted_error
-from cresmo.infrastructure.adapters.prompts import load_prompt_catalog
-from cresmo.infrastructure.config import CresmoSettings
-from cresmo.presentation.formatters.calibration_report import (
+from cresmo.infrastructure.adapters.llm.gemini_pool import is_quota_exhausted_error  # noqa: E402
+from cresmo.infrastructure.adapters.prompts.catalog import load_prompt_catalog  # noqa: E402
+from cresmo.infrastructure.config import CresmoSettings  # noqa: E402
+from cresmo.presentation.formatters.calibration_report import (  # noqa: E402
     format_benchmark_summary,
     format_calibration_report,
     render_calibration_event,
@@ -189,17 +193,14 @@ def run_cli(
     if dataset_path is not None and len(selected_stages) > 1:
         raise typer.BadParameter("--dataset-path can only be used with a single --stage.")
 
+    resolved_threshold = (
+        threshold if threshold is not None else base_settings.judge.pass_threshold
+    )
     stage_thresholds = {
-        "fluid_prose": threshold if threshold is not None else base_settings.judge.pass_threshold,
-        "gap_filler": (
-            threshold if threshold is not None else base_settings.judge.gap_filler.threshold
-        ),
-        "long_expander": (
-            threshold if threshold is not None else base_settings.judge.pass_threshold
-        ),
-        "wide_expander": (
-            threshold if threshold is not None else base_settings.judge.pass_threshold
-        ),
+        "fluid_prose": resolved_threshold,
+        "gap_filler": resolved_threshold,
+        "long_expander": resolved_threshold,
+        "wide_expander": resolved_threshold,
     }
 
     def _build_judge(
@@ -212,9 +213,6 @@ def run_cli(
         judge_updates: dict[str, object] = {
             "provider": provider,
             "pass_threshold": threshold,
-            "gap_filler": base_settings.judge.gap_filler.model_copy(
-                update={"threshold": threshold}
-            ),
         }
         llm_updates: dict[str, object] = {}
         if provider == "gemini":

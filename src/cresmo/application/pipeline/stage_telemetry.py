@@ -12,55 +12,29 @@ Conforms to:
 from __future__ import annotations
 
 import time
-from collections.abc import Generator, Sequence
+from collections.abc import Generator
 from contextlib import contextmanager
 from typing import Any
 
 from cresmo.application.pipeline.context import PipelineExecutionContext
 from cresmo.application.ports import (
+    MetricName,
     MetricsPort,
     TelemetryAttributeValue,
     TelemetryPort,
     TelemetrySpan,
     format_stage_span_name,
 )
-from cresmo.application.use_cases import DeduplicationReport
-from cresmo.domain.entities import (
-    AtomicNote,
-    MapOfContent,
-    PipelineSessionId,
-    UserIdentity,
-)
 from cresmo.domain.value_objects import (
-    AtomicEntityInventory,
     Channel,
-    ChannelId,
-    ChannelName,
     Content,
-    ContentId,
     JudgeEvaluation,
 )
 
 
-def as_str(
-    val: ChannelName | ContentId | ChannelId | PipelineSessionId | UserIdentity | str | None,
-) -> str:
-    """Extract canonical string value from Value Objects or return primitive string safely."""
-    if val is None:
-        return ""
-    if isinstance(val, (ChannelName, ContentId, ChannelId, PipelineSessionId, UserIdentity)):
-        return val.value
-    return val
-
-
 def resolve_active_trace_id(
-    channel: Channel | ChannelId | ChannelName | str | None = None,
-    content: Content | ContentId | str | None = None,
+    context: PipelineExecutionContext,
     *,
-    context: PipelineExecutionContext | None = None,
-    channel_id: ChannelId | str | None = None,
-    channel_name: ChannelName | str | None = None,
-    content_id: ContentId | str | None = None,
     telemetry_port: TelemetryPort | None = None,
     span: TelemetrySpan | None = None,
 ) -> str:
@@ -73,26 +47,8 @@ def resolve_active_trace_id(
     if active_span is not None and isinstance(active_span.trace_id, str) and active_span.trace_id:
         return active_span.trace_id
 
-    if context is not None:
-        channel = context.channel
-        content = context.content
-
-    resolved_cid = (
-        content.id.value
-        if isinstance(content, Content)
-        else (as_str(content_id) if content_id else as_str(content))
-    )
-    if isinstance(channel, Channel):
-        ch_token = channel.id.value if channel.id else channel.name
-    else:
-        effective_ch_id = channel_id or (channel if isinstance(channel, ChannelId) else None)
-        effective_ch_name = channel_name or channel
-        ch_token = (
-            as_str(effective_ch_id)
-            if effective_ch_id
-            else (as_str(effective_ch_name) if effective_ch_name else "cresmo")
-        )
-    return f"cresmo_{ch_token}_{resolved_cid}"
+    ch_token = context.channel.id.value if context.channel.id else context.channel.name
+    return f"cresmo_{ch_token}_{context.content.id.value}"
 
 
 def attach_evaluation_span_attributes(
@@ -154,15 +110,14 @@ def record_error_metric(
     channel: Channel,
     content: Content,
 ) -> None:
-    """Increment stage error counter with algorithmic and cognitive parity labels."""
+    """Increment stage error counter with low-cardinality dimensional labels."""
+    _ = content
     metrics_port.increment_counter(
-        "cresmo_pipeline_errors_total",
+        MetricName.PIPELINE_ERRORS,
         1.0,
         labels={
             "error_type": exc.__class__.__name__,
             "channel_id": channel.id.value if channel.id else "",
-            "content_id": content.id.value,
-            "channel_name": channel.name,
             "stage": stage_name,
         },
     )
@@ -174,17 +129,15 @@ def record_duration_metric(
     elapsed: float,
     stage_name: str,
     channel: Channel,
-    content: Content,
     status: str,
 ) -> None:
     """Observe stage execution duration histogram in seconds."""
     metrics_port.observe_histogram(
-        "cresmo_pipeline_stage_duration_seconds",
+        MetricName.PIPELINE_STAGE_DURATION,
         elapsed,
         labels={
             "stage": stage_name,
             "channel_id": channel.id.value if channel.id else "",
-            "channel_name": channel.name,
             "status": status,
         },
     )
@@ -199,83 +152,9 @@ def record_evaluation_metric(
 ) -> None:
     """Increment judge evaluation counter."""
     metrics_port.increment_counter(
-        "cresmo_judge_evaluations_total",
+        MetricName.JUDGE_EVALUATIONS,
         1.0,
         labels={"stage": stage_name, "passed": str(passed).lower(), "attempt": str(attempt)},
-    )
-
-
-def record_session_completion_telemetry(
-    metrics_port: MetricsPort,
-    telemetry_port: TelemetryPort,
-    *,
-    session_id: PipelineSessionId | str,
-    content_id: ContentId | str,
-    channel_name: ChannelName | str,
-    synthesized_notes: Sequence[AtomicNote],
-    inventory: AtomicEntityInventory,
-    mocs: Sequence[MapOfContent],
-    dedup_report: DeduplicationReport,
-    channel_id: ChannelId | str | None = None,
-) -> None:
-    """Record completed atomic_notes metrics and session coherence evaluation telemetry."""
-    lbls = {
-        "channel_id": as_str(channel_id),
-        "channel_name": as_str(channel_name),
-        "content_id": as_str(content_id),
-    }
-    metrics_port.increment_counter(
-        "cresmo_transcripts_processed_total",
-        1.0,
-        labels={**lbls, "status": "completed", "modality": "transcript"},
-    )
-    metrics_port.increment_counter(
-        "cresmo_atomic_notes_synthesized_total",
-        float(len(synthesized_notes)),
-        labels={**lbls, "note_type": "all"},
-    )
-
-    item_count = len(inventory.items) if hasattr(inventory, "items") else 1
-    coherence_score = min(1.0, len(synthesized_notes) / max(1, item_count)) if item_count else 1.0
-    details = {
-        "synthesized_notes_count": len(synthesized_notes),
-        "inventory_count": item_count,
-        "mocs_count": len(mocs),
-        "duplicates_unified": dedup_report.duplicates_unified_count,
-    }
-    sess_vo = (
-        session_id if isinstance(session_id, PipelineSessionId) else PipelineSessionId(session_id)
-    )
-    cnt_vo = ContentId.from_string(content_id)
-
-    session_parts = sess_vo.value.split(":")
-    channel_token = (
-        session_parts[1]
-        if session_parts[0] == "content" and len(session_parts) == 3
-        else session_parts[0]
-    )
-
-    active_span = telemetry_port.current_span()
-    active_span.set_output({"coherence_score": coherence_score, **details})
-    active_span.add_event(
-        "session_coherence",
-        attributes={
-            "eval.session_id": sess_vo.value,
-            "eval.content_id": cnt_vo.value,
-            "eval.channel_id": channel_token,
-            "eval.coherence_score": coherence_score,
-            "eval.details.synthesized_notes_count": details["synthesized_notes_count"],
-            "eval.details.inventory_count": details["inventory_count"],
-            "eval.details.mocs_count": details["mocs_count"],
-            "eval.details.duplicates_unified": details["duplicates_unified"],
-        },
-    )
-    telemetry_port.record_score(
-        name="session_coherence",
-        value=coherence_score,
-        comment=f"Coherence for {cnt_vo.value}",
-        trace_id=active_span.trace_id,
-        observation_id=active_span.span_id,
     )
 
 
@@ -285,17 +164,13 @@ def measure_stage_execution(
     metrics_port: MetricsPort,
     *,
     stage_name: str,
-    context: PipelineExecutionContext | None = None,
-    channel: Channel | None = None,
-    content: Content | None = None,
+    context: PipelineExecutionContext,
 ) -> Generator[TelemetrySpan]:
     """Wrap stage execution in a TelemetryPort stage span and record SRE golden signals."""
     start_time = time.perf_counter()
     status = "success"
-    effective_channel = context.channel if context is not None else channel
-    effective_content = context.content if context is not None else content
-    if effective_channel is None or effective_content is None:
-        raise ValueError("_measure_stage requires context or (channel and content)")
+    effective_channel = context.channel
+    effective_content = context.content
 
     stage_attributes: dict[str, TelemetryAttributeValue] = {
         "cresmo.stage.channel.id": effective_channel.id.value if effective_channel.id else "",
@@ -329,6 +204,5 @@ def measure_stage_execution(
                 elapsed=time.perf_counter() - start_time,
                 stage_name=stage_name,
                 channel=effective_channel,
-                content=effective_content,
                 status=status,
             )

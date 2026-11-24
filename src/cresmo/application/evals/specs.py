@@ -18,18 +18,13 @@ from pathlib import Path
 from typing import Any
 
 from cresmo.application.evals.calibration_metrics import CalibrationVerdict, ConfusionMatrix
+from cresmo.domain.stage_registry import StageName, StageRegistry
 from cresmo.domain.value_objects.prompt import PromptKey
-from cresmo.domain.value_objects.quality import (
-    GAP_FILLER_CANONICAL_WEIGHTS,
-    LONG_EXPANDER_CANONICAL_WEIGHTS,
-    WIDE_EXPANDER_CANONICAL_WEIGHTS,
-    JudgeCriterion,
-)
+from cresmo.domain.value_objects.quality import JudgeCriterion
 
 DEFAULT_CHECKPOINT_DIR = Path("data") / "calibration_checkpoints"
 DEFAULT_REPORTS_DIR = Path("reports") / "calibration"
 DEFAULT_DATASETS_DIR = Path("evals") / "datasets"
-DEFAULT_SEEDS_DIR = DEFAULT_DATASETS_DIR / "seeds"
 
 PromptTemplateLookup = Callable[[PromptKey], dict[str, str]]
 
@@ -70,50 +65,25 @@ def build_stage_specs(
         Mapping from canonical stage name to its ``StageCalibrationSpec``.
     """
     resolved_seeds_dir = seeds_dir if seeds_dir is not None else datasets_dir / "seeds"
-    return {
-        "fluid_prose": StageCalibrationSpec(
-            stage_name="fluid_prose",
-            label="Stage 1: Fluid Prose",
-            prompt_key=PromptKey.JUDGE_FLUID_PROSE,
-            default_golden_set_path=datasets_dir / "fluid_prose_golden_set.json",
-            default_seed_path=resolved_seeds_dir / "fluid_prose_seed.json",
-            required_criteria=(
-                JudgeCriterion.ORALITY_REMOVAL,
-                JudgeCriterion.SEMANTIC_FAITHFULNESS,
-                JudgeCriterion.EPISTEMIC_CRITIQUE,
-                JudgeCriterion.NER_PRESERVATION,
-                JudgeCriterion.STRUCTURAL_COMPLIANCE,
-                JudgeCriterion.AUTHORIAL_VOICE,
-            ),
-        ),
-        "gap_filler": StageCalibrationSpec(
-            stage_name="gap_filler",
-            label="Stage 2: Gap Filler",
-            prompt_key=PromptKey.JUDGE_GAP_FILLER,
-            default_golden_set_path=datasets_dir / "gap_filler_golden_set.json",
-            default_seed_path=resolved_seeds_dir / "gap_filler_seed.json",
-            required_criteria=tuple(GAP_FILLER_CANONICAL_WEIGHTS.keys()),
-        ),
-        "long_expander": StageCalibrationSpec(
-            stage_name="long_expander",
-            label="Stage 3: Long Expander",
-            prompt_key=PromptKey.JUDGE_LONG_EXPANDER,
-            default_golden_set_path=datasets_dir / "long_expander_golden_set.json",
-            default_seed_path=resolved_seeds_dir / "long_expander_seed.json",
-            required_criteria=tuple(LONG_EXPANDER_CANONICAL_WEIGHTS.keys()),
-        ),
-        "wide_expander": StageCalibrationSpec(
-            stage_name="wide_expander",
-            label="Stage 4: Wide Expander",
-            prompt_key=PromptKey.JUDGE_WIDE_EXPANDER,
-            default_golden_set_path=datasets_dir / "wide_expander_golden_set.json",
-            default_seed_path=resolved_seeds_dir / "wide_expander_seed.json",
-            required_criteria=tuple(WIDE_EXPANDER_CANONICAL_WEIGHTS.keys()),
-        ),
-    }
-
-
-STAGE_SPECS: dict[str, StageCalibrationSpec] = build_stage_specs()
+    stage_configs = (
+        (StageName.FLUID_PROSE, "Stage 1: Fluid Prose", PromptKey.JUDGE_FLUID_PROSE),
+        (StageName.GAP_FILLER, "Stage 2: Gap Filler", PromptKey.JUDGE_GAP_FILLER),
+        (StageName.LONG_EXPANDER, "Stage 3: Long Expander", PromptKey.JUDGE_LONG_EXPANDER),
+        (StageName.WIDE_EXPANDER, "Stage 4: Wide Expander", PromptKey.JUDGE_WIDE_EXPANDER),
+    )
+    specs: dict[str, StageCalibrationSpec] = {}
+    for stage_enum, label, fallback_prompt_key in stage_configs:
+        stage_key = stage_enum.value
+        stage_def = StageRegistry.get(stage_key)
+        specs[stage_key] = StageCalibrationSpec(
+            stage_name=stage_key,
+            label=label,
+            prompt_key=stage_def.judge_prompt_key or fallback_prompt_key,
+            default_golden_set_path=datasets_dir / f"{stage_key}_golden_set.json",
+            default_seed_path=resolved_seeds_dir / f"{stage_key}_seed.json",
+            required_criteria=stage_def.required_criteria,
+        )
+    return specs
 
 
 def classify_verdict(
@@ -175,7 +145,7 @@ def parse_stage_specs(
     Args:
         stages: Optional sequence of stage flags or comma-separated tokens.
         single_stage: Optional single-stage override flag.
-        stage_specs: Available stage registry (defaults to ``STAGE_SPECS``).
+        stage_specs: Available stage registry (defaults to ``build_stage_specs()``).
 
     Returns:
         Deduplicated ordered list of canonical stage names.
@@ -183,7 +153,7 @@ def parse_stage_specs(
     Raises:
         ValueError: If any requested stage token is not present in ``stage_specs``.
     """
-    registry = STAGE_SPECS if stage_specs is None else stage_specs
+    registry = build_stage_specs() if stage_specs is None else stage_specs
     raw_tokens: list[str] = []
     if stages:
         for entry in stages:

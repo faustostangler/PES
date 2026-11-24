@@ -39,7 +39,7 @@ class TestContentId:
     def test_invalid_characters_in_content_id_raises_validation_error(self) -> None:
         with pytest.raises(
             DomainValidationError,
-            match=r"^Invalid ContentId 'invalid/id#special!'\. Must match \^\[a-zA-Z0-9_-\]\{8,64\}\$ without whitespace\.$",
+            match=r"^Invalid ContentId 'invalid/id#special!'\. Must match \^\[a-zA-Z0-9_-\]\{1,64\}\$ without whitespace\.$",
         ):
             ContentId("invalid/id#special!")
 
@@ -68,7 +68,7 @@ class TestContentId:
         assert cid == "  dQw4w9WgXcQ  "
         assert cid != "different_id_123"
         assert (cid == 12345) is False
-        assert (cid == None) is False
+        assert (cid == None) is False  # noqa: E711
         assert hash(cid) == hash("dQw4w9WgXcQ")
         assert hash(cid) != hash(None)
         assert cid.strip() == "dQw4w9WgXcQ"
@@ -501,7 +501,7 @@ class TestChannelName:
 
         cn = ChannelName("Fabio Akita")
         assert (cn == 123) is False
-        assert (cn == None) is False
+        assert (cn == None) is False  # noqa: E711
         assert hash(cn) == hash("Fabio Akita")
         assert hash(cn) != hash(None)
         assert cn.strip() == "Fabio Akita"
@@ -697,7 +697,7 @@ class TestChannelId:
         assert cid == ChannelId("UC_x5XG1OV2P6uZZ5FSM9Ttw")
         assert cid != "UC_other_channel_id"
         assert (cid == 999) is False
-        assert (cid == None) is False
+        assert (cid == None) is False  # noqa: E711
         assert hash(cid) == hash("UC_x5XG1OV2P6uZZ5FSM9Ttw")
         assert hash(cid) != hash(None)
         assert cid.strip() == "UC_x5XG1OV2P6uZZ5FSM9Ttw"
@@ -742,10 +742,10 @@ class TestChannel:
         assert ch_empty_id.id is None
         assert ch_empty_id.url == "https://www.youtube.com/@Fabio Akita"
 
-    def test_channel_from_name_factory(self) -> None:
+    def test_channel_direct_construction_defaults_and_url(self) -> None:
         from cresmo.domain.value_objects import Channel, ChannelId
 
-        ch = Channel.from_name(
+        ch = Channel(
             name="Veritasium",
             id="UCHnyfMqiRRG1u-2MsSQLbXA",
             category="Science",
@@ -755,13 +755,13 @@ class TestChannel:
         assert ch.category == "Science"
         assert ch.url == "https://www.youtube.com/channel/UCHnyfMqiRRG1u-2MsSQLbXA"
 
-        ch_min = Channel.from_name(name="Minimal")
+        ch_min = Channel(name="Minimal")
         assert ch_min.name == "Minimal"
         assert ch_min.id is None
         assert ch_min.category == ""
         assert ch_min.url == "https://www.youtube.com/@Minimal"
 
-        ch_with_url = Channel.from_name(
+        ch_with_url = Channel(
             name="CustomUrl",
             url="https://example.com/custom",
         )
@@ -770,16 +770,16 @@ class TestChannel:
     def test_channel_url_fallback(self) -> None:
         from cresmo.domain.value_objects import Channel
 
-        ch = Channel.from_name(name="NonCanonicalChannel")
+        ch = Channel(name="NonCanonicalChannel")
         assert ch.url == "https://www.youtube.com/@NonCanonicalChannel"
 
     def test_channel_tenant_key(self) -> None:
         from cresmo.domain.value_objects import Channel
 
-        ch_with_id = Channel.from_name("Akita", id="UC1234567890abcdef")
+        ch_with_id = Channel("Akita", id="UC1234567890abcdef")
         assert ch_with_id.tenant_key == "channel:UC1234567890abcdef"
 
-        ch_without_id = Channel.from_name("Akita")
+        ch_without_id = Channel("Akita")
         assert ch_without_id.tenant_key == "channel:Akita"
 
     def test_channel_empty_name_raises_validation_error(self) -> None:
@@ -789,12 +789,12 @@ class TestChannel:
         with pytest.raises(
             DomainValidationError, match=r"^Channel name cannot be empty or whitespace\.$"
         ):
-            Channel.from_name("")
+            Channel("")
 
         with pytest.raises(
             DomainValidationError, match=r"^Channel name cannot be empty or whitespace\.$"
         ):
-            Channel(name=None)
+            Channel(name=None)  # type: ignore[arg-type]
 
     def test_channel_invalid_id_type_raises(self) -> None:
         from cresmo.domain.exceptions import DomainValidationError
@@ -808,7 +808,7 @@ class TestChannel:
     def test_channel_immutability(self) -> None:
         from cresmo.domain.value_objects import Channel
 
-        ch = Channel.from_name("Akita")
+        ch = Channel("Akita")
         with pytest.raises((FrozenInstanceError, AttributeError)):
             ch.name = "New Name"  # type: ignore
 

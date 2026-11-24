@@ -12,7 +12,6 @@ from __future__ import annotations
 
 from datetime import datetime
 from pathlib import Path
-from types import SimpleNamespace as Namespace
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -55,14 +54,6 @@ class TestWorkerCommand:
         )
         mock_use_case.execute.return_value = mock_summary
 
-        args = Namespace(
-            channel="https://youtube.com/@cresmo",
-            poll_interval=120,
-            lookback=14,
-            max_videos=25,
-            once=True,
-        )
-
         fake_temp_dir = tmp_path / "temp"
         fake_temp_dir.mkdir()
         heartbeat_file = fake_temp_dir / "cresmo_worker.heartbeat"
@@ -78,7 +69,13 @@ class TestWorkerCommand:
             ) as mock_build_uc,
             patch("tempfile.gettempdir", return_value=str(fake_temp_dir)),
         ):
-            code = handle_worker(args)
+            code = handle_worker(
+                channel="https://youtube.com/@cresmo",
+                poll_interval=120,
+                lookback=14,
+                max_videos=25,
+                once=True,
+            )
             assert code == EXIT_SUCCESS
             mock_resolve_settings.assert_called_once()
             mock_build_uc.assert_called_once_with(settings=mock_settings)
@@ -125,14 +122,6 @@ class TestWorkerCommand:
         )
         mock_use_case.execute.return_value = mock_summary
 
-        args = Namespace(
-            channel="https://youtube.com/@loop",
-            poll_interval=45,
-            lookback=7,
-            max_videos=10,
-            once=False,
-        )
-
         with (
             patch(
                 "cresmo.presentation.commands.worker.resolve_shared_settings",
@@ -145,7 +134,13 @@ class TestWorkerCommand:
             patch("tempfile.gettempdir", return_value=str(tmp_path)),
             patch("time.sleep", side_effect=KeyboardInterrupt) as mock_sleep,
         ):
-            code = handle_worker(args)
+            code = handle_worker(
+                channel="https://youtube.com/@loop",
+                poll_interval=45,
+                lookback=7,
+                max_videos=10,
+                once=False,
+            )
             assert code == EXIT_SUCCESS
             mock_sleep.assert_called_once_with(45)
 
@@ -157,14 +152,6 @@ class TestWorkerCommand:
         self, tmp_path: Path, capsys: pytest.CaptureFixture[str]
     ) -> None:
         """Verify unhandled exception during polling outputs error to stderr and returns EXIT_INTERNAL_ERROR (1)."""
-        args = Namespace(
-            channel="https://youtube.com/@broken",
-            poll_interval=300,
-            lookback=7,
-            max_videos=10,
-            once=True,
-        )
-
         with (
             patch(
                 "cresmo.presentation.commands.worker.resolve_shared_settings",
@@ -172,7 +159,13 @@ class TestWorkerCommand:
             ),
             patch("tempfile.gettempdir", return_value=str(tmp_path)),
         ):
-            code = handle_worker(args)
+            code = handle_worker(
+                channel="https://youtube.com/@broken",
+                poll_interval=300,
+                lookback=7,
+                max_videos=10,
+                once=True,
+            )
             assert code == EXIT_INTERNAL_ERROR
 
             captured = capsys.readouterr()

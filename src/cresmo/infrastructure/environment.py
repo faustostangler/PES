@@ -52,11 +52,6 @@ class StorageSettingsProtocol(Protocol):
         ...
 
     @property
-    def gap_filler_dir(self) -> Path:
-        """Directory for deep gap-filled prose transcripts."""
-        ...
-
-    @property
     def enriched_dir(self) -> Path:
         """Directory for enriched multi-pass compendiums."""
         ...
@@ -84,9 +79,6 @@ def ensure_runtime_directories(
         storage.data_dir,
         storage.vault_dir,
         storage.mocs_dir,
-        storage.raw_dir,
-        storage.fluid_dir,
-        storage.gap_filler_dir,
         storage.enriched_dir,
         storage.master_dir,
         storage.priority_texts_dir,

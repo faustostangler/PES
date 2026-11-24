@@ -11,10 +11,12 @@ from __future__ import annotations
 from pathlib import Path
 from unittest.mock import patch
 
-from cresmo.application.use_cases.discovery import (
-    BatchDiscoveryQuery,
+from cresmo.application.use_cases.discovery.discover_batch_sources import (
     DiscoverBatchSourcesUseCase,
-    LakeScannerService,
+)
+from cresmo.application.use_cases.discovery.lake_scanner import LakeScannerService
+from cresmo.application.use_cases.discovery.models import (
+    BatchDiscoveryQuery,
     _BatchSourceAccumulator,
 )
 

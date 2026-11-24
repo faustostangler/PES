@@ -8,6 +8,7 @@ from unittest.mock import MagicMock
 import pytest
 
 from cresmo.application.pipeline.context import PipelineExecutionContext
+from cresmo.application.pipeline.models import PipelineDependencies
 from cresmo.application.pipeline.quarantine import record_stage_quarantine
 from cresmo.application.pipeline.stage_factory import StageFactory
 from cresmo.application.pipeline.stage_runner import PipelineStageRunner
@@ -58,17 +59,19 @@ def test_execute_stage_with_string_identifier_and_factory() -> None:
     mock_llm.transform.return_value = "Transformed text output."
 
     runner = PipelineStageRunner(
-        telemetry_port=NoOpTelemetryPort(),
-        metrics_port=NoOpMetricsPort(),
-        prompt_provider=NoOpPromptProviderPort(),
-        llm_transformation_port=mock_llm,
-        stage_factory=factory,
+        PipelineDependencies(
+            telemetry_port=NoOpTelemetryPort(),
+            metrics_port=NoOpMetricsPort(),
+            prompt_provider=NoOpPromptProviderPort(),
+            llm_transformation_port=mock_llm,
+            stage_factory=factory,
+        )
     )
 
     ctx = _create_sample_context()
     raw = StageTranscript(
         channel=Channel(name=ChannelName(ctx.channel.name)),
-        provenance=MediaProvenance.empty(),
+        provenance=MediaProvenance(),
         content=Content(id=ctx.content.id, text="Original source transcript."),
     )
 
@@ -81,17 +84,19 @@ def test_execute_stage_with_string_identifier_and_factory() -> None:
 def test_execute_stage_string_without_factory_raises_value_error() -> None:
     """Verify execute_stage raises ValueError if stage name is provided but no StageFactory was injected."""
     runner = PipelineStageRunner(
-        telemetry_port=NoOpTelemetryPort(),
-        metrics_port=NoOpMetricsPort(),
-        prompt_provider=NoOpPromptProviderPort(),
-        llm_transformation_port=MagicMock(spec=LLMTransformationPort),
-        stage_factory=None,
+        PipelineDependencies(
+            telemetry_port=NoOpTelemetryPort(),
+            metrics_port=NoOpMetricsPort(),
+            prompt_provider=NoOpPromptProviderPort(),
+            llm_transformation_port=MagicMock(spec=LLMTransformationPort),
+            stage_factory=None,
+        )
     )
 
     ctx = _create_sample_context()
     raw = StageTranscript(
         channel=Channel(name=ChannelName(ctx.channel.name)),
-        provenance=MediaProvenance.empty(),
+        provenance=MediaProvenance(),
         content=Content(id=ctx.content.id, text="Some text"),
     )
 
@@ -141,19 +146,21 @@ def test_execute_stage_closed_loop_critique_synthesizer_integration() -> None:
 
     metrics = MagicMock(spec=NoOpMetricsPort())
     runner = PipelineStageRunner(
-        telemetry_port=NoOpTelemetryPort(),
-        metrics_port=metrics,
-        llm_judge=mock_judge,
-        prompt_provider=NoOpPromptProviderPort(),
-        llm_transformation_port=mock_llm,
-        stage_factory=factory,
-        critique_synthesizer=mock_synthesizer,
+        PipelineDependencies(
+            telemetry_port=NoOpTelemetryPort(),
+            metrics_port=metrics,
+            llm_judge=mock_judge,
+            prompt_provider=NoOpPromptProviderPort(),
+            llm_transformation_port=mock_llm,
+            stage_factory=factory,
+            critique_synthesizer=mock_synthesizer,
+        )
     )
 
     ctx = _create_sample_context()
     raw = StageTranscript(
         channel=Channel(name=ChannelName(ctx.channel.name)),
-        provenance=MediaProvenance.empty(),
+        provenance=MediaProvenance(),
         content=Content(id=ctx.content.id, text="Verbatim transcript with hesitation."),
     )
 
@@ -205,20 +212,22 @@ def test_execute_stage_fail_fast_quarantine_protocol() -> None:
     mock_llm.transform.return_value = "Failed candidate draft."
 
     runner = PipelineStageRunner(
-        telemetry_port=NoOpTelemetryPort(),
-        metrics_port=mock_metrics,
-        llm_judge=mock_judge,
-        prompt_provider=NoOpPromptProviderPort(),
-        llm_transformation_port=mock_llm,
-        stage_factory=factory,
-        critique_synthesizer=mock_synthesizer,
-        ledger_port=mock_ledger,
+        PipelineDependencies(
+            telemetry_port=NoOpTelemetryPort(),
+            metrics_port=mock_metrics,
+            llm_judge=mock_judge,
+            prompt_provider=NoOpPromptProviderPort(),
+            llm_transformation_port=mock_llm,
+            stage_factory=factory,
+            critique_synthesizer=mock_synthesizer,
+            ledger_port=mock_ledger,
+        )
     )
 
     ctx = _create_sample_context()
     raw = StageTranscript(
         channel=Channel(name=ChannelName(ctx.channel.name)),
-        provenance=MediaProvenance.empty(),
+        provenance=MediaProvenance(),
         content=Content(id=ctx.content.id, text="Text that repeatedly fails."),
     )
 
@@ -245,37 +254,12 @@ def test_execute_stage_fail_fast_quarantine_protocol() -> None:
     mock_metrics.increment_counter.assert_any_call(
         "cresmo_stage_quarantines_total",
         1.0,
-        labels={"stage": "fluid_prose", "channel_name": ctx.channel.name},
+        labels={"stage": "fluid_prose", "channel_id": "UC_test"},
     )
-
-
-def test_record_stage_quarantine_requires_content_or_content_id() -> None:
-    """Verify record_stage_quarantine raises ValueError when neither content nor content_id is provided."""
-    eval_mock = JudgeEvaluation(
-        target_stage="fluid_prose",
-        passed=False,
-        overall_score=0.2,
-        criteria_scores=(),
-        provider="test",
-    )
-    with pytest.raises(
-        ValueError,
-        match=r"^content or content_id must be provided to record_stage_quarantine$",
-    ):
-        record_stage_quarantine(
-            stage_name="fluid_prose",
-            content=None,
-            content_id=None,
-            evaluation=eval_mock,
-            critique="fail",
-            effective_max_attempts=2,
-            ledger_port=None,
-            metrics_port=NoOpMetricsPort(),
-        )
 
 
 def test_record_stage_quarantine_with_channel_and_content_objects_and_span() -> None:
-    """Verify record_stage_quarantine with Channel, Content, TelemetryPort span, and new Ledger entry."""
+    """Verify record_stage_quarantine with PipelineExecutionContext, TelemetryPort span, and new Ledger entry."""
     eval_mock = JudgeEvaluation(
         target_stage="fluid_prose",
         passed=False,
@@ -286,6 +270,7 @@ def test_record_stage_quarantine_with_channel_and_content_objects_and_span() -> 
     ch = Channel(name="TestChannel", id=ChannelId("UC_123"))
     cnt = Content.create(id=ContentId("vid_999"), title="Title 999")
     prov = MediaProvenance(url="https://yt.be/999")
+    ctx = PipelineExecutionContext(user_identity=UserIdentity.worker(), channel=ch, content=cnt)
     mock_ledger = MagicMock(spec=LedgerRepositoryPort)
     mock_ledger.get_entry.return_value = None
     mock_metrics = MagicMock(spec=NoOpMetricsPort())
@@ -297,8 +282,7 @@ def test_record_stage_quarantine_with_channel_and_content_objects_and_span() -> 
     ):
         record_stage_quarantine(
             stage_name="fluid_prose",
-            channel=ch,
-            content=cnt,
+            context=ctx,
             provenance=prov,
             evaluation=eval_mock,
             critique="Critical defect",
@@ -345,7 +329,7 @@ def test_record_stage_quarantine_with_channel_and_content_objects_and_span() -> 
     mock_metrics.increment_counter.assert_called_once_with(
         "cresmo_stage_quarantines_total",
         1.0,
-        labels={"stage": "fluid_prose", "channel_name": "TestChannel"},
+        labels={"stage": "fluid_prose", "channel_id": "UC_123"},
     )
 
 
@@ -375,11 +359,11 @@ def test_record_stage_quarantine_preserves_existing_ledger_entry() -> None:
     mock_ledger.get_entry.return_value = existing
     telemetry = InMemoryTelemetryPort()
 
+    ctx = PipelineExecutionContext(user_identity=UserIdentity.worker(), channel=ch, content=cnt)
     with pytest.raises(StageQuarantinedError), telemetry.start_span("cresmo.stage_2"):
         record_stage_quarantine(
             stage_name="stage_2",
-            channel=ch,
-            content=cnt,
+            context=ctx,
             evaluation=eval_mock,
             critique="failed check",
             effective_max_attempts=1,
@@ -407,6 +391,11 @@ def test_record_stage_quarantine_fallback_urls_and_titles() -> None:
         provider="test",
     )
     cnt = Content(id=ContentId("vid_fallback"), title="")
+    ctx = PipelineExecutionContext(
+        user_identity=UserIdentity.worker(),
+        channel=Channel(name="unknown"),
+        content=cnt,
+    )
     mock_ledger = MagicMock(spec=LedgerRepositoryPort)
     mock_ledger.get_entry.return_value = None
     telemetry = InMemoryTelemetryPort()
@@ -414,10 +403,7 @@ def test_record_stage_quarantine_fallback_urls_and_titles() -> None:
     with pytest.raises(StageQuarantinedError) as exc_info, telemetry.start_span("cresmo.stage_3"):
         record_stage_quarantine(
             stage_name="stage_3",
-            channel=None,
-            content=cnt,
-            channel_name="",
-            channel_id="",
+            context=ctx,
             evaluation=eval_mock,
             critique="",
             effective_max_attempts=1,
@@ -432,78 +418,10 @@ def test_record_stage_quarantine_fallback_urls_and_titles() -> None:
     assert saved.title == "Quarantined Content vid_fallback"
     assert saved.channel_name == ChannelName("unknown")
     span_attrs = telemetry.spans[0].attributes
-    assert span_attrs["cresmo.channel.name"] == ""
-    assert span_attrs["cresmo.channel.id"] == ""
+    assert span_attrs["cresmo.channel.name"] == "unknown"
+    assert span_attrs["cresmo.channel.id"] == "unknown"
     assert span_attrs["cresmo.content.title"] == "vid_fallback"
     assert span_attrs["quarantine.critique"] == ""
-
-
-def test_record_stage_quarantine_legacy_channel_args() -> None:
-    """Verify legacy channel_name and channel_id parameter coercion."""
-    eval_mock = JudgeEvaluation(
-        target_stage="stage_4",
-        passed=False,
-        overall_score=0.5,
-        criteria_scores=(),
-        provider="test",
-    )
-    mock_ledger = MagicMock(spec=LedgerRepositoryPort)
-    mock_ledger.get_entry.return_value = None
-    mock_metrics = MagicMock(spec=NoOpMetricsPort())
-
-    # Case 1: channel_name as ChannelName VO, channel_id as ChannelId VO, explicit media_url fallback
-    telemetry_vo = InMemoryTelemetryPort()
-    original_channel_name = ChannelName("CustomChan")
-    with pytest.raises(StageQuarantinedError), telemetry_vo.start_span("cresmo.stage_4"):
-        record_stage_quarantine(
-            stage_name="stage_4",
-            content_id=ContentId("vid_legacy"),
-            channel_name=original_channel_name,
-            channel_id=ChannelId("UC_custom"),
-            content_title="CustomTitle",
-            media_url="https://direct.media.example/vid_legacy",
-            evaluation=eval_mock,
-            critique="crit",
-            effective_max_attempts=2,
-            ledger_port=mock_ledger,
-            metrics_port=mock_metrics,
-            telemetry_port=telemetry_vo,
-        )
-
-    saved = mock_ledger.save_entry.call_args[0][0]
-    assert saved.channel_name is original_channel_name
-    assert saved.title == "CustomTitle"
-    assert saved.media_url == "https://direct.media.example/vid_legacy"
-    vo_attrs = telemetry_vo.spans[0].attributes
-    assert type(vo_attrs["cresmo.channel.name"]) is str
-    assert vo_attrs["cresmo.channel.name"] == "CustomChan"
-    assert type(vo_attrs["cresmo.channel.id"]) is str
-    assert vo_attrs["cresmo.channel.id"] == "UC_custom"
-    metric_labels = mock_metrics.increment_counter.call_args.kwargs["labels"]
-    assert type(metric_labels["channel_name"]) is str
-    assert metric_labels["channel_name"] == "CustomChan"
-
-    # Case 2: raw strings for channel_name and channel_id, with default content_title
-    telemetry = InMemoryTelemetryPort()
-    with pytest.raises(StageQuarantinedError), telemetry.start_span("cresmo.stage_4"):
-        record_stage_quarantine(
-            stage_name="stage_4",
-            content_id=ContentId("vid_legacy_str"),
-            channel_name="RawChan",
-            channel_id="raw_id",
-            evaluation=eval_mock,
-            critique="crit",
-            effective_max_attempts=1,
-            ledger_port=mock_ledger,
-            metrics_port=mock_metrics,
-            telemetry_port=telemetry,
-        )
-
-    saved_str = mock_ledger.save_entry.call_args[0][0]
-    assert saved_str.channel_name == ChannelName("RawChan")
-    assert saved_str.title == "Quarantined Content vid_legacy_str"
-    assert telemetry.spans[0].attributes["cresmo.channel.name"] == "RawChan"
-    assert telemetry.spans[0].attributes["cresmo.channel.id"] == "raw_id"
 
 
 def test_record_stage_quarantine_ledger_exception_resilience(
@@ -519,6 +437,7 @@ def test_record_stage_quarantine_ledger_exception_resilience(
     )
     ch = Channel(name="Chan", id=None)
     cnt = Content.create(id=ContentId("vid_err"), title="T")
+    ctx = PipelineExecutionContext(user_identity=UserIdentity.worker(), channel=ch, content=cnt)
     mock_ledger = MagicMock(spec=LedgerRepositoryPort)
     mock_ledger.get_entry.side_effect = RuntimeError("Database locked")
     mock_metrics = MagicMock(spec=NoOpMetricsPort())
@@ -526,8 +445,7 @@ def test_record_stage_quarantine_ledger_exception_resilience(
     with pytest.raises(StageQuarantinedError) as exc_info:
         record_stage_quarantine(
             stage_name="stage_5",
-            channel=ch,
-            content=cnt,
+            context=ctx,
             evaluation=eval_mock,
             critique="error test",
             effective_max_attempts=1,

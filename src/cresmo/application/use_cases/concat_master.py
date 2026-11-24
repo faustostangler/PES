@@ -18,7 +18,6 @@ from cresmo.application.ports import (
     NoOpChannelTaxonomyPort,
     VaultRepositoryPort,
 )
-from cresmo.domain.exceptions import DomainValidationError
 from cresmo.domain.stage_registry import StageName
 from cresmo.domain.value_objects import (
     ChannelName,
@@ -59,9 +58,6 @@ def parse_metadata_from_content(
         channel_name: Creator channel name used for deterministic fallback classification.
         fallback_stem: Filename stem fallback when video_id frontmatter is absent.
         taxonomy_port: Optional taxonomy classification port for fallback resolution.
-        content: Raw markdown text with YAML frontmatter.
-        channel_name: Channel identifier for fallback categorization.
-        fallback_stem: File stem fallback if video_id is absent.
 
     Returns:
         Tuple of (date_integer, category_string, video_id ContentId).
@@ -163,16 +159,12 @@ class ConcatMasterUseCase:
             word_count = count_words(content)
             docs.append((sort_date, file_path.name, content, video_id, word_count))
 
-        if not docs:
+        if not docs or resolved_category is None:
             return []
 
         # Chronological sort: oldest first (ascending by sort_date, then file name)
         docs.sort(key=lambda doc_tuple: (doc_tuple[0], doc_tuple[1]))
 
-        if resolved_category is None:
-            raise DomainValidationError(
-                f"Channel category could not be resolved for '{channel_name.value}'."
-            )
         channel_category = resolved_category
 
         # Group documents into parts without ever splitting a single file
@@ -225,14 +217,6 @@ class ConcatMasterUseCase:
 
         return results
 
-    def execute_for_channel(
-        self,
-        channel_name: ChannelName,
-        max_words: int | None = None,
-    ) -> list[MasterDocumentResult]:
-        """Legacy alias delegating to execute() for backward compatibility."""
-        return self.execute(channel_name=channel_name, max_words=max_words)
-
     def execute_all(
         self,
         max_words: int | None = None,
@@ -254,7 +238,7 @@ class ConcatMasterUseCase:
         all_results: dict[str, list[MasterDocumentResult]] = {}
 
         for channel_name in channel_dirs:
-            channel_results = self.execute_for_channel(
+            channel_results = self.execute(
                 channel_name=ChannelName(channel_name), max_words=max_words
             )
             if channel_results:

@@ -26,7 +26,6 @@ dependencies = [
     "pyjwt>=2.9.0",
     "fastapi>=0.115.0",
     "uvicorn>=0.30.0",
-    "prometheus-client>=0.20.0",
     "python-json-logger>=3.3.0",
     "demucs>=4.0.1",
     "scipy>=1.14.0",
@@ -34,9 +33,6 @@ dependencies = [
     "sqlalchemy>=2.0.0",
     "asyncpg>=0.29.0",
     "alembic>=1.13.0",
-    "polars>=1.0.0",
-    "pyarrow>=18.0.0",
-    "selectolax>=0.3.0",
     "redis>=5.2.0",
     "arq>=0.26.0",
     "structlog>=24.4.0",
@@ -44,7 +40,7 @@ dependencies = [
 ]
 
 [project.scripts]
-cresmo = "cresmo.presentation.cli:app"
+cresmo = "cresmo.presentation.cli:cli_entrypoint"
 
 [tool.mypy]
 strict = true
@@ -106,9 +102,11 @@ target-version = "py313"
 extend-exclude = ["playground", "mutants", ".agents", "docs"]
 
 [tool.ruff.lint]
+select = ["E", "F", "W", "B", "I", "UP", "BLE", "RUF100"]
 ignore = [
     "EXE002",  # Executable permissions are set by NTFS mount mask
     "B008",    # FastAPI Depends in argument defaults
+    "E501",    # Line length handled by formatter; avoids churn on docstrings/help text
 ]
 
 [build-system]

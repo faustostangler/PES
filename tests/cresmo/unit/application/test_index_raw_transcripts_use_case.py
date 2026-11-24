@@ -13,8 +13,8 @@ from unittest.mock import MagicMock
 import pytest
 
 from cresmo.application.ports import ChannelTaxonomyPort
-from cresmo.application.use_cases.indexing import (
-    IndexRawTranscriptsUseCase,
+from cresmo.application.use_cases.indexing.index_raw_transcripts import IndexRawTranscriptsUseCase
+from cresmo.application.use_cases.indexing.validators import (
     is_valid_synthesis_paragraph,
     parse_judge_boolean,
 )
@@ -27,7 +27,7 @@ from cresmo.domain.value_objects import (
     ContentId,
     MediaProvenance,
 )
-from cresmo.infrastructure.adapters.prompts import JsonPromptProvider
+from cresmo.infrastructure.adapters.prompts.json_provider import JsonPromptProvider
 from tests.doubles.mock_adapters import InMemoryVaultAdapter, MockLLMAdapter
 
 _SAMPLE_VALID_SYNTHESIS = (
@@ -56,8 +56,8 @@ class TestIndexRawTranscriptsUseCase:
         prompt_provider = JsonPromptProvider()
 
         use_case = IndexRawTranscriptsUseCase(
-            vault_repo=vault,
-            llm=llm,
+            vault_port=vault,
+            llm_indexing_port=llm,
             prompt_provider=prompt_provider,
         )
 
@@ -137,8 +137,8 @@ class TestIndexRawTranscriptsUseCase:
         prompt_provider = JsonPromptProvider()
 
         use_case = IndexRawTranscriptsUseCase(
-            vault_repo=vault,
-            llm=llm,
+            vault_port=vault,
+            llm_indexing_port=llm,
             prompt_provider=prompt_provider,
         )
 
@@ -184,8 +184,8 @@ class TestIndexRawTranscriptsUseCase:
         prompt_provider = JsonPromptProvider()
 
         use_case = IndexRawTranscriptsUseCase(
-            vault_repo=vault,
-            llm=llm,
+            vault_port=vault,
+            llm_indexing_port=llm,
             prompt_provider=prompt_provider,
         )
 
@@ -216,8 +216,8 @@ class TestIndexRawTranscriptsUseCase:
         prompt_provider = JsonPromptProvider()
 
         use_case = IndexRawTranscriptsUseCase(
-            vault_repo=vault,
-            llm=mock_llm,
+            vault_port=vault,
+            llm_indexing_port=mock_llm,
             prompt_provider=prompt_provider,
         )
 
@@ -255,8 +255,8 @@ class TestIndexRawTranscriptsUseCase:
         llm = MockLLMAdapter()
         prompt_provider = JsonPromptProvider()
         use_case = IndexRawTranscriptsUseCase(
-            vault_repo=vault,
-            llm=llm,
+            vault_port=vault,
+            llm_indexing_port=llm,
             prompt_provider=prompt_provider,
         )
         with pytest.raises(
@@ -288,8 +288,8 @@ class TestIndexRawTranscriptsUseCase:
         prompt_provider = JsonPromptProvider()
 
         use_case = IndexRawTranscriptsUseCase(
-            vault_repo=vault,
-            llm=llm,
+            vault_port=vault,
+            llm_indexing_port=llm,
             prompt_provider=prompt_provider,
             temperature=0.2,
             language="Português do Brasil",
@@ -341,8 +341,8 @@ class TestIndexRawTranscriptsUseCase:
         prompt_provider = JsonPromptProvider()
 
         use_case = IndexRawTranscriptsUseCase(
-            vault_repo=vault,
-            llm=llm,
+            vault_port=vault,
+            llm_indexing_port=llm,
             prompt_provider=prompt_provider,
             max_rewrites=2,
         )
@@ -390,8 +390,8 @@ class TestIndexRawTranscriptsUseCase:
         prompt_provider = JsonPromptProvider()
 
         use_case = IndexRawTranscriptsUseCase(
-            vault_repo=vault,
-            llm=llm,
+            vault_port=vault,
+            llm_indexing_port=llm,
             prompt_provider=prompt_provider,
             max_rewrites=2,
         )
@@ -440,8 +440,8 @@ class TestIndexRawTranscriptsUseCase:
         prompt_provider = JsonPromptProvider()
 
         use_case = IndexRawTranscriptsUseCase(
-            vault_repo=vault,
-            llm=llm,
+            vault_port=vault,
+            llm_indexing_port=llm,
             prompt_provider=prompt_provider,
             max_rewrites=2,
         )
@@ -490,8 +490,8 @@ class TestIndexRawTranscriptsUseCase:
         prompt_provider = JsonPromptProvider()
 
         use_case = IndexRawTranscriptsUseCase(
-            vault_repo=vault,
-            llm=llm,
+            vault_port=vault,
+            llm_indexing_port=llm,
             prompt_provider=prompt_provider,
             max_rewrites=2,
         )
@@ -539,8 +539,8 @@ class TestIndexRawTranscriptsUseCase:
         prompt_provider = JsonPromptProvider()
 
         use_case = IndexRawTranscriptsUseCase(
-            vault_repo=vault,
-            llm=llm,
+            vault_port=vault,
+            llm_indexing_port=llm,
             prompt_provider=prompt_provider,
             max_rewrites=2,
         )
@@ -589,8 +589,8 @@ class TestIndexRawTranscriptsUseCase:
         prompt_provider = JsonPromptProvider()
 
         use_case = IndexRawTranscriptsUseCase(
-            vault_repo=vault,
-            llm=llm,
+            vault_port=vault,
+            llm_indexing_port=llm,
             prompt_provider=prompt_provider,
             max_rewrites=0,  # Unbounded / infinite loop mode
         )
@@ -657,8 +657,8 @@ class TestIndexRawTranscriptsUseCase:
         prompt_provider = JsonPromptProvider()
 
         use_case = IndexRawTranscriptsUseCase(
-            vault_repo=vault,
-            llm=mock_llm,
+            vault_port=vault,
+            llm_indexing_port=mock_llm,
             prompt_provider=prompt_provider,
             temperature=0.35,
             language="Português do Brasil",
@@ -753,9 +753,7 @@ class TestIndexRawTranscriptsUseCase:
             prompt_provider=prompt_provider,
         )
         assert use_case.vault_port is vault
-        assert use_case.vault_repo is vault
         assert use_case.llm_indexing_port is llm
-        assert use_case.llm is llm
         assert use_case.prompt_provider is prompt_provider
         assert use_case.max_chars == 0
         assert use_case.temperature == 0.2
@@ -788,7 +786,6 @@ class TestIndexRawTranscriptsUseCase:
         with pytest.raises(ValueError) as exc1:
             IndexRawTranscriptsUseCase(
                 vault_port=None,
-                vault_repo=None,
                 llm_indexing_port=llm,
                 prompt_provider=prompt_provider,
             )
@@ -798,7 +795,6 @@ class TestIndexRawTranscriptsUseCase:
             IndexRawTranscriptsUseCase(
                 vault_port=vault,
                 llm_indexing_port=None,
-                llm=None,
                 prompt_provider=prompt_provider,
             )
         assert str(exc2.value) == "llm_indexing_port is required."
@@ -810,19 +806,6 @@ class TestIndexRawTranscriptsUseCase:
                 prompt_provider=None,
             )
         assert str(exc3.value) == "prompt_provider is required."
-
-    def test_warmup_passes_timeout_seconds(self) -> None:
-        """Verify warmup contract forwards timeout_seconds."""
-        vault = InMemoryVaultAdapter()
-        mock_llm = MagicMock()
-        prompt_provider = JsonPromptProvider()
-        use_case = IndexRawTranscriptsUseCase(
-            vault_port=vault,
-            llm_indexing_port=mock_llm,
-            prompt_provider=prompt_provider,
-        )
-        use_case.warmup(timeout_seconds=42.0)
-        mock_llm.warmup.assert_called_once_with(timeout_seconds=42.0)
 
     def test_index_single_transcript_excerpt_slicing_and_fallback_title(self) -> None:
         """Verify max_chars excerpt slicing and fallback to video_id when title is empty."""

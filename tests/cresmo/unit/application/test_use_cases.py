@@ -14,13 +14,13 @@ import pytest
 from cresmo.application.ports import (
     PromptProviderPort,
 )
-from cresmo.application.use_cases import (
-    DiscoverAtomicInventoryUseCase,
-    IngestRawTranscriptUseCase,
-    ReconcileMOCsUseCase,
+from cresmo.application.use_cases.discover_atomic_inventory import DiscoverAtomicInventoryUseCase
+from cresmo.application.use_cases.ingest_raw_transcript import IngestRawTranscriptUseCase
+from cresmo.application.use_cases.reconcile_mocs import ReconcileMOCsUseCase
+from cresmo.application.use_cases.synthesize_atomic_batch import (
     SynthesizeAtomicBatchUseCase,
+    _norm_honorific,
 )
-from cresmo.application.use_cases.synthesize_atomic_batch import _norm_honorific
 from cresmo.domain.entities import (
     AtomicNote,
     StageTranscript,
@@ -308,7 +308,7 @@ class TestSynthesizeAtomicBatch:
             lateral_events="Revolução Marginalista",
             aftermath="Fascismo italiano",
         )
-        assert vault_port.get_atomic_note_by_title(NoteTitle("Vilfredo Pareto")) == note
+        assert vault_port.atomic_notes["vilfredo pareto"] == note
 
         # Verify strict port interactions
         assert len(llm_port.call_history) == 1

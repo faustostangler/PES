@@ -72,19 +72,17 @@ class LangfuseSettings(BaseModel):
 
 
 class PrometheusSettings(BaseModel):
-    """Immutable Prometheus metrics exposition settings."""
+    """Immutable Prometheus v3 native OTLP HTTP metrics settings."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     enabled: bool = Field(
         default=True,
-        description="Whether Prometheus SRE Golden Signals and DORA metrics collection is enabled.",
+        description="Whether Prometheus SRE Golden Signals and DORA OTLP push collection is enabled.",
     )
-    port: int = Field(
-        default=9090,
-        ge=1,
-        le=65535,
-        description="Local Prometheus scraping and exposition port.",
+    endpoint: str = Field(
+        default="http://localhost:9090",
+        description="Prometheus v3 server base URL hosting /api/v1/otlp/v1/metrics and /-/ready.",
     )
 
 

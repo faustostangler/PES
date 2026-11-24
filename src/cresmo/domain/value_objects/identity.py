@@ -12,19 +12,23 @@ import datetime
 import re
 import uuid
 from dataclasses import dataclass
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 from cresmo.domain.exceptions import DomainValidationError
 from cresmo.domain.value_objects.constants import (
     MAX_CHANNEL_ID_LENGTH,
     MAX_CHANNEL_NAME_LENGTH,
+    MAX_CONTENT_ID_LENGTH,
     MIN_CANONICAL_CHANNEL_ID_LENGTH,
     MIN_CHANNEL_ID_LENGTH,
+    MIN_CONTENT_ID_LENGTH,
 )
 
 _BATCH_ID_REGEX = re.compile(r"^\d{8}_\d{6}_[a-f0-9]{6}$")
-_CONTENT_ID_PATTERN = re.compile(r"^[a-zA-Z0-9_-]{1,64}$")
+_CONTENT_ID_PATTERN = re.compile(
+    rf"^[a-zA-Z0-9_-]{{{MIN_CONTENT_ID_LENGTH},{MAX_CONTENT_ID_LENGTH}}}$"
+)
 _VIDEO_ID_REGEX = re.compile(
     r"(?:v=|/v/|youtu\.be/|/embed/|/shorts/|/live/)([a-zA-Z0-9_-]{8,64})",
     re.IGNORECASE,
@@ -40,7 +44,7 @@ _CHANNEL_OR_PLAYLIST_URL_REGEX = re.compile(
 )
 
 
-class SourceModality(str, Enum):
+class SourceModality(StrEnum):
     """Discriminator for input batch source modality.
 
     Conforms to ADR-019 (Zero Primitive Obsession).
@@ -270,7 +274,7 @@ class ContentId:
         # Security invariant: prevent directory traversal or injection in identifiers
         if not cleaned_value or not _CONTENT_ID_PATTERN.match(cleaned_value):
             raise DomainValidationError(
-                f"Invalid ContentId '{self.value}'. Must match ^[a-zA-Z0-9_-]{{8,64}}$ without whitespace."
+                f"Invalid ContentId '{self.value}'. Must match ^[a-zA-Z0-9_-]{{{MIN_CONTENT_ID_LENGTH},{MAX_CONTENT_ID_LENGTH}}}$ without whitespace."
             )
         object.__setattr__(self, "value", cleaned_value)
 
@@ -295,7 +299,7 @@ class ContentId:
         if _CONTENT_ID_PATTERN.match(token):
             return cls(value=token)
         raise DomainValidationError(
-            f"Unable to extract valid ContentId from '{raw}'. Expected YouTube URL or ^[a-zA-Z0-9_-]{{8,64}}$."
+            f"Unable to extract valid ContentId from '{raw}'. Expected YouTube URL or ^[a-zA-Z0-9_-]{{{MIN_CONTENT_ID_LENGTH},{MAX_CONTENT_ID_LENGTH}}}$."
         )
 
     @classmethod
@@ -370,17 +374,6 @@ class Channel:
         object.__setattr__(self, "id", resolved_channel_id)
         object.__setattr__(self, "category", category.strip() if category else "")
         object.__setattr__(self, "url", clean_url)
-
-    @classmethod
-    def from_name(
-        cls,
-        name: str | ChannelName,
-        id: str | ChannelId | None = None,
-        category: str = "",
-        url: str | None = None,
-    ) -> Channel:
-        """Ergonomic factory constructing Channel from primitive strings or Value Objects."""
-        return cls(name=name, id=id, category=category, url=url)
 
     @property
     def tenant_key(self) -> str:

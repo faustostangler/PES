@@ -15,16 +15,15 @@ from __future__ import annotations
 
 from collections.abc import Callable
 
-from cresmo.application.pipeline import (
-    CresmoPipeline,  # slow import
-    PipelineDependencies,
-    PipelineStageRunner,
-    StageFactory,
-)
+from cresmo.application.pipeline.coordinator import CresmoPipeline
+from cresmo.application.pipeline.models import PipelineDependencies
+from cresmo.application.pipeline.stage_factory import StageFactory
+from cresmo.application.pipeline.stage_runner import PipelineStageRunner
 from cresmo.application.ports import MediaIngestionPort, VaultRepositoryPort
-from cresmo.application.services.preflight import PreflightHealthChecker
 from cresmo.application.use_cases.concat_master import ConcatMasterUseCase
-from cresmo.application.use_cases.discovery import DiscoverBatchSourcesUseCase
+from cresmo.application.use_cases.discovery.discover_batch_sources import (
+    DiscoverBatchSourcesUseCase,
+)
 from cresmo.application.use_cases.run_synthesis import RunSynthesisUseCase
 from cresmo.application.use_cases.sync_batch import SyncBatchUseCase
 from cresmo.application.use_cases.sync_channel import SyncChannelUseCase
@@ -44,16 +43,13 @@ from cresmo.bootstrap.factories.adapter_factory import (
 )
 from cresmo.bootstrap.factories.judge_factory import build_llm_judge_adapter
 from cresmo.bootstrap.factories.settings_factory import (
-    get_shared_settings,
     load_fresh_settings,
-    reset_shared_settings,
     resolve_shared_settings,
 )
 from cresmo.bootstrap.factories.telemetry_factory import (
     build_anonymizer_adapter,
     build_metrics_adapter,
     build_telemetry_adapter,
-    probe_langfuse_ready,
     resolve_langfuse_client,
 )
 from cresmo.bootstrap.factories.use_case_factory import (
@@ -62,7 +58,6 @@ from cresmo.bootstrap.factories.use_case_factory import (
     build_index_raw_use_case,
     build_unify_duplicates_use_case,
 )
-from cresmo.infrastructure.adapters.system.preflight_probe_adapter import probe_http_endpoint
 from cresmo.infrastructure.config import CresmoSettings
 from cresmo.infrastructure.environment import ensure_runtime_directories
 from cresmo.infrastructure.logging_config import configure_logging
@@ -71,7 +66,6 @@ from cresmo.infrastructure.persistence.sqlite_ledger_adapter import SqliteLedger
 
 def build_pipeline(
     settings: CresmoSettings | None = None,
-    batch_size_override: int | None = None,
     web_index: bool = False,
 ) -> CresmoPipeline:
     """Instantiate and wire production infrastructure adapters into CresmoPipeline."""
@@ -149,9 +143,6 @@ def build_pipeline(
     )
 
     # 6. Pipeline Assembly
-    batch_size = (
-        batch_size_override if batch_size_override is not None else resolved.pipeline.batch_size
-    )
     taxonomy_port = build_taxonomy_adapter(resolved.storage)
 
     return CresmoPipeline(
@@ -159,18 +150,11 @@ def build_pipeline(
         vault_port=vault_port,
         stage_runner=stage_runner,
         ledger_port=ledger_port,
-        batch_size=batch_size,
         stage_policy=stage_policy,
         llm_indexing_port=llm_indexing_port,
         taxonomy_port=taxonomy_port,
+        whisper_model=resolved.ingestion.whisper_model,
     )
-
-
-def build_stage_runner(settings: CresmoSettings | None = None) -> PipelineStageRunner:
-    """Build and wire an isolated PipelineStageRunner instance with resolved settings."""
-    resolved = resolve_shared_settings(settings)
-    pipeline = build_pipeline(resolved)
-    return pipeline.stage_runner
 
 
 def build_sync_channel_use_case(
@@ -179,8 +163,9 @@ def build_sync_channel_use_case(
     check_ffmpeg: bool = True,
 ) -> SyncChannelUseCase:
     """Construct SyncChannelUseCase with all ports and dependencies wired."""
+    _ = batch_size_override
     resolved = resolve_shared_settings(settings)
-    pipeline = build_pipeline(resolved, batch_size_override=batch_size_override)
+    pipeline = build_pipeline(resolved)
     preflight_checker = build_preflight_checker(resolved, check_ffmpeg=check_ffmpeg)
 
     if pipeline.ledger_port is None:
@@ -198,7 +183,6 @@ def build_run_synthesis_use_case(
     settings: CresmoSettings | None = None,
     *,
     lookback_override: int | None = None,
-    batch_size_override: int | None = None,
     web_index: bool = False,
     check_ffmpeg: bool = True,
 ) -> RunSynthesisUseCase:
@@ -233,7 +217,6 @@ def build_run_synthesis_use_case(
         preflight_checker=preflight_checker,
         pipeline_factory=lambda: build_pipeline(
             settings=resolved,
-            batch_size_override=batch_size_override,
             web_index=web_index,
         ),
         discover_sources_factory=_discover_factory,
@@ -265,36 +248,18 @@ def build_sync_batch_use_case(
 
 
 __all__ = [
-    "PreflightHealthChecker",
-    "build_anonymizer_adapter",
     "build_concat_master_use_case",
-    "build_discover_batch_sources_use_case",
-    "build_embedding_adapter",
-    "build_gemini_credential_pool",
-    "build_gemini_synthesis_adapter",
     "build_index_raw_use_case",
-    "build_indexing_adapter",
     "build_local_prompt_provider",
-    "build_media_ingestion_adapter",
-    "build_metrics_adapter",
     "build_pipeline",
     "build_preflight_checker",
-    "build_process_runtime_adapter",
     "build_prompt_provider",
     "build_run_synthesis_use_case",
-    "build_stage_runner",
     "build_sync_batch_use_case",
     "build_sync_channel_use_case",
-    "build_taxonomy_adapter",
-    "build_telemetry_adapter",
     "build_unify_duplicates_use_case",
-    "build_vault_adapter",
-    "get_shared_settings",
     "load_fresh_settings",
     "load_local_prompt_catalog",
-    "probe_http_endpoint",
-    "probe_langfuse_ready",
-    "reset_shared_settings",
     "resolve_langfuse_client",
     "resolve_shared_settings",
 ]

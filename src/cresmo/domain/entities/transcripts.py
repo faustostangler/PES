@@ -23,16 +23,15 @@ from cresmo.domain.exceptions import (
     StageTranscriptStructureError,
 )
 from cresmo.domain.value_objects import (
+    TITLE_H1_PATTERN,
     CandidateText,
     Channel,
     Content,
     MediaProvenance,
 )
 
-# Matches Markdown H1 title header
-_TITLE_H1_PATTERN = re.compile(r"^\s*#\s+(.+)$", re.MULTILINE)
 # Matches any accidental complementary information section headers
-_COMPLEMENTARY_REGEX = re.compile(
+_ACCIDENTAL_COMPLEMENTARY_HEADING_PATTERN = re.compile(
     r"^\s*#{2,3}\s+\*?\*?(?:Extra\s+Info|Informa[cç][oõ]es\s+Complementares|Notas\s+Complementares|Informa[cç][oõ]es\s+Adicionais)\*?\*?.*$",
     re.MULTILINE | re.IGNORECASE,
 )
@@ -111,15 +110,15 @@ def post_process_fluid_transcript(
         candidate.text.strip() if isinstance(candidate, CandidateText) else candidate.strip()
     )
 
-    title_match = _TITLE_H1_PATTERN.search(current_text)
+    title_match = TITLE_H1_PATTERN.search(current_text)
     if title_match:
         extracted_title = title_match.group(1).strip()
-        body = _TITLE_H1_PATTERN.sub("", current_text).strip()
+        body = TITLE_H1_PATTERN.sub("", current_text).strip()
     else:
         extracted_title = source.content.title or "Untitled Compendium"
         body = current_text
 
-    complementary_match = _COMPLEMENTARY_REGEX.search(body)
+    complementary_match = _ACCIDENTAL_COMPLEMENTARY_HEADING_PATTERN.search(body)
     if complementary_match:
         body = body[: complementary_match.start()].strip()
 

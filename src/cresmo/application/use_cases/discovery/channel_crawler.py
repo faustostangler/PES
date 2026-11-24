@@ -181,15 +181,14 @@ class ChannelFeedCrawlerService:
             discovered = self.media_ingestion_port.discover_channel_feed(feed_query)
             in_window: list[str] = []
             for item in discovered:
-                published_at = getattr(item, "published_at", None)
+                published_at = item.published_at
                 if published_at is not None:
                     if published_at.tzinfo is None:
                         published_at = published_at.replace(tzinfo=UTC)
                     if published_at < cutoff:
                         continue
-                media_url = getattr(item, "media_url", None) or getattr(item, "url", "")
-                if media_url:
-                    in_window.append(media_url)
+                if item.media_url:
+                    in_window.append(item.media_url)
             return in_window
         except Exception as exc:  # noqa: BLE001
             self._notify(f"[crawler] Warning: Failed to probe {chan_url}: {exc}\n")

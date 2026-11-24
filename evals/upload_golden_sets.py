@@ -32,8 +32,8 @@ for path_entry in (str(SRC_DIR), str(REPO_ROOT)):
     if path_entry not in sys.path:
         sys.path.insert(0, path_entry)
 
-from cresmo.bootstrap.factories.telemetry_factory import resolve_langfuse_client
-from cresmo.infrastructure.config import CresmoSettings
+from cresmo.bootstrap.factories.telemetry_factory import resolve_langfuse_client  # noqa: E402
+from cresmo.infrastructure.config import CresmoSettings  # noqa: E402
 
 logger = structlog.get_logger("upload_golden_sets")
 

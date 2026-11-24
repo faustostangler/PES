@@ -16,7 +16,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from cresmo import __version__
-from cresmo.infrastructure.adapters.prompts import JsonPromptProvider
+from cresmo.infrastructure.adapters.prompts.json_provider import JsonPromptProvider
 from cresmo.presentation.cli import main
 from cresmo.presentation.commands.seed_prompts import (
     PROMPT_MAPPINGS,
@@ -36,20 +36,12 @@ class TestSeedPromptsCLI:
         """Verify templates contain native Mustache {{var}} syntax."""
         provider = JsonPromptProvider()
         sys_p, user_p = provider.get_chat_prompt_template("fluid_prose")
-        assert provider.language in sys_p
+        assert provider.default_language in sys_p
         assert "{{raw_text}}" in user_p
 
     def test_seed_prompts_cli_help(self) -> None:
         """Verify seed-prompts CLI displays help and options."""
         assert main(["seed-prompts", "--help"]) == EXIT_SUCCESS
-
-    def test_get_raw_prompt_template_returns_populated_template(self) -> None:
-        """Verify get_raw_prompt_template on JsonPromptProvider returns non-empty template."""
-        provider = JsonPromptProvider()
-        tpl = provider.get_raw_prompt_template("gap_filler")
-        assert isinstance(tpl, str)
-        assert len(tpl) > 0
-        assert "Transcrição:" in tpl and "{{raw_text}}" in tpl
 
     def test_seed_prompts_dry_run(self, capsys: pytest.CaptureFixture[str]) -> None:
         """Verify --dry-run prints template previews and exits with SUCCESS without API calls."""
@@ -167,11 +159,11 @@ class TestSeedPromptsCLI:
             "cresmo.presentation.commands.seed_prompts.resolve_langfuse_client",
             return_value=mock_client,
         ):
-            assert handle_seed_prompts(Namespace(label="", dry_run=False)) == EXIT_SUCCESS
+            assert handle_seed_prompts(label="", dry_run=False) == EXIT_SUCCESS
             assert mock_client.create_prompt.call_args.kwargs["labels"] == ["production"]
 
             mock_client.reset_mock()
-            assert handle_seed_prompts(Namespace(label=None, dry_run=False)) == EXIT_SUCCESS
+            assert handle_seed_prompts(label="", dry_run=False) == EXIT_SUCCESS
             assert mock_client.create_prompt.call_args.kwargs["labels"] == ["production"]
 
     def test_seed_prompts_partial_failure_returns_success(
