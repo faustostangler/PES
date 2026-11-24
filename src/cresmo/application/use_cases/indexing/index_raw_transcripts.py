@@ -25,11 +25,11 @@ from cresmo.application.ports import (
     PromptProviderPort,
     VaultRepositoryPort,
 )
-from cresmo.application.ports.settings import DEFAULT_LANGUAGE
 from cresmo.application.use_cases.indexing.distiller import LLMTranscriptDistiller
 from cresmo.domain.entities import StageTranscript, UserIdentity
 from cresmo.domain.exceptions import DomainValidationError
 from cresmo.domain.value_objects import (
+    DEFAULT_LANGUAGE,
     ChannelName,
     RawIndexEntry,
 )

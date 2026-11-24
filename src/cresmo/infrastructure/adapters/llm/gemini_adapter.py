@@ -280,9 +280,7 @@ class GeminiLLMAdapter(LLMTransformationPort):
                 response_text.split()
             )
             raw_thoughts_tokens = getattr(usage_meta, "thoughts_token_count", None)
-            thinking_tokens = (
-                raw_thoughts_tokens if isinstance(raw_thoughts_tokens, int) else None
-            )
+            thinking_tokens = raw_thoughts_tokens if isinstance(raw_thoughts_tokens, int) else None
             effective_thinking_level = resolve_effective_thinking_level(
                 model=model,
                 thinking_level=requested_thinking_level,

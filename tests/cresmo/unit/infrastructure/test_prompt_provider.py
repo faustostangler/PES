@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from unittest.mock import Mock
 
 import pytest
 
@@ -318,12 +317,11 @@ class TestJsonPromptProvider:
             },
         )
 
-        mock_settings = Mock()
-        mock_settings.prompts_path = manifest_file
-        mock_settings.skills_dir = skills_dir
-        mock_settings.language = "en-US"
-
-        provider = JsonPromptProvider(settings=mock_settings)
+        provider = JsonPromptProvider(
+            prompts_path=manifest_file,
+            skills_dir=skills_dir,
+            language="en-US",
+        )
         assert provider.prompts_path == manifest_file
         assert provider.skills_dir == skills_dir
         assert provider.language == "en-US"

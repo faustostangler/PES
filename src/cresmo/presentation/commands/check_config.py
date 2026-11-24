@@ -56,24 +56,22 @@ def handle_check_config(args: Any = None) -> int:
             return EXIT_CONFIG_OR_USAGE_ERROR
 
         sys.stdout.write("Configuration and environment verified successfully:\n")
-        sys.stdout.write(f"- Vault Root: {settings.vault_dir}\n")
-        sys.stdout.write(f"- SQLite Ledger: {settings.sqlite_ledger_path}\n")
-        sys.stdout.write(f"- Gemini Model: {settings.gemini_model}\n")
-        fallback_model = getattr(settings, "gemini_fallback_model", None)
-        if isinstance(fallback_model, str) and fallback_model:
-            sys.stdout.write(f"- Gemini Fallback Model: {fallback_model}\n")
-        thinking_level = getattr(settings, "gemini_thinking_level", None)
-        if isinstance(thinking_level, str) and thinking_level:
-            sys.stdout.write(f"- Gemini Thinking Level: {thinking_level}\n")
-        judge_model = getattr(settings, "judge_gemini_model", None)
-        if isinstance(judge_model, str) and judge_model:
-            sys.stdout.write(f"- Judge Gemini Model: {judge_model}\n")
-        sys.stdout.write(f"- Batch Size: {settings.batch_size}\n")
-        lf_pk = getattr(settings, "langfuse_public_key", "")
-        lf_sk = getattr(settings, "langfuse_secret_key", None)
-        lf_host = getattr(settings, "langfuse_host", "https://cloud.langfuse.com")
-        lf_env = getattr(settings, "langfuse_environment", "staging")
-        if lf_pk and lf_sk and hasattr(lf_sk, "get_secret_value") and lf_sk.get_secret_value():
+        sys.stdout.write(f"- Vault Root: {settings.storage.vault_dir}\n")
+        sys.stdout.write(f"- SQLite Ledger: {settings.storage.sqlite_ledger_path}\n")
+        sys.stdout.write(f"- Gemini Model: {settings.llm.gemini.model}\n")
+        if settings.llm.gemini.fallback_model:
+            sys.stdout.write(f"- Gemini Fallback Model: {settings.llm.gemini.fallback_model}\n")
+        if settings.llm.gemini.thinking_level:
+            sys.stdout.write(f"- Gemini Thinking Level: {settings.llm.gemini.thinking_level}\n")
+        if settings.judge.gemini.model:
+            sys.stdout.write(f"- Judge Gemini Model: {settings.judge.gemini.model}\n")
+        sys.stdout.write(f"- Batch Size: {settings.pipeline.batch_size}\n")
+        langfuse_cfg = settings.observability.langfuse
+        lf_pk = langfuse_cfg.public_key
+        lf_sk = langfuse_cfg.secret_key
+        lf_host = langfuse_cfg.host
+        lf_env = langfuse_cfg.environment
+        if lf_pk and lf_sk.get_secret_value():
             pk_masked = lf_pk[:10] + "..."
             sys.stdout.write(
                 f"- Langfuse Telemetry: Enabled ({lf_host}, env={lf_env}, {pk_masked})\n"

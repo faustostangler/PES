@@ -108,7 +108,7 @@ def handle_seed_prompts(
         sys.stdout.write(f"[dry-run] Completed preview of {len(PROMPT_MAPPINGS)} chat prompts.\n")
         return EXIT_SUCCESS
 
-    client = resolve_langfuse_client(settings)
+    client = resolve_langfuse_client(settings.observability)
     if client is None:
         sys.stderr.write(
             "Langfuse client could not be initialized or server is unreachable.\n"
@@ -118,8 +118,7 @@ def handle_seed_prompts(
 
     success_count = 0
     failure_count = 0
-    raw_git_sha = getattr(settings, "git_sha", None)
-    git_sha = _resolve_git_sha(raw_git_sha if isinstance(raw_git_sha, str) else None)
+    git_sha = _resolve_git_sha(settings.observability.runtime.git_sha)
     tags = ["cresmo", f"v{__version__}", f"git:{git_sha}"]
     prompt_config = {"git_sha": git_sha, "version": __version__}
 

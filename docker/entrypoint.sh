@@ -5,8 +5,8 @@ set -eu
 export PATH="/app/.venv/bin:$PATH"
 
 # Set default 12-Factor storage mounts
-export DATA_DIR="${DATA_DIR:-/app/data}"
-export VAULT_DIR="${VAULT_DIR:-/app/vault}"
+export CRESMO_STORAGE__DATA_DIR="${CRESMO_STORAGE__DATA_DIR:-/app/data}"
+export CRESMO_STORAGE__VAULT_DIR="${CRESMO_STORAGE__VAULT_DIR:-/app/vault}"
 
 ROLE="${ROLE:-cli}"
 

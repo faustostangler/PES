@@ -2,7 +2,7 @@
 
 | Field       | Value                                                              |
 |-------------|--------------------------------------------------------------------|
-| **Status**  | ACCEPTED                                                           |
+| **Status**  | SUPERSEDED by ADR-074                                              |
 | **Date**    | 2026-11-22                                                         |
 | **Authors** | Lead Architect (Fausto Stangler), Systems Architect (Doctor Stangler Committee) |
 | **Scope**   | Cresmo Knowledge Synthesis Bounded Context — Infrastructure, Bootstrap, Root Configuration |

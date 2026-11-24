@@ -69,11 +69,13 @@ def handle_dedupe(
     try:
         settings = resolve_shared_settings()
         if vault is not None:
-            settings = settings.model_copy(update={"vault_dir": vault})
+            settings = settings.model_copy(
+                update={"storage": settings.storage.model_copy(update={"vault_dir": vault})}
+            )
         use_case = build_unify_duplicates_use_case(settings=settings)
         report = use_case.execute()
         if verbose:
-            sys.stdout.write(f"Vault directory: {settings.vault_dir}\n")
+            sys.stdout.write(f"Vault directory: {settings.storage.vault_dir}\n")
         sys.stdout.write("Vault Graph Deduplication Summary:\n")
         sys.stdout.write(f"- Duplicate Clusters Unified: {report.duplicates_unified_count}\n")
         sys.stdout.write(f"- Total Inbound WikiLinks Rewritten: {report.total_links_rewritten}\n")

@@ -1,7 +1,7 @@
 """Unit tests for Cresmo Composition Root.
 
 Verifies Dependency Injection assembly, port wiring, and configuration binding
-per SPEC-002 §4.4.
+per SPEC-002 §4.4 and ADR-074.
 """
 
 from __future__ import annotations
@@ -10,7 +10,6 @@ import logging
 import os
 from pathlib import Path
 from types import SimpleNamespace
-from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -56,6 +55,13 @@ from cresmo.infrastructure.adapters.anonymization.anonymizer_adapter import (
     NoOpAnonymizerAdapter,
     RegexAnonymizerAdapter,
 )
+from cresmo.infrastructure.adapters.judges.composite_judge import (
+    ResilientCompositeJudgeAdapter,
+)
+from cresmo.infrastructure.adapters.judges.gemini_judge import GeminiJudgeAdapter
+from cresmo.infrastructure.adapters.judges.preflight_decorator import (
+    MechanicalPreflightJudgeDecorator,
+)
 from cresmo.infrastructure.adapters.judges.telemetry_decorator import TelemetryJudgeDecorator
 from cresmo.infrastructure.adapters.llm.gemini_adapter import GeminiLLMAdapter
 from cresmo.infrastructure.adapters.llm.ollama_llm_adapter import OllamaLLMAdapter
@@ -74,7 +80,18 @@ from cresmo.infrastructure.adapters.prompts import (
 from cresmo.infrastructure.adapters.telemetry.opentelemetry_adapter import (
     OpenTelemetryAdapter,
 )
-from cresmo.infrastructure.config import CresmoSettings
+from cresmo.infrastructure.config import (
+    CresmoSettings,
+    GeminiSettings,
+    JudgeSettings,
+    LangfuseSettings,
+    LlmSettings,
+    ObservabilitySettings,
+    PipelineSettings,
+    PrometheusSettings,
+    RuntimeTelemetrySettings,
+    StorageSettings,
+)
 from cresmo.infrastructure.persistence.sqlite_ledger_adapter import SqliteLedgerAdapter
 
 
@@ -84,9 +101,12 @@ class TestCompositionRoot:
     @pytest.fixture
     def test_settings(self, tmp_path: Path) -> CresmoSettings:
         return CresmoSettings(
-            gemini_api_key=SecretStr("TEST_FAKE_KEY_FOR_COMPOSITION"),
-            vault_dir=tmp_path / "vault",
-            batch_size=7,
+            _env_file=None,
+            llm=LlmSettings(
+                gemini=GeminiSettings(api_keys=(SecretStr("TEST_FAKE_KEY_FOR_COMPOSITION"),)),
+            ),
+            storage=StorageSettings(vault_dir=tmp_path / "vault", data_dir=tmp_path / "data"),
+            pipeline=PipelineSettings(batch_size=7),
         )
 
     def test_build_pipeline_wires_all_ports_correctly(self, test_settings: CresmoSettings) -> None:
@@ -104,7 +124,6 @@ class TestCompositionRoot:
 
     def test_build_pipeline_with_batch_size_override(self, test_settings: CresmoSettings) -> None:
         pipeline = build_pipeline(settings=test_settings, batch_size_override=12)
-
         assert pipeline.batch_size == 12
 
     def test_build_pipeline_wires_prompt_provider_to_llm_judge(
@@ -156,7 +175,9 @@ class TestCompositionRoot:
     def test_factory_functions_fallback_to_default_settings(
         self, test_settings: CresmoSettings
     ) -> None:
-        with patch("cresmo.bootstrap.composition.CresmoSettings", return_value=test_settings):
+        with patch(
+            "cresmo.bootstrap.composition.resolve_shared_settings", return_value=test_settings
+        ):
             p = build_pipeline(settings=None)
             assert isinstance(p, CresmoPipeline)
 
@@ -174,12 +195,17 @@ class TestCompositionRoot:
 
     def test_build_pipeline_with_langfuse_configured(self, tmp_path: Path) -> None:
         settings_with_langfuse = CresmoSettings(
-            gemini_api_key=SecretStr("TEST_KEY"),
-            vault_dir=tmp_path / "vault",
-            langfuse_public_key="pk-lf-test",
-            langfuse_secret_key=SecretStr("sk-lf-test"),
-            langfuse_host="https://cloud.langfuse.com",
-            anonymization_enabled=True,
+            _env_file=None,
+            llm=LlmSettings(gemini=GeminiSettings(api_keys=(SecretStr("TEST_KEY"),))),
+            storage=StorageSettings(vault_dir=tmp_path / "vault", data_dir=tmp_path / "data"),
+            observability=ObservabilitySettings(
+                langfuse=LangfuseSettings(
+                    public_key="pk-lf-test",
+                    secret_key=SecretStr("sk-lf-test"),
+                    host="https://cloud.langfuse.com",
+                ),
+                runtime=RuntimeTelemetrySettings(anonymization_enabled=True),
+            ),
         )
 
         mock_langfuse_instance = MagicMock()
@@ -194,11 +220,14 @@ class TestCompositionRoot:
         ):
             pipeline = build_pipeline(settings=settings_with_langfuse)
             assert isinstance(pipeline, CresmoPipeline)
-            assert pipeline.settings is settings_with_langfuse
+            assert pipeline.stage_policy == settings_with_langfuse.to_stage_execution_policy()
             assert isinstance(pipeline.vault_port, ObsidianVaultAdapter)
             assert pipeline.vault_port.vault_dir == (tmp_path / "vault").resolve()
             assert pipeline.stage_runner.stage_factory is not None
-            assert pipeline.stage_runner.stage_factory.settings is settings_with_langfuse
+            assert (
+                pipeline.stage_runner.stage_factory.policy
+                == settings_with_langfuse.to_stage_execution_policy()
+            )
             assert isinstance(pipeline.stage_runner.llm_judge, TelemetryJudgeDecorator)
             assert pipeline.stage_runner.llm_judge._telemetry is pipeline.telemetry_port
             assert pipeline.llm_indexing_port is not None
@@ -229,11 +258,16 @@ class TestCompositionRoot:
         self, tmp_path: Path, capsys: pytest.CaptureFixture[str]
     ) -> None:
         settings_with_langfuse = CresmoSettings(
-            gemini_api_key=SecretStr("TEST_KEY"),
-            vault_dir=tmp_path / "vault",
-            langfuse_public_key="pk-lf-test",
-            langfuse_secret_key=SecretStr("sk-lf-test"),
-            langfuse_host="http://localhost:3000",
+            _env_file=None,
+            llm=LlmSettings(gemini=GeminiSettings(api_keys=(SecretStr("TEST_KEY"),))),
+            storage=StorageSettings(vault_dir=tmp_path / "vault", data_dir=tmp_path / "data"),
+            observability=ObservabilitySettings(
+                langfuse=LangfuseSettings(
+                    public_key="pk-lf-test",
+                    secret_key=SecretStr("sk-lf-test"),
+                    host="http://localhost:3000",
+                ),
+            ),
         )
 
         with patch(
@@ -259,11 +293,16 @@ class TestCompositionRoot:
         capsys: pytest.CaptureFixture[str],
     ) -> None:
         settings_with_langfuse = CresmoSettings(
-            gemini_api_key=SecretStr("TEST_KEY"),
-            vault_dir=tmp_path / "vault",
-            langfuse_public_key="pk-lf-test",
-            langfuse_secret_key=SecretStr("sk-lf-test"),
-            langfuse_host="https://cloud.langfuse.com",
+            _env_file=None,
+            llm=LlmSettings(gemini=GeminiSettings(api_keys=(SecretStr("TEST_KEY"),))),
+            storage=StorageSettings(vault_dir=tmp_path / "vault", data_dir=tmp_path / "data"),
+            observability=ObservabilitySettings(
+                langfuse=LangfuseSettings(
+                    public_key="pk-lf-test",
+                    secret_key=SecretStr("sk-lf-test"),
+                    host="https://cloud.langfuse.com",
+                ),
+            ),
         )
 
         with (
@@ -285,11 +324,11 @@ class TestCompositionRoot:
         self, tmp_path: Path
     ) -> None:
         s_custom = CresmoSettings(
-            gemini_api_key=SecretStr("TEST"),
-            vault_dir=tmp_path / "v1",
-            judge_blocking=True,
-            judge_max_attempts=5,
-            prometheus_enabled=True,
+            _env_file=None,
+            llm=LlmSettings(gemini=GeminiSettings(api_keys=(SecretStr("TEST"),))),
+            storage=StorageSettings(vault_dir=tmp_path / "v1", data_dir=tmp_path / "d1"),
+            judge=JudgeSettings(blocking=True, max_attempts=5),
+            observability=ObservabilitySettings(prometheus=PrometheusSettings(enabled=True)),
         )
         p_custom = build_pipeline(settings=s_custom)
         assert p_custom.stage_runner.judge_blocking is True
@@ -297,9 +336,10 @@ class TestCompositionRoot:
         assert isinstance(p_custom.stage_runner.metrics_port, PrometheusMetricsAdapter)
 
         s_default = CresmoSettings(
-            gemini_api_key=SecretStr("TEST"),
-            vault_dir=tmp_path / "v2",
-            prometheus_enabled=False,
+            _env_file=None,
+            llm=LlmSettings(gemini=GeminiSettings(api_keys=(SecretStr("TEST"),))),
+            storage=StorageSettings(vault_dir=tmp_path / "v2", data_dir=tmp_path / "d2"),
+            observability=ObservabilitySettings(prometheus=PrometheusSettings(enabled=False)),
         )
         p_default = build_pipeline(settings=s_default)
         assert p_default.stage_runner.judge_blocking is False
@@ -344,58 +384,46 @@ class TestCompositionRoot:
             )
 
     def test_resolve_langfuse_client_preflight_timeout_wiring(
-        self, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+        self, capsys: pytest.CaptureFixture[str]
     ) -> None:
-        s1 = CresmoSettings(
-            gemini_api_key=SecretStr("TEST"),
-            vault_dir=tmp_path / "v1",
-            langfuse_public_key="pk-1",
-            langfuse_secret_key=SecretStr("sk-1"),
-            langfuse_host="http://host1:3000",
+        o1 = ObservabilitySettings(
+            langfuse=LangfuseSettings(
+                public_key="pk-1",
+                secret_key=SecretStr("sk-1"),
+                host="http://host1:3000",
+            ),
         )
         with patch(
             "cresmo.bootstrap.factories.telemetry_factory.probe_langfuse_ready", return_value=False
         ) as mock_probe:
-            assert resolve_langfuse_client(s1) is None
+            assert resolve_langfuse_client(o1) is None
             mock_probe.assert_called_once_with("http://host1:3000", timeout_seconds=2.0)
             captured = capsys.readouterr()
             expected_msg = (
-                f"[preflight] Langfuse server at '{s1.langfuse_host}' is unreachable. "
+                f"[preflight] Langfuse server at '{o1.langfuse.host}' is unreachable. "
                 "Telemetry bypassed to prevent OpenTelemetry retry loops.\n"
                 "            To enable observability: docker compose -f docker-compose.langfuse.yml up -d\n"
             )
             assert captured.err == expected_msg
 
-        s2 = CresmoSettings(
-            gemini_api_key=SecretStr("TEST"),
-            vault_dir=tmp_path / "v2",
-            langfuse_public_key="pk-2",
-            langfuse_secret_key=SecretStr("sk-2"),
-            langfuse_host="http://host2:3000",
-            preflight_probe_timeout_seconds=3.5,
+        o2 = ObservabilitySettings(
+            langfuse=LangfuseSettings(
+                public_key="pk-2",
+                secret_key=SecretStr("sk-2"),
+                host="http://host2:3000",
+            ),
+            runtime=RuntimeTelemetrySettings(preflight_probe_timeout_seconds=3.5),
         )
         with patch(
             "cresmo.bootstrap.factories.telemetry_factory.probe_langfuse_ready", return_value=False
         ) as mock_probe2:
-            assert resolve_langfuse_client(s2) is None
+            assert resolve_langfuse_client(o2) is None
             mock_probe2.assert_called_once_with("http://host2:3000", timeout_seconds=3.5)
 
-        s_missing_probe_attrs = SimpleNamespace(
-            langfuse_public_key="pk-miss",
-            langfuse_secret_key=SecretStr("sk-miss"),
-            langfuse_host="http://hostmiss:3000",
-        )
-        with patch(
-            "cresmo.bootstrap.factories.telemetry_factory.probe_langfuse_ready", return_value=False
-        ) as mock_probe_miss:
-            assert resolve_langfuse_client(s_missing_probe_attrs) is None  # type: ignore[arg-type]
-            mock_probe_miss.assert_called_once_with("http://hostmiss:3000", timeout_seconds=1.0)
-
     def test_build_concat_master_use_case(self, test_settings: CresmoSettings) -> None:
-
         uc = build_concat_master_use_case(settings=test_settings)
         assert isinstance(uc, ConcatMasterUseCase)
-        assert uc.settings is test_settings
+        assert uc.rollover_policy == test_settings.to_compendium_rollover_policy()
 
     def test_build_index_raw_use_case_default_ollama(self, test_settings: CresmoSettings) -> None:
         uc = build_index_raw_use_case(settings=test_settings, web_index=False)
@@ -449,45 +477,33 @@ class TestCompositionRoot:
         assert s3 == s1
         reset_shared_settings()
 
-    def test_build_anonymizer_adapter_enabled_and_disabled(self, tmp_path: Path) -> None:
-        settings_enabled = CresmoSettings(
-            gemini_api_key=SecretStr("TEST"),
-            vault_dir=tmp_path / "v1",
-            anonymization_enabled=True,
+    def test_build_anonymizer_adapter_enabled_and_disabled(self) -> None:
+        enabled = ObservabilitySettings(
+            runtime=RuntimeTelemetrySettings(anonymization_enabled=True)
         )
-        assert isinstance(build_anonymizer_adapter(settings_enabled), RegexAnonymizerAdapter)
+        assert isinstance(build_anonymizer_adapter(enabled), RegexAnonymizerAdapter)
 
-        settings_disabled = CresmoSettings(
-            gemini_api_key=SecretStr("TEST"),
-            vault_dir=tmp_path / "v2",
-            anonymization_enabled=False,
+        disabled = ObservabilitySettings(
+            runtime=RuntimeTelemetrySettings(anonymization_enabled=False)
         )
-        assert isinstance(build_anonymizer_adapter(settings_disabled), NoOpAnonymizerAdapter)
+        assert isinstance(build_anonymizer_adapter(disabled), NoOpAnonymizerAdapter)
 
     def test_build_telemetry_adapter_with_and_without_client(
         self, test_settings: CresmoSettings
     ) -> None:
         mock_client = MagicMock()
-        adapter = build_telemetry_adapter(test_settings, langfuse_client=mock_client)
+        adapter = build_telemetry_adapter(test_settings.observability, langfuse_client=mock_client)
         assert isinstance(adapter, OpenTelemetryAdapter)
 
-        noop = build_telemetry_adapter(test_settings, langfuse_client=None)
+        noop = build_telemetry_adapter(test_settings.observability, langfuse_client=None)
         assert isinstance(noop, NoOpTelemetryPort)
 
-    def test_build_metrics_adapter_enabled_and_disabled(self, tmp_path: Path) -> None:
-        settings_enabled = CresmoSettings(
-            gemini_api_key=SecretStr("TEST"),
-            vault_dir=tmp_path / "v1",
-            prometheus_enabled=True,
-        )
-        assert isinstance(build_metrics_adapter(settings_enabled), PrometheusMetricsAdapter)
+    def test_build_metrics_adapter_enabled_and_disabled(self) -> None:
+        enabled = ObservabilitySettings(prometheus=PrometheusSettings(enabled=True))
+        assert isinstance(build_metrics_adapter(enabled), PrometheusMetricsAdapter)
 
-        settings_disabled = CresmoSettings(
-            gemini_api_key=SecretStr("TEST"),
-            vault_dir=tmp_path / "v2",
-            prometheus_enabled=False,
-        )
-        assert isinstance(build_metrics_adapter(settings_disabled), NoOpMetricsAdapter)
+        disabled = ObservabilitySettings(prometheus=PrometheusSettings(enabled=False))
+        assert isinstance(build_metrics_adapter(disabled), NoOpMetricsAdapter)
 
     def test_build_prompt_provider(self, test_settings: CresmoSettings) -> None:
         provider = build_prompt_provider(test_settings, langfuse_client=None)
@@ -495,20 +511,20 @@ class TestCompositionRoot:
         assert isinstance(provider._fallback, JsonPromptProvider)
 
     def test_build_gemini_synthesis_adapter(self, test_settings: CresmoSettings) -> None:
-        adapter = build_gemini_synthesis_adapter(test_settings, telemetry_port=None)
+        adapter = build_gemini_synthesis_adapter(test_settings.llm.gemini, telemetry_port=None)
         assert isinstance(adapter, GeminiLLMAdapter)
-        assert adapter.model_name == test_settings.gemini_model
+        assert adapter.model_name == test_settings.llm.gemini.model
 
     def test_build_indexing_adapter_selection(self, test_settings: CresmoSettings) -> None:
-        ollama_adapter = build_indexing_adapter(test_settings, web_index=False)
+        ollama_adapter = build_indexing_adapter(test_settings.llm, web_index=False)
         assert isinstance(ollama_adapter, OllamaLLMAdapter)
 
-        gemini_adapter = build_indexing_adapter(test_settings, web_index=True)
+        gemini_adapter = build_indexing_adapter(test_settings.llm, web_index=True)
         assert isinstance(gemini_adapter, GeminiLLMAdapter)
 
         mock_synthesis = MagicMock(spec=GeminiLLMAdapter)
         reused = build_indexing_adapter(
-            test_settings, synthesis_adapter=mock_synthesis, web_index=True
+            test_settings.llm, synthesis_adapter=mock_synthesis, web_index=True
         )
         assert reused is mock_synthesis
 
@@ -528,7 +544,6 @@ class TestCompositionRoot:
     def test_build_should_export_span_filtering(self) -> None:
         predicate = _build_should_export_span()
 
-        # 1. Default export span returns True
         with patch(
             "cresmo.bootstrap.factories.telemetry_factory.is_default_export_span", return_value=True
         ) as mock_default:
@@ -536,7 +551,6 @@ class TestCompositionRoot:
             assert predicate(span_default) is True
             mock_default.assert_called_once_with(span_default)
 
-        # 2. Not default export, but starts with cresmo.
         with patch(
             "cresmo.bootstrap.factories.telemetry_factory.is_default_export_span",
             return_value=False,
@@ -547,17 +561,14 @@ class TestCompositionRoot:
             assert predicate(span_cresmo) is True
             mock_not_default.assert_called_once_with(span_cresmo)
 
-            # 3. Not cresmo scope
             span_other = SimpleNamespace(
                 instrumentation_scope=SimpleNamespace(name="requests.opentelemetry")
             )
             assert predicate(span_other) is False
 
-            # 4. Scope is None
             span_none_scope = SimpleNamespace(instrumentation_scope=None)
             assert predicate(span_none_scope) is False
 
-            # 5. No instrumentation_scope attribute
             span_no_scope = SimpleNamespace()
             assert predicate(span_no_scope) is False
 
@@ -568,14 +579,12 @@ class TestCompositionRoot:
         mask_fn = _build_mask_hook(mock_anonymizer)
         assert mask_fn is not None
 
-        # Case A: Identical attributes (no mask applied)
         mock_anonymizer.mask_span_attributes.return_value = {"key1": "val1"}
         span_clean = SimpleNamespace(attributes={"key1": "val1"})
         params_clean = SimpleNamespace(spans={"span-1": span_clean})
         assert mask_fn(params=params_clean) is None  # type: ignore[arg-type]
         mock_anonymizer.mask_span_attributes.assert_called_with({"key1": "val1"})
 
-        # Case B: Sanitized attributes with modification and deletion
         raw = {"email": "user@test.com", "secret": "123", "normal": "public"}
         sanitized = {"email": "[REDACTED]", "normal": "public"}
         mock_anonymizer.mask_span_attributes.return_value = sanitized
@@ -586,28 +595,27 @@ class TestCompositionRoot:
         mock_anonymizer.mask_span_attributes.assert_called_with(raw)
         assert result is not None
         assert result.span_patches is not None
-        patch = result.span_patches.get("span-2")  # type: ignore[call-overload]
-        assert patch is not None
-        assert patch.set_attributes == {"email": "[REDACTED]"}
-        assert patch.delete_attributes == ("secret",)
+        patch_obj = result.span_patches.get("span-2")  # type: ignore[call-overload]
+        assert patch_obj is not None
+        assert patch_obj.set_attributes == {"email": "[REDACTED]"}
+        assert patch_obj.delete_attributes == ("secret",)
 
-        # Case C: Span with None attributes
         mock_anonymizer.mask_span_attributes.return_value = {}
         span_none_attr = SimpleNamespace(attributes=None)
         params_none = SimpleNamespace(spans={"span-3": span_none_attr})
         assert mask_fn(params=params_none) is None  # type: ignore[arg-type]
         mock_anonymizer.mask_span_attributes.assert_called_with({})
 
-    def test_resolve_langfuse_client_probe_disabled_and_kwargs(self, tmp_path: Path) -> None:
-        settings = CresmoSettings(
-            gemini_api_key=SecretStr("TEST"),
-            vault_dir=tmp_path / "v",
-            langfuse_public_key="pk-custom",
-            langfuse_secret_key=SecretStr("sk-custom"),
-            langfuse_host="http://custom-host:3000",
-            enable_preflight_probes=False,
-            langfuse_timeout_seconds=45,
-            langfuse_environment="staging",
+    def test_resolve_langfuse_client_probe_disabled_and_kwargs(self) -> None:
+        obs = ObservabilitySettings(
+            langfuse=LangfuseSettings(
+                public_key="pk-custom",
+                secret_key=SecretStr("sk-custom"),
+                host="http://custom-host:3000",
+                timeout_seconds=45,
+                environment="staging",
+            ),
+            runtime=RuntimeTelemetrySettings(enable_preflight_probes=False),
         )
 
         mock_client = MagicMock()
@@ -620,7 +628,7 @@ class TestCompositionRoot:
                 "cresmo.bootstrap.factories.telemetry_factory.name_telemetry_threads"
             ) as mock_name_threads,
         ):
-            client = resolve_langfuse_client(settings, anonymizer=mock_anonymizer)
+            client = resolve_langfuse_client(obs, anonymizer=mock_anonymizer)
             assert client is mock_client
             mock_name_threads.assert_called_once_with(mock_client)
 
@@ -640,84 +648,57 @@ class TestCompositionRoot:
             assert os.environ["LANGFUSE_TRACING_ENVIRONMENT"] == "staging"
             assert os.environ["OTEL_EXPORTER_OTLP_TIMEOUT"] == "45"
 
-        # Defaults when timeout and environment are completely missing from settings object
-        s_missing_timeout_env = SimpleNamespace(
-            langfuse_public_key="pk-defaults",
-            langfuse_secret_key=SecretStr("sk-defaults"),
-            langfuse_host="http://custom-host:3000",
-            enable_preflight_probes=False,
-        )
-        with (
-            patch.dict("sys.modules", {"langfuse": SimpleNamespace()}),
-            patch("cresmo.bootstrap.factories.telemetry_factory.Langfuse", mock_langfuse_cls),
-            patch("cresmo.bootstrap.factories.telemetry_factory.name_telemetry_threads"),
-        ):
-            resolve_langfuse_client(s_missing_timeout_env)  # type: ignore[arg-type]
-            _, kwargs_def = mock_langfuse_cls.call_args
-            assert kwargs_def["timeout"] == 30
-            assert kwargs_def["environment"] == "staging"
-            assert os.environ["LANGFUSE_TRACING_ENVIRONMENT"] == "staging"
-            assert os.environ["OTEL_EXPORTER_OTLP_TIMEOUT"] == "30"
-
-        from cresmo.bootstrap.factories.telemetry_factory import _clean_langfuse_env
-
         _clean_langfuse_env()
         assert "LANGFUSE_TRACING_ENVIRONMENT" not in os.environ
 
     def test_resolve_langfuse_client_init_exception_logs_warning(
         self, caplog: pytest.LogCaptureFixture
     ) -> None:
-        settings = SimpleNamespace(
-            langfuse_public_key="pk-err",
-            langfuse_secret_key=SecretStr("sk-err"),
-            langfuse_host="http://host-err:3000",
-            enable_preflight_probes=False,
+        obs = ObservabilitySettings(
+            langfuse=LangfuseSettings(
+                public_key="pk-err",
+                secret_key=SecretStr("sk-err"),
+                host="http://host-err:3000",
+            ),
+            runtime=RuntimeTelemetrySettings(enable_preflight_probes=False),
         )
         with (
             patch("langfuse.Langfuse", side_effect=RuntimeError("Langfuse boom")),
             caplog.at_level(logging.WARNING),
         ):
-            client = resolve_langfuse_client(settings)  # type: ignore[arg-type]
+            client = resolve_langfuse_client(obs)
             assert client is None
             record = next(r for r in caplog.records if r.levelno == logging.WARNING)
             assert "[composition] Failed to initialize Langfuse client" in record.getMessage()
             assert "Langfuse boom" in record.getMessage()
 
-    def test_resolve_langfuse_client_missing_keys_returns_none(self, tmp_path: Path) -> None:
-        s1 = CresmoSettings(
-            gemini_api_key=SecretStr("TEST"),
-            vault_dir=tmp_path / "v",
-            langfuse_public_key="",
-            langfuse_secret_key=SecretStr("sk-test"),
+    def test_resolve_langfuse_client_missing_keys_returns_none(self) -> None:
+        o1 = ObservabilitySettings(
+            langfuse=LangfuseSettings(public_key="", secret_key=SecretStr("sk-test"))
         )
-        assert resolve_langfuse_client(s1) is None
+        assert resolve_langfuse_client(o1) is None
 
-        s2 = CresmoSettings(
-            gemini_api_key=SecretStr("TEST"),
-            vault_dir=tmp_path / "v",
-            langfuse_public_key="pk-test",
-            langfuse_secret_key=SecretStr(""),
+        o2 = ObservabilitySettings(
+            langfuse=LangfuseSettings(public_key="pk-test", secret_key=SecretStr(""))
         )
-        assert resolve_langfuse_client(s2) is None
+        assert resolve_langfuse_client(o2) is None
 
     def test_build_sync_channel_use_case_parameter_and_port_wiring(
         self, test_settings: CresmoSettings
     ) -> None:
-        # 1. Custom batch size override and check_ffmpeg defaulting to True
         uc = build_sync_channel_use_case(
             settings=test_settings,
             batch_size_override=19,
         )
         assert uc.pipeline.batch_size == 19
-        assert uc.pipeline.settings is test_settings
+        assert uc.pipeline.stage_policy == test_settings.to_stage_execution_policy()
         assert uc.media_ingestion_port is uc.pipeline.media_ingestion_port
         assert uc.ledger_port is uc.pipeline.ledger_port
         assert uc.preflight_checker is not None
         assert isinstance(uc.preflight_checker, PreflightHealthChecker)
         assert uc.preflight_checker._check_ffmpeg is True
-        assert uc.preflight_checker._sqlite_ledger_path == test_settings.sqlite_ledger_path
+        assert uc.preflight_checker._sqlite_ledger_path == test_settings.storage.sqlite_ledger_path
 
-        # 2. Explicit check_ffmpeg=False
         uc_false = build_sync_channel_use_case(
             settings=test_settings,
             check_ffmpeg=False,
@@ -725,8 +706,9 @@ class TestCompositionRoot:
         assert uc_false.preflight_checker is not None
         assert uc_false.preflight_checker._check_ffmpeg is False
 
-        # 3. None settings defaults correctly
-        with patch("cresmo.bootstrap.composition.CresmoSettings", return_value=test_settings):
+        with patch(
+            "cresmo.bootstrap.composition.resolve_shared_settings", return_value=test_settings
+        ):
             uc_default = build_sync_channel_use_case(settings=None, check_ffmpeg=False)
             assert uc_default.pipeline is not None
             assert uc_default.media_ingestion_port is not None
@@ -743,8 +725,8 @@ class TestCompositionRoot:
         ):
             pipeline = build_pipeline(settings=test_settings, batch_size_override=23)
             mock_logging.assert_called_once_with(
-                level=test_settings.log_level,
-                fmt=test_settings.log_format,
+                level=test_settings.observability.logging.level,
+                fmt=test_settings.observability.logging.format,
             )
             mock_ensure_dirs.assert_called_once()
             assert pipeline.batch_size == 23
@@ -753,30 +735,13 @@ class TestCompositionRoot:
             assert runner.telemetry_port is not None
             assert runner.metrics_port is not None
             assert runner.llm_judge is not None
-            assert runner.judge_blocking == getattr(test_settings, "judge_blocking", False)
-            assert runner.judge_max_attempts == getattr(test_settings, "judge_max_attempts", 1)
+            assert runner.judge_blocking == test_settings.judge.blocking
+            assert runner.judge_max_attempts == test_settings.judge.max_attempts
             assert runner.prompt_provider is not None
             assert runner.llm_transformation_port is pipeline.llm_synthesis_port
             assert runner.stage_factory is not None
             assert runner.critique_synthesizer is not None
             assert runner.ledger_port is pipeline.ledger_port
-
-    def test_build_pipeline_missing_judge_attributes_fallbacks(self, tmp_path: Path) -> None:
-        real_settings = CresmoSettings(
-            gemini_api_key=SecretStr("TEST"),
-            vault_dir=tmp_path / "v_miss",
-            prometheus_enabled=False,
-        )
-
-        class SettingsWithoutJudgeAttrs:
-            def __getattr__(self, name: str) -> Any:
-                if name in ("judge_blocking", "judge_max_attempts"):
-                    raise AttributeError(f"No {name}")
-                return getattr(real_settings, name)
-
-        pipeline = build_pipeline(settings=SettingsWithoutJudgeAttrs())  # type: ignore[arg-type]
-        assert pipeline.stage_runner.judge_blocking is False
-        assert pipeline.stage_runner.judge_max_attempts == 2
 
     def test_build_pipeline_subfactory_wiring_integrity(
         self, test_settings: CresmoSettings
@@ -831,19 +796,23 @@ class TestCompositionRoot:
             patch("cresmo.infrastructure.config.CresmoSettings.ensure_directories"),
         ):
             pipeline = build_pipeline(settings=test_settings, web_index=False)
-            mock_anon.assert_called_once_with(test_settings)
-            mock_lf.assert_called_once_with(test_settings, anonymizer=mock_anon_adapter)
-            mock_tel.assert_called_once_with(test_settings, langfuse_client=mock_lf_client)
+            mock_anon.assert_called_once_with(test_settings.observability)
+            mock_lf.assert_called_once_with(
+                test_settings.observability, anonymizer=mock_anon_adapter
+            )
+            mock_tel.assert_called_once_with(
+                test_settings.observability, langfuse_client=mock_lf_client
+            )
             mock_ingest.assert_called_once_with(test_settings)
             mock_prompt.assert_called_once_with(test_settings, langfuse_client=mock_lf_client)
-            mock_pool_builder.assert_called_once_with(test_settings)
+            mock_pool_builder.assert_called_once_with(test_settings.llm.gemini)
             mock_gemini.assert_called_once_with(
-                test_settings,
+                test_settings.llm.gemini,
                 telemetry_port=mock_tel_adapter,
                 credential_pool=mock_pool,
             )
             mock_idx.assert_called_once_with(
-                test_settings,
+                test_settings.llm,
                 synthesis_adapter=mock_synth_adapter,
                 web_index=False,
                 telemetry_port=mock_tel_adapter,
@@ -869,20 +838,25 @@ class TestCompositionRoot:
     def test_gemini_timeout_seconds_wired_into_synthesis_and_indexing_adapters(
         self, tmp_path: Path
     ) -> None:
-        """Verify settings.gemini_timeout_seconds propagates to synthesis and web_index adapters."""
+        """Verify llm.gemini.timeout_seconds propagates to synthesis and web_index adapters."""
         settings = CresmoSettings(
-            gemini_api_key=SecretStr("TEST_FAKE_KEY_FOR_TIMEOUT"),
-            vault_dir=tmp_path / "vault",
-            gemini_timeout_seconds=180.0,
+            _env_file=None,
+            llm=LlmSettings(
+                gemini=GeminiSettings(
+                    api_keys=(SecretStr("TEST_FAKE_KEY_FOR_TIMEOUT"),),
+                    timeout_seconds=180.0,
+                ),
+            ),
+            storage=StorageSettings(vault_dir=tmp_path / "vault", data_dir=tmp_path / "data"),
         )
 
-        synthesis_adapter = build_gemini_synthesis_adapter(settings, telemetry_port=None)
+        synthesis_adapter = build_gemini_synthesis_adapter(settings.llm.gemini, telemetry_port=None)
         assert isinstance(synthesis_adapter, GeminiLLMAdapter)
         assert synthesis_adapter.timeout_seconds == 180.0
         assert synthesis_adapter._pool is not None
         assert synthesis_adapter._pool.timeout == 180.0
 
-        indexing_adapter = build_indexing_adapter(settings, web_index=True)
+        indexing_adapter = build_indexing_adapter(settings.llm, web_index=True)
         assert isinstance(indexing_adapter, GeminiLLMAdapter)
         assert indexing_adapter.timeout_seconds == 180.0
         assert indexing_adapter._pool is not None
@@ -891,24 +865,17 @@ class TestCompositionRoot:
     def test_build_pipeline_shares_single_gemini_credential_pool_across_synthesis_and_judge(
         self, tmp_path: Path
     ) -> None:
-        """Verify SPEC-3: build_pipeline injects identical GeminiCredentialPool into synthesis and judge."""
-        from cresmo.infrastructure.adapters.judges.composite_judge import (
-            ResilientCompositeJudgeAdapter,
-        )
-        from cresmo.infrastructure.adapters.judges.gemini_judge import GeminiJudgeAdapter
-        from cresmo.infrastructure.adapters.judges.preflight_decorator import (
-            MechanicalPreflightJudgeDecorator,
-        )
-        from cresmo.infrastructure.adapters.judges.telemetry_decorator import (
-            TelemetryJudgeDecorator,
-        )
-
+        """Verify build_pipeline injects identical GeminiCredentialPool into synthesis and judge."""
         settings = CresmoSettings(
-            gemini_api_keys=[SecretStr("KEY_PRIMARY_POOL"), SecretStr("KEY_SECONDARY_POOL")],
-            vault_dir=tmp_path / "vault",
-            judge_provider="gemini",
-            langfuse_enabled=False,
-            prometheus_enabled=False,
+            _env_file=None,
+            llm=LlmSettings(
+                gemini=GeminiSettings(
+                    api_keys=(SecretStr("KEY_PRIMARY_POOL"), SecretStr("KEY_SECONDARY_POOL")),
+                ),
+            ),
+            storage=StorageSettings(vault_dir=tmp_path / "vault", data_dir=tmp_path / "data"),
+            judge=JudgeSettings(provider="gemini"),
+            observability=ObservabilitySettings(prometheus=PrometheusSettings(enabled=False)),
         )
 
         pipeline = build_pipeline(settings=settings, web_index=True)
@@ -916,7 +883,6 @@ class TestCompositionRoot:
         synthesis_adapter = pipeline.llm_synthesis_port
         assert isinstance(synthesis_adapter, GeminiLLMAdapter)
 
-        # Unwrap TelemetryJudgeDecorator -> MechanicalPreflightJudgeDecorator -> ResilientCompositeJudgeAdapter -> GeminiJudgeAdapter
         judge_adapter = pipeline.llm_judge
         assert isinstance(judge_adapter, TelemetryJudgeDecorator)
         preflight = judge_adapter._inner_judge
@@ -928,7 +894,6 @@ class TestCompositionRoot:
 
         assert synthesis_adapter._pool is primary_judge._pool
 
-        # Cooldown reported on synthesis pool must immediately rotate judge lease to secondary key
         primary_key, _, _ = synthesis_adapter._pool.lease()
         synthesis_adapter._pool.report_quota_exhausted(primary_key, 300.0)
         assert primary_judge._pool is not None

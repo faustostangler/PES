@@ -13,7 +13,6 @@ from cresmo.application.pipeline.stage_factory import StageFactory
 from cresmo.application.pipeline.stage_runner import PipelineStageRunner
 from cresmo.application.ports import (
     CritiqueSynthesizerPort,
-    DefaultPipelineSettings,
     LedgerRepositoryPort,
     LLMTransformationPort,
     NoOpMetricsPort,
@@ -33,6 +32,7 @@ from cresmo.domain.value_objects import (
     JudgeEvaluation,
     MediaProvenance,
     PipelineStatus,
+    StageExecutionPolicy,
 )
 from tests.doubles.telemetry_fake import InMemoryTelemetryPort
 
@@ -51,8 +51,8 @@ def _create_sample_context() -> PipelineExecutionContext:
 
 def test_execute_stage_with_string_identifier_and_factory() -> None:
     """Verify execute_stage resolves stage descriptor from string identifier via injected StageFactory."""
-    settings = DefaultPipelineSettings(judge_blocking=False, judge_max_attempts=1)
-    factory = StageFactory(settings=settings)
+    policy = StageExecutionPolicy(judge_blocking=False, judge_max_attempts=1)
+    factory = StageFactory(policy=policy)
 
     mock_llm = MagicMock(spec=LLMTransformationPort)
     mock_llm.transform.return_value = "Transformed text output."
@@ -101,8 +101,8 @@ def test_execute_stage_string_without_factory_raises_value_error() -> None:
 
 def test_execute_stage_closed_loop_critique_synthesizer_integration() -> None:
     """Verify CritiqueSynthesizer is invoked on failed attempt to produce directed critique for prompt reflection."""
-    settings = DefaultPipelineSettings(judge_blocking=True, judge_max_attempts=2)
-    factory = StageFactory(settings=settings)
+    policy = StageExecutionPolicy(judge_blocking=True, judge_max_attempts=2)
+    factory = StageFactory(policy=policy)
 
     mock_judge = MagicMock()
     failed_eval = JudgeEvaluation(
@@ -174,8 +174,8 @@ def test_execute_stage_closed_loop_critique_synthesizer_integration() -> None:
 
 def test_execute_stage_fail_fast_quarantine_protocol() -> None:
     """Verify Fail-Fast with Quarantine executes all 4 protocol actions on exhausted retry failures."""
-    settings = DefaultPipelineSettings(judge_blocking=True, judge_max_attempts=2)
-    factory = StageFactory(settings=settings)
+    policy = StageExecutionPolicy(judge_blocking=True, judge_max_attempts=2)
+    factory = StageFactory(policy=policy)
 
     mock_judge = MagicMock()
     failed_eval = JudgeEvaluation(

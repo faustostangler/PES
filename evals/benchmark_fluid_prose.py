@@ -254,26 +254,28 @@ def build_generator_adapter(
     """Instantiate candidate generator LLM adapter."""
     prov = provider.lower().strip()
     if prov == "gemini":
-        api_keys = [k.get_secret_value() for k in settings.gemini_api_keys]
+        gemini_cfg = settings.llm.gemini
+        api_keys = [k.get_secret_value() for k in gemini_cfg.api_keys]
         if not api_keys:
             raise ValueError(
-                "GEMINI_API_KEY or GEMINI_API_KEYS is required to test Gemini models. Set it in .env or environment."
+                "CRESMO_LLM__GEMINI__API_KEYS is required to test Gemini models. Set it in .env or environment."
             )
         return GeminiLLMAdapter(
             api_keys=api_keys,
             model_name=model_name,
-            max_output_tokens=settings.gemini_max_output_tokens,
-            thinking_level=settings.gemini_thinking_level,
+            max_output_tokens=gemini_cfg.max_output_tokens,
+            thinking_level=gemini_cfg.thinking_level,
         )
 
     if prov == "ollama":
+        ollama_cfg = settings.llm.ollama
         return OllamaLLMAdapter(
-            base_url=settings.ollama_base_url,
+            base_url=ollama_cfg.base_url,
             model=model_name,
-            timeout_seconds=settings.ollama_timeout_seconds,
+            timeout_seconds=ollama_cfg.timeout_seconds,
             default_temperature=temperature,
-            num_predict=settings.ollama_num_predict,
-            keep_alive=settings.ollama_keep_alive,
+            num_predict=ollama_cfg.num_predict,
+            keep_alive=ollama_cfg.keep_alive,
         )
 
     raise ValueError(
@@ -346,7 +348,7 @@ def run_benchmark_for_model(
             channel_name=sample.channel_name,
             file_name=sample.file_name,
             raw_text=sample.raw_text,
-            language=settings.language,
+            language=settings.pipeline.language,
         )
 
         t_gen_start = time.perf_counter()
@@ -649,7 +651,7 @@ def benchmark(
             "--models",
             help=(
                 "List of model identifiers to test sequentially (default: configured in "
-                "CresmoSettings.generator_benchmark_models)"
+                "CresmoSettings.judge.benchmark_models)"
             ),
         ),
     ] = None,
@@ -695,15 +697,16 @@ def benchmark(
     output_dir.mkdir(parents=True, exist_ok=True)
 
     # Propagate Langfuse environment variables to silence client initialization warnings
-    if settings.langfuse_public_key:
-        os.environ["LANGFUSE_PUBLIC_KEY"] = settings.langfuse_public_key
-    if settings.langfuse_secret_key.get_secret_value():
-        os.environ["LANGFUSE_SECRET_KEY"] = settings.langfuse_secret_key.get_secret_value()
-    if settings.langfuse_host:
-        os.environ["LANGFUSE_HOST"] = settings.langfuse_host
+    langfuse_cfg = settings.observability.langfuse
+    if langfuse_cfg.public_key:
+        os.environ["LANGFUSE_PUBLIC_KEY"] = langfuse_cfg.public_key
+    if langfuse_cfg.secret_key.get_secret_value():
+        os.environ["LANGFUSE_SECRET_KEY"] = langfuse_cfg.secret_key.get_secret_value()
+    if langfuse_cfg.host:
+        os.environ["LANGFUSE_HOST"] = langfuse_cfg.host
 
     # 1. Resolve Target Models
-    default_models = list(settings.generator_benchmark_models)
+    default_models = list(settings.judge.benchmark_models)
     raw_models = models if models else default_models
     if "all" in [m.lower() for m in raw_models]:
         raw_models = default_models

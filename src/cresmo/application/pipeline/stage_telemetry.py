@@ -236,9 +236,7 @@ def record_session_completion_telemetry(
     )
 
     item_count = len(inventory.items) if hasattr(inventory, "items") else 1
-    coherence_score = (
-        min(1.0, len(synthesized_notes) / max(1, item_count)) if item_count else 1.0
-    )
+    coherence_score = min(1.0, len(synthesized_notes) / max(1, item_count)) if item_count else 1.0
     details = {
         "synthesized_notes_count": len(synthesized_notes),
         "inventory_count": item_count,

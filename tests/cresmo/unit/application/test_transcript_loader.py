@@ -456,28 +456,26 @@ class TestLoadManifestUrls:
 def test_coordinator_run_for_text_file_passes_raw_dir(tmp_path: Path) -> None:
     from cresmo.application.pipeline import CresmoPipeline
     from cresmo.application.pipeline.stage_runner import PipelineStageRunner
-    from cresmo.application.ports import DefaultPipelineSettings
     from cresmo.application.ports.storage import VaultRepositoryPort
 
     file_path = tmp_path / "incoming" / "sample.md"
     file_path.parent.mkdir()
     file_path.write_text("---\ntitle: 'Title'\nchannel: 'Chan'\n---\nBody text.", encoding="utf-8")
 
+    custom_raw_dir = tmp_path / "custom_raw"
+    custom_raw_dir.mkdir()
+
     mock_vault = MagicMock(spec=VaultRepositoryPort)
+    mock_vault.resolve_stage_dir.return_value = custom_raw_dir
     mock_runner = MagicMock(spec=PipelineStageRunner)
     mock_runner.telemetry_port = None
     mock_runner.metrics_port = None
     mock_runner.llm_transformation_port = MagicMock()
 
-    custom_raw_dir = tmp_path / "custom_raw"
-    custom_raw_dir.mkdir()
-    settings = DefaultPipelineSettings(raw_dir=custom_raw_dir)
-
     pipeline = CresmoPipeline(
         media_ingestion_port=MagicMock(),
         vault_port=mock_vault,
         stage_runner=mock_runner,
-        settings=settings,
     )
     pipeline.execute = MagicMock()
 

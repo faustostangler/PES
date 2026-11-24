@@ -36,7 +36,7 @@ from cresmo.infrastructure.adapters.telemetry.opentelemetry_adapter import (
     OpenTelemetryAdapter,
     name_telemetry_threads,
 )
-from cresmo.infrastructure.config import DEFAULT_LANGFUSE_ENVIRONMENT, TelemetrySettings
+from cresmo.infrastructure.config import ObservabilitySettings
 
 logger = structlog.get_logger(__name__)
 
@@ -153,7 +153,7 @@ Langfuse: Any = _LAZY_LANGFUSE_SENTINEL
 
 
 def resolve_langfuse_client(
-    settings: TelemetrySettings,
+    settings: ObservabilitySettings,
     anonymizer: AnonymizerPort | None = None,
 ) -> Any | None:
     """Instantiate and return Langfuse client if configured and actively reachable.
@@ -164,40 +164,42 @@ def resolve_langfuse_client(
     Also configures should_export_span allowlisting and export-stage masking per ADR-017.
 
     Args:
-        settings: Validated application configuration.
+        settings: Validated observability configuration.
         anonymizer: Optional AnonymizerPort adapter for export-stage PII scrubbing.
 
     Returns:
         Configured Langfuse client instance or None if not configured/unreachable.
     """
-    if not (settings.langfuse_public_key and settings.langfuse_secret_key.get_secret_value()):
+    langfuse_cfg = settings.langfuse
+    runtime_cfg = settings.runtime
+    if not (langfuse_cfg.public_key and langfuse_cfg.secret_key.get_secret_value()):
         return None
 
     # Active Preflight Probe
-    if getattr(settings, "enable_preflight_probes", True):
-        timeout_seconds = getattr(settings, "preflight_probe_timeout_seconds", 1.0)
-        if not probe_langfuse_ready(settings.langfuse_host, timeout_seconds=timeout_seconds):
-            sys.stderr.write(
-                f"[preflight] Langfuse server at '{settings.langfuse_host}' is unreachable. "
-                "Telemetry bypassed to prevent OpenTelemetry retry loops.\n"
-                "            To enable observability: docker compose -f docker-compose.langfuse.yml up -d\n"
-            )
-            _clean_langfuse_env()
-            return None
+    if runtime_cfg.enable_preflight_probes and not probe_langfuse_ready(
+        langfuse_cfg.host, timeout_seconds=runtime_cfg.preflight_probe_timeout_seconds
+    ):
+        sys.stderr.write(
+            f"[preflight] Langfuse server at '{langfuse_cfg.host}' is unreachable. "
+            "Telemetry bypassed to prevent OpenTelemetry retry loops.\n"
+            "            To enable observability: docker compose -f docker-compose.langfuse.yml up -d\n"
+        )
+        _clean_langfuse_env()
+        return None
 
     try:
-        timeout_sec = getattr(settings, "langfuse_timeout_seconds", 30)
-        resolved_env = getattr(settings, "langfuse_environment", DEFAULT_LANGFUSE_ENVIRONMENT)
-        os.environ["LANGFUSE_PUBLIC_KEY"] = settings.langfuse_public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = settings.langfuse_secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = settings.langfuse_host
+        timeout_sec = langfuse_cfg.timeout_seconds
+        resolved_env = langfuse_cfg.environment
+        os.environ["LANGFUSE_PUBLIC_KEY"] = langfuse_cfg.public_key
+        os.environ["LANGFUSE_SECRET_KEY"] = langfuse_cfg.secret_key.get_secret_value()
+        os.environ["LANGFUSE_HOST"] = langfuse_cfg.host
         os.environ["LANGFUSE_TRACING_ENVIRONMENT"] = resolved_env
         os.environ["OTEL_EXPORTER_OTLP_TIMEOUT"] = str(timeout_sec)
 
         init_kwargs: dict[str, Any] = {
-            "public_key": settings.langfuse_public_key,
-            "secret_key": settings.langfuse_secret_key.get_secret_value(),
-            "host": settings.langfuse_host,
+            "public_key": langfuse_cfg.public_key,
+            "secret_key": langfuse_cfg.secret_key.get_secret_value(),
+            "host": langfuse_cfg.host,
             "timeout": timeout_sec,
             "should_export_span": _build_should_export_span(),
             "environment": resolved_env,
@@ -216,35 +218,35 @@ def resolve_langfuse_client(
 
 
 def build_anonymizer_adapter(
-    settings: TelemetrySettings | None = None,
+    settings: ObservabilitySettings | None = None,
 ) -> AnonymizerPort:
-    """Instantiate AnonymizerPort adapter based on settings configuration."""
-    resolved_settings = settings if settings is not None else resolve_shared_settings(None)
-    if getattr(resolved_settings, "anonymization_enabled", True):
+    """Instantiate AnonymizerPort adapter based on observability configuration."""
+    resolved = settings if settings is not None else resolve_shared_settings(None).observability
+    if resolved.runtime.anonymization_enabled:
         return RegexAnonymizerAdapter()
     return NoOpAnonymizerAdapter()
 
 
 def build_telemetry_adapter(
-    settings: TelemetrySettings | None = None,
+    settings: ObservabilitySettings | None = None,
     langfuse_client: Any | None = None,
 ) -> TelemetryPort:
     """Instantiate TelemetryPort choosing between OpenTelemetryAdapter and canonical NoOpTelemetryPort."""
-    resolved_settings = settings if settings is not None else resolve_shared_settings(None)
+    resolved = settings if settings is not None else resolve_shared_settings(None).observability
     if langfuse_client is not None:
         return OpenTelemetryAdapter(
             langfuse_client=langfuse_client,
-            pipeline_version=resolved_settings.pipeline_version,
-            git_sha=resolved_settings.git_sha,
+            pipeline_version=resolved.runtime.pipeline_version,
+            git_sha=resolved.runtime.git_sha,
         )
     return NoOpTelemetryPort()
 
 
 def build_metrics_adapter(
-    settings: TelemetrySettings | None = None,
+    settings: ObservabilitySettings | None = None,
 ) -> MetricsPort:
     """Instantiate MetricsPort adapter choosing between Prometheus and NoOp."""
-    resolved_settings = settings if settings is not None else resolve_shared_settings(None)
-    if getattr(resolved_settings, "prometheus_enabled", True):
+    resolved = settings if settings is not None else resolve_shared_settings(None).observability
+    if resolved.prometheus.enabled:
         return PrometheusMetricsAdapter()
     return NoOpMetricsAdapter()

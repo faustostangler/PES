@@ -29,7 +29,13 @@ from cresmo.infrastructure.adapters.judges.preflight_decorator import (
     MechanicalPreflightJudgeDecorator,
 )
 from cresmo.infrastructure.adapters.prompts import JsonPromptProvider
-from cresmo.infrastructure.config import CresmoSettings
+from cresmo.infrastructure.config import (
+    CresmoSettings,
+    JudgeSettings,
+    ObservabilitySettings,
+    RuntimeTelemetrySettings,
+    StorageSettings,
+)
 from cresmo.infrastructure.persistence.sqlite_ledger_adapter import SqliteLedgerAdapter
 from tests.doubles.mock_adapters import MockLLMAdapter, MockMediaIngestionPort
 
@@ -117,22 +123,25 @@ def test_sqlite_vault_taxonomy_pipeline_roundtrip_and_idempotency(tmp_path: Path
     """Verify real SQLite ledger, Obsidian vault, taxonomy, prompts, and pipeline conveyor."""
     data_dir = tmp_path / "data"
     vault_dir = tmp_path / "vault"
-    sqlite_path = data_dir / "cresmo_ledger.db"
 
     settings = CresmoSettings(
-        data_dir=data_dir,
-        vault_dir=vault_dir,
-        sqlite_ledger_path=sqlite_path,
-        enable_preflight_probes=False,
-        judge_blocking=True,
-        judge_max_attempts=1,
+        _env_file=None,
+        storage=StorageSettings(data_dir=data_dir, vault_dir=vault_dir),
+        judge=JudgeSettings(blocking=True, max_attempts=1),
+        observability=ObservabilitySettings(
+            runtime=RuntimeTelemetrySettings(enable_preflight_probes=False)
+        ),
     )
     settings.ensure_directories()
 
-    vault_adapter = build_vault_adapter(settings)
-    ledger_adapter = SqliteLedgerAdapter(db_path=settings.sqlite_ledger_path)
-    taxonomy_adapter = build_taxonomy_adapter(settings)
-    prompt_provider = JsonPromptProvider(settings=settings)
+    vault_adapter = build_vault_adapter(settings.storage)
+    ledger_adapter = SqliteLedgerAdapter(db_path=settings.storage.sqlite_ledger_path)
+    taxonomy_adapter = build_taxonomy_adapter(settings.storage)
+    prompt_provider = JsonPromptProvider(
+        prompts_path=settings.storage.prompts_path,
+        skills_dir=settings.storage.skills_dir,
+        language=settings.pipeline.language,
+    )
 
     llm_adapter = MockLLMAdapter(
         responses=[
@@ -150,7 +159,7 @@ def test_sqlite_vault_taxonomy_pipeline_roundtrip_and_idempotency(tmp_path: Path
         judge_max_attempts=1,
         prompt_provider=prompt_provider,
         llm_transformation_port=llm_adapter,
-        stage_factory=StageFactory(settings=settings),
+        stage_factory=StageFactory(policy=settings.to_stage_execution_policy()),
         ledger_port=ledger_adapter,
     )
     pipeline = CresmoPipeline(
@@ -158,7 +167,7 @@ def test_sqlite_vault_taxonomy_pipeline_roundtrip_and_idempotency(tmp_path: Path
         vault_port=vault_adapter,
         stage_runner=stage_runner,
         ledger_port=ledger_adapter,
-        settings=settings,
+        stage_policy=settings.to_stage_execution_policy(),
         taxonomy_port=taxonomy_adapter,
     )
 

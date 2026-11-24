@@ -1,20 +1,19 @@
 """Infrastructure storage and filesystem path settings for Cresmo.
 
-Pure declarative Pydantic Settings V2 model for Category 2 paths without
-filesystem mutation or probe side effects during model instantiation.
+Pure declarative, immutable Pydantic V2 BaseModel without filesystem mutation
+or probe side effects during instantiation.
 
 Conforms to:
     - ADR-005: Multi-Role 12-Factor Container & Settings
     - ADR-006: Resilient Workspace Root Discovery
-    - ADR-069: Modular Domain Settings Package
+    - ADR-074: Hierarchical Immutable Settings & Pure Domain Policies
 """
 
 from __future__ import annotations
 
 from pathlib import Path
 
-from pydantic import AliasChoices, Field
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 from cresmo.infrastructure.paths import find_workspace_root
 
@@ -23,14 +22,10 @@ _WORKSPACE_DIR = find_workspace_root()
 __all__ = ["StorageSettings"]
 
 
-class StorageSettings(BaseSettings):
-    """Category 2 infrastructure and filesystem storage settings.
+class StorageSettings(BaseModel):
+    """Immutable infrastructure and filesystem storage settings."""
 
-    Declares workspace-anchored directories, manifest filenames, SQLite WAL
-    ledger paths, and optional external resource overrides.
-    """
-
-    model_config = SettingsConfigDict(extra="ignore")
+    model_config = ConfigDict(frozen=True, extra="forbid")
 
     data_dir: Path = Field(
         default_factory=lambda: _WORKSPACE_DIR / "data",
@@ -127,13 +122,6 @@ class StorageSettings(BaseSettings):
     browser_headers_path: Path | None = Field(
         default=None,
         description="Optional custom path to browser request headers pool JSON file.",
-    )
-    cookies_file: Path | None = Field(
-        default=None,
-        validation_alias=AliasChoices(
-            "cookies_file", "DEFAULT_COOKIES_FILE", "CRESMO_COOKIES_FILE"
-        ),
-        description="Path to Netscape cookies file for YouTube authentication.",
     )
     prompts_path: Path | None = Field(
         default=None,

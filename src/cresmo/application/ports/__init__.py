@@ -27,10 +27,6 @@ from cresmo.application.ports.metrics import MetricsPort, NoOpMetricsPort
 from cresmo.application.ports.preflight import PreflightProbePort
 from cresmo.application.ports.prompt import NoOpPromptProviderPort, PromptProviderPort
 from cresmo.application.ports.runtime import NoOpProcessRuntimePort, ProcessRuntimePort
-from cresmo.application.ports.settings import (
-    DefaultPipelineSettings,
-    PipelineSettingsProtocol,
-)
 from cresmo.application.ports.storage import (
     LedgerRepositoryPort,
     VaultRepositoryPort,
@@ -77,7 +73,6 @@ __all__ = [
     "CalibrationReportWriterPort",
     "ChannelTaxonomyPort",
     "CritiqueSynthesizerPort",
-    "DefaultPipelineSettings",
     "LLMTransformationPort",
     "LedgerRepositoryPort",
     "LlmJudgePort",
@@ -89,7 +84,6 @@ __all__ = [
     "NoOpPromptProviderPort",
     "NoOpTelemetryPort",
     "NoOpTelemetrySpan",
-    "PipelineSettingsProtocol",
     "PreflightProbePort",
     "ProcessRuntimePort",
     "PromptProviderPort",

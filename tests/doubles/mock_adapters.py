@@ -111,7 +111,8 @@ class MockLLMAdapter(LLMTransformationPort):
 class InMemoryVaultAdapter(VaultRepositoryPort):
     """In-memory mock for VaultRepositoryPort."""
 
-    def __init__(self) -> None:
+    def __init__(self, data_dir: Path | None = None) -> None:
+        self._data_dir = data_dir or Path("/tmp/data")
         self.stage_transcripts: dict[str, dict[str, StageTranscript]] = {}
         self.raw_transcripts: dict[str, StageTranscript] = {}
         self.atomic_notes: dict[str, AtomicNote] = {}
@@ -168,7 +169,7 @@ class InMemoryVaultAdapter(VaultRepositoryPort):
 
     def resolve_stage_dir(self, stage_name: str | StageName) -> Path:
         key = stage_name.value if hasattr(stage_name, "value") else str(stage_name)
-        return Path("/tmp/data") / key
+        return self._data_dir / key
 
     def save_stage_transcript(
         self, stage_name: str | StageName, transcript: StageTranscript

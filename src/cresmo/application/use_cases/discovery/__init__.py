@@ -20,6 +20,7 @@ from cresmo.application.use_cases.discovery.manifests import (
 from cresmo.application.use_cases.discovery.models import (
     BatchDiscoveryQuery,
     BatchSource,
+    DiscoveryPaths,
     _BatchSourceAccumulator,
 )
 
@@ -28,6 +29,7 @@ __all__ = [
     "BatchSource",
     "ChannelFeedCrawlerService",
     "DiscoverBatchSourcesUseCase",
+    "DiscoveryPaths",
     "LakeScannerService",
     "_BatchSourceAccumulator",
     "extract_raw_file_metadata",

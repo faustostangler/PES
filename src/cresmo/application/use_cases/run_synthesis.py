@@ -19,7 +19,6 @@ from typing import TYPE_CHECKING
 from cresmo.application.ports import (
     MediaIngestionPort,
     NoOpProcessRuntimePort,
-    PipelineSettingsProtocol,
     ProcessRuntimePort,
     VaultRepositoryPort,
 )
@@ -32,6 +31,7 @@ from cresmo.domain.exceptions import (
 from cresmo.domain.value_objects import (
     BatchId,
     ChannelName,
+    DiscoveryPolicy,
     SourceModality,
     SyncFilterCriteria,
     is_processable_transcript_file,
@@ -148,7 +148,7 @@ class RunSynthesisUseCase:
 
     def __init__(
         self,
-        settings: PipelineSettingsProtocol,
+        discovery_policy: DiscoveryPolicy,
         preflight_checker: PreflightHealthChecker,
         pipeline_factory: Callable[[], CresmoPipeline],
         discover_sources_factory: Callable[
@@ -158,7 +158,7 @@ class RunSynthesisUseCase:
         concat_master_factory: Callable[[VaultRepositoryPort], ConcatMasterUseCase],
         runtime_port: ProcessRuntimePort | None = None,
     ) -> None:
-        self._settings = settings
+        self._discovery_policy = discovery_policy
         self._preflight_checker = preflight_checker
         self._pipeline_factory = pipeline_factory
         self._discover_sources_factory = discover_sources_factory
@@ -317,10 +317,9 @@ class RunSynthesisUseCase:
     def _build_discovery_query(self, request: RunSynthesisRequest) -> BatchDiscoveryQuery:
         from cresmo.application.use_cases.discovery import BatchDiscoveryQuery
 
-        if request.crawl:
-            enable_channel_crawler = True
-        else:
-            enable_channel_crawler = bool(getattr(self._settings, "enable_channel_crawler", False))
+        enable_channel_crawler = (
+            True if request.crawl else self._discovery_policy.enable_channel_crawler
+        )
 
         filter_criteria = SyncFilterCriteria.from_strings(
             channels=list(request.channels),
@@ -331,12 +330,12 @@ class RunSynthesisUseCase:
         return BatchDiscoveryQuery(
             explicit_manifest=request.manifest,
             scan_raw=request.scan_raw,
-            lookback_days=self._settings.days_lookback,
+            lookback_days=self._discovery_policy.lookback_days,
             channel_max_videos=request.channel_max_videos,
-            discovery_workers=self._settings.channel_discovery_workers,
+            discovery_workers=self._discovery_policy.discovery_workers,
             enable_channel_crawler=enable_channel_crawler,
             filter_criteria=filter_criteria,
-            queue_maxsize=self._settings.discovery_queue_maxsize,
+            queue_maxsize=self._discovery_policy.queue_maxsize,
         )
 
     def _execute_batch_dry_run(

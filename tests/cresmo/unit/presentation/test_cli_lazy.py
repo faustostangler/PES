@@ -134,11 +134,10 @@ assert "torch" not in sys.modules, "torch eagerly imported by NativeMediaIngesti
             RunSynthesisRequest,
             RunSynthesisUseCase,
         )
-        from cresmo.infrastructure.config import CresmoSettings
+        from cresmo.domain.value_objects import DiscoveryPolicy
 
-        settings = CresmoSettings()
         use_case = RunSynthesisUseCase(
-            settings=settings,
+            discovery_policy=DiscoveryPolicy(),
             preflight_checker=MagicMock(),
             pipeline_factory=MagicMock(),
             discover_sources_factory=MagicMock(),

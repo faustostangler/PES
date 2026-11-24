@@ -16,7 +16,7 @@ In this repository, architectural decisions evolve continuously through test-dri
 > [`ADR-000: Patterns and Anti-Patterns Catalog`](ADR-000-patterns-antipatterns.md) is the **Foundational Supreme Canon**. It has **absolute overarching priority over all ADRs in the repository, regardless of publication date**. All architectural patterns defined in ADR-000 are authoritative; all items marked with an asterisk (`*`) are strictly prohibited anti-patterns that must never be introduced or tolerated.
 >
 > ### Invariant 2: Lex Posterior Derogat Priori (More Recent Overrides Older)
-> For all subsequent decisions (ADR-001 through ADR-066), **more recent ADRs supersede and override older ADRs**. In the event of any semantic ambiguity, interface drift, or operational conflict:
+> For all subsequent decisions (ADR-001 through ADR-074), **more recent ADRs supersede and override older ADRs**. In the event of any semantic ambiguity, interface drift, or operational conflict:
 > - If an older ADR says to do **A** and a more recent ADR says to do **B**, **B is authoritative** and **A is deprecated / superseded**.
 > - All decisions previously designated as `PROPOSED` or `IN REVIEW` are officially **ACCEPTED** as ratified canon (with the sole exception of exploratory proposals explicitly marked `PROPOSED`, such as ADR-045).
 > - Downstream implementations, specifications, and tests must strictly adhere to the higher-numbered ADR.
@@ -96,10 +96,11 @@ In this repository, architectural decisions evolve continuously through test-dri
 | [**ADR-066**](ADR-066-hybrid-semantic-saturation-and-text-embedding-adapters.md) | 2026-11-21 | Hybrid Semantic Saturation, Pure Convergence Domain, and Hexagonal Text Embedding Adapters | Cresmo Core / Cognitive & Infra | `ACCEPTED` | **Refines ADR-039 and ADR-046; deletes `mechanical_validator.py` per ADR-010**. Splits syntax preflight (`prose_syntax_guard.py`) from pure convergence math (`convergence_evaluator.py`), introduces `SaturationVerdict`/`<NO_NEW_GAPS/>` fixed-point loop, `TextEmbeddingPort`, `HybridSaturationEvaluator`, Gemini/Ollama/TF-IDF resilient embedding adapters, and `cresmo.{stage}.saturation.pass_{N}` Langfuse spans. |
 | [**ADR-067**](ADR-067-humble-presentation-cli-and-run-sync-use-cases.md) | 2026-11-22 | Humble Presentation CLI and Run/Sync Use Cases | Presentation / Application / Domain | `ACCEPTED` | **Refines ADR-002, ADR-010, ADR-026, ADR-053**. Extracts `RunSynthesisUseCase` and `SyncBatchUseCase`, adds `QuotaPoolExhaustedError`, `ProcessRuntimePort`, `load_fresh_settings`, and centralized `error_handler.py`, and purges all 12 dead CLI flags (including destructive `dedupe --dry-run` and `--no-crawl`). |
 | [**ADR-068**](ADR-068-evals-hexagonal-decomposition-and-seed-ssot.md) | 2026-11-22 | Hexagonal Decomposition of Judge Calibration and JSON Seed SSOT | Cognitive / Evaluation | `ACCEPTED` | **Refines ADR-039, ADR-061, ADR-062; deletes `calibration_runner.py` per ADR-010**. Decomposes judge calibration into pure Application modules (`calibration_metrics`, `specs`, `executor`, `suite`), introduces `CalibrationCheckpointPort`/`CalibrationDatasetPort`/`CalibrationReportWriterPort`, externalizes JSON seeds to `evals/datasets/seeds/`, moves ASCII/SDT formatting to `presentation/formatters/calibration_report.py`, and standardizes English identifiers + `CalibrationVerdict(StrEnum)`. |
-| [**ADR-069**](ADR-069-modular-domain-settings-package-and-infrastructure-environment.md) | 2026-11-22 | Modular Domain Settings Package and Pure Infrastructure Environment Helpers | Infrastructure / Config & Bootstrap | `ACCEPTED` | **Deletes monolithic `config.py` per ADR-010**. Decomposes `CresmoSettings` into cohesive `infrastructure/config/` modules (`catalog`, `llm`, `telemetry`, `storage`, `ingestion`, `saturation`, `judge`, `settings`), isolates disk I/O into `infrastructure/environment.py`, and applies ISP across bootstrap factories. |
+| [**ADR-069**](ADR-069-modular-domain-settings-package-and-infrastructure-environment.md) | 2026-11-22 | Modular Domain Settings Package and Pure Infrastructure Environment Helpers | Infrastructure / Config & Bootstrap | `SUPERSEDED` | **SUPERSEDED by ADR-074**. Decomposed monolithic `config.py` into flat sub-settings and extracted `infrastructure/environment.py`. |
 | [**ADR-071**](ADR-071-langfuse-mirrored-prompt-resources-cohesion-and-taxonomy-relocation.md) | 2026-11-22 | Langfuse-Mirrored Prompt Resources, Context Normalization Parity & Taxonomy Relocation | Infrastructure / Prompts & Taxonomy | `ACCEPTED` | **Refines ADR-052; deletes `builders.py` & `taxonomy_catalog.py` per ADR-010**. Relocates `JsonTaxonomyCatalogAdapter` to `adapters/taxonomy/`, splits `prompts.json` into lightweight manifest + 36 Langfuse-mirrored `prompts/<key>/{system,user}.md` files, extracts `SkillDocumentLoader`/`TemplateRenderer`/`PromptContextNormalizer` for 1:1 local/remote parity, fixes `RAW_INDEX_CONCEPTS_REWRITE` system prompt, and wires `seed_prompts.py` via bootstrap factories. |
 | [**ADR-072**](ADR-072-langfuse-tracing-environment-governance.md) | 2026-11-22 | Langfuse Tracing Environment Governance | Infrastructure / Config & Telemetry | `ACCEPTED` | **Amends ADR-069**. Enforces canonical `staging` default for `TelemetrySettings.langfuse_environment`, fail-fast validation against Langfuse environment regex, `LANGFUSE_TRACING_ENVIRONMENT` alias resolution, and bootstrap env mirroring/cleanup. |
 | [**ADR-073**](ADR-073-conveyor-long-and-wide-expander-stages.md) | 2026-11-23 | Sequential Conveyor Integration of Long and Wide Expander Stages | Cognitive / Pipeline & Domain | `ACCEPTED` | **Refines ADR-031, ADR-039, ADR-058, ADR-060, ADR-071; deletes legacy shims per ADR-010**. Sequences `raw -> fluid_prose -> gap_filler -> long_expander -> wide_expander` through stage-agnostic `BUILD/REFINE` + `HybridSaturationEvaluator` (`max_passes` 5/7/5), refactors `long_expander` & `wide_expander` skills/prompts to `cresmo-gap-filler` + `cresmo-style-guide` parity, replaces `PipelineResult.{fluid_transcript,compendium}` with `stage_artifacts`/`final_transcript`, removes `ExpandCompendiumUseCase` and `gap_filler_passes`, and defines 5-criterion judge gates for both stages. |
+| [**ADR-074**](ADR-074-hierarchical-immutable-settings-and-domain-policies.md) | 2026-11-23 | Hierarchical Immutable Settings & Pure Domain Policies (Zero-Legacy DDD Hexagonal Redesign) | Domain / Application / Infra / Bootstrap | `ACCEPTED` | **SUPERSEDES ADR-069; deletes `PipelineSettingsProtocol` & `DefaultPipelineSettings` per ADR-010**. Introduces pure frozen domain Policy Value Objects (`StageExecutionPolicy`, `DiscoveryPolicy`, `CompendiumRolloverPolicy`), `DiscoveryPaths`, hierarchical immutable `CresmoSettings` (`CRESMO_` + `__` delimiter, zero `AliasChoices` or legacy shims), and strict Hexagonal ISP bootstrap wiring. |
 
 ---
 
@@ -223,10 +224,11 @@ graph TD
         A062["ADR-062: Structural Consolidation & Hygiene"]
         A067["ADR-067: Humble Presentation CLI & Run/Sync Use Cases"]
         A068["ADR-068: Hexagonal Evals Decomposition & Seed SSOT"]
-        A069["ADR-069: Modular Domain Settings & Pure Environment"]
+        A069["ADR-069: Modular Domain Settings (Superseded)"]
         A071["ADR-071: Langfuse-Mirrored Prompts & Taxonomy Relocation"]
         A072["ADR-072: Langfuse Tracing Environment Governance"]
         A073["ADR-073: Sequential Long & Wide Expander Conveyor Stages"]
+        A074["ADR-074: Hierarchical Immutable Settings & Domain Policies"]
         A019 --> A020 --> A026
         A020 --> A032 --> A033
         A005 --> A041
@@ -238,7 +240,7 @@ graph TD
         A053 --> A067
         A062 --> A067
         A062 --> A068
-        A062 --> A069
+        A062 --> A069 -. superseded by .-> A074
         A062 --> A071
     end
 ```

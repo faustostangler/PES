@@ -7,8 +7,8 @@ services:
     container_name: ${CRESMO_RUNNER_CONTAINER:-cresmo-runner}
     environment:
       - ROLE=cli
-      - DATA_DIR=/app/data
-      - VAULT_DIR=/app/vault
+      - CRESMO_STORAGE__DATA_DIR=/app/data
+      - CRESMO_STORAGE__VAULT_DIR=/app/vault
     env_file:
       - path: env/compose.env
         required: false
@@ -27,8 +27,8 @@ services:
     container_name: ${CRESMO_CHECK_CONTAINER:-cresmo-check}
     command: ["check-config"]
     environment:
-      - DATA_DIR=/app/data
-      - VAULT_DIR=/app/vault
+      - CRESMO_STORAGE__DATA_DIR=/app/data
+      - CRESMO_STORAGE__VAULT_DIR=/app/vault
     env_file:
       - path: env/compose.env
         required: false
@@ -48,8 +48,8 @@ services:
     restart: unless-stopped
     environment:
       - ROLE=worker
-      - DATA_DIR=/app/data
-      - VAULT_DIR=/app/vault
+      - CRESMO_STORAGE__DATA_DIR=/app/data
+      - CRESMO_STORAGE__VAULT_DIR=/app/vault
     env_file:
       - path: env/compose.env
         required: false

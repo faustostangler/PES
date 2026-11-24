@@ -19,7 +19,10 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from cresmo.application.ports.taxonomy import ChannelTaxonomyPort
 from cresmo.domain.taxonomy import TaxonomyCatalog, classify_channel_from_catalog
-from cresmo.infrastructure.config import CresmoSettings
+from cresmo.infrastructure.config.catalog import (
+    DEFAULT_TAXONOMY_RESOURCE_NAME,
+    DEFAULT_TAXONOMY_RESOURCE_PACKAGE,
+)
 
 if TYPE_CHECKING:
     from cresmo.domain.value_objects import ChannelName
@@ -62,8 +65,8 @@ def load_taxonomy_catalog(taxonomy_path: Path | None = None) -> TaxonomyCatalog:
     else:
         try:
             resource_traversable = importlib.resources.files(
-                CresmoSettings.DEFAULT_TAXONOMY_RESOURCE_PACKAGE
-            ).joinpath(CresmoSettings.DEFAULT_TAXONOMY_RESOURCE_NAME)
+                DEFAULT_TAXONOMY_RESOURCE_PACKAGE
+            ).joinpath(DEFAULT_TAXONOMY_RESOURCE_NAME)
             raw_text = resource_traversable.read_text(encoding="utf-8")
         except Exception as exc:
             raise TaxonomyCatalogError(f"Failed to load bundled taxonomy resource: {exc}") from exc

@@ -1,9 +1,9 @@
-"""Adapter factory functions for media ingestion, Obsidian vault, and preflight health.
+"""Adapter factory functions for media ingestion, Obsidian vault, LLM, and preflight health.
 
 Conforms to:
 - ADR-001: Modular Monolith Domain Integrity
-- ADR-002: Presentation CLI & Humble Object
 - ADR-004: Native Media Ingestion Decommissioning
+- ADR-074: Hierarchical Immutable Settings & Pure Domain Policies (Strict ISP)
 """
 
 from __future__ import annotations
@@ -40,7 +40,9 @@ from cresmo.infrastructure.adapters.system.process_runtime_adapter import (
 )
 from cresmo.infrastructure.adapters.taxonomy import JsonTaxonomyCatalogAdapter
 from cresmo.infrastructure.config import (
+    CookieSettings,
     CresmoSettings,
+    GeminiSettings,
     LlmSettings,
     StorageSettings,
 )
@@ -54,57 +56,45 @@ if TYPE_CHECKING:
 logger = structlog.get_logger(__name__)
 
 
-def _resolve_cookie_file(settings: StorageSettings) -> Path | None:
-    """Resolve active cookie file via pure infrastructure environment discovery.
-
-    Decoupled per ADR-000, ADR-002, and ADR-069: delegates candidate probing to
-    ``discover_cookies_file`` without triggering browser extraction at startup.
-    """
-    raw_configured = getattr(settings, "cookies_file", None)
-    configured = Path(raw_configured) if raw_configured is not None else None
-    raw_data_dir = getattr(settings, "data_dir", None)
-    data_dir = Path(raw_data_dir) if raw_data_dir is not None else Path("data")
+def _resolve_cookie_file(storage: StorageSettings, cookies: CookieSettings) -> Path | None:
+    """Resolve active cookie file via pure infrastructure environment discovery."""
     return discover_cookies_file(
-        data_dir=data_dir,
+        data_dir=storage.data_dir,
         workspace_dir=find_workspace_root(),
-        configured=configured,
+        configured=cookies.file,
     )
 
 
 def build_taxonomy_adapter(
-    settings: StorageSettings | None = None,
+    storage: StorageSettings | None = None,
 ) -> ChannelTaxonomyPort:
     """Instantiate ChannelTaxonomyPort backed by bundled or custom taxonomy JSON."""
-    resolved = settings if settings is not None else resolve_shared_settings(None)
-    raw_path = getattr(resolved, "taxonomy_path", None)
-    taxonomy_path = raw_path if isinstance(raw_path, Path) else None
-    return JsonTaxonomyCatalogAdapter(taxonomy_path=taxonomy_path)
+    resolved = storage if storage is not None else resolve_shared_settings(None).storage
+    return JsonTaxonomyCatalogAdapter(taxonomy_path=resolved.taxonomy_path)
 
 
 def build_media_ingestion_adapter(
     settings: CresmoSettings | None = None,
 ) -> NativeMediaIngestionAdapter:
     """Instantiate and wire NativeMediaIngestionAdapter with resolved settings and active cookies."""
-    settings = resolve_shared_settings(settings)
-    headers_path = getattr(settings, "browser_headers_path", None)
-    header_generator = RandomHeaderGenerator(headers_path=headers_path)
-    cookie_file = _resolve_cookie_file(settings)
-    whisper_concurrency_limit = getattr(settings, "whisper_workers", 1)
-    taxonomy_port = build_taxonomy_adapter(settings)
+    resolved = resolve_shared_settings(settings)
+    header_generator = RandomHeaderGenerator(headers_path=resolved.storage.browser_headers_path)
+    cookie_file = _resolve_cookie_file(resolved.storage, resolved.ingestion.cookies)
+    taxonomy_port = build_taxonomy_adapter(resolved.storage)
 
     return NativeMediaIngestionAdapter(
         header_generator=header_generator,
-        whisper_concurrency_limit=whisper_concurrency_limit,
+        whisper_concurrency_limit=resolved.ingestion.workers.whisper,
         cookie_file=cookie_file,
         taxonomy_port=taxonomy_port,
     )
 
 
 def build_vault_adapter(
-    settings: StorageSettings | None = None,
+    storage: StorageSettings | None = None,
 ) -> ObsidianVaultAdapter:
     """Instantiate and wire ObsidianVaultAdapter from storage settings."""
-    resolved = settings if settings is not None else resolve_shared_settings(None)
+    resolved = storage if storage is not None else resolve_shared_settings(None).storage
     return ObsidianVaultAdapter(
         vault_dir=resolved.vault_dir,
         raw_dir=resolved.raw_dir,
@@ -122,15 +112,15 @@ def build_preflight_checker(
     check_ffmpeg: bool = True,
 ) -> PreflightHealthChecker:
     """Construct PreflightHealthChecker with resolved settings."""
-    settings = resolve_shared_settings(settings)
+    resolved = resolve_shared_settings(settings)
     return PreflightHealthChecker(
-        gemini_api_key=settings.gemini_api_key,
-        vault_dir=settings.vault_dir,
-        sqlite_ledger_path=settings.sqlite_ledger_path,
+        gemini_api_key=resolved.llm.gemini.primary_api_key(),
+        vault_dir=resolved.storage.vault_dir,
+        sqlite_ledger_path=resolved.storage.sqlite_ledger_path,
         probe_port=PreflightProbeAdapter(),
         check_ffmpeg=check_ffmpeg,
-        langfuse_host=settings.langfuse_host,
-        ollama_base_url=settings.ollama_base_url,
+        langfuse_host=resolved.observability.langfuse.host,
+        ollama_base_url=resolved.llm.ollama.base_url,
     )
 
 
@@ -139,64 +129,61 @@ def build_prompt_provider(
     langfuse_client: Any | None = None,
 ) -> PromptProviderPort:
     """Instantiate PromptProviderPort with Langfuse decorator and local Json fallback."""
-    settings = resolve_shared_settings(settings)
+    resolved = resolve_shared_settings(settings)
     fallback_provider = JsonPromptProvider(
-        prompts_path=settings.prompts_path,
-        skills_dir=settings.skills_dir,
-        language=settings.language,
-        settings=settings,
+        prompts_path=resolved.storage.prompts_path,
+        skills_dir=resolved.storage.skills_dir,
+        language=resolved.pipeline.language,
     )
     return LangfusePromptProvider(
         langfuse_client=langfuse_client,
         fallback_provider=fallback_provider,
-        label=settings.langfuse_prompt_label,
+        label=resolved.observability.langfuse.prompt_label,
     )
 
 
 def build_gemini_credential_pool(
-    settings: LlmSettings | None = None,
+    gemini: GeminiSettings | None = None,
 ) -> GeminiCredentialPool | None:
     """Instantiate a shared GeminiCredentialPool from configured API keys and timeout."""
     from cresmo.infrastructure.adapters.llm.gemini_pool import GeminiCredentialPool
 
-    resolved = settings if settings is not None else resolve_shared_settings(None)
+    resolved = gemini if gemini is not None else resolve_shared_settings(None).llm.gemini
     api_keys = [
-        k.get_secret_value().strip()
-        for k in resolved.gemini_api_keys
-        if k.get_secret_value().strip()
+        k.get_secret_value().strip() for k in resolved.api_keys if k.get_secret_value().strip()
     ]
     if not api_keys:
         return None
     return GeminiCredentialPool(
         keys=api_keys,
-        timeout=resolved.gemini_timeout_seconds,
+        timeout=resolved.timeout_seconds,
     )
 
 
 def build_gemini_synthesis_adapter(
-    settings: LlmSettings | None = None,
+    gemini: GeminiSettings | None = None,
     telemetry_port: TelemetryPort | None = None,
     credential_pool: GeminiCredentialPool | None = None,
 ) -> GeminiLLMAdapter:
     """Instantiate and wire GeminiLLMAdapter for core synthesis workflows."""
     from cresmo.infrastructure.adapters.llm.gemini_adapter import GeminiLLMAdapter
 
-    resolved = settings if settings is not None else resolve_shared_settings(None)
-    api_keys = [k.get_secret_value() for k in resolved.gemini_api_keys]
+    resolved = gemini if gemini is not None else resolve_shared_settings(None).llm.gemini
+    api_keys = [k.get_secret_value() for k in resolved.api_keys]
     return GeminiLLMAdapter(
         api_keys=api_keys,
-        model_name=resolved.gemini_model,
-        fallback_model_name=resolved.gemini_fallback_model,
-        max_output_tokens=resolved.gemini_max_output_tokens,
-        thinking_level=resolved.gemini_thinking_level,
+        model_name=resolved.model,
+        fallback_model_name=resolved.fallback_model,
+        max_output_tokens=resolved.max_output_tokens,
+        thinking_level=resolved.thinking_level,
         telemetry_port=telemetry_port,
         credential_pool=credential_pool,
-        timeout_seconds=resolved.gemini_timeout_seconds,
+        timeout_seconds=resolved.timeout_seconds,
     )
 
 
 def build_indexing_adapter(
-    settings: LlmSettings | None = None,
+    llm: LlmSettings | None = None,
     synthesis_adapter: LLMTransformationPort | None = None,
     web_index: bool = False,
     model_override: str | None = None,
@@ -207,7 +194,8 @@ def build_indexing_adapter(
     """Instantiate LLM adapter for indexing, selecting between local Ollama and Gemini API."""
     from cresmo.infrastructure.adapters.llm.gemini_adapter import GeminiLLMAdapter
 
-    resolved = settings if settings is not None else resolve_shared_settings(None)
+    resolved = llm if llm is not None else resolve_shared_settings(None).llm
+    gemini_cfg = resolved.gemini
     if web_index or resolved.indexing_provider == "gemini":
         if (
             synthesis_adapter is not None
@@ -215,29 +203,30 @@ def build_indexing_adapter(
             and model_override is None
         ):
             return synthesis_adapter
-        api_keys = api_keys or [k.get_secret_value() for k in resolved.gemini_api_keys]
+        resolved_keys = api_keys or [k.get_secret_value() for k in gemini_cfg.api_keys]
         return GeminiLLMAdapter(
-            api_keys=api_keys,
-            model_name=model_override or resolved.gemini_model,
-            fallback_model_name=resolved.gemini_fallback_model,
-            max_output_tokens=resolved.gemini_max_output_tokens,
-            thinking_level=resolved.gemini_thinking_level,
+            api_keys=resolved_keys,
+            model_name=model_override or gemini_cfg.model,
+            fallback_model_name=gemini_cfg.fallback_model,
+            max_output_tokens=gemini_cfg.max_output_tokens,
+            thinking_level=gemini_cfg.thinking_level,
             telemetry_port=telemetry_port,
             credential_pool=credential_pool,
-            timeout_seconds=resolved.gemini_timeout_seconds,
+            timeout_seconds=gemini_cfg.timeout_seconds,
         )
 
     from cresmo.infrastructure.adapters.llm.ollama_llm_adapter import OllamaLLMAdapter
 
+    ollama_cfg = resolved.ollama
     return OllamaLLMAdapter(
-        base_url=resolved.ollama_base_url,
-        model=model_override or resolved.ollama_model,
-        timeout_seconds=resolved.ollama_timeout_seconds,
-        default_temperature=resolved.llm_indexing_temperature,
-        num_predict=resolved.ollama_num_predict,
+        base_url=ollama_cfg.base_url,
+        model=model_override or ollama_cfg.model,
+        timeout_seconds=ollama_cfg.timeout_seconds,
+        default_temperature=ollama_cfg.indexing_temperature,
+        num_predict=ollama_cfg.num_predict,
         telemetry_port=telemetry_port,
-        keep_alive=resolved.ollama_keep_alive,
-        warmup_timeout_seconds=resolved.ollama_warmup_timeout_seconds,
+        keep_alive=ollama_cfg.keep_alive,
+        warmup_timeout_seconds=ollama_cfg.warmup_timeout_seconds,
     )
 
 
@@ -253,34 +242,36 @@ def build_embedding_adapter(
         TfidfEmbeddingAdapter,
     )
 
-    settings = resolve_shared_settings(settings)
-    provider = str(getattr(settings, "embedding_provider", "gemini")).strip().lower()
+    resolved = resolve_shared_settings(settings)
+    emb_cfg = resolved.embeddings
+    provider = emb_cfg.provider
 
     if provider == "tfidf":
         return TfidfEmbeddingAdapter()
 
     if provider == "ollama":
         ollama_adapter = OllamaEmbeddingAdapter(
-            base_url=settings.ollama_base_url,
-            model=settings.ollama_embedding_model,
-            timeout_seconds=settings.ollama_timeout_seconds,
+            base_url=resolved.llm.ollama.base_url,
+            model=emb_cfg.ollama_model,
+            timeout_seconds=resolved.llm.ollama.timeout_seconds,
         )
         return ResilientEmbeddingAdapter(ollama_adapter, TfidfEmbeddingAdapter())
 
     if provider == "gemini":
+        gemini_cfg = resolved.llm.gemini
         api_keys = [
             k.get_secret_value().strip()
-            for k in settings.gemini_api_keys
+            for k in gemini_cfg.api_keys
             if k.get_secret_value().strip()
         ]
         if credential_pool is None and not api_keys:
             return TfidfEmbeddingAdapter()
         gemini_adapter = GeminiEmbeddingAdapter(
-            model_name=settings.gemini_embedding_model,
-            dimensions=settings.gemini_embedding_dimensions,
+            model_name=emb_cfg.gemini_model,
+            dimensions=emb_cfg.gemini_dimensions,
             credential_pool=credential_pool,
             api_keys=api_keys or None,
-            timeout_seconds=settings.gemini_timeout_seconds,
+            timeout_seconds=gemini_cfg.timeout_seconds,
         )
         return ResilientEmbeddingAdapter(gemini_adapter, TfidfEmbeddingAdapter())
 

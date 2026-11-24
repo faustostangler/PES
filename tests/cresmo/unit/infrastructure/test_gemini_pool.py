@@ -88,16 +88,32 @@ class TestGeminiConfigCredentialParsing:
     """Hermetic unit tests for CresmoSettings multi-key parsing."""
 
     def test_settings_parses_comma_separated_keys(self) -> None:
-        settings = CresmoSettings(gemini_api_keys="key1,key2,key3")
-        assert len(settings.gemini_api_keys) == 3
-        assert [k.get_secret_value() for k in settings.gemini_api_keys] == ["key1", "key2", "key3"]
-        assert settings.gemini_api_key.get_secret_value() == "key1"
+        from cresmo.infrastructure.config import GeminiSettings, LlmSettings
 
-    def test_settings_falls_back_to_single_gemini_api_key(self) -> None:
-        settings = CresmoSettings(gemini_api_key="single-key")
-        assert len(settings.gemini_api_keys) == 1
-        assert settings.gemini_api_keys[0].get_secret_value() == "single-key"
-        assert settings.gemini_api_key.get_secret_value() == "single-key"
+        settings = CresmoSettings(
+            _env_file=None,
+            llm=LlmSettings(gemini=GeminiSettings(api_keys="key1,key2,key3")),  # type: ignore[arg-type]
+        )
+        assert len(settings.llm.gemini.api_keys) == 3
+        assert [k.get_secret_value() for k in settings.llm.gemini.api_keys] == [
+            "key1",
+            "key2",
+            "key3",
+        ]
+        assert settings.llm.gemini.primary_api_key().get_secret_value() == "key1"
+
+    def test_settings_parses_single_secret_and_json_array(self) -> None:
+        from pydantic import SecretStr
+
+        from cresmo.infrastructure.config import GeminiSettings, LlmSettings
+
+        settings = CresmoSettings(
+            _env_file=None,
+            llm=LlmSettings(gemini=GeminiSettings(api_keys=SecretStr("single-key"))),  # type: ignore[arg-type]
+        )
+        assert len(settings.llm.gemini.api_keys) == 1
+        assert settings.llm.gemini.api_keys[0].get_secret_value() == "single-key"
+        assert settings.llm.gemini.primary_api_key().get_secret_value() == "single-key"
 
 
 class TestGeminiQuotaAndErrorScoping:

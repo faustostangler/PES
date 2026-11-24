@@ -87,6 +87,16 @@ class BatchDiscoveryQuery:
             object.__setattr__(self, "filter_criteria", SyncFilterCriteria())
 
 
+@dataclass(frozen=True, slots=True)
+class DiscoveryPaths:
+    """Immutable filesystem path bundle injected into DiscoverBatchSourcesUseCase (ADR-074)."""
+
+    raw_dir: Path = Path("data/raw")
+    playlist_path: Path = Path("data/playlist.txt")
+    playlist_priority_path: Path | None = None
+    priority_texts_dir: Path | None = None
+
+
 def _resolve_content_id(
     target: str,
     raw_id: ContentId | str | None,

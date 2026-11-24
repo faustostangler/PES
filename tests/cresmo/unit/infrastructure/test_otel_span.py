@@ -35,7 +35,9 @@ class TestOTelTelemetrySpan:
             assert wrapped.trace_id is not None and len(wrapped.trace_id) == 32
             assert wrapped.span_id is not None and len(wrapped.span_id) == 16
 
-            wrapped.set_attributes({"str_k": "val", "int_k": 3, "bool_k": True, "tup_k": ("a", "b")})
+            wrapped.set_attributes(
+                {"str_k": "val", "int_k": 3, "bool_k": True, "tup_k": ("a", "b")}
+            )
             wrapped.set_input({"content_id": "vid_1"})
             wrapped.set_output({"status": "COMPLETED", "word_count": 42})
             wrapped.add_event("session_coherence", {"eval.coherence_score": 0.9})

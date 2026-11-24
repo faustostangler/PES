@@ -258,9 +258,9 @@ def compute_ngram_jaccard(baseline_text: str, current_text: str, n: int = 3) -> 
     curr_shingles = _build_ngram_shingles(curr_tokens, n)
     union = base_shingles | curr_shingles
     return len(base_shingles & curr_shingles) / len(union)
+
+
 def compute_word_delta_ratio(baseline_text: str, current_text: str) -> float:
-
-
     """Compute relative word-count delta ratio between baseline and current text.
 
     Args:

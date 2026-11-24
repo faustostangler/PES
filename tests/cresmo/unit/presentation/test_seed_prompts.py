@@ -89,7 +89,7 @@ class TestSeedPromptsCLI:
             code = main(["seed-prompts"])
             assert code == EXIT_CONFIG_OR_USAGE_ERROR
             mock_resolve_settings.assert_called_once()
-            mock_resolve_lf.assert_called_once_with(mock_settings)
+            mock_resolve_lf.assert_called_once_with(mock_settings.observability)
             captured = capsys.readouterr()
             assert captured.err == (
                 "Langfuse client could not be initialized or server is unreachable.\n"
@@ -113,7 +113,7 @@ class TestSeedPromptsCLI:
         ):
             code = main(["seed-prompts"])
             assert code == EXIT_SUCCESS
-            mock_resolve_lf.assert_called_once_with(mock_settings)
+            mock_resolve_lf.assert_called_once_with(mock_settings.observability)
             assert mock_client.create_prompt.call_count == len(PROMPT_MAPPINGS)
 
             for call in mock_client.create_prompt.call_args_list:

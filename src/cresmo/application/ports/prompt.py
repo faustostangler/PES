@@ -12,8 +12,7 @@ from abc import ABC, abstractmethod
 from collections.abc import Callable
 from typing import Any
 
-from cresmo.application.ports.settings import DEFAULT_LANGUAGE
-from cresmo.domain.value_objects import ChatPrompt, PromptKey
+from cresmo.domain.value_objects import DEFAULT_LANGUAGE, ChatPrompt, PromptKey
 
 
 class PromptProviderPort(ABC):

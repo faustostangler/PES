@@ -39,8 +39,8 @@ class TestExportCookiesCommand:
         cookie_file.write_text("# Netscape HTTP Cookie File\n", encoding="utf-8")
 
         mock_settings = MagicMock()
-        mock_settings.cookies_file = None
-        mock_settings.data_dir = tmp_path
+        mock_settings.ingestion.cookies.file = None
+        mock_settings.storage.data_dir = tmp_path
 
         args = Namespace(
             browser="firefox",
@@ -83,8 +83,8 @@ class TestExportCookiesCommand:
         cookie_file.write_text("# Netscape HTTP Cookie File\n", encoding="utf-8")
 
         mock_settings = MagicMock()
-        mock_settings.cookies_file = None
-        mock_settings.data_dir = tmp_path
+        mock_settings.ingestion.cookies.file = None
+        mock_settings.storage.data_dir = tmp_path
 
         args = Namespace(
             browser="chrome",
@@ -131,8 +131,8 @@ class TestExportCookiesCommand:
         cookie_file.write_text("invalid cookies", encoding="utf-8")
 
         mock_settings = MagicMock()
-        mock_settings.cookies_file = None
-        mock_settings.data_dir = tmp_path
+        mock_settings.ingestion.cookies.file = None
+        mock_settings.storage.data_dir = tmp_path
 
         args = Namespace(
             browser="brave",
@@ -177,8 +177,8 @@ class TestExportCookiesCommand:
         cookie_file = tmp_path / "missing_cookies.txt"
 
         mock_settings = MagicMock()
-        mock_settings.cookies_file = None
-        mock_settings.data_dir = tmp_path
+        mock_settings.ingestion.cookies.file = None
+        mock_settings.storage.data_dir = tmp_path
 
         args = Namespace(
             browser="chromium",
@@ -244,8 +244,8 @@ class TestExportCookiesCommand:
         """Verify output path falls back to settings.cookies_file when --output is None."""
         target_cookies = tmp_path / "custom" / "my_cookies.txt"
         mock_settings = MagicMock()
-        mock_settings.cookies_file = target_cookies
-        mock_settings.data_dir = tmp_path
+        mock_settings.ingestion.cookies.file = target_cookies
+        mock_settings.storage.data_dir = tmp_path
 
         args = Namespace(
             browser="edge",
@@ -276,8 +276,8 @@ class TestExportCookiesCommand:
     def test_output_fallback_to_data_dir_cookies_txt(self, tmp_path: Path) -> None:
         """Verify output path falls back to settings.data_dir / 'cookies.txt' when both args and setting are None."""
         mock_settings = MagicMock()
-        mock_settings.cookies_file = None
-        mock_settings.data_dir = tmp_path
+        mock_settings.ingestion.cookies.file = None
+        mock_settings.storage.data_dir = tmp_path
 
         args = Namespace(
             browser="firefox",
@@ -309,8 +309,8 @@ class TestExportCookiesCommand:
         """Verify main entrypoint invokes export-cookies and executes handler successfully."""
         cookie_path = tmp_path / "cli_cookies.txt"
         mock_settings = MagicMock()
-        mock_settings.cookies_file = None
-        mock_settings.data_dir = tmp_path
+        mock_settings.ingestion.cookies.file = None
+        mock_settings.storage.data_dir = tmp_path
 
         with (
             patch(

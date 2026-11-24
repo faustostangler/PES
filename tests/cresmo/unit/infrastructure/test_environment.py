@@ -48,11 +48,11 @@ class TestStorageSettingsProtocol:
     """Validate runtime_checkable StorageSettingsProtocol compliance."""
 
     def test_protocol_is_runtime_checkable_and_satisfied_by_settings(self) -> None:
-        storage = StorageSettings(_env_file=None)
+        storage = StorageSettings()
         cresmo = CresmoSettings(_env_file=None)
 
         assert isinstance(storage, StorageSettingsProtocol)
-        assert isinstance(cresmo, StorageSettingsProtocol)
+        assert isinstance(cresmo.storage, StorageSettingsProtocol)
         assert not isinstance(object(), StorageSettingsProtocol)
 
     def test_protocol_is_satisfied_by_lightweight_stub(self, tmp_path: Path) -> None:
@@ -68,7 +68,6 @@ class TestEnsureRuntimeDirectories:
         storage = StorageSettings(
             data_dir=tmp_path / "nested" / "data",
             vault_dir=tmp_path / "nested" / "vault",
-            _env_file=None,
         )
         assert not (tmp_path / "nested").exists()
 
@@ -114,7 +113,6 @@ class TestEnsureRuntimeDirectories:
         storage = StorageSettings(
             data_dir=tmp_path / "data",
             vault_dir=tmp_path / "vault",
-            _env_file=None,
         )
         ensure_runtime_directories(storage)
 

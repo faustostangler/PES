@@ -12,6 +12,7 @@ Conforms to:
 from __future__ import annotations
 
 from cresmo.domain.value_objects.constants import (
+    DEFAULT_LANGUAGE,
     MAX_CHANNEL_ID_LENGTH,
     MAX_CHANNEL_NAME_LENGTH,
     MAX_NOTE_TITLE_LENGTH,
@@ -59,6 +60,11 @@ from cresmo.domain.value_objects.notes import (
     NoteTitle,
     NoteType,
 )
+from cresmo.domain.value_objects.policies import (
+    CompendiumRolloverPolicy,
+    DiscoveryPolicy,
+    StageExecutionPolicy,
+)
 from cresmo.domain.value_objects.prompt import (
     ChatMessage,
     ChatPrompt,
@@ -94,6 +100,7 @@ __all__ = [
     "DEFAULT_FEED_LOOKBACK_DAYS",
     "DEFAULT_FEED_MAX_VIDEOS",
     "DEFAULT_FLUID_PROSE_WEIGHTS",
+    "DEFAULT_LANGUAGE",
     "DEFAULT_MECHANICAL_VETO_CRITERIA",
     "GAP_FILLER_CANONICAL_WEIGHTS",
     "GAP_FILLER_MECHANICAL_VETO_CRITERIA",
@@ -118,12 +125,14 @@ __all__ = [
     "ChannelName",
     "ChatMessage",
     "ChatPrompt",
+    "CompendiumRolloverPolicy",
     "Content",
     "ContentId",
     "ConvergenceMode",
     "CriterionScore",
     "CrossContextRelations",
     "DiscoveredMediaItem",
+    "DiscoveryPolicy",
     "EvaluationContext",
     "JudgeCriterion",
     "JudgeEvaluation",
@@ -142,6 +151,7 @@ __all__ = [
     "SaturationVerdict",
     "SourceModality",
     "StageEvaluationSpec",
+    "StageExecutionPolicy",
     "SyncFilterCriteria",
     "SyncSummary",
     "TypedVerdict",

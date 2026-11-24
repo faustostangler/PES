@@ -13,7 +13,6 @@ from cresmo.application.use_cases.concat_master import (
     parse_metadata_from_content,
 )
 from cresmo.domain.value_objects import ChannelName, ContentId, MasterDocumentResult
-from cresmo.infrastructure.config import CresmoSettings
 from tests.doubles.mock_adapters import InMemoryVaultAdapter
 
 
@@ -86,15 +85,13 @@ class TestConcatMasterUseCase:
         assert vid_blank_fallback == ContentId("stem_blank_fallback")
 
     def test_empty_channel_returns_empty_list(self, tmp_path: Path) -> None:
-        settings = CresmoSettings(data_dir=tmp_path / "data", vault_dir=tmp_path / "vault")
         vault = InMemoryVaultAdapter()
-        use_case = ConcatMasterUseCase(vault_port=vault, settings=settings)
+        use_case = ConcatMasterUseCase(vault_port=vault)
 
         results = use_case.execute_for_channel(channel_name=ChannelName("EmptyChannel"))
         assert results == []
 
     def test_chronological_sorting_oldest_first(self, tmp_path: Path) -> None:
-        settings = CresmoSettings(data_dir=tmp_path / "data", vault_dir=tmp_path / "vault")
         vault = InMemoryVaultAdapter()
 
         ch_dir = tmp_path / "enriched" / "HistoryChannel"
@@ -120,7 +117,7 @@ class TestConcatMasterUseCase:
 
         vault.channel_stage_files[("wide_expander", "HistoryChannel")] = [f_newest, f_oldest, f_mid]
 
-        use_case = ConcatMasterUseCase(vault_port=vault, settings=settings)
+        use_case = ConcatMasterUseCase(vault_port=vault)
         results = use_case.execute_for_channel(ChannelName("HistoryChannel"))
 
         assert len(results) == 1
@@ -147,7 +144,6 @@ class TestConcatMasterUseCase:
     def test_chronological_sorting_not_reversed_by_filename_or_content_tie_breaker(
         self, tmp_path: Path
     ) -> None:
-        settings = CresmoSettings(data_dir=tmp_path / "data", vault_dir=tmp_path / "vault")
         vault = InMemoryVaultAdapter()
 
         ch_dir = tmp_path / "enriched" / "OrderChannel"
@@ -166,7 +162,7 @@ class TestConcatMasterUseCase:
         )
 
         vault.channel_stage_files[("wide_expander", "OrderChannel")] = [f_new, f_old]
-        use_case = ConcatMasterUseCase(vault_port=vault, settings=settings)
+        use_case = ConcatMasterUseCase(vault_port=vault)
         res = use_case.execute(ChannelName("OrderChannel"))
         assert len(res) == 1
         assert res[0].video_ids == (ContentId("z_old"), ContentId("a_new"))
@@ -212,7 +208,6 @@ class TestConcatMasterUseCase:
         assert res_stable[0].video_ids == (ContentId("z_id1"), ContentId("a_id2"))
 
     def test_execute_uses_file_stem_when_video_id_is_absent(self, tmp_path: Path) -> None:
-        settings = CresmoSettings(data_dir=tmp_path / "data", vault_dir=tmp_path / "vault")
         vault = InMemoryVaultAdapter()
 
         ch_dir = tmp_path / "enriched" / "StemChannel"
@@ -225,7 +220,7 @@ class TestConcatMasterUseCase:
         )
 
         vault.channel_stage_files[("wide_expander", "StemChannel")] = [f_no_vid]
-        use_case = ConcatMasterUseCase(vault_port=vault, settings=settings)
+        use_case = ConcatMasterUseCase(vault_port=vault)
         results = use_case.execute(ChannelName("StemChannel"))
 
         assert len(results) == 1
@@ -234,7 +229,6 @@ class TestConcatMasterUseCase:
     def test_read_file_error_and_empty_content_are_skipped_via_continue(
         self, tmp_path: Path
     ) -> None:
-        settings = CresmoSettings(data_dir=tmp_path / "data", vault_dir=tmp_path / "vault")
         vault = InMemoryVaultAdapter()
 
         # File 1: raises OSError on read_text
@@ -258,7 +252,7 @@ class TestConcatMasterUseCase:
             mock_f_empty,
             mock_f_valid,
         ]
-        use_case = ConcatMasterUseCase(vault_port=vault, settings=settings)
+        use_case = ConcatMasterUseCase(vault_port=vault)
         results = use_case.execute(ChannelName("SkipChannel"))
 
         assert len(results) == 1
@@ -273,7 +267,6 @@ class TestConcatMasterUseCase:
                     return "engineering", "perennial"
                 return "uncategorized", "volatile"
 
-        settings = CresmoSettings(data_dir=tmp_path / "data", vault_dir=tmp_path / "vault")
         vault = InMemoryVaultAdapter()
 
         ch_dir = tmp_path / "enriched" / "3blue1brown"
@@ -288,7 +281,6 @@ class TestConcatMasterUseCase:
         vault.channel_stage_files[("wide_expander", "3blue1brown")] = [f]
         use_case = ConcatMasterUseCase(
             vault_port=vault,
-            settings=settings,
             taxonomy_port=_StubTaxonomy(),
         )
         results = use_case.execute(ChannelName("3blue1brown"))
@@ -297,7 +289,6 @@ class TestConcatMasterUseCase:
         assert results[0].channel_category == "engineering"
 
     def test_word_limit_exact_boundary_fits_in_single_part(self, tmp_path: Path) -> None:
-        settings = CresmoSettings(data_dir=tmp_path / "data", vault_dir=tmp_path / "vault")
         vault = InMemoryVaultAdapter()
 
         ch_dir = tmp_path / "enriched" / "BoundaryChannel"
@@ -322,7 +313,7 @@ class TestConcatMasterUseCase:
         exact_total = w1 + w2
 
         vault.channel_stage_files[("wide_expander", "BoundaryChannel")] = [f1, f2]
-        use_case = ConcatMasterUseCase(vault_port=vault, settings=settings)
+        use_case = ConcatMasterUseCase(vault_port=vault)
         results = use_case.execute(ChannelName("BoundaryChannel"), max_words=exact_total)
 
         assert len(results) == 1
@@ -333,7 +324,6 @@ class TestConcatMasterUseCase:
     def test_multi_file_accumulation_rolls_over_and_accumulates_in_part_two(
         self, tmp_path: Path
     ) -> None:
-        settings = CresmoSettings(data_dir=tmp_path / "data", vault_dir=tmp_path / "vault")
         vault = InMemoryVaultAdapter()
 
         ch_dir = tmp_path / "enriched" / "MultiAccumChannel"
@@ -382,7 +372,7 @@ class TestConcatMasterUseCase:
         effective_limit = max(w1, w2 + w3)
 
         vault.channel_stage_files[("wide_expander", "MultiAccumChannel")] = [f1, f2, f3, f4]
-        use_case = ConcatMasterUseCase(vault_port=vault, settings=settings)
+        use_case = ConcatMasterUseCase(vault_port=vault)
         results = use_case.execute(ChannelName("MultiAccumChannel"), max_words=effective_limit)
 
         assert len(results) == 3
@@ -397,7 +387,6 @@ class TestConcatMasterUseCase:
         assert results[2].video_ids == (ContentId("f4"),)
 
     def test_single_large_file_stays_whole_without_split(self, tmp_path: Path) -> None:
-        settings = CresmoSettings(data_dir=tmp_path / "data", vault_dir=tmp_path / "vault")
         vault = InMemoryVaultAdapter()
 
         ch_dir = tmp_path / "enriched" / "BigDocChannel"
@@ -412,7 +401,7 @@ class TestConcatMasterUseCase:
 
         vault.channel_stage_files[("wide_expander", "BigDocChannel")] = [f_big]
 
-        use_case = ConcatMasterUseCase(vault_port=vault, settings=settings)
+        use_case = ConcatMasterUseCase(vault_port=vault)
         results = use_case.execute(ChannelName("BigDocChannel"), max_words=500)
 
         assert len(results) == 1
@@ -421,7 +410,6 @@ class TestConcatMasterUseCase:
         assert results[0].word_count >= 1000
 
     def test_execute_for_channel_propagates_max_words(self, tmp_path: Path) -> None:
-        settings = CresmoSettings(data_dir=tmp_path / "data", vault_dir=tmp_path / "vault")
         vault = InMemoryVaultAdapter()
 
         ch_dir = tmp_path / "enriched" / "ForwardChannel"
@@ -440,10 +428,10 @@ class TestConcatMasterUseCase:
         )
 
         vault.channel_stage_files[("wide_expander", "ForwardChannel")] = [f1, f2]
-        use_case = ConcatMasterUseCase(vault_port=vault, settings=settings)
+        use_case = ConcatMasterUseCase(vault_port=vault)
 
         # When max_words=150 is passed, it must split into 2 parts (each file is ~108 words)
-        # If mutated to max_words=None or omitted, it uses settings.concat_max_words (50000) and produces 1 part!
+        # If mutated to max_words=None or omitted, it uses rollover_policy.max_words (500000) and produces 1 part!
         results = use_case.execute_for_channel(ChannelName("ForwardChannel"), max_words=150)
         assert len(results) == 2
 
@@ -465,8 +453,6 @@ class TestConcatMasterUseCase:
 
         # 4. Stray regular file (not directory)
         (wide_root / "stray_notes.md").write_text("Stray notes", encoding="utf-8")
-
-        settings = CresmoSettings(data_dir=tmp_path / "data", vault_dir=tmp_path / "vault")
         vault = InMemoryVaultAdapter()
 
         words_100 = " ".join(["word"] * 100)
@@ -488,6 +474,7 @@ class TestConcatMasterUseCase:
             f"---\nvideo_id: b2\nvideo_date: 20230201\n---\n\n{words_100}", encoding="utf-8"
         )
 
+        vault = InMemoryVaultAdapter(data_dir=tmp_path / "data")
         vault.channel_stage_files[("wide_expander", "ChannelA")] = [fA1, fA2]
         vault.channel_stage_files[("wide_expander", "ChannelB")] = [fB1, fB2]
 
@@ -497,7 +484,7 @@ class TestConcatMasterUseCase:
         vault.channel_stage_files[("wide_expander", "_system_templates")] = [fA1]
         vault.channel_stage_files[("wide_expander", "stray_notes.md")] = [fA1]
 
-        use_case = ConcatMasterUseCase(vault_port=vault, settings=settings)
+        use_case = ConcatMasterUseCase(vault_port=vault)
 
         # Execute with explicit max_words=150
         all_results = use_case.execute_all(max_words=150)
@@ -517,16 +504,11 @@ class TestConcatMasterUseCase:
         file_env = tmp_path / "file_env"
         file_env.mkdir()
         (file_env / "wide_expander").write_text("I am a file", encoding="utf-8")
-        settings_file_root = CresmoSettings(data_dir=file_env, vault_dir=tmp_path / "vault")
-        use_case_file_root = ConcatMasterUseCase(vault_port=vault, settings=settings_file_root)
+        use_case_file_root = ConcatMasterUseCase(vault_port=InMemoryVaultAdapter(data_dir=file_env))
         assert use_case_file_root.execute_all() == {}
 
         # Test when enriched_root does not exist
-        settings_non_existent = CresmoSettings(
-            data_dir=tmp_path / "does_not_exist",
-            vault_dir=tmp_path / "vault",
-        )
         use_case_non_existent = ConcatMasterUseCase(
-            vault_port=vault, settings=settings_non_existent
+            vault_port=InMemoryVaultAdapter(data_dir=tmp_path / "does_not_exist")
         )
         assert use_case_non_existent.execute_all() == {}

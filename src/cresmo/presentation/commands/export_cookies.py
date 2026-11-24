@@ -98,7 +98,9 @@ def handle_export_cookies(
 
     try:
         settings = resolve_shared_settings()
-        resolved_output = output or settings.cookies_file or (settings.data_dir / "cookies.txt")
+        resolved_output = (
+            output or settings.ingestion.cookies.file or (settings.storage.data_dir / "cookies.txt")
+        )
         output_file = Path(resolved_output).resolve()
 
         if output_file.exists() and not force and has_valid_auth_cookies(output_file):

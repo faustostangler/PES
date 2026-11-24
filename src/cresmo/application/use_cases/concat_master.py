@@ -15,14 +15,17 @@ import re
 
 from cresmo.application.ports import (
     ChannelTaxonomyPort,
-    DefaultPipelineSettings,
     NoOpChannelTaxonomyPort,
-    PipelineSettingsProtocol,
     VaultRepositoryPort,
 )
 from cresmo.domain.exceptions import DomainValidationError
 from cresmo.domain.stage_registry import StageName
-from cresmo.domain.value_objects import ChannelName, ContentId, MasterDocumentResult
+from cresmo.domain.value_objects import (
+    ChannelName,
+    CompendiumRolloverPolicy,
+    ContentId,
+    MasterDocumentResult,
+)
 
 CHUNK_SEPARATOR: str = "\n\n---\n\n"
 SENTINEL_FALLBACK_SORT_DATE: int = 99_999_999
@@ -101,18 +104,20 @@ class ConcatMasterUseCase:
     def __init__(
         self,
         vault_port: VaultRepositoryPort,
-        settings: PipelineSettingsProtocol | None = None,
+        rollover_policy: CompendiumRolloverPolicy | None = None,
         taxonomy_port: ChannelTaxonomyPort | None = None,
     ) -> None:
-        """Initialize use case with vault port, operational settings, and taxonomy port.
+        """Initialize use case with vault port, compendium rollover policy, and taxonomy port.
 
         Args:
             vault_port: Port providing file read and master document write capabilities.
-            settings: Configuration settings holding target word caps.
+            rollover_policy: Domain policy defining maximum word budget before rollover.
             taxonomy_port: Port classifying channels into macro taxonomy categories.
         """
         self.vault_port = vault_port
-        self.settings = settings if settings is not None else DefaultPipelineSettings()
+        self.rollover_policy: CompendiumRolloverPolicy = (
+            rollover_policy if rollover_policy is not None else CompendiumRolloverPolicy()
+        )
         self.taxonomy_port = taxonomy_port or NoOpChannelTaxonomyPort()
 
     def execute(
@@ -124,12 +129,12 @@ class ConcatMasterUseCase:
 
         Args:
             channel_name: Name of the channel whose enriched documents to aggregate (ChannelName Value Object).
-            max_words: Optional word limit override (defaults to settings.concat_max_words).
+            max_words: Optional word limit override (defaults to rollover_policy.max_words).
 
         Returns:
             List of MasterDocumentResult value objects representing created parts.
         """
-        effective_max = max_words if max_words is not None else self.settings.concat_max_words
+        effective_max = max_words if max_words is not None else self.rollover_policy.max_words
         files = self.vault_port.get_stage_files_for_channel(StageName.WIDE_EXPANDER, channel_name)
         if not files:
             return []
@@ -237,7 +242,7 @@ class ConcatMasterUseCase:
         Returns:
             Mapping of channel names to their generated MasterDocumentResult lists.
         """
-        terminal_stage_root = self.settings.data_dir / StageName.WIDE_EXPANDER.value
+        terminal_stage_root = self.vault_port.resolve_stage_dir(StageName.WIDE_EXPANDER)
         if not terminal_stage_root.exists() or not terminal_stage_root.is_dir():
             return {}
 

@@ -8,14 +8,13 @@ Conforms to:
 from __future__ import annotations
 
 from collections.abc import Iterable, Iterator
-from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 from unittest.mock import MagicMock, call
 
 import pytest
 
-from cresmo.application.ports import DefaultPipelineSettings, NoOpProcessRuntimePort
+from cresmo.application.ports import NoOpProcessRuntimePort
 from cresmo.application.services.preflight import PreflightResult
 from cresmo.application.use_cases.discovery import BatchDiscoveryQuery, BatchSource
 from cresmo.application.use_cases.run_synthesis import (
@@ -35,19 +34,15 @@ from cresmo.domain.value_objects import (
     BatchId,
     ChannelName,
     ContentId,
+    DiscoveryPolicy,
     MasterDocumentResult,
     SourceModality,
 )
 
 
-@dataclass
-class _CrawlerPipelineSettings(DefaultPipelineSettings):
-    enable_channel_crawler: bool = False
-
-
 def _make_use_case(
     *,
-    settings: Any = None,
+    discovery_policy: DiscoveryPolicy | None = None,
     preflight_result: PreflightResult | None = None,
     preflight_exc: BaseException | None = None,
     pipeline: Any = None,
@@ -58,7 +53,7 @@ def _make_use_case(
     capture_media_ports: list[Any] | None = None,
     progress_messages: list[str] | None = None,
 ) -> tuple[RunSynthesisUseCase, MagicMock, MagicMock, MagicMock]:
-    cfg = settings or DefaultPipelineSettings()
+    cfg = discovery_policy or DiscoveryPolicy()
     preflight_checker = MagicMock()
     if preflight_exc is not None:
         preflight_checker.check_all.return_value = MagicMock(
@@ -95,7 +90,7 @@ def _make_use_case(
     concat_factory = MagicMock(return_value=mock_concat)
 
     use_case = RunSynthesisUseCase(
-        settings=cfg,
+        discovery_policy=cfg,
         preflight_checker=preflight_checker,
         pipeline_factory=pipeline_factory,
         discover_sources_factory=_discover_factory,
@@ -740,10 +735,10 @@ class TestRunSynthesisUseCase:
         ]
 
     def test_discovery_query_respects_crawler_and_filter_flags(self, tmp_path: Path) -> None:
-        settings = DefaultPipelineSettings()
+        policy = DiscoveryPolicy()
         captured: list[tuple[BatchDiscoveryQuery, Any]] = []
         use_case, _, _, _ = _make_use_case(
-            settings=settings,
+            discovery_policy=policy,
             sources=[],
             capture_discovery_args=captured,
         )
@@ -766,23 +761,23 @@ class TestRunSynthesisUseCase:
         assert query.scan_raw is True
         assert query.enable_channel_crawler is True
         assert query.channel_max_videos == 12
-        assert query.lookback_days == settings.days_lookback
-        assert query.discovery_workers == settings.channel_discovery_workers
-        assert query.queue_maxsize == settings.discovery_queue_maxsize
+        assert query.lookback_days == policy.lookback_days
+        assert query.discovery_workers == policy.discovery_workers
+        assert query.queue_maxsize == policy.queue_maxsize
         assert "mises" in query.filter_criteria.channels
         assert "economics" in query.filter_criteria.categories
         assert "dQw4w9WgXcQ" in query.filter_criteria.video_ids
 
-        # crawl=False without attribute on DefaultPipelineSettings defaults to False
+        # crawl=False defaults to policy.enable_channel_crawler (False)
         captured.clear()
         use_case.execute(RunSynthesisRequest(scan_raw=False, crawl=False))
         assert captured[0][0].scan_raw is False
         assert captured[0][0].enable_channel_crawler is False
 
-        # crawl=False inherits enable_channel_crawler from settings when present
+        # crawl=False inherits enable_channel_crawler from DiscoveryPolicy
         captured_true: list[tuple[BatchDiscoveryQuery, Any]] = []
         use_case_true, _, _, _ = _make_use_case(
-            settings=_CrawlerPipelineSettings(enable_channel_crawler=True),
+            discovery_policy=DiscoveryPolicy(enable_channel_crawler=True),
             sources=[],
             capture_discovery_args=captured_true,
         )
@@ -791,7 +786,7 @@ class TestRunSynthesisUseCase:
 
         captured_false: list[tuple[BatchDiscoveryQuery, Any]] = []
         use_case_false, _, _, _ = _make_use_case(
-            settings=_CrawlerPipelineSettings(enable_channel_crawler=False),
+            discovery_policy=DiscoveryPolicy(enable_channel_crawler=False),
             sources=[],
             capture_discovery_args=captured_false,
         )

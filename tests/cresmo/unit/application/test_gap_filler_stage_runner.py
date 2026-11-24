@@ -17,7 +17,6 @@ from cresmo.application.pipeline.stage_descriptor import StageConfig
 from cresmo.application.pipeline.stage_factory import StageFactory
 from cresmo.application.pipeline.stage_runner import PipelineStageRunner
 from cresmo.application.ports import (
-    DefaultPipelineSettings,
     LLMTransformationPort,
     NoOpMetricsPort,
     NoOpPromptProviderPort,
@@ -33,6 +32,7 @@ from cresmo.domain.value_objects import (
     Content,
     ContentId,
     MediaProvenance,
+    StageExecutionPolicy,
 )
 
 
@@ -73,7 +73,7 @@ def test_gap_filler_execution_single_pass_override(
         "1. **Henrique de Borgonha** (1066-1112) liderou contingentes da Reconquista."
     )
 
-    stage_factory = StageFactory(settings=DefaultPipelineSettings())
+    stage_factory = StageFactory()
 
     runner = PipelineStageRunner(
         telemetry_port=NoOpTelemetryPort(),
@@ -127,7 +127,7 @@ def test_gap_filler_execution_multi_pass_to_completion(
     mock_llm = MagicMock(spec=LLMTransformationPort)
     mock_llm.transform.side_effect = [pass1_text, pass2_text, pass3_text]
 
-    stage_factory = StageFactory(settings=DefaultPipelineSettings(expansion_max_passes=3))
+    stage_factory = StageFactory(policy=StageExecutionPolicy(expansion_max_passes=3))
 
     runner = PipelineStageRunner(
         telemetry_port=NoOpTelemetryPort(),
@@ -169,8 +169,8 @@ def test_gap_filler_execution_early_stopping_on_saturation(
     mock_llm = MagicMock(spec=LLMTransformationPort)
     mock_llm.transform.side_effect = [pass1_text, pass2_text, "pass 3 should not be called"]
 
-    settings = DefaultPipelineSettings(expansion_max_passes=3)
-    stage_factory = StageFactory(settings=settings)
+    policy = StageExecutionPolicy(expansion_max_passes=3)
+    stage_factory = StageFactory(policy=policy)
 
     runner = PipelineStageRunner(
         telemetry_port=NoOpTelemetryPort(),
@@ -242,7 +242,7 @@ def test_gap_filler_multi_pass_chains_previous_output_and_emits_pass_telemetry(
     mock_llm = MagicMock(spec=LLMTransformationPort)
     mock_llm.transform.side_effect = _spy_transform
 
-    stage_factory = StageFactory(settings=DefaultPipelineSettings(expansion_max_passes=3))
+    stage_factory = StageFactory(policy=StageExecutionPolicy(expansion_max_passes=3))
     runner = PipelineStageRunner(
         telemetry_port=NoOpTelemetryPort(),
         metrics_port=NoOpMetricsPort(),
@@ -307,7 +307,7 @@ def test_gap_filler_single_pass_omits_telemetry_pass_suffix(
         metrics_port=NoOpMetricsPort(),
         prompt_provider=NoOpPromptProviderPort(),
         llm_transformation_port=mock_llm,
-        stage_factory=StageFactory(settings=DefaultPipelineSettings()),
+        stage_factory=StageFactory(policy=StageExecutionPolicy()),
     )
 
     runner.execute_stage(
@@ -718,7 +718,7 @@ def test_stage_factory_wires_hybrid_saturation_and_never_saturate() -> None:
     mock_embedding_port.provider_name = "gemini"
 
     factory = StageFactory(
-        settings=DefaultPipelineSettings(),
+        policy=StageExecutionPolicy(),
         embedding_port=mock_embedding_port,
     )
 
@@ -1027,7 +1027,7 @@ def test_long_expander_reuses_stage_agnostic_build_refine_and_sentinel_stop(
     mock_llm = MagicMock(spec=LLMTransformationPort)
     mock_llm.transform.side_effect = [pass1_long, pass2_long, "<NO_NEW_GAPS/>"]
 
-    stage_factory = StageFactory(settings=DefaultPipelineSettings(long_expander_max_passes=7))
+    stage_factory = StageFactory(policy=StageExecutionPolicy(long_expander_max_passes=7))
     long_descriptor: StageConfig[StageTranscript, StageTranscript] = stage_factory.build_stage(
         "long_expander"
     )
@@ -1100,7 +1100,7 @@ def test_wide_expander_reuses_stage_agnostic_build_refine_and_sentinel_stop(
     mock_llm = MagicMock(spec=LLMTransformationPort)
     mock_llm.transform.side_effect = [pass1_wide, pass2_wide, "<NO_NEW_GAPS/>"]
 
-    stage_factory = StageFactory(settings=DefaultPipelineSettings(expansion_max_passes=5))
+    stage_factory = StageFactory(policy=StageExecutionPolicy(expansion_max_passes=5))
     wide_descriptor: StageConfig[StageTranscript, StageTranscript] = stage_factory.build_stage(
         "wide_expander"
     )

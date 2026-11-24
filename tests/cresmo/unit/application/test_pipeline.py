@@ -21,7 +21,6 @@ from cresmo.application.pipeline import (
     PipelineStageRunner,
 )
 from cresmo.application.ports import (
-    DefaultPipelineSettings,
     NoOpMetricsPort,
     NoOpPromptProviderPort,
     NoOpTelemetryPort,
@@ -436,7 +435,7 @@ class TestCresmoPipelineOrchestration:
             encoding="utf-8",
         )
 
-        vault = InMemoryVaultAdapter()
+        vault = InMemoryVaultAdapter(data_dir=tmp_path)
         vault.save_stage_transcript = MagicMock(wraps=vault.save_stage_transcript)  # type: ignore[method-assign]
 
         pipeline = CresmoPipeline(
@@ -444,7 +443,6 @@ class TestCresmoPipelineOrchestration:
             llm_synthesis_port=SmartMockLLMAdapter(),
             vault_port=vault,
             ledger_port=InMemoryLedgerAdapter(),
-            settings=DefaultPipelineSettings(raw_dir=raw_lake_dir),
         )
 
         res = pipeline.run_for_text_file(raw_file)

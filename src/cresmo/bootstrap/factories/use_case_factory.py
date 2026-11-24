@@ -1,8 +1,9 @@
-"""Use case factory functions for assembling domain use cases with injected adapters.
+"""Use case factory functions for assembling domain use cases with injected policies and adapters.
 
 Conforms to:
 - ADR-001: Modular Monolith Domain Integrity
 - ADR-002: Presentation CLI & Humble Object
+- ADR-074: Hierarchical Immutable Settings & Pure Domain Policies
 """
 
 from __future__ import annotations
@@ -12,7 +13,7 @@ from typing import TYPE_CHECKING
 
 from cresmo.application.ports import MediaIngestionPort, VaultRepositoryPort
 from cresmo.application.use_cases.concat_master import ConcatMasterUseCase
-from cresmo.application.use_cases.discovery import DiscoverBatchSourcesUseCase
+from cresmo.application.use_cases.discovery import DiscoverBatchSourcesUseCase, DiscoveryPaths
 from cresmo.application.use_cases.indexing import IndexRawTranscriptsUseCase
 from cresmo.application.use_cases.sync_channel import SyncChannelUseCase
 from cresmo.application.use_cases.unify_duplicate_notes import UnifyDuplicateNotesUseCase
@@ -47,9 +48,9 @@ def build_sync_channel_use_case(
     """Construct SyncChannelUseCase with all ports and dependencies wired."""
     from cresmo.bootstrap.composition import build_pipeline
 
-    settings = resolve_shared_settings(settings)
-    pipeline = pipeline or build_pipeline(settings, batch_size_override=batch_size_override)
-    preflight_checker = build_preflight_checker(settings, check_ffmpeg=check_ffmpeg)
+    resolved = resolve_shared_settings(settings)
+    pipeline = pipeline or build_pipeline(resolved, batch_size_override=batch_size_override)
+    preflight_checker = build_preflight_checker(resolved, check_ffmpeg=check_ffmpeg)
 
     if pipeline.ledger_port is None:
         raise RuntimeError("Ledger port must be wired for channel sync.")
@@ -66,8 +67,8 @@ def build_unify_duplicates_use_case(
     settings: CresmoSettings | None = None,
 ) -> UnifyDuplicateNotesUseCase:
     """Construct UnifyDuplicateNotesUseCase with ObsidianVaultAdapter wired."""
-    settings = resolve_shared_settings(settings)
-    vault_port = build_vault_adapter(settings)
+    resolved = resolve_shared_settings(settings)
+    vault_port = build_vault_adapter(resolved.storage)
     return UnifyDuplicateNotesUseCase(vault_port=vault_port)
 
 
@@ -76,13 +77,21 @@ def build_discover_batch_sources_use_case(
     media_ingestion_port: MediaIngestionPort | None = None,
     progress_callback: Callable[[str], object] | None = None,
 ) -> DiscoverBatchSourcesUseCase:
-    """Construct DiscoverBatchSourcesUseCase with injected or default NativeMediaIngestionAdapter."""
-    settings = resolve_shared_settings(settings)
-    media_ingestion_port = media_ingestion_port or build_media_ingestion_adapter(settings)
-    taxonomy_port = build_taxonomy_adapter(settings)
+    """Construct DiscoverBatchSourcesUseCase with domain DiscoveryPolicy and DiscoveryPaths."""
+    resolved = resolve_shared_settings(settings)
+    media_ingestion_port = media_ingestion_port or build_media_ingestion_adapter(resolved)
+    taxonomy_port = build_taxonomy_adapter(resolved.storage)
+    storage = resolved.storage
+    discovery_paths = DiscoveryPaths(
+        raw_dir=storage.raw_dir,
+        playlist_path=storage.playlist_path,
+        playlist_priority_path=storage.playlist_priority_path,
+        priority_texts_dir=storage.priority_texts_dir,
+    )
     return DiscoverBatchSourcesUseCase(
         media_ingestion_port=media_ingestion_port,
-        settings=settings,
+        discovery_policy=resolved.to_discovery_policy(),
+        discovery_paths=discovery_paths,
         progress_callback=progress_callback,
         taxonomy_port=taxonomy_port,
     )
@@ -92,13 +101,13 @@ def build_concat_master_use_case(
     settings: CresmoSettings | None = None,
     vault_port: VaultRepositoryPort | None = None,
 ) -> ConcatMasterUseCase:
-    """Instantiate ConcatMasterUseCase with configured dependencies."""
-    settings = resolve_shared_settings(settings)
-    vault_port = vault_port or build_vault_adapter(settings)
-    taxonomy_port = build_taxonomy_adapter(settings)
+    """Instantiate ConcatMasterUseCase with domain CompendiumRolloverPolicy."""
+    resolved = resolve_shared_settings(settings)
+    vault_port = vault_port or build_vault_adapter(resolved.storage)
+    taxonomy_port = build_taxonomy_adapter(resolved.storage)
     return ConcatMasterUseCase(
         vault_port=vault_port,
-        settings=settings,
+        rollover_policy=resolved.to_compendium_rollover_policy(),
         taxonomy_port=taxonomy_port,
     )
 
@@ -109,42 +118,44 @@ def build_index_raw_use_case(
     model_override: str | None = None,
 ) -> IndexRawTranscriptsUseCase:
     """Instantiate IndexRawTranscriptsUseCase selecting between local Ollama and Gemini Web API."""
-    settings = resolve_shared_settings(settings)
-    vault_port = build_vault_adapter(settings)
-    anonymizer = build_anonymizer_adapter(settings)
-    langfuse_client = resolve_langfuse_client(settings, anonymizer=anonymizer)
-    telemetry_port = build_telemetry_adapter(settings, langfuse_client=langfuse_client)
-    prompt_provider = build_prompt_provider(settings, langfuse_client=langfuse_client)
+    resolved = resolve_shared_settings(settings)
+    vault_port = build_vault_adapter(resolved.storage)
+    anonymizer = build_anonymizer_adapter(resolved.observability)
+    langfuse_client = resolve_langfuse_client(resolved.observability, anonymizer=anonymizer)
+    telemetry_port = build_telemetry_adapter(
+        resolved.observability, langfuse_client=langfuse_client
+    )
+    prompt_provider = build_prompt_provider(resolved, langfuse_client=langfuse_client)
     uses_gemini = (
         web_index
-        or settings.indexing_provider == "gemini"
-        or settings.judge_provider.lower().strip() == "gemini"
+        or resolved.llm.indexing_provider == "gemini"
+        or resolved.judge.provider == "gemini"
     )
-    gemini_pool = build_gemini_credential_pool(settings) if uses_gemini else None
+    gemini_pool = build_gemini_credential_pool(resolved.llm.gemini) if uses_gemini else None
     llm_indexing_port = build_indexing_adapter(
-        settings,
+        resolved.llm,
         web_index=web_index,
         model_override=model_override,
         telemetry_port=telemetry_port,
         credential_pool=gemini_pool,
     )
     llm_judge_port = build_llm_judge_adapter(
-        settings,
+        resolved,
         telemetry_port=telemetry_port,
         prompt_provider=prompt_provider,
         credential_pool=gemini_pool,
     )
 
-    taxonomy_port = build_taxonomy_adapter(settings)
+    taxonomy_port = build_taxonomy_adapter(resolved.storage)
 
     return IndexRawTranscriptsUseCase(
         vault_port=vault_port,
         llm_indexing_port=llm_indexing_port,
         prompt_provider=prompt_provider,
-        max_chars=settings.raw_index_max_chars,
-        temperature=settings.llm_indexing_temperature,
-        language=settings.language,
-        max_rewrites=settings.raw_index_max_attempts,
+        max_chars=resolved.pipeline.raw_index_max_chars,
+        temperature=resolved.llm.ollama.indexing_temperature,
+        language=resolved.pipeline.language,
+        max_rewrites=resolved.pipeline.stages.raw_index_max_attempts,
         llm_judge_port=llm_judge_port,
         taxonomy_port=taxonomy_port,
     )

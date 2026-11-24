@@ -7,9 +7,11 @@ process exit codes per SPEC-002 §4.1 & §4.2.
 from __future__ import annotations
 
 from pathlib import Path
+from types import SimpleNamespace as Namespace
 from unittest.mock import MagicMock, patch
 
 import pytest
+from pydantic import SecretStr
 
 from cresmo.application.pipeline import PipelineResult
 from cresmo.application.services.preflight import PreflightResult
@@ -154,14 +156,18 @@ class TestCresmoCLI:
                 "cresmo.presentation.commands.check_config.build_preflight_checker"
             ) as mock_checker_builder,
         ):
-            mock_settings = MagicMock(spec=CresmoSettings)
-            mock_settings.vault_dir = Path("/tmp/vault")
-            mock_settings.sqlite_ledger_path = Path("/tmp/vault/cresmo_ledger.db")
-            mock_settings.gemini_model = "gemini-2.5-flash"
-            mock_settings.batch_size = 5
-            mock_settings.langfuse_public_key = ""
-            mock_settings.langfuse_secret_key = None
-            mock_settings.langfuse_host = "https://cloud.langfuse.com"
+            mock_settings = MagicMock(spec=CresmoSettings(_env_file=None))
+            mock_settings.storage.vault_dir = Path("/tmp/vault")
+            mock_settings.storage.sqlite_ledger_path = Path("/tmp/vault/cresmo_ledger.db")
+            mock_settings.llm.gemini.model = "gemini-2.5-flash"
+            mock_settings.llm.gemini.fallback_model = "gemini-3.6-flash"
+            mock_settings.llm.gemini.thinking_level = "low"
+            mock_settings.judge.gemini.model = "gemini-3.5-flash-lite"
+            mock_settings.pipeline.batch_size = 5
+            mock_settings.observability.langfuse.public_key = ""
+            mock_settings.observability.langfuse.secret_key = SecretStr("")
+            mock_settings.observability.langfuse.host = "https://cloud.langfuse.com"
+            mock_settings.observability.langfuse.environment = "staging"
             mock_settings_cls.return_value = mock_settings
 
             mock_checker = MagicMock()
@@ -190,7 +196,7 @@ class TestCresmoCLI:
                 "cresmo.presentation.commands.check_config.build_preflight_checker"
             ) as mock_checker_builder,
         ):
-            mock_settings = MagicMock(spec=CresmoSettings)
+            mock_settings = MagicMock(spec=CresmoSettings(_env_file=None))
             mock_settings_cls.return_value = mock_settings
 
             mock_checker = MagicMock()
@@ -841,9 +847,12 @@ class TestCresmoCLI:
         custom_vault = tmp_path / "custom_vault"
         custom_vault.mkdir()
 
-        mock_settings = MagicMock()
-        mock_copied_settings = MagicMock()
-        mock_copied_settings.vault_dir = custom_vault
+        mock_settings = MagicMock(spec=CresmoSettings(_env_file=None))
+        mock_copied_storage = MagicMock()
+        mock_copied_storage.vault_dir = custom_vault
+        mock_settings.storage.model_copy.return_value = mock_copied_storage
+        mock_copied_settings = MagicMock(spec=CresmoSettings(_env_file=None))
+        mock_copied_settings.storage = mock_copied_storage
         mock_settings.model_copy.return_value = mock_copied_settings
 
         with (
@@ -858,8 +867,11 @@ class TestCresmoCLI:
         ):
             exit_code = main(["dedupe", "--vault", str(custom_vault), "--verbose"])
             assert exit_code == EXIT_SUCCESS
-            mock_settings.model_copy.assert_called_once_with(
+            mock_settings.storage.model_copy.assert_called_once_with(
                 update={"vault_dir": custom_vault.resolve()}
+            )
+            mock_settings.model_copy.assert_called_once_with(
+                update={"storage": mock_copied_storage}
             )
             mock_builder.assert_called_once_with(settings=mock_copied_settings)
             captured = capsys.readouterr()
@@ -881,24 +893,34 @@ class TestCresmoCLI:
     def test_settings_concurrency_pools_and_lookback_defaults(self) -> None:
         """Verify default lookback is 365 days and worker pools use proportional multiples."""
         settings = CresmoSettings(_env_file=None)
-        assert settings.days_lookback == 365
-        assert settings.whisper_workers == 1
-        assert settings.subtitle_workers == 5
-        assert settings.channel_discovery_workers == 10
+        assert settings.ingestion.days_lookback == 365
+        assert settings.ingestion.workers.whisper == 1
+        assert settings.ingestion.workers.subtitle == 5
+        assert settings.ingestion.workers.channel_discovery == 10
 
     def test_settings_concurrency_pools_multiples_scaled(self) -> None:
-        """Verify worker pools auto-scale when whisper_workers is configured."""
-        settings = CresmoSettings(whisper_workers=2, _env_file=None)
-        assert settings.whisper_workers == 2
-        assert settings.subtitle_workers == 10
-        assert settings.channel_discovery_workers == 20
+        """Verify worker pools auto-scale when whisper workers is configured."""
+        from cresmo.infrastructure.config import IngestionSettings, WorkerPoolSettings
+
+        settings = CresmoSettings(
+            _env_file=None,
+            ingestion=IngestionSettings(workers=WorkerPoolSettings(whisper=2)),
+        )
+        assert settings.ingestion.workers.whisper == 2
+        assert settings.ingestion.workers.subtitle == 10
+        assert settings.ingestion.workers.channel_discovery == 20
 
     def test_settings_concurrency_pools_explicit_override(self) -> None:
         """Verify explicit worker settings override calculated multiples."""
-        settings = CresmoSettings(whisper_workers=3, subtitle_workers=7, _env_file=None)
-        assert settings.whisper_workers == 3
-        assert settings.subtitle_workers == 7
-        assert settings.channel_discovery_workers == 30
+        from cresmo.infrastructure.config import IngestionSettings, WorkerPoolSettings
+
+        settings = CresmoSettings(
+            _env_file=None,
+            ingestion=IngestionSettings(workers=WorkerPoolSettings(whisper=3, subtitle=7)),
+        )
+        assert settings.ingestion.workers.whisper == 3
+        assert settings.ingestion.workers.subtitle == 7
+        assert settings.ingestion.workers.channel_discovery == 30
 
     def test_cli_worker_flags_removed(self) -> None:
         """Verify that --subtitle-workers, --whisper-workers, and --discovery-workers are rejected."""
@@ -909,13 +931,16 @@ class TestCresmoCLI:
     def test_check_config_telemetry_masked_and_exceptions(
         self, capsys: pytest.CaptureFixture[str]
     ) -> None:
-        from types import SimpleNamespace as Namespace
-
-        from pydantic import SecretStr
-
+        from cresmo.infrastructure.config import (
+            GeminiSettings,
+            LangfuseSettings,
+            LlmSettings,
+            ObservabilitySettings,
+            PipelineSettings,
+            StorageSettings,
+        )
         from cresmo.presentation.commands.check_config import handle_check_config
 
-        # 1. Langfuse public key and secret key configured
         with (
             patch(
                 "cresmo.presentation.commands.check_config.load_fresh_settings"
@@ -924,22 +949,25 @@ class TestCresmoCLI:
                 "cresmo.presentation.commands.check_config.build_preflight_checker"
             ) as mock_checker_builder,
         ):
-            # 1a. Custom host
-            mock_settings = MagicMock(spec=CresmoSettings)
-            mock_settings.vault_dir = Path("/tmp/vault")
-            mock_settings.sqlite_ledger_path = Path("/tmp/vault/cresmo_ledger.db")
-            mock_settings.gemini_model = "gemini-2.5-flash"
-            mock_settings.batch_size = 5
-            mock_settings.langfuse_public_key = "pk-lf-1234567890abcdef"
-            mock_settings.langfuse_secret_key = SecretStr("sk-lf-secret")
-            mock_settings.langfuse_host = "http://custom-host:3000"
-            mock_settings.langfuse_environment = "production"
-            mock_settings_cls.return_value = mock_settings
-
             mock_checker = MagicMock()
             mock_checker.check_all.return_value = PreflightResult(is_healthy=True, errors=())
             mock_checker_builder.return_value = mock_checker
 
+            # 1a. Custom host & production environment
+            mock_settings_cls.return_value = CresmoSettings(
+                _env_file=None,
+                storage=StorageSettings(vault_dir=Path("/tmp/vault"), data_dir=Path("/tmp/vault")),
+                llm=LlmSettings(gemini=GeminiSettings(model="gemini-2.5-flash")),
+                pipeline=PipelineSettings(batch_size=5),
+                observability=ObservabilitySettings(
+                    langfuse=LangfuseSettings(
+                        public_key="pk-lf-1234567890abcdef",
+                        secret_key=SecretStr("sk-lf-secret"),
+                        host="http://custom-host:3000",
+                        environment="production",
+                    )
+                ),
+            )
             code = handle_check_config(Namespace())
             assert code == EXIT_SUCCESS
             captured = capsys.readouterr()
@@ -948,9 +976,17 @@ class TestCresmoCLI:
                 in captured.out
             )
 
-            # 1b. Missing langfuse_host and langfuse_environment attributes exercise defaults
-            del mock_settings.langfuse_host
-            del mock_settings.langfuse_environment
+            # 1b. Default host and staging environment
+            mock_settings_cls.return_value = CresmoSettings(
+                _env_file=None,
+                storage=StorageSettings(vault_dir=Path("/tmp/vault"), data_dir=Path("/tmp/vault")),
+                observability=ObservabilitySettings(
+                    langfuse=LangfuseSettings(
+                        public_key="pk-lf-1234567890abcdef",
+                        secret_key=SecretStr("sk-lf-secret"),
+                    )
+                ),
+            )
             code = handle_check_config(Namespace())
             assert code == EXIT_SUCCESS
             captured = capsys.readouterr()
@@ -959,44 +995,31 @@ class TestCresmoCLI:
                 in captured.out
             )
 
-            # 1c. Secret without get_secret_value
-            mock_settings.langfuse_secret_key = "plain-string-no-method"
+            # 1c. Empty secret key
+            mock_settings_cls.return_value = CresmoSettings(
+                _env_file=None,
+                observability=ObservabilitySettings(
+                    langfuse=LangfuseSettings(
+                        public_key="pk-lf-1234567890abcdef",
+                        secret_key=SecretStr(""),
+                    )
+                ),
+            )
             code = handle_check_config(Namespace())
             assert code == EXIT_SUCCESS
             captured = capsys.readouterr()
             assert "- Langfuse Telemetry: Disabled (no credentials configured)\n" in captured.out
 
-            # 1d. Secret with empty get_secret_value
-            mock_settings.langfuse_secret_key = SecretStr("")
-            code = handle_check_config(Namespace())
-            assert code == EXIT_SUCCESS
-            captured = capsys.readouterr()
-            assert "- Langfuse Telemetry: Disabled (no credentials configured)\n" in captured.out
-
-            # 1e. None secret
-            mock_settings.langfuse_secret_key = None
-            code = handle_check_config(Namespace())
-            assert code == EXIT_SUCCESS
-            captured = capsys.readouterr()
-            assert "- Langfuse Telemetry: Disabled (no credentials configured)\n" in captured.out
-
-            # 1f. Empty public key with valid secret
-            mock_settings.langfuse_public_key = ""
-            mock_settings.langfuse_secret_key = SecretStr("sk-valid")
-            code = handle_check_config(Namespace())
-            assert code == EXIT_SUCCESS
-            captured = capsys.readouterr()
-            assert "- Langfuse Telemetry: Disabled (no credentials configured)\n" in captured.out
-
-            # 1g. Missing public key attribute
-            del mock_settings.langfuse_public_key
-            code = handle_check_config(Namespace())
-            assert code == EXIT_SUCCESS
-            captured = capsys.readouterr()
-            assert "- Langfuse Telemetry: Disabled (no credentials configured)\n" in captured.out
-
-            # 1h. Missing secret key attribute
-            del mock_settings.langfuse_secret_key
+            # 1d. Empty public key with valid secret
+            mock_settings_cls.return_value = CresmoSettings(
+                _env_file=None,
+                observability=ObservabilitySettings(
+                    langfuse=LangfuseSettings(
+                        public_key="",
+                        secret_key=SecretStr("sk-valid"),
+                    )
+                ),
+            )
             code = handle_check_config(Namespace())
             assert code == EXIT_SUCCESS
             captured = capsys.readouterr()

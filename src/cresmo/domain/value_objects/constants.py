@@ -8,6 +8,9 @@ Conforms to:
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Final
+
+DEFAULT_LANGUAGE: Final[str] = "Português do Brasil"
 
 MAX_CHANNEL_NAME_LENGTH: int = 120
 MAX_CHANNEL_ID_LENGTH: int = 64

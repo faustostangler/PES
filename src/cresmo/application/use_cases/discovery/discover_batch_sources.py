@@ -22,9 +22,7 @@ import structlog
 
 from cresmo.application.ports import (
     ChannelTaxonomyPort,
-    DefaultPipelineSettings,
     MediaIngestionPort,
-    PipelineSettingsProtocol,
 )
 from cresmo.application.use_cases.discovery.channel_crawler import ChannelFeedCrawlerService
 from cresmo.application.use_cases.discovery.lake_scanner import LakeScannerService
@@ -34,10 +32,12 @@ from cresmo.application.use_cases.discovery.manifests import (
 from cresmo.application.use_cases.discovery.models import (
     BatchDiscoveryQuery,
     BatchSource,
+    DiscoveryPaths,
     _BatchSourceAccumulator,
 )
 from cresmo.domain.value_objects import (
     ContentId,
+    DiscoveryPolicy,
     SourceModality,
     normalize_to_uploads_playlist_url,
 )
@@ -64,13 +64,15 @@ class DiscoverBatchSourcesUseCase:
     def __init__(
         self,
         media_ingestion_port: MediaIngestionPort | None = None,
-        settings: PipelineSettingsProtocol | None = None,
+        discovery_policy: DiscoveryPolicy | None = None,
+        discovery_paths: DiscoveryPaths | None = None,
         progress_callback: Callable[[str], object] | None = None,
         taxonomy_port: ChannelTaxonomyPort | None = None,
     ) -> None:
-        """Initialize use case with injected media ingestion adapter and optional settings."""
+        """Initialize use case with injected media ingestion adapter, policy, and paths."""
         self.media_ingestion_port = media_ingestion_port
-        self.settings = settings or DefaultPipelineSettings()
+        self.discovery_policy: DiscoveryPolicy = discovery_policy or DiscoveryPolicy()
+        self.discovery_paths: DiscoveryPaths = discovery_paths or DiscoveryPaths()
         self.progress_callback = progress_callback
         self.taxonomy_port = taxonomy_port
         self._crawler_service = ChannelFeedCrawlerService(
@@ -93,7 +95,7 @@ class DiscoverBatchSourcesUseCase:
         priority_texts_dir = (
             q.priority_texts_dir
             if q.priority_texts_dir is not None
-            else self.settings.priority_texts_dir
+            else self.discovery_paths.priority_texts_dir
         )
         priority_text_channels = LakeScannerService.collect_priority_texts(
             priority_texts_dir,
@@ -102,7 +104,7 @@ class DiscoverBatchSourcesUseCase:
             taxonomy_port=self.taxonomy_port,
         )
 
-        raw_dir = q.raw_dir if q.raw_dir is not None else self.settings.raw_dir
+        raw_dir = q.raw_dir if q.raw_dir is not None else self.discovery_paths.raw_dir
         if q.scan_raw or q.enable_channel_crawler:
             needs_frontmatter = bool(
                 q.enable_channel_crawler
@@ -122,7 +124,7 @@ class DiscoverBatchSourcesUseCase:
         playlist_priority_path = (
             q.playlist_priority_path
             if q.playlist_priority_path is not None
-            else self.settings.playlist_priority_path
+            else self.discovery_paths.playlist_priority_path
         )
         priority_url_channels, unresolved_priority_video_seeds = (
             LakeScannerService.collect_priority_urls(
@@ -135,7 +137,7 @@ class DiscoverBatchSourcesUseCase:
         )
 
         priority_sources = list(acc.sources)
-        playlist_path = q.playlist_path or q.manifest_path or self.settings.playlist_path
+        playlist_path = q.playlist_path or q.manifest_path or self.discovery_paths.playlist_path
 
         return _FastPathDiscoveryState(
             priority_sources=priority_sources,
@@ -178,9 +180,11 @@ class DiscoverBatchSourcesUseCase:
         workers = (
             q.discovery_workers
             if q.discovery_workers is not None
-            else self.settings.channel_discovery_workers
+            else self.discovery_policy.discovery_workers
         )
-        lookback = q.lookback_days if q.lookback_days is not None else self.settings.days_lookback
+        lookback = (
+            q.lookback_days if q.lookback_days is not None else self.discovery_policy.lookback_days
+        )
 
         try:
             channels_to_probe, remote_videos, probed_channels = LakeScannerService.classify_seeds(
@@ -319,7 +323,7 @@ class DiscoverBatchSourcesUseCase:
         maxsize = (
             discovery_query.queue_maxsize
             if discovery_query.queue_maxsize is not None
-            else getattr(self.settings, "discovery_queue_maxsize", 50)
+            else self.discovery_policy.queue_maxsize
         )
         stream_queue: queue.Queue[BatchSource | None | Exception] = queue.Queue(maxsize=maxsize)
         stop_event = threading.Event()

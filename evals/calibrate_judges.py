@@ -184,21 +184,21 @@ def run_cli(
         models,
         model,
         default_provider=provider,
-        default_models=base_settings.judge_calibration_models,
+        default_models=base_settings.judge.benchmark_models,
     )
     if dataset_path is not None and len(selected_stages) > 1:
         raise typer.BadParameter("--dataset-path can only be used with a single --stage.")
 
     stage_thresholds = {
-        "fluid_prose": threshold if threshold is not None else base_settings.judge_pass_threshold,
+        "fluid_prose": threshold if threshold is not None else base_settings.judge.pass_threshold,
         "gap_filler": (
-            threshold if threshold is not None else base_settings.gap_filler_judge_threshold
+            threshold if threshold is not None else base_settings.judge.gap_filler.threshold
         ),
         "long_expander": (
-            threshold if threshold is not None else base_settings.judge_pass_threshold
+            threshold if threshold is not None else base_settings.judge.pass_threshold
         ),
         "wide_expander": (
-            threshold if threshold is not None else base_settings.judge_pass_threshold
+            threshold if threshold is not None else base_settings.judge.pass_threshold
         ),
     }
 
@@ -209,18 +209,28 @@ def run_cli(
         threshold: float,
         enable_fallback: bool,
     ) -> LlmJudgePort:
-        updates: dict[str, object] = {
-            "judge_provider": provider,
-            "judge_pass_threshold": threshold,
-            "gap_filler_judge_threshold": threshold,
+        judge_updates: dict[str, object] = {
+            "provider": provider,
+            "pass_threshold": threshold,
+            "gap_filler": base_settings.judge.gap_filler.model_copy(
+                update={"threshold": threshold}
+            ),
         }
+        llm_updates: dict[str, object] = {}
         if provider == "gemini":
-            updates["judge_gemini_model"] = model
+            judge_updates["gemini"] = base_settings.judge.gemini.model_copy(update={"model": model})
         elif provider == "ollama":
-            updates["ollama_model"] = model
+            llm_updates["ollama"] = base_settings.llm.ollama.model_copy(update={"model": model})
         elif provider == "typesafe":
-            updates["typesafe_model"] = model
-        stage_settings = base_settings.model_copy(update=updates)
+            judge_updates["typesafe"] = base_settings.judge.typesafe.model_copy(
+                update={"model": model}
+            )
+        root_updates: dict[str, object] = {
+            "judge": base_settings.judge.model_copy(update=judge_updates),
+        }
+        if llm_updates:
+            root_updates["llm"] = base_settings.llm.model_copy(update=llm_updates)
+        stage_settings = base_settings.model_copy(update=root_updates)
         return build_llm_judge_adapter(settings=stage_settings, enable_fallback=enable_fallback)
 
     outcome = run_calibration_suite(

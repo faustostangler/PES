@@ -1,142 +1,105 @@
-"""Ingestion, crawler, transcription, and pipeline throughput settings for Cresmo.
+"""Ingestion, cookies, Whisper STT, and worker pool settings for Cresmo.
 
 Conforms to:
-    - ADR-069: Modular Domain Settings Package
+    - ADR-004: Native Media Ingestion
+    - ADR-074: Hierarchical Immutable Settings & Pure Domain Policies
 """
 
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Self
 
-from pydantic import AliasChoices, Field, model_validator
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 
-class IngestionSettings(BaseSettings):
-    """Media ingestion, worker concurrency, and pipeline execution settings."""
+class CookieSettings(BaseModel):
+    """Immutable YouTube browser/cookie authentication settings."""
 
-    model_config = SettingsConfigDict(extra="ignore")
+    model_config = ConfigDict(frozen=True, extra="forbid")
 
-    browser_cookies: str | None = Field(
+    browser: str | None = Field(
         default="firefox",
-        description="Default browser to extract cookies from if cookies_file is absent ('firefox', 'chrome', etc.).",
+        description="Default browser to extract cookies from if cookies file is absent.",
     )
-    auto_extract_cookies: bool = Field(
+    auto_extract: bool = Field(
         default=True,
-        description="Whether to automatically extract cookies from browser if cookies_file is absent or expired.",
+        description="Whether to automatically extract cookies from browser if cookies file is absent or expired.",
     )
-    enable_channel_crawler: bool = Field(
-        default=False,
-        description="Whether batch discovery automatically crawls 365d uploads across all channels by default.",
-    )
-    require_auth_cookies: bool = Field(
+    require_auth: bool = Field(
         default=False,
         description="Whether to fail-fast if no valid authenticated YouTube session cookies are found.",
     )
+    file: Path | None = Field(
+        default=None,
+        description="Optional explicit path to Netscape cookies file for YouTube authentication.",
+    )
+
+
+class WorkerPoolSettings(BaseModel):
+    """Immutable ingestion worker pool sizing and queue backpressure settings."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    whisper: int = Field(
+        default=1,
+        ge=1,
+        description="Concurrent worker threads for local Whisper audio-to-text fallback.",
+    )
+    subtitle: int = Field(
+        default=0,
+        ge=0,
+        description="Concurrent worker threads for native subtitle downloading (0 -> whisper * 5).",
+    )
+    channel_discovery: int = Field(
+        default=0,
+        ge=0,
+        description="Concurrent worker threads for scanning YouTube channel feeds (0 -> whisper * 10).",
+    )
+    discovery_queue_maxsize: int = Field(
+        default=50,
+        ge=1,
+        description="Maximum bounded capacity for batch source streaming queue.",
+    )
+
+    @model_validator(mode="after")
+    def _compute_worker_multiples(self) -> Self:
+        """Compute deterministic worker pool ratios from whisper base on frozen construction."""
+        if self.subtitle <= 0:
+            object.__setattr__(self, "subtitle", max(1, self.whisper * 5))
+        if self.channel_discovery <= 0:
+            object.__setattr__(self, "channel_discovery", max(1, self.whisper * 10))
+        return self
+
+
+class IngestionSettings(BaseModel):
+    """Composed media ingestion, cookie, Whisper, and worker pool settings."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    cookies: CookieSettings = Field(default_factory=CookieSettings)
+    workers: WorkerPoolSettings = Field(default_factory=WorkerPoolSettings)
     whisper_model: str = Field(
         default="base",
         description="Whisper STT model variant for audio transcription.",
     )
     days_lookback: int = Field(
         default=365,
-        description="Default crawling lookback window in days (default: 365 / 1 year).",
+        ge=0,
+        description="Default crawling lookback window in days.",
     )
-    whisper_workers: int = Field(
-        default=1,
-        validation_alias=AliasChoices("whisper_workers", "max_whisper_workers"),
-        description="Concurrent worker threads for local Whisper audio-to-text fallback (default: 1).",
-    )
-    subtitle_workers: int = Field(
-        default=0,
-        validation_alias=AliasChoices("subtitle_workers", "max_subtitle_workers"),
-        description="Concurrent worker threads for native JSON/SRV subtitle downloading (defaults to whisper_workers * 5).",
-    )
-    channel_discovery_workers: int = Field(
-        default=0,
-        validation_alias=AliasChoices("channel_discovery_workers", "max_channel_workers"),
-        description="Concurrent worker threads for scanning YouTube channel uploads feeds (defaults to whisper_workers * 10).",
-    )
-    discovery_queue_maxsize: int = Field(
-        default=50,
-        ge=1,
-        validation_alias=AliasChoices("discovery_queue_maxsize", "max_discovery_queue_size"),
-        description="Maximum bounded capacity for batch source streaming queue to enforce backpressure against OOM (default: 50).",
-    )
-
-    @model_validator(mode="after")
-    def _compute_worker_multiples(self) -> Self:
-        """Calculate dynamic worker pool sizes from whisper_workers base.
-
-        Maintains healthy worker ratios (5x for network-bound subtitle downloads,
-        10x for channel uploads feed polling) derived from the CPU-bound whisper_workers base,
-        preventing thread starvation and CPU saturation.
-
-        Returns:
-            Self instance with calculated worker counts.
-        """
-        if self.subtitle_workers <= 0:
-            self.subtitle_workers = max(1, self.whisper_workers * 5)
-        if self.channel_discovery_workers <= 0:
-            self.channel_discovery_workers = max(1, self.whisper_workers * 10)
-        return self
-
-    batch_size: int = Field(
-        default=5,
-        validation_alias=AliasChoices("batch_size", "CRESMO_BATCH_SIZE"),
-        description="Batch size for Atomic Note synthesis.",
+    enable_channel_crawler: bool = Field(
+        default=False,
+        description="Whether batch discovery automatically crawls uploads across channels by default.",
     )
     keep_audio: bool = Field(
         default=False,
         description="Whether to preserve downloaded raw audio files.",
     )
-    expansion_max_passes: int = Field(
-        default=5,
-        ge=1,
-        le=10,
-        validation_alias=AliasChoices(
-            "expansion_max_passes",
-            "CRESMO_EXPANSION_MAX_PASSES",
-            "EXPANSION_MAX_PASSES",
-        ),
-        description="Default multi-pass text expansion and refinement limit before mechanical saturation.",
-    )
-    long_expander_max_passes: int = Field(
-        default=7,
-        ge=1,
-        le=10,
-        validation_alias=AliasChoices(
-            "long_expander_max_passes",
-            "CRESMO_LONG_EXPANDER_MAX_PASSES",
-            "LONG_EXPANDER_MAX_PASSES",
-        ),
-        description="Multi-pass longitudinal expansion budget before mechanical saturation.",
-    )
-
-    concat_max_words: int = Field(
-        default=500_000,
-        validation_alias=AliasChoices("concat_max_words", "CONCAT_MAX_WORDS", "MASTER_MAX_WORDS"),
-        description="Maximum word limit per aggregated master document before sequential rollover without mid-file splits.",
-    )
-    raw_index_max_chars: int = Field(
-        default=0,
-        description="Maximum characters of transcript body passed to LLM for conceptual synthesis, zero means full text.",
-    )
-    raw_index_max_attempts: int = Field(
-        default=2,
-        ge=0,
-        validation_alias=AliasChoices(
-            "raw_index_max_attempts", "CRESMO_RAW_INDEX_MAX_ATTEMPTS", "RAW_INDEX_MAX_ATTEMPTS"
-        ),
-        description="Maximum LLM judge rewrite attempts for raw indexing (0 means unconstrained / infinite loop).",
-    )
-    inventory_max_attempts: int = Field(
-        default=2,
-        ge=0,
-        validation_alias=AliasChoices(
-            "inventory_max_attempts", "CRESMO_INVENTORY_MAX_ATTEMPTS", "INVENTORY_MAX_ATTEMPTS"
-        ),
-        description="Maximum LLM judge rewrite attempts for atomic inventory discovery (0 means unconstrained / infinite loop).",
-    )
 
 
-__all__ = ["IngestionSettings"]
+__all__ = [
+    "CookieSettings",
+    "IngestionSettings",
+    "WorkerPoolSettings",
+]

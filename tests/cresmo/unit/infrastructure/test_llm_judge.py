@@ -845,12 +845,20 @@ class TestTelemetryJudgeDecoratorWiring:
         result = decorator.evaluate(context)
         assert result == mock_eval
         assert len(telemetry.scores) == 2
-        assert (telemetry.scores[0].name, telemetry.scores[0].value, telemetry.scores[0].comment) == (
+        assert (
+            telemetry.scores[0].name,
+            telemetry.scores[0].value,
+            telemetry.scores[0].comment,
+        ) == (
             "fluid_prose.orality_removal",
             0.95,
             "Clean",
         )
-        assert (telemetry.scores[1].name, telemetry.scores[1].value, telemetry.scores[1].comment) == (
+        assert (
+            telemetry.scores[1].name,
+            telemetry.scores[1].value,
+            telemetry.scores[1].comment,
+        ) == (
             "fluid_prose.semantic_faithfulness",
             0.88,
             "Faithful",
@@ -913,9 +921,9 @@ class TestLlmJudgeFactory:
 
     def test_build_llm_judge_adapter_creates_composite_decorator(self) -> None:
         from cresmo.bootstrap.factories.judge_factory import build_llm_judge_adapter
-        from cresmo.infrastructure.config import CresmoSettings
+        from cresmo.infrastructure.config import CresmoSettings, JudgeSettings
 
-        settings = CresmoSettings(judge_provider="gemini")
+        settings = CresmoSettings(_env_file=None, judge=JudgeSettings(provider="gemini"))
         judge = build_llm_judge_adapter(settings, telemetry_port=None)
 
         assert isinstance(judge, TelemetryJudgeDecorator)
@@ -927,9 +935,9 @@ class TestLlmJudgeFactory:
 
     def test_build_llm_judge_adapter_typesafe_provider(self) -> None:
         from cresmo.bootstrap.factories.judge_factory import build_llm_judge_adapter
-        from cresmo.infrastructure.config import CresmoSettings
+        from cresmo.infrastructure.config import CresmoSettings, JudgeSettings
 
-        settings = CresmoSettings(judge_provider="typesafe")
+        settings = CresmoSettings(_env_file=None, judge=JudgeSettings(provider="typesafe"))
         judge = build_llm_judge_adapter(settings, telemetry_port=None)
 
         assert isinstance(judge, TelemetryJudgeDecorator)
@@ -941,9 +949,9 @@ class TestLlmJudgeFactory:
 
     def test_build_llm_judge_adapter_ollama_provider(self) -> None:
         from cresmo.bootstrap.factories.judge_factory import build_llm_judge_adapter
-        from cresmo.infrastructure.config import CresmoSettings
+        from cresmo.infrastructure.config import CresmoSettings, JudgeSettings
 
-        settings = CresmoSettings(judge_provider="ollama")
+        settings = CresmoSettings(_env_file=None, judge=JudgeSettings(provider="ollama"))
         judge = build_llm_judge_adapter(settings, telemetry_port=None)
 
         assert isinstance(judge, TelemetryJudgeDecorator)
@@ -955,13 +963,22 @@ class TestLlmJudgeFactory:
 
     def test_build_llm_judge_adapter_injects_configured_tunables(self) -> None:
         from cresmo.bootstrap.factories.judge_factory import build_llm_judge_adapter
-        from cresmo.infrastructure.config import CresmoSettings
+        from cresmo.infrastructure.config import (
+            CresmoSettings,
+            JudgeGeminiSettings,
+            JudgeSettings,
+        )
 
         settings = CresmoSettings(
-            judge_provider="gemini",
-            judge_pass_threshold=0.88,
-            judge_gemini_model="gemini-custom-judge",
-            judge_gemini_thinking_level="medium",
+            _env_file=None,
+            judge=JudgeSettings(
+                provider="gemini",
+                pass_threshold=0.88,
+                gemini=JudgeGeminiSettings(
+                    model="gemini-custom-judge",
+                    thinking_level="medium",
+                ),
+            ),
         )
         judge = build_llm_judge_adapter(settings, telemetry_port=None)
 
@@ -983,9 +1000,9 @@ class TestLlmJudgeFactory:
     def test_build_llm_judge_adapter_without_fallback_bypasses_composite(self) -> None:
         """Verify build_llm_judge_adapter with enable_fallback=False returns primary adapter directly."""
         from cresmo.bootstrap.factories.judge_factory import build_llm_judge_adapter
-        from cresmo.infrastructure.config import CresmoSettings
+        from cresmo.infrastructure.config import CresmoSettings, JudgeSettings
 
-        settings = CresmoSettings(judge_provider="gemini")
+        settings = CresmoSettings(_env_file=None, judge=JudgeSettings(provider="gemini"))
         judge = build_llm_judge_adapter(settings, telemetry_port=None, enable_fallback=False)
 
         assert isinstance(judge, TelemetryJudgeDecorator)
@@ -1005,8 +1022,8 @@ class TestCoordinatorLlmJudgeIntegration:
             Content,
             ContentId,
             MediaProvenance,
+            StageExecutionPolicy,
         )
-        from cresmo.infrastructure.config import CresmoSettings
         from tests.cresmo.unit.application.test_pipeline import SmartMockLLMAdapter
         from tests.doubles.mock_adapters import (
             InMemoryLedgerAdapter,
@@ -1036,13 +1053,12 @@ class TestCoordinatorLlmJudgeIntegration:
         )
         mock_judge.evaluate.return_value = mock_eval
 
-        settings = CresmoSettings(judge_blocking=False)
         pipeline = CresmoPipeline(
             media_ingestion_port=mock_ingestion,
             llm_synthesis_port=mock_llm,
             vault_port=vault_port,
             ledger_port=ledger_port,
-            settings=settings,
+            stage_policy=StageExecutionPolicy(judge_blocking=False),
             llm_judge_port=mock_judge,
         )
 
@@ -1073,8 +1089,8 @@ class TestCoordinatorLlmJudgeIntegration:
             Content,
             ContentId,
             MediaProvenance,
+            StageExecutionPolicy,
         )
-        from cresmo.infrastructure.config import CresmoSettings
         from tests.cresmo.unit.application.test_pipeline import SmartMockLLMAdapter
         from tests.doubles.mock_adapters import (
             InMemoryLedgerAdapter,
@@ -1103,13 +1119,12 @@ class TestCoordinatorLlmJudgeIntegration:
             provider="gemini",
         )
 
-        settings = CresmoSettings(judge_blocking=True)
         pipeline = CresmoPipeline(
             media_ingestion_port=mock_ingestion,
             llm_synthesis_port=mock_llm,
             vault_port=vault_port,
             ledger_port=ledger_port,
-            settings=settings,
+            stage_policy=StageExecutionPolicy(judge_blocking=True),
             llm_judge_port=mock_judge,
         )
 
@@ -1126,8 +1141,8 @@ class TestCoordinatorLlmJudgeIntegration:
             Content,
             ContentId,
             MediaProvenance,
+            StageExecutionPolicy,
         )
-        from cresmo.infrastructure.config import CresmoSettings
         from tests.cresmo.unit.application.test_pipeline import SmartMockLLMAdapter
         from tests.doubles.mock_adapters import (
             InMemoryLedgerAdapter,
@@ -1150,13 +1165,12 @@ class TestCoordinatorLlmJudgeIntegration:
         ledger_port = InMemoryLedgerAdapter()
         telemetry = InMemoryTelemetryPort()
 
-        settings = CresmoSettings(judge_blocking=False)
         pipeline = CresmoPipeline(
             media_ingestion_port=mock_ingestion,
             llm_synthesis_port=mock_llm,
             vault_port=vault_port,
             ledger_port=ledger_port,
-            settings=settings,
+            stage_policy=StageExecutionPolicy(judge_blocking=False),
             telemetry_port=telemetry,
         )
 

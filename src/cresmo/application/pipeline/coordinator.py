@@ -40,7 +40,6 @@ from cresmo.application.ports import (
     PIPELINE_TRACE_NAME,
     ChannelTaxonomyPort,
     CritiqueSynthesizerPort,
-    DefaultPipelineSettings,
     LedgerRepositoryPort,
     LlmJudgePort,
     LLMTransformationPort,
@@ -50,7 +49,6 @@ from cresmo.application.ports import (
     NoOpMetricsPort,
     NoOpPromptProviderPort,
     NoOpTelemetryPort,
-    PipelineSettingsProtocol,
     PromptProviderPort,
     SessionTelemetrySpec,
     TelemetryPort,
@@ -68,6 +66,7 @@ from cresmo.domain.value_objects import (
     BatchId,
     ConvergenceMode,
     RawIndexEntry,
+    StageExecutionPolicy,
     is_processable_transcript_file,
 )
 
@@ -110,7 +109,7 @@ class CresmoPipeline:
         *,
         ledger_port: LedgerRepositoryPort | None = None,
         batch_size: int = 5,
-        settings: PipelineSettingsProtocol | None = None,
+        stage_policy: StageExecutionPolicy | None = None,
         telemetry_port: TelemetryPort | None = None,
         metrics_port: MetricsPort | None = None,
         llm_synthesis_port: LLMTransformationPort | None = None,
@@ -128,7 +127,7 @@ class CresmoPipeline:
         self.ledger_port = ledger_port
         self.taxonomy_port: ChannelTaxonomyPort = taxonomy_port or NoOpChannelTaxonomyPort()
         self.batch_size = batch_size
-        self.settings: PipelineSettingsProtocol = settings or DefaultPipelineSettings()
+        self.stage_policy: StageExecutionPolicy = stage_policy or StageExecutionPolicy()
 
         if stage_runner is not None:
             self.stage_runner = stage_runner
@@ -148,14 +147,14 @@ class CresmoPipeline:
             llm_judge = llm_judge_port
             llm_transformation_port = llm_synthesis_port
             prompt_provider = prompt_provider or NoOpPromptProviderPort()
-            stage_factory = StageFactory(settings=self.settings)
+            stage_factory = StageFactory(policy=self.stage_policy)
             self.stage_runner = PipelineStageRunner(
                 PipelineDependencies(
                     telemetry_port=self.telemetry_port,
                     metrics_port=self.metrics_port,
                     llm_judge=llm_judge,
-                    judge_blocking=getattr(self.settings, "judge_blocking", False),
-                    judge_max_attempts=getattr(self.settings, "judge_max_attempts", 2),
+                    judge_blocking=self.stage_policy.judge_blocking,
+                    judge_max_attempts=self.stage_policy.judge_max_attempts,
                     prompt_provider=prompt_provider,
                     llm_transformation_port=llm_transformation_port,
                     stage_factory=stage_factory,
@@ -446,7 +445,7 @@ class CresmoPipeline:
             self.vault_port,
             file_path,
             raw,
-            target_dir=self.settings.raw_dir,
+            target_dir=self.vault_port.resolve_stage_dir(StageName.RAW),
         )
 
         return self.execute(

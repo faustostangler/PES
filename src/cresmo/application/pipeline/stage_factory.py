@@ -6,7 +6,7 @@ from collections.abc import Callable, Sequence
 from typing import Any, TypeVar
 
 from cresmo.application.pipeline.stage_descriptor import StageConfig
-from cresmo.application.ports import PipelineSettingsProtocol, TextEmbeddingPort
+from cresmo.application.ports import TextEmbeddingPort
 from cresmo.application.services.hybrid_saturation import HybridSaturationEvaluator
 from cresmo.domain.stage_registry import StageDefinition, StageName, StageRegistry
 from cresmo.domain.value_objects import (
@@ -15,8 +15,8 @@ from cresmo.domain.value_objects import (
     JudgeCriterion,
     PromptKey,
     SaturationPolicy,
-    SaturationThresholds,
     StageEvaluationSpec,
+    StageExecutionPolicy,
     never_saturate,
 )
 
@@ -28,42 +28,18 @@ class StageFactory:
     """Polyvalent Factory creating standardized StageConfigs from declarative domain specs.
 
     Maintains single source of truth for prompts, quality criteria, post-processors,
-    and stage execution tunables across pipeline stages (ADR-031).
+    and stage execution tunables across pipeline stages (ADR-031, ADR-074).
     Delegates domain metadata resolution to StageRegistry.
     """
 
     def __init__(
         self,
-        settings: PipelineSettingsProtocol,
+        policy: StageExecutionPolicy | None = None,
         embedding_port: TextEmbeddingPort | None = None,
     ) -> None:
-        self.settings = settings
+        self.policy: StageExecutionPolicy = policy or StageExecutionPolicy()
         self._embedding_port = embedding_port
         self._cache: dict[str, StageConfig[Any, Any]] = {}
-
-    def _build_saturation_thresholds(self) -> SaturationThresholds:
-        """Build SaturationThresholds from settings with safe defaults for minimal settings objects."""
-        return SaturationThresholds(
-            lexical_identity_threshold=float(
-                getattr(self.settings, "saturation_lexical_threshold", 0.95)
-            ),
-            max_lexical_word_delta=float(getattr(self.settings, "saturation_max_word_delta", 0.03)),
-            semantic_similarity_threshold=float(
-                getattr(self.settings, "saturation_semantic_threshold", 0.88)
-            ),
-            max_novel_paragraphs_for_saturation=int(
-                getattr(self.settings, "saturation_max_novel_paragraphs", 0)
-            ),
-            long_unit_word_cutoff=int(
-                getattr(self.settings, "saturation_long_unit_word_cutoff", 120)
-            ),
-            sliding_window_sentences=int(
-                getattr(self.settings, "saturation_sliding_window_sentences", 3)
-            ),
-            sliding_window_overlap=int(
-                getattr(self.settings, "saturation_sliding_window_overlap", 1)
-            ),
-        )
 
     def build_stage(
         self,
@@ -131,13 +107,13 @@ class StageFactory:
         if post_processor is None and stage_definition:
             post_processor = stage_definition.post_processor
 
-        # 3. Resolve tunables from settings with call-site overrides
+        # 3. Resolve tunables from domain policy with call-site overrides
         if temperature is None:
-            temperature = getattr(self.settings, "llm_synthesis_temperature", None)
+            temperature = self.policy.synthesis_temperature
         if max_attempts is None:
-            max_attempts = getattr(self.settings, "judge_max_attempts", 2)
+            max_attempts = self.policy.judge_max_attempts
         if blocking is None:
-            blocking = getattr(self.settings, "judge_blocking", False)
+            blocking = self.policy.judge_blocking
 
         # 4. Resolve quality evaluation spec (StageEvaluationSpec)
         if eval_spec is None:
@@ -182,23 +158,12 @@ class StageFactory:
         # 6. Resolve multi-pass and saturation policy tunables
         if max_passes is None:
             if stage_name == StageName.LONG_EXPANDER:
-                settings_passes = getattr(self.settings, "long_expander_max_passes", None)
-                fallback_passes = stage_definition.max_passes if stage_definition else 7
-                max_passes = (
-                    settings_passes
-                    if isinstance(settings_passes, int) and not isinstance(settings_passes, bool)
-                    else fallback_passes
-                )
+                max_passes = self.policy.long_expander_max_passes
             elif (
                 stage_definition is not None
                 and stage_definition.convergence_mode == ConvergenceMode.HYBRID_SEMANTIC
             ):
-                settings_passes = getattr(self.settings, "expansion_max_passes", None)
-                max_passes = (
-                    settings_passes
-                    if isinstance(settings_passes, int) and not isinstance(settings_passes, bool)
-                    else stage_definition.max_passes
-                )
+                max_passes = self.policy.expansion_max_passes
             else:
                 max_passes = (
                     stage_definition.max_passes
@@ -215,7 +180,7 @@ class StageFactory:
         ):
             resolved_saturation_policy = HybridSaturationEvaluator(
                 embedding_port=self._embedding_port,
-                thresholds=self._build_saturation_thresholds(),
+                thresholds=self.policy.saturation_thresholds,
             )
         else:
             resolved_saturation_policy = never_saturate

@@ -17,7 +17,6 @@ from cresmo.application.ports import (
     LLMTransformationPort,
     PromptProviderPort,
 )
-from cresmo.application.ports.settings import DEFAULT_LANGUAGE
 from cresmo.application.use_cases.indexing.validators import (
     clean_concept_line,
     clean_text_line,
@@ -27,6 +26,7 @@ from cresmo.application.use_cases.indexing.validators import (
 )
 from cresmo.domain.entities import PipelineSessionId, UserIdentity
 from cresmo.domain.value_objects import (
+    DEFAULT_LANGUAGE,
     ChannelId,
     ChannelName,
     ContentId,

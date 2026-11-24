@@ -13,9 +13,14 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import Any
 
-from cresmo.domain.value_objects import ChannelName, PromptKey
+from cresmo.domain.value_objects import DEFAULT_LANGUAGE, ChannelName, PromptKey
 
-DEFAULT_LANGUAGE = "Português do Brasil"
+__all__ = [
+    "DEFAULT_LANGUAGE",
+    "PROMPT_VARIABLE_SCHEMAS",
+    "PromptVariableSchema",
+    "normalize_prompt_context",
+]
 
 
 @dataclass(frozen=True, slots=True)

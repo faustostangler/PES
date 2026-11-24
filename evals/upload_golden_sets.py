@@ -96,15 +96,17 @@ def upload_golden_set(
     items: list[dict[str, Any]] = [item for item in raw if isinstance(item, dict)]
     logger.info("Loaded %d items from %s", len(items), dataset_path)
 
-    if not settings.langfuse_public_key or not settings.langfuse_secret_key.get_secret_value():
+    langfuse_cfg = settings.observability.langfuse
+    if not langfuse_cfg.public_key or not langfuse_cfg.secret_key.get_secret_value():
         logger.error(
-            "Langfuse API credentials missing. Set LANGFUSE_PUBLIC_KEY and LANGFUSE_SECRET_KEY in .env"
+            "Langfuse API credentials missing. Set CRESMO_OBSERVABILITY__LANGFUSE__PUBLIC_KEY and "
+            "CRESMO_OBSERVABILITY__LANGFUSE__SECRET_KEY in .env"
         )
         return 1
 
-    langfuse = resolve_langfuse_client(settings)
+    langfuse = resolve_langfuse_client(settings.observability)
     if langfuse is None:
-        logger.error("Langfuse server unreachable at '%s'.", settings.langfuse_host)
+        logger.error("Langfuse server unreachable at '%s'.", langfuse_cfg.host)
         return 1
 
     try:

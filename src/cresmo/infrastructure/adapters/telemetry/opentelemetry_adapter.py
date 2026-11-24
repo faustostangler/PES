@@ -180,7 +180,9 @@ class OpenTelemetryAdapter(TelemetryPort):
     ) -> None:
         """Emit an evaluation or clinical score to active span event and Langfuse backend."""
         active_span = wrap_current_otel_span()
-        resolved_observation_id = observation_id if observation_id is not None else active_span.span_id
+        resolved_observation_id = (
+            observation_id if observation_id is not None else active_span.span_id
+        )
 
         event_attributes: dict[str, TelemetryAttributeValue] = {
             "score.name": name,

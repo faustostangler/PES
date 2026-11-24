@@ -36,39 +36,21 @@ class JsonPromptProvider(PromptProviderPort):
         prompts_path: Path | None = None,
         skills_dir: Path | None = None,
         language: str | None = None,
-        settings: Any | None = None,
         *,
         default_language: str = DEFAULT_LANGUAGE,
         skill_loader: SkillDocumentLoader | None = None,
         template_renderer: TemplateRenderer | None = None,
     ) -> None:
-        resolved_prompts_path = prompts_path
-        if resolved_prompts_path is None and settings is not None:
-            raw_prompts_path = getattr(settings, "prompts_path", None)
-            if isinstance(raw_prompts_path, Path):
-                resolved_prompts_path = raw_prompts_path
-
-        resolved_skills_dir = skills_dir
-        if resolved_skills_dir is None and settings is not None:
-            raw_skills_dir = getattr(settings, "skills_dir", None)
-            if isinstance(raw_skills_dir, Path):
-                resolved_skills_dir = raw_skills_dir
-
-        settings_lang = getattr(settings, "language", None) if settings is not None else None
         resolved_lang = (
-            language
-            if isinstance(language, str) and language.strip()
-            else settings_lang
-            if isinstance(settings_lang, str) and settings_lang.strip()
-            else default_language
+            language if isinstance(language, str) and language.strip() else default_language
         )
 
-        self.prompts_path = resolved_prompts_path
-        self.skills_dir = resolved_skills_dir
-        self._prompts_path = resolved_prompts_path
+        self.prompts_path = prompts_path
+        self.skills_dir = skills_dir
+        self._prompts_path = prompts_path
         self.language = resolved_lang
         self.default_language = resolved_lang
-        self._skill_loader = skill_loader or SkillDocumentLoader(skills_dir=resolved_skills_dir)
+        self._skill_loader = skill_loader or SkillDocumentLoader(skills_dir=skills_dir)
         self._renderer = template_renderer or TemplateRenderer()
         self._catalog: PromptCatalog | None = None
         self._templates: dict[str, dict[str, Any]] = {}

@@ -1,17 +1,16 @@
-"""Shared model catalogs, resource constants, and versioning helpers for Cresmo settings.
+"""Shared model catalogs, resource constants, and parsing helpers for Cresmo settings.
 
 Conforms to:
     - ADR-063: Dynamic Pipeline Versioning via importlib.metadata
     - ADR-064: Gemini Free-Tier Catalog & Thinking Level Governance
-    - ADR-069: Modular Domain Settings Package
+    - ADR-074: Hierarchical Immutable Settings & Pure Domain Policies
 """
 
 from __future__ import annotations
 
 import importlib.metadata
+import json
 from typing import Any, Literal
-
-from pydantic_settings import PydanticBaseSettingsSource
 
 DEFAULT_LANGFUSE_ENVIRONMENT: str = "staging"
 LANGFUSE_ENVIRONMENT_PATTERN: str = r"^(?!langfuse)[a-z0-9-_]{1,40}$"
@@ -57,26 +56,11 @@ DEFAULT_JUDGE_GEMINI_MODEL: str = DEFAULT_GEMINI_MODEL
 DEFAULT_GEMINI_THINKING_LEVEL: GeminiThinkingLevel = "low"
 DEFAULT_GEMINI_MAX_OUTPUT_TOKENS: int = 32_768
 DEFAULT_GEMINI_TIMEOUT_SECONDS: float = 300.0
-DEFAULT_BENCHMARK_MODELS: list[str] = [
+DEFAULT_BENCHMARK_MODELS: tuple[str, ...] = (
     "gemini:gemini-3.5-flash-lite",
     "gemini:gemini-3.8-flash",
     "gemini:gemini-4-hydrogen",
-    # Remaining Free-Tier text/multimodal options (GEMINI_FREE_TIER_MODELS):
-    # "gemini:gemini-3.6-flash",
-    # "gemini:gemini-3.1-flash-lite",
-    # "gemini:gemini-3-flash-preview",
-    # "gemini:gemma-4-31b-it",
-    # "gemini:gemma-4-26b-a4b-it",
-    # "gemini:gemini-2.5-flash-lite",
-    # "gemini:gemini-2.5-flash",
-    # "gemini:gemini-2.5-pro",
-    # "ollama:qwen2.5:latest",
-    # "ollama:gemma4:latest",
-    # "ollama:deepseek-r1:7b",
-    # "ollama:llama3:latest",
-]
-DEFAULT_JUDGE_CALIBRATION_MODELS: list[str] = DEFAULT_BENCHMARK_MODELS
-DEFAULT_GENERATOR_BENCHMARK_MODELS: list[str] = DEFAULT_BENCHMARK_MODELS
+)
 
 
 def resolve_default_pipeline_version() -> str:
@@ -88,46 +72,28 @@ def resolve_default_pipeline_version() -> str:
     return f"cresmo:v{pkg_version}"
 
 
-def _normalize_str_choice(value: Any) -> Any:
+def normalize_str_choice(value: Any) -> Any:
     """Strip surrounding whitespace and lowercase string choice values."""
     if isinstance(value, str):
         return value.strip().lower()
     return value
 
 
-def _customize_comma_list_sources(
-    field_names: tuple[str, ...],
-    init_settings: PydanticBaseSettingsSource,
-    env_settings: PydanticBaseSettingsSource,
-    dotenv_settings: PydanticBaseSettingsSource,
-    file_secret_settings: PydanticBaseSettingsSource,
-) -> tuple[PydanticBaseSettingsSource, ...]:
-    """Wrap env and dotenv complex decoders to accept comma-separated strings safely."""
-
-    def _safe_decode(field_name: str, field: Any, val: Any, orig_decode: Any) -> Any:
-        if field_name in field_names and isinstance(val, str):
-            try:
-                return orig_decode(field_name, field, val)
-            except (ValueError, TypeError):
-                return [p.strip() for p in val.split(",") if p.strip()]
-        return orig_decode(field_name, field, val)
-
-    orig_dot = dotenv_settings.decode_complex_value
-    dotenv_settings.decode_complex_value = (  # type: ignore[method-assign]
-        lambda field_name, field, value: _safe_decode(field_name, field, value, orig_dot)
-    )
-
-    orig_env = env_settings.decode_complex_value
-    env_settings.decode_complex_value = (  # type: ignore[method-assign]
-        lambda field_name, field, value: _safe_decode(field_name, field, value, orig_env)
-    )
-
-    return (
-        init_settings,
-        env_settings,
-        dotenv_settings,
-        file_secret_settings,
-    )
+def parse_comma_separated_strings(value: Any) -> Any:
+    """Parse comma-separated strings, JSON string arrays, or sequences into a clean tuple[str, ...]."""
+    if isinstance(value, str):
+        stripped = value.strip()
+        if not stripped:
+            return ()
+        if stripped.startswith("["):
+            parsed = json.loads(stripped)
+            if not isinstance(parsed, list):
+                raise ValueError("Expected JSON array for sequence setting.")
+            return tuple(str(item).strip() for item in parsed if str(item).strip())
+        return tuple(part.strip() for part in stripped.split(",") if part.strip())
+    if isinstance(value, (list, tuple)):
+        return tuple(str(item).strip() for item in value if str(item).strip())
+    return value
 
 
 __all__ = [
@@ -137,8 +103,6 @@ __all__ = [
     "DEFAULT_GEMINI_MODEL",
     "DEFAULT_GEMINI_THINKING_LEVEL",
     "DEFAULT_GEMINI_TIMEOUT_SECONDS",
-    "DEFAULT_GENERATOR_BENCHMARK_MODELS",
-    "DEFAULT_JUDGE_CALIBRATION_MODELS",
     "DEFAULT_JUDGE_GEMINI_MODEL",
     "DEFAULT_JUDGE_PASS_THRESHOLD",
     "DEFAULT_LANGFUSE_ENVIRONMENT",
@@ -152,5 +116,7 @@ __all__ = [
     "LANGFUSE_ENVIRONMENT_PATTERN",
     "GeminiFreeTierModel",
     "GeminiThinkingLevel",
+    "normalize_str_choice",
+    "parse_comma_separated_strings",
     "resolve_default_pipeline_version",
 ]

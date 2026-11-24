@@ -1,17 +1,14 @@
 """Composition Root for the Cresmo Knowledge Synthesis Engine.
 
-Centralizes pure Dependency Injection assembly, binding validated configuration
-from CresmoSettings to concrete infrastructure adapters and instantiating CresmoPipeline
-and Application Use Cases per Clean/Hexagonal Architecture.
+Centralizes pure Dependency Injection assembly, translating validated hierarchical
+CresmoSettings into domain policies for Use Cases and narrow sub-configs for adapters.
 
 Conforms to:
     - ADR-001: Modular Monolith Domain Integrity
     - ADR-002: Presentation CLI & Humble Object
     - ADR-005: Multi-Role 12-Factor Container & Settings
+    - ADR-074: Hierarchical Immutable Settings & Pure Domain Policies
     - SPEC-002: CLI Controller & Exit Codes
-    - ADR-014: Fail-Fast Preflight Probing & Telemetry Circuit Breaking
-    - ADR-017: Langfuse Otel Span Masking and Scrubbing
-    - ADR-026: Clean Code Anti-Patterns & Code Smell Governance (Modularization)
 """
 
 from __future__ import annotations
@@ -77,55 +74,48 @@ def build_pipeline(
     batch_size_override: int | None = None,
     web_index: bool = False,
 ) -> CresmoPipeline:
-    """Instantiate and wire production infrastructure adapters into CresmoPipeline.
-
-    Args:
-        settings: Validated application settings. If None, loaded fail-fast from environment.
-        batch_size_override: Optional operational override for note batch size.
-        web_index: If True, uses Gemini API for raw transcript indexing instead of local Ollama.
-
-    Returns:
-        Configured and wired CresmoPipeline ready for execution.
-    """
-    settings = resolve_shared_settings(settings)
-    settings.ensure_directories()
+    """Instantiate and wire production infrastructure adapters into CresmoPipeline."""
+    resolved = resolve_shared_settings(settings)
+    resolved.ensure_directories()
 
     # 0. Structured Logging Configuration (ADR-025)
     configure_logging(
-        level=settings.log_level,
-        fmt=settings.log_format,
+        level=resolved.observability.logging.level,
+        fmt=resolved.observability.logging.format,
     )
 
     # 1. Observability & Security
-    anonymizer = build_anonymizer_adapter(settings)
-    langfuse_client = resolve_langfuse_client(settings, anonymizer=anonymizer)
-    telemetry_port = build_telemetry_adapter(settings, langfuse_client=langfuse_client)
+    anonymizer = build_anonymizer_adapter(resolved.observability)
+    langfuse_client = resolve_langfuse_client(resolved.observability, anonymizer=anonymizer)
+    telemetry_port = build_telemetry_adapter(
+        resolved.observability, langfuse_client=langfuse_client
+    )
 
     # 2. Ingestion, Persistence & Idempotency
-    media_ingestion_port = build_media_ingestion_adapter(settings)
-    vault_port = build_vault_adapter(settings)
-    ledger_port = SqliteLedgerAdapter(db_path=settings.sqlite_ledger_path)
+    media_ingestion_port = build_media_ingestion_adapter(resolved)
+    vault_port = build_vault_adapter(resolved.storage)
+    ledger_port = SqliteLedgerAdapter(db_path=resolved.storage.sqlite_ledger_path)
 
     # 3. SRE & DORA Metrics Telemetry
-    metrics_port = build_metrics_adapter(settings)
+    metrics_port = build_metrics_adapter(resolved.observability)
 
     # 4. Prompt Governance, Cognitive & Judge LLM Engines
-    prompt_provider = build_prompt_provider(settings, langfuse_client=langfuse_client)
-    gemini_pool = build_gemini_credential_pool(settings)
+    prompt_provider = build_prompt_provider(resolved, langfuse_client=langfuse_client)
+    gemini_pool = build_gemini_credential_pool(resolved.llm.gemini)
     synthesis_adapter = build_gemini_synthesis_adapter(
-        settings,
+        resolved.llm.gemini,
         telemetry_port=telemetry_port,
         credential_pool=gemini_pool,
     )
     llm_indexing_port = build_indexing_adapter(
-        settings,
+        resolved.llm,
         synthesis_adapter=synthesis_adapter,
         web_index=web_index,
         telemetry_port=telemetry_port,
         credential_pool=gemini_pool,
     )
     llm_judge = build_llm_judge_adapter(
-        settings,
+        resolved,
         telemetry_port=telemetry_port,
         prompt_provider=prompt_provider,
         credential_pool=gemini_pool,
@@ -139,16 +129,17 @@ def build_pipeline(
         prompt_provider=prompt_provider,
     )
 
-    # 5. Pipeline Stage Runner & Closed-Loop Verifier (ADR-030, ADR-031)
-    embedding_port = build_embedding_adapter(settings, credential_pool=gemini_pool)
-    stage_factory = StageFactory(settings=settings, embedding_port=embedding_port)
+    # 5. Pipeline Stage Runner & Closed-Loop Verifier (ADR-030, ADR-031, ADR-074)
+    stage_policy = resolved.to_stage_execution_policy()
+    embedding_port = build_embedding_adapter(resolved, credential_pool=gemini_pool)
+    stage_factory = StageFactory(policy=stage_policy, embedding_port=embedding_port)
     stage_runner = PipelineStageRunner(
         PipelineDependencies(
             telemetry_port=telemetry_port,
             metrics_port=metrics_port,
             llm_judge=llm_judge,
-            judge_blocking=getattr(settings, "judge_blocking", False),
-            judge_max_attempts=getattr(settings, "judge_max_attempts", 2),
+            judge_blocking=resolved.judge.blocking,
+            judge_max_attempts=resolved.judge.max_attempts,
             prompt_provider=prompt_provider,
             llm_transformation_port=synthesis_adapter,
             stage_factory=stage_factory,
@@ -158,8 +149,10 @@ def build_pipeline(
     )
 
     # 6. Pipeline Assembly
-    batch_size = batch_size_override if batch_size_override is not None else settings.batch_size
-    taxonomy_port = build_taxonomy_adapter(settings)
+    batch_size = (
+        batch_size_override if batch_size_override is not None else resolved.pipeline.batch_size
+    )
+    taxonomy_port = build_taxonomy_adapter(resolved.storage)
 
     return CresmoPipeline(
         media_ingestion_port=media_ingestion_port,
@@ -167,23 +160,16 @@ def build_pipeline(
         stage_runner=stage_runner,
         ledger_port=ledger_port,
         batch_size=batch_size,
-        settings=settings,
+        stage_policy=stage_policy,
         llm_indexing_port=llm_indexing_port,
         taxonomy_port=taxonomy_port,
     )
 
 
 def build_stage_runner(settings: CresmoSettings | None = None) -> PipelineStageRunner:
-    """Build and wire an isolated PipelineStageRunner instance with resolved settings.
-
-    Args:
-        settings: Optional custom or partial application settings.
-
-    Returns:
-        Fully wired PipelineStageRunner with LLM transformation and telemetry adapters.
-    """
-    settings = resolve_shared_settings(settings)
-    pipeline = build_pipeline(settings)
+    """Build and wire an isolated PipelineStageRunner instance with resolved settings."""
+    resolved = resolve_shared_settings(settings)
+    pipeline = build_pipeline(resolved)
     return pipeline.stage_runner
 
 
@@ -193,9 +179,9 @@ def build_sync_channel_use_case(
     check_ffmpeg: bool = True,
 ) -> SyncChannelUseCase:
     """Construct SyncChannelUseCase with all ports and dependencies wired."""
-    settings = resolve_shared_settings(settings)
-    pipeline = build_pipeline(settings, batch_size_override=batch_size_override)
-    preflight_checker = build_preflight_checker(settings, check_ffmpeg=check_ffmpeg)
+    resolved = resolve_shared_settings(settings)
+    pipeline = build_pipeline(resolved, batch_size_override=batch_size_override)
+    preflight_checker = build_preflight_checker(resolved, check_ffmpeg=check_ffmpeg)
 
     if pipeline.ledger_port is None:
         raise RuntimeError("Ledger port must be wired for channel sync.")
@@ -217,13 +203,15 @@ def build_run_synthesis_use_case(
     check_ffmpeg: bool = True,
 ) -> RunSynthesisUseCase:
     """Construct RunSynthesisUseCase with fail-fast preflight and lazy pipeline factories."""
-    overrides = {"days_lookback": lookback_override} if lookback_override is not None else None
-    if settings is None:
-        resolved = load_fresh_settings(overrides=overrides)
-    elif overrides is not None:
-        resolved = settings.model_copy(update=overrides)
-    else:
-        resolved = settings
+    resolved = load_fresh_settings() if settings is None else settings
+    if lookback_override is not None:
+        resolved = resolved.model_copy(
+            update={
+                "ingestion": resolved.ingestion.model_copy(
+                    update={"days_lookback": lookback_override}
+                )
+            }
+        )
 
     preflight_checker = build_preflight_checker(settings=resolved, check_ffmpeg=check_ffmpeg)
 
@@ -241,7 +229,7 @@ def build_run_synthesis_use_case(
         return build_concat_master_use_case(settings=resolved, vault_port=vault_port)
 
     return RunSynthesisUseCase(
-        settings=resolved,
+        discovery_policy=resolved.to_discovery_policy(),
         preflight_checker=preflight_checker,
         pipeline_factory=lambda: build_pipeline(
             settings=resolved,
@@ -262,16 +250,16 @@ def build_sync_batch_use_case(
 ) -> SyncBatchUseCase:
     """Construct SyncBatchUseCase with ensured runtime directories, channel sync, and taxonomy."""
     resolved = resolve_shared_settings(settings)
-    ensure_runtime_directories(resolved)
+    ensure_runtime_directories(resolved.storage)
     sync_channel_use_case = build_sync_channel_use_case(
         settings=resolved,
         batch_size_override=batch_size_override,
         check_ffmpeg=check_ffmpeg,
     )
-    taxonomy_port = build_taxonomy_adapter(resolved)
+    taxonomy_port = build_taxonomy_adapter(resolved.storage)
     return SyncBatchUseCase(
         sync_channel_use_case=sync_channel_use_case,
-        default_manifest_path=resolved.playlist_path,
+        default_manifest_path=resolved.storage.playlist_path,
         taxonomy_port=taxonomy_port,
     )
 

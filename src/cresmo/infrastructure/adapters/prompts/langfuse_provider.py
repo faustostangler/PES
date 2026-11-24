@@ -22,7 +22,7 @@ from cresmo.infrastructure.adapters.prompts.context_normalizer import (
     DEFAULT_LANGUAGE,
     normalize_prompt_context,
 )
-from cresmo.infrastructure.config import CresmoSettings
+from cresmo.infrastructure.config.catalog import DEFAULT_LANGFUSE_PROMPT_LABEL
 
 logger = structlog.get_logger(__name__)
 
@@ -130,7 +130,7 @@ class LangfusePromptProvider(PromptProviderPort):
         self,
         langfuse_client: Any | None,
         fallback_provider: PromptProviderPort,
-        label: str = CresmoSettings.DEFAULT_LANGFUSE_PROMPT_LABEL,
+        label: str = DEFAULT_LANGFUSE_PROMPT_LABEL,
     ) -> None:
         """Initialize Langfuse prompt provider.
 

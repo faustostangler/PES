@@ -18,6 +18,7 @@ from cresmo.application.use_cases.discovery import (
     BatchDiscoveryQuery,
     BatchSource,
     DiscoverBatchSourcesUseCase,
+    DiscoveryPaths,
     LakeScannerService,
     _BatchSourceAccumulator,
     extract_raw_file_metadata,
@@ -29,10 +30,10 @@ from cresmo.domain.value_objects import (
     ChannelName,
     ContentId,
     DiscoveredMediaItem,
+    DiscoveryPolicy,
     SourceModality,
     SyncFilterCriteria,
 )
-from cresmo.infrastructure.config import CresmoSettings
 
 
 def _create_mock_media_item(
@@ -129,10 +130,8 @@ class TestDiscoverBatchSourcesUseCase:
         mock_ingestion = MagicMock()
         mock_ingestion.discover_channel_feed.return_value = []
 
-        settings = CresmoSettings()
         use_case = DiscoverBatchSourcesUseCase(
             media_ingestion_port=mock_ingestion,
-            settings=settings,
         )
 
         query = BatchDiscoveryQuery(
@@ -167,7 +166,6 @@ class TestDiscoverBatchSourcesUseCase:
 
         use_case = DiscoverBatchSourcesUseCase(
             media_ingestion_port=mock_ingestion,
-            settings=CresmoSettings(),
         )
 
         query = BatchDiscoveryQuery(
@@ -208,7 +206,6 @@ class TestDiscoverBatchSourcesUseCase:
 
         use_case = DiscoverBatchSourcesUseCase(
             media_ingestion_port=mock_ingestion,
-            settings=CresmoSettings(),
         )
 
         query = BatchDiscoveryQuery(
@@ -297,7 +294,6 @@ class TestDiscoverBatchSourcesUseCase:
         notifications: list[str] = []
         use_case = DiscoverBatchSourcesUseCase(
             media_ingestion_port=MagicMock(),
-            settings=CresmoSettings(_env_file=None),
             progress_callback=notifications.append,
         )
 
@@ -322,7 +318,6 @@ class TestDiscoverBatchSourcesUseCase:
         mock_ingestion = MagicMock()
         use_case = DiscoverBatchSourcesUseCase(
             media_ingestion_port=mock_ingestion,
-            settings=CresmoSettings(_env_file=None),
         )
 
         query = BatchDiscoveryQuery(
@@ -376,7 +371,6 @@ class TestDiscoverBatchSourcesUseCase:
 
         use_case = DiscoverBatchSourcesUseCase(
             media_ingestion_port=mock_ingestion,
-            settings=CresmoSettings(_env_file=None),
         )
 
         query = BatchDiscoveryQuery(
@@ -405,7 +399,6 @@ class TestDiscoverBatchSourcesUseCase:
 
         use_case = DiscoverBatchSourcesUseCase(
             media_ingestion_port=mock_ingestion,
-            settings=CresmoSettings(_env_file=None),
             progress_callback=notifications.append,
         )
 
@@ -432,7 +425,6 @@ class TestDiscoverBatchSourcesUseCase:
 
         use_case = DiscoverBatchSourcesUseCase(
             media_ingestion_port=mock_ingestion,
-            settings=CresmoSettings(_env_file=None),
             progress_callback=notifications.append,
         )
 
@@ -739,7 +731,6 @@ class TestDiscoverBatchSourcesUseCase:
         mock_ingestion = MagicMock()
         use_case = DiscoverBatchSourcesUseCase(
             media_ingestion_port=mock_ingestion,
-            settings=CresmoSettings(_env_file=None),
         )
 
         now = datetime.now(UTC)
@@ -810,16 +801,15 @@ class TestDiscoverBatchSourcesUseCase:
         mock_ingestion.extract_channel_url_from_video.return_value = None
         mock_ingestion.discover_channel_feed.return_value = []
 
-        settings = CresmoSettings(
-            _env_file=None,
-            data_dir=data_dir,
-            channel_discovery_workers=2,
-            days_lookback=10,
-        )
-
         use_case = DiscoverBatchSourcesUseCase(
             media_ingestion_port=mock_ingestion,
-            settings=settings,
+            discovery_policy=DiscoveryPolicy(discovery_workers=2, lookback_days=10),
+            discovery_paths=DiscoveryPaths(
+                raw_dir=raw_dir,
+                playlist_path=playlist_txt,
+                playlist_priority_path=prio_txt,
+                priority_texts_dir=priority_dir,
+            ),
         )
 
         # Execute with completely empty BatchDiscoveryQuery (defaults trigger all settings fallbacks)
@@ -854,7 +844,6 @@ class TestDiscoverBatchSourcesUseCase:
 
         use_case = DiscoverBatchSourcesUseCase(
             media_ingestion_port=mock_ingestion,
-            settings=CresmoSettings(_env_file=None),
         )
 
         # Test empty videos list returns immediately
@@ -945,7 +934,6 @@ class TestDiscoverBatchSourcesUseCase:
         notifications: list[str] = []
         use_case = DiscoverBatchSourcesUseCase(
             media_ingestion_port=mock_ingestion,
-            settings=CresmoSettings(_env_file=None),
             progress_callback=notifications.append,
         )
 
@@ -1019,7 +1007,6 @@ class TestDiscoverBatchSourcesUseCase:
 
         use_case = DiscoverBatchSourcesUseCase(
             media_ingestion_port=mock_ingestion,
-            settings=CresmoSettings(_env_file=None),
         )
 
         query = BatchDiscoveryQuery(
@@ -1076,7 +1063,6 @@ class TestDiscoverBatchSourcesUseCase:
 
         use_case = DiscoverBatchSourcesUseCase(
             media_ingestion_port=mock_ingestion,
-            settings=CresmoSettings(_env_file=None),
         )
 
         query = BatchDiscoveryQuery(
@@ -1100,7 +1086,6 @@ class TestDiscoverBatchSourcesUseCase:
 
         use_case = DiscoverBatchSourcesUseCase(
             media_ingestion_port=MagicMock(),
-            settings=CresmoSettings(_env_file=None),
         )
 
         query = BatchDiscoveryQuery(
@@ -1133,7 +1118,6 @@ class TestDiscoverBatchSourcesUseCase:
         notifications: list[str] = []
         use_case = DiscoverBatchSourcesUseCase(
             media_ingestion_port=mock_ingestion,
-            settings=CresmoSettings(_env_file=None),
             progress_callback=notifications.append,
         )
 
@@ -1171,7 +1155,6 @@ class TestDiscoverBatchSourcesUseCase:
 
         use_case = DiscoverBatchSourcesUseCase(
             media_ingestion_port=mock_ingestion,
-            settings=CresmoSettings(_env_file=None),
         )
 
         query = BatchDiscoveryQuery(
@@ -1207,7 +1190,6 @@ class TestDiscoverBatchSourcesUseCase:
 
         use_case = DiscoverBatchSourcesUseCase(
             media_ingestion_port=mock_ingestion,
-            settings=CresmoSettings(_env_file=None),
         )
 
         query = BatchDiscoveryQuery(
@@ -1253,7 +1235,6 @@ class TestDiscoverBatchSourcesUseCase:
 
         use_case = DiscoverBatchSourcesUseCase(
             media_ingestion_port=mock_ingestion,
-            settings=CresmoSettings(_env_file=None),
             taxonomy_port=_StubTaxonomy(),
         )
 
@@ -1283,7 +1264,6 @@ class TestDiscoverBatchSourcesUseCase:
 
         use_case = DiscoverBatchSourcesUseCase(
             media_ingestion_port=MagicMock(),
-            settings=CresmoSettings(_env_file=None),
         )
 
         query = BatchDiscoveryQuery(
@@ -1315,10 +1295,9 @@ class TestDiscoverBatchSourcesUseCase:
         mock_ingestion = MagicMock()
         mock_ingestion.extract_channel_url_from_video.return_value = None
 
-        settings = CresmoSettings(discovery_queue_maxsize=2, _env_file=None)
         use_case = DiscoverBatchSourcesUseCase(
             media_ingestion_port=mock_ingestion,
-            settings=settings,
+            discovery_policy=DiscoveryPolicy(queue_maxsize=2),
         )
 
         query = BatchDiscoveryQuery(
@@ -1343,7 +1322,6 @@ class TestDiscoverBatchSourcesUseCase:
         )
         use_case = DiscoverBatchSourcesUseCase(
             media_ingestion_port=MagicMock(),
-            settings=CresmoSettings(_env_file=None),
         )
         sources = list(use_case.execute(BatchDiscoveryQuery(explicit_manifest=manifest)))
         assert len(sources) == 2
@@ -1378,7 +1356,6 @@ class TestDiscoverBatchSourcesUseCase:
         manifest.write_text("", encoding="utf-8")
         use_case = DiscoverBatchSourcesUseCase(
             media_ingestion_port=MagicMock(),
-            settings=CresmoSettings(_env_file=None),
         )
         query = BatchDiscoveryQuery(
             playlist_path=manifest,
@@ -1414,7 +1391,6 @@ class TestDiscoverBatchSourcesUseCase:
 
         use_case = DiscoverBatchSourcesUseCase(
             media_ingestion_port=mock_ingestion,
-            settings=CresmoSettings(_env_file=None),
         )
         probed_channels_captured: list[list[str]] = []
         orig_probe = use_case._crawler_service.probe_channel_feeds
@@ -1463,7 +1439,6 @@ class TestDiscoverBatchSourcesUseCase:
         mock_ingestion.discover_channel_feed.return_value = []
         use_case = DiscoverBatchSourcesUseCase(
             media_ingestion_port=mock_ingestion,
-            settings=CresmoSettings(_env_file=None),
         )
         probed_captured: list[list[str]] = []
         orig_probe = use_case._crawler_service.probe_channel_feeds
@@ -1500,7 +1475,6 @@ class TestDiscoverBatchSourcesUseCase:
         criteria = SyncFilterCriteria(video_ids=("remoteSeed1",))
         use_case = DiscoverBatchSourcesUseCase(
             media_ingestion_port=mock_ingestion,
-            settings=CresmoSettings(_env_file=None),
         )
 
         resolve_kwargs: dict[str, object] = {}
@@ -1572,7 +1546,6 @@ class TestDiscoverBatchSourcesUseCase:
         criteria = SyncFilterCriteria(video_ids=("vidPass",))
         use_case = DiscoverBatchSourcesUseCase(
             media_ingestion_port=MagicMock(),
-            settings=CresmoSettings(_env_file=None),
         )
         query = BatchDiscoveryQuery(
             playlist_path=tmp_path / "playlist.txt",
@@ -1612,7 +1585,6 @@ class TestDiscoverBatchSourcesUseCase:
         manifest.write_text("https://www.youtube.com/watch?v=fallback1\n", encoding="utf-8")
         use_case = DiscoverBatchSourcesUseCase(
             media_ingestion_port=None,
-            settings=CresmoSettings(_env_file=None),
         )
         query = BatchDiscoveryQuery(
             playlist_path=manifest,
@@ -1640,7 +1612,6 @@ class TestDiscoverBatchSourcesUseCase:
         notifications: list[str] = []
         use_case = DiscoverBatchSourcesUseCase(
             media_ingestion_port=MagicMock(),
-            settings=CresmoSettings(_env_file=None),
             progress_callback=notifications.append,
         )
 
@@ -1692,7 +1663,6 @@ class TestDiscoverBatchSourcesUseCase:
 
         use_case = DiscoverBatchSourcesUseCase(
             media_ingestion_port=MagicMock(),
-            settings=CresmoSettings(_env_file=None),
         )
         mock_q = MagicMock()
         err = RuntimeError("test error")
@@ -1729,7 +1699,6 @@ class TestDiscoverBatchSourcesUseCase:
         notifications: list[str] = []
         use_case = DiscoverBatchSourcesUseCase(
             media_ingestion_port=MagicMock(),
-            settings=CresmoSettings(_env_file=None),
             progress_callback=notifications.append,
         )
 
@@ -1781,36 +1750,24 @@ class TestDiscoverBatchSourcesUseCase:
 
         monkeypatch.setattr(queue, "Queue", spy_queue)
 
-        # Case 1: Custom discovery_queue_maxsize on settings (kills XX, DISCOVERY_QUEUE_MAXSIZE)
-        custom_settings = MagicMock()
-        custom_settings.discovery_queue_maxsize = 7
-        custom_settings.priority_texts_dir = None
-        custom_settings.raw_dir = tmp_path / "raw"
-        custom_settings.playlist_priority_path = None
-        custom_settings.playlist_path = tmp_path / "playlist.txt"
-        custom_settings.channel_discovery_workers = 1
-        custom_settings.days_lookback = 1
         (tmp_path / "playlist.txt").write_text("", encoding="utf-8")
+        paths = DiscoveryPaths(
+            raw_dir=tmp_path / "raw",
+            playlist_path=tmp_path / "playlist.txt",
+        )
 
         use_case = DiscoverBatchSourcesUseCase(
             media_ingestion_port=MagicMock(),
-            settings=custom_settings,
+            discovery_policy=DiscoveryPolicy(queue_maxsize=7, discovery_workers=1, lookback_days=1),
+            discovery_paths=paths,
         )
         list(use_case.execute(BatchDiscoveryQuery(enable_channel_crawler=True)))
         assert captured_maxsizes[-1] == 7
 
-        # Case 2: Object without discovery_queue_maxsize (kills None, 51 defaults)
-        class NoMaxsizeSettings:
-            priority_texts_dir = None
-            raw_dir = tmp_path / "raw"
-            playlist_priority_path = None
-            playlist_path = tmp_path / "playlist.txt"
-            channel_discovery_workers = 1
-            days_lookback = 1
-
         use_case_default = DiscoverBatchSourcesUseCase(
             media_ingestion_port=MagicMock(),
-            settings=NoMaxsizeSettings(),  # type: ignore[arg-type]
+            discovery_policy=DiscoveryPolicy(discovery_workers=1, lookback_days=1),
+            discovery_paths=paths,
         )
         list(use_case_default.execute(BatchDiscoveryQuery(enable_channel_crawler=True)))
         assert captured_maxsizes[-1] == 50
@@ -1847,7 +1804,6 @@ class TestDiscoverBatchSourcesUseCase:
         ]
         use_case = DiscoverBatchSourcesUseCase(
             media_ingestion_port=mock_ingestion,
-            settings=CresmoSettings(_env_file=None),
         )
         manifest = tmp_path / "playlist.txt"
         manifest.write_text("https://www.youtube.com/channel/UCChan1\n", encoding="utf-8")
@@ -1872,7 +1828,6 @@ class TestDiscoverBatchSourcesUseCase:
     def test_consume_stream_queue_stops_when_crawler_thread_dies(self) -> None:
         use_case = DiscoverBatchSourcesUseCase(
             media_ingestion_port=MagicMock(),
-            settings=CresmoSettings(_env_file=None),
         )
         stream_q: queue.Queue[BatchSource | None | Exception] = queue.Queue()
         stop_ev = threading.Event()
@@ -1887,7 +1842,6 @@ class TestDiscoverBatchSourcesUseCase:
     def test_consume_stream_queue_stops_when_stop_event_set(self) -> None:
         use_case = DiscoverBatchSourcesUseCase(
             media_ingestion_port=MagicMock(),
-            settings=CresmoSettings(_env_file=None),
         )
         stream_q: queue.Queue[BatchSource | None | Exception] = queue.Queue()
         stop_ev = threading.Event()

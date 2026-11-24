@@ -29,7 +29,6 @@ from cresmo.application.pipeline.stage_factory import StageFactory
 from cresmo.application.ports import (
     ChannelTaxonomyPort,
     CritiqueSynthesizerPort,
-    DefaultPipelineSettings,
     LedgerRepositoryPort,
     LlmJudgePort,
     LLMTransformationPort,
@@ -178,7 +177,9 @@ class TestCresmoPipelineInitializationAndProperties:
         mock_ledger = MagicMock(spec=LedgerRepositoryPort)
         mock_taxonomy = MagicMock(spec=ChannelTaxonomyPort)
 
-        settings = DefaultPipelineSettings(judge_blocking=True, judge_max_attempts=4)
+        from cresmo.domain.value_objects import StageExecutionPolicy
+
+        stage_policy = StageExecutionPolicy(judge_blocking=True, judge_max_attempts=4)
 
         pipeline = CresmoPipeline(
             media_ingestion_port=mock_ingestion,
@@ -192,7 +193,7 @@ class TestCresmoPipelineInitializationAndProperties:
             critique_synthesizer=mock_synth,
             ledger_port=mock_ledger,
             taxonomy_port=mock_taxonomy,
-            settings=settings,
+            stage_policy=stage_policy,
             batch_size=10,
         )
 
@@ -209,9 +210,9 @@ class TestCresmoPipelineInitializationAndProperties:
         assert pipeline.stage_runner.critique_synthesizer is mock_synth
         assert pipeline.stage_runner.ledger_port is mock_ledger
         assert pipeline.stage_factory is not None
-        assert pipeline.stage_factory.settings is settings
+        assert pipeline.stage_factory.policy is stage_policy
         assert pipeline.stage_runner.stage_factory is not None
-        assert pipeline.stage_runner.stage_factory.settings is settings
+        assert pipeline.stage_runner.stage_factory.policy is stage_policy
 
     def test_init_constructing_stage_runner_with_default_prompt_provider_noop(self) -> None:
         mock_ingestion = MagicMock(spec=MediaIngestionPort)
@@ -227,7 +228,7 @@ class TestCresmoPipelineInitializationAndProperties:
 
         assert isinstance(pipeline.stage_runner.prompt_provider, NoOpPromptProviderPort)
 
-    def test_init_constructing_stage_runner_settings_fallbacks_when_attributes_missing(
+    def test_init_constructing_stage_runner_uses_stage_execution_policy_defaults(
         self,
     ) -> None:
         mock_ingestion = MagicMock(spec=MediaIngestionPort)
@@ -238,7 +239,7 @@ class TestCresmoPipelineInitializationAndProperties:
             media_ingestion_port=mock_ingestion,
             vault_port=mock_vault,
             llm_synthesis_port=mock_llm_synth,
-            settings=object(),  # Has neither judge_blocking nor judge_max_attempts
+            stage_policy=None,
         )
         assert pipeline.stage_runner.judge_blocking is False
         assert pipeline.stage_runner.judge_max_attempts == 2
@@ -1076,7 +1077,7 @@ class TestCresmoPipelineRunForSources:
                 mock_vault,
                 file_path,
                 mock_raw,
-                target_dir=pipeline.settings.raw_dir,
+                target_dir=mock_vault.resolve_stage_dir.return_value,
             )
             mock_exec.assert_called_once_with(
                 raw=mock_raw,
