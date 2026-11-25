@@ -118,6 +118,17 @@ class TestLakeScannerHelpers:
         with_cat = SyncFilterCriteria(video_ids=("dQw4w9WgXcQ",), categories=("some_cat",))
         assert _is_unresolved_video_candidate(with_cat, cid, url) is False
 
+        # Cross-host cid vs url_fallback coverage for both helpers
+        cross_host = SyncFilterCriteria(video_ids=("https://youtu.be/dQw4w9WgXcQ",))
+        assert _matches_video_entry(cross_host, cid, url, None) is True
+        assert _is_unresolved_video_candidate(cross_host, cid, url) is True
+
+        list_only = SyncFilterCriteria(video_ids=("list=PL888",))
+        url_with_list = "https://www.youtube.com/watch?v=oHg5SJYRHA0&list=PL888"
+        cid_other = ContentId("oHg5SJYRHA0")
+        assert _matches_video_entry(list_only, cid_other, url_with_list, None) is True
+        assert _is_unresolved_video_candidate(list_only, cid_other, url_with_list) is True
+
 
 class TestLakeScannerService:
     def test_collect_priority_texts(self, tmp_path: Path) -> None:
@@ -284,3 +295,308 @@ class TestLakeScannerService:
         assert any("zebra_channel" in c for c in channels)
         assert len(remote_videos) == 1
         assert "remote_video_1" in remote_videos[0]
+
+    def test_collect_priority_texts_taxonomy_video_id_and_stem_fallback(
+        self, tmp_path: Path
+    ) -> None:
+        from unittest.mock import MagicMock
+
+        priority_dir = tmp_path / "priority_texts"
+        priority_dir.mkdir()
+
+        # File with frontmatter video_id != stem + channel classified by taxonomy
+        f_custom = priority_dir / "stem_custom.md"
+        f_custom.write_text(
+            "---\nvideo_id: front_vid_99\nchannel: kept_chan\n---\nBody",
+            encoding="utf-8",
+        )
+        # File without video_id frontmatter (falls back to stem)
+        f_stem = priority_dir / "stem_only_77.md"
+        f_stem.write_text(
+            "---\nchannel: kept_chan\n---\nBody",
+            encoding="utf-8",
+        )
+        # File rejected by category taxonomy
+        f_other_cat = priority_dir / "other_cat.md"
+        f_other_cat.write_text(
+            "---\nvideo_id: front_vid_99\nchannel: volatile_chan\n---\nBody",
+            encoding="utf-8",
+        )
+
+        taxonomy = MagicMock()
+        taxonomy.classify.side_effect = lambda target: (
+            ("science", "perennial")
+            if "kept_chan" in str(target)
+            else ("news", "volatile")
+        )
+
+        acc1 = _BatchSourceAccumulator()
+        chans1 = LakeScannerService.collect_priority_texts(
+            priority_dir,
+            acc1,
+            filter_criteria=SyncFilterCriteria(
+                video_ids=("front_vid_99",),
+                categories=("perennial",),
+            ),
+            taxonomy_port=taxonomy,
+        )
+        assert [s.target for s in acc1.sources] == [str(f_custom.absolute())]
+        assert len(chans1) == 1
+        assert "kept_chan" in chans1[0]
+
+        acc2 = _BatchSourceAccumulator()
+        LakeScannerService.collect_priority_texts(
+            priority_dir,
+            acc2,
+            filter_criteria=SyncFilterCriteria(video_ids=("stem_only_77",)),
+            taxonomy_port=taxonomy,
+        )
+        assert [s.target for s in acc2.sources] == [str(f_stem.absolute())]
+
+    def test_collect_priority_urls_dedup_criteria_taxonomy_and_unresolved(
+        self, tmp_path: Path
+    ) -> None:
+        from unittest.mock import MagicMock
+
+        priority_file = tmp_path / "priority_urls.txt"
+        priority_file.write_text(
+            "https://www.youtube.com/@kept_chan\n"
+            "https://www.youtube.com/@kept_chan\n"
+            "https://www.youtube.com/@dropped_chan\n"
+            "https://www.youtube.com/watch?v=dQw4w9WgXcQ\n"
+            "https://www.youtube.com/watch?v=oHg5SJYRHA0&list=PL777\n"
+            "https://www.youtube.com/watch?v=seenVid0001\n"
+            "https://www.youtube.com/watch?v=unres000001\n"
+            "https://www.youtube.com/watch?v=unres000001\n"
+            "https://www.youtube.com/watch?v=unres000002&list=PL777\n",
+            encoding="utf-8",
+        )
+        local_map = {
+            "dQw4w9WgXcQ": "https://www.youtube.com/@kept_chan",
+            "oHg5SJYRHA0": "https://www.youtube.com/@kept_chan",
+            "seenVid0001": "https://www.youtube.com/@kept_chan",
+        }
+        taxonomy = MagicMock()
+        taxonomy.classify.side_effect = lambda target: (
+            ("science", "perennial")
+            if "kept_chan" in str(target)
+            else ("news", "volatile")
+        )
+
+        # 1. Cross-host video_id + category + taxonomy filter + seen video dedup
+        acc = _BatchSourceAccumulator()
+        acc.mark_seen("seenVid0001")
+        criteria = SyncFilterCriteria(
+            channels=("kept_chan",),
+            categories=("perennial",),
+            video_ids=("https://youtu.be/dQw4w9WgXcQ", "list=PL777", "seenVid0001"),
+        )
+        chans, unres = LakeScannerService.collect_priority_urls(
+            priority_file,
+            local_video_channel_map=local_map,
+            acc=acc,
+            filter_criteria=criteria,
+            taxonomy_port=taxonomy,
+        )
+        assert chans == ["https://www.youtube.com/@kept_chan/videos"]
+        assert None not in chans
+        assert len(acc.sources) == 2
+        assert {s.content_id for s in acc.sources} == {
+            ContentId("dQw4w9WgXcQ"),
+            ContentId("oHg5SJYRHA0"),
+        }
+        assert unres == []
+
+        # 2. Unresolved videos with video_ids-only criteria deduplicate and respect cross-host/list
+        acc_unres = _BatchSourceAccumulator()
+        _, unres_only = LakeScannerService.collect_priority_urls(
+            priority_file,
+            local_video_channel_map={},
+            acc=acc_unres,
+            filter_criteria=SyncFilterCriteria(
+                video_ids=("https://youtu.be/unres000001", "list=PL777")
+            ),
+        )
+        assert unres_only == [
+            "https://www.youtube.com/watch?v=oHg5SJYRHA0&list=PL777",
+            "https://www.youtube.com/watch?v=unres000001",
+            "https://www.youtube.com/watch?v=unres000002&list=PL777",
+        ]
+
+        # 3. Feed URL taxonomy filtering without local_map, and local_chan taxonomy filtering without feed URL
+        feed_only = tmp_path / "feed_only.txt"
+        feed_only.write_text(
+            "https://www.youtube.com/@kept_chan\n"
+            "https://www.youtube.com/@kept_chan\n"
+            "https://www.youtube.com/@dropped_chan\n",
+            encoding="utf-8",
+        )
+        chans_feed_only, _ = LakeScannerService.collect_priority_urls(
+            feed_only,
+            local_video_channel_map={},
+            acc=_BatchSourceAccumulator(),
+            filter_criteria=SyncFilterCriteria(categories=("perennial",)),
+            taxonomy_port=taxonomy,
+        )
+        assert chans_feed_only == ["https://www.youtube.com/@kept_chan/videos"]
+
+        vid_only = tmp_path / "vid_only.txt"
+        vid_only.write_text(
+            "https://www.youtube.com/watch?v=dQw4w9WgXcQ\n"
+            "https://www.youtube.com/watch?v=dropVid0001\n",
+            encoding="utf-8",
+        )
+        chans_local_only, _ = LakeScannerService.collect_priority_urls(
+            vid_only,
+            local_video_channel_map={
+                "dQw4w9WgXcQ": "https://www.youtube.com/@kept_chan",
+                "dropVid0001": "https://www.youtube.com/@dropped_chan",
+            },
+            acc=_BatchSourceAccumulator(),
+            filter_criteria=SyncFilterCriteria(categories=("perennial",)),
+            taxonomy_port=taxonomy,
+        )
+        assert chans_local_only == ["https://www.youtube.com/@kept_chan/videos"]
+
+    def test_scan_raw_lake_nested_same_name_stem_marking_and_video_id_filter(
+        self, tmp_path: Path
+    ) -> None:
+        raw_dir = tmp_path / "raw_lake"
+        same_name_subdir = raw_dir / "raw_lake"
+        same_name_subdir.mkdir(parents=True)
+        (same_name_subdir / "nested_vid.md").write_text("Body", encoding="utf-8")
+
+        acc_no_fm = _BatchSourceAccumulator()
+        mapping_no_fm = LakeScannerService.scan_raw_lake(
+            raw_dir=raw_dir,
+            scan_raw=True,
+            acc=acc_no_fm,
+            extract_frontmatter=False,
+        )
+        # parent_dir != raw_dir but parent_dir.name == raw_dir.name -> no channel inferred
+        assert mapping_no_fm == {}
+
+        # Frontmatter video_id != stem: stem must still be marked seen, no None in seen_vids,
+        # and video_ids criteria filters on canonical_vid
+        raw_fm = tmp_path / "raw_fm"
+        raw_fm.mkdir()
+        (raw_fm / "local_stem_alpha.md").write_text(
+            "---\nvideo_id: canonical_alpha\nchannel: chan_a\n---\nBody",
+            encoding="utf-8",
+        )
+        (raw_fm / "local_stem_beta.md").write_text(
+            "---\nvideo_id: canonical_beta\nchannel: chan_b\n---\nBody",
+            encoding="utf-8",
+        )
+        acc_fm = _BatchSourceAccumulator()
+        LakeScannerService.scan_raw_lake(
+            raw_dir=raw_fm,
+            scan_raw=True,
+            acc=acc_fm,
+            filter_criteria=SyncFilterCriteria(video_ids=("canonical_alpha",)),
+        )
+        assert [s.target for s in acc_fm.sources] == [
+            str((raw_fm / "local_stem_alpha.md").absolute())
+        ]
+        assert acc_fm.has_seen("local_stem_alpha") is True
+        assert acc_fm.has_seen("local_stem_beta") is True
+        assert acc_fm.has_seen("canonical_beta") is True
+        assert None not in acc_fm.seen_vids
+
+    def test_classify_seeds_criteria_taxonomy_dedup_and_case_insensitive_sort(
+        self, tmp_path: Path
+    ) -> None:
+        from unittest.mock import MagicMock
+
+        seeds_file = tmp_path / "seeds.txt"
+        seeds_file.write_text(
+            "https://www.youtube.com/@alpha\n"
+            "https://www.youtube.com/@alpha\n"
+            "https://www.youtube.com/@_under\n"
+            "https://www.youtube.com/@dropped_feed\n"
+            "https://www.youtube.com/watch?v=dQw4w9WgXcQ\n"
+            "https://www.youtube.com/watch?v=oHg5SJYRHA0&list=PL777\n"
+            "https://www.youtube.com/watch?v=seenVid0001\n"
+            "https://www.youtube.com/watch?v=unres000001\n"
+            "https://www.youtube.com/watch?v=unres000001\n",
+            encoding="utf-8",
+        )
+        local_map = {
+            "dQw4w9WgXcQ": "https://www.youtube.com/@alpha",
+            "oHg5SJYRHA0": "https://www.youtube.com/@dropped_local",
+            "seenVid0001": "https://www.youtube.com/@alpha",
+        }
+        taxonomy = MagicMock()
+        taxonomy.classify.side_effect = lambda target: (
+            ("science", "perennial")
+            if ("alpha" in str(target) or "_under" in str(target) or "Zebra" in str(target))
+            else ("news", "volatile")
+        )
+
+        # 1. Mixed-case + underscore sorting (lambda c: c.lower() puts _under, alpha, Zebra;
+        # key=None puts Zebra before _under and alpha!)
+        acc_sort = _BatchSourceAccumulator()
+        chans_sort, _, probed_sort = LakeScannerService.classify_seeds(
+            playlist_path=seeds_file,
+            local_video_channel_map={"x": "https://www.youtube.com/@Zebra"},
+            acc=acc_sort,
+            filter_criteria=SyncFilterCriteria(categories=("perennial",)),
+            taxonomy_port=taxonomy,
+        )
+        assert chans_sort == [
+            "https://www.youtube.com/@_under",
+            "https://www.youtube.com/@alpha",
+            "https://www.youtube.com/@Zebra",
+        ]
+        assert None not in probed_sort
+        assert None not in chans_sort
+
+        # Local-only channel map with empty playlist verifies Loop 1 taxonomy_port forwarding
+        empty_seeds = tmp_path / "empty_seeds.txt"
+        empty_seeds.write_text("", encoding="utf-8")
+        chans_local_map, _, _ = LakeScannerService.classify_seeds(
+            playlist_path=empty_seeds,
+            local_video_channel_map={
+                "v1": "https://www.youtube.com/@alpha",
+                "v2": "https://www.youtube.com/@dropped_local",
+            },
+            acc=_BatchSourceAccumulator(),
+            filter_criteria=SyncFilterCriteria(categories=("perennial",)),
+            taxonomy_port=taxonomy,
+        )
+        assert chans_local_map == ["https://www.youtube.com/@alpha"]
+
+        # 2. Combined channel + category + cross-host video_id filtering with local_chan
+        acc_filt = _BatchSourceAccumulator()
+        acc_filt.mark_seen("seenVid0001")
+        chans_filt, remote_filt, _ = LakeScannerService.classify_seeds(
+            playlist_path=seeds_file,
+            local_video_channel_map=local_map,
+            acc=acc_filt,
+            filter_criteria=SyncFilterCriteria(
+                channels=("alpha", "dropped_local"),
+                categories=("perennial",),
+                video_ids=("https://youtu.be/dQw4w9WgXcQ", "list=PL777", "seenVid0001"),
+            ),
+            taxonomy_port=taxonomy,
+        )
+        assert chans_filt == ["https://www.youtube.com/@alpha"]
+        assert len(acc_filt.sources) == 1
+        assert acc_filt.sources[0].content_id == ContentId("dQw4w9WgXcQ")
+        assert remote_filt == []
+
+        # 3. Unresolved remote_videos deduplication and video_ids-only filtering
+        acc_rem = _BatchSourceAccumulator()
+        _, remote_only, _ = LakeScannerService.classify_seeds(
+            playlist_path=seeds_file,
+            local_video_channel_map={},
+            acc=acc_rem,
+            filter_criteria=SyncFilterCriteria(
+                video_ids=("https://youtu.be/unres000001", "list=PL777")
+            ),
+        )
+        assert remote_only == [
+            "https://www.youtube.com/watch?v=oHg5SJYRHA0&list=PL777",
+            "https://www.youtube.com/watch?v=unres000001",
+        ]
+        assert len(acc_rem.sources) == 2

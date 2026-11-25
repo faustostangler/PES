@@ -9,7 +9,6 @@ from __future__ import annotations
 
 import hashlib
 import json
-import logging
 from pathlib import Path
 from typing import Any
 
@@ -88,6 +87,28 @@ class TestCalibrationSpecs:
         assert default_seed_specs["wide_expander"].default_seed_path == (
             ds / "seeds" / "wide_expander_seed.json"
         )
+
+    def test_build_stage_specs_raises_when_judge_prompt_key_missing(
+        self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+    ) -> None:
+        from dataclasses import replace
+
+        from cresmo.domain.stage_registry import StageRegistry
+
+        original_get = StageRegistry.get
+
+        def _fake_get(stage_key: str) -> Any:
+            stage_def = original_get(stage_key)
+            if stage_key == "fluid_prose":
+                return replace(stage_def, judge_prompt_key=None)
+            return stage_def
+
+        monkeypatch.setattr(StageRegistry, "get", staticmethod(_fake_get))
+        with pytest.raises(
+            ValueError,
+            match=r"Stage 'fluid_prose' is missing judge_prompt_key in StageRegistry\.",
+        ):
+            build_stage_specs(datasets_dir=tmp_path)
 
     @pytest.mark.parametrize(
         ("spec_str", "default_prov", "expected"),
@@ -194,8 +215,9 @@ class TestCalibrationSpecs:
         assert classify_verdict(cm_rejected, custom) is CalibrationVerdict.APPROVED
 
     def test_compute_config_hash_is_deterministic_and_handles_lookup_errors(
-        self, tmp_path: Path, caplog: pytest.LogCaptureFixture
+        self, tmp_path: Path
     ) -> None:
+        import structlog.testing
         specs = build_stage_specs(datasets_dir=tmp_path)
         spec = specs["fluid_prose"]
         items: list[dict[str, Any]] = [{"id": "a", "text": "São Paulo — café"}]
@@ -224,13 +246,15 @@ class TestCalibrationSpecs:
         def _failing_lookup(_key: PromptKey) -> dict[str, str]:
             raise KeyError("catalog offline")
 
-        with caplog.at_level(logging.DEBUG, logger="cresmo.application.evals.specs"):
+        with structlog.testing.capture_logs() as cap_logs:
             fallback_digest = compute_config_hash(spec, items, 0.85, prompt_lookup=_failing_lookup)
-        assert any(
-            rec.name == "cresmo.application.evals.specs"
-            and "Prompt lookup unavailable for config hash" in rec.getMessage()
-            for rec in caplog.records
-        )
+        assert cap_logs == [
+            {
+                "event": "Prompt lookup unavailable for config hash",
+                "error": "'catalog offline'",
+                "log_level": "debug",
+            }
+        ]
         default_canonical = {
             "stage": "fluid_prose",
             "threshold": 0.85,

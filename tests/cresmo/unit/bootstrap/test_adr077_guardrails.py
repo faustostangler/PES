@@ -144,6 +144,47 @@ def test_metrics_llm_transformation_decorator_observes_success_and_error() -> No
     assert fail_args[1]["labels"] == {"provider": "ollama", "status": "error"}
 
 
+def test_metrics_llm_transformation_decorator_forwards_args_warmup_and_duration(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Verify default provider label, argument forwarding, warmup delegation, and perf_counter delta."""
+    import time
+
+    clock = iter([10.0, 10.35])
+    monkeypatch.setattr(time, "perf_counter", lambda: next(clock))
+
+    mock_metrics = MagicMock(spec=MetricsPort)
+    inner = MagicMock(spec=LLMTransformationPort)
+    inner.transform.return_value = "delegated"
+    decorator = MetricsLLMTransformationDecorator(inner=inner, metrics_port=mock_metrics)
+
+    decorator.warmup()
+    inner.warmup.assert_called_once_with()
+
+    prompt = ChatPrompt.single_turn(user_prompt="Hello")
+    result = decorator.transform(
+        prompt=prompt,
+        temperature=0.4,
+        trace_id="tr-99",
+        session_id="sess-77",
+        user_id="usr-55",
+    )
+
+    assert result == "delegated"
+    inner.transform.assert_called_once_with(
+        prompt=prompt,
+        temperature=0.4,
+        trace_id="tr-99",
+        session_id="sess-77",
+        user_id="usr-55",
+    )
+    mock_metrics.observe_histogram.assert_called_once_with(
+        MetricName.LLM_REQUEST_DURATION,
+        pytest.approx(0.35),
+        labels={"provider": "llm", "status": "success"},
+    )
+
+
 def test_native_media_ingestion_records_failures_and_bounded_duration_labels() -> None:
     """Verify ingest_single_video records INGESTION_FAILURES and MEDIA_INGESTION_DURATION without channel_id."""
     mock_metrics = MagicMock(spec=MetricsPort)

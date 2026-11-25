@@ -106,6 +106,7 @@ class TestRecordSeenIdentifiersHelper:
         assert cid in seen
         assert cid.value in seen
         assert "my_stem" in seen
+        assert None not in seen
 
     def test_records_with_content_id_raw_and_empty_stem(self) -> None:
         seen: set[ContentId | str] = set()
@@ -189,3 +190,14 @@ class TestBatchSourceAccumulator:
         acc.seen_vids.add("isolated_stem")
         assert acc.has_seen("/folder/sub/isolated_stem.txt") is True
         assert acc.has_seen("/folder/sub/unknown_stem.txt") is False
+        assert acc.has_seen("") is False
+
+    def test_add_source_deduplicates_unresolvable_stem_without_leaking_none(self) -> None:
+        acc = _BatchSourceAccumulator()
+        src1 = acc.add_source(kind=SourceModality.FILE, target="/a/b/foo bar.txt")
+        assert src1 is not None
+        assert src1.content_id is None
+        assert None not in acc.seen_vids
+
+        dup = acc.add_source(kind=SourceModality.FILE, target="/c/d/foo bar.txt")
+        assert dup is None

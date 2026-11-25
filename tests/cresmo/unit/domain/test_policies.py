@@ -66,27 +66,39 @@ class TestStageExecutionPolicy:
         assert high.long_expander_max_passes == 10
 
     @pytest.mark.parametrize(
-        "kwargs",
+        ("kwargs", "expected_msg"),
         [
-            {"expansion_max_passes": 0},
-            {"expansion_max_passes": 11},
-            {"expansion_max_passes": True},
-            {"expansion_max_passes": "5"},
-            {"long_expander_max_passes": 0},
-            {"long_expander_max_passes": 11},
-            {"long_expander_max_passes": False},
-            {"judge_max_attempts": 0},
-            {"judge_max_attempts": -1},
-            {"judge_max_attempts": True},
-            {"judge_blocking": 1},
-            {"judge_blocking": "false"},
-            {"saturation_thresholds": "invalid"},
-            {"saturation_thresholds": None},
+            ({"expansion_max_passes": 0}, "expansion_max_passes must be >= 1, got 0."),
+            ({"expansion_max_passes": 11}, "expansion_max_passes must be <= 10, got 11."),
+            ({"expansion_max_passes": True}, "expansion_max_passes must be an integer, got True."),
+            ({"expansion_max_passes": "5"}, "expansion_max_passes must be an integer, got '5'."),
+            ({"long_expander_max_passes": 0}, "long_expander_max_passes must be >= 1, got 0."),
+            ({"long_expander_max_passes": 11}, "long_expander_max_passes must be <= 10, got 11."),
+            (
+                {"long_expander_max_passes": False},
+                "long_expander_max_passes must be an integer, got False.",
+            ),
+            ({"judge_max_attempts": 0}, "judge_max_attempts must be >= 1, got 0."),
+            ({"judge_max_attempts": -1}, "judge_max_attempts must be >= 1, got -1."),
+            ({"judge_max_attempts": True}, "judge_max_attempts must be an integer, got True."),
+            ({"judge_blocking": 1}, "judge_blocking must be a bool, got 1."),
+            ({"judge_blocking": "false"}, "judge_blocking must be a bool, got 'false'."),
+            (
+                {"saturation_thresholds": "invalid"},
+                "saturation_thresholds must be a SaturationThresholds instance.",
+            ),
+            (
+                {"saturation_thresholds": None},
+                "saturation_thresholds must be a SaturationThresholds instance.",
+            ),
         ],
     )
-    def test_invalid_inputs_raise_domain_validation_error(self, kwargs: dict[str, Any]) -> None:
-        with pytest.raises(DomainValidationError):
+    def test_invalid_inputs_raise_domain_validation_error(
+        self, kwargs: dict[str, Any], expected_msg: str
+    ) -> None:
+        with pytest.raises(DomainValidationError) as exc_info:
             StageExecutionPolicy(**kwargs)
+        assert exc_info.value.args[0] == expected_msg
 
 
 class TestDiscoveryPolicy:
@@ -115,22 +127,28 @@ class TestDiscoveryPolicy:
         assert policy.enable_channel_crawler is True
 
     @pytest.mark.parametrize(
-        "kwargs",
+        ("kwargs", "expected_msg"),
         [
-            {"lookback_days": -1},
-            {"lookback_days": False},
-            {"lookback_days": "30"},
-            {"discovery_workers": 0},
-            {"discovery_workers": True},
-            {"queue_maxsize": 0},
-            {"queue_maxsize": True},
-            {"enable_channel_crawler": 0},
-            {"enable_channel_crawler": "true"},
+            ({"lookback_days": -1}, "lookback_days must be >= 0, got -1."),
+            ({"lookback_days": False}, "lookback_days must be an integer, got False."),
+            ({"lookback_days": "30"}, "lookback_days must be an integer, got '30'."),
+            ({"discovery_workers": 0}, "discovery_workers must be >= 1, got 0."),
+            ({"discovery_workers": True}, "discovery_workers must be an integer, got True."),
+            ({"queue_maxsize": 0}, "queue_maxsize must be >= 1, got 0."),
+            ({"queue_maxsize": True}, "queue_maxsize must be an integer, got True."),
+            ({"enable_channel_crawler": 0}, "enable_channel_crawler must be a bool, got 0."),
+            (
+                {"enable_channel_crawler": "true"},
+                "enable_channel_crawler must be a bool, got 'true'.",
+            ),
         ],
     )
-    def test_invalid_inputs_raise_domain_validation_error(self, kwargs: dict[str, Any]) -> None:
-        with pytest.raises(DomainValidationError):
+    def test_invalid_inputs_raise_domain_validation_error(
+        self, kwargs: dict[str, Any], expected_msg: str
+    ) -> None:
+        with pytest.raises(DomainValidationError) as exc_info:
             DiscoveryPolicy(**kwargs)
+        assert exc_info.value.args[0] == expected_msg
 
 
 class TestCompendiumRolloverPolicy:
@@ -148,9 +166,19 @@ class TestCompendiumRolloverPolicy:
         assert policy.max_words == 1
 
     @pytest.mark.parametrize(
-        "max_words",
-        [0, -1, True, False, 100.5, "500"],
+        ("max_words", "expected_msg"),
+        [
+            (0, "max_words must be >= 1, got 0."),
+            (-1, "max_words must be >= 1, got -1."),
+            (True, "max_words must be an integer, got True."),
+            (False, "max_words must be an integer, got False."),
+            (100.5, "max_words must be an integer, got 100.5."),
+            ("500", "max_words must be an integer, got '500'."),
+        ],
     )
-    def test_invalid_max_words_raises_domain_validation_error(self, max_words: Any) -> None:
-        with pytest.raises(DomainValidationError):
+    def test_invalid_max_words_raises_domain_validation_error(
+        self, max_words: Any, expected_msg: str
+    ) -> None:
+        with pytest.raises(DomainValidationError) as exc_info:
             CompendiumRolloverPolicy(max_words=max_words)
+        assert exc_info.value.args[0] == expected_msg

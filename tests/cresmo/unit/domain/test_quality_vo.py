@@ -588,3 +588,62 @@ class TestWeightedAverageAndMechanicalVeto:
         assert multi_veto_eval.extract_critique() == (
             "[CRITICAL MECHANICAL VETO]: Veto A; Veto B\n- ner_preservation: Missing name"
         )
+
+    def test_create_with_composite_verdict_partial_and_full_policy_overrides(self) -> None:
+        # 1. Custom weights only (veto_criteria=None) must still resolve target_stage veto criteria
+        gap_scores = (
+            CriterionScore(JudgeCriterion.EPISTEMIC_GROUNDING_SEGREGATION, 0.50, False),
+            CriterionScore(JudgeCriterion.EXTRA_INFO_GRANULARITY, 1.0, True),
+            CriterionScore(JudgeCriterion.BRAUDELIAN_STRATIFICATION, 1.0, True),
+        )
+        weights_only = JudgeEvaluation.create_with_composite_verdict(
+            target_stage="gap_filler",
+            criteria_scores=gap_scores,
+            provider="gemini",
+            weights={
+                JudgeCriterion.EPISTEMIC_GROUNDING_SEGREGATION: 0.10,
+                JudgeCriterion.EXTRA_INFO_GRANULARITY: 0.45,
+                JudgeCriterion.BRAUDELIAN_STRATIFICATION: 0.45,
+            },
+            veto_criteria=None,
+        )
+        assert weights_only.overall_score == pytest.approx(0.95)
+        assert weights_only.is_vetoed is True
+        assert weights_only.passed is False
+        assert any("epistemic_grounding_segregation" in r for r in weights_only.veto_reasons)
+
+        # 2. Custom veto_criteria only (weights=None) must still resolve target_stage weights
+        veto_only_scores = (
+            CriterionScore(JudgeCriterion.EPISTEMIC_GROUNDING_SEGREGATION, 1.0, True),
+            CriterionScore(JudgeCriterion.EXTRA_INFO_GRANULARITY, 0.50, True),
+        )
+        veto_only = JudgeEvaluation.create_with_composite_verdict(
+            target_stage="gap_filler",
+            criteria_scores=veto_only_scores,
+            provider="gemini",
+            weights=None,
+            veto_criteria=frozenset(),
+        )
+        # Gap filler canonical weights: 0.20 / (0.20 + 0.10) * 1.0 + 0.10 / 0.30 * 0.50 = 0.8333
+        assert veto_only.overall_score == pytest.approx(0.8333)
+        assert veto_only.is_vetoed is False
+        assert veto_only.passed is True
+
+        # 3. Both weights and veto_criteria provided must bypass stage policy resolution
+        both_override_scores = (
+            CriterionScore(JudgeCriterion.SEMANTIC_FAITHFULNESS, 0.50, True),
+            CriterionScore(JudgeCriterion.ORALITY_REMOVAL, 1.0, True),
+        )
+        both_override = JudgeEvaluation.create_with_composite_verdict(
+            target_stage="fluid_prose",
+            criteria_scores=both_override_scores,
+            provider="gemini",
+            weights={
+                JudgeCriterion.SEMANTIC_FAITHFULNESS: 0.10,
+                JudgeCriterion.ORALITY_REMOVAL: 0.90,
+            },
+            veto_criteria=frozenset(),
+        )
+        assert both_override.overall_score == pytest.approx(0.95)
+        assert both_override.is_vetoed is False
+        assert both_override.passed is True

@@ -268,3 +268,56 @@ def test_stage_factory_max_passes_edge_cases_and_unregistered_rejection(
 
     with pytest.raises(KeyError, match="not_in_registry"):
         StageFactory().build_stage("not_in_registry")
+
+
+def test_stage_factory_missing_transform_prompt_key_raises_value_error(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Verify StageDefinition without transform_prompt_key fails fast with descriptive ValueError."""
+    stage_name = "missing_key_stage"
+    monkeypatch.setitem(
+        StageRegistry._SPECS,
+        stage_name,
+        StageDefinition(transform_prompt_key=None),
+    )
+    with pytest.raises(
+        ValueError,
+        match=r"^Stage 'missing_key_stage' is missing transform_prompt_key in StageRegistry\.$",
+    ):
+        StageFactory().build_stage(stage_name)
+
+
+def test_stage_factory_empty_criteria_sets_eval_spec_none_and_wires_eval_metadata(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Verify empty required_criteria yields eval_spec=None and non-empty forwards eval_metadata."""
+    no_eval_stage = "no_eval_stage"
+    monkeypatch.setitem(
+        StageRegistry._SPECS,
+        no_eval_stage,
+        StageDefinition(
+            transform_prompt_key=PromptKey.FLUID_PROSE,
+            required_criteria=(),
+        ),
+    )
+    no_eval_cfg: StageConfig[StageTranscript, StageTranscript] = StageFactory().build_stage(
+        no_eval_stage
+    )
+    assert no_eval_cfg.eval_spec is None
+
+    with_meta_stage = "with_meta_stage"
+    monkeypatch.setitem(
+        StageRegistry._SPECS,
+        with_meta_stage,
+        StageDefinition(
+            transform_prompt_key=PromptKey.FLUID_PROSE,
+            required_criteria=(JudgeCriterion.ORALITY_REMOVAL,),
+            eval_metadata={"rubric": "v2"},
+        ),
+    )
+    meta_cfg: StageConfig[StageTranscript, StageTranscript] = StageFactory().build_stage(
+        with_meta_stage
+    )
+    assert meta_cfg.eval_spec is not None
+    assert meta_cfg.eval_spec.metadata == {"rubric": "v2"}
+    assert meta_cfg.eval_spec.candidate_extractor("plain string") == "plain string"

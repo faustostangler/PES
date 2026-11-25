@@ -155,6 +155,7 @@ class TestCalibrationExecutor:
         assert ctx.candidate_text == "cand"
         assert ctx.stage_name == "fluid_prose"
         assert ctx.required_criteria == spec.required_criteria
+        assert ctx.judge_prompt_key == spec.prompt_key
         assert res.actual == "FAIL"
         assert res.expected == "PASS"
         assert res.target_actual == "PASS"

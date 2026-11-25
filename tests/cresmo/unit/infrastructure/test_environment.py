@@ -234,3 +234,14 @@ class TestDiscoverCookiesFile:
             )
             is None
         )
+
+    def test_accepts_single_byte_non_empty_cookie_file(self, tmp_path: Path) -> None:
+        data_dir = tmp_path / "custom_data"
+        workspace_dir = tmp_path / "workspace"
+        data_dir.mkdir(parents=True)
+        workspace_dir.mkdir(parents=True)
+
+        one_byte = data_dir / "cookies.txt"
+        one_byte.write_bytes(b"x")
+
+        assert discover_cookies_file(data_dir, workspace_dir) == one_byte

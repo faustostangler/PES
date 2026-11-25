@@ -247,6 +247,7 @@ class TestSyncChannelUseCase:
 
         assert summary.processed_count == 1
         assert summary.skipped_count == 0
+        mock_pipeline.warmup.assert_not_called()
         mock_pipeline.run_for_video.assert_not_called()
         mock_ledger_port.save_entry.assert_not_called()
 
@@ -469,6 +470,7 @@ class TestSyncChannelUseCase:
             summary = use_case.execute(query)
 
             mock_ingestion_port.discover_channel_feed.assert_called_once_with(query)
+            mock_pipeline.warmup.assert_not_called()
             assert summary.duration_seconds == 1.123
 
     def test_sync_channel_multiple_skips_and_is_processed_argument(
@@ -616,3 +618,51 @@ class TestSyncChannelUseCase:
         assert summary.failed_count == 2
         assert summary.status == PipelineStatus.FAILED_TRANSFORMATION
         mock_ledger_port.save_entry.assert_not_called()
+
+    def test_sync_channel_accumulates_skipped_count_when_pipeline_reports_already_processed(
+        self,
+        mock_ingestion_port: MagicMock,
+        mock_ledger_port: MagicMock,
+        mock_pipeline: MagicMock,
+    ) -> None:
+        now = datetime.now(UTC)
+        ledger_done = DiscoveredMediaItem(
+            content_id=ContentId("ledgerDone1"),
+            title="Ledger Done",
+            published_at=now - timedelta(hours=1),
+            media_url="https://youtube.com/watch?v=ledgerDone1",
+            channel_name=ChannelName("TestChannel"),
+        )
+        pipeline_done = DiscoveredMediaItem(
+            content_id=ContentId("pipeDone001"),
+            title="Pipeline Already Processed",
+            published_at=now - timedelta(hours=2),
+            media_url="https://youtube.com/watch?v=pipeDone001",
+            channel_name=ChannelName("TestChannel"),
+        )
+        fresh_item = DiscoveredMediaItem(
+            content_id=ContentId("freshItem01"),
+            title="Fresh Item",
+            published_at=now - timedelta(hours=3),
+            media_url="https://youtube.com/watch?v=freshItem01",
+            channel_name=ChannelName("TestChannel"),
+        )
+        mock_ingestion_port.discover_channel_feed.return_value = [
+            ledger_done,
+            pipeline_done,
+            fresh_item,
+        ]
+        mock_ledger_port.is_processed.side_effect = lambda cid: cid == ContentId("ledgerDone1")
+        mock_pipeline.run_for_video.side_effect = [
+            PipelineResult(content_id=ContentId("pipeDone001"), already_processed=True),
+            PipelineResult(content_id=ContentId("freshItem01"), already_processed=False),
+        ]
+
+        use_case = SyncChannelUseCase(mock_ingestion_port, mock_ledger_port, mock_pipeline)
+        summary = use_case.execute(ChannelFeedQuery(channel_url="https://youtube.com/@TestChannel"))
+
+        assert summary.total_discovered == 3
+        assert summary.skipped_count == 2
+        assert summary.processed_count == 1
+        assert summary.failed_count == 0
+        assert summary.status == PipelineStatus.COMPLETED

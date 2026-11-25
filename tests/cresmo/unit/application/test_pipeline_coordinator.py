@@ -26,6 +26,7 @@ from cresmo.application.ports import (
     LlmJudgePort,
     LLMTransformationPort,
     MediaIngestionPort,
+    MetricName,
     MetricsPort,
     NoOpMetricsPort,
     NoOpTelemetryPort,
@@ -37,7 +38,7 @@ from cresmo.domain.entities import (
     StageTranscript,
     UserIdentity,
 )
-from cresmo.domain.exceptions import CresmoDomainError
+from cresmo.domain.exceptions import CresmoDomainError, StageQuarantinedError
 from cresmo.domain.stage_registry import StageName
 from cresmo.domain.value_objects import (
     BatchId,
@@ -47,6 +48,7 @@ from cresmo.domain.value_objects import (
     Content,
     ContentId,
     MediaProvenance,
+    PipelineStatus,
 )
 from tests.doubles.telemetry_fake import InMemoryTelemetryPort
 
@@ -197,7 +199,7 @@ class TestCresmoPipelineExecutionAndIdempotency:
         )
 
     def test_execute_happy_path_produces_full_result_and_telemetry(
-        self, sample_source_transcript: StageTranscript
+        self, sample_source_transcript: StageTranscript, capsys: pytest.CaptureFixture[str]
     ) -> None:
         mock_ingestion = MagicMock(spec=MediaIngestionPort)
         mock_vault = MagicMock(spec=VaultRepositoryPort)
@@ -371,6 +373,20 @@ class TestCresmoPipelineExecutionAndIdempotency:
         assert output_payload["cache_hit_ratio"] == 0.0
         assert output_payload["force_reprocess"] is False
         assert output_payload["expansion_max_passes"] == 3
+        assert (
+            capsys.readouterr().out
+            == "[STAGE] gap_filler\n[STAGE] long_expander\n[STAGE] wide_expander\n"
+        )
+        mock_m.increment_counter.assert_called_once_with(
+            MetricName.TRANSCRIPTS_PROCESSED,
+            1.0,
+            labels={
+                "channel_id": "UC_econ101",
+                "status": "completed",
+                "modality": "transcript",
+            },
+        )
+        mock_m.flush.assert_called_once_with()
 
     def test_execute_records_stage_cache_hit_insights(
         self,
@@ -469,16 +485,28 @@ class TestCresmoPipelineExecutionAndIdempotency:
         mock_runner.execute_stage.return_value = BareFluid()
 
         mock_runner.metrics_port = NoOpMetricsPort()
+        mock_m = MagicMock(spec=MetricsPort)
 
         pipeline = CresmoPipeline(
             media_ingestion_port=mock_ingestion,
             vault_port=mock_vault,
             stage_runner=mock_runner,
             telemetry_port=telemetry,
+            metrics_port=mock_m,
         )
 
         res = pipeline.execute(raw_bare, user=None, batch_id="  str_batch_id  ")
         assert res.already_processed is False
+        mock_m.increment_counter.assert_called_once_with(
+            MetricName.TRANSCRIPTS_PROCESSED,
+            1.0,
+            labels={
+                "channel_id": "",
+                "status": "completed",
+                "modality": "transcript",
+            },
+        )
+        mock_m.flush.assert_called_once_with()
 
         spec = telemetry.spans[0].session_spec
         assert spec is not None
@@ -621,6 +649,29 @@ class TestCresmoPipelineExecutionAndIdempotency:
         assert untitled_payload["content_title"] == ""
         assert untitled_payload["synthesized_characters"] == 0
         assert untitled_payload["synthesized_words"] == 0
+
+        # Asymmetric fallback: wide has text only (no title), long has title, gap has both
+        gap_both = StageTranscript(
+            channel=raw.channel,
+            provenance=raw.provenance,
+            content=Content(id=raw.content.id, title="Gap Title", text="Gap"),
+        )
+        long_both = StageTranscript(
+            channel=raw.channel,
+            provenance=raw.provenance,
+            content=Content(id=raw.content.id, title="Long Title", text="Long body"),
+        )
+        wide_text_only = StageTranscript(
+            channel=raw.channel,
+            provenance=raw.provenance,
+            content=Content(id=raw.content.id, title="", text="Wide body words"),
+        )
+        mock_runner.execute_stage.side_effect = [fluid, gap_both, long_both, wide_text_only]
+        pipeline.execute(raw, force_reprocess=True)
+        asym_text_first = telemetry.spans[2].outputs[0]
+        assert isinstance(asym_text_first, dict)
+        assert asym_text_first["content_title"] == "Long Title"
+        assert asym_text_first["synthesized_words"] == 3
 
     def test_execute_idempotent_skip_when_in_ledger_and_not_force_reprocess(
         self, sample_source_transcript: StageTranscript
@@ -1128,3 +1179,98 @@ class TestCresmoPipelineRunForSources:
             "session_exit:cresmo.pipeline",
             "flush",
         ]
+
+    def test_execute_persists_ledger_entries_across_success_failure_and_quarantine(self) -> None:
+        """Verify RUNNING, COMPLETED, FAILED_TRANSFORMATION ledger transitions and quarantine isolation."""
+        mock_ingestion = MagicMock(spec=MediaIngestionPort)
+        mock_vault = MagicMock(spec=VaultRepositoryPort)
+        mock_vault.get_stage_transcript.return_value = None
+        mock_ledger = MagicMock(spec=LedgerRepositoryPort)
+        mock_ledger.is_processed.return_value = False
+        mock_runner = MagicMock(spec=PipelineStageRunner)
+        mock_runner.telemetry_port = NoOpTelemetryPort()
+        mock_runner.metrics_port = NoOpMetricsPort()
+
+        # 1. Success with http:// URL
+        raw_http = StageTranscript(
+            channel=Channel(name="LedgerChan", id=ChannelId("UC_led")),
+            provenance=MediaProvenance(url="  http://example.com/v1  "),
+            content=Content(id=ContentId("c_led_1"), title="  Ledger Title  ", text="Body text."),
+        )
+        out_stage = StageTranscript(
+            channel=raw_http.channel,
+            provenance=raw_http.provenance,
+            content=Content(id=ContentId("c_led_1"), title="Out", text="Synthesized text."),
+        )
+        mock_runner.execute_stage.return_value = out_stage
+
+        pipeline = CresmoPipeline(
+            media_ingestion_port=mock_ingestion,
+            vault_port=mock_vault,
+            stage_runner=mock_runner,
+            ledger_port=mock_ledger,
+        )
+        pipeline.execute(raw_http, force_reprocess=True)
+
+        assert mock_ledger.save_entry.call_count == 2
+        running_entry = mock_ledger.save_entry.call_args_list[0].args[0]
+        completed_entry = mock_ledger.save_entry.call_args_list[1].args[0]
+        assert running_entry.status == PipelineStatus.RUNNING
+        assert running_entry.media_url == "http://example.com/v1"
+        assert running_entry.title == "Ledger Title"
+        assert running_entry.channel_name == ChannelName.from_string("LedgerChan")
+        assert running_entry.started_at is not None
+        assert running_entry.started_at.tzinfo == UTC
+        assert running_entry.completed_at is None
+
+        assert completed_entry.status == PipelineStatus.COMPLETED
+        assert completed_entry.started_at == running_entry.started_at
+        assert completed_entry.completed_at is not None
+        assert completed_entry.completed_at.tzinfo == UTC
+
+        # 1b. Success with https:// URL preserves exact https:// URL
+        mock_ledger.reset_mock()
+        raw_https = StageTranscript(
+            channel=Channel(name="LedgerChan", id=ChannelId("UC_led")),
+            provenance=MediaProvenance(url="  https://example.com/v2  "),
+            content=Content(id=ContentId("c_led_1b"), title="HTTPS Title", text="Body text."),
+        )
+        pipeline.execute(raw_https, force_reprocess=True)
+        https_entry = mock_ledger.save_entry.call_args_list[0].args[0]
+        assert https_entry.media_url == "https://example.com/v2"
+
+        # 2. Failure with non-http URL and empty title saves FAILED_TRANSFORMATION
+        mock_ledger.reset_mock()
+        raw_local = StageTranscript(
+            channel=Channel(name="LocalChan", id=None),
+            provenance=MediaProvenance(url="file:///tmp/local.md"),
+            content=Content(id=ContentId("c_led_2"), title="   ", text="Body text."),
+        )
+        mock_runner.execute_stage.side_effect = RuntimeError("stage exploded")
+        with pytest.raises(RuntimeError, match="stage exploded"):
+            pipeline.execute(raw_local, force_reprocess=True)
+
+        assert mock_ledger.save_entry.call_count == 2
+        failed_entry = mock_ledger.save_entry.call_args_list[1].args[0]
+        assert failed_entry.status == PipelineStatus.FAILED_TRANSFORMATION
+        assert failed_entry.media_url == "https://cresmo.internal/content/c_led_2"
+        assert failed_entry.title == "Content c_led_2"
+        assert failed_entry.error_message == "stage exploded"
+        assert failed_entry.started_at == mock_ledger.save_entry.call_args_list[0].args[0].started_at
+        assert failed_entry.completed_at is not None
+        assert failed_entry.completed_at.tzinfo == UTC
+
+        # 3. StageQuarantinedError propagates without overwriting ledger as FAILED_TRANSFORMATION
+        mock_ledger.reset_mock()
+        mock_runner.execute_stage.side_effect = StageQuarantinedError(
+            stage_name="fluid_prose",
+            content_id="c_led_2",
+            attempts=2,
+            critique="bad quality",
+            overall_score=0.2,
+        )
+        with pytest.raises(StageQuarantinedError):
+            pipeline.execute(raw_local, force_reprocess=True)
+
+        assert mock_ledger.save_entry.call_count == 1
+        assert mock_ledger.save_entry.call_args_list[0].args[0].status == PipelineStatus.RUNNING

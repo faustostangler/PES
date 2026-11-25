@@ -78,6 +78,40 @@ class TestConcatMasterUseCase:
         )
         assert vid_blank_fallback == ContentId("stem_blank_fallback")
 
+        # 6. Date boundary and non-digit / whitespace channel_category checks
+        # 4-digit year is valid (kills 5 <= len and 4 < len mutants)
+        d4, _, _ = parse_metadata_from_content(
+            "---\nvideo_id: v4\nvideo_date: '2024'\nchannel_category: tech\n---\nBody",
+            channel_name=ChannelName("TestChan"),
+            fallback_stem="stem",
+        )
+        assert d4 == 2024
+
+        # 9-digit number exceeds 8-digit upper bound -> sentinel (kills <= 9 mutant)
+        d9, _, _ = parse_metadata_from_content(
+            "---\nvideo_id: v9\nvideo_date: '202401019'\nchannel_category: tech\n---\nBody",
+            channel_name=ChannelName("TestChan"),
+            fallback_stem="stem",
+        )
+        assert d9 == SENTINEL_FALLBACK_SORT_DATE
+
+        # Non-digit 4-char string -> sentinel instead of int() ValueError (kills 'or' mutant)
+        d_alpha, _, _ = parse_metadata_from_content(
+            "---\nvideo_id: va\nvideo_date: abcd\nchannel_category: tech\n---\nBody",
+            channel_name=ChannelName("TestChan"),
+            fallback_stem="stem",
+        )
+        assert d_alpha == SENTINEL_FALLBACK_SORT_DATE
+
+        # Whitespace-only channel_category falls back to taxonomy (kills str(None).strip() mutant)
+        _, blank_cat_fallback, _ = parse_metadata_from_content(
+            "---\nvideo_id: vc\nvideo_date: 20240101\nchannel_category: '   '\n---\nBody",
+            channel_name=ChannelName("3blue1brown"),
+            fallback_stem="stem",
+            taxonomy_port=_StubTaxonomy(),
+        )
+        assert blank_cat_fallback == "engineering"
+
     def test_empty_channel_returns_empty_list(self, tmp_path: Path) -> None:
         vault = InMemoryVaultAdapter()
         use_case = ConcatMasterUseCase(vault_port=vault)

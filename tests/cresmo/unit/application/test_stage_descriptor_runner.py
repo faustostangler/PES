@@ -10,6 +10,8 @@ from __future__ import annotations
 from typing import Any
 from unittest.mock import MagicMock
 
+import pytest
+
 from cresmo.application.pipeline.context import PipelineExecutionContext
 from cresmo.application.pipeline.models import PipelineDependencies
 from cresmo.application.pipeline.stage_descriptor import StageConfig
@@ -824,3 +826,76 @@ class TestStageConfigPromptBuilding:
         assert len(received_args) == 1
         assert received_args[0][0] is cand
         assert received_args[0][1] is src
+
+    def test_stage_config_rejects_non_callable_saturation_policy_with_type_name(self) -> None:
+        with pytest.raises(
+            TypeError,
+            match=r"^StageConfig\.saturation_policy must be callable, got int\.$",
+        ):
+            StageConfig[str, str](
+                stage_name="bad_sat",
+                transform_prompt_key=PromptKey.FLUID_PROSE,
+                saturation_policy=123,  # type: ignore[arg-type]
+            )
+
+    def test_build_transform_prompt_draft_pass_fallback_variants(self) -> None:
+        mock_provider = MagicMock(spec=PromptProviderPort)
+        mock_provider.get_prompt.return_value = ChatPrompt(
+            messages=(ChatMessage(role=MessageRole.USER, content="Base prompt"),),
+        )
+        cfg = StageConfig[str, str](
+            stage_name="gap_filler",
+            transform_prompt_key=PromptKey.GAP_FILLER,
+        )
+        ctx = PipelineExecutionContext(
+            user_identity=UserIdentity.worker(),
+            channel=Channel(name="Chan", id=ChannelId("UC_1")),
+            content=Content(id=ContentId("vid_draft_var"), title="Title", session_id="sess:dv"),
+        )
+
+        # 1. Default pass_num=2, no prev_pass_num, no total_passes -> <draft pass="1"> and REFINE mode
+        res_default = cfg.build_transform_prompt(
+            mock_provider,
+            source="raw",
+            context=ctx,
+            current_text="draft text",
+        )
+        assert (
+            mock_provider.get_prompt.call_args.kwargs["draft_section"]
+            == '\n<draft pass="1">\ndraft text\n</draft>\n'
+        )
+        assert "[REFINE mode: Iterative Expansion]" in res_default.messages[-1].content
+
+        # 2. pass_num=3, total_passes=None, prev_pass_num=None -> <draft pass="2"> and REFINE mode
+        res_pass3 = cfg.build_transform_prompt(
+            mock_provider,
+            source="raw",
+            context=ctx,
+            pass_num=3,
+            current_text="draft text",
+        )
+        assert '<draft pass="2">\ndraft text\n</draft>' in res_pass3.messages[-1].content
+        assert "[REFINE mode: Iterative Expansion]" in res_pass3.messages[-1].content
+
+        # 3. pass_num=1, total_passes=3, prev_pass_num=None -> clamped <draft pass="1">
+        res_pass1 = cfg.build_transform_prompt(
+            mock_provider,
+            source="raw",
+            context=ctx,
+            pass_num=1,
+            total_passes=3,
+            current_text="draft text",
+        )
+        assert '<draft pass="1">\ndraft text\n</draft>' in res_pass1.messages[-1].content
+        assert "[Pass 1/3 — REFINE mode: Iterative Expansion]" in res_pass1.messages[-1].content
+
+        # 4. Explicit prev_pass_num=5 overrides pass_num calculation
+        res_prev5 = cfg.build_transform_prompt(
+            mock_provider,
+            source="raw",
+            context=ctx,
+            pass_num=2,
+            prev_pass_num=5,
+            current_text="draft text",
+        )
+        assert '<draft pass="5">\ndraft text\n</draft>' in res_prev5.messages[-1].content

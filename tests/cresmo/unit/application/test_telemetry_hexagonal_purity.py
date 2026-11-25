@@ -3,10 +3,12 @@
 from __future__ import annotations
 
 import ast
+import inspect
 from pathlib import Path
 
 import pytest
 
+from cresmo.application.ports.metrics import MetricName, NoOpMetricsPort
 from cresmo.application.ports.telemetry import (
     _LLM_GENERATION_FALLBACK_SPAN_NAME,
     _LLM_GENERATION_SPAN_NAME,
@@ -229,3 +231,24 @@ class TestSessionTelemetrySpecAndPortContracts:
                 )
                 == "cresmo.fluid_prose.generate_fallback.pass_3"
             )
+
+
+class TestMetricsPortContracts:
+    """Verify MetricsPort / NoOpMetricsPort default signatures and non-negative validation."""
+
+    def test_noop_metrics_port_default_increment_and_negative_guards(self) -> None:
+        sig = inspect.signature(NoOpMetricsPort.increment_counter)
+        assert sig.parameters["value"].default == 1.0
+
+        port = NoOpMetricsPort()
+        port.increment_counter(MetricName.PIPELINE_ERRORS)
+        port.increment_counter(MetricName.PIPELINE_ERRORS, value=0.0, labels={"stage": "s"})
+        port.observe_histogram(MetricName.PIPELINE_STAGE_DURATION, value=0.0, labels={"stage": "s"})
+        port.set_gauge(MetricName.DISCOVERY_QUEUE_SIZE, value=5.0, labels={"channel": "c"})
+        port.flush()
+
+        with pytest.raises(ValueError, match=r"^Counter increment must be non-negative$"):
+            port.increment_counter(MetricName.PIPELINE_ERRORS, value=-0.1)
+
+        with pytest.raises(ValueError, match=r"^Histogram observation must be non-negative$"):
+            port.observe_histogram(MetricName.PIPELINE_STAGE_DURATION, value=-0.1)

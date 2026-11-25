@@ -8,12 +8,14 @@ Conforms to:
 from __future__ import annotations
 
 import json
-from typing import Any
+from typing import Any, cast
 from unittest.mock import MagicMock
 
+import httpx
 import pytest
+import structlog.testing
 
-from cresmo.domain.value_objects.prompt import ChatPrompt, PromptKey
+from cresmo.domain.value_objects.prompt import ChatMessage, ChatPrompt, MessageRole, PromptKey
 from cresmo.domain.value_objects.quality import (
     CriterionScore,
     EvaluationContext,
@@ -533,7 +535,8 @@ class TestGeminiJudgeAdapter:
         """Verify GeminiJudgeAdapter retries transient 503 via shared retry helper."""
         from cresmo.infrastructure.adapters.llm.gemini_common import generate_content_with_retry
 
-        monkeypatch.setattr(generate_content_with_retry.retry, "sleep", lambda _: None)
+        retry_controller = cast(Any, generate_content_with_retry).retry
+        monkeypatch.setattr(retry_controller, "sleep", lambda _: None)
 
         mock_client = MagicMock()
         valid_resp = MagicMock(
@@ -571,7 +574,8 @@ class TestGeminiJudgeAdapter:
         """Verify GeminiJudgeAdapter fails over to fallback_model after exhausting 3 primary retries."""
         from cresmo.infrastructure.adapters.llm.gemini_common import generate_content_with_retry
 
-        monkeypatch.setattr(generate_content_with_retry.retry, "sleep", lambda _: None)
+        retry_controller = cast(Any, generate_content_with_retry).retry
+        monkeypatch.setattr(retry_controller, "sleep", lambda _: None)
 
         mock_client = MagicMock()
         valid_resp = MagicMock(
@@ -620,7 +624,8 @@ class TestGeminiJudgeAdapter:
 
         from cresmo.infrastructure.adapters.llm.gemini_common import generate_content_with_retry
 
-        monkeypatch.setattr(generate_content_with_retry.retry, "sleep", lambda _: None)
+        retry_controller = cast(Any, generate_content_with_retry).retry
+        monkeypatch.setattr(retry_controller, "sleep", lambda _: None)
 
         mock_client = MagicMock()
         valid_resp = MagicMock(
@@ -728,6 +733,112 @@ class TestGeminiJudgeAdapter:
         )
         assert judge.model == "gemini-3.8-flash"
         assert judge.fallback_model == "gemini-3.6-flash"
+
+    def test_gemini_judge_credential_pool_init_variants_and_timeout(self) -> None:
+        """Verify api_keys, CSV api_key, client timeout propagation, and unconfigured evaluate."""
+        single_key_judge = GeminiJudgeAdapter(api_keys=["single-key"], timeout_seconds=42.5)
+        assert single_key_judge._pool is not None
+        assert single_key_judge._pool.key_count == 1
+        assert single_key_judge._pool.timeout == 42.5
+
+        csv_key_judge = GeminiJudgeAdapter(api_key=" key-a , , key-b ", timeout_seconds=19.0)
+        assert csv_key_judge._pool is not None
+        assert csv_key_judge._pool.key_count == 2
+        assert csv_key_judge._pool.timeout == 19.0
+
+        client_judge = GeminiJudgeAdapter(client=MagicMock(), timeout_seconds=17.5)
+        assert client_judge._pool is not None
+        assert client_judge._pool.timeout == 17.5
+
+        unconfigured = GeminiJudgeAdapter()
+        context = EvaluationContext(
+            stage_name="fluid_prose",
+            raw_text="raw",
+            candidate_text="cand",
+            required_criteria=(),
+            judge_prompt_key=PromptKey.JUDGE_FLUID_PROSE,
+        )
+        with pytest.raises(ValueError, match="Gemini API key must be provided explicitly"):
+            unconfigured.evaluate(context)
+
+    def test_gemini_judge_maps_chat_turns_system_instruction_and_disables_afc(self) -> None:
+        """Verify multi-turn role mapping, system_instruction forwarding, and AFC disablement."""
+        mock_client = MagicMock()
+        mock_client.models.generate_content.return_value = MagicMock(text="{}")
+
+        mock_prompt_provider = MagicMock()
+        mock_prompt_provider.get_prompt.return_value = ChatPrompt(
+            system_prompt="STRICT SYSTEM INSTRUCTION",
+            messages=(
+                ChatMessage(role=MessageRole.USER, content="First user turn"),
+                ChatMessage(role=MessageRole.ASSISTANT, content="Assistant exemplar"),
+            ),
+        )
+
+        judge = GeminiJudgeAdapter(client=mock_client, prompt_provider=mock_prompt_provider)
+        context = EvaluationContext(
+            stage_name="fluid_prose",
+            raw_text="raw",
+            candidate_text="cand",
+            required_criteria=(),
+            judge_prompt_key=PromptKey.JUDGE_FLUID_PROSE,
+        )
+        judge.evaluate(context)
+
+        _, kwargs = mock_client.models.generate_content.call_args
+        contents = kwargs["contents"]
+        assert len(contents) == 2
+        assert contents[0].role == "user"
+        assert contents[0].parts[0].text == "First user turn"
+        assert contents[1].role == "model"
+        assert contents[1].parts[0].text == "Assistant exemplar"
+
+        config = kwargs["config"]
+        assert config.system_instruction == "STRICT SYSTEM INSTRUCTION"
+        assert config.automatic_function_calling is not None
+        assert config.automatic_function_calling.disable is True
+
+    def test_gemini_judge_empty_response_fallback_and_failover_adapter_label(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """Verify failover logs canonical adapter label and empty response.text falls back to '{}'."""
+        from cresmo.infrastructure.adapters.llm.gemini_common import generate_content_with_retry
+
+        retry_controller = cast(Any, generate_content_with_retry).retry
+        monkeypatch.setattr(retry_controller, "sleep", lambda _: None)
+
+        mock_client = MagicMock()
+        mock_client.models.generate_content.side_effect = [
+            RuntimeError("503 UNAVAILABLE"),
+            RuntimeError("503 UNAVAILABLE"),
+            RuntimeError("503 UNAVAILABLE"),
+            MagicMock(text=""),
+        ]
+
+        judge = GeminiJudgeAdapter(
+            client=mock_client,
+            model="gemini-3.5-flash-lite",
+            fallback_model="gemini-3.6-flash",
+        )
+        context = EvaluationContext(
+            stage_name="fluid_prose",
+            raw_text="raw",
+            candidate_text="cand",
+            required_criteria=(),
+            judge_prompt_key=PromptKey.JUDGE_FLUID_PROSE,
+        )
+
+        with structlog.testing.capture_logs() as logs:
+            evaluation = judge.evaluate(context)
+
+        assert evaluation.criteria_scores == ()
+        assert evaluation.passed is False
+        assert any(
+            entry.get("log_level") == "warning"
+            and "Primary model" in str(entry.get("event", ""))
+            and entry.get("positional_args", (None,))[0] == "GeminiJudgeAdapter"
+            for entry in logs
+        )
 
 
 class TestOllamaJudgeAdapter:
@@ -885,6 +996,111 @@ class TestOllamaJudgeAdapter:
 
         assert args[0] == PromptKey.JUDGE_GAP_FILLER
         assert kwargs["stage_name"] == "gap_filler"
+
+    def test_ollama_judge_default_http_client_and_timeout(self) -> None:
+        """Verify OllamaJudgeAdapter constructs httpx.Client with default and custom timeouts."""
+        default_adapter = OllamaJudgeAdapter()
+        try:
+            assert isinstance(default_adapter._client, httpx.Client)
+            assert default_adapter._client.timeout == httpx.Timeout(120.0)
+        finally:
+            default_adapter._client.close()
+
+        custom_adapter = OllamaJudgeAdapter(timeout_seconds=45.0)
+        try:
+            assert isinstance(custom_adapter._client, httpx.Client)
+            assert custom_adapter._client.timeout == httpx.Timeout(45.0)
+        finally:
+            custom_adapter._client.close()
+
+    def test_ollama_judge_posts_canonical_payload_and_strips_trailing_slash(self) -> None:
+        """Verify endpoint URL normalization and exact Ollama /api/chat JSON payload fields."""
+        mock_http_client = MagicMock()
+        mock_post_resp = MagicMock()
+        mock_post_resp.json.return_value = {"message": {"content": "{}"}}
+        mock_http_client.post.return_value = mock_post_resp
+
+        mock_prompt_provider = MagicMock()
+        mock_prompt_provider.get_prompt.return_value = ChatPrompt.single_turn(
+            user_prompt="USER",
+            system_prompt="SYS",
+        )
+
+        context = EvaluationContext(
+            stage_name="fluid_prose",
+            raw_text="raw",
+            candidate_text="cand",
+            required_criteria=(),
+            judge_prompt_key=PromptKey.JUDGE_FLUID_PROSE,
+        )
+
+        default_adapter = OllamaJudgeAdapter(
+            http_client=mock_http_client,
+            prompt_provider=mock_prompt_provider,
+        )
+        default_adapter.evaluate(context)
+        assert mock_http_client.post.call_args.args[0] == "http://localhost:11434/api/chat"
+        assert mock_http_client.post.call_args.kwargs["json"] == {
+            "model": "qwen2.5:7b",
+            "messages": [
+                {"role": "system", "content": "SYS"},
+                {"role": "user", "content": "USER"},
+            ],
+            "format": "json",
+            "stream": False,
+        }
+
+        mock_http_client.post.reset_mock()
+        custom_adapter = OllamaJudgeAdapter(
+            http_client=mock_http_client,
+            base_url="http://127.0.0.1:11434///",
+            model="llama3.2",
+            prompt_provider=mock_prompt_provider,
+        )
+        assert custom_adapter._client is mock_http_client
+        custom_adapter.evaluate(context)
+        assert mock_http_client.post.call_args.args[0] == "http://127.0.0.1:11434/api/chat"
+        assert mock_http_client.post.call_args.kwargs["json"]["model"] == "llama3.2"
+
+        mock_http_client.post.reset_mock()
+        non_slash_suffix_adapter = OllamaJudgeAdapter(
+            http_client=mock_http_client,
+            base_url="http://127.0.0.1:11434/X",
+            prompt_provider=mock_prompt_provider,
+        )
+        non_slash_suffix_adapter.evaluate(context)
+        assert mock_http_client.post.call_args.args[0] == "http://127.0.0.1:11434/X/api/chat"
+
+    def test_ollama_judge_handles_missing_content_and_non_dict_message(self) -> None:
+        """Verify missing message.content and non-dict message fall back safely to '{}'."""
+        mock_http_client = MagicMock()
+        mock_prompt_provider = MagicMock()
+        mock_prompt_provider.get_prompt.return_value = ChatPrompt.single_turn(user_prompt="U")
+        adapter = OllamaJudgeAdapter(
+            http_client=mock_http_client,
+            prompt_provider=mock_prompt_provider,
+        )
+        context = EvaluationContext(
+            stage_name="fluid_prose",
+            raw_text="raw",
+            candidate_text="cand",
+            required_criteria=(),
+            judge_prompt_key=PromptKey.JUDGE_FLUID_PROSE,
+        )
+
+        mock_resp_empty_msg = MagicMock()
+        mock_resp_empty_msg.json.return_value = {"message": {}}
+        mock_http_client.post.return_value = mock_resp_empty_msg
+        eval_empty = adapter.evaluate(context)
+        assert eval_empty.criteria_scores == ()
+        assert eval_empty.passed is False
+
+        mock_resp_non_dict = MagicMock()
+        mock_resp_non_dict.json.return_value = {"message": "unexpected-string"}
+        mock_http_client.post.return_value = mock_resp_non_dict
+        eval_non_dict = adapter.evaluate(context)
+        assert eval_non_dict.criteria_scores == ()
+        assert eval_non_dict.passed is False
 
 
 class TestTypeSafeJudgeAdapter:

@@ -11,19 +11,29 @@ Conforms to:
 from __future__ import annotations
 
 import sys
-from typing import Annotated
+from typing import Annotated, Any
 
 import typer
 
-from cresmo.bootstrap.composition import (
-    build_concat_master_use_case,
-    resolve_shared_settings,
-)
 from cresmo.domain.value_objects import ChannelName
 from cresmo.presentation.exit_codes import (
     EXIT_INTERNAL_ERROR,
     EXIT_SUCCESS,
 )
+
+
+def resolve_shared_settings(*args: Any, **kwargs: Any) -> Any:
+    """Lazily import composition factory to keep --help and module load instant (ADR-055)."""
+    from cresmo.bootstrap.composition import resolve_shared_settings as _factory
+
+    return _factory(*args, **kwargs)
+
+
+def build_concat_master_use_case(*args: Any, **kwargs: Any) -> Any:
+    """Lazily import composition factory to keep --help and module load instant (ADR-055)."""
+    from cresmo.bootstrap.composition import build_concat_master_use_case as _factory
+
+    return _factory(*args, **kwargs)
 
 
 def concat_master(

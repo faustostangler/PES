@@ -51,6 +51,7 @@ def _make_use_case(
     sources: Iterable[BatchSource] = (),
     concat_master: Any = None,
     runtime_port: Any = None,
+    default_manifest_path: Path | None = Path("data/playlist.txt"),
     capture_discovery_args: list[tuple[BatchDiscoveryQuery, Any]] | None = None,
     capture_media_ports: list[Any] | None = None,
     progress_messages: list[str] | None = None,
@@ -97,6 +98,7 @@ def _make_use_case(
         discover_sources_factory=_discover_factory,
         concat_master_factory=concat_factory,
         runtime_port=runtime_port,
+        default_manifest_path=default_manifest_path,
     )
     return use_case, preflight_checker, pipeline_factory, concat_factory
 
@@ -148,26 +150,38 @@ class TestRunSynthesisUseCase:
         transcript.content.text = "Hello world transcript"
         pipeline.ingest_raw_transcript.execute.return_value = transcript
 
+        events: list[BatchItemEvent] = []
         use_case, _, _, _ = _make_use_case(pipeline=pipeline)
         url = "https://youtube.com/watch?v=dQw4w9WgXcQ"
         req = RunSynthesisRequest(url=url, dry_run=True)
-        outcome = use_case.execute(req)
+        outcome = use_case.execute(req, on_event=events.append)
 
         pipeline.ingest_raw_transcript.execute.assert_called_once_with(video_url=url)
         assert outcome.status is RunExitStatus.SUCCESS
-        assert outcome.mode == "single"
         assert outcome.dry_run is True
-        assert outcome.single_content_id == "dQw4w9WgXcQ"
-        assert outcome.single_dry_run_chars == len("Hello world transcript")
-        assert outcome.single_dry_run_url == url
+        assert outcome.dry_run_validated == 1
+        assert outcome.dry_run_total == 1
+        assert events == [
+            BatchItemEvent(
+                kind=BatchItemEventKind.DRY_RUN_URL,
+                message=f"[1/1] Dry-run ingested: [dQw4w9WgXcQ] ({len('Hello world transcript')} chars)",
+            )
+        ]
         pipeline.run_for_video.assert_not_called()
 
+        events.clear()
         pipeline.ingest_raw_transcript.execute.return_value = None
-        missing_outcome = use_case.execute(req)
-        assert missing_outcome.status is RunExitStatus.INGESTION_ERROR
-        assert missing_outcome.mode == "single"
+        missing_outcome = use_case.execute(req, on_event=events.append)
+        assert missing_outcome.status is RunExitStatus.SUCCESS
         assert missing_outcome.dry_run is True
-        assert missing_outcome.single_dry_run_url == url
+        assert missing_outcome.dry_run_validated == 0
+        assert missing_outcome.dry_run_total == 1
+        assert events == [
+            BatchItemEvent(
+                kind=BatchItemEventKind.DRY_RUN_FAILED,
+                message=f"[1/1] Ingestion failed for: {url}",
+            )
+        ]
 
     def test_single_video_success_consolidates_master_and_handles_warning(self) -> None:
         events: list[BatchItemEvent] = []
@@ -175,12 +189,9 @@ class TestRunSynthesisUseCase:
         cid = ContentId("dQw4w9WgXcQ")
         final_transcript = MagicMock()
         final_transcript.content.text = "Expanded synthesis text."
-        raw_transcript = MagicMock()
-        raw_transcript.channel.name = "Mises"
         pipeline.run_for_video.return_value = MagicMock(
             already_processed=False,
             content_id=cid,
-            source_transcript=raw_transcript,
             stage_artifacts={
                 StageName.FLUID_PROSE: MagicMock(),
                 StageName.WIDE_EXPANDER: final_transcript,
@@ -203,56 +214,32 @@ class TestRunSynthesisUseCase:
         )
 
         assert outcome.status is RunExitStatus.SUCCESS
-        assert outcome.mode == "single"
+        assert outcome.batch_id is not None
+        assert outcome.manifest_display == "https://youtube.com/watch?v=dQw4w9WgXcQ"
         assert outcome.completed == 1
         assert outcome.total_items == 1
-        assert outcome.single_stages_completed == ("fluid_prose", "wide_expander")
-        assert outcome.single_final_chars == len("Expanded synthesis text.")
-        assert outcome.single_content_id == "dQw4w9WgXcQ"
         pipeline.run_for_video.assert_called_once_with(
             video_url="https://youtube.com/watch?v=dQw4w9WgXcQ",
             expansion_max_passes=4,
             force_reprocess=True,
+            batch_id=outcome.batch_id,
         )
         concat_factory.assert_called_with(pipeline.vault_port)
-        concat_master.execute.assert_called_once_with(ChannelName("Mises"))
+        concat_master.execute_all.assert_called_once_with()
 
-        concat_master.execute.side_effect = RuntimeError("Disk full")
+        concat_master.execute_all.side_effect = RuntimeError("Disk full")
         events.clear()
         warn_outcome = use_case.execute(
             RunSynthesisRequest(url="https://youtube.com/watch?v=dQw4w9WgXcQ"),
             on_event=events.append,
         )
         assert warn_outcome.status is RunExitStatus.SUCCESS
-        assert warn_outcome.mode == "single"
+        assert warn_outcome.batch_id is not None
         assert warn_outcome.total_items == 1
-        assert warn_outcome.single_content_id == "dQw4w9WgXcQ"
-        assert events == [
-            BatchItemEvent(
-                kind=BatchItemEventKind.MASTER_WARNING,
-                message="Warning: Master consolidation failed: Disk full",
-            )
-        ]
-
-        concat_master.execute.side_effect = None
-        concat_master.reset_mock()
-        pipeline.run_for_video.return_value = MagicMock(
-            already_processed=False,
-            content_id=cid,
-            source_transcript=None,
-            stage_artifacts={},
-            final_transcript=None,
+        assert events[-1] == BatchItemEvent(
+            kind=BatchItemEventKind.MASTER_WARNING,
+            message="Warning: Master consolidation failed: Disk full",
         )
-        pipeline.vault_port.get_stage_transcript.return_value = None
-        events.clear()
-        no_raw_outcome = use_case.execute(
-            RunSynthesisRequest(url="https://youtube.com/watch?v=dQw4w9WgXcQ"),
-            on_event=events.append,
-        )
-        assert no_raw_outcome.status is RunExitStatus.SUCCESS
-        pipeline.vault_port.get_stage_transcript.assert_called_once_with(StageName.RAW, cid)
-        concat_master.execute.assert_not_called()
-        assert events == []
 
     def test_single_video_skipped_and_failed_exception_channel(self) -> None:
         pipeline = MagicMock()
@@ -267,16 +254,17 @@ class TestRunSynthesisUseCase:
             RunSynthesisRequest(url="https://youtube.com/watch?v=abc123def45")
         )
         assert skipped.status is RunExitStatus.SUCCESS
-        assert skipped.mode == "single"
+        assert skipped.batch_id is not None
         assert skipped.skipped == 1
         assert skipped.total_items == 1
-        assert skipped.single_content_id == "abc123def45"
 
         pipeline.run_for_video.side_effect = CresmoDomainError("Stage aborted")
-        with pytest.raises(CresmoDomainError, match="Stage aborted"):
-            use_case.execute(
-                RunSynthesisRequest(url="https://youtube.com/watch?v=abc123def45")
-            )
+        failed = use_case.execute(
+            RunSynthesisRequest(url="https://youtube.com/watch?v=abc123def45")
+        )
+        assert failed.status is RunExitStatus.INTERNAL_ERROR
+        assert failed.failed == 1
+        assert failed.total_items == 1
 
     def test_batch_dry_run_empty_and_mixed_artifacts_and_urls(self, tmp_path: Path) -> None:
         manifest_file = tmp_path / "manifest.txt"
@@ -285,7 +273,6 @@ class TestRunSynthesisUseCase:
             RunSynthesisRequest(manifest=manifest_file, scan_raw=True, dry_run=True),
         )
         assert empty_outcome.status is RunExitStatus.SUCCESS
-        assert empty_outcome.mode == "batch"
         assert empty_outcome.dry_run is True
         assert empty_outcome.empty_sources is True
         assert empty_outcome.manifest_display == str(manifest_file)
@@ -323,7 +310,6 @@ class TestRunSynthesisUseCase:
         )
 
         assert outcome.status is RunExitStatus.SUCCESS
-        assert outcome.mode == "batch"
         assert outcome.dry_run is True
         assert outcome.dry_run_validated == 3
         assert outcome.dry_run_total == 5
@@ -453,7 +439,6 @@ class TestRunSynthesisUseCase:
         assert captured_ports == [pipeline.media_ingestion_port]
         concat_factory.assert_called_once_with(pipeline.vault_port)
         assert outcome.status is RunExitStatus.INTERNAL_ERROR
-        assert outcome.mode == "batch"
         assert outcome.completed == 2
         assert outcome.skipped == 2
         assert outcome.failed == 4
@@ -590,7 +575,6 @@ class TestRunSynthesisUseCase:
         outcome = use_case.execute(RunSynthesisRequest(), on_event=events.append)
 
         assert outcome.status is RunExitStatus.RATE_LIMITED
-        assert outcome.mode == "batch"
         assert outcome.failed == 2
         assert outcome.total_items == 2
         assert outcome.manifest_display == "data/playlist.txt"
@@ -612,7 +596,6 @@ class TestRunSynthesisUseCase:
             RunSynthesisRequest(manifest=empty_manifest, scan_raw=True)
         )
         assert empty_outcome.status is RunExitStatus.SUCCESS
-        assert empty_outcome.mode == "batch"
         assert empty_outcome.batch_id is not None
         assert empty_outcome.empty_sources is True
         assert empty_outcome.total_items == 0
@@ -644,7 +627,6 @@ class TestRunSynthesisUseCase:
             on_event=events.append,
         )
         assert outcome.status is RunExitStatus.SUCCESS
-        assert outcome.mode == "batch"
         assert outcome.scan_raw is True
         assert outcome.manifest_display == str(batch_manifest)
         assert events == [
@@ -719,14 +701,7 @@ class TestRunSynthesisUseCase:
 
     def test_private_helper_contracts_for_defensive_fallbacks(self) -> None:
         pipeline = MagicMock()
-        pipeline.ingest_raw_transcript.execute.return_value = None
         use_case, _, _, _ = _make_use_case(pipeline=pipeline)
-
-        res = use_case._execute_single_video(
-            pipeline, RunSynthesisRequest(url=None, dry_run=True), None
-        )
-        assert res.status is RunExitStatus.INGESTION_ERROR
-        pipeline.ingest_raw_transcript.execute.assert_called_once_with(video_url="")
 
         batch_id = BatchId.generate()
         source = BatchSource(
@@ -752,3 +727,34 @@ class TestRunSynthesisUseCase:
                 )
                 == "failed"
             )
+
+    def test_single_video_none_final_transcript_and_drain_debug_logging(self) -> None:
+        import structlog.testing
+
+        pipeline = MagicMock()
+        pipeline.run_for_video.return_value = MagicMock(
+            already_processed=False,
+            content_id=ContentId("vid11111111"),
+            source_transcript=None,
+            stage_artifacts={},
+            final_transcript=None,
+        )
+        pipeline.vault_port.get_stage_transcript.return_value = None
+        pipeline.telemetry_port.flush.side_effect = RuntimeError("tele boom")
+        pipeline.metrics_port.flush.side_effect = RuntimeError("metrics boom")
+
+        use_case, _, _, _ = _make_use_case(pipeline=pipeline)
+        outcome = use_case.execute(RunSynthesisRequest(url="https://youtube.com/watch?v=vid11111111"))
+        assert outcome.status is RunExitStatus.SUCCESS
+        assert outcome.completed == 1
+        assert outcome.batch_id is not None
+
+        with structlog.testing.capture_logs() as cap_logs:
+            use_case._drain_telemetry_and_memory(pipeline)
+        assert len(cap_logs) == 2
+        assert cap_logs[0]["event"] == "Telemetry flush failed during batch drain: %s"
+        assert cap_logs[0]["log_level"] == "debug"
+        assert str(cap_logs[0]["positional_args"][0]) == "tele boom"
+        assert cap_logs[1]["event"] == "Metrics/GC drain failed during batch drain: %s"
+        assert cap_logs[1]["log_level"] == "debug"
+        assert str(cap_logs[1]["positional_args"][0]) == "metrics boom"

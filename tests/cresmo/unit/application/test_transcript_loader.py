@@ -198,6 +198,12 @@ class TestFrontmatterParsing:
         assert parsed_body == "Actual content"
         assert meta == {}
 
+    def test_parse_frontmatter_strips_leading_whitespace_only(self) -> None:
+        body = "  \n---\ntitle: Leading Whitespace\n---\nActual content"
+        parsed_body, meta = parse_frontmatter(body)
+        assert parsed_body == "Actual content"
+        assert meta == {"title": "Leading Whitespace"}
+
 
 class TestMetadataResolution:
     """Verifies metadata resolution hierarchy and fallbacks."""
@@ -300,6 +306,14 @@ class TestMetadataResolution:
         assert desc2 == ""
 
     def test_publication_date_and_published_at_resolution(self, tmp_path: Path) -> None:
+        meta_video_date = {
+            "video_date": "2026-01-05",
+            "publication_date": "2026-04-10",
+            "published_at": "2026-05-20",
+        }
+        *_, pub0 = _resolve_metadata(meta_video_date, tmp_path / "test.md", "test")
+        assert pub0 == "2026-01-05"
+
         meta_pub = {"publication_date": "2026-04-10"}
         *_, pub1 = _resolve_metadata(meta_pub, tmp_path / "test.md", "test")
         assert pub1 == "2026-04-10"
@@ -369,6 +383,10 @@ class TestLoadTranscriptFromFile:
             and "Invalid YAML frontmatter ignored" in r.getMessage()
         )
         assert record.name == "cresmo.application.services.frontmatter"
+        msg = record.getMessage()
+        assert msg.startswith("Invalid YAML frontmatter ignored: ")
+        assert not msg.endswith(": None")
+        assert "%s" not in msg
 
     def test_load_transcript_enforces_utf8_encoding(self, tmp_path: Path) -> None:
         file_path = tmp_path / "encoding_test.md"
@@ -437,3 +455,24 @@ def test_coordinator_run_for_text_file_passes_raw_dir(tmp_path: Path) -> None:
 
     # Since file_path is in incoming/ and not in custom_raw/, it must be persisted via vault_port mock
     mock_vault.save_stage_transcript.assert_called_once()
+
+
+def test_ensure_transcript_saved_resolves_raw_dir_when_target_dir_is_none(tmp_path: Path) -> None:
+    from cresmo.application.ports.storage import VaultRepositoryPort
+    from cresmo.domain.stage_registry import StageName
+
+    incoming = tmp_path / "incoming" / "item.md"
+    incoming.parent.mkdir()
+    incoming.write_text("Body text.", encoding="utf-8")
+
+    raw_dir = tmp_path / "vault_raw"
+    raw_dir.mkdir()
+
+    mock_vault = MagicMock(spec=VaultRepositoryPort)
+    mock_vault.resolve_stage_dir.return_value = raw_dir
+    transcript = MagicMock(spec=StageTranscript)
+
+    ensure_transcript_saved(mock_vault, incoming, transcript)
+
+    mock_vault.resolve_stage_dir.assert_called_once_with(StageName.RAW)
+    mock_vault.save_stage_transcript.assert_called_once_with(StageName.RAW, transcript)

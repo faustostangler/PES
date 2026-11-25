@@ -13,16 +13,26 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
-from typing import Annotated
+from typing import Annotated, Any
 
 import typer
 
-from cresmo.bootstrap.composition import (
-    build_unify_duplicates_use_case,
-    resolve_shared_settings,
-)
 from cresmo.presentation.error_handler import handle_cli_exception
 from cresmo.presentation.exit_codes import EXIT_SUCCESS
+
+
+def resolve_shared_settings(*args: Any, **kwargs: Any) -> Any:
+    """Lazily import composition factory to keep --help and module load instant (ADR-055)."""
+    from cresmo.bootstrap.composition import resolve_shared_settings as _factory
+
+    return _factory(*args, **kwargs)
+
+
+def build_unify_duplicates_use_case(*args: Any, **kwargs: Any) -> Any:
+    """Lazily import composition factory to keep --help and module load instant (ADR-055)."""
+    from cresmo.bootstrap.composition import build_unify_duplicates_use_case as _factory
+
+    return _factory(*args, **kwargs)
 
 
 def dedupe(

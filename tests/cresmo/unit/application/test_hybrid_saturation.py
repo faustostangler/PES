@@ -107,15 +107,15 @@ def test_semantic_plateau_calls_embed_batch_once_and_records_provider() -> None:
 
     baseline = (
         "## Bloco Um\n\n"
-        "O controle fiscal das rotas comerciais financiou a defesa das fronteiras marítimas.\n\n"
+        "O controle fiscal das rotas comerciais no reino medieval financiou a defesa das fronteiras.\n\n"
         "### Extra Info\n\n"
         "1. A Casa da Índia centralizava registros aduaneiros e contratos de navegação."
     )
     current = (
         "## Bloco Dois\n\n"
-        "A arrecadação tributária sobre o comércio oceânico sustentou a proteção portuária.\n\n"
+        "A arrecadação tributária sobre o comércio oceânico no reino medieval sustentou portos.\n\n"
         "### Extra Info\n\n"
-        "1. O órgão régio lisboeta supervisionava tarifas marítimas e licenças mercantis."
+        "1. O órgão régio lisboeta supervisionava tarifas marítimas, contratos mercantis e licenças."
     )
 
     verdict = evaluator.evaluate(baseline, current, pass_index=2)
@@ -134,6 +134,8 @@ def test_semantic_plateau_calls_embed_batch_once_and_records_provider() -> None:
     assert verdict.total_paragraphs == 2
     assert verdict.preserve_baseline is False
     assert verdict.provider == "gemini"
+    assert verdict.lexical_jaccard > 0.0
+    assert verdict.word_delta_ratio > 0.0
 
 
 def test_novel_content_calls_embed_batch_once_and_continues() -> None:
@@ -219,6 +221,7 @@ def test_none_embedding_port_preserves_layer1_and_degrades_layer2_to_novel_conte
     assert degraded_verdict.is_saturated is False
     assert degraded_verdict.reason is SaturationReason.NOVEL_CONTENT
     assert degraded_verdict.preserve_baseline is False
+    assert degraded_verdict.provider == "none"
 
 
 def test_mode_none_returns_disabled_verdict_without_embedding() -> None:
@@ -261,6 +264,7 @@ def test_empty_baseline_with_non_empty_current_returns_novel_content_without_emb
     assert verdict.novel_paragraphs == 3
     assert verdict.total_paragraphs == 3
     assert verdict.preserve_baseline is False
+    assert verdict.provider == "lexical"
 
 
 def test_long_paragraph_intra_paragraph_addition_detected_with_tfidf() -> None:
@@ -323,21 +327,30 @@ def test_embedding_infrastructure_error_degrades_gracefully_to_novel_content() -
     assert verdict.provider == "degraded"
     assert verdict.novel_paragraphs == 1
     assert verdict.total_paragraphs == 1
-    assert any(entry.get("log_level") == "warning" for entry in captured_logs)
+    warning_entry = next(entry for entry in captured_logs if entry.get("log_level") == "warning")
+    assert (
+        warning_entry.get("event")
+        == "Embedding port failed during saturation check; degrading to NOVEL_CONTENT."
+    )
+    assert warning_entry.get("provider") == "gemini"
+    assert warning_entry.get("error") == "Upstream 503 unavailable"
 
 
 def test_mismatched_embedding_vector_count_degrades_gracefully() -> None:
     """Verify mismatched embed_batch output length degrades cleanly instead of slicing corrupt vectors."""
+    import structlog.testing
+
     mock_port = MagicMock(spec=TextEmbeddingPort)
     mock_port.provider_name = "gemini"
     mock_port.embed_batch.return_value = [[1.0, 0.0]]  # Expected 2 vectors
     evaluator = HybridSaturationEvaluator(embedding_port=mock_port)
 
-    verdict = evaluator.evaluate(
-        "## A\n\nPrimeiro parágrafo sobre finanças públicas.",
-        "## B\n\nSegundo parágrafo completamente distinto sobre arquitetura naval.",
-        pass_index=2,
-    )
+    with structlog.testing.capture_logs() as captured_logs:
+        verdict = evaluator.evaluate(
+            "## A\n\nPrimeiro parágrafo sobre finanças públicas.",
+            "## B\n\nSegundo parágrafo completamente distinto sobre arquitetura naval.",
+            pass_index=2,
+        )
 
     assert verdict.is_saturated is False
     assert verdict.reason is SaturationReason.NOVEL_CONTENT
@@ -345,6 +358,14 @@ def test_mismatched_embedding_vector_count_degrades_gracefully() -> None:
     assert verdict.provider == "degraded"
     assert verdict.novel_paragraphs == 1
     assert verdict.total_paragraphs == 1
+    warning_entry = next(entry for entry in captured_logs if entry.get("log_level") == "warning")
+    assert (
+        warning_entry.get("event")
+        == "Embedding port returned mismatched vector count; degrading to NOVEL_CONTENT."
+    )
+    assert warning_entry.get("provider") == "gemini"
+    assert warning_entry.get("expected") == 2
+    assert warning_entry.get("actual") == 1
 
 
 def test_none_embedding_port_with_empty_current_returns_semantic_plateau() -> None:
@@ -359,7 +380,103 @@ def test_none_embedding_port_with_empty_current_returns_semantic_plateau() -> No
 
     assert verdict.is_saturated is True
     assert verdict.reason is SaturationReason.SEMANTIC_PLATEAU
+    assert verdict.max_novelty == pytest.approx(0.0)
     assert verdict.preserve_baseline is False
     assert verdict.novel_paragraphs == 0
     assert verdict.total_paragraphs == 0
     assert verdict.provider == "lexical"
+
+
+def test_default_pass_index_is_one_for_evaluate_and_callable() -> None:
+    """Verify omitted pass_index defaults to 1 so explicit stop sentinel is not triggered on Pass 1."""
+    evaluator = HybridSaturationEvaluator(embedding_port=None)
+    baseline = "## Origens\n\nParágrafo histórico inicial sobre instituições fiscais."
+
+    verdict_eval = evaluator.evaluate(baseline, NO_NEW_GAPS_SENTINEL)
+    verdict_call = evaluator(baseline, NO_NEW_GAPS_SENTINEL)
+
+    assert verdict_eval.reason is not SaturationReason.EXPLICIT_SENTINEL
+    assert verdict_call.reason is not SaturationReason.EXPLICIT_SENTINEL
+
+
+def test_custom_thresholds_govern_lexical_segmentation_and_semantic_gates() -> None:
+    """Verify SaturationThresholds are forwarded to lexical, unit-segmentation, and semantic evaluators."""
+    # 1. Custom lexical thresholds trigger LEXICAL_IDENTITY below default 0.95/0.03
+    lexical_eval = HybridSaturationEvaluator(
+        embedding_port=None,
+        thresholds=SaturationThresholds(
+            lexical_identity_threshold=0.45,
+            max_lexical_word_delta=0.25,
+        ),
+    )
+    lex_verdict = lexical_eval.evaluate(
+        "O controle fiscal das rotas comerciais no reino medieval financiou navios.",
+        "O controle fiscal das rotas comerciais no reino medieval sustentou armadas.",
+        pass_index=2,
+    )
+    assert lex_verdict.is_saturated is True
+    assert lex_verdict.reason is SaturationReason.LEXICAL_IDENTITY
+
+    # 2. Custom long_unit_word_cutoff / sliding_window_* split both baseline and current into 3 windows each
+    mock_seg_port = MagicMock(spec=TextEmbeddingPort)
+    mock_seg_port.provider_name = "gemini"
+    mock_seg_port.embed_batch.return_value = [
+        [1.0, 0.0],
+        [0.0, 1.0],
+        [1.0, 1.0],
+        [1.0, 0.0],
+        [0.0, 1.0],
+        [1.0, 1.0],
+    ]
+    seg_eval = HybridSaturationEvaluator(
+        embedding_port=mock_seg_port,
+        thresholds=SaturationThresholds(
+            long_unit_word_cutoff=6,
+            sliding_window_sentences=2,
+            sliding_window_overlap=0,
+        ),
+    )
+    five_sent_base = (
+        "Alpha sentence one. Beta sentence two. Gamma sentence three. "
+        "Delta sentence four. Epsilon sentence five."
+    )
+    five_sent_curr = (
+        "Zeta clause one. Eta clause two. Theta clause three. "
+        "Iota clause four. Kappa clause five."
+    )
+    seg_verdict = seg_eval.evaluate(five_sent_base, five_sent_curr, pass_index=2)
+    assert len(mock_seg_port.embed_batch.call_args.args[0]) == 6
+    assert seg_verdict.total_paragraphs == 3
+
+    # 3. Custom semantic_similarity_threshold=0.99 treats 0.95 cosine similarity as NOVEL_CONTENT
+    mock_sem_port = MagicMock(spec=TextEmbeddingPort)
+    mock_sem_port.provider_name = "gemini"
+    mock_sem_port.embed_batch.return_value = [
+        [1.0, 0.0],
+        [0.95, 0.3122499],
+    ]
+    sem_eval = HybridSaturationEvaluator(
+        embedding_port=mock_sem_port,
+        thresholds=SaturationThresholds(semantic_similarity_threshold=0.99),
+    )
+    sem_verdict = sem_eval.evaluate(
+        "## A\n\nPrimeiro argumento fiscal medieval.",
+        "## B\n\nSegundo argumento marítimo atlântico.",
+        pass_index=2,
+    )
+    assert sem_verdict.is_saturated is False
+    assert sem_verdict.reason is SaturationReason.NOVEL_CONTENT
+
+
+def test_empty_last_provider_name_falls_back_to_port_provider_name() -> None:
+    """Verify empty last_provider_name falls back to embedding_port.provider_name."""
+    stub_port = _ResilientStubEmbeddingPort(vectors=[[1.0, 0.0], [1.0, 0.0]])
+    stub_port.last_provider_name = ""
+    evaluator = HybridSaturationEvaluator(embedding_port=stub_port)
+
+    verdict = evaluator.evaluate(
+        "## A\n\nPrimeiro texto sobre crédito régio.",
+        "## B\n\nSegundo texto sobre tesouro público.",
+        pass_index=2,
+    )
+    assert verdict.provider == "gemini"

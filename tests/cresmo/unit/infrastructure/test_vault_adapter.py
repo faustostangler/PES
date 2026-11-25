@@ -36,6 +36,7 @@ from cresmo.domain.value_objects import (
 )
 from cresmo.infrastructure.adapters.obsidian.adapter import ObsidianVaultAdapter
 from cresmo.infrastructure.adapters.obsidian.catalog import ChannelCatalogHandler
+from cresmo.infrastructure.adapters.obsidian.transcripts import TranscriptVaultHandler
 from cresmo.infrastructure.adapters.obsidian.utils import (
     atomic_write,
     channel_to_slug,
@@ -1575,3 +1576,176 @@ class TestChannelCatalogHandlerAndUtils:
         handler.append_brain_csv_entry(entry)
         csv_twice = csv_file.read_text(encoding="utf-8")
         assert csv_twice.count('"channel_category";"channel_name"') == 1
+
+    def test_catalog_handler_ignores_invalid_utf8_bytes_in_index(self, tmp_path: Path) -> None:
+        data_dir = tmp_path / "data"
+        handler = ChannelCatalogHandler(data_dir=data_dir)
+        ch = ChannelName("CorruptBytesChan")
+        idx_path = handler._get_channel_index_path(ch)
+        idx_path.parent.mkdir(parents=True, exist_ok=True)
+        idx_path.write_bytes(b"\xff\xfe\n- **Video ID**: `vid_utf8_ok`\n")
+
+        assert handler.get_indexed_video_ids_for_channel(ch) == {ContentId("vid_utf8_ok")}
+
+    def test_catalog_handler_zero_byte_files_exact_format_and_nested_brain_csv(
+        self, tmp_path: Path
+    ) -> None:
+        nested_data_dir = tmp_path / "nested" / "lake"
+        handler = ChannelCatalogHandler(data_dir=nested_data_dir)
+        ch = ChannelName("Economics")
+        entry = RawIndexEntry(
+            channel_name=ch,
+            channel_category="Social Sciences",
+            video_id=ContentId("vid_econ_02"),
+            title="Capital Allocation",
+            key_concept="Interest Rates",
+            synthesis="Interest rates coordinate intertemporal consumption and investment.",
+            url="https://youtube.com/watch?v=vid_econ_02",
+        )
+
+        # Appending to brain.csv first creates missing nested parent directories
+        handler.append_brain_csv_entry(entry)
+        nested_csv = nested_data_dir / "brain.csv"
+        assert nested_csv.exists()
+        assert '"Interest Rates"' in nested_csv.read_text(encoding="utf-8")
+
+        # Pre-existing zero-byte index and brain.csv must still receive headers and exact separators
+        zero_data_dir = tmp_path / "zero_data"
+        zero_handler = ChannelCatalogHandler(data_dir=zero_data_dir)
+        idx_path = zero_handler._get_channel_index_path(ch)
+        idx_path.parent.mkdir(parents=True, exist_ok=True)
+        idx_path.write_text("", encoding="utf-8")
+        csv_path = zero_data_dir / "brain.csv"
+        csv_path.write_text("", encoding="utf-8")
+
+        zero_handler.append_channel_index_entry(ch, entry)
+        zero_handler.append_channel_index_entry(ch, entry)
+        expected_block = entry.to_markdown_block() + "\n---\n\n"
+        assert (
+            idx_path.read_text(encoding="utf-8")
+            == f"# Canal: Economics\n\n{expected_block}{expected_block}"
+        )
+
+        zero_handler.append_brain_csv_entry(entry)
+        csv_text = csv_path.read_text(encoding="utf-8")
+        assert '"channel_category";"channel_name";"filename";"key_concept";"synthesis"' in csv_text
+
+    def test_transcript_handler_metadata_date_untitled_and_existing_heading(
+        self, tmp_path: Path
+    ) -> None:
+        data_dir = tmp_path / "data"
+        handler = TranscriptVaultHandler(data_dir=data_dir)
+        ch = Channel(name=ChannelName("History"))
+
+        untitled = StageTranscript(
+            channel=ch,
+            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=vid_untitled1"),
+            content=Content(id=ContentId("vid_untitled1"), title="", text="Body without heading."),
+            metadata={"video_date": "20240115"},
+        )
+        handler.save_stage_transcript(StageName.GAP_FILLER, untitled)
+        untitled_path = data_dir / "gap_filler" / "History" / "vid_untitled1.md"
+        untitled_raw = untitled_path.read_text(encoding="utf-8")
+        assert "video_date: 20240115\n" in untitled_raw
+        assert "\n\n# Untitled Compendium\n\nBody without heading." in untitled_raw
+
+        headed = StageTranscript(
+            channel=ch,
+            provenance=MediaProvenance.create(url="https://youtube.com/watch?v=vid_headed001"),
+            content=Content(
+                id=ContentId("vid_headed001"),
+                title="Ignored Title",
+                text="# Existing Heading\n\nBody already headed.",
+            ),
+        )
+        handler.save_stage_transcript(StageName.GAP_FILLER, headed)
+        headed_path = data_dir / "gap_filler" / "History" / "vid_headed001.md"
+        headed_raw = headed_path.read_text(encoding="utf-8")
+        assert "\n\n# Existing Heading\n\nBody already headed." in headed_raw
+        assert "# Ignored Title" not in headed_raw
+
+        # Verify str stage_name works identically to StageName enum in get_stage_files_for_channel
+        files = handler.get_stage_files_for_channel("gap_filler", ChannelName("History"))
+        assert files == sorted([headed_path, untitled_path])
+
+    def test_transcript_handler_deserialize_iso_dates_invalid_fields_and_metadata(
+        self, tmp_path: Path
+    ) -> None:
+        data_dir = tmp_path / "data"
+        handler = TranscriptVaultHandler(data_dir=data_dir)
+        raw_dir = data_dir / "raw" / "Chan"
+        raw_dir.mkdir(parents=True)
+
+        # Case A: ISO datetime truncated to [:10], empty video_title on raw, invalid str pass_count,
+        # channel_id session_id, Extra Info H1 stripping, and raw_date metadata retention
+        cid_a = ContentId("vid_iso_a")
+        (raw_dir / f"{cid_a.value}.md").write_text(
+            "---\n"
+            'video_title: ""\n'
+            f"video_id: {cid_a.value}\n"
+            'channel_name: "Chan"\n'
+            "channel_id: UC_999\n"
+            'channel_category: "cat"\n'
+            "url: https://youtube.com/watch?v=vid_iso_a\n"
+            'video_date: "2023-05-17T12:30:00Z"\n'
+            'pass_count: "not-an-int"\n'
+            "video_description: |\n  desc\n"
+            "---\n\n"
+            "# Heading\nLine 1\nLine 2\n\n### Extra Info\nDetails\n",
+            encoding="utf-8",
+        )
+        retrieved_a = handler.get_stage_transcript("raw", cid_a)
+        assert retrieved_a is not None
+        assert retrieved_a.provenance.publication_date == date(2023, 5, 17)
+        assert retrieved_a.content.title == ""
+        assert retrieved_a.pass_count is None
+        assert retrieved_a.content.session_id == "UC_999:vid_iso_a"
+        assert retrieved_a.content.text == "Line 1\nLine 2\n\n### Extra Info\nDetails"
+        assert retrieved_a.metadata == {"video_date": "2023-05-17T12:30:00Z"}
+
+        # Case B: 8-digit invalid calendar date suppressed, non-int list pass_count TypeError suppressed
+        cid_b = ContentId("vid_bad_b")
+        (raw_dir / f"{cid_b.value}.md").write_text(
+            "---\n"
+            'video_title: "B"\n'
+            f"video_id: {cid_b.value}\n"
+            'channel_name: "Chan"\n'
+            "video_date: 20239999\n"
+            "pass_count: [1, 2]\n"
+            "---\n\nBody B\n",
+            encoding="utf-8",
+        )
+        retrieved_b = handler.get_stage_transcript("raw", cid_b)
+        assert retrieved_b is not None
+        assert retrieved_b.provenance.publication_date is None
+        assert retrieved_b.pass_count is None
+
+        # Case C: Non-ISO invalid date string returns None (not ""), missing video_date yields {}
+        cid_c = ContentId("vid_bad_c")
+        (raw_dir / f"{cid_c.value}.md").write_text(
+            "---\n"
+            'video_title: "C"\n'
+            f"video_id: {cid_c.value}\n"
+            'channel_name: "Chan"\n'
+            'video_date: "not-a-date"\n'
+            "---\n\nBody C\n",
+            encoding="utf-8",
+        )
+        retrieved_c = handler.get_stage_transcript("raw", cid_c)
+        assert retrieved_c is not None
+        assert retrieved_c.provenance.publication_date is None
+
+        cid_d = ContentId("vid_nodate_d")
+        (raw_dir / f"{cid_d.value}.md").write_text(
+            "---\n"
+            'video_title: "D"\n'
+            f"video_id: {cid_d.value}\n"
+            'channel_name: "Chan"\n'
+            "video_date:\n"
+            "---\n\nBody D\n",
+            encoding="utf-8",
+        )
+        retrieved_d = handler.get_stage_transcript("raw", cid_d)
+        assert retrieved_d is not None
+        assert retrieved_d.provenance.publication_date is None
+        assert retrieved_d.metadata == {}

@@ -17,6 +17,7 @@ from cresmo.application.pipeline.stage_descriptor import StageConfig
 from cresmo.application.pipeline.stage_runner import PipelineStageRunner
 from cresmo.application.ports import (
     LLMTransformationPort,
+    MetricName,
     NoOpMetricsPort,
     NoOpPromptProviderPort,
     NoOpTelemetryPort,
@@ -1811,3 +1812,121 @@ class TestStageRunnerStageExecutionAndFallback:
             metrics_port=mock_m,
         )
         assert mock_judge.evaluate.call_args[0][0].observation_id is None
+
+    def test_measure_stage_execution_records_duration_and_error_metrics(self) -> None:
+        from cresmo.application.pipeline.stage_telemetry import measure_stage_execution
+
+        telemetry = InMemoryTelemetryPort()
+        mock_m = MagicMock()
+        ctx_with_id = PipelineExecutionContext(
+            user_identity=UserIdentity.worker(),
+            channel=Channel(name="MetCh", id=ChannelId("UC_met")),
+            content=Content(id=ContentId("vid_met_1"), title="T", session_id="met:1"),
+        )
+        with measure_stage_execution(telemetry, mock_m, stage_name="fluid_prose", context=ctx_with_id):
+            pass
+
+        mock_m.increment_counter.assert_not_called()
+        mock_m.observe_histogram.assert_called_once()
+        hist_args = mock_m.observe_histogram.call_args
+        assert hist_args.args[0] == MetricName.PIPELINE_STAGE_DURATION
+        assert hist_args.args[1] >= 0.0
+        assert hist_args.kwargs == {
+            "labels": {"stage": "fluid_prose", "channel_id": "UC_met", "status": "success"}
+        }
+
+        mock_m.reset_mock()
+        ctx_no_id = PipelineExecutionContext(
+            user_identity=UserIdentity.worker(),
+            channel=Channel(name="MetChNoId", id=None),
+            content=Content(id=ContentId("vid_met_2"), title="T", session_id="met:2"),
+        )
+        with (
+            pytest.raises(ValueError, match="metric boom"),
+            measure_stage_execution(telemetry, mock_m, stage_name="gap_filler", context=ctx_no_id),
+        ):
+            raise ValueError("metric boom")
+
+        mock_m.increment_counter.assert_called_once_with(
+            MetricName.PIPELINE_ERRORS,
+            1.0,
+            labels={"error_type": "ValueError", "channel_id": "", "stage": "gap_filler"},
+        )
+        mock_m.observe_histogram.assert_called_once()
+        err_hist_args = mock_m.observe_histogram.call_args
+        assert err_hist_args.args[0] == MetricName.PIPELINE_STAGE_DURATION
+        assert err_hist_args.args[1] >= 0.0
+        assert err_hist_args.kwargs == {
+            "labels": {"stage": "gap_filler", "channel_id": "", "status": "failure"}
+        }
+
+    def test_stage_runner_forwards_trace_id_telemetry_judge_key_and_single_word_ratio(self) -> None:
+        from cresmo.application.services.hybrid_saturation import HybridSaturationEvaluator
+
+        ctx = PipelineExecutionContext(
+            user_identity=UserIdentity.worker(),
+            channel=Channel(name="EdgeChan", id=ChannelId("UC_edge")),
+            content=Content(
+                id=ContentId("vid_edge_02"), title="Edge Title", session_id="edge:2"
+            ),
+        )
+
+        # 1. True zero effective_max_attempts (max_attempts=0, eval_spec=None, judge_max_attempts=0)
+        telemetry_zero = InMemoryTelemetryPort()
+        runner_zero = _make_runner(
+            telemetry_port=telemetry_zero,
+            metrics_port=NoOpMetricsPort(),
+            judge_max_attempts=0,
+        )
+        cfg_zero = StageConfig[str, CandidateText](
+            stage_name="fluid_prose",
+            transform_prompt_key=PromptKey.FLUID_PROSE,
+            max_attempts=0,
+            eval_spec=None,
+        )
+        with pytest.raises(
+            DomainValidationError, match=r"^Stage 'fluid_prose' produced no candidate text\.$"
+        ):
+            runner_zero.execute_stage(cfg_zero, "single", context=ctx)
+
+        # 2. execute_stage forwards active_trace_id, telemetry_port for saturation spans, and 1-word ratio
+        sat_telemetry = InMemoryTelemetryPort(trace_id="f" * 32)
+        mock_llm = MagicMock(spec=LLMTransformationPort)
+        mock_llm.transform.side_effect = ["One two", "One two"]
+        mock_judge = MagicMock()
+        mock_judge.evaluate.return_value = JudgeEvaluation(
+            target_stage="gap_filler",
+            passed=True,
+            overall_score=0.95,
+            criteria_scores=(),
+            provider="test",
+        )
+        runner_sat = _make_runner(
+            telemetry_port=sat_telemetry,
+            metrics_port=NoOpMetricsPort(),
+            llm_transformation_port=mock_llm,
+            llm_judge=mock_judge,
+            judge_max_attempts=1,
+        )
+        cfg_sat = StageConfig[str, CandidateText](
+            stage_name="gap_filler",
+            transform_prompt_key=PromptKey.GAP_FILLER,
+            judge_prompt_key=PromptKey.JUDGE_GAP_FILLER,
+            eval_spec=StageEvaluationSpec(
+                candidate_extractor=lambda c: c.text,
+                required_criteria=(JudgeCriterion.ORALITY_REMOVAL,),
+                max_attempts=1,
+            ),
+            max_attempts=1,
+            max_passes=2,
+            saturation_policy=HybridSaturationEvaluator(),
+        )
+        runner_sat.execute_stage(cfg_sat, "Singleword", context=ctx)
+
+        assert mock_llm.transform.call_args_list[0].kwargs["trace_id"] == f"{'f' * 32}_pass_1"
+        assert "cresmo.gap_filler.saturation.pass_1" in [s.name for s in sat_telemetry.spans]
+        assert mock_judge.evaluate.call_args[0][0].judge_prompt_key == PromptKey.JUDGE_GAP_FILLER
+        stage_span = next(s for s in sat_telemetry.spans if s.name == "cresmo.gap_filler")
+        stage_output = stage_span.outputs[0]
+        assert isinstance(stage_output, dict)
+        assert stage_output["expansion_ratio"] == 2.0

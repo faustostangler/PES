@@ -14,7 +14,7 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
-from typing import Annotated
+from typing import Annotated, Any
 
 import typer
 
@@ -25,7 +25,6 @@ from cresmo.application.use_cases.run_synthesis import (
     RunSynthesisOutcome,
     RunSynthesisRequest,
 )
-from cresmo.bootstrap.composition import build_run_synthesis_use_case
 from cresmo.presentation.error_handler import handle_cli_exception
 from cresmo.presentation.exit_codes import (
     EXIT_INGESTION_ERROR,
@@ -33,6 +32,13 @@ from cresmo.presentation.exit_codes import (
     EXIT_RATE_LIMIT_EXCEEDED,
     EXIT_SUCCESS,
 )
+
+
+def build_run_synthesis_use_case(*args: Any, **kwargs: Any) -> Any:
+    """Lazily import composition factory to keep --help and module load instant (ADR-055)."""
+    from cresmo.bootstrap.composition import build_run_synthesis_use_case as _factory
+
+    return _factory(*args, **kwargs)
 
 _STATUS_TO_EXIT_CODE: dict[RunExitStatus, int] = {
     RunExitStatus.SUCCESS: EXIT_SUCCESS,
@@ -185,31 +191,6 @@ def _render_event(event: BatchItemEvent) -> None:
 
 def _render_outcome(outcome: RunSynthesisOutcome) -> int:
     """Render terminal synthesis summary and return canonical exit code."""
-    if outcome.mode == "single":
-        if outcome.dry_run:
-            if outcome.status is RunExitStatus.INGESTION_ERROR:
-                sys.stderr.write(
-                    f"Dry-run ingestion returned no transcript for {outcome.single_dry_run_url}\n"
-                )
-            else:
-                sys.stdout.write(
-                    f"Dry run successful for [{outcome.single_content_id}]: "
-                    f"Transcript length: {outcome.single_dry_run_chars} characters.\n"
-                )
-        elif outcome.skipped > 0:
-            sys.stdout.write(
-                f"[SKIPPED] Content [{outcome.single_content_id}] was already marked as COMPLETED "
-                "in the ledger. Use --force-reprocess to bypass.\n"
-            )
-        else:
-            stages_label = ", ".join(outcome.single_stages_completed) or "none"
-            sys.stdout.write(
-                f"Synthesis completed successfully for [{outcome.single_content_id}]: "
-                f"{len(outcome.single_stages_completed)} stage(s) completed ({stages_label}), "
-                f"{outcome.single_final_chars} chars.\n"
-            )
-        return _STATUS_TO_EXIT_CODE[outcome.status]
-
     if outcome.empty_sources:
         sys.stdout.write(
             f"No sources found to process (manifest: {outcome.manifest_display}, "

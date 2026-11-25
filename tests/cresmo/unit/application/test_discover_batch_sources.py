@@ -1838,3 +1838,254 @@ class TestDiscoverBatchSourcesUseCase:
 
         items = list(use_case._consume_stream_queue([], stream_q, stop_ev, None))
         assert items == []
+
+    def test_taxonomy_port_propagated_across_fast_path_sync_and_crawler(
+        self, tmp_path: Path
+    ) -> None:
+        from cresmo.application.ports import MetricName, MetricsPort
+
+        priority_texts_dir = tmp_path / "prio_texts"
+        priority_texts_dir.mkdir()
+        (priority_texts_dir / "pt_keep.md").write_text(
+            "---\nvideo_id: ptKeep1\nchannel: kept_chan\n---\nBody",
+            encoding="utf-8",
+        )
+        (priority_texts_dir / "pt_drop.md").write_text(
+            "---\nvideo_id: ptDrop1\nchannel: drop_chan\n---\nBody",
+            encoding="utf-8",
+        )
+
+        raw_dir = tmp_path / "raw"
+        raw_dir.mkdir()
+        (raw_dir / "raw_vid.md").write_text(
+            "---\nvideo_id: rawKeep1\nchannel: https://www.youtube.com/@kept_chan\n---\nBody",
+            encoding="utf-8",
+        )
+        (raw_dir / "raw_drop.md").write_text(
+            "---\nvideo_id: rawDrop1\nchannel: https://www.youtube.com/@drop_chan\n---\nBody",
+            encoding="utf-8",
+        )
+
+        prio_manifest = tmp_path / "prio.txt"
+        prio_manifest.write_text(
+            "https://www.youtube.com/watch?v=rawKeep1\n"
+            "https://www.youtube.com/watch?v=rawDrop1\n"
+            "https://www.youtube.com/@kept_chan\n"
+            "https://www.youtube.com/@only_prio_kept_chan\n"
+            "https://www.youtube.com/@drop_chan\n",
+            encoding="utf-8",
+        )
+        seed_manifest = tmp_path / "seeds.txt"
+        seed_manifest.write_text(
+            "https://www.youtube.com/watch?v=seedKeep1\n"
+            "https://www.youtube.com/watch?v=seedDrop1\n"
+            "https://www.youtube.com/@seed_feed_kept_chan\n"
+            "https://www.youtube.com/@drop_feed_chan\n",
+            encoding="utf-8",
+        )
+
+        taxonomy = MagicMock()
+        taxonomy.classify.side_effect = lambda target: (
+            ("science", "perennial")
+            if "kept_chan" in str(target)
+            else ("news", "volatile")
+        )
+        mock_ingestion = MagicMock()
+        mock_ingestion.extract_channel_url_from_video.side_effect = (
+            lambda url: "https://www.youtube.com/@remote_kept_chan"
+            if "seedKeep1" in url
+            else "https://www.youtube.com/@drop_chan"
+        )
+
+        def _feed_for_channel(q: object) -> list[DiscoveredMediaItem]:
+            url = getattr(q, "channel_url", "")
+            if "only_prio_kept_chan" in url:
+                return [
+                    _create_mock_media_item(
+                        "prio_crawled1", "https://www.youtube.com/watch?v=prio_crawled1"
+                    )
+                ]
+            if "remote_kept_chan" in url:
+                return [
+                    _create_mock_media_item(
+                        "remote_crawled1", "https://www.youtube.com/watch?v=remote_crawled1"
+                    )
+                ]
+            if "seed_feed_kept_chan" in url:
+                return [
+                    _create_mock_media_item(
+                        "seed_feed_crawled1",
+                        "https://www.youtube.com/watch?v=seed_feed_crawled1",
+                    )
+                ]
+            if "kept_chan" in url:
+                return [
+                    _create_mock_media_item(
+                        "crawled1", "https://www.youtube.com/watch?v=crawled1"
+                    )
+                ]
+            return [
+                _create_mock_media_item(
+                    "drop_crawled1", "https://www.youtube.com/watch?v=drop_crawled1"
+                )
+            ]
+
+        mock_ingestion.discover_channel_feed.side_effect = _feed_for_channel
+        metrics = MagicMock(spec=MetricsPort)
+
+        # 1. Sync fallback path propagates taxonomy_port to priority texts, priority urls, classify_seeds
+        uc_sync = DiscoverBatchSourcesUseCase(
+            media_ingestion_port=mock_ingestion,
+            taxonomy_port=taxonomy,
+            metrics_port=metrics,
+        )
+        sync_sources = list(
+            uc_sync.execute(
+                BatchDiscoveryQuery(
+                    priority_texts_dir=priority_texts_dir,
+                    playlist_priority_path=prio_manifest,
+                    playlist_path=seed_manifest,
+                    raw_dir=raw_dir,
+                    scan_raw=True,
+                    enable_channel_crawler=False,
+                    filter_criteria=SyncFilterCriteria(categories=("perennial",)),
+                )
+            )
+        )
+        sync_targets = [s.target for s in sync_sources]
+        assert str((priority_texts_dir / "pt_keep.md").absolute()) in sync_targets
+        assert str((raw_dir / "raw_vid.md").absolute()) in sync_targets
+        assert "https://www.youtube.com/watch?v=rawDrop1" not in sync_targets
+        metrics.increment_counter.assert_any_call(
+            MetricName.BATCH_SOURCES_DISCOVERED,
+            1.0,
+            labels={"modality": "file"},
+        )
+
+        # 2. Crawler path propagates taxonomy_port to classify_seeds and ChannelFeedCrawlerService
+        metrics.reset_mock()
+        uc_crawl = DiscoverBatchSourcesUseCase(
+            media_ingestion_port=mock_ingestion,
+            taxonomy_port=taxonomy,
+            metrics_port=metrics,
+        )
+        crawled_sources = list(
+            uc_crawl.execute(
+                BatchDiscoveryQuery(
+                    priority_texts_dir=priority_texts_dir,
+                    playlist_priority_path=prio_manifest,
+                    playlist_path=seed_manifest,
+                    raw_dir=raw_dir,
+                    scan_raw=False,
+                    enable_channel_crawler=True,
+                    filter_criteria=SyncFilterCriteria(categories=("perennial",)),
+                )
+            )
+        )
+        targets = [s.target for s in crawled_sources]
+        assert str((priority_texts_dir / "pt_keep.md").absolute()) in targets
+        assert "https://www.youtube.com/watch?v=crawled1" in targets
+        assert "https://www.youtube.com/watch?v=prio_crawled1" in targets
+        assert "https://www.youtube.com/watch?v=seed_feed_crawled1" in targets
+        assert "https://www.youtube.com/watch?v=drop_crawled1" not in targets
+        metrics.increment_counter.assert_any_call(
+            MetricName.BATCH_SOURCES_DISCOVERED,
+            1.0,
+            labels={"modality": "url"},
+        )
+        gauge_calls = metrics.set_gauge.call_args_list
+        assert len(gauge_calls) >= 2
+        assert all(
+            c.args[0] == MetricName.DISCOVERY_QUEUE_SIZE and isinstance(c.args[1], float)
+            for c in gauge_calls
+        )
+        assert gauge_calls[-1].args == (MetricName.DISCOVERY_QUEUE_SIZE, 0.0)
+
+    def test_sync_fallback_skips_frontmatter_when_crawler_off_and_criteria_empty(
+        self, tmp_path: Path
+    ) -> None:
+        raw_dir = tmp_path / "raw"
+        raw_dir.mkdir()
+        (raw_dir / "stem_a.md").write_text(
+            "---\nvideo_id: vidFromFrontmatter\n---\nBody",
+            encoding="utf-8",
+        )
+        seed_manifest = tmp_path / "seeds.txt"
+        seed_manifest.write_text(
+            "https://www.youtube.com/watch?v=vidFromFrontmatter\n",
+            encoding="utf-8",
+        )
+        uc = DiscoverBatchSourcesUseCase(media_ingestion_port=None)
+        sources = list(
+            uc.execute(
+                BatchDiscoveryQuery(
+                    raw_dir=raw_dir,
+                    playlist_path=seed_manifest,
+                    scan_raw=True,
+                    enable_channel_crawler=False,
+                    filter_criteria=SyncFilterCriteria(),
+                )
+            )
+        )
+        # Frontmatter is NOT parsed when crawler is off and criteria is empty, so both are yielded
+        assert len(sources) == 2
+
+    def test_streaming_waits_for_slow_crawler_thread_and_consume_queue_empty_handling(
+        self, tmp_path: Path
+    ) -> None:
+        import time
+
+        seed_manifest = tmp_path / "seeds.txt"
+        seed_manifest.write_text("https://www.youtube.com/@slow_chan\n", encoding="utf-8")
+
+        mock_ingestion = MagicMock()
+
+        def _slow_feed(_query: object) -> list[DiscoveredMediaItem]:
+            time.sleep(0.35)
+            return [_create_mock_media_item("slowVid1", "https://www.youtube.com/watch?v=slowVid1")]
+
+        mock_ingestion.discover_channel_feed.side_effect = _slow_feed
+        uc = DiscoverBatchSourcesUseCase(media_ingestion_port=mock_ingestion)
+        sources = list(
+            uc.execute(
+                BatchDiscoveryQuery(
+                    playlist_path=seed_manifest,
+                    raw_dir=tmp_path / "empty_raw",
+                    scan_raw=False,
+                    enable_channel_crawler=True,
+                )
+            )
+        )
+        assert [s.target for s in sources] == ["https://www.youtube.com/watch?v=slowVid1"]
+
+        # Direct _consume_stream_queue empty-queue branch tests
+        from cresmo.application.use_cases.discovery.discover_batch_sources import (
+            _DEFAULT_STREAM_QUEUE_TIMEOUT_SECONDS,
+        )
+
+        class _EmptySpyQueue:
+            def __init__(self) -> None:
+                self.timeouts: list[float | None] = []
+
+            def empty(self) -> bool:
+                return True
+
+            def get(self, timeout: float | None = None) -> BatchSource | None | Exception:
+                self.timeouts.append(timeout)
+                raise queue.Empty
+
+        spy_q1 = _EmptySpyQueue()
+        items1 = list(
+            uc._consume_stream_queue([], spy_q1, threading.Event(), None)  # type: ignore[arg-type]
+        )
+        assert items1 == []
+        assert spy_q1.timeouts == [_DEFAULT_STREAM_QUEUE_TIMEOUT_SECONDS]
+
+        spy_q2 = _EmptySpyQueue()
+        alive_then_dead = MagicMock()
+        alive_then_dead.is_alive.side_effect = [True, True, True, True, False]
+        items2 = list(
+            uc._consume_stream_queue([], spy_q2, threading.Event(), alive_then_dead)  # type: ignore[arg-type]
+        )
+        assert items2 == []
+        assert len(spy_q2.timeouts) == 2

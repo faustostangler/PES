@@ -32,10 +32,8 @@ from cresmo.domain.exceptions import (
     QuotaPoolExhaustedError,
     RateLimitExceededError,
 )
-from cresmo.domain.stage_registry import StageName
 from cresmo.domain.value_objects import (
     BatchId,
-    ChannelName,
     DiscoveryPolicy,
     SourceModality,
     SyncFilterCriteria,
@@ -111,7 +109,6 @@ class RunSynthesisOutcome:
     """Immutable summary outcome returned by RunSynthesisUseCase."""
 
     status: RunExitStatus
-    mode: str
     batch_id: BatchId | None = None
     completed: int = 0
     skipped: int = 0
@@ -119,14 +116,9 @@ class RunSynthesisOutcome:
     total_items: int = 0
     dry_run: bool = False
     empty_sources: bool = False
-    single_stages_completed: tuple[str, ...] = ()
-    single_final_chars: int = 0
-    single_content_id: str | None = None
-    single_dry_run_chars: int | None = None
-    single_dry_run_url: str | None = None
     dry_run_validated: int = 0
     dry_run_total: int = 0
-    manifest_display: str = "data/playlist.txt"
+    manifest_display: str = ""
     scan_raw: bool = False
 
 
@@ -152,6 +144,7 @@ class RunSynthesisUseCase:
         ],
         concat_master_factory: Callable[[VaultRepositoryPort], ConcatMasterUseCase],
         runtime_port: ProcessRuntimePort | None = None,
+        default_manifest_path: Path | None = None,
     ) -> None:
         self._discovery_policy = discovery_policy
         self._preflight_checker = preflight_checker
@@ -159,13 +152,16 @@ class RunSynthesisUseCase:
         self._discover_sources_factory = discover_sources_factory
         self._concat_master_factory = concat_master_factory
         self._runtime_port = runtime_port or NoOpProcessRuntimePort()
+        self._default_manifest_display = (
+            str(default_manifest_path) if default_manifest_path is not None else ""
+        )
 
     def execute(
         self,
         request: RunSynthesisRequest,
         on_event: Callable[[BatchItemEvent], None] | None = None,
     ) -> RunSynthesisOutcome:
-        """Execute preflight validation, warmup, and single-video or batch synthesis.
+        """Execute preflight validation, warmup, and unified batch synthesis.
 
         Args:
             request: Immutable synthesis execution request parameters.
@@ -182,101 +178,12 @@ class RunSynthesisUseCase:
             pipeline.warmup()
 
         if request.url:
-            return self._execute_single_video(pipeline, request, on_event)
-        return self._execute_batch(pipeline, request, on_event)
-
-    def _execute_single_video(
-        self,
-        pipeline: CresmoPipeline,
-        request: RunSynthesisRequest,
-        on_event: Callable[[BatchItemEvent], None] | None,
-    ) -> RunSynthesisOutcome:
-        video_url = request.url or ""
-        if request.dry_run:
-            raw_transcript = pipeline.ingest_raw_transcript.execute(video_url=video_url)
-            if raw_transcript is None:
-                return RunSynthesisOutcome(
-                    status=RunExitStatus.INGESTION_ERROR,
-                    mode="single",
-                    dry_run=True,
-                    single_dry_run_url=video_url,
-                )
-            return RunSynthesisOutcome(
-                status=RunExitStatus.SUCCESS,
-                mode="single",
-                dry_run=True,
-                single_content_id=raw_transcript.content.id.value,
-                single_dry_run_chars=len(raw_transcript.content.text),
-                single_dry_run_url=video_url,
-            )
-
-        result = pipeline.run_for_video(
-            video_url=video_url,
-            expansion_max_passes=request.passes,
-            force_reprocess=request.force_reprocess,
-        )
-        content_id_str = result.content_id.value
-        if result.already_processed:
-            return RunSynthesisOutcome(
-                status=RunExitStatus.SUCCESS,
-                mode="single",
-                skipped=1,
-                total_items=1,
-                single_content_id=content_id_str,
-            )
-        try:
-            raw_transcript = (
-                result.source_transcript
-                or pipeline.vault_port.get_stage_transcript(StageName.RAW, result.content_id)
-            )
-            if raw_transcript and raw_transcript.channel.name:
-                concat_master = self._concat_master_factory(pipeline.vault_port)
-                concat_master.execute(ChannelName(raw_transcript.channel.name))
-        except Exception as exc:  # noqa: BLE001
-            _emit(
-                on_event,
-                BatchItemEvent(
-                    kind=BatchItemEventKind.MASTER_WARNING,
-                    message=f"Warning: Master consolidation failed: {exc}",
-                ),
-            )
-        return RunSynthesisOutcome(
-            status=RunExitStatus.SUCCESS,
-            mode="single",
-            completed=1,
-            total_items=1,
-            single_stages_completed=tuple(s.value for s in result.stage_artifacts),
-            single_final_chars=(
-                len(result.final_transcript.content.text)
-                if result.final_transcript is not None
-                else 0
-            ),
-            single_content_id=content_id_str,
-        )
-
-    def _execute_batch(
-        self,
-        pipeline: CresmoPipeline,
-        request: RunSynthesisRequest,
-        on_event: Callable[[BatchItemEvent], None] | None,
-    ) -> RunSynthesisOutcome:
-        query = self._build_discovery_query(request)
-        manifest_display = str(request.manifest) if request.manifest else "data/playlist.txt"
-
-        def _on_progress(msg: str) -> None:
-            _emit(
-                on_event,
-                BatchItemEvent(
-                    kind=BatchItemEventKind.DISCOVERY_PROGRESS,
-                    message=msg,
-                ),
-            )
-
-        discover_use_case = self._discover_sources_factory(
-            pipeline.media_ingestion_port,
-            _on_progress,
-        )
-        sources = discover_use_case.execute(query=query)
+            sources: Iterable[BatchSource] = [
+                BatchSource(kind=SourceModality.URL, target=request.url)
+            ]
+            manifest_display = request.url
+        else:
+            sources, manifest_display = self._discover_sources(pipeline, request, on_event)
 
         if request.dry_run:
             return self._execute_batch_dry_run(
@@ -293,6 +200,32 @@ class RunSynthesisUseCase:
             manifest_display=manifest_display,
             on_event=on_event,
         )
+
+    def _discover_sources(
+        self,
+        pipeline: CresmoPipeline,
+        request: RunSynthesisRequest,
+        on_event: Callable[[BatchItemEvent], None] | None,
+    ) -> tuple[Iterable[BatchSource], str]:
+        query = self._build_discovery_query(request)
+        manifest_display = (
+            str(request.manifest) if request.manifest else self._default_manifest_display
+        )
+
+        def _on_progress(msg: str) -> None:
+            _emit(
+                on_event,
+                BatchItemEvent(
+                    kind=BatchItemEventKind.DISCOVERY_PROGRESS,
+                    message=msg,
+                ),
+            )
+
+        discover_use_case = self._discover_sources_factory(
+            pipeline.media_ingestion_port,
+            _on_progress,
+        )
+        return discover_use_case.execute(query=query), manifest_display
 
     def _build_discovery_query(self, request: RunSynthesisRequest) -> BatchDiscoveryQuery:
         enable_channel_crawler = (
@@ -333,7 +266,6 @@ class RunSynthesisUseCase:
         if not sources:
             return RunSynthesisOutcome(
                 status=RunExitStatus.SUCCESS,
-                mode="batch",
                 dry_run=True,
                 empty_sources=True,
                 manifest_display=manifest_display,
@@ -392,7 +324,6 @@ class RunSynthesisUseCase:
 
         return RunSynthesisOutcome(
             status=RunExitStatus.SUCCESS,
-            mode="batch",
             dry_run=True,
             dry_run_validated=validated,
             dry_run_total=total,
@@ -454,7 +385,6 @@ class RunSynthesisUseCase:
         if total_items == 0:
             return RunSynthesisOutcome(
                 status=RunExitStatus.SUCCESS,
-                mode="batch",
                 batch_id=batch_id,
                 empty_sources=True,
                 manifest_display=manifest_display,
@@ -471,7 +401,6 @@ class RunSynthesisUseCase:
         )
         return RunSynthesisOutcome(
             status=exit_status,
-            mode="batch",
             batch_id=batch_id,
             completed=completed,
             skipped=skipped,

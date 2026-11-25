@@ -115,6 +115,7 @@ class TestCalibrationSuite:
                 provider="gemini",
             ),
         ]
+        slept_in_first: list[float] = []
         outcome = run_calibration_suite(
             selected_stages=["fluid_prose"],
             selected_models=[("gemini", "m1")],
@@ -127,7 +128,9 @@ class TestCalibrationSuite:
             dataset_path=custom_path,
             delay=0.0,
             jitter=0.0,
+            sleep_fn=slept_in_first.append,
         )
+        assert slept_in_first == []
         assert outcome.has_errors is False
         assert load_calls == [
             (
@@ -238,6 +241,7 @@ class TestCalibrationSuite:
             return judge_boom
 
         events: list[CalibrationEvent] = []
+        slept_main: list[float] = []
         outcome = run_calibration_suite(
             selected_stages=["fluid_prose"],
             selected_models=[
@@ -266,8 +270,10 @@ class TestCalibrationSuite:
                 f"REPORT:{spec.stage_name}:{p}:{m}:{res.overall.accuracy:.2f}"
             ),
             now_fn=lambda: 1000.0,
+            sleep_fn=slept_main.append,
             on_event=events.append,
         )
+        assert slept_main == []
 
         assert outcome.has_errors is True
         assert factory_seen == [

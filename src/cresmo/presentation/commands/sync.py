@@ -14,7 +14,7 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
-from typing import Annotated
+from typing import Annotated, Any
 
 import typer
 
@@ -24,12 +24,18 @@ from cresmo.application.use_cases.sync_batch import (
     SyncTargetEvent,
     SyncTargetEventKind,
 )
-from cresmo.bootstrap.composition import build_sync_batch_use_case
 from cresmo.presentation.error_handler import handle_cli_exception
 from cresmo.presentation.exit_codes import (
     EXIT_INTERNAL_ERROR,
     EXIT_SUCCESS,
 )
+
+
+def build_sync_batch_use_case(*args: Any, **kwargs: Any) -> Any:
+    """Lazily import composition factory to keep --help and module load instant (ADR-055)."""
+    from cresmo.bootstrap.composition import build_sync_batch_use_case as _factory
+
+    return _factory(*args, **kwargs)
 
 
 def sync(

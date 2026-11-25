@@ -13,18 +13,29 @@ Conforms to:
 from __future__ import annotations
 
 import sys
+from typing import Any
 
 import typer
 
-from cresmo.bootstrap.composition import (
-    build_preflight_checker,
-    load_fresh_settings,
-)
 from cresmo.presentation.error_handler import handle_cli_exception
 from cresmo.presentation.exit_codes import (
     EXIT_CONFIG_OR_USAGE_ERROR,
     EXIT_SUCCESS,
 )
+
+
+def load_fresh_settings(*args: Any, **kwargs: Any) -> Any:
+    """Lazily import composition factory to keep --help and module load instant (ADR-055)."""
+    from cresmo.bootstrap.composition import load_fresh_settings as _factory
+
+    return _factory(*args, **kwargs)
+
+
+def build_preflight_checker(*args: Any, **kwargs: Any) -> Any:
+    """Lazily import composition factory to keep --help and module load instant (ADR-055)."""
+    from cresmo.bootstrap.composition import build_preflight_checker as _factory
+
+    return _factory(*args, **kwargs)
 
 
 def check_config() -> None:

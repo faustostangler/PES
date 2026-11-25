@@ -159,7 +159,11 @@ class TestMapOfContent:
     def test_source_transcript_empty_channel_raises_error(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
         with pytest.raises(DomainValidationError, match="ChannelName cannot be empty"):
-            StageTranscript(content_id=cid, channel_name=ChannelName("   "), text="Valid body.")
+            StageTranscript(  # type: ignore[call-arg]
+                content_id=cid,
+                channel_name=ChannelName("   "),
+                text="Valid body.",
+            )
 
 
 class TestPipelineSessionId:
@@ -737,8 +741,18 @@ class TestPostProcessFluidTranscriptInvariantsAndRegex:
     def test_preserves_pure_triad_and_content_id(self) -> None:
         ch = Channel(name="Preserved Channel", id=ChannelId("UC_preserve"))
         prov = MediaProvenance.create(url="https://url", description="desc")
-        cnt = Content(id=ContentId("preserve_cid"), title="Orig", text="Body")
-        st = StageTranscript(channel=ch, provenance=prov, content=cnt)
+        cnt = Content(
+            id=ContentId("preserve_cid"),
+            title="Orig",
+            text="Body",
+            session_id="custom_sess_42",
+        )
+        st = StageTranscript(
+            channel=ch,
+            provenance=prov,
+            content=cnt,
+            metadata={"origin": "unit", "pass": 1},
+        )
 
         res = post_process_fluid_transcript(
             CandidateText(text="Processed prose body.", stage_name="fluid_prose"), st
@@ -747,4 +761,37 @@ class TestPostProcessFluidTranscriptInvariantsAndRegex:
         assert res.provenance is prov
         assert res.content.id == ContentId("preserve_cid")
         assert res.content.id.value == "preserve_cid"
+        assert res.content.session_id == "custom_sess_42"
         assert res.content.text == "Processed prose body."
+        assert res.metadata == {"origin": "unit", "pass": 1}
+        assert res.metadata is not st.metadata
+
+    def test_stage_transcript_triad_type_and_empty_text_invariants(self) -> None:
+        ch = Channel(name="Valid Channel", id=ChannelId("UC_valid"))
+        prov = MediaProvenance.create(url="https://url")
+        cnt = Content(id=ContentId("cid_valid"), title="T", text="Valid body.")
+
+        with pytest.raises(
+            TypeError, match=r"^channel must be an instance of Channel, got str$"
+        ):
+            StageTranscript(channel="not_a_channel", provenance=prov, content=cnt)  # type: ignore[arg-type]
+
+        with pytest.raises(
+            TypeError, match=r"^provenance must be an instance of MediaProvenance, got int$"
+        ):
+            StageTranscript(channel=ch, provenance=123, content=cnt)  # type: ignore[arg-type]
+
+        with pytest.raises(
+            TypeError, match=r"^content must be an instance of Content, got dict$"
+        ):
+            StageTranscript(channel=ch, provenance=prov, content={})  # type: ignore[arg-type]
+
+        with pytest.raises(
+            DomainValidationError,
+            match=r"^StageTranscript content\.text cannot be empty or whitespace\.$",
+        ):
+            StageTranscript(
+                channel=ch,
+                provenance=prov,
+                content=Content(id=ContentId("cid_empty"), title="T", text="   \n\t "),
+            )

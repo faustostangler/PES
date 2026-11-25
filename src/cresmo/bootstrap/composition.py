@@ -224,6 +224,7 @@ def build_run_synthesis_use_case(
         discover_sources_factory=_discover_factory,
         concat_master_factory=_concat_factory,
         runtime_port=build_process_runtime_adapter(),
+        default_manifest_path=resolved.storage.playlist_path,
     )
 
 

@@ -52,7 +52,6 @@ class TestRunHumbleCommand:
         batch_id = BatchId.generate()
         mock_uc.execute.return_value = RunSynthesisOutcome(
             status=RunExitStatus.SUCCESS,
-            mode="batch",
             batch_id=batch_id,
             completed=2,
             skipped=1,
@@ -122,61 +121,14 @@ class TestRunHumbleCommand:
         assert "Found 1 [1/1] [DONE]\n" in captured.out
         assert "Consolidating master compendiums for RAG..." in captured.out
 
-    def test_render_outcome_covers_single_and_batch_variants(
+    def test_render_outcome_covers_batch_variants(
         self, capsys: pytest.CaptureFixture[str]
     ) -> None:
-        assert (
-            _render_outcome(
-                RunSynthesisOutcome(
-                    status=RunExitStatus.INGESTION_ERROR,
-                    mode="single",
-                    dry_run=True,
-                    single_dry_run_url="https://youtube.com/watch?v=12345678901",
-                )
-            )
-            == EXIT_INGESTION_ERROR
-        )
+        batch_id = BatchId.generate()
         assert (
             _render_outcome(
                 RunSynthesisOutcome(
                     status=RunExitStatus.SUCCESS,
-                    mode="single",
-                    dry_run=True,
-                    single_content_id="12345678901",
-                    single_dry_run_chars=500,
-                )
-            )
-            == EXIT_SUCCESS
-        )
-        assert (
-            _render_outcome(
-                RunSynthesisOutcome(
-                    status=RunExitStatus.SUCCESS,
-                    mode="single",
-                    skipped=1,
-                    single_content_id="12345678901",
-                )
-            )
-            == EXIT_SUCCESS
-        )
-        assert (
-            _render_outcome(
-                RunSynthesisOutcome(
-                    status=RunExitStatus.SUCCESS,
-                    mode="single",
-                    completed=1,
-                    single_content_id="12345678901",
-                    single_stages_completed=("fluid_prose", "gap_filler"),
-                    single_final_chars=420,
-                )
-            )
-            == EXIT_SUCCESS
-        )
-        assert (
-            _render_outcome(
-                RunSynthesisOutcome(
-                    status=RunExitStatus.SUCCESS,
-                    mode="batch",
                     empty_sources=True,
                     manifest_display="m.txt",
                     scan_raw=True,
@@ -188,7 +140,6 @@ class TestRunHumbleCommand:
             _render_outcome(
                 RunSynthesisOutcome(
                     status=RunExitStatus.SUCCESS,
-                    mode="batch",
                     dry_run=True,
                     dry_run_validated=2,
                     dry_run_total=3,
@@ -196,15 +147,25 @@ class TestRunHumbleCommand:
             )
             == EXIT_SUCCESS
         )
-        captured = capsys.readouterr()
         assert (
-            "Synthesis completed successfully for [12345678901]: "
-            "2 stage(s) completed (fluid_prose, gap_filler), 420 chars.\n" in captured.out
+            _render_outcome(
+                RunSynthesisOutcome(
+                    status=RunExitStatus.RATE_LIMITED,
+                    batch_id=batch_id,
+                    completed=0,
+                    skipped=0,
+                    failed=1,
+                    total_items=1,
+                )
+            )
+            == EXIT_RATE_LIMIT_EXCEEDED
         )
+        captured = capsys.readouterr()
         assert "Dry-run completed: 2/3 items validated.\n" in captured.out
         assert (
             "No sources found to process (manifest: m.txt, raw lake scan: True).\n" in captured.out
         )
+        assert f"Batch Synthesis Summary [Batch: {batch_id.value}]:" in captured.out
 
     def test_typer_run_builds_request_without_dead_flags(self, tmp_path: Path) -> None:
         manifest = tmp_path / "playlist.txt"

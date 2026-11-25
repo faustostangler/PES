@@ -329,6 +329,65 @@ class TestJsonPromptProvider:
         assert chat.system_prompt == "Custom System Custom Skill Doc"
         assert chat.messages[-1].content == "Custom User Hello"
 
+    def test_get_chat_prompt_template_renders_static_vars_in_user_turn(self, tmp_path: Path) -> None:
+        manifest_file = _write_custom_prompt_bundle(
+            tmp_path,
+            {
+                "fluid_prose": {
+                    "description": "Fluid Desc",
+                    "skills": [],
+                    "system_prompt": "Sys {{language}}",
+                    "user_prompt": "Lang={{language}} Raw={{raw_text}}",
+                }
+            },
+        )
+        provider = JsonPromptProvider(prompts_path=manifest_file, language="French")
+        sys_tpl, user_tpl = provider.get_chat_prompt_template(PromptKey.FLUID_PROSE)
+
+        assert sys_tpl == "Sys French"
+        assert user_tpl == "Lang=French Raw={{raw_text}}"
+
+    def test_get_prompt_forwards_default_language_to_context_normalizer(
+        self, tmp_path: Path
+    ) -> None:
+        manifest_file = _write_custom_prompt_bundle(
+            tmp_path,
+            {
+                "raw_index_concepts": {
+                    "skills": [],
+                    "system_prompt": "Extract concepts in {{language}}.",
+                    "user_prompt": "Title={{content_title}} Excerpt={{transcript_excerpt}}",
+                }
+            },
+        )
+        provider = JsonPromptProvider(prompts_path=manifest_file, language="Italian")
+        chat = provider.get_prompt(
+            PromptKey.RAW_INDEX_CONCEPTS,
+            content_title="Pareto",
+            transcript_excerpt="Elites circulate.",
+        )
+
+        assert chat.system_prompt == "Extract concepts in Italian."
+
+    def test_get_prompt_strict_mustache_rejects_unresolved_system_placeholder(
+        self, tmp_path: Path
+    ) -> None:
+        manifest_file = _write_custom_prompt_bundle(
+            tmp_path,
+            {
+                "fluid_prose": {
+                    "skills": [],
+                    "system_prompt": "Missing {{missing_sys_var}}",
+                    "user_prompt": "User {{raw_text}}",
+                }
+            },
+        )
+        provider = JsonPromptProvider(prompts_path=manifest_file)
+        with pytest.raises(
+            ValueError, match=r"Unresolved Mustache placeholder: '\{\{missing_sys_var\}\}'"
+        ):
+            provider.get_prompt(PromptKey.FLUID_PROSE, raw_text="Transcript")
+
 
 def test_noop_prompt_provider_supports_expander_and_judge_keys() -> None:
     """Verify NoOpPromptProviderPort binds unified raw/current variables and all stage judge keys."""
