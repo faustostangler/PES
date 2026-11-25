@@ -25,11 +25,13 @@ from cresmo.application.use_cases.run_synthesis import (
     RunSynthesisUseCase,
 )
 from cresmo.domain.exceptions import (
+    CresmoDomainError,
     IngestionNetworkError,
     PreflightError,
     QuotaPoolExhaustedError,
     RateLimitExceededError,
 )
+from cresmo.domain.stage_registry import StageName
 from cresmo.domain.value_objects import (
     BatchId,
     ChannelName,
@@ -57,11 +59,10 @@ def _make_use_case(
     preflight_checker = MagicMock()
     if preflight_exc is not None:
         preflight_checker.check_all.return_value = MagicMock(
-            warnings=(),
             assert_healthy=MagicMock(side_effect=preflight_exc),
         )
     else:
-        res = preflight_result or PreflightResult(is_healthy=True, errors=(), warnings=())
+        res = preflight_result or PreflightResult(is_healthy=True, errors=())
         preflight_checker.check_all.return_value = res
 
     mock_pipeline = pipeline or MagicMock()
@@ -114,39 +115,29 @@ class TestRunSynthesisUseCase:
         preflight_checker.check_all.assert_called_once_with()
         pipeline_factory.assert_not_called()
 
-    def test_preflight_warnings_emit_events_and_warmup_follows_web_index(self) -> None:
-        events: list[BatchItemEvent] = []
+    def test_warmup_called_regardless_of_web_index_and_skipped_for_dry_run(self) -> None:
         pipeline = MagicMock()
         pipeline.run_for_video.return_value = MagicMock(
             already_processed=True,
             content_id=ContentId("dQw4w9WgXcQ"),
         )
-        use_case, _, _, _ = _make_use_case(
-            preflight_result=PreflightResult(
-                is_healthy=True,
-                errors=(),
-                warnings=("Ollama unreachable",),
-            ),
-            pipeline=pipeline,
-        )
+        use_case, _, _, _ = _make_use_case(pipeline=pipeline)
 
         outcome = use_case.execute(
             RunSynthesisRequest(url="https://youtube.com/watch?v=dQw4w9WgXcQ", web_index=False),
-            on_event=events.append,
         )
 
         assert outcome.status is RunExitStatus.SUCCESS
-        assert events[0].kind is BatchItemEventKind.PREFLIGHT_WARNING
-        assert events[0].message == "Ollama unreachable"
         pipeline.warmup.assert_called_once_with()
 
         pipeline.reset_mock()
-        pipeline.run_for_video.return_value = MagicMock(
-            already_processed=True,
-            content_id=ContentId("dQw4w9WgXcQ"),
+        pipeline.ingest_raw_transcript.execute.return_value = MagicMock(
+            content=MagicMock(id=ContentId("dQw4w9WgXcQ"), text="raw")
         )
         use_case.execute(
-            RunSynthesisRequest(url="https://youtube.com/watch?v=dQw4w9WgXcQ", web_index=True),
+            RunSynthesisRequest(
+                url="https://youtube.com/watch?v=dQw4w9WgXcQ", dry_run=True, web_index=True
+            ),
         )
         pipeline.warmup.assert_not_called()
 
@@ -182,17 +173,20 @@ class TestRunSynthesisUseCase:
         events: list[BatchItemEvent] = []
         pipeline = MagicMock()
         cid = ContentId("dQw4w9WgXcQ")
-        pipeline.run_for_video.return_value = MagicMock(
-            already_processed=False,
-            success=True,
-            content_id=cid,
-            synthesized_notes=("n1", "n2"),
-            reconciled_mocs=("m1",),
-            duplicates_unified=3,
-        )
+        final_transcript = MagicMock()
+        final_transcript.content.text = "Expanded synthesis text."
         raw_transcript = MagicMock()
         raw_transcript.channel.name = "Mises"
-        pipeline.vault_port.get_stage_transcript.return_value = raw_transcript
+        pipeline.run_for_video.return_value = MagicMock(
+            already_processed=False,
+            content_id=cid,
+            source_transcript=raw_transcript,
+            stage_artifacts={
+                StageName.FLUID_PROSE: MagicMock(),
+                StageName.WIDE_EXPANDER: final_transcript,
+            },
+            final_transcript=final_transcript,
+        )
         concat_master = MagicMock()
 
         use_case, _, _, concat_factory = _make_use_case(
@@ -212,16 +206,14 @@ class TestRunSynthesisUseCase:
         assert outcome.mode == "single"
         assert outcome.completed == 1
         assert outcome.total_items == 1
-        assert outcome.single_notes_count == 2
-        assert outcome.single_mocs_count == 1
-        assert outcome.single_duplicates_unified == 3
+        assert outcome.single_stages_completed == ("fluid_prose", "wide_expander")
+        assert outcome.single_final_chars == len("Expanded synthesis text.")
         assert outcome.single_content_id == "dQw4w9WgXcQ"
         pipeline.run_for_video.assert_called_once_with(
             video_url="https://youtube.com/watch?v=dQw4w9WgXcQ",
             expansion_max_passes=4,
             force_reprocess=True,
         )
-        pipeline.vault_port.get_stage_transcript.assert_called_once_with("raw", cid)
         concat_factory.assert_called_with(pipeline.vault_port)
         concat_master.execute.assert_called_once_with(ChannelName("Mises"))
 
@@ -244,6 +236,13 @@ class TestRunSynthesisUseCase:
 
         concat_master.execute.side_effect = None
         concat_master.reset_mock()
+        pipeline.run_for_video.return_value = MagicMock(
+            already_processed=False,
+            content_id=cid,
+            source_transcript=None,
+            stage_artifacts={},
+            final_transcript=None,
+        )
         pipeline.vault_port.get_stage_transcript.return_value = None
         events.clear()
         no_raw_outcome = use_case.execute(
@@ -251,15 +250,15 @@ class TestRunSynthesisUseCase:
             on_event=events.append,
         )
         assert no_raw_outcome.status is RunExitStatus.SUCCESS
+        pipeline.vault_port.get_stage_transcript.assert_called_once_with(StageName.RAW, cid)
         concat_master.execute.assert_not_called()
         assert events == []
 
-    def test_single_video_skipped_and_failed(self) -> None:
+    def test_single_video_skipped_and_failed_exception_channel(self) -> None:
         pipeline = MagicMock()
         cid = ContentId("abc123def45")
         pipeline.run_for_video.return_value = MagicMock(
             already_processed=True,
-            success=True,
             content_id=cid,
         )
         use_case, _, _, _ = _make_use_case(pipeline=pipeline)
@@ -273,21 +272,11 @@ class TestRunSynthesisUseCase:
         assert skipped.total_items == 1
         assert skipped.single_content_id == "abc123def45"
 
-        pipeline.run_for_video.return_value = MagicMock(
-            already_processed=False,
-            success=False,
-            content_id=cid,
-            error_message="Stage aborted",
-        )
-        failed = use_case.execute(
-            RunSynthesisRequest(url="https://youtube.com/watch?v=abc123def45")
-        )
-        assert failed.status is RunExitStatus.INTERNAL_ERROR
-        assert failed.mode == "single"
-        assert failed.failed == 1
-        assert failed.total_items == 1
-        assert failed.single_content_id == "abc123def45"
-        assert failed.error_message == "Stage aborted"
+        pipeline.run_for_video.side_effect = CresmoDomainError("Stage aborted")
+        with pytest.raises(CresmoDomainError, match="Stage aborted"):
+            use_case.execute(
+                RunSynthesisRequest(url="https://youtube.com/watch?v=abc123def45")
+            )
 
     def test_batch_dry_run_empty_and_mixed_artifacts_and_urls(self, tmp_path: Path) -> None:
         manifest_file = tmp_path / "manifest.txt"
@@ -409,32 +398,26 @@ class TestRunSynthesisUseCase:
         pipeline.run_for_text_file.side_effect = [
             MagicMock(
                 already_processed=False,
-                success=True,
                 content_id=ContentId("talk_01"),
-                synthesized_notes=("a",),
-                reconciled_mocs=(),
-                duplicates_unified=0,
+                stage_artifacts={StageName.FLUID_PROSE: MagicMock()},
             ),
             MagicMock(
                 already_processed=False,
-                success=True,
                 content_id=ContentId("talk_02"),
-                synthesized_notes=("b", "c"),
-                reconciled_mocs=("m1",),
-                duplicates_unified=2,
+                stage_artifacts={
+                    StageName.FLUID_PROSE: MagicMock(),
+                    StageName.GAP_FILLER: MagicMock(),
+                    StageName.LONG_EXPANDER: MagicMock(),
+                    StageName.WIDE_EXPANDER: MagicMock(),
+                },
             ),
         ]
         pipeline.run_for_video.side_effect = [
-            MagicMock(already_processed=True, success=True, content_id=ContentId("vid11111111")),
+            MagicMock(already_processed=True, content_id=ContentId("vid11111111")),
             RateLimitExceededError("HTTP 429 transient"),
             IngestionNetworkError("Socket reset"),
             RuntimeError("Boom"),
-            MagicMock(
-                already_processed=False,
-                success=False,
-                content_id=ContentId("vid55555555"),
-                error_message="Eval gate failed",
-            ),
+            CresmoDomainError("Eval gate failed"),
         ]
         runtime = MagicMock(spec=NoOpProcessRuntimePort)
         runtime.get_process_rss_bytes.return_value = 64_000_000.0
@@ -537,17 +520,11 @@ class TestRunSynthesisUseCase:
             ),
             BatchItemEvent(
                 kind=BatchItemEventKind.COMPLETED,
-                message=(
-                    "[2] [DONE] [talk_01]: 1 atomic notes synthesized, "
-                    "0 MOCs reconciled, 0 duplicate clusters unified."
-                ),
+                message="[2] [DONE] [talk_01]: 1 stages completed (fluid_prose).",
             ),
             BatchItemEvent(
                 kind=BatchItemEventKind.COMPLETED,
-                message=(
-                    "[3] [DONE] [talk_02]: 2 atomic notes synthesized, "
-                    "1 MOCs reconciled, 2 duplicate clusters unified."
-                ),
+                message="[3] [DONE] [talk_02]: 4 stages completed (wide_expander).",
             ),
             BatchItemEvent(
                 kind=BatchItemEventKind.SKIPPED_IDEMPOTENT,
@@ -567,7 +544,7 @@ class TestRunSynthesisUseCase:
             ),
             BatchItemEvent(
                 kind=BatchItemEventKind.ITEM_FAILED,
-                message=f"[8] [ERROR] {vid_fail_res.target}: Eval gate failed",
+                message=f"[8] [FAILED] {vid_fail_res.target}: Eval gate failed",
             ),
             BatchItemEvent(
                 kind=BatchItemEventKind.MASTER_CONSOLIDATED,
@@ -646,11 +623,8 @@ class TestRunSynthesisUseCase:
         pipeline = MagicMock()
         pipeline.run_for_video.return_value = MagicMock(
             already_processed=False,
-            success=True,
             content_id=ContentId("vid11111111"),
-            synthesized_notes=(),
-            reconciled_mocs=(),
-            duplicates_unified=0,
+            stage_artifacts={},
         )
         concat_master = MagicMock()
         concat_master.execute_all.side_effect = RuntimeError("Concat failure")
@@ -676,10 +650,7 @@ class TestRunSynthesisUseCase:
         assert events == [
             BatchItemEvent(
                 kind=BatchItemEventKind.COMPLETED,
-                message=(
-                    "[1/1] [DONE] [vid11111111]: 0 atomic notes synthesized, "
-                    "0 MOCs reconciled, 0 duplicate clusters unified."
-                ),
+                message="[1/1] [DONE] [vid11111111]: 0 stages completed (none).",
             ),
             BatchItemEvent(
                 kind=BatchItemEventKind.MASTER_WARNING,
@@ -763,27 +734,10 @@ class TestRunSynthesisUseCase:
         )
         req = RunSynthesisRequest()
 
-        pipeline.run_for_video.return_value = MagicMock(
-            already_processed=False,
-            success=False,
-            content_id=ContentId("vid11111111"),
-            error_message="Err",
-        )
-        assert (
-            use_case._process_batch_item(
-                pipeline=pipeline,
-                source=source,
-                request=req,
-                item_prefix="[1/1]",
-                batch_id=batch_id,
-                on_event=None,
-            )
-            == "failed"
-        )
-
         for exc in (
             RateLimitExceededError("429"),
             IngestionNetworkError("reset"),
+            CresmoDomainError("domain err"),
             RuntimeError("boom"),
         ):
             pipeline.run_for_video.side_effect = exc

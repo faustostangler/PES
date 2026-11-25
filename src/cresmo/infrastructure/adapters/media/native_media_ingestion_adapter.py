@@ -99,6 +99,7 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         whisper_device: str = "auto",
         whisper_compute_type: str = "auto",
         whisper_vad_filter: bool = True,
+        whisper_model: str = "base",
         enable_rss_fast_path: bool = True,
         http_client: httpx.Client | None = None,
         transcriber: FasterWhisperEngine | None = None,
@@ -116,6 +117,7 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             whisper_device: Target inference device for FasterWhisperEngine ('auto', 'cpu', 'cuda').
             whisper_compute_type: CTranslate2 compute type ('auto', 'int8', 'float16', etc.).
             whisper_vad_filter: Whether to enable Silero VAD speech filtering during transcription.
+            whisper_model: Default Whisper STT model checkpoint for audio transcription fallback.
             enable_rss_fast_path: Whether to attempt YouTube Atom RSS discovery before yt-dlp.
             http_client: Optional externally managed httpx.Client for connection pooling or testing.
             transcriber: Optional FasterWhisperEngine instance for audio transcription fallback.
@@ -127,6 +129,7 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             device=whisper_device,
             compute_type=whisper_compute_type,
             vad_filter=whisper_vad_filter,
+            model_name=whisper_model,
         )
         self._cookie_file: Path | None = Path(cookie_file).resolve() if cookie_file else None
         self._js_runtime_name: str | None = js_runtime_name or self._detect_js_runtime()
@@ -261,14 +264,7 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             str(info.get("channel") or info.get("uploader") or "Unknown_Channel")
         )
 
-    def _transcribe_audio_fallback(
-        self,
-        video_url: str,
-        output_dir: Path,
-        whisper_model: str,
-        keep_audio: bool,
-        channel_name: str = "Unknown_Channel",
-    ) -> str:
+    def _transcribe_audio_fallback(self, video_url: str) -> str:
         """Download audio to ephemeral scratch dir, transcribe via FasterWhisperEngine, and clean up."""
         with tempfile.TemporaryDirectory(prefix="cresmo_scratch_") as scratch_str:
             scratch_path = Path(scratch_str)
@@ -297,14 +293,7 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
                 )
 
             audio_file = downloaded_files[0]
-
-            if keep_audio:
-                dest_dir = output_dir / channel_name
-                dest_dir.mkdir(parents=True, exist_ok=True)
-                dest_audio = dest_dir / audio_file.name
-                shutil.copy2(audio_file, dest_audio)
-
-            body = self._transcriber.transcribe(audio_file, model_name=whisper_model)
+            body = self._transcriber.transcribe(audio_file)
 
         return str(body)
 
@@ -341,10 +330,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         self,
         video_url: str,
         info: Mapping[str, Any],
-        output_dir: Path,
-        whisper_model: str,
-        keep_audio: bool,
-        channel_name: str = "Unknown_Channel",
     ) -> str:
         """Resolve transcript text either from native subtitles or Whisper fallback."""
         actual_video_id = str(info.get("id") or self._extract_video_id(video_url))
@@ -370,13 +355,7 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
 
         # If subtitles were absent, malformed, or empty, trigger Whisper fallback
         if not body:
-            body = self._transcribe_audio_fallback(
-                video_url=video_url,
-                output_dir=output_dir,
-                whisper_model=whisper_model,
-                keep_audio=keep_audio,
-                channel_name=channel_name,
-            )
+            body = self._transcribe_audio_fallback(video_url=video_url)
 
         if not body:
             raise DomainValidationError(
@@ -397,7 +376,7 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         info: Mapping[str, Any],
         body: str,
         channel_name: str,
-    ) -> tuple[StageTranscript, ChannelId | None]:
+    ) -> StageTranscript:
         """Construct domain StageTranscript entity from resolved metadata and body."""
         actual_video_id = str(info.get("id") or self._extract_video_id(video_url))
         content_id = ContentId.extract_from_text(actual_video_id) or ContentId.from_url_or_token(
@@ -413,31 +392,26 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             name=resolved_channel_name,
             id=resolved_channel_id,
             category=category,
-            url=str(info.get("channel_url") or "") or None,
         )
         provenance = MediaProvenance.create(
             url=video_url,
             description=str(info.get("description") or ""),
             publication_date=upload_date,
         )
-        content = Content.create(
+        content = Content(
             id=content_id,
             title=str(info.get("title") or ""),
             text=body,
         )
-        transcript = StageTranscript(
+        return StageTranscript(
             channel=channel,
             provenance=provenance,
             content=content,
         )
-        return transcript, resolved_channel_id
 
     def ingest_single_video(
         self,
         video_url: str,
-        output_dir: Path,
-        whisper_model: str = "base",
-        keep_audio: bool = False,
     ) -> StageTranscript | None:
         """Ingest single video into StageTranscript domain aggregate.
 
@@ -446,40 +420,33 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         """
         start_time = time.perf_counter()
         status = "success"
-        channel_name = "Unknown_Channel"
-        channel_id = ""
 
         try:
             info = self._fetch_video_metadata(video_url)
             if not info:
                 status = "failure"
+                self._metrics_port.increment_counter(
+                    MetricName.INGESTION_FAILURES,
+                    1.0,
+                    labels={"error_type": "empty_metadata"},
+                )
                 return None
 
             channel_name = self._extract_channel_name(info)
-            early_channel_id = self._extract_channel_id(info)
-            if early_channel_id:
-                channel_id = early_channel_id.value
-
-            body = self._resolve_transcript_body(
-                video_url=video_url,
-                info=info,
-                output_dir=output_dir,
-                whisper_model=whisper_model,
-                keep_audio=keep_audio,
-                channel_name=channel_name,
-            )
-
-            transcript, resolved_channel_id = self._build_raw_transcript_aggregate(
+            body = self._resolve_transcript_body(video_url=video_url, info=info)
+            return self._build_raw_transcript_aggregate(
                 video_url=video_url,
                 info=info,
                 body=body,
                 channel_name=channel_name,
             )
-            if resolved_channel_id:
-                channel_id = resolved_channel_id.value
-            return transcript
-        except Exception:
+        except Exception as exc:
             status = "failure"
+            self._metrics_port.increment_counter(
+                MetricName.INGESTION_FAILURES,
+                1.0,
+                labels={"error_type": type(exc).__name__},
+            )
             raise
         finally:
             elapsed = time.perf_counter() - start_time
@@ -487,7 +454,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
                 MetricName.MEDIA_INGESTION_DURATION,
                 elapsed,
                 labels={
-                    "channel_id": channel_id,
                     "modality": "url",
                     "status": status,
                 },

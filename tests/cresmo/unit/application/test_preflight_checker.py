@@ -13,7 +13,6 @@ from typing import Any, cast
 from unittest.mock import MagicMock, patch
 
 import pytest
-from pydantic import SecretStr
 
 from cresmo.application.ports.preflight import PreflightProbePort
 from cresmo.application.services.preflight import (
@@ -72,19 +71,10 @@ class FakePreflightProbe(PreflightProbePort):
 class TestPreflightHealthChecker:
     """Hermetic test suite for PreflightHealthChecker using PreflightProbePort."""
 
-    def test_requires_probe_port(self, tmp_path: Path) -> None:
-        with pytest.raises(ValueError, match=r"^probe_port is required\.$"):
-            PreflightHealthChecker(
-                gemini_api_key=SecretStr("valid_key"),
-                vault_dir=tmp_path / "vault",
-                sqlite_ledger_path=tmp_path / "data" / "ledger.db",
-                probe_port=None,
-            )
-
     def test_default_check_ffmpeg_enabled_fails_when_binary_missing(self, tmp_path: Path) -> None:
         probe = FakePreflightProbe(binaries=set())
         checker = PreflightHealthChecker(
-            gemini_api_key=SecretStr("valid_key"),
+            gemini_api_key="valid_key",
             vault_dir=tmp_path / "vault",
             sqlite_ledger_path=tmp_path / "data" / "ledger.db",
             probe_port=probe,
@@ -98,7 +88,7 @@ class TestPreflightHealthChecker:
         ledger_path = tmp_path / "data" / "ledger.db"
         probe = FakePreflightProbe()
         checker = PreflightHealthChecker(
-            gemini_api_key=SecretStr("valid_test_key"),
+            gemini_api_key="valid_test_key",
             vault_dir=vault_dir,
             sqlite_ledger_path=ledger_path,
             check_ffmpeg=False,
@@ -107,14 +97,13 @@ class TestPreflightHealthChecker:
         result = checker.check_all()
         assert result.is_healthy
         assert result.errors == ()
-        assert result.warnings == ()
         assert vault_dir in probe.created_dirs
         assert ledger_path.parent in probe.created_dirs
         result.assert_healthy()
 
     def test_missing_api_key_fails(self, tmp_path: Path) -> None:
         checker = PreflightHealthChecker(
-            gemini_api_key=SecretStr("   "),
+            gemini_api_key="   ",
             vault_dir=tmp_path / "vault",
             sqlite_ledger_path=tmp_path / "data" / "ledger.db",
             check_ffmpeg=False,
@@ -128,7 +117,7 @@ class TestPreflightHealthChecker:
 
     def test_missing_ffmpeg_binary_fails_when_enabled(self, tmp_path: Path) -> None:
         checker = PreflightHealthChecker(
-            gemini_api_key=SecretStr("valid_test_key"),
+            gemini_api_key="valid_test_key",
             vault_dir=tmp_path / "vault",
             sqlite_ledger_path=tmp_path / "data" / "ledger.db",
             check_ffmpeg=True,
@@ -140,7 +129,7 @@ class TestPreflightHealthChecker:
 
     def test_found_ffmpeg_binary_passes_when_enabled(self, tmp_path: Path) -> None:
         checker = PreflightHealthChecker(
-            gemini_api_key=SecretStr("valid_test_key"),
+            gemini_api_key="valid_test_key",
             vault_dir=tmp_path / "vault",
             sqlite_ledger_path=tmp_path / "data" / "ledger.db",
             check_ffmpeg=True,
@@ -152,7 +141,7 @@ class TestPreflightHealthChecker:
     def test_unwritable_directory_fails(self, tmp_path: Path) -> None:
         vault_dir = tmp_path / "vault"
         checker = PreflightHealthChecker(
-            gemini_api_key=SecretStr("valid_test_key"),
+            gemini_api_key="valid_test_key",
             vault_dir=vault_dir,
             sqlite_ledger_path=tmp_path / "data" / "ledger.db",
             check_ffmpeg=False,
@@ -161,148 +150,6 @@ class TestPreflightHealthChecker:
         result = checker.check_all()
         assert not result.is_healthy
         assert f"Vault directory is not writable: '{vault_dir}'" in result.errors
-
-    def test_preflight_result_with_warnings(self) -> None:
-        res = PreflightResult(
-            is_healthy=True,
-            errors=(),
-            warnings=("Langfuse unreachable; telemetry bypassed",),
-        )
-        assert res.is_healthy
-        res.assert_healthy()
-
-    def test_preflight_checker_probes(self, tmp_path: Path) -> None:
-        probe_ok = FakePreflightProbe(default_http_ok=True)
-        checker_ok = PreflightHealthChecker(
-            gemini_api_key=SecretStr("key"),
-            vault_dir=tmp_path / "vault",
-            sqlite_ledger_path=tmp_path / "ledger.db",
-            check_ffmpeg=False,
-            langfuse_host="http://localhost:3000",
-            ollama_base_url="http://localhost:11434",
-            probe_port=probe_ok,
-        )
-        assert checker_ok.check_langfuse_probe("http://localhost:3000") is True
-        assert checker_ok.check_ollama_probe("http://localhost:11434") is True
-
-        probe_fail = FakePreflightProbe(default_http_ok=False)
-        checker_fail = PreflightHealthChecker(
-            gemini_api_key=SecretStr("key"),
-            vault_dir=tmp_path / "vault",
-            sqlite_ledger_path=tmp_path / "ledger.db",
-            check_ffmpeg=False,
-            langfuse_host="http://localhost:3000",
-            ollama_base_url="http://localhost:11434",
-            probe_port=probe_fail,
-        )
-        assert checker_fail.check_langfuse_probe("http://localhost:3000") is False
-        assert checker_fail.check_ollama_probe("http://localhost:11434") is False
-
-    def test_preflight_checker_url_normalization(self, tmp_path: Path) -> None:
-        probe = FakePreflightProbe(default_http_ok=True)
-        checker = PreflightHealthChecker(
-            gemini_api_key="plain_str_key",
-            vault_dir=str(tmp_path / "vault"),
-            sqlite_ledger_path=str(tmp_path / "data" / "ledger.db"),
-            check_ffmpeg=True,
-            langfuse_host="http://localhost:3000/",
-            ollama_base_url="http://localhost:11434/",
-            probe_port=probe,
-        )
-
-        assert checker.check_langfuse_probe("http://localhost:3000/", timeout_seconds=2.5) is True
-        assert probe.http_calls[-1] == ("http://localhost:3000/api/public/health", 2.5)
-
-        assert checker.check_langfuse_probe("http://localhost:3000/") is True
-        assert probe.http_calls[-1] == ("http://localhost:3000/api/public/health", 2.0)
-
-        assert checker.check_ollama_probe("http://localhost:11434/", timeout_seconds=3.5) is True
-        assert probe.http_calls[-1] == ("http://localhost:11434/api/version", 3.5)
-
-        assert checker.check_ollama_probe("http://localhost:11434/") is True
-        assert probe.http_calls[-1] == ("http://localhost:11434/api/version", 1.0)
-
-        assert checker.check_langfuse_probe("http://localhost:3000/apiX") is True
-        assert probe.http_calls[-1] == ("http://localhost:3000/apiX/api/public/health", 2.0)
-
-        assert checker.check_ollama_probe("http://localhost:11434/apiX") is True
-        assert probe.http_calls[-1] == ("http://localhost:11434/apiX/api/version", 1.0)
-
-    def test_check_langfuse_localhost_fallback_to_127(self, tmp_path: Path) -> None:
-        probe = FakePreflightProbe(
-            http_responses={
-                "http://localhost:3000/api/public/health": False,
-                "http://127.0.0.1:3000/api/public/health": True,
-            },
-            default_http_ok=False,
-        )
-        checker = PreflightHealthChecker(
-            gemini_api_key=SecretStr("key"),
-            vault_dir=tmp_path / "vault",
-            sqlite_ledger_path=tmp_path / "ledger.db",
-            check_ffmpeg=False,
-            probe_port=probe,
-        )
-        assert checker.check_langfuse_probe("http://localhost:3000") is True
-        assert probe.http_calls == [
-            ("http://localhost:3000/api/public/health", 2.0),
-            ("http://127.0.0.1:3000/api/public/health", 2.0),
-        ]
-        assert checker.check_langfuse_probe("https://cloud.langfuse.com") is False
-
-    def test_check_all_telemetry_and_ollama_probe_failure(self, tmp_path: Path) -> None:
-        vault_dir = tmp_path / "vault"
-        ledger_path = tmp_path / "data" / "ledger.db"
-
-        checker = PreflightHealthChecker(
-            gemini_api_key=SecretStr("valid_key"),
-            vault_dir=vault_dir,
-            sqlite_ledger_path=ledger_path,
-            check_ffmpeg=False,
-            langfuse_host="http://localhost:3000",
-            ollama_base_url="http://localhost:11434",
-            probe_port=FakePreflightProbe(default_http_ok=False),
-        )
-
-        with (
-            patch.object(checker, "check_langfuse_probe", return_value=False) as mock_lf,
-            patch.object(checker, "check_ollama_probe", return_value=False) as mock_ol,
-        ):
-            result = checker.check_all(probe_telemetry=True, probe_ollama=True)
-            mock_lf.assert_called_once_with("http://localhost:3000")
-            mock_ol.assert_called_once_with("http://localhost:11434")
-
-            assert not result.is_healthy
-            assert (
-                "Langfuse server at 'http://localhost:3000' is unreachable. Telemetry disabled."
-                in result.warnings
-            )
-            assert (
-                "Local Ollama daemon at 'http://localhost:11434' is unreachable." in result.errors
-            )
-
-    def test_check_all_telemetry_and_ollama_probe_success(self, tmp_path: Path) -> None:
-        vault_dir = tmp_path / "vault"
-        ledger_path = tmp_path / "data" / "ledger.db"
-
-        checker = PreflightHealthChecker(
-            gemini_api_key=SecretStr("valid_key"),
-            vault_dir=vault_dir,
-            sqlite_ledger_path=ledger_path,
-            check_ffmpeg=False,
-            langfuse_host="http://localhost:3000",
-            ollama_base_url="http://localhost:11434",
-            probe_port=FakePreflightProbe(default_http_ok=True),
-        )
-
-        with (
-            patch.object(checker, "check_langfuse_probe", return_value=True),
-            patch.object(checker, "check_ollama_probe", return_value=True),
-        ):
-            result = checker.check_all(probe_telemetry=True, probe_ollama=True)
-            assert result.is_healthy
-            assert len(result.warnings) == 0
-            assert len(result.errors) == 0
 
     def test_check_all_oserror_on_vault_and_ledger_directories(self, tmp_path: Path) -> None:
         vault_dir = tmp_path / "bad_vault"
@@ -314,7 +161,7 @@ class TestPreflightHealthChecker:
             }
         )
         checker = PreflightHealthChecker(
-            gemini_api_key=SecretStr("valid_key"),
+            gemini_api_key="valid_key",
             vault_dir=vault_dir,
             sqlite_ledger_path=ledger_path,
             check_ffmpeg=False,
@@ -334,7 +181,7 @@ class TestPreflightHealthChecker:
         ledger_path = tmp_path / "ledger" / "db.sqlite"
         probe = FakePreflightProbe(unwritable_paths={ledger_path.parent})
         checker = PreflightHealthChecker(
-            gemini_api_key=SecretStr("valid_key"),
+            gemini_api_key="valid_key",
             vault_dir=vault_dir,
             sqlite_ledger_path=ledger_path,
             check_ffmpeg=False,
@@ -386,33 +233,6 @@ class TestPreflightHealthChecker:
             res.assert_healthy()
         assert "Preflight health check failed: First error; Second error" == str(exc_info.value)
 
-    def test_check_all_telemetry_and_ollama_defaults(self, tmp_path: Path) -> None:
-        checker = PreflightHealthChecker(
-            gemini_api_key=SecretStr("valid_key"),
-            vault_dir=tmp_path / "vault",
-            sqlite_ledger_path=tmp_path / "data" / "ledger.db",
-            check_ffmpeg=False,
-            langfuse_host="http://localhost:3000",
-            ollama_base_url="http://localhost:11434",
-            probe_port=FakePreflightProbe(),
-        )
-        with (
-            patch.object(
-                checker,
-                "check_langfuse_probe",
-                side_effect=AssertionError("Should not probe telemetry by default"),
-            ),
-            patch.object(
-                checker,
-                "check_ollama_probe",
-                side_effect=AssertionError("Should not probe ollama by default"),
-            ),
-        ):
-            res = checker.check_all()
-            assert res.is_healthy is True
-            assert len(res.warnings) == 0
-            assert len(res.errors) == 0
-
 
 class TestPreflightProbeAdapter:
     """Unit tests for infrastructure PreflightProbeAdapter and probe_http_endpoint."""
@@ -435,15 +255,6 @@ class TestPreflightProbeAdapter:
 
         with patch("shutil.which", return_value=None):
             assert adapter.executable_exists("ffmpeg") is False
-
-    def test_probe_http_delegates_to_probe_http_endpoint(self) -> None:
-        adapter = PreflightProbeAdapter()
-        with patch(
-            "cresmo.infrastructure.adapters.system.preflight_probe_adapter.probe_http_endpoint",
-            return_value=True,
-        ) as mock_probe:
-            assert adapter.probe_http("http://localhost:3000/health", timeout_seconds=2.5) is True
-            mock_probe.assert_called_once_with("http://localhost:3000/health", timeout_seconds=2.5)
 
     def test_probe_http_endpoint_success_and_failures(self) -> None:
         mock_resp = MagicMock()

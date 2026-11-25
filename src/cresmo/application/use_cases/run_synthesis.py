@@ -16,6 +16,8 @@ from enum import StrEnum
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+import structlog
+
 from cresmo.application.ports import (
     MediaIngestionPort,
     MetricName,
@@ -24,11 +26,13 @@ from cresmo.application.ports import (
     VaultRepositoryPort,
 )
 from cresmo.application.services.preflight import PreflightHealthChecker
+from cresmo.application.use_cases.discovery.models import BatchDiscoveryQuery, BatchSource
 from cresmo.domain.exceptions import (
     IngestionNetworkError,
     QuotaPoolExhaustedError,
     RateLimitExceededError,
 )
+from cresmo.domain.stage_registry import StageName
 from cresmo.domain.value_objects import (
     BatchId,
     ChannelName,
@@ -38,13 +42,14 @@ from cresmo.domain.value_objects import (
     is_processable_transcript_file,
 )
 
+logger = structlog.get_logger(__name__)
+
 if TYPE_CHECKING:
     from cresmo.application.pipeline.coordinator import CresmoPipeline
     from cresmo.application.use_cases.concat_master import ConcatMasterUseCase
     from cresmo.application.use_cases.discovery.discover_batch_sources import (
         DiscoverBatchSourcesUseCase,
     )
-    from cresmo.application.use_cases.discovery.models import BatchDiscoveryQuery, BatchSource
 
 
 class RunExitStatus(StrEnum):
@@ -59,7 +64,6 @@ class RunExitStatus(StrEnum):
 class BatchItemEventKind(StrEnum):
     """Event discriminators emitted during synthesis run execution."""
 
-    PREFLIGHT_WARNING = "preflight_warning"
     DISCOVERY_PROGRESS = "discovery_progress"
     SKIPPED_ARTIFACT = "skipped_artifact"
     SKIPPED_IDEMPOTENT = "skipped_idempotent"
@@ -115,9 +119,8 @@ class RunSynthesisOutcome:
     total_items: int = 0
     dry_run: bool = False
     empty_sources: bool = False
-    single_notes_count: int = 0
-    single_mocs_count: int = 0
-    single_duplicates_unified: int = 0
+    single_stages_completed: tuple[str, ...] = ()
+    single_final_chars: int = 0
     single_content_id: str | None = None
     single_dry_run_chars: int | None = None
     single_dry_run_url: str | None = None
@@ -125,7 +128,6 @@ class RunSynthesisOutcome:
     dry_run_total: int = 0
     manifest_display: str = "data/playlist.txt"
     scan_raw: bool = False
-    error_message: str | None = None
 
 
 def _emit(
@@ -150,7 +152,6 @@ class RunSynthesisUseCase:
         ],
         concat_master_factory: Callable[[VaultRepositoryPort], ConcatMasterUseCase],
         runtime_port: ProcessRuntimePort | None = None,
-        runtime_role: str = "cli",
     ) -> None:
         self._discovery_policy = discovery_policy
         self._preflight_checker = preflight_checker
@@ -158,7 +159,6 @@ class RunSynthesisUseCase:
         self._discover_sources_factory = discover_sources_factory
         self._concat_master_factory = concat_master_factory
         self._runtime_port = runtime_port or NoOpProcessRuntimePort()
-        self._runtime_role = runtime_role
 
     def execute(
         self,
@@ -176,17 +176,9 @@ class RunSynthesisUseCase:
         """
         preflight_result = self._preflight_checker.check_all()
         preflight_result.assert_healthy()
-        for warning in preflight_result.warnings:
-            _emit(
-                on_event,
-                BatchItemEvent(
-                    kind=BatchItemEventKind.PREFLIGHT_WARNING,
-                    message=warning,
-                ),
-            )
 
         pipeline = self._pipeline_factory()
-        if not request.web_index:
+        if not request.dry_run:
             pipeline.warmup()
 
         if request.url:
@@ -232,40 +224,34 @@ class RunSynthesisUseCase:
                 total_items=1,
                 single_content_id=content_id_str,
             )
-        if result.success:
-            try:
-                raw_transcript = pipeline.vault_port.get_stage_transcript(
-                    "raw",
-                    result.content_id,
-                )
-                if raw_transcript and raw_transcript.channel.name:
-                    concat_master = self._concat_master_factory(pipeline.vault_port)
-                    concat_master.execute(ChannelName(raw_transcript.channel.name))
-            except Exception as exc:  # noqa: BLE001
-                _emit(
-                    on_event,
-                    BatchItemEvent(
-                        kind=BatchItemEventKind.MASTER_WARNING,
-                        message=f"Warning: Master consolidation failed: {exc}",
-                    ),
-                )
-            return RunSynthesisOutcome(
-                status=RunExitStatus.SUCCESS,
-                mode="single",
-                completed=1,
-                total_items=1,
-                single_notes_count=len(result.synthesized_notes),
-                single_mocs_count=len(result.reconciled_mocs),
-                single_duplicates_unified=result.duplicates_unified,
-                single_content_id=content_id_str,
+        try:
+            raw_transcript = (
+                result.source_transcript
+                or pipeline.vault_port.get_stage_transcript(StageName.RAW, result.content_id)
+            )
+            if raw_transcript and raw_transcript.channel.name:
+                concat_master = self._concat_master_factory(pipeline.vault_port)
+                concat_master.execute(ChannelName(raw_transcript.channel.name))
+        except Exception as exc:  # noqa: BLE001
+            _emit(
+                on_event,
+                BatchItemEvent(
+                    kind=BatchItemEventKind.MASTER_WARNING,
+                    message=f"Warning: Master consolidation failed: {exc}",
+                ),
             )
         return RunSynthesisOutcome(
-            status=RunExitStatus.INTERNAL_ERROR,
+            status=RunExitStatus.SUCCESS,
             mode="single",
-            failed=1,
+            completed=1,
             total_items=1,
+            single_stages_completed=tuple(s.value for s in result.stage_artifacts),
+            single_final_chars=(
+                len(result.final_transcript.content.text)
+                if result.final_transcript is not None
+                else 0
+            ),
             single_content_id=content_id_str,
-            error_message=result.error_message,
         )
 
     def _execute_batch(
@@ -309,8 +295,6 @@ class RunSynthesisUseCase:
         )
 
     def _build_discovery_query(self, request: RunSynthesisRequest) -> BatchDiscoveryQuery:
-        from cresmo.application.use_cases.discovery.models import BatchDiscoveryQuery
-
         enable_channel_crawler = (
             True if request.crawl else self._discovery_policy.enable_channel_crawler
         )
@@ -549,29 +533,19 @@ class RunSynthesisUseCase:
                 )
                 return "skipped"
 
-            if result.success:
-                _emit(
-                    on_event,
-                    BatchItemEvent(
-                        kind=BatchItemEventKind.COMPLETED,
-                        message=(
-                            f"{item_prefix} [DONE] [{content_id}]: "
-                            f"{len(result.synthesized_notes)} atomic notes synthesized, "
-                            f"{len(result.reconciled_mocs)} MOCs reconciled, "
-                            f"{result.duplicates_unified} duplicate clusters unified."
-                        ),
-                    ),
-                )
-                return "completed"
-
+            completed_stages = list(result.stage_artifacts)
+            final_stage = completed_stages[-1].value if completed_stages else "none"
             _emit(
                 on_event,
                 BatchItemEvent(
-                    kind=BatchItemEventKind.ITEM_FAILED,
-                    message=f"{item_prefix} [ERROR] {source.target}: {result.error_message}",
+                    kind=BatchItemEventKind.COMPLETED,
+                    message=(
+                        f"{item_prefix} [DONE] [{content_id}]: "
+                        f"{len(completed_stages)} stages completed ({final_stage})."
+                    ),
                 ),
             )
-            return "failed"
+            return "completed"
         except QuotaPoolExhaustedError:
             raise
         except RateLimitExceededError as exc:
@@ -606,7 +580,7 @@ class RunSynthesisUseCase:
         self,
         pipeline: CresmoPipeline,
         on_event: Callable[[BatchItemEvent], None] | None,
-    ) -> tuple[int, int]:
+    ) -> None:
         try:
             concat_master = self._concat_master_factory(pipeline.vault_port)
             master_results = concat_master.execute_all()
@@ -622,7 +596,6 @@ class RunSynthesisUseCase:
                     ),
                 ),
             )
-            return total_parts, channels_count
         except Exception as exc:  # noqa: BLE001
             _emit(
                 on_event,
@@ -631,20 +604,19 @@ class RunSynthesisUseCase:
                     message=f"Warning: Master consolidation failed: {exc}",
                 ),
             )
-            return 0, 0
 
     def _drain_telemetry_and_memory(self, pipeline: CresmoPipeline) -> None:
         try:
             pipeline.telemetry_port.flush()
-        except Exception:  # noqa: BLE001
-            pass
+        except Exception as exc:  # noqa: BLE001
+            logger.debug("Telemetry flush failed during batch drain: %s", exc)
         try:
             self._runtime_port.collect_garbage()
             rss_bytes = self._runtime_port.get_process_rss_bytes()
             pipeline.metrics_port.set_gauge(
                 MetricName.PROCESS_RESIDENT_MEMORY_BYTES,
                 rss_bytes,
-                labels={"role": self._runtime_role},
+                labels={"role": "cli"},
             )
             pipeline.metrics_port.increment_counter(
                 MetricName.GC_COLLECTIONS,
@@ -652,5 +624,5 @@ class RunSynthesisUseCase:
                 labels={"generation": "all"},
             )
             pipeline.metrics_port.flush()
-        except Exception:  # noqa: BLE001
-            pass
+        except Exception as exc:  # noqa: BLE001
+            logger.debug("Metrics/GC drain failed during batch drain: %s", exc)

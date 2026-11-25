@@ -70,23 +70,26 @@ SAMPLE_CONTEXTS: dict[PromptKey, dict[str, Any]] = {
         "transcript_excerpt": "Excerpt 1",
     },
     PromptKey.JUDGE_RAW_INDEX_SYNTHESIS: {
-        "content_title": "Video 1",
-        "summary": "Summary 1",
-        "synthesis": "Synthesis 1",
+        "stage_name": "raw_index_synthesis",
+        "criteria_json": '["index_synthesis_quality"]',
+        "source_text": "Summary 1",
+        "candidate_text": "Synthesis 1",
     },
     PromptKey.JUDGE_RAW_INDEX_SUMMARY: {
-        "content_title": "Video 1",
-        "transcript_excerpt": "Excerpt 1",
-        "summary": "Summary 1",
+        "stage_name": "raw_index_summary",
+        "criteria_json": '["index_synthesis_quality"]',
+        "source_text": "Excerpt 1",
+        "candidate_text": "Summary 1",
     },
     PromptKey.RAW_INDEX_CONCEPTS: {
         "content_title": "Video 1",
         "transcript_excerpt": "Excerpt 1",
     },
     PromptKey.JUDGE_RAW_INDEX_CONCEPTS: {
-        "content_title": "Video 1",
-        "transcript_excerpt": "Excerpt 1",
-        "concepts": "Concept A",
+        "stage_name": "raw_index_concepts",
+        "criteria_json": '["index_synthesis_quality"]',
+        "source_text": "Excerpt 1",
+        "candidate_text": "Concept A",
     },
     PromptKey.RAW_INDEX_CONCEPTS_REWRITE: {"previous_output": "Old concepts"},
     PromptKey.RAW_INDEX_SYNTHESIS: {
@@ -100,10 +103,10 @@ SAMPLE_CONTEXTS: dict[PromptKey, dict[str, Any]] = {
         "compendium_body": "Body",
     },
     PromptKey.JUDGE_ATOMIC_INVENTORY: {
-        "channel_name": ChannelName("Tech"),
-        "content_title": "Video 1",
-        "compendium_body": "Body",
-        "inventory_json": "[]",
+        "stage_name": "atomic_inventory",
+        "criteria_json": '["inventory_coherence"]',
+        "source_text": "Body",
+        "candidate_text": "[]",
     },
     PromptKey.ATOMIC_BATCH: {
         "channel_name": ChannelName("Tech"),
@@ -151,4 +154,4 @@ class TestPromptNormalizationParity:
         local_chat = local_provider.get_prompt(key, **ctx)
         assert local_chat.system_prompt is not None
         assert local_chat.system_prompt.strip() != ""
-        assert local_chat.get_last_user_content().strip() != ""
+        assert local_chat.messages[-1].content.strip() != ""

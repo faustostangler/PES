@@ -134,7 +134,6 @@ class InMemoryCalibrationDatasetFake(CalibrationDatasetPort):
 
     def load_items(
         self,
-        stage_name: str,
         default_golden_set_path: Path,
         default_seed_path: Path,
         *,
@@ -144,12 +143,17 @@ class InMemoryCalibrationDatasetFake(CalibrationDatasetPort):
         """Return configured items or seed fallback without touching disk."""
         self.calls.append(
             {
-                "stage_name": stage_name,
                 "default_golden_set_path": default_golden_set_path,
                 "default_seed_path": default_seed_path,
                 "dataset_path": dataset_path,
                 "seed_only": seed_only,
             }
+        )
+        all_stages = tuple(self._golden_by_stage.keys() | self._seeds_by_stage.keys())
+        stems = f"{default_golden_set_path.stem} {default_seed_path.stem}"
+        stage_name = next(
+            (s for s in all_stages if s in stems),
+            default_golden_set_path.parent.name,
         )
         if seed_only:
             return copy.deepcopy(self._seeds_by_stage.get(stage_name, []))

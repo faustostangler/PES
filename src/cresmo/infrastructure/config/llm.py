@@ -124,12 +124,6 @@ class OllamaSettings(BaseModel):
         ge=0,
         description="Maximum tokens predicted by local Ollama model (0 means unconstrained).",
     )
-    synthesis_temperature: float = Field(
-        default=0.2,
-        ge=0.0,
-        le=2.0,
-        description="Sampling temperature for generative synthesis.",
-    )
     indexing_temperature: float = Field(
         default=0.2,
         ge=0.0,

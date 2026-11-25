@@ -53,8 +53,8 @@ class ReconcileMOCsUseCase:
 
     def execute(
         self,
-        session_id: PipelineSessionId | str | None = None,
-        user_id: UserIdentity | str | None = None,
+        session_id: PipelineSessionId | None = None,
+        user_id: UserIdentity | None = None,
     ) -> list[MapOfContent]:
         """Execute MOC reconciliation.
 
@@ -80,17 +80,10 @@ class ReconcileMOCsUseCase:
             notes_json=json.dumps(note_summaries, ensure_ascii=False),
         )
 
-        actual_session_id = (
-            session_id.value
-            if isinstance(session_id, PipelineSessionId)
-            else (session_id or "system:mocs")
+        actual_session_id = session_id.value if session_id is not None else "system:mocs"
+        actual_user_id = (
+            user_id.value if user_id is not None else UserIdentity.worker().value
         )
-        if isinstance(user_id, UserIdentity):
-            actual_user_id = user_id.value
-        elif isinstance(user_id, str) and user_id.strip():
-            actual_user_id = user_id.strip()
-        else:
-            actual_user_id = UserIdentity.worker().value
 
         response = self.llm_synthesis_port.transform(
             prompt=chat_prompt,

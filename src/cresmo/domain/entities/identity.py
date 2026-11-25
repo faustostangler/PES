@@ -9,6 +9,7 @@ Conforms to:
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Final
 
 from cresmo.domain.value_objects import (
     Channel,
@@ -18,7 +19,7 @@ from cresmo.domain.value_objects import (
     ContentId,
 )
 
-CANONICAL_SESSION_ID_PARTS: int = 2
+_CANONICAL_SESSION_ID_PARTS: Final[int] = 2
 
 
 @dataclass(frozen=True)
@@ -36,7 +37,7 @@ class PipelineSessionId:
         if not self.value or not self.value.strip():
             raise ValueError("PipelineSessionId cannot be empty.")
         parts = self.value.split(":")
-        if len(parts) != CANONICAL_SESSION_ID_PARTS or not parts[0].strip() or not parts[1].strip():
+        if len(parts) != _CANONICAL_SESSION_ID_PARTS or not parts[0].strip() or not parts[1].strip():
             raise ValueError(
                 f"Invalid PipelineSessionId format: '{self.value}'. "
                 "Expected '{channel_id}:{content_id}'."
@@ -45,15 +46,15 @@ class PipelineSessionId:
     @classmethod
     def create(
         cls,
-        channel: Channel | ChannelName | str,
-        content_id: Content | ContentId | str,
+        channel: Channel | ChannelName,
+        content_id: Content | ContentId,
         channel_id: ChannelId | None = None,
     ) -> PipelineSessionId:
         """Construct canonical session key preferring stable ChannelId over mutable Channel.name.
 
         Args:
-            channel: Composite Channel VO, human-readable ChannelName, or str.
-            content_id: Composite Content VO, ContentId, or str.
+            channel: Composite Channel VO or human-readable ChannelName.
+            content_id: Composite Content VO or ContentId.
             channel_id: Optional stable platform ID (preferred for algorithmic keys).
         """
         # Algorithmic key: prefer stable ID over mutable name
@@ -61,18 +62,11 @@ class PipelineSessionId:
             resolved_channel_id = channel.id or channel_id
             channel_identifier = resolved_channel_id.value if resolved_channel_id else channel.name
         else:
-            channel_identifier = (
-                channel_id.value
-                if channel_id
-                else (channel.value if isinstance(channel, ChannelName) else channel.strip())
-            )
+            channel_identifier = channel_id.value if channel_id else channel.value
 
-        if isinstance(content_id, Content):
-            content_identifier = content_id.id.value
-        else:
-            content_identifier = (
-                content_id.value if isinstance(content_id, ContentId) else content_id.strip()
-            )
+        content_identifier = (
+            content_id.id.value if isinstance(content_id, Content) else content_id.value
+        )
 
         return cls(value=f"{channel_identifier}:{content_identifier}")
 
@@ -91,9 +85,8 @@ class PipelineSessionId:
 class UserIdentity:
     """Value Object representing the user/operator executing the synthesis pipeline.
 
-    Supports forward-compatible identity modalities per ADR-027:
+    Supports identity modalities per ADR-027 and ADR-077:
     - Anonymous (unauthenticated, guest, CLI): 'anonymous'
-    - Identified (authenticated via IAM / OAuth): 'user:iam:alice' or 'user:oauth:subject'
     - Scheduled workers (daemons, batch sync): 'system:worker'
     """
 
@@ -107,28 +100,9 @@ class UserIdentity:
             raise ValueError("UserIdentity cannot be empty.")
 
     @classmethod
-    def anonymous(cls, token: str | None = None) -> UserIdentity:
+    def anonymous(cls) -> UserIdentity:
         """Create an anonymous user identity."""
-        identity_value = f"anon:{token}" if token else "anonymous"
-        return cls(value=identity_value)
-
-    @classmethod
-    def identified(cls, subject: str, provider: str | None = None) -> UserIdentity:
-        """Create an identified user identity from OAuth subject, IAM username, or email."""
-        if not subject or not subject.strip():
-            raise ValueError("Identified UserIdentity requires a non-empty subject.")
-        if provider is not None:
-            clean_provider = provider.strip().lower()
-            resolved_provider = clean_provider if clean_provider else "oauth"
-        else:
-            resolved_provider = "oauth"
-        identity_value = f"user:{resolved_provider}:{subject.strip()}"
-        return cls(
-            value=identity_value,
-            is_anonymous=False,
-            provider=resolved_provider,
-            subject=subject.strip(),
-        )
+        return cls(value="anonymous")
 
     @classmethod
     def worker(cls, name: str = "worker") -> UserIdentity:

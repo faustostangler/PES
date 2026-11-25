@@ -1,9 +1,10 @@
-Title: {{content_title}}
+Evaluate stage: {{stage_name}}
+Required criteria JSON: {{criteria_json}}
 
-Transcript Excerpt:
-{{transcript_excerpt}}
+--- SOURCE TRANSCRIPT EXCERPT ---
+{{source_text}}
 
-Proposed Concepts:
-{{concepts}}
+--- PROPOSED CONCEPTS ---
+{{candidate_text}}
 
-Does the proposed concepts extraction strictly satisfy all ontological, factual, and formatting criteria without introductory labels, discursive syntax, or em-dashes? Respond ONLY with 'true' or 'false'.
+Score every requested criterion rigorously in JSON format.

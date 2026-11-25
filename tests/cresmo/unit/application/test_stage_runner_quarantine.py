@@ -40,7 +40,7 @@ from tests.doubles.telemetry_fake import InMemoryTelemetryPort
 
 def _create_sample_context() -> PipelineExecutionContext:
     channel = Channel(name="Test Channel", id=ChannelId("UC_test"))
-    content = Content.create(
+    content = Content(
         id=ContentId("content_123"), title="Sample Content", session_id="test_chan:content_123"
     )
     return PipelineExecutionContext(
@@ -176,7 +176,7 @@ def test_execute_stage_closed_loop_critique_synthesizer_integration() -> None:
 
     # Verify critique was injected into prompt on attempt 2
     prompt_attempt_2 = mock_llm.transform.call_args_list[1].kwargs.get("prompt")
-    assert "Direcionamento crítico" in prompt_attempt_2.get_last_user_content()
+    assert "Direcionamento crítico" in prompt_attempt_2.messages[-1].content
 
 
 def test_execute_stage_fail_fast_quarantine_protocol() -> None:
@@ -268,7 +268,7 @@ def test_record_stage_quarantine_with_channel_and_content_objects_and_span() -> 
         provider="test",
     )
     ch = Channel(name="TestChannel", id=ChannelId("UC_123"))
-    cnt = Content.create(id=ContentId("vid_999"), title="Title 999")
+    cnt = Content(id=ContentId("vid_999"), title="Title 999")
     prov = MediaProvenance(url="https://yt.be/999")
     ctx = PipelineExecutionContext(user_identity=UserIdentity.worker(), channel=ch, content=cnt)
     mock_ledger = MagicMock(spec=LedgerRepositoryPort)
@@ -343,7 +343,7 @@ def test_record_stage_quarantine_preserves_existing_ledger_entry() -> None:
         provider="test",
     )
     ch = Channel(name="OldChannel", id=None)
-    cnt = Content.create(id=ContentId("vid_existing"), title="")
+    cnt = Content(id=ContentId("vid_existing"), title="")
     started_time = datetime(2026, 1, 1, 12, 0, 0, tzinfo=UTC)
     from cresmo.domain.value_objects import LedgerEntry
 
@@ -436,7 +436,7 @@ def test_record_stage_quarantine_ledger_exception_resilience(
         provider="test",
     )
     ch = Channel(name="Chan", id=None)
-    cnt = Content.create(id=ContentId("vid_err"), title="T")
+    cnt = Content(id=ContentId("vid_err"), title="T")
     ctx = PipelineExecutionContext(user_identity=UserIdentity.worker(), channel=ch, content=cnt)
     mock_ledger = MagicMock(spec=LedgerRepositoryPort)
     mock_ledger.get_entry.side_effect = RuntimeError("Database locked")
@@ -451,6 +451,7 @@ def test_record_stage_quarantine_ledger_exception_resilience(
             effective_max_attempts=1,
             ledger_port=mock_ledger,
             metrics_port=mock_metrics,
+            telemetry_port=NoOpTelemetryPort(),
         )
 
     assert exc_info.value.content_id == "vid_err"

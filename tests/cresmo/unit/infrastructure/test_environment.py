@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 
+from cresmo.domain.stage_registry import StageName
 from cresmo.infrastructure.config import CresmoSettings, StorageSettings
 from cresmo.infrastructure.environment import (
     StorageSettingsProtocol,
@@ -20,9 +21,6 @@ class _StubStorage:
     data_dir: Path
     vault_dir: Path
     mocs_dir: Path
-    raw_dir: Path
-    fluid_dir: Path
-    enriched_dir: Path
     master_dir: Path
     priority_texts_dir: Path
 
@@ -34,9 +32,6 @@ def _build_stub_storage(root: Path) -> _StubStorage:
         data_dir=data_dir,
         vault_dir=vault_dir,
         mocs_dir=vault_dir / "MOCs",
-        raw_dir=data_dir / "raw",
-        fluid_dir=data_dir / "fluid_prose",
-        enriched_dir=data_dir / "enriched",
         master_dir=data_dir / "master",
         priority_texts_dir=data_dir / "priority",
     )
@@ -62,7 +57,7 @@ class TestStorageSettingsProtocol:
 class TestEnsureRuntimeDirectories:
     """Validate idempotent directory creation for StorageSettings and stubs."""
 
-    def test_creates_all_nine_directories_from_storage_settings(self, tmp_path: Path) -> None:
+    def test_creates_all_expected_directories_from_storage_settings(self, tmp_path: Path) -> None:
         storage = StorageSettings(
             data_dir=tmp_path / "nested" / "data",
             vault_dir=tmp_path / "nested" / "vault",
@@ -75,19 +70,15 @@ class TestEnsureRuntimeDirectories:
             storage.data_dir,
             storage.vault_dir,
             storage.mocs_dir,
-            storage.raw_dir,
-            storage.fluid_dir,
-            storage.data_dir / "gap_filler",
-            storage.enriched_dir,
             storage.master_dir,
             storage.priority_texts_dir,
+            *(storage.data_dir / stage.value for stage in StageName),
         )
-        assert len(expected_dirs) == 9
         for directory in expected_dirs:
             assert directory.exists()
             assert directory.is_dir()
 
-    def test_creates_all_nine_directories_from_stub_object(self, tmp_path: Path) -> None:
+    def test_creates_all_expected_directories_from_stub_object(self, tmp_path: Path) -> None:
         stub = _build_stub_storage(tmp_path / "stub_env")
         assert isinstance(stub, StorageSettingsProtocol)
 
@@ -97,12 +88,9 @@ class TestEnsureRuntimeDirectories:
             stub.data_dir,
             stub.vault_dir,
             stub.mocs_dir,
-            stub.raw_dir,
-            stub.fluid_dir,
-            stub.data_dir / "gap_filler",
-            stub.enriched_dir,
             stub.master_dir,
             stub.priority_texts_dir,
+            *(stub.data_dir / stage.value for stage in StageName),
         ):
             assert directory.exists()
             assert directory.is_dir()

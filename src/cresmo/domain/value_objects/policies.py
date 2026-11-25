@@ -7,11 +7,10 @@ Conforms to:
 
 from __future__ import annotations
 
-import math
 from dataclasses import dataclass, field
 
 from cresmo.domain.exceptions import DomainValidationError
-from cresmo.domain.value_objects.convergence import SaturationThresholds
+from cresmo.domain.value_objects.convergence import ConvergenceMode, SaturationThresholds
 
 
 def _require_int_range(
@@ -36,16 +35,6 @@ def _require_strict_bool(value: bool, field_name: str) -> None:
         raise DomainValidationError(f"{field_name} must be a bool, got {value!r}.")
 
 
-def _require_optional_temperature(value: float | None, field_name: str) -> None:
-    """Validate optional finite temperature within [0.0, 2.0]."""
-    if value is None:
-        return
-    if isinstance(value, bool) or not isinstance(value, (int, float)):
-        raise DomainValidationError(f"{field_name} must be a finite float or None, got {value!r}.")
-    if not math.isfinite(value) or not (0.0 <= float(value) <= 2.0):
-        raise DomainValidationError(f"{field_name} must be within [0.0, 2.0], got {value!r}.")
-
-
 @dataclass(frozen=True, slots=True)
 class StageExecutionPolicy:
     """Immutable domain policy governing multi-pass stage execution and quality gates."""
@@ -54,7 +43,6 @@ class StageExecutionPolicy:
     long_expander_max_passes: int = 7
     judge_max_attempts: int = 2
     judge_blocking: bool = False
-    synthesis_temperature: float | None = 0.2
     saturation_thresholds: SaturationThresholds = field(default_factory=SaturationThresholds)
 
     def __post_init__(self) -> None:
@@ -77,11 +65,18 @@ class StageExecutionPolicy:
             min_value=1,
         )
         _require_strict_bool(self.judge_blocking, "judge_blocking")
-        _require_optional_temperature(self.synthesis_temperature, "synthesis_temperature")
         if not isinstance(self.saturation_thresholds, SaturationThresholds):
             raise DomainValidationError(
                 "saturation_thresholds must be a SaturationThresholds instance."
             )
+
+    def resolve_max_passes(self, stage_name: str, convergence_mode: ConvergenceMode) -> int:
+        """Resolve maximum pass budget for a stage according to domain execution policy."""
+        if stage_name == "long_expander":
+            return self.long_expander_max_passes
+        if convergence_mode == ConvergenceMode.HYBRID_SEMANTIC:
+            return self.expansion_max_passes
+        return 1
 
 
 @dataclass(frozen=True, slots=True)

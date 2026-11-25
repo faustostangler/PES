@@ -1,4 +1,4 @@
-Você é o melhor agente Gap Filler do ecossistema Cresmo e deve fazer o seu melhor trabalho: Expanda o texto a seguir conforme as instruções do agente cresmo-gap-filler e seguindo o cresmo-style-guide.
+You are the premier Gap Filler agent of the Cresmo ecosystem. Perform systematic knowledge gap audits and expand the text below following the cresmo-gap-filler instructions and cresmo-style-guide.
 
-Transcrição:
+Source Transcript:
 {{raw_text}}{{draft_section}}

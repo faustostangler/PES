@@ -12,7 +12,6 @@ Conforms to:
 from __future__ import annotations
 
 import json
-import re
 from typing import Any, Final
 
 from cresmo.application.ports import (
@@ -32,6 +31,7 @@ from cresmo.domain.exceptions import (
     DomainValidationError,
     NoteTypologyError,
 )
+from cresmo.domain.services.entity_matching import normalize_entity_title_for_matching
 from cresmo.domain.value_objects import (
     AtomicEntityInventory,
     CausalMatrix,
@@ -41,27 +41,7 @@ from cresmo.domain.value_objects import (
     PromptKey,
 )
 
-# Honorific prefixes stripped during entity normalization to prevent duplicate notes
-_HONORIFIC_PREFIXES: tuple[str, ...] = ("dom ", "dona ", "d. ", "d ")
-_PUNCT_COLLAPSE_RE = re.compile(r"[\s\-_.,()]+")
 _MIN_HONORIFIC_NORMALIZED_LENGTH: Final[int] = 4
-
-
-def _norm_honorific(s: str) -> str:
-    """Normalize note title by stripping honorific prefixes and collapsing punctuation.
-
-    Args:
-        s: Raw title string.
-
-    Returns:
-        Cleaned lowercase title without honorific prefix.
-    """
-    cleaned = s.lower().strip()
-    for pfx in _HONORIFIC_PREFIXES:
-        if cleaned.startswith(pfx):
-            cleaned = cleaned[len(pfx) :].strip()
-            break
-    return _PUNCT_COLLAPSE_RE.sub(" ", cleaned).strip()
 
 
 def _build_existing_lookups(
@@ -74,7 +54,7 @@ def _build_existing_lookups(
         lookup[n.title.value.lower()] = n
         for a in n.aliases:
             lookup[a.lower()] = n
-        norm_title = _norm_honorific(n.title.value)
+        norm_title = normalize_entity_title_for_matching(n.title.value)
         if len(norm_title) >= _MIN_HONORIFIC_NORMALIZED_LENGTH:
             norm_lookup[norm_title] = n
     return lookup, norm_lookup
@@ -90,7 +70,7 @@ def _partition_inventory_items(
     pending: list[tuple[NoteTitle, NoteType]] = []
     for title, note_type in inventory.items:
         key = title.value.lower()
-        norm_key = _norm_honorific(key)
+        norm_key = normalize_entity_title_for_matching(key)
         if key in existing_lookup:
             synthesized.append(existing_lookup[key])
         elif norm_key in norm_lookup:
@@ -194,7 +174,8 @@ class SynthesizeAtomicBatchUseCase:
         self,
         chunk: list[tuple[NoteTitle, NoteType]],
         compendium: StageTranscript,
-        user: UserIdentity | None = None,
+        session_id: str,
+        user_id: str,
     ) -> list[AtomicNote]:
         """Synthesize and persist notes for a single batch chunk via LLM."""
         targets_summary = [
@@ -208,11 +189,6 @@ class SynthesizeAtomicBatchUseCase:
             compendium_body=compendium.content.text,
             targets_json=json.dumps(targets_summary, ensure_ascii=False),
         )
-        session_id = PipelineSessionId.create(
-            channel=compendium.channel,
-            content_id=compendium.content,
-        ).value
-        user_id = user.value if user is not None else UserIdentity.anonymous().value
         response = self.llm_synthesis_port.transform(
             prompt=chat_prompt,
             temperature=self.temperature,
@@ -259,8 +235,15 @@ class SynthesizeAtomicBatchUseCase:
             inventory, existing_lookup, norm_lookup
         )
 
+        session_id = PipelineSessionId.create(
+            channel=compendium.channel,
+            content_id=compendium.content,
+        ).value
+        user_id = user.value if user is not None else UserIdentity.anonymous().value
         for i in range(0, len(pending_items), self.batch_size):
             chunk = pending_items[i : i + self.batch_size]
-            synthesized_notes.extend(self._synthesize_chunk(chunk, compendium, user=user))
+            synthesized_notes.extend(
+                self._synthesize_chunk(chunk, compendium, session_id=session_id, user_id=user_id)
+            )
 
         return synthesized_notes

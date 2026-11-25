@@ -12,16 +12,14 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from cresmo.application.ports import PromptProviderPort
-from cresmo.application.use_cases.synthesize_atomic_batch import (
-    SynthesizeAtomicBatchUseCase,
-    _norm_honorific,
-)
+from cresmo.application.use_cases.synthesize_atomic_batch import SynthesizeAtomicBatchUseCase
 from cresmo.domain.entities import (
     AtomicNote,
     StageTranscript,
     UserIdentity,
 )
 from cresmo.domain.exceptions import DomainValidationError
+from cresmo.domain.services.entity_matching import normalize_entity_title_for_matching
 from cresmo.domain.value_objects import (
     AtomicEntityInventory,
     CausalMatrix,
@@ -57,12 +55,15 @@ class TestSynthesizeAtomicBatchUseCase:
 
     def test_norm_honorific_all_prefixes_and_punctuation(self) -> None:
         """Verify honorific stripping (dom, dona, d., d) and punctuation collapse."""
-        assert _norm_honorific("Dom Pedro II") == "pedro ii"
-        assert _norm_honorific("dona leopoldina") == "leopoldina"
-        assert _norm_honorific("D. João VI") == "joão vi"
-        assert _norm_honorific("D Duarte") == "duarte"
-        assert _norm_honorific("  Dom   Pedro---II (Imperador)... ") == "pedro ii imperador"
-        assert _norm_honorific("Normal Title") == "normal title"
+        assert normalize_entity_title_for_matching("Dom Pedro II") == "pedroii"
+        assert normalize_entity_title_for_matching("dona leopoldina") == "leopoldina"
+        assert normalize_entity_title_for_matching("D. João VI") == "joãovi"
+        assert normalize_entity_title_for_matching("D Duarte") == "duarte"
+        assert (
+            normalize_entity_title_for_matching("  Dom   Pedro---II (Imperador)... ")
+            == "pedroiiimperador"
+        )
+        assert normalize_entity_title_for_matching("Normal Title") == "normaltitle"
 
     def test_init_validation_and_batch_size_clamping(self) -> None:
         """Verify fail-fast parameter validation and batch_size clamping to >= 1."""
@@ -362,7 +363,7 @@ class TestSynthesizeAtomicBatchUseCase:
 
         # Exactly 1 LLM call for "rui"
         assert len(llm_port.call_history) == 1
-        prompt = llm_port.call_history[0]["prompt"].get_last_user_content()
+        prompt = llm_port.call_history[0]["prompt"].messages[-1].content
         assert "rui" in prompt
         assert "Vilfredo Pareto" not in prompt
         assert "fox" not in prompt

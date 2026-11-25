@@ -405,101 +405,10 @@
           "refId": "A"
         }
       ]
-    },
-    {
-      "collapsed": false,
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 36 },
-      "id": 500,
-      "title": "DORA Four Keys",
-      "type": "row"
-    },
-    {
-      "datasource": { "type": "prometheus", "uid": "Prometheus" },
-      "description": "Total deployment and execution activations in environment.",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "drawStyle": "bars",
-            "lineWidth": 1
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 37 },
-      "id": 13,
-      "title": "Deployment Frequency (DORA)",
-      "type": "timeseries",
-      "targets": [
-        {
-          "datasource": { "type": "prometheus", "uid": "Prometheus" },
-          "editorMode": "code",
-          "expr": "sum by (environment, role) (increase(cresmo_dora_deployments_total[24h]))",
-          "legendFormat": "{{environment}} - {{role}}",
-          "range": true,
-          "refId": "A"
-        }
-      ]
-    },
-    {
-      "datasource": { "type": "prometheus", "uid": "Prometheus" },
-      "description": "Lead time from commit timestamp to execution activation in seconds.",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "drawStyle": "line",
-            "lineWidth": 2
-          },
-          "unit": "s"
-        },
-        "overrides": []
-      },
-      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 37 },
-      "id": 14,
-      "title": "Change Lead Time (DORA)",
-      "type": "timeseries",
-      "targets": [
-        {
-          "datasource": { "type": "prometheus", "uid": "Prometheus" },
-          "editorMode": "code",
-          "expr": "cresmo_dora_lead_time_seconds",
-          "legendFormat": "{{branch}}",
-          "range": true,
-          "refId": "A"
-        }
-      ]
-    },
-    {
-      "datasource": { "type": "prometheus", "uid": "Prometheus" },
-      "description": "p95 time to restore service after an incident.",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "drawStyle": "line",
-            "lineWidth": 2
-          },
-          "unit": "s"
-        },
-        "overrides": []
-      },
-      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 37 },
-      "id": 15,
-      "title": "Time to Restore Service (DORA)",
-      "type": "timeseries",
-      "targets": [
-        {
-          "datasource": { "type": "prometheus", "uid": "Prometheus" },
-          "editorMode": "code",
-          "expr": "histogram_quantile(0.95, sum by (le) (rate(cresmo_dora_restore_duration_seconds_bucket[5m])))",
-          "legendFormat": "MTTR (p95)",
-          "range": true,
-          "refId": "A"
-        }
-      ]
     }
   ],
   "schemaVersion": 39,
-  "tags": ["cresmo", "sre", "dora", "golden-signals"],
+  "tags": ["cresmo", "sre", "golden-signals"],
   "templating": {
     "list": [
       {
@@ -534,7 +443,7 @@
   },
   "timepicker": {},
   "timezone": "browser",
-  "title": "Cresmo SRE Golden Signals & DORA Metrics",
+  "title": "Cresmo SRE Golden Signals",
   "uid": "cresmo-sre-golden-signals",
   "version": 1
 }

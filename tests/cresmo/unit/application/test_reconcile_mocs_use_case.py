@@ -103,7 +103,7 @@ class TestReconcileMOCsUseCase:
         assert call["session_id"] == "system:mocs"
         assert call["user_id"] == UserIdentity.worker().value
 
-        prompt_str = call["prompt"].get_last_user_content()
+        prompt_str = call["prompt"].messages[-1].content
         # Verify ensure_ascii=False preserves literal unicode
         assert "Ciência Política" in prompt_str
         assert '"title": "Vilfredo Pareto"' in prompt_str
@@ -111,11 +111,10 @@ class TestReconcileMOCsUseCase:
         assert '"domain": "Ciência Política"' in prompt_str
 
     def test_reconcile_mocs_telemetry_routing_and_overrides(self) -> None:
-        """Verify session_id and user_id VO vs str routing."""
+        """Verify session_id and user_id VO routing."""
         vault_port = InMemoryVaultAdapter()
         llm_port = MockLLMAdapter(
             responses=[
-                "[]",
                 "[]",
                 "[]",
             ]
@@ -132,15 +131,10 @@ class TestReconcileMOCsUseCase:
         assert llm_port.call_history[0]["session_id"] == "chan123:content456"
         assert llm_port.call_history[0]["user_id"] == "user_alice"
 
-        # 2. String session and stripped string user
-        use_case.execute(session_id="custom_sess_789", user_id="  user_bob  ")
-        assert llm_port.call_history[1]["session_id"] == "custom_sess_789"
-        assert llm_port.call_history[1]["user_id"] == "user_bob"
-
-        # 3. None session and blank whitespace user fallback
-        use_case.execute(session_id=None, user_id="   ")
-        assert llm_port.call_history[2]["session_id"] == "system:mocs"
-        assert llm_port.call_history[2]["user_id"] == UserIdentity.worker().value
+        # 2. None session and None user fallback
+        use_case.execute(session_id=None, user_id=None)
+        assert llm_port.call_history[1]["session_id"] == "system:mocs"
+        assert llm_port.call_history[1]["user_id"] == UserIdentity.worker().value
 
     def test_reconcile_mocs_raises_on_non_list_json(self) -> None:
         """Verify DomainValidationError when extracted JSON is not a list."""

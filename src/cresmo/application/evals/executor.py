@@ -27,13 +27,6 @@ from cresmo.domain.exceptions import QuotaPoolExhaustedError, RateLimitExceededE
 from cresmo.domain.value_objects.quality import EvaluationContext, JudgeCriterion
 
 
-class CooldownActiveError(QuotaPoolExhaustedError):
-    """Raised when a calibration target already sits inside an active quota cooldown window."""
-
-    def __init__(self, retry_after_seconds: float, message: str) -> None:
-        super().__init__(message, retry_after_seconds=retry_after_seconds)
-
-
 class JudgeCalibrationFactory(Protocol):
     """Port callback building an isolated judge adapter for one calibration target."""
 
@@ -94,10 +87,8 @@ def extract_cooldown_seconds(exc: BaseException) -> float | None:
     Returns:
         Non-negative cooldown duration in seconds, or ``None`` if not applicable.
     """
-    if isinstance(exc, RateLimitExceededError):
-        retry_val = getattr(exc, "retry_after_seconds", None)
-        if isinstance(retry_val, int | float):
-            return max(0.0, float(retry_val))
+    if isinstance(exc, QuotaPoolExhaustedError):
+        return exc.retry_after_seconds
     return None
 
 
@@ -262,7 +253,7 @@ def run_stage_calibration(
         Aggregated ``CalibrationResultSet`` across resumed and newly evaluated items.
 
     Raises:
-        CooldownActiveError: If the target is currently inside an active cooldown window.
+        QuotaPoolExhaustedError: If the target is currently inside an active cooldown window.
     """
     active_until = checkpoint_store.active_cooldown_until(
         stage=spec.stage_name,
@@ -272,9 +263,9 @@ def run_stage_calibration(
     )
     if active_until is not None:
         remaining = max(0.0, active_until - now_fn())
-        raise CooldownActiveError(
+        raise QuotaPoolExhaustedError(
+            f"Cooldown active for {provider}:{model} ({remaining:.0f}s remaining).",
             retry_after_seconds=remaining,
-            message=f"Cooldown active for {provider}:{model} ({remaining:.0f}s remaining).",
         )
 
     results = CalibrationResultSet()
@@ -344,7 +335,6 @@ def run_stage_calibration(
 
     for idx, item in enumerate(pending_items, start=1):
         item_id = str(item.get("id", f"item_{idx}"))
-        eval_res: ItemEvaluationResult | None = None
         short_cooldown_attempts = 0
         transient_attempts = 0
 
@@ -415,7 +405,6 @@ def run_stage_calibration(
                     continue
                 raise
 
-        assert eval_res is not None
         checkpoint_store.record_item(
             stage=spec.stage_name,
             provider=provider,

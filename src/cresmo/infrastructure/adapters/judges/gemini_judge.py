@@ -7,8 +7,6 @@ Conforms to:
 
 from __future__ import annotations
 
-import json
-import time
 from typing import Any
 
 import structlog
@@ -17,17 +15,13 @@ from google.genai import types
 from cresmo.application.ports import PromptProviderPort
 from cresmo.application.ports.llm_judge_port import LlmJudgePort
 from cresmo.domain.value_objects import (
+    ChatPrompt,
     EvaluationContext,
     JudgeEvaluation,
     MessageRole,
-    PromptKey,
-    resolve_stage_scoring_policy,
 )
-from cresmo.infrastructure.adapters.judges.criterion_parser import (
-    JudgeResponseOutputSchema,
-    clean_json_markdown,
-    parse_criteria_scores,
-)
+from cresmo.infrastructure.adapters.judges.criterion_parser import JudgeResponseOutputSchema
+from cresmo.infrastructure.adapters.judges.prompt_judge_runner import evaluate_prompt_judge
 from cresmo.infrastructure.adapters.llm.gemini_common import (
     build_thinking_config,
     execute_with_model_failover,
@@ -117,72 +111,33 @@ class GeminiJudgeAdapter(LlmJudgePort):
             "Bypassing Pydantic Settings via direct os.getenv is prohibited (ADR-026 Rule 9)."
         )
 
+    def _invoke_gemini(self, chat_prompt: ChatPrompt) -> str:
+        contents = [
+            types.Content(
+                role="model" if m.role == MessageRole.ASSISTANT else "user",
+                parts=[types.Part.from_text(text=m.content)],
+            )
+            for m in chat_prompt.messages
+        ]
+        return execute_with_model_failover(
+            primary_model=self._model,
+            fallback_model=self._fallback_model,
+            adapter_label="GeminiJudgeAdapter",
+            operation=lambda target_model, _is_fallback: self._invoke_model(
+                model=target_model,
+                system_instruction=chat_prompt.system_prompt,
+                contents=contents,
+            ),
+        )
+
     def evaluate(self, context: EvaluationContext) -> JudgeEvaluation:
         """Evaluate candidate text against raw text across requested criteria."""
-        start_time = time.perf_counter()
-        criteria_names = [c.value for c in context.required_criteria]
-
-        prompt_key = context.judge_prompt_key
-        if prompt_key is None:
-            try:
-                prompt_key = PromptKey(f"judge_{context.stage_name}")
-            except ValueError:
-                prompt_key = PromptKey.JUDGE_FLUID_PROSE
-        chat_prompt = self._prompt_provider.get_prompt(
-            prompt_key,
-            stage_name=context.stage_name,
-            criteria_json=json.dumps(criteria_names),
-            source_text=context.raw_text,
-            candidate_text=context.candidate_text,
-        )
-
-        try:
-            contents = [
-                types.Content(
-                    role="model" if m.role == MessageRole.ASSISTANT else "user",
-                    parts=[types.Part.from_text(text=m.content)],
-                )
-                for m in chat_prompt.messages
-            ]
-            raw_response_text = execute_with_model_failover(
-                primary_model=self._model,
-                fallback_model=self._fallback_model,
-                adapter_label="GeminiJudgeAdapter",
-                operation=lambda target_model, _is_fallback: self._invoke_model(
-                    model=target_model,
-                    system_instruction=chat_prompt.system_prompt,
-                    contents=contents,
-                ),
-            )
-        except Exception as exc:
-            # Re-raise to trigger resilient composite failover
-            logger.warning("GeminiJudgeAdapter invocation failed: %s", exc)
-            raise
-
-        latency_ms = (time.perf_counter() - start_time) * 1000.0
-
-        try:
-            parsed = json.loads(clean_json_markdown(raw_response_text))
-        except json.JSONDecodeError as err:
-            logger.error("Failed to parse Gemini judge response as JSON: %s", raw_response_text)
-            raise ValueError(f"Gemini judge returned non-JSON output: {raw_response_text}") from err
-
-        criteria_scores_list = parse_criteria_scores(
-            raw_criteria=parsed.get("criteria", []),
+        return evaluate_prompt_judge(
+            context=context,
+            prompt_provider=self._prompt_provider,
             pass_threshold=self._pass_threshold,
-            logger_instance=logger,
-        )
-
-        weights, veto_criteria = resolve_stage_scoring_policy(context.stage_name)
-        return JudgeEvaluation.create_with_composite_verdict(
-            target_stage=context.stage_name,
-            criteria_scores=criteria_scores_list,
-            provider="gemini",
-            pass_threshold=self._pass_threshold,
-            latency_ms=latency_ms,
-            trace_id=context.trace_id,
-            weights=weights,
-            veto_criteria=veto_criteria,
+            provider_name="gemini",
+            invoke_llm=self._invoke_gemini,
         )
 
     @property

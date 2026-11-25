@@ -3,19 +3,15 @@
 from __future__ import annotations
 
 import hashlib
-import re
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
-import structlog
-import yaml
-
 from cresmo.application.ports import ChannelTaxonomyPort, NoOpChannelTaxonomyPort
+from cresmo.application.services.frontmatter import parse_frontmatter
 from cresmo.domain.entities import StageTranscript
 from cresmo.domain.exceptions import CresmoDomainError
 from cresmo.domain.stage_registry import StageName
 from cresmo.domain.value_objects import (
-    MAX_CONTENT_ID_LENGTH,
     MIN_CONTENT_ID_LENGTH,
     Channel,
     ChannelId,
@@ -25,13 +21,10 @@ from cresmo.domain.value_objects import (
     MediaProvenance,
     is_processable_transcript_file,
 )
+from cresmo.domain.value_objects.constants import MAX_CONTENT_ID_LENGTH
 
 if TYPE_CHECKING:
     from cresmo.application.ports.storage import VaultRepositoryPort
-
-logger = structlog.get_logger(__name__)
-
-_FRONTMATTER_REGEX = re.compile(r"^---\s*\n([\s\S]*?)\n---\s*\n([\s\S]*)$")
 
 
 def _derive_content_id(stem: str, raw_body: str) -> ContentId:
@@ -45,31 +38,6 @@ def _derive_content_id(stem: str, raw_body: str) -> ContentId:
         suffix = hashlib.sha256(raw_body.encode("utf-8")).hexdigest()[:16]
         content_id_str = f"{prefix}_{suffix}"
     return ContentId(value=content_id_str)
-
-
-def _parse_frontmatter_dict(fm_text: str, filename: str) -> dict[str, Any]:
-    """Parse YAML text safely with logging fallback for invalid syntax."""
-    try:
-        return yaml.safe_load(fm_text) or {}
-    except (yaml.YAMLError, ValueError, TypeError, KeyError) as exc:
-        logger.debug(
-            "[pipeline] Malformed YAML frontmatter in '%s', retaining defaults: %s",
-            filename,
-            exc,
-        )
-        return {}
-
-
-def _extract_frontmatter(raw_body: str, filename: str) -> tuple[str, dict[str, Any]]:
-    """Extract body text and frontmatter dictionary if YAML header exists."""
-    if not raw_body.startswith("---"):
-        return raw_body, {}
-    fm_match = _FRONTMATTER_REGEX.match(raw_body)
-    if not fm_match:
-        return raw_body, {}
-    fm_text, parsed_body = fm_match.groups()
-    meta = _parse_frontmatter_dict(fm_text, filename)
-    return parsed_body.strip(), meta
 
 
 def _resolve_metadata(
@@ -103,7 +71,9 @@ def _resolve_metadata(
     )
     source_url = str(meta.get("url") or f"file://{file_path.resolve()}")
     video_description = str(meta.get("video_description") or "")
-    publication_date_raw = meta.get("publication_date") or meta.get("published_at")
+    publication_date_raw = (
+        meta.get("video_date") or meta.get("publication_date") or meta.get("published_at")
+    )
 
     return (
         title,
@@ -129,6 +99,7 @@ def load_transcript_from_file(
 
     Args:
         file_path: Path to the transcript markdown or text file.
+        taxonomy_port: Optional taxonomy classification port resolving channel category.
 
     Returns:
         Validated StageTranscript domain aggregate root.
@@ -143,14 +114,15 @@ def load_transcript_from_file(
         )
 
     if not file_path.is_file():
-        raise CresmoDomainError(f"Priority text file not found: {file_path}")
+        raise CresmoDomainError(f"Transcript file not found: {file_path}")
 
     raw_body = file_path.read_text(encoding="utf-8").strip()
     if not raw_body:
-        raise CresmoDomainError(f"Priority text file is empty: {file_path}")
+        raise CresmoDomainError(f"Transcript file is empty: {file_path}")
 
     content_id = _derive_content_id(file_path.stem, raw_body)
-    body, meta = _extract_frontmatter(raw_body, file_path.name)
+    body, meta = parse_frontmatter(raw_body)
+    body = body.strip()
     (
         title,
         channel_name,
@@ -171,7 +143,7 @@ def load_transcript_from_file(
         description=description,
         publication_date=publication_date,
     )
-    content = Content.create(
+    content = Content(
         id=content_id,
         title=title,
         text=body,
@@ -204,7 +176,9 @@ def ensure_transcript_saved(
     Conforms to Hexagonal Architecture: physical file persistence is encapsulated
     by VaultRepositoryPort adapter, preventing direct disk I/O in the application layer.
     """
-    vault_target_dir = getattr(vault_port, "raw_dir", None)
-    if is_subpath(file_path, target_dir) or is_subpath(file_path, vault_target_dir):
+    effective_dir = (
+        target_dir if target_dir is not None else vault_port.resolve_stage_dir(StageName.RAW)
+    )
+    if is_subpath(file_path, effective_dir):
         return
     vault_port.save_stage_transcript(StageName.RAW, transcript)

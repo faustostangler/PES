@@ -9,7 +9,6 @@ Conforms to:
 from __future__ import annotations
 
 from cresmo.domain.services.prose_syntax_guard import (
-    extract_extra_info_section,
     validate_expanded_prose_syntax,
     validate_fluid_prose_syntax,
 )
@@ -196,15 +195,6 @@ def test_multiple_simultaneous_violations() -> None:
     assert "bullet points" in violations[3]
     assert "table markers" in violations[4]
     assert "blockquotes" in violations[5]
-
-
-def test_extract_extra_info_section() -> None:
-    text_with = (
-        "## Main Body\n\nAnalytical prose text.\n\n"
-        "### Extra Info\n\n1. First detail.\n\n2. Second detail."
-    )
-    assert extract_extra_info_section(text_with) == "1. First detail.\n\n2. Second detail."
-    assert extract_extra_info_section("## Body Only\n\nNo extra info section.") == ""
 
 
 def test_validate_expanded_prose_syntax() -> None:

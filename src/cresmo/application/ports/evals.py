@@ -73,7 +73,6 @@ class CalibrationDatasetPort(ABC):
     @abstractmethod
     def load_items(
         self,
-        stage_name: str,
         default_golden_set_path: Path,
         default_seed_path: Path,
         *,

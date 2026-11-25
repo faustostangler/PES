@@ -249,17 +249,14 @@ class OllamaLLMAdapter(LLMTransformationPort):
             self.keep_alive,
         )
 
-    def warmup(self, timeout_seconds: float | None = None) -> None:
+    def warmup(self) -> None:
         """Asynchronously preload model weights in background daemon thread.
 
         Dispatches model weight preloading onto a background daemon thread without blocking,
         allowing file parsing, directory scanning, and channel crawling to execute concurrently.
-
-        Args:
-            timeout_seconds: Extended socket timeout for model loading (defaults to self.warmup_timeout_seconds).
         """
         with self._warmup_lock:
-            self._dispatch_warmup_locked(timeout_seconds)
+            self._dispatch_warmup_locked()
 
     def _wait_for_warmup(self, timeout_seconds: float | None = None) -> bool:
         """Wait at the rendezvous barrier until model warmup completes.

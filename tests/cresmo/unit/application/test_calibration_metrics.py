@@ -21,6 +21,7 @@ from cresmo.application.evals.calibration_metrics import (
     ItemEvaluationResult,
     ModelBenchmarkSummary,
 )
+from cresmo.domain.exceptions import DomainValidationError
 
 
 class TestConfusionMatrixAndModels:
@@ -36,16 +37,18 @@ class TestConfusionMatrixAndModels:
         assert cm.record("FAIL", "PASS") == "FALSE_ACCEPT_ALPHA"
         assert cm.record("PASS", "FAIL") == "FALSE_REJECT_BETA"
         assert cm.record("PASS", "FAIL") == "FALSE_REJECT_BETA"
-        assert cm.record("UNKNOWN", "PASS") == "INVALID"
-        assert cm.record("BAD_EXPECTED", "FAIL") == "INVALID"
         assert cm.record("PASS", "PASS") == "HIT"
         assert cm.record("FAIL", "ERROR") == "FALSE_REJECT_BETA"
+
+        with pytest.raises(DomainValidationError, match="UNKNOWN"):
+            cm.record("UNKNOWN", "PASS")
+        with pytest.raises(DomainValidationError, match="BAD_EXPECTED"):
+            cm.record("BAD_EXPECTED", "FAIL")
 
         assert cm.hit == 3
         assert cm.correct_rejection == 2
         assert cm.false_accept_alpha == 2
         assert cm.false_reject_beta == 3
-        assert cm.invalid == 2
         assert cm.total_valid == 6
         assert cm.total_defective == 4
         assert cm.total_approved == 5
@@ -107,7 +110,7 @@ class TestConfusionMatrixAndModels:
         assert rs.overall.false_accept_alpha == 0
         assert rs.overall.false_reject_beta == 0
         assert rs.overall.correct_rejection == 0
-        assert rs.overall.invalid == 0
+        assert not hasattr(rs.overall, "invalid")
         assert rs.overall.total_samples == 0
         assert rs.overall.total_valid == 0
         assert rs.overall.accuracy == 0.0
@@ -119,13 +122,13 @@ class TestConfusionMatrixAndModels:
         rs.overall.record("FAIL", "FAIL")
         rs.overall.record("FAIL", "PASS")
         rs.overall.record("PASS", "FAIL")
-        rs.overall.record("BAD", "PASS")
+        with pytest.raises(DomainValidationError, match="Invalid expected calibration verdict"):
+            rs.overall.record("BAD", "PASS")
 
         assert rs.overall.hit == 1
         assert rs.overall.correct_rejection == 1
         assert rs.overall.false_accept_alpha == 1
         assert rs.overall.false_reject_beta == 1
-        assert rs.overall.invalid == 1
         assert rs.overall.total_samples == 4
         assert rs.overall.total_valid == 2
         assert math.isclose(rs.overall.accuracy, 0.5)

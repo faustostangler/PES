@@ -17,7 +17,6 @@ from typing import Any
 import pytest
 
 from cresmo.domain.services.prose_syntax_guard import (
-    extract_extra_info_section,
     validate_expanded_prose_syntax,
     validate_fluid_prose_syntax,
 )
@@ -154,7 +153,7 @@ def test_golden_set_candidate_text_invariants(
         assert cand.startswith("## "), f"Item '{item_id}' candidate_text must start with '## '."
         assert "### Extra Info" in cand, f"Item '{item_id}' missing mandatory '### Extra Info'."
 
-        comp_section = extract_extra_info_section(cand)
+        comp_section = cand.split("### Extra Info", 1)[1].strip()
         assert comp_section, f"Item '{item_id}' complementary section is empty."
 
         # If it's NOT an intentional mechanical defect item (e.g. ei_04 testing bullet formatting
@@ -221,7 +220,7 @@ def test_golden_set_metadata_and_defect_isolation(
             criterion == JudgeCriterion.EXTRA_INFO_GRANULARITY.value and verdict == "FAIL"
         )
         if not is_extra_fail:
-            comp_section = extract_extra_info_section(cand) or ""
+            comp_section = cand.split("### Extra Info", 1)[1].strip() if "### Extra Info" in cand else ""
             numbered = [
                 line.strip()
                 for line in comp_section.splitlines()

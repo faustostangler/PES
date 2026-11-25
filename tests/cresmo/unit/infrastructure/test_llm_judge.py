@@ -13,7 +13,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from cresmo.domain.value_objects.prompt import ChatPrompt
+from cresmo.domain.value_objects.prompt import ChatPrompt, PromptKey
 from cresmo.domain.value_objects.quality import (
     CriterionScore,
     EvaluationContext,
@@ -39,13 +39,11 @@ class TestQualityValueObjects:
             criterion=JudgeCriterion.ORALITY_REMOVAL,
             score=0.95,
             passed=True,
-            confidence=0.98,
             reasoning="All filler words removed.",
         )
         assert score.criterion == JudgeCriterion.ORALITY_REMOVAL
         assert score.score == 0.95
         assert score.passed is True
-        assert score.confidence == 0.98
         assert score.reasoning == "All filler words removed."
 
     def test_criterion_score_out_of_bounds_raises_error(self) -> None:
@@ -54,14 +52,6 @@ class TestQualityValueObjects:
                 criterion=JudgeCriterion.SEMANTIC_FAITHFULNESS,
                 score=1.5,
                 passed=True,
-            )
-
-        with pytest.raises(ValueError, match="Confidence must be between 0.0 and 1.0"):
-            CriterionScore(
-                criterion=JudgeCriterion.NER_PRESERVATION,
-                score=0.8,
-                passed=True,
-                confidence=-0.1,
             )
 
     def test_judge_evaluation_get_score_query(self) -> None:
@@ -132,6 +122,7 @@ class TestGeminiJudgeAdapter:
                 JudgeCriterion.ORALITY_REMOVAL,
                 JudgeCriterion.SEMANTIC_FAITHFULNESS,
             ),
+            judge_prompt_key=PromptKey.JUDGE_FLUID_PROSE,
         )
 
         evaluation = adapter.evaluate(context)
@@ -177,12 +168,12 @@ class TestGeminiJudgeAdapter:
             raw_text="raw",
             candidate_text="cand",
             required_criteria=(JudgeCriterion.ORALITY_REMOVAL,),
+            judge_prompt_key=PromptKey.JUDGE_FLUID_PROSE,
         )
         adapter.evaluate(context)
 
         mock_prompt_provider.get_prompt.assert_called_once()
         args, kwargs = mock_prompt_provider.get_prompt.call_args
-        from cresmo.domain.value_objects import PromptKey
 
         assert args[0] == PromptKey.JUDGE_FLUID_PROSE
         assert kwargs["stage_name"] == "fluid_prose"
@@ -219,6 +210,7 @@ class TestGeminiJudgeAdapter:
             raw_text="raw",
             candidate_text="cand",
             required_criteria=(JudgeCriterion.ORALITY_REMOVAL,),
+            judge_prompt_key=PromptKey.JUDGE_FLUID_PROSE,
         )
         eval_default = adapter_default.evaluate(context)
         assert eval_default.passed is False
@@ -260,6 +252,7 @@ class TestGeminiJudgeAdapter:
             raw_text="raw",
             candidate_text="cand",
             required_criteria=(),
+            judge_prompt_key=PromptKey.JUDGE_FLUID_PROSE,
         )
         adapter.evaluate(context)
 
@@ -304,13 +297,13 @@ class TestGeminiJudgeAdapter:
             raw_text="source transcript",
             candidate_text="candidate compendium",
             required_criteria=(JudgeCriterion.EPISTEMIC_GROUNDING_SEGREGATION,),
+            judge_prompt_key=PromptKey.JUDGE_GAP_FILLER,
         )
         evaluation = adapter.evaluate(context)
 
         assert evaluation.passed is True
         mock_prompt_provider.get_prompt.assert_called_once()
         args, kwargs = mock_prompt_provider.get_prompt.call_args
-        from cresmo.domain.value_objects import PromptKey
 
         assert args[0] == PromptKey.JUDGE_GAP_FILLER
         assert kwargs["stage_name"] == "gap_filler"
@@ -340,6 +333,7 @@ class TestGeminiJudgeAdapter:
             raw_text="source",
             candidate_text="candidate",
             required_criteria=(JudgeCriterion.EPISTEMIC_GROUNDING_SEGREGATION,),
+            judge_prompt_key=PromptKey.JUDGE_GAP_FILLER,
         )
         adapter.evaluate(context)
 
@@ -391,6 +385,7 @@ class TestGeminiJudgeAdapter:
                 JudgeCriterion.EPISTEMIC_GROUNDING_SEGREGATION,
                 JudgeCriterion.CONCEPTUAL_MECHANICAL_DECOMPOSITION,
             ),
+            judge_prompt_key=PromptKey.JUDGE_GAP_FILLER,
         )
         evaluation = adapter.evaluate(context)
 
@@ -472,6 +467,7 @@ class TestGeminiJudgeAdapter:
                 JudgeCriterion.EXTRA_INFO_GRANULARITY,
                 JudgeCriterion.LINEAR_STYLE_NATURALISM,
             ),
+            judge_prompt_key=PromptKey.JUDGE_GAP_FILLER,
         )
         evaluation = adapter.evaluate(context)
 
@@ -562,6 +558,7 @@ class TestGeminiJudgeAdapter:
             raw_text="raw",
             candidate_text="cand",
             required_criteria=(JudgeCriterion.ORALITY_REMOVAL,),
+            judge_prompt_key=PromptKey.JUDGE_FLUID_PROSE,
         )
         evaluation = judge.evaluate(context)
 
@@ -605,6 +602,7 @@ class TestGeminiJudgeAdapter:
             raw_text="raw",
             candidate_text="cand",
             required_criteria=(JudgeCriterion.ORALITY_REMOVAL,),
+            judge_prompt_key=PromptKey.JUDGE_FLUID_PROSE,
         )
         evaluation = judge.evaluate(context)
 
@@ -652,6 +650,7 @@ class TestGeminiJudgeAdapter:
             raw_text="raw",
             candidate_text="cand",
             required_criteria=(JudgeCriterion.ORALITY_REMOVAL,),
+            judge_prompt_key=PromptKey.JUDGE_FLUID_PROSE,
         )
         evaluation = judge.evaluate(context)
 
@@ -684,6 +683,7 @@ class TestGeminiJudgeAdapter:
             raw_text="raw",
             candidate_text="cand",
             required_criteria=(JudgeCriterion.ORALITY_REMOVAL,),
+            judge_prompt_key=PromptKey.JUDGE_FLUID_PROSE,
         )
 
         with pytest.raises(CredentialPoolExhaustedError):
@@ -710,6 +710,7 @@ class TestGeminiJudgeAdapter:
             raw_text="raw",
             candidate_text="cand",
             required_criteria=(JudgeCriterion.ORALITY_REMOVAL,),
+            judge_prompt_key=PromptKey.JUDGE_FLUID_PROSE,
         )
 
         with pytest.raises(ValueError, match="Fatal error"):
@@ -768,6 +769,7 @@ class TestOllamaJudgeAdapter:
             candidate_text="Portanto.",
             trace_id="tr-ollama-1",
             required_criteria=(JudgeCriterion.ORALITY_REMOVAL,),
+            judge_prompt_key=PromptKey.JUDGE_FLUID_PROSE,
         )
 
         evaluation = adapter.evaluate(context)
@@ -816,12 +818,12 @@ class TestOllamaJudgeAdapter:
             raw_text="raw text",
             candidate_text="cand text",
             required_criteria=(JudgeCriterion.ORALITY_REMOVAL,),
+            judge_prompt_key=PromptKey.JUDGE_FLUID_PROSE,
         )
         adapter.evaluate(context)
 
         mock_prompt_provider.get_prompt.assert_called_once()
         args, kwargs = mock_prompt_provider.get_prompt.call_args
-        from cresmo.domain.value_objects import PromptKey
 
         assert args[0] == PromptKey.JUDGE_FLUID_PROSE
         assert kwargs["stage_name"] == "fluid_prose"
@@ -873,13 +875,13 @@ class TestOllamaJudgeAdapter:
             raw_text="source raw",
             candidate_text="cand text",
             required_criteria=(JudgeCriterion.EPISTEMIC_GROUNDING_SEGREGATION,),
+            judge_prompt_key=PromptKey.JUDGE_GAP_FILLER,
         )
         evaluation = adapter.evaluate(context)
 
         assert evaluation.passed is True
         mock_prompt_provider.get_prompt.assert_called_once()
         args, kwargs = mock_prompt_provider.get_prompt.call_args
-        from cresmo.domain.value_objects import PromptKey
 
         assert args[0] == PromptKey.JUDGE_GAP_FILLER
         assert kwargs["stage_name"] == "gap_filler"
@@ -931,7 +933,7 @@ class TestTypeSafeJudgeAdapter:
         assert ts_orality.score == 0.98
         ts_faithfulness = evaluation.get_score(JudgeCriterion.SEMANTIC_FAITHFULNESS)
         assert ts_faithfulness is not None
-        assert ts_faithfulness.confidence == 0.94
+        assert ts_faithfulness.score == 0.90
 
     def test_typesafe_judge_evaluates_gap_filler_criteria(self) -> None:
         mock_http_client = MagicMock()
@@ -1339,7 +1341,6 @@ class TestCoordinatorLlmJudgeIntegration:
             vault_port=vault_port,
             stage_runner=runner,
             ledger_port=ledger_port,
-            stage_policy=policy,
         )
 
         pipeline.execute(canned_raw)
@@ -1426,7 +1427,6 @@ class TestCoordinatorLlmJudgeIntegration:
             vault_port=vault_port,
             stage_runner=runner,
             ledger_port=ledger_port,
-            stage_policy=policy,
         )
 
         with pytest.raises(DomainValidationError, match="Stage 'fluid_prose' quarantined"):
@@ -1488,7 +1488,6 @@ class TestCoordinatorLlmJudgeIntegration:
             vault_port=vault_port,
             stage_runner=runner,
             ledger_port=ledger_port,
-            stage_policy=policy,
             telemetry_port=telemetry,
         )
 

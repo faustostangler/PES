@@ -23,7 +23,6 @@ from cresmo.application.ports import (
     NoOpTelemetryPort,
     TelemetryPort,
 )
-from cresmo.bootstrap.factories.settings_factory import resolve_shared_settings
 from cresmo.infrastructure.adapters.anonymization.anonymizer_adapter import (
     NoOpAnonymizerAdapter,
     RegexAnonymizerAdapter,
@@ -37,7 +36,7 @@ from cresmo.infrastructure.adapters.telemetry.opentelemetry_adapter import (
     OpenTelemetryAdapter,
     name_telemetry_threads,
 )
-from cresmo.infrastructure.config import ObservabilitySettings
+from cresmo.infrastructure.config import ObservabilitySettings, resolve_shared_settings
 
 logger = structlog.get_logger(__name__)
 

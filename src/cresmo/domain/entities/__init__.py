@@ -14,21 +14,21 @@ from cresmo.domain.entities.identity import (
     UserIdentity,
 )
 from cresmo.domain.entities.notes import (
-    MIN_ATOMIC_NOTE_DEFINITION_LENGTH,
     AtomicNote,
     MapOfContent,
 )
 from cresmo.domain.entities.transcripts import (
     StageTranscript,
+    extract_source_text,
     post_process_fluid_transcript,
 )
 
 __all__ = [
-    "MIN_ATOMIC_NOTE_DEFINITION_LENGTH",
     "AtomicNote",
     "MapOfContent",
     "PipelineSessionId",
     "StageTranscript",
     "UserIdentity",
+    "extract_source_text",
     "post_process_fluid_transcript",
 ]

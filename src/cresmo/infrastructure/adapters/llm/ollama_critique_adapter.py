@@ -30,6 +30,11 @@ class OllamaCritiqueAdapter(CritiqueSynthesizerPort):
         self.temperature = temperature
         self._prompt_provider = prompt_provider or JsonPromptProvider()
 
+    def warmup(self) -> None:
+        """Forward warmup to the wrapped LLM transformation adapter when configured."""
+        if self.llm_transformation_port is not None:
+            self.llm_transformation_port.warmup()
+
     def synthesize(
         self,
         evaluation: JudgeEvaluation,

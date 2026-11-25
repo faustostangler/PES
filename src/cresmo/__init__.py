@@ -7,6 +7,7 @@ atomic note synthesis, and Obsidian Second Brain vault reconciliation.
 from __future__ import annotations
 
 import contextlib
+import sys
 import threading
 from typing import Any
 
@@ -37,4 +38,5 @@ def _patch_python313_threading_shutdown() -> None:
         threading._DeleteDummyThreadOnDel.__del__ = _safe_dummy_del
 
 
-_patch_python313_threading_shutdown()
+if sys.version_info[:2] == (3, 13):
+    _patch_python313_threading_shutdown()

@@ -17,10 +17,10 @@ from typing import Annotated
 
 import typer
 
-from cresmo.bootstrap.composition import resolve_shared_settings
-from cresmo.infrastructure.adapters.scrapers.cookie_extractor import (
+from cresmo.bootstrap.composition import (
     export_cookies_from_browser,
     has_valid_auth_cookies,
+    resolve_shared_settings,
 )
 from cresmo.presentation.exit_codes import (
     EXIT_CONFIG_OR_USAGE_ERROR,

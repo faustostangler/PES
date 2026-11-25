@@ -7,29 +7,20 @@ Conforms to:
 
 from __future__ import annotations
 
-import json
-import time
 from typing import Any
 
 import httpx
-import structlog
 
 from cresmo.application.ports import PromptProviderPort
 from cresmo.application.ports.llm_judge_port import LlmJudgePort
 from cresmo.domain.value_objects import (
+    ChatPrompt,
     EvaluationContext,
     JudgeEvaluation,
-    PromptKey,
-    resolve_stage_scoring_policy,
 )
-from cresmo.infrastructure.adapters.judges.criterion_parser import (
-    clean_json_markdown,
-    parse_criteria_scores,
-)
+from cresmo.infrastructure.adapters.judges.prompt_judge_runner import evaluate_prompt_judge
 from cresmo.infrastructure.adapters.prompts.json_provider import JsonPromptProvider
 from cresmo.infrastructure.config import DEFAULT_JUDGE_PASS_THRESHOLD
-
-logger = structlog.get_logger(__name__)
 
 
 class OllamaJudgeAdapter(LlmJudgePort):
@@ -60,65 +51,27 @@ class OllamaJudgeAdapter(LlmJudgePort):
         self._client = http_client or httpx.Client(timeout=timeout_seconds)
         self._prompt_provider = prompt_provider or JsonPromptProvider()
 
+    def _invoke_ollama(self, chat_prompt: ChatPrompt) -> str:
+        payload = {
+            "model": self._model,
+            "messages": chat_prompt.to_dict_list(),
+            "format": "json",
+            "stream": False,
+        }
+        resp = self._client.post(f"{self._base_url}/api/chat", json=payload)
+        resp.raise_for_status()
+        data = resp.json()
+        msg_obj = data.get("message")
+        return str(msg_obj.get("content", "{}")) if isinstance(msg_obj, dict) else "{}"
+
     def evaluate(self, context: EvaluationContext) -> JudgeEvaluation:
         """Evaluate candidate text against raw text using local Ollama model."""
-        start_time = time.perf_counter()
-        criteria_names = [c.value for c in context.required_criteria]
-
-        prompt_key = context.judge_prompt_key
-        if prompt_key is None:
-            try:
-                prompt_key = PromptKey(f"judge_{context.stage_name}")
-            except ValueError:
-                prompt_key = PromptKey.JUDGE_FLUID_PROSE
-        chat_prompt = self._prompt_provider.get_prompt(
-            prompt_key,
-            stage_name=context.stage_name,
-            criteria_json=json.dumps(criteria_names),
-            source_text=context.raw_text,
-            candidate_text=context.candidate_text,
-        )
-
-        try:
-            payload = {
-                "model": self._model,
-                "messages": chat_prompt.to_dict_list(),
-                "format": "json",
-                "stream": False,
-            }
-            resp = self._client.post(f"{self._base_url}/api/chat", json=payload)
-            resp.raise_for_status()
-            data = resp.json()
-            msg_obj = data.get("message")
-            raw_text = msg_obj.get("content", "{}") if isinstance(msg_obj, dict) else "{}"
-        except Exception as exc:
-            logger.warning("OllamaJudgeAdapter evaluation failed: %s", exc)
-            raise
-
-        latency_ms = (time.perf_counter() - start_time) * 1000.0
-
-        try:
-            parsed = json.loads(clean_json_markdown(raw_text))
-        except json.JSONDecodeError as err:
-            logger.error("Failed to parse Ollama judge JSON output: %s", raw_text)
-            raise ValueError(f"Ollama returned invalid JSON: {raw_text}") from err
-
-        criteria_scores_list = parse_criteria_scores(
-            raw_criteria=parsed.get("criteria", []),
+        return evaluate_prompt_judge(
+            context=context,
+            prompt_provider=self._prompt_provider,
             pass_threshold=self._pass_threshold,
-            logger_instance=logger,
-        )
-
-        weights, veto_criteria = resolve_stage_scoring_policy(context.stage_name)
-        return JudgeEvaluation.create_with_composite_verdict(
-            target_stage=context.stage_name,
-            criteria_scores=criteria_scores_list,
-            provider="ollama",
-            pass_threshold=self._pass_threshold,
-            latency_ms=latency_ms,
-            trace_id=context.trace_id,
-            weights=weights,
-            veto_criteria=veto_criteria,
+            provider_name="ollama",
+            invoke_llm=self._invoke_ollama,
         )
 
     @property

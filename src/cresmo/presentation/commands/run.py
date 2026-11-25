@@ -43,7 +43,6 @@ _STATUS_TO_EXIT_CODE: dict[RunExitStatus, int] = {
 
 _STDERR_EVENT_KINDS: frozenset[BatchItemEventKind] = frozenset(
     {
-        BatchItemEventKind.PREFLIGHT_WARNING,
         BatchItemEventKind.DRY_RUN_FAILED,
         BatchItemEventKind.ITEM_RATE_LIMITED,
         BatchItemEventKind.ITEM_NETWORK_ERROR,
@@ -174,9 +173,7 @@ def run(
 
 def _render_event(event: BatchItemEvent) -> None:
     """Render structured synthesis progress events to stdout or stderr."""
-    if event.kind is BatchItemEventKind.PREFLIGHT_WARNING:
-        sys.stderr.write(f"[preflight warning] {event.message}\n")
-    elif event.kind is BatchItemEventKind.DISCOVERY_PROGRESS:
+    if event.kind is BatchItemEventKind.DISCOVERY_PROGRESS:
         sys.stdout.write(event.message)
     elif event.kind is BatchItemEventKind.MASTER_CONSOLIDATED:
         sys.stdout.write(f"\nConsolidating master compendiums for RAG...\n{event.message}\n")
@@ -204,15 +201,13 @@ def _render_outcome(outcome: RunSynthesisOutcome) -> int:
                 f"[SKIPPED] Content [{outcome.single_content_id}] was already marked as COMPLETED "
                 "in the ledger. Use --force-reprocess to bypass.\n"
             )
-        elif outcome.status is RunExitStatus.SUCCESS:
+        else:
+            stages_label = ", ".join(outcome.single_stages_completed) or "none"
             sys.stdout.write(
                 f"Synthesis completed successfully for [{outcome.single_content_id}]: "
-                f"{outcome.single_notes_count} atomic notes synthesized, "
-                f"{outcome.single_mocs_count} MOCs reconciled, "
-                f"{outcome.single_duplicates_unified} duplicate clusters unified.\n"
+                f"{len(outcome.single_stages_completed)} stage(s) completed ({stages_label}), "
+                f"{outcome.single_final_chars} chars.\n"
             )
-        else:
-            sys.stderr.write(f"Pipeline error: {outcome.error_message}\n")
         return _STATUS_TO_EXIT_CODE[outcome.status]
 
     if outcome.empty_sources:

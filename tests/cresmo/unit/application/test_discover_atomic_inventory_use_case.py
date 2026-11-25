@@ -13,7 +13,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from cresmo.application.ports import LlmJudgePort, PromptProviderPort
+from cresmo.application.ports import LlmJudgePort
 from cresmo.application.use_cases.discover_atomic_inventory import (
     DiscoverAtomicInventoryUseCase,
     _parse_and_deduplicate_items,
@@ -25,16 +25,12 @@ from cresmo.domain.value_objects import (
     Channel,
     ChannelId,
     ChannelName,
-    ChatMessage,
-    ChatPrompt,
     Content,
     ContentId,
     JudgeCriterion,
     JudgeEvaluation,
     MediaProvenance,
-    MessageRole,
     NoteType,
-    PromptKey,
 )
 from cresmo.infrastructure.adapters.prompts.json_provider import JsonPromptProvider
 from tests.doubles.mock_adapters import MockLLMAdapter
@@ -104,34 +100,31 @@ class TestDiscoverAtomicInventoryJudge:
                 {"title": "1571 Batalha de Lepanto", "type": "event"},
             ]
         )
-        # First call: candidate extraction; Second call: judge boolean verdict
-        llm = MockLLMAdapter(responses=[candidate_json, "true"])
+        llm = MockLLMAdapter(responses=[candidate_json])
+        mock_judge = MagicMock(spec=LlmJudgePort)
+        mock_judge.evaluate.return_value = JudgeEvaluation(
+            target_stage="atomic_inventory",
+            passed=True,
+            overall_score=0.95,
+            criteria_scores=(),
+            provider="test",
+        )
 
         use_case = DiscoverAtomicInventoryUseCase(
             llm_synthesis_port=llm,
             prompt_provider=prompt_provider,
+            llm_judge_port=mock_judge,
             max_rewrites=3,
         )
         inventory = use_case.execute(sample_compendium)
 
         assert len(inventory.items) == 3
-        assert len(llm.call_history) == 2
-
-        # Verify extraction call
+        assert len(llm.call_history) == 1
         assert llm.call_history[0]["trace_id"] == "vid_inv_1234_inventory"
         assert llm.call_history[0]["temperature"] == 0.0
         assert llm.call_history[0]["session_id"] == "Geopolitics Channel:vid_inv_1234"
         assert llm.call_history[0]["user_id"] == "anonymous"
-
-        # Verify judge call
-        assert llm.call_history[1]["trace_id"] == "vid_inv_1234_inventory_judge"
-        assert llm.call_history[1]["temperature"] == 0.0
-        assert llm.call_history[1]["session_id"] == "Geopolitics Channel:vid_inv_1234"
-        assert llm.call_history[1]["user_id"] == "anonymous"
-        assert (
-            "Does the candidate inventory strictly satisfy"
-            in llm.call_history[1]["prompt"].get_last_user_content()
-        )
+        mock_judge.evaluate.assert_called_once()
 
     def test_discover_inventory_judge_retry_loop(self, sample_compendium: StageTranscript) -> None:
         prompt_provider = JsonPromptProvider()
@@ -142,25 +135,43 @@ class TestDiscoverAtomicInventoryJudge:
                 {"title": "Longue Durée", "type": "concept"},
             ]
         )
-        # Attempt 0: cand1 -> judge says "false"
-        # Attempt 1: cand2 -> judge says "true"
-        llm = MockLLMAdapter(responses=[cand1, "false", cand2, "true"])
+        llm = MockLLMAdapter(responses=[cand1, cand2])
+        mock_judge = MagicMock(spec=LlmJudgePort)
+        mock_judge.evaluate.side_effect = [
+            JudgeEvaluation(
+                target_stage="atomic_inventory",
+                passed=False,
+                overall_score=0.3,
+                criteria_scores=(),
+                provider="test",
+            ),
+            JudgeEvaluation(
+                target_stage="atomic_inventory",
+                passed=True,
+                overall_score=0.95,
+                criteria_scores=(),
+                provider="test",
+            ),
+        ]
 
         use_case = DiscoverAtomicInventoryUseCase(
             llm_synthesis_port=llm,
             prompt_provider=prompt_provider,
+            llm_judge_port=mock_judge,
             max_rewrites=3,
         )
         inventory = use_case.execute(sample_compendium)
 
         assert len(inventory.items) == 2
-        assert len(llm.call_history) == 4
-
-        # Verification of retry trace IDs
+        assert len(llm.call_history) == 2
+        assert mock_judge.evaluate.call_count == 2
         assert llm.call_history[0]["trace_id"] == "vid_inv_1234_inventory"
-        assert llm.call_history[1]["trace_id"] == "vid_inv_1234_inventory_judge"
-        assert llm.call_history[2]["trace_id"] == "vid_inv_1234_inventory_retry_1"
-        assert llm.call_history[3]["trace_id"] == "vid_inv_1234_inventory_judge_retry_1"
+        assert llm.call_history[1]["trace_id"] == "vid_inv_1234_inventory_retry_1"
+        assert mock_judge.evaluate.call_args_list[0][0][0].trace_id == "vid_inv_1234_inventory_judge"
+        assert (
+            mock_judge.evaluate.call_args_list[1][0][0].trace_id
+            == "vid_inv_1234_inventory_judge_retry_1"
+        )
 
     def test_discover_inventory_fast_fail_guardrail_skips_judge(
         self, sample_compendium: StageTranscript
@@ -168,36 +179,53 @@ class TestDiscoverAtomicInventoryJudge:
         prompt_provider = JsonPromptProvider()
         # Attempt 0: malformed JSON (not a list) -> fails Gate 1, judge is skipped!
         cand0 = json.dumps({"invalid": "not_a_list"})
-        # Attempt 1: valid list -> passes Gate 1, judge is called and returns "true"
+        # Attempt 1: valid list -> passes Gate 1, judge is called once
         cand1 = json.dumps([{"title": "Longue Durée", "type": "concept"}])
-        llm = MockLLMAdapter(responses=[cand0, cand1, "true"])
+        llm = MockLLMAdapter(responses=[cand0, cand1])
+        mock_judge = MagicMock(spec=LlmJudgePort)
+        mock_judge.evaluate.return_value = JudgeEvaluation(
+            target_stage="atomic_inventory",
+            passed=True,
+            overall_score=0.95,
+            criteria_scores=(),
+            provider="test",
+        )
 
         use_case = DiscoverAtomicInventoryUseCase(
             llm_synthesis_port=llm,
             prompt_provider=prompt_provider,
+            llm_judge_port=mock_judge,
             max_rewrites=3,
         )
         inventory = use_case.execute(sample_compendium)
 
         assert len(inventory.items) == 1
-        # Exactly 3 calls: cand0 (attempt 0), cand1 (attempt 1), judge (attempt 1).
-        # Judge was NOT called for cand0!
-        assert len(llm.call_history) == 3
+        assert len(llm.call_history) == 2
         assert llm.call_history[0]["trace_id"] == "vid_inv_1234_inventory"
         assert llm.call_history[1]["trace_id"] == "vid_inv_1234_inventory_retry_1"
-        assert llm.call_history[2]["trace_id"] == "vid_inv_1234_inventory_judge_retry_1"
+        mock_judge.evaluate.assert_called_once()
+        assert mock_judge.evaluate.call_args[0][0].trace_id == "vid_inv_1234_inventory_judge_retry_1"
 
     def test_discover_inventory_exhausts_retries_raises_domain_error(
         self, sample_compendium: StageTranscript
     ) -> None:
         prompt_provider = JsonPromptProvider()
         cand = json.dumps([{"title": "Nó Questionável", "type": "concept"}])
-        # All judge evaluations return "false"
-        llm = MockLLMAdapter(responses=[cand, "false", cand, "false"])
+        llm = MockLLMAdapter(responses=[cand, cand])
+        fail_eval = JudgeEvaluation(
+            target_stage="atomic_inventory",
+            passed=False,
+            overall_score=0.2,
+            criteria_scores=(),
+            provider="test",
+        )
+        mock_judge = MagicMock(spec=LlmJudgePort)
+        mock_judge.evaluate.return_value = fail_eval
 
         use_case = DiscoverAtomicInventoryUseCase(
             llm_synthesis_port=llm,
             prompt_provider=prompt_provider,
+            llm_judge_port=mock_judge,
             max_rewrites=1,
         )
         with pytest.raises(
@@ -205,13 +233,16 @@ class TestDiscoverAtomicInventoryJudge:
             match="Candidate entity inventory rejected by LLM-as-a-judge",
         ):
             use_case.execute(sample_compendium)
-        assert len(llm.call_history) == 4
+        assert len(llm.call_history) == 2
+        assert mock_judge.evaluate.call_count == 2
 
-        # Verify max_rewrites=0 executes exactly 1 attempt (2 calls: candidate + judge)
-        llm_zero = MockLLMAdapter(responses=[cand, "false"])
+        # Verify max_rewrites=0 executes exactly 1 attempt (1 LLM + 1 judge)
+        llm_zero = MockLLMAdapter(responses=[cand])
+        mock_judge.reset_mock()
         use_case_zero = DiscoverAtomicInventoryUseCase(
             llm_synthesis_port=llm_zero,
             prompt_provider=prompt_provider,
+            llm_judge_port=mock_judge,
             max_rewrites=0,
         )
         with pytest.raises(
@@ -219,7 +250,8 @@ class TestDiscoverAtomicInventoryJudge:
             match="Candidate entity inventory rejected by LLM-as-a-judge",
         ):
             use_case_zero.execute(sample_compendium)
-        assert len(llm_zero.call_history) == 2
+        assert len(llm_zero.call_history) == 1
+        assert mock_judge.evaluate.call_count == 1
 
     def test_guardrail_rejects_non_dict_element_and_non_string_type(self) -> None:
         assert is_valid_inventory_json_structure(["not_a_dict"]) is False
@@ -378,7 +410,7 @@ class TestDiscoverAtomicInventoryJudge:
         assert ctx.candidate_text == json.dumps(cand_list)
         assert ctx.metadata == {
             "title": "The Longue Durée of Mediterranean Trade",
-            "channel": "Geopolitics Channel",
+            "channel_name": "Geopolitics Channel",
         }
         assert ctx.trace_id == "vid_inv_1234_inventory_judge"
         assert ctx.required_criteria == (JudgeCriterion.INVENTORY_COHERENCE,)
@@ -391,12 +423,29 @@ class TestDiscoverAtomicInventoryJudge:
         cand2 = json.dumps([{"title": "Bad 2", "type": "concept"}])
         cand3 = json.dumps([{"title": "Good Note", "type": "concept"}])
 
-        llm = MockLLMAdapter(responses=[cand1, "false", cand2, "false", cand3, "true"])
+        llm = MockLLMAdapter(responses=[cand1, cand2, cand3])
+        fail_eval = JudgeEvaluation(
+            target_stage="atomic_inventory",
+            passed=False,
+            overall_score=0.3,
+            criteria_scores=(),
+            provider="test",
+        )
+        pass_eval = JudgeEvaluation(
+            target_stage="atomic_inventory",
+            passed=True,
+            overall_score=0.95,
+            criteria_scores=(),
+            provider="test",
+        )
+        mock_judge = MagicMock(spec=LlmJudgePort)
+        mock_judge.evaluate.side_effect = [fail_eval, fail_eval, pass_eval]
         user = UserIdentity("user_operator_99")
 
         use_case = DiscoverAtomicInventoryUseCase(
             llm_synthesis_port=llm,
             prompt_provider=prompt_provider,
+            llm_judge_port=mock_judge,
             max_rewrites=3,
         )
         with caplog.at_level(logging.INFO):
@@ -406,7 +455,6 @@ class TestDiscoverAtomicInventoryJudge:
         # Verify user_id and prompt propagation
         assert llm.call_history[0]["user_id"] == "user_operator_99"
         assert llm.call_history[0]["prompt"] is not None
-        assert llm.call_history[1]["user_id"] == "user_operator_99"
 
         # Verify Attempt 0 was not logged
         assert "Attempt 0" not in caplog.text
@@ -425,46 +473,7 @@ class TestDiscoverAtomicInventoryJudge:
             == "[InventoryDiscovery] Attempt 2: candidate inventory compliance check failed for 'vid_inv_1234'. Re-extracting."
         )
 
-    def test_fallback_judge_prompt_provider_argument_fidelity(
-        self, sample_compendium: StageTranscript
-    ) -> None:
-        cand_list = [{"title": "Bacia do Mediterrâneo", "type": "entity"}]
-        cand = json.dumps(cand_list, ensure_ascii=False)
-        llm = MockLLMAdapter(responses=[cand, "true"])
-
-        mock_provider = MagicMock(spec=PromptProviderPort)
-        mock_provider.get_prompt.side_effect = [
-            ChatPrompt(messages=(ChatMessage(role=MessageRole.USER, content="extract entities"),)),
-            ChatPrompt(
-                messages=(ChatMessage(role=MessageRole.USER, content="judge boolean: true"),)
-            ),
-        ]
-
-        use_case = DiscoverAtomicInventoryUseCase(
-            llm_synthesis_port=llm,
-            prompt_provider=mock_provider,
-            judge_enabled=True,
-        )
-        inventory = use_case.execute(sample_compendium)
-        assert len(inventory.items) == 1
-
-        assert mock_provider.get_prompt.call_count == 2
-        # Call 1: extraction prompt
-        extract_call = mock_provider.get_prompt.call_args_list[0]
-        assert extract_call[0][0] == PromptKey.ATOMIC_INVENTORY
-        assert extract_call[1]["content_title"] == sample_compendium.content.title
-        assert extract_call[1]["channel_name"] == sample_compendium.channel.name
-        assert extract_call[1]["compendium_body"] == sample_compendium.content.text
-
-        # Call 2: judge prompt
-        judge_call = mock_provider.get_prompt.call_args_list[1]
-        assert judge_call[0][0] == PromptKey.JUDGE_ATOMIC_INVENTORY
-        assert judge_call[1]["content_title"] == sample_compendium.content.title
-        assert judge_call[1]["channel_name"] == sample_compendium.channel.name
-        assert judge_call[1]["compendium_body"] == sample_compendium.content.text
-        assert judge_call[1]["inventory_json"] == json.dumps(cand_list)
-
-    def test_evaluate_candidate_inventory_fallback_returns_true_when_no_judge_or_provider(
+    def test_evaluate_candidate_inventory_returns_true_when_no_judge_port(
         self, sample_compendium: StageTranscript
     ) -> None:
         use_case = DiscoverAtomicInventoryUseCase(

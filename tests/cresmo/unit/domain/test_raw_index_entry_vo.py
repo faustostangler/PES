@@ -30,23 +30,6 @@ class TestRawIndexEntry:
         assert entry.channel_name == "Political Theory"
         assert entry.key_concept == "Circulação de Elites"
         assert "minorias organizadas governam" in entry.synthesis
-        assert entry.summary == ""
-        assert entry.excerpt == ""
-
-    def test_raw_index_entry_with_summary_and_excerpt(self) -> None:
-        entry = RawIndexEntry(
-            video_id=ContentId("dQw4w9WgXcQ"),
-            url="https://youtube.com/watch?v=dQw4w9WgXcQ",
-            title="Vilfredo Pareto and Elites",
-            channel_name=ChannelName("Political Theory"),
-            key_concept="Circulação de Elites",
-            synthesis="A circulação das elites postula que minorias organizadas governam sociedades.",
-            summary="  Resumo estruturado do vídeo sobre elites governantes.  ",
-            excerpt="  Trecho inicial da transcrição com o contexto histórico.  ",
-        )
-
-        assert entry.summary == "Resumo estruturado do vídeo sobre elites governantes."
-        assert entry.excerpt == "Trecho inicial da transcrição com o contexto histórico."
 
     def test_markdown_block_format(self) -> None:
         entry = RawIndexEntry(
@@ -95,8 +78,6 @@ class TestRawIndexEntry:
             key_concept="  Circulação   de   Elites  ",
             synthesis="  A circulação das elites postula que minorias organizadas governam.  ",
             channel_category="  politics_br  ",
-            summary="  Resumo  ",
-            excerpt="  Trecho  ",
         )
         assert isinstance(entry.video_id, ContentId)
         assert entry.video_id.value == "dQw4w9WgXcQ"
@@ -109,8 +90,6 @@ class TestRawIndexEntry:
             entry.synthesis == "A circulação das elites postula que minorias organizadas governam."
         )
         assert entry.channel_category == "politics_br"
-        assert entry.summary == "Resumo"
-        assert entry.excerpt == "Trecho"
 
     def test_default_or_none_channel_category(self) -> None:
         entry1 = RawIndexEntry(

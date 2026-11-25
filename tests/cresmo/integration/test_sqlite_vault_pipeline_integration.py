@@ -173,7 +173,6 @@ def test_sqlite_vault_taxonomy_pipeline_roundtrip_and_idempotency(tmp_path: Path
         vault_port=vault_adapter,
         stage_runner=stage_runner,
         ledger_port=ledger_adapter,
-        stage_policy=settings.to_stage_execution_policy(),
         taxonomy_port=taxonomy_adapter,
     )
 
@@ -186,7 +185,6 @@ def test_sqlite_vault_taxonomy_pipeline_roundtrip_and_idempotency(tmp_path: Path
 
     first_result = pipeline.run_for_text_file(raw_input, expansion_max_passes=1)
 
-    assert first_result.success is True
     assert not first_result.already_processed
     assert first_result.source_transcript is not None
     assert first_result.source_transcript.channel.name == "ancapsu"
@@ -226,7 +224,6 @@ def test_sqlite_vault_taxonomy_pipeline_roundtrip_and_idempotency(tmp_path: Path
 
     second_result = pipeline.run_for_text_file(raw_input, expansion_max_passes=1)
 
-    assert second_result.success is True
     assert second_result.already_processed is True
     assert second_result.final_transcript is not None
     assert "### Extra Info" in second_result.final_transcript.content.text

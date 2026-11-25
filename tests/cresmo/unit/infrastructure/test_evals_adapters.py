@@ -59,15 +59,13 @@ class TestInfrastructureEvalsAdapters:
         seed.write_text(json.dumps([{"id": "s1"}]), encoding="utf-8")
 
         loader = JsonCalibrationDatasetLoader()
-        assert loader.load_items("fluid_prose", golden, seed, seed_only=True) == [{"id": "s1"}]
-        assert loader.load_items("fluid_prose", golden, seed) == [{"id": "g1"}]
-        assert loader.load_items("fluid_prose", tmp_path / "missing.json", seed) == [{"id": "s1"}]
+        assert loader.load_items(golden, seed, seed_only=True) == [{"id": "s1"}]
+        assert loader.load_items(golden, seed) == [{"id": "g1"}]
+        assert loader.load_items(tmp_path / "missing.json", seed) == [{"id": "s1"}]
 
         override = tmp_path / "override.json"
         override.write_text(json.dumps([{"id": "o1"}]), encoding="utf-8")
-        assert loader.load_items("fluid_prose", golden, seed, dataset_path=override) == [
-            {"id": "o1"}
-        ]
+        assert loader.load_items(golden, seed, dataset_path=override) == [{"id": "o1"}]
 
     def test_real_externalized_seed_json_ssot_files_exist_and_validate(self) -> None:
         repo_root = Path(__file__).resolve().parents[4]

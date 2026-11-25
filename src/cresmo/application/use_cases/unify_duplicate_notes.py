@@ -13,12 +13,12 @@ Conforms to:
 
 from __future__ import annotations
 
-import re
 from dataclasses import dataclass
 from typing import Final
 
 from cresmo.application.ports import VaultRepositoryPort
 from cresmo.domain.entities import AtomicNote
+from cresmo.domain.services.entity_matching import normalize_entity_title_for_matching
 from cresmo.domain.value_objects import (
     CausalMatrix,
     CrossContextRelations,
@@ -141,15 +141,6 @@ class UnifyDuplicateNotesUseCase:
         """
         self.vault_port = vault_port
 
-    def _normalize_for_matching(self, title: str) -> str:
-        """Strip honorifics, punctuation, and leading/trailing articles for similarity."""
-        cleaned = title.lower().strip()
-        for prefix in ("dom ", "dona ", "d. ", "d "):
-            if cleaned.startswith(prefix):
-                cleaned = cleaned[len(prefix) :].strip()
-                break
-        return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
-
     def _are_duplicates(self, note_a: AtomicNote, note_b: AtomicNote) -> bool:
         """Evaluate whether two atomic notes represent the same domain entity."""
         if note_a.title.value.lower() == note_b.title.value.lower():
@@ -171,8 +162,8 @@ class UnifyDuplicateNotesUseCase:
             return True
 
         # 3. Honorific prefix normalization match
-        norm_a = self._normalize_for_matching(t_a)
-        norm_b = self._normalize_for_matching(t_b)
+        norm_a = normalize_entity_title_for_matching(t_a)
+        norm_b = normalize_entity_title_for_matching(t_b)
         return norm_a == norm_b and len(norm_a) >= _MIN_HONORIFIC_NORMALIZED_LENGTH
 
     def _merge_notes(self, canonical: AtomicNote, redundant: AtomicNote) -> AtomicNote:
@@ -222,7 +213,7 @@ class UnifyDuplicateNotesUseCase:
                     continue
 
                 if self._are_duplicates(current_canonical, note_b):
-                    # Elect canonical: note with longer definition or more relations
+                    # Elect canonical: note with substantially longer definition (> 50 chars margin)
                     if len(note_b.definition) > len(current_canonical.definition) + 50:
                         canonical_candidate = note_b
                         redundant_candidate = current_canonical

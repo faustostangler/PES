@@ -144,7 +144,7 @@ def _lazy_command_stub() -> None:
 app = typer.Typer(
     cls=LazyTyperGroup,
     name="cresmo",
-    help="Cresmo Knowledge Synthesis",
+    help="Cresmo Second Brain",
     add_completion=True,
     no_args_is_help=True,
     context_settings={"help_option_names": ["-h", "--help"]},

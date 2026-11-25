@@ -93,7 +93,6 @@ class TestChatPromptValueObject:
         assert len(prompt.messages) == 1
         assert prompt.messages[0].role == MessageRole.USER
         assert prompt.messages[0].content == "Summarize this text"
-        assert prompt.get_last_user_content() == "Summarize this text"
 
     def test_multi_turn_with_few_shots(self) -> None:
         prompt = ChatPrompt(
@@ -105,20 +104,12 @@ class TestChatPromptValueObject:
             ),
         )
         assert len(prompt.messages) == 3
-        assert prompt.get_last_user_content() == "Raw 2"
-
-    def test_get_last_user_content_when_no_user_message(self) -> None:
-        prompt = ChatPrompt(
-            system_prompt="System prompt",
-            messages=(ChatMessage(role=MessageRole.ASSISTANT, content="Hi"),),
-        )
-        assert prompt.get_last_user_content() == ""
+        assert prompt.messages[-1].content == "Raw 2"
 
     def test_system_prompt_only_is_valid(self) -> None:
         prompt = ChatPrompt(messages=(), system_prompt="System only instruction")
         assert prompt.system_prompt == "System only instruction"
         assert prompt.messages == ()
-        assert prompt.get_last_user_content() == ""
 
     @pytest.mark.parametrize("invalid_sys", [None, "", "   ", "\t"])
     def test_empty_messages_and_empty_system_raises_validation_error(

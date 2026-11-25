@@ -8,7 +8,6 @@ Conforms to:
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from pathlib import Path
 
 from cresmo.domain.entities import StageTranscript
 from cresmo.domain.value_objects import ChannelFeedQuery, DiscoveredMediaItem
@@ -17,7 +16,7 @@ from cresmo.domain.value_objects import ChannelFeedQuery, DiscoveredMediaItem
 class MediaIngestionPort(ABC):
     """Hexagonal Port for media crawling, audio downloading, and subtitle/transcript ingestion.
 
-    Conforms to ADR-004 and SPEC-004. Abstracts external tools (yt-dlp, whisper) behind
+    Conforms to ADR-004, SPEC-004, and ADR-077. Abstracts external tools (yt-dlp, whisper) behind
     pure domain aggregates (StageTranscript).
     """
 
@@ -25,17 +24,11 @@ class MediaIngestionPort(ABC):
     def ingest_single_video(
         self,
         video_url: str,
-        output_dir: Path,
-        whisper_model: str = "base",
-        keep_audio: bool = False,
     ) -> StageTranscript | None:
         """Fetch transcript or transcribe audio for a single video.
 
         Args:
             video_url: Target YouTube or media item URL.
-            output_dir: Directory where raw text and audio scratch files reside.
-            whisper_model: Whisper model checkpoint name (tiny, base, small, medium).
-            keep_audio: If True, preserves downloaded audio; otherwise cleans up.
 
         Returns:
             StageTranscript domain aggregate if successful, or None if extraction fails.

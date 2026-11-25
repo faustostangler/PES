@@ -56,7 +56,6 @@ class SyncBatchRequest:
     manifest: Path | None = None
     lookback: int = 7 * 52 * 2
     max_videos: int = 250
-    batch_size: int | None = None
     dry_run: bool = False
     force_refresh: bool = False
 
@@ -87,8 +86,6 @@ def _describe_mode(criteria: SyncFilterCriteria) -> str:
         parts.append(f"channels={','.join(criteria.channels)}")
     if criteria.categories:
         parts.append(f"categories={','.join(criteria.categories)}")
-    if criteria.video_ids:
-        parts.append(f"videos={','.join(criteria.video_ids)}")
     return ", ".join(parts) if parts else "full manifest"
 
 

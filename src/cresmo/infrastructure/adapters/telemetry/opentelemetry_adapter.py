@@ -76,13 +76,11 @@ class OpenTelemetryAdapter(TelemetryPort):
         spec: SessionTelemetrySpec,
     ) -> Generator[TelemetrySpan]:
         """Initiate root OpenTelemetry span, bind Langfuse propagation, and flush after exit."""
-        effective_version = spec.pipeline_version or self._pipeline_version
-        effective_git_sha = short_git_sha(spec.git_sha) or self._git_sha
         resolved_trace_name, root_operation = resolve_root_operation_name(spec.trace_name)
         session_attributes, tags, input_payload = build_session_span_attributes(
             spec,
-            pipeline_version=effective_version,
-            git_sha=effective_git_sha,
+            pipeline_version=self._pipeline_version,
+            git_sha=self._git_sha,
             resolved_trace_name=resolved_trace_name,
         )
 
@@ -188,7 +186,8 @@ class OpenTelemetryAdapter(TelemetryPort):
             event_attributes["score.trace_id"] = trace_id
         if resolved_observation_id:
             event_attributes["score.observation_id"] = resolved_observation_id
-        active_span.add_event("telemetry_score", attributes=event_attributes)
+        if isinstance(active_span, OTelTelemetrySpan):
+            active_span.add_event("telemetry_score", attributes=event_attributes)
 
         if self._langfuse is not None:
             score_fn = getattr(self._langfuse, "create_score", None)

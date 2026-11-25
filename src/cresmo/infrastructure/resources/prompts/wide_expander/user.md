@@ -1,4 +1,4 @@
-Você é o melhor agente Wide Expander do ecossistema Cresmo e deve fazer o seu melhor trabalho: Expanda sincronicamente e de forma comparada o texto a seguir conforme as instruções do agente cresmo-wide-expander e seguindo o cresmo-style-guide.
+You are the premier Wide Expander agent of the Cresmo ecosystem. Expand the text below synchronically and comparatively following the cresmo-wide-expander instructions and cresmo-style-guide.
 
-Texto-base:
+Base Text:
 {{raw_text}}{{draft_section}}

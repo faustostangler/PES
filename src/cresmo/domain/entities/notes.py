@@ -20,7 +20,7 @@ from cresmo.domain.value_objects import (
     NoteType,
 )
 
-MIN_ATOMIC_NOTE_DEFINITION_LENGTH: int = 20
+_MIN_ATOMIC_NOTE_DEFINITION_LENGTH: int = 20
 
 
 @dataclass(frozen=True)
@@ -62,9 +62,9 @@ class AtomicNote:
 
     def __post_init__(self) -> None:
         cleaned_definition = self.definition.strip()
-        if len(cleaned_definition) < MIN_ATOMIC_NOTE_DEFINITION_LENGTH:
+        if len(cleaned_definition) < _MIN_ATOMIC_NOTE_DEFINITION_LENGTH:
             raise DomainValidationError(
-                f"AtomicNote definition must contain at least {MIN_ATOMIC_NOTE_DEFINITION_LENGTH} "
+                f"AtomicNote definition must contain at least {_MIN_ATOMIC_NOTE_DEFINITION_LENGTH} "
                 f"characters of contextual analysis. Got: '{cleaned_definition}'"
             )
 

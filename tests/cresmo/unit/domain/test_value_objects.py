@@ -71,7 +71,7 @@ class TestContentId:
         assert (cid == None) is False  # noqa: E711
         assert hash(cid) == hash("dQw4w9WgXcQ")
         assert hash(cid) != hash(None)
-        assert cid.strip() == "dQw4w9WgXcQ"
+        assert not hasattr(cid, "strip")
 
     def test_extract_from_text(self) -> None:
         cid = ContentId.extract_from_text("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
@@ -504,7 +504,7 @@ class TestChannelName:
         assert (cn == None) is False  # noqa: E711
         assert hash(cn) == hash("Fabio Akita")
         assert hash(cn) != hash(None)
-        assert cn.strip() == "Fabio Akita"
+        assert not hasattr(cn, "strip")
 
     def test_from_string_factory(self) -> None:
         from cresmo.domain.value_objects import ChannelName
@@ -700,7 +700,7 @@ class TestChannelId:
         assert (cid == None) is False  # noqa: E711
         assert hash(cid) == hash("UC_x5XG1OV2P6uZZ5FSM9Ttw")
         assert hash(cid) != hash(None)
-        assert cid.strip() == "UC_x5XG1OV2P6uZZ5FSM9Ttw"
+        assert not hasattr(cid, "strip")
 
 
 class TestChannel:
@@ -713,14 +713,13 @@ class TestChannel:
             name=ChannelName("Canal do Meio"),
             id=ChannelId("UC_x5XG1OV2P6uZZ5FSM9Ttw"),
             category="News",
-            url="https://www.youtube.com/@canaldomeio",
         )
         assert ch.name == "Canal do Meio"
         assert ch.id == ChannelId("UC_x5XG1OV2P6uZZ5FSM9Ttw")
         assert not hasattr(ch, "channel_id")
         assert not hasattr(ch, "channel_name")
         assert ch.category == "News"
-        assert ch.url == "https://www.youtube.com/@canaldomeio"
+        assert not hasattr(ch, "url")
         assert not hasattr(ch, "canonical_url")
         assert str(ch) == "Canal do Meio"
 
@@ -736,13 +735,11 @@ class TestChannel:
         assert isinstance(ch.id, ChannelId)
         assert ch.id.value == "UC_x5XG1OV2P6uZZ5FSM9Ttw"
         assert ch.category == ""
-        assert ch.url == "https://www.youtube.com/channel/UC_x5XG1OV2P6uZZ5FSM9Ttw"
 
         ch_empty_id = Channel(name="Fabio Akita", id="")
         assert ch_empty_id.id is None
-        assert ch_empty_id.url == "https://www.youtube.com/@Fabio Akita"
 
-    def test_channel_direct_construction_defaults_and_url(self) -> None:
+    def test_channel_direct_construction_defaults(self) -> None:
         from cresmo.domain.value_objects import Channel, ChannelId
 
         ch = Channel(
@@ -753,25 +750,11 @@ class TestChannel:
         assert ch.name == "Veritasium"
         assert ch.id == ChannelId("UCHnyfMqiRRG1u-2MsSQLbXA")
         assert ch.category == "Science"
-        assert ch.url == "https://www.youtube.com/channel/UCHnyfMqiRRG1u-2MsSQLbXA"
 
         ch_min = Channel(name="Minimal")
         assert ch_min.name == "Minimal"
         assert ch_min.id is None
         assert ch_min.category == ""
-        assert ch_min.url == "https://www.youtube.com/@Minimal"
-
-        ch_with_url = Channel(
-            name="CustomUrl",
-            url="https://example.com/custom",
-        )
-        assert ch_with_url.url == "https://example.com/custom"
-
-    def test_channel_url_fallback(self) -> None:
-        from cresmo.domain.value_objects import Channel
-
-        ch = Channel(name="NonCanonicalChannel")
-        assert ch.url == "https://www.youtube.com/@NonCanonicalChannel"
 
     def test_channel_tenant_key(self) -> None:
         from cresmo.domain.value_objects import Channel
@@ -847,27 +830,14 @@ class TestContent:
         assert cnt_default.title == ""
         assert cnt_default.text == ""
 
-    def test_content_create_factory(self) -> None:
-        from cresmo.domain.value_objects import Content, ContentId
-
-        cnt = Content.create(
-            id="dQw4w9WgXcQ",
-            title="My Video",
-            text="Synthesized body text",
-        )
-        assert cnt.id == ContentId("dQw4w9WgXcQ")
-        assert cnt.title == "My Video"
-        assert cnt.text == "Synthesized body text"
-        assert not hasattr(cnt, "content_id")
-        assert not hasattr(cnt, "content_title")
-
     def test_content_defaults(self) -> None:
         from cresmo.domain.value_objects import Content
 
-        cnt = Content.create(id="dQw4w9WgXcQ")
+        cnt = Content(id="dQw4w9WgXcQ")
         assert cnt.title == ""
         assert cnt.text == ""
         assert not hasattr(cnt, "display_title")
+        assert not hasattr(Content, "create")
 
     def test_content_invalid_id_raises(self) -> None:
         from cresmo.domain.exceptions import DomainValidationError
@@ -889,7 +859,7 @@ class TestContent:
     def test_content_immutability(self) -> None:
         from cresmo.domain.value_objects import Content
 
-        cnt = Content.create(id="dQw4w9WgXcQ")
+        cnt = Content(id="dQw4w9WgXcQ")
         with pytest.raises((FrozenInstanceError, AttributeError)):
             cnt.title = "Changed"  # type: ignore
 
@@ -922,8 +892,6 @@ class TestRawIndexEntry:
             key_concept="Pop Music Video",
             synthesis="A landmark 1980s music video.",
             channel_category="Music",
-            summary="Full summary text.",
-            excerpt="Short excerpt.",
         )
         row = entry.to_csv_row()
         assert row == [

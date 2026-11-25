@@ -10,7 +10,7 @@ import logging
 import os
 from pathlib import Path
 from types import SimpleNamespace
-from unittest.mock import MagicMock, patch
+from unittest.mock import ANY, MagicMock, patch
 
 import pytest
 from pydantic import SecretStr
@@ -48,10 +48,6 @@ from cresmo.bootstrap.composition import (
     resolve_langfuse_client,
     resolve_shared_settings,
 )
-from cresmo.bootstrap.factories.settings_factory import (
-    get_shared_settings,
-    reset_shared_settings,
-)
 from cresmo.bootstrap.factories.telemetry_factory import (
     _build_mask_hook,
     _build_should_export_span,
@@ -70,6 +66,9 @@ from cresmo.infrastructure.adapters.judges.preflight_decorator import (
 )
 from cresmo.infrastructure.adapters.judges.telemetry_decorator import TelemetryJudgeDecorator
 from cresmo.infrastructure.adapters.llm.gemini_adapter import GeminiLLMAdapter
+from cresmo.infrastructure.adapters.llm.metrics_decorator import (
+    MetricsLLMTransformationDecorator,
+)
 from cresmo.infrastructure.adapters.llm.ollama_llm_adapter import OllamaLLMAdapter
 from cresmo.infrastructure.adapters.media.native_media_ingestion_adapter import (
     NativeMediaIngestionAdapter,
@@ -94,6 +93,8 @@ from cresmo.infrastructure.config import (
     PrometheusSettings,
     RuntimeTelemetrySettings,
     StorageSettings,
+    get_shared_settings,
+    reset_shared_settings,
 )
 from cresmo.infrastructure.persistence.sqlite_ledger_adapter import SqliteLedgerAdapter
 
@@ -119,7 +120,10 @@ class TestCompositionRoot:
         assert isinstance(pipeline.stage_runner, PipelineStageRunner)
         assert isinstance(pipeline.stage_runner.stage_factory, StageFactory)
         assert isinstance(pipeline.media_ingestion_port, NativeMediaIngestionAdapter)
-        assert isinstance(pipeline.stage_runner.llm_transformation_port, GeminiLLMAdapter)
+        assert isinstance(
+            pipeline.stage_runner.llm_transformation_port, MetricsLLMTransformationDecorator
+        )
+        assert isinstance(pipeline.stage_runner.llm_transformation_port._inner, GeminiLLMAdapter)
         assert isinstance(pipeline.vault_port, ObsidianVaultAdapter)
         assert isinstance(pipeline.ledger_port, SqliteLedgerAdapter)
 
@@ -217,7 +221,7 @@ class TestCompositionRoot:
         ):
             pipeline = build_pipeline(settings=settings_with_langfuse)
             assert isinstance(pipeline, CresmoPipeline)
-            assert pipeline.stage_policy == settings_with_langfuse.to_stage_execution_policy()
+            assert not hasattr(pipeline, "stage_policy")
             assert isinstance(pipeline.vault_port, ObsidianVaultAdapter)
             assert pipeline.vault_port.vault_dir == (tmp_path / "vault").resolve()
             assert pipeline.stage_runner.stage_factory is not None
@@ -227,13 +231,19 @@ class TestCompositionRoot:
             )
             assert isinstance(pipeline.stage_runner.llm_judge, TelemetryJudgeDecorator)
             assert pipeline.stage_runner.llm_judge._telemetry is pipeline.telemetry_port
-            assert pipeline.llm_indexing_port is not None
+            assert pipeline.stage_runner.critique_synthesizer.llm_transformation_port is not None
             assert pipeline.media_ingestion_port is not None
             assert pipeline.vault_port is not None
             assert pipeline.ledger_port is not None
-            assert isinstance(pipeline.stage_runner.llm_transformation_port, GeminiLLMAdapter)
+            assert isinstance(
+                pipeline.stage_runner.llm_transformation_port, MetricsLLMTransformationDecorator
+            )
+            assert isinstance(
+                pipeline.stage_runner.llm_transformation_port._inner, GeminiLLMAdapter
+            )
             assert (
-                pipeline.stage_runner.llm_transformation_port._telemetry is pipeline.telemetry_port
+                pipeline.stage_runner.llm_transformation_port._inner._telemetry
+                is pipeline.telemetry_port
             )
             assert (
                 getattr(pipeline.stage_runner.telemetry_port, "_langfuse", None)
@@ -245,7 +255,7 @@ class TestCompositionRoot:
             )
             assert (
                 getattr(pipeline.stage_runner.critique_synthesizer, "llm_transformation_port", None)
-                is pipeline.llm_indexing_port
+                is not None
             )
             assert (
                 getattr(pipeline.stage_runner.critique_synthesizer, "_prompt_provider", None)
@@ -274,9 +284,15 @@ class TestCompositionRoot:
         ):
             pipeline = build_pipeline(settings=settings_with_langfuse)
             assert isinstance(pipeline, CresmoPipeline)
-            assert isinstance(pipeline.stage_runner.llm_transformation_port, GeminiLLMAdapter)
             assert isinstance(
-                pipeline.stage_runner.llm_transformation_port._telemetry, NoOpTelemetryPort
+                pipeline.stage_runner.llm_transformation_port, MetricsLLMTransformationDecorator
+            )
+            assert isinstance(
+                pipeline.stage_runner.llm_transformation_port._inner, GeminiLLMAdapter
+            )
+            assert isinstance(
+                pipeline.stage_runner.llm_transformation_port._inner._telemetry,
+                NoOpTelemetryPort,
             )
 
         captured = capsys.readouterr()
@@ -315,9 +331,15 @@ class TestCompositionRoot:
         ):
             pipeline = build_pipeline(settings=settings_with_langfuse)
             assert isinstance(pipeline, CresmoPipeline)
-            assert isinstance(pipeline.stage_runner.llm_transformation_port, GeminiLLMAdapter)
             assert isinstance(
-                pipeline.stage_runner.llm_transformation_port._telemetry, NoOpTelemetryPort
+                pipeline.stage_runner.llm_transformation_port, MetricsLLMTransformationDecorator
+            )
+            assert isinstance(
+                pipeline.stage_runner.llm_transformation_port._inner, GeminiLLMAdapter
+            )
+            assert isinstance(
+                pipeline.stage_runner.llm_transformation_port._inner._telemetry,
+                NoOpTelemetryPort,
             )
 
         record = next(
@@ -358,12 +380,19 @@ class TestCompositionRoot:
         self, test_settings: CresmoSettings
     ) -> None:
         pipeline = build_pipeline(settings=test_settings, web_index=True)
-        assert pipeline.llm_indexing_port is pipeline.stage_runner.llm_transformation_port
+        indexing_port = getattr(
+            pipeline.stage_runner.critique_synthesizer, "llm_transformation_port", None
+        )
+        assert indexing_port is pipeline.stage_runner.llm_transformation_port
 
     def test_build_pipeline_default_web_index_is_false(self, test_settings: CresmoSettings) -> None:
         pipeline = build_pipeline(settings=test_settings)
-        assert pipeline.llm_indexing_port is not pipeline.stage_runner.llm_transformation_port
-        assert isinstance(pipeline.llm_indexing_port, OllamaLLMAdapter)
+        indexing_port = getattr(
+            pipeline.stage_runner.critique_synthesizer, "llm_transformation_port", None
+        )
+        assert indexing_port is not pipeline.stage_runner.llm_transformation_port
+        assert isinstance(indexing_port, MetricsLLMTransformationDecorator)
+        assert isinstance(indexing_port._inner, OllamaLLMAdapter)
 
     def test_probe_langfuse_ready_url_construction(self) -> None:
         from cresmo.bootstrap.factories.telemetry_factory import probe_langfuse_ready
@@ -448,7 +477,11 @@ class TestCompositionRoot:
     def test_build_pipeline_with_web_index(self, test_settings: CresmoSettings) -> None:
         pipeline = build_pipeline(settings=test_settings, web_index=True)
         assert isinstance(pipeline, CresmoPipeline)
-        assert isinstance(pipeline.llm_indexing_port, GeminiLLMAdapter)
+        indexing_port = getattr(
+            pipeline.stage_runner.critique_synthesizer, "llm_transformation_port", None
+        )
+        assert isinstance(indexing_port, MetricsLLMTransformationDecorator)
+        assert isinstance(indexing_port._inner, GeminiLLMAdapter)
 
     def test_build_sync_channel_use_case_raises_runtime_error_when_ledger_port_missing(
         self, test_settings: CresmoSettings
@@ -705,7 +738,10 @@ class TestCompositionRoot:
         self, test_settings: CresmoSettings
     ) -> None:
         uc = build_sync_channel_use_case(settings=test_settings)
-        assert uc.pipeline.stage_policy == test_settings.to_stage_execution_policy()
+        assert (
+            uc.pipeline.stage_runner.stage_factory.policy
+            == test_settings.to_stage_execution_policy()
+        )
         assert uc.media_ingestion_port is uc.pipeline.media_ingestion_port
         assert uc.ledger_port is uc.pipeline.ledger_port
         assert uc.preflight_checker is not None
@@ -751,7 +787,8 @@ class TestCompositionRoot:
             assert runner.judge_blocking == test_settings.judge.blocking
             assert runner.judge_max_attempts == test_settings.judge.max_attempts
             assert runner.prompt_provider is not None
-            assert isinstance(runner.llm_transformation_port, GeminiLLMAdapter)
+            assert isinstance(runner.llm_transformation_port, MetricsLLMTransformationDecorator)
+            assert isinstance(runner.llm_transformation_port._inner, GeminiLLMAdapter)
             assert runner.stage_factory is not None
             assert runner.critique_synthesizer is not None
             assert runner.ledger_port is pipeline.ledger_port
@@ -816,13 +853,14 @@ class TestCompositionRoot:
             mock_tel.assert_called_once_with(
                 test_settings.observability, langfuse_client=mock_lf_client
             )
-            mock_ingest.assert_called_once_with(test_settings)
+            mock_ingest.assert_called_once_with(test_settings, metrics_port=ANY)
             mock_prompt.assert_called_once_with(test_settings, langfuse_client=mock_lf_client)
             mock_pool_builder.assert_called_once_with(test_settings.llm.gemini)
             mock_gemini.assert_called_once_with(
                 test_settings.llm.gemini,
                 telemetry_port=mock_tel_adapter,
                 credential_pool=mock_pool,
+                metrics_port=ANY,
             )
             mock_idx.assert_called_once_with(
                 test_settings.llm,
@@ -830,6 +868,7 @@ class TestCompositionRoot:
                 web_index=False,
                 telemetry_port=mock_tel_adapter,
                 credential_pool=mock_pool,
+                metrics_port=ANY,
             )
             mock_judge.assert_called_once_with(
                 test_settings,
@@ -838,7 +877,12 @@ class TestCompositionRoot:
                 credential_pool=mock_pool,
             )
             assert pipeline.media_ingestion_port is mock_ingest_adapter
-            assert pipeline.llm_indexing_port is mock_index_adapter
+            assert (
+                getattr(
+                    pipeline.stage_runner.critique_synthesizer, "llm_transformation_port", None
+                )
+                is mock_index_adapter
+            )
 
     def test_build_sync_channel_use_case_wires_preflight_checker_with_settings(
         self, test_settings: CresmoSettings
@@ -893,7 +937,9 @@ class TestCompositionRoot:
 
         pipeline = build_pipeline(settings=settings, web_index=True)
 
-        synthesis_adapter = pipeline.stage_runner.llm_transformation_port
+        synthesis_wrapper = pipeline.stage_runner.llm_transformation_port
+        assert isinstance(synthesis_wrapper, MetricsLLMTransformationDecorator)
+        synthesis_adapter = synthesis_wrapper._inner
         assert isinstance(synthesis_adapter, GeminiLLMAdapter)
 
         judge_adapter = pipeline.stage_runner.llm_judge

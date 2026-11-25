@@ -11,6 +11,7 @@ import csv
 import re
 from pathlib import Path
 
+from cresmo.domain.stage_registry import StageName
 from cresmo.domain.value_objects import ChannelName, ContentId, RawIndexEntry
 from cresmo.infrastructure.adapters.obsidian.utils import sanitize_filename
 
@@ -18,9 +19,9 @@ from cresmo.infrastructure.adapters.obsidian.utils import sanitize_filename
 class ChannelCatalogHandler:
     """Handles channel-level semantic markdown catalog and global brain.csv indexing."""
 
-    def __init__(self, raw_dir: Path, data_dir: Path) -> None:
-        self.raw_dir = raw_dir
-        self.data_dir = data_dir
+    def __init__(self, data_dir: Path) -> None:
+        self.data_dir = Path(data_dir).resolve()
+        self.raw_dir = self.data_dir / StageName.RAW.value
 
     def _get_channel_index_path(self, channel_name: ChannelName) -> Path:
         """Return absolute path to channel's _index_{channel_name}.md."""

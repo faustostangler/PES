@@ -7,7 +7,6 @@ InMemoryLedgerAdapter) strictly respect port contracts and behavior under mutati
 from __future__ import annotations
 
 from datetime import UTC, datetime
-from pathlib import Path
 
 from cresmo.domain.entities import (
     AtomicNote,
@@ -71,7 +70,7 @@ class TestMockMediaIngestionPort:
         assert len(port.discover_calls) == 1
         assert port.discover_calls[0].channel_url == "https://youtube.com/@Sample"
 
-    def test_ingest_single_video_records_and_returns_canned(self, tmp_path: Path) -> None:
+    def test_ingest_single_video_records_and_returns_canned(self) -> None:
         cid = ContentId("singleVid123")
         transcript = StageTranscript(
             channel=Channel(name="Channel"),
@@ -81,9 +80,6 @@ class TestMockMediaIngestionPort:
         port = MockMediaIngestionPort(canned_transcript=transcript)
         result = port.ingest_single_video(
             video_url="https://youtube.com/watch?v=singleVid123",
-            output_dir=tmp_path,
-            whisper_model="tiny",
-            keep_audio=True,
         )
         assert result is transcript
         assert port.ingest_single_calls == ["https://youtube.com/watch?v=singleVid123"]

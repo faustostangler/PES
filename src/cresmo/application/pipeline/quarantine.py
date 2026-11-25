@@ -11,7 +11,6 @@ from cresmo.application.ports import (
     LedgerRepositoryPort,
     MetricName,
     MetricsPort,
-    NoOpTelemetryPort,
     TelemetryPort,
 )
 from cresmo.domain.exceptions import StageQuarantinedError
@@ -38,7 +37,7 @@ def record_stage_quarantine(
     effective_max_attempts: int,
     ledger_port: LedgerRepositoryPort | None,
     metrics_port: MetricsPort,
-    telemetry_port: TelemetryPort | None = None,
+    telemetry_port: TelemetryPort,
     provenance: MediaProvenance | None = None,
 ) -> None:
     """Execute the 4-step fail-fast quarantine protocol per ADR-031 and ADR-070."""
@@ -83,14 +82,13 @@ def record_stage_quarantine(
                 ledger_err,
             )
 
-    active_telemetry = telemetry_port or NoOpTelemetryPort()
     effective_channel_id = channel_id_string or channel_name_string
     effective_content_title = resolved_title or resolved_cid.value
-    active_telemetry.current_span().set_attributes(
+    telemetry_port.current_span().set_attributes(
         {
             "quarantined": True,
             "quarantine.stage": stage_name,
-            "quarantine.critique": critique or "",
+            "quarantine.critique": critique,
             "quarantine.attempts": effective_max_attempts,
             "quarantine.overall_score": evaluation.overall_score,
             "cresmo.content.id": resolved_cid.value,
@@ -110,6 +108,6 @@ def record_stage_quarantine(
         stage_name=stage_name,
         content_id=resolved_cid.value,
         attempts=effective_max_attempts,
-        critique=critique or "",
+        critique=critique,
         overall_score=evaluation.overall_score,
     )

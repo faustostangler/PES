@@ -11,13 +11,12 @@ Conforms to:
 
 from __future__ import annotations
 
-import re
-
 from cresmo.application.ports import (
     ChannelTaxonomyPort,
     NoOpChannelTaxonomyPort,
     VaultRepositoryPort,
 )
+from cresmo.application.services.frontmatter import parse_frontmatter
 from cresmo.domain.stage_registry import StageName
 from cresmo.domain.value_objects import (
     ChannelName,
@@ -28,21 +27,6 @@ from cresmo.domain.value_objects import (
 
 CHUNK_SEPARATOR: str = "\n\n---\n\n"
 SENTINEL_FALLBACK_SORT_DATE: int = 99_999_999
-_DATE_PATTERN = re.compile(r'video_date:\s*["\']?(\d{4,8})["\']?')
-_CATEGORY_PATTERN = re.compile(r'channel_category:\s*["\']?([^"\'\n]+)["\']?')
-_VIDEO_ID_PATTERN = re.compile(r'video_id:\s*["\']?([a-zA-Z0-9_-]+)["\']?')
-
-
-def count_words(text: str) -> int:
-    """Count the total number of whitespace-delimited words in a string.
-
-    Args:
-        text: Source text string.
-
-    Returns:
-        Total word count integer.
-    """
-    return len(text.split())
 
 
 def parse_metadata_from_content(
@@ -62,26 +46,25 @@ def parse_metadata_from_content(
     Returns:
         Tuple of (date_integer, category_string, video_id ContentId).
     """
-    # 1. Parse video_date
-    date_match = _DATE_PATTERN.search(content)
-    sort_date = SENTINEL_FALLBACK_SORT_DATE
-    if date_match:
-        sort_date = int(date_match.group(1))
+    _, metadata = parse_frontmatter(content)
 
-    # 2. Parse channel_category
-    category_match = _CATEGORY_PATTERN.search(content)
-    if category_match and category_match.group(1).strip():
-        category = category_match.group(1).strip()
+    raw_date = str(metadata.get("video_date", "")).strip()
+    sort_date = (
+        int(raw_date)
+        if raw_date.isdigit() and 4 <= len(raw_date) <= 8
+        else SENTINEL_FALLBACK_SORT_DATE
+    )
+
+    raw_category = metadata.get("channel_category")
+    if raw_category is not None and str(raw_category).strip():
+        category = str(raw_category).strip()
     else:
         resolved_taxonomy = taxonomy_port or NoOpChannelTaxonomyPort()
         category, _ = resolved_taxonomy.classify(channel_name)
 
-    # 3. Parse video_id
-    video_id_match = _VIDEO_ID_PATTERN.search(content)
+    raw_vid = metadata.get("video_id")
     raw_video_id = (
-        video_id_match.group(1).strip()
-        if video_id_match and video_id_match.group(1).strip()
-        else fallback_stem
+        str(raw_vid).strip() if raw_vid is not None and str(raw_vid).strip() else fallback_stem
     )
     video_id = ContentId.from_string(raw_video_id)
 
@@ -156,7 +139,7 @@ class ConcatMasterUseCase:
             if resolved_category is None:
                 resolved_category = category
 
-            word_count = count_words(content)
+            word_count = len(content.split())
             docs.append((sort_date, file_path.name, content, video_id, word_count))
 
         if not docs or resolved_category is None:
@@ -193,7 +176,7 @@ class ConcatMasterUseCase:
         results: list[MasterDocumentResult] = []
         for part_num, part_docs in enumerate(parts, start=1):
             merged_content = CHUNK_SEPARATOR.join(doc[0] for doc in part_docs) + "\n"
-            total_words = count_words(merged_content)
+            total_words = len(merged_content.split())
             video_ids: tuple[ContentId, ...] = tuple(doc[1] for doc in part_docs)
 
             out_path = self.vault_port.save_master_document(

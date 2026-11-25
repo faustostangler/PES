@@ -25,27 +25,6 @@ _GIT_SHA_SHORT_LENGTH: Final[int] = 8
 # Infra limit: Langfuse drops propagated attribute values longer than 200 characters.
 _LANGFUSE_PROPAGATED_VALUE_MAX_CHARS: Final[int] = 200
 
-_CANONICAL_ROOT_METADATA_KEYS: Final[frozenset[str]] = frozenset(
-    {
-        "batch_id",
-        "title",
-        "content_title",
-        "channel",
-        "channel_name",
-        "channel_id",
-        "content_id",
-        "source",
-        "raw_words",
-        "raw_characters",
-        "expansion_max_passes",
-        "force_reprocess",
-        "publication_date",
-        "pipeline_version",
-        "version",
-        "git_sha",
-    }
-)
-
 
 def short_git_sha(git_sha: str | None) -> str | None:
     """Normalize and truncate git commit SHA to short length."""
@@ -134,10 +113,6 @@ def build_session_span_attributes(
     if clean_batch_id:
         attributes["cresmo.batch_id"] = clean_batch_id
         tags.append(f"batch:{clean_batch_id}")
-
-    for key, value in spec.extra_metadata.items():
-        if key not in _CANONICAL_ROOT_METADATA_KEYS:
-            attributes[f"cresmo.metadata.{key}"] = str(value)
 
     input_payload: dict[str, Any] = {
         "channel_id": channel_id,

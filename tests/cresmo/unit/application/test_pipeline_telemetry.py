@@ -170,10 +170,10 @@ class TestPipelineTelemetryIntegration:
             ),
         )
 
-        user = UserIdentity.identified(subject="fausto@cresmo.ai", provider="oauth")
+        user = UserIdentity.worker(name="fausto_operator")
         result = pipeline.execute(raw=raw, expansion_max_passes=1, user=user)
 
-        assert result.success is True
+        assert result.final_transcript is not None
 
         spans = exporter.get_finished_spans()
         root_span = next(
@@ -185,13 +185,13 @@ class TestPipelineTelemetryIntegration:
         )
         assert root_span.attributes is not None
         assert root_span.attributes["langfuse.session.id"] == "acropole:yt_auth_test_01"
-        assert root_span.attributes["langfuse.user.id"] == "user:oauth:fausto@cresmo.ai"
+        assert root_span.attributes["langfuse.user.id"] == "system:fausto_operator"
         assert root_span.attributes["cresmo.channel.name"] == "acropole"
         assert root_span.attributes["cresmo.content.title"] == "Estoicismo Clássico"
         assert root_span.attributes["cresmo.tenant_id"] == "channel:acropole"
         assert root_span.attributes["cresmo.user.is_anonymous"] is False
-        assert root_span.attributes["cresmo.user.provider"] == "oauth"
-        assert root_span.attributes["cresmo.user.subject"] == "fausto@cresmo.ai"
+        assert root_span.attributes["cresmo.user.provider"] == "system"
+        assert root_span.attributes["cresmo.user.subject"] == "fausto_operator"
         assert "cresmo.channel" not in root_span.attributes
         assert "cresmo.content_id" not in root_span.attributes
 
@@ -216,7 +216,7 @@ class TestPipelineTelemetryIntegration:
         user = UserIdentity.worker()
         result = pipeline.execute(raw=raw, expansion_max_passes=1, user=user)
 
-        assert result.success is True
+        assert result.final_transcript is not None
 
         spans = exporter.get_finished_spans()
         root_span = next(
@@ -253,7 +253,7 @@ class TestPipelineTelemetryIntegration:
 
         result = pipeline.execute(raw=raw, expansion_max_passes=1)
 
-        assert result.success is True
+        assert result.final_transcript is not None
 
         spans = exporter.get_finished_spans()
         root_span = next(
@@ -400,7 +400,7 @@ class TestPipelineTelemetryIntegration:
         batch_id = BatchId.generate()
         result = pipeline.execute(raw=raw, batch_id=batch_id)
 
-        assert result.success is True
+        assert result.final_transcript is not None
 
         spans = exporter.get_finished_spans()
         root_span = next(s for s in spans if s.name == "cresmo.coordinator")
@@ -415,7 +415,7 @@ class TestPipelineTelemetryIntegration:
         telemetry_pipeline: tuple[CresmoPipeline, InMemorySpanExporter, InMemoryVaultAdapter],
     ) -> None:
         """Verify active conveyor emits cresmo.pipeline -> cresmo.coordinator -> cresmo.{stage_name}."""
-        from cresmo.application.ports import get_active_telemetry_stage
+        from cresmo.application.ports.telemetry import _get_active_telemetry_stage
 
         pipeline, exporter, _ = telemetry_pipeline
         observed_stages_during_transform: list[str | None] = []
@@ -423,7 +423,7 @@ class TestPipelineTelemetryIntegration:
         original_transform = pipeline.stage_runner.llm_transformation_port.transform
 
         def _spy_transform(*args: object, **kwargs: object) -> str:
-            observed_stages_during_transform.append(get_active_telemetry_stage())
+            observed_stages_during_transform.append(_get_active_telemetry_stage())
             return original_transform(*args, **kwargs)  # type: ignore[arg-type]
 
         pipeline.stage_runner.llm_transformation_port.transform = _spy_transform  # type: ignore[method-assign]
@@ -441,8 +441,8 @@ class TestPipelineTelemetryIntegration:
         )
 
         result = pipeline.execute(raw=raw, expansion_max_passes=1)
-        assert result.success is True
-        assert get_active_telemetry_stage() is None
+        assert result.final_transcript is not None
+        assert _get_active_telemetry_stage() is None
         assert "fluid_prose" in observed_stages_during_transform
         assert "gap_filler" in observed_stages_during_transform
         assert "long_expander" in observed_stages_during_transform

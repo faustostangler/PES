@@ -46,10 +46,7 @@ class StageDefinition:
     required_criteria: tuple[JudgeCriterion, ...] = ()
     judge_prompt_key: PromptKey | None = None
     post_processor: Callable[..., Any] | None = None
-    source_extractor: Callable[..., str] | None = None
-    candidate_extractor: Callable[..., str] | None = None
     eval_metadata: dict[str, Any] = field(default_factory=dict)
-    max_passes: int = 1
     convergence_mode: ConvergenceMode = ConvergenceMode.NONE
 
 
@@ -82,7 +79,6 @@ class StageRegistry:
                 "weights": {c.value: w for c, w in GAP_FILLER_CANONICAL_WEIGHTS.items()},
                 "veto_criteria": sorted(c.value for c in GAP_FILLER_MECHANICAL_VETO_CRITERIA),
             },
-            max_passes=5,
             convergence_mode=ConvergenceMode.HYBRID_SEMANTIC,
         ),
         StageName.LONG_EXPANDER: StageDefinition(
@@ -94,7 +90,6 @@ class StageRegistry:
                 "weights": {c.value: w for c, w in LONG_EXPANDER_CANONICAL_WEIGHTS.items()},
                 "veto_criteria": sorted(c.value for c in LONG_EXPANDER_MECHANICAL_VETO_CRITERIA),
             },
-            max_passes=7,
             convergence_mode=ConvergenceMode.HYBRID_SEMANTIC,
         ),
         StageName.WIDE_EXPANDER: StageDefinition(
@@ -106,7 +101,6 @@ class StageRegistry:
                 "weights": {c.value: w for c, w in WIDE_EXPANDER_CANONICAL_WEIGHTS.items()},
                 "veto_criteria": sorted(c.value for c in WIDE_EXPANDER_MECHANICAL_VETO_CRITERIA),
             },
-            max_passes=5,
             convergence_mode=ConvergenceMode.HYBRID_SEMANTIC,
         ),
     }

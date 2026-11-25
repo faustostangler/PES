@@ -79,7 +79,6 @@ class CresmoSettings(BaseSettings):
             long_expander_max_passes=self.pipeline.stages.long_expander_max_passes,
             judge_max_attempts=self.judge.max_attempts,
             judge_blocking=self.judge.blocking,
-            synthesis_temperature=self.llm.ollama.synthesis_temperature,
             saturation_thresholds=self.pipeline.saturation.to_domain_thresholds(),
         )
 

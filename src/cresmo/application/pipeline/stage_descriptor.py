@@ -11,33 +11,22 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, cast
 
 from cresmo.application.pipeline.context import PipelineExecutionContext
 from cresmo.application.ports.prompt import PromptProviderPort
+from cresmo.domain.entities.transcripts import extract_source_text
 from cresmo.domain.services.convergence_evaluator import NO_NEW_GAPS_SENTINEL
 from cresmo.domain.value_objects import (
     CandidateText,
     ChatMessage,
     ChatPrompt,
-    Content,
     MessageRole,
     PromptKey,
     SaturationPolicy,
     StageEvaluationSpec,
     never_saturate,
 )
-
-
-def extract_stage_source_text(source: Any) -> str:
-    """Extract canonical raw text from StageTranscript-like objects, Content wrappers, or strings."""
-    source_content = getattr(source, "content", None)
-    raw_text_val = (
-        source_content.text
-        if isinstance(source_content, Content)
-        else (getattr(source, "text", None) or str(source))
-    )
-    return str(raw_text_val)
 
 
 def _append_to_last_user_message(prompt: ChatPrompt, suffix: str) -> ChatPrompt:
@@ -73,9 +62,10 @@ class StageConfig[TSource, TOutput]:
         judge_prompt_key: Optional PromptKey for LLM judge instructions.
         eval_spec: Quality gate criteria and candidate extraction specification.
         post_processor: Optional callable transforming CandidateText into domain aggregate or output.
-        temperature: Sampling temperature override for generative LLM call.
         max_attempts: Maximum generation attempts before giving up (default: 1).
-        blocking: If True, raises DomainValidationError when quality evaluation fails after retries.
+        blocking: If True, raises StageQuarantinedError when quality evaluation fails after retries.
+        max_passes: Maximum iterative refinement passes for multi-pass stages (default: 1).
+        saturation_policy: Convergence evaluation callable governing early stopping.
     """
 
     stage_name: str
@@ -83,7 +73,6 @@ class StageConfig[TSource, TOutput]:
     judge_prompt_key: PromptKey | None = None
     eval_spec: StageEvaluationSpec | None = None
     post_processor: Callable[[CandidateText, TSource], TOutput] | None = None
-    temperature: float | None = None
     max_attempts: int = 1
     blocking: bool = False
     max_passes: int = 1
@@ -91,6 +80,8 @@ class StageConfig[TSource, TOutput]:
 
     def __post_init__(self) -> None:
         """Fail-fast validation for StageConfig invariants."""
+        if isinstance(self.max_passes, bool) or self.max_passes < 1:
+            raise ValueError(f"StageConfig.max_passes must be >= 1, got {self.max_passes!r}.")
         if not callable(self.saturation_policy):
             raise TypeError(
                 f"StageConfig.saturation_policy must be callable, got {type(self.saturation_policy).__name__}."
@@ -107,8 +98,7 @@ class StageConfig[TSource, TOutput]:
     ) -> ChatPrompt:
         """Resolve ChatPrompt, injecting closed-loop reflection critique on retry."""
         effective_channel_id = context.channel.id.value if context.channel.id else ""
-        raw_text = extract_stage_source_text(source)
-        effective_key = self.transform_prompt_key
+        raw_text = extract_source_text(source)  # type: ignore[arg-type]
 
         raw_current_text = extra_context.get("current_text")
         current_draft = (
@@ -128,7 +118,7 @@ class StageConfig[TSource, TOutput]:
             provider_kwargs.setdefault("draft_section", draft_section)
 
         base_prompt: ChatPrompt = prompt_provider.get_prompt(
-            effective_key,
+            self.transform_prompt_key,
             channel_name=context.channel.name,
             channel_id=effective_channel_id,
             content_id=context.content.id.value,
@@ -174,7 +164,7 @@ class StageConfig[TSource, TOutput]:
         return _append_to_last_user_message(base_prompt, critique_feedback)
 
     def post_process(self, candidate: CandidateText, source: TSource) -> TOutput:
-        """Execute post-processing transformation on CandidateText or cast candidate directly."""
+        """Execute post-processing transformation on CandidateText or return candidate directly."""
         if self.post_processor is not None:
             return self.post_processor(candidate, source)
-        return candidate  # type: ignore[return-value]
+        return cast(TOutput, candidate)

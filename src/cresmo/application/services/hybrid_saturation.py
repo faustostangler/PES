@@ -29,14 +29,6 @@ from cresmo.domain.value_objects.convergence import (
 logger = structlog.get_logger(__name__)
 
 
-def _resolve_provider_name(port: TextEmbeddingPort) -> str:
-    """Resolve active provider attribution, honoring resilient fallback wrappers."""
-    raw_last_provider = getattr(port, "last_provider_name", None)
-    if isinstance(raw_last_provider, str) and raw_last_provider:
-        return raw_last_provider
-    return port.provider_name
-
-
 def _build_novel_verdict(
     *,
     lexical_jaccard: float,
@@ -177,7 +169,7 @@ class HybridSaturationEvaluator:
         if len(vectors) != len(combined_units):
             logger.warning(
                 "Embedding port returned mismatched vector count; degrading to NOVEL_CONTENT.",
-                provider=_resolve_provider_name(self.embedding_port),
+                provider=self.embedding_port.provider_name,
                 expected=len(combined_units),
                 actual=len(vectors),
             )
@@ -191,7 +183,12 @@ class HybridSaturationEvaluator:
         split_idx = len(baseline_units)
         baseline_vectors = vectors[:split_idx]
         current_vectors = vectors[split_idx:]
-        provider = _resolve_provider_name(self.embedding_port)
+        raw_last = getattr(self.embedding_port, "last_provider_name", None)
+        provider = (
+            raw_last
+            if isinstance(raw_last, str) and raw_last
+            else self.embedding_port.provider_name
+        )
 
         return evaluate_semantic_convergence(
             baseline_vectors,

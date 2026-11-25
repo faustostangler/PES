@@ -74,14 +74,12 @@ class TestCriterionScore:
             criterion=JudgeCriterion.SEMANTIC_FAITHFULNESS,
             score=0.88,
             passed=True,
-            confidence=0.9,
             reasoning="Faithful semantics",
             improvement_suggestion="Keep it up",
         )
         assert cs.criterion == JudgeCriterion.SEMANTIC_FAITHFULNESS
         assert cs.score == 0.88
         assert cs.passed is True
-        assert cs.confidence == 0.9
         assert cs.reasoning == "Faithful semantics"
         assert cs.improvement_suggestion == "Keep it up"
 
@@ -91,7 +89,6 @@ class TestCriterionScore:
             score=0.5,
             passed=True,
         )
-        assert cs.confidence is None
         assert cs.reasoning == ""
         assert cs.improvement_suggestion == ""
 
@@ -114,31 +111,6 @@ class TestCriterionScore:
                 criterion=JudgeCriterion.SEMANTIC_FAITHFULNESS,
                 score=invalid_score,
                 passed=True,
-            )
-
-    @pytest.mark.parametrize("boundary_conf", [0.0, 1.0])
-    def test_criterion_confidence_boundaries(self, boundary_conf: float) -> None:
-        cs = CriterionScore(
-            criterion=JudgeCriterion.SEMANTIC_FAITHFULNESS,
-            score=0.5,
-            passed=True,
-            confidence=boundary_conf,
-        )
-        assert cs.confidence == boundary_conf
-
-    @pytest.mark.parametrize("invalid_conf", [-0.01, 1.01])
-    def test_criterion_confidence_out_of_bounds_raises_value_error(
-        self, invalid_conf: float
-    ) -> None:
-        with pytest.raises(
-            ValueError,
-            match=rf"^Confidence must be between 0\.0 and 1\.0 if provided, got: {invalid_conf}$",
-        ):
-            CriterionScore(
-                criterion=JudgeCriterion.SEMANTIC_FAITHFULNESS,
-                score=0.5,
-                passed=True,
-                confidence=invalid_conf,
             )
 
 
@@ -279,15 +251,13 @@ class TestEvaluationContext:
 
 
 class TestStageEvaluationSpec:
-    """Invariants and source text extraction of StageEvaluationSpec."""
+    """Invariants of StageEvaluationSpec."""
 
     def test_spec_defaults(self) -> None:
         spec = StageEvaluationSpec()
         assert spec.required_criteria == ()
-        assert spec.raw_text == ""
         assert spec.metadata == {}
         assert spec.max_attempts == 1
-        assert spec.source_extractor is None
         # Default candidate_extractor stringifies
         assert spec.candidate_extractor(123) == "123"
 
@@ -298,28 +268,6 @@ class TestStageEvaluationSpec:
             match=rf"^max_attempts must be >= 1, got {invalid_attempts}$",
         ):
             StageEvaluationSpec(max_attempts=invalid_attempts)
-
-    def test_extract_source_text_explicit_raw_text(self) -> None:
-        spec = StageEvaluationSpec(raw_text="explicit text")
-        assert spec.extract_source_text("arbitrary_source") == "explicit text"
-
-    def test_extract_source_text_with_source_extractor(self) -> None:
-        spec = StageEvaluationSpec(source_extractor=lambda s: f"extracted:{s}")
-        assert spec.extract_source_text("hello") == "extracted:hello"
-
-    def test_extract_source_text_from_content_text(self) -> None:
-        class FakeContent:
-            text = "text from content"
-
-        class FakeSource:
-            content = FakeContent()
-
-        spec = StageEvaluationSpec()
-        assert spec.extract_source_text(FakeSource()) == "text from content"
-
-    def test_extract_source_text_fallback_to_str(self) -> None:
-        spec = StageEvaluationSpec()
-        assert spec.extract_source_text(42) == "42"
 
 
 class TestWeightedAverageAndMechanicalVeto:
@@ -640,16 +588,3 @@ class TestWeightedAverageAndMechanicalVeto:
         assert multi_veto_eval.extract_critique() == (
             "[CRITICAL MECHANICAL VETO]: Veto A; Veto B\n- ner_preservation: Missing name"
         )
-
-    def test_extract_source_text_falls_back_when_content_lacks_text_attribute(self) -> None:
-        class _OpaqueContent:
-            pass
-
-        class _SourceWithoutText:
-            content = _OpaqueContent()
-
-            def __str__(self) -> str:
-                return "opaque_source_repr"
-
-        spec = StageEvaluationSpec()
-        assert spec.extract_source_text(_SourceWithoutText()) == "opaque_source_repr"

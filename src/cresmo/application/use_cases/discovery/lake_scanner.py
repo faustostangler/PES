@@ -19,10 +19,7 @@ from cresmo.application.use_cases.discovery.manifests import (
     matches_video_target,
     read_manifest_lines,
 )
-from cresmo.application.use_cases.discovery.models import (
-    BatchSource,
-    _BatchSourceAccumulator,
-)
+from cresmo.application.use_cases.discovery.models import _BatchSourceAccumulator
 from cresmo.domain.value_objects import (
     ContentId,
     SourceModality,
@@ -115,12 +112,10 @@ class LakeScannerService:
                 resolved_pf = str(priority_file.absolute())
                 acc.add_source(kind=SourceModality.FILE, target=resolved_pf)
 
-            if raw_chan and (
-                criteria.is_empty()
-                or (
-                    matches_channel_target(criteria, raw_chan)
-                    and matches_category_target(criteria, raw_chan, taxonomy_port=taxonomy_port)
-                )
+            if raw_chan and _matches_channel_and_category(
+                criteria,
+                raw_chan,
+                taxonomy_port=taxonomy_port,
             ):
                 norm_chan = normalize_to_uploads_playlist_url(raw_chan)
                 if norm_chan not in priority_channels:
@@ -209,10 +204,6 @@ class LakeScannerService:
 
             already_seen = acc.has_seen(stem) or acc.has_seen(canonical_vid)
 
-            # Record in accumulator so discovered feeds know these already exist in local lake
-            acc.seen_vids.add(stem)
-            acc.seen_vids.add(canonical_vid)
-
             if chan_url:
                 local_video_to_channel[canonical_vid] = chan_url
                 local_video_to_channel[stem] = chan_url
@@ -224,11 +215,10 @@ class LakeScannerService:
                 chan_url,
                 taxonomy_port=taxonomy_port,
             ):
-                resolved_rf = str(rf.absolute())
-                if not any(s.target == resolved_rf for s in acc.sources):
-                    acc.sources.append(
-                        BatchSource(kind=SourceModality.FILE, target=resolved_rf)
-                    )
+                acc.add_source(kind=SourceModality.FILE, target=str(rf.absolute()))
+
+            # Record in accumulator so discovered feeds know these already exist in local lake
+            acc.mark_seen(stem, canonical_vid)
 
         return local_video_to_channel
 

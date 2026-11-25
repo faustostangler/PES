@@ -128,27 +128,32 @@ class _BatchSourceAccumulator:
         self.on_source_added = on_source_added
         self._lock = threading.Lock()
 
+    def mark_seen(self, *identifiers: str) -> None:
+        """Register raw file or token identifiers as seen in a thread-safe manner."""
+        with self._lock:
+            for identifier in identifiers:
+                if identifier:
+                    self.seen_vids.add(identifier)
+
     def add_source(
         self,
         kind: SourceModality,
         target: str,
-        vid: ContentId | None = None,
         content_id: ContentId | None = None,
     ) -> BatchSource | None:
         """Append a source and register its identifier for deduplication."""
         with self._lock:
-            raw_id = content_id if content_id is not None else vid
-            resolved_id = _resolve_content_id(target, raw_id)
+            resolved_id = _resolve_content_id(target, content_id)
             dedup_token: str = (
                 resolved_id.value
                 if resolved_id is not None
-                else (str(raw_id) if raw_id is not None else Path(target).stem)
+                else (str(content_id) if content_id is not None else Path(target).stem)
             )
 
-            if _is_already_seen(self.seen_vids, dedup_token, resolved_id, raw_id):
+            if _is_already_seen(self.seen_vids, dedup_token, resolved_id, content_id):
                 return None
 
-            _record_seen_identifiers(self.seen_vids, dedup_token, resolved_id, raw_id, target)
+            _record_seen_identifiers(self.seen_vids, dedup_token, resolved_id, content_id, target)
 
             batch_source = BatchSource(kind=kind, target=target, content_id=resolved_id)
             self.sources.append(batch_source)

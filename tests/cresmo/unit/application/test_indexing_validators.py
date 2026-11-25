@@ -16,7 +16,6 @@ from cresmo.application.use_cases.indexing.validators import (
     clean_text_line,
     is_valid_concepts_output,
     is_valid_synthesis_paragraph,
-    parse_judge_boolean,
 )
 
 
@@ -119,31 +118,6 @@ class TestIsValidSynthesisParagraph:
         words_5 = "one two three four five"
         assert is_valid_synthesis_paragraph(words_5, min_words=5, max_words=10) is True
         assert is_valid_synthesis_paragraph(words_5, min_words=6, max_words=10) is False
-
-
-class TestParseJudgeBoolean:
-    def test_empty_or_whitespace_is_false(self) -> None:
-        assert parse_judge_boolean("") is False
-        assert parse_judge_boolean("   ") is False
-
-    def test_true_variations(self) -> None:
-        assert parse_judge_boolean("true") is True
-        assert parse_judge_boolean("True") is True
-        assert parse_judge_boolean("TRUE") is True
-        assert parse_judge_boolean("true.") is True
-        assert parse_judge_boolean("true!") is True
-        assert parse_judge_boolean("true?") is True
-        assert parse_judge_boolean("```\ntrue\n```") is True
-        assert parse_judge_boolean("```json\ntrue\n```") is True
-        assert parse_judge_boolean("```txt\nTrue.\n```") is True
-        assert parse_judge_boolean("true, the output satisfies criteria") is True
-        assert parse_judge_boolean("(true)") is True
-
-    def test_false_variations(self) -> None:
-        assert parse_judge_boolean("false") is False
-        assert parse_judge_boolean("False") is False
-        assert parse_judge_boolean("```json\nfalse\n```") is False
-        assert parse_judge_boolean("not compliant") is False
 
 
 class TestCleanTextLine:

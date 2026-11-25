@@ -56,15 +56,15 @@ _NOOP_BUILDERS: dict[PromptKey, Callable[[dict[str, Any]], tuple[str, str]]] = {
     ),
     PromptKey.GAP_FILLER: lambda c: (
         f"You are Cresmo Expander. Enrich transcript for {c.get('channel_name', '')}.",
-        f"Pass {c.get('pass_num', 1)} of {c.get('total_passes', 1)} for {c.get('channel_name', '')} (file: {c.get('file_name', '')}):\nRaw transcript:\n{c.get('source_text') or c.get('raw_text', '')}\nCurrent text:\n{c.get('current_text', '')}",
+        f"Pass {c.get('pass_num', 1)} of {c.get('total_passes', 1)} for {c.get('channel_name', '')} (file: {c.get('file_name', '')}):\nRaw transcript:\n{c.get('raw_text', '')}\nCurrent text:\n{c.get('current_text', '')}",
     ),
     PromptKey.LONG_EXPANDER: lambda c: (
         f"You are Cresmo Long-Expander. Language: {c.get('language', DEFAULT_LANGUAGE)}.",
-        f"Pass {c.get('pass_num', 1)} of {c.get('total_passes', 1)} for {c.get('channel_name', '')}:\nSource text:\n{c.get('source_text') or c.get('raw_text', '')}\nCurrent text:\n{c.get('current_text', '')}",
+        f"Pass {c.get('pass_num', 1)} of {c.get('total_passes', 1)} for {c.get('channel_name', '')}:\nSource text:\n{c.get('raw_text', '')}\nCurrent text:\n{c.get('current_text', '')}",
     ),
     PromptKey.WIDE_EXPANDER: lambda c: (
         f"You are Cresmo Wide-Expander. Language: {c.get('language', DEFAULT_LANGUAGE)}.",
-        f"Pass {c.get('pass_num', 1)} of {c.get('total_passes', 1)} for {c.get('channel_name', '')}:\nSource text:\n{c.get('source_text') or c.get('raw_text', '')}\nCurrent text:\n{c.get('current_text', '')}",
+        f"Pass {c.get('pass_num', 1)} of {c.get('total_passes', 1)} for {c.get('channel_name', '')}:\nSource text:\n{c.get('raw_text', '')}\nCurrent text:\n{c.get('current_text', '')}",
     ),
     PromptKey.ATOMIC_INVENTORY: lambda c: (
         "You are Cresmo Atomic Inventory Specialist (cresmo-atomic).",

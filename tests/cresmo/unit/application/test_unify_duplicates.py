@@ -146,28 +146,28 @@ class TestUnifyDuplicateNotesUseCase:
     @pytest.mark.parametrize(
         ("input_title", "expected"),
         [
-            ("Dom Afonso Henriques", "afonso henriques"),
-            ("dom afonso henriques", "afonso henriques"),
-            ("Dona Maria I", "maria i"),
-            ("dona maria i", "maria i"),
-            ("D. Pedro II", "pedro ii"),
-            ("d. pedro ii", "pedro ii"),
-            ("D João VI", "joão vi"),
-            ("d joão vi", "joão vi"),
+            ("Dom Afonso Henriques", "afonsohenriques"),
+            ("dom afonso henriques", "afonsohenriques"),
+            ("Dona Maria I", "mariai"),
+            ("dona maria i", "mariai"),
+            ("D. Pedro II", "pedroii"),
+            ("d. pedro ii", "pedroii"),
+            ("D João VI", "joãovi"),
+            ("d joão vi", "joãovi"),
             ("  dom   manuel  ", "manuel"),
-            ("Batalha de São Mamede (1128)", "batalha de são mamede 1128"),
-            ("Tratado_de-Zamora...1143", "tratado de zamora 1143"),
-            ("Vilfredo Pareto", "vilfredo pareto"),
+            ("Batalha de São Mamede (1128)", "batalhadesãomamede1128"),
+            ("Tratado_de-Zamora...1143", "tratadodezamora1143"),
+            ("Vilfredo Pareto", "vilfredopareto"),
         ],
     )
     def test_normalize_for_matching_exhaustive(
         self,
-        mock_vault: InMemoryVaultAdapter,
         input_title: str,
         expected: str,
     ) -> None:
-        use_case = UnifyDuplicateNotesUseCase(vault_port=mock_vault)
-        assert use_case._normalize_for_matching(input_title) == expected
+        from cresmo.domain.services.entity_matching import normalize_entity_title_for_matching
+
+        assert normalize_entity_title_for_matching(input_title) == expected
 
     def test_are_duplicates_evaluation_branches(self, mock_vault: InMemoryVaultAdapter) -> None:
         use_case = UnifyDuplicateNotesUseCase(vault_port=mock_vault)

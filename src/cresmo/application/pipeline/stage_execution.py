@@ -16,17 +16,16 @@ from typing import Any
 import structlog
 
 from cresmo.application.pipeline.context import PipelineExecutionContext
-from cresmo.application.pipeline.stage_descriptor import (
-    StageConfig,
-    extract_stage_source_text,
-)
+from cresmo.application.pipeline.stage_descriptor import StageConfig
 from cresmo.application.pipeline.stage_telemetry import (
     attach_evaluation_span_attributes,
     record_evaluation_metric,
+    resolve_active_trace_id,
 )
 from cresmo.application.ports import (
     LlmJudgePort,
     LLMTransformationPort,
+    MetricsPort,
     PromptProviderPort,
     TelemetryAttributeValue,
     TelemetryPort,
@@ -34,6 +33,7 @@ from cresmo.application.ports import (
     format_stage_judge_span_name,
     format_stage_saturation_span_name,
 )
+from cresmo.domain.entities.transcripts import extract_source_text
 from cresmo.domain.value_objects import (
     CandidateText,
     EvaluationContext,
@@ -100,11 +100,10 @@ def generate_stage_candidate[TSource, TOutput](
     telemetry_port: TelemetryPort | None = None,
 ) -> CandidateText:
     """Build prompt and invoke LLM transformation port to generate CandidateText (multi-pass aware)."""
-    raw_max_passes = getattr(stage_config, "max_passes", 1)
-    max_passes = raw_max_passes if isinstance(raw_max_passes, int) and raw_max_passes > 0 else 1
+    max_passes = stage_config.max_passes
     is_multi_pass = max_passes > 1
 
-    baseline_text = extract_stage_source_text(source)
+    baseline_text = extract_source_text(source)  # type: ignore[arg-type]
     draft_text: str | None = None
     current_text = ""
     passes_executed = 0
@@ -142,7 +141,6 @@ def generate_stage_candidate[TSource, TOutput](
         with telemetry_pass_context:
             current_text = llm_port.transform(
                 prompt=chat_prompt,
-                temperature=stage_config.temperature,
                 trace_id=(
                     f"{active_trace_id}_pass_{pass_index}" if is_multi_pass else active_trace_id
                 ),
@@ -221,31 +219,37 @@ def generate_stage_candidate[TSource, TOutput](
 
 
 def evaluate_stage_candidate[TSource, TOutput](
-    runner: Any,
     stage_config: StageConfig[TSource, TOutput],
     source: TSource,
     candidate: CandidateText,
     *,
     context: PipelineExecutionContext,
     attempt: int,
+    llm_judge: LlmJudgePort | None,
+    telemetry_port: TelemetryPort,
+    metrics_port: MetricsPort,
 ) -> JudgeEvaluation | None:
     """Evaluate candidate text against stage quality criteria if judge and eval_spec are configured."""
-    if runner.llm_judge is None or stage_config.eval_spec is None:
+    if llm_judge is None or stage_config.eval_spec is None:
         return None
 
-    with runner.telemetry_port.start_span(
+    with telemetry_port.start_span(
         format_stage_judge_span_name(stage_config.stage_name),
         attributes={
             "judge.stage_name": stage_config.stage_name,
             "judge.attempt": attempt,
         },
     ) as eval_span:
-        active_trace_id = runner._get_active_trace_id(context=context, span=eval_span)
-        active_observation_id = eval_span.span_id if eval_span is not None else None
+        active_trace_id = resolve_active_trace_id(
+            context,
+            telemetry_port=telemetry_port,
+            span=eval_span,
+        )
+        active_observation_id = eval_span.span_id
 
         eval_context = EvaluationContext(
             stage_name=stage_config.stage_name,
-            raw_text=stage_config.eval_spec.extract_source_text(source),
+            raw_text=extract_source_text(source),  # type: ignore[arg-type]
             candidate_text=stage_config.eval_spec.candidate_extractor(candidate),
             metadata={
                 "channel_id": context.channel.id.value if context.channel.id else "",
@@ -261,10 +265,9 @@ def evaluate_stage_candidate[TSource, TOutput](
             judge_prompt_key=stage_config.judge_prompt_key,
         )
 
-        llm_judge: LlmJudgePort = runner.llm_judge
         evaluation = llm_judge.evaluate(eval_context)
         record_evaluation_metric(
-            runner.metrics_port,
+            metrics_port,
             stage_name=stage_config.stage_name,
             passed=evaluation.passed,
             attempt=attempt,

@@ -14,6 +14,8 @@ from google.genai import errors, types
 from cresmo.application.ports import (
     NoOpTelemetryPort,
     SpanKind,
+)
+from cresmo.application.ports.telemetry import (
     active_telemetry_pass,
     active_telemetry_stage,
 )

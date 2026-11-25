@@ -35,26 +35,11 @@ def data_vault_setup(
 ) -> tuple[Path, Path, TranscriptVaultHandler, ObsidianVaultAdapter]:
     data_dir = tmp_path / "data"
     vault_dir = tmp_path / "vault"
-    raw_dir = data_dir / "raw"
-    enriched_dir = data_dir / "enriched"
-    fluid_dir = data_dir / "fluid_prose"
+    data_dir.mkdir(parents=True, exist_ok=True)
+    vault_dir.mkdir(parents=True, exist_ok=True)
 
-    for d in (data_dir, vault_dir, raw_dir, enriched_dir, fluid_dir):
-        d.mkdir(parents=True, exist_ok=True)
-
-    handler = TranscriptVaultHandler(
-        raw_dir=raw_dir,
-        enriched_dir=enriched_dir,
-        fluid_dir=fluid_dir,
-        data_dir=data_dir,
-    )
-    adapter = ObsidianVaultAdapter(
-        vault_dir=vault_dir,
-        raw_dir=raw_dir,
-        enriched_dir=enriched_dir,
-        fluid_dir=fluid_dir,
-        data_dir=data_dir,
-    )
+    handler = TranscriptVaultHandler(data_dir=data_dir)
+    adapter = ObsidianVaultAdapter(vault_dir=vault_dir, data_dir=data_dir)
     return data_dir, vault_dir, handler, adapter
 
 
@@ -72,7 +57,7 @@ def _make_sample_transcript(
             description="Sample video description\nLine 2 of description",
             publication_date=datetime.date(2026, 11, 10),
         ),
-        content=Content.create(
+        content=Content(
             id=ContentId(content_id_str),
             title="Clean Title Sample",
             text="## Header 2\n\nParagraph 1 prose content.\n\n### Extra Info\n\n1. Biographical datum.",

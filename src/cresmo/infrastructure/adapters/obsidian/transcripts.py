@@ -42,29 +42,14 @@ _EXPANDED_STAGES: frozenset[str] = frozenset(
 
 
 class TranscriptVaultHandler:
-    """Handles filesystem persistence and retrieval of source transcripts, fluid transcripts, and enriched compendiums."""
+    """Handles filesystem persistence and retrieval of staged pipeline transcripts."""
 
-    def __init__(
-        self,
-        raw_dir: Path,
-        enriched_dir: Path,
-        fluid_dir: Path | None = None,
-        data_dir: Path | None = None,
-    ) -> None:
-        self.raw_dir = Path(raw_dir)
-        self.enriched_dir = Path(enriched_dir)
-        self.data_dir = Path(data_dir).resolve() if data_dir is not None else self.raw_dir.parent
-        self.fluid_dir = (
-            Path(fluid_dir) if fluid_dir is not None else (self.data_dir / StageName.FLUID_PROSE.value)
-        )
+    def __init__(self, data_dir: Path) -> None:
+        self.data_dir = Path(data_dir).resolve()
 
     def resolve_stage_dir(self, stage: str | StageName) -> Path:
         """Resolve dynamic stage directory following canonical data/{stage} structure (ADR-058)."""
-        stage_key = stage.value if hasattr(stage, "value") else str(stage).strip()
-        if stage_key == StageName.RAW:
-            return self.raw_dir
-        if stage_key == StageName.FLUID_PROSE:
-            return self.fluid_dir
+        stage_key = stage.value if isinstance(stage, StageName) else str(stage).strip()
         return self.data_dir / stage_key
 
     def _format_stage_frontmatter(self, transcript: StageTranscript) -> str:
@@ -143,7 +128,7 @@ class TranscriptVaultHandler:
                 url=f"file://{file_path.resolve()}",
                 description="",
             )
-            content = Content.create(
+            content = Content(
                 id=content_id,
                 title=file_path.stem,
                 text=text,
@@ -204,7 +189,7 @@ class TranscriptVaultHandler:
             body_lines = body_payload.splitlines()
             body_payload = "\n".join(body_lines[1:]).strip()
 
-        content = Content.create(
+        content = Content(
             id=content_id,
             title=title,
             text=body_payload,

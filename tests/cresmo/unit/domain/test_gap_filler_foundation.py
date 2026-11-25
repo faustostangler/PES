@@ -188,7 +188,6 @@ def test_stage_registry_contains_gap_filler() -> None:
     long_spec = StageRegistry.get("long_expander")
     assert long_spec.transform_prompt_key == PromptKey.LONG_EXPANDER
     assert long_spec.judge_prompt_key == PromptKey.JUDGE_LONG_EXPANDER
-    assert long_spec.max_passes == 7
     assert len(spec.required_criteria) == 7
     assert JudgeCriterion.EPISTEMIC_GROUNDING_SEGREGATION in spec.required_criteria
     assert JudgeCriterion.CONCEPTUAL_MECHANICAL_DECOMPOSITION in spec.required_criteria

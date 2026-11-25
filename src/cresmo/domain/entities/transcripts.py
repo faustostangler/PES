@@ -96,19 +96,26 @@ class StageTranscript:
                 raise StageTranscriptStructureError("pass_count must be at least 1.")
 
 
+def extract_source_text(source: StageTranscript | CandidateText | str) -> str:
+    """Extract canonical textual payload from a StageTranscript, CandidateText, or string."""
+    if isinstance(source, StageTranscript):
+        return source.content.text
+    if isinstance(source, CandidateText):
+        return source.text
+    return str(source)
+
+
 def post_process_fluid_transcript(
-    candidate: CandidateText | str,
+    candidate: CandidateText,
     source: StageTranscript,
 ) -> StageTranscript:
     """Post-process candidate text into a validated StageTranscript domain aggregate.
 
     Strips H1 headers to preserve clean heading hierarchy, removes accidental
     complementary sections, and maps the pure Value Object triad from the source transcript.
-    Conforms to ADR-038 and ADR-057.
+    Conforms to ADR-038, ADR-057, and ADR-077.
     """
-    current_text = (
-        candidate.text.strip() if isinstance(candidate, CandidateText) else candidate.strip()
-    )
+    current_text = candidate.text.strip()
 
     title_match = TITLE_H1_PATTERN.search(current_text)
     if title_match:

@@ -15,7 +15,13 @@ from cresmo.application.pipeline.context import PipelineExecutionContext
 from cresmo.application.pipeline.models import PipelineDependencies
 from cresmo.application.pipeline.stage_descriptor import StageConfig
 from cresmo.application.pipeline.stage_runner import PipelineStageRunner
-from cresmo.application.ports import NoOpMetricsPort, NoOpTelemetryPort, TelemetryPort
+from cresmo.application.ports import (
+    LLMTransformationPort,
+    NoOpMetricsPort,
+    NoOpPromptProviderPort,
+    NoOpTelemetryPort,
+    TelemetryPort,
+)
 from cresmo.domain.entities import StageTranscript, UserIdentity
 from cresmo.domain.exceptions import DomainValidationError, StageQuarantinedError
 from cresmo.domain.value_objects import (
@@ -35,6 +41,8 @@ from tests.doubles.telemetry_fake import InMemoryTelemetryPort
 
 
 def _make_runner(**kwargs: object) -> PipelineStageRunner:
+    kwargs.setdefault("prompt_provider", NoOpPromptProviderPort())
+    kwargs.setdefault("llm_transformation_port", MagicMock(spec=LLMTransformationPort))
     return PipelineStageRunner(PipelineDependencies(**kwargs))  # type: ignore[arg-type]
 
 
@@ -43,19 +51,16 @@ class TestStageEvaluationSpec:
 
     def test_valid_spec_creation(self) -> None:
         spec = StageEvaluationSpec(
-            raw_text="Raw ground truth",
             candidate_extractor=lambda res: res["text"],
             required_criteria=(JudgeCriterion.ORALITY_REMOVAL,),
             max_attempts=3,
         )
-        assert spec.raw_text == "Raw ground truth"
         assert spec.max_attempts == 3
         assert spec.candidate_extractor({"text": "Hello"}) == "Hello"
 
     def test_invalid_max_attempts_raises_value_error(self) -> None:
         with pytest.raises(ValueError, match="max_attempts must be >= 1"):
             StageEvaluationSpec(
-                raw_text="Raw ground truth",
                 candidate_extractor=lambda res: str(res),
                 required_criteria=(),
                 max_attempts=0,
@@ -87,7 +92,7 @@ class TestPipelineStageRunnerEvaluatedStage:
         )
 
         channel = Channel(name="CtxChannel")
-        content = Content.create(
+        content = Content(
             id=ContentId("vid_ctx_1"), title="CtxTitle", session_id="ch_test:vid_ctx_1"
         )
         ctx = PipelineExecutionContext(
@@ -120,6 +125,8 @@ class TestPipelineStageRunnerEvaluatedStage:
         deps = PipelineDependencies(
             telemetry_port=telemetry,
             metrics_port=metrics,
+            prompt_provider=NoOpPromptProviderPort(),
+            llm_transformation_port=MagicMock(spec=LLMTransformationPort),
             judge_blocking=False,
             judge_max_attempts=2,
         )
@@ -129,7 +136,9 @@ class TestPipelineStageRunnerEvaluatedStage:
         assert runner.judge_max_attempts == 2
 
     def test_evaluate_candidate_binds_active_observation_id_adr036(self) -> None:
-        """Verify _evaluate_candidate populates EvaluationContext.observation_id from active TelemetrySpan."""
+        """Verify evaluate_stage_candidate populates EvaluationContext.observation_id from active TelemetrySpan."""
+        from cresmo.application.pipeline.stage_execution import evaluate_stage_candidate
+
         mock_judge = MagicMock()
         mock_eval = MagicMock(spec=JudgeEvaluation)
         mock_eval.passed = True
@@ -137,17 +146,11 @@ class TestPipelineStageRunnerEvaluatedStage:
         mock_judge.evaluate.return_value = mock_eval
 
         telemetry = InMemoryTelemetryPort(trace_id="1234567890abcdef1234567890abcdef")
-        runner = _make_runner(
-            telemetry_port=telemetry,
-            metrics_port=NoOpMetricsPort(),
-            llm_judge=mock_judge,
-        )
 
         stage_config = StageConfig(
             stage_name="fluid_prose",
             transform_prompt_key=PromptKey.FLUID_PROSE,
             eval_spec=StageEvaluationSpec(
-                raw_text="source text",
                 candidate_extractor=lambda res: res.text,
                 required_criteria=(JudgeCriterion.ORALITY_REMOVAL,),
             ),
@@ -162,12 +165,15 @@ class TestPipelineStageRunnerEvaluatedStage:
         candidate = CandidateText(text="candidate prose", stage_name="fluid_prose")
 
         with telemetry.start_span("cresmo.fluid_prose"):
-            result = runner._evaluate_candidate(
+            result = evaluate_stage_candidate(
                 stage_config,
                 source="source text",
                 candidate=candidate,
                 context=context,
                 attempt=1,
+                llm_judge=mock_judge,
+                telemetry_port=telemetry,
+                metrics_port=NoOpMetricsPort(),
             )
 
         assert result is mock_eval
@@ -178,7 +184,9 @@ class TestPipelineStageRunnerEvaluatedStage:
         assert passed_eval_context.observation_id == telemetry.spans[1].span_id
 
     def test_evaluate_candidate_opens_chronological_evaluation_span(self) -> None:
-        """Verify _evaluate_candidate opens cresmo.{stage}.judge span on TelemetryPort (ADR-037, ADR-070)."""
+        """Verify evaluate_stage_candidate opens cresmo.{stage}.judge span on TelemetryPort (ADR-037, ADR-070)."""
+        from cresmo.application.pipeline.stage_execution import evaluate_stage_candidate
+
         telemetry = InMemoryTelemetryPort()
         mock_judge = MagicMock()
         mock_eval = MagicMock(spec=JudgeEvaluation)
@@ -186,17 +194,10 @@ class TestPipelineStageRunnerEvaluatedStage:
         mock_eval.overall_score = 0.95
         mock_judge.evaluate.return_value = mock_eval
 
-        runner = _make_runner(
-            telemetry_port=telemetry,
-            metrics_port=NoOpMetricsPort(),
-            llm_judge=mock_judge,
-        )
-
         stage_config = StageConfig(
             stage_name="fluid_prose",
             transform_prompt_key=PromptKey.FLUID_PROSE,
             eval_spec=StageEvaluationSpec(
-                raw_text="source text",
                 candidate_extractor=lambda res: res.text,
                 required_criteria=(JudgeCriterion.ORALITY_REMOVAL,),
             ),
@@ -209,12 +210,15 @@ class TestPipelineStageRunnerEvaluatedStage:
         )
         candidate = CandidateText(text="candidate prose", stage_name="fluid_prose")
 
-        runner._evaluate_candidate(
+        evaluate_stage_candidate(
             stage_config,
             source="source text",
             candidate=candidate,
             context=context,
             attempt=1,
+            llm_judge=mock_judge,
+            telemetry_port=telemetry,
+            metrics_port=NoOpMetricsPort(),
         )
 
         assert len(telemetry.spans) == 1
@@ -232,19 +236,51 @@ class TestStageRunnerHelperAndInit:
     def test_init_requires_both_ports(self) -> None:
         mock_t = MagicMock(spec=TelemetryPort)
         mock_m = MagicMock(spec=NoOpMetricsPort)
+        mock_pp = NoOpPromptProviderPort()
+        mock_llm = MagicMock(spec=LLMTransformationPort)
 
         with pytest.raises(
             ValueError, match=r"^Both telemetry_port and metrics_port must be provided\.$"
         ):
             PipelineStageRunner(
-                PipelineDependencies(telemetry_port=None, metrics_port=mock_m)  # type: ignore[arg-type]
+                PipelineDependencies(
+                    telemetry_port=None,  # type: ignore[arg-type]
+                    metrics_port=mock_m,
+                    prompt_provider=mock_pp,
+                    llm_transformation_port=mock_llm,
+                )
             )
 
         with pytest.raises(
             ValueError, match=r"^Both telemetry_port and metrics_port must be provided\.$"
         ):
             PipelineStageRunner(
-                PipelineDependencies(telemetry_port=mock_t, metrics_port=None)  # type: ignore[arg-type]
+                PipelineDependencies(
+                    telemetry_port=mock_t,
+                    metrics_port=None,  # type: ignore[arg-type]
+                    prompt_provider=mock_pp,
+                    llm_transformation_port=mock_llm,
+                )
+            )
+
+        with pytest.raises(ValueError, match=r"^prompt_provider must be provided\.$"):
+            PipelineStageRunner(
+                PipelineDependencies(
+                    telemetry_port=mock_t,
+                    metrics_port=mock_m,
+                    prompt_provider=None,
+                    llm_transformation_port=mock_llm,
+                )
+            )
+
+        with pytest.raises(ValueError, match=r"^llm_transformation_port must be provided\.$"):
+            PipelineStageRunner(
+                PipelineDependencies(
+                    telemetry_port=mock_t,
+                    metrics_port=mock_m,
+                    prompt_provider=mock_pp,
+                    llm_transformation_port=None,
+                )
             )
 
     def test_init_defaults(self) -> None:
@@ -254,8 +290,8 @@ class TestStageRunnerHelperAndInit:
         runner = _make_runner(telemetry_port=mock_t, metrics_port=mock_m)
         assert runner.judge_blocking is False
         assert runner.judge_max_attempts == 2
-        assert runner.prompt_provider is None
-        assert runner.llm_transformation_port is None
+        assert isinstance(runner.prompt_provider, NoOpPromptProviderPort)
+        assert runner.llm_transformation_port is not None
         assert runner.stage_factory is None
         assert runner.critique_synthesizer is None
         assert runner.ledger_port is None
@@ -266,54 +302,34 @@ class TestStageRunnerHelperAndInit:
         )
         assert runner_custom.judge_max_attempts == 4
 
-    def test_warmup_with_and_without_llm_port(self) -> None:
+    def test_warmup_with_and_without_critique_synthesizer(self) -> None:
         mock_t = MagicMock(spec=TelemetryPort)
         mock_m = MagicMock(spec=NoOpMetricsPort)
         mock_llm = MagicMock()
+        mock_synth = MagicMock()
 
         runner = _make_runner(
             telemetry_port=mock_t,
             metrics_port=mock_m,
             llm_transformation_port=mock_llm,
+            critique_synthesizer=mock_synth,
         )
-        runner.warmup(timeout_seconds=3.5)
-        mock_llm.warmup.assert_called_once_with(timeout_seconds=3.5)
+        runner.warmup()
+        mock_llm.warmup.assert_called_once_with()
+        mock_synth.warmup.assert_called_once_with()
 
-        # Without LLM transformation port, warmup is a no-op
-        runner_none = _make_runner(telemetry_port=mock_t, metrics_port=mock_m)
-        runner_none.warmup(timeout_seconds=2.0)
+        mock_llm_only = MagicMock()
+        runner_no_synth = _make_runner(
+            telemetry_port=mock_t,
+            metrics_port=mock_m,
+            llm_transformation_port=mock_llm_only,
+        )
+        runner_no_synth.warmup()
+        mock_llm_only.warmup.assert_called_once_with()
 
 
 class TestStageRunnerResolution:
     """Verifies dependency resolution and critique synthesis."""
-
-    def test_resolve_prompt_provider(self) -> None:
-        mock_t = MagicMock(spec=TelemetryPort)
-        mock_m = MagicMock(spec=NoOpMetricsPort)
-        runner = _make_runner(telemetry_port=mock_t, metrics_port=mock_m)
-
-        with pytest.raises(
-            ValueError,
-            match=r"^PromptProviderPort must be provided via constructor or execute_stage argument$",
-        ):
-            runner._resolve_prompt_provider(None)
-
-        custom_pp = MagicMock()
-        assert runner._resolve_prompt_provider(custom_pp) is custom_pp
-
-    def test_resolve_llm_transformation_port(self) -> None:
-        mock_t = MagicMock(spec=TelemetryPort)
-        mock_m = MagicMock(spec=NoOpMetricsPort)
-        runner = _make_runner(telemetry_port=mock_t, metrics_port=mock_m)
-
-        with pytest.raises(
-            ValueError,
-            match=r"^LLMTransformationPort must be provided via constructor or execute_stage argument$",
-        ):
-            runner._resolve_llm_transformation_port(None)
-
-        custom_llm = MagicMock()
-        assert runner._resolve_llm_transformation_port(custom_llm) is custom_llm
 
     def test_resolve_stage_config(self) -> None:
         mock_t = MagicMock(spec=TelemetryPort)
@@ -336,7 +352,7 @@ class TestStageRunnerResolution:
             stage_factory=mock_factory,
         )
         assert runner_with_factory._resolve_stage_config("fluid_prose") is mock_cfg
-        mock_factory.build_stage.assert_called_once_with("fluid_prose")
+        mock_factory.build_stage.assert_called_once_with("fluid_prose", max_passes=None)
         assert runner_with_factory._resolve_stage_config(mock_cfg) is mock_cfg
 
     def test_synthesize_critique(self) -> None:
@@ -387,9 +403,10 @@ class TestStageRunnerActiveTraceId:
     """Verifies deterministic trace ID derivation across context combinations."""
 
     def test_trace_id_with_recording_span(self) -> None:
+        from cresmo.application.pipeline.stage_telemetry import resolve_active_trace_id
+
         expected_tid = format(0x1234567890ABCDEF1234567890ABCDEF, "032x")
         telemetry = InMemoryTelemetryPort(trace_id=expected_tid)
-        runner = _make_runner(telemetry_port=telemetry, metrics_port=NoOpMetricsPort())
         ctx = PipelineExecutionContext(
             user_identity=UserIdentity.worker(),
             channel=Channel(name="NameA", id=ChannelId("UC_id_a")),
@@ -397,12 +414,12 @@ class TestStageRunnerActiveTraceId:
         )
 
         with telemetry.start_span("cresmo.fluid_prose"):
-            assert runner._get_active_trace_id(context=ctx) == expected_tid
+            assert resolve_active_trace_id(ctx, telemetry_port=telemetry) == expected_tid
 
     def test_trace_id_without_span(self) -> None:
-        runner = _make_runner(
-            telemetry_port=NoOpTelemetryPort(), metrics_port=NoOpMetricsPort()
-        )
+        from cresmo.application.pipeline.stage_telemetry import resolve_active_trace_id
+
+        telemetry = NoOpTelemetryPort()
 
         # Channel with id
         ctx_with_id = PipelineExecutionContext(
@@ -410,7 +427,10 @@ class TestStageRunnerActiveTraceId:
             channel=Channel(name="NameA", id=ChannelId("UC_id_a")),
             content=Content(id=ContentId("vid_1001")),
         )
-        assert runner._get_active_trace_id(context=ctx_with_id) == "cresmo_UC_id_a_vid_1001"
+        assert (
+            resolve_active_trace_id(ctx_with_id, telemetry_port=telemetry)
+            == "cresmo_UC_id_a_vid_1001"
+        )
 
         # Channel without id
         ctx_no_id = PipelineExecutionContext(
@@ -418,7 +438,9 @@ class TestStageRunnerActiveTraceId:
             channel=Channel(name="NameA", id=None),
             content=Content(id=ContentId("vid_1001")),
         )
-        assert runner._get_active_trace_id(context=ctx_no_id) == "cresmo_NameA_vid_1001"
+        assert (
+            resolve_active_trace_id(ctx_no_id, telemetry_port=telemetry) == "cresmo_NameA_vid_1001"
+        )
 
     def test_trace_id_precedence_and_attach_evaluation_null_guards(self) -> None:
         from cresmo.application.pipeline.stage_telemetry import (
@@ -435,7 +457,6 @@ class TestStageRunnerActiveTraceId:
             span_id_value="1" * 16,
         )
         other_telemetry = InMemoryTelemetryPort(trace_id="0" * 32)
-        runner = _make_runner(telemetry_port=other_telemetry, metrics_port=NoOpMetricsPort())
         ctx = PipelineExecutionContext(
             user_identity=UserIdentity.worker(),
             channel=Channel(name="HumanChan", id=ChannelId("UC_1")),
@@ -446,7 +467,6 @@ class TestStageRunnerActiveTraceId:
                 resolve_active_trace_id(ctx, telemetry_port=other_telemetry, span=explicit_span)
                 == "f" * 32
             )
-            assert runner._get_active_trace_id(context=ctx, span=explicit_span) == "f" * 32
 
         assert resolve_active_trace_id(ctx) == "cresmo_UC_1_vid_from_obj"
 
@@ -507,7 +527,6 @@ class TestStageRunnerExecuteStageRetriesAndQuarantine:
             stage_name="fluid_prose",
             transform_prompt_key=PromptKey.FLUID_PROSE,
             eval_spec=StageEvaluationSpec(
-                raw_text="source text",
                 candidate_extractor=lambda res: res.text,
                 required_criteria=(JudgeCriterion.ORALITY_REMOVAL,),
                 max_attempts=2,
@@ -524,7 +543,7 @@ class TestStageRunnerExecuteStageRetriesAndQuarantine:
         ctx = PipelineExecutionContext(
             user_identity=UserIdentity.worker(),
             channel=Channel(name="RetCh", id=ChannelId("UC_ret")),
-            content=Content.create(
+            content=Content(
                 id=ContentId("vid_retry_1"), title="Retry Title", session_id="ret_sess:1"
             ),
         )
@@ -542,8 +561,8 @@ class TestStageRunnerExecuteStageRetriesAndQuarantine:
             {
                 "stage_name": "fluid_prose",
                 "source_type": "StageTranscript",
-                "source_characters": len("source text"),
-                "source_words": len(["source", "text"]),
+                "source_characters": len("Source audio text words."),
+                "source_words": 4,
             }
         ]
         assert stage_span.outputs == [
@@ -553,7 +572,7 @@ class TestStageRunnerExecuteStageRetriesAndQuarantine:
                 "output_words": len(["Final", "polished", "prose", "text"]),
                 "attempts": 2,
                 "retries": 1,
-                "expansion_ratio": round(4 / 2, 3),
+                "expansion_ratio": round(4 / 4, 3),
                 "judge_passed": True,
                 "judge_overall_score": 0.92,
             }
@@ -594,7 +613,6 @@ class TestStageRunnerExecuteStageRetriesAndQuarantine:
             stage_name="fluid_prose",
             transform_prompt_key=PromptKey.FLUID_PROSE,
             eval_spec=StageEvaluationSpec(
-                raw_text="source text",
                 candidate_extractor=lambda res: res.text,
                 required_criteria=(JudgeCriterion.ORALITY_REMOVAL,),
                 max_attempts=1,
@@ -611,7 +629,7 @@ class TestStageRunnerExecuteStageRetriesAndQuarantine:
         ctx = PipelineExecutionContext(
             user_identity=UserIdentity.worker(),
             channel=Channel(name="UnblockCh"),
-            content=Content.create(
+            content=Content(
                 id=ContentId("vid_unblock"), title="Unblock Title", session_id="unblock_sess:1"
             ),
         )
@@ -627,7 +645,7 @@ class TestStageRunnerExecuteStageRetriesAndQuarantine:
                 "output_words": len(["Unblocked", "imperfect", "text"]),
                 "attempts": 1,
                 "retries": 0,
-                "expansion_ratio": round(3 / 2, 3),
+                "expansion_ratio": round(3 / 3, 3),
                 "judge_passed": False,
                 "judge_overall_score": 0.45,
             }
@@ -669,7 +687,6 @@ class TestStageRunnerExecuteStageRetriesAndQuarantine:
             transform_prompt_key=PromptKey.FLUID_PROSE,
             blocking=True,
             eval_spec=StageEvaluationSpec(
-                raw_text="source text",
                 candidate_extractor=lambda res: res.text,
                 required_criteria=(JudgeCriterion.ORALITY_REMOVAL,),
                 max_attempts=1,
@@ -686,7 +703,7 @@ class TestStageRunnerExecuteStageRetriesAndQuarantine:
         ctx = PipelineExecutionContext(
             user_identity=UserIdentity.worker(),
             channel=Channel(name="QuarantineCh", id=ChannelId("UC_quarantine")),
-            content=Content.create(
+            content=Content(
                 id=ContentId("vid_quarantine"),
                 title="Quarantine Title",
                 session_id="quarantine_sess:1",
@@ -715,32 +732,34 @@ class TestStageRunnerCandidateGenerationAndEvaluation:
     """Verifies candidate generation parameters and evaluation span formatting."""
 
     def test_generate_candidate_exhaustive_parameters(self) -> None:
-        telemetry = NoOpTelemetryPort()
-        mock_m = MagicMock(spec=NoOpMetricsPort)
-        runner = _make_runner(telemetry_port=telemetry, metrics_port=mock_m)
+        from cresmo.application.pipeline.stage_execution import generate_stage_candidate
+        from cresmo.application.pipeline.stage_telemetry import resolve_active_trace_id
 
+        telemetry = NoOpTelemetryPort()
         mock_llm = MagicMock()
         mock_llm.transform.return_value = "Generated text output"
 
         mock_stage_cfg = MagicMock()
         mock_stage_cfg.stage_name = "fluid_prose"
-        mock_stage_cfg.temperature = 0.7
+        mock_stage_cfg.max_passes = 1
         mock_stage_cfg.build_transform_prompt.return_value = "Formatted prompt"
 
         ctx = PipelineExecutionContext(
             user_identity=UserIdentity.worker(),
             channel=Channel(name="TechChan", id=ChannelId("UC_tech")),
-            content=Content.create(id=ContentId("c1234567"), title="Ep 1", session_id="sess:123"),
+            content=Content(id=ContentId("c1234567"), title="Ep 1", session_id="sess:123"),
         )
 
-        candidate = runner._generate_candidate(
+        candidate = generate_stage_candidate(
             stage_config=mock_stage_cfg,
-            prompt_provider=MagicMock(),
-            source=MagicMock(),
+            source="raw source",
             context=ctx,
+            prompt_provider=MagicMock(),
             llm_port=mock_llm,
             attempt=1,
+            active_trace_id=resolve_active_trace_id(ctx, telemetry_port=telemetry),
             critique="Improve flow",
+            telemetry_port=telemetry,
         )
 
         mock_stage_cfg.build_transform_prompt.assert_called_once_with(
@@ -751,7 +770,6 @@ class TestStageRunnerCandidateGenerationAndEvaluation:
         )
         mock_llm.transform.assert_called_once_with(
             prompt="Formatted prompt",
-            temperature=0.7,
             trace_id="cresmo_UC_tech_c1234567",
             session_id="sess:123",
             user_id="system:worker",
@@ -767,32 +785,31 @@ class TestStageRunnerCandidateGenerationAndEvaluation:
         }
 
     def test_generate_candidate_channel_without_id(self) -> None:
-        mock_t = MagicMock(spec=TelemetryPort)
-        mock_m = MagicMock(spec=NoOpMetricsPort)
-        runner = _make_runner(telemetry_port=mock_t, metrics_port=mock_m)
+        from cresmo.application.pipeline.stage_execution import generate_stage_candidate
 
         mock_llm = MagicMock()
         mock_llm.transform.return_value = "Text"
         mock_stage_cfg = MagicMock()
         mock_stage_cfg.stage_name = "fluid_prose"
-        mock_stage_cfg.temperature = 0.5
+        mock_stage_cfg.max_passes = 1
         mock_stage_cfg.build_transform_prompt.return_value = "P"
 
         ctx = PipelineExecutionContext(
             user_identity=UserIdentity.worker(),
             channel=Channel(name="NoIdChan", id=None),
-            content=Content.create(id=ContentId("c7654321"), title="Ep 2", session_id="sess:456"),
+            content=Content(id=ContentId("c7654321"), title="Ep 2", session_id="sess:456"),
         )
 
         mock_pp = MagicMock()
-        mock_src = MagicMock()
-        candidate = runner._generate_candidate(
+        mock_src = "src"
+        candidate = generate_stage_candidate(
             stage_config=mock_stage_cfg,
-            prompt_provider=mock_pp,
             source=mock_src,
             context=ctx,
+            prompt_provider=mock_pp,
             llm_port=mock_llm,
             attempt=2,
+            active_trace_id="cresmo_NoIdChan_c7654321",
             critique=None,
         )
         assert candidate.metadata["channel_id"] == ""
@@ -805,46 +822,54 @@ class TestStageRunnerCandidateGenerationAndEvaluation:
         )
 
     def test_evaluate_candidate_none_conditions(self) -> None:
-        mock_t = MagicMock(spec=TelemetryPort)
+        from cresmo.application.pipeline.stage_execution import evaluate_stage_candidate
+
+        mock_t = NoOpTelemetryPort()
         mock_m = MagicMock(spec=NoOpMetricsPort)
-        runner_no_judge = _make_runner(
-            telemetry_port=mock_t, metrics_port=mock_m, llm_judge=None
-        )
 
         mock_stage_cfg = MagicMock()
         mock_stage_cfg.eval_spec = None
         ctx = PipelineExecutionContext(
             user_identity=UserIdentity.worker(),
             channel=Channel(name="Ch"),
-            content=Content.create(id=ContentId("c1234567"), title="T", session_id="s:1"),
+            content=Content(id=ContentId("c1234567"), title="T", session_id="s:1"),
         )
         cand = CandidateText(text="hello", stage_name="s", metadata={})
         assert (
-            runner_no_judge._evaluate_candidate(
-                mock_stage_cfg, MagicMock(), cand, context=ctx, attempt=1
+            evaluate_stage_candidate(
+                mock_stage_cfg,
+                "raw",
+                cand,
+                context=ctx,
+                attempt=1,
+                llm_judge=None,
+                telemetry_port=mock_t,
+                metrics_port=mock_m,
             )
             is None
         )
 
         # Judge present but eval_spec None
-        runner_with_judge = _make_runner(
-            telemetry_port=mock_t, metrics_port=mock_m, llm_judge=MagicMock()
-        )
         assert (
-            runner_with_judge._evaluate_candidate(
-                mock_stage_cfg, MagicMock(), cand, context=ctx, attempt=1
+            evaluate_stage_candidate(
+                mock_stage_cfg,
+                "raw",
+                cand,
+                context=ctx,
+                attempt=1,
+                llm_judge=MagicMock(),
+                telemetry_port=mock_t,
+                metrics_port=mock_m,
             )
             is None
         )
 
     def test_evaluate_candidate_recording_span_and_criteria_scores(self) -> None:
+        from cresmo.application.pipeline.stage_execution import evaluate_stage_candidate
+
         telemetry = InMemoryTelemetryPort(trace_id="1234567890abcdef1234567890abcdef")
         mock_m = MagicMock()
         mock_judge = MagicMock()
-
-        runner = _make_runner(
-            telemetry_port=telemetry, metrics_port=mock_m, llm_judge=mock_judge
-        )
 
         score1 = CriterionScore(
             criterion=JudgeCriterion.ORALITY_REMOVAL,
@@ -869,11 +894,10 @@ class TestStageRunnerCandidateGenerationAndEvaluation:
         )
         mock_judge.evaluate.return_value = eval_result
 
-        stage_cfg = StageConfig[MagicMock, CandidateText](
+        stage_cfg = StageConfig[str, CandidateText](
             stage_name="fluid_prose",
             transform_prompt_key=PromptKey.FLUID_PROSE,
             eval_spec=StageEvaluationSpec(
-                raw_text="raw text",
                 candidate_extractor=lambda res: res.text,
                 required_criteria=(JudgeCriterion.ORALITY_REMOVAL,),
                 metadata={"custom_eval_key": "val1"},
@@ -883,12 +907,20 @@ class TestStageRunnerCandidateGenerationAndEvaluation:
         ctx = PipelineExecutionContext(
             user_identity=UserIdentity.worker(),
             channel=Channel(name="Ch", id=ChannelId("UC_1")),
-            content=Content.create(id=ContentId("c1234567"), title="Ep 1", session_id="s:1"),
+            content=Content(id=ContentId("c1234567"), title="Ep 1", session_id="s:1"),
         )
         cand = CandidateText(text="cleaned prose", stage_name="fluid_prose", metadata={})
 
-        source_stub = MagicMock()
-        res = runner._evaluate_candidate(stage_cfg, source_stub, cand, context=ctx, attempt=1)
+        res = evaluate_stage_candidate(
+            stage_cfg,
+            "raw text",
+            cand,
+            context=ctx,
+            attempt=1,
+            llm_judge=mock_judge,
+            telemetry_port=telemetry,
+            metrics_port=mock_m,
+        )
 
         assert res is eval_result
         eval_span = telemetry.spans[0]
@@ -921,16 +953,14 @@ class TestStageRunnerCandidateGenerationAndEvaluation:
         assert output_dict["suggestions"]["orality_removal"] == "Keep it up"
 
     def test_evaluate_candidate_failing_verdict_needs_rewrite(self) -> None:
+        from cresmo.application.pipeline.stage_execution import evaluate_stage_candidate
+
         telemetry = InMemoryTelemetryPort(trace_id="")
         mock_m = MagicMock()
         mock_judge = MagicMock()
 
-        runner = _make_runner(
-            telemetry_port=telemetry, metrics_port=mock_m, llm_judge=mock_judge
-        )
-
         crit_plain = MagicMock()
-        crit_plain.criterion = "plain_metric"
+        crit_plain.criterion = JudgeCriterion.ORALITY_REMOVAL
         crit_plain.score = "0.40"
         crit_plain.reasoning = ""
         crit_plain.improvement_suggestion = ""
@@ -943,23 +973,30 @@ class TestStageRunnerCandidateGenerationAndEvaluation:
         eval_result.provider = "gemini"
         mock_judge.evaluate.return_value = eval_result
 
-        stage_cfg = StageConfig[MagicMock, CandidateText](
+        stage_cfg = StageConfig[str, CandidateText](
             stage_name="fluid_prose",
             transform_prompt_key=PromptKey.FLUID_PROSE,
             eval_spec=StageEvaluationSpec(
-                raw_text="raw",
                 candidate_extractor=lambda res: res.text,
             ),
         )
         ctx = PipelineExecutionContext(
             user_identity=UserIdentity.worker(),
             channel=Channel(name="Ch", id=None),
-            content=Content.create(id=ContentId("c1234567"), title="Ep 2", session_id="s:2"),
+            content=Content(id=ContentId("c1234567"), title="Ep 2", session_id="s:2"),
         )
         cand = CandidateText(text="imperfect", stage_name="fluid_prose", metadata={})
 
-        source_mock = MagicMock()
-        res = runner._evaluate_candidate(stage_cfg, source_mock, cand, context=ctx, attempt=2)
+        res = evaluate_stage_candidate(
+            stage_cfg,
+            "raw",
+            cand,
+            context=ctx,
+            attempt=2,
+            llm_judge=mock_judge,
+            telemetry_port=telemetry,
+            metrics_port=mock_m,
+        )
 
         assert res is eval_result
         eval_span = telemetry.spans[0]
@@ -977,14 +1014,16 @@ class TestStageRunnerCandidateGenerationAndEvaluation:
 
         output_dict = eval_span.outputs[0]
         assert output_dict["verdict"] == "NEEDS_REWRITE"
-        assert output_dict["overall_score"] == "0.40"
-        assert output_dict["scores"]["plain_metric"] == "0.40"
+        assert output_dict["overall_score"] == 0.4
+        assert output_dict["scores"]["orality_removal"] == 0.4
         assert "reasons" not in output_dict
         assert "suggestions" not in output_dict
 
         class BareScore:
-            criterion = "bare_metric"
+            criterion = JudgeCriterion.ORALITY_REMOVAL
             score = 0.7
+            reasoning = ""
+            improvement_suggestion = ""
 
         class BareEval:
             target_stage = "fluid_prose"
@@ -993,23 +1032,48 @@ class TestStageRunnerCandidateGenerationAndEvaluation:
             criteria_scores = (BareScore(),)
 
         mock_judge.evaluate.return_value = BareEval()
-        runner._evaluate_candidate(stage_cfg, source_mock, cand, context=ctx, attempt=1)
+        evaluate_stage_candidate(
+            stage_cfg,
+            "raw",
+            cand,
+            context=ctx,
+            attempt=1,
+            llm_judge=mock_judge,
+            telemetry_port=telemetry,
+            metrics_port=mock_m,
+        )
 
         class NoCriteriaEval:
             target_stage = "fluid_prose"
             passed = True
             overall_score = 0.8
+            criteria_scores: tuple[CriterionScore, ...] = ()
 
         mock_judge.evaluate.return_value = NoCriteriaEval()
-        runner._evaluate_candidate(stage_cfg, source_mock, cand, context=ctx, attempt=1)
+        evaluate_stage_candidate(
+            stage_cfg,
+            "raw",
+            cand,
+            context=ctx,
+            attempt=1,
+            llm_judge=mock_judge,
+            telemetry_port=telemetry,
+            metrics_port=mock_m,
+        )
 
         # NoOpTelemetryPort yields NOOP_TELEMETRY_SPAN (span_id is None, trace_id fallback)
-        noop_runner = _make_runner(
-            telemetry_port=NoOpTelemetryPort(), metrics_port=mock_m, llm_judge=mock_judge
-        )
         mock_judge.evaluate.return_value = eval_result
         assert (
-            noop_runner._evaluate_candidate(stage_cfg, source_mock, cand, context=ctx, attempt=2)
+            evaluate_stage_candidate(
+                stage_cfg,
+                "raw",
+                cand,
+                context=ctx,
+                attempt=2,
+                llm_judge=mock_judge,
+                telemetry_port=NoOpTelemetryPort(),
+                metrics_port=mock_m,
+            )
             is eval_result
         )
         assert mock_judge.evaluate.call_args[0][0].observation_id is None
@@ -1035,7 +1099,7 @@ class TestStageRunnerStageExecutionAndFallback:
         ctx = PipelineExecutionContext(
             user_identity=UserIdentity.worker(),
             channel=Channel(name="ExChan", id=ChannelId("UC_ex")),
-            content=Content.create(id=ContentId("c1234567"), title="Ex Title", session_id="s:1"),
+            content=Content(id=ContentId("c1234567"), title="Ex Title", session_id="s:1"),
         )
 
         # Case 1: source is StageTranscript
@@ -1062,45 +1126,41 @@ class TestStageRunnerStageExecutionAndFallback:
             }
         ]
 
-        # Case 2: source has .text string
-        class SourceWithText:
-            text = "Source text only"
+        # Case 2: source is CandidateText
+        src_cand = CandidateText(stage_name="fluid_prose", text="Candidate source only")
 
-        cfg2 = StageConfig[SourceWithText, CandidateText](
+        cfg2 = StageConfig[CandidateText, CandidateText](
             stage_name="fluid_prose",
             transform_prompt_key=PromptKey.FLUID_PROSE,
             eval_spec=None,
         )
-        runner.execute_stage(cfg2, SourceWithText(), context=ctx)
+        runner.execute_stage(cfg2, src_cand, context=ctx)
         assert telemetry.spans[-1].inputs == [
             {
                 "stage_name": "fluid_prose",
-                "source_type": "SourceWithText",
-                "source_characters": len("Source text only"),
-                "source_words": len(["Source", "text", "only"]),
+                "source_type": "CandidateText",
+                "source_characters": len("Candidate source only"),
+                "source_words": len(["Candidate", "source", "only"]),
             }
         ]
 
-        # Case 3: source has .content that is Content
-        class SourceWithContent:
-            content = Content(id=ContentId("c1234567"), text="Content body text")
-
-        cfg3 = StageConfig[SourceWithContent, CandidateText](
+        # Case 3: source is str
+        cfg3 = StageConfig[str, CandidateText](
             stage_name="fluid_prose",
             transform_prompt_key=PromptKey.FLUID_PROSE,
             eval_spec=None,
         )
-        runner.execute_stage(cfg3, SourceWithContent(), context=ctx)
+        runner.execute_stage(cfg3, "Plain string source", context=ctx)
         assert telemetry.spans[-1].inputs == [
             {
                 "stage_name": "fluid_prose",
-                "source_type": "SourceWithContent",
-                "source_characters": len("Content body text"),
-                "source_words": len(["Content", "body", "text"]),
+                "source_type": "str",
+                "source_characters": len("Plain string source"),
+                "source_words": len(["Plain", "string", "source"]),
             }
         ]
 
-        # Case 4: source with neither, falls back to str(source)
+        # Case 4: arbitrary source falls back to str(source)
         class SourceBare:
             def __str__(self) -> str:
                 return "Bare source string representation"
@@ -1125,17 +1185,21 @@ class TestStageRunnerStageExecutionAndFallback:
     ) -> None:
         telemetry = InMemoryTelemetryPort()
         mock_m = MagicMock()
-        runner = _make_runner(telemetry_port=telemetry, metrics_port=mock_m)
+        mock_pp = MagicMock()
+        mock_llm = MagicMock()
+        mock_llm.transform.return_value = "Candidate output text"
+        runner = _make_runner(
+            telemetry_port=telemetry,
+            metrics_port=mock_m,
+            prompt_provider=mock_pp,
+            llm_transformation_port=mock_llm,
+        )
 
         ctx = PipelineExecutionContext(
             user_identity=UserIdentity.worker(),
             channel=Channel(name="Chan", id=ChannelId("UC_1")),
-            content=Content.create(id=ContentId("c1234567"), title="Title", session_id="s:1"),
+            content=Content(id=ContentId("c1234567"), title="Title", session_id="s:1"),
         )
-
-        mock_pp = MagicMock()
-        mock_llm = MagicMock()
-        mock_llm.transform.return_value = "Candidate output text"
 
         cfg = StageConfig[MagicMock, CandidateText](
             stage_name="fluid_prose",
@@ -1146,8 +1210,6 @@ class TestStageRunnerStageExecutionAndFallback:
             cfg,
             MagicMock(),
             context=ctx,
-            prompt_provider=mock_pp,
-            llm_transformation_port=mock_llm,
         )
         assert res.text == "Candidate output text"
 
@@ -1185,7 +1247,6 @@ class TestStageRunnerStageExecutionAndFallback:
             judge_max_attempts=1,
         )
         spec_max3 = StageEvaluationSpec(
-            raw_text="raw",
             candidate_extractor=lambda res: res.text,
             max_attempts=3,
         )
@@ -1219,9 +1280,7 @@ class TestStageRunnerStageExecutionAndFallback:
             judge_blocking=False,
             judge_max_attempts=4,
         )
-        spec1 = StageEvaluationSpec(
-            raw_text="raw", candidate_extractor=lambda res: res.text, max_attempts=1
-        )
+        spec1 = StageEvaluationSpec(candidate_extractor=lambda res: res.text, max_attempts=1)
         cfg_j4 = StageConfig[MagicMock, CandidateText](
             stage_name="fluid_prose",
             transform_prompt_key=PromptKey.FLUID_PROSE,
@@ -1233,7 +1292,10 @@ class TestStageRunnerStageExecutionAndFallback:
         assert mock_judge.evaluate.call_count == 4
 
         with (
-            patch.object(runner_j1, "_generate_candidate", return_value=None),
+            patch(
+                "cresmo.application.pipeline.stage_runner.generate_stage_candidate",
+                return_value=None,
+            ),
             pytest.raises(
                 DomainValidationError, match=r"Stage 'fluid_prose' produced no candidate text\."
             ),
@@ -1243,9 +1305,11 @@ class TestStageRunnerStageExecutionAndFallback:
         from cresmo.domain.value_objects import MediaProvenance
 
         prov = MediaProvenance(url="https://youtube.com/watch?v=123", description="video")
-        source_with_prov = MagicMock()
-        source_with_prov.provenance = prov
-        source_with_prov.content = Content(id=ContentId("c123"), text="Source prov text")
+        source_with_prov = StageTranscript(
+            channel=Channel(name="Chan", id=ChannelId("UC_1")),
+            provenance=prov,
+            content=Content(id=ContentId("c123"), text="Source prov text"),
+        )
 
         runner_blocking = _make_runner(
             telemetry_port=telemetry,
@@ -1257,12 +1321,11 @@ class TestStageRunnerStageExecutionAndFallback:
             judge_max_attempts=1,
             ledger_port=MagicMock(),
         )
-        cfg_blocking = StageConfig[MagicMock, CandidateText](
+        cfg_blocking = StageConfig[StageTranscript, CandidateText](
             stage_name="fluid_prose",
             transform_prompt_key=PromptKey.FLUID_PROSE,
             max_attempts=1,
             eval_spec=StageEvaluationSpec(
-                raw_text="raw",
                 candidate_extractor=lambda res: res.text,
                 max_attempts=1,
             ),
@@ -1291,13 +1354,12 @@ class TestStageRunnerStageExecutionAndFallback:
             assert quar_kwargs["telemetry_port"] is runner_blocking.telemetry_port
             assert quar_kwargs["critique"] == "Synthesized critique string"
 
-        cfg_blocking_true = StageConfig[MagicMock, CandidateText](
+        cfg_blocking_true = StageConfig[StageTranscript, CandidateText](
             stage_name="fluid_prose",
             transform_prompt_key=PromptKey.FLUID_PROSE,
             blocking=True,
             max_attempts=1,
             eval_spec=StageEvaluationSpec(
-                raw_text="raw",
                 candidate_extractor=lambda res: res.text,
                 max_attempts=1,
             ),
@@ -1320,35 +1382,33 @@ class TestStageRunnerStageExecutionAndFallback:
             )
             mock_record_quar2.assert_called_once()
 
-        class SourceWithIntText:
-            text = 999
-
-        cfg_int_src = StageConfig[SourceWithIntText, CandidateText](
+        cfg_str_src = StageConfig[str, CandidateText](
             stage_name="fluid_prose",
             transform_prompt_key=PromptKey.FLUID_PROSE,
             eval_spec=None,
         )
-        runner_j1.execute_stage(cfg_int_src, SourceWithIntText(), context=ctx)
+        runner_j1.execute_stage(cfg_str_src, "999", context=ctx)
         assert telemetry.spans[-1].inputs == [
             {
                 "stage_name": "fluid_prose",
-                "source_type": "SourceWithIntText",
+                "source_type": "str",
                 "source_characters": 3,
                 "source_words": 1,
             }
         ]
 
-        class OutputWithContent:
-            def __init__(self) -> None:
-                self.content = Content(id=ContentId("c123"), text="Content obj body")
-
-        cfg_content = StageConfig[MagicMock, OutputWithContent](
+        out_transcript = StageTranscript(
+            channel=Channel(name="Chan"),
+            provenance=MediaProvenance(),
+            content=Content(id=ContentId("c123"), text="Content obj body"),
+        )
+        cfg_content = StageConfig[str, StageTranscript](
             stage_name="fluid_prose",
             transform_prompt_key=PromptKey.FLUID_PROSE,
             eval_spec=None,
-            post_processor=lambda cand, src: OutputWithContent(),
+            post_processor=lambda cand, src: out_transcript,
         )
-        runner_j1.execute_stage(cfg_content, MagicMock(), context=ctx)
+        runner_j1.execute_stage(cfg_content, "one two three", context=ctx)
         assert telemetry.spans[-1].outputs == [
             {
                 "status": "APPROVED",
@@ -1362,22 +1422,20 @@ class TestStageRunnerStageExecutionAndFallback:
             }
         ]
 
-        class OutputWithStage:
-            def __init__(self) -> None:
-                self.content = Content(id=ContentId("c123"), text="Content obj text")
-
-        cfg_stage = StageConfig[MagicMock, OutputWithStage](
+        cfg_cand_out = StageConfig[str, CandidateText](
             stage_name="fluid_prose",
             transform_prompt_key=PromptKey.FLUID_PROSE,
             eval_spec=None,
-            post_processor=lambda cand, src: OutputWithStage(),
+            post_processor=lambda cand, src: CandidateText(
+                stage_name="fluid_prose", text="Candidate obj text"
+            ),
         )
-        runner_j1.execute_stage(cfg_stage, MagicMock(), context=ctx)
+        runner_j1.execute_stage(cfg_cand_out, "one two three", context=ctx)
         assert telemetry.spans[-1].outputs == [
             {
                 "status": "APPROVED",
-                "output_characters": len("Content obj text"),
-                "output_words": len(["Content", "obj", "text"]),
+                "output_characters": len("Candidate obj text"),
+                "output_words": len(["Candidate", "obj", "text"]),
                 "attempts": 1,
                 "retries": 0,
                 "expansion_ratio": 1.0,
@@ -1390,13 +1448,13 @@ class TestStageRunnerStageExecutionAndFallback:
             def __str__(self) -> str:
                 return ""
 
-        cfg_bare = StageConfig[MagicMock, OutputBare](
+        cfg_bare = StageConfig[str, OutputBare](
             stage_name="fluid_prose",
             transform_prompt_key=PromptKey.FLUID_PROSE,
             eval_spec=None,
             post_processor=lambda cand, src: OutputBare(),
         )
-        runner_j1.execute_stage(cfg_bare, MagicMock(), context=ctx)
+        runner_j1.execute_stage(cfg_bare, "one two three", context=ctx)
         assert telemetry.spans[-1].outputs == [
             {
                 "status": "APPROVED",
@@ -1405,30 +1463,6 @@ class TestStageRunnerStageExecutionAndFallback:
                 "attempts": 1,
                 "retries": 0,
                 "expansion_ratio": 1.0,
-                "judge_passed": None,
-                "judge_overall_score": None,
-            }
-        ]
-
-        class OutputWithInt:
-            def __init__(self) -> None:
-                self.text = 123
-
-        cfg_int = StageConfig[MagicMock, OutputWithInt](
-            stage_name="fluid_prose",
-            transform_prompt_key=PromptKey.FLUID_PROSE,
-            eval_spec=None,
-            post_processor=lambda cand, src: OutputWithInt(),
-        )
-        runner_j1.execute_stage(cfg_int, MagicMock(), context=ctx)
-        assert telemetry.spans[-1].outputs == [
-            {
-                "status": "APPROVED",
-                "output_characters": 3,
-                "output_words": 1,
-                "attempts": 1,
-                "retries": 0,
-                "expansion_ratio": 0.333,
                 "judge_passed": None,
                 "judge_overall_score": None,
             }
@@ -1462,7 +1496,7 @@ class TestStageRunnerStageExecutionAndFallback:
         ctx = PipelineExecutionContext(
             user_identity=UserIdentity.worker(),
             channel=Channel(name="RetCh", id=ChannelId("UC_ret")),
-            content=Content.create(
+            content=Content(
                 id=ContentId("vid_retry_1"), title="Retry Title", session_id="ret_sess:1"
             ),
         )
@@ -1478,22 +1512,22 @@ class TestStageRunnerStageExecutionAndFallback:
 
     def test_measure_stage_execution_sets_active_telemetry_stage(self) -> None:
         from cresmo.application.pipeline.stage_telemetry import measure_stage_execution
-        from cresmo.application.ports import get_active_telemetry_stage
+        from cresmo.application.ports.telemetry import _get_active_telemetry_stage
 
         telemetry = InMemoryTelemetryPort()
         mock_m = MagicMock()
         ctx = PipelineExecutionContext(
             user_identity=UserIdentity.worker(),
             channel=Channel(name="RetCh", id=ChannelId("UC_ret")),
-            content=Content.create(
+            content=Content(
                 id=ContentId("vid_stage_ctx"), title="Stage Ctx Title", session_id="ret_sess:2"
             ),
         )
 
-        assert get_active_telemetry_stage() is None
+        assert _get_active_telemetry_stage() is None
         with measure_stage_execution(telemetry, mock_m, stage_name="fluid_prose", context=ctx):
-            assert get_active_telemetry_stage() == "fluid_prose"
-        assert get_active_telemetry_stage() is None
+            assert _get_active_telemetry_stage() == "fluid_prose"
+        assert _get_active_telemetry_stage() is None
 
     def test_measure_stage_execution_flushes_after_stage_span_closes(self) -> None:
         from cresmo.application.pipeline.stage_telemetry import measure_stage_execution
@@ -1503,7 +1537,7 @@ class TestStageRunnerStageExecutionAndFallback:
         ctx = PipelineExecutionContext(
             user_identity=UserIdentity.worker(),
             channel=Channel(name="RetCh", id=ChannelId("UC_ret")),
-            content=Content.create(
+            content=Content(
                 id=ContentId("vid_stage_flush"), title="Flush Title", session_id="ret_sess:3"
             ),
         )
@@ -1533,6 +1567,10 @@ class TestStageRunnerStageExecutionAndFallback:
         from collections.abc import Generator
         from contextlib import contextmanager
 
+        from cresmo.application.pipeline.stage_execution import (
+            evaluate_stage_candidate,
+            generate_stage_candidate,
+        )
         from cresmo.application.ports.telemetry import (
             NOOP_TELEMETRY_SPAN,
             SessionTelemetrySpec,
@@ -1545,7 +1583,7 @@ class TestStageRunnerStageExecutionAndFallback:
         ctx = PipelineExecutionContext(
             user_identity=UserIdentity.worker(),
             channel=Channel(name="EdgeChan", id=ChannelId("UC_edge")),
-            content=Content.create(
+            content=Content(
                 id=ContentId("vid_edge_01"), title="Edge Title", session_id="edge:1"
             ),
         )
@@ -1564,7 +1602,7 @@ class TestStageRunnerStageExecutionAndFallback:
         )
         mock_judge.evaluate.return_value = eval_pass
 
-        # 2. Dynamic eval_spec extracts from source, preserves critique=None on attempt 1, and rounds ratio to 3 decimals
+        # 2. extract_source_text extracts from StageTranscript, preserves critique=None on attempt 1, and rounds ratio to 3 decimals
         seen_critiques: list[str | None] = []
         source_transcript = StageTranscript(
             channel=ctx.channel,
@@ -1572,8 +1610,6 @@ class TestStageRunnerStageExecutionAndFallback:
             content=Content(id=ctx.content.id, title=ctx.content.title, text="Alpha beta gamma"),
         )
         dynamic_spec = StageEvaluationSpec(
-            raw_text="",
-            source_extractor=lambda s: s.content.text,
             candidate_extractor=lambda c: c.text,
             max_attempts=1,
         )
@@ -1591,13 +1627,15 @@ class TestStageRunnerStageExecutionAndFallback:
             llm_judge=mock_judge,
             judge_max_attempts=1,
         )
-        orig_gen = runner._generate_candidate
 
         def _spy_gen(*args: object, **kwargs: object) -> CandidateText:
             seen_critiques.append(kwargs.get("critique"))  # type: ignore[arg-type]
-            return orig_gen(*args, **kwargs)  # type: ignore[arg-type]
+            return generate_stage_candidate(*args, **kwargs)  # type: ignore[arg-type]
 
-        with patch.object(runner, "_generate_candidate", side_effect=_spy_gen):
+        with patch(
+            "cresmo.application.pipeline.stage_runner.generate_stage_candidate",
+            side_effect=_spy_gen,
+        ):
             runner.execute_stage(cfg_dynamic, source_transcript, context=ctx)
 
         assert seen_critiques == [None]
@@ -1637,44 +1675,41 @@ class TestStageRunnerStageExecutionAndFallback:
         cfg_zero = StageConfig[StageTranscript, CandidateText](
             stage_name="fluid_prose",
             transform_prompt_key=PromptKey.FLUID_PROSE,
-            max_attempts=0,
+            max_attempts=1,
             eval_spec=None,
         )
-        with pytest.raises(
-            DomainValidationError, match=r"^Stage 'fluid_prose' produced no candidate text\.$"
+        with (
+            patch(
+                "cresmo.application.pipeline.stage_runner.generate_stage_candidate",
+                return_value=None,
+            ),
+            pytest.raises(
+                DomainValidationError, match=r"^Stage 'fluid_prose' produced no candidate text\.$"
+            ),
         ):
             runner_zero.execute_stage(cfg_zero, source_transcript, context=ctx)
 
-        # 5. Non-str source_text from eval_spec.extract_source_text yields 0 chars/words
-        non_str_spec = StageEvaluationSpec(
-            raw_text="",
-            source_extractor=lambda _s: None,  # type: ignore[arg-type,return-value]
-            candidate_extractor=lambda c: c.text,
-            max_attempts=1,
-        )
-        cfg_non_str = StageConfig[StageTranscript, CandidateText](
-            stage_name="fluid_prose",
-            transform_prompt_key=PromptKey.FLUID_PROSE,
-            eval_spec=non_str_spec,
-            max_attempts=1,
-        )
-        runner_no_judge = _make_runner(
-            telemetry_port=telemetry,
-            metrics_port=mock_m,
-            prompt_provider=mock_pp,
-            llm_transformation_port=mock_llm,
-            judge_max_attempts=1,
-        )
-        runner_no_judge.execute_stage(cfg_non_str, source_transcript, context=ctx)
-        assert telemetry.spans[-1].inputs[0]["source_characters"] == 0
-        assert telemetry.spans[-1].inputs[0]["source_words"] == 0
-
-        # 6. Quarantine fallback critique synthesis and source without .provenance attribute
+        # 6. Quarantine fallback critique extraction when synthesizer returns empty string and no provenance
         class BareSourceNoProv:
             content = Content(id=ctx.content.id, title=ctx.content.title, text="Bare source")
 
         mock_synth_empty = MagicMock()
-        mock_synth_empty.synthesize.side_effect = ["", "Recovered fallback critique"]
+        mock_synth_empty.synthesize.return_value = ""
+        eval_with_suggestion = JudgeEvaluation(
+            target_stage="fluid_prose",
+            passed=False,
+            overall_score=0.3,
+            criteria_scores=(
+                CriterionScore(
+                    criterion=JudgeCriterion.ORALITY_REMOVAL,
+                    score=0.3,
+                    passed=False,
+                    improvement_suggestion="Fix oral fillers.",
+                ),
+            ),
+            provider="test",
+        )
+        mock_judge.evaluate.return_value = eval_with_suggestion
         runner_block_bare = _make_runner(
             telemetry_port=telemetry,
             metrics_port=mock_m,
@@ -1689,7 +1724,7 @@ class TestStageRunnerStageExecutionAndFallback:
             stage_name="fluid_prose",
             transform_prompt_key=PromptKey.FLUID_PROSE,
             eval_spec=StageEvaluationSpec(
-                raw_text="Bare source", candidate_extractor=lambda c: c.text, max_attempts=1
+                candidate_extractor=lambda c: c.text, max_attempts=1
             ),
             max_attempts=1,
         )
@@ -1697,34 +1732,29 @@ class TestStageRunnerStageExecutionAndFallback:
             "cresmo.application.pipeline.stage_runner.record_stage_quarantine"
         ) as mock_record_q:
             runner_block_bare.execute_stage(cfg_bare_q, BareSourceNoProv(), context=ctx)
-            assert mock_synth_empty.synthesize.call_count == 2
-            assert mock_synth_empty.synthesize.call_args_list[1].args == (eval_fail, "fluid_prose")
+            mock_synth_empty.synthesize.assert_called_once_with(eval_with_suggestion, "fluid_prose")
             assert mock_record_q.call_args.kwargs["provenance"] is None
-            assert mock_record_q.call_args.kwargs["critique"] == "Recovered fallback critique"
+            assert mock_record_q.call_args.kwargs["critique"] == eval_with_suggestion.extract_critique()
 
-        # 7. _generate_candidate forwards self.telemetry_port to emit saturation spans
+        # 7. generate_stage_candidate forwards telemetry_port to emit saturation spans
         sat_telemetry = InMemoryTelemetryPort()
         mock_llm_sat = MagicMock()
         mock_llm_sat.transform.side_effect = ["Pass 1 text.", "Pass 1 text."]
-        runner_sat = _make_runner(
-            telemetry_port=sat_telemetry,
-            metrics_port=mock_m,
-            prompt_provider=mock_pp,
-            llm_transformation_port=mock_llm_sat,
-        )
         cfg_multi = StageConfig[StageTranscript, CandidateText](
             stage_name="gap_filler",
             transform_prompt_key=PromptKey.GAP_FILLER,
             max_passes=2,
             saturation_policy=HybridSaturationEvaluator(),
         )
-        runner_sat._generate_candidate(
+        generate_stage_candidate(
             cfg_multi,
             source_transcript,
             context=ctx,
             prompt_provider=mock_pp,
             llm_port=mock_llm_sat,
             attempt=1,
+            active_trace_id="trace_sat_7",
+            telemetry_port=sat_telemetry,
         )
         assert "cresmo.gap_filler.saturation.pass_1" in [s.name for s in sat_telemetry.spans]
 
@@ -1753,34 +1783,31 @@ class TestStageRunnerStageExecutionAndFallback:
             trace_id_value="e" * 32,
             span_id_value="b" * 16,
         )
-        runner_iso = _make_runner(
-            telemetry_port=YieldingTelemetryPort(isolated_eval_span),
-            metrics_port=mock_m,
-            llm_judge=mock_judge,
-        )
         mock_judge.reset_mock()
         mock_judge.evaluate.return_value = eval_pass
-        runner_iso._evaluate_candidate(
+        evaluate_stage_candidate(
             cfg_dynamic,
             source_transcript,
             CandidateText(text="cand", stage_name="fluid_prose"),
             context=ctx,
             attempt=1,
+            llm_judge=mock_judge,
+            telemetry_port=YieldingTelemetryPort(isolated_eval_span),
+            metrics_port=mock_m,
         )
         assert mock_judge.evaluate.call_args[0][0].trace_id == "e" * 32
         assert mock_judge.evaluate.call_args[0][0].observation_id == "b" * 16
 
-        runner_none_span = _make_runner(
-            telemetry_port=YieldingTelemetryPort(None),
-            metrics_port=mock_m,
-            llm_judge=mock_judge,
-        )
+        # NoOpTelemetryPort yields NOOP_TELEMETRY_SPAN whose span_id is None
         mock_judge.reset_mock()
-        runner_none_span._evaluate_candidate(
+        evaluate_stage_candidate(
             cfg_dynamic,
             source_transcript,
             CandidateText(text="cand", stage_name="fluid_prose"),
             context=ctx,
             attempt=1,
+            llm_judge=mock_judge,
+            telemetry_port=NoOpTelemetryPort(),
+            metrics_port=mock_m,
         )
         assert mock_judge.evaluate.call_args[0][0].observation_id is None

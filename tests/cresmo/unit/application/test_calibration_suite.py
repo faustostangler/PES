@@ -81,7 +81,6 @@ class TestCalibrationSuite:
         class _RecordingDatasetLoader(InMemoryCalibrationDatasetFake):
             def load_items(
                 self,
-                stage: str,
                 default_golden_set_path: Path,
                 default_seed_path: Path,
                 *,
@@ -89,7 +88,13 @@ class TestCalibrationSuite:
                 seed_only: bool = False,
             ) -> list[dict[str, Any]]:
                 load_calls.append(
-                    (stage, default_golden_set_path, default_seed_path, dataset_path, seed_only)
+                    (
+                        default_golden_set_path.stem,
+                        default_golden_set_path,
+                        default_seed_path,
+                        dataset_path,
+                        seed_only,
+                    )
                 )
                 return _sample_items()
 
@@ -126,7 +131,7 @@ class TestCalibrationSuite:
         assert outcome.has_errors is False
         assert load_calls == [
             (
-                "fluid_prose",
+                specs["fluid_prose"].default_golden_set_path.stem,
                 specs["fluid_prose"].default_golden_set_path,
                 specs["fluid_prose"].default_seed_path,
                 custom_path,

@@ -18,7 +18,7 @@ from cresmo.infrastructure.adapters.system.process_runtime_adapter import (
 
 def test_noop_process_runtime_port_returns_deterministic_zeros(tmp_path: Path) -> None:
     port = NoOpProcessRuntimePort()
-    assert port.collect_garbage() == 0
+    assert port.collect_garbage() is None
     assert port.get_process_rss_bytes() == 0.0
     assert port.get_file_size_bytes(tmp_path / "nonexistent.txt") == 0
 
@@ -38,7 +38,7 @@ def test_system_process_runtime_adapter_delegates_runtime_calls(tmp_path: Path) 
             return_value=12345.0,
         ) as mock_rss,
     ):
-        assert adapter.collect_garbage() == 7
+        assert adapter.collect_garbage() is None
         assert adapter.get_process_rss_bytes() == 12345.0
         mock_gc.assert_called_once_with()
         mock_rss.assert_called_once_with()

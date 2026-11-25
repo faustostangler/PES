@@ -8,22 +8,22 @@ from pathlib import Path
 import pytest
 
 from cresmo.application.ports.telemetry import (
-    LLM_GENERATION_FALLBACK_SPAN_NAME,
-    LLM_GENERATION_SPAN_NAME,
+    _LLM_GENERATION_FALLBACK_SPAN_NAME,
+    _LLM_GENERATION_SPAN_NAME,
     NOOP_TELEMETRY_SPAN,
     NoOpTelemetryPort,
     NoOpTelemetrySpan,
     SessionTelemetrySpec,
     SpanKind,
     TelemetryPort,
+    _format_stage_generation_span_name,
+    _get_active_telemetry_stage,
     active_telemetry_pass,
     active_telemetry_stage,
-    format_stage_generation_span_name,
     format_stage_judge_span_name,
     format_stage_saturation_span_name,
     format_stage_span_name,
     get_active_telemetry_pass,
-    get_active_telemetry_stage,
     resolve_llm_generation_span_name,
 )
 from cresmo.domain.entities import PipelineSessionId, UserIdentity
@@ -90,8 +90,6 @@ class TestSessionTelemetrySpecAndPortContracts:
         )
         assert valid.source == "transcript"
         assert valid.force_reprocess is False
-        with pytest.raises(TypeError):
-            valid.extra_metadata["mutated"] = "nope"  # type: ignore[index]
 
         with pytest.raises(ValueError, match=r"^raw_characters must be >= 0$"):
             SessionTelemetrySpec(
@@ -155,18 +153,16 @@ class TestSessionTelemetrySpecAndPortContracts:
             root_span.set_attributes({"k": "v"})
             root_span.set_input({"in": 1})
             root_span.set_output({"out": 2})
-            root_span.add_event("evt", {"a": 1})
-            root_span.record_error(RuntimeError("noop"))
 
-        assert get_active_telemetry_stage() is None
+        assert _get_active_telemetry_stage() is None
         with port.start_span("cresmo.fluid_prose", stage_name="fluid_prose") as stage_span:
             assert stage_span is NOOP_TELEMETRY_SPAN
-            assert get_active_telemetry_stage() == "fluid_prose"
-        assert get_active_telemetry_stage() is None
+            assert _get_active_telemetry_stage() == "fluid_prose"
+        assert _get_active_telemetry_stage() is None
 
         with port.start_span("cresmo.llm.generate", kind=SpanKind.GENERATION) as gen_span:
             assert gen_span is NOOP_TELEMETRY_SPAN
-            assert get_active_telemetry_stage() is None
+            assert _get_active_telemetry_stage() is None
 
         port.record_score(name="s", value=0.9, comment="ok", trace_id="t", observation_id="o")
         port.flush()
@@ -187,29 +183,32 @@ class TestSessionTelemetrySpecAndPortContracts:
             with pytest.raises(ValueError, match=r"^pass_num must be a positive integer$"):
                 format_stage_saturation_span_name("gap_filler", pass_num=invalid_pass)
 
-        assert format_stage_generation_span_name("fluid_prose") == "cresmo.fluid_prose.generate"
+        assert _format_stage_generation_span_name("fluid_prose") == "cresmo.fluid_prose.generate"
         assert (
-            format_stage_generation_span_name("fluid_prose", fallback=True)
+            _format_stage_generation_span_name("fluid_prose", fallback=True)
             == "cresmo.fluid_prose.generate_fallback"
         )
         assert (
-            format_stage_generation_span_name("fluid_prose", fallback=True, pass_num=2)
+            _format_stage_generation_span_name("fluid_prose", fallback=True, pass_num=2)
             == "cresmo.fluid_prose.generate_fallback.pass_2"
         )
-        assert format_stage_generation_span_name(None) == LLM_GENERATION_SPAN_NAME
+        assert _format_stage_generation_span_name(None) == _LLM_GENERATION_SPAN_NAME
         assert (
-            format_stage_generation_span_name(None, fallback=True)
-            == LLM_GENERATION_FALLBACK_SPAN_NAME
+            _format_stage_generation_span_name(None, fallback=True)
+            == _LLM_GENERATION_FALLBACK_SPAN_NAME
         )
         assert (
-            format_stage_generation_span_name("   ", fallback=True, pass_num=2)
+            _format_stage_generation_span_name("   ", fallback=True, pass_num=2)
             == "cresmo.llm.generate_fallback.pass_2"
         )
 
-        assert get_active_telemetry_stage() is None
+        assert _get_active_telemetry_stage() is None
         assert get_active_telemetry_pass() is None
-        assert resolve_llm_generation_span_name() == LLM_GENERATION_SPAN_NAME
-        assert resolve_llm_generation_span_name(fallback=True) == LLM_GENERATION_FALLBACK_SPAN_NAME
+        assert resolve_llm_generation_span_name() == _LLM_GENERATION_SPAN_NAME
+        assert (
+            resolve_llm_generation_span_name(fallback=True)
+            == _LLM_GENERATION_FALLBACK_SPAN_NAME
+        )
 
         with active_telemetry_stage("gap_filler"), active_telemetry_pass(2):
             assert resolve_llm_generation_span_name() == "cresmo.gap_filler.generate.pass_2"

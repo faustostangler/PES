@@ -70,6 +70,8 @@ class TestStageConfigRunner:
             PipelineDependencies(
                 telemetry_port=telemetry,
                 metrics_port=metrics,
+                prompt_provider=prompt_provider,
+                llm_transformation_port=mock_llm,
                 llm_judge=mock_judge,
             )
         )
@@ -87,7 +89,6 @@ class TestStageConfigRunner:
             stage_name="fluid_prose",
             transform_prompt_key=PromptKey.FLUID_PROSE,
             eval_spec=StageEvaluationSpec(
-                raw_text=source.content.text,
                 candidate_extractor=lambda c: c.text if isinstance(c, CandidateText) else str(c),
                 required_criteria=(JudgeCriterion.ORALITY_REMOVAL,),
                 max_attempts=3,
@@ -104,8 +105,6 @@ class TestStageConfigRunner:
             descriptor,
             source,
             context=ctx,
-            prompt_provider=prompt_provider,
-            llm_transformation_port=mock_llm,
         )
 
         assert isinstance(result, CandidateText)
@@ -160,6 +159,8 @@ class TestStageConfigRunner:
             PipelineDependencies(
                 telemetry_port=telemetry,
                 metrics_port=metrics,
+                prompt_provider=prompt_provider,
+                llm_transformation_port=mock_llm,
                 llm_judge=mock_judge,
             )
         )
@@ -177,7 +178,6 @@ class TestStageConfigRunner:
             stage_name="fluid_prose",
             transform_prompt_key=PromptKey.FLUID_PROSE,
             eval_spec=StageEvaluationSpec(
-                raw_text=source.content.text,
                 candidate_extractor=lambda c: c.text if isinstance(c, CandidateText) else str(c),
                 required_criteria=(JudgeCriterion.ORALITY_REMOVAL,),
                 max_attempts=3,
@@ -194,8 +194,6 @@ class TestStageConfigRunner:
             descriptor,
             source,
             context=ctx,
-            prompt_provider=prompt_provider,
-            llm_transformation_port=mock_llm,
         )
 
         assert result.text == "Attempt 2 fully cleansed of oralities."
@@ -205,8 +203,8 @@ class TestStageConfigRunner:
         # Verify critique was injected into prompt on attempt 2
         second_call_prompt = mock_llm.transform.call_args_list[1].kwargs.get("prompt")
         assert isinstance(second_call_prompt, ChatPrompt)
-        assert "[PREVIOUS ATTEMPT QUALITY FEEDBACK]" in second_call_prompt.get_last_user_content()
-        assert "tipo assim" in second_call_prompt.get_last_user_content()
+        assert "[PREVIOUS ATTEMPT QUALITY FEEDBACK]" in second_call_prompt.messages[-1].content
+        assert "tipo assim" in second_call_prompt.messages[-1].content
 
     def test_execute_stage_with_post_processor(self) -> None:
         telemetry = NoOpTelemetryPort()
@@ -220,6 +218,8 @@ class TestStageConfigRunner:
             PipelineDependencies(
                 telemetry_port=telemetry,
                 metrics_port=metrics,
+                prompt_provider=prompt_provider,
+                llm_transformation_port=mock_llm,
                 llm_judge=None,
             )
         )
@@ -253,8 +253,6 @@ class TestStageConfigRunner:
             descriptor,
             source,
             context=ctx,
-            prompt_provider=prompt_provider,
-            llm_transformation_port=mock_llm,
         )
 
         assert result == "Clean continuous fluid prose."
@@ -296,6 +294,8 @@ class TestStageConfigRunner:
             PipelineDependencies(
                 telemetry_port=telemetry,
                 metrics_port=metrics,
+                prompt_provider=mock_prompt_provider,
+                llm_transformation_port=mock_llm,
                 llm_judge=mock_judge,
             )
         )
@@ -317,7 +317,6 @@ class TestStageConfigRunner:
             stage_name="fluid_prose",
             transform_prompt_key=PromptKey.FLUID_PROSE,
             eval_spec=StageEvaluationSpec(
-                raw_text=source.content.text,
                 candidate_extractor=capture_candidate,
                 required_criteria=(JudgeCriterion.ORALITY_REMOVAL,),
                 max_attempts=1,
@@ -334,8 +333,6 @@ class TestStageConfigRunner:
             descriptor,
             source,
             context=ctx,
-            prompt_provider=mock_prompt_provider,
-            llm_transformation_port=mock_llm,
         )
 
         assert isinstance(result, CandidateText)
@@ -401,10 +398,12 @@ class TestStageConfigRunner:
             user_prompt="user prompt", system_prompt="sys instruction"
         )
 
-        runner = PipelineStageRunner(
+        PipelineStageRunner(
             PipelineDependencies(
                 telemetry_port=telemetry,
                 metrics_port=metrics,
+                prompt_provider=prompt_provider,
+                llm_transformation_port=mock_llm,
                 llm_judge=mock_judge,
             )
         )
@@ -413,7 +412,6 @@ class TestStageConfigRunner:
             stage_name="fluid_prose",
             transform_prompt_key=PromptKey.FLUID_PROSE,
             eval_spec=StageEvaluationSpec(
-                raw_text="ground truth",
                 required_criteria=(),
             ),
         )
@@ -432,14 +430,20 @@ class TestStageConfigRunner:
             content=source.content,
         )
 
+        from cresmo.application.pipeline.stage_execution import (
+            evaluate_stage_candidate,
+            generate_stage_candidate,
+        )
+
         # 1. Test isolated candidate generation
-        candidate = runner._generate_candidate(
+        candidate = generate_stage_candidate(
             descriptor,
             source,
             context=ctx,
             prompt_provider=prompt_provider,
             llm_port=mock_llm,
             attempt=1,
+            active_trace_id="trace_iso_1",
             critique="Focus on parataxis",
         )
         assert candidate.text == "Isolated candidate text"
@@ -448,12 +452,15 @@ class TestStageConfigRunner:
         assert candidate.metadata["channel_name"] == "Channel A"
 
         # 2. Test isolated candidate evaluation
-        eval_result = runner._evaluate_candidate(
+        eval_result = evaluate_stage_candidate(
             descriptor,
             source,
             candidate,
             context=ctx,
             attempt=1,
+            llm_judge=mock_judge,
+            telemetry_port=telemetry,
+            metrics_port=metrics,
         )
         assert eval_result is not None
         assert eval_result.passed is True
@@ -474,7 +481,6 @@ class TestStageConfigPromptBuilding:
         assert cfg.judge_prompt_key is None
         assert cfg.eval_spec is None
         assert cfg.post_processor is None
-        assert cfg.temperature is None
         assert cfg.max_attempts == 1
         assert cfg.blocking is False
 
@@ -586,18 +592,20 @@ class TestStageConfigPromptBuilding:
             content=Content(id=ContentId("vid_1001"), session_id="sess:4"),
         )
 
-        # 1. Source with content.text
-        class SourceContentText:
-            content = Content(id="vid_1001", text="extracted from content.text")
+        # 1. StageTranscript source
+        source_transcript = StageTranscript(
+            channel=Channel(name="Chan"),
+            provenance=MediaProvenance(),
+            content=Content(id="vid_1001", text="extracted from content.text"),
+        )
 
-        cfg.build_transform_prompt(mock_provider, source=SourceContentText(), context=ctx)
+        cfg.build_transform_prompt(mock_provider, source=source_transcript, context=ctx)
         assert mock_provider.get_prompt.call_args[1]["raw_text"] == "extracted from content.text"
 
-        # 2. Source with text attribute
-        class SourceText:
-            text = "extracted from text"
+        # 2. CandidateText source
+        cand = CandidateText(stage_name="test_stage", text="extracted from text")
 
-        cfg.build_transform_prompt(mock_provider, source=SourceText(), context=ctx)
+        cfg.build_transform_prompt(mock_provider, source=cand, context=ctx)
         assert mock_provider.get_prompt.call_args[1]["raw_text"] == "extracted from text"
 
         # 3. Fallback to str(source)
@@ -719,7 +727,7 @@ class TestStageConfigPromptBuilding:
             passed_kwargs["draft_section"]
             == '\n<draft pass="1">\nPass 1 expanded text.\n</draft>\n'
         )
-        user_msg = result.get_last_user_content()
+        user_msg = result.messages[-1].content
         assert "Transcrição:\nsource text" in user_msg
         assert "Pass 2/3 — REFINE mode" in user_msg
         assert '<draft pass="1">\nPass 1 expanded text.\n</draft>' in user_msg
@@ -753,7 +761,7 @@ class TestStageConfigPromptBuilding:
             current_text="Pass 1 expanded text.",
         )
 
-        user_msg = result.get_last_user_content()
+        user_msg = result.messages[-1].content
         assert user_msg == already_rendered
         assert user_msg.count("<draft pass=") == 1
 
@@ -783,7 +791,7 @@ class TestStageConfigPromptBuilding:
             current_text="Pass 1 text.",
         )
 
-        user_msg = result.get_last_user_content()
+        user_msg = result.messages[-1].content
         draft_idx = user_msg.find('<draft pass="1">\nPass 1 text.\n</draft>')
         critique_idx = user_msg.find("[PREVIOUS ATTEMPT QUALITY FEEDBACK]")
         assert draft_idx != -1

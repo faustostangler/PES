@@ -96,7 +96,7 @@ class TestSqliteLedgerAdapter:
             media_url="https://youtube.com/watch?v=errVideo123",
             title="Failed Video",
             channel_name=ChannelName("ErrorChannel"),
-            status=PipelineStatus.FAILED_INGESTION,
+            status=PipelineStatus.FAILED_TRANSFORMATION,
             notes_count=0,
             error_message="Download timeout 408",
             started_at=now,
@@ -106,7 +106,7 @@ class TestSqliteLedgerAdapter:
         retrieved = adapter.get_entry(ContentId("errVideo123"))
         assert retrieved is not None
         assert retrieved.error_message == "Download timeout 408"
-        assert retrieved.status == PipelineStatus.FAILED_INGESTION
+        assert retrieved.status == PipelineStatus.FAILED_TRANSFORMATION
         assert retrieved.notes_count == 0
         assert retrieved.started_at == now
         assert retrieved.completed_at == now
@@ -186,7 +186,6 @@ class TestSqliteLedgerAdapter:
         for idx, status in enumerate(
             [
                 PipelineStatus.RUNNING,
-                PipelineStatus.FAILED_INGESTION,
                 PipelineStatus.FAILED_TRANSFORMATION,
                 PipelineStatus.QUARANTINED,
             ]
@@ -225,7 +224,7 @@ class TestSqliteLedgerAdapter:
             media_url=f"https://youtube.com/watch?v={cid.value}",
             title="Updated Title",
             channel_name=ChannelName("Channel2"),
-            status=PipelineStatus.FAILED_INGESTION,
+            status=PipelineStatus.FAILED_TRANSFORMATION,
             error_message="Fatal processing failure",
             started_at=None,
         )
@@ -235,7 +234,7 @@ class TestSqliteLedgerAdapter:
         assert retrieved is not None
         assert retrieved.title == "Updated Title"
         assert retrieved.channel_name == ChannelName("Channel2")
-        assert retrieved.status == PipelineStatus.FAILED_INGESTION
+        assert retrieved.status == PipelineStatus.FAILED_TRANSFORMATION
         assert retrieved.error_message == "Fatal processing failure"
         assert retrieved.started_at == start_time
         assert retrieved.completed_at is None
@@ -273,7 +272,7 @@ class TestSqliteLedgerAdapter:
                 media_url="https://youtube.com/watch?v=vid_failed",
                 title="Failed Video",
                 channel_name=ChannelName("Channel"),
-                status=PipelineStatus.FAILED_INGESTION,
+                status=PipelineStatus.FAILED_TRANSFORMATION,
             )
         )
         adapter.save_entry(

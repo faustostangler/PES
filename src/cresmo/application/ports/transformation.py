@@ -47,13 +47,10 @@ class LLMTransformationPort(ABC):
         """
         raise NotImplementedError("Implement LLM transformation contract.")
 
-    def warmup(self, timeout_seconds: float | None = None) -> None:
+    def warmup(self) -> None:
         """Asynchronously preload model weights in background if supported by provider.
 
         Default implementation is a no-op for providers not requiring local weight loading
         (e.g. cloud APIs or test doubles).
-
-        Args:
-            timeout_seconds: Optional timeout in seconds for background model loading.
         """
-        _ = timeout_seconds
+        return None

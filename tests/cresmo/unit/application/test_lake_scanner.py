@@ -32,10 +32,20 @@ class TestLakeScannerHelpers:
         assert _matches_channel_and_category(empty, "https://youtube.com/@pes_channel") is True
 
     def test_matches_channel_and_category_with_matching_and_unmatching(self) -> None:
+        from unittest.mock import MagicMock
+
+        mock_taxonomy = MagicMock()
+        mock_taxonomy.classify.return_value = ("science", "volatile")
         criteria = SyncFilterCriteria(channels=("pes_channel",), categories=("volatile",))
         # Matching channel name and classified volatile category
-        assert _matches_channel_and_category(criteria, "pes_channel") is True
-        assert _matches_channel_and_category(criteria, "other_channel") is False
+        assert (
+            _matches_channel_and_category(criteria, "pes_channel", taxonomy_port=mock_taxonomy)
+            is True
+        )
+        assert (
+            _matches_channel_and_category(criteria, "other_channel", taxonomy_port=mock_taxonomy)
+            is False
+        )
 
     def test_matches_video_entry_empty_criteria(self) -> None:
         empty = SyncFilterCriteria()
@@ -64,16 +74,26 @@ class TestLakeScannerHelpers:
         )
 
     def test_matches_video_entry_channels_and_categories_filter(self) -> None:
+        from unittest.mock import MagicMock
+
+        mock_taxonomy = MagicMock()
+        mock_taxonomy.classify.return_value = ("science", "volatile")
         criteria = SyncFilterCriteria(channels=("target_chan",), categories=("volatile",))
         cid = ContentId("dQw4w9WgXcQ")
         url = "https://youtube.com/watch?v=dQw4w9WgXcQ"
 
         # No local channel provided: fails channel filter
-        assert _matches_video_entry(criteria, cid, url, None) is False
+        assert _matches_video_entry(criteria, cid, url, None, taxonomy_port=mock_taxonomy) is False
         # Wrong local channel: fails channel filter
-        assert _matches_video_entry(criteria, cid, url, "wrong_chan") is False
+        assert (
+            _matches_video_entry(criteria, cid, url, "wrong_chan", taxonomy_port=mock_taxonomy)
+            is False
+        )
         # Correct local channel
-        assert _matches_video_entry(criteria, cid, url, "target_chan") is True
+        assert (
+            _matches_video_entry(criteria, cid, url, "target_chan", taxonomy_port=mock_taxonomy)
+            is True
+        )
 
     def test_is_unresolved_video_candidate(self) -> None:
         empty = SyncFilterCriteria()

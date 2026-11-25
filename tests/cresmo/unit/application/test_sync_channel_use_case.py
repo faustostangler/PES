@@ -16,18 +16,14 @@ from cresmo.application.pipeline.models import PipelineResult
 from cresmo.application.ports import LedgerRepositoryPort, MediaIngestionPort
 from cresmo.application.services.preflight import PreflightHealthChecker, PreflightResult
 from cresmo.application.use_cases.sync_channel import SyncChannelUseCase
-from cresmo.domain.entities import AtomicNote, UserIdentity
-from cresmo.domain.exceptions import PreflightError
+from cresmo.domain.entities import UserIdentity
+from cresmo.domain.exceptions import PreflightError, StageQuarantinedError
 from cresmo.domain.value_objects import (
     BatchId,
-    CausalMatrix,
     ChannelFeedQuery,
     ChannelName,
     ContentId,
-    CrossContextRelations,
     DiscoveredMediaItem,
-    NoteTitle,
-    NoteType,
     PipelineStatus,
 )
 
@@ -47,19 +43,8 @@ def mock_ledger_port() -> MagicMock:
 @pytest.fixture
 def mock_pipeline() -> MagicMock:
     pipeline = MagicMock(spec=CresmoPipeline)
-    note = AtomicNote(
-        title=NoteTitle("Quantum Mechanics"),
-        note_type=NoteType.CONCEPT,
-        definition="Fundamental physics framework with comprehensive contextual analysis.",
-        direct_relations=(NoteTitle("Wave Function"),),
-        causal_matrix=CausalMatrix(cause="Subatomic observation", effect="Wave packet collapse"),
-        cross_context=CrossContextRelations(),
-    )
     pipeline.run_for_video.return_value = PipelineResult(
         content_id=ContentId("dQw4w9WgXcQ"),
-        success=True,
-        synthesized_notes=(note,),
-        reconciled_mocs=(),
     )
     return pipeline
 
@@ -107,34 +92,15 @@ class TestSyncChannelUseCase:
         assert summary.skipped_count == 0
         assert summary.failed_count == 0
         assert summary.status == PipelineStatus.COMPLETED
+        mock_pipeline.warmup.assert_called_once_with()
         mock_pipeline.run_for_video.assert_called_once_with(
             video_url=recent_item.media_url,
             user=UserIdentity.worker(),
             batch_id=ANY,
+            force_reprocess=False,
         )
         assert isinstance(mock_pipeline.run_for_video.call_args.kwargs["batch_id"], BatchId)
-
-        calls = mock_ledger_port.save_entry.call_args_list
-        assert len(calls) == 2
-        running_entry = calls[0][0][0]
-        assert running_entry.content_id == recent_item.content_id
-        assert running_entry.media_url == recent_item.media_url
-        assert running_entry.title == recent_item.title
-        assert running_entry.channel_name == recent_item.channel_name
-        assert running_entry.status == PipelineStatus.RUNNING
-        assert running_entry.started_at is not None
-        assert running_entry.started_at.tzinfo == UTC
-
-        completed_entry = calls[1][0][0]
-        assert completed_entry.content_id == recent_item.content_id
-        assert completed_entry.media_url == recent_item.media_url
-        assert completed_entry.title == recent_item.title
-        assert completed_entry.channel_name == recent_item.channel_name
-        assert completed_entry.status == PipelineStatus.COMPLETED
-        assert completed_entry.notes_count == 1
-        assert completed_entry.started_at == running_entry.started_at
-        assert completed_entry.completed_at is not None
-        assert completed_entry.completed_at.tzinfo == UTC
+        mock_ledger_port.save_entry.assert_not_called()
 
     def test_sync_channel_skips_already_processed_items(
         self,
@@ -200,6 +166,7 @@ class TestSyncChannelUseCase:
             video_url=item.media_url,
             user=UserIdentity.worker(),
             batch_id=ANY,
+            force_reprocess=True,
         )
         assert isinstance(mock_pipeline.run_for_video.call_args.kwargs["batch_id"], BatchId)
 
@@ -227,18 +194,15 @@ class TestSyncChannelUseCase:
         mock_ingestion_port.discover_channel_feed.return_value = [failing_item, succeeding_item]
 
         mock_pipeline.run_for_video.side_effect = [
-            PipelineResult(
-                content_id=ContentId("failingVideo"),
-                success=False,
-                synthesized_notes=(),
-                reconciled_mocs=(),
-                error_message="LLM Rate limit reached",
+            StageQuarantinedError(
+                stage_name="fluid_prose",
+                content_id="failingVideo",
+                attempts=1,
+                critique="LLM Rate limit reached",
+                overall_score=0.2,
             ),
             PipelineResult(
                 content_id=ContentId("successVideo"),
-                success=True,
-                synthesized_notes=(),
-                reconciled_mocs=(),
             ),
         ]
 
@@ -469,16 +433,7 @@ class TestSyncChannelUseCase:
         assert summary.status == PipelineStatus.FAILED_TRANSFORMATION
         assert summary.channel_url == "https://youtube.com/@TestChannel"
         assert summary.duration_seconds >= 0.0
-
-        # Verify saved ledger entry has error message
-        calls = mock_ledger_port.save_entry.call_args_list
-        assert len(calls) == 2
-        # First call is RUNNING
-        assert calls[0][0][0].status == PipelineStatus.RUNNING
-        assert calls[0][0][0].content_id.value == "crashItem1"
-        # Second call is FAILED_TRANSFORMATION with error_message
-        assert calls[1][0][0].status == PipelineStatus.FAILED_TRANSFORMATION
-        assert "Fatal pipeline failure" in calls[1][0][0].error_message
+        mock_ledger_port.save_entry.assert_not_called()
 
     def test_init_attributes(
         self,
@@ -609,8 +564,14 @@ class TestSyncChannelUseCase:
         )
         mock_ingestion_port.discover_channel_feed.return_value = [item1, item2]
         mock_pipeline.run_for_video.side_effect = [
-            PipelineResult(content_id=ContentId("fail1"), success=False, error_message="Err1"),
-            PipelineResult(content_id=ContentId("fail2"), success=False, error_message="Err2"),
+            RuntimeError("Err1"),
+            StageQuarantinedError(
+                stage_name="fluid_prose",
+                content_id="fail2",
+                attempts=2,
+                critique="Err2",
+                overall_score=0.3,
+            ),
         ]
 
         use_case = SyncChannelUseCase(mock_ingestion_port, mock_ledger_port, mock_pipeline)
@@ -619,25 +580,9 @@ class TestSyncChannelUseCase:
 
         assert summary.failed_count == 2
         assert summary.status == PipelineStatus.FAILED_TRANSFORMATION
+        mock_ledger_port.save_entry.assert_not_called()
 
-        calls = mock_ledger_port.save_entry.call_args_list
-        assert len(calls) == 4  # 2 running + 2 failed
-
-        fail1 = calls[1][0][0]
-        assert fail1.content_id == ContentId("fail1")
-        assert fail1.media_url == "https://youtube.com/watch?v=fail1"
-        assert fail1.title == "F1"
-        assert fail1.channel_name == ChannelName("TestChannel")
-        assert fail1.status == PipelineStatus.FAILED_TRANSFORMATION
-        assert fail1.error_message == "Err1"
-        assert fail1.started_at is not None
-        assert fail1.completed_at is not None
-
-        fail2 = calls[3][0][0]
-        assert fail2.content_id == ContentId("fail2")
-        assert fail2.error_message == "Err2"
-
-    def test_sync_channel_multiple_exceptions_and_ledger_validation(
+    def test_sync_channel_multiple_exceptions_and_ledger_delegation(
         self,
         mock_ingestion_port: MagicMock,
         mock_ledger_port: MagicMock,
@@ -670,22 +615,4 @@ class TestSyncChannelUseCase:
 
         assert summary.failed_count == 2
         assert summary.status == PipelineStatus.FAILED_TRANSFORMATION
-
-        calls = mock_ledger_port.save_entry.call_args_list
-        assert len(calls) == 4
-
-        exc_entry1 = calls[1][0][0]
-        assert exc_entry1.content_id == ContentId("exc1")
-        assert exc_entry1.media_url == "https://youtube.com/watch?v=exc1"
-        assert exc_entry1.title == "E1"
-        assert exc_entry1.channel_name == ChannelName("TestChannel")
-        assert exc_entry1.status == PipelineStatus.FAILED_TRANSFORMATION
-        assert exc_entry1.error_message == "Crash 1"
-        assert exc_entry1.started_at is not None
-        assert exc_entry1.started_at.tzinfo == UTC
-        assert exc_entry1.completed_at is not None
-        assert exc_entry1.completed_at.tzinfo == UTC
-
-        exc_entry2 = calls[3][0][0]
-        assert exc_entry2.content_id == ContentId("exc2")
-        assert exc_entry2.error_message == "Crash 2"
+        mock_ledger_port.save_entry.assert_not_called()

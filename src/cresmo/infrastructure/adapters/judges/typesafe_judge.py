@@ -19,7 +19,6 @@ from cresmo.domain.value_objects.quality import (
     EvaluationContext,
     JudgeCriterion,
     JudgeEvaluation,
-    resolve_stage_scoring_policy,
 )
 from cresmo.infrastructure.config import DEFAULT_JUDGE_PASS_THRESHOLD
 
@@ -331,7 +330,6 @@ class TypeSafeJudgeAdapter(LlmJudgePort):
         for criterion in context.required_criteria:
             c_name = criterion.value
             score_val = 0.0
-            confidence_val: float | None = None
             passed_val = False
 
             if c_name in nouls:
@@ -341,29 +339,22 @@ class TypeSafeJudgeAdapter(LlmJudgePort):
             elif c_name in scores:
                 score_item = scores[c_name]
                 score_val = float(score_item.get("score", 0.0))
-                confidence_val = score_item.get("confidence")
-                if confidence_val is not None:
-                    confidence_val = float(confidence_val)
                 passed_val = score_val >= self._pass_threshold
             else:
                 score_val = 0.5
                 passed_val = False
 
             score_val = max(0.0, min(1.0, score_val))
-            if confidence_val is not None:
-                confidence_val = max(0.0, min(1.0, confidence_val))
 
             criteria_scores_list.append(
                 CriterionScore(
                     criterion=criterion,
                     score=score_val,
                     passed=passed_val,
-                    confidence=confidence_val,
                     reasoning=f"System One Jev evaluation for {c_name}",
                 )
             )
 
-        weights, veto_criteria = resolve_stage_scoring_policy(context.stage_name)
         return JudgeEvaluation.create_with_composite_verdict(
             target_stage=context.stage_name,
             criteria_scores=criteria_scores_list,
@@ -371,8 +362,6 @@ class TypeSafeJudgeAdapter(LlmJudgePort):
             pass_threshold=self._pass_threshold,
             latency_ms=latency_ms,
             trace_id=context.trace_id,
-            weights=weights,
-            veto_criteria=veto_criteria,
         )
 
 __all__ = [

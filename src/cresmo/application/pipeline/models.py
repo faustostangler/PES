@@ -16,11 +16,7 @@ from cresmo.application.ports import (
     PromptProviderPort,
     TelemetryPort,
 )
-from cresmo.domain.entities import (
-    AtomicNote,
-    MapOfContent,
-    StageTranscript,
-)
+from cresmo.domain.entities import StageTranscript
 from cresmo.domain.stage_registry import StageName
 from cresmo.domain.value_objects import ContentId
 
@@ -44,36 +40,25 @@ class PipelineDependencies:
     ledger_port: LedgerRepositoryPort | None = None
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, slots=True)
 class PipelineResult:
-    """Summary record emitted at the conclusion of an end-to-end pipeline execution.
+    """Summary record emitted upon successful completion of a pipeline execution.
 
-    Encapsulates both the terminal operational outcome and the rich domain aggregates
-    and intermediate artifacts produced across all incremental synthesis stages.
+    Conforms to Single Error Channel (ADR-077): failures always raise typed exceptions.
 
     Attributes:
         content_id: Canonical ContentId processed.
-        success: True if all stages completed successfully without unhandled errors.
-        synthesized_notes: Tuple of all newly synthesized AtomicNote domain aggregates.
-        reconciled_mocs: Tuple of MapOfContent aggregates updated or created.
         source_transcript: Optional StageTranscript aggregate root from raw ingestion.
         stage_artifacts: Read-only mapping of conveyor StageName to StageTranscript output.
         final_transcript: Terminal conveyor StageTranscript output.
-        duplicates_unified: Total count of duplicate notes consolidated during duplicate unification.
         already_processed: True if execution was skipped due to ledger idempotency match.
-        error_message: Optional error message string if execution terminated early.
     """
 
     content_id: ContentId
-    success: bool
-    synthesized_notes: tuple[AtomicNote, ...] = ()
-    reconciled_mocs: tuple[MapOfContent, ...] = ()
     source_transcript: StageTranscript | None = None
     stage_artifacts: Mapping[StageName, StageTranscript] = field(default_factory=dict)
     final_transcript: StageTranscript | None = None
-    duplicates_unified: int = 0
     already_processed: bool = False
-    error_message: str | None = None
 
     def __post_init__(self) -> None:
         """Freeze stage_artifacts mapping to preserve PipelineResult immutability."""

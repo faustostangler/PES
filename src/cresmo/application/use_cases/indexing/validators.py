@@ -92,25 +92,6 @@ def is_valid_synthesis_paragraph(
     return min_words <= len(words) <= max_words
 
 
-def parse_judge_boolean(raw_output: str) -> bool:
-    """Parse boolean verdict from LLM-as-a-judge deterministic response.
-
-    Args:
-        raw_output: Verbatim output from judge LLM invocation.
-
-    Returns:
-        True if the response confirms compliance ('true'); False otherwise.
-    """
-    if not raw_output:
-        return False
-    clean = raw_output.strip()
-    clean = re.sub(r"^```(?:json|txt)?\s*", "", clean)
-    clean = re.sub(r"\s*```$", "", clean)
-    clean = clean.strip().strip(".,;:!?\"'()")
-    lower = clean.lower()
-    return lower == "true" or lower.startswith("true")
-
-
 def clean_text_line(text: str) -> str:
     """Strip markdown formatting, quotes, and conversational prefixes from a single line.
 

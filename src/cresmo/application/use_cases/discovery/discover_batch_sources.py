@@ -14,7 +14,7 @@ from __future__ import annotations
 
 import queue
 import threading
-from collections.abc import Callable, Iterator
+from collections.abc import Callable, Iterable, Iterator
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -23,6 +23,9 @@ import structlog
 from cresmo.application.ports import (
     ChannelTaxonomyPort,
     MediaIngestionPort,
+    MetricName,
+    MetricsPort,
+    NoOpMetricsPort,
 )
 from cresmo.application.use_cases.discovery.channel_crawler import ChannelFeedCrawlerService
 from cresmo.application.use_cases.discovery.lake_scanner import LakeScannerService
@@ -68,6 +71,7 @@ class DiscoverBatchSourcesUseCase:
         discovery_paths: DiscoveryPaths | None = None,
         progress_callback: Callable[[str], object] | None = None,
         taxonomy_port: ChannelTaxonomyPort | None = None,
+        metrics_port: MetricsPort | None = None,
     ) -> None:
         """Initialize use case with injected media ingestion adapter, policy, and paths."""
         self.media_ingestion_port = media_ingestion_port
@@ -75,6 +79,7 @@ class DiscoverBatchSourcesUseCase:
         self.discovery_paths: DiscoveryPaths = discovery_paths or DiscoveryPaths()
         self.progress_callback = progress_callback
         self.taxonomy_port = taxonomy_port
+        self._metrics_port: MetricsPort = metrics_port or NoOpMetricsPort()
         self._crawler_service = (
             ChannelFeedCrawlerService(
                 media_ingestion_port=self.media_ingestion_port,
@@ -247,8 +252,6 @@ class DiscoverBatchSourcesUseCase:
             )
         except Exception as exc:  # noqa: BLE001
             try:
-                if getattr(stream_queue, "full", lambda: False)() is True:
-                    raise queue.Full
                 stream_queue.put(exc, timeout=_DEFAULT_STREAM_ERROR_TIMEOUT_SECONDS)
             except Exception:  # noqa: BLE001
                 logger.warning(
@@ -259,8 +262,6 @@ class DiscoverBatchSourcesUseCase:
                 if stop_event.is_set():
                     break
                 try:
-                    if getattr(stream_queue, "full", lambda: False)() is True:
-                        raise queue.Full
                     stream_queue.put(None, timeout=_DEFAULT_STREAM_QUEUE_TIMEOUT_SECONDS)
                     break
                 except queue.Full:
@@ -304,9 +305,22 @@ class DiscoverBatchSourcesUseCase:
                 if isinstance(item, Exception):
                     self._notify(f"[crawler] Warning: Background crawler failed: {item}\n")
                     return
+                self._metrics_port.set_gauge(
+                    MetricName.DISCOVERY_QUEUE_SIZE, float(stream_queue.qsize())
+                )
                 yield item
         finally:
             stop_event.set()
+            self._metrics_port.set_gauge(MetricName.DISCOVERY_QUEUE_SIZE, 0.0)
+
+    def _emit_and_record(self, sources: Iterable[BatchSource]) -> Iterator[BatchSource]:
+        for src in sources:
+            self._metrics_port.increment_counter(
+                MetricName.BATCH_SOURCES_DISCOVERED,
+                1.0,
+                labels={"modality": src.kind.value},
+            )
+            yield src
 
     def execute(self, query: BatchDiscoveryQuery | None = None) -> Iterator[BatchSource]:
         """Discover batch sources with streaming queue for overlapped producer-consumer execution.
@@ -317,14 +331,18 @@ class DiscoverBatchSourcesUseCase:
         """
         discovery_query = query or BatchDiscoveryQuery()
         if discovery_query.explicit_manifest is not None:
-            yield from self._load_explicit_manifest(discovery_query.explicit_manifest)
+            yield from self._emit_and_record(
+                self._load_explicit_manifest(discovery_query.explicit_manifest)
+            )
             return
 
         acc = _BatchSourceAccumulator()
         state = self._collect_fast_path_sources(discovery_query, acc)
 
         if self.media_ingestion_port is None or not discovery_query.enable_channel_crawler:
-            yield from self._execute_sync_fallback(discovery_query, acc, state)
+            yield from self._emit_and_record(
+                self._execute_sync_fallback(discovery_query, acc, state)
+            )
             return
 
         maxsize = (
@@ -339,6 +357,9 @@ class DiscoverBatchSourcesUseCase:
             while not stop_event.is_set():
                 try:
                     stream_queue.put(src, timeout=_DEFAULT_STREAM_QUEUE_TIMEOUT_SECONDS)
+                    self._metrics_port.set_gauge(
+                        MetricName.DISCOVERY_QUEUE_SIZE, float(stream_queue.qsize())
+                    )
                     return
                 except queue.Full:
                     pass
@@ -353,8 +374,10 @@ class DiscoverBatchSourcesUseCase:
         )
         crawler_thread.start()
 
-        yield from self._consume_stream_queue(
-            state.priority_sources, stream_queue, stop_event, crawler_thread
+        yield from self._emit_and_record(
+            self._consume_stream_queue(
+                state.priority_sources, stream_queue, stop_event, crawler_thread
+            )
         )
 
     def _load_explicit_manifest(self, manifest_path: Path) -> list[BatchSource]:

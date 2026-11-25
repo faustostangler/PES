@@ -280,7 +280,7 @@ class TestSyncBatchUseCase:
     def test_describe_mode_formats_all_criteria_combinations(self) -> None:
         assert _describe_mode(SyncFilterCriteria()) == "full manifest"
         assert _describe_mode(SyncFilterCriteria(channels=("c1", "c2"))) == "channels=c1,c2"
-        assert _describe_mode(SyncFilterCriteria(video_ids=("v1", "v2"))) == "videos=v1,v2"
+        assert _describe_mode(SyncFilterCriteria(video_ids=("v1", "v2"))) == "full manifest"
         assert (
             _describe_mode(
                 SyncFilterCriteria(
@@ -289,5 +289,5 @@ class TestSyncBatchUseCase:
                     video_ids=("v1", "v2"),
                 )
             )
-            == "channels=c1,c2, categories=cat1,cat2, videos=v1,v2"
+            == "channels=c1,c2, categories=cat1,cat2"
         )

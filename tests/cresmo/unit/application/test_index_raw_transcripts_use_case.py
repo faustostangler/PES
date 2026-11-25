@@ -12,11 +12,10 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from cresmo.application.ports import ChannelTaxonomyPort
+from cresmo.application.ports import ChannelTaxonomyPort, LlmJudgePort
 from cresmo.application.use_cases.indexing.index_raw_transcripts import IndexRawTranscriptsUseCase
 from cresmo.application.use_cases.indexing.validators import (
     is_valid_synthesis_paragraph,
-    parse_judge_boolean,
 )
 from cresmo.domain.entities import StageTranscript
 from cresmo.domain.exceptions import DomainValidationError
@@ -25,6 +24,7 @@ from cresmo.domain.value_objects import (
     ChannelName,
     Content,
     ContentId,
+    JudgeEvaluation,
     MediaProvenance,
 )
 from cresmo.infrastructure.adapters.prompts.json_provider import JsonPromptProvider
@@ -46,11 +46,8 @@ class TestIndexRawTranscriptsUseCase:
         llm = MockLLMAdapter(
             responses=[
                 "Circulação de Elites",
-                "true",
                 "Resumo conceitual da teoria das elites e oligarquias organizadas.",
-                "true",
                 _SAMPLE_VALID_SYNTHESIS,
-                "true",
             ]
         )
         prompt_provider = JsonPromptProvider()
@@ -79,38 +76,21 @@ class TestIndexRawTranscriptsUseCase:
         assert entry.key_concept == "Circulação de Elites"
         assert "Minorias burocráticas governam" in entry.synthesis
         assert entry.channel_name == "Political Theory"
-        assert entry.summary == "Resumo conceitual da teoria das elites e oligarquias organizadas."
-        assert (
-            entry.excerpt
-            == "A teoria sociológica de Vilfredo Pareto enfatiza a inevitabilidade das oligarquias."
-        )
 
-        # 6 sequential passes executed: Concepts -> Concepts Judge -> Summary -> Summary Judge -> Synthesis -> Synthesis Judge
-        assert len(llm.call_history) == 6
+        # 3 sequential generative passes when no llm_judge_port is attached
+        assert len(llm.call_history) == 3
         assert llm.call_history[0]["trace_id"] == "vid11111111_concepts"
         assert llm.call_history[0]["temperature"] == 0.2
         assert llm.call_history[0]["session_id"] == "Political Theory:vid11111111"
         assert llm.call_history[0]["user_id"] == "anonymous"
-        assert llm.call_history[1]["trace_id"] == "vid11111111_concepts_judge"
-        assert llm.call_history[1]["temperature"] == 0.0
+        assert llm.call_history[1]["trace_id"] == "vid11111111_summary"
+        assert llm.call_history[1]["temperature"] == 0.2
         assert llm.call_history[1]["session_id"] == "Political Theory:vid11111111"
         assert llm.call_history[1]["user_id"] == "anonymous"
-        assert llm.call_history[2]["trace_id"] == "vid11111111_summary"
+        assert llm.call_history[2]["trace_id"] == "vid11111111_synthesis"
         assert llm.call_history[2]["temperature"] == 0.2
         assert llm.call_history[2]["session_id"] == "Political Theory:vid11111111"
         assert llm.call_history[2]["user_id"] == "anonymous"
-        assert llm.call_history[3]["trace_id"] == "vid11111111_summary_judge"
-        assert llm.call_history[3]["temperature"] == 0.0
-        assert llm.call_history[3]["session_id"] == "Political Theory:vid11111111"
-        assert llm.call_history[3]["user_id"] == "anonymous"
-        assert llm.call_history[4]["trace_id"] == "vid11111111_synthesis"
-        assert llm.call_history[4]["temperature"] == 0.2
-        assert llm.call_history[4]["session_id"] == "Political Theory:vid11111111"
-        assert llm.call_history[4]["user_id"] == "anonymous"
-        assert llm.call_history[5]["trace_id"] == "vid11111111_synthesis_judge"
-        assert llm.call_history[5]["temperature"] == 0.0
-        assert llm.call_history[5]["session_id"] == "Political Theory:vid11111111"
-        assert llm.call_history[5]["user_id"] == "anonymous"
 
         # Verify dual persistence: _canal.md index AND brain.csv
         assert len(vault.channel_raw_indexes["Political Theory"]) == 1
@@ -132,7 +112,7 @@ class TestIndexRawTranscriptsUseCase:
         caplog.set_level(logging.INFO)
         vault = InMemoryVaultAdapter()
         llm = MockLLMAdapter(
-            responses=["Conceito", "true", "Resumo.", "true", _SAMPLE_VALID_SYNTHESIS, "true"]
+            responses=["Conceito", "Resumo.", _SAMPLE_VALID_SYNTHESIS]
         )
         prompt_provider = JsonPromptProvider()
 
@@ -155,12 +135,12 @@ class TestIndexRawTranscriptsUseCase:
         # Index once
         entry1 = use_case.execute(transcript)
         assert entry1 is not None
-        assert len(llm.call_history) == 6
+        assert len(llm.call_history) == 3
 
         # Index again without force - should skip and return None (0 additional calls)
         entry2 = use_case.execute(transcript)
         assert entry2 is None
-        assert len(llm.call_history) == 6
+        assert len(llm.call_history) == 3
         assert len(vault.channel_raw_indexes["Political Theory"]) == 1
 
         expected_skip_log = f"[IndexRaw] Skipping already indexed transcript '{transcript.content.id.value}' for channel '{transcript.channel.name}'."
@@ -174,11 +154,8 @@ class TestIndexRawTranscriptsUseCase:
         llm = MockLLMAdapter(
             responses=[
                 "Teoria dos Jogos, Equilíbrios de Nash",
-                "true",
                 "Resumo sobre equilíbrio de Nash e estratégias interdependentes.",
-                "true",
                 _SAMPLE_VALID_SYNTHESIS,
-                "true",
             ]
         )
         prompt_provider = JsonPromptProvider()
@@ -278,11 +255,8 @@ class TestIndexRawTranscriptsUseCase:
             responses=[
                 "Key concepts: Circulação de Elites",
                 "Circulação de Elites, Teoria das Elites",
-                "true",
                 "Resumo sobre Pareto e teoria das elites.",
-                "true",
                 _SAMPLE_VALID_SYNTHESIS,
-                "true",
             ]
         )
         prompt_provider = JsonPromptProvider()
@@ -312,17 +286,11 @@ class TestIndexRawTranscriptsUseCase:
 
         assert entry is not None
         assert entry.key_concept == "Circulação de Elites, Teoria das Elites"
-        # 1 bad concepts + 1 rewrite + 1 concepts judge + 1 summary + 1 summary judge + 1 synthesis + 1 synthesis judge = 7 calls
-        assert len(llm.call_history) == 7
+        assert len(llm.call_history) == 4
         assert llm.call_history[0]["trace_id"] == "vid44444444_concepts"
         assert llm.call_history[1]["trace_id"] == "vid44444444_concepts_rewrite_1"
-        assert llm.call_history[2]["trace_id"] == "vid44444444_concepts_judge_retry_1"
-        assert llm.call_history[2]["temperature"] == 0.0
-        assert llm.call_history[3]["trace_id"] == "vid44444444_summary"
-        assert llm.call_history[4]["trace_id"] == "vid44444444_summary_judge"
-        assert llm.call_history[4]["temperature"] == 0.0
-        assert llm.call_history[5]["trace_id"] == "vid44444444_synthesis"
-        assert llm.call_history[6]["trace_id"] == "vid44444444_synthesis_judge"
+        assert llm.call_history[2]["trace_id"] == "vid44444444_summary"
+        assert llm.call_history[3]["trace_id"] == "vid44444444_synthesis"
 
     def test_self_healing_rewrite_loop_exhausts_retries_and_defensively_cleans(self) -> None:
         """Verify that when LLM keeps returning forbidden prefix, retries stop at max_rewrites and cleans."""
@@ -333,9 +301,7 @@ class TestIndexRawTranscriptsUseCase:
                 "Palavras-chave: Conceito Teórico",
                 "Palavras-chave: Conceito Teórico",
                 "Resumo teórico...",
-                "true",
                 _SAMPLE_VALID_SYNTHESIS,
-                "true",
             ]
         )
         prompt_provider = JsonPromptProvider()
@@ -362,15 +328,12 @@ class TestIndexRawTranscriptsUseCase:
         assert entry is not None
         # Defensively cleaned even though rewrite loop exhausted
         assert entry.key_concept == "Conceito Teórico"
-        # 1 initial concept + 2 rewrites + 1 summary + 1 summary judge + 1 synthesis + 1 synthesis judge = 7 calls
-        assert len(llm.call_history) == 7
+        assert len(llm.call_history) == 5
         assert llm.call_history[0]["trace_id"] == "vid55555555_concepts"
         assert llm.call_history[1]["trace_id"] == "vid55555555_concepts_rewrite_1"
         assert llm.call_history[2]["trace_id"] == "vid55555555_concepts_rewrite_2"
         assert llm.call_history[3]["trace_id"] == "vid55555555_summary"
-        assert llm.call_history[4]["trace_id"] == "vid55555555_summary_judge"
-        assert llm.call_history[5]["trace_id"] == "vid55555555_synthesis"
-        assert llm.call_history[6]["trace_id"] == "vid55555555_synthesis_judge"
+        assert llm.call_history[4]["trace_id"] == "vid55555555_synthesis"
 
     def test_summary_judge_triggers_regeneration_on_false(self) -> None:
         """Verify that when summary judge returns false, summary is regenerated and re-judged."""
@@ -378,15 +341,27 @@ class TestIndexRawTranscriptsUseCase:
         llm = MockLLMAdapter(
             responses=[
                 "Conceito Fiel",
-                "true",
                 "Resumo superficial com alucinação.",
-                "false",
                 "Resumo rigoroso e conceitualmente fiel.",
-                "true",
                 _SAMPLE_VALID_SYNTHESIS,
-                "true",
             ]
         )
+        pass_eval = JudgeEvaluation(
+            target_stage="raw_index",
+            passed=True,
+            overall_score=0.95,
+            criteria_scores=(),
+            provider="test",
+        )
+        fail_eval = JudgeEvaluation(
+            target_stage="raw_index",
+            passed=False,
+            overall_score=0.3,
+            criteria_scores=(),
+            provider="test",
+        )
+        mock_judge = MagicMock(spec=LlmJudgePort)
+        mock_judge.evaluate.side_effect = [pass_eval, fail_eval, pass_eval, pass_eval]
         prompt_provider = JsonPromptProvider()
 
         use_case = IndexRawTranscriptsUseCase(
@@ -394,6 +369,7 @@ class TestIndexRawTranscriptsUseCase:
             llm_indexing_port=llm,
             prompt_provider=prompt_provider,
             max_rewrites=2,
+            llm_judge_port=mock_judge,
         )
 
         transcript = StageTranscript(
@@ -412,15 +388,12 @@ class TestIndexRawTranscriptsUseCase:
 
         assert entry is not None
         assert entry.key_concept == "Conceito Fiel"
-        assert len(llm.call_history) == 8
+        assert len(llm.call_history) == 4
+        assert mock_judge.evaluate.call_count == 4
         assert llm.call_history[0]["trace_id"] == "vid77777777_concepts"
-        assert llm.call_history[1]["trace_id"] == "vid77777777_concepts_judge"
-        assert llm.call_history[2]["trace_id"] == "vid77777777_summary"
-        assert llm.call_history[3]["trace_id"] == "vid77777777_summary_judge"
-        assert llm.call_history[4]["trace_id"] == "vid77777777_summary_retry_1"
-        assert llm.call_history[5]["trace_id"] == "vid77777777_summary_judge_retry_1"
-        assert llm.call_history[6]["trace_id"] == "vid77777777_synthesis"
-        assert llm.call_history[7]["trace_id"] == "vid77777777_synthesis_judge"
+        assert llm.call_history[1]["trace_id"] == "vid77777777_summary"
+        assert llm.call_history[2]["trace_id"] == "vid77777777_summary_retry_1"
+        assert llm.call_history[3]["trace_id"] == "vid77777777_synthesis"
 
     def test_concepts_judge_triggers_rewrite_on_false(self) -> None:
         """Verify that when concepts pass regex but judge returns false, rewrite is triggered."""
@@ -428,15 +401,27 @@ class TestIndexRawTranscriptsUseCase:
         llm = MockLLMAdapter(
             responses=[
                 "Conceito Desconexo",
-                "false",
                 "Conceito Conexo, Teoria Central",
-                "true",
                 "Resumo fiel do conteúdo.",
-                "true",
                 _SAMPLE_VALID_SYNTHESIS,
-                "true",
             ]
         )
+        pass_eval = JudgeEvaluation(
+            target_stage="raw_index",
+            passed=True,
+            overall_score=0.95,
+            criteria_scores=(),
+            provider="test",
+        )
+        fail_eval = JudgeEvaluation(
+            target_stage="raw_index",
+            passed=False,
+            overall_score=0.3,
+            criteria_scores=(),
+            provider="test",
+        )
+        mock_judge = MagicMock(spec=LlmJudgePort)
+        mock_judge.evaluate.side_effect = [fail_eval, pass_eval, pass_eval, pass_eval]
         prompt_provider = JsonPromptProvider()
 
         use_case = IndexRawTranscriptsUseCase(
@@ -444,6 +429,7 @@ class TestIndexRawTranscriptsUseCase:
             llm_indexing_port=llm,
             prompt_provider=prompt_provider,
             max_rewrites=2,
+            llm_judge_port=mock_judge,
         )
 
         transcript = StageTranscript(
@@ -462,15 +448,12 @@ class TestIndexRawTranscriptsUseCase:
 
         assert entry is not None
         assert entry.key_concept == "Conceito Conexo, Teoria Central"
-        assert len(llm.call_history) == 8
+        assert len(llm.call_history) == 4
+        assert mock_judge.evaluate.call_count == 4
         assert llm.call_history[0]["trace_id"] == "vid88888888_concepts"
-        assert llm.call_history[1]["trace_id"] == "vid88888888_concepts_judge"
-        assert llm.call_history[2]["trace_id"] == "vid88888888_concepts_rewrite_1"
-        assert llm.call_history[3]["trace_id"] == "vid88888888_concepts_judge_retry_1"
-        assert llm.call_history[4]["trace_id"] == "vid88888888_summary"
-        assert llm.call_history[5]["trace_id"] == "vid88888888_summary_judge"
-        assert llm.call_history[6]["trace_id"] == "vid88888888_synthesis"
-        assert llm.call_history[7]["trace_id"] == "vid88888888_synthesis_judge"
+        assert llm.call_history[1]["trace_id"] == "vid88888888_concepts_rewrite_1"
+        assert llm.call_history[2]["trace_id"] == "vid88888888_summary"
+        assert llm.call_history[3]["trace_id"] == "vid88888888_synthesis"
 
     def test_synthesis_judge_triggers_regeneration_on_false(self) -> None:
         """Verify that when synthesis judge returns false, synthesis is regenerated and re-judged."""
@@ -478,15 +461,27 @@ class TestIndexRawTranscriptsUseCase:
         llm = MockLLMAdapter(
             responses=[
                 "Conceito Sólido",
-                "true",
                 "Resumo bem estruturado.",
-                "true",
                 _SAMPLE_VALID_SYNTHESIS,
-                "false",  # Initial synthesis judged false (e.g. slight factual hallucination)
                 "Minorias políticas burocráticas governam as instituições com base em normas estritas e transparentes. As contra-elites organizadas substituem a liderança decadente e reconfiguram as decisões estruturais.",
-                "true",  # Regenerated synthesis judged true
             ]
         )
+        pass_eval = JudgeEvaluation(
+            target_stage="raw_index",
+            passed=True,
+            overall_score=0.95,
+            criteria_scores=(),
+            provider="test",
+        )
+        fail_eval = JudgeEvaluation(
+            target_stage="raw_index",
+            passed=False,
+            overall_score=0.3,
+            criteria_scores=(),
+            provider="test",
+        )
+        mock_judge = MagicMock(spec=LlmJudgePort)
+        mock_judge.evaluate.side_effect = [pass_eval, pass_eval, fail_eval, pass_eval]
         prompt_provider = JsonPromptProvider()
 
         use_case = IndexRawTranscriptsUseCase(
@@ -494,6 +489,7 @@ class TestIndexRawTranscriptsUseCase:
             llm_indexing_port=llm,
             prompt_provider=prompt_provider,
             max_rewrites=2,
+            llm_judge_port=mock_judge,
         )
 
         transcript = StageTranscript(
@@ -513,14 +509,15 @@ class TestIndexRawTranscriptsUseCase:
         assert entry is not None
         assert entry.key_concept == "Conceito Sólido"
         assert "Minorias políticas burocráticas governam" in entry.synthesis
-        # 1 concepts + 1 concepts_judge + 1 summary + 1 summary_judge + 1 synthesis + 1 synthesis_judge (false) + 1 retry + 1 retry_judge (true) = 8 calls
-        assert len(llm.call_history) == 8
-        assert llm.call_history[4]["trace_id"] == "vid99999999_synthesis"
-        assert llm.call_history[5]["trace_id"] == "vid99999999_synthesis_judge"
-        assert llm.call_history[5]["temperature"] == 0.0
-        assert llm.call_history[6]["trace_id"] == "vid99999999_synthesis_retry_1"
-        assert llm.call_history[7]["trace_id"] == "vid99999999_synthesis_judge_retry_1"
-        assert llm.call_history[7]["temperature"] == 0.0
+        assert len(llm.call_history) == 4
+        assert mock_judge.evaluate.call_count == 4
+        assert llm.call_history[2]["trace_id"] == "vid99999999_synthesis"
+        assert llm.call_history[3]["trace_id"] == "vid99999999_synthesis_retry_1"
+        assert mock_judge.evaluate.call_args_list[2][0][0].trace_id == "vid99999999_synthesis_judge"
+        assert (
+            mock_judge.evaluate.call_args_list[3][0][0].trace_id
+            == "vid99999999_synthesis_judge_retry_1"
+        )
 
     def test_synthesis_size_invalidation_triggers_retry(self) -> None:
         """Verify that when synthesis fails sizing heuristic (e.g. too few words), judge is skipped and retry triggered."""
@@ -528,12 +525,9 @@ class TestIndexRawTranscriptsUseCase:
         llm = MockLLMAdapter(
             responses=[
                 "Conceito",
-                "true",
                 "Resumo completo.",
-                "true",
                 "Texto curto demais.",  # 3 words -> fails min_words heuristic
                 _SAMPLE_VALID_SYNTHESIS,  # Valid size
-                "true",  # Judge confirms
             ]
         )
         prompt_provider = JsonPromptProvider()
@@ -559,11 +553,9 @@ class TestIndexRawTranscriptsUseCase:
 
         assert entry is not None
         assert entry.synthesis == _SAMPLE_VALID_SYNTHESIS
-        # 1 concepts + 1 judge + 1 summary + 1 judge + 1 short_syn (no judge!) + 1 retry_syn + 1 judge = 7 calls
-        assert len(llm.call_history) == 7
-        assert llm.call_history[4]["trace_id"] == "vidsize123_synthesis"
-        assert llm.call_history[5]["trace_id"] == "vidsize123_synthesis_retry_1"
-        assert llm.call_history[6]["trace_id"] == "vidsize123_synthesis_judge_retry_1"
+        assert len(llm.call_history) == 4
+        assert llm.call_history[2]["trace_id"] == "vidsize123_synthesis"
+        assert llm.call_history[3]["trace_id"] == "vidsize123_synthesis_retry_1"
 
     def test_infinite_retry_loop_when_max_rewrites_is_zero(self) -> None:
         """Verify that max_rewrites=0 allows unconstrained retries without aborting early."""
@@ -571,21 +563,38 @@ class TestIndexRawTranscriptsUseCase:
         llm = MockLLMAdapter(
             responses=[
                 "Conceito Central",
-                "true",
                 "Resumo inicial.",
-                "true",
                 _SAMPLE_VALID_SYNTHESIS,
-                "false",  # Attempt 0 fails judge
                 _SAMPLE_VALID_SYNTHESIS,
-                "false",  # Attempt 1 fails judge
                 _SAMPLE_VALID_SYNTHESIS,
-                "false",  # Attempt 2 fails judge
                 _SAMPLE_VALID_SYNTHESIS,
-                "false",  # Attempt 3 fails judge (> 3 attempts!)
                 _SAMPLE_VALID_SYNTHESIS,
-                "true",  # Attempt 4 succeeds
             ]
         )
+        pass_eval = JudgeEvaluation(
+            target_stage="raw_index",
+            passed=True,
+            overall_score=0.95,
+            criteria_scores=(),
+            provider="test",
+        )
+        fail_eval = JudgeEvaluation(
+            target_stage="raw_index",
+            passed=False,
+            overall_score=0.3,
+            criteria_scores=(),
+            provider="test",
+        )
+        mock_judge = MagicMock(spec=LlmJudgePort)
+        mock_judge.evaluate.side_effect = [
+            pass_eval,
+            pass_eval,
+            fail_eval,
+            fail_eval,
+            fail_eval,
+            fail_eval,
+            pass_eval,
+        ]
         prompt_provider = JsonPromptProvider()
 
         use_case = IndexRawTranscriptsUseCase(
@@ -593,6 +602,7 @@ class TestIndexRawTranscriptsUseCase:
             llm_indexing_port=llm,
             prompt_provider=prompt_provider,
             max_rewrites=0,  # Unbounded / infinite loop mode
+            llm_judge_port=mock_judge,
         )
 
         transcript = StageTranscript(
@@ -611,10 +621,13 @@ class TestIndexRawTranscriptsUseCase:
 
         assert entry is not None
         assert entry.key_concept == "Conceito Central"
-        # 1 concepts + 1 judge + 1 summary + 1 judge + 5 synthesis calls + 5 judge calls = 14 calls
-        assert len(llm.call_history) == 14
-        assert llm.call_history[-2]["trace_id"] == "vidinfinite_synthesis_retry_4"
-        assert llm.call_history[-1]["trace_id"] == "vidinfinite_synthesis_judge_retry_4"
+        assert len(llm.call_history) == 7
+        assert mock_judge.evaluate.call_count == 7
+        assert llm.call_history[-1]["trace_id"] == "vidinfinite_synthesis_retry_4"
+        assert (
+            mock_judge.evaluate.call_args_list[-1][0][0].trace_id
+            == "vidinfinite_synthesis_judge_retry_4"
+        )
 
     def test_is_valid_synthesis_paragraph_heuristic(self) -> None:
         """Verify the standalone synthesis paragraph heuristic function."""
@@ -643,16 +656,13 @@ class TestIndexRawTranscriptsUseCase:
         assert is_valid_synthesis_paragraph(_SAMPLE_VALID_SYNTHESIS)
 
     def test_index_single_transcript_passes_configured_temperature(self) -> None:
-        """Verify that configured temperature is passed to generative transformations and 0.0 to judges."""
+        """Verify that configured temperature is passed to generative transformations."""
         vault = InMemoryVaultAdapter()
         mock_llm = MagicMock()
         mock_llm.transform.side_effect = [
             "Conceito",
-            "true",
             "Resumo explicativo.",
-            "true",
             _SAMPLE_VALID_SYNTHESIS,
-            "true",
         ]
         prompt_provider = JsonPromptProvider()
 
@@ -677,34 +687,11 @@ class TestIndexRawTranscriptsUseCase:
         entry = use_case.execute(transcript)
 
         assert entry is not None
-        assert mock_llm.transform.call_count == 6
+        assert mock_llm.transform.call_count == 3
         calls = mock_llm.transform.call_args_list
-        # Generative passes use configured temperature (0.35): Pass 1 concepts, Pass 2 summary, Pass 3 synthesis
         assert calls[0][1]["temperature"] == 0.35
+        assert calls[1][1]["temperature"] == 0.35
         assert calls[2][1]["temperature"] == 0.35
-        assert calls[4][1]["temperature"] == 0.35
-        # Judge passes use deterministic temperature (0.0): Pass 1 concepts judge, Pass 2 summary judge, Pass 3 synthesis judge
-        assert calls[1][1]["temperature"] == 0.0
-        assert calls[3][1]["temperature"] == 0.0
-        assert calls[5][1]["temperature"] == 0.0
-
-    def test_parse_judge_boolean_edge_cases(self) -> None:
-        """Verify deterministic parsing of judge true/false outputs."""
-        assert parse_judge_boolean("true") is True
-        assert parse_judge_boolean("True") is True
-        assert parse_judge_boolean("TRUE.") is True
-        assert parse_judge_boolean("true\n") is True
-        assert parse_judge_boolean("```\ntrue\n```") is True
-        assert parse_judge_boolean("```json\ntrue\n```") is True
-        assert parse_judge_boolean("true - compliant with all guidelines") is True
-
-        assert parse_judge_boolean("false") is False
-        assert parse_judge_boolean("False") is False
-        assert parse_judge_boolean("FALSE.") is False
-        assert parse_judge_boolean("```\nfalse\n```") is False
-        assert parse_judge_boolean("") is False
-        assert parse_judge_boolean("unclear") is False
-        assert parse_judge_boolean("no") is False
 
     def test_distiller_delegates_to_llm_judge_port_when_provided(self) -> None:
         """Verify LLMTranscriptDistiller delegates 100% to LlmJudgePort when injected (ADR-029)."""
@@ -813,11 +800,8 @@ class TestIndexRawTranscriptsUseCase:
         llm = MockLLMAdapter(
             responses=[
                 "Concept",
-                "true",
                 "Summary.",
-                "true",
                 _SAMPLE_VALID_SYNTHESIS,
-                "true",
             ]
         )
         prompt_provider = JsonPromptProvider()
@@ -839,7 +823,7 @@ class TestIndexRawTranscriptsUseCase:
         entry = use_case.execute(transcript)
         assert entry is not None
         assert entry.title == "vid_notitle_99"
-        assert entry.excerpt == "L"
+        assert "Long body" not in llm.call_history[0]["prompt"].messages[-1].content
 
     def test_execute_forwards_all_arguments_to_distiller(self) -> None:
         """Verify execute forwards all VOs, metadata, and user identity to distiller."""
@@ -872,7 +856,6 @@ class TestIndexRawTranscriptsUseCase:
         entry = use_case.execute(transcript, user=user)
         assert entry is not None
         assert entry.key_concept == "Concept Alpha"
-        assert entry.summary == "Summary Beta"
         assert entry.synthesis == "Synthesis Gamma"
 
         mock_distiller.extract_concepts.assert_called_once_with(
@@ -907,17 +890,11 @@ class TestIndexRawTranscriptsUseCase:
         llm = MockLLMAdapter(
             responses=[
                 "Concept",
-                "true",
                 "Summary.",
-                "true",
                 _SAMPLE_VALID_SYNTHESIS,
-                "true",
                 "Concept",
-                "true",
                 "Summary.",
-                "true",
                 _SAMPLE_VALID_SYNTHESIS,
-                "true",
             ]
         )
 

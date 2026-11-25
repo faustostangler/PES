@@ -17,9 +17,9 @@ from cresmo.infrastructure.system import get_process_rss_bytes
 class SystemProcessRuntimeAdapter(ProcessRuntimePort):
     """Concrete ProcessRuntimePort adapter wrapping gc, OS RSS telemetry, and filesystem stat."""
 
-    def collect_garbage(self) -> int:
-        """Execute full generational garbage collection and return collected object count."""
-        return gc.collect()
+    def collect_garbage(self) -> None:
+        """Execute full generational garbage collection."""
+        gc.collect()
 
     def get_process_rss_bytes(self) -> float:
         """Return current resident set size in bytes via host OS bindings."""

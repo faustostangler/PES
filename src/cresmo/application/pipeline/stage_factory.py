@@ -1,35 +1,29 @@
-"""Factory for pipeline StageConfigs conforming to ADR-031."""
+"""Factory for pipeline StageConfigs conforming to ADR-031 and ADR-077."""
 
 from __future__ import annotations
 
-from collections.abc import Callable, Sequence
-from typing import Any, TypeVar
+from dataclasses import replace
+from typing import Any, cast
 
 from cresmo.application.pipeline.stage_descriptor import StageConfig
 from cresmo.application.ports import TextEmbeddingPort
 from cresmo.application.services.hybrid_saturation import HybridSaturationEvaluator
-from cresmo.domain.stage_registry import StageDefinition, StageName, StageRegistry
+from cresmo.domain.stage_registry import StageName, StageRegistry
 from cresmo.domain.value_objects import (
     CandidateText,
     ConvergenceMode,
-    JudgeCriterion,
-    PromptKey,
     SaturationPolicy,
     StageEvaluationSpec,
     StageExecutionPolicy,
     never_saturate,
 )
 
-TSource = TypeVar("TSource")
-TOutput = TypeVar("TOutput")
-
 
 class StageFactory:
-    """Polyvalent Factory creating standardized StageConfigs from declarative domain specs.
+    """Factory creating standardized StageConfigs from declarative domain specs.
 
     Maintains single source of truth for prompts, quality criteria, post-processors,
-    and stage execution tunables across pipeline stages (ADR-031, ADR-074).
-    Delegates domain metadata resolution to StageRegistry.
+    and stage execution tunables across pipeline stages (ADR-031, ADR-074, ADR-077).
     """
 
     def __init__(
@@ -41,167 +35,66 @@ class StageFactory:
         self._embedding_port = embedding_port
         self._cache: dict[str, StageConfig[Any, Any]] = {}
 
-    def build_stage(
+    def build_stage[TSource, TOutput](
         self,
-        stage_name: str,
+        stage_name: StageName | str,
         *,
-        transform_prompt_key: PromptKey | None = None,
-        required_criteria: Sequence[JudgeCriterion] | None = None,
-        post_processor: Callable[[CandidateText, TSource], TOutput] | None = None,
-        judge_prompt_key: PromptKey | None = None,
-        candidate_extractor: Callable[[Any], str] | None = None,
-        source_extractor: Callable[[TSource], str] | None = None,
-        temperature: float | None = None,
-        max_attempts: int | None = None,
-        blocking: bool | None = None,
-        eval_spec: StageEvaluationSpec | None = None,
-        eval_metadata: dict[str, Any] | None = None,
         max_passes: int | None = None,
-        saturation_policy: SaturationPolicy | None = None,
     ) -> StageConfig[TSource, TOutput]:
-        """Build or retrieve a standardized StageConfig for any pipeline stage.
+        """Build or retrieve a standardized StageConfig for a registered pipeline stage."""
+        canonical_name = str(stage_name)
+        base_config = self._cache.get(canonical_name)
+        if base_config is None:
+            stage_definition = StageRegistry.get(canonical_name)
+            if stage_definition.transform_prompt_key is None:
+                raise ValueError(
+                    f"Stage '{canonical_name}' is missing transform_prompt_key in StageRegistry."
+                )
 
-        Resolves stage metadata from the declarative StageRegistry catalog, applies
-        convention-over-configuration for prompts/extractors, and binds centralized
-        settings with optional call-site overrides.
-        """
-        has_overrides = any(
-            v is not None
-            for v in (
-                transform_prompt_key,
-                required_criteria,
-                post_processor,
-                judge_prompt_key,
-                candidate_extractor,
-                source_extractor,
-                temperature,
-                max_attempts,
-                blocking,
-                eval_spec,
-                eval_metadata,
-                max_passes,
-                saturation_policy,
-            )
-        )
-
-        if not has_overrides and stage_name in self._cache:
-            return self._cache[stage_name]
-
-        stage_definition: StageDefinition | None = (
-            StageRegistry.get(stage_name) if StageRegistry.contains(stage_name) else None
-        )
-
-        # 1. Resolve transform prompt key (explicit -> stage_definition -> convention: PromptKey(stage_name))
-        if transform_prompt_key is None:
-            if stage_definition and stage_definition.transform_prompt_key is not None:
-                transform_prompt_key = stage_definition.transform_prompt_key
-            else:
-                try:
-                    transform_prompt_key = PromptKey(stage_name)
-                except ValueError as err:
-                    raise ValueError(
-                        f"Unknown stage '{stage_name}' with no transform_prompt_key provided."
-                    ) from err
-
-        # 2. Resolve post processor
-        if post_processor is None and stage_definition:
-            post_processor = stage_definition.post_processor
-
-        # 3. Resolve tunables from domain policy with call-site overrides
-        if temperature is None:
-            temperature = self.policy.synthesis_temperature
-        if max_attempts is None:
             max_attempts = self.policy.judge_max_attempts
-        if blocking is None:
             blocking = self.policy.judge_blocking
 
-        # 4. Resolve quality evaluation spec (StageEvaluationSpec)
-        if eval_spec is None:
-            resolved_criteria = (
-                tuple(required_criteria)
-                if required_criteria is not None
-                else (stage_definition.required_criteria if stage_definition else ())
-            )
-            resolved_candidate_extractor = (
-                candidate_extractor
-                if candidate_extractor is not None
-                else (
-                    stage_definition.candidate_extractor
-                    if stage_definition and stage_definition.candidate_extractor is not None
-                    else (lambda res: res.text if isinstance(res, CandidateText) else str(res))
-                )
-            )
-            resolved_source_extractor = (
-                source_extractor
-                if source_extractor is not None
-                else (stage_definition.source_extractor if stage_definition else None)
-            )
-            resolved_eval_metadata = (
-                eval_metadata
-                if eval_metadata is not None
-                else (stage_definition.eval_metadata if stage_definition else {})
-            )
-
-            if resolved_criteria or candidate_extractor is not None or source_extractor is not None:
+            eval_spec: StageEvaluationSpec | None = None
+            if stage_definition.required_criteria:
                 eval_spec = StageEvaluationSpec(
-                    candidate_extractor=resolved_candidate_extractor,
-                    required_criteria=resolved_criteria,
+                    candidate_extractor=lambda res: (
+                        res.text if isinstance(res, CandidateText) else str(res)
+                    ),
+                    required_criteria=stage_definition.required_criteria,
                     max_attempts=max_attempts,
-                    source_extractor=resolved_source_extractor,
-                    metadata=resolved_eval_metadata,
+                    metadata=dict(stage_definition.eval_metadata),
                 )
 
-        # 5. Resolve judge prompt key
-        if judge_prompt_key is None and stage_definition:
-            judge_prompt_key = stage_definition.judge_prompt_key
-
-        # 6. Resolve multi-pass and saturation policy tunables
-        if max_passes is None:
-            if stage_name == StageName.LONG_EXPANDER:
-                max_passes = self.policy.long_expander_max_passes
-            elif (
-                stage_definition is not None
-                and stage_definition.convergence_mode == ConvergenceMode.HYBRID_SEMANTIC
-            ):
-                max_passes = self.policy.expansion_max_passes
-            else:
-                max_passes = (
-                    stage_definition.max_passes
-                    if stage_definition and stage_definition.max_passes > 1
-                    else 1
-                )
-
-        resolved_saturation_policy: SaturationPolicy
-        if saturation_policy is not None:
-            resolved_saturation_policy = saturation_policy
-        elif (
-            stage_definition is not None
-            and stage_definition.convergence_mode == ConvergenceMode.HYBRID_SEMANTIC
-        ):
-            resolved_saturation_policy = HybridSaturationEvaluator(
-                embedding_port=self._embedding_port,
-                thresholds=self.policy.saturation_thresholds,
+            default_max_passes = self.policy.resolve_max_passes(
+                canonical_name,
+                stage_definition.convergence_mode,
             )
-        else:
-            resolved_saturation_policy = never_saturate
 
-        stage_config = StageConfig[TSource, TOutput](
-            stage_name=stage_name,
-            transform_prompt_key=transform_prompt_key,
-            judge_prompt_key=judge_prompt_key,
-            eval_spec=eval_spec,
-            post_processor=post_processor,
-            temperature=temperature,
-            max_attempts=max_attempts,
-            blocking=blocking,
-            max_passes=max_passes,
-            saturation_policy=resolved_saturation_policy,
-        )
+            saturation_policy: SaturationPolicy = (
+                HybridSaturationEvaluator(
+                    embedding_port=self._embedding_port,
+                    thresholds=self.policy.saturation_thresholds,
+                )
+                if stage_definition.convergence_mode == ConvergenceMode.HYBRID_SEMANTIC
+                else never_saturate
+            )
 
-        if not has_overrides:
-            self._cache[stage_name] = stage_config
+            base_config = StageConfig[Any, Any](
+                stage_name=canonical_name,
+                transform_prompt_key=stage_definition.transform_prompt_key,
+                judge_prompt_key=stage_definition.judge_prompt_key,
+                eval_spec=eval_spec,
+                post_processor=stage_definition.post_processor,
+                max_attempts=max_attempts,
+                blocking=blocking,
+                max_passes=default_max_passes,
+                saturation_policy=saturation_policy,
+            )
+            self._cache[canonical_name] = base_config
 
-        return stage_config
+        if max_passes is not None:
+            return cast(StageConfig[TSource, TOutput], replace(base_config, max_passes=max_passes))
+        return cast(StageConfig[TSource, TOutput], base_config)
 
 
 __all__ = ["StageFactory"]

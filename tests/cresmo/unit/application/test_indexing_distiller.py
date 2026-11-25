@@ -152,12 +152,11 @@ class TestLLMTranscriptDistillerExtractConcepts:
         assert llm.calls[1]["user_id"] == "usr_123"
         assert len(judge.evaluated_contexts) == 2
 
-    def test_extract_concepts_transitional_prompt_provider_judge_fallback(self) -> None:
-        # Without llm_judge_port, uses prompt_provider judge prompt
+    def test_extract_concepts_without_judge_port_accepts_structurally_valid_output(self) -> None:
+        # Without llm_judge_port, structurally valid concepts pass directly with no transitional boolean judge call
         llm = DummyTransformationPort(
             responses=[
                 "Valid Concept Line",
-                "true",  # Judge boolean verdict
             ]
         )
         prompts = DummyPromptProvider()
@@ -177,9 +176,7 @@ class TestLLMTranscriptDistillerExtractConcepts:
         )
 
         assert res == "Valid Concept Line"
-        assert len(llm.calls) == 2
-        # Second call is the judge prompt with temperature 0.0
-        assert llm.calls[1]["temperature"] == 0.0
+        assert len(llm.calls) == 1
 
     def test_extract_concepts_exhausted_retries_returns_cleaned_or_fallback(self) -> None:
         llm = DummyTransformationPort(responses=["", "", ""])
@@ -227,22 +224,21 @@ class TestLLMTranscriptDistillerExtractSummary:
         assert len(llm.calls) == 1
         assert llm.calls[0]["trace_id"] == "dQw4w9WgXcQ_summary"
 
-    def test_extract_summary_retry_and_transitional_fallback(self) -> None:
+    def test_extract_summary_retry_with_judge_port(self) -> None:
         llm = DummyTransformationPort(
             responses=[
                 "First summary attempt",
-                "false",  # Judge rejected
                 "Second summary attempt",
-                "true",  # Judge passed
             ]
         )
         prompts = DummyPromptProvider()
+        judge = DummyJudgePort(verdicts=[False, True])
 
         distiller = LLMTranscriptDistiller(
             llm_indexing_port=llm,
             prompt_provider=prompts,
             max_rewrites=2,
-            llm_judge_port=None,
+            llm_judge_port=judge,
         )
 
         summary = distiller.extract_summary(
@@ -253,7 +249,8 @@ class TestLLMTranscriptDistillerExtractSummary:
         )
 
         assert summary == "Second summary attempt"
-        assert len(llm.calls) == 4
+        assert len(llm.calls) == 2
+        assert len(judge.evaluated_contexts) == 2
 
     def test_extract_summary_exhausted_retries_falls_back_to_title(self) -> None:
         llm = DummyTransformationPort(responses=["", ""])

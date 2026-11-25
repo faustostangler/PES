@@ -144,9 +144,18 @@ class TestTargetMatchingFunctions:
         assert matches_channel_target(criteria, "other_chan") is False
 
     def test_matches_category_target(self) -> None:
+        from unittest.mock import MagicMock
+
+        mock_taxonomy = MagicMock()
+        mock_taxonomy.classify.return_value = ("science", "volatile")
         criteria = SyncFilterCriteria(categories=("volatile",))
-        assert matches_category_target(criteria, "pes_chan") is True
-        assert matches_category_target(criteria, "https://youtube.com/@pes_chan") is True
+        assert matches_category_target(criteria, "pes_chan", taxonomy_port=mock_taxonomy) is True
+        assert (
+            matches_category_target(
+                criteria, "https://youtube.com/@pes_chan", taxonomy_port=mock_taxonomy
+            )
+            is True
+        )
 
     def test_matches_video_target_variations(self) -> None:
         criteria = SyncFilterCriteria(video_ids=("dQw4w9WgXcQ",))

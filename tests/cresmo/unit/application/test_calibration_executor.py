@@ -17,7 +17,6 @@ import pytest
 from cresmo.application.evals.executor import (
     CalibrationEvent,
     CalibrationEventKind,
-    CooldownActiveError,
     evaluate_single_item,
     extract_cooldown_seconds,
     is_transient_retryable_error,
@@ -191,7 +190,7 @@ class TestCalibrationExecutor:
         checkpoint.record_cooldown("fluid_prose", "gemini", "m1", 2500.0)
         judge = MagicMock(spec=LlmJudgePort)
 
-        with pytest.raises(CooldownActiveError) as exc_info:
+        with pytest.raises(QuotaPoolExhaustedError) as exc_info:
             run_stage_calibration(
                 judge=judge,
                 spec=spec,
@@ -208,7 +207,7 @@ class TestCalibrationExecutor:
         judge.evaluate.assert_not_called()
 
         checkpoint.record_cooldown("fluid_prose", "gemini", "m_sub", 2000.4)
-        with pytest.raises(CooldownActiveError) as sub_sec_exc:
+        with pytest.raises(QuotaPoolExhaustedError) as sub_sec_exc:
             run_stage_calibration(
                 judge=judge,
                 spec=spec,

@@ -112,7 +112,7 @@ class PipelineSettings(BaseModel):
         default=DEFAULT_LANGUAGE,
         description="Target generation language for synthesis, compendiums, and conceptual indexing.",
     )
-    batch_size: int = Field(
+    batch_size: int = Field(  # Consumed by SynthesizeAtomicBatchUseCase (re-wired post-refactor)
         default=5,
         ge=1,
         description="Batch size for Atomic Note synthesis.",

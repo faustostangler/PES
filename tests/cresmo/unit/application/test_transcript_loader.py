@@ -11,13 +11,13 @@ import pytest
 
 from cresmo.application.pipeline.transcript_loader import (
     _derive_content_id,
-    _extract_frontmatter,
     _resolve_metadata,
     ensure_transcript_saved,
     is_subpath,
     load_transcript_from_file,
 )
 from cresmo.application.ports import ChannelTaxonomyPort
+from cresmo.application.services.frontmatter import parse_frontmatter
 from cresmo.domain.entities import StageTranscript
 from cresmo.domain.exceptions import CresmoDomainError
 from cresmo.domain.value_objects import ChannelName, ContentId
@@ -106,7 +106,7 @@ class TestEnsureTranscriptSaved:
         file_path.write_text("content", encoding="utf-8")
 
         mock_vault = MagicMock()
-        mock_vault.raw_dir = vault_raw_dir
+        mock_vault.resolve_stage_dir.return_value = vault_raw_dir
         mock_transcript = MagicMock(spec=StageTranscript)
 
         ensure_transcript_saved(mock_vault, file_path, mock_transcript, target_dir=None)
@@ -122,7 +122,7 @@ class TestEnsureTranscriptSaved:
         file_path.write_text("content", encoding="utf-8")
 
         mock_vault = MagicMock()
-        mock_vault.raw_dir = vault_raw_dir
+        mock_vault.resolve_stage_dir.return_value = vault_raw_dir
         mock_transcript = MagicMock(spec=StageTranscript)
 
         ensure_transcript_saved(mock_vault, file_path, mock_transcript, target_dir=None)
@@ -176,37 +176,27 @@ class TestFrontmatterParsing:
 
     def test_raw_body_without_frontmatter(self) -> None:
         body = "Just plain text without headers."
-        parsed_body, meta = _extract_frontmatter(body, "sample.md")
+        parsed_body, meta = parse_frontmatter(body)
         assert parsed_body == body
         assert meta == {}
 
     def test_raw_body_with_unclosed_frontmatter(self) -> None:
         body = "---\ntitle: unclosed\nno end delimiter here"
-        parsed_body, meta = _extract_frontmatter(body, "sample.md")
+        parsed_body, meta = parse_frontmatter(body)
         assert parsed_body == body
         assert meta == {}
 
     def test_empty_frontmatter(self) -> None:
         body = "---\n\n---\nActual content"
-        parsed_body, meta = _extract_frontmatter(body, "sample.md")
+        parsed_body, meta = parse_frontmatter(body)
         assert parsed_body == "Actual content"
         assert meta == {}
 
-    def test_malformed_yaml_frontmatter_logs_debug_and_returns_empty(
-        self, caplog: pytest.LogCaptureFixture
-    ) -> None:
+    def test_malformed_yaml_frontmatter_returns_empty(self) -> None:
         body = "---\nkey: : [unbalanced yaml\n---\nActual content"
-        with caplog.at_level(logging.DEBUG):
-            parsed_body, meta = _extract_frontmatter(body, "malformed.md")
+        parsed_body, meta = parse_frontmatter(body)
         assert parsed_body == "Actual content"
         assert meta == {}
-        record = next(
-            r
-            for r in caplog.records
-            if r.levelno == logging.DEBUG and "malformed.md" in r.getMessage()
-        )
-        assert "[pipeline] Malformed YAML frontmatter in 'malformed.md'" in record.getMessage()
-        assert "retaining defaults" in record.getMessage()
 
 
 class TestMetadataResolution:
@@ -375,10 +365,10 @@ class TestLoadTranscriptFromFile:
         record = next(
             r
             for r in caplog.records
-            if r.levelno == logging.DEBUG and "bad_yaml.md" in r.getMessage()
+            if r.levelno == logging.DEBUG
+            and "Invalid YAML frontmatter ignored" in r.getMessage()
         )
-        assert "[pipeline] Malformed YAML frontmatter in 'bad_yaml.md'" in record.getMessage()
-        assert "retaining defaults" in record.getMessage()
+        assert record.name == "cresmo.application.services.frontmatter"
 
     def test_load_transcript_enforces_utf8_encoding(self, tmp_path: Path) -> None:
         file_path = tmp_path / "encoding_test.md"
@@ -406,14 +396,14 @@ class TestLoadTranscriptFromFile:
     def test_nonexistent_file_raises_error(self, tmp_path: Path) -> None:
         nonexistent = tmp_path / "nonexistent.md"
 
-        with pytest.raises(CresmoDomainError, match="Priority text file not found:"):
+        with pytest.raises(CresmoDomainError, match="Transcript file not found:"):
             load_transcript_from_file(nonexistent)
 
     def test_empty_file_raises_error(self, tmp_path: Path) -> None:
         empty_file = tmp_path / "empty.md"
         empty_file.write_text("   \n   \t \n", encoding="utf-8")
 
-        with pytest.raises(CresmoDomainError, match="Priority text file is empty:"):
+        with pytest.raises(CresmoDomainError, match="Transcript file is empty:"):
             load_transcript_from_file(empty_file)
 
 

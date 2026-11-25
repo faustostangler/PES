@@ -23,6 +23,7 @@ class FasterWhisperEngine:
         device: str = "auto",
         compute_type: str = "auto",
         vad_filter: bool = True,
+        model_name: str = "base",
     ) -> None:
         """Initialize FasterWhisperEngine without eagerly loading CTranslate2/faster-whisper.
 
@@ -31,11 +32,13 @@ class FasterWhisperEngine:
             device: Target inference device ('auto', 'cpu', or 'cuda').
             compute_type: CTranslate2 quantization/precision mode ('auto', 'int8', 'float16', etc.).
             vad_filter: Whether to enable Silero VAD filtering during transcription.
+            model_name: Default Whisper STT checkpoint name.
         """
         self._semaphore = threading.BoundedSemaphore(max(1, concurrency_limit))
         self._device = device
         self._compute_type = compute_type
         self._vad_filter = vad_filter
+        self._model_name = model_name
         self._cache_lock = threading.Lock()
         self._model_cache: dict[tuple[str, str, str], Any] = {}
 
@@ -72,14 +75,15 @@ class FasterWhisperEngine:
             self._model_cache[cache_key] = model
             return model
 
-    def transcribe(self, audio_path: Path, model_name: str) -> str:
+    def transcribe(self, audio_path: Path, model_name: str | None = None) -> str:
         """Transcribe an audio file using a cached WhisperModel under semaphore control."""
+        effective_model = model_name or self._model_name
         try:
             with self._semaphore:
                 resolved_device = self.resolve_device()
                 resolved_compute_type = self.resolve_compute_type(resolved_device)
                 model = self._get_or_load_model(
-                    model_name=model_name,
+                    model_name=effective_model,
                     device=resolved_device,
                     compute_type=resolved_compute_type,
                 )

@@ -7,7 +7,7 @@ Orchestrates the cognitive synthesis pipeline per ADR-007 (Template Method), ADR
 - Holistic Inventory Discovery (DiscoverAtomicInventoryUseCase)  # FUTURE / DEFERRED
 - Batched Atomic Synthesis (SynthesizeAtomicBatchUseCase)  # FUTURE / DEFERRED
 - Map of Content Reconciliation (ReconcileMOCsUseCase)  # FUTURE / DEFERRED
-- Duplicate Unification & Entity Resolution (UnifyDuplicateNotesUseCase)
+- Duplicate Unification & Entity Resolution (UnifyDuplicateNotesUseCase)  # FUTURE / DEFERRED
 
 Conforms to:
 - ADR-001: Cresmo Modular Monolith Strangling
@@ -36,13 +36,10 @@ from cresmo.application.ports import (
     PIPELINE_TRACE_NAME,
     ChannelTaxonomyPort,
     LedgerRepositoryPort,
-    LLMTransformationPort,
     MediaIngestionPort,
     MetricName,
     MetricsPort,
     NoOpChannelTaxonomyPort,
-    NoOpMetricsPort,
-    NoOpTelemetryPort,
     SessionTelemetrySpec,
     TelemetryPort,
     VaultRepositoryPort,
@@ -61,7 +58,6 @@ from cresmo.domain.value_objects import (
     ConvergenceMode,
     LedgerEntry,
     PipelineStatus,
-    StageExecutionPolicy,
     is_processable_transcript_file,
 )
 
@@ -89,12 +85,9 @@ class CresmoPipeline:
         stage_runner: PipelineStageRunner,
         *,
         ledger_port: LedgerRepositoryPort | None = None,
-        stage_policy: StageExecutionPolicy | None = None,
         telemetry_port: TelemetryPort | None = None,
         metrics_port: MetricsPort | None = None,
-        llm_indexing_port: LLMTransformationPort | None = None,
         taxonomy_port: ChannelTaxonomyPort | None = None,
-        whisper_model: str = "base",
     ) -> None:
         self.media_ingestion_port = media_ingestion_port
 
@@ -106,32 +99,21 @@ class CresmoPipeline:
         self.stage_runner = stage_runner
         self.ledger_port = ledger_port
         self.taxonomy_port: ChannelTaxonomyPort = taxonomy_port or NoOpChannelTaxonomyPort()
-        self.stage_policy: StageExecutionPolicy = stage_policy or StageExecutionPolicy()
-        self.telemetry_port: TelemetryPort = (
-            telemetry_port
-            or getattr(stage_runner, "telemetry_port", None)
-            or NoOpTelemetryPort()
-        )
-        self.metrics_port: MetricsPort = (
-            metrics_port or getattr(stage_runner, "metrics_port", None) or NoOpMetricsPort()
-        )
-        self.llm_indexing_port = llm_indexing_port or getattr(
-            self.stage_runner, "llm_transformation_port", None
-        )
+        self.telemetry_port: TelemetryPort = telemetry_port or stage_runner.telemetry_port
+        self.metrics_port: MetricsPort = metrics_port or stage_runner.metrics_port
+        self._warmup_dispatched: bool = False
 
         self.ingest_raw_transcript = IngestRawTranscriptUseCase(
             ingestion_port=self.media_ingestion_port,
             vault_port=self.vault_port,
-            default_whisper_model=whisper_model,
         )
 
-    def warmup(self, timeout_seconds: float | None = None) -> None:
-        """Asynchronously trigger warmup across pipeline LLM ports."""
-        if self.llm_indexing_port is not None:
-            self.llm_indexing_port.warmup(timeout_seconds=timeout_seconds)
-        runner_llm_port = getattr(self.stage_runner, "llm_transformation_port", None)
-        if runner_llm_port is not None and runner_llm_port is not self.llm_indexing_port:
-            self.stage_runner.warmup(timeout_seconds=timeout_seconds)
+    def warmup(self) -> None:
+        """Idempotently trigger background warmup across pipeline LLM ports once per instance."""
+        if self._warmup_dispatched:
+            return
+        self._warmup_dispatched = True
+        self.stage_runner.warmup()
 
     def execute(
         self,
@@ -262,29 +244,22 @@ class CresmoPipeline:
                 # their domain VOs conform to StageTranscript (ADR-054).
 
                 synthesized_text = ""
+                resolved_title = ""
                 for step in reversed(CONVEYOR_STAGES):
                     step_artifact = stage_artifacts.get(step)
-                    candidate_text = (
-                        step_artifact.content.text
-                        if isinstance(step_artifact, StageTranscript)
-                        else ""
-                    )
-                    if candidate_text:
-                        synthesized_text = candidate_text
-                        break
+                    if isinstance(step_artifact, StageTranscript):
+                        if not synthesized_text and step_artifact.content.text:
+                            synthesized_text = step_artifact.content.text
+                        if not resolved_title and step_artifact.content.title:
+                            resolved_title = step_artifact.content.title
+                        if synthesized_text and resolved_title:
+                            break
+                if not resolved_title:
+                    resolved_title = str(content.title or "")
+
                 raw_word_count = len(raw_text.split())
                 synthesized_word_count = len(synthesized_text.split())
                 expansion_ratio = round(synthesized_word_count / max(raw_word_count, 1), 3)
-
-                resolved_title = ""
-                for step in reversed(CONVEYOR_STAGES):
-                    step_content = getattr(stage_artifacts.get(step), "content", None)
-                    step_title = getattr(step_content, "title", None)
-                    if step_title:
-                        resolved_title = str(step_title)
-                        break
-                if not resolved_title:
-                    resolved_title = str(content.title or "")
 
                 cache_hit_count = len(cached_stages)
                 cache_hit_ratio = round(cache_hit_count / max(len(CONVEYOR_STAGES), 1), 3)
@@ -348,7 +323,6 @@ class CresmoPipeline:
 
             return PipelineResult(
                 content_id=content.id,
-                success=True,
                 source_transcript=raw,
                 stage_artifacts=stage_artifacts,
                 final_transcript=final_artifact,
@@ -405,7 +379,6 @@ class CresmoPipeline:
                     loaded_artifacts[step] = cached
             return PipelineResult(
                 content_id=content_id,
-                success=True,
                 source_transcript=raw,
                 stage_artifacts=loaded_artifacts,
                 final_transcript=loaded_artifacts.get(CONVEYOR_STAGES[-1]),
@@ -422,7 +395,6 @@ class CresmoPipeline:
         batch_id: BatchId | str | None = None,
     ) -> PipelineResult:
         """Run the end-to-end synthesis pipeline for a single video source."""
-        self.warmup()
         raw = self.ingest_raw_transcript.execute(video_url=video_url)
         if raw is None:
             raise CresmoDomainError(f"Ingestion failed to retrieve transcript for: {video_url}")
@@ -449,7 +421,6 @@ class CresmoPipeline:
                 f"File '{file_path.name}' is an internal Cresmo artifact or system index "
                 "and cannot be processed as a transcript."
             )
-        self.warmup()
         raw = load_transcript_from_file(file_path, taxonomy_port=self.taxonomy_port)
         ensure_transcript_saved(
             self.vault_port,

@@ -92,7 +92,7 @@ class TestCresmoCLI:
     def test_cli_none_argv_defaults_to_sys_argv(self) -> None:
         mock_checker = MagicMock()
         mock_checker.check_all.return_value = PreflightResult(
-            is_healthy=True, errors=(), warnings=()
+            is_healthy=True, errors=()
         )
         mock_discover = MagicMock()
         mock_discover.execute.return_value = []
@@ -124,7 +124,7 @@ class TestCresmoCLI:
     def test_cli_run_without_args_runs_batch(self) -> None:
         mock_checker = MagicMock()
         mock_checker.check_all.return_value = PreflightResult(
-            is_healthy=True, errors=(), warnings=()
+            is_healthy=True, errors=()
         )
         mock_discover = MagicMock()
         mock_discover.execute.return_value = []
@@ -210,14 +210,11 @@ class TestCresmoCLI:
     def test_cli_run_success_returns_code_0(self) -> None:
         mock_checker = MagicMock()
         mock_checker.check_all.return_value = PreflightResult(
-            is_healthy=True, errors=(), warnings=()
+            is_healthy=True, errors=()
         )
         mock_pipeline = MagicMock()
         mock_pipeline.run_for_video.return_value = PipelineResult(
             content_id=ContentId("dQw4w9WgXcQ"),
-            success=True,
-            synthesized_notes=(),
-            reconciled_mocs=(),
         )
 
         with (
@@ -239,14 +236,11 @@ class TestCresmoCLI:
     def test_cli_run_with_flag_overrides(self) -> None:
         mock_checker = MagicMock()
         mock_checker.check_all.return_value = PreflightResult(
-            is_healthy=True, errors=(), warnings=()
+            is_healthy=True, errors=()
         )
         mock_pipeline = MagicMock()
         mock_pipeline.run_for_video.return_value = PipelineResult(
             content_id=ContentId("dQw4w9WgXcQ"),
-            success=True,
-            synthesized_notes=(),
-            reconciled_mocs=(),
         )
 
         with (
@@ -281,7 +275,7 @@ class TestCresmoCLI:
     def test_cli_run_dry_run_invokes_only_ingest(self) -> None:
         mock_checker = MagicMock()
         mock_checker.check_all.return_value = PreflightResult(
-            is_healthy=True, errors=(), warnings=()
+            is_healthy=True, errors=()
         )
         mock_pipeline = MagicMock()
         mock_raw = StageTranscript(
@@ -323,14 +317,11 @@ class TestCresmoCLI:
 
         mock_checker = MagicMock()
         mock_checker.check_all.return_value = PreflightResult(
-            is_healthy=True, errors=(), warnings=()
+            is_healthy=True, errors=()
         )
         mock_pipeline = MagicMock()
         mock_pipeline.run_for_video.return_value = PipelineResult(
             content_id=ContentId("video11111111"),
-            success=True,
-            synthesized_notes=(),
-            reconciled_mocs=(),
         )
 
         with (
@@ -354,7 +345,7 @@ class TestCresmoCLI:
 
         mock_checker = MagicMock()
         mock_checker.check_all.return_value = PreflightResult(
-            is_healthy=True, errors=(), warnings=()
+            is_healthy=True, errors=()
         )
         mock_pipeline = MagicMock()
         mock_raw = StageTranscript(
@@ -391,7 +382,7 @@ class TestCresmoCLI:
     def test_cli_maps_domain_validation_error_to_code_3(self) -> None:
         mock_checker = MagicMock()
         mock_checker.check_all.return_value = PreflightResult(
-            is_healthy=True, errors=(), warnings=()
+            is_healthy=True, errors=()
         )
         mock_pipeline = MagicMock()
         mock_pipeline.run_for_video.side_effect = DomainValidationError("Invalid domain entity")
@@ -408,7 +399,7 @@ class TestCresmoCLI:
     def test_cli_maps_rate_limit_error_to_code_4(self) -> None:
         mock_checker = MagicMock()
         mock_checker.check_all.return_value = PreflightResult(
-            is_healthy=True, errors=(), warnings=()
+            is_healthy=True, errors=()
         )
         mock_pipeline = MagicMock()
         mock_pipeline.run_for_video.side_effect = RateLimitExceededError(
@@ -427,7 +418,7 @@ class TestCresmoCLI:
     def test_cli_maps_ingestion_error_to_code_5(self) -> None:
         mock_checker = MagicMock()
         mock_checker.check_all.return_value = PreflightResult(
-            is_healthy=True, errors=(), warnings=()
+            is_healthy=True, errors=()
         )
         mock_pipeline = MagicMock()
         mock_pipeline.run_for_video.side_effect = IngestionNetworkError("Whisper failed")
@@ -444,7 +435,7 @@ class TestCresmoCLI:
     def test_cli_maps_unexpected_error_to_code_1(self) -> None:
         mock_checker = MagicMock()
         mock_checker.check_all.return_value = PreflightResult(
-            is_healthy=True, errors=(), warnings=()
+            is_healthy=True, errors=()
         )
         mock_pipeline = MagicMock()
         mock_pipeline.run_for_video.side_effect = RuntimeError("Fatal crash")
@@ -532,8 +523,6 @@ class TestCresmoCLI:
                     "14",
                     "--max-videos",
                     "20",
-                    "--batch-size",
-                    "7",
                     "--dry-run",
                     "--force-refresh",
                 ]
@@ -541,7 +530,7 @@ class TestCresmoCLI:
             assert exit_code == EXIT_SUCCESS
             mock_builder.assert_called_once()
             call_kwargs = mock_builder.call_args.kwargs
-            assert call_kwargs["batch_size_override"] == 7
+            assert "batch_size_override" not in call_kwargs
             assert isinstance(call_kwargs["settings"], CresmoSettings)
             mock_use_case.execute.assert_called_once_with(
                 query=ChannelFeedQuery(
@@ -633,7 +622,7 @@ class TestCresmoCLI:
     def test_cli_run_with_filter_criteria_propagated(self) -> None:
         mock_checker = MagicMock()
         mock_checker.check_all.return_value = PreflightResult(
-            is_healthy=True, errors=(), warnings=()
+            is_healthy=True, errors=()
         )
         mock_discover = MagicMock()
         mock_discover.execute.return_value = []
@@ -1311,7 +1300,7 @@ class TestCresmoCLI:
         runner = CliRunner()
         mock_checker = MagicMock()
         mock_checker.check_all.return_value = PreflightResult(
-            is_healthy=True, errors=(), warnings=()
+            is_healthy=True, errors=()
         )
         with (
             patch(
@@ -1334,7 +1323,7 @@ class TestCresmoCLI:
         runner = CliRunner()
         mock_checker = MagicMock()
         mock_checker.check_all.return_value = PreflightResult(
-            is_healthy=True, errors=(), warnings=()
+            is_healthy=True, errors=()
         )
         with (
             patch(
@@ -1357,7 +1346,7 @@ class TestCresmoCLI:
         runner = CliRunner()
         mock_checker = MagicMock()
         mock_checker.check_all.return_value = PreflightResult(
-            is_healthy=True, errors=(), warnings=()
+            is_healthy=True, errors=()
         )
         with (
             patch(
@@ -1396,7 +1385,7 @@ class TestCresmoCLI:
         runner = CliRunner()
         mock_checker = MagicMock()
         mock_checker.check_all.return_value = PreflightResult(
-            is_healthy=True, errors=(), warnings=()
+            is_healthy=True, errors=()
         )
         mock_pipeline = MagicMock()
         mock_discover = MagicMock()

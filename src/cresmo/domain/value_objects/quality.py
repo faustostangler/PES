@@ -81,7 +81,6 @@ class CriterionScore:
         criterion: The specific quality criterion being scored.
         score: Normalized quality score bounded in [0.0, 1.0].
         passed: Boolean verdict indicating compliance with stage threshold.
-        confidence: Optional calibrated probability confidence in [0.0, 1.0].
         reasoning: Succinct explanation of the score or failure rationale.
         improvement_suggestion: Optional actionable correction suggestion for closed-loop retries.
     """
@@ -89,7 +88,6 @@ class CriterionScore:
     criterion: JudgeCriterion
     score: float
     passed: bool
-    confidence: float | None = None
     reasoning: str = ""
     improvement_suggestion: str = ""
 
@@ -97,10 +95,6 @@ class CriterionScore:
         """Validate value object invariants."""
         if not (0.0 <= self.score <= 1.0):
             raise ValueError(f"Score must be between 0.0 and 1.0, got: {self.score}")
-        if self.confidence is not None and not (0.0 <= self.confidence <= 1.0):
-            raise ValueError(
-                f"Confidence must be between 0.0 and 1.0 if provided, got: {self.confidence}"
-            )
 
 
 DEFAULT_FLUID_PROSE_WEIGHTS: dict[JudgeCriterion, float] = {
@@ -289,14 +283,20 @@ class JudgeEvaluation:
         veto_criteria: frozenset[JudgeCriterion] | None = None,
     ) -> JudgeEvaluation:
         """Construct JudgeEvaluation with weighted average and mechanical veto resolution."""
-        resolved_weights, resolved_vetoes = resolve_stage_scoring_policy(target_stage)
+        if weights is None or veto_criteria is None:
+            resolved_weights, resolved_vetoes = resolve_stage_scoring_policy(target_stage)
+            effective_weights = weights if weights is not None else resolved_weights
+            effective_vetoes = veto_criteria if veto_criteria is not None else resolved_vetoes
+        else:
+            effective_weights = weights
+            effective_vetoes = veto_criteria
         scores_tuple = tuple(criteria_scores)
         overall_score, passed, is_vetoed, veto_reasons = compute_composite_verdict(
             criteria_scores=scores_tuple,
             pass_threshold=pass_threshold,
             veto_threshold=veto_threshold,
-            weights=weights if weights is not None else resolved_weights,
-            veto_criteria=veto_criteria if veto_criteria is not None else resolved_vetoes,
+            weights=effective_weights,
+            veto_criteria=effective_vetoes,
         )
         return cls(
             target_stage=target_stage,
@@ -346,6 +346,8 @@ class EvaluationContext:
         metadata: Domain and pipeline provenance metadata.
         trace_id: OpenTelemetry / Langfuse active trace ID.
         required_criteria: Criteria tuple that must be evaluated for this stage.
+        observation_id: Optional parent OpenTelemetry / Langfuse observation ID.
+        judge_prompt_key: Canonical PromptKey selecting the judge prompt template.
     """
 
     stage_name: str
@@ -360,37 +362,22 @@ class EvaluationContext:
 
 @dataclass(frozen=True, slots=True)
 class StageEvaluationSpec:
-    """Specification of quality evaluation criteria and extractors for a pipeline stage.
+    """Specification of quality evaluation criteria and candidate extractor for a pipeline stage.
 
     Attributes:
         candidate_extractor: Callable extracting candidate text from stage result.
         required_criteria: Tuple of JudgeCriterion required for this stage.
-        raw_text: Optional explicit source reference text. If empty, extracted via source_extractor.
         metadata: Optional stage metadata for evaluation tracking.
         max_attempts: Maximum generation attempts if evaluation fails (must be >= 1).
-        source_extractor: Optional callable extracting source reference text from stage input.
     """
 
     candidate_extractor: Callable[[Any], str] = field(
         default_factory=lambda: lambda result: str(result)
     )
     required_criteria: tuple[JudgeCriterion, ...] = ()
-    raw_text: str = ""
     metadata: dict[str, Any] = field(default_factory=dict)
     max_attempts: int = 1
-    source_extractor: Callable[[Any], str] | None = None
 
     def __post_init__(self) -> None:
         if self.max_attempts < 1:
             raise ValueError(f"max_attempts must be >= 1, got {self.max_attempts}")
-
-    def extract_source_text(self, source: Any) -> str:
-        """Extract source reference text from stage input or return explicit raw_text."""
-        if self.raw_text:
-            return self.raw_text
-        if self.source_extractor:
-            return self.source_extractor(source)
-        content = getattr(source, "content", None)
-        if content is not None and hasattr(content, "text"):
-            return str(content.text)
-        return str(source)

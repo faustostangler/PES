@@ -26,7 +26,6 @@ from cresmo.application.ports import (
     PromptProviderPort,
 )
 from cresmo.application.services.json_parser import extract_json_data
-from cresmo.application.use_cases.indexing.validators import parse_judge_boolean
 from cresmo.domain.entities import (
     PipelineSessionId,
     StageTranscript,
@@ -207,7 +206,6 @@ class DiscoverAtomicInventoryUseCase:
         if not is_valid_inventory_json_structure(candidate_data):
             return False
 
-        # Priority 1: Decoupled LlmJudgePort (ADR-029)
         if self.llm_judge_port is not None:
             context = EvaluationContext(
                 stage_name="atomic_inventory",
@@ -215,31 +213,14 @@ class DiscoverAtomicInventoryUseCase:
                 candidate_text=json.dumps(candidate_data),
                 metadata={
                     "title": compendium.content.title,
-                    "channel": compendium.channel.name,
+                    "channel_name": compendium.channel.name,
                 },
                 trace_id=judge_trace_id,
                 required_criteria=(JudgeCriterion.INVENTORY_COHERENCE,),
+                judge_prompt_key=PromptKey.JUDGE_ATOMIC_INVENTORY,
             )
             evaluation = self.llm_judge_port.evaluate(context)
             return evaluation.passed
-
-        # Priority 2: Transitional fallback when LlmJudgePort is not injected (ADR-010 / ADR-029)
-        if not isinstance(self.prompt_provider, NoOpPromptProviderPort):
-            judge_prompt = self.prompt_provider.get_prompt(
-                PromptKey.JUDGE_ATOMIC_INVENTORY,
-                content_title=compendium.content.title,
-                channel_name=compendium.channel.name,
-                compendium_body=compendium.content.text,
-                inventory_json=json.dumps(candidate_data),
-            )
-            judge_response = self.llm_synthesis_port.transform(
-                prompt=judge_prompt,
-                temperature=0.0,
-                trace_id=judge_trace_id,
-                session_id=session_id,
-                user_id=user_id,
-            )
-            return parse_judge_boolean(judge_response)
 
         return True
 

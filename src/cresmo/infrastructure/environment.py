@@ -11,7 +11,7 @@ Conforms to:
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any, Protocol, runtime_checkable
+from typing import Protocol, runtime_checkable
 
 from cresmo.domain.stage_registry import StageName
 
@@ -28,7 +28,7 @@ class StorageSettingsProtocol(Protocol):
 
     @property
     def data_dir(self) -> Path:
-        """Root directory for raw media lake, enriched compendiums, and ledger."""
+        """Root directory for staged media transcripts and processing ledger."""
         ...
 
     @property
@@ -42,21 +42,6 @@ class StorageSettingsProtocol(Protocol):
         ...
 
     @property
-    def raw_dir(self) -> Path:
-        """Directory for ingested raw media transcripts."""
-        ...
-
-    @property
-    def fluid_dir(self) -> Path:
-        """Directory for intermediate detranscribed fluid prose transcripts."""
-        ...
-
-    @property
-    def enriched_dir(self) -> Path:
-        """Directory for enriched multi-pass compendiums."""
-        ...
-
-    @property
     def master_dir(self) -> Path:
         """Directory for consolidated master compendiums per channel category."""
         ...
@@ -67,9 +52,7 @@ class StorageSettingsProtocol(Protocol):
         ...
 
 
-def ensure_runtime_directories(
-    storage: StorageSettingsProtocol | Any,  # Any allows lightweight mock settings in tests
-) -> None:
+def ensure_runtime_directories(storage: StorageSettingsProtocol) -> None:
     """Create all runtime storage directories idempotently in deterministic order.
 
     Args:
@@ -79,7 +62,6 @@ def ensure_runtime_directories(
         storage.data_dir,
         storage.vault_dir,
         storage.mocs_dir,
-        storage.enriched_dir,
         storage.master_dir,
         storage.priority_texts_dir,
         *(storage.data_dir / stage.value for stage in StageName),

@@ -35,11 +35,11 @@ class VaultRepositoryPort(ABC):
     """
 
     @abstractmethod
-    def resolve_stage_dir(self, stage_name: str | StageName) -> Path:
+    def resolve_stage_dir(self, stage_name: StageName) -> Path:
         """Resolve dynamic stage directory following canonical data/{stage} structure (ADR-058).
 
         Args:
-            stage_name: Unique pipeline stage identifier or enum.
+            stage_name: Canonical pipeline stage enum.
 
         Returns:
             Resolved filesystem Path to the stage data directory.
@@ -48,24 +48,24 @@ class VaultRepositoryPort(ABC):
 
     @abstractmethod
     def save_stage_transcript(
-        self, stage_name: str | StageName, transcript: StageTranscript
+        self, stage_name: StageName, transcript: StageTranscript
     ) -> None:
         """Persist stage transcript envelope atomically into stage directory (ADR-054, ADR-058, ADR-059).
 
         Args:
-            stage_name: Unique pipeline stage identifier or enum (e.g. 'raw', 'fluid_prose', 'gap_filler').
+            stage_name: Canonical pipeline stage enum (e.g. StageName.RAW, StageName.FLUID_PROSE).
             transcript: Validated StageTranscript domain aggregate.
         """
         raise NotImplementedError("Persist stage transcript atomically.")
 
     @abstractmethod
     def get_stage_transcript(
-        self, stage_name: str | StageName, content_id: ContentId
+        self, stage_name: StageName, content_id: ContentId
     ) -> StageTranscript | None:
         """Retrieve persisted stage transcript envelope by stage name and content ID (ADR-054, ADR-058, ADR-059).
 
         Args:
-            stage_name: Unique pipeline stage identifier or enum (e.g. 'raw', 'fluid_prose', 'gap_filler').
+            stage_name: Canonical pipeline stage enum (e.g. StageName.RAW, StageName.FLUID_PROSE).
             content_id: Target unique content identifier.
 
         Returns:
@@ -133,12 +133,12 @@ class VaultRepositoryPort(ABC):
 
     @abstractmethod
     def get_stage_files_for_channel(
-        self, stage_name: str | StageName, channel_name: ChannelName
+        self, stage_name: StageName, channel_name: ChannelName
     ) -> list[Path]:
         """Retrieve sorted list of all markdown file paths for a stage and channel.
 
         Args:
-            stage_name: Conveyor stage identifier (StageName enum or canonical string).
+            stage_name: Conveyor stage identifier enum.
             channel_name: Human-readable creator channel name.
 
         Returns:
@@ -216,7 +216,7 @@ class VaultRepositoryPort(ABC):
 class LedgerRepositoryPort(ABC):
     """Hexagonal Persistence Port for tracking processed content status and idempotency.
 
-    Conforms to ADR-001 and ADR-003. Employs transactional SQLite WAL storage to guarantee
+    Conforms to ADR-001 and ADR-003. Employs transactional idempotency storage to guarantee
     zero duplicate LLM calls and reproducible execution audits.
     """
 

@@ -18,7 +18,7 @@ from cresmo.domain.value_objects.media import PipelineStatus
 
 @dataclass(frozen=True)
 class LedgerEntry:
-    """Immutable transactional audit and idempotency record persisted in SQLite WAL.
+    """Immutable transactional audit and idempotency record persisted in the idempotency ledger.
 
     Attributes:
         content_id: Unique content identifier.
@@ -127,6 +127,7 @@ class RawIndexEntry:
         channel_name: Creator channel name (ChannelName Value Object).
         key_concept: Distilled 2-4 word concept descriptor.
         synthesis: Paratactic summary paragraph.
+        channel_category: Optional taxonomy category for the source channel.
     """
 
     video_id: ContentId
@@ -136,8 +137,6 @@ class RawIndexEntry:
     key_concept: str
     synthesis: str
     channel_category: str = ""
-    summary: str = ""
-    excerpt: str = ""
 
     def __post_init__(self) -> None:
         resolved_content_id = ContentId.from_string(self.video_id)
@@ -148,8 +147,6 @@ class RawIndexEntry:
         cleaned_key_concept = " ".join(self.key_concept.split())
         cleaned_synthesis = self.synthesis.strip()
         cleaned_channel_category = (self.channel_category or "").strip()
-        cleaned_summary = self.summary.strip()
-        cleaned_excerpt = self.excerpt.strip()
 
         if not cleaned_url:
             raise DomainValidationError("RawIndexEntry url cannot be empty.")
@@ -166,8 +163,6 @@ class RawIndexEntry:
         object.__setattr__(self, "key_concept", cleaned_key_concept)
         object.__setattr__(self, "synthesis", cleaned_synthesis)
         object.__setattr__(self, "channel_category", cleaned_channel_category)
-        object.__setattr__(self, "summary", cleaned_summary)
-        object.__setattr__(self, "excerpt", cleaned_excerpt)
 
     def to_markdown_block(self) -> str:
         """Format entry as a rich Markdown block with title link, ID, concept, and paratactic paragraph."""

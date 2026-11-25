@@ -389,6 +389,7 @@ def run_benchmark_for_model(
                 raw_text=sample.raw_text,
                 candidate_text=candidate_text,
                 required_criteria=CANONICAL_CRITERIA,
+                judge_prompt_key=PromptKey.JUDGE_FLUID_PROSE,
             )
             eval_result = judge_adapter.evaluate(context)
             t_judge_end = time.perf_counter()

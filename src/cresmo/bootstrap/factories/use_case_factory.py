@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 
-from cresmo.application.ports import MediaIngestionPort, VaultRepositoryPort
+from cresmo.application.ports import MediaIngestionPort, MetricsPort, VaultRepositoryPort
 from cresmo.application.use_cases.concat_master import ConcatMasterUseCase
 from cresmo.application.use_cases.discovery.discover_batch_sources import (
     DiscoverBatchSourcesUseCase,
@@ -27,13 +27,12 @@ from cresmo.bootstrap.factories.adapter_factory import (
     build_vault_adapter,
 )
 from cresmo.bootstrap.factories.judge_factory import build_llm_judge_adapter
-from cresmo.bootstrap.factories.settings_factory import resolve_shared_settings
 from cresmo.bootstrap.factories.telemetry_factory import (
     build_anonymizer_adapter,
     build_telemetry_adapter,
     resolve_langfuse_client,
 )
-from cresmo.infrastructure.config import CresmoSettings
+from cresmo.infrastructure.config import CresmoSettings, resolve_shared_settings
 
 
 def build_unify_duplicates_use_case(
@@ -49,10 +48,13 @@ def build_discover_batch_sources_use_case(
     settings: CresmoSettings | None = None,
     media_ingestion_port: MediaIngestionPort | None = None,
     progress_callback: Callable[[str], object] | None = None,
+    metrics_port: MetricsPort | None = None,
 ) -> DiscoverBatchSourcesUseCase:
     """Construct DiscoverBatchSourcesUseCase with domain DiscoveryPolicy and DiscoveryPaths."""
     resolved = resolve_shared_settings(settings)
-    media_ingestion_port = media_ingestion_port or build_media_ingestion_adapter(resolved)
+    media_ingestion_port = media_ingestion_port or build_media_ingestion_adapter(
+        resolved, metrics_port=metrics_port
+    )
     taxonomy_port = build_taxonomy_adapter(resolved.storage)
     storage = resolved.storage
     discovery_paths = DiscoveryPaths(
@@ -67,6 +69,7 @@ def build_discover_batch_sources_use_case(
         discovery_paths=discovery_paths,
         progress_callback=progress_callback,
         taxonomy_port=taxonomy_port,
+        metrics_port=metrics_port,
     )
 
 

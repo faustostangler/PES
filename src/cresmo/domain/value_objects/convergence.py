@@ -67,6 +67,9 @@ class SaturationThresholds:
         max_lexical_word_delta: Maximum relative word-count delta allowed for lexical short-circuit.
         semantic_similarity_threshold: Minimum cosine similarity to consider a unit semantically covered.
         max_novel_paragraphs_for_saturation: Maximum count of novel units tolerated while still saturated.
+        long_unit_word_cutoff: Word-count threshold above which a unit is sub-chunked into windows.
+        sliding_window_sentences: Number of sentences per overlapping sliding window.
+        sliding_window_overlap: Number of overlapping sentences between consecutive windows.
     """
 
     lexical_identity_threshold: float = 0.95

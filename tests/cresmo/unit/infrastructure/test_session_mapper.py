@@ -37,7 +37,7 @@ class TestSessionMapper:
     def test_build_session_span_attributes_full_parity_and_zero_duplication(self) -> None:
         spec = SessionTelemetrySpec(
             session_id=PipelineSessionId("UC_econ:vid_01"),
-            user_id=UserIdentity.identified(subject="fausto@cresmo.ai", provider="oauth"),
+            user_id=UserIdentity.worker(name="fausto_worker"),
             channel_tenant_id="channel:UC_econ",
             channel_id="UC_econ",
             channel_name="Economics",
@@ -51,7 +51,6 @@ class TestSessionMapper:
             batch_id="20261122_130000_abc123",
             video_url="https://youtube.com/watch?v=vid_01",
             publication_date="2024-05-20",
-            extra_metadata={"custom_tag": "gold", "channel_id": "ignored_canonical_shadow"},
         )
 
         attrs, tags, input_payload = build_session_span_attributes(
@@ -62,7 +61,7 @@ class TestSessionMapper:
 
         assert attrs["langfuse.observation.type"] == "span"
         assert attrs["langfuse.session.id"] == "UC_econ:vid_01"
-        assert attrs["langfuse.user.id"] == "user:oauth:fausto@cresmo.ai"
+        assert attrs["langfuse.user.id"] == "system:fausto_worker"
         assert attrs["langfuse.trace.name"] == PIPELINE_TRACE_NAME
         assert attrs["cresmo.pipeline.version"] == "cresmo:v0.1.0"
         assert attrs["cresmo.pipeline.git_sha"] == "abcdef12"
@@ -72,8 +71,8 @@ class TestSessionMapper:
         assert attrs["cresmo.content.title"] == "Pareto Elites"
         assert attrs["cresmo.tenant_id"] == "channel:UC_econ"
         assert attrs["cresmo.user.is_anonymous"] is False
-        assert attrs["cresmo.user.provider"] == "oauth"
-        assert attrs["cresmo.user.subject"] == "fausto@cresmo.ai"
+        assert attrs["cresmo.user.provider"] == "system"
+        assert attrs["cresmo.user.subject"] == "fausto_worker"
         assert attrs["cresmo.batch_id"] == "20261122_130000_abc123"
         assert attrs["cresmo.content.source"] == "transcript"
         assert attrs["cresmo.content.word_count"] == 75
@@ -81,14 +80,13 @@ class TestSessionMapper:
         assert attrs["cresmo.content.publication_date"] == "2024-05-20"
         assert attrs["cresmo.pipeline.expansion_max_passes"] == 3
         assert attrs["cresmo.pipeline.force_reprocess"] is True
-        assert attrs["cresmo.metadata.custom_tag"] == "gold"
-        assert "cresmo.metadata.channel_id" not in attrs
+        assert not any(k.startswith("cresmo.metadata.") for k in attrs)
         assert not any(k.startswith("langfuse.input.") for k in attrs)
 
         assert tags == [
             "Economics",
             "cresmo:v0.1.0",
-            "auth:oauth",
+            "auth:system",
             "git:abcdef12",
             "batch:20261122_130000_abc123",
         ]

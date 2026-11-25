@@ -44,26 +44,23 @@ from cresmo.infrastructure.adapters.obsidian.utils import (
 
 
 @pytest.fixture
-def storage_paths(tmp_path: Path) -> tuple[Path, Path, Path]:
-    """Fixture providing isolated temporary directories for vault, raw lake, and enriched compendiums."""
+def storage_paths(tmp_path: Path) -> tuple[Path, Path]:
+    """Fixture providing isolated temporary directories for vault and raw lake."""
     vault_dir = tmp_path / "vault"
     raw_dir = tmp_path / "data" / "raw"
-    enriched_dir = tmp_path / "data" / "enriched"
     vault_dir.mkdir(parents=True, exist_ok=True)
     raw_dir.mkdir(parents=True, exist_ok=True)
-    enriched_dir.mkdir(parents=True, exist_ok=True)
-    return vault_dir, raw_dir, enriched_dir
+    return vault_dir, raw_dir
 
 
 class TestObsidianVaultAdapter:
     """Hermetic unit tests for ObsidianVaultAdapter filesystem operations."""
 
-    def test_save_and_get_raw_transcript(self, storage_paths: tuple[Path, Path, Path]) -> None:
-        vault_dir, raw_dir, enriched_dir = storage_paths
+    def test_save_and_get_raw_transcript(self, storage_paths: tuple[Path, Path]) -> None:
+        vault_dir, raw_dir = storage_paths
         adapter = ObsidianVaultAdapter(
             vault_dir=vault_dir,
-            raw_dir=raw_dir,
-            enriched_dir=enriched_dir,
+            data_dir=raw_dir.parent,
         )
         cid = ContentId("dQw4w9WgXcQ")
         raw = StageTranscript(
@@ -87,41 +84,34 @@ class TestObsidianVaultAdapter:
         assert retrieved.channel.name == "Political Theory"
         assert retrieved.content.id == cid
 
-    def test_custom_injected_mocs_dir_and_index_path(
-        self, storage_paths: tuple[Path, Path, Path], tmp_path: Path
+    def test_default_derived_mocs_dir_and_index_path(
+        self, storage_paths: tuple[Path, Path]
     ) -> None:
-        vault_dir, raw_dir, enriched_dir = storage_paths
-        custom_mocs = tmp_path / "custom_mocs"
-        custom_index = tmp_path / "custom_catalog.json"
+        vault_dir, raw_dir = storage_paths
 
         adapter = ObsidianVaultAdapter(
             vault_dir=vault_dir,
-            raw_dir=raw_dir,
-            enriched_dir=enriched_dir,
-            mocs_dir=custom_mocs,
-            index_path=custom_index,
+            data_dir=raw_dir.parent,
         )
 
-        assert adapter.mocs_dir == custom_mocs.resolve()
-        assert adapter.index_path == custom_index.resolve()
+        assert adapter.mocs_dir == (vault_dir / "MOCs").resolve()
+        assert adapter.index_path == (vault_dir / "_index.json").resolve()
 
     def test_get_raw_transcript_missing_returns_none(
-        self, storage_paths: tuple[Path, Path, Path]
+        self, storage_paths: tuple[Path, Path]
     ) -> None:
-        vault_dir, raw_dir, enriched_dir = storage_paths
+        vault_dir, raw_dir = storage_paths
         adapter = ObsidianVaultAdapter(
             vault_dir=vault_dir,
-            raw_dir=raw_dir,
-            enriched_dir=enriched_dir,
+            data_dir=raw_dir.parent,
         )
         assert adapter.get_stage_transcript("raw", ContentId("non_existent")) is None
 
-    def test_save_and_get_enriched_compendium(self, storage_paths: tuple[Path, Path, Path]) -> None:
-        vault_dir, raw_dir, enriched_dir = storage_paths
+    def test_save_and_get_enriched_compendium(self, storage_paths: tuple[Path, Path]) -> None:
+        vault_dir, raw_dir = storage_paths
         adapter = ObsidianVaultAdapter(
             vault_dir=vault_dir,
-            raw_dir=raw_dir,
-            enriched_dir=enriched_dir,
+            data_dir=raw_dir.parent,
         )
         cid = ContentId("dQw4w9WgXcQ")
         compendium = StageTranscript(
@@ -158,24 +148,22 @@ class TestObsidianVaultAdapter:
         assert retrieved.pass_count == 2
 
     def test_get_enriched_compendium_missing_returns_none(
-        self, storage_paths: tuple[Path, Path, Path]
+        self, storage_paths: tuple[Path, Path]
     ) -> None:
-        vault_dir, raw_dir, enriched_dir = storage_paths
+        vault_dir, raw_dir = storage_paths
         adapter = ObsidianVaultAdapter(
             vault_dir=vault_dir,
-            raw_dir=raw_dir,
-            enriched_dir=enriched_dir,
+            data_dir=raw_dir.parent,
         )
         assert adapter.get_stage_transcript("gap_filler", ContentId("non_existent")) is None
 
     def test_save_and_get_atomic_note_with_index(
-        self, storage_paths: tuple[Path, Path, Path]
+        self, storage_paths: tuple[Path, Path]
     ) -> None:
-        vault_dir, raw_dir, enriched_dir = storage_paths
+        vault_dir, raw_dir = storage_paths
         adapter = ObsidianVaultAdapter(
             vault_dir=vault_dir,
-            raw_dir=raw_dir,
-            enriched_dir=enriched_dir,
+            data_dir=raw_dir.parent,
         )
         title = NoteTitle("Vilfredo Pareto")
         note = AtomicNote(
@@ -248,13 +236,12 @@ class TestObsidianVaultAdapter:
         assert all_notes[0].title.value == "Vilfredo Pareto"
 
     def test_delete_atomic_note_removes_file_and_cleans_index(
-        self, storage_paths: tuple[Path, Path, Path]
+        self, storage_paths: tuple[Path, Path]
     ) -> None:
-        vault_dir, raw_dir, enriched_dir = storage_paths
+        vault_dir, raw_dir = storage_paths
         adapter = ObsidianVaultAdapter(
             vault_dir=vault_dir,
-            raw_dir=raw_dir,
-            enriched_dir=enriched_dir,
+            data_dir=raw_dir.parent,
         )
         note = AtomicNote(
             title=NoteTitle("Vilfredo Pareto"),
@@ -298,13 +285,12 @@ class TestObsidianVaultAdapter:
         assert "pareto" not in updated_index
 
     def test_remove_index_entry_handles_missing_and_corrupted_file(
-        self, storage_paths: tuple[Path, Path, Path]
+        self, storage_paths: tuple[Path, Path]
     ) -> None:
-        vault_dir, raw_dir, enriched_dir = storage_paths
+        vault_dir, raw_dir = storage_paths
         adapter = ObsidianVaultAdapter(
             vault_dir=vault_dir,
-            raw_dir=raw_dir,
-            enriched_dir=enriched_dir,
+            data_dir=raw_dir.parent,
         )
 
         # Non-existent index path must return cleanly
@@ -315,13 +301,12 @@ class TestObsidianVaultAdapter:
         adapter._notes._remove_index_entry("some_key")
 
     def test_update_index_entry_handles_corrupt_index_gracefully(
-        self, storage_paths: tuple[Path, Path, Path]
+        self, storage_paths: tuple[Path, Path]
     ) -> None:
-        vault_dir, raw_dir, enriched_dir = storage_paths
+        vault_dir, raw_dir = storage_paths
         adapter = ObsidianVaultAdapter(
             vault_dir=vault_dir,
-            raw_dir=raw_dir,
-            enriched_dir=enriched_dir,
+            data_dir=raw_dir.parent,
         )
         adapter.index_path.write_text("{corrupt_json: true", encoding="utf-8")
 
@@ -336,12 +321,11 @@ class TestObsidianVaultAdapter:
         index_data = json.loads(adapter.index_path.read_text(encoding="utf-8"))
         assert "vilfredo pareto" in index_data
 
-    def test_save_map_of_content(self, storage_paths: tuple[Path, Path, Path]) -> None:
-        vault_dir, raw_dir, enriched_dir = storage_paths
+    def test_save_map_of_content(self, storage_paths: tuple[Path, Path]) -> None:
+        vault_dir, raw_dir = storage_paths
         adapter = ObsidianVaultAdapter(
             vault_dir=vault_dir,
-            raw_dir=raw_dir,
-            enriched_dir=enriched_dir,
+            data_dir=raw_dir.parent,
         )
         moc = MapOfContent(
             title=NoteTitle("MOC Teoria Politica"),
@@ -370,13 +354,12 @@ class TestObsidianVaultAdapter:
         assert "\\u" not in content
 
     def test_get_all_atomic_notes_and_get_by_title_exclude_mocs(
-        self, storage_paths: tuple[Path, Path, Path]
+        self, storage_paths: tuple[Path, Path]
     ) -> None:
-        vault_dir, raw_dir, enriched_dir = storage_paths
+        vault_dir, raw_dir = storage_paths
         adapter = ObsidianVaultAdapter(
             vault_dir=vault_dir,
-            raw_dir=raw_dir,
-            enriched_dir=enriched_dir,
+            data_dir=raw_dir.parent,
         )
         note = AtomicNote(
             title=NoteTitle("Vilfredo Pareto"),
@@ -399,13 +382,12 @@ class TestObsidianVaultAdapter:
         assert all_notes[0].note_type == NoteType.ENTITY
 
     def test_rewrite_wiki_links_rewrites_inbound_references(
-        self, storage_paths: tuple[Path, Path, Path]
+        self, storage_paths: tuple[Path, Path]
     ) -> None:
-        vault_dir, raw_dir, enriched_dir = storage_paths
+        vault_dir, raw_dir = storage_paths
         adapter = ObsidianVaultAdapter(
             vault_dir=vault_dir,
-            raw_dir=raw_dir,
-            enriched_dir=enriched_dir,
+            data_dir=raw_dir.parent,
         )
 
         sub_dir = vault_dir / "concepts"
@@ -442,13 +424,12 @@ class TestObsidianVaultAdapter:
         assert "[[Outro Conceito]]" in unrelated_content
 
     def test_rewrite_wiki_links_identical_titles_returns_zero(
-        self, storage_paths: tuple[Path, Path, Path]
+        self, storage_paths: tuple[Path, Path]
     ) -> None:
-        vault_dir, raw_dir, enriched_dir = storage_paths
+        vault_dir, raw_dir = storage_paths
         adapter = ObsidianVaultAdapter(
             vault_dir=vault_dir,
-            raw_dir=raw_dir,
-            enriched_dir=enriched_dir,
+            data_dir=raw_dir.parent,
         )
 
         sub_dir = vault_dir / "concepts"
@@ -486,11 +467,12 @@ class TestObsidianVaultAdapter:
         assert sanitize_filename(raw_name) == expected
 
     def test_get_raw_transcript_no_frontmatter_fallback(
-        self, storage_paths: tuple[Path, Path, Path]
+        self, storage_paths: tuple[Path, Path]
     ) -> None:
-        vault_dir, raw_dir, enriched_dir = storage_paths
+        vault_dir, raw_dir = storage_paths
         adapter = ObsidianVaultAdapter(
-            vault_dir=vault_dir, raw_dir=raw_dir, enriched_dir=enriched_dir
+            vault_dir=vault_dir,
+            data_dir=raw_dir.parent,
         )
         raw_file = raw_dir / "ChannelFolder" / "no_fm_1234.md"
         raw_file.parent.mkdir(parents=True, exist_ok=True)
@@ -508,11 +490,12 @@ class TestObsidianVaultAdapter:
         assert transcript.content.text == "Plain markdown body with no yaml frontmatter at all."
 
     def test_get_raw_transcript_invalid_date_handled_gracefully(
-        self, storage_paths: tuple[Path, Path, Path]
+        self, storage_paths: tuple[Path, Path]
     ) -> None:
-        vault_dir, raw_dir, enriched_dir = storage_paths
+        vault_dir, raw_dir = storage_paths
         adapter = ObsidianVaultAdapter(
-            vault_dir=vault_dir, raw_dir=raw_dir, enriched_dir=enriched_dir
+            vault_dir=vault_dir,
+            data_dir=raw_dir.parent,
         )
         raw_file = raw_dir / "ChannelFolder" / "bad_date12.md"
         raw_file.parent.mkdir(parents=True, exist_ok=True)
@@ -526,23 +509,25 @@ class TestObsidianVaultAdapter:
         assert transcript.provenance.publication_date is None
 
     def test_get_enriched_compendium_no_frontmatter_returns_none(
-        self, storage_paths: tuple[Path, Path, Path]
+        self, storage_paths: tuple[Path, Path]
     ) -> None:
-        vault_dir, raw_dir, enriched_dir = storage_paths
+        vault_dir, raw_dir = storage_paths
         adapter = ObsidianVaultAdapter(
-            vault_dir=vault_dir, raw_dir=raw_dir, enriched_dir=enriched_dir
+            vault_dir=vault_dir, data_dir=raw_dir.parent
         )
-        file_path = enriched_dir / "comp123456.md"
+        file_path = raw_dir.parent / "gap_filler" / "comp123456.md"
+        file_path.parent.mkdir(parents=True, exist_ok=True)
         file_path.write_text("No frontmatter header in compendium.", encoding="utf-8")
 
         assert adapter.get_stage_transcript("gap_filler", ContentId("comp123456")) is None
 
     def test_get_atomic_note_os_error_or_missing_frontmatter(
-        self, storage_paths: tuple[Path, Path, Path]
+        self, storage_paths: tuple[Path, Path]
     ) -> None:
-        vault_dir, raw_dir, enriched_dir = storage_paths
+        vault_dir, raw_dir = storage_paths
         adapter = ObsidianVaultAdapter(
-            vault_dir=vault_dir, raw_dir=raw_dir, enriched_dir=enriched_dir
+            vault_dir=vault_dir,
+            data_dir=raw_dir.parent,
         )
         concepts_dir = vault_dir / "concepts"
         concepts_dir.mkdir(parents=True, exist_ok=True)
@@ -555,11 +540,12 @@ class TestObsidianVaultAdapter:
             assert adapter._notes.parse_atomic_note_file(corrupted) is None
 
     def test_get_atomic_note_invalid_type_and_short_definition_fallbacks(
-        self, storage_paths: tuple[Path, Path, Path]
+        self, storage_paths: tuple[Path, Path]
     ) -> None:
-        vault_dir, raw_dir, enriched_dir = storage_paths
+        vault_dir, raw_dir = storage_paths
         adapter = ObsidianVaultAdapter(
-            vault_dir=vault_dir, raw_dir=raw_dir, enriched_dir=enriched_dir
+            vault_dir=vault_dir,
+            data_dir=raw_dir.parent,
         )
         concepts_dir = vault_dir / "concepts"
         concepts_dir.mkdir(parents=True, exist_ok=True)
@@ -573,11 +559,12 @@ class TestObsidianVaultAdapter:
         assert note is None
 
     def test_rewrite_wiki_links_ignores_unreadable_files(
-        self, storage_paths: tuple[Path, Path, Path]
+        self, storage_paths: tuple[Path, Path]
     ) -> None:
-        vault_dir, raw_dir, enriched_dir = storage_paths
+        vault_dir, raw_dir = storage_paths
         adapter = ObsidianVaultAdapter(
-            vault_dir=vault_dir, raw_dir=raw_dir, enriched_dir=enriched_dir
+            vault_dir=vault_dir,
+            data_dir=raw_dir.parent,
         )
         concepts_dir = vault_dir / "concepts"
         concepts_dir.mkdir(parents=True, exist_ok=True)
@@ -599,15 +586,14 @@ class TestObsidianVaultAdapter:
         assert "[[New Title]]" in good_file.read_text(encoding="utf-8")
 
     def test_master_document_persistence_and_clearing(
-        self, storage_paths: tuple[Path, Path, Path]
+        self, storage_paths: tuple[Path, Path]
     ) -> None:
-        vault_dir, raw_dir, enriched_dir = storage_paths
-        master_dir = vault_dir.parent / "master"
+        vault_dir, raw_dir = storage_paths
+        data_dir = raw_dir.parent
+        master_dir = data_dir / "master"
         adapter = ObsidianVaultAdapter(
             vault_dir=vault_dir,
-            raw_dir=raw_dir,
-            enriched_dir=enriched_dir,
-            master_dir=master_dir,
+            data_dir=data_dir,
         )
 
         # 1. Stage files discovery
@@ -679,13 +665,12 @@ class TestObsidianVaultAdapter:
             )
 
     def test_raw_index_channel_and_brain_csv_persistence(
-        self, storage_paths: tuple[Path, Path, Path]
+        self, storage_paths: tuple[Path, Path]
     ) -> None:
-        vault_dir, raw_dir, enriched_dir = storage_paths
+        vault_dir, raw_dir = storage_paths
         adapter = ObsidianVaultAdapter(
             vault_dir=vault_dir,
-            raw_dir=raw_dir,
-            enriched_dir=enriched_dir,
+            data_dir=raw_dir.parent,
         )
 
         entry1 = RawIndexEntry(
@@ -748,19 +733,15 @@ class TestObsidianVaultAdapter:
             in csv_text
         )
 
-    def test_default_and_custom_paths_initialization(
-        self, storage_paths: tuple[Path, Path, Path], tmp_path: Path
+    def test_default_derived_paths_initialization(
+        self, storage_paths: tuple[Path, Path]
     ) -> None:
-        """Verify default directory resolution and custom data_dir/master_dir resolution."""
-        vault_dir, raw_dir, enriched_dir = storage_paths
-        custom_data = tmp_path / "custom_data"
-        custom_master = tmp_path / "custom_master"
+        """Verify deterministic directory derivation from vault_dir and data_dir."""
+        vault_dir, raw_dir = storage_paths
 
-        # Defaults when data_dir, master_dir, index_path, mocs_dir are None
         adapter_default = ObsidianVaultAdapter(
             vault_dir=vault_dir,
-            raw_dir=raw_dir,
-            enriched_dir=enriched_dir,
+            data_dir=raw_dir.parent,
         )
         assert adapter_default.data_dir == raw_dir.parent.resolve()
         assert adapter_default.master_dir == (adapter_default.data_dir / "master").resolve()
@@ -769,25 +750,14 @@ class TestObsidianVaultAdapter:
         assert adapter_default.mocs_dir.name == "MOCs"
         assert adapter_default.index_path == (vault_dir / "_index.json").resolve()
         assert adapter_default.index_path.name == "_index.json"
+        assert adapter_default.raw_dir == (adapter_default.data_dir / "raw").resolve()
 
-        # Custom data_dir and master_dir
-        adapter_custom = ObsidianVaultAdapter(
-            vault_dir=vault_dir,
-            raw_dir=raw_dir,
-            enriched_dir=enriched_dir,
-            data_dir=custom_data,
-            master_dir=custom_master,
-        )
-        assert adapter_custom.data_dir == custom_data.resolve()
-        assert adapter_custom.master_dir == custom_master.resolve()
-
-    def test_remove_index_entry_delegation(self, storage_paths: tuple[Path, Path, Path]) -> None:
+    def test_remove_index_entry_delegation(self, storage_paths: tuple[Path, Path]) -> None:
         """Verify remove_index_entry handler delegation removes targeted index entry."""
-        vault_dir, raw_dir, enriched_dir = storage_paths
+        vault_dir, raw_dir = storage_paths
         adapter = ObsidianVaultAdapter(
             vault_dir=vault_dir,
-            raw_dir=raw_dir,
-            enriched_dir=enriched_dir,
+            data_dir=raw_dir.parent,
         )
         note = AtomicNote(
             title=NoteTitle("Index Remove Test"),
@@ -804,14 +774,13 @@ class TestObsidianVaultAdapter:
         assert key not in raw_index_after
 
     def test_remove_index_entry_indentation_and_unicode(
-        self, storage_paths: tuple[Path, Path, Path]
+        self, storage_paths: tuple[Path, Path]
     ) -> None:
         """Verify _index.json formatting preserves 2-space indentation and unescaped unicode after removal."""
-        vault_dir, raw_dir, enriched_dir = storage_paths
+        vault_dir, raw_dir = storage_paths
         adapter = ObsidianVaultAdapter(
             vault_dir=vault_dir,
-            raw_dir=raw_dir,
-            enriched_dir=enriched_dir,
+            data_dir=raw_dir.parent,
         )
         note1 = AtomicNote(
             title=NoteTitle("Conceito de Ação"),
@@ -842,14 +811,13 @@ class TestObsidianVaultAdapter:
         assert '\n    "conceito de ação": {' not in raw_after
 
     def test_update_index_entry_payload_and_alias_mapping_exhaustive(
-        self, storage_paths: tuple[Path, Path, Path]
+        self, storage_paths: tuple[Path, Path]
     ) -> None:
         """Verify update_index_entry payload integrity, aliases, path, and json formatting."""
-        vault_dir, raw_dir, enriched_dir = storage_paths
+        vault_dir, raw_dir = storage_paths
         adapter = ObsidianVaultAdapter(
             vault_dir=vault_dir,
-            raw_dir=raw_dir,
-            enriched_dir=enriched_dir,
+            data_dir=raw_dir.parent,
         )
         note = AtomicNote(
             title=NoteTitle("Vilfredo Pareto"),
@@ -906,12 +874,13 @@ class TestObsidianVaultAdapter:
         assert index.get("v. pareto") is not None
 
     def test_save_and_get_raw_transcript_rich_metadata_and_escaping(
-        self, storage_paths: tuple[Path, Path, Path]
+        self, storage_paths: tuple[Path, Path]
     ) -> None:
         """Verify save_transcript and get_raw_transcript preserve quotes, dates, ids, and multiline descriptions."""
-        vault_dir, raw_dir, enriched_dir = storage_paths
+        vault_dir, raw_dir = storage_paths
         adapter = ObsidianVaultAdapter(
-            vault_dir=vault_dir, raw_dir=raw_dir, enriched_dir=enriched_dir
+            vault_dir=vault_dir,
+            data_dir=raw_dir.parent,
         )
         cid = ContentId("vid_rich_123")
         channel = Channel(
@@ -924,7 +893,7 @@ class TestObsidianVaultAdapter:
             description="Linha descritiva 1\nLinha descritiva 2",
             publication_date=date(2023, 11, 25),
         )
-        content = Content.create(
+        content = Content(
             id=cid,
             title='Título com "Aspas"',
             text="Transcrição de áudio completa.\nSegunda linha.",
@@ -965,12 +934,13 @@ class TestObsidianVaultAdapter:
         assert retrieved.provenance.publication_date == date(2023, 11, 25)
 
     def test_save_and_get_raw_transcript_defaults_and_fallbacks(
-        self, storage_paths: tuple[Path, Path, Path]
+        self, storage_paths: tuple[Path, Path]
     ) -> None:
         """Verify save_transcript and get_raw_transcript handle optional/none fields gracefully."""
-        vault_dir, raw_dir, enriched_dir = storage_paths
+        vault_dir, raw_dir = storage_paths
         adapter = ObsidianVaultAdapter(
-            vault_dir=vault_dir, raw_dir=raw_dir, enriched_dir=enriched_dir
+            vault_dir=vault_dir,
+            data_dir=raw_dir.parent,
         )
         cid = ContentId("vid_min_456")
         channel = Channel(name="Simple Channel")
@@ -979,7 +949,7 @@ class TestObsidianVaultAdapter:
             description="",
             publication_date=None,
         )
-        content = Content.create(
+        content = Content(
             id=cid,
             title="",  # Empty title triggers fallback to content.id.value
             text="Minimum transcript body.",
@@ -1010,12 +980,13 @@ class TestObsidianVaultAdapter:
         assert retrieved.provenance.description == ""
 
     def test_get_raw_transcript_canonical_frontmatter_and_folder_fallback(
-        self, storage_paths: tuple[Path, Path, Path]
+        self, storage_paths: tuple[Path, Path]
     ) -> None:
         """Verify get_stage_transcript('raw') parses canonical frontmatter and falls back to folder."""
-        vault_dir, raw_dir, enriched_dir = storage_paths
+        vault_dir, raw_dir = storage_paths
         adapter = ObsidianVaultAdapter(
-            vault_dir=vault_dir, raw_dir=raw_dir, enriched_dir=enriched_dir
+            vault_dir=vault_dir,
+            data_dir=raw_dir.parent,
         )
         cid = ContentId("vid_alt_789")
         ch_folder = raw_dir / "FolderChannelName"
@@ -1062,12 +1033,13 @@ Body text.
         assert retrieved2.channel.name == "FolderChannelName"
 
     def test_save_and_get_enriched_compendium_rich_metadata_and_escaping(
-        self, storage_paths: tuple[Path, Path, Path]
+        self, storage_paths: tuple[Path, Path]
     ) -> None:
         """Verify save_enriched_compendium and get_enriched_compendium with full metadata and escaping."""
-        vault_dir, raw_dir, enriched_dir = storage_paths
+        vault_dir, raw_dir = storage_paths
         adapter = ObsidianVaultAdapter(
-            vault_dir=vault_dir, raw_dir=raw_dir, enriched_dir=enriched_dir
+            vault_dir=vault_dir,
+            data_dir=raw_dir.parent,
         )
         cid = ContentId("comp_rich_001")
         comp = StageTranscript(
@@ -1127,12 +1099,13 @@ Body text.
         assert "Matriz complementar de factualidade" in retrieved.content.text
 
     def test_save_and_get_enriched_compendium_defaults_and_fallbacks(
-        self, storage_paths: tuple[Path, Path, Path]
+        self, storage_paths: tuple[Path, Path]
     ) -> None:
         """Verify save_enriched_compendium and get_enriched_compendium default fallback behavior."""
-        vault_dir, raw_dir, enriched_dir = storage_paths
+        vault_dir, raw_dir = storage_paths
         adapter = ObsidianVaultAdapter(
-            vault_dir=vault_dir, raw_dir=raw_dir, enriched_dir=enriched_dir
+            vault_dir=vault_dir,
+            data_dir=raw_dir.parent,
         )
         cid = ContentId("comp_min_002")
         comp = StageTranscript(
@@ -1163,12 +1136,13 @@ Body text.
         assert "Informações complementares mínimas." in retrieved.content.text
 
     def test_get_enriched_compendium_canonical_frontmatter_and_formatting(
-        self, storage_paths: tuple[Path, Path, Path]
+        self, storage_paths: tuple[Path, Path]
     ) -> None:
         """Verify get_stage_transcript('gap_filler') handles canonical keys and bodies without title headers."""
-        vault_dir, raw_dir, enriched_dir = storage_paths
+        vault_dir, raw_dir = storage_paths
         adapter = ObsidianVaultAdapter(
-            vault_dir=vault_dir, raw_dir=raw_dir, enriched_dir=enriched_dir
+            vault_dir=vault_dir,
+            data_dir=raw_dir.parent,
         )
         cid = ContentId("comp_alt_003")
         ch_folder = adapter.resolve_stage_dir("gap_filler") / "FolderEnriched"
@@ -1231,13 +1205,14 @@ Complementary data.
         assert adapter.get_stage_transcript(StageName.WIDE_EXPANDER, cid2) is None
 
     def test_get_stage_files_for_channel_comprehensive_filtering(
-        self, storage_paths: tuple[Path, Path, Path]
+        self, storage_paths: tuple[Path, Path]
     ) -> None:
         """Verify get_stage_files_for_channel enforces existence, is_dir, and filename filters."""
-        vault_dir, raw_dir, enriched_dir = storage_paths
+        vault_dir, raw_dir = storage_paths
         wide_dir = raw_dir.parent / "wide_expander"
         adapter = ObsidianVaultAdapter(
-            vault_dir=vault_dir, raw_dir=raw_dir, enriched_dir=enriched_dir
+            vault_dir=vault_dir,
+            data_dir=raw_dir.parent,
         )
 
         # 1. Non-existent channel directory returns empty list
@@ -1288,12 +1263,13 @@ Complementary data.
         assert result == [valid1, valid2]
 
     def test_get_raw_transcript_empty_metadata_fallbacks(
-        self, storage_paths: tuple[Path, Path, Path]
+        self, storage_paths: tuple[Path, Path]
     ) -> None:
         """Verify get_raw_transcript handles frontmatter where optional keys are absent or empty."""
-        vault_dir, raw_dir, enriched_dir = storage_paths
+        vault_dir, raw_dir = storage_paths
         adapter = ObsidianVaultAdapter(
-            vault_dir=vault_dir, raw_dir=raw_dir, enriched_dir=enriched_dir
+            vault_dir=vault_dir,
+            data_dir=raw_dir.parent,
         )
         ch_folder = raw_dir / "EmptyMetadataChannel"
         ch_folder.mkdir(parents=True, exist_ok=True)
@@ -1319,12 +1295,13 @@ Body text only.
         assert retrieved.provenance.publication_date is None
 
     def test_get_enriched_compendium_empty_metadata_and_body_stripping(
-        self, storage_paths: tuple[Path, Path, Path]
+        self, storage_paths: tuple[Path, Path]
     ) -> None:
         """Verify get_enriched_compendium handles empty metadata and multi-line body heading stripping."""
-        vault_dir, raw_dir, enriched_dir = storage_paths
+        vault_dir, raw_dir = storage_paths
         adapter = ObsidianVaultAdapter(
-            vault_dir=vault_dir, raw_dir=raw_dir, enriched_dir=enriched_dir
+            vault_dir=vault_dir,
+            data_dir=raw_dir.parent,
         )
         ch_folder = adapter.resolve_stage_dir("gap_filler") / "EmptyMetaEnriched"
         ch_folder.mkdir(parents=True, exist_ok=True)
@@ -1358,12 +1335,13 @@ Informações complementares para teste.
         assert "Line 2 of body" in retrieved.content.text
 
     def test_get_enriched_compendium_missing_complementary_raises_error(
-        self, storage_paths: tuple[Path, Path, Path]
+        self, storage_paths: tuple[Path, Path]
     ) -> None:
         """Verify get_enriched_compendium parses correctly when Extra Info is absent."""
-        vault_dir, raw_dir, enriched_dir = storage_paths
+        vault_dir, raw_dir = storage_paths
         adapter = ObsidianVaultAdapter(
-            vault_dir=vault_dir, raw_dir=raw_dir, enriched_dir=enriched_dir
+            vault_dir=vault_dir,
+            data_dir=raw_dir.parent,
         )
         ch_folder = adapter.resolve_stage_dir("gap_filler") / "NoCompChannel"
         ch_folder.mkdir(parents=True, exist_ok=True)
@@ -1385,16 +1363,13 @@ Only body here, no complementary section.
         assert "Only body here, no complementary section." in retrieved.content.text
 
     def test_save_and_get_fluid_transcript(
-        self, storage_paths: tuple[Path, Path, Path], tmp_path: Path
+        self, storage_paths: tuple[Path, Path]
     ) -> None:
         """Verify save_fluid_transcript and get_fluid_transcript roundtrip per ADR-043 and SPEC-043."""
-        vault_dir, raw_dir, enriched_dir = storage_paths
-        fluid_dir = tmp_path / "data" / "fluid"
+        vault_dir, raw_dir = storage_paths
         adapter = ObsidianVaultAdapter(
             vault_dir=vault_dir,
-            raw_dir=raw_dir,
-            enriched_dir=enriched_dir,
-            fluid_dir=fluid_dir,
+            data_dir=raw_dir.parent,
         )
         cid = ContentId("fluid_test_abc123")
         fluid = StageTranscript(
@@ -1404,7 +1379,7 @@ Only body here, no complementary section.
                 publication_date=date(2026, 6, 15),
                 description="Descrição detalhada sobre arquitetura de sistemas.",
             ),
-            content=Content.create(
+            content=Content(
                 id=cid,
                 title="A Engenharia de Software Moderna",
                 text="## A Natureza da Concorrência em Sistemas de Baixa Latência\n\nTexto narrativo em terceira pessoa desprovido de qualquer vício oral.",
@@ -1436,30 +1411,24 @@ Only body here, no complementary section.
         assert retrieved.provenance.publication_date == date(2026, 6, 15)
 
     def test_get_fluid_transcript_missing_returns_none(
-        self, storage_paths: tuple[Path, Path, Path], tmp_path: Path
+        self, storage_paths: tuple[Path, Path]
     ) -> None:
         """Verify get_fluid_transcript returns None when content ID is not present."""
-        vault_dir, raw_dir, enriched_dir = storage_paths
-        fluid_dir = tmp_path / "data" / "fluid"
+        vault_dir, raw_dir = storage_paths
         adapter = ObsidianVaultAdapter(
             vault_dir=vault_dir,
-            raw_dir=raw_dir,
-            enriched_dir=enriched_dir,
-            fluid_dir=fluid_dir,
+            data_dir=raw_dir.parent,
         )
         assert adapter.get_stage_transcript("fluid_prose", ContentId("absent_id_999")) is None
 
     def test_save_and_get_stage_transcript_polymorphic(
-        self, storage_paths: tuple[Path, Path, Path], tmp_path: Path
+        self, storage_paths: tuple[Path, Path]
     ) -> None:
         """Verify save_stage_transcript and get_stage_transcript polymorphic roundtrip."""
-        vault_dir, raw_dir, enriched_dir = storage_paths
-        fluid_dir = tmp_path / "data" / "fluid"
+        vault_dir, raw_dir = storage_paths
         adapter = ObsidianVaultAdapter(
             vault_dir=vault_dir,
-            raw_dir=raw_dir,
-            enriched_dir=enriched_dir,
-            fluid_dir=fluid_dir,
+            data_dir=raw_dir.parent,
         )
 
         cid_fluid = ContentId("stage_fluid_123")
@@ -1469,7 +1438,7 @@ Only body here, no complementary section.
                 url="https://youtube.com/watch?v=stage_fluid_123",
                 publication_date=date(2026, 6, 15),
             ),
-            content=Content.create(
+            content=Content(
                 id=cid_fluid,
                 title="Titulo Fluido",
                 text="## Prosa Fluida\n\nTexto denso sem oralidades.",
@@ -1489,7 +1458,7 @@ Only body here, no complementary section.
                 url="https://youtube.com/watch?v=stage_comp_456",
                 publication_date=date(2026, 6, 15),
             ),
-            content=Content.create(
+            content=Content(
                 id=cid_comp,
                 title="Titulo Compendio",
                 text="## Prosa Expandida\n\nCorpo do compendio.\n\n### Extra Info\n\n1. Contexto complementar detalhado.",
@@ -1505,15 +1474,13 @@ Only body here, no complementary section.
         assert retrieved_comp.pass_count == 2
 
     def test_get_stage_transcript_missing_returns_none(
-        self, storage_paths: tuple[Path, Path, Path], tmp_path: Path
+        self, storage_paths: tuple[Path, Path]
     ) -> None:
         """Verify get_stage_transcript returns None when stage or content ID is absent."""
-        vault_dir, raw_dir, enriched_dir = storage_paths
+        vault_dir, raw_dir = storage_paths
         adapter = ObsidianVaultAdapter(
             vault_dir=vault_dir,
-            raw_dir=raw_dir,
-            enriched_dir=enriched_dir,
-            fluid_dir=tmp_path / "data" / "fluid",
+            data_dir=raw_dir.parent,
         )
         assert adapter.get_stage_transcript("fluid_prose", ContentId("nonexistent")) is None
         assert adapter.get_stage_transcript("unknown_stage", ContentId("nonexistent")) is None
@@ -1542,9 +1509,9 @@ class TestChannelCatalogHandlerAndUtils:
         assert target.read_text(encoding="utf-8") == "atomic content"
 
     def test_catalog_handler_index_paths_and_parsing(self, tmp_path: Path) -> None:
-        raw_dir = tmp_path / "raw"
         data_dir = tmp_path / "data"
-        handler = ChannelCatalogHandler(raw_dir=raw_dir, data_dir=data_dir)
+        raw_dir = data_dir / "raw"
+        handler = ChannelCatalogHandler(data_dir=data_dir)
 
         ch = ChannelName("Tech Channel")
         idx_path = handler._get_channel_index_path(ch)
@@ -1567,9 +1534,8 @@ class TestChannelCatalogHandlerAndUtils:
         assert ContentId("vid00000002") in video_ids
 
     def test_catalog_handler_append_entries(self, tmp_path: Path) -> None:
-        raw_dir = tmp_path / "raw"
         data_dir = tmp_path / "data"
-        handler = ChannelCatalogHandler(raw_dir=raw_dir, data_dir=data_dir)
+        handler = ChannelCatalogHandler(data_dir=data_dir)
 
         ch = ChannelName("Economics")
         entry = RawIndexEntry(
@@ -1579,8 +1545,6 @@ class TestChannelCatalogHandlerAndUtils:
             title="Market Mechanisms",
             key_concept="Price Discovery",
             synthesis="Prices coordinate dispersed knowledge efficiently across economic agents.",
-            summary="Study of market price signaling.",
-            excerpt="Excerpt body text.",
             url="https://youtube.com/watch?v=vid_econ_01",
         )
 

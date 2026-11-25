@@ -305,7 +305,7 @@ def compute_maxsim_novelty(
     baseline_vectors: Sequence[Sequence[float]],
     current_vectors: Sequence[Sequence[float]],
     similarity_threshold: float = 0.88,
-) -> tuple[int, float, float]:
+) -> tuple[int, float]:
     """Evaluate unit-level MaxSim novelty of current vectors against baseline vectors.
 
     Args:
@@ -314,7 +314,7 @@ def compute_maxsim_novelty(
         similarity_threshold: Minimum cosine similarity required to consider a unit covered.
 
     Returns:
-        tuple[int, float, float]: Tuple of (novel_count, max_novelty, mean_max_similarity).
+        tuple[int, float]: Tuple of (novel_count, max_novelty).
     """
     if (
         isinstance(similarity_threshold, bool)
@@ -327,13 +327,12 @@ def compute_maxsim_novelty(
         )
 
     if not current_vectors:
-        return (0, 0.0, 1.0)
+        return (0, 0.0)
     if not baseline_vectors:
-        return (len(current_vectors), 1.0, 0.0)
+        return (len(current_vectors), 1.0)
 
     novel_count = 0
     max_novelty = 0.0
-    max_similarities: list[float] = []
 
     for curr_vec in current_vectors:
         max_sim = max(cosine_similarity(curr_vec, base_vec) for base_vec in baseline_vectors)
@@ -341,10 +340,8 @@ def compute_maxsim_novelty(
         if max_sim < similarity_threshold:
             novel_count += 1
         max_novelty = max(max_novelty, novelty)
-        max_similarities.append(max_sim)
 
-    mean_max_similarity = math.fsum(max_similarities) / len(max_similarities)
-    return (novel_count, max_novelty, mean_max_similarity)
+    return (novel_count, max_novelty)
 
 
 def evaluate_lexical_convergence(
@@ -451,7 +448,7 @@ def evaluate_semantic_convergence(
         SaturationVerdict: Structured semantic plateau or novel content verdict.
     """
     active_thresholds = thresholds if thresholds is not None else SaturationThresholds()
-    novel_paragraphs, max_novelty, _ = compute_maxsim_novelty(
+    novel_paragraphs, max_novelty = compute_maxsim_novelty(
         baseline_vectors,
         current_vectors,
         similarity_threshold=active_thresholds.semantic_similarity_threshold,

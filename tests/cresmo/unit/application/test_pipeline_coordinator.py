@@ -110,16 +110,14 @@ class TestCresmoPipelineInitializationAndProperties:
         assert pipeline.stage_runner.llm_transformation_port is mock_llm
         assert pipeline.stage_runner.llm_judge is mock_judge
         assert pipeline.stage_runner.prompt_provider is mock_prompt
-        assert pipeline.llm_indexing_port is mock_llm
 
-    def test_init_with_direct_stage_runner_without_runner_ports_defaults_to_noop(self) -> None:
+    def test_init_inherits_stage_runner_telemetry_and_metrics_ports(self) -> None:
         mock_ingestion = MagicMock(spec=MediaIngestionPort)
         mock_vault = MagicMock(spec=VaultRepositoryPort)
 
         runner = MagicMock(spec=PipelineStageRunner)
-        runner.telemetry_port = None
-        runner.metrics_port = None
-        runner.llm_transformation_port = None
+        runner.telemetry_port = NoOpTelemetryPort()
+        runner.metrics_port = NoOpMetricsPort()
 
         pipeline = CresmoPipeline(
             media_ingestion_port=mock_ingestion,
@@ -135,14 +133,11 @@ class TestCresmoPipelineInitializationAndProperties:
         mock_vault = MagicMock(spec=VaultRepositoryPort)
         mock_t = MagicMock(spec=TelemetryPort)
         mock_m = MagicMock(spec=MetricsPort)
-        mock_llm_index = MagicMock(spec=LLMTransformationPort)
         mock_ledger = MagicMock(spec=LedgerRepositoryPort)
         mock_taxonomy = MagicMock(spec=ChannelTaxonomyPort)
         mock_runner = MagicMock(spec=PipelineStageRunner)
-
-        from cresmo.domain.value_objects import StageExecutionPolicy
-
-        stage_policy = StageExecutionPolicy(judge_blocking=True, judge_max_attempts=4)
+        mock_runner.telemetry_port = NoOpTelemetryPort()
+        mock_runner.metrics_port = NoOpMetricsPort()
 
         pipeline = CresmoPipeline(
             media_ingestion_port=mock_ingestion,
@@ -150,77 +145,36 @@ class TestCresmoPipelineInitializationAndProperties:
             stage_runner=mock_runner,
             telemetry_port=mock_t,
             metrics_port=mock_m,
-            llm_indexing_port=mock_llm_index,
             ledger_port=mock_ledger,
             taxonomy_port=mock_taxonomy,
-            stage_policy=stage_policy,
         )
 
         assert pipeline.taxonomy_port is mock_taxonomy
         assert pipeline.telemetry_port is mock_t
         assert pipeline.metrics_port is mock_m
-        assert pipeline.llm_indexing_port is mock_llm_index
         assert pipeline.ledger_port is mock_ledger
-        assert pipeline.stage_policy is stage_policy
 
 
 class TestCresmoPipelineWarmup:
-    """Verifies warmup propagation to indexing and stage runner transformation ports."""
+    """Verifies idempotent warmup propagation to stage runner."""
 
-    def test_warmup_calls_both_ports_when_distinct(self) -> None:
+    def test_warmup_delegates_to_stage_runner_once(self) -> None:
         mock_ingestion = MagicMock(spec=MediaIngestionPort)
         mock_vault = MagicMock(spec=VaultRepositoryPort)
-        mock_index_llm = MagicMock(spec=LLMTransformationPort)
         mock_runner = MagicMock(spec=PipelineStageRunner)
-        mock_synth_llm = MagicMock(spec=LLMTransformationPort)
-        mock_runner.llm_transformation_port = mock_synth_llm
+        mock_runner.telemetry_port = NoOpTelemetryPort()
+        mock_runner.metrics_port = NoOpMetricsPort()
 
         pipeline = CresmoPipeline(
             media_ingestion_port=mock_ingestion,
             vault_port=mock_vault,
             stage_runner=mock_runner,
-            llm_indexing_port=mock_index_llm,
         )
 
-        pipeline.warmup(timeout_seconds=5.0)
+        pipeline.warmup()
+        pipeline.warmup()
 
-        mock_index_llm.warmup.assert_called_once_with(timeout_seconds=5.0)
-        mock_runner.warmup.assert_called_once_with(timeout_seconds=5.0)
-
-    def test_warmup_calls_runner_only_once_when_ports_are_identical(self) -> None:
-        mock_ingestion = MagicMock(spec=MediaIngestionPort)
-        mock_vault = MagicMock(spec=VaultRepositoryPort)
-        mock_shared_llm = MagicMock(spec=LLMTransformationPort)
-        mock_runner = MagicMock(spec=PipelineStageRunner)
-        mock_runner.llm_transformation_port = mock_shared_llm
-
-        pipeline = CresmoPipeline(
-            media_ingestion_port=mock_ingestion,
-            vault_port=mock_vault,
-            stage_runner=mock_runner,
-            llm_indexing_port=mock_shared_llm,
-        )
-
-        pipeline.warmup(timeout_seconds=2.5)
-
-        mock_shared_llm.warmup.assert_called_once_with(timeout_seconds=2.5)
-        mock_runner.warmup.assert_not_called()
-
-    def test_warmup_handles_none_ports_gracefully(self) -> None:
-        mock_ingestion = MagicMock(spec=MediaIngestionPort)
-        mock_vault = MagicMock(spec=VaultRepositoryPort)
-        mock_runner = MagicMock(spec=PipelineStageRunner)
-        mock_runner.llm_transformation_port = None
-
-        pipeline = CresmoPipeline(
-            media_ingestion_port=mock_ingestion,
-            vault_port=mock_vault,
-            stage_runner=mock_runner,
-            llm_indexing_port=None,
-        )
-
-        pipeline.warmup(timeout_seconds=1.0)
-        mock_runner.warmup.assert_not_called()
+        mock_runner.warmup.assert_called_once_with()
 
 
 class TestCresmoPipelineExecutionAndIdempotency:
@@ -315,7 +269,6 @@ class TestCresmoPipelineExecutionAndIdempotency:
             batch_id=batch,
         )
 
-        assert res.success is True
         assert res.content_id == ContentId("c1234567")
         assert res.source_transcript is sample_source_transcript
         assert res.stage_artifacts[StageName.FLUID_PROSE] is fluid_res
@@ -469,6 +422,8 @@ class TestCresmoPipelineExecutionAndIdempotency:
         mock_vault.get_stage_transcript.side_effect = [cached_fluid, None, None, None]
         mock_runner.execute_stage.side_effect = [fresh_gaps, fresh_long, fresh_wide]
 
+        mock_runner.metrics_port = NoOpMetricsPort()
+
         pipeline = CresmoPipeline(
             media_ingestion_port=mock_ingestion,
             vault_port=mock_vault,
@@ -480,7 +435,7 @@ class TestCresmoPipelineExecutionAndIdempotency:
                 sample_source_transcript, expansion_max_passes=2, force_reprocess=False
             )
 
-        assert res.success is True
+        assert res.already_processed is False
         assert any(
             record.getMessage() == "Reusing cached fluid_prose for content_id 'c1234567'"
             for record in caplog.records
@@ -513,6 +468,8 @@ class TestCresmoPipelineExecutionAndIdempotency:
 
         mock_runner.execute_stage.return_value = BareFluid()
 
+        mock_runner.metrics_port = NoOpMetricsPort()
+
         pipeline = CresmoPipeline(
             media_ingestion_port=mock_ingestion,
             vault_port=mock_vault,
@@ -521,7 +478,7 @@ class TestCresmoPipelineExecutionAndIdempotency:
         )
 
         res = pipeline.execute(raw_bare, user=None, batch_id="  str_batch_id  ")
-        assert res.success is True
+        assert res.already_processed is False
 
         spec = telemetry.spans[0].session_spec
         assert spec is not None
@@ -553,6 +510,8 @@ class TestCresmoPipelineExecutionAndIdempotency:
 
         mock_runner.execute_stage.return_value = multi_word
         telemetry = InMemoryTelemetryPort()
+
+        mock_runner.metrics_port = NoOpMetricsPort()
 
         pipeline = CresmoPipeline(
             media_ingestion_port=MagicMock(spec=MediaIngestionPort),
@@ -590,6 +549,8 @@ class TestCresmoPipelineExecutionAndIdempotency:
 
         mock_runner.execute_stage.return_value = fluid_obj
         telemetry = InMemoryTelemetryPort()
+
+        mock_runner.metrics_port = NoOpMetricsPort()
 
         pipeline = CresmoPipeline(
             media_ingestion_port=MagicMock(spec=MediaIngestionPort),
@@ -629,6 +590,8 @@ class TestCresmoPipelineExecutionAndIdempotency:
         mock_runner = MagicMock(spec=PipelineStageRunner)
         mock_runner.execute_stage.side_effect = [fluid, BareGaps(), BareGaps(), BareGaps()]
         telemetry = InMemoryTelemetryPort()
+        mock_runner.metrics_port = NoOpMetricsPort()
+
         pipeline = CresmoPipeline(
             media_ingestion_port=MagicMock(spec=MediaIngestionPort),
             vault_port=MagicMock(spec=VaultRepositoryPort),
@@ -693,7 +656,6 @@ class TestCresmoPipelineExecutionAndIdempotency:
         res = pipeline.execute(sample_source_transcript, force_reprocess=False)
 
         assert res.already_processed is True
-        assert res.success is True
         assert res.content_id == sample_source_transcript.content.id
         assert res.source_transcript is sample_source_transcript
         assert res.stage_artifacts[StageName.FLUID_PROSE] is fluid_mock
@@ -701,10 +663,6 @@ class TestCresmoPipelineExecutionAndIdempotency:
         assert res.stage_artifacts[StageName.LONG_EXPANDER] is long_mock
         assert res.stage_artifacts[StageName.WIDE_EXPANDER] is wide_mock
         assert res.final_transcript is wide_mock
-        assert res.synthesized_notes == ()
-        assert res.reconciled_mocs == ()
-        assert isinstance(res.synthesized_notes, tuple)
-        assert isinstance(res.reconciled_mocs, tuple)
         mock_runner.execute_stage.assert_not_called()
         assert mock_vault.get_stage_transcript.call_count == 4
         mock_vault.get_stage_transcript.assert_any_call(
@@ -749,10 +707,12 @@ class TestCresmoPipelineExecutionAndIdempotency:
         mock_ledger.is_processed.return_value = True
         mock_m = MagicMock(spec=MetricsPort)
 
+        mock_runner = MagicMock(spec=PipelineStageRunner)
+        mock_runner.telemetry_port = NoOpTelemetryPort()
         pipeline = CresmoPipeline(
             media_ingestion_port=MagicMock(spec=MediaIngestionPort),
             vault_port=MagicMock(spec=VaultRepositoryPort),
-            stage_runner=MagicMock(spec=PipelineStageRunner),
+            stage_runner=mock_runner,
             ledger_port=mock_ledger,
             metrics_port=mock_m,
         )
@@ -781,6 +741,8 @@ class TestCresmoPipelineExecutionAndIdempotency:
         mock_runner = MagicMock(spec=PipelineStageRunner)
         mock_runner.execute_stage.return_value = MagicMock(text="New fluid body")
 
+        mock_runner.metrics_port = NoOpMetricsPort()
+
         pipeline = CresmoPipeline(
             media_ingestion_port=mock_ingestion,
             vault_port=mock_vault,
@@ -791,7 +753,6 @@ class TestCresmoPipelineExecutionAndIdempotency:
 
         res = pipeline.execute(sample_source_transcript, force_reprocess=True)
         assert res.already_processed is False
-        assert res.success is True
         assert mock_runner.execute_stage.call_count == 4
 
     def test_execute_stage_failure_propagates_exception(
@@ -801,6 +762,7 @@ class TestCresmoPipelineExecutionAndIdempotency:
         mock_vault = MagicMock(spec=VaultRepositoryPort)
         mock_t = MagicMock(spec=TelemetryPort)
         mock_runner = MagicMock(spec=PipelineStageRunner)
+        mock_runner.metrics_port = NoOpMetricsPort()
         mock_runner.execute_stage.side_effect = RuntimeError("Stage execution died")
 
         pipeline = CresmoPipeline(
@@ -834,6 +796,8 @@ class TestCresmoPipelineRunForSources:
         mock_ingestion = MagicMock(spec=MediaIngestionPort)
         mock_vault = MagicMock(spec=VaultRepositoryPort)
         mock_runner = MagicMock(spec=PipelineStageRunner)
+        mock_runner.telemetry_port = NoOpTelemetryPort()
+        mock_runner.metrics_port = NoOpMetricsPort()
 
         pipeline = CresmoPipeline(
             media_ingestion_port=mock_ingestion,
@@ -852,10 +816,7 @@ class TestCresmoPipelineRunForSources:
 
         pipeline.ingest_raw_transcript.execute = MagicMock(return_value=sample_raw)
 
-        with (
-            patch.object(pipeline, "warmup") as mock_warmup,
-            patch.object(pipeline, "execute", return_value=MagicMock(success=True)) as mock_exec,
-        ):
+        with patch.object(pipeline, "execute", return_value=MagicMock(spec=PipelineResult)) as mock_exec:
             res = pipeline.run_for_video(
                 video_url="https://youtube.com/watch?v=v123",
                 expansion_max_passes=2,
@@ -863,7 +824,6 @@ class TestCresmoPipelineRunForSources:
                 user=UserIdentity.worker(),
                 batch_id="batch_vid",
             )
-            mock_warmup.assert_called_once()
             pipeline.ingest_raw_transcript.execute.assert_called_once_with(
                 video_url="https://youtube.com/watch?v=v123"
             )
@@ -880,6 +840,8 @@ class TestCresmoPipelineRunForSources:
         mock_ingestion = MagicMock(spec=MediaIngestionPort)
         mock_vault = MagicMock(spec=VaultRepositoryPort)
         mock_runner = MagicMock(spec=PipelineStageRunner)
+        mock_runner.telemetry_port = NoOpTelemetryPort()
+        mock_runner.metrics_port = NoOpMetricsPort()
 
         pipeline = CresmoPipeline(
             media_ingestion_port=mock_ingestion,
@@ -890,12 +852,8 @@ class TestCresmoPipelineRunForSources:
         sample_raw = MagicMock(spec=StageTranscript)
         pipeline.ingest_raw_transcript.execute = MagicMock(return_value=sample_raw)
 
-        with (
-            patch.object(pipeline, "warmup") as mock_warmup,
-            patch.object(pipeline, "execute", return_value=MagicMock(success=True)) as mock_exec,
-        ):
+        with patch.object(pipeline, "execute", return_value=MagicMock(spec=PipelineResult)) as mock_exec:
             pipeline.run_for_video("https://youtube.com/watch?v=defaults")
-            mock_warmup.assert_called_once()
             mock_exec.assert_called_once_with(
                 raw=sample_raw,
                 expansion_max_passes=None,
@@ -908,6 +866,8 @@ class TestCresmoPipelineRunForSources:
         mock_ingestion = MagicMock(spec=MediaIngestionPort)
         mock_vault = MagicMock(spec=VaultRepositoryPort)
         mock_runner = MagicMock(spec=PipelineStageRunner)
+        mock_runner.telemetry_port = NoOpTelemetryPort()
+        mock_runner.metrics_port = NoOpMetricsPort()
 
         pipeline = CresmoPipeline(
             media_ingestion_port=mock_ingestion,
@@ -926,6 +886,8 @@ class TestCresmoPipelineRunForSources:
         mock_ingestion = MagicMock(spec=MediaIngestionPort)
         mock_vault = MagicMock(spec=VaultRepositoryPort)
         mock_runner = MagicMock(spec=PipelineStageRunner)
+        mock_runner.telemetry_port = NoOpTelemetryPort()
+        mock_runner.metrics_port = NoOpMetricsPort()
 
         pipeline = CresmoPipeline(
             media_ingestion_port=mock_ingestion,
@@ -944,6 +906,8 @@ class TestCresmoPipelineRunForSources:
         mock_ingestion = MagicMock(spec=MediaIngestionPort)
         mock_vault = MagicMock(spec=VaultRepositoryPort)
         mock_runner = MagicMock(spec=PipelineStageRunner)
+        mock_runner.telemetry_port = NoOpTelemetryPort()
+        mock_runner.metrics_port = NoOpMetricsPort()
 
         pipeline = CresmoPipeline(
             media_ingestion_port=mock_ingestion,
@@ -965,7 +929,6 @@ class TestCresmoPipelineRunForSources:
             patch(
                 "cresmo.application.pipeline.coordinator.ensure_transcript_saved",
             ) as mock_ensure,
-            patch.object(pipeline, "warmup") as mock_warmup,
             patch.object(pipeline, "execute", return_value=mock_result) as mock_exec,
         ):
             user = UserIdentity.worker()
@@ -976,7 +939,6 @@ class TestCresmoPipelineRunForSources:
                 user=user,
                 batch_id="text_batch",
             )
-            mock_warmup.assert_called_once()
             mock_load.assert_called_once_with(file_path, taxonomy_port=pipeline.taxonomy_port)
             mock_ensure.assert_called_once_with(
                 mock_vault,
@@ -997,6 +959,8 @@ class TestCresmoPipelineRunForSources:
         mock_ingestion = MagicMock(spec=MediaIngestionPort)
         mock_vault = MagicMock(spec=VaultRepositoryPort)
         mock_runner = MagicMock(spec=PipelineStageRunner)
+        mock_runner.telemetry_port = NoOpTelemetryPort()
+        mock_runner.metrics_port = NoOpMetricsPort()
 
         pipeline = CresmoPipeline(
             media_ingestion_port=mock_ingestion,
@@ -1053,6 +1017,9 @@ class TestCresmoPipelineRunForSources:
         mock_vault.get_stage_transcript.side_effect = lambda stage, _cid: stage_cache.get(stage)
         mock_runner = MagicMock(spec=PipelineStageRunner)
 
+        mock_runner.metrics_port = NoOpMetricsPort()
+        mock_runner.telemetry_port = NoOpTelemetryPort()
+
         pipeline = CresmoPipeline(
             media_ingestion_port=mock_ingestion,
             vault_port=mock_vault,
@@ -1061,7 +1028,7 @@ class TestCresmoPipelineRunForSources:
 
         result = pipeline.execute(raw, force_reprocess=False)
 
-        assert result.success is True
+        assert result.already_processed is False
         assert result.stage_artifacts[StageName.FLUID_PROSE] == cached_fluid
         assert result.stage_artifacts[StageName.GAP_FILLER] == cached_gaps
         assert result.stage_artifacts[StageName.LONG_EXPANDER] == cached_long
@@ -1091,6 +1058,8 @@ class TestCresmoPipelineRunForSources:
         wide_out = MagicMock(spec=StageTranscript)
         mock_runner = MagicMock(spec=PipelineStageRunner)
         mock_runner.execute_stage.side_effect = [gaps_out, long_out, wide_out]
+        mock_runner.telemetry_port = NoOpTelemetryPort()
+        mock_runner.metrics_port = NoOpMetricsPort()
 
         pipeline = CresmoPipeline(
             media_ingestion_port=mock_ingestion,
@@ -1100,7 +1069,7 @@ class TestCresmoPipelineRunForSources:
 
         result = pipeline.execute(raw, force_reprocess=False)
 
-        assert result.success is True
+        assert result.already_processed is False
         assert result.stage_artifacts[StageName.FLUID_PROSE] == cached_fluid
         assert result.stage_artifacts[StageName.GAP_FILLER] is gaps_out
         assert result.stage_artifacts[StageName.LONG_EXPANDER] is long_out
@@ -1129,6 +1098,7 @@ class TestCresmoPipelineRunForSources:
         mock_vault.get_stage_transcript.return_value = None
         mock_runner = MagicMock(spec=PipelineStageRunner)
         mock_runner.execute_stage.return_value = MagicMock(text="Stage output")
+        mock_runner.metrics_port = NoOpMetricsPort()
         telemetry = InMemoryTelemetryPort()
 
         pipeline = CresmoPipeline(
@@ -1139,7 +1109,7 @@ class TestCresmoPipelineRunForSources:
         )
 
         result = pipeline.execute(raw, force_reprocess=True)
-        assert result.success is True
+        assert result.already_processed is False
         assert telemetry.spans[0].session_spec is not None
         assert telemetry.spans[0].session_spec.force_reprocess is True
         assert telemetry.spans[0].session_spec.batch_id is None

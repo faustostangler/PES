@@ -17,14 +17,17 @@ from cresmo.infrastructure.adapters.metrics.otlp_metrics_adapter import (
 
 
 class TestMetricNameVocabulary:
-    """Verify canonical 16 low-cardinality MetricName StrEnum members."""
+    """Verify canonical 13 low-cardinality MetricName StrEnum members."""
 
-    def test_metric_name_has_sixteen_canonical_members(self) -> None:
-        assert len(MetricName) == 16
+    def test_metric_name_has_thirteen_canonical_members(self) -> None:
+        assert len(MetricName) == 13
         assert MetricName.PIPELINE_STAGE_DURATION == "cresmo_pipeline_stage_duration_seconds"
         assert MetricName.JUDGE_RETRY_COUNT == "cresmo_judge_retry_count_total"
         assert MetricName.STAGE_QUARANTINES == "cresmo_stage_quarantines_total"
-        assert MetricName.DORA_DEPLOYMENTS == "cresmo_dora_deployments_total"
+        assert MetricName.INGESTION_FAILURES == "cresmo_ingestion_failures_total"
+        assert MetricName.LLM_REQUEST_DURATION == "cresmo_llm_request_duration_seconds"
+        assert MetricName.BATCH_SOURCES_DISCOVERED == "cresmo_batch_sources_discovered_total"
+        assert MetricName.DISCOVERY_QUEUE_SIZE == "cresmo_discovery_queue_size"
 
 
 class TestProbePrometheusReady:
@@ -80,7 +83,7 @@ class TestOtlpMetricsAdapter:
             },
         )
         adapter.observe_histogram(
-            MetricName.DORA_RESTORE_DURATION,
+            MetricName.MEDIA_INGESTION_DURATION,
             12.5,
             labels={"incident_id": "inc_strip", "stage": "sync"},
         )
@@ -103,7 +106,7 @@ class TestOtlpMetricsAdapter:
         assert recorded[MetricName.TRANSCRIPTS_PROCESSED] == [
             {"channel_id": "UC_123", "status": "completed"}
         ]
-        assert recorded[MetricName.DORA_RESTORE_DURATION] == [{"stage": "sync"}]
+        assert recorded[MetricName.MEDIA_INGESTION_DURATION] == [{"stage": "sync"}]
         assert recorded[MetricName.PROCESS_RESIDENT_MEMORY_BYTES] == [{"role": "cli"}]
 
     def test_rejects_negative_counter_and_histogram_values(

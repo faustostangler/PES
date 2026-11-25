@@ -222,13 +222,13 @@ class TestCalibrationSpecs:
         )
 
         def _failing_lookup(_key: PromptKey) -> dict[str, str]:
-            raise RuntimeError("catalog offline")
+            raise KeyError("catalog offline")
 
         with caplog.at_level(logging.DEBUG, logger="cresmo.application.evals.specs"):
             fallback_digest = compute_config_hash(spec, items, 0.85, prompt_lookup=_failing_lookup)
         assert any(
             rec.name == "cresmo.application.evals.specs"
-            and rec.getMessage() == "Prompt lookup unavailable for config hash: catalog offline"
+            and "Prompt lookup unavailable for config hash" in rec.getMessage()
             for rec in caplog.records
         )
         default_canonical = {

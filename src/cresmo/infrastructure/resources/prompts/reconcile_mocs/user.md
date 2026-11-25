@@ -10,7 +10,7 @@ EXECUTION DIRECTIVES:
 1. Audit all atomic notes to ensure 100% coverage with zero orphans. Every note in the input must appear in at least one MOC's 'associated_notes' and be referenced within its contextual narrative index.
 2. Cluster notes into appropriate Global Epistemological MOCs ('MOC <Macro Domain>') and Thematic Sub-MOCs ('MOC <Thematic Cluster>').
 3. Write an analytical 'overview' for each MOC: an authoritative, continuous narrative synthesis (at least 2 dense paragraphs) that articulates how the concepts, entities, events, and processes intersect, mapping systemic feedback loops, second-order causes, and historical/conceptual trajectories.
-4. Ensure zero em-dashes (—) and zero binary antitheses ('não X, mas Y') across all narrative prose.
+4. Ensure zero em-dashes (—) and zero binary antitheses ('not X, but Y') across all narrative prose.
 
 Output strictly a single valid JSON array of objects with the following schema:
 [

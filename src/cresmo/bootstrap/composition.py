@@ -42,10 +42,6 @@ from cresmo.bootstrap.factories.adapter_factory import (
     load_local_prompt_catalog,
 )
 from cresmo.bootstrap.factories.judge_factory import build_llm_judge_adapter
-from cresmo.bootstrap.factories.settings_factory import (
-    load_fresh_settings,
-    resolve_shared_settings,
-)
 from cresmo.bootstrap.factories.telemetry_factory import (
     build_anonymizer_adapter,
     build_metrics_adapter,
@@ -58,10 +54,19 @@ from cresmo.bootstrap.factories.use_case_factory import (
     build_index_raw_use_case,
     build_unify_duplicates_use_case,
 )
-from cresmo.infrastructure.config import CresmoSettings
+from cresmo.infrastructure.adapters.scrapers.cookie_extractor import (
+    export_cookies_from_browser,
+    has_valid_auth_cookies,
+)
+from cresmo.infrastructure.config import CresmoSettings, resolve_shared_settings
 from cresmo.infrastructure.environment import ensure_runtime_directories
 from cresmo.infrastructure.logging_config import configure_logging
 from cresmo.infrastructure.persistence.sqlite_ledger_adapter import SqliteLedgerAdapter
+
+
+def load_fresh_settings() -> CresmoSettings:
+    """Instantiate fresh validated CresmoSettings directly from environment and .env."""
+    return CresmoSettings()
 
 
 def build_pipeline(
@@ -85,21 +90,20 @@ def build_pipeline(
         resolved.observability, langfuse_client=langfuse_client
     )
 
-    # 2. Ingestion, Persistence & Idempotency
-    media_ingestion_port = build_media_ingestion_adapter(resolved)
+    # 2. Metrics, Ingestion, Persistence & Idempotency
+    metrics_port = build_metrics_adapter(resolved.observability)
+    media_ingestion_port = build_media_ingestion_adapter(resolved, metrics_port=metrics_port)
     vault_port = build_vault_adapter(resolved.storage)
     ledger_port = SqliteLedgerAdapter(db_path=resolved.storage.sqlite_ledger_path)
 
-    # 3. SRE & DORA Metrics Telemetry
-    metrics_port = build_metrics_adapter(resolved.observability)
-
-    # 4. Prompt Governance, Cognitive & Judge LLM Engines
+    # 3. Prompt Governance, Cognitive & Judge LLM Engines
     prompt_provider = build_prompt_provider(resolved, langfuse_client=langfuse_client)
     gemini_pool = build_gemini_credential_pool(resolved.llm.gemini)
     synthesis_adapter = build_gemini_synthesis_adapter(
         resolved.llm.gemini,
         telemetry_port=telemetry_port,
         credential_pool=gemini_pool,
+        metrics_port=metrics_port,
     )
     llm_indexing_port = build_indexing_adapter(
         resolved.llm,
@@ -107,6 +111,7 @@ def build_pipeline(
         web_index=web_index,
         telemetry_port=telemetry_port,
         credential_pool=gemini_pool,
+        metrics_port=metrics_port,
     )
     llm_judge = build_llm_judge_adapter(
         resolved,
@@ -150,20 +155,15 @@ def build_pipeline(
         vault_port=vault_port,
         stage_runner=stage_runner,
         ledger_port=ledger_port,
-        stage_policy=stage_policy,
-        llm_indexing_port=llm_indexing_port,
         taxonomy_port=taxonomy_port,
-        whisper_model=resolved.ingestion.whisper_model,
     )
 
 
 def build_sync_channel_use_case(
     settings: CresmoSettings | None = None,
-    batch_size_override: int | None = None,
     check_ffmpeg: bool = True,
 ) -> SyncChannelUseCase:
     """Construct SyncChannelUseCase with all ports and dependencies wired."""
-    _ = batch_size_override
     resolved = resolve_shared_settings(settings)
     pipeline = build_pipeline(resolved)
     preflight_checker = build_preflight_checker(resolved, check_ffmpeg=check_ffmpeg)
@@ -198,6 +198,7 @@ def build_run_synthesis_use_case(
         )
 
     preflight_checker = build_preflight_checker(settings=resolved, check_ffmpeg=check_ffmpeg)
+    metrics_port = build_metrics_adapter(resolved.observability)
 
     def _discover_factory(
         media_port: MediaIngestionPort,
@@ -207,6 +208,7 @@ def build_run_synthesis_use_case(
             settings=resolved,
             media_ingestion_port=media_port,
             progress_callback=progress_callback,
+            metrics_port=metrics_port,
         )
 
     def _concat_factory(vault_port: VaultRepositoryPort) -> ConcatMasterUseCase:
@@ -228,7 +230,6 @@ def build_run_synthesis_use_case(
 def build_sync_batch_use_case(
     settings: CresmoSettings | None = None,
     *,
-    batch_size_override: int | None = None,
     check_ffmpeg: bool = True,
 ) -> SyncBatchUseCase:
     """Construct SyncBatchUseCase with ensured runtime directories, channel sync, and taxonomy."""
@@ -236,7 +237,6 @@ def build_sync_batch_use_case(
     ensure_runtime_directories(resolved.storage)
     sync_channel_use_case = build_sync_channel_use_case(
         settings=resolved,
-        batch_size_override=batch_size_override,
         check_ffmpeg=check_ffmpeg,
     )
     taxonomy_port = build_taxonomy_adapter(resolved.storage)
@@ -258,6 +258,8 @@ __all__ = [
     "build_sync_batch_use_case",
     "build_sync_channel_use_case",
     "build_unify_duplicates_use_case",
+    "export_cookies_from_browser",
+    "has_valid_auth_cookies",
     "load_fresh_settings",
     "load_local_prompt_catalog",
     "resolve_langfuse_client",

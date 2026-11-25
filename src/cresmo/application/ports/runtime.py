@@ -15,8 +15,8 @@ class ProcessRuntimePort(ABC):
     """Hexagonal Port abstracting OS process runtime operations for Application use cases."""
 
     @abstractmethod
-    def collect_garbage(self) -> int:
-        """Trigger garbage collection and return unreachable object count."""
+    def collect_garbage(self) -> None:
+        """Trigger garbage collection."""
         raise NotImplementedError
 
     @abstractmethod
@@ -33,9 +33,9 @@ class ProcessRuntimePort(ABC):
 class NoOpProcessRuntimePort(ProcessRuntimePort):
     """Hermetic Null-Object implementation of ProcessRuntimePort for offline/test runs."""
 
-    def collect_garbage(self) -> int:
-        """Return zero without invoking host garbage collector."""
-        return 0
+    def collect_garbage(self) -> None:
+        """No-op without invoking host garbage collector."""
+        return None
 
     def get_process_rss_bytes(self) -> float:
         """Return zero bytes RSS memory metric."""

@@ -63,8 +63,8 @@ def test_stage_registry_gap_filler_spec() -> None:
     assert StageRegistry.contains("gap_filler") is True
     spec = StageRegistry.get("gap_filler")
     assert isinstance(spec, StageDefinition)
-    assert spec.max_passes == 5
     assert spec.convergence_mode is ConvergenceMode.HYBRID_SEMANTIC
+    assert not hasattr(spec, "max_passes")
     assert not hasattr(spec, "early_stopping_enabled")
     assert not hasattr(spec, "saturation_checker")
 
@@ -73,10 +73,9 @@ def test_stage_registry_gap_filler_spec() -> None:
 
 
 def test_stage_registry_long_expander_spec() -> None:
-    """Verify StageRegistry configures long_expander with 7 max_passes and 5 criteria."""
+    """Verify StageRegistry configures long_expander with 5 criteria."""
     assert StageRegistry.contains("long_expander") is True
     spec = StageRegistry.get("long_expander")
-    assert spec.max_passes == 7
     assert spec.convergence_mode is ConvergenceMode.HYBRID_SEMANTIC
     assert JudgeCriterion.LONGUE_DUREE_STRATIFICATION in spec.required_criteria
     assert JudgeCriterion.EMPIRICAL_HISTORICAL_GROUNDING in spec.required_criteria
@@ -87,10 +86,9 @@ def test_stage_registry_long_expander_spec() -> None:
 
 
 def test_stage_registry_wide_expander_spec() -> None:
-    """Verify StageRegistry configures wide_expander with 5 max_passes and 5 criteria."""
+    """Verify StageRegistry configures wide_expander with 5 criteria."""
     assert StageRegistry.contains("wide_expander") is True
     spec = StageRegistry.get("wide_expander")
-    assert spec.max_passes == 5
     assert spec.convergence_mode is ConvergenceMode.HYBRID_SEMANTIC
     assert JudgeCriterion.SYNCHRONIC_CONNECTIVITY in spec.required_criteria
     assert JudgeCriterion.COMPARATIVE_PARALLELISM in spec.required_criteria

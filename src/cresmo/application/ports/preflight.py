@@ -13,7 +13,7 @@ from pathlib import Path
 
 
 class PreflightProbePort(ABC):
-    """Port abstracting filesystem, binary, and HTTP runtime environment probes."""
+    """Port abstracting filesystem and binary runtime environment probes."""
 
     @abstractmethod
     def ensure_directory(self, path: Path) -> None:
@@ -43,16 +43,4 @@ class PreflightProbePort(ABC):
 
         Returns:
             True if resolved on PATH, False otherwise.
-        """
-
-    @abstractmethod
-    def probe_http(self, url: str, timeout_seconds: float = 1.0) -> bool:
-        """Execute lightweight HTTP GET probe returning True for status < 500.
-
-        Args:
-            url: Full HTTP/HTTPS probe URL.
-            timeout_seconds: Socket timeout in seconds.
-
-        Returns:
-            True if reachable and status < 500, False otherwise.
         """

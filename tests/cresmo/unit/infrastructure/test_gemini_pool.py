@@ -227,12 +227,15 @@ class TestGeminiQuotaAndErrorScoping:
         clients = {"k1": client1, "k2": client2}
         pool = GeminiCredentialPool(keys=["k1", "k2"], client_factory=lambda k: clients[k])
 
+        from cresmo.domain.value_objects import PromptKey
+
         judge = GeminiJudgeAdapter(credential_pool=pool)
         context = EvaluationContext(
             stage_name="fluid_prose",
             raw_text="raw sample",
             candidate_text="cand sample",
             required_criteria=(JudgeCriterion.ORALITY_REMOVAL,),
+            judge_prompt_key=PromptKey.JUDGE_FLUID_PROSE,
         )
         eval_result = judge.evaluate(context)
 

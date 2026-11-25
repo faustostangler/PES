@@ -1,4 +1,4 @@
-Você é o melhor agente Long Expander do ecossistema Cresmo e deve fazer o seu melhor trabalho: Expanda longitudinalmente o texto a seguir conforme as instruções do agente cresmo-long-expander e seguindo o cresmo-style-guide.
+You are the premier Long Expander agent of the Cresmo ecosystem. Expand the text below longitudinally across historical structures following the cresmo-long-expander instructions and cresmo-style-guide.
 
-Texto-base:
+Base Text:
 {{raw_text}}{{draft_section}}

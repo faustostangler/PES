@@ -190,8 +190,6 @@ class IndexRawTranscriptsUseCase:
             key_concept=concept,
             synthesis=synthesis,
             channel_category=category,
-            summary=summary,
-            excerpt=excerpt,
         )
 
         # Dual output persistence: channel markdown index and global tabular catalog (brain.csv)

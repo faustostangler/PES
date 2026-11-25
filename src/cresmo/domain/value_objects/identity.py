@@ -13,7 +13,6 @@ import re
 import uuid
 from dataclasses import dataclass
 from enum import StrEnum
-from typing import Any
 
 from cresmo.domain.exceptions import DomainValidationError
 from cresmo.domain.value_objects.constants import (
@@ -124,9 +123,6 @@ class ChannelName:
         return cls(value=str(raw))
 
     def __str__(self) -> str:
-        return self.value
-
-    def strip(self) -> str:
         return self.value
 
     def __eq__(self, other: object) -> bool:
@@ -243,10 +239,6 @@ class ChannelId:
     def __str__(self) -> str:
         return self.value
 
-    def strip(self) -> str:
-        """String duck typing helper."""
-        return self.value
-
     def __eq__(self, other: object) -> bool:
         if isinstance(other, ChannelId):
             return self.value == other.value
@@ -263,7 +255,7 @@ class ContentId:
     """Strongly-typed unique identifier for a raw media item or transcript.
 
     Invariants:
-        Must be a non-empty string between 8 and 64 characters matching ^[a-zA-Z0-9_-]+$.
+        Must be a non-empty string between 1 and 64 characters matching ^[a-zA-Z0-9_-]+$.
         Zero whitespace or shell/path traversal characters allowed.
     """
 
@@ -313,10 +305,6 @@ class ContentId:
     def __str__(self) -> str:
         return self.value
 
-    def strip(self) -> str:
-        """String duck typing helper."""
-        return self.value
-
     def __eq__(self, other: object) -> bool:
         if isinstance(other, ContentId):
             return self.value == other.value
@@ -332,21 +320,19 @@ class ContentId:
 class Channel:
     """Canonical domain Composite Value Object representing a content creator or source channel.
 
-    Encapsulates channel identity, human-readable name, platform ID, category, and canonical URL.
+    Encapsulates channel identity, human-readable name, platform ID, and category.
     Conforms to ADR-019, ADR-032, and ADR-033 (Composite Value Objects with Identity VOs).
     """
 
     name: str
     id: ChannelId | None = None
     category: str = ""
-    url: str | None = None
 
     def __init__(
         self,
         name: str | ChannelName,
         id: ChannelId | str | None = None,
         category: str = "",
-        url: str | None = None,
     ) -> None:
         raw_name = name.value if isinstance(name, ChannelName) else (name or "")
         clean_name = raw_name.strip()
@@ -363,17 +349,9 @@ class Channel:
         else:
             resolved_channel_id = None
 
-        clean_url = url.strip() if url else None
-        if not clean_url:
-            if resolved_channel_id is not None and resolved_channel_id.is_youtube_canonical:
-                clean_url = f"https://www.youtube.com/channel/{resolved_channel_id.value}"
-            else:
-                clean_url = f"https://www.youtube.com/@{clean_name}"
-
         object.__setattr__(self, "name", clean_name)
         object.__setattr__(self, "id", resolved_channel_id)
         object.__setattr__(self, "category", category.strip() if category else "")
-        object.__setattr__(self, "url", clean_url)
 
     @property
     def tenant_key(self) -> str:
@@ -403,7 +381,7 @@ class Content:
         id: ContentId | str,
         title: str = "",
         text: str = "",
-        session_id: str | Any = "",
+        session_id: str = "",
     ) -> None:
         if id is None:
             raise DomainValidationError("Content requires non-null id.")
@@ -412,44 +390,10 @@ class Content:
         else:
             raise DomainValidationError(f"Invalid content id type: {type(id)}")
 
-        effective_title = title.value if hasattr(title, "value") else str(title or "")
-        effective_session_id = (
-            session_id.value if hasattr(session_id, "value") else str(session_id or "")
-        )
-
         object.__setattr__(self, "id", resolved_content_id)
-        object.__setattr__(self, "title", effective_title.strip() if effective_title else "")
+        object.__setattr__(self, "title", title.strip() if title else "")
         object.__setattr__(self, "text", text)
-        object.__setattr__(
-            self, "session_id", effective_session_id.strip() if effective_session_id else ""
-        )
-
-    @classmethod
-    def create(
-        cls,
-        id: str | ContentId | None = None,
-        title: str = "",
-        text: str = "",
-        session_id: str | Any = "",
-        *,
-        url: str = "",
-    ) -> Content:
-        """Ergonomic factory constructing Content from primitive strings or Value Objects."""
-        if id is None:
-            if url:
-                extracted = ContentId.extract_from_text(url)
-                if not extracted:
-                    raise DomainValidationError(f"Could not extract ContentId from URL: '{url}'")
-                id = extracted
-            else:
-                raise DomainValidationError("Content requires non-null id or valid url.")
-        resolved_content_id = ContentId.from_string(id)
-        return cls(
-            id=resolved_content_id,
-            title=title,
-            text=text,
-            session_id=session_id,
-        )
+        object.__setattr__(self, "session_id", session_id.strip() if session_id else "")
 
     def __str__(self) -> str:
         return self.id.value

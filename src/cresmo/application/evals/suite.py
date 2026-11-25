@@ -41,7 +41,7 @@ from cresmo.application.ports.evals import (
     CalibrationReportWriterPort,
 )
 
-ReportContentBuilder = Callable[[StageCalibrationSpec, CalibrationResultSet, str, str], str]
+_ReportContentBuilder = Callable[[StageCalibrationSpec, CalibrationResultSet, str, str], str]
 
 
 def run_calibration_suite(
@@ -64,7 +64,7 @@ def run_calibration_suite(
     max_retry_wait: float = 60.0,
     prompt_lookup: PromptTemplateLookup | None = None,
     is_quota_exhausted: Callable[[Exception], bool] | None = None,
-    report_builder: ReportContentBuilder | None = None,
+    report_builder: _ReportContentBuilder | None = None,
     now_fn: Callable[[], float] = time.time,
     sleep_fn: Callable[[float], None] = time.sleep,
     on_event: Callable[[CalibrationEvent], None] | None = None,
@@ -122,7 +122,6 @@ def run_calibration_suite(
     for stage_name in selected_stages:
         spec = stage_specs[stage_name]
         items = dataset_loader.load_items(
-            stage_name,
             spec.default_golden_set_path,
             spec.default_seed_path,
             dataset_path=dataset_path,

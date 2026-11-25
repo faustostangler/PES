@@ -42,7 +42,7 @@ def sample_context() -> PipelineExecutionContext:
     return PipelineExecutionContext(
         user_identity=UserIdentity.worker(),
         channel=Channel(name="Historia", id=ChannelId("UC_hist")),
-        content=Content.create(
+        content=Content(
             id=ContentId("vid_hist1"), title="Fundação", session_id="sess:gap_filler"
         ),
     )
@@ -53,7 +53,7 @@ def sample_fluid_transcript() -> StageTranscript:
     return StageTranscript(
         channel=Channel(name="Historia", id=ChannelId("UC_hist")),
         provenance=MediaProvenance.create(url="https://youtube.com/watch?v=vid_hist1"),
-        content=Content.create(
+        content=Content(
             id="vid_hist1",
             title="Fundação",
             text="## Fundação de Portugal\n\nTexto fluido sem oralidades.",
@@ -203,10 +203,10 @@ def test_gap_filler_multi_pass_chains_previous_output_and_emits_pass_telemetry(
     sample_fluid_transcript: StageTranscript,
 ) -> None:
     """Verify multi-pass gap_filler chains Pass N-1 draft into Pass N and scopes telemetry pass numbers."""
-    from cresmo.application.ports import (
+    from cresmo.application.ports import resolve_llm_generation_span_name
+    from cresmo.application.ports.telemetry import (
+        _get_active_telemetry_stage,
         get_active_telemetry_pass,
-        get_active_telemetry_stage,
-        resolve_llm_generation_span_name,
     )
     from cresmo.infrastructure.adapters.prompts.json_provider import JsonPromptProvider
 
@@ -238,7 +238,7 @@ def test_gap_filler_multi_pass_chains_previous_output_and_emits_pass_telemetry(
 
     def _spy_transform(prompt: object, **_kwargs: object) -> str:
         nonlocal call_idx
-        user_content = prompt.get_last_user_content()  # type: ignore[attr-defined]
+        user_content = prompt.messages[-1].content  # type: ignore[attr-defined]
         recorded_calls.append(
             (user_content, get_active_telemetry_pass(), resolve_llm_generation_span_name())
         )
@@ -289,7 +289,7 @@ def test_gap_filler_multi_pass_chains_previous_output_and_emits_pass_telemetry(
     assert p3_span == "cresmo.gap_filler.generate.pass_3"
 
     assert get_active_telemetry_pass() is None
-    assert get_active_telemetry_stage() is None
+    assert _get_active_telemetry_stage() is None
 
 
 def test_gap_filler_single_pass_omits_telemetry_pass_suffix(
@@ -297,10 +297,8 @@ def test_gap_filler_single_pass_omits_telemetry_pass_suffix(
     sample_fluid_transcript: StageTranscript,
 ) -> None:
     """Verify max_passes=1 runs without sequential pass number so observation stays cresmo.{stage}.generate."""
-    from cresmo.application.ports import (
-        get_active_telemetry_pass,
-        resolve_llm_generation_span_name,
-    )
+    from cresmo.application.ports import resolve_llm_generation_span_name
+    from cresmo.application.ports.telemetry import get_active_telemetry_pass
 
     captured: list[tuple[int | None, str]] = []
 
@@ -351,7 +349,7 @@ def test_multi_pass_injects_critique_only_on_final_pass(
 
     def _spy_transform(prompt: object, **_kwargs: object) -> str:
         nonlocal call_idx
-        prompts_seen.append(prompt.get_last_user_content())  # type: ignore[attr-defined]
+        prompts_seen.append(prompt.messages[-1].content)  # type: ignore[attr-defined]
         out = outputs[call_idx]
         call_idx += 1
         return out
@@ -423,7 +421,7 @@ def test_multi_pass_early_saturation_with_critique_runs_terminal_critique_pass(
 
     def _spy_transform(prompt: object, **_kwargs: object) -> str:
         nonlocal call_idx
-        prompts_seen.append(prompt.get_last_user_content())  # type: ignore[attr-defined]
+        prompts_seen.append(prompt.messages[-1].content)  # type: ignore[attr-defined]
         out = outputs[call_idx]
         call_idx += 1
         return out
@@ -560,7 +558,7 @@ def test_single_pass_with_critique_applies_critique_on_pass_1(
     prompts_seen: list[str] = []
 
     def _spy_transform(prompt: object, **_kwargs: object) -> str:
-        prompts_seen.append(prompt.get_last_user_content())  # type: ignore[attr-defined]
+        prompts_seen.append(prompt.messages[-1].content)  # type: ignore[attr-defined]
         return "## Title\n\nClean prose."
 
     mock_llm = MagicMock(spec=LLMTransformationPort)
@@ -827,7 +825,7 @@ def test_draft_fallback_block_instructs_no_new_gaps_sentinel_not_copy_back(
         prev_pass_num=1,
         current_text="## Draft\n\nExisting pass 1 draft.",
     )
-    rendered = prompt.get_last_user_content()
+    rendered = prompt.messages[-1].content
 
     assert NO_NEW_GAPS_SENTINEL in rendered
     assert "return the draft unchanged" not in rendered.lower()
@@ -896,50 +894,34 @@ def test_stage_execution_pass_context_and_boundary_contracts(
         == {}
     )
 
-    # 2. stage_config missing max_passes attribute defaults safely to single pass (1)
-    class ConfigWithoutMaxPasses:
-        stage_name = "fluid_prose"
-        temperature = None
-
-        def build_transform_prompt(
-            self, _provider: object, _source: object, **_kwargs: object
-        ) -> ChatPrompt:
-            return ChatPrompt.single_turn(user_prompt="usr", system_prompt="sys")
+    # 2. stage_config with max_passes=1 executes a single pass
+    cfg_single = StageConfig[StageTranscript, StageTranscript](
+        stage_name="fluid_prose",
+        transform_prompt_key=PromptKey.FLUID_PROSE,
+        max_passes=1,
+    )
 
     mock_llm_default = MagicMock(spec=LLMTransformationPort)
     mock_llm_default.transform.return_value = "Single pass default."
     cand_default = generate_stage_candidate(
-        ConfigWithoutMaxPasses(),  # type: ignore[arg-type]
+        cfg_single,
         sample_fluid_transcript,
         context=sample_context,
         prompt_provider=NoOpPromptProviderPort(),
         llm_port=mock_llm_default,
         attempt=1,
-        active_trace_id="trace_no_attr",
+        active_trace_id="trace_single_attr",
     )
     assert mock_llm_default.transform.call_count == 1
     assert "passes_executed" not in cand_default.metadata
 
-    # 3. max_passes=0 clamps to 1 and runs single pass
-    mock_llm_zero = MagicMock(spec=LLMTransformationPort)
-    mock_llm_zero.transform.return_value = "Clamped single pass."
-    cfg_zero = StageConfig[StageTranscript, StageTranscript](
-        stage_name="fluid_prose",
-        transform_prompt_key=PromptKey.FLUID_PROSE,
-        max_passes=0,
-    )
-    cand_zero = generate_stage_candidate(
-        cfg_zero,
-        sample_fluid_transcript,
-        context=sample_context,
-        prompt_provider=NoOpPromptProviderPort(),
-        llm_port=mock_llm_zero,
-        attempt=1,
-        active_trace_id="trace_zero_passes",
-    )
-    assert mock_llm_zero.transform.call_count == 1
-    assert cand_zero.text == "Clamped single pass."
-    assert "passes_executed" not in cand_zero.metadata
+    # 3. max_passes=0 fails fast during StageConfig validation
+    with pytest.raises(ValueError, match=r"StageConfig\.max_passes must be >= 1"):
+        StageConfig[StageTranscript, StageTranscript](
+            stage_name="fluid_prose",
+            transform_prompt_key=PromptKey.FLUID_PROSE,
+            max_passes=0,
+        )
 
     # 4. max_passes=2 activates multi-pass, forwards total_passes=2, and saturating on final pass with critique marks is_saturated=True
     observed_prompt_kwargs: list[dict[str, object]] = []
@@ -1066,8 +1048,8 @@ def test_long_expander_reuses_stage_agnostic_build_refine_and_sentinel_stop(
     assert result.pass_count == 3
     assert "circuitos atlânticos" in result.content.text
     assert "antiguidade tardia" in result.content.text
-    pass1_call_user = mock_llm.transform.call_args_list[0].kwargs["prompt"].get_last_user_content()
-    pass2_call_user = mock_llm.transform.call_args_list[1].kwargs["prompt"].get_last_user_content()
+    pass1_call_user = mock_llm.transform.call_args_list[0].kwargs["prompt"].messages[-1].content
+    pass2_call_user = mock_llm.transform.call_args_list[1].kwargs["prompt"].messages[-1].content
     assert "<draft" not in pass1_call_user
     assert '<draft pass="1">' in pass2_call_user
 
@@ -1141,7 +1123,7 @@ def test_wide_expander_reuses_stage_agnostic_build_refine_and_sentinel_stop(
     assert result.pass_count == 3
     assert "Sakoku" in result.content.text
     assert "Potosí" in result.content.text
-    pass1_call_user = mock_llm.transform.call_args_list[0].kwargs["prompt"].get_last_user_content()
-    pass2_call_user = mock_llm.transform.call_args_list[1].kwargs["prompt"].get_last_user_content()
+    pass1_call_user = mock_llm.transform.call_args_list[0].kwargs["prompt"].messages[-1].content
+    pass2_call_user = mock_llm.transform.call_args_list[1].kwargs["prompt"].messages[-1].content
     assert "<draft" not in pass1_call_user
     assert '<draft pass="1">' in pass2_call_user

@@ -79,36 +79,44 @@ class TestPostProcessExpandedTranscript:
             metadata={"passes_executed": 4},
         )
 
-        result = post_process_expanded_transcript(candidate, source, pass_count=1)
+        result = post_process_expanded_transcript(candidate, source)
 
         assert result.pass_count == 4
 
-    def test_accepts_plain_string_candidate_and_falls_back_to_source_title(self) -> None:
+    def test_falls_back_to_source_title_and_defaults_pass_count_to_one(self) -> None:
         source = _make_source_transcript(title="Source Fallback Title")
-        plain_candidate = (
-            "## Section Only\n\nMain narrative content.\n\n### Extra Info\n\nSupplemental note."
+        candidate = CandidateText(
+            text="## Section Only\n\nMain narrative content.\n\n### Extra Info\n\nSupplemental note.",
+            stage_name="long_expander",
         )
 
-        result = post_process_expanded_transcript(plain_candidate, source, pass_count=3)
+        result = post_process_expanded_transcript(candidate, source)
 
         assert result.content.title == "Source Fallback Title"
         assert result.content.text == (
             "## Section Only\n\nMain narrative content.\n\n### Extra Info\n\nSupplemental note."
         )
-        assert result.pass_count == 3
+        assert result.pass_count == 1
 
     def test_falls_back_to_untitled_transcript_and_clamps_non_positive_pass_count(self) -> None:
         source = _make_source_transcript(title="")
-        candidate = "## Heading\n\nBody.\n\n### Extra Info\n\nDetails."
+        candidate = CandidateText(
+            text="## Heading\n\nBody.\n\n### Extra Info\n\nDetails.",
+            stage_name="gap_filler",
+            metadata={"passes_executed": 0},
+        )
 
-        result = post_process_expanded_transcript(candidate, source, pass_count=0)
+        result = post_process_expanded_transcript(candidate, source)
 
         assert result.content.title == "Untitled Transcript"
         assert result.pass_count == 1
 
     def test_raises_exact_error_when_extra_info_section_is_missing(self) -> None:
         source = _make_source_transcript()
-        candidate = "## Heading\n\nBody without extra info."
+        candidate = CandidateText(
+            text="## Heading\n\nBody without extra info.",
+            stage_name="gap_filler",
+        )
 
         with pytest.raises(StageTranscriptStructureError) as exc_info:
             post_process_expanded_transcript(candidate, source)
@@ -120,7 +128,10 @@ class TestPostProcessExpandedTranscript:
 
     def test_raises_exact_error_when_main_body_is_empty(self) -> None:
         source = _make_source_transcript()
-        candidate = "# Title Only\n\n### Extra Info\n\nOrphan extra info."
+        candidate = CandidateText(
+            text="# Title Only\n\n### Extra Info\n\nOrphan extra info.",
+            stage_name="gap_filler",
+        )
 
         with pytest.raises(StageTranscriptStructureError) as exc_info:
             post_process_expanded_transcript(candidate, source)
@@ -129,7 +140,10 @@ class TestPostProcessExpandedTranscript:
 
     def test_raises_exact_error_when_extra_info_body_is_empty(self) -> None:
         source = _make_source_transcript()
-        candidate = "## Main Section\n\nBody exists.\n\n### Extra Info\n   \n"
+        candidate = CandidateText(
+            text="## Main Section\n\nBody exists.\n\n### Extra Info\n   \n",
+            stage_name="gap_filler",
+        )
 
         with pytest.raises(StageTranscriptStructureError) as exc_info:
             post_process_expanded_transcript(candidate, source)
@@ -140,18 +154,18 @@ class TestPostProcessExpandedTranscript:
         )
 
     @pytest.mark.parametrize(
-        ("metadata", "fallback_pass_count", "expected_pass_count"),
+        ("metadata", "expected_pass_count"),
         [
-            ({"passes_executed": "invalid"}, 3, 3),
-            ({"passes_executed": None}, 2, 2),
-            ({"passes_executed": True}, 4, 4),
-            ({"passes_executed": 0}, 5, 1),
+            ({"passes_executed": "invalid"}, 1),
+            ({"passes_executed": None}, 1),
+            ({"passes_executed": True}, 1),
+            ({"passes_executed": 0}, 1),
+            ({"passes_executed": 4}, 4),
         ],
     )
     def test_ignores_invalid_or_bool_passes_executed_and_clamps_zero(
         self,
         metadata: dict[str, object],
-        fallback_pass_count: int,
         expected_pass_count: int,
     ) -> None:
         source = _make_source_transcript(title="Source Title")
@@ -164,7 +178,6 @@ class TestPostProcessExpandedTranscript:
         result = post_process_expanded_transcript(
             candidate,
             source,
-            pass_count=fallback_pass_count,
         )
 
         assert result.pass_count == expected_pass_count

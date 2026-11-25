@@ -18,7 +18,6 @@ from cresmo.domain.value_objects import (
     BatchId,
     ChannelFeedQuery,
     DiscoveredMediaItem,
-    LedgerEntry,
     PipelineStatus,
     SyncSummary,
 )
@@ -96,9 +95,12 @@ class SyncChannelUseCase:
         failed_count = 0
         batch_id = BatchId.generate()
 
+        if not dry_run and in_window_items:
+            self.pipeline.warmup()
+
         # Step 4: Process items with idempotency skip check
         for item in in_window_items:
-            # Idempotency check against ledger
+            # Idempotency check against ledger avoids downloading already processed media
             if not force_refresh and self.ledger_port.is_processed(item.content_id):
                 skipped_count += 1
                 continue
@@ -107,70 +109,21 @@ class SyncChannelUseCase:
                 processed_count += 1
                 continue
 
-            item_start = datetime.now(UTC)
-            self.ledger_port.save_entry(
-                LedgerEntry(
-                    content_id=item.content_id,
-                    media_url=item.media_url,
-                    title=item.title,
-                    channel_name=item.channel_name,
-                    status=PipelineStatus.RUNNING,
-                    started_at=item_start,
-                )
-            )
-
             try:
                 result = self.pipeline.run_for_video(
                     video_url=item.media_url,
                     user=UserIdentity.worker(),
                     batch_id=batch_id,
+                    force_reprocess=force_refresh,
                 )
-                completed_at = datetime.now(UTC)
-
-                if result.success:
-                    processed_count += 1
-                    self.ledger_port.save_entry(
-                        LedgerEntry(
-                            content_id=item.content_id,
-                            media_url=item.media_url,
-                            title=item.title,
-                            channel_name=item.channel_name,
-                            status=PipelineStatus.COMPLETED,
-                            notes_count=len(result.synthesized_notes),
-                            started_at=item_start,
-                            completed_at=completed_at,
-                        )
-                    )
+                if result.already_processed:
+                    skipped_count += 1
                 else:
-                    failed_count += 1
-                    self.ledger_port.save_entry(
-                        LedgerEntry(
-                            content_id=item.content_id,
-                            media_url=item.media_url,
-                            title=item.title,
-                            channel_name=item.channel_name,
-                            status=PipelineStatus.FAILED_TRANSFORMATION,
-                            error_message=result.error_message,
-                            started_at=item_start,
-                            completed_at=completed_at,
-                        )
-                    )
+                    processed_count += 1
             except StageQuarantinedError:
                 failed_count += 1
-            except Exception as exc:  # noqa: BLE001 - Failure isolation across items
+            except Exception:  # noqa: BLE001 - Failure isolation across items
                 failed_count += 1
-                self.ledger_port.save_entry(
-                    LedgerEntry(
-                        content_id=item.content_id,
-                        media_url=item.media_url,
-                        title=item.title,
-                        channel_name=item.channel_name,
-                        status=PipelineStatus.FAILED_TRANSFORMATION,
-                        error_message=str(exc),
-                        started_at=item_start,
-                        completed_at=datetime.now(UTC),
-                    )
-                )
 
         duration = time.perf_counter() - start_time
         final_status = (

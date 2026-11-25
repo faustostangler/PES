@@ -107,8 +107,8 @@ class JsonPromptProvider(PromptProviderPort):
                 default_language=self.default_language,
             )
         )
-        system_rendered = self._renderer.render(spec.system_prompt, variables)
-        user_rendered = self._renderer.render(spec.user_prompt, variables)
+        system_rendered = self._renderer.render(spec.system_prompt, variables, strict=True)
+        user_rendered = self._renderer.render(spec.user_prompt, variables, strict=True)
         return ChatPrompt.single_turn(
             user_prompt=user_rendered,
             system_prompt=system_rendered,

@@ -439,28 +439,26 @@ def test_cosine_similarity_and_compute_maxsim_novelty() -> None:
     assert cosine_similarity([1.0, 0.0], [-1.0, 0.0]) == pytest.approx(-1.0)
 
     # Empty vector boundary contracts for compute_maxsim_novelty
-    assert compute_maxsim_novelty([[1.0, 0.0]], []) == (0, 0.0, 1.0)
-    assert compute_maxsim_novelty([], [[1.0, 0.0], [0.0, 1.0]]) == (2, 1.0, 0.0)
+    assert compute_maxsim_novelty([[1.0, 0.0]], []) == (0, 0.0)
+    assert compute_maxsim_novelty([], [[1.0, 0.0], [0.0, 1.0]]) == (2, 1.0)
 
     # Mixed novelty: one exact match (sim=1.0, nov=0.0) and one orthogonal unit (sim=0.0, nov=1.0)
-    novel_count, max_novelty, mean_max_sim = compute_maxsim_novelty(
+    novel_count, max_novelty = compute_maxsim_novelty(
         [[1.0, 0.0]],
         [[1.0, 0.0], [0.0, 1.0]],
         similarity_threshold=0.88,
     )
     assert novel_count == 1
     assert max_novelty == pytest.approx(1.0)
-    assert mean_max_sim == pytest.approx(0.5)
 
     # All current units covered above 0.88 threshold
-    covered_count, covered_max_nov, covered_mean_sim = compute_maxsim_novelty(
+    covered_count, covered_max_nov = compute_maxsim_novelty(
         [[1.0, 0.0], [0.0, 1.0]],
         [[1.0, 0.0], [0.99, 0.1]],
         similarity_threshold=0.88,
     )
     assert covered_count == 0
     assert 0.0 <= covered_max_nov < 0.02
-    assert covered_mean_sim > 0.99
 
     for bad_thresh in (0.0, -0.2, 1.05, math.nan, True):
         with pytest.raises(DomainValidationError):

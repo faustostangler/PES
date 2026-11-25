@@ -22,7 +22,6 @@ from cresmo.application.use_cases.indexing.validators import (
     clean_text_line,
     is_valid_concepts_output,
     is_valid_synthesis_paragraph,
-    parse_judge_boolean,
 )
 from cresmo.domain.entities import PipelineSessionId, UserIdentity
 from cresmo.domain.value_objects import (
@@ -123,28 +122,12 @@ class LLMTranscriptDistiller:
                         stage_name="raw_indexing_concepts",
                         raw_text=text,
                         candidate_text=raw_concepts,
-                        metadata={"title": title, "channel": channel_name.value},
+                        metadata={"title": title, "channel_name": channel_name.value},
                         trace_id=judge_trace_id,
                         required_criteria=(JudgeCriterion.INDEX_SYNTHESIS_QUALITY,),
+                        judge_prompt_key=PromptKey.JUDGE_RAW_INDEX_CONCEPTS,
                     )
                     is_valid = self.llm_judge_port.evaluate(ctx).passed
-                elif self.prompt_provider:
-                    # Transitional fallback (ADR-010 / ADR-029 §2.4)
-                    judge_prompt = self.prompt_provider.get_prompt(
-                        PromptKey.JUDGE_RAW_INDEX_CONCEPTS,
-                        content_title=title,
-                        transcript_excerpt=text,
-                        concepts=raw_concepts,
-                        language=self.language,
-                    )
-                    judge_response = self.llm_indexing_port.transform(
-                        prompt=judge_prompt,
-                        temperature=0.0,
-                        trace_id=judge_trace_id,
-                        session_id=session_id,
-                        user_id=user_id,
-                    )
-                    is_valid = parse_judge_boolean(judge_response)
                 else:
                     is_valid = True
 
@@ -211,28 +194,12 @@ class LLMTranscriptDistiller:
                     stage_name="raw_indexing_summary",
                     raw_text=text,
                     candidate_text=summary,
-                    metadata={"title": title, "channel": channel_name.value},
+                    metadata={"title": title, "channel_name": channel_name.value},
                     trace_id=judge_trace_id,
                     required_criteria=(JudgeCriterion.INDEX_SYNTHESIS_QUALITY,),
+                    judge_prompt_key=PromptKey.JUDGE_RAW_INDEX_SUMMARY,
                 )
                 is_valid = self.llm_judge_port.evaluate(ctx).passed
-            elif self.prompt_provider:
-                # Transitional fallback (ADR-010 / ADR-029 §2.4)
-                judge_prompt = self.prompt_provider.get_prompt(
-                    PromptKey.JUDGE_RAW_INDEX_SUMMARY,
-                    content_title=title,
-                    transcript_excerpt=text,
-                    summary=summary,
-                    language=self.language,
-                )
-                judge_response = self.llm_indexing_port.transform(
-                    prompt=judge_prompt,
-                    temperature=0.0,
-                    trace_id=judge_trace_id,
-                    session_id=session_id,
-                    user_id=user_id,
-                )
-                is_valid = parse_judge_boolean(judge_response)
             else:
                 is_valid = True
 
@@ -254,6 +221,7 @@ class LLMTranscriptDistiller:
         """Synthesize dense single paratactic paragraph through an iterative LLM-as-a-judge loop."""
         chat_prompt = self.prompt_provider.get_prompt(
             PromptKey.RAW_INDEX_SYNTHESIS,
+            channel_name=channel_name.value,
             content_title=title,
             summary=summary,
             language=self.language,
@@ -300,28 +268,12 @@ class LLMTranscriptDistiller:
                         stage_name="raw_indexing_synthesis",
                         raw_text=excerpt,
                         candidate_text=synthesis,
-                        metadata={"title": title, "channel": channel_name.value},
+                        metadata={"title": title, "channel_name": channel_name.value},
                         trace_id=judge_trace_id,
                         required_criteria=(JudgeCriterion.INDEX_SYNTHESIS_QUALITY,),
+                        judge_prompt_key=PromptKey.JUDGE_RAW_INDEX_SYNTHESIS,
                     )
                     is_valid = self.llm_judge_port.evaluate(ctx).passed
-                elif self.prompt_provider:
-                    # Transitional fallback (ADR-010 / ADR-029 §2.4)
-                    judge_prompt = self.prompt_provider.get_prompt(
-                        PromptKey.JUDGE_RAW_INDEX_SYNTHESIS,
-                        content_title=title,
-                        transcript_excerpt=excerpt,
-                        synthesis=synthesis,
-                        language=self.language,
-                    )
-                    judge_response = self.llm_indexing_port.transform(
-                        prompt=judge_prompt,
-                        temperature=0.0,
-                        trace_id=judge_trace_id,
-                        session_id=session_id,
-                        user_id=user_id,
-                    )
-                    is_valid = parse_judge_boolean(judge_response)
                 else:
                     is_valid = True
 

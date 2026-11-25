@@ -87,7 +87,7 @@ class TestJsonPromptProvider:
             "linear_style_naturalism",
         ):
             assert criterion in prompt.system_prompt
-        user_msg = prompt.get_last_user_content()
+        user_msg = prompt.messages[-1].content
         assert "Source fluid transcript." in user_msg
         assert "Candidate compendium text." in user_msg
 
@@ -103,7 +103,7 @@ class TestJsonPromptProvider:
             source_text="Source fluid text here.",
         )
         s1 = prompt1.system_prompt or ""
-        p1 = prompt1.get_last_user_content()
+        p1 = prompt1.messages[-1].content
         assert "Your Skill:" in s1
         assert "cresmo-gap-filler:\n" in s1
         assert "Cresmo Style Guide:" in s1
@@ -112,7 +112,7 @@ class TestJsonPromptProvider:
         assert "{{skill_block}}" not in s1
         assert s1.count("# Guia de Estilo Cresmo") == 1
         assert "Português do Brasil" in s1
-        assert "Transcrição:\nSource fluid text here." in p1
+        assert "Source Transcript:\nSource fluid text here." in p1
         assert "<draft" not in p1
 
         prompt2 = provider.get_prompt(
@@ -125,7 +125,7 @@ class TestJsonPromptProvider:
             current_text="Draft from pass 1.",
         )
         s2 = prompt2.system_prompt or ""
-        p2 = prompt2.get_last_user_content()
+        p2 = prompt2.messages[-1].content
         assert s1 == s2
         assert "Source fluid text here." in p2
         assert '<draft pass="1">\nDraft from pass 1.\n</draft>' in p2
@@ -140,7 +140,7 @@ class TestJsonPromptProvider:
             current_text="Longitudinal draft pass 1.",
         )
         long_s = long_prompt.system_prompt or ""
-        long_p = long_prompt.get_last_user_content()
+        long_p = long_prompt.messages[-1].content
         assert "Gap-filled baseline text." in long_p
         assert '<draft pass="1">\nLongitudinal draft pass 1.\n</draft>' in long_p
         assert "Cresmo Style Guide:\n" in long_s
@@ -157,7 +157,7 @@ class TestJsonPromptProvider:
             current_text="Wide draft pass 1.",
         )
         wide_s = wide_prompt.system_prompt or ""
-        wide_p = wide_prompt.get_last_user_content()
+        wide_p = wide_prompt.messages[-1].content
         assert "Longitudinally expanded text." in wide_p
         assert '<draft pass="1">\nWide draft pass 1.\n</draft>' in wide_p
         assert "Cresmo Style Guide:\n" in wide_s
@@ -178,8 +178,8 @@ class TestJsonPromptProvider:
             channel_name=ChannelName("Tech Channel"),
             compendium_body="Body text.",
         )
-        assert "Compendium Title" in inv_prompt.get_last_user_content()
-        assert "Tech Channel" in inv_prompt.get_last_user_content()
+        assert "Compendium Title" in inv_prompt.messages[-1].content
+        assert "Tech Channel" in inv_prompt.messages[-1].content
 
         batch_prompt = provider.get_prompt(
             PromptKey.ATOMIC_BATCH,
@@ -188,14 +188,14 @@ class TestJsonPromptProvider:
             compendium_body="Body text.",
             targets_json='["Target 1"]',
         )
-        assert '["Target 1"]' in batch_prompt.get_last_user_content()
+        assert '["Target 1"]' in batch_prompt.messages[-1].content
 
         mocs_prompt = provider.get_prompt(
             PromptKey.RECONCILE_MOCS,
             existing_mocs="MOC A",
             notes_json='[{"title": "Note 1"}]',
         )
-        assert '[{"title": "Note 1"}]' in mocs_prompt.get_last_user_content()
+        assert '[{"title": "Note 1"}]' in mocs_prompt.messages[-1].content
 
     def test_raw_index_3_pass_rewrite_and_judge_prompts(self) -> None:
         provider = JsonPromptProvider()
@@ -207,7 +207,7 @@ class TestJsonPromptProvider:
             language="Português do Brasil",
         )
         assert "comma-separated" in (concepts_prompt.system_prompt or "").lower()
-        assert "Vilfredo Pareto and Elites" in concepts_prompt.get_last_user_content()
+        assert "Vilfredo Pareto and Elites" in concepts_prompt.messages[-1].content
 
         # ADR-071 parity fix: RAW_INDEX_CONCEPTS_REWRITE preserves its system.md prompt
         rewrite_prompt = provider.get_prompt(
@@ -218,7 +218,7 @@ class TestJsonPromptProvider:
         assert rewrite_prompt.system_prompt is not None
         assert len(rewrite_prompt.system_prompt.strip()) > 100
         assert "English" in rewrite_prompt.system_prompt
-        assert "Concept A, Concept B" in rewrite_prompt.get_last_user_content()
+        assert "Concept A, Concept B" in rewrite_prompt.messages[-1].content
 
         summary_prompt = provider.get_prompt(
             PromptKey.RAW_INDEX_SUMMARY,
@@ -230,6 +230,7 @@ class TestJsonPromptProvider:
 
         synthesis_prompt = provider.get_prompt(
             PromptKey.RAW_INDEX_SYNTHESIS,
+            channel_name=ChannelName("Tech"),
             content_title="Vilfredo Pareto and Elites",
             summary="A circulação de elites explica a alternância de poder.",
             language="Português do Brasil",
@@ -238,13 +239,14 @@ class TestJsonPromptProvider:
 
         judge_synth = provider.get_prompt(
             PromptKey.JUDGE_RAW_INDEX_SYNTHESIS,
-            content_title="Pareto and Elites",
-            transcript_excerpt="Explicando a circulação das elites na política.",
-            synthesis="A circulação de elites reflete a alternância política segundo Pareto.",
+            stage_name="raw_index_synthesis",
+            criteria_json='["index_synthesis_quality"]',
+            source_text="Explicando a circulação das elites na política.",
+            candidate_text="A circulação de elites reflete a alternância política segundo Pareto.",
         )
         assert "impartial evaluator" in (judge_synth.system_prompt or "").lower()
         assert (
-            "Explicando a circulação das elites na política." in judge_synth.get_last_user_content()
+            "Explicando a circulação das elites na política." in judge_synth.messages[-1].content
         )
 
     def test_custom_manifest_and_markdown_override_and_multi_skill_block(
@@ -278,7 +280,7 @@ class TestJsonPromptProvider:
         assert user_tpl == "Run task with {{raw_text}}"
 
         chat = provider.get_prompt(PromptKey.FLUID_PROSE, raw_text="Transcript body")
-        assert chat.get_last_user_content() == "Run task with Transcript body"
+        assert chat.messages[-1].content == "Run task with Transcript body"
 
     def test_corrupted_manifest_raises_prompt_catalog_error(self, tmp_path: Path) -> None:
         bad_file = tmp_path / "prompts.json"
@@ -297,7 +299,7 @@ class TestJsonPromptProvider:
         sys_inst = prompt.system_prompt or ""
         assert "cresmo-style-guide:\n" in sys_inst
         assert "cresmo-fluid-prose:\n" in sys_inst
-        assert "Test spoken raw transcript content." in prompt.get_last_user_content()
+        assert "Test spoken raw transcript content." in prompt.messages[-1].content
 
     def test_json_prompt_provider_respects_settings_paths(self, tmp_path: Path) -> None:
         skills_dir = tmp_path / "custom_skills"
@@ -325,7 +327,7 @@ class TestJsonPromptProvider:
         assert provider.default_language == "en-US"
         chat = provider.get_prompt(PromptKey.FLUID_PROSE, raw_text="Hello")
         assert chat.system_prompt == "Custom System Custom Skill Doc"
-        assert chat.get_last_user_content() == "Custom User Hello"
+        assert chat.messages[-1].content == "Custom User Hello"
 
 
 def test_noop_prompt_provider_supports_expander_and_judge_keys() -> None:
@@ -336,13 +338,13 @@ def test_noop_prompt_provider_supports_expander_and_judge_keys() -> None:
     for key in (PromptKey.LONG_EXPANDER, PromptKey.WIDE_EXPANDER):
         prompt = noop.get_prompt(
             key,
-            source_text="Unified source prose.",
+            raw_text="Unified source prose.",
             pass_num=2,
             total_passes=5,
             current_text="Draft pass 1.",
             channel_name="TestChan",
         )
-        user_msg = prompt.get_last_user_content()
+        user_msg = prompt.messages[-1].content
         assert "Unified source prose." in user_msg
         assert "Draft pass 1." in user_msg
 
@@ -358,4 +360,4 @@ def test_noop_prompt_provider_supports_expander_and_judge_keys() -> None:
             source_text="Source",
             candidate_text="Candidate",
         )
-        assert "Candidate" in judge_prompt.get_last_user_content()
+        assert "Candidate" in judge_prompt.messages[-1].content

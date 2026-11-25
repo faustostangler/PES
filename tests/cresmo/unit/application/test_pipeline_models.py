@@ -26,8 +26,6 @@ from cresmo.application.ports import (
     TelemetryPort,
 )
 from cresmo.domain.entities import (
-    AtomicNote,
-    MapOfContent,
     StageTranscript,
 )
 from cresmo.domain.value_objects import (
@@ -96,57 +94,45 @@ class TestPipelineResult:
 
     def test_default_values(self) -> None:
         cid = ContentId("c1234567")
-        res = PipelineResult(content_id=cid, success=True)
+        res = PipelineResult(content_id=cid)
 
         assert res.content_id == cid
-        assert res.success is True
-        assert res.synthesized_notes == ()
-        assert res.reconciled_mocs == ()
         assert res.source_transcript is None
         assert dict(res.stage_artifacts) == {}
         assert res.final_transcript is None
-        assert res.duplicates_unified == 0
         assert res.already_processed is False
-        assert res.error_message is None
+        assert not hasattr(res, "success")
+        assert not hasattr(res, "error_message")
+        assert not hasattr(res, "synthesized_notes")
+        assert not hasattr(res, "reconciled_mocs")
+        assert not hasattr(res, "duplicates_unified")
 
     def test_custom_values_and_immutability(self) -> None:
         from cresmo.domain.stage_registry import StageName
 
         cid = ContentId("c1234567")
-        mock_note = MagicMock(spec=AtomicNote)
-        mock_moc = MagicMock(spec=MapOfContent)
         mock_source = MagicMock(spec=StageTranscript)
         mock_fluid = MagicMock(spec=StageTranscript)
         mock_final = MagicMock(spec=StageTranscript)
 
         res = PipelineResult(
             content_id=cid,
-            success=False,
-            synthesized_notes=(mock_note,),
-            reconciled_mocs=(mock_moc,),
             source_transcript=mock_source,
             stage_artifacts={
                 StageName.FLUID_PROSE: mock_fluid,
                 StageName.LONG_EXPANDER: mock_final,
             },
             final_transcript=mock_final,
-            duplicates_unified=5,
             already_processed=True,
-            error_message="Stage timeout",
         )
 
-        assert res.success is False
-        assert res.synthesized_notes == (mock_note,)
-        assert res.reconciled_mocs == (mock_moc,)
         assert res.source_transcript is mock_source
         assert res.stage_artifacts[StageName.FLUID_PROSE] is mock_fluid
         assert res.final_transcript is mock_final
-        assert res.duplicates_unified == 5
         assert res.already_processed is True
-        assert res.error_message == "Stage timeout"
 
         with pytest.raises(TypeError):
             res.stage_artifacts[StageName.GAP_FILLER] = mock_final  # type: ignore[index]
 
         with pytest.raises(FrozenInstanceError):
-            res.success = True  # type: ignore[misc]
+            res.already_processed = False  # type: ignore[misc]

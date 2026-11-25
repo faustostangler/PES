@@ -9,7 +9,6 @@ from cresmo.application.ports import ChannelTaxonomyPort
 from cresmo.application.use_cases.concat_master import (
     SENTINEL_FALLBACK_SORT_DATE,
     ConcatMasterUseCase,
-    count_words,
     parse_metadata_from_content,
 )
 from cresmo.domain.value_objects import ChannelName, ContentId, MasterDocumentResult
@@ -18,11 +17,6 @@ from tests.doubles.mock_adapters import InMemoryVaultAdapter
 
 class TestConcatMasterUseCase:
     """Test suite verifying chronological ordering, word chunking, and master file generation."""
-
-    def test_count_words(self) -> None:
-        assert count_words("") == 0
-        assert count_words("hello world") == 2
-        assert count_words("   one   two   three   ") == 3
 
     def test_parse_metadata_all_permutations(self) -> None:
         # 1. Complete metadata
@@ -308,8 +302,8 @@ class TestConcatMasterUseCase:
             encoding="utf-8",
         )
 
-        w1 = count_words(f1.read_text(encoding="utf-8").strip())
-        w2 = count_words(f2.read_text(encoding="utf-8").strip())
+        w1 = len(f1.read_text(encoding="utf-8").strip().split())
+        w2 = len(f2.read_text(encoding="utf-8").strip().split())
         exact_total = w1 + w2
 
         vault.channel_stage_files[("wide_expander", "BoundaryChannel")] = [f1, f2]
@@ -365,9 +359,9 @@ class TestConcatMasterUseCase:
             encoding="utf-8",
         )
 
-        w1 = count_words(f1.read_text(encoding="utf-8").strip())
-        w2 = count_words(f2.read_text(encoding="utf-8").strip())
-        w3 = count_words(f3.read_text(encoding="utf-8").strip())
+        w1 = len(f1.read_text(encoding="utf-8").strip().split())
+        w2 = len(f2.read_text(encoding="utf-8").strip().split())
+        w3 = len(f3.read_text(encoding="utf-8").strip().split())
 
         effective_limit = max(w1, w2 + w3)
 

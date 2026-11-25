@@ -15,6 +15,7 @@ from pathlib import Path
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from cresmo.domain.stage_registry import StageName
 from cresmo.infrastructure.paths import find_workspace_root
 
 _WORKSPACE_DIR = find_workspace_root()
@@ -29,27 +30,21 @@ class StorageSettings(BaseModel):
 
     data_dir: Path = Field(
         default_factory=lambda: _WORKSPACE_DIR / "data",
-        description="Root directory for raw media lake, enriched compendiums, and ledger.",
+        description="Root directory for staged media transcripts and processing ledger.",
     )
     vault_dir: Path = Field(
         default_factory=lambda: _WORKSPACE_DIR / "vault",
         description="Root directory for Obsidian Second Brain knowledge graph vault.",
     )
 
+    def stage_dir(self, stage: StageName) -> Path:
+        """Resolve directory for a canonical pipeline stage under ``data_dir``."""
+        return self.data_dir / stage.value
+
     @property
     def raw_dir(self) -> Path:
         """Directory for ingested raw media transcripts."""
-        return self.data_dir / "raw"
-
-    @property
-    def fluid_dir(self) -> Path:
-        """Directory for intermediate detranscribed fluid prose transcripts."""
-        return self.data_dir / "fluid_prose"
-
-    @property
-    def enriched_dir(self) -> Path:
-        """Directory for enriched multi-pass compendiums."""
-        return self.data_dir / "enriched"
+        return self.stage_dir(StageName.RAW)
 
     @property
     def master_dir(self) -> Path:

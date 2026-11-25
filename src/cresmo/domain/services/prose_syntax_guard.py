@@ -55,21 +55,6 @@ def _collect_forbidden_block_violations(text: str, *, scope_label: str) -> list[
     return violations
 
 
-def extract_extra_info_section(text: str) -> str:
-    """Extract stripped content following the mandatory '### Extra Info' heading.
-
-    Args:
-        text: Candidate markdown compendium text.
-
-    Returns:
-        str: Stripped text after the '### Extra Info' heading, or empty string if absent.
-    """
-    match = EXTRA_INFO_HEADING_PATTERN.search(text)
-    if not match:
-        return ""
-    return text[match.end() :].strip()
-
-
 def validate_fluid_prose_syntax(text: str) -> list[str]:
     """Validate deterministic syntactic invariants for fluid_prose compendia.
 

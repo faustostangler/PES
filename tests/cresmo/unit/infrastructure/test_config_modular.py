@@ -112,7 +112,6 @@ class TestLlmAndEmbeddingSettings:
         assert llm.ollama.warmup_timeout_seconds == 300.0
         assert llm.ollama.keep_alive == "1h"
         assert llm.ollama.num_predict == 0
-        assert llm.ollama.synthesis_temperature == 0.2
         assert llm.ollama.indexing_temperature == 0.2
         assert llm.indexing_provider == "ollama"
 
@@ -144,14 +143,12 @@ class TestLlmAndEmbeddingSettings:
         with pytest.raises(ValidationError):
             GeminiSettings.model_validate({"thinking_level": "ultra"})
 
-        low = OllamaSettings(synthesis_temperature=0.0, indexing_temperature=0.0)
-        high = OllamaSettings(synthesis_temperature=2.0, indexing_temperature=2.0)
-        assert low.synthesis_temperature == 0.0
+        low = OllamaSettings(indexing_temperature=0.0)
+        high = OllamaSettings(indexing_temperature=2.0)
+        assert low.indexing_temperature == 0.0
         assert high.indexing_temperature == 2.0
 
         for invalid in (
-            {"synthesis_temperature": -0.1},
-            {"synthesis_temperature": 2.1},
             {"indexing_temperature": -0.1},
             {"indexing_temperature": 2.1},
         ):
@@ -220,8 +217,6 @@ class TestStorageAndIngestionSettings:
         storage = StorageSettings(data_dir=data_dir, vault_dir=vault_dir)
 
         assert storage.raw_dir == data_dir / "raw"
-        assert storage.fluid_dir == data_dir / "fluid_prose"
-        assert storage.enriched_dir == data_dir / "enriched"
         assert storage.master_dir == data_dir / "master"
         assert storage.index_path == vault_dir / "_index.json"
         assert storage.mocs_dir == vault_dir / "MOCs"

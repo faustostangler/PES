@@ -34,11 +34,6 @@ from cresmo.bootstrap.factories.adapter_factory import (
     build_vault_adapter,
 )
 from cresmo.bootstrap.factories.judge_factory import build_llm_judge_adapter
-from cresmo.bootstrap.factories.settings_factory import (
-    get_shared_settings,
-    reset_shared_settings,
-    resolve_shared_settings,
-)
 from cresmo.bootstrap.factories.telemetry_factory import (
     _build_mask_hook,
     _build_should_export_span,
@@ -103,6 +98,9 @@ from cresmo.infrastructure.config import (
     RuntimeTelemetrySettings,
     StorageSettings,
     TypeSafeSettings,
+    get_shared_settings,
+    reset_shared_settings,
+    resolve_shared_settings,
 )
 
 

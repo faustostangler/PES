@@ -16,7 +16,6 @@ from cresmo.domain.exceptions import (
     DomainValidationError,
     PreflightError,
 )
-from cresmo.domain.taxonomy import TaxonomyCatalog
 from cresmo.domain.value_objects import (
     ChannelFeedQuery,
     ChannelId,
@@ -37,7 +36,6 @@ class TestPipelineStatus:
 
     def test_pipeline_status_canonical_members(self) -> None:
         assert PipelineStatus.COMPLETED.value == "COMPLETED"
-        assert PipelineStatus.FAILED_INGESTION.value == "FAILED_INGESTION"
         assert PipelineStatus.FAILED_TRANSFORMATION.value == "FAILED_TRANSFORMATION"
         assert PipelineStatus.RUNNING.value == "RUNNING"
         assert PipelineStatus.QUARANTINED.value == "QUARANTINED"
@@ -533,36 +531,46 @@ class TestSyncFilterCriteria:
     def test_matches_category_evaluates_domain_name_vs_volatility(self) -> None:
         # Category list has both domain name ("politics_br") and volatility type ("perennial")
         criteria = SyncFilterCriteria(categories=("politics_br", "perennial"))
-        catalog: TaxonomyCatalog = {
+        catalog: dict[str, tuple[str, frozenset[str]]] = {
             "politics_br": ("volatile", frozenset({"ancapsu"})),
             "engineering": ("perennial", frozenset({"3blue1brown"})),
             "entertainment": ("volatile", frozenset({"canal 90"})),
         }
 
+        def _classifier(target: ChannelName | str) -> tuple[str, str]:
+            key = (target.value if isinstance(target, ChannelName) else target).lower()
+            for domain, (volatility, names) in catalog.items():
+                if any(name in key for name in names):
+                    return domain, volatility
+            return "unknown", "volatile"
+
         # Ancapsu -> domain='politics_br', category_type='volatile' -> MATCHES via domain!
-        assert criteria.matches_category(ChannelName("ancapsu"), catalog=catalog) is True
+        assert criteria.matches_category(ChannelName("ancapsu"), classifier=_classifier) is True
 
         # 3blue1brown -> domain='engineering', category_type='perennial' -> MATCHES via volatility!
-        assert criteria.matches_category(ChannelName("3blue1brown"), catalog=catalog) is True
+        assert criteria.matches_category(ChannelName("3blue1brown"), classifier=_classifier) is True
 
         # Canal 90 -> domain='entertainment', category_type='volatile' -> REJECTED (neither matches)
-        assert criteria.matches_category(ChannelName("canal 90"), catalog=catalog) is False
+        assert criteria.matches_category(ChannelName("canal 90"), classifier=_classifier) is False
 
         # Fallback with channel_url when channel_name is None
         assert (
             criteria.matches_category(
                 channel_name=None,
                 channel_url="https://youtube.com/@ancapsu",
-                catalog=catalog,
+                classifier=_classifier,
             )
             is True
         )
         assert (
-            criteria.matches_category(channel_name=None, channel_url=None, catalog=catalog) is False
+            criteria.matches_category(channel_name=None, channel_url=None, classifier=_classifier)
+            is False
         )
         c_dummy_cat = SyncFilterCriteria(categories=("XXXX",))
         assert (
-            c_dummy_cat.matches_category(channel_name=None, channel_url=None, catalog=catalog)
+            c_dummy_cat.matches_category(
+                channel_name=None, channel_url=None, classifier=_classifier
+            )
             is False
         )
 
@@ -618,11 +626,11 @@ class TestNormalizeToUploadsPlaylistUrl:
     def test_channel_id_instance(self) -> None:
         cid = ChannelId("UC1234567890123456789012")
         expected = "https://www.youtube.com/playlist?list=UU1234567890123456789012"
-        assert normalize_to_uploads_playlist_url(cid) == expected
+        assert normalize_to_uploads_playlist_url(cid.value) == expected
 
-        # ChannelId without uploads playlist URL falls back to value
+        # Non-UC token receives https:// scheme normalization
         cid_no_uploads = ChannelId("custom_channel")
-        assert normalize_to_uploads_playlist_url(cid_no_uploads) == cid_no_uploads.value
+        assert normalize_to_uploads_playlist_url(cid_no_uploads.value) == "https://custom_channel"
 
     def test_empty_and_whitespace(self) -> None:
         assert normalize_to_uploads_playlist_url("") == ""

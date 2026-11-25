@@ -25,3 +25,7 @@ class CritiqueSynthesizerPort(ABC):
         Returns:
             Concise, directed natural language critique to inject into reflection prompt.
         """
+
+    def warmup(self) -> None:
+        """Optional background warmup hook for local critique synthesizer engines."""
+        return None

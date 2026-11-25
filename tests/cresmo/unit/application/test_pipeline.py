@@ -54,7 +54,6 @@ def _make_pipeline(
     llm_synthesis_port: Any,
     ledger_port: Any | None = None,
     prompt_provider: PromptProviderPort | None = None,
-    llm_indexing_port: Any | None = None,
 ) -> CresmoPipeline:
     runner = PipelineStageRunner(
         PipelineDependencies(
@@ -70,7 +69,6 @@ def _make_pipeline(
         vault_port=vault_port,
         stage_runner=runner,
         ledger_port=ledger_port,
-        llm_indexing_port=llm_indexing_port,
     )
 
 
@@ -88,9 +86,7 @@ class SmartMockLLMAdapter(MockLLMAdapter):
         system_prompt: str | None = None,
     ) -> str:
         sys_str = prompt.system_prompt if isinstance(prompt, ChatPrompt) else system_prompt
-        prompt_text = (
-            prompt.get_last_user_content() if isinstance(prompt, ChatPrompt) else str(prompt)
-        )
+        prompt_text = prompt.messages[-1].content if isinstance(prompt, ChatPrompt) else str(prompt)
         self.call_history.append(
             {
                 "prompt": prompt,
@@ -177,7 +173,7 @@ class TestCresmoPipelineOrchestration:
 
         result: PipelineResult = pipeline.run_for_video("https://youtube.com/watch?v=dQw4w9WgXcQ")
 
-        assert result.success is True
+        assert result.already_processed is False
         assert result.content_id == cid
         assert result.source_transcript is canned_raw
         assert result.index_entry is not None
@@ -187,11 +183,6 @@ class TestCresmoPipelineOrchestration:
         assert result.inventory is not None
         assert len(result.inventory.items) == 1
         assert result.dedup_report is not None
-        assert len(result.synthesized_notes) == 1
-        assert result.synthesized_notes[0].title.value == "Vilfredo Pareto"
-        assert len(result.reconciled_mocs) == 1
-        assert result.reconciled_mocs[0].title.value == "MOC Teoria Politica"
-        assert result.duplicates_unified == 0
         assert ledger_port.is_processed(cid) is True
 
     def test_pipeline_stage1_fluid_prose_execution(self) -> None:
@@ -225,7 +216,7 @@ class TestCresmoPipelineOrchestration:
 
         from cresmo.domain.stage_registry import StageName
 
-        assert result.success is True
+        assert result.already_processed is False
         assert result.content_id == cid
         assert result.source_transcript is canned_source
         fluid_res = result.stage_artifacts.get(StageName.FLUID_PROSE)
@@ -277,8 +268,6 @@ class TestCresmoPipelineOrchestration:
 
         res = pipeline.run_for_video("https://youtube.com/watch?v=dQw4w9WgXcQ")
         assert res.already_processed is True
-        assert res.success is True
-        assert res.synthesized_notes == ()
 
     @pytest.mark.skip(
         reason="Downstream stages 2-8 quarantined pending StageConfig refactoring per ADR-031"
@@ -312,9 +301,6 @@ class TestCresmoPipelineOrchestration:
             "https://youtube.com/watch?v=dQw4w9WgXcQ", force_reprocess=True
         )
         assert res.already_processed is False
-        assert res.success is True
-        assert len(result_notes := res.synthesized_notes) == 1
-        assert result_notes[0].title.value == "Vilfredo Pareto"
 
     @pytest.mark.skip(
         reason="Downstream stages 2-8 quarantined pending StageConfig refactoring per ADR-031"
@@ -349,7 +335,7 @@ class TestCresmoPipelineOrchestration:
         )
 
         res = pipeline.run_for_video("https://youtube.com/watch?v=dQw4w9WgXcQ")
-        assert res.success is True
+        assert res.already_processed is False
         # All calls share the unified video session_id (1 fluid prose + 6 indexing + 4 downstream synthesis = 11)
         video_session_calls = [
             c for c in llm.call_history if c.get("session_id") == "Political Theory:dQw4w9WgXcQ"
@@ -370,7 +356,7 @@ class TestCresmoPipelineOrchestration:
             vault_port=InMemoryVaultAdapter(),
         )
         missing = tmp_path / "non_existent.md"
-        with pytest.raises(CresmoDomainError, match=r"Priority text file not found:"):
+        with pytest.raises(CresmoDomainError, match=r"Transcript file not found:"):
             pipeline.run_for_text_file(missing)
 
     def test_run_for_text_file_empty_raises_error(self, tmp_path: Path) -> None:
@@ -381,7 +367,7 @@ class TestCresmoPipelineOrchestration:
         )
         empty_file = tmp_path / "empty_transcript.txt"
         empty_file.write_text("   \n\t  ", encoding="utf-8")
-        with pytest.raises(CresmoDomainError, match=r"Priority text file is empty:"):
+        with pytest.raises(CresmoDomainError, match=r"Transcript file is empty:"):
             pipeline.run_for_text_file(empty_file)
 
     def test_run_for_text_file_rejects_internal_system_artifacts(self, tmp_path: Path) -> None:
@@ -389,7 +375,6 @@ class TestCresmoPipelineOrchestration:
             media_ingestion_port=MockMediaIngestionPort(),
             llm_synthesis_port=SmartMockLLMAdapter(),
             vault_port=InMemoryVaultAdapter(),
-            llm_indexing_port=SmartMockLLMAdapter(),
         )
         canal_file = tmp_path / "_canal.md"
         canal_file.write_text("# Channel Index", encoding="utf-8")
@@ -423,10 +408,8 @@ class TestCresmoPipelineOrchestration:
         )
 
         res = pipeline.run_for_text_file(text_file)
-        assert res.success is True
+        assert res.already_processed is False
         assert res.content_id.value == "pareto_elites_analysis"
-        assert len(res.synthesized_notes) == 1
-        assert res.synthesized_notes[0].title.value == "Vilfredo Pareto"
         assert ledger.is_processed(res.content_id) is True
         assert vault.get_stage_transcript("raw", res.content_id) is not None
 
@@ -454,7 +437,7 @@ class TestCresmoPipelineOrchestration:
         )
 
         res = pipeline.run_for_text_file(text_file)
-        assert res.success is True
+        assert res.already_processed is False
         raw = vault.get_stage_transcript("raw", res.content_id)
         assert raw is not None
         assert raw.content.title == "Discurso sobre a Servidão Voluntária"
@@ -487,7 +470,7 @@ class TestCresmoPipelineOrchestration:
         )
 
         res = pipeline.run_for_text_file(raw_file)
-        assert res.success is True
+        assert res.already_processed is False
         # Assert raw stage persistence was bypassed to prevent redundant disk I/O
         raw_calls = [
             c
@@ -503,7 +486,7 @@ class TestCresmoPipelineOrchestration:
         ext_file.write_text("External article content.", encoding="utf-8")
 
         result_external = pipeline.run_for_text_file(ext_file)
-        assert result_external.success is True
+        assert result_external.already_processed is False
         external_raw_calls = [
             c
             for c in vault.save_stage_transcript.call_args_list
@@ -523,7 +506,7 @@ class TestCresmoPipelineOrchestration:
         )
 
         res = pipeline.run_for_text_file(short_file)
-        assert res.success is True
+        assert res.already_processed is False
         assert res.content_id.value.startswith("ab_")
         assert len(res.content_id.value) >= 8
 
@@ -552,7 +535,6 @@ class TestCresmoPipelineOrchestration:
 
         res = pipeline.run_for_text_file(text_file)
         assert res.already_processed is True
-        assert res.success is True
 
     def test_run_for_text_file_force_reprocess_bypasses_ledger(self, tmp_path: Path) -> None:
         text_file = tmp_path / "force_reprocess_file.txt"
@@ -579,7 +561,6 @@ class TestCresmoPipelineOrchestration:
 
         res = pipeline.run_for_text_file(text_file, force_reprocess=True)
         assert res.already_processed is False
-        assert res.success is True
 
     def test_pipeline_init_with_directly_injected_stage_runner(self) -> None:
         """Verify CresmoPipeline accepts a directly injected PipelineStageRunner instance."""
@@ -626,7 +607,7 @@ class TestCresmoPipelineOrchestration:
         res = pipeline.run_for_video(
             "https://youtube.com/watch?v=videoPassTest1", expansion_max_passes=2
         )
-        assert res.success is True
+        assert res.already_processed is False
         comp = vault.get_stage_transcript("gap_filler", cid)
         assert comp is not None
         assert comp.pass_count == 3
@@ -636,11 +617,7 @@ class TestCresmoPipelineOrchestration:
             "https://youtube.com/watch?v=videoPassTest1", force_reprocess=False
         )
         assert result_cached.content_id == cid
-        assert result_cached.synthesized_notes == ()
-        assert result_cached.reconciled_mocs == ()
-        assert result_cached.duplicates_unified == 0
         assert result_cached.already_processed is True
-        assert result_cached.success is True
 
     def test_run_for_text_file_content_id_derivation_boundaries(self, tmp_path: Path) -> None:
         pipeline = _make_pipeline(
@@ -701,7 +678,7 @@ class TestCresmoPipelineOrchestration:
         )
 
         res = pipeline.run_for_text_file(text_file, expansion_max_passes=4)
-        assert res.success is True
+        assert res.already_processed is False
         comp = vault.get_stage_transcript("gap_filler", res.content_id)
         assert comp is not None
         assert comp.pass_count == 5
@@ -709,11 +686,7 @@ class TestCresmoPipelineOrchestration:
         # Idempotent re-run
         result_idempotent = pipeline.run_for_text_file(text_file, force_reprocess=False)
         assert result_idempotent.content_id == res.content_id
-        assert result_idempotent.synthesized_notes == ()
-        assert result_idempotent.reconciled_mocs == ()
-        assert result_idempotent.duplicates_unified == 0
         assert result_idempotent.already_processed is True
-        assert result_idempotent.success is True
 
     def test_run_for_text_file_frontmatter_field_variants_and_malformed_tolerance(
         self, tmp_path: Path
@@ -741,7 +714,7 @@ class TestCresmoPipelineOrchestration:
         )
 
         result_variant = pipeline.run_for_text_file(f_var)
-        assert result_variant.success is True
+        assert result_variant.already_processed is False
         raw = vault.get_stage_transcript("raw", result_variant.content_id)
         assert raw is not None
         assert raw.content.title == "Alternative Title"
@@ -758,7 +731,7 @@ class TestCresmoPipelineOrchestration:
             encoding="utf-8",
         )
         result_bad = pipeline.run_for_text_file(f_bad_yaml)
-        assert result_bad.success is True
+        assert result_bad.already_processed is False
         raw_bad = vault.get_stage_transcript("raw", result_bad.content_id)
         assert raw_bad is not None
         assert "Body content surviving bad YAML" in raw_bad.content.text
@@ -770,7 +743,7 @@ class TestCresmoPipelineOrchestration:
             encoding="utf-8",
         )
         result_no_close = pipeline.run_for_text_file(f_no_close)
-        assert result_no_close.success is True
+        assert result_no_close.already_processed is False
         raw_no_close = vault.get_stage_transcript("raw", result_no_close.content_id)
         assert raw_no_close is not None
         assert "Just plain body text." in raw_no_close.content.text
@@ -803,7 +776,7 @@ class TestCresmoPipelineOrchestration:
         # Run with expansion_max_passes = 2 (fluid prose sets passes=2, expansion increments to 3)
         results = pipeline.run_for_manifest(manifest, expansion_max_passes=2)
         assert len(results) == 1
-        assert results[0].success is True
+        assert results[0].already_processed is False
         comp = vault.get_stage_transcript("gap_filler", cid)
         assert comp is not None
         assert comp.pass_count == 3
@@ -815,7 +788,6 @@ class TestCresmoPipelineOrchestration:
         # Third run with force_reprocess = True executes
         results_force = pipeline.run_for_manifest(manifest, force_reprocess=True)
         assert results_force[0].already_processed is False
-        assert results_force[0].success is True
 
     @pytest.mark.skip(
         reason="Downstream stages 2-8 quarantined pending StageConfig refactoring per ADR-031"
@@ -836,7 +808,7 @@ class TestCresmoPipelineOrchestration:
 
         res = pipeline.run_for_video("https://youtube.com/watch?v=entryPass123")
 
-        assert res.success is True
+        assert res.already_processed is False
         assert res.index_entry is not None
         assert isinstance(res.index_entry, RawIndexEntry)
         assert res.index_entry.video_id == cid
@@ -882,7 +854,6 @@ class TestCresmoPipelineOrchestration:
         pipeline.stage_runner.execute_stage = spy_stage_execute  # type: ignore[assignment,method-assign]
         res = pipeline.execute(raw=canned_raw, force_reprocess=False)
 
-        assert res.success is True
         assert res.already_processed is True
         assert not stage_executed
 
@@ -902,7 +873,7 @@ class TestCresmoPipelineOrchestration:
         )
 
         res = pipeline.execute(raw=raw)
-        assert res.success is True
+        assert res.already_processed is False
         assert ledger.is_processed(cid) is True
         entry = ledger.get_entry(cid)
         assert entry is not None
@@ -997,7 +968,7 @@ class TestCresmoPipelineOrchestration:
 
         res = pipeline.execute(raw=canned_raw)
 
-        assert res.success is True
+        assert res.already_processed is False
         assert res.index_entry is None
         assert res.stage_artifacts[StageName.FLUID_PROSE] is not None
         assert res.final_transcript is not None

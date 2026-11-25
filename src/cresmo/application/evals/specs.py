@@ -10,21 +10,23 @@ from __future__ import annotations
 
 import hashlib
 import json
-import logging
 import re
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+import structlog
+
 from cresmo.application.evals.calibration_metrics import CalibrationVerdict, ConfusionMatrix
 from cresmo.domain.stage_registry import StageName, StageRegistry
 from cresmo.domain.value_objects.prompt import PromptKey
 from cresmo.domain.value_objects.quality import JudgeCriterion
 
-DEFAULT_CHECKPOINT_DIR = Path("data") / "calibration_checkpoints"
 DEFAULT_REPORTS_DIR = Path("reports") / "calibration"
 DEFAULT_DATASETS_DIR = Path("evals") / "datasets"
+
+logger = structlog.get_logger(__name__)
 
 PromptTemplateLookup = Callable[[PromptKey], dict[str, str]]
 
@@ -66,19 +68,21 @@ def build_stage_specs(
     """
     resolved_seeds_dir = seeds_dir if seeds_dir is not None else datasets_dir / "seeds"
     stage_configs = (
-        (StageName.FLUID_PROSE, "Stage 1: Fluid Prose", PromptKey.JUDGE_FLUID_PROSE),
-        (StageName.GAP_FILLER, "Stage 2: Gap Filler", PromptKey.JUDGE_GAP_FILLER),
-        (StageName.LONG_EXPANDER, "Stage 3: Long Expander", PromptKey.JUDGE_LONG_EXPANDER),
-        (StageName.WIDE_EXPANDER, "Stage 4: Wide Expander", PromptKey.JUDGE_WIDE_EXPANDER),
+        (StageName.FLUID_PROSE, "Stage 1: Fluid Prose"),
+        (StageName.GAP_FILLER, "Stage 2: Gap Filler"),
+        (StageName.LONG_EXPANDER, "Stage 3: Long Expander"),
+        (StageName.WIDE_EXPANDER, "Stage 4: Wide Expander"),
     )
     specs: dict[str, StageCalibrationSpec] = {}
-    for stage_enum, label, fallback_prompt_key in stage_configs:
+    for stage_enum, label in stage_configs:
         stage_key = stage_enum.value
         stage_def = StageRegistry.get(stage_key)
+        if stage_def.judge_prompt_key is None:
+            raise ValueError(f"Stage '{stage_key}' is missing judge_prompt_key in StageRegistry.")
         specs[stage_key] = StageCalibrationSpec(
             stage_name=stage_key,
             label=label,
-            prompt_key=stage_def.judge_prompt_key or fallback_prompt_key,
+            prompt_key=stage_def.judge_prompt_key,
             default_golden_set_path=datasets_dir / f"{stage_key}_golden_set.json",
             default_seed_path=resolved_seeds_dir / f"{stage_key}_seed.json",
             required_criteria=stage_def.required_criteria,
@@ -250,11 +254,8 @@ def compute_config_hash(
     if prompt_lookup is not None:
         try:
             prompt_payload = prompt_lookup(spec.prompt_key)
-        except Exception as exc:  # noqa: BLE001
-            logging.getLogger(__name__).debug(
-                "Prompt lookup unavailable for config hash: %s",
-                exc,
-            )
+        except (KeyError, OSError, ValueError) as exc:
+            logger.debug("Prompt lookup unavailable for config hash", error=str(exc))
 
     canonical = {
         "stage": spec.stage_name,

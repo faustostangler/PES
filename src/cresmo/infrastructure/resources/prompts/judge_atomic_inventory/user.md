@@ -1,10 +1,10 @@
-Content Title: {{content_title}}
-Channel: {{channel_name}}
+Evaluate stage: {{stage_name}}
+Required criteria JSON: {{criteria_json}}
 
 --- COMPENDIUM CONTEXT ---
-{{compendium_body}}
+{{source_text}}
 
 --- CANDIDATE ATOMIC INVENTORY (JSON) ---
-{{inventory_json}}
+{{candidate_text}}
 
-Does the candidate inventory strictly satisfy all ontological, factual, and typographical criteria? Respond ONLY with 'true' or 'false':
+Score every requested criterion rigorously in JSON format.

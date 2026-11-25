@@ -24,14 +24,12 @@ class PipelineStatus(StrEnum):
 
     Members:
         COMPLETED: Ingestion and all synthesis stages finished successfully.
-        FAILED_INGESTION: Audio download or transcript crawling failed.
         FAILED_TRANSFORMATION: LLM synthesis or schema extraction failed.
         RUNNING: Currently executing active pipeline stages.
         QUARANTINED: Quality gate evaluation failed after maximum retries; item quarantined.
     """
 
     COMPLETED = "COMPLETED"
-    FAILED_INGESTION = "FAILED_INGESTION"
     FAILED_TRANSFORMATION = "FAILED_TRANSFORMATION"
     RUNNING = "RUNNING"
     QUARANTINED = "QUARANTINED"
@@ -126,10 +124,10 @@ class DiscoveredMediaItem:
         object.__setattr__(self, "content_id", resolved_content_id)
 
 
-CHANNEL_TAB_ENDINGS: tuple[str, ...] = ("/videos", "/shorts", "/streams", "/playlists")
+_CHANNEL_TAB_ENDINGS: tuple[str, ...] = ("/videos", "/shorts", "/streams", "/playlists")
 
 
-def normalize_to_uploads_playlist_url(channel_ref: str | ChannelId) -> str:
+def normalize_to_uploads_playlist_url(channel_ref: str) -> str:
     """Transform YouTube channel reference to its canonical uploads playlist URL (UU prefix).
 
     YouTube automatically maintains an 'Uploads from <Channel>' playlist for every channel,
@@ -138,18 +136,11 @@ def normalize_to_uploads_playlist_url(channel_ref: str | ChannelId) -> str:
     reverse-chronological, and avoids web scrapers navigating dynamic UI tabs.
 
     Args:
-        channel_ref: Raw channel URL, handle, or channel ID (str or ChannelId).
+        channel_ref: Raw channel URL, handle, or channel ID string.
 
     Returns:
         Canonical YouTube uploads playlist URL or sanitized /videos endpoint.
     """
-    if isinstance(channel_ref, ChannelId):
-        return channel_ref.uploads_playlist_url or (
-            f"https://www.youtube.com/channel/{channel_ref.value}"
-            if channel_ref.is_youtube_canonical
-            else channel_ref.value
-        )
-
     cleaned = channel_ref.strip()
     if not cleaned:
         return cleaned
@@ -167,11 +158,11 @@ def normalize_to_uploads_playlist_url(channel_ref: str | ChannelId) -> str:
 
     if formatted.startswith("https://@"):
         handle = formatted.removeprefix("https://@")
-        if handle.endswith(CHANNEL_TAB_ENDINGS):
+        if handle.endswith(_CHANNEL_TAB_ENDINGS):
             return f"https://www.youtube.com/@{handle}"
         return f"https://www.youtube.com/@{handle}/videos"
 
-    if "/@" in formatted and not formatted.endswith(CHANNEL_TAB_ENDINGS):
+    if "/@" in formatted and not formatted.endswith(_CHANNEL_TAB_ENDINGS):
         return f"{formatted}/videos"
 
     return formatted

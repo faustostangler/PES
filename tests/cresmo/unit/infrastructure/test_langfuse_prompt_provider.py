@@ -44,7 +44,7 @@ class TestLangfusePromptProvider:
             raw_text="Sample raw transcript.",
         )
         sys_inst = prompt_res.system_prompt or ""
-        prompt = prompt_res.get_last_user_content()
+        prompt = prompt_res.messages[-1].content
         assert isinstance(sys_inst, str)
         assert isinstance(prompt, str)
         assert len(sys_inst) > 0
@@ -81,7 +81,7 @@ class TestLangfusePromptProvider:
             raw_text="Sample transcript text.",
         )
         sys_inst = prompt_res.system_prompt or ""
-        prompt = prompt_res.get_last_user_content()
+        prompt = prompt_res.messages[-1].content
 
         assert sys_inst == "System directive from Langfuse Cloud Chat"
         assert prompt == "User input payload compiled from Langfuse Cloud"
@@ -120,7 +120,7 @@ class TestLangfusePromptProvider:
             raw_text="Sample transcript text.",
         )
         sys_inst = prompt_res.system_prompt or ""
-        prompt = prompt_res.get_last_user_content()
+        prompt = prompt_res.messages[-1].content
 
         assert sys_inst == "fallback_sys"
         assert prompt == "fallback_user"
@@ -148,7 +148,7 @@ class TestLangfusePromptProvider:
             raw_text="Ground truth text.",
         )
         sys_inst = prompt_res.system_prompt or ""
-        prompt = prompt_res.get_last_user_content()
+        prompt = prompt_res.messages[-1].content
 
         assert isinstance(sys_inst, str)
         assert isinstance(prompt, str)
@@ -180,7 +180,7 @@ class TestLangfusePromptProvider:
             raw_text="Fallback text on 404.",
         )
         sys_inst = prompt_res.system_prompt or ""
-        prompt = prompt_res.get_last_user_content()
+        prompt = prompt_res.messages[-1].content
 
         assert isinstance(sys_inst, str)
         assert isinstance(prompt, str)
@@ -208,7 +208,7 @@ class TestLangfusePromptProvider:
             raw_text="Fallback text on 500.",
         )
         sys_inst = prompt_res.system_prompt or ""
-        prompt = prompt_res.get_last_user_content()
+        prompt = prompt_res.messages[-1].content
 
         assert isinstance(sys_inst, str)
         assert isinstance(prompt, str)
@@ -231,7 +231,7 @@ class TestLangfusePromptProvider:
             current_text="Long draft pass 1.",
         )
         long_sys = long_res.system_prompt or ""
-        long_prompt = long_res.get_last_user_content()
+        long_prompt = long_res.messages[-1].content
         assert isinstance(long_sys, str)
         assert "Body text" in long_prompt
         assert '<draft pass="1">\nLong draft pass 1.\n</draft>' in long_prompt
@@ -243,7 +243,7 @@ class TestLangfusePromptProvider:
             current_text="Wide draft pass 1.",
         )
         wide_sys = wide_res.system_prompt or ""
-        wide_prompt = wide_res.get_last_user_content()
+        wide_prompt = wide_res.messages[-1].content
         assert isinstance(wide_sys, str)
         assert "Axial text" in wide_prompt
         assert '<draft pass="1">\nWide draft pass 1.\n</draft>' in wide_prompt
@@ -255,7 +255,7 @@ class TestLangfusePromptProvider:
             compendium_body="Compendium body",
         )
         inv_sys = inv_res.system_prompt or ""
-        inventory_prompt = inv_res.get_last_user_content()
+        inventory_prompt = inv_res.messages[-1].content
         assert isinstance(inv_sys, str)
         assert "Compendium body" in inventory_prompt
 
@@ -267,16 +267,17 @@ class TestLangfusePromptProvider:
             targets_json="Inventory JSON",
         )
         batch_sys = batch_res.system_prompt or ""
-        atomic_batch_prompt = batch_res.get_last_user_content()
+        atomic_batch_prompt = batch_res.messages[-1].content
         assert isinstance(batch_sys, str)
         assert "Compendium body" in atomic_batch_prompt
 
         moc_res = provider.get_prompt(
             PromptKey.RECONCILE_MOCS,
+            existing_mocs="MOC A",
             notes_json="Notes summary",
         )
         moc_sys = moc_res.system_prompt or ""
-        moc_prompt = moc_res.get_last_user_content()
+        moc_prompt = moc_res.messages[-1].content
         assert isinstance(moc_sys, str)
         assert "Notes summary" in moc_prompt
 
@@ -286,7 +287,7 @@ class TestLangfusePromptProvider:
             transcript_excerpt="Excerpt",
         )
         raw_sys = raw_res.system_prompt or ""
-        raw_prompt = raw_res.get_last_user_content()
+        raw_prompt = raw_res.messages[-1].content
         assert isinstance(raw_sys, str)
         assert "Pareto" in raw_prompt
 

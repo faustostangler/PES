@@ -29,7 +29,6 @@ class JsonCalibrationDatasetLoader(CalibrationDatasetPort):
 
     def load_items(
         self,
-        stage_name: str,
         default_golden_set_path: Path,
         default_seed_path: Path,
         *,
@@ -37,7 +36,6 @@ class JsonCalibrationDatasetLoader(CalibrationDatasetPort):
         seed_only: bool = False,
     ) -> list[dict[str, Any]]:
         """Load golden set JSON list for a stage or fall back to canonical seed JSON."""
-        _ = stage_name
         if seed_only:
             return self._read_json_list(default_seed_path)
 

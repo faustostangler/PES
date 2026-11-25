@@ -112,14 +112,12 @@ class TestRunHumbleCommand:
     def test_render_event_routes_stdout_and_stderr(
         self, capsys: pytest.CaptureFixture[str]
     ) -> None:
-        _render_event(BatchItemEvent(BatchItemEventKind.PREFLIGHT_WARNING, "warn"))
         _render_event(BatchItemEvent(BatchItemEventKind.DISCOVERY_PROGRESS, "Found 1 "))
         _render_event(BatchItemEvent(BatchItemEventKind.COMPLETED, "[1/1] [DONE]"))
         _render_event(BatchItemEvent(BatchItemEventKind.MASTER_CONSOLIDATED, "Master done: 1"))
         _render_event(BatchItemEvent(BatchItemEventKind.QUOTA_ABORT, "Cooldown abort"))
 
         captured = capsys.readouterr()
-        assert "[preflight warning] warn\n" in captured.err
         assert "Cooldown abort\n" in captured.err
         assert "Found 1 [1/1] [DONE]\n" in captured.out
         assert "Consolidating master compendiums for RAG..." in captured.out
@@ -168,23 +166,11 @@ class TestRunHumbleCommand:
                     mode="single",
                     completed=1,
                     single_content_id="12345678901",
-                    single_notes_count=4,
-                    single_mocs_count=1,
-                    single_duplicates_unified=2,
+                    single_stages_completed=("fluid_prose", "gap_filler"),
+                    single_final_chars=420,
                 )
             )
             == EXIT_SUCCESS
-        )
-        assert (
-            _render_outcome(
-                RunSynthesisOutcome(
-                    status=RunExitStatus.INTERNAL_ERROR,
-                    mode="single",
-                    failed=1,
-                    error_message="Stage error",
-                )
-            )
-            == EXIT_INTERNAL_ERROR
         )
         assert (
             _render_outcome(
@@ -211,11 +197,14 @@ class TestRunHumbleCommand:
             == EXIT_SUCCESS
         )
         captured = capsys.readouterr()
+        assert (
+            "Synthesis completed successfully for [12345678901]: "
+            "2 stage(s) completed (fluid_prose, gap_filler), 420 chars.\n" in captured.out
+        )
         assert "Dry-run completed: 2/3 items validated.\n" in captured.out
         assert (
             "No sources found to process (manifest: m.txt, raw lake scan: True).\n" in captured.out
         )
-        assert "Pipeline error: Stage error\n" in captured.err
 
     def test_typer_run_builds_request_without_dead_flags(self, tmp_path: Path) -> None:
         manifest = tmp_path / "playlist.txt"

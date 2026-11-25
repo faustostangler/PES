@@ -80,14 +80,6 @@ def sync(
             help="Maximum videos to discover and process in this run (default: 250)",
         ),
     ] = 250,
-    batch_size: Annotated[
-        int | None,
-        typer.Option(
-            "--batch-size",
-            min=1,
-            help="Batch size override for atomic note synthesis",
-        ),
-    ] = None,
     dry_run: Annotated[
         bool,
         typer.Option(
@@ -111,7 +103,6 @@ def sync(
         manifest=manifest,
         lookback=lookback,
         max_videos=max_videos,
-        batch_size=batch_size,
         dry_run=dry_run,
         force_refresh=force_refresh,
     )
@@ -160,7 +151,7 @@ def _render_sync_outcome(outcome: SyncBatchOutcome) -> int:
 def handle_sync(request: SyncBatchRequest) -> int:
     """Delegate channel/video synchronization batch to SyncBatchUseCase."""
     try:
-        use_case = build_sync_batch_use_case(batch_size_override=request.batch_size)
+        use_case = build_sync_batch_use_case()
         outcome = use_case.execute(request, on_event=_render_sync_event)
         return _render_sync_outcome(outcome)
     except Exception as exc:  # noqa: BLE001

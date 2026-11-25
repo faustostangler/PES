@@ -10,6 +10,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from cresmo.application.ports import ChannelTaxonomyPort
+from cresmo.application.services.frontmatter import read_frontmatter_header
 from cresmo.domain.value_objects import (
     ChannelId,
     ChannelName,
@@ -47,38 +48,25 @@ def read_manifest_lines(path: Path | None) -> list[str]:
 
 def extract_raw_file_metadata(path: Path) -> dict[str, str]:
     """Extract YAML frontmatter attributes from a raw markdown transcript file."""
-    metadata: dict[str, str] = {}
-    try:
-        with path.open("r", encoding="utf-8") as f:
-            first_line = f.readline()
-            if first_line.strip() == "---":
-                closed = False
-                for idx, line in enumerate(f):
-                    if idx >= 50:
-                        break
-                    if line.strip() == "---":
-                        closed = True
-                        break
-                    if ":" in line:
-                        k, v = line.split(":", 1)
-                        metadata[k.strip()] = v.strip().strip("\"'")
-                if not closed:
-                    return {}
-
-        raw_chan_id = metadata.get("channel_id")
-        raw_chan_name = metadata.get("channel") or metadata.get("channel_name")
-        raw_chan = raw_chan_id or raw_chan_name
-        if raw_chan:
-            if raw_chan.startswith(("http://", "https://")):
-                metadata["channel"] = raw_chan
-            elif raw_chan.startswith("@"):
-                metadata["channel"] = f"https://www.youtube.com/{raw_chan}"
-            elif raw_chan.startswith("UC"):
-                metadata["channel"] = f"https://www.youtube.com/channel/{raw_chan}"
-            else:
-                metadata["channel"] = raw_chan
-    except Exception:  # noqa: BLE001
+    loaded = read_frontmatter_header(path, max_lines=50)
+    if not loaded:
         return {}
+
+    metadata: dict[str, str] = {
+        str(k).strip(): str(v).strip().strip("\"'")
+        for k, v in loaded.items()
+        if v is not None
+    }
+    raw_chan = metadata.get("channel_id") or metadata.get("channel") or metadata.get("channel_name")
+    if raw_chan:
+        if raw_chan.startswith(("http://", "https://")):
+            metadata["channel"] = raw_chan
+        elif raw_chan.startswith("@"):
+            metadata["channel"] = f"https://www.youtube.com/{raw_chan}"
+        elif raw_chan.startswith("UC"):
+            metadata["channel"] = f"https://www.youtube.com/channel/{raw_chan}"
+        else:
+            metadata["channel"] = raw_chan
     return metadata
 
 

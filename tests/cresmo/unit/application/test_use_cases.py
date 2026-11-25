@@ -17,15 +17,13 @@ from cresmo.application.ports import (
 from cresmo.application.use_cases.discover_atomic_inventory import DiscoverAtomicInventoryUseCase
 from cresmo.application.use_cases.ingest_raw_transcript import IngestRawTranscriptUseCase
 from cresmo.application.use_cases.reconcile_mocs import ReconcileMOCsUseCase
-from cresmo.application.use_cases.synthesize_atomic_batch import (
-    SynthesizeAtomicBatchUseCase,
-    _norm_honorific,
-)
+from cresmo.application.use_cases.synthesize_atomic_batch import SynthesizeAtomicBatchUseCase
 from cresmo.domain.entities import (
     AtomicNote,
     StageTranscript,
 )
 from cresmo.domain.exceptions import DomainValidationError
+from cresmo.domain.services.entity_matching import normalize_entity_title_for_matching
 from cresmo.domain.value_objects import (
     AtomicEntityInventory,
     CausalMatrix,
@@ -51,20 +49,20 @@ class TestNormHonorific:
     @pytest.mark.parametrize(
         ("raw_title", "expected"),
         [
-            ("Dom Pedro II", "pedro ii"),
-            ("dom pedro ii", "pedro ii"),
+            ("Dom Pedro II", "pedroii"),
+            ("dom pedro ii", "pedroii"),
             ("Dona Leopoldina", "leopoldina"),
             ("dona leopoldina", "leopoldina"),
-            ("D. Pedro I", "pedro i"),
+            ("D. Pedro I", "pedroi"),
             ("d. manuel", "manuel"),
             ("d joão", "joão"),
-            ("Vilfredo Pareto", "vilfredo pareto"),
-            ("Oligarquia - de. Ferro, (conceito)", "oligarquia de ferro conceito"),
+            ("Vilfredo Pareto", "vilfredopareto"),
+            ("Oligarquia - de. Ferro, (conceito)", "oligarquia deferroconceito".replace(" ", "")),
             ("   ", ""),
         ],
     )
     def test_norm_honorific_permutations(self, raw_title: str, expected: str) -> None:
-        assert _norm_honorific(raw_title) == expected
+        assert normalize_entity_title_for_matching(raw_title) == expected
 
 
 class TestIngestRawTranscript:
@@ -135,7 +133,7 @@ class TestDiscoverAtomicInventory:
         assert call["temperature"] == 0.0
         assert call["session_id"] == "Example Channel:dQw4w9WgXcQ"
         assert call["user_id"] == "anonymous"
-        user_prompt = call["prompt"].get_last_user_content()
+        user_prompt = call["prompt"].messages[-1].content
         assert "Teoria das Elites" in user_prompt
         assert "Example Channel" in user_prompt
         assert "Continuous body describing Vilfredo Pareto" in user_prompt
@@ -315,7 +313,7 @@ class TestSynthesizeAtomicBatch:
         call = llm_port.call_history[0]
         assert call["session_id"] == "Example Channel:dQw4w9WgXcQ"
         assert call["user_id"] == "anonymous"
-        user_prompt = call["prompt"].get_last_user_content()
+        user_prompt = call["prompt"].messages[-1].content
         assert "Teoria das Elites" in user_prompt
         assert "Example Channel" in user_prompt
         assert "Continuous body describing elites." in user_prompt
@@ -642,7 +640,7 @@ class TestReconcileMOCs:
         # Verify strict port interactions
         assert len(llm_port.call_history) == 1
         call = llm_port.call_history[0]
-        user_prompt = call["prompt"].get_last_user_content()
+        user_prompt = call["prompt"].messages[-1].content
         assert '"title": "Vilfredo Pareto"' in user_prompt
         assert '"type": "entity"' in user_prompt
         assert '"domain": "Ciência Política"' in user_prompt

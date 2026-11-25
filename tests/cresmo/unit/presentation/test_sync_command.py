@@ -57,7 +57,7 @@ class TestSyncCommand:
             total_failed=0,
             manifest_path=tmp_path / "playlist.txt",
         )
-        req = SyncBatchRequest(channels=("@alpha",), lookback=14, max_videos=20, batch_size=7)
+        req = SyncBatchRequest(channels=("@alpha",), lookback=14, max_videos=20)
 
         with patch(
             "cresmo.presentation.commands.sync.build_sync_batch_use_case",
@@ -66,7 +66,7 @@ class TestSyncCommand:
             code = handle_sync(req)
 
         assert code == EXIT_SUCCESS
-        mock_builder.assert_called_once_with(batch_size_override=7)
+        mock_builder.assert_called_once_with()
         mock_uc.execute.assert_called_once()
         assert mock_uc.execute.call_args.args[0] == req
         out = capsys.readouterr().out

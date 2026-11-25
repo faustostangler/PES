@@ -73,10 +73,11 @@ class TestCresmoSettingsRoot:
         assert settings.storage.data_dir.name == "data"
         assert settings.storage.vault_dir.name == "vault"
         assert settings.storage.raw_dir == settings.storage.data_dir / "raw"
-        assert settings.storage.enriched_dir == settings.storage.data_dir / "enriched"
         assert settings.storage.master_dir == settings.storage.data_dir / "master"
         assert settings.storage.index_path == settings.storage.vault_dir / "_index.json"
         assert settings.storage.sqlite_ledger_path == settings.storage.data_dir / "cresmo_ledger.db"
+        assert not hasattr(settings.storage, "enriched_dir")
+        assert not hasattr(settings.storage, "fluid_dir")
 
         # Zero legacy flat attributes or ClassVar mirrors
         for removed in (
@@ -108,7 +109,7 @@ class TestCresmoSettingsRoot:
     def test_policy_translators_produce_pure_domain_value_objects(self, tmp_path: Path) -> None:
         settings = CresmoSettings(
             _env_file=None,
-            llm=LlmSettings(ollama={"synthesis_temperature": 0.45}),  # type: ignore[arg-type]
+            llm=LlmSettings(ollama={"indexing_temperature": 0.45}),  # type: ignore[arg-type]
             pipeline=PipelineSettings(
                 concat_max_words=120_000,
                 stages={"expansion_max_passes": 4, "long_expander_max_passes": 9},  # type: ignore[arg-type]
@@ -129,7 +130,6 @@ class TestCresmoSettingsRoot:
             long_expander_max_passes=9,
             judge_max_attempts=3,
             judge_blocking=True,
-            synthesis_temperature=0.45,
             saturation_thresholds=SaturationThresholds(semantic_similarity_threshold=0.91),
         )
 
@@ -157,9 +157,10 @@ class TestCresmoSettingsRoot:
             settings.storage.vault_dir,
             settings.storage.mocs_dir,
             settings.storage.raw_dir,
-            settings.storage.fluid_dir,
+            settings.storage.data_dir / "fluid_prose",
             settings.storage.data_dir / "gap_filler",
-            settings.storage.enriched_dir,
+            settings.storage.data_dir / "long_expander",
+            settings.storage.data_dir / "wide_expander",
             settings.storage.master_dir,
             settings.storage.priority_texts_dir,
         ):

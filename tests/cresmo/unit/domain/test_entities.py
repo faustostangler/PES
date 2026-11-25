@@ -35,32 +35,17 @@ from cresmo.domain.value_objects import (
 )
 
 
-class TestChannelUrlAndContentCreation:
-    """Tests for Channel URL fallback and Content URL extraction factory."""
+class TestChannelAndContentIdentity:
+    """Tests for strict Channel and Content identity VOs."""
 
-    def test_channel_url_dynamic_fallback(self) -> None:
-        ch1 = Channel(name="MyChannel", id=ChannelId("UC_auto_url_1"))
-        assert ch1.url == "https://www.youtube.com/channel/UC_auto_url_1"
+    def test_channel_construction_without_url_property(self) -> None:
+        ch = Channel(name="MyChannel", id=ChannelId("UC_auto_url_1"))
+        assert ch.name == "MyChannel"
+        assert ch.id == ChannelId("UC_auto_url_1")
+        assert not hasattr(ch, "url")
 
-        ch2 = Channel(
-            name="MyChannel", id=ChannelId("UC_auto_url_1"), url="https://youtube.com/@custom"
-        )
-        assert ch2.url == "https://youtube.com/@custom"
-
-        ch3 = Channel(
-            name="MyChannel",
-            id=ChannelId("UC_auto_url_1"),
-            url="https://www.youtube.com/channel/UC_auto_url_1",
-        )
-        assert ch3.url == "https://www.youtube.com/channel/UC_auto_url_1"
-
-        ch4 = Channel(name="MyChannel")
-        assert ch4.url == "https://www.youtube.com/@MyChannel"
-
-    def test_content_create_with_inferred_id_from_url(self) -> None:
-        cnt = Content.create(
-            url="https://youtube.com/watch?v=extracted_abc", title="Title", text="Body"
-        )
+    def test_content_direct_construction(self) -> None:
+        cnt = Content(id=ContentId("extracted_abc"), title="Title", text="Body")
         assert cnt.id == ContentId("extracted_abc")
 
 
@@ -220,17 +205,17 @@ class TestPipelineSessionId:
         from cresmo.domain.value_objects import Channel, Content
 
         ch = Channel(name="Example Channel", id=ChannelId("UCxyz1234567890ab"))
-        cnt = Content.create("9IbNJ0EsTxI")
+        cnt = Content(id=ContentId("9IbNJ0EsTxI"))
         sid = PipelineSessionId.create(channel=ch, content_id=cnt)
         assert sid.value == "UCxyz1234567890ab:9IbNJ0EsTxI"
         assert sid.channel_id == "UCxyz1234567890ab"
         assert sid.content_id == "9IbNJ0EsTxI"
 
-    def test_create_with_string_channel_still_works(self) -> None:
-        """Passing a raw string for channel produces canonical {channel}:{content_id}."""
+    def test_create_with_channel_name_and_content_id_vo(self) -> None:
+        """Passing ChannelName and ContentId produces canonical {channel}:{content_id}."""
         sid = PipelineSessionId.create(
-            channel="Raw String Channel",
-            content_id="dQw4w9WgXcQ",
+            channel=ChannelName("Raw String Channel"),
+            content_id=ContentId("dQw4w9WgXcQ"),
         )
         assert sid.value == "Raw String Channel:dQw4w9WgXcQ"
         assert sid.channel_id == "Raw String Channel"
@@ -308,46 +293,55 @@ class TestPipelineSessionId:
 
         # Channel with id
         ch1 = Channel(name="Name1", id=ChannelId("UC_id1"))
-        sid1 = PipelineSessionId.create(channel=ch1, content_id="vid1")
+        sid1 = PipelineSessionId.create(channel=ch1, content_id=ContentId("vid1"))
         assert sid1.value == "UC_id1:vid1"
 
         # Channel without id, explicit channel_id passed
         ch2 = Channel(name="Name2", id=None)
         sid2 = PipelineSessionId.create(
-            channel=ch2, content_id="vid2", channel_id=ChannelId("UC_id2")
+            channel=ch2, content_id=ContentId("vid2"), channel_id=ChannelId("UC_id2")
         )
         assert sid2.value == "UC_id2:vid2"
 
         # Channel without id, channel_id=None -> fallback to channel.name
         ch3 = Channel(name="Name3", id=None)
-        sid3 = PipelineSessionId.create(channel=ch3, content_id="vid3", channel_id=None)
+        sid3 = PipelineSessionId.create(channel=ch3, content_id=ContentId("vid3"), channel_id=None)
         assert sid3.value == "Name3:vid3"
 
         # channel as ChannelName
-        sid4 = PipelineSessionId.create(channel=ChannelName("Name4"), content_id="vid4")
+        sid4 = PipelineSessionId.create(channel=ChannelName("Name4"), content_id=ContentId("vid4"))
         assert sid4.value == "Name4:vid4"
 
         # channel as ChannelName with explicit channel_id
         sid5 = PipelineSessionId.create(
-            channel=ChannelName("Name5"), content_id="vid5", channel_id=ChannelId("UC_id5")
+            channel=ChannelName("Name5"),
+            content_id=ContentId("vid5"),
+            channel_id=ChannelId("UC_id5"),
         )
         assert sid5.value == "UC_id5:vid5"
 
-        # channel as raw string with whitespace
-        sid6 = PipelineSessionId.create(channel="  RawChannel  ", content_id="vid6")
+        # channel and content with trimmed Value Objects
+        sid6 = PipelineSessionId.create(
+            channel=ChannelName("  RawChannel  "),
+            content_id=ContentId("vid6"),
+        )
         assert sid6.value == "RawChannel:vid6"
 
         # content_id as Content VO
         cnt7 = Content(id=ContentId("vid7"), title="Title7")
-        sid7 = PipelineSessionId.create(channel="Chan7", content_id=cnt7)
+        sid7 = PipelineSessionId.create(channel=ChannelName("Chan7"), content_id=cnt7)
         assert sid7.value == "Chan7:vid7"
 
         # content_id as ContentId VO
-        sid8 = PipelineSessionId.create(channel="Chan8", content_id=ContentId("vid8"))
+        sid8 = PipelineSessionId.create(
+            channel=ChannelName("Chan8"), content_id=ContentId("vid8")
+        )
         assert sid8.value == "Chan8:vid8"
 
-        # content_id as raw string with whitespace
-        sid9 = PipelineSessionId.create(channel="Chan9", content_id="  vid9  ")
+        # content_id as trimmed ContentId VO
+        sid9 = PipelineSessionId.create(
+            channel=ChannelName("Chan9"), content_id=ContentId("  vid9  ")
+        )
         assert sid9.value == "Chan9:vid9"
 
 
@@ -381,46 +375,6 @@ class TestUserIdentity:
         assert u3.value == "system:cron_daemon"
         assert u3.subject == "cron_daemon"
 
-    def test_identified_iam_user(self) -> None:
-        """Identified IAM user generates user:iam:{username}."""
-        user = UserIdentity.identified(subject="alice", provider="iam")
-        assert user.value == "user:iam:alice"
-        assert user.is_anonymous is False
-        assert user.provider == "iam"
-        assert user.subject == "alice"
-
-    def test_identified_defaults_and_normalization(self) -> None:
-        import inspect
-
-        assert inspect.signature(UserIdentity.identified).parameters["provider"].default is None
-
-        u1 = UserIdentity.identified(subject="bob")
-        assert u1.value == "user:oauth:bob"
-        assert u1.is_anonymous is False
-        assert u1.provider == "oauth"
-        assert u1.subject == "bob"
-
-        u2 = UserIdentity.identified(subject="carol", provider="   ")
-        assert u2.value == "user:oauth:carol"
-        assert u2.provider == "oauth"
-        assert u2.subject == "carol"
-
-        u3 = UserIdentity.identified(subject="  dave  ", provider="  OAuth  ")
-        assert u3.value == "user:oauth:dave"
-        assert u3.is_anonymous is False
-        assert u3.provider == "oauth"
-        assert u3.subject == "dave"
-
-    def test_identified_empty_subject_raises_error(self) -> None:
-        with pytest.raises(
-            ValueError, match="^Identified UserIdentity requires a non-empty subject\\.$"
-        ):
-            UserIdentity.identified(subject="")
-        with pytest.raises(
-            ValueError, match="^Identified UserIdentity requires a non-empty subject\\.$"
-        ):
-            UserIdentity.identified(subject="   ", provider="iam")
-
     def test_anonymous_user(self) -> None:
         """Anonymous user generates anonymous with provider anonymous."""
         user = UserIdentity.anonymous()
@@ -428,20 +382,6 @@ class TestUserIdentity:
         assert user.is_anonymous is True
         assert user.provider == "anonymous"
         assert user.subject == ""
-
-    def test_anonymous_user_with_token(self) -> None:
-        """Anonymous user with token generates anon:{token}."""
-        user = UserIdentity.anonymous(token="guest_123")
-        assert user.value == "anon:guest_123"
-        assert user.is_anonymous is True
-        assert user.provider == "anonymous"
-        assert user.subject == ""
-
-        u_empty = UserIdentity.anonymous(token="")
-        assert u_empty.value == "anonymous"
-        assert u_empty.is_anonymous is True
-        assert u_empty.provider == "anonymous"
-        assert u_empty.subject == ""
 
     def test_empty_user_identity_raises_error(self) -> None:
         with pytest.raises(ValueError, match="^UserIdentity cannot be empty\\.$"):
@@ -461,7 +401,6 @@ class TestChannelCompositeValueObjectAndTenantKey:
             name="Marcelo Andrade",
             id=ChannelId("UCP3CtEXi5nxbhei_aBfIOVA"),
             category="history",
-            url="https://www.youtube.com/channel/UCP3CtEXi5nxbhei_aBfIOVA",
         )
         assert ch.name == "Marcelo Andrade"
         assert isinstance(ch.name, str)
@@ -516,7 +455,6 @@ class TestAdr038PureValueObjectTriadComposition:
             id=ChannelId("UCP3CtEXi5nxbhei_aBfIOVA"),
             name="Marcelo Andrade",
             category="history",
-            url="https://www.youtube.com/channel/UCP3CtEXi5nxbhei_aBfIOVA",
         )
         provenance = MediaProvenance(
             url="https://youtu.be/9IbNJ0EsTxI",
@@ -696,12 +634,8 @@ class TestPostProcessFluidTranscriptInvariantsAndRegex:
             content=Content(id=ContentId(cid), title=title, text="Raw"),
         )
 
-    def test_candidate_as_candidatetext_and_raw_str(self) -> None:
+    def test_candidate_as_candidatetext(self) -> None:
         st = self._make_source("c1", "Default Title")
-
-        res1 = post_process_fluid_transcript("   Prose body text.   ", st)
-        assert res1.content.text == "Prose body text."
-        assert res1.content.title == "Default Title"
 
         cand = CandidateText(text="   Prose body text.   ", stage_name="s1")
         res2 = post_process_fluid_transcript(cand, st)
@@ -711,46 +645,70 @@ class TestPostProcessFluidTranscriptInvariantsAndRegex:
     def test_title_h1_extraction_and_stripping(self) -> None:
         st = self._make_source("c1", "Old Title")
         text = "# Primary Extracted Heading\n\nThis is the remaining narrative body."
-        res = post_process_fluid_transcript(text, st)
+        res = post_process_fluid_transcript(CandidateText(text=text, stage_name="fluid_prose"), st)
         assert res.content.title == "Primary Extracted Heading"
         assert res.content.text == "This is the remaining narrative body."
 
         text_spaced = "   #    Spaced Heading   \n\nBody text after."
-        res_sp = post_process_fluid_transcript(text_spaced, st)
+        res_sp = post_process_fluid_transcript(
+            CandidateText(text=text_spaced, stage_name="fluid_prose"), st
+        )
         assert res_sp.content.title == "Spaced Heading"
         assert res_sp.content.text == "Body text after."
 
     def test_fallback_titles_when_h1_missing(self) -> None:
         st_with_title = self._make_source("c1", "Original Title")
-        res1 = post_process_fluid_transcript("Body without H1 header.", st_with_title)
+        res1 = post_process_fluid_transcript(
+            CandidateText(text="Body without H1 header.", stage_name="fluid_prose"), st_with_title
+        )
         assert res1.content.title == "Original Title"
 
         st_no_title = self._make_source("c1", "")
-        res2 = post_process_fluid_transcript("Body without H1 header.", st_no_title)
+        res2 = post_process_fluid_transcript(
+            CandidateText(text="Body without H1 header.", stage_name="fluid_prose"), st_no_title
+        )
         assert res2.content.title == "Untitled Compendium"
 
     def test_complementary_sections_stripping(self) -> None:
         st = self._make_source("c1", "Default Title")
         base = "Main core prose narrative that must be preserved."
 
-        res1 = post_process_fluid_transcript(f"{base}\n\n### Extra Info\nDetails to drop.", st)
+        res1 = post_process_fluid_transcript(
+            CandidateText(text=f"{base}\n\n### Extra Info\nDetails to drop.", stage_name="fluid_prose"),
+            st,
+        )
         assert res1.content.text == base
 
         res2 = post_process_fluid_transcript(
-            f"{base}\n\n### Notas Complementares\nNotes to drop.", st
+            CandidateText(
+                text=f"{base}\n\n### Notas Complementares\nNotes to drop.", stage_name="fluid_prose"
+            ),
+            st,
         )
         assert res2.content.text == base
 
         res3 = post_process_fluid_transcript(
-            f"{base}\n\n## Informações Adicionais\nMore to drop.", st
+            CandidateText(
+                text=f"{base}\n\n## Informações Adicionais\nMore to drop.", stage_name="fluid_prose"
+            ),
+            st,
         )
         assert res3.content.text == base
 
-        res4 = post_process_fluid_transcript(f"{base}\n\n## **Extra Info**\nBold to drop.", st)
+        res4 = post_process_fluid_transcript(
+            CandidateText(
+                text=f"{base}\n\n## **Extra Info**\nBold to drop.", stage_name="fluid_prose"
+            ),
+            st,
+        )
         assert res4.content.text == base
 
         res5 = post_process_fluid_transcript(
-            f"{base}\n\n## informações complementares\nCase to drop.", st
+            CandidateText(
+                text=f"{base}\n\n## informações complementares\nCase to drop.",
+                stage_name="fluid_prose",
+            ),
+            st,
         )
         assert res5.content.text == base
 
@@ -761,19 +719,20 @@ class TestPostProcessFluidTranscriptInvariantsAndRegex:
             StageTranscriptStructureError,
             match=r"^Generated fluid prose body is empty for 'c_err_1'\.$",
         ):
-            post_process_fluid_transcript("# Only A Header\n", st)
+            post_process_fluid_transcript(
+                CandidateText(text="# Only A Header\n", stage_name="fluid_prose"), st
+            )
 
         with pytest.raises(
             StageTranscriptStructureError,
             match=r"^Generated fluid prose body is empty for 'c_err_1'\.$",
         ):
-            post_process_fluid_transcript("# Header\n\n### Extra Info\nExtra notes.", st)
-
-        with pytest.raises(
-            StageTranscriptStructureError,
-            match=r"^Generated fluid prose body is empty for 'c_err_1'\.$",
-        ):
-            post_process_fluid_transcript("   \n   ", st)
+            post_process_fluid_transcript(
+                CandidateText(
+                    text="# Header\n\n### Extra Info\nExtra notes.", stage_name="fluid_prose"
+                ),
+                st,
+            )
 
     def test_preserves_pure_triad_and_content_id(self) -> None:
         ch = Channel(name="Preserved Channel", id=ChannelId("UC_preserve"))
@@ -781,7 +740,9 @@ class TestPostProcessFluidTranscriptInvariantsAndRegex:
         cnt = Content(id=ContentId("preserve_cid"), title="Orig", text="Body")
         st = StageTranscript(channel=ch, provenance=prov, content=cnt)
 
-        res = post_process_fluid_transcript("Processed prose body.", st)
+        res = post_process_fluid_transcript(
+            CandidateText(text="Processed prose body.", stage_name="fluid_prose"), st
+        )
         assert res.channel is ch
         assert res.provenance is prov
         assert res.content.id == ContentId("preserve_cid")

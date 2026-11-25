@@ -59,9 +59,6 @@ class MockMediaIngestionPort(MediaIngestionPort):
     def ingest_single_video(
         self,
         video_url: str,
-        output_dir: Path,
-        whisper_model: str = "base",
-        keep_audio: bool = False,
     ) -> StageTranscript | None:
         self.ingest_single_calls.append(video_url)
         return self.canned_transcript

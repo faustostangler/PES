@@ -12,7 +12,7 @@ from enum import StrEnum
 
 
 class MetricName(StrEnum):
-    """Canonical low-cardinality SRE Golden Signals and DORA metric identifiers."""
+    """Canonical low-cardinality SRE Golden Signals metric identifiers."""
 
     PIPELINE_STAGE_DURATION = "cresmo_pipeline_stage_duration_seconds"
     MEDIA_INGESTION_DURATION = "cresmo_media_ingestion_duration_seconds"
@@ -27,9 +27,6 @@ class MetricName(StrEnum):
     DISCOVERY_QUEUE_SIZE = "cresmo_discovery_queue_size"
     PROCESS_RESIDENT_MEMORY_BYTES = "cresmo_process_resident_memory_bytes"
     GC_COLLECTIONS = "cresmo_gc_collections_total"
-    DORA_DEPLOYMENTS = "cresmo_dora_deployments_total"
-    DORA_LEAD_TIME = "cresmo_dora_lead_time_seconds"
-    DORA_RESTORE_DURATION = "cresmo_dora_restore_duration_seconds"
 
 
 class MetricsPort(ABC):
@@ -43,7 +40,7 @@ class MetricsPort(ABC):
     @abstractmethod
     def increment_counter(
         self,
-        name: str,
+        name: MetricName,
         value: float = 1.0,
         labels: dict[str, str] | None = None,
     ) -> None:
@@ -61,7 +58,7 @@ class MetricsPort(ABC):
     @abstractmethod
     def observe_histogram(
         self,
-        name: str,
+        name: MetricName,
         value: float,
         labels: dict[str, str] | None = None,
     ) -> None:
@@ -79,7 +76,7 @@ class MetricsPort(ABC):
     @abstractmethod
     def set_gauge(
         self,
-        name: str,
+        name: MetricName,
         value: float,
         labels: dict[str, str] | None = None,
     ) -> None:
@@ -101,7 +98,7 @@ class NoOpMetricsPort(MetricsPort):
 
     def increment_counter(
         self,
-        name: str,
+        name: MetricName,
         value: float = 1.0,
         labels: dict[str, str] | None = None,
     ) -> None:
@@ -112,7 +109,7 @@ class NoOpMetricsPort(MetricsPort):
 
     def observe_histogram(
         self,
-        name: str,
+        name: MetricName,
         value: float,
         labels: dict[str, str] | None = None,
     ) -> None:
@@ -123,7 +120,7 @@ class NoOpMetricsPort(MetricsPort):
 
     def set_gauge(
         self,
-        name: str,
+        name: MetricName,
         value: float,
         labels: dict[str, str] | None = None,
     ) -> None:

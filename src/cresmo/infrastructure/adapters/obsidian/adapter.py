@@ -44,32 +44,16 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
     def __init__(
         self,
         vault_dir: Path,
-        raw_dir: Path,
-        enriched_dir: Path,
-        fluid_dir: Path | None = None,
-        master_dir: Path | None = None,
-        data_dir: Path | None = None,
-        mocs_dir: Path | None = None,
-        index_path: Path | None = None,
+        data_dir: Path,
     ) -> None:
         self.vault_dir = Path(vault_dir).resolve()
-        self.raw_dir = Path(raw_dir).resolve()
-        self.enriched_dir = Path(enriched_dir).resolve()
-        self.data_dir = Path(data_dir).resolve() if data_dir else self.raw_dir.parent
-        self.fluid_dir = Path(fluid_dir).resolve() if fluid_dir else (self.data_dir / "fluid_prose")
-        self.master_dir = Path(master_dir).resolve() if master_dir else (self.data_dir / "master")
+        self.data_dir = Path(data_dir).resolve()
+        self.raw_dir = self.data_dir / StageName.RAW.value
+        self.master_dir = self.data_dir / "master"
+        self.mocs_dir = self.vault_dir / "MOCs"
+        self.index_path = self.vault_dir / "_index.json"
 
-        self.mocs_dir = Path(mocs_dir).resolve() if mocs_dir else (self.vault_dir / "MOCs")
-        self.index_path = (
-            Path(index_path).resolve() if index_path else (self.vault_dir / "_index.json")
-        )
-
-        self._transcripts = TranscriptVaultHandler(
-            raw_dir=self.raw_dir,
-            enriched_dir=self.enriched_dir,
-            fluid_dir=self.fluid_dir,
-            data_dir=self.data_dir,
-        )
+        self._transcripts = TranscriptVaultHandler(data_dir=self.data_dir)
         self._notes = AtomicNoteVaultHandler(
             vault_dir=self.vault_dir,
             index_path=self.index_path,
@@ -79,10 +63,7 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
             mocs_dir=self.mocs_dir,
             master_dir=self.master_dir,
         )
-        self._catalog = ChannelCatalogHandler(
-            raw_dir=self.raw_dir,
-            data_dir=self.data_dir,
-        )
+        self._catalog = ChannelCatalogHandler(data_dir=self.data_dir)
 
     # --- Transcripts & Compendiums (ADR-058, ADR-059) ---
 

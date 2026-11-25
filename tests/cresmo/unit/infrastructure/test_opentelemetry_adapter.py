@@ -13,22 +13,22 @@ from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 from opentelemetry.sdk.trace.export.in_memory_span_exporter import InMemorySpanExporter
 
 from cresmo.application.ports.telemetry import (
-    LLM_GENERATION_FALLBACK_SPAN_NAME,
-    LLM_GENERATION_SPAN_NAME,
+    _LLM_GENERATION_FALLBACK_SPAN_NAME,
+    _LLM_GENERATION_SPAN_NAME,
     NOOP_TELEMETRY_SPAN,
     PIPELINE_ROOT_SPAN_NAME,
     PIPELINE_TRACE_NAME,
     NoOpTelemetryPort,
     SessionTelemetrySpec,
     SpanKind,
+    _format_stage_generation_span_name,
+    _get_active_telemetry_stage,
     active_telemetry_pass,
     active_telemetry_stage,
-    format_stage_generation_span_name,
     format_stage_judge_span_name,
     format_stage_saturation_span_name,
     format_stage_span_name,
     get_active_telemetry_pass,
-    get_active_telemetry_stage,
     resolve_llm_generation_span_name,
 )
 from cresmo.domain.entities import PipelineSessionId, UserIdentity
@@ -66,15 +66,15 @@ class TestTelemetryNamingAndContextVars:
             format_stage_saturation_span_name("gap_filler", pass_num=2)
             == "cresmo.gap_filler.saturation.pass_2"
         )
-        assert format_stage_generation_span_name("fluid_prose") == "cresmo.fluid_prose.generate"
+        assert _format_stage_generation_span_name("fluid_prose") == "cresmo.fluid_prose.generate"
         assert (
-            format_stage_generation_span_name("fluid_prose", fallback=True, pass_num=2)
+            _format_stage_generation_span_name("fluid_prose", fallback=True, pass_num=2)
             == "cresmo.fluid_prose.generate_fallback.pass_2"
         )
-        assert format_stage_generation_span_name(None) == LLM_GENERATION_SPAN_NAME
+        assert _format_stage_generation_span_name(None) == _LLM_GENERATION_SPAN_NAME
         assert (
-            format_stage_generation_span_name("   ", fallback=True)
-            == LLM_GENERATION_FALLBACK_SPAN_NAME
+            _format_stage_generation_span_name("   ", fallback=True)
+            == _LLM_GENERATION_FALLBACK_SPAN_NAME
         )
 
         with pytest.raises(ValueError, match="stage_name must be a non-empty string"):
@@ -87,12 +87,12 @@ class TestTelemetryNamingAndContextVars:
             format_stage_saturation_span_name("gap_filler", pass_num=True)
 
     def test_nested_stage_and_pass_contextvars_isolation(self) -> None:
-        assert get_active_telemetry_stage() is None
+        assert _get_active_telemetry_stage() is None
         assert get_active_telemetry_pass() is None
         assert resolve_llm_generation_span_name() == "cresmo.llm.generate"
 
         with active_telemetry_stage("gap_filler"):
-            assert get_active_telemetry_stage() == "gap_filler"
+            assert _get_active_telemetry_stage() == "gap_filler"
             with active_telemetry_pass(2):
                 assert get_active_telemetry_pass() == 2
                 assert resolve_llm_generation_span_name() == "cresmo.gap_filler.generate.pass_2"
@@ -101,13 +101,13 @@ class TestTelemetryNamingAndContextVars:
                     == "cresmo.gap_filler.generate_fallback.pass_2"
                 )
                 with active_telemetry_stage("nested_stage"):
-                    assert get_active_telemetry_stage() == "nested_stage"
+                    assert _get_active_telemetry_stage() == "nested_stage"
                     assert get_active_telemetry_pass() is None
                     assert resolve_llm_generation_span_name() == "cresmo.nested_stage.generate"
-                assert get_active_telemetry_stage() == "gap_filler"
+                assert _get_active_telemetry_stage() == "gap_filler"
                 assert get_active_telemetry_pass() == 2
             assert get_active_telemetry_pass() is None
-        assert get_active_telemetry_stage() is None
+        assert _get_active_telemetry_stage() is None
 
 
 class TestOpenTelemetryAdapterSessionsAndSpans:
@@ -120,7 +120,7 @@ class TestOpenTelemetryAdapterSessionsAndSpans:
         adapter, exporter, mock_langfuse = otel_harness
         spec = SessionTelemetrySpec(
             session_id=PipelineSessionId("UC_chan:vid_42"),
-            user_id=UserIdentity.identified(subject="fausto@cresmo.ai", provider="oauth"),
+            user_id=UserIdentity.worker(),
             channel_tenant_id="channel:UC_chan",
             trace_name=PIPELINE_TRACE_NAME,
             channel_id="UC_chan",
@@ -154,7 +154,7 @@ class TestOpenTelemetryAdapterSessionsAndSpans:
                 attributes={"cresmo.stage.content.id": "vid_42"},
                 flush_on_exit=True,
             ) as stage_span:
-                assert get_active_telemetry_stage() == "fluid_prose"
+                assert _get_active_telemetry_stage() == "fluid_prose"
                 stage_span.set_input({"stage_name": "fluid_prose"})
                 with adapter.start_span(
                     "cresmo.fluid_prose.generate",
@@ -164,13 +164,13 @@ class TestOpenTelemetryAdapterSessionsAndSpans:
                     gen_span.set_output("Generated prose")
                 stage_span.set_output({"status": "APPROVED"})
 
-            assert get_active_telemetry_stage() is None
+            assert _get_active_telemetry_stage() is None
             root_span.set_output({"status": "COMPLETED", "word_count": 120})
 
         mock_prop.assert_called_once()
         prop_kwargs = mock_prop.call_args.kwargs
         assert prop_kwargs["session_id"] == "UC_chan:vid_42"
-        assert prop_kwargs["user_id"] == "user:oauth:fausto@cresmo.ai"
+        assert prop_kwargs["user_id"] == "system:worker"
         assert prop_kwargs["trace_name"] == PIPELINE_TRACE_NAME
         assert "git:12345678" in prop_kwargs["tags"]
         assert "batch:batch_xyz" in prop_kwargs["tags"]
@@ -411,8 +411,8 @@ class TestOpenTelemetryAdapterSessionsAndSpans:
             root.set_output({"ok": True})
         with noop.start_span("cresmo.fluid_prose", stage_name="fluid_prose") as stage:
             assert stage is NOOP_TELEMETRY_SPAN
-            assert get_active_telemetry_stage() == "fluid_prose"
-        assert get_active_telemetry_stage() is None
+            assert _get_active_telemetry_stage() == "fluid_prose"
+        assert _get_active_telemetry_stage() is None
         assert noop.current_span() is NOOP_TELEMETRY_SPAN
         noop.record_score(name="x", value=1.0)
         noop.flush()

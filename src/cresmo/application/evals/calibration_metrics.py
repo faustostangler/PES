@@ -15,6 +15,8 @@ from enum import StrEnum
 from statistics import NormalDist
 from typing import Any
 
+from cresmo.domain.exceptions import DomainValidationError
+
 
 class CalibrationVerdict(StrEnum):
     """Canonical lifecycle verdict assigned to one `(stage, provider, model)` target."""
@@ -34,7 +36,6 @@ class ConfusionMatrix:
     false_reject_beta: int = 0
     false_accept_alpha: int = 0
     correct_rejection: int = 0
-    invalid: int = 0
 
     @property
     def total_valid(self) -> int:
@@ -185,8 +186,9 @@ class ConfusionMatrix:
     def record(self, expected: str, actual: str) -> str:
         """Record expected vs actual verdict pair and return canonical status code."""
         if expected not in ("PASS", "FAIL"):
-            self.invalid += 1
-            return "INVALID"
+            raise DomainValidationError(
+                f"Invalid expected calibration verdict {expected!r}; expected 'PASS' or 'FAIL'."
+            )
         if expected == "PASS" and actual == "PASS":
             self.hit += 1
             return "HIT"

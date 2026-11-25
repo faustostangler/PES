@@ -1,9 +1,10 @@
-Title: {{content_title}}
+Evaluate stage: {{stage_name}}
+Required criteria JSON: {{criteria_json}}
 
-Transcript Excerpt:
-{{transcript_excerpt}}
+--- SOURCE TRANSCRIPT EXCERPT ---
+{{source_text}}
 
-Proposed Summary:
-{{summary}}
+--- PROPOSED SUMMARY ---
+{{candidate_text}}
 
-Does the proposed summary satisfy all criteria (substantive fidelity, continuous prose, zero em-dashes, zero antitheses, and zero meta-discourse/framing)? Respond ONLY with 'true' or 'false'.
+Score every requested criterion rigorously in JSON format.

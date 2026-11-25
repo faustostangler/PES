@@ -27,7 +27,6 @@ from cresmo.application.ports import (
 )
 from cresmo.domain.value_objects import (
     Channel,
-    Content,
     JudgeEvaluation,
 )
 
@@ -60,34 +59,24 @@ def attach_evaluation_span_attributes(
         return
 
     verdict_val = "PASS" if evaluation.passed else "NEEDS_REWRITE"
-    span_attrs: dict[str, TelemetryAttributeValue] = {"judge.verdict": verdict_val}
-    score_val: float | str = (
-        float(evaluation.overall_score)
-        if isinstance(evaluation.overall_score, (int, float))
-        else str(evaluation.overall_score)
+    score_val = float(evaluation.overall_score)
+    span.set_attributes(
+        {
+            "judge.verdict": verdict_val,
+            "judge.overall_score": score_val,
+        }
     )
-    if isinstance(score_val, float):
-        span_attrs["judge.overall_score"] = score_val
-    span.set_attributes(span_attrs)
 
-    scores_dict: dict[str, float | str] = {}
+    scores_dict: dict[str, float] = {}
     reasons_dict: dict[str, str] = {}
     suggestions_dict: dict[str, str] = {}
-    for criterion_entry in getattr(evaluation, "criteria_scores", ()):
-        crit_key = str(getattr(criterion_entry.criterion, "value", criterion_entry.criterion))
-        crit_score: float | str = (
-            float(criterion_entry.score)
-            if isinstance(criterion_entry.score, (int, float))
-            else str(criterion_entry.score)
-        )
-        scores_dict[crit_key] = crit_score
-        if hasattr(criterion_entry, "reasoning") and criterion_entry.reasoning:
-            reasons_dict[crit_key] = str(criterion_entry.reasoning)
-        if (
-            hasattr(criterion_entry, "improvement_suggestion")
-            and criterion_entry.improvement_suggestion
-        ):
-            suggestions_dict[crit_key] = str(criterion_entry.improvement_suggestion)
+    for criterion_entry in evaluation.criteria_scores:
+        crit_key = criterion_entry.criterion.value
+        scores_dict[crit_key] = float(criterion_entry.score)
+        if criterion_entry.reasoning:
+            reasons_dict[crit_key] = criterion_entry.reasoning
+        if criterion_entry.improvement_suggestion:
+            suggestions_dict[crit_key] = criterion_entry.improvement_suggestion
 
     eval_output: dict[str, Any] = {
         "verdict": verdict_val,
@@ -108,10 +97,8 @@ def record_error_metric(
     exc: Exception,
     stage_name: str,
     channel: Channel,
-    content: Content,
 ) -> None:
     """Increment stage error counter with low-cardinality dimensional labels."""
-    _ = content
     metrics_port.increment_counter(
         MetricName.PIPELINE_ERRORS,
         1.0,
@@ -195,7 +182,6 @@ def measure_stage_execution(
                 exc=exc,
                 stage_name=stage_name,
                 channel=effective_channel,
-                content=effective_content,
             )
             raise
         finally:

@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import math
 from dataclasses import FrozenInstanceError
 from typing import Any
 
@@ -34,8 +33,12 @@ class TestStageExecutionPolicy:
         assert policy.long_expander_max_passes == 7
         assert policy.judge_max_attempts == 2
         assert policy.judge_blocking is False
-        assert policy.synthesis_temperature == 0.2
         assert policy.saturation_thresholds == SaturationThresholds()
+        from cresmo.domain.value_objects import ConvergenceMode
+
+        assert policy.resolve_max_passes("long_expander", ConvergenceMode.HYBRID_SEMANTIC) == 7
+        assert policy.resolve_max_passes("gap_filler", ConvergenceMode.HYBRID_SEMANTIC) == 5
+        assert policy.resolve_max_passes("fluid_prose", ConvergenceMode.NONE) == 1
 
         with pytest.raises(FrozenInstanceError):
             policy.expansion_max_passes = 3  # type: ignore[misc]
@@ -47,30 +50,20 @@ class TestStageExecutionPolicy:
             long_expander_max_passes=1,
             judge_max_attempts=1,
             judge_blocking=True,
-            synthesis_temperature=0.0,
             saturation_thresholds=custom_thresholds,
         )
         assert low.expansion_max_passes == 1
         assert low.long_expander_max_passes == 1
         assert low.judge_max_attempts == 1
         assert low.judge_blocking is True
-        assert low.synthesis_temperature == 0.0
         assert low.saturation_thresholds is custom_thresholds
 
         high = StageExecutionPolicy(
             expansion_max_passes=10,
             long_expander_max_passes=10,
-            synthesis_temperature=2.0,
         )
         assert high.expansion_max_passes == 10
         assert high.long_expander_max_passes == 10
-        assert high.synthesis_temperature == 2.0
-
-        no_temp = StageExecutionPolicy(synthesis_temperature=None)
-        assert no_temp.synthesis_temperature is None
-
-        int_temp = StageExecutionPolicy(synthesis_temperature=1)
-        assert int_temp.synthesis_temperature == 1
 
     @pytest.mark.parametrize(
         "kwargs",
@@ -87,13 +80,6 @@ class TestStageExecutionPolicy:
             {"judge_max_attempts": True},
             {"judge_blocking": 1},
             {"judge_blocking": "false"},
-            {"synthesis_temperature": -0.01},
-            {"synthesis_temperature": 2.01},
-            {"synthesis_temperature": math.nan},
-            {"synthesis_temperature": math.inf},
-            {"synthesis_temperature": -math.inf},
-            {"synthesis_temperature": True},
-            {"synthesis_temperature": "0.2"},
             {"saturation_thresholds": "invalid"},
             {"saturation_thresholds": None},
         ],

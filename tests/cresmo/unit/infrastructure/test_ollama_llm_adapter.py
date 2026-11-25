@@ -15,7 +15,8 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from cresmo.application.ports import SpanKind, active_telemetry_stage
+from cresmo.application.ports import SpanKind
+from cresmo.application.ports.telemetry import active_telemetry_stage
 from cresmo.domain.exceptions import LLMInfrastructureError
 from cresmo.domain.value_objects.prompt import ChatPrompt
 from cresmo.infrastructure.adapters.llm.ollama_llm_adapter import OllamaLLMAdapter

@@ -13,9 +13,8 @@ from abc import ABC, abstractmethod
 from collections.abc import Generator, Mapping, Sequence
 from contextlib import AbstractContextManager, contextmanager, nullcontext
 from contextvars import ContextVar
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from enum import StrEnum
-from types import MappingProxyType
 from typing import Final, Protocol
 
 from cresmo.domain.entities import (
@@ -25,8 +24,8 @@ from cresmo.domain.entities import (
 
 PIPELINE_TRACE_NAME: Final[str] = "cresmo.pipeline"
 PIPELINE_ROOT_SPAN_NAME: Final[str] = "cresmo.coordinator"
-LLM_GENERATION_SPAN_NAME: Final[str] = "cresmo.llm.generate"
-LLM_GENERATION_FALLBACK_SPAN_NAME: Final[str] = "cresmo.llm.generate_fallback"
+_LLM_GENERATION_SPAN_NAME: Final[str] = "cresmo.llm.generate"
+_LLM_GENERATION_FALLBACK_SPAN_NAME: Final[str] = "cresmo.llm.generate_fallback"
 
 type TelemetryAttributeValue = str | int | float | bool | tuple[str, ...]
 type TelemetryPayload = Mapping[str, object] | Sequence[object] | str
@@ -68,9 +67,6 @@ class SessionTelemetrySpec:
     batch_id: str | None = None
     video_url: str | None = None
     publication_date: str | None = None
-    pipeline_version: str | None = None
-    git_sha: str | None = None
-    extra_metadata: Mapping[str, TelemetryAttributeValue] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
         if isinstance(self.raw_characters, bool) or self.raw_characters < 0:
@@ -81,7 +77,6 @@ class SessionTelemetrySpec:
             isinstance(self.expansion_max_passes, bool) or self.expansion_max_passes < 1
         ):
             raise ValueError("expansion_max_passes must be >= 1 when provided")
-        object.__setattr__(self, "extra_metadata", MappingProxyType(dict(self.extra_metadata)))
 
 
 class TelemetrySpan(Protocol):
@@ -107,18 +102,6 @@ class TelemetrySpan(Protocol):
 
     def set_output(self, payload: TelemetryPayload) -> None:
         """Record structured or textual output payload on the active span."""
-        ...
-
-    def add_event(
-        self,
-        name: str,
-        attributes: Mapping[str, TelemetryAttributeValue] | None = None,
-    ) -> None:
-        """Append a named domain or diagnostic event onto the active span."""
-        ...
-
-    def record_error(self, exc: BaseException) -> None:
-        """Mark the active span as failed and record exception diagnostics."""
         ...
 
 
@@ -147,18 +130,6 @@ class NoOpTelemetrySpan:
         """No-op output payload attachment."""
         _ = payload
 
-    def add_event(
-        self,
-        name: str,
-        attributes: Mapping[str, TelemetryAttributeValue] | None = None,
-    ) -> None:
-        """No-op span event recorder."""
-        _ = (name, attributes)
-
-    def record_error(self, exc: BaseException) -> None:
-        """No-op span exception recorder."""
-        _ = exc
-
 
 NOOP_TELEMETRY_SPAN: Final[NoOpTelemetrySpan] = NoOpTelemetrySpan()
 
@@ -183,7 +154,7 @@ def format_stage_span_name(stage_name: str) -> str:
     return f"cresmo.{_normalize_stage_name(stage_name)}"
 
 
-def format_stage_generation_span_name(
+def _format_stage_generation_span_name(
     stage_name: str | None,
     *,
     fallback: bool = False,
@@ -196,7 +167,7 @@ def format_stage_generation_span_name(
         if normalized:
             suffix = "generate_fallback" if fallback else "generate"
             return f"cresmo.{normalized}.{suffix}{pass_suffix}"
-    base = LLM_GENERATION_FALLBACK_SPAN_NAME if fallback else LLM_GENERATION_SPAN_NAME
+    base = _LLM_GENERATION_FALLBACK_SPAN_NAME if fallback else _LLM_GENERATION_SPAN_NAME
     return f"{base}{pass_suffix}"
 
 
@@ -216,7 +187,7 @@ def format_stage_saturation_span_name(
     return base
 
 
-def get_active_telemetry_stage() -> str | None:
+def _get_active_telemetry_stage() -> str | None:
     """Return the active pipeline stage identifier from the current execution context, if any."""
     return _ACTIVE_TELEMETRY_STAGE.get()
 
@@ -257,9 +228,9 @@ def resolve_llm_generation_span_name(
     pass_num: int | None = None,
 ) -> str:
     """Resolve Tier 3A LLM generation observation name from explicit or active stage and pass."""
-    effective_stage = stage_name if stage_name is not None else get_active_telemetry_stage()
+    effective_stage = stage_name if stage_name is not None else _get_active_telemetry_stage()
     effective_pass = pass_num if pass_num is not None else get_active_telemetry_pass()
-    return format_stage_generation_span_name(
+    return _format_stage_generation_span_name(
         effective_stage,
         fallback=fallback,
         pass_num=effective_pass,

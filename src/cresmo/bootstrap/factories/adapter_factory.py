@@ -16,13 +16,16 @@ import structlog
 from cresmo.application.ports import (
     ChannelTaxonomyPort,
     LLMTransformationPort,
+    MetricsPort,
     ProcessRuntimePort,
     PromptProviderPort,
     TelemetryPort,
     TextEmbeddingPort,
 )
 from cresmo.application.services.preflight import PreflightHealthChecker
-from cresmo.bootstrap.factories.settings_factory import resolve_shared_settings
+from cresmo.infrastructure.adapters.llm.metrics_decorator import (
+    MetricsLLMTransformationDecorator,
+)
 from cresmo.infrastructure.adapters.media.native_media_ingestion_adapter import (
     NativeMediaIngestionAdapter,
 )
@@ -41,12 +44,12 @@ from cresmo.infrastructure.config import (
     GeminiSettings,
     LlmSettings,
     StorageSettings,
+    resolve_shared_settings,
 )
 from cresmo.infrastructure.environment import discover_cookies_file
 from cresmo.infrastructure.paths import find_workspace_root
 
 if TYPE_CHECKING:
-    from cresmo.infrastructure.adapters.llm.gemini_adapter import GeminiLLMAdapter
     from cresmo.infrastructure.adapters.llm.gemini_pool import GeminiCredentialPool
 
 logger = structlog.get_logger(__name__)
@@ -71,6 +74,8 @@ def build_taxonomy_adapter(
 
 def build_media_ingestion_adapter(
     settings: CresmoSettings | None = None,
+    *,
+    metrics_port: MetricsPort | None = None,
 ) -> NativeMediaIngestionAdapter:
     """Instantiate and wire NativeMediaIngestionAdapter with resolved settings and active cookies."""
     resolved = resolve_shared_settings(settings)
@@ -82,10 +87,12 @@ def build_media_ingestion_adapter(
         header_generator=header_generator,
         whisper_concurrency_limit=resolved.ingestion.workers.whisper,
         cookie_file=cookie_file,
+        metrics_port=metrics_port,
         taxonomy_port=taxonomy_port,
         whisper_device=resolved.ingestion.whisper_device,
         whisper_compute_type=resolved.ingestion.whisper_compute_type,
         whisper_vad_filter=resolved.ingestion.whisper_vad_filter,
+        whisper_model=resolved.ingestion.whisper_model,
         enable_rss_fast_path=resolved.ingestion.enable_rss_fast_path,
     )
 
@@ -97,13 +104,7 @@ def build_vault_adapter(
     resolved = storage if storage is not None else resolve_shared_settings(None).storage
     return ObsidianVaultAdapter(
         vault_dir=resolved.vault_dir,
-        raw_dir=resolved.raw_dir,
-        enriched_dir=resolved.enriched_dir,
-        fluid_dir=resolved.fluid_dir,
-        master_dir=resolved.master_dir,
         data_dir=resolved.data_dir,
-        mocs_dir=resolved.mocs_dir,
-        index_path=resolved.index_path,
     )
 
 
@@ -114,13 +115,11 @@ def build_preflight_checker(
     """Construct PreflightHealthChecker with resolved settings."""
     resolved = resolve_shared_settings(settings)
     return PreflightHealthChecker(
-        gemini_api_key=resolved.llm.gemini.primary_api_key(),
+        gemini_api_key=resolved.llm.gemini.primary_api_key().get_secret_value(),
         vault_dir=resolved.storage.vault_dir,
         sqlite_ledger_path=resolved.storage.sqlite_ledger_path,
         probe_port=PreflightProbeAdapter(),
         check_ffmpeg=check_ffmpeg,
-        langfuse_host=resolved.observability.langfuse.host,
-        ollama_base_url=resolved.llm.ollama.base_url,
     )
 
 
@@ -164,13 +163,14 @@ def build_gemini_synthesis_adapter(
     gemini: GeminiSettings | None = None,
     telemetry_port: TelemetryPort | None = None,
     credential_pool: GeminiCredentialPool | None = None,
-) -> GeminiLLMAdapter:
+    metrics_port: MetricsPort | None = None,
+) -> LLMTransformationPort:
     """Instantiate and wire GeminiLLMAdapter for core synthesis workflows."""
     from cresmo.infrastructure.adapters.llm.gemini_adapter import GeminiLLMAdapter
 
     resolved = gemini if gemini is not None else resolve_shared_settings(None).llm.gemini
     api_keys = [k.get_secret_value() for k in resolved.api_keys]
-    return GeminiLLMAdapter(
+    adapter = GeminiLLMAdapter(
         api_keys=api_keys,
         model_name=resolved.model,
         fallback_model_name=resolved.fallback_model,
@@ -180,6 +180,9 @@ def build_gemini_synthesis_adapter(
         credential_pool=credential_pool,
         timeout_seconds=resolved.timeout_seconds,
     )
+    if metrics_port is not None:
+        return MetricsLLMTransformationDecorator(adapter, metrics_port=metrics_port, provider="gemini")
+    return adapter
 
 
 def build_indexing_adapter(
@@ -189,6 +192,7 @@ def build_indexing_adapter(
     model_override: str | None = None,
     telemetry_port: TelemetryPort | None = None,
     credential_pool: GeminiCredentialPool | None = None,
+    metrics_port: MetricsPort | None = None,
 ) -> LLMTransformationPort:
     """Instantiate LLM adapter for indexing, selecting between local Ollama and Gemini API."""
     from cresmo.infrastructure.adapters.llm.gemini_adapter import GeminiLLMAdapter
@@ -196,14 +200,10 @@ def build_indexing_adapter(
     resolved = llm if llm is not None else resolve_shared_settings(None).llm
     gemini_cfg = resolved.gemini
     if web_index or resolved.indexing_provider == "gemini":
-        if (
-            synthesis_adapter is not None
-            and isinstance(synthesis_adapter, GeminiLLMAdapter)
-            and model_override is None
-        ):
+        if synthesis_adapter is not None and model_override is None:
             return synthesis_adapter
         resolved_keys = [k.get_secret_value() for k in gemini_cfg.api_keys]
-        return GeminiLLMAdapter(
+        gemini_adapter = GeminiLLMAdapter(
             api_keys=resolved_keys,
             model_name=model_override or gemini_cfg.model,
             fallback_model_name=gemini_cfg.fallback_model,
@@ -213,11 +213,16 @@ def build_indexing_adapter(
             credential_pool=credential_pool,
             timeout_seconds=gemini_cfg.timeout_seconds,
         )
+        if metrics_port is not None:
+            return MetricsLLMTransformationDecorator(
+                gemini_adapter, metrics_port=metrics_port, provider="gemini"
+            )
+        return gemini_adapter
 
     from cresmo.infrastructure.adapters.llm.ollama_llm_adapter import OllamaLLMAdapter
 
     ollama_cfg = resolved.ollama
-    return OllamaLLMAdapter(
+    ollama_adapter = OllamaLLMAdapter(
         base_url=ollama_cfg.base_url,
         model=model_override or ollama_cfg.model,
         timeout_seconds=ollama_cfg.timeout_seconds,
@@ -227,6 +232,11 @@ def build_indexing_adapter(
         keep_alive=ollama_cfg.keep_alive,
         warmup_timeout_seconds=ollama_cfg.warmup_timeout_seconds,
     )
+    if metrics_port is not None:
+        return MetricsLLMTransformationDecorator(
+            ollama_adapter, metrics_port=metrics_port, provider="ollama"
+        )
+    return ollama_adapter
 
 
 def build_embedding_adapter(

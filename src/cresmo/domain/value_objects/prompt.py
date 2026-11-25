@@ -88,13 +88,6 @@ class ChatPrompt:
             messages=(ChatMessage(role=MessageRole.USER, content=user_prompt),),
         )
 
-    def get_last_user_content(self) -> str:
-        """Extract content of the last user message, or empty string if absent."""
-        for msg in reversed(self.messages):
-            if msg.role == MessageRole.USER:
-                return msg.content
-        return ""
-
     def to_dict_list(self) -> list[dict[str, str]]:
         """Serialize messages into standardized dictionary representation."""
         result: list[dict[str, str]] = []
