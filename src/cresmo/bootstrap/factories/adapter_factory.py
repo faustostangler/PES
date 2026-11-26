@@ -122,10 +122,10 @@ def build_preflight_checker(
     if resolved.observability.runtime.enable_preflight_probes:
         langfuse = resolved.observability.langfuse
         if langfuse.public_key.strip() and langfuse.secret_key.get_secret_value().strip():
-            service_health_urls["langfuse"] = f"{langfuse.host.rstrip('/')}/api/public/health"
+            service_health_urls["langfuse"] = langfuse.health_url
         prometheus = resolved.observability.prometheus
         if prometheus.enabled and prometheus.endpoint.strip():
-            service_health_urls["prometheus"] = f"{prometheus.endpoint.rstrip('/')}/-/ready"
+            service_health_urls["prometheus"] = prometheus.ready_url
 
     return PreflightHealthChecker(
         gemini_api_key=resolved.llm.gemini.primary_api_key().get_secret_value(),

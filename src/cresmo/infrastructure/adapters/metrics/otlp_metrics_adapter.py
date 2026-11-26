@@ -19,6 +19,7 @@ from opentelemetry.sdk.resources import Resource
 
 from cresmo.application.ports.metrics import MetricsPort
 from cresmo.infrastructure.adapters.system.preflight_probe_adapter import probe_http_endpoint
+from cresmo.infrastructure.config.observability import PROMETHEUS_READY_PATH
 
 logger = structlog.get_logger(__name__)
 
@@ -30,7 +31,7 @@ DEFAULT_PROMETHEUS_ENDPOINT: Final[str] = "http://localhost:9090"
 DEFAULT_OTLP_EXPORT_INTERVAL_MILLIS: Final[float] = 15_000.0
 DEFAULT_SERVICE_NAME: Final[str] = "cresmo"
 _URL_TRAILING_SLASH: Final[str] = "/"
-_PROMETHEUS_READY_PATH: Final[str] = "/-/ready"
+_PROMETHEUS_READY_PATH: Final[str] = PROMETHEUS_READY_PATH
 _OTLP_METRICS_PATH: Final[str] = "/api/v1/otlp/v1/metrics"
 _LOCALHOST_HOST: Final[str] = "localhost"
 _LOOPBACK_IP: Final[str] = "127.0.0.1"

@@ -37,12 +37,13 @@ from cresmo.infrastructure.adapters.telemetry.opentelemetry_adapter import (
     name_telemetry_threads,
 )
 from cresmo.infrastructure.config import ObservabilitySettings, resolve_shared_settings
+from cresmo.infrastructure.config.observability import LANGFUSE_HEALTH_PATH
 
 logger = structlog.get_logger(__name__)
 
 DEFAULT_LANGFUSE_PROBE_TIMEOUT_SECONDS: Final[float] = 2.0
 URL_TRAILING_SLASH: Final[str] = "/"
-LANGFUSE_HEALTH_ENDPOINT_PATH: Final[str] = "/api/public/health"
+LANGFUSE_HEALTH_ENDPOINT_PATH: Final[str] = LANGFUSE_HEALTH_PATH
 LOCALHOST_HOSTNAME: Final[str] = "localhost"
 LOOPBACK_IPV4_HOST: Final[str] = "127.0.0.1"
 CRESMO_SCOPE_PREFIX: Final[str] = "cresmo."

@@ -24,8 +24,10 @@ from cresmo.infrastructure.config.catalog import (
 
 _LANGFUSE_ENVIRONMENT_REGEX = re.compile(LANGFUSE_ENVIRONMENT_PATTERN)
 DEFAULT_LANGFUSE_HOST: Final[str] = "https://cloud.langfuse.com"
+LANGFUSE_HEALTH_PATH: Final[str] = "/api/public/health"
 DEFAULT_LANGFUSE_TIMEOUT_SECONDS: Final[int] = 30
 DEFAULT_PROMETHEUS_ENDPOINT: Final[str] = "http://localhost:9090"
+PROMETHEUS_READY_PATH: Final[str] = "/-/ready"
 DEFAULT_LOGGING_LEVEL: Final[str] = "WARNING"
 DEFAULT_PREFLIGHT_PROBE_TIMEOUT_SECONDS: Final[float] = 2.0
 
@@ -61,6 +63,11 @@ class LangfuseSettings(BaseModel):
         description="Read and connect timeout in seconds for Langfuse client and OTel exporter.",
     )
 
+    @property
+    def health_url(self) -> str:
+        """Return canonical Langfuse health probe URL."""
+        return f"{self.host.rstrip('/')}{LANGFUSE_HEALTH_PATH}"
+
     @field_validator("environment", mode="before")
     @classmethod
     def _validate_environment(cls, value: Any) -> str:
@@ -89,6 +96,11 @@ class PrometheusSettings(BaseModel):
         default=DEFAULT_PROMETHEUS_ENDPOINT,
         description="Prometheus v3 server base URL hosting /api/v1/otlp/v1/metrics and /-/ready.",
     )
+
+    @property
+    def ready_url(self) -> str:
+        """Return canonical Prometheus readiness probe URL."""
+        return f"{self.endpoint.rstrip('/')}{PROMETHEUS_READY_PATH}"
 
 
 class LoggingSettings(BaseModel):
@@ -151,6 +163,8 @@ class ObservabilitySettings(BaseModel):
 
 
 __all__ = [
+    "LANGFUSE_HEALTH_PATH",
+    "PROMETHEUS_READY_PATH",
     "LangfuseSettings",
     "LoggingSettings",
     "ObservabilitySettings",
