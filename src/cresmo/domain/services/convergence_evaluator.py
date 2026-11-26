@@ -16,15 +16,34 @@ from typing import Final
 
 from cresmo.domain.exceptions import DomainValidationError
 from cresmo.domain.value_objects.convergence import (
+    DEFAULT_LONG_UNIT_WORD_CUTOFF,
+    DEFAULT_SEMANTIC_SIMILARITY_THRESHOLD,
+    DEFAULT_SLIDING_WINDOW_OVERLAP,
+    DEFAULT_SLIDING_WINDOW_SENTENCES,
     SaturationReason,
     SaturationThresholds,
     SaturationVerdict,
 )
 
 NO_NEW_GAPS_SENTINEL: Final[str] = "<NO_NEW_GAPS/>"
-LONG_UNIT_WORD_CUTOFF: Final[int] = 120
-SLIDING_WINDOW_SENTENCES: Final[int] = 3
-SLIDING_WINDOW_OVERLAP: Final[int] = 1
+LONG_UNIT_WORD_CUTOFF: Final[int] = DEFAULT_LONG_UNIT_WORD_CUTOFF
+SLIDING_WINDOW_SENTENCES: Final[int] = DEFAULT_SLIDING_WINDOW_SENTENCES
+SLIDING_WINDOW_OVERLAP: Final[int] = DEFAULT_SLIDING_WINDOW_OVERLAP
+
+DEFAULT_CONVERGENCE_PASS_INDEX: Final[int] = 2
+FIRST_PASS_INDEX: Final[int] = 1
+DEFAULT_SHINGLE_NGRAM_SIZE: Final[int] = 3
+MIN_SHINGLE_NGRAM_SIZE: Final[int] = 1
+COSINE_SIMILARITY_MIN: Final[float] = -1.0
+CONVERGENCE_PROVIDER_SENTINEL: Final[str] = "sentinel"
+CONVERGENCE_PROVIDER_LEXICAL: Final[str] = "lexical"
+CONVERGENCE_PROVIDER_SEMANTIC: Final[str] = "semantic"
+
+_CRLF_NEWLINE: Final[str] = "\r\n"
+_CR_NEWLINE: Final[str] = "\r"
+_BOUNDARY_WRAPPER_CHARS: Final[str] = "*_\"'“‘(["
+_UNCONDITIONAL_SENTENCE_ENDINGS: Final[tuple[str, ...]] = ("!", "?")
+_SENTENCE_PERIOD: Final[str] = "."
 
 _BLANK_LINE_SPLIT_PATTERN = re.compile(r"\n\s*\n")
 _HEADING_LINE_PATTERN = re.compile(r"^\s*#{1,6}\s+")
@@ -102,7 +121,7 @@ def segment_semantic_units(
     Returns:
         tuple[str, ...]: Ordered semantic units with markdown headings and stop sentinels excluded.
     """
-    normalized = text.replace("\r\n", "\n").replace("\r", "\n").strip()
+    normalized = text.replace(_CRLF_NEWLINE, "\n").replace(_CR_NEWLINE, "\n").strip()
     if not normalized:
         return ()
 
@@ -175,22 +194,22 @@ def _split_sentences(paragraph: str) -> list[str]:
 
 def _is_sentence_boundary(text: str, boundary_start: int, boundary_end: int) -> bool:
     """Return True when punctuation and whitespace at boundary delimit a new sentence."""
-    after = text[boundary_end:].lstrip("*_\"'“‘([")
+    after = text[boundary_end:].lstrip(_BOUNDARY_WRAPPER_CHARS)
     if not after:
         return False
 
-    if text[boundary_start] in ("!", "?"):
+    if text[boundary_start] in _UNCONDITIONAL_SENTENCE_ENDINGS:
         return True
 
     if after[0].islower():
         return False
 
     prefix_text = text[:boundary_start].strip()
-    cleaned_prefix = prefix_text.rstrip(".")
+    cleaned_prefix = prefix_text.rstrip(_SENTENCE_PERIOD)
     if not cleaned_prefix or cleaned_prefix.isdigit():
         return False
 
-    lower_stem = prefix_text.rsplit(maxsplit=1)[-1].lstrip("*_\"'“‘([").lower()
+    lower_stem = prefix_text.rsplit(maxsplit=1)[-1].lstrip(_BOUNDARY_WRAPPER_CHARS).lower()
     if lower_stem in _TITLE_ABBREVIATIONS:
         return False
 
@@ -215,7 +234,9 @@ def _split_kept_block_lines(kept_lines: list[str]) -> list[str]:
     return split_units
 
 
-def is_explicit_stop_sentinel(text: str, pass_index: int = 2) -> bool:
+def is_explicit_stop_sentinel(
+    text: str, pass_index: int = DEFAULT_CONVERGENCE_PASS_INDEX
+) -> bool:
     """Detect whether text emits the explicit saturation stop sentinel for eligible passes.
 
     Args:
@@ -225,14 +246,18 @@ def is_explicit_stop_sentinel(text: str, pass_index: int = 2) -> bool:
     Returns:
         bool: True when pass_index > 1 and the stop sentinel token is present.
     """
-    if isinstance(pass_index, bool) or not isinstance(pass_index, int) or pass_index < 1:
-        raise DomainValidationError(f"pass_index must be an integer >= 1, got {pass_index!r}.")
-    if pass_index == 1:
+    if isinstance(pass_index, bool) or not isinstance(pass_index, int) or pass_index < FIRST_PASS_INDEX:
+        raise DomainValidationError(
+            f"pass_index must be an integer >= {FIRST_PASS_INDEX}, got {pass_index!r}."
+        )
+    if pass_index == FIRST_PASS_INDEX:
         return False
     return text.strip() == NO_NEW_GAPS_SENTINEL
 
 
-def compute_ngram_jaccard(baseline_text: str, current_text: str, n: int = 3) -> float:
+def compute_ngram_jaccard(
+    baseline_text: str, current_text: str, n: int = DEFAULT_SHINGLE_NGRAM_SIZE
+) -> float:
     """Compute word n-gram Jaccard similarity between baseline and current text.
 
     Args:
@@ -243,8 +268,10 @@ def compute_ngram_jaccard(baseline_text: str, current_text: str, n: int = 3) -> 
     Returns:
         float: Jaccard similarity coefficient bounded in [0.0, 1.0].
     """
-    if isinstance(n, bool) or not isinstance(n, int) or n < 1:
-        raise DomainValidationError(f"n must be an integer >= 1, got {n!r}.")
+    if isinstance(n, bool) or not isinstance(n, int) or n < MIN_SHINGLE_NGRAM_SIZE:
+        raise DomainValidationError(
+            f"n must be an integer >= {MIN_SHINGLE_NGRAM_SIZE}, got {n!r}."
+        )
 
     base_tokens = _tokenize_words(baseline_text)
     curr_tokens = _tokenize_words(current_text)
@@ -298,13 +325,13 @@ def cosine_similarity(vec_a: Sequence[float], vec_b: Sequence[float]) -> float:
     if norm_a == 0.0 or norm_b == 0.0:
         return 0.0
 
-    return max(-1.0, min(1.0, dot / (norm_a * norm_b)))
+    return max(COSINE_SIMILARITY_MIN, min(1.0, dot / (norm_a * norm_b)))
 
 
 def compute_maxsim_novelty(
     baseline_vectors: Sequence[Sequence[float]],
     current_vectors: Sequence[Sequence[float]],
-    similarity_threshold: float = 0.88,
+    similarity_threshold: float = DEFAULT_SEMANTIC_SIMILARITY_THRESHOLD,
 ) -> tuple[int, float]:
     """Evaluate unit-level MaxSim novelty of current vectors against baseline vectors.
 
@@ -348,7 +375,7 @@ def evaluate_lexical_convergence(
     baseline_text: str,
     current_text: str,
     thresholds: SaturationThresholds | None = None,
-    pass_index: int = 2,
+    pass_index: int = DEFAULT_CONVERGENCE_PASS_INDEX,
     *,
     lexical_jaccard: float | None = None,
     word_delta_ratio: float | None = None,
@@ -403,7 +430,7 @@ def evaluate_lexical_convergence(
             novel_paragraphs=0,
             total_paragraphs=total_paragraphs,
             preserve_baseline=True,
-            provider="sentinel",
+            provider=CONVERGENCE_PROVIDER_SENTINEL,
         )
 
     if (
@@ -419,7 +446,7 @@ def evaluate_lexical_convergence(
             novel_paragraphs=0,
             total_paragraphs=total_paragraphs,
             preserve_baseline=False,
-            provider="lexical",
+            provider=CONVERGENCE_PROVIDER_LEXICAL,
         )
 
     return None
@@ -432,7 +459,7 @@ def evaluate_semantic_convergence(
     *,
     lexical_jaccard: float = 0.0,
     word_delta_ratio: float = 0.0,
-    provider: str = "semantic",
+    provider: str = CONVERGENCE_PROVIDER_SEMANTIC,
 ) -> SaturationVerdict:
     """Evaluate Tier 2 unit-level MaxSim semantic convergence from precomputed embeddings.
 

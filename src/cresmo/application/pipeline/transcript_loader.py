@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import hashlib
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Final
 
 from cresmo.application.ports import ChannelTaxonomyPort, NoOpChannelTaxonomyPort
 from cresmo.application.services.frontmatter import parse_frontmatter
@@ -26,16 +26,38 @@ from cresmo.domain.value_objects.constants import MAX_CONTENT_ID_LENGTH
 if TYPE_CHECKING:
     from cresmo.application.ports.storage import VaultRepositoryPort
 
+_ALLOWED_STEM_PUNCTUATION: Final[tuple[str, ...]] = ("-", "_")
+MIN_DERIVABLE_CONTENT_ID_LENGTH: Final[int] = 8
+CONTENT_ID_STEM_PREFIX_MAX_LEN: Final[int] = 24
+CONTENT_ID_HASH_SUFFIX_LEN: Final[int] = 16
+DEFAULT_TEXT_FALLBACK_LABEL: Final[str] = "text"
+DEFAULT_ENCODING: Final[str] = "utf-8"
+DEFAULT_PRIORITY_CHANNEL_ID: Final[str] = "priority_text"
+FILE_URI_SCHEME: Final[str] = "file://"
+
+_META_KEY_VIDEO_TITLE: Final[str] = "video_title"
+_META_KEY_TITLE: Final[str] = "title"
+_META_KEY_CHANNEL_NAME: Final[str] = "channel_name"
+_META_KEY_CHANNEL: Final[str] = "channel"
+_META_KEY_CHANNEL_ID: Final[str] = "channel_id"
+_META_KEY_CHANNEL_CATEGORY: Final[str] = "channel_category"
+_META_KEY_DOMAIN: Final[str] = "domain"
+_META_KEY_URL: Final[str] = "url"
+_META_KEY_VIDEO_DESCRIPTION: Final[str] = "video_description"
+_META_DATE_KEYS: Final[tuple[str, ...]] = ("video_date", "publication_date", "published_at")
+
 
 def _derive_content_id(stem: str, raw_body: str) -> ContentId:
     """Derive deterministic and compliant ContentId string."""
-    clean_stem = "".join(c for c in stem if c.isalnum() or c in ("-", "_"))
-    min_derivable = max(8, MIN_CONTENT_ID_LENGTH)
+    clean_stem = "".join(c for c in stem if c.isalnum() or c in _ALLOWED_STEM_PUNCTUATION)
+    min_derivable = max(MIN_DERIVABLE_CONTENT_ID_LENGTH, MIN_CONTENT_ID_LENGTH)
     if min_derivable <= len(clean_stem) <= MAX_CONTENT_ID_LENGTH:
         content_id_str = clean_stem
     else:
-        prefix = clean_stem[:24] if clean_stem else "text"
-        suffix = hashlib.sha256(raw_body.encode("utf-8")).hexdigest()[:16]
+        prefix = clean_stem[:CONTENT_ID_STEM_PREFIX_MAX_LEN] if clean_stem else DEFAULT_TEXT_FALLBACK_LABEL
+        suffix = hashlib.sha256(raw_body.encode(DEFAULT_ENCODING)).hexdigest()[
+            :CONTENT_ID_HASH_SUFFIX_LEN
+        ]
         content_id_str = f"{prefix}_{suffix}"
     return ContentId(value=content_id_str)
 
@@ -48,31 +70,34 @@ def _resolve_metadata(
 ) -> tuple[str, ChannelName, ChannelId | None, str, str, str, str | None]:
     """Resolve entity attributes combining explicit frontmatter and path conventions."""
     title = str(
-        meta.get("video_title")
-        or meta.get("title")
+        meta.get(_META_KEY_VIDEO_TITLE)
+        or meta.get(_META_KEY_TITLE)
         or stem.replace("_", " ").replace("-", " ").title()
     )
     channel_raw = str(
-        meta.get("channel_name")
-        or meta.get("channel")
-        or (file_path.parent.name if file_path.parent.name else "text")
+        meta.get(_META_KEY_CHANNEL_NAME)
+        or meta.get(_META_KEY_CHANNEL)
+        or (file_path.parent.name if file_path.parent.name else DEFAULT_TEXT_FALLBACK_LABEL)
     )
     channel_name = ChannelName(channel_raw)
 
-    raw_channel_id = meta.get("channel_id")
+    raw_channel_id = meta.get(_META_KEY_CHANNEL_ID)
     resolved_channel_id: ChannelId | None = (
-        ChannelId.from_string(str(raw_channel_id)) if raw_channel_id else ChannelId("priority_text")
+        ChannelId.from_string(str(raw_channel_id))
+        if raw_channel_id
+        else ChannelId(DEFAULT_PRIORITY_CHANNEL_ID)
     )
     resolved_taxonomy = taxonomy_port or NoOpChannelTaxonomyPort()
     category = str(
-        meta.get("channel_category")
-        or meta.get("domain")
+        meta.get(_META_KEY_CHANNEL_CATEGORY)
+        or meta.get(_META_KEY_DOMAIN)
         or resolved_taxonomy.classify(channel_name)[0]
     )
-    source_url = str(meta.get("url") or f"file://{file_path.resolve()}")
-    video_description = str(meta.get("video_description") or "")
-    publication_date_raw = (
-        meta.get("video_date") or meta.get("publication_date") or meta.get("published_at")
+    source_url = str(meta.get(_META_KEY_URL) or f"{FILE_URI_SCHEME}{file_path.resolve()}")
+    video_description = str(meta.get(_META_KEY_VIDEO_DESCRIPTION) or "")
+    publication_date_raw = next(
+        (meta[key] for key in _META_DATE_KEYS if meta.get(key)),
+        None,
     )
 
     return (
@@ -116,7 +141,7 @@ def load_transcript_from_file(
     if not file_path.is_file():
         raise CresmoDomainError(f"Transcript file not found: {file_path}")
 
-    raw_body = file_path.read_text(encoding="utf-8").strip()
+    raw_body = file_path.read_text(encoding=DEFAULT_ENCODING).strip()
     if not raw_body:
         raise CresmoDomainError(f"Transcript file is empty: {file_path}")
 

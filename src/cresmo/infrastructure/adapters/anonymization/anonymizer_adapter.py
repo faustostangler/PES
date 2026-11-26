@@ -11,9 +11,12 @@ from __future__ import annotations
 
 import re
 from collections.abc import Mapping
-from typing import Any
+from typing import Any, Final
 
 from cresmo.application.ports import AnonymizerPort
+
+_REDACTED_SECRET_MARKER: Final[str] = "[REDACTED_SECRET]"
+_REDACTED_EMAIL_MARKER: Final[str] = "[REDACTED_EMAIL]"
 
 # Pre-compiled high-performance regular expressions
 _EMAIL_REGEX = re.compile(
@@ -80,10 +83,10 @@ class RegexAnonymizerAdapter(AnonymizerPort):
             return text
 
         # Step 1: Redact secrets / bearer tokens / API keys
-        sanitized = _SECRET_TOKEN_REGEX.sub("[REDACTED_SECRET]", text)
+        sanitized = _SECRET_TOKEN_REGEX.sub(_REDACTED_SECRET_MARKER, text)
 
         # Step 2: Redact email addresses
-        sanitized = _EMAIL_REGEX.sub("[REDACTED_EMAIL]", sanitized)
+        sanitized = _EMAIL_REGEX.sub(_REDACTED_EMAIL_MARKER, sanitized)
 
         return sanitized
 

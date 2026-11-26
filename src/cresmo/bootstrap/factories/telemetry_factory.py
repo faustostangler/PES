@@ -12,7 +12,7 @@ from __future__ import annotations
 import os
 import sys
 from collections.abc import Callable
-from typing import Any
+from typing import Any, Final
 
 import structlog
 
@@ -40,8 +40,32 @@ from cresmo.infrastructure.config import ObservabilitySettings, resolve_shared_s
 
 logger = structlog.get_logger(__name__)
 
+DEFAULT_LANGFUSE_PROBE_TIMEOUT_SECONDS: Final[float] = 2.0
+URL_TRAILING_SLASH: Final[str] = "/"
+LANGFUSE_HEALTH_ENDPOINT_PATH: Final[str] = "/api/public/health"
+LOCALHOST_HOSTNAME: Final[str] = "localhost"
+LOOPBACK_IPV4_HOST: Final[str] = "127.0.0.1"
+CRESMO_SCOPE_PREFIX: Final[str] = "cresmo."
+_LANGFUSE_CLASS_NAME: Final[str] = "Langfuse"
+_LANGFUSE_MODULE_NAME: Final[str] = "langfuse"
 
-def probe_langfuse_ready(host: str, timeout_seconds: float = 2.0) -> bool:
+_LANGFUSE_ENV_KEY_PUBLIC: Final[str] = "LANGFUSE_PUBLIC_KEY"
+_LANGFUSE_ENV_KEY_SECRET: Final[str] = "LANGFUSE_SECRET_KEY"
+_LANGFUSE_ENV_KEY_HOST: Final[str] = "LANGFUSE_HOST"
+_LANGFUSE_ENV_KEY_TRACING_ENV: Final[str] = "LANGFUSE_TRACING_ENVIRONMENT"
+_OTEL_ENV_KEY_EXPORTER_TIMEOUT: Final[str] = "OTEL_EXPORTER_OTLP_TIMEOUT"
+_LANGFUSE_ENV_KEYS_TO_PURGE: Final[tuple[str, ...]] = (
+    _LANGFUSE_ENV_KEY_PUBLIC,
+    _LANGFUSE_ENV_KEY_SECRET,
+    _LANGFUSE_ENV_KEY_HOST,
+    _LANGFUSE_ENV_KEY_TRACING_ENV,
+    _OTEL_ENV_KEY_EXPORTER_TIMEOUT,
+)
+
+
+def probe_langfuse_ready(
+    host: str, timeout_seconds: float = DEFAULT_LANGFUSE_PROBE_TIMEOUT_SECONDS
+) -> bool:
     """Active preflight probe verifying whether the Langfuse server is responding to health pings.
 
     Args:
@@ -51,23 +75,20 @@ def probe_langfuse_ready(host: str, timeout_seconds: float = 2.0) -> bool:
     Returns:
         True if the server responded with HTTP < 500, False if unreachable or timed out.
     """
-    normalized_host = host.rstrip("/")
-    probe_url = f"{normalized_host}/api/public/health"
+    normalized_host = host.rstrip(URL_TRAILING_SLASH)
+    probe_url = f"{normalized_host}{LANGFUSE_HEALTH_ENDPOINT_PATH}"
     if probe_http_endpoint(probe_url, timeout_seconds=timeout_seconds):
         return True
-    if "localhost" in normalized_host:
-        fallback_url = probe_url.replace("localhost", "127.0.0.1")
+    if LOCALHOST_HOSTNAME in normalized_host:
+        fallback_url = probe_url.replace(LOCALHOST_HOSTNAME, LOOPBACK_IPV4_HOST)
         return probe_http_endpoint(fallback_url, timeout_seconds=timeout_seconds)
     return False
 
 
 def _clean_langfuse_env() -> None:
     """Clean Langfuse environment variables to prevent spurious autoinstrumentation retries."""
-    os.environ.pop("LANGFUSE_PUBLIC_KEY", None)
-    os.environ.pop("LANGFUSE_SECRET_KEY", None)
-    os.environ.pop("LANGFUSE_HOST", None)
-    os.environ.pop("LANGFUSE_TRACING_ENVIRONMENT", None)
-    os.environ.pop("OTEL_EXPORTER_OTLP_TIMEOUT", None)
+    for env_key in _LANGFUSE_ENV_KEYS_TO_PURGE:
+        os.environ.pop(env_key, None)
 
 
 def is_default_export_span(span: Any) -> bool:
@@ -85,7 +106,7 @@ def _build_should_export_span() -> Callable[[Any], bool]:
         scope_name = getattr(scope, "name", None)
         span_name = getattr(span, "name", None)
         is_default = is_default_export_span(span)
-        is_cresmo = scope is not None and scope.name.startswith("cresmo.")
+        is_cresmo = scope is not None and scope.name.startswith(CRESMO_SCOPE_PREFIX)
         export = is_default or is_cresmo
         # KEEP FOR NOW (TEMPORARY): Retain span export debug output during ADR-070 OTel verification; remove once stabilized.
         print(
@@ -125,12 +146,12 @@ def _build_mask_hook(
 
 def _resolve_langfuse_class() -> Any:
     """Resolve active Langfuse class lazily, supporting test mocks and patches (ADR-055)."""
-    cur = globals().get("Langfuse")
+    cur = globals().get(_LANGFUSE_CLASS_NAME)
     if cur is not None and cur is not _LAZY_LANGFUSE_SENTINEL:
         return cur
-    mod = sys.modules.get("langfuse")
-    if mod is not None and hasattr(mod, "Langfuse"):
-        return mod.Langfuse
+    mod = sys.modules.get(_LANGFUSE_MODULE_NAME)
+    if mod is not None and hasattr(mod, _LANGFUSE_CLASS_NAME):
+        return getattr(mod, _LANGFUSE_CLASS_NAME)
     from langfuse import Langfuse as _RealLangfuse
 
     return _RealLangfuse
@@ -190,11 +211,11 @@ def resolve_langfuse_client(
     try:
         timeout_sec = langfuse_cfg.timeout_seconds
         resolved_env = langfuse_cfg.environment
-        os.environ["LANGFUSE_PUBLIC_KEY"] = langfuse_cfg.public_key
-        os.environ["LANGFUSE_SECRET_KEY"] = langfuse_cfg.secret_key.get_secret_value()
-        os.environ["LANGFUSE_HOST"] = langfuse_cfg.host
-        os.environ["LANGFUSE_TRACING_ENVIRONMENT"] = resolved_env
-        os.environ["OTEL_EXPORTER_OTLP_TIMEOUT"] = str(timeout_sec)
+        os.environ[_LANGFUSE_ENV_KEY_PUBLIC] = langfuse_cfg.public_key
+        os.environ[_LANGFUSE_ENV_KEY_SECRET] = langfuse_cfg.secret_key.get_secret_value()
+        os.environ[_LANGFUSE_ENV_KEY_HOST] = langfuse_cfg.host
+        os.environ[_LANGFUSE_ENV_KEY_TRACING_ENV] = resolved_env
+        os.environ[_OTEL_ENV_KEY_EXPORTER_TIMEOUT] = str(timeout_sec)
 
         init_kwargs: dict[str, Any] = {
             "public_key": langfuse_cfg.public_key,

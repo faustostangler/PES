@@ -10,7 +10,7 @@ Conforms to:
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any
+from typing import Any, Final
 
 from cresmo.application.ports import PromptProviderPort
 from cresmo.domain.value_objects import PromptKey
@@ -26,6 +26,9 @@ from cresmo.infrastructure.adapters.prompts.context_normalizer import (
 )
 from cresmo.infrastructure.adapters.prompts.skill_loader import SkillDocumentLoader
 from cresmo.infrastructure.adapters.prompts.template_renderer import TemplateRenderer
+
+_KEY_DESCRIPTION: Final[str] = "description"
+_KEY_LANGUAGE: Final[str] = "language"
 
 
 class JsonPromptProvider(PromptProviderPort):
@@ -72,8 +75,8 @@ class JsonPromptProvider(PromptProviderPort):
             skills=spec.skills,
             templates=(spec.system_prompt, spec.user_prompt),
         )
-        replacements["description"] = spec.description
-        replacements["language"] = self.default_language
+        replacements[_KEY_DESCRIPTION] = spec.description
+        replacements[_KEY_LANGUAGE] = self.default_language
         return replacements
 
     def get_chat_prompt_template(self, key: str | PromptKey) -> tuple[str, str]:

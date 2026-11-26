@@ -15,7 +15,7 @@ Conforms to:
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Final
 
 import structlog
 from google.genai import types
@@ -48,6 +48,14 @@ from cresmo.infrastructure.config import (
 __all__ = ["GeminiLLMAdapter"]
 
 logger = structlog.get_logger(__name__)
+
+_GEMINI_MODEL_PREFIX: Final[str] = "gemini:"
+_MOCK_CREDENTIAL_KEY: Final[str] = "mock-key"
+_API_KEY_LIST_SEPARATOR: Final[str] = ","
+_GEMINI_ADAPTER_LABEL: Final[str] = "GeminiLLMAdapter"
+_GENAI_ROLE_MODEL: Final[str] = "model"
+_GENAI_ROLE_USER: Final[str] = "user"
+_GENAI_SYSTEM_GOOGLE: Final[str] = "google"
 
 _is_transient_genai_error = is_transient_genai_error
 
@@ -94,9 +102,11 @@ class GeminiLLMAdapter(LLMTransformationPort):
             timeout_seconds: Socket and request timeout in seconds for GenAI HTTP calls.
         """
         # ACL boundary hygiene: strip optional provider routing prefix ("gemini:")
-        self.model_name = model_name.removeprefix("gemini:")
+        self.model_name = model_name.removeprefix(_GEMINI_MODEL_PREFIX)
         self.fallback_model_name = (
-            fallback_model_name.removeprefix("gemini:") if fallback_model_name is not None else None
+            fallback_model_name.removeprefix(_GEMINI_MODEL_PREFIX)
+            if fallback_model_name is not None
+            else None
         )
         self.max_output_tokens = max_output_tokens
         self.thinking_level = thinking_level
@@ -109,13 +119,13 @@ class GeminiLLMAdapter(LLMTransformationPort):
             self._pool = GeminiCredentialPool(keys=api_keys, timeout=timeout_seconds)
         elif genai_client is not None:
             self._pool = GeminiCredentialPool(
-                keys=["mock-key"],
+                keys=[_MOCK_CREDENTIAL_KEY],
                 client_factory=lambda _: genai_client,
                 timeout=timeout_seconds,
             )
         else:
             raw = api_key or ""
-            parts = [p.strip() for p in raw.split(",") if p.strip()]
+            parts = [p.strip() for p in raw.split(_API_KEY_LIST_SEPARATOR) if p.strip()]
             if not parts:
                 raise ValueError(
                     "Gemini API key must be provided explicitly via api_key, api_keys, credential_pool, or genai_client."
@@ -147,7 +157,7 @@ class GeminiLLMAdapter(LLMTransformationPort):
         return execute_with_model_failover(
             primary_model=self.model_name,
             fallback_model=self.fallback_model_name,
-            adapter_label="GeminiLLMAdapter",
+            adapter_label=_GEMINI_ADAPTER_LABEL,
             operation=lambda target_model, is_fallback: self._run_model_generation(
                 model=target_model,
                 prompt=prompt,
@@ -186,7 +196,7 @@ class GeminiLLMAdapter(LLMTransformationPort):
         requested_thinking_level = self.thinking_level
         contents = [
             types.Content(
-                role="model" if msg.role == MessageRole.ASSISTANT else "user",
+                role=_GENAI_ROLE_MODEL if msg.role == MessageRole.ASSISTANT else _GENAI_ROLE_USER,
                 parts=[types.Part.from_text(text=msg.content)],
             )
             for msg in prompt.messages
@@ -223,7 +233,7 @@ class GeminiLLMAdapter(LLMTransformationPort):
 
             span.set_attributes(
                 build_genai_attributes(
-                    system="google",
+                    system=_GENAI_SYSTEM_GOOGLE,
                     model=model,
                     prompt_tokens=prompt_tokens,
                     candidate_tokens=candidate_tokens,

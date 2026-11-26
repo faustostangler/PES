@@ -14,7 +14,7 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
-from typing import Annotated, Any
+from typing import Annotated, Any, Final
 
 import typer
 
@@ -33,21 +33,14 @@ from cresmo.presentation.exit_codes import (
     EXIT_SUCCESS,
 )
 
-
-def build_run_synthesis_use_case(*args: Any, **kwargs: Any) -> Any:
-    """Lazily import composition factory to keep --help and module load instant (ADR-055)."""
-    from cresmo.bootstrap.composition import build_run_synthesis_use_case as _factory
-
-    return _factory(*args, **kwargs)
-
-_STATUS_TO_EXIT_CODE: dict[RunExitStatus, int] = {
+_STATUS_TO_EXIT_CODE: Final[dict[RunExitStatus, int]] = {
     RunExitStatus.SUCCESS: EXIT_SUCCESS,
     RunExitStatus.RATE_LIMITED: EXIT_RATE_LIMIT_EXCEEDED,
     RunExitStatus.INGESTION_ERROR: EXIT_INGESTION_ERROR,
     RunExitStatus.INTERNAL_ERROR: EXIT_INTERNAL_ERROR,
 }
 
-_STDERR_EVENT_KINDS: frozenset[BatchItemEventKind] = frozenset(
+_STDERR_EVENT_KINDS: Final[frozenset[BatchItemEventKind]] = frozenset(
     {
         BatchItemEventKind.DRY_RUN_FAILED,
         BatchItemEventKind.ITEM_RATE_LIMITED,
@@ -57,6 +50,20 @@ _STDERR_EVENT_KINDS: frozenset[BatchItemEventKind] = frozenset(
         BatchItemEventKind.MASTER_WARNING,
     }
 )
+
+_MIN_REFINEMENT_PASSES: Final[int] = 1
+_MAX_REFINEMENT_PASSES: Final[int] = 10
+_MIN_LOOKBACK_DAYS: Final[int] = 0
+_MIN_CHANNEL_MAX_VIDEOS: Final[int] = 1
+DEFAULT_CHANNEL_MAX_VIDEOS: Final[int] = 50
+_UNKNOWN_BATCH_LABEL: Final[str] = "unknown"
+
+
+def build_run_synthesis_use_case(*args: Any, **kwargs: Any) -> Any:
+    """Lazily import composition factory to keep --help and module load instant (ADR-055)."""
+    from cresmo.bootstrap.composition import build_run_synthesis_use_case as _factory
+
+    return _factory(*args, **kwargs)
 
 
 def run(
@@ -77,8 +84,8 @@ def run(
         int | None,
         typer.Option(
             "--passes",
-            min=1,
-            max=10,
+            min=_MIN_REFINEMENT_PASSES,
+            max=_MAX_REFINEMENT_PASSES,
             help="Refinement passes override for expansion stages (default: configured per-stage)",
         ),
     ] = None,
@@ -100,7 +107,7 @@ def run(
         int | None,
         typer.Option(
             "--lookback",
-            min=0,
+            min=_MIN_LOOKBACK_DAYS,
             help="Days lookback window for channel uploads discovery (default: 365 days / 1 year)",
         ),
     ] = None,
@@ -108,10 +115,10 @@ def run(
         int,
         typer.Option(
             "--channel-max-videos",
-            min=1,
+            min=_MIN_CHANNEL_MAX_VIDEOS,
             help="Maximum candidate videos to inspect per channel feed (default: 50)",
         ),
-    ] = 50,
+    ] = DEFAULT_CHANNEL_MAX_VIDEOS,
     scan_raw: Annotated[
         bool,
         typer.Option(
@@ -205,7 +212,7 @@ def _render_outcome(outcome: RunSynthesisOutcome) -> int:
         )
         return _STATUS_TO_EXIT_CODE[outcome.status]
 
-    batch_label = outcome.batch_id.value if outcome.batch_id is not None else "unknown"
+    batch_label = outcome.batch_id.value if outcome.batch_id is not None else _UNKNOWN_BATCH_LABEL
     sys.stdout.write(
         f"\nBatch Synthesis Summary [Batch: {batch_label}]:\n"
         f"- Total Items: {outcome.total_items}\n"

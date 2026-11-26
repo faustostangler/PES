@@ -19,7 +19,7 @@ import time
 import urllib.error
 import urllib.request
 from http import HTTPStatus
-from typing import Any
+from typing import Any, Final
 
 import structlog
 
@@ -38,7 +38,42 @@ __all__ = ["OllamaLLMAdapter"]
 
 logger = structlog.get_logger(__name__)
 
-DEFAULT_HEALTHCHECK_TIMEOUT_SECONDS: float = 2.0
+DEFAULT_HEALTHCHECK_TIMEOUT_SECONDS: Final[float] = 2.0
+DEFAULT_OLLAMA_BASE_URL: Final[str] = "http://localhost:11434"
+DEFAULT_OLLAMA_MODEL: Final[str] = "qwen2.5:7b"
+DEFAULT_OLLAMA_TIMEOUT_SECONDS: Final[float] = 60.0
+DEFAULT_OLLAMA_TEMPERATURE: Final[float] = 0.2
+DEFAULT_OLLAMA_KEEP_ALIVE: Final[str] = "1h"
+DEFAULT_OLLAMA_WARMUP_TIMEOUT_SECONDS: Final[float] = 300.0
+_URL_TRAILING_SLASH: Final[str] = "/"
+_OLLAMA_PS_PATH: Final[str] = "/api/ps"
+_OLLAMA_GENERATE_PATH: Final[str] = "/api/generate"
+_OLLAMA_CHAT_PATH: Final[str] = "/api/chat"
+_HTTP_GET_METHOD: Final[str] = "GET"
+_HTTP_POST_METHOD: Final[str] = "POST"
+_CONTENT_TYPE_HEADER: Final[str] = "Content-Type"
+_CONTENT_TYPE_JSON: Final[str] = "application/json"
+_UTF8_ENCODING: Final[str] = "utf-8"
+_BYTES_PER_MIB: Final[int] = 1024 * 1024
+_MODEL_TAG_SEPARATOR: Final[str] = ":"
+_DONE_REASON_LOAD: Final[str] = "load"
+_WARMUP_THREAD_NAME_PREFIX: Final[str] = "OllamaWarmupThread-"
+_OLLAMA_SYSTEM_NAME: Final[str] = "ollama"
+_KEY_MODELS: Final[str] = "models"
+_KEY_NAME: Final[str] = "name"
+_KEY_SIZE_VRAM: Final[str] = "size_vram"
+_KEY_MODEL: Final[str] = "model"
+_KEY_KEEP_ALIVE: Final[str] = "keep_alive"
+_KEY_DONE_REASON: Final[str] = "done_reason"
+_KEY_TEMPERATURE: Final[str] = "temperature"
+_KEY_NUM_PREDICT: Final[str] = "num_predict"
+_KEY_MESSAGES: Final[str] = "messages"
+_KEY_STREAM: Final[str] = "stream"
+_KEY_OPTIONS: Final[str] = "options"
+_KEY_MESSAGE: Final[str] = "message"
+_KEY_CONTENT: Final[str] = "content"
+_KEY_PROMPT_EVAL_COUNT: Final[str] = "prompt_eval_count"
+_KEY_EVAL_COUNT: Final[str] = "eval_count"
 
 
 class OllamaLLMAdapter(LLMTransformationPort):
@@ -57,14 +92,14 @@ class OllamaLLMAdapter(LLMTransformationPort):
 
     def __init__(
         self,
-        base_url: str = "http://localhost:11434",
-        model: str = "qwen2.5:7b",
-        timeout_seconds: float = 60.0,
-        default_temperature: float = 0.2,
+        base_url: str = DEFAULT_OLLAMA_BASE_URL,
+        model: str = DEFAULT_OLLAMA_MODEL,
+        timeout_seconds: float = DEFAULT_OLLAMA_TIMEOUT_SECONDS,
+        default_temperature: float = DEFAULT_OLLAMA_TEMPERATURE,
         num_predict: int = 0,
         telemetry_port: TelemetryPort | None = None,
-        keep_alive: str = "1h",
-        warmup_timeout_seconds: float = 300.0,
+        keep_alive: str = DEFAULT_OLLAMA_KEEP_ALIVE,
+        warmup_timeout_seconds: float = DEFAULT_OLLAMA_WARMUP_TIMEOUT_SECONDS,
     ) -> None:
         """Initialize Ollama LLM adapter with model settings and injected TelemetryPort.
 
@@ -78,7 +113,7 @@ class OllamaLLMAdapter(LLMTransformationPort):
             keep_alive: Duration to keep model in VRAM/RAM (e.g. '1h', '60m', '-1' for indefinite).
             warmup_timeout_seconds: Extended socket timeout in seconds for initial model preload.
         """
-        self.base_url = base_url.rstrip("/")
+        self.base_url = base_url.rstrip(_URL_TRAILING_SLASH)
         self.model = model
         self.timeout_seconds = timeout_seconds
         self.default_temperature = default_temperature
@@ -109,29 +144,33 @@ class OllamaLLMAdapter(LLMTransformationPort):
         demote Ollama to CPU-only mode without any error at the API level. This probe surfaces
         that degradation proactively so operators can act before inference timeouts occur.
         """
-        endpoint = f"{self.base_url}/api/ps"
-        req = urllib.request.Request(endpoint, method="GET")
+        endpoint = f"{self.base_url}{_OLLAMA_PS_PATH}"
+        req = urllib.request.Request(endpoint, method=_HTTP_GET_METHOD)
         try:
             with urllib.request.urlopen(
                 req, timeout=DEFAULT_HEALTHCHECK_TIMEOUT_SECONDS
             ) as response:
                 if response.status != HTTPStatus.OK:
                     return
-                ps_data: dict[str, Any] = json.loads(response.read().decode("utf-8"))
+                ps_data: dict[str, Any] = json.loads(response.read().decode(_UTF8_ENCODING))
         except (urllib.error.URLError, TimeoutError, OSError) as exc:
             logger.debug("[OllamaLLMAdapter] GPU status probe failed (non-fatal): %s", exc)
             return
 
-        models: list[dict[str, Any]] = ps_data.get("models", [])
+        models: list[dict[str, Any]] = ps_data.get(_KEY_MODELS, [])
         active = next(
-            (m for m in models if m.get("name", "").startswith(self.model.split(":")[0])),
+            (
+                m
+                for m in models
+                if m.get(_KEY_NAME, "").startswith(self.model.split(_MODEL_TAG_SEPARATOR)[0])
+            ),
             None,
         )
         if active is None:
             # Model may not appear in /api/ps if it just finished loading; skip silently.
             return
 
-        size_vram: int = active.get("size_vram", 0)
+        size_vram: int = active.get(_KEY_SIZE_VRAM, 0)
         if size_vram == 0:
             logger.warning(
                 "[OllamaLLMAdapter] ⚠️  GPU probe: model '%s' is running on CPU RAM only "
@@ -143,7 +182,7 @@ class OllamaLLMAdapter(LLMTransformationPort):
             logger.info(
                 "[OllamaLLMAdapter] ✅ GPU probe: model '%s' loaded in VRAM (%.1f MB).",
                 self.model,
-                size_vram / 1024 / 1024,
+                size_vram / _BYTES_PER_MIB,
             )
 
     def _execute_warmup(self, effective_timeout: float) -> bool:
@@ -152,17 +191,17 @@ class OllamaLLMAdapter(LLMTransformationPort):
             if self._is_warmed_up:
                 return True
 
-        endpoint = f"{self.base_url}/api/generate"
+        endpoint = f"{self.base_url}{_OLLAMA_GENERATE_PATH}"
         payload: dict[str, Any] = {
-            "model": self.model,
-            "keep_alive": self.keep_alive,
+            _KEY_MODEL: self.model,
+            _KEY_KEEP_ALIVE: self.keep_alive,
         }
-        data = json.dumps(payload).encode("utf-8")
+        data = json.dumps(payload).encode(_UTF8_ENCODING)
         req = urllib.request.Request(
             endpoint,
             data=data,
-            headers={"Content-Type": "application/json"},
-            method="POST",
+            headers={_CONTENT_TYPE_HEADER: _CONTENT_TYPE_JSON},
+            method=_HTTP_POST_METHOD,
         )
 
         start_time = time.perf_counter()
@@ -177,10 +216,10 @@ class OllamaLLMAdapter(LLMTransformationPort):
         try:
             with urllib.request.urlopen(req, timeout=effective_timeout) as response:
                 if response.status == HTTPStatus.OK:
-                    raw_body = response.read().decode("utf-8")
+                    raw_body = response.read().decode(_UTF8_ENCODING)
                     response_json = json.loads(raw_body)
                     duration = time.perf_counter() - start_time
-                    done_reason = response_json.get("done_reason", "load")
+                    done_reason = response_json.get(_KEY_DONE_REASON, _DONE_REASON_LOAD)
                     logger.info(
                         "[OllamaLLMAdapter] Model '%s' successfully loaded into memory in %.2fs (reason: %s).",
                         self.model,
@@ -239,7 +278,7 @@ class OllamaLLMAdapter(LLMTransformationPort):
 
         self._warmup_thread = threading.Thread(
             target=_background_worker,
-            name=f"OllamaWarmupThread-{self.model}",
+            name=f"{_WARMUP_THREAD_NAME_PREFIX}{self.model}",
             daemon=True,
         )
         self._warmup_thread.start()
@@ -330,48 +369,50 @@ class OllamaLLMAdapter(LLMTransformationPort):
             effective_temperature = (
                 temperature if temperature is not None else self.default_temperature
             )
-            endpoint = f"{self.base_url}/api/chat"
-            options: dict[str, Any] = {"temperature": effective_temperature}
+            endpoint = f"{self.base_url}{_OLLAMA_CHAT_PATH}"
+            options: dict[str, Any] = {_KEY_TEMPERATURE: effective_temperature}
             if self.num_predict > 0:
-                options["num_predict"] = self.num_predict
+                options[_KEY_NUM_PREDICT] = self.num_predict
 
             messages = prompt.to_dict_list()
             span.set_input(messages)
 
             payload: dict[str, Any] = {
-                "model": self.model,
-                "messages": messages,
-                "stream": False,
-                "keep_alive": self.keep_alive,
-                "options": options,
+                _KEY_MODEL: self.model,
+                _KEY_MESSAGES: messages,
+                _KEY_STREAM: False,
+                _KEY_KEEP_ALIVE: self.keep_alive,
+                _KEY_OPTIONS: options,
             }
 
-            data = json.dumps(payload).encode("utf-8")
+            data = json.dumps(payload).encode(_UTF8_ENCODING)
             req = urllib.request.Request(
                 endpoint,
                 data=data,
-                headers={"Content-Type": "application/json"},
-                method="POST",
+                headers={_CONTENT_TYPE_HEADER: _CONTENT_TYPE_JSON},
+                method=_HTTP_POST_METHOD,
             )
 
             try:
                 with urllib.request.urlopen(req, timeout=self.timeout_seconds) as response:
-                    raw_body = response.read().decode("utf-8")
+                    raw_body = response.read().decode(_UTF8_ENCODING)
                     response_json = json.loads(raw_body)
-                    msg_obj = response_json.get("message")
+                    msg_obj = response_json.get(_KEY_MESSAGE)
                     generated_text = (
-                        str(msg_obj.get("content", "")).strip() if isinstance(msg_obj, dict) else ""
+                        str(msg_obj.get(_KEY_CONTENT, "")).strip()
+                        if isinstance(msg_obj, dict)
+                        else ""
                     )
 
                     total_prompt_words = sum(len(m.content.split()) for m in prompt.messages)
-                    prompt_tokens = response_json.get("prompt_eval_count") or total_prompt_words
-                    candidate_tokens = response_json.get("eval_count") or len(
+                    prompt_tokens = response_json.get(_KEY_PROMPT_EVAL_COUNT) or total_prompt_words
+                    candidate_tokens = response_json.get(_KEY_EVAL_COUNT) or len(
                         generated_text.split()
                     )
 
                     span.set_attributes(
                         build_genai_attributes(
-                            system="ollama",
+                            system=_OLLAMA_SYSTEM_NAME,
                             model=self.model,
                             prompt_tokens=prompt_tokens,
                             candidate_tokens=candidate_tokens,

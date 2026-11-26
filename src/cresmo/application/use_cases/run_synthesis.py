@@ -14,7 +14,7 @@ from collections.abc import Callable, Iterable, Sized
 from dataclasses import dataclass
 from enum import StrEnum
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Final
 
 import structlog
 
@@ -26,7 +26,11 @@ from cresmo.application.ports import (
     VaultRepositoryPort,
 )
 from cresmo.application.services.preflight import PreflightHealthChecker
-from cresmo.application.use_cases.discovery.models import BatchDiscoveryQuery, BatchSource
+from cresmo.application.use_cases.discovery.models import (
+    DEFAULT_CHANNEL_MAX_VIDEOS,
+    BatchDiscoveryQuery,
+    BatchSource,
+)
 from cresmo.domain.exceptions import (
     IngestionNetworkError,
     QuotaPoolExhaustedError,
@@ -41,6 +45,16 @@ from cresmo.domain.value_objects import (
 )
 
 logger = structlog.get_logger(__name__)
+
+ITEM_STATUS_COMPLETED: Final[str] = "completed"
+ITEM_STATUS_SKIPPED: Final[str] = "skipped"
+ITEM_STATUS_FAILED: Final[str] = "failed"
+NO_STAGES_COMPLETED_LABEL: Final[str] = "none"
+METRIC_LABEL_ROLE: Final[str] = "role"
+METRIC_ROLE_CLI: Final[str] = "cli"
+METRIC_INCREMENT_ONE: Final[float] = 1.0
+METRIC_LABEL_GENERATION: Final[str] = "generation"
+METRIC_GC_GENERATION_ALL: Final[str] = "all"
 
 if TYPE_CHECKING:
     from cresmo.application.pipeline.coordinator import CresmoPipeline
@@ -95,7 +109,7 @@ class RunSynthesisRequest:
     dry_run: bool = False
     force_reprocess: bool = False
     lookback: int | None = None
-    channel_max_videos: int = 50
+    channel_max_videos: int = DEFAULT_CHANNEL_MAX_VIDEOS
     scan_raw: bool = False
     crawl: bool = False
     web_index: bool = False
@@ -358,9 +372,9 @@ class RunSynthesisUseCase:
                     batch_id=batch_id,
                     on_event=on_event,
                 )
-                if status == "completed":
+                if status == ITEM_STATUS_COMPLETED:
                     completed += 1
-                elif status == "skipped":
+                elif status == ITEM_STATUS_SKIPPED:
                     skipped += 1
                 else:
                     failed += 1
@@ -434,7 +448,7 @@ class RunSynthesisUseCase:
                             ),
                         ),
                     )
-                    return "skipped"
+                    return ITEM_STATUS_SKIPPED
                 result = pipeline.run_for_text_file(
                     file_path=file_path,
                     expansion_max_passes=request.passes,
@@ -460,10 +474,10 @@ class RunSynthesisUseCase:
                         ),
                     ),
                 )
-                return "skipped"
+                return ITEM_STATUS_SKIPPED
 
             completed_stages = list(result.stage_artifacts)
-            final_stage = completed_stages[-1].value if completed_stages else "none"
+            final_stage = completed_stages[-1].value if completed_stages else NO_STAGES_COMPLETED_LABEL
             _emit(
                 on_event,
                 BatchItemEvent(
@@ -474,7 +488,7 @@ class RunSynthesisUseCase:
                     ),
                 ),
             )
-            return "completed"
+            return ITEM_STATUS_COMPLETED
         except QuotaPoolExhaustedError:
             raise
         except RateLimitExceededError as exc:
@@ -485,7 +499,7 @@ class RunSynthesisUseCase:
                     message=f"{item_prefix} [RATE LIMIT] {source.target}: {exc}",
                 ),
             )
-            return "failed"
+            return ITEM_STATUS_FAILED
         except IngestionNetworkError as exc:
             _emit(
                 on_event,
@@ -494,7 +508,7 @@ class RunSynthesisUseCase:
                     message=f"{item_prefix} [NETWORK ERROR] {source.target}: {exc}",
                 ),
             )
-            return "failed"
+            return ITEM_STATUS_FAILED
         except Exception as exc:  # noqa: BLE001
             _emit(
                 on_event,
@@ -503,7 +517,7 @@ class RunSynthesisUseCase:
                     message=f"{item_prefix} [FAILED] {source.target}: {exc}",
                 ),
             )
-            return "failed"
+            return ITEM_STATUS_FAILED
 
     def _consolidate_master(
         self,
@@ -545,12 +559,12 @@ class RunSynthesisUseCase:
             pipeline.metrics_port.set_gauge(
                 MetricName.PROCESS_RESIDENT_MEMORY_BYTES,
                 rss_bytes,
-                labels={"role": "cli"},
+                labels={METRIC_LABEL_ROLE: METRIC_ROLE_CLI},
             )
             pipeline.metrics_port.increment_counter(
                 MetricName.GC_COLLECTIONS,
-                1.0,
-                labels={"generation": "all"},
+                METRIC_INCREMENT_ONE,
+                labels={METRIC_LABEL_GENERATION: METRIC_GC_GENERATION_ALL},
             )
             pipeline.metrics_port.flush()
         except Exception as exc:  # noqa: BLE001

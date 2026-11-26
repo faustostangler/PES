@@ -19,6 +19,7 @@ from cresmo.application.ports import (
 from cresmo.domain.entities import StageTranscript
 from cresmo.domain.stage_registry import StageName
 from cresmo.domain.value_objects import ContentId
+from cresmo.domain.value_objects.policies import DEFAULT_JUDGE_MAX_ATTEMPTS
 
 if TYPE_CHECKING:
     from cresmo.application.pipeline.stage_factory import StageFactory
@@ -32,7 +33,7 @@ class PipelineDependencies:
     metrics_port: MetricsPort
     llm_judge: LlmJudgePort | None = None
     judge_blocking: bool = False
-    judge_max_attempts: int = 2
+    judge_max_attempts: int = DEFAULT_JUDGE_MAX_ATTEMPTS
     prompt_provider: PromptProviderPort | None = None
     llm_transformation_port: LLMTransformationPort | None = None
     stage_factory: StageFactory | None = None

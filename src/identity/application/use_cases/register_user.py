@@ -15,6 +15,7 @@ from identity.domain.exceptions import (
 from identity.domain.value_objects import Email, Role, UserId
 
 MIN_PASSWORD_LENGTH: Final[int] = 8
+USER_ID_PREFIX: Final[str] = "usr_"
 
 
 class RegisterUserUseCase:
@@ -47,7 +48,7 @@ class RegisterUserUseCase:
             except ValueError as e:
                 raise InvalidRoleError(f"Invalid role: '{r}'.") from e
 
-        user_id = UserId(f"usr_{uuid.uuid4().hex}")
+        user_id = UserId(f"{USER_ID_PREFIX}{uuid.uuid4().hex}")
         user = User(
             id=user_id,
             email=email,

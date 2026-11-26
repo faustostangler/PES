@@ -9,7 +9,7 @@ Conforms to:
 from __future__ import annotations
 
 import sys
-from typing import TextIO
+from typing import Final, TextIO
 
 from pydantic import ValidationError
 
@@ -28,7 +28,9 @@ from cresmo.presentation.exit_codes import (
     EXIT_RATE_LIMIT_EXCEEDED,
 )
 
-_EXCEPTION_MAPPINGS: tuple[tuple[type[BaseException], int, str], ...] = (
+_DEFAULT_FALLBACK_ERROR_PREFIX: Final[str] = "Unexpected internal error"
+
+_EXCEPTION_MAPPINGS: Final[tuple[tuple[type[BaseException], int, str], ...]] = (
     (RateLimitExceededError, EXIT_RATE_LIMIT_EXCEEDED, "Rate limit exceeded"),
     (IngestionNetworkError, EXIT_INGESTION_ERROR, "Ingestion network error"),
     (PreflightError, EXIT_CONFIG_OR_USAGE_ERROR, "Preflight error"),
@@ -56,7 +58,7 @@ def map_exception_to_exit_code(exc: BaseException) -> int:
 def format_cli_error(
     exc: BaseException,
     *,
-    fallback_prefix: str = "Unexpected internal error",
+    fallback_prefix: str = _DEFAULT_FALLBACK_ERROR_PREFIX,
 ) -> str:
     """Format a user-facing error message line without trailing newline.
 
@@ -76,7 +78,7 @@ def format_cli_error(
 def handle_cli_exception(
     exc: BaseException,
     *,
-    fallback_prefix: str = "Unexpected internal error",
+    fallback_prefix: str = _DEFAULT_FALLBACK_ERROR_PREFIX,
     err_stream: TextIO | None = None,
 ) -> int:
     """Write formatted error to stderr stream and return canonical process exit code.

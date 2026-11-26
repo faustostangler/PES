@@ -16,8 +16,9 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, Final
 
+from cresmo.domain.entities.identity import SESSION_ID_DELIMITER
 from cresmo.domain.exceptions import (
     DomainValidationError,
     StageTranscriptStructureError,
@@ -29,6 +30,9 @@ from cresmo.domain.value_objects import (
     Content,
     MediaProvenance,
 )
+
+MIN_TRANSCRIPT_PASS_COUNT: Final[int] = 1
+DEFAULT_COMPENDIUM_TITLE: Final[str] = "Untitled Compendium"
 
 # Matches any accidental complementary information section headers
 _ACCIDENTAL_COMPLEMENTARY_HEADING_PATTERN = re.compile(
@@ -85,15 +89,17 @@ class StageTranscript:
                     id=self.content.id,
                     title=self.content.title,
                     text=self.content.text,
-                    session_id=f"{ch_token}:{self.content.id.value}",
+                    session_id=f"{ch_token}{SESSION_ID_DELIMITER}{self.content.id.value}",
                 ),
             )
 
         if self.pass_count is not None:
             if not isinstance(self.pass_count, int):
                 raise StageTranscriptStructureError("pass_count must be an integer.")
-            if self.pass_count < 1:
-                raise StageTranscriptStructureError("pass_count must be at least 1.")
+            if self.pass_count < MIN_TRANSCRIPT_PASS_COUNT:
+                raise StageTranscriptStructureError(
+                    f"pass_count must be at least {MIN_TRANSCRIPT_PASS_COUNT}."
+                )
 
 
 def extract_source_text(source: StageTranscript | CandidateText | str) -> str:
@@ -122,7 +128,7 @@ def post_process_fluid_transcript(
         extracted_title = title_match.group(1).strip()
         body = TITLE_H1_PATTERN.sub("", current_text).strip()
     else:
-        extracted_title = source.content.title or "Untitled Compendium"
+        extracted_title = source.content.title or DEFAULT_COMPENDIUM_TITLE
         body = current_text
 
     complementary_match = _ACCIDENTAL_COMPLEMENTARY_HEADING_PATTERN.search(body)

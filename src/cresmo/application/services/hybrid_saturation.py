@@ -7,6 +7,8 @@ Conforms to:
 
 from __future__ import annotations
 
+from typing import Final
+
 import structlog
 
 from cresmo.application.ports.embedding import TextEmbeddingPort
@@ -28,6 +30,13 @@ from cresmo.domain.value_objects.convergence import (
 
 logger = structlog.get_logger(__name__)
 
+MAX_NOVELTY_SCORE: Final[float] = 1.0
+MIN_NOVELTY_SCORE: Final[float] = 0.0
+DEFAULT_PASS_INDEX: Final[int] = 1
+SATURATION_PROVIDER_LEXICAL: Final[str] = "lexical"
+SATURATION_PROVIDER_NONE: Final[str] = "none"
+SATURATION_PROVIDER_DEGRADED: Final[str] = "degraded"
+
 
 def _build_novel_verdict(
     *,
@@ -42,7 +51,7 @@ def _build_novel_verdict(
         reason=SaturationReason.NOVEL_CONTENT,
         lexical_jaccard=lexical_jaccard,
         word_delta_ratio=word_delta_ratio,
-        max_novelty=1.0,
+        max_novelty=MAX_NOVELTY_SCORE,
         novel_paragraphs=unit_count,
         total_paragraphs=unit_count,
         preserve_baseline=False,
@@ -78,7 +87,7 @@ class HybridSaturationEvaluator:
         self,
         baseline_text: str,
         current_text: str,
-        pass_index: int = 1,
+        pass_index: int = DEFAULT_PASS_INDEX,
     ) -> SaturationVerdict:
         """Evaluate pass convergence using Tier 1 lexical gates and Tier 2 MaxSim semantics.
 
@@ -127,11 +136,11 @@ class HybridSaturationEvaluator:
                 reason=SaturationReason.SEMANTIC_PLATEAU,
                 lexical_jaccard=lexical_jaccard,
                 word_delta_ratio=word_delta_ratio,
-                max_novelty=0.0,
+                max_novelty=MIN_NOVELTY_SCORE,
                 novel_paragraphs=0,
                 total_paragraphs=0,
                 preserve_baseline=False,
-                provider="lexical",
+                provider=SATURATION_PROVIDER_LEXICAL,
             )
 
         if not baseline_units:
@@ -139,7 +148,7 @@ class HybridSaturationEvaluator:
                 lexical_jaccard=lexical_jaccard,
                 word_delta_ratio=word_delta_ratio,
                 unit_count=len(current_units),
-                provider="lexical",
+                provider=SATURATION_PROVIDER_LEXICAL,
             )
 
         if self.embedding_port is None:
@@ -147,7 +156,7 @@ class HybridSaturationEvaluator:
                 lexical_jaccard=lexical_jaccard,
                 word_delta_ratio=word_delta_ratio,
                 unit_count=len(current_units),
-                provider="none",
+                provider=SATURATION_PROVIDER_NONE,
             )
 
         combined_units = [*baseline_units, *current_units]
@@ -163,7 +172,7 @@ class HybridSaturationEvaluator:
                 lexical_jaccard=lexical_jaccard,
                 word_delta_ratio=word_delta_ratio,
                 unit_count=len(current_units),
-                provider="degraded",
+                provider=SATURATION_PROVIDER_DEGRADED,
             )
 
         if len(vectors) != len(combined_units):
@@ -177,7 +186,7 @@ class HybridSaturationEvaluator:
                 lexical_jaccard=lexical_jaccard,
                 word_delta_ratio=word_delta_ratio,
                 unit_count=len(current_units),
-                provider="degraded",
+                provider=SATURATION_PROVIDER_DEGRADED,
             )
 
         split_idx = len(baseline_units)
@@ -203,7 +212,7 @@ class HybridSaturationEvaluator:
         self,
         baseline_text: str,
         current_text: str,
-        pass_index: int = 1,
+        pass_index: int = DEFAULT_PASS_INDEX,
     ) -> SaturationVerdict:
         """Invoke convergence evaluation directly via the SaturationPolicy callable contract.
 

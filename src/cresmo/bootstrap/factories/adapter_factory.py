@@ -9,7 +9,7 @@ Conforms to:
 from __future__ import annotations
 
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Final
 
 import structlog
 
@@ -53,6 +53,10 @@ if TYPE_CHECKING:
     from cresmo.infrastructure.adapters.llm.gemini_pool import GeminiCredentialPool
 
 logger = structlog.get_logger(__name__)
+
+PROVIDER_GEMINI: Final[str] = "gemini"
+PROVIDER_OLLAMA: Final[str] = "ollama"
+PROVIDER_TFIDF: Final[str] = "tfidf"
 
 
 def _resolve_cookie_file(storage: StorageSettings, cookies_file: Path | None) -> Path | None:
@@ -181,7 +185,9 @@ def build_gemini_synthesis_adapter(
         timeout_seconds=resolved.timeout_seconds,
     )
     if metrics_port is not None:
-        return MetricsLLMTransformationDecorator(adapter, metrics_port=metrics_port, provider="gemini")
+        return MetricsLLMTransformationDecorator(
+            adapter, metrics_port=metrics_port, provider=PROVIDER_GEMINI
+        )
     return adapter
 
 
@@ -199,7 +205,7 @@ def build_indexing_adapter(
 
     resolved = llm if llm is not None else resolve_shared_settings(None).llm
     gemini_cfg = resolved.gemini
-    if web_index or resolved.indexing_provider == "gemini":
+    if web_index or resolved.indexing_provider == PROVIDER_GEMINI:
         if synthesis_adapter is not None and model_override is None:
             return synthesis_adapter
         resolved_keys = [k.get_secret_value() for k in gemini_cfg.api_keys]
@@ -215,7 +221,7 @@ def build_indexing_adapter(
         )
         if metrics_port is not None:
             return MetricsLLMTransformationDecorator(
-                gemini_adapter, metrics_port=metrics_port, provider="gemini"
+                gemini_adapter, metrics_port=metrics_port, provider=PROVIDER_GEMINI
             )
         return gemini_adapter
 
@@ -234,7 +240,7 @@ def build_indexing_adapter(
     )
     if metrics_port is not None:
         return MetricsLLMTransformationDecorator(
-            ollama_adapter, metrics_port=metrics_port, provider="ollama"
+            ollama_adapter, metrics_port=metrics_port, provider=PROVIDER_OLLAMA
         )
     return ollama_adapter
 
@@ -261,10 +267,10 @@ def build_embedding_adapter(
     emb_cfg = resolved.embeddings
     provider = emb_cfg.provider
 
-    if provider == "tfidf":
+    if provider == PROVIDER_TFIDF:
         return TfidfEmbeddingAdapter()
 
-    if provider == "ollama":
+    if provider == PROVIDER_OLLAMA:
         ollama_adapter = OllamaEmbeddingAdapter(
             base_url=resolved.llm.ollama.base_url,
             model=emb_cfg.ollama_model,
@@ -272,7 +278,7 @@ def build_embedding_adapter(
         )
         return ResilientEmbeddingAdapter(ollama_adapter, TfidfEmbeddingAdapter())
 
-    if provider == "gemini":
+    if provider == PROVIDER_GEMINI:
         gemini_cfg = resolved.llm.gemini
         api_keys = [
             k.get_secret_value().strip()

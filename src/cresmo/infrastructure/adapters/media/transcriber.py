@@ -9,9 +9,20 @@ from __future__ import annotations
 
 import threading
 from pathlib import Path
-from typing import Any
+from typing import Any, Final
 
 from cresmo.domain.exceptions import CresmoInfrastructureError
+
+DEFAULT_WHISPER_CONCURRENCY_LIMIT: Final[int] = 2
+MIN_WHISPER_CONCURRENCY_LIMIT: Final[int] = 1
+DEFAULT_WHISPER_DEVICE: Final[str] = "auto"
+DEFAULT_WHISPER_COMPUTE_TYPE: Final[str] = "auto"
+DEFAULT_WHISPER_MODEL: Final[str] = "base"
+_DEVICE_CUDA: Final[str] = "cuda"
+_DEVICE_CPU: Final[str] = "cpu"
+_COMPUTE_TYPE_FLOAT16: Final[str] = "float16"
+_COMPUTE_TYPE_INT8: Final[str] = "int8"
+_SEGMENT_JOINER: Final[str] = " "
 
 
 class FasterWhisperEngine:
@@ -19,11 +30,11 @@ class FasterWhisperEngine:
 
     def __init__(
         self,
-        concurrency_limit: int = 2,
-        device: str = "auto",
-        compute_type: str = "auto",
+        concurrency_limit: int = DEFAULT_WHISPER_CONCURRENCY_LIMIT,
+        device: str = DEFAULT_WHISPER_DEVICE,
+        compute_type: str = DEFAULT_WHISPER_COMPUTE_TYPE,
         vad_filter: bool = True,
-        model_name: str = "base",
+        model_name: str = DEFAULT_WHISPER_MODEL,
     ) -> None:
         """Initialize FasterWhisperEngine without eagerly loading CTranslate2/faster-whisper.
 
@@ -34,7 +45,9 @@ class FasterWhisperEngine:
             vad_filter: Whether to enable Silero VAD filtering during transcription.
             model_name: Default Whisper STT checkpoint name.
         """
-        self._semaphore = threading.BoundedSemaphore(max(1, concurrency_limit))
+        self._semaphore = threading.BoundedSemaphore(
+            max(MIN_WHISPER_CONCURRENCY_LIMIT, concurrency_limit)
+        )
         self._device = device
         self._compute_type = compute_type
         self._vad_filter = vad_filter
@@ -44,22 +57,22 @@ class FasterWhisperEngine:
 
     def resolve_device(self) -> str:
         """Resolve execution device, probing CTranslate2 CUDA count when set to 'auto'."""
-        if self._device != "auto":
+        if self._device != DEFAULT_WHISPER_DEVICE:
             return self._device
         try:
             import ctranslate2
 
             if int(ctranslate2.get_cuda_device_count()) > 0:
-                return "cuda"
+                return _DEVICE_CUDA
         except Exception:  # noqa: BLE001 - Graceful fallback to CPU when CUDA probe fails
-            return "cpu"
-        return "cpu"
+            return _DEVICE_CPU
+        return _DEVICE_CPU
 
     def resolve_compute_type(self, resolved_device: str) -> str:
         """Resolve CTranslate2 compute type for the target device."""
-        if self._compute_type != "auto":
+        if self._compute_type != DEFAULT_WHISPER_COMPUTE_TYPE:
             return self._compute_type
-        return "float16" if resolved_device == "cuda" else "int8"
+        return _COMPUTE_TYPE_FLOAT16 if resolved_device == _DEVICE_CUDA else _COMPUTE_TYPE_INT8
 
     def _get_or_load_model(self, model_name: str, device: str, compute_type: str) -> Any:
         """Retrieve cached WhisperModel instance or lazily construct one under thread lock."""
@@ -89,6 +102,6 @@ class FasterWhisperEngine:
                 )
                 segments, _ = model.transcribe(str(audio_path), vad_filter=self._vad_filter)
                 parts = [str(segment.text).strip() for segment in segments]
-                return " ".join(part for part in parts if part).strip()
+                return _SEGMENT_JOINER.join(part for part in parts if part).strip()
         except Exception as exc:
             raise CresmoInfrastructureError(f"Whisper transcription failed: {exc}") from exc

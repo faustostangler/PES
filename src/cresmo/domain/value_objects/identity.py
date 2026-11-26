@@ -13,6 +13,7 @@ import re
 import uuid
 from dataclasses import dataclass
 from enum import StrEnum
+from typing import Final
 
 from cresmo.domain.exceptions import DomainValidationError
 from cresmo.domain.value_objects.constants import (
@@ -23,6 +24,18 @@ from cresmo.domain.value_objects.constants import (
     MIN_CHANNEL_ID_LENGTH,
     MIN_CONTENT_ID_LENGTH,
 )
+
+BATCH_ID_TIMESTAMP_FORMAT: Final[str] = "%Y%m%d_%H%M%S"
+BATCH_ID_UUID_HEX_LENGTH: Final[int] = 6
+ERROR_VALUE_PREVIEW_LENGTH: Final[int] = 30
+FORBIDDEN_PATH_TRAVERSAL_TOKENS: Final[tuple[str, ...]] = ("..", "/", "\\")
+YOUTUBE_WATCH_QUERY_MARKER: Final[str] = "watch?v="
+YOUTUBE_PLAYLIST_QUERY_MARKER: Final[str] = "list="
+YOUTUBE_CHANNEL_ID_PREFIX: Final[str] = "UC"
+YOUTUBE_UPLOADS_PLAYLIST_PREFIX: Final[str] = "UU"
+YOUTUBE_CHANNEL_PREFIX_LENGTH: Final[int] = 2
+YOUTUBE_PLAYLIST_URL_PREFIX: Final[str] = "https://www.youtube.com/playlist?list="
+CHANNEL_TENANT_KEY_PREFIX: Final[str] = "channel:"
 
 _BATCH_ID_REGEX = re.compile(r"^\d{8}_\d{6}_[a-f0-9]{6}$")
 _CONTENT_ID_PATTERN = re.compile(
@@ -78,8 +91,8 @@ class BatchId:
     @classmethod
     def generate(cls) -> BatchId:
         """Construct canonical batch identifier with UTC timestamp and short UUID suffix."""
-        now_str = datetime.datetime.now(datetime.UTC).strftime("%Y%m%d_%H%M%S")
-        short_uuid = uuid.uuid4().hex[:6]
+        now_str = datetime.datetime.now(datetime.UTC).strftime(BATCH_ID_TIMESTAMP_FORMAT)
+        short_uuid = uuid.uuid4().hex[:BATCH_ID_UUID_HEX_LENGTH]
         return cls(value=f"{now_str}_{short_uuid}")
 
     def __str__(self) -> str:
@@ -107,9 +120,9 @@ class ChannelName:
             raise DomainValidationError("ChannelName cannot be empty or whitespace.")
         if len(cleaned_value) > MAX_CHANNEL_NAME_LENGTH:
             raise DomainValidationError(
-                f"ChannelName exceeds maximum length of {MAX_CHANNEL_NAME_LENGTH} characters: '{cleaned_value[:30]}...'"
+                f"ChannelName exceeds maximum length of {MAX_CHANNEL_NAME_LENGTH} characters: '{cleaned_value[:ERROR_VALUE_PREVIEW_LENGTH]}...'"
             )
-        if ".." in cleaned_value or "/" in cleaned_value or "\\" in cleaned_value:
+        if any(token in cleaned_value for token in FORBIDDEN_PATH_TRAVERSAL_TOKENS):
             raise DomainValidationError(
                 f"ChannelName cannot contain path traversal or separator characters: '{cleaned_value}'"
             )
@@ -157,13 +170,13 @@ class ChannelId:
             raise DomainValidationError("ChannelId cannot be empty or whitespace.")
         if len(cleaned_value) > MAX_CHANNEL_ID_LENGTH:
             raise DomainValidationError(
-                f"ChannelId exceeds maximum length of {MAX_CHANNEL_ID_LENGTH} characters: '{cleaned_value[:30]}...' (length: {len(cleaned_value)})"
+                f"ChannelId exceeds maximum length of {MAX_CHANNEL_ID_LENGTH} characters: '{cleaned_value[:ERROR_VALUE_PREVIEW_LENGTH]}...' (length: {len(cleaned_value)})"
             )
         if len(cleaned_value) < MIN_CHANNEL_ID_LENGTH:
             raise DomainValidationError(
                 f"ChannelId must have at least {MIN_CHANNEL_ID_LENGTH} characters: '{cleaned_value}'"
             )
-        if ".." in cleaned_value or "/" in cleaned_value or "\\" in cleaned_value:
+        if any(token in cleaned_value for token in FORBIDDEN_PATH_TRAVERSAL_TOKENS):
             raise DomainValidationError(
                 f"ChannelId cannot contain path traversal characters: '{cleaned_value}'"
             )
@@ -212,20 +225,26 @@ class ChannelId:
             return False
         cleaned_url = url.strip()
         normalized_url = cleaned_url.lower()
-        if "watch?v=" in normalized_url and "list=" not in normalized_url:
+        if (
+            YOUTUBE_WATCH_QUERY_MARKER in normalized_url
+            and YOUTUBE_PLAYLIST_QUERY_MARKER not in normalized_url
+        ):
             return False
         return bool(_CHANNEL_OR_PLAYLIST_URL_REGEX.search(cleaned_url))
 
     @property
     def is_youtube_canonical(self) -> bool:
         """Check if this channel identifier follows canonical YouTube format (UC prefix)."""
-        return self.value.startswith("UC") and len(self.value) >= MIN_CANONICAL_CHANNEL_ID_LENGTH
+        return (
+            self.value.startswith(YOUTUBE_CHANNEL_ID_PREFIX)
+            and len(self.value) >= MIN_CANONICAL_CHANNEL_ID_LENGTH
+        )
 
     @property
     def uploads_playlist_id(self) -> str | None:
         """Convert canonical YouTube channel ID (UC...) to its uploads playlist ID (UU...)."""
         if self.is_youtube_canonical:
-            return "UU" + self.value[2:]
+            return YOUTUBE_UPLOADS_PLAYLIST_PREFIX + self.value[YOUTUBE_CHANNEL_PREFIX_LENGTH:]
         return None
 
     @property
@@ -233,7 +252,7 @@ class ChannelId:
         """Generate canonical YouTube uploads playlist URL."""
         playlist_id = self.uploads_playlist_id
         if playlist_id:
-            return f"https://www.youtube.com/playlist?list={playlist_id}"
+            return f"{YOUTUBE_PLAYLIST_URL_PREFIX}{playlist_id}"
         return None
 
     def __str__(self) -> str:
@@ -357,7 +376,7 @@ class Channel:
     def tenant_key(self) -> str:
         """Canonical tenant format key ('channel:{token}')."""
         token = self.id.value if self.id else self.name
-        return f"channel:{token}"
+        return f"{CHANNEL_TENANT_KEY_PREFIX}{token}"
 
     def __str__(self) -> str:
         return self.name

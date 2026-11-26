@@ -7,11 +7,17 @@ Conforms to:
 from __future__ import annotations
 
 import threading
-from typing import Any
+from typing import Any, Final
 
 import structlog
 
 logger = structlog.get_logger(__name__)
+
+_LANGFUSE_MEDIA_THREAD_PREFIX: Final[str] = "LangfuseMediaUploadConsumer-"
+_LANGFUSE_SCORE_THREAD_PREFIX: Final[str] = "LangfuseScoreIngestionConsumer-"
+_LANGFUSE_CACHE_THREAD_PREFIX: Final[str] = "LangfusePromptCacheConsumer-"
+_OTEL_DEFAULT_THREAD_NAME: Final[str] = "OtelBatchSpanRecordProcessor"
+_CRESMO_OTEL_THREAD_NAME: Final[str] = "CresmoOtelBatchSpanProcessor"
 
 
 def _name_langfuse_threads(langfuse_client: Any) -> None:
@@ -21,23 +27,23 @@ def _name_langfuse_threads(langfuse_client: Any) -> None:
         return
 
     for idx, consumer in enumerate(getattr(resources, "_media_upload_consumers", [])):
-        consumer.name = f"LangfuseMediaUploadConsumer-{idx}"
+        consumer.name = f"{_LANGFUSE_MEDIA_THREAD_PREFIX}{idx}"
     for idx, consumer in enumerate(getattr(resources, "_ingestion_consumers", [])):
-        consumer.name = f"LangfuseScoreIngestionConsumer-{idx}"
+        consumer.name = f"{_LANGFUSE_SCORE_THREAD_PREFIX}{idx}"
 
     prompt_cache = getattr(resources, "prompt_cache", None)
     if prompt_cache:
         prompt_task_manager = getattr(prompt_cache, "_task_manager", None)
         if prompt_task_manager:
             for idx, consumer in enumerate(getattr(prompt_task_manager, "_consumers", [])):
-                consumer.name = f"LangfusePromptCacheConsumer-{idx}"
+                consumer.name = f"{_LANGFUSE_CACHE_THREAD_PREFIX}{idx}"
 
 
 def _name_otel_threads() -> None:
     """Assign canonical name to OpenTelemetry batch span processor thread."""
     for thread in threading.enumerate():
-        if thread.name == "OtelBatchSpanRecordProcessor":
-            thread.name = "CresmoOtelBatchSpanProcessor"
+        if thread.name == _OTEL_DEFAULT_THREAD_NAME:
+            thread.name = _CRESMO_OTEL_THREAD_NAME
 
 
 def name_telemetry_threads(langfuse_client: Any | None = None) -> None:

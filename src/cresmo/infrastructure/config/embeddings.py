@@ -7,11 +7,15 @@ Conforms to:
 
 from __future__ import annotations
 
-from typing import Any, Literal
+from typing import Any, Final, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from cresmo.infrastructure.config.catalog import normalize_str_choice
+
+DEFAULT_GEMINI_EMBEDDING_MODEL: Final[str] = "gemini-embedding-001"
+DEFAULT_GEMINI_EMBEDDING_DIMENSIONS: Final[int] = 768
+DEFAULT_OLLAMA_EMBEDDING_MODEL: Final[str] = "nomic-embed-text"
 
 
 class EmbeddingSettings(BaseModel):
@@ -24,16 +28,16 @@ class EmbeddingSettings(BaseModel):
         description="Text embedding provider for hybrid semantic pass saturation ('gemini', 'ollama', 'tfidf').",
     )
     gemini_model: str = Field(
-        default="gemini-embedding-001",
+        default=DEFAULT_GEMINI_EMBEDDING_MODEL,
         description="Google Gemini model identifier used for text embeddings.",
     )
     gemini_dimensions: int = Field(
-        default=768,
+        default=DEFAULT_GEMINI_EMBEDDING_DIMENSIONS,
         ge=1,
         description="Output vector dimensionality requested from Gemini embeddings.",
     )
     ollama_model: str = Field(
-        default="nomic-embed-text",
+        default=DEFAULT_OLLAMA_EMBEDDING_MODEL,
         description="Local Ollama model identifier used for text embeddings.",
     )
 

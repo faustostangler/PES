@@ -3,6 +3,7 @@
 import secrets
 import uuid
 from datetime import UTC, datetime, timedelta
+from typing import Final
 
 from identity.application.dtos import (
     AuthenticatedUserDTO,
@@ -17,6 +18,13 @@ from identity.application.ports import (
 from identity.domain.entities import PersonalAccessToken
 from identity.domain.exceptions import InvalidTokenError
 from identity.domain.value_objects import Scope, TokenHash, UserId
+from shared_kernel.security import DEFAULT_TENANT_ID
+
+PAT_SECRET_TOKEN_BYTES: Final[int] = 32
+PAT_RAW_TOKEN_PREFIX: Final[str] = "cresmo_pat_"
+PAT_TOKEN_PREFIX_LENGTH: Final[int] = 16
+PAT_ID_PREFIX: Final[str] = "pat_"
+PAT_ID_HEX_LENGTH: Final[int] = 12
 
 
 class CreatePersonalAccessTokenUseCase:
@@ -28,9 +36,9 @@ class CreatePersonalAccessTokenUseCase:
     def execute(self, dto: CreatePATRequestDTO) -> CreatedPATResponseDTO:
         user_id = UserId(dto.user_id)
         # 32 bytes URL-safe random string -> ~43 chars
-        random_secret = secrets.token_urlsafe(32)
-        raw_token = f"cresmo_pat_{random_secret}"
-        token_prefix = raw_token[:16]
+        random_secret = secrets.token_urlsafe(PAT_SECRET_TOKEN_BYTES)
+        raw_token = f"{PAT_RAW_TOKEN_PREFIX}{random_secret}"
+        token_prefix = raw_token[:PAT_TOKEN_PREFIX_LENGTH]
         token_hash = TokenHash.from_raw_token(raw_token)
 
         scopes = frozenset([Scope(s) for s in dto.scopes])
@@ -39,7 +47,7 @@ class CreatePersonalAccessTokenUseCase:
             created_at + timedelta(days=dto.expires_in_days) if dto.expires_in_days else None
         )
 
-        pat_id = f"pat_{uuid.uuid4().hex[:12]}"
+        pat_id = f"{PAT_ID_PREFIX}{uuid.uuid4().hex[:PAT_ID_HEX_LENGTH]}"
         pat = PersonalAccessToken(
             id=pat_id,
             user_id=user_id,
@@ -75,7 +83,7 @@ class ValidatePersonalAccessTokenUseCase:
         self._user_repo = user_repo
 
     def execute(self, raw_token: str) -> AuthenticatedUserDTO:
-        if not raw_token or not raw_token.startswith("cresmo_pat_"):
+        if not raw_token or not raw_token.startswith(PAT_RAW_TOKEN_PREFIX):
             raise InvalidTokenError("Invalid token format.")
 
         token_hash = TokenHash.from_raw_token(raw_token)
@@ -96,7 +104,7 @@ class ValidatePersonalAccessTokenUseCase:
 
         return AuthenticatedUserDTO(
             user_id=user.id.value,
-            tenant_id="default",
+            tenant_id=DEFAULT_TENANT_ID,
             email=user.email.value,
             roles=[r.value for r in user.roles],
             scopes=[s.value for s in pat.scopes],

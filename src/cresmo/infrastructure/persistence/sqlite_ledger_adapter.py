@@ -12,9 +12,57 @@ from collections.abc import Generator
 from contextlib import contextmanager
 from datetime import datetime
 from pathlib import Path
+from typing import Final
 
 from cresmo.application.ports import LedgerRepositoryPort
 from cresmo.domain.value_objects import ChannelName, ContentId, LedgerEntry, PipelineStatus
+
+DEFAULT_SQLITE_TIMEOUT_SECONDS: Final[float] = 5.0
+_SQLITE_MEMORY_DB: Final[str] = ":memory:"
+_SQL_PRAGMA_WAL: Final[str] = "PRAGMA journal_mode=WAL;"
+_SQL_PRAGMA_SYNC_NORMAL: Final[str] = "PRAGMA synchronous=NORMAL;"
+_SQL_CREATE_LEDGER_TABLE: Final[str] = """
+    CREATE TABLE IF NOT EXISTS cresmo_ledger (
+        content_id TEXT PRIMARY KEY,
+        media_url TEXT NOT NULL,
+        title TEXT NOT NULL,
+        channel_name TEXT NOT NULL,
+        status TEXT NOT NULL,
+        notes_count INTEGER NOT NULL DEFAULT 0,
+        error_message TEXT,
+        started_at TEXT,
+        completed_at TEXT
+    );
+"""
+_SQL_CREATE_STATUS_INDEX: Final[str] = (
+    "CREATE INDEX IF NOT EXISTS idx_cresmo_ledger_status ON cresmo_ledger(status);"
+)
+_SQL_SELECT_STATUS: Final[str] = "SELECT status FROM cresmo_ledger WHERE content_id = ?;"
+_SQL_UPSERT_ENTRY: Final[str] = """
+    INSERT INTO cresmo_ledger (
+        content_id, media_url, title, channel_name, status,
+        notes_count, error_message, started_at, completed_at
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ON CONFLICT(content_id) DO UPDATE SET
+        media_url = excluded.media_url,
+        title = excluded.title,
+        channel_name = excluded.channel_name,
+        status = excluded.status,
+        notes_count = excluded.notes_count,
+        error_message = excluded.error_message,
+        started_at = COALESCE(excluded.started_at, cresmo_ledger.started_at),
+        completed_at = excluded.completed_at;
+"""
+_SQL_SELECT_ENTRY: Final[str] = "SELECT * FROM cresmo_ledger WHERE content_id = ?;"
+_COL_CONTENT_ID: Final[str] = "content_id"
+_COL_MEDIA_URL: Final[str] = "media_url"
+_COL_TITLE: Final[str] = "title"
+_COL_CHANNEL_NAME: Final[str] = "channel_name"
+_COL_STATUS: Final[str] = "status"
+_COL_NOTES_COUNT: Final[str] = "notes_count"
+_COL_ERROR_MESSAGE: Final[str] = "error_message"
+_COL_STARTED_AT: Final[str] = "started_at"
+_COL_COMPLETED_AT: Final[str] = "completed_at"
 
 
 class SqliteLedgerAdapter(LedgerRepositoryPort):
@@ -28,7 +76,11 @@ class SqliteLedgerAdapter(LedgerRepositoryPort):
         - SPEC-003: Channel Synchronization Specifications
     """
 
-    def __init__(self, db_path: Path | str, timeout: float = 5.0) -> None:
+    def __init__(
+        self,
+        db_path: Path | str,
+        timeout: float = DEFAULT_SQLITE_TIMEOUT_SECONDS,
+    ) -> None:
         """Initialize SQLite ledger adapter and ensure WAL schema invariants.
 
         Args:
@@ -38,7 +90,7 @@ class SqliteLedgerAdapter(LedgerRepositoryPort):
         self._db_path = str(db_path)
         self._timeout = timeout
 
-        if self._db_path != ":memory:":
+        if self._db_path != _SQLITE_MEMORY_DB:
             target_path = Path(self._db_path)
             target_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -55,9 +107,9 @@ class SqliteLedgerAdapter(LedgerRepositoryPort):
         try:
             conn.row_factory = sqlite3.Row
             # Enforce WAL mode and NORMAL synchronous to maximize write throughput without data corruption
-            if self._db_path != ":memory:":
-                conn.execute("PRAGMA journal_mode=WAL;")
-            conn.execute("PRAGMA synchronous=NORMAL;")
+            if self._db_path != _SQLITE_MEMORY_DB:
+                conn.execute(_SQL_PRAGMA_WAL)
+            conn.execute(_SQL_PRAGMA_SYNC_NORMAL)
             with conn:
                 yield conn
         finally:
@@ -66,24 +118,8 @@ class SqliteLedgerAdapter(LedgerRepositoryPort):
     def _init_db(self) -> None:
         """Initialize database schema and indices if not already present."""
         with self._get_connection() as conn:
-            conn.execute(
-                """
-                CREATE TABLE IF NOT EXISTS cresmo_ledger (
-                    content_id TEXT PRIMARY KEY,
-                    media_url TEXT NOT NULL,
-                    title TEXT NOT NULL,
-                    channel_name TEXT NOT NULL,
-                    status TEXT NOT NULL,
-                    notes_count INTEGER NOT NULL DEFAULT 0,
-                    error_message TEXT,
-                    started_at TEXT,
-                    completed_at TEXT
-                );
-                """
-            )
-            conn.execute(
-                "CREATE INDEX IF NOT EXISTS idx_cresmo_ledger_status ON cresmo_ledger(status);"
-            )
+            conn.execute(_SQL_CREATE_LEDGER_TABLE)
+            conn.execute(_SQL_CREATE_STATUS_INDEX)
 
     def is_processed(self, content_id: ContentId) -> bool:
         """Check whether a content item has already completed all pipeline stages.
@@ -95,14 +131,11 @@ class SqliteLedgerAdapter(LedgerRepositoryPort):
             True if status is COMPLETED; False otherwise.
         """
         with self._get_connection() as conn:
-            cursor = conn.execute(
-                "SELECT status FROM cresmo_ledger WHERE content_id = ?;",
-                (content_id.value,),
-            )
+            cursor = conn.execute(_SQL_SELECT_STATUS, (content_id.value,))
             row = cursor.fetchone()
             if row is None:
                 return False
-            return str(row["status"]) == PipelineStatus.COMPLETED.value
+            return str(row[_COL_STATUS]) == PipelineStatus.COMPLETED.value
 
     def save_entry(self, entry: LedgerEntry) -> None:
         """Persist or update an immutable LedgerEntry audit record atomically.
@@ -115,21 +148,7 @@ class SqliteLedgerAdapter(LedgerRepositoryPort):
 
         with self._get_connection() as conn:
             conn.execute(
-                """
-                INSERT INTO cresmo_ledger (
-                    content_id, media_url, title, channel_name, status,
-                    notes_count, error_message, started_at, completed_at
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-                ON CONFLICT(content_id) DO UPDATE SET
-                    media_url = excluded.media_url,
-                    title = excluded.title,
-                    channel_name = excluded.channel_name,
-                    status = excluded.status,
-                    notes_count = excluded.notes_count,
-                    error_message = excluded.error_message,
-                    started_at = COALESCE(excluded.started_at, cresmo_ledger.started_at),
-                    completed_at = excluded.completed_at;
-                """,
+                _SQL_UPSERT_ENTRY,
                 (
                     entry.content_id.value,
                     entry.media_url,
@@ -153,10 +172,7 @@ class SqliteLedgerAdapter(LedgerRepositoryPort):
             LedgerEntry if record exists, or None.
         """
         with self._get_connection() as conn:
-            cursor = conn.execute(
-                "SELECT * FROM cresmo_ledger WHERE content_id = ?;",
-                (content_id.value,),
-            )
+            cursor = conn.execute(_SQL_SELECT_ENTRY, (content_id.value,))
             row = cursor.fetchone()
             if row is None:
                 return None
@@ -172,16 +188,18 @@ class SqliteLedgerAdapter(LedgerRepositoryPort):
         Returns:
             Hydrated immutable LedgerEntry value object.
         """
-        started_at = datetime.fromisoformat(row["started_at"]) if row["started_at"] else None
-        completed_at = datetime.fromisoformat(row["completed_at"]) if row["completed_at"] else None
+        started_at = datetime.fromisoformat(row[_COL_STARTED_AT]) if row[_COL_STARTED_AT] else None
+        completed_at = (
+            datetime.fromisoformat(row[_COL_COMPLETED_AT]) if row[_COL_COMPLETED_AT] else None
+        )
         return LedgerEntry(
-            content_id=ContentId(str(row["content_id"])),
-            media_url=str(row["media_url"]),
-            title=str(row["title"]),
-            channel_name=ChannelName(str(row["channel_name"])),
-            status=PipelineStatus(str(row["status"])),
-            notes_count=int(row["notes_count"]),
-            error_message=str(row["error_message"]) if row["error_message"] else None,
+            content_id=ContentId(str(row[_COL_CONTENT_ID])),
+            media_url=str(row[_COL_MEDIA_URL]),
+            title=str(row[_COL_TITLE]),
+            channel_name=ChannelName(str(row[_COL_CHANNEL_NAME])),
+            status=PipelineStatus(str(row[_COL_STATUS])),
+            notes_count=int(row[_COL_NOTES_COUNT]),
+            error_message=str(row[_COL_ERROR_MESSAGE]) if row[_COL_ERROR_MESSAGE] else None,
             started_at=started_at,
             completed_at=completed_at,
         )

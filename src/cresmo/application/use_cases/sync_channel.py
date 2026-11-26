@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import time
 from datetime import UTC, datetime, timedelta
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Final
 
 from cresmo.application.ports import LedgerRepositoryPort, MediaIngestionPort
 from cresmo.application.services.preflight import PreflightHealthChecker
@@ -24,6 +24,8 @@ from cresmo.domain.value_objects import (
 
 if TYPE_CHECKING:
     from cresmo.application.pipeline.coordinator import CresmoPipeline
+
+DURATION_ROUND_DECIMAL_PLACES: Final[int] = 3
 
 
 class SyncChannelUseCase:
@@ -136,6 +138,6 @@ class SyncChannelUseCase:
             processed_count=processed_count,
             skipped_count=skipped_count,
             failed_count=failed_count,
-            duration_seconds=round(duration, 3),
+            duration_seconds=round(duration, DURATION_ROUND_DECIMAL_PLACES),
             status=final_status,
         )

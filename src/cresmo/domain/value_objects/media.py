@@ -10,6 +10,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import date, datetime
 from enum import StrEnum
+from typing import Final
 
 from cresmo.domain.exceptions import DomainValidationError
 from cresmo.domain.value_objects.identity import (
@@ -17,6 +18,18 @@ from cresmo.domain.value_objects.identity import (
     ChannelName,
     ContentId,
 )
+
+DEFAULT_FEED_LOOKBACK_DAYS: Final[int] = 7
+DEFAULT_FEED_MAX_VIDEOS: Final[int] = 50
+ALLOWED_URL_SCHEMES: Final[tuple[str, ...]] = ("http://", "https://")
+DEFAULT_HTTPS_SCHEME: Final[str] = "https://"
+URL_TRAILING_SLASH: Final[str] = "/"
+YOUTUBE_PLAYLIST_URL_MARKERS: Final[tuple[str, ...]] = ("playlist?list=", "list=UU", "list=PL")
+YOUTUBE_BARE_HANDLE_URL_PREFIX: Final[str] = "https://@"
+YOUTUBE_HANDLE_URL_PREFIX: Final[str] = "https://www.youtube.com/@"
+YOUTUBE_VIDEOS_TAB_SUFFIX: Final[str] = "/videos"
+YOUTUBE_HANDLE_PATH_MARKER: Final[str] = "/@"
+_CHANNEL_TAB_ENDINGS: Final[tuple[str, ...]] = ("/videos", "/shorts", "/streams", "/playlists")
 
 
 class PipelineStatus(StrEnum):
@@ -33,10 +46,6 @@ class PipelineStatus(StrEnum):
     FAILED_TRANSFORMATION = "FAILED_TRANSFORMATION"
     RUNNING = "RUNNING"
     QUARANTINED = "QUARANTINED"
-
-
-DEFAULT_FEED_LOOKBACK_DAYS: int = 7
-DEFAULT_FEED_MAX_VIDEOS: int = 50
 
 
 @dataclass(frozen=True, slots=True)
@@ -111,7 +120,7 @@ class DiscoveredMediaItem:
 
         if not cleaned_title:
             raise DomainValidationError("DiscoveredMediaItem title cannot be empty.")
-        if not cleaned_media_url.startswith(("http://", "https://")):
+        if not cleaned_media_url.startswith(ALLOWED_URL_SCHEMES):
             raise DomainValidationError(
                 f"Invalid DiscoveredMediaItem media_url '{self.media_url}'. Must start with http:// or https://"
             )
@@ -122,9 +131,6 @@ class DiscoveredMediaItem:
         object.__setattr__(self, "media_url", cleaned_media_url)
         object.__setattr__(self, "channel_name", resolved_channel_name)
         object.__setattr__(self, "content_id", resolved_content_id)
-
-
-_CHANNEL_TAB_ENDINGS: tuple[str, ...] = ("/videos", "/shorts", "/streams", "/playlists")
 
 
 def normalize_to_uploads_playlist_url(channel_ref: str) -> str:
@@ -146,24 +152,32 @@ def normalize_to_uploads_playlist_url(channel_ref: str) -> str:
         return cleaned
 
     # Direct pass-through if already a playlist URL
-    if "playlist?list=" in cleaned or "list=UU" in cleaned or "list=PL" in cleaned:
-        return cleaned if cleaned.startswith(("http://", "https://")) else f"https://{cleaned}"
+    if any(marker in cleaned for marker in YOUTUBE_PLAYLIST_URL_MARKERS):
+        return (
+            cleaned
+            if cleaned.startswith(ALLOWED_URL_SCHEMES)
+            else f"{DEFAULT_HTTPS_SCHEME}{cleaned}"
+        )
 
     extracted_channel_id = ChannelId.extract_from_text(cleaned)
     if extracted_channel_id and extracted_channel_id.uploads_playlist_url:
         return extracted_channel_id.uploads_playlist_url
 
-    formatted = cleaned if cleaned.startswith(("http://", "https://")) else f"https://{cleaned}"
-    formatted = formatted.rstrip("/")
+    formatted = (
+        cleaned
+        if cleaned.startswith(ALLOWED_URL_SCHEMES)
+        else f"{DEFAULT_HTTPS_SCHEME}{cleaned}"
+    )
+    formatted = formatted.rstrip(URL_TRAILING_SLASH)
 
-    if formatted.startswith("https://@"):
-        handle = formatted.removeprefix("https://@")
+    if formatted.startswith(YOUTUBE_BARE_HANDLE_URL_PREFIX):
+        handle = formatted.removeprefix(YOUTUBE_BARE_HANDLE_URL_PREFIX)
         if handle.endswith(_CHANNEL_TAB_ENDINGS):
-            return f"https://www.youtube.com/@{handle}"
-        return f"https://www.youtube.com/@{handle}/videos"
+            return f"{YOUTUBE_HANDLE_URL_PREFIX}{handle}"
+        return f"{YOUTUBE_HANDLE_URL_PREFIX}{handle}{YOUTUBE_VIDEOS_TAB_SUFFIX}"
 
-    if "/@" in formatted and not formatted.endswith(_CHANNEL_TAB_ENDINGS):
-        return f"{formatted}/videos"
+    if YOUTUBE_HANDLE_PATH_MARKER in formatted and not formatted.endswith(_CHANNEL_TAB_ENDINGS):
+        return f"{formatted}{YOUTUBE_VIDEOS_TAB_SUFFIX}"
 
     return formatted
 
@@ -184,7 +198,7 @@ class ChannelFeedQuery:
 
     def __post_init__(self) -> None:
         cleaned_channel_url = self.channel_url.strip()
-        if not cleaned_channel_url.startswith(("http://", "https://")):
+        if not cleaned_channel_url.startswith(ALLOWED_URL_SCHEMES):
             raise DomainValidationError(
                 f"Invalid ChannelFeedQuery channel_url '{self.channel_url}'. Must start with http:// or https://"
             )

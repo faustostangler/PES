@@ -34,6 +34,41 @@ YOUTUBE_RSS_MAX_ENTRIES: Final[int] = 15
 _ATOM_NS: Final[str] = "{http://www.w3.org/2005/Atom}"
 _YT_NS: Final[str] = "{http://www.youtube.com/xml/schemas/2015}"
 _PLAYLIST_ID_REGEX = re.compile(r"[?&]list=([a-zA-Z0-9_-]+)")
+_YOUTUBE_FEED_CHANNEL_URL_PREFIX: Final[str] = (
+    "https://www.youtube.com/feeds/videos.xml?channel_id="
+)
+_YOUTUBE_FEED_PLAYLIST_URL_PREFIX: Final[str] = (
+    "https://www.youtube.com/feeds/videos.xml?playlist_id="
+)
+_YOUTUBE_WATCH_URL_PREFIX: Final[str] = "https://www.youtube.com/watch?v="
+_UPLOADS_PLAYLIST_PREFIX: Final[str] = "UU"
+_CANONICAL_CHANNEL_ID_PREFIX: Final[str] = "UC"
+_UPLOADS_PREFIX_OFFSET: Final[int] = 2
+_UNKNOWN_CHANNEL_NAME: Final[str] = "Unknown_Channel"
+_ATOM_LINK_REL_ATTR: Final[str] = "rel"
+_ATOM_LINK_HREF_ATTR: Final[str] = "href"
+_ATOM_LINK_REL_ALTERNATE: Final[str] = "alternate"
+_ATOM_TAG_TITLE: Final[str] = f"{_ATOM_NS}title"
+_ATOM_TAG_AUTHOR_NAME: Final[str] = f"{_ATOM_NS}author/{_ATOM_NS}name"
+_ATOM_TAG_ENTRY: Final[str] = f"{_ATOM_NS}entry"
+_ATOM_TAG_LINK: Final[str] = f"{_ATOM_NS}link"
+_ATOM_TAG_PUBLISHED: Final[str] = f"{_ATOM_NS}published"
+_YT_TAG_VIDEO_ID: Final[str] = f"{_YT_NS}videoId"
+_KEY_ID: Final[str] = "id"
+_KEY_TITLE: Final[str] = "title"
+_KEY_URL: Final[str] = "url"
+_KEY_ENTRIES: Final[str] = "entries"
+_KEY_UPLOADER: Final[str] = "uploader"
+_KEY_CHANNEL: Final[str] = "channel"
+_KEY_UPLOAD_DATE: Final[str] = "upload_date"
+_KEY_CHANNEL_ID: Final[str] = "channel_id"
+_KEY_UPLOADER_ID: Final[str] = "uploader_id"
+_KEY_CHANNEL_URL: Final[str] = "channel_url"
+_KEY_UPLOADER_URL: Final[str] = "uploader_url"
+_YTDLP_OPT_EXTRACT_FLAT: Final[str] = "extract_flat"
+_YTDLP_OPT_PLAYLISTEND: Final[str] = "playlistend"
+_YTDLP_OPT_QUIET: Final[str] = "quiet"
+_YTDLP_OPT_NO_WARNINGS: Final[str] = "no_warnings"
 
 
 def resolve_youtube_rss_url(channel_url: str) -> str | None:
@@ -44,15 +79,18 @@ def resolve_youtube_rss_url(channel_url: str) -> str | None:
 
     channel_id = ChannelId.extract_from_text(cleaned)
     if channel_id and channel_id.is_youtube_canonical:
-        return f"https://www.youtube.com/feeds/videos.xml?channel_id={channel_id.value}"
+        return f"{_YOUTUBE_FEED_CHANNEL_URL_PREFIX}{channel_id.value}"
 
     playlist_match = _PLAYLIST_ID_REGEX.search(cleaned)
     if playlist_match:
         list_id = playlist_match.group(1).strip()
-        if list_id.startswith("UU") and len(list_id) >= MIN_CANONICAL_CHANNEL_ID_LENGTH:
-            canonical_channel_id = f"UC{list_id[2:]}"
-            return f"https://www.youtube.com/feeds/videos.xml?channel_id={canonical_channel_id}"
-        return f"https://www.youtube.com/feeds/videos.xml?playlist_id={list_id}"
+        if (
+            list_id.startswith(_UPLOADS_PLAYLIST_PREFIX)
+            and len(list_id) >= MIN_CANONICAL_CHANNEL_ID_LENGTH
+        ):
+            canonical_channel_id = f"{_CANONICAL_CHANNEL_ID_PREFIX}{list_id[_UPLOADS_PREFIX_OFFSET:]}"
+            return f"{_YOUTUBE_FEED_CHANNEL_URL_PREFIX}{canonical_channel_id}"
+        return f"{_YOUTUBE_FEED_PLAYLIST_URL_PREFIX}{list_id}"
 
     return None
 
@@ -77,38 +115,38 @@ def parse_youtube_atom_feed(
     """Parse YouTube Atom XML feed payload into DiscoveredMediaItem value objects."""
     root = ElementTree.fromstring(xml_payload)
     raw_feed_title = (
-        root.findtext(f"{_ATOM_NS}title")
-        or root.findtext(f"{_ATOM_NS}author/{_ATOM_NS}name")
-        or "Unknown_Channel"
+        root.findtext(_ATOM_TAG_TITLE)
+        or root.findtext(_ATOM_TAG_AUTHOR_NAME)
+        or _UNKNOWN_CHANNEL_NAME
     )
     default_channel_name = ChannelName.from_string(sanitize_fs_name(raw_feed_title))
 
     items: list[DiscoveredMediaItem] = []
-    for entry in root.findall(f"{_ATOM_NS}entry"):
-        raw_vid = (entry.findtext(f"{_YT_NS}videoId") or "").strip()
-        title = (entry.findtext(f"{_ATOM_NS}title") or "").strip()
+    for entry in root.findall(_ATOM_TAG_ENTRY):
+        raw_vid = (entry.findtext(_YT_TAG_VIDEO_ID) or "").strip()
+        title = (entry.findtext(_ATOM_TAG_TITLE) or "").strip()
         if not raw_vid or not title:
             continue
 
         cid = ContentId.extract_from_text(raw_vid) or ContentId.from_url_or_token(raw_vid)
 
         media_url = ""
-        for link in entry.findall(f"{_ATOM_NS}link"):
-            if link.attrib.get("rel", "alternate") == "alternate":
-                href = link.attrib.get("href", "").strip()
+        for link in entry.findall(_ATOM_TAG_LINK):
+            if link.attrib.get(_ATOM_LINK_REL_ATTR, _ATOM_LINK_REL_ALTERNATE) == _ATOM_LINK_REL_ALTERNATE:
+                href = link.attrib.get(_ATOM_LINK_HREF_ATTR, "").strip()
                 if href:
                     media_url = href
                     break
         if not media_url:
-            media_url = f"https://www.youtube.com/watch?v={cid.value}"
+            media_url = f"{_YOUTUBE_WATCH_URL_PREFIX}{cid.value}"
 
-        entry_author = (entry.findtext(f"{_ATOM_NS}author/{_ATOM_NS}name") or "").strip()
+        entry_author = (entry.findtext(_ATOM_TAG_AUTHOR_NAME) or "").strip()
         channel_name = (
             ChannelName.from_string(sanitize_fs_name(entry_author))
             if entry_author
             else default_channel_name
         )
-        pub_date = _parse_atom_published_datetime(entry.findtext(f"{_ATOM_NS}published"))
+        pub_date = _parse_atom_published_datetime(entry.findtext(_ATOM_TAG_PUBLISHED))
 
         items.append(
             DiscoveredMediaItem(
@@ -188,10 +226,10 @@ def discover_channel_feed_items(
     opts = dict(ydl_opts)
     opts.update(
         {
-            "extract_flat": True,
-            "playlistend": query.max_videos,
-            "quiet": True,
-            "no_warnings": True,
+            _YTDLP_OPT_EXTRACT_FLAT: True,
+            _YTDLP_OPT_PLAYLISTEND: query.max_videos,
+            _YTDLP_OPT_QUIET: True,
+            _YTDLP_OPT_NO_WARNINGS: True,
         }
     )
 
@@ -201,7 +239,7 @@ def discover_channel_feed_items(
         with yt_dlp.YoutubeDL(cast(Any, opts)) as ydl:
             info = ydl.extract_info(target_url, download=False)
             # Fallback to original channel_url if uploads playlist returned empty
-            if (not info or not info.get("entries")) and target_url != query.channel_url:
+            if (not info or not info.get(_KEY_ENTRIES)) and target_url != query.channel_url:
                 info = ydl.extract_info(query.channel_url, download=False)
     except Exception as exc:  # noqa: BLE001
         handle_error(exc)
@@ -210,9 +248,9 @@ def discover_channel_feed_items(
     if not info:
         return []
 
-    entries = info.get("entries") or []
+    entries = info.get(_KEY_ENTRIES) or []
     channel_title = sanitize_fs_name(
-        str(info.get("title") or info.get("uploader") or "Unknown_Channel")
+        str(info.get(_KEY_TITLE) or info.get(_KEY_UPLOADER) or _UNKNOWN_CHANNEL_NAME)
     )
     items: list[DiscoveredMediaItem] = []
 
@@ -220,17 +258,17 @@ def discover_channel_feed_items(
         if not entry or not isinstance(entry, dict):
             continue
 
-        raw_vid = str(entry.get("id") or "").strip()
-        title = str(entry.get("title") or "").strip()
+        raw_vid = str(entry.get(_KEY_ID) or "").strip()
+        title = str(entry.get(_KEY_TITLE) or "").strip()
         if not raw_vid or not title:
             continue
 
         cid = ContentId.extract_from_text(raw_vid) or ContentId.from_url_or_token(raw_vid)
-        url = str(entry.get("url") or f"https://www.youtube.com/watch?v={cid.value}").strip()
-        raw_channel = str(entry.get("channel") or entry.get("uploader") or channel_title)
+        url = str(entry.get(_KEY_URL) or f"{_YOUTUBE_WATCH_URL_PREFIX}{cid.value}").strip()
+        raw_channel = str(entry.get(_KEY_CHANNEL) or entry.get(_KEY_UPLOADER) or channel_title)
         channel_name = ChannelName.from_string(sanitize_fs_name(raw_channel))
 
-        pub_date = parse_published_datetime(entry.get("upload_date"))
+        pub_date = parse_published_datetime(entry.get(_KEY_UPLOAD_DATE))
 
         items.append(
             DiscoveredMediaItem(
@@ -250,11 +288,11 @@ def extract_channel_url_from_info(info: dict[str, Any] | None) -> str | None:
     if not info or not isinstance(info, dict):
         return None
 
-    channel_id = info.get("channel_id") or info.get("uploader_id")
+    channel_id = info.get(_KEY_CHANNEL_ID) or info.get(_KEY_UPLOADER_ID)
     if channel_id:
         return normalize_to_uploads_playlist_url(str(channel_id).strip())
 
-    channel_url = info.get("channel_url") or info.get("uploader_url")
+    channel_url = info.get(_KEY_CHANNEL_URL) or info.get(_KEY_UPLOADER_URL)
     if channel_url:
         return normalize_to_uploads_playlist_url(str(channel_url).strip())
 

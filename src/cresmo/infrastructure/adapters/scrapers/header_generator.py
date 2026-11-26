@@ -15,11 +15,16 @@ import importlib.resources
 import json
 import random
 from pathlib import Path
-from typing import Any
+from typing import Any, Final
 
 import structlog
 
 logger = structlog.get_logger(__name__)
+
+_RESOURCES_PACKAGE: Final[str] = "cresmo.infrastructure.resources"
+_HEADERS_POOL_FILENAME: Final[str] = "headers_pool.json"
+_UTF8_ENCODING: Final[str] = "utf-8"
+_HEADER_USER_AGENT: Final[str] = "User-Agent"
 
 _DEFAULT_FALLBACK_PROFILES: tuple[dict[str, str], ...] = (
     {
@@ -101,7 +106,7 @@ class RandomHeaderGenerator:
             if not path.is_file():
                 logger.warning("Custom headers path '%s' does not exist.", path)
                 return
-            content = path.read_text(encoding="utf-8")
+            content = path.read_text(encoding=_UTF8_ENCODING)
             data = json.loads(content)
             self._parse_and_set_profiles(data)
         except Exception as exc:  # noqa: BLE001
@@ -110,10 +115,10 @@ class RandomHeaderGenerator:
     def _load_from_package_resource(self) -> None:
         """Load JSON profiles from bundled cresmo.infrastructure.resources package."""
         try:
-            resource_file = importlib.resources.files("cresmo.infrastructure.resources").joinpath(
-                "headers_pool.json"
+            resource_file = importlib.resources.files(_RESOURCES_PACKAGE).joinpath(
+                _HEADERS_POOL_FILENAME
             )
-            with resource_file.open("r", encoding="utf-8") as f:
+            with resource_file.open("r", encoding=_UTF8_ENCODING) as f:
                 data = json.load(f)
             self._parse_and_set_profiles(data)
         except Exception as exc:  # noqa: BLE001
@@ -127,7 +132,7 @@ class RandomHeaderGenerator:
 
         valid_profiles: list[dict[str, str]] = []
         for item in data:
-            if isinstance(item, dict) and "User-Agent" in item:
+            if isinstance(item, dict) and _HEADER_USER_AGENT in item:
                 # Ensure all header values are strings
                 sanitized = {str(k): str(v) for k, v in item.items()}
                 valid_profiles.append(sanitized)

@@ -18,7 +18,7 @@ import http.cookiejar
 import re
 import sys
 from pathlib import Path
-from typing import Any
+from typing import Any, Final
 
 try:
     import yt_dlp
@@ -75,6 +75,10 @@ MIN_COOKIE_FILE_BYTES: int = 50
 
 COOKIE_NAME_REGEX: re.Pattern[str] = re.compile(r"^[!-~]+$")
 COOKIE_VALUE_REGEX: re.Pattern[str] = re.compile(r"^[ -~]+$")
+_COOKIE_TEMP_SUFFIX: Final[str] = ".tmp"
+_UTF8_ENCODING: Final[str] = "utf-8"
+_READ_ERRORS_IGNORE: Final[str] = "ignore"
+_YOUTUBE_DOMAIN_MARKER: Final[str] = "youtube.com"
 
 
 def has_valid_auth_cookies(cookie_file: Path) -> bool:
@@ -90,7 +94,7 @@ def has_valid_auth_cookies(cookie_file: Path) -> bool:
     if not cookie_file.exists() or cookie_file.stat().st_size < MIN_COOKIE_FILE_BYTES:
         return False
     try:
-        content = cookie_file.read_text(encoding="utf-8", errors="ignore")
+        content = cookie_file.read_text(encoding=_UTF8_ENCODING, errors=_READ_ERRORS_IGNORE)
         return any(
             f"\t{auth_token}\t" in content or content.endswith(f"\t{auth_token}")
             for auth_token in AUTH_COOKIE_NAMES
@@ -158,7 +162,7 @@ def export_cookies_from_browser(
         True if cookies were successfully extracted and persisted; False otherwise.
     """
     output_path = Path(output_file).resolve()
-    temp_path = output_path.with_suffix(".tmp")
+    temp_path = output_path.with_suffix(_COOKIE_TEMP_SUFFIX)
 
     cj = _extract_raw_cookies(browser, verbose)
     if not cj:
@@ -179,7 +183,7 @@ def export_cookies_from_browser(
 
         mcj.set_cookie(c)
         valid_count += 1
-        if "youtube.com" in (c.domain or "").lower():
+        if _YOUTUBE_DOMAIN_MARKER in (c.domain or "").lower():
             yt_count += 1
 
     if valid_count == 0 or (require_auth and not has_auth_cookies):

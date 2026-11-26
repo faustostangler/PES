@@ -8,9 +8,29 @@ Conforms to:
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from typing import Final
 
 from cresmo.domain.exceptions import DomainValidationError
 from cresmo.domain.value_objects.convergence import ConvergenceMode, SaturationThresholds
+
+DEFAULT_EXPANSION_MAX_PASSES: Final[int] = 5
+DEFAULT_LONG_EXPANDER_MAX_PASSES: Final[int] = 7
+DEFAULT_JUDGE_MAX_ATTEMPTS: Final[int] = 2
+MIN_STAGE_PASSES: Final[int] = 1
+MAX_STAGE_PASSES: Final[int] = 10
+MIN_JUDGE_ATTEMPTS: Final[int] = 1
+STAGE_NAME_LONG_EXPANDER: Final[str] = "long_expander"
+SINGLE_PASS_STAGE_COUNT: Final[int] = 1
+
+DEFAULT_DISCOVERY_LOOKBACK_DAYS: Final[int] = 365
+DEFAULT_DISCOVERY_WORKERS: Final[int] = 10
+DEFAULT_DISCOVERY_QUEUE_MAXSIZE: Final[int] = 50
+MIN_LOOKBACK_DAYS: Final[int] = 0
+MIN_DISCOVERY_WORKERS: Final[int] = 1
+MIN_QUEUE_MAXSIZE: Final[int] = 1
+
+DEFAULT_COMPENDIUM_MAX_WORDS: Final[int] = 500_000
+MIN_COMPENDIUM_MAX_WORDS: Final[int] = 1
 
 
 def _require_int_range(
@@ -39,9 +59,9 @@ def _require_strict_bool(value: bool, field_name: str) -> None:
 class StageExecutionPolicy:
     """Immutable domain policy governing multi-pass stage execution and quality gates."""
 
-    expansion_max_passes: int = 5
-    long_expander_max_passes: int = 7
-    judge_max_attempts: int = 2
+    expansion_max_passes: int = DEFAULT_EXPANSION_MAX_PASSES
+    long_expander_max_passes: int = DEFAULT_LONG_EXPANDER_MAX_PASSES
+    judge_max_attempts: int = DEFAULT_JUDGE_MAX_ATTEMPTS
     judge_blocking: bool = False
     saturation_thresholds: SaturationThresholds = field(default_factory=SaturationThresholds)
 
@@ -50,19 +70,19 @@ class StageExecutionPolicy:
         _require_int_range(
             self.expansion_max_passes,
             "expansion_max_passes",
-            min_value=1,
-            max_value=10,
+            min_value=MIN_STAGE_PASSES,
+            max_value=MAX_STAGE_PASSES,
         )
         _require_int_range(
             self.long_expander_max_passes,
             "long_expander_max_passes",
-            min_value=1,
-            max_value=10,
+            min_value=MIN_STAGE_PASSES,
+            max_value=MAX_STAGE_PASSES,
         )
         _require_int_range(
             self.judge_max_attempts,
             "judge_max_attempts",
-            min_value=1,
+            min_value=MIN_JUDGE_ATTEMPTS,
         )
         _require_strict_bool(self.judge_blocking, "judge_blocking")
         if not isinstance(self.saturation_thresholds, SaturationThresholds):
@@ -72,27 +92,29 @@ class StageExecutionPolicy:
 
     def resolve_max_passes(self, stage_name: str, convergence_mode: ConvergenceMode) -> int:
         """Resolve maximum pass budget for a stage according to domain execution policy."""
-        if stage_name == "long_expander":
+        if stage_name == STAGE_NAME_LONG_EXPANDER:
             return self.long_expander_max_passes
         if convergence_mode == ConvergenceMode.HYBRID_SEMANTIC:
             return self.expansion_max_passes
-        return 1
+        return SINGLE_PASS_STAGE_COUNT
 
 
 @dataclass(frozen=True, slots=True)
 class DiscoveryPolicy:
     """Immutable domain policy governing batch source discovery and crawler concurrency."""
 
-    lookback_days: int = 365
-    discovery_workers: int = 10
-    queue_maxsize: int = 50
+    lookback_days: int = DEFAULT_DISCOVERY_LOOKBACK_DAYS
+    discovery_workers: int = DEFAULT_DISCOVERY_WORKERS
+    queue_maxsize: int = DEFAULT_DISCOVERY_QUEUE_MAXSIZE
     enable_channel_crawler: bool = False
 
     def __post_init__(self) -> None:
         """Enforce construction-time domain invariants for batch discovery."""
-        _require_int_range(self.lookback_days, "lookback_days", min_value=0)
-        _require_int_range(self.discovery_workers, "discovery_workers", min_value=1)
-        _require_int_range(self.queue_maxsize, "queue_maxsize", min_value=1)
+        _require_int_range(self.lookback_days, "lookback_days", min_value=MIN_LOOKBACK_DAYS)
+        _require_int_range(
+            self.discovery_workers, "discovery_workers", min_value=MIN_DISCOVERY_WORKERS
+        )
+        _require_int_range(self.queue_maxsize, "queue_maxsize", min_value=MIN_QUEUE_MAXSIZE)
         _require_strict_bool(self.enable_channel_crawler, "enable_channel_crawler")
 
 
@@ -100,11 +122,11 @@ class DiscoveryPolicy:
 class CompendiumRolloverPolicy:
     """Immutable domain policy defining word limits before master compendium rollover."""
 
-    max_words: int = 500_000
+    max_words: int = DEFAULT_COMPENDIUM_MAX_WORDS
 
     def __post_init__(self) -> None:
         """Enforce positive word budget invariant."""
-        _require_int_range(self.max_words, "max_words", min_value=1)
+        _require_int_range(self.max_words, "max_words", min_value=MIN_COMPENDIUM_MAX_WORDS)
 
 
 __all__ = [

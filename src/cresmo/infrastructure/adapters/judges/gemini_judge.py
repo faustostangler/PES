@@ -7,7 +7,7 @@ Conforms to:
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Final
 
 import structlog
 from google.genai import types
@@ -39,6 +39,16 @@ from cresmo.infrastructure.config import (
 )
 
 logger = structlog.get_logger(__name__)
+
+_GEMINI_PROVIDER_NAME: Final[str] = "gemini"
+_GEMINI_MODEL_PREFIX: Final[str] = "gemini:"
+_MOCK_CREDENTIAL_KEY: Final[str] = "mock-key"
+_API_KEY_LIST_SEPARATOR: Final[str] = ","
+_GENAI_ROLE_MODEL: Final[str] = "model"
+_GENAI_ROLE_USER: Final[str] = "user"
+_GEMINI_JUDGE_ADAPTER_LABEL: Final[str] = "GeminiJudgeAdapter"
+_JSON_RESPONSE_MIME_TYPE: Final[str] = "application/json"
+_EMPTY_JSON_OBJECT_STR: Final[str] = "{}"
 
 
 class GeminiJudgeAdapter(LlmJudgePort):
@@ -74,9 +84,11 @@ class GeminiJudgeAdapter(LlmJudgePort):
             timeout_seconds: Socket and request timeout in seconds for GenAI HTTP calls.
         """
         # ACL boundary hygiene: strip optional provider routing prefix ("gemini:")
-        self._model = model.removeprefix("gemini:")
+        self._model = model.removeprefix(_GEMINI_MODEL_PREFIX)
         self._fallback_model = (
-            fallback_model.removeprefix("gemini:") if fallback_model is not None else None
+            fallback_model.removeprefix(_GEMINI_MODEL_PREFIX)
+            if fallback_model is not None
+            else None
         )
         self._pass_threshold = pass_threshold
         self._thinking_level = thinking_level
@@ -91,12 +103,12 @@ class GeminiJudgeAdapter(LlmJudgePort):
             self._pool = GeminiCredentialPool(keys=api_keys, timeout=timeout_seconds)
         elif client is not None:
             self._pool = GeminiCredentialPool(
-                keys=["mock-key"],
+                keys=[_MOCK_CREDENTIAL_KEY],
                 client_factory=lambda _: client,
                 timeout=timeout_seconds,
             )
         elif api_key:
-            parts = [p.strip() for p in api_key.split(",") if p.strip()]
+            parts = [p.strip() for p in api_key.split(_API_KEY_LIST_SEPARATOR) if p.strip()]
             self._pool = GeminiCredentialPool(
                 keys=parts if parts else [api_key], timeout=timeout_seconds
             )
@@ -114,7 +126,7 @@ class GeminiJudgeAdapter(LlmJudgePort):
     def _invoke_gemini(self, chat_prompt: ChatPrompt) -> str:
         contents = [
             types.Content(
-                role="model" if m.role == MessageRole.ASSISTANT else "user",
+                role=_GENAI_ROLE_MODEL if m.role == MessageRole.ASSISTANT else _GENAI_ROLE_USER,
                 parts=[types.Part.from_text(text=m.content)],
             )
             for m in chat_prompt.messages
@@ -122,7 +134,7 @@ class GeminiJudgeAdapter(LlmJudgePort):
         return execute_with_model_failover(
             primary_model=self._model,
             fallback_model=self._fallback_model,
-            adapter_label="GeminiJudgeAdapter",
+            adapter_label=_GEMINI_JUDGE_ADAPTER_LABEL,
             operation=lambda target_model, _is_fallback: self._invoke_model(
                 model=target_model,
                 system_instruction=chat_prompt.system_prompt,
@@ -136,7 +148,7 @@ class GeminiJudgeAdapter(LlmJudgePort):
             context=context,
             prompt_provider=self._prompt_provider,
             pass_threshold=self._pass_threshold,
-            provider_name="gemini",
+            provider_name=_GEMINI_PROVIDER_NAME,
             invoke_llm=self._invoke_gemini,
         )
 
@@ -166,7 +178,7 @@ class GeminiJudgeAdapter(LlmJudgePort):
         config = types.GenerateContentConfig(
             max_output_tokens=self._max_output_tokens,
             system_instruction=system_instruction,
-            response_mime_type="application/json",
+            response_mime_type=_JSON_RESPONSE_MIME_TYPE,
             response_schema=JudgeResponseOutputSchema,
             thinking_config=build_thinking_config(
                 model=model,
@@ -187,7 +199,7 @@ class GeminiJudgeAdapter(LlmJudgePort):
             response = self._pool.execute_with_failover(_do_generate)
         else:
             response = _do_generate(self.client)
-        return str(response.text or "{}")
+        return str(response.text or _EMPTY_JSON_OBJECT_STR)
 
     @property
     def model(self) -> str:

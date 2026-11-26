@@ -75,6 +75,59 @@ logger = structlog.get_logger(__name__)
 YTDLP_METADATA_SKIP_MANIFESTS: Final[tuple[str, ...]] = ("dash", "hls", "translated_subs")
 DEFAULT_HTTP_MAX_CONNECTIONS: Final[int] = 20
 DEFAULT_HTTP_MAX_KEEPALIVE_CONNECTIONS: Final[int] = 10
+DEFAULT_REQUEST_TIMEOUT_SECONDS: Final[float] = 30.0
+DEFAULT_WHISPER_CONCURRENCY_LIMIT: Final[int] = 2
+DEFAULT_WHISPER_DEVICE: Final[str] = "auto"
+DEFAULT_WHISPER_COMPUTE_TYPE: Final[str] = "auto"
+DEFAULT_WHISPER_MODEL: Final[str] = "base"
+_HTTP2_MODULE_NAME: Final[str] = "h2"
+_JS_RUNTIME_CANDIDATES: Final[tuple[str, ...]] = ("node", "deno", "bun")
+_ILLEGAL_FS_REPLACEMENT: Final[str] = "_"
+_UNKNOWN_CHANNEL_NAME: Final[str] = "Unknown_Channel"
+_SCRATCH_DIR_PREFIX: Final[str] = "cresmo_scratch_"
+_SCRATCH_GLOB_ALL: Final[str] = "*.*"
+_YTDLP_BEST_AUDIO_FORMAT: Final[str] = "bestaudio/best"
+_YTDLP_OUTTMPL_PATTERN: Final[str] = "%(id)s.%(ext)s"
+_YTDLP_OPT_HTTP_HEADERS: Final[str] = "http_headers"
+_YTDLP_OPT_COOKIEFILE: Final[str] = "cookiefile"
+_YTDLP_OPT_JS_RUNTIMES: Final[str] = "js_runtimes"
+_YTDLP_OPT_FORMAT: Final[str] = "format"
+_YTDLP_OPT_OUTTMPL: Final[str] = "outtmpl"
+_YTDLP_OPT_QUIET: Final[str] = "quiet"
+_YTDLP_OPT_NO_WARNINGS: Final[str] = "no_warnings"
+_YTDLP_OPT_SKIP_DOWNLOAD: Final[str] = "skip_download"
+_YTDLP_OPT_IGNORE_NO_FORMATS: Final[str] = "ignore_no_formats_error"
+_YTDLP_OPT_EXTRACTOR_ARGS: Final[str] = "extractor_args"
+_YTDLP_OPT_EXTRACT_FLAT: Final[str] = "extract_flat"
+_YTDLP_EXTRACTOR_YOUTUBE: Final[str] = "youtube"
+_YTDLP_EXTRACTOR_SKIP: Final[str] = "skip"
+_RATE_LIMIT_MARKERS: Final[tuple[str, ...]] = ("429", "Too Many Requests")
+_BOT_CHALLENGE_MARKERS: Final[tuple[str, ...]] = (
+    "Sign in to confirm you’re not a bot",
+    "confirm you're not a bot",
+)
+_NETWORK_ERROR_MARKERS: Final[tuple[str, ...]] = (
+    "Connection reset",
+    "timed out",
+    "Name or service not known",
+    "Network",
+)
+_KEY_CHANNEL: Final[str] = "channel"
+_KEY_UPLOADER: Final[str] = "uploader"
+_KEY_ID: Final[str] = "id"
+_KEY_CHANNEL_ID: Final[str] = "channel_id"
+_KEY_UPLOADER_ID: Final[str] = "uploader_id"
+_KEY_UPLOAD_DATE: Final[str] = "upload_date"
+_KEY_DESCRIPTION: Final[str] = "description"
+_KEY_TITLE: Final[str] = "title"
+_METRIC_STATUS_SUCCESS: Final[str] = "success"
+_METRIC_STATUS_FAILURE: Final[str] = "failure"
+_METRIC_INCREMENT_ONE: Final[float] = 1.0
+_LABEL_ERROR_TYPE: Final[str] = "error_type"
+_ERROR_TYPE_EMPTY_METADATA: Final[str] = "empty_metadata"
+_LABEL_MODALITY: Final[str] = "modality"
+_MODALITY_URL: Final[str] = "url"
+_LABEL_STATUS: Final[str] = "status"
 
 
 class NativeMediaIngestionAdapter(MediaIngestionPort):
@@ -89,17 +142,17 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
 
     def __init__(
         self,
-        request_timeout: float = 30.0,
+        request_timeout: float = DEFAULT_REQUEST_TIMEOUT_SECONDS,
         header_generator: RandomHeaderGenerator | None = None,
-        whisper_concurrency_limit: int = 2,
+        whisper_concurrency_limit: int = DEFAULT_WHISPER_CONCURRENCY_LIMIT,
         cookie_file: Path | str | None = None,
         js_runtime_name: str | None = None,
         metrics_port: MetricsPort | None = None,
         taxonomy_port: ChannelTaxonomyPort | None = None,
-        whisper_device: str = "auto",
-        whisper_compute_type: str = "auto",
+        whisper_device: str = DEFAULT_WHISPER_DEVICE,
+        whisper_compute_type: str = DEFAULT_WHISPER_COMPUTE_TYPE,
         whisper_vad_filter: bool = True,
-        whisper_model: str = "base",
+        whisper_model: str = DEFAULT_WHISPER_MODEL,
         enable_rss_fast_path: bool = True,
         http_client: httpx.Client | None = None,
         transcriber: FasterWhisperEngine | None = None,
@@ -149,7 +202,7 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             return self._http_client
         with self._http_client_lock:
             if self._http_client is None:
-                http2_available = importlib.util.find_spec("h2") is not None
+                http2_available = importlib.util.find_spec(_HTTP2_MODULE_NAME) is not None
                 self._http_client = httpx.Client(
                     timeout=self.request_timeout,
                     limits=httpx.Limits(
@@ -181,7 +234,7 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
 
     def _detect_js_runtime(self) -> str | None:
         """Auto-detect available JavaScript runtime for yt-dlp challenge solving."""
-        for candidate in ("node", "deno", "bun"):
+        for candidate in _JS_RUNTIME_CANDIDATES:
             if shutil.which(candidate):
                 return candidate
         return None
@@ -189,8 +242,8 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
     def _build_ydl_opts(self, base_opts: dict[str, Any]) -> dict[str, Any]:
         """Construct fully-configured yt-dlp options with headers, cookies, and JS runtime."""
         opts = dict(base_opts)
-        if "http_headers" not in opts:
-            opts["http_headers"] = self._header_generator.get_random_headers()
+        if _YTDLP_OPT_HTTP_HEADERS not in opts:
+            opts[_YTDLP_OPT_HTTP_HEADERS] = self._header_generator.get_random_headers()
 
         # Inject Netscape authentication cookies if file exists
         if (
@@ -198,11 +251,11 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             and self._cookie_file.exists()
             and self._cookie_file.stat().st_size > 0
         ):
-            opts["cookiefile"] = str(self._cookie_file)
+            opts[_YTDLP_OPT_COOKIEFILE] = str(self._cookie_file)
 
         # Inject JavaScript runtime for YouTube n-sig challenge solving
         if self._js_runtime_name:
-            opts["js_runtimes"] = {self._js_runtime_name: {}}
+            opts[_YTDLP_OPT_JS_RUNTIMES] = {self._js_runtime_name: {}}
 
         return opts
 
@@ -215,8 +268,8 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
 
     def _sanitize_fs_name(self, name: str) -> str:
         """Sanitize channel or video title for filesystem safety."""
-        cleaned = _ILLEGAL_FS_CHARS.sub("_", name).strip()
-        return cleaned or "Unknown_Channel"
+        cleaned = _ILLEGAL_FS_CHARS.sub(_ILLEGAL_FS_REPLACEMENT, name).strip()
+        return cleaned or _UNKNOWN_CHANNEL_NAME
 
     def _find_native_subtitle_url(self, info: Mapping[str, Any]) -> str | None:
         """Search for native spoken subtitle URL, strictly rejecting tlang= translations."""
@@ -245,35 +298,32 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
     def _handle_yt_dlp_error(self, exc: Exception) -> None:
         """Translate yt-dlp internal exceptions to canonical domain exception hierarchy."""
         msg = str(exc)
-        if "429" in msg or "Too Many Requests" in msg:
+        if any(marker in msg for marker in _RATE_LIMIT_MARKERS):
             raise RateLimitExceededError(f"Upstream rate limit exceeded (HTTP 429): {msg}") from exc
-        if "Sign in to confirm you’re not a bot" in msg or "confirm you're not a bot" in msg:
+        if any(marker in msg for marker in _BOT_CHALLENGE_MARKERS):
             raise IngestionNetworkError(
                 f"YouTube bot-detection challenge triggered. Use active session cookies via 'cresmo export-cookies': {msg}"
             ) from exc
-        if any(
-            term in msg
-            for term in ("Connection reset", "timed out", "Name or service not known", "Network")
-        ):
+        if any(term in msg for term in _NETWORK_ERROR_MARKERS):
             raise IngestionNetworkError(f"Ingestion network connectivity error: {msg}") from exc
         raise CresmoInfrastructureError(f"Media extraction infrastructure error: {msg}") from exc
 
     def _extract_channel_name(self, info: Mapping[str, Any]) -> str:
         """Extract and sanitize channel/uploader name from yt-dlp metadata."""
         return self._sanitize_fs_name(
-            str(info.get("channel") or info.get("uploader") or "Unknown_Channel")
+            str(info.get(_KEY_CHANNEL) or info.get(_KEY_UPLOADER) or _UNKNOWN_CHANNEL_NAME)
         )
 
     def _transcribe_audio_fallback(self, video_url: str) -> str:
         """Download audio to ephemeral scratch dir, transcribe via FasterWhisperEngine, and clean up."""
-        with tempfile.TemporaryDirectory(prefix="cresmo_scratch_") as scratch_str:
+        with tempfile.TemporaryDirectory(prefix=_SCRATCH_DIR_PREFIX) as scratch_str:
             scratch_path = Path(scratch_str)
             ydl_opts: dict[str, Any] = self._build_ydl_opts(
                 {
-                    "format": "bestaudio/best",
-                    "outtmpl": str(scratch_path / "%(id)s.%(ext)s"),
-                    "quiet": True,
-                    "no_warnings": True,
+                    _YTDLP_OPT_FORMAT: _YTDLP_BEST_AUDIO_FORMAT,
+                    _YTDLP_OPT_OUTTMPL: str(scratch_path / _YTDLP_OUTTMPL_PATTERN),
+                    _YTDLP_OPT_QUIET: True,
+                    _YTDLP_OPT_NO_WARNINGS: True,
                 }
             )
 
@@ -286,7 +336,7 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             except Exception as exc:  # noqa: BLE001
                 self._handle_yt_dlp_error(exc)
 
-            downloaded_files = list(scratch_path.glob("*.*"))
+            downloaded_files = list(scratch_path.glob(_SCRATCH_GLOB_ALL))
             if not downloaded_files:
                 raise IngestionNetworkError(
                     f"yt-dlp completed audio download but no file was found in {scratch_path}"
@@ -303,13 +353,13 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         """Extract metadata dictionary from yt-dlp while pruning DASH/HLS manifest parsing."""
         ydl_opts: dict[str, Any] = self._build_ydl_opts(
             {
-                "skip_download": True,
-                "ignore_no_formats_error": True,
-                "extractor_args": {
-                    "youtube": {"skip": list(YTDLP_METADATA_SKIP_MANIFESTS)},
+                _YTDLP_OPT_SKIP_DOWNLOAD: True,
+                _YTDLP_OPT_IGNORE_NO_FORMATS: True,
+                _YTDLP_OPT_EXTRACTOR_ARGS: {
+                    _YTDLP_EXTRACTOR_YOUTUBE: {_YTDLP_EXTRACTOR_SKIP: list(YTDLP_METADATA_SKIP_MANIFESTS)},
                 },
-                "quiet": True,
-                "no_warnings": True,
+                _YTDLP_OPT_QUIET: True,
+                _YTDLP_OPT_NO_WARNINGS: True,
             }
         )
         try:
@@ -332,7 +382,7 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         info: Mapping[str, Any],
     ) -> str:
         """Resolve transcript text either from native subtitles or Whisper fallback."""
-        actual_video_id = str(info.get("id") or self._extract_video_id(video_url))
+        actual_video_id = str(info.get(_KEY_ID) or self._extract_video_id(video_url))
 
         # Check for native subtitles (rejecting tlang=)
         sub_url = self._find_native_subtitle_url(info)
@@ -367,7 +417,9 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
     @staticmethod
     def _extract_channel_id(info: Mapping[str, Any]) -> ChannelId | None:
         """Extract canonical ChannelId from yt-dlp video metadata if present."""
-        raw_channel_id = str(info.get("channel_id") or info.get("uploader_id") or "").strip()
+        raw_channel_id = str(
+            info.get(_KEY_CHANNEL_ID) or info.get(_KEY_UPLOADER_ID) or ""
+        ).strip()
         return ChannelId.extract_from_text(raw_channel_id)
 
     def _build_raw_transcript_aggregate(
@@ -378,13 +430,13 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         channel_name: str,
     ) -> StageTranscript:
         """Construct domain StageTranscript entity from resolved metadata and body."""
-        actual_video_id = str(info.get("id") or self._extract_video_id(video_url))
+        actual_video_id = str(info.get(_KEY_ID) or self._extract_video_id(video_url))
         content_id = ContentId.extract_from_text(actual_video_id) or ContentId.from_url_or_token(
             actual_video_id
         )
         resolved_channel_name = ChannelName.from_string(channel_name)
         category, _ = self._taxonomy_port.classify(resolved_channel_name)
-        upload_date = self._parse_upload_date(info.get("upload_date"))
+        upload_date = self._parse_upload_date(info.get(_KEY_UPLOAD_DATE))
 
         resolved_channel_id = self._extract_channel_id(info)
 
@@ -395,12 +447,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         )
         provenance = MediaProvenance.create(
             url=video_url,
-            description=str(info.get("description") or ""),
+            description=str(info.get(_KEY_DESCRIPTION) or ""),
             publication_date=upload_date,
         )
         content = Content(
             id=content_id,
-            title=str(info.get("title") or ""),
+            title=str(info.get(_KEY_TITLE) or ""),
             text=body,
         )
         return StageTranscript(
@@ -419,16 +471,16 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         Whisper transcription with RAII temporary scratch storage.
         """
         start_time = time.perf_counter()
-        status = "success"
+        status = _METRIC_STATUS_SUCCESS
 
         try:
             info = self._fetch_video_metadata(video_url)
             if not info:
-                status = "failure"
+                status = _METRIC_STATUS_FAILURE
                 self._metrics_port.increment_counter(
                     MetricName.INGESTION_FAILURES,
-                    1.0,
-                    labels={"error_type": "empty_metadata"},
+                    _METRIC_INCREMENT_ONE,
+                    labels={_LABEL_ERROR_TYPE: _ERROR_TYPE_EMPTY_METADATA},
                 )
                 return None
 
@@ -441,11 +493,11 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
                 channel_name=channel_name,
             )
         except Exception as exc:
-            status = "failure"
+            status = _METRIC_STATUS_FAILURE
             self._metrics_port.increment_counter(
                 MetricName.INGESTION_FAILURES,
-                1.0,
-                labels={"error_type": type(exc).__name__},
+                _METRIC_INCREMENT_ONE,
+                labels={_LABEL_ERROR_TYPE: type(exc).__name__},
             )
             raise
         finally:
@@ -454,8 +506,8 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
                 MetricName.MEDIA_INGESTION_DURATION,
                 elapsed,
                 labels={
-                    "modality": "url",
-                    "status": status,
+                    _LABEL_MODALITY: _MODALITY_URL,
+                    _LABEL_STATUS: status,
                 },
             )
 
@@ -480,9 +532,9 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         """Resolve YouTube channel URL or feed identifier from a video URL."""
         ydl_opts: dict[str, Any] = self._build_ydl_opts(
             {
-                "extract_flat": True,
-                "quiet": True,
-                "no_warnings": True,
+                _YTDLP_OPT_EXTRACT_FLAT: True,
+                _YTDLP_OPT_QUIET: True,
+                _YTDLP_OPT_NO_WARNINGS: True,
             }
         )
         try:

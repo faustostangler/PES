@@ -9,11 +9,16 @@ from __future__ import annotations
 import contextlib
 import sys
 import threading
-from typing import Any
+from typing import Any, Final
 
 __version__ = "0.1.0"
 
 __all__ = ["__version__"]
+
+_PYTHON_313_VERSION: Final[tuple[int, int]] = (3, 13)
+_THREADING_DELETE_DUMMY_ATTR: Final[str] = "_DeleteDummyThreadOnDel"
+_THREADING_ACTIVE_LIMBO_LOCK_ATTR: Final[str] = "_active_limbo_lock"
+_THREADING_ACTIVE_ATTR: Final[str] = "_active"
 
 
 def _patch_python313_threading_shutdown() -> None:
@@ -25,18 +30,19 @@ def _patch_python313_threading_shutdown() -> None:
     `with _active_limbo_lock:`, triggering a noisy TypeError: 'NoneType' object does not support
     the context manager protocol.
     """
-    if hasattr(threading, "_DeleteDummyThreadOnDel"):
+    dummy_cls = getattr(threading, _THREADING_DELETE_DUMMY_ATTR, None)
+    if dummy_cls is not None:
 
         def _safe_dummy_del(self: Any) -> None:
-            lock = getattr(threading, "_active_limbo_lock", None)
+            lock = getattr(threading, _THREADING_ACTIVE_LIMBO_LOCK_ATTR, None)
             if lock is not None:
                 with contextlib.suppress(TypeError, KeyError, AttributeError), lock:
-                    active = getattr(threading, "_active", None)
+                    active = getattr(threading, _THREADING_ACTIVE_ATTR, None)
                     if active and active.get(self._tident) is self._dummy_thread:
                         active.pop(self._tident, None)
 
-        threading._DeleteDummyThreadOnDel.__del__ = _safe_dummy_del
+        dummy_cls.__del__ = _safe_dummy_del
 
 
-if sys.version_info[:2] == (3, 13):
+if sys.version_info[:2] == _PYTHON_313_VERSION:
     _patch_python313_threading_shutdown()

@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import importlib.metadata
 import json
-from typing import Any, Literal
+from typing import Any, Final, Literal
 
 DEFAULT_LANGFUSE_ENVIRONMENT: str = "staging"
 LANGFUSE_ENVIRONMENT_PATTERN: str = r"^(?!langfuse)[a-z0-9-_]{1,40}$"
@@ -48,15 +48,20 @@ DEFAULT_BENCHMARK_MODELS: tuple[str, ...] = (
     "gemini:gemini-3.8-flash",
     "gemini:gemini-4-hydrogen",
 )
+_DISTRIBUTION_PACKAGE_NAME: Final[str] = "pes"
+_DEV_VERSION_FALLBACK: Final[str] = "0.0.0-dev"
+_PIPELINE_VERSION_PREFIX: Final[str] = "cresmo:v"
+_JSON_ARRAY_PREFIX: Final[str] = "["
+_CSV_DELIMITER: Final[str] = ","
 
 
 def resolve_default_pipeline_version() -> str:
     """Resolve canonical pipeline version dynamically from distribution metadata (ADR-063)."""
     try:
-        pkg_version = importlib.metadata.version("pes")
+        pkg_version = importlib.metadata.version(_DISTRIBUTION_PACKAGE_NAME)
     except importlib.metadata.PackageNotFoundError:
-        pkg_version = "0.0.0-dev"
-    return f"cresmo:v{pkg_version}"
+        pkg_version = _DEV_VERSION_FALLBACK
+    return f"{_PIPELINE_VERSION_PREFIX}{pkg_version}"
 
 
 def normalize_str_choice(value: Any) -> Any:
@@ -72,12 +77,12 @@ def parse_comma_separated_strings(value: Any) -> Any:
         stripped = value.strip()
         if not stripped:
             return ()
-        if stripped.startswith("["):
+        if stripped.startswith(_JSON_ARRAY_PREFIX):
             parsed = json.loads(stripped)
             if not isinstance(parsed, list):
                 raise ValueError("Expected JSON array for sequence setting.")
             return tuple(str(item).strip() for item in parsed if str(item).strip())
-        return tuple(part.strip() for part in stripped.split(",") if part.strip())
+        return tuple(part.strip() for part in stripped.split(_CSV_DELIMITER) if part.strip())
     if isinstance(value, (list, tuple)):
         return tuple(str(item).strip() for item in value if str(item).strip())
     return value

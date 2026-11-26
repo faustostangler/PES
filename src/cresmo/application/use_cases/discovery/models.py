@@ -11,12 +11,17 @@ import threading
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Final
 
 from cresmo.domain.value_objects import (
     ContentId,
     SourceModality,
     SyncFilterCriteria,
 )
+
+DEFAULT_CHANNEL_MAX_VIDEOS: Final[int] = 50
+DEFAULT_RAW_DATA_DIR: Final[Path] = Path("data/raw")
+DEFAULT_PLAYLIST_MANIFEST_PATH: Final[Path] = Path("data/playlist.txt")
 
 
 @dataclass(frozen=True)
@@ -48,7 +53,7 @@ class BatchDiscoveryQuery:
     raw_dir: Path | None = None
     scan_raw: bool = True
     lookback_days: int | None = None
-    channel_max_videos: int = 50
+    channel_max_videos: int = DEFAULT_CHANNEL_MAX_VIDEOS
     discovery_workers: int | None = None
     enable_channel_crawler: bool = True
     filter_criteria: SyncFilterCriteria = field(default_factory=SyncFilterCriteria)
@@ -59,8 +64,8 @@ class BatchDiscoveryQuery:
 class DiscoveryPaths:
     """Immutable filesystem path bundle injected into DiscoverBatchSourcesUseCase (ADR-074)."""
 
-    raw_dir: Path = Path("data/raw")
-    playlist_path: Path = Path("data/playlist.txt")
+    raw_dir: Path = DEFAULT_RAW_DATA_DIR
+    playlist_path: Path = DEFAULT_PLAYLIST_MANIFEST_PATH
     playlist_priority_path: Path | None = None
     priority_texts_dir: Path | None = None
 

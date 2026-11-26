@@ -11,9 +11,28 @@ import math
 from collections.abc import Callable
 from dataclasses import dataclass
 from enum import StrEnum
-from typing import Any
+from typing import Any, Final
 
 from cresmo.domain.exceptions import DomainValidationError
+
+DEFAULT_LEXICAL_IDENTITY_THRESHOLD: Final[float] = 0.95
+DEFAULT_MAX_LEXICAL_WORD_DELTA: Final[float] = 0.03
+DEFAULT_SEMANTIC_SIMILARITY_THRESHOLD: Final[float] = 0.88
+DEFAULT_MAX_NOVEL_PARAGRAPHS: Final[int] = 0
+DEFAULT_LONG_UNIT_WORD_CUTOFF: Final[int] = 120
+DEFAULT_SLIDING_WINDOW_SENTENCES: Final[int] = 3
+DEFAULT_SLIDING_WINDOW_OVERLAP: Final[int] = 1
+DEFAULT_PASS_INDEX: Final[int] = 1
+
+_KEY_IS_SATURATED: Final[str] = "is_saturated"
+_KEY_REASON: Final[str] = "reason"
+_KEY_LEXICAL_JACCARD: Final[str] = "lexical_jaccard"
+_KEY_WORD_DELTA_RATIO: Final[str] = "word_delta_ratio"
+_KEY_MAX_NOVELTY: Final[str] = "max_novelty"
+_KEY_NOVEL_PARAGRAPHS: Final[str] = "novel_paragraphs"
+_KEY_TOTAL_PARAGRAPHS: Final[str] = "total_paragraphs"
+_KEY_PRESERVE_BASELINE: Final[str] = "preserve_baseline"
+_KEY_PROVIDER: Final[str] = "provider"
 
 
 def _validate_unit_float(value: float, field_name: str, *, allow_zero: bool) -> None:
@@ -72,13 +91,13 @@ class SaturationThresholds:
         sliding_window_overlap: Number of overlapping sentences between consecutive windows.
     """
 
-    lexical_identity_threshold: float = 0.95
-    max_lexical_word_delta: float = 0.03
-    semantic_similarity_threshold: float = 0.88
-    max_novel_paragraphs_for_saturation: int = 0
-    long_unit_word_cutoff: int = 120
-    sliding_window_sentences: int = 3
-    sliding_window_overlap: int = 1
+    lexical_identity_threshold: float = DEFAULT_LEXICAL_IDENTITY_THRESHOLD
+    max_lexical_word_delta: float = DEFAULT_MAX_LEXICAL_WORD_DELTA
+    semantic_similarity_threshold: float = DEFAULT_SEMANTIC_SIMILARITY_THRESHOLD
+    max_novel_paragraphs_for_saturation: int = DEFAULT_MAX_NOVEL_PARAGRAPHS
+    long_unit_word_cutoff: int = DEFAULT_LONG_UNIT_WORD_CUTOFF
+    sliding_window_sentences: int = DEFAULT_SLIDING_WINDOW_SENTENCES
+    sliding_window_overlap: int = DEFAULT_SLIDING_WINDOW_OVERLAP
 
     def __post_init__(self) -> None:
         """Enforce construction-time numerical bounds and type invariants."""
@@ -190,15 +209,15 @@ class SaturationVerdict:
             dict[str, Any]: Scalar verdict attributes suitable for trace spans and candidate metadata.
         """
         return {
-            "is_saturated": self.is_saturated,
-            "reason": str(self.reason.value),
-            "lexical_jaccard": float(self.lexical_jaccard),
-            "word_delta_ratio": float(self.word_delta_ratio),
-            "max_novelty": float(self.max_novelty),
-            "novel_paragraphs": self.novel_paragraphs,
-            "total_paragraphs": self.total_paragraphs,
-            "preserve_baseline": self.preserve_baseline,
-            "provider": self.provider,
+            _KEY_IS_SATURATED: self.is_saturated,
+            _KEY_REASON: str(self.reason.value),
+            _KEY_LEXICAL_JACCARD: float(self.lexical_jaccard),
+            _KEY_WORD_DELTA_RATIO: float(self.word_delta_ratio),
+            _KEY_MAX_NOVELTY: float(self.max_novelty),
+            _KEY_NOVEL_PARAGRAPHS: self.novel_paragraphs,
+            _KEY_TOTAL_PARAGRAPHS: self.total_paragraphs,
+            _KEY_PRESERVE_BASELINE: self.preserve_baseline,
+            _KEY_PROVIDER: self.provider,
         }
 
 
@@ -208,7 +227,7 @@ SaturationPolicy = Callable[[str, str, int], SaturationVerdict]
 def never_saturate(
     baseline_text: str,
     current_text: str,
-    pass_index: int = 1,
+    pass_index: int = DEFAULT_PASS_INDEX,
 ) -> SaturationVerdict:
     """Return a disabled convergence verdict that never terminates multi-pass refinement early.
 
@@ -229,5 +248,5 @@ def never_saturate(
         novel_paragraphs=0,
         total_paragraphs=0,
         preserve_baseline=False,
-        provider="disabled",
+        provider=SaturationReason.DISABLED.value,
     )

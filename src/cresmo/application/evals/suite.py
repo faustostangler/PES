@@ -11,6 +11,7 @@ from __future__ import annotations
 import time
 from collections.abc import Callable, Mapping, Sequence
 from pathlib import Path
+from typing import Final
 
 from cresmo.application.evals.calibration_metrics import (
     CalibrationResultSet,
@@ -28,6 +29,8 @@ from cresmo.application.evals.executor import (
 )
 from cresmo.application.evals.specs import (
     DEFAULT_REPORTS_DIR,
+    DISPLAY_LIST_SEPARATOR,
+    PROVIDER_MODEL_DELIMITER,
     CalibrationThresholds,
     PromptTemplateLookup,
     StageCalibrationSpec,
@@ -40,6 +43,11 @@ from cresmo.application.ports.evals import (
     CalibrationDatasetPort,
     CalibrationReportWriterPort,
 )
+
+DEFAULT_SUITE_DELAY_SECONDS: Final[float] = 4.2
+DEFAULT_SUITE_JITTER_SECONDS: Final[float] = 0.8
+DEFAULT_SUITE_MAX_RETRY_WAIT_SECONDS: Final[float] = 60.0
+DEFAULT_STAGE_PASS_THRESHOLD: Final[float] = 0.75
 
 _ReportContentBuilder = Callable[[StageCalibrationSpec, CalibrationResultSet, str, str], str]
 
@@ -59,9 +67,9 @@ def run_calibration_suite(
     seed_only: bool = False,
     reports_dir: Path = DEFAULT_REPORTS_DIR,
     output_path: Path | None = None,
-    delay: float = 4.2,
-    jitter: float = 0.8,
-    max_retry_wait: float = 60.0,
+    delay: float = DEFAULT_SUITE_DELAY_SECONDS,
+    jitter: float = DEFAULT_SUITE_JITTER_SECONDS,
+    max_retry_wait: float = DEFAULT_SUITE_MAX_RETRY_WAIT_SECONDS,
     prompt_lookup: PromptTemplateLookup | None = None,
     is_quota_exhausted: Callable[[Exception], bool] | None = None,
     report_builder: _ReportContentBuilder | None = None,
@@ -112,9 +120,9 @@ def run_calibration_suite(
         CalibrationEvent(
             kind=CalibrationEventKind.SUITE_STARTED,
             message=(
-                f"Stages scheduled ({len(selected_stages)}): {', '.join(selected_stages)} | "
+                f"Stages scheduled ({len(selected_stages)}): {DISPLAY_LIST_SEPARATOR.join(selected_stages)} | "
                 f"Models scheduled ({len(selected_models)}): "
-                f"{', '.join(f'{p}:{m}' for p, m in selected_models)}"
+                f"{DISPLAY_LIST_SEPARATOR.join(f'{p}{PROVIDER_MODEL_DELIMITER}{m}' for p, m in selected_models)}"
             ),
         ),
     )
@@ -127,7 +135,7 @@ def run_calibration_suite(
             dataset_path=dataset_path,
             seed_only=seed_only,
         )
-        active_threshold = stage_thresholds.get(stage_name, 0.75)
+        active_threshold = stage_thresholds.get(stage_name, DEFAULT_STAGE_PASS_THRESHOLD)
         config_hash = compute_config_hash(
             spec,
             items,

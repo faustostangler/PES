@@ -11,6 +11,7 @@ import threading
 from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import UTC, datetime, timedelta
+from typing import Final
 
 from cresmo.application.ports import ChannelTaxonomyPort, MediaIngestionPort
 from cresmo.application.use_cases.discovery.manifests import (
@@ -27,6 +28,10 @@ from cresmo.domain.value_objects import (
     SourceModality,
     SyncFilterCriteria,
 )
+from cresmo.domain.value_objects.media import ALLOWED_URL_SCHEMES, DEFAULT_HTTPS_SCHEME
+
+CHANNEL_RESOLVER_THREAD_PREFIX: Final[str] = "CresmoChannelResolver"
+FEED_PROBER_THREAD_PREFIX: Final[str] = "CresmoFeedProber"
 
 
 class ChannelFeedCrawlerService:
@@ -62,7 +67,7 @@ class ChannelFeedCrawlerService:
         )
         with ThreadPoolExecutor(
             max_workers=max_workers,
-            thread_name_prefix="CresmoChannelResolver",
+            thread_name_prefix=CHANNEL_RESOLVER_THREAD_PREFIX,
         ) as executor:
             future_to_vurl = {
                 executor.submit(self.media_ingestion_port.extract_channel_url_from_video, vu): vu
@@ -124,7 +129,7 @@ class ChannelFeedCrawlerService:
 
         with ThreadPoolExecutor(
             max_workers=max_workers,
-            thread_name_prefix="CresmoFeedProber",
+            thread_name_prefix=FEED_PROBER_THREAD_PREFIX,
         ) as executor:
             future_to_url = {
                 executor.submit(
@@ -170,7 +175,9 @@ class ChannelFeedCrawlerService:
     ) -> list[str]:
         """Fetch and filter recent uploads within lookback window for a single channel feed."""
         formatted_url = (
-            chan_url if chan_url.startswith(("http://", "https://")) else f"https://{chan_url}"
+            chan_url
+            if chan_url.startswith(ALLOWED_URL_SCHEMES)
+            else f"{DEFAULT_HTTPS_SCHEME}{chan_url}"
         )
         feed_query = ChannelFeedQuery(
             channel_url=formatted_url,

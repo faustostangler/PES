@@ -11,6 +11,7 @@ Conforms to:
 from __future__ import annotations
 
 import json
+from typing import Final
 
 from cresmo.application.ports import (
     LLMTransformationPort,
@@ -22,6 +23,16 @@ from cresmo.application.services.json_parser import extract_json_data
 from cresmo.domain.entities import MapOfContent, PipelineSessionId, UserIdentity
 from cresmo.domain.exceptions import DomainValidationError
 from cresmo.domain.value_objects import NoteTitle, PromptKey
+
+DEFAULT_MOCS_SESSION_ID: Final[str] = "system:mocs"
+TRACE_ID_MOCS_RECONCILIATION: Final[str] = "mocs_reconciliation"
+
+_KEY_TITLE: Final[str] = "title"
+_KEY_TYPE: Final[str] = "type"
+_KEY_DOMAIN: Final[str] = "domain"
+_KEY_THEME: Final[str] = "theme"
+_KEY_OVERVIEW: Final[str] = "overview"
+_KEY_ASSOCIATED_NOTES: Final[str] = "associated_notes"
 
 
 class ReconcileMOCsUseCase:
@@ -71,7 +82,8 @@ class ReconcileMOCsUseCase:
         # Step 1: Read all existing atomic notes from vault.
         notes = self.vault_port.get_all_atomic_notes()
         note_summaries = [
-            {"title": n.title.value, "type": n.note_type.value, "domain": n.domain} for n in notes
+            {_KEY_TITLE: n.title.value, _KEY_TYPE: n.note_type.value, _KEY_DOMAIN: n.domain}
+            for n in notes
         ]
 
         # Step 2: Prompt LLM to cluster notes into thematic Maps of Content.
@@ -80,7 +92,7 @@ class ReconcileMOCsUseCase:
             notes_json=json.dumps(note_summaries, ensure_ascii=False),
         )
 
-        actual_session_id = session_id.value if session_id is not None else "system:mocs"
+        actual_session_id = session_id.value if session_id is not None else DEFAULT_MOCS_SESSION_ID
         actual_user_id = (
             user_id.value if user_id is not None else UserIdentity.worker().value
         )
@@ -88,7 +100,7 @@ class ReconcileMOCsUseCase:
         response = self.llm_synthesis_port.transform(
             prompt=chat_prompt,
             temperature=self.temperature,
-            trace_id="mocs_reconciliation",
+            trace_id=TRACE_ID_MOCS_RECONCILIATION,
             session_id=actual_session_id,
             user_id=actual_user_id,
         )
@@ -103,14 +115,14 @@ class ReconcileMOCsUseCase:
         for entry in data:
             if not isinstance(entry, dict):
                 continue
-            title_str = entry.get("title")
+            title_str = entry.get(_KEY_TITLE)
             if not title_str or not isinstance(title_str, str):
                 continue
             title = NoteTitle(title_str)
-            theme = str(entry.get("theme", "")).strip()
-            overview = str(entry.get("overview", "")).strip()
+            theme = str(entry.get(_KEY_THEME, "")).strip()
+            overview = str(entry.get(_KEY_OVERVIEW, "")).strip()
 
-            raw_associated = entry.get("associated_notes", [])
+            raw_associated = entry.get(_KEY_ASSOCIATED_NOTES, [])
             seen_associated: set[str] = set()
             associated_notes: list[NoteTitle] = []
             for raw_note in raw_associated:

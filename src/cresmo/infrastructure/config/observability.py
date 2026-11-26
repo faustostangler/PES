@@ -10,7 +10,7 @@ Conforms to:
 from __future__ import annotations
 
 import re
-from typing import Any, Literal
+from typing import Any, Final, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, SecretStr, field_validator
 
@@ -23,6 +23,11 @@ from cresmo.infrastructure.config.catalog import (
 )
 
 _LANGFUSE_ENVIRONMENT_REGEX = re.compile(LANGFUSE_ENVIRONMENT_PATTERN)
+DEFAULT_LANGFUSE_HOST: Final[str] = "https://cloud.langfuse.com"
+DEFAULT_LANGFUSE_TIMEOUT_SECONDS: Final[int] = 30
+DEFAULT_PROMETHEUS_ENDPOINT: Final[str] = "http://localhost:9090"
+DEFAULT_LOGGING_LEVEL: Final[str] = "WARNING"
+DEFAULT_PREFLIGHT_PROBE_TIMEOUT_SECONDS: Final[float] = 2.0
 
 
 class LangfuseSettings(BaseModel):
@@ -39,7 +44,7 @@ class LangfuseSettings(BaseModel):
         description="Langfuse public key for evaluation and observability.",
     )
     host: str = Field(
-        default="https://cloud.langfuse.com",
+        default=DEFAULT_LANGFUSE_HOST,
         description="Langfuse telemetry endpoint URL.",
     )
     environment: str = Field(
@@ -51,7 +56,7 @@ class LangfuseSettings(BaseModel):
         description="Active prompt label tag in Langfuse (e.g. 'production', 'staging').",
     )
     timeout_seconds: int = Field(
-        default=30,
+        default=DEFAULT_LANGFUSE_TIMEOUT_SECONDS,
         ge=1,
         description="Read and connect timeout in seconds for Langfuse client and OTel exporter.",
     )
@@ -81,7 +86,7 @@ class PrometheusSettings(BaseModel):
         description="Whether Prometheus SRE Golden Signals and DORA OTLP push collection is enabled.",
     )
     endpoint: str = Field(
-        default="http://localhost:9090",
+        default=DEFAULT_PROMETHEUS_ENDPOINT,
         description="Prometheus v3 server base URL hosting /api/v1/otlp/v1/metrics and /-/ready.",
     )
 
@@ -92,7 +97,7 @@ class LoggingSettings(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     level: str = Field(
-        default="WARNING",
+        default=DEFAULT_LOGGING_LEVEL,
         description="Root logging level (DEBUG, INFO, WARNING, ERROR).",
     )
     format: Literal["json", "text"] = Field(
@@ -128,7 +133,7 @@ class RuntimeTelemetrySettings(BaseModel):
         description="Enable active HTTP preflight probes before initializing telemetry or remote services.",
     )
     preflight_probe_timeout_seconds: float = Field(
-        default=2.0,
+        default=DEFAULT_PREFLIGHT_PROBE_TIMEOUT_SECONDS,
         gt=0.0,
         description="Socket timeout in seconds for active preflight probes (Langfuse, Ollama).",
     )

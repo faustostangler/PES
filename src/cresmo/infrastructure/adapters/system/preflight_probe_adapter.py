@@ -12,12 +12,23 @@ import os
 import shutil
 import urllib.error
 import urllib.request
+from http import HTTPStatus
 from pathlib import Path
+from typing import Final
 
 from cresmo.application.ports.preflight import PreflightProbePort
 
+DEFAULT_HTTP_PROBE_TIMEOUT_SECONDS: Final[float] = 1.0
+_HTTP_GET_METHOD: Final[str] = "GET"
+_HEADER_USER_AGENT: Final[str] = "User-Agent"
+_PROBE_USER_AGENT_VALUE: Final[str] = "CresmoPreflightProbe/1.0"
+_ATTR_STATUS: Final[str] = "status"
 
-def probe_http_endpoint(url: str, timeout_seconds: float = 1.0) -> bool:
+
+def probe_http_endpoint(
+    url: str,
+    timeout_seconds: float = DEFAULT_HTTP_PROBE_TIMEOUT_SECONDS,
+) -> bool:
     """Execute lightweight HTTP GET probe returning True if status < 500.
 
     Args:
@@ -30,12 +41,12 @@ def probe_http_endpoint(url: str, timeout_seconds: float = 1.0) -> bool:
     try:
         req = urllib.request.Request(
             url,
-            method="GET",
-            headers={"User-Agent": "CresmoPreflightProbe/1.0"},
+            method=_HTTP_GET_METHOD,
+            headers={_HEADER_USER_AGENT: _PROBE_USER_AGENT_VALUE},
         )
         with urllib.request.urlopen(req, timeout=timeout_seconds) as response:
-            status = getattr(response, "status", 200)
-            return bool(isinstance(status, int) and status < 500)
+            status = getattr(response, _ATTR_STATUS, HTTPStatus.OK)
+            return bool(isinstance(status, int) and status < HTTPStatus.INTERNAL_SERVER_ERROR)
     except (urllib.error.URLError, OSError, TimeoutError, ValueError):
         return False
 

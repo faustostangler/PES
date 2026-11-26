@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import re
 from pathlib import Path
+from typing import Final
 
 import yaml
 
@@ -19,6 +20,16 @@ from cresmo.infrastructure.adapters.obsidian.utils import (
     channel_to_slug,
     sanitize_filename,
 )
+
+_MARKDOWN_EXT: Final[str] = ".md"
+_MARKDOWN_GLOB_ALL: Final[str] = "**/*.md"
+_UTF8_ENCODING: Final[str] = "utf-8"
+_FRONTMATTER_FENCE: Final[str] = "---"
+_MOC_TYPE_VALUE: Final[str] = "moc"
+_MOC_NOTES_HEADING: Final[str] = "## Notas Associadas"
+_KEY_TITLE: Final[str] = "title"
+_KEY_TYPE: Final[str] = "type"
+_KEY_THEME: Final[str] = "theme"
 
 
 class MocVaultHandler:
@@ -31,25 +42,25 @@ class MocVaultHandler:
 
     def save_map_of_content(self, moc: MapOfContent) -> None:
         """Persist Map of Content in vault/MOCs/ atomically."""
-        target_path = self.mocs_dir / f"{sanitize_filename(moc.title.value)}.md"
+        target_path = self.mocs_dir / f"{sanitize_filename(moc.title.value)}{_MARKDOWN_EXT}"
 
         frontmatter_dict = {
-            "title": moc.title.value,
-            "type": "moc",
-            "theme": moc.theme,
+            _KEY_TITLE: moc.title.value,
+            _KEY_TYPE: _MOC_TYPE_VALUE,
+            _KEY_THEME: moc.theme,
         }
         frontmatter_yaml = yaml.dump(frontmatter_dict, allow_unicode=True, sort_keys=False)
 
         lines: list[str] = [
-            "---",
+            _FRONTMATTER_FENCE,
             frontmatter_yaml.strip(),
-            "---",
+            _FRONTMATTER_FENCE,
             "",
             f"# [[{moc.title.value}]]",
             "",
             moc.overview,
             "",
-            "## Notas Associadas",
+            _MOC_NOTES_HEADING,
         ]
         for note_title in moc.associated_notes:
             lines.append(f"- [[{note_title.value}]]")
@@ -71,9 +82,9 @@ class MocVaultHandler:
         pattern = re.compile(rf"\[\[{re.escape(old_val)}(\|.*?)?\]\]", re.IGNORECASE)
         updated_count = 0
 
-        for file_path in self.vault_dir.glob("**/*.md"):
+        for file_path in self.vault_dir.glob(_MARKDOWN_GLOB_ALL):
             try:
-                content = file_path.read_text(encoding="utf-8")
+                content = file_path.read_text(encoding=_UTF8_ENCODING)
             except OSError:
                 continue
 
@@ -99,7 +110,7 @@ class MocVaultHandler:
         cat_dir = self.master_dir / channel_to_slug(channel_category)
         cat_dir.mkdir(parents=True, exist_ok=True)
         channel_slug = channel_to_slug(channel_name)
-        filename = f"{channel_slug}_{part_number:03d}.md"
+        filename = f"{channel_slug}_{part_number:03d}{_MARKDOWN_EXT}"
         target_path = cat_dir / filename
         atomic_write(target_path, content)
         return target_path
@@ -114,7 +125,7 @@ class MocVaultHandler:
         channel_slug = channel_to_slug(channel_name)
         if not cat_dir.exists() or not cat_dir.is_dir():
             return
-        pattern = f"{channel_slug}_*.md"
+        pattern = f"{channel_slug}_*{_MARKDOWN_EXT}"
         for p in cat_dir.glob(pattern):
             if p.is_file():
                 p.unlink(missing_ok=True)

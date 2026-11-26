@@ -20,6 +20,18 @@ from cresmo.application.ports.embedding import TextEmbeddingPort
 from cresmo.domain.exceptions import EmbeddingInfrastructureError
 
 DEFAULT_OLLAMA_EMBEDDING_MODEL: Final[str] = "nomic-embed-text"
+DEFAULT_OLLAMA_BASE_URL: Final[str] = "http://localhost:11434"
+DEFAULT_OLLAMA_EMBED_TIMEOUT_SECONDS: Final[float] = 30.0
+OLLAMA_PROVIDER_NAME: Final[str] = "ollama"
+_OLLAMA_EMBED_PATH: Final[str] = "/api/embed"
+_URL_TRAILING_SLASH: Final[str] = "/"
+_UTF8_ENCODING: Final[str] = "utf-8"
+_CONTENT_TYPE_HEADER: Final[str] = "Content-Type"
+_CONTENT_TYPE_JSON: Final[str] = "application/json"
+_HTTP_POST_METHOD: Final[str] = "POST"
+_KEY_MODEL: Final[str] = "model"
+_KEY_INPUT: Final[str] = "input"
+_KEY_EMBEDDINGS: Final[str] = "embeddings"
 
 
 class OllamaEmbeddingAdapter(TextEmbeddingPort):
@@ -27,9 +39,9 @@ class OllamaEmbeddingAdapter(TextEmbeddingPort):
 
     def __init__(
         self,
-        base_url: str = "http://localhost:11434",
+        base_url: str = DEFAULT_OLLAMA_BASE_URL,
         model: str = DEFAULT_OLLAMA_EMBEDDING_MODEL,
-        timeout_seconds: float = 30.0,
+        timeout_seconds: float = DEFAULT_OLLAMA_EMBED_TIMEOUT_SECONDS,
     ) -> None:
         """Initialize the local Ollama embedding adapter.
 
@@ -38,14 +50,14 @@ class OllamaEmbeddingAdapter(TextEmbeddingPort):
             model: Ollama embedding model identifier.
             timeout_seconds: HTTP request timeout in seconds.
         """
-        self.base_url = base_url.rstrip("/")
+        self.base_url = base_url.rstrip(_URL_TRAILING_SLASH)
         self.model = model
         self.timeout_seconds = timeout_seconds
 
     @property
     def provider_name(self) -> str:
         """Return canonical provider identifier ('ollama')."""
-        return "ollama"
+        return OLLAMA_PROVIDER_NAME
 
     def embed_batch(self, texts: Sequence[str]) -> list[list[float]]:
         """Generate embedding vectors for a sequence of text units via Ollama.
@@ -64,18 +76,20 @@ class OllamaEmbeddingAdapter(TextEmbeddingPort):
         if not text_list:
             return []
 
-        endpoint = f"{self.base_url}/api/embed"
-        request_body = json.dumps({"model": self.model, "input": text_list}).encode("utf-8")
+        endpoint = f"{self.base_url}{_OLLAMA_EMBED_PATH}"
+        request_body = json.dumps(
+            {_KEY_MODEL: self.model, _KEY_INPUT: text_list}
+        ).encode(_UTF8_ENCODING)
         req = urllib.request.Request(
             endpoint,
             data=request_body,
-            headers={"Content-Type": "application/json"},
-            method="POST",
+            headers={_CONTENT_TYPE_HEADER: _CONTENT_TYPE_JSON},
+            method=_HTTP_POST_METHOD,
         )
 
         try:
             with urllib.request.urlopen(req, timeout=self.timeout_seconds) as response:
-                raw_body = response.read().decode("utf-8")
+                raw_body = response.read().decode(_UTF8_ENCODING)
                 payload: Any = json.loads(raw_body)
         except urllib.error.HTTPError as exc:
             raise EmbeddingInfrastructureError(
@@ -99,7 +113,7 @@ class OllamaEmbeddingAdapter(TextEmbeddingPort):
                 f"Ollama embedding response at {endpoint} must be a JSON object."
             )
 
-        raw_embeddings = payload.get("embeddings")
+        raw_embeddings = payload.get(_KEY_EMBEDDINGS)
         if not isinstance(raw_embeddings, list) or len(raw_embeddings) != len(text_list):
             actual_count = len(raw_embeddings) if isinstance(raw_embeddings, list) else 0
             raise EmbeddingInfrastructureError(

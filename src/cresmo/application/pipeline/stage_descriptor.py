@@ -11,7 +11,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Any, cast
+from typing import Any, Final, cast
 
 from cresmo.application.pipeline.context import PipelineExecutionContext
 from cresmo.application.ports.prompt import PromptProviderPort
@@ -27,6 +27,19 @@ from cresmo.domain.value_objects import (
     StageEvaluationSpec,
     never_saturate,
 )
+
+DEFAULT_STAGE_MAX_ATTEMPTS: Final[int] = 1
+MIN_STAGE_MAX_PASSES: Final[int] = 1
+DEFAULT_REFINE_PASS_NUM: Final[int] = 2
+TRANSCRIPT_FILE_EXTENSION: Final[str] = ".txt"
+REFINE_MODE_LABEL: Final[str] = "REFINE mode"
+
+_CTX_KEY_CURRENT_TEXT: Final[str] = "current_text"
+_CTX_KEY_PREV_PASS_NUM: Final[str] = "prev_pass_num"
+_CTX_KEY_PASS_NUM: Final[str] = "pass_num"
+_CTX_KEY_TOTAL_PASSES: Final[str] = "total_passes"
+_CTX_KEY_DRAFT_SECTION: Final[str] = "draft_section"
+_DRAFT_XML_TEMPLATE: Final[str] = '\n<draft pass="{pass_num}">\n{draft}\n</draft>\n'
 
 
 def _append_to_last_user_message(prompt: ChatPrompt, suffix: str) -> ChatPrompt:
@@ -73,15 +86,17 @@ class StageConfig[TSource, TOutput]:
     judge_prompt_key: PromptKey | None = None
     eval_spec: StageEvaluationSpec | None = None
     post_processor: Callable[[CandidateText, TSource], TOutput] | None = None
-    max_attempts: int = 1
+    max_attempts: int = DEFAULT_STAGE_MAX_ATTEMPTS
     blocking: bool = False
-    max_passes: int = 1
+    max_passes: int = MIN_STAGE_MAX_PASSES
     saturation_policy: SaturationPolicy = never_saturate
 
     def __post_init__(self) -> None:
         """Fail-fast validation for StageConfig invariants."""
-        if isinstance(self.max_passes, bool) or self.max_passes < 1:
-            raise ValueError(f"StageConfig.max_passes must be >= 1, got {self.max_passes!r}.")
+        if isinstance(self.max_passes, bool) or self.max_passes < MIN_STAGE_MAX_PASSES:
+            raise ValueError(
+                f"StageConfig.max_passes must be >= {MIN_STAGE_MAX_PASSES}, got {self.max_passes!r}."
+            )
         if not callable(self.saturation_policy):
             raise TypeError(
                 f"StageConfig.saturation_policy must be callable, got {type(self.saturation_policy).__name__}."
@@ -100,7 +115,7 @@ class StageConfig[TSource, TOutput]:
         effective_channel_id = context.channel.id.value if context.channel.id else ""
         raw_text = extract_source_text(source)  # type: ignore[arg-type]
 
-        raw_current_text = extra_context.get("current_text")
+        raw_current_text = extra_context.get(_CTX_KEY_CURRENT_TEXT)
         current_draft = (
             raw_current_text
             if isinstance(raw_current_text, str) and raw_current_text.strip()
@@ -109,13 +124,17 @@ class StageConfig[TSource, TOutput]:
         provider_kwargs = dict(extra_context)
         draft_section = ""
         if current_draft is not None:
-            raw_prev_pass = extra_context.get("prev_pass_num")
-            raw_pass_num = extra_context.get("pass_num", 2)
+            raw_prev_pass = extra_context.get(_CTX_KEY_PREV_PASS_NUM)
+            raw_pass_num = extra_context.get(_CTX_KEY_PASS_NUM, DEFAULT_REFINE_PASS_NUM)
             prev_pass_val = (
-                int(raw_prev_pass) if raw_prev_pass is not None else max(1, int(raw_pass_num) - 1)
+                int(raw_prev_pass)
+                if raw_prev_pass is not None
+                else max(MIN_STAGE_MAX_PASSES, int(raw_pass_num) - 1)
             )
-            draft_section = f'\n<draft pass="{prev_pass_val}">\n{current_draft}\n</draft>\n'
-            provider_kwargs.setdefault("draft_section", draft_section)
+            draft_section = _DRAFT_XML_TEMPLATE.format(
+                pass_num=prev_pass_val, draft=current_draft
+            )
+            provider_kwargs.setdefault(_CTX_KEY_DRAFT_SECTION, draft_section)
 
         base_prompt: ChatPrompt = prompt_provider.get_prompt(
             self.transform_prompt_key,
@@ -123,7 +142,7 @@ class StageConfig[TSource, TOutput]:
             channel_id=effective_channel_id,
             content_id=context.content.id.value,
             content_title=context.content.title,
-            file_name=f"{context.content.id.value}.txt",
+            file_name=f"{context.content.id.value}{TRANSCRIPT_FILE_EXTENSION}",
             raw_text=raw_text,
             **provider_kwargs,
         )
@@ -135,12 +154,12 @@ class StageConfig[TSource, TOutput]:
                 normalized_draft in msg.content for msg in base_prompt.messages
             )
             if not draft_already_rendered:
-                pass_num = extra_context.get("pass_num")
-                total_passes = extra_context.get("total_passes")
+                pass_num = extra_context.get(_CTX_KEY_PASS_NUM)
+                total_passes = extra_context.get(_CTX_KEY_TOTAL_PASSES)
                 pass_header = (
-                    f"Pass {pass_num}/{total_passes} — REFINE mode"
+                    f"Pass {pass_num}/{total_passes} — {REFINE_MODE_LABEL}"
                     if pass_num and total_passes
-                    else "REFINE mode"
+                    else REFINE_MODE_LABEL
                 )
                 draft_fallback_block = (
                     f"\n\n[{pass_header}: Iterative Expansion]\n"

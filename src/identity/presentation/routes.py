@@ -1,5 +1,7 @@
 """FastAPI Router exposing authentication, account, and PAT endpoints."""
 
+from typing import Final
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel, Field
 
@@ -20,28 +22,46 @@ from identity.domain.exceptions import (
     UserAlreadyExistsError,
     WeakPasswordError,
 )
-from identity.domain.value_objects import UserId
+from identity.domain.value_objects import Role, UserId
 from identity.presentation.composition import IdentityContainer, get_identity_container
-from identity.presentation.dependencies import get_current_user
+from identity.presentation.dependencies import (
+    AUTH_SCHEME_BEARER_HEADER,
+    WWW_AUTHENTICATE_HEADER,
+    get_current_user,
+)
 
-router = APIRouter(prefix="/auth", tags=["auth"])
+AUTH_ROUTER_PREFIX: Final[str] = "/auth"
+AUTH_ROUTER_TAG: Final[str] = "auth"
+ROUTE_TOKENS: Final[str] = "/tokens"
+
+MIN_EMAIL_LENGTH: Final[int] = 3
+MAX_EMAIL_LENGTH: Final[int] = 255
+MIN_PASSWORD_LENGTH: Final[int] = 8
+MIN_PAT_NAME_LENGTH: Final[int] = 1
+MAX_PAT_NAME_LENGTH: Final[int] = 100
+MIN_PAT_EXPIRATION_DAYS: Final[int] = 1
+MAX_PAT_EXPIRATION_DAYS: Final[int] = 365
+
+router = APIRouter(prefix=AUTH_ROUTER_PREFIX, tags=[AUTH_ROUTER_TAG])
 
 
 # Pydantic Schemas for HTTP Serialization & Validation
 class RegisterSchema(BaseModel):
-    email: str = Field(min_length=3, max_length=255)
-    password: str = Field(min_length=8)
+    email: str = Field(min_length=MIN_EMAIL_LENGTH, max_length=MAX_EMAIL_LENGTH)
+    password: str = Field(min_length=MIN_PASSWORD_LENGTH)
 
 
 class LoginSchema(BaseModel):
-    email: str = Field(min_length=3, max_length=255)
+    email: str = Field(min_length=MIN_EMAIL_LENGTH, max_length=MAX_EMAIL_LENGTH)
     password: str
 
 
 class CreatePATSchema(BaseModel):
-    name: str = Field(min_length=1, max_length=100)
+    name: str = Field(min_length=MIN_PAT_NAME_LENGTH, max_length=MAX_PAT_NAME_LENGTH)
     scopes: list[str] = Field(default_factory=list)
-    expires_in_days: int | None = Field(default=None, ge=1, le=365)
+    expires_in_days: int | None = Field(
+        default=None, ge=MIN_PAT_EXPIRATION_DAYS, le=MAX_PAT_EXPIRATION_DAYS
+    )
 
 
 class PATListItemSchema(BaseModel):
@@ -68,7 +88,7 @@ def register(
     dto = RegisterUserRequestDTO(
         email=payload.email,
         password=payload.password,
-        roles=["user"],
+        roles=[Role.USER.value],
     )
     try:
         return container.register_user_uc.execute(dto)
@@ -94,7 +114,7 @@ def login(
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid email or password.",
-            headers={"WWW-Authenticate": "Bearer"},
+            headers={WWW_AUTHENTICATE_HEADER: AUTH_SCHEME_BEARER_HEADER},
         ) from e
     except InactiveUserError as e:
         raise HTTPException(
@@ -115,7 +135,7 @@ def get_me(
 
 
 @router.post(
-    "/tokens",
+    ROUTE_TOKENS,
     response_model=CreatedPATResponseDTO,
     status_code=status.HTTP_201_CREATED,
     summary="Generate Personal Access Token (revealed once)",
@@ -135,7 +155,7 @@ def create_personal_access_token(
 
 
 @router.get(
-    "/tokens",
+    ROUTE_TOKENS,
     response_model=list[PATListItemSchema],
     summary="List active Personal Access Tokens for current user",
 )

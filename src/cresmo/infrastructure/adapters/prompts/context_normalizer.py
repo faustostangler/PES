@@ -11,7 +11,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Final
 
 from cresmo.domain.value_objects import DEFAULT_LANGUAGE, PromptKey
 
@@ -21,6 +21,28 @@ __all__ = [
     "PromptVariableSchema",
     "normalize_prompt_context",
 ]
+
+
+_KEY_RAW_TEXT: Final[str] = "raw_text"
+_KEY_SOURCE_TEXT: Final[str] = "source_text"
+_KEY_CONTENT_TITLE: Final[str] = "content_title"
+_KEY_TITLE: Final[str] = "title"
+_KEY_SUMMARY: Final[str] = "summary"
+_KEY_TRANSCRIPT_EXCERPT: Final[str] = "transcript_excerpt"
+_KEY_LANGUAGE: Final[str] = "language"
+_KEY_PASS_NUM: Final[str] = "pass_num"
+_KEY_PREV_PASS_NUM: Final[str] = "prev_pass_num"
+_KEY_CURRENT_TEXT: Final[str] = "current_text"
+_KEY_DRAFT_SECTION: Final[str] = "draft_section"
+_DEFAULT_PASS_NUM: Final[int] = 1
+_MIN_PREV_PASS_NUM: Final[int] = 0
+_ITERATIVE_SOURCE_ALIASES: Final[dict[str, tuple[str, ...]]] = {
+    _KEY_RAW_TEXT: (_KEY_RAW_TEXT, _KEY_SOURCE_TEXT),
+    _KEY_SOURCE_TEXT: (_KEY_SOURCE_TEXT, _KEY_RAW_TEXT),
+}
+_CONTENT_TITLE_ALIASES: Final[dict[str, tuple[str, ...]]] = {
+    _KEY_CONTENT_TITLE: (_KEY_CONTENT_TITLE, _KEY_TITLE),
+}
 
 
 @dataclass(frozen=True, slots=True)
@@ -36,7 +58,7 @@ class PromptVariableSchema:
 PROMPT_VARIABLE_SCHEMAS: Mapping[PromptKey, PromptVariableSchema] = {
     PromptKey.FLUID_PROSE: PromptVariableSchema(
         key=PromptKey.FLUID_PROSE,
-        aliases={"raw_text": ("raw_text", "source_text")},
+        aliases={_KEY_RAW_TEXT: (_KEY_RAW_TEXT, _KEY_SOURCE_TEXT)},
         include_language=True,
     ),
     PromptKey.JUDGE_FLUID_PROSE: PromptVariableSchema(
@@ -45,10 +67,7 @@ PROMPT_VARIABLE_SCHEMAS: Mapping[PromptKey, PromptVariableSchema] = {
     ),
     PromptKey.GAP_FILLER: PromptVariableSchema(
         key=PromptKey.GAP_FILLER,
-        aliases={
-            "raw_text": ("raw_text", "source_text"),
-            "source_text": ("source_text", "raw_text"),
-        },
+        aliases=_ITERATIVE_SOURCE_ALIASES,
         include_language=True,
         iterative_draft=True,
     ),
@@ -62,10 +81,7 @@ PROMPT_VARIABLE_SCHEMAS: Mapping[PromptKey, PromptVariableSchema] = {
     ),
     PromptKey.LONG_EXPANDER: PromptVariableSchema(
         key=PromptKey.LONG_EXPANDER,
-        aliases={
-            "raw_text": ("raw_text", "source_text"),
-            "source_text": ("source_text", "raw_text"),
-        },
+        aliases=_ITERATIVE_SOURCE_ALIASES,
         include_language=True,
         iterative_draft=True,
     ),
@@ -75,10 +91,7 @@ PROMPT_VARIABLE_SCHEMAS: Mapping[PromptKey, PromptVariableSchema] = {
     ),
     PromptKey.WIDE_EXPANDER: PromptVariableSchema(
         key=PromptKey.WIDE_EXPANDER,
-        aliases={
-            "raw_text": ("raw_text", "source_text"),
-            "source_text": ("source_text", "raw_text"),
-        },
+        aliases=_ITERATIVE_SOURCE_ALIASES,
         include_language=True,
         iterative_draft=True,
     ),
@@ -88,21 +101,21 @@ PROMPT_VARIABLE_SCHEMAS: Mapping[PromptKey, PromptVariableSchema] = {
     ),
     PromptKey.RAW_INDEX_SUMMARY: PromptVariableSchema(
         key=PromptKey.RAW_INDEX_SUMMARY,
-        aliases={"content_title": ("content_title", "title")},
+        aliases=_CONTENT_TITLE_ALIASES,
         include_language=True,
     ),
     PromptKey.JUDGE_RAW_INDEX_SUMMARY: PromptVariableSchema(
         key=PromptKey.JUDGE_RAW_INDEX_SUMMARY,
-        aliases={"content_title": ("content_title", "title")},
+        aliases=_CONTENT_TITLE_ALIASES,
     ),
     PromptKey.RAW_INDEX_CONCEPTS: PromptVariableSchema(
         key=PromptKey.RAW_INDEX_CONCEPTS,
-        aliases={"content_title": ("content_title", "title")},
+        aliases=_CONTENT_TITLE_ALIASES,
         include_language=True,
     ),
     PromptKey.JUDGE_RAW_INDEX_CONCEPTS: PromptVariableSchema(
         key=PromptKey.JUDGE_RAW_INDEX_CONCEPTS,
-        aliases={"content_title": ("content_title", "title")},
+        aliases=_CONTENT_TITLE_ALIASES,
     ),
     PromptKey.RAW_INDEX_CONCEPTS_REWRITE: PromptVariableSchema(
         key=PromptKey.RAW_INDEX_CONCEPTS_REWRITE,
@@ -111,27 +124,27 @@ PROMPT_VARIABLE_SCHEMAS: Mapping[PromptKey, PromptVariableSchema] = {
     ),
     PromptKey.RAW_INDEX_SYNTHESIS: PromptVariableSchema(
         key=PromptKey.RAW_INDEX_SYNTHESIS,
-        aliases={"content_title": ("content_title", "title")},
+        aliases=_CONTENT_TITLE_ALIASES,
         include_language=True,
     ),
     PromptKey.JUDGE_RAW_INDEX_SYNTHESIS: PromptVariableSchema(
         key=PromptKey.JUDGE_RAW_INDEX_SYNTHESIS,
         aliases={
-            "content_title": ("content_title", "title"),
-            "summary": ("summary", "transcript_excerpt"),
+            _KEY_CONTENT_TITLE: (_KEY_CONTENT_TITLE, _KEY_TITLE),
+            _KEY_SUMMARY: (_KEY_SUMMARY, _KEY_TRANSCRIPT_EXCERPT),
         },
     ),
     PromptKey.ATOMIC_INVENTORY: PromptVariableSchema(
         key=PromptKey.ATOMIC_INVENTORY,
-        aliases={"content_title": ("content_title", "title")},
+        aliases=_CONTENT_TITLE_ALIASES,
     ),
     PromptKey.JUDGE_ATOMIC_INVENTORY: PromptVariableSchema(
         key=PromptKey.JUDGE_ATOMIC_INVENTORY,
-        aliases={"content_title": ("content_title", "title")},
+        aliases=_CONTENT_TITLE_ALIASES,
     ),
     PromptKey.ATOMIC_BATCH: PromptVariableSchema(
         key=PromptKey.ATOMIC_BATCH,
-        aliases={"content_title": ("content_title", "title")},
+        aliases=_CONTENT_TITLE_ALIASES,
     ),
     PromptKey.RECONCILE_MOCS: PromptVariableSchema(
         key=PromptKey.RECONCILE_MOCS,
@@ -183,19 +196,19 @@ def normalize_prompt_context(
                 break
 
     if schema.include_language:
-        raw_lang = normalized.get("language", "").strip()
-        normalized["language"] = raw_lang if raw_lang else default_language
+        raw_lang = normalized.get(_KEY_LANGUAGE, "").strip()
+        normalized[_KEY_LANGUAGE] = raw_lang if raw_lang else default_language
 
     if schema.iterative_draft:
-        raw_pass = context.get("pass_num")
+        raw_pass = context.get(_KEY_PASS_NUM)
         try:
-            pass_num = int(raw_pass) if raw_pass is not None else 1
+            pass_num = int(raw_pass) if raw_pass is not None else _DEFAULT_PASS_NUM
         except (TypeError, ValueError):
-            pass_num = 1
-        prev_pass_num = max(0, pass_num - 1)
-        normalized["prev_pass_num"] = str(prev_pass_num)
-        current_text = normalized.get("current_text", "")
-        normalized["draft_section"] = (
+            pass_num = _DEFAULT_PASS_NUM
+        prev_pass_num = max(_MIN_PREV_PASS_NUM, pass_num - 1)
+        normalized[_KEY_PREV_PASS_NUM] = str(prev_pass_num)
+        current_text = normalized.get(_KEY_CURRENT_TEXT, "")
+        normalized[_KEY_DRAFT_SECTION] = (
             f'\n<draft pass="{prev_pass_num}">\n{current_text}\n</draft>\n' if current_text else ""
         )
 

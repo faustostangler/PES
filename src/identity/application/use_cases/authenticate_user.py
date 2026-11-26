@@ -1,5 +1,7 @@
 """Use Case: Authenticate user via email and password."""
 
+from typing import Final
+
 from identity.application.dtos import LoginRequestDTO, TokenResponseDTO
 from identity.application.ports import (
     PasswordHasherPort,
@@ -11,6 +13,9 @@ from identity.domain.exceptions import (
     InvalidCredentialsError,
 )
 from identity.domain.value_objects import Email, HashedPassword
+
+ACCESS_TOKEN_TYPE: Final[str] = "bearer"
+DEFAULT_ACCESS_TOKEN_TTL_SECONDS: Final[int] = 900
 
 # Canonical RFC 9106 Argon2id dummy hash for constant-time negative lookups
 DUMMY_ARGON2_HASH = HashedPassword(
@@ -49,6 +54,6 @@ class AuthenticateUserUseCase:
 
         return TokenResponseDTO(
             access_token=access_token,
-            token_type="bearer",
-            expires_in=900,
+            token_type=ACCESS_TOKEN_TYPE,
+            expires_in=DEFAULT_ACCESS_TOKEN_TTL_SECONDS,
         )

@@ -9,11 +9,14 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 from dataclasses import dataclass
+from typing import Final
 
 from cresmo.domain.exceptions import DomainValidationError
-from cresmo.domain.taxonomy import ChannelClassifierFn
+from cresmo.domain.taxonomy import CHANNEL_HANDLE_PREFIX, ChannelClassifierFn
 from cresmo.domain.value_objects.identity import ChannelName, ContentId
 from cresmo.domain.value_objects.media import PipelineStatus
+
+FILTER_TOKEN_DELIMITER: Final[str] = ","
 
 
 def _resolve_channel_name_and_url(
@@ -31,8 +34,8 @@ def _target_matches_channel(target: str, channel_name: str, channel_url: str) ->
         return True
     if channel_url and target in channel_url:
         return True
-    if target.startswith("@"):
-        bare_target = target.removeprefix("@")
+    if target.startswith(CHANNEL_HANDLE_PREFIX):
+        bare_target = target.removeprefix(CHANNEL_HANDLE_PREFIX)
         if bare_target and (bare_target in channel_name or bare_target in channel_url):
             return True
     return False
@@ -96,7 +99,7 @@ class SyncFilterCriteria:
             for item in items:
                 if not item:
                     continue
-                for part in item.split(","):
+                for part in item.split(FILTER_TOKEN_DELIMITER):
                     token = part.strip()
                     if token:
                         tokens.append(token)

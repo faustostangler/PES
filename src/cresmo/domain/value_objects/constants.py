@@ -20,6 +20,8 @@ MIN_CANONICAL_CHANNEL_ID_LENGTH: int = 4
 MIN_CONTENT_ID_LENGTH: int = 1
 MAX_CONTENT_ID_LENGTH: int = 64
 MAX_NOTE_TITLE_LENGTH: int = 200
+PROCESSABLE_TRANSCRIPT_EXTENSIONS: Final[frozenset[str]] = frozenset({".md", ".txt"})
+HIDDEN_OR_INTERNAL_PREFIXES: Final[tuple[str, ...]] = ("_", ".")
 
 TITLE_H1_PATTERN: Final[re.Pattern[str]] = re.compile(r"^\s*#\s+(.+)$", re.MULTILINE)
 EXTRA_INFO_HEADING_PATTERN: Final[re.Pattern[str]] = re.compile(
@@ -74,16 +76,16 @@ def is_processable_transcript_file(path: Path | str) -> bool:
 
     # Rule 1: Suffix must be .md or .txt
     suffix = candidate_path.suffix.lower()
-    if suffix not in {".md", ".txt"}:
+    if suffix not in PROCESSABLE_TRANSCRIPT_EXTENSIONS:
         return False
 
     # Rule 2: Filename cannot start with '_' or '.'
-    if name.startswith(("_", ".")):
+    if name.startswith(HIDDEN_OR_INTERNAL_PREFIXES):
         return False
 
     # Rule 3: Hidden or system directory components (e.g. .git, .obsidian, _trash)
     for part in candidate_path.parts[:-1]:
-        if part.startswith(("_", ".")):
+        if part.startswith(HIDDEN_OR_INTERNAL_PREFIXES):
             return False
 
     # Rule 4: Reserved system filenames

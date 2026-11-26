@@ -10,10 +10,14 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
+from typing import Final
 
 from cresmo.domain.exceptions import DomainValidationError
 from cresmo.domain.value_objects.identity import ChannelName, ContentId
-from cresmo.domain.value_objects.media import PipelineStatus
+from cresmo.domain.value_objects.media import ALLOWED_URL_SCHEMES, PipelineStatus
+
+MIN_MASTER_PART_NUMBER: Final[int] = 1
+MARKDOWN_FILE_EXTENSION: Final[str] = ".md"
 
 
 @dataclass(frozen=True)
@@ -48,7 +52,7 @@ class LedgerEntry:
         resolved_channel_name = ChannelName.from_string(self.channel_name)
         resolved_content_id = ContentId.from_string(self.content_id)
 
-        if not cleaned_media_url.startswith(("http://", "https://")):
+        if not cleaned_media_url.startswith(ALLOWED_URL_SCHEMES):
             raise DomainValidationError(
                 f"Invalid LedgerEntry media_url '{self.media_url}'. Must start with http:// or https://"
             )
@@ -92,9 +96,9 @@ class MasterDocumentResult:
         cleaned_category = self.channel_category.strip()
         if not cleaned_category:
             raise DomainValidationError("MasterDocumentResult channel_category cannot be empty.")
-        if self.part_number < 1:
+        if self.part_number < MIN_MASTER_PART_NUMBER:
             raise DomainValidationError(
-                f"MasterDocumentResult part_number must be >= 1. Got: {self.part_number}"
+                f"MasterDocumentResult part_number must be >= {MIN_MASTER_PART_NUMBER}. Got: {self.part_number}"
             )
         if self.word_count < 0:
             raise DomainValidationError(
@@ -178,7 +182,7 @@ class RawIndexEntry:
         return [
             self.channel_category,
             str(self.channel_name),
-            f"{self.video_id.value}.md",
+            f"{self.video_id.value}{MARKDOWN_FILE_EXTENSION}",
             self.key_concept,
             clean_synthesis,
         ]

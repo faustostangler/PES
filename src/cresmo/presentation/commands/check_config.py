@@ -13,7 +13,7 @@ Conforms to:
 from __future__ import annotations
 
 import sys
-from typing import Any
+from typing import Any, Final
 
 import typer
 
@@ -22,6 +22,10 @@ from cresmo.presentation.exit_codes import (
     EXIT_CONFIG_OR_USAGE_ERROR,
     EXIT_SUCCESS,
 )
+
+_LANGFUSE_PK_PREVIEW_LENGTH: Final[int] = 10
+_MASK_ELLIPSIS: Final[str] = "..."
+_FALLBACK_CONFIG_ERROR_PREFIX: Final[str] = "Unexpected configuration error"
 
 
 def load_fresh_settings(*args: Any, **kwargs: Any) -> Any:
@@ -78,7 +82,7 @@ def handle_check_config() -> int:
         lf_host = langfuse_cfg.host
         lf_env = langfuse_cfg.environment
         if lf_pk and lf_sk.get_secret_value():
-            pk_masked = lf_pk[:10] + "..."
+            pk_masked = lf_pk[:_LANGFUSE_PK_PREVIEW_LENGTH] + _MASK_ELLIPSIS
             sys.stdout.write(
                 f"- Langfuse Telemetry: Enabled ({lf_host}, env={lf_env}, {pk_masked})\n"
             )
@@ -86,4 +90,4 @@ def handle_check_config() -> int:
             sys.stdout.write("- Langfuse Telemetry: Disabled (no credentials configured)\n")
         return EXIT_SUCCESS
     except Exception as exc:  # noqa: BLE001
-        return handle_cli_exception(exc, fallback_prefix="Unexpected configuration error")
+        return handle_cli_exception(exc, fallback_prefix=_FALLBACK_CONFIG_ERROR_PREFIX)

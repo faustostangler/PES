@@ -14,7 +14,7 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
-from typing import Annotated, Any
+from typing import Annotated, Any, Final
 
 import typer
 
@@ -29,6 +29,12 @@ from cresmo.presentation.exit_codes import (
     EXIT_INTERNAL_ERROR,
     EXIT_SUCCESS,
 )
+
+_MIN_LOOKBACK_DAYS: Final[int] = 0
+DEFAULT_SYNC_LOOKBACK_DAYS: Final[int] = 7 * 52 * 2
+_MIN_MAX_VIDEOS: Final[int] = 1
+DEFAULT_SYNC_MAX_VIDEOS: Final[int] = 250
+_FALLBACK_SYNC_ERROR_PREFIX: Final[str] = "Unexpected sync error"
 
 
 def build_sync_batch_use_case(*args: Any, **kwargs: Any) -> Any:
@@ -74,18 +80,18 @@ def sync(
         int,
         typer.Option(
             "--lookback",
-            min=0,
+            min=_MIN_LOOKBACK_DAYS,
             help="Days lookback window for new uploads",
         ),
-    ] = 7 * 52 * 2,
+    ] = DEFAULT_SYNC_LOOKBACK_DAYS,
     max_videos: Annotated[
         int,
         typer.Option(
             "--max-videos",
-            min=1,
+            min=_MIN_MAX_VIDEOS,
             help="Maximum videos to discover and process in this run (default: 250)",
         ),
-    ] = 250,
+    ] = DEFAULT_SYNC_MAX_VIDEOS,
     dry_run: Annotated[
         bool,
         typer.Option(
@@ -161,4 +167,4 @@ def handle_sync(request: SyncBatchRequest) -> int:
         outcome = use_case.execute(request, on_event=_render_sync_event)
         return _render_sync_outcome(outcome)
     except Exception as exc:  # noqa: BLE001
-        return handle_cli_exception(exc, fallback_prefix="Unexpected sync error")
+        return handle_cli_exception(exc, fallback_prefix=_FALLBACK_SYNC_ERROR_PREFIX)

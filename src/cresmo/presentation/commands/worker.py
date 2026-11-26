@@ -17,7 +17,7 @@ import tempfile
 import time
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Annotated, Any
+from typing import Annotated, Any, Final
 
 import typer
 
@@ -26,6 +26,16 @@ from cresmo.presentation.exit_codes import (
     EXIT_INTERNAL_ERROR,
     EXIT_SUCCESS,
 )
+
+_MIN_POLL_INTERVAL_SECONDS: Final[int] = 10
+DEFAULT_WORKER_POLL_INTERVAL_SECONDS: Final[int] = 300
+_MIN_LOOKBACK_DAYS: Final[int] = 0
+DEFAULT_WORKER_LOOKBACK_DAYS: Final[int] = 7
+_MIN_MAX_VIDEOS: Final[int] = 1
+DEFAULT_WORKER_MAX_VIDEOS: Final[int] = 10
+_HEARTBEAT_FILENAME: Final[str] = "cresmo_worker.heartbeat"
+_UTF8_ENCODING: Final[str] = "utf-8"
+_TIME_LOG_FORMAT: Final[str] = "%H:%M:%S"
 
 
 def resolve_shared_settings(*args: Any, **kwargs: Any) -> Any:
@@ -54,26 +64,26 @@ def worker(
         int,
         typer.Option(
             "--poll-interval",
-            min=10,
+            min=_MIN_POLL_INTERVAL_SECONDS,
             help="Polling interval in seconds between feed checks (default: 300)",
         ),
-    ] = 300,
+    ] = DEFAULT_WORKER_POLL_INTERVAL_SECONDS,
     lookback: Annotated[
         int,
         typer.Option(
             "--lookback",
-            min=0,
+            min=_MIN_LOOKBACK_DAYS,
             help="Days lookback window for new uploads per polling cycle (default: 7)",
         ),
-    ] = 7,
+    ] = DEFAULT_WORKER_LOOKBACK_DAYS,
     max_videos: Annotated[
         int,
         typer.Option(
             "--max-videos",
-            min=1,
+            min=_MIN_MAX_VIDEOS,
             help="Maximum videos per cycle (default: 10)",
         ),
-    ] = 10,
+    ] = DEFAULT_WORKER_MAX_VIDEOS,
     once: Annotated[
         bool,
         typer.Option(
@@ -96,9 +106,9 @@ def worker(
 
 def handle_worker(
     channel: str = "",
-    poll_interval: int = 300,
-    lookback: int = 7,
-    max_videos: int = 10,
+    poll_interval: int = DEFAULT_WORKER_POLL_INTERVAL_SECONDS,
+    lookback: int = DEFAULT_WORKER_LOOKBACK_DAYS,
+    max_videos: int = DEFAULT_WORKER_MAX_VIDEOS,
     once: bool = False,
 ) -> int:
     """Run polling daemon for continuous channel monitoring.
@@ -121,17 +131,17 @@ def handle_worker(
             lookback_days=lookback,
             max_videos=max_videos,
         )
-        heartbeat_file = Path(tempfile.gettempdir()) / "cresmo_worker.heartbeat"
+        heartbeat_file = Path(tempfile.gettempdir()) / _HEARTBEAT_FILENAME
 
         sys.stdout.write(
             f"Starting ChannelPollingDaemon for '{channel}' (interval: {poll_interval}s)...\n"
         )
 
         while True:
-            heartbeat_file.write_text(datetime.now(UTC).isoformat(), encoding="utf-8")
+            heartbeat_file.write_text(datetime.now(UTC).isoformat(), encoding=_UTF8_ENCODING)
             summary = use_case.execute(query=query)
             sys.stdout.write(
-                f"[{datetime.now(UTC).strftime('%H:%M:%S')}] Polled {summary.channel_url}: "
+                f"[{datetime.now(UTC).strftime(_TIME_LOG_FORMAT)}] Polled {summary.channel_url}: "
                 f"processed={summary.processed_count}, skipped={summary.skipped_count}, failed={summary.failed_count}\n"
             )
             use_case.pipeline.metrics_port.flush()

@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
-from typing import Annotated, Any
+from typing import Annotated, Any, Final
 
 import typer
 
@@ -22,6 +22,9 @@ from cresmo.presentation.exit_codes import (
     EXIT_INGESTION_ERROR,
     EXIT_SUCCESS,
 )
+
+DEFAULT_COOKIE_BROWSER: Final[str] = "firefox"
+_DEFAULT_COOKIES_FILENAME: Final[str] = "cookies.txt"
 
 
 def resolve_shared_settings(*args: Any, **kwargs: Any) -> Any:
@@ -52,7 +55,7 @@ def export_cookies(
             "--browser",
             help="Target browser to extract cookies from (default: firefox)",
         ),
-    ] = "firefox",
+    ] = DEFAULT_COOKIE_BROWSER,
     output: Annotated[
         Path | None,
         typer.Option(
@@ -88,7 +91,7 @@ def export_cookies(
 
 
 def handle_export_cookies(
-    browser: str = "firefox",
+    browser: str = DEFAULT_COOKIE_BROWSER,
     output: Path | None = None,
     require_auth: bool = False,
     force: bool = False,
@@ -107,7 +110,9 @@ def handle_export_cookies(
     try:
         settings = resolve_shared_settings()
         resolved_output = (
-            output or settings.ingestion.cookies_file or (settings.storage.data_dir / "cookies.txt")
+            output
+            or settings.ingestion.cookies_file
+            or (settings.storage.data_dir / _DEFAULT_COOKIES_FILENAME)
         )
         output_file = Path(resolved_output).resolve()
 

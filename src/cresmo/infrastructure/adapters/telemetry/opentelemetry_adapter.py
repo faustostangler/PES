@@ -44,6 +44,19 @@ logger = structlog.get_logger(__name__)
 
 DEFAULT_PIPELINE_VERSION: Final[str] = resolve_default_pipeline_version()
 OTEL_FLUSH_TIMEOUT_MS: Final[int] = 2000
+_TRACER_NAME: Final[str] = "cresmo.pipeline"
+_ATTR_OBSERVATION_TYPE: Final[str] = "langfuse.observation.type"
+_ATTR_SCORE_NAME: Final[str] = "score.name"
+_ATTR_SCORE_VALUE: Final[str] = "score.value"
+_ATTR_SCORE_COMMENT: Final[str] = "score.comment"
+_ATTR_SCORE_TRACE_ID: Final[str] = "score.trace_id"
+_ATTR_SCORE_OBSERVATION_ID: Final[str] = "score.observation_id"
+_EVENT_TELEMETRY_SCORE: Final[str] = "telemetry_score"
+_KEY_NAME: Final[str] = "name"
+_KEY_VALUE: Final[str] = "value"
+_KEY_COMMENT: Final[str] = "comment"
+_KEY_TRACE_ID: Final[str] = "trace_id"
+_KEY_OBSERVATION_ID: Final[str] = "observation_id"
 
 
 # Defer langfuse import to runtime per ADR-026/ADR-053/ADR-055
@@ -64,7 +77,7 @@ class OpenTelemetryAdapter(TelemetryPort):
         pipeline_version: str | None = None,
         git_sha: str | None = None,
     ) -> None:
-        self._tracer = tracer or trace.get_tracer("cresmo.pipeline")
+        self._tracer = tracer or trace.get_tracer(_TRACER_NAME)
         self._langfuse = langfuse_client
         self._pipeline_version = pipeline_version or DEFAULT_PIPELINE_VERSION
         self._git_sha: str | None = short_git_sha(git_sha)
@@ -129,7 +142,7 @@ class OpenTelemetryAdapter(TelemetryPort):
         flush_on_exit: bool = False,
     ) -> Generator[TelemetrySpan]:
         """Create child OTel span with creation-time observation kind and optional stage scope."""
-        init_attributes: dict[str, Any] = {"langfuse.observation.type": kind.value}
+        init_attributes: dict[str, Any] = {_ATTR_OBSERVATION_TYPE: kind.value}
         if attributes:
             for key, value in attributes.items():
                 if is_valid_otel_value(value):
@@ -177,29 +190,29 @@ class OpenTelemetryAdapter(TelemetryPort):
         )
 
         event_attributes: dict[str, TelemetryAttributeValue] = {
-            "score.name": name,
-            "score.value": value,
+            _ATTR_SCORE_NAME: name,
+            _ATTR_SCORE_VALUE: value,
         }
         if comment:
-            event_attributes["score.comment"] = comment
+            event_attributes[_ATTR_SCORE_COMMENT] = comment
         if trace_id:
-            event_attributes["score.trace_id"] = trace_id
+            event_attributes[_ATTR_SCORE_TRACE_ID] = trace_id
         if resolved_observation_id:
-            event_attributes["score.observation_id"] = resolved_observation_id
+            event_attributes[_ATTR_SCORE_OBSERVATION_ID] = resolved_observation_id
         if isinstance(active_span, OTelTelemetrySpan):
-            active_span.add_event("telemetry_score", attributes=event_attributes)
+            active_span.add_event(_EVENT_TELEMETRY_SCORE, attributes=event_attributes)
 
         if self._langfuse is not None:
             score_fn = getattr(self._langfuse, "create_score", None)
             if callable(score_fn):
                 try:
-                    score_arguments: dict[str, Any] = {"name": name, "value": value}
+                    score_arguments: dict[str, Any] = {_KEY_NAME: name, _KEY_VALUE: value}
                     if comment is not None:
-                        score_arguments["comment"] = comment
+                        score_arguments[_KEY_COMMENT] = comment
                     if trace_id is not None:
-                        score_arguments["trace_id"] = trace_id
+                        score_arguments[_KEY_TRACE_ID] = trace_id
                     if resolved_observation_id is not None:
-                        score_arguments["observation_id"] = resolved_observation_id
+                        score_arguments[_KEY_OBSERVATION_ID] = resolved_observation_id
                     score_fn(**score_arguments)
                 except Exception as exc:  # noqa: BLE001
                     logger.debug("[OpenTelemetryAdapter] Langfuse score emission skipped: %s", exc)

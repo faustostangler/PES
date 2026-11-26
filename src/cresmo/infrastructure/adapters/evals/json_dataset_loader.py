@@ -10,9 +10,11 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Any
+from typing import Any, Final
 
 from cresmo.application.ports.evals import CalibrationDatasetPort
+
+_UTF8_ENCODING: Final[str] = "utf-8"
 
 
 class JsonCalibrationDatasetLoader(CalibrationDatasetPort):
@@ -22,7 +24,7 @@ class JsonCalibrationDatasetLoader(CalibrationDatasetPort):
     def _read_json_list(path: Path) -> list[dict[str, Any]]:
         if not path.is_file():
             return []
-        loaded = json.loads(path.read_text(encoding="utf-8"))
+        loaded = json.loads(path.read_text(encoding=_UTF8_ENCODING))
         if isinstance(loaded, list):
             return [dict(item) for item in loaded if isinstance(item, dict)]
         return []

@@ -14,6 +14,7 @@ Conforms to:
 from __future__ import annotations
 
 from collections.abc import Callable
+from typing import Final
 
 from cresmo.application.pipeline.coordinator import CresmoPipeline
 from cresmo.application.pipeline.models import PipelineDependencies
@@ -62,6 +63,9 @@ from cresmo.infrastructure.config import CresmoSettings, resolve_shared_settings
 from cresmo.infrastructure.environment import ensure_runtime_directories
 from cresmo.infrastructure.logging_config import configure_logging
 from cresmo.infrastructure.persistence.sqlite_ledger_adapter import SqliteLedgerAdapter
+
+_SETTINGS_KEY_INGESTION: Final[str] = "ingestion"
+_SETTINGS_KEY_DAYS_LOOKBACK: Final[str] = "days_lookback"
 
 
 def load_fresh_settings() -> CresmoSettings:
@@ -191,8 +195,8 @@ def build_run_synthesis_use_case(
     if lookback_override is not None:
         resolved = resolved.model_copy(
             update={
-                "ingestion": resolved.ingestion.model_copy(
-                    update={"days_lookback": lookback_override}
+                _SETTINGS_KEY_INGESTION: resolved.ingestion.model_copy(
+                    update={_SETTINGS_KEY_DAYS_LOOKBACK: lookback_override}
                 )
             }
         )

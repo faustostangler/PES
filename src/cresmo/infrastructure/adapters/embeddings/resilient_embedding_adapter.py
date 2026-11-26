@@ -11,6 +11,7 @@ Conforms to:
 from __future__ import annotations
 
 from collections.abc import Sequence
+from typing import Final
 
 import structlog
 
@@ -21,6 +22,8 @@ from cresmo.infrastructure.adapters.embeddings.tfidf_embedding_adapter import (
 )
 
 logger = structlog.get_logger(__name__)
+
+_FALLBACK_PROVIDER_SUFFIX: Final[str] = "_fallback"
 
 
 class ResilientEmbeddingAdapter(TextEmbeddingPort):
@@ -79,7 +82,7 @@ class ResilientEmbeddingAdapter(TextEmbeddingPort):
                 fallback_provider=self.fallback.provider_name,
                 error=str(exc),
             )
-            self._last_provider_name = f"{self.fallback.provider_name}_fallback"
+            self._last_provider_name = f"{self.fallback.provider_name}{_FALLBACK_PROVIDER_SUFFIX}"
             return self.fallback.embed_batch(texts)
 
         self._last_provider_name = self.primary.provider_name

@@ -13,6 +13,7 @@ Conforms to:
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Final
 
 from cresmo.application.ports import VaultRepositoryPort
 from cresmo.domain.entities import (
@@ -32,6 +33,10 @@ from cresmo.infrastructure.adapters.obsidian.mocs import MocVaultHandler
 from cresmo.infrastructure.adapters.obsidian.notes import AtomicNoteVaultHandler
 from cresmo.infrastructure.adapters.obsidian.transcripts import TranscriptVaultHandler
 
+_MASTER_DIR_NAME: Final[str] = "master"
+_MOCS_DIR_NAME: Final[str] = "MOCs"
+_VAULT_INDEX_FILENAME: Final[str] = "_index.json"
+
 
 class ObsidianVaultAdapter(VaultRepositoryPort):
     """Filesystem-backed Obsidian Second Brain vault adapter.
@@ -49,9 +54,9 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
         self.vault_dir = Path(vault_dir).resolve()
         self.data_dir = Path(data_dir).resolve()
         self.raw_dir = self.data_dir / StageName.RAW.value
-        self.master_dir = self.data_dir / "master"
-        self.mocs_dir = self.vault_dir / "MOCs"
-        self.index_path = self.vault_dir / "_index.json"
+        self.master_dir = self.data_dir / _MASTER_DIR_NAME
+        self.mocs_dir = self.vault_dir / _MOCS_DIR_NAME
+        self.index_path = self.vault_dir / _VAULT_INDEX_FILENAME
 
         self._transcripts = TranscriptVaultHandler(data_dir=self.data_dir)
         self._notes = AtomicNoteVaultHandler(

@@ -8,8 +8,11 @@ Conforms to:
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Final
 
 from cresmo.application.ports.evals import CalibrationReportWriterPort
+
+_UTF8_ENCODING: Final[str] = "utf-8"
 
 
 class FileCalibrationReportWriter(CalibrationReportWriterPort):
@@ -18,5 +21,5 @@ class FileCalibrationReportWriter(CalibrationReportWriterPort):
     def write_report(self, output_path: Path, content: str) -> Path:
         """Create parent directories and persist rendered calibration report."""
         output_path.parent.mkdir(parents=True, exist_ok=True)
-        output_path.write_text(content, encoding="utf-8")
+        output_path.write_text(content, encoding=_UTF8_ENCODING)
         return output_path

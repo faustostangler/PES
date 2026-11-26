@@ -17,6 +17,7 @@ import threading
 from collections.abc import Callable, Iterable, Iterator
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Final
 
 import structlog
 
@@ -49,6 +50,11 @@ logger = structlog.get_logger(__name__)
 
 _DEFAULT_STREAM_QUEUE_TIMEOUT_SECONDS: float = 0.2
 _DEFAULT_STREAM_ERROR_TIMEOUT_SECONDS: float = 2.0
+QUEUE_SENTINEL_PUT_MAX_RETRIES: Final[int] = 5
+EMPTY_QUEUE_GAUGE_VALUE: Final[float] = 0.0
+METRIC_INCREMENT_ONE: Final[float] = 1.0
+METRIC_LABEL_MODALITY: Final[str] = "modality"
+CRAWLER_PRODUCER_THREAD_NAME: Final[str] = "CresmoCrawlerProducer"
 
 
 @dataclass(frozen=True)
@@ -258,7 +264,7 @@ class DiscoverBatchSourcesUseCase:
                     "[crawler] Failed to put error into stream_queue (queue full): %s", exc
                 )
         finally:
-            for _ in range(5):
+            for _ in range(QUEUE_SENTINEL_PUT_MAX_RETRIES):
                 if stop_event.is_set():
                     break
                 try:
@@ -311,14 +317,16 @@ class DiscoverBatchSourcesUseCase:
                 yield item
         finally:
             stop_event.set()
-            self._metrics_port.set_gauge(MetricName.DISCOVERY_QUEUE_SIZE, 0.0)
+            self._metrics_port.set_gauge(
+                MetricName.DISCOVERY_QUEUE_SIZE, EMPTY_QUEUE_GAUGE_VALUE
+            )
 
     def _emit_and_record(self, sources: Iterable[BatchSource]) -> Iterator[BatchSource]:
         for src in sources:
             self._metrics_port.increment_counter(
                 MetricName.BATCH_SOURCES_DISCOVERED,
-                1.0,
-                labels={"modality": src.kind.value},
+                METRIC_INCREMENT_ONE,
+                labels={METRIC_LABEL_MODALITY: src.kind.value},
             )
             yield src
 
@@ -369,7 +377,7 @@ class DiscoverBatchSourcesUseCase:
         crawler_thread = threading.Thread(
             target=self._run_crawler_producer,
             args=(discovery_query, acc, state, stream_queue, stop_event),
-            name="CresmoCrawlerProducer",
+            name=CRAWLER_PRODUCER_THREAD_NAME,
             daemon=True,
         )
         crawler_thread.start()

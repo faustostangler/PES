@@ -9,6 +9,10 @@ Conforms to SPEC-001: §2 (Core Domain Invariants & Exception Hierarchy).
 
 from __future__ import annotations
 
+from typing import Final
+
+DEFAULT_RETRY_AFTER_SECONDS: Final[float] = 0.0
+
 
 class CresmoDomainError(Exception):
     """Base domain exception for all invariant, business rule, and ontology violations.
@@ -104,8 +108,12 @@ class QuotaPoolExhaustedError(RateLimitExceededError):
         - ADR-067: Humble Presentation CLI and Run/Sync Use Cases
     """
 
-    def __init__(self, message: str = "", *, retry_after_seconds: float = 0.0) -> None:
-        self.retry_after_seconds: float = max(0.0, float(retry_after_seconds))
+    def __init__(
+        self, message: str = "", *, retry_after_seconds: float = DEFAULT_RETRY_AFTER_SECONDS
+    ) -> None:
+        self.retry_after_seconds: float = max(
+            DEFAULT_RETRY_AFTER_SECONDS, float(retry_after_seconds)
+        )
         super().__init__(message)
 
 

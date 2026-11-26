@@ -31,7 +31,10 @@ from cresmo.domain.exceptions import (
     DomainValidationError,
     NoteTypologyError,
 )
-from cresmo.domain.services.entity_matching import normalize_entity_title_for_matching
+from cresmo.domain.services.entity_matching import (
+    MIN_HONORIFIC_NORMALIZED_LENGTH,
+    normalize_entity_title_for_matching,
+)
 from cresmo.domain.value_objects import (
     AtomicEntityInventory,
     CausalMatrix,
@@ -41,7 +44,27 @@ from cresmo.domain.value_objects import (
     PromptKey,
 )
 
-_MIN_HONORIFIC_NORMALIZED_LENGTH: Final[int] = 4
+DEFAULT_ATOMIC_BATCH_SIZE: Final[int] = 5
+MIN_ATOMIC_BATCH_SIZE: Final[int] = 1
+TRACE_SUFFIX_ATOMIC_BATCH: Final[str] = "_atomic_batch"
+
+_KEY_TITLE: Final[str] = "title"
+_KEY_TYPE: Final[str] = "type"
+_KEY_DEFINITION: Final[str] = "definition"
+_KEY_DIRECT_RELATIONS: Final[str] = "direct_relations"
+_KEY_CAUSAL_MATRIX: Final[str] = "causal_matrix"
+_KEY_CAUSE: Final[str] = "cause"
+_KEY_EFFECT: Final[str] = "effect"
+_KEY_EPISTEMIC_ATTRIBUTION: Final[str] = "epistemic_attribution"
+_KEY_CROSS_CONTEXT: Final[str] = "cross_context"
+_KEY_PRECURSORS: Final[str] = "precursors"
+_KEY_LATERAL_EVENTS: Final[str] = "lateral_events"
+_KEY_AFTERMATH: Final[str] = "aftermath"
+_KEY_ALIASES: Final[str] = "aliases"
+_KEY_CONTENT_TAGS: Final[str] = "content_tags"
+_KEY_DOMAIN: Final[str] = "domain"
+_KEY_CLUSTER: Final[str] = "cluster"
+_KEY_SOURCE: Final[str] = "source"
 
 
 def _build_existing_lookups(
@@ -55,7 +78,7 @@ def _build_existing_lookups(
         for a in n.aliases:
             lookup[a.lower()] = n
         norm_title = normalize_entity_title_for_matching(n.title.value)
-        if len(norm_title) >= _MIN_HONORIFIC_NORMALIZED_LENGTH:
+        if len(norm_title) >= MIN_HONORIFIC_NORMALIZED_LENGTH:
             norm_lookup[norm_title] = n
     return lookup, norm_lookup
 
@@ -85,11 +108,11 @@ def _parse_single_atomic_note(
     compendium: StageTranscript,
 ) -> AtomicNote | None:
     """Parse raw dictionary payload from LLM into a validated AtomicNote aggregate."""
-    title_str = entry.get("title")
+    title_str = entry.get(_KEY_TITLE)
     if not isinstance(title_str, str) or not title_str.strip():
         return None
 
-    raw_type = entry.get("type")
+    raw_type = entry.get(_KEY_TYPE)
     if isinstance(raw_type, str):
         try:
             note_type = NoteType.from_string(raw_type)
@@ -98,31 +121,31 @@ def _parse_single_atomic_note(
     else:
         note_type = NoteType.CONCEPT
 
-    definition = str(entry.get("definition", "")).strip()
-    relations_raw = entry.get("direct_relations", [])
+    definition = str(entry.get(_KEY_DEFINITION, "")).strip()
+    relations_raw = entry.get(_KEY_DIRECT_RELATIONS, [])
     relations = tuple(NoteTitle(r) for r in relations_raw if isinstance(r, str) and r.strip())
 
     causal_matrix: CausalMatrix | None = None
-    cm_raw = entry.get("causal_matrix")
+    cm_raw = entry.get(_KEY_CAUSAL_MATRIX)
     if isinstance(cm_raw, dict):
         causal_matrix = CausalMatrix(
-            cause=str(cm_raw.get("cause", "")),
-            effect=str(cm_raw.get("effect", "")),
-            epistemic_attribution=str(cm_raw.get("epistemic_attribution", "")),
+            cause=str(cm_raw.get(_KEY_CAUSE, "")),
+            effect=str(cm_raw.get(_KEY_EFFECT, "")),
+            epistemic_attribution=str(cm_raw.get(_KEY_EPISTEMIC_ATTRIBUTION, "")),
         )
 
     cross_context: CrossContextRelations | None = None
-    cc_raw = entry.get("cross_context")
+    cc_raw = entry.get(_KEY_CROSS_CONTEXT)
     if isinstance(cc_raw, dict):
         cross_context = CrossContextRelations(
-            precursors=str(cc_raw.get("precursors", "")),
-            lateral_events=str(cc_raw.get("lateral_events", "")),
-            aftermath=str(cc_raw.get("aftermath", "")),
+            precursors=str(cc_raw.get(_KEY_PRECURSORS, "")),
+            lateral_events=str(cc_raw.get(_KEY_LATERAL_EVENTS, "")),
+            aftermath=str(cc_raw.get(_KEY_AFTERMATH, "")),
         )
 
-    aliases_raw = entry.get("aliases", [])
+    aliases_raw = entry.get(_KEY_ALIASES, [])
     aliases = tuple(a.strip() for a in aliases_raw if isinstance(a, str) and a.strip())
-    tags_raw = entry.get("content_tags", [])
+    tags_raw = entry.get(_KEY_CONTENT_TAGS, [])
     content_tags = tuple(t.strip() for t in tags_raw if isinstance(t, str) and t.strip())
 
     return AtomicNote(
@@ -130,9 +153,9 @@ def _parse_single_atomic_note(
         note_type=note_type,
         definition=definition,
         content_tags=content_tags,
-        domain=str(entry.get("domain", compendium.channel.name)),
-        cluster=str(entry.get("cluster", "")),
-        source=str(entry.get("source", compendium.content.title)),
+        domain=str(entry.get(_KEY_DOMAIN, compendium.channel.name)),
+        cluster=str(entry.get(_KEY_CLUSTER, "")),
+        source=str(entry.get(_KEY_SOURCE, compendium.content.title)),
         aliases=aliases,
         direct_relations=relations,
         causal_matrix=causal_matrix,
@@ -147,7 +170,7 @@ class SynthesizeAtomicBatchUseCase:
         self,
         llm_synthesis_port: LLMTransformationPort,
         vault_port: VaultRepositoryPort,
-        batch_size: int = 5,
+        batch_size: int = DEFAULT_ATOMIC_BATCH_SIZE,
         prompt_provider: PromptProviderPort | None = None,
         temperature: float | None = None,
     ) -> None:
@@ -166,7 +189,7 @@ class SynthesizeAtomicBatchUseCase:
             raise ValueError("vault_port must be provided")
         self.llm_synthesis_port = llm_synthesis_port
         self.vault_port = vault_port
-        self.batch_size = max(1, batch_size)
+        self.batch_size = max(MIN_ATOMIC_BATCH_SIZE, batch_size)
         self.temperature = temperature
         self.prompt_provider: PromptProviderPort = prompt_provider or NoOpPromptProviderPort()
 
@@ -179,7 +202,7 @@ class SynthesizeAtomicBatchUseCase:
     ) -> list[AtomicNote]:
         """Synthesize and persist notes for a single batch chunk via LLM."""
         targets_summary = [
-            {"title": title.value, "type": note_type.value} for title, note_type in chunk
+            {_KEY_TITLE: title.value, _KEY_TYPE: note_type.value} for title, note_type in chunk
         ]
 
         chat_prompt = self.prompt_provider.get_prompt(
@@ -192,7 +215,7 @@ class SynthesizeAtomicBatchUseCase:
         response = self.llm_synthesis_port.transform(
             prompt=chat_prompt,
             temperature=self.temperature,
-            trace_id=f"{compendium.content.id.value}_atomic_batch",
+            trace_id=f"{compendium.content.id.value}{TRACE_SUFFIX_ATOMIC_BATCH}",
             session_id=session_id,
             user_id=user_id,
         )

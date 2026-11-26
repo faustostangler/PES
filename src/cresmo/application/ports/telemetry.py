@@ -26,6 +26,14 @@ PIPELINE_TRACE_NAME: Final[str] = "cresmo.pipeline"
 PIPELINE_ROOT_SPAN_NAME: Final[str] = "cresmo.coordinator"
 _LLM_GENERATION_SPAN_NAME: Final[str] = "cresmo.llm.generate"
 _LLM_GENERATION_FALLBACK_SPAN_NAME: Final[str] = "cresmo.llm.generate_fallback"
+DEFAULT_TELEMETRY_SOURCE: Final[str] = "transcript"
+MIN_PASS_NUMBER: Final[int] = 1
+TELEMETRY_SPAN_NAMESPACE_PREFIX: Final[str] = "cresmo."
+TELEMETRY_PASS_SPAN_SUFFIX_PREFIX: Final[str] = ".pass_"
+TELEMETRY_GENERATION_FALLBACK_SUFFIX: Final[str] = "generate_fallback"
+TELEMETRY_GENERATION_SUFFIX: Final[str] = "generate"
+TELEMETRY_JUDGE_SPAN_SUFFIX: Final[str] = ".judge"
+TELEMETRY_SATURATION_SPAN_SUFFIX: Final[str] = ".saturation"
 
 type TelemetryAttributeValue = str | int | float | bool | tuple[str, ...]
 type TelemetryPayload = Mapping[str, object] | Sequence[object] | str
@@ -59,7 +67,7 @@ class SessionTelemetrySpec:
     channel_name: str = ""
     content_id: str = ""
     content_title: str = ""
-    source: str = "transcript"
+    source: str = DEFAULT_TELEMETRY_SOURCE
     raw_characters: int = 0
     raw_words: int = 0
     expansion_max_passes: int | None = None
@@ -74,9 +82,9 @@ class SessionTelemetrySpec:
         if isinstance(self.raw_words, bool) or self.raw_words < 0:
             raise ValueError("raw_words must be >= 0")
         if self.expansion_max_passes is not None and (
-            isinstance(self.expansion_max_passes, bool) or self.expansion_max_passes < 1
+            isinstance(self.expansion_max_passes, bool) or self.expansion_max_passes < MIN_PASS_NUMBER
         ):
-            raise ValueError("expansion_max_passes must be >= 1 when provided")
+            raise ValueError(f"expansion_max_passes must be >= {MIN_PASS_NUMBER} when provided")
 
 
 class TelemetrySpan(Protocol):
@@ -144,14 +152,14 @@ def _normalize_stage_name(stage_name: str) -> str:
 
 def _validate_pass_num(pass_num: int) -> int:
     """Validate that a sequential pass index is a positive integer."""
-    if isinstance(pass_num, bool) or pass_num < 1:
+    if isinstance(pass_num, bool) or pass_num < MIN_PASS_NUMBER:
         raise ValueError("pass_num must be a positive integer")
     return pass_num
 
 
 def format_stage_span_name(stage_name: str) -> str:
     """Return canonical Tier 2 stage span name (``cresmo.{stage_name}``)."""
-    return f"cresmo.{_normalize_stage_name(stage_name)}"
+    return f"{TELEMETRY_SPAN_NAMESPACE_PREFIX}{_normalize_stage_name(stage_name)}"
 
 
 def _format_stage_generation_span_name(
@@ -161,19 +169,25 @@ def _format_stage_generation_span_name(
     pass_num: int | None = None,
 ) -> str:
     """Return canonical Tier 3A LLM generation observation name, scoped to stage and pass."""
-    pass_suffix = f".pass_{_validate_pass_num(pass_num)}" if pass_num is not None else ""
+    pass_suffix = (
+        f"{TELEMETRY_PASS_SPAN_SUFFIX_PREFIX}{_validate_pass_num(pass_num)}"
+        if pass_num is not None
+        else ""
+    )
     if stage_name is not None:
         normalized = stage_name.strip()
         if normalized:
-            suffix = "generate_fallback" if fallback else "generate"
-            return f"cresmo.{normalized}.{suffix}{pass_suffix}"
+            suffix = (
+                TELEMETRY_GENERATION_FALLBACK_SUFFIX if fallback else TELEMETRY_GENERATION_SUFFIX
+            )
+            return f"{TELEMETRY_SPAN_NAMESPACE_PREFIX}{normalized}.{suffix}{pass_suffix}"
     base = _LLM_GENERATION_FALLBACK_SPAN_NAME if fallback else _LLM_GENERATION_SPAN_NAME
     return f"{base}{pass_suffix}"
 
 
 def format_stage_judge_span_name(stage_name: str) -> str:
     """Return canonical Tier 3B judge evaluation span name (``cresmo.{stage_name}.judge``)."""
-    return f"cresmo.{_normalize_stage_name(stage_name)}.judge"
+    return f"{TELEMETRY_SPAN_NAMESPACE_PREFIX}{_normalize_stage_name(stage_name)}{TELEMETRY_JUDGE_SPAN_SUFFIX}"
 
 
 def format_stage_saturation_span_name(
@@ -181,9 +195,9 @@ def format_stage_saturation_span_name(
     pass_num: int | None = None,
 ) -> str:
     """Return canonical Tier 3C saturation evaluation span name, optionally pass-scoped."""
-    base = f"cresmo.{_normalize_stage_name(stage_name)}.saturation"
+    base = f"{TELEMETRY_SPAN_NAMESPACE_PREFIX}{_normalize_stage_name(stage_name)}{TELEMETRY_SATURATION_SPAN_SUFFIX}"
     if pass_num is not None:
-        return f"{base}.pass_{_validate_pass_num(pass_num)}"
+        return f"{base}{TELEMETRY_PASS_SPAN_SUFFIX_PREFIX}{_validate_pass_num(pass_num)}"
     return base
 
 

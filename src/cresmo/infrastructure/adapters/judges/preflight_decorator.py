@@ -27,6 +27,11 @@ from cresmo.domain.value_objects.quality import (
 
 logger = structlog.get_logger(__name__)
 
+_PREFLIGHT_VIOLATION_SEPARATOR: Final[str] = "; "
+_PREFLIGHT_FAILURE_SCORE: Final[float] = 0.0
+_PREFLIGHT_PROVIDER_NAME: Final[str] = "mechanical_preflight"
+_PREFLIGHT_NOMINAL_LATENCY_MS: Final[float] = 0.1
+
 _STAGE_PREFLIGHT_VALIDATORS: Final[dict[str, tuple[Callable[[str], list[str]], JudgeCriterion]]] = {
     StageName.FLUID_PROSE: (validate_fluid_prose_syntax, JudgeCriterion.STRUCTURAL_COMPLIANCE),
     StageName.GAP_FILLER: (validate_expanded_prose_syntax, JudgeCriterion.EXTRA_INFO_GRANULARITY),
@@ -59,7 +64,7 @@ class MechanicalPreflightJudgeDecorator(LlmJudgePort):
             validator_fn, criterion = stage_rule
             violations = validator_fn(context.candidate_text)
             if violations:
-                violations_msg = "; ".join(violations)
+                violations_msg = _PREFLIGHT_VIOLATION_SEPARATOR.join(violations)
                 logger.info(
                     "[MechanicalPreflight] Candidate failed syntactic invariants for %s: %s",
                     context.stage_name,
@@ -67,7 +72,7 @@ class MechanicalPreflightJudgeDecorator(LlmJudgePort):
                 )
                 criterion_score = CriterionScore(
                     criterion=criterion,
-                    score=0.0,
+                    score=_PREFLIGHT_FAILURE_SCORE,
                     passed=False,
                     reasoning=f"Mechanical invariants failed: {violations_msg}",
                     improvement_suggestion=f"Fix syntax errors: {violations_msg}",
@@ -75,10 +80,10 @@ class MechanicalPreflightJudgeDecorator(LlmJudgePort):
                 return JudgeEvaluation(
                     target_stage=context.stage_name,
                     passed=False,
-                    overall_score=0.0,
+                    overall_score=_PREFLIGHT_FAILURE_SCORE,
                     criteria_scores=(criterion_score,),
-                    provider="mechanical_preflight",
-                    latency_ms=0.1,
+                    provider=_PREFLIGHT_PROVIDER_NAME,
+                    latency_ms=_PREFLIGHT_NOMINAL_LATENCY_MS,
                     trace_id=context.trace_id,
                 )
 

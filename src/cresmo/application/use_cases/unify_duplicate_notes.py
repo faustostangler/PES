@@ -18,12 +18,17 @@ from typing import Final
 
 from cresmo.application.ports import VaultRepositoryPort
 from cresmo.domain.entities import AtomicNote
-from cresmo.domain.services.entity_matching import normalize_entity_title_for_matching
+from cresmo.domain.services.entity_matching import (
+    MIN_HONORIFIC_NORMALIZED_LENGTH,
+    normalize_entity_title_for_matching,
+)
 from cresmo.domain.value_objects import (
     CausalMatrix,
     CrossContextRelations,
     NoteTitle,
 )
+
+CANONICAL_DEFINITION_LENGTH_MARGIN: Final[int] = 50
 
 
 @dataclass(frozen=True)
@@ -60,9 +65,6 @@ class DeduplicationReport:
     def total_links_rewritten(self) -> int:
         """Total count of inbound WikiLinks updated across vault markdown files."""
         return sum(c.links_rewritten_count for c in self.clusters)
-
-
-_MIN_HONORIFIC_NORMALIZED_LENGTH: Final[int] = 4
 
 
 def _merge_aliases(canonical: AtomicNote, redundant: AtomicNote) -> tuple[str, ...]:
@@ -164,7 +166,7 @@ class UnifyDuplicateNotesUseCase:
         # 3. Honorific prefix normalization match
         norm_a = normalize_entity_title_for_matching(t_a)
         norm_b = normalize_entity_title_for_matching(t_b)
-        return norm_a == norm_b and len(norm_a) >= _MIN_HONORIFIC_NORMALIZED_LENGTH
+        return norm_a == norm_b and len(norm_a) >= MIN_HONORIFIC_NORMALIZED_LENGTH
 
     def _merge_notes(self, canonical: AtomicNote, redundant: AtomicNote) -> AtomicNote:
         """Merge redundant note into canonical note non-destructively."""
@@ -214,7 +216,10 @@ class UnifyDuplicateNotesUseCase:
 
                 if self._are_duplicates(current_canonical, note_b):
                     # Elect canonical: note with substantially longer definition (> 50 chars margin)
-                    if len(note_b.definition) > len(current_canonical.definition) + 50:
+                    if (
+                        len(note_b.definition)
+                        > len(current_canonical.definition) + CANONICAL_DEFINITION_LENGTH_MARGIN
+                    ):
                         canonical_candidate = note_b
                         redundant_candidate = current_canonical
                     else:

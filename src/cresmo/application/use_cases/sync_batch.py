@@ -12,7 +12,7 @@ from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from enum import StrEnum
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Final
 
 from cresmo.application.ports import ChannelTaxonomyPort
 from cresmo.application.use_cases.discovery.manifests import read_manifest_lines
@@ -21,9 +21,18 @@ from cresmo.domain.value_objects import (
     SyncFilterCriteria,
     normalize_to_uploads_playlist_url,
 )
+from cresmo.domain.value_objects.media import ALLOWED_URL_SCHEMES
 
 if TYPE_CHECKING:
     from cresmo.application.use_cases.sync_channel import SyncChannelUseCase
+
+DEFAULT_SYNC_LOOKBACK_DAYS: Final[int] = 7 * 52 * 2
+DEFAULT_SYNC_MAX_VIDEOS: Final[int] = 250
+DEFAULT_SYNC_MODE_DESCRIPTION: Final[str] = "full manifest"
+MODE_TOKEN_DELIMITER: Final[str] = ","
+MODE_PARTS_SEPARATOR: Final[str] = ", "
+YOUTUBE_WATCH_URL_PREFIX: Final[str] = "https://www.youtube.com/watch?v="
+DIRECT_VIDEO_MAX_COUNT: Final[int] = 1
 
 
 class SyncTargetEventKind(StrEnum):
@@ -54,8 +63,8 @@ class SyncBatchRequest:
     categories: tuple[str, ...] = ()
     video_ids: tuple[str, ...] = ()
     manifest: Path | None = None
-    lookback: int = 7 * 52 * 2
-    max_videos: int = 250
+    lookback: int = DEFAULT_SYNC_LOOKBACK_DAYS
+    max_videos: int = DEFAULT_SYNC_MAX_VIDEOS
     dry_run: bool = False
     force_refresh: bool = False
 
@@ -70,7 +79,7 @@ class SyncBatchOutcome:
     total_skipped: int = 0
     total_failed: int = 0
     no_matching_channels: bool = False
-    mode_description: str = "full manifest"
+    mode_description: str = DEFAULT_SYNC_MODE_DESCRIPTION
     manifest_path: Path | None = None
     direct_video_mode: bool = False
 
@@ -83,10 +92,10 @@ class SyncBatchOutcome:
 def _describe_mode(criteria: SyncFilterCriteria) -> str:
     parts: list[str] = []
     if criteria.channels:
-        parts.append(f"channels={','.join(criteria.channels)}")
+        parts.append(f"channels={MODE_TOKEN_DELIMITER.join(criteria.channels)}")
     if criteria.categories:
-        parts.append(f"categories={','.join(criteria.categories)}")
-    return ", ".join(parts) if parts else "full manifest"
+        parts.append(f"categories={MODE_TOKEN_DELIMITER.join(criteria.categories)}")
+    return MODE_PARTS_SEPARATOR.join(parts) if parts else DEFAULT_SYNC_MODE_DESCRIPTION
 
 
 def _emit(
@@ -176,13 +185,13 @@ class SyncBatchUseCase:
         for target in targets:
             channel_url = (
                 target
-                if not is_direct_video or target.startswith(("http://", "https://"))
-                else f"https://www.youtube.com/watch?v={target}"
+                if not is_direct_video or target.startswith(ALLOWED_URL_SCHEMES)
+                else f"{YOUTUBE_WATCH_URL_PREFIX}{target}"
             )
             query = ChannelFeedQuery(
                 channel_url=channel_url,
                 lookback_days=request.lookback,
-                max_videos=1 if is_direct_video else request.max_videos,
+                max_videos=DIRECT_VIDEO_MAX_COUNT if is_direct_video else request.max_videos,
             )
             summary = self._sync_channel_use_case.execute(
                 query=query,
@@ -224,7 +233,7 @@ class SyncBatchUseCase:
         if filter_criteria.channels:
             return [
                 ch
-                if ch.startswith(("http://", "https://"))
+                if ch.startswith(ALLOWED_URL_SCHEMES)
                 else normalize_to_uploads_playlist_url(ch)
                 for ch in filter_criteria.channels
             ]

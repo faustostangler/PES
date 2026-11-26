@@ -11,6 +11,8 @@ Conforms to:
 
 from __future__ import annotations
 
+from typing import Final
+
 from cresmo.application.ports import (
     ChannelTaxonomyPort,
     NoOpChannelTaxonomyPort,
@@ -24,9 +26,17 @@ from cresmo.domain.value_objects import (
     ContentId,
     MasterDocumentResult,
 )
+from cresmo.domain.value_objects.constants import HIDDEN_OR_INTERNAL_PREFIXES
 
 CHUNK_SEPARATOR: str = "\n\n---\n\n"
 SENTINEL_FALLBACK_SORT_DATE: int = 99_999_999
+MIN_NUMERIC_DATE_LENGTH: Final[int] = 4
+MAX_NUMERIC_DATE_LENGTH: Final[int] = 8
+DEFAULT_ENCODING: Final[str] = "utf-8"
+
+_META_KEY_VIDEO_DATE: Final[str] = "video_date"
+_META_KEY_CHANNEL_CATEGORY: Final[str] = "channel_category"
+_META_KEY_VIDEO_ID: Final[str] = "video_id"
 
 
 def parse_metadata_from_content(
@@ -48,21 +58,21 @@ def parse_metadata_from_content(
     """
     _, metadata = parse_frontmatter(content)
 
-    raw_date = str(metadata.get("video_date", "")).strip()
+    raw_date = str(metadata.get(_META_KEY_VIDEO_DATE, "")).strip()
     sort_date = (
         int(raw_date)
-        if raw_date.isdigit() and 4 <= len(raw_date) <= 8
+        if raw_date.isdigit() and MIN_NUMERIC_DATE_LENGTH <= len(raw_date) <= MAX_NUMERIC_DATE_LENGTH
         else SENTINEL_FALLBACK_SORT_DATE
     )
 
-    raw_category = metadata.get("channel_category")
+    raw_category = metadata.get(_META_KEY_CHANNEL_CATEGORY)
     if raw_category is not None and str(raw_category).strip():
         category = str(raw_category).strip()
     else:
         resolved_taxonomy = taxonomy_port or NoOpChannelTaxonomyPort()
         category, _ = resolved_taxonomy.classify(channel_name)
 
-    raw_vid = metadata.get("video_id")
+    raw_vid = metadata.get(_META_KEY_VIDEO_ID)
     raw_video_id = (
         str(raw_vid).strip() if raw_vid is not None and str(raw_vid).strip() else fallback_stem
     )
@@ -124,7 +134,7 @@ class ConcatMasterUseCase:
 
         for file_path in files:
             try:
-                content = file_path.read_text(encoding="utf-8").strip()
+                content = file_path.read_text(encoding=DEFAULT_ENCODING).strip()
             except OSError:
                 continue
             if not content:
@@ -216,7 +226,7 @@ class ConcatMasterUseCase:
         channel_dirs = sorted(
             d.name
             for d in terminal_stage_root.iterdir()
-            if d.is_dir() and not d.name.startswith((".", "_"))
+            if d.is_dir() and not d.name.startswith(HIDDEN_OR_INTERNAL_PREFIXES)
         )
         all_results: dict[str, list[MasterDocumentResult]] = {}
 

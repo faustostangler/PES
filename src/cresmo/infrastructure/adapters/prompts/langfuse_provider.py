@@ -11,7 +11,7 @@ Conforms to ADR-014 and ADR-017:
 from __future__ import annotations
 
 from http import HTTPStatus
-from typing import Any
+from typing import Any, Final
 
 import structlog
 
@@ -25,6 +25,15 @@ from cresmo.infrastructure.adapters.prompts.context_normalizer import (
 from cresmo.infrastructure.config.catalog import DEFAULT_LANGFUSE_PROMPT_LABEL
 
 logger = structlog.get_logger(__name__)
+
+_PROMPT_TYPE_CHAT: Final[str] = "chat"
+_LANGFUSE_NAME_PREFIX: Final[str] = "cresmo-"
+_SYSTEM_TURN_SEPARATOR: Final[str] = "\n\n"
+_KEY_ROLE: Final[str] = "role"
+_KEY_CONTENT: Final[str] = "content"
+_ROLE_SYSTEM: Final[str] = "system"
+_ROLE_USER_ALIASES: Final[tuple[str, ...]] = ("user", "human")
+_ROLE_ASSISTANT_ALIASES: Final[tuple[str, ...]] = ("assistant", "model", "ai")
 
 
 def _get_api_error_type() -> type[Exception]:
@@ -77,11 +86,11 @@ def _extract_prompt_messages(
 
     for msg in compiled_messages:
         if isinstance(msg, dict):
-            raw_role = str(msg.get("role", "")).lower().strip()
-            raw_content = msg.get("content")
-        elif hasattr(msg, "role") and hasattr(msg, "content"):
-            raw_role = str(getattr(msg, "role", "")).lower().strip()
-            raw_content = getattr(msg, "content", None)
+            raw_role = str(msg.get(_KEY_ROLE, "")).lower().strip()
+            raw_content = msg.get(_KEY_CONTENT)
+        elif hasattr(msg, _KEY_ROLE) and hasattr(msg, _KEY_CONTENT):
+            raw_role = str(getattr(msg, _KEY_ROLE, "")).lower().strip()
+            raw_content = getattr(msg, _KEY_CONTENT, None)
         else:
             continue
 
@@ -90,14 +99,14 @@ def _extract_prompt_messages(
 
         content = str(raw_content)
 
-        if raw_role == "system":
+        if raw_role == _ROLE_SYSTEM:
             if system_prompt:
-                system_prompt = f"{system_prompt}\n\n{content}"
+                system_prompt = f"{system_prompt}{_SYSTEM_TURN_SEPARATOR}{content}"
             else:
                 system_prompt = content
-        elif raw_role in ("user", "human"):
+        elif raw_role in _ROLE_USER_ALIASES:
             messages.append(ChatMessage(role=MessageRole.USER, content=content))
-        elif raw_role in ("assistant", "model", "ai"):
+        elif raw_role in _ROLE_ASSISTANT_ALIASES:
             messages.append(ChatMessage(role=MessageRole.ASSISTANT, content=content))
         else:
             messages.append(ChatMessage(role=MessageRole.USER, content=content))
@@ -172,7 +181,7 @@ class LangfusePromptProvider(PromptProviderPort):
             prompt = self._client.get_prompt(
                 prompt_name,
                 label=self._label,
-                type="chat",
+                type=_PROMPT_TYPE_CHAT,
             )
 
             if hasattr(prompt, "compile"):
@@ -222,7 +231,7 @@ class LangfusePromptProvider(PromptProviderPort):
         if catalog is not None and key in catalog:
             prompt_name = catalog[key].langfuse_name
         else:
-            prompt_name = f"cresmo-{key.value.replace('_', '-')}"
+            prompt_name = f"{_LANGFUSE_NAME_PREFIX}{key.value.replace('_', '-')}"
 
         try:
             default_language = str(getattr(self._fallback, "default_language", DEFAULT_LANGUAGE))

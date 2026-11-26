@@ -13,7 +13,7 @@ from __future__ import annotations
 import importlib.resources
 import json
 from pathlib import Path
-from typing import TYPE_CHECKING, Literal
+from typing import TYPE_CHECKING, Final, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -30,6 +30,9 @@ if TYPE_CHECKING:
 
 class TaxonomyCatalogError(Exception):
     """Raised when the channel taxonomy JSON catalog fails loading or schema validation."""
+
+
+_UTF8_ENCODING: Final[str] = "utf-8"
 
 
 class TaxonomyDomainSpec(BaseModel):
@@ -57,7 +60,7 @@ def load_taxonomy_catalog(taxonomy_path: Path | None = None) -> TaxonomyCatalog:
         if not taxonomy_path.exists():
             raise TaxonomyCatalogError(f"Taxonomy catalog file not found: {taxonomy_path}")
         try:
-            raw_text = taxonomy_path.read_text(encoding="utf-8")
+            raw_text = taxonomy_path.read_text(encoding=_UTF8_ENCODING)
         except OSError as exc:
             raise TaxonomyCatalogError(
                 f"Failed to read taxonomy JSON '{taxonomy_path}': {exc}"
@@ -67,7 +70,7 @@ def load_taxonomy_catalog(taxonomy_path: Path | None = None) -> TaxonomyCatalog:
             resource_traversable = importlib.resources.files(
                 DEFAULT_TAXONOMY_RESOURCE_PACKAGE
             ).joinpath(DEFAULT_TAXONOMY_RESOURCE_NAME)
-            raw_text = resource_traversable.read_text(encoding="utf-8")
+            raw_text = resource_traversable.read_text(encoding=_UTF8_ENCODING)
         except Exception as exc:
             raise TaxonomyCatalogError(f"Failed to load bundled taxonomy resource: {exc}") from exc
 

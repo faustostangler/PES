@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import functools
 from pathlib import Path
-from typing import Any
+from typing import Any, Final
 
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -34,21 +34,29 @@ from cresmo.infrastructure.environment import ensure_runtime_directories
 from cresmo.infrastructure.paths import find_workspace_root
 
 _WORKSPACE_DIR = find_workspace_root()
+ENV_PREFIX: Final[str] = "CRESMO_"
+ENV_NESTED_DELIMITER: Final[str] = "__"
+ENV_FILE_NAME: Final[str] = ".env"
+ENV_FILE_ENCODING: Final[str] = "utf-8"
+_VAULT_DIR_NAME: Final[str] = "vault"
+_DATA_DIR_NAME: Final[str] = "data"
+_ENV_FILE_KWARG_KEY: Final[str] = "_env_file"
+_SETTINGS_CACHE_MAXSIZE: Final[int] = 1
 
 
 class CresmoSettings(BaseSettings):
     """Single Source of Truth (SSOT) hierarchical configuration root for the Cresmo engine."""
 
     model_config = SettingsConfigDict(
-        env_prefix="CRESMO_",
-        env_nested_delimiter="__",
+        env_prefix=ENV_PREFIX,
+        env_nested_delimiter=ENV_NESTED_DELIMITER,
         env_file=(
-            ".env",
-            str(_WORKSPACE_DIR / ".env"),
-            str(_WORKSPACE_DIR / "vault" / ".env"),
-            str(_WORKSPACE_DIR / "data" / ".env"),
+            ENV_FILE_NAME,
+            str(_WORKSPACE_DIR / ENV_FILE_NAME),
+            str(_WORKSPACE_DIR / _VAULT_DIR_NAME / ENV_FILE_NAME),
+            str(_WORKSPACE_DIR / _DATA_DIR_NAME / ENV_FILE_NAME),
         ),
-        env_file_encoding="utf-8",
+        env_file_encoding=ENV_FILE_ENCODING,
         frozen=True,
         extra="ignore",
     )
@@ -69,7 +77,7 @@ class CresmoSettings(BaseSettings):
     ) -> None:
         """Initialize settings with optional explicit environment file override."""
         if _env_file is not ...:
-            values["_env_file"] = _env_file
+            values[_ENV_FILE_KWARG_KEY] = _env_file
         super().__init__(*args, **values)
 
     def to_stage_execution_policy(self) -> StageExecutionPolicy:
@@ -100,7 +108,7 @@ class CresmoSettings(BaseSettings):
         ensure_runtime_directories(self.storage)
 
 
-@functools.lru_cache(maxsize=1)
+@functools.lru_cache(maxsize=_SETTINGS_CACHE_MAXSIZE)
 def get_shared_settings() -> CresmoSettings:
     """Return canonical cached CresmoSettings singleton."""
     return CresmoSettings()

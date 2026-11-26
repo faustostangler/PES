@@ -22,6 +22,8 @@ DEFAULT_GEMINI_EMBEDDING_MODEL: Final[str] = "gemini-embedding-001"
 DEFAULT_GEMINI_EMBEDDING_DIMENSIONS: Final[int] = 768
 GEMINI_EMBED_MAX_BATCH_SIZE: Final[int] = 100
 GEMINI_EMBED_TASK_TYPE: Final[str] = "SEMANTIC_SIMILARITY"
+DEFAULT_GEMINI_EMBED_TIMEOUT_SECONDS: Final[float] = 30.0
+GEMINI_PROVIDER_NAME: Final[str] = "gemini"
 
 
 class GeminiEmbeddingAdapter(TextEmbeddingPort):
@@ -35,7 +37,7 @@ class GeminiEmbeddingAdapter(TextEmbeddingPort):
         genai_client: Any | None = None,
         credential_pool: GeminiCredentialPool | None = None,
         api_keys: list[str] | None = None,
-        timeout_seconds: float = 30.0,
+        timeout_seconds: float = DEFAULT_GEMINI_EMBED_TIMEOUT_SECONDS,
     ) -> None:
         """Initialize the Gemini embedding adapter configuration.
 
@@ -59,7 +61,7 @@ class GeminiEmbeddingAdapter(TextEmbeddingPort):
     @property
     def provider_name(self) -> str:
         """Return canonical provider identifier ('gemini')."""
-        return "gemini"
+        return GEMINI_PROVIDER_NAME
 
     def _resolve_pool(self) -> GeminiCredentialPool:
         """Resolve or lazily instantiate the credential pool from configured API keys."""

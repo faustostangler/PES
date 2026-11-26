@@ -22,7 +22,8 @@ import re
 import threading
 import time
 from collections.abc import Callable
-from typing import Any, TypeVar
+from http import HTTPStatus
+from typing import Any, Final, TypeVar
 
 import structlog
 from google import genai
@@ -42,12 +43,50 @@ logger = structlog.get_logger(__name__)
 
 T = TypeVar("T")
 
+DEFAULT_RETRY_DELAY_SECONDS: Final[float] = 60.0
+_MIN_COOLDOWN_FLOOR_SECONDS: Final[float] = 0.0
+_MIN_REMAINING_WAIT_SECONDS: Final[float] = 0.1
+_MS_PER_SECOND: Final[int] = 1000
+_KEY_HASH_HEX_LENGTH: Final[int] = 4
+_UTF8_ENCODING: Final[str] = "utf-8"
+_KEY_ALIAS_PREFIX: Final[str] = "key#"
+_UNKNOWN_KEY_INDEX: Final[str] = "?"
+_KEY_ALIAS_SEPARATOR: Final[str] = ":"
+_NON_QUOTA_SERVER_STATUS_CODES: Final[frozenset[int]] = frozenset(
+    {
+        HTTPStatus.INTERNAL_SERVER_ERROR,
+        HTTPStatus.BAD_GATEWAY,
+        HTTPStatus.SERVICE_UNAVAILABLE,
+        HTTPStatus.GATEWAY_TIMEOUT,
+    }
+)
+_EXCLUDED_503_MARKERS: Final[tuple[str, ...]] = (
+    "503",
+    "UNAVAILABLE",
+    "high demand",
+    "Service Unavailable",
+)
+_QUOTA_429_MARKERS: Final[tuple[str, ...]] = (
+    "429",
+    "ResourceExhausted",
+    "RESOURCE_EXHAUSTED",
+    "Too Many Requests",
+    "Quota exceeded",
+    "quota exhausted",
+    "Exceeded rate limit",
+)
+_RETRY_DELAY_PATTERNS: Final[tuple[re.Pattern[str], ...]] = (
+    re.compile(r"[Pp]lease retry in\s+([0-9]+(?:\.[0-9]+)?)\s*s"),
+    re.compile(r"retry_?[Dd]elay['\"]?\s*:\s*['\"]?([0-9]+(?:\.[0-9]+)?)\s*s?['\"]?"),
+    re.compile(r"([0-9]+(?:\.[0-9]+)?)\s*s\s*backoff"),
+)
+
 
 class CredentialPoolExhaustedError(QuotaPoolExhaustedError, RuntimeError):
     """Raised when all credentials in the pool are temporarily in cooldown."""
 
     def __init__(self, retry_after_seconds: float, message: str | None = None) -> None:
-        normalized_retry = max(0.0, retry_after_seconds)
+        normalized_retry = max(_MIN_COOLDOWN_FLOOR_SECONDS, retry_after_seconds)
         formatted_message = message or (
             f"All Gemini API credentials are currently exhausted in cooldown. "
             f"Earliest credential will recover in {normalized_retry:.1f}s."
@@ -55,7 +94,10 @@ class CredentialPoolExhaustedError(QuotaPoolExhaustedError, RuntimeError):
         super().__init__(formatted_message, retry_after_seconds=normalized_retry)
 
 
-def parse_retry_delay_from_error(exc: BaseException, default_delay: float = 60.0) -> float:
+def parse_retry_delay_from_error(
+    exc: BaseException,
+    default_delay: float = DEFAULT_RETRY_DELAY_SECONDS,
+) -> float:
     """Extract retry delay in seconds from Google GenAI error messages or details.
 
     Supports patterns like:
@@ -72,29 +114,13 @@ def parse_retry_delay_from_error(exc: BaseException, default_delay: float = 60.0
         Extracted or default cooldown delay in seconds.
     """
     msg = str(exc)
-    # Pattern 1: Please retry in X.Xs
-    match = re.search(r"[Pp]lease retry in\s+([0-9]+(?:\.[0-9]+)?)\s*s", msg)
-    if match:
-        try:
-            return float(match.group(1))
-        except (ValueError, TypeError):
-            pass
-
-    # Pattern 2: retryDelay: "33968s" or 'retryDelay': '33968s'
-    match = re.search(r"retry_?[Dd]elay['\"]?\s*:\s*['\"]?([0-9]+(?:\.[0-9]+)?)\s*s?['\"]?", msg)
-    if match:
-        try:
-            return float(match.group(1))
-        except (ValueError, TypeError):
-            pass
-
-    # Pattern 3: quota reset or backoff in seconds
-    match = re.search(r"([0-9]+(?:\.[0-9]+)?)\s*s\s*backoff", msg)
-    if match:
-        try:
-            return float(match.group(1))
-        except (ValueError, TypeError):
-            pass
+    for pattern in _RETRY_DELAY_PATTERNS:
+        match = pattern.search(msg)
+        if match:
+            try:
+                return float(match.group(1))
+            except (ValueError, TypeError):
+                pass
 
     return default_delay
 
@@ -115,30 +141,19 @@ def is_quota_exhausted_error(exc: BaseException) -> bool:
     """
     if isinstance(exc, errors.APIError):
         code = getattr(exc, "code", None)
-        if code == 429:
+        if code == HTTPStatus.TOO_MANY_REQUESTS:
             return True
-        if code in (500, 502, 503, 504):
+        if code in _NON_QUOTA_SERVER_STATUS_CODES:
             return False
 
     msg = str(exc)
 
     # Explicitly exclude 503 and high demand first
-    if any(p in msg for p in ("503", "UNAVAILABLE", "high demand", "Service Unavailable")):
+    if any(p in msg for p in _EXCLUDED_503_MARKERS):
         return False
 
     # Match 429 / ResourceExhausted indicators
-    return any(
-        p in msg
-        for p in (
-            "429",
-            "ResourceExhausted",
-            "RESOURCE_EXHAUSTED",
-            "Too Many Requests",
-            "Quota exceeded",
-            "quota exhausted",
-            "Exceeded rate limit",
-        )
-    )
+    return any(p in msg for p in _QUOTA_429_MARKERS)
 
 
 class GeminiCredentialPool:
@@ -171,14 +186,14 @@ class GeminiCredentialPool:
 
         self._keys = cleaned_keys
         self._timeout = timeout
-        timeout_ms = int(timeout * 1000)
+        timeout_ms = int(timeout * _MS_PER_SECOND)
         self._client_factory = client_factory or (
             lambda k: genai.Client(api_key=k, http_options=types.HttpOptions(timeout=timeout_ms))
         )
         self._lock = threading.Lock()
 
         # Cooldown map: key_str -> monotonic timestamp when cooldown expires
-        self._cooldown_until: dict[str, float] = {k: 0.0 for k in self._keys}
+        self._cooldown_until: dict[str, float] = {k: _MIN_COOLDOWN_FLOOR_SECONDS for k in self._keys}
 
         # Client cache: key_str -> genai.Client instance
         self._clients: dict[str, Any] = {}
@@ -188,8 +203,10 @@ class GeminiCredentialPool:
         # Pre-generate masked aliases: "key#idx:hash4"
         self._aliases: dict[str, str] = {}
         for idx, key in enumerate(self._keys):
-            masked_hash = hashlib.sha256(key.encode("utf-8")).hexdigest()[:4]
-            self._aliases[key] = f"key#{idx}:{masked_hash}"
+            masked_hash = hashlib.sha256(key.encode(_UTF8_ENCODING)).hexdigest()[
+                :_KEY_HASH_HEX_LENGTH
+            ]
+            self._aliases[key] = f"{_KEY_ALIAS_PREFIX}{idx}{_KEY_ALIAS_SEPARATOR}{masked_hash}"
 
     @property
     def key_count(self) -> int:
@@ -205,7 +222,10 @@ class GeminiCredentialPool:
         """Return the obfuscated identifier for a given key string."""
         return self._aliases.get(
             key_str,
-            f"key#?:{hashlib.sha256(key_str.encode('utf-8')).hexdigest()[:4]}",
+            (
+                f"{_KEY_ALIAS_PREFIX}{_UNKNOWN_KEY_INDEX}{_KEY_ALIAS_SEPARATOR}"
+                f"{hashlib.sha256(key_str.encode(_UTF8_ENCODING)).hexdigest()[:_KEY_HASH_HEX_LENGTH]}"
+            ),
         )
 
     def lease(self) -> tuple[str, Any, str]:
@@ -221,7 +241,7 @@ class GeminiCredentialPool:
         with self._lock:
             # 1. Search sequentially from primary (index 0) to fallbacks
             for key in self._keys:
-                cooldown_exp = self._cooldown_until.get(key, 0.0)
+                cooldown_exp = self._cooldown_until.get(key, _MIN_COOLDOWN_FLOOR_SECONDS)
                 if now >= cooldown_exp:
                     # Key is active
                     client = self._get_or_create_client(key)
@@ -229,11 +249,12 @@ class GeminiCredentialPool:
 
             # 2. All keys are currently in cooldown: calculate minimal wait time
             min_wait = min(self._cooldown_until[k] for k in self._keys) - now
+            clamped_wait = max(_MIN_REMAINING_WAIT_SECONDS, min_wait)
             raise CredentialPoolExhaustedError(
-                retry_after_seconds=max(0.1, min_wait),
+                retry_after_seconds=clamped_wait,
                 message=(
                     f"All {len(self._keys)} Gemini credentials in pool are in cooldown. "
-                    f"Earliest key will recover in {max(0.1, min_wait):.1f}s."
+                    f"Earliest key will recover in {clamped_wait:.1f}s."
                 ),
             )
 
@@ -245,7 +266,7 @@ class GeminiCredentialPool:
             retry_delay_seconds: Duration in seconds to keep this key in cooldown.
         """
         alias = self.get_alias(key_str)
-        delay = max(0.0, float(retry_delay_seconds))
+        delay = max(_MIN_COOLDOWN_FLOOR_SECONDS, float(retry_delay_seconds))
         now = time.monotonic()
         cooldown_target = now + delay
 
@@ -283,7 +304,9 @@ class GeminiCredentialPool:
                 # We already attempted all keys in this single operation attempt
                 now = time.monotonic()
                 min_wait = min(self._cooldown_until[k] for k in self._keys) - now
-                raise CredentialPoolExhaustedError(retry_after_seconds=max(0.1, min_wait))
+                raise CredentialPoolExhaustedError(
+                    retry_after_seconds=max(_MIN_REMAINING_WAIT_SECONDS, min_wait)
+                )
 
             attempted_keys.add(key)
 

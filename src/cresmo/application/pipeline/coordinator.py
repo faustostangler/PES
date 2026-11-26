@@ -21,7 +21,7 @@ from __future__ import annotations
 
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, Final
 
 import structlog
 
@@ -60,8 +60,43 @@ from cresmo.domain.value_objects import (
     PipelineStatus,
     is_processable_transcript_file,
 )
+from cresmo.domain.value_objects.media import ALLOWED_URL_SCHEMES
 
 logger = structlog.get_logger(__name__)
+
+DEFAULT_TELEMETRY_SOURCE_MODALITY: Final[str] = "transcript"
+OUTCOME_STATUS_SKIPPED_IDEMPOTENT: Final[str] = "SKIPPED_IDEMPOTENT"
+SKIPPED_IDEMPOTENT_REASON: Final[str] = "Existing content already processed"
+OUTCOME_STATUS_COMPLETED: Final[str] = "COMPLETED"
+_STAGE_PROGRESS_PREFIX: Final[str] = "[STAGE] "
+RATIO_ROUND_DECIMAL_PLACES: Final[int] = 3
+METRIC_INCREMENT_ONE: Final[float] = 1.0
+METRIC_LABEL_CHANNEL_ID: Final[str] = "channel_id"
+METRIC_LABEL_STATUS: Final[str] = "status"
+METRIC_LABEL_MODALITY: Final[str] = "modality"
+METRIC_STATUS_COMPLETED: Final[str] = "completed"
+METRIC_STATUS_SKIPPED_IDEMPOTENT: Final[str] = "skipped_idempotent"
+INTERNAL_CONTENT_URL_PREFIX: Final[str] = "https://cresmo.internal/content/"
+FALLBACK_CONTENT_TITLE_PREFIX: Final[str] = "Content "
+
+_PAYLOAD_KEY_STATUS: Final[str] = "status"
+_PAYLOAD_KEY_REASON: Final[str] = "reason"
+_PAYLOAD_KEY_CONTENT_ID: Final[str] = "content_id"
+_PAYLOAD_KEY_STAGE: Final[str] = "stage"
+_PAYLOAD_KEY_STAGES_COMPLETED: Final[str] = "stages_completed"
+_PAYLOAD_KEY_STAGES_REUSED_FROM_CACHE: Final[str] = "stages_reused_from_cache"
+_PAYLOAD_KEY_CACHE_HIT_COUNT: Final[str] = "cache_hit_count"
+_PAYLOAD_KEY_CACHE_HIT_RATIO: Final[str] = "cache_hit_ratio"
+_PAYLOAD_KEY_FORCE_REPROCESS: Final[str] = "force_reprocess"
+_PAYLOAD_KEY_EXPANSION_MAX_PASSES: Final[str] = "expansion_max_passes"
+_PAYLOAD_KEY_CONTENT_TITLE: Final[str] = "content_title"
+_PAYLOAD_KEY_WORD_COUNT: Final[str] = "word_count"
+_PAYLOAD_KEY_CHAR_COUNT: Final[str] = "char_count"
+_PAYLOAD_KEY_SOURCE_WORDS: Final[str] = "source_words"
+_PAYLOAD_KEY_SYNTHESIZED_WORDS: Final[str] = "synthesized_words"
+_PAYLOAD_KEY_EXPANSION_RATIO: Final[str] = "expansion_ratio"
+_PAYLOAD_KEY_SOURCE_CHARACTERS: Final[str] = "source_characters"
+_PAYLOAD_KEY_SYNTHESIZED_CHARACTERS: Final[str] = "synthesized_characters"
 
 CONVEYOR_STAGES: tuple[StageName, ...] = (
     StageName.FLUID_PROSE,
@@ -145,7 +180,7 @@ class CresmoPipeline:
             channel_name=channel.name,
             content_id=content.id.value,
             content_title=content.title,
-            source="transcript",
+            source=DEFAULT_TELEMETRY_SOURCE_MODALITY,
             raw_characters=len(raw_text),
             raw_words=len(raw_text.split()),
             expansion_max_passes=expansion_max_passes,
@@ -164,9 +199,9 @@ class CresmoPipeline:
             if early_result := self._check_idempotent_exit(raw, force_reprocess):
                 root_span.set_output(
                     {
-                        "status": "SKIPPED_IDEMPOTENT",
-                        "reason": "Existing content already processed",
-                        "content_id": content.id.value,
+                        _PAYLOAD_KEY_STATUS: OUTCOME_STATUS_SKIPPED_IDEMPOTENT,
+                        _PAYLOAD_KEY_REASON: SKIPPED_IDEMPOTENT_REASON,
+                        _PAYLOAD_KEY_CONTENT_ID: content.id.value,
                     }
                 )
                 return early_result
@@ -223,7 +258,7 @@ class CresmoPipeline:
                             or step == StageName.LONG_EXPANDER
                             or step == StageName.WIDE_EXPANDER
                         ):
-                            print(f"[STAGE] {step.value}")
+                            print(f"{_STAGE_PROGRESS_PREFIX}{step.value}")
 
                         artifact = self.stage_runner.execute_stage(
                             step,
@@ -259,29 +294,35 @@ class CresmoPipeline:
 
                 raw_word_count = len(raw_text.split())
                 synthesized_word_count = len(synthesized_text.split())
-                expansion_ratio = round(synthesized_word_count / max(raw_word_count, 1), 3)
+                expansion_ratio = round(
+                    synthesized_word_count / max(raw_word_count, 1),
+                    RATIO_ROUND_DECIMAL_PLACES,
+                )
 
                 cache_hit_count = len(cached_stages)
-                cache_hit_ratio = round(cache_hit_count / max(len(CONVEYOR_STAGES), 1), 3)
+                cache_hit_ratio = round(
+                    cache_hit_count / max(len(CONVEYOR_STAGES), 1),
+                    RATIO_ROUND_DECIMAL_PLACES,
+                )
                 completed_stage_names = [step.value for step in CONVEYOR_STAGES]
                 root_span.set_output(
                     {
-                        "status": "COMPLETED",
-                        "stage": completed_stage_names[-1],
-                        "stages_completed": completed_stage_names,
-                        "stages_reused_from_cache": cached_stages,
-                        "cache_hit_count": cache_hit_count,
-                        "cache_hit_ratio": cache_hit_ratio,
-                        "force_reprocess": force_reprocess,
-                        "expansion_max_passes": expansion_max_passes,
-                        "content_title": resolved_title,
-                        "word_count": synthesized_word_count,
-                        "char_count": len(synthesized_text),
-                        "source_words": raw_word_count,
-                        "synthesized_words": synthesized_word_count,
-                        "expansion_ratio": expansion_ratio,
-                        "source_characters": len(raw_text),
-                        "synthesized_characters": len(synthesized_text),
+                        _PAYLOAD_KEY_STATUS: OUTCOME_STATUS_COMPLETED,
+                        _PAYLOAD_KEY_STAGE: completed_stage_names[-1],
+                        _PAYLOAD_KEY_STAGES_COMPLETED: completed_stage_names,
+                        _PAYLOAD_KEY_STAGES_REUSED_FROM_CACHE: cached_stages,
+                        _PAYLOAD_KEY_CACHE_HIT_COUNT: cache_hit_count,
+                        _PAYLOAD_KEY_CACHE_HIT_RATIO: cache_hit_ratio,
+                        _PAYLOAD_KEY_FORCE_REPROCESS: force_reprocess,
+                        _PAYLOAD_KEY_EXPANSION_MAX_PASSES: expansion_max_passes,
+                        _PAYLOAD_KEY_CONTENT_TITLE: resolved_title,
+                        _PAYLOAD_KEY_WORD_COUNT: synthesized_word_count,
+                        _PAYLOAD_KEY_CHAR_COUNT: len(synthesized_text),
+                        _PAYLOAD_KEY_SOURCE_WORDS: raw_word_count,
+                        _PAYLOAD_KEY_SYNTHESIZED_WORDS: synthesized_word_count,
+                        _PAYLOAD_KEY_EXPANSION_RATIO: expansion_ratio,
+                        _PAYLOAD_KEY_SOURCE_CHARACTERS: len(raw_text),
+                        _PAYLOAD_KEY_SYNTHESIZED_CHARACTERS: len(synthesized_text),
                     }
                 )
             except StageQuarantinedError:
@@ -312,11 +353,11 @@ class CresmoPipeline:
             channel_id = channel.id.value if channel.id else ""
             self.metrics_port.increment_counter(
                 MetricName.TRANSCRIPTS_PROCESSED,
-                1.0,
+                METRIC_INCREMENT_ONE,
                 labels={
-                    "channel_id": channel_id,
-                    "status": "completed",
-                    "modality": "transcript",
+                    METRIC_LABEL_CHANNEL_ID: channel_id,
+                    METRIC_LABEL_STATUS: METRIC_STATUS_COMPLETED,
+                    METRIC_LABEL_MODALITY: DEFAULT_TELEMETRY_SOURCE_MODALITY,
                 },
             )
             self.metrics_port.flush()
@@ -339,9 +380,9 @@ class CresmoPipeline:
     ) -> LedgerEntry:
         """Build validated LedgerEntry from StageTranscript for unified ledger persistence."""
         media_url = raw.provenance.url.strip()
-        if not media_url.startswith(("http://", "https://")):
-            media_url = f"https://cresmo.internal/content/{raw.content.id.value}"
-        title = raw.content.title.strip() or f"Content {raw.content.id.value}"
+        if not media_url.startswith(ALLOWED_URL_SCHEMES):
+            media_url = f"{INTERNAL_CONTENT_URL_PREFIX}{raw.content.id.value}"
+        title = raw.content.title.strip() or f"{FALLBACK_CONTENT_TITLE_PREFIX}{raw.content.id.value}"
         return LedgerEntry(
             content_id=raw.content.id,
             media_url=media_url,
@@ -364,11 +405,11 @@ class CresmoPipeline:
             channel_id = raw.channel.id.value if raw.channel.id else ""
             self.metrics_port.increment_counter(
                 MetricName.TRANSCRIPTS_PROCESSED,
-                1.0,
+                METRIC_INCREMENT_ONE,
                 labels={
-                    "channel_id": channel_id,
-                    "status": "skipped_idempotent",
-                    "modality": "transcript",
+                    METRIC_LABEL_CHANNEL_ID: channel_id,
+                    METRIC_LABEL_STATUS: METRIC_STATUS_SKIPPED_IDEMPOTENT,
+                    METRIC_LABEL_MODALITY: DEFAULT_TELEMETRY_SOURCE_MODALITY,
                 },
             )
             self.metrics_port.flush()

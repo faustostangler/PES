@@ -9,6 +9,10 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from enum import StrEnum
+from typing import Final
+
+DEFAULT_COUNTER_INCREMENT: Final[float] = 1.0
+MIN_METRIC_OBSERVATION_VALUE: Final[float] = 0.0
 
 
 class MetricName(StrEnum):
@@ -41,7 +45,7 @@ class MetricsPort(ABC):
     def increment_counter(
         self,
         name: MetricName,
-        value: float = 1.0,
+        value: float = DEFAULT_COUNTER_INCREMENT,
         labels: dict[str, str] | None = None,
     ) -> None:
         """Increment a monotonically increasing counter by a non-negative value.
@@ -99,12 +103,12 @@ class NoOpMetricsPort(MetricsPort):
     def increment_counter(
         self,
         name: MetricName,
-        value: float = 1.0,
+        value: float = DEFAULT_COUNTER_INCREMENT,
         labels: dict[str, str] | None = None,
     ) -> None:
         """Increment a monotonically increasing counter."""
         _ = (name, labels)
-        if value < 0.0:
+        if value < MIN_METRIC_OBSERVATION_VALUE:
             raise ValueError("Counter increment must be non-negative")
 
     def observe_histogram(
@@ -115,7 +119,7 @@ class NoOpMetricsPort(MetricsPort):
     ) -> None:
         """Record an observed floating-point value into a histogram distribution."""
         _ = (name, labels)
-        if value < 0.0:
+        if value < MIN_METRIC_OBSERVATION_VALUE:
             raise ValueError("Histogram observation must be non-negative")
 
     def set_gauge(

@@ -15,9 +15,13 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Final
 
 from cresmo.application.ports.preflight import PreflightProbePort
 from cresmo.domain.exceptions import PreflightError
+
+PREFLIGHT_ERROR_SEPARATOR: Final[str] = "; "
+REQUIRED_FFMPEG_BINARY: Final[str] = "ffmpeg"
 
 
 @dataclass(frozen=True, slots=True)
@@ -30,7 +34,7 @@ class PreflightResult:
     def assert_healthy(self) -> None:
         """Raise PreflightError if environment checks failed."""
         if not self.is_healthy:
-            reasons = "; ".join(self.errors)
+            reasons = PREFLIGHT_ERROR_SEPARATOR.join(self.errors)
             raise PreflightError(f"Preflight health check failed: {reasons}")
 
 
@@ -79,8 +83,8 @@ class PreflightHealthChecker:
             errors.append(f"Cannot access SQLite ledger directory '{ledger_dir}': {exc}")
 
         # 4. System binary dependencies
-        if self._check_ffmpeg and not self._probe_port.executable_exists("ffmpeg"):
-            errors.append("System binary 'ffmpeg' not found in PATH")
+        if self._check_ffmpeg and not self._probe_port.executable_exists(REQUIRED_FFMPEG_BINARY):
+            errors.append(f"System binary '{REQUIRED_FFMPEG_BINARY}' not found in PATH")
 
         return PreflightResult(
             is_healthy=len(errors) == 0,

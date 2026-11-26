@@ -13,6 +13,8 @@ Conforms to:
 
 from __future__ import annotations
 
+from typing import Final
+
 from cresmo.domain.entities.transcripts import StageTranscript
 from cresmo.domain.exceptions import StageTranscriptStructureError
 from cresmo.domain.value_objects import (
@@ -22,13 +24,18 @@ from cresmo.domain.value_objects import (
     Content,
 )
 
+METADATA_KEY_PASSES_EXECUTED: Final[str] = "passes_executed"
+DEFAULT_PASS_COUNT: Final[int] = 1
+DEFAULT_TRANSCRIPT_TITLE: Final[str] = "Untitled Transcript"
+EXTRA_INFO_HEADING: Final[str] = "### Extra Info"
+
 
 def _resolve_effective_pass_count(candidate: CandidateText) -> int:
     """Resolve executed pass count from candidate metadata, defaulting to 1."""
-    raw_passes = candidate.metadata.get("passes_executed", 1)
+    raw_passes = candidate.metadata.get(METADATA_KEY_PASSES_EXECUTED, DEFAULT_PASS_COUNT)
     if isinstance(raw_passes, int) and not isinstance(raw_passes, bool):
-        return max(raw_passes, 1)
-    return 1
+        return max(raw_passes, DEFAULT_PASS_COUNT)
+    return DEFAULT_PASS_COUNT
 
 
 def post_process_expanded_transcript(
@@ -49,7 +56,7 @@ def post_process_expanded_transcript(
         extracted_title = title_match.group(1).strip()
         body = TITLE_H1_PATTERN.sub("", current_text).strip()
     else:
-        extracted_title = source.content.title or "Untitled Transcript"
+        extracted_title = source.content.title or DEFAULT_TRANSCRIPT_TITLE
         body = current_text
 
     complementary_match = EXTRA_INFO_HEADING_PATTERN.search(body)
@@ -68,7 +75,7 @@ def post_process_expanded_transcript(
             "StageTranscript must contain a non-empty 'Extra Info' section."
         )
 
-    full_body = f"{main_body}\n\n### Extra Info\n\n{complementary_info}"
+    full_body = f"{main_body}\n\n{EXTRA_INFO_HEADING}\n\n{complementary_info}"
     effective_pass_count = _resolve_effective_pass_count(candidate)
 
     return StageTranscript(

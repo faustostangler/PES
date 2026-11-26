@@ -8,7 +8,7 @@ Conforms to:
 from __future__ import annotations
 
 import re
-from typing import Any
+from typing import Any, Final
 
 import structlog
 from pydantic import BaseModel, Field
@@ -18,6 +18,20 @@ from cresmo.domain.value_objects import CriterionScore, JudgeCriterion
 logger = structlog.get_logger(__name__)
 
 _MARKDOWN_JSON_FENCE_PATTERN = re.compile(r"```(?:json)?\s*([\s\S]*?)\s*```")
+_SCORE_MIN_BOUND: Final[float] = 0.0
+_SCORE_MAX_BOUND: Final[float] = 1.0
+_KEY_CRITERION: Final[str] = "criterion"
+_KEY_SCORE: Final[str] = "score"
+_KEY_RAW: Final[str] = "raw"
+_KEY_PASSED: Final[str] = "passed"
+_KEY_REASONING: Final[str] = "reasoning"
+_CRITERION_ALIAS_KEYS: Final[tuple[str, ...]] = (
+    _KEY_CRITERION,
+    "name",
+    "criterion_name",
+    "id",
+    "criterion_id",
+)
 
 
 def clean_json_markdown(text: str) -> str:
@@ -78,11 +92,11 @@ def parse_criteria_scores(
     if isinstance(raw_criteria, dict):
         for k, v in raw_criteria.items():
             if isinstance(v, dict):
-                items.append({"criterion": k, **v})
+                items.append({_KEY_CRITERION: k, **v})
             elif isinstance(v, (int, float)):
-                items.append({"criterion": k, "score": float(v)})
+                items.append({_KEY_CRITERION: k, _KEY_SCORE: float(v)})
             else:
-                items.append({"criterion": k, "raw": v})
+                items.append({_KEY_CRITERION: k, _KEY_RAW: v})
     elif isinstance(raw_criteria, list):
         items = raw_criteria
     else:
@@ -97,12 +111,9 @@ def parse_criteria_scores(
 
         try:
             # 1. Resolve criterion identifier across common LLM aliases
-            crit_name = (
-                item.get("criterion")
-                or item.get("name")
-                or item.get("criterion_name")
-                or item.get("id")
-                or item.get("criterion_id")
+            crit_name = next(
+                (item[alias] for alias in _CRITERION_ALIAS_KEYS if item.get(alias)),
+                None,
             )
 
             # 2. Support single-key dicts where the key itself is the criterion name
@@ -112,24 +123,24 @@ def parse_criteria_scores(
                     JudgeCriterion(str(candidate_key).strip().lower())
                     crit_name = candidate_key
                     if isinstance(candidate_val, dict):
-                        item = {"criterion": crit_name, **candidate_val}
+                        item = {_KEY_CRITERION: crit_name, **candidate_val}
                     elif isinstance(candidate_val, (int, float)):
-                        item = {"criterion": crit_name, "score": float(candidate_val)}
+                        item = {_KEY_CRITERION: crit_name, _KEY_SCORE: float(candidate_val)}
                 except ValueError:
                     pass
 
             if crit_name is None:
-                raise KeyError("criterion")
+                raise KeyError(_KEY_CRITERION)
 
             crit_enum = JudgeCriterion(str(crit_name).strip().lower())
-            score_val = max(0.0, min(1.0, float(item["score"])))
-            passed_val = bool(item.get("passed", score_val >= pass_threshold))
+            score_val = max(_SCORE_MIN_BOUND, min(_SCORE_MAX_BOUND, float(item[_KEY_SCORE])))
+            passed_val = bool(item.get(_KEY_PASSED, score_val >= pass_threshold))
             criteria_scores_list.append(
                 CriterionScore(
                     criterion=crit_enum,
                     score=score_val,
                     passed=passed_val,
-                    reasoning=str(item.get("reasoning", "")),
+                    reasoning=str(item.get(_KEY_REASONING, "")),
                 )
             )
         except (ValueError, KeyError, TypeError) as parse_item_err:

@@ -11,17 +11,54 @@ import re
 import threading
 from collections.abc import Mapping
 from datetime import UTC, date, datetime
-from typing import Any
+from typing import Any, Final
 
 import structlog
 
 logger = structlog.get_logger(__name__)
 
-SENTENCES_PER_PARAGRAPH_THRESHOLD: int = 4
-ISO_DATE_COMPACT_LENGTH: int = 8
+SENTENCES_PER_PARAGRAPH_THRESHOLD: Final[int] = 4
+ISO_DATE_COMPACT_LENGTH: Final[int] = 8
 _ILLEGAL_FS_CHARS = re.compile(r'[\\/*?:"<>|%]')
 _PLUGINS_LOCK = threading.Lock()
 _PLUGINS_LOADED = False
+_PARAGRAPH_SEPARATOR: Final[str] = "\n\n"
+_SENTENCE_JOINER: Final[str] = " "
+_SENTENCE_END_PUNCTUATION: Final[tuple[str, ...]] = (".", "!", "?")
+_TRANSLATED_SUBTITLE_QUERY_MARKER: Final[str] = "tlang="
+_SUBTITLE_EXT_JSON3: Final[str] = "json3"
+_AUTO_CAPTION_ORIG_SUFFIX: Final[str] = "-orig"
+_AUTO_CAPTION_ORIG_KEY: Final[str] = "orig"
+_LANG_CODE_PT: Final[str] = "pt"
+_LANG_CODE_EN: Final[str] = "en"
+_PT_PRIORITY_LANGS: Final[tuple[str, ...]] = (
+    "pt-orig",
+    "pt-BR",
+    "pt",
+    "pt-PT",
+    "en-orig",
+    "en",
+    "en-US",
+)
+_DEFAULT_PRIORITY_LANGS: Final[tuple[str, ...]] = (
+    "en-orig",
+    "en",
+    "en-US",
+    "pt-orig",
+    "pt-BR",
+    "pt",
+    "pt-PT",
+)
+_COMPACT_DATE_FORMAT: Final[str] = "%Y%m%d"
+_KEY_EVENTS: Final[str] = "events"
+_KEY_SEGS: Final[str] = "segs"
+_KEY_A_APPEND: Final[str] = "aAppend"
+_KEY_UTF8: Final[str] = "utf8"
+_KEY_URL: Final[str] = "url"
+_KEY_EXT: Final[str] = "ext"
+_KEY_SUBTITLES: Final[str] = "subtitles"
+_KEY_AUTOMATIC_CAPTIONS: Final[str] = "automatic_captions"
+_KEY_LANGUAGE: Final[str] = "language"
 
 
 def _reset_yt_dlp_plugins_cache() -> None:
@@ -50,25 +87,25 @@ def ensure_yt_dlp_plugins_loaded() -> None:
 
 def reconstruct_json3_paragraphs(data: dict[str, Any]) -> str:
     """Reconstruct JSON3 subtitle event segments into continuous prose paragraphs."""
-    events: list[dict[str, Any]] = data.get("events", [])
+    events: list[dict[str, Any]] = data.get(_KEY_EVENTS, [])
     paragraphs: list[str] = []
     current_sentences: list[str] = []
 
     for event in events:
-        if "segs" in event and not event.get("aAppend"):
-            seg_text = "".join(str(s.get("utf8", "")) for s in event["segs"]).strip()
+        if _KEY_SEGS in event and not event.get(_KEY_A_APPEND):
+            seg_text = "".join(str(s.get(_KEY_UTF8, "")) for s in event[_KEY_SEGS]).strip()
             if seg_text:
                 current_sentences.append(seg_text)
                 if len(current_sentences) >= SENTENCES_PER_PARAGRAPH_THRESHOLD or seg_text.endswith(
-                    (".", "!", "?")
+                    _SENTENCE_END_PUNCTUATION
                 ):
-                    paragraphs.append(" ".join(current_sentences))
+                    paragraphs.append(_SENTENCE_JOINER.join(current_sentences))
                     current_sentences = []
 
     if current_sentences:
-        paragraphs.append(" ".join(current_sentences))
+        paragraphs.append(_SENTENCE_JOINER.join(current_sentences))
 
-    return "\n\n".join(paragraphs).strip()
+    return _PARAGRAPH_SEPARATOR.join(paragraphs).strip()
 
 
 def is_native_subtitle_url(url: str | None) -> bool:
@@ -76,21 +113,21 @@ def is_native_subtitle_url(url: str | None) -> bool:
     if not url:
         return False
     # Strictly reject on-the-fly machine-translated subtitles that cause YouTube HTTP 429
-    return "tlang=" not in url
+    return _TRANSLATED_SUBTITLE_QUERY_MARKER not in url
 
 
 def find_matching_format_url(formats: list[dict[str, Any]]) -> str | None:
     """Scan subtitle format candidates for valid non-translated json3 track."""
     for format_candidate in formats:
-        url = format_candidate.get("url")
-        if format_candidate.get("ext") == "json3" and is_native_subtitle_url(url):
+        url = format_candidate.get(_KEY_URL)
+        if format_candidate.get(_KEY_EXT) == _SUBTITLE_EXT_JSON3 and is_native_subtitle_url(url):
             return str(url)
     return None
 
 
 def find_in_manual_subtitles(
     subtitles: dict[str, list[dict[str, Any]]],
-    ordered_langs: list[str],
+    ordered_langs: tuple[str, ...] | list[str],
 ) -> str | None:
     """Search in manual subtitles with prioritized language order, then fallback to any."""
     for lang in ordered_langs:
@@ -107,14 +144,21 @@ def find_in_manual_subtitles(
 
 def find_in_auto_captions(
     auto_captions: dict[str, list[dict[str, Any]]],
-    ordered_langs: list[str],
+    ordered_langs: tuple[str, ...] | list[str],
     is_pt_video: bool,
 ) -> str | None:
     """Search in automatic captions prioritizing explicit original tracks (*-orig)."""
-    original_keys = [key for key in auto_captions if key.endswith("-orig") or key == "orig"]
+    original_keys = [
+        key
+        for key in auto_captions
+        if key.endswith(_AUTO_CAPTION_ORIG_SUFFIX) or key == _AUTO_CAPTION_ORIG_KEY
+    ]
     original_keys.sort(
         key=lambda key: (
-            0 if (is_pt_video and "pt" in key) or (not is_pt_video and "en" in key) else 1
+            0
+            if (is_pt_video and _LANG_CODE_PT in key)
+            or (not is_pt_video and _LANG_CODE_EN in key)
+            else 1
         )
     )
     for lang in original_keys:
@@ -135,16 +179,13 @@ def find_in_auto_captions(
 
 def find_native_subtitle_url(info: Mapping[str, Any]) -> str | None:
     """Search for native spoken subtitle URL, strictly rejecting tlang= translations."""
-    subtitles: dict[str, list[dict[str, Any]]] = info.get("subtitles") or {}
-    auto_captions: dict[str, list[dict[str, Any]]] = info.get("automatic_captions") or {}
+    subtitles: dict[str, list[dict[str, Any]]] = info.get(_KEY_SUBTITLES) or {}
+    auto_captions: dict[str, list[dict[str, Any]]] = info.get(_KEY_AUTOMATIC_CAPTIONS) or {}
 
-    video_lang = str(info.get("language") or "").lower()
-    is_pt_video = video_lang.startswith("pt")
+    video_lang = str(info.get(_KEY_LANGUAGE) or "").lower()
+    is_pt_video = video_lang.startswith(_LANG_CODE_PT)
 
-    if is_pt_video:
-        ordered_langs = ["pt-orig", "pt-BR", "pt", "pt-PT", "en-orig", "en", "en-US"]
-    else:
-        ordered_langs = ["en-orig", "en", "en-US", "pt-orig", "pt-BR", "pt", "pt-PT"]
+    ordered_langs = _PT_PRIORITY_LANGS if is_pt_video else _DEFAULT_PRIORITY_LANGS
 
     return find_in_manual_subtitles(subtitles, ordered_langs) or find_in_auto_captions(
         auto_captions, ordered_langs, is_pt_video
@@ -158,7 +199,7 @@ def parse_upload_date(raw_date: Any) -> date | None:
     date_str = str(raw_date).strip()
     if len(date_str) == ISO_DATE_COMPACT_LENGTH and date_str.isdigit():
         try:
-            return datetime.strptime(date_str, "%Y%m%d").replace(tzinfo=UTC).date()
+            return datetime.strptime(date_str, _COMPACT_DATE_FORMAT).replace(tzinfo=UTC).date()
         except ValueError:
             return None
     return None
@@ -171,7 +212,7 @@ def parse_published_datetime(raw_date: Any) -> datetime:
     date_str = str(raw_date).strip()
     if len(date_str) == ISO_DATE_COMPACT_LENGTH and date_str.isdigit():
         try:
-            return datetime.strptime(date_str, "%Y%m%d").replace(tzinfo=UTC)
+            return datetime.strptime(date_str, _COMPACT_DATE_FORMAT).replace(tzinfo=UTC)
         except ValueError:
             return datetime.now(UTC)
     return datetime.now(UTC)

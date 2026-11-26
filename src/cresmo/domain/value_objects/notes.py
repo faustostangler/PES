@@ -10,12 +10,14 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 from enum import StrEnum
+from typing import Final
 
 from cresmo.domain.exceptions import DomainValidationError, NoteTypologyError
 from cresmo.domain.value_objects.constants import MAX_NOTE_TITLE_LENGTH
 
 _BRACKETS_PATTERN = re.compile(r"\[\[(.*?)\]\]")
 _ILLEGAL_CHARS_PATTERN = re.compile(r'[\\/*?:"<>|%]')
+FORBIDDEN_UNTITLED_NOTE_NAMES: Final[frozenset[str]] = frozenset({"untitled", "untitled_note"})
 
 
 class NoteType(StrEnum):
@@ -78,7 +80,7 @@ class NoteTitle:
                 f"NoteTitle must be between 1 and {MAX_NOTE_TITLE_LENGTH} characters. Got: '{self.value}' (sanitized: '{sanitized}')"
             )
 
-        if sanitized.lower() in {"untitled", "untitled_note"}:
+        if sanitized.lower() in FORBIDDEN_UNTITLED_NOTE_NAMES:
             raise DomainValidationError(f"Generic placeholder title '{self.value}' is prohibited.")
 
         object.__setattr__(self, "value", sanitized)

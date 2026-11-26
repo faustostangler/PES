@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Final
+
 import structlog
 
 from cresmo.application.ports import (
@@ -15,6 +17,8 @@ from cresmo.infrastructure.adapters.prompts.json_provider import JsonPromptProvi
 
 logger = structlog.get_logger(__name__)
 
+DEFAULT_OLLAMA_CRITIQUE_TEMPERATURE: Final[float] = 0.1
+
 
 class OllamaCritiqueAdapter(CritiqueSynthesizerPort):
     """Adapter transforming structured evaluation verdicts into natural language reflection critiques via Ollama."""
@@ -22,7 +26,7 @@ class OllamaCritiqueAdapter(CritiqueSynthesizerPort):
     def __init__(
         self,
         llm_transformation_port: LLMTransformationPort | None = None,
-        temperature: float = 0.1,
+        temperature: float = DEFAULT_OLLAMA_CRITIQUE_TEMPERATURE,
         *,
         prompt_provider: PromptProviderPort | None = None,
     ) -> None:

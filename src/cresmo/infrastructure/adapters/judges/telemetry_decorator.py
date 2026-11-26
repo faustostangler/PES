@@ -8,6 +8,8 @@ Conforms to:
 
 from __future__ import annotations
 
+from typing import Final
+
 import structlog
 
 from cresmo.application.ports.llm_judge_port import LlmJudgePort
@@ -15,6 +17,8 @@ from cresmo.application.ports.telemetry import NoOpTelemetryPort, TelemetryPort
 from cresmo.domain.value_objects.quality import EvaluationContext, JudgeEvaluation
 
 logger = structlog.get_logger(__name__)
+
+_SCORE_NAMESPACE_SEPARATOR: Final[str] = "."
 
 
 class TelemetryJudgeDecorator(LlmJudgePort):
@@ -38,7 +42,7 @@ class TelemetryJudgeDecorator(LlmJudgePort):
 
         for score in evaluation.criteria_scores:
             score_name = (
-                f"{context.stage_name}.{score.criterion.value}"
+                f"{context.stage_name}{_SCORE_NAMESPACE_SEPARATOR}{score.criterion.value}"
                 if context.stage_name
                 else score.criterion.value
             )

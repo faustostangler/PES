@@ -13,12 +13,16 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
-from typing import Annotated, Any
+from typing import Annotated, Any, Final
 
 import typer
 
 from cresmo.presentation.error_handler import handle_cli_exception
 from cresmo.presentation.exit_codes import EXIT_SUCCESS
+
+_KEY_STORAGE: Final[str] = "storage"
+_KEY_VAULT_DIR: Final[str] = "vault_dir"
+_FALLBACK_DEDUPE_ERROR_PREFIX: Final[str] = "Deduplication error"
 
 
 def resolve_shared_settings(*args: Any, **kwargs: Any) -> Any:
@@ -74,7 +78,7 @@ def handle_dedupe(
         settings = resolve_shared_settings()
         if vault is not None:
             settings = settings.model_copy(
-                update={"storage": settings.storage.model_copy(update={"vault_dir": vault})}
+                update={_KEY_STORAGE: settings.storage.model_copy(update={_KEY_VAULT_DIR: vault})}
             )
         use_case = build_unify_duplicates_use_case(settings=settings)
         report = use_case.execute()
@@ -91,4 +95,4 @@ def handle_dedupe(
             )
         return EXIT_SUCCESS
     except Exception as exc:  # noqa: BLE001
-        return handle_cli_exception(exc, fallback_prefix="Deduplication error")
+        return handle_cli_exception(exc, fallback_prefix=_FALLBACK_DEDUPE_ERROR_PREFIX)

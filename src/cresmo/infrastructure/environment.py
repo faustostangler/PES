@@ -11,7 +11,7 @@ Conforms to:
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Protocol, runtime_checkable
+from typing import Final, Protocol, runtime_checkable
 
 from cresmo.domain.stage_registry import StageName
 
@@ -20,6 +20,10 @@ __all__ = [
     "discover_cookies_file",
     "ensure_runtime_directories",
 ]
+
+_COOKIES_FILENAME: Final[str] = "cookies.txt"
+_DATA_DIR_NAME: Final[str] = "data"
+_LEGACY_COOKIES_FILENAME: Final[str] = ".yt_dlp_cookies.txt"
 
 
 @runtime_checkable
@@ -95,9 +99,9 @@ def discover_cookies_file(
         candidates.append(configured)
     candidates.extend(
         (
-            data_dir / "cookies.txt",
-            workspace_dir / "data" / "cookies.txt",
-            workspace_dir / ".yt_dlp_cookies.txt",
+            data_dir / _COOKIES_FILENAME,
+            workspace_dir / _DATA_DIR_NAME / _COOKIES_FILENAME,
+            workspace_dir / _LEGACY_COOKIES_FILENAME,
         )
     )
     for candidate in candidates:

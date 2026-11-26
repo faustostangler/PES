@@ -8,9 +8,16 @@ Conforms to:
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Literal, Self
+from typing import Final, Literal, Self
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
+
+DEFAULT_WHISPER_WORKERS: Final[int] = 1
+DEFAULT_CHANNEL_DISCOVERY_WORKERS: Final[int] = 0
+CHANNEL_DISCOVERY_WORKER_MULTIPLIER: Final[int] = 10
+DEFAULT_DISCOVERY_QUEUE_MAXSIZE: Final[int] = 50
+DEFAULT_WHISPER_MODEL: Final[str] = "base"
+DEFAULT_DAYS_LOOKBACK: Final[int] = 365
 
 
 class WorkerPoolSettings(BaseModel):
@@ -19,17 +26,17 @@ class WorkerPoolSettings(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     whisper: int = Field(
-        default=1,
+        default=DEFAULT_WHISPER_WORKERS,
         ge=1,
         description="Concurrent worker threads for local Whisper audio-to-text fallback.",
     )
     channel_discovery: int = Field(
-        default=0,
+        default=DEFAULT_CHANNEL_DISCOVERY_WORKERS,
         ge=0,
         description="Concurrent worker threads for scanning YouTube channel feeds (0 -> whisper * 10).",
     )
     discovery_queue_maxsize: int = Field(
-        default=50,
+        default=DEFAULT_DISCOVERY_QUEUE_MAXSIZE,
         ge=1,
         description="Maximum bounded capacity for batch source streaming queue.",
     )
@@ -38,7 +45,11 @@ class WorkerPoolSettings(BaseModel):
     def _compute_worker_multiples(self) -> Self:
         """Compute deterministic worker pool ratios from whisper base on frozen construction."""
         if self.channel_discovery <= 0:
-            object.__setattr__(self, "channel_discovery", max(1, self.whisper * 10))
+            object.__setattr__(
+                self,
+                "channel_discovery",
+                max(DEFAULT_WHISPER_WORKERS, self.whisper * CHANNEL_DISCOVERY_WORKER_MULTIPLIER),
+            )
         return self
 
 
@@ -53,7 +64,7 @@ class IngestionSettings(BaseModel):
     )
     workers: WorkerPoolSettings = Field(default_factory=WorkerPoolSettings)
     whisper_model: str = Field(
-        default="base",
+        default=DEFAULT_WHISPER_MODEL,
         description="Whisper STT model variant for audio transcription.",
     )
     whisper_device: Literal["auto", "cpu", "cuda"] = Field(
@@ -73,7 +84,7 @@ class IngestionSettings(BaseModel):
         description="Whether to use YouTube Atom RSS feeds as a sub-200ms fast-path before yt-dlp.",
     )
     days_lookback: int = Field(
-        default=365,
+        default=DEFAULT_DAYS_LOOKBACK,
         ge=0,
         description="Default crawling lookback window in days.",
     )

@@ -10,10 +10,21 @@ from __future__ import annotations
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from enum import StrEnum
-from typing import Any
+from typing import Any, Final
 
 from cresmo.domain.exceptions import DomainValidationError
 from cresmo.domain.value_objects.prompt import PromptKey
+
+SCORE_MIN_BOUND: Final[float] = 0.0
+SCORE_MAX_BOUND: Final[float] = 1.0
+DEFAULT_CRITERION_WEIGHT: Final[float] = 1.0
+DEFAULT_PASS_THRESHOLD: Final[float] = 0.80
+DEFAULT_VETO_THRESHOLD: Final[float] = 0.80
+OVERALL_SCORE_DECIMAL_PLACES: Final[int] = 4
+MECHANICAL_VETO_CRITIQUE_PREFIX: Final[str] = "[CRITICAL MECHANICAL VETO]: "
+CRITIQUE_REASON_SEPARATOR: Final[str] = "; "
+DEFAULT_QUALITY_FAILURE_CRITIQUE: Final[str] = "Quality threshold not met."
+MIN_EVALUATION_ATTEMPTS: Final[int] = 1
 
 
 class JudgeCriterion(StrEnum):
@@ -93,8 +104,10 @@ class CriterionScore:
 
     def __post_init__(self) -> None:
         """Validate value object invariants."""
-        if not (0.0 <= self.score <= 1.0):
-            raise ValueError(f"Score must be between 0.0 and 1.0, got: {self.score}")
+        if not (SCORE_MIN_BOUND <= self.score <= SCORE_MAX_BOUND):
+            raise ValueError(
+                f"Score must be between {SCORE_MIN_BOUND} and {SCORE_MAX_BOUND}, got: {self.score}"
+            )
 
 
 DEFAULT_FLUID_PROSE_WEIGHTS: dict[JudgeCriterion, float] = {
@@ -181,8 +194,8 @@ def resolve_stage_scoring_policy(
 
 def compute_composite_verdict(
     criteria_scores: tuple[CriterionScore, ...] | list[CriterionScore],
-    pass_threshold: float = 0.80,
-    veto_threshold: float = 0.80,
+    pass_threshold: float = DEFAULT_PASS_THRESHOLD,
+    veto_threshold: float = DEFAULT_VETO_THRESHOLD,
     weights: dict[JudgeCriterion, float] | None = None,
     veto_criteria: frozenset[JudgeCriterion] | None = None,
 ) -> tuple[float, bool, bool, tuple[str, ...]]:
@@ -205,17 +218,17 @@ def compute_composite_verdict(
     """
     scores = tuple(criteria_scores)
     if not scores:
-        return 0.0, False, False, ()
+        return SCORE_MIN_BOUND, False, False, ()
 
     active_weights = weights or DEFAULT_FLUID_PROSE_WEIGHTS
     active_veto = veto_criteria if veto_criteria is not None else DEFAULT_MECHANICAL_VETO_CRITERIA
 
-    weighted_sum = 0.0
-    total_weight = 0.0
+    weighted_sum = SCORE_MIN_BOUND
+    total_weight = SCORE_MIN_BOUND
     veto_reasons: list[str] = []
 
     for criterion_score in scores:
-        weight = active_weights.get(criterion_score.criterion, 1.0)
+        weight = active_weights.get(criterion_score.criterion, DEFAULT_CRITERION_WEIGHT)
         weighted_sum += criterion_score.score * weight
         total_weight += weight
 
@@ -227,8 +240,12 @@ def compute_composite_verdict(
                 f"score {criterion_score.score:.2f} < threshold {veto_threshold:.2f}"
             )
 
-    overall_score = round(weighted_sum / total_weight, 4) if total_weight > 0.0 else 0.0
-    overall_score = max(0.0, min(1.0, overall_score))
+    overall_score = (
+        round(weighted_sum / total_weight, OVERALL_SCORE_DECIMAL_PLACES)
+        if total_weight > SCORE_MIN_BOUND
+        else SCORE_MIN_BOUND
+    )
+    overall_score = max(SCORE_MIN_BOUND, min(SCORE_MAX_BOUND, overall_score))
 
     is_vetoed = len(veto_reasons) > 0
     passed = (not is_vetoed) and (overall_score >= pass_threshold)
@@ -264,9 +281,9 @@ class JudgeEvaluation:
 
     def __post_init__(self) -> None:
         """Validate aggregate invariants."""
-        if not (0.0 <= self.overall_score <= 1.0):
+        if not (SCORE_MIN_BOUND <= self.overall_score <= SCORE_MAX_BOUND):
             raise ValueError(
-                f"Overall score must be between 0.0 and 1.0, got: {self.overall_score}"
+                f"Overall score must be between {SCORE_MIN_BOUND} and {SCORE_MAX_BOUND}, got: {self.overall_score}"
             )
 
     @classmethod
@@ -275,8 +292,8 @@ class JudgeEvaluation:
         target_stage: str,
         criteria_scores: tuple[CriterionScore, ...] | list[CriterionScore],
         provider: str,
-        pass_threshold: float = 0.80,
-        veto_threshold: float = 0.80,
+        pass_threshold: float = DEFAULT_PASS_THRESHOLD,
+        veto_threshold: float = DEFAULT_VETO_THRESHOLD,
         latency_ms: float = 0.0,
         trace_id: str | None = None,
         weights: dict[JudgeCriterion, float] | None = None,
@@ -325,14 +342,16 @@ class JudgeEvaluation:
         """
         failures: list[str] = []
         if self.is_vetoed and self.veto_reasons:
-            failures.append("[CRITICAL MECHANICAL VETO]: " + "; ".join(self.veto_reasons))
+            failures.append(
+                MECHANICAL_VETO_CRITIQUE_PREFIX + CRITIQUE_REASON_SEPARATOR.join(self.veto_reasons)
+            )
         for score in self.criteria_scores:
             if not score.passed:
                 part = f"- {score.criterion.value}: {score.reasoning}"
                 if score.improvement_suggestion:
                     part += f" (Suggestion: {score.improvement_suggestion})"
                 failures.append(part)
-        return "\n".join(failures) if failures else "Quality threshold not met."
+        return "\n".join(failures) if failures else DEFAULT_QUALITY_FAILURE_CRITIQUE
 
 
 @dataclass(frozen=True, slots=True)
@@ -376,8 +395,10 @@ class StageEvaluationSpec:
     )
     required_criteria: tuple[JudgeCriterion, ...] = ()
     metadata: dict[str, Any] = field(default_factory=dict)
-    max_attempts: int = 1
+    max_attempts: int = MIN_EVALUATION_ATTEMPTS
 
     def __post_init__(self) -> None:
-        if self.max_attempts < 1:
-            raise ValueError(f"max_attempts must be >= 1, got {self.max_attempts}")
+        if self.max_attempts < MIN_EVALUATION_ATTEMPTS:
+            raise ValueError(
+                f"max_attempts must be >= {MIN_EVALUATION_ATTEMPTS}, got {self.max_attempts}"
+            )

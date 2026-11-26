@@ -10,6 +10,7 @@ from __future__ import annotations
 import json
 import time
 from collections.abc import Callable
+from typing import Final
 
 import structlog
 
@@ -25,6 +26,9 @@ from cresmo.infrastructure.adapters.judges.criterion_parser import (
 )
 
 logger = structlog.get_logger(__name__)
+
+_MS_PER_SECOND: Final[float] = 1000.0
+_KEY_CRITERIA: Final[str] = "criteria"
 
 
 def evaluate_prompt_judge(
@@ -72,7 +76,7 @@ def evaluate_prompt_judge(
         logger.warning("%s judge invocation failed: %s", provider_name, exc)
         raise
 
-    latency_ms = (time.perf_counter() - start_time) * 1000.0
+    latency_ms = (time.perf_counter() - start_time) * _MS_PER_SECOND
 
     try:
         parsed = json.loads(clean_json_markdown(raw_response_text))
@@ -83,7 +87,7 @@ def evaluate_prompt_judge(
         ) from err
 
     criteria_scores_list = parse_criteria_scores(
-        raw_criteria=parsed.get("criteria", []),
+        raw_criteria=parsed.get(_KEY_CRITERIA, []),
         pass_threshold=pass_threshold,
         logger_instance=logger,
     )

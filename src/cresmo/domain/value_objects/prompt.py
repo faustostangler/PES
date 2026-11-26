@@ -9,8 +9,12 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import StrEnum
+from typing import Final
 
 from cresmo.domain.exceptions import DomainValidationError
+
+CHAT_MESSAGE_KEY_ROLE: Final[str] = "role"
+CHAT_MESSAGE_KEY_CONTENT: Final[str] = "content"
 
 
 class PromptKey(StrEnum):
@@ -92,7 +96,17 @@ class ChatPrompt:
         """Serialize messages into standardized dictionary representation."""
         result: list[dict[str, str]] = []
         if self.system_prompt:
-            result.append({"role": MessageRole.SYSTEM.value, "content": self.system_prompt})
+            result.append(
+                {
+                    CHAT_MESSAGE_KEY_ROLE: MessageRole.SYSTEM.value,
+                    CHAT_MESSAGE_KEY_CONTENT: self.system_prompt,
+                }
+            )
         for msg in self.messages:
-            result.append({"role": msg.role.value, "content": msg.content})
+            result.append(
+                {
+                    CHAT_MESSAGE_KEY_ROLE: msg.role.value,
+                    CHAT_MESSAGE_KEY_CONTENT: msg.content,
+                }
+            )
         return result

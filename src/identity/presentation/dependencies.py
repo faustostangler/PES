@@ -10,11 +10,15 @@ from identity.domain.exceptions import InactiveUserError, InvalidTokenError
 from identity.presentation.composition import IdentityContainer, get_identity_container
 
 _EXPECTED_AUTH_HEADER_PARTS: Final[int] = 2
+PAT_HEADER_NAME: Final[str] = "X-Cresmo-PAT"
+WWW_AUTHENTICATE_HEADER: Final[str] = "WWW-Authenticate"
+AUTH_SCHEME_BEARER_HEADER: Final[str] = "Bearer"
+AUTH_SCHEME_BEARER_LOWER: Final[str] = "bearer"
 
 
 async def get_current_user(
     authorization: str | None = Header(default=None),
-    x_cresmo_pat: str | None = Header(default=None, alias="X-Cresmo-PAT"),
+    x_cresmo_pat: str | None = Header(default=None, alias=PAT_HEADER_NAME),
     container: IdentityContainer = Depends(get_identity_container),
 ) -> AuthenticatedUserDTO:
     """Extracts and validates security principal from either Bearer JWT or X-Cresmo-PAT header.
@@ -31,13 +35,13 @@ async def get_current_user(
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail=f"Invalid Personal Access Token: {e}",
-                headers={"WWW-Authenticate": "Bearer"},
+                headers={WWW_AUTHENTICATE_HEADER: AUTH_SCHEME_BEARER_HEADER},
             ) from e
 
     # 2. Check Bearer JWT (Web / BFF)
     if authorization:
         parts = authorization.split()
-        if len(parts) == _EXPECTED_AUTH_HEADER_PARTS and parts[0].lower() == "bearer":
+        if len(parts) == _EXPECTED_AUTH_HEADER_PARTS and parts[0].lower() == AUTH_SCHEME_BEARER_LOWER:
             token = parts[1]
             try:
                 return container.validate_token_uc.execute(token)
@@ -45,13 +49,13 @@ async def get_current_user(
                 raise HTTPException(
                     status_code=status.HTTP_401_UNAUTHORIZED,
                     detail=f"Invalid access token: {e}",
-                    headers={"WWW-Authenticate": "Bearer"},
+                    headers={WWW_AUTHENTICATE_HEADER: AUTH_SCHEME_BEARER_HEADER},
                 ) from e
 
     raise HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Missing authentication credentials. Provide 'Authorization: Bearer <token>' or 'X-Cresmo-PAT: <token>'.",
-        headers={"WWW-Authenticate": "Bearer"},
+        headers={WWW_AUTHENTICATE_HEADER: AUTH_SCHEME_BEARER_HEADER},
     )
 
 

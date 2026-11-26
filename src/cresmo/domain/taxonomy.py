@@ -13,13 +13,17 @@ Conforms to:
 from __future__ import annotations
 
 from collections.abc import Callable, Mapping
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Final
 
 if TYPE_CHECKING:
     from cresmo.domain.value_objects import ChannelName
 
 DEFAULT_CHANNEL_DOMAIN: str = "uncategorized"
 DEFAULT_CHANNEL_CATEGORY: str = "volatile"
+YOUTUBE_HANDLE_PATH_MARKER: Final[str] = "/@"
+URL_PATH_SEPARATOR: Final[str] = "/"
+URL_QUERY_SEPARATOR: Final[str] = "?"
+CHANNEL_HANDLE_PREFIX: Final[str] = "@"
 
 TaxonomyCatalog = Mapping[str, tuple[str, frozenset[str]]]
 ChannelClassifierFn = Callable[["ChannelName | str"], tuple[str, str]]
@@ -28,18 +32,18 @@ ChannelClassifierFn = Callable[["ChannelName | str"], tuple[str, str]]
 def _extract_channel_candidates(raw: str) -> list[str]:
     """Extract candidate channel handles, slugs, and normalized tokens from URL or raw text."""
     candidates: list[str] = [raw]
-    if "/@" in raw:
-        _, _, after_at = raw.partition("/@")
-        slug = after_at.partition("/")[0].partition("?")[0].strip()
+    if YOUTUBE_HANDLE_PATH_MARKER in raw:
+        _, _, after_at = raw.partition(YOUTUBE_HANDLE_PATH_MARKER)
+        slug = after_at.partition(URL_PATH_SEPARATOR)[0].partition(URL_QUERY_SEPARATOR)[0].strip()
         if slug:
-            candidates.extend([f"@{slug}", slug])
-    elif raw.startswith("@"):
+            candidates.extend([f"{CHANNEL_HANDLE_PREFIX}{slug}", slug])
+    elif raw.startswith(CHANNEL_HANDLE_PREFIX):
         slug = raw[1:].strip()
         if slug:
             candidates.append(slug)
-    elif "/" in raw:
-        base_raw = raw.partition("?")[0]
-        parts = [part for part in base_raw.split("/") if part]
+    elif URL_PATH_SEPARATOR in raw:
+        base_raw = raw.partition(URL_QUERY_SEPARATOR)[0]
+        parts = [part for part in base_raw.split(URL_PATH_SEPARATOR) if part]
         if parts:
             slug = parts[-1].strip()
             if slug:

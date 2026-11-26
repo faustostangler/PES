@@ -14,7 +14,7 @@ import re
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, Final
 
 import structlog
 
@@ -26,6 +26,40 @@ from cresmo.domain.value_objects.quality import JudgeCriterion
 DEFAULT_REPORTS_DIR = Path("reports") / "calibration"
 DEFAULT_DATASETS_DIR = Path("evals") / "datasets"
 
+DEFAULT_APPROVED_MIN_ACCURACY: Final[float] = 0.85
+DEFAULT_APPROVED_MAX_FALSE_ACCEPT: Final[int] = 0
+DEFAULT_PRE_CALIBRATED_MIN_ACCURACY: Final[float] = 0.80
+SEEDS_SUBDIR_NAME: Final[str] = "seeds"
+STAGE_LABEL_FLUID_PROSE: Final[str] = "Stage 1: Fluid Prose"
+STAGE_LABEL_GAP_FILLER: Final[str] = "Stage 2: Gap Filler"
+STAGE_LABEL_LONG_EXPANDER: Final[str] = "Stage 3: Long Expander"
+STAGE_LABEL_WIDE_EXPANDER: Final[str] = "Stage 4: Wide Expander"
+GOLDEN_SET_FILE_SUFFIX: Final[str] = "_golden_set.json"
+SEED_FILE_SUFFIX: Final[str] = "_seed.json"
+PROVIDER_GEMINI: Final[str] = "gemini"
+PROVIDER_OLLAMA: Final[str] = "ollama"
+PROVIDER_TYPESAFE: Final[str] = "typesafe"
+PROVIDER_MODEL_DELIMITER: Final[str] = ":"
+MODEL_PREFIX_GEMMA: Final[str] = "gemma"
+SPEC_LIST_DELIMITER: Final[str] = ","
+STAGE_SELECTOR_ALL: Final[str] = "all"
+STAGE_NAME_UNDERSCORE: Final[str] = "_"
+STAGE_NAME_HYPHEN: Final[str] = "-"
+DISPLAY_LIST_SEPARATOR: Final[str] = ", "
+_FILENAME_SANITIZE_PATTERN: Final[re.Pattern[str]] = re.compile(r"[^a-zA-Z0-9_\-\.]")
+_FILENAME_REPLACEMENT_CHAR: Final[str] = "_"
+REPORT_FILENAME_PREFIX: Final[str] = "llm_judge_"
+REPORT_FILENAME_EXTENSION: Final[str] = ".txt"
+_HASH_KEY_SYSTEM_PROMPT: Final[str] = "system_prompt"
+_HASH_KEY_USER_PROMPT: Final[str] = "user_prompt"
+_HASH_KEY_STAGE: Final[str] = "stage"
+_HASH_KEY_THRESHOLD: Final[str] = "threshold"
+_HASH_KEY_REQUIRED_CRITERIA: Final[str] = "required_criteria"
+_HASH_KEY_PROMPT: Final[str] = "prompt"
+_HASH_KEY_ITEMS: Final[str] = "items"
+CONFIG_HASH_THRESHOLD_PRECISION: Final[int] = 6
+DEFAULT_ENCODING: Final[str] = "utf-8"
+
 logger = structlog.get_logger(__name__)
 
 PromptTemplateLookup = Callable[[PromptKey], dict[str, str]]
@@ -35,9 +69,9 @@ PromptTemplateLookup = Callable[[PromptKey], dict[str, str]]
 class CalibrationThresholds:
     """Configurable accuracy and false-acceptance gates for calibration verdicts."""
 
-    approved_min_accuracy: float = 0.85
-    approved_max_false_accept: int = 0
-    pre_calibrated_min_accuracy: float = 0.80
+    approved_min_accuracy: float = DEFAULT_APPROVED_MIN_ACCURACY
+    approved_max_false_accept: int = DEFAULT_APPROVED_MAX_FALSE_ACCEPT
+    pre_calibrated_min_accuracy: float = DEFAULT_PRE_CALIBRATED_MIN_ACCURACY
 
 
 @dataclass(frozen=True, slots=True)
@@ -66,12 +100,12 @@ def build_stage_specs(
     Returns:
         Mapping from canonical stage name to its ``StageCalibrationSpec``.
     """
-    resolved_seeds_dir = seeds_dir if seeds_dir is not None else datasets_dir / "seeds"
+    resolved_seeds_dir = seeds_dir if seeds_dir is not None else datasets_dir / SEEDS_SUBDIR_NAME
     stage_configs = (
-        (StageName.FLUID_PROSE, "Stage 1: Fluid Prose"),
-        (StageName.GAP_FILLER, "Stage 2: Gap Filler"),
-        (StageName.LONG_EXPANDER, "Stage 3: Long Expander"),
-        (StageName.WIDE_EXPANDER, "Stage 4: Wide Expander"),
+        (StageName.FLUID_PROSE, STAGE_LABEL_FLUID_PROSE),
+        (StageName.GAP_FILLER, STAGE_LABEL_GAP_FILLER),
+        (StageName.LONG_EXPANDER, STAGE_LABEL_LONG_EXPANDER),
+        (StageName.WIDE_EXPANDER, STAGE_LABEL_WIDE_EXPANDER),
     )
     specs: dict[str, StageCalibrationSpec] = {}
     for stage_enum, label in stage_configs:
@@ -83,8 +117,8 @@ def build_stage_specs(
             stage_name=stage_key,
             label=label,
             prompt_key=stage_def.judge_prompt_key,
-            default_golden_set_path=datasets_dir / f"{stage_key}_golden_set.json",
-            default_seed_path=resolved_seeds_dir / f"{stage_key}_seed.json",
+            default_golden_set_path=datasets_dir / f"{stage_key}{GOLDEN_SET_FILE_SUFFIX}",
+            default_seed_path=resolved_seeds_dir / f"{stage_key}{SEED_FILE_SUFFIX}",
             required_criteria=stage_def.required_criteria,
         )
     return specs
@@ -114,7 +148,7 @@ def classify_verdict(
     return CalibrationVerdict.REJECTED
 
 
-def resolve_model_spec(spec: str, default_provider: str = "gemini") -> tuple[str, str]:
+def resolve_model_spec(spec: str, default_provider: str = PROVIDER_GEMINI) -> tuple[str, str]:
     """Parse model specification string into canonical `(provider, model_name)` tuple.
 
     Args:
@@ -125,16 +159,16 @@ def resolve_model_spec(spec: str, default_provider: str = "gemini") -> tuple[str
         Canonical ``(provider, model_name)`` tuple.
     """
     cleaned = spec.strip()
-    if ":" in cleaned:
-        provider, model_name = cleaned.split(":", 1)
+    if PROVIDER_MODEL_DELIMITER in cleaned:
+        provider, model_name = cleaned.split(PROVIDER_MODEL_DELIMITER, 1)
         return provider.strip().lower(), model_name.strip()
     lower = cleaned.lower()
-    if lower.startswith(("gemini", "gemma")):
-        return "gemini", cleaned
-    if lower.startswith("ollama"):
-        return "ollama", cleaned
-    if lower.startswith("typesafe"):
-        return "typesafe", cleaned
+    if lower.startswith((PROVIDER_GEMINI, MODEL_PREFIX_GEMMA)):
+        return PROVIDER_GEMINI, cleaned
+    if lower.startswith(PROVIDER_OLLAMA):
+        return PROVIDER_OLLAMA, cleaned
+    if lower.startswith(PROVIDER_TYPESAFE):
+        return PROVIDER_TYPESAFE, cleaned
     return default_provider.strip().lower(), cleaned
 
 
@@ -161,19 +195,25 @@ def parse_stage_specs(
     raw_tokens: list[str] = []
     if stages:
         for entry in stages:
-            raw_tokens.extend(part.strip() for part in entry.split(",") if part.strip())
+            raw_tokens.extend(
+                part.strip() for part in entry.split(SPEC_LIST_DELIMITER) if part.strip()
+            )
     if single_stage is not None:
-        raw_tokens.extend(part.strip() for part in single_stage.split(",") if part.strip())
+        raw_tokens.extend(
+            part.strip() for part in single_stage.split(SPEC_LIST_DELIMITER) if part.strip()
+        )
 
-    if not raw_tokens or "all" in [t.lower() for t in raw_tokens]:
+    if not raw_tokens or STAGE_SELECTOR_ALL in [t.lower() for t in raw_tokens]:
         return list(registry.keys())
 
     resolved: list[str] = []
     for token in raw_tokens:
-        norm = "_".join(token.lower().split("-"))
+        norm = STAGE_NAME_UNDERSCORE.join(token.lower().split(STAGE_NAME_HYPHEN))
         if norm not in registry:
-            valid = ", ".join(registry.keys())
-            raise ValueError(f"Unknown stage '{token}'. Valid stages: {valid}, all.")
+            valid = DISPLAY_LIST_SEPARATOR.join(registry.keys())
+            raise ValueError(
+                f"Unknown stage '{token}'. Valid stages: {valid}, {STAGE_SELECTOR_ALL}."
+            )
         if norm not in resolved:
             resolved.append(norm)
     return resolved
@@ -182,7 +222,7 @@ def parse_stage_specs(
 def parse_model_specs(
     models: Sequence[str] | None,
     single_model: str | None,
-    default_provider: str = "gemini",
+    default_provider: str = PROVIDER_GEMINI,
     *,
     default_models: Sequence[str] = (),
 ) -> list[tuple[str, str]]:
@@ -200,7 +240,9 @@ def parse_model_specs(
     raw_tokens: list[str] = []
     if models:
         for entry in models:
-            raw_tokens.extend(part.strip() for part in entry.split(",") if part.strip())
+            raw_tokens.extend(
+                part.strip() for part in entry.split(SPEC_LIST_DELIMITER) if part.strip()
+            )
     elif single_model is not None and single_model.strip():
         raw_tokens.append(single_model.strip())
     else:
@@ -226,10 +268,10 @@ def sanitize_report_filename(stage: str, provider: str, model_name: str) -> str:
         Safe ASCII report filename ending in ``.txt``.
     """
     clean_model = model_name
-    if clean_model.startswith(f"{provider}:"):
+    if clean_model.startswith(f"{provider}{PROVIDER_MODEL_DELIMITER}"):
         clean_model = clean_model[len(provider) + 1 :]
-    clean_model = re.sub(r"[^a-zA-Z0-9_\-\.]", "_", clean_model)
-    return f"llm_judge_{stage}_{provider}_{clean_model}.txt"
+    clean_model = _FILENAME_SANITIZE_PATTERN.sub(_FILENAME_REPLACEMENT_CHAR, clean_model)
+    return f"{REPORT_FILENAME_PREFIX}{stage}_{provider}_{clean_model}{REPORT_FILENAME_EXTENSION}"
 
 
 def compute_config_hash(
@@ -250,7 +292,7 @@ def compute_config_hash(
     Returns:
         Hex-encoded SHA-256 digest uniquely identifying the calibration configuration.
     """
-    prompt_payload: dict[str, str] = {"system_prompt": "", "user_prompt": ""}
+    prompt_payload: dict[str, str] = {_HASH_KEY_SYSTEM_PROMPT: "", _HASH_KEY_USER_PROMPT: ""}
     if prompt_lookup is not None:
         try:
             prompt_payload = prompt_lookup(spec.prompt_key)
@@ -258,11 +300,11 @@ def compute_config_hash(
             logger.debug("Prompt lookup unavailable for config hash", error=str(exc))
 
     canonical = {
-        "stage": spec.stage_name,
-        "threshold": round(threshold, 6),
-        "required_criteria": [c.value for c in spec.required_criteria],
-        "prompt": prompt_payload,
-        "items": items,
+        _HASH_KEY_STAGE: spec.stage_name,
+        _HASH_KEY_THRESHOLD: round(threshold, CONFIG_HASH_THRESHOLD_PRECISION),
+        _HASH_KEY_REQUIRED_CRITERIA: [c.value for c in spec.required_criteria],
+        _HASH_KEY_PROMPT: prompt_payload,
+        _HASH_KEY_ITEMS: items,
     }
-    encoded = json.dumps(canonical, ensure_ascii=False, sort_keys=True).encode("utf-8")
+    encoded = json.dumps(canonical, ensure_ascii=False, sort_keys=True).encode(DEFAULT_ENCODING)
     return hashlib.sha256(encoded).hexdigest()

@@ -13,12 +13,14 @@ from __future__ import annotations
 
 import json
 import re
-from typing import Any
+from typing import Any, Final
 
 # Regex to extract JSON wrapped in markdown codeblocks
 _MARKDOWN_CODE_FENCE_PATTERN = re.compile(r"```(?:json)?\s*([\s\S]*?)\s*```")
 # ACL Sanitizer: strip trailing commas before closing braces/brackets (common LLM hallucination)
 _TRAILING_COMMA_PATTERN = re.compile(r",\s*([\]}])")
+
+ERROR_SNIPPET_MAX_CHARS: Final[int] = 200
 
 
 def _parse_json_candidate(candidate: str) -> Any | None:
@@ -136,4 +138,4 @@ def extract_json_data(raw_content: str) -> Any:
             return extracted[0]
         return extracted
 
-    raise ValueError(f"Failed to extract valid JSON payload: {raw_content[:200]}")
+    raise ValueError(f"Failed to extract valid JSON payload: {raw_content[:ERROR_SNIPPET_MAX_CHARS]}")

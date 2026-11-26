@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import time
+from typing import Final
 
 from cresmo.application.ports import (
     LLMTransformationPort,
@@ -12,6 +13,12 @@ from cresmo.application.ports import (
 )
 from cresmo.domain.value_objects import ChatPrompt
 
+DEFAULT_LLM_PROVIDER_LABEL: Final[str] = "llm"
+_STATUS_SUCCESS: Final[str] = "success"
+_STATUS_ERROR: Final[str] = "error"
+_LABEL_PROVIDER: Final[str] = "provider"
+_LABEL_STATUS: Final[str] = "status"
+
 
 class MetricsLLMTransformationDecorator(LLMTransformationPort):
     """Decorator observing ``MetricName.LLM_REQUEST_DURATION`` around LLM calls."""
@@ -20,7 +27,7 @@ class MetricsLLMTransformationDecorator(LLMTransformationPort):
         self,
         inner: LLMTransformationPort,
         metrics_port: MetricsPort | None = None,
-        provider: str = "llm",
+        provider: str = DEFAULT_LLM_PROVIDER_LABEL,
     ) -> None:
         self._inner = inner
         self._metrics_port: MetricsPort = metrics_port or NoOpMetricsPort()
@@ -41,7 +48,7 @@ class MetricsLLMTransformationDecorator(LLMTransformationPort):
     ) -> str:
         """Delegate transformation while recording request duration histogram."""
         start_time = time.perf_counter()
-        status = "success"
+        status = _STATUS_SUCCESS
         try:
             return self._inner.transform(
                 prompt=prompt,
@@ -51,13 +58,13 @@ class MetricsLLMTransformationDecorator(LLMTransformationPort):
                 user_id=user_id,
             )
         except Exception:
-            status = "error"
+            status = _STATUS_ERROR
             raise
         finally:
             self._metrics_port.observe_histogram(
                 MetricName.LLM_REQUEST_DURATION,
                 time.perf_counter() - start_time,
-                labels={"provider": self._provider, "status": status},
+                labels={_LABEL_PROVIDER: self._provider, _LABEL_STATUS: status},
             )
 
 

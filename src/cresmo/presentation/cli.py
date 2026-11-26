@@ -16,7 +16,7 @@ from __future__ import annotations
 import importlib
 import sys
 from collections.abc import Sequence
-from typing import Any
+from typing import Any, Final
 
 import click
 import typer
@@ -33,6 +33,11 @@ __all__ = [
     "cli_entrypoint",
     "main",
 ]
+
+_CLI_APP_NAME: Final[str] = "cresmo"
+_CLI_APP_HELP: Final[str] = "Cresmo Second Brain"
+_HELP_OPTION_FLAGS: Final[list[str]] = ["-h", "--help"]
+_ATTR_EXIT_CODE: Final[str] = "exit_code"
 
 _LAZY_COMMANDS: dict[str, tuple[str, str, str]] = {
     "run": (
@@ -143,11 +148,11 @@ def _lazy_command_stub() -> None:
 
 app = typer.Typer(
     cls=LazyTyperGroup,
-    name="cresmo",
-    help="Cresmo Second Brain",
+    name=_CLI_APP_NAME,
+    help=_CLI_APP_HELP,
     add_completion=True,
     no_args_is_help=True,
-    context_settings={"help_option_names": ["-h", "--help"]},
+    context_settings={"help_option_names": _HELP_OPTION_FLAGS},
 )
 
 for _cmd_name, (_, _, _help_text) in _LAZY_COMMANDS.items():
@@ -186,11 +191,11 @@ def main(argv: Sequence[str] | None = None) -> int:
     except click.exceptions.Exit as exc:
         return exc.exit_code
     except typer.exceptions.TyperException as exc:
-        code = getattr(exc, "exit_code", EXIT_CONFIG_OR_USAGE_ERROR)
+        code = getattr(exc, _ATTR_EXIT_CODE, EXIT_CONFIG_OR_USAGE_ERROR)
         return code if isinstance(code, int) else EXIT_CONFIG_OR_USAGE_ERROR
     except click.ClickException as exc:
         sys.stderr.write(f"Usage error: {exc}\n")
-        code = getattr(exc, "exit_code", EXIT_CONFIG_OR_USAGE_ERROR)
+        code = getattr(exc, _ATTR_EXIT_CODE, EXIT_CONFIG_OR_USAGE_ERROR)
         return code if isinstance(code, int) else EXIT_CONFIG_OR_USAGE_ERROR
     except SystemExit as exc:
         return exc.code if isinstance(exc.code, int) else EXIT_CONFIG_OR_USAGE_ERROR

@@ -11,7 +11,7 @@ Conforms to:
 from __future__ import annotations
 
 import sys
-from typing import Annotated, Any
+from typing import Annotated, Any, Final
 
 import typer
 
@@ -20,6 +20,8 @@ from cresmo.presentation.exit_codes import (
     EXIT_INTERNAL_ERROR,
     EXIT_SUCCESS,
 )
+
+_MIN_MAX_WORDS: Final[int] = 1
 
 
 def resolve_shared_settings(*args: Any, **kwargs: Any) -> Any:
@@ -50,7 +52,7 @@ def concat_master(
         typer.Option(
             "--max-words",
             "-w",
-            min=1,
+            min=_MIN_MAX_WORDS,
             help="Maximum word count per master document (default: 500,000, never splitting files in the middle)",
         ),
     ] = None,

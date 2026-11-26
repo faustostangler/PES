@@ -10,9 +10,19 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from collections.abc import Callable
-from typing import Any
+from typing import Any, Final
 
 from cresmo.domain.value_objects import DEFAULT_LANGUAGE, ChatPrompt, PromptKey
+
+_NOOP_JUDGE_SYSTEM_PROMPT: Final[str] = (
+    "You are a rigorous, calibrated Quality Evaluation Judge for knowledge synthesis pipelines. "
+    "You must return ONLY a valid JSON object matching the criteria structure."
+)
+_CTX_KEY_STAGE_NAME: Final[str] = "stage_name"
+_CTX_KEY_CRITERIA_JSON: Final[str] = "criteria_json"
+_EMPTY_JSON_ARRAY: Final[str] = "[]"
+_CTX_KEY_SOURCE_TEXT: Final[str] = "source_text"
+_CTX_KEY_CANDIDATE_TEXT: Final[str] = "candidate_text"
 
 
 class PromptProviderPort(ABC):
@@ -44,8 +54,8 @@ class PromptProviderPort(ABC):
 def _build_judge_noop_prompt(c: dict[str, Any]) -> tuple[str, str]:
     """Build standard null-object evaluation prompt across judge stages."""
     return (
-        "You are a rigorous, calibrated Quality Evaluation Judge for knowledge synthesis pipelines. You must return ONLY a valid JSON object matching the criteria structure.",
-        f"Stage: {c.get('stage_name', '')}\nRequired Criteria to Evaluate: {c.get('criteria_json', '[]')}\n\n--- SOURCE REFERENCE TEXT ---\n{c.get('source_text', '')}\n\n--- CANDIDATE TEXT ---\n{c.get('candidate_text', '')}\n\nEvaluate now and output the JSON verdict.",
+        _NOOP_JUDGE_SYSTEM_PROMPT,
+        f"Stage: {c.get(_CTX_KEY_STAGE_NAME, '')}\nRequired Criteria to Evaluate: {c.get(_CTX_KEY_CRITERIA_JSON, _EMPTY_JSON_ARRAY)}\n\n--- SOURCE REFERENCE TEXT ---\n{c.get(_CTX_KEY_SOURCE_TEXT, '')}\n\n--- CANDIDATE TEXT ---\n{c.get(_CTX_KEY_CANDIDATE_TEXT, '')}\n\nEvaluate now and output the JSON verdict.",
     )
 
 

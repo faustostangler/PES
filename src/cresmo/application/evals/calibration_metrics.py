@@ -13,9 +13,23 @@ import math
 from dataclasses import dataclass, field
 from enum import StrEnum
 from statistics import NormalDist
-from typing import Any
+from typing import Any, Final
 
 from cresmo.domain.exceptions import DomainValidationError
+
+F05_BETA: Final[float] = 0.5
+F1_BETA: Final[float] = 1.0
+F2_BETA: Final[float] = 2.0
+LR_NEUTRAL_FALLBACK: Final[float] = 1.0
+LOGLINEAR_CORRECTION_FACTOR: Final[int] = 2
+SDT_CRITERION_BIAS_FACTOR: Final[float] = -0.5
+
+VERDICT_PASS: Final[str] = "PASS"
+VERDICT_FAIL: Final[str] = "FAIL"
+OUTCOME_HIT: Final[str] = "HIT"
+OUTCOME_CORRECT_REJECTION: Final[str] = "CORRECT_REJECTION"
+OUTCOME_FALSE_ACCEPT_ALPHA: Final[str] = "FALSE_ACCEPT_ALPHA"
+OUTCOME_FALSE_REJECT_BETA: Final[str] = "FALSE_REJECT_BETA"
 
 
 class CalibrationVerdict(StrEnum):
@@ -113,24 +127,24 @@ class ConfusionMatrix:
     @property
     def f05(self) -> float:
         """F0.5 score weighting precision twice as strongly as recall."""
-        return self._f_beta(0.5)
+        return self._f_beta(F05_BETA)
 
     @property
     def f1(self) -> float:
         """F1 score balancing precision and recall equally."""
-        return self._f_beta(1.0)
+        return self._f_beta(F1_BETA)
 
     @property
     def f2(self) -> float:
         """F2 score weighting recall twice as strongly as precision."""
-        return self._f_beta(2.0)
+        return self._f_beta(F2_BETA)
 
     @property
     def lr_plus(self) -> float:
         """Positive Likelihood Ratio: Recall / Alpha FPR."""
         fpr = self.alpha_fpr
         if fpr == 0:
-            return float("inf") if self.recall > 0 else 1.0
+            return math.inf if self.recall > 0 else LR_NEUTRAL_FALLBACK
         return self.recall / fpr
 
     @property
@@ -138,7 +152,7 @@ class ConfusionMatrix:
         """Negative Likelihood Ratio: Beta FNR / Specificity."""
         tnr = self.specificity
         if tnr == 0:
-            return float("inf") if self.beta_fnr > 0 else 1.0
+            return math.inf if self.beta_fnr > 0 else LR_NEUTRAL_FALLBACK
         return self.beta_fnr / tnr
 
     @property
@@ -162,8 +176,8 @@ class ConfusionMatrix:
         n_noise = self.total_defective
         if n_signal == 0 or n_noise == 0:
             return 0.0
-        eps_s = 1.0 / (2 * n_signal)
-        eps_n = 1.0 / (2 * n_noise)
+        eps_s = 1.0 / (LOGLINEAR_CORRECTION_FACTOR * n_signal)
+        eps_n = 1.0 / (LOGLINEAR_CORRECTION_FACTOR * n_noise)
         h_clamp = min(max(self.hit / n_signal, eps_s), 1.0 - eps_s)
         fa_clamp = min(max(self.false_accept_alpha / n_noise, eps_n), 1.0 - eps_n)
         norm = NormalDist()
@@ -176,30 +190,30 @@ class ConfusionMatrix:
         n_noise = self.total_defective
         if n_signal == 0 or n_noise == 0:
             return 0.0
-        eps_s = 1.0 / (2 * n_signal)
-        eps_n = 1.0 / (2 * n_noise)
+        eps_s = 1.0 / (LOGLINEAR_CORRECTION_FACTOR * n_signal)
+        eps_n = 1.0 / (LOGLINEAR_CORRECTION_FACTOR * n_noise)
         h_clamp = min(max(self.hit / n_signal, eps_s), 1.0 - eps_s)
         fa_clamp = min(max(self.false_accept_alpha / n_noise, eps_n), 1.0 - eps_n)
         norm = NormalDist()
-        return -0.5 * (norm.inv_cdf(h_clamp) + norm.inv_cdf(fa_clamp))
+        return SDT_CRITERION_BIAS_FACTOR * (norm.inv_cdf(h_clamp) + norm.inv_cdf(fa_clamp))
 
     def record(self, expected: str, actual: str) -> str:
         """Record expected vs actual verdict pair and return canonical status code."""
-        if expected not in ("PASS", "FAIL"):
+        if expected not in (VERDICT_PASS, VERDICT_FAIL):
             raise DomainValidationError(
-                f"Invalid expected calibration verdict {expected!r}; expected 'PASS' or 'FAIL'."
+                f"Invalid expected calibration verdict {expected!r}; expected '{VERDICT_PASS}' or '{VERDICT_FAIL}'."
             )
-        if expected == "PASS" and actual == "PASS":
+        if expected == VERDICT_PASS and actual == VERDICT_PASS:
             self.hit += 1
-            return "HIT"
-        if expected == "FAIL" and actual == "FAIL":
+            return OUTCOME_HIT
+        if expected == VERDICT_FAIL and actual == VERDICT_FAIL:
             self.correct_rejection += 1
-            return "CORRECT_REJECTION"
-        if expected == "FAIL" and actual == "PASS":
+            return OUTCOME_CORRECT_REJECTION
+        if expected == VERDICT_FAIL and actual == VERDICT_PASS:
             self.false_accept_alpha += 1
-            return "FALSE_ACCEPT_ALPHA"
+            return OUTCOME_FALSE_ACCEPT_ALPHA
         self.false_reject_beta += 1
-        return "FALSE_REJECT_BETA"
+        return OUTCOME_FALSE_REJECT_BETA
 
 
 @dataclass

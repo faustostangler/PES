@@ -9,6 +9,7 @@ Conforms to:
 from __future__ import annotations
 
 from collections.abc import Callable
+from typing import Final
 
 from cresmo.application.ports import MediaIngestionPort, MetricsPort, VaultRepositoryPort
 from cresmo.application.use_cases.concat_master import ConcatMasterUseCase
@@ -33,6 +34,8 @@ from cresmo.bootstrap.factories.telemetry_factory import (
     resolve_langfuse_client,
 )
 from cresmo.infrastructure.config import CresmoSettings, resolve_shared_settings
+
+PROVIDER_GEMINI: Final[str] = "gemini"
 
 
 def build_unify_duplicates_use_case(
@@ -104,8 +107,8 @@ def build_index_raw_use_case(
     prompt_provider = build_prompt_provider(resolved, langfuse_client=langfuse_client)
     uses_gemini = (
         web_index
-        or resolved.llm.indexing_provider == "gemini"
-        or resolved.judge.provider == "gemini"
+        or resolved.llm.indexing_provider == PROVIDER_GEMINI
+        or resolved.judge.provider == PROVIDER_GEMINI
     )
     gemini_pool = build_gemini_credential_pool(resolved.llm.gemini) if uses_gemini else None
     llm_indexing_port = build_indexing_adapter(

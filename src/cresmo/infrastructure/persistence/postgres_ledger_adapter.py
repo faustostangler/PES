@@ -13,7 +13,7 @@ import asyncio
 import concurrent.futures
 from collections.abc import Coroutine
 from datetime import UTC, datetime
-from typing import Any, TypeVar
+from typing import Any, Final, TypeVar
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import (
@@ -28,6 +28,13 @@ from cresmo.domain.value_objects import ChannelName, ContentId, LedgerEntry, Pip
 from cresmo.infrastructure.persistence.models import Base, LedgerEntryRow
 
 T = TypeVar("T")
+
+_POSTGRES_SCHEME_PREFIX: Final[str] = "postgresql://"
+_POSTGRES_ASYNCPG_PREFIX: Final[str] = "postgresql+asyncpg://"
+_SQLITE_SCHEME_PREFIX: Final[str] = "sqlite://"
+_SQLITE_AIOSQLITE_PREFIX: Final[str] = "sqlite+aiosqlite://"
+_SCHEME_REPLACE_COUNT: Final[int] = 1
+_SYNC_BRIDGE_MAX_WORKERS: Final[int] = 1
 
 
 class PostgresLedgerAdapter(LedgerRepositoryPort):
@@ -69,10 +76,18 @@ class PostgresLedgerAdapter(LedgerRepositoryPort):
         elif db_url is not None:
             # Normalize PostgreSQL scheme to asyncpg driver if bare postgresql:// is provided
             normalized_url = db_url
-            if normalized_url.startswith("postgresql://"):
-                normalized_url = normalized_url.replace("postgresql://", "postgresql+asyncpg://", 1)
-            elif normalized_url.startswith("sqlite://"):
-                normalized_url = normalized_url.replace("sqlite://", "sqlite+aiosqlite://", 1)
+            if normalized_url.startswith(_POSTGRES_SCHEME_PREFIX):
+                normalized_url = normalized_url.replace(
+                    _POSTGRES_SCHEME_PREFIX,
+                    _POSTGRES_ASYNCPG_PREFIX,
+                    _SCHEME_REPLACE_COUNT,
+                )
+            elif normalized_url.startswith(_SQLITE_SCHEME_PREFIX):
+                normalized_url = normalized_url.replace(
+                    _SQLITE_SCHEME_PREFIX,
+                    _SQLITE_AIOSQLITE_PREFIX,
+                    _SCHEME_REPLACE_COUNT,
+                )
 
             self._engine = create_async_engine(normalized_url, echo=echo)
             self._session_factory = async_sessionmaker(
@@ -190,5 +205,7 @@ class PostgresLedgerAdapter(LedgerRepositoryPort):
         except RuntimeError:
             return asyncio.run(coro)
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
+        with concurrent.futures.ThreadPoolExecutor(
+            max_workers=_SYNC_BRIDGE_MAX_WORKERS
+        ) as executor:
             return executor.submit(asyncio.run, coro).result()

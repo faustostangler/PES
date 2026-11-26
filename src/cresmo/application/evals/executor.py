@@ -13,9 +13,11 @@ import time
 from collections.abc import Callable
 from dataclasses import dataclass
 from enum import StrEnum
-from typing import Any, Protocol
+from typing import Any, Final, Protocol
 
 from cresmo.application.evals.calibration_metrics import (
+    VERDICT_FAIL,
+    VERDICT_PASS,
     CalibrationResultSet,
     ConfusionMatrix,
     ItemEvaluationResult,
@@ -25,6 +27,54 @@ from cresmo.application.ports.evals import CalibrationCheckpointPort
 from cresmo.application.ports.llm_judge_port import LlmJudgePort
 from cresmo.domain.exceptions import QuotaPoolExhaustedError, RateLimitExceededError
 from cresmo.domain.value_objects.quality import EvaluationContext, JudgeCriterion
+
+DEFAULT_CALIBRATION_DELAY_SECONDS: Final[float] = 4.2
+DEFAULT_CALIBRATION_JITTER_SECONDS: Final[float] = 0.8
+DEFAULT_MAX_RETRY_WAIT_SECONDS: Final[float] = 60.0
+MAX_SHORT_COOLDOWN_ATTEMPTS: Final[int] = 5
+MIN_COOLDOWN_WAIT_SECONDS: Final[float] = 0.5
+COOLDOWN_BUFFER_SECONDS: Final[float] = 0.5
+MAX_TRANSIENT_RETRY_ATTEMPTS: Final[int] = 3
+TRANSIENT_BACKOFF_BASE: Final[float] = 2.0
+TRANSIENT_BACKOFF_MULTIPLIER: Final[float] = 1.5
+
+_QUOTA_ERROR_MARKERS: Final[tuple[str, ...]] = (
+    "resource_exhausted",
+    "429",
+    "quota exceeded",
+    "too many requests",
+)
+_TRANSIENT_ERROR_MARKERS: Final[tuple[str, ...]] = (
+    "503",
+    "504",
+    "unavailable",
+    "timeout",
+    "connection reset",
+    "timed out",
+)
+_ITEM_KEY_INPUT: Final[str] = "input"
+_ITEM_KEY_RAW_TEXT: Final[str] = "raw_text"
+_ITEM_KEY_CANDIDATE_TEXT: Final[str] = "candidate_text"
+_ITEM_KEY_EXPECTED_OUTPUT: Final[str] = "expected_output"
+_ITEM_KEY_VERDICT: Final[str] = "verdict"
+_ITEM_KEY_METADATA: Final[str] = "metadata"
+_KEY_ID: Final[str] = "id"
+_KEY_CRITERION: Final[str] = "criterion"
+_KEY_DIFFICULTY: Final[str] = "difficulty"
+_KEY_EXPECTED: Final[str] = "expected"
+_KEY_ACTUAL: Final[str] = "actual"
+_KEY_ACTUAL_TARGET: Final[str] = "actual_target"
+_KEY_ACTUAL_GLOBAL: Final[str] = "actual_global"
+_KEY_TARGET_ACTUAL: Final[str] = "target_actual"
+_KEY_TARGET_SCORE: Final[str] = "target_score"
+_KEY_SCORE: Final[str] = "score"
+_KEY_ANOMALY: Final[str] = "anomaly"
+_KEY_EXPECTED_ANOMALY: Final[str] = "expected_anomaly"
+_KEY_REASONING: Final[str] = "reasoning"
+_DEFAULT_ITEM_ID: Final[str] = "item"
+_DEFAULT_CRITERION_NAME: Final[str] = "general"
+_DEFAULT_DIFFICULTY: Final[str] = "typical"
+_FALLBACK_ITEM_ID_PREFIX: Final[str] = "item_"
 
 
 class JudgeCalibrationFactory(Protocol):
@@ -111,10 +161,9 @@ def is_transient_retryable_error(
     if is_quota_exhausted is not None and is_quota_exhausted(exc):
         return False
     msg = str(exc).lower()
-    if any(q in msg for q in ("resource_exhausted", "429", "quota exceeded", "too many requests")):
+    if any(q in msg for q in _QUOTA_ERROR_MARKERS):
         return False
-    transient_markers = ("503", "504", "unavailable", "timeout", "connection reset", "timed out")
-    return any(marker in msg for marker in transient_markers)
+    return any(marker in msg for marker in _TRANSIENT_ERROR_MARKERS)
 
 
 def evaluate_single_item(
@@ -132,10 +181,10 @@ def evaluate_single_item(
     Returns:
         ``ItemEvaluationResult`` containing global and target-isolated outcomes.
     """
-    raw_text = item["input"]["raw_text"]
-    candidate_text = item["input"]["candidate_text"]
-    expected_verdict = str(item["expected_output"]["verdict"]).upper().strip()
-    target_criterion_name = str(item.get("metadata", {}).get("criterion", "")).strip()
+    raw_text = item[_ITEM_KEY_INPUT][_ITEM_KEY_RAW_TEXT]
+    candidate_text = item[_ITEM_KEY_INPUT][_ITEM_KEY_CANDIDATE_TEXT]
+    expected_verdict = str(item[_ITEM_KEY_EXPECTED_OUTPUT][_ITEM_KEY_VERDICT]).upper().strip()
+    target_criterion_name = str(item.get(_ITEM_KEY_METADATA, {}).get(_KEY_CRITERION, "")).strip()
 
     context = EvaluationContext(
         stage_name=spec.stage_name,
@@ -146,7 +195,7 @@ def evaluate_single_item(
     )
 
     evaluation = judge.evaluate(context)
-    global_actual = "PASS" if evaluation.passed else "FAIL"
+    global_actual = VERDICT_PASS if evaluation.passed else VERDICT_FAIL
     global_score = float(evaluation.overall_score)
     reasoning = evaluation.extract_critique()
 
@@ -157,7 +206,7 @@ def evaluate_single_item(
             crit_vo = JudgeCriterion(target_criterion_name)
             crit_score = evaluation.get_score(crit_vo)
             if crit_score is not None:
-                target_actual = "PASS" if crit_score.passed else "FAIL"
+                target_actual = VERDICT_PASS if crit_score.passed else VERDICT_FAIL
                 target_score = float(crit_score.score)
                 if crit_score.reasoning:
                     reasoning = crit_score.reasoning
@@ -180,10 +229,10 @@ def _record_item_into_results(
     eval_res: ItemEvaluationResult,
 ) -> str:
     """Record item verdict into global, target-isolated, and slice confusion matrices."""
-    item_id = str(item.get("id", "item"))
-    metadata = item.get("metadata", {})
-    criterion = str(metadata.get("criterion", "general"))
-    difficulty = str(metadata.get("difficulty", "typical"))
+    item_id = str(item.get(_KEY_ID, _DEFAULT_ITEM_ID))
+    metadata = item.get(_ITEM_KEY_METADATA, {})
+    criterion = str(metadata.get(_KEY_CRITERION, _DEFAULT_CRITERION_NAME))
+    difficulty = str(metadata.get(_KEY_DIFFICULTY, _DEFAULT_DIFFICULTY))
 
     if criterion not in results.by_criterion:
         results.by_criterion[criterion] = ConfusionMatrix()
@@ -198,15 +247,15 @@ def _record_item_into_results(
     if eval_res.expected != eval_res.target_actual:
         results.disagreements.append(
             {
-                "id": item_id,
-                "criterion": criterion,
-                "difficulty": difficulty,
-                "expected": eval_res.expected,
-                "actual_target": eval_res.target_actual,
-                "actual_global": eval_res.actual,
-                "score": eval_res.target_score,
-                "anomaly": metadata.get("expected_anomaly", ""),
-                "reasoning": eval_res.reasoning,
+                _KEY_ID: item_id,
+                _KEY_CRITERION: criterion,
+                _KEY_DIFFICULTY: difficulty,
+                _KEY_EXPECTED: eval_res.expected,
+                _KEY_ACTUAL_TARGET: eval_res.target_actual,
+                _KEY_ACTUAL_GLOBAL: eval_res.actual,
+                _KEY_SCORE: eval_res.target_score,
+                _KEY_ANOMALY: metadata.get(_KEY_EXPECTED_ANOMALY, ""),
+                _KEY_REASONING: eval_res.reasoning,
             }
         )
     return status_target
@@ -221,9 +270,9 @@ def run_stage_calibration(
     model: str,
     config_hash: str,
     checkpoint_store: CalibrationCheckpointPort,
-    delay: float = 4.2,
-    jitter: float = 0.8,
-    max_retry_wait: float = 60.0,
+    delay: float = DEFAULT_CALIBRATION_DELAY_SECONDS,
+    jitter: float = DEFAULT_CALIBRATION_JITTER_SECONDS,
+    max_retry_wait: float = DEFAULT_MAX_RETRY_WAIT_SECONDS,
     is_quota_exhausted: Callable[[Exception], bool] | None = None,
     now_fn: Callable[[], float] = time.time,
     sleep_fn: Callable[[float], None] = time.sleep,
@@ -278,16 +327,16 @@ def run_stage_calibration(
 
     pending_items: list[dict[str, Any]] = []
     for item in items:
-        item_id = str(item.get("id", "item"))
+        item_id = str(item.get(_KEY_ID, _DEFAULT_ITEM_ID))
         saved = completed_map.get(item_id)
         if saved is not None:
             saved_eval = ItemEvaluationResult(
-                actual=str(saved["actual"]),
-                expected=str(saved["expected"]),
-                score=float(saved["score"]),
-                reasoning=str(saved.get("reasoning", "")),
-                target_actual=str(saved.get("target_actual", saved["actual"])),
-                target_score=float(saved.get("target_score", saved["score"])),
+                actual=str(saved[_KEY_ACTUAL]),
+                expected=str(saved[_KEY_EXPECTED]),
+                score=float(saved[_KEY_SCORE]),
+                reasoning=str(saved.get(_KEY_REASONING, "")),
+                target_actual=str(saved.get(_KEY_TARGET_ACTUAL, saved[_KEY_ACTUAL])),
+                target_score=float(saved.get(_KEY_TARGET_SCORE, saved[_KEY_SCORE])),
             )
             _record_item_into_results(results, item, saved_eval)
             results.skipped_from_checkpoint += 1
@@ -334,7 +383,7 @@ def run_stage_calibration(
         )
 
     for idx, item in enumerate(pending_items, start=1):
-        item_id = str(item.get("id", f"item_{idx}"))
+        item_id = str(item.get(_KEY_ID, f"{_FALLBACK_ITEM_ID_PREFIX}{idx}"))
         short_cooldown_attempts = 0
         transient_attempts = 0
 
@@ -345,16 +394,19 @@ def run_stage_calibration(
             except Exception as exc:
                 retry_after = extract_cooldown_seconds(exc)
                 if retry_after is not None:
-                    if retry_after <= max_retry_wait and short_cooldown_attempts < 5:
+                    if (
+                        retry_after <= max_retry_wait
+                        and short_cooldown_attempts < MAX_SHORT_COOLDOWN_ATTEMPTS
+                    ):
                         short_cooldown_attempts += 1
-                        wait_s = max(retry_after, 0.5) + 0.5
+                        wait_s = max(retry_after, MIN_COOLDOWN_WAIT_SECONDS) + COOLDOWN_BUFFER_SECONDS
                         _emit(
                             on_event,
                             CalibrationEvent(
                                 kind=CalibrationEventKind.COOLDOWN_WAIT,
                                 message=(
-                                    f"  [COOLDOWN WAIT {short_cooldown_attempts}/5] {item_id}: "
-                                    f"waiting {wait_s:.1f}s ({exc})"
+                                    f"  [COOLDOWN WAIT {short_cooldown_attempts}/{MAX_SHORT_COOLDOWN_ATTEMPTS}] "
+                                    f"{item_id}: waiting {wait_s:.1f}s ({exc})"
                                 ),
                                 stage=spec.stage_name,
                                 provider=provider,
@@ -383,17 +435,19 @@ def run_stage_calibration(
                     raise
                 if (
                     is_transient_retryable_error(exc, is_quota_exhausted=is_quota_exhausted)
-                    and transient_attempts < 3
+                    and transient_attempts < MAX_TRANSIENT_RETRY_ATTEMPTS
                 ):
                     transient_attempts += 1
-                    backoff = (2.0**transient_attempts) * 1.5
+                    backoff = (
+                        TRANSIENT_BACKOFF_BASE**transient_attempts
+                    ) * TRANSIENT_BACKOFF_MULTIPLIER
                     _emit(
                         on_event,
                         CalibrationEvent(
                             kind=CalibrationEventKind.RETRY_WAIT,
                             message=(
-                                f"  [RETRY {transient_attempts}/3] Transient error on '{item_id}': "
-                                f"{exc}. Waiting {backoff:.1f}s..."
+                                f"  [RETRY {transient_attempts}/{MAX_TRANSIENT_RETRY_ATTEMPTS}] "
+                                f"Transient error on '{item_id}': {exc}. Waiting {backoff:.1f}s..."
                             ),
                             stage=spec.stage_name,
                             provider=provider,
@@ -412,12 +466,12 @@ def run_stage_calibration(
             config_hash=config_hash,
             item_id=item_id,
             payload={
-                "actual": eval_res.actual,
-                "expected": eval_res.expected,
-                "score": eval_res.score,
-                "reasoning": eval_res.reasoning,
-                "target_actual": eval_res.target_actual,
-                "target_score": eval_res.target_score,
+                _KEY_ACTUAL: eval_res.actual,
+                _KEY_EXPECTED: eval_res.expected,
+                _KEY_SCORE: eval_res.score,
+                _KEY_REASONING: eval_res.reasoning,
+                _KEY_TARGET_ACTUAL: eval_res.target_actual,
+                _KEY_TARGET_SCORE: eval_res.target_score,
             },
         )
         status_target = _record_item_into_results(results, item, eval_res)

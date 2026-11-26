@@ -10,8 +10,12 @@ Conforms to:
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Final
 
 __all__ = ["find_workspace_root"]
+
+_WORKSPACE_ANCHOR_MARKERS: Final[tuple[str, ...]] = ("pyproject.toml", ".git")
+_FALLBACK_PARENT_DEPTH: Final[int] = 3
 
 
 def find_workspace_root(start_path: Path | None = None) -> Path:
@@ -29,7 +33,7 @@ def find_workspace_root(start_path: Path | None = None) -> Path:
     # ACL boundary: Resolves path safely without assuming CWD matches the project root
     current = (start_path or Path(__file__)).resolve()
     for directory in [current, *current.parents]:
-        if (directory / "pyproject.toml").exists() or (directory / ".git").exists():
+        if any((directory / marker).exists() for marker in _WORKSPACE_ANCHOR_MARKERS):
             return directory
     # Fallback heuristic: src/cresmo/infrastructure/paths.py -> parents[3] is project root
-    return (start_path or Path(__file__)).resolve().parents[3]
+    return (start_path or Path(__file__)).resolve().parents[_FALLBACK_PARENT_DEPTH]

@@ -3,7 +3,8 @@
 from collections.abc import Iterable
 from dataclasses import dataclass, field
 
-from shared_kernel.security import AuthenticatedUser
+from identity.domain.value_objects import Role
+from shared_kernel.security import DEFAULT_TENANT_ID, AuthenticatedUser
 
 
 @dataclass(frozen=True)
@@ -12,7 +13,7 @@ class RegisterUserRequestDTO:
 
     email: str
     password: str
-    roles: list[str] = field(default_factory=lambda: ["user"])
+    roles: list[str] = field(default_factory=lambda: [Role.USER.value])
 
 
 @dataclass(frozen=True)
@@ -86,7 +87,7 @@ class AuthenticatedUserDTO(AuthenticatedUser):
     def __init__(
         self,
         user_id: str,
-        tenant_id: str = "default",
+        tenant_id: str = DEFAULT_TENANT_ID,
         email: str = "",
         roles: Iterable[str] = (),
         scopes: Iterable[str] = (),

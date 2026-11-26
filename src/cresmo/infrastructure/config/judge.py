@@ -9,7 +9,7 @@ Conforms to:
 
 from __future__ import annotations
 
-from typing import Annotated, Any, Literal
+from typing import Annotated, Any, Final, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, SecretStr, field_validator
 from pydantic_settings import NoDecode
@@ -26,6 +26,10 @@ from cresmo.infrastructure.config.catalog import (
 
 JudgeProviderName = Literal["gemini", "typesafe", "ollama"]
 
+DEFAULT_TYPESAFE_MODEL: Final[str] = "jev-latest"
+DEFAULT_TYPESAFE_BASE_URL: Final[str] = "https://api.typesafe.ai/v1"
+DEFAULT_JUDGE_MAX_ATTEMPTS: Final[int] = 2
+
 
 class TypeSafeSettings(BaseModel):
     """Immutable TypeSafe AI System One Jev evaluator settings."""
@@ -37,11 +41,11 @@ class TypeSafeSettings(BaseModel):
         description="TypeSafe AI API Key for System One Jev decision evaluations.",
     )
     model: str = Field(
-        default="jev-latest",
+        default=DEFAULT_TYPESAFE_MODEL,
         description="Model identifier for TypeSafe AI System One decision evaluations.",
     )
     base_url: str = Field(
-        default="https://api.typesafe.ai/v1",
+        default=DEFAULT_TYPESAFE_BASE_URL,
         description="Base URL endpoint for TypeSafe AI API.",
     )
 
@@ -80,7 +84,7 @@ class JudgeSettings(BaseModel):
         description="Whether failed quality evaluations raise DomainValidationError or log warnings.",
     )
     max_attempts: int = Field(
-        default=2,
+        default=DEFAULT_JUDGE_MAX_ATTEMPTS,
         ge=1,
         description="Maximum execution attempts across pipeline stages when quality evaluation fails.",
     )

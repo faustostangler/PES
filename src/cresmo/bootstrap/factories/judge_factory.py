@@ -9,7 +9,7 @@ Conforms to:
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Final
 
 from cresmo.application.ports import PromptProviderPort, TelemetryPort
 from cresmo.application.ports.llm_judge_port import LlmJudgePort
@@ -17,6 +17,9 @@ from cresmo.infrastructure.config import CresmoSettings
 
 if TYPE_CHECKING:
     from cresmo.infrastructure.adapters.llm.gemini_pool import GeminiCredentialPool
+
+PROVIDER_GEMINI: Final[str] = "gemini"
+PROVIDER_OLLAMA: Final[str] = "ollama"
 
 
 def build_llm_judge_adapter(
@@ -33,7 +36,7 @@ def build_llm_judge_adapter(
 
     primary: LlmJudgePort
     provider = judge_cfg.provider
-    if provider == "gemini":
+    if provider == PROVIDER_GEMINI:
         from cresmo.infrastructure.adapters.judges.gemini_judge import GeminiJudgeAdapter
 
         primary = GeminiJudgeAdapter(
@@ -47,7 +50,7 @@ def build_llm_judge_adapter(
             credential_pool=credential_pool,
             timeout_seconds=gemini_cfg.timeout_seconds,
         )
-    elif provider == "ollama":
+    elif provider == PROVIDER_OLLAMA:
         from cresmo.infrastructure.adapters.judges.ollama_judge import OllamaJudgeAdapter
 
         primary = OllamaJudgeAdapter(
@@ -69,7 +72,7 @@ def build_llm_judge_adapter(
         )
 
     inner_judge: LlmJudgePort
-    if enable_fallback and provider != "ollama":
+    if enable_fallback and provider != PROVIDER_OLLAMA:
         from cresmo.infrastructure.adapters.judges.composite_judge import (
             ResilientCompositeJudgeAdapter,
         )

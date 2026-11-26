@@ -9,10 +9,36 @@ from __future__ import annotations
 import logging
 import logging.config
 from collections.abc import MutableMapping
-from typing import Any
+from typing import Any, Final
 
 import structlog
 from opentelemetry import trace
+
+_TRACE_ID_HEX_FORMAT: Final[str] = "032x"
+_SPAN_ID_HEX_FORMAT: Final[str] = "016x"
+_ZERO_TRACE_ID: Final[str] = "0" * 32
+_ZERO_SPAN_ID: Final[str] = "0" * 16
+_ATTR_SESSION_ID: Final[str] = "langfuse.session.id"
+_FIELD_OTEL_TRACE_ID: Final[str] = "otelTraceID"
+_FIELD_OTEL_SPAN_ID: Final[str] = "otelSpanID"
+_FIELD_SESSION_ID: Final[str] = "session_id"
+DEFAULT_LOG_LEVEL: Final[str] = "WARNING"
+DEFAULT_LOG_FORMAT: Final[str] = "json"
+_JSON_FORMATTER_CLASS: Final[str] = "pythonjsonlogger.json.JsonFormatter"
+_JSON_LOG_FORMAT_TEMPLATE: Final[str] = (
+    "%(asctime)s %(name)s %(levelname)s %(message)s "
+    "%(otelTraceID)s %(otelSpanID)s %(session_id)s"
+)
+_TEXT_LOG_FORMAT_TEMPLATE: Final[str] = "%(asctime)s [%(levelname)s] %(name)s: %(message)s"
+_TIMESTAMP_FORMAT_ISO: Final[str] = "iso"
+_THIRD_PARTY_LOG_LEVELS: Final[dict[str, dict[str, str]]] = {
+    "httpx": {"level": "WARNING"},
+    "httpcore": {"level": "WARNING"},
+    "opentelemetry": {"level": "WARNING"},
+    "urllib3": {"level": "WARNING"},
+    "google_genai": {"level": "ERROR"},
+    "google_genai.models": {"level": "ERROR"},
+}
 
 
 def _extract_otel_log_context() -> tuple[str, str, str]:
@@ -20,15 +46,15 @@ def _extract_otel_log_context() -> tuple[str, str, str]:
     span = trace.get_current_span()
     span_context = span.get_span_context() if span else None
     if span_context and span_context.trace_id:
-        otel_trace_id = format(span_context.trace_id, "032x")
-        otel_span_id = format(span_context.span_id, "016x")
+        otel_trace_id = format(span_context.trace_id, _TRACE_ID_HEX_FORMAT)
+        otel_span_id = format(span_context.span_id, _SPAN_ID_HEX_FORMAT)
     else:
-        otel_trace_id = "0" * 32
-        otel_span_id = "0" * 16
+        otel_trace_id = _ZERO_TRACE_ID
+        otel_span_id = _ZERO_SPAN_ID
 
     session_id = ""
     if hasattr(span, "attributes") and span.attributes:
-        session_id_attr = span.attributes.get("langfuse.session.id")
+        session_id_attr = span.attributes.get(_ATTR_SESSION_ID)
         if session_id_attr:
             session_id = str(session_id_attr)
     return otel_trace_id, otel_span_id, session_id
@@ -58,16 +84,19 @@ def _add_opentelemetry_context(
     """Structlog processor injecting OTel trace_id, span_id, and session_id into event_dict."""
     _ = (logger, method_name)
     otel_trace_id, otel_span_id, session_id = _extract_otel_log_context()
-    event_dict["otelTraceID"] = otel_trace_id
-    event_dict["otelSpanID"] = otel_span_id
-    event_dict["session_id"] = session_id
+    event_dict[_FIELD_OTEL_TRACE_ID] = otel_trace_id
+    event_dict[_FIELD_OTEL_SPAN_ID] = otel_span_id
+    event_dict[_FIELD_SESSION_ID] = session_id
     return event_dict
 
 
 _LOGGING_CONFIGURED: bool = False
 
 
-def configure_logging(level: str = "WARNING", fmt: str = "json") -> None:
+def configure_logging(
+    level: str = DEFAULT_LOG_LEVEL,
+    fmt: str = DEFAULT_LOG_FORMAT,
+) -> None:
     """Configure root logger and structlog with JSON or text formatter.
 
     Idempotent: subsequent calls after initialization update only the root log level,
@@ -85,17 +114,14 @@ def configure_logging(level: str = "WARNING", fmt: str = "json") -> None:
         return
     _LOGGING_CONFIGURED = True
 
-    if fmt == "json":
+    if fmt == DEFAULT_LOG_FORMAT:
         formatter_cfg: dict[str, Any] = {
-            "class": "pythonjsonlogger.json.JsonFormatter",
-            "format": (
-                "%(asctime)s %(name)s %(levelname)s %(message)s "
-                "%(otelTraceID)s %(otelSpanID)s %(session_id)s"
-            ),
+            "class": _JSON_FORMATTER_CLASS,
+            "format": _JSON_LOG_FORMAT_TEMPLATE,
         }
     else:
         formatter_cfg = {
-            "format": "%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+            "format": _TEXT_LOG_FORMAT_TEMPLATE,
         }
 
     logging.config.dictConfig(
@@ -113,14 +139,7 @@ def configure_logging(level: str = "WARNING", fmt: str = "json") -> None:
                 },
             },
             "root": {"level": level.upper(), "handlers": ["console"]},
-            "loggers": {
-                "httpx": {"level": "WARNING"},
-                "httpcore": {"level": "WARNING"},
-                "opentelemetry": {"level": "WARNING"},
-                "urllib3": {"level": "WARNING"},
-                "google_genai": {"level": "ERROR"},
-                "google_genai.models": {"level": "ERROR"},
-            },
+            "loggers": _THIRD_PARTY_LOG_LEVELS,
         }
     )
 
@@ -130,7 +149,7 @@ def configure_logging(level: str = "WARNING", fmt: str = "json") -> None:
             structlog.stdlib.filter_by_level,
             structlog.stdlib.add_logger_name,
             structlog.stdlib.add_log_level,
-            structlog.processors.TimeStamper(fmt="iso"),
+            structlog.processors.TimeStamper(fmt=_TIMESTAMP_FORMAT_ISO),
             _add_opentelemetry_context,
             structlog.processors.StackInfoRenderer(),
             structlog.processors.format_exc_info,

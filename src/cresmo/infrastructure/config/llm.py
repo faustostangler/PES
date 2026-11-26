@@ -7,7 +7,7 @@ Conforms to:
 
 from __future__ import annotations
 
-from typing import Annotated, Any, Literal
+from typing import Annotated, Any, Final, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, SecretStr, field_validator
 from pydantic_settings import NoDecode
@@ -23,6 +23,18 @@ from cresmo.infrastructure.config.catalog import (
     normalize_str_choice,
     parse_comma_separated_strings,
 )
+
+MIN_GEMINI_MAX_OUTPUT_TOKENS: Final[int] = 256
+MAX_GEMINI_MAX_OUTPUT_TOKENS: Final[int] = 1_048_576
+MIN_GEMINI_TIMEOUT_SECONDS: Final[float] = 1.0
+DEFAULT_OLLAMA_BASE_URL: Final[str] = "http://localhost:11434"
+DEFAULT_OLLAMA_MODEL: Final[str] = "qwen2.5:7b"
+DEFAULT_OLLAMA_TIMEOUT_SECONDS: Final[float] = 300.0
+DEFAULT_OLLAMA_WARMUP_TIMEOUT_SECONDS: Final[float] = 300.0
+DEFAULT_OLLAMA_KEEP_ALIVE: Final[str] = "1h"
+DEFAULT_OLLAMA_NUM_PREDICT: Final[int] = 0
+DEFAULT_OLLAMA_INDEXING_TEMPERATURE: Final[float] = 0.2
+MAX_OLLAMA_TEMPERATURE: Final[float] = 2.0
 
 
 class GeminiSettings(BaseModel):
@@ -51,13 +63,13 @@ class GeminiSettings(BaseModel):
     )
     max_output_tokens: int = Field(
         default=DEFAULT_GEMINI_MAX_OUTPUT_TOKENS,
-        ge=256,
-        le=1_048_576,
+        ge=MIN_GEMINI_MAX_OUTPUT_TOKENS,
+        le=MAX_GEMINI_MAX_OUTPUT_TOKENS,
         description="Maximum output token ceiling (thinking + response tokens) for Gemini requests.",
     )
     timeout_seconds: float = Field(
         default=DEFAULT_GEMINI_TIMEOUT_SECONDS,
-        ge=1.0,
+        ge=MIN_GEMINI_TIMEOUT_SECONDS,
         description="HTTP/TCP socket timeout in seconds for Google Gemini API inference requests.",
     )
 
@@ -98,36 +110,36 @@ class OllamaSettings(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     base_url: str = Field(
-        default="http://localhost:11434",
+        default=DEFAULT_OLLAMA_BASE_URL,
         description="Local Ollama endpoint URL.",
     )
     model: str = Field(
-        default="qwen2.5:7b",
+        default=DEFAULT_OLLAMA_MODEL,
         description="Local Ollama model variant for conceptual indexing and fallback judging.",
     )
     timeout_seconds: float = Field(
-        default=300.0,
-        ge=1.0,
+        default=DEFAULT_OLLAMA_TIMEOUT_SECONDS,
+        ge=MIN_GEMINI_TIMEOUT_SECONDS,
         description="HTTP timeout in seconds for local Ollama inference requests.",
     )
     warmup_timeout_seconds: float = Field(
-        default=300.0,
-        ge=1.0,
+        default=DEFAULT_OLLAMA_WARMUP_TIMEOUT_SECONDS,
+        ge=MIN_GEMINI_TIMEOUT_SECONDS,
         description="Extended HTTP timeout in seconds for initial Ollama model preload into VRAM.",
     )
     keep_alive: str = Field(
-        default="1h",
+        default=DEFAULT_OLLAMA_KEEP_ALIVE,
         description="Duration to keep the model loaded in Ollama VRAM/RAM (e.g. '1h', '60m', '-1').",
     )
     num_predict: int = Field(
-        default=0,
+        default=DEFAULT_OLLAMA_NUM_PREDICT,
         ge=0,
         description="Maximum tokens predicted by local Ollama model (0 means unconstrained).",
     )
     indexing_temperature: float = Field(
-        default=0.2,
+        default=DEFAULT_OLLAMA_INDEXING_TEMPERATURE,
         ge=0.0,
-        le=2.0,
+        le=MAX_OLLAMA_TEMPERATURE,
         description="Sampling temperature for conceptual indexing.",
     )
 

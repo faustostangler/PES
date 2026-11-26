@@ -13,7 +13,7 @@ import importlib.resources
 import json
 from collections.abc import Iterator, Mapping
 from pathlib import Path
-from typing import Any, Literal
+from typing import Any, Final, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
@@ -22,6 +22,14 @@ from cresmo.infrastructure.config.catalog import (
     DEFAULT_PROMPTS_RESOURCE_NAME,
     DEFAULT_PROMPTS_RESOURCE_PACKAGE,
 )
+
+_LANGFUSE_NAME_PREFIX: Final[str] = "cresmo-"
+_UTF8_ENCODING: Final[str] = "utf-8"
+_PROMPTS_SUBDIR_NAME: Final[str] = "prompts"
+_PYCACHE_DIR_NAME: Final[str] = "__pycache__"
+_SYSTEM_TURN_FILENAME: Final[str] = "system.md"
+_USER_TURN_FILENAME: Final[str] = "user.md"
+_SKILL_BLOCK_PLACEHOLDER: Final[str] = "{{skill_block}}"
 
 
 class PromptCatalogError(Exception):
@@ -55,7 +63,7 @@ class PromptSpec(BaseModel):
     @property
     def langfuse_name(self) -> str:
         """Deterministic remote Langfuse identifier (e.g. PromptKey.FLUID_PROSE -> cresmo-fluid-prose)."""
-        return self.langfuse_slug or f"cresmo-{self.key.value.replace('_', '-')}"
+        return self.langfuse_slug or f"{_LANGFUSE_NAME_PREFIX}{self.key.value.replace('_', '-')}"
 
 
 class PromptCatalog(Mapping[PromptKey, PromptSpec]):
@@ -113,7 +121,7 @@ def _read_markdown_turn(prompts_root: Any, key_name: str, filename: str) -> str:
         raise PromptCatalogError(
             f"Missing required Markdown template '{key_name}/{filename}' for prompt key '{key_name}'."
         )
-    return str(turn_file.read_text(encoding="utf-8"))
+    return str(turn_file.read_text(encoding=_UTF8_ENCODING))
 
 
 def _validate_no_orphan_prompt_dirs(prompts_root: Any, valid_keys: set[str]) -> None:
@@ -122,7 +130,7 @@ def _validate_no_orphan_prompt_dirs(prompts_root: Any, valid_keys: set[str]) -> 
         raise PromptCatalogError(f"Prompt Markdown directory not found: {prompts_root}")
     orphans: list[str] = []
     for child in prompts_root.iterdir():
-        if child.is_dir() and child.name != "__pycache__" and child.name not in valid_keys:
+        if child.is_dir() and child.name != _PYCACHE_DIR_NAME and child.name not in valid_keys:
             orphans.append(child.name)
     if orphans:
         raise PromptCatalogError(f"Orphan prompt directories not in PromptKey: {sorted(orphans)}")
@@ -144,13 +152,15 @@ def load_prompt_catalog(path: Path | None = None) -> PromptCatalog:
     """
     try:
         if path is not None:
-            raw_text = path.read_text(encoding="utf-8")
-            prompts_root: Any = path.parent / "prompts"
+            raw_text = path.read_text(encoding=_UTF8_ENCODING)
+            prompts_root: Any = path.parent / _PROMPTS_SUBDIR_NAME
         else:
             res_root = importlib.resources.files(DEFAULT_PROMPTS_RESOURCE_PACKAGE)
-            raw_text = res_root.joinpath(DEFAULT_PROMPTS_RESOURCE_NAME).read_text(encoding="utf-8")
+            raw_text = res_root.joinpath(DEFAULT_PROMPTS_RESOURCE_NAME).read_text(
+                encoding=_UTF8_ENCODING
+            )
             prompts_root = importlib.resources.files(
-                f"{DEFAULT_PROMPTS_RESOURCE_PACKAGE}.prompts"
+                f"{DEFAULT_PROMPTS_RESOURCE_PACKAGE}.{_PROMPTS_SUBDIR_NAME}"
             )
     except Exception as exc:
         raise PromptCatalogError(f"Failed to read prompt catalog resource: {exc}") from exc
@@ -192,11 +202,13 @@ def load_prompt_catalog(path: Path | None = None) -> PromptCatalog:
                 f"Schema validation failed for manifest entry '{key_member.value}': {exc}"
             ) from exc
 
-        system_prompt = _read_markdown_turn(prompts_root, key_member.value, "system.md")
-        user_prompt = _read_markdown_turn(prompts_root, key_member.value, "user.md")
+        system_prompt = _read_markdown_turn(
+            prompts_root, key_member.value, _SYSTEM_TURN_FILENAME
+        )
+        user_prompt = _read_markdown_turn(prompts_root, key_member.value, _USER_TURN_FILENAME)
 
         combined_templates = f"{system_prompt}\n{user_prompt}"
-        has_skill_placeholder = "{{skill_block}}" in combined_templates or any(
+        has_skill_placeholder = _SKILL_BLOCK_PLACEHOLDER in combined_templates or any(
             f"{{{{{skill}}}}}" in combined_templates for skill in manifest_entry.skills
         )
         if manifest_entry.skills and not has_skill_placeholder:
@@ -204,7 +216,7 @@ def load_prompt_catalog(path: Path | None = None) -> PromptCatalog:
                 f"Prompt '{key_member.value}' declares skills {manifest_entry.skills} "
                 "but neither '{{skill_block}}' nor skill-specific placeholders appear in templates."
             )
-        if "{{skill_block}}" in combined_templates and not manifest_entry.skills:
+        if _SKILL_BLOCK_PLACEHOLDER in combined_templates and not manifest_entry.skills:
             raise PromptCatalogError(
                 f"Prompt '{key_member.value}' contains '{{{{skill_block}}}}' in templates "
                 "but declares empty skills list in prompts.json."

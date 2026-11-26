@@ -14,7 +14,7 @@ from __future__ import annotations
 import time
 from collections.abc import Generator
 from contextlib import contextmanager
-from typing import Any
+from typing import Any, Final
 
 from cresmo.application.pipeline.context import PipelineExecutionContext
 from cresmo.application.ports import (
@@ -29,6 +29,32 @@ from cresmo.domain.value_objects import (
     Channel,
     JudgeEvaluation,
 )
+
+FALLBACK_TRACE_ID_PREFIX: Final[str] = "cresmo_"
+JUDGE_VERDICT_PASS: Final[str] = "PASS"
+JUDGE_VERDICT_NEEDS_REWRITE: Final[str] = "NEEDS_REWRITE"
+SPAN_ATTR_JUDGE_VERDICT: Final[str] = "judge.verdict"
+SPAN_ATTR_JUDGE_OVERALL_SCORE: Final[str] = "judge.overall_score"
+SPAN_ATTR_STAGE_CHANNEL_ID: Final[str] = "cresmo.stage.channel.id"
+SPAN_ATTR_STAGE_CONTENT_ID: Final[str] = "cresmo.stage.content.id"
+SPAN_ATTR_STAGE_CHANNEL_NAME: Final[str] = "cresmo.stage.channel.name"
+SPAN_ATTR_STAGE_CONTENT_TITLE: Final[str] = "cresmo.stage.content.title"
+
+_EVAL_OUT_KEY_VERDICT: Final[str] = "verdict"
+_EVAL_OUT_KEY_OVERALL_SCORE: Final[str] = "overall_score"
+_EVAL_OUT_KEY_SCORES: Final[str] = "scores"
+_EVAL_OUT_KEY_REASONS: Final[str] = "reasons"
+_EVAL_OUT_KEY_SUGGESTIONS: Final[str] = "suggestions"
+
+METRIC_INCREMENT_ONE: Final[float] = 1.0
+METRIC_LABEL_ERROR_TYPE: Final[str] = "error_type"
+METRIC_LABEL_CHANNEL_ID: Final[str] = "channel_id"
+METRIC_LABEL_STAGE: Final[str] = "stage"
+METRIC_LABEL_STATUS: Final[str] = "status"
+METRIC_LABEL_PASSED: Final[str] = "passed"
+METRIC_LABEL_ATTEMPT: Final[str] = "attempt"
+STAGE_METRIC_STATUS_SUCCESS: Final[str] = "success"
+STAGE_METRIC_STATUS_FAILURE: Final[str] = "failure"
 
 
 def resolve_active_trace_id(
@@ -47,7 +73,7 @@ def resolve_active_trace_id(
         return active_span.trace_id
 
     ch_token = context.channel.id.value if context.channel.id else context.channel.name
-    return f"cresmo_{ch_token}_{context.content.id.value}"
+    return f"{FALLBACK_TRACE_ID_PREFIX}{ch_token}_{context.content.id.value}"
 
 
 def attach_evaluation_span_attributes(
@@ -58,12 +84,12 @@ def attach_evaluation_span_attributes(
     if span is None or evaluation is None:
         return
 
-    verdict_val = "PASS" if evaluation.passed else "NEEDS_REWRITE"
+    verdict_val = JUDGE_VERDICT_PASS if evaluation.passed else JUDGE_VERDICT_NEEDS_REWRITE
     score_val = float(evaluation.overall_score)
     span.set_attributes(
         {
-            "judge.verdict": verdict_val,
-            "judge.overall_score": score_val,
+            SPAN_ATTR_JUDGE_VERDICT: verdict_val,
+            SPAN_ATTR_JUDGE_OVERALL_SCORE: score_val,
         }
     )
 
@@ -79,14 +105,14 @@ def attach_evaluation_span_attributes(
             suggestions_dict[crit_key] = criterion_entry.improvement_suggestion
 
     eval_output: dict[str, Any] = {
-        "verdict": verdict_val,
-        "overall_score": score_val,
-        "scores": scores_dict,
+        _EVAL_OUT_KEY_VERDICT: verdict_val,
+        _EVAL_OUT_KEY_OVERALL_SCORE: score_val,
+        _EVAL_OUT_KEY_SCORES: scores_dict,
     }
     if reasons_dict:
-        eval_output["reasons"] = reasons_dict
+        eval_output[_EVAL_OUT_KEY_REASONS] = reasons_dict
     if suggestions_dict:
-        eval_output["suggestions"] = suggestions_dict
+        eval_output[_EVAL_OUT_KEY_SUGGESTIONS] = suggestions_dict
 
     span.set_output(eval_output)
 
@@ -101,11 +127,11 @@ def record_error_metric(
     """Increment stage error counter with low-cardinality dimensional labels."""
     metrics_port.increment_counter(
         MetricName.PIPELINE_ERRORS,
-        1.0,
+        METRIC_INCREMENT_ONE,
         labels={
-            "error_type": exc.__class__.__name__,
-            "channel_id": channel.id.value if channel.id else "",
-            "stage": stage_name,
+            METRIC_LABEL_ERROR_TYPE: exc.__class__.__name__,
+            METRIC_LABEL_CHANNEL_ID: channel.id.value if channel.id else "",
+            METRIC_LABEL_STAGE: stage_name,
         },
     )
 
@@ -123,9 +149,9 @@ def record_duration_metric(
         MetricName.PIPELINE_STAGE_DURATION,
         elapsed,
         labels={
-            "stage": stage_name,
-            "channel_id": channel.id.value if channel.id else "",
-            "status": status,
+            METRIC_LABEL_STAGE: stage_name,
+            METRIC_LABEL_CHANNEL_ID: channel.id.value if channel.id else "",
+            METRIC_LABEL_STATUS: status,
         },
     )
 
@@ -140,8 +166,12 @@ def record_evaluation_metric(
     """Increment judge evaluation counter."""
     metrics_port.increment_counter(
         MetricName.JUDGE_EVALUATIONS,
-        1.0,
-        labels={"stage": stage_name, "passed": str(passed).lower(), "attempt": str(attempt)},
+        METRIC_INCREMENT_ONE,
+        labels={
+            METRIC_LABEL_STAGE: stage_name,
+            METRIC_LABEL_PASSED: str(passed).lower(),
+            METRIC_LABEL_ATTEMPT: str(attempt),
+        },
     )
 
 
@@ -155,15 +185,15 @@ def measure_stage_execution(
 ) -> Generator[TelemetrySpan]:
     """Wrap stage execution in a TelemetryPort stage span and record SRE golden signals."""
     start_time = time.perf_counter()
-    status = "success"
+    status = STAGE_METRIC_STATUS_SUCCESS
     effective_channel = context.channel
     effective_content = context.content
 
     stage_attributes: dict[str, TelemetryAttributeValue] = {
-        "cresmo.stage.channel.id": effective_channel.id.value if effective_channel.id else "",
-        "cresmo.stage.content.id": effective_content.id.value,
-        "cresmo.stage.channel.name": effective_channel.name,
-        "cresmo.stage.content.title": effective_content.title,
+        SPAN_ATTR_STAGE_CHANNEL_ID: effective_channel.id.value if effective_channel.id else "",
+        SPAN_ATTR_STAGE_CONTENT_ID: effective_content.id.value,
+        SPAN_ATTR_STAGE_CHANNEL_NAME: effective_channel.name,
+        SPAN_ATTR_STAGE_CONTENT_TITLE: effective_content.title,
     }
 
     with telemetry_port.start_span(
@@ -176,7 +206,7 @@ def measure_stage_execution(
         try:
             yield stage_span
         except Exception as exc:
-            status = "failure"
+            status = STAGE_METRIC_STATUS_FAILURE
             record_error_metric(
                 metrics_port,
                 exc=exc,

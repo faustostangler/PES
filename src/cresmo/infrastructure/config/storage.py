@@ -12,6 +12,7 @@ Conforms to:
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Final
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -19,6 +20,15 @@ from cresmo.domain.stage_registry import StageName
 from cresmo.infrastructure.paths import find_workspace_root
 
 _WORKSPACE_DIR = find_workspace_root()
+_DATA_DIR_NAME: Final[str] = "data"
+_VAULT_DIR_NAME: Final[str] = "vault"
+_MASTER_DIR_NAME: Final[str] = "master"
+_VAULT_INDEX_FILENAME: Final[str] = "_index.json"
+_MOCS_DIR_NAME: Final[str] = "MOCs"
+DEFAULT_SQLITE_LEDGER_FILENAME: Final[str] = "cresmo_ledger.db"
+DEFAULT_PLAYLIST_FILENAME: Final[str] = "playlist.txt"
+DEFAULT_PLAYLIST_PRIORITY_FILENAME: Final[str] = "playlist-priority.txt"
+DEFAULT_PRIORITY_TEXTS_DIRNAME: Final[str] = "priority"
 
 __all__ = ["StorageSettings"]
 
@@ -29,11 +39,11 @@ class StorageSettings(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     data_dir: Path = Field(
-        default_factory=lambda: _WORKSPACE_DIR / "data",
+        default_factory=lambda: _WORKSPACE_DIR / _DATA_DIR_NAME,
         description="Root directory for staged media transcripts and processing ledger.",
     )
     vault_dir: Path = Field(
-        default_factory=lambda: _WORKSPACE_DIR / "vault",
+        default_factory=lambda: _WORKSPACE_DIR / _VAULT_DIR_NAME,
         description="Root directory for Obsidian Second Brain knowledge graph vault.",
     )
 
@@ -49,20 +59,20 @@ class StorageSettings(BaseModel):
     @property
     def master_dir(self) -> Path:
         """Directory for consolidated master compendiums per channel category for RAG."""
-        return self.data_dir / "master"
+        return self.data_dir / _MASTER_DIR_NAME
 
     @property
     def index_path(self) -> Path:
         """Master lookup JSON index."""
-        return self.vault_dir / "_index.json"
+        return self.vault_dir / _VAULT_INDEX_FILENAME
 
     @property
     def mocs_dir(self) -> Path:
         """Subdirectory within vault/ housing Maps of Content."""
-        return self.vault_dir / "MOCs"
+        return self.vault_dir / _MOCS_DIR_NAME
 
     sqlite_ledger_filename: str = Field(
-        default="cresmo_ledger.db",
+        default=DEFAULT_SQLITE_LEDGER_FILENAME,
         description="Filename of the SQLite WAL database for processed content tracking.",
     )
 
@@ -72,16 +82,16 @@ class StorageSettings(BaseModel):
         return self.data_dir / self.sqlite_ledger_filename
 
     playlist_filename: str = Field(
-        default="playlist.txt",
+        default=DEFAULT_PLAYLIST_FILENAME,
         description="Filename of the main video manifest inside data_dir.",
     )
     playlist_priority_filename: str = Field(
-        default="playlist-priority.txt",
+        default=DEFAULT_PLAYLIST_PRIORITY_FILENAME,
         description="Filename of the priority video manifest inside data_dir.",
     )
 
     priority_texts_dirname: str = Field(
-        default="priority",
+        default=DEFAULT_PRIORITY_TEXTS_DIRNAME,
         description="Directory name inside data_dir containing priority text files (.txt, .md).",
     )
 

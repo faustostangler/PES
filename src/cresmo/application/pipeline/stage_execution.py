@@ -11,7 +11,7 @@ Conforms to:
 from __future__ import annotations
 
 from contextlib import AbstractContextManager, nullcontext
-from typing import Any
+from typing import Any, Final
 
 import structlog
 
@@ -44,6 +44,26 @@ from cresmo.domain.value_objects import (
 
 logger = structlog.get_logger(__name__)
 
+SPAN_ATTR_PASS_NUM: Final[str] = "cresmo.pass_num"
+SPAN_ATTR_SATURATION_PREFIX: Final[str] = "cresmo.saturation."
+SPAN_ATTR_JUDGE_STAGE_NAME: Final[str] = "judge.stage_name"
+SPAN_ATTR_JUDGE_ATTEMPT: Final[str] = "judge.attempt"
+PASS_TRACE_SUFFIX_PREFIX: Final[str] = "_pass_"
+
+_CTX_KEY_PASS_NUM: Final[str] = "pass_num"
+_CTX_KEY_TOTAL_PASSES: Final[str] = "total_passes"
+_CTX_KEY_PREV_PASS_NUM: Final[str] = "prev_pass_num"
+_CTX_KEY_CURRENT_TEXT: Final[str] = "current_text"
+
+_META_KEY_CHANNEL_ID: Final[str] = "channel_id"
+_META_KEY_CONTENT_ID: Final[str] = "content_id"
+_META_KEY_CHANNEL_NAME: Final[str] = "channel_name"
+_META_KEY_CONTENT_TITLE: Final[str] = "content_title"
+_META_KEY_ATTEMPT: Final[str] = "attempt"
+_META_KEY_PASSES_EXECUTED: Final[str] = "passes_executed"
+_META_KEY_IS_SATURATED: Final[str] = "is_saturated"
+_META_KEY_SATURATION_HISTORY: Final[str] = "saturation_history"
+
 
 def _build_pass_prompt_context(
     *,
@@ -54,11 +74,13 @@ def _build_pass_prompt_context(
 ) -> dict[str, Any]:
     """Assemble prompt template variables for the active refinement pass."""
     prompt_context: dict[str, Any] = (
-        {"pass_num": pass_index, "total_passes": max_passes} if is_multi_pass else {}
+        {_CTX_KEY_PASS_NUM: pass_index, _CTX_KEY_TOTAL_PASSES: max_passes}
+        if is_multi_pass
+        else {}
     )
     if draft_text is not None:
-        prompt_context["prev_pass_num"] = pass_index - 1
-        prompt_context["current_text"] = draft_text
+        prompt_context[_CTX_KEY_PREV_PASS_NUM] = pass_index - 1
+        prompt_context[_CTX_KEY_CURRENT_TEXT] = draft_text
     return prompt_context
 
 
@@ -73,17 +95,17 @@ def _record_saturation_verdict(
     """Emit scalar saturation telemetry span and append structured pass verdict history."""
     metadata_entry = verdict.to_metadata_dict()
     if telemetry_port is not None and verdict.reason is not SaturationReason.DISABLED:
-        span_attrs: dict[str, TelemetryAttributeValue] = {"cresmo.pass_num": pass_index}
+        span_attrs: dict[str, TelemetryAttributeValue] = {SPAN_ATTR_PASS_NUM: pass_index}
         for key, val in metadata_entry.items():
             if isinstance(val, (bool, int, float, str)):
-                span_attrs[f"cresmo.saturation.{key}"] = val
+                span_attrs[f"{SPAN_ATTR_SATURATION_PREFIX}{key}"] = val
         with telemetry_port.start_span(
             format_stage_saturation_span_name(stage_name, pass_num=pass_index),
             attributes=span_attrs,
         ):
             pass
 
-    metadata_entry["pass_num"] = pass_index
+    metadata_entry[_CTX_KEY_PASS_NUM] = pass_index
     saturation_history.append(metadata_entry)
 
 
@@ -142,7 +164,9 @@ def generate_stage_candidate[TSource, TOutput](
             current_text = llm_port.transform(
                 prompt=chat_prompt,
                 trace_id=(
-                    f"{active_trace_id}_pass_{pass_index}" if is_multi_pass else active_trace_id
+                    f"{active_trace_id}{PASS_TRACE_SUFFIX_PREFIX}{pass_index}"
+                    if is_multi_pass
+                    else active_trace_id
                 ),
                 session_id=context.content.session_id,
                 user_id=context.user_identity.value,
@@ -200,16 +224,16 @@ def generate_stage_candidate[TSource, TOutput](
         draft_text = current_text
 
     candidate_metadata: dict[str, Any] = {
-        "channel_id": context.channel.id.value if context.channel.id else "",
-        "content_id": context.content.id.value,
-        "channel_name": context.channel.name,
-        "content_title": context.content.title,
-        "attempt": attempt,
+        _META_KEY_CHANNEL_ID: context.channel.id.value if context.channel.id else "",
+        _META_KEY_CONTENT_ID: context.content.id.value,
+        _META_KEY_CHANNEL_NAME: context.channel.name,
+        _META_KEY_CONTENT_TITLE: context.content.title,
+        _META_KEY_ATTEMPT: attempt,
     }
     if is_multi_pass:
-        candidate_metadata["passes_executed"] = passes_executed
-        candidate_metadata["is_saturated"] = is_saturated
-        candidate_metadata["saturation_history"] = saturation_history
+        candidate_metadata[_META_KEY_PASSES_EXECUTED] = passes_executed
+        candidate_metadata[_META_KEY_IS_SATURATED] = is_saturated
+        candidate_metadata[_META_KEY_SATURATION_HISTORY] = saturation_history
 
     return CandidateText(
         text=current_text,
@@ -236,8 +260,8 @@ def evaluate_stage_candidate[TSource, TOutput](
     with telemetry_port.start_span(
         format_stage_judge_span_name(stage_config.stage_name),
         attributes={
-            "judge.stage_name": stage_config.stage_name,
-            "judge.attempt": attempt,
+            SPAN_ATTR_JUDGE_STAGE_NAME: stage_config.stage_name,
+            SPAN_ATTR_JUDGE_ATTEMPT: attempt,
         },
     ) as eval_span:
         active_trace_id = resolve_active_trace_id(
@@ -252,11 +276,11 @@ def evaluate_stage_candidate[TSource, TOutput](
             raw_text=extract_source_text(source),  # type: ignore[arg-type]
             candidate_text=stage_config.eval_spec.candidate_extractor(candidate),
             metadata={
-                "channel_id": context.channel.id.value if context.channel.id else "",
-                "content_id": context.content.id.value,
-                "channel_name": context.channel.name,
-                "content_title": context.content.title,
-                "attempt": attempt,
+                _META_KEY_CHANNEL_ID: context.channel.id.value if context.channel.id else "",
+                _META_KEY_CONTENT_ID: context.content.id.value,
+                _META_KEY_CHANNEL_NAME: context.channel.name,
+                _META_KEY_CONTENT_TITLE: context.content.title,
+                _META_KEY_ATTEMPT: attempt,
                 **stage_config.eval_spec.metadata,
             },
             trace_id=active_trace_id,

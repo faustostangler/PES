@@ -8,6 +8,7 @@ Conforms to:
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Final
 
 from cresmo.application.ports import ChannelTaxonomyPort
 from cresmo.application.use_cases.discovery.manifests import (
@@ -27,6 +28,10 @@ from cresmo.domain.value_objects import (
     is_processable_transcript_file,
     normalize_to_uploads_playlist_url,
 )
+
+_META_KEY_CHANNEL: Final[str] = "channel"
+_META_KEY_CHANNEL_ID: Final[str] = "channel_id"
+_META_KEY_VIDEO_ID: Final[str] = "video_id"
 
 
 def _matches_channel_and_category(
@@ -99,8 +104,8 @@ class LakeScannerService:
             if not is_processable_transcript_file(priority_file):
                 continue
             meta = extract_raw_file_metadata(priority_file)
-            raw_chan = meta.get("channel") or meta.get("channel_id")
-            video_id = meta.get("video_id") or priority_file.stem
+            raw_chan = meta.get(_META_KEY_CHANNEL) or meta.get(_META_KEY_CHANNEL_ID)
+            video_id = meta.get(_META_KEY_VIDEO_ID) or priority_file.stem
 
             if _matches_video_entry(
                 criteria,
@@ -195,8 +200,8 @@ class LakeScannerService:
 
             if extract_frontmatter:
                 meta = extract_raw_file_metadata(rf)
-                vid_front = meta.get("video_id")
-                chan_url = meta.get("channel")
+                vid_front = meta.get(_META_KEY_VIDEO_ID)
+                chan_url = meta.get(_META_KEY_CHANNEL)
                 if vid_front:
                     canonical_vid = vid_front
             elif parent_dir != raw_dir and parent_dir.name != (raw_dir.name if raw_dir else ""):

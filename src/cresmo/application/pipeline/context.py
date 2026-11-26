@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from cresmo.domain.entities import UserIdentity
+from cresmo.domain.entities.identity import SESSION_ID_DELIMITER
 from cresmo.domain.value_objects import Channel, Content
 
 
@@ -40,6 +41,6 @@ class PipelineExecutionContext:
                     id=self.content.id,
                     title=self.content.title,
                     text=self.content.text,
-                    session_id=f"{ch_token}:{self.content.id.value}",
+                    session_id=f"{ch_token}{SESSION_ID_DELIMITER}{self.content.id.value}",
                 ),
             )

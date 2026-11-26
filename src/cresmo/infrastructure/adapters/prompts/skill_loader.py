@@ -11,10 +11,20 @@ from __future__ import annotations
 import re
 from collections.abc import Sequence
 from pathlib import Path
+from typing import Final
 
 from cresmo.infrastructure.paths import find_workspace_root
 
 _YAML_FRONTMATTER_RE = re.compile(r"\A---\s*\r?\n.*?\r?\n---\s*(?:\r?\n)?", re.DOTALL)
+_YAML_FRONTMATTER_FENCE: Final[str] = "---"
+_CRLF_CHARS: Final[str] = "\r\n"
+_SKILLS_DOT_DIR: Final[str] = ".agents"
+_SKILLS_SUBDIR_NAME: Final[str] = "skills"
+_SKILL_MARKDOWN_FILENAME: Final[str] = "SKILL.md"
+_UTF8_ENCODING: Final[str] = "utf-8"
+_KEY_SKILL_BLOCK: Final[str] = "skill_block"
+_LINES_SEPARATOR: Final[str] = "\n"
+_BLOCK_SEPARATOR: Final[str] = "\n\n"
 
 
 def strip_yaml_frontmatter(text: str) -> str:
@@ -26,12 +36,12 @@ def strip_yaml_frontmatter(text: str) -> str:
     Returns:
         Markdown text without leading YAML frontmatter, stripped of leading whitespace.
     """
-    if not text.startswith("---"):
+    if not text.startswith(_YAML_FRONTMATTER_FENCE):
         return text
     match = _YAML_FRONTMATTER_RE.match(text)
     if match is None:
         return text
-    return text[match.end() :].lstrip("\r\n")
+    return text[match.end() :].lstrip(_CRLF_CHARS)
 
 
 class SkillDocumentLoader:
@@ -49,7 +59,7 @@ class SkillDocumentLoader:
             if self._custom_skills_dir is not None:
                 self._resolved_dir = self._custom_skills_dir
             else:
-                self._resolved_dir = find_workspace_root() / ".agents" / "skills"
+                self._resolved_dir = find_workspace_root() / _SKILLS_DOT_DIR / _SKILLS_SUBDIR_NAME
         return self._resolved_dir
 
     def read_skill(self, skill_name: str) -> str:
@@ -64,12 +74,12 @@ class SkillDocumentLoader:
         if skill_name in self._cache:
             return self._cache[skill_name]
 
-        skill_path = self.skills_dir / skill_name / "SKILL.md"
+        skill_path = self.skills_dir / skill_name / _SKILL_MARKDOWN_FILENAME
         if not skill_path.is_file():
             self._cache[skill_name] = ""
             return ""
 
-        raw = skill_path.read_text(encoding="utf-8")
+        raw = skill_path.read_text(encoding=_UTF8_ENCODING)
         cleaned = strip_yaml_frontmatter(raw).strip()
         self._cache[skill_name] = cleaned
         return cleaned
@@ -91,7 +101,7 @@ class SkillDocumentLoader:
         Returns:
             Replacement mapping keyed by each skill name plus ``"skill_block"``.
         """
-        combined = "\n".join(templates)
+        combined = _LINES_SEPARATOR.join(templates)
         replacements: dict[str, str] = {}
         block_sections: list[str] = []
 
@@ -102,5 +112,5 @@ class SkillDocumentLoader:
             if content and not inline_pattern.search(combined):
                 block_sections.append(f"{skill_name}:\n{content}")
 
-        replacements["skill_block"] = "\n\n".join(block_sections)
+        replacements[_KEY_SKILL_BLOCK] = _BLOCK_SEPARATOR.join(block_sections)
         return replacements

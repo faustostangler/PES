@@ -9,6 +9,16 @@ Conforms to:
 from __future__ import annotations
 
 import re
+from typing import Final
+
+_STRIP_MARKDOWN_QUOTE_CHARS: Final[str] = "\"'`*#_"
+_STRIP_CONCEPT_CHARS: Final[str] = "\"'`*#_:"
+DEFAULT_SYNTHESIS_MIN_WORDS: Final[int] = 20
+DEFAULT_SYNTHESIS_MAX_WORDS: Final[int] = 120
+FORBIDDEN_LIST_LINE_PREFIXES: Final[tuple[str, ...]] = ("- ", "* ", "1.", "2.", "• ")
+CONCEPT_LIST_SPLIT_CHAR: Final[str] = ","
+CONCEPT_LIST_JOIN_SEP: Final[str] = ", "
+FALLBACK_KEY_CONCEPT_TITLE: Final[str] = "Síntese Conceitual"
 
 _INDICATIVE_PREFIXES = (
     "key concept:",
@@ -49,14 +59,14 @@ def is_valid_concepts_output(raw_output: str) -> bool:
     first_line = clean.splitlines()[0].strip()
     if _FORBIDDEN_PREFIX_REGEX.search(first_line):
         return False
-    clean_first = first_line.strip("\"'`*#_")
+    clean_first = first_line.strip(_STRIP_MARKDOWN_QUOTE_CHARS)
     return not _FORBIDDEN_PREFIX_REGEX.search(clean_first)
 
 
 def is_valid_synthesis_paragraph(
     raw_output: str,
-    min_words: int = 20,
-    max_words: int = 120,
+    min_words: int = DEFAULT_SYNTHESIS_MIN_WORDS,
+    max_words: int = DEFAULT_SYNTHESIS_MAX_WORDS,
 ) -> bool:
     """Validate that candidate synthesis output is a single paragraph of appropriate size.
 
@@ -73,7 +83,7 @@ def is_valid_synthesis_paragraph(
         return False
     if _FORBIDDEN_PREFIX_REGEX.search(clean):
         return False
-    clean_first = clean.splitlines()[0].strip("\"'`*#_")
+    clean_first = clean.splitlines()[0].strip(_STRIP_MARKDOWN_QUOTE_CHARS)
     if _FORBIDDEN_PREFIX_REGEX.search(clean_first):
         return False
 
@@ -85,7 +95,7 @@ def is_valid_synthesis_paragraph(
     # Reject markdown bullet lists or numbered lists
     for line in clean.splitlines():
         stripped = line.strip()
-        if stripped.startswith(("- ", "* ", "1.", "2.", "• ")):
+        if stripped.startswith(FORBIDDEN_LIST_LINE_PREFIXES):
             return False
 
     words = clean.split()
@@ -101,11 +111,11 @@ def clean_text_line(text: str) -> str:
     Returns:
         Sanitized clean string line.
     """
-    clean = text.strip().strip("\"'`*#_")
+    clean = text.strip().strip(_STRIP_MARKDOWN_QUOTE_CHARS)
     lower = clean.lower()
     for prefix in _INDICATIVE_PREFIXES:
         if lower.startswith(prefix):
-            clean = clean[len(prefix) :].strip().strip("\"'`*#_")
+            clean = clean[len(prefix) :].strip().strip(_STRIP_MARKDOWN_QUOTE_CHARS)
             lower = clean.lower()
     return clean.strip()
 
@@ -120,8 +130,12 @@ def clean_concept_line(line: str) -> str:
         Comma-separated string of clean concept terms.
     """
     clean = clean_text_line(line)
-    clean = _FORBIDDEN_PREFIX_REGEX.sub("", clean).strip().strip("\"'`*#_:")
-    parts = [p.strip().strip("\"'`*#_") for p in clean.split(",") if p.strip().strip("\"'`*#_")]
+    clean = _FORBIDDEN_PREFIX_REGEX.sub("", clean).strip().strip(_STRIP_CONCEPT_CHARS)
+    parts = [
+        p.strip().strip(_STRIP_MARKDOWN_QUOTE_CHARS)
+        for p in clean.split(CONCEPT_LIST_SPLIT_CHAR)
+        if p.strip().strip(_STRIP_MARKDOWN_QUOTE_CHARS)
+    ]
     if parts:
-        return ", ".join(parts)
-    return clean or "Síntese Conceitual"
+        return CONCEPT_LIST_JOIN_SEP.join(parts)
+    return clean or FALLBACK_KEY_CONCEPT_TITLE

@@ -10,14 +10,19 @@ from __future__ import annotations
 import os
 import re
 from pathlib import Path
+from typing import Final
 from uuid import uuid4
 
 from cresmo.domain.value_objects import ChannelName
 
-ISO_DATE_COMPACT_LENGTH: int = 8
+ISO_DATE_COMPACT_LENGTH: Final[int] = 8
 
-_ILLEGAL_FILENAME_CHARS = re.compile(r'[\\/*?:"<>|%]')
-_FRONTMATTER_PATTERN = re.compile(r"^---\s*\n([\s\S]*?)\n---\s*\n([\s\S]*)$")
+_ILLEGAL_FILENAME_CHARS: Final[re.Pattern[str]] = re.compile(r'[\\/*?:"<>|%]')
+_WHITESPACE_PATTERN: Final[re.Pattern[str]] = re.compile(r"\s+")
+_FRONTMATTER_PATTERN: Final[re.Pattern[str]] = re.compile(r"^---\s*\n([\s\S]*?)\n---\s*\n([\s\S]*)$")
+_ILLEGAL_CHAR_REPLACEMENT: Final[str] = "_"
+_TEMP_FILE_MARKER: Final[str] = ".tmp."
+_UTF8_ENCODING: Final[str] = "utf-8"
 
 
 def sanitize_filename(name: str | ChannelName) -> str:
@@ -29,7 +34,7 @@ def sanitize_filename(name: str | ChannelName) -> str:
     Returns:
         Filesystem-safe string with illegal characters replaced by underscores.
     """
-    return _ILLEGAL_FILENAME_CHARS.sub("_", str(name).strip())
+    return _ILLEGAL_FILENAME_CHARS.sub(_ILLEGAL_CHAR_REPLACEMENT, str(name).strip())
 
 
 def channel_to_slug(name: str | ChannelName) -> str:
@@ -41,8 +46,8 @@ def channel_to_slug(name: str | ChannelName) -> str:
     Returns:
         Clean slug safe for folder naming.
     """
-    clean = re.sub(r"\s+", "_", str(name).strip())
-    return _ILLEGAL_FILENAME_CHARS.sub("_", clean)
+    clean = _WHITESPACE_PATTERN.sub(_ILLEGAL_CHAR_REPLACEMENT, str(name).strip())
+    return _ILLEGAL_FILENAME_CHARS.sub(_ILLEGAL_CHAR_REPLACEMENT, clean)
 
 
 def atomic_write(target_path: Path, content: str) -> None:
@@ -57,6 +62,6 @@ def atomic_write(target_path: Path, content: str) -> None:
         content: Complete text content to persist.
     """
     target_path.parent.mkdir(parents=True, exist_ok=True)
-    temp_file = target_path.parent / f"{target_path.name}.tmp.{uuid4().hex}"
-    temp_file.write_text(content, encoding="utf-8")
+    temp_file = target_path.parent / f"{target_path.name}{_TEMP_FILE_MARKER}{uuid4().hex}"
+    temp_file.write_text(content, encoding=_UTF8_ENCODING)
     os.replace(temp_file, target_path)

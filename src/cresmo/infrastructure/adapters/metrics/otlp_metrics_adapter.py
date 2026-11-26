@@ -25,16 +25,31 @@ logger = structlog.get_logger(__name__)
 HIGH_CARDINALITY_LABELS: Final[frozenset[str]] = frozenset(
     {"content_id", "channel_name", "incident_id"}
 )
+DEFAULT_PROMETHEUS_READY_TIMEOUT_SECONDS: Final[float] = 2.0
+DEFAULT_PROMETHEUS_ENDPOINT: Final[str] = "http://localhost:9090"
+DEFAULT_OTLP_EXPORT_INTERVAL_MILLIS: Final[float] = 15_000.0
+DEFAULT_SERVICE_NAME: Final[str] = "cresmo"
+_URL_TRAILING_SLASH: Final[str] = "/"
+_PROMETHEUS_READY_PATH: Final[str] = "/-/ready"
+_OTLP_METRICS_PATH: Final[str] = "/api/v1/otlp/v1/metrics"
+_LOCALHOST_HOST: Final[str] = "localhost"
+_LOOPBACK_IP: Final[str] = "127.0.0.1"
+_METER_NAME: Final[str] = "cresmo.metrics"
+_ATTR_SERVICE_NAME: Final[str] = "service.name"
+_ATTR_SERVICE_VERSION: Final[str] = "service.version"
 
 
-def probe_prometheus_ready(endpoint: str, timeout_seconds: float = 2.0) -> bool:
+def probe_prometheus_ready(
+    endpoint: str,
+    timeout_seconds: float = DEFAULT_PROMETHEUS_READY_TIMEOUT_SECONDS,
+) -> bool:
     """Verify whether Prometheus v3 HTTP server is ready to ingest OTLP metrics."""
-    normalized = endpoint.rstrip("/")
-    probe_url = f"{normalized}/-/ready"
+    normalized = endpoint.rstrip(_URL_TRAILING_SLASH)
+    probe_url = f"{normalized}{_PROMETHEUS_READY_PATH}"
     if probe_http_endpoint(probe_url, timeout_seconds=timeout_seconds):
         return True
-    if "localhost" in normalized:
-        fallback_url = probe_url.replace("localhost", "127.0.0.1")
+    if _LOCALHOST_HOST in normalized:
+        fallback_url = probe_url.replace(_LOCALHOST_HOST, _LOOPBACK_IP)
         return probe_http_endpoint(fallback_url, timeout_seconds=timeout_seconds)
     return False
 
@@ -44,15 +59,15 @@ class OtlpMetricsAdapter(MetricsPort):
 
     def __init__(
         self,
-        endpoint: str = "http://localhost:9090",
+        endpoint: str = DEFAULT_PROMETHEUS_ENDPOINT,
         *,
-        export_interval_millis: float = 15_000.0,
+        export_interval_millis: float = DEFAULT_OTLP_EXPORT_INTERVAL_MILLIS,
         metric_exporter: MetricExporter | None = None,
         meter_provider: MeterProvider | None = None,
-        service_name: str = "cresmo",
+        service_name: str = DEFAULT_SERVICE_NAME,
         service_version: str | None = None,
     ) -> None:
-        self._endpoint = endpoint.rstrip("/")
+        self._endpoint = endpoint.rstrip(_URL_TRAILING_SLASH)
         self._lock = threading.Lock()
         self._counters: dict[str, Counter] = {}
         self._histograms: dict[str, Histogram] = {}
@@ -61,11 +76,11 @@ class OtlpMetricsAdapter(MetricsPort):
         if meter_provider is not None:
             self._meter_provider = meter_provider
         else:
-            resource_attrs: dict[str, str] = {"service.name": service_name}
+            resource_attrs: dict[str, str] = {_ATTR_SERVICE_NAME: service_name}
             if service_version:
-                resource_attrs["service.version"] = service_version
+                resource_attrs[_ATTR_SERVICE_VERSION] = service_version
             exporter = metric_exporter or OTLPMetricExporter(
-                endpoint=f"{self._endpoint}/api/v1/otlp/v1/metrics",
+                endpoint=f"{self._endpoint}{_OTLP_METRICS_PATH}",
             )
             reader = PeriodicExportingMetricReader(
                 exporter,
@@ -76,7 +91,7 @@ class OtlpMetricsAdapter(MetricsPort):
                 metric_readers=[reader],
             )
 
-        self._meter = self._meter_provider.get_meter("cresmo.metrics")
+        self._meter = self._meter_provider.get_meter(_METER_NAME)
 
     @staticmethod
     def _sanitize_labels(labels: dict[str, str] | None) -> dict[str, str]:

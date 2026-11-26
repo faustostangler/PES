@@ -12,7 +12,8 @@ Conforms to:
 from __future__ import annotations
 
 from collections.abc import Callable
-from typing import Any
+from http import HTTPStatus
+from typing import Any, Final
 
 import httpx
 import structlog
@@ -58,11 +59,40 @@ TRANSIENT_NETWORK_PATTERNS: tuple[str, ...] = (
     "socket.timeout",
 )
 
-_THINKING_LEVEL_ENUM_MAP: dict[str, types.ThinkingLevel] = {
-    "minimal": types.ThinkingLevel.MINIMAL,
-    "low": types.ThinkingLevel.LOW,
-    "medium": types.ThinkingLevel.MEDIUM,
-    "high": types.ThinkingLevel.HIGH,
+GEMINI_MODEL_PREFIX: Final[str] = "gemini:"
+_THINKING_MINIMAL: Final[str] = "minimal"
+_THINKING_LOW: Final[str] = "low"
+_THINKING_MEDIUM: Final[str] = "medium"
+_THINKING_HIGH: Final[str] = "high"
+_THINKING_XHIGH: Final[str] = "xhigh"
+_GEMMA_4_MODEL_PREFIX: Final[str] = "gemma-4"
+_GEMINI_4_HYDROGEN_MODEL_PREFIX: Final[str] = "gemini-4-hydrogen"
+_STANDARD_CLAMP_MODEL_PREFIXES: Final[tuple[str, ...]] = (
+    "gemini-3.8-",
+    "gemini-4-",
+    "gemini-3.1-pro",
+    "gemini-2.5-",
+)
+_TRANSIENT_HTTP_STATUS_CODES: Final[frozenset[int]] = frozenset(
+    {
+        HTTPStatus.TOO_MANY_REQUESTS,
+        HTTPStatus.INTERNAL_SERVER_ERROR,
+        HTTPStatus.BAD_GATEWAY,
+        HTTPStatus.SERVICE_UNAVAILABLE,
+        HTTPStatus.GATEWAY_TIMEOUT,
+    }
+)
+_RETRY_MIN_WAIT_SECONDS: Final[int] = 2
+_RETRY_MAX_WAIT_SECONDS: Final[int] = 20
+_RETRY_MAX_ATTEMPTS: Final[int] = 3
+_ZERO_SLEEP_SECONDS: Final[float] = 0.0
+_KEY_THINKING_LEVEL: Final[str] = "thinking_level"
+
+_THINKING_LEVEL_ENUM_MAP: Final[dict[str, types.ThinkingLevel]] = {
+    _THINKING_MINIMAL: types.ThinkingLevel.MINIMAL,
+    _THINKING_LOW: types.ThinkingLevel.LOW,
+    _THINKING_MEDIUM: types.ThinkingLevel.MEDIUM,
+    _THINKING_HIGH: types.ThinkingLevel.HIGH,
 }
 
 
@@ -74,7 +104,7 @@ def is_transient_genai_error(exc: BaseException) -> bool:
         return True
     if isinstance(exc, errors.APIError):
         code = getattr(exc, "code", None)
-        return code in (429, 500, 502, 503, 504)
+        return code in _TRANSIENT_HTTP_STATUS_CODES
     msg = str(exc)
     return any(pattern in msg for pattern in TRANSIENT_NETWORK_PATTERNS)
 
@@ -98,7 +128,11 @@ def log_gemini_retry_attempt(retry_state: RetryCallState) -> None:
         if retry_state.outcome is not None and retry_state.outcome.failed
         else None
     )
-    sleep_seconds = retry_state.next_action.sleep if retry_state.next_action is not None else 0.0
+    sleep_seconds = (
+        retry_state.next_action.sleep
+        if retry_state.next_action is not None
+        else _ZERO_SLEEP_SECONDS
+    )
     logger.debug(
         "[GeminiRetry] Attempt %d failed (%s). Retrying in %.1fs...",
         retry_state.attempt_number,
@@ -109,8 +143,8 @@ def log_gemini_retry_attempt(retry_state: RetryCallState) -> None:
 
 @retry(
     retry=retry_if_exception(is_transient_cluster_error),
-    wait=wait_random_exponential(min=2, max=20),
-    stop=stop_after_attempt(3),
+    wait=wait_random_exponential(min=_RETRY_MIN_WAIT_SECONDS, max=_RETRY_MAX_WAIT_SECONDS),
+    stop=stop_after_attempt(_RETRY_MAX_ATTEMPTS),
     before_sleep=log_gemini_retry_attempt,
     reraise=True,
 )
@@ -176,23 +210,23 @@ def resolve_effective_thinking_level(
             f"Unsupported thinking_level '{thinking_level}'. Expected one of {GEMINI_THINKING_LEVELS}."
         )
 
-    normalized_model = model.removeprefix("gemini:").strip().lower()
+    normalized_model = model.removeprefix(GEMINI_MODEL_PREFIX).strip().lower()
 
-    if normalized_model.startswith("gemma-4"):
-        return "minimal" if level in ("minimal", "low") else "high"
+    if normalized_model.startswith(_GEMMA_4_MODEL_PREFIX):
+        return _THINKING_MINIMAL if level in (_THINKING_MINIMAL, _THINKING_LOW) else _THINKING_HIGH
 
-    if normalized_model.startswith("gemini-4-hydrogen"):
-        return "low" if level == "minimal" else level
+    if normalized_model.startswith(_GEMINI_4_HYDROGEN_MODEL_PREFIX):
+        return _THINKING_LOW if level == _THINKING_MINIMAL else level
 
-    if normalized_model.startswith(("gemini-3.8-", "gemini-4-", "gemini-3.1-pro", "gemini-2.5-")):
-        if level == "minimal":
-            return "low"
-        if level == "xhigh":
-            return "high"
+    if normalized_model.startswith(_STANDARD_CLAMP_MODEL_PREFIXES):
+        if level == _THINKING_MINIMAL:
+            return _THINKING_LOW
+        if level == _THINKING_XHIGH:
+            return _THINKING_HIGH
         return level
 
-    if level == "xhigh":
-        return "high"
+    if level == _THINKING_XHIGH:
+        return _THINKING_HIGH
     return level
 
 
@@ -219,7 +253,7 @@ def build_thinking_config(
         return types.ThinkingConfig(thinking_level=enum_val)
 
     # SDK 2.22.0 ThinkingLevel enum omits 'xhigh' supported by Gemini 4 Hydrogen
-    return types.ThinkingConfig.model_validate({"thinking_level": effective})
+    return types.ThinkingConfig.model_validate({_KEY_THINKING_LEVEL: effective})
 
 
 __all__ = [

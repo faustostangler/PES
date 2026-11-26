@@ -15,6 +15,8 @@ Conforms to:
 
 from __future__ import annotations
 
+from typing import Final
+
 import structlog
 
 from cresmo.application.ports import (
@@ -35,6 +37,11 @@ from cresmo.domain.value_objects import (
 )
 
 logger = structlog.get_logger(__name__)
+
+DEFAULT_MAX_CHARS_UNLIMITED: Final[int] = 0
+DEFAULT_INDEXING_TEMPERATURE: Final[float] = 0.2
+DEFAULT_INDEXING_MAX_REWRITES: Final[int] = 3
+YOUTUBE_WATCH_URL_PREFIX: Final[str] = "https://youtube.com/watch?v="
 
 
 class IndexRawTranscriptsUseCase:
@@ -62,10 +69,10 @@ class IndexRawTranscriptsUseCase:
         vault_port: VaultRepositoryPort | None = None,
         llm_indexing_port: LLMTransformationPort | None = None,
         prompt_provider: PromptProviderPort | None = None,
-        max_chars: int = 0,
-        temperature: float = 0.2,
+        max_chars: int = DEFAULT_MAX_CHARS_UNLIMITED,
+        temperature: float = DEFAULT_INDEXING_TEMPERATURE,
         language: str = DEFAULT_LANGUAGE,
-        max_rewrites: int = 3,
+        max_rewrites: int = DEFAULT_INDEXING_MAX_REWRITES,
         llm_judge_port: LlmJudgePort | None = None,
         taxonomy_port: ChannelTaxonomyPort | None = None,
     ) -> None:
@@ -175,7 +182,7 @@ class IndexRawTranscriptsUseCase:
         url = (
             transcript.provenance.url
             if transcript.provenance.url
-            else f"https://youtube.com/watch?v={video_id}"
+            else f"{YOUTUBE_WATCH_URL_PREFIX}{video_id}"
         )
 
         category = transcript.channel.category.strip() if transcript.channel.category else ""

@@ -20,6 +20,10 @@ from cresmo.domain.value_objects import (
 )
 
 _CANONICAL_SESSION_ID_PARTS: Final[int] = 2
+SESSION_ID_DELIMITER: Final[str] = ":"
+ANONYMOUS_IDENTITY_VALUE: Final[str] = "anonymous"
+DEFAULT_WORKER_IDENTITY_NAME: Final[str] = "worker"
+SYSTEM_IDENTITY_PROVIDER: Final[str] = "system"
 
 
 @dataclass(frozen=True)
@@ -36,7 +40,7 @@ class PipelineSessionId:
     def __post_init__(self) -> None:
         if not self.value or not self.value.strip():
             raise ValueError("PipelineSessionId cannot be empty.")
-        parts = self.value.split(":")
+        parts = self.value.split(SESSION_ID_DELIMITER)
         if len(parts) != _CANONICAL_SESSION_ID_PARTS or not parts[0].strip() or not parts[1].strip():
             raise ValueError(
                 f"Invalid PipelineSessionId format: '{self.value}'. "
@@ -68,17 +72,17 @@ class PipelineSessionId:
             content_id.id.value if isinstance(content_id, Content) else content_id.value
         )
 
-        return cls(value=f"{channel_identifier}:{content_identifier}")
+        return cls(value=f"{channel_identifier}{SESSION_ID_DELIMITER}{content_identifier}")
 
     @property
     def channel_id(self) -> str:
         """Extract the channel identifier from the session id."""
-        return self.value.split(":")[0]
+        return self.value.split(SESSION_ID_DELIMITER)[0]
 
     @property
     def content_id(self) -> str:
         """Extract the content identifier from the session id."""
-        return self.value.split(":")[1]
+        return self.value.split(SESSION_ID_DELIMITER)[1]
 
 
 @dataclass(frozen=True)
@@ -92,7 +96,7 @@ class UserIdentity:
 
     value: str
     is_anonymous: bool = True
-    provider: str = "anonymous"
+    provider: str = ANONYMOUS_IDENTITY_VALUE
     subject: str = ""
 
     def __post_init__(self) -> None:
@@ -102,15 +106,15 @@ class UserIdentity:
     @classmethod
     def anonymous(cls) -> UserIdentity:
         """Create an anonymous user identity."""
-        return cls(value="anonymous")
+        return cls(value=ANONYMOUS_IDENTITY_VALUE)
 
     @classmethod
-    def worker(cls, name: str = "worker") -> UserIdentity:
+    def worker(cls, name: str = DEFAULT_WORKER_IDENTITY_NAME) -> UserIdentity:
         """Create a scheduled or background worker user identity per ADR-027."""
-        clean_name = name.strip() or "worker"
+        clean_name = name.strip() or DEFAULT_WORKER_IDENTITY_NAME
         return cls(
-            value=f"system:{clean_name}",
+            value=f"{SYSTEM_IDENTITY_PROVIDER}{SESSION_ID_DELIMITER}{clean_name}",
             is_anonymous=False,
-            provider="system",
+            provider=SYSTEM_IDENTITY_PROVIDER,
             subject=clean_name,
         )

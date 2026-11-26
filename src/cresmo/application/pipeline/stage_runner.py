@@ -10,6 +10,8 @@ Conforms to:
 
 from __future__ import annotations
 
+from typing import Final
+
 import structlog
 
 from cresmo.application.pipeline.context import PipelineExecutionContext
@@ -31,6 +33,25 @@ from cresmo.domain.exceptions import DomainValidationError
 from cresmo.domain.value_objects import CandidateText, JudgeEvaluation
 
 logger = structlog.get_logger(__name__)
+
+STAGE_STATUS_APPROVED: Final[str] = "APPROVED"
+STAGE_STATUS_COMPLETED_UNBLOCKING: Final[str] = "COMPLETED_UNBLOCKING"
+METRIC_INCREMENT_ONE: Final[float] = 1.0
+METRIC_LABEL_STAGE: Final[str] = "stage"
+RATIO_ROUND_DECIMAL_PLACES: Final[int] = 3
+
+_PAYLOAD_KEY_STAGE_NAME: Final[str] = "stage_name"
+_PAYLOAD_KEY_SOURCE_TYPE: Final[str] = "source_type"
+_PAYLOAD_KEY_SOURCE_CHARACTERS: Final[str] = "source_characters"
+_PAYLOAD_KEY_SOURCE_WORDS: Final[str] = "source_words"
+_PAYLOAD_KEY_STATUS: Final[str] = "status"
+_PAYLOAD_KEY_OUTPUT_CHARACTERS: Final[str] = "output_characters"
+_PAYLOAD_KEY_OUTPUT_WORDS: Final[str] = "output_words"
+_PAYLOAD_KEY_ATTEMPTS: Final[str] = "attempts"
+_PAYLOAD_KEY_RETRIES: Final[str] = "retries"
+_PAYLOAD_KEY_EXPANSION_RATIO: Final[str] = "expansion_ratio"
+_PAYLOAD_KEY_JUDGE_PASSED: Final[str] = "judge_passed"
+_PAYLOAD_KEY_JUDGE_OVERALL_SCORE: Final[str] = "judge_overall_score"
 
 __all__ = ["PipelineStageRunner"]
 
@@ -104,10 +125,10 @@ class PipelineStageRunner:
             source_words = len(source_text.split())
             stage_span.set_input(
                 {
-                    "stage_name": stage_name,
-                    "source_type": type(source).__name__,
-                    "source_characters": len(source_text),
-                    "source_words": source_words,
+                    _PAYLOAD_KEY_STAGE_NAME: stage_name,
+                    _PAYLOAD_KEY_SOURCE_TYPE: type(source).__name__,
+                    _PAYLOAD_KEY_SOURCE_CHARACTERS: len(source_text),
+                    _PAYLOAD_KEY_SOURCE_WORDS: source_words,
                 }
             )
 
@@ -156,7 +177,9 @@ class PipelineStageRunner:
                 critique = self._synthesize_critique(evaluation, stage_name)
                 if attempt < effective_max_attempts:
                     self.metrics_port.increment_counter(
-                        MetricName.JUDGE_RETRY_COUNT, 1.0, labels={"stage": stage_name}
+                        MetricName.JUDGE_RETRY_COUNT,
+                        METRIC_INCREMENT_ONE,
+                        labels={METRIC_LABEL_STAGE: stage_name},
                     )
 
             if (
@@ -188,18 +211,22 @@ class PipelineStageRunner:
             output_words = len(output_text.split())
             stage_span.set_output(
                 {
-                    "status": (
-                        "APPROVED"
+                    _PAYLOAD_KEY_STATUS: (
+                        STAGE_STATUS_APPROVED
                         if (evaluation is None or evaluation.passed)
-                        else "COMPLETED_UNBLOCKING"
+                        else STAGE_STATUS_COMPLETED_UNBLOCKING
                     ),
-                    "output_characters": len(output_text),
-                    "output_words": output_words,
-                    "attempts": attempts_run,
-                    "retries": max(0, attempts_run - 1),
-                    "expansion_ratio": round(output_words / max(source_words, 1), 3),
-                    "judge_passed": evaluation.passed if evaluation is not None else None,
-                    "judge_overall_score": (
+                    _PAYLOAD_KEY_OUTPUT_CHARACTERS: len(output_text),
+                    _PAYLOAD_KEY_OUTPUT_WORDS: output_words,
+                    _PAYLOAD_KEY_ATTEMPTS: attempts_run,
+                    _PAYLOAD_KEY_RETRIES: max(0, attempts_run - 1),
+                    _PAYLOAD_KEY_EXPANSION_RATIO: round(
+                        output_words / max(source_words, 1), RATIO_ROUND_DECIMAL_PLACES
+                    ),
+                    _PAYLOAD_KEY_JUDGE_PASSED: (
+                        evaluation.passed if evaluation is not None else None
+                    ),
+                    _PAYLOAD_KEY_JUDGE_OVERALL_SCORE: (
                         evaluation.overall_score if evaluation is not None else None
                     ),
                 }

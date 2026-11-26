@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import json
 import re
-from typing import Any
+from typing import Any, Final
 
 import structlog
 
@@ -45,6 +45,17 @@ from cresmo.domain.value_objects import (
 logger = structlog.get_logger(__name__)
 
 _BIG_ENDIAN_YEAR_REGEX = re.compile(r"^\d{4}")
+VALID_INVENTORY_NOTE_TYPES: Final[frozenset[str]] = frozenset(member.value for member in NoteType)
+DEFAULT_INVENTORY_TEMPERATURE: Final[float] = 0.0
+DEFAULT_INVENTORY_MAX_REWRITES: Final[int] = 3
+STAGE_NAME_ATOMIC_INVENTORY: Final[str] = "atomic_inventory"
+TRACE_RETRY_SUFFIX_PREFIX: Final[str] = "_retry_"
+TRACE_INVENTORY_SUFFIX: Final[str] = "_inventory"
+TRACE_INVENTORY_JUDGE_SUFFIX: Final[str] = "_inventory_judge"
+
+_KEY_TITLE: Final[str] = "title"
+_KEY_TYPE: Final[str] = "type"
+_KEY_CHANNEL_NAME: Final[str] = "channel_name"
 
 
 def is_valid_inventory_json_structure(data: Any) -> bool:
@@ -68,16 +79,16 @@ def is_valid_inventory_json_structure(data: Any) -> bool:
     for entry in data:
         if not isinstance(entry, dict):
             return False
-        title = entry.get("title")
+        title = entry.get(_KEY_TITLE)
         if not isinstance(title, str) or not title.strip():
             return False
-        type_raw = entry.get("type")
+        type_raw = entry.get(_KEY_TYPE)
         if not isinstance(type_raw, str):
             return False
         type_clean = type_raw.strip().lower()
-        if type_clean not in {"entity", "concept", "event", "process"}:
+        if type_clean not in VALID_INVENTORY_NOTE_TYPES:
             return False
-        if type_clean == "event" and not _BIG_ENDIAN_YEAR_REGEX.match(title.strip()):
+        if type_clean == NoteType.EVENT.value and not _BIG_ENDIAN_YEAR_REGEX.match(title.strip()):
             return False
 
     return True
@@ -103,7 +114,7 @@ def _parse_and_deduplicate_items(
     for entry in candidate_data:
         if not isinstance(entry, dict):
             continue
-        title_str = entry.get("title")
+        title_str = entry.get(_KEY_TITLE)
         if not title_str or not isinstance(title_str, str):
             continue
         note_title = NoteTitle(title_str)
@@ -112,7 +123,7 @@ def _parse_and_deduplicate_items(
             continue
         seen_titles.add(key)
 
-        type_raw = entry.get("type")
+        type_raw = entry.get(_KEY_TYPE)
         if type_raw is None:
             note_type = NoteType.CONCEPT
         else:
@@ -138,8 +149,8 @@ class DiscoverAtomicInventoryUseCase:
         self,
         llm_synthesis_port: LLMTransformationPort,
         prompt_provider: PromptProviderPort | None = None,
-        temperature: float = 0.0,
-        max_rewrites: int = 3,
+        temperature: float = DEFAULT_INVENTORY_TEMPERATURE,
+        max_rewrites: int = DEFAULT_INVENTORY_MAX_REWRITES,
         judge_enabled: bool | None = None,
         llm_judge_port: LlmJudgePort | None = None,
     ) -> None:
@@ -208,12 +219,12 @@ class DiscoverAtomicInventoryUseCase:
 
         if self.llm_judge_port is not None:
             context = EvaluationContext(
-                stage_name="atomic_inventory",
+                stage_name=STAGE_NAME_ATOMIC_INVENTORY,
                 raw_text=compendium.content.text,
                 candidate_text=json.dumps(candidate_data),
                 metadata={
-                    "title": compendium.content.title,
-                    "channel_name": compendium.channel.name,
+                    _KEY_TITLE: compendium.content.title,
+                    _KEY_CHANNEL_NAME: compendium.channel.name,
                 },
                 trace_id=judge_trace_id,
                 required_criteria=(JudgeCriterion.INVENTORY_COHERENCE,),
@@ -256,15 +267,15 @@ class DiscoverAtomicInventoryUseCase:
         content_id = compendium.content.id.value
 
         for retries in range(self.max_rewrites + 1):
-            trace_suffix = "" if retries == 0 else f"_retry_{retries}"
+            trace_suffix = "" if retries == 0 else f"{TRACE_RETRY_SUFFIX_PREFIX}{retries}"
             if retries > 0:
                 logger.info(
                     "[InventoryDiscovery] Attempt %d: candidate inventory compliance check failed for '%s'. Re-extracting.",
                     retries,
                     content_id,
                 )
-            trace_id = f"{content_id}_inventory{trace_suffix}"
-            judge_trace_id = f"{content_id}_inventory_judge{trace_suffix}"
+            trace_id = f"{content_id}{TRACE_INVENTORY_SUFFIX}{trace_suffix}"
+            judge_trace_id = f"{content_id}{TRACE_INVENTORY_JUDGE_SUFFIX}{trace_suffix}"
 
             candidate_data = self._query_candidate_inventory(
                 prompt=chat_prompt,
