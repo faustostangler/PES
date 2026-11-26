@@ -118,12 +118,23 @@ def build_preflight_checker(
 ) -> PreflightHealthChecker:
     """Construct PreflightHealthChecker with resolved settings."""
     resolved = resolve_shared_settings(settings)
+    service_health_urls: dict[str, str] = {}
+    if resolved.observability.runtime.enable_preflight_probes:
+        langfuse = resolved.observability.langfuse
+        if langfuse.public_key.strip() and langfuse.secret_key.get_secret_value().strip():
+            service_health_urls["langfuse"] = f"{langfuse.host.rstrip('/')}/api/public/health"
+        prometheus = resolved.observability.prometheus
+        if prometheus.enabled and prometheus.endpoint.strip():
+            service_health_urls["prometheus"] = f"{prometheus.endpoint.rstrip('/')}/-/ready"
+
     return PreflightHealthChecker(
         gemini_api_key=resolved.llm.gemini.primary_api_key().get_secret_value(),
         vault_dir=resolved.storage.vault_dir,
         sqlite_ledger_path=resolved.storage.sqlite_ledger_path,
         probe_port=PreflightProbeAdapter(),
         check_ffmpeg=check_ffmpeg,
+        service_health_urls=service_health_urls,
+        probe_timeout_seconds=resolved.observability.runtime.preflight_probe_timeout_seconds,
     )
 
 

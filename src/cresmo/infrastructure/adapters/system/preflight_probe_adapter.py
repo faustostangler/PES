@@ -65,3 +65,11 @@ class PreflightProbeAdapter(PreflightProbePort):
     def executable_exists(self, binary_name: str) -> bool:
         """Check whether an executable binary is available on system PATH."""
         return shutil.which(binary_name) is not None
+
+    def probe_http(
+        self,
+        url: str,
+        timeout_seconds: float = DEFAULT_HTTP_PROBE_TIMEOUT_SECONDS,
+    ) -> bool:
+        """Probe an HTTP health endpoint via stdlib urllib with bounded timeout."""
+        return probe_http_endpoint(url, timeout_seconds=timeout_seconds)

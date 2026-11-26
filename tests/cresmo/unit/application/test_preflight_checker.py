@@ -233,6 +233,48 @@ class TestPreflightHealthChecker:
             res.assert_healthy()
         assert "Preflight health check failed: First error; Second error" == str(exc_info.value)
 
+    def test_service_health_probes_pass_and_fail_fast_with_make_up_hint(
+        self, tmp_path: Path
+    ) -> None:
+        urls = {
+            "langfuse": "http://localhost:3000/api/public/health",
+            "prometheus": "http://localhost:9090/-/ready",
+        }
+        healthy_probe = FakePreflightProbe(default_http_ok=True)
+        healthy_checker = PreflightHealthChecker(
+            gemini_api_key="valid_key",
+            vault_dir=tmp_path / "vault",
+            sqlite_ledger_path=tmp_path / "data" / "ledger.db",
+            check_ffmpeg=False,
+            probe_port=healthy_probe,
+            service_health_urls=urls,
+            probe_timeout_seconds=0.5,
+        )
+        assert healthy_checker.check_all().is_healthy is True
+        assert healthy_probe.http_calls == [
+            ("http://localhost:3000/api/public/health", 0.5),
+            ("http://localhost:9090/-/ready", 0.5),
+        ]
+
+        down_probe = FakePreflightProbe(
+            http_responses={"http://localhost:3000/api/public/health": False},
+            default_http_ok=True,
+        )
+        down_checker = PreflightHealthChecker(
+            gemini_api_key="valid_key",
+            vault_dir=tmp_path / "vault",
+            sqlite_ledger_path=tmp_path / "data" / "ledger.db",
+            check_ffmpeg=False,
+            probe_port=down_probe,
+            service_health_urls=urls,
+            probe_timeout_seconds=0.5,
+        )
+        res = down_checker.check_all()
+        assert res.is_healthy is False
+        assert any("langfuse" in err and "make up" in err for err in res.errors)
+        with pytest.raises(PreflightError, match="make up"):
+            res.assert_healthy()
+
 
 class TestPreflightProbeAdapter:
     """Unit tests for infrastructure PreflightProbeAdapter and probe_http_endpoint."""
@@ -255,6 +297,15 @@ class TestPreflightProbeAdapter:
 
         with patch("shutil.which", return_value=None):
             assert adapter.executable_exists("ffmpeg") is False
+
+        with patch(
+            "cresmo.infrastructure.adapters.system.preflight_probe_adapter.probe_http_endpoint",
+            return_value=True,
+        ) as mock_probe:
+            assert adapter.probe_http("http://localhost:3000/api/public/health", 0.5) is True
+            mock_probe.assert_called_once_with(
+                "http://localhost:3000/api/public/health", timeout_seconds=0.5
+            )
 
     def test_probe_http_endpoint_success_and_failures(self) -> None:
         mock_resp = MagicMock()

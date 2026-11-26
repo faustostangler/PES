@@ -49,6 +49,8 @@ class PreflightHealthChecker:
         sqlite_ledger_path: Path,
         probe_port: PreflightProbePort,
         check_ffmpeg: bool = True,
+        service_health_urls: dict[str, str] | None = None,
+        probe_timeout_seconds: float = 1.0,
     ) -> None:
         """Initialize preflight health checker with target coordinates and probe port."""
         self._gemini_api_key = gemini_api_key
@@ -56,6 +58,8 @@ class PreflightHealthChecker:
         self._sqlite_ledger_path = Path(sqlite_ledger_path)
         self._probe_port = probe_port
         self._check_ffmpeg = check_ffmpeg
+        self._service_health_urls = dict(service_health_urls) if service_health_urls else {}
+        self._probe_timeout_seconds = probe_timeout_seconds
 
     def check_all(self) -> PreflightResult:
         """Execute all local diagnostics and return a comprehensive PreflightResult."""
@@ -85,6 +89,16 @@ class PreflightHealthChecker:
         # 4. System binary dependencies
         if self._check_ffmpeg and not self._probe_port.executable_exists(REQUIRED_FFMPEG_BINARY):
             errors.append(f"System binary '{REQUIRED_FFMPEG_BINARY}' not found in PATH")
+
+        # 5. Active backing service health probes (fail-fast with 'make up' guidance)
+        for service_name, health_url in self._service_health_urls.items():
+            if not self._probe_port.probe_http(
+                health_url, timeout_seconds=self._probe_timeout_seconds
+            ):
+                errors.append(
+                    f"Service '{service_name}' is unreachable at '{health_url}' "
+                    "(run 'make up' to start required containers)"
+                )
 
         return PreflightResult(
             is_healthy=len(errors) == 0,

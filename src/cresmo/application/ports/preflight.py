@@ -44,3 +44,15 @@ class PreflightProbePort(ABC):
         Returns:
             True if resolved on PATH, False otherwise.
         """
+
+    @abstractmethod
+    def probe_http(self, url: str, timeout_seconds: float = 1.0) -> bool:
+        """Probe an HTTP health endpoint and return True if reachable (status < 500).
+
+        Args:
+            url: Full HTTP/HTTPS health check URL.
+            timeout_seconds: Socket timeout in seconds.
+
+        Returns:
+            True if endpoint responded with HTTP status < 500, False otherwise.
+        """
